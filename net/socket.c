@@ -306,7 +306,7 @@ id|net_families
 id|NPROTO
 )braket
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|net_family_lockct
 r_static
 id|atomic_t

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Kernel scheduler and related syscalls&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1998-11-19&t;Implemented schedule_timeout() and related stuff&n; *&t;&t;by Andrea Arcangeli&n; *  1998-12-28  Implemented better SMP scheduling by Ingo Molnar&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -144,7 +145,7 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|idle_task
 mdefine_line|#define idle_task(cpu) (init_tasks[cpu_number_map(cpu)])
 DECL|macro|can_schedule
@@ -222,7 +223,7 @@ id|weight
 r_goto
 id|out
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Give a largish advantage to the same processor...   */
 multiline_comment|/* (this is equivalent to penalizing other processors) */
 r_if
@@ -375,7 +376,7 @@ r_int
 id|flags
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|this_cpu
 op_assign
@@ -1103,7 +1104,7 @@ id|current-&gt;need_resched
 op_or_assign
 id|prev-&gt;need_resched
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1159,7 +1160,7 @@ id|prev-&gt;has_cpu
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 )brace
 DECL|function|schedule_tail
 r_void
@@ -1468,7 +1469,7 @@ id|sched_data-&gt;curr
 op_assign
 id|next
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|next-&gt;has_cpu
 op_assign
 l_int|1
@@ -1495,7 +1496,7 @@ id|next
 r_goto
 id|same_process
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/*&n; &t; * maintain the per-process &squot;average timeslice&squot; value.&n; &t; * (this has to be recalculated even if we reschedule to&n; &t; * the same process) Currently this is only used on SMP,&n;&t; * and it&squot;s approximate, so we do not have to maintain&n;&t; * it while holding the runqueue spinlock.&n; &t; */
 (brace
 id|cycles_t
@@ -1537,7 +1538,7 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We drop the scheduler lock early (it&squot;s a global spinlock),&n;&t; * thus we have to lock the previous process from getting&n;&t; * rescheduled during switch_to().&n;&t; */
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 id|kstat.context_swtch
 op_increment
 suffix:semicolon

@@ -2634,6 +2634,8 @@ c_func
 id|dt
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_else
 (brace

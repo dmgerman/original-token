@@ -1509,11 +1509,6 @@ id|i
 comma
 id|len
 suffix:semicolon
-r_int
-id|sum
-op_assign
-l_int|0
-suffix:semicolon
 r_extern
 r_int
 r_int
@@ -1524,6 +1519,12 @@ r_int
 id|jif
 op_assign
 id|jiffies
+suffix:semicolon
+macro_line|#if !defined(CONFIG_ARCH_S390)
+r_int
+id|sum
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -1547,7 +1548,8 @@ c_func
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMP
 id|len
 op_assign
 id|sprintf
@@ -1667,6 +1669,7 @@ suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|page
 op_plus
@@ -1678,9 +1681,14 @@ l_string|&quot;disk_wio %u %u %u %u&bslash;n&quot;
 l_string|&quot;disk_rblk %u %u %u %u&bslash;n&quot;
 l_string|&quot;disk_wblk %u %u %u %u&bslash;n&quot;
 l_string|&quot;page %u %u&bslash;n&quot;
+macro_line|#if !defined(CONFIG_ARCH_S390)
 l_string|&quot;swap %u %u&bslash;n&quot;
 l_string|&quot;intr %u&quot;
 comma
+macro_line|#else
+l_string|&quot;swap %u %u&bslash;n&quot;
+comma
+macro_line|#endif
 macro_line|#else
 id|len
 op_assign
@@ -1696,9 +1704,14 @@ l_string|&quot;disk_wio %u %u %u %u&bslash;n&quot;
 l_string|&quot;disk_rblk %u %u %u %u&bslash;n&quot;
 l_string|&quot;disk_wblk %u %u %u %u&bslash;n&quot;
 l_string|&quot;page %u %u&bslash;n&quot;
+macro_line|#if !defined(CONFIG_ARCH_S390)
 l_string|&quot;swap %u %u&bslash;n&quot;
 l_string|&quot;intr %u&quot;
 comma
+macro_line|#else
+l_string|&quot;swap %u %u&bslash;n&quot;
+comma
+macro_line|#endif
 id|kstat.cpu_user
 comma
 id|kstat.cpu_nice
@@ -1824,13 +1837,13 @@ id|kstat.pgpgout
 comma
 id|kstat.pswpin
 comma
+macro_line|#if !defined(CONFIG_ARCH_S390)
 id|kstat.pswpout
 comma
 id|sum
 )paren
 suffix:semicolon
 r_for
-c_loop
 (paren
 id|i
 op_assign
@@ -1861,6 +1874,11 @@ id|i
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|kstat.pswpout
+)paren
+suffix:semicolon
+macro_line|#endif
 id|len
 op_add_assign
 id|sprintf
@@ -2116,6 +2134,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#if !defined(CONFIG_ARCH_S390)
 DECL|function|interrupts_read_proc
 r_static
 r_int
@@ -2206,6 +2225,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|filesystems_read_proc
 r_static
 r_int
@@ -3415,7 +3435,7 @@ op_star
 id|ppos
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_int
 id|setup_profiling_timer
@@ -3659,12 +3679,14 @@ comma
 id|partitions_read_proc
 )brace
 comma
+macro_line|#if !defined(CONFIG_ARCH_S390)
 (brace
 l_string|&quot;interrupts&quot;
 comma
 id|interrupts_read_proc
 )brace
 comma
+macro_line|#endif
 (brace
 l_string|&quot;filesystems&quot;
 comma

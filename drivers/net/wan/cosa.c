@@ -4,6 +4,7 @@ multiline_comment|/*&n; * The driver for the SRP and COSA synchronous serial car
 multiline_comment|/*&n; *     5/25/1999 : Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt;&n; *             fixed a deadlock in cosa_sppp_open&n; */
 "&f;"
 multiline_comment|/* ---------- Headers, macros, data structures ---------- */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1441,7 +1442,7 @@ id|KERN_INFO
 l_string|&quot;cosa v1.08 (c) 1997-2000 Jan Kasprzak &lt;kas@fi.muni.cz&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|printk
 c_func
 (paren

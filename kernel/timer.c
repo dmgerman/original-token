@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/timer.c&n; *&n; *  Kernel internal timers, kernel timekeeping, basic process system calls&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; *&n; *  1997-09-10  Updated NTP code according to technical memorandum Jan &squot;96&n; *              &quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; *  1998-12-24  Fixed a xtime SMP race (we need the xtime_lock rw spinlock to&n; *              serialize accesses to xtime/lost_ticks).&n; *                              Copyright (C) 1998  Andrea Arcangeli&n; *  1999-03-10  Improved NTP compatibility by Ulrich Windl&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -927,7 +928,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/*&n; * SMP specific function to delete periodic timer.&n; * Caller must disable by some means restarting the timer&n; * for new. Upon exit the timer is not queued and handler is not running&n; * on any CPU. It returns number of times, which timer was deleted&n; * (for reference counting).&n; */
 DECL|function|del_timer_sync
 r_int
@@ -2304,7 +2305,7 @@ id|system
 )paren
 (brace
 multiline_comment|/*&n; * SMP does this on a per-CPU basis elsewhere&n; */
-macro_line|#ifndef  __SMP__
+macro_line|#ifndef  CONFIG_SMP
 r_struct
 id|task_struct
 op_star
@@ -2871,7 +2872,7 @@ id|pid
 op_assign
 id|parent-&gt;pid
 suffix:semicolon
-macro_line|#if __SMP__
+macro_line|#if CONFIG_SMP
 (brace
 r_struct
 id|task_struct

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;added cpuinfo&n; *&t;&t;&t;&lt;dth@cistron.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; *&t;&t;&t;&lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; *&n; * Yves Arrouye      :  remove removal of trailing spaces in get_array.&n; *&t;&t;&t;&lt;Yves.Arrouye@marin.fdn.fr&gt;&n; *&n; * Jerome Forissier  :  added per-CPU time information to /proc/stat&n; *                      and /proc/&lt;pid&gt;/cpu extension&n; *                      &lt;forissier@isia.cma.fr&gt;&n; *&t;&t;&t;- Incorporation and non-SMP safe operation&n; *&t;&t;&t;of forissier patch in 2.1.78 by&n; *&t;&t;&t;Hans Marcus &lt;crowbar@concepts.nl&gt;&n; *&n; * aeb@cwi.nl        :  /proc/partitions&n; *&n; *&n; * Alan Cox&t;     :  security fixes.&n; *&t;&t;&t;&lt;Alan.Cox@linux.org&gt;&n; *&n; * Al Viro           :  safe handling of mm_struct&n; *&n; * Gerhard Wichert   :  added BIGMEM support&n; * Siemens AG           &lt;Gerhard.Wichert@pdb.siemens.de&gt;&n; *&n; * Al Viro &amp; Jeff Garzik :  moved most of the thing into base.c and&n; *&t;&t;&t; :  proc_misc.c. The rest may eventually go into&n; *&t;&t;&t; :  base.c too.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -913,6 +914,13 @@ id|mm
 op_assign
 id|task-&gt;mm
 suffix:semicolon
+macro_line|#if defined(CONFIG_ARCH_S390)
+r_int
+id|line
+comma
+id|len
+suffix:semicolon
+macro_line|#endif
 id|buffer
 op_assign
 id|task_name
@@ -968,6 +976,44 @@ comma
 id|buffer
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_ARCH_S390)
+r_for
+c_loop
+(paren
+id|line
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|len
+op_assign
+id|sprintf_regs
+c_func
+(paren
+id|line
+comma
+id|buffer
+comma
+id|task
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+)paren
+op_ne
+l_int|0
+suffix:semicolon
+id|line
+op_increment
+)paren
+(brace
+id|buffer
+op_add_assign
+id|len
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|buffer
 op_minus
@@ -2669,7 +2715,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|proc_pid_cpu
 r_int
 id|proc_pid_cpu

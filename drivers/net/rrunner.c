@@ -5,6 +5,7 @@ DECL|macro|RX_DMA_SKBUFF
 mdefine_line|#define RX_DMA_SKBUFF 1
 DECL|macro|PKT_COPY_THRESHOLD
 mdefine_line|#define PKT_COPY_THRESHOLD 512
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -315,7 +316,7 @@ id|rrpriv
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|spin_lock_init
 c_func
 (paren
@@ -7717,5 +7718,5 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__SMP__ -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -pipe -fomit-frame-pointer -fno-strength-reduce -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h -c rrunner.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -pipe -fomit-frame-pointer -fno-strength-reduce -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h -c rrunner.c&quot;&n; * End:&n; */
 eof

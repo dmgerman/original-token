@@ -11892,5 +11892,5 @@ c_func
 id|vortex_cleanup_module
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c -o 3c575_cb.o -I/usr/src/pcmcia-cs-3.0.5/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c -o 3c575_cb.o -I/usr/src/pcmcia-cs-3.0.5/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

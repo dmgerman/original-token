@@ -159,7 +159,7 @@ macro_line|#endif
 multiline_comment|/*&n; * Used for debugging the new queueing code.  We want to make sure&n; * that the lock state is consistent with design.  Only do this in&n; * the user space simulator.&n; */
 DECL|macro|ASSERT_LOCK
 mdefine_line|#define ASSERT_LOCK(_LOCK, _COUNT)
-macro_line|#if defined(__SMP__) &amp;&amp; defined(CONFIG_USER_DEBUG)
+macro_line|#if defined(CONFIG_SMP) &amp;&amp; defined(CONFIG_USER_DEBUG)
 DECL|macro|ASSERT_LOCK
 macro_line|#undef ASSERT_LOCK
 DECL|macro|ASSERT_LOCK

@@ -5845,7 +5845,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#else /* LINUX_VERSION_CODE */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|del_timer_sync
 c_func
 (paren
@@ -10897,5 +10897,5 @@ id|eepro100_cleanup_module
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c eepro100.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c eepro100.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c eepro100.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

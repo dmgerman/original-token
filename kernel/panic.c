@@ -195,7 +195,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_send_stop
 c_func
 (paren

@@ -1245,7 +1245,7 @@ op_logical_neg
 id|card-&gt;configured
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Initialize the Spin lock */
 id|printk
 c_func
@@ -2863,7 +2863,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Use spin lock only for S508 */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|spin_lock
 c_func
 (paren
@@ -2892,7 +2892,7 @@ c_func
 id|card
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|spin_unlock
 c_func
 (paren

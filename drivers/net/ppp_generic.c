@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Generic PPP layer for Linux.&n; *&n; * Copyright 1999-2000 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * The generic PPP layer handles the PPP network interfaces, the&n; * /dev/ppp device, packet and VJ compression, and multilink.&n; * It talks to PPP `channels&squot; via the interface defined in&n; * include/linux/ppp_channel.h.  Channels provide the basic means for&n; * sending and receiving PPP frames on some kind of communications&n; * channel.&n; *&n; * Part of the code in this driver was inspired by the old async-only&n; * PPP driver, written by Michael Callahan and Al Longyear, and&n; * subsequently hacked by Paul Mackerras.&n; *&n; * ==FILEVERSION 20000412==&n; */
+multiline_comment|/*&n; * Generic PPP layer for Linux.&n; *&n; * Copyright 1999-2000 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * The generic PPP layer handles the PPP network interfaces, the&n; * /dev/ppp device, packet and VJ compression, and multilink.&n; * It talks to PPP `channels&squot; via the interface defined in&n; * include/linux/ppp_channel.h.  Channels provide the basic means for&n; * sending and receiving PPP frames on some kind of communications&n; * channel.&n; *&n; * Part of the code in this driver was inspired by the old async-only&n; * PPP driver, written by Michael Callahan and Al Longyear, and&n; * subsequently hacked by Paul Mackerras.&n; *&n; * ==FILEVERSION 20000417==&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10113,6 +10113,9 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+r_int
+id|dead
+suffix:semicolon
 id|write_lock_bh
 c_func
 (paren
@@ -10153,9 +10156,8 @@ suffix:semicolon
 op_decrement
 id|ppp-&gt;n_channels
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|dead
+op_assign
 id|ppp-&gt;dev
 op_eq
 l_int|0
@@ -10163,16 +10165,20 @@ op_logical_and
 id|ppp-&gt;n_channels
 op_eq
 l_int|0
-)paren
-multiline_comment|/* Last disconnect from a ppp unit&n;&t;&t;&t;   that is already dead: free it. */
-id|kfree
+suffix:semicolon
+id|ppp_unlock
 c_func
 (paren
 id|ppp
 )paren
 suffix:semicolon
-r_else
-id|ppp_unlock
+r_if
+c_cond
+(paren
+id|dead
+)paren
+multiline_comment|/* Last disconnect from a ppp unit&n;&t;&t;&t;   that is already dead: free it. */
+id|kfree
 c_func
 (paren
 id|ppp

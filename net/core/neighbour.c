@@ -87,7 +87,7 @@ id|neigh_table
 op_star
 id|neigh_tables
 suffix:semicolon
-macro_line|#if defined(__i386__) &amp;&amp; defined(__SMP__)
+macro_line|#if defined(__i386__) &amp;&amp; defined(CONFIG_SMP)
 DECL|macro|ASSERT_WL
 mdefine_line|#define ASSERT_WL(n) if ((int)((n)-&gt;lock.lock) &gt; 0) { printk(&quot;WL assertion failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); }
 macro_line|#else
@@ -2375,7 +2375,7 @@ id|tbl-&gt;lock
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|neigh_periodic_timer
 r_static
 r_void
@@ -2503,7 +2503,7 @@ id|NUD_IN_TIMER
 )paren
 )paren
 (brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|printk
 c_func
 (paren
@@ -4905,7 +4905,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|tasklet_init
 c_func
 (paren

@@ -28144,5 +28144,5 @@ suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/linux/include -Wall -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2 -O2 -m486 -c de4x5.c&quot;&n; *&n; * Delete -D__SMP__ below if you didn&squot;t define this in your kernel&n; * Delete -DMODVERSIONS below if you didn&squot;t define this in your kernel&n; *&n; *  compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I/linux/include -Wall -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2 -O2 -m486 -DMODVERSIONS -include /linux/include/linux/modversions.h -c de4x5.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *&n; * Delete -DMODVERSIONS below if you didn&squot;t define this in your kernel&n; *&n; *  compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I/linux/include -Wall -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2 -O2 -m486 -DMODVERSIONS -include /linux/include/linux/modversions.h -c de4x5.c&quot;&n; * End:&n; */
 eof

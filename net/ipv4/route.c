@@ -10259,7 +10259,7 @@ comma
 id|length
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren

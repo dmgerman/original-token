@@ -104,7 +104,7 @@ macro_line|# endif
 macro_line|#endif
 macro_line|#ifdef USE_SPINLOCKS
 macro_line|# if USE_SPINLOCKS == 3 /* both */
-macro_line|#  if defined (__SMP__) || DEBUG_SPINLOCKS &gt; 0
+macro_line|#  if defined (CONFIG_SMP) || DEBUG_SPINLOCKS &gt; 0
 DECL|macro|DC390_LOCKA_INIT
 macro_line|#   define DC390_LOCKA_INIT { spinlock_t __unlocked = SPIN_LOCK_UNLOCKED; pACB-&gt;lock = __unlocked; };
 macro_line|#  else
@@ -146,7 +146,7 @@ macro_line|#  define DC390_UNLOCK_ACB_NI spin_unlock (&amp;(pACB-&gt;lock))
 singleline_comment|//#  define DC390_LOCKA_INIT spin_lock_init (&amp;(pACB-&gt;lock))
 macro_line|# else
 macro_line|#  if USE_SPINLOCKS == 2 /* adapter specific locks */
-macro_line|#   if defined (__SMP__) || DEBUG_SPINLOCKS &gt; 0
+macro_line|#   if defined (CONFIG_SMP) || DEBUG_SPINLOCKS &gt; 0
 DECL|macro|DC390_LOCKA_INIT
 macro_line|#    define DC390_LOCKA_INIT { spinlock_t __unlocked = SPIN_LOCK_UNLOCKED; pACB-&gt;lock = __unlocked; };
 macro_line|#   else

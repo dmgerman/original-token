@@ -150,6 +150,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|lmc_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|abyss_probe
 c_func
 (paren
@@ -271,6 +279,14 @@ l_int|0
 )brace
 comma
 macro_line|#endif&t;/*&n;&t; *&t;SLHC if present needs attaching so other people see it&n;&t; *&t;even if not opened.&n;&t; */
+macro_line|#if defined(CONFIG_LANMEDIA)
+(brace
+id|lmc_setup
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET&t; 
 macro_line|#if (defined(CONFIG_SLIP) &amp;&amp; defined(CONFIG_SLIP_COMPRESSED)) &bslash;&n;&t; || defined(CONFIG_PPP) &bslash;&n;    || (defined(CONFIG_ISDN) &amp;&amp; defined(CONFIG_ISDN_PPP))
 (brace

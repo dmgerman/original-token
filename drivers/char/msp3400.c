@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * programming the msp34* sound processor family&n; *&n; * (c) 1997,1998 Gerd Knorr &lt;kraxel@goldbach.in-berlin.de&gt;&n; *&n; * what works and what doesn&squot;t:&n; *&n; *  AM-Mono&n; *      Support for Hauppauge cards added (decoding handled by tuner) added by&n; *      Frederic Crozat &lt;fcrozat@mail.dotcom.fr&gt;&n; *&n; *  FM-Mono&n; *      should work. The stereo modes are backward compatible to FM-mono,&n; *      therefore FM-Mono should be allways available.&n; *&n; *  FM-Stereo (B/G, used in germany)&n; *      should work, with autodetect&n; *&n; *  FM-Stereo (satellite)&n; *      should work, no autodetect (i.e. default is mono, but you can&n; *      switch to stereo -- untested)&n; *&n; *  NICAM (B/G, L , used in UK, Scandinavia, Spain and France)&n; *      should work, with autodetect. Support for NICAM was added by&n; *      Pekka Pietikainen &lt;pp@netppl.fi&gt;&n; *&n; *&n; * TODO:&n; *   - better SAT support&n; *&n; *&n; * 980623  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *         using soundcore instead of OSS&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10,7 +11,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#endif
@@ -22,7 +23,6 @@ macro_line|#include &quot;audiochip.h&quot;
 DECL|macro|WAIT_QUEUE
 mdefine_line|#define WAIT_QUEUE                 wait_queue_head_t
 multiline_comment|/* sound mixer stuff */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SOUND) || defined(CONFIG_SOUND_MODULE)
 DECL|macro|REGISTER_MIXER
 macro_line|# define REGISTER_MIXER 1
@@ -3496,7 +3496,7 @@ id|val
 comma
 id|this
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|lock_kernel
 c_func
 (paren
@@ -3540,7 +3540,7 @@ id|msp-&gt;thread
 op_assign
 id|current
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|unlock_kernel
 c_func
 (paren
@@ -4986,7 +4986,7 @@ id|i
 comma
 id|std
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|lock_kernel
 c_func
 (paren
@@ -5030,7 +5030,7 @@ id|msp-&gt;thread
 op_assign
 id|current
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|unlock_kernel
 c_func
 (paren

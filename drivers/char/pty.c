@@ -523,6 +523,8 @@ op_assign
 l_int|0
 comma
 id|n
+comma
+id|room
 suffix:semicolon
 r_char
 op_star
@@ -571,11 +573,6 @@ l_int|0
 multiline_comment|/* check space so we don&squot;t copy needlessly */
 id|n
 op_assign
-id|MIN
-c_func
-(paren
-id|count
-comma
 id|to-&gt;ldisc
 dot
 id|receive_room
@@ -583,7 +580,17 @@ c_func
 (paren
 id|to
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|n
+OG
+id|count
 )paren
+id|n
+op_assign
+id|count
 suffix:semicolon
 r_if
 c_cond
@@ -637,13 +644,8 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* check again in case the buffer filled up */
-id|n
+id|room
 op_assign
-id|MIN
-c_func
-(paren
-id|n
-comma
 id|to-&gt;ldisc
 dot
 id|receive_room
@@ -651,7 +653,17 @@ c_func
 (paren
 id|to
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|n
+OG
+id|room
 )paren
+id|n
+op_assign
+id|room
 suffix:semicolon
 r_if
 c_cond

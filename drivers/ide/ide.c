@@ -7173,6 +7173,17 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|DRIVER
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|revalidate
+)paren
 id|DRIVER
 c_func
 (paren

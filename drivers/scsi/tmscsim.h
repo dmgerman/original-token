@@ -3,6 +3,7 @@ multiline_comment|/* $Id: tmscsim.h,v 2.4 1998/12/25 17:33:27 garloff Exp $ */
 macro_line|#ifndef _TMSCSIM_H
 DECL|macro|_TMSCSIM_H
 mdefine_line|#define _TMSCSIM_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|IRQ_NONE
 mdefine_line|#define IRQ_NONE 255
 DECL|macro|MAX_ADAPTER_NUM
@@ -597,7 +598,7 @@ id|DCBmap
 id|MAX_SCSI_ID
 )braket
 suffix:semicolon
-macro_line|#if defined(USE_SPINLOCKS) &amp;&amp; USE_SPINLOCKS &gt; 1 &amp;&amp; (defined(__SMP__) || DEBUG_SPINLOCKS &gt; 0)
+macro_line|#if defined(USE_SPINLOCKS) &amp;&amp; USE_SPINLOCKS &gt; 1 &amp;&amp; (defined(CONFIG_SMP) || DEBUG_SPINLOCKS &gt; 0)
 DECL|member|lock
 id|spinlock_t
 id|lock

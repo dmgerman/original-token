@@ -133,6 +133,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+r_static
 r_int
 DECL|function|proc_dodebug
 id|proc_dodebug

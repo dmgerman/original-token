@@ -6,6 +6,7 @@ multiline_comment|/* Speed up hash, lru, and free list operations.  Use gfp() fo
 multiline_comment|/* Added 32k buffer block sizes - these are required older ARM systems.&n; * - RMK&n; */
 multiline_comment|/* Thread it... -DaveM */
 multiline_comment|/* async buffer flushing, 1999 Andrea Arcangeli &lt;andrea@suse.de&gt; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -9286,7 +9287,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_struct
 id|buffer_head
 op_star
@@ -9360,7 +9361,7 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__ /* trylock does nothing on UP and so we could deadlock */
+macro_line|#ifdef CONFIG_SMP /* trylock does nothing on UP and so we could deadlock */
 r_if
 c_cond
 (paren

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/kernel/fork.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  &squot;fork.c&squot; contains the help-routines for the &squot;fork&squot; system call&n; * (see also system_call.s).&n; * Fork is rather simple, once you get the hang of it, but the memory&n; * management can be a bitch. See &squot;mm/mm.c&squot;: &squot;copy_page_tables()&squot;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -280,7 +281,7 @@ id|up
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * For SMP, we need to re-test the user struct counter&n; * after having aquired the spinlock. This allows us to do&n; * the common case (not freeing anything) without having&n; * any locking.&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|uid_hash_free
 mdefine_line|#define uid_hash_free(up)&t;(!atomic_read(&amp;(up)-&gt;count))
 macro_line|#else
@@ -2838,7 +2839,7 @@ id|p-&gt;times.tms_cstime
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 (brace
 r_int
 id|i

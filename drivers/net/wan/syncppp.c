@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;NET3:&t;A (fairly minimal) implementation of synchronous PPP for Linux&n; *&t;&t;as well as a CISCO HDLC implementation. See the copyright &n; *&t;&t;message below for the original source.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the license, or (at your option) any later version.&n; *&n; *&t;Note however. This code is also used in a different form by FreeBSD.&n; *&t;Therefore when making any non OS specific change please consider&n; *&t;contributing it back to the original author under the terms&n; *&t;below in addition.&n; *&t;&t;-- Alan&n; *&n; *&t;Port for Linux-2.1 by Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;&n; */
-multiline_comment|/*&n; * Synchronous PPP/Cisco link level subroutines.&n; * Keepalive protocol implemented in both Cisco and PPP modes.&n; *&n; * Copyright (C) 1994 Cronyx Ltd.&n; * Author: Serge Vakulenko, &lt;vak@zebub.msk.su&gt;&n; *&n; * This software is distributed with NO WARRANTIES, not even the implied&n; * warranties for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.&n; *&n; * Authors grant any other persons or organisations permission to use&n; * or modify this software as long as this message is kept with the software,&n; * all derivative works or modified versions.&n; *&n; * Version 1.9, Wed Oct  4 18:58:15 MSK 1995&n; *&n; * $Id: if_spppsubr.c,v 1.12 1996/06/10 23:17:45 gpalmer Exp $&n; */
+multiline_comment|/*&n; * Synchronous PPP/Cisco link level subroutines.&n; * Keepalive protocol implemented in both Cisco and PPP modes.&n; *&n; * Copyright (C) 1994 Cronyx Ltd.&n; * Author: Serge Vakulenko, &lt;vak@zebub.msk.su&gt;&n; *&n; * This software is distributed with NO WARRANTIES, not even the implied&n; * warranties for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.&n; *&n; * Authors grant any other persons or organisations permission to use&n; * or modify this software as long as this message is kept with the software,&n; * all derivative works or modified versions.&n; *&n; * Version 1.9, Wed Oct  4 18:58:15 MSK 1995&n; *&n; * $Id: syncppp.c,v 1.18 2000/04/11 05:25:31 asj Exp $&n; */
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#include &lt;linux/config.h&gt;
@@ -1348,7 +1348,7 @@ multiline_comment|/* No keepalive packets got.  Stop the interface. */
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: down&bslash;n&quot;
+l_string|&quot;%s: protocol down&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -2025,7 +2025,6 @@ suffix:semicolon
 r_case
 id|LCP_STATE_OPENED
 suffix:colon
-macro_line|#if 0&t;&t;
 multiline_comment|/* Remote magic changed -- close session. */
 id|sp-&gt;lcp.state
 op_assign
@@ -2046,7 +2045,6 @@ id|sp-&gt;lcp.state
 op_assign
 id|LCP_STATE_ACK_SENT
 suffix:semicolon
-macro_line|#endif&t;&t;&t;
 r_break
 suffix:semicolon
 )brace
@@ -2093,7 +2091,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;%s: up&bslash;n&quot;
+l_string|&quot;%s: protocol up&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -2869,7 +2867,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;%s: up&bslash;n&quot;
+l_string|&quot;%s: protocol up&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren

@@ -14713,7 +14713,7 @@ id|esp
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|function|esp_intr
 r_void
 id|esp_intr

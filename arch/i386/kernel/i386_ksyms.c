@@ -48,7 +48,7 @@ r_extern
 id|spinlock_t
 id|rtc_lock
 suffix:semicolon
-macro_line|#if defined(CONFIG_APM)
+macro_line|#if defined(CONFIG_APM) || defined(CONFIG_APM_MODULE)
 r_extern
 r_void
 id|machine_real_restart

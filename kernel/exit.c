@@ -58,7 +58,7 @@ op_ne
 id|current
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|has_cpu
 suffix:semicolon

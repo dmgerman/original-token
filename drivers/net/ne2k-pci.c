@@ -645,13 +645,17 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|pci_enable_device
 (paren
 id|pdev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
 (brace
 id|printk
@@ -661,8 +665,7 @@ l_string|&quot;ne2k-pci: cannot enable device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EIO
+id|i
 suffix:semicolon
 )brace
 r_if
@@ -1210,6 +1213,10 @@ suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
+suffix:semicolon
+id|pdev-&gt;driver_data
+op_assign
+id|dev
 suffix:semicolon
 multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
 r_if

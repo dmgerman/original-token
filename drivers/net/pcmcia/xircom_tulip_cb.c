@@ -19130,5 +19130,5 @@ c_func
 id|tulip_exit
 )paren
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c -o tulip_cb.o -I/usr/src/pcmcia-cs-3.0.9/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c tulip.c -o tulip_cb.o -I/usr/src/pcmcia-cs-3.0.9/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

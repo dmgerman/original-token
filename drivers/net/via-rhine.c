@@ -6073,5 +6073,5 @@ c_func
 id|via_rhine_cleanup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c via-rhine.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c via-rhine.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c via-rhine.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

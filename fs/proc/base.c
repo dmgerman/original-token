@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/proc/base.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  proc base directory handling functions&n; *&n; *  1999, Al Viro. Rewritten. Now it covers the whole per-process part.&n; *  Instead of using magical inumbers to determine the kind of object&n; *  we allocate and fill in-core inodes upon lookup. They don&squot;t even&n; *  go into icache. We cache the reference to task_struct upon lookup too.&n; *  Eventually it should become a filesystem in its own. We don&squot;t use the&n; *  rest of procfs anymore.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -2308,7 +2309,7 @@ op_or
 id|S_IRUGO
 )paren
 comma
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|E
 c_func
 (paren
@@ -3734,7 +3735,7 @@ id|proc_maps_operations
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_case
 id|PROC_PID_CPU
 suffix:colon

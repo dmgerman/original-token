@@ -2,6 +2,7 @@ macro_line|#ifndef _ASM_IA64_PGTABLE_H
 DECL|macro|_ASM_IA64_PGTABLE_H
 mdefine_line|#define _ASM_IA64_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the ia-64 page table tree.&n; *&n; * This hopefully works with any (fixed) ia-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/types.h&gt;

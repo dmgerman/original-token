@@ -6817,5 +6817,5 @@ c_func
 id|starfire_cleanup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c starfire.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c starfire.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  simple-compile-command: &quot;gcc -DMODULE -D__KERNEL__ -O6 -c starfire.c&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c starfire.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  simple-compile-command: &quot;gcc -DMODULE -D__KERNEL__ -O6 -c starfire.c&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

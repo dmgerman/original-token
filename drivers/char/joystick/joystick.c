@@ -2317,6 +2317,14 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
+id|jd
+op_member_access_from_pointer
+id|close
+c_func
+(paren
+id|jd
+)paren
+suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

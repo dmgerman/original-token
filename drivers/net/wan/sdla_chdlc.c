@@ -1,4 +1,5 @@
 multiline_comment|/*****************************************************************************&n;* sdla_chdlc.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver. Cisco HDLC module.&n;*&n;* Authors: &t;Nenad Corbic &lt;ncorbic@sangoma.com&gt;&n;*&t;&t;Gideon Hack  &n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Feb 28, 2000  Jeff Garzik&t;softnet updates&n;* Nov 20, 1999  Nenad Corbic &t;Fixed zero length API bug.&n;* Sep 30, 1999  Nenad Corbic    Fixed dynamic IP and route setup.&n;* Sep 23, 1999  Nenad Corbic    Added SMP support, fixed tracing &n;* Sep 13, 1999  Nenad Corbic&t;Split up Port 0 and 1 into separate devices.&n;* Jun 02, 1999  Gideon Hack     Added support for the S514 adapter.&n;* Oct 30, 1998&t;Jaspreet Singh&t;Added Support for CHDLC API (HDLC STREAMING).&n;* Oct 28, 1998&t;Jaspreet Singh&t;Added Support for Dual Port CHDLC.&n;* Aug 07, 1998&t;David Fong&t;Initial version.&n;*****************************************************************************/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk(), and other useful stuff */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
@@ -9708,7 +9709,7 @@ op_star
 id|smp_flags
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|spin_lock_irqsave
 c_func
 (paren
@@ -9756,7 +9757,7 @@ op_star
 id|smp_flags
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren

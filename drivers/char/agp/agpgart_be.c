@@ -143,7 +143,7 @@ macro_line|#else
 macro_line|#error &quot;Please define flush_cache.&quot;
 macro_line|#endif
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|cpus_waiting
 r_static
 id|atomic_t
@@ -259,10 +259,10 @@ suffix:semicolon
 )brace
 DECL|macro|global_cache_flush
 mdefine_line|#define global_cache_flush smp_flush_cache
-macro_line|#else&t;&t;&t;&t;/* __SMP__ */
+macro_line|#else&t;&t;&t;&t;/* CONFIG_SMP */
 DECL|macro|global_cache_flush
 mdefine_line|#define global_cache_flush flush_cache
-macro_line|#endif&t;&t;&t;&t;/* __SMP__ */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_SMP */
 DECL|function|agp_backend_acquire
 r_int
 id|agp_backend_acquire
@@ -7340,6 +7340,62 @@ id|intel_generic_setup
 comma
 macro_line|#endif /* CONFIG_AGP_INTEL */
 macro_line|#ifdef CONFIG_AGP_SIS
+(brace
+id|PCI_DEVICE_ID_SI_630
+comma
+id|PCI_VENDOR_ID_SI
+comma
+id|SIS_GENERIC
+comma
+l_string|&quot;SiS&quot;
+comma
+l_string|&quot;630&quot;
+comma
+id|sis_generic_setup
+)brace
+comma
+(brace
+id|PCI_DEVICE_ID_SI_540
+comma
+id|PCI_VENDOR_ID_SI
+comma
+id|SIS_GENERIC
+comma
+l_string|&quot;SiS&quot;
+comma
+l_string|&quot;540&quot;
+comma
+id|sis_generic_setup
+)brace
+comma
+(brace
+id|PCI_DEVICE_ID_SI_620
+comma
+id|PCI_VENDOR_ID_SI
+comma
+id|SIS_GENERIC
+comma
+l_string|&quot;SiS&quot;
+comma
+l_string|&quot;620&quot;
+comma
+id|sis_generic_setup
+)brace
+comma
+(brace
+id|PCI_DEVICE_ID_SI_530
+comma
+id|PCI_VENDOR_ID_SI
+comma
+id|SIS_GENERIC
+comma
+l_string|&quot;SiS&quot;
+comma
+l_string|&quot;530&quot;
+comma
+id|sis_generic_setup
+)brace
+comma
 (brace
 id|PCI_DEVICE_ID_SI_630
 comma

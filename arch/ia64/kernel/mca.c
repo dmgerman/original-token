@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

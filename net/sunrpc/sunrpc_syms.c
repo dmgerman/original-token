@@ -472,6 +472,7 @@ id|rpc_system_err
 )paren
 suffix:semicolon
 multiline_comment|/* Debugging symbols */
+macro_line|#ifdef RPC_DEBUG
 DECL|variable|rpc_debug
 id|EXPORT_SYMBOL
 c_func
@@ -500,4 +501,5 @@ c_func
 id|nlm_debug
 )paren
 suffix:semicolon
+macro_line|#endif
 eof
