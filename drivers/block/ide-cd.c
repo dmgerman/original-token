@@ -7534,6 +7534,14 @@ id|msf.cdmsf_frame0
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure the TOC is up to date. */
+r_if
+c_cond
+(paren
+id|cmd
+op_ne
+id|CDROMREADRAW
+)paren
+(brace
 id|stat
 op_assign
 id|cdrom_read_toc
@@ -7570,6 +7578,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 id|buf
 op_assign
 (paren

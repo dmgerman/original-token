@@ -941,6 +941,15 @@ op_star
 id|val
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|swapin_readahead
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* mmap.c */
 r_extern
 r_void

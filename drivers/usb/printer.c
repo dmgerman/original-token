@@ -1866,10 +1866,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|offset
-suffix:semicolon
 id|usb_deregister
 c_func
 (paren

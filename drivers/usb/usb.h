@@ -319,7 +319,7 @@ mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
 mdefine_line|#define USB_MAXENDPOINTS&t;32
 DECL|macro|USB_MAXSTRINGS
-mdefine_line|#define USB_MAXSTRINGS&t;&t;16
+mdefine_line|#define USB_MAXSTRINGS&t;&t;32
 DECL|struct|usb_device_descriptor
 r_struct
 id|usb_device_descriptor
@@ -646,7 +646,7 @@ id|driver_list
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Pointer to a device endpoint interrupt function -greg&n; *   Parameters:&n; *     int status - This needs to be defined.  Right now each HCD&n; *         passes different transfer status bits back.  Don&squot;t use it&n; *         until we come up with a common meaning.&n; *     void *buffer - This is a pointer to the data used in this&n; *         USB transfer.&n; *     int length - This is the number of bytes transferred in or out&n; *         of the buffer by this transfer.  (-1 = unknown/unsupported)&n; *     void *dev_id - This is a user defined pointer set when the IRQ&n; *         is requested that is passed back.&n; */
+multiline_comment|/*&n; * Pointer to a device endpoint interrupt function -greg&n; *   Parameters:&n; *     int status - This needs to be defined.  Right now each HCD&n; *         passes different transfer status bits back.  Don&squot;t use it&n; *         until we come up with a common meaning.&n; *     void *buffer - This is a pointer to the data used in this&n; *         USB transfer.&n; *     int length - This is the number of bytes transferred in or out&n; *         of the buffer by this transfer.  (-1 = unknown/unsupported)&n; *     void *dev_id - This is a user defined pointer set when the IRQ&n; *         is requested that is passed back.&n; *&n; *   Special Cases:&n; *     if (status == USB_ST_REMOVED), don&squot;t trust buffer or len.&n; */
 DECL|typedef|usb_device_irq
 r_typedef
 r_int
@@ -744,7 +744,8 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|request_irq
-r_int
+r_void
+op_star
 (paren
 op_star
 id|request_irq
@@ -765,26 +766,16 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|member|remove_irq
+DECL|member|release_irq
 r_int
 (paren
 op_star
-id|remove_irq
+id|release_irq
 )paren
 (paren
-r_struct
-id|usb_device
-op_star
-comma
-r_int
-r_int
-comma
-id|usb_device_irq
-comma
-r_int
-comma
 r_void
 op_star
+id|handle
 )paren
 suffix:semicolon
 )brace
@@ -914,24 +905,20 @@ id|usb_device
 op_star
 id|parent
 suffix:semicolon
-DECL|member|stringtable
-r_char
-op_star
-id|stringtable
-suffix:semicolon
-multiline_comment|/* Strings (multiple, null term) */
 DECL|member|stringindex
 r_char
 op_star
-op_star
 id|stringindex
+(braket
+id|USB_MAXSTRINGS
+)braket
 suffix:semicolon
 multiline_comment|/* pointers to strings */
-DECL|member|maxstring
+DECL|member|string_langid
 r_int
-id|maxstring
+id|string_langid
 suffix:semicolon
-multiline_comment|/* max valid index */
+multiline_comment|/* language ID for strings */
 multiline_comment|/*&n;&t; * Child devices - these can be either new devices&n;&t; * (if this is a hub device), or different instances&n;&t; * of this same device.&n;&t; *&n;&t; * Each instance needs its own set of data structures.&n;&t; */
 DECL|member|maxchild
 r_int
@@ -1002,7 +989,8 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
+op_star
 id|usb_request_irq
 c_func
 (paren
@@ -1019,6 +1007,21 @@ r_int
 comma
 r_void
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_release_irq
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_void
+op_star
+id|handle
 )paren
 suffix:semicolon
 r_extern
@@ -1414,6 +1417,22 @@ id|report_id
 )paren
 suffix:semicolon
 r_int
+id|usb_set_interface
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|interface
+comma
+r_int
+id|alternate
+)paren
+suffix:semicolon
+r_int
 id|usb_set_configuration
 c_func
 (paren
@@ -1436,22 +1455,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-r_int
-id|usb_clear_halt
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|dev
-comma
-r_int
-id|endp
-)paren
-suffix:semicolon
-DECL|function|usb_string
-r_static
-r_inline
 r_char
 op_star
 id|usb_string
@@ -1465,32 +1468,20 @@ comma
 r_int
 id|index
 )paren
-(brace
-r_if
-c_cond
+suffix:semicolon
+r_int
+id|usb_clear_halt
+c_func
 (paren
-id|index
-op_le
-id|dev-&gt;maxstring
-op_logical_and
-id|dev-&gt;stringindex
-op_logical_and
-id|dev-&gt;stringindex
-(braket
-id|index
-)braket
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|endp
 )paren
-r_return
-id|dev-&gt;stringindex
-(braket
-id|index
-)braket
 suffix:semicolon
-r_else
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Debugging helpers..&n; */
 r_void
 id|usb_show_device_descriptor

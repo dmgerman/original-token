@@ -64,6 +64,30 @@ id|fasync
 suffix:semicolon
 multiline_comment|/* later, add a list here to support multiple mice */
 multiline_comment|/* but we will also need a list of file pointers to identify it */
+multiline_comment|/* FIXME: move these to a per-mouse structure */
+DECL|member|dev
+r_struct
+id|usb_device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* host controller this mouse is on */
+DECL|member|irq_handle
+r_void
+op_star
+id|irq_handle
+suffix:semicolon
+multiline_comment|/* host controller&squot;s IRQ transfer handle */
+DECL|member|bEndpointAddress
+id|__u8
+id|bEndpointAddress
+suffix:semicolon
+multiline_comment|/* these are from the endpoint descriptor */
+DECL|member|bInterval
+id|__u8
+id|bInterval
+suffix:semicolon
+multiline_comment|/* ...  used when calling usb_request_irq */
 )brace
 suffix:semicolon
 DECL|variable|static_mouse_state
@@ -306,15 +330,32 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_decrement
 id|mouse-&gt;active
-)paren
-r_return
+op_eq
 l_int|0
+)paren
+(brace
+multiline_comment|/* stop polling the mouse while its not in use */
+id|usb_release_irq
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;irq_handle
+)paren
 suffix:semicolon
+multiline_comment|/* never keep a reference to a released IRQ! */
+id|mouse-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -373,6 +414,32 @@ op_assign
 id|mouse-&gt;dz
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* prevent the driver from being unloaded while its in use */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+multiline_comment|/* start the usb controller&squot;s polling of the mouse */
+id|mouse-&gt;irq_handle
+op_assign
+id|usb_request_irq
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;bEndpointAddress
+)paren
+comma
+id|mouse_irq
+comma
+id|mouse-&gt;bInterval
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -937,25 +1004,18 @@ dot
 id|bConfigurationValue
 )paren
 suffix:semicolon
-id|usb_request_irq
-c_func
-(paren
+multiline_comment|/* these are used to request the irq when the mouse is opened */
+id|mouse-&gt;dev
+op_assign
 id|dev
-comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|dev
-comma
+suffix:semicolon
+id|mouse-&gt;bEndpointAddress
+op_assign
 id|endpoint-&gt;bEndpointAddress
-)paren
-comma
-id|mouse_irq
-comma
+suffix:semicolon
+id|mouse-&gt;bInterval
+op_assign
 id|endpoint-&gt;bInterval
-comma
-l_int|NULL
-)paren
 suffix:semicolon
 id|mouse-&gt;present
 op_assign
@@ -984,6 +1044,31 @@ id|mouse
 op_assign
 op_amp
 id|static_mouse_state
+suffix:semicolon
+multiline_comment|/* stop the usb interrupt transfer */
+r_if
+c_cond
+(paren
+id|mouse-&gt;present
+)paren
+(brace
+id|usb_release_irq
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;irq_handle
+)paren
+suffix:semicolon
+multiline_comment|/* never keep a reference to a released IRQ! */
+id|mouse-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|mouse-&gt;irq_handle
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* this might need work */
 id|mouse-&gt;present
@@ -1046,6 +1131,10 @@ id|mouse-&gt;active
 op_assign
 l_int|0
 suffix:semicolon
+id|mouse-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
@@ -1083,6 +1172,35 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|mouse_state
+op_star
+id|mouse
+op_assign
+op_amp
+id|static_mouse_state
+suffix:semicolon
+multiline_comment|/* stop the usb interrupt transfer */
+r_if
+c_cond
+(paren
+id|mouse-&gt;present
+)paren
+(brace
+id|usb_release_irq
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;irq_handle
+)paren
+suffix:semicolon
+multiline_comment|/* never keep a reference to a released IRQ! */
+id|mouse-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/* this, too, probably needs work */
 id|usb_deregister
 c_func

@@ -136,10 +136,10 @@ DECL|macro|MASK_GAINMIC
 mdefine_line|#define MASK_GAINMIC&t;(0x0 &lt;&lt; 8)&t;/* Change Gain for Mic??? */
 DECL|macro|MASK_MUX_CD
 mdefine_line|#define MASK_MUX_CD&t;(0x1 &lt;&lt; 9)&t;/* Select CD in MUX */
-DECL|macro|MASK_MUX_MIC
-mdefine_line|#define MASK_MUX_MIC&t;(0x1 &lt;&lt; 10)&t;/* Select Mic in MUX */
 DECL|macro|MASK_MUX_AUDIN
-mdefine_line|#define MASK_MUX_AUDIN&t;(0x1 &lt;&lt; 11)&t;/* Select Audio In in MUX */
+mdefine_line|#define MASK_MUX_AUDIN&t;(0x1 &lt;&lt; 10)&t;/* Select Audio In in MUX */
+DECL|macro|MASK_MUX_MIC
+mdefine_line|#define MASK_MUX_MIC&t;(0x1 &lt;&lt; 11)&t;/* Select Mic in MUX */
 DECL|macro|MASK_MUX_LINE
 mdefine_line|#define MASK_MUX_LINE&t;MASK_MUX_AUDIN
 DECL|macro|GAINRIGHT

@@ -3,7 +3,7 @@ DECL|macro|PARPORT_DEBUG_SHARING
 macro_line|#undef PARPORT_DEBUG_SHARING&t;&t;/* undef for production */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -69,6 +69,13 @@ multiline_comment|/* bit0: Is this TD allocated? */
 multiline_comment|/* bit1: Is this a dummy (end of list) TD? */
 multiline_comment|/* bit2: do NOT automatically free this TD on completion */
 multiline_comment|/* bit3: this is NOT the last TD in a contiguious TD chain&n;&t;&t; *       on the indicated ED.  (0 means it is the last) */
+DECL|member|usb_dev
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+suffix:semicolon
+multiline_comment|/* the owning device */
 DECL|member|dev_id
 r_void
 op_star
@@ -83,7 +90,7 @@ c_func
 id|aligned
 c_func
 (paren
-l_int|16
+l_int|32
 )paren
 )paren
 )paren
@@ -375,6 +382,17 @@ id|DATA_BUF_LEN
 )braket
 suffix:semicolon
 )brace
+id|__attribute
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|32
+)paren
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* .... */
 multiline_comment|/*&n; * These are the index of the placeholder EDs for the root hub to&n; * build the interrupt transfer ED tree out of.&n; */

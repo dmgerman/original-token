@@ -4,17 +4,6 @@ DECL|macro|__LINUX_FILE_H
 mdefine_line|#define __LINUX_FILE_H
 r_extern
 r_void
-id|__fput
-c_func
-(paren
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* goner? */
-r_extern
-r_void
 id|_fput
 c_func
 (paren

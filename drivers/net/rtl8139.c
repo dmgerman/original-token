@@ -3275,6 +3275,14 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

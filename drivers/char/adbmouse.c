@@ -13,7 +13,9 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef __powerpc__
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#endif
+macro_line|#ifdef __mc68000__
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#endif
 DECL|variable|mouse
 r_static
 r_struct
@@ -905,13 +907,16 @@ op_amp
 id|adb_mouse_fops
 )brace
 suffix:semicolon
-DECL|function|adb_mouse_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
 id|adb_mouse_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|mouse.active
@@ -981,9 +986,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * XXX this function is misnamed.&n; * It is called if the kernel is booted with the adb_buttons=xxx&n; * option, which is about using ADB keyboard buttons to emulate&n; * mouse buttons. -- paulus&n; */
-DECL|function|adb_mouse_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-id|__init
 id|adb_mouse_setup
 c_func
 (paren
@@ -994,6 +1001,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -1053,6 +1061,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
+macro_line|#include &lt;asm/setup.h&gt;
 DECL|function|init_module
 r_int
 id|init_module

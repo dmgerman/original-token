@@ -3484,7 +3484,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; * Primitive swap readahead code. We simply read an aligned block of&n; * (1 &lt;&lt; page_cluster) entries in the swap area. This method is chosen&n; * because it doesn&squot;t cost us any seek time.  We also make sure to queue&n; * the &squot;original&squot; request together with the readahead ones...  &n; */
 DECL|function|swapin_readahead
-r_static
 r_void
 id|swapin_readahead
 c_func
@@ -4049,6 +4048,19 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* SIGBUS - but we _really_ should know whether it is OOM or SIGBUS */
+r_if
+c_cond
+(paren
+id|page
+op_eq
+op_minus
+l_int|1
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* OOM */
 op_increment
 id|tsk-&gt;maj_flt
 suffix:semicolon

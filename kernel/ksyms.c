@@ -417,14 +417,6 @@ c_func
 id|getname
 )paren
 suffix:semicolon
-DECL|variable|__fput
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__fput
-)paren
-suffix:semicolon
-multiline_comment|/* goner? */
 DECL|variable|_fput
 id|EXPORT_SYMBOL
 c_func

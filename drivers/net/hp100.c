@@ -63,8 +63,6 @@ macro_line|#endif
 macro_line|#ifndef __initfunc
 DECL|macro|__initfunc
 mdefine_line|#define __initfunc(__initarg) __initarg
-macro_line|#else
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#endif
 macro_line|#include &quot;hp100.h&quot;
 multiline_comment|/*&n; *  defines&n; */
