@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: avm_pci.c,v 1.22 2000/11/24 17:05:37 kai Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: avm_pci.c,v 1.22.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -23,20 +23,12 @@ r_char
 op_star
 id|avm_pci_rev
 op_assign
-l_string|&quot;$Revision: 1.22 $&quot;
+l_string|&quot;$Revision: 1.22.6.1 $&quot;
 suffix:semicolon
 DECL|macro|AVM_FRITZ_PCI
 mdefine_line|#define  AVM_FRITZ_PCI&t;&t;1
 DECL|macro|AVM_FRITZ_PNP
 mdefine_line|#define  AVM_FRITZ_PNP&t;&t;2
-macro_line|#ifndef PCI_VENDOR_ID_AVM
-DECL|macro|PCI_VENDOR_ID_AVM
-mdefine_line|#define PCI_VENDOR_ID_AVM&t;0x1244
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_AVM_FRITZ
-DECL|macro|PCI_DEVICE_ID_AVM_FRITZ
-mdefine_line|#define PCI_DEVICE_ID_AVM_FRITZ&t;0xa00
-macro_line|#endif
 DECL|macro|HDLC_FIFO
 mdefine_line|#define  HDLC_FIFO&t;&t;0x0
 DECL|macro|HDLC_STATUS
@@ -4234,7 +4226,7 @@ c_func
 (paren
 id|PCI_VENDOR_ID_AVM
 comma
-id|PCI_DEVICE_ID_AVM_FRITZ
+id|PCI_DEVICE_ID_AVM_A1
 comma
 id|dev_avm
 )paren

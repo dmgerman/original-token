@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: socket.c,v 1.3 2000/08/14 23:50:31 anton Exp $&n; * socket.c: Socket syscall emulation for Solaris 2.6+&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; *&n; * 1999-08-19 Fixed socketpair code &n; *            Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
+multiline_comment|/* $Id: socket.c,v 1.4 2000/11/18 02:11:00 davem Exp $&n; * socket.c: Socket syscall emulation for Solaris 2.6+&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; *&n; * 1999-08-19 Fixed socketpair code &n; *            Jason Rappleye (rappleye@ccr.buffalo.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

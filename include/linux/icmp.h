@@ -137,22 +137,6 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/ip.h&gt;
-DECL|struct|icmp_err
-r_struct
-id|icmp_err
-(brace
-DECL|member|errno
-r_int
-id|errno
-suffix:semicolon
-DECL|member|fatal
-r_int
-id|fatal
-suffix:colon
-l_int|1
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; *&t;Build xmit assembly blocks&n; */
 DECL|struct|icmp_bxm
 r_struct

@@ -6,15 +6,27 @@ multiline_comment|/*&n; * Note on how mapped kernels work: the text and data sec
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#ifdef CONFIG_MAPPED_KERNEL
+DECL|macro|MAPPED_ADDR_RO_TO_PHYS
+mdefine_line|#define MAPPED_ADDR_RO_TO_PHYS(x)&t;(x - CKSSEG)
+DECL|macro|MAPPED_ADDR_RW_TO_PHYS
+mdefine_line|#define MAPPED_ADDR_RW_TO_PHYS(x)&t;(x - CKSSEG - 16777216)
+DECL|macro|MAPPED_KERN_RO_PHYSBASE
+mdefine_line|#define MAPPED_KERN_RO_PHYSBASE(n) &bslash;&n;&t;&t;&t;(PLAT_NODE_DATA(n)-&gt;kern_vars.kv_ro_baseaddr)
+DECL|macro|MAPPED_KERN_RW_PHYSBASE
+mdefine_line|#define MAPPED_KERN_RW_PHYSBASE(n) &bslash;&n;&t;&t;&t;(PLAT_NODE_DATA(n)-&gt;kern_vars.kv_rw_baseaddr)
 DECL|macro|MAPPED_KERN_RO_TO_PHYS
-mdefine_line|#define MAPPED_KERN_RO_TO_PHYS(x)&t;(x - CKSSEG)
+mdefine_line|#define MAPPED_KERN_RO_TO_PHYS(x) &bslash;&n;&t;&t;&t;&t;((unsigned long)MAPPED_ADDR_RO_TO_PHYS(x) | &bslash;&n;&t;&t;&t;&t;MAPPED_KERN_RO_PHYSBASE(get_compact_nodeid()))
 DECL|macro|MAPPED_KERN_RW_TO_PHYS
-mdefine_line|#define MAPPED_KERN_RW_TO_PHYS(x)&t;(x - CKSSEG - 16777216)
+mdefine_line|#define MAPPED_KERN_RW_TO_PHYS(x) &bslash;&n;&t;&t;&t;&t;((unsigned long)MAPPED_ADDR_RW_TO_PHYS(x) | &bslash;&n;&t;&t;&t;&t;MAPPED_KERN_RW_PHYSBASE(get_compact_nodeid()))
+DECL|macro|MAPPED_OFFSET
+mdefine_line|#define MAPPED_OFFSET&t;&t;&t;16777216
 macro_line|#else /* CONFIG_MAPPED_KERNEL */
 DECL|macro|MAPPED_KERN_RO_TO_PHYS
 mdefine_line|#define MAPPED_KERN_RO_TO_PHYS(x)&t;(x - CKSEG0)
 DECL|macro|MAPPED_KERN_RW_TO_PHYS
 mdefine_line|#define MAPPED_KERN_RW_TO_PHYS(x)&t;(x - CKSEG0)
+DECL|macro|MAPPED_OFFSET
+mdefine_line|#define MAPPED_OFFSET&t;&t;&t;0
 macro_line|#endif /* CONFIG_MAPPED_KERNEL */
 DECL|macro|MAPPED_KERN_RO_TO_K0
 mdefine_line|#define MAPPED_KERN_RO_TO_K0(x)&t;PHYS_TO_K0(MAPPED_KERN_RO_TO_PHYS(x))

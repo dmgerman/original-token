@@ -119,6 +119,36 @@ id|regs.cp0_epc
 )paren
 suffix:semicolon
 )brace
+r_extern
+id|spinlock_t
+id|console_lock
+comma
+id|timerlist_lock
+suffix:semicolon
+multiline_comment|/*&n; * Unlock any spinlocks which will prevent us from getting the&n; * message out (timerlist_lock is aquired through the&n; * console unblank code)&n; */
+DECL|function|bust_spinlocks
+r_void
+id|bust_spinlocks
+c_func
+(paren
+r_void
+)paren
+(brace
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|console_lock
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|timerlist_lock
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; */
 id|asmlinkage
 r_void
@@ -567,6 +597,11 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n;&t; * terminate things with extreme prejudice.&n;&t; */
+id|bust_spinlocks
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

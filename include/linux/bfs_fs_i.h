@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;include/linux/bfs_fs_i.h&n; *&t;Copyright (C) 1999 Tigran Aivazian &lt;tigran@ocston.org&gt;&n; */
+multiline_comment|/*&n; *&t;include/linux/bfs_fs_i.h&n; *&t;Copyright (C) 1999 Tigran Aivazian &lt;tigran@veritas.com&gt;&n; */
 macro_line|#ifndef _LINUX_BFS_FS_I
 DECL|macro|_LINUX_BFS_FS_I
 mdefine_line|#define _LINUX_BFS_FS_I

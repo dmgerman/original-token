@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#ifdef CONFIG_USB_DEBUG
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
@@ -104,6 +105,11 @@ c_func
 id|usb_bus_list
 )paren
 suffix:semicolon
+DECL|variable|usb_devfs_handle
+id|devfs_handle_t
+id|usb_devfs_handle
+suffix:semicolon
+multiline_comment|/* /dev/usb dir. */
 DECL|variable|busmap
 r_static
 r_struct
@@ -8694,7 +8700,7 @@ r_void
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|USB_MAJOR
@@ -8719,6 +8725,18 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|usb_devfs_handle
+op_assign
+id|devfs_mk_dir
+c_func
+(paren
+l_int|NULL
+comma
+l_string|&quot;usb&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8731,7 +8749,13 @@ c_func
 r_void
 )paren
 (brace
-id|unregister_chrdev
+id|devfs_unregister
+c_func
+(paren
+id|usb_devfs_handle
+)paren
+suffix:semicolon
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|USB_MAJOR
@@ -9171,6 +9195,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|usb_bulk_msg
+)paren
+suffix:semicolon
+DECL|variable|usb_devfs_handle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|usb_devfs_handle
 )paren
 suffix:semicolon
 eof

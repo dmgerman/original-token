@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;&t;&t;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#include &lt;asm/ioc3.h&gt;
+macro_line|#include &lt;asm/sn/ioc3.h&gt;
 macro_line|#include &lt;asm/m48t35.h&gt;
 macro_line|#include &lt;asm/sn/klconfig.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;
@@ -18,7 +18,7 @@ macro_line|#include &lt;asm/sn/addrs.h&gt;
 macro_line|#include &lt;asm/sn/sn_private.h&gt;
 macro_line|#include &lt;asm/sn/sn0/ip27.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hub.h&gt;
-multiline_comment|/* This is a hack; we really need to figure these values out dynamically&n; * &n; * Since 800 ns works very well with various HUB frequencies, such as&n; * 360, 380, 390 and 400 MHZ, we use 800 ns rtc cycle time.&n; *&n; * Ralf: which clock rate is used to feed the counter?&n; */
+multiline_comment|/*&n; * This is a hack; we really need to figure these values out dynamically&n; * &n; * Since 800 ns works very well with various HUB frequencies, such as&n; * 360, 380, 390 and 400 MHZ, we use 800 ns rtc cycle time.&n; *&n; * Ralf: which clock rate is used to feed the counter?&n; */
 DECL|macro|NSEC_PER_CYCLE
 mdefine_line|#define NSEC_PER_CYCLE&t;&t;800
 DECL|macro|NSEC_PER_SEC
@@ -98,6 +98,7 @@ r_struct
 id|m48t35_rtc
 op_star
 )paren
+(paren
 id|KL_CONFIG_CH_CONS_INFO
 c_func
 (paren
@@ -107,6 +108,7 @@ op_member_access_from_pointer
 id|memory_base
 op_plus
 id|IOC3_BYTEBUS_DEV0
+)paren
 suffix:semicolon
 id|rtc-&gt;control
 op_or_assign
@@ -127,7 +129,7 @@ op_and_assign
 op_complement
 id|M48T35_RTC_READ
 suffix:semicolon
-multiline_comment|/*      &n;         * Since we&squot;re only adjusting minutes and seconds,&n;         * don&squot;t interfere with hour overflow. This avoids&n;         * messing with unknown time zones but requires your&n;         * RTC not to be off by more than 15 minutes&n;         */
+multiline_comment|/*&n;&t; * Since we&squot;re only adjusting minutes and seconds, don&squot;t interfere with&n;&t; * hour overflow. This avoids messing with unknown time zones but&n;&t; * requires your RTC not to be off by more than 15 minutes&n;&t; */
 id|real_seconds
 op_assign
 id|nowtime
@@ -364,20 +366,7 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
-r_if
-c_cond
-(paren
-id|current-&gt;pid
-)paren
 (brace
-r_int
-r_int
-op_star
-id|inc
-comma
-op_star
-id|inc2
-suffix:semicolon
 r_int
 id|user
 op_assign
@@ -387,123 +376,32 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-id|update_one_process
+multiline_comment|/*&n;&t;&t; * update_process_times() expects us to have done irq_enter().&n;&t;&t; * Besides, if we don&squot;t timer interrupts ignore the global&n;&t;&t; * interrupt lock, which is the WrongThing (tm) to do.&n;&t;&t; * Picked from i386 code.&n;&t;&t; */
+id|irq_enter
 c_func
 (paren
-id|current
-comma
-l_int|1
-comma
-id|user
-comma
-op_logical_neg
-id|user
-comma
 id|cpu
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_decrement
-id|current-&gt;counter
-op_le
+comma
 l_int|0
 )paren
-(brace
-id|current-&gt;counter
-op_assign
-l_int|0
 suffix:semicolon
-id|current-&gt;need_resched
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
+id|update_process_times
+c_func
 (paren
 id|user
 )paren
-(brace
-r_if
-c_cond
+suffix:semicolon
+id|irq_exit
+c_func
 (paren
-id|current-&gt;nice
-OG
+id|cpu
+comma
 l_int|0
-)paren
-(brace
-id|inc
-op_assign
-op_amp
-id|kstat.cpu_nice
-suffix:semicolon
-id|inc2
-op_assign
-op_amp
-id|kstat.per_cpu_nice
-(braket
-id|cpu
-)braket
-suffix:semicolon
-)brace
-r_else
-(brace
-id|inc
-op_assign
-op_amp
-id|kstat.cpu_user
-suffix:semicolon
-id|inc2
-op_assign
-op_amp
-id|kstat.per_cpu_user
-(braket
-id|cpu
-)braket
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|inc
-op_assign
-op_amp
-id|kstat.cpu_system
-suffix:semicolon
-id|inc2
-op_assign
-op_amp
-id|kstat.per_cpu_system
-(braket
-id|cpu
-)braket
-suffix:semicolon
-)brace
-id|atomic_inc
-c_func
-(paren
-(paren
-id|atomic_t
-op_star
-)paren
-id|inc
-)paren
-suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-(paren
-id|atomic_t
-op_star
-)paren
-id|inc2
 )paren
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_SMP */
-multiline_comment|/*&n;         * If we have an externally synchronized Linux clock, then update&n;         * RTC clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;         * called as close as possible to when a second starts.&n;         */
+multiline_comment|/*&n;&t; * If we have an externally synchronized Linux clock, then update&n;&t; * RTC clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;&t; * called as close as possible to when a second starts.&n;&t; */
 r_if
 c_cond
 (paren
@@ -826,17 +724,17 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* stop active adjtime() */
-id|time_state
-op_assign
-id|TIME_BAD
+id|time_status
+op_or_assign
+id|STA_UNSYNC
 suffix:semicolon
 id|time_maxerror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|time_esterror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|write_unlock_irq
 c_func
@@ -852,13 +750,11 @@ macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubni.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 macro_line|#include &lt;asm/pci/bridge.h&gt;
-DECL|macro|DEBUG_RTC
-mdefine_line|#define DEBUG_RTC
 DECL|function|get_m48t35_time
 r_static
-r_int
-r_int
 id|__init
+r_int
+r_int
 id|get_m48t35_time
 c_func
 (paren
@@ -1004,14 +900,6 @@ id|sec
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_void
-id|ioc3_eth_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|time_init
 r_void
 id|__init

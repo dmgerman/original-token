@@ -858,9 +858,9 @@ id|dev-&gt;init
 op_assign
 id|ipgre_tunnel_init
 suffix:semicolon
-id|dev-&gt;new_style
-op_assign
-l_int|1
+id|dev-&gt;features
+op_or_assign
+id|NETIF_F_DYNALLOC
 suffix:semicolon
 id|memcpy
 c_func

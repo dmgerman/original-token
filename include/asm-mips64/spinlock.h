@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: spinlock.h,v 1.4 2000/01/25 00:41:46 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_SPINLOCK_H
 DECL|macro|_ASM_SPINLOCK_H
 mdefine_line|#define _ASM_SPINLOCK_H
@@ -25,23 +25,6 @@ mdefine_line|#define spin_is_locked(x)&t;((x)-&gt;lock != 0)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(x)&t;({ do { barrier(); } while ((x)-&gt;lock); })
 multiline_comment|/*&n; * Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions.  They have a cost.&n; */
-DECL|member|a
-DECL|typedef|__dummy_lock_t
-r_typedef
-r_struct
-(brace
-r_int
-r_int
-id|a
-(braket
-l_int|100
-)braket
-suffix:semicolon
-)brace
-id|__dummy_lock_t
-suffix:semicolon
-DECL|macro|__dummy_lock
-mdefine_line|#define __dummy_lock(lock) (*(__dummy_lock_t *)(lock))
 DECL|function|spin_lock
 r_static
 r_inline
@@ -73,11 +56,7 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -87,11 +66,7 @@ id|tmp
 suffix:colon
 l_string|&quot;o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -121,20 +96,12 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -179,8 +146,7 @@ id|temp
 comma
 l_string|&quot;=m&quot;
 (paren
-op_star
-id|lock
+id|lock-&gt;lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -195,8 +161,7 @@ l_int|1
 comma
 l_string|&quot;m&quot;
 (paren
-op_star
-id|lock
+id|lock-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -255,11 +220,7 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -269,11 +230,7 @@ id|tmp
 suffix:colon
 l_string|&quot;o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -311,11 +268,7 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -325,11 +278,7 @@ id|tmp
 suffix:colon
 l_string|&quot;o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -367,11 +316,7 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -381,11 +326,7 @@ id|tmp
 suffix:colon
 l_string|&quot;o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -415,20 +356,12 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;o&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|rw
-)paren
+id|rw-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;memory&quot;

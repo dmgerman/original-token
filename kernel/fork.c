@@ -768,6 +768,8 @@ suffix:semicolon
 )brace
 DECL|macro|allocate_mm
 mdefine_line|#define allocate_mm()&t;(kmem_cache_alloc(mm_cachep, SLAB_KERNEL))
+DECL|macro|free_mm
+mdefine_line|#define free_mm(mm)&t;(kmem_cache_free(mm_cachep, (mm)))
 DECL|function|mm_init
 r_static
 r_struct
@@ -826,11 +828,9 @@ id|mm-&gt;pgd
 r_return
 id|mm
 suffix:semicolon
-id|kmem_cache_free
+id|free_mm
 c_func
 (paren
-id|mm_cachep
-comma
 id|mm
 )paren
 suffix:semicolon
@@ -931,11 +931,9 @@ c_func
 id|mm
 )paren
 suffix:semicolon
-id|kmem_cache_free
+id|free_mm
 c_func
 (paren
-id|mm_cachep
-comma
 id|mm
 )paren
 suffix:semicolon

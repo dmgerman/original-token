@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-multiline_comment|/*&n; * Allocate an fd array, using __get_free_page() if possible.&n; * Note: the array isn&squot;t cleared at allocation time.&n; */
+multiline_comment|/*&n; * Allocate an fd array, using kmalloc or vmalloc.&n; * Note: the array isn&squot;t cleared at allocation time.&n; */
 DECL|function|alloc_fd_array
 r_struct
 id|file
@@ -464,7 +464,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Allocate an fdset array, using __get_free_page() if possible.&n; * Note: the array isn&squot;t cleared at allocation time.&n; */
+multiline_comment|/*&n; * Allocate an fdset array, using kmalloc or vmalloc.&n; * Note: the array isn&squot;t cleared at allocation time.&n; */
 DECL|function|alloc_fdset
 id|fd_set
 op_star

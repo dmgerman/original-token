@@ -95,7 +95,6 @@ id|tk_rqstp
 suffix:semicolon
 multiline_comment|/* RPC request */
 DECL|member|tk_status
-r_volatile
 r_int
 id|tk_status
 suffix:semicolon

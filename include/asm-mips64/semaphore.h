@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: semaphore.h,v 1.5 2000/02/18 00:24:49 ralf Exp $&n; *&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996  Linus Torvalds&n; * Copyright (C) 1998, 1999, 2000  Ralf Baechle&n; * Copyright (C) 1999, 2000  Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996  Linus Torvalds&n; * Copyright (C) 1998, 1999, 2000  Ralf Baechle&n; * Copyright (C) 1999, 2000  Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_SEMAPHORE_H
 DECL|macro|_ASM_SEMAPHORE_H
 mdefine_line|#define _ASM_SEMAPHORE_H
@@ -62,7 +62,7 @@ mdefine_line|#define DECLARE_MUTEX(name) __DECLARE_SEMAPHORE_GENERIC(name,1)
 DECL|macro|DECLARE_MUTEX_LOCKED
 mdefine_line|#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
 DECL|function|sema_init
-r_extern
+r_static
 r_inline
 r_void
 id|sema_init
@@ -199,7 +199,7 @@ id|sem
 )paren
 suffix:semicolon
 DECL|function|down
-r_extern
+r_static
 r_inline
 r_void
 id|down
@@ -239,7 +239,7 @@ id|sem
 suffix:semicolon
 )brace
 DECL|function|down_interruptible
-r_extern
+r_static
 r_inline
 r_int
 id|down_interruptible
@@ -290,7 +290,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * down_trylock returns 0 on success, 1 if we failed to get the lock.&n; *&n; * We must manipulate count and waking simultaneously and atomically.&n; * Here, we this by using ll/sc on the pair of 32-bit words.&n; *&n; * Pseudocode:&n; *&n; *   Decrement(sem-&gt;count)&n; *   If(sem-&gt;count &gt;=0) {&n; *&t;Return(SUCCESS)&t;&t;&t;// resource is free&n; *   } else {&n; *&t;If(sem-&gt;waking &lt;= 0) {&t;&t;// if no wakeup pending&n; *&t;   Increment(sem-&gt;count)&t;// undo decrement&n; *&t;   Return(FAILURE)&n; *      } else {&n; *&t;   Decrement(sem-&gt;waking)&t;// otherwise &quot;steal&quot; wakeup&n; *&t;   Return(SUCCESS)&n; *&t;}&n; *   }&n; */
 DECL|function|down_trylock
-r_extern
+r_static
 r_inline
 r_int
 id|down_trylock
@@ -450,7 +450,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note! This is subtle. We jump to wake people up only if&n; * the semaphore was negative (== somebody was waiting on it).&n; */
 DECL|function|up
-r_extern
+r_static
 r_inline
 r_void
 id|up
@@ -503,6 +503,7 @@ suffix:semicolon
 multiline_comment|/* bit 0 means read bias granted;&n;&t;   bit 1 means write bias granted.  */
 DECL|member|granted
 r_int
+r_int
 id|granted
 suffix:semicolon
 DECL|member|wait
@@ -547,7 +548,7 @@ mdefine_line|#define DECLARE_RWSEM_READ_LOCKED(name) &bslash;&n;&t;__DECLARE_RWS
 DECL|macro|DECLARE_RWSEM_WRITE_LOCKED
 mdefine_line|#define DECLARE_RWSEM_WRITE_LOCKED(name) &bslash;&n;&t;__DECLARE_RWSEM_GENERIC(name, 0)
 DECL|function|init_rwsem
-r_extern
+r_static
 r_inline
 r_void
 id|init_rwsem
@@ -660,7 +661,7 @@ id|readers
 )paren
 suffix:semicolon
 DECL|function|down_read
-r_extern
+r_static
 r_inline
 r_void
 id|down_read
@@ -752,7 +753,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|down_write
-r_extern
+r_static
 r_inline
 r_void
 id|down_write
@@ -860,7 +861,7 @@ macro_line|#endif
 )brace
 multiline_comment|/* When a reader does a release, the only significant case is when&n;   there was a writer waiting, and we&squot;ve bumped the count to 0: we must&n;   wake the writer up.  */
 DECL|function|up_read
-r_extern
+r_static
 r_inline
 r_void
 id|up_read
@@ -951,7 +952,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Releasing the writer is easy -- just release it and wake up any sleepers.&n; */
 DECL|function|up_write
-r_extern
+r_static
 r_inline
 r_void
 id|up_write

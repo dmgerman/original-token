@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bkm_ax.h,v 1.5 2000/11/19 17:41:03 kai Exp $&n; * bkm_ax.h   low level decls for T-Berkom cards A4T and Scitel Quadro (4*S0, passive)&n; *&n; * Author     Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: bkm_ax.h,v 1.5.6.1 2000/11/28 12:02:46 kai Exp $&n; * bkm_ax.h   low level decls for T-Berkom cards A4T and Scitel Quadro (4*S0, passive)&n; *&n; * Author     Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#ifndef&t;__BKM_AX_H__
 DECL|macro|__BKM_AX_H__
 mdefine_line|#define&t;__BKM_AX_H__
@@ -13,32 +13,6 @@ DECL|macro|SCT_4
 mdefine_line|#define&t;SCT_4&t;&t;4
 DECL|macro|BKM_A4T
 mdefine_line|#define BKM_A4T&t;&t;5
-multiline_comment|/* A4T&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
-macro_line|#ifndef PCI_VENDOR_ID_ZORAN
-DECL|macro|PCI_VENDOR_ID_ZORAN
-mdefine_line|#define PCI_VENDOR_ID_ZORAN&t;0x11DE
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_ZORAN_36120
-DECL|macro|PCI_DEVICE_ID_ZORAN_36120
-mdefine_line|#define PCI_DEVICE_ID_ZORAN_36120&t;0x6120
-macro_line|#endif
-DECL|macro|A4T_SUBVEN_ID
-mdefine_line|#define&t;A4T_SUBVEN_ID&t;&t;0x0871&t;
-DECL|macro|A4T_SUBSYS_ID
-mdefine_line|#define&t;A4T_SUBSYS_ID&t;&t;0xFFA4
-multiline_comment|/* Scitel Quadro &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
-macro_line|#ifndef PCI_VENDOR_ID_PLX
-DECL|macro|PCI_VENDOR_ID_PLX
-mdefine_line|#define PCI_VENDOR_ID_PLX&t;0x10B5
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_PLX_9050
-DECL|macro|PCI_DEVICE_ID_PLX_9050
-mdefine_line|#define PCI_DEVICE_ID_PLX_9050&t;0x9050
-macro_line|#endif
-DECL|macro|SCT_SUBVEN_ID
-mdefine_line|#define&t;SCT_SUBVEN_ID&t;&t;0x0871
-DECL|macro|SCT_SUBSYS_ID
-mdefine_line|#define&t;SCT_SUBSYS_ID&t;&t;0xFFA8
 DECL|macro|PLX_ADDR_PLX
 mdefine_line|#define&t;PLX_ADDR_PLX&t;&t;0x14&t;/* Addr PLX configuration */
 DECL|macro|PLX_ADDR_ISAC

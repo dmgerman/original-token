@@ -11,7 +11,7 @@ macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubni.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 macro_line|#include &lt;asm/sn/klconfig.h&gt;
-macro_line|#include &lt;asm/ioc3.h&gt;
+macro_line|#include &lt;asm/sn/ioc3.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/sn/gda.h&gt;
 macro_line|#include &lt;asm/sn/intr.h&gt;
@@ -1126,6 +1126,17 @@ suffix:semicolon
 id|cnodemask_t
 id|done
 suffix:semicolon
+id|nasid_t
+id|nasid
+suffix:semicolon
+id|nasid
+op_assign
+id|COMPACT_TO_NASID_NODEID
+c_func
+(paren
+id|cnode
+)paren
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -1161,6 +1172,27 @@ id|cnode
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; &t; * Do the actual initialization if it hasn&squot;t been done yet.&n;&t; &t; * We don&squot;t need to hold a lock for this work.&n;&t; &t; */
+multiline_comment|/*&n;&t;&t; * Set CRB timeout at 5ms, (&lt; PI timeout of 10ms)&n;&t;&t; */
+id|REMOTE_HUB_S
+c_func
+(paren
+id|nasid
+comma
+id|IIO_ICTP
+comma
+l_int|0x800
+)paren
+suffix:semicolon
+id|REMOTE_HUB_S
+c_func
+(paren
+id|nasid
+comma
+id|IIO_ICTO
+comma
+l_int|0xff
+)paren
+suffix:semicolon
 id|hub_rtc_init
 c_func
 (paren

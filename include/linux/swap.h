@@ -269,17 +269,6 @@ suffix:semicolon
 r_struct
 id|zone_t
 suffix:semicolon
-multiline_comment|/* linux/ipc/shm.c */
-r_extern
-r_int
-id|shm_swap
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* linux/mm/swap.c */
 r_extern
 r_int

@@ -1560,6 +1560,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|fl-&gt;fl_file-&gt;f_op
+op_logical_and
 (paren
 id|lock
 op_assign
@@ -4831,6 +4833,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|filp-&gt;f_op
+op_logical_and
 id|filp-&gt;f_op-&gt;lock
 )paren
 (brace
@@ -5328,6 +5332,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|filp-&gt;f_op
+op_logical_and
 id|filp-&gt;f_op-&gt;lock
 op_ne
 l_int|NULL
@@ -5525,6 +5531,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|filp-&gt;f_op
+op_logical_and
 id|filp-&gt;f_op-&gt;lock
 )paren
 (brace
@@ -5937,6 +5945,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|filp-&gt;f_op
+op_logical_and
 id|filp-&gt;f_op-&gt;lock
 op_ne
 l_int|NULL

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bkm_a4t.c,v 1.13 2000/11/24 17:05:37 kai Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: bkm_a4t.c,v 1.13.6.1 2000/11/28 12:02:46 kai Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -24,7 +24,7 @@ r_char
 op_star
 id|bkm_a4t_revision
 op_assign
-l_string|&quot;$Revision: 1.13 $&quot;
+l_string|&quot;$Revision: 1.13.6.1 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -1311,13 +1311,13 @@ c_cond
 (paren
 id|sub_sys
 op_eq
-id|A4T_SUBSYS_ID
+id|PCI_DEVICE_ID_BERKOM_A4T
 )paren
 op_logical_and
 (paren
 id|sub_vendor
 op_eq
-id|A4T_SUBVEN_ID
+id|PCI_VENDOR_ID_BERKOM
 )paren
 )paren
 (brace

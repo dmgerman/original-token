@@ -8561,7 +8561,7 @@ op_assign
 (paren
 id|block_nr
 op_lshift
-l_int|2
+l_int|1
 )paren
 op_div
 id|sectors_per_chunk
@@ -8572,7 +8572,7 @@ op_assign
 (paren
 id|block_nr
 op_lshift
-l_int|2
+l_int|1
 )paren
 op_mod
 id|sectors_per_chunk

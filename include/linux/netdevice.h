@@ -29,16 +29,16 @@ mdefine_line|#define NET_XMIT_BYPASS&t;&t;4&t;/* packet does not leave via deque
 multiline_comment|/* Backlog congestion levels */
 DECL|macro|NET_RX_SUCCESS
 mdefine_line|#define NET_RX_SUCCESS&t;&t;0   /* keep &squot;em coming, baby */
-DECL|macro|NET_RX_CN_LOW
-mdefine_line|#define NET_RX_CN_LOW&t;&t;1   /* storm alert, just in case */
-DECL|macro|NET_RX_CN_MOD
-mdefine_line|#define NET_RX_CN_MOD&t;&t;2   /* Storm on its way! */
-DECL|macro|NET_RX_CN_HIGH
-mdefine_line|#define NET_RX_CN_HIGH&t;&t;5   /* The storm is here */
 DECL|macro|NET_RX_DROP
-mdefine_line|#define NET_RX_DROP&t;&t;-1  /* packet dropped */
+mdefine_line|#define NET_RX_DROP&t;&t;1  /* packet dropped */
+DECL|macro|NET_RX_CN_LOW
+mdefine_line|#define NET_RX_CN_LOW&t;&t;2   /* storm alert, just in case */
+DECL|macro|NET_RX_CN_MOD
+mdefine_line|#define NET_RX_CN_MOD&t;&t;3   /* Storm on its way! */
+DECL|macro|NET_RX_CN_HIGH
+mdefine_line|#define NET_RX_CN_HIGH&t;&t;4   /* The storm is here */
 DECL|macro|NET_RX_BAD
-mdefine_line|#define NET_RX_BAD&t;&t;-2  /* packet dropped due to kernel error */
+mdefine_line|#define NET_RX_BAD&t;&t;5  /* packet dropped due to kernel error */
 DECL|macro|net_xmit_errno
 mdefine_line|#define net_xmit_errno(e)&t;((e) != NET_XMIT_CN ? -ENOBUFS : 0)
 macro_line|#endif
@@ -786,11 +786,25 @@ DECL|member|deadbeaf
 r_int
 id|deadbeaf
 suffix:semicolon
-multiline_comment|/* New style devices allow asynchronous destruction;&n;&t;   netdevice_unregister for old style devices blocks until&n;&t;   the last user will dereference this device.&n;&t; */
-DECL|member|new_style
+multiline_comment|/* Net device features */
+DECL|member|features
 r_int
-id|new_style
+id|features
 suffix:semicolon
+DECL|macro|NETIF_F_SG
+mdefine_line|#define NETIF_F_SG&t;&t;1&t;/* Scatter/gather IO. */
+DECL|macro|NETIF_F_IP_CSUM
+mdefine_line|#define NETIF_F_IP_CSUM&t;&t;2&t;/* Can checksum only TCP/UDP over IPv4. */
+DECL|macro|NETIF_F_NO_CSUM
+mdefine_line|#define NETIF_F_NO_CSUM&t;&t;4&t;/* Does not require checksum. F.e. loopack. */
+DECL|macro|NETIF_F_HW_CSUM
+mdefine_line|#define NETIF_F_HW_CSUM&t;&t;8&t;/* Can checksum all the packets. */
+DECL|macro|NETIF_F_DYNALLOC
+mdefine_line|#define NETIF_F_DYNALLOC&t;16&t;/* Self-dectructable device. */
+DECL|macro|NETIF_F_HIGHDMA
+mdefine_line|#define NETIF_F_HIGHDMA&t;&t;32&t;/* Can DMA to high memory. */
+DECL|macro|NETIF_F_FRAGLIST
+mdefine_line|#define NETIF_F_FRAGLIST&t;1&t;/* Scatter/gather IO. */
 multiline_comment|/* Called after device is detached from network. */
 DECL|member|uninit
 r_void

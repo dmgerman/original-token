@@ -13410,7 +13410,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;md: serializing resync, md%d has overlapping physical units with md%d!&bslash;n&quot;
+l_string|&quot;md: serializing resync, md%d shares one or more physical units with md%d!&bslash;n&quot;
 comma
 id|mdidx
 c_func
@@ -14796,7 +14796,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;md driver %d.%d.%d MAX_MD_DEVS=%d, MAX_REAL=%d&bslash;n&quot;
+l_string|&quot;md driver %d.%d.%d MAX_MD_DEVS=%d, MD_SB_DISKS=%d&bslash;n&quot;
 comma
 id|MD_MAJOR_VERSION
 comma
@@ -14806,7 +14806,7 @@ id|MD_PATCHLEVEL_VERSION
 comma
 id|MAX_MD_DEVS
 comma
-id|MAX_REAL
+id|MD_SB_DISKS
 )paren
 suffix:semicolon
 r_if
@@ -15012,7 +15012,7 @@ id|devices
 id|MAX_MD_BOOT_DEVS
 )braket
 (braket
-id|MAX_REAL
+id|MD_SB_DISKS
 )braket
 suffix:semicolon
 DECL|variable|md__initdata
@@ -15330,7 +15330,7 @@ c_loop
 suffix:semicolon
 id|i
 OL
-id|MAX_REAL
+id|MD_SB_DISKS
 op_logical_and
 id|str
 suffix:semicolon
@@ -16035,7 +16035,7 @@ c_func
 id|md_init
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_AUTODETECT_RAID
+macro_line|#if defined(CONFIG_AUTODETECT_RAID) || defined(CONFIG_MD_BOOT)
 DECL|variable|md_run_setup
 id|__initcall
 c_func

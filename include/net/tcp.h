@@ -645,10 +645,17 @@ mdefine_line|#define TCP_FIN_TIMEOUT&t;TCP_TIMEWAIT_LEN
 multiline_comment|/* BSD style FIN_WAIT2 deadlock breaker.&n;&t;&t;&t;&t;  * It used to be 3min, new value is 60sec,&n;&t;&t;&t;&t;  * to combine FIN-WAIT-2 timeout with&n;&t;&t;&t;&t;  * TIME-WAIT timer.&n;&t;&t;&t;&t;  */
 DECL|macro|TCP_DELACK_MAX
 mdefine_line|#define TCP_DELACK_MAX&t;(HZ/5)&t;/* maximal time to delay before sending an ACK */
+macro_line|#if HZ &gt;= 100
 DECL|macro|TCP_DELACK_MIN
-mdefine_line|#define TCP_DELACK_MIN&t;(2)&t;/* minimal time to delay before sending an ACK,&n;&t;&t;&t;&t; * 2 scheduler ticks, not depending on HZ. */
+mdefine_line|#define TCP_DELACK_MIN&t;(HZ/25)&t;/* minimal time to delay before sending an ACK */
 DECL|macro|TCP_ATO_MIN
-mdefine_line|#define TCP_ATO_MIN&t;2
+mdefine_line|#define TCP_ATO_MIN&t;(HZ/25)
+macro_line|#else
+DECL|macro|TCP_DELACK_MIN
+mdefine_line|#define TCP_DELACK_MIN&t;4
+DECL|macro|TCP_ATO_MIN
+mdefine_line|#define TCP_ATO_MIN&t;4
+macro_line|#endif
 DECL|macro|TCP_RTO_MAX
 mdefine_line|#define TCP_RTO_MAX&t;(120*HZ)
 DECL|macro|TCP_RTO_MIN
@@ -1839,6 +1846,30 @@ id|tp-&gt;ack
 )paren
 suffix:semicolon
 )brace
+DECL|function|tcp_clear_options
+r_static
+r_inline
+r_void
+id|tcp_clear_options
+c_func
+(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+)paren
+(brace
+id|tp-&gt;tstamp_ok
+op_assign
+id|tp-&gt;sack_ok
+op_assign
+id|tp-&gt;wscale_ok
+op_assign
+id|tp-&gt;snd_wscale
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 DECL|enum|tcp_tw_status
 r_enum
 id|tcp_tw_status
@@ -2159,6 +2190,9 @@ r_struct
 id|tcp_opt
 op_star
 id|tp
+comma
+r_int
+id|estab
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;TCP v4 functions exported for the inet6 API&n; */
@@ -3245,6 +3279,10 @@ DECL|macro|TCPCB_EVER_RETRANS
 mdefine_line|#define TCPCB_EVER_RETRANS&t;0x80&t;/* Ever retransmitted frame&t;*/
 DECL|macro|TCPCB_RETRANS
 mdefine_line|#define TCPCB_RETRANS&t;&t;(TCPCB_SACKED_RETRANS|TCPCB_EVER_RETRANS)
+DECL|macro|TCPCB_URG
+mdefine_line|#define TCPCB_URG&t;&t;0x20&t;/* Urgent pointer advenced here&t;*/
+DECL|macro|TCPCB_AT_TAIL
+mdefine_line|#define TCPCB_AT_TAIL&t;&t;(TCPCB_URG)
 DECL|member|urg_ptr
 id|__u16
 id|urg_ptr
@@ -3684,11 +3722,11 @@ op_member_access_from_pointer
 id|end_seq
 suffix:semicolon
 )brace
-multiline_comment|/* Return 0, if packet can be sent now without violation Nagle&squot;s rules:&n;   1. It is full sized.&n;   2. Or it contains FIN or URG.&n;   3. Or TCP_NODELAY was set.&n;   4. Or TCP_CORK is not set, and all sent packets are ACKed.&n;      With Minshall&squot;s modification: all sent small packets are ACKed.&n; */
-DECL|function|tcp_nagle_check
+multiline_comment|/* Return 0, if packet can be sent now without violation Nagle&squot;s rules:&n;   1. It is full sized.&n;   2. Or it contains FIN.&n;   3. Or TCP_NODELAY was set.&n;   4. Or TCP_CORK is not set, and all sent packets are ACKed.&n;      With Minshall&squot;s modification: all sent small packets are ACKed.&n; */
 r_static
 id|__inline__
 r_int
+DECL|function|tcp_nagle_check
 id|tcp_nagle_check
 c_func
 (paren
@@ -3704,6 +3742,9 @@ id|skb
 comma
 r_int
 id|mss_now
+comma
+r_int
+id|nonagle
 )paren
 (brace
 r_return
@@ -3722,21 +3763,17 @@ id|skb
 op_member_access_from_pointer
 id|flags
 op_amp
-(paren
-id|TCPCB_FLAG_URG
-op_or
 id|TCPCB_FLAG_FIN
-)paren
 )paren
 op_logical_and
 (paren
-id|tp-&gt;nonagle
+id|nonagle
 op_eq
 l_int|2
 op_logical_or
 (paren
 op_logical_neg
-id|tp-&gt;nonagle
+id|nonagle
 op_logical_and
 id|tp-&gt;packets_out
 op_logical_and
@@ -3772,7 +3809,7 @@ r_int
 id|cur_mss
 comma
 r_int
-id|tail
+id|nonagle
 )paren
 (brace
 multiline_comment|/*&t;RFC 1122 - section 4.2.3.4&n;&t; *&n;&t; *&t;We must queue if&n;&t; *&n;&t; *&t;a) The right edge of this frame exceeds the window&n;&t; *&t;b) There are packets in flight and we have a small segment&n;&t; *&t;   [SWS avoidance and Nagle algorithm]&n;&t; *&t;   (part of SWS is done on packetization)&n;&t; *&t;   Minshall version sounds: there are no _small_&n;&t; *&t;   segments in flight. (tcp_nagle_check)&n;&t; *&t;c) We have too many packets &squot;in flight&squot;&n;&t; *&n;&t; * &t;Don&squot;t use the nagle rule for urgent data (or&n;&t; *&t;for the final FIN -DaveM).&n;&t; *&n;&t; *&t;Also, Nagle rule does not apply to frames, which&n;&t; *&t;sit in the middle of queue (they have no chances&n;&t; *&t;to get new data) and if room at tail of skb is&n;&t; *&t;not enough to save something seriously (&lt;32 for now).&n;&t; */
@@ -3780,8 +3817,11 @@ multiline_comment|/* Don&squot;t be strict about the congestion window for the&n
 r_return
 (paren
 (paren
-op_logical_neg
-id|tail
+id|nonagle
+op_eq
+l_int|1
+op_logical_or
+id|tp-&gt;urg_mode
 op_logical_or
 op_logical_neg
 id|tcp_nagle_check
@@ -3792,15 +3832,9 @@ comma
 id|skb
 comma
 id|cur_mss
+comma
+id|nonagle
 )paren
-op_logical_or
-id|skb_tailroom
-c_func
-(paren
-id|skb
-)paren
-OL
-l_int|32
 )paren
 op_logical_and
 (paren
@@ -3936,6 +3970,9 @@ id|tp
 comma
 r_int
 id|cur_mss
+comma
+r_int
+id|nonagle
 )paren
 (brace
 r_struct
@@ -3955,6 +3992,22 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|tcp_skb_is_last
+c_func
+(paren
+id|sk
+comma
+id|skb
+)paren
+)paren
+id|nonagle
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|tcp_snd_test
 c_func
 (paren
@@ -3964,13 +4017,7 @@ id|skb
 comma
 id|cur_mss
 comma
-id|tcp_skb_is_last
-c_func
-(paren
-id|sk
-comma
-id|skb
-)paren
+id|nonagle
 )paren
 op_logical_or
 id|tcp_write_xmit
@@ -4027,6 +4074,8 @@ c_func
 (paren
 id|sk
 )paren
+comma
+id|tp-&gt;nonagle
 )paren
 suffix:semicolon
 )brace
@@ -4079,6 +4128,11 @@ id|sk
 comma
 id|skb
 )paren
+ques
+c_cond
+l_int|1
+suffix:colon
+id|tp-&gt;nonagle
 )paren
 )paren
 suffix:semicolon

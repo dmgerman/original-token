@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.53 2000/10/22 16:06:56 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.54 2000/11/28 13:34:56 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1530,6 +1530,13 @@ op_assign
 id|copied
 suffix:semicolon
 multiline_comment|/* Reset and regenerate socket error */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;error_queue.lock
+)paren
+suffix:semicolon
 id|sk-&gt;err
 op_assign
 l_int|0
@@ -1561,12 +1568,29 @@ id|skb2
 op_member_access_from_pointer
 id|ee.ee_errno
 suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;error_queue.lock
+)paren
+suffix:semicolon
 id|sk
 op_member_access_from_pointer
 id|error_report
 c_func
 (paren
 id|sk
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;error_queue.lock
 )paren
 suffix:semicolon
 )brace

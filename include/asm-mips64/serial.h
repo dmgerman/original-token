@@ -2,32 +2,13 @@ multiline_comment|/* $Id: serial.h,v 1.2 2000/01/17 23:32:47 ralf Exp $&n; *&n; 
 macro_line|#ifndef _ASM_SERIAL_H
 DECL|macro|_ASM_SERIAL_H
 mdefine_line|#define _ASM_SERIAL_H
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/sn/sn0/ip27.h&gt;
 multiline_comment|/*&n; * This assumes you have a 1.8432 MHz clock for your UART.&n; *&n; * It&squot;d be nice if someone built a serial card with a 24.576 MHz&n; * clock, since the 16550A is capable of handling a top speed of 1.5&n; * megabits/second; but this requires the faster clock.&n; */
 DECL|macro|BASE_BAUD
 mdefine_line|#define BASE_BAUD (1843200 / 16)
-multiline_comment|/* Standard COM flags (except for COM4, because of the 8514 problem) */
-DECL|macro|STD_COM_FLAGS
-mdefine_line|#define STD_COM_FLAGS (ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST)
-multiline_comment|/*&n; * The IOC3 serials use a 22MHz clock rate with an additional divider by 3.&n; */
-DECL|macro|IOC3_BAUD
-mdefine_line|#define IOC3_BAUD (22000000 / (3*16))
-DECL|macro|IOC3_COM_FLAGS
-mdefine_line|#define IOC3_COM_FLAGS (ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST)
-multiline_comment|/* Let the compiler figure out the size.  */
+multiline_comment|/*&n; * Note about serial ports and consoles:&n; * For console output, everyone uses the IOC3 UARTA (offset 0x178)&n; * connected to the master node (look in ip27_setup_console() and&n; * ip27prom_console_write()).&n; *&n; * For serial (/dev/ttyS0 etc), we can not have hardcoded serial port&n; * addresses on a partitioned machine. Since we currently use the ioc3&n; * serial ports, we use dynamic serial port discovery that the serial.c&n; * driver uses for pci/pnp ports (there is an entry for the SGI ioc3&n; * boards in pci_boards[]). Unfortunately, UARTA&squot;s pio address is greater&n; * than UARTB&squot;s, although UARTA on o200s has traditionally been known as&n; * port 0. So, we just use one serial port from each ioc3 (since the&n; * serial driver adds addresses to get to higher ports).&n; *&n; * The first one to do a register_console becomes the preferred console&n; * (if there is no kernel command line console= directive). /dev/console&n; * (ie 5, 1) is then &quot;aliased&quot; into the device number returned by the &n; * &quot;device&quot; routine referred to in this console structure &n; * (ip27prom_console_dev).&n; *&n; * Also look in ip27-pci.c:pci_fixuop_ioc3() for some comments on working&n; * around ioc3 oddities in this respect.&n; *&n; * The IOC3 serials use a 22MHz clock rate with an additional divider by 3.&n; * (IOC3_BAUD = (22000000 / (3*16)))&n; */
 DECL|macro|RS_TABLE_SIZE
-mdefine_line|#define RS_TABLE_SIZE
-macro_line|#ifdef CONFIG_SGI_IP27
-DECL|macro|_ORIGIN_SERIAL_INIT
-mdefine_line|#define _ORIGIN_SERIAL_INIT(int, base)&t;&t;&t;&t;&t;&bslash;&n;&t;{ baud_base: IOC3_BAUD, irq: int, flags: IOC3_COM_FLAGS,&t;&bslash;&n;&t;  iomem_base: (u8 *) base, iomem_reg_shift: 0,&t;&t;&t;&bslash;&n;&t;  io_type: SERIAL_IO_MEM }
-DECL|macro|ORIGIN_SERIAL_PORT_DFNS
-mdefine_line|#define ORIGIN_SERIAL_PORT_DFNS&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_ORIGIN_SERIAL_INIT(0, 0x9200000008620178UL),&t;&t;&t;&bslash;&n;&t;_ORIGIN_SERIAL_INIT(0, 0x9200000008620170UL),
-macro_line|#else
-DECL|macro|ORIGIN_SERIAL_PORT_DFNS
-mdefine_line|#define ORIGIN_SERIAL_PORT_DFNS
-macro_line|#endif
+mdefine_line|#define RS_TABLE_SIZE&t;64
 DECL|macro|SERIAL_PORT_DFNS
-mdefine_line|#define SERIAL_PORT_DFNS&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ORIGIN_SERIAL_PORT_DFNS
+mdefine_line|#define SERIAL_PORT_DFNS
 macro_line|#endif /* _ASM_SERIAL_H */
 eof

@@ -3635,7 +3635,7 @@ c_cond
 (paren
 id|lsize
 op_eq
-l_int|1
+l_int|0
 )paren
 r_return
 l_int|7

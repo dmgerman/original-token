@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elsa.c,v 2.26 2000/11/24 17:05:37 kai Exp $&n; *&n; * elsa.c     low level stuff for Elsa isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Elsa GmbH for documents and informations&n; *&n; *              Klaus Lichtenwalder (Klaus.Lichtenwalder@WebForum.DE)&n; *              for ELSA PCMCIA support&n; *&n; */
+multiline_comment|/* $Id: elsa.c,v 2.26.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * elsa.c     low level stuff for Elsa isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Elsa GmbH for documents and informations&n; *&n; *              Klaus Lichtenwalder (Klaus.Lichtenwalder@WebForum.DE)&n; *              for ELSA PCMCIA support&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/init.h&gt;
@@ -26,7 +26,7 @@ r_char
 op_star
 id|Elsa_revision
 op_assign
-l_string|&quot;$Revision: 2.26 $&quot;
+l_string|&quot;$Revision: 2.26.6.1 $&quot;
 suffix:semicolon
 DECL|variable|Elsa_Types
 r_const
@@ -135,18 +135,6 @@ mdefine_line|#define ELSA_QS3000PCI 10
 DECL|macro|ELSA_PCMCIA_IPAC
 mdefine_line|#define ELSA_PCMCIA_IPAC 11
 multiline_comment|/* PCI stuff */
-macro_line|#ifndef PCI_VENDOR_ID_ELSA
-DECL|macro|PCI_VENDOR_ID_ELSA
-mdefine_line|#define PCI_VENDOR_ID_ELSA&t;0x1048
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_ELSA_MIRCOLINK
-DECL|macro|PCI_DEVICE_ID_ELSA_MIRCOLINK
-mdefine_line|#define PCI_DEVICE_ID_ELSA_MIRCOLINK&t;0x1000
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_ELSA_QS3000
-DECL|macro|PCI_DEVICE_ID_ELSA_QS3000
-mdefine_line|#define PCI_DEVICE_ID_ELSA_QS3000&t;0x3000
-macro_line|#endif
 DECL|macro|ELSA_PCI_IRQ_MASK
 mdefine_line|#define ELSA_PCI_IRQ_MASK&t;0x04
 multiline_comment|/* ITAC Registeradressen (only Microlink PC) */
@@ -5183,7 +5171,7 @@ c_func
 (paren
 id|PCI_VENDOR_ID_ELSA
 comma
-id|PCI_DEVICE_ID_ELSA_MIRCOLINK
+id|PCI_DEVICE_ID_ELSA_MICROLINK
 comma
 id|dev_qs1000
 )paren

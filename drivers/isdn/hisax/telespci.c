@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: telespci.c,v 2.16 2000/11/24 17:05:38 kai Exp $&n; *&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: telespci.c,v 2.16.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * telespci.c     low level stuff for Teles PCI isdn cards&n; *&n; * Author       Ton van Rosmalen &n; *              Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/init.h&gt;
@@ -22,7 +22,7 @@ r_char
 op_star
 id|telespci_revision
 op_assign
-l_string|&quot;$Revision: 2.16 $&quot;
+l_string|&quot;$Revision: 2.16.6.1 $&quot;
 suffix:semicolon
 DECL|macro|ZORAN_PO_RQ_PEN
 mdefine_line|#define ZORAN_PO_RQ_PEN&t;0x02000000
@@ -38,14 +38,6 @@ DECL|macro|ZORAN_PO_GREG1
 mdefine_line|#define ZORAN_PO_GREG1&t;0x00010000
 DECL|macro|ZORAN_PO_DMASK
 mdefine_line|#define ZORAN_PO_DMASK&t;0xFF
-macro_line|#ifndef PCI_VENDOR_ID_ZORAN
-DECL|macro|PCI_VENDOR_ID_ZORAN
-mdefine_line|#define PCI_VENDOR_ID_ZORAN&t;0x11DE
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_ZORAN_36120
-DECL|macro|PCI_DEVICE_ID_ZORAN_36120
-mdefine_line|#define PCI_DEVICE_ID_ZORAN_36120&t;0x6120
-macro_line|#endif
 DECL|macro|WRITE_ADDR_ISAC
 mdefine_line|#define WRITE_ADDR_ISAC&t;(ZORAN_PO_WR | ZORAN_PO_GID0 | ZORAN_PO_GREG0)
 DECL|macro|READ_DATA_ISAC

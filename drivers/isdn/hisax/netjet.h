@@ -1,4 +1,4 @@
-singleline_comment|// $Id: netjet.h,v 2.5 2000/11/24 17:05:38 kai Exp $
+singleline_comment|// $Id: netjet.h,v 2.5.6.1 2000/11/28 12:02:46 kai Exp $
 singleline_comment|//-----------------------------------------------------------------------------
 singleline_comment|//
 singleline_comment|// NETjet common header file
@@ -21,15 +21,6 @@ DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
 DECL|macro|bytein
 mdefine_line|#define bytein(addr) inb(addr)
-multiline_comment|/* PCI stuff */
-macro_line|#ifndef PCI_VENDOR_ID_TIGERJET
-DECL|macro|PCI_VENDOR_ID_TIGERJET
-mdefine_line|#define PCI_VENDOR_ID_TIGERJET&t;0xe159
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TIGERJET_300
-DECL|macro|PCI_DEVICE_ID_TIGERJET_300
-mdefine_line|#define PCI_DEVICE_ID_TIGERJET_300&t;0x0001
-macro_line|#endif
 DECL|macro|NETJET_CTRL
 mdefine_line|#define NETJET_CTRL&t;0x00
 DECL|macro|NETJET_DMACTRL

@@ -1413,7 +1413,7 @@ comma
 op_star
 id|envp
 (braket
-l_int|7
+l_int|8
 )braket
 suffix:semicolon
 r_char
@@ -1429,7 +1429,7 @@ l_int|24
 comma
 id|bus_id
 (braket
-l_int|64
+l_int|24
 )braket
 comma
 id|class_id
@@ -1458,8 +1458,6 @@ comma
 id|pdev
 op_member_access_from_pointer
 r_class
-op_rshift
-l_int|8
 )paren
 suffix:semicolon
 id|sprintf
@@ -1491,7 +1489,7 @@ c_func
 (paren
 id|bus_id
 comma
-l_string|&quot;PCI_BUS_ID=%s&quot;
+l_string|&quot;PCI_SLOT_NAME=%s&quot;
 comma
 id|pdev-&gt;slot_name
 )paren
@@ -1545,6 +1543,14 @@ op_assign
 l_string|&quot;PATH=/sbin:/bin:/usr/sbin:/usr/bin&quot;
 suffix:semicolon
 multiline_comment|/* other stuff we want to pass to /sbin/hotplug */
+id|envp
+(braket
+id|i
+op_increment
+)braket
+op_assign
+id|class_id
+suffix:semicolon
 id|envp
 (braket
 id|i

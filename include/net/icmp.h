@@ -6,6 +6,22 @@ macro_line|#include &lt;linux/icmp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
+DECL|struct|icmp_err
+r_struct
+id|icmp_err
+(brace
+DECL|member|errno
+r_int
+id|errno
+suffix:semicolon
+DECL|member|fatal
+r_int
+id|fatal
+suffix:colon
+l_int|1
+suffix:semicolon
+)brace
+suffix:semicolon
 r_extern
 r_struct
 id|icmp_err

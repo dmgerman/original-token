@@ -284,21 +284,12 @@ id|slot
 id|RPC_MAXREQS
 )braket
 suffix:semicolon
-DECL|member|connected
-r_volatile
+DECL|member|sockstate
 r_int
-r_char
-id|connected
-suffix:colon
-l_int|1
-comma
-multiline_comment|/* TCP: connected */
-DECL|member|write_space
-id|write_space
-suffix:colon
-l_int|1
+r_int
+id|sockstate
 suffix:semicolon
-multiline_comment|/* TCP: can send */
+multiline_comment|/* Socket state */
 DECL|member|shutdown
 r_int
 r_char
@@ -554,6 +545,24 @@ r_struct
 id|list_head
 id|rpc_xprt_pending
 suffix:semicolon
+DECL|macro|XPRT_WSPACE
+mdefine_line|#define XPRT_WSPACE&t;0
+DECL|macro|XPRT_CONNECT
+mdefine_line|#define XPRT_CONNECT&t;1
+DECL|macro|xprt_wspace
+mdefine_line|#define xprt_wspace(xp)&t;&t;&t;(test_bit(XPRT_WSPACE, &amp;(xp)-&gt;sockstate))
+DECL|macro|xprt_test_and_set_wspace
+mdefine_line|#define xprt_test_and_set_wspace(xp)&t;(test_and_set_bit(XPRT_WSPACE, &amp;(xp)-&gt;sockstate))
+DECL|macro|xprt_clear_wspace
+mdefine_line|#define xprt_clear_wspace(xp)&t;&t;(clear_bit(XPRT_WSPACE, &amp;(xp)-&gt;sockstate))
+DECL|macro|xprt_connected
+mdefine_line|#define xprt_connected(xp)&t;&t;(!(xp)-&gt;stream || test_bit(XPRT_CONNECT, &amp;(xp)-&gt;sockstate))
+DECL|macro|xprt_set_connected
+mdefine_line|#define xprt_set_connected(xp)&t;&t;(set_bit(XPRT_CONNECT, &amp;(xp)-&gt;sockstate))
+DECL|macro|xprt_test_and_set_connected
+mdefine_line|#define xprt_test_and_set_connected(xp)&t;(test_and_set_bit(XPRT_CONNECT, &amp;(xp)-&gt;sockstate))
+DECL|macro|xprt_clear_connected
+mdefine_line|#define xprt_clear_connected(xp)&t;(clear_bit(XPRT_CONNECT, &amp;(xp)-&gt;sockstate))
 r_static
 r_inline
 DECL|function|xprt_tcp_pending

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.45 2000/10/28 17:19:25 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.47 2000/11/28 13:49:22 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes:&n; * Roger Venning &lt;r.venning@telstra.com&gt;:&t;6to4 support&n; * Nate Thompson &lt;nate@thebog.net&gt;:&t;&t;6to4 support&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -806,9 +806,9 @@ id|dev-&gt;init
 op_assign
 id|ipip6_tunnel_init
 suffix:semicolon
-id|dev-&gt;new_style
-op_assign
-l_int|1
+id|dev-&gt;features
+op_or_assign
+id|NETIF_F_DYNALLOC
 suffix:semicolon
 id|memcpy
 c_func
@@ -1859,6 +1859,61 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Returns the embedded IPv4 address if the IPv6 address&n;   comes from 6to4 (draft-ietf-ngtrans-6to4-04) addr space */
+DECL|function|try_6to4
+r_static
+r_inline
+id|u32
+id|try_6to4
+c_func
+(paren
+r_struct
+id|in6_addr
+op_star
+id|v6dst
+)paren
+(brace
+id|u32
+id|dst
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v6dst-&gt;s6_addr16
+(braket
+l_int|0
+)braket
+op_eq
+id|htons
+c_func
+(paren
+l_int|0x2002
+)paren
+)paren
+(brace
+multiline_comment|/* 6to4 v6 addr has 16 bits prefix, 32 v4addr, 16 SLA, ... */
+id|memcpy
+c_func
+(paren
+op_amp
+id|dst
+comma
+op_amp
+id|v6dst-&gt;s6_addr16
+(braket
+l_int|1
+)braket
+comma
+l_int|4
+)paren
+suffix:semicolon
+)brace
+r_return
+id|dst
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;This function assumes it is being called from dev_queue_xmit()&n; *&t;and that skb is filled properly by that function.&n; */
 DECL|function|ipip6_tunnel_xmit
 r_static
@@ -1989,6 +2044,21 @@ c_cond
 op_logical_neg
 id|dst
 )paren
+id|dst
+op_assign
+id|try_6to4
+c_func
+(paren
+op_amp
+id|iph6-&gt;daddr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dst
+)paren
 (brace
 r_struct
 id|neighbour
@@ -2108,6 +2178,21 @@ id|tos
 comma
 id|tunnel-&gt;parms.link
 )paren
+)paren
+(brace
+id|tunnel-&gt;stat.tx_carrier_errors
+op_increment
+suffix:semicolon
+r_goto
+id|tx_error_icmp
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|rt-&gt;rt_type
+op_ne
+id|RTN_UNICAST
 )paren
 (brace
 id|tunnel-&gt;stat.tx_carrier_errors

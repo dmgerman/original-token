@@ -34,7 +34,7 @@ id|mdk_rdev_t
 op_star
 id|dev
 (braket
-id|MAX_REAL
+id|MD_SB_DISKS
 )braket
 suffix:semicolon
 multiline_comment|/* Devices attached to the zone */

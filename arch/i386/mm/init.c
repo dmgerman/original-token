@@ -744,10 +744,6 @@ r_void
 r_int
 id|i
 comma
-id|free
-op_assign
-l_int|0
-comma
 id|total
 op_assign
 l_int|0
@@ -858,7 +854,6 @@ r_else
 r_if
 c_cond
 (paren
-op_logical_neg
 id|page_count
 c_func
 (paren
@@ -867,10 +862,6 @@ op_plus
 id|i
 )paren
 )paren
-id|free
-op_increment
-suffix:semicolon
-r_else
 id|shared
 op_add_assign
 id|page_count
@@ -1995,7 +1986,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * paging_init() sets up the page tables - note that the first 4MB are&n; * already mapped by head.S.&n; *&n; * This routines also unmaps the page at virtual kernel address 0, so&n; * that we can trap those pesky NULL-reference errors in the kernel.&n; */
+multiline_comment|/*&n; * paging_init() sets up the page tables - note that the first 8MB are&n; * already mapped by head.S.&n; *&n; * This routines also unmaps the page at virtual kernel address 0, so&n; * that we can trap those pesky NULL-reference errors in the kernel.&n; */
 DECL|function|paging_init
 r_void
 id|__init

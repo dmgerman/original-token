@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for SanDisk SDDR-09 SmartMedia reader&n; *&n; * $Id: sddr09.c,v 1.12 2000/10/03 01:06:07 mdharm Exp $&n; *&n; * SDDR09 driver v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * The SanDisk SDDR-09 SmartMedia reader uses the Shuttle EUSB-01 chip.&n; * This chip is a programmable USB controller. In the SDDR-09, it has&n; * been programmed to obey a certain limited set of SCSI commands. This&n; * driver translates the &quot;real&quot; SCSI commands to the SDDR-09 SCSI&n; * commands.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for SanDisk SDDR-09 SmartMedia reader&n; *&n; * $Id: sddr09.c,v 1.14 2000/11/21 02:58:26 mdharm Exp $&n; *&n; * SDDR09 driver v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * The SanDisk SDDR-09 SmartMedia reader uses the Shuttle EUSB-01 chip.&n; * This chip is a programmable USB controller. In the SDDR-09, it has&n; * been programmed to obey a certain limited set of SCSI commands. This&n; * driver translates the &quot;real&quot; SCSI commands to the SDDR-09 SCSI&n; * commands.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
@@ -2077,6 +2077,18 @@ l_int|32
 suffix:semicolon
 r_return
 l_int|0x02000000
+suffix:semicolon
+r_case
+l_int|0x76
+suffix:colon
+singleline_comment|// 64MB
+op_star
+id|blocksize
+op_assign
+l_int|32
+suffix:semicolon
+r_return
+l_int|0x04000000
 suffix:semicolon
 r_default
 suffix:colon

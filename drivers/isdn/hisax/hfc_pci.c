@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hfc_pci.c,v 1.34 2000/11/24 17:05:37 kai Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* $Id: hfc_pci.c,v 1.34.6.2 2000/11/28 12:02:46 kai Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
@@ -23,7 +23,7 @@ r_char
 op_star
 id|hfcpci_revision
 op_assign
-l_string|&quot;$Revision: 1.34 $&quot;
+l_string|&quot;$Revision: 1.34.6.2 $&quot;
 suffix:semicolon
 multiline_comment|/* table entry in the PCI devices list */
 r_typedef
@@ -67,9 +67,9 @@ id|id_list
 op_assign
 (brace
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0x2BD0
+id|PCI_DEVICE_ID_CCD_2BD0
 comma
 l_string|&quot;CCD/Billion/Asuscom&quot;
 comma
@@ -77,9 +77,9 @@ l_string|&quot;2BD0&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB000
+id|PCI_DEVICE_ID_CCD_B000
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -87,9 +87,9 @@ l_string|&quot;B000&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB006
+id|PCI_DEVICE_ID_CCD_B006
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -97,9 +97,9 @@ l_string|&quot;B006&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB007
+id|PCI_DEVICE_ID_CCD_B007
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -107,9 +107,9 @@ l_string|&quot;B007&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB008
+id|PCI_DEVICE_ID_CCD_B008
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -117,9 +117,9 @@ l_string|&quot;B008&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB009
+id|PCI_DEVICE_ID_CCD_B009
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -127,9 +127,9 @@ l_string|&quot;B009&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB00A
+id|PCI_DEVICE_ID_CCD_B00A
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -137,9 +137,9 @@ l_string|&quot;B00A&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB00B
+id|PCI_DEVICE_ID_CCD_B00B
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -147,9 +147,9 @@ l_string|&quot;B00B&quot;
 )brace
 comma
 (brace
-l_int|0x1397
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0xB00C
+id|PCI_DEVICE_ID_CCD_B00C
 comma
 l_string|&quot;Billion&quot;
 comma
@@ -157,49 +157,9 @@ l_string|&quot;B00C&quot;
 )brace
 comma
 (brace
-l_int|0x1043
+id|PCI_VENDOR_ID_CCD
 comma
-l_int|0x0675
-comma
-l_string|&quot;Asuscom/Askey&quot;
-comma
-l_string|&quot;675&quot;
-)brace
-comma
-(brace
-l_int|0x0871
-comma
-l_int|0xFFA2
-comma
-l_string|&quot;German telekom&quot;
-comma
-l_string|&quot;T-Concept&quot;
-)brace
-comma
-(brace
-l_int|0x0871
-comma
-l_int|0xFFA1
-comma
-l_string|&quot;German telekom&quot;
-comma
-l_string|&quot;A1T&quot;
-)brace
-comma
-(brace
-l_int|0x1051
-comma
-l_int|0x0100
-comma
-l_string|&quot;Motorola MC145575&quot;
-comma
-l_string|&quot;MC145575&quot;
-)brace
-comma
-(brace
-l_int|0x1397
-comma
-l_int|0xB100
+id|PCI_DEVICE_ID_CCD_B100
 comma
 l_string|&quot;Seyeon&quot;
 comma
@@ -207,9 +167,49 @@ l_string|&quot;B100&quot;
 )brace
 comma
 (brace
-l_int|0x15B0
+id|PCI_VENDOR_ID_ASUSTEK
 comma
-l_int|0x2BD0
+id|PCI_DEVICE_ID_ASUSTEK_0675
+comma
+l_string|&quot;Asuscom/Askey&quot;
+comma
+l_string|&quot;675&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_BERKOM
+comma
+id|PCI_DEVICE_ID_BERKOM_T_CONCEPT
+comma
+l_string|&quot;German telekom&quot;
+comma
+l_string|&quot;T-Concept&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_BERKOM
+comma
+id|PCI_DEVICE_ID_BERKOM_A1T
+comma
+l_string|&quot;German telekom&quot;
+comma
+l_string|&quot;A1T&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_ANIGMA
+comma
+id|PCI_DEVICE_ID_ANIGMA_MC145575
+comma
+l_string|&quot;Motorola MC145575&quot;
+comma
+l_string|&quot;MC145575&quot;
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_ZOLTRIX
+comma
+id|PCI_DEVICE_ID_ZOLTRIX_2BD0
 comma
 l_string|&quot;Zoltrix&quot;
 comma
@@ -217,9 +217,9 @@ l_string|&quot;2BD0&quot;
 )brace
 comma
 (brace
-l_int|0x114F
+id|PCI_VENDOR_ID_DIGI
 comma
-l_int|0x70
+id|PCI_DEVICE_ID_DIGI_DF_M_IOM2_E
 comma
 l_string|&quot;Digi International&quot;
 comma
@@ -227,9 +227,9 @@ l_string|&quot;Digi DataFire Micro V IOM2 (Europe)&quot;
 )brace
 comma
 (brace
-l_int|0x114F
+id|PCI_VENDOR_ID_DIGI
 comma
-l_int|0x71
+id|PCI_DEVICE_ID_DIGI_DF_M_E
 comma
 l_string|&quot;Digi International&quot;
 comma
@@ -237,9 +237,9 @@ l_string|&quot;Digi DataFire Micro V (Europe)&quot;
 )brace
 comma
 (brace
-l_int|0x114F
+id|PCI_VENDOR_ID_DIGI
 comma
-l_int|0x72
+id|PCI_DEVICE_ID_DIGI_DF_M_IOM2_A
 comma
 l_string|&quot;Digi International&quot;
 comma
@@ -247,9 +247,9 @@ l_string|&quot;Digi DataFire Micro V IOM2 (North America)&quot;
 )brace
 comma
 (brace
-l_int|0x114F
+id|PCI_VENDOR_ID_DIGI
 comma
-l_int|0x73
+id|PCI_DEVICE_ID_DIGI_DF_M_A
 comma
 l_string|&quot;Digi International&quot;
 comma

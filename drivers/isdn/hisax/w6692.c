@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: w6692.c,v 1.12 2000/11/24 17:05:38 kai Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: w6692.c,v 1.12.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|__NO_VERSION__
@@ -8,22 +8,6 @@ macro_line|#include &quot;w6692.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#ifndef PCI_VENDOR_ID_ASUSCOM
-DECL|macro|PCI_VENDOR_ID_ASUSCOM
-mdefine_line|#define PCI_VENDOR_ID_ASUSCOM&t;0x675
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_ASUSCOM_TA1
-DECL|macro|PCI_DEVICE_ID_ASUSCOM_TA1
-mdefine_line|#define PCI_DEVICE_ID_ASUSCOM_TA1&t;0x1702
-macro_line|#endif
-macro_line|#ifndef PCI_VENDOR_ID_WINBOND2
-DECL|macro|PCI_VENDOR_ID_WINBOND2
-mdefine_line|#define PCI_VENDOR_ID_WINBOND2&t;0x1050
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_WINBOND_6692
-DECL|macro|PCI_DEVICE_ID_WINBOND_6692
-mdefine_line|#define&t;PCI_DEVICE_ID_WINBOND_6692&t;0x6692
-macro_line|#endif
 multiline_comment|/* table entry in the PCI devices list */
 r_typedef
 r_struct
@@ -60,19 +44,19 @@ id|id_list
 op_assign
 (brace
 (brace
-id|PCI_VENDOR_ID_ASUSCOM
+id|PCI_VENDOR_ID_DYNALINK
 comma
-id|PCI_DEVICE_ID_ASUSCOM_TA1
+id|PCI_DEVICE_ID_DYNALINK_IS64PH
 comma
-l_string|&quot;AsusCom&quot;
+l_string|&quot;Dynalink/AsusCom&quot;
 comma
-l_string|&quot;TA XXX&quot;
+l_string|&quot;IS64PH&quot;
 )brace
 comma
 (brace
 id|PCI_VENDOR_ID_WINBOND2
 comma
-id|PCI_DEVICE_ID_WINBOND_6692
+id|PCI_DEVICE_ID_WINBOND2_6692
 comma
 l_string|&quot;Winbond&quot;
 comma
@@ -104,7 +88,7 @@ r_char
 op_star
 id|w6692_revision
 op_assign
-l_string|&quot;$Revision: 1.12 $&quot;
+l_string|&quot;$Revision: 1.12.6.1 $&quot;
 suffix:semicolon
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80

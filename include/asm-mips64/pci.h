@@ -126,6 +126,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_COHERENT_IO
 id|dma_cache_wback_inv
 c_func
 (paren
@@ -138,11 +139,19 @@ comma
 id|size
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
-id|virt_to_bus
+(paren
+id|bus_to_baddr
+(braket
+id|hwdev-&gt;bus-&gt;number
+)braket
+op_or
+id|__pa
 c_func
 (paren
 id|ptr
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -208,11 +217,9 @@ r_int
 id|direction
 )paren
 (brace
-macro_line|#ifndef CONFIG_COHERENT_IO
 r_int
 id|i
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -226,7 +233,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure that gcc doesn&squot;t leave the empty loop body.  */
-macro_line|#ifndef CONFIG_COHERENT_IO
 r_for
 c_loop
 (paren
@@ -244,6 +250,8 @@ comma
 id|sg
 op_increment
 )paren
+(brace
+macro_line|#ifndef CONFIG_COHERENT_IO
 id|dma_cache_wback_inv
 c_func
 (paren
@@ -257,6 +265,26 @@ id|sg-&gt;length
 )paren
 suffix:semicolon
 macro_line|#endif
+id|sg-&gt;address
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+id|bus_to_baddr
+(braket
+id|hwdev-&gt;bus-&gt;number
+)braket
+op_or
+id|__pa
+c_func
+(paren
+id|sg-&gt;address
+)paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|nents
 suffix:semicolon
@@ -335,6 +363,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_COHERENT_IO
 id|dma_cache_wback_inv
 c_func
 (paren
@@ -342,15 +371,21 @@ c_func
 r_int
 r_int
 )paren
-id|bus_to_virt
+id|__va
 c_func
 (paren
 id|dma_handle
+op_minus
+id|bus_to_baddr
+(braket
+id|hwdev-&gt;bus-&gt;number
+)braket
 )paren
 comma
 id|size
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Make physical memory consistent for a set of streaming&n; * mode DMA translations after a transfer.&n; *&n; * The same as pci_dma_sync_single but for a scatter-gather list,&n; * same rules and usage.&n; */
 DECL|function|pci_dma_sync_sg
@@ -429,7 +464,7 @@ macro_line|#endif
 )brace
 multiline_comment|/*&n; * These macros should be used after a pci_map_sg call has been done&n; * to get bus addresses of each of the SG entries and their lengths.&n; * You should only work with the number of sg entries pci_map_sg&n; * returns, or alternatively stop on the first sg_dma_len(sg) which&n; * is 0.&n; */
 DECL|macro|sg_dma_address
-mdefine_line|#define sg_dma_address(sg)&t;(virt_to_bus((sg)-&gt;address))
+mdefine_line|#define sg_dma_address(sg)&t;((unsigned long)((sg)-&gt;address))
 DECL|macro|sg_dma_len
 mdefine_line|#define sg_dma_len(sg)&t;&t;((sg)-&gt;length)
 macro_line|#endif /* __KERNEL__ */

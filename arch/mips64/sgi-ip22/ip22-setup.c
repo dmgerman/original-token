@@ -387,7 +387,7 @@ l_string|&quot;ttyS0&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_SGI_PROM_CONSOLE
+macro_line|#ifdef CONFIG_ARC_CONSOLE
 id|console_setup
 c_func
 (paren

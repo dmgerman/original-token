@@ -7818,7 +7818,11 @@ l_string|&quot;netdev_finish_unregister: %s%s.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|dev-&gt;new_style
+(paren
+id|dev-&gt;features
+op_amp
+id|NETIF_F_DYNALLOC
+)paren
 ques
 c_cond
 l_string|&quot;&quot;
@@ -7843,7 +7847,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;new_style
+id|dev-&gt;features
+op_amp
+id|NETIF_F_DYNALLOC
 )paren
 id|kfree
 c_func
@@ -7987,6 +7993,19 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+multiline_comment|/* Synchronize to net_rx_action. */
+id|br_write_lock_bh
+c_func
+(paren
+id|BR_NETPROTO_LOCK
+)paren
+suffix:semicolon
+id|br_write_unlock_bh
+c_func
+(paren
+id|BR_NETPROTO_LOCK
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8063,7 +8082,9 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|dev-&gt;new_style
+id|dev-&gt;features
+op_amp
+id|NETIF_F_DYNALLOC
 )paren
 (brace
 macro_line|#ifdef NET_REFCNT_DEBUG

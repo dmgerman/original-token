@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: gazel.c,v 2.11 2000/11/24 17:05:37 kai Exp $&n; *&n; * gazel.c     low level stuff for Gazel isdn cards&n; *&n; * Author       BeWan Systems&n; *              based on source code from Karsten Keil&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: gazel.c,v 2.11.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * gazel.c     low level stuff for Gazel isdn cards&n; *&n; * Author       BeWan Systems&n; *              based on source code from Karsten Keil&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|__NO_VERSION__
@@ -23,7 +23,7 @@ r_char
 op_star
 id|gazel_revision
 op_assign
-l_string|&quot;$Revision: 2.11 $&quot;
+l_string|&quot;$Revision: 2.11.6.1 $&quot;
 suffix:semicolon
 DECL|macro|R647
 mdefine_line|#define R647      1
@@ -33,23 +33,6 @@ DECL|macro|R753
 mdefine_line|#define R753      3
 DECL|macro|R742
 mdefine_line|#define R742      4
-multiline_comment|/* Gazel R685 stuff */
-macro_line|#ifndef PCI_VENDOR_ID_PLX
-DECL|macro|PCI_VENDOR_ID_PLX
-mdefine_line|#define PCI_VENDOR_ID_PLX&t;0x10b5
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_PLX_R685
-DECL|macro|PCI_DEVICE_ID_PLX_R685
-mdefine_line|#define PCI_DEVICE_ID_PLX_R685&t;0x1030
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_PLX_R753
-DECL|macro|PCI_DEVICE_ID_PLX_R753
-mdefine_line|#define PCI_DEVICE_ID_PLX_R753&t;0x1152
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_PLX_DJINN_ITOO
-DECL|macro|PCI_DEVICE_ID_PLX_DJINN_ITOO
-mdefine_line|#define PCI_DEVICE_ID_PLX_DJINN_ITOO&t;0x1151
-macro_line|#endif
 DECL|macro|PLX_CNTRL
 mdefine_line|#define PLX_CNTRL    0x50&t;/* registre de controle PLX */
 DECL|macro|RESET_GAZEL

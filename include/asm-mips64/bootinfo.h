@@ -78,10 +78,14 @@ mdefine_line|#define GROUP_ACN_NAMES { &quot;ACN&quot; }
 multiline_comment|/*&n; * Valid machtype for group SGI&n; */
 DECL|macro|MACH_SGI_INDY
 mdefine_line|#define MACH_SGI_INDY&t;&t;0&t;/* R4?K and R5K Indy workstaions */
+DECL|macro|MACH_SGI_CHALLENGE_S
+mdefine_line|#define MACH_SGI_CHALLENGE_S&t;1       /* The Challenge S server */
+DECL|macro|MACH_SGI_INDIGO2
+mdefine_line|#define MACH_SGI_INDIGO2&t;2&t;/* The Indigo2 system */
 DECL|macro|MACH_SGI_IP27
-mdefine_line|#define MACH_SGI_IP27&t;&t;1&t;/* Origin 200, Origin 2000, Onyx 2 */
+mdefine_line|#define MACH_SGI_IP27&t;&t;3&t;/* Origin 200, Origin 2000, Onyx 2 */
 DECL|macro|GROUP_SGI_NAMES
-mdefine_line|#define GROUP_SGI_NAMES { &quot;Indy&quot;, &quot;IP27&quot; }
+mdefine_line|#define GROUP_SGI_NAMES { &quot;Indy&quot;, &quot;Challenge S&quot;, &quot;Indigo2&quot;, &quot;IP27&quot; }
 multiline_comment|/*&n; * Valid machtype for group COBALT&n; */
 DECL|macro|MACH_COBALT_27
 mdefine_line|#define MACH_COBALT_27 &t;&t; 0&t;/* Proto &quot;27&quot; hardware */

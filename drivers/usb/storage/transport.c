@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: transport.c,v 1.32 2000/11/03 00:18:04 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *   (c) 2000 Stephen J. Gowdy (SGowdy@lbl.gov)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: transport.c,v 1.38 2000/11/21 00:52:10 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *   (c) 2000 Stephen J. Gowdy (SGowdy@lbl.gov)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
@@ -1058,9 +1058,11 @@ id|us-&gt;current_urb_sem
 )paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_RUNNING
+)paren
 suffix:semicolon
 id|remove_wait_queue
 c_func
@@ -1304,9 +1306,11 @@ id|us-&gt;current_urb_sem
 )paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_RUNNING
+)paren
 suffix:semicolon
 id|remove_wait_queue
 c_func
@@ -2458,51 +2462,89 @@ comma
 id|urb-&gt;status
 )paren
 suffix:semicolon
-multiline_comment|/* is the device removed? */
-r_if
-c_cond
-(paren
-id|urb-&gt;status
-op_ne
-op_minus
-id|ENOENT
-)paren
-(brace
-multiline_comment|/* save the data for interpretation later */
 id|US_DEBUGP
 c_func
 (paren
 l_string|&quot;-- Interrupt Status (0x%x, 0x%x)&bslash;n&quot;
 comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|urb-&gt;transfer_buffer
-)paren
+id|us-&gt;irqbuf
 (braket
 l_int|0
 )braket
 comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|urb-&gt;transfer_buffer
-)paren
+id|us-&gt;irqbuf
 (braket
 l_int|1
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* reject improper IRQs */
+r_if
+c_cond
+(paren
+id|urb-&gt;actual_length
+op_ne
+l_int|2
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- IRQ too short&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* is the device removed? */
+r_if
+c_cond
+(paren
+id|urb-&gt;status
+op_eq
+op_minus
+id|ENOENT
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- device has been removed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* was this a command-completion interrupt? */
+r_if
+c_cond
+(paren
+id|us-&gt;irqbuf
+(braket
+l_int|0
+)braket
+op_logical_and
+(paren
+id|us-&gt;subclass
+op_ne
+id|US_SC_UFI
+)paren
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- not a command-completion IRQ&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* was this a wanted interrupt? */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|atomic_read
 c_func
 (paren
@@ -2510,6 +2552,16 @@ id|us-&gt;ip_wanted
 )paren
 )paren
 (brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;ERROR: Unwanted interrupt received!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* adjust the flag */
 id|atomic_set
 c_func
 (paren
@@ -2518,6 +2570,28 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* copy the valid data */
+id|us-&gt;irqdata
+(braket
+l_int|0
+)braket
+op_assign
+id|us-&gt;irqbuf
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|us-&gt;irqdata
+(braket
+l_int|1
+)braket
+op_assign
+id|us-&gt;irqbuf
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* wake up the command thread */
 id|US_DEBUGP
 c_func
 (paren
@@ -2538,22 +2612,6 @@ op_amp
 (paren
 id|us-&gt;ip_waitq
 )paren
-)paren
-suffix:semicolon
-)brace
-r_else
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;ERROR: Unwanted interrupt received!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;-- device has been removed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2813,26 +2871,12 @@ c_func
 (paren
 l_string|&quot;Got interrupt data (0x%x, 0x%x)&bslash;n&quot;
 comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|us-&gt;irq_urb-&gt;transfer_buffer
-)paren
+id|us-&gt;irqdata
 (braket
 l_int|0
 )braket
 comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|us-&gt;irq_urb-&gt;transfer_buffer
-)paren
+id|us-&gt;irqdata
 (braket
 l_int|1
 )braket
@@ -2895,14 +2939,7 @@ multiline_comment|/* If not UFI, we interpret the data as a result code &n;&t; *
 r_if
 c_cond
 (paren
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|us-&gt;irq_urb-&gt;transfer_buffer
-)paren
+id|us-&gt;irqdata
 (braket
 l_int|0
 )braket
@@ -2911,7 +2948,12 @@ l_int|0
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;CBI IRQ data showed reserved bType&bslash;n&quot;
+l_string|&quot;CBI IRQ data showed reserved bType %d&bslash;n&quot;
+comma
+id|us-&gt;irqdata
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 r_return
@@ -2921,14 +2963,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|us-&gt;irq_urb-&gt;transfer_buffer
-)paren
+id|us-&gt;irqdata
 (braket
 l_int|1
 )braket
@@ -3784,7 +3819,7 @@ id|bcs.Status
 r_case
 id|US_BULK_STAT_OK
 suffix:colon
-multiline_comment|/* command good -- note that we could be short on data */
+multiline_comment|/* command good -- note that data could be short */
 r_return
 id|USB_STOR_TRANSPORT_GOOD
 suffix:semicolon
@@ -3798,7 +3833,7 @@ suffix:semicolon
 r_case
 id|US_BULK_STAT_PHASE
 suffix:colon
-multiline_comment|/* phase error -- note that a transport reset will be&n;&t;&t; * invoked by the invoke_transport() function&n;&t;&t; */
+multiline_comment|/* phase error -- note that a transport reset will be&n;&t;&t;&t; * invoked by the invoke_transport() function&n;&t;&t;&t; */
 r_return
 id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon

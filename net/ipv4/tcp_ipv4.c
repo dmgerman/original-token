@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.220 2000/11/14 07:26:02 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.221 2000/11/28 17:04:10 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix new listen.&n; *&t;Andi Kleen&t;&t;:&t;Fix accept error reporting.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -5379,15 +5379,12 @@ l_int|NULL
 r_goto
 id|drop
 suffix:semicolon
-id|tp.tstamp_ok
-op_assign
-id|tp.sack_ok
-op_assign
-id|tp.wscale_ok
-op_assign
-id|tp.snd_wscale
-op_assign
-l_int|0
+id|tcp_clear_options
+c_func
+(paren
+op_amp
+id|tp
+)paren
 suffix:semicolon
 id|tp.mss_clamp
 op_assign
@@ -5404,6 +5401,8 @@ id|skb
 comma
 op_amp
 id|tp
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -5412,21 +5411,12 @@ c_cond
 id|want_cookie
 )paren
 (brace
-id|tp.sack_ok
-op_assign
-l_int|0
-suffix:semicolon
-id|tp.wscale_ok
-op_assign
-l_int|0
-suffix:semicolon
-id|tp.snd_wscale
-op_assign
-l_int|0
-suffix:semicolon
-id|tp.tstamp_ok
-op_assign
-l_int|0
+id|tcp_clear_options
+c_func
+(paren
+op_amp
+id|tp
+)paren
 suffix:semicolon
 id|tp.saw_tstamp
 op_assign
@@ -5453,6 +5443,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|tp.tstamp_ok
+op_assign
+id|tp.saw_tstamp
+suffix:semicolon
 id|tcp_openreq_init
 c_func
 (paren
@@ -8214,11 +8208,24 @@ id|tp-&gt;rto
 comma
 id|tp-&gt;ack.ato
 comma
+(paren
 id|tp-&gt;ack.quick
-comma
+op_lshift
+l_int|1
+)paren
+op_or
 id|tp-&gt;ack.pingpong
 comma
-id|sp-&gt;sndbuf
+id|tp-&gt;snd_cwnd
+comma
+id|tp-&gt;snd_ssthresh
+op_ge
+l_int|0xFFFF
+ques
+op_minus
+l_int|1
+suffix:colon
+id|tp-&gt;snd_ssthresh
 )paren
 suffix:semicolon
 )brace

@@ -161,8 +161,6 @@ suffix:semicolon
 macro_line|#if (MINORBITS != 8)
 macro_line|#error MD doesnt handle bigger kdev yet
 macro_line|#endif
-DECL|macro|MAX_REAL
-mdefine_line|#define MAX_REAL     12&t;&t;&t;/* Max number of disks per md dev */
 DECL|macro|MAX_MD_DEVS
 mdefine_line|#define MAX_MD_DEVS  (1&lt;&lt;MINORBITS)&t;/* Max number of md dev */
 multiline_comment|/*&n; * Maps a kdev to an mddev/subdev. How &squot;data&squot; is handled is up to&n; * the personality. (eg. HSM uses this to identify individual LVs)&n; */

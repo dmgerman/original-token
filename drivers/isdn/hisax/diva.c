@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: diva.c,v 1.25 2000/11/24 17:05:37 kai Exp $&n; *&n; * diva.c     low level stuff for Eicon.Diehl Diva Family ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to Eicon Technology for documents and informations&n; *&n; */
+multiline_comment|/* $Id: diva.c,v 1.25.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * diva.c     low level stuff for Eicon.Diehl Diva Family ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to Eicon Technology for documents and informations&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/init.h&gt;
@@ -23,7 +23,7 @@ r_char
 op_star
 id|Diva_revision
 op_assign
-l_string|&quot;$Revision: 1.25 $&quot;
+l_string|&quot;$Revision: 1.25.6.1 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -58,23 +58,6 @@ DECL|macro|DIVA_IPAC_ISA
 mdefine_line|#define DIVA_IPAC_ISA&t;3
 DECL|macro|DIVA_IPAC_PCI
 mdefine_line|#define DIVA_IPAC_PCI&t;4
-multiline_comment|/* PCI stuff */
-macro_line|#ifndef PCI_VENDOR_ID_EICON
-DECL|macro|PCI_VENDOR_ID_EICON
-mdefine_line|#define PCI_VENDOR_ID_EICON&t;0x1133
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_EICON_DIVA20
-DECL|macro|PCI_DEVICE_ID_EICON_DIVA20
-mdefine_line|#define PCI_DEVICE_ID_EICON_DIVA20&t;0xe002
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_EICON_DIVA20_U
-DECL|macro|PCI_DEVICE_ID_EICON_DIVA20_U
-mdefine_line|#define PCI_DEVICE_ID_EICON_DIVA20_U&t;0xe004
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_EICON_DIVA201
-DECL|macro|PCI_DEVICE_ID_EICON_DIVA201
-mdefine_line|#define PCI_DEVICE_ID_EICON_DIVA201&t;0xe005
-macro_line|#endif
 multiline_comment|/* CTRL (Read) */
 DECL|macro|DIVA_IRQ_STAT
 mdefine_line|#define DIVA_IRQ_STAT&t;0x01

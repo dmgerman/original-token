@@ -4,7 +4,7 @@ DECL|macro|_ASM_BCACHE_H
 mdefine_line|#define _ASM_BCACHE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_BOARD_SCACHE
-multiline_comment|/* Some R4000 / R4400 / R4600 / R5000 machines may have chipset implemented&n;   caches.  On machines with other CPUs the CPU does the cache thing itself. */
+multiline_comment|/* Some R4000 / R4400 / R4600 / R5000 machines may have a non-dma-coherent,&n;   chipset implemented caches.  On machines with other CPUs the CPU does the &n;   cache thing itself. */
 DECL|struct|bcache_ops
 r_struct
 id|bcache_ops

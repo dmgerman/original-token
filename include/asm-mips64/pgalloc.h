@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.3 2000/02/24 00:13:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 2000 by Ralf Baechle at alii&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 2000 by Ralf Baechle at alii&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PGALLOC_H
 DECL|macro|_ASM_PGALLOC_H
 mdefine_line|#define _ASM_PGALLOC_H
@@ -978,35 +978,5 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|function|set_pgdir
-r_extern
-r_inline
-r_void
-id|set_pgdir
-c_func
-(paren
-r_int
-r_int
-id|address
-comma
-id|pgd_t
-id|entry
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;set_pgdir!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-suffix:semicolon
-)brace
-)brace
 macro_line|#endif /* _ASM_PGALLOC_H */
 eof

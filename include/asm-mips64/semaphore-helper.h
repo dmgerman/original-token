@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: semaphore-helper.h,v 1.2 1999/10/20 18:10:32 ralf Exp $&n; *&n; * SMP- and interrupt-safe semaphores helper functions.&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; * (C) Copyright 1999 Andrea Arcangeli&n; * (C) Copyright 1999 Ralf Baechle&n; * (C) Copyright 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * SMP- and interrupt-safe semaphores helper functions.&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; * (C) Copyright 1999 Andrea Arcangeli&n; * (C) Copyright 1999 Ralf Baechle&n; * (C) Copyright 1999 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_SEMAPHORE_HELPER_H
 DECL|macro|_ASM_SEMAPHORE_HELPER_H
 mdefine_line|#define _ASM_SEMAPHORE_HELPER_H
@@ -66,12 +66,7 @@ id|tmp
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-op_amp
 id|sem-&gt;waking
-)paren
 )paren
 suffix:colon
 l_string|&quot;0&quot;

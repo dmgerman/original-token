@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.9 2000/03/14 01:39:27 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1996 Stoned Elipot&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1996 Stoned Elipot&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -25,10 +25,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
-macro_line|#ifdef CONFIG_SGI_IP27
-multiline_comment|/* XXX Origin garbage has no business in this file  */
-macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
-macro_line|#endif
 macro_line|#ifndef CONFIG_SMP
 DECL|variable|cpu_data
 r_struct

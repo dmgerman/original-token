@@ -345,6 +345,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|cs-&gt;hw.njet.irqstat0
 op_amp
 id|NETJET_IRQM0_WRITE

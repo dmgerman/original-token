@@ -11085,7 +11085,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* kflushd can wakeup us before we have a chance to&n;&t;   go to sleep so we must be smart in handling&n;&t;   this wakeup event from kflushd to avoid deadlocking in SMP&n;&t;   (we are not holding any lock anymore in these two paths). */
+multiline_comment|/* bdflush can wakeup us before we have a chance to&n;&t;   go to sleep so we must be smart in handling&n;&t;   this wakeup event from bdflush to avoid deadlocking in SMP&n;&t;   (we are not holding any lock anymore in these two paths). */
 id|__set_current_state
 c_func
 (paren
@@ -11616,7 +11616,7 @@ c_func
 (paren
 id|tsk-&gt;comm
 comma
-l_string|&quot;kflushd&quot;
+l_string|&quot;bdflush&quot;
 )paren
 suffix:semicolon
 id|bdflush_tsk

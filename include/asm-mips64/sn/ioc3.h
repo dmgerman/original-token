@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: ioc3.h,v 1.1 2000/01/13 00:17:02 ralf Exp $&n; *&n; * Copyright (C) 1999 Ralf Baechle&n; * This file is part of the Linux driver for the SGI IOC3.&n; */
-macro_line|#ifndef IOC3_H
-DECL|macro|IOC3_H
-mdefine_line|#define IOC3_H
+multiline_comment|/*&n; * Copyright (C) 1999, 2000 Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+macro_line|#ifndef _IOC3_H
+DECL|macro|_IOC3_H
+mdefine_line|#define _IOC3_H
 multiline_comment|/* SUPERIO uart register map */
 DECL|struct|ioc3_uartregs
 r_typedef
@@ -712,12 +712,18 @@ id|u32
 id|micr
 suffix:semicolon
 multiline_comment|/* 0x00148  */
-DECL|member|midr
+DECL|member|midr_r
 r_volatile
 id|u32
-id|midr
+id|midr_r
 suffix:semicolon
 multiline_comment|/* 0x0014c  */
+DECL|member|midr_w
+r_volatile
+id|u32
+id|midr_w
+suffix:semicolon
+multiline_comment|/* 0x00150  */
 DECL|member|pad1
 r_volatile
 id|u32
@@ -726,7 +732,7 @@ id|pad1
 (paren
 l_int|0x20000
 op_minus
-l_int|0x00150
+l_int|0x00154
 )paren
 op_div
 l_int|4
@@ -1578,5 +1584,5 @@ DECL|macro|IOC3_INTA_SUBDEVS
 mdefine_line|#define IOC3_INTA_SUBDEVS&t;IOC3_SDB_ETHER
 DECL|macro|IOC3_INTB_SUBDEVS
 mdefine_line|#define IOC3_INTB_SUBDEVS&t;(IOC3_SDB_GENERIC|IOC3_SDB_KBMS|IOC3_SDB_SERIAL|IOC3_SDB_ECPP|IOC3_SDB_RT)
-macro_line|#endif /* IOC3_H */
+macro_line|#endif /* _IOC3_H */
 eof

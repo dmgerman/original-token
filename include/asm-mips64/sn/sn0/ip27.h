@@ -86,8 +86,6 @@ DECL|macro|CPU_CALL_A_IRQ
 mdefine_line|#define CPU_CALL_A_IRQ&t;&t;2
 DECL|macro|CPU_CALL_B_IRQ
 mdefine_line|#define CPU_CALL_B_IRQ&t;&t;3
-DECL|macro|IOC3_ETH_INT
-mdefine_line|#define IOC3_ETH_INT&t;&t;4
 DECL|macro|BASE_PCI_IRQ
 mdefine_line|#define BASE_PCI_IRQ&t;&t;4
 DECL|macro|SN00_BRIDGE

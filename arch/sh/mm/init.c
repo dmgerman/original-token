@@ -623,10 +623,6 @@ r_void
 r_int
 id|i
 comma
-id|free
-op_assign
-l_int|0
-comma
 id|total
 op_assign
 l_int|0
@@ -718,7 +714,6 @@ r_else
 r_if
 c_cond
 (paren
-op_logical_neg
 id|page_count
 c_func
 (paren
@@ -727,10 +722,6 @@ op_plus
 id|i
 )paren
 )paren
-id|free
-op_increment
-suffix:semicolon
-r_else
 id|shared
 op_add_assign
 id|page_count

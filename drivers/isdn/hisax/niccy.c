@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: niccy.c,v 1.15 2000/11/24 17:05:38 kai Exp $&n; *&n; * niccy.c  low level stuff for Dr. Neuhaus NICCY PnP and NICCY PCI and&n; *          compatible (SAGEM cybermodem)&n; *&n; * Author   Karsten Keil&n; * &n; * Thanks to Dr. Neuhaus and SAGEM for informations&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: niccy.c,v 1.15.6.1 2000/11/28 12:02:46 kai Exp $&n; *&n; * niccy.c  low level stuff for Dr. Neuhaus NICCY PnP and NICCY PCI and&n; *          compatible (SAGEM cybermodem)&n; *&n; * Author   Karsten Keil&n; * &n; * Thanks to Dr. Neuhaus and SAGEM for informations&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -22,7 +22,7 @@ r_char
 op_star
 id|niccy_revision
 op_assign
-l_string|&quot;$Revision: 1.15 $&quot;
+l_string|&quot;$Revision: 1.15.6.1 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -46,14 +46,6 @@ mdefine_line|#define NICCY_PNP&t;1
 DECL|macro|NICCY_PCI
 mdefine_line|#define NICCY_PCI&t;2
 multiline_comment|/* PCI stuff */
-macro_line|#ifndef PCI_VENDOR_ID_SATSAGEM
-DECL|macro|PCI_VENDOR_ID_SATSAGEM
-mdefine_line|#define PCI_VENDOR_ID_SATSAGEM&t;0x1267
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_SATSAGEM_NICCY
-DECL|macro|PCI_DEVICE_ID_SATSAGEM_NICCY
-mdefine_line|#define PCI_DEVICE_ID_SATSAGEM_NICCY&t;0x1016
-macro_line|#endif
 DECL|macro|PCI_IRQ_CTRL_REG
 mdefine_line|#define PCI_IRQ_CTRL_REG&t;0x38
 DECL|macro|PCI_IRQ_ENABLE

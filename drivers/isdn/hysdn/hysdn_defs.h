@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hysdn_defs.h,v 1.5 2000/11/22 17:13:13 kai Exp $&n;&n; * Linux driver for HYSDN cards, global definitions and exported vars and functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* $Id: hysdn_defs.h,v 1.5.6.1 2000/11/28 12:02:47 kai Exp $&n;&n; * Linux driver for HYSDN cards, global definitions and exported vars and functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#ifndef HYSDN_DEFS_H
 DECL|macro|HYSDN_DEFS_H
 mdefine_line|#define HYSDN_DEFS_H
@@ -129,26 +129,6 @@ DECL|macro|PROC_CONF_BASENAME
 mdefine_line|#define PROC_CONF_BASENAME &quot;cardconf&quot;
 DECL|macro|PROC_LOG_BASENAME
 mdefine_line|#define PROC_LOG_BASENAME &quot;cardlog&quot;
-multiline_comment|/************************/
-multiline_comment|/* PCI constant defines */
-multiline_comment|/************************/
-DECL|macro|PCI_VENDOR_ID_HYPERCOPE
-mdefine_line|#define PCI_VENDOR_ID_HYPERCOPE 0x1365
-DECL|macro|PCI_DEVICE_ID_PLX
-mdefine_line|#define PCI_DEVICE_ID_PLX 0x9050&t;/* all DPRAM cards use the same id */
-multiline_comment|/*****************************/
-multiline_comment|/* sub ids determining cards */
-multiline_comment|/*****************************/
-DECL|macro|PCI_SUB_ID_OLD_ERGO
-mdefine_line|#define PCI_SUB_ID_OLD_ERGO 0x0104
-DECL|macro|PCI_SUB_ID_ERGO
-mdefine_line|#define PCI_SUB_ID_ERGO     0x0106
-DECL|macro|PCI_SUB_ID_METRO
-mdefine_line|#define PCI_SUB_ID_METRO    0x0107
-DECL|macro|PCI_SUB_ID_CHAMP2
-mdefine_line|#define PCI_SUB_ID_CHAMP2   0x0108
-DECL|macro|PCI_SUB_ID_PLEXUS
-mdefine_line|#define PCI_SUB_ID_PLEXUS   0x0109
 multiline_comment|/***********************************/
 multiline_comment|/* PCI 32 bit parms for IO and MEM */
 multiline_comment|/***********************************/

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.3 1999/12/04 03:59:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * XXX For now I&squot;m too lazy to fix the string functions, let&squot;s rely on the&n; * generic stuff.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994 - 2000 by Ralf Baechle&n; * Copyright (c) 2000 by Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_STRING_H
 DECL|macro|_ASM_STRING_H
 mdefine_line|#define _ASM_STRING_H
@@ -22,11 +22,47 @@ id|__count
 )paren
 suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMCPY
-macro_line|#undef __HAVE_ARCH_MEMCPY
-singleline_comment|//extern void *memcpy(void *__to, __const__ void *__from, size_t __n);
+mdefine_line|#define __HAVE_ARCH_MEMCPY
+r_extern
+r_void
+op_star
+id|memcpy
+c_func
+(paren
+r_void
+op_star
+id|__to
+comma
+id|__const__
+r_void
+op_star
+id|__from
+comma
+r_int
+id|__n
+)paren
+suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMMOVE
-macro_line|#undef __HAVE_ARCH_MEMMOVE
-singleline_comment|//extern void *memmove(void *__dest, __const__ void *__src, size_t __n);
+mdefine_line|#define __HAVE_ARCH_MEMMOVE
+r_extern
+r_void
+op_star
+id|memmove
+c_func
+(paren
+r_void
+op_star
+id|__dest
+comma
+id|__const__
+r_void
+op_star
+id|__src
+comma
+r_int
+id|__n
+)paren
+suffix:semicolon
 multiline_comment|/* Don&squot;t build bcopy at all ...  */
 DECL|macro|__HAVE_ARCH_BCOPY
 mdefine_line|#define __HAVE_ARCH_BCOPY

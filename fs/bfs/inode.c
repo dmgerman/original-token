@@ -292,11 +292,6 @@ id|inode-&gt;i_ctime
 op_assign
 id|di-&gt;i_ctime
 suffix:semicolon
-id|inode-&gt;i_rdev
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* BFS doesn&squot;t have special nodes */
 id|inode-&gt;iu_dsk_ino
 op_assign
 id|di-&gt;i_ino

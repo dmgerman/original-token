@@ -272,7 +272,7 @@ mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { RW_LOCK_BIAS RWLOCK_MAGIC_INI
 DECL|macro|rwlock_init
 mdefine_line|#define rwlock_init(x)&t;do { *(x) = RW_LOCK_UNLOCKED; } while(0)
 multiline_comment|/*&n; * On x86, we implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;contended&quot; bit.&n; *&n; * The inline assembly is non-obvious. Think about it.&n; *&n; * Changed to use the same technique as rw semaphores.  See&n; * semaphore.h for details.  -ben&n; */
-multiline_comment|/* the spinlock helpers are in arch/i386/kernel/semaphore.S */
+multiline_comment|/* the spinlock helpers are in arch/i386/kernel/semaphore.c */
 DECL|function|read_lock
 r_static
 r_inline

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ip22-int.c,v 1.5 2000/03/02 02:36:50 ralf Exp $&n; *&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - Indigo2 changes&n; */
+multiline_comment|/*&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - Indigo2 changes&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -96,17 +96,6 @@ id|indyIRQ
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-DECL|variable|irq_cannonicalize
-r_int
-(paren
-op_star
-id|irq_cannonicalize
-)paren
-(paren
-r_int
-id|irq
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_REMOTE_DEBUG
@@ -2974,21 +2963,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-DECL|function|indy_irq_cannonicalize
-r_static
-r_int
-id|indy_irq_cannonicalize
-c_func
-(paren
-r_int
-id|irq
-)paren
-(brace
-r_return
-id|irq
-suffix:semicolon
-multiline_comment|/* Sane hardware, sane code ... */
-)brace
 DECL|function|init_IRQ
 r_void
 id|__init
@@ -2998,10 +2972,6 @@ c_func
 r_void
 )paren
 (brace
-id|irq_cannonicalize
-op_assign
-id|indy_irq_cannonicalize
-suffix:semicolon
 id|sgint_init
 c_func
 (paren

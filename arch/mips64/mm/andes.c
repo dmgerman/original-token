@@ -14,9 +14,6 @@ r_static
 r_int
 id|scache_lsz64
 suffix:semicolon
-multiline_comment|/* CP0 hazard avoidance.  I think we can drop this for the R10000.  */
-DECL|macro|BARRIER
-mdefine_line|#define BARRIER __asm__ __volatile__(&quot;.set noreorder&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&t;     &quot;nop; nop; nop; nop; nop; nop;&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&t;     &quot;.set reorder&bslash;n&bslash;t&quot;)
 multiline_comment|/*&n; * This version has been tuned on an Origin.  For other machines the arguments&n; * of the pref instructin may have to be tuned differently.&n; */
 DECL|function|andes_clear_page
 r_static
@@ -358,7 +355,6 @@ DECL|macro|NTLB_ENTRIES
 mdefine_line|#define NTLB_ENTRIES       64
 DECL|macro|NTLB_ENTRIES_HALF
 mdefine_line|#define NTLB_ENTRIES_HALF  32
-multiline_comment|/* TLB operations.&n;   XXX These should work fine on R10k without the BARRIERs.  */
 r_static
 r_inline
 r_void
@@ -423,8 +419,6 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 id|entry
 op_assign
 id|get_wired
@@ -447,21 +441,15 @@ c_func
 id|entry
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 id|tlb_write_indexed
 c_func
 (paren
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 id|entry
 op_increment
 suffix:semicolon
 )brace
-id|BARRIER
-suffix:semicolon
 id|set_entryhi
 c_func
 (paren
@@ -756,14 +744,10 @@ op_lshift
 l_int|1
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 id|tlb_probe
 c_func
 (paren
 )paren
-suffix:semicolon
-id|BARRIER
 suffix:semicolon
 id|idx
 op_assign
@@ -790,8 +774,6 @@ c_func
 id|KSEG0
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -807,8 +789,6 @@ id|tlb_write_indexed
 c_func
 (paren
 )paren
-suffix:semicolon
-id|BARRIER
 suffix:semicolon
 )brace
 id|set_entryhi
@@ -972,14 +952,10 @@ op_or
 id|newpid
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 id|tlb_probe
 c_func
 (paren
 )paren
-suffix:semicolon
-id|BARRIER
 suffix:semicolon
 id|idx
 op_assign
@@ -1018,8 +994,6 @@ r_goto
 id|finish
 suffix:semicolon
 )brace
-id|BARRIER
-suffix:semicolon
 id|tlb_write_indexed
 c_func
 (paren
@@ -1027,8 +1001,6 @@ c_func
 suffix:semicolon
 id|finish
 suffix:colon
-id|BARRIER
-suffix:semicolon
 id|set_entryhi
 c_func
 (paren
@@ -1219,14 +1191,10 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 id|tlb_probe
 c_func
 (paren
 )paren
-suffix:semicolon
-id|BARRIER
 suffix:semicolon
 id|pmdp
 op_assign
@@ -1254,8 +1222,6 @@ id|pmdp
 comma
 id|address
 )paren
-suffix:semicolon
-id|BARRIER
 suffix:semicolon
 id|set_entrylo0
 c_func
@@ -1294,8 +1260,6 @@ id|pid
 )paren
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1318,43 +1282,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|BARRIER
-suffix:semicolon
 id|set_entryhi
 c_func
 (paren
 id|pid
 )paren
 suffix:semicolon
-id|BARRIER
-suffix:semicolon
 id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|andes_user_mode
-id|andes_user_mode
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_return
-(paren
-id|regs-&gt;cp0_status
-op_amp
-id|ST0_KSU
-)paren
-op_eq
-id|KSU_USER
 suffix:semicolon
 )brace
 DECL|function|andes_show_regs
@@ -1772,10 +1710,6 @@ suffix:semicolon
 id|_show_regs
 op_assign
 id|andes_show_regs
-suffix:semicolon
-id|_user_mode
-op_assign
-id|andes_user_mode
 suffix:semicolon
 id|flush_cache_l1
 c_func

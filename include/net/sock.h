@@ -1022,10 +1022,16 @@ id|__u8
 id|pending
 suffix:semicolon
 multiline_comment|/* Scheduled timer event&t;*/
-DECL|member|__empty
+DECL|member|urg_mode
 id|__u8
-id|__empty
+id|urg_mode
 suffix:semicolon
+multiline_comment|/* In urgent mode&t;&t;*/
+DECL|member|snd_up
+id|__u32
+id|snd_up
+suffix:semicolon
+multiline_comment|/* Urgent pointer&t;&t;*/
 multiline_comment|/* The syn_wait_lock is necessary only to avoid tcp_get_info having&n;&t; * to grab the main lock sock while browsing the listening hash&n;&t; * (otherwise it&squot;s deadlock prone).&n;&t; * This lock is acquired in read mode only from tcp_get_info() and&n;&t; * it&squot;s acquired in write mode _only_ from code that is actively&n;&t; * changing the syn_wait_queue. All readers that are holding&n;&t; * the master sock lock don&squot;t need to grab this lock in read mode&n;&t; * too as the syn_wait_queue writes are always protected from&n;&t; * the main sock lock.&n;&t; */
 DECL|member|syn_wait_lock
 id|rwlock_t

@@ -1082,6 +1082,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|interpreter-&gt;f_op
+op_logical_or
+op_logical_neg
 id|interpreter-&gt;f_op-&gt;mmap
 )paren
 r_goto
@@ -1576,6 +1579,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|interpreter-&gt;f_op
+op_logical_or
 op_logical_neg
 id|interpreter-&gt;f_op-&gt;read
 )paren
@@ -3457,6 +3463,9 @@ c_func
 op_amp
 id|elf_ex
 )paren
+op_logical_or
+op_logical_neg
+id|file-&gt;f_op
 op_logical_or
 op_logical_neg
 id|file-&gt;f_op-&gt;mmap

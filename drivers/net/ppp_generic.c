@@ -9458,9 +9458,9 @@ id|dev-&gt;priv
 op_assign
 id|ppp
 suffix:semicolon
-id|dev-&gt;new_style
-op_assign
-l_int|1
+id|dev-&gt;features
+op_or_assign
+id|NETIF_F_DYNALLOC
 suffix:semicolon
 id|rtnl_lock
 c_func

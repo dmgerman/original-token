@@ -1325,9 +1325,9 @@ id|dev-&gt;addr_len
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;new_style
-op_assign
-l_int|1
+id|dev-&gt;features
+op_or_assign
+id|NETIF_F_DYNALLOC
 suffix:semicolon
 multiline_comment|/* dev-&gt;destructor      = irda_device_destructor; */
 id|dev-&gt;type

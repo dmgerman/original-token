@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998-2000  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.1998   0.1   Initial release&n; *    10.05.1998   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                       First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.1998   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                       set_dac_rate in the FMODE_WRITE case in sv_open&n; *                       Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.1998   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.1998   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.1998   0.6   Do not include modversions.h&n; *                       Now mixer behaviour can basically be selected between&n; *                       &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.1998   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.1998   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.1998   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.1999   0.10  remove the silly SA_INTERRUPT flag.&n; *                       hopefully killed the egcs section type conflict&n; *    12.03.1999   0.11  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                       reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.1999   0.12  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                       read/write cannot be executed&n; *    05.04.1999   0.13  added code to sv_read and sv_write which should detect&n; *                       lockups of the sound chip and revive it. This is basically&n; *                       an ugly hack, but at least applications using this driver&n; *                       won&squot;t hang forever. I don&squot;t know why these lockups happen,&n; *                       it might well be the motherboard chipset (an early 486 PCI&n; *                       board with ALI chipset), since every busmastering 100MB&n; *                       ethernet card I&squot;ve tried (Realtek 8139 and Macronix tulip clone)&n; *                       exhibit similar behaviour (they work for a couple of packets&n; *                       and then lock up and can be revived by ifconfig down/up).&n; *    07.04.1999   0.14  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                       SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                       Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                       Note: dmaio hack might still be wrong on archs other than i386&n; *    15.06.1999   0.15  Fix bad allocation bug.&n; *                       Thanks to Deti Fliegl &lt;fliegl@in.tum.de&gt;&n; *    28.06.1999   0.16  Add pci_set_master&n; *    03.08.1999   0.17  adapt to Linus&squot; new __setup/__initcall&n; *                       added kernel command line options &quot;sonicvibes=reverb&quot; and &quot;sonicvibesdmaio=dmaioaddr&quot;&n; *    12.08.1999   0.18  module_init/__setup fixes&n; *    24.08.1999   0.19  get rid of the dmaio kludge, replace with allocate_resource&n; *    31.08.1999   0.20  add spin_lock_init&n; *                       use new resource allocation to allocate DDMA IO space&n; *                       replaced current-&gt;state = x with set_current_state(x)&n; *    03.09.1999   0.21  change read semantics for MIDI to match&n; *                       OSS more closely; remove possible wakeup race&n; *    28.10.1999   0.22  More waitqueue races fixed&n; *    01.12.1999   0.23  New argument to allocate_resource&n; *    07.12.1999   0.24  More allocate_resource semantics change&n; *    08.01.2000   0.25  Prevent some ioctl&squot;s from returning bad count values on underrun/overrun;&n; *                       Tim Janik&squot;s BSE (Bedevilled Sound Engine) found this&n; *                       use Martin Mares&squot; pci_assign_resource&n; *    07.02.2000   0.26  Use pci_alloc_consistent and pci_register_driver&n; *&n; */
+multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998-2000  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.1998   0.1   Initial release&n; *    10.05.1998   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                       First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.1998   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                       set_dac_rate in the FMODE_WRITE case in sv_open&n; *                       Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.1998   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.1998   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.1998   0.6   Do not include modversions.h&n; *                       Now mixer behaviour can basically be selected between&n; *                       &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.1998   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.1998   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.1998   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.1999   0.10  remove the silly SA_INTERRUPT flag.&n; *                       hopefully killed the egcs section type conflict&n; *    12.03.1999   0.11  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                       reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.1999   0.12  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                       read/write cannot be executed&n; *    05.04.1999   0.13  added code to sv_read and sv_write which should detect&n; *                       lockups of the sound chip and revive it. This is basically&n; *                       an ugly hack, but at least applications using this driver&n; *                       won&squot;t hang forever. I don&squot;t know why these lockups happen,&n; *                       it might well be the motherboard chipset (an early 486 PCI&n; *                       board with ALI chipset), since every busmastering 100MB&n; *                       ethernet card I&squot;ve tried (Realtek 8139 and Macronix tulip clone)&n; *                       exhibit similar behaviour (they work for a couple of packets&n; *                       and then lock up and can be revived by ifconfig down/up).&n; *    07.04.1999   0.14  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                       SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                       Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                       Note: dmaio hack might still be wrong on archs other than i386&n; *    15.06.1999   0.15  Fix bad allocation bug.&n; *                       Thanks to Deti Fliegl &lt;fliegl@in.tum.de&gt;&n; *    28.06.1999   0.16  Add pci_set_master&n; *    03.08.1999   0.17  adapt to Linus&squot; new __setup/__initcall&n; *                       added kernel command line options &quot;sonicvibes=reverb&quot; and &quot;sonicvibesdmaio=dmaioaddr&quot;&n; *    12.08.1999   0.18  module_init/__setup fixes&n; *    24.08.1999   0.19  get rid of the dmaio kludge, replace with allocate_resource&n; *    31.08.1999   0.20  add spin_lock_init&n; *                       use new resource allocation to allocate DDMA IO space&n; *                       replaced current-&gt;state = x with set_current_state(x)&n; *    03.09.1999   0.21  change read semantics for MIDI to match&n; *                       OSS more closely; remove possible wakeup race&n; *    28.10.1999   0.22  More waitqueue races fixed&n; *    01.12.1999   0.23  New argument to allocate_resource&n; *    07.12.1999   0.24  More allocate_resource semantics change&n; *    08.01.2000   0.25  Prevent some ioctl&squot;s from returning bad count values on underrun/overrun;&n; *                       Tim Janik&squot;s BSE (Bedevilled Sound Engine) found this&n; *                       use Martin Mares&squot; pci_assign_resource&n; *    07.02.2000   0.26  Use pci_alloc_consistent and pci_register_driver&n; *    21.11.2000   0.27  Initialize dma buffers in poll, otherwise poll may return a bogus mask&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -7649,6 +7649,24 @@ id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;dma_dac.ready
+op_logical_and
+id|prog_dmabuf
+c_func
+(paren
+id|s
+comma
+l_int|1
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|poll_wait
 c_func
 (paren
@@ -7660,6 +7678,7 @@ comma
 id|wait
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -7667,6 +7686,24 @@ id|file-&gt;f_mode
 op_amp
 id|FMODE_READ
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;dma_adc.ready
+op_logical_and
+id|prog_dmabuf
+c_func
+(paren
+id|s
+comma
+l_int|0
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|poll_wait
 c_func
 (paren
@@ -7678,6 +7715,7 @@ comma
 id|wait
 )paren
 suffix:semicolon
+)brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -15276,7 +15314,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;sv: version v0.26 time &quot;
+l_string|&quot;sv: version v0.27 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__

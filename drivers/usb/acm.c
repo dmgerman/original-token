@@ -2234,7 +2234,7 @@ op_ne
 l_int|10
 op_logical_or
 id|ifdata-&gt;bNumEndpoints
-op_ne
+OL
 l_int|2
 )paren
 r_return
@@ -2257,7 +2257,7 @@ op_ne
 l_int|1
 op_logical_or
 id|ifcom-&gt;bNumEndpoints
-op_ne
+OL
 l_int|1
 )paren
 r_return

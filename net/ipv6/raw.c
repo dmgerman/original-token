@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.41 2000/10/18 18:04:23 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.42 2000/11/28 13:38:38 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -3100,13 +3100,6 @@ id|destp
 comma
 id|srcp
 suffix:semicolon
-r_int
-id|sock_timer_active
-suffix:semicolon
-r_int
-r_int
-id|timer_expires
-suffix:semicolon
 id|dest
 op_assign
 op_amp
@@ -3124,33 +3117,6 @@ suffix:semicolon
 id|srcp
 op_assign
 id|sp-&gt;num
-suffix:semicolon
-id|sock_timer_active
-op_assign
-id|timer_pending
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-ques
-c_cond
-l_int|2
-suffix:colon
-l_int|0
-suffix:semicolon
-id|timer_expires
-op_assign
-(paren
-id|sock_timer_active
-op_eq
-l_int|2
-ques
-c_cond
-id|sp-&gt;timer.expires
-suffix:colon
-id|jiffies
-)paren
 suffix:semicolon
 id|sprintf
 c_func
@@ -3222,11 +3188,9 @@ op_amp
 id|sp-&gt;rmem_alloc
 )paren
 comma
-id|sock_timer_active
+l_int|0
 comma
-id|timer_expires
-op_minus
-id|jiffies
+l_int|0L
 comma
 l_int|0
 comma

@@ -404,7 +404,7 @@ r_char
 op_star
 id|isdn_ppp_revision
 op_assign
-l_string|&quot;$Revision: 1.84 $&quot;
+l_string|&quot;$Revision: 1.85 $&quot;
 suffix:semicolon
 DECL|variable|ippp_table
 r_static

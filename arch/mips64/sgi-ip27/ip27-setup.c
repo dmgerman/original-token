@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubni.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 macro_line|#include &lt;asm/sn/klconfig.h&gt;
-macro_line|#include &lt;asm/ioc3.h&gt;
+macro_line|#include &lt;asm/sn/ioc3.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;
 macro_line|#include &lt;asm/sn/sn_private.h&gt;
@@ -283,6 +283,14 @@ id|bus_to_cpu
 l_int|256
 )braket
 suffix:semicolon
+DECL|variable|bus_to_baddr
+r_int
+r_int
+id|bus_to_baddr
+(braket
+l_int|256
+)braket
+suffix:semicolon
 DECL|function|pcibr_setup
 r_void
 id|__init
@@ -299,7 +307,9 @@ comma
 id|start
 comma
 id|num
-comma
+suffix:semicolon
+r_int
+r_int
 id|masterwid
 suffix:semicolon
 id|bridge_t
@@ -326,6 +336,19 @@ id|spinlock_t
 id|pcibr_setup_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+multiline_comment|/*&n;&t; * If the master is doing this for headless node, nothing to do.&n;&t; * This is because currently we require at least one of the hubs&n;&t; * (master hub) connected to the xbow to have at least one enabled &n;&t; * cpu to receive intrs. Else we need an array bus_to_intrnasid[] &n;&t; * that bridge_startup() needs to use to target intrs. All dma is&n;&t; * routed thru the widget of the master hub. The master hub wid&n;&t; * is selectable by WIDGET_A below.&n;&t; */
+r_if
+c_cond
+(paren
+id|nid
+op_ne
+id|get_compact_nodeid
+c_func
+(paren
+)paren
+)paren
+r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * find what&squot;s on our local node&n;&t; */
 id|spin_lock
@@ -443,6 +466,17 @@ l_int|0
 op_assign
 l_int|0
 suffix:semicolon
+id|masterwid
+op_assign
+l_int|0xa
+suffix:semicolon
+id|bus_to_baddr
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0xa100000000000000UL
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -543,7 +577,7 @@ l_string|&quot;argh&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;    * Okay, here&squot;s a xbow. Lets arbitrate and find&n;&t;&t;&t;    * out if we should initialize it. Set hub connected&n;&t;&t;&t;    * at highest or lowest widget as master.&n;&t;&t;&t;    * This algo needs to change a little for headless&n;&t;&t;&t;    * nodes.&n;&t;&t;&t;    */
+multiline_comment|/*&n;&t;&t;&t;    * Okay, here&squot;s a xbow. Lets arbitrate and find&n;&t;&t;&t;    * out if we should initialize it. Set enabled &n;&t;&t;&t;    * hub connected at highest or lowest widget as &n;&t;&t;&t;    * master.&n;&t;&t;&t;    */
 macro_line|#ifdef WIDGET_A
 id|i
 op_assign
@@ -560,6 +594,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 op_logical_neg
 id|XBOW_PORT_TYPE_HUB
 c_func
@@ -567,6 +602,18 @@ c_func
 id|xbow_p
 comma
 id|i
+)paren
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|XBOW_PORT_IS_ENABLED
+c_func
+(paren
+id|xbow_p
+comma
+id|i
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -586,6 +633,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 op_logical_neg
 id|XBOW_PORT_TYPE_HUB
 c_func
@@ -593,6 +641,18 @@ c_func
 id|xbow_p
 comma
 id|i
+)paren
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|XBOW_PORT_IS_ENABLED
+c_func
+(paren
+id|xbow_p
+comma
+id|i
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -717,6 +777,26 @@ id|num_bridges
 op_assign
 id|nasid
 suffix:semicolon
+id|bus_to_baddr
+(braket
+id|num_bridges
+)braket
+op_assign
+(paren
+(paren
+id|masterwid
+op_lshift
+l_int|60
+)paren
+op_or
+(paren
+l_int|1UL
+op_lshift
+l_int|56
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Barrier set */
 id|num_bridges
 op_increment
 suffix:semicolon
@@ -782,6 +862,31 @@ l_int|2
 )braket
 op_assign
 l_int|0
+suffix:semicolon
+id|bus_to_baddr
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0xa100000000000000UL
+suffix:semicolon
+id|bus_to_baddr
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0xa100000000000000UL
+suffix:semicolon
+id|bus_to_baddr
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0xa100000000000000UL
+suffix:semicolon
+id|masterwid
+op_assign
+l_int|0xa
 suffix:semicolon
 id|num_bridges
 op_assign
@@ -899,7 +1004,7 @@ id|bridge-&gt;b_wid_control
 op_or_assign
 id|BRIDGE_CTRL_MEM_SWAP
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Hmm...  IRIX sets additional bits in the address which &n;&t;&t; * are documented as reserved in the bridge docs.&n;&t;&t; * We waste time programming b_wid_int_upper/b_wid_int_lower,&n;&t;&t; * since bridge_startup will set up the widget-&gt;nasid intr&n;&t;&t; * path anyway.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Hmm...  IRIX sets additional bits in the address which &n;&t;&t; * are documented as reserved in the bridge docs.&n;&t;&t; */
 id|bridge-&gt;b_int_mode
 op_assign
 l_int|0x0
@@ -907,16 +1012,26 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t clear ints */
 id|bridge-&gt;b_wid_int_upper
 op_assign
-l_int|0x000a8000
+l_int|0x8000
+op_or
+(paren
+id|masterwid
+op_lshift
+l_int|16
+)paren
 suffix:semicolon
-multiline_comment|/* Ints to widget A */
 id|bridge-&gt;b_wid_int_lower
 op_assign
 l_int|0x01800090
 suffix:semicolon
+multiline_comment|/* PI_INT_PEND_MOD off*/
 id|bridge-&gt;b_dir_map
 op_assign
-l_int|0xa00000
+(paren
+id|masterwid
+op_lshift
+l_int|20
+)paren
 suffix:semicolon
 multiline_comment|/* DMA */
 id|bridge-&gt;b_int_enable
@@ -928,6 +1043,14 @@ suffix:semicolon
 multiline_comment|/* wait until Bridge PIO complete */
 )brace
 )brace
+r_extern
+r_void
+id|ip27_setup_console
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|ip27_setup
 r_void
 id|__init
@@ -944,6 +1067,11 @@ id|hubreg_t
 id|p
 comma
 id|e
+suffix:semicolon
+id|ip27_setup_console
+c_func
+(paren
+)paren
 suffix:semicolon
 id|num_bridges
 op_assign

@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: hysdn_init.c,v 1.6 2000/11/13 22:51:47 kai Exp $&n;&n; * Linux driver for HYSDN cards, init functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* $Id: hysdn_init.c,v 1.6.6.1 2000/11/28 12:02:47 kai Exp $&n;&n; * Linux driver for HYSDN cards, init functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
@@ -13,7 +14,7 @@ r_char
 op_star
 id|hysdn_init_revision
 op_assign
-l_string|&quot;$Revision: 1.6 $&quot;
+l_string|&quot;$Revision: 1.6.6.1 $&quot;
 suffix:semicolon
 DECL|variable|cardmax
 r_int
@@ -53,25 +54,25 @@ id|pci_subid_map
 op_assign
 (brace
 (brace
-id|PCI_SUB_ID_METRO
+id|PCI_SUBDEVICE_ID_HYPERCOPE_METRO
 comma
 id|BD_METRO
 )brace
 comma
 (brace
-id|PCI_SUB_ID_CHAMP2
+id|PCI_SUBDEVICE_ID_HYPERCOPE_CHAMP2
 comma
 id|BD_CHAMP2
 )brace
 comma
 (brace
-id|PCI_SUB_ID_ERGO
+id|PCI_SUBDEVICE_ID_HYPERCOPE_ERGO
 comma
 id|BD_ERGO
 )brace
 comma
 (brace
-id|PCI_SUB_ID_OLD_ERGO
+id|PCI_SUBDEVICE_ID_HYPERCOPE_OLD_ERGO
 comma
 id|BD_ERGO
 )brace
@@ -83,6 +84,69 @@ l_int|0
 )brace
 multiline_comment|/* terminating entry */
 )brace
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_struct
+id|pci_device_id
+id|hysdn_pci_tbl
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+id|PCI_VENDOR_ID_HYPERCOPE
+comma
+id|PCI_DEVICE_ID_HYPERCOPE_PLX
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_SUBDEVICE_ID_HYPERCOPE_METRO
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_HYPERCOPE
+comma
+id|PCI_DEVICE_ID_HYPERCOPE_PLX
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_SUBDEVICE_ID_HYPERCOPE_CHAMP2
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_HYPERCOPE
+comma
+id|PCI_DEVICE_ID_HYPERCOPE_PLX
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_SUBDEVICE_ID_HYPERCOPE_ERGO
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_HYPERCOPE
+comma
+id|PCI_DEVICE_ID_HYPERCOPE_PLX
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_SUBDEVICE_ID_HYPERCOPE_OLD_ERGO
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|hysdn_pci_tbl
+)paren
 suffix:semicolon
 multiline_comment|/*********************************************************************/
 multiline_comment|/* search_cards searches for available cards in the pci config data. */
@@ -134,7 +198,7 @@ c_func
 (paren
 id|PCI_VENDOR_ID_HYPERCOPE
 comma
-id|PCI_DEVICE_ID_PLX
+id|PCI_DEVICE_ID_HYPERCOPE_PLX
 comma
 id|akt_pcidev
 )paren

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * The &quot;user cache&quot;.&n; *&n; * (C) Copyright 1991-2000 Linus Torvalds&n; *&n; * We have a per-user structure to keep track of how many&n; * processes, files etc the user has claimed, in order to be&n; * able to have per-user limits for system resources. &n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -238,14 +237,6 @@ id|up
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * For SMP, we need to re-test the user struct counter&n; * after having acquired the spinlock. This allows us to do&n; * the common case (not freeing anything) without having&n; * any locking.&n; */
-macro_line|#ifdef CONFIG_SMP
-DECL|macro|uid_hash_free
-mdefine_line|#define uid_hash_free(up)&t;(!atomic_read(&amp;(up)-&gt;__count))
-macro_line|#else
-DECL|macro|uid_hash_free
-mdefine_line|#define uid_hash_free(up)&t;(1)
-macro_line|#endif
 DECL|function|free_uid
 r_void
 id|free_uid
@@ -261,33 +252,15 @@ r_if
 c_cond
 (paren
 id|up
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|atomic_dec_and_test
+op_logical_and
+id|atomic_dec_and_lock
 c_func
 (paren
 op_amp
 id|up-&gt;__count
-)paren
-)paren
-(brace
-id|spin_lock
-c_func
-(paren
+comma
 op_amp
 id|uidhash_lock
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|uid_hash_free
-c_func
-(paren
-id|up
 )paren
 )paren
 (brace
@@ -305,7 +278,6 @@ comma
 id|up
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 c_func
 (paren
@@ -313,7 +285,6 @@ op_amp
 id|uidhash_lock
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|alloc_uid

@@ -710,7 +710,11 @@ op_ne
 id|NETDEV_DOWN
 op_logical_and
 op_logical_neg
-id|dev-&gt;new_style
+(paren
+id|dev-&gt;features
+op_amp
+id|NETIF_F_DYNALLOC
+)paren
 op_logical_and
 id|dst-&gt;output
 op_eq

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.67 2000/07/30 23:12:24 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999,2000 Jakub Jelinek (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: traps.c,v 1.68 2000/11/22 06:50:37 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997,1999,2000 Jakub Jelinek (jakub@redhat.com)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -3465,7 +3465,7 @@ op_assign
 id|FPE_FLTRES
 suffix:semicolon
 )brace
-id|send_sig_info
+id|force_sig_info
 c_func
 (paren
 id|SIGFPE
@@ -3670,7 +3670,7 @@ id|info.si_trapno
 op_assign
 l_int|0
 suffix:semicolon
-id|send_sig_info
+id|force_sig_info
 c_func
 (paren
 id|SIGEMT
@@ -3720,7 +3720,7 @@ id|info.si_trapno
 op_assign
 l_int|0
 suffix:semicolon
-id|send_sig_info
+id|force_sig_info
 c_func
 (paren
 id|SIGFPE
@@ -4374,7 +4374,7 @@ id|info.si_trapno
 op_assign
 l_int|0
 suffix:semicolon
-id|send_sig_info
+id|force_sig_info
 c_func
 (paren
 id|SIGILL
@@ -4485,7 +4485,7 @@ id|info.si_trapno
 op_assign
 l_int|0
 suffix:semicolon
-id|send_sig_info
+id|force_sig_info
 c_func
 (paren
 id|SIGBUS
@@ -4535,7 +4535,7 @@ id|info.si_trapno
 op_assign
 l_int|0
 suffix:semicolon
-id|send_sig_info
+id|force_sig_info
 c_func
 (paren
 id|SIGILL

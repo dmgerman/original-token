@@ -1452,7 +1452,7 @@ DECL|macro|swp_entry_to_pte
 mdefine_line|#define swp_entry_to_pte(x)&t;((pte_t) { (x).val })
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
-mdefine_line|#define PageSkip(page)&t;&t;test_bit(PG_skip, &amp;(page)-&gt;flags)
+mdefine_line|#define PageSkip(page)&t;&t;(0)
 macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|macro|kern_addr_valid
 mdefine_line|#define kern_addr_valid(addr)&t;(1)
@@ -1908,6 +1908,39 @@ l_string|&quot;r&quot;
 id|val
 )paren
 )paren
+suffix:semicolon
+)brace
+DECL|function|get_info
+r_extern
+r_inline
+r_int
+r_int
+id|get_info
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;.set push&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $7&bslash;n&bslash;t&quot;
+l_string|&quot;.set pop&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
 suffix:semicolon
 )brace
 multiline_comment|/* CP0_TAGLO and CP0_TAGHI registers */

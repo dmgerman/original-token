@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.50 2000/07/07 22:29:42 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; *&t;&t;Alexey Kuznetsov:&t;SMP races, threading, cleanup.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.52 2000/11/28 13:32:54 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; *&t;&t;Alexey Kuznetsov:&t;SMP races, threading, cleanup.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -33,6 +33,7 @@ l_int|192
 op_star
 l_int|1024
 suffix:semicolon
+multiline_comment|/* Important NOTE! Fragment queue must be destroyed before MSL expires.&n; * RFC791 is wrong proposing to prolongate timer each fragment arrival by TTL.&n; */
 DECL|variable|sysctl_ipfrag_time
 r_int
 id|sysctl_ipfrag_time
@@ -983,6 +984,28 @@ id|qp
 op_assign
 id|qp_in
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mod_timer
+c_func
+(paren
+op_amp
+id|qp-&gt;timer
+comma
+id|jiffies
+op_plus
+id|sysctl_ipfrag_time
+)paren
+)paren
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|qp-&gt;refcnt
+)paren
+suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -1362,28 +1385,6 @@ id|COMPLETE
 )paren
 r_goto
 id|err
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|mod_timer
-c_func
-(paren
-op_amp
-id|qp-&gt;timer
-comma
-id|jiffies
-op_plus
-id|sysctl_ipfrag_time
-)paren
-)paren
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|qp-&gt;refcnt
-)paren
 suffix:semicolon
 id|offset
 op_assign
@@ -2067,7 +2068,7 @@ id|CHECKSUM_HW
 )paren
 id|skb-&gt;csum
 op_assign
-id|csum_chain
+id|csum_add
 c_func
 (paren
 id|skb-&gt;csum

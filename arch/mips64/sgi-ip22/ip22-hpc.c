@@ -5,6 +5,7 @@ macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
 macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 DECL|macro|DEBUG_SGIHPC
 macro_line|#undef DEBUG_SGIHPC
 DECL|variable|hpc3c0
@@ -176,6 +177,10 @@ id|sgi_guiness
 op_assign
 l_int|1
 suffix:semicolon
+id|mips_machtype
+op_assign
+id|MACH_SGI_INDY
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -187,6 +192,10 @@ l_string|&quot;FULLHOUSE &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|mips_machtype
+op_assign
+id|MACH_SGI_INDIGO2
+suffix:semicolon
 id|sgi_guiness
 op_assign
 l_int|0

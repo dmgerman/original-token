@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.3 1999/08/20 21:59:08 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994 - 1999  Ralf Baechle (ralf@gnu.org)&n; * Copyright (c) 1999  Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 95, 96, 97, 98, 99, 2000  Ralf Baechle&n; * Copyright (c) 1999, 2000  Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_BITOPS_H
 DECL|macro|_ASM_BITOPS_H
 mdefine_line|#define _ASM_BITOPS_H
@@ -10,6 +10,11 @@ macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sgidefs.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
+multiline_comment|/*&n; * clear_bit() doesn&squot;t provide any barrier for the compiler.&n; */
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;barrier()
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;barrier()
 multiline_comment|/*&n; * These functions for MIPS ISA &gt; 1 are interrupt and SMP proof and&n; * interrupt friendly&n; */
 r_extern
 id|__inline__
@@ -22,6 +27,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -87,6 +93,57 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* WARNING: non atomic and it can be reordered! */
+DECL|function|__set_bit
+r_extern
+id|__inline__
+r_void
+id|__set_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+op_star
+id|m
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|addr
+)paren
+op_plus
+(paren
+id|nr
+op_rshift
+l_int|6
+)paren
+suffix:semicolon
+op_star
+id|m
+op_or_assign
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|0x3f
 )paren
 suffix:semicolon
 )brace
@@ -101,6 +158,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -183,6 +241,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -263,6 +322,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -338,12 +398,78 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
 id|res
 op_ne
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|__test_and_set_bit
+r_extern
+id|__inline__
+r_int
+id|__test_and_set_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+id|mask
+comma
+id|retval
+suffix:semicolon
+r_volatile
+r_int
+op_star
+id|a
+op_assign
+id|addr
+suffix:semicolon
+id|a
+op_add_assign
+id|nr
+op_rshift
+l_int|6
+suffix:semicolon
+id|mask
+op_assign
+l_int|1
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|0x3f
+)paren
+suffix:semicolon
+id|retval
+op_assign
+(paren
+id|mask
+op_amp
+op_star
+id|a
+)paren
+op_ne
+l_int|0
+suffix:semicolon
+op_star
+id|a
+op_or_assign
+id|mask
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 r_extern
@@ -358,6 +484,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -434,12 +561,79 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
 id|res
 op_ne
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|__test_and_clear_bit
+r_extern
+id|__inline__
+r_int
+id|__test_and_clear_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+id|mask
+comma
+id|retval
+suffix:semicolon
+r_volatile
+r_int
+op_star
+id|a
+op_assign
+id|addr
+suffix:semicolon
+id|a
+op_add_assign
+id|nr
+op_rshift
+l_int|6
+suffix:semicolon
+id|mask
+op_assign
+l_int|1
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|0x3f
+)paren
+suffix:semicolon
+id|retval
+op_assign
+(paren
+id|mask
+op_amp
+op_star
+id|a
+)paren
+op_ne
+l_int|0
+suffix:semicolon
+op_star
+id|a
+op_and_assign
+op_complement
+id|mask
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 r_extern
@@ -454,6 +648,7 @@ r_int
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -529,6 +724,8 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -629,9 +826,6 @@ l_string|&quot;beq&bslash;t%1,$1,1b&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;subu&bslash;t%0,32&bslash;n&bslash;t&quot;
 macro_line|#endif
-macro_line|#ifdef __MIPSEB__
-macro_line|#error &quot;Fix this for big endian&quot;
-macro_line|#endif /* __MIPSEB__ */
 l_string|&quot;li&bslash;t%1,1&bslash;n&quot;
 l_string|&quot;1:&bslash;tand&bslash;t%2,$1,%1&bslash;n&bslash;t&quot;
 l_string|&quot;beqz&bslash;t%2,2f&bslash;n&bslash;t&quot;
@@ -753,9 +947,6 @@ id|bit
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Look for zero in first byte&n;&t;&t; */
-macro_line|#ifdef __MIPSEB__
-macro_line|#error &quot;Fix this for big endian byte order&quot;
-macro_line|#endif
 id|__asm__
 c_func
 (paren

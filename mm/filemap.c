@@ -5265,9 +5265,6 @@ op_star
 id|file
 )paren
 (brace
-r_int
-id|retval
-op_assign
 id|filemap_write_page
 c_func
 (paren
@@ -5285,8 +5282,9 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|retval
+l_int|1
 suffix:semicolon
+multiline_comment|/* We might have slept */
 )brace
 multiline_comment|/* Called with mm-&gt;page_table_lock held to protect against other&n; * threads/the swapper from ripping pte&squot;s out from under us.&n; */
 DECL|function|filemap_sync_pte

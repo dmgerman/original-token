@@ -1,10 +1,8 @@
-multiline_comment|/* $Id$&n; *&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1999 by Ralf Baechle&n; */
+multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1999, 2000 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_ATOMIC_H
 DECL|macro|_ASM_ATOMIC_H
 mdefine_line|#define _ASM_ATOMIC_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sgidefs.h&gt;
-macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
@@ -17,19 +15,6 @@ suffix:semicolon
 )brace
 id|atomic_t
 suffix:semicolon
-macro_line|#else
-DECL|member|counter
-DECL|typedef|atomic_t
-r_typedef
-r_struct
-(brace
-r_int
-id|counter
-suffix:semicolon
-)brace
-id|atomic_t
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef __KERNEL__
 DECL|macro|ATOMIC_INIT
 mdefine_line|#define ATOMIC_INIT(i)    { (i) }
@@ -37,9 +22,6 @@ DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;((v)-&gt;counter)
 DECL|macro|atomic_set
 mdefine_line|#define atomic_set(v,i)&t;((v)-&gt;counter = (i))
-multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
-DECL|macro|__atomic_fool_gcc
-mdefine_line|#define __atomic_fool_gcc(x) (*(volatile struct { int a[100]; } *)x)
 DECL|function|atomic_add
 r_extern
 id|__inline__
@@ -64,7 +46,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&bslash;tll&bslash;t%0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tll&bslash;t%0,%1&bslash;t&bslash;t&bslash;t# atomic_add&bslash;n&bslash;t&quot;
 l_string|&quot;addu&bslash;t%0,%2&bslash;n&bslash;t&quot;
 l_string|&quot;sc&bslash;t%0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;beqz&bslash;t%0,1b&quot;
@@ -76,11 +58,7 @@ id|temp
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;Ir&quot;
@@ -90,11 +68,7 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 )paren
 suffix:semicolon
@@ -123,7 +97,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&bslash;tll&bslash;t%0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tll&bslash;t%0,%1&bslash;t&bslash;t&bslash;t# atomic_sub&bslash;n&bslash;t&quot;
 l_string|&quot;subu&bslash;t%0,%2&bslash;n&bslash;t&quot;
 l_string|&quot;sc&bslash;t%0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;beqz&bslash;t%0,1b&quot;
@@ -135,11 +109,7 @@ id|temp
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;Ir&quot;
@@ -149,11 +119,7 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 )paren
 suffix:semicolon
@@ -184,7 +150,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&quot;
+l_string|&quot;.set&bslash;tnoreorder&bslash;t&bslash;t&bslash;t# atomic_add_return&bslash;n&quot;
 l_string|&quot;1:&bslash;tll&bslash;t%1,%2&bslash;n&bslash;t&quot;
 l_string|&quot;addu&bslash;t%0,%1,%3&bslash;n&bslash;t&quot;
 l_string|&quot;sc&bslash;t%0,%2&bslash;n&bslash;t&quot;
@@ -204,11 +170,7 @@ id|temp
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;Ir&quot;
@@ -218,12 +180,10 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
+id|v-&gt;counter
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -255,7 +215,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&quot;
+l_string|&quot;.set&bslash;tnoreorder&bslash;t&bslash;t&bslash;t# atomic_sub_return&bslash;n&quot;
 l_string|&quot;1:&bslash;tll&bslash;t%1,%2&bslash;n&bslash;t&quot;
 l_string|&quot;subu&bslash;t%0,%1,%3&bslash;n&bslash;t&quot;
 l_string|&quot;sc&bslash;t%0,%2&bslash;n&bslash;t&quot;
@@ -275,11 +235,7 @@ id|temp
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;Ir&quot;
@@ -289,12 +245,10 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
+id|v-&gt;counter
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return

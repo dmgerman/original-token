@@ -12,7 +12,6 @@ l_int|1024
 suffix:semicolon
 DECL|function|prom_printf
 r_void
-id|__init
 id|prom_printf
 c_func
 (paren

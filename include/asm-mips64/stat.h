@@ -79,15 +79,13 @@ DECL|member|st_blocks
 r_int
 id|st_blocks
 suffix:semicolon
-DECL|member|st_flags
+DECL|member|st_unused
 r_int
 r_int
-id|st_flags
-suffix:semicolon
-DECL|member|st_gen
-r_int
-r_int
-id|st_gen
+id|st_unused
+(braket
+l_int|2
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -177,30 +175,12 @@ DECL|member|st_blocks
 r_int
 id|st_blocks
 suffix:semicolon
-DECL|member|st_fstype
-r_char
-id|st_fstype
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* Filesystem type name */
 DECL|member|st_pad4
 r_int
 id|st_pad4
 (braket
-l_int|8
+l_int|14
 )braket
-suffix:semicolon
-DECL|member|st_flags
-r_int
-r_int
-id|st_flags
-suffix:semicolon
-DECL|member|st_gen
-r_int
-r_int
-id|st_gen
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -223,7 +203,8 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* Reserved for st_dev expansion  */
 DECL|member|st_ino
-id|ino_t
+r_int
+r_int
 id|st_ino
 suffix:semicolon
 DECL|member|st_mode
@@ -261,7 +242,8 @@ id|st_size
 suffix:semicolon
 multiline_comment|/*&n;&t; * Actually this should be timestruc_t st_atime, st_mtime and st_ctime&n;&t; * but we don&squot;t have it under Linux.&n;&t; */
 DECL|member|st_atime
-id|time_t
+r_int
+r_int
 id|st_atime
 suffix:semicolon
 DECL|member|reserved0
@@ -271,7 +253,8 @@ id|reserved0
 suffix:semicolon
 multiline_comment|/* Reserved for st_atime expansion  */
 DECL|member|st_mtime
-id|time_t
+r_int
+r_int
 id|st_mtime
 suffix:semicolon
 DECL|member|reserved1
@@ -279,9 +262,10 @@ r_int
 r_int
 id|reserved1
 suffix:semicolon
-multiline_comment|/* Reserved for st_atime expansion  */
+multiline_comment|/* Reserved for st_mtime expansion  */
 DECL|member|st_ctime
-id|time_t
+r_int
+r_int
 id|st_ctime
 suffix:semicolon
 DECL|member|reserved2
@@ -289,11 +273,16 @@ r_int
 r_int
 id|reserved2
 suffix:semicolon
-multiline_comment|/* Reserved for st_atime expansion  */
+multiline_comment|/* Reserved for st_ctime expansion  */
 DECL|member|st_blksize
 r_int
 r_int
 id|st_blksize
+suffix:semicolon
+DECL|member|st_pad2
+r_int
+r_int
+id|st_pad2
 suffix:semicolon
 DECL|member|st_blocks
 r_int

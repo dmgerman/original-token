@@ -2010,7 +2010,7 @@ suffix:semicolon
 r_int
 id|shrink
 op_assign
-l_int|1
+l_int|8
 suffix:semicolon
 multiline_comment|/* Number of times we should try to shrink dcache and icache */
 id|repeat
@@ -6685,10 +6685,15 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|f-&gt;f_op
+op_logical_or
+(paren
+op_logical_neg
 id|f-&gt;f_op-&gt;read
 op_logical_and
 op_logical_neg
 id|f-&gt;f_op-&gt;write
+)paren
 )paren
 r_goto
 id|out_f

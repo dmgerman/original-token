@@ -1412,12 +1412,10 @@ c_func
 r_struct
 id|page
 op_star
-id|page
 comma
 r_struct
 id|file
 op_star
-id|file
 )paren
 suffix:semicolon
 r_extern
@@ -1428,18 +1426,14 @@ c_func
 r_struct
 id|vm_area_struct
 op_star
-id|vma
 comma
 r_int
 r_int
-id|address
 comma
 r_int
-id|size
 comma
 r_int
 r_int
-id|flags
 )paren
 suffix:semicolon
 r_extern
@@ -1452,14 +1446,11 @@ c_func
 r_struct
 id|vm_area_struct
 op_star
-id|area
 comma
 r_int
 r_int
-id|address
 comma
 r_int
-id|no_share
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * GFP bitmasks..&n; */

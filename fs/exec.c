@@ -2497,6 +2497,17 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|bprm-&gt;file-&gt;f_op
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
 id|bprm-&gt;e_uid
 op_assign
 id|current-&gt;euid

@@ -2119,9 +2119,6 @@ r_struct
 id|list_head
 op_star
 id|head
-op_assign
-op_amp
-id|q-&gt;queue_head
 suffix:semicolon
 r_int
 id|latency
@@ -2245,6 +2242,11 @@ id|io_request_lock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * skip first entry, for devices with active queue head&n;&t; */
+id|head
+op_assign
+op_amp
+id|q-&gt;queue_head
+suffix:semicolon
 r_if
 c_cond
 (paren

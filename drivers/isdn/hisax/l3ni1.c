@@ -1,15 +1,20 @@
-singleline_comment|// $Id: l3ni1.c,v 2.3 2000/06/26 08:59:14 keil Exp $
+singleline_comment|// $Id: l3ni1.c,v 2.5 2000/11/19 17:02:48 kai Exp $
+singleline_comment|//
 singleline_comment|//-----------------------------------------------------------------------------
 singleline_comment|//
 singleline_comment|// NI1 D-channel protocol
 singleline_comment|//
-singleline_comment|// Author                Matt Henderson &amp; Guy Ellis - Traverse Tecnologies Pty Ltd
-singleline_comment|//                                www.traverse.com.au
+singleline_comment|// Authors:
+singleline_comment|// Matt Henderson &amp; Guy Ellis - Traverse Tecnologies Pty Ltd
+singleline_comment|// www.traverse.com.au
 singleline_comment|//
 singleline_comment|// 2000.6.6 Initial implementation of routines for US NI1 
 singleline_comment|// Layer 3 protocol based on the EURO/DSS1 D-channel protocol 
-singleline_comment|// driver written by Karsten Keil et al.  Thanks also for the 
-singleline_comment|// code provided by Ragnar Paulson and Will Scales.
+singleline_comment|// driver written by Karsten Keil et al.  
+singleline_comment|// NI-1 Hall of Fame - Thanks to.... 
+singleline_comment|// Ragnar Paulson - for some handy code fragments
+singleline_comment|// Will Scales - beta tester extraordinaire
+singleline_comment|// Brett Whittacre - beta tester and remote devel system in Vegas
 singleline_comment|//
 singleline_comment|// This file is (c) under GNU PUBLIC LICENSE
 singleline_comment|//
@@ -20,6 +25,7 @@ macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl3.h&quot;
 macro_line|#include &quot;l3ni1.h&quot;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_char
 op_star
@@ -38,7 +44,7 @@ r_char
 op_star
 id|ni1_revision
 op_assign
-l_string|&quot;$Revision: 2.3 $&quot;
+l_string|&quot;$Revision: 2.5 $&quot;
 suffix:semicolon
 DECL|macro|EXT_BEARER_CAPS
 mdefine_line|#define EXT_BEARER_CAPS 1

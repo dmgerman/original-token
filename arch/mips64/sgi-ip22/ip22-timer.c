@@ -985,17 +985,22 @@ op_assign
 op_star
 id|tv
 suffix:semicolon
-id|time_state
+id|time_adjust
 op_assign
-id|TIME_BAD
+l_int|0
+suffix:semicolon
+multiline_comment|/* stop active adjtime() */
+id|time_status
+op_or_assign
+id|STA_UNSYNC
 suffix:semicolon
 id|time_maxerror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|time_esterror
 op_assign
-id|MAXPHASE
+id|NTP_PHASE_LIMIT
 suffix:semicolon
 id|write_unlock_irq
 c_func

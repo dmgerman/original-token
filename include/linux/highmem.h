@@ -26,18 +26,6 @@ r_void
 suffix:semicolon
 r_extern
 r_struct
-id|page
-op_star
-id|replace_with_highmem
-c_func
-(paren
-r_struct
-id|page
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_struct
 id|buffer_head
 op_star
 id|create_bounce
@@ -116,8 +104,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|macro|replace_with_highmem
-mdefine_line|#define replace_with_highmem(page) page
 DECL|function|kmap
 r_static
 r_inline

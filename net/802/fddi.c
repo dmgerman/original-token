@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;FDDI-type device handling.&n; *&n; * Version:&t;@(#)fddi.c&t;1.0.0&t;08/12/96&n; *&n; * Authors:&t;Lawrence V. Stefani, &lt;stefani@lkg.dec.com&gt;&n; *&n; *&t;&t;fddi.c is based on previous eth.c and tr.c work by&n; *&t;&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes&n; *&t;&t;Alan Cox&t;:&t;New arp/rebuild header&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;FDDI-type device handling.&n; *&n; * Version:&t;@(#)fddi.c&t;1.0.0&t;08/12/96&n; *&n; * Authors:&t;Lawrence V. Stefani, &lt;stefani@lkg.dec.com&gt;&n; *&n; *&t;&t;fddi.c is based on previous eth.c and tr.c work by&n; *&t;&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Changes&n; *&t;&t;Alan Cox&t;&t;:&t;New arp/rebuild header&n; *&t;&t;Maciej W. Rozycki&t;:&t;IPv6 support&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -68,6 +68,10 @@ id|ETH_P_IP
 op_logical_and
 id|type
 op_ne
+id|ETH_P_IPV6
+op_logical_and
+id|type
+op_ne
 id|ETH_P_ARP
 )paren
 (brace
@@ -103,6 +107,10 @@ c_cond
 id|type
 op_eq
 id|ETH_P_IP
+op_logical_or
+id|type
+op_eq
+id|ETH_P_IPV6
 op_logical_or
 id|type
 op_eq

@@ -117,6 +117,10 @@ id|if_node
 id|IPX_NODE_LEN
 )braket
 suffix:semicolon
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
+suffix:semicolon
 multiline_comment|/* physical device info */
 DECL|member|if_dev
 r_struct
@@ -146,6 +150,10 @@ r_struct
 id|sock
 op_star
 id|if_sklist
+suffix:semicolon
+DECL|member|if_sklist_lock
+id|spinlock_t
+id|if_sklist_lock
 suffix:semicolon
 multiline_comment|/* administrative overhead */
 DECL|member|if_ipx_offset
