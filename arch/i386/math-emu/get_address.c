@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  get_address.c                                                            |&n; |                                                                           |&n; | Get the effective address from an FPU instruction.                        |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  get_address.c                                                            |&n; |                                                                           |&n; | Get the effective address from an FPU instruction.                        |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1997                                         |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@suburbia.net             |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -82,7 +82,7 @@ id|___edi
 )brace
 suffix:semicolon
 DECL|macro|REG_
-mdefine_line|#define REG_(x) (*(long *)(reg_offset[(x)]+(char *) FPU_info))
+mdefine_line|#define REG_(x) (*(long *)(reg_offset[(x)]+(u_char *) FPU_info))
 DECL|variable|reg_offset_vm86
 r_static
 r_int
@@ -149,7 +149,7 @@ id|___vm86_ds
 )brace
 suffix:semicolon
 DECL|macro|VM86_REG_
-mdefine_line|#define VM86_REG_(x) (*(unsigned short *) &bslash;&n;&t;&t;      (reg_offset_vm86[((unsigned)x)]+(char *) FPU_info))
+mdefine_line|#define VM86_REG_(x) (*(unsigned short *) &bslash;&n;&t;&t;      (reg_offset_vm86[((unsigned)x)]+(u_char *) FPU_info))
 multiline_comment|/* These are dummy, fs and gs are not saved on the stack. */
 DECL|macro|___FS
 mdefine_line|#define ___FS ___ds
@@ -221,7 +221,7 @@ id|___ds
 )brace
 suffix:semicolon
 DECL|macro|PM_REG_
-mdefine_line|#define PM_REG_(x) (*(unsigned short *) &bslash;&n;&t;&t;      (reg_offset_pm[((unsigned)x)]+(char *) FPU_info))
+mdefine_line|#define PM_REG_(x) (*(unsigned short *) &bslash;&n;&t;&t;      (reg_offset_pm[((unsigned)x)]+(u_char *) FPU_info))
 multiline_comment|/* Decode the SIB byte. This function assumes mod != 0 */
 DECL|function|sib
 r_static
@@ -238,8 +238,7 @@ op_star
 id|fpu_eip
 )paren
 (brace
-r_int
-r_char
+id|u_char
 id|ss
 comma
 id|index
@@ -257,14 +256,13 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|base
 comma
 (paren
-r_int
-r_char
+id|u_char
 op_star
 )paren
 (paren
@@ -388,7 +386,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|displacement
@@ -443,13 +441,12 @@ c_func
 l_int|4
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|displacement
 comma
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -484,8 +481,7 @@ r_int
 id|vm86_segment
 c_func
 (paren
-r_int
-r_char
+id|u_char
 id|segment
 comma
 r_int
@@ -554,12 +550,10 @@ r_int
 id|pm_address
 c_func
 (paren
-r_int
-r_char
+id|u_char
 id|FPU_modrm
 comma
-r_int
-r_char
+id|u_char
 id|segment
 comma
 r_int
@@ -888,14 +882,13 @@ id|address
 suffix:semicolon
 )brace
 multiline_comment|/*&n;       MOD R/M byte:  MOD == 3 has a special use for the FPU&n;                      SIB byte used iff R/M = 100b&n;&n;       7   6   5   4   3   2   1   0&n;       .....   .........   .........&n;        MOD    OPCODE(2)     R/M&n;&n;&n;       SIB byte&n;&n;       7   6   5   4   3   2   1   0&n;       .....   .........   .........&n;        SS      INDEX        BASE&n;&n;*/
-DECL|function|get_address
+DECL|function|FPU_get_address
 r_void
 op_star
-id|get_address
+id|FPU_get_address
 c_func
 (paren
-r_int
-r_char
+id|u_char
 id|FPU_modrm
 comma
 r_int
@@ -908,13 +901,11 @@ id|address
 op_star
 id|addr
 comma
-multiline_comment|/*&t;&t;  unsigned short *selector, unsigned long *offset, */
 id|fpu_addr_modes
 id|addr_modes
 )paren
 (brace
-r_int
-r_char
+id|u_char
 id|mod
 suffix:semicolon
 r_int
@@ -1038,7 +1029,7 @@ c_func
 l_int|4
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|address
@@ -1107,7 +1098,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|address
@@ -1145,7 +1136,7 @@ c_func
 l_int|4
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|address
@@ -1275,14 +1266,13 @@ op_star
 id|address
 suffix:semicolon
 )brace
-DECL|function|get_address_16
+DECL|function|FPU_get_address_16
 r_void
 op_star
-id|get_address_16
+id|FPU_get_address_16
 c_func
 (paren
-r_int
-r_char
+id|u_char
 id|FPU_modrm
 comma
 r_int
@@ -1295,13 +1285,11 @@ id|address
 op_star
 id|addr
 comma
-multiline_comment|/*&t;&t;     unsigned short *selector, unsigned long *offset, */
 id|fpu_addr_modes
 id|addr_modes
 )paren
 (brace
-r_int
-r_char
+id|u_char
 id|mod
 suffix:semicolon
 r_int
@@ -1387,7 +1375,7 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|address
@@ -1430,7 +1418,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|address
@@ -1468,7 +1456,7 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
-id|get_user
+id|FPU_get_user
 c_func
 (paren
 id|address

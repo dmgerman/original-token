@@ -56,7 +56,7 @@ comma
 id|byte
 id|pio
 )paren
-multiline_comment|/* Store values into drive-&gt;timing_data&n; *&t;second_contr - 0 for primary controller, 1 for secondary&n; *&t;slave_drive - 0 -&gt; pio is for master, 1 -&gt; pio is for slave&n; *&t;pio - PIO mode for selected drive (for other we don&squot;t know)&n; */
+multiline_comment|/* Store values into drive-&gt;drive_data&n; *&t;second_contr - 0 for primary controller, 1 for secondary&n; *&t;slave_drive - 0 -&gt; pio is for master, 1 -&gt; pio is for slave&n; *&t;pio - PIO mode for selected drive (for other we don&squot;t know)&n; */
 (brace
 r_int
 id|d
@@ -71,7 +71,7 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-id|drive-&gt;timing_data
+id|drive-&gt;drive_data
 op_assign
 id|ide_get_best_pio_mode
 c_func
@@ -117,11 +117,11 @@ id|drive-&gt;present
 r_if
 c_cond
 (paren
-id|drive-&gt;timing_data
+id|drive-&gt;drive_data
 op_eq
 id|PIO_DONT_KNOW
 )paren
-id|drive-&gt;timing_data
+id|drive-&gt;drive_data
 op_assign
 id|ide_get_best_pio_mode
 c_func
@@ -143,14 +143,14 @@ l_string|&quot;%s: Selected PIO mode %d&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
-id|drive-&gt;timing_data
+id|drive-&gt;drive_data
 )paren
 suffix:semicolon
 macro_line|#endif
 )brace
 r_else
 (brace
-id|drive-&gt;timing_data
+id|drive-&gt;drive_data
 op_assign
 id|PIO_NOT_EXIST
 suffix:semicolon
@@ -561,7 +561,7 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-multiline_comment|/* set drive-&gt;timing_data for both drives */
+multiline_comment|/* set drive-&gt;drive_data for both drives */
 id|compute_pios
 c_func
 (paren
@@ -577,7 +577,7 @@ id|hwif-&gt;drives
 l_int|0
 )braket
 dot
-id|timing_data
+id|drive_data
 suffix:semicolon
 id|pio2
 op_assign
@@ -586,7 +586,7 @@ id|hwif-&gt;drives
 l_int|1
 )braket
 dot
-id|timing_data
+id|drive_data
 suffix:semicolon
 id|compute_clocks
 c_func
@@ -865,17 +865,11 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ide_init_opti621() is Called from idedma.c once for each hwif found at boot.&n; */
+multiline_comment|/*&n; * ide_init_opti621() is called once for each hwif found at boot.&n; */
 DECL|function|ide_init_opti621
 r_void
 id|ide_init_opti621
 (paren
-id|byte
-id|bus
-comma
-id|byte
-id|fn
-comma
 id|ide_hwif_t
 op_star
 id|hwif
@@ -886,7 +880,7 @@ id|hwif-&gt;drives
 l_int|0
 )braket
 dot
-id|timing_data
+id|drive_data
 op_assign
 id|PIO_DONT_KNOW
 suffix:semicolon
@@ -895,7 +889,7 @@ id|hwif-&gt;drives
 l_int|1
 )braket
 dot
-id|timing_data
+id|drive_data
 op_assign
 id|PIO_DONT_KNOW
 suffix:semicolon

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.28 1997/11/05 20:20:43 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; */
+multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.30 1997/12/09 17:12:47 freitag Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; *&t;Andi Kleen&t;&t;&t;:&t;kill doube kfree on module&n; *&t;&t;&t;&t;&t;&t;unload.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -4284,6 +4284,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;addrconf_ifdown: invalid device %p&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -5496,6 +5505,11 @@ id|i
 op_increment
 )paren
 (brace
+r_struct
+id|inet6_dev
+op_star
+id|next
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -5508,31 +5522,19 @@ id|i
 suffix:semicolon
 id|idev
 suffix:semicolon
+id|idev
+op_assign
+id|next
 )paren
 (brace
-r_struct
-id|inet6_dev
-op_star
-id|back
+id|next
+op_assign
+id|idev-&gt;next
 suffix:semicolon
 id|addrconf_ifdown
 c_func
 (paren
 id|idev-&gt;dev
-)paren
-suffix:semicolon
-id|back
-op_assign
-id|idev
-suffix:semicolon
-id|idev
-op_assign
-id|idev-&gt;next
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|back
 )paren
 suffix:semicolon
 )brace

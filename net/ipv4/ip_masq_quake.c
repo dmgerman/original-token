@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_QUAKE quake masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_quake.c 0.02   22/02/97&n; *&n; * Author:&t;Harald Hoyer mailto:HarryH@Royal.Net&n; *&t;&t;&n; *&n; * Fixes: &n; *      Harald Hoyer            :       Unofficial Quake Specs found at &n; *                                 http://www.gamers.org/dEngine/quake/spec/ &n; *      Harald Hoyer            :       Check for QUAKE-STRING&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *  &n; *  &n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_QUAKE quake masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_quake.c 0.02   22/02/97&n; *&n; * Author:&t;Harald Hoyer mailto:HarryH@Royal.Net&n; *&t;&t;&n; *&n; * Fixes: &n; *      Harald Hoyer            :       Unofficial Quake Specs found at &n; *                                 http://www.gamers.org/dEngine/quake/spec/ &n; *      Harald Hoyer            :       Check for QUAKE-STRING&n; *&t;Juan Jose Ciarlante&t;:  litl bits for 2.1&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *  &n; *  &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -176,6 +176,9 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
+comma
+id|__u32
+id|maddr
 )paren
 (brace
 r_struct
@@ -817,9 +820,11 @@ op_assign
 id|ip_masq_new
 c_func
 (paren
+id|IPPROTO_UDP
+comma
 id|maddr
 comma
-id|IPPROTO_UDP
+l_int|0
 comma
 id|ms-&gt;saddr
 comma
@@ -879,6 +884,26 @@ op_amp
 id|udp_port
 comma
 l_int|2
+)paren
+suffix:semicolon
+id|ip_masq_listen
+c_func
+(paren
+id|n_ms
+)paren
+suffix:semicolon
+id|ip_masq_control_add
+c_func
+(paren
+id|n_ms
+comma
+id|ms
+)paren
+suffix:semicolon
+id|ip_masq_put
+c_func
+(paren
+id|n_ms
 )paren
 suffix:semicolon
 r_break

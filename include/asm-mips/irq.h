@@ -42,5 +42,35 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|local_irq_count
+(braket
+)braket
+suffix:semicolon
+macro_line|#ifdef __SMP__
+macro_line|#error Send superfluous SMP boxes to ralf@uni-koblenz.de
+macro_line|#else
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count[cpu])
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count[cpu])
+macro_line|#endif
+r_extern
+r_int
+r_int
+id|local_irq_count
+(braket
+)braket
+suffix:semicolon
+macro_line|#ifdef __SMP__
+macro_line|#error Send superfluous SMP boxes to ralf@uni-koblenz.de
+macro_line|#else
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count[cpu])
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count[cpu])
+macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_IRQ_H */
 eof

@@ -2573,6 +2573,14 @@ id|writing
 op_assign
 l_int|0
 suffix:semicolon
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|last_result_fatal
+op_assign
+l_int|0
+suffix:semicolon
 id|flags
 op_assign
 id|filp-&gt;f_flags

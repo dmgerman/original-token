@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_forward.c,v 1.32 1997/10/24 17:16:06 kuznet Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_forward.c,v 1.33 1997/11/28 15:32:03 alan Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -493,9 +493,49 @@ op_eq
 id|IPPROTO_ICMP
 )paren
 (brace
+id|__u32
+id|maddr
+suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MASQUERADE_ICMP
+DECL|macro|icmph
+mdefine_line|#define icmph ((struct icmphdr *)((char *)iph + (iph-&gt;ihl&lt;&lt;2)))
 r_if
 c_cond
 (paren
+(paren
+id|icmph-&gt;type
+op_eq
+id|ICMP_DEST_UNREACH
+)paren
+op_logical_or
+(paren
+id|icmph-&gt;type
+op_eq
+id|ICMP_SOURCE_QUENCH
+)paren
+op_logical_or
+(paren
+id|icmph-&gt;type
+op_eq
+id|ICMP_TIME_EXCEEDED
+)paren
+)paren
+(brace
+macro_line|#endif
+id|maddr
+op_assign
+id|inet_select_addr
+c_func
+(paren
+id|dev2
+comma
+id|rt-&gt;rt_gateway
+comma
+id|RT_SCOPE_UNIVERSE
+)paren
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|fw_res
 op_assign
@@ -504,7 +544,8 @@ c_func
 (paren
 op_amp
 id|skb
-)paren
+comma
+id|maddr
 )paren
 OL
 l_int|0
@@ -532,6 +573,9 @@ multiline_comment|/* ICMP matched - skip firewall */
 r_goto
 id|skip_call_fw_firewall
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MASQUERADE_ICMP
+)brace
+macro_line|#endif&t;&t;&t;&t;
 )brace
 r_if
 c_cond
@@ -703,6 +747,27 @@ suffix:semicolon
 r_return
 op_minus
 l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; *      Masquerader may have changed skb &n;&t;&t;&t;&t; */
+id|iph
+op_assign
+id|skb-&gt;nh.iph
+suffix:semicolon
+id|opt
+op_assign
+op_amp
+(paren
+id|IPCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|opt
+)paren
 suffix:semicolon
 )brace
 )brace

@@ -582,16 +582,6 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_BLK_DEV_HD */
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
-r_void
-id|ide_setup
-c_func
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 r_int
 id|ide_register

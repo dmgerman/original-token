@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/mips/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * Mips support by Ralf Baechle and Andreas Busse&n; *&n; * $Id: irq.c,v 1.7 1997/08/08 18:12:24 miguel Exp $&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: irq.c,v 1.7 1997/09/26 11:51:33 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -15,13 +14,9 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/vector.h&gt;
-macro_line|#ifdef CONFIG_SGI
-macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#endif
 DECL|variable|cache_21
 r_int
 r_char
@@ -67,15 +62,6 @@ id|irq_nr
 r_int
 r_char
 id|mask
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq_nr
-op_ge
-l_int|16
-)paren
-r_return
 suffix:semicolon
 id|mask
 op_assign
@@ -139,15 +125,6 @@ id|irq_nr
 r_int
 r_char
 id|mask
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq_nr
-op_ge
-l_int|16
-)paren
-r_return
 suffix:semicolon
 id|mask
 op_assign
@@ -269,22 +246,6 @@ multiline_comment|/*&n; * Pointers to the low-level handlers: first the general 
 r_extern
 r_void
 id|interrupt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|fast_interrupt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|bad_interrupt
 c_func
 (paren
 r_void
@@ -511,14 +472,6 @@ DECL|variable|__mips_bh_counter
 id|atomic_t
 id|__mips_bh_counter
 suffix:semicolon
-macro_line|#ifdef __SMP__
-macro_line|#error Send superfluous SMP boxes to ralf@uni-koblenz.de
-macro_line|#else
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count[cpu])
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count[cpu])
-macro_line|#endif
 multiline_comment|/*&n; * do_IRQ handles IRQ&squot;s that have been installed without the&n; * SA_INTERRUPT flag: it uses the full signal-handling return&n; * and runs with other interrupts enabled. All relatively slow&n; * IRQ&squot;s should use this format: notably the keyboard/timer&n; * routines.&n; */
 DECL|function|do_IRQ
 id|asmlinkage
@@ -539,17 +492,12 @@ r_struct
 id|irqaction
 op_star
 id|action
-op_assign
-op_star
-(paren
-id|irq
-op_plus
-id|irq_action
-)paren
 suffix:semicolon
 r_int
 id|do_random
 comma
+id|cpu
+suffix:semicolon
 id|cpu
 op_assign
 id|smp_processor_id
@@ -571,8 +519,34 @@ id|irq
 )braket
 op_increment
 suffix:semicolon
-multiline_comment|/* slow interrupts run with interrupts enabled */
-id|sti
+multiline_comment|/*&n;&t; * mask and ack quickly, we don&squot;t want the irq controller&n;&t; * thinking we&squot;re snobs just because some other CPU has&n;&t; * disabled global interrupts (we have already done the&n;&t; * INT_ACK cycles, it&squot;s too late to try to pretend to the&n;&t; * controller that we aren&squot;t taking the interrupt).&n;&t; *&n;&t; * Commented out because we&squot;ve already done this in the&n;&t; * machinespecific part of the handler.  It&squot;s reasonable to&n;&t; * do this here in a highlevel language though because that way&n;&t; * we could get rid of a good part of duplicated code ...&n;&t; */
+multiline_comment|/* mask_and_ack_irq(irq); */
+id|action
+op_assign
+op_star
+(paren
+id|irq
+op_plus
+id|irq_action
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|action
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|action-&gt;flags
+op_amp
+id|SA_INTERRUPT
+)paren
+)paren
+id|__sti
 c_func
 (paren
 )paren
@@ -590,11 +564,7 @@ id|do_random
 op_assign
 l_int|0
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|action
-)paren
+r_do
 (brace
 id|do_random
 op_or_assign
@@ -617,108 +587,12 @@ op_assign
 id|action-&gt;next
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|do_random
-op_amp
-id|SA_SAMPLE_RANDOM
-)paren
-id|add_interrupt_randomness
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-id|irq_exit
-c_func
-(paren
-id|cpu
-comma
-id|irq
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * do_fast_IRQ handles IRQ&squot;s that don&squot;t need the fancy interrupt return&n; * stuff - the handler is also running with interrupts disabled unless&n; * it explicitly enables them later.&n; */
-DECL|function|do_fast_IRQ
-id|asmlinkage
-r_void
-id|do_fast_IRQ
-c_func
-(paren
-r_int
-id|irq
-)paren
-(brace
-r_struct
-id|irqaction
-op_star
-id|action
-suffix:semicolon
-r_int
-id|do_random
-comma
-id|cpu
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
-id|irq_enter
-c_func
-(paren
-id|cpu
-comma
-id|irq
-)paren
-suffix:semicolon
-id|kstat.interrupts
-(braket
-id|irq
-)braket
-op_increment
-suffix:semicolon
-id|action
-op_assign
-op_star
-(paren
-id|irq
-op_plus
-id|irq_action
-)paren
-suffix:semicolon
-id|do_random
-op_assign
-l_int|0
-suffix:semicolon
 r_while
 c_loop
 (paren
 id|action
 )paren
-(brace
-id|do_random
-op_or_assign
-id|action-&gt;flags
 suffix:semicolon
-id|action
-op_member_access_from_pointer
-id|handler
-c_func
-(paren
-id|irq
-comma
-id|action-&gt;dev_id
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|action
-op_assign
-id|action-&gt;next
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -732,6 +606,12 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|irq_exit
 c_func
 (paren
@@ -740,6 +620,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
+multiline_comment|/* unmasking and bottom half handling is done magically for us. */
 )brace
 multiline_comment|/*&n; * Used only for setup of PC style interrupts and therefore still&n; * called setup_x86_irq.  Later on I&squot;ll provide a machine specific&n; * function with similar purpose.  Idea is to put all interrupts&n; * in a single table and differenciate them just by number.&n; */
 DECL|function|setup_x86_irq
@@ -888,32 +769,6 @@ op_logical_neg
 id|shared
 )paren
 (brace
-r_if
-c_cond
-(paren
-r_new
-op_member_access_from_pointer
-id|flags
-op_amp
-id|SA_INTERRUPT
-)paren
-id|set_int_vector
-c_func
-(paren
-id|irq
-comma
-id|fast_interrupt
-)paren
-suffix:semicolon
-r_else
-id|set_int_vector
-c_func
-(paren
-id|irq
-comma
-id|interrupt
-)paren
-suffix:semicolon
 id|unmask_irq
 c_func
 (paren
@@ -982,8 +837,8 @@ r_if
 c_cond
 (paren
 id|irq
-OG
-l_int|31
+op_ge
+l_int|32
 )paren
 r_return
 op_minus
@@ -1177,22 +1032,12 @@ id|irq
 id|irq_action
 )braket
 )paren
-(brace
 id|mask_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
-id|set_int_vector
-c_func
-(paren
-id|irq
-comma
-id|bad_interrupt
-)paren
-suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -1433,31 +1278,6 @@ r_void
 )paren
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|32
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|set_int_vector
-c_func
-(paren
-id|i
-comma
-id|bad_interrupt
-)paren
-suffix:semicolon
 id|irq_setup
 c_func
 (paren

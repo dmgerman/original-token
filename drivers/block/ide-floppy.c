@@ -1,5 +1,7 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.5 - ALPHA&t;Feb  21, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
-multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; * Ver 0.4   Jan 26 97   Add support for the HDIO_GETGEO ioctl.&n; * Ver 0.5   Feb 21 97   Add partitions support.&n; *                       Use the minimum of the LBA and CHS capacities.&n; *                       Avoid hwgroup-&gt;rq == NULL on the last irq.&n; *                       Fix potential null dereferencing with DEBUG_LOG.&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.8&t;&t;Feb  21, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; * Ver 0.4   Jan 26 97   Add support for the HDIO_GETGEO ioctl.&n; * Ver 0.5   Feb 21 97   Add partitions support.&n; *                       Use the minimum of the LBA and CHS capacities.&n; *                       Avoid hwgroup-&gt;rq == NULL on the last irq.&n; *                       Fix potential null dereferencing with DEBUG_LOG.&n; * Ver 0.8   Dec  7 97   Increase irq timeout from 10 to 50 seconds.&n; *                       Add media write-protect detection.&n; *                       Issue START command only if TEST UNIT READY fails.&n; *                       Add work-around for IOMEGA ZIP revision 21.D.&n; *                       Remove idefloppy_get_capabilities().&n; */
+DECL|macro|IDEFLOPPY_VERSION
+mdefine_line|#define IDEFLOPPY_VERSION &quot;0.8&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8,12 +10,9 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -31,6 +30,9 @@ DECL|macro|IDEFLOPPY_DEBUG_INFO
 mdefine_line|#define IDEFLOPPY_DEBUG_INFO&t;&t;0
 DECL|macro|IDEFLOPPY_DEBUG_BUGS
 mdefine_line|#define IDEFLOPPY_DEBUG_BUGS&t;&t;1
+multiline_comment|/*&n; *&t;Some drives require a longer irq timeout.&n; */
+DECL|macro|IDEFLOPPY_WAIT_CMD
+mdefine_line|#define IDEFLOPPY_WAIT_CMD&t;&t;(5 * WAIT_CMD)
 multiline_comment|/*&n; *&t;After each failed packet command we issue a request sense command&n; *&t;and retry the packet command IDEFLOPPY_MAX_PC_RETRIES times.&n; */
 DECL|macro|IDEFLOPPY_MAX_PC_RETRIES
 mdefine_line|#define IDEFLOPPY_MAX_PC_RETRIES&t;3
@@ -469,6 +471,11 @@ id|idefloppy_flexible_disk_page_t
 id|flexible_disk_page
 suffix:semicolon
 multiline_comment|/* Copy of the flexible disk page */
+DECL|member|wp
+r_int
+id|wp
+suffix:semicolon
+multiline_comment|/* Write protect */
 DECL|member|flags
 r_int
 r_int
@@ -2317,7 +2324,7 @@ op_member_access_from_pointer
 id|dmaproc
 c_func
 (paren
-id|ide_dma_status_bad
+id|ide_dma_end
 comma
 id|drive
 )paren
@@ -2346,26 +2353,6 @@ id|pc
 )paren
 suffix:semicolon
 )brace
-(paren
-r_void
-)paren
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|dmaproc
-c_func
-(paren
-id|ide_dma_abort
-comma
-id|drive
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* End DMA */
 macro_line|#if IDEFLOPPY_DEBUG_LOG
 id|printk
 (paren
@@ -2523,12 +2510,9 @@ id|KERN_ERR
 l_string|&quot;ide-floppy: The floppy wants to issue more interrupts in DMA mode&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
 (paren
-id|KERN_ERR
-l_string|&quot;ide-floppy: DMA disabled, reverting to PIO&bslash;n&quot;
+r_void
 )paren
-suffix:semicolon
 id|HWIF
 c_func
 (paren
@@ -2700,7 +2684,7 @@ comma
 op_amp
 id|idefloppy_pc_intr
 comma
-id|WAIT_CMD
+id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 r_return
@@ -2802,7 +2786,7 @@ comma
 op_amp
 id|idefloppy_pc_intr
 comma
-id|WAIT_CMD
+id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
@@ -2887,7 +2871,7 @@ comma
 op_amp
 id|idefloppy_pc_intr
 comma
-id|WAIT_CMD
+id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Set the interrupt routine */
@@ -3091,12 +3075,9 @@ id|pc-&gt;flags
 )paren
 )paren
 (brace
-id|printk
 (paren
-id|KERN_WARNING
-l_string|&quot;ide-floppy: DMA disabled, reverting to PIO&bslash;n&quot;
+r_void
 )paren
-suffix:semicolon
 id|HWIF
 c_func
 (paren
@@ -3251,7 +3232,7 @@ comma
 op_amp
 id|idefloppy_transfer_pc
 comma
-id|WAIT_CMD
+id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -3538,6 +3519,31 @@ l_int|4
 )braket
 op_assign
 id|start
+suffix:semicolon
+)brace
+DECL|function|idefloppy_create_test_unit_ready_cmd
+r_static
+r_void
+id|idefloppy_create_test_unit_ready_cmd
+c_func
+(paren
+id|idefloppy_pc_t
+op_star
+id|pc
+)paren
+(brace
+id|idefloppy_init_pc
+c_func
+(paren
+id|pc
+)paren
+suffix:semicolon
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_assign
+id|IDEFLOPPY_TEST_UNIT_READY_CMD
 suffix:semicolon
 )brace
 DECL|function|idefloppy_create_rw_cmd
@@ -4118,6 +4124,10 @@ op_star
 )paren
 id|pc.buffer
 suffix:semicolon
+id|floppy-&gt;wp
+op_assign
+id|header-&gt;wp
+suffix:semicolon
 id|page
 op_assign
 (paren
@@ -4685,6 +4695,26 @@ op_eq
 l_int|1
 )paren
 (brace
+id|idefloppy_create_test_unit_ready_cmd
+c_func
+(paren
+op_amp
+id|pc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idefloppy_queue_pc_tail
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+)paren
+(brace
 id|idefloppy_create_start_stop_cmd
 (paren
 op_amp
@@ -4704,6 +4734,7 @@ op_amp
 id|pc
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4721,6 +4752,28 @@ suffix:semicolon
 r_return
 op_minus
 id|EIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|floppy-&gt;wp
+op_logical_and
+(paren
+id|filp-&gt;f_mode
+op_amp
+l_int|2
+)paren
+)paren
+(brace
+id|drive-&gt;usage
+op_decrement
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+op_minus
+id|EROFS
 suffix:semicolon
 )brace
 id|set_bit
@@ -5235,7 +5288,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;Model: %s&bslash;n&quot;
+l_string|&quot;Model: %.40s&bslash;n&quot;
 comma
 id|id-&gt;model
 )paren
@@ -5243,7 +5296,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;Firmware Revision: %s&bslash;n&quot;
+l_string|&quot;Firmware Revision: %.8s&bslash;n&quot;
 comma
 id|id-&gt;fw_rev
 )paren
@@ -5251,7 +5304,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;Serial Number: %s&bslash;n&quot;
+l_string|&quot;Serial Number: %.20s&bslash;n&quot;
 comma
 id|id-&gt;serial_no
 )paren
@@ -5723,227 +5776,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;idefloppy_get_capabilities asks the floppy about its various&n; *&t;parameters.&n; */
-DECL|function|idefloppy_get_capabilities
-r_static
-r_void
-id|idefloppy_get_capabilities
-(paren
-id|ide_drive_t
-op_star
-id|drive
-)paren
-(brace
-id|idefloppy_pc_t
-id|pc
-suffix:semicolon
-id|idefloppy_mode_parameter_header_t
-op_star
-id|header
-suffix:semicolon
-id|idefloppy_capabilities_page_t
-op_star
-id|capabilities
-suffix:semicolon
-id|idefloppy_create_mode_sense_cmd
-(paren
-op_amp
-id|pc
-comma
-id|IDEFLOPPY_CAPABILITIES_PAGE
-comma
-id|MODE_SENSE_CURRENT
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|idefloppy_queue_pc_tail
-(paren
-id|drive
-comma
-op_amp
-id|pc
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;ide-floppy: Can&squot;t get drive capabilities&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|header
-op_assign
-(paren
-id|idefloppy_mode_parameter_header_t
-op_star
-)paren
-id|pc.buffer
-suffix:semicolon
-id|capabilities
-op_assign
-(paren
-id|idefloppy_capabilities_page_t
-op_star
-)paren
-(paren
-id|header
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|capabilities-&gt;sflp
-)paren
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Warning - system floppy device bit is not set&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-macro_line|#if IDEFLOPPY_DEBUG_INFO
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Dumping the results of the MODE SENSE packet command&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Mode Parameter Header:&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Mode Data Length - %d&bslash;n&quot;
-comma
-id|header-&gt;mode_data_length
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Medium Type - %d&bslash;n&quot;
-comma
-id|header-&gt;medium_type
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;WP - %d&bslash;n&quot;
-comma
-id|header-&gt;wp
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Capabilities Page:&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Page code - %d&bslash;n&quot;
-comma
-id|capabilities-&gt;page_code
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Page length - %d&bslash;n&quot;
-comma
-id|capabilities-&gt;page_length
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;PS - %d&bslash;n&quot;
-comma
-id|capabilities-&gt;ps
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;System Floppy Type device - %s&bslash;n&quot;
-comma
-id|capabilities-&gt;sflp
-ques
-c_cond
-l_string|&quot;Yes&quot;
-suffix:colon
-l_string|&quot;No&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Supports Reporting progress of Format - %s&bslash;n&quot;
-comma
-id|capabilities-&gt;srfp
-ques
-c_cond
-l_string|&quot;Yes&quot;
-suffix:colon
-l_string|&quot;No&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Non CD Optical device - %s&bslash;n&quot;
-comma
-id|capabilities-&gt;ncd
-ques
-c_cond
-l_string|&quot;Yes&quot;
-suffix:colon
-l_string|&quot;No&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Multiple LUN support - %s&bslash;n&quot;
-comma
-id|capabilities-&gt;sml
-ques
-c_cond
-l_string|&quot;Yes&quot;
-suffix:colon
-l_string|&quot;No&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;Total LUN supported - %s&bslash;n&quot;
-comma
-id|capabilities-&gt;tlun
-ques
-c_cond
-l_string|&quot;Yes&quot;
-suffix:colon
-l_string|&quot;No&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDEFLOPPY_DEBUG_INFO */
-)brace
 multiline_comment|/*&n; *&t;Driver initialization.&n; */
 DECL|function|idefloppy_setup
 r_static
@@ -5962,6 +5794,26 @@ id|floppy
 r_struct
 id|idefloppy_id_gcw
 id|gcw
+suffix:semicolon
+r_int
+id|major
+op_assign
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
+comma
+id|i
+suffix:semicolon
+r_int
+id|minor
+op_assign
+id|drive-&gt;select.b.unit
+op_lshift
+id|PARTN_BITS
 suffix:semicolon
 op_star
 (paren
@@ -6019,11 +5871,59 @@ op_amp
 id|floppy-&gt;flags
 )paren
 suffix:semicolon
-id|idefloppy_get_capabilities
+r_if
+c_cond
 (paren
-id|drive
+id|strcmp
+c_func
+(paren
+id|drive-&gt;id-&gt;model
+comma
+l_string|&quot;IOMEGA ZIP 100 ATAPI&quot;
 )paren
+op_eq
+l_int|0
+op_logical_and
+id|strcmp
+c_func
+(paren
+id|drive-&gt;id-&gt;fw_rev
+comma
+l_string|&quot;21.D&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
 suffix:semicolon
+id|i
+OL
+l_int|1
+op_lshift
+id|PARTN_BITS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|max_sectors
+(braket
+id|major
+)braket
+(braket
+id|minor
+op_plus
+id|i
+)braket
+op_assign
+l_int|64
+suffix:semicolon
+)brace
 (paren
 r_void
 )paren
@@ -6099,6 +5999,12 @@ id|ide_driver_t
 id|idefloppy_driver
 op_assign
 (brace
+l_string|&quot;ide-floppy&quot;
+comma
+multiline_comment|/* name */
+id|IDEFLOPPY_VERSION
+comma
+multiline_comment|/* version */
 id|ide_floppy
 comma
 multiline_comment|/* media */
@@ -6139,7 +6045,10 @@ id|idefloppy_capacity
 comma
 multiline_comment|/* capacity */
 l_int|NULL
+comma
 multiline_comment|/* special */
+l_int|NULL
+multiline_comment|/* proc */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;idefloppy_init will register the driver for each floppy.&n; */

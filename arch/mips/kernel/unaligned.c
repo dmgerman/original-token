@@ -843,7 +843,6 @@ op_assign
 id|regs-&gt;cp0_badvaddr
 suffix:semicolon
 r_char
-op_star
 id|adels
 suffix:semicolon
 id|lock_kernel
@@ -868,9 +867,9 @@ l_int|4
 )paren
 ques
 c_cond
-l_string|&quot;adel&quot;
+l_char|&squot;l&squot;
 suffix:colon
-l_string|&quot;ades&quot;
+l_char|&squot;s&squot;
 suffix:semicolon
 macro_line|#ifdef CONF_NO_UNALIGNED_KERNEL_ACCESS
 multiline_comment|/*&n;&t; * In an ideal world there are no unaligned accesses by the kernel.&n;&t; * So be a bit noisy ...&n;&t; */
@@ -897,29 +896,16 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef __mips64
 id|panic
 c_func
 (paren
-l_string|&quot;Caught %s exception in kernel mode accessing %016Lx.&quot;
+l_string|&quot;Caught adel%c exception in kernel mode accessing %08lx.&quot;
 comma
 id|adels
 comma
 id|badvaddr
 )paren
 suffix:semicolon
-macro_line|#else
-id|panic
-c_func
-(paren
-l_string|&quot;Caught %s exception in kernel mode accessing %08lx.&quot;
-comma
-id|adels
-comma
-id|badvaddr
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif /* CONF_NO_UNALIGNED_KERNEL_ACCESS */
 macro_line|#ifdef CONF_LOG_UNALIGNED_ACCESSES
@@ -947,12 +933,11 @@ id|logpc
 op_add_assign
 l_int|4
 suffix:semicolon
-macro_line|#ifdef __mips64
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Caught %s in &squot;%s&squot; at 0x%016Lx accessing 0x%016Lx.&bslash;n&quot;
+l_string|&quot;Caught adel%c in &squot;%s&squot; at 0x%08lx accessing 0x%08lx.&bslash;n&quot;
 comma
 id|adels
 comma
@@ -963,23 +948,6 @@ comma
 id|regs-&gt;cp0_badvaddr
 )paren
 suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Caught %s in &squot;%s&squot; at 0x%08lx accessing 0x%08lx.&bslash;n&quot;
-comma
-id|adels
-comma
-id|current-&gt;comm
-comma
-id|logpc
-comma
-id|regs-&gt;cp0_badvaddr
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif /* CONF_LOG_UNALIGNED_ACCESSES */
 r_if

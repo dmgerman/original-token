@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: file.c,v 1.1 1997/06/06 09:37:03 ralf Exp $&n; * file.c: ARCS firmware interface to files.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: file.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * file.c: ARCS firmware interface to files.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|function|prom_getvdirent
 r_int

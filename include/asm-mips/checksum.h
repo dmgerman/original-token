@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/checksum.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: checksum.h,v 1.5 1997/08/08 20:22:28 miguel Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/checksum.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_CHECKSUM_H
 DECL|macro|__ASM_MIPS_CHECKSUM_H
 mdefine_line|#define __ASM_MIPS_CHECKSUM_H
@@ -603,12 +603,10 @@ r_int
 id|len
 )paren
 (brace
-r_int
-r_int
-id|sum
-suffix:semicolon
-id|sum
-op_assign
+r_return
+id|csum_fold
+c_func
+(paren
 id|csum_partial
 c_func
 (paren
@@ -618,12 +616,6 @@ id|len
 comma
 l_int|0
 )paren
-suffix:semicolon
-r_return
-id|csum_fold
-c_func
-(paren
-id|sum
 )paren
 suffix:semicolon
 )brace

@@ -158,8 +158,10 @@ DECL|macro|IP_FW_OUT
 mdefine_line|#define IP_FW_OUT&t;&t;2
 DECL|macro|IP_FW_ACCT
 mdefine_line|#define IP_FW_ACCT&t;&t;3
+DECL|macro|IP_FW_MASQ
+mdefine_line|#define IP_FW_MASQ&t;&t;4
 DECL|macro|IP_FW_CHAINS
-mdefine_line|#define IP_FW_CHAINS&t;&t;4&t;/* total number of ip_fw chains */
+mdefine_line|#define IP_FW_CHAINS&t;&t;5&t;/* total number of ip_fw chains */
 DECL|macro|IP_FW_INSERT
 mdefine_line|#define IP_FW_INSERT&t;&t;(IP_FW_BASE_CTL)
 DECL|macro|IP_FW_APPEND
@@ -228,6 +230,14 @@ DECL|macro|IP_ACCT_FLUSH
 mdefine_line|#define IP_ACCT_FLUSH&t;&t;(IP_FW_FLUSH  | (IP_FW_ACCT &lt;&lt; IP_FW_SHIFT))
 DECL|macro|IP_ACCT_ZERO
 mdefine_line|#define IP_ACCT_ZERO&t;&t;(IP_FW_ZERO   | (IP_FW_ACCT &lt;&lt; IP_FW_SHIFT))
+DECL|macro|IP_FW_MASQ_INSERT
+mdefine_line|#define IP_FW_MASQ_INSERT&t;(IP_FW_INSERT | (IP_FW_MASQ &lt;&lt; IP_FW_SHIFT))
+DECL|macro|IP_FW_MASQ_ADD
+mdefine_line|#define IP_FW_MASQ_ADD&t;&t;(IP_FW_APPEND | (IP_FW_MASQ &lt;&lt; IP_FW_SHIFT))
+DECL|macro|IP_FW_MASQ_DEL
+mdefine_line|#define IP_FW_MASQ_DEL&t;&t;(IP_FW_DELETE | (IP_FW_MASQ &lt;&lt; IP_FW_SHIFT))
+DECL|macro|IP_FW_MASQ_FLUSH
+mdefine_line|#define IP_FW_MASQ_FLUSH  &t;(IP_FW_FLUSH  | (IP_FW_MASQ &lt;&lt; IP_FW_SHIFT))
 DECL|struct|ip_fwpkt
 r_struct
 id|ip_fwpkt
@@ -276,6 +286,46 @@ id|IFNAMSIZ
 )braket
 suffix:semicolon
 multiline_comment|/* interface name */
+)brace
+suffix:semicolon
+DECL|macro|IP_FW_MASQCTL_MAX
+mdefine_line|#define IP_FW_MASQCTL_MAX 256
+DECL|macro|IP_MASQ_MOD_NMAX
+mdefine_line|#define IP_MASQ_MOD_NMAX  32
+DECL|struct|ip_fw_masqctl
+r_struct
+id|ip_fw_masqctl
+(brace
+DECL|member|mctl_action
+r_int
+id|mctl_action
+suffix:semicolon
+r_union
+(brace
+r_struct
+(brace
+DECL|member|name
+r_char
+id|name
+(braket
+id|IP_MASQ_MOD_NMAX
+)braket
+suffix:semicolon
+DECL|member|data
+r_char
+id|data
+(braket
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|mod
+)brace
+id|mod
+suffix:semicolon
+DECL|member|u
+)brace
+id|u
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * timeouts for ip masquerading&n; */
@@ -349,6 +399,21 @@ suffix:semicolon
 r_extern
 r_int
 id|ip_acct_ctl
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+r_extern
+r_int
+id|ip_masq_ctl
 c_func
 (paren
 r_int

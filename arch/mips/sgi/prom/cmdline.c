@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cmdline.c,v 1.1 1997/06/06 09:36:53 ralf Exp $&n; * cmdline.c: Kernel command line creation using ARCS argc/argv.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: cmdline.c,v 1.2 1997/12/02 05:51:09 ralf Exp $&n; * cmdline.c: Kernel command line creation using ARCS argc/argv.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
@@ -186,6 +186,23 @@ id|actr
 op_increment
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|cp
+op_ne
+op_amp
+(paren
+id|arcs_cmdline
+(braket
+l_int|0
+)braket
+)paren
+)paren
+multiline_comment|/* get rid of trailing space */
+op_decrement
+id|cp
+suffix:semicolon
 op_star
 id|cp
 op_assign

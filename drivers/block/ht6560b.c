@@ -282,14 +282,6 @@ id|timing
 suffix:semicolon
 macro_line|#endif
 )brace
-id|OUT_BYTE
-c_func
-(paren
-id|drive-&gt;select.all
-comma
-id|IDE_SELECT_REG
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Autodetection and initialization of ht6560b&n; */
 DECL|function|try_to_init_ht6560b
@@ -705,6 +697,15 @@ id|ide_hwifs
 (braket
 l_int|0
 )braket
+suffix:semicolon
+id|ide_hwifs
+(braket
+l_int|1
+)braket
+dot
+id|channel
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_else

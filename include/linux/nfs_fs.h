@@ -667,6 +667,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|nfs_check_failed_request
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|nfs_check_error
 c_func
 (paren

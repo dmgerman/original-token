@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_asm.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1995                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail billm@jacobi.maths.monash.edu.au |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_asm.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1995,1997                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail billm@suburbia.net               |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#ifndef _FPU_ASM_H_
 DECL|macro|_FPU_ASM_H_
 mdefine_line|#define _FPU_ASM_H_
@@ -13,19 +13,21 @@ DECL|macro|PARAM3
 mdefine_line|#define&t;PARAM3&t;16(%ebp)
 DECL|macro|PARAM4
 mdefine_line|#define&t;PARAM4&t;20(%ebp)
+DECL|macro|PARAM5
+mdefine_line|#define&t;PARAM5&t;24(%ebp)
+DECL|macro|PARAM6
+mdefine_line|#define&t;PARAM6&t;28(%ebp)
+DECL|macro|PARAM7
+mdefine_line|#define&t;PARAM7&t;32(%ebp)
 DECL|macro|SIGL_OFFSET
-mdefine_line|#define SIGL_OFFSET 8
-DECL|macro|SIGN
-mdefine_line|#define SIGN(x)&t;(x)
-DECL|macro|TAG
-mdefine_line|#define&t;TAG(x)&t;1(x)
+mdefine_line|#define SIGL_OFFSET 0
 DECL|macro|EXP
-mdefine_line|#define&t;EXP(x)&t;4(x)
+mdefine_line|#define&t;EXP(x)&t;8(x)
 DECL|macro|SIG
 mdefine_line|#define SIG(x)&t;SIGL_OFFSET##(x)
 DECL|macro|SIGL
 mdefine_line|#define&t;SIGL(x)&t;SIGL_OFFSET##(x)
 DECL|macro|SIGH
-mdefine_line|#define&t;SIGH(x)&t;12(x)
+mdefine_line|#define&t;SIGH(x)&t;4(x)
 macro_line|#endif _FPU_ASM_H_
 eof

@@ -31,6 +31,17 @@ r_int
 id|arg
 )paren
 (brace
+r_struct
+id|smb_sb_info
+op_star
+id|server
+op_assign
+id|SMB_SERVER
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_int
 id|result
 op_assign
@@ -51,13 +62,7 @@ op_assign
 id|put_user
 c_func
 (paren
-id|SMB_SERVER
-c_func
-(paren
-id|inode
-)paren
-op_member_access_from_pointer
-id|mnt-&gt;mounted_uid
+id|server-&gt;mnt-&gt;mounted_uid
 comma
 (paren
 id|uid_t
@@ -80,25 +85,7 @@ r_if
 c_cond
 (paren
 id|arg
-op_eq
-l_int|0
 )paren
-(brace
-multiline_comment|/* The process offers a new connection upon SIGUSR1 */
-id|result
-op_assign
-id|smb_offerconn
-c_func
-(paren
-id|SMB_SERVER
-c_func
-(paren
-id|inode
-)paren
-)paren
-suffix:semicolon
-)brace
-r_else
 (brace
 id|result
 op_assign
@@ -132,15 +119,28 @@ op_assign
 id|smb_newconn
 c_func
 (paren
-id|SMB_SERVER
-c_func
-(paren
-id|inode
-)paren
+id|server
 comma
 op_amp
 id|opt
 )paren
+suffix:semicolon
+)brace
+r_else
+(brace
+macro_line|#if 0
+multiline_comment|/* obsolete option ... print a warning */
+id|printk
+c_func
+(paren
+l_string|&quot;SMBFS: ioctl deprecated, please upgrade &quot;
+l_string|&quot;smbfs package&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|result
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_break

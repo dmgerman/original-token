@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996  Ralf Baechle&n; *&n; * $Id: signal.c,v 1.8 1997/08/08 18:12:30 miguel Exp $&n; */
+multiline_comment|/*&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996  Ralf Baechle&n; *&n; * $Id: signal.c,v 1.8 1997/12/01 16:26:34 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -112,9 +112,6 @@ op_assign
 id|sigset_t
 op_star
 )paren
-(paren
-r_int
-)paren
 id|regs-&gt;regs
 (braket
 l_int|4
@@ -221,6 +218,14 @@ op_star
 id|context
 suffix:semicolon
 r_int
+r_int
+id|blocked
+suffix:semicolon
+r_int
+r_int
+id|reg
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 id|context
@@ -272,90 +277,31 @@ l_int|1
 r_goto
 id|badframe
 suffix:semicolon
+id|__get_user
+c_func
+(paren
+id|blocked
+comma
+op_amp
+id|context-&gt;sc_sigset
+)paren
+suffix:semicolon
 id|current-&gt;blocked
 op_assign
-id|context-&gt;sc_sigset
+id|blocked
 op_amp
 id|_BLOCKABLE
 suffix:semicolon
-multiline_comment|/* XXX */
+id|__get_user
+c_func
+(paren
 id|regs-&gt;cp0_epc
-op_assign
+comma
+op_amp
 id|context-&gt;sc_pc
-suffix:semicolon
-multiline_comment|/* XXX */
-multiline_comment|/*&n; * Disabled because we only use the lower 32 bit of the registers.&n; */
-macro_line|#if 0
-multiline_comment|/*&n;&t; * We only allow user processes in 64bit mode (n32, 64 bit ABI) to&n;&t; * restore the upper half of registers.&n;&t; */
-r_if
-c_cond
-(paren
-id|read_32bit_cp0_register
-c_func
-(paren
-id|CP0_STATUS
-)paren
-op_amp
-id|ST0_UX
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|31
-suffix:semicolon
-id|i
-op_ge
-l_int|0
-suffix:semicolon
-id|i
-op_decrement
-)paren
-(brace
-id|__get_user
-c_func
-(paren
-id|regs-&gt;regs
-(braket
-id|i
-)braket
-comma
-op_amp
-id|context-&gt;sc_regs
-(braket
-id|i
-)braket
 )paren
 suffix:semicolon
-)brace
-id|__get_user
-c_func
-(paren
-id|regs-&gt;hi
-comma
-op_amp
-id|context-&gt;sc_mdhi
-)paren
-suffix:semicolon
-id|__get_user
-c_func
-(paren
-id|regs-&gt;lo
-comma
-op_amp
-id|context-&gt;sc_mdlo
-)paren
-suffix:semicolon
-)brace
-r_else
-macro_line|#endif
-(brace
-r_int
-r_int
-id|reg
-suffix:semicolon
+multiline_comment|/*&n;&t; * Restore all integer registers.&n;&t; */
 r_for
 c_loop
 (paren
@@ -426,7 +372,7 @@ r_int
 )paren
 id|reg
 suffix:semicolon
-)brace
+multiline_comment|/*&n;&t; * FP depends on what FPU in what mode we have.  Best done in&n;&t; * Assembler ...&n;&t; */
 id|restore_fp_context
 c_func
 (paren
@@ -603,7 +549,7 @@ op_assign
 op_amp
 id|frame-&gt;scc
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set up the return code ...&n;&t; *&n;&t; *         .set    noreorder&n;&t; *         addiu   sp,24&n;&t; *         li      v0,__NR_sigreturn&n;&t; *         syscall&n;&t; *         .set    reorder&n;&t; */
+multiline_comment|/*&n;&t; * Set up the return code ...&n;&t; *&n;&t; *         .set    noreorder&n;&t; *         addiu   sp,0x20&n;&t; *         li      v0,__NR_sigreturn&n;&t; *         syscall&n;&t; *         .set    reorder&n;&t; */
 id|__put_user
 c_func
 (paren
@@ -1674,6 +1620,30 @@ id|handler
 r_return
 op_minus
 id|ENOSYS
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Compatibility syscall.  Can be replaced in libc.&n; */
+DECL|function|sys_pause
+id|asmlinkage
+r_int
+id|sys_pause
+c_func
+(paren
+r_void
+)paren
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ERESTARTNOHAND
 suffix:semicolon
 )brace
 eof

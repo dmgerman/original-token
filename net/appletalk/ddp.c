@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-multiline_comment|/*#include &lt;linux/inetdevice.h&gt; -- coming soon */
+macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -7062,11 +7062,9 @@ suffix:colon
 r_case
 id|SIOCGIFCOUNT
 suffix:colon
-macro_line|#if 0&t;&t;&t;/* Also coming in the IP merge */
 r_case
 id|SIOCGIFINDEX
 suffix:colon
-macro_line|#endif&t;&t;
 r_case
 id|SIOCGIFNAME
 suffix:colon

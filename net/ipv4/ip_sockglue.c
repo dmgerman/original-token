@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.28 1997/11/17 17:36:08 kuznet Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.29 1997/11/28 15:32:39 alan Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -930,7 +930,15 @@ r_struct
 id|ip_fw
 id|tmp_fw
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+r_char
+id|masq_ctl
+(braket
+id|IP_FW_MASQCTL_MAX
+)braket
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2065,6 +2073,88 @@ id|optname
 comma
 op_amp
 id|tmp_fw
+comma
+id|optlen
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|err
+suffix:semicolon
+multiline_comment|/* -0 is 0 after all */
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+r_case
+id|IP_FW_MASQ_ADD
+suffix:colon
+r_case
+id|IP_FW_MASQ_DEL
+suffix:colon
+r_case
+id|IP_FW_MASQ_FLUSH
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|optlen
+OG
+r_sizeof
+(paren
+id|masq_ctl
+)paren
+op_logical_or
+id|optlen
+OL
+l_int|1
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+id|masq_ctl
+comma
+id|optval
+comma
+id|optlen
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+id|err
+op_assign
+id|ip_masq_ctl
+c_func
+(paren
+id|optname
+comma
+id|masq_ctl
 comma
 id|optlen
 )paren

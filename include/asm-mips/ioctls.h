@@ -135,8 +135,6 @@ DECL|macro|TIOCSBRK
 mdefine_line|#define TIOCSBRK&t;0x5427  /* BSD compatibility */
 DECL|macro|TIOCCBRK
 mdefine_line|#define TIOCCBRK&t;0x5428  /* BSD compatibility */
-DECL|macro|TIOCGSID
-mdefine_line|#define TIOCGSID&t;0x5429  /* Return the session ID of FD */
 DECL|macro|TIOCSERCONFIG
 mdefine_line|#define TIOCSERCONFIG&t;0x5488
 DECL|macro|TIOCSERGWILD
@@ -159,9 +157,5 @@ DECL|macro|TIOCMIWAIT
 mdefine_line|#define TIOCMIWAIT      0x5491 /* wait for a change on serial input line(s) */
 DECL|macro|TIOCGICOUNT
 mdefine_line|#define TIOCGICOUNT     0x5492 /* read serial port inline interrupt counts */
-DECL|macro|TIOCSBRK
-mdefine_line|#define TIOCSBRK&t;0x5491 /* BSD compatibility */ 
-DECL|macro|TIOCCBRK
-mdefine_line|#define TIOCCBRK&t;0x5492 /* BSD compatibility */
 macro_line|#endif /* __ASM_MIPS_IOCTLS_H */
 eof

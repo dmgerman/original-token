@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgint23.h,v 1.1 1997/06/06 09:40:06 ralf Exp $&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgint23.h,v 1.1.1.1 1997/06/01 03:17:12 ralf Exp $&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGINT23_H
 DECL|macro|_MIPS_SGINT23_H
 mdefine_line|#define _MIPS_SGINT23_H

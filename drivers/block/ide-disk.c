@@ -1,5 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.03  Nov  30, 1997&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@pobox.com).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@pobox.com)&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Verions 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Verions 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; */
+multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Verions 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Verions 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; */
+DECL|macro|IDEDISK_VERSION
+mdefine_line|#define IDEDISK_VERSION&t;&quot;1.03&quot;
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -9,12 +11,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -1207,7 +1206,9 @@ id|IS_PDC4030_DRIVE
 r_if
 c_cond
 (paren
-id|hwif-&gt;is_pdc4030_2
+id|hwif-&gt;channel
+op_ne
+l_int|0
 op_logical_or
 id|rq-&gt;cmd
 op_eq
@@ -2208,6 +2209,31 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|variable|idedisk_proc
+r_static
+id|ide_proc_entry_t
+id|idedisk_proc
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;geometry&quot;
+comma
+id|proc_ide_read_geometry
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+)brace
+suffix:semicolon
 r_int
 id|idedisk_init
 (paren
@@ -2234,6 +2260,12 @@ id|ide_driver_t
 id|idedisk_driver
 op_assign
 (brace
+l_string|&quot;ide-disk&quot;
+comma
+multiline_comment|/* name */
+id|IDEDISK_VERSION
+comma
+multiline_comment|/* version */
 id|ide_disk
 comma
 multiline_comment|/* media */
@@ -2274,7 +2306,10 @@ id|idedisk_capacity
 comma
 multiline_comment|/* capacity */
 id|idedisk_special
+comma
 multiline_comment|/* special */
+id|idedisk_proc
+multiline_comment|/* proc */
 )brace
 suffix:semicolon
 DECL|function|idedisk_cleanup
@@ -2293,68 +2328,6 @@ c_func
 (paren
 id|drive
 )paren
-suffix:semicolon
-)brace
-DECL|function|idedisk_identify_device
-r_static
-r_int
-id|idedisk_identify_device
-(paren
-id|ide_drive_t
-op_star
-id|drive
-)paren
-(brace
-r_struct
-id|hd_driveid
-op_star
-id|id
-op_assign
-id|drive-&gt;id
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|id
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* SunDisk drives: force one unit */
-r_if
-c_cond
-(paren
-id|id-&gt;model
-(braket
-l_int|0
-)braket
-op_eq
-l_char|&squot;S&squot;
-op_logical_and
-id|id-&gt;model
-(braket
-l_int|1
-)braket
-op_eq
-l_char|&squot;u&squot;
-op_logical_and
-(paren
-id|drive-&gt;select.all
-op_amp
-(paren
-l_int|1
-op_lshift
-l_int|4
-)paren
-)paren
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|idedisk_setup
@@ -2425,7 +2398,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* SunDisk drives: treat as non-removable */
+multiline_comment|/* SunDisk drives: treat as non-removable;   can mess up non-Sun systems!  FIXME */
 r_if
 c_cond
 (paren
@@ -2802,13 +2775,34 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* SunDisk drives: ignore &quot;second&quot; drive;   can mess up non-Sun systems!  FIXME */
+r_struct
+id|hd_driveid
+op_star
+id|id
+op_assign
+id|drive-&gt;id
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|idedisk_identify_device
-(paren
-id|drive
-)paren
+id|id
+op_logical_and
+id|id-&gt;model
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;S&squot;
+op_logical_and
+id|id-&gt;model
+(braket
+l_int|1
+)braket
+op_eq
+l_char|&squot;u&squot;
+op_logical_and
+id|drive-&gt;select.b.unit
 )paren
 r_continue
 suffix:semicolon

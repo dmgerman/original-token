@@ -1,7 +1,8 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1997                                         |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@suburbia.net             |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
+macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;control_w.h&quot;
 macro_line|#include &quot;poly.h&quot;
 DECL|macro|HiPOWERop
@@ -99,13 +100,8 @@ id|poly_tan
 c_func
 (paren
 id|FPU_REG
-r_const
 op_star
-id|arg
-comma
-id|FPU_REG
-op_star
-id|result
+id|st0_ptr
 )paren
 (brace
 r_int
@@ -136,24 +132,28 @@ id|adj
 suffix:semicolon
 id|exponent
 op_assign
-id|arg-&gt;exp
-op_minus
-id|EXP_BIAS
+id|exponent
+c_func
+(paren
+id|st0_ptr
+)paren
 suffix:semicolon
 macro_line|#ifdef PARANOID
 r_if
 c_cond
 (paren
-id|arg-&gt;sign
-op_ne
-l_int|0
+id|signnegative
+c_func
+(paren
+id|st0_ptr
+)paren
 )paren
 multiline_comment|/* Can&squot;t hack a number &lt; 0.0 */
 (brace
 id|arith_invalid
 c_func
 (paren
-id|result
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -180,7 +180,7 @@ l_int|1
 )paren
 op_logical_and
 (paren
-id|arg-&gt;sigh
+id|st0_ptr-&gt;sigh
 OG
 l_int|0xc90fdaa2
 )paren
@@ -205,7 +205,7 @@ op_assign
 id|significand
 c_func
 (paren
-id|arg
+id|st0_ptr
 )paren
 suffix:semicolon
 r_if
@@ -296,7 +296,7 @@ op_assign
 id|significand
 c_func
 (paren
-id|arg
+id|st0_ptr
 )paren
 suffix:semicolon
 r_if
@@ -312,7 +312,7 @@ multiline_comment|/* shift the argument right by the required places */
 r_if
 c_cond
 (paren
-id|shrx
+id|FPU_shrx
 c_func
 (paren
 op_amp
@@ -896,22 +896,16 @@ op_amp
 id|accum
 )paren
 suffix:semicolon
-op_star
+id|FPU_settag0
+c_func
 (paren
-r_int
-op_star
+id|TAG_Valid
 )paren
-op_amp
-(paren
-id|result-&gt;sign
-)paren
-op_assign
-l_int|0
 suffix:semicolon
 id|significand
 c_func
 (paren
-id|result
+id|st0_ptr
 )paren
 op_assign
 id|XSIG_LL
@@ -920,11 +914,16 @@ c_func
 id|accum
 )paren
 suffix:semicolon
-id|result-&gt;exp
-op_assign
-id|EXP_BIAS
-op_plus
+id|setexponent16
+c_func
+(paren
+id|st0_ptr
+comma
 id|exponent
+op_plus
+id|EXTENDED_Ebias
+)paren
 suffix:semicolon
+multiline_comment|/* Result is positive. */
 )brace
 eof

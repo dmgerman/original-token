@@ -32,6 +32,15 @@ r_int
 id|retry_count
 suffix:semicolon
 multiline_comment|/* LLC link state variables */
+DECL|member|name
+r_int
+r_char
+id|name
+(braket
+l_int|9
+)braket
+suffix:semicolon
+multiline_comment|/* name of this llc instance */
 DECL|member|s_flag
 r_int
 r_char
@@ -220,16 +229,6 @@ id|MAX_ADDR_LEN
 )braket
 suffix:semicolon
 multiline_comment|/* MAC address of remote session partner */
-DECL|member|remote_mac_len
-r_int
-id|remote_mac_len
-suffix:semicolon
-multiline_comment|/* Actual length of mac address */
-DECL|member|mac_offset
-r_int
-id|mac_offset
-suffix:semicolon
-multiline_comment|/* Source mac offset in skb */
 DECL|member|dev
 r_struct
 id|device
@@ -654,6 +653,19 @@ c_func
 (paren
 id|llcptr
 id|lp
+)paren
+suffix:semicolon
+r_int
+id|llc_mac_data_indicate
+c_func
+(paren
+id|llcptr
+id|lp
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 suffix:semicolon
 eof

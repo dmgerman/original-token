@@ -394,6 +394,8 @@ comma
 id|j
 comma
 id|count
+comma
+id|flags
 suffix:semicolon
 r_int
 id|do_clear
@@ -692,6 +694,18 @@ id|error
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The logged_chars, log_start, and log_size values may&n;&t;&t; * change from an interrupt, so we disable interrupts.&n;&t;&t; */
+id|__save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|count
 op_assign
 id|len
@@ -725,6 +739,12 @@ op_plus
 id|log_size
 op_minus
 id|count
+suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_for
 c_loop

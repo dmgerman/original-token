@@ -6,7 +6,7 @@ macro_line|#include &lt;asm/branch.h&gt;
 macro_line|#include &lt;asm/inst.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/*&n; * Compute the return address and do emulate branch and instruction&n; * simulation, if required.&n; */
+multiline_comment|/*&n; * Compute the return address and do emulate branch simulation, if required.&n; */
 DECL|function|__compute_return_epc
 r_int
 id|__compute_return_epc
@@ -552,7 +552,7 @@ id|epc
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t; * And now the FPA/cp1 branch instructions.&n;&t; *&n;&t; * FIXME: This will silently fail for MIPS IV cop1 branches with&n;&t; *        the cc field != 0.&n;&t; */
+multiline_comment|/*&n;&t; * And now the FPA/cp1 branch instructions.&n;&t; */
 r_case
 id|cop1_op
 suffix:colon
@@ -576,11 +576,14 @@ l_int|2
 suffix:semicolon
 id|bit
 op_add_assign
+(paren
 id|bit
-ques
-c_cond
-l_int|24
-suffix:colon
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|bit
+op_add_assign
 l_int|23
 suffix:semicolon
 r_switch

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Hardware info about Mips JAZZ and similar systems&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Andreas Busse and Ralf Baechle&n; *&n; * This file is a mess. It really needs some reorganisation!&n; */
+multiline_comment|/*&n; * Hardware info about Mips JAZZ and similar systems&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Andreas Busse and Ralf Baechle&n; *&n; * This file is a mess. It really needs some reorganisation!&n; *&n; * $Id: jazz.h,v 1.5 1997/12/01 21:26:48 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_JAZZ_H 
 DECL|macro|__ASM_MIPS_JAZZ_H
 mdefine_line|#define __ASM_MIPS_JAZZ_H 
@@ -279,9 +279,9 @@ DECL|macro|PICA_DRAM_CONFIG
 mdefine_line|#define PICA_DRAM_CONFIG        0xe00fffe0
 multiline_comment|/*&n; * JAZZ interrupt control registers&n; */
 DECL|macro|JAZZ_IO_IRQ_SOURCE
-mdefine_line|#define JAZZ_IO_IRQ_SOURCE      0xe0100000
+mdefine_line|#define JAZZ_IO_IRQ_SOURCE      0xe0010000
 DECL|macro|JAZZ_IO_IRQ_ENABLE
-mdefine_line|#define JAZZ_IO_IRQ_ENABLE      0xe0100002
+mdefine_line|#define JAZZ_IO_IRQ_ENABLE      0xe0010002
 multiline_comment|/*&n; * JAZZ interrupt enable bits&n; */
 DECL|macro|JAZZ_IE_PARALLEL
 mdefine_line|#define JAZZ_IE_PARALLEL            (1 &lt;&lt; 0)
@@ -308,18 +308,18 @@ DECL|macro|JAZZ_TIMER_IRQ
 mdefine_line|#define JAZZ_TIMER_IRQ          0
 DECL|macro|JAZZ_KEYBOARD_IRQ
 mdefine_line|#define JAZZ_KEYBOARD_IRQ       1
-DECL|macro|JAZZ_ETHERNET_IRQ
-mdefine_line|#define JAZZ_ETHERNET_IRQ       13
-DECL|macro|JAZZ_SERIAL1_IRQ
-mdefine_line|#define JAZZ_SERIAL1_IRQ        3
-DECL|macro|JAZZ_SERIAL2_IRQ
-mdefine_line|#define JAZZ_SERIAL2_IRQ        4
-DECL|macro|JAZZ_PARALLEL_IRQ
-mdefine_line|#define JAZZ_PARALLEL_IRQ       5
 DECL|macro|JAZZ_FLOPPY_IRQ
 mdefine_line|#define JAZZ_FLOPPY_IRQ         6 /* needs to be consistent with floppy driver! */
-DECL|macro|JAZZ_SCSI_INTERRUPT
-mdefine_line|#define JAZZ_SCSI_INTERRUPT     12
+DECL|macro|JAZZ_SCSI_IRQ
+mdefine_line|#define JAZZ_SCSI_IRQ           16
+DECL|macro|JAZZ_ETHERNET_IRQ
+mdefine_line|#define JAZZ_ETHERNET_IRQ       17
+DECL|macro|JAZZ_SERIAL1_IRQ
+mdefine_line|#define JAZZ_SERIAL1_IRQ        18
+DECL|macro|JAZZ_SERIAL2_IRQ
+mdefine_line|#define JAZZ_SERIAL2_IRQ        19
+DECL|macro|JAZZ_PARALLEL_IRQ
+mdefine_line|#define JAZZ_PARALLEL_IRQ       20
 multiline_comment|/*&n; * JAZZ DMA Channels&n; * Note: Channels 4...7 are not used with respect to the Acer PICA-61&n; * chipset which does not provide these DMA channels.&n; */
 DECL|macro|JAZZ_SCSI_DMA
 mdefine_line|#define JAZZ_SCSI_DMA           0              /* SCSI */

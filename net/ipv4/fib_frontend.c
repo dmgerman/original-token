@@ -913,7 +913,8 @@ comma
 op_amp
 id|rta
 comma
-id|arg
+op_amp
+id|r
 )paren
 suffix:semicolon
 r_if

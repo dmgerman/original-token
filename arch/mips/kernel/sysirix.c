@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysirix.c,v 1.4 1997/08/08 18:12:35 miguel Exp $&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; */
+multiline_comment|/* $Id: sysirix.c,v 1.6 1997/12/06 11:29:29 ralf Exp $&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
@@ -19,7 +19,7 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/* 2,300 lines of complete and utter shit coming up... */
+multiline_comment|/* 2,358 lines of complete and utter shit coming up... */
 multiline_comment|/* The sysmp commands supported thus far. */
 DECL|macro|MP_PGSIZE
 mdefine_line|#define MP_PGSIZE           14 /* Return system page size in v1. */
@@ -3214,14 +3214,6 @@ suffix:semicolon
 id|error
 op_assign
 l_int|0
-suffix:semicolon
-id|dput_and_out
-suffix:colon
-id|dput
-c_func
-(paren
-id|dentry
-)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -7322,14 +7314,6 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-id|dput_and_out
-suffix:colon
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel
@@ -9421,14 +9405,6 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-id|dput_and_out
-suffix:colon
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel
@@ -10113,8 +10089,6 @@ op_member_access_from_pointer
 id|readdir
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 op_amp
@@ -10649,8 +10623,6 @@ op_member_access_from_pointer
 id|readdir
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 op_amp
@@ -10960,8 +10932,6 @@ op_member_access_from_pointer
 id|readdir
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 op_amp

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-probe.c&t;Version 1.02  Jul  29, 1997&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@pobox.com).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@pobox.com)&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t;by Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-probe.c&t;Version 1.03  Dec  5, 1997&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -9,12 +9,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -243,6 +240,19 @@ comma
 id|bswap
 )paren
 suffix:semicolon
+id|id-&gt;model
+(braket
+r_sizeof
+(paren
+id|id-&gt;model
+)paren
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/* we depend on this a lot! */
 id|drive-&gt;present
 op_assign
 l_int|1
@@ -293,7 +303,19 @@ c_func
 id|drive
 )paren
 op_member_access_from_pointer
-id|is_pdc4030_2
+id|channel
+op_eq
+l_int|1
+op_logical_and
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|chipset
+op_eq
+id|ide_pdc4030
 )paren
 (brace
 id|printk
@@ -463,7 +485,7 @@ r_void
 (brace
 r_int
 r_int
-id|timer
+id|timeout
 op_assign
 id|jiffies
 op_plus
@@ -482,9 +504,17 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|timer
-OG
+l_int|0
+OL
+(paren
+r_int
+r_int
+)paren
+(paren
+id|timeout
+op_minus
 id|jiffies
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -517,6 +547,11 @@ r_int
 id|irqs
 op_assign
 l_int|0
+suffix:semicolon
+id|byte
+id|s
+comma
+id|a
 suffix:semicolon
 r_if
 c_cond
@@ -566,21 +601,29 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* take a deep breath */
-r_if
-c_cond
-(paren
-(paren
+id|a
+op_assign
 id|IN_BYTE
 c_func
 (paren
 id|IDE_ALTSTATUS_REG
 )paren
-op_xor
+suffix:semicolon
+id|s
+op_assign
 id|IN_BYTE
 c_func
 (paren
 id|IDE_STATUS_REG
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|a
+op_xor
+id|s
 )paren
 op_amp
 op_complement
@@ -590,16 +633,20 @@ id|INDEX_STAT
 id|printk
 c_func
 (paren
-l_string|&quot;%s: probing with STATUS instead of ALTSTATUS&bslash;n&quot;
+l_string|&quot;%s: probing with STATUS(0x%02x) instead of ALTSTATUS(0x%02x)&bslash;n&quot;
 comma
 id|drive-&gt;name
+comma
+id|s
+comma
+id|a
 )paren
 suffix:semicolon
 id|hd_status
 op_assign
 id|IDE_STATUS_REG
 suffix:semicolon
-multiline_comment|/* ancient Seagate drives */
+multiline_comment|/* ancient Seagate drives, broken interfaces */
 )brace
 r_else
 id|hd_status
@@ -693,9 +740,17 @@ r_do
 r_if
 c_cond
 (paren
+l_int|0
+OL
+(paren
+r_int
+r_int
+)paren
+(paren
 id|jiffies
-OG
+op_minus
 id|timeout
+)paren
 )paren
 (brace
 r_if
@@ -1062,12 +1117,24 @@ op_logical_neg
 id|drive-&gt;present
 )paren
 (brace
-id|OUT_BYTE
+r_if
+c_cond
+(paren
+id|drive-&gt;select.b.unit
+op_ne
+l_int|0
+)paren
+(brace
+id|SELECT_DRIVE
 c_func
 (paren
-l_int|0xa0
+id|hwif
 comma
-id|IDE_SELECT_REG
+op_amp
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 multiline_comment|/* exit with drive0 selected */
@@ -1077,10 +1144,11 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* allow BUSY_STAT to assert &amp; clear */
+)brace
 r_return
 l_int|3
 suffix:semicolon
-multiline_comment|/* no i/f present: avoid killing ethernet cards */
+multiline_comment|/* no i/f present: mmm.. this should be a 4 -ml */
 )brace
 r_if
 c_cond
@@ -1178,12 +1246,16 @@ op_ne
 l_int|0
 )paren
 (brace
-id|OUT_BYTE
+id|SELECT_DRIVE
 c_func
 (paren
-l_int|0xa0
+id|hwif
 comma
-id|IDE_SELECT_REG
+op_amp
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 multiline_comment|/* exit with drive0 selected */
@@ -1365,7 +1437,13 @@ macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
-id|hwif-&gt;is_pdc4030_2
+id|hwif-&gt;chipset
+op_eq
+id|ide_pdc4030
+op_logical_and
+id|hwif-&gt;channel
+op_ne
+l_int|0
 )paren
 r_return
 suffix:semicolon
@@ -1534,12 +1612,29 @@ id|probe_cmos_for_drives
 id|hwif
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
+(paren
+id|hwif-&gt;chipset
+op_ne
+id|ide_4drives
+op_logical_or
 op_logical_neg
-id|hwif-&gt;is_pdc4030_2
+id|hwif-&gt;mate-&gt;present
+)paren
+macro_line|#if CONFIG_BLK_DEV_PDC4030
+op_logical_and
+(paren
+id|hwif-&gt;chipset
+op_ne
+id|ide_pdc4030
+op_logical_or
+id|hwif-&gt;channel
+op_eq
+l_int|0
+)paren
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 op_logical_and
 (paren
 id|ide_check_region
@@ -1566,34 +1661,6 @@ l_int|1
 )paren
 )paren
 (brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|ide_check_region
-c_func
-(paren
-id|hwif-&gt;io_ports
-(braket
-id|IDE_DATA_OFFSET
-)braket
-comma
-l_int|8
-)paren
-op_logical_or
-id|ide_check_region
-c_func
-(paren
-id|hwif-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
-comma
-l_int|1
-)paren
-)paren
-(brace
-macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 r_int
 id|msgout
 op_assign
@@ -1724,6 +1791,17 @@ id|hwif-&gt;present
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hwif-&gt;chipset
+op_ne
+id|ide_4drives
+op_logical_or
+op_logical_neg
+id|hwif-&gt;mate-&gt;present
+)paren
+(brace
 id|ide_request_region
 c_func
 (paren
@@ -1750,6 +1828,7 @@ comma
 id|hwif-&gt;name
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 r_if
@@ -1833,9 +1912,17 @@ op_amp
 id|BUSY_STAT
 )paren
 op_logical_and
-id|jiffies
+l_int|0
 OL
+(paren
+r_int
+r_int
+)paren
+(paren
 id|timeout
+op_minus
+id|jiffies
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2106,28 +2193,14 @@ c_cond
 id|hwif-&gt;serialized
 )paren
 (brace
-id|ide_hwif_t
-op_star
-id|mate
-op_assign
-op_amp
-id|ide_hwifs
-(braket
-id|hwif-&gt;index
-op_xor
-l_int|1
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|index
+id|hwif-&gt;mate
+op_logical_and
+id|hwif-&gt;mate-&gt;irq
 op_eq
-id|mate-&gt;index
-op_logical_or
 id|h-&gt;irq
-op_eq
-id|mate-&gt;irq
 )paren
 id|save_match
 c_func
@@ -2147,24 +2220,14 @@ c_cond
 id|h-&gt;serialized
 )paren
 (brace
-id|ide_hwif_t
-op_star
-id|mate
-op_assign
-op_amp
-id|ide_hwifs
-(braket
-id|h-&gt;index
-op_xor
-l_int|1
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
+id|h-&gt;mate
+op_logical_and
 id|hwif-&gt;irq
 op_eq
-id|mate-&gt;irq
+id|h-&gt;mate-&gt;irq
 )paren
 id|save_match
 c_func
@@ -2500,6 +2563,9 @@ suffix:semicolon
 r_int
 op_star
 id|bs
+comma
+op_star
+id|max_sect
 suffix:semicolon
 multiline_comment|/* figure out maximum drive number on the interface */
 r_for
@@ -2598,6 +2664,20 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+id|max_sect
+op_assign
+id|kmalloc
+(paren
+id|minors
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -2622,6 +2702,13 @@ id|hwif-&gt;major
 op_assign
 id|bs
 suffix:semicolon
+id|max_sectors
+(braket
+id|hwif-&gt;major
+)braket
+op_assign
+id|max_sect
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2636,12 +2723,20 @@ suffix:semicolon
 op_increment
 id|unit
 )paren
+(brace
 op_star
 id|bs
 op_increment
 op_assign
 id|BLOCK_SIZE
 suffix:semicolon
+op_star
+id|max_sect
+op_increment
+op_assign
+l_int|244
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -2757,20 +2852,11 @@ r_static
 r_int
 id|hwif_init
 (paren
-r_int
-id|h
-)paren
-(brace
 id|ide_hwif_t
 op_star
 id|hwif
-op_assign
-op_amp
-id|ide_hwifs
-(braket
-id|h
-)braket
-suffix:semicolon
+)paren
+(brace
 r_void
 (paren
 op_star
@@ -3047,12 +3133,6 @@ r_return
 id|hwif-&gt;present
 suffix:semicolon
 )brace
-r_int
-id|ideprobe_init
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|ideprobe_module
 r_static
 id|ide_module_t
@@ -3151,6 +3231,7 @@ id|index
 )braket
 )paren
 id|probe_hwif
+c_func
 (paren
 op_amp
 id|ide_hwifs
@@ -3182,8 +3263,13 @@ id|index
 )braket
 )paren
 id|hwif_init
+c_func
 (paren
+op_amp
+id|ide_hwifs
+(braket
 id|index
+)braket
 )paren
 suffix:semicolon
 id|ide_register_module

@@ -1,6 +1,5 @@
-macro_line|#warning &quot;Needs new networking merges before it will work&quot;
-macro_line|#if 0
 multiline_comment|/*&n; *&t;ipddp.c: IP-over-DDP driver for Linux&n; *&n; *&t;Authors:&n; *      - Original code by: Bradford W. Johnson &lt;johns393@maroon.tc.umn.edu&gt;&n; *&t;- Moved to driver by: Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.us&gt;&n; *&n; *&t;Derived from:&n; *&t;- Almost all code already existed in net/appletalk/ddp.c I just&n; *&t;  moved/reorginized it into a driver file. Original IP-over-DDP code&n; *&t;  was done by Bradford W. Johnson &lt;johns393@maroon.tc.umn.edu&gt;&n; *      - skeleton.c: A network driver outline for linux.&n; *        Written 1993-94 by Donald Becker.&n; *&t;- dummy.c: A dummy net driver. By Nick Holloway.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *      This software may be used and distributed according to the terms&n; *      of the GNU Public License, incorporated herein by reference.&n; */
+DECL|variable|version
 r_static
 r_const
 r_char
@@ -51,8 +50,10 @@ l_string|&quot;ipddp&quot;
 suffix:semicolon
 multiline_comment|/* Use 0 for production, 1 for verification, 2 for debug, 3 for verbose debug */
 macro_line|#ifndef IPDDP_DEBUG
+DECL|macro|IPDDP_DEBUG
 mdefine_line|#define IPDDP_DEBUG 1
 macro_line|#endif
+DECL|variable|ipddp_debug
 r_static
 r_int
 r_int
@@ -151,6 +152,7 @@ r_int
 id|cmd
 )paren
 suffix:semicolon
+DECL|function|ipddp_open
 r_static
 r_int
 id|ipddp_open
@@ -170,6 +172,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipddp_close
 r_static
 r_int
 id|ipddp_close
@@ -189,6 +192,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipddp_init
 r_int
 id|ipddp_init
 c_func
@@ -333,6 +337,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Transmit LLAP/ELAP frame using aarp_send_ddp.&n; */
+DECL|function|ipddp_xmit
 r_static
 r_int
 id|ipddp_xmit
@@ -448,6 +453,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get the current statistics. This may be called with the card open or closed.&n; */
+DECL|function|ipddp_get_stats
 r_static
 r_struct
 id|net_device_stats
@@ -471,6 +477,7 @@ id|dev-&gt;priv
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Now the packet really wants to go out.&n; */
+DECL|function|ipddp_rebuild_header
 r_static
 r_int
 id|ipddp_rebuild_header
@@ -717,6 +724,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipddp_header
 r_static
 r_int
 id|ipddp_header
@@ -786,6 +794,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ipddp_ioctl
 r_static
 r_int
 id|ipddp_ioctl
@@ -961,6 +970,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE&t;/* Module specific functions for ipddp.c */
+DECL|variable|dev_ipddp
 r_static
 r_struct
 id|device
@@ -992,6 +1002,7 @@ comma
 id|ipddp_init
 )brace
 suffix:semicolon
+DECL|function|init_module
 r_int
 id|init_module
 c_func
@@ -1019,6 +1030,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|cleanup_module
 r_void
 id|cleanup_module
 c_func
@@ -1045,5 +1057,4 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-macro_line|#endif
 eof

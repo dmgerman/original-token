@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_IRC irc masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_irc.c 0.01   03/20/96&n; *&n; * Author:&t;Juan Jose Ciarlante&n; *&n; *&n; * Fixes:&n; *&t;- set NO_DADDR flag in ip_masq_new().&n; *&n; * FIXME:&n; *&t;- detect also previous &quot;PRIVMSG&quot; string ?.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_IRC irc masquerading module&n; *&n; *&n; * Version:&t;@(#)ip_masq_irc.c 0.03   97/11/30&n; *&n; * Author:&t;Juan Jose Ciarlante&n; *&t;&t;&n; * Additions:&n; *  - recognize a few non-irc-II DCC requests (Oliver Wagner)&n; *     DCC MOVE (AmIRC/DCC.MOVE; SEND with resuming)&n; *     DCC SCHAT (AmIRC IDEA encrypted CHAT)&n; *     DCC TSEND (AmIRC/PIRCH SEND without ACKs)&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:  set NO_DADDR flag in ip_masq_new()&n; *&t;Nigel Metheringham&t;:  Added multiple port support &n; *&t;Juan Jose Ciarlante&t;:  litl bits for 2.1&n; *&t;Oliver Wagner &t;&t;:  more IRC cmds processing&n; *&t;  &lt;winmute@lucifer.gv.kotnet.org&gt;&n; *&t;Juan Jose Ciarlante&t;:  put new ms entry to listen()&n; *&n; * FIXME:&n; *&t;- detect also previous &quot;PRIVMSG&quot; string ?.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; * Multiple Port Support&n; *&t;The helper can be made to handle up to MAX_MASQ_APP_PORTS (normally 12)&n; *&t;with the port numbers being defined at module load time.  The module&n; *&t;uses the symbol &quot;ports&quot; to define a list of monitored ports, which can&n; *&t;be specified on the insmod command line as&n; *&t;&t;ports=x1,x2,x3...&n; *&t;where x[n] are integer port numbers.  This option can be put into&n; *&t;/etc/conf.modules (or /etc/modules.conf depending on your config)&n; *&t;where modload will pick it up should you use modload to load your&n; *&t;modules.&n; *&t;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,8 +11,135 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/ip_masq.h&gt;
-DECL|macro|DEBUG_CONFIG_IP_MASQ_IRC
-mdefine_line|#define DEBUG_CONFIG_IP_MASQ_IRC 0
+multiline_comment|/* &n; * List of ports (up to MAX_MASQ_APP_PORTS) to be handled by helper&n; * First port is set to the default port.&n; */
+DECL|variable|ports
+r_int
+id|ports
+(braket
+id|MAX_MASQ_APP_PORTS
+)braket
+op_assign
+(brace
+l_int|6667
+)brace
+suffix:semicolon
+multiline_comment|/* I rely on the trailing items being set to zero */
+DECL|variable|masq_incarnations
+r_struct
+id|ip_masq_app
+op_star
+id|masq_incarnations
+(braket
+id|MAX_MASQ_APP_PORTS
+)braket
+suffix:semicolon
+multiline_comment|/*&n; *&t;Debug level&n; */
+DECL|variable|debug
+r_static
+r_int
+id|debug
+op_assign
+l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|ports
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_MASQ_APP_PORTS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * List of supported DCC protocols&n; */
+DECL|macro|NUM_DCCPROTO
+mdefine_line|#define NUM_DCCPROTO 5
+DECL|struct|dccproto
+r_struct
+id|dccproto
+(brace
+DECL|member|match
+r_char
+op_star
+id|match
+suffix:semicolon
+DECL|member|matchlen
+r_int
+id|matchlen
+suffix:semicolon
+DECL|member|xtra_args
+r_int
+id|xtra_args
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|variable|dccprotos
+r_struct
+id|dccproto
+id|dccprotos
+(braket
+id|NUM_DCCPROTO
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;SEND &quot;
+comma
+l_int|5
+comma
+l_int|1
+)brace
+comma
+(brace
+l_string|&quot;CHAT &quot;
+comma
+l_int|5
+comma
+l_int|0
+comma
+)brace
+comma
+(brace
+l_string|&quot;MOVE &quot;
+comma
+l_int|5
+comma
+l_int|1
+)brace
+comma
+(brace
+l_string|&quot;TSEND &quot;
+comma
+l_int|6
+comma
+l_int|1
+comma
+)brace
+comma
+(brace
+l_string|&quot;SCHAT &quot;
+comma
+l_int|6
+comma
+l_int|0
+comma
+)brace
+)brace
+suffix:semicolon
+DECL|macro|MAXMATCHLEN
+mdefine_line|#define MAXMATCHLEN 6
 r_static
 r_int
 DECL|function|masq_irc_init_1
@@ -187,7 +314,7 @@ id|th
 l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/*&n;         *&t;Hunt irc DCC string, the _shortest_:&n;         *&n;         *&t;strlen(&quot;DCC CHAT chat AAAAAAAA P&bslash;x01&bslash;n&quot;)=26&n;         *&t;strlen(&quot;DCC SEND F AAAAAAAA P S&bslash;x01&bslash;n&quot;)=25&n;         *&t;&t;AAAAAAAAA: bound addr (1.0.0.0==16777216, min 8 digits)&n;         *&t;&t;P:         bound port (min 1 d )&n;         *&t;&t;F:         filename   (min 1 d )&n;         *&t;&t;S:         size       (min 1 d )&n;         *&t;&t;0x01, &bslash;n:  terminators&n;         */
+multiline_comment|/*&n;&t; *&t;Hunt irc DCC string, the _shortest_:&n;&t; *&n;&t; *&t;strlen(&quot;DCC CHAT chat AAAAAAAA P&bslash;x01&bslash;n&quot;)=26&n;&t; *&t;strlen(&quot;DCC SCHAT chat AAAAAAAA P&bslash;x01&bslash;n&quot;)=27&n;&t; *&t;strlen(&quot;DCC SEND F AAAAAAAA P S&bslash;x01&bslash;n&quot;)=25&n;&t; *&t;strlen(&quot;DCC MOVE F AAAAAAAA P S&bslash;x01&bslash;n&quot;)=25&n;&t; *&t;strlen(&quot;DCC TSEND F AAAAAAAA P S&bslash;x01&bslash;n&quot;)=26&n;&t; *&t;strlen(&quot;DCC MOVE F AAAAAAAA P S&bslash;x01&bslash;n&quot;)=25&n;&t; *&t;&t;AAAAAAAAA: bound addr (1.0.0.0==16777216, min 8 digits)&n;&t; *&t;&t;P:         bound port (min 1 d )&n;&t; *&t;&t;F:         filename   (min 1 d )&n;&t; *&t;&t;S:         size       (min 1 d ) &n;&t; *&t;&t;0x01, &bslash;n:  terminators&n;         */
 id|data_limit
 op_assign
 id|skb-&gt;h.raw
@@ -202,10 +329,17 @@ OL
 (paren
 id|data_limit
 op_minus
-l_int|25
+(paren
+l_int|21
+op_plus
+id|MAXMATCHLEN
+)paren
 )paren
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -235,6 +369,22 @@ op_add_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* point to DCC cmd */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NUM_DCCPROTO
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * go through the table and hunt a match string&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -243,47 +393,43 @@ c_func
 (paren
 id|data
 comma
-l_string|&quot;CHAT &quot;
+id|dccprotos
+(braket
+id|i
+)braket
+dot
+id|match
 comma
-l_int|5
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|memcmp
-c_func
-(paren
-id|data
-comma
-l_string|&quot;SEND &quot;
-comma
-l_int|5
+id|dccprotos
+(braket
+id|i
+)braket
+dot
+id|matchlen
 )paren
 op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;                         *&t;extra arg (file_size) req. for &quot;SEND&quot;&n;                         */
-r_if
-c_cond
-(paren
-op_star
-id|data
-op_eq
-l_char|&squot;S&squot;
-)paren
 id|xtra_args
-op_increment
+op_assign
+id|dccprotos
+(braket
+id|i
+)braket
+dot
+id|xtra_args
 suffix:semicolon
 id|data
 op_add_assign
-l_int|5
+id|dccprotos
+(braket
+id|i
+)braket
+dot
+id|matchlen
 suffix:semicolon
-)brace
-r_else
-r_continue
-suffix:semicolon
-multiline_comment|/*&n;                 *&t;skip next string.&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;skip next string.&n;&t;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -293,7 +439,7 @@ op_increment
 op_ne
 l_char|&squot; &squot;
 )paren
-multiline_comment|/*&n;                         *&t;must still parse, at least, &quot;AAAAAAAA P&bslash;x01&bslash;n&quot;,&n;                         *      12 bytes left.&n;                         */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;must still parse, at least, &quot;AAAAAAAA P&bslash;x01&bslash;n&quot;,&n;&t;&t;&t;&t;&t; *      12 bytes left.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -312,7 +458,7 @@ id|addr_beg_p
 op_assign
 id|data
 suffix:semicolon
-multiline_comment|/*&n;                 *&t;client bound address in dec base&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;client bound address in dec base&n;&t;&t;&t;&t; */
 id|s_addr
 op_assign
 id|simple_strtoul
@@ -337,7 +483,7 @@ l_char|&squot; &squot;
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;                 *&t;client bound port in dec base&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;client bound port in dec base&n;&t;&t;&t;&t; */
 id|s_port
 op_assign
 id|simple_strtoul
@@ -355,7 +501,7 @@ id|addr_end_p
 op_assign
 id|data
 suffix:semicolon
-multiline_comment|/*&n;                 *&t;should check args consistency?&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;should check args consistency?&n;&t;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -399,7 +545,7 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;                 *&t;terminators.&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;terminators.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -431,15 +577,17 @@ l_char|&squot;&bslash;n&squot;
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Now create an masquerade entry for it&n;                 * &t;must set NO_DPORT and NO_DADDR because&n;                 *&t;connection is requested by another client.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Now create an masquerade entry for it&n;&t;&t;&t;&t; * &t;must set NO_DPORT and NO_DADDR because&n;&t;&t;&t;&t; *&t;connection is requested by another client.&n;&t;&t;&t;&t; */
 id|n_ms
 op_assign
 id|ip_masq_new
 c_func
 (paren
+id|IPPROTO_TCP
+comma
 id|maddr
 comma
-id|IPPROTO_TCP
+l_int|0
 comma
 id|htonl
 c_func
@@ -472,15 +620,7 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
-id|ip_masq_set_expire
-c_func
-(paren
-id|n_ms
-comma
-id|ip_masq_expire-&gt;tcp_fin_timeout
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Replace the old &quot;address port&quot; with the new one&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Replace the old &quot;address port&quot; with the new one&n;&t;&t;&t;&t; */
 id|buf_len
 op_assign
 id|sprintf
@@ -503,7 +643,7 @@ id|n_ms-&gt;mport
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Calculate required delta-offset to keep TCP happy&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Calculate required delta-offset to keep TCP happy&n;&t;&t;&t;&t; */
 id|diff
 op_assign
 id|buf_len
@@ -514,15 +654,18 @@ op_minus
 id|addr_beg_p
 )paren
 suffix:semicolon
-macro_line|#if DEBUG_CONFIG_IP_MASQ_IRC
 op_star
 id|addr_beg_p
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|printk
+id|IP_MASQ_DEBUG
 c_func
 (paren
+l_int|1
+op_minus
+id|debug
+comma
 l_string|&quot;masq_irc_out(): &squot;%s&squot; %X:%X detected (diff=%d)&bslash;n&quot;
 comma
 id|dcc_p
@@ -534,8 +677,7 @@ comma
 id|diff
 )paren
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t;&t; *&t;No shift.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;No shift.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -544,7 +686,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * simple case, just copy.&n; &t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * simple case, just copy.&n;&t;&t;&t;&t;&t; */
 id|memcpy
 c_func
 (paren
@@ -555,10 +697,9 @@ comma
 id|buf_len
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
+r_else
+(brace
 op_star
 id|skb_p
 op_assign
@@ -580,15 +721,30 @@ comma
 id|buf_len
 )paren
 suffix:semicolon
+)brace
+id|ip_masq_listen
+c_func
+(paren
+id|n_ms
+)paren
+suffix:semicolon
+id|ip_masq_put
+c_func
+(paren
+id|n_ms
+)paren
+suffix:semicolon
 r_return
 id|diff
 suffix:semicolon
+)brace
+)brace
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Main irc object&n; *     &t;You need 1 object per port in case you need&n; *&t;to offer also other used irc ports (6665,6666,etc),&n; *&t;they will share methods but they need own space for&n; *&t;data.&n; */
+multiline_comment|/*&n; *&t;Main irc object&n; *     &t;You need 1 object per port in case you need&n; *&t;to offer also other used irc ports (6665,6666,etc),&n; *&t;they will share methods but they need own space for&n; *&t;data. &n; */
 DECL|variable|ip_masq_irc
 r_struct
 id|ip_masq_app
@@ -633,17 +789,143 @@ r_void
 )paren
 )paren
 (brace
-r_return
-id|register_ip_masq_app
+r_int
+id|i
+comma
+id|j
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|i
+OL
+id|MAX_MASQ_APP_PORTS
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ports
+(braket
+id|i
+)braket
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|masq_incarnations
+(braket
+id|i
+)braket
+op_assign
+id|kmalloc
 c_func
 (paren
+r_sizeof
+(paren
+r_struct
+id|ip_masq_app
+)paren
+comma
+id|GFP_KERNEL
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|masq_incarnations
+(braket
+id|i
+)braket
+comma
 op_amp
 id|ip_masq_irc
 comma
+r_sizeof
+(paren
+r_struct
+id|ip_masq_app
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|j
+op_assign
+id|register_ip_masq_app
+c_func
+(paren
+id|masq_incarnations
+(braket
+id|i
+)braket
+comma
 id|IPPROTO_TCP
 comma
-l_int|6667
+id|ports
+(braket
+id|i
+)braket
 )paren
+)paren
+)paren
+(brace
+r_return
+id|j
+suffix:semicolon
+)brace
+id|IP_MASQ_DEBUG
+c_func
+(paren
+l_int|1
+op_minus
+id|debug
+comma
+l_string|&quot;Irc: loaded support on port[%d] = %d&bslash;n&quot;
+comma
+id|i
+comma
+id|ports
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* To be safe, force the incarnation table entry to NULL */
+id|masq_incarnations
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * &t;ip_masq_irc fin.&n; */
@@ -655,13 +937,105 @@ c_func
 r_void
 )paren
 (brace
-r_return
+r_int
+id|i
+comma
+id|j
+comma
+id|k
+suffix:semicolon
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|i
+OL
+id|MAX_MASQ_APP_PORTS
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|masq_incarnations
+(braket
+id|i
+)braket
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|j
+op_assign
 id|unregister_ip_masq_app
 c_func
 (paren
-op_amp
-id|ip_masq_irc
+id|masq_incarnations
+(braket
+id|i
+)braket
 )paren
+)paren
+)paren
+(brace
+id|k
+op_assign
+id|j
+suffix:semicolon
+)brace
+r_else
+(brace
+id|kfree
+c_func
+(paren
+id|masq_incarnations
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|masq_incarnations
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|IP_MASQ_DEBUG
+c_func
+(paren
+l_int|1
+op_minus
+id|debug
+comma
+l_string|&quot;Irc: unloaded support on port[%d] = %d&bslash;n&quot;
+comma
+id|i
+comma
+id|ports
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+r_return
+id|k
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

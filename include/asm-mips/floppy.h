@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995&n; */
+multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: floppy.h,v 1.3 1997/09/07 03:59:02 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_FLOPPY_H
 DECL|macro|__ASM_MIPS_FLOPPY_H
 mdefine_line|#define __ASM_MIPS_FLOPPY_H
@@ -13,37 +13,37 @@ mdefine_line|#define fd_inb(port)&t;&t;&t;feature-&gt;fd_inb(port)
 DECL|macro|fd_outb
 mdefine_line|#define fd_outb(value,port)&t;&t;feature-&gt;fd_outb(value,port)
 DECL|macro|fd_enable_dma
-mdefine_line|#define fd_enable_dma()&t;&t;&t;feature-&gt;fd_enable_dma()
+mdefine_line|#define fd_enable_dma(channel)&t;&t;feature-&gt;fd_enable_dma(channel)
 DECL|macro|fd_disable_dma
-mdefine_line|#define fd_disable_dma()&t;&t;feature-&gt;fd_disable_dma()
+mdefine_line|#define fd_disable_dma(channel)&t;&t;feature-&gt;fd_disable_dma(channel)
 DECL|macro|fd_request_dma
-mdefine_line|#define fd_request_dma()&t;&t;feature-&gt;fd_request_dma()
+mdefine_line|#define fd_request_dma(channel)&t;&t;feature-&gt;fd_request_dma(channel)
 DECL|macro|fd_free_dma
-mdefine_line|#define fd_free_dma()&t;&t;&t;feature-&gt;fd_free_dma()
+mdefine_line|#define fd_free_dma(channel)&t;&t;feature-&gt;fd_free_dma(channel)
 DECL|macro|fd_clear_dma_ff
-mdefine_line|#define fd_clear_dma_ff()&t;&t;feature-&gt;fd_clear_dma_ff()
+mdefine_line|#define fd_clear_dma_ff(channel)&t;feature-&gt;fd_clear_dma_ff(channel)
 DECL|macro|fd_set_dma_mode
-mdefine_line|#define fd_set_dma_mode(mode)&t;&t;feature-&gt;fd_set_dma_mode(mode)
+mdefine_line|#define fd_set_dma_mode(channel, mode)&t;feature-&gt;fd_set_dma_mode(channel, mode)
 DECL|macro|fd_set_dma_addr
-mdefine_line|#define fd_set_dma_addr(addr)&t;&t;feature-&gt;fd_set_dma_addr(virt_to_bus(addr))
+mdefine_line|#define fd_set_dma_addr(channel, addr)&t;feature-&gt;fd_set_dma_addr(channel, &bslash;&n;&t;&t;&t;&t;&t;         virt_to_bus(addr))
 DECL|macro|fd_set_dma_count
-mdefine_line|#define fd_set_dma_count(count)&t;&t;feature-&gt;fd_set_dma_count(count)
+mdefine_line|#define fd_set_dma_count(channel,count)&t;feature-&gt;fd_set_dma_count(channel,count)
 DECL|macro|fd_get_dma_residue
-mdefine_line|#define fd_get_dma_residue()&t;&t;feature-&gt;fd_get_dma_residue()
+mdefine_line|#define fd_get_dma_residue(channel)&t;feature-&gt;fd_get_dma_residue(channel)
 DECL|macro|fd_enable_irq
-mdefine_line|#define fd_enable_irq()&t;&t;&t;feature-&gt;fd_enable_irq()
+mdefine_line|#define fd_enable_irq(irq)&t;&t;feature-&gt;fd_enable_irq(irq)
 DECL|macro|fd_disable_irq
-mdefine_line|#define fd_disable_irq()&t;&t;feature-&gt;fd_disable_irq()
+mdefine_line|#define fd_disable_irq(irq)&t;&t;feature-&gt;fd_disable_irq(irq)
 DECL|macro|fd_request_irq
-mdefine_line|#define fd_request_irq()        request_irq(FLOPPY_IRQ, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;&t;    SA_INTERRUPT|SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;            &quot;floppy&quot;, NULL)
+mdefine_line|#define fd_request_irq(irq)&t;&t;request_irq(irq, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;&t;&t;    SA_INTERRUPT &bslash;&n;&t;&t;&t;&t;&t;            | SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;                    &quot;floppy&quot;, NULL)
 DECL|macro|fd_free_irq
-mdefine_line|#define fd_free_irq()           free_irq(FLOPPY_IRQ, NULL);
+mdefine_line|#define fd_free_irq(irq)&t;&t;free_irq(irq, NULL);
 DECL|macro|MAX_BUFFER_SECTORS
 mdefine_line|#define MAX_BUFFER_SECTORS 24
 multiline_comment|/* Pure 2^n version of get_order */
 DECL|function|__get_order
 r_extern
-id|__inline__
+r_inline
 r_int
 id|__get_order
 c_func
@@ -97,7 +97,7 @@ suffix:semicolon
 )brace
 DECL|function|mips_dma_mem_alloc
 r_extern
-id|__inline__
+r_inline
 r_int
 r_int
 id|mips_dma_mem_alloc
@@ -169,7 +169,7 @@ suffix:semicolon
 )brace
 DECL|function|mips_dma_mem_free
 r_extern
-id|__inline__
+r_inline
 r_void
 id|mips_dma_mem_free
 c_func
@@ -194,14 +194,10 @@ id|MACH_GROUP_JAZZ
 id|vdma_free
 c_func
 (paren
-id|vdma_phys2log
-c_func
-(paren
 id|PHYSADDR
 c_func
 (paren
 id|addr
-)paren
 )paren
 )paren
 suffix:semicolon

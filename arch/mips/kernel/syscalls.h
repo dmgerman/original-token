@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.7 1997/08/08 18:12:32 miguel Exp $&n; */
+multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.6 1997/12/06 09:57:39 ralf Exp $&n; */
 multiline_comment|/*&n; * This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; *&n; * The binary compatibility calls are still missing in this list.&n; */
 id|SYS
 c_func
@@ -126,7 +126,7 @@ l_int|3
 id|SYS
 c_func
 (paren
-id|sys_break
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -227,14 +227,14 @@ multiline_comment|/* 4030 */
 id|SYS
 c_func
 (paren
-id|sys_stty
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
 id|SYS
 c_func
 (paren
-id|sys_gtty
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -255,7 +255,7 @@ l_int|1
 id|SYS
 c_func
 (paren
-id|sys_ftime
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -320,7 +320,7 @@ l_int|1
 id|SYS
 c_func
 (paren
-id|sys_prof
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -378,14 +378,14 @@ l_int|0
 id|SYS
 c_func
 (paren
-id|sys_phys
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
 id|SYS
 c_func
 (paren
-id|sys_lock
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -407,7 +407,7 @@ multiline_comment|/* 4055 */
 id|SYS
 c_func
 (paren
-id|sys_mpx
+id|sys_ni_syscall
 comma
 l_int|2
 )paren
@@ -421,7 +421,7 @@ l_int|2
 id|SYS
 c_func
 (paren
-id|sys_ulimit
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -710,7 +710,7 @@ l_int|3
 id|SYS
 c_func
 (paren
-id|sys_profil
+id|sys_ni_syscall
 comma
 l_int|0
 )paren
@@ -1369,21 +1369,6 @@ id|SYS
 c_func
 (paren
 id|sys_nfsservctl
-comma
-l_int|3
-)paren
-id|SYS
-c_func
-(paren
-id|sys_setresgid
-comma
-l_int|3
-)paren
-multiline_comment|/* 4190 */
-id|SYS
-c_func
-(paren
-id|sys_getresgid
 comma
 l_int|3
 )paren

@@ -1,23 +1,9 @@
-multiline_comment|/*&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * $Id: bootinfo.h,v 1.3 1997/09/19 08:37:44 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_BOOTINFO_H
 DECL|macro|__ASM_MIPS_BOOTINFO_H
 mdefine_line|#define __ASM_MIPS_BOOTINFO_H
 multiline_comment|/* XXX */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if 0
-multiline_comment|/*&n; * Valid machtype values&n; * FIXME: note that we really need a hierarchy for this stuff, as there are &n; * several models of DECStation (for example). PMA&n; */
-mdefine_line|#define MACH_UNKNOWN&t;&t;0&t;/* whatever...                   */
-mdefine_line|#define MACH_DESKSTATION_RPC44&t;1&t;/* Deskstation rPC44             */
-mdefine_line|#define MACH_DESKSTATION_TYNE&t;2&t;/* Deskstation Tyne              */
-mdefine_line|#define MACH_ACER_PICA_61&t;3&t;/* Acer PICA-61 (PICA1)          */
-mdefine_line|#define MACH_MIPS_MAGNUM_4000&t;4&t;/* Mips Magnum 4000 &quot;RC4030&quot;     */
-mdefine_line|#define MACH_OLIVETTI_M700&t;4&t;/* almost a clone ...            */
-mdefine_line|#define MACH_DECSTATION&t;&t;5&t;/* DECStation 5000/2x for now    */
-mdefine_line|#define MACH_SNI_RM200_PCI&t;6&t;/* RM200/RM300/RM400 PCI series  */
-mdefine_line|#define MACH_SGI_INDY&t;&t;7&t;/* R4?K and R5K Indy workstaions */
-mdefine_line|#define MACH_LAST&t;&t;7
-mdefine_line|#define MACH_NAMES {&quot;unknown&quot;, &quot;Deskstation rPC44&quot;, &quot;Deskstation Tyne&quot;, &bslash;&n;&t;&quot;Acer PICA 61&quot;, &quot;Mips Magnum 4000&quot;, &quot;DECStation&quot;, &quot;RM200 PCI&quot;, &bslash;&n;        &quot;SGI INDY&quot; }
-macro_line|#endif
 multiline_comment|/*&n; * Values for machgroup&n; */
 DECL|macro|MACH_GROUP_UNKNOWN
 mdefine_line|#define MACH_GROUP_UNKNOWN      0 /* whatever... */
@@ -34,7 +20,7 @@ mdefine_line|#define MACH_GROUP_ACN&t;&t;5
 DECL|macro|MACH_GROUP_SGI
 mdefine_line|#define MACH_GROUP_SGI          6 /* Silicon Graphics workstations and servers */
 DECL|macro|GROUP_NAMES
-mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &quot;SNI&quot;, &quot;ACN&quot; }
+mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot; }
 multiline_comment|/*&n; * Valid machtype values for group unknown (low order halfword of mips_machtype)&n; */
 DECL|macro|MACH_UNKNOWN
 mdefine_line|#define MACH_UNKNOWN&t;&t;0&t;/* whatever...&t;&t;&t;*/
@@ -76,6 +62,10 @@ mdefine_line|#define GROUP_ACN_NAMES { &quot;ACN&quot; }
 multiline_comment|/*&n; * Valid machtype for group SGI&n; */
 DECL|macro|MACH_SGI_INDY
 mdefine_line|#define MACH_SGI_INDY&t;&t;0&t;/* R4?K and R5K Indy workstaions */
+DECL|macro|GROUP_SGI_NAMES
+mdefine_line|#define GROUP_SGI_NAMES { &quot;Indy&quot; }
+DECL|macro|GROUP_SGI_NAMES
+mdefine_line|#define GROUP_SGI_NAMES { &quot;Indy&quot; }
 multiline_comment|/*&n; * Valid cputype values&n; */
 DECL|macro|CPU_UNKNOWN
 mdefine_line|#define CPU_UNKNOWN&t;&t;0
@@ -131,10 +121,12 @@ DECL|macro|CPU_R5000A
 mdefine_line|#define CPU_R5000A&t;&t;25
 DECL|macro|CPU_R4640
 mdefine_line|#define CPU_R4640&t;&t;26
+DECL|macro|CPU_NEVADA
+mdefine_line|#define CPU_NEVADA&t;&t;27&t;/* RM5230, RM5260 */
 DECL|macro|CPU_LAST
-mdefine_line|#define CPU_LAST                27
+mdefine_line|#define CPU_LAST&t;&t;27
 DECL|macro|CPU_NAMES
-mdefine_line|#define CPU_NAMES { &quot;unknown&quot;, &quot;R2000&quot;, &quot;R3000&quot;, &quot;R3000A&quot;, &quot;R3041&quot;, &quot;R3051&quot;, &bslash;&n;        &quot;R3052&quot;, &quot;R3081&quot;, &quot;R3081E&quot;, &quot;R4000PC&quot;, &quot;R4000SC&quot;, &quot;R4000MC&quot;,         &bslash;&n;        &quot;R4200&quot;, &quot;R4400PC&quot;, &quot;R4400SC&quot;, &quot;R4400MC&quot;, &quot;R4600&quot;, &quot;R6000&quot;,          &bslash;&n;        &quot;R6000A&quot;, &quot;R8000&quot;, &quot;R10000&quot;, &quot;R4300&quot;, &quot;R4650&quot;, &quot;R4700&quot;, &quot;R5000&quot;,     &bslash;&n;&t;&quot;R5000A&quot;, &quot;R4640&quot; }
+mdefine_line|#define CPU_NAMES { &quot;unknown&quot;, &quot;R2000&quot;, &quot;R3000&quot;, &quot;R3000A&quot;, &quot;R3041&quot;, &quot;R3051&quot;, &bslash;&n;        &quot;R3052&quot;, &quot;R3081&quot;, &quot;R3081E&quot;, &quot;R4000PC&quot;, &quot;R4000SC&quot;, &quot;R4000MC&quot;,         &bslash;&n;        &quot;R4200&quot;, &quot;R4400PC&quot;, &quot;R4400SC&quot;, &quot;R4400MC&quot;, &quot;R4600&quot;, &quot;R6000&quot;,          &bslash;&n;        &quot;R6000A&quot;, &quot;R8000&quot;, &quot;R10000&quot;, &quot;R4300&quot;, &quot;R4650&quot;, &quot;R4700&quot;, &quot;R5000&quot;,     &bslash;&n;        &quot;R5000A&quot;, &quot;R4640&quot;, &quot;Nevada&quot; }
 DECL|macro|CL_SIZE
 mdefine_line|#define CL_SIZE      (80)
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/mipsregs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996 by Ralf Baechle&n; * Modified for further R[236]000 support by Paul M. Antoine, 1996.&n; */
+multiline_comment|/*&n; * include/asm-mips/mipsregs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997 by Ralf Baechle&n; * Modified for further R[236]000 support by Paul M. Antoine, 1996.&n; *&n; * $Id: mipsregs.h,v 1.4 1997/09/20 19:02:46 root Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_MIPSREGS_H
 DECL|macro|__ASM_MIPS_MIPSREGS_H
 mdefine_line|#define __ASM_MIPS_MIPSREGS_H
@@ -165,21 +165,28 @@ DECL|macro|C_IRQ5
 mdefine_line|#define C_IRQ5          (1&lt;&lt;15)
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 multiline_comment|/*&n; * Manipulate the status register.&n; * Mostly used to access the interrupt bits.&n; */
-DECL|macro|BUILD_SET_CP0
-mdefine_line|#define BUILD_SET_CP0(name,register)                            &bslash;&n;extern __inline__ unsigned int                                  &bslash;&n;set_cp0_##name(unsigned int change, unsigned int new)           &bslash;&n;{                                                               &bslash;&n;&t;unsigned int res;                                       &bslash;&n;                                                                &bslash;&n;&t;res = read_32bit_cp0_register(register);                &bslash;&n;&t;res &amp;= ~change;                                         &bslash;&n;&t;res |= (new &amp; change);                                  &bslash;&n;&t;if(change)                                              &bslash;&n;&t;&t;write_32bit_cp0_register(register, res);        &bslash;&n;                                                                &bslash;&n;&t;return res;                                             &bslash;&n;}
-id|BUILD_SET_CP0
+DECL|macro|__BUILD_SET_CP0
+mdefine_line|#define __BUILD_SET_CP0(name,register)                          &bslash;&n;extern __inline__ unsigned int                                  &bslash;&n;set_cp0_##name(unsigned int change, unsigned int new)           &bslash;&n;{                                                               &bslash;&n;&t;unsigned int res;                                       &bslash;&n;                                                                &bslash;&n;&t;res = read_32bit_cp0_register(register);                &bslash;&n;&t;res &amp;= ~change;                                         &bslash;&n;&t;res |= (new &amp; change);                                  &bslash;&n;&t;if(change)                                              &bslash;&n;&t;&t;write_32bit_cp0_register(register, res);        &bslash;&n;                                                                &bslash;&n;&t;return res;                                             &bslash;&n;}
+id|__BUILD_SET_CP0
 c_func
 (paren
 id|status
 comma
 id|CP0_STATUS
 )paren
-id|BUILD_SET_CP0
+id|__BUILD_SET_CP0
 c_func
 (paren
 id|cause
 comma
 id|CP0_CAUSE
+)paren
+id|__BUILD_SET_CP0
+c_func
+(paren
+id|config
+comma
+id|CP0_CONFIG
 )paren
 macro_line|#endif /* defined (__LANGUAGE_ASSEMBLY__) */
 multiline_comment|/*&n; * Inline code for use of the ll and sc instructions&n; *&n; * FIXME: This instruction is only available on MIPS ISA &gt;=2.&n; * Since these operations are only being used for atomic operations&n; * the easiest workaround for the R[23]00 is to disable interrupts.&n; * This fails for R3000 SMP machines which use that many different&n; * technologies as replacement that it is difficult to create even&n; * just a hook for for all machines to hook into.  The only good&n; * thing is that there is currently no R3000 SMP machine on the&n; * Linux/MIPS target list ...&n; */
@@ -230,6 +237,38 @@ mdefine_line|#define ST0_DL                 (1   &lt;&lt; 24)
 multiline_comment|/*&n; * Status register bits available in all MIPS CPUs.&n; */
 DECL|macro|ST0_IM
 mdefine_line|#define ST0_IM&t;&t;&t;0x0000ff00
+DECL|macro|STATUSB_IP0
+mdefine_line|#define  STATUSB_IP0&t;&t;8
+DECL|macro|STATUSF_IP0
+mdefine_line|#define  STATUSF_IP0&t;&t;(1   &lt;&lt;  8)
+DECL|macro|STATUSB_IP1
+mdefine_line|#define  STATUSB_IP1&t;&t;9
+DECL|macro|STATUSF_IP1
+mdefine_line|#define  STATUSF_IP1&t;&t;(1   &lt;&lt;  9)
+DECL|macro|STATUSB_IP2
+mdefine_line|#define  STATUSB_IP2&t;&t;10
+DECL|macro|STATUSF_IP2
+mdefine_line|#define  STATUSF_IP2&t;&t;(1   &lt;&lt; 10)
+DECL|macro|STATUSB_IP3
+mdefine_line|#define  STATUSB_IP3&t;&t;11
+DECL|macro|STATUSF_IP3
+mdefine_line|#define  STATUSF_IP3&t;&t;(1   &lt;&lt; 11)
+DECL|macro|STATUSB_IP4
+mdefine_line|#define  STATUSB_IP4&t;&t;12
+DECL|macro|STATUSF_IP4
+mdefine_line|#define  STATUSF_IP4&t;&t;(1   &lt;&lt; 12)
+DECL|macro|STATUSB_IP5
+mdefine_line|#define  STATUSB_IP5&t;&t;13
+DECL|macro|STATUSF_IP5
+mdefine_line|#define  STATUSF_IP5&t;&t;(1   &lt;&lt; 13)
+DECL|macro|STATUSB_IP6
+mdefine_line|#define  STATUSB_IP6&t;&t;14
+DECL|macro|STATUSF_IP6
+mdefine_line|#define  STATUSF_IP6&t;&t;(1   &lt;&lt; 14)
+DECL|macro|STATUSB_IP7
+mdefine_line|#define  STATUSB_IP7&t;&t;15
+DECL|macro|STATUSF_IP7
+mdefine_line|#define  STATUSF_IP7&t;&t;(1   &lt;&lt; 15)
 DECL|macro|ST0_DE
 mdefine_line|#define ST0_DE&t;&t;&t;0x00010000
 DECL|macro|ST0_CE
@@ -297,6 +336,10 @@ DECL|macro|CAUSEB_IP7
 mdefine_line|#define  CAUSEB_IP7&t;&t;15
 DECL|macro|CAUSEF_IP7
 mdefine_line|#define  CAUSEF_IP7&t;&t;(1   &lt;&lt; 15)
+DECL|macro|CAUSEB_IV
+mdefine_line|#define  CAUSEB_IV&t;&t;23
+DECL|macro|CAUSEF_IV
+mdefine_line|#define  CAUSEF_IV&t;&t;(1   &lt;&lt; 23)
 DECL|macro|CAUSEB_CE
 mdefine_line|#define  CAUSEB_CE&t;&t;28
 DECL|macro|CAUSEF_CE
@@ -306,12 +349,30 @@ mdefine_line|#define  CAUSEB_BD&t;&t;31
 DECL|macro|CAUSEF_BD
 mdefine_line|#define  CAUSEF_BD&t;&t;(1   &lt;&lt; 31)
 multiline_comment|/*&n; * Bits in the coprozessor 0 config register.&n; */
+DECL|macro|CONFIG_CM_CACHABLE_NO_WA
+mdefine_line|#define CONFIG_CM_CACHABLE_NO_WA&t;0
+DECL|macro|CONFIG_CM_CACHABLE_WA
+mdefine_line|#define CONFIG_CM_CACHABLE_WA&t;&t;1
+DECL|macro|CONFIG_CM_UNCACHED
+mdefine_line|#define CONFIG_CM_UNCACHED&t;&t;2
+DECL|macro|CONFIG_CM_CACHABLE_NONCOHERENT
+mdefine_line|#define CONFIG_CM_CACHABLE_NONCOHERENT&t;3
+DECL|macro|CONFIG_CM_CACHABLE_CE
+mdefine_line|#define CONFIG_CM_CACHABLE_CE&t;&t;4
+DECL|macro|CONFIG_CM_CACHABLE_COW
+mdefine_line|#define CONFIG_CM_CACHABLE_COW&t;&t;5
+DECL|macro|CONFIG_CM_CACHABLE_CUW
+mdefine_line|#define CONFIG_CM_CACHABLE_CUW&t;&t;6
+DECL|macro|CONFIG_CM_CACHABLE_ACCELERATED
+mdefine_line|#define CONFIG_CM_CACHABLE_ACCELERATED&t;7
+DECL|macro|CONFIG_CM_CMASK
+mdefine_line|#define CONFIG_CM_CMASK&t;&t;&t;7
 DECL|macro|CONFIG_DB
-mdefine_line|#define CONFIG_DB&t;&t;(1 &lt;&lt;  4)
+mdefine_line|#define CONFIG_DB&t;&t;&t;(1 &lt;&lt;  4)
 DECL|macro|CONFIG_IB
-mdefine_line|#define CONFIG_IB&t;&t;(1 &lt;&lt;  5)
+mdefine_line|#define CONFIG_IB&t;&t;&t;(1 &lt;&lt;  5)
 DECL|macro|CONFIG_SC
-mdefine_line|#define CONFIG_SC&t;&t;(1 &lt;&lt; 17)
+mdefine_line|#define CONFIG_SC&t;&t;&t;(1 &lt;&lt; 17)
 multiline_comment|/*&n; * R10000 performance counter definitions.&n; *&n; * FIXME: The R10000 performance counter opens a nice way to implement CPU&n; *        time accounting with a precission of one cycle.  I don&squot;t have&n; *        R10000 silicon but just a manual, so ...&n; */
 multiline_comment|/*&n; * Events counted by counter #0&n; */
 DECL|macro|CE0_CYCLES

@@ -1,7 +1,4 @@
-multiline_comment|/*&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: setup.c,v 1.3 1997/08/08 18:13:22 miguel Exp $&n; */
-macro_line|#ifndef __GOGOGO__
-macro_line|#error &quot;... about to fuckup your Indy?&quot;
-macro_line|#endif
+multiline_comment|/*&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: setup.c,v 1.5 1997/09/13 02:19:18 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
@@ -174,76 +171,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_extern
-r_void
-id|register_console
-c_func
-(paren
-r_void
-(paren
-op_star
-id|proc
-)paren
-(paren
-r_const
-r_char
-op_star
-)paren
-)paren
-suffix:semicolon
-r_static
-r_void
-id|sgi_print
-c_func
-(paren
-r_const
-r_char
-op_star
-id|p
-)paren
-(brace
-r_char
-id|c
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|c
-op_assign
-op_star
-id|p
-op_increment
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|c
-op_eq
-l_char|&squot;&bslash;n&squot;
-)paren
-(brace
-id|prom_putchar
-c_func
-(paren
-l_char|&squot;&bslash;r&squot;
-)paren
-suffix:semicolon
-)brace
-id|prom_putchar
-c_func
-(paren
-id|c
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 DECL|function|sgi_setup
 r_void
 id|sgi_setup
@@ -281,7 +208,6 @@ id|_machine_power_off
 op_assign
 id|sgi_machine_power_off
 suffix:semicolon
-multiline_comment|/* register_console(sgi_print); */
 multiline_comment|/* Init the INDY HPC I/O controller.  Need to call this before&n;&t; * fucking with the memory controller because it needs to know the&n;&t; * boardID and whether this is a Guiness or a FullHouse machine.&n;&t; */
 id|sgihpc_init
 c_func

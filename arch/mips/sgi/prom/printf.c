@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: printf.c,v 1.1 1997/06/06 09:37:17 ralf Exp $&n; * printf.c: Putting things on the screen using SGI arcs&n; *           PROM facilities.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
+multiline_comment|/* $Id: printf.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * printf.c: Putting things on the screen using SGI arcs&n; *           PROM facilities.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|variable|ppbuf

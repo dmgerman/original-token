@@ -183,13 +183,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Changer can report exact contents&n;&t;&t;&t;&t;      of slots. */
-DECL|member|max_speed
-id|__u8
-id|max_speed
-suffix:colon
-l_int|4
-suffix:semicolon
-multiline_comment|/* Max speed of the drive */
 DECL|member|seeking
 id|__u8
 id|seeking
@@ -203,10 +196,15 @@ id|reserved
 suffix:colon
 l_int|6
 suffix:semicolon
+DECL|member|max_speed
+id|byte
+id|max_speed
+suffix:semicolon
+multiline_comment|/* Max speed of the drive */
 )brace
 suffix:semicolon
 DECL|macro|CDROM_CONFIG_FLAGS
-mdefine_line|#define CDROM_CONFIG_FLAGS(drive) ((struct ide_cd_config_flags *)&amp;((drive)-&gt;bios_cyl))
+mdefine_line|#define CDROM_CONFIG_FLAGS(drive) (&amp;(((struct cdrom_info *)(drive-&gt;driver_data))-&gt;config_flags))
 multiline_comment|/* State flags.  These give information about the current state of the&n;   drive, and will change during normal operation. */
 DECL|struct|ide_cd_state_flags
 r_struct
@@ -240,23 +238,21 @@ suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* Sanyo 3 CD changer support */
-DECL|member|curent_speed
-id|__u8
-id|curent_speed
-suffix:colon
-l_int|4
-suffix:semicolon
-multiline_comment|/* Current speed of the drive */
 DECL|member|reserved
 id|__u8
 id|reserved
 suffix:colon
 l_int|3
 suffix:semicolon
+DECL|member|current_speed
+id|byte
+id|current_speed
+suffix:semicolon
+multiline_comment|/* Current speed of the drive */
 )brace
 suffix:semicolon
 DECL|macro|CDROM_STATE_FLAGS
-mdefine_line|#define CDROM_STATE_FLAGS(drive)  ((struct ide_cd_state_flags *)&amp;((drive)-&gt;bios_head))
+mdefine_line|#define CDROM_STATE_FLAGS(drive) (&amp;(((struct cdrom_info *)(drive-&gt;driver_data))-&gt;state_flags))
 DECL|struct|atapi_request_sense
 r_struct
 id|atapi_request_sense
@@ -1066,6 +1062,16 @@ r_struct
 id|atapi_changer_info
 op_star
 id|changer_info
+suffix:semicolon
+DECL|member|config_flags
+r_struct
+id|ide_cd_config_flags
+id|config_flags
+suffix:semicolon
+DECL|member|state_flags
+r_struct
+id|ide_cd_state_flags
+id|state_flags
 suffix:semicolon
 multiline_comment|/* Per-device info needed by cdrom.c generic driver. */
 DECL|member|devinfo

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: r4kcache.h,v 1.2 1997/06/25 17:04:19 ralf Exp $&n; * r4kcache.h: Inline assembly cache operations.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * r4kcache.h: Inline assembly cache operations.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r4kcache.h,v 1.5 1997/12/01 16:47:05 ralf Exp $&n; *&n; * FIXME: Handle split L2 caches.&n; */
 macro_line|#ifndef _MIPS_R4KCACHE_H
 DECL|macro|_MIPS_R4KCACHE_H
 mdefine_line|#define _MIPS_R4KCACHE_H
+macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/cacheops.h&gt;
 DECL|function|flush_icache_line_indexed
 r_extern
@@ -178,6 +179,146 @@ id|Hit_Writeback_Inv_D
 )paren
 suffix:semicolon
 )brace
+DECL|function|invalidate_dcache_line
+r_extern
+r_inline
+r_void
+id|invalidate_dcache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;cache %1, (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Invalidate_D
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|invalidate_scache_line
+r_extern
+r_inline
+r_void
+id|invalidate_scache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;cache %1, (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Invalidate_SD
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|invalidate_dcache_line
+r_extern
+r_inline
+r_void
+id|invalidate_dcache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;cache %1, (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Invalidate_D
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|invalidate_scache_line
+r_extern
+r_inline
+r_void
+id|invalidate_scache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;cache %1, (%0)&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Invalidate_SD
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|flush_scache_line
 r_extern
 r_inline
@@ -209,6 +350,180 @@ comma
 l_string|&quot;i&quot;
 (paren
 id|Hit_Writeback_Inv_SD
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * The next two are for badland addresses like signal trampolines.&n; */
+DECL|function|protected_flush_icache_line
+r_extern
+r_inline
+r_void
+id|protected_flush_icache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&quot;
+l_string|&quot;1:&bslash;tcache %1,(%0)&bslash;n&quot;
+l_string|&quot;2:&bslash;t.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+l_string|&quot;.section&bslash;t__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
+id|STR
+c_func
+(paren
+id|PTR
+)paren
+l_string|&quot;&bslash;t1b,2b&bslash;n&bslash;t&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Invalidate_I
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|protected_writeback_dcache_line
+r_extern
+r_inline
+r_void
+id|protected_writeback_dcache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&quot;
+l_string|&quot;1:&bslash;tcache %1,(%0)&bslash;n&quot;
+l_string|&quot;2:&bslash;t.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+l_string|&quot;.section&bslash;t__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
+id|STR
+c_func
+(paren
+id|PTR
+)paren
+l_string|&quot;&bslash;t1b,2b&bslash;n&bslash;t&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Writeback_D
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * The next two are for badland addresses like signal trampolines.&n; */
+DECL|function|protected_flush_icache_line
+r_extern
+r_inline
+r_void
+id|protected_flush_icache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&quot;
+l_string|&quot;1:&bslash;tcache %1,(%0)&bslash;n&quot;
+l_string|&quot;2:&bslash;t.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+l_string|&quot;.section&bslash;t__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
+id|STR
+c_func
+(paren
+id|PTR
+)paren
+l_string|&quot;&bslash;t1b,2b&bslash;n&bslash;t&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Invalidate_I
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|protected_writeback_dcache_line
+r_extern
+r_inline
+r_void
+id|protected_writeback_dcache_line
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&quot;
+l_string|&quot;1:&bslash;tcache %1,(%0)&bslash;n&quot;
+l_string|&quot;2:&bslash;t.set mips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+l_string|&quot;.section&bslash;t__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
+id|STR
+c_func
+(paren
+id|PTR
+)paren
+l_string|&quot;&bslash;t1b,2b&bslash;n&bslash;t&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|Hit_Writeback_D
 )paren
 )paren
 suffix:semicolon
@@ -3845,6 +4160,7 @@ l_int|0x400
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * Call this function only with interrupts disabled or R4600 V2.0 may blow&n; * you up.&n; *&n; * R4600 v2.0 bug: &quot;The CACHE instructions Hit_Writeback_Inv_D,&n; * Hit_Writeback_D, Hit_Invalidate_D and Create_Dirty_Excl_D will only&n; * operate correctly if the internal data cache refill buffer is empty.  These&n; * CACHE instructions should be separated from any potential data cache miss&n; * by a load instruction to an uncached address to empty the response buffer.&quot;&n; * (Revision 2.0 device errata from IDT available on http://www.idt.com/&n; * in .pdf format.)&n; */
 DECL|function|blast_dcache32_page
 r_extern
 r_inline
@@ -3872,6 +4188,16 @@ id|start
 op_plus
 id|PAGE_SIZE
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Sigh ... workaround for R4600 v1.7 bug.  Explanation see above.&n;&t; */
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|KSEG1
 suffix:semicolon
 id|__asm__
 id|__volatile__

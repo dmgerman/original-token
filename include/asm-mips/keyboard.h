@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.5 1997/08/08 20:22:31 miguel Exp $&n; */
+multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.8 1997/12/02 05:51:14 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_KEYBOARD_H
 DECL|macro|__ASM_MIPS_KEYBOARD_H
 mdefine_line|#define __ASM_MIPS_KEYBOARD_H
@@ -195,7 +195,7 @@ mdefine_line|#define ps2_request_irq() 0
 DECL|macro|ps2_free_irq
 mdefine_line|#define ps2_free_irq(void) do { } while(0);
 macro_line|#endif /* CONFIG_SGI */
-macro_line|#if defined(CONFIG_ACER_PICA_61) || defined(CONFIG_SNI_RM200_PCI) &bslash;&n;    || defined(CONFIG_DESKSTATION_RPC44) || defined(CONFIG_DESKSTATION_TYNE)
+macro_line|#if defined(CONFIG_ACER_PICA_61) || defined(CONFIG_SNI_RM200_PCI)
 DECL|macro|CONF_KEYBOARD_USES_IO_PORTS
 mdefine_line|#define CONF_KEYBOARD_USES_IO_PORTS
 macro_line|#endif

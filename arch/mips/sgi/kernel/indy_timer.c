@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_timer.c,v 1.2 1997/06/30 15:53:04 ralf Exp $&n; */
+multiline_comment|/*&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_timer.c,v 1.3 1997/08/11 04:37:09 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -334,6 +334,11 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|irq
+op_assign
+l_int|7
+suffix:semicolon
 multiline_comment|/* Ack timer and compute new compare. */
 id|r4k_cur
 op_assign
@@ -355,7 +360,7 @@ id|r4k_cur
 suffix:semicolon
 id|kstat.interrupts
 (braket
-l_int|7
+id|irq
 )braket
 op_increment
 suffix:semicolon
@@ -1035,9 +1040,30 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_int
+id|irq
+op_assign
+l_int|4
+suffix:semicolon
+id|irq_enter
+c_func
+(paren
+id|cpu
+comma
+id|irq
+)paren
+suffix:semicolon
 id|kstat.interrupts
 (braket
-l_int|4
+id|irq
 )braket
 op_increment
 suffix:semicolon
@@ -1055,6 +1081,14 @@ suffix:semicolon
 id|prom_imode
 c_func
 (paren
+)paren
+suffix:semicolon
+id|irq_exit
+c_func
+(paren
+id|cpu
+comma
+id|irq
 )paren
 suffix:semicolon
 )brace

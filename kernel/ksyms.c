@@ -883,6 +883,13 @@ c_func
 id|shrink_dcache_parent
 )paren
 suffix:semicolon
+DECL|variable|find_inode_number
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|find_inode_number
+)paren
+suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
 DECL|variable|do_nfsservctl
 id|EXPORT_SYMBOL
@@ -1095,6 +1102,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|init_buffer
+)paren
+suffix:semicolon
+DECL|variable|max_sectors
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|max_sectors
 )paren
 suffix:semicolon
 multiline_comment|/* tty routines */

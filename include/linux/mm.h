@@ -459,8 +459,6 @@ DECL|macro|PageError
 mdefine_line|#define PageError(page)&t;&t;(test_bit(PG_error, &amp;(page)-&gt;flags))
 DECL|macro|PageReferenced
 mdefine_line|#define PageReferenced(page)&t;(test_bit(PG_referenced, &amp;(page)-&gt;flags))
-DECL|macro|PageDirty
-mdefine_line|#define PageDirty(page)&t;&t;(test_bit(PG_dirty, &amp;(page)-&gt;flags))
 DECL|macro|PageUptodate
 mdefine_line|#define PageUptodate(page)&t;(test_bit(PG_uptodate, &amp;(page)-&gt;flags))
 DECL|macro|PageFreeAfter

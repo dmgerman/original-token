@@ -2801,6 +2801,10 @@ id|cmd_hwif1-&gt;mate
 op_assign
 id|cmd_hwif0
 suffix:semicolon
+id|cmd_hwif1-&gt;channel
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_CMD640_ENHANCED
 id|cmd_hwif1-&gt;tuneproc
 op_assign

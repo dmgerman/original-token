@@ -102,6 +102,15 @@ id|xss
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Arbitrarily choose the same ptrace numbers as used by the Sparc code. */
+DECL|macro|PTRACE_GETREGS
+mdefine_line|#define PTRACE_GETREGS            12
+DECL|macro|PTRACE_SETREGS
+mdefine_line|#define PTRACE_SETREGS            13
+DECL|macro|PTRACE_GETFPREGS
+mdefine_line|#define PTRACE_GETFPREGS          14
+DECL|macro|PTRACE_SETFPREGS
+mdefine_line|#define PTRACE_SETFPREGS          15
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) ((VM_MASK &amp; (regs)-&gt;eflags) || (3 &amp; (regs)-&gt;xcs))

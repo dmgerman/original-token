@@ -6,7 +6,7 @@ macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
-multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; *&n; */
+multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; */
 r_extern
 r_void
 (paren
@@ -93,7 +93,40 @@ id|page
 )paren
 suffix:semicolon
 DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
+mdefine_line|#define flush_icache_range(start, end) flush_cache_all()
+multiline_comment|/*&n; * Prototype of the DMA related cacheflushing stuff.&n; */
+r_extern
+r_void
+(paren
+op_star
+id|flush_cache_pre_dma_out
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_cache_post_dma_in
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
 multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
 r_extern
 r_void

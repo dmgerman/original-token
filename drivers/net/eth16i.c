@@ -276,7 +276,7 @@ DECL|macro|E_PRODUCT_CFG
 mdefine_line|#define E_PRODUCT_CFG                  0x30
 multiline_comment|/* Macro to slow down io between EEPROM clock transitions */
 DECL|macro|eeprom_slow_io
-mdefine_line|#define eeprom_slow_io() do { int _i = 40; while(--_i &gt; 0) { __SLOW_DOWN_IO; }}while(0)
+mdefine_line|#define eeprom_slow_io() &t;udelay(100)&t;/* FIXME: smaller but right value here */
 multiline_comment|/* Jumperless Configuration Register (BMPR19) */
 DECL|macro|JUMPERLESS_CONFIG
 mdefine_line|#define JUMPERLESS_CONFIG      19

@@ -649,10 +649,6 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-id|current-&gt;used_math
-op_assign
-l_int|1
-suffix:semicolon
 id|current-&gt;flags
 op_and_assign
 op_complement
@@ -710,10 +706,17 @@ r_else
 id|restore_i387_soft
 c_func
 (paren
+op_amp
+id|current-&gt;tss.i387.soft
+comma
 id|buf
 )paren
 suffix:semicolon
 macro_line|#endif
+id|current-&gt;used_math
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_static
 r_int
@@ -1355,10 +1358,6 @@ id|buf
 )paren
 )paren
 suffix:semicolon
-id|current-&gt;used_math
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 id|buf
 suffix:semicolon
@@ -1386,6 +1385,11 @@ id|current-&gt;used_math
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* This will cause a &quot;finit&quot; to be triggered by the next&n;&t;   attempted FPU operation by the &squot;current&squot; process.&n;&t;   */
+id|current-&gt;used_math
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifndef CONFIG_MATH_EMULATION
 r_return
 id|save_i387_hard
@@ -1408,6 +1412,9 @@ suffix:colon
 id|save_i387_soft
 c_func
 (paren
+op_amp
+id|current-&gt;tss.i387.soft
+comma
 id|buf
 )paren
 suffix:semicolon

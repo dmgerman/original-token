@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: asmmacro.h,v 1.1 1997/06/06 09:38:18 ralf Exp $&n; * asmmacro.h: Assembler macros to make things easier to read.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: asmmacro.h,v 1.1.1.1 1997/06/01 03:17:13 ralf Exp $&n; * asmmacro.h: Assembler macros to make things easier to read.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef __MIPS_ASMMACRO_H
 DECL|macro|__MIPS_ASMMACRO_H
 mdefine_line|#define __MIPS_ASMMACRO_H

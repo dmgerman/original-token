@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -507,7 +508,7 @@ id|resend
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *&t;Wait for keyboard controller input buffer is empty.&n; */
+multiline_comment|/*&n; *&t;Wait for keyboard controller input buffer is empty.&n; *&n; *&t;Don&squot;t use &squot;jiffies&squot; so that we don&squot;t depend on&n; *&t;interrupts..&n; */
 DECL|function|kb_wait
 r_static
 r_inline
@@ -520,9 +521,9 @@ r_void
 (brace
 r_int
 r_int
-id|start
+id|timeout
 op_assign
-id|jiffies
+id|KBC_TIMEOUT
 suffix:semicolon
 r_do
 (brace
@@ -542,15 +543,20 @@ id|KBD_STAT_IBF
 )paren
 r_return
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+id|timeout
+op_decrement
+suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|jiffies
-op_minus
-id|start
-OL
-id|KBC_TIMEOUT
+id|timeout
 )paren
 suffix:semicolon
 macro_line|#ifdef KBD_REPORT_TIMEOUTS
@@ -1739,7 +1745,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * send_data sends a character to the keyboard and waits&n; * for an acknowledge, possibly retrying if asked to. Returns&n; * the success status.&n; */
+multiline_comment|/*&n; * send_data sends a character to the keyboard and waits&n; * for an acknowledge, possibly retrying if asked to. Returns&n; * the success status.&n; *&n; * Don&squot;t use &squot;jiffies&squot;, so that we don&squot;t depend on interrupts&n; */
 DECL|function|send_data
 r_static
 r_int
@@ -1756,12 +1762,14 @@ id|retries
 op_assign
 l_int|3
 suffix:semicolon
-r_int
-r_int
-id|start
-suffix:semicolon
 r_do
 (brace
+r_int
+r_int
+id|timeout
+op_assign
+id|KBD_TIMEOUT
+suffix:semicolon
 id|kb_wait
 c_func
 (paren
@@ -1787,11 +1795,12 @@ comma
 id|KBD_DATA_REG
 )paren
 suffix:semicolon
-id|start
-op_assign
-id|jiffies
+r_for
+c_loop
+(paren
 suffix:semicolon
-r_do
+suffix:semicolon
+)paren
 (brace
 r_if
 c_cond
@@ -1804,11 +1813,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|jiffies
-op_minus
-id|start
-op_ge
-id|KBD_TIMEOUT
+id|resend
+)paren
+r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|timeout
 )paren
 (brace
 macro_line|#ifdef KBD_REPORT_TIMEOUTS
@@ -1825,13 +1845,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-r_while
-c_loop
-(paren
-op_logical_neg
-id|resend
-)paren
-suffix:semicolon
 )brace
 r_while
 c_loop

@@ -1,7 +1,9 @@
-multiline_comment|/*&n; * include/asm-mips/bitops.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996  Ralf Baechle&n; */
+multiline_comment|/*&n; * include/asm-mips/bitops.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994 - 1997  Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#ifndef __ASM_MIPS_BITOPS_H
 DECL|macro|__ASM_MIPS_BITOPS_H
 mdefine_line|#define __ASM_MIPS_BITOPS_H
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/byteorder/swab.h&gt;&t;&t;/* sigh ... */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sgidefs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1922,55 +1924,6 @@ suffix:semicolon
 )brace
 DECL|macro|ext2_find_first_zero_bit
 mdefine_line|#define ext2_find_first_zero_bit(addr, size) &bslash;&n;        ext2_find_next_zero_bit((addr), (size), 0)
-DECL|function|__swab32
-r_static
-id|__inline__
-r_int
-r_int
-id|__swab32
-c_func
-(paren
-r_int
-r_int
-id|val
-)paren
-(brace
-r_return
-(paren
-(paren
-id|val
-op_rshift
-l_int|24
-)paren
-op_or
-(paren
-(paren
-id|val
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xff00
-)paren
-op_or
-(paren
-(paren
-id|val
-op_lshift
-l_int|8
-)paren
-op_amp
-l_int|0xff0000
-)paren
-op_or
-(paren
-id|val
-op_lshift
-l_int|24
-)paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|ext2_find_next_zero_bit
 r_extern
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Setup pointers to hardware dependand routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; */
+multiline_comment|/*&n; * Setup pointers to hardware dependand routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: setup.c,v 1.5 1997/12/01 16:19:12 ralf Exp $&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -176,7 +176,9 @@ c_func
 (paren
 id|ST0_IM
 comma
-id|IE_IRQ0
+id|IE_IRQ1
+op_or
+id|IE_IRQ4
 )paren
 suffix:semicolon
 )brace
@@ -256,18 +258,9 @@ r_char
 id|aux_device_present
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|sni_rm200_pcibios_init
-(paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
-)paren
+r_struct
+id|pci_ops
+id|sni_pci_ops
 suffix:semicolon
 r_extern
 r_int
@@ -302,7 +295,10 @@ op_assign
 id|boardtype
 suffix:semicolon
 r_int
+r_int
 id|asic
+comma
+id|cacheconf
 suffix:semicolon
 id|csmsr
 op_assign
@@ -413,6 +409,100 @@ comma
 id|boardtype
 )paren
 suffix:semicolon
+id|cacheconf
+op_assign
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|PCIMT_CACHECONF
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cacheconf
+op_amp
+l_int|7
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Secondary cache disabled&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;256kb secondary cache&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;512kb secondary cache&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;1mb secondary cache&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;2mb secondary cache&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|5
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;4mb secondary cache&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|panic
+c_func
+(paren
+l_string|&quot;invalid secondary cache size&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -546,7 +636,7 @@ op_assign
 op_amp
 id|sni_rm200_pci_feature
 suffix:semicolon
-id|port_base
+id|mips_io_port_base
 op_assign
 id|SNI_PORT_BASE
 suffix:semicolon
@@ -646,9 +736,10 @@ comma
 l_string|&quot;PCI config data&quot;
 )paren
 suffix:semicolon
-id|_pcibios_init
+id|pci_ops
 op_assign
-id|sni_rm200_pcibios_init
+op_amp
+id|sni_pci_ops
 suffix:semicolon
 )brace
 eof

@@ -305,5 +305,13 @@ id|max_readahead
 id|MAX_BLKDEV
 )braket
 suffix:semicolon
+r_extern
+r_int
+op_star
+id|max_sectors
+(braket
+id|MAX_BLKDEV
+)braket
+suffix:semicolon
 macro_line|#endif
 eof

@@ -431,6 +431,17 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+r_extern
+r_void
+id|ide_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_EZ
 r_extern
 r_void

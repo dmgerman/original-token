@@ -7,7 +7,7 @@ macro_line|#  include &lt;linux/byteorder/big_endian.h&gt;
 macro_line|#elif defined (__MIPSEL__)
 macro_line|#  include &lt;linux/byteorder/little_endian.h&gt;
 macro_line|#else
-macro_line|#  error What&squot;s that? MIPS, but neither MIPSEB, nor MIPSEL???
+macro_line|#  error &quot;MIPS, but neither __MIPSEB__, nor __MIPSEL__???&quot;
 macro_line|#endif
 macro_line|#endif /* _MIPS_BYTEORDER_H */
 eof

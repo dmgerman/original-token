@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-mips/namei.h&n; *&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/*&n; * linux/include/asm-mips/namei.h&n; *&n; * Included from linux/fs/namei.c&n; *&n; * $Id: namei.h,v 1.6 1997/09/18 07:59:31 root Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_NAMEI_H
 DECL|macro|__ASM_MIPS_NAMEI_H
 mdefine_line|#define __ASM_MIPS_NAMEI_H
@@ -24,9 +24,6 @@ r_int
 id|follow_link
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 r_struct
 id|dentry
 op_star

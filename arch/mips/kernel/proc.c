@@ -1,22 +1,11 @@
 multiline_comment|/*&n; *  linux/arch/mips/kernel/proc.c&n; *&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
-DECL|variable|dflushes
-r_int
-r_int
-id|dflushes
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|iflushes
-r_int
-r_int
-id|iflushes
-op_assign
-l_int|0
-suffix:semicolon
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/watch.h&gt;
 DECL|variable|unaligned_instructions
 r_int
 r_int
@@ -99,6 +88,24 @@ suffix:semicolon
 r_const
 r_char
 op_star
+id|mach_acn_names
+(braket
+)braket
+op_assign
+id|GROUP_ACN_NAMES
+suffix:semicolon
+r_const
+r_char
+op_star
+id|mach_sgi_names
+(braket
+)braket
+op_assign
+id|GROUP_SGI_NAMES
+suffix:semicolon
+r_const
+r_char
+op_star
 op_star
 id|mach_group_to_name
 (braket
@@ -114,6 +121,10 @@ comma
 id|mach_arc_names
 comma
 id|mach_sni_rm_names
+comma
+id|mach_acn_names
+comma
+id|mach_sgi_names
 )brace
 suffix:semicolon
 r_int
@@ -269,37 +280,85 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;D-cache flushes&bslash;t&bslash;t: %lu&bslash;n&quot;
-comma
-id|dflushes
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;I-cache flushes&bslash;t&bslash;t: %lu&bslash;n&quot;
-comma
-id|iflushes
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
 l_string|&quot;unaligned accesses&bslash;t: %lu&bslash;n&quot;
 comma
 id|unaligned_instructions
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;wait instruction&bslash;t: %s&bslash;n&quot;
+comma
+id|wait_available
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;microsecond timers&bslash;t: %s&bslash;n&quot;
+comma
+id|cyclecounter_available
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;extra interrupt vector&bslash;t: %s&bslash;n&quot;
+comma
+id|dedicated_iv_available
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;hardware watchpoint&bslash;t: %s&bslash;n&quot;
+comma
+id|watch_available
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
 )paren
 suffix:semicolon
 r_return

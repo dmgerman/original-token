@@ -15,43 +15,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip_masq.h&gt;
-DECL|variable|strProt
-r_static
-r_const
-r_char
-op_star
-id|strProt
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;UDP&quot;
-comma
-l_string|&quot;TCP&quot;
-)brace
-suffix:semicolon
-DECL|function|masq_proto_name
-r_static
-id|__inline__
-r_const
-r_char
-op_star
-id|masq_proto_name
-c_func
-(paren
-r_int
-id|proto
-)paren
-(brace
-r_return
-id|strProt
-(braket
-id|proto
-op_eq
-id|IPPROTO_TCP
-)braket
-suffix:semicolon
-)brace
 DECL|macro|IP_MASQ_APP_TAB_SIZE
 mdefine_line|#define IP_MASQ_APP_TAB_SIZE  16 /* must be power of 2 */
 DECL|macro|IP_MASQ_APP_HASH
@@ -126,10 +89,9 @@ op_logical_neg
 id|mapp
 )paren
 (brace
-id|printk
+id|IP_MASQ_ERR
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;register_ip_masq_app(): NULL arg&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -229,10 +191,9 @@ op_logical_neg
 id|mapp
 )paren
 (brace
-id|printk
+id|IP_MASQ_ERR
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;unregister_ip_masq_app(): NULL arg&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -248,10 +209,9 @@ c_cond
 id|mapp-&gt;n_attach
 )paren
 (brace
-id|printk
+id|IP_MASQ_ERR
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;unregister_ip_masq_app(): has %d attachments. failed&bslash;n&quot;
 comma
 id|mapp-&gt;n_attach
@@ -347,10 +307,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|printk
+id|IP_MASQ_ERR
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;unregister_ip_masq_app(proto=%s,port=%u): not hashed!&bslash;n&quot;
 comma
 id|masq_proto_name
@@ -528,10 +487,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|printk
+id|IP_MASQ_ERR
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;ip_masq_app: tried to set n_attach &lt; 0 for (proto=%s,port==%d) ip_masq_app object.&bslash;n&quot;
 comma
 id|masq_proto_name
@@ -589,6 +547,20 @@ id|ip_masq_app
 op_star
 id|mapp
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ms-&gt;protocol
+op_ne
+id|IPPROTO_TCP
+op_logical_and
+id|ms-&gt;protocol
+op_ne
+id|IPPROTO_UDP
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
 id|mapp
 op_assign
 id|ip_masq_app_get
@@ -599,6 +571,27 @@ comma
 id|ms-&gt;dport
 )paren
 suffix:semicolon
+macro_line|#if 0000
+multiline_comment|/* #ifdef CONFIG_IP_MASQUERADE_IPAUTOFW */
+r_if
+c_cond
+(paren
+id|mapp
+op_eq
+l_int|NULL
+)paren
+id|mapp
+op_assign
+id|ip_masq_app_get
+c_func
+(paren
+id|ms-&gt;protocol
+comma
+id|ms-&gt;sport
+)paren
+suffix:semicolon
+multiline_comment|/* #endif */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -616,10 +609,9 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|printk
+id|IP_MASQ_ERR
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;ip_masq_bind_app() called for already bound object.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -680,6 +672,20 @@ suffix:semicolon
 id|mapp
 op_assign
 id|ms-&gt;app
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ms-&gt;protocol
+op_ne
+id|IPPROTO_TCP
+op_logical_and
+id|ms-&gt;protocol
+op_ne
+id|IPPROTO_UDP
+)paren
+r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -788,16 +794,16 @@ op_plus
 id|ms_seq-&gt;delta
 )paren
 suffix:semicolon
-macro_line|#if DEBUG_CONFIG_IP_MASQ_APP
-id|printk
+id|IP_MASQ_DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;masq_fix_seq() : added delta (%d) to seq&bslash;n&quot;
 comma
 id|ms_seq-&gt;delta
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -811,16 +817,16 @@ op_plus
 id|ms_seq-&gt;previous_delta
 )paren
 suffix:semicolon
-macro_line|#if DEBUG_CONFIG_IP_MASQ_APP
-id|printk
+id|IP_MASQ_DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;masq_fix_seq() : added previous_delta (%d) to seq&bslash;n&quot;
 comma
 id|ms_seq-&gt;previous_delta
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 )brace
@@ -886,16 +892,16 @@ op_minus
 id|ms_seq-&gt;delta
 )paren
 suffix:semicolon
-macro_line|#if DEBUG_CONFIG_IP_MASQ_APP
-id|printk
+id|IP_MASQ_DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;masq_fix_ack_seq() : subtracted delta (%d) from ack_seq&bslash;n&quot;
 comma
 id|ms_seq-&gt;delta
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -909,16 +915,16 @@ op_minus
 id|ms_seq-&gt;previous_delta
 )paren
 suffix:semicolon
-macro_line|#if DEBUG_CONFIG_IP_MASQ_APP
-id|printk
+id|IP_MASQ_DEBUG
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;masq_fix_ack_seq() : subtracted previous_delta (%d) from ack_seq&bslash;n&quot;
 comma
 id|ms_seq-&gt;previous_delta
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 )brace
@@ -1202,6 +1208,9 @@ id|sk_buff
 op_star
 op_star
 id|skb_p
+comma
+id|__u32
+id|maddr
 )paren
 (brace
 r_struct
@@ -1346,6 +1355,8 @@ comma
 id|ms
 comma
 id|skb_p
+comma
+id|maddr
 )paren
 suffix:semicolon
 multiline_comment|/*&n;         *&t;Update ip_masq seq stuff if len has changed.&n;         */
@@ -1800,10 +1811,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|IP_MASQ_ERR
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;skb_replace(): no room left (from %p)&bslash;n&quot;
 comma
 id|__builtin_return_address
@@ -2028,18 +2038,18 @@ id|iphdr
 op_star
 id|iph
 suffix:semicolon
-macro_line|#if DEBUG_CONFIG_IP_MASQ_APP
-id|printk
+id|IP_MASQ_DEBUG
 c_func
 (paren
-l_string|&quot;masq_skb_replace(): pkt resized for %d bytes (len=%ld)&bslash;n&quot;
+l_int|1
+comma
+l_string|&quot;masq_skb_replace(): pkt resized for %d bytes (len=%d)&bslash;n&quot;
 comma
 id|diff
 comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;                 * &t;update ip header&n;                 */
 id|iph
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.2 1997/08/08 18:13:05 miguel Exp $&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.4 1997/12/02 05:51:07 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -120,6 +120,39 @@ id|flush_page_to_ram
 r_int
 r_int
 id|page
+)paren
+suffix:semicolon
+multiline_comment|/* DMA cache operations. */
+DECL|variable|flush_cache_pre_dma_out
+r_void
+(paren
+op_star
+id|flush_cache_pre_dma_out
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+DECL|variable|flush_cache_post_dma_in
+r_void
+(paren
+op_star
+id|flush_cache_post_dma_in
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
 )paren
 suffix:semicolon
 multiline_comment|/* TLB operations. */
@@ -392,6 +425,9 @@ id|CPU_R5000
 suffix:colon
 r_case
 id|CPU_R5000A
+suffix:colon
+r_case
+id|CPU_NEVADA
 suffix:colon
 id|printk
 c_func

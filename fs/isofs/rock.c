@@ -954,6 +954,10 @@ comma
 l_char|&squot;R&squot;
 )paren
 suffix:colon
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_rock
+op_assign
+l_int|1
+suffix:semicolon
 id|printk
 c_func
 (paren

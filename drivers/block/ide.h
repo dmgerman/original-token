@@ -3,9 +3,14 @@ DECL|macro|_IDE_H
 mdefine_line|#define _IDE_H
 multiline_comment|/*&n; *  linux/drivers/block/ide.h&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
-multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.  &n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; */
-multiline_comment|/******************************************************************************&n; * IDE driver configuration options (play with these as desired):&n; * &n; * REALLY_SLOW_IO can be defined in ide.c and ide-cd.c, if necessary&n; */
+multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.&n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; */
+multiline_comment|/******************************************************************************&n; * IDE driver configuration options (play with these as desired):&n; *&n; * REALLY_SLOW_IO can be defined in ide.c and ide-cd.c, if necessary&n; */
 DECL|macro|REALLY_FAST_IO
 macro_line|#undef REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
 DECL|macro|INITIAL_MULT_COUNT
@@ -195,13 +200,8 @@ DECL|macro|WAIT_CMD
 mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
 DECL|macro|WAIT_MIN_SLEEP
 mdefine_line|#define WAIT_MIN_SLEEP&t;(2*HZ/100)&t;/* 20msec - minimum sleep time */
-macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030) || defined(CONFIG_BLK_DEV_TRM290)
 DECL|macro|SELECT_DRIVE
-mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]); &bslash;&n;}
-macro_line|#else
-DECL|macro|SELECT_DRIVE
-mdefine_line|#define SELECT_DRIVE(hwif,drive)  OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]);
-macro_line|#endif&t;/* CONFIG_BLK_DEV_HT6560B || CONFIG_BLK_DEV_PDC4030 */
+mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]); &bslash;&n;}
 multiline_comment|/*&n; * Now for the data we need to maintain per-drive:  ide_drive_t&n; */
 DECL|macro|ide_scsi
 mdefine_line|#define ide_scsi&t;0x21
@@ -545,12 +545,12 @@ r_int
 id|cyl
 suffix:semicolon
 multiline_comment|/* &quot;real&quot; number of cyls */
-DECL|member|timing_data
+DECL|member|drive_data
 r_int
 r_int
-id|timing_data
+id|drive_data
 suffix:semicolon
-multiline_comment|/* for use by tuneproc()&squot;s */
+multiline_comment|/* for use by tuneproc/selectproc as needed */
 DECL|member|hwif
 r_void
 op_star
@@ -598,6 +598,13 @@ op_star
 id|driver_data
 suffix:semicolon
 multiline_comment|/* extra driver data */
+DECL|member|proc
+r_struct
+id|proc_dir_entry
+op_star
+id|proc
+suffix:semicolon
+multiline_comment|/* /proc/ide/ directory entry */
 DECL|typedef|ide_drive_t
 )brace
 id|ide_drive_t
@@ -605,58 +612,32 @@ suffix:semicolon
 multiline_comment|/*&n; * An ide_dmaproc_t() initiates/aborts DMA read/write operations on a drive.&n; *&n; * The caller is assumed to have selected the drive and programmed the drive&squot;s&n; * sector address using CHS or LBA.  All that remains is to prepare for DMA&n; * and then issue the actual read/write DMA/PIO command to the drive.&n; *&n; * Returns 0 if all went well.&n; * Returns 1 if DMA read/write could not be started, in which case the caller&n; * should either try again later, or revert to PIO for the current request.&n; */
 DECL|enumerator|ide_dma_read
 DECL|enumerator|ide_dma_write
+DECL|enumerator|ide_dma_begin
+DECL|enumerator|ide_dma_end
 r_typedef
 r_enum
 (brace
 id|ide_dma_read
-op_assign
-l_int|0
 comma
 id|ide_dma_write
-op_assign
-l_int|1
 comma
-DECL|enumerator|ide_dma_abort
-DECL|enumerator|ide_dma_check
-id|ide_dma_abort
-op_assign
-l_int|2
-comma
-id|ide_dma_check
-op_assign
-l_int|3
-comma
-DECL|enumerator|ide_dma_status_bad
-DECL|enumerator|ide_dma_transferred
-id|ide_dma_status_bad
-op_assign
-l_int|4
-comma
-id|ide_dma_transferred
-op_assign
-l_int|5
-comma
-DECL|enumerator|ide_dma_begin
-DECL|enumerator|ide_dma_on
 id|ide_dma_begin
-op_assign
-l_int|6
 comma
-id|ide_dma_on
-op_assign
-l_int|7
+id|ide_dma_end
 comma
+DECL|enumerator|ide_dma_check
+DECL|enumerator|ide_dma_on
 DECL|enumerator|ide_dma_off
 DECL|enumerator|ide_dma_off_quietly
+id|ide_dma_check
+comma
+id|ide_dma_on
+comma
 id|ide_dma_off
-op_assign
-l_int|8
 comma
 id|ide_dma_off_quietly
-op_assign
-l_int|9
-)brace
 DECL|typedef|ide_dma_action_t
+)brace
 id|ide_dma_action_t
 suffix:semicolon
 DECL|typedef|ide_dmaproc_t
@@ -686,7 +667,7 @@ comma
 id|byte
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is used to provide HT6560B &amp; PDC4030 &amp; TRM290 interface support.&n; */
+multiline_comment|/*&n; * This is used to provide support for strange interfaces&n; */
 DECL|typedef|ide_selectproc_t
 r_typedef
 r_void
@@ -740,10 +721,33 @@ id|ide_trm290
 comma
 DECL|enumerator|ide_4drives
 id|ide_4drives
-)brace
 DECL|typedef|hwif_chipset_t
+)brace
 id|hwif_chipset_t
 suffix:semicolon
+DECL|struct|ide_pci_devid_s
+r_typedef
+r_struct
+id|ide_pci_devid_s
+(brace
+DECL|member|vid
+r_int
+r_int
+id|vid
+suffix:semicolon
+DECL|member|did
+r_int
+r_int
+id|did
+suffix:semicolon
+DECL|typedef|ide_pci_devid_t
+)brace
+id|ide_pci_devid_t
+suffix:semicolon
+DECL|macro|IDE_PCI_DEVID_NULL
+mdefine_line|#define IDE_PCI_DEVID_NULL&t;((ide_pci_devid_t){0,0})
+DECL|macro|IDE_PCI_DEVID_EQ
+mdefine_line|#define IDE_PCI_DEVID_EQ(a,b)&t;(a.vid == b.vid &amp;&amp; a.did == b.did)
 DECL|struct|hwif_s
 r_typedef
 r_struct
@@ -791,14 +795,12 @@ op_star
 id|tuneproc
 suffix:semicolon
 multiline_comment|/* routine to tune PIO mode for drives */
-macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PDC4030) || defined(CONFIG_BLK_DEV_TRM290)
 DECL|member|selectproc
 id|ide_selectproc_t
 op_star
 id|selectproc
 suffix:semicolon
 multiline_comment|/* tweaks hardware to select drive */
-macro_line|#endif
 DECL|member|dmaproc
 id|ide_dmaproc_t
 op_star
@@ -824,7 +826,26 @@ r_int
 r_int
 id|dma_base
 suffix:semicolon
-multiline_comment|/* base addr for dma ports (triton) */
+multiline_comment|/* base addr for dma ports */
+DECL|member|config_data
+r_int
+r_int
+id|config_data
+suffix:semicolon
+multiline_comment|/* for use by chipset-specific code */
+DECL|member|select_data
+r_int
+r_int
+id|select_data
+suffix:semicolon
+multiline_comment|/* for use by chipset-specific code */
+DECL|member|proc
+r_struct
+id|proc_dir_entry
+op_star
+id|proc
+suffix:semicolon
+multiline_comment|/* /proc/ide/ directory entry */
 DECL|member|irq
 r_int
 id|irq
@@ -881,15 +902,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 1 = sharing irq with another hwif */
-macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
-DECL|member|is_pdc4030_2
-r_int
-id|is_pdc4030_2
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* 2nd i/f on pdc4030 */
-macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 DECL|member|reset
 r_int
 id|reset
@@ -897,13 +909,33 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reset after probe */
-DECL|member|pci_port
+DECL|member|no_autodma
 r_int
-id|pci_port
+id|no_autodma
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/* don&squot;t automatically enable DMA at boot */
+DECL|member|channel
+id|byte
+id|channel
+suffix:semicolon
 multiline_comment|/* for dual-port chips: 0=primary, 1=secondary */
+DECL|member|pci_bus
+id|byte
+id|pci_bus
+suffix:semicolon
+multiline_comment|/* for pci chipsets */
+DECL|member|pci_fn
+id|byte
+id|pci_fn
+suffix:semicolon
+multiline_comment|/* for pci chipsets */
+DECL|member|pci_devid
+id|ide_pci_devid_t
+id|pci_devid
+suffix:semicolon
+multiline_comment|/* for pci chipsets: {VID,DID} */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|member|last_time
 r_int
@@ -984,6 +1016,66 @@ multiline_comment|/* set when servicing requests */
 DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
+suffix:semicolon
+multiline_comment|/*&n; * /proc/ide interface&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|read_proc
+id|read_proc_t
+op_star
+id|read_proc
+suffix:semicolon
+DECL|member|write_proc
+id|write_proc_t
+op_star
+id|write_proc
+suffix:semicolon
+DECL|typedef|ide_proc_entry_t
+)brace
+id|ide_proc_entry_t
+suffix:semicolon
+r_void
+id|proc_ide_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|ide_add_proc_entries
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|ide_proc_entry_t
+op_star
+id|p
+)paren
+suffix:semicolon
+r_void
+id|ide_remove_proc_entries
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|ide_proc_entry_t
+op_star
+id|p
+)paren
+suffix:semicolon
+DECL|variable|proc_ide_read_geometry
+id|read_proc_t
+id|proc_ide_read_geometry
 suffix:semicolon
 multiline_comment|/*&n; * Subdrivers support.&n; */
 DECL|macro|IDE_SUBDRIVER_VERSION
@@ -1143,6 +1235,18 @@ r_typedef
 r_struct
 id|ide_driver_s
 (brace
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|version
+r_const
+r_char
+op_star
+id|version
+suffix:semicolon
 DECL|member|media
 id|byte
 id|media
@@ -1215,6 +1319,11 @@ id|ide_special_proc
 op_star
 id|special
 suffix:semicolon
+DECL|member|proc
+id|ide_proc_entry_t
+op_star
+id|proc
+suffix:semicolon
 DECL|typedef|ide_driver_t
 )brace
 id|ide_driver_t
@@ -1262,7 +1371,7 @@ DECL|typedef|ide_module_t
 )brace
 id|ide_module_t
 suffix:semicolon
-multiline_comment|/*&n; * ide_hwifs[] is the master data structure used to keep track&n; * of just about everything in ide.c.  Whenever possible, routines&n; * should be using pointers to a drive (ide_drive_t *) or &n; * pointers to a hwif (ide_hwif_t *), rather than indexing this&n; * structure directly (the allocation/layout may change!).&n; *&n; */
+multiline_comment|/*&n; * ide_hwifs[] is the master data structure used to keep track&n; * of just about everything in ide.c.  Whenever possible, routines&n; * should be using pointers to a drive (ide_drive_t *) or&n; * pointers to a hwif (ide_hwif_t *), rather than indexing this&n; * structure directly (the allocation/layout may change!).&n; *&n; */
 macro_line|#ifndef _IDE_C
 r_extern
 id|ide_hwif_t
@@ -1503,7 +1612,7 @@ multiline_comment|/* insert rq at end of list, but don&squot;t wait for it */
 DECL|typedef|ide_action_t
 id|ide_action_t
 suffix:semicolon
-multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the &n; * ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_end, then the rq is queued at the end of the&n; * request queue, and the function returns immediately without waiting&n; * for the new rq to be completed. This is again intended for careful&n; * use by the ATAPI tape/cdrom driver code.&n; */
+multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the&n; * ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_end, then the rq is queued at the end of the&n; * request queue, and the function returns immediately without waiting&n; * for the new rq to be completed. This is again intended for careful&n; * use by the ATAPI tape/cdrom driver code.&n; */
 r_int
 id|ide_do_drive_cmd
 (paren
@@ -1753,9 +1862,36 @@ op_star
 id|drive
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
+r_int
+r_int
+id|ide_find_free_region
+(paren
+r_int
+r_int
+id|size
+)paren
+id|__init
+suffix:semicolon
+r_void
+id|ide_scan_pcibus
+(paren
+r_void
+)paren
+id|__init
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_int
 id|ide_build_dmatable
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_void
+id|ide_dma_intr
 (paren
 id|ide_drive_t
 op_star
@@ -1788,6 +1924,25 @@ r_int
 r_int
 id|num_ports
 )paren
+id|__init
+suffix:semicolon
+r_int
+r_int
+id|ide_get_or_set_dma_base
+(paren
+id|ide_hwif_t
+op_star
+id|hwif
+comma
+r_int
+id|extra
+comma
+r_const
+r_char
+op_star
+id|name
+)paren
+id|__init
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDE

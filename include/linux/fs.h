@@ -154,6 +154,14 @@ DECL|macro|BLKRASET
 mdefine_line|#define BLKRASET   _IO(0x12,98)&t;/* Set read ahead for block device */
 DECL|macro|BLKRAGET
 mdefine_line|#define BLKRAGET   _IO(0x12,99)&t;/* get current read ahead setting */
+DECL|macro|BLKFRASET
+mdefine_line|#define BLKFRASET  _IO(0x12,100)/* set filesystem (mm/filemap.c) read-ahead */
+DECL|macro|BLKFRAGET
+mdefine_line|#define BLKFRAGET  _IO(0x12,101)/* get filesystem (mm/filemap.c) read-ahead */
+DECL|macro|BLKSECTSET
+mdefine_line|#define BLKSECTSET _IO(0x12,102)/* set max sectors per request (ll_rw_blk.c) */
+DECL|macro|BLKSECTGET
+mdefine_line|#define BLKSECTGET _IO(0x12,103)/* get max sectors per request (ll_rw_blk.c) */
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP
@@ -3277,6 +3285,20 @@ id|do_pipe
 c_func
 (paren
 r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+id|ino_t
+id|find_inode_number
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|qstr
 op_star
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixioctl.c,v 1.2 1997/08/08 18:12:19 miguel Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: irixioctl.c,v 1.2 1997/12/02 05:51:06 ralf Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -11,6 +11,8 @@ macro_line|#include &lt;asm/ioctl.h&gt;
 macro_line|#include &lt;asm/ioctls.h&gt;
 DECL|macro|DEBUG_IOCTLS
 macro_line|#undef DEBUG_IOCTLS
+DECL|macro|DEBUG_MISSING_IOCTL
+macro_line|#undef DEBUG_MISSING_IOCTL
 DECL|struct|irix_termios
 r_struct
 id|irix_termios
@@ -1164,6 +1166,7 @@ suffix:colon
 (brace
 )brace
 (brace
+macro_line|#ifdef DEBUG_MISSING_IOCTL
 r_char
 op_star
 id|msg
@@ -1234,6 +1237,19 @@ c_func
 l_int|255
 )paren
 suffix:semicolon
+macro_line|#else
+id|error
+op_assign
+id|sys_ioctl
+(paren
+id|fd
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 suffix:semicolon

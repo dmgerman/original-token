@@ -142,14 +142,6 @@ r_int
 id|channel
 )paren
 suffix:semicolon
-r_int
-id|vdma_get_enable
-c_func
-(paren
-r_int
-id|channel
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * some definitions used by the driver functions&n; */
 DECL|macro|VDMA_PAGESIZE
 mdefine_line|#define VDMA_PAGESIZE&t;&t;4096

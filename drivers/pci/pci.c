@@ -1174,7 +1174,7 @@ id|OPTI
 comma
 id|OPTI_82C557
 comma
-l_string|&quot;82C557&quot;
+l_string|&quot;82C557 Viper-M&quot;
 )paren
 comma
 id|DEVICE
@@ -1184,7 +1184,7 @@ id|OPTI
 comma
 id|OPTI_82C558
 comma
-l_string|&quot;82C558&quot;
+l_string|&quot;82C558 Viper-M ISA+IDE&quot;
 )paren
 comma
 id|DEVICE
@@ -3596,9 +3596,9 @@ c_func
 (paren
 id|INTEL
 comma
-id|INTEL_82371_0
+id|INTEL_82371FB_0
 comma
-l_string|&quot;82371 Triton PIIX&quot;
+l_string|&quot;82371FB PIIX ISA&quot;
 )paren
 comma
 id|DEVICE
@@ -3606,9 +3606,9 @@ c_func
 (paren
 id|INTEL
 comma
-id|INTEL_82371_1
+id|INTEL_82371FB_1
 comma
-l_string|&quot;82371 Triton PIIX&quot;
+l_string|&quot;82371FB PIIX IDE&quot;
 )paren
 comma
 id|DEVICE
@@ -3658,7 +3658,7 @@ id|INTEL
 comma
 id|INTEL_82371SB_0
 comma
-l_string|&quot;82371SB Natoma/Triton II PIIX3&quot;
+l_string|&quot;82371SB PIIX3 ISA&quot;
 )paren
 comma
 id|DEVICE
@@ -3668,7 +3668,7 @@ id|INTEL
 comma
 id|INTEL_82371SB_1
 comma
-l_string|&quot;82371SB Natoma/Triton II PIIX3&quot;
+l_string|&quot;82371SB PIIX3 IDE&quot;
 )paren
 comma
 id|DEVICE
@@ -3678,7 +3678,7 @@ id|INTEL
 comma
 id|INTEL_82371SB_2
 comma
-l_string|&quot;82371SB Natoma/Triton II PIIX3&quot;
+l_string|&quot;82371SB PIIX3 USB&quot;
 )paren
 comma
 id|DEVICE
@@ -4410,13 +4410,13 @@ r_case
 id|PCI_CLASS_STORAGE_SCSI
 suffix:colon
 r_return
-l_string|&quot;SCSI storage controller&quot;
+l_string|&quot;SCSI bus controller&quot;
 suffix:semicolon
 r_case
 id|PCI_CLASS_STORAGE_IDE
 suffix:colon
 r_return
-l_string|&quot;IDE interface&quot;
+l_string|&quot;IDE controller&quot;
 suffix:semicolon
 r_case
 id|PCI_CLASS_STORAGE_FLOPPY
@@ -4434,7 +4434,7 @@ r_case
 id|PCI_CLASS_STORAGE_RAID
 suffix:colon
 r_return
-l_string|&quot;RAID bus controller&quot;
+l_string|&quot;RAID controller&quot;
 suffix:semicolon
 r_case
 id|PCI_CLASS_STORAGE_OTHER
@@ -6274,7 +6274,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;IRQ %x.  &quot;
+l_string|&quot;IRQ %d.  &quot;
 comma
 id|dev-&gt;irq
 )paren

@@ -348,6 +348,8 @@ DECL|typedef|idevInfo
 )brace
 id|idevInfo
 suffix:semicolon
+DECL|macro|IDEV_KEYMAP_NAME_LEN
+mdefine_line|#define IDEV_KEYMAP_NAME_LEN 15
 r_typedef
 r_struct
 (brace
@@ -355,19 +357,98 @@ DECL|member|name
 r_char
 id|name
 (braket
-l_int|16
+id|IDEV_KEYMAP_NAME_LEN
+op_plus
+l_int|1
 )braket
 suffix:semicolon
 DECL|typedef|idevKeymapDesc
 )brace
 id|idevKeymapDesc
 suffix:semicolon
-DECL|macro|IDEVINITDEVICE
-mdefine_line|#define IDEVINITDEVICE&t;&t;_IOW(&squot;i&squot;, 51, unsigned int)
+multiline_comment|/* The valuator definition */
+r_typedef
+r_struct
+(brace
+DECL|member|hwMinRes
+r_int
+id|hwMinRes
+suffix:semicolon
+DECL|member|hwMaxRes
+r_int
+id|hwMaxRes
+suffix:semicolon
+DECL|member|hwMinVal
+r_int
+id|hwMinVal
+suffix:semicolon
+DECL|member|hwMaxVal
+r_int
+id|hwMaxVal
+suffix:semicolon
+DECL|member|possibleModes
+r_int
+r_char
+id|possibleModes
+suffix:semicolon
+DECL|macro|IDEV_ABSOLUTE
+mdefine_line|#define IDEV_ABSOLUTE           0x0
+DECL|macro|IDEV_RELATIVE
+mdefine_line|#define IDEV_RELATIVE           0x1
+DECL|macro|IDEV_EITHER
+mdefine_line|#define IDEV_EITHER             0x2
+DECL|member|mode
+r_int
+r_char
+id|mode
+suffix:semicolon
+multiline_comment|/* One of: IDEV_ABSOLUTE, IDEV_RELATIVE */
+DECL|member|resolution
+r_int
+r_int
+id|resolution
+suffix:semicolon
+DECL|member|minVal
+r_int
+id|minVal
+suffix:semicolon
+DECL|member|maxVal
+r_int
+id|maxVal
+suffix:semicolon
+DECL|typedef|idevValuatorDesc
+)brace
+id|idevValuatorDesc
+suffix:semicolon
+multiline_comment|/* This is used to query a specific valuator with the IDEVGETVALUATORDESC ioctl */
+r_typedef
+r_struct
+(brace
+DECL|member|valNum
+r_int
+id|valNum
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+DECL|member|desc
+id|idevValuatorDesc
+id|desc
+suffix:semicolon
+DECL|typedef|idevGetSetValDesc
+)brace
+id|idevGetSetValDesc
+suffix:semicolon
 DECL|macro|IDEVGETDEVICEDESC
-mdefine_line|#define IDEVGETDEVICEDESC&t;_IOWR(&squot;i&squot;, 0, idevDesc)
+mdefine_line|#define IDEVGETDEVICEDESC&t;_IOWR(&squot;i&squot;, 0,  idevDesc)
+DECL|macro|IDEVGETVALUATORDESC
+mdefine_line|#define IDEVGETVALUATORDESC     _IOWR(&squot;i&squot;, 1,  idevGetSetValDesc)
 DECL|macro|IDEVGETKEYMAPDESC
-mdefine_line|#define IDEVGETKEYMAPDESC&t;_IOWR(&squot;i&squot;, 2, idevKeymapDesc)
+mdefine_line|#define IDEVGETKEYMAPDESC&t;_IOWR(&squot;i&squot;, 2,  idevKeymapDesc)
+DECL|macro|IDEVINITDEVICE
+mdefine_line|#define IDEVINITDEVICE&t;&t;_IOW (&squot;i&squot;, 51, unsigned int)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* These are only interpreted by SHMIQ-attacheable devices and are internal&n; * to the kernel&n; */
 DECL|macro|SHMIQ_OFF

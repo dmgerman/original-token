@@ -19,26 +19,6 @@ DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_VFS
 DECL|macro|NFS_PARANOIA
 mdefine_line|#define NFS_PARANOIA 1
-r_extern
-r_void
-id|nfs_invalidate_dircache_sb
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|check_failed_request
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
 r_static
 r_void
 id|nfs_read_inode
@@ -284,14 +264,16 @@ l_int|5
 op_star
 id|HZ
 suffix:semicolon
+macro_line|#ifdef NFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;NFS: inode %ld, invalidating pending RPC requests&bslash;n&quot;
+l_string|&quot;nfs_delete_inode: inode %ld has pending RPC requests&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+macro_line|#endif
 id|nfs_invalidate_pages
 c_func
 (paren
@@ -356,7 +338,7 @@ suffix:semicolon
 )brace
 id|failed
 op_assign
-id|check_failed_request
+id|nfs_check_failed_request
 c_func
 (paren
 id|inode
@@ -1326,7 +1308,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is our own version of iget that looks up inodes by file handle&n; * instead of inode number.  We use this technique instead of using&n; * the vfs read_inode function because there is no way to pass the&n; * file handle or current attributes into the read_inode function.&n; * We just have to be careful not to subvert iget&squot;s special handling&n; * of mount points.&n; */
+multiline_comment|/*&n; * This is our own version of iget that looks up inodes by file handle&n; * instead of inode number.  We use this technique instead of using&n; * the vfs read_inode function because there is no way to pass the&n; * file handle or current attributes into the read_inode function.&n; */
 r_struct
 id|inode
 op_star
@@ -1630,7 +1612,6 @@ id|inode
 op_assign
 id|fattr-&gt;mtime.seconds
 suffix:semicolon
-)brace
 op_star
 id|NFS_FH
 c_func
@@ -1640,6 +1621,34 @@ id|inode
 op_assign
 op_star
 id|fhandle
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|memcmp
+c_func
+(paren
+id|NFS_FH
+c_func
+(paren
+id|inode
+)paren
+comma
+id|fhandle
+comma
+r_sizeof
+(paren
+r_struct
+id|nfs_fh
+)paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_fhget: fhandle changed!&bslash;n&quot;
+)paren
 suffix:semicolon
 id|nfs_refresh_inode
 c_func

@@ -1,8 +1,9 @@
-multiline_comment|/*&n; *  include/asm-mips/bugs.h&n; *&n; *  Copyright (C) 1995  Waldorf Electronics&n; *  written by Ralf Baechle&n; */
+multiline_comment|/*&n; *  include/asm-mips/bugs.h&n; *&n; *  Copyright (C) 1995  Waldorf Electronics&n; *  Copyright (C) 1997  Ralf Baechle&n; *&n; * $Id: bugs.h,v 1.2 1997/09/07 04:13:53 ralf Exp $&n; */
 macro_line|#include &lt;asm/bootinfo.h&gt;
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
 DECL|function|check_wait
 r_static
+r_inline
 r_void
 id|check_wait
 c_func
@@ -32,7 +33,19 @@ r_case
 id|CPU_R4600
 suffix:colon
 r_case
+id|CPU_R4640
+suffix:colon
+r_case
+id|CPU_R4650
+suffix:colon
+r_case
+id|CPU_R4700
+suffix:colon
+r_case
 id|CPU_R5000
+suffix:colon
+r_case
+id|CPU_NEVADA
 suffix:colon
 id|wait_available
 op_assign

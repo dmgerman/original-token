@@ -1,5 +1,7 @@
-multiline_comment|/*&n; * linux/drivers/scsi/ide-scsi.c&t;Version 0.2 - ALPHA&t;Jan  26, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
-multiline_comment|/*&n; * Emulation of a SCSI host adapter for IDE ATAPI devices.&n; *&n; * With this driver, one can use the Linux SCSI drivers instead of the&n; * native IDE ATAPI drivers.&n; *&n; * Ver 0.1   Dec  3 96   Initial version.&n; * Ver 0.2   Jan 26 97   Fixed bug in cleanup_module() and added emulation&n; *                        of MODE_SENSE_6/MODE_SELECT_6 for cdroms. Thanks&n; *                        to Janos Farkas for pointing this out.&n; *                       Avoid using bitfields in structures for m68k.&n; *                       Added Scather/Gather and DMA support.&n; */
+multiline_comment|/*&n; * linux/drivers/scsi/ide-scsi.c&t;Version 0.4&t;&t;Dec   7, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * Emulation of a SCSI host adapter for IDE ATAPI devices.&n; *&n; * With this driver, one can use the Linux SCSI drivers instead of the&n; * native IDE ATAPI drivers.&n; *&n; * Ver 0.1   Dec  3 96   Initial version.&n; * Ver 0.2   Jan 26 97   Fixed bug in cleanup_module() and added emulation&n; *                        of MODE_SENSE_6/MODE_SELECT_6 for cdroms. Thanks&n; *                        to Janos Farkas for pointing this out.&n; *                       Avoid using bitfields in structures for m68k.&n; *                       Added Scatter/Gather and DMA support.&n; * Ver 0.4   Dec  7 97   Add support for ATAPI PD/CD drives.&n; *                       Use variable timeout for each command.&n; */
+DECL|macro|IDESCSI_VERSION
+mdefine_line|#define IDESCSI_VERSION &quot;0.4&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -72,7 +74,7 @@ id|scatterlist
 op_star
 id|sg
 suffix:semicolon
-multiline_comment|/* Scather gather table */
+multiline_comment|/* Scatter gather table */
 DECL|member|b_count
 r_int
 id|b_count
@@ -102,6 +104,12 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Status/Action flags */
+DECL|member|timeout
+r_int
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* Command timeout */
 DECL|typedef|idescsi_pc_t
 )brace
 id|idescsi_pc_t
@@ -465,6 +473,13 @@ l_int|0
 )braket
 op_eq
 id|READ_6
+op_logical_or
+id|c
+(braket
+l_int|0
+)braket
+op_eq
+id|WRITE_6
 )paren
 (brace
 id|c
@@ -1028,6 +1043,31 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|get_timeout
+r_static
+r_inline
+r_int
+r_int
+id|get_timeout
+c_func
+(paren
+id|idescsi_pc_t
+op_star
+id|pc
+)paren
+(brace
+r_return
+id|IDE_MAX
+c_func
+(paren
+id|WAIT_CMD
+comma
+id|pc-&gt;timeout
+op_minus
+id|jiffies
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Our interrupt handler.&n; */
 DECL|function|idescsi_pc_intr
 r_static
@@ -1116,7 +1156,7 @@ op_member_access_from_pointer
 id|dmaproc
 c_func
 (paren
-id|ide_dma_abort
+id|ide_dma_end
 comma
 id|drive
 )paren
@@ -1270,13 +1310,18 @@ id|bcount
 )paren
 suffix:semicolon
 id|ide_set_handler
+c_func
 (paren
 id|drive
 comma
 op_amp
 id|idescsi_pc_intr
 comma
-id|WAIT_CMD
+id|get_timeout
+c_func
+(paren
+id|pc
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1362,13 +1407,18 @@ op_add_assign
 id|bcount
 suffix:semicolon
 id|ide_set_handler
+c_func
 (paren
 id|drive
 comma
 op_amp
 id|idescsi_pc_intr
 comma
-id|WAIT_CMD
+id|get_timeout
+c_func
+(paren
+id|pc
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
@@ -1388,6 +1438,12 @@ op_star
 id|scsi
 op_assign
 id|drive-&gt;driver_data
+suffix:semicolon
+id|idescsi_pc_t
+op_star
+id|pc
+op_assign
+id|scsi-&gt;pc
 suffix:semicolon
 id|byte
 id|ireason
@@ -1454,13 +1510,18 @@ r_return
 suffix:semicolon
 )brace
 id|ide_set_handler
+c_func
 (paren
 id|drive
 comma
 op_amp
 id|idescsi_pc_intr
 comma
-id|WAIT_CMD
+id|get_timeout
+c_func
+(paren
+id|pc
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Set the interrupt routine */
@@ -1664,7 +1725,11 @@ comma
 op_amp
 id|idescsi_transfer_pc
 comma
-id|WAIT_CMD
+id|get_timeout
+c_func
+(paren
+id|pc
+)paren
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -2000,6 +2065,12 @@ id|ide_driver_t
 id|idescsi_driver
 op_assign
 (brace
+l_string|&quot;ide-scsi&quot;
+comma
+multiline_comment|/* name */
+id|IDESCSI_VERSION
+comma
+multiline_comment|/* version */
 id|ide_scsi
 comma
 multiline_comment|/* media */
@@ -2040,7 +2111,10 @@ l_int|NULL
 comma
 multiline_comment|/* capacity */
 l_int|NULL
+comma
 multiline_comment|/* special */
+l_int|NULL
+multiline_comment|/* proc */
 )brace
 suffix:semicolon
 DECL|variable|idescsi_proc_dir
@@ -2702,6 +2776,9 @@ c_cond
 op_logical_neg
 id|drive-&gt;using_dma
 op_logical_or
+op_logical_neg
+id|pc-&gt;request_transfer
+op_logical_or
 id|pc-&gt;request_transfer
 op_mod
 l_int|1024
@@ -3027,6 +3104,12 @@ id|pc-&gt;done
 op_assign
 id|done
 suffix:semicolon
+id|pc-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|cmd-&gt;timeout_per_command
+suffix:semicolon
 id|idescsi_transform_pc1
 (paren
 id|drive
@@ -3141,6 +3224,67 @@ id|resetflags
 (brace
 r_return
 id|SCSI_RESET_PUNT
+suffix:semicolon
+)brace
+DECL|function|idescsi_bios
+r_int
+id|idescsi_bios
+(paren
+id|Disk
+op_star
+id|disk
+comma
+id|kdev_t
+id|dev
+comma
+r_int
+op_star
+id|parm
+)paren
+(brace
+id|ide_drive_t
+op_star
+id|drive
+op_assign
+id|idescsi_drives
+(braket
+id|disk-&gt;device-&gt;id
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;cyl
+op_logical_and
+id|drive-&gt;head
+op_logical_and
+id|drive-&gt;sect
+)paren
+(brace
+id|parm
+(braket
+l_int|0
+)braket
+op_assign
+id|drive-&gt;head
+suffix:semicolon
+id|parm
+(braket
+l_int|1
+)braket
+op_assign
+id|drive-&gt;sect
+suffix:semicolon
+id|parm
+(braket
+l_int|2
+)braket
+op_assign
+id|drive-&gt;cyl
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

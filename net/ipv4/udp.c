@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The User Datagram Protocol (UDP).&n; *&n; * Version:&t;$Id: udp.c,v 1.44 1997/10/15 19:56:35 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() calls&n; *&t;&t;Alan Cox&t;: &t;stopped close while in use off icmp&n; *&t;&t;&t;&t;&t;messages. Not a fix but a botch that&n; *&t;&t;&t;&t;&t;for udp at least is &squot;valid&squot;.&n; *&t;&t;Alan Cox&t;:&t;Fixed icmp handling properly&n; *&t;&t;Alan Cox&t;: &t;Correct error for oversized datagrams&n; *&t;&t;Alan Cox&t;:&t;Tidied select() semantics. &n; *&t;&t;Alan Cox&t;:&t;udp_err() fixed properly, also now &n; *&t;&t;&t;&t;&t;select and read wake correctly on errors&n; *&t;&t;Alan Cox&t;:&t;udp_send verify_area moved to avoid mem leak&n; *&t;&t;Alan Cox&t;:&t;UDP can count its memory&n; *&t;&t;Alan Cox&t;:&t;send to an unknown connection causes&n; *&t;&t;&t;&t;&t;an ECONNREFUSED off the icmp, but&n; *&t;&t;&t;&t;&t;does NOT close.&n; *&t;&t;Alan Cox&t;:&t;Switched to new sk_buff handlers. No more backlog!&n; *&t;&t;Alan Cox&t;:&t;Using generic datagram code. Even smaller and the PEEK&n; *&t;&t;&t;&t;&t;bug no longer crashes it.&n; *&t;&t;Fred Van Kempen&t;: &t;Net2e support for sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram&n; *&t;&t;Alan Cox&t;:&t;Added get/set sockopt support.&n; *&t;&t;Alan Cox&t;:&t;Broadcasting without option set returns EACCES.&n; *&t;&t;Alan Cox&t;:&t;No wakeup calls. Instead we now use the callbacks.&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos and ip_ttl&n; *&t;&t;Alan Cox&t;:&t;SNMP Mibs&n; *&t;&t;Alan Cox&t;:&t;MSG_DONTROUTE, and 0.0.0.0 support.&n; *&t;&t;Matt Dillon&t;:&t;UDP length checks.&n; *&t;&t;Alan Cox&t;:&t;Smarter af_inet used properly.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing.&n; *&t;&t;Alan Cox&t;:&t;Incorrect return on truncated datagram receive.&n; *&t;Arnt Gulbrandsen &t;:&t;New udp_send and stuff&n; *&t;&t;Alan Cox&t;:&t;Cache last socket&n; *&t;&t;Alan Cox&t;:&t;Route cache&n; *&t;&t;Jon Peatfield&t;:&t;Minor efficiency fix to sendto().&n; *&t;&t;Mike Shaver&t;:&t;RFC1122 checks.&n; *&t;&t;Alan Cox&t;:&t;Nonblocking error fix.&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;Last socket cache retained as it&n; *&t;&t;&t;&t;&t;does have a high hit rate.&n; *&t;&t;Olaf Kirch&t;:&t;Don&squot;t linearise iovec on sendmsg.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/* RFC1122 Status:&n;   4.1.3.1 (Ports):&n;     SHOULD send ICMP_PORT_UNREACHABLE in response to datagrams to &n;       an un-listened port. (OK)&n;   4.1.3.2 (IP Options)&n;     MUST pass IP options from IP -&gt; application (OK)&n;     MUST allow application to specify IP options (OK)&n;   4.1.3.3 (ICMP Messages)&n;     MUST pass ICMP error messages to application (OK)&n;   4.1.3.4 (UDP Checksums)&n;     MUST provide facility for checksumming (OK)&n;     MAY allow application to control checksumming (OK)&n;     MUST default to checksumming on (OK)&n;     MUST discard silently datagrams with bad csums (OK)&n;   4.1.3.5 (UDP Multihoming)&n;     MUST allow application to specify source address (OK)&n;     SHOULD be able to communicate the chosen src addr up to application&n;       when application doesn&squot;t choose (NOT YET - doesn&squot;t seem to be in the BSD API)&n;       [Does opening a SOCK_PACKET and snooping your output count 8)]&n;   4.1.3.6 (Invalid Addresses)&n;     MUST discard invalid source addresses (OK -- done in the new routing code)&n;     MUST only send datagrams with one of our addresses (NOT YET - ought to be OK )&n;   950728 -- MS&n;*/
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The User Datagram Protocol (UDP).&n; *&n; * Version:&t;$Id: udp.c,v 1.45 1997/12/04 03:55:17 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() calls&n; *&t;&t;Alan Cox&t;: &t;stopped close while in use off icmp&n; *&t;&t;&t;&t;&t;messages. Not a fix but a botch that&n; *&t;&t;&t;&t;&t;for udp at least is &squot;valid&squot;.&n; *&t;&t;Alan Cox&t;:&t;Fixed icmp handling properly&n; *&t;&t;Alan Cox&t;: &t;Correct error for oversized datagrams&n; *&t;&t;Alan Cox&t;:&t;Tidied select() semantics. &n; *&t;&t;Alan Cox&t;:&t;udp_err() fixed properly, also now &n; *&t;&t;&t;&t;&t;select and read wake correctly on errors&n; *&t;&t;Alan Cox&t;:&t;udp_send verify_area moved to avoid mem leak&n; *&t;&t;Alan Cox&t;:&t;UDP can count its memory&n; *&t;&t;Alan Cox&t;:&t;send to an unknown connection causes&n; *&t;&t;&t;&t;&t;an ECONNREFUSED off the icmp, but&n; *&t;&t;&t;&t;&t;does NOT close.&n; *&t;&t;Alan Cox&t;:&t;Switched to new sk_buff handlers. No more backlog!&n; *&t;&t;Alan Cox&t;:&t;Using generic datagram code. Even smaller and the PEEK&n; *&t;&t;&t;&t;&t;bug no longer crashes it.&n; *&t;&t;Fred Van Kempen&t;: &t;Net2e support for sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram&n; *&t;&t;Alan Cox&t;:&t;Added get/set sockopt support.&n; *&t;&t;Alan Cox&t;:&t;Broadcasting without option set returns EACCES.&n; *&t;&t;Alan Cox&t;:&t;No wakeup calls. Instead we now use the callbacks.&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos and ip_ttl&n; *&t;&t;Alan Cox&t;:&t;SNMP Mibs&n; *&t;&t;Alan Cox&t;:&t;MSG_DONTROUTE, and 0.0.0.0 support.&n; *&t;&t;Matt Dillon&t;:&t;UDP length checks.&n; *&t;&t;Alan Cox&t;:&t;Smarter af_inet used properly.&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addressing.&n; *&t;&t;Alan Cox&t;:&t;Incorrect return on truncated datagram receive.&n; *&t;Arnt Gulbrandsen &t;:&t;New udp_send and stuff&n; *&t;&t;Alan Cox&t;:&t;Cache last socket&n; *&t;&t;Alan Cox&t;:&t;Route cache&n; *&t;&t;Jon Peatfield&t;:&t;Minor efficiency fix to sendto().&n; *&t;&t;Mike Shaver&t;:&t;RFC1122 checks.&n; *&t;&t;Alan Cox&t;:&t;Nonblocking error fix.&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;Last socket cache retained as it&n; *&t;&t;&t;&t;&t;does have a high hit rate.&n; *&t;&t;Olaf Kirch&t;:&t;Don&squot;t linearise iovec on sendmsg.&n; *&t;&t;Andi Kleen&t;:&t;Some cleanups, cache destination entry&n; *&t;&t;&t;&t;&t;for connect. &n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/* RFC1122 Status:&n;   4.1.3.1 (Ports):&n;     SHOULD send ICMP_PORT_UNREACHABLE in response to datagrams to &n;       an un-listened port. (OK)&n;   4.1.3.2 (IP Options)&n;     MUST pass IP options from IP -&gt; application (OK)&n;     MUST allow application to specify IP options (OK)&n;   4.1.3.3 (ICMP Messages)&n;     MUST pass ICMP error messages to application (OK -- except when SO_BSDCOMPAT is set)&n;   4.1.3.4 (UDP Checksums)&n;     MUST provide facility for checksumming (OK)&n;     MAY allow application to control checksumming (OK)&n;     MUST default to checksumming on (OK)&n;     MUST discard silently datagrams with bad csums (OK)&n;   4.1.3.5 (UDP Multihoming)&n;     MUST allow application to specify source address (OK)&n;     SHOULD be able to communicate the chosen src addr up to application&n;       when application doesn&squot;t choose (DOES - use recvmsg cmsgs)&n;   4.1.3.6 (Invalid Addresses)&n;     MUST discard invalid source addresses (OK -- done in the new routing code)&n;     MUST only send datagrams with one of our addresses (OK)&n;*/
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1669,8 +1669,6 @@ r_return
 id|s
 suffix:semicolon
 )brace
-DECL|macro|min
-mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 multiline_comment|/*&n; * This routine is called by the ICMP module when it gets some&n; * sort of error condition.  If err &lt; 0 then the socket should&n; * be closed and the error returned to the user.  If err &gt; 0&n; * it&squot;s just the icmp type &lt;&lt; 8 | icmp code.  &n; * Header points to the ip header of the error packet. We move&n; * on past this. Then (as it used to claim before adjustment)&n; * header points to the first 8 bytes of the udp header.  We need&n; * to find the appropriate port.&n; */
 DECL|function|udp_err
 r_void
@@ -1837,41 +1835,20 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-r_if
+r_switch
 c_cond
 (paren
 id|type
-op_eq
-id|ICMP_SOURCE_QUENCH
 )paren
 (brace
-macro_line|#if 0 /* FIXME:&t;If you check the rest of the code, this is a NOP!&n;       * &t;Someone figure out what we were trying to be doing&n;       * &t;here.  Besides, cong_window is a TCP thing and thus&n;       * &t;I moved it out of normal sock and into tcp_opt.&n;       */
-multiline_comment|/* Slow down! */
-r_if
-c_cond
-(paren
-id|sk-&gt;cong_window
-OG
-l_int|1
-)paren
-id|sk-&gt;cong_window
-op_assign
-id|sk-&gt;cong_window
-op_div
-l_int|2
-suffix:semicolon
-macro_line|#endif
+r_case
+id|ICMP_SOURCE_QUENCH
+suffix:colon
 r_return
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|type
-op_eq
+r_case
 id|ICMP_PARAMETERPROB
-)paren
-(brace
+suffix:colon
 id|sk-&gt;err
 op_assign
 id|EPROTO
@@ -1886,19 +1863,18 @@ id|sk
 suffix:semicolon
 r_return
 suffix:semicolon
-)brace
+r_case
+id|ICMP_DEST_UNREACH
+suffix:colon
 r_if
 c_cond
 (paren
-id|type
-op_eq
-id|ICMP_DEST_UNREACH
-op_logical_and
 id|code
 op_eq
 id|ICMP_FRAG_NEEDED
 )paren
 (brace
+multiline_comment|/* Path MTU discovery */
 r_if
 c_cond
 (paren
@@ -1907,6 +1883,7 @@ op_ne
 id|IP_PMTUDISC_DONT
 )paren
 (brace
+multiline_comment|/* &n;&t;&t;&t;&t; * There should be really a way to pass the&n;&t;&t;&t;&t; * discovered MTU value back to the user (the&n;&t;&t;&t;&t; * ICMP layer did all the work for us)&n;&t;&t;&t;&t; */
 id|sk-&gt;err
 op_assign
 id|EMSGSIZE
@@ -1921,6 +1898,9 @@ id|sk
 suffix:semicolon
 )brace
 r_return
+suffix:semicolon
+)brace
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Various people wanted BSD UDP semantics. Well they&squot;ve come &n;&t; *&t;back out because they slow down response to stuff like dead&n;&t; *&t;or unreachable name servers and they screw term users something&n;&t; *&t;chronic. Oh and it violates RFC1122. So basically fix your &n;&t; *&t;client code people.&n;&t; */
@@ -2380,9 +2360,15 @@ r_struct
 id|rtable
 op_star
 id|rt
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|free
+op_assign
+l_int|0
+comma
+id|localroute
 op_assign
 l_int|0
 suffix:semicolon
@@ -2526,6 +2512,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/* XXX: is a one-behind cache for the dst_entry worth it? */
 )brace
 r_else
 (brace
@@ -2547,6 +2534,15 @@ suffix:semicolon
 id|ufh.uh.dest
 op_assign
 id|sk-&gt;dummy_th.dest
+suffix:semicolon
+id|rt
+op_assign
+(paren
+r_struct
+id|rtable
+op_star
+)paren
+id|sk-&gt;dst_cache
 suffix:semicolon
 )brace
 id|ipc.addr
@@ -2646,7 +2642,9 @@ c_func
 (paren
 id|sk-&gt;ip_tos
 )paren
-op_or
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|sk-&gt;localroute
 op_logical_or
@@ -2662,7 +2660,17 @@ op_logical_and
 id|ipc.opt-&gt;is_strictroute
 )paren
 )paren
+(brace
+id|tos
+op_or_assign
+l_int|1
 suffix:semicolon
+id|rt
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* sorry */
+)brace
 r_if
 c_cond
 (paren
@@ -2694,6 +2702,14 @@ op_assign
 id|sk-&gt;ip_mc_addr
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|rt
+op_eq
+l_int|NULL
+)paren
+(brace
 id|err
 op_assign
 id|ip_route_output
@@ -2716,22 +2732,18 @@ c_cond
 (paren
 id|err
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|free
-)paren
-id|kfree
-c_func
-(paren
-id|ipc.opt
-)paren
+r_goto
+id|out
 suffix:semicolon
-r_return
+id|localroute
+op_assign
+l_int|1
+suffix:semicolon
 id|err
+op_assign
+op_minus
+id|EACCES
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2742,27 +2754,8 @@ op_logical_and
 op_logical_neg
 id|sk-&gt;broadcast
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|free
-)paren
-id|kfree
-c_func
-(paren
-id|ipc.opt
-)paren
-suffix:semicolon
-id|ip_rt_put
-c_func
-(paren
-id|rt
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EACCES
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|ufh.saddr
@@ -2831,41 +2824,18 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|err
+op_assign
+id|ip_build_xmit
+c_func
 (paren
+id|sk
+comma
 id|sk-&gt;no_check
-)paren
-id|err
-op_assign
-id|ip_build_xmit
-c_func
-(paren
-id|sk
-comma
+ques
+c_cond
 id|udp_getfrag_nosum
-comma
-op_amp
-id|ufh
-comma
-id|ulen
-comma
-op_amp
-id|ipc
-comma
-id|rt
-comma
-id|msg-&gt;msg_flags
-)paren
-suffix:semicolon
-r_else
-id|err
-op_assign
-id|ip_build_xmit
-c_func
-(paren
-id|sk
-comma
+suffix:colon
 id|udp_getfrag
 comma
 op_amp
@@ -2881,16 +2851,23 @@ comma
 id|msg-&gt;msg_flags
 )paren
 suffix:semicolon
-id|ip_rt_put
-c_func
-(paren
-id|rt
-)paren
-suffix:semicolon
 id|release_sock
 c_func
 (paren
 id|sk
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+r_if
+c_cond
+(paren
+id|localroute
+)paren
+id|ip_rt_put
+c_func
+(paren
+id|rt
 )paren
 suffix:semicolon
 r_if
@@ -3036,13 +3013,9 @@ l_int|NULL
 multiline_comment|/*&n;&t;&t;&t;&t; * We will only return the amount&n;&t;&t;&t;&t; * of this packet since that is all&n;&t;&t;&t;&t; * that will be read.&n;&t;&t;&t;&t; */
 id|amount
 op_assign
-id|skb-&gt;len
+id|skb-&gt;tail
 op_minus
-r_sizeof
-(paren
-r_struct
-id|udphdr
-)paren
+id|skb-&gt;h.raw
 suffix:semicolon
 )brace
 r_return
@@ -3496,6 +3469,16 @@ r_return
 op_minus
 id|EAFNOSUPPORT
 suffix:semicolon
+id|dst_release
+c_func
+(paren
+id|sk-&gt;dst_cache
+)paren
+suffix:semicolon
+id|sk-&gt;dst_cache
+op_assign
+l_int|NULL
+suffix:semicolon
 id|err
 op_assign
 id|ip_route_connect
@@ -3597,11 +3580,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|ip_rt_put
-c_func
-(paren
-id|rt
-)paren
+id|sk-&gt;dst_cache
+op_assign
+op_amp
+id|rt-&gt;u.dst
 suffix:semicolon
 r_return
 l_int|0
@@ -4194,12 +4176,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* RFC1122 warning: According to 4.1.3.6, we MUST discard any */
-multiline_comment|/* datagram which has an invalid source address, either here or */
-multiline_comment|/* in IP. */
-multiline_comment|/* Right now, IP isn&squot;t doing it, and neither is UDP. It&squot;s on the */
-multiline_comment|/* FIXME list for IP, though, so I wouldn&squot;t worry about it. */
-multiline_comment|/* (That&squot;s the Right Place to do it, IMHO.) -- MS */
 r_if
 c_cond
 (paren

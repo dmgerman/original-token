@@ -14,6 +14,8 @@ DECL|macro|GFX_IS_MANAGED
 mdefine_line|#define GFX_IS_MANAGED       (GFX_BASE + 5)
 DECL|macro|GFX_MAPALL
 mdefine_line|#define GFX_MAPALL           (GFX_BASE + 10)
+DECL|macro|GFX_LABEL
+mdefine_line|#define GFX_LABEL            (GFX_BASE + 11)
 DECL|macro|GFX_INFO_NAME_SIZE
 mdefine_line|#define GFX_INFO_NAME_SIZE  16
 DECL|macro|GFX_INFO_LABEL_SIZE

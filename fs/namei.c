@@ -24,6 +24,7 @@ DECL|macro|ACC_MODE
 mdefine_line|#define ACC_MODE(x) (&quot;&bslash;000&bslash;004&bslash;002&bslash;006&quot;[(x)&amp;O_ACCMODE])
 multiline_comment|/* [Feb-1997 T. Schoebel-Theuer]&n; * Fundamental changes in the pathname lookup mechanisms (namei)&n; * were necessary because of omirr.  The reason is that omirr needs&n; * to know the _real_ pathname, not the user-supplied one, in case&n; * of symlinks (and also when transname replacements occur).&n; *&n; * The new code replaces the old recursive symlink resolution with&n; * an iterative one (in case of non-nested symlink chains).  It does&n; * this by looking up the symlink name from the particular filesystem,&n; * and then follows this name as if it were a user-supplied one.  This&n; * is done solely in the VFS level, such that &lt;fs&gt;_follow_link() is not&n; * used any more and could be removed in future.  As a side effect,&n; * dir_namei(), _namei() and follow_link() are now replaced with a single&n; * function lookup_dentry() that can handle all the special cases of the former&n; * code.&n; *&n; * With the new dcache, the pathname is stored at each inode, at least as&n; * long as the refcount of the inode is positive.  As a side effect, the&n; * size of the dcache depends on the inode cache and thus is dynamic.&n; */
 multiline_comment|/* [24-Feb-97 T. Schoebel-Theuer] Side effects caused by new implementation:&n; * New symlink semantics: when open() is called with flags O_CREAT | O_EXCL&n; * and the name already exists in form of a symlink, try to create the new&n; * name indicated by the symlink. The old code always complained that the&n; * name already exists, due to not following the symlink even if its target&n; * is non-existant.  The new semantics affects also mknod() and link() when&n; * the name is a symlink pointing to a non-existant name.&n; *&n; * I don&squot;t know which semantics is the right one, since I have no access&n; * to standards. But I found by trial that HP-UX 9.0 has the full &quot;new&quot;&n; * semantics implemented, while SunOS 4.1.1 and Solaris (SunOS 5.4) have the&n; * &quot;old&quot; one. Personally, I think the new semantics is much more logical.&n; * Note that &quot;ln old new&quot; where &quot;new&quot; is a symlink pointing to a non-existing&n; * file does succeed in both HP-UX and SunOs, but not in Solaris&n; * and in the old Linux semantics.&n; */
+multiline_comment|/* [16-Dec-97 Kevin Buhr] For security reasons, we change some symlink&n; * semantics.  See the comments in &quot;open_namei&quot; and &quot;do_link&quot; below.&n; */
 DECL|variable|quicklist
 r_static
 r_char
@@ -1875,6 +1876,7 @@ id|mode
 op_or_assign
 id|S_IFREG
 suffix:semicolon
+multiline_comment|/* &n;&t; * Special case: O_CREAT|O_EXCL on a dangling symlink should&n;&t; * give EEXIST for security reasons.  While inconsistent, this&n;&t; * is the same scheme used by, for example, Solaris 2.5.1.  --KAB&n;&t; */
 id|dentry
 op_assign
 id|lookup_dentry
@@ -1884,7 +1886,21 @@ id|pathname
 comma
 l_int|NULL
 comma
-l_int|1
+(paren
+id|flag
+op_amp
+(paren
+id|O_CREAT
+op_or
+id|O_EXCL
+)paren
+)paren
+op_ne
+(paren
+id|O_CREAT
+op_or
+id|O_EXCL
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2891,7 +2907,7 @@ id|pathname
 comma
 l_int|NULL
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|error
@@ -4181,6 +4197,7 @@ id|old_dentry
 r_goto
 m_exit
 suffix:semicolon
+multiline_comment|/*&n;&t; * Hardlinks are often used in delicate situations.  We avoid&n;&t; * security-related surprises by not following symlinks on the&n;&t; * newname.  We *do* follow them on the oldname.  This is&n;&t; * the same as Digital Unix 4.0, for example.&n;&t; *&n;&t; * Solaris 2.5.1 is similar, but for a laugh try linking from&n;&t; * a dangling symlink.                              --KAB&n;&t; */
 id|new_dentry
 op_assign
 id|lookup_dentry
@@ -4190,7 +4207,7 @@ id|newname
 comma
 l_int|NULL
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 id|error

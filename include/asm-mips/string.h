@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/string.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: string.h,v 1.4 1997/08/08 20:22:34 miguel Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/string.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: string.h,v 1.3 1997/08/11 04:11:53 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_STRING_H
 DECL|macro|__ASM_MIPS_STRING_H
 mdefine_line|#define __ASM_MIPS_STRING_H
@@ -265,7 +265,7 @@ r_int
 id|__count
 )paren
 (brace
-r_char
+r_int
 id|__res
 suffix:semicolon
 id|__asm__

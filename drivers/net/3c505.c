@@ -790,11 +790,11 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 multiline_comment|/* Check to make sure that a DMA transfer hasn&squot;t timed out.  This should&n; * never happen in theory, but seems to occur occasionally if the card gets&n; * prodded at the wrong time.&n; */
-DECL|function|check_dma
+DECL|function|check_3c505_dma
 r_static
 r_inline
 r_void
-id|check_dma
+id|check_3c505_dma
 c_func
 (paren
 r_struct
@@ -1124,7 +1124,7 @@ id|adapter
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-id|check_dma
+id|check_3c505_dma
 c_func
 (paren
 id|dev
@@ -2501,7 +2501,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* has one timed out? */
-id|check_dma
+id|check_3c505_dma
 c_func
 (paren
 id|dev
@@ -3848,7 +3848,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|check_dma
+id|check_3c505_dma
 c_func
 (paren
 id|dev

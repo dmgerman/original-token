@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; */
+multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; *&n; * $Id: processor.h,v 1.5 1997/12/01 16:48:39 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_PROCESSOR_H
 DECL|macro|__ASM_MIPS_PROCESSOR_H
 mdefine_line|#define __ASM_MIPS_PROCESSOR_H
@@ -7,12 +7,22 @@ macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/*&n; * System setup and hardware bug flags..&n; */
+multiline_comment|/*&n; * System setup and hardware flags..&n; */
 r_extern
 r_char
 id|wait_available
 suffix:semicolon
 multiline_comment|/* only available on R4[26]00 */
+r_extern
+r_char
+id|cyclecounter_available
+suffix:semicolon
+multiline_comment|/* only available from R4000 upwards. */
+r_extern
+r_char
+id|dedicated_iv_available
+suffix:semicolon
+multiline_comment|/* some embedded MIPS like Nevada */
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; *&n; * This needs to be extended since MIPS systems are being delivered with&n; * numerous different types of bus systems.&n; */
 r_extern
 r_int
@@ -85,6 +95,18 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|INIT_FPU
 mdefine_line|#define INIT_FPU { &bslash;&n;&t;{{0,},} &bslash;&n;}
+r_typedef
+r_struct
+(brace
+DECL|member|seg
+r_int
+r_int
+id|seg
+suffix:semicolon
+DECL|typedef|mm_segment_t
+)brace
+id|mm_segment_t
+suffix:semicolon
 multiline_comment|/*&n; * If you change thread_struct remember to change the #defines below too!&n; */
 DECL|struct|thread_struct
 r_struct
@@ -201,7 +223,7 @@ r_int
 id|mflags
 suffix:semicolon
 DECL|member|current_ds
-r_int
+id|mm_segment_t
 id|current_ds
 suffix:semicolon
 DECL|member|irix_trampoline
@@ -221,7 +243,7 @@ macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process &bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, (unsigned long)&amp;init_task_union + KERNEL_STACK_SIZE - 8, &bslash;&n;&t;(unsigned long) swapper_pg_dir, &bslash;&n;&t;/* &bslash;&n;&t; * For now the default is to fix address errors &bslash;&n;&t; */ &bslash;&n;&t;MF_FIXADE, 0, 0, 0 &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process &bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, (unsigned long)&amp;init_task_union + KERNEL_STACK_SIZE - 32, &bslash;&n;&t;(unsigned long) swapper_pg_dir, &bslash;&n;&t;/* &bslash;&n;&t; * For now the default is to fix address errors &bslash;&n;&t; */ &bslash;&n;&t;MF_FIXADE, 0, 0, 0 &bslash;&n;}
 macro_line|#ifdef __KERNEL__
 DECL|macro|KERNEL_STACK_SIZE
 mdefine_line|#define KERNEL_STACK_SIZE 8192
@@ -252,20 +274,41 @@ op_star
 id|t
 )paren
 (brace
+r_extern
+r_void
+id|ret_from_sys_call
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* New born processes are a special case */
+r_if
+c_cond
+(paren
+id|t-&gt;reg31
+op_eq
+(paren
+r_int
+r_int
+)paren
+id|ret_from_sys_call
+)paren
+r_return
+id|t-&gt;reg31
+suffix:semicolon
 r_return
 (paren
 (paren
-r_struct
-id|pt_regs
-op_star
-)paren
-(paren
 r_int
+r_int
+op_star
 )paren
 id|t-&gt;reg29
 )paren
-op_member_access_from_pointer
-id|cp0_epc
+(braket
+l_int|17
+)braket
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
@@ -289,8 +332,18 @@ id|sp
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
+r_extern
+r_int
+(paren
+op_star
+id|running_in_user_mode
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|USES_USER_TIME
-mdefine_line|#define USES_USER_TIME(regs) (!((regs)-&gt;cp0_status &amp; 0x18))
+mdefine_line|#define USES_USER_TIME(regs) running_in_user_mode()
 multiline_comment|/* Allocation and freeing of basic task resources. */
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 DECL|macro|alloc_task_struct

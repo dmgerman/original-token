@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/rz1000.c&t;Version 0.03  Mar 20, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; author (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  mlord@pobox.com (Mark Lord)&n; *&n; *  This file provides support for disabling the buggy read-ahead&n; *  mode of the RZ1000 IDE chipset, commonly used on Intel motherboards.&n; */
+multiline_comment|/*&n; *  linux/drivers/block/rz1000.c&t;Version 0.05  December 8, 1997&n; *&n; *  Copyright (C) 1995-1998  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  mlord@pobox.com (Mark Lord)&n; *&n; *  This file provides support for disabling the buggy read-ahead&n; *  mode of the RZ1000 IDE chipset, commonly used on Intel motherboards.&n; *&n; *  Dunno if this fixes both ports, or only the primary port (?).&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -14,7 +14,109 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &quot;ide.h&quot;
-DECL|function|init_rz1000
+macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|ide_init_rz1000
+(paren
+id|ide_hwif_t
+op_star
+id|hwif
+)paren
+)paren
+multiline_comment|/* called from ide-pci.c */
+(brace
+r_int
+r_int
+id|reg
+suffix:semicolon
+id|hwif-&gt;chipset
+op_assign
+id|ide_rz1000
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_read_config_word
+(paren
+id|hwif-&gt;pci_bus
+comma
+id|hwif-&gt;pci_fn
+comma
+l_int|0x40
+comma
+op_amp
+id|reg
+)paren
+op_logical_and
+op_logical_neg
+id|pcibios_write_config_word
+c_func
+(paren
+id|hwif-&gt;pci_bus
+comma
+id|hwif-&gt;pci_fn
+comma
+l_int|0x40
+comma
+id|reg
+op_amp
+l_int|0xdfff
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: disabled chipset read-ahead (buggy RZ1000/RZ1001)&bslash;n&quot;
+comma
+id|hwif-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|hwif-&gt;serialized
+op_assign
+l_int|1
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
+dot
+id|no_unmask
+op_assign
+l_int|1
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|1
+)braket
+dot
+id|no_unmask
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: serialized, disabled unmasking (buggy RZ1000/RZ1001)&bslash;n&quot;
+comma
+id|hwif-&gt;name
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|init_rz1000
@@ -30,20 +132,13 @@ r_char
 op_star
 id|name
 )paren
+)paren
 (brace
 r_int
 r_int
 id|reg
 comma
 id|h
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: buggy IDE controller: &quot;
-comma
-id|name
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -72,7 +167,9 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;disabled (BIOS)&bslash;n&quot;
+l_string|&quot;%s: buggy IDE controller disabled (BIOS)&bslash;n&quot;
+comma
+id|name
 )paren
 suffix:semicolon
 r_return
@@ -113,18 +210,14 @@ l_int|0xdfff
 id|printk
 c_func
 (paren
-l_string|&quot;disabled read-ahead&bslash;n&quot;
+l_string|&quot;IDE: disabled chipset read-ahead (buggy %s)&bslash;n&quot;
+comma
+id|name
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -206,24 +299,45 @@ id|no_unmask
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
+op_eq
+l_int|0x170
+)paren
+id|hwif-&gt;channel
+op_assign
+l_int|1
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  %s: serialized, disabled unmasking&bslash;n&quot;
+l_string|&quot;%s: serialized, disabled unmasking (buggy %s)&bslash;n&quot;
 comma
 id|hwif-&gt;name
+comma
+id|name
 )paren
 suffix:semicolon
 )brace
 )brace
 )brace
 )brace
-DECL|function|ide_probe_for_rz100x
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ide_probe_for_rz100x
 (paren
 r_void
 )paren
+)paren
+multiline_comment|/* called from ide.c */
 (brace
 id|byte
 id|index
@@ -303,4 +417,5 @@ l_string|&quot;RZ1001&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif CONFIG_BLK_DEV_IDEPCI
 eof

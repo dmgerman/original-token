@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; *  Copyright (C) 1996  Stoned Elipot&n; */
+multiline_comment|/*&n; *  linux/arch/mips/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; *  Copyright (C) 1996  Stoned Elipot&n; *&n; * $Id: setup.c,v 1.5 1997/12/06 08:55:42 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -60,6 +60,11 @@ multiline_comment|/*&n; * Not all of the MIPS CPUs have the &quot;wait&quot; ins
 DECL|variable|wait_available
 r_char
 id|wait_available
+suffix:semicolon
+multiline_comment|/*&n; * Do we have a cyclecounter available?&n; */
+DECL|variable|cyclecounter_available
+r_char
+id|cyclecounter_available
 suffix:semicolon
 multiline_comment|/*&n; * There are several bus types available for MIPS machines.  &quot;RISC PC&quot;&n; * type machines have ISA, EISA, VLB or PCI available, DECstations&n; * have Turbochannel or Q-Bus, SGI has GIO, there are lots of VME&n; * boxes ...&n; * This flag is set if a EISA slots are available.&n; */
 DECL|variable|EISA_bus
@@ -193,6 +198,12 @@ id|irq_setup
 (paren
 r_void
 )paren
+suffix:semicolon
+multiline_comment|/*&n; * mips_io_port_base is the begin of the address space to which x86 style&n; * I/O ports are mapped.&n; */
+DECL|variable|mips_io_port_base
+r_int
+r_int
+id|mips_io_port_base
 suffix:semicolon
 multiline_comment|/*&n; * isa_slot_offset is the address where E(ISA) busaddress 0 is is mapped&n; * for the processor.&n; */
 DECL|variable|isa_slot_offset
@@ -406,7 +417,7 @@ r_break
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_MIPS_ARC) 
-multiline_comment|/* Perhaps arch/mips/deskstation should be renommed arch/mips/arc.&n; * For now CONFIG_MIPS_ARC means DeskStation. -Stoned.&n; */
+multiline_comment|/*&n;&t; * Perhaps arch/mips/deskstation should be renamed to arch/mips/arc.&n;&t; * For now CONFIG_MIPS_ARC means DeskStation. -Stoned.&n;&t; */
 r_case
 id|MACH_GROUP_ARC
 suffix:colon
@@ -486,12 +497,6 @@ comma
 id|atag-&gt;size
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|aux_device_present
-op_assign
-id|AUX_DEVICE_INFO
-suffix:semicolon
-macro_line|#endif
 id|memory_end
 op_assign
 id|mips_memory_upper

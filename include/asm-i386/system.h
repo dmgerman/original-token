@@ -384,11 +384,11 @@ mdefine_line|#define set_call_gate(a,addr) &bslash;&n;&t;_set_gate(a,12,3,addr)
 DECL|macro|_set_seg_desc
 mdefine_line|#define _set_seg_desc(gate_addr,type,dpl,base,limit) {&bslash;&n;&t;*((gate_addr)+1) = ((base) &amp; 0xff000000) | &bslash;&n;&t;&t;(((base) &amp; 0x00ff0000)&gt;&gt;16) | &bslash;&n;&t;&t;((limit) &amp; 0xf0000) | &bslash;&n;&t;&t;((dpl)&lt;&lt;13) | &bslash;&n;&t;&t;(0x00408000) | &bslash;&n;&t;&t;((type)&lt;&lt;8); &bslash;&n;&t;*(gate_addr) = (((base) &amp; 0x0000ffff)&lt;&lt;16) | &bslash;&n;&t;&t;((limit) &amp; 0x0ffff); }
 DECL|macro|_set_tssldt_desc
-mdefine_line|#define _set_tssldt_desc(n,addr,limit,type) &bslash;&n;__asm__ __volatile__ (&quot;movw $&quot; #limit &quot;,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%ax,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%al,%3&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb $&quot; type &quot;,%4&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb $0x00,%5&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%ah,%6&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%eax&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;a&quot; (addr), &quot;m&quot; (*(n)), &quot;m&quot; (*(n+2)), &quot;m&quot; (*(n+4)), &bslash;&n;&t; &quot;m&quot; (*(n+5)), &quot;m&quot; (*(n+6)), &quot;m&quot; (*(n+7)) &bslash;&n;&t;)
+mdefine_line|#define _set_tssldt_desc(n,addr,limit,type) &bslash;&n;__asm__ __volatile__ (&quot;movw %3,0(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%ax,2(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%al,4(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %4,5(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb $0,6(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%ah,7(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%eax&quot; &bslash;&n;&t;: &quot;=m&quot;(*(n)) : &quot;a&quot; (addr), &quot;r&quot;(n), &quot;i&quot;(limit), &quot;i&quot;(type))
 DECL|macro|set_tss_desc
-mdefine_line|#define set_tss_desc(n,addr) _set_tssldt_desc(((char *) (n)),((int)(addr)),235,&quot;0x89&quot;)
+mdefine_line|#define set_tss_desc(n,addr) &bslash;&n;&t;_set_tssldt_desc(((char *) (n)),((int)(addr)),235,0x89)
 DECL|macro|set_ldt_desc
-mdefine_line|#define set_ldt_desc(n,addr,size) &bslash;&n;&t;_set_tssldt_desc(((char *) (n)),((int)(addr)),((size &lt;&lt; 3) - 1),&quot;0x82&quot;)
+mdefine_line|#define set_ldt_desc(n,addr,size) &bslash;&n;&t;_set_tssldt_desc(((char *) (n)),((int)(addr)),((size &lt;&lt; 3) - 1),0x82)
 multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
 r_extern
 r_struct

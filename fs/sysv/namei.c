@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/sysv/namei.c&n; *&n; *  minix/namei.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  coh/namei.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/namei.c&n; *  Copyright (C) 1993  Bruno Haible&n; */
-multiline_comment|/*&n;  7 Dec 1997 - updated to use dentries by Krzysztof G. Baranowski&n;&t;       &lt;kgb@manjak.knm.org.pl&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/sysv/namei.c&n; *&n; *  minix/namei.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  coh/namei.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/namei.c&n; *  Copyright (C) 1993  Bruno Haible&n; *&n; *&n; *  Revised: 15 Dec 1997 by Krzysztof G. Baranowski &lt;kgb@manjak.knm.org.pl&gt;&n; *    Driver updated to use dentries.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -384,9 +383,6 @@ op_star
 id|dentry
 )paren
 (brace
-r_int
-id|ino
-suffix:semicolon
 r_struct
 id|inode
 op_star
@@ -430,11 +426,6 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|bh
 op_assign
 id|sysv_find_entry
@@ -449,14 +440,14 @@ comma
 op_amp
 id|de
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh
 )paren
 (brace
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
+r_int
 id|ino
 op_assign
 id|de-&gt;inode
@@ -487,6 +478,7 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+)brace
 id|d_add
 c_func
 (paren
@@ -1398,12 +1390,10 @@ id|dir-&gt;i_nlink
 op_ge
 id|dir-&gt;i_sb-&gt;sv_link_max
 )paren
-(brace
 r_return
 op_minus
 id|EMLINK
 suffix:semicolon
-)brace
 id|inode
 op_assign
 id|sysv_new_inode
@@ -2917,6 +2907,12 @@ c_cond
 id|error
 )paren
 (brace
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -3117,18 +3113,6 @@ id|brelse
 c_func
 (paren
 id|dir_bh
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|old_inode
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|new_inode
 )paren
 suffix:semicolon
 id|current-&gt;counter
@@ -3704,6 +3688,14 @@ id|new_dir
 suffix:semicolon
 )brace
 )brace
+id|d_move
+c_func
+(paren
+id|old_dentry
+comma
+id|new_dentry
+)paren
+suffix:semicolon
 id|retval
 op_assign
 l_int|0
@@ -3726,30 +3718,6 @@ id|brelse
 c_func
 (paren
 id|new_bh
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|old_inode
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|new_inode
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|old_dir
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|new_dir
 )paren
 suffix:semicolon
 r_return

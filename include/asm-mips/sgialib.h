@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgialib.h,v 1.1 1997/06/06 09:39:56 ralf Exp $&n; * sgialib.h: SGI ARCS firmware interface library for the Linux kernel.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgialib.h,v 1.1.1.1 1997/06/01 03:17:13 ralf Exp $&n; * sgialib.h: SGI ARCS firmware interface library for the Linux kernel.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGIALIB_H
 DECL|macro|_MIPS_SGIALIB_H
 mdefine_line|#define _MIPS_SGIALIB_H

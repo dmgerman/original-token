@@ -523,24 +523,17 @@ id|x
 suffix:semicolon
 )brace
 r_extern
+r_void
+id|set_except_vector
+c_func
+(paren
 r_int
-r_int
-id|IRQ_vectors
-(braket
-l_int|32
-)braket
+id|n
+comma
+r_void
+op_star
+id|addr
+)paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|exception_handlers
-(braket
-l_int|32
-)braket
-suffix:semicolon
-DECL|macro|set_int_vector
-mdefine_line|#define set_int_vector(n,addr) &bslash;&n;&t;IRQ_vectors[n] = (unsigned long) (addr)
-DECL|macro|set_except_vector
-mdefine_line|#define set_except_vector(n,addr) &bslash;&n;&t;exception_handlers[n] = (unsigned long) (addr)
 macro_line|#endif /* __ASM_MIPS_SYSTEM_H */
 eof

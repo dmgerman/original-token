@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;iovec manipulation routines.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&t;Andrew Lunn&t;:&t;Errors in iovec copying.&n; *&t;&t;Pedro Roque&t;:&t;Added memcpy_fromiovecend and&n; *&t;&t;&t;&t;&t;csum_..._fromiovecend.&n; *&t;&t;Andi Kleen&t;:&t;fixed error handling for 2.1&n; *&t;&t;Alexey Kuznetsov:&t;2.1 optimisations&n; */
+multiline_comment|/*&n; *&t;iovec manipulation routines.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&t;Andrew Lunn&t;:&t;Errors in iovec copying.&n; *&t;&t;Pedro Roque&t;:&t;Added memcpy_fromiovecend and&n; *&t;&t;&t;&t;&t;csum_..._fromiovecend.&n; *&t;&t;Andi Kleen&t;:&t;fixed error handling for 2.1&n; *&t;&t;Alexey Kuznetsov:&t;2.1 optimisations&n; *&t;&t;Andi Kleen&t;:&t;Fix csum*fromiovecend for IPv6.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -611,6 +611,7 @@ r_int
 id|offset
 comma
 r_int
+r_int
 id|len
 comma
 r_int
@@ -795,6 +796,7 @@ op_assign
 id|iov-&gt;iov_base
 suffix:semicolon
 r_int
+r_int
 id|copy
 op_assign
 id|min
@@ -805,6 +807,29 @@ comma
 id|iov-&gt;iov_len
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: more sanity checking is needed here, because&n;                 * the iovs are copied from the user.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|base
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: iov too short&bslash;n&quot;
+comma
+id|current-&gt;comm
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 multiline_comment|/* There is a remnant from previous iov. */
 r_if
 c_cond
@@ -976,6 +1001,15 @@ id|partial_cnt
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|copy
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
 id|csum
 op_assign
 id|csum_partial_copy_from_user

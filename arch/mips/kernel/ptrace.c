@@ -247,7 +247,7 @@ op_star
 id|pgtable
 )paren
 suffix:semicolon
-multiline_comment|/* this is a hack for non-kernel-mapped video buffers and similar */
+multiline_comment|/* This is a hack for non-kernel-mapped video buffers and similar */
 r_if
 c_cond
 (paren
@@ -273,6 +273,12 @@ op_amp
 op_complement
 id|PAGE_MASK
 suffix:semicolon
+multiline_comment|/* We can&squot;t use flush_page_to_ram() since we&squot;re running in&n;&t; * another context ...&n;&t; */
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_star
@@ -282,12 +288,6 @@ r_int
 op_star
 )paren
 id|page
-suffix:semicolon
-id|flush_page_to_ram
-c_func
-(paren
-id|page
-)paren
 suffix:semicolon
 r_return
 id|retval
@@ -553,15 +553,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-multiline_comment|/* this is a hack for non-kernel-mapped video buffers and similar */
-id|flush_cache_page
-c_func
-(paren
-id|vma
-comma
-id|addr
-)paren
-suffix:semicolon
+multiline_comment|/* This is a hack for non-kernel-mapped video buffers and similar */
 r_if
 c_cond
 (paren
@@ -577,7 +569,14 @@ c_func
 id|high_memory
 )paren
 )paren
-(brace
+id|flush_cache_page
+c_func
+(paren
+id|vma
+comma
+id|addr
+)paren
+suffix:semicolon
 op_star
 (paren
 r_int
@@ -597,15 +596,28 @@ id|PAGE_MASK
 op_assign
 id|data
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|MAP_NR
+c_func
+(paren
+id|page
+)paren
+OL
+id|MAP_NR
+c_func
+(paren
+id|high_memory
+)paren
+)paren
 id|flush_page_to_ram
 c_func
 (paren
 id|page
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
-multiline_comment|/* this should also re-instate whatever read-only mode there was before */
+multiline_comment|/*&n;&t; * We&squot;re bypassing pagetables, so we have to set the dirty bit&n;&t; * ourselves this should also re-instate whatever read-only mode&n;&t; * there was before&n;&t; */
 id|set_pte
 c_func
 (paren
@@ -1901,6 +1913,7 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
+multiline_comment|/* implementation / version register */
 id|tmp
 op_assign
 l_int|0

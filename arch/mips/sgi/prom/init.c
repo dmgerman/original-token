@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.1 1997/06/06 09:37:06 ralf Exp $&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: init.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 multiline_comment|/* #define DEBUG_PROM_INIT */

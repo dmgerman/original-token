@@ -1,13 +1,17 @@
-multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Declarations for the MIPS specific implementation of the PCI BIOS32 services.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Declarations for the MIPS specific implementation of the PCI BIOS32 services.&n; *&n; * $Id: pci.h,v 1.2 1997/09/20 21:16:37 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_PCI_H
 DECL|macro|__ASM_MIPS_PCI_H
 mdefine_line|#define __ASM_MIPS_PCI_H
-r_extern
+DECL|struct|pci_ops
+r_struct
+id|pci_ops
+(brace
+DECL|member|pcibios_fixup
 r_int
 r_int
 (paren
 op_star
-id|_pcibios_init
+id|pcibios_fixup
 )paren
 (paren
 r_int
@@ -19,28 +23,11 @@ r_int
 id|memory_end
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-(paren
-op_star
-id|_pcibios_fixup
-)paren
-(paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
-)paren
-suffix:semicolon
-r_extern
+DECL|member|pcibios_read_config_byte
 r_int
 (paren
 op_star
-id|_pcibios_read_config_byte
+id|pcibios_read_config_byte
 )paren
 (paren
 r_int
@@ -61,11 +48,11 @@ op_star
 id|val
 )paren
 suffix:semicolon
-r_extern
+DECL|member|pcibios_read_config_word
 r_int
 (paren
 op_star
-id|_pcibios_read_config_word
+id|pcibios_read_config_word
 )paren
 (paren
 r_int
@@ -86,11 +73,11 @@ op_star
 id|val
 )paren
 suffix:semicolon
-r_extern
+DECL|member|pcibios_read_config_dword
 r_int
 (paren
 op_star
-id|_pcibios_read_config_dword
+id|pcibios_read_config_dword
 )paren
 (paren
 r_int
@@ -111,11 +98,11 @@ op_star
 id|val
 )paren
 suffix:semicolon
-r_extern
+DECL|member|pcibios_write_config_byte
 r_int
 (paren
 op_star
-id|_pcibios_write_config_byte
+id|pcibios_write_config_byte
 )paren
 (paren
 r_int
@@ -135,11 +122,11 @@ r_char
 id|val
 )paren
 suffix:semicolon
-r_extern
+DECL|member|pcibios_write_config_word
 r_int
 (paren
 op_star
-id|_pcibios_write_config_word
+id|pcibios_write_config_word
 )paren
 (paren
 r_int
@@ -159,11 +146,11 @@ r_int
 id|val
 )paren
 suffix:semicolon
-r_extern
+DECL|member|pcibios_write_config_dword
 r_int
 (paren
 op_star
-id|_pcibios_write_config_dword
+id|pcibios_write_config_dword
 )paren
 (paren
 r_int
@@ -182,6 +169,14 @@ r_int
 r_int
 id|val
 )paren
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|pci_ops
+op_star
+id|pci_ops
 suffix:semicolon
 macro_line|#endif /* __ASM_MIPS_PCI_H */
 eof

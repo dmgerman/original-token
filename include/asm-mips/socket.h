@@ -1,3 +1,5 @@
+multiline_comment|/*&n; * $Id: socket.h,v 1.4 1997/12/06 20:32:40 ralf Exp $&n; */
+multiline_comment|/*&n; * $Id: socket.h,v 1.4 1997/12/06 23:55:49 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SOCKET_H
 DECL|macro|__ASM_MIPS_SOCKET_H
 mdefine_line|#define __ASM_MIPS_SOCKET_H
@@ -61,48 +63,20 @@ DECL|macro|SO_SECURITY_ENCRYPTION_TRANSPORT
 mdefine_line|#define SO_SECURITY_ENCRYPTION_TRANSPORT&t;23
 DECL|macro|SO_SECURITY_ENCRYPTION_NETWORK
 mdefine_line|#define SO_SECURITY_ENCRYPTION_NETWORK&t;&t;24
+DECL|macro|SO_BINDTODEVICE
+mdefine_line|#define SO_BINDTODEVICE&t;&t;25
 multiline_comment|/* Types of sockets.  */
-DECL|enum|__socket_type
-r_enum
-id|__socket_type
-(brace
-DECL|enumerator|SOCK_DGRAM
-id|SOCK_DGRAM
-op_assign
-l_int|1
-comma
-multiline_comment|/* Connectionless, unreliable datagrams&n;                                   of fixed maximum length.  */
-DECL|enumerator|SOCK_STREAM
-id|SOCK_STREAM
-op_assign
-l_int|2
-comma
-multiline_comment|/* Sequenced, reliable, connection-based&n;                                   byte streams.  */
-DECL|enumerator|SOCK_RAW
-id|SOCK_RAW
-op_assign
-l_int|3
-comma
-multiline_comment|/* Raw protocol interface.  */
-DECL|enumerator|SOCK_RDM
-id|SOCK_RDM
-op_assign
-l_int|4
-comma
-multiline_comment|/* Reliably-delivered messages.  */
-DECL|enumerator|SOCK_SEQPACKET
-id|SOCK_SEQPACKET
-op_assign
-l_int|5
-comma
-multiline_comment|/* Sequenced, reliable, connection-based,&n;                                   datagrams of fixed maximum length.  */
-DECL|enumerator|SOCK_PACKET
-id|SOCK_PACKET
-op_assign
-l_int|10
-comma
-multiline_comment|/* linux specific way of getting packets at&n;&t;&t;&t;&t;   the dev level.  For writing rarp and&n;&t;&t;&t;&t;   other similar things on the user level.  */
-)brace
-suffix:semicolon
+DECL|macro|SOCK_DGRAM
+mdefine_line|#define SOCK_DGRAM 1&t;&t;/* Connectionless, unreliable datagrams&n;&t;&t;&t;&t;   of fixed maximum length.  */
+DECL|macro|SOCK_STREAM
+mdefine_line|#define SOCK_STREAM 2&t;&t;/* Sequenced, reliable, connection-based&n;&t;&t;&t;&t;   byte streams.  */
+DECL|macro|SOCK_RAW
+mdefine_line|#define SOCK_RAW 3&t;&t;/* Raw protocol interface.  */
+DECL|macro|SOCK_RDM
+mdefine_line|#define SOCK_RDM 4&t;&t;/* Reliably-delivered messages.  */
+DECL|macro|SOCK_SEQPACKET
+mdefine_line|#define SOCK_SEQPACKET 5&t;/* Sequenced, reliable, connection-based,&n;&t;&t;&t;&t;   datagrams of fixed maximum length.  */
+DECL|macro|SOCK_PACKET
+mdefine_line|#define SOCK_PACKET 10&t;&t;/* Linux specific way of getting packets at&n;&t;&t;&t;&t;   the dev level.  For writing rarp and&n;&t;&t;&t;&t;   other similar things on the user level.  */
 macro_line|#endif /* __ASM_MIPS_SOCKET_H */
 eof

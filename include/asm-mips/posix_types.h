@@ -98,7 +98,6 @@ r_char
 op_star
 id|__kernel_caddr_t
 suffix:semicolon
-multiline_comment|/* typedef unsigned long&t;__kernel_sigset_t;  anybody using this type? */
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
 r_typedef

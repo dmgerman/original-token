@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: mips_ksyms.c,v 1.2 1997/08/08 18:12:26 miguel Exp $&n; */
+multiline_comment|/*&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: mips_ksyms.c,v 1.4 1997/08/11 04:17:18 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -165,20 +165,126 @@ c_func
 id|fd_cacheflush
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Base address of ports for Intel style I/O.&n; */
-DECL|variable|port_base
+DECL|variable|flush_cache_all
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|port_base
+id|flush_cache_all
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Base address of ports for Intel style I/O.&n; */
+DECL|variable|mips_io_port_base
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mips_io_port_base
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Architecture specific stuff.&n; */
+macro_line|#ifdef CONFIG_MIPS_JAZZ
+DECL|variable|vdma_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vdma_alloc
+)paren
+suffix:semicolon
+DECL|variable|vdma_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vdma_free
+)paren
+suffix:semicolon
+DECL|variable|vdma_log2phys
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vdma_log2phys
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SGI
 DECL|variable|hpc3c0
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|hpc3c0
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n; * Kernel hacking ...&n; */
+macro_line|#include &lt;asm/branch.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+r_int
+id|register_fpe
+c_func
+(paren
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+r_int
+id|fcr31
+)paren
+)paren
+suffix:semicolon
+r_int
+id|unregister_fpe
+c_func
+(paren
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+r_int
+id|fcr31
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_MIPS_FPE_MODULE
+DECL|variable|force_sig
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|force_sig
+)paren
+suffix:semicolon
+DECL|variable|__compute_return_epc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__compute_return_epc
+)paren
+suffix:semicolon
+DECL|variable|register_fpe
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_fpe
+)paren
+suffix:semicolon
+DECL|variable|unregister_fpe
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_fpe
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -1,10 +1,11 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.74 1997/10/30 23:52:27 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;NEW_LISTEN for now)&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.76 1997/12/07 04:44:19 freitag Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;NEW_LISTEN for now)&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/ipsec.h&gt;
+macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -28,6 +29,10 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_tcp_syncookies
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_ip_dynaddr
 suffix:semicolon
 multiline_comment|/* Check TCP sequence numbers in ICMP packets. */
 DECL|macro|ICMP_PARANOIA
@@ -3333,7 +3338,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* pointless, because we have no way to retry when sk is locked.&n;&t;   But the socket should be really locked here for better interaction&n;&t;   with the socket layer. This needs to be solved for SMP&n;&t;   (I would prefer an &quot;ICMP backlog&quot;).&n;&n;&t;   tcp_v4_err is called only from bh, so that lock_sock is pointless,&n;&t;   even in commented form :-) --ANK&n;&t;   &n;&t;   Note &quot;for SMP&quot; ;) -AK&n;&n;&t;   Couple of notes about backlogging:&n;&t;   - error_queue could be used for it.&n;&t;   - could, but MUST NOT :-), because:&n;&t;     a) it is not clear,&n;&t;        who will process deferred messages.&n;&t;     b) ICMP is not reliable by design, so that you can safely&n;&t;        drop ICMP messages. Besides that, if ICMP really arrived&n;&t;&t;it is very unlikely, that socket is locked. &t;--ANK&n;&n;            I don&squot;t think it&squot;s unlikely that sk is locked. With the &n;&t;    open_request stuff there is much more stress on the main&n;&t;    LISTEN socket. I just want to make sure that all ICMP unreachables&n;&t;    destroy unneeded open_requests as reliable as possible (for&n;&t;    syn flood protection) -AK&n;&t;*/
 id|tp
 op_assign
 op_amp
@@ -6514,6 +6518,15 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
+r_int
+id|want_rewrite
+op_assign
+id|sysctl_ip_dynaddr
+op_logical_and
+id|sk-&gt;state
+op_eq
+id|TCP_SYN_SENT
+suffix:semicolon
 multiline_comment|/* Check route */
 id|rt
 op_assign
@@ -6524,6 +6537,90 @@ op_star
 )paren
 id|skb-&gt;dst
 suffix:semicolon
+multiline_comment|/* Force route checking if want_rewrite */
+r_if
+c_cond
+(paren
+id|want_rewrite
+)paren
+(brace
+r_int
+id|tmp
+suffix:semicolon
+id|__u32
+id|old_saddr
+op_assign
+id|rt-&gt;rt_src
+suffix:semicolon
+multiline_comment|/* Query new route */
+id|tmp
+op_assign
+id|ip_route_connect
+c_func
+(paren
+op_amp
+id|rt
+comma
+id|rt-&gt;rt_dst
+comma
+l_int|0
+comma
+id|RT_TOS
+c_func
+(paren
+id|sk-&gt;ip_tos
+)paren
+op_or
+(paren
+id|sk-&gt;localroute
+op_logical_or
+l_int|0
+)paren
+comma
+id|sk-&gt;bound_dev_if
+)paren
+suffix:semicolon
+multiline_comment|/* Only useful if different source addrs */
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+l_int|0
+op_logical_or
+id|rt-&gt;rt_src
+op_ne
+id|old_saddr
+)paren
+(brace
+id|dst_release
+c_func
+(paren
+id|skb-&gt;dst
+)paren
+suffix:semicolon
+id|skb-&gt;dst
+op_assign
+op_amp
+id|rt-&gt;u.dst
+suffix:semicolon
+)brace
+r_else
+(brace
+id|want_rewrite
+op_assign
+l_int|0
+suffix:semicolon
+id|dst_release
+c_func
+(paren
+op_amp
+id|rt-&gt;u.dst
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -6611,6 +6708,152 @@ id|skb-&gt;tail
 op_minus
 id|skb-&gt;h.raw
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|want_rewrite
+)paren
+(brace
+id|__u32
+id|new_saddr
+op_assign
+id|rt-&gt;rt_src
+suffix:semicolon
+multiline_comment|/*&n;                 *&t;Ouch!, this should not happen.&n;                 */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;saddr
+op_logical_or
+op_logical_neg
+id|sk-&gt;rcv_saddr
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;tcp_v4_rebuild_header(): not valid sock addrs: saddr=%08lX rcv_saddr=%08lX&bslash;n&quot;
+comma
+id|ntohl
+c_func
+(paren
+id|sk-&gt;saddr
+)paren
+comma
+id|ntohl
+c_func
+(paren
+id|sk-&gt;rcv_saddr
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *&t;Maybe whe are in a skb chain loop and socket address has&n;&t;&t; *&t;yet been &squot;damaged&squot;.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|new_saddr
+op_ne
+id|sk-&gt;saddr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sysctl_ip_dynaddr
+OG
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;tcp_v4_rebuild_header(): shifting sk-&gt;saddr from %d.%d.%d.%d to %d.%d.%d.%d&bslash;n&quot;
+comma
+id|NIPQUAD
+c_func
+(paren
+id|sk-&gt;saddr
+)paren
+comma
+id|NIPQUAD
+c_func
+(paren
+id|new_saddr
+)paren
+)paren
+suffix:semicolon
+)brace
+id|sk-&gt;saddr
+op_assign
+id|new_saddr
+suffix:semicolon
+id|sk-&gt;rcv_saddr
+op_assign
+id|new_saddr
+suffix:semicolon
+multiline_comment|/* sk-&gt;prot-&gt;rehash(sk); */
+id|tcp_v4_rehash
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|new_saddr
+op_ne
+id|iph-&gt;saddr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sysctl_ip_dynaddr
+OG
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;tcp_v4_rebuild_header(): shifting iph-&gt;saddr from %d.%d.%d.%d to %d.%d.%d.%d&bslash;n&quot;
+comma
+id|NIPQUAD
+c_func
+(paren
+id|iph-&gt;saddr
+)paren
+comma
+id|NIPQUAD
+c_func
+(paren
+id|new_saddr
+)paren
+)paren
+suffix:semicolon
+)brace
+id|iph-&gt;saddr
+op_assign
+id|new_saddr
+suffix:semicolon
+id|ip_send_check
+c_func
+(paren
+id|iph
+)paren
+suffix:semicolon
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Low-level hardware access stuff for SNI RM200 PCI&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: hw-access.c,v 1.2 1997/08/08 18:13:27 miguel Exp $&n; */
+multiline_comment|/*&n; * Low-level hardware access stuff for SNI RM200 PCI&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: hw-access.c,v 1.3 1997/07/29 17:46:46 ralf Exp $&n; */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kbdcntrlr.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -74,13 +74,14 @@ DECL|function|fd_enable_dma
 id|fd_enable_dma
 c_func
 (paren
-r_void
+r_int
+id|channel
 )paren
 (brace
 id|enable_dma
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 )paren
 suffix:semicolon
 )brace
@@ -90,13 +91,14 @@ DECL|function|fd_disable_dma
 id|fd_disable_dma
 c_func
 (paren
-r_void
+r_int
+id|channel
 )paren
 (brace
 id|disable_dma
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 )paren
 suffix:semicolon
 )brace
@@ -106,14 +108,15 @@ DECL|function|fd_request_dma
 id|fd_request_dma
 c_func
 (paren
-r_void
+r_int
+id|channel
 )paren
 (brace
 r_return
 id|request_dma
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 comma
 l_string|&quot;floppy&quot;
 )paren
@@ -125,13 +128,14 @@ DECL|function|fd_free_dma
 id|fd_free_dma
 c_func
 (paren
-r_void
+r_int
+id|channel
 )paren
 (brace
 id|free_dma
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 )paren
 suffix:semicolon
 )brace
@@ -141,13 +145,14 @@ DECL|function|fd_clear_dma_ff
 id|fd_clear_dma_ff
 c_func
 (paren
-r_void
+r_int
+id|channel
 )paren
 (brace
 id|clear_dma_ff
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 )paren
 suffix:semicolon
 )brace
@@ -157,6 +162,9 @@ DECL|function|fd_set_dma_mode
 id|fd_set_dma_mode
 c_func
 (paren
+r_int
+id|channel
+comma
 r_char
 id|mode
 )paren
@@ -164,7 +172,7 @@ id|mode
 id|set_dma_mode
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 comma
 id|mode
 )paren
@@ -177,6 +185,9 @@ id|fd_set_dma_addr
 c_func
 (paren
 r_int
+id|channel
+comma
+r_int
 r_int
 id|addr
 )paren
@@ -184,7 +195,7 @@ id|addr
 id|set_dma_addr
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 comma
 id|addr
 )paren
@@ -197,6 +208,9 @@ id|fd_set_dma_count
 c_func
 (paren
 r_int
+id|channel
+comma
+r_int
 r_int
 id|count
 )paren
@@ -204,7 +218,7 @@ id|count
 id|set_dma_count
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 comma
 id|count
 )paren
@@ -216,14 +230,15 @@ DECL|function|fd_get_dma_residue
 id|fd_get_dma_residue
 c_func
 (paren
-r_void
+r_int
+id|channel
 )paren
 (brace
 r_return
 id|get_dma_residue
 c_func
 (paren
-id|FLOPPY_DMA
+id|channel
 )paren
 suffix:semicolon
 )brace
@@ -233,13 +248,14 @@ DECL|function|fd_enable_irq
 id|fd_enable_irq
 c_func
 (paren
-r_void
+r_int
+id|irq
 )paren
 (brace
 id|enable_irq
 c_func
 (paren
-id|FLOPPY_IRQ
+id|irq
 )paren
 suffix:semicolon
 )brace
@@ -249,13 +265,14 @@ DECL|function|fd_disable_irq
 id|fd_disable_irq
 c_func
 (paren
-r_void
+r_int
+id|irq
 )paren
 (brace
 id|disable_irq
 c_func
 (paren
-id|FLOPPY_IRQ
+id|irq
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.1 1997/06/06 09:36:56 ralf Exp $&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
+multiline_comment|/* $Id: console.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|function|prom_putchar
 r_void

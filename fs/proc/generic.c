@@ -569,6 +569,7 @@ comma
 id|n
 )paren
 suffix:semicolon
+multiline_comment|/* BUG ??? */
 r_if
 c_cond
 (paren

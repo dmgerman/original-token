@@ -73,7 +73,8 @@ op_star
 id|fd_enable_dma
 )paren
 (paren
-r_void
+r_int
+id|channel
 )paren
 suffix:semicolon
 DECL|member|fd_disable_dma
@@ -83,7 +84,8 @@ op_star
 id|fd_disable_dma
 )paren
 (paren
-r_void
+r_int
+id|channel
 )paren
 suffix:semicolon
 DECL|member|fd_request_dma
@@ -93,7 +95,8 @@ op_star
 id|fd_request_dma
 )paren
 (paren
-r_void
+r_int
+id|channel
 )paren
 suffix:semicolon
 DECL|member|fd_free_dma
@@ -103,7 +106,8 @@ op_star
 id|fd_free_dma
 )paren
 (paren
-r_void
+r_int
+id|channel
 )paren
 suffix:semicolon
 DECL|member|fd_clear_dma_ff
@@ -113,7 +117,8 @@ op_star
 id|fd_clear_dma_ff
 )paren
 (paren
-r_void
+r_int
+id|channel
 )paren
 suffix:semicolon
 DECL|member|fd_set_dma_mode
@@ -123,6 +128,9 @@ op_star
 id|fd_set_dma_mode
 )paren
 (paren
+r_int
+id|channel
+comma
 r_char
 id|mode
 )paren
@@ -134,6 +142,9 @@ op_star
 id|fd_set_dma_addr
 )paren
 (paren
+r_int
+id|channel
+comma
 r_int
 r_int
 id|a
@@ -147,6 +158,9 @@ id|fd_set_dma_count
 )paren
 (paren
 r_int
+id|channel
+comma
+r_int
 r_int
 id|count
 )paren
@@ -158,7 +172,8 @@ op_star
 id|fd_get_dma_residue
 )paren
 (paren
-r_void
+r_int
+id|channel
 )paren
 suffix:semicolon
 DECL|member|fd_enable_irq
@@ -168,7 +183,8 @@ op_star
 id|fd_enable_irq
 )paren
 (paren
-r_void
+r_int
+id|irq
 )paren
 suffix:semicolon
 DECL|member|fd_disable_irq
@@ -178,7 +194,8 @@ op_star
 id|fd_disable_irq
 )paren
 (paren
-r_void
+r_int
+id|irq
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * How to access the RTC register of the DS1287?&n;&t; */

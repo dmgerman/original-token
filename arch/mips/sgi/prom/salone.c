@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: salone.c,v 1.1 1997/06/06 09:37:20 ralf Exp $&n; * salone.c: Routines to load into memory and execute stand-along&n; *           program images using ARCS PROM firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: salone.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * salone.c: Routines to load into memory and execute stand-along&n; *           program images using ARCS PROM firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|function|prom_load
 r_int

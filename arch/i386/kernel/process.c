@@ -31,6 +31,10 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ldt.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#ifdef CONFIG_MATH_EMULATION
+macro_line|#include &lt;asm/math_emu.h&gt;
+macro_line|#endif
 macro_line|#ifdef __SMP__
 id|asmlinkage
 r_void
@@ -1781,13 +1785,6 @@ id|fpu
 r_int
 id|fpvalid
 suffix:semicolon
-multiline_comment|/* Flag indicating the math stuff is valid. We don&squot;t support this for the&n;   soft-float routines yet */
-r_if
-c_cond
-(paren
-id|hard_math
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -1803,14 +1800,21 @@ l_int|0
 r_if
 c_cond
 (paren
+id|hard_math
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|last_task_used_math
 op_eq
 id|current
 )paren
+(brace
 id|__asm__
 c_func
 (paren
-l_string|&quot;clts ; fnsave %0&quot;
+l_string|&quot;clts ; fsave %0; fwait&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;m&quot;
@@ -1820,6 +1824,7 @@ id|fpu
 )paren
 )paren
 suffix:semicolon
+)brace
 r_else
 id|memcpy
 c_func
@@ -1837,14 +1842,24 @@ id|fpu
 )paren
 suffix:semicolon
 )brace
-)brace
 r_else
 (brace
-multiline_comment|/* we should dump the emulator state here, but we need to&n;&t;&t;   convert it into standard 387 format first.. */
-id|fpvalid
-op_assign
-l_int|0
+id|memcpy
+c_func
+(paren
+id|fpu
+comma
+op_amp
+id|current-&gt;tss.i387.hard
+comma
+r_sizeof
+(paren
+op_star
+id|fpu
+)paren
+)paren
 suffix:semicolon
+)brace
 )brace
 r_return
 id|fpvalid

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_hpc.c,v 1.1 1997/06/06 09:36:18 ralf Exp $&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: indy_hpc.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;

@@ -1,13 +1,10 @@
-multiline_comment|/*&n; * system.c: Probe the system type using ARCS prom interface library.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: system.c,v 1.2 1997/06/30 15:26:32 ralf Exp $&n; */
+multiline_comment|/*&n; * system.c: Probe the system type using ARCS prom interface library.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: system.c,v 1.3 1997/09/13 02:19:18 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/sgi.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
-macro_line|#ifndef __GOGOGO__
-macro_line|#error &quot;... You&squot;re fearless, aren&squot;t you?&quot;
-macro_line|#endif
 DECL|variable|sgimach
 r_enum
 id|sgi_mach

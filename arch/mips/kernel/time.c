@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; *&n; * $Id: time.c,v 1.5 1997/08/08 18:12:39 miguel Exp $&n; */
+multiline_comment|/*&n; *  linux/arch/mips/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; *&n; * $Id: time.c,v 1.5 1997/11/12 12:12:12 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
@@ -19,9 +19,193 @@ r_int
 r_int
 id|lost_ticks
 suffix:semicolon
-multiline_comment|/* change this if you have some constant time drift */
+multiline_comment|/*&n; * Change this if you have some constant time drift&n; */
+multiline_comment|/* This is the value for the PC-style PICs. */
+multiline_comment|/* #define USECS_PER_JIFFY (1000020/HZ) */
+multiline_comment|/* This is for machines which generate the exact clock. */
 DECL|macro|USECS_PER_JIFFY
-mdefine_line|#define USECS_PER_JIFFY (1000020/HZ)
+mdefine_line|#define USECS_PER_JIFFY (1000000/HZ)
+multiline_comment|/* Cycle counter value at the previous timer interrupt.. */
+DECL|variable|timerhi
+DECL|variable|timerlo
+r_static
+r_int
+r_int
+id|timerhi
+op_assign
+l_int|0
+comma
+id|timerlo
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n; * On MIPS only R4000 and better have a cycle counter.&n; *&n; * FIXME: Does playing with the RP bit in c0_status interfere with this code?&n; */
+DECL|function|do_fast_gettimeoffset
+r_static
+r_int
+r_int
+id|do_fast_gettimeoffset
+c_func
+(paren
+r_void
+)paren
+(brace
+id|u32
+id|count
+suffix:semicolon
+r_int
+r_int
+id|res
+comma
+id|tmp
+suffix:semicolon
+multiline_comment|/* Last jiffy when do_fast_gettimeoffset() was called. */
+r_static
+r_int
+r_int
+id|last_jiffies
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+r_int
+id|quotient
+suffix:semicolon
+multiline_comment|/*&n;&t; * Cached &quot;1/(clocks per usec)*2^32&quot; value.&n;&t; * It has to be recalculated once each jiffy.&n;&t; */
+r_static
+r_int
+r_int
+id|cached_quotient
+op_assign
+l_int|0
+suffix:semicolon
+id|tmp
+op_assign
+id|jiffies
+suffix:semicolon
+id|quotient
+op_assign
+id|cached_quotient
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_jiffies
+op_ne
+id|tmp
+)paren
+(brace
+id|last_jiffies
+op_assign
+id|tmp
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tmips3&bslash;n&bslash;t&quot;
+l_string|&quot;lwu&bslash;t%0,%2&bslash;n&bslash;t&quot;
+l_string|&quot;dsll32&bslash;t$1,%1,0&bslash;n&bslash;t&quot;
+l_string|&quot;or&bslash;t$1,$1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;ddivu&bslash;t$0,$1,%3&bslash;n&bslash;t&quot;
+l_string|&quot;mflo&bslash;t$1&bslash;n&bslash;t&quot;
+l_string|&quot;dsll32&bslash;t%0,%4,0&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;ddivu&bslash;t$0,%0,$1&bslash;n&bslash;t&quot;
+l_string|&quot;mflo&bslash;t%0&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tmips0&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|quotient
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|timerhi
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+id|timerlo
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|tmp
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|USECS_PER_JIFFY
+)paren
+suffix:colon
+l_string|&quot;$1&quot;
+)paren
+suffix:semicolon
+id|cached_quotient
+op_assign
+id|quotient
+suffix:semicolon
+)brace
+multiline_comment|/* Get last timer tick in absolute kernel time */
+id|count
+op_assign
+id|read_32bit_cp0_register
+c_func
+(paren
+id|CP0_COUNT
+)paren
+suffix:semicolon
+multiline_comment|/* .. relative to previous jiffy (32 bits is enough) */
+id|count
+op_sub_assign
+id|timerlo
+suffix:semicolon
+singleline_comment|//printk(&quot;count: %08lx, %08lx:%08lx&bslash;n&quot;, count, timerhi, timerlo);
+id|__asm__
+c_func
+(paren
+l_string|&quot;multu&bslash;t%1,%2&bslash;n&bslash;t&quot;
+l_string|&quot;mfhi&bslash;t%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|res
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|count
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|quotient
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; &t; * Due to possible jiffies inconsistencies, we need to check &n;&t; * the result so that we&squot;ll get a timer that is monotonic.&n;&t; */
+r_if
+c_cond
+(paren
+id|res
+op_ge
+id|USECS_PER_JIFFY
+)paren
+id|res
+op_assign
+id|USECS_PER_JIFFY
+op_minus
+l_int|1
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
+)brace
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
@@ -564,9 +748,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * timer_interrupt() needs to keep up the real-time clock,&n; * as well as call the &quot;do_timer()&quot; routine every clocktick&n; */
-DECL|function|timer_interrupt
 r_static
 r_void
+r_inline
+DECL|function|timer_interrupt
 id|timer_interrupt
 c_func
 (paren
@@ -648,6 +833,62 @@ suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
 multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
+)brace
+DECL|function|r4k_timer_interrupt
+r_static
+r_void
+id|r4k_timer_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/*&n;&t; * The cycle counter is only 32 bit which is good for about&n;&t; * a minute at current count rates of upto 150MHz or so.&n;&t; */
+id|count
+op_assign
+id|read_32bit_cp0_register
+c_func
+(paren
+id|CP0_COUNT
+)paren
+suffix:semicolon
+id|timerhi
+op_add_assign
+(paren
+id|count
+OL
+id|timerlo
+)paren
+suffix:semicolon
+multiline_comment|/* Wrap around */
+id|timerlo
+op_assign
+id|count
+suffix:semicolon
+id|timer_interrupt
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
@@ -764,8 +1005,126 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
-DECL|variable|irq0
+DECL|variable|cyclecounter_available
+r_char
+id|cyclecounter_available
+suffix:semicolon
+DECL|function|init_cycle_counter
 r_static
+r_inline
+r_void
+id|init_cycle_counter
+c_func
+(paren
+r_void
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|mips_cputype
+)paren
+(brace
+r_case
+id|CPU_UNKNOWN
+suffix:colon
+r_case
+id|CPU_R2000
+suffix:colon
+r_case
+id|CPU_R3000
+suffix:colon
+r_case
+id|CPU_R3000A
+suffix:colon
+r_case
+id|CPU_R3041
+suffix:colon
+r_case
+id|CPU_R3051
+suffix:colon
+r_case
+id|CPU_R3052
+suffix:colon
+r_case
+id|CPU_R3081
+suffix:colon
+r_case
+id|CPU_R3081E
+suffix:colon
+r_case
+id|CPU_R6000
+suffix:colon
+r_case
+id|CPU_R6000A
+suffix:colon
+r_case
+id|CPU_R8000
+suffix:colon
+multiline_comment|/* Not shure about that one, play safe */
+id|cyclecounter_available
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CPU_R4000PC
+suffix:colon
+r_case
+id|CPU_R4000SC
+suffix:colon
+r_case
+id|CPU_R4000MC
+suffix:colon
+r_case
+id|CPU_R4200
+suffix:colon
+r_case
+id|CPU_R4400PC
+suffix:colon
+r_case
+id|CPU_R4400SC
+suffix:colon
+r_case
+id|CPU_R4400MC
+suffix:colon
+r_case
+id|CPU_R4600
+suffix:colon
+r_case
+id|CPU_R10000
+suffix:colon
+r_case
+id|CPU_R4300
+suffix:colon
+r_case
+id|CPU_R4650
+suffix:colon
+r_case
+id|CPU_R4700
+suffix:colon
+r_case
+id|CPU_R5000
+suffix:colon
+r_case
+id|CPU_R5000A
+suffix:colon
+r_case
+id|CPU_R4640
+suffix:colon
+r_case
+id|CPU_NEVADA
+suffix:colon
+id|cyclecounter_available
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+DECL|variable|irq0
 r_struct
 id|irqaction
 id|irq0
@@ -773,7 +1132,7 @@ op_assign
 (brace
 id|timer_interrupt
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 l_int|0
 comma
@@ -1050,7 +1409,34 @@ id|xtime.tv_usec
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* FIXME: If we have the CPU hardware time counters, use them */
+id|init_cycle_counter
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cyclecounter_available
+)paren
+(brace
+id|write_32bit_cp0_register
+c_func
+(paren
+id|CP0_COUNT
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|do_gettimeoffset
+op_assign
+id|do_fast_gettimeoffset
+suffix:semicolon
+id|irq0.handler
+op_assign
+id|r4k_timer_interrupt
+suffix:semicolon
+)brace
 id|board_time_init
 c_func
 (paren

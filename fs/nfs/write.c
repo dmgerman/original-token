@@ -14,15 +14,6 @@ DECL|macro|IS_SOFT
 mdefine_line|#define IS_SOFT 0
 DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_PAGECACHE
-r_int
-id|check_failed_request
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
 r_static
 r_void
 id|nfs_wback_lock
@@ -965,8 +956,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find and release all failed requests for this inode.&n; */
 r_int
-DECL|function|check_failed_request
-id|check_failed_request
+DECL|function|nfs_check_failed_request
+id|nfs_check_failed_request
 c_func
 (paren
 r_struct
@@ -1593,24 +1584,7 @@ id|current-&gt;state
 op_assign
 id|TASK_RUNNING
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|page-&gt;count
-)paren
-op_eq
-l_int|1
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;NFS: page unused while waiting&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* N.B. page may have been unused, so we must use free_page() */
 id|free_page
 c_func
 (paren

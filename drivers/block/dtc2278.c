@@ -416,5 +416,14 @@ id|ide_hwifs
 l_int|0
 )braket
 suffix:semicolon
+id|ide_hwifs
+(braket
+l_int|1
+)braket
+dot
+id|channel
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 eof

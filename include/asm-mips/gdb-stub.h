@@ -171,10 +171,10 @@ DECL|macro|GDB_FR_CP0_ENTRYLO0
 mdefine_line|#define GDB_FR_CP0_ENTRYLO0&t;((GDB_FR_CP0_RANDOM) + 4)&t;/* 76 */
 DECL|macro|GDB_FR_CP0_ENTRYLO1
 mdefine_line|#define GDB_FR_CP0_ENTRYLO1&t;((GDB_FR_CP0_ENTRYLO0) + 4)&t;/* 77 */
-DECL|macro|GDB_FR_CP0_REG4
-mdefine_line|#define GDB_FR_CP0_REG4&t;&t;((GDB_FR_CP0_ENTRYLO1) + 4)&t;/* 78 */
+DECL|macro|GDB_FR_CP0_CONTEXT
+mdefine_line|#define GDB_FR_CP0_CONTEXT&t;((GDB_FR_CP0_ENTRYLO1) + 4)&t;/* 78 */
 DECL|macro|GDB_FR_CP0_PAGEMASK
-mdefine_line|#define GDB_FR_CP0_PAGEMASK&t;((GDB_FR_CP0_REG4) + 4)&t;&t;/* 79 */
+mdefine_line|#define GDB_FR_CP0_PAGEMASK&t;((GDB_FR_CP0_CONTEXT) + 4)&t;/* 79 */
 DECL|macro|GDB_FR_CP0_WIRED
 mdefine_line|#define GDB_FR_CP0_WIRED&t;((GDB_FR_CP0_PAGEMASK) + 4)&t;/* 80 */
 DECL|macro|GDB_FR_CP0_REG7
@@ -474,9 +474,9 @@ DECL|member|cp0_entrylo1
 r_int
 id|cp0_entrylo1
 suffix:semicolon
-DECL|member|cp0_reg4
+DECL|member|cp0_context
 r_int
-id|cp0_reg4
+id|cp0_context
 suffix:semicolon
 DECL|member|cp0_pagemask
 r_int

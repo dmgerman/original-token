@@ -1236,7 +1236,7 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;smb_file_write: file %s/%s, count=%lu@%lu&bslash;n&quot;
+l_string|&quot;smb_file_write: file %s/%s, count=%lu@%lu, pages=%ld&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -1254,6 +1254,8 @@ r_int
 )paren
 op_star
 id|ppos
+comma
+id|inode-&gt;i_nrpages
 )paren
 suffix:semicolon
 macro_line|#endif

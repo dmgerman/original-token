@@ -47,24 +47,8 @@ r_int
 r_int
 id|number
 suffix:semicolon
-id|OUT_BYTE
-c_func
-(paren
-id|drive-&gt;select.all
-comma
-id|IDE_SELECT_REG
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* paranoia */
 id|number
 op_assign
-(paren
 (paren
 id|HWIF
 c_func
@@ -72,8 +56,7 @@ c_func
 id|drive
 )paren
 op_member_access_from_pointer
-id|is_pdc4030_2
-)paren
+id|channel
 op_lshift
 l_int|1
 )paren
@@ -312,7 +295,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hwif-&gt;is_pdc4030_2
+id|hwif-&gt;chipset
+op_eq
+id|ide_pdc4030
 )paren
 (brace
 multiline_comment|/* we&squot;ve already been found ! */
@@ -556,6 +541,10 @@ id|second_hwif-&gt;mate
 op_assign
 id|hwif
 suffix:semicolon
+id|second_hwif-&gt;channel
+op_assign
+l_int|1
+suffix:semicolon
 id|hwif-&gt;selectproc
 op_assign
 id|second_hwif-&gt;selectproc
@@ -651,10 +640,6 @@ op_member_access_from_pointer
 id|noprobe
 suffix:semicolon
 )brace
-id|second_hwif-&gt;is_pdc4030_2
-op_assign
-l_int|1
-suffix:semicolon
 id|ide_init_hwif_ports
 c_func
 (paren

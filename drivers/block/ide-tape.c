@@ -1,7 +1,9 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-tape.c&t;Version 1.11 - BETA&t;Dec   2, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This driver was constructed as a student project in the software laboratory&n; * of the faculty of electrical engineering in the Technion - Israel&squot;s&n; * Institute Of Technology, with the guide of Avner Lottem and Dr. Ilana David.&n; *&n; * It is hereby placed under the terms of the GNU general public license.&n; * (See linux/COPYING).&n; */
-multiline_comment|/*&n; * IDE ATAPI streaming tape driver.&n; *&n; * This driver is a part of the Linux ide driver and works in co-operation&n; * with linux/drivers/block/ide.c.&n; *&n; * The driver, in co-operation with ide.c, basically traverses the &n; * request-list for the block device interface. The character device&n; * interface, on the other hand, creates new requests, adds them&n; * to the request-list of the block device, and waits for their completion.&n; *&n; * Pipelined operation mode is now supported on both reads and writes.&n; *&n; * The block device major and minor numbers are determined from the&n; * tape&squot;s relative position in the ide interfaces, as explained in ide.c.&n; *&n; * The character device interface consists of the following devices:&n; *&n; * ht0&t;&t;major 37, minor 0&t;first  IDE tape, rewind on close.&n; * ht1&t;&t;major 37, minor 1&t;second IDE tape, rewind on close.&n; * ...&n; * nht0&t;&t;major 37, minor 128&t;first  IDE tape, no rewind on close.&n; * nht1&t;&t;major 37, minor 129&t;second IDE tape, no rewind on close.&n; * ...&n; *&n; * Run linux/scripts/MAKEDEV.ide to create the above entries.&n; *&n; * The general magnetic tape commands compatible interface, as defined by&n; * include/linux/mtio.h, is accessible through the character device.&n; *&n; * General ide driver configuration options, such as the interrupt-unmask&n; * flag, can be configured by issuing an ioctl to the block device interface,&n; * as any other ide device.&n; *&n; * Our own ide-tape ioctl&squot;s can can be issued to either the block device or&n; * the character device interface.&n; *&n; * Maximal throughput with minimal bus load will usually be achieved in the&n; * following scenario:&n; *&n; *&t;1.&t;ide-tape is operating in the pipelined operation mode.&n; *&t;2.&t;No buffering is performed by the user backup program.&n; *&n; * Testing was done with a 2 GB CONNER CTMA 4000 IDE ATAPI Streaming Tape Drive.&n; * &n; * Ver 0.1   Nov  1 95   Pre-working code :-)&n; * Ver 0.2   Nov 23 95   A short backup (few megabytes) and restore procedure&n; *                        was successful ! (Using tar cvf ... on the block&n; *                        device interface).&n; *                       A longer backup resulted in major swapping, bad&n; *                        overall Linux performance and eventually failed as&n; *                        we received non serial read-ahead requests from the&n; *                        buffer cache.&n; * Ver 0.3   Nov 28 95   Long backups are now possible, thanks to the&n; *                        character device interface. Linux&squot;s responsiveness&n; *                        and performance doesn&squot;t seem to be much affected&n; *                        from the background backup procedure.&n; *                       Some general mtio.h magnetic tape operations are&n; *                        now supported by our character device. As a result,&n; *                        popular tape utilities are starting to work with&n; *                        ide tapes :-)&n; *                       The following configurations were tested:&n; *                       &t;1. An IDE ATAPI TAPE shares the same interface&n; *                       &t;   and irq with an IDE ATAPI CDROM.&n; *                        &t;2. An IDE ATAPI TAPE shares the same interface&n; *                          &t;   and irq with a normal IDE disk.&n; *                        Both configurations seemed to work just fine !&n; *                        However, to be on the safe side, it is meanwhile&n; *                        recommended to give the IDE TAPE its own interface&n; *                        and irq.&n; *                       The one thing which needs to be done here is to&n; *                        add a &quot;request postpone&quot; feature to ide.c,&n; *                        so that we won&squot;t have to wait for the tape to finish&n; *                        performing a long media access (DSC) request (such&n; *                        as a rewind) before we can access the other device&n; *                        on the same interface. This effect doesn&squot;t disturb&n; *                        normal operation most of the time because read/write&n; *                        requests are relatively fast, and once we are&n; *                        performing one tape r/w request, a lot of requests&n; *                        from the other device can be queued and ide.c will&n; *&t;&t;&t;  service all of them after this single tape request.&n; * Ver 1.0   Dec 11 95   Integrated into Linux 1.3.46 development tree.&n; *                       On each read / write request, we now ask the drive&n; *                        if we can transfer a constant number of bytes&n; *                        (a parameter of the drive) only to its buffers,&n; *                        without causing actual media access. If we can&squot;t,&n; *                        we just wait until we can by polling the DSC bit.&n; *                        This ensures that while we are not transferring&n; *                        more bytes than the constant referred to above, the&n; *                        interrupt latency will not become too high and&n; *                        we won&squot;t cause an interrupt timeout, as happened&n; *                        occasionally in the previous version.&n; *                       While polling for DSC, the current request is&n; *                        postponed and ide.c is free to handle requests from&n; *                        the other device. This is handled transparently to&n; *                        ide.c. The hwgroup locking method which was used&n; *                        in the previous version was removed.&n; *                       Use of new general features which are provided by&n; *                        ide.c for use with atapi devices.&n; *                        (Programming done by Mark Lord)&n; *                       Few potential bug fixes (Again, suggested by Mark)&n; *                       Single character device data transfers are now&n; *                        not limited in size, as they were before.&n; *                       We are asking the tape about its recommended&n; *                        transfer unit and send a larger data transfer&n; *                        as several transfers of the above size.&n; *                        For best results, use an integral number of this&n; *                        basic unit (which is shown during driver&n; *                        initialization). I will soon add an ioctl to get&n; *                        this important parameter.&n; *                       Our data transfer buffer is allocated on startup,&n; *                        rather than before each data transfer. This should&n; *                        ensure that we will indeed have a data buffer.&n; * Ver 1.1   Dec 14 95   Fixed random problems which occurred when the tape&n; *                        shared an interface with another device.&n; *                        (poll_for_dsc was a complete mess).&n; *                       Removed some old (non-active) code which had&n; *                        to do with supporting buffer cache originated&n; *                        requests.&n; *                       The block device interface can now be opened, so&n; *                        that general ide driver features like the unmask&n; *                        interrupts flag can be selected with an ioctl.&n; *                        This is the only use of the block device interface.&n; *                       New fast pipelined operation mode (currently only on&n; *                        writes). When using the pipelined mode, the&n; *                        throughput can potentially reach the maximum&n; *                        tape supported throughput, regardless of the&n; *                        user backup program. On my tape drive, it sometimes&n; *                        boosted performance by a factor of 2. Pipelined&n; *                        mode is enabled by default, but since it has a few&n; *                        downfalls as well, you may want to disable it.&n; *                        A short explanation of the pipelined operation mode&n; *                        is available below.&n; * Ver 1.2   Jan  1 96   Eliminated pipelined mode race condition.&n; *                       Added pipeline read mode. As a result, restores&n; *                        are now as fast as backups.&n; *                       Optimized shared interface behavior. The new behavior&n; *                        typically results in better IDE bus efficiency and&n; *                        higher tape throughput.&n; *                       Pre-calculation of the expected read/write request&n; *                        service time, based on the tape&squot;s parameters. In&n; *                        the pipelined operation mode, this allows us to&n; *                        adjust our polling frequency to a much lower value,&n; *                        and thus to dramatically reduce our load on Linux,&n; *                        without any decrease in performance.&n; *                       Implemented additional mtio.h operations.&n; *                       The recommended user block size is returned by&n; *                        the MTIOCGET ioctl.&n; *                       Additional minor changes.&n; * Ver 1.3   Feb  9 96   Fixed pipelined read mode bug which prevented the&n; *                        use of some block sizes during a restore procedure.&n; *                       The character device interface will now present a&n; *                        continuous view of the media - any mix of block sizes&n; *                        during a backup/restore procedure is supported. The&n; *                        driver will buffer the requests internally and&n; *                        convert them to the tape&squot;s recommended transfer&n; *                        unit, making performance almost independent of the&n; *                        chosen user block size.&n; *                       Some improvements in error recovery.&n; *                       By cooperating with ide-dma.c, bus mastering DMA can&n; *                        now sometimes be used with IDE tape drives as well.&n; *                        Bus mastering DMA has the potential to dramatically&n; *                        reduce the CPU&squot;s overhead when accessing the device,&n; *                        and can be enabled by using hdparm -d1 on the tape&squot;s&n; *                        block device interface. For more info, read the&n; *                        comments in ide-dma.c.&n; * Ver 1.4   Mar 13 96   Fixed serialize support.&n; * Ver 1.5   Apr 12 96   Fixed shared interface operation, broken in 1.3.85.&n; *                       Fixed pipelined read mode inefficiency.&n; *                       Fixed nasty null dereferencing bug.&n; * Ver 1.6   Aug 16 96   Fixed FPU usage in the driver.&n; *                       Fixed end of media bug.&n; * Ver 1.7   Sep 10 96   Minor changes for the CONNER CTT8000-A model.&n; * Ver 1.8   Sep 26 96   Attempt to find a better balance between good&n; *                        interactive response and high system throughput.&n; * Ver 1.9   Nov  5 96   Automatically cross encountered filemarks rather&n; *                        than requiring an explicit FSF command.&n; *                       Abort pending requests at end of media.&n; *                       MTTELL was sometimes returning incorrect results.&n; *                       Return the real block size in the MTIOCGET ioctl.&n; *                       Some error recovery bug fixes.&n; * Ver 1.10  Nov  5 96   Major reorganization.&n; *                       Reduced CPU overhead a bit by eliminating internal&n; *                        bounce buffers.&n; *                       Added module support.&n; *                       Added multiple tape drives support.&n; *                       Added partition support.&n; *                       Rewrote DSC handling.&n; *                       Some portability fixes.&n; *                       Removed ide-tape.h.&n; *                       Additional minor changes.&n; * Ver 1.11  Dec  2 96   Bug fix in previous DSC timeout handling.&n; *                       Use ide_stall_queue() for DSC overlap.&n; *                       Use the maximum speed rather than the current speed&n; *                        to compute the request service time.&n; *&n; * Here are some words from the first releases of hd.c, which are quoted&n; * in ide.c and apply here as well:&n; *&n; * | Special care is recommended.  Have Fun!&n; *&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-tape.c&t;Version 1.12&t;&t;Dec   7, 1997&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This driver was constructed as a student project in the software laboratory&n; * of the faculty of electrical engineering in the Technion - Israel&squot;s&n; * Institute Of Technology, with the guide of Avner Lottem and Dr. Ilana David.&n; *&n; * It is hereby placed under the terms of the GNU general public license.&n; * (See linux/COPYING).&n; */
+multiline_comment|/*&n; * IDE ATAPI streaming tape driver.&n; *&n; * This driver is a part of the Linux ide driver and works in co-operation&n; * with linux/drivers/block/ide.c.&n; *&n; * The driver, in co-operation with ide.c, basically traverses the &n; * request-list for the block device interface. The character device&n; * interface, on the other hand, creates new requests, adds them&n; * to the request-list of the block device, and waits for their completion.&n; *&n; * Pipelined operation mode is now supported on both reads and writes.&n; *&n; * The block device major and minor numbers are determined from the&n; * tape&squot;s relative position in the ide interfaces, as explained in ide.c.&n; *&n; * The character device interface consists of the following devices:&n; *&n; * ht0&t;&t;major 37, minor 0&t;first  IDE tape, rewind on close.&n; * ht1&t;&t;major 37, minor 1&t;second IDE tape, rewind on close.&n; * ...&n; * nht0&t;&t;major 37, minor 128&t;first  IDE tape, no rewind on close.&n; * nht1&t;&t;major 37, minor 129&t;second IDE tape, no rewind on close.&n; * ...&n; *&n; * Run linux/scripts/MAKEDEV.ide to create the above entries.&n; *&n; * The general magnetic tape commands compatible interface, as defined by&n; * include/linux/mtio.h, is accessible through the character device.&n; *&n; * General ide driver configuration options, such as the interrupt-unmask&n; * flag, can be configured by issuing an ioctl to the block device interface,&n; * as any other ide device.&n; *&n; * Our own ide-tape ioctl&squot;s can can be issued to either the block device or&n; * the character device interface.&n; *&n; * Maximal throughput with minimal bus load will usually be achieved in the&n; * following scenario:&n; *&n; *&t;1.&t;ide-tape is operating in the pipelined operation mode.&n; *&t;2.&t;No buffering is performed by the user backup program.&n; *&n; * Testing was done with a 2 GB CONNER CTMA 4000 IDE ATAPI Streaming Tape Drive.&n; * &n; * Ver 0.1   Nov  1 95   Pre-working code :-)&n; * Ver 0.2   Nov 23 95   A short backup (few megabytes) and restore procedure&n; *                        was successful ! (Using tar cvf ... on the block&n; *                        device interface).&n; *                       A longer backup resulted in major swapping, bad&n; *                        overall Linux performance and eventually failed as&n; *                        we received non serial read-ahead requests from the&n; *                        buffer cache.&n; * Ver 0.3   Nov 28 95   Long backups are now possible, thanks to the&n; *                        character device interface. Linux&squot;s responsiveness&n; *                        and performance doesn&squot;t seem to be much affected&n; *                        from the background backup procedure.&n; *                       Some general mtio.h magnetic tape operations are&n; *                        now supported by our character device. As a result,&n; *                        popular tape utilities are starting to work with&n; *                        ide tapes :-)&n; *                       The following configurations were tested:&n; *                       &t;1. An IDE ATAPI TAPE shares the same interface&n; *                       &t;   and irq with an IDE ATAPI CDROM.&n; *                        &t;2. An IDE ATAPI TAPE shares the same interface&n; *                          &t;   and irq with a normal IDE disk.&n; *                        Both configurations seemed to work just fine !&n; *                        However, to be on the safe side, it is meanwhile&n; *                        recommended to give the IDE TAPE its own interface&n; *                        and irq.&n; *                       The one thing which needs to be done here is to&n; *                        add a &quot;request postpone&quot; feature to ide.c,&n; *                        so that we won&squot;t have to wait for the tape to finish&n; *                        performing a long media access (DSC) request (such&n; *                        as a rewind) before we can access the other device&n; *                        on the same interface. This effect doesn&squot;t disturb&n; *                        normal operation most of the time because read/write&n; *                        requests are relatively fast, and once we are&n; *                        performing one tape r/w request, a lot of requests&n; *                        from the other device can be queued and ide.c will&n; *&t;&t;&t;  service all of them after this single tape request.&n; * Ver 1.0   Dec 11 95   Integrated into Linux 1.3.46 development tree.&n; *                       On each read / write request, we now ask the drive&n; *                        if we can transfer a constant number of bytes&n; *                        (a parameter of the drive) only to its buffers,&n; *                        without causing actual media access. If we can&squot;t,&n; *                        we just wait until we can by polling the DSC bit.&n; *                        This ensures that while we are not transferring&n; *                        more bytes than the constant referred to above, the&n; *                        interrupt latency will not become too high and&n; *                        we won&squot;t cause an interrupt timeout, as happened&n; *                        occasionally in the previous version.&n; *                       While polling for DSC, the current request is&n; *                        postponed and ide.c is free to handle requests from&n; *                        the other device. This is handled transparently to&n; *                        ide.c. The hwgroup locking method which was used&n; *                        in the previous version was removed.&n; *                       Use of new general features which are provided by&n; *                        ide.c for use with atapi devices.&n; *                        (Programming done by Mark Lord)&n; *                       Few potential bug fixes (Again, suggested by Mark)&n; *                       Single character device data transfers are now&n; *                        not limited in size, as they were before.&n; *                       We are asking the tape about its recommended&n; *                        transfer unit and send a larger data transfer&n; *                        as several transfers of the above size.&n; *                        For best results, use an integral number of this&n; *                        basic unit (which is shown during driver&n; *                        initialization). I will soon add an ioctl to get&n; *                        this important parameter.&n; *                       Our data transfer buffer is allocated on startup,&n; *                        rather than before each data transfer. This should&n; *                        ensure that we will indeed have a data buffer.&n; * Ver 1.1   Dec 14 95   Fixed random problems which occurred when the tape&n; *                        shared an interface with another device.&n; *                        (poll_for_dsc was a complete mess).&n; *                       Removed some old (non-active) code which had&n; *                        to do with supporting buffer cache originated&n; *                        requests.&n; *                       The block device interface can now be opened, so&n; *                        that general ide driver features like the unmask&n; *                        interrupts flag can be selected with an ioctl.&n; *                        This is the only use of the block device interface.&n; *                       New fast pipelined operation mode (currently only on&n; *                        writes). When using the pipelined mode, the&n; *                        throughput can potentially reach the maximum&n; *                        tape supported throughput, regardless of the&n; *                        user backup program. On my tape drive, it sometimes&n; *                        boosted performance by a factor of 2. Pipelined&n; *                        mode is enabled by default, but since it has a few&n; *                        downfalls as well, you may want to disable it.&n; *                        A short explanation of the pipelined operation mode&n; *                        is available below.&n; * Ver 1.2   Jan  1 96   Eliminated pipelined mode race condition.&n; *                       Added pipeline read mode. As a result, restores&n; *                        are now as fast as backups.&n; *                       Optimized shared interface behavior. The new behavior&n; *                        typically results in better IDE bus efficiency and&n; *                        higher tape throughput.&n; *                       Pre-calculation of the expected read/write request&n; *                        service time, based on the tape&squot;s parameters. In&n; *                        the pipelined operation mode, this allows us to&n; *                        adjust our polling frequency to a much lower value,&n; *                        and thus to dramatically reduce our load on Linux,&n; *                        without any decrease in performance.&n; *                       Implemented additional mtio.h operations.&n; *                       The recommended user block size is returned by&n; *                        the MTIOCGET ioctl.&n; *                       Additional minor changes.&n; * Ver 1.3   Feb  9 96   Fixed pipelined read mode bug which prevented the&n; *                        use of some block sizes during a restore procedure.&n; *                       The character device interface will now present a&n; *                        continuous view of the media - any mix of block sizes&n; *                        during a backup/restore procedure is supported. The&n; *                        driver will buffer the requests internally and&n; *                        convert them to the tape&squot;s recommended transfer&n; *                        unit, making performance almost independent of the&n; *                        chosen user block size.&n; *                       Some improvements in error recovery.&n; *                       By cooperating with ide-dma.c, bus mastering DMA can&n; *                        now sometimes be used with IDE tape drives as well.&n; *                        Bus mastering DMA has the potential to dramatically&n; *                        reduce the CPU&squot;s overhead when accessing the device,&n; *                        and can be enabled by using hdparm -d1 on the tape&squot;s&n; *                        block device interface. For more info, read the&n; *                        comments in ide-dma.c.&n; * Ver 1.4   Mar 13 96   Fixed serialize support.&n; * Ver 1.5   Apr 12 96   Fixed shared interface operation, broken in 1.3.85.&n; *                       Fixed pipelined read mode inefficiency.&n; *                       Fixed nasty null dereferencing bug.&n; * Ver 1.6   Aug 16 96   Fixed FPU usage in the driver.&n; *                       Fixed end of media bug.&n; * Ver 1.7   Sep 10 96   Minor changes for the CONNER CTT8000-A model.&n; * Ver 1.8   Sep 26 96   Attempt to find a better balance between good&n; *                        interactive response and high system throughput.&n; * Ver 1.9   Nov  5 96   Automatically cross encountered filemarks rather&n; *                        than requiring an explicit FSF command.&n; *                       Abort pending requests at end of media.&n; *                       MTTELL was sometimes returning incorrect results.&n; *                       Return the real block size in the MTIOCGET ioctl.&n; *                       Some error recovery bug fixes.&n; * Ver 1.10  Nov  5 96   Major reorganization.&n; *                       Reduced CPU overhead a bit by eliminating internal&n; *                        bounce buffers.&n; *                       Added module support.&n; *                       Added multiple tape drives support.&n; *                       Added partition support.&n; *                       Rewrote DSC handling.&n; *                       Some portability fixes.&n; *                       Removed ide-tape.h.&n; *                       Additional minor changes.&n; * Ver 1.11  Dec  2 96   Bug fix in previous DSC timeout handling.&n; *                       Use ide_stall_queue() for DSC overlap.&n; *                       Use the maximum speed rather than the current speed&n; *                        to compute the request service time.&n; * Ver 1.12  Dec  7 97   Fix random memory overwriting and/or last block data&n; *                        corruption, which could occur if the total number&n; *                        of bytes written to the tape was not an integral&n; *                        number of tape blocks.&n; *                       Add support for INTERRUPT DRQ devices.&n; *&n; * Here are some words from the first releases of hd.c, which are quoted&n; * in ide.c and apply here as well:&n; *&n; * | Special care is recommended.  Have Fun!&n; *&n; */
 multiline_comment|/*&n; * An overview of the pipelined operation mode.&n; *&n; * In the pipelined write mode, we will usually just add requests to our&n; * pipeline and return immediately, before we even start to service them. The&n; * user program will then have enough time to prepare the next request while&n; * we are still busy servicing previous requests. In the pipelined read mode,&n; * the situation is similar - we add read-ahead requests into the pipeline,&n; * before the user even requested them.&n; *&n; * The pipeline can be viewed as a &quot;safety net&quot; which will be activated when&n; * the system load is high and prevents the user backup program from keeping up&n; * with the current tape speed. At this point, the pipeline will get&n; * shorter and shorter but the tape will still be streaming at the same speed.&n; * Assuming we have enough pipeline stages, the system load will hopefully&n; * decrease before the pipeline is completely empty, and the backup program&n; * will be able to &quot;catch up&quot; and refill the pipeline again.&n; * &n; * When using the pipelined mode, it would be best to disable any type of&n; * buffering done by the user program, as ide-tape already provides all the&n; * benefits in the kernel, where it can be done in a more efficient way.&n; * As we will usually not block the user program on a request, the most&n; * efficient user code will then be a simple read-write-read-... cycle.&n; * Any additional logic will usually just slow down the backup process.&n; *&n; * Using the pipelined mode, I get a constant over 400 KBps throughput,&n; * which seems to be the maximum throughput supported by my tape.&n; *&n; * However, there are some downfalls:&n; *&n; *&t;1.&t;We use memory (for data buffers) in proportional to the number&n; *&t;&t;of pipeline stages (each stage is about 26 KB with my tape).&n; *&t;2.&t;In the pipelined write mode, we cheat and postpone error codes&n; *&t;&t;to the user task. In read mode, the actual tape position&n; *&t;&t;will be a bit further than the last requested block.&n; *&n; * Concerning (1):&n; *&n; *&t;1.&t;We allocate stages dynamically only when we need them. When&n; *&t;&t;we don&squot;t need them, we don&squot;t consume additional memory. In&n; *&t;&t;case we can&squot;t allocate stages, we just manage without them&n; *&t;&t;(at the expense of decreased throughput) so when Linux is&n; *&t;&t;tight in memory, we will not pose additional difficulties.&n; *&n; *&t;2.&t;The maximum number of stages (which is, in fact, the maximum&n; *&t;&t;amount of memory) which we allocate is limited by the compile&n; *&t;&t;time parameter IDETAPE_MAX_PIPELINE_STAGES.&n; *&n; *&t;3.&t;The maximum number of stages is a controlled parameter - We&n; *&t;&t;don&squot;t start from the user defined maximum number of stages&n; *&t;&t;but from the lower IDETAPE_MIN_PIPELINE_STAGES (again, we&n; *&t;&t;will not even allocate this amount of stages if the user&n; *&t;&t;program can&squot;t handle the speed). We then implement a feedback&n; *&t;&t;loop which checks if the pipeline is empty, and if it is, we&n; *&t;&t;increase the maximum number of stages as necessary until we&n; *&t;&t;reach the optimum value which just manages to keep the tape&n; *&t;&t;busy with with minimum allocated memory or until we reach&n; *&t;&t;IDETAPE_MAX_PIPELINE_STAGES.&n; *&n; * Concerning (2):&n; *&n; *&t;In pipelined write mode, ide-tape can not return accurate error codes&n; *&t;to the user program since we usually just add the request to the&n; *      pipeline without waiting for it to be serviced. In case an error&n; *      occurs, I will report it on the next user request.&n; *&n; *&t;In the pipelined read mode, subsequent read requests or forward&n; *&t;filemark spacing will perform correctly, as we preserve all blocks&n; *&t;and filemarks which we encountered during our excess read-ahead.&n; * &n; *&t;For accurate tape positioning and error reporting, disabling&n; *&t;pipelined mode might be the best option.&n; *&n; * You can enable/disable/tune the pipelined operation mode by adjusting&n; * the compile time parameters below.&n; */
 multiline_comment|/*&n; *&t;Possible improvements.&n; *&n; *&t;1.&t;Support for the ATAPI overlap protocol.&n; *&n; *&t;&t;In order to maximize bus throughput, we currently use the DSC&n; *&t;&t;overlap method which enables ide.c to service requests from the&n; *&t;&t;other device while the tape is busy executing a command. The&n; *&t;&t;DSC overlap method involves polling the tape&squot;s status register&n; *&t;&t;for the DSC bit, and servicing the other device while the tape&n; *&t;&t;isn&squot;t ready.&n; *&n; *&t;&t;In the current QIC development standard (December 1995),&n; *&t;&t;it is recommended that new tape drives will *in addition* &n; *&t;&t;implement the ATAPI overlap protocol, which is used for the&n; *&t;&t;same purpose - efficient use of the IDE bus, but is interrupt&n; *&t;&t;driven and thus has much less CPU overhead.&n; *&n; *&t;&t;ATAPI overlap is likely to be supported in most new ATAPI&n; *&t;&t;devices, including new ATAPI cdroms, and thus provides us&n; *&t;&t;a method by which we can achieve higher throughput when&n; *&t;&t;sharing a (fast) ATA-2 disk with any (slow) new ATAPI device.&n; */
+DECL|macro|IDETAPE_VERSION
+mdefine_line|#define IDETAPE_VERSION &quot;1.12&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -10,12 +12,9 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -692,6 +691,8 @@ DECL|macro|IDETAPE_DETECT_BS
 mdefine_line|#define IDETAPE_DETECT_BS&t;&t;4&t;/* Attempt to auto-detect the current user block size */
 DECL|macro|IDETAPE_FILEMARK
 mdefine_line|#define IDETAPE_FILEMARK&t;&t;5&t;/* Currently on a filemark */
+DECL|macro|IDETAPE_DRQ_INTERRUPT
+mdefine_line|#define IDETAPE_DRQ_INTERRUPT&t;&t;6&t;/* DRQ interrupt device */
 multiline_comment|/*&n; *&t;Supported ATAPI tape drives packet commands&n; */
 DECL|macro|IDETAPE_TEST_UNIT_READY_CMD
 mdefine_line|#define IDETAPE_TEST_UNIT_READY_CMD&t;0x00
@@ -2241,39 +2242,6 @@ op_star
 id|rq
 )paren
 (brace
-r_int
-r_int
-id|major
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|major
-suffix:semicolon
-r_struct
-id|blk_dev_struct
-op_star
-id|bdev
-op_assign
-op_amp
-id|blk_dev
-(braket
-id|major
-)braket
-suffix:semicolon
-id|bdev-&gt;current_request
-op_assign
-id|HWGROUP
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|rq
-suffix:semicolon
-multiline_comment|/* Since we may have taken it out */
 id|ide_init_drive_cmd
 (paren
 id|rq
@@ -3692,29 +3660,6 @@ op_assign
 id|drive-&gt;driver_data
 suffix:semicolon
 r_int
-r_int
-id|major
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|major
-suffix:semicolon
-r_struct
-id|blk_dev_struct
-op_star
-id|bdev
-op_assign
-op_amp
-id|blk_dev
-(braket
-id|major
-)braket
-suffix:semicolon
-r_int
 id|error
 suffix:semicolon
 macro_line|#if IDETAPE_DEBUG_LOG
@@ -3725,11 +3670,6 @@ l_string|&quot;Reached idetape_end_request&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* IDETAPE_DEBUG_LOG */
-id|bdev-&gt;current_request
-op_assign
-id|rq
-suffix:semicolon
-multiline_comment|/* Since we may have taken it out */
 r_switch
 c_cond
 (paren
@@ -4430,35 +4370,19 @@ op_member_access_from_pointer
 id|dmaproc
 c_func
 (paren
-id|ide_dma_status_bad
+id|ide_dma_end
 comma
 id|drive
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * A DMA error is sometimes expected. For example,&n;&t;&t;&t; * if the tape is crossing a filemark during a&n;&t;&t;&t; * READ command, it will issue an irq and position&n;&t;&t;&t; * itself before the filemark, so that only a partial&n;&t;&t;&t; * data transfer will occur (which causes the DMA&n;&t;&t;&t; * error). In that case, we will later ask the tape&n;&t;&t;&t; * how much bytes of the original request were&n;&t;&t;&t; * actually transferred (we can&squot;t receive that&n;&t;&t;&t; * information from the DMA engine on most chipsets).&n;&t;&t;&t; */
 id|set_bit
 (paren
 id|PC_DMA_ERROR
 comma
 op_amp
 id|pc-&gt;flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;We will currently correct the following in&n;&t;&t;&t; *&t;idetape_analyze_error.&n;&t;&t;&t; */
-id|pc-&gt;actually_transferred
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|dmaproc
-c_func
-(paren
-id|ide_dma_transferred
-comma
-id|drive
 )paren
 suffix:semicolon
 )brace
@@ -4474,26 +4398,6 @@ id|pc
 )paren
 suffix:semicolon
 )brace
-(paren
-r_void
-)paren
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|dmaproc
-c_func
-(paren
-id|ide_dma_abort
-comma
-id|drive
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* End DMA */
 macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
@@ -4693,6 +4597,9 @@ id|KERN_ERR
 l_string|&quot;ide-tape: DMA disabled, reverting to PIO&bslash;n&quot;
 )paren
 suffix:semicolon
+(paren
+r_void
+)paren
 id|HWIF
 c_func
 (paren
@@ -4972,6 +4879,109 @@ suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
 )brace
 multiline_comment|/*&n; *&t;Packet Command Interface&n; *&n; *&t;The current Packet Command is available in tape-&gt;pc, and will not&n; *&t;change until we finish handling it. Each packet command is associated&n; *&t;with a callback function that will be called when the command is&n; *&t;finished.&n; *&n; *&t;The handling will be done in three stages:&n; *&n; *&t;1.&t;idetape_issue_packet_command will send the packet command to the&n; *&t;&t;drive, and will set the interrupt handler to idetape_pc_intr.&n; *&n; *&t;2.&t;On each interrupt, idetape_pc_intr will be called. This step&n; *&t;&t;will be repeated until the device signals us that no more&n; *&t;&t;interrupts will be issued.&n; *&n; *&t;3.&t;ATAPI Tape media access commands have immediate status with a&n; *&t;&t;delayed process. In case of a successful initiation of a&n; *&t;&t;media access packet command, the DSC bit will be set when the&n; *&t;&t;actual execution of the command is finished. &n; *&t;&t;Since the tape drive will not issue an interrupt, we have to&n; *&t;&t;poll for this event. In this case, we define the request as&n; *&t;&t;&quot;low priority request&quot; by setting rq_status to&n; *&t;&t;IDETAPE_RQ_POSTPONED, &t;set a timer to poll for DSC and exit&n; *&t;&t;the driver.&n; *&n; *&t;&t;ide.c will then give higher priority to requests which&n; *&t;&t;originate from the other device, until will change rq_status&n; *&t;&t;to RQ_ACTIVE.&n; *&n; *&t;4.&t;When the packet command is finished, it will be checked for errors.&n; *&n; *&t;5.&t;In case an error was found, we queue a request sense packet command&n; *&t;&t;in front of the request queue and retry the operation up to&n; *&t;&t;IDETAPE_MAX_PC_RETRIES times.&n; *&n; *&t;6.&t;In case no error was found, or we decided to give up and not&n; *&t;&t;to retry again, the callback function will be called and then&n; *&t;&t;we will handle the next request.&n; *&n; */
+DECL|function|idetape_transfer_pc
+r_static
+r_void
+id|idetape_transfer_pc
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|idetape_tape_t
+op_star
+id|tape
+op_assign
+id|drive-&gt;driver_data
+suffix:semicolon
+id|idetape_pc_t
+op_star
+id|pc
+op_assign
+id|tape-&gt;pc
+suffix:semicolon
+id|idetape_ireason_reg_t
+id|ireason
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ide_wait_stat
+(paren
+id|drive
+comma
+id|DRQ_STAT
+comma
+id|BUSY_STAT
+comma
+id|WAIT_READY
+)paren
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;ide-tape: Strange, packet command initiated yet DRQ isn&squot;t asserted&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|ireason.all
+op_assign
+id|IN_BYTE
+(paren
+id|IDE_IREASON_REG
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ireason.b.cod
+op_logical_or
+id|ireason.b.io
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;ide-tape: (IO,CoD) != (0,1) while issuing a packet command&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ide_do_reset
+(paren
+id|drive
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|idetape_pc_intr
+comma
+id|WAIT_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Set the interrupt routine */
+id|atapi_output_bytes
+(paren
+id|drive
+comma
+id|pc-&gt;c
+comma
+l_int|12
+)paren
+suffix:semicolon
+multiline_comment|/* Send the actual packet */
+)brace
 DECL|function|idetape_issue_packet_command
 r_static
 r_void
@@ -4994,9 +5004,6 @@ id|drive-&gt;driver_data
 suffix:semicolon
 id|idetape_bcount_reg_t
 id|bcount
-suffix:semicolon
-id|idetape_ireason_reg_t
-id|ireason
 suffix:semicolon
 r_int
 id|dma_ok
@@ -5169,6 +5176,9 @@ id|KERN_WARNING
 l_string|&quot;ide-tape: DMA disabled, reverting to PIO&bslash;n&quot;
 )paren
 suffix:semicolon
+(paren
+r_void
+)paren
 id|HWIF
 c_func
 (paren
@@ -5267,91 +5277,6 @@ comma
 id|IDE_SELECT_REG
 )paren
 suffix:semicolon
-id|ide_set_handler
-(paren
-id|drive
-comma
-op_amp
-id|idetape_pc_intr
-comma
-id|WAIT_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Set the interrupt routine */
-id|OUT_BYTE
-(paren
-id|WIN_PACKETCMD
-comma
-id|IDE_COMMAND_REG
-)paren
-suffix:semicolon
-multiline_comment|/* Issue the packet command */
-r_if
-c_cond
-(paren
-id|ide_wait_stat
-(paren
-id|drive
-comma
-id|DRQ_STAT
-comma
-id|BUSY_STAT
-comma
-id|WAIT_READY
-)paren
-)paren
-(brace
-multiline_comment|/* Wait for DRQ to be ready - Assuming Accelerated DRQ */
-multiline_comment|/*&n;&t;&t; *&t;We currently only support tape drives which report&n;&t;&t; *&t;accelerated DRQ assertion. For this case, specs&n;&t;&t; *&t;allow up to 50us. We really shouldn&squot;t get here.&n;&t;&t; *&n;&t;&t; *&t;??? Still needs to think what to do if we reach&n;&t;&t; *&t;here anyway.&n;&t;&t; */
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;ide-tape: Strange, packet command initiated yet DRQ isn&squot;t asserted&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|ireason.all
-op_assign
-id|IN_BYTE
-(paren
-id|IDE_IREASON_REG
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ireason.b.cod
-op_logical_or
-id|ireason.b.io
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;ide-tape: (IO,CoD) != (0,1) while issuing a packet command&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ide_do_reset
-(paren
-id|drive
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|atapi_output_bytes
-(paren
-id|drive
-comma
-id|pc-&gt;c
-comma
-l_int|12
-)paren
-suffix:semicolon
-multiline_comment|/* Send the actual packet */
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
@@ -5389,6 +5314,56 @@ id|drive
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|IDETAPE_DRQ_INTERRUPT
+comma
+op_amp
+id|tape-&gt;flags
+)paren
+)paren
+(brace
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|idetape_transfer_pc
+comma
+id|WAIT_CMD
+)paren
+suffix:semicolon
+id|OUT_BYTE
+c_func
+(paren
+id|WIN_PACKETCMD
+comma
+id|IDE_COMMAND_REG
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|OUT_BYTE
+c_func
+(paren
+id|WIN_PACKETCMD
+comma
+id|IDE_COMMAND_REG
+)paren
+suffix:semicolon
+id|idetape_transfer_pc
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|idetape_media_access_finished
 r_static
@@ -6445,23 +6420,6 @@ op_star
 id|pc
 suffix:semicolon
 r_struct
-id|blk_dev_struct
-op_star
-id|bdev
-op_assign
-op_amp
-id|blk_dev
-(braket
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|major
-)braket
-suffix:semicolon
-r_struct
 id|request
 op_star
 id|postponed_rq
@@ -6536,22 +6494,6 @@ multiline_comment|/* Let the common code handle it */
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;This is an important point. We will try to remove our request&n;&t; *&t;from the block device request queue while we service the&n;&t; *&t;request. Note that the request must be returned to&n;&t; *&t;bdev-&gt;current_request before the next call to&n;&t; *&t;ide_end_drive_cmd or ide_do_drive_cmd to conform with the&n;&t; *&t;normal behavior of the IDE driver, which leaves the active&n;&t; *&t;request in bdev-&gt;current_request during I/O.&n;&t; *&n;&t; *&t;This will eliminate fragmentation of disk/cdrom requests&n;&t; *&t;around a tape request, now that we are using ide_next to&n;&t; *&t;insert pending pipeline requests, since we have only one&n;&t; *&t;ide-tape.c data request in the device request queue, and&n;&t; *&t;thus once removed, ll_rw_blk.c will only see requests from&n;&t; *&t;the other device.&n;&t; *&n;&t; *&t;The potential fragmentation inefficiency was pointed to me&n;&t; *&t;by Mark Lord.&n;&t; *&n;&t; *&t;Uhuh.. the following &quot;fix&quot; is actually not entirely correct.&n;&t; *&t;Some day we should probably move to a per device request&n;&t; *&t;queue, rather than per interface.&n;&t; */
-r_if
-c_cond
-(paren
-id|rq-&gt;next
-op_ne
-l_int|NULL
-op_logical_and
-id|rq-&gt;rq_dev
-op_ne
-id|rq-&gt;next-&gt;rq_dev
-)paren
-id|bdev-&gt;current_request
-op_assign
-id|rq-&gt;next
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Retry a failed packet command&n;&t; */
 r_if
 c_cond
@@ -8001,16 +7943,16 @@ id|tape-&gt;tape_block_size
 suffix:semicolon
 id|memset
 (paren
-id|tape-&gt;merge_stage-&gt;bh-&gt;b_data
+id|tape-&gt;bh-&gt;b_data
 op_plus
-id|tape-&gt;merge_stage-&gt;bh-&gt;b_count
+id|tape-&gt;bh-&gt;b_count
 comma
 l_int|0
 comma
 id|i
 )paren
 suffix:semicolon
-id|tape-&gt;merge_stage-&gt;bh-&gt;b_count
+id|tape-&gt;bh-&gt;b_count
 op_add_assign
 id|i
 suffix:semicolon
@@ -11205,7 +11147,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;Model: %s&bslash;n&quot;
+l_string|&quot;Model: %.40s&bslash;n&quot;
 comma
 id|id-&gt;model
 )paren
@@ -11213,7 +11155,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;Firmware Revision: %s&bslash;n&quot;
+l_string|&quot;Firmware Revision: %.8s&bslash;n&quot;
 comma
 id|id-&gt;fw_rev
 )paren
@@ -11221,7 +11163,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;Serial Number: %s&bslash;n&quot;
+l_string|&quot;Serial Number: %.20s&bslash;n&quot;
 comma
 id|id-&gt;serial_no
 )paren
@@ -12162,6 +12104,10 @@ suffix:semicolon
 id|u16
 id|speed
 suffix:semicolon
+r_struct
+id|idetape_id_gcw
+id|gcw
+suffix:semicolon
 id|drive-&gt;driver_data
 op_assign
 id|tape
@@ -12229,6 +12175,35 @@ suffix:semicolon
 id|tape-&gt;max_stages
 op_assign
 id|IDETAPE_MIN_PIPELINE_STAGES
+suffix:semicolon
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|gcw
+)paren
+op_assign
+id|drive-&gt;id-&gt;config
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|gcw.drq_type
+op_eq
+l_int|1
+)paren
+id|set_bit
+c_func
+(paren
+id|IDETAPE_DRQ_INTERRUPT
+comma
+op_amp
+id|tape-&gt;flags
+)paren
 suffix:semicolon
 id|idetape_get_mode_sense_results
 (paren
@@ -12677,6 +12652,12 @@ id|ide_driver_t
 id|idetape_driver
 op_assign
 (brace
+l_string|&quot;ide-tape&quot;
+comma
+multiline_comment|/* name */
+id|IDETAPE_VERSION
+comma
+multiline_comment|/* version */
 id|ide_tape
 comma
 multiline_comment|/* media */
@@ -12717,7 +12698,10 @@ l_int|NULL
 comma
 multiline_comment|/* capacity */
 l_int|NULL
+comma
 multiline_comment|/* special */
+l_int|NULL
+multiline_comment|/* proc */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Our character device supporting functions, passed to register_chrdev.&n; */

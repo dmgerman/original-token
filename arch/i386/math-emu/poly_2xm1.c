@@ -1,7 +1,8 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_2xm1.c                                                              |&n; |                                                                           |&n; | Function to compute 2^x-1 by a polynomial approximation.                  |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_2xm1.c                                                              |&n; |                                                                           |&n; | Function to compute 2^x-1 by a polynomial approximation.                  |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1997                                         |&n; |                  W. Metzenthen, 22 Parker St, Ormond, Vic 3163, Australia |&n; |                  E-mail   billm@suburbia.net                              |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
+macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;control_w.h&quot;
 macro_line|#include &quot;poly.h&quot;
 DECL|macro|HIPOWER
@@ -146,14 +147,16 @@ op_amp
 id|shiftterm3
 )brace
 suffix:semicolon
-multiline_comment|/*--- poly_2xm1() -----------------------------------------------------------+&n; | Requires an argument which is TW_Valid and &lt; 1.                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*--- poly_2xm1() -----------------------------------------------------------+&n; | Requires st(0) which is TAG_Valid and &lt; 1.                                |&n; +---------------------------------------------------------------------------*/
 DECL|function|poly_2xm1
 r_int
 id|poly_2xm1
 c_func
 (paren
+id|u_char
+id|sign
+comma
 id|FPU_REG
-r_const
 op_star
 id|arg
 comma
@@ -180,29 +183,26 @@ id|Denom
 comma
 id|argSignif
 suffix:semicolon
+id|u_char
+id|tag
+suffix:semicolon
 id|exponent
 op_assign
-id|arg-&gt;exp
-op_minus
-id|EXP_BIAS
+id|exponent16
+c_func
+(paren
+id|arg
+)paren
 suffix:semicolon
 macro_line|#ifdef PARANOID
 r_if
 c_cond
-(paren
 (paren
 id|exponent
 op_ge
 l_int|0
 )paren
 multiline_comment|/* Don&squot;t want a |number| &gt;= 1.0 */
-op_logical_or
-(paren
-id|arg-&gt;tag
-op_ne
-id|TW_Valid
-)paren
-)paren
 (brace
 multiline_comment|/* Number negative, too large, or not Valid. */
 id|EXCEPTION
@@ -325,7 +325,7 @@ multiline_comment|/* Shift the argument right by the required places. */
 r_if
 c_cond
 (paren
-id|shrx
+id|FPU_shrx
 c_func
 (paren
 op_amp
@@ -458,7 +458,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|arg-&gt;sign
+id|sign
 op_ne
 id|SIGN_POS
 )paren
@@ -566,6 +566,15 @@ op_amp
 id|accumulator
 )paren
 suffix:semicolon
+id|result
+op_assign
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 id|significand
 c_func
 (paren
@@ -578,19 +587,43 @@ c_func
 id|accumulator
 )paren
 suffix:semicolon
-id|result-&gt;tag
-op_assign
-id|TW_Valid
-suffix:semicolon
-id|result-&gt;exp
-op_assign
+id|setexponent16
+c_func
+(paren
+id|result
+comma
 id|exponent
-op_plus
-id|EXP_BIAS
+)paren
 suffix:semicolon
-id|result-&gt;sign
+id|tag
 op_assign
-id|arg-&gt;sign
+id|FPU_round
+c_func
+(paren
+id|result
+comma
+l_int|1
+comma
+l_int|0
+comma
+id|FULL_PRECISION
+comma
+id|sign
+)paren
+suffix:semicolon
+id|setsign
+c_func
+(paren
+id|result
+comma
+id|sign
+)paren
+suffix:semicolon
+id|FPU_settag0
+c_func
+(paren
+id|tag
+)paren
 suffix:semicolon
 r_return
 l_int|0
