@@ -4,9 +4,7 @@ DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;nm256.h&quot;
@@ -85,6 +83,23 @@ r_struct
 id|pt_regs
 op_star
 id|dummy
+)paren
+suffix:semicolon
+r_static
+r_int
+id|handle_pm_event
+(paren
+r_struct
+id|pm_dev
+op_star
+id|dev
+comma
+id|pm_request_t
+id|rqst
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
 multiline_comment|/* These belong in linux/pci.h. */
@@ -3723,6 +3738,11 @@ id|nm256_info
 op_star
 id|card
 suffix:semicolon
+r_struct
+id|pm_dev
+op_star
+id|pmdev
+suffix:semicolon
 r_int
 id|x
 suffix:semicolon
@@ -4484,80 +4504,86 @@ id|nm256_install_mixer
 id|card
 )paren
 suffix:semicolon
+id|pmdev
+op_assign
+id|pm_register
+c_func
+(paren
+id|PM_PCI_DEV
+comma
+id|PM_PCI_ID
+c_func
+(paren
+id|pcidev
+)paren
+comma
+id|handle_pm_event
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pmdev
+)paren
+id|pmdev-&gt;data
+op_assign
+id|card
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_APM
-multiline_comment|/*&n; * APM event handler, so the card is properly reinitialized after a power&n; * event.&n; */
+multiline_comment|/*&n; * PM event handler, so the card is properly reinitialized after a power&n; * event.&n; */
 r_static
 r_int
-DECL|function|handle_apm_event
-id|handle_apm_event
+DECL|function|handle_pm_event
+id|handle_pm_event
 (paren
-id|apm_event_t
-id|event
-)paren
-(brace
-r_static
-r_int
-id|down
-op_assign
-l_int|0
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|event
-)paren
-(brace
-r_case
-id|APM_SYS_SUSPEND
-suffix:colon
-r_case
-id|APM_USER_SUSPEND
-suffix:colon
-id|down
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|APM_NORMAL_RESUME
-suffix:colon
-r_case
-id|APM_CRITICAL_RESUME
-suffix:colon
-r_if
-c_cond
-(paren
-id|down
+r_struct
+id|pm_dev
+op_star
+id|dev
+comma
+id|pm_request_t
+id|rqst
+comma
+r_void
+op_star
+id|data
 )paren
 (brace
 r_struct
 id|nm256_info
 op_star
 id|crd
-suffix:semicolon
-id|down
 op_assign
-l_int|0
+(paren
+r_struct
+id|nm256_info
+op_star
+)paren
+id|dev-&gt;data
 suffix:semicolon
-r_for
-c_loop
+r_if
+c_cond
 (paren
 id|crd
-op_assign
-id|nmcard_list
-suffix:semicolon
-id|crd
-op_ne
-l_int|NULL
-suffix:semicolon
-id|crd
-op_assign
-id|crd-&gt;next_card
 )paren
+(brace
+r_switch
+c_cond
+(paren
+id|rqst
+)paren
+(brace
+r_case
+id|PM_SUSPEND
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+id|PM_RESUME
+suffix:colon
 (brace
 r_int
 id|playing
@@ -4569,7 +4595,7 @@ id|nm256_full_reset
 id|crd
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;     * A little ugly, but that&squot;s ok; pretend the&n;&t;&t;&t;     * block we were playing is done. &n;&t;&t;&t;     */
+multiline_comment|/*&n;                 * A little ugly, but that&squot;s ok; pretend the&n;                 * block we were playing is done. &n;                 */
 r_if
 c_cond
 (paren
@@ -4583,15 +4609,14 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-)brace
 r_break
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * &t;This loop walks the PCI configuration database and finds where&n; *&t;the sound cards are.&n; */
 r_int
 DECL|function|init_nm256
@@ -4705,14 +4730,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
-id|apm_register_callback
-(paren
-op_amp
-id|handle_apm_event
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 (paren
 id|KERN_INFO
@@ -6185,14 +6202,12 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_APM
-id|apm_unregister_callback
+id|pm_unregister_all
 (paren
 op_amp
-id|handle_apm_event
+id|handle_pm_event
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif
 "&f;"

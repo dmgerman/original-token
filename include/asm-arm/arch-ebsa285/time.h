@@ -3,7 +3,6 @@ DECL|macro|RTC_PORT
 mdefine_line|#define RTC_PORT(x)&t;&t;(rtc_base+(x))
 DECL|macro|RTC_ALWAYS_BCD
 mdefine_line|#define RTC_ALWAYS_BCD&t;&t;0
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;

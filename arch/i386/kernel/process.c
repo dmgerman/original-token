@@ -77,11 +77,11 @@ op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Powermanagement idle function, if any..&n; */
-DECL|variable|acpi_idle
+DECL|variable|pm_idle
 r_void
 (paren
 op_star
-id|acpi_idle
+id|pm_idle
 )paren
 (paren
 r_void
@@ -90,11 +90,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Power off function, if any&n; */
-DECL|variable|acpi_power_off
+DECL|variable|pm_power_off
 r_void
 (paren
 op_star
-id|acpi_power_off
+id|pm_power_off
 )paren
 (paren
 r_void
@@ -170,7 +170,7 @@ id|idle
 r_void
 )paren
 op_assign
-id|acpi_idle
+id|pm_idle
 suffix:semicolon
 r_if
 c_cond
@@ -945,9 +945,9 @@ r_void
 r_if
 c_cond
 (paren
-id|acpi_power_off
+id|pm_power_off
 )paren
-id|acpi_power_off
+id|pm_power_off
 c_func
 (paren
 )paren

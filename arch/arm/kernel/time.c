@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/arm/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Modifications for ARM (C) 1994, 1995, 1996,1997 Russell King&n; *&n; * This file contains the ARM-specific time handling details:&n; * reading the RTC at bootup, etc...&n; *&n; * 1994-07-02  Alan Modra&n; *             fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1998-12-20  Updated NTP code according to technical memorandum Jan &squot;96&n; *             &quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

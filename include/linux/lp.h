@@ -81,6 +81,8 @@ mdefine_line|#define LPGETSTATS  0x060d  /* get statistics (struct lp_stats) */
 macro_line|#endif
 DECL|macro|LPGETFLAGS
 mdefine_line|#define LPGETFLAGS  0x060e  /* get status flags */
+DECL|macro|LPSETTIMEOUT
+mdefine_line|#define LPSETTIMEOUT 0x060f /* set parport timeout */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
 DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)
@@ -222,6 +224,10 @@ suffix:semicolon
 DECL|member|dataq
 id|wait_queue_head_t
 id|dataq
+suffix:semicolon
+DECL|member|timeout
+r_int
+id|timeout
 suffix:semicolon
 )brace
 suffix:semicolon

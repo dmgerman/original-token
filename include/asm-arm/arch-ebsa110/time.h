@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/time.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; *&n; * No real time clock on the evalulation board!&n; *&n; * Changelog:&n; *  10-Oct-1996&t;RMK&t;Created&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/kernel/time.c&n; *  07-Aug-1998&t;RMK&t;Updated for arch/arm/kernel/leds.c&n; *  28-Dec-1998&t;APH&t;Made leds code optional&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 DECL|macro|MCLK_47_8
 mdefine_line|#define MCLK_47_8

@@ -1,6 +1,7 @@
 macro_line|#ifndef __I386_MMU_CONTEXT_H
 DECL|macro|__I386_MMU_CONTEXT_H
 mdefine_line|#define __I386_MMU_CONTEXT_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;

@@ -2,7 +2,6 @@ macro_line|#ifndef _ASM_IA64_ATOMIC_H
 DECL|macro|_ASM_IA64_ATOMIC_H
 mdefine_line|#define _ASM_IA64_ATOMIC_H
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * NOTE: don&squot;t mess with the types below!  The &quot;unsigned long&quot; and&n; * &quot;int&quot; types were carefully placed so as to ensure proper operation&n; * of the macros.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */

@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_IA64_IOSAPIC_H
 DECL|macro|__ASM_IA64_IOSAPIC_H
 mdefine_line|#define __ASM_IA64_IOSAPIC_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|IO_SAPIC_DEFAULT_ADDR
 mdefine_line|#define&t;IO_SAPIC_DEFAULT_ADDR&t;0xFEC00000
 DECL|macro|IO_SAPIC_REG_SELECT

@@ -4,6 +4,7 @@ DECL|macro|NSC_IRCC_H
 mdefine_line|#define NSC_IRCC_H
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* DMA modes needed */
 DECL|macro|DMA_TX_MODE
@@ -516,6 +517,12 @@ r_int
 id|index
 suffix:semicolon
 multiline_comment|/* Instance index */
+DECL|member|dev
+r_struct
+id|pm_dev
+op_star
+id|dev
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|switch_bank

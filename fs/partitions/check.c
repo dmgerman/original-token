@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/raid/md.h&gt;
 macro_line|#include &quot;check.h&quot;
 macro_line|#include &quot;acorn.h&quot;
 macro_line|#include &quot;amiga.h&quot;
@@ -1302,6 +1303,13 @@ suffix:semicolon
 r_else
 macro_line|#endif
 id|rd_load
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_MD
+id|autodetect_raid
 c_func
 (paren
 )paren

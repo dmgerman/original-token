@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/ppdev.c&n; *&n; * This is the code behind /dev/parport* -- it allows a user-space&n; * application to use the parport subsystem.&n; *&n; * Copyright (C) 1998-9 Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * A /dev/parportx device node represents an arbitrary device&n; * on port &squot;x&squot;.  The following operations are possible:&n; *&n; * open&t;&t;do nothing, set up default IEEE 1284 protocol to be COMPAT&n; * close&t;release port and unregister device (if necessary)&n; * ioctl&n; *   EXCL&t;register device exclusively (may fail)&n; *   CLAIM&t;(register device first time) parport_claim_or_block&n; *   RELEASE&t;parport_release&n; *   SETMODE&t;set the IEEE 1284 protocol to use for read/write&n; *   SETPHASE&t;set the IEEE 1284 phase of a particular mode.  Not to be&n; *              confused with ioctl(fd, SETPHASER, &amp;stun). ;-)&n; *   DATADIR&t;data_forward / data_reverse&n; *   WDATA&t;write_data&n; *   RDATA&t;read_data&n; *   WCONTROL&t;write_control&n; *   RCONTROL&t;read_control&n; *   FCONTROL&t;frob_control&n; *   RSTATUS&t;read_status&n; *   NEGOT&t;parport_negotiate&n; *   YIELD&t;parport_yield_blocking&n; *   WCTLONIRQ&t;on interrupt, set control lines&n; *   CLRIRQ&t;clear (and return) interrupt count&n; *   SETTIME&t;sets device timeout (struct timeval)&n; *   GETTIME    gets device timeout (struct timeval)&n; * read/write&t;read or write in current IEEE 1284 protocol&n; * select&t;wait for interrupt (in readfds)&n; *&n; * Added SETTIME/GETTIME ioctl, Fred Barnes 1999.&n; */
+multiline_comment|/*&n; * linux/drivers/char/ppdev.c&n; *&n; * This is the code behind /dev/parport* -- it allows a user-space&n; * application to use the parport subsystem.&n; *&n; * Copyright (C) 1998-2000 Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * A /dev/parportx device node represents an arbitrary device&n; * on port &squot;x&squot;.  The following operations are possible:&n; *&n; * open&t;&t;do nothing, set up default IEEE 1284 protocol to be COMPAT&n; * close&t;release port and unregister device (if necessary)&n; * ioctl&n; *   EXCL&t;register device exclusively (may fail)&n; *   CLAIM&t;(register device first time) parport_claim_or_block&n; *   RELEASE&t;parport_release&n; *   SETMODE&t;set the IEEE 1284 protocol to use for read/write&n; *   SETPHASE&t;set the IEEE 1284 phase of a particular mode.  Not to be&n; *              confused with ioctl(fd, SETPHASER, &amp;stun). ;-)&n; *   DATADIR&t;data_forward / data_reverse&n; *   WDATA&t;write_data&n; *   RDATA&t;read_data&n; *   WCONTROL&t;write_control&n; *   RCONTROL&t;read_control&n; *   FCONTROL&t;frob_control&n; *   RSTATUS&t;read_status&n; *   NEGOT&t;parport_negotiate&n; *   YIELD&t;parport_yield_blocking&n; *   WCTLONIRQ&t;on interrupt, set control lines&n; *   CLRIRQ&t;clear (and return) interrupt count&n; *   SETTIME&t;sets device timeout (struct timeval)&n; *   GETTIME    gets device timeout (struct timeval)&n; * read/write&t;read or write in current IEEE 1284 protocol&n; * select&t;wait for interrupt (in readfds)&n; *&n; * Added SETTIME/GETTIME ioctl, Fred Barnes 1999.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1960,6 +1960,8 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|pp
 op_assign
 id|kmalloc
@@ -1979,10 +1981,14 @@ c_cond
 op_logical_neg
 id|pp
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|pp-&gt;state.mode
 op_assign
 id|IEEE1284_MODE_COMPAT
@@ -2024,8 +2030,6 @@ suffix:semicolon
 id|file-&gt;private_data
 op_assign
 id|pp
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

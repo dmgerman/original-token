@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/raid/md.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -28,9 +29,6 @@ macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#  include &lt;asm/mtrr.h&gt;
-macro_line|#endif
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_MAC
 r_extern
@@ -2485,6 +2483,13 @@ op_ne
 l_int|0
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_MD
+id|autodetect_raid
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|error
 op_assign
 id|change_root

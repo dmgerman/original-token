@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  pm.h - Power management interface&n; *&n; *  Copyrigh
 macro_line|#ifndef _LINUX_PM_H
 DECL|macro|_LINUX_PM_H
 mdefine_line|#define _LINUX_PM_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 multiline_comment|/*&n; * Power management requests&n; */
@@ -97,6 +98,12 @@ op_assign
 l_int|0x41d00500
 comma
 multiline_comment|/* serial port */
+DECL|enumerator|PM_SYS_IRDA
+id|PM_SYS_IRDA
+op_assign
+l_int|0x41d00510
+comma
+multiline_comment|/* IRDA controller */
 DECL|enumerator|PM_SYS_FDC
 id|PM_SYS_FDC
 op_assign
@@ -109,6 +116,12 @@ op_assign
 l_int|0x41d00900
 comma
 multiline_comment|/* VGA controller */
+DECL|enumerator|PM_SYS_PCMCIA
+id|PM_SYS_PCMCIA
+op_assign
+l_int|0x41d00e00
+comma
+multiline_comment|/* PCMCIA controller */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Device identifier&n; */
@@ -167,10 +180,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-DECL|member|status
+DECL|member|state
 r_int
-r_int
-id|status
+id|state
 suffix:semicolon
 DECL|member|entry
 r_struct
@@ -180,6 +192,12 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#if defined(CONFIG_ACPI) || defined(CONFIG_APM)
+r_extern
+r_int
+id|pm_active
+suffix:semicolon
+DECL|macro|PM_IS_ACTIVE
+mdefine_line|#define PM_IS_ACTIVE() (pm_active != 0)
 multiline_comment|/*&n; * Register a device with power management&n; */
 r_struct
 id|pm_dev
@@ -207,6 +225,15 @@ r_struct
 id|pm_dev
 op_star
 id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Unregister all devices with matching callback&n; */
+r_void
+id|pm_unregister_all
+c_func
+(paren
+id|pm_callback
+id|callback
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Send a request to all devices&n; */
@@ -268,6 +295,8 @@ id|dev
 )brace
 macro_line|#else 
 singleline_comment|// CONFIG_ACPI || CONFIG_APM
+DECL|macro|PM_IS_ACTIVE
+mdefine_line|#define PM_IS_ACTIVE() 0
 DECL|function|pm_register
 r_extern
 r_inline
@@ -303,6 +332,18 @@ r_struct
 id|pm_dev
 op_star
 id|dev
+)paren
+(brace
+)brace
+DECL|function|pm_unregister_all
+r_extern
+r_inline
+r_void
+id|pm_unregister_all
+c_func
+(paren
+id|pm_callback
+id|callback
 )paren
 (brace
 )brace
@@ -377,5 +418,27 @@ id|dev
 )brace
 macro_line|#endif 
 singleline_comment|// CONFIG_ACPI || CONFIG_APM
+r_extern
+r_void
+(paren
+op_star
+id|pm_idle
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|pm_power_off
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif 
+singleline_comment|// __KERNEL__
 macro_line|#endif /* _LINUX_PM_H */
 eof

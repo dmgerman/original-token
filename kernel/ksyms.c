@@ -1322,20 +1322,6 @@ c_func
 id|register_disk
 )paren
 suffix:semicolon
-DECL|variable|unplug_device
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|unplug_device
-)paren
-suffix:semicolon
-DECL|variable|make_request
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|make_request
-)paren
-suffix:semicolon
 DECL|variable|tq_disk
 id|EXPORT_SYMBOL
 c_func
@@ -1963,14 +1949,6 @@ c_func
 id|cdevname
 )paren
 suffix:semicolon
-DECL|variable|partition_name
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|partition_name
-)paren
-suffix:semicolon
-multiline_comment|/* md.c only */
 DECL|variable|simple_strtoul
 id|EXPORT_SYMBOL
 c_func

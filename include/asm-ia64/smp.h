@@ -2,6 +2,7 @@ multiline_comment|/*&n; * SMP Support&n; *&n; * Copyright (C) 1999 VA Linux Syst
 macro_line|#ifndef _ASM_IA64_SMP_H
 DECL|macro|_ASM_IA64_SMP_H
 mdefine_line|#define _ASM_IA64_SMP_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -1,5 +1,6 @@
 multiline_comment|/* $Id: aty128fb.c,v 1.1.1.1.36.1 1999/12/11 09:03:05 Exp $&n; *  linux/drivers/video/aty128fb.c -- Frame buffer device for ATI Rage128&n; *&n; *  Copyright (C) 1999-2000, Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *                Brad Douglas &lt;brad@neruo.com&gt;&n; *&t;&t;&t;&t;- x86 support&n; *&t;&t;&t;&t;- MTRR&n; *&t;&t;&t;&t;- Probe ROM for PLL&n; *&t;&t;&t;&t;- modedb&n; *&n; *                Ani Joshi / Jeff Garzik&n; *                      - Code cleanup&n; *&n; *  Based off of Geert&squot;s atyfb.c and vfb.c.&n; *&n; *  TODO:&n; *&t;&t;- panning&n; *&t;&t;- monitor sensing (DDC)&n; *              - virtual display&n; *&t;&t;- other platform support (only ppc/x86 supported)&n; *&t;&t;- PPLL_REF_DIV &amp; XTALIN calculation    -done for x86&n; *&t;&t;- determine MCLK from previous setting -done for x86            &n; *              - calculate XCLK, rather than probe BIOS&n; *&t;&t;- hardware cursor support&n; *              - acceleration&n; *&t;&t;- ioctl()&squot;s&n; */
 multiline_comment|/*&n; * A special note of gratitude to ATI&squot;s devrel for providing documentation,&n; * example code and hardware. Thanks Nitya.&t;-atong&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

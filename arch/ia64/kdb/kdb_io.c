@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Kernel Debugger Console I/O handler&n; *&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; * Copyright (C) Scott Lurndal (slurn@engr.sgi.com)&n; * Copyright (C) Scott Foehner (sfoehner@engr.sgi.com)&n; * Copyright (C) Srinivasa Thirumalachar (sprasad@engr.sgi.com)&n; *&n; * Written March 1999 by Scott Lurndal at Silicon Graphics, Inc.&n; *&n; * Modifications from:&n; *&t;Chuck Fleckenstein&t;&t;1999/07/20&n; *&t;&t;Move kdb_info struct declaration to this file&n; *&t;&t;for cases where serial support is not compiled into&n; *&t;&t;the kernel.&n; *&n; *&t;Masahiro Adegawa&t;&t;1999/07/20&n; *&t;&t;Handle some peculiarities of japanese 86/106&n; *&t;&t;keyboards.&n; *&n; *&t;marc@mucom.co.il&t;&t;1999/07/20&n; *&t;&t;Catch buffer overflow for serial input.&n; *&n; *      Scott Foehner  &n; *              Port to ia64&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;

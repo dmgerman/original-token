@@ -13,6 +13,8 @@ DECL|macro|WIN98_EXTENDED_PARTITION
 mdefine_line|#define WIN98_EXTENDED_PARTITION 0x0f
 DECL|macro|LINUX_SWAP_PARTITION
 mdefine_line|#define LINUX_SWAP_PARTITION&t;0x82
+DECL|macro|LINUX_RAID_PARTITION
+mdefine_line|#define LINUX_RAID_PARTITION&t;0xfd&t;/* autodetect RAID partition */
 macro_line|#ifdef CONFIG_SOLARIS_X86_PARTITION
 DECL|macro|SOLARIS_X86_PARTITION
 mdefine_line|#define SOLARIS_X86_PARTITION&t;LINUX_SWAP_PARTITION
@@ -110,6 +112,11 @@ DECL|member|nr_sects
 r_int
 id|nr_sects
 suffix:semicolon
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* currently RAID or normal */
 )brace
 suffix:semicolon
 DECL|struct|gendisk

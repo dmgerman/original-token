@@ -2,7 +2,6 @@ multiline_comment|/* $Id: sys_sparc.c,v 1.59 2000/01/29 07:40:10 davem Exp $&n; 
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/file.h&gt;

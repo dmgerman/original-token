@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/*&n; * This is identical to IOSAPIC handle_irq.  It may go away . . .&n; */
 r_static
 r_int

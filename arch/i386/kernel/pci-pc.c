@@ -5111,6 +5111,8 @@ comma
 id|pin
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Will be removed completely if things work out well with fuzzy parsing&n; */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -5186,6 +5188,7 @@ id|irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;(C) Copyright 
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Module information */
 id|MODULE_AUTHOR
 c_func

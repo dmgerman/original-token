@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/acpi.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -199,18 +199,18 @@ c_func
 id|kernel_thread
 )paren
 suffix:semicolon
-DECL|variable|acpi_idle
+DECL|variable|pm_idle
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|acpi_idle
+id|pm_idle
 )paren
 suffix:semicolon
-DECL|variable|acpi_power_off
+DECL|variable|pm_power_off
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|acpi_power_off
+id|pm_power_off
 )paren
 suffix:semicolon
 DECL|variable|__down_failed

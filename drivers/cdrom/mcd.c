@@ -4675,26 +4675,9 @@ op_eq
 l_char|&squot;D&squot;
 )paren
 (brace
-id|sprintf
-c_func
-(paren
-id|msg
-comma
-l_string|&quot; mcd: Mitsumi Double Speed CD-ROM at port=0x%x,&quot;
-l_string|&quot; irq=%d&bslash;n&quot;
-comma
-id|mcd_port
-comma
-id|mcd_irq
-)paren
-suffix:semicolon
 id|MCMD_DATA_READ
 op_assign
 id|MCMD_2X_READ
-suffix:semicolon
-id|mcd_info.speed
-op_assign
-l_int|2
 suffix:semicolon
 multiline_comment|/* Added flag to drop to 1x speed if too many errors */
 id|mcdDouble
@@ -4703,25 +4686,32 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
-(brace
+id|mcd_info.speed
+op_assign
+l_int|1
+suffix:semicolon
 id|sprintf
 c_func
 (paren
 id|msg
 comma
-l_string|&quot; mcd: Mitsumi Single Speed CD-ROM at port=0x%x,&quot;
+l_string|&quot; mcd: Mitsumi %s Speed CD-ROM at port=0x%x,&quot;
 l_string|&quot; irq=%d&bslash;n&quot;
+comma
+id|mcd_info.speed
+op_eq
+l_int|1
+ques
+c_cond
+l_string|&quot;Single&quot;
+suffix:colon
+l_string|&quot;Double&quot;
 comma
 id|mcd_port
 comma
 id|mcd_irq
 )paren
 suffix:semicolon
-id|mcd_info.speed
-op_assign
-l_int|2
-suffix:semicolon
-)brace
 id|request_region
 c_func
 (paren

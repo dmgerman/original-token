@@ -248,6 +248,11 @@ id|sync
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|f
+)paren
 (paren
 op_star
 id|f

@@ -3779,6 +3779,20 @@ c_func
 id|unregister_framebuffer
 )paren
 suffix:semicolon
+DECL|variable|registered_fb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|registered_fb
+)paren
+suffix:semicolon
+DECL|variable|num_registered_fb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|num_registered_fb
+)paren
+suffix:semicolon
 macro_line|#if 1 /* to go away in 2.4.0 */
 DECL|variable|GET_FB_IDX
 id|EXPORT_SYMBOL

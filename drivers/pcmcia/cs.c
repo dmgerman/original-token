@@ -29,18 +29,25 @@ macro_line|#include &lt;pcmcia/cisreg.h&gt;
 macro_line|#include &lt;pcmcia/bus_ops.h&gt;
 macro_line|#include &quot;cs_internal.h&quot;
 macro_line|#include &quot;rsrc_mgr.h&quot;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 r_static
 r_int
-id|handle_apm_event
+id|handle_pm_event
 c_func
 (paren
-id|apm_event_t
-id|event
+r_struct
+id|pm_dev
+op_star
+id|dev
+comma
+id|pm_request_t
+id|rqst
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef PCMCIA_DEBUG
 DECL|variable|pc_debug
 r_int
@@ -80,14 +87,14 @@ macro_line|#else
 DECL|macro|CB_OPT
 mdefine_line|#define CB_OPT &quot;&quot;
 macro_line|#endif
-macro_line|#ifdef CONFIG_APM
+macro_line|#if defined(CONFIG_APM) || defined(CONFIG_ACPI)
 DECL|macro|APM_OPT
 mdefine_line|#define APM_OPT &quot; [apm]&quot;
 macro_line|#else
 DECL|macro|APM_OPT
 mdefine_line|#define APM_OPT &quot;&quot;
 macro_line|#endif
-macro_line|#if !defined(CONFIG_CARDBUS) &amp;&amp; !defined(CONFIG_PCI) &amp;&amp; &bslash;&n;    !defined(CONFIG_APM)
+macro_line|#if !defined(CONFIG_CARDBUS) &amp;&amp; !defined(CONFIG_PCI) &amp;&amp; &bslash;&n;    !defined(CONFIG_APM) &amp;&amp; !defined(CONFIG_ACPI)
 DECL|macro|OPTIONS
 mdefine_line|#define OPTIONS &quot; none&quot;
 macro_line|#else
@@ -242,7 +249,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* ns */
 multiline_comment|/* Optional features */
-macro_line|#ifdef CONFIG_APM
+macro_line|#if defined(CONFIG_APM) || defined(CONFIG_ACPI)
 DECL|variable|do_apm
 r_static
 r_int
@@ -257,6 +264,14 @@ id|do_apm
 comma
 l_string|&quot;i&quot;
 )paren
+suffix:semicolon
+macro_line|#else
+DECL|variable|do_apm
+r_static
+r_int
+id|do_apm
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
 id|MODULE_PARM
@@ -2927,15 +2942,23 @@ suffix:semicolon
 )brace
 multiline_comment|/* parse_events */
 multiline_comment|/*======================================================================&n;&n;    Another event handler, for power management events.&n;&n;    This does not comply with the latest PC Card spec for handling&n;    power management events.&n;    &n;======================================================================*/
-macro_line|#ifdef CONFIG_APM
-DECL|function|handle_apm_event
+DECL|function|handle_pm_event
 r_static
 r_int
-id|handle_apm_event
+id|handle_pm_event
 c_func
 (paren
-id|apm_event_t
-id|event
+r_struct
+id|pm_dev
+op_star
+id|dev
+comma
+id|pm_request_t
+id|rqst
+comma
+r_void
+op_star
+id|data
 )paren
 (brace
 r_int
@@ -2947,23 +2970,14 @@ id|socket_info_t
 op_star
 id|s
 suffix:semicolon
-r_static
-r_int
-id|down
-op_assign
-l_int|0
-suffix:semicolon
 r_switch
 c_cond
 (paren
-id|event
+id|rqst
 )paren
 (brace
 r_case
-id|APM_SYS_SUSPEND
-suffix:colon
-r_case
-id|APM_USER_SUSPEND
+id|PM_SUSPEND
 suffix:colon
 id|DEBUG
 c_func
@@ -2972,26 +2986,6 @@ l_int|1
 comma
 l_string|&quot;cs: received suspend notification&bslash;n&quot;
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|down
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;cs: received extra suspend event&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|down
-op_assign
-l_int|1
 suffix:semicolon
 r_for
 c_loop
@@ -3057,10 +3051,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|APM_NORMAL_RESUME
-suffix:colon
-r_case
-id|APM_CRITICAL_RESUME
+id|PM_RESUME
 suffix:colon
 id|DEBUG
 c_func
@@ -3069,27 +3060,6 @@ l_int|1
 comma
 l_string|&quot;cs: received resume notification&bslash;n&quot;
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|down
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;cs: received bogus resume event&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|down
-op_assign
-l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -3161,8 +3131,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* handle_apm_event */
-macro_line|#endif
+multiline_comment|/* handle_pm_event */
 multiline_comment|/*======================================================================&n;&n;    Special stuff for managing IO windows, because they are scarce.&n;    &n;======================================================================*/
 DECL|function|alloc_io_space
 r_static
@@ -11196,20 +11165,21 @@ comma
 id|version
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
 r_if
 c_cond
 (paren
 id|do_apm
 )paren
-id|apm_register_callback
+id|pm_register
 c_func
 (paren
-op_amp
-id|handle_apm_event
+id|PM_SYS_DEV
+comma
+id|PM_SYS_PCMCIA
+comma
+id|handle_pm_event
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_pccard
 op_assign
@@ -11260,20 +11230,17 @@ id|proc_bus
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_APM
 r_if
 c_cond
 (paren
 id|do_apm
 )paren
-id|apm_unregister_callback
+id|pm_unregister_all
 c_func
 (paren
-op_amp
-id|handle_apm_event
+id|handle_pm_event
 )paren
 suffix:semicolon
-macro_line|#endif
 id|release_resource_db
 c_func
 (paren

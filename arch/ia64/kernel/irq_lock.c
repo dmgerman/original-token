@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * SMP IRQ Lock support&n; *&n; * Global interrupt locks for SMP. Allow interrupts to come in on any&n; * CPU, yet make cli/sti act globally to protect critical regions..&n; * These function usually appear in irq.c, but I think it&squot;s cleaner this way.&n; * &n; * Copyright (C) 1999 VA Linux Systems &n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;

@@ -3,6 +3,7 @@ macro_line|#ifndef SMC_IRCC_H
 DECL|macro|SMC_IRCC_H
 mdefine_line|#define SMC_IRCC_H
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;net/irda/irport.h&gt;
 multiline_comment|/* DMA modes needed */
 DECL|macro|DMA_TX_MODE
@@ -313,6 +314,12 @@ r_int
 id|tx_len
 suffix:semicolon
 multiline_comment|/* Number of frames in tx_buff */
+DECL|member|pmdev
+r_struct
+id|pm_dev
+op_star
+id|pmdev
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* SMC_IRCC_H */

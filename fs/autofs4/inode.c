@@ -512,6 +512,8 @@ suffix:semicolon
 op_star
 id|minproto
 op_assign
+id|AUTOFS_MIN_PROTO_VERSION
+suffix:semicolon
 op_star
 id|maxproto
 op_assign

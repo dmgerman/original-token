@@ -68,32 +68,6 @@ r_typedef
 r_int
 id|acpi_dstate_t
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
-r_extern
-r_int
-id|acpi_active
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|acpi_idle
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|acpi_power_off
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* RSDP location */
 DECL|macro|ACPI_BIOS_ROM_BASE
 mdefine_line|#define ACPI_BIOS_ROM_BASE (0x0e0000)

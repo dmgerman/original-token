@@ -7,12 +7,16 @@ macro_line|#include &lt;linux/auto_fs.h&gt;
 multiline_comment|/* autofs v4 definitions */
 DECL|macro|AUTOFS_PROTO_VERSION
 macro_line|#undef AUTOFS_PROTO_VERSION
-DECL|macro|AUTOFS_PROTO_VERSION
-mdefine_line|#define AUTOFS_PROTO_VERSION 4
+DECL|macro|AUTOFS_MIN_PROTO_VERSION
+macro_line|#undef AUTOFS_MIN_PROTO_VERSION
 DECL|macro|AUTOFS_MAX_PROTO_VERSION
 macro_line|#undef AUTOFS_MAX_PROTO_VERSION
+DECL|macro|AUTOFS_PROTO_VERSION
+mdefine_line|#define AUTOFS_PROTO_VERSION&t;&t;4
+DECL|macro|AUTOFS_MIN_PROTO_VERSION
+mdefine_line|#define AUTOFS_MIN_PROTO_VERSION&t;3
 DECL|macro|AUTOFS_MAX_PROTO_VERSION
-mdefine_line|#define AUTOFS_MAX_PROTO_VERSION&t;AUTOFS_PROTO_VERSION
+mdefine_line|#define AUTOFS_MAX_PROTO_VERSION&t;4
 multiline_comment|/* New message type */
 DECL|macro|autofs_ptype_expire_multi
 mdefine_line|#define autofs_ptype_expire_multi&t;2&t;/* Expire entry (umount request) */

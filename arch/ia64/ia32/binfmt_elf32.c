@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * IA-32 ELF support.&n; *&n; * Copyright (C) 1999 Arun Sharma &lt;arun.sharma@intel.com&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/ia32.h&gt;

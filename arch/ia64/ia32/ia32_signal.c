@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * IA32 Architecture-specific signal handling support.&n; *&n; * Copyright (C) 1999 Hewlett-Packard Co&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Arun Sharma &lt;arun.sharma@intel.com&gt;&n; * Copyright (C) 2000 VA Linux Co&n; * Copyright (C) 2000 Don Dugger &lt;n0ano@valinux.com&gt;&n; *&n; * Derived from i386 and Alpha versions.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

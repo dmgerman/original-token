@@ -2,7 +2,6 @@ macro_line|#ifndef _ASM_IA64_ACPI_EXT_H
 DECL|macro|_ASM_IA64_ACPI_EXT_H
 mdefine_line|#define _ASM_IA64_ACPI_EXT_H
 multiline_comment|/*&n; * Advanced Configuration and Power Infterface&n; * Based on &squot;ACPI Specification 1.0b&squot; Febryary 2, 1999&n; * and &squot;IA-64 Extensions to the ACPI Specification&squot; Rev 0.6&n; * &n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 DECL|macro|ACPI_RSDP_SIG
 mdefine_line|#define ACPI_RSDP_SIG &quot;RSD PTR &quot; /* Trailing space required */

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Minimalist Kernel Debugger&n; *&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; * Copyright (C) Scott Lurndal (slurn@engr.sgi.com)&n; * Copyright (C) Scott Foehner (sfoehner@engr.sgi.com)&n; * Copyright (C) Srinivasa Thirumalachar (sprasad@engr.sgi.com)&n; * Copyright (C) David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * Written March 1999 by Scott Lurndal at Silicon Graphics, Inc.&n; *&n; * Modifications from:&n; *      Richard Bass                    1999/07/20&n; *              Many bug fixes and enhancements.&n; *      Scott Foehner&n; *              Port to ia64&n; *      Srinivasa Thirumalachar&n; *              RSE support for ia64&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

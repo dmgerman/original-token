@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Architecture-specific signal handling support.&n; *&n; * Copyright (C) 1999-2000 Hewlett-Packard Co&n; * Copyright (C) 1999-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * Derived from i386 and Alpha versions.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

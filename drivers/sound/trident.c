@@ -18,9 +18,6 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
 macro_line|#include &quot;trident.h&quot;
 macro_line|#include &quot;ac97_codec.h&quot;
 DECL|macro|DEBUG

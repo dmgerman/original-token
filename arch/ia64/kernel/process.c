@@ -2,7 +2,7 @@ multiline_comment|/*&n; * Architecture-specific setup.&n; *&n; * Copyright (C) 1
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__&t;/* see &lt;asm/unistd.h&gt; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/acpi.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -473,11 +473,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|acpi_idle
+id|pm_idle
 )paren
 (paren
 op_star
-id|acpi_idle
+id|pm_idle
 )paren
 (paren
 )paren

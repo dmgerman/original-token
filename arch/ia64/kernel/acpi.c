@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * Advanced Configuration and Power Interface &n; *&n; * Based on &squot;ACPI Specification 1.0b&squot; February 2, 1999 and &n; * &squot;IA-64 Extensions to ACPI Specification&squot; Revision 0.6&n; * &n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999,2000 Walt Drummond &lt;drummond@valinux.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -45,11 +44,11 @@ id|cpu_cnt
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|acpi_idle
+DECL|variable|pm_idle
 r_void
 (paren
 op_star
-id|acpi_idle
+id|pm_idle
 )paren
 (paren
 r_void

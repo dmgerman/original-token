@@ -44,15 +44,23 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 r_static
 r_int
-id|maestro_apm_callback
+id|maestro_pm_callback
 c_func
 (paren
-id|apm_event_t
-id|ae
+r_struct
+id|pm_dev
+op_star
+id|dev
+comma
+id|pm_request_t
+id|rqst
+comma
+r_void
+op_star
+id|d
 )paren
 suffix:semicolon
 DECL|variable|in_suspend
@@ -76,10 +84,6 @@ r_void
 suffix:semicolon
 DECL|macro|CHECK_SUSPEND
 mdefine_line|#define CHECK_SUSPEND check_suspend();
-macro_line|#else
-DECL|macro|CHECK_SUSPEND
-mdefine_line|#define CHECK_SUSPEND
-macro_line|#endif
 macro_line|#include &quot;maestro.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|M_DEBUG
@@ -554,7 +558,6 @@ id|NR_IDRS
 )braket
 suffix:semicolon
 multiline_comment|/* Register map */
-macro_line|#ifdef CONFIG_APM
 multiline_comment|/* we have to store this junk so that we can come back from a&n;&t;&t;suspend */
 DECL|member|apu_map
 id|u16
@@ -567,7 +570,6 @@ id|NR_APU_REGS
 )braket
 suffix:semicolon
 multiline_comment|/* contents of apu regs */
-macro_line|#endif
 multiline_comment|/* this locks around the physical registers on the card */
 DECL|member|lock
 id|spinlock_t
@@ -3877,7 +3879,6 @@ id|s-&gt;apu
 id|channel
 )braket
 suffix:semicolon
-macro_line|#ifdef&t;CONFIG_APM
 multiline_comment|/* store based on real hardware apu/reg */
 id|s-&gt;card-&gt;apu_map
 (braket
@@ -3889,7 +3890,6 @@ id|reg
 op_assign
 id|data
 suffix:semicolon
-macro_line|#endif
 )brace
 id|reg
 op_or_assign
@@ -9637,7 +9637,6 @@ id|HZ
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_APM
 r_if
 c_cond
 (paren
@@ -9645,7 +9644,6 @@ op_logical_neg
 id|in_suspend
 )paren
 (brace
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -10165,7 +10163,6 @@ id|HZ
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_APM
 r_if
 c_cond
 (paren
@@ -10173,7 +10170,6 @@ op_logical_neg
 id|in_suspend
 )paren
 (brace
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -15266,6 +15262,11 @@ id|ess_state
 op_star
 id|ess
 suffix:semicolon
+r_struct
+id|pm_dev
+op_star
+id|pmdev
+suffix:semicolon
 r_int
 id|num
 op_assign
@@ -15412,26 +15413,31 @@ id|card-&gt;pcidev
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
+id|pmdev
+op_assign
+id|pm_register
+c_func
+(paren
+id|PM_PCI_DEV
+comma
+id|PM_PCI_ID
+c_func
+(paren
+id|pcidev
+)paren
+comma
+id|maestro_pm_callback
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|apm_register_callback
-c_func
-(paren
-id|maestro_apm_callback
+id|pmdev
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;maestro: apm suspend might not work.&bslash;n&quot;
-)paren
+id|pmdev-&gt;data
+op_assign
+id|card
 suffix:semicolon
-)brace
-macro_line|#endif
 id|card-&gt;iobase
 op_assign
 id|iobase
@@ -16037,7 +16043,6 @@ id|dsps_order
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_APM
 id|init_waitqueue_head
 c_func
 (paren
@@ -16045,7 +16050,6 @@ op_amp
 id|suspend_queue
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Find the ESS Maestro 2.&n;&t; */
 r_while
 c_loop
@@ -16224,14 +16228,12 @@ id|ess_card
 op_star
 id|s
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
-id|apm_unregister_callback
+id|pm_unregister_all
 c_func
 (paren
-id|maestro_apm_callback
+id|maestro_pm_callback
 )paren
 suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -16330,7 +16332,6 @@ l_string|&quot;maestro: unloading&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-macro_line|#ifdef CONFIG_APM
 r_void
 DECL|function|check_suspend
 id|check_suspend
@@ -16400,17 +16401,20 @@ DECL|function|maestro_suspend
 id|maestro_suspend
 c_func
 (paren
-r_void
-)paren
-(brace
 r_struct
 id|ess_card
 op_star
 id|card
-suffix:semicolon
+)paren
+(brace
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+id|i
+comma
+id|j
 suffix:semicolon
 id|save_flags
 c_func
@@ -16423,29 +16427,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|card
-op_assign
-id|devs
-suffix:semicolon
-id|card
-suffix:semicolon
-id|card
-op_assign
-id|card-&gt;next
-)paren
-(brace
-r_int
-id|i
-comma
-id|j
-suffix:semicolon
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: apm in dev %p&bslash;n&quot;
+l_string|&quot;maestro: pm in dev %p&bslash;n&quot;
 comma
 id|card
 )paren
@@ -16566,7 +16551,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-)brace
 id|in_suspend
 op_assign
 l_int|1
@@ -16588,17 +16572,18 @@ DECL|function|maestro_resume
 id|maestro_resume
 c_func
 (paren
-r_void
-)paren
-(brace
 r_struct
 id|ess_card
 op_star
 id|card
-suffix:semicolon
+)paren
+(brace
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|save_flags
 c_func
@@ -16622,27 +16607,10 @@ l_string|&quot;maestro: resuming&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* first lets just bring everything back. .*/
-r_for
-c_loop
-(paren
-id|card
-op_assign
-id|devs
-suffix:semicolon
-id|card
-suffix:semicolon
-id|card
-op_assign
-id|card-&gt;next
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: apm in dev %p&bslash;n&quot;
+l_string|&quot;maestro: pm in dev %p&bslash;n&quot;
 comma
 id|card
 )paren
@@ -16833,29 +16801,11 @@ l_int|0xFF0F
 suffix:semicolon
 )brace
 )brace
-)brace
 multiline_comment|/* now we flip on the music */
-r_for
-c_loop
-(paren
-id|card
-op_assign
-id|devs
-suffix:semicolon
-id|card
-suffix:semicolon
-id|card
-op_assign
-id|card-&gt;next
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: apm in dev %p&bslash;n&quot;
+l_string|&quot;maestro: pm in dev %p&bslash;n&quot;
 comma
 id|card
 )paren
@@ -16886,7 +16836,7 @@ id|card-&gt;channels
 id|i
 )braket
 suffix:semicolon
-multiline_comment|/* these use the apu_mode, and can handle&n;&t;&t;&t;&t;spurious calls */
+multiline_comment|/* these use the apu_mode, and can handle&n;                   spurious calls */
 id|start_dac
 c_func
 (paren
@@ -16919,7 +16869,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-)brace
 id|restore_flags
 c_func
 (paren
@@ -16938,68 +16887,81 @@ l_int|0
 suffix:semicolon
 )brace
 r_int
-DECL|function|maestro_apm_callback
-id|maestro_apm_callback
+DECL|function|maestro_pm_callback
+id|maestro_pm_callback
 c_func
 (paren
-id|apm_event_t
-id|ae
+r_struct
+id|pm_dev
+op_star
+id|dev
+comma
+id|pm_request_t
+id|rqst
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+r_struct
+id|ess_card
+op_star
+id|card
+op_assign
+(paren
+r_struct
+id|ess_card
+op_star
+)paren
+id|dev-&gt;data
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|card
 )paren
 (brace
 id|M_printk
 c_func
 (paren
-l_string|&quot;maestro: apm event received: 0x%x&bslash;n&quot;
+l_string|&quot;maestro: pm event received: 0x%x&bslash;n&quot;
 comma
-id|ae
+id|rqst
 )paren
 suffix:semicolon
 r_switch
 c_cond
 (paren
-id|ae
+id|rqst
 )paren
 (brace
 r_case
-id|APM_SYS_SUSPEND
-suffix:colon
-r_case
-id|APM_CRITICAL_SUSPEND
-suffix:colon
-r_case
-id|APM_USER_SUSPEND
+id|PM_SUSPEND
 suffix:colon
 id|maestro_suspend
 c_func
 (paren
+id|card
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|APM_NORMAL_RESUME
-suffix:colon
-r_case
-id|APM_CRITICAL_RESUME
-suffix:colon
-r_case
-id|APM_STANDBY_RESUME
+id|PM_RESUME
 suffix:colon
 id|maestro_resume
 c_func
 (paren
+id|card
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
-r_default
-suffix:colon
-r_break
-suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

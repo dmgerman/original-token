@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * arch/ia64/boot/bootloader.c&n; *&n; * Loads an ELF kernel.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; *&n; * 01/07/99 S.Eranian modified to pass command line arguments to kernel&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
