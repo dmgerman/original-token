@@ -198,7 +198,7 @@ id|p-&gt;euid
 )paren
 op_logical_and
 (paren
-id|current-&gt;uid
+id|current-&gt;euid
 op_ne
 id|p-&gt;uid
 )paren

@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &quot;aha152x.h&quot;
 multiline_comment|/* DEFINES */
 multiline_comment|/* For PCMCIA cards, always use AUTOCONF */
-macro_line|#ifdef PCMCIA
+macro_line|#if defined(PCMCIA) || defined(MODULE)
 DECL|macro|AUTOCONF
 mdefine_line|#define AUTOCONF
 macro_line|#endif
