@@ -505,11 +505,9 @@ id|dev
 op_ge
 id|NRDEVS
 )paren
-id|panic
-c_func
-(paren
-l_string|&quot;rw_char: dev&gt;NRDEV&quot;
-)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond
@@ -528,22 +526,10 @@ id|dev
 )braket
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;dev: %04x&bslash;n&quot;
-comma
-id|dev
-)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;Trying to r/w from/to nonexistent character device&quot;
-)paren
-suffix:semicolon
-)brace
 r_return
 id|call_addr
 c_func

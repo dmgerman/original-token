@@ -140,11 +140,9 @@ id|dev
 op_ge
 id|NRDEVS
 )paren
-id|panic
-c_func
-(paren
-l_string|&quot;unknown device for ioctl&quot;
-)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond

@@ -214,7 +214,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the followig.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; */
+multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the followig.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; * [ nothing wrong here, Linus ]&n; */
 DECL|function|get_fs
 r_extern
 r_inline

@@ -195,6 +195,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|req-&gt;bh
+)paren
+id|req-&gt;bh-&gt;b_dirt
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|tmp
@@ -218,9 +227,9 @@ id|dev-&gt;request_fn
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
-r_else
-(brace
 r_for
 c_loop
 (paren
@@ -271,7 +280,6 @@ id|tmp-&gt;next
 op_assign
 id|req
 suffix:semicolon
-)brace
 id|sti
 c_func
 (paren
@@ -301,14 +309,25 @@ id|request
 op_star
 id|req
 suffix:semicolon
-multiline_comment|/* READA is special case - the read is not really needed, so if the   */
+r_int
+id|rw_ahead
+suffix:semicolon
+multiline_comment|/* WRITEA/READA is special case - it is not really needed, so if the */
 multiline_comment|/* buffer is locked, we just forget about it, else it&squot;s a normal read */
 r_if
 c_cond
 (paren
+id|rw_ahead
+op_assign
+(paren
 id|rw
 op_eq
 id|READA
+op_logical_or
+id|rw
+op_eq
+id|WRITEA
+)paren
 )paren
 (brace
 r_if
@@ -318,10 +337,21 @@ id|bh-&gt;b_lock
 )paren
 r_return
 suffix:semicolon
-r_else
+r_if
+c_cond
+(paren
+id|rw
+op_eq
+id|READA
+)paren
 id|rw
 op_assign
 id|READ
+suffix:semicolon
+r_else
+id|rw
+op_assign
+id|WRITE
 suffix:semicolon
 )brace
 r_if
@@ -338,7 +368,7 @@ id|WRITE
 id|panic
 c_func
 (paren
-l_string|&quot;Bad block dev command, must be R/W/RA&quot;
+l_string|&quot;Bad block dev command, must be R/W/RA/WA&quot;
 )paren
 suffix:semicolon
 id|lock_buffer
@@ -379,23 +409,43 @@ suffix:semicolon
 )brace
 id|repeat
 suffix:colon
-r_for
-c_loop
+multiline_comment|/* we don&squot;t allow the write-requests to fill up the queue completely:&n; * we want some room for reads: they take precedence. The last third&n; * of the requests are only for reads.&n; */
+r_if
+c_cond
 (paren
+id|rw
+op_eq
+id|READ
+)paren
 id|req
 op_assign
-l_int|0
-op_plus
 id|request
-suffix:semicolon
-id|req
-OL
+op_plus
 id|NR_REQUEST
-op_plus
-id|request
 suffix:semicolon
+r_else
 id|req
-op_increment
+op_assign
+id|request
+op_plus
+(paren
+(paren
+id|NR_REQUEST
+op_star
+l_int|2
+)paren
+op_div
+l_int|3
+)paren
+suffix:semicolon
+multiline_comment|/* find an empty request */
+r_while
+c_loop
+(paren
+op_decrement
+id|req
+op_ge
+id|request
 )paren
 r_if
 c_cond
@@ -406,16 +456,30 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/* if none found, sleep on new requests: check for rw_ahead */
 r_if
 c_cond
 (paren
 id|req
-op_eq
-id|NR_REQUEST
-op_plus
+OL
 id|request
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|rw_ahead
+)paren
+(brace
+id|unlock_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|sleep_on
 c_func
 (paren
@@ -427,6 +491,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
+multiline_comment|/* fill up the request-info, and add it to the queue */
 id|req-&gt;dev
 op_assign
 id|bh-&gt;b_dev
@@ -519,12 +584,16 @@ dot
 id|request_fn
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;Trying to read nonexistent block-device&quot;
+l_string|&quot;Trying to read nonexistent block-device&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|make_request
 c_func
 (paren

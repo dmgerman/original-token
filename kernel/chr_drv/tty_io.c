@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/tty_io.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc (well,&n; * not currently, but ...)&n; */
+multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl.&n; */
 macro_line|#include &lt;ctype.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;signal.h&gt;
@@ -67,6 +67,7 @@ op_assign
 (brace
 id|ICRNL
 comma
+multiline_comment|/* change incoming CR to NL */
 id|OPOST
 op_or
 id|ONLCR
@@ -74,6 +75,8 @@ comma
 multiline_comment|/* change outgoing NL to CRNL */
 l_int|0
 comma
+id|ISIG
+op_or
 id|ICANON
 op_or
 id|ECHO
@@ -140,12 +143,10 @@ comma
 (brace
 l_int|0
 comma
-multiline_comment|/*IGNCR*/
-id|OPOST
-op_or
-id|ONLRET
+multiline_comment|/* no translation */
+l_int|0
 comma
-multiline_comment|/* change outgoing NL to CR */
+multiline_comment|/* no translation */
 id|B2400
 op_or
 id|CS8
@@ -205,12 +206,10 @@ comma
 (brace
 l_int|0
 comma
-multiline_comment|/*IGNCR*/
-id|OPOST
-op_or
-id|ONLRET
+multiline_comment|/* no translation */
+l_int|0
 comma
-multiline_comment|/* change outgoing NL to CR */
+multiline_comment|/* no translation */
 id|B2400
 op_or
 id|CS8
@@ -611,6 +610,104 @@ c_cond
 (paren
 id|c
 op_eq
+id|KILL_CHAR
+c_func
+(paren
+id|tty
+)paren
+)paren
+(brace
+multiline_comment|/* deal with killing the input line */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|EMPTY
+c_func
+(paren
+id|tty-&gt;secondary
+)paren
+op_logical_or
+(paren
+id|c
+op_assign
+id|LAST
+c_func
+(paren
+id|tty-&gt;secondary
+)paren
+)paren
+op_eq
+l_int|10
+op_logical_or
+id|c
+op_eq
+id|EOF_CHAR
+c_func
+(paren
+id|tty
+)paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|L_ECHO
+c_func
+(paren
+id|tty
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|c
+OL
+l_int|32
+)paren
+id|PUTCH
+c_func
+(paren
+l_int|127
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|PUTCH
+c_func
+(paren
+l_int|127
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|tty
+op_member_access_from_pointer
+id|write
+c_func
+(paren
+id|tty
+)paren
+suffix:semicolon
+)brace
+id|DEC
+c_func
+(paren
+id|tty-&gt;secondary.head
+)paren
+suffix:semicolon
+)brace
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|c
+op_eq
 id|ERASE_CHAR
 c_func
 (paren
@@ -742,7 +839,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|L_ISIG
 c_func
 (paren
@@ -778,7 +874,7 @@ c_cond
 (paren
 id|c
 op_eq
-id|KILL_CHAR
+id|QUIT_CHAR
 c_func
 (paren
 id|tty
@@ -790,7 +886,7 @@ c_func
 (paren
 id|tty
 comma
-id|KILLMASK
+id|QUITMASK
 )paren
 suffix:semicolon
 r_continue
@@ -994,10 +1090,7 @@ id|current-&gt;alarm
 suffix:semicolon
 id|time
 op_assign
-(paren
-r_int
-)paren
-l_int|10
+l_int|10L
 op_star
 id|tty-&gt;termios.c_cc
 (braket
@@ -1006,9 +1099,6 @@ id|VTIME
 suffix:semicolon
 id|minimum
 op_assign
-(paren
-r_int
-)paren
 id|tty-&gt;termios.c_cc
 (braket
 id|VMIN

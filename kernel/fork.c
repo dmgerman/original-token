@@ -193,6 +193,10 @@ id|nr
 op_star
 l_int|0x4000000
 suffix:semicolon
+id|p-&gt;start_code
+op_assign
+id|new_code_base
+suffix:semicolon
 id|set_base
 c_func
 (paren
@@ -339,6 +343,13 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+id|task
+(braket
+id|nr
+)braket
+op_assign
+id|p
+suffix:semicolon
 op_star
 id|p
 op_assign
@@ -348,7 +359,7 @@ suffix:semicolon
 multiline_comment|/* NOTE! this doesn&squot;t copy the supervisor stack */
 id|p-&gt;state
 op_assign
-id|TASK_RUNNING
+id|TASK_UNINTERRUPTIBLE
 suffix:semicolon
 id|p-&gt;pid
 op_assign
@@ -506,7 +517,7 @@ id|current
 id|__asm__
 c_func
 (paren
-l_string|&quot;fnsave %0&quot;
+l_string|&quot;clts ; fnsave %0&quot;
 op_scope_resolution
 l_string|&quot;m&quot;
 (paren
@@ -526,6 +537,13 @@ id|p
 )paren
 )paren
 (brace
+id|task
+(braket
+id|nr
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -583,6 +601,14 @@ id|current-&gt;root
 id|current-&gt;root-&gt;i_count
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;executable
+)paren
+id|current-&gt;executable-&gt;i_count
+op_increment
+suffix:semicolon
 id|set_tss_desc
 c_func
 (paren
@@ -621,12 +647,9 @@ id|p-&gt;ldt
 )paren
 )paren
 suffix:semicolon
-id|task
-(braket
-id|nr
-)braket
+id|p-&gt;state
 op_assign
-id|p
+id|TASK_RUNNING
 suffix:semicolon
 multiline_comment|/* do this last, just in case */
 r_return

@@ -56,6 +56,8 @@ DECL|macro|TIOCGSOFTCAR
 mdefine_line|#define TIOCGSOFTCAR&t;0x5419
 DECL|macro|TIOCSSOFTCAR
 mdefine_line|#define TIOCSSOFTCAR&t;0x541A
+DECL|macro|TIOCINQ
+mdefine_line|#define TIOCINQ&t;&t;0x541B
 DECL|struct|winsize
 r_struct
 id|winsize
@@ -338,6 +340,10 @@ DECL|macro|B19200
 mdefine_line|#define  B19200&t;0000016
 DECL|macro|B38400
 mdefine_line|#define  B38400&t;0000017
+DECL|macro|EXTA
+mdefine_line|#define EXTA B19200
+DECL|macro|EXTB
+mdefine_line|#define EXTB B38400
 DECL|macro|CSIZE
 mdefine_line|#define CSIZE&t;0000060
 DECL|macro|CS5
@@ -364,6 +370,10 @@ DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;03600000&t;&t;/* input baud rate (not used) */
 DECL|macro|CRTSCTS
 mdefine_line|#define CRTSCTS&t;020000000000&t;&t;/* flow control */
+DECL|macro|PARENB
+mdefine_line|#define PARENB CPARENB
+DECL|macro|PARODD
+mdefine_line|#define PARODD CPARODD
 multiline_comment|/* c_lflag bits */
 DECL|macro|ISIG
 mdefine_line|#define ISIG&t;0000001

@@ -12,6 +12,8 @@ DECL|macro|WRITE
 mdefine_line|#define WRITE 1
 DECL|macro|READA
 mdefine_line|#define READA 2&t;&t;/* read-ahead - don&squot;t pause */
+DECL|macro|WRITEA
+mdefine_line|#define WRITEA 3&t;/* &quot;write-ahead&quot; - silly, but somewhat useful */
 r_void
 id|buffer_init
 c_func
@@ -88,18 +90,18 @@ op_star
 id|b_data
 suffix:semicolon
 multiline_comment|/* pointer to data block (1024 bytes) */
-DECL|member|b_dev
-r_int
-r_int
-id|b_dev
-suffix:semicolon
-multiline_comment|/* device (0 = free) */
 DECL|member|b_blocknr
 r_int
 r_int
 id|b_blocknr
 suffix:semicolon
 multiline_comment|/* block number */
+DECL|member|b_dev
+r_int
+r_int
+id|b_dev
+suffix:semicolon
+multiline_comment|/* device (0 = free) */
 DECL|member|b_uptodate
 r_int
 r_char
@@ -795,6 +797,25 @@ id|dev
 comma
 r_int
 id|block
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|bread_page
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|dev
+comma
+r_int
+id|b
+(braket
+l_int|4
+)braket
 )paren
 suffix:semicolon
 r_extern

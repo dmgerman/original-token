@@ -3,8 +3,9 @@ DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
 DECL|macro|NR_BLK_DEV
 mdefine_line|#define NR_BLK_DEV&t;7
+multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;64
+mdefine_line|#define NR_REQUEST&t;32
 multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and &squot;waiting&squot; is used to wait for&n; * read/write completion.&n; */
 DECL|struct|request
 r_struct
@@ -59,8 +60,9 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; * reads always go before writes. This is natural: reads&n; * are much more time-critical than writes.&n; */
 DECL|macro|IN_ORDER
-mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || ((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector))
+mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd&lt;(s2)-&gt;cmd || (s1)-&gt;cmd==(s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || ((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))
 DECL|struct|blk_dev_struct
 r_struct
 id|blk_dev_struct
@@ -107,7 +109,19 @@ id|wait_for_request
 suffix:semicolon
 macro_line|#ifdef MAJOR_NR
 multiline_comment|/*&n; * Add entries as needed. Currently the only block devices&n; * supported are hard-disks and floppies.&n; */
-macro_line|#if (MAJOR_NR == 2)
+macro_line|#if (MAJOR_NR == 1)
+multiline_comment|/* ram disk */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;ramdisk&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_rd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) ((device) &amp; 7)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == 2)
 multiline_comment|/* floppy */
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;floppy&quot;
@@ -143,6 +157,7 @@ DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
 DECL|macro|CURRENT_DEV
 mdefine_line|#define CURRENT_DEV DEVICE_NR(CURRENT-&gt;dev)
+macro_line|#ifdef DEVICE_INTR
 DECL|variable|DEVICE_INTR
 r_void
 (paren
@@ -155,6 +170,7 @@ r_void
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 (paren
@@ -286,7 +302,7 @@ id|CURRENT-&gt;next
 suffix:semicolon
 )brace
 DECL|macro|INIT_REQUEST
-mdefine_line|#define INIT_REQUEST &bslash;&n;repeat: &bslash;&n;&t;if (!CURRENT) &bslash;&n;&t;&t;return; &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;&t;else { &bslash;&n;&t;&t;&t;CURRENT-&gt;bh-&gt;b_dirt = 0; &bslash;&n;&t;&t;&t;CURRENT-&gt;bh-&gt;b_uptodate = 0; &bslash;&n;&t;&t;}
+mdefine_line|#define INIT_REQUEST &bslash;&n;repeat: &bslash;&n;&t;if (!CURRENT) &bslash;&n;&t;&t;return; &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif
 macro_line|#endif
 eof

@@ -246,6 +246,11 @@ id|super_block
 op_star
 id|sb
 suffix:semicolon
+r_struct
+id|m_inode
+op_star
+id|inode
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon

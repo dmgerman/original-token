@@ -402,7 +402,7 @@ id|count
 )paren
 suffix:colon
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -615,7 +615,7 @@ id|count
 )paren
 suffix:colon
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 r_if
 c_cond

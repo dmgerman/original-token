@@ -57,6 +57,7 @@ r_int
 id|from
 comma
 r_int
+r_int
 id|size
 )paren
 suffix:semicolon
@@ -327,12 +328,15 @@ DECL|member|exit_code
 r_int
 id|exit_code
 suffix:semicolon
+DECL|member|start_code
 DECL|member|end_code
 DECL|member|end_data
 DECL|member|brk
 DECL|member|start_stack
 r_int
 r_int
+id|start_code
+comma
 id|end_code
 comma
 id|end_data
@@ -427,6 +431,12 @@ id|m_inode
 op_star
 id|root
 suffix:semicolon
+DECL|member|executable
+r_struct
+id|m_inode
+op_star
+id|executable
+suffix:semicolon
 DECL|member|close_on_exec
 r_int
 r_int
@@ -460,7 +470,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,-1,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* alarm */&t;0,0,0,0,0,0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;-1,0022,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,-1,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* alarm */&t;0,0,0,0,0,0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;-1,0022,NULL,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct

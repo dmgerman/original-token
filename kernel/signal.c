@@ -458,6 +458,7 @@ id|ss
 )paren
 (brace
 r_int
+r_int
 id|sa_handler
 suffix:semicolon
 r_int
@@ -487,6 +488,7 @@ suffix:semicolon
 id|sa_handler
 op_assign
 (paren
+r_int
 r_int
 )paren
 id|sa-&gt;sa_handler

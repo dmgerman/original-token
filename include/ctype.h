@@ -55,8 +55,8 @@ mdefine_line|#define isascii(c) (((unsigned) c)&lt;=0x7f)
 DECL|macro|toascii
 mdefine_line|#define toascii(c) (((unsigned) c)&amp;0x7f)
 DECL|macro|tolower
-mdefine_line|#define tolower(c) (_ctmp=c,isupper(_ctmp)?_ctmp+(&squot;a&squot;-&squot;A&squot;):_ctmp)
+mdefine_line|#define tolower(c) (_ctmp=c,isupper(_ctmp)?_ctmp-(&squot;A&squot;-&squot;a&squot;):_ctmp)
 DECL|macro|toupper
-mdefine_line|#define toupper(c) (_ctmp=c,islower(_ctmp)?_ctmp+(&squot;A&squot;-&squot;a&squot;):_ctmp)
+mdefine_line|#define toupper(c) (_ctmp=c,islower(_ctmp)?_ctmp-(&squot;a&squot;-&squot;A&squot;):_ctmp)
 macro_line|#endif
 eof

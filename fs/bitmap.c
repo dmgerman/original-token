@@ -6,9 +6,9 @@ macro_line|#include &lt;linux/kernel.h&gt;
 DECL|macro|clear_block
 mdefine_line|#define clear_block(addr) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stosl&quot; &bslash;&n;&t;::&quot;a&quot; (0),&quot;c&quot; (BLOCK_SIZE/4),&quot;D&quot; ((long) (addr)):&quot;cx&quot;,&quot;di&quot;)
 DECL|macro|set_bit
-mdefine_line|#define set_bit(nr,addr) ({&bslash;&n;register int res __asm__(&quot;ax&quot;); &bslash;&n;__asm__(&quot;btsl %2,%3&bslash;n&bslash;tsetb %%al&quot;:&quot;=a&quot; (res):&quot;0&quot; (0),&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
+mdefine_line|#define set_bit(nr,addr) ({&bslash;&n;register int res __asm__(&quot;ax&quot;); &bslash;&n;__asm__ __volatile__(&quot;btsl %2,%3&bslash;n&bslash;tsetb %%al&quot;: &bslash;&n;&quot;=a&quot; (res):&quot;0&quot; (0),&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
 DECL|macro|clear_bit
-mdefine_line|#define clear_bit(nr,addr) ({&bslash;&n;register int res __asm__(&quot;ax&quot;); &bslash;&n;__asm__(&quot;btrl %2,%3&bslash;n&bslash;tsetnb %%al&quot;:&quot;=a&quot; (res):&quot;0&quot; (0),&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
+mdefine_line|#define clear_bit(nr,addr) ({&bslash;&n;register int res __asm__(&quot;ax&quot;); &bslash;&n;__asm__ __volatile__(&quot;btrl %2,%3&bslash;n&bslash;tsetnb %%al&quot;: &bslash;&n;&quot;=a&quot; (res):&quot;0&quot; (0),&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
 DECL|macro|find_first_zero
 mdefine_line|#define find_first_zero(addr) ({ &bslash;&n;int __res; &bslash;&n;__asm__(&quot;cld&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tlodsl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;notl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bsfl %%eax,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl %%edx,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 3f&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;taddl $32,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl $8192,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jl 1b&bslash;n&quot; &bslash;&n;&t;&quot;3:&quot; &bslash;&n;&t;:&quot;=c&quot; (__res):&quot;c&quot; (0),&quot;S&quot; (addr):&quot;ax&quot;,&quot;dx&quot;,&quot;si&quot;); &bslash;&n;__res;})
 DECL|function|free_block
@@ -544,10 +544,10 @@ comma
 id|bh-&gt;b_data
 )paren
 )paren
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;free_inode: bit already cleared&quot;
+l_string|&quot;free_inode: bit already cleared.&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
 id|bh-&gt;b_dirt
@@ -742,6 +742,14 @@ suffix:semicolon
 id|inode-&gt;i_dev
 op_assign
 id|dev
+suffix:semicolon
+id|inode-&gt;i_uid
+op_assign
+id|current-&gt;euid
+suffix:semicolon
+id|inode-&gt;i_gid
+op_assign
+id|current-&gt;egid
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/tools/build.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: max 510 bytes of 8086 machine code, loads the rest&n; * - setup: max 4 sectors of 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
+multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; */
 macro_line|#include &lt;stdio.h&gt;&t;/* fprintf */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdlib.h&gt;&t;/* contains exit */
@@ -12,6 +13,8 @@ DECL|macro|MINIX_HEADER
 mdefine_line|#define MINIX_HEADER 32
 DECL|macro|GCC_HEADER
 mdefine_line|#define GCC_HEADER 1024
+DECL|macro|SYS_SIZE
+mdefine_line|#define SYS_SIZE 0x2000
 DECL|macro|DEFAULT_MAJOR_ROOT
 mdefine_line|#define DEFAULT_MAJOR_ROOT 3
 DECL|macro|DEFAULT_MINOR_ROOT
@@ -58,7 +61,7 @@ r_void
 id|die
 c_func
 (paren
-l_string|&quot;Usage: build bootsect setup system [&gt; image]&quot;
+l_string|&quot;Usage: build bootsect setup system [rootdev] [&gt; image]&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1063,6 +1066,21 @@ comma
 l_string|&quot;System is %d bytes.&bslash;n&quot;
 comma
 id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OG
+id|SYS_SIZE
+op_star
+l_int|16
+)paren
+id|die
+c_func
+(paren
+l_string|&quot;System is too big&quot;
 )paren
 suffix:semicolon
 r_return
