@@ -2412,6 +2412,25 @@ c_func
 id|sem
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|clone_flags
+op_amp
+id|CLONE_PID
+)paren
+(brace
+multiline_comment|/* This is only allowed from the boot up thread */
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 id|current-&gt;vfork_sem
 op_assign
 op_amp
@@ -2483,7 +2502,7 @@ id|p-&gt;user-&gt;count
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Counter atomicity is protected by&n;&t; * the kernel lock&n;&t; */
+multiline_comment|/*&n;&t; * Counter increases are protected by&n;&t; * the kernel lock so nr_threads can&squot;t&n;&t; * increase under us (but it may decrease).&n;&t; */
 r_if
 c_cond
 (paren
@@ -2869,15 +2888,15 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|nr_threads
+op_increment
+suffix:semicolon
 id|write_unlock_irq
 c_func
 (paren
 op_amp
 id|tasklist_lock
 )paren
-suffix:semicolon
-id|nr_threads
-op_increment
 suffix:semicolon
 id|wake_up_process
 c_func
@@ -2976,9 +2995,6 @@ c_func
 (paren
 id|p-&gt;binfmt-&gt;module
 )paren
-suffix:semicolon
-id|nr_threads
-op_decrement
 suffix:semicolon
 id|bad_fork_cleanup_count
 suffix:colon

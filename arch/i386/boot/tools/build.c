@@ -101,12 +101,9 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Reading of ld86 output (Minix format) */
-DECL|macro|MINIX_HEADER_LEN
-mdefine_line|#define MINIX_HEADER_LEN 32
-DECL|function|minix_open
+DECL|function|file_open
 r_void
-id|minix_open
+id|file_open
 c_func
 (paren
 r_const
@@ -115,41 +112,6 @@ op_star
 id|name
 )paren
 (brace
-r_static
-id|byte
-id|hdr
-(braket
-)braket
-op_assign
-(brace
-l_int|0x01
-comma
-l_int|0x03
-comma
-l_int|0x10
-comma
-l_int|0x04
-comma
-l_int|0x20
-comma
-l_int|0x00
-comma
-l_int|0x00
-comma
-l_int|0x00
-)brace
-suffix:semicolon
-r_static
-id|u32
-op_star
-id|lb
-op_assign
-(paren
-id|u32
-op_star
-)paren
-id|buf
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -175,100 +137,6 @@ c_func
 l_string|&quot;Unable to open `%s&squot;: %m&quot;
 comma
 id|name
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|read
-c_func
-(paren
-id|fd
-comma
-id|buf
-comma
-id|MINIX_HEADER_LEN
-)paren
-op_ne
-id|MINIX_HEADER_LEN
-)paren
-id|die
-c_func
-(paren
-l_string|&quot;%s: Unable to read header&quot;
-comma
-id|name
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|memcmp
-c_func
-(paren
-id|buf
-comma
-id|hdr
-comma
-r_sizeof
-(paren
-id|hdr
-)paren
-)paren
-op_logical_or
-id|lb
-(braket
-l_int|5
-)braket
-)paren
-id|die
-c_func
-(paren
-l_string|&quot;%s: Non-Minix header&quot;
-comma
-id|name
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|lb
-(braket
-l_int|3
-)braket
-)paren
-id|die
-c_func
-(paren
-l_string|&quot;%s: Illegal data segment&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|lb
-(braket
-l_int|4
-)braket
-)paren
-id|die
-c_func
-(paren
-l_string|&quot;%s: Illegal bss segment&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|lb
-(braket
-l_int|7
-)braket
-)paren
-id|die
-c_func
-(paren
-l_string|&quot;%s: Illegal symbol table&quot;
 )paren
 suffix:semicolon
 )brace
@@ -541,7 +409,7 @@ comma
 id|minor_root
 )paren
 suffix:semicolon
-id|minix_open
+id|file_open
 c_func
 (paren
 id|argv
@@ -550,7 +418,6 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Copy the boot sector */
 id|i
 op_assign
 id|read
@@ -652,7 +519,7 @@ id|close
 id|fd
 )paren
 suffix:semicolon
-id|minix_open
+id|file_open
 c_func
 (paren
 id|argv
@@ -742,7 +609,7 @@ op_div
 l_int|512
 suffix:semicolon
 multiline_comment|/* Pad unused space with zeros */
-multiline_comment|/* for compatibility with ancient versions of LILO */
+multiline_comment|/* for compatibility with ancient versions of LILO. */
 r_if
 c_cond
 (paren
@@ -838,34 +705,9 @@ op_add_assign
 id|c
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
-id|fd
-op_assign
-id|open
+id|file_open
 c_func
 (paren
-id|argv
-(braket
-l_int|3
-)braket
-comma
-id|O_RDONLY
-comma
-l_int|0
-)paren
-)paren
-OL
-l_int|0
-)paren
-multiline_comment|/* Copy the image itself */
-id|die
-c_func
-(paren
-l_string|&quot;Unable to open `%s&squot;: %m&quot;
-comma
 id|argv
 (braket
 l_int|3
@@ -1076,7 +918,7 @@ id|SEEK_SET
 op_ne
 l_int|497
 )paren
-multiline_comment|/* Write sizes to the boot sector */
+multiline_comment|/* Write sizes to the bootsector */
 id|die
 c_func
 (paren

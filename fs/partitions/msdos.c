@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;&t;/* IDE xlate */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;check.h&quot;
 macro_line|#include &quot;msdos.h&quot;

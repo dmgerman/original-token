@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
-macro_line|#include &quot;pc_keyb.h&quot;&t;&t;/* mouse enable command.. */
+macro_line|#include &lt;linux/pc_keyb.h&gt;&t;&t;/* mouse enable command.. */
 multiline_comment|/*&n; * We use the same minor number as the PS/2 mouse for (bad) historical&n; * reasons..&n; */
 DECL|macro|PSMOUSE_MINOR
 mdefine_line|#define PSMOUSE_MINOR      1&t;       &t;&t;/* Minor device # for this mouse */
@@ -343,6 +343,8 @@ c_func
 id|queue-&gt;fasync
 comma
 id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 id|wake_up_interruptible

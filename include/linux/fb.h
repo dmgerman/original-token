@@ -34,6 +34,8 @@ DECL|macro|FBIOGET_CON2FBMAP
 mdefine_line|#define FBIOGET_CON2FBMAP&t;0x460F
 DECL|macro|FBIOPUT_CON2FBMAP
 mdefine_line|#define FBIOPUT_CON2FBMAP&t;0x4610
+DECL|macro|FBIOBLANK
+mdefine_line|#define FBIOBLANK&t;&t;0x4611&t;&t;/* arg: 0 or vesa level + 1 */
 DECL|macro|FB_TYPE_PACKED_PIXELS
 mdefine_line|#define FB_TYPE_PACKED_PIXELS&t;&t;0&t;/* Packed Pixels&t;*/
 DECL|macro|FB_TYPE_PLANES

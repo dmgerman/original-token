@@ -32,10 +32,6 @@ macro_line|#ifndef OK_TO_RESET_CONTROLLER&t;&t;/* 1 needed for good error recove
 DECL|macro|OK_TO_RESET_CONTROLLER
 mdefine_line|#define OK_TO_RESET_CONTROLLER&t;1&t;/* 0 for use with AH2372A/B interface */
 macro_line|#endif
-macro_line|#ifndef FAKE_FDISK_FOR_EZDRIVE&t;&t;/* 1 to help linux fdisk with EZDRIVE */
-DECL|macro|FAKE_FDISK_FOR_EZDRIVE
-mdefine_line|#define FAKE_FDISK_FOR_EZDRIVE &t;1&t;/* 0 to reduce kernel size */
-macro_line|#endif
 macro_line|#ifndef FANCY_STATUS_DUMPS&t;&t;/* 1 for human-readable drive errors */
 DECL|macro|FANCY_STATUS_DUMPS
 mdefine_line|#define FANCY_STATUS_DUMPS&t;1&t;/* 0 to reduce kernel size */
@@ -548,15 +544,13 @@ suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* 1=autotune, 2=noautotune, 0=default */
-macro_line|#if FAKE_FDISK_FOR_EZDRIVE
 DECL|member|remap_0_to_1
 r_int
 id|remap_0_to_1
 suffix:colon
-l_int|1
+l_int|2
 suffix:semicolon
-multiline_comment|/* flag: partitioned with ezdrive */
-macro_line|#endif /* FAKE_FDISK_FOR_EZDRIVE */
+multiline_comment|/* 0=remap if ezdrive, 1=remap, 2=noremap */
 DECL|member|ata_flash
 r_int
 id|ata_flash
@@ -656,6 +650,12 @@ r_int
 id|cyl
 suffix:semicolon
 multiline_comment|/* &quot;real&quot; number of cyls */
+DECL|member|capacity
+r_int
+r_int
+id|capacity
+suffix:semicolon
+multiline_comment|/* total number of sectors */
 DECL|member|drive_data
 r_int
 r_int
@@ -2029,7 +2029,7 @@ r_int
 id|timeout
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This routine is called from the partition-table code in genhd.c&n; * to &quot;convert&quot; a drive to a logical geometry with fewer than 1024 cyls.&n; *&n; * The second parameter, &quot;xparm&quot;, determines exactly how the translation&n; * will be handled:&n; *&t;&t; 0 = convert to CHS with fewer than 1024 cyls&n; *&t;&t;&t;using the same method as Ontrack DiskManager.&n; *&t;&t; 1 = same as &quot;0&quot;, plus offset everything by 63 sectors.&n; *&t;&t;-1 = similar to &quot;0&quot;, plus redirect sector 0 to sector 1.&n; *&t;&t;&gt;1 = convert to a CHS geometry with &quot;xparm&quot; heads.&n; *&n; * Returns 0 if the translation was not possible, if the device was not&n; * an IDE disk drive, or if a geometry was &quot;forced&quot; on the commandline.&n; * Returns 1 if the geometry translation was successful.&n; */
+multiline_comment|/*&n; * This routine is called from the partition-table code in genhd.c&n; * to &quot;convert&quot; a drive to a logical geometry with fewer than 1024 cyls.&n; */
 r_int
 id|ide_xlate_1024
 (paren
@@ -2042,6 +2042,25 @@ comma
 r_const
 r_char
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Convert kdev_t structure into ide_drive_t * one.&n; */
+id|ide_drive_t
+op_star
+id|get_info_ptr
+(paren
+id|kdev_t
+id|i_rdev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Return the current idea about the total capacity of this drive.&n; */
+r_int
+r_int
+id|current_capacity
+(paren
+id|ide_drive_t
+op_star
+id|drive
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Start a reset operation for an IDE interface.&n; * The caller should return immediately after invoking this.&n; */

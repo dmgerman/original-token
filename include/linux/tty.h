@@ -809,6 +809,8 @@ DECL|macro|TTY_HW_COOK_IN
 mdefine_line|#define TTY_HW_COOK_IN 15
 DECL|macro|TTY_PTY_LOCK
 mdefine_line|#define TTY_PTY_LOCK 16
+DECL|macro|TTY_NO_WRITE_SPLIT
+mdefine_line|#define TTY_NO_WRITE_SPLIT 17
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 r_extern
