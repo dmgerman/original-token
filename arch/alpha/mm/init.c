@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt; /* max_low_pfn */
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
@@ -1131,6 +1132,7 @@ macro_line|#endif
 DECL|function|printk_memory_info
 r_static
 r_void
+id|__init
 id|printk_memory_info
 c_func
 (paren
@@ -1314,6 +1316,7 @@ l_int|10
 suffix:semicolon
 )brace
 r_void
+id|__init
 DECL|function|mem_init
 id|mem_init
 c_func
