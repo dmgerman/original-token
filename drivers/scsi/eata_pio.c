@@ -1786,7 +1786,7 @@ id|EATA_CMD_PIO_SEND_CP
 (brace
 id|cmd-&gt;result
 op_assign
-id|DID_ERROR
+id|DID_BUS_BUSY
 op_lshift
 l_int|16
 suffix:semicolon
@@ -1794,23 +1794,27 @@ id|printk
 c_func
 (paren
 l_string|&quot;eata_pio_queue target %d, pid %ld, HBA busy, returning &quot;
-l_string|&quot;DID_ERROR, done.&bslash;n&quot;
+l_string|&quot;DID_BUS_BUSY, done.&bslash;n&quot;
 comma
 id|cmd-&gt;target
 comma
 id|cmd-&gt;pid
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|done
 c_func
 (paren
 id|cmd
+)paren
+suffix:semicolon
+id|cp-&gt;status
+op_assign
+id|FREE
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_return

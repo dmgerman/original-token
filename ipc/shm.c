@@ -3354,6 +3354,8 @@ id|pte
 )paren
 )paren
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 r_return
@@ -3913,6 +3915,8 @@ id|pte
 )paren
 )paren
 )braket
+dot
+id|count
 op_decrement
 suffix:semicolon
 r_if
@@ -3965,6 +3969,8 @@ id|page
 )paren
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren

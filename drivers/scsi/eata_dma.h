@@ -9,7 +9,7 @@ mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 5
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;7b&quot;
+mdefine_line|#define VER_SUB   &quot;8&quot;
 multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of                      *&n; ************************************************************************/
 DECL|macro|CHECKPAL
 mdefine_line|#define CHECKPAL        0        /* EISA pal checking on/off            */
@@ -157,6 +157,7 @@ macro_line|#else
 DECL|macro|eata_release
 mdefine_line|#define eata_release NULL  
 macro_line|#endif
+macro_line|#include &lt;linux/scsicam.h&gt;
 DECL|macro|EATA_DMA
 mdefine_line|#define EATA_DMA {                   &bslash;&n;        NULL, NULL,                  &bslash;&n;        NULL,               /* proc_dir_entry */ &bslash;&n;        eata_proc_info,     /* procinfo       */ &bslash;&n;        &quot;EATA (Extended Attachment) HBA driver&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        eata_release,                &bslash;&n;&t;NULL, NULL,                  &bslash;&n;&t;eata_queue,                  &bslash;&n;&t;eata_abort,                  &bslash;&n;&t;eata_reset,                  &bslash;&n;&t;NULL,   /* Slave attach */   &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;&t;0,      /* Canqueue     */   &bslash;&n;&t;0,      /* this_id      */   &bslash;&n;&t;0,      /* sg_tablesize */   &bslash;&n;&t;0,      /* cmd_per_lun  */   &bslash;&n;&t;0,      /* present      */   &bslash;&n;&t;1,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
 macro_line|#endif /* _EATA_DMA_H */

@@ -237,8 +237,8 @@ id|mem_map
 (braket
 id|i
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
+dot
+id|reserved
 )paren
 id|reserved
 op_increment
@@ -252,6 +252,8 @@ id|mem_map
 (braket
 id|i
 )braket
+dot
+id|count
 )paren
 id|free
 op_increment
@@ -263,6 +265,8 @@ id|mem_map
 (braket
 id|i
 )braket
+dot
+id|count
 op_minus
 l_int|1
 suffix:semicolon
@@ -501,6 +505,8 @@ id|mem_map
 id|pfn
 op_increment
 )braket
+dot
+id|reserved
 op_assign
 l_int|0
 suffix:semicolon
@@ -649,8 +655,10 @@ c_func
 id|tmp
 )paren
 )braket
+dot
+id|reserved
 op_assign
-id|MAP_PAGE_RESERVED
+l_int|1
 suffix:semicolon
 id|tmp
 op_add_assign
@@ -699,6 +707,8 @@ c_func
 id|tmp
 )paren
 )braket
+dot
+id|reserved
 )paren
 r_continue
 suffix:semicolon
@@ -710,6 +720,8 @@ c_func
 id|tmp
 )paren
 )braket
+dot
+id|count
 op_assign
 l_int|1
 suffix:semicolon
@@ -795,8 +807,8 @@ id|mem_map
 (braket
 id|i
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
+dot
+id|reserved
 )paren
 r_continue
 suffix:semicolon
@@ -811,6 +823,8 @@ id|mem_map
 (braket
 id|i
 )braket
+dot
+id|count
 )paren
 r_continue
 suffix:semicolon
@@ -820,6 +834,8 @@ id|mem_map
 (braket
 id|i
 )braket
+dot
+id|count
 op_minus
 l_int|1
 suffix:semicolon

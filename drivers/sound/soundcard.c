@@ -2583,6 +2583,15 @@ id|mem_map
 (braket
 id|i
 )braket
+dot
+id|reserved
+op_logical_or
+id|mem_map
+(braket
+id|i
+)braket
+dot
+id|count
 )paren
 id|panic
 (paren
@@ -2593,8 +2602,10 @@ id|mem_map
 (braket
 id|i
 )braket
+dot
+id|reserved
 op_assign
-id|MAP_PAGE_RESERVED
+l_int|1
 suffix:semicolon
 )brace
 )brace

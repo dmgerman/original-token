@@ -756,7 +756,6 @@ id|pte
 OG
 id|high_memory
 op_logical_or
-(paren
 id|mem_map
 (braket
 id|MAP_NR
@@ -769,9 +768,8 @@ id|pte
 )paren
 )paren
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
-)paren
+dot
+id|reserved
 )paren
 (brace
 id|set_pte
@@ -855,6 +853,8 @@ id|pte
 )paren
 )paren
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 )brace
@@ -1423,8 +1423,8 @@ id|page
 )paren
 )paren
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
+dot
+id|reserved
 )paren
 r_return
 suffix:semicolon
@@ -2266,7 +2266,6 @@ id|offset
 op_ge
 id|high_memory
 op_logical_or
-(paren
 id|mem_map
 (braket
 id|MAP_NR
@@ -2275,9 +2274,8 @@ c_func
 id|offset
 )paren
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
-)paren
+dot
+id|reserved
 )paren
 id|set_pte
 c_func
@@ -2701,6 +2699,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren
@@ -3044,6 +3044,8 @@ c_func
 id|old_page
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren
@@ -3065,8 +3067,8 @@ c_func
 id|old_page
 )paren
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
+dot
+id|reserved
 )paren
 op_increment
 id|vma-&gt;vm_mm-&gt;rss
@@ -3970,8 +3972,8 @@ id|from
 )paren
 )paren
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
+dot
+id|reserved
 )paren
 r_return
 l_int|0
@@ -4239,6 +4241,8 @@ id|from
 )paren
 )paren
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 id|set_pte
@@ -4763,6 +4767,8 @@ id|page
 )paren
 )paren
 )braket
+dot
+id|count
 OG
 l_int|1
 op_logical_and
@@ -5084,6 +5090,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 OG
 l_int|1
 op_logical_and

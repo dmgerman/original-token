@@ -2380,6 +2380,8 @@ id|page
 )paren
 )paren
 )braket
+dot
+id|count
 OG
 l_int|1
 )paren

@@ -2610,9 +2610,11 @@ macro_line|#ifdef LOW_ELF_STACK
 r_if
 c_cond
 (paren
+(paren
 id|elf_ppnt-&gt;p_vaddr
 op_amp
 l_int|0xfffff000
+)paren
 OL
 id|elf_stack
 )paren

@@ -168,22 +168,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Dirty hack */
-macro_line|#if defined(CONFIG_PROC_FS)
-r_extern
-r_struct
-id|proc_dir_entry
-id|scsi_dir
-(braket
-)braket
-suffix:semicolon
-r_extern
-r_struct
-id|proc_dir_entry
-id|scsi_hba_dir
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 id|sys_tz
@@ -1086,6 +1070,12 @@ comma
 id|X
 c_func
 (paren
+id|kdevname
+)paren
+comma
+id|X
+c_func
+(paren
 id|simple_strtoul
 )paren
 comma
@@ -1610,20 +1600,6 @@ c_func
 id|resetup_one_dev
 )paren
 comma
-macro_line|#if defined(CONFIG_PROC_FS)
-id|X
-c_func
-(paren
-id|scsi_dir
-)paren
-comma
-id|X
-c_func
-(paren
-id|scsi_hba_dir
-)paren
-comma
-macro_line|#endif
 id|X
 c_func
 (paren

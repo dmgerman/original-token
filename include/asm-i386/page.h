@@ -140,12 +140,27 @@ DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)(addr)) &gt;&gt; PAGE_SHIFT)
-DECL|macro|MAP_PAGE_RESERVED
-mdefine_line|#define MAP_PAGE_RESERVED&t;(1&lt;&lt;15)
-DECL|typedef|mem_map_t
 r_typedef
+r_struct
+(brace
+DECL|member|count
 r_int
-r_int
+id|count
+suffix:colon
+l_int|30
+comma
+DECL|member|dirty
+id|dirty
+suffix:colon
+l_int|1
+comma
+DECL|member|reserved
+id|reserved
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|typedef|mem_map_t
+)brace
 id|mem_map_t
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

@@ -2665,6 +2665,8 @@ r_int
 id|bh-&gt;b_data
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 op_logical_or
@@ -2938,6 +2940,8 @@ r_int
 id|bh-&gt;b_data
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren
@@ -3148,6 +3152,8 @@ r_int
 id|bh-&gt;b_data
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 op_logical_or
@@ -3642,6 +3648,8 @@ r_int
 id|buf-&gt;b_data
 )paren
 )braket
+dot
+id|count
 OG
 l_int|1
 )paren
@@ -5018,6 +5026,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 id|read_buffers
@@ -5322,6 +5332,8 @@ c_func
 id|address
 )paren
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 id|buffer_pages
@@ -6357,6 +6369,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Consult the load average for buffers and decide whether or not&n; * we should shrink the buffers of one size or not.  If we decide yes,&n; * do it and return 1.  Else return 0.  Do not attempt to shrink size&n; * that is specified.&n; *&n; * I would prefer not to use a load average, but the way things are now it&n; * seems unavoidable.  The way to get rid of it would be to force clustering&n; * universally, so that when we reclaim buffers we always reclaim an entire&n; * page.  Doing this would mean that we all need to move towards QMAGIC.&n; */
@@ -7143,6 +7157,8 @@ id|bh-&gt;b_data
 )paren
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren
@@ -7349,6 +7365,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren

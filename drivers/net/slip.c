@@ -4280,19 +4280,16 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If not loadable module, a bootstrap Space.c slip_proto dev&n;&t; *  now needs to be unregistered.&n;&t; */
-macro_line|#ifndef MODULE
-multiline_comment|/*&t;printk(&quot;SLIP: Unregistering bootstrap device &quot;&n;&t;       &quot;&squot;slip_proto&squot; - slip OK&bslash;n&quot;);*/
-id|unregister_netdev
-c_func
-(paren
-id|dummy
-)paren
-suffix:semicolon
-macro_line|#endif
+macro_line|#ifdef MODULE
 r_return
 id|status
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Return &quot;not found&quot;, so that dev_init() will unlink&n;&t; * the placeholder device entry for us.&n;&t; */
+r_return
+id|ENODEV
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Initialize the SLIP driver.  Called by DDI. */
 r_int

@@ -1633,8 +1633,8 @@ c_func
 id|page
 )paren
 )braket
-op_amp
-id|MAP_PAGE_RESERVED
+dot
+id|reserved
 )paren
 r_return
 l_int|0
@@ -1748,6 +1748,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren
@@ -1839,6 +1841,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 op_ne
 l_int|1
 )paren
@@ -1919,6 +1923,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 suffix:semicolon
 id|free_page
 c_func
@@ -3154,9 +3160,17 @@ id|order
 r_if
 c_cond
 (paren
+id|MAP_NR
+c_func
+(paren
 id|addr
+)paren
 OL
+id|MAP_NR
+c_func
+(paren
 id|high_memory
+)paren
 )paren
 (brace
 r_int
@@ -3178,20 +3192,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|map
+id|map-&gt;reserved
 )paren
-(brace
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-op_star
-id|map
-op_amp
-id|MAP_PAGE_RESERVED
-)paren
+id|map-&gt;count
 )paren
 (brace
 id|save_flags
@@ -3210,8 +3218,7 @@ c_cond
 (paren
 op_logical_neg
 op_decrement
-op_star
-id|map
+id|map-&gt;count
 )paren
 (brace
 id|free_pages_ok
@@ -3238,8 +3245,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|map
+id|map-&gt;count
 op_eq
 l_int|1
 )paren
@@ -3249,7 +3255,6 @@ c_func
 id|addr
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -3320,7 +3325,7 @@ id|order
 suffix:semicolon
 )brace
 DECL|macro|EXPAND
-mdefine_line|#define EXPAND(addr,low,high) &bslash;&n;do { unsigned long size = PAGE_SIZE &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;high--; size &gt;&gt;= 1; cli(); &bslash;&n;&t;&t;add_mem_queue(free_area_list+high, addr); &bslash;&n;&t;&t;mark_used((unsigned long) addr, high); &bslash;&n;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;addr = (struct mem_list *) (size + (unsigned long) addr); &bslash;&n;&t;} mem_map[MAP_NR((unsigned long) addr)] = 1; &bslash;&n;} while (0)
+mdefine_line|#define EXPAND(addr,low,high) &bslash;&n;do { unsigned long size = PAGE_SIZE &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;high--; size &gt;&gt;= 1; cli(); &bslash;&n;&t;&t;add_mem_queue(free_area_list+high, addr); &bslash;&n;&t;&t;mark_used((unsigned long) addr, high); &bslash;&n;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;addr = (struct mem_list *) (size + (unsigned long) addr); &bslash;&n;&t;} mem_map[MAP_NR((unsigned long) addr)].count = 1; &bslash;&n;} while (0)
 DECL|function|__get_free_pages
 r_int
 r_int
@@ -4326,6 +4331,21 @@ op_star
 id|vma
 suffix:semicolon
 multiline_comment|/*&n;&t; * Go through process&squot; page directory.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p-&gt;mm
+op_logical_or
+id|pgd_inuse
+c_func
+(paren
+id|p-&gt;mm-&gt;pgd
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|vma
 op_assign
 id|p-&gt;mm-&gt;mmap
@@ -5802,7 +5822,7 @@ suffix:semicolon
 )brace
 DECL|macro|LONG_ALIGN
 mdefine_line|#define LONG_ALIGN(x) (((x)+(sizeof(long))-1)&amp;~((sizeof(long))-1))
-multiline_comment|/*&n; * set up the free-area data structures:&n; *   - mark all pages MAP_PAGE_RESERVED&n; *   - mark all memory queues empty&n; *   - clear the memory bitmaps&n; */
+multiline_comment|/*&n; * set up the free-area data structures:&n; *   - mark all pages reserved&n; *   - mark all memory queues empty&n; *   - clear the memory bitmaps&n; */
 DECL|function|free_area_init
 r_int
 r_int
@@ -5908,12 +5928,23 @@ id|p
 OG
 id|mem_map
 )paren
-op_star
+(brace
 op_decrement
 id|p
-op_assign
-id|MAP_PAGE_RESERVED
 suffix:semicolon
+id|p-&gt;count
+op_assign
+l_int|0
+suffix:semicolon
+id|p-&gt;dirty
+op_assign
+l_int|0
+suffix:semicolon
+id|p-&gt;reserved
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren

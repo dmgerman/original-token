@@ -971,8 +971,10 @@ c_func
 id|ForbiddenAddress
 )paren
 )braket
+dot
+id|reserved
 op_assign
-id|MAP_PAGE_RESERVED
+l_int|1
 suffix:semicolon
 )brace
 )brace

@@ -2770,6 +2770,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Device index to PCI BIOS calls */
+id|tpnt-&gt;proc_dir
+op_assign
+op_amp
+id|proc_scsi_ncr53c7xx
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3361,11 +3366,6 @@ id|TEMP_REG
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * I needed some variables in the script to be accessible to &n;     * both the NCR chip and the host processor. For these variables,&n;     * I made the arbitrary decision to store them directly in the &n;     * hostdata structure rather than in the RELATIVE area of the &n;     * SCRIPTS.&n;     */
-id|tpnt-&gt;proc_dir
-op_assign
-op_amp
-id|proc_scsi_ncr53c7xx
-suffix:semicolon
 id|patch_abs_rwri_data
 (paren
 id|hostdata-&gt;script

@@ -154,11 +154,13 @@ id|minor
 suffix:semicolon
 )brace
 macro_line|#else /* __KERNEL__ */
-multiline_comment|/*&n;Some unfortunate programs want their definitions of MAJOR and MINOR&n;from the kernel sources.&n;*/
+multiline_comment|/*&n;Some programs want their definitions of MAJOR and MINOR and MKDEV&n;from the kernel sources. These must be the externally visible ones.&n;*/
 DECL|macro|MAJOR
 mdefine_line|#define MAJOR(dev)&t;((dev)&gt;&gt;8)
 DECL|macro|MINOR
 mdefine_line|#define MINOR(dev)&t;((dev) &amp; 0xff)
+DECL|macro|MKDEV
+mdefine_line|#define MKDEV(ma,mi)&t;((ma)&lt;&lt;8 | (mi))
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

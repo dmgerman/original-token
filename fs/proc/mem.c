@@ -1551,6 +1551,8 @@ id|src_table
 )paren
 )paren
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 id|stmp

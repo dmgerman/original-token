@@ -2398,7 +2398,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|host-&gt;proc_dir
 op_assign
 op_amp
 id|proc_scsi_qlogic

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * PCI defines and function prototypes&n; * Copyright 1994, Drew Eckhardt&n; *&n; * For more information, please consult &n; * &n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; * &n; * Manuals are $25 each or $50 for all three, plus $7 shipping &n; * within the United States, $35 abroad.&n; */
-multiline_comment|/*&t;PROCEDURE TO REPORT NEW PCI DEVICES&n; * We are trying to collect informations on new PCI devices, using&n; * the standart PCI identification procedure. If some warning is&n; * displayed at boot time, please report &n; *&t;- /proc/pci&n; *&t;- your exact hardware description. Try to find out&n; *&t;  which device is unknown. It may be you mainboard chipset.&n; *&t;  PCI-CPU bridge or PCI-ISA bridge.&n; *&t;- Send all that to frederic@cao-vlsi.ibp.fr, and I&squot;ll add&n; *&t;  your device to the list as soon as possible&n; *&t;&t;fred.&n; */
+multiline_comment|/*&t;PROCEDURE TO REPORT NEW PCI DEVICES&n; * We are trying to collect informations on new PCI devices, using&n; * the standart PCI identification procedure. If some warning is&n; * displayed at boot time, please report &n; *&t;- /proc/pci&n; *&t;- your exact hardware description. Try to find out&n; *&t;  which device is unknown. It may be you mainboard chipset.&n; *&t;  PCI-CPU bridge or PCI-ISA bridge.&n; *&t;- If you can&squot;t find the actual information in your hardware&n; *&t;  booklet, try to read the references of the chip on the board.&n; *&t;- Send all that, with the word PCIPROBE in the subject,&n; *&t;  to frederic@cao-vlsi.ibp.fr, and I&squot;ll add your device to &n; *&t;  the list as soon as possible&n; *&t;&t;fred.&n; */
 macro_line|#ifndef PCI_H
 DECL|macro|PCI_H
 mdefine_line|#define PCI_H
@@ -388,6 +388,10 @@ DECL|macro|PCI_DEVICE_ID_SI_496
 mdefine_line|#define PCI_DEVICE_ID_SI_496&t;&t;0x0496
 DECL|macro|PCI_DEVICE_ID_SI_601
 mdefine_line|#define PCI_DEVICE_ID_SI_601&t;&t;0x0601
+DECL|macro|PCI_DEVICE_ID_SI_5511
+mdefine_line|#define PCI_DEVICE_ID_SI_5511&t;&t;0x5511
+DECL|macro|PCI_DEVICE_ID_SI_5513
+mdefine_line|#define PCI_DEVICE_ID_SI_5513&t;&t;0x5513
 DECL|macro|PCI_VENDOR_ID_HP
 mdefine_line|#define PCI_VENDOR_ID_HP&t;&t;0x103c
 DECL|macro|PCI_DEVICE_ID_HP_J2585A
@@ -466,6 +470,8 @@ DECL|macro|PCI_VENDOR_ID_CMD
 mdefine_line|#define PCI_VENDOR_ID_CMD&t;&t;0x1095
 DECL|macro|PCI_DEVICE_ID_CMD_640
 mdefine_line|#define PCI_DEVICE_ID_CMD_640&t;&t;0x0640
+DECL|macro|PCI_DEVICE_ID_CMD_646
+mdefine_line|#define PCI_DEVICE_ID_CMD_646&t;&t;0x0646
 DECL|macro|PCI_VENDOR_ID_VISION
 mdefine_line|#define PCI_VENDOR_ID_VISION&t;&t;0x1098
 DECL|macro|PCI_DEVICE_ID_VISION_QD8500
@@ -504,6 +510,10 @@ DECL|macro|PCI_VENDOR_ID_IMS
 mdefine_line|#define PCI_VENDOR_ID_IMS&t;&t;0x10e0
 DECL|macro|PCI_DEVICE_ID_IMS_8849
 mdefine_line|#define PCI_DEVICE_ID_IMS_8849&t;&t;0x8849
+DECL|macro|PCI_VENDOR_ID_REALTEK
+mdefine_line|#define PCI_VENDOR_ID_REALTEK&t;&t;0x10ec
+DECL|macro|PCI_DEVICE_ID_REALTEK_8300
+mdefine_line|#define PCI_DEVICE_ID_REALTEK_8300&t;0x8029
 DECL|macro|PCI_VENDOR_ID_VIA
 mdefine_line|#define PCI_VENDOR_ID_VIA&t;&t;0x1106
 DECL|macro|PCI_DEVICE_ID_VIA_82C505

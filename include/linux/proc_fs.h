@@ -851,11 +851,6 @@ suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
-id|proc_base_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
 id|proc_net_inode_operations
 suffix:semicolon
 r_extern

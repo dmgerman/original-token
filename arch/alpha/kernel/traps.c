@@ -226,25 +226,10 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|5000000000
-suffix:semicolon
-id|i
-op_increment
-)paren
-multiline_comment|/* pause */
-suffix:semicolon
-id|halt
+id|do_exit
 c_func
 (paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 )brace

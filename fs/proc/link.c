@@ -154,7 +154,7 @@ l_int|NULL
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This open routine is somewhat of a hack.... what we are doing is&n; * looking up the file structure of the newly opened proc fd file, and&n; * replacing it with the actual file structure of the process&squot;s file&n; * descriptor.  This allows plan 9 semantics, so that the returned&n; * file descriptor is an dup of the target file descriptor.&n; */
+multiline_comment|/*&n; * This open routine is somewhat of a hack.... what we are doing is&n; * looking up the file structure of the newly opened proc fd file, and&n; * replacing it with the actual file structure of the process&squot;s file&n; * descriptor.  This allows plan 9 semantics, so that the returned&n; * file descriptor is a dup of the target file descriptor.&n; */
 DECL|function|proc_fd_dupf
 r_static
 r_int

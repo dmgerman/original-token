@@ -534,6 +534,8 @@ id|mem_map
 (braket
 id|page
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 id|page
@@ -659,6 +661,8 @@ c_func
 id|page
 )paren
 )braket
+dot
+id|count
 op_increment
 suffix:semicolon
 )brace

@@ -1,7 +1,10 @@
-multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Sun Sep 10 13:26:02 1995 by root@kai.makisara.fi&n;*/
+multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Mon Sep 18 21:00:49 1995 by root@kai.makisara.fi&n;*/
 macro_line|#ifndef _ST_OPTIONS_H
 DECL|macro|_ST_OPTIONS_H
 mdefine_line|#define _ST_OPTIONS_H
+multiline_comment|/* The driver allocates the tape buffers when needed if ST_RUNTIME_BUFFERS&n;   is nonzero. Otherwise a number of buffers are allocated at initialization.&n;   The drawback of runtime allocation is that allocation may fail. In any&n;   case the driver tries to allocate a new tape buffer when none is free. */
+DECL|macro|ST_RUNTIME_BUFFERS
+mdefine_line|#define ST_RUNTIME_BUFFERS 0
 multiline_comment|/* The driver does not wait for some operations to finish before returning&n;   to the user program if ST_NOWAIT is non-zero. This helps if the SCSI&n;   adapter does not support multiple outstanding commands. However, the user&n;   should not give a new tape command before the previous one has finished. */
 DECL|macro|ST_NOWAIT
 mdefine_line|#define ST_NOWAIT 0
@@ -14,14 +17,9 @@ mdefine_line|#define ST_RECOVERED_WRITE_FATAL 0
 multiline_comment|/* The &quot;guess&quot; for the block size for devices that don&squot;t support MODE&n;   SENSE. */
 DECL|macro|ST_DEFAULT_BLOCK
 mdefine_line|#define ST_DEFAULT_BLOCK 0
-multiline_comment|/* The tape driver buffer size in kilobytes. When loading as module, the&n;   memory block being used is slightly less than a power of two, i.e.,&n;   a 64 kB block is used for a 32 kB buffer =&gt; we may as well use what is&n;   being allocated! */
-macro_line|#ifdef MODULE
-DECL|macro|ST_BUFFER_BLOCKS
-mdefine_line|#define ST_BUFFER_BLOCKS 63
-macro_line|#else
+multiline_comment|/* The tape driver buffer size in kilobytes. */
 DECL|macro|ST_BUFFER_BLOCKS
 mdefine_line|#define ST_BUFFER_BLOCKS 32
-macro_line|#endif
 multiline_comment|/* The number of kilobytes of data in the buffer that triggers an&n;   asynchronous write in fixed block mode. See also ST_ASYNC_WRITES&n;   below. */
 DECL|macro|ST_WRITE_THRESHOLD_BLOCKS
 mdefine_line|#define ST_WRITE_THRESHOLD_BLOCKS 30

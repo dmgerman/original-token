@@ -43,10 +43,8 @@ suffix:semicolon
 DECL|member|b_data
 r_int
 r_char
+op_star
 id|b_data
-(braket
-l_int|1
-)braket
 suffix:semicolon
 DECL|typedef|ST_buffer
 )brace

@@ -2398,7 +2398,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;Sum   : %12u %12u&bslash;n&quot;
+l_string|&quot;Sum   :%12u %12u&bslash;n&quot;
 comma
 id|SD
 c_func
