@@ -676,16 +676,13 @@ op_amp
 id|atari_mouse_fops
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_mouse_init
 r_int
+id|__init
 id|atari_mouse_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -745,11 +742,9 @@ DECL|macro|MIN_THRESHOLD
 mdefine_line|#define&t;MIN_THRESHOLD 1
 DECL|macro|MAX_THRESHOLD
 mdefine_line|#define&t;MAX_THRESHOLD 20&t;/* more seems not reasonable... */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_mouse_setup
 r_void
+id|__init
 id|atari_mouse_setup
 c_func
 (paren
@@ -760,7 +755,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if

@@ -2173,16 +2173,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------ */
 multiline_comment|/*&n; * Initialize driver. To be called from af_ax25 if not compiled as a&n; * module&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|bpq_init
 r_int
+id|__init
 id|bpq_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

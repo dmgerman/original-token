@@ -16989,17 +16989,14 @@ suffix:semicolon
 multiline_comment|/*&n; * Floppy Driver initialization&n; * =============================&n; */
 multiline_comment|/* Determine the floppy disk controller type */
 multiline_comment|/* This routine was written by David C. Niemi */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_fdc_version
 r_static
 r_char
+id|__init
 id|get_fdc_version
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -17393,12 +17390,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* get_fdc_version */
 multiline_comment|/* lilo configuration */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|floppy_set_flags
 r_static
 r_void
+id|__init
 id|floppy_set_flags
 c_func
 (paren
@@ -17411,7 +17406,6 @@ id|param
 comma
 r_int
 id|param2
-)paren
 )paren
 (brace
 r_int
@@ -17478,12 +17472,10 @@ id|param
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|daring
 r_static
 r_void
+id|__init
 id|daring
 c_func
 (paren
@@ -17496,7 +17488,6 @@ id|param
 comma
 r_int
 id|param2
-)paren
 )paren
 (brace
 r_int
@@ -17587,12 +17578,10 @@ l_string|&quot;broken&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|set_cmos
 r_static
 r_void
+id|__init
 id|set_cmos
 c_func
 (paren
@@ -17605,7 +17594,6 @@ id|dummy
 comma
 r_int
 id|dummy2
-)paren
 )paren
 (brace
 r_int
@@ -17746,11 +17734,9 @@ initialization_block
 suffix:semicolon
 DECL|macro|FLOPPY_SETUP
 mdefine_line|#define FLOPPY_SETUP
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|floppy_setup
 r_void
+id|__init
 id|floppy_setup
 c_func
 (paren
@@ -17761,7 +17747,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -17988,16 +17973,13 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|floppy_init
 r_int
+id|__init
 id|floppy_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -19231,19 +19213,16 @@ id|floppy
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|parse_floppy_cfg_string
 r_static
 r_void
+id|__init
 id|parse_floppy_cfg_string
 c_func
 (paren
 r_char
 op_star
 id|cfg
-)paren
 )paren
 (brace
 r_char
@@ -19329,12 +19308,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mod_setup
 r_static
 r_void
+id|__init
 id|mod_setup
 c_func
 (paren
@@ -19353,7 +19330,6 @@ op_star
 comma
 r_int
 op_star
-)paren
 )paren
 )paren
 (brace

@@ -7865,17 +7865,14 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* Driver initialisation */
 multiline_comment|/* Returns 1 if a drive is detected with a version string&n;   starting with &quot;DOLPHIN&quot;. Otherwise 0. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|version_ok
 r_static
 r_int
+id|__init
 id|version_ok
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_char
@@ -8171,11 +8168,9 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* Get kernel parameter when used as a kernel driver */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|optcd_setup
 r_void
+id|__init
 id|optcd_setup
 c_func
 (paren
@@ -8186,7 +8181,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -8208,16 +8202,13 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Test for presence of drive and initialize it. Called at boot time&n;   or during module initialisation. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|optcd_init
 r_int
+id|__init
 id|optcd_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

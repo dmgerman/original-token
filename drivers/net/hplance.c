@@ -151,11 +151,9 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Find all the HP Lance boards and initialise them... */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hplance_probe
 r_int
+id|__init
 id|hplance_probe
 c_func
 (paren
@@ -163,7 +161,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -266,11 +263,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Initialise a single lance board at the given select code */
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|hplance_init
 r_static
 r_int
+id|__init
 id|hplance_init
 c_func
 (paren
@@ -281,7 +277,6 @@ id|dev
 comma
 r_int
 id|scode
-)paren
 )paren
 (brace
 multiline_comment|/* const char *name = dio_scodetoname(scode); */

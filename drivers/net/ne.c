@@ -560,11 +560,9 @@ id|netcard_portlist
 suffix:semicolon
 macro_line|#else
 multiline_comment|/*&n; * Note that at boot, this probe only picks up one card at a time, even for&n; * multiple PCI ne2k cards. Use &quot;ether=0,0,eth1&quot; if you have a second PCI&n; * ne2k card.  This keeps things consistent regardless of the bus type of&n; * the card.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ne_probe
 r_int
+id|__init
 id|ne_probe
 c_func
 (paren
@@ -572,7 +570,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -706,12 +703,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ne_probe_pci
 r_static
 r_int
+id|__init
 id|ne_probe_pci
 c_func
 (paren
@@ -719,7 +714,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -899,12 +893,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif  /* CONFIG_PCI */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ne_probe1
 r_static
 r_int
+id|__init
 id|ne_probe1
 c_func
 (paren
@@ -915,7 +907,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

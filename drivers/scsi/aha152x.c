@@ -1,4 +1,4 @@
-multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: J&#xfffd;rgen E. Fischer, fischer@et-inf.fho-emden.de&n; * Copyright 1993, 1994, 1995, 1996 J&#xfffd;rgen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; *&n; * $Id: aha152x.c,v 1.18 1996/09/07 20:10:40 fischer Exp $&n; *&n; * $Log: aha152x.c,v $&n; * Revision 1.18  1996/09/07 20:10:40  fischer&n; * - fixed can_queue handling (multiple outstanding commands working again)&n; *&n; * Revision 1.17  1996/08/17 16:05:14  fischer&n; * - biosparam improved&n; * - interrupt verification&n; * - updated documentation&n; * - cleanups&n; *&n; * Revision 1.16  1996/06/09 00:04:56  root&n; * - added configuration symbols for insmod (aha152x/aha152x1)&n; *&n; * Revision 1.15  1996/04/30 14:52:06  fischer&n; * - proc info fixed&n; * - support for extended translation for &gt;1GB disks&n; *&n; * Revision 1.14  1996/01/17  15:11:20  fischer&n; * - fixed lockup in MESSAGE IN phase after reconnection&n; *&n; * Revision 1.13  1996/01/09  02:15:53  fischer&n; * - some cleanups&n; * - moved request_irq behind controller initialization&n; *   (to avoid spurious interrupts)&n; *&n; * Revision 1.12  1995/12/16  12:26:07  fischer&n; * - barrier()s added&n; * - configurable RESET delay added&n; *&n; * Revision 1.11  1995/12/06  21:18:35  fischer&n; * - some minor updates&n; *&n; * Revision 1.10  1995/07/22  19:18:45  fischer&n; * - support for 2 controllers&n; * - started synchronous data transfers (not working yet)&n; *&n; * Revision 1.9  1995/03/18  09:20:24  root&n; * - patches for PCMCIA and modules&n; *&n; * Revision 1.8  1995/01/21  22:07:19  root&n; * - snarf_region =&gt; request_region&n; * - aha152x_intr interface change&n; *&n; * Revision 1.7  1995/01/02  23:19:36  root&n; * - updated COMMAND_SIZE to cmd_len&n; * - changed sti() to restore_flags()&n; * - fixed some #ifdef which generated warnings&n; *&n; * Revision 1.6  1994/11/24  20:35:27  root&n; * - problem with odd number of bytes in fifo fixed&n; *&n; * Revision 1.5  1994/10/30  14:39:56  root&n; * - abort code fixed&n; * - debugging improved&n; *&n; * Revision 1.4  1994/09/12  11:33:01  root&n; * - irqaction to request_irq&n; * - abortion updated&n; *&n; * Revision 1.3  1994/08/04  13:53:05  root&n; * - updates for mid-level-driver changes&n; * - accept unexpected BUSFREE phase as error condition&n; * - parity check now configurable&n; *&n; * Revision 1.2  1994/07/03  12:56:36  root&n; * - cleaned up debugging code&n; * - more tweaking on reset delays&n; * - updated abort/reset code (pretty untested...)&n; *&n; * Revision 1.1  1994/05/28  21:18:49  root&n; * - update for mid-level interface change (abort-reset)&n; * - delays after resets adjusted for some slow devices&n; *&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n; *&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522 SCSI&n; host adapters.&n;&n;&n; CONFIGURATION ARGUMENTS:&n;&n;  IOPORT        base io address                           (0x340/0x140)&n;  IRQ           interrupt level                           (9-12; default 11)&n;  SCSI_ID       scsi id of controller                     (0-7; default 7)&n;  RECONNECT     allow targets to disconnect from the bus  (0/1; default 1 [on])&n;  PARITY        enable parity checking                    (0/1; default 1 [on])&n;  SYNCHRONOUS   enable synchronous transfers              (0/1; default 0 [off])&n;                (NOT WORKING YET)&n;  DELAY:        bus reset delay                           (default 100)&n;  EXT_TRANS:    enable extended translation               (0/1: default 0 [off])&n;                (see NOTES below)&n;&n; COMPILE TIME CONFIGURATION (put into AHA152X in drivers/scsi/Makefile):&n;&n; -DAUTOCONF&n;   use configuration the controller reports (AHA-152x only)&n;&n; -DSKIP_BIOSTEST&n;   Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n;&n; -DSETUP0=&quot;{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }&quot;&n;   override for the first controller &n;   &n; -DSETUP1=&quot;{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }&quot;&n;   override for the second controller&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;IOPORT&gt;[,&lt;IRQ&gt;[,&lt;SCSI-ID&gt;[,&lt;RECONNECT&gt;[,&lt;PARITY&gt;[,&lt;SYNCHRONOUS&gt;[,&lt;DELAY&gt; [,&lt;EXT_TRANS]]]]]]]&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known).  Don&squot;t use values that aren&squot;t supported under normal&n; operation.  If you think that you need other values: contact me.&n; For two controllers use the aha152x statement twice.&n;&n;&n; SYMBOLS FOR MODULE CONFIGURATION:&n; &n;  aha152x=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS&n;    configuration override of first controller&n;&n; &n;  aha152x1=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS&n;    configuration override of second controller&n;&n;&n; NOTES ON EXT_TRANS: &n;&n; SCSI uses block numbers to address blocks/sectors on a device.&n; The BIOS uses a cylinder/head/sector addressing scheme (C/H/S)&n; scheme instead.  DOS expects a BIOS or driver that understands this&n; C/H/S addressing.&n;&n; The number of cylinders/heads/sectors is called geometry and is required&n; as base for requests in C/H/S addressing.  SCSI only knows about the&n; total capacity of disks in blocks (sectors).&n;&n; Therefore the SCSI BIOS/DOS driver has to calculate a logical/virtual&n; geometry just to be able to support that addressing scheme.  The geometry&n; returned by the SCSI BIOS is a pure calculation and has nothing to&n; do with the real/physical geometry of the disk (which is usually&n; irrelevant anyway).&n;&n; Basically this has no impact at all on Linux, because it also uses block&n; instead of C/H/S addressing.  Unfortunately C/H/S addressing is also used&n; in the partition table and therefore every operating system has to know&n; the right geometry to be able to interpret it.&n;&n; Moreover there are certain limitations to the C/H/S addressing scheme,&n; namely the address space is limited to upto 255 heads, upto 63 sectors&n; and a maximum of 1023 cylinders.&n;&n; The AHA-1522 BIOS calculates the geometry by fixing the number of heads&n; to 64, the number of sectors to 32 and by calculating the number of&n; cylinders by dividing the capacity reported by the disk by 64*32 (1 MB).&n; This is considered to be the default translation.&n;&n; With respect to the limit of 1023 cylinders using C/H/S you can only&n; address the first GB of your disk in the partition table.  Therefore&n; BIOSes of some newer controllers based on the AIC-6260/6360 support&n; extended translation.  This means that the BIOS uses 255 for heads,&n; 63 for sectors and then divides the capacity of the disk by 255*63&n; (about 8 MB), as soon it sees a disk greater than 1 GB.  That results&n; in a maximum of about 8 GB addressable diskspace in the partition table&n; (but there are already bigger disks out there today).&n;&n; To make it even more complicated the translation mode might/might&n; not be configurable in certain BIOS setups.&n;&n; This driver does some more or less failsafe guessing to get the&n; geometry right in most cases:&n;&n; - for disks&lt;1GB: use default translation (C/32/64)&n; - for disks&gt;1GB:&n;   - take current geometry from the partition table&n;     (using scsicam_bios_param and accept only `valid&squot; geometries,&n;      ie. either (C/32/64) or (C/63/255)).  This can be extended&n;      translation even if it&squot;s not enabled in the driver.&n;   - if that fails, take extended translation if enabled by override,&n;     kernel or module parameter, otherwise take default translation and&n;     ask the user for verification.  This might on not yet partitioned&n;     disks or&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (ericy@cais.com) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
+multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: J&#xfffd;rgen E. Fischer, fischer@et-inf.fho-emden.de&n; * Copyright 1993, 1994, 1995, 1996 J&#xfffd;rgen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; *&n; * $Id: aha152x.c,v 1.18 1996/09/07 20:10:40 fischer Exp $&n; *&n; * $Log: aha152x.c,v $&n; * Revision 1.18  1996/09/07 20:10:40  fischer&n; * - fixed can_queue handling (multiple outstanding commands working again)&n; *&n; * Revision 1.17  1996/08/17 16:05:14  fischer&n; * - biosparam improved&n; * - interrupt verification&n; * - updated documentation&n; * - cleanups&n; *&n; * Revision 1.16  1996/06/09 00:04:56  root&n; * - added configuration symbols for insmod (aha152x/aha152x1)&n; *&n; * Revision 1.15  1996/04/30 14:52:06  fischer&n; * - proc info fixed&n; * - support for extended translation for &gt;1GB disks&n; *&n; * Revision 1.14  1996/01/17  15:11:20  fischer&n; * - fixed lockup in MESSAGE IN phase after reconnection&n; *&n; * Revision 1.13  1996/01/09  02:15:53  fischer&n; * - some cleanups&n; * - moved request_irq behind controller initialization&n; *   (to avoid spurious interrupts)&n; *&n; * Revision 1.12  1995/12/16  12:26:07  fischer&n; * - barrier()s added&n; * - configurable RESET delay added&n; *&n; * Revision 1.11  1995/12/06  21:18:35  fischer&n; * - some minor updates&n; *&n; * Revision 1.10  1995/07/22  19:18:45  fischer&n; * - support for 2 controllers&n; * - started synchronous data transfers (not working yet)&n; *&n; * Revision 1.9  1995/03/18  09:20:24  root&n; * - patches for PCMCIA and modules&n; *&n; * Revision 1.8  1995/01/21  22:07:19  root&n; * - snarf_region =&gt; request_region&n; * - aha152x_intr interface change&n; *&n; * Revision 1.7  1995/01/02  23:19:36  root&n; * - updated COMMAND_SIZE to cmd_len&n; * - changed sti() to restore_flags()&n; * - fixed some #ifdef which generated warnings&n; *&n; * Revision 1.6  1994/11/24  20:35:27  root&n; * - problem with odd number of bytes in fifo fixed&n; *&n; * Revision 1.5  1994/10/30  14:39:56  root&n; * - abort code fixed&n; * - debugging improved&n; *&n; * Revision 1.4  1994/09/12  11:33:01  root&n; * - irqaction to request_irq&n; * - abortion updated&n; *&n; * Revision 1.3  1994/08/04  13:53:05  root&n; * - updates for mid-level-driver changes&n; * - accept unexpected BUSFREE phase as error condition&n; * - parity check now configurable&n; *&n; * Revision 1.2  1994/07/03  12:56:36  root&n; * - cleaned up debugging code&n; * - more tweaking on reset delays&n; * - updated abort/reset code (pretty untested...)&n; *&n; * Revision 1.1  1994/05/28  21:18:49  root&n; * - update for mid-level interface change (abort-reset)&n; * - delays after resets adjusted for some slow devices&n; *&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n; *&n; **************************************************************************&n;&n;&n;&n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522 SCSI&n; host adapters.&n;&n;&n; CONFIGURATION ARGUMENTS:&n;&n; IOPORT        base io address                           (0x340/0x140)&n; IRQ           interrupt level                           (9-12; default 11)&n; SCSI_ID       scsi id of controller                     (0-7; default 7)&n; RECONNECT     allow targets to disconnect from the bus  (0/1; default 1 [on])&n; PARITY        enable parity checking                    (0/1; default 1 [on])&n; SYNCHRONOUS   enable synchronous transfers              (0/1; default 0 [off])&n; (NOT WORKING YET)&n; DELAY:        bus reset delay                           (default 100)&n; EXT_TRANS:    enable extended translation               (0/1: default 0 [off])&n; (see NOTES below)&n;&n; COMPILE TIME CONFIGURATION (put into AHA152X in drivers/scsi/Makefile):&n;&n; -DAUTOCONF&n; use configuration the controller reports (AHA-152x only)&n;&n; -DSKIP_BIOSTEST&n; Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n;&n; -DSETUP0=&quot;{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }&quot;&n; override for the first controller &n;&n; -DSETUP1=&quot;{ IOPORT, IRQ, SCSI_ID, RECONNECT, PARITY, SYNCHRONOUS, DELAY, EXT_TRANS }&quot;&n; override for the second controller&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;IOPORT&gt;[,&lt;IRQ&gt;[,&lt;SCSI-ID&gt;[,&lt;RECONNECT&gt;[,&lt;PARITY&gt;[,&lt;SYNCHRONOUS&gt;[,&lt;DELAY&gt; [,&lt;EXT_TRANS]]]]]]]&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known).  Don&squot;t use values that aren&squot;t supported under normal&n; operation.  If you think that you need other values: contact me.&n; For two controllers use the aha152x statement twice.&n;&n;&n; SYMBOLS FOR MODULE CONFIGURATION:&n;&n; aha152x=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS&n; configuration override of first controller&n;&n;&n; aha152x1=IOPORT,IRQ,SCSI_ID,RECONNECT,PARITY,SYNCHRONOUS,DELAY,EXT_TRANS&n; configuration override of second controller&n;&n;&n; NOTES ON EXT_TRANS: &n;&n; SCSI uses block numbers to address blocks/sectors on a device.&n; The BIOS uses a cylinder/head/sector addressing scheme (C/H/S)&n; scheme instead.  DOS expects a BIOS or driver that understands this&n; C/H/S addressing.&n;&n; The number of cylinders/heads/sectors is called geometry and is required&n; as base for requests in C/H/S addressing.  SCSI only knows about the&n; total capacity of disks in blocks (sectors).&n;&n; Therefore the SCSI BIOS/DOS driver has to calculate a logical/virtual&n; geometry just to be able to support that addressing scheme.  The geometry&n; returned by the SCSI BIOS is a pure calculation and has nothing to&n; do with the real/physical geometry of the disk (which is usually&n; irrelevant anyway).&n;&n; Basically this has no impact at all on Linux, because it also uses block&n; instead of C/H/S addressing.  Unfortunately C/H/S addressing is also used&n; in the partition table and therefore every operating system has to know&n; the right geometry to be able to interpret it.&n;&n; Moreover there are certain limitations to the C/H/S addressing scheme,&n; namely the address space is limited to upto 255 heads, upto 63 sectors&n; and a maximum of 1023 cylinders.&n;&n; The AHA-1522 BIOS calculates the geometry by fixing the number of heads&n; to 64, the number of sectors to 32 and by calculating the number of&n; cylinders by dividing the capacity reported by the disk by 64*32 (1 MB).&n; This is considered to be the default translation.&n;&n; With respect to the limit of 1023 cylinders using C/H/S you can only&n; address the first GB of your disk in the partition table.  Therefore&n; BIOSes of some newer controllers based on the AIC-6260/6360 support&n; extended translation.  This means that the BIOS uses 255 for heads,&n; 63 for sectors and then divides the capacity of the disk by 255*63&n; (about 8 MB), as soon it sees a disk greater than 1 GB.  That results&n; in a maximum of about 8 GB addressable diskspace in the partition table&n; (but there are already bigger disks out there today).&n;&n; To make it even more complicated the translation mode might/might&n; not be configurable in certain BIOS setups.&n;&n; This driver does some more or less failsafe guessing to get the&n; geometry right in most cases:&n;&n; - for disks&lt;1GB: use default translation (C/32/64)&n; - for disks&gt;1GB:&n; - take current geometry from the partition table&n; (using scsicam_bios_param and accept only `valid&squot; geometries,&n; ie. either (C/32/64) or (C/63/255)).  This can be extended&n; translation even if it&squot;s not enabled in the driver.&n; - if that fails, take extended translation if enabled by override,&n; kernel or module parameter, otherwise take default translation and&n; ask the user for verification.  This might on not yet partitioned&n; disks or&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n;&n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (ericy@cais.com) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
 macro_line|#ifdef PCMCIA
 DECL|macro|MODULE
 mdefine_line|#define MODULE
@@ -59,39 +59,39 @@ macro_line|#error define AUTOCONF or SETUP0
 macro_line|#endif
 macro_line|#if defined(DEBUG_AHA152X)
 DECL|macro|SKIP_PORTS
-macro_line|#undef  SKIP_PORTS              /* don&squot;t display ports */
+macro_line|#undef  SKIP_PORTS&t;&t;/* don&squot;t display ports */
 DECL|macro|DEBUG_QUEUE
-macro_line|#undef  DEBUG_QUEUE             /* debug queue() */
+macro_line|#undef  DEBUG_QUEUE&t;&t;/* debug queue() */
 DECL|macro|DEBUG_RESET
-macro_line|#undef  DEBUG_RESET             /* debug reset() */
+macro_line|#undef  DEBUG_RESET&t;&t;/* debug reset() */
 DECL|macro|DEBUG_INTR
-macro_line|#undef  DEBUG_INTR              /* debug intr() */
+macro_line|#undef  DEBUG_INTR&t;&t;/* debug intr() */
 DECL|macro|DEBUG_SELECTION
-macro_line|#undef  DEBUG_SELECTION         /* debug selection part in intr() */
+macro_line|#undef  DEBUG_SELECTION&t;&t;/* debug selection part in intr() */
 DECL|macro|DEBUG_MSGO
-macro_line|#undef  DEBUG_MSGO              /* debug message out phase in intr() */
+macro_line|#undef  DEBUG_MSGO&t;&t;/* debug message out phase in intr() */
 DECL|macro|DEBUG_MSGI
-macro_line|#undef  DEBUG_MSGI              /* debug message in phase in intr() */
+macro_line|#undef  DEBUG_MSGI&t;&t;/* debug message in phase in intr() */
 DECL|macro|DEBUG_STATUS
-macro_line|#undef  DEBUG_STATUS            /* debug status phase in intr() */
+macro_line|#undef  DEBUG_STATUS&t;&t;/* debug status phase in intr() */
 DECL|macro|DEBUG_CMD
-macro_line|#undef  DEBUG_CMD               /* debug command phase in intr() */
+macro_line|#undef  DEBUG_CMD&t;&t;/* debug command phase in intr() */
 DECL|macro|DEBUG_DATAI
-macro_line|#undef  DEBUG_DATAI             /* debug data in phase in intr() */
+macro_line|#undef  DEBUG_DATAI&t;&t;/* debug data in phase in intr() */
 DECL|macro|DEBUG_DATAO
-macro_line|#undef  DEBUG_DATAO             /* debug data out phase in intr() */
+macro_line|#undef  DEBUG_DATAO&t;&t;/* debug data out phase in intr() */
 DECL|macro|DEBUG_ABORT
-macro_line|#undef  DEBUG_ABORT             /* debug abort() */
+macro_line|#undef  DEBUG_ABORT&t;&t;/* debug abort() */
 DECL|macro|DEBUG_DONE
-macro_line|#undef  DEBUG_DONE              /* debug done() */
+macro_line|#undef  DEBUG_DONE&t;&t;/* debug done() */
 DECL|macro|DEBUG_BIOSPARAM
-macro_line|#undef  DEBUG_BIOSPARAM         /* debug biosparam() */
+macro_line|#undef  DEBUG_BIOSPARAM&t;&t;/* debug biosparam() */
 DECL|macro|DEBUG_RACE
-macro_line|#undef  DEBUG_RACE              /* debug race conditions */
+macro_line|#undef  DEBUG_RACE&t;&t;/* debug race conditions */
 DECL|macro|DEBUG_PHASES
-macro_line|#undef  DEBUG_PHASES            /* debug phases (useful to trace) */
+macro_line|#undef  DEBUG_PHASES&t;&t;/* debug phases (useful to trace) */
 DECL|macro|DEBUG_QUEUES
-macro_line|#undef  DEBUG_QUEUES            /* debug reselection */
+macro_line|#undef  DEBUG_QUEUES&t;&t;/* debug reselection */
 multiline_comment|/* recently used for debugging */
 macro_line|#if 0
 macro_line|#endif
@@ -850,8 +850,8 @@ c_func
 r_int
 id|amount
 )paren
-multiline_comment|/* Pause for amount*10 milliseconds */
 (brace
+multiline_comment|/* Pause for amount*10 milliseconds */
 r_int
 r_int
 id|the_time
@@ -916,13 +916,11 @@ op_logical_neg
 op_star
 id|SC
 )paren
-(brace
 op_star
 id|SC
 op_assign
 id|new_SC
 suffix:semicolon
-)brace
 r_else
 (brace
 r_for
@@ -943,9 +941,7 @@ op_star
 )paren
 id|end-&gt;host_scribble
 )paren
-(brace
 suffix:semicolon
-)brace
 id|end-&gt;host_scribble
 op_assign
 (paren
@@ -985,7 +981,6 @@ c_cond
 (paren
 id|ptr
 )paren
-(brace
 op_star
 id|SC
 op_assign
@@ -1000,7 +995,6 @@ id|SC
 op_member_access_from_pointer
 id|host_scribble
 suffix:semicolon
-)brace
 r_return
 id|ptr
 suffix:semicolon
@@ -1072,9 +1066,7 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1086,12 +1078,10 @@ c_cond
 (paren
 id|prev
 )paren
-(brace
 id|prev-&gt;host_scribble
 op_assign
 id|ptr-&gt;host_scribble
 suffix:semicolon
-)brace
 r_else
 op_star
 id|SC
@@ -1155,13 +1145,11 @@ comma
 id|ACKI
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * detect current phase more reliable:&n; * phase is valid, when the target asserts REQ after we&squot;ve deasserted ACK.&n; *&n; * return value is a valid phase or an error code.&n; *&n; * errorcodes:&n; *   P_BUSFREE   BUS FREE phase detected&n; *   P_PARITY    parity error in DATA phase&n; */
 DECL|function|getphase
@@ -1213,13 +1201,11 @@ id|REQINIT
 )paren
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1227,11 +1213,9 @@ id|sstat1
 op_amp
 id|BUSFREE
 )paren
-(brace
 r_return
 id|P_BUSFREE
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1275,9 +1259,7 @@ comma
 id|REQINIT
 )paren
 )paren
-(brace
 suffix:semicolon
-)brace
 id|SETPORT
 c_func
 (paren
@@ -1323,12 +1305,10 @@ id|MSGO
 op_eq
 l_int|0
 )paren
-(brace
 multiline_comment|/* DATA phase */
 r_return
 id|P_PARITY
 suffix:semicolon
-)brace
 id|make_acklow
 c_func
 (paren
@@ -1364,14 +1344,12 @@ id|setup_count
 OG
 l_int|2
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;aha152x: you can only configure up to two controllers&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|setup
 (braket
 id|setup_count
@@ -1650,11 +1628,9 @@ comma
 id|IO_RANGE
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|SETPORT
 c_func
 (paren
@@ -1680,7 +1656,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|SETPORT
 c_func
 (paren
@@ -1691,7 +1666,6 @@ comma
 id|i
 )paren
 suffix:semicolon
-)brace
 id|SETPORT
 c_func
 (paren
@@ -1727,13 +1701,13 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 suffix:semicolon
-)brace
 r_return
+(paren
 id|i
 op_eq
 l_int|16
+)paren
 suffix:semicolon
 )brace
 DECL|function|aha152x_checksetup
@@ -1774,9 +1748,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1784,11 +1756,9 @@ id|i
 op_eq
 id|PORT_COUNT
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -1800,11 +1770,9 @@ c_func
 id|setup-&gt;io_port
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1820,11 +1788,9 @@ OG
 id|IRQ_MAX
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1840,11 +1806,9 @@ OG
 l_int|7
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1860,11 +1824,9 @@ OG
 l_int|1
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1880,11 +1842,9 @@ OG
 l_int|1
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1900,11 +1860,9 @@ OG
 l_int|1
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1920,11 +1878,9 @@ OG
 l_int|1
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -1965,14 +1921,12 @@ c_cond
 op_logical_neg
 id|shpnt
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;aha152x: catched software interrupt for unknown controller.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|HOSTDATA
 c_func
 (paren
@@ -2024,7 +1978,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|aha152x_host
 (braket
 id|i
@@ -2037,7 +1990,6 @@ op_star
 )paren
 l_int|NULL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2416,11 +2368,9 @@ id|setup_count
 )braket
 )paren
 )paren
-(brace
 id|setup_count
 op_increment
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -2632,11 +2582,9 @@ id|setup_count
 )braket
 )paren
 )paren
-(brace
 id|setup_count
 op_increment
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -2752,7 +2700,6 @@ suffix:semicolon
 id|j
 op_increment
 )paren
-(brace
 id|ok
 op_assign
 id|check_signature
@@ -2785,7 +2732,6 @@ dot
 id|sig_length
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2796,11 +2742,9 @@ id|setup_count
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -2814,7 +2758,7 @@ c_func
 l_string|&quot;aha152x: &quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* !SKIP_BIOSTEST */
+macro_line|#endif&t;&t;&t;&t;/* !SKIP_BIOSTEST */
 id|ok
 op_assign
 l_int|0
@@ -2861,10 +2805,8 @@ id|i
 )braket
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3009,14 +2951,12 @@ c_cond
 (paren
 id|ok
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;auto configuration: ok, &quot;
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif
 id|printk
@@ -3283,7 +3223,6 @@ suffix:semicolon
 id|j
 op_increment
 )paren
-(brace
 id|HOSTDATA
 c_func
 (paren
@@ -3297,7 +3236,6 @@ id|j
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 id|SETPORT
 c_func
 (paren
@@ -3332,12 +3270,10 @@ id|i
 dot
 id|reconnect
 )paren
-(brace
 id|shpnt-&gt;can_queue
 op_assign
 id|AHA152X_MAXQUEUE
 suffix:semicolon
-)brace
 multiline_comment|/* RESET OUT */
 id|SETBITS
 c_func
@@ -3521,7 +3457,6 @@ op_eq
 op_minus
 id|EINVAL
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3532,7 +3467,6 @@ comma
 id|shpnt-&gt;irq
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -3542,7 +3476,6 @@ op_eq
 op_minus
 id|EBUSY
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3553,7 +3486,6 @@ comma
 id|shpnt-&gt;irq
 )paren
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -3654,13 +3586,11 @@ comma
 id|the_time
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 id|free_irq
 c_func
 (paren
@@ -3911,14 +3841,12 @@ id|debug
 op_amp
 id|debug_queue
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;aha152x: queue(), &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(DEBUG_QUEUE)
@@ -3976,7 +3904,7 @@ id|SCpnt-&gt;scsi_done
 op_assign
 id|done
 suffix:semicolon
-multiline_comment|/* setup scratch area&n;     SCp.ptr              : buffer pointer&n;     SCp.this_residual    : buffer length&n;     SCp.buffer           : next buffer&n;     SCp.buffers_residual : left buffers in list&n;     SCp.phase            : current state of the command */
+multiline_comment|/* setup scratch area&n;&t;   SCp.ptr              : buffer pointer&n;&t;   SCp.this_residual    : buffer length&n;&t;   SCp.buffer           : next buffer&n;&t;   SCp.buffers_residual : left buffers in list&n;&t;   SCp.phase            : current state of the command */
 id|SCpnt-&gt;SCp.phase
 op_assign
 id|not_issued
@@ -4084,7 +4012,6 @@ id|commands
 op_eq
 l_int|1
 )paren
-(brace
 id|SETPORT
 c_func
 (paren
@@ -4093,7 +4020,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_QUEUES)
 r_if
 c_cond
@@ -4108,7 +4034,6 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -4123,7 +4048,6 @@ op_member_access_from_pointer
 id|commands
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|append_SC
 c_func
@@ -4314,9 +4238,7 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4329,12 +4251,10 @@ c_cond
 (paren
 id|prev
 )paren
-(brace
 id|prev-&gt;host_scribble
 op_assign
 id|ptr-&gt;host_scribble
 suffix:semicolon
-)brace
 r_else
 id|ISSUE_SC
 op_assign
@@ -4369,6 +4289,15 @@ id|DID_ABORT
 op_lshift
 l_int|16
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|ptr
 op_member_access_from_pointer
 id|scsi_done
@@ -4377,11 +4306,20 @@ c_func
 id|ptr
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/* if the bus is busy or a command is currently processed,&n;     we can&squot;t do anything more */
+multiline_comment|/* if the bus is busy or a command is currently processed,&n;&t;   we can&squot;t do anything more */
 r_if
 c_cond
 (paren
@@ -4409,14 +4347,12 @@ c_cond
 op_logical_neg
 id|CURRENT_SC
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;bus busy w/o current command, &quot;
 )paren
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -4450,6 +4386,15 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|CURRENT_SC-&gt;result
 op_assign
 id|DID_ERROR
@@ -4471,6 +4416,15 @@ id|Scsi_Cmnd
 op_star
 )paren
 l_int|NULL
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 r_return
 id|SCSI_ABORT_SUCCESS
@@ -4506,9 +4460,7 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4552,12 +4504,10 @@ c_cond
 (paren
 id|prev
 )paren
-(brace
 id|prev-&gt;host_scribble
 op_assign
 id|ptr-&gt;host_scribble
 suffix:semicolon
-)brace
 r_else
 id|DISCONNECTED_SC
 op_assign
@@ -4576,7 +4526,7 @@ op_member_access_from_pointer
 id|commands
 op_decrement
 suffix:semicolon
-multiline_comment|/* set command current and initiate selection,&n;       let the interrupt routine take care of the abortion */
+multiline_comment|/* set command current and initiate selection,&n;&t;&t;   let the interrupt routine take care of the abortion */
 id|CURRENT_SC
 op_assign
 id|ptr
@@ -4700,13 +4650,11 @@ id|shpnt
 op_member_access_from_pointer
 id|abortion_complete
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 id|HOSTDATA
 c_func
 (paren
@@ -5012,12 +4960,30 @@ id|DID_RESET
 op_lshift
 l_int|16
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|ptr
 op_member_access_from_pointer
 id|scsi_done
 c_func
 (paren
 id|CURRENT_SC
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|CURRENT_SC
@@ -5062,12 +5028,10 @@ c_cond
 (paren
 id|prev
 )paren
-(brace
 id|prev-&gt;host_scribble
 op_assign
 id|ptr-&gt;host_scribble
 suffix:semicolon
-)brace
 r_else
 id|DISCONNECTED_SC
 op_assign
@@ -5095,12 +5059,30 @@ id|DID_RESET
 op_lshift
 l_int|16
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|ptr
 op_member_access_from_pointer
 id|scsi_done
 c_func
 (paren
 id|ptr
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|ptr
@@ -5266,7 +5248,6 @@ id|debug
 op_amp
 id|debug_biosparam
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -5281,7 +5262,6 @@ comma
 id|disk-&gt;capacity
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* try default translation */
 id|info_array
@@ -5611,7 +5591,6 @@ id|debug
 op_amp
 id|debug_done
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -5620,7 +5599,6 @@ comma
 id|error
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|save_flags
 c_func
@@ -5663,7 +5641,6 @@ id|shpnt
 op_member_access_from_pointer
 id|commands
 )paren
-(brace
 id|SETPORT
 c_func
 (paren
@@ -5672,7 +5649,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* turn led off */
 macro_line|#if defined(DEBUG_QUEUES)
 r_if
@@ -5688,7 +5664,6 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -5703,7 +5678,6 @@ op_member_access_from_pointer
 id|commands
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|restore_flags
 c_func
@@ -5753,14 +5727,12 @@ id|debug
 op_amp
 id|debug_phases
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;BUS FREE loop, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_while
 c_loop
@@ -5773,13 +5745,11 @@ comma
 id|BUSFREE
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_PHASES)
 r_if
 c_cond
@@ -5794,14 +5764,12 @@ id|debug
 op_amp
 id|debug_phases
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;BUS FREE&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#endif
 id|done_SC-&gt;result
@@ -5828,21 +5796,37 @@ id|debug
 op_amp
 id|debug_done
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;calling scsi_done, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|done_SC
 op_member_access_from_pointer
 id|scsi_done
 c_func
 (paren
 id|done_SC
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_DONE)
@@ -5859,14 +5843,12 @@ id|debug
 op_amp
 id|debug_done
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;done returned, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 r_else
@@ -5903,7 +5885,7 @@ r_struct
 id|tq_struct
 id|aha152x_tq
 suffix:semicolon
-multiline_comment|/*&n; *&t;Run service completions on the card with interrupts enabled.&n; */
+multiline_comment|/*&n; *    Run service completions on the card with interrupts enabled.&n; */
 DECL|function|aha152x_run
 r_static
 r_void
@@ -5974,7 +5956,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; *&t;Interrupts handler (main routine of the driver)&n; */
+multiline_comment|/*&n; *    Interrupts handler (main routine of the driver)&n; */
 DECL|function|aha152x_intr
 r_static
 r_void
@@ -6028,14 +6010,12 @@ id|debug
 op_amp
 id|debug_intr
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;naha152x: intr(), &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#endif
 r_if
@@ -6044,14 +6024,12 @@ c_cond
 op_logical_neg
 id|shpnt
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;aha152x: catched interrupt for unknown controller.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* no more interrupts from the controller, while we&squot;re busy.&n;&t;   INTEN is restored by the BH handler */
 id|CLRBITS
 c_func
@@ -6153,7 +6131,7 @@ id|target
 comma
 id|i
 suffix:semicolon
-multiline_comment|/* Avoid conflicts when a target reconnects&n;       while we are trying to connect to another. */
+multiline_comment|/* Avoid conflicts when a target reconnects&n;&t;&t;   while we are trying to connect to another. */
 r_if
 c_cond
 (paren
@@ -6174,14 +6152,12 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;i+, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|save_flags
 c_func
@@ -6257,14 +6233,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;reselected, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|i
 op_assign
@@ -6292,7 +6266,6 @@ id|i
 op_eq
 l_int|0
 )paren
-(brace
 id|aha152x_panic
 c_func
 (paren
@@ -6301,7 +6274,6 @@ comma
 l_string|&quot;reconnecting target unknown&quot;
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -6321,9 +6293,7 @@ id|i
 op_rshift_assign
 l_int|1
 )paren
-(brace
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_QUEUES)
 r_if
 c_cond
@@ -6338,7 +6308,6 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -6353,7 +6322,6 @@ comma
 id|target
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|SETPORT
 c_func
@@ -6388,7 +6356,6 @@ comma
 id|SELDI
 )paren
 )paren
-(brace
 id|aha152x_panic
 c_func
 (paren
@@ -6397,7 +6364,6 @@ comma
 l_string|&quot;RESELI failed&quot;
 )paren
 suffix:semicolon
-)brace
 id|SETPORT
 c_func
 (paren
@@ -6527,7 +6493,6 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -6540,7 +6505,6 @@ op_amp
 l_int|0x3f
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|save_flags
 c_func
@@ -6567,14 +6531,12 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;d-, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CURRENT_SC
 op_assign
@@ -6732,14 +6694,12 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;i-, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CURRENT_SC
 op_assign
@@ -6776,14 +6736,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;issuing command, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CURRENT_SC-&gt;SCp.phase
 op_assign
@@ -6809,7 +6767,6 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -6818,7 +6775,6 @@ comma
 id|CURRENT_SC-&gt;target
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|SETPORT
 c_func
@@ -6973,14 +6929,12 @@ id|debug
 op_amp
 id|debug_intr
 )paren
-(brace
 id|disp_ports
 c_func
 (paren
 id|shpnt
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* we are waiting for the result of a selection attempt */
 r_if
@@ -7146,7 +7100,6 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -7159,7 +7112,6 @@ id|SELID
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* selection was done */
 id|SETPORT
@@ -7192,14 +7144,12 @@ op_amp
 id|aborted
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;(ABORT) target selected, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CURRENT_SC-&gt;SCp.phase
 op_and_assign
@@ -7390,14 +7340,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELTO, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* end selection attempt */
 id|CLRBITS
@@ -7483,14 +7431,12 @@ id|debug
 op_amp
 id|debug_abort
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;(ABORT) selection timeout, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|HOSTDATA
 c_func
@@ -7523,7 +7469,6 @@ comma
 id|SELINGO
 )paren
 )paren
-(brace
 multiline_comment|/* ARBITRATION not won */
 id|aha152x_done
 c_func
@@ -7535,7 +7480,6 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-)brace
 r_else
 multiline_comment|/* ARBITRATION won, but SELECTION failed */
 id|aha152x_done
@@ -7572,7 +7516,6 @@ op_complement
 id|P_MASK
 )paren
 )paren
-(brace
 multiline_comment|/* &quot;real&quot; phase */
 id|SETPORT
 c_func
@@ -7582,7 +7525,6 @@ comma
 id|phase
 )paren
 suffix:semicolon
-)brace
 id|SETPORT
 c_func
 (paren
@@ -7657,14 +7599,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;MESSAGE OUT, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -7694,14 +7634,12 @@ id|debug
 op_amp
 id|debug_msgo
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;unexpected MESSAGE OUT phase; rejecting, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 id|CLRBITS
@@ -7744,13 +7682,11 @@ comma
 id|INTSTAT
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_MSGO)
 r_if
 c_cond
@@ -7805,9 +7741,7 @@ c_func
 l_string|&quot; &quot;
 )paren
 )paren
-(brace
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -7853,7 +7787,6 @@ id|debug
 op_amp
 id|debug_msgo
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -7866,7 +7799,6 @@ id|i
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -7935,11 +7867,9 @@ comma
 id|CURRENT_SC-&gt;lun
 )paren
 )paren
-(brace
 id|identify
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7951,11 +7881,9 @@ id|i
 op_eq
 id|ABORT
 )paren
-(brace
 m_abort
 op_increment
 suffix:semicolon
-)brace
 )brace
 id|MSGLEN
 op_assign
@@ -7966,12 +7894,10 @@ c_cond
 (paren
 id|identify
 )paren
-(brace
 id|CURRENT_SC-&gt;SCp.phase
 op_or_assign
 id|sent_ident
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -8064,14 +7990,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;COMMAND, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -8125,13 +8049,11 @@ comma
 id|INTSTAT
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -8194,7 +8116,6 @@ comma
 id|PHASEMIS
 )paren
 )paren
-(brace
 id|aha152x_panic
 c_func
 (paren
@@ -8203,7 +8124,6 @@ comma
 l_string|&quot;target left COMMAND&quot;
 )paren
 suffix:semicolon
-)brace
 id|CURRENT_SC-&gt;SCp.sent_command
 op_increment
 suffix:semicolon
@@ -8249,14 +8169,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;MESSAGE IN, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|SETPORT
 c_func
@@ -8325,14 +8243,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;target disconnected, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CURRENT_SC-&gt;SCp.Message
 op_assign
@@ -8354,7 +8270,6 @@ id|shpnt
 op_member_access_from_pointer
 id|reconnect
 )paren
-(brace
 id|aha152x_panic
 c_func
 (paren
@@ -8363,7 +8278,6 @@ comma
 l_string|&quot;target was not allowed to disconnect&quot;
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -8387,14 +8301,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;inbound message (COMMAND COMPLETE), &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|done
 op_increment
@@ -8449,14 +8361,12 @@ id|debug
 op_amp
 id|debug_msgi
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;inbound message (MESSAGE REJECT), &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_break
 suffix:semicolon
@@ -8477,14 +8387,12 @@ id|debug
 op_amp
 id|debug_msgi
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;inbound message (SAVE DATA POINTERS), &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_break
 suffix:semicolon
@@ -8505,14 +8413,12 @@ id|debug
 op_amp
 id|debug_msgi
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;inbound message (RESTORE DATA POINTERS), &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_break
 suffix:semicolon
@@ -8543,14 +8449,12 @@ id|debug
 op_amp
 id|debug_msgi
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;inbound message (EXTENDED MESSAGE), &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|make_acklow
 c_func
@@ -8569,10 +8473,8 @@ id|shpnt
 op_ne
 id|P_MSGI
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|buffer
 (braket
 l_int|0
@@ -8624,7 +8526,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|buffer
 (braket
 l_int|2
@@ -8638,7 +8539,6 @@ c_func
 id|SCSIDAT
 )paren
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_MSGI)
 r_if
 c_cond
@@ -8653,14 +8553,12 @@ id|debug
 op_amp
 id|debug_msgi
 )paren
-(brace
 id|print_msg
 c_func
 (paren
 id|buffer
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_switch
 c_cond
@@ -8688,7 +8586,6 @@ l_int|1
 op_ne
 l_int|3
 )paren
-(brace
 id|aha152x_panic
 c_func
 (paren
@@ -8697,7 +8594,6 @@ comma
 l_string|&quot;SDTR message length != 3&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -8710,10 +8606,8 @@ id|shpnt
 op_member_access_from_pointer
 id|synchronous
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -8764,7 +8658,6 @@ l_int|4
 template_param
 l_int|8
 )paren
-(brace
 id|aha152x_panic
 c_func
 (paren
@@ -8773,7 +8666,6 @@ comma
 l_string|&quot;received SDTR invalid&quot;
 )paren
 suffix:semicolon
-)brace
 id|SYNCRATE
 op_or_assign
 (paren
@@ -8818,7 +8710,6 @@ l_int|4
 OG
 l_int|8
 )paren
-(brace
 id|buffer
 (braket
 l_int|4
@@ -8826,7 +8717,6 @@ l_int|4
 op_assign
 l_int|8
 suffix:semicolon
-)brace
 id|ADDMSG
 c_func
 (paren
@@ -9010,12 +8900,10 @@ c_cond
 (paren
 id|start_sync
 )paren
-(brace
 id|CURRENT_SC-&gt;SCp.phase
 op_or_assign
 id|in_sync
 suffix:semicolon
-)brace
 r_else
 id|CURRENT_SC-&gt;SCp.phase
 op_and_assign
@@ -9029,7 +8917,6 @@ id|MSGLEN
 OG
 l_int|0
 )paren
-(brace
 id|SETPORT
 c_func
 (paren
@@ -9040,7 +8927,6 @@ op_or
 id|ATNO
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* clear SCSI fifo on BUSFREE */
 r_if
 c_cond
@@ -9049,7 +8935,6 @@ id|phase
 op_eq
 id|P_BUSFREE
 )paren
-(brace
 id|SETPORT
 c_func
 (paren
@@ -9060,7 +8945,6 @@ op_or
 id|CLRCH1
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -9094,14 +8978,12 @@ id|debug
 op_amp
 id|debug_queues
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;d+, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|append_SC
 c_func
@@ -9200,14 +9082,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;STATUS, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|SETPORT
 c_func
@@ -9246,14 +9126,12 @@ comma
 id|PHASEMIS
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;aha152x: passing STATUS phase&quot;
 )paren
 suffix:semicolon
-)brace
 id|CURRENT_SC-&gt;SCp.Status
 op_assign
 id|GETPORT
@@ -9343,14 +9221,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;DATA IN, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#if 0
 r_if
@@ -9374,7 +9250,6 @@ op_or
 id|SFCNT
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9399,7 +9274,6 @@ id|SFCNT
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* reset host fifo */
 id|SETPORT
@@ -9477,14 +9351,12 @@ id|debug
 op_amp
 id|debug_datai
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;expecting data, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* wait for PHASEMIS or full FIFO */
 r_while
@@ -9500,13 +9372,11 @@ op_or
 id|INTSTAT
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_DATAI)
 r_if
 c_cond
@@ -9521,14 +9391,12 @@ id|debug
 op_amp
 id|debug_datai
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ok, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -9541,7 +9409,6 @@ comma
 id|DFIFOFULL
 )paren
 )paren
-(brace
 id|fifodata
 op_assign
 id|GETPORT
@@ -9550,7 +9417,6 @@ c_func
 id|FIFOSTAT
 )paren
 suffix:semicolon
-)brace
 r_else
 (brace
 multiline_comment|/* wait for SCSI fifo to get empty */
@@ -9565,13 +9431,11 @@ comma
 id|SEMPTY
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* rest of data in FIFO */
 id|fifodata
 op_assign
@@ -9595,14 +9459,12 @@ id|debug
 op_amp
 id|debug_datai
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;last transfer, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|done
 op_assign
@@ -9623,7 +9485,6 @@ id|debug
 op_amp
 id|debug_datai
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9632,7 +9493,6 @@ comma
 id|fifodata
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_while
 c_loop
@@ -9654,12 +9514,10 @@ id|data_count
 OG
 id|CURRENT_SC-&gt;SCp.this_residual
 )paren
-(brace
 id|data_count
 op_assign
 id|CURRENT_SC-&gt;SCp.this_residual
 suffix:semicolon
-)brace
 id|fifodata
 op_sub_assign
 id|data_count
@@ -9678,7 +9536,6 @@ id|debug
 op_amp
 id|debug_datai
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9687,7 +9544,6 @@ comma
 id|data_count
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -9828,7 +9684,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9839,7 +9694,6 @@ id|data
 op_increment
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -9889,7 +9743,7 @@ id|CURRENT_SC-&gt;SCp.buffer-&gt;length
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;         * FIFO should be empty&n;         */
+multiline_comment|/*&n;&t;&t;&t;&t; * FIFO should be empty&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -9930,7 +9784,6 @@ c_loop
 id|fifodata
 op_decrement
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9943,7 +9796,6 @@ id|DATAPORT
 )paren
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -9971,14 +9823,12 @@ c_cond
 op_logical_neg
 id|fifodata
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;fifo empty, &quot;
 )paren
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -10010,7 +9860,6 @@ op_logical_or
 id|CURRENT_SC-&gt;SCp.this_residual
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10021,7 +9870,6 @@ comma
 id|CURRENT_SC-&gt;SCp.this_residual
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* transfer can be considered ended, when SCSIEN reads back zero */
 id|CLRBITS
@@ -10045,13 +9893,11 @@ comma
 id|SCSIEN
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 id|CLRBITS
 c_func
 (paren
@@ -10078,7 +9924,6 @@ op_or
 id|debug_intr
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10090,7 +9935,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CURRENT_SC-&gt;SCp.have_data_in
 op_increment
@@ -10126,14 +9970,12 @@ op_or
 id|debug_phases
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;DATA OUT, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#if defined(DEBUG_DATAO)
 r_if
@@ -10149,7 +9991,6 @@ id|debug
 op_amp
 id|debug_datao
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10160,7 +10001,6 @@ comma
 id|CURRENT_SC-&gt;SCp.buffers_residual
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -10279,7 +10119,7 @@ op_or
 id|ENBUSFREE
 )paren
 suffix:semicolon
-multiline_comment|/* while current buffer is not empty or&n;         there are more buffers to transfer */
+multiline_comment|/* while current buffer is not empty or&n;&t;&t;&t;   there are more buffers to transfer */
 r_while
 c_loop
 (paren
@@ -10312,7 +10152,6 @@ id|debug
 op_amp
 id|debug_datao
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10323,7 +10162,6 @@ comma
 id|CURRENT_SC-&gt;SCp.buffers_residual
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* transfer rest of buffer, but max. 128 byte */
 id|data_count
@@ -10351,7 +10189,6 @@ id|debug
 op_amp
 id|debug_datao
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10360,7 +10197,6 @@ comma
 id|data_count
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -10451,13 +10287,11 @@ op_or
 id|INTSTAT
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_DATAO)
 r_if
 c_cond
@@ -10472,7 +10306,6 @@ id|debug
 op_amp
 id|debug_datao
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10490,7 +10323,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* if this buffer is empty and there are more buffers left */
 r_if
@@ -10581,7 +10413,6 @@ id|debug
 op_amp
 id|debug_datao
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10595,7 +10426,6 @@ comma
 id|data_count
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|SETPORT
 c_func
@@ -10642,14 +10472,12 @@ id|debug
 op_amp
 id|debug_datao
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;waiting for SCSI fifo to get empty, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/* wait for SCSI fifo to get empty */
 r_while
@@ -10663,13 +10491,11 @@ comma
 id|SEMPTY
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#if defined(DEBUG_DATAO)
 r_if
 c_cond
@@ -10684,7 +10510,6 @@ id|debug
 op_amp
 id|debug_datao
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10695,7 +10520,6 @@ comma
 id|CURRENT_SC-&gt;SCp.buffers_residual
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CLRBITS
 c_func
@@ -10719,13 +10543,11 @@ comma
 id|SCSIEN
 )paren
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 id|CLRBITS
 c_func
 (paren
@@ -10753,7 +10575,6 @@ op_or
 id|debug_intr
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -10765,7 +10586,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 r_break
@@ -10796,14 +10616,12 @@ id|debug
 op_amp
 id|debug_phases
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;unexpected BUS FREE, &quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|CURRENT_SC-&gt;SCp.phase
 op_and_assign
@@ -10909,14 +10727,12 @@ id|debug
 op_amp
 id|debug_intr
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;command done.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#if defined(DEBUG_RACE)
 id|leave_driver
@@ -11021,14 +10837,12 @@ c_cond
 (paren
 id|CURRENT_SC
 )paren
-(brace
 id|CURRENT_SC-&gt;SCp.phase
 op_or_assign
 l_int|1
 op_lshift
 l_int|16
 suffix:semicolon
-)brace
 id|SETPORT
 c_func
 (paren
@@ -11061,14 +10875,12 @@ id|debug
 op_amp
 id|debug_intr
 )paren
-(brace
 id|disp_enintr
 c_func
 (paren
 id|shpnt
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#if defined(DEBUG_RACE)
 id|leave_driver
@@ -11158,10 +10970,8 @@ id|debug
 op_amp
 id|debug_skipports
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#endif
 id|printk
 c_func
@@ -11197,14 +11007,12 @@ id|s
 op_amp
 id|TEMODEO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;TARGET MODE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11212,14 +11020,12 @@ id|s
 op_amp
 id|ENSELO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11227,14 +11033,12 @@ id|s
 op_amp
 id|ENSELI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11242,14 +11046,12 @@ id|s
 op_amp
 id|ENRESELI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;RESELI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11257,14 +11059,12 @@ id|s
 op_amp
 id|ENAUTOATNO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;AUTOATNO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11272,14 +11072,12 @@ id|s
 op_amp
 id|ENAUTOATNI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;AUTOATNI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11287,14 +11085,12 @@ id|s
 op_amp
 id|ENAUTOATNP
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;AUTOATNP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11302,14 +11098,12 @@ id|s
 op_amp
 id|SCSIRSTO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SCSIRSTO &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -11461,14 +11255,12 @@ id|s
 op_amp
 id|TARGET
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;TARGET &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11476,14 +11268,12 @@ id|s
 op_amp
 id|SELDO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELDO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11491,14 +11281,12 @@ id|s
 op_amp
 id|SELDI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELDI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11506,14 +11294,12 @@ id|s
 op_amp
 id|SELINGO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELINGO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11521,14 +11307,12 @@ id|s
 op_amp
 id|SWRAP
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SWRAP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11536,14 +11320,12 @@ id|s
 op_amp
 id|SDONE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11551,14 +11333,12 @@ id|s
 op_amp
 id|SPIORDY
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SPIORDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11566,14 +11346,12 @@ id|s
 op_amp
 id|DMADONE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;DMADONE &quot;
 )paren
 suffix:semicolon
-)brace
 id|s
 op_assign
 id|GETPORT
@@ -11589,14 +11367,12 @@ id|s
 op_amp
 id|SELTO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELTO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11604,14 +11380,12 @@ id|s
 op_amp
 id|ATNTARG
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ATNTARG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11619,14 +11393,12 @@ id|s
 op_amp
 id|SCSIRSTI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SCSIRSTI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11634,14 +11406,12 @@ id|s
 op_amp
 id|PHASEMIS
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;PHASEMIS &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11649,14 +11419,12 @@ id|s
 op_amp
 id|BUSFREE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;BUSFREE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11664,14 +11432,12 @@ id|s
 op_amp
 id|SCSIPERR
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SCSIPERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11679,14 +11445,12 @@ id|s
 op_amp
 id|PHASECHG
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;PHASECHG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11694,14 +11458,12 @@ id|s
 op_amp
 id|REQINIT
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;REQINIT &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -11735,14 +11497,12 @@ id|s
 op_amp
 id|TARGET
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;TARGET &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11750,14 +11510,12 @@ id|s
 op_amp
 id|SELDO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELDO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11765,14 +11523,12 @@ id|s
 op_amp
 id|SELDI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELDI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11780,14 +11536,12 @@ id|s
 op_amp
 id|SELINGO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELINGO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11795,14 +11549,12 @@ id|s
 op_amp
 id|SWRAP
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SWRAP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11810,14 +11562,12 @@ id|s
 op_amp
 id|SDONE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11825,14 +11575,12 @@ id|s
 op_amp
 id|SPIORDY
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SPIORDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11840,14 +11588,12 @@ id|s
 op_amp
 id|DMADONE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;DMADONE &quot;
 )paren
 suffix:semicolon
-)brace
 id|s
 op_assign
 id|GETPORT
@@ -11869,14 +11615,12 @@ id|s
 op_amp
 id|SELTO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELTO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11884,14 +11628,12 @@ id|s
 op_amp
 id|ATNTARG
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ATNTARG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11899,14 +11641,12 @@ id|s
 op_amp
 id|SCSIRSTI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SCSIRSTI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11914,14 +11654,12 @@ id|s
 op_amp
 id|PHASEMIS
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;PHASEMIS &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11929,14 +11667,12 @@ id|s
 op_amp
 id|BUSFREE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;BUSFREE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11944,14 +11680,12 @@ id|s
 op_amp
 id|SCSIPERR
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SCSIPERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11959,14 +11693,12 @@ id|s
 op_amp
 id|PHASECHG
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;PHASECHG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -11974,14 +11706,12 @@ id|s
 op_amp
 id|REQINIT
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;REQINIT &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -12009,14 +11739,12 @@ id|s
 op_amp
 id|SCSIEN
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SCSIEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12024,14 +11752,12 @@ id|s
 op_amp
 id|DMAEN
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;DMAEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12039,14 +11765,12 @@ id|s
 op_amp
 id|CH1
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;CH1 &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12054,14 +11778,12 @@ id|s
 op_amp
 id|CLRSTCNT
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;CLRSTCNT &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12069,14 +11791,12 @@ id|s
 op_amp
 id|SPIOEN
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SPIOEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12084,14 +11804,12 @@ id|s
 op_amp
 id|CLRCH1
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;CLRCH1 &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -12119,14 +11837,12 @@ id|s
 op_amp
 id|ATNI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ATNI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12134,14 +11850,12 @@ id|s
 op_amp
 id|SELI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SELI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12149,14 +11863,12 @@ id|s
 op_amp
 id|BSYI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;BSYI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12164,14 +11876,12 @@ id|s
 op_amp
 id|REQI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;REQI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12179,14 +11889,12 @@ id|s
 op_amp
 id|ACKI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ACKI &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -12226,14 +11934,12 @@ id|s
 op_amp
 id|SOFFSET
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SOFFSET &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12241,14 +11947,12 @@ id|s
 op_amp
 id|SEMPTY
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SEMPTY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12256,14 +11960,12 @@ id|s
 op_amp
 id|SFULL
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SFULL &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -12325,14 +12027,12 @@ id|s
 op_amp
 id|SYNCERR
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SYNCERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12340,14 +12040,12 @@ id|s
 op_amp
 id|FWERR
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;FWERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12355,14 +12053,12 @@ id|s
 op_amp
 id|FRERR
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;FRERR &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -12435,14 +12131,12 @@ id|s
 op_amp
 id|ENDMA
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENDMA &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12450,14 +12144,12 @@ id|s
 op_amp
 id|INTEN
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;INTEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12465,14 +12157,12 @@ id|s
 op_amp
 id|RSTFIFO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;RSTFIFO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12480,14 +12170,12 @@ id|s
 op_amp
 id|SWINT
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;SWINT &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -12515,14 +12203,12 @@ id|s
 op_amp
 id|ATDONE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ATDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12530,14 +12216,12 @@ id|s
 op_amp
 id|WORDRDY
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;WORDRDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12545,14 +12229,12 @@ id|s
 op_amp
 id|DFIFOFULL
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;DFIFOFULL &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12560,14 +12242,12 @@ id|s
 op_amp
 id|DFIFOEMP
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;DFIFOEMP &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -12619,14 +12299,12 @@ id|s
 op_amp
 id|ENSELDO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSELDO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12634,14 +12312,12 @@ id|s
 op_amp
 id|ENSELDI
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSELDI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12649,14 +12325,12 @@ id|s
 op_amp
 id|ENSELINGO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSELINGO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12664,14 +12338,12 @@ id|s
 op_amp
 id|ENSWRAP
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSWRAP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12679,14 +12351,12 @@ id|s
 op_amp
 id|ENSDONE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12694,14 +12364,12 @@ id|s
 op_amp
 id|ENSPIORDY
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSPIORDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12709,14 +12377,12 @@ id|s
 op_amp
 id|ENDMADONE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENDMADONE &quot;
 )paren
 suffix:semicolon
-)brace
 id|s
 op_assign
 id|GETPORT
@@ -12732,14 +12398,12 @@ id|s
 op_amp
 id|ENSELTIMO
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSELTIMO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12747,14 +12411,12 @@ id|s
 op_amp
 id|ENATNTARG
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENATNTARG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12762,14 +12424,12 @@ id|s
 op_amp
 id|ENPHASEMIS
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENPHASEMIS &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12777,14 +12437,12 @@ id|s
 op_amp
 id|ENBUSFREE
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENBUSFREE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12792,14 +12450,12 @@ id|s
 op_amp
 id|ENSCSIPERR
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENSCSIPERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12807,14 +12463,12 @@ id|s
 op_amp
 id|ENPHASECHG
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENPHASECHG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12822,14 +12476,12 @@ id|s
 op_amp
 id|ENREQINIT
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;ENREQINIT &quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -13050,14 +12702,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|not_issued
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;not issued|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13065,14 +12715,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|in_selection
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;in selection|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13080,14 +12728,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|disconnected
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;disconnected|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13095,14 +12741,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|aborted
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;aborted|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13110,14 +12754,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|sent_ident
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;send_ident|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13238,14 +12880,12 @@ op_lshift
 l_int|16
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;; phaseend&quot;
 )paren
 suffix:semicolon
-)brace
 )brace
 id|printk
 c_func
@@ -13315,14 +12955,12 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 )paren
-(brace
 id|show_command
 c_func
 (paren
 id|ptr
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -13334,14 +12972,12 @@ c_cond
 (paren
 id|CURRENT_SC
 )paren
-(brace
 id|show_command
 c_func
 (paren
 id|CURRENT_SC
 )paren
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -13372,14 +13008,12 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 )paren
-(brace
 id|show_command
 c_func
 (paren
 id|ptr
 )paren
 suffix:semicolon
-)brace
 id|disp_ports
 c_func
 (paren
@@ -13418,8 +13052,10 @@ id|shpnt
 )paren
 (brace
 r_return
+(paren
 op_minus
 id|ENOSYS
+)paren
 suffix:semicolon
 multiline_comment|/* Currently this is a no-op */
 )brace
@@ -13488,7 +13124,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
@@ -13500,7 +13135,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -13518,14 +13152,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|not_issued
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;not issued|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13533,14 +13165,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|in_selection
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;in selection|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13548,14 +13178,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|disconnected
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;disconnected|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13563,14 +13191,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|aborted
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;aborted|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13578,14 +13204,12 @@ id|ptr-&gt;SCp.phase
 op_amp
 id|sent_ident
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;send_ident|&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13706,14 +13330,12 @@ op_lshift
 l_int|16
 )paren
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;; phaseend&quot;
 )paren
 suffix:semicolon
-)brace
 )brace
 id|SPRINTF
 c_func
@@ -13728,9 +13350,11 @@ id|ptr-&gt;host_scribble
 )paren
 suffix:semicolon
 r_return
+(paren
 id|pos
 op_minus
 id|start
+)paren
 suffix:semicolon
 )brace
 DECL|function|get_ports
@@ -13772,10 +13396,8 @@ id|debug
 op_amp
 id|debug_skipports
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#endif
 id|SPRINTF
 c_func
@@ -13811,14 +13433,12 @@ id|s
 op_amp
 id|TEMODEO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;TARGET MODE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13826,14 +13446,12 @@ id|s
 op_amp
 id|ENSELO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13841,14 +13459,12 @@ id|s
 op_amp
 id|ENSELI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13856,14 +13472,12 @@ id|s
 op_amp
 id|ENRESELI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;RESELI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13871,14 +13485,12 @@ id|s
 op_amp
 id|ENAUTOATNO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;AUTOATNO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13886,14 +13498,12 @@ id|s
 op_amp
 id|ENAUTOATNI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;AUTOATNI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13901,14 +13511,12 @@ id|s
 op_amp
 id|ENAUTOATNP
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;AUTOATNP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -13916,14 +13524,12 @@ id|s
 op_amp
 id|SCSIRSTO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SCSIRSTO &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -14075,14 +13681,12 @@ id|s
 op_amp
 id|TARGET
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;TARGET &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14090,14 +13694,12 @@ id|s
 op_amp
 id|SELDO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELDO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14105,14 +13707,12 @@ id|s
 op_amp
 id|SELDI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELDI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14120,14 +13720,12 @@ id|s
 op_amp
 id|SELINGO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELINGO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14135,14 +13733,12 @@ id|s
 op_amp
 id|SWRAP
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SWRAP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14150,14 +13746,12 @@ id|s
 op_amp
 id|SDONE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14165,14 +13759,12 @@ id|s
 op_amp
 id|SPIORDY
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SPIORDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14180,14 +13772,12 @@ id|s
 op_amp
 id|DMADONE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;DMADONE &quot;
 )paren
 suffix:semicolon
-)brace
 id|s
 op_assign
 id|GETPORT
@@ -14203,14 +13793,12 @@ id|s
 op_amp
 id|SELTO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELTO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14218,14 +13806,12 @@ id|s
 op_amp
 id|ATNTARG
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ATNTARG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14233,14 +13819,12 @@ id|s
 op_amp
 id|SCSIRSTI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SCSIRSTI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14248,14 +13832,12 @@ id|s
 op_amp
 id|PHASEMIS
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;PHASEMIS &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14263,14 +13845,12 @@ id|s
 op_amp
 id|BUSFREE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;BUSFREE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14278,14 +13858,12 @@ id|s
 op_amp
 id|SCSIPERR
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SCSIPERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14293,14 +13871,12 @@ id|s
 op_amp
 id|PHASECHG
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;PHASECHG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14308,14 +13884,12 @@ id|s
 op_amp
 id|REQINIT
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;REQINIT &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -14349,14 +13923,12 @@ id|s
 op_amp
 id|TARGET
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;TARGET &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14364,14 +13936,12 @@ id|s
 op_amp
 id|SELDO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELDO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14379,14 +13949,12 @@ id|s
 op_amp
 id|SELDI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELDI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14394,14 +13962,12 @@ id|s
 op_amp
 id|SELINGO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELINGO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14409,14 +13975,12 @@ id|s
 op_amp
 id|SWRAP
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SWRAP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14424,14 +13988,12 @@ id|s
 op_amp
 id|SDONE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14439,14 +14001,12 @@ id|s
 op_amp
 id|SPIORDY
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SPIORDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14454,14 +14014,12 @@ id|s
 op_amp
 id|DMADONE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;DMADONE &quot;
 )paren
 suffix:semicolon
-)brace
 id|s
 op_assign
 id|GETPORT
@@ -14483,14 +14041,12 @@ id|s
 op_amp
 id|SELTO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELTO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14498,14 +14054,12 @@ id|s
 op_amp
 id|ATNTARG
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ATNTARG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14513,14 +14067,12 @@ id|s
 op_amp
 id|SCSIRSTI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SCSIRSTI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14528,14 +14080,12 @@ id|s
 op_amp
 id|PHASEMIS
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;PHASEMIS &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14543,14 +14093,12 @@ id|s
 op_amp
 id|BUSFREE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;BUSFREE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14558,14 +14106,12 @@ id|s
 op_amp
 id|SCSIPERR
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SCSIPERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14573,14 +14119,12 @@ id|s
 op_amp
 id|PHASECHG
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;PHASECHG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14588,14 +14132,12 @@ id|s
 op_amp
 id|REQINIT
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;REQINIT &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -14623,14 +14165,12 @@ id|s
 op_amp
 id|SCSIEN
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SCSIEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14638,14 +14178,12 @@ id|s
 op_amp
 id|DMAEN
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;DMAEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14653,14 +14191,12 @@ id|s
 op_amp
 id|CH1
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;CH1 &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14668,14 +14204,12 @@ id|s
 op_amp
 id|CLRSTCNT
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;CLRSTCNT &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14683,14 +14217,12 @@ id|s
 op_amp
 id|SPIOEN
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SPIOEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14698,14 +14230,12 @@ id|s
 op_amp
 id|CLRCH1
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;CLRCH1 &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -14733,14 +14263,12 @@ id|s
 op_amp
 id|ATNI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ATNI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14748,14 +14276,12 @@ id|s
 op_amp
 id|SELI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SELI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14763,14 +14289,12 @@ id|s
 op_amp
 id|BSYI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;BSYI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14778,14 +14302,12 @@ id|s
 op_amp
 id|REQI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;REQI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14793,14 +14315,12 @@ id|s
 op_amp
 id|ACKI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ACKI &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -14840,14 +14360,12 @@ id|s
 op_amp
 id|SOFFSET
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SOFFSET &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14855,14 +14373,12 @@ id|s
 op_amp
 id|SEMPTY
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SEMPTY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14870,14 +14386,12 @@ id|s
 op_amp
 id|SFULL
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SFULL &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -14939,14 +14453,12 @@ id|s
 op_amp
 id|SYNCERR
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SYNCERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14954,14 +14466,12 @@ id|s
 op_amp
 id|FWERR
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;FWERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14969,14 +14479,12 @@ id|s
 op_amp
 id|FRERR
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;FRERR &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -15049,14 +14557,12 @@ id|s
 op_amp
 id|ENDMA
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENDMA &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15064,14 +14570,12 @@ id|s
 op_amp
 id|INTEN
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;INTEN &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15079,14 +14583,12 @@ id|s
 op_amp
 id|RSTFIFO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;RSTFIFO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15094,14 +14596,12 @@ id|s
 op_amp
 id|SWINT
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;SWINT &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -15129,14 +14629,12 @@ id|s
 op_amp
 id|ATDONE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ATDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15144,14 +14642,12 @@ id|s
 op_amp
 id|WORDRDY
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;WORDRDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15159,14 +14655,12 @@ id|s
 op_amp
 id|DFIFOFULL
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;DFIFOFULL &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15174,14 +14668,12 @@ id|s
 op_amp
 id|DFIFOEMP
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;DFIFOEMP &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -15209,14 +14701,12 @@ id|s
 op_amp
 id|ENSELDO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSELDO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15224,14 +14714,12 @@ id|s
 op_amp
 id|ENSELDI
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSELDI &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15239,14 +14727,12 @@ id|s
 op_amp
 id|ENSELINGO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSELINGO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15254,14 +14740,12 @@ id|s
 op_amp
 id|ENSWRAP
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSWRAP &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15269,14 +14753,12 @@ id|s
 op_amp
 id|ENSDONE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSDONE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15284,14 +14766,12 @@ id|s
 op_amp
 id|ENSPIORDY
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSPIORDY &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15299,14 +14779,12 @@ id|s
 op_amp
 id|ENDMADONE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENDMADONE &quot;
 )paren
 suffix:semicolon
-)brace
 id|s
 op_assign
 id|GETPORT
@@ -15322,14 +14800,12 @@ id|s
 op_amp
 id|ENSELTIMO
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSELTIMO &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15337,14 +14813,12 @@ id|s
 op_amp
 id|ENATNTARG
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENATNTARG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15352,14 +14826,12 @@ id|s
 op_amp
 id|ENPHASEMIS
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENPHASEMIS &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15367,14 +14839,12 @@ id|s
 op_amp
 id|ENBUSFREE
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENBUSFREE &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15382,14 +14852,12 @@ id|s
 op_amp
 id|ENSCSIPERR
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENSCSIPERR &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15397,14 +14865,12 @@ id|s
 op_amp
 id|ENPHASECHG
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENPHASECHG &quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -15412,14 +14878,12 @@ id|s
 op_amp
 id|ENREQINIT
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
 l_string|&quot;ENREQINIT &quot;
 )paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -15527,7 +14991,6 @@ id|host_no
 op_eq
 id|hostno
 )paren
-(brace
 id|shpnt
 op_assign
 id|aha152x_host
@@ -15535,27 +14998,26 @@ id|aha152x_host
 id|i
 )braket
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|shpnt
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|ESRCH
+)paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|inout
 )paren
-(brace
 multiline_comment|/* Has data been written to the file ? */
 r_return
+(paren
 id|aha152x_set_info
 c_func
 (paren
@@ -15565,8 +15027,8 @@ id|length
 comma
 id|shpnt
 )paren
+)paren
 suffix:semicolon
-)brace
 id|SPRINTF
 c_func
 (paren
@@ -15731,7 +15193,6 @@ id|i
 op_amp
 l_int|0x7f
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
@@ -15803,7 +15264,6 @@ op_amp
 l_int|0x0f
 )paren
 suffix:semicolon
-)brace
 macro_line|#else
 id|SPRINTF
 c_func
@@ -15841,7 +15301,6 @@ id|i
 op_amp
 l_int|0x7f
 )paren
-(brace
 id|SPRINTF
 c_func
 (paren
@@ -15911,7 +15370,6 @@ op_amp
 l_int|0x0f
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 macro_line|#ifdef DEBUG_AHA152X
@@ -16093,7 +15551,6 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 )paren
-(brace
 id|pos
 op_add_assign
 id|get_command
@@ -16104,7 +15561,6 @@ comma
 id|ptr
 )paren
 suffix:semicolon
-)brace
 )brace
 r_else
 id|SPRINTF
@@ -16172,7 +15628,6 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 )paren
-(brace
 id|pos
 op_add_assign
 id|get_command
@@ -16183,7 +15638,6 @@ comma
 id|ptr
 )paren
 suffix:semicolon
-)brace
 )brace
 r_else
 id|SPRINTF

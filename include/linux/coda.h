@@ -96,6 +96,7 @@ macro_line|#endif /* !DJGPP */
 macro_line|#if defined(__linux__)
 DECL|macro|cdev_t
 mdefine_line|#define cdev_t u_quad_t
+macro_line|#ifndef __KERNEL__
 macro_line|#if !defined(_UQUAD_T_) &amp;&amp; (!defined(__GLIBC__) || __GLIBC__ &lt; 2)
 DECL|macro|_UQUAD_T_
 mdefine_line|#define _UQUAD_T_ 1
@@ -107,17 +108,20 @@ r_int
 id|u_quad_t
 suffix:semicolon
 macro_line|#endif
+macro_line|#else /*__KERNEL__ */
+DECL|typedef|u_quad_t
+r_typedef
+r_int
+r_int
+r_int
+id|u_quad_t
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#else
 DECL|macro|cdev_t
 mdefine_line|#define cdev_t dev_t
 macro_line|#endif
 macro_line|#ifdef __CYGWIN32__
-DECL|typedef|u_int8_t
-r_typedef
-r_int
-r_char
-id|u_int8_t
-suffix:semicolon
 DECL|struct|timespec
 r_struct
 id|timespec
@@ -133,6 +137,44 @@ id|tv_nsec
 suffix:semicolon
 multiline_comment|/* nanoseconds */
 )brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef __BIT_TYPES_DEFINED__
+DECL|macro|__BIT_TYPES_DEFINED__
+mdefine_line|#define __BIT_TYPES_DEFINED__
+DECL|typedef|int8_t
+r_typedef
+r_int
+r_char
+r_int8
+suffix:semicolon
+DECL|typedef|u_int8_t
+r_typedef
+r_int
+r_char
+id|u_int8_t
+suffix:semicolon
+DECL|typedef|int16_t
+r_typedef
+r_int
+r_int16
+suffix:semicolon
+DECL|typedef|u_int16_t
+r_typedef
+r_int
+r_int
+id|u_int16_t
+suffix:semicolon
+DECL|typedef|int32_t
+r_typedef
+r_int
+r_int32
+suffix:semicolon
+DECL|typedef|u_int32_t
+r_typedef
+r_int
+r_int
+id|u_int32_t
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Cfs constants&n; */
@@ -189,11 +231,13 @@ id|d_reclen
 suffix:semicolon
 multiline_comment|/* length of this record */
 DECL|member|d_type
+r_int
 r_char
 id|d_type
 suffix:semicolon
 multiline_comment|/* file type, see below */
 DECL|member|d_namlen
+r_int
 r_char
 id|d_namlen
 suffix:semicolon
@@ -360,10 +404,6 @@ macro_line|#else
 DECL|macro|coda_f2i
 mdefine_line|#define coda_f2i(fid)&bslash;&n;&t;((fid) ? ((fid)-&gt;Unique + ((fid)-&gt;Vnode&lt;&lt;10) + ((fid)-&gt;Volume&lt;&lt;20)) : 0)
 macro_line|#endif
-macro_line|#ifndef __BIT_TYPES_DEFINED__
-DECL|macro|u_int32_t
-mdefine_line|#define u_int32_t unsigned int
-macro_line|#endif
 macro_line|#ifndef _VUID_T_
 DECL|macro|_VUID_T_
 mdefine_line|#define _VUID_T_
@@ -398,6 +438,7 @@ id|cr_suid
 comma
 id|cr_fsuid
 suffix:semicolon
+multiline_comment|/* Real, efftve, set, fs uid*/
 DECL|member|cr_groupid
 DECL|member|cr_egid
 DECL|member|cr_sgid
@@ -411,19 +452,7 @@ id|cr_sgid
 comma
 id|cr_fsgid
 suffix:semicolon
-macro_line|#if   defined(CODA_SUPPORTS_SUPPLEMENTARY_GROUPS)
-DECL|member|cr_nsupgps
-r_int
-id|cr_nsupgps
-suffix:semicolon
-DECL|member|cr_supgps
-id|vgid_t
-id|cr_supgps
-(braket
-id|NGROUPS
-)braket
-suffix:semicolon
-macro_line|#endif        /* defined(CODA_SUPPORTS_SUPPLEMENTARY_GROUPS) */
+multiline_comment|/* same for groups */
 )brace
 suffix:semicolon
 macro_line|#endif 
@@ -553,6 +582,33 @@ multiline_comment|/* file modification number */
 )brace
 suffix:semicolon
 macro_line|#endif 
+multiline_comment|/* structure used by CODA_STATFS for getting cache information from venus */
+DECL|struct|coda_statfs
+r_struct
+id|coda_statfs
+(brace
+DECL|member|f_blocks
+r_int32
+id|f_blocks
+suffix:semicolon
+DECL|member|f_bfree
+r_int32
+id|f_bfree
+suffix:semicolon
+DECL|member|f_bavail
+r_int32
+id|f_bavail
+suffix:semicolon
+DECL|member|f_files
+r_int32
+id|f_files
+suffix:semicolon
+DECL|member|f_ffree
+r_int32
+id|f_ffree
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Kernel &lt;--&gt; Venus communications.&n; */
 DECL|macro|CODA_ROOT
 mdefine_line|#define CODA_ROOT&t;2
@@ -616,8 +672,10 @@ DECL|macro|CODA_RESOLVE
 mdefine_line|#define CODA_RESOLVE     32
 DECL|macro|CODA_REINTEGRATE
 mdefine_line|#define CODA_REINTEGRATE 33
+DECL|macro|CODA_STATFS
+mdefine_line|#define CODA_STATFS&t; 34
 DECL|macro|CODA_NCALLS
-mdefine_line|#define CODA_NCALLS 34
+mdefine_line|#define CODA_NCALLS 35
 DECL|macro|DOWNCALL
 mdefine_line|#define DOWNCALL(opcode) (opcode &gt;= CODA_REPLACE &amp;&amp; opcode &lt;= CODA_PURGEFID)
 DECL|macro|VC_MAXDATASIZE
@@ -1645,6 +1703,34 @@ id|path
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* coda_statfs: NO_IN */
+DECL|struct|coda_statfs_in
+r_struct
+id|coda_statfs_in
+(brace
+DECL|member|in
+r_struct
+id|coda_in_hdr
+id|in
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|coda_statfs_out
+r_struct
+id|coda_statfs_out
+(brace
+DECL|member|oh
+r_struct
+id|coda_out_hdr
+id|oh
+suffix:semicolon
+DECL|member|stat
+r_struct
+id|coda_statfs
+id|stat
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* &n; * Occasionally, we don&squot;t cache the fid returned by CODA_LOOKUP. &n; * For instance, if the fid is inconsistent. &n; * This case is handled by setting the top bit of the type result parameter.&n; */
 DECL|macro|CODA_NOCACHE
 mdefine_line|#define CODA_NOCACHE          0x80000000
@@ -1763,6 +1849,11 @@ r_struct
 id|coda_open_by_path_in
 id|coda_open_by_path
 suffix:semicolon
+DECL|member|coda_statfs
+r_struct
+id|coda_statfs_in
+id|coda_statfs
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|union|outputArgs
@@ -1865,6 +1956,11 @@ r_struct
 id|coda_open_by_path_out
 id|coda_open_by_path
 suffix:semicolon
+DECL|member|coda_statfs
+r_struct
+id|coda_statfs_out
+id|coda_statfs
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|union|coda_downcalls
@@ -1932,34 +2028,6 @@ suffix:semicolon
 multiline_comment|/* Maximum size of output buffer, &lt;= 2K */
 )brace
 suffix:semicolon
-macro_line|#if defined(__CYGWIN32__) || defined(DJGPP)
-DECL|struct|PioctlData
-r_struct
-id|PioctlData
-(brace
-DECL|member|cmd
-r_int
-r_int
-id|cmd
-suffix:semicolon
-DECL|member|path
-r_const
-r_char
-op_star
-id|path
-suffix:semicolon
-DECL|member|follow
-r_int
-id|follow
-suffix:semicolon
-DECL|member|vi
-r_struct
-id|ViceIoctl
-id|vi
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|struct|PioctlData
 r_struct
 id|PioctlData
@@ -1981,7 +2049,6 @@ id|vi
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|macro|CODA_CONTROL
 mdefine_line|#define&t;CODA_CONTROL&t;&t;&quot;.CONTROL&quot;
 DECL|macro|CODA_CONTROLLEN

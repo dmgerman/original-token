@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; * 960825&t;Made a few changes to code, deleted some defines and made&n; *&t;&t;typedefs to replace them.  Made heartbeat reset only available&n; *&t;&t;via ioctl, and removed the write routine.&n; * 960828&t;Added new items for PC Watchdog Rev.C card.&n; * 960829&t;Changed around all of the IOCTLs, added new features,&n; *&t;&t;added watchdog disable/re-enable routines.  Added firmware&n; *&t;&t;version reporting.  Added read routine for temperature.&n; *&t;&t;Removed some extra defines, added an autodetect Revision&n; *&t;&t;routine.&n; * 961006       Revised some documentation, fixed some cosmetic bugs.  Made&n; *              drivers to panic the system if it&squot;s overheating at bootup.&n; * 961118&t;Changed some verbiage on some of the output, tidied up&n; *&t;&t;code bits, and added compatibility to 2.1.x.&n; * 970912       Enabled board on open and disable on close.&n; * 971107&t;Took account of recent VFS changes (broke read).&n; * 971210       Disable board on initialisation in case board already ticking.&n; * 971222       Changed open/close for temperature handling&n; *              Michael Meskes &lt;meskes@debian.org&gt;.&n; * 980112       Used minor numbers from include/linux/miscdevice.h&n; */
+multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; * 960825&t;Made a few changes to code, deleted some defines and made&n; *&t;&t;typedefs to replace them.  Made heartbeat reset only available&n; *&t;&t;via ioctl, and removed the write routine.&n; * 960828&t;Added new items for PC Watchdog Rev.C card.&n; * 960829&t;Changed around all of the IOCTLs, added new features,&n; *&t;&t;added watchdog disable/re-enable routines.  Added firmware&n; *&t;&t;version reporting.  Added read routine for temperature.&n; *&t;&t;Removed some extra defines, added an autodetect Revision&n; *&t;&t;routine.&n; * 961006       Revised some documentation, fixed some cosmetic bugs.  Made&n; *              drivers to panic the system if it&squot;s overheating at bootup.&n; * 961118&t;Changed some verbiage on some of the output, tidied up&n; *&t;&t;code bits, and added compatibility to 2.1.x.&n; * 970912       Enabled board on open and disable on close.&n; * 971107&t;Took account of recent VFS changes (broke read).&n; * 971210       Disable board on initialisation in case board already ticking.&n; * 971222       Changed open/close for temperature handling&n; *              Michael Meskes &lt;meskes@debian.org&gt;.&n; * 980112       Used minor numbers from include/linux/miscdevice.h&n; * 990605&t;Made changes to code to support Firmware 1.22a, added&n; *&t;&t;fairly useless proc entry.&n; * 990610&t;removed said useless proc code for the merge &lt;alan&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * These are the auto-probe addresses available.&n; *&n; * Revision A only uses ports 0x270 and 0x370.  Revision C introduced 0x350.&n; * Revision A has an address range of 2 addresses, while Revision C has 3.&n; */
@@ -38,7 +39,7 @@ l_int|0x000
 )brace
 suffix:semicolon
 DECL|macro|WD_VER
-mdefine_line|#define WD_VER                  &quot;1.0 (11/18/96)&quot;
+mdefine_line|#define WD_VER                  &quot;1.10 (06/05/99)&quot;
 multiline_comment|/*&n; * It should be noted that PCWD_REVISION_B was removed because A and B&n; * are essentially the same types of card, with the exception that B&n; * has temperature reporting.  Since I didn&squot;t receive a Rev.B card,&n; * the Rev.B card is not supported.  (It&squot;s a good thing too, as they&n; * are no longer in production.)&n; */
 DECL|macro|PCWD_REVISION_A
 mdefine_line|#define&t;PCWD_REVISION_A&t;&t;1
@@ -83,17 +84,14 @@ comma
 id|mode_debug
 suffix:semicolon
 multiline_comment|/*&n; * PCWD_CHECKCARD&n; *&n; * This routine checks the &quot;current_readport&quot; to see if the card lies there.&n; * If it does, it returns accordingly.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcwd_checkcard
 r_static
 r_int
+id|__init
 id|pcwd_checkcard
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -573,14 +571,13 @@ id|watchdog_info
 id|ident
 op_assign
 (brace
-multiline_comment|/* FIXME: should set A/C here */
 id|WDIOF_OVERHEAT
 op_or
 id|WDIOF_CARDRESET
 comma
 l_int|1
 comma
-l_string|&quot;PCWD.&quot;
+l_string|&quot;PCWD&quot;
 )brace
 suffix:semicolon
 r_switch
@@ -1302,7 +1299,7 @@ id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 r_case
 id|TEMP_MINOR
 suffix:colon
-multiline_comment|/* c is in celsius, we need fahrenheit */
+multiline_comment|/*&n;&t;&t;&t; * Convert metric to Fahrenheit, since this was&n;&t;&t;&t; * the decided &squot;standard&squot; for this return value.&n;&t;&t;&t; */
 id|cp
 op_assign
 (paren
@@ -1488,18 +1485,15 @@ r_return
 id|PCWD_REVISION_C
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|send_command
 r_static
 r_int
+id|__init
 id|send_command
 c_func
 (paren
 r_int
 id|cmd
-)paren
 )paren
 (brace
 r_int
@@ -1758,6 +1752,163 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pcwd_proc_get_info
+r_static
+r_int
+id|pcwd_proc_get_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|inout
+)paren
+(brace
+r_int
+id|len
+suffix:semicolon
+id|off_t
+id|begin
+op_assign
+l_int|0
+suffix:semicolon
+id|revision
+op_assign
+id|get_revision
+c_func
+(paren
+)paren
+suffix:semicolon
+id|len
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;Version = &quot;
+id|WD_VER
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|revision
+op_eq
+id|PCWD_REVISION_A
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Revision = A&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Revision = C&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|supports_temp
+)paren
+(brace
+r_int
+r_int
+id|c
+op_assign
+id|inb
+c_func
+(paren
+id|current_readport
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Temp = Yes&bslash;n&quot;
+l_string|&quot;Current temp = %d (Celsius)&bslash;n&quot;
+comma
+id|c
+)paren
+suffix:semicolon
+)brace
+r_else
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Temp = No&bslash;n&quot;
+)paren
+suffix:semicolon
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+(paren
+id|offset
+)paren
+suffix:semicolon
+id|len
+op_sub_assign
+id|offset
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+id|len
+op_assign
+id|length
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
+)brace
 DECL|variable|pcwd_fops
 r_static
 r_struct
@@ -1851,15 +2002,12 @@ c_func
 r_void
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|pcwatchdog_init
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#endif
 (brace
@@ -1877,7 +2025,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: v%s Ken Hollis (khollis@nurk.org)&bslash;n&quot;
+l_string|&quot;pcwd: v%s Ken Hollis (kenji@bitgate.com)&bslash;n&quot;
 comma
 id|WD_VER
 )paren
@@ -2033,6 +2181,17 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|supports_temp
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;pcwd: Temperature Option Detected.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|debug_off
 c_func
 (paren

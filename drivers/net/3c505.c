@@ -4866,12 +4866,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************&n; *&n; * A couple of tests to see if there&squot;s 3C505 or not&n; * Called only by elp_autodetect&n; ************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|elp_sense
 r_static
 r_int
+id|__init
 id|elp_sense
 c_func
 (paren
@@ -4879,7 +4877,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -5173,12 +5170,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*************************************************************&n; *&n; * Search through addr_list[] and try to find a 3C505&n; * Called only by eplus_probe&n; *************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|elp_autodetect
 r_static
 r_int
+id|__init
 id|elp_autodetect
 c_func
 (paren
@@ -5186,7 +5181,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -5272,11 +5266,9 @@ multiline_comment|/* Because of this, the layer above will return -ENODEV */
 )brace
 multiline_comment|/******************************************************&n; *&n; * probe for an Etherlink Plus board at the specified address&n; *&n; ******************************************************/
 multiline_comment|/* There are three situations we need to be able to detect here:&n;&n; *  a) the card is idle&n; *  b) the card is still booting up&n; *  c) the card is stuck in a strange state (some DOS drivers do this)&n; *&n; * In case (a), all is well.  In case (b), we wait 10 seconds to see if the&n; * card finishes booting, and carry on if so.  In case (c), we do a hard reset,&n; * loop round, and hope for the best.&n; *&n; * This is all very unpleasant, but hopefully avoids the problems with the old&n; * probe code (which had a 15-second delay if the card was idle, and didn&squot;t&n; * work at all if it was in a weird state).&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|elplus_probe
 r_int
+id|__init
 id|elplus_probe
 c_func
 (paren
@@ -5284,7 +5276,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|elp_device

@@ -277,10 +277,9 @@ id|start_page
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Note that at boot, this probe only picks up one card at a time.&n; */
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|ne2_probe
 r_int
+id|__init
 id|ne2_probe
 c_func
 (paren
@@ -288,7 +287,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -591,11 +589,10 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|ne2_probe1
 r_static
 r_int
+id|__init
 id|ne2_probe1
 c_func
 (paren
@@ -606,7 +603,6 @@ id|dev
 comma
 r_int
 id|slot
-)paren
 )paren
 (brace
 r_int

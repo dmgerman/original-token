@@ -443,11 +443,9 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *      Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n; *      If dev-&gt;base_addr == 0, probe all likely locations.&n; *      If dev-&gt;base_addr in [1..0x1ff], always return failure.&n; *        otherwise go with what we pass in.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cops_probe
 r_int
+id|__init
 id|cops_probe
 c_func
 (paren
@@ -455,7 +453,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -585,12 +582,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *      This is the real probe routine. Linux has a history of friendly device&n; *      probes on the ISA bus. A good device probes avoids doing writes, and&n; *      verifies that the correct device exists and functions.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cops_probe1
 r_static
 r_int
+id|__init
 id|cops_probe1
 c_func
 (paren
@@ -601,7 +596,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_struct
@@ -921,12 +915,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cops_irq
 r_static
 r_int
+id|__init
 id|cops_irq
 (paren
 r_int
@@ -934,7 +926,6 @@ id|ioaddr
 comma
 r_int
 id|board
-)paren
 )paren
 (brace
 multiline_comment|/*&n;         * This does not use the IRQ to determine where the IRQ is. We just&n;         * assume that when we get a correct status response that it&squot;s the IRQ.&n;         * This really just verifies the IO port but since we only have access&n;         * to such a small number of IRQs (5, 4, 3) this is not bad.&n;         * This will probably not work for more than one card.&n;         */

@@ -50,17 +50,14 @@ suffix:semicolon
 macro_line|#endif /* __i386__ */
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef __i386__
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|i386_capability
 r_static
 r_void
+id|__init
 id|i386_capability
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if
@@ -87,16 +84,13 @@ suffix:semicolon
 )brace
 macro_line|#endif /* __i386__ */   
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hfmodem_refclock_probe
 r_void
+id|__init
 id|hfmodem_refclock_probe
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 macro_line|#ifdef __i386__

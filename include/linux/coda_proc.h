@@ -205,6 +205,10 @@ r_struct
 id|coda_cache_inv_stats
 id|coda_cache_inv_stat
 suffix:semicolon
+r_extern
+r_int
+id|coda_upcall_timestamping
+suffix:semicolon
 multiline_comment|/* reset statistics to 0 */
 r_void
 id|reset_coda_vfs_stats

@@ -1074,11 +1074,11 @@ r_int
 id|bus_index
 suffix:semicolon
 multiline_comment|/* address shift - 0 for ISA, 1 for PCI */
-DECL|member|inact_ctrl
+DECL|member|intr_enabled
 r_int
-id|inact_ctrl
+id|intr_enabled
 suffix:semicolon
-multiline_comment|/* FW Inactivity control - 0 disabled, 1 enabled */
+multiline_comment|/* FW Interrupt flag - 0 disabled, 1 enabled */
 )brace
 suffix:semicolon
 DECL|struct|cyclades_chip

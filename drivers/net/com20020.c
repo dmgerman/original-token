@@ -374,10 +374,8 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|com20020_setup
 (paren
 r_char
@@ -387,7 +385,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 suffix:semicolon
 r_extern
@@ -755,11 +752,9 @@ l_string|&quot;com20020.c: v3.00 97/11/09 Avery Pennarun &lt;apenwarr@worldvisio
 suffix:semicolon
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* We cannot probe for an IO mapped card either, although we can check that&n; * it&squot;s where we were told it was, and even autoirq&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arc20020_probe
 r_int
+id|__init
 id|arc20020_probe
 c_func
 (paren
@@ -767,7 +762,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -1201,11 +1195,9 @@ id|dev-&gt;irq
 suffix:semicolon
 )brace
 multiline_comment|/* Set up the struct device associated with this card.  Called after&n; * probing succeeds.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arc20020_found
 r_int
+id|__init
 id|arc20020_found
 c_func
 (paren
@@ -1219,7 +1211,6 @@ id|ioaddr
 comma
 r_int
 id|airq
-)paren
 )paren
 (brace
 r_struct
@@ -3930,11 +3921,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|com20020_setup
 r_void
+id|__init
 id|com20020_setup
 (paren
 r_char
@@ -3944,7 +3933,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_struct

@@ -60,16 +60,13 @@ op_assign
 l_string|&quot;$Date: 1997/11/06 00:38:08 $&quot;
 suffix:semicolon
 multiline_comment|/*  Called by modules package when installing the driver&n; *  or by kernel during the initialization phase&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ftape_init
 r_int
+id|__init
 id|ftape_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|TRACE_FUN

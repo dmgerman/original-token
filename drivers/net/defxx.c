@@ -529,11 +529,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * =============&n; * = dfx_probe =&n; * =============&n; *   &n; * Overview:&n; *   Probes for supported FDDI EISA and PCI controllers&n; *  &n; * Returns:&n; *   Condition code&n; *       &n; * Arguments:&n; *   dev - pointer to device information&n; *&n; * Functional Description:&n; *   This routine is called by the OS for each FDDI device name (fddi0,&n; *   fddi1,...,fddi6, fddi7) specified in drivers/net/Space.c.  Since&n; *   the DEFXX.C driver currently does not support being loaded as a&n; *   module, dfx_probe() will initialize all devices the first time&n; *   it is called.&n; *&n; *   Let&squot;s say that dfx_probe() is getting called to initialize fddi0.&n; *   Furthermore, let&squot;s say there are three supported controllers in the&n; *   system.  Before dfx_probe() leaves, devices fddi0, fddi1, and fddi2&n; *   will be initialized and a global flag will be set to indicate that&n; *   dfx_probe() has already been called.&n; *&n; *   However...the OS doesn&squot;t know that we&squot;ve already initialized&n; *   devices fddi1 and fddi2 so dfx_probe() gets called again and again&n; *   until it reaches the end of the device list for FDDI (presently,&n; *   fddi7).  It&squot;s important that the driver &quot;pretend&quot; to probe for&n; *   devices fddi1 and fddi2 and return success.  Devices fddi3&n; *   through fddi7 will return failure since they weren&squot;t initialized.&n; *&n; *   This algorithm seems to work for the time being.  As other FDDI&n; *   drivers are written for Linux, a more generic approach (perhaps&n; *   similar to the Ethernet card approach) may need to be implemented.&n; *   &n; * Return Codes:&n; *   0&t;&t; - This device (fddi0, fddi1, etc) configured successfully&n; *   -ENODEV - No devices present, or no Digital FDDI EISA or PCI device&n; *&t;&t;&t;   present for this device name&n; *&n; * Assumptions:&n; *   For the time being, DEFXX.C is the only FDDI driver under Linux.&n; *   As this assumption changes, this routine will likely be impacted.&n; *   Also, it is assumed that no more than eight (8) FDDI controllers&n; *   will be configured in the system (fddi0 through fddi7).  This&n; *   routine will not allocate new device structures.  If more than&n; *   eight FDDI controllers need to be configured, drivers/net/Space.c&n; *   should be updated as well as the DFX_MAX_NUM_BOARDS constant in&n; *   DEFXX.H.&n; *&n; * Side Effects:&n; *   Device structures for FDDI adapters (fddi0, fddi1, etc) are&n; *   initialized and the board resources are read and stored in&n; *   the device structure.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dfx_probe
 r_int
+id|__init
 id|dfx_probe
 c_func
 (paren
@@ -541,7 +539,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -1064,12 +1061,10 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * ====================&n; * = dfx_alloc_device =&n; * ====================&n; *   &n; * Overview:&n; *   Allocate new device structure for adapter&n; *  &n; * Returns:&n; *   Pointer to device structure for this adapter or NULL if&n; *   none are available or could not allocate memory for&n; *   private board structure.&n; *       &n; * Arguments:&n; *   dev    - pointer to device information for last device&n; *   iobase - base I/O address of new adapter&n; *&n; * Functional Description:&n; *   The algorithm for allocating a new device structure is&n; *   fairly simple.  Since we&squot;re presently the only FDDI driver&n; *   under Linux, we&squot;ll find the first device structure with an&n; *   &quot;fddi*&quot; device name that&squot;s free.  If we run out of devices,&n; *   we&squot;ll fail on error.  This is simpler than trying to&n; *   allocate the memory for a new device structure, determine&n; *   the next free number (beyond 7) and link it into the chain&n; *   of devices.  A user can always modify drivers/net/Space.c&n; *   to add new FDDI device structures if necessary.&n; *&n; *   Beyond finding a free FDDI device structure, this routine&n; *   initializes most of the fields, resource tags, and dispatch&n; *   pointers in the device structure and calls the common&n; *   fddi_setup() routine to perform the rest of the device&n; *   structure initialization.&n; *&n; * Return Codes:&n; *   None&n; *&n; * Assumptions:&n; *   If additional FDDI drivers are integrated into Linux,&n; *   we&squot;ll likely need to use a different approach to&n; *   allocate a device structure.  Perhaps one that is&n; *   similar to what the Ethernet drivers use.&n; *&n; * Side Effects:&n; *   None&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dfx_alloc_device
 r_struct
 id|device
+id|__init
 op_star
 id|dfx_alloc_device
 c_func
@@ -1081,7 +1076,6 @@ id|dev
 comma
 id|u16
 id|iobase
-)paren
 )paren
 (brace
 r_struct
@@ -1332,11 +1326,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * ================&n; * = dfx_bus_init =&n; * ================&n; *   &n; * Overview:&n; *   Initializes EISA and PCI controller bus-specific logic.&n; *  &n; * Returns:&n; *   None&n; *       &n; * Arguments:&n; *   dev - pointer to device information&n; *&n; * Functional Description:&n; *   Determine and save adapter IRQ in device table,&n; *   then perform bus-specific logic initialization.&n; *&n; * Return Codes:&n; *   None&n; *&n; * Assumptions:&n; *   dev-&gt;base_addr has already been set with the proper&n; *&t; base I/O address for this device.&n; *&n; * Side Effects:&n; *   Interrupts are enabled at the adapter bus-specific logic.&n; *   Note:  Interrupts at the DMA engine (PDQ chip) are not&n; *   enabled yet.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dfx_bus_init
 r_void
+id|__init
 id|dfx_bus_init
 c_func
 (paren
@@ -1344,7 +1336,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|DFX_board_t
@@ -1622,18 +1613,15 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * ========================&n; * = dfx_bus_config_check =&n; * ========================&n; *   &n; * Overview:&n; *   Checks the configuration (burst size, full-duplex, etc.)  If any parameters&n; *   are illegal, then this routine will set new defaults.&n; *  &n; * Returns:&n; *   None&n; *       &n; * Arguments:&n; *   bp - pointer to board information&n; *&n; * Functional Description:&n; *   For Revision 1 FDDI EISA, Revision 2 or later FDDI EISA with rev E or later&n; *   PDQ, and all FDDI PCI controllers, all values are legal.&n; *&n; * Return Codes:&n; *   None&n; *&n; * Assumptions:&n; *   dfx_adap_init has NOT been called yet so burst size and other items have&n; *   not been set.&n; *&n; * Side Effects:&n; *   None&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dfx_bus_config_check
 r_void
+id|__init
 id|dfx_bus_config_check
 c_func
 (paren
 id|DFX_board_t
 op_star
 id|bp
-)paren
 )paren
 (brace
 r_int
@@ -1755,11 +1743,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * ===================&n; * = dfx_driver_init =&n; * ===================&n; *   &n; * Overview:&n; *   Initializes remaining adapter board structure information&n; *   and makes sure adapter is in a safe state prior to dfx_open().&n; *  &n; * Returns:&n; *   Condition code&n; *       &n; * Arguments:&n; *   dev - pointer to device information&n; *&n; * Functional Description:&n; *   This function allocates additional resources such as the host memory&n; *   blocks needed by the adapter (eg. descriptor and consumer blocks).&n; *&t; Remaining bus initialization steps are also completed.  The adapter&n; *   is also reset so that it is in the DMA_UNAVAILABLE state.  The OS&n; *   must call dfx_open() to open the adapter and bring it on-line.&n; *&n; * Return Codes:&n; *   DFX_K_SUCCESS&t;- initialization succeeded&n; *   DFX_K_FAILURE&t;- initialization failed - could not allocate memory&n; *&t;&t;&t;&t;&t;&t;or read adapter MAC address&n; *&n; * Assumptions:&n; *   Memory allocated from kmalloc() call is physically contiguous, locked&n; *   memory whose physical address equals its virtual address.&n; *&n; * Side Effects:&n; *   Adapter is reset and should be in DMA_UNAVAILABLE state before&n; *   returning from this routine.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dfx_driver_init
 r_int
+id|__init
 id|dfx_driver_init
 c_func
 (paren
@@ -1767,7 +1753,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|DFX_board_t

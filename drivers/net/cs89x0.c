@@ -364,11 +364,9 @@ id|netcard_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|cs89x0_probe
 id|cs89x0_probe
 c_func
 (paren
@@ -376,7 +374,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -618,12 +615,10 @@ id|portno
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|wait_eeprom_ready
 id|wait_eeprom_ready
 c_func
 (paren
@@ -631,7 +626,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -670,12 +664,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|get_eeprom_data
 id|get_eeprom_data
 c_func
 (paren
@@ -693,7 +685,6 @@ comma
 r_int
 op_star
 id|buffer
-)paren
 )paren
 (brace
 r_int
@@ -827,12 +818,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|get_eeprom_cksum
 id|get_eeprom_cksum
 c_func
 (paren
@@ -845,7 +834,6 @@ comma
 r_int
 op_star
 id|buffer
-)paren
 )paren
 (brace
 r_int
@@ -898,12 +886,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* This is the real probe routine.  Linux has a history of friendly device&n;   probes on the ISA bus.  A good device probes avoids doing writes, and&n;   verifies that the correct device exists and functions.  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cs89x0_probe1
 r_static
 r_int
+id|__init
 id|cs89x0_probe1
 c_func
 (paren
@@ -914,7 +900,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_struct
@@ -1680,12 +1665,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|reset_chip
 id|reset_chip
 c_func
 (paren
@@ -1693,7 +1675,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

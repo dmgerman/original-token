@@ -1942,16 +1942,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|baycom_par_init
 r_int
+id|__init
 id|baycom_par_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -2238,16 +2235,13 @@ l_string|&quot;Baycom par96 and picpar amateur radio modem driver&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_module
 r_int
+id|__init
 id|init_module
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -2411,11 +2405,9 @@ suffix:semicolon
 macro_line|#else /* MODULE */
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * format: baycom_par=io,mode&n; * mode: par96,picpar&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|baycom_par_setup
 r_void
+id|__init
 id|baycom_par_setup
 c_func
 (paren
@@ -2426,7 +2418,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int

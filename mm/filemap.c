@@ -5231,11 +5231,10 @@ op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and file could be released ... increment the count to be safe.&n;&t; */
-id|atomic_inc
+id|get_file
 c_func
 (paren
-op_amp
-id|file-&gt;f_count
+id|file
 )paren
 suffix:semicolon
 id|result

@@ -422,16 +422,13 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function pc87108_init ()&n; *&n; *    Initialize chip. Just try to find out how many chips we are dealing with&n; *    and where they are&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pc87108_init
 r_int
+id|__init
 id|pc87108_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -374,11 +374,9 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; * (detachable devices only).&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mc32_probe
 r_int
+id|__init
 id|mc32_probe
 c_func
 (paren
@@ -386,7 +384,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -503,12 +500,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the real probe routine. Linux has a history of friendly device&n; * probes on the ISA bus. A good device probes avoids doing writes, and&n; * verifies that the correct device exists and functions.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mc32_probe1
 r_static
 r_int
+id|__init
 id|mc32_probe1
 c_func
 (paren
@@ -519,7 +514,6 @@ id|dev
 comma
 r_int
 id|slot
-)paren
 )paren
 (brace
 r_static

@@ -4043,18 +4043,15 @@ suffix:semicolon
 )brace
 multiline_comment|/* Probe for a PI card. */
 multiline_comment|/* This routine also initializes the timer chip */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hw_probe
 r_static
 r_int
+id|__init
 id|hw_probe
 c_func
 (paren
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -5454,16 +5451,13 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pi_init
 r_int
+id|__init
 id|pi_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

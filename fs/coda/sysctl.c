@@ -289,6 +289,12 @@ r_struct
 id|coda_upcallstats
 id|coda_callstats
 suffix:semicolon
+DECL|variable|coda_upcall_timestamping
+r_int
+id|coda_upcall_timestamping
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* keep this in sync with coda.h! */
 DECL|variable|coda_upcall_names
 r_char
@@ -385,14 +391,23 @@ multiline_comment|/* 27 */
 l_string|&quot;zapdir      &quot;
 comma
 multiline_comment|/* 28 */
-l_string|&quot;zapvnode    &quot;
+l_string|&quot;noop2       &quot;
 comma
-multiline_comment|/* 28 */
+multiline_comment|/* 29 */
 l_string|&quot;purgefid    &quot;
 comma
 multiline_comment|/* 30 */
 l_string|&quot;open_by_path&quot;
+comma
 multiline_comment|/* 31 */
+l_string|&quot;resolve     &quot;
+comma
+multiline_comment|/* 32 */
+l_string|&quot;reintegrate &quot;
+comma
+multiline_comment|/* 33 */
+l_string|&quot;statfs      &quot;
+multiline_comment|/* 34 */
 )brace
 suffix:semicolon
 DECL|function|reset_coda_vfs_stats
@@ -507,12 +522,8 @@ r_int
 id|time
 op_assign
 id|runtime
-op_star
-l_int|1000
-op_div
-id|HZ
 suffix:semicolon
-multiline_comment|/* time in ms */
+multiline_comment|/* time in us */
 id|CDEBUG
 c_func
 (paren
@@ -885,12 +896,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|filp-&gt;f_pos
+op_add_assign
+op_star
+id|lenp
+suffix:semicolon
 )brace
+r_else
+(brace
 op_star
 id|lenp
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -927,17 +946,65 @@ c_cond
 id|write
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_star
+id|lenp
+OG
+l_int|0
+)paren
+(brace
+r_char
+id|c
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|get_user
+c_func
+(paren
+id|c
+comma
+(paren
+r_char
+op_star
+)paren
+id|buffer
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+id|coda_upcall_timestamping
+op_assign
+(paren
+id|c
+op_eq
+l_char|&squot;1&squot;
+)paren
+suffix:semicolon
+)brace
 id|reset_coda_upcall_stats
 c_func
 (paren
 )paren
 suffix:semicolon
+id|filp-&gt;f_pos
+op_add_assign
+op_star
+id|lenp
+suffix:semicolon
 )brace
+r_else
+(brace
 op_star
 id|lenp
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -979,12 +1046,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|filp-&gt;f_pos
+op_add_assign
+op_star
+id|lenp
+suffix:semicolon
 )brace
+r_else
+(brace
 op_star
 id|lenp
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1026,12 +1101,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|filp-&gt;f_pos
+op_add_assign
+op_star
+id|lenp
+suffix:semicolon
 )brace
+r_else
+(brace
 op_star
 id|lenp
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1298,7 +1381,7 @@ id|len
 comma
 l_string|&quot;%-79s&bslash;n&quot;
 comma
-l_string|&quot;upcall&bslash;t&bslash;t    count&bslash;tavg time(ms)&bslash;tstd deviation(ms)&quot;
+l_string|&quot;upcall              count       avg time(us)    std deviation(us)&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1319,7 +1402,7 @@ id|len
 comma
 l_string|&quot;%-79s&bslash;n&quot;
 comma
-l_string|&quot;------&bslash;t&bslash;t    -----&bslash;t------------&bslash;t-----------------&quot;
+l_string|&quot;------              -----       ------------    -----------------&quot;
 )paren
 suffix:semicolon
 id|pos
@@ -1348,7 +1431,7 @@ c_func
 (paren
 id|tmpbuf
 comma
-l_string|&quot;%s&bslash;t%9d&bslash;t%10ld&bslash;t%10ld&quot;
+l_string|&quot;%s    %9d       %10ld      %10ld&quot;
 comma
 id|coda_upcall_names
 (braket

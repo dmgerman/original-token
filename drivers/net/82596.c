@@ -3607,11 +3607,9 @@ l_int|13
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|i82596_probe
 r_int
+id|__init
 id|i82596_probe
 c_func
 (paren
@@ -3619,7 +3617,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

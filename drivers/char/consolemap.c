@@ -4930,16 +4930,13 @@ suffix:semicolon
 multiline_comment|/* not found */
 )brace
 multiline_comment|/*&n; * This is called at sys_setup time, after memory and the console are&n; * initialized.  It must be possible to call kmalloc(..., GFP_KERNEL)&n; * from this function, hence the call from sys_setup.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|console_map_init
 id|console_map_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

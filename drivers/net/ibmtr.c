@@ -201,18 +201,15 @@ comma
 l_string|&quot;ISA P&amp;P&quot;
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|adapter_def
 r_char
+id|__init
 op_star
 id|adapter_def
 c_func
 (paren
 r_char
 id|type
-)paren
 )paren
 (brace
 r_switch
@@ -535,12 +532,10 @@ id|ibmtr_mem_base
 op_assign
 l_int|0xd0000
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|PrtChanID
 r_static
 r_void
+id|__init
 id|PrtChanID
 c_func
 (paren
@@ -550,7 +545,6 @@ id|pcid
 comma
 r_int
 id|stride
-)paren
 )paren
 (brace
 r_int
@@ -605,12 +599,10 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|HWPrtChanID
 r_static
 r_void
+id|__init
 id|HWPrtChanID
 (paren
 id|__u32
@@ -618,7 +610,6 @@ id|pcid
 comma
 r_int
 id|stride
-)paren
 )paren
 (brace
 r_int
@@ -677,11 +668,9 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;ibmtr_probe():  Routine specified in the network device structure&n; *&t;to probe for an IBM Token Ring Adapter.  Routine outline:&n; *&t;I.    Interrogate hardware to determine if an adapter exists&n; *&t;      and what the speeds and feeds are&n; *&t;II.   Setup data structures to control execution based upon&n; *&t;      adapter characteristics.&n; *&t;III.  Initialize adapter operation&n; *&n; *&t;We expect ibmtr_probe to be called once for each device entry&n; *&t;which references it.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ibmtr_probe
 r_int
+id|__init
 id|ibmtr_probe
 c_func
 (paren
@@ -689,7 +678,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -829,12 +817,10 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ibmtr_probe1
 r_static
 r_int
+id|__init
 id|ibmtr_probe1
 c_func
 (paren
@@ -845,7 +831,6 @@ id|dev
 comma
 r_int
 id|PIOaddr
-)paren
 )paren
 (brace
 r_int
@@ -2868,13 +2853,11 @@ suffix:semicolon
 multiline_comment|/* Return 0 to indicate we have found a Token Ring card. */
 )brace
 multiline_comment|/* query the adapter for the size of shared RAM  */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_sram_size
 r_static
 r_int
 r_char
+id|__init
 id|get_sram_size
 c_func
 (paren
@@ -2882,7 +2865,6 @@ r_struct
 id|tok_info
 op_star
 id|adapt_info
-)paren
 )paren
 (brace
 r_int
@@ -2948,12 +2930,10 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|trdev_init
 r_static
 r_int
+id|__init
 id|trdev_init
 c_func
 (paren
@@ -2961,7 +2941,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

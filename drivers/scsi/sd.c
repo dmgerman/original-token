@@ -4514,6 +4514,10 @@ id|this_count
 op_lshift
 l_int|9
 suffix:semicolon
+id|SCpnt-&gt;cmd_len
+op_assign
+l_int|0
+suffix:semicolon
 id|scsi_do_cmd
 (paren
 id|SCpnt

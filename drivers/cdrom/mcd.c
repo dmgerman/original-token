@@ -612,11 +612,9 @@ comma
 multiline_comment|/* name of the device type */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mcd_setup
 r_void
+id|__init
 id|mcd_setup
 c_func
 (paren
@@ -627,7 +625,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -4209,16 +4206,13 @@ suffix:colon
 )brace
 )brace
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mcd_init
 r_int
+id|__init
 id|mcd_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

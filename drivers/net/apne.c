@@ -226,11 +226,9 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* signal if card already owned */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|apne_probe
 r_int
+id|__init
 id|apne_probe
 c_func
 (paren
@@ -238,7 +236,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 macro_line|#ifndef MANUAL_CONFIG
@@ -386,12 +383,10 @@ id|ENODEV
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|apne_probe1
 r_static
 r_int
+id|__init
 id|apne_probe1
 c_func
 (paren
@@ -402,7 +397,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

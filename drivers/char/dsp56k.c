@@ -2434,16 +2434,13 @@ multiline_comment|/* no special dsp56k_revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/****** Init and module functions ******/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dsp56k_init
 r_int
+id|__init
 id|dsp56k_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

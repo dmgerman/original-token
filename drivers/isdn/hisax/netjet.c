@@ -4566,11 +4566,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|inittiger
 id|inittiger
 c_func
 (paren
@@ -4578,7 +4576,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 r_if
@@ -5742,11 +5739,9 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_netjet
 id|setup_netjet
 c_func
 (paren
@@ -5754,7 +5749,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_int

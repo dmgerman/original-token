@@ -6,7 +6,6 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/md.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;

@@ -5,6 +5,7 @@ mdefine_line|#define OLYMPIC_DEBUG 0
 multiline_comment|/* Change OLYMPIC_NETWORK_MONITOR to receive mac frames through the arb channel.&n; * Will also create a /proc/net/olympic_tr entry if proc_fs is compiled into the&n; * kernel.&n; * Intended to be used to create a ring-error reporting network module &n; * i.e. it will give you the source address of beaconers on the ring &n; */
 DECL|macro|OLYMPIC_NETWORK_MONITOR
 mdefine_line|#define OLYMPIC_NETWORK_MONITOR 0
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,7 +13,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;

@@ -5536,11 +5536,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|myri_sbus_probe
 r_int
+id|__init
 id|myri_sbus_probe
 c_func
 (paren
@@ -5548,7 +5546,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

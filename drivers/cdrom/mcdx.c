@@ -3211,11 +3211,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mcdx_setup
 r_void
+id|__init
 id|mcdx_setup
 c_func
 (paren
@@ -3226,7 +3224,6 @@ comma
 r_int
 op_star
 id|pi
-)paren
 )paren
 (brace
 r_if
@@ -4311,17 +4308,14 @@ macro_line|#endif
 )brace
 macro_line|#endif MODULE
 multiline_comment|/* Support functions ************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mcdx_init_drive
 r_int
+id|__init
 id|mcdx_init_drive
 c_func
 (paren
 r_int
 id|drive
-)paren
 )paren
 (brace
 r_struct
@@ -5127,16 +5121,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|mcdx_init
 r_int
+id|__init
 id|mcdx_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

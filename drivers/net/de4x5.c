@@ -3116,11 +3116,9 @@ DECL|macro|PHY_HARD_RESET
 mdefine_line|#define PHY_HARD_RESET {&bslash;&n;    outl(GEP_HRST, DE4X5_GEP);           /* Hard RESET the PHY dev. */&bslash;&n;    mdelay(1);                           /* Assert for 1ms */&bslash;&n;    outl(0x00, DE4X5_GEP);&bslash;&n;    mdelay(2);                           /* Wait for 2ms */&bslash;&n;}
 "&f;"
 multiline_comment|/*&n;** Autoprobing in modules is allowed here. See the top of the file for&n;** more info.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|de4x5_probe
 id|de4x5_probe
 c_func
 (paren
@@ -3128,7 +3126,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|u_long
@@ -3187,12 +3184,10 @@ id|ENODEV
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|de4x5_hw_init
 id|de4x5_hw_init
 c_func
 (paren
@@ -3203,7 +3198,6 @@ id|dev
 comma
 id|u_long
 id|iobase
-)paren
 )paren
 (brace
 r_struct
@@ -7878,12 +7872,10 @@ suffix:semicolon
 )brace
 macro_line|#if !defined(__sparc_v9__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__alpha__)
 multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard. Upto 15 EISA devices are supported.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|eisa_probe
 id|eisa_probe
 c_func
 (paren
@@ -7894,7 +7886,6 @@ id|dev
 comma
 id|u_long
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -8232,12 +8223,10 @@ macro_line|#endif          /* !(__sparc_v9__) &amp;&amp; !(__powerpc__) &amp;&am
 multiline_comment|/*&n;** PCI bus I/O device probe&n;** NB: PCI I/O accesses and Bus Mastering are enabled by the PCI BIOS, not&n;** the driver. Some PCI BIOS&squot;s, pre V2.1, need the slot + features to be&n;** enabled by the user first in the set up utility. Hence we just check for&n;** enabled features and silently ignore the card if they&squot;re not.&n;**&n;** STOP PRESS: Some BIOS&squot;s __require__ the driver to enable the bus mastering&n;** bit. Here, check for I/O accesses and then set BM. If you put the card in&n;** a non BM slot, you&squot;re on your own (and complain to the PC vendor that your&n;** PC doesn&squot;t conform to the PCI standard)!&n;**&n;** This function is only compatible with the *latest* 2.1.x kernels. For 2.0.x&n;** kernels use the V0.535[n] drivers.&n;*/
 DECL|macro|PCI_LAST_DEV
 mdefine_line|#define PCI_LAST_DEV  32
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|pci_probe
 id|pci_probe
 c_func
 (paren
@@ -8248,7 +8237,6 @@ id|dev
 comma
 id|u_long
 id|ioaddr
-)paren
 )paren
 (brace
 id|u_char
@@ -8831,12 +8819,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** This function searches the current bus (which is &gt;0) for a DECchip with an&n;** SROM, so that in multiport cards that have one SROM shared between multiple &n;** DECchips, we can find the base SROM irrespective of the BIOS scan direction.&n;** For single port cards this is a time waster...&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|srom_search
 id|srom_search
 c_func
 (paren
@@ -8844,7 +8830,6 @@ r_struct
 id|pci_dev
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|u_char
@@ -9168,12 +9153,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|link_modules
 id|link_modules
 c_func
 (paren
@@ -9186,7 +9169,6 @@ r_struct
 id|device
 op_star
 id|tmp
-)paren
 )paren
 (brace
 r_struct
@@ -26689,23 +26671,6 @@ id|ioc-&gt;len
 op_assign
 id|ETH_ALEN
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|ioc-&gt;data
-comma
-id|ioc-&gt;len
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -26732,6 +26697,9 @@ id|i
 )braket
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -26741,6 +26709,10 @@ id|tmp.addr
 comma
 id|ioc-&gt;len
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -26765,20 +26737,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|ioc-&gt;data
-comma
-id|ETH_ALEN
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -26788,6 +26746,10 @@ id|ioc-&gt;data
 comma
 id|ETH_ALEN
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_for
 c_loop
@@ -27045,23 +27007,6 @@ r_sizeof
 id|lp-&gt;pktStats
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|ioc-&gt;data
-comma
-id|ioc-&gt;len
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -27071,6 +27016,9 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -27081,6 +27029,10 @@ id|lp-&gt;pktStats
 comma
 id|ioc-&gt;len
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
@@ -27163,20 +27115,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|ioc-&gt;data
-comma
-l_int|1
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|copy_to_user
 c_func
 (paren
@@ -27186,6 +27124,10 @@ id|tmp.addr
 comma
 l_int|1
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -27210,20 +27152,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|ioc-&gt;data
-comma
-l_int|1
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -27233,6 +27161,10 @@ id|ioc-&gt;data
 comma
 l_int|1
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|outl
 c_func
@@ -27382,20 +27314,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|ioc-&gt;data
-comma
-id|ioc-&gt;len
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 id|copy_to_user
 c_func
 (paren
@@ -27405,12 +27323,16 @@ id|tmp.addr
 comma
 id|ioc-&gt;len
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_break
 suffix:semicolon
 DECL|macro|DE4X5_DUMP
 mdefine_line|#define DE4X5_DUMP              0x0f /* Dump the DE4X5 Status */
-multiline_comment|/*&t;&n;      case DE4X5_DUMP:&n;&t;j = 0;&n;&t;tmp.addr[j++] = dev-&gt;irq;&n;&t;for (i=0; i&lt;ETH_ALEN; i++) {&n;&t;    tmp.addr[j++] = dev-&gt;dev_addr[i];&n;&t;}&n;&t;tmp.addr[j++] = lp-&gt;rxRingSize;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;rx_ring; j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;tx_ring; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;rx_ring[i].status); j+=4;&n;&t;}&n;&t;for (i=0;i&lt;lp-&gt;txRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;tx_ring[i].status); j+=4;&n;&t;}&n;&t;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_BMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_STS);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_OMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_IMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;chipset; j+=4; &n;&t;if (lp-&gt;chipset == DC21140) {&n;&t;    tmp.lval[j&gt;&gt;2] = gep_rd(dev);  j+=4;&n;&t;} else {&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SISR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SICR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_STRR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SIGR); j+=4; &n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;phy[lp-&gt;active].id; j+=4; &n;&t;if (lp-&gt;phy[lp-&gt;active].id &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&n;&t;    tmp.lval[j&gt;&gt;2] = lp-&gt;active; j+=4; &n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_CR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_SR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID0,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID1,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANLPA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(0x10,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x11,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x12,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    } else {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x14,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;}&n;&t;&n;&t;tmp.addr[j++] = lp-&gt;txRingSize;&n;&t;tmp.addr[j++] = dev-&gt;tbusy;&n;&t;&n;&t;ioc-&gt;len = j;&n;&t;if (verify_area(VERIFY_WRITE, ioc-&gt;data, ioc-&gt;len)) return -EFAULT;&n;&t;copy_to_user(ioc-&gt;data, tmp.addr, ioc-&gt;len);&n;&t;break;&n;&n;*/
+multiline_comment|/*&t;&n;      case DE4X5_DUMP:&n;&t;j = 0;&n;&t;tmp.addr[j++] = dev-&gt;irq;&n;&t;for (i=0; i&lt;ETH_ALEN; i++) {&n;&t;    tmp.addr[j++] = dev-&gt;dev_addr[i];&n;&t;}&n;&t;tmp.addr[j++] = lp-&gt;rxRingSize;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;rx_ring; j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;tx_ring; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;rx_ring[i].status); j+=4;&n;&t;}&n;&t;for (i=0;i&lt;lp-&gt;txRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;tx_ring[i].status); j+=4;&n;&t;}&n;&t;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_BMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_STS);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_OMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_IMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;chipset; j+=4; &n;&t;if (lp-&gt;chipset == DC21140) {&n;&t;    tmp.lval[j&gt;&gt;2] = gep_rd(dev);  j+=4;&n;&t;} else {&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SISR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SICR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_STRR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SIGR); j+=4; &n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;phy[lp-&gt;active].id; j+=4; &n;&t;if (lp-&gt;phy[lp-&gt;active].id &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&n;&t;    tmp.lval[j&gt;&gt;2] = lp-&gt;active; j+=4; &n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_CR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_SR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID0,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID1,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANLPA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(0x10,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x11,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x12,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    } else {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x14,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;}&n;&t;&n;&t;tmp.addr[j++] = lp-&gt;txRingSize;&n;&t;tmp.addr[j++] = dev-&gt;tbusy;&n;&t;&n;&t;ioc-&gt;len = j;&n;&t;if (copy_to_user(ioc-&gt;data, tmp.addr, ioc-&gt;len)) return -EFAULT;&n;&t;break;&n;&n;*/
 r_default
 suffix:colon
 r_return
@@ -27901,14 +27823,12 @@ id|j
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** If at end of eth device list and can&squot;t use current entry, malloc&n;** one up. If memory could not be allocated, print an error message.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_struct
 id|device
 op_star
+id|__init
+DECL|function|insert_device
 id|insert_device
 c_func
 (paren
@@ -27929,7 +27849,6 @@ id|init
 r_struct
 id|device
 op_star
-)paren
 )paren
 )paren
 (brace

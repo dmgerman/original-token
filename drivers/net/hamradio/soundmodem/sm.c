@@ -3012,28 +3012,22 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sm_init
 r_static
 r_int
+id|__init
 id|sm_init
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#else /* MODULE */
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|sm_init
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#endif /* MODULE */
 (brace
@@ -3493,16 +3487,13 @@ l_string|&quot;Soundcard amateur radio modem driver&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_module
 r_int
+id|__init
 id|init_module
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if
@@ -3757,11 +3748,9 @@ suffix:semicolon
 macro_line|#else /* MODULE */
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * format: sm=io,irq,dma[,dma2[,serio[,pario]]],mode&n; * mode: hw:modem&n; * hw: sbc, wss, wssfdx&n; * modem: afsk1200, fsk9600&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sm_setup
 r_void
+id|__init
 id|sm_setup
 c_func
 (paren
@@ -3772,7 +3761,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int

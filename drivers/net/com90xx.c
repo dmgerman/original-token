@@ -256,10 +256,8 @@ l_string|&quot;s&quot;
 )paren
 suffix:semicolon
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|com90xx_setup
 c_func
 (paren
@@ -270,7 +268,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 suffix:semicolon
 DECL|variable|com90xx_explicit
@@ -387,11 +384,9 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arc90xx_probe
 r_int
+id|__init
 id|arc90xx_probe
 c_func
 (paren
@@ -399,7 +394,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -1578,7 +1572,7 @@ c_func
 id|NORXflag
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|1
@@ -1985,12 +1979,10 @@ id|retval
 suffix:semicolon
 )brace
 multiline_comment|/* Set up the struct device associated with this card.  Called after&n; * probing succeeds.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arc90xx_found
 r_static
 r_int
+id|__init
 id|arc90xx_found
 c_func
 (paren
@@ -2010,7 +2002,6 @@ id|shmem
 comma
 r_int
 id|more
-)paren
 )paren
 (brace
 r_struct
@@ -4465,11 +4456,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|com90xx_setup
 r_void
+id|__init
 id|com90xx_setup
 c_func
 (paren
@@ -4480,7 +4469,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_struct

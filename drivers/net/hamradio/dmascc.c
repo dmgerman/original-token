@@ -1035,11 +1035,9 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dmascc_setup
 r_void
+id|__init
 id|dmascc_setup
 c_func
 (paren
@@ -1050,7 +1048,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -1092,16 +1089,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Initialization functions */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dmascc_init
 r_int
+id|__init
 id|dmascc_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -1883,11 +1877,9 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_adapter
 r_int
+id|__init
 id|setup_adapter
 c_func
 (paren
@@ -1899,7 +1891,6 @@ id|h
 comma
 r_int
 id|n
-)paren
 )paren
 (brace
 r_int

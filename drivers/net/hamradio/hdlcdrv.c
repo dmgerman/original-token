@@ -3978,16 +3978,13 @@ l_string|&quot;Packet Radio network interface HDLC encoder/decoder&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_module
 r_int
+id|__init
 id|init_module
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk

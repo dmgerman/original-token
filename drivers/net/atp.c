@@ -294,11 +294,9 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adapter of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|atp_init
 id|atp_init
 c_func
 (paren
@@ -306,7 +304,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -427,12 +424,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atp_probe1
 r_static
 r_int
+id|__init
 id|atp_probe1
 c_func
 (paren
@@ -443,7 +438,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -856,12 +850,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Read the station address PROM, usually a word-wide EEPROM. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_node_ID
 r_static
 r_void
+id|__init
 id|get_node_ID
 c_func
 (paren
@@ -869,7 +861,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -974,13 +965,11 @@ id|CMR2_NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;  An EEPROM read command starts by shifting out 0x60+address, and then&n;  shifting in the serial data. See the NatSemi databook for details.&n; *&t;&t;   ________________&n; * CS : __|&n; *&t;&t;&t;   ___&t;   ___&n; * CLK: ______|&t;  |___|&t;  |&n; *&t;&t; __ _______ _______&n; * DI :&t; __X_______X_______X&n; * DO :&t; _________X_______X&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eeprom_op
 r_static
 r_int
 r_int
+id|__init
 id|eeprom_op
 c_func
 (paren
@@ -990,7 +979,6 @@ comma
 r_int
 r_int
 id|cmd
-)paren
 )paren
 (brace
 r_int

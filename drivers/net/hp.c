@@ -266,11 +266,9 @@ id|hppclan_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp_probe
 r_int
+id|__init
 id|hp_probe
 c_func
 (paren
@@ -278,7 +276,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -382,11 +379,9 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp_probe1
 r_int
+id|__init
 id|hp_probe1
 c_func
 (paren
@@ -397,7 +392,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

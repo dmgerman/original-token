@@ -306,11 +306,9 @@ id|fmv18x_probe_list
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|fmv18x_probe
 id|fmv18x_probe
 c_func
 (paren
@@ -318,7 +316,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -423,11 +420,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* The Fujitsu datasheet suggests that the NIC be probed for by checking its&n;   &quot;signature&quot;, the default bit pattern after a reset.  This *doesn&squot;t* work --&n;   there is no way to reset the bus interface without a complete power-cycle!&n;&n;   It turns out that ATI came to the same conclusion I did: the only thing&n;   that can be done is checking a few bits and then diving right into MAC&n;   address check. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fmv18x_probe1
 r_int
+id|__init
 id|fmv18x_probe1
 c_func
 (paren
@@ -438,7 +433,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_char

@@ -4217,10 +4217,8 @@ op_star
 id|ints
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|aztcd_setup
 c_func
 (paren
@@ -4231,7 +4229,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 macro_line|#endif
 (brace
@@ -6962,15 +6959,12 @@ c_func
 r_void
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|aztcd_init
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#endif
 (brace

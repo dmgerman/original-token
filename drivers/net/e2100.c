@@ -276,11 +276,9 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/*  Probe for the E2100 series ethercards.  These cards have an 8390 at the&n;&t;base address and the station address at both offset 0x10 and 0x18.  I read&n;&t;the station address from offset 0x18 to avoid the dataport of NE2000&n;&t;ethercards, and look for Ctron&squot;s unique ID (first three octets of the&n;&t;station address).&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|e2100_probe
 r_int
+id|__init
 id|e2100_probe
 c_func
 (paren
@@ -288,7 +286,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -379,11 +376,9 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|e21_probe1
 r_int
+id|__init
 id|e21_probe1
 c_func
 (paren
@@ -394,7 +389,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

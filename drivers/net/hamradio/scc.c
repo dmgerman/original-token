@@ -8645,15 +8645,12 @@ macro_line|#endif
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* * &t;&t;&t;Init SCC driver &t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|scc_init
 r_int
+id|__init
 id|scc_init
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -97,18 +97,15 @@ suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Translate PSA irq parameter to irq number &n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|wv_psa_to_irq
 id|wv_psa_to_irq
 c_func
 (paren
 id|u_char
 id|irqval
-)paren
 )paren
 (brace
 r_int
@@ -8469,32 +8466,6 @@ r_struct
 id|iw_range
 id|range
 suffix:semicolon
-multiline_comment|/* Verify the user buffer. */
-id|ret
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|wrq-&gt;u.data.pointer
-comma
-r_sizeof
-(paren
-r_struct
-id|iw_range
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* Set the length (useless:  it&squot;s constant). */
 id|wrq-&gt;u.data.length
 op_assign
@@ -8591,6 +8562,9 @@ op_assign
 id|MMR_SILENCE_LVL
 suffix:semicolon
 multiline_comment|/* Copy structure to the user buffer. */
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -8605,6 +8579,11 @@ r_struct
 id|iw_range
 )paren
 )paren
+)paren
+id|ret
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_break
@@ -8686,37 +8665,15 @@ l_string|&quot;gethisto&quot;
 comma
 )brace
 suffix:semicolon
-multiline_comment|/* Verify the user buffer. */
-id|ret
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|wrq-&gt;u.data.pointer
-comma
-r_sizeof
-(paren
-id|priv
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* Set the number of available ioctls. */
 id|wrq-&gt;u.data.length
 op_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* Copy structure to the user buffer. */
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -8733,6 +8690,11 @@ r_sizeof
 id|priv
 )paren
 )paren
+)paren
+id|ret
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_break
@@ -8782,35 +8744,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Verify where the user has set his addresses. */
-id|ret
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|wrq-&gt;u.data.pointer
-comma
-r_sizeof
-(paren
-r_struct
-id|sockaddr
-)paren
-op_star
-id|lp-&gt;spy_number
-)paren
-suffix:semicolon
+multiline_comment|/* Copy addresses to the driver. */
 r_if
 c_cond
 (paren
-id|ret
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/* Copy addresses to the driver. */
 id|copy_from_user
 c_func
 (paren
@@ -8826,7 +8763,16 @@ id|sockaddr
 op_star
 id|lp-&gt;spy_number
 )paren
+)paren
+(brace
+id|ret
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Copy addresses to the lp structure. */
 r_for
 c_loop
@@ -9000,41 +8946,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Verify the user buffer. */
-id|ret
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|wrq-&gt;u.data.pointer
-comma
-(paren
-r_sizeof
-(paren
-id|iw_qual
-)paren
-op_plus
-r_sizeof
-(paren
-r_struct
-id|sockaddr
-)paren
-)paren
-op_star
-id|IW_MAX_SPY
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* Copy addresses from the lp structure. */
 r_for
 c_loop
@@ -9080,6 +8991,9 @@ id|AF_UNIX
 suffix:semicolon
 )brace
 multiline_comment|/* Copy addresses to the user buffer. */
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -9095,8 +9009,20 @@ id|sockaddr
 op_star
 id|lp-&gt;spy_number
 )paren
+)paren
+(brace
+id|ret
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Copy stats to the user buffer (just after). */
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -9121,7 +9047,16 @@ id|iw_qual
 op_star
 id|lp-&gt;spy_number
 )paren
+)paren
+(brace
+id|ret
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Reset updated flags. */
 r_for
 c_loop
@@ -9338,34 +9273,10 @@ OG
 l_int|0
 )paren
 (brace
-multiline_comment|/* Verify where the user has set his addresses. */
-id|ret
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|wrq-&gt;u.data.pointer
-comma
-r_sizeof
-(paren
-r_char
-)paren
-op_star
-id|lp-&gt;his_number
-)paren
-suffix:semicolon
+multiline_comment|/* Copy interval ranges to the driver */
 r_if
 c_cond
 (paren
-id|ret
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/* Copy interval ranges to the driver */
 id|copy_from_user
 c_func
 (paren
@@ -9380,7 +9291,16 @@ r_char
 op_star
 id|lp-&gt;his_number
 )paren
+)paren
+(brace
+id|ret
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Reset structure. */
 id|memset
 c_func
@@ -9428,34 +9348,10 @@ l_int|0
 )paren
 )paren
 (brace
-multiline_comment|/* Verify the user buffer. */
-id|ret
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|wrq-&gt;u.data.pointer
-comma
-r_sizeof
-(paren
-r_int
-)paren
-op_star
-l_int|16
-)paren
-suffix:semicolon
+multiline_comment|/* Copy data to the user buffer. */
 r_if
 c_cond
 (paren
-id|ret
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/* Copy data to the user buffer. */
 id|copy_to_user
 c_func
 (paren
@@ -9470,6 +9366,11 @@ r_int
 op_star
 id|lp-&gt;his_number
 )paren
+)paren
+id|ret
+op_assign
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 multiline_comment|/* if(pointer != NULL) */
@@ -15858,19 +15759,16 @@ suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Probe an I/O address, and if the WaveLAN is there configure the&n; * device structure&n; * (called by wavelan_probe() and via init_module()).&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|wavelan_config
 id|wavelan_config
 c_func
 (paren
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|u_long
@@ -16248,18 +16146,15 @@ suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Check for a network adaptor of this type.  Return &squot;0&squot; iff one &n; * exists.  There seem to be different interpretations of&n; * the initial value of dev-&gt;base_addr.&n; * We follow the example in drivers/net/ne.c.&n; * (called in &quot;Space.c&quot;)&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|wavelan_probe
 id|wavelan_probe
 c_func
 (paren
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -16716,6 +16611,22 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ret
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

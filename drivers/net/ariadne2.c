@@ -180,11 +180,9 @@ r_int
 id|start_page
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ariadne2_probe
 r_int
+id|__init
 id|ariadne2_probe
 c_func
 (paren
@@ -192,7 +190,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -292,12 +289,10 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ariadne2_init
 r_static
 r_int
+id|__init
 id|ariadne2_init
 c_func
 (paren
@@ -313,7 +308,6 @@ comma
 r_int
 r_int
 id|board
-)paren
 )paren
 (brace
 r_int

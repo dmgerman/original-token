@@ -55,7 +55,7 @@ id|rsquash
 id|MAXQUOTAS
 )braket
 suffix:semicolon
-multiline_comment|/* for quotas threath root as any other user */
+multiline_comment|/* for quotas treat root as any other user */
 )brace
 suffix:semicolon
 DECL|struct|vfsmount

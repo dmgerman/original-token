@@ -124,11 +124,9 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dummy_init
 r_int
+id|__init
 id|dummy_init
 c_func
 (paren
@@ -136,7 +134,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 multiline_comment|/* Initialize the device structure. */
@@ -308,12 +305,10 @@ id|stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dummy_probe
 r_static
 r_int
+id|__init
 id|dummy_probe
 c_func
 (paren
@@ -321,7 +316,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|dummy_init

@@ -2375,16 +2375,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amiga_keyb_init
 r_int
+id|__init
 id|amiga_keyb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if
@@ -2637,11 +2634,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|amiga_kbd_reset_setup
 r_void
+id|__init
 id|amiga_kbd_reset_setup
 c_func
 (paren
@@ -2652,7 +2647,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 )brace

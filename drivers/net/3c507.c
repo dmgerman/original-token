@@ -532,11 +532,9 @@ id|netcard_portlist
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;&t;If dev-&gt;base_addr == 0, probe all likely locations.&n;&t;If dev-&gt;base_addr == 1, always return failure.&n;&t;If dev-&gt;base_addr == 2, (detachable devices only) allocate space for the&n;&t;device and return success.&n;&t;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|el16_probe
 r_int
+id|__init
 id|el16_probe
 c_func
 (paren
@@ -544,7 +542,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -647,11 +644,9 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|el16_probe1
 r_int
+id|__init
 id|el16_probe1
 c_func
 (paren
@@ -662,7 +657,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_static

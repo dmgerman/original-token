@@ -1155,11 +1155,10 @@ id|vma-&gt;vm_file
 op_assign
 id|file
 suffix:semicolon
-id|atomic_inc
+id|get_file
 c_func
 (paren
-op_amp
-id|file-&gt;f_count
+id|file
 )paren
 suffix:semicolon
 )brace
@@ -2090,11 +2089,10 @@ c_cond
 (paren
 id|mpnt-&gt;vm_file
 )paren
-id|atomic_inc
+id|get_file
 c_func
 (paren
-op_amp
-id|mpnt-&gt;vm_file-&gt;f_count
+id|mpnt-&gt;vm_file
 )paren
 suffix:semicolon
 r_if
@@ -2636,6 +2634,11 @@ comma
 id|size
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|remove_shared_vm_struct
 c_func
 (paren
@@ -2688,11 +2691,6 @@ comma
 id|size
 comma
 id|extra
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -3033,12 +3031,6 @@ id|addr
 op_assign
 id|vma-&gt;vm_start
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* kswapd, ugh */
 id|insert_vm_struct
 c_func
 (paren
@@ -3055,11 +3047,6 @@ comma
 id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|mm-&gt;total_vm

@@ -5580,16 +5580,13 @@ op_assign
 id|CDU535_BLOCK_SIZE
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|sony535_init
 id|sony535_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -6374,11 +6371,9 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters&n; * (added by emoenke@gwdg.de)&n; *&n; * use: tell LILO:&n; *                 sonycd535=0x320&n; *&n; * the address value has to be the existing CDROM port address.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|sonycd535_setup
 id|sonycd535_setup
 c_func
 (paren
@@ -6389,7 +6384,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 multiline_comment|/* if IRQ change and default io base desired,&n;&t; * then call with io base of 0&n;&t; */

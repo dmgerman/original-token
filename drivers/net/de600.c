@@ -1704,11 +1704,9 @@ id|skb
 suffix:semicolon
 multiline_comment|/*&n;&t; * If any worth-while packets have been received, netif_rx()&n;&t; * has done a mark_bh(INET_BH) for us and will work on them&n;&t; * when we get to the bottom-half routine.&n;&t; */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|de600_probe
 id|de600_probe
 c_func
 (paren
@@ -1716,7 +1714,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

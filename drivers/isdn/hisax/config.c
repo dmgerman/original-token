@@ -982,11 +982,9 @@ macro_line|#ifdef MODULE
 DECL|macro|HiSax_init
 mdefine_line|#define HiSax_init init_module
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|HiSax_setup
 id|HiSax_setup
 c_func
 (paren
@@ -997,7 +995,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -4761,16 +4758,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|HiSax_init
 id|HiSax_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

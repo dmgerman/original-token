@@ -689,12 +689,10 @@ suffix:semicolon
 multiline_comment|/* most done by init */
 )brace
 multiline_comment|/**********************************************&n; * Check to see if there&squot;s an 82586 out there.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check586
 r_static
 r_int
+id|__init
 id|check586
 c_func
 (paren
@@ -709,7 +707,6 @@ id|where
 comma
 r_int
 id|size
-)paren
 )paren
 (brace
 r_struct
@@ -1319,11 +1316,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* elmc_getinfo() */
 multiline_comment|/*****************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|elmc_probe
 r_int
+id|__init
 id|elmc_probe
 c_func
 (paren
@@ -1331,7 +1326,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static

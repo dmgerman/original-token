@@ -11812,7 +11812,7 @@ c_func
 suffix:semicolon
 id|filp
 op_assign
-id|fcheck
+id|fget
 c_func
 (paren
 id|fd
@@ -11826,7 +11826,7 @@ id|filp
 )paren
 (brace
 r_goto
-id|out
+id|out2
 suffix:semicolon
 )brace
 r_if
@@ -13933,6 +13933,14 @@ r_break
 suffix:semicolon
 )brace
 id|out
+suffix:colon
+id|fput
+c_func
+(paren
+id|filp
+)paren
+suffix:semicolon
+id|out2
 suffix:colon
 id|unlock_kernel
 c_func

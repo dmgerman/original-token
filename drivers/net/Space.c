@@ -301,6 +301,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|arlan_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|el16_probe
 c_func
 (paren
@@ -921,12 +931,10 @@ multiline_comment|/* non-zero if autoprobe has failed */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * probe_list walks a list of probe functions and calls each so long&n; * as a non-zero ioaddr is given, or as long as it hasn&squot;t already failed &n; * to find a card in the past (as recorded by &quot;status&quot;) when asked to&n; * autoprobe (i.e. a probe that fails to find a card when autoprobing&n; * will not be asked to autoprobe again).  It exits when a card is found.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|probe_list
 r_static
 r_int
+id|__init
 id|probe_list
 c_func
 (paren
@@ -939,7 +947,6 @@ r_struct
 id|devprobe
 op_star
 id|plist
-)paren
 )paren
 (brace
 r_struct
@@ -1536,6 +1543,14 @@ l_int|0
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_ARLAN&t;&t;/* Aironet */
+(brace
+id|arlan_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_EL16&t;&t;/* 3c507 */
 (brace
 id|el16_probe
@@ -1872,12 +1887,10 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Unified ethernet device probe, segmented per architecture and&n; * per bus interface.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ethif_probe
 r_static
 r_int
+id|__init
 id|ethif_probe
 c_func
 (paren
@@ -1885,7 +1898,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -2094,12 +2106,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_FDDI
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fddiif_probe
 r_static
 r_int
+id|__init
 id|fddiif_probe
 c_func
 (paren
@@ -2107,7 +2117,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -3162,6 +3171,16 @@ id|device
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|olympic_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 r_static
 r_int
 DECL|function|trif_probe
@@ -3181,6 +3200,14 @@ l_int|1
 macro_line|#ifdef CONFIG_IBMTR
 op_logical_and
 id|ibmtr_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_IBMOL
+op_logical_and
+id|olympic_probe
 c_func
 (paren
 id|dev

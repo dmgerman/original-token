@@ -363,11 +363,9 @@ id|hpplus_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp_plus_probe
 r_int
+id|__init
 id|hp_plus_probe
 c_func
 (paren
@@ -375,7 +373,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -480,11 +477,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Do the interesting part of the probe at a single address. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hpp_probe1
 r_int
+id|__init
 id|hpp_probe1
 c_func
 (paren
@@ -495,7 +490,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

@@ -265,6 +265,11 @@ comma
 id|rsize
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|rpc_call
@@ -285,6 +290,11 @@ op_amp
 id|rqst.ra_res
 comma
 id|flags
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Even if we had a partial success we can&squot;t mark the page&n;&t;&t; * cache valid.&n;&t;&t; */

@@ -3698,17 +3698,14 @@ id|stats
 suffix:semicolon
 )brace
 multiline_comment|/* initialization stuff */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ltpc_probe_dma
 r_int
+id|__init
 id|ltpc_probe_dma
 c_func
 (paren
 r_int
 id|base
-)paren
 )paren
 (brace
 r_int
@@ -4118,11 +4115,9 @@ r_return
 id|dma
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ltpc_probe
 r_int
+id|__init
 id|ltpc_probe
 c_func
 (paren
@@ -4130,7 +4125,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -4912,11 +4906,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* handles &quot;ltpc=io,irq,dma&quot; kernel command lines */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ltpc_setup
 r_void
+id|__init
 id|ltpc_setup
 c_func
 (paren
@@ -4927,7 +4919,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if

@@ -3671,6 +3671,22 @@ c_func
 id|de
 )paren
 suffix:semicolon
+multiline_comment|/* propagate for a flush */
+r_if
+c_cond
+(paren
+id|cii-&gt;c_flags
+op_amp
+id|C_FLUSH
+)paren
+id|coda_flag_inode_children
+c_func
+(paren
+id|inode
+comma
+id|C_FLUSH
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3701,22 +3717,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* propagate for a flush */
-r_if
-c_cond
-(paren
-id|cii-&gt;c_flags
-op_amp
-id|C_FLUSH
-)paren
-id|coda_flag_inode_children
-c_func
-(paren
-id|inode
-comma
-id|C_FLUSH
-)paren
-suffix:semicolon
 multiline_comment|/* clear the flags. */
 id|cii-&gt;c_flags
 op_and_assign

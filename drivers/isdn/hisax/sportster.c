@@ -787,11 +787,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|get_io_range
 id|get_io_range
 c_func
 (paren
@@ -799,7 +797,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 r_int
@@ -926,11 +923,9 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_sportster
 id|setup_sportster
 c_func
 (paren
@@ -938,7 +933,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

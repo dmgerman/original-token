@@ -347,11 +347,9 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hydra_probe
 r_int
+id|__init
 id|hydra_probe
 c_func
 (paren
@@ -359,7 +357,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

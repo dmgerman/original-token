@@ -223,11 +223,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the rest of the LOOPBACK device. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|loopback_init
 r_int
+id|__init
 id|loopback_init
 c_func
 (paren
@@ -235,7 +233,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|dev-&gt;mtu

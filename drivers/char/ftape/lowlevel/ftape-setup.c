@@ -158,11 +158,9 @@ l_int|1
 )brace
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ftape_setup
 r_void
+id|__init
 id|ftape_setup
 c_func
 (paren
@@ -173,7 +171,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int

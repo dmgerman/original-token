@@ -5642,17 +5642,14 @@ suffix:colon
 )brace
 )brace
 multiline_comment|/* This function probes for the adapter card. It returns the base&n;   address if it has found the adapter card. One can specify a base &n;   port to probe specifically, or 0 which means span all possible&n;   bases. &n;&n;   Linus says it is too dangerous to use writes for probing, so we&n;   stick with pure reads for a while. Hope that 8 possible ranges,&n;   check_region, 15 bits of one port and 6 of another make things&n;   likely enough to accept the region on the first hit...&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|probe_base_port
 r_int
+id|__init
 id|probe_base_port
 c_func
 (paren
 r_int
 id|base
-)paren
 )paren
 (brace
 r_int
@@ -5781,17 +5778,15 @@ suffix:semicolon
 )brace
 macro_line|#if !defined(MODULE) || defined(AUTO_PROBE_MODULE)
 multiline_comment|/* Probe for irq# nr. If nr==0, probe for all possible irq&squot;s. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|probe_irq
 r_int
+id|__init
+(def_block
 id|probe_irq
 c_func
 (paren
 r_int
 id|nr
-)paren
 )paren
 (brace
 r_int
@@ -5876,17 +5871,15 @@ r_return
 id|irq
 suffix:semicolon
 )brace
+)def_block
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cm206_init
 r_int
+id|__init
 id|cm206_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|uch
@@ -6399,16 +6392,13 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* for compatible `insmod&squot; parameter passing */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|parse_options
 r_void
+id|__init
 id|parse_options
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -6548,11 +6538,9 @@ suffix:semicolon
 )brace
 macro_line|#else /* !MODULE */
 multiline_comment|/* This setup function accepts either `auto&squot; or numbers in the range&n; * 3--11 (for irq) or 0x300--0x370 (for base port) or both. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cm206_setup
 r_void
+id|__init
 id|cm206_setup
 c_func
 (paren
@@ -6563,7 +6551,6 @@ comma
 r_int
 op_star
 id|p
-)paren
 )paren
 (brace
 r_int

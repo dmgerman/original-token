@@ -1881,17 +1881,14 @@ suffix:semicolon
 )brace
 multiline_comment|/* The following higher level routines work on virtual addresses and convert them to&n; * physical addresses when passed to the lowlevel routines. It&squot;s up to the higher level&n; * routines to copy data from Alternate RAM to ST RAM if neccesary!&n; */
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; */
-id|__initfunc
-c_func
-(paren
 r_extern
 r_int
+id|__init
+DECL|function|pamsnet_probe
 id|pamsnet_probe
 (paren
 id|dev
 )paren
-)paren
-DECL|variable|dev
 r_struct
 id|device
 op_star

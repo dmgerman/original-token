@@ -18,6 +18,7 @@ multiline_comment|/* construction providing full use of PIPE_BUF (multiple of PA
 multiline_comment|/* Florian Coosmann (FGC)                                ^ current = 1       */
 multiline_comment|/* Additionally, we now use locking technique. This prevents race condition  */
 multiline_comment|/* in case of paging and multiple read/write on the same pipe. (FGC)         */
+multiline_comment|/* Reads with count = 0 should always return 0. Julian Bradfield 1999-06-07. */
 DECL|function|do_pipe_read
 r_static
 id|ssize_t
@@ -789,6 +790,15 @@ id|filp-&gt;f_pos
 r_return
 op_minus
 id|ESPIPE
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|count
+)paren
+r_return
+l_int|0
 suffix:semicolon
 id|lock_kernel
 c_func

@@ -70,11 +70,6 @@ r_int
 id|arg
 )paren
 (brace
-r_struct
-id|file
-op_star
-id|filp
-suffix:semicolon
 r_int
 id|ret
 op_assign
@@ -94,13 +89,10 @@ op_ge
 id|SUNOS_NR_OPEN
 op_logical_or
 op_logical_neg
+id|fcheck
+c_func
 (paren
-id|filp
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
 id|fd
-)braket
 )paren
 )paren
 r_goto

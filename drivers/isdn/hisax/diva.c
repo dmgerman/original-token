@@ -1935,11 +1935,9 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_diva
 id|setup_diva
 c_func
 (paren
@@ -1947,7 +1945,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_int

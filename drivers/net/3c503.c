@@ -233,11 +233,9 @@ id|ring_page
 suffix:semicolon
 "&f;"
 multiline_comment|/* This routine probes for a memory-mapped 3c503 board by looking for&n;   the &quot;location register&quot; at the end of the jumpered boot PROM space.&n;   This works even if a PROM isn&squot;t there.&n;&n;   If the ethercard isn&squot;t found there is an optional probe for&n;   ethercard jumpered to programmed-I/O mode.&n;   */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|el2_probe
 id|el2_probe
 c_func
 (paren
@@ -245,7 +243,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -419,11 +416,9 @@ macro_line|#endif
 )brace
 macro_line|#ifndef HAVE_DEVLIST
 multiline_comment|/*  Try all of the locations that aren&squot;t obviously empty.  This touches&n;    a lot of locations, and is much riskier than the code above. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|el2_pio_probe
 id|el2_pio_probe
 c_func
 (paren
@@ -431,7 +426,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -536,11 +530,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Probe for the Etherlink II card at I/O port base IOADDR,&n;   returning non-zero on success.  If found, set the station&n;   address and memory parameters in DEVICE. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|el2_probe1
 id|el2_probe1
 c_func
 (paren
@@ -551,7 +543,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

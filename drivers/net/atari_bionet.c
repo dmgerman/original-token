@@ -953,11 +953,10 @@ l_int|0x02
 suffix:semicolon
 )brace
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|bionet_probe
+(def_block
 id|bionet_probe
 c_func
 (paren
@@ -965,7 +964,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -1282,6 +1280,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)def_block
 multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;ifconfig&squot; program is run.&n;&n;   This routine should set everything up anew at each open, even&n;   registers that &quot;should&quot; only need to be set once at boot, so that&n;   there is non-reboot way to recover if something goes wrong.&n; */
 r_static
 r_int

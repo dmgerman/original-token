@@ -356,11 +356,9 @@ op_lshift
 l_int|8
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ariadne_probe
 r_int
+id|__init
 id|ariadne_probe
 c_func
 (paren
@@ -368,7 +366,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

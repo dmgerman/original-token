@@ -3393,11 +3393,9 @@ id|foreign_interface
 id|dbri_foreign_interface
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_foreign
 id|setup_foreign
 c_func
 (paren
@@ -3405,7 +3403,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

@@ -2650,11 +2650,9 @@ multiline_comment|/* all ok */
 "&f;"
 multiline_comment|/******************************************************************************&n; *&n; * Only start-up code below&n; *&n; */
 multiline_comment|/****************************************&n; *&n; * Check if there is a DE-620 connected&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|de620_probe
 id|de620_probe
 c_func
 (paren
@@ -2662,7 +2660,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -3040,13 +3037,11 @@ suffix:semicolon
 multiline_comment|/**********************************&n; *&n; * Read info from on-board EEPROM&n; *&n; * Note: Bitwise serial I/O to/from the EEPROM vi the status _register_!&n; */
 DECL|macro|sendit
 mdefine_line|#define sendit(dev,data) de620_set_register(dev, W_EIP, data | EIPRegister);
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
 r_int
+id|__init
+DECL|function|ReadAWord
 id|ReadAWord
 c_func
 (paren
@@ -3057,7 +3052,6 @@ id|dev
 comma
 r_int
 id|from
-)paren
 )paren
 (brace
 r_int
@@ -3325,12 +3319,10 @@ r_return
 id|data
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|read_eeprom
 id|read_eeprom
 c_func
 (paren
@@ -3338,7 +3330,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

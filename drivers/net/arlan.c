@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  Copyright (C) 1997 Cullen Jennings&n; *  Copyright (C) 1998 Elmer.Joandi@ut.ee, +37-255-13500        &n; *  Gnu Public License applies&n; * This module provides support for the Arlan 655 card made by Aironet&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;arlan.h&quot;
 DECL|variable|arlan_version
 r_static

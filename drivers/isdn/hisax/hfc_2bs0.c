@@ -3254,11 +3254,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|init_send
 id|init_send
 c_func
 (paren
@@ -3266,7 +3264,6 @@ r_struct
 id|BCState
 op_star
 id|bcs
-)paren
 )paren
 (brace
 r_int
@@ -3327,11 +3324,9 @@ op_assign
 l_int|0x1fff
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|inithfc
 id|inithfc
 c_func
 (paren
@@ -3339,7 +3334,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|init_send

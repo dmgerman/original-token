@@ -35,6 +35,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/config.h&gt;  /* for CONFIG_PCI */
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|macro|LINUX_2_1
 mdefine_line|#define LINUX_2_1
@@ -940,11 +941,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  probe functions&n; *  These functions should - if possible - avoid doing write operations&n; *  since this could cause problems when the card is not installed.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp100_probe
 r_int
+id|__init
 id|hp100_probe
 c_func
 (paren
@@ -952,7 +951,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -1853,12 +1851,10 @@ suffix:semicolon
 )brace
 "&f;"
 macro_line|#ifdef LINUX_2_1
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hp100_probe1
 r_static
 r_int
+id|__init
 id|hp100_probe1
 c_func
 (paren
@@ -1878,13 +1874,10 @@ id|pci_dev
 op_star
 id|pci_dev
 )paren
-)paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
 id|hp100_probe1
 c_func
 (paren
@@ -1904,7 +1897,6 @@ id|pci_bus
 comma
 id|u_char
 id|pci_device_fn
-)paren
 )paren
 macro_line|#endif
 (brace

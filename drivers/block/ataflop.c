@@ -6954,18 +6954,15 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the &squot;unit&squot; variable for drive &squot;drive&squot; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fd_probe
 r_static
 r_void
+id|__init
 id|fd_probe
 c_func
 (paren
 r_int
 id|drive
-)paren
 )paren
 (brace
 id|UD.connected
@@ -7076,18 +7073,15 @@ suffix:semicolon
 multiline_comment|/* from probe restore operation! */
 )brace
 multiline_comment|/* This function tests the physical presence of a floppy drive (not&n; * whether a disk is inserted). This is done by issuing a restore&n; * command, waiting max. 2 seconds (that should be enough to move the&n; * head across the whole disk) and looking at the state of the &quot;TR00&quot;&n; * signal. This should now be raised if there is a drive connected&n; * (and there is no hardware failure :-) Otherwise, the drive is&n; * declared absent.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fd_test_drive_present
 r_static
 r_int
+id|__init
 id|fd_test_drive_present
 c_func
 (paren
 r_int
 id|drive
-)paren
 )paren
 (brace
 r_int
@@ -7292,17 +7286,14 @@ id|ok
 suffix:semicolon
 )brace
 multiline_comment|/* Look how many and which kind of drives are connected. If there are&n; * floppies, additionally start the disk-change and motor-off timers.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_types
 r_static
 r_void
+id|__init
 id|config_types
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -7895,15 +7886,12 @@ comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_floppy_init
 r_int
+id|__init
 id|atari_floppy_init
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -8258,11 +8246,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|atari_floppy_setup
 r_void
+id|__init
 id|atari_floppy_setup
 c_func
 (paren
@@ -8273,7 +8259,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int

@@ -145,11 +145,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;To call this a probe is a bit misleading, however for real&n; *&t;hardware it would have to check what was present.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ethertap_probe
 r_int
+id|__init
 id|ethertap_probe
 c_func
 (paren
@@ -157,7 +155,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|memcpy

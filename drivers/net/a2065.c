@@ -2972,11 +2972,9 @@ id|NET_BH
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|a2065_probe
 r_int
+id|__init
 id|a2065_probe
 c_func
 (paren
@@ -2984,7 +2982,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

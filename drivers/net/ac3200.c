@@ -258,11 +258,9 @@ id|dev
 suffix:semicolon
 "&f;"
 multiline_comment|/*&t;Probe for the AC3200.&n;&n;&t;The AC3200 can be identified by either the EISA configuration registers,&n;&t;or the unique value in the station address PROM.&n;&t;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ac3200_probe
 r_int
+id|__init
 id|ac3200_probe
 c_func
 (paren
@@ -270,7 +268,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -367,12 +364,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ac_probe1
 r_static
 r_int
+id|__init
 id|ac_probe1
 c_func
 (paren
@@ -383,7 +378,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

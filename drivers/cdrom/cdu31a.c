@@ -12080,12 +12080,10 @@ comma
 l_string|&quot;unknown&quot;
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_void
+id|__init
+DECL|function|get_drive_configuration
 id|get_drive_configuration
 c_func
 (paren
@@ -12103,7 +12101,6 @@ r_int
 r_int
 op_star
 id|res_size
-)paren
 )paren
 (brace
 r_int
@@ -12270,11 +12267,9 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Set up base I/O and interrupts, called from main.c.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|cdu31a_setup
 id|cdu31a_setup
 c_func
 (paren
@@ -12285,7 +12280,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -12382,16 +12376,13 @@ r_int
 id|cdu31a_block_size
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|cdu31a_init
 id|cdu31a_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

@@ -312,11 +312,9 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Set up device, i.e., use command line data to set&n; * base address.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sjcd_setup
 r_void
+id|__init
 id|sjcd_setup
 c_func
 (paren
@@ -327,7 +325,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -5790,17 +5787,14 @@ DECL|variable|sjcd_version
 id|sjcd_version
 suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it. Called at boot time.&n; * Probe cdrom, find out version and status.&n; */
-DECL|function|__initfunc
-(def_block
-id|__initfunc
-c_func
-(paren
+DECL|function|sjcd_init
 r_int
+id|__init
+(def_block
 id|sjcd_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

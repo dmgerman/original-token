@@ -371,11 +371,9 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hd_setup
 r_void
+id|__init
 id|hd_setup
 c_func
 (paren
@@ -386,7 +384,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -3901,16 +3898,13 @@ id|block_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|hd_init
 r_int
+id|__init
 id|hd_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

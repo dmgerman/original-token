@@ -10937,16 +10937,13 @@ id|port_detected
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|espserial_init
 r_int
+id|__init
 id|espserial_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -16963,17 +16963,14 @@ suffix:semicolon
 )brace
 macro_line|#endif FUTURE
 multiline_comment|/*==========================================================================*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_datarate
 r_static
 r_void
+id|__init
 id|check_datarate
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -17272,17 +17269,14 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*==========================================================================*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ask_mail
 r_static
 r_void
+id|__init
 id|ask_mail
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -17446,17 +17440,14 @@ id|msgbuf
 suffix:semicolon
 )brace
 multiline_comment|/*==========================================================================*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_version
 r_static
 r_int
+id|__init
 id|check_version
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -20012,18 +20003,15 @@ suffix:semicolon
 multiline_comment|/*==========================================================================*/
 macro_line|#ifdef PATH_CHECK
 multiline_comment|/*&n; * probe for the presence of an interface card&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_card
 r_static
 r_int
+id|__init
 id|check_card
 c_func
 (paren
 r_int
 id|port
-)paren
 )paren
 (brace
 DECL|macro|N_RESPO
@@ -20896,17 +20884,14 @@ macro_line|#endif PATH_CHECK
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * probe for the presence of drives on the selected controller&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|check_drives
 r_static
 r_int
+id|__init
 id|check_drives
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -31389,12 +31374,10 @@ suffix:semicolon
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters &n; * (suggested by Peter MacDonald with SLS 1.03)&n; *&n; * This is only implemented for the first controller. Should be enough to&n; * allow installing with a &quot;strange&quot; distribution kernel.&n; *&n; * use: tell LILO:&n; *                 sbpcd=0x230,SoundBlaster&n; *             or&n; *                 sbpcd=0x300,LaserMate&n; *             or&n; *                 sbpcd=0x338,SoundScape&n; *             or&n; *                 sbpcd=0x2C0,Teac16bit&n; *&n; * (upper/lower case sensitive here - but all-lowercase is ok!!!).&n; *&n; * the address value has to be the CDROM PORT ADDRESS -&n; * not the soundcard base address.&n; * For the SPEA/SoundScape setup, DO NOT specify the &quot;configuration port&quot;&n; * address, but the address which is really used for the CDROM (usually 8&n; * bytes above).&n; *&n; */
 macro_line|#if (SBPCD_ISSUE-1)
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbpcd_setup
 r_static
 r_void
+id|__init
 id|sbpcd_setup
 c_func
 (paren
@@ -31406,13 +31389,10 @@ comma
 r_int
 op_star
 id|p
-)paren
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|sbpcd_setup
 c_func
 (paren
@@ -31424,7 +31404,6 @@ comma
 r_int
 op_star
 id|p
-)paren
 )paren
 macro_line|#endif
 (brace
@@ -31705,17 +31684,14 @@ suffix:semicolon
 )brace
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * Sequoia S-1000 CD-ROM Interface Configuration&n; * as used within SPEA Media FX, Ensonic SoundScape and some Reveal cards&n; * The soundcard has to get jumpered for the interface type &quot;Panasonic&quot;&n; * (not Sony or Mitsumi) and to get soft-configured for&n; *     -&gt; configuration port address&n; *     -&gt; CDROM port offset (num_ports): has to be 8 here. Possibly this&n; *        offset value determines the interface type (none, Panasonic,&n; *        Mitsumi, Sony).&n; *        The interface uses a configuration port (0x320, 0x330, 0x340, 0x350)&n; *        some bytes below the real CDROM address.&n; *         &n; *        For the Panasonic style (LaserMate) interface and the configuration&n; *        port 0x330, we have to use an offset of 8; so, the real CDROM port&n; *        address is 0x338.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|config_spea
 r_static
 r_int
+id|__init
 id|config_spea
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;         * base address offset between configuration port and CDROM port,&n;&t; * this probably defines the interface type&n;         *   2 (type=??): 0x00&n;         *   8 (type=LaserMate):0x10&n;         *  16 (type=??):0x20&n;         *  32 (type=??):0x30&n;         */
@@ -31933,15 +31909,12 @@ c_func
 r_void
 )paren
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|SBPCD_INIT
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#endif MODULE
 (brace

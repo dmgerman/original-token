@@ -243,10 +243,8 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|arcrimi_setup
 (paren
 r_char
@@ -256,7 +254,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 suffix:semicolon
 r_extern
@@ -321,11 +318,9 @@ l_string|&quot;arc-rimi.c: v3.00 97/11/09 Avery Pennarun &lt;apenwarr@worldvisio
 suffix:semicolon
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* We cannot probe for a RIM I card; one reason is I don&squot;t know how to reset&n; * them.  In fact, we can&squot;t even get their node ID automatically.  So, we&n; * need to be passed a specific shmem address, IRQ, and node ID.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arcrimi_probe
 r_int
+id|__init
 id|arcrimi_probe
 c_func
 (paren
@@ -333,7 +328,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|BUGLVL
@@ -433,11 +427,9 @@ id|dev-&gt;mem_start
 suffix:semicolon
 )brace
 multiline_comment|/* Set up the struct device associated with this card.  Called after&n; * probing succeeds.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arcrimi_found
 r_int
+id|__init
 id|arcrimi_found
 c_func
 (paren
@@ -454,7 +446,6 @@ id|airq
 comma
 id|u_long
 id|shmem
-)paren
 )paren
 (brace
 r_struct
@@ -2772,11 +2763,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|arcrimi_setup
 r_void
+id|__init
 id|arcrimi_setup
 (paren
 r_char
@@ -2786,7 +2775,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_struct

@@ -3575,16 +3575,14 @@ op_amp
 id|apollo_mouse_fops
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dn_keyb_init
 r_int
+id|__init
+(def_block
 id|dn_keyb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*  printk(&quot;dn_keyb_init&bslash;n&quot;); */
@@ -3781,6 +3779,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+)def_block
 DECL|function|dn_dummy_kbdrate
 r_int
 id|dn_dummy_kbdrate

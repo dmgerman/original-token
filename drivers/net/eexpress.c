@@ -878,11 +878,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Linux interface&n; */
 multiline_comment|/*&n; * checks for presence of EtherExpress card&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|express_probe
 r_int
+id|__init
 id|express_probe
 c_func
 (paren
@@ -890,7 +888,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -3943,12 +3940,10 @@ id|jiffies
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Sanity check the suspected EtherExpress card&n; * Read hardware address, reset card, size memory and initialize buffer&n; * memory pointers. These are held in dev-&gt;priv, in case someone has more&n; * than one card in a machine.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eexp_hw_probe
 r_static
 r_int
+id|__init
 id|eexp_hw_probe
 c_func
 (paren
@@ -3960,7 +3955,6 @@ comma
 r_int
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -4627,13 +4621,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a word from the EtherExpress on-board serial EEPROM.&n; * The EEPROM contains 64 words of 16 bits.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eexp_hw_readeeprom
 r_static
 r_int
 r_int
+id|__init
 id|eexp_hw_readeeprom
 c_func
 (paren
@@ -4644,7 +4636,6 @@ comma
 r_int
 r_char
 id|location
-)paren
 )paren
 (brace
 r_int

@@ -262,11 +262,9 @@ l_int|0x0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Probe for the card. The best way is to read the EISA ID if it&n; *&t;is known. Then we can check the prefix of the station address&n; *&t;PROM for a match against the value assigned to Mylex.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lne390_probe
 r_int
+id|__init
 id|lne390_probe
 c_func
 (paren
@@ -274,7 +272,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -382,11 +379,9 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lne390_probe1
 r_int
+id|__init
 id|lne390_probe1
 c_func
 (paren
@@ -397,7 +392,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;arlan.h&quot;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/sysctl.h&gt;

@@ -3217,10 +3217,11 @@ id|file
 suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fcheck
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -598,6 +598,21 @@ op_star
 id|fid
 )paren
 suffix:semicolon
+r_int
+id|venus_statfs
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_struct
+id|statfs
+op_star
+id|sfs
+)paren
+suffix:semicolon
 multiline_comment|/* messages between coda filesystem in kernel and Venus */
 r_extern
 r_int
