@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.6 1997/12/13 21:52:48 kuznet Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.9 1998/03/08 20:52:36 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -406,10 +406,6 @@ suffix:semicolon
 id|key.dst
 op_assign
 id|addr
-suffix:semicolon
-id|key.scope
-op_assign
-id|RT_SCOPE_UNIVERSE
 suffix:semicolon
 r_if
 c_cond
@@ -1400,6 +1396,49 @@ id|fib_table
 op_star
 id|tb
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|NLMSG_PAYLOAD
+c_func
+(paren
+id|cb-&gt;nlh
+comma
+l_int|0
+)paren
+op_ge
+r_sizeof
+(paren
+r_struct
+id|rtmsg
+)paren
+op_logical_and
+(paren
+(paren
+r_struct
+id|rtmsg
+op_star
+)paren
+id|NLMSG_DATA
+c_func
+(paren
+id|cb-&gt;nlh
+)paren
+)paren
+op_member_access_from_pointer
+id|rtm_flags
+op_amp
+id|RTM_F_CLONED
+)paren
+r_return
+id|ip_rt_dump
+c_func
+(paren
+id|skb
+comma
+id|cb
+)paren
+suffix:semicolon
 id|s_t
 op_assign
 id|cb-&gt;args
@@ -1808,6 +1847,7 @@ id|ifa-&gt;ifa_flags
 op_amp
 id|IFA_F_SECONDARY
 )paren
+(brace
 id|prim
 op_assign
 id|inet_ifa_byprefix
@@ -1820,6 +1860,25 @@ comma
 id|mask
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|prim
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;fib_add_ifaddr: bug: prim == NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
 id|fib_magic
 c_func
 (paren
@@ -1885,6 +1944,16 @@ op_logical_neg
 id|ifa-&gt;ifa_flags
 op_amp
 id|IFA_F_SECONDARY
+)paren
+op_logical_and
+(paren
+id|prefix
+op_ne
+id|addr
+op_logical_or
+id|ifa-&gt;ifa_prefixlen
+OL
+l_int|32
 )paren
 )paren
 (brace
@@ -2050,6 +2119,7 @@ id|prim
 )paren
 suffix:semicolon
 r_else
+(brace
 id|prim
 op_assign
 id|inet_ifa_byprefix
@@ -2062,6 +2132,25 @@ comma
 id|ifa-&gt;ifa_mask
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|prim
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;fib_del_ifaddr: bug: prim == NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Deletion is more complicated than add.&n;&t;   We should take care of not to delete too much :-)&n;&n;&t;   Scan address list to be sure that addresses are really gone.&n;&t; */
 r_for
 c_loop

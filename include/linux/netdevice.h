@@ -255,6 +255,17 @@ r_int
 r_int
 id|tx_window_errors
 suffix:semicolon
+multiline_comment|/* for cslip etc */
+DECL|member|rx_compressed
+r_int
+r_int
+id|rx_compressed
+suffix:semicolon
+DECL|member|tx_compressed
+r_int
+r_int
+id|tx_compressed
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
@@ -1286,6 +1297,17 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|dev_tint
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|dev_get_info
 c_func
@@ -1651,7 +1673,7 @@ r_int
 id|inc
 )paren
 suffix:semicolon
-multiline_comment|/* Load a device via the kerneld */
+multiline_comment|/* Load a device via the kmod */
 r_extern
 r_void
 id|dev_load

@@ -18,8 +18,8 @@ macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -661,7 +661,7 @@ op_star
 id|disp
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_static
 r_void
 id|request_driver
@@ -6798,7 +6798,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 DECL|function|request_driver
 r_static
 r_void
@@ -6940,7 +6940,7 @@ id|modname
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_KERNELD */
+macro_line|#endif /* CONFIG_KMOD */
 DECL|function|fbcon_get_driver
 r_static
 r_struct
@@ -6979,7 +6979,7 @@ comma
 id|disp
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -7027,7 +7027,7 @@ comma
 id|disp
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren

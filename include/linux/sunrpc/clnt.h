@@ -36,6 +36,12 @@ DECL|struct|rpc_clnt
 r_struct
 id|rpc_clnt
 (brace
+DECL|member|cl_users
+r_int
+r_int
+id|cl_users
+suffix:semicolon
+multiline_comment|/* number of references */
 DECL|member|cl_xprt
 r_struct
 id|rpc_xprt
@@ -74,12 +80,6 @@ op_star
 id|cl_auth
 suffix:semicolon
 multiline_comment|/* authenticator */
-DECL|member|cl_pmap
-r_struct
-id|rpc_portmap
-id|cl_pmap
-suffix:semicolon
-multiline_comment|/* port mapping */
 DECL|member|cl_stats
 r_struct
 id|rpc_stat
@@ -131,24 +131,30 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* abandoned */
+DECL|member|cl_flags
+r_int
+r_int
+id|cl_flags
+suffix:semicolon
+multiline_comment|/* misc client flags */
 DECL|member|cl_hardmax
 r_int
 r_int
 id|cl_hardmax
 suffix:semicolon
 multiline_comment|/* max hard timeout */
+DECL|member|cl_pmap
+r_struct
+id|rpc_portmap
+id|cl_pmap
+suffix:semicolon
+multiline_comment|/* port mapping */
 DECL|member|cl_bindwait
 r_struct
 id|rpc_wait_queue
 id|cl_bindwait
 suffix:semicolon
 multiline_comment|/* waiting on getport() */
-DECL|member|cl_users
-r_int
-r_int
-id|cl_users
-suffix:semicolon
-multiline_comment|/* number of references */
 )brace
 suffix:semicolon
 DECL|macro|cl_timeout

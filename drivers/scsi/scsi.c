@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@andante.jic.com or ericy@gnu.ai.mit.edu to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
+multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@andante.jic.com or ericy@gnu.ai.mit.edu to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *  (changed to kmod)&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -22,8 +22,8 @@ macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
@@ -11775,7 +11775,7 @@ multiline_comment|/* Load upper level device handler of some kind */
 r_case
 id|MODULE_SCSI_DEV
 suffix:colon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren

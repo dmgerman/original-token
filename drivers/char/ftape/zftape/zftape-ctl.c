@@ -5,9 +5,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/zftape.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,6)

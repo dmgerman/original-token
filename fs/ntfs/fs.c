@@ -3661,10 +3661,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* When the driver is compiled as a module, kerneld must know when it&n;&t; * can safely remove it from memory. To do this, each module owns a&n;&t; * reference counter.&n;&t; */
+multiline_comment|/* When the driver is compiled as a module, kmod must know when it&n;&t; * can safely remove it from memory. To do this, each module owns a&n;&t; * reference counter.&n;&t; */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-multiline_comment|/* Don&squot;t put ntfs_debug() before MOD_INC_USE_COUNT, printk() can block&n;&t; * so this could lead to a race condition with kerneld.&n;&t; */
+multiline_comment|/* Don&squot;t put ntfs_debug() before MOD_INC_USE_COUNT, printk() can block&n;&t; * so this could lead to a race condition with kmod.&n;&t; */
 id|ntfs_debug
 c_func
 (paren
@@ -4305,7 +4305,7 @@ id|ntfs_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/* A module is a piece of code which can be inserted in and removed&n; * from the running kernel whenever you want using lsmod, or on demand using&n; * kerneld&n; */
+multiline_comment|/* A module is a piece of code which can be inserted in and removed&n; * from the running kernel whenever you want using lsmod, or on demand using&n; * kmod&n; */
 multiline_comment|/* No function of this module is needed by another module */
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
@@ -4340,7 +4340,7 @@ comma
 l_string|&quot;Debug level&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* When this code is compiled as a module, if you use mount -t ntfs when no&n; * ntfs filesystem is registered (see /proc/filesystems), get_fs_type() in&n; * fs/super.c asks kerneld to load the module named ntfs in memory.&n; *&n; * Therefore, this function is the main entry point in this case&n; */
+multiline_comment|/* When this code is compiled as a module, if you use mount -t ntfs when no&n; * ntfs filesystem is registered (see /proc/filesystems), get_fs_type() in&n; * fs/super.c asks kmod to load the module named ntfs in memory.&n; *&n; * Therefore, this function is the main entry point in this case&n; */
 DECL|function|init_module
 r_int
 id|init_module
@@ -4356,7 +4356,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Called by kerneld just before the kernel removes the module from memory */
+multiline_comment|/* Called by kmod just before the kernel removes the module from memory */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module

@@ -481,6 +481,15 @@ id|dst
 r_if
 c_cond
 (paren
+id|dst-&gt;obsolete
+OG
+l_int|0
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|atomic_read
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.21 1997/12/29 19:52:52 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.23 1998/03/08 05:56:59 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1886,6 +1886,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Note: called only from the BH handler context,&n; * so we don&squot;t need to lock the hashes.&n; */
 DECL|function|udpv6_mcast_deliver
 r_static
 r_void
@@ -1921,10 +1922,10 @@ comma
 op_star
 id|sk2
 suffix:semicolon
-id|SOCKHASH_LOCK
-c_func
-(paren
-)paren
+r_struct
+id|sk_buff
+op_star
+id|buff
 suffix:semicolon
 id|sk
 op_assign
@@ -1962,9 +1963,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|sk
 )paren
-(brace
+r_goto
+id|free_skb
+suffix:semicolon
+id|buff
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sk2
 op_assign
 id|sk
@@ -1991,9 +1999,13 @@ id|daddr
 )paren
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buff
+)paren
+(brace
 id|buff
 op_assign
 id|skb_clone
@@ -2007,8 +2019,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|buff
-op_logical_and
+)paren
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|sock_queue_rcv_skb
 c_func
 (paren
@@ -2016,8 +2035,18 @@ id|sk2
 comma
 id|buff
 )paren
-OL
+op_ge
 l_int|0
+)paren
+id|buff
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|buff
 )paren
 (brace
 id|buff-&gt;sk
@@ -2031,14 +2060,9 @@ id|buff
 )paren
 suffix:semicolon
 )brace
-)brace
-)brace
 r_if
 c_cond
 (paren
-op_logical_neg
-id|sk
-op_logical_or
 id|sock_queue_rcv_skb
 c_func
 (paren
@@ -2050,6 +2074,8 @@ OL
 l_int|0
 )paren
 (brace
+id|free_skb
+suffix:colon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -2061,11 +2087,6 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-id|SOCKHASH_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|udpv6_rcv
 r_int

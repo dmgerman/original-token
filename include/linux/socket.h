@@ -336,6 +336,8 @@ DECL|macro|AF_ROUTE
 mdefine_line|#define AF_ROUTE&t;AF_NETLINK /* Alias to emulate 4.4BSD */
 DECL|macro|AF_PACKET
 mdefine_line|#define AF_PACKET&t;17&t;/* Packet family&t;&t;*/
+DECL|macro|AF_ASH
+mdefine_line|#define AF_ASH&t;&t;18&t;/* Ash&t;&t;&t;&t;*/
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -379,6 +381,8 @@ DECL|macro|PF_ROUTE
 mdefine_line|#define PF_ROUTE&t;AF_ROUTE
 DECL|macro|PF_PACKET
 mdefine_line|#define PF_PACKET&t;AF_PACKET
+DECL|macro|PF_ASH
+mdefine_line|#define PF_ASH&t;&t;AF_ASH
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */

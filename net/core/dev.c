@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;    Michael Chastain&t;:&t;Fix signed/unsigned for SIOCGIFCONF&n; *&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;    Michael Chastain&t;:&t;Fix signed/unsigned for SIOCGIFCONF&n; *&t;&t;Cyrus Durgin&t;:&t;Cleaned for KMOD&n; *&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -27,7 +27,7 @@ macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#ifdef CONFIG_NET_RADIO
 macro_line|#include &lt;linux/wireless.h&gt;
 macro_line|#endif&t;/* CONFIG_NET_RADIO */
@@ -693,7 +693,7 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Find and possibly load an interface.&n; */
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 DECL|function|dev_load
 r_void
 id|dev_load
@@ -890,9 +890,11 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NET_FASTROUTE
-DECL|function|dev_clear_fastroute
+DECL|function|dev_do_clear_fastroute
+r_static
+id|__inline__
 r_void
-id|dev_clear_fastroute
+id|dev_do_clear_fastroute
 c_func
 (paren
 r_struct
@@ -901,15 +903,15 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev
+id|dev-&gt;accept_fastpath
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -936,6 +938,31 @@ id|i
 comma
 l_int|NULL
 )paren
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|dev_clear_fastroute
+r_void
+id|dev_clear_fastroute
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev
+)paren
+(brace
+id|dev_do_clear_fastroute
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -954,43 +981,12 @@ id|dev
 op_assign
 id|dev-&gt;next
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|dev-&gt;accept_fastpath
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-op_le
-id|NETDEV_FASTROUTE_HMASK
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dst_release
+id|dev_do_clear_fastroute
 c_func
 (paren
-id|xchg
-c_func
-(paren
-id|dev-&gt;fastpath
-op_plus
-id|i
-comma
-l_int|NULL
-)paren
+id|dev
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 )brace
 macro_line|#endif
@@ -1744,9 +1740,10 @@ id|netdev_fc_xoff
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1822,9 +1819,10 @@ id|netdev_fc_xoff
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -2750,61 +2748,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   This ioctl is wrong by design. It really existed in some&n;   old SYSV systems, only was named SIOCGIFNUM.&n;   In multiprotocol environment it is just useless.&n;   Well, SIOCGIFCONF is wrong too, but we have to preserve&n;   it by compatibility reasons.&n;&n;   If someone wants to achieve the same effect, please, use undocumented&n;   feature of SIOCGIFCONF: it returns buffer length, if buffer&n;   is not supplied.&n;&n;   Let&squot;s remove it, until someone started to use it. --ANK&n;&n;   In any case, if someone cannot live without it, it should&n;   be renamed to SIOCGIFNUM.&n; */
-multiline_comment|/*&n; *&t;Count the installed interfaces (SIOCGIFCOUNT)&n; */
-DECL|function|dev_ifcount
-r_static
-r_int
-id|dev_ifcount
-c_func
-(paren
-r_int
-r_int
-op_star
-id|arg
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-r_int
-r_int
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-op_ne
-l_int|NULL
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-id|count
-op_increment
-suffix:semicolon
-r_return
-id|put_user
-c_func
-(paren
-id|count
-comma
-id|arg
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;Map an interface index to its name (SIOCGIFNAME)&n; */
-multiline_comment|/*&n; *&t;This call is useful, but I&squot;d remove it too.&n; *&n; *&t;The reason is purely aestetical, it is the only call&n; *&t;from SIOC* family using struct ifreq in reversed manner.&n; *&t;Besides that, it is pretty silly to put &quot;drawing&quot; facility&n; *&t;to kernel, it is useful only to print ifindices&n; *&t;in readable form, is not it? --ANK&n; */
+multiline_comment|/*&n; *&t;This call is useful, but I&squot;d remove it too.&n; *&n; *&t;The reason is purely aestetical, it is the only call&n; *&t;from SIOC* family using struct ifreq in reversed manner.&n; *&t;Besides that, it is pretty silly to put &quot;drawing&quot; facility&n; *&t;to kernel, it is useful only to print ifindices&n; *&t;in readable form, is not it? --ANK&n; *&n; *&t;We need this ioctl for efficient implementation of the&n; *&t;if_indextoname() function required by the IPv6 API.  Without&n; *&t;it, we would have to search all the interfaces to find a&n; *&t;match.  --pb&n; */
 DECL|function|dev_ifname
 r_static
 r_int
@@ -3170,7 +3115,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%6s:%8lu %7lu %4lu %4lu %4lu %4lu %8lu %8lu %4lu %4lu %4lu %5lu %4lu %4lu&bslash;n&quot;
+l_string|&quot;%6s:%8lu %7lu %4lu %4lu %4lu %5lu %10lu %9lu %8lu %8lu %4lu %4lu %4lu %5lu %4lu %4lu&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3194,6 +3139,10 @@ id|stats-&gt;rx_crc_errors
 op_plus
 id|stats-&gt;rx_frame_errors
 comma
+id|stats-&gt;rx_compressed
+comma
+id|stats-&gt;multicast
+comma
 id|stats-&gt;tx_bytes
 comma
 id|stats-&gt;tx_packets
@@ -3214,7 +3163,7 @@ id|stats-&gt;tx_window_errors
 op_plus
 id|stats-&gt;tx_heartbeat_errors
 comma
-id|stats-&gt;multicast
+id|stats-&gt;tx_compressed
 )paren
 suffix:semicolon
 r_else
@@ -3289,8 +3238,8 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Inter-|   Receive                           |  Transmit&bslash;n&quot;
-l_string|&quot; face |bytes    packets errs drop fifo frame|bytes    packets errs drop fifo colls carrier multicast&bslash;n&quot;
+l_string|&quot;Inter-|   Receive                                                |  Transmit&bslash;n&quot;
+l_string|&quot; face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pos
@@ -4844,27 +4793,6 @@ c_func
 suffix:semicolon
 r_return
 id|ret
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|cmd
-op_eq
-id|SIOCGIFCOUNT
-)paren
-(brace
-r_return
-id|dev_ifcount
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|arg
-)paren
 suffix:semicolon
 )brace
 r_if

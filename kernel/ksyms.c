@@ -55,8 +55,8 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef __SMP__
@@ -188,21 +188,21 @@ l_string|&quot;Using_Versions&quot;
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_KMOD
+DECL|variable|request_module
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|request_module
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_MODULES
 DECL|variable|get_module_symbol
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_module_symbol
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_KERNELD
-DECL|variable|kerneld_send
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|kerneld_send
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -115,14 +115,6 @@ r_int
 id|dma2
 )paren
 suffix:semicolon
-r_void
-id|DMAbuf_deinit
-c_func
-(paren
-r_int
-id|dev
-)paren
-suffix:semicolon
 r_int
 id|DMAbuf_start_dma
 (paren

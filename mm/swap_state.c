@@ -148,7 +148,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;swap_cache: replacing non-empty entry %08lx &quot;
-l_string|&quot;on page %08lx&quot;
+l_string|&quot;on page %08lx&bslash;n&quot;
 comma
 id|page-&gt;offset
 comma
@@ -173,7 +173,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;swap_cache: replacing page-cached entry &quot;
-l_string|&quot;on page %08lx&quot;
+l_string|&quot;on page %08lx&bslash;n&quot;
 comma
 id|page_address
 c_func
@@ -459,7 +459,7 @@ id|page-&gt;inode
 id|printk
 (paren
 l_string|&quot;VM: Removing swap cache page with zero inode hash &quot;
-l_string|&quot;on page %08lx&quot;
+l_string|&quot;on page %08lx&bslash;n&quot;
 comma
 id|page_address
 c_func
@@ -483,7 +483,7 @@ id|swapper_inode
 id|printk
 (paren
 l_string|&quot;VM: Removing swap cache page with wrong inode hash &quot;
-l_string|&quot;on page %08lx&quot;
+l_string|&quot;on page %08lx&bslash;n&quot;
 comma
 id|page_address
 c_func
@@ -509,7 +509,7 @@ l_int|1
 (brace
 id|printk
 (paren
-l_string|&quot;VM: Removing page cache on unshared page %08lx&quot;
+l_string|&quot;VM: Removing page cache on unshared page %08lx&bslash;n&quot;
 comma
 id|page_address
 c_func

@@ -9,8 +9,8 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#ifdef CONFIG_MULTIFACE_III_LP
@@ -1505,7 +1505,7 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren

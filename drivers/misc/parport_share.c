@@ -12,8 +12,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 DECL|macro|PARPORT_PARANOID
 macro_line|#undef PARPORT_PARANOID
@@ -67,7 +67,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -91,7 +91,7 @@ l_string|&quot;parport_probe&quot;
 suffix:semicolon
 macro_line|#endif /* CONFIG_PNP_PARPORT_MODULE */
 )brace
-macro_line|#endif /* CONFIG_KERNELD */
+macro_line|#endif /* CONFIG_KMOD */
 r_return
 id|portlist
 suffix:semicolon

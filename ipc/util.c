@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
+macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void
 id|sem_init
@@ -425,15 +425,6 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
-)brace
-DECL|function|kerneld_exit
-r_void
-id|kerneld_exit
-c_func
-(paren
-r_void
-)paren
-(brace
 )brace
 macro_line|#endif /* CONFIG_SYSVIPC */
 eof

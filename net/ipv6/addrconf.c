@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.32 1997/12/27 20:41:18 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.37 1998/03/08 20:52:46 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; *&t;Andi Kleen&t;&t;&t;:&t;kill doube kfree on module&n; *&t;&t;&t;&t;&t;&t;unload.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -7726,6 +7726,11 @@ c_func
 (paren
 id|t
 )paren
+suffix:semicolon
+r_else
+id|p-&gt;sysctl
+op_assign
+id|t
 suffix:semicolon
 )brace
 DECL|function|addrconf_sysctl_unregister

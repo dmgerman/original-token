@@ -3750,6 +3750,8 @@ c_func
 id|AF_APPLETALK
 comma
 id|GFP_KERNEL
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if

@@ -207,7 +207,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Copy kernel to iovec.&n; */
+multiline_comment|/*&n; *&t;Copy kernel to iovec.&n; *&n; *&t;Note: this modifies the original iovec.&n; */
 DECL|function|memcpy_toiovec
 r_int
 id|memcpy_toiovec
@@ -305,7 +305,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Copy iovec to kernel.&n; */
+multiline_comment|/*&n; *&t;Copy iovec to kernel.&n; *&n; *&t;Note: this modifies the original iovec.&n; */
 DECL|function|memcpy_fromiovec
 r_int
 id|memcpy_fromiovec
@@ -977,35 +977,12 @@ id|out_fault
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Why do we want to break?? There may be more to copy ... */
 r_if
 c_cond
 (paren
 id|copy
-op_eq
-l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|len
-OG
-id|partial_cnt
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;csum_iovec: early break? len=%d, partial=%d&bslash;n&quot;
-comma
-id|len
-comma
-id|partial_cnt
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|csum
 op_assign
 id|csum_and_copy_from_user
@@ -1031,6 +1008,7 @@ id|err
 r_goto
 id|out
 suffix:semicolon
+)brace
 id|len
 op_sub_assign
 id|copy

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.04  Jan   7, 1998&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; */
+multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; */
 DECL|macro|IDEDISK_VERSION
-mdefine_line|#define IDEDISK_VERSION&t;&quot;1.04&quot;
+mdefine_line|#define IDEDISK_VERSION&t;&quot;1.06&quot;
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -221,6 +221,43 @@ id|chs_sects
 op_div
 l_int|10
 suffix:semicolon
+multiline_comment|/* very large drives (8GB+) may lie about the number of cylinders */
+r_if
+c_cond
+(paren
+id|id-&gt;cyls
+op_eq
+l_int|16383
+op_logical_and
+id|id-&gt;heads
+op_eq
+l_int|16
+op_logical_and
+id|id-&gt;sectors
+op_eq
+l_int|63
+op_logical_and
+id|lba_sects
+OG
+id|chs_sects
+)paren
+(brace
+id|id-&gt;cyls
+op_assign
+id|lba_sects
+op_div
+(paren
+l_int|16
+op_star
+l_int|63
+)paren
+suffix:semicolon
+multiline_comment|/* correct cyls */
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* lba_capacity is our only option */
+)brace
 multiline_comment|/* perform a rough sanity check on lba_sects:  within 10% is &quot;okay&quot; */
 r_if
 c_cond
@@ -1999,6 +2036,16 @@ op_ge
 id|capacity
 )paren
 (brace
+id|drive-&gt;cyl
+op_assign
+id|id-&gt;lba_capacity
+op_div
+(paren
+id|drive-&gt;head
+op_star
+id|drive-&gt;sect
+)paren
+suffix:semicolon
 id|capacity
 op_assign
 id|id-&gt;lba_capacity
@@ -3642,6 +3689,15 @@ op_assign
 id|id-&gt;sectors
 suffix:semicolon
 )brace
+multiline_comment|/* calculate drive capacity, and select LBA if possible */
+(paren
+r_void
+)paren
+id|idedisk_capacity
+(paren
+id|drive
+)paren
+suffix:semicolon
 multiline_comment|/* Correct the number of cyls if the bios value is too small */
 r_if
 c_cond
@@ -3676,15 +3732,6 @@ c_func
 id|id-&gt;buf_size
 )paren
 suffix:semicolon
-(paren
-r_void
-)paren
-id|idedisk_capacity
-(paren
-id|drive
-)paren
-suffix:semicolon
-multiline_comment|/* initialize LBA selection */
 id|printk
 (paren
 id|KERN_INFO

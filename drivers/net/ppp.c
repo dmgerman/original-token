@@ -1,4 +1,4 @@
-multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *  Paul Mackerras &lt;Paul.Mackerras@cs.anu.edu.au&gt;&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 980123==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *  Paul Mackerras &lt;Paul.Mackerras@cs.anu.edu.au&gt;&n; *  Cyrus Durgin &lt;cider@speakeasy.org&gt; (changes for kmod)&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 980123==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   OPTIMIZE_FLAG_TIME - Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If zero then the leading&n;&t;&t;&t;flag is always sent.&n;&n;   CHECK_CHARACTERS   - Enable the checking on all received characters for&n;&t;&t;&t;8 data bits, no parity. This adds a small amount of&n;&t;&t;&t;processing for each received character.&n;*/
 DECL|macro|OPTIMIZE_FLAG_TIME
 mdefine_line|#define OPTIMIZE_FLAG_TIME&t;((HZ * 3)/2)
@@ -53,8 +53,8 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/if_ppp.h&gt;
 macro_line|#include &lt;linux/if_pppvar.h&gt;
 macro_line|#include &lt;linux/ppp-comp.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#ifndef PPP_IPX
 DECL|macro|PPP_IPX
@@ -7580,7 +7580,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -7626,7 +7626,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_KERNELD */
+macro_line|#endif /* CONFIG_KMOD */
 r_if
 c_cond
 (paren

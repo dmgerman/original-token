@@ -465,6 +465,8 @@ c_func
 id|AF_ROSE
 comma
 id|GFP_ATOMIC
+comma
+l_int|1
 )paren
 )paren
 op_eq

@@ -432,7 +432,7 @@ comma
 id|xbuff
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SLIP_MODE_SLIP6
+macro_line|#ifdef SL_INCLUDE_CSLIP
 id|cbuff
 op_assign
 id|xchg
@@ -455,6 +455,7 @@ comma
 id|slcomp
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SLIP_MODE_SLIP6
 id|sl-&gt;xdata
 op_assign
 l_int|0
@@ -463,6 +464,7 @@ id|sl-&gt;xbits
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|end_bh_atomic
 c_func
@@ -4097,8 +4099,6 @@ id|sl-&gt;dev-&gt;name
 comma
 id|tmp
 )paren
-OL
-l_int|0
 )paren
 r_return
 op_minus

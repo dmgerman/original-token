@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_MOD masq modules support&n; *&n; *&n; * Version:&t;@(#)ip_masq_mod.c  0.02      97/10/30&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_MOD masq modules support&n; *&n; *&n; * Version:&t;@(#)ip_masq_mod.c  0.02      97/10/30&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Changes:&n; *&t;&t;Cyrus Durgin:&t;&t;fixed kerneld stuff for kmod.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -6,8 +6,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;net/ip_masq.h&gt;
 macro_line|#include &lt;net/ip_masq_mod.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 DECL|variable|register_ip_masq_mod
 id|EXPORT_SYMBOL
@@ -1108,7 +1108,7 @@ id|ip_masq_mod
 op_star
 id|mmod
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_char
 id|kmod_name
 (braket
@@ -1154,7 +1154,7 @@ comma
 id|optlen
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 id|sprintf
 c_func
 (paren

@@ -25,9 +25,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
 DECL|macro|SHUTDOWN_SIGS
 mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL)|sigmask(SIGINT)|sigmask(SIGTERM))
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
-macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|SENSE_TIMEOUT
 mdefine_line|#define SENSE_TIMEOUT SCSI_TIMEOUT

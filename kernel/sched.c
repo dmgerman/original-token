@@ -608,13 +608,37 @@ id|this_cpu
 )paren
 (brace
 r_int
+id|policy
+op_assign
+id|p-&gt;policy
+suffix:semicolon
+r_int
 id|weight
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|policy
+op_amp
+id|SCHED_YIELD
+)paren
+(brace
+id|p-&gt;policy
+op_assign
+id|policy
+op_amp
+op_complement
+id|SCHED_YIELD
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Realtime process, select the first one on the&n;&t; * runqueue (taking priorities within processes&n;&t; * into account).&n;&t; */
 r_if
 c_cond
 (paren
-id|p-&gt;policy
+id|policy
 op_ne
 id|SCHED_OTHER
 )paren
@@ -649,17 +673,21 @@ op_add_assign
 id|PROC_CHANGE_PENALTY
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* .. and a slight advantage to the current process */
+multiline_comment|/* .. and a slight advantage to the current thread */
 r_if
 c_cond
 (paren
-id|p
+id|p-&gt;mm
 op_eq
-id|prev
+id|prev-&gt;mm
 )paren
 id|weight
 op_add_assign
 l_int|1
+suffix:semicolon
+id|weight
+op_add_assign
+id|p-&gt;priority
 suffix:semicolon
 )brace
 r_return
@@ -4748,11 +4776,6 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/*&n;&t; * This is not really right. We&squot;d like to reschedule&n;&t; * just _once_ with this process having a zero count.&n;&t; */
-id|current-&gt;counter
-op_assign
-l_int|0
-suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -4766,6 +4789,10 @@ c_func
 op_amp
 id|runqueue_lock
 )paren
+suffix:semicolon
+id|current-&gt;policy
+op_or_assign
+id|SCHED_YIELD
 suffix:semicolon
 id|move_last_runqueue
 c_func

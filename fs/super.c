@@ -17,12 +17,12 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * We use a semaphore to synchronize all mount/umount&n; * activity - imagine the mess if we have a race between&n; * unmounting a filesystem and re-mounting it (or something&n; * else).&n; */
 DECL|variable|mount_sem
 r_static
@@ -1847,7 +1847,7 @@ op_assign
 id|fs-&gt;next
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren

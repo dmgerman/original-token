@@ -13,6 +13,9 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
+multiline_comment|/* Uncomment this to support servers requiring longword lengths */
+DECL|macro|NFS_PAD_WRITES
+mdefine_line|#define NFS_PAD_WRITES 1
 DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_XDR
 multiline_comment|/* #define NFS_PARANOIA 1 */
@@ -733,7 +736,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Arguments to a READ call. Since we read data directly into the page&n; * cache, we also set up the reply iovec here so that iov[1] points&n; * exactly to the page wewant to fetch.&n; */
+multiline_comment|/*&n; * Arguments to a READ call. Since we read data directly into the page&n; * cache, we also set up the reply iovec here so that iov[1] points&n; * exactly to the page we want to fetch.&n; */
 r_static
 r_int
 DECL|function|nfs_xdr_readargs
@@ -1169,6 +1172,11 @@ op_star
 id|args
 )paren
 (brace
+id|u32
+id|count
+op_assign
+id|args-&gt;count
+suffix:semicolon
 id|p
 op_assign
 id|xdr_encode_fhandle
@@ -1206,7 +1214,7 @@ op_assign
 id|htonl
 c_func
 (paren
-id|args-&gt;count
+id|count
 )paren
 suffix:semicolon
 op_star
@@ -1216,7 +1224,7 @@ op_assign
 id|htonl
 c_func
 (paren
-id|args-&gt;count
+id|count
 )paren
 suffix:semicolon
 id|req-&gt;rq_slen
@@ -1249,16 +1257,90 @@ l_int|1
 dot
 id|iov_len
 op_assign
-id|args-&gt;count
+id|count
 suffix:semicolon
 id|req-&gt;rq_slen
 op_add_assign
-id|args-&gt;count
+id|count
 suffix:semicolon
 id|req-&gt;rq_snr
 op_assign
 l_int|2
 suffix:semicolon
+macro_line|#ifdef NFS_PAD_WRITES
+multiline_comment|/*&n;&t; * Some old servers require that the message length&n;&t; * be a multiple of 4, so we pad it here if needed.&n;&t; */
+id|count
+op_assign
+(paren
+(paren
+id|count
+op_plus
+l_int|3
+)paren
+op_amp
+op_complement
+l_int|3
+)paren
+op_minus
+id|count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+)paren
+(brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_writeargs: padding write, len=%d, slen=%d, pad=%d&bslash;n&quot;
+comma
+id|req-&gt;rq_svec
+(braket
+l_int|1
+)braket
+dot
+id|iov_len
+comma
+id|req-&gt;rq_slen
+comma
+id|count
+)paren
+suffix:semicolon
+macro_line|#endif
+id|req-&gt;rq_svec
+(braket
+l_int|2
+)braket
+dot
+id|iov_base
+op_assign
+(paren
+r_void
+op_star
+)paren
+l_string|&quot;&bslash;0&bslash;0&bslash;0&quot;
+suffix:semicolon
+id|req-&gt;rq_svec
+(braket
+l_int|2
+)braket
+dot
+id|iov_len
+op_assign
+id|count
+suffix:semicolon
+id|req-&gt;rq_slen
+op_add_assign
+id|count
+suffix:semicolon
+id|req-&gt;rq_snr
+op_assign
+l_int|3
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1570,14 +1652,40 @@ id|args
 )paren
 (brace
 r_struct
+id|rpc_task
+op_star
+id|task
+op_assign
+id|req-&gt;rq_task
+suffix:semicolon
+r_struct
 id|rpc_auth
 op_star
 id|auth
 op_assign
-id|req-&gt;rq_task-&gt;tk_auth
+id|task-&gt;tk_auth
+suffix:semicolon
+id|u32
+id|bufsiz
+op_assign
+id|args-&gt;bufsiz
 suffix:semicolon
 r_int
 id|replen
+suffix:semicolon
+multiline_comment|/*&n;&t; * Some servers (e.g. HP OS 9.5) seem to expect the buffer size&n;&t; * to be in longwords ... check whether to convert the size.&n;&t; */
+r_if
+c_cond
+(paren
+id|task-&gt;tk_client-&gt;cl_flags
+op_amp
+id|NFS_CLNTF_BUFSIZE
+)paren
+id|bufsiz
+op_assign
+id|bufsiz
+op_rshift
+l_int|2
 suffix:semicolon
 id|p
 op_assign
@@ -1606,9 +1714,10 @@ op_assign
 id|htonl
 c_func
 (paren
-id|args-&gt;bufsiz
+id|bufsiz
 )paren
 suffix:semicolon
+multiline_comment|/* see above */
 id|req-&gt;rq_slen
 op_assign
 id|xdr_adjust_iovec
@@ -1708,8 +1817,6 @@ r_int
 id|status
 comma
 id|nr
-comma
-id|len
 suffix:semicolon
 r_char
 op_star
@@ -1721,14 +1828,15 @@ suffix:semicolon
 id|u32
 op_star
 id|end
-suffix:semicolon
-id|__u32
-id|fileid
-comma
-id|cookie
 comma
 op_star
 id|entry
+comma
+id|len
+comma
+id|fileid
+comma
+id|cookie
 suffix:semicolon
 r_if
 c_cond
@@ -1824,7 +1932,7 @@ multiline_comment|/* Get start and end of dirent buffer */
 id|entry
 op_assign
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|res-&gt;buffer
@@ -1882,6 +1990,7 @@ id|p
 op_increment
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Check whether the server has exceeded our reply buffer,&n;&t;&t; * and set a flag to convert the size to longwords.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1900,12 +2009,27 @@ OG
 id|end
 )paren
 (brace
+r_struct
+id|rpc_clnt
+op_star
+id|clnt
+op_assign
+id|req-&gt;rq_task-&gt;tk_client
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;NFS: short readdir reply! &quot;
-l_string|&quot;nr=%d, slots=%d, len=%d&bslash;n&quot;
+l_string|&quot;NFS: server %s, readdir reply truncated&bslash;n&quot;
+comma
+id|clnt-&gt;cl_server
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;NFS: nr=%d, slots=%d, len=%d&bslash;n&quot;
 comma
 id|nr
 comma
@@ -1917,6 +2041,10 @@ id|p
 comma
 id|len
 )paren
+suffix:semicolon
+id|clnt-&gt;cl_flags
+op_or_assign
+id|NFS_CLNTF_BUFSIZE
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.24 1997/12/13 21:53:08 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.28 1998/03/08 05:56:49 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -155,6 +155,8 @@ c_func
 id|AF_INET6
 comma
 id|GFP_KERNEL
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -416,12 +418,6 @@ c_func
 id|sk-&gt;num
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;prot-&gt;hash
-)paren
-(brace
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|hash
@@ -430,7 +426,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
 id|add_to_prot_sklist
 c_func
 (paren

@@ -186,7 +186,13 @@ id|KERN_STATINODE
 comma
 DECL|enumerator|KERN_DENTRY
 id|KERN_DENTRY
+comma
 multiline_comment|/* dentry statistics */
+DECL|enumerator|KERN_MODPROBE
+id|KERN_MODPROBE
+comma
+DECL|enumerator|KERN_KMOD_UNLOAD_DELAY
+id|KERN_KMOD_UNLOAD_DELAY
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */
@@ -298,6 +304,9 @@ id|NET_CORE_MSG_COST
 comma
 DECL|enumerator|NET_CORE_MSG_BURST
 id|NET_CORE_MSG_BURST
+comma
+DECL|enumerator|NET_CORE_OPTMEM_MAX
+id|NET_CORE_OPTMEM_MAX
 comma
 )brace
 suffix:semicolon

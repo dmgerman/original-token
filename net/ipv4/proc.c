@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;$Id: proc.c,v 1.23 1997/10/30 23:52:20 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;identd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&t;&t;Alan Cox&t;:&t;Handle dead sockets properly.&n; *&t;Gerhard Koerting&t;:&t;Show both timers&n; *&t;&t;Alan Cox&t;:&t;Allow inode to be NULL (kernel socket)&n; *&t;Andi Kleen&t;&t;:&t;Add support for open_requests and &n; *&t;&t;&t;&t;&t;split functions for more readibility.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;$Id: proc.c,v 1.24 1998/03/06 01:23:06 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;identd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&t;&t;Alan Cox&t;:&t;Handle dead sockets properly.&n; *&t;Gerhard Koerting&t;:&t;Show both timers&n; *&t;&t;Alan Cox&t;:&t;Allow inode to be NULL (kernel socket)&n; *&t;Andi Kleen&t;&t;:&t;Add support for open_requests and &n; *&t;&t;&t;&t;&t;split functions for more readibility.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -317,7 +317,7 @@ op_eq
 l_int|0
 ques
 c_cond
-id|sp-&gt;write_seq
+id|tp-&gt;write_seq
 op_minus
 id|tp-&gt;snd_una
 suffix:colon
@@ -335,7 +335,7 @@ ques
 c_cond
 id|tp-&gt;rcv_nxt
 op_minus
-id|sp-&gt;copied_seq
+id|tp-&gt;copied_seq
 suffix:colon
 id|atomic_read
 c_func

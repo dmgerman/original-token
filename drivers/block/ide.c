@@ -26,9 +26,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
-macro_line|#endif /* CONFIG_KERNELD */
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
+macro_line|#endif /* CONFIG_KMOD */
 DECL|variable|ide_hwif_to_major
 r_static
 r_const
@@ -6295,7 +6295,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -6315,7 +6315,7 @@ c_func
 l_string|&quot;ide-probe&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_KERNELD */
+macro_line|#endif /* CONFIG_KMOD */
 )brace
 DECL|function|ide_open
 r_static
@@ -6375,7 +6375,7 @@ c_func
 id|IDE_DRIVER_MODULE
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -6449,7 +6449,7 @@ l_string|&quot;ide-floppy&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_KERNELD */
+macro_line|#endif /* CONFIG_KMOD */
 r_while
 c_loop
 (paren

@@ -21,8 +21,8 @@ macro_line|#include &lt;linux/hfs_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/lockd/bind.h&gt;
 macro_line|#include &lt;linux/lockd/xdr.h&gt;
@@ -421,7 +421,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -451,7 +451,7 @@ id|resp
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_KERNELD */
+macro_line|#endif /* CONFIG_KMOD */
 id|out
 suffix:colon
 id|unlock_kernel

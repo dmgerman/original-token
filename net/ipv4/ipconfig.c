@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.6 1998/01/09 17:19:46 mj Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.11 1998/02/12 07:43:16 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

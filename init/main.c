@@ -1663,7 +1663,7 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
+macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void
 id|ipc_init
@@ -4614,7 +4614,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
+macro_line|#if defined(CONFIG_SYSVIPC)
 id|ipc_init
 c_func
 (paren
@@ -5040,6 +5040,23 @@ id|error
 )paren
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_KMOD
+(brace
+r_extern
+r_int
+id|kmod_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|kmod_init
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 id|setup

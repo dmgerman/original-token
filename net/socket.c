@@ -20,8 +20,8 @@ macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
-macro_line|#if defined(CONFIG_KERNELD) &amp;&amp; defined(CONFIG_NET)
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#if defined(CONFIG_KMOD) &amp;&amp; defined(CONFIG_NET)
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1953,7 +1953,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_KERNELD) &amp;&amp; defined(CONFIG_NET)
+macro_line|#if defined(CONFIG_KMOD) &amp;&amp; defined(CONFIG_NET)
 multiline_comment|/* Attempt to load a protocol module if the find failed. &n;&t; * &n;&t; * 12/09/1996 Marcin: But! this makes REALLY only sense, if the user &n;&t; * requested real, full-featured networking support upon configuration.&n;&t; * Otherwise module support will break!&n;&t; */
 r_if
 c_cond
@@ -2826,7 +2826,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|out_inval
+id|out_release
 suffix:semicolon
 id|newsock-&gt;file
 op_assign
@@ -2908,13 +2908,6 @@ c_func
 suffix:semicolon
 r_return
 id|err
-suffix:semicolon
-id|out_inval
-suffix:colon
-id|err
-op_assign
-op_minus
-id|EINVAL
 suffix:semicolon
 id|out_release
 suffix:colon

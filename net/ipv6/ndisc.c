@@ -307,9 +307,9 @@ id|HZ
 op_div
 l_int|10
 comma
-l_int|0
-comma
 l_int|64
+comma
+l_int|0
 )brace
 comma
 l_int|30

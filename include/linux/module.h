@@ -309,7 +309,7 @@ DECL|macro|MODULE_AUTHOR
 mdefine_line|#define MODULE_AUTHOR(name)&t;&t;&t;&t;&t;&t;   &bslash;&n;const char __module_author[] __attribute__((section(&quot;.modinfo&quot;))) = &t;   &bslash;&n;&quot;author=&quot; name
 DECL|macro|MODULE_DESCRIPTION
 mdefine_line|#define MODULE_DESCRIPTION(desc)&t;&t;&t;&t;&t;   &bslash;&n;const char __module_description[] __attribute__((section(&quot;.modinfo&quot;))) =   &bslash;&n;&quot;description=&quot; desc
-multiline_comment|/* Could potentially be used by kerneld...  */
+multiline_comment|/* Could potentially be used by kmod...  */
 DECL|macro|MODULE_SUPPORTED_DEVICE
 mdefine_line|#define MODULE_SUPPORTED_DEVICE(dev)&t;&t;&t;&t;&t;   &bslash;&n;const char __module_device[] __attribute__((section(&quot;.modinfo&quot;))) = &t;   &bslash;&n;&quot;device=&quot; dev
 multiline_comment|/* Used to verify parameters given to the module.  The TYPE arg should&n;   be a string in the following format:&n;   &t;[min[-max]]{b,h,i,l,s}&n;   The MIN and MAX specifiers delimit the length of the array.  If MAX&n;   is omitted, it defaults to MIN; if both are omitted, the default is 1.&n;   The final character is a type specifier:&n;&t;b&t;byte&n;&t;h&t;short&n;&t;i&t;int&n;&t;l&t;long&n;&t;s&t;string&n;*/

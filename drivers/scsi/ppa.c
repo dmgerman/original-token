@@ -84,8 +84,8 @@ DECL|macro|PPA_EMPTY
 mdefine_line|#define PPA_EMPTY &bslash;&n;{NULL,&t;&t;/* dev */&t;&bslash;&n;-1,&t;&t;/* base */&t;&bslash;&n;PPA_AUTODETECT,&t;/* mode */&t;&bslash;&n;-1,&t;&t;/* host */&t;&bslash;&n;NULL,&t;&t;/* cur_cmd */&t;&bslash;&n;{0, 0, ppa_interrupt, NULL},&t;&bslash;&n;0,&t;&t;/* jstart */&t;&bslash;&n;0,&t;&t;/* failed */&t;&bslash;&n;0&t;&t;/* p_busy */&t;&bslash;&n;}
 macro_line|#include  &quot;ppa.h&quot;
 macro_line|#include &lt;linux/parport.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include  &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include  &lt;linux/kmod.h&gt;
 macro_line|#ifndef PARPORT_MODULES
 DECL|macro|PARPORT_MODULES
 mdefine_line|#define PARPORT_MODULES &quot;parport_pc&quot;
@@ -355,7 +355,7 @@ id|try_again
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.15 1997/12/13 21:52:47 kuznet Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.19 1998/03/08 20:52:35 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; &t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -26,8 +26,8 @@ macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#ifdef CONFIG_SYSCTL
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/route.h&gt;
@@ -573,18 +573,7 @@ op_assign
 op_star
 id|ifap
 suffix:semicolon
-r_struct
-id|in_ifaddr
-op_star
-id|ifa
-suffix:semicolon
-multiline_comment|/* 1. Unlink it */
-op_star
-id|ifap
-op_assign
-id|ifa1-&gt;ifa_next
-suffix:semicolon
-multiline_comment|/* 2. Deleting primary ifaddr forces deletion all secondaries */
+multiline_comment|/* 1. Deleting primary ifaddr forces deletion all secondaries */
 r_if
 c_cond
 (paren
@@ -596,6 +585,20 @@ id|IFA_F_SECONDARY
 )paren
 )paren
 (brace
+r_struct
+id|in_ifaddr
+op_star
+id|ifa
+suffix:semicolon
+r_struct
+id|in_ifaddr
+op_star
+op_star
+id|ifap1
+op_assign
+op_amp
+id|ifa1-&gt;ifa_next
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -603,7 +606,7 @@ c_loop
 id|ifa
 op_assign
 op_star
-id|ifap
+id|ifap1
 )paren
 op_ne
 l_int|NULL
@@ -612,6 +615,13 @@ l_int|NULL
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|ifa-&gt;ifa_flags
+op_amp
+id|IFA_F_SECONDARY
+)paren
+op_logical_or
 id|ifa1-&gt;ifa_mask
 op_ne
 id|ifa-&gt;ifa_mask
@@ -626,7 +636,7 @@ id|ifa
 )paren
 )paren
 (brace
-id|ifap
+id|ifap1
 op_assign
 op_amp
 id|ifa-&gt;ifa_next
@@ -635,7 +645,7 @@ r_continue
 suffix:semicolon
 )brace
 op_star
-id|ifap
+id|ifap1
 op_assign
 id|ifa-&gt;ifa_next
 suffix:semicolon
@@ -666,6 +676,12 @@ id|ifa
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* 2. Unlink it */
+op_star
+id|ifap
+op_assign
+id|ifa1-&gt;ifa_next
+suffix:semicolon
 multiline_comment|/* 3. Announce address deletion */
 multiline_comment|/* Send message first, then call notifier.&n;&t;   At first sight, FIB update triggered by notifier&n;&t;   will refer to already deleted ifaddr, that could confuse&n;&t;   netlink listeners. It is not true: look, gated sees&n;&t;   that route deleted and if it still thinks that ifaddr&n;&t;   is valid, it will try to restore deleted routes... Grr.&n;&t;   So that, this order is correct.&n;&t; */
 id|rtmsg_ifa
@@ -896,25 +912,16 @@ op_assign
 id|last_primary
 suffix:semicolon
 )brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|ifa-&gt;ifa_next
 op_assign
 op_star
 id|ifap
 suffix:semicolon
+multiline_comment|/* ATOMIC_SET */
 op_star
 id|ifap
 op_assign
 id|ifa
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* Send message first, then call notifier.&n;&t;   Notifier will trigger FIB update, so that&n;&t;   listeners of netlink will know about new ifaddr */
 id|rtmsg_ifa
@@ -1874,7 +1881,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 id|dev_load
 c_func
 (paren
@@ -4707,6 +4714,11 @@ c_func
 (paren
 id|t
 )paren
+suffix:semicolon
+r_else
+id|p-&gt;sysctl
+op_assign
+id|t
 suffix:semicolon
 )brace
 DECL|function|devinet_sysctl_unregister

@@ -629,6 +629,9 @@ r_struct
 id|rtmsg
 op_star
 id|rtm
+comma
+r_int
+id|nowait
 )paren
 suffix:semicolon
 macro_line|#endif

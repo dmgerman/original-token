@@ -6,8 +6,8 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * Offset of the first process in the /proc root directory..&n; */
 DECL|macro|FIRST_PROCESS_ENTRY
@@ -831,7 +831,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_SUN_OPENPROMFS_MODULE) &amp;&amp; defined(CONFIG_KERNELD)
+macro_line|#if defined(CONFIG_SUN_OPENPROMFS_MODULE) &amp;&amp; defined(CONFIG_KMOD)
 r_static
 r_int
 DECL|function|proc_openprom_defreaddir

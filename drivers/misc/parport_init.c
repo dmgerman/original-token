@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#ifndef MODULE
 DECL|variable|__initdata
 r_static

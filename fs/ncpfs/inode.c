@@ -15,9 +15,6 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
 r_static

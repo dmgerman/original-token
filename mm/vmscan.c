@@ -1774,6 +1774,10 @@ l_int|1
 r_int
 id|tries
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 id|kswapd_awake
 op_assign
 l_int|0
@@ -1795,10 +1799,6 @@ id|schedule
 c_func
 (paren
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|kswapd_awake
 op_assign
@@ -1924,26 +1924,6 @@ id|tq_disk
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*&n;&t; * Report failure if we couldn&squot;t even reach min_free_pages.&n;&t; */
-r_if
-c_cond
-(paren
-id|nr_free_pages
-OL
-id|min_free_pages
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;kswapd: failed, got %d of %d&bslash;n&quot;
-comma
-id|nr_free_pages
-comma
-id|min_free_pages
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* As if we could ever get here - maybe we want to make this killable */
 id|remove_wait_queue

@@ -451,7 +451,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|variable|ncp_dentry_operations
-r_static
 r_struct
 id|dentry_operations
 id|ncp_dentry_operations

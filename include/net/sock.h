@@ -338,22 +338,36 @@ DECL|struct|tcp_opt
 r_struct
 id|tcp_opt
 (brace
+multiline_comment|/* TCP bind bucket hash linkage. */
+DECL|member|bind_next
+r_struct
+id|sock
+op_star
+id|bind_next
+suffix:semicolon
+DECL|member|bind_pprev
+r_struct
+id|sock
+op_star
+op_star
+id|bind_pprev
+suffix:semicolon
+DECL|member|tcp_header_len
+r_int
+id|tcp_header_len
+suffix:semicolon
+multiline_comment|/* Bytes of tcp header to send&t;&t;*/
+multiline_comment|/*&n; *&t;Header prediction flags&n; *&t;0x5?10 &lt;&lt; 16 + snd_wnd in net byte order&n; */
+DECL|member|pred_flags
+id|__u32
+id|pred_flags
+suffix:semicolon
 multiline_comment|/*&n; *&t;RFC793 variables by their proper names. This means you can&n; *&t;read the code and the spec side by side (and laugh ...)&n; *&t;See RFC793 and RFC1122. The RFC writes these in capitals.&n; */
 DECL|member|rcv_nxt
 id|__u32
 id|rcv_nxt
 suffix:semicolon
 multiline_comment|/* What we want to receive next &t;*/
-DECL|member|rcv_up
-id|__u32
-id|rcv_up
-suffix:semicolon
-multiline_comment|/* The urgent point (may not be valid) &t;*/
-DECL|member|rcv_wnd
-id|__u32
-id|rcv_wnd
-suffix:semicolon
-multiline_comment|/* Current receiver window&t;&t;*/
 DECL|member|snd_nxt
 id|__u32
 id|snd_nxt
@@ -364,11 +378,26 @@ id|__u32
 id|snd_una
 suffix:semicolon
 multiline_comment|/* First byte we want an ack for&t;*/
-DECL|member|snd_up
+DECL|member|rcv_tstamp
 id|__u32
-id|snd_up
+id|rcv_tstamp
 suffix:semicolon
-multiline_comment|/* Outgoing urgent pointer&t;&t;*/
+multiline_comment|/* timestamp of last received packet&t;*/
+DECL|member|lrcvtime
+id|__u32
+id|lrcvtime
+suffix:semicolon
+multiline_comment|/* timestamp of last received data packet*/
+DECL|member|srtt
+id|__u32
+id|srtt
+suffix:semicolon
+multiline_comment|/* smothed round trip time &lt;&lt; 3&t;&t;*/
+DECL|member|ato
+id|__u32
+id|ato
+suffix:semicolon
+multiline_comment|/* delayed ack timeout */
 DECL|member|snd_wl1
 id|__u32
 id|snd_wl1
@@ -379,42 +408,60 @@ id|__u32
 id|snd_wl2
 suffix:semicolon
 multiline_comment|/* Ack sequence for update&t;&t;*/
-DECL|member|rcv_wup
+DECL|member|snd_wnd
 id|__u32
-id|rcv_wup
+id|snd_wnd
 suffix:semicolon
-multiline_comment|/* rcv_nxt on last window update sent&t;*/
-DECL|member|fin_seq
+multiline_comment|/* The window we expect to receive&t;*/
+DECL|member|max_window
+id|__u16
+id|max_window
+suffix:semicolon
+DECL|member|pending
+id|__u8
+id|pending
+suffix:semicolon
+multiline_comment|/* pending events&t;&t;&t;*/
+DECL|member|retransmits
+id|__u8
+id|retransmits
+suffix:semicolon
+DECL|member|last_ack_sent
 id|__u32
-id|fin_seq
+id|last_ack_sent
 suffix:semicolon
-multiline_comment|/* XXX This one should go, we don&squot;t need it. -DaveM */
-DECL|member|srtt
-id|__u32
-id|srtt
-suffix:semicolon
-multiline_comment|/* smothed round trip time &lt;&lt; 3&t;&t;*/
-DECL|member|mdev
-id|__u32
-id|mdev
-suffix:semicolon
-multiline_comment|/* medium deviation&t;&t;&t;*/
-DECL|member|rto
-id|__u32
-id|rto
-suffix:semicolon
-multiline_comment|/* retransmit timeout&t;&t;&t;*/
+multiline_comment|/* last ack we sent&t;&t;&t;*/
 DECL|member|backoff
 id|__u32
 id|backoff
 suffix:semicolon
 multiline_comment|/* backoff&t;&t;&t;&t;*/
-multiline_comment|/*&n; *&t;Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)&n; */
+DECL|member|mdev
+id|__u32
+id|mdev
+suffix:semicolon
+multiline_comment|/* medium deviation&t;&t;&t;*/
 DECL|member|snd_cwnd
 id|__u32
 id|snd_cwnd
 suffix:semicolon
 multiline_comment|/* Sending congestion window&t;&t;*/
+DECL|member|rto
+id|__u32
+id|rto
+suffix:semicolon
+multiline_comment|/* retransmit timeout&t;&t;&t;*/
+DECL|member|packets_out
+id|__u32
+id|packets_out
+suffix:semicolon
+multiline_comment|/* Packets which are &quot;in flight&quot; */
+DECL|member|high_seq
+id|__u32
+id|high_seq
+suffix:semicolon
+multiline_comment|/* highest sequence number sent by onset of congestion */
+multiline_comment|/*&n; *&t;Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)&n; */
 DECL|member|snd_ssthresh
 id|__u32
 id|snd_ssthresh
@@ -424,9 +471,72 @@ DECL|member|snd_cwnd_cnt
 id|__u16
 id|snd_cwnd_cnt
 suffix:semicolon
-DECL|member|max_window
-id|__u16
-id|max_window
+DECL|member|dup_acks
+id|__u8
+id|dup_acks
+suffix:semicolon
+multiline_comment|/* Consequetive duplicate acks seen from other end */
+DECL|member|delayed_acks
+id|__u8
+id|delayed_acks
+suffix:semicolon
+multiline_comment|/* Two commonly used timers in both sender and receiver paths. */
+DECL|member|retransmit_timer
+r_struct
+id|timer_list
+id|retransmit_timer
+suffix:semicolon
+multiline_comment|/* Resend (no ack)&t;*/
+DECL|member|delack_timer
+r_struct
+id|timer_list
+id|delack_timer
+suffix:semicolon
+multiline_comment|/* Ack delay &t;&t;*/
+DECL|member|out_of_order_queue
+r_struct
+id|sk_buff_head
+id|out_of_order_queue
+suffix:semicolon
+multiline_comment|/* Out of order segments go here */
+DECL|member|af_specific
+r_struct
+id|tcp_func
+op_star
+id|af_specific
+suffix:semicolon
+multiline_comment|/* Operations which are AF_INET{4,6} specific&t;*/
+DECL|member|send_head
+r_struct
+id|sk_buff
+op_star
+id|send_head
+suffix:semicolon
+multiline_comment|/* Front of stuff to transmit&t;&t;&t;*/
+DECL|member|retrans_head
+r_struct
+id|sk_buff
+op_star
+id|retrans_head
+suffix:semicolon
+multiline_comment|/* retrans head can be &n;&t;&t;&t;&t;&t;&t; * different to the head of&n;&t;&t;&t;&t;&t;&t; * write queue if we are doing&n;&t;&t;&t;&t;&t;&t; * fast retransmit&n;&t;&t;&t;&t;&t;&t; */
+DECL|member|rcv_wnd
+id|__u32
+id|rcv_wnd
+suffix:semicolon
+multiline_comment|/* Current receiver window&t;&t;*/
+DECL|member|rcv_wup
+id|__u32
+id|rcv_wup
+suffix:semicolon
+multiline_comment|/* rcv_nxt on last window update sent&t;*/
+DECL|member|write_seq
+id|__u32
+id|write_seq
+suffix:semicolon
+DECL|member|copied_seq
+id|__u32
+id|copied_seq
 suffix:semicolon
 multiline_comment|/*&n; *      Options received (usually on last packet, some only on SYN packets).&n; */
 DECL|member|tstamp_ok
@@ -482,11 +592,6 @@ id|__u32
 id|ts_recent_stamp
 suffix:semicolon
 multiline_comment|/* Time we stored ts_recent (for aging) */
-DECL|member|last_ack_sent
-id|__u32
-id|last_ack_sent
-suffix:semicolon
-multiline_comment|/* last ack we sent&t;&t;&t;*/
 DECL|member|sacks
 r_int
 id|sacks
@@ -508,134 +613,43 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* Right edges of blocks        &t;*/
-DECL|member|tcp_header_len
-r_int
-id|tcp_header_len
-suffix:semicolon
-multiline_comment|/* Bytes of tcp header to send &t;*/
-multiline_comment|/*&n; *&t;Timers used by the TCP protocol layer&n; */
-DECL|member|delack_timer
-r_struct
-id|timer_list
-id|delack_timer
-suffix:semicolon
-multiline_comment|/* Ack delay &t;*/
-DECL|member|idle_timer
-r_struct
-id|timer_list
-id|idle_timer
-suffix:semicolon
-multiline_comment|/* Idle watch &t;*/
-DECL|member|completion_timer
-r_struct
-id|timer_list
-id|completion_timer
-suffix:semicolon
-multiline_comment|/* Up/Down timer */
 DECL|member|probe_timer
 r_struct
 id|timer_list
 id|probe_timer
 suffix:semicolon
 multiline_comment|/* Probes&t;*/
-DECL|member|retransmit_timer
-r_struct
-id|timer_list
-id|retransmit_timer
-suffix:semicolon
-multiline_comment|/* Resend (no ack) */
 DECL|member|basertt
 id|__u32
 id|basertt
 suffix:semicolon
-multiline_comment|/* Vegas baseRTT */
-DECL|member|packets_out
-id|__u32
-id|packets_out
-suffix:semicolon
-multiline_comment|/* Packets which are &quot;in flight&quot; */
+multiline_comment|/* Vegas baseRTT&t;&t;&t;*/
 DECL|member|window_clamp
 id|__u32
 id|window_clamp
 suffix:semicolon
-multiline_comment|/* XXX Document this... -DaveM */
-DECL|member|pending
-id|__u8
-id|pending
-suffix:semicolon
-multiline_comment|/* pending events */
-DECL|member|delayed_acks
-id|__u8
-id|delayed_acks
-suffix:semicolon
-DECL|member|dup_acks
-id|__u8
-id|dup_acks
-suffix:semicolon
-multiline_comment|/* Consequetive duplicate acks seen from other end */
-DECL|member|retransmits
-id|__u8
-id|retransmits
-suffix:semicolon
-DECL|member|lrcvtime
-id|__u32
-id|lrcvtime
-suffix:semicolon
-multiline_comment|/* timestamp of last received data packet  */
-DECL|member|rcv_tstamp
-id|__u32
-id|rcv_tstamp
-suffix:semicolon
-multiline_comment|/* timestamp of last received packet  */
-DECL|member|iat_mdev
-id|__u32
-id|iat_mdev
-suffix:semicolon
-multiline_comment|/* interarrival time medium deviation */
-DECL|member|iat
-id|__u32
-id|iat
-suffix:semicolon
-multiline_comment|/* interarrival time */
-DECL|member|ato
-id|__u32
-id|ato
-suffix:semicolon
-multiline_comment|/* delayed ack timeout */
-DECL|member|high_seq
-id|__u32
-id|high_seq
-suffix:semicolon
-multiline_comment|/* highest sequence number sent by onset of congestion */
-multiline_comment|/*&n; *&t;new send pointers&n; */
-DECL|member|send_head
-r_struct
-id|sk_buff
-op_star
-id|send_head
-suffix:semicolon
-DECL|member|retrans_head
-r_struct
-id|sk_buff
-op_star
-id|retrans_head
-suffix:semicolon
-multiline_comment|/* retrans head can be &n;&t;&t;&t;&t;&t;&t; * different to the head of&n;&t;&t;&t;&t;&t;&t; * write queue if we are doing&n;&t;&t;&t;&t;&t;&t; * fast retransmit&n;&t;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n; *&t;Header prediction flags&n; *&t;0x5?10 &lt;&lt; 16 + snd_wnd in net byte order&n; */
-DECL|member|pred_flags
-id|__u32
-id|pred_flags
-suffix:semicolon
-DECL|member|snd_wnd
-id|__u32
-id|snd_wnd
-suffix:semicolon
-multiline_comment|/* The window we expect to receive */
+multiline_comment|/* XXX Document this... -DaveM&t;&t;*/
 DECL|member|probes_out
 id|__u32
 id|probes_out
 suffix:semicolon
-multiline_comment|/* unanswered 0 window probes&t;   */
+multiline_comment|/* unanswered 0 window probes&t;&t;*/
+DECL|member|syn_seq
+id|__u32
+id|syn_seq
+suffix:semicolon
+DECL|member|fin_seq
+id|__u32
+id|fin_seq
+suffix:semicolon
+DECL|member|urg_seq
+id|__u32
+id|urg_seq
+suffix:semicolon
+DECL|member|urg_data
+id|__u32
+id|urg_data
+suffix:semicolon
 DECL|member|syn_wait_queue
 r_struct
 id|open_request
@@ -652,12 +666,6 @@ suffix:semicolon
 DECL|member|syn_backlog
 r_int
 id|syn_backlog
-suffix:semicolon
-DECL|member|af_specific
-r_struct
-id|tcp_func
-op_star
-id|af_specific
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -691,63 +699,141 @@ id|sock
 op_star
 id|sklist_prev
 suffix:semicolon
-DECL|member|wmem_alloc
-id|atomic_t
-id|wmem_alloc
+multiline_comment|/* Main hash linkage for various protocol lookup tables. */
+DECL|member|next
+r_struct
+id|sock
+op_star
+id|next
 suffix:semicolon
+DECL|member|pprev
+r_struct
+id|sock
+op_star
+op_star
+id|pprev
+suffix:semicolon
+multiline_comment|/* Socket demultiplex comparisons on incoming packets. */
+DECL|member|daddr
+id|__u32
+id|daddr
+suffix:semicolon
+multiline_comment|/* Foreign IPv4 addr&t;&t;&t;*/
+DECL|member|rcv_saddr
+id|__u32
+id|rcv_saddr
+suffix:semicolon
+multiline_comment|/* Bound local IPv4 addr&t;&t;*/
+DECL|member|bound_dev_if
+r_int
+id|bound_dev_if
+suffix:semicolon
+multiline_comment|/* Bound device index if != 0&t;&t;*/
+DECL|member|num
+r_int
+r_int
+id|num
+suffix:semicolon
+multiline_comment|/* Local port&t;&t;&t;&t;*/
+DECL|member|state
+r_volatile
+r_int
+r_char
+id|state
+comma
+multiline_comment|/* Connection state&t;&t;&t;*/
+DECL|member|zapped
+id|zapped
+suffix:semicolon
+multiline_comment|/* In ax25 &amp; ipx means not linked&t;*/
+DECL|member|dummy_th
+r_struct
+id|tcphdr
+id|dummy_th
+suffix:semicolon
+multiline_comment|/* TCP header template&t;&t;&t;*/
+DECL|member|sock_readers
+r_int
+id|sock_readers
+suffix:semicolon
+multiline_comment|/* user count&t;&t;&t;&t;*/
+DECL|member|rcvbuf
+r_int
+id|rcvbuf
+suffix:semicolon
+DECL|member|sleep
+r_struct
+id|wait_queue
+op_star
+op_star
+id|sleep
+suffix:semicolon
+DECL|member|dst_cache
+r_struct
+id|dst_entry
+op_star
+id|dst_cache
+suffix:semicolon
+multiline_comment|/* Destination cache&t;&t;&t;*/
 DECL|member|rmem_alloc
 id|atomic_t
 id|rmem_alloc
 suffix:semicolon
+multiline_comment|/* Receive queue bytes committed&t;*/
+DECL|member|receive_queue
+r_struct
+id|sk_buff_head
+id|receive_queue
+suffix:semicolon
+multiline_comment|/* Incoming packets&t;&t;&t;*/
+DECL|member|wmem_alloc
+id|atomic_t
+id|wmem_alloc
+suffix:semicolon
+multiline_comment|/* Transmit queue bytes committed&t;*/
+DECL|member|write_queue
+r_struct
+id|sk_buff_head
+id|write_queue
+suffix:semicolon
+multiline_comment|/* Packet sending queue&t;&t;&t;*/
+DECL|member|omem_alloc
+id|atomic_t
+id|omem_alloc
+suffix:semicolon
+multiline_comment|/* &quot;o&quot; is &quot;option&quot; or &quot;other&quot; */
+DECL|member|saddr
+id|__u32
+id|saddr
+suffix:semicolon
+multiline_comment|/* Sending source&t;&t;&t;*/
 DECL|member|allocation
 r_int
 r_int
 id|allocation
 suffix:semicolon
-multiline_comment|/* Allocation mode */
-multiline_comment|/* The following stuff should probably move to the tcp private area */
-DECL|member|write_seq
-id|__u32
-id|write_seq
-suffix:semicolon
-DECL|member|copied_seq
-id|__u32
-id|copied_seq
-suffix:semicolon
-DECL|member|syn_seq
-id|__u32
-id|syn_seq
-suffix:semicolon
-DECL|member|urg_seq
-id|__u32
-id|urg_seq
-suffix:semicolon
-DECL|member|urg_data
-id|__u32
-id|urg_data
-suffix:semicolon
-DECL|member|delayed_acks
+multiline_comment|/* Allocation mode&t;&t;&t;*/
+DECL|member|sndbuf
 r_int
-r_char
-id|delayed_acks
+id|sndbuf
 suffix:semicolon
-multiline_comment|/* End of block to move */
-DECL|member|sock_readers
-r_int
-id|sock_readers
+DECL|member|prev
+r_struct
+id|sock
+op_star
+id|prev
 suffix:semicolon
-multiline_comment|/* user count */
 multiline_comment|/*&n;   *&t;Not all are volatile, but some are, so we&n;   * &t;might as well say they all are.&n;   */
 DECL|member|dead
 r_volatile
 r_char
 id|dead
 comma
-DECL|member|urginline
-id|urginline
-comma
 DECL|member|done
 id|done
+comma
+DECL|member|urginline
+id|urginline
 comma
 DECL|member|reuse
 id|reuse
@@ -764,10 +850,6 @@ comma
 DECL|member|no_check
 id|no_check
 comma
-DECL|member|zapped
-id|zapped
-comma
-multiline_comment|/* In ax25 &amp; ipx means not linked */
 DECL|member|broadcast
 id|broadcast
 comma
@@ -777,50 +859,19 @@ comma
 DECL|member|bsdism
 id|bsdism
 suffix:semicolon
-DECL|member|bound_dev_if
+DECL|member|debug
 r_int
-id|bound_dev_if
-suffix:semicolon
-DECL|member|lingertime
-r_int
-r_int
-id|lingertime
+r_char
+id|debug
 suffix:semicolon
 DECL|member|proc
 r_int
 id|proc
 suffix:semicolon
-DECL|member|next
-r_struct
-id|sock
-op_star
-id|next
-suffix:semicolon
-DECL|member|pprev
-r_struct
-id|sock
-op_star
-op_star
-id|pprev
-suffix:semicolon
-DECL|member|bind_next
-r_struct
-id|sock
-op_star
-id|bind_next
-suffix:semicolon
-DECL|member|bind_pprev
-r_struct
-id|sock
-op_star
-op_star
-id|bind_pprev
-suffix:semicolon
-DECL|member|prev
-r_struct
-id|sock
-op_star
-id|prev
+DECL|member|lingertime
+r_int
+r_int
+id|lingertime
 suffix:semicolon
 DECL|member|hashent
 r_int
@@ -832,21 +883,11 @@ id|sock
 op_star
 id|pair
 suffix:semicolon
+multiline_comment|/* Error and backlog packet queues, rarely used. */
 DECL|member|back_log
 r_struct
 id|sk_buff_head
 id|back_log
-suffix:semicolon
-DECL|member|write_queue
-r_struct
-id|sk_buff_head
-id|write_queue
-comma
-DECL|member|receive_queue
-id|receive_queue
-comma
-DECL|member|out_of_order_queue
-id|out_of_order_queue
 comma
 DECL|member|error_queue
 id|error_queue
@@ -861,33 +902,6 @@ r_struct
 id|proto
 op_star
 id|prot
-suffix:semicolon
-DECL|member|sleep
-r_struct
-id|wait_queue
-op_star
-op_star
-id|sleep
-suffix:semicolon
-DECL|member|daddr
-id|__u32
-id|daddr
-suffix:semicolon
-DECL|member|saddr
-id|__u32
-id|saddr
-suffix:semicolon
-multiline_comment|/* Sending source */
-DECL|member|rcv_saddr
-id|__u32
-id|rcv_saddr
-suffix:semicolon
-multiline_comment|/* Bound address */
-DECL|member|dst_cache
-r_struct
-id|dst_entry
-op_star
-id|dst_cache
 suffix:semicolon
 multiline_comment|/*&n; *&t;mss is min(mtu, max_window) &n; */
 DECL|member|mtu
@@ -908,11 +922,6 @@ r_int
 id|user_mss
 suffix:semicolon
 multiline_comment|/* mss requested by user in ioctl */
-DECL|member|num
-r_int
-r_int
-id|num
-suffix:semicolon
 DECL|member|shutdown
 r_int
 r_int
@@ -964,17 +973,6 @@ comma
 id|err_soft
 suffix:semicolon
 multiline_comment|/* Soft holds errors that don&squot;t&n;&t;&t;&t;&t;&t;&t;   cause failure but are the cause&n;&t;&t;&t;&t;&t;&t;   of a persistent failure not just&n;&t;&t;&t;&t;&t;&t;   &squot;timed out&squot; */
-DECL|member|protocol
-r_int
-r_char
-id|protocol
-suffix:semicolon
-DECL|member|state
-r_volatile
-r_int
-r_char
-id|state
-suffix:semicolon
 DECL|member|ack_backlog
 r_int
 r_int
@@ -985,22 +983,9 @@ r_int
 r_int
 id|max_ack_backlog
 suffix:semicolon
-DECL|member|debug
-r_int
-r_char
-id|debug
-suffix:semicolon
 DECL|member|priority
 id|__u32
 id|priority
-suffix:semicolon
-DECL|member|rcvbuf
-r_int
-id|rcvbuf
-suffix:semicolon
-DECL|member|sndbuf
-r_int
-id|sndbuf
 suffix:semicolon
 DECL|member|type
 r_int
@@ -1013,6 +998,11 @@ r_char
 id|localroute
 suffix:semicolon
 multiline_comment|/* Route locally only */
+DECL|member|protocol
+r_int
+r_char
+id|protocol
+suffix:semicolon
 DECL|member|peercred
 r_struct
 id|ucred
@@ -1065,15 +1055,6 @@ id|packet_opt
 op_star
 id|af_packet
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_INET
-macro_line|#ifdef CONFIG_NUTCP&t;&t;
-DECL|member|af_tcp
-r_struct
-id|tcp_opt
-id|af_tcp
-suffix:semicolon
-macro_line|#endif&t;&t;
 macro_line|#endif
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 DECL|member|x25
@@ -1135,11 +1116,6 @@ multiline_comment|/* TOS */
 DECL|member|ip_cmsg_flags
 r_int
 id|ip_cmsg_flags
-suffix:semicolon
-DECL|member|dummy_th
-r_struct
-id|tcphdr
-id|dummy_th
 suffix:semicolon
 DECL|member|opt
 r_struct
@@ -2061,7 +2037,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This might not be the most apropriate place for this two&t; &n; *&t;but since they are used by a lot of the net related code&n; *&t;at least they get declared on a include that is common to all&n; */
+multiline_comment|/*&n; *&t;This might not be the most appropriate place for this two&t; &n; *&t;but since they are used by a lot of the net related code&n; *&t;at least they get declared on a include that is common to all&n; */
 DECL|function|min
 r_static
 id|__inline__
@@ -2136,6 +2112,9 @@ id|family
 comma
 r_int
 id|priority
+comma
+r_int
+id|zero_it
 )paren
 suffix:semicolon
 r_extern
@@ -2921,14 +2900,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|skb_set_owner_r
-c_func
-(paren
-id|skb
-comma
-id|sk
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_FILTER
 r_if
 c_cond
@@ -2956,6 +2927,14 @@ suffix:semicolon
 multiline_comment|/* Toss packet */
 )brace
 macro_line|#endif /* CONFIG_FILTER */
+id|skb_set_owner_r
+c_func
+(paren
+id|skb
+comma
+id|sk
+)paren
+suffix:semicolon
 id|skb_queue_tail
 c_func
 (paren

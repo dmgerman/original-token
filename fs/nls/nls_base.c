@@ -5,8 +5,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|variable|tables
@@ -922,7 +922,7 @@ id|nls_table
 op_star
 id|nls
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_char
 id|buf
 (braket
@@ -958,7 +958,7 @@ r_return
 id|nls
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_KERNELD
+macro_line|#ifndef CONFIG_KMOD
 r_return
 l_int|NULL
 suffix:semicolon

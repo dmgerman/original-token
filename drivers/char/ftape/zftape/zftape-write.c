@@ -2,9 +2,6 @@ multiline_comment|/*&n; *      Copyright (C) 1996, 1997 Claus Heine&n;&n; This p
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/zftape.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,6)
 macro_line|#include &lt;asm/uaccess.h&gt;

@@ -1613,6 +1613,8 @@ c_func
 id|AF_X25
 comma
 id|GFP_ATOMIC
+comma
+l_int|1
 )paren
 )paren
 op_eq

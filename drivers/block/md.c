@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   md.c : Multiple Devices driver for Linux&n;          Copyright (C) 1994-96 Marc ZYNGIER&n;&t;  &lt;zyngier@ufr-info-p7.ibp.fr&gt; or&n;&t;  &lt;maz@gloups.fdn.fr&gt;&n;&n;   A lot of inspiration came from hd.c ...&n;&n;   kerneld support by Boris Tobotras &lt;boris@xtalk.msk.su&gt;&n;   boot support for linear and striped mode by Harald Hoyer &lt;HarryH@Royal.Net&gt;&n;&n;   RAID-1/RAID-5 extensions by:&n;        Ingo Molnar, Miguel de Icaza, Gadi Oxman&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2, or (at your option)&n;   any later version.&n;   &n;   You should have received a copy of the GNU General Public License&n;   (for example /usr/src/linux/COPYING); if not, write to the Free&n;   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  &n;*/
+multiline_comment|/*&n;   md.c : Multiple Devices driver for Linux&n;          Copyright (C) 1994-96 Marc ZYNGIER&n;&t;  &lt;zyngier@ufr-info-p7.ibp.fr&gt; or&n;&t;  &lt;maz@gloups.fdn.fr&gt;&n;&n;   A lot of inspiration came from hd.c ...&n;&n;   kerneld support by Boris Tobotras &lt;boris@xtalk.msk.su&gt;&n;   boot support for linear and striped mode by Harald Hoyer &lt;HarryH@Royal.Net&gt;&n;&n;   RAID-1/RAID-5 extensions by:&n;        Ingo Molnar, Miguel de Icaza, Gadi Oxman&n;&n;   Changes for kmod by:&n;   &t;Cyrus Durgin&n;   &n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2, or (at your option)&n;   any later version.&n;   &n;   You should have received a copy of the GNU General Public License&n;   (for example /usr/src/linux/COPYING); if not, write to the Free&n;   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  &n;*/
 multiline_comment|/*&n; * Current RAID-1,4,5 parallel reconstruction speed limit is 1024 KB/sec, so&n; * the extra system load does not show up that much. Increase it if your&n; * system can take more.&n; */
 DECL|macro|SPEED_LIMIT
 mdefine_line|#define SPEED_LIMIT 1024
@@ -15,8 +15,8 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1713,7 +1713,7 @@ id|pnum
 )braket
 )paren
 (brace
-macro_line|#ifdef CONFIG_KERNELD
+macro_line|#ifdef CONFIG_KMOD
 r_char
 id|module_name
 (braket

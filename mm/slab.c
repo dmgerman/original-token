@@ -6401,8 +6401,8 @@ op_amp
 id|best_cachep-&gt;c_spinlock
 )paren
 suffix:semicolon
-r_if
-c_cond
+r_while
+c_loop
 (paren
 op_logical_neg
 id|best_cachep-&gt;c_growing
@@ -6509,7 +6509,12 @@ comma
 id|slabp
 )paren
 suffix:semicolon
-r_return
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|best_cachep-&gt;c_spinlock
+)paren
 suffix:semicolon
 )brace
 id|dma_fail

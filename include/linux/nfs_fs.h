@@ -62,6 +62,9 @@ mdefine_line|#define NFS_WRITEBACK(inode)&t;&t;((inode)-&gt;u.nfs_i.writeback)
 multiline_comment|/*&n; * These are the default flags for swap requests&n; */
 DECL|macro|NFS_RPC_SWAPFLAGS
 mdefine_line|#define NFS_RPC_SWAPFLAGS&t;&t;(RPC_TASK_SWAPPER|RPC_TASK_ROOTCREDS)
+multiline_comment|/* Flags in the RPC client structure */
+DECL|macro|NFS_CLNTF_BUFSIZE
+mdefine_line|#define NFS_CLNTF_BUFSIZE&t;0x0001&t;/* readdir buffer in longwords */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This struct describes a file region to be written.&n; * It&squot;s kind of a pity we have to keep all these lists ourselves, rather&n; * than sticking an extra pointer into struct page.&n; */
 DECL|struct|nfs_wreq

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/devices.c&n; *&n; * (C) 1993 Matthias Urlichs -- collected common code and tables.&n; * &n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Added kerneld support: Jacques Gelinas and Bjorn Ekwall&n; */
+multiline_comment|/*&n; *  linux/fs/devices.c&n; *&n; * (C) 1993 Matthias Urlichs -- collected common code and tables.&n; * &n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Added kerneld support: Jacques Gelinas and Bjorn Ekwall&n; *  (changed to kmod)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -7,10 +7,10 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
-macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-multiline_comment|/* serial module kerneld load support */
+multiline_comment|/* serial module kmod load support */
 r_struct
 id|tty_driver
 op_star
@@ -269,8 +269,8 @@ OL
 id|maxdev
 )paren
 (brace
-macro_line|#ifdef CONFIG_KERNELD
-multiline_comment|/*&n;&t;&t; * I do get request for device 0. I have no idea why. It happen&n;&t;&t; * at shutdown time for one. Without the following test, the&n;&t;&t; * kernel will happily trigger a request_module() which will&n;&t;&t; * trigger kerneld and modprobe for nothing (since there&n;&t;&t; * is no device with major number == 0. And furthermore&n;&t;&t; * it locks the reboot process :-(&n;&t;&t; *&n;&t;&t; * Jacques Gelinas (jacques@solucorp.qc.ca)&n;&t;&t; *&n;&t;&t; * A. Haritsis &lt;ah@doc.ic.ac.uk&gt;: fix for serial module&n;&t;&t; *  though we need the minor here to check if serial dev,&n;&t;&t; *  we pass only the normal major char dev to kerneld &n;&t;&t; *  as there is no other loadable dev on these majors&n;&t;&t; */
+macro_line|#ifdef CONFIG_KMOD
+multiline_comment|/*&n;&t;&t; * I do get request for device 0. I have no idea why. It happen&n;&t;&t; * at shutdown time for one. Without the following test, the&n;&t;&t; * kernel will happily trigger a request_module() which will&n;&t;&t; * trigger kmod and modprobe for nothing (since there&n;&t;&t; * is no device with major number == 0. And furthermore&n;&t;&t; * it locks the reboot process :-(&n;&t;&t; *&n;&t;&t; * Jacques Gelinas (jacques@solucorp.qc.ca)&n;&t;&t; *&n;&t;&t; * A. Haritsis &lt;ah@doc.ic.ac.uk&gt;: fix for serial module&n;&t;&t; *  though we need the minor here to check if serial dev,&n;&t;&t; *  we pass only the normal major char dev to kmod &n;&t;&t; *  as there is no other loadable dev on these majors&n;&t;&t; */
 r_if
 c_cond
 (paren

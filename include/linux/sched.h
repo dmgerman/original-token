@@ -98,6 +98,9 @@ DECL|macro|SCHED_FIFO
 mdefine_line|#define SCHED_FIFO&t;&t;1
 DECL|macro|SCHED_RR
 mdefine_line|#define SCHED_RR&t;&t;2
+multiline_comment|/*&n; * This is an additional bit set when we want to&n; * yield the CPU for one re-schedule..&n; */
+DECL|macro|SCHED_YIELD
+mdefine_line|#define SCHED_YIELD&t;&t;0x10
 DECL|struct|sched_param
 r_struct
 id|sched_param
@@ -155,7 +158,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* Open file table structure */
+multiline_comment|/*&n; * Open file table structure&n; */
 DECL|struct|files_struct
 r_struct
 id|files_struct
@@ -164,6 +167,18 @@ DECL|member|count
 r_int
 id|count
 suffix:semicolon
+DECL|member|max_fds
+r_int
+id|max_fds
+suffix:semicolon
+DECL|member|fd
+r_struct
+id|file
+op_star
+op_star
+id|fd
+suffix:semicolon
+multiline_comment|/* current fd array */
 DECL|member|close_on_exec
 id|fd_set
 id|close_on_exec
@@ -172,19 +187,10 @@ DECL|member|open_fds
 id|fd_set
 id|open_fds
 suffix:semicolon
-DECL|member|fd
-r_struct
-id|file
-op_star
-id|fd
-(braket
-id|NR_OPEN
-)braket
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FILES
-mdefine_line|#define INIT_FILES { &bslash;&n;&t;1, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ NULL, } &bslash;&n;}
+mdefine_line|#define INIT_FILES { &bslash;&n;&t;1, &bslash;&n;&t;NR_OPEN, &bslash;&n;&t;&amp;init_fd_array[0], &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } } &bslash;&n;}
 DECL|struct|fs_struct
 r_struct
 id|fs_struct
@@ -2076,40 +2082,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* See if we have a valid user level fd.&n; * If it makes sense, return the file structure it references.&n; * Otherwise return NULL.&n; */
-DECL|function|file_from_fd
-r_extern
-r_inline
-r_struct
-id|file
-op_star
-id|file_from_fd
-c_func
-(paren
-r_const
-r_int
-r_int
-id|fd
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fd
-op_ge
-id|NR_OPEN
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* either valid or null */
-r_return
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * The wait-queues are circular lists, and you have to be *very* sure&n; * to keep them correct. Use only these two functions to add/remove&n; * entries in the queues.&n; */
 DECL|function|__add_wait_queue
 r_extern

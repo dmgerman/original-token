@@ -1101,6 +1101,8 @@ c_func
 id|AF_UNIX
 comma
 id|GFP_KERNEL
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if
