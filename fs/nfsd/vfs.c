@@ -3804,6 +3804,9 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * We need to do a check-parent every time&n; * after we have locked the parent - to verify&n; * that the parent is still our parent and&n; * that we are still hashed onto it..&n; *&n; * This is requied in case two processes race&n; * on removing (or moving) the same entry: the&n; * parent lock will serialize them, but the&n; * other process will be too late..&n; */
+DECL|macro|check_parent
+mdefine_line|#define check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent-&gt;d_inode &amp;&amp; !list_empty(&amp;dentry-&gt;d_hash))
 multiline_comment|/*&n; * This follows the model of double_lock() in the VFS.&n; */
 DECL|function|nfsd_double_down
 r_static
@@ -4145,6 +4148,20 @@ id|odentry
 r_goto
 id|out_nfserr
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENOENT
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|odentry-&gt;d_inode
+)paren
+r_goto
+id|out_dput_old
+suffix:semicolon
 id|ndentry
 op_assign
 id|lookup_dentry
@@ -4192,7 +4209,32 @@ op_amp
 id|fdir-&gt;i_sem
 )paren
 suffix:semicolon
-multiline_comment|/* N.B. check for parent changes after locking?? */
+id|err
+op_assign
+op_minus
+id|ENOENT
+suffix:semicolon
+multiline_comment|/* GAM3 check for parent changes after locking. */
+r_if
+c_cond
+(paren
+id|check_parent
+c_func
+(paren
+id|fdir
+comma
+id|odentry
+)paren
+op_logical_and
+id|check_parent
+c_func
+(paren
+id|tdir
+comma
+id|ndentry
+)paren
+)paren
+(brace
 id|err
 op_assign
 id|vfs_rename
@@ -4233,6 +4275,14 @@ id|tdir
 )paren
 suffix:semicolon
 )brace
+)brace
+r_else
+id|dprintk
+c_func
+(paren
+l_string|&quot;nfsd: Caught race in nfsd_rename&quot;
+)paren
+suffix:semicolon
 id|DQUOT_DROP
 c_func
 (paren
@@ -4536,7 +4586,6 @@ id|fhp-&gt;fh_locked
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* CHECKME: Should we do something with the child? */
 id|err
 op_assign
 op_minus
@@ -4545,9 +4594,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rdentry-&gt;d_parent-&gt;d_inode
-op_eq
+id|check_parent
+c_func
+(paren
 id|dirp
+comma
+id|rdentry
+)paren
 )paren
 id|err
 op_assign

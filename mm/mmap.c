@@ -1429,6 +1429,10 @@ id|tree
 op_assign
 id|mm-&gt;mmap_avl
 suffix:semicolon
+id|vma
+op_assign
+l_int|NULL
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2012,11 +2016,13 @@ id|last
 op_assign
 (paren
 id|end
-op_amp
-id|PGDIR_MASK
-)paren
 op_plus
 id|PGDIR_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+id|PGDIR_MASK
 suffix:semicolon
 r_if
 c_cond

@@ -367,6 +367,13 @@ id|sb_be_quiet
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|esstype
+r_int
+id|esstype
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ESS chip type */
 macro_line|#ifdef MODULE
 DECL|variable|config
 r_static
@@ -458,13 +465,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do acer notebook init */
-DECL|variable|esstype
-r_int
-id|esstype
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* ESS chip type */
 id|MODULE_PARM
 c_func
 (paren
