@@ -18,7 +18,7 @@ macro_line|#endif
 DECL|macro|PARPORT_PARANOID
 macro_line|#undef PARPORT_PARANOID
 DECL|macro|PARPORT_DEFAULT_TIMESLICE
-mdefine_line|#define PARPORT_DEFAULT_TIMESLICE&t;(HZ/10)
+mdefine_line|#define PARPORT_DEFAULT_TIMESLICE&t;(HZ/5)
 DECL|variable|portlist
 DECL|variable|portlist_tail
 r_static

@@ -710,37 +710,16 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * &quot;maxorder&quot; is the highest order number that we&squot;re allowed&n;&t; * to empty in order to find a free page..&n;&t; */
 id|maxorder
 op_assign
-id|order
-op_plus
 id|NR_MEM_LISTS
-op_div
-l_int|3
+op_minus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_MED
-)paren
-id|maxorder
-op_add_assign
-id|NR_MEM_LISTS
-op_div
-l_int|3
-suffix:semicolon
-r_if
-c_cond
-(paren
 (paren
 id|gfp_mask
 op_amp
 id|__GFP_HIGH
-)paren
-op_logical_or
-id|maxorder
-OG
-id|NR_MEM_LISTS
 )paren
 id|maxorder
 op_assign
@@ -854,6 +833,11 @@ op_complement
 id|__GFP_WAIT
 suffix:semicolon
 multiline_comment|/* go through this only once */
+id|maxorder
+op_assign
+id|NR_MEM_LISTS
+suffix:semicolon
+multiline_comment|/* Allow anything this time */
 r_if
 c_cond
 (paren

@@ -3301,7 +3301,7 @@ c_cond
 op_logical_neg
 id|BusLogic_ProbeOptions.NoProbePCI
 op_logical_and
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren

@@ -298,6 +298,10 @@ id|load_addr
 comma
 r_int
 r_int
+id|load_bias
+comma
+r_int
+r_int
 id|interp_load_addr
 comma
 r_int
@@ -631,9 +635,8 @@ l_int|6
 comma
 id|AT_ENTRY
 comma
-(paren
-id|elf_addr_t
-)paren
+id|load_bias
+op_plus
 id|exec-&gt;e_entry
 )paren
 suffix:semicolon
@@ -2529,6 +2532,11 @@ id|current-&gt;mm-&gt;mmap
 op_assign
 l_int|NULL
 suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_FORKNOEXEC
+suffix:semicolon
 id|elf_entry
 op_assign
 (paren
@@ -3117,6 +3125,8 @@ l_int|NULL
 )paren
 comma
 id|load_addr
+comma
+id|load_bias
 comma
 id|interp_load_addr
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This is &lt;linux/capability.h&gt;&n; *&n; * Andrew G. Morgan &lt;morgan@parc.power.net&gt;&n; * Alexander Kjeldaas &lt;astor@guardian.no&gt;&n; * with help from Aleph1, Roland Buresund and Andrew Main.&n; */
+multiline_comment|/*&n; * This is &lt;linux/capability.h&gt;&n; *&n; * Andrew G. Morgan &lt;morgan@transmeta.com&gt;&n; * Alexander Kjeldaas &lt;astor@guardian.no&gt;&n; * with help from Aleph1, Roland Buresund and Andrew Main.&n; */
 macro_line|#ifndef _LINUX_CAPABILITY_H
 DECL|macro|_LINUX_CAPABILITY_H
 mdefine_line|#define _LINUX_CAPABILITY_H

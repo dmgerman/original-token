@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Support for PCI bridges found on Power Macintoshes.&n; * At present the &quot;bandit&quot; and &quot;chaos&quot; bridges are supported.&n; * Fortunately you access configuration space in the same&n; * way with either bridge.&n; *&n; * Copyright (C) 1997 Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

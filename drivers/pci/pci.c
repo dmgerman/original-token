@@ -1449,7 +1449,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROC
+macro_line|#ifdef CONFIG_PROC_FS
 id|pci_proc_init
 c_func
 (paren

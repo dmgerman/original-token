@@ -2965,7 +2965,7 @@ macro_line|#else
 DECL|variable|__initdata
 r_static
 r_int
-id|parport
+id|parport_nr
 (braket
 id|LP_NO
 )braket
@@ -3044,7 +3044,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* disable driver on &quot;lp=&quot; or &quot;lp=0&quot; */
-id|parport
+id|parport_nr
 (braket
 l_int|0
 )braket
@@ -3106,7 +3106,7 @@ id|parport_ptr
 OL
 id|LP_NO
 )paren
-id|parport
+id|parport_nr
 (braket
 id|parport_ptr
 op_increment
@@ -3139,7 +3139,7 @@ l_string|&quot;auto&quot;
 )paren
 )paren
 (brace
-id|parport
+id|parport_nr
 (braket
 l_int|0
 )braket
@@ -3161,7 +3161,7 @@ l_string|&quot;none&quot;
 )paren
 )paren
 (brace
-id|parport
+id|parport_nr
 (braket
 id|parport_ptr
 op_increment

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * macserial.c: Serial port driver for Power Macintoshes.&n; *&n; * Derived from drivers/sbus/char/sunserial.c by Paul Mackerras.&n; *&n; * Copyright (C) 1996 Paul Mackerras (Paul.Mackerras@cs.anu.edu.au)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
