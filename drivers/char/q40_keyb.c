@@ -5,10 +5,12 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/keyboard.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
@@ -2055,11 +2057,6 @@ r_int
 r_char
 id|status
 suffix:semicolon
-id|disable_keyboard
-c_func
-(paren
-)paren
-suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -2214,10 +2211,11 @@ id|keyup
 op_assign
 l_int|0
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace
@@ -2246,30 +2244,7 @@ id|KEYBOARD_UNLOCK_REG
 )paren
 suffix:semicolon
 multiline_comment|/* keyb ints reenabled herewith */
-id|enable_keyboard
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-DECL|function|kbd_is_sysrq
-r_int
-id|kbd_is_sysrq
-c_func
-(paren
-r_int
-r_char
-id|keycode
-)paren
-(brace
-r_return
-id|keycode
-op_eq
-id|SYSRQ_KEY
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
 DECL|macro|KBD_NO_DATA
 mdefine_line|#define KBD_NO_DATA&t;(-1)&t;/* No data */
 DECL|macro|KBD_BAD_DATA

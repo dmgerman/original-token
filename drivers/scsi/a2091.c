@@ -1028,7 +1028,6 @@ suffix:semicolon
 )brace
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
-macro_line|#include &quot;a2091.h&quot;
 DECL|variable|driver_template
 r_static
 id|Scsi_Host_Template

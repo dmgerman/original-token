@@ -11,7 +11,7 @@ macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;dmasound.h&quot;
-multiline_comment|/*&n;    *&t;The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    *&t;(Imported from arch/m68k/amiga/amisound.c)&n;    *&n;    *&t;FIXME: if amifb is not used, there should be a method to change htotal&n;    */
+multiline_comment|/*&n;    *&t;The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    *&t;(Imported from arch/m68k/amiga/amisound.c)&n;    */
 r_extern
 r_volatile
 id|u_short

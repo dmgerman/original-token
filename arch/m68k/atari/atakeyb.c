@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
@@ -2568,10 +2569,11 @@ op_assign
 id|acia.key_data
 suffix:semicolon
 multiline_comment|/* get it or reset the ACIA, I&squot;ll get it! */
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 id|interpret_scancode
@@ -4523,6 +4525,61 @@ id|HZ
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|atari_kbd_translate
+r_int
+id|atari_kbd_translate
+c_func
+(paren
+r_int
+r_char
+id|keycode
+comma
+r_int
+r_char
+op_star
+id|keycodep
+comma
+r_char
+id|raw_mode
+)paren
+(brace
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+multiline_comment|/* ALT+HELP pressed? */
+r_if
+c_cond
+(paren
+(paren
+id|keycode
+op_eq
+l_int|98
+)paren
+op_logical_and
+(paren
+(paren
+id|shift_state
+op_amp
+l_int|0xff
+)paren
+op_eq
+l_int|8
+)paren
+)paren
+op_star
+id|keycodep
+op_assign
+l_int|0xff
+suffix:semicolon
+r_else
+macro_line|#endif
+op_star
+id|keycodep
+op_assign
+id|keycode
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 eof

@@ -4400,7 +4400,7 @@ id|drive
 (brace
 id|printk
 (paren
-l_string|&quot;%s: cleanup_module() called while still busy&bslash;n&quot;
+l_string|&quot;%s: exit_idescsi_module() called while still busy&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren

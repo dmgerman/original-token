@@ -8,6 +8,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy to/from user&t;&t;*/
 macro_line|#include &lt;linux/videodev.h&gt;&t;/* kernel radio structs&t;&t;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_RADIO_CADET_PORT &t;*/
 macro_line|#include &lt;linux/param.h&gt;
+macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#ifndef CONFIG_RADIO_CADET_PORT
 DECL|macro|CONFIG_RADIO_CADET_PORT
 mdefine_line|#define CONFIG_RADIO_CADET_PORT 0x330
@@ -104,7 +105,6 @@ id|cadet_lock
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef MODULE
 r_static
 r_int
 id|cadet_probe
@@ -113,10 +113,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISAPNP
-macro_line|#include &lt;linux/isapnp.h&gt;
 DECL|variable|dev
+r_static
 r_struct
 id|pci_dev
 op_star
@@ -130,7 +128,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Signal Strength Threshold Values&n; * The V4L API spec does not define any particular unit for the signal &n; * strength value.  These values are in microvolts of RF at the tuner&squot;s input.&n; */
 DECL|variable|sigtable
 r_static
@@ -2420,7 +2417,6 @@ id|cadet_ioctl
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
 DECL|function|isapnp_cadet_probe
 r_static
 r_int
@@ -2545,8 +2541,6 @@ r_return
 id|io
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;/* CONFIG_ISAPNP */
-macro_line|#ifdef MODULE
 DECL|function|cadet_probe
 r_static
 r_int
@@ -2593,12 +2587,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+id|request_region
 c_func
 (paren
 id|io
 comma
 l_int|2
+comma
+l_string|&quot;cadet-probe&quot;
 )paren
 op_ge
 l_int|0
@@ -2621,10 +2617,26 @@ op_eq
 l_int|1410
 )paren
 (brace
+id|release_region
+c_func
+(paren
+id|io
+comma
+l_int|2
+)paren
+suffix:semicolon
 r_return
 id|io
 suffix:semicolon
 )brace
+id|release_region
+c_func
+(paren
+id|io
+comma
+l_int|2
+)paren
+suffix:semicolon
 )brace
 )brace
 r_return
@@ -2632,7 +2644,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;/* MODULE */
 DECL|function|cadet_init
 r_static
 r_int
@@ -2643,14 +2654,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_ISAPNP
-id|io
-op_assign
-id|isapnp_cadet_probe
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If a probe was requested then probe ISAPnP first (safest)&n;&t; */
 r_if
 c_cond
 (paren
@@ -2658,21 +2662,30 @@ id|io
 OL
 l_int|0
 )paren
-r_return
-(paren
 id|io
+op_assign
+id|isapnp_cadet_probe
+c_func
+(paren
 )paren
 suffix:semicolon
-macro_line|#else
-macro_line|#ifndef MODULE&t;&t;/* only probe on non-ISAPnP monolithic compiles */
+multiline_comment|/*&n;&t; *&t;If that fails then probe unsafely if probe is requested&n;&t; */
+r_if
+c_cond
+(paren
+id|io
+OL
+l_int|0
+)paren
+(brace
 id|io
 op_assign
 id|cadet_probe
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
-macro_line|#endif /* CONFIG_ISAPNP */
+)brace
+multiline_comment|/*&n;&t; *&t;Else we bail out&n;&t; */
 r_if
 c_cond
 (paren
@@ -2810,7 +2823,6 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
 r_if
 c_cond
 (paren
@@ -2824,7 +2836,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|variable|cadet_init
 id|module_init

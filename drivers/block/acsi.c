@@ -7219,8 +7219,6 @@ c_func
 (paren
 id|ACSI_BUFFER_SIZE
 comma
-l_int|NULL
-comma
 l_string|&quot;acsi&quot;
 )paren
 )paren

@@ -83,25 +83,6 @@ r_int
 r_int
 id|mac_orig_videoaddr
 suffix:semicolon
-multiline_comment|/* Mac specific keyboard functions */
-r_extern
-r_int
-id|mackbd_init_hw
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|mackbd_leds
-c_func
-(paren
-r_int
-r_int
-id|leds
-)paren
-suffix:semicolon
 multiline_comment|/* Mac specific timer functions */
 r_extern
 r_void
@@ -313,33 +294,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-DECL|variable|mac_sysrq_xlate
-r_static
-r_char
-id|mac_sysrq_xlate
-(braket
-l_int|128
-)braket
-op_assign
-l_string|&quot;&bslash;000sdfghzxcv&bslash;000bqwer&quot;
-multiline_comment|/* 0x00 - 0x0f */
-l_string|&quot;yt123465=97-80)o&quot;
-multiline_comment|/* 0x10 - 0x1f */
-l_string|&quot;u(ip&bslash;rlj&squot;k;&bslash;&bslash;,/nm.&quot;
-multiline_comment|/* 0x20 - 0x2f */
-l_string|&quot;&bslash;t `&bslash;000&bslash;033&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
-multiline_comment|/* 0x30 - 0x3f */
-l_string|&quot;&bslash;000.&bslash;000*&bslash;000+&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000/&bslash;r&bslash;000-&bslash;000&quot;
-multiline_comment|/* 0x40 - 0x4f */
-l_string|&quot;&bslash;000&bslash;00001234567a89&bslash;000&bslash;000&bslash;000&quot;
-multiline_comment|/* 0x50 - 0x5f */
-l_string|&quot;&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
-multiline_comment|/* 0x60 - 0x6f */
-l_string|&quot;&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&bslash;000&quot;
-suffix:semicolon
-multiline_comment|/* 0x70 - 0x7f */
-macro_line|#endif
 r_extern
 r_void
 (paren
@@ -354,6 +308,94 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|mackbd_init_hw
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mackbd_leds
+c_func
+(paren
+r_int
+r_int
+id|leds
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mackbd_translate
+c_func
+(paren
+r_int
+r_char
+id|keycode
+comma
+r_int
+r_char
+op_star
+id|keycodep
+comma
+r_char
+id|raw_mode
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mac_hid_init_hw
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mac_hid_kbd_translate
+c_func
+(paren
+r_int
+r_char
+id|scancode
+comma
+r_int
+r_char
+op_star
+id|keycode
+comma
+r_char
+id|raw_mode
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+r_extern
+r_int
+r_char
+id|mac_hid_kbd_sysrq_xlate
+(braket
+l_int|128
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|pckbd_sysrq_xlate
+(braket
+l_int|128
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|mackbd_sysrq_xlate
+(braket
+l_int|128
+)braket
+suffix:semicolon
+macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
 r_static
 r_void
 id|mac_get_model
@@ -738,10 +780,48 @@ l_string|&quot;ERROR: no Mac, but config_mac() called!! &bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|mach_sched_init
+macro_line|#ifdef CONFIG_VT
+macro_line|#ifdef CONFIG_INPUT_ADBHID
+id|mach_keyb_init
 op_assign
-id|mac_sched_init
+id|mac_hid_init_hw
 suffix:semicolon
+id|mach_kbd_translate
+op_assign
+id|mac_hid_kbd_translate
+suffix:semicolon
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+macro_line|#ifdef CONFIG_MAC_ADBKEYCODES
+r_if
+c_cond
+(paren
+op_logical_neg
+id|keyboard_sends_linux_keycodes
+)paren
+(brace
+id|mach_sysrq_xlate
+op_assign
+id|mac_hid_kbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x69
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif /* CONFIG_MAC_ADBKEYCODES */
+(brace
+id|mach_sysrq_xlate
+op_assign
+id|pckbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x54
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
+macro_line|#elif defined(CONFIG_ADB_KEYBOARD)
 id|mach_keyb_init
 op_assign
 id|mackbd_init_hw
@@ -749,6 +829,24 @@ suffix:semicolon
 id|mach_kbd_leds
 op_assign
 id|mackbd_leds
+suffix:semicolon
+id|mach_kbd_translate
+op_assign
+id|mackbd_translate
+suffix:semicolon
+id|mach_sysrq_xlate
+op_assign
+id|mackbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x69
+suffix:semicolon
+macro_line|#endif /* CONFIG_INPUT_ADBHID */
+macro_line|#endif /* CONFIG_VT */
+id|mach_sched_init
+op_assign
+id|mac_sched_init
 suffix:semicolon
 id|mach_init_IRQ
 op_assign
@@ -836,27 +934,6 @@ id|kd_mksound
 op_assign
 id|mac_mksound
 suffix:semicolon
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|mach_sysrq_key
-op_assign
-l_int|114
-suffix:semicolon
-multiline_comment|/* HELP */
-id|mach_sysrq_shift_state
-op_assign
-l_int|8
-suffix:semicolon
-multiline_comment|/* Alt */
-id|mach_sysrq_shift_mask
-op_assign
-l_int|0xff
-suffix:semicolon
-multiline_comment|/* all modifiers except CapsLock */
-id|mach_sysrq_xlate
-op_assign
-id|mac_sysrq_xlate
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_HEARTBEAT
 macro_line|#if 0
 id|mach_heartbeat
@@ -869,7 +946,7 @@ id|IRQ_MAC_TIMER
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/*&n;     * Determine hardware present&n;     */
+multiline_comment|/*&n;&t; * Determine hardware present&n;&t; */
 id|mac_identify
 c_func
 (paren
@@ -880,7 +957,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* AFAIK only the IIci takes a cache card.  The IIfx has onboard&n;       cache ... someone needs to figure out how to tell if it&squot;s on or&n;       not. */
+multiline_comment|/* AFAIK only the IIci takes a cache card.  The IIfx has onboard&n;&t;   cache ... someone needs to figure out how to tell if it&squot;s on or&n;&t;   not. */
 r_if
 c_cond
 (paren
@@ -909,7 +986,7 @@ l_int|10
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;     * Check for machine specific fixups.&n;     */
+multiline_comment|/*&n;&t; * Check for machine specific fixups.&n;&t; */
 macro_line|#ifdef OLD_NUBUS_CODE
 id|nubus_sweep_video
 c_func

@@ -4951,9 +4951,9 @@ r_if
 c_cond
 (paren
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 op_logical_and
 id|signr

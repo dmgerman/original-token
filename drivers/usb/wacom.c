@@ -1512,6 +1512,12 @@ comma
 r_int
 r_int
 id|ifnum
+comma
+r_const
+r_struct
+id|usb_device_id
+op_star
+id|id
 )paren
 (brace
 r_struct

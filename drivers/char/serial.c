@@ -16661,7 +16661,7 @@ op_logical_and
 (paren
 id|dev-&gt;device
 op_eq
-id|PCI_VENDOR_ID_PLX_ROMULUS
+id|PCI_DEVICE_ID_PLX_ROMULUS
 )paren
 )paren
 (brace
@@ -18067,7 +18067,7 @@ multiline_comment|/* (Exoray@isys.ca) */
 (brace
 id|PCI_VENDOR_ID_PLX
 comma
-id|PCI_VENDOR_ID_PLX_ROMULUS
+id|PCI_DEVICE_ID_PLX_ROMULUS
 comma
 l_int|0x10b5
 comma

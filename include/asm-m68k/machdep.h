@@ -77,6 +77,26 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|mach_kbd_translate
+)paren
+(paren
+r_int
+r_char
+id|scancode
+comma
+r_int
+r_char
+op_star
+id|keycode
+comma
+r_char
+id|raw_mode
+)paren
+suffix:semicolon
 multiline_comment|/* machine dependent irq functions */
 r_extern
 r_void

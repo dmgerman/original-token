@@ -29,25 +29,25 @@ l_int|0x00000808
 id|LSIGTRAP
 op_assign
 l_int|5
-multiline_comment|/* process bits for task_struct.flags */
-id|PF_TRACESYS_OFF
+multiline_comment|/* process bits for task_struct.ptrace */
+id|PT_TRACESYS_OFF
 op_assign
 l_int|3
-id|PF_TRACESYS_BIT
-op_assign
-l_int|5
-id|PF_PTRACED_OFF
-op_assign
-l_int|3
-id|PF_PTRACED_BIT
-op_assign
-l_int|4
-id|PF_DTRACE_OFF
+id|PT_TRACESYS_BIT
 op_assign
 l_int|1
-id|PF_DTRACE_BIT
+id|PT_PTRACED_OFF
 op_assign
-l_int|5
+l_int|3
+id|PT_PTRACED_BIT
+op_assign
+l_int|0
+id|PT_DTRACE_OFF
+op_assign
+l_int|3
+id|PT_DTRACE_BIT
+op_assign
+l_int|2
 DECL|macro|SAVE_ALL_INT
 mdefine_line|#define SAVE_ALL_INT save_all_int
 DECL|macro|SAVE_ALL_SYS

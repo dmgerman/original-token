@@ -1248,11 +1248,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|pci_set_bus_ranges
-c_func
-(paren
-)paren
-suffix:semicolon
 id|pcibios_fixup_irqs
 c_func
 (paren

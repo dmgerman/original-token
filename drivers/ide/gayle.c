@@ -7,8 +7,10 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
+macro_line|#include &lt;asm/amigayle.h&gt;
 multiline_comment|/*&n;     *  Bases of the IDE interfaces&n;     */
 DECL|macro|GAYLE_BASE_4000
 mdefine_line|#define GAYLE_BASE_4000&t;0xdd2020&t;/* A4000/A4000T */
@@ -33,14 +35,14 @@ DECL|macro|GAYLE_STATUS
 mdefine_line|#define GAYLE_STATUS&t;0x1e&t;&t;/* see status-bits */
 DECL|macro|GAYLE_CONTROL
 mdefine_line|#define GAYLE_CONTROL&t;0x101a
-DECL|variable|gayle_offsets
+DECL|variable|__initdata
 r_static
 r_int
-id|__init
 id|gayle_offsets
 (braket
 id|IDE_NR_PORTS
 )braket
+id|__initdata
 op_assign
 (brace
 id|GAYLE_DATA
@@ -134,7 +136,7 @@ op_logical_neg
 (paren
 id|ch
 op_amp
-l_int|0x80
+id|GAYLE_IRQ_IDE
 )paren
 )paren
 r_return
@@ -177,7 +179,7 @@ op_logical_neg
 (paren
 id|ch
 op_amp
-l_int|0x80
+id|GAYLE_IRQ_IDE
 )paren
 )paren
 r_return
@@ -199,12 +201,6 @@ id|outb
 c_func
 (paren
 l_int|0x7c
-op_or
-(paren
-id|ch
-op_amp
-l_int|0x03
-)paren
 comma
 id|hwif-&gt;io_ports
 (braket

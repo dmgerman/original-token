@@ -1082,6 +1082,7 @@ id|urb-&gt;bandwidth
 op_assign
 id|bustime
 suffix:semicolon
+macro_line|#ifdef USB_BANDWIDTH_MESSAGES
 id|dbg
 c_func
 (paren
@@ -1096,6 +1097,7 @@ op_plus
 id|dev-&gt;bus-&gt;bandwidth_isoc_reqs
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * usb_release_bandwidth():&n; *&n; * called to release a pipe&squot;s bandwidth (in microseconds)&n; */
 DECL|function|usb_release_bandwidth
@@ -1133,6 +1135,7 @@ r_else
 id|dev-&gt;bus-&gt;bandwidth_int_reqs
 op_decrement
 suffix:semicolon
+macro_line|#ifdef USB_BANDWIDTH_MESSAGES
 id|dbg
 c_func
 (paren
@@ -1147,6 +1150,7 @@ op_plus
 id|dev-&gt;bus-&gt;bandwidth_isoc_reqs
 )paren
 suffix:semicolon
+macro_line|#endif
 id|urb-&gt;bandwidth
 op_assign
 l_int|0

@@ -6240,12 +6240,70 @@ id|des
 op_amp
 l_int|0x0F
 suffix:semicolon
+multiline_comment|/* Black magic... */
 r_switch
 c_cond
 (paren
 id|dh
 )paren
 (brace
+r_case
+l_int|0
+suffix:colon
+r_switch
+c_cond
+(paren
+id|dl
+)paren
+(brace
+r_case
+l_int|6
+suffix:colon
+multiline_comment|/* L1 I cache */
+id|l1i
+op_add_assign
+l_int|8
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|8
+suffix:colon
+multiline_comment|/* L1 I cache */
+id|l1i
+op_add_assign
+l_int|16
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|10
+suffix:colon
+multiline_comment|/* L1 D cache */
+id|l1d
+op_add_assign
+l_int|8
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|12
+suffix:colon
+multiline_comment|/* L1 D cache */
+id|l1d
+op_add_assign
+l_int|16
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+multiline_comment|/* TLB, or unknown */
+)brace
+r_break
+suffix:semicolon
 r_case
 l_int|2
 suffix:colon
@@ -6276,6 +6334,43 @@ suffix:semicolon
 r_case
 l_int|4
 suffix:colon
+r_if
+c_cond
+(paren
+id|c-&gt;x86
+OG
+l_int|6
+op_logical_and
+id|dl
+)paren
+(brace
+multiline_comment|/* P4 family */
+r_if
+c_cond
+(paren
+id|dl
+)paren
+(brace
+multiline_comment|/* L3 cache */
+id|cs
+op_assign
+l_int|128
+op_lshift
+(paren
+id|dl
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|l3
+op_add_assign
+id|cs
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* else same as 8 - fall through */
 r_case
 l_int|8
 suffix:colon
@@ -6335,7 +6430,33 @@ suffix:semicolon
 r_case
 l_int|7
 suffix:colon
-multiline_comment|/* L1 I cache */
+r_if
+c_cond
+(paren
+id|dl
+op_ge
+l_int|8
+)paren
+(brace
+multiline_comment|/* L2 cache */
+id|cs
+op_assign
+l_int|64
+op_lshift
+(paren
+id|dl
+op_minus
+l_int|8
+)paren
+suffix:semicolon
+id|l2
+op_add_assign
+id|cs
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* L0 I cache, count as L1 */
 id|cs
 op_assign
 id|dl
@@ -6357,6 +6478,7 @@ id|l1i
 op_add_assign
 id|cs
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_default
@@ -8430,11 +8552,11 @@ l_string|&quot;pse36&quot;
 comma
 l_string|&quot;pn&quot;
 comma
-l_string|&quot;clflsh&quot;
+l_string|&quot;clflush&quot;
 comma
 l_int|NULL
 comma
-l_string|&quot;dtes&quot;
+l_string|&quot;dts&quot;
 comma
 l_string|&quot;acpi&quot;
 comma
@@ -8446,11 +8568,11 @@ l_string|&quot;sse&quot;
 comma
 l_string|&quot;sse2&quot;
 comma
-l_string|&quot;selfsnoop&quot;
+l_string|&quot;ss&quot;
 comma
 l_int|NULL
 comma
-l_string|&quot;acc&quot;
+l_string|&quot;tm&quot;
 comma
 l_string|&quot;ia64&quot;
 comma

@@ -1,4 +1,6 @@
 macro_line|#ifndef A2091_H
+DECL|macro|A2091_H
+mdefine_line|#define A2091_H
 multiline_comment|/* $Id: a2091.h,v 1.4 1997/01/19 23:07:09 davem Exp $&n; *&n; * Header file for the Commodore A2091 Zorro II SCSI controller for Linux&n; *&n; * Written and (C) 1993, Hamish Macdonald, see a2091.c for more info&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 r_int

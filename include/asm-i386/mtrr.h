@@ -71,6 +71,16 @@ DECL|macro|MTRRIOC_GET_ENTRY
 mdefine_line|#define MTRRIOC_GET_ENTRY        _IOWR(MTRR_IOCTL_BASE, 3, struct mtrr_gentry)
 DECL|macro|MTRRIOC_KILL_ENTRY
 mdefine_line|#define MTRRIOC_KILL_ENTRY       _IOW(MTRR_IOCTL_BASE,  4, struct mtrr_sentry)
+DECL|macro|MTRRIOC_ADD_PAGE_ENTRY
+mdefine_line|#define MTRRIOC_ADD_PAGE_ENTRY   _IOW(MTRR_IOCTL_BASE,  5, struct mtrr_sentry)
+DECL|macro|MTRRIOC_SET_PAGE_ENTRY
+mdefine_line|#define MTRRIOC_SET_PAGE_ENTRY   _IOW(MTRR_IOCTL_BASE,  6, struct mtrr_sentry)
+DECL|macro|MTRRIOC_DEL_PAGE_ENTRY
+mdefine_line|#define MTRRIOC_DEL_PAGE_ENTRY   _IOW(MTRR_IOCTL_BASE,  7, struct mtrr_sentry)
+DECL|macro|MTRRIOC_GET_PAGE_ENTRY
+mdefine_line|#define MTRRIOC_GET_PAGE_ENTRY   _IOWR(MTRR_IOCTL_BASE, 8, struct mtrr_gentry)
+DECL|macro|MTRRIOC_KILL_PAGE_ENTRY
+mdefine_line|#define MTRRIOC_KILL_PAGE_ENTRY  _IOW(MTRR_IOCTL_BASE,  9, struct mtrr_sentry)
 multiline_comment|/*  These are the region types  */
 DECL|macro|MTRR_TYPE_UNCACHABLE
 mdefine_line|#define MTRR_TYPE_UNCACHABLE 0
@@ -146,7 +156,43 @@ id|increment
 suffix:semicolon
 r_extern
 r_int
+id|mtrr_add_page
+(paren
+r_int
+r_int
+id|base
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|type
+comma
+r_char
+id|increment
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|mtrr_del
+(paren
+r_int
+id|reg
+comma
+r_int
+r_int
+id|base
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mtrr_del_page
 (paren
 r_int
 id|reg
@@ -188,11 +234,61 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|mtrr_add_page
+r_static
+id|__inline__
+r_int
+id|mtrr_add_page
+(paren
+r_int
+r_int
+id|base
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|type
+comma
+r_char
+id|increment
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 DECL|function|mtrr_del
 r_static
 id|__inline__
 r_int
 id|mtrr_del
+(paren
+r_int
+id|reg
+comma
+r_int
+r_int
+id|base
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+DECL|function|mtrr_del_page
+r_static
+id|__inline__
+r_int
+id|mtrr_del_page
 (paren
 r_int
 id|reg

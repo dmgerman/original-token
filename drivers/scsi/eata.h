@@ -3,7 +3,6 @@ macro_line|#ifndef _EATA_H
 DECL|macro|_EATA_H
 mdefine_line|#define _EATA_H
 macro_line|#include &lt;scsi/scsicam.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 r_int
 id|eata2x_detect
 c_func
@@ -48,30 +47,11 @@ op_star
 )paren
 suffix:semicolon
 r_int
-id|eata2x_old_abort
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-r_int
 id|eata2x_reset
 c_func
 (paren
 id|Scsi_Cmnd
 op_star
-)paren
-suffix:semicolon
-r_int
-id|eata2x_old_reset
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-comma
-r_int
-r_int
 )paren
 suffix:semicolon
 r_int
@@ -88,10 +68,8 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|EATA_VERSION
-mdefine_line|#define EATA_VERSION &quot;5.11.00&quot;
-DECL|macro|LinuxVersionCode
-mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
+mdefine_line|#define EATA_VERSION &quot;6.02.00&quot;
 DECL|macro|EATA
-mdefine_line|#define EATA {                                                               &bslash;&n;                name:              &quot;EATA/DMA 2.0x rev. &quot; EATA_VERSION &quot; &quot;,   &bslash;&n;                detect:                  eata2x_detect,                      &bslash;&n;                release:                 eata2x_release,                     &bslash;&n;                queuecommand:            eata2x_queuecommand,                &bslash;&n;                abort:                   eata2x_old_abort,                   &bslash;&n;                reset:                   eata2x_old_reset,                   &bslash;&n;                eh_abort_handler:        eata2x_abort,                       &bslash;&n;                eh_device_reset_handler: NULL,                               &bslash;&n;                eh_bus_reset_handler:    NULL,                               &bslash;&n;                eh_host_reset_handler:   eata2x_reset,                       &bslash;&n;                bios_param:              eata2x_biosparam,                   &bslash;&n;                this_id:                 7,                                  &bslash;&n;                unchecked_isa_dma:       1,                                  &bslash;&n;                use_clustering:          ENABLE_CLUSTERING,                  &bslash;&n;                use_new_eh_code:         1    /* Enable new error code */    &bslash;&n;             }
+mdefine_line|#define EATA {                                                               &bslash;&n;                name:              &quot;EATA/DMA 2.0x rev. &quot; EATA_VERSION &quot; &quot;,   &bslash;&n;                detect:                  eata2x_detect,                      &bslash;&n;                release:                 eata2x_release,                     &bslash;&n;                queuecommand:            eata2x_queuecommand,                &bslash;&n;                abort:                   NULL,                               &bslash;&n;                reset:                   NULL,                               &bslash;&n;                eh_abort_handler:        eata2x_abort,                       &bslash;&n;                eh_device_reset_handler: NULL,                               &bslash;&n;                eh_bus_reset_handler:    NULL,                               &bslash;&n;                eh_host_reset_handler:   eata2x_reset,                       &bslash;&n;                bios_param:              eata2x_biosparam,                   &bslash;&n;                this_id:                 7,                                  &bslash;&n;                unchecked_isa_dma:       1,                                  &bslash;&n;                use_clustering:          ENABLE_CLUSTERING,                  &bslash;&n;                use_new_eh_code:         1    /* Enable new error code */    &bslash;&n;             }
 macro_line|#endif
 eof

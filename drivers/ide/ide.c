@@ -15047,6 +15047,23 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_MAC_IDE */
+macro_line|#ifdef CONFIG_BLK_DEV_Q40IDE
+(brace
+r_extern
+r_void
+id|q40ide_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|q40ide_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_Q40IDE */
 macro_line|#ifdef CONFIG_BLK_DEV_BUDDHA
 (brace
 r_extern

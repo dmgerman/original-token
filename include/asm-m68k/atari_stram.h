@@ -11,11 +11,6 @@ c_func
 r_int
 id|size
 comma
-r_int
-r_int
-op_star
-id|start_mem
-comma
 r_const
 r_char
 op_star
@@ -42,9 +37,15 @@ r_void
 id|atari_stram_reserve_pages
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|start_mem
+)paren
+suffix:semicolon
+r_void
+id|atari_stram_mem_init_hook
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif /*_M68K_ATARI_STRAM_H */

@@ -3674,6 +3674,8 @@ id|amiga_chip_alloc
 c_func
 (paren
 id|SAVEKMSG_MAXMEM
+comma
+l_string|&quot;Debug&quot;
 )paren
 suffix:semicolon
 id|savekmsg-&gt;magic1

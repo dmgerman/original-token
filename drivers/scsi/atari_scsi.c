@@ -1919,8 +1919,6 @@ c_func
 (paren
 id|STRAM_BUFFER_SIZE
 comma
-l_int|NULL
-comma
 l_string|&quot;SCSI&quot;
 )paren
 suffix:semicolon

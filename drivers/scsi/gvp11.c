@@ -1560,11 +1560,7 @@ suffix:colon
 id|release_mem_region
 c_func
 (paren
-id|ZTWO_PADDR
-c_func
-(paren
-id|instance-&gt;base
-)paren
+id|address
 comma
 l_int|256
 )paren

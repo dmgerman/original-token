@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/include/asm-m68k/keyboard.h&n; *&n; *  Created 3 Nov 1996 by Geert Uytterhoeven&n; */
 multiline_comment|/*&n; *  This file contains the m68k architecture specific keyboard definitions&n; */
-macro_line|#include &lt;linux/config.h&gt; /* CONFIG_MAGIC_SYSRQ */
 macro_line|#ifndef __M68K_KEYBOARD_H
 DECL|macro|__M68K_KEYBOARD_H
 mdefine_line|#define __M68K_KEYBOARD_H
@@ -84,53 +83,6 @@ suffix:colon
 id|scancode
 suffix:semicolon
 )brace
-DECL|function|kbd_translate
-r_static
-id|__inline__
-r_int
-id|kbd_translate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-comma
-r_int
-r_char
-op_star
-id|keycode
-comma
-r_char
-id|raw_mode
-)paren
-(brace
-macro_line|#ifdef CONFIG_Q40
-r_if
-c_cond
-(paren
-id|MACH_IS_Q40
-)paren
-r_return
-id|q40kbd_translate
-c_func
-(paren
-id|scancode
-comma
-id|keycode
-comma
-id|raw_mode
-)paren
-suffix:semicolon
-macro_line|#endif
-op_star
-id|keycode
-op_assign
-id|scancode
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 DECL|function|kbd_unexpected_up
 r_static
 id|__inline__
@@ -185,14 +137,22 @@ id|leds
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-DECL|macro|kbd_is_sysrq
-mdefine_line|#define kbd_is_sysrq(keycode)&t;((keycode) == mach_sysrq_key &amp;&amp; &bslash;&n;&t;&t;&t;&t; (up_flag || &bslash;&n;&t;&t;&t;&t;  (shift_state &amp; mach_sysrq_shift_mask) == &bslash;&n;&t;&t;&t;&t;  mach_sysrq_shift_state))
-DECL|macro|kbd_sysrq_xlate
-mdefine_line|#define kbd_sysrq_xlate&t;&t;&t;mach_sysrq_xlate
-macro_line|#endif
 DECL|macro|kbd_init_hw
-mdefine_line|#define kbd_init_hw&t;mach_keyb_init
+mdefine_line|#define kbd_init_hw&t;&t;mach_keyb_init
+DECL|macro|kbd_translate
+mdefine_line|#define kbd_translate&t;&t;mach_kbd_translate
+DECL|macro|kbd_sysrq_xlate
+mdefine_line|#define kbd_sysrq_xlate&t;&t;mach_sysrq_xlate
+multiline_comment|/* resource allocation */
+DECL|macro|kbd_request_region
+mdefine_line|#define kbd_request_region()
+DECL|macro|kbd_request_irq
+mdefine_line|#define kbd_request_irq(handler)
+r_extern
+r_int
+r_int
+id|SYSRQ_KEY
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __M68K_KEYBOARD_H */
 eof

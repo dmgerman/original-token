@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/arch/m68k/amiga/amikeyb.c&n; *&n; * Amiga Keyboard driver for Linux/m68k&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Amiga support by Hamish Macdonald&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -11,6 +12,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
@@ -1977,13 +1979,6 @@ id|kbd_pt_regs
 op_assign
 l_int|NULL
 suffix:semicolon
-id|init_timer
-c_func
-(paren
-op_amp
-id|amikeyb_rep_timer
-)paren
-suffix:semicolon
 id|amikeyb_rep_timer.expires
 op_assign
 id|jiffies
@@ -2223,13 +2218,6 @@ id|rep_scancode
 op_assign
 id|keycode
 suffix:semicolon
-id|init_timer
-c_func
-(paren
-op_amp
-id|amikeyb_rep_timer
-)paren
-suffix:semicolon
 id|amikeyb_rep_timer.expires
 op_assign
 id|jiffies
@@ -2395,6 +2383,28 @@ id|AMI_KEYBOARD
 r_return
 op_minus
 id|EIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|CIAA_PHYSADDR
+op_minus
+l_int|1
+op_plus
+l_int|0xb00
+comma
+l_int|0x100
+comma
+l_string|&quot;amikeyb&quot;
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 multiline_comment|/* setup key map */
 id|memcpy
@@ -2629,6 +2639,61 @@ id|HZ
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|amiga_kbd_translate
+r_int
+id|amiga_kbd_translate
+c_func
+(paren
+r_int
+r_char
+id|keycode
+comma
+r_int
+r_char
+op_star
+id|keycodep
+comma
+r_char
+id|raw_mode
+)paren
+(brace
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+multiline_comment|/* SHIFT+ALTGR+HELP pressed? */
+r_if
+c_cond
+(paren
+(paren
+id|keycode
+op_eq
+l_int|0x5f
+)paren
+op_logical_and
+(paren
+(paren
+id|shift_state
+op_amp
+l_int|0xff
+)paren
+op_eq
+l_int|3
+)paren
+)paren
+op_star
+id|keycodep
+op_assign
+l_int|0xff
+suffix:semicolon
+r_else
+macro_line|#endif
+op_star
+id|keycodep
+op_assign
+id|keycode
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 eof

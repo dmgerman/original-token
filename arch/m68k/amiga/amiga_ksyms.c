@@ -106,13 +106,6 @@ c_func
 id|amiga_do_irq_list
 )paren
 suffix:semicolon
-DECL|variable|amiga_intena_vals
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|amiga_intena_vals
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_AMIGA_PCMCIA
 DECL|variable|pcmcia_reset
 id|EXPORT_SYMBOL

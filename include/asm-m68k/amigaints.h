@@ -140,20 +140,6 @@ DECL|macro|IF_DSKBLK
 mdefine_line|#define IF_DSKBLK   0x0002&t;/* diskblock DMA finished */
 DECL|macro|IF_TBE
 mdefine_line|#define IF_TBE&t;    0x0001&t;/* serial transmit buffer empty interrupt */
-DECL|struct|irq_server
-r_struct
-id|irq_server
-(brace
-DECL|member|count
-DECL|member|reentrance
-r_int
-r_int
-id|count
-comma
-id|reentrance
-suffix:semicolon
-)brace
-suffix:semicolon
 r_extern
 r_void
 id|amiga_do_irq
@@ -180,11 +166,6 @@ r_struct
 id|pt_regs
 op_star
 id|fp
-comma
-r_struct
-id|irq_server
-op_star
-id|server
 )paren
 suffix:semicolon
 r_extern

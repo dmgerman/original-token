@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/m68k/amiga/amisound.c&n; *&n; * amiga sound driver for Linux/m68k&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -106,9 +107,18 @@ c_func
 r_void
 )paren
 (brace
+r_static
+r_struct
+id|resource
+id|beep_res
+op_assign
+(brace
+l_string|&quot;Beep&quot;
+)brace
+suffix:semicolon
 id|snd_data
 op_assign
-id|amiga_chip_alloc
+id|amiga_chip_alloc_res
 c_func
 (paren
 r_sizeof
@@ -116,7 +126,8 @@ r_sizeof
 id|sine_data
 )paren
 comma
-l_string|&quot;Beep&quot;
+op_amp
+id|beep_res
 )paren
 suffix:semicolon
 r_if
@@ -160,6 +171,14 @@ l_int|2
 op_div
 id|DATA_SIZE
 suffix:semicolon
+multiline_comment|/* without amifb, turn video off and enable high quality sound */
+macro_line|#ifndef CONFIG_FB_AMIGA
+id|amifb_video_off
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_static
 r_void

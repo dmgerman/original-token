@@ -9465,7 +9465,7 @@ id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|mark_inode_dirty
+id|mark_inode_dirty_sync
 c_func
 (paren
 id|inode
@@ -9735,6 +9735,33 @@ c_func
 id|cached_page
 )paren
 suffix:semicolon
+multiline_comment|/* For now, when the user asks for O_SYNC, we&squot;ll actually&n;&t; * provide O_DSYNC. */
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_ge
+l_int|0
+)paren
+op_logical_and
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_SYNC
+)paren
+)paren
+id|status
+op_assign
+id|generic_osync_inode
+c_func
+(paren
+id|inode
+comma
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* 1 means datasync */
 id|err
 op_assign
 id|written

@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/siginfo.h&gt;
 multiline_comment|/* assembler routines */
@@ -4311,9 +4311,9 @@ id|VEC_TRACE
 )paren
 (brace
 multiline_comment|/* traced a trapping instruction */
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_or_assign
-id|PF_DTRACE
+id|PT_DTRACE
 suffix:semicolon
 )brace
 r_else

@@ -512,7 +512,7 @@ macro_line|#endif&t;/* CONFIG_SUN3 */
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)(addr)-PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 DECL|macro|virt_to_page
-mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + (((unsigned long)(addr)-PAGE_OFFSET) &gt;&gt; PAGE_SHIFT))
+mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + (((unsigned long)(kaddr)-PAGE_OFFSET) &gt;&gt; PAGE_SHIFT))
 DECL|macro|VALID_PAGE
 mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 macro_line|#ifndef CONFIG_SUN3

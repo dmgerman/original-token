@@ -4175,8 +4175,6 @@ c_func
 (paren
 id|size
 comma
-l_int|NULL
-comma
 l_string|&quot;dmasound&quot;
 )paren
 suffix:semicolon

@@ -3,6 +3,7 @@ multiline_comment|/* tms380tr_microcode.h: TI TMS380 Token Ring driver COMMproce
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_TMS380TR) || defined(CONFIG_TMS380TR_MODULE)
 DECL|variable|tms380tr_code
+r_static
 r_int
 r_char
 id|tms380tr_code

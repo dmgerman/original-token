@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
@@ -361,6 +362,12 @@ id|cmd-&gt;SCp.this_residual
 )paren
 suffix:semicolon
 multiline_comment|/* start DMA */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* make sure setup is completed */
 id|DMA
 c_func
 (paren
@@ -371,6 +378,12 @@ id|ST_DMA
 op_assign
 l_int|1
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* make sure DMA has started before next IO */
 multiline_comment|/* return success */
 r_return
 l_int|0
@@ -427,6 +440,12 @@ id|CNTR
 op_assign
 id|cntr
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* make sure CNTR is updated before next IO */
 multiline_comment|/* flush if we were reading */
 r_if
 c_cond
@@ -450,6 +469,12 @@ id|FLUSH
 op_assign
 l_int|1
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* don&squot;t allow prefetch */
 r_while
 c_loop
 (paren
@@ -466,7 +491,17 @@ op_amp
 id|ISTR_FE_FLG
 )paren
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* no IO until FLUSH is done */
 )brace
 multiline_comment|/* clear a possible interrupt */
 multiline_comment|/* I think that this CINT is only necessary if you are&n;     * using the terminal count features.   HM 7 Mar 1994&n;     */
@@ -491,6 +526,12 @@ id|SP_DMA
 op_assign
 l_int|1
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* make sure DMA is stopped before next IO */
 multiline_comment|/* restore the CONTROL bits (minus the direction flag) */
 id|DMA
 c_func
@@ -504,6 +545,12 @@ id|CNTR_PDMD
 op_or
 id|CNTR_INTEN
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* make sure CNTR is updated before next IO */
 multiline_comment|/* copy from a bounce buffer, if necessary */
 r_if
 c_cond
@@ -709,6 +756,24 @@ id|A3000_SCSI
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+l_int|0xDD0000
+comma
+l_int|256
+comma
+l_string|&quot;wd33c93&quot;
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 id|tpnt-&gt;proc_name
 op_assign
 l_string|&quot;A3000&quot;
@@ -739,6 +804,14 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|release_mem_region
+c_func
+(paren
+l_int|0xDD0000
+comma
+l_int|256
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -828,13 +901,12 @@ suffix:semicolon
 )brace
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
-macro_line|#include &quot;a3000.h&quot;
 DECL|variable|driver_template
 r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
-id|A3000_SCSI
+id|_A3000_SCSI
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 DECL|function|a3000_release
@@ -863,6 +935,14 @@ op_member_access_from_pointer
 id|CNTR
 op_assign
 l_int|0
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+l_int|0xDD0000
+comma
+l_int|256
+)paren
 suffix:semicolon
 id|free_irq
 c_func

@@ -158,11 +158,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Not interested in the bogus interrupts (0,3,4,6), &n;&t;   NMI (1), HALT (2), flash (5), or 21142 (8).  */
+multiline_comment|/* Not interested in the bogus interrupts (0,3,6),&n;&t;   NMI (1), HALT (2), flash (5), or 21142 (8).  */
 id|init_pyxis_irqs
 c_func
 (paren
-l_int|0x17f0000
+l_int|0x16f0000
 )paren
 suffix:semicolon
 id|common_init_isa_dma

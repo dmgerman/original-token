@@ -42,6 +42,30 @@ id|child
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|resource_list
+r_struct
+id|resource_list
+(brace
+DECL|member|next
+r_struct
+id|resource_list
+op_star
+id|next
+suffix:semicolon
+DECL|member|res
+r_struct
+id|resource
+op_star
+id|res
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|pci_dev
+op_star
+id|dev
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * IO resources have these defined flags.&n; */
 DECL|macro|IORESOURCE_BITS
 mdefine_line|#define IORESOURCE_BITS&t;&t;0x000000ff&t;/* Bus-specific bits */
@@ -63,6 +87,8 @@ DECL|macro|IORESOURCE_RANGELENGTH
 mdefine_line|#define IORESOURCE_RANGELENGTH&t;0x00008000
 DECL|macro|IORESOURCE_SHADOWABLE
 mdefine_line|#define IORESOURCE_SHADOWABLE&t;0x00010000
+DECL|macro|IORESOURCE_BUS_HAS_VGA
+mdefine_line|#define IORESOURCE_BUS_HAS_VGA&t;0x00080000
 DECL|macro|IORESOURCE_UNSET
 mdefine_line|#define IORESOURCE_UNSET&t;0x20000000
 DECL|macro|IORESOURCE_AUTO

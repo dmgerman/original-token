@@ -482,11 +482,6 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-id|out_failed
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
 id|out_unlock_restore
 suffix:colon
 id|set_pte

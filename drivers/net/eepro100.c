@@ -8,13 +8,14 @@ op_star
 id|version
 op_assign
 l_string|&quot;eepro100.c:v1.09j-t 9/29/99 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/eepro100.html&bslash;n&quot;
-l_string|&quot;eepro100.c: $Revision: 1.33 $ 2000/05/24 Modified by Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt; and others&bslash;n&quot;
+l_string|&quot;eepro100.c: $Revision: 1.35 $ 2000/11/17 Modified by Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt; and others&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values that apply to all boards.&n;   First set is undocumented and spelled per Intel recommendations. */
 DECL|variable|congenb
 r_static
 r_int
 id|congenb
+multiline_comment|/* = 0 */
 suffix:semicolon
 multiline_comment|/* Enable congestion control in the DP83840. */
 DECL|variable|txfifo
@@ -45,8 +46,18 @@ DECL|variable|rxdmacount
 r_static
 r_int
 id|rxdmacount
+multiline_comment|/* = 0 */
 suffix:semicolon
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-buffer Rx method.&n;   Lower values use more memory, but are faster. */
+macro_line|#if defined(__alpha__) || defined(__sparc__)
+DECL|variable|rx_copybreak
+r_static
+r_int
+id|rx_copybreak
+op_assign
+l_int|1518
+suffix:semicolon
+macro_line|#else
 DECL|variable|rx_copybreak
 r_static
 r_int
@@ -54,6 +65,7 @@ id|rx_copybreak
 op_assign
 l_int|200
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
 DECL|variable|max_interrupt_work
 r_static
@@ -338,216 +350,16 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_EEPRO100_PM */
-macro_line|#ifndef pci_resource_start
-DECL|macro|pci_resource_start
-mdefine_line|#define pci_resource_start(p, n) (p)-&gt;resource[n].start
-DECL|macro|pci_resource_len
-mdefine_line|#define pci_resource_len(p, n) ((p)-&gt;resource[n].end - (p)-&gt;resource[n].start)
-macro_line|#endif
-multiline_comment|/* Because of changes in this area the driver may not compile for kernels&n;   2.3.43 - 2.3.47.  --SAW */
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
-DECL|macro|netif_wake_queue
-mdefine_line|#define netif_wake_queue(dev)&t;do { &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;clear_bit(0, (void*)&amp;dev-&gt;tbusy); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;mark_bh(NET_BH); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;} while(0)
-DECL|macro|netif_start_queue
-mdefine_line|#define netif_start_queue(dev)&t;clear_bit(0, (void*)&amp;dev-&gt;tbusy)
-DECL|macro|netif_stop_queue
-mdefine_line|#define netif_stop_queue(dev)&t;set_bit(0, (void*)&amp;dev-&gt;tbusy)
-DECL|macro|netif_running
-mdefine_line|#define netif_running(dev)&t;&t;dev-&gt;start
-DECL|macro|netdevice_start
-mdefine_line|#define netdevice_start(dev)&t;dev-&gt;start = 1
-DECL|macro|netdevice_stop
-mdefine_line|#define netdevice_stop(dev)&t;&t;dev-&gt;start = 0
-DECL|macro|netif_set_tx_timeout
-mdefine_line|#define netif_set_tx_timeout(dev, tf, tm)
-DECL|macro|dev_kfree_skb_irq
-mdefine_line|#define dev_kfree_skb_irq(x)&t;dev_kfree_skb(x)
-macro_line|#else
 DECL|macro|netdevice_start
 mdefine_line|#define netdevice_start(dev)
 DECL|macro|netdevice_stop
 mdefine_line|#define netdevice_stop(dev)
 DECL|macro|netif_set_tx_timeout
 mdefine_line|#define netif_set_tx_timeout(dev, tf, tm) &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;do { &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;(dev)-&gt;tx_timeout = (tf); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;(dev)-&gt;watchdog_timeo = (tm); &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;} while(0)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,47)
 DECL|macro|netif_device_attach
 mdefine_line|#define netif_device_attach(dev) netif_start_queue(dev)
 DECL|macro|netif_device_detach
 mdefine_line|#define netif_device_detach(dev) netif_stop_queue(dev)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
-DECL|typedef|dma_addr_t
-r_typedef
-id|u32
-id|dma_addr_t
-suffix:semicolon
-DECL|function|pci_alloc_consistent
-r_static
-r_void
-op_star
-id|pci_alloc_consistent
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|hwdev
-comma
-r_int
-id|size
-comma
-id|dma_addr_t
-op_star
-id|dma_handle
-)paren
-(brace
-r_void
-op_star
-id|ret
-suffix:semicolon
-id|ret
-op_assign
-id|kmalloc
-c_func
-(paren
-id|size
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-op_ne
-l_int|NULL
-)paren
-(brace
-op_star
-id|dma_handle
-op_assign
-id|virt_to_bus
-c_func
-(paren
-id|ret
-)paren
-suffix:semicolon
-)brace
-r_return
-id|ret
-suffix:semicolon
-)brace
-DECL|function|pci_free_consistent
-r_void
-id|pci_free_consistent
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|hwdev
-comma
-r_int
-id|size
-comma
-r_void
-op_star
-id|vaddr
-comma
-id|dma_addr_t
-id|dma_handle
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|vaddr
-)paren
-suffix:semicolon
-)brace
-DECL|macro|PCI_DMA_FROMDEVICE
-mdefine_line|#define PCI_DMA_FROMDEVICE 0
-DECL|macro|PCI_DMA_TODEVICE
-mdefine_line|#define PCI_DMA_TODEVICE 0
-DECL|function|pci_map_single
-r_extern
-r_inline
-id|dma_addr_t
-id|pci_map_single
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|hwdev
-comma
-r_void
-op_star
-id|ptr
-comma
-r_int
-id|size
-comma
-r_int
-id|direction
-)paren
-(brace
-r_return
-id|virt_to_bus
-c_func
-(paren
-id|ptr
-)paren
-suffix:semicolon
-)brace
-DECL|function|pci_unmap_single
-r_extern
-r_inline
-r_void
-id|pci_unmap_single
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|hwdev
-comma
-id|dma_addr_t
-id|dma_addr
-comma
-r_int
-id|size
-comma
-r_int
-id|direction
-)paren
-(brace
-)brace
-DECL|function|pci_dma_sync_single
-r_extern
-r_inline
-r_void
-id|pci_dma_sync_single
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|hwdev
-comma
-id|dma_addr_t
-id|dma_handle
-comma
-r_int
-id|size
-comma
-r_int
-id|direction
-)paren
-(brace
-)brace
-macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_INTEL_ID1029
 DECL|macro|PCI_DEVICE_ID_INTEL_ID1029
 mdefine_line|#define PCI_DEVICE_ID_INTEL_ID1029 0x1029
@@ -1130,6 +942,8 @@ l_int|0x8000
 comma
 )brace
 suffix:semicolon
+DECL|macro|CONFIG_DATA_SIZE
+mdefine_line|#define CONFIG_DATA_SIZE 22
 DECL|struct|TxFD
 r_struct
 id|TxFD
@@ -1177,6 +991,7 @@ id|s32
 id|tx_buf_size1
 suffix:semicolon
 multiline_comment|/* Length of Tx frame. */
+multiline_comment|/* the structure must have space for at least CONFIG_DATA_SIZE starting&n;&t; * from tx_desc_addr field */
 )brace
 suffix:semicolon
 multiline_comment|/* Multicast filter setting block.  --SAW */
@@ -1569,7 +1384,7 @@ r_const
 r_char
 id|i82557_config_cmd
 (braket
-l_int|22
+id|CONFIG_DATA_SIZE
 )braket
 op_assign
 (brace
@@ -1626,7 +1441,7 @@ r_const
 r_char
 id|i82558_config_cmd
 (braket
-l_int|22
+id|CONFIG_DATA_SIZE
 )braket
 op_assign
 (brace
@@ -1836,7 +1651,7 @@ op_star
 id|pdev
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_EEPRO100_PM */
+macro_line|#endif
 r_static
 r_int
 id|do_eeprom_cmd
@@ -2139,10 +1954,12 @@ suffix:semicolon
 r_static
 r_int
 id|cards_found
+multiline_comment|/* = 0 */
 suffix:semicolon
 r_static
 r_int
 id|did_version
+multiline_comment|/* = 0 */
 suffix:semicolon
 multiline_comment|/* Already printed version info. */
 r_if
@@ -2871,6 +2688,12 @@ op_plus
 id|SCBPort
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3490,6 +3313,12 @@ op_plus
 id|SCBPort
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
 multiline_comment|/* Return the chip to its original power state. */
 id|pci_set_power_state
 c_func
@@ -3546,6 +3375,9 @@ id|TX_RING_SIZE
 suffix:semicolon
 id|sp-&gt;lstats_dma
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|TX_RING_ELEM_DMA
 c_func
 (paren
@@ -3553,7 +3385,16 @@ id|sp
 comma
 id|TX_RING_SIZE
 )paren
+)paren
 suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+multiline_comment|/* used in ioctl() */
 id|sp-&gt;full_duplex
 op_assign
 id|option
@@ -3898,12 +3739,6 @@ comma
 id|ee_addr
 )paren
 suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|4
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -4141,6 +3976,9 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4198,9 +4036,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* .. we can safely take handler calls during init. */
-r_if
-c_cond
-(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -4215,13 +4052,17 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-op_minus
-id|EBUSY
+id|retval
 suffix:semicolon
 )brace
 id|dev-&gt;if_port
@@ -4410,13 +4251,6 @@ id|SCBStatus
 suffix:semicolon
 )brace
 multiline_comment|/* Set the timer.  The timer serves a dual purpose:&n;&t;   1) to monitor the media interface (e.g. link beat) and perhaps switch&n;&t;   to an alternate media type&n;&t;   2) to monitor Rx activity, and restart the Rx process if the receiver&n;&t;   hangs. */
-id|init_timer
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-suffix:semicolon
 id|sp-&gt;timer.expires
 op_assign
 id|RUN_AT
@@ -4541,6 +4375,15 @@ op_plus
 id|SCBPointer
 )paren
 suffix:semicolon
+id|inl
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBPointer
+)paren
+suffix:semicolon
+multiline_comment|/* XXX */
 id|outb
 c_func
 (paren
@@ -4569,6 +4412,7 @@ op_plus
 id|SCBCmd
 )paren
 suffix:semicolon
+multiline_comment|/* Load the statistics block and rx ring addresses. */
 id|wait_for_cmd_done
 c_func
 (paren
@@ -4577,7 +4421,6 @@ op_plus
 id|SCBCmd
 )paren
 suffix:semicolon
-multiline_comment|/* Load the statistics block and rx ring addresses. */
 id|outl
 c_func
 (paren
@@ -4588,6 +4431,15 @@ op_plus
 id|SCBPointer
 )paren
 suffix:semicolon
+id|inl
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBPointer
+)paren
+suffix:semicolon
+multiline_comment|/* XXX */
 id|outb
 c_func
 (paren
@@ -4601,14 +4453,6 @@ suffix:semicolon
 id|sp-&gt;lstats-&gt;done_marker
 op_assign
 l_int|0
-suffix:semicolon
-id|wait_for_cmd_done
-c_func
-(paren
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4642,6 +4486,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|wait_for_cmd_done
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
 id|outl
 c_func
 (paren
@@ -4667,6 +4519,7 @@ op_plus
 id|SCBCmd
 )paren
 suffix:semicolon
+)brace
 id|wait_for_cmd_done
 c_func
 (paren
@@ -4675,7 +4528,6 @@ op_plus
 id|SCBCmd
 )paren
 suffix:semicolon
-)brace
 id|outb
 c_func
 (paren
@@ -4684,6 +4536,12 @@ comma
 id|ioaddr
 op_plus
 id|SCBCmd
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|30
 )paren
 suffix:semicolon
 multiline_comment|/* Fill the first command with our physical address. */
@@ -5051,16 +4909,23 @@ c_cond
 (paren
 id|speedo_debug
 OG
-l_int|2
+l_int|3
 )paren
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;%s: Sending a multicast list set command&quot;
-l_string|&quot; from a timer routine.&bslash;n&quot;
+l_string|&quot; from a timer routine,&quot;
+l_string|&quot; m=%d, j=%ld, l=%ld.&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|sp-&gt;rx_mode
+comma
+id|jiffies
+comma
+id|sp-&gt;last_rx_time
 )paren
 suffix:semicolon
 id|set_rx_mode
@@ -5089,6 +4954,15 @@ op_amp
 id|sp-&gt;timer
 )paren
 suffix:semicolon
+macro_line|#if defined(timer_exit)
+id|timer_exit
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|speedo_show_state
 r_static
@@ -5293,6 +5167,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#if 0
+(brace
 r_int
 id|ioaddr
 op_assign
@@ -5359,6 +5234,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
+)brace
 macro_line|#endif
 )brace
 multiline_comment|/* Initialize the Rx and Tx rings, along with various &squot;dev&squot; bits. */
@@ -5395,6 +5271,12 @@ op_star
 id|last_rxf
 op_assign
 l_int|NULL
+suffix:semicolon
+id|dma_addr_t
+id|last_rxf_dma
+op_assign
+l_int|0
+multiline_comment|/* to shut up the compiler */
 suffix:semicolon
 r_int
 id|i
@@ -5495,7 +5377,7 @@ r_struct
 id|RxFD
 )paren
 comma
-id|PCI_DMA_FROMDEVICE
+id|PCI_DMA_BIDIRECTIONAL
 )paren
 suffix:semicolon
 id|skb_reserve
@@ -5532,12 +5414,7 @@ c_func
 (paren
 id|sp-&gt;pdev
 comma
-id|sp-&gt;rx_ring_dma
-(braket
-id|i
-op_minus
-l_int|1
-)braket
+id|last_rxf_dma
 comma
 r_sizeof
 (paren
@@ -5552,6 +5429,13 @@ suffix:semicolon
 id|last_rxf
 op_assign
 id|rxf
+suffix:semicolon
+id|last_rxf_dma
+op_assign
+id|sp-&gt;rx_ring_dma
+(braket
+id|i
+)braket
 suffix:semicolon
 id|rxf-&gt;status
 op_assign
@@ -5651,12 +5535,7 @@ id|last_rxf
 suffix:semicolon
 id|sp-&gt;last_rxf_dma
 op_assign
-id|sp-&gt;rx_ring_dma
-(braket
-id|RX_RING_SIZE
-op_minus
-l_int|1
-)braket
+id|last_rxf_dma
 suffix:semicolon
 )brace
 DECL|function|speedo_purge_tx
@@ -6099,13 +5978,6 @@ dot
 id|status
 )paren
 suffix:semicolon
-multiline_comment|/* Trigger a stats dump to give time before the reset. */
-id|speedo_get_stats
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|speedo_show_state
 c_func
 (paren
@@ -6185,26 +6057,6 @@ r_else
 macro_line|#else
 (brace
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Ensure that timer routine doesn&squot;t run! */
-id|del_timer
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-suffix:semicolon
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* LINUX_VERSION_CODE */
 id|del_timer_sync
 c_func
 (paren
@@ -6212,7 +6064,6 @@ op_amp
 id|sp-&gt;timer
 )paren
 suffix:semicolon
-macro_line|#endif /* LINUX_VERSION_CODE */
 multiline_comment|/* Reset the Tx and Rx units. */
 id|outl
 c_func
@@ -6373,109 +6224,6 @@ suffix:semicolon
 r_int
 id|entry
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-id|TX_TIMEOUT
-op_minus
-l_int|2
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-id|TX_TIMEOUT
-)paren
-(brace
-multiline_comment|/* Reap sent packets from the full Tx queue. */
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|sp-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|wait_for_cmd_done
-c_func
-(paren
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|SCBTriggerIntr
-comma
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|sp-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|speedo_tx_timeout
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
 (brace
 multiline_comment|/* Prevent interrupts from changing the Tx ring from underneath us. */
 r_int
@@ -7740,7 +7488,7 @@ id|status
 suffix:semicolon
 multiline_comment|/* Clear all interrupt sources. */
 multiline_comment|/* Will change from 0xfc00 to 0xff00 when we start handling&n;&t;&t;&t;   FCP and ER interrupts --Dragan */
-id|outl
+id|outw
 c_func
 (paren
 l_int|0xfc00
@@ -8405,9 +8153,6 @@ op_mod
 id|RX_RING_SIZE
 suffix:semicolon
 r_int
-id|status
-suffix:semicolon
-r_int
 id|rx_work_limit
 op_assign
 id|sp-&gt;dirty_rx
@@ -8448,6 +8193,9 @@ l_int|NULL
 )paren
 (brace
 r_int
+id|status
+suffix:semicolon
+r_int
 id|pkt_len
 suffix:semicolon
 id|pci_dma_sync_single
@@ -8469,12 +8217,6 @@ comma
 id|PCI_DMA_FROMDEVICE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-(paren
 id|status
 op_assign
 id|le32_to_cpu
@@ -8487,15 +8229,7 @@ id|entry
 op_member_access_from_pointer
 id|status
 )paren
-)paren
-op_amp
-id|RxComplete
-)paren
-)paren
-(brace
-r_break
 suffix:semicolon
-)brace
 id|pkt_len
 op_assign
 id|le32_to_cpu
@@ -8510,6 +8244,18 @@ id|count
 )paren
 op_amp
 l_int|0x3fff
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|RxComplete
+)paren
+)paren
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -8760,10 +8506,6 @@ macro_line|#endif
 )brace
 r_else
 (brace
-r_void
-op_star
-id|temp
-suffix:semicolon
 multiline_comment|/* Pass up the already-filled skbuff. */
 id|skb
 op_assign
@@ -8799,8 +8541,6 @@ id|entry
 op_assign
 l_int|NULL
 suffix:semicolon
-id|temp
-op_assign
 id|skb_put
 c_func
 (paren
@@ -8984,7 +8724,7 @@ id|SCBStatus
 )paren
 suffix:semicolon
 multiline_comment|/* Shut off the media monitoring timer. */
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
@@ -9233,7 +8973,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* The Speedo-3 has an especially awkward and unusable method of getting&n;   statistics out of the chip.  It takes an unpredictable length of time&n;   for the dump-stats command to complete.  To avoid a busy-wait loop we&n;   update the stats with the previous dump results, and then trigger a&n;   new dump.&n;&n;   These problems are mitigated by the current /proc implementation, which&n;   calls this routine first to judge the output length, and then to emit the&n;   output.&n;&n;   Oh, and incoming frames are dropped while executing dump-stats!&n;   */
+multiline_comment|/* The Speedo-3 has an especially awkward and unusable method of getting&n;   statistics out of the chip.  It takes an unpredictable length of time&n;   for the dump-stats command to complete.  To avoid a busy-wait loop we&n;   update the stats with the previous dump results, and then trigger a&n;   new dump.&n;&n;   Oh, and incoming frames are dropped while executing dump-stats!&n;   */
 r_static
 r_struct
 id|net_device_stats
@@ -9482,6 +9222,9 @@ suffix:semicolon
 r_int
 id|saved_acpi
 suffix:semicolon
+r_int
+id|t
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -9516,39 +9259,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-id|data
-(braket
-l_int|3
-)braket
+id|t
 op_assign
-id|mdio_read
-c_func
-(paren
-id|ioaddr
-comma
-id|data
-(braket
-l_int|0
-)braket
-comma
-id|data
-(braket
-l_int|1
-)braket
-)paren
-suffix:semicolon
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* LINUX_VERSION_CODE */
 id|del_timer_sync
 c_func
 (paren
@@ -9577,6 +9289,11 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|t
+)paren
 id|add_timer
 c_func
 (paren
@@ -9585,7 +9302,6 @@ id|sp-&gt;timer
 )paren
 suffix:semicolon
 multiline_comment|/* may be set to the past  --SAW */
-macro_line|#endif /* LINUX_VERSION_CODE */
 id|pci_set_power_state
 c_func
 (paren
@@ -9627,39 +9343,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-id|mdio_write
-c_func
-(paren
-id|ioaddr
-comma
-id|data
-(braket
-l_int|0
-)braket
-comma
-id|data
-(braket
-l_int|1
-)braket
-comma
-id|data
-(braket
-l_int|2
-)braket
-)paren
-suffix:semicolon
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* LINUX_VERSION_CODE */
+id|t
+op_assign
 id|del_timer_sync
 c_func
 (paren
@@ -9688,6 +9373,11 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|t
+)paren
 id|add_timer
 c_func
 (paren
@@ -9696,7 +9386,6 @@ id|sp-&gt;timer
 )paren
 suffix:semicolon
 multiline_comment|/* may be set to the past  --SAW */
-macro_line|#endif /* LINUX_VERSION_CODE */
 id|pci_set_power_state
 c_func
 (paren
@@ -9963,10 +9652,7 @@ id|config_cmd_data
 comma
 id|i82558_config_cmd
 comma
-r_sizeof
-(paren
-id|i82558_config_cmd
-)paren
+id|CONFIG_DATA_SIZE
 )paren
 suffix:semicolon
 id|config_cmd_data

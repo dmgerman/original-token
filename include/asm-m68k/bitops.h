@@ -304,6 +304,11 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * clear_bit() doesn&squot;t provide any barrier for the compiler.&n; */
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;barrier()
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;barrier()
 DECL|macro|clear_bit
 mdefine_line|#define clear_bit(nr,vaddr) &bslash;&n;  (__builtin_constant_p(nr) ? &bslash;&n;   __constant_clear_bit(nr, vaddr) : &bslash;&n;   __generic_clear_bit(nr, vaddr))
 DECL|function|__constant_clear_bit

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|variable|amiga_model
@@ -322,6 +323,24 @@ id|amiga_kbdrate
 r_struct
 id|kbd_repeat
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|amiga_kbd_translate
+c_func
+(paren
+r_int
+r_char
+id|keycode
+comma
+r_int
+r_char
+op_star
+id|keycodep
+comma
+r_char
+id|raw_mode
 )paren
 suffix:semicolon
 multiline_comment|/* amiga specific irq functions */
@@ -1794,6 +1813,14 @@ suffix:semicolon
 id|mach_kbdrate
 op_assign
 id|amiga_kbdrate
+suffix:semicolon
+id|mach_kbd_translate
+op_assign
+id|amiga_kbd_translate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0xff
 suffix:semicolon
 id|mach_init_IRQ
 op_assign
@@ -3849,19 +3876,24 @@ c_func
 r_void
 )paren
 (brace
+r_static
+r_struct
+id|resource
+id|debug_res
+op_assign
+(brace
+l_string|&quot;Debug&quot;
+)brace
+suffix:semicolon
 id|savekmsg
 op_assign
-(paren
-r_struct
-id|savekmsg
-op_star
-)paren
-id|amiga_chip_alloc
+id|amiga_chip_alloc_res
 c_func
 (paren
 id|SAVEKMSG_MAXMEM
 comma
-l_string|&quot;Debug&quot;
+op_amp
+id|debug_res
 )paren
 suffix:semicolon
 id|savekmsg-&gt;magic1

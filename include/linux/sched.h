@@ -322,7 +322,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FILES
-mdefine_line|#define INIT_FILES { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;RW_LOCK_UNLOCKED, &bslash;&n;&t;NR_OPEN_DEFAULT, &bslash;&n;&t;__FD_SETSIZE, &bslash;&n;&t;0, &bslash;&n;&t;&amp;init_files.fd_array[0], &bslash;&n;&t;&amp;init_files.close_on_exec_init, &bslash;&n;&t;&amp;init_files.open_fds_init, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ NULL, } &bslash;&n;}
+mdefine_line|#define INIT_FILES &bslash;&n;{ &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;count:&t;&t;ATOMIC_INIT(1), &t;&t;&bslash;&n;&t;file_lock:&t;RW_LOCK_UNLOCKED, &t;&t;&bslash;&n;&t;max_fds:&t;NR_OPEN_DEFAULT, &t;&t;&bslash;&n;&t;max_fdset:&t;__FD_SETSIZE, &t;&t;&t;&bslash;&n;&t;next_fd:&t;0, &t;&t;&t;&t;&bslash;&n;&t;fd:&t;&t;&amp;init_files.fd_array[0], &t;&bslash;&n;&t;close_on_exec:&t;&amp;init_files.close_on_exec_init, &bslash;&n;&t;open_fds:&t;&amp;init_files.open_fds_init, &t;&bslash;&n;&t;close_on_exec_init: { { 0, } }, &t;&t;&bslash;&n;&t;open_fds_init:&t;{ { 0, } }, &t;&t;&t;&bslash;&n;&t;fd_array:&t;{ NULL, } &t;&t;&t;&bslash;&n;}
 multiline_comment|/* Maximum number of active map areas.. This is a random (large) number */
 DECL|macro|MAX_MAP_COUNT
 mdefine_line|#define MAX_MAP_COUNT&t;(65536)
@@ -468,7 +468,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), ATOMIC_INIT(1), 1,&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
+mdefine_line|#define INIT_MM(name) &bslash;&n;{&t;&t;&t; &t;&t;&t;&t;&bslash;&n;&t;mmap:&t;&t;&amp;init_mmap, &t;&t;&t;&bslash;&n;&t;mmap_avl:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;mmap_cache:&t;NULL, &t;&t;&t;&t;&bslash;&n;&t;pgd:&t;&t;swapper_pg_dir, &t;&t;&bslash;&n;&t;mm_users:&t;ATOMIC_INIT(2), &t;&t;&bslash;&n;&t;mm_count:&t;ATOMIC_INIT(1), &t;&t;&bslash;&n;&t;map_count:&t;1, &t;&t;&t;&t;&bslash;&n;&t;mmap_sem:&t;__MUTEX_INITIALIZER(name.mmap_sem), &bslash;&n;&t;page_table_lock: SPIN_LOCK_UNLOCKED, &t;&t;&bslash;&n;&t;segments:&t;NULL &t;&t;&t;&t;&bslash;&n;}
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -492,7 +492,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_SIGNALS
-mdefine_line|#define INIT_SIGNALS { &bslash;&n;&t;&t;ATOMIC_INIT(1), &bslash;&n;&t;&t;{ {{0,}}, }, &bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED }
+mdefine_line|#define INIT_SIGNALS {&t;&bslash;&n;&t;count:&t;&t;ATOMIC_INIT(1), &t;&t;&bslash;&n;&t;action:&t;&t;{ {{0,}}, }, &t;&t;&t;&bslash;&n;&t;siglock:&t;SPIN_LOCK_UNLOCKED &t;&t;&bslash;&n;}
 multiline_comment|/*&n; * Some day this will be a full-fledged user tracking system..&n; */
 DECL|struct|user_struct
 r_struct

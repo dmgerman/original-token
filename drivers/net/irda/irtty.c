@@ -3415,7 +3415,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|2
+l_int|3
 comma
 id|__FUNCTION__
 l_string|&quot;(), %s, (cmd=0x%X)&bslash;n&quot;

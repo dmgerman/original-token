@@ -1192,12 +1192,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+id|request_region
 c_func
 (paren
 id|io
 comma
 l_int|2
+comma
+l_string|&quot;Trust FM Radio&quot;
 )paren
 )paren
 (brace
@@ -1231,21 +1233,19 @@ op_minus
 l_int|1
 )paren
 (brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|request_region
+id|release_region
 c_func
 (paren
 id|io
 comma
 l_int|2
-comma
-l_string|&quot;Trust FM Radio&quot;
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

@@ -2841,6 +2841,28 @@ op_plus
 id|FCR
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x03
+comma
+id|iobase
+op_plus
+id|LCR
+)paren
+suffix:semicolon
+multiline_comment|/* 8 bit word length */
+id|outb
+c_func
+(paren
+id|MCR_SIR
+comma
+id|iobase
+op_plus
+id|MCR
+)paren
+suffix:semicolon
+multiline_comment|/* Start at SIR-mode, also clears LSR*/
 multiline_comment|/* Set FIFO size to 32 */
 id|switch_bank
 c_func
@@ -2922,7 +2944,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* Set SIR pulse width */
+multiline_comment|/* Set SIR pulse width to 1.6us */
 id|outb
 c_func
 (paren
@@ -3162,20 +3184,6 @@ r_case
 l_int|0x04
 suffix:colon
 multiline_comment|/* Sharp RY5HD01 */
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), %s not supported yet&bslash;n&quot;
-comma
-id|dongle_types
-(braket
-id|dongle_id
-)braket
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3516,19 +3524,7 @@ r_case
 l_int|0x04
 suffix:colon
 multiline_comment|/* Sharp RY5HD01 */
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), %s not supported yet&bslash;n&quot;
-comma
-id|dongle_types
-(braket
-id|dongle_id
-)braket
-)paren
+r_break
 suffix:semicolon
 r_case
 l_int|0x05

@@ -181,6 +181,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+op_star
+(paren
+id|vip
+)paren
+id|CIA_IOC_CIA_ERR
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 multiline_comment|/* If Type1 access, must set CIA CFG. */
 r_if
 c_cond
@@ -223,6 +230,11 @@ id|vip
 id|CIA_IOC_CFG
 suffix:semicolon
 )brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|draina
 c_func
 (paren
@@ -425,6 +437,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+op_star
+(paren
+id|vip
+)paren
+id|CIA_IOC_CIA_ERR
+suffix:semicolon
+multiline_comment|/* re-read to force write */
 multiline_comment|/* If Type1 access, must set CIA CFG.  */
 r_if
 c_cond
@@ -467,6 +486,11 @@ id|vip
 id|CIA_IOC_CFG
 suffix:semicolon
 )brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|draina
 c_func
 (paren
@@ -507,12 +531,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|mb
-c_func
+op_star
 (paren
+id|vip
 )paren
+id|addr
 suffix:semicolon
-multiline_comment|/* magic */
+multiline_comment|/* read back to force the write */
 id|mcheck_expected
 c_func
 (paren
@@ -2571,13 +2596,21 @@ op_assign
 id|temp
 suffix:semicolon
 multiline_comment|/* Clear all currently pending errors.  */
+id|temp
+op_assign
+op_star
+(paren
+id|vip
+)paren
+id|CIA_IOC_CIA_ERR
+suffix:semicolon
 op_star
 (paren
 id|vip
 )paren
 id|CIA_IOC_CIA_ERR
 op_assign
-l_int|0
+id|temp
 suffix:semicolon
 multiline_comment|/* Turn on mchecks.  */
 id|temp

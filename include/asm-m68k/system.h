@@ -3,6 +3,7 @@ DECL|macro|_M68K_SYSTEM_H
 mdefine_line|#define _M68K_SYSTEM_H
 macro_line|#include &lt;linux/config.h&gt; /* get configuration macros */
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/entry.h&gt;
 DECL|macro|prepare_to_switch
@@ -50,19 +51,27 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(x)&t;&t;__save_flags(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x)&t;__restore_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
 multiline_comment|/*&n; * Force strict CPU ordering.&n; * Not really required on m68k...&n; */
 DECL|macro|nop
-mdefine_line|#define nop()  asm volatile (&quot;nop&quot;::)
+mdefine_line|#define nop()&t;&t;do { asm volatile (&quot;nop&quot;); barrier(); } while (0)
 DECL|macro|mb
-mdefine_line|#define mb()   asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
+mdefine_line|#define mb()&t;&t;barrier()
 DECL|macro|rmb
-mdefine_line|#define rmb()  asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
+mdefine_line|#define rmb()&t;&t;barrier()
 DECL|macro|wmb
-mdefine_line|#define wmb()  asm volatile (&quot;&quot;   : : :&quot;memory&quot;)
+mdefine_line|#define wmb()&t;&t;barrier()
 DECL|macro|set_mb
 mdefine_line|#define set_mb(var, value)    do { xchg(&amp;var, value); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value)    do { var = value; wmb(); } while (0)
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;barrier()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;barrier()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;barrier()
 DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 DECL|macro|tas

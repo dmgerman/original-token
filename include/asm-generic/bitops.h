@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_GENERIC_BITOPS_H_
 DECL|macro|_ASM_GENERIC_BITOPS_H_
 mdefine_line|#define _ASM_GENERIC_BITOPS_H_
-multiline_comment|/*&n; * For the benefit of those who are trying to port Linux to another&n; * architecture, here are some C-language equivalents.  You should&n; * recode these in the native assembly language, if at all possible.&n; * To guarantee atomicity, these routines call cli() and sti() to&n; * disable interrupts while they operate.  (You have to provide inline&n; * routines to cli() and sti().)&n; *&n; * Also note, these routines assume that you have 32 bit integers.&n; * You will have to change this if you are trying to port Linux to the&n; * Alpha architecture or to a Cray.  :-)&n; * &n; * C language equivalents written by Theodore Ts&squot;o, 9/26/92&n; */
+multiline_comment|/*&n; * For the benefit of those who are trying to port Linux to another&n; * architecture, here are some C-language equivalents.  You should&n; * recode these in the native assembly language, if at all possible.&n; * To guarantee atomicity, these routines call cli() and sti() to&n; * disable interrupts while they operate.  (You have to provide inline&n; * routines to cli() and sti().)&n; *&n; * Also note, these routines assume that you have 32 bit longs.&n; * You will have to change this if you are trying to port Linux to the&n; * Alpha architecture or to a Cray.  :-)&n; * &n; * C language equivalents written by Theodore Ts&squot;o, 9/26/92&n; */
 DECL|function|set_bit
 r_extern
 id|__inline__

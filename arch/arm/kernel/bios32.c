@@ -1529,11 +1529,6 @@ comma
 id|hw_pci-&gt;map_irq
 )paren
 suffix:semicolon
-id|pci_set_bus_ranges
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|pcibios_setup
 r_char

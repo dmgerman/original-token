@@ -78,16 +78,6 @@ id|leds
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|q40kbd_is_sysrq
-c_func
-(paren
-r_int
-r_char
-id|keycode
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|q40kbd_init_hw
 c_func
@@ -111,7 +101,6 @@ mdefine_line|#define kbd_translate&t;&t;q40kbd_translate
 mdefine_line|#define kbd_unexpected_up&t;q40kbd_unexpected_up
 mdefine_line|#define kbd_leds&t;&t;q40kbd_leds
 mdefine_line|#define kbd_init_hw&t;&t;q40kbd_init_hw
-mdefine_line|#define kbd_is_sysrq&t;&t;q40kbd_is_sysrq
 mdefine_line|#define kbd_sysrq_xlate&t;&t;q40kbd_sysrq_xlate
 mdefine_line|#define SYSRQ_KEY 0x54
 macro_line|#endif

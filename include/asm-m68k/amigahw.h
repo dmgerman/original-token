@@ -2,6 +2,7 @@ multiline_comment|/*&n;** asm-m68k/amigahw.h -- This header defines some macros 
 macro_line|#ifndef _M68K_AMIGAHW_H
 DECL|macro|_M68K_AMIGAHW_H
 mdefine_line|#define _M68K_AMIGAHW_H
+macro_line|#include &lt;linux/ioport.h&gt;
 multiline_comment|/*&n;     *  Different Amiga models&n;     */
 r_extern
 r_int
@@ -1186,8 +1187,6 @@ DECL|macro|ciab
 mdefine_line|#define ciab   ((*(volatile struct CIA *)(zTwoBase + CIAB_PHYSADDR)))
 DECL|macro|CHIP_PHYSADDR
 mdefine_line|#define CHIP_PHYSADDR&t;    (0x000000)
-DECL|macro|chipaddr
-mdefine_line|#define chipaddr ((unsigned long)(zTwoBase + CHIP_PHYSADDR))
 r_void
 id|amiga_chip_init
 (paren
@@ -1197,7 +1196,9 @@ suffix:semicolon
 r_void
 op_star
 id|amiga_chip_alloc
+c_func
 (paren
+r_int
 r_int
 id|size
 comma
@@ -1208,10 +1209,27 @@ id|name
 )paren
 suffix:semicolon
 r_void
+op_star
+id|amiga_chip_alloc_res
+c_func
+(paren
+r_int
+r_int
+id|size
+comma
+r_struct
+id|resource
+op_star
+id|res
+)paren
+suffix:semicolon
+r_void
 id|amiga_chip_free
+c_func
 (paren
 r_void
 op_star
+id|ptr
 )paren
 suffix:semicolon
 r_int
@@ -1223,6 +1241,69 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/*MILAN*/
+r_extern
+r_volatile
+r_int
+r_int
+id|amiga_audio_min_period
+suffix:semicolon
+DECL|function|amifb_video_off
+r_static
+r_inline
+r_void
+id|amifb_video_off
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|amiga_chipset
+op_eq
+id|CS_ECS
+op_logical_or
+id|amiga_chipset
+op_eq
+id|CS_AGA
+)paren
+(brace
+multiline_comment|/* program Denise/Lisa for a higher maximum play rate */
+id|custom.htotal
+op_assign
+l_int|113
+suffix:semicolon
+multiline_comment|/* 31 kHz */
+id|custom.vtotal
+op_assign
+l_int|223
+suffix:semicolon
+multiline_comment|/* 70 Hz */
+id|custom.beamcon0
+op_assign
+l_int|0x4390
+suffix:semicolon
+multiline_comment|/* HARDDIS, VAR{BEAM,VSY,HSY,CSY}EN */
+multiline_comment|/* suspend the monitor */
+id|custom.hsstrt
+op_assign
+id|custom.hsstop
+op_assign
+l_int|116
+suffix:semicolon
+id|custom.vsstrt
+op_assign
+id|custom.vsstop
+op_assign
+l_int|226
+suffix:semicolon
+id|amiga_audio_min_period
+op_assign
+l_int|57
+suffix:semicolon
+)brace
+)brace
 DECL|struct|tod3000
 r_struct
 id|tod3000

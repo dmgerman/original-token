@@ -1673,7 +1673,7 @@ macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+l_string|&quot;Dag Brattli &lt;dag@brattli.net&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION

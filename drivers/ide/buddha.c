@@ -21,15 +21,15 @@ DECL|macro|BUDDHA_BASE2
 mdefine_line|#define BUDDHA_BASE2&t;0xa00
 DECL|macro|BUDDHA_BASE3
 mdefine_line|#define BUDDHA_BASE3&t;0xc00
-DECL|variable|buddha_bases
+DECL|variable|__initdata
 r_static
 r_const
 id|u_int
-id|__init
 id|buddha_bases
 (braket
 id|CATWEASEL_NUM_HWIFS
 )braket
+id|__initdata
 op_assign
 (brace
 id|BUDDHA_BASE1
@@ -58,14 +58,14 @@ DECL|macro|BUDDHA_STATUS
 mdefine_line|#define BUDDHA_STATUS&t;0x1e&t;&t;/* see status-bits */
 DECL|macro|BUDDHA_CONTROL
 mdefine_line|#define BUDDHA_CONTROL&t;0x11a
-DECL|variable|buddha_offsets
+DECL|variable|__initdata
 r_static
 r_int
-id|__init
 id|buddha_offsets
 (braket
 id|IDE_NR_PORTS
 )braket
+id|__initdata
 op_assign
 (brace
 id|BUDDHA_DATA
@@ -94,15 +94,15 @@ DECL|macro|BUDDHA_IRQ2
 mdefine_line|#define BUDDHA_IRQ2&t;0xf40&t;&t;/* interrupt */
 DECL|macro|BUDDHA_IRQ3
 mdefine_line|#define BUDDHA_IRQ3&t;0xf80
-DECL|variable|buddha_irqports
+DECL|variable|__initdata
 r_static
 r_const
 r_int
-id|__init
 id|buddha_irqports
 (braket
 id|CATWEASEL_NUM_HWIFS
 )braket
+id|__initdata
 op_assign
 (brace
 id|BUDDHA_IRQ1

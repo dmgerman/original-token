@@ -269,10 +269,12 @@ r_int
 r_char
 id|SASR
 suffix:semicolon
+macro_line|#if !defined(CONFIG_MVME147_SCSI)
 DECL|member|pad
 r_char
 id|pad
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SGI_IP22
 DECL|member|pad2
 DECL|member|pad3
@@ -774,6 +776,13 @@ op_star
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+r_void
+id|wd33c93_release
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* WD33C93_H */

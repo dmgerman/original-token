@@ -411,6 +411,14 @@ id|irlan_client_get_value_confirm
 )paren
 suffix:semicolon
 multiline_comment|/* Get some values from peer IAS */
+id|irlan_next_client_state
+c_func
+(paren
+id|self
+comma
+id|IRLAN_QUERY
+)paren
+suffix:semicolon
 id|iriap_getvaluebyclass_request
 c_func
 (paren
@@ -423,14 +431,6 @@ comma
 l_string|&quot;IrLAN&quot;
 comma
 l_string|&quot;IrDA:TinyTP:LsapSel&quot;
-)paren
-suffix:semicolon
-id|irlan_next_client_state
-c_func
-(paren
-id|self
-comma
-id|IRLAN_QUERY
 )paren
 suffix:semicolon
 r_break

@@ -1174,9 +1174,16 @@ op_le
 l_int|0x3ff
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;We cannot use NE2000 probe spaces for ISAPnP or we&n;&t;&t; *&t;will lock up machines.&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|rdp
+template_param
+l_int|0x380
+)paren
+op_logical_and
 op_logical_neg
 id|check_region
 c_func
@@ -1199,22 +1206,6 @@ id|rdp
 op_add_assign
 id|RDP_STEP
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;We cannot use NE2000 probe spaces for ISAPnP or we&n;&t;&t; *&t;will lock up machines.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|rdp
-op_ge
-l_int|0x280
-op_logical_and
-id|rdp
-op_le
-l_int|0x380
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
 )brace
 r_return
 op_minus
