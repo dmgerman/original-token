@@ -39,7 +39,7 @@ mdefine_line|#define NR_OPEN 32
 DECL|macro|NR_INODE
 mdefine_line|#define NR_INODE 128
 DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE 64
+mdefine_line|#define NR_FILE 128
 DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 8
 DECL|macro|NR_HASH
@@ -84,6 +84,31 @@ DECL|macro|SEL_OUT
 mdefine_line|#define SEL_OUT&t;&t;2
 DECL|macro|SEL_EX
 mdefine_line|#define SEL_EX&t;&t;4
+multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
+DECL|macro|MS_RDONLY
+mdefine_line|#define MS_RDONLY    1 /* mount read-only */
+DECL|macro|MS_NOSUID
+mdefine_line|#define MS_NOSUID    2 /* ignore suid and sgid bits */
+DECL|macro|MS_NODEV
+mdefine_line|#define MS_NODEV     4 /* disallow access to device special files */
+DECL|macro|MS_NOEXEC
+mdefine_line|#define MS_NOEXEC    8 /* disallow program execution */
+multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to overrride it sevelctively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; */
+DECL|macro|IS_RDONLY
+mdefine_line|#define IS_RDONLY(inode) ((inode)-&gt;i_flags &amp; MS_RDONLY)
+DECL|macro|IS_NOSUID
+mdefine_line|#define IS_NOSUID(inode) ((inode)-&gt;i_flags &amp; MS_NOSUID)
+DECL|macro|IS_NODEV
+mdefine_line|#define IS_NODEV(inode) ((inode)-&gt;i_flags &amp; MS_NODEV)
+DECL|macro|IS_NOEXEC
+mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
+multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
+DECL|macro|BLKROSET
+mdefine_line|#define BLKROSET 4701 /* set device read-only (0 = read-write) */
+DECL|macro|BLKROGET
+mdefine_line|#define BLKROGET 4702 /* get read-only status (0 = read_write) */
+DECL|macro|BMAP_IOCTL
+mdefine_line|#define BMAP_IOCTL 1
 DECL|typedef|buffer_block
 r_typedef
 r_char
@@ -262,6 +287,11 @@ r_int
 r_int
 id|i_count
 suffix:semicolon
+DECL|member|i_flags
+r_int
+r_int
+id|i_flags
+suffix:semicolon
 DECL|member|i_lock
 r_int
 r_char
@@ -318,6 +348,12 @@ r_int
 r_int
 id|f_reada
 suffix:semicolon
+DECL|member|f_rdev
+r_int
+r_int
+id|f_rdev
+suffix:semicolon
+multiline_comment|/* needed for /dev/tty */
 DECL|member|f_inode
 r_struct
 id|inode
@@ -505,6 +541,10 @@ r_struct
 id|super_operations
 op_star
 id|s_op
+suffix:semicolon
+DECL|member|s_flags
+r_int
+id|s_flags
 suffix:semicolon
 )brace
 suffix:semicolon

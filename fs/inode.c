@@ -1133,6 +1133,10 @@ id|inode-&gt;i_ino
 op_assign
 id|nr
 suffix:semicolon
+id|inode-&gt;i_flags
+op_assign
+id|inode-&gt;i_sb-&gt;s_flags
+suffix:semicolon
 id|read_inode
 c_func
 (paren

@@ -121,6 +121,29 @@ id|blk_size
 id|NR_BLK_DEV
 )braket
 suffix:semicolon
+r_extern
+r_int
+id|is_read_only
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|set_device_ro
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|flag
+)paren
+suffix:semicolon
+DECL|macro|RO_IOCTLS
+mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EPERM; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: put_fs_long(is_read_only(dev),(long *) (where)); return 0;
 macro_line|#ifdef MAJOR_NR
 multiline_comment|/*&n; * Add entries as needed. Currently the only block devices&n; * supported are hard-disks and floppies.&n; */
 macro_line|#if (MAJOR_NR == 1)

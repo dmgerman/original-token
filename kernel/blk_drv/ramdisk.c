@@ -277,7 +277,7 @@ op_star
 id|bh
 suffix:semicolon
 r_struct
-id|super_block
+id|minix_super_block
 id|s
 suffix:semicolon
 r_int

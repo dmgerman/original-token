@@ -118,6 +118,7 @@ c_func
 r_int
 id|which
 comma
+r_const
 r_struct
 id|itimerval
 op_star

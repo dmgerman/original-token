@@ -2,6 +2,8 @@ multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  (C) 1991  Linus Tor
 multiline_comment|/*&n; *&t;console.c&n; *&n; * This module implements the console io functions&n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_write(struct tty_queue * queue)&squot;&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 multiline_comment|/*&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; */
+DECL|macro|KEYBOARD_IRQ
+mdefine_line|#define KEYBOARD_IRQ 1
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -56,7 +58,8 @@ r_void
 id|keyboard_interrupt
 c_func
 (paren
-r_void
+r_int
+id|cpl
 )paren
 suffix:semicolon
 r_extern
@@ -695,8 +698,8 @@ l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&b
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot; !&bslash;&quot;#$%&amp;&squot;()*+,-./0123456789:;&lt;=&gt;?&quot;
 l_string|&quot;@ABCDEFGHIJKLMNOPQRSTUVWXYZ[&bslash;&bslash;]^ &quot;
-l_string|&quot;&bslash;004&bslash;261&bslash;007&bslash;007&bslash;007&bslash;007&bslash;370&bslash;361&bslash;007&bslash;007&bslash;275&bslash;267&bslash;326&bslash;323&bslash;327&bslash;304&quot;
-l_string|&quot;&bslash;304&bslash;304&bslash;304&bslash;304&bslash;307&bslash;266&bslash;320&bslash;322&bslash;272&bslash;363&bslash;362&bslash;343&bslash;007&bslash;234&bslash;007&bslash;0&quot;
+l_string|&quot;&bslash;004&bslash;261&bslash;007&bslash;007&bslash;007&bslash;007&bslash;370&bslash;361&bslash;040&bslash;007&bslash;331&bslash;277&bslash;332&bslash;300&bslash;305&bslash;007&quot;
+l_string|&quot;&bslash;007&bslash;304&bslash;007&bslash;007&bslash;303&bslash;264&bslash;301&bslash;302&bslash;263&bslash;007&bslash;007&bslash;007&bslash;007&bslash;007&bslash;234&bslash;0&quot;
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot;&bslash;040&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
@@ -705,12 +708,32 @@ l_string|&quot;&bslash;376&bslash;376&bslash;376&bslash;376&bslash;216&bslash;21
 l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
 l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
 l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;376&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
+comma
+multiline_comment|/* IBM grapgics: minimal translations (CR, LF, LL and ESC) */
+l_string|&quot;&bslash;000&bslash;001&bslash;002&bslash;003&bslash;004&bslash;005&bslash;006&bslash;007&bslash;010&bslash;011&bslash;000&bslash;013&bslash;000&bslash;000&bslash;016&bslash;017&quot;
+l_string|&quot;&bslash;020&bslash;021&bslash;022&bslash;023&bslash;024&bslash;025&bslash;026&bslash;027&bslash;030&bslash;031&bslash;032&bslash;000&bslash;034&bslash;035&bslash;036&bslash;037&quot;
+l_string|&quot;&bslash;040&bslash;041&bslash;042&bslash;043&bslash;044&bslash;045&bslash;046&bslash;047&bslash;050&bslash;051&bslash;052&bslash;053&bslash;054&bslash;055&bslash;056&bslash;057&quot;
+l_string|&quot;&bslash;060&bslash;061&bslash;062&bslash;063&bslash;064&bslash;065&bslash;066&bslash;067&bslash;070&bslash;071&bslash;072&bslash;073&bslash;074&bslash;075&bslash;076&bslash;077&quot;
+l_string|&quot;&bslash;100&bslash;101&bslash;102&bslash;103&bslash;104&bslash;105&bslash;106&bslash;107&bslash;110&bslash;111&bslash;112&bslash;113&bslash;114&bslash;115&bslash;116&bslash;117&quot;
+l_string|&quot;&bslash;120&bslash;121&bslash;122&bslash;123&bslash;124&bslash;125&bslash;126&bslash;127&bslash;130&bslash;131&bslash;132&bslash;133&bslash;134&bslash;135&bslash;136&bslash;137&quot;
+l_string|&quot;&bslash;140&bslash;141&bslash;142&bslash;143&bslash;144&bslash;145&bslash;146&bslash;147&bslash;150&bslash;151&bslash;152&bslash;153&bslash;154&bslash;155&bslash;156&bslash;157&quot;
+l_string|&quot;&bslash;160&bslash;161&bslash;162&bslash;163&bslash;164&bslash;165&bslash;166&bslash;167&bslash;170&bslash;171&bslash;172&bslash;173&bslash;174&bslash;175&bslash;176&bslash;177&quot;
+l_string|&quot;&bslash;200&bslash;201&bslash;202&bslash;203&bslash;204&bslash;205&bslash;206&bslash;207&bslash;210&bslash;211&bslash;212&bslash;213&bslash;214&bslash;215&bslash;216&bslash;217&quot;
+l_string|&quot;&bslash;220&bslash;221&bslash;222&bslash;223&bslash;224&bslash;225&bslash;226&bslash;227&bslash;230&bslash;231&bslash;232&bslash;233&bslash;234&bslash;235&bslash;236&bslash;237&quot;
+l_string|&quot;&bslash;240&bslash;241&bslash;242&bslash;243&bslash;244&bslash;245&bslash;246&bslash;247&bslash;250&bslash;251&bslash;252&bslash;253&bslash;254&bslash;255&bslash;256&bslash;257&quot;
+l_string|&quot;&bslash;260&bslash;261&bslash;262&bslash;263&bslash;264&bslash;265&bslash;266&bslash;267&bslash;270&bslash;271&bslash;272&bslash;273&bslash;274&bslash;275&bslash;276&bslash;277&quot;
+l_string|&quot;&bslash;300&bslash;301&bslash;302&bslash;303&bslash;304&bslash;305&bslash;306&bslash;307&bslash;310&bslash;311&bslash;312&bslash;313&bslash;314&bslash;315&bslash;316&bslash;317&quot;
+l_string|&quot;&bslash;320&bslash;321&bslash;322&bslash;323&bslash;324&bslash;325&bslash;326&bslash;327&bslash;330&bslash;331&bslash;332&bslash;333&bslash;334&bslash;335&bslash;336&bslash;337&quot;
+l_string|&quot;&bslash;340&bslash;341&bslash;342&bslash;343&bslash;344&bslash;345&bslash;346&bslash;347&bslash;350&bslash;351&bslash;352&bslash;353&bslash;354&bslash;355&bslash;356&bslash;357&quot;
+l_string|&quot;&bslash;360&bslash;361&bslash;362&bslash;363&bslash;364&bslash;365&bslash;366&bslash;367&bslash;370&bslash;371&bslash;372&bslash;373&bslash;374&bslash;375&bslash;376&bslash;377&quot;
 )brace
 suffix:semicolon
 DECL|macro|NORM_TRANS
 mdefine_line|#define NORM_TRANS (translations[0])
 DECL|macro|GRAF_TRANS
 mdefine_line|#define GRAF_TRANS (translations[1])
+DECL|macro|NULL_TRANS
+mdefine_line|#define NULL_TRANS (translations[2])
 DECL|variable|color_table
 r_static
 r_int
@@ -2413,7 +2436,7 @@ op_star
 id|p
 )paren
 (brace
-id|PUTCH
+id|put_tty_queue
 c_func
 (paren
 op_star
@@ -2504,7 +2527,7 @@ id|i
 op_decrement
 )paren
 (brace
-id|PUTCH
+id|put_tty_queue
 c_func
 (paren
 id|buff
@@ -2533,7 +2556,7 @@ op_star
 id|tty
 )paren
 (brace
-id|PUTCH
+id|put_tty_queue
 c_func
 (paren
 l_char|&squot;&bslash;033&squot;
@@ -2541,7 +2564,7 @@ comma
 id|tty-&gt;read_q
 )paren
 suffix:semicolon
-id|PUTCH
+id|put_tty_queue
 c_func
 (paren
 l_char|&squot;[&squot;
@@ -2570,7 +2593,7 @@ comma
 id|tty
 )paren
 suffix:semicolon
-id|PUTCH
+id|put_tty_queue
 c_func
 (paren
 l_char|&squot;;&squot;
@@ -2590,7 +2613,7 @@ comma
 id|tty
 )paren
 suffix:semicolon
-id|PUTCH
+id|put_tty_queue
 c_func
 (paren
 l_char|&squot;R&squot;
@@ -3952,7 +3975,7 @@ op_logical_and
 (paren
 id|c
 op_assign
-id|GETCH
+id|get_tty_queue
 c_func
 (paren
 id|tty-&gt;write_q
@@ -5419,6 +5442,18 @@ id|G0_charset
 op_assign
 id|NORM_TRANS
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_char|&squot;U&squot;
+)paren
+id|G0_charset
+op_assign
+id|NULL_TRANS
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5461,6 +5496,18 @@ l_char|&squot;B&squot;
 id|G1_charset
 op_assign
 id|NORM_TRANS
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_char|&squot;U&squot;
+)paren
+id|G1_charset
+op_assign
+id|NULL_TRANS
 suffix:semicolon
 r_if
 c_cond
@@ -6129,27 +6176,23 @@ c_func
 id|fg_console
 )paren
 suffix:semicolon
-id|set_trap_gate
+r_if
+c_cond
+(paren
+id|request_irq
 c_func
 (paren
-l_int|0x21
+id|KEYBOARD_IRQ
 comma
-op_amp
 id|keyboard_interrupt
 )paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|inb_p
-c_func
-(paren
-l_int|0x21
 )paren
-op_amp
-l_int|0xfd
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to get IRQ%d for keyboard driver&bslash;n&quot;
 comma
-l_int|0x21
+id|KEYBOARD_IRQ
 )paren
 suffix:semicolon
 id|a

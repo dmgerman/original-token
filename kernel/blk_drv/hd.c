@@ -1,6 +1,9 @@
 multiline_comment|/*&n; *  linux/kernel/hd.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * This is the low-level hd interrupt support. It traverses the&n; * request-list, using interrupts to jump between functions. As&n; * all the functions are called within interrupts, we may not&n; * sleep. Special care is recommended.&n; * &n; *  modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; */
+DECL|macro|HD_IRQ
+mdefine_line|#define HD_IRQ 14
 macro_line|#include &lt;errno.h&gt;
+macro_line|#include &lt;signal.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -225,14 +228,6 @@ DECL|macro|port_read
 mdefine_line|#define port_read(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insw&quot;::&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
 DECL|macro|port_write
 mdefine_line|#define port_write(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsw&quot;::&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
-r_extern
-r_void
-id|hd_interrupt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|rd_load
@@ -1297,11 +1292,13 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef RAMDISK
 id|rd_load
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|mount_root
 c_func
 (paren
@@ -2519,7 +2516,7 @@ c_func
 r_void
 )paren
 (brace
-id|do_hd
+id|DEVICE_INTR
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -3054,8 +3051,38 @@ op_amp
 id|loc-&gt;cylinders
 )paren
 suffix:semicolon
+id|put_fs_long
+c_func
+(paren
+id|hd
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|start_sect
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|loc-&gt;start
+)paren
+suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|RO_IOCTLS
+c_func
+(paren
+id|inode-&gt;i_rdev
+comma
+id|arg
+)paren
 suffix:semicolon
 r_default
 suffix:colon
@@ -3122,6 +3149,73 @@ id|hd_release
 multiline_comment|/* release */
 )brace
 suffix:semicolon
+DECL|function|hd_interrupt
+r_static
+r_void
+id|hd_interrupt
+c_func
+(paren
+r_int
+id|cpl
+)paren
+(brace
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_void
+)paren
+op_assign
+id|DEVICE_INTR
+suffix:semicolon
+id|DEVICE_INTR
+op_assign
+l_int|NULL
+suffix:semicolon
+id|timer_active
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|HD_TIMER
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|handler
+)paren
+id|handler
+op_assign
+id|unexpected_hd_interrupt
+suffix:semicolon
+id|handler
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This is the harddisk IRQ descruption. The SA_INTERRUPT in sa_flags&n; * means we run the IRQ-handler with interrupts disabled: this is bad for&n; * interrupt latency, but anything else has led to problems on some&n; * machines...&n; */
+DECL|variable|hd_sigaction
+r_static
+r_struct
+id|sigaction
+id|hd_sigaction
+op_assign
+(brace
+id|hd_interrupt
+comma
+l_int|0
+comma
+id|SA_INTERRUPT
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|function|hd_init
 r_void
 id|hd_init
@@ -3147,41 +3241,24 @@ op_assign
 op_amp
 id|hd_fops
 suffix:semicolon
-id|set_intr_gate
+r_if
+c_cond
+(paren
+id|irqaction
 c_func
 (paren
-l_int|0x2E
+id|HD_IRQ
 comma
 op_amp
-id|hd_interrupt
+id|hd_sigaction
 )paren
-suffix:semicolon
-id|outb_p
+)paren
+id|printk
 c_func
 (paren
-id|inb_p
-c_func
-(paren
-l_int|0x21
-)paren
-op_amp
-l_int|0xfb
+l_string|&quot;Unable to get IRQ%d for the harddisk driver&bslash;n&quot;
 comma
-l_int|0x21
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|inb_p
-c_func
-(paren
-l_int|0xA1
-)paren
-op_amp
-l_int|0xbf
-comma
-l_int|0xA1
+id|HD_IRQ
 )paren
 suffix:semicolon
 id|timer_table

@@ -232,6 +232,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|init_IRQ
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|blk_dev_init
 c_func
@@ -815,6 +823,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sched_init
 c_func
 (paren
@@ -920,7 +933,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *   NOTE!!   For any other task &squot;pause()&squot; would mean we have to get a&n; * signal to awaken, but task0 is the sole exception (see &squot;schedule()&squot;)&n; * as task 0 gets activated at every idle moment (when no other tasks&n; * can run). For task0 &squot;pause()&squot; just means we go check if some other&n; * task can run, and if not we return here.&n; */
+multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does a infinite loop in user mode.&n; */
 r_for
 c_loop
 (paren
@@ -928,18 +941,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;int $0x80&quot;
-op_scope_resolution
-l_string|&quot;a&quot;
-(paren
-id|__NR_pause
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-)paren
+multiline_comment|/* nothing */
 suffix:semicolon
 )brace
 )brace

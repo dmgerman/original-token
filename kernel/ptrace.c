@@ -68,7 +68,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|i
 OL
@@ -963,6 +963,17 @@ id|PTRACE_ATTACH
 (brace
 r_int
 id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|child
+op_eq
+id|current
+)paren
+r_return
+op_minus
+id|EPERM
 suffix:semicolon
 r_if
 c_cond

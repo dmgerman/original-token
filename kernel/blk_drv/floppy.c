@@ -4,6 +4,8 @@ multiline_comment|/*&n; * This file is certainly a mess. I&squot;ve tried my bes
 multiline_comment|/*&n; * As with hd.c, all routines within this file can (and will) be called&n; * by interrupts, so extreme caution is needed. A hardware interrupt&n; * handler may not sleep, or a kernel panic will happen. Thus I cannot&n; * call &quot;floppy-on&quot; directly, but have to set a special timer interrupt&n; * etc.&n; */
 multiline_comment|/*&n; * 28.02.92 - made track-buffering routines, based on the routines written&n; * by entropy@wintermute.wpi.edu (Lawrence Foard). Linus.&n; */
 multiline_comment|/*&n; * Automatic floppy-detection and formatting written by Werner Almesberger&n; * (almesber@nessie.cs.id.ethz.ch), who also corrected some problems with&n; * the floppy-change signal detection.&n; */
+DECL|macro|FLOPPY_IRQ
+mdefine_line|#define FLOPPY_IRQ 6
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -633,14 +635,6 @@ multiline_comment|/* Current error count. */
 DECL|macro|CURRENT_ERRORS
 mdefine_line|#define CURRENT_ERRORS (format_status == FORMAT_BUSY ? format_errors : &bslash;&n;    (CURRENT-&gt;errors))
 multiline_comment|/*&n; * Rate is 0 for 500kb/s, 2 for 300kbps, 1 for 250kbps&n; * Spec1 is 0xSH, where S is stepping rate (F=1ms, E=2ms, D=3ms etc),&n; * H is head unload time (1=16ms, 2=32ms, etc)&n; *&n; * Spec2 is (HLD&lt;&lt;1 | ND), where HLD is head load time (1=2ms, 2=4 ms etc)&n; * and ND is set means no DMA. Hardcoded to 6 (HLD=6ms, use DMA).&n; */
-r_extern
-r_void
-id|floppy_interrupt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_char
 id|tmp_floppy_area
@@ -2259,6 +2253,7 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|unexpected_floppy_interrupt
+r_static
 r_void
 id|unexpected_floppy_interrupt
 c_func
@@ -3635,6 +3630,21 @@ id|floppy_struct
 op_star
 id|this
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cmd
+)paren
+(brace
+id|RO_IOCTLS
+c_func
+(paren
+id|inode-&gt;i_rdev
+comma
+id|param
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4519,6 +4529,64 @@ id|floppy_release
 multiline_comment|/* release */
 )brace
 suffix:semicolon
+DECL|function|floppy_interrupt
+r_static
+r_void
+id|floppy_interrupt
+c_func
+(paren
+r_int
+id|cpl
+)paren
+(brace
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_void
+)paren
+op_assign
+id|DEVICE_INTR
+suffix:semicolon
+id|DEVICE_INTR
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|handler
+)paren
+id|handler
+op_assign
+id|unexpected_floppy_interrupt
+suffix:semicolon
+id|handler
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This is the harddisk IRQ descruption. The SA_INTERRUPT in sa_flags&n; * means we run the IRQ-handler with interrupts disabled: this is bad for&n; * interrupt latency, but may be safer...&n; */
+DECL|variable|floppy_sigaction
+r_static
+r_struct
+id|sigaction
+id|floppy_sigaction
+op_assign
+(brace
+id|floppy_interrupt
+comma
+l_int|0
+comma
+id|SA_INTERRUPT
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|function|floppy_init
 r_void
 id|floppy_init
@@ -4582,28 +4650,24 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|set_intr_gate
+r_if
+c_cond
+(paren
+id|irqaction
 c_func
 (paren
-l_int|0x26
+id|FLOPPY_IRQ
 comma
 op_amp
-id|floppy_interrupt
+id|floppy_sigaction
 )paren
-suffix:semicolon
-id|outb
+)paren
+id|printk
 c_func
 (paren
-id|inb_p
-c_func
-(paren
-l_int|0x21
-)paren
-op_amp
-op_complement
-l_int|0x40
+l_string|&quot;Unable to grab IRQ%d for the floppy driver&bslash;n&quot;
 comma
-l_int|0x21
+id|FLOPPY_IRQ
 )paren
 suffix:semicolon
 )brace

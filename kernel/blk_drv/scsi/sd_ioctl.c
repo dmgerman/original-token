@@ -3,6 +3,9 @@ macro_line|#ifdef CONFIG_BLK_DEV_SD
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &quot;../blk.h&quot;
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 r_extern
@@ -55,6 +58,14 @@ c_cond
 id|cmd
 )paren
 (brace
+id|RO_IOCTLS
+c_func
+(paren
+id|dev
+comma
+id|arg
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 r_return

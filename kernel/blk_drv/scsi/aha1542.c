@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
@@ -55,13 +56,6 @@ id|do_done
 )paren
 op_assign
 l_int|NULL
-suffix:semicolon
-r_extern
-r_void
-id|aha1542_interrupt
-c_func
-(paren
-)paren
 suffix:semicolon
 DECL|macro|aha1542_intr_reset
 mdefine_line|#define aha1542_intr_reset()  outb(IRST, CONTROL)
@@ -552,12 +546,14 @@ id|buffer
 suffix:semicolon
 )brace
 multiline_comment|/* A &quot;high&quot; level interrupt handler */
-DECL|function|aha1542_intr_handle
+DECL|function|aha1542_interrupt
+r_static
 r_void
-id|aha1542_intr_handle
+id|aha1542_interrupt
 c_func
 (paren
-r_void
+r_int
+id|cpl
 )paren
 (brace
 r_int
@@ -590,7 +586,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;aha1542_intr_handle: &quot;
+l_string|&quot;aha1542_interrupt: &quot;
 )paren
 suffix:semicolon
 r_if
@@ -720,7 +716,7 @@ id|my_done
 id|printk
 c_func
 (paren
-l_string|&quot;aha1542_intr_handle: Unexpected interrupt&bslash;n&quot;
+l_string|&quot;aha1542_interrupt: Unexpected interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -745,7 +741,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;aha1542_intr_handle: strange: mbif but no mail!&bslash;n&quot;
+l_string|&quot;aha1542_interrupt: strange: mbif but no mail!&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -815,7 +811,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;aha1542_intr_handle: sense:&quot;
+l_string|&quot;aha1542_interrupt: sense:&quot;
 )paren
 )paren
 suffix:semicolon
@@ -852,7 +848,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;DEB(printk(&quot;aha1542_intr_handle: buf:&quot;));&n;&t;for (i = 0; i &lt; bufflen; i++)&n;&t;  printk(&quot;%02x &quot;, ((unchar *)buff)[i]);&n;&t;printk(&quot;&bslash;n&quot;);&n;*/
+multiline_comment|/*&n;&t;DEB(printk(&quot;aha1542_interrupt: buf:&quot;));&n;&t;for (i = 0; i &lt; bufflen; i++)&n;&t;  printk(&quot;%02x &quot;, ((unchar *)buff)[i]);&n;&t;printk(&quot;&bslash;n&quot;);&n;*/
 )brace
 id|DEB
 c_func
@@ -864,7 +860,7 @@ id|errstatus
 id|printk
 c_func
 (paren
-l_string|&quot;aha1542_intr_handle: returning %6x&bslash;n&quot;
+l_string|&quot;aha1542_interrupt: returning %6x&bslash;n&quot;
 comma
 id|errstatus
 )paren
@@ -1554,13 +1550,44 @@ c_func
 (paren
 )paren
 (brace
-id|set_intr_gate
+r_struct
+id|sigaction
+id|sa
+suffix:semicolon
+id|sa.sa_handler
+op_assign
+id|aha1542_interrupt
+suffix:semicolon
+id|sa.sa_flags
+op_assign
+id|SA_INTERRUPT
+suffix:semicolon
+id|sa.sa_mask
+op_assign
+l_int|0
+suffix:semicolon
+id|sa.sa_restorer
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irqaction
 c_func
 (paren
-l_int|0x2b
+id|intr_chan
 comma
 op_amp
-id|aha1542_interrupt
+id|sa
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to allocate IRQ%d for aha controller&bslash;n&quot;
+comma
+id|intr_chan
 )paren
 suffix:semicolon
 )brace
@@ -2056,122 +2083,4 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|__asm__
-c_func
-(paren
-"&quot;"
-id|_aha1542_interrupt
-suffix:colon
-id|cld
-id|pushl
-op_mod
-id|eax
-id|pushl
-op_mod
-id|ecx
-id|pushl
-op_mod
-id|edx
-id|push
-op_mod
-id|ds
-id|push
-op_mod
-id|es
-id|push
-op_mod
-id|fs
-id|movl
-"$"
-l_int|0x10
-comma
-op_mod
-id|eax
-id|mov
-op_mod
-id|ax
-comma
-op_mod
-id|ds
-id|mov
-op_mod
-id|ax
-comma
-op_mod
-id|es
-id|movl
-"$"
-l_int|0x17
-comma
-op_mod
-id|eax
-id|mov
-op_mod
-id|ax
-comma
-op_mod
-id|fs
-id|movb
-"$"
-l_int|0x20
-comma
-op_mod
-id|al
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0xA0
-macro_line|# EOI to interrupt controller #1
-id|jmp
-l_float|1f
-macro_line|# give port chance to breathe
-l_int|1
-suffix:colon
-id|jmp
-l_float|1f
-l_int|1
-suffix:colon
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0x20
-macro_line|# Please, someone, change this to use the timer
-macro_line|#&t;andl $0xfffeffff,_timer_active
-id|movl
-"$"
-id|_aha1542_intr_handle
-comma
-op_mod
-id|edx
-id|call
-op_star
-op_mod
-id|edx
-macro_line|# ``interesting&squot;&squot; way of handling intr.
-id|pop
-op_mod
-id|fs
-id|pop
-op_mod
-id|es
-id|pop
-op_mod
-id|ds
-id|popl
-op_mod
-id|edx
-id|popl
-op_mod
-id|ecx
-id|popl
-op_mod
-id|eax
-id|iret
-"&quot;"
-)paren
-suffix:semicolon
 eof

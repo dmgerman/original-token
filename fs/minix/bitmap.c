@@ -912,6 +912,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|inode-&gt;i_flags
+op_assign
+id|inode-&gt;i_sb-&gt;s_flags
+suffix:semicolon
 id|j
 op_assign
 l_int|8192

@@ -144,10 +144,6 @@ op_star
 id|queue
 )paren
 suffix:semicolon
-DECL|macro|PUTCH
-mdefine_line|#define PUTCH(c,queue) put_tty_queue((c),(queue))
-DECL|macro|GETCH
-mdefine_line|#define GETCH(queue) get_tty_queue(queue)
 DECL|macro|INTR_CHAR
 mdefine_line|#define INTR_CHAR(tty) ((tty)-&gt;termios.c_cc[VINTR])
 DECL|macro|QUIT_CHAR
@@ -403,6 +399,17 @@ suffix:semicolon
 r_extern
 r_void
 id|flush_output
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wait_until_sent
 c_func
 (paren
 r_struct

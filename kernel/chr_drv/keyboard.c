@@ -221,12 +221,13 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|function|do_keyboard
+DECL|function|keyboard_interrupt
 r_void
-id|do_keyboard
+id|keyboard_interrupt
 c_func
 (paren
-r_void
+r_int
+id|cpl
 )paren
 (brace
 r_static
@@ -8221,7 +8222,7 @@ id|ch
 suffix:semicolon
 )brace
 )brace
-macro_line|#if defined KBD_FR || defined KBD_US
+macro_line|#if defined KBD_FR || defined KBD_US || defined KBD_UK
 DECL|variable|num_table
 r_static
 r_int

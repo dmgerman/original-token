@@ -163,6 +163,11 @@ r_int
 r_int
 id|cylinders
 suffix:semicolon
+DECL|member|start
+r_int
+r_int
+id|start
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
