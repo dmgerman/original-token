@@ -619,20 +619,6 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|sock_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SBPCD
 r_extern
 r_void

@@ -13,21 +13,21 @@ mdefine_line|#define SOUND_BASE 0x220
 multiline_comment|/* ignore the rest if you have only one interface board &amp; driver */
 macro_line|#if !(SBPCD_ISSUE-2) /* second interface board: */
 DECL|macro|CDROM_PORT
-mdefine_line|#define CDROM_PORT 0x0370
+mdefine_line|#define CDROM_PORT 0x0320
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO     0
 macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-3) /* third interface board: */
 DECL|macro|CDROM_PORT
-mdefine_line|#define CDROM_PORT 0x0330
+mdefine_line|#define CDROM_PORT 0x0630
 DECL|macro|SBPRO
-mdefine_line|#define SBPRO     0
+mdefine_line|#define SBPRO     1
 macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-4) /* fourth interface board: */
 DECL|macro|CDROM_PORT
-mdefine_line|#define CDROM_PORT 0x0230
+mdefine_line|#define CDROM_PORT 0x0634
 DECL|macro|SBPRO
-mdefine_line|#define SBPRO     1
+mdefine_line|#define SBPRO     0
 macro_line|#endif
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
@@ -460,10 +460,8 @@ DECL|macro|CMD2_x08
 mdefine_line|#define CMD2_x08&t;0x08
 DECL|macro|CMDT_x08
 mdefine_line|#define CMDT_x08&t;0x08
-DECL|macro|CMD2_xD4
-mdefine_line|#define CMD2_xD4&t;0xd4
-DECL|macro|CMD2_xDA
-mdefine_line|#define CMD2_xDA&t;0xda
+DECL|macro|CMD2_SETSPEED
+mdefine_line|#define CMD2_SETSPEED&t;0xda
 DECL|macro|CMD0_PATH_CHECK
 mdefine_line|#define CMD0_PATH_CHECK&t;0x00
 DECL|macro|CMD1_PATH_CHECK
@@ -494,6 +492,8 @@ DECL|macro|CMDT_READ
 mdefine_line|#define CMDT_READ&t;0x28
 DECL|macro|CMD0_READ_XA
 mdefine_line|#define CMD0_READ_XA&t;0x03
+DECL|macro|CMD2_READ_XA
+mdefine_line|#define CMD2_READ_XA&t;0xd4
 DECL|macro|CMDL_READ_XA
 mdefine_line|#define CMDL_READ_XA&t;0x03 /* really ?? */
 DECL|macro|CMD0_READ_HEAD

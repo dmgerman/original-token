@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mtio.h,v 1.13 1994/07/19 19:35:52 root Exp $&n; *&n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; */
+multiline_comment|/* $Id: /usr/src/linux-1.1.64/include/linux/mtio.h at Tue Jan 10 21:02:51 1995 by root@kai.home$&n; *&n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; */
 macro_line|#ifndef _LINUX_MTIO_H
 DECL|macro|_LINUX_MTIO_H
 mdefine_line|#define _LINUX_MTIO_H
@@ -286,5 +286,7 @@ DECL|macro|MT_ST_DEBUGGING
 mdefine_line|#define MT_ST_DEBUGGING&t;&t;0x8
 DECL|macro|MT_ST_TWO_FM
 mdefine_line|#define MT_ST_TWO_FM&t;&t;0x10
+DECL|macro|MT_ST_FAST_MTEOM
+mdefine_line|#define MT_ST_FAST_MTEOM&t;0x20
 macro_line|#endif /* _LINUX_MTIO_H */
 eof

@@ -524,12 +524,6 @@ id|inode
 op_star
 id|i_mount
 suffix:semicolon
-DECL|member|i_socket
-r_struct
-id|socket
-op_star
-id|i_socket
-suffix:semicolon
 DECL|member|i_count
 r_int
 r_int
@@ -559,6 +553,11 @@ DECL|member|i_pipe
 r_int
 r_char
 id|i_pipe
+suffix:semicolon
+DECL|member|i_sock
+r_int
+r_char
+id|i_sock
 suffix:semicolon
 DECL|member|i_seek
 r_int
@@ -626,6 +625,11 @@ DECL|member|sysv_i
 r_struct
 id|sysv_inode_info
 id|sysv_i
+suffix:semicolon
+DECL|member|socket_i
+r_struct
+id|socket
+id|socket_i
 suffix:semicolon
 DECL|member|generic_ip
 r_void

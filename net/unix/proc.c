@@ -79,7 +79,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NSOCKETS
+id|NSOCKETS_UNIX
 suffix:semicolon
 id|i
 op_increment

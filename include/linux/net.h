@@ -147,20 +147,6 @@ op_star
 id|fasync_list
 suffix:semicolon
 multiline_comment|/* Asynchronous wake up list&t;*/
-DECL|member|nextsock
-r_struct
-id|socket
-op_star
-id|nextsock
-suffix:semicolon
-multiline_comment|/* next on the allocated socks&t;*/
-DECL|member|prevsock
-r_struct
-id|socket
-op_star
-id|prevsock
-suffix:semicolon
-multiline_comment|/* precious on the allocated socks */
 )brace
 suffix:semicolon
 DECL|macro|SOCK_INODE

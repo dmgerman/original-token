@@ -405,7 +405,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This is for compatibility with older drivers.&n; * It can be removed when all driver call the new function.&n; */
+multiline_comment|/*&n; * This is for compatibility with older drivers.&n; * It can be removed when all drivers call the new function.&n; */
 DECL|function|snarf_region
 r_void
 id|snarf_region

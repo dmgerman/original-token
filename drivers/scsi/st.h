@@ -135,6 +135,11 @@ r_int
 r_char
 id|two_fm
 suffix:semicolon
+DECL|member|fast_mteom
+r_int
+r_char
+id|fast_mteom
+suffix:semicolon
 DECL|member|density
 r_int
 r_char

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 3.6  January 5, 1994&n; *&n; *  Copyright (C) 1994  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; * This is the dual IDE interface driver, as evolved from hd.c.  &n; * It supports up to two IDE interfaces, on one or two IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary   i/f: ide0: major=3;  (hda)         minor=0, (hdb)         minor=64&n; * Secondary i/f: ide1: major=22; (hdc or hd1a) minor=0, (hdd or hd1b) minor=64&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with &n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.1 ALPHA&t;fixes for dual i/f&n; *  Version 1.2 ALPHA&t;first serious attempt at sharing irqs&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *&t;&t;&t;fixed hd.c coexistence bug, other minor stuff&n; *  Version 1.6 BETA&t;fix link error when cd-rom not configured&n; *  Version 2.0 BETA&t;lots of minor fixes; remove annoying messages; ...&n; *  Version 2.2 BETA&t;fixed reset_drives; major overhaul of autoprobing&n; *  Version 2.3 BETA&t;set DEFAULT_UNMASK_INTR to 0 again; cosmetic changes&n; *  Version 2.4 BETA&t;added debounce on reading of drive status reg,&n; *&t;&t;&t;added config flags to remove unwanted features&n; *  Version 2.5 BETA&t;fixed problem with leftover phantom IRQ after probe,&n; *&t;&t;&t;allow &quot;set_geometry&quot; even when in LBA (as per spec(?)),&n; *&t;&t;&t;assorted miscellaneous tweaks.&n; *  Version 2.6 BETA&t;more config flag stuff, another probing tweak,&n; *  (not released)&t;multmode now defaults to status quo from boot time,&n; *&t;&t;&t;moved &gt;16heads check to init time, rearranged reset code&n; *&t;&t;&t;added HDIO_DRIVE_CMD, removed standby/xfermode stuff&n; *&t;&t;&t;hopefully fixed ATAPI probing code, added hdx=cdrom&n; *  Version 2.7 BETA&t;fixed invocation of cdrom_setup()&n; *  Version 2.8 BETA&t;fixed compile error for DISK_RECOVERY_TIME&gt;0&n; *&t;&t;&t;fixed incorrect drive selection in DO_DRIVE_CMD (Bug!)&n; *  Version 2.9 BETA&t;more work on ATAPI CDROM recognition&n; *  (not released)&t;changed init order so partition checks go in sequence&n; *  Version 3.0 BETA&t;included ide-cd.c update from Steve with Mitsumi fixes&n; *&t;&t;&t;attempt to fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;ensure drives on second i/f get initialized on boot&n; *&t;&t;&t;preliminary compile-time support for 32bit IDE i/f chips&n; *&t;&t;&t;added check_region() and snarf_region() to probes&n; *  Version 3.1 BETA&t;ensure drives on *both* i/f get initialized on boot&n; *&t;&t;&t;fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;changed ide_timermask into ide_timerbit&n; *&t;&t;&t;get rid of unexpected interrupts after probing&n; *&t;&t;&t;don&squot;t wait for READY_STAT on cdrom drives&n; *  Version 3.2 BETA&t;Ooops.. mistakenly left VLB_32BIT_IDE on by default&n; *&t;&t;&t;new ide-cd.c from Scott&n; *  Version 3.3 BETA&t;fix compiling with PROBE_FOR_IRQS==0&n; *  (sent to Linus)&t;tweak in do_probe() to fix Delman&squot;s DRDY problem&n; *  Version 3.4 BETA&t;removed &quot;444&quot; debug message&n; *  (sent to Linus)&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  To do:&n; *&t;- special 32-bit controller-type detection &amp; support&n; *&t;- figure out why two WD drives on one i/f sometimes don&squot;t identify&n; *&t;- figure out how to support oddball &quot;intelligent&quot; caching cards&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 3.8  January 12, 1995&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; * This is the dual IDE interface driver, as evolved from hd.c.  &n; * It supports up to two IDE interfaces, on one or two IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary   i/f: ide0: major=3;  (hda)         minor=0, (hdb)         minor=64&n; * Secondary i/f: ide1: major=22; (hdc or hd1a) minor=0, (hdd or hd1b) minor=64&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with &n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.1 ALPHA&t;fixes for dual i/f&n; *  Version 1.2 ALPHA&t;first serious attempt at sharing irqs&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *&t;&t;&t;fixed hd.c coexistence bug, other minor stuff&n; *  Version 1.6 BETA&t;fix link error when cd-rom not configured&n; *  Version 2.0 BETA&t;lots of minor fixes; remove annoying messages; ...&n; *  Version 2.2 BETA&t;fixed reset_drives; major overhaul of autoprobing&n; *  Version 2.3 BETA&t;set DEFAULT_UNMASK_INTR to 0 again; cosmetic changes&n; *  Version 2.4 BETA&t;added debounce on reading of drive status reg,&n; *&t;&t;&t;added config flags to remove unwanted features&n; *  Version 2.5 BETA&t;fixed problem with leftover phantom IRQ after probe,&n; *&t;&t;&t;allow &quot;set_geometry&quot; even when in LBA (as per spec(?)),&n; *&t;&t;&t;assorted miscellaneous tweaks.&n; *  Version 2.6 BETA&t;more config flag stuff, another probing tweak,&n; *  (not released)&t;multmode now defaults to status quo from boot time,&n; *&t;&t;&t;moved &gt;16heads check to init time, rearranged reset code&n; *&t;&t;&t;added HDIO_DRIVE_CMD, removed standby/xfermode stuff&n; *&t;&t;&t;hopefully fixed ATAPI probing code, added hdx=cdrom&n; *  Version 2.7 BETA&t;fixed invocation of cdrom_setup()&n; *  Version 2.8 BETA&t;fixed compile error for DISK_RECOVERY_TIME&gt;0&n; *&t;&t;&t;fixed incorrect drive selection in DO_DRIVE_CMD (Bug!)&n; *  Version 2.9 BETA&t;more work on ATAPI CDROM recognition&n; *  (not released)&t;changed init order so partition checks go in sequence&n; *  Version 3.0 BETA&t;included ide-cd.c update from Steve with Mitsumi fixes&n; *&t;&t;&t;attempt to fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;ensure drives on second i/f get initialized on boot&n; *&t;&t;&t;preliminary compile-time support for 32bit IDE i/f chips&n; *&t;&t;&t;added check_region() and snarf_region() to probes&n; *  Version 3.1 BETA&t;ensure drives on *both* i/f get initialized on boot&n; *&t;&t;&t;fix byte-swap problem with Mitsumi id_info&n; *&t;&t;&t;changed ide_timermask into ide_timerbit&n; *&t;&t;&t;get rid of unexpected interrupts after probing&n; *&t;&t;&t;don&squot;t wait for READY_STAT on cdrom drives&n; *  Version 3.2 BETA&t;Ooops.. mistakenly left VLB_32BIT_IDE on by default&n; *&t;&t;&t;new ide-cd.c from Scott&n; *  Version 3.3 BETA&t;fix compiling with PROBE_FOR_IRQS==0&n; *  (sent to Linus)&t;tweak in do_probe() to fix Delman&squot;s DRDY problem&n; *  Version 3.4 BETA&t;removed &quot;444&quot; debug message&n; *  (sent to Linus)&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  Version 3.8&t;&t;fixed byte-swapping for confused Mitsumi cdrom drives&n; *&t;&t;&t;update of ide-cd.c from Scott, allows blocksize=1024&n; *&t;&t;&t;cdrom probe fixes, inspired by jprang@uni-duisburg.de&n; *&n; *  To do:&n; *&t;- special 32-bit controller-type detection &amp; support&n; *&t;- figure out why two WD drives on one i/f sometimes don&squot;t identify&n; *&t;- figure out how to support oddball &quot;intelligent&quot; caching cards&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1243,7 +1243,7 @@ id|BUSY_STAT
 id|printk
 c_func
 (paren
-l_string|&quot;timed out, status=0x%02x&bslash;n&quot;
+l_string|&quot;timed-out, status=0x%02x&bslash;n&quot;
 comma
 id|tmp
 )paren
@@ -7091,25 +7091,33 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Everything except ATAPI seems to use big-endian string ordering,&n;&t; * whereas the NEC and Vertos ATAPI drives both use little-endian.&n;&t; * Latest reports indicate that some Mitsumi ATAPI use big-endian.&n;&t; */
+multiline_comment|/*&n;&t; * Non-ATAPI drives seem to always use big-endian string ordering.&n;&t; * Most ATAPI cdrom drives, such as the NEC, Vertos, and some Mitsumi&n;&t; * models, use little-endian.  But otherMitsumi models appear to use&n;&t; * big-endian, confusing the issue.  We try to take all of this into &n;&t; * consideration, &quot;knowing&quot; that Mitsumi drive names begin with &quot;FX&quot;.&n;&t; */
 id|bswap
 op_assign
-(paren
-id|id-&gt;config
-op_amp
-l_int|0x8000
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
 l_int|1
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|bswap
-op_logical_and
+id|id-&gt;model
+(braket
+l_int|0
+)braket
+op_ne
+l_char|&squot;X&squot;
+op_logical_or
+id|id-&gt;model
+(braket
+l_int|1
+)braket
+op_ne
+l_char|&squot;F&squot;
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
 id|id-&gt;model
 (braket
 l_int|0
@@ -7124,17 +7132,25 @@ l_int|1
 op_eq
 l_char|&squot;X&squot;
 )paren
+op_logical_or
+(paren
+id|id-&gt;config
+op_amp
+l_int|0x8000
+)paren
+)paren
 id|bswap
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|fixstring
 (paren
-id|id-&gt;serial_no
+id|id-&gt;model
 comma
 r_sizeof
 (paren
-id|id-&gt;serial_no
+id|id-&gt;model
 )paren
 comma
 id|bswap
@@ -7154,17 +7170,17 @@ id|bswap
 suffix:semicolon
 id|fixstring
 (paren
-id|id-&gt;model
+id|id-&gt;serial_no
 comma
 r_sizeof
 (paren
-id|id-&gt;model
+id|id-&gt;serial_no
 )paren
 comma
 id|bswap
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check for ATAPI device (such as an NEC-260 IDE cdrom drive)&n;&t; */
+multiline_comment|/*&n;&t; * Check for an ATAPI device&n;&t; */
 r_if
 c_cond
 (paren
@@ -7616,14 +7632,13 @@ comma
 id|byte
 id|cmd
 )paren
+multiline_comment|/*&n; * Returns:&t;0  device was identified&n; *&t;&t;1  device timed-out (no response to identify request)&n; *&t;&t;2  device aborted the command (refused to identify itself)&n; */
 (brace
 r_int
 id|rc
 suffix:semicolon
 r_int
 r_int
-id|timer
-comma
 id|timeout
 suffix:semicolon
 macro_line|#if PROBE_FOR_IRQS
@@ -7712,6 +7727,7 @@ multiline_comment|/* wait for BUSY_STAT */
 id|timeout
 op_assign
 (paren
+(paren
 id|cmd
 op_eq
 id|WIN_IDENTIFY
@@ -7721,30 +7737,17 @@ c_cond
 id|WAIT_WORSTCASE
 suffix:colon
 id|WAIT_PIDENTIFY
+)paren
+op_div
+l_int|2
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|timer
-op_assign
-id|jiffies
-op_plus
-(paren
 id|timeout
-op_div
-l_int|2
-)paren
-suffix:semicolon
-id|timer
-OG
+op_add_assign
 id|jiffies
 suffix:semicolon
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
 id|IN_BYTE
 c_func
 (paren
@@ -7754,17 +7757,49 @@ id|DEV_HWIF
 )paren
 op_amp
 id|BUSY_STAT
-)paren
-op_eq
-l_int|0
+suffix:semicolon
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|timeout
+OL
+id|jiffies
+)paren
+(brace
+macro_line|#if PROBE_FOR_IRQS
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irq_probed
+(braket
+id|DEV_HWIF
+)braket
+)paren
+(paren
+r_void
+)paren
+id|probe_irq_off
+c_func
+(paren
+id|irqs
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* PROBE_FOR_IRQS */
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* drive timed-out */
+)brace
+)brace
 id|delay_10ms
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* wait for IRQ &amp; DATA_READY */
+multiline_comment|/* wait for IRQ and DRQ_STAT */
 r_if
 c_cond
 (paren
@@ -7788,7 +7823,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* some sys need this */
+multiline_comment|/* some systems need this */
 id|do_identify
 c_func
 (paren
@@ -7800,11 +7835,12 @@ id|rc
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* success */
 )brace
 r_else
 id|rc
 op_assign
-l_int|1
+l_int|2
 suffix:semicolon
 multiline_comment|/* drive refused ID */
 macro_line|#if PROBE_FOR_IRQS
@@ -7826,7 +7862,7 @@ c_func
 id|irqs
 )paren
 suffix:semicolon
-multiline_comment|/* end probe */
+multiline_comment|/* get irq number */
 r_if
 c_cond
 (paren
@@ -7851,6 +7887,7 @@ id|irqs
 suffix:semicolon
 )brace
 r_else
+multiline_comment|/* Mmmm.. multiple IRQs */
 id|printk
 c_func
 (paren
@@ -7863,55 +7900,11 @@ id|irqs
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* PROBE_FOR_IRQS */
-r_goto
-id|done_try
-suffix:semicolon
-)brace
-)brace
-id|rc
-op_assign
-l_int|2
-suffix:semicolon
-multiline_comment|/* it ain&squot;t responding */
-macro_line|#if PROBE_FOR_IRQS
-r_if
-c_cond
-(paren
-op_logical_neg
-id|irq_probed
-(braket
-id|DEV_HWIF
-)braket
-)paren
-(paren
-r_void
-)paren
-id|probe_irq_off
-c_func
-(paren
-id|irqs
-)paren
-suffix:semicolon
-multiline_comment|/* end probing */
-macro_line|#endif&t;/* PROBE_FOR_IRQS */
-id|done_try
-suffix:colon
-id|OUT_BYTE
-c_func
-(paren
-id|dev-&gt;ctl
-op_or
-l_int|2
-comma
-id|HD_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* disable device irq */
 r_return
 id|rc
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine has the difficult job of finding a drive if it exists,&n; * without getting hung up if it doesn&squot;t exist, and without leaving any IRQs&n; * dangling to haunt us later.  The last point actually occurred in v2.3, and&n; * is the reason for the slightly complex exit sequence.  If a drive is &quot;known&quot;&n; * to exist (from CMOS or kernel parameters), but does not respond right away,&n; * the probe will &quot;hang in there&quot; for the maximum wait time (about 30 seconds).&n; * Otherwise, it will exit much more quickly.&n; *&n; * Returns 1 if device present but not identified.  Returns 0 otherwise.&n; */
+multiline_comment|/*&n; * This routine has the difficult job of finding a drive if it exists,&n; * without getting hung up if it doesn&squot;t exist, without trampling on&n; * ethernet cards, and without leaving any IRQs dangling to haunt us later.&n; *&n; * If a drive is &quot;known&quot; to exist (from CMOS or kernel parameters),&n; * but does not respond right away, the probe will &quot;hang in there&quot;&n; * for the maximum wait time (about 30 seconds), otherwise it will&n; * exit much more quickly.&n; */
 DECL|function|do_probe
 r_static
 r_int
@@ -7924,6 +7917,7 @@ comma
 id|byte
 id|cmd
 )paren
+multiline_comment|/*&n; * Returns:&t;0  device was identified&n; *&t;&t;1  device timed-out (no response to identify request)&n; *&t;&t;2  device aborted the command (refused to identify itself)&n; *&t;&t;3  bad status from device (possible for ATAPI drives)&n; *&t;&t;4  probe was not attempted&n; */
 (brace
 r_int
 id|rc
@@ -7952,7 +7946,7 @@ id|WIN_IDENTIFY
 )paren
 )paren
 r_return
-l_int|1
+l_int|4
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
@@ -8017,10 +8011,21 @@ op_logical_and
 op_logical_neg
 id|dev-&gt;present
 )paren
+(brace
+id|OUT_BYTE
+c_func
+(paren
+l_int|0xa0
+comma
+id|HD_CURRENT
+)paren
+suffix:semicolon
+multiline_comment|/* exit with drive0 selected */
 r_return
-l_int|0
+l_int|3
 suffix:semicolon
 multiline_comment|/* no i/f present: avoid killing ethernet cards */
+)brace
 r_if
 c_cond
 (paren
@@ -8071,31 +8076,33 @@ comma
 id|cmd
 )paren
 suffix:semicolon
-multiline_comment|/* try again */
+multiline_comment|/* failed: try again */
 r_if
 c_cond
-(paren
-id|rc
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: identification %s&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
 (paren
 id|rc
 op_eq
 l_int|1
 )paren
-ques
-c_cond
-l_string|&quot;refused&quot;
-suffix:colon
-l_string|&quot;timed-out&quot;
+id|printk
+c_func
+(paren
+l_string|&quot;%s: no response&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
+id|OUT_BYTE
+c_func
+(paren
+id|dev-&gt;ctl
+op_or
+l_int|2
+comma
+id|HD_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* disable device irq */
 id|delay_10ms
 c_func
 (paren
@@ -8116,9 +8123,9 @@ r_else
 (brace
 id|rc
 op_assign
-l_int|2
+l_int|3
 suffix:semicolon
-multiline_comment|/* drive not present */
+multiline_comment|/* not present or maybe ATAPI */
 )brace
 r_if
 c_cond
@@ -8182,6 +8189,7 @@ id|ide_dev_t
 op_star
 id|dev
 )paren
+multiline_comment|/*&n; * Returns:&t;0  no device was found&n; *&t;&t;1  device was found (note: dev-&gt;present might still be 0)&n; */
 (brace
 r_if
 c_cond
@@ -8202,11 +8210,11 @@ id|dev
 comma
 id|WIN_IDENTIFY
 )paren
-op_eq
-l_int|1
+op_ge
+l_int|2
 )paren
 (brace
-multiline_comment|/* 1 = drive aborted the cmd */
+multiline_comment|/* if !(success || timed-out) */
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD
 (paren
 r_void
@@ -8219,6 +8227,7 @@ comma
 id|WIN_PIDENTIFY
 )paren
 suffix:semicolon
+multiline_comment|/* look for ATAPI device */
 macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
 )brace
 r_if
@@ -8230,7 +8239,7 @@ id|dev-&gt;present
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* drive not present */
+multiline_comment|/* drive not found */
 r_if
 c_cond
 (paren
@@ -8290,9 +8299,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* nuke it */
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
-multiline_comment|/* drive not present */
+multiline_comment|/* drive was found */
 )brace
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD
@@ -8351,7 +8360,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* drive present */
+multiline_comment|/* drive was found */
 )brace
 DECL|function|probe_for_drives
 r_static
@@ -8479,7 +8488,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* needed for jiffies and irq probing */
-multiline_comment|/* second drive can only exist if first drive was present */
+multiline_comment|/* second drive should only exist if first drive was found */
 r_if
 c_cond
 (paren
@@ -8559,7 +8568,10 @@ id|HWIF
 comma
 l_int|8
 comma
-l_string|&quot;ide&quot;
+id|ide_name
+(braket
+id|HWIF
+)braket
 )paren
 suffix:semicolon
 id|request_region
@@ -8575,7 +8587,10 @@ id|HWIF
 comma
 l_int|1
 comma
-l_string|&quot;ide&quot;
+id|ide_name
+(braket
+id|HWIF
+)braket
 )paren
 suffix:semicolon
 )brace

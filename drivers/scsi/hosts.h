@@ -383,6 +383,9 @@ c_func
 r_int
 r_int
 id|size
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 r_extern
@@ -398,6 +401,19 @@ r_int
 r_int
 id|size
 )paren
+suffix:semicolon
+r_void
+id|scan_scsis
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|next_scsi_host
 suffix:semicolon
 r_extern
 r_int
@@ -528,7 +544,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* Perform initialization after attachment */
 DECL|member|attach
-r_void
+r_int
 (paren
 op_star
 id|attach
@@ -582,5 +598,46 @@ op_star
 id|sdpnt
 )paren
 suffix:semicolon
+multiline_comment|/* These are used by loadable modules */
+r_extern
+r_int
+id|scsi_register_module
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_unregister_module
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* The different types of modules that we can load and unload */
+DECL|macro|MODULE_SCSI_HA
+mdefine_line|#define MODULE_SCSI_HA 1
+DECL|macro|MODULE_SCSI_CONST
+mdefine_line|#define MODULE_SCSI_CONST 2
+DECL|macro|MODULE_SCSI_IOCTL
+mdefine_line|#define MODULE_SCSI_IOCTL 3
+DECL|macro|MODULE_SCSI_DEV
+mdefine_line|#define MODULE_SCSI_DEV 4
+multiline_comment|/*&n; * This is an ugly hack.  If we expect to be able to load devices at run time, we need&n; * to leave extra room in some of the data structures.  Doing a realloc to enlarge&n; * the structures would be riddled with race conditions, so until a better solution &n; * is discovered, we use this crude approach&n; */
+DECL|macro|SD_EXTRA_DEVS
+mdefine_line|#define SD_EXTRA_DEVS 2
+DECL|macro|ST_EXTRA_DEVS
+mdefine_line|#define ST_EXTRA_DEVS 2
+DECL|macro|SR_EXTRA_DEVS
+mdefine_line|#define SR_EXTRA_DEVS 2
+DECL|macro|SG_EXTRA_DEVS
+mdefine_line|#define SG_EXTRA_DEVS (SD_EXTRA_DEVS + SR_EXTRA_DEVS + ST_EXTRA_DEVS)
 macro_line|#endif
 eof

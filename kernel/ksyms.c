@@ -77,6 +77,10 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI
+macro_line|#include &quot;../drivers/scsi/scsi.h&quot;
+macro_line|#include &quot;../drivers/scsi/hosts.h&quot;
+macro_line|#endif
 r_extern
 r_int
 id|sys_tz
@@ -1041,6 +1045,45 @@ id|X
 c_func
 (paren
 id|dev_base
+)paren
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI
+multiline_comment|/* Supports loadable scsi drivers */
+id|X
+c_func
+(paren
+id|scsi_register_module
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_unregister_module
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_free
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_malloc
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_register
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_unregister
 )paren
 comma
 macro_line|#endif

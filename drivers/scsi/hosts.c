@@ -27,6 +27,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 macro_line|#include &quot;buslogic.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA_DMA
+macro_line|#include &quot;eata_dma.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_U14_34F
 macro_line|#include &quot;u14-34f.h&quot;
 macro_line|#endif
@@ -148,6 +151,10 @@ macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
 id|NCR53c7xx
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA_DMA
+id|EATA_DMA
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
 id|WD7000
 comma
@@ -185,10 +192,9 @@ id|max_scsi_hosts
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|next_host
-r_static
+DECL|variable|next_scsi_host
 r_int
-id|next_host
+id|next_scsi_host
 op_assign
 l_int|0
 suffix:semicolon
@@ -254,7 +260,7 @@ id|shpnt-&gt;next-&gt;next
 suffix:semicolon
 )brace
 suffix:semicolon
-id|next_host
+id|next_scsi_host
 op_decrement
 suffix:semicolon
 id|scsi_init_free
@@ -319,6 +325,19 @@ id|Scsi_Host
 )paren
 op_plus
 id|j
+comma
+(paren
+id|tpnt-&gt;unchecked_isa_dma
+op_logical_and
+id|j
+ques
+c_cond
+id|GFP_DMA
+suffix:colon
+l_int|0
+)paren
+op_or
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|retval-&gt;host_busy
@@ -354,7 +373,7 @@ id|scsi_loadable_module_flag
 suffix:semicolon
 id|retval-&gt;host_no
 op_assign
-id|next_host
+id|next_scsi_host
 op_increment
 suffix:semicolon
 id|retval-&gt;host_queue
@@ -395,8 +414,14 @@ c_func
 (paren
 l_string|&quot;Register %x %x: %d&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|retval
 comma
+(paren
+r_int
+)paren
 id|retval-&gt;hostt
 comma
 id|j
@@ -516,19 +541,21 @@ suffix:semicolon
 r_int
 id|i
 comma
-id|j
-comma
-id|count
-comma
 id|pcount
 suffix:semicolon
 id|Scsi_Host_Template
 op_star
 id|tpnt
 suffix:semicolon
-id|count
-op_assign
-l_int|0
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+suffix:semicolon
+r_const
+r_char
+op_star
+id|name
 suffix:semicolon
 r_if
 c_cond
@@ -573,7 +600,7 @@ op_increment
 multiline_comment|/*&n;&t;&t; * Initialize our semaphores.  -1 is interpreted to mean&n;&t;&t; * &quot;inactive&quot; - where as 0 will indicate a time out condition.&n;&t;&t; */
 id|pcount
 op_assign
-id|next_host
+id|next_scsi_host
 suffix:semicolon
 r_if
 c_cond
@@ -601,7 +628,7 @@ c_cond
 (paren
 id|pcount
 op_eq
-id|next_host
+id|next_scsi_host
 )paren
 (brace
 r_if
@@ -619,7 +646,7 @@ l_string|&quot;Failure to register low-level scsi driver&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The low-level driver failed to register a driver.  We&n;&t;&t;&t;&t;   can do this now. */
+multiline_comment|/* The low-level driver failed to register a driver.  We&n; &t;&t;&t;&t;   can do this now. */
 id|scsi_register
 c_func
 (paren
@@ -638,39 +665,60 @@ id|scsi_hosts
 op_assign
 id|tpnt
 suffix:semicolon
+)brace
+)brace
 r_for
 c_loop
 (paren
-id|j
+id|shpnt
 op_assign
-l_int|0
+id|scsi_hostlist
 suffix:semicolon
-id|j
-OL
-id|tpnt-&gt;present
+id|shpnt
 suffix:semicolon
-id|j
-op_increment
+id|shpnt
+op_assign
+id|shpnt-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|shpnt-&gt;hostt-&gt;info
+)paren
+(brace
+id|name
+op_assign
+id|shpnt-&gt;hostt
+op_member_access_from_pointer
+id|info
+c_func
+(paren
+id|shpnt
+)paren
+suffix:semicolon
+)brace
+r_else
+id|name
+op_assign
+id|shpnt-&gt;hostt-&gt;name
+suffix:semicolon
 id|printk
 (paren
 l_string|&quot;scsi%d : %s&bslash;n&quot;
 comma
-id|count
-op_increment
+multiline_comment|/* And print a little message */
+id|shpnt-&gt;host_no
 comma
-id|tpnt-&gt;name
+id|name
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 id|printk
 (paren
 l_string|&quot;scsi : %d hosts.&bslash;n&quot;
 comma
-id|count
+id|next_scsi_host
 )paren
 suffix:semicolon
 (brace
@@ -856,7 +904,7 @@ suffix:semicolon
 macro_line|#endif
 id|max_scsi_hosts
 op_assign
-id|count
+id|next_scsi_host
 suffix:semicolon
 r_return
 l_int|0
