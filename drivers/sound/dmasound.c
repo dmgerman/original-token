@@ -5315,7 +5315,7 @@ suffix:semicolon
 DECL|macro|sq_block_address
 mdefine_line|#define sq_block_address(i)&t;(sq.buffers[i])
 DECL|macro|SIGNAL_RECEIVED
-mdefine_line|#define SIGNAL_RECEIVED&t;(current-&gt;signal &amp; ~current-&gt;blocked)
+mdefine_line|#define SIGNAL_RECEIVED&t;(signal_pending(current))
 DECL|macro|NON_BLOCKING
 mdefine_line|#define NON_BLOCKING(open_mode)&t;(open_mode &amp; O_NONBLOCK)
 DECL|macro|ONE_SECOND

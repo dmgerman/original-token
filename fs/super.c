@@ -24,6 +24,15 @@ macro_line|#endif
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
+multiline_comment|/*&n; * We use a semaphore to synchronize all mount/umount&n; * activity - imagine the mess if we have a race between&n; * unmounting a filesystem and re-mounting it (or something&n; * else).&n; */
+DECL|variable|mount_sem
+r_static
+r_struct
+id|semaphore
+id|mount_sem
+op_assign
+id|MUTEX
+suffix:semicolon
 r_extern
 r_void
 id|wait_for_keypress
@@ -3044,6 +3053,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|mount_sem
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|do_umount
@@ -3089,6 +3105,13 @@ id|dev
 suffix:semicolon
 )brace
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|mount_sem
+)paren
+suffix:semicolon
 id|out_iput
 suffix:colon
 id|iput
@@ -3370,6 +3393,13 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|mount_sem
+)paren
+suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -3566,8 +3596,12 @@ comma
 id|sb-&gt;s_root
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 l_int|0
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* we don&squot;t dput(dir) - see umount */
 )brace
@@ -3581,6 +3615,13 @@ id|dir_d
 suffix:semicolon
 id|out
 suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mount_sem
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

@@ -2386,11 +2386,10 @@ id|as
 )paren
 op_logical_and
 op_logical_neg
+id|signal_pending
+c_func
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|current
 )paren
 )paren
 (brace
@@ -2523,10 +2522,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
 )paren
 r_return
 op_minus
@@ -2994,7 +2994,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-id|KERN_ER
+id|KERN_ERR
 l_string|&quot;apm_bios: cannot allocate struct of size %d bytes&quot;
 comma
 r_sizeof

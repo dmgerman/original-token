@@ -1394,6 +1394,20 @@ suffix:semicolon
 r_int
 id|stop
 suffix:semicolon
+multiline_comment|/* Always trim SLAB caches when memory gets low. */
+(paren
+r_void
+)paren
+id|kmem_cache_reap
+c_func
+(paren
+l_int|0
+comma
+id|dma
+comma
+id|wait
+)paren
+suffix:semicolon
 multiline_comment|/* we don&squot;t try as hard if we&squot;re not waiting.. */
 id|stop
 op_assign
@@ -1440,30 +1454,6 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * We shouldn&squot;t have a priority here:&n;&t;&t;&t; * If we&squot;re low on memory we should&n;&t;&t;&t; * unconditionally throw away _all_&n;&t;&t;&t; * kmalloc caches!&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|kmem_cache_reap
-c_func
-(paren
-l_int|0
-comma
-id|dma
-comma
-id|wait
-)paren
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|state
-op_assign
-l_int|2
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
 r_if
 c_cond
 (paren
@@ -1480,7 +1470,7 @@ l_int|1
 suffix:semicolon
 id|state
 op_assign
-l_int|3
+l_int|2
 suffix:semicolon
 r_default
 suffix:colon

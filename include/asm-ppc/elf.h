@@ -16,7 +16,7 @@ mdefine_line|#define ELF_ARCH&t;EM_PPC
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA&t;ELFDATA2MSB;
+mdefine_line|#define ELF_DATA&t;ELFDATA2MSB
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE

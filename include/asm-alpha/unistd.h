@@ -534,6 +534,8 @@ DECL|macro|__NR_pciconfig_write
 mdefine_line|#define __NR_pciconfig_write&t;&t;346
 DECL|macro|__NR_query_module
 mdefine_line|#define __NR_query_module&t;&t;347
+DECL|macro|__NR_prctl
+mdefine_line|#define __NR_prctl&t;&t;&t;348
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

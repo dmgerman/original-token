@@ -1402,4 +1402,11 @@ id|sys_getresgid
 comma
 l_int|3
 )paren
+id|SYS
+c_func
+(paren
+id|sys_prctl
+comma
+l_int|5
+)paren
 eof

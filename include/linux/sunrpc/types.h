@@ -207,6 +207,6 @@ DECL|macro|rpc_remove_list
 mdefine_line|#define rpc_remove_list(q, i) &bslash;&n;      __rpc_remove_list((struct rpc_listitem **) q, (struct rpc_listitem *) i)
 multiline_comment|/*&n; * Shorthands&n; */
 DECL|macro|signalled
-mdefine_line|#define signalled()&t;&t;(current-&gt;signal &amp; ~current-&gt;blocked)
+mdefine_line|#define signalled()&t;&t;(signal_pending(current))
 macro_line|#endif /* _LINUX_SUNRPC_TYPES_H_ */
 eof

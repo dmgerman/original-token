@@ -1910,7 +1910,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|macro|NO_SIGNAL
-mdefine_line|#define NO_SIGNAL (!(current-&gt;signal &amp; ~current-&gt;blocked) || !interruptible)
+mdefine_line|#define NO_SIGNAL (!interruptible || !signal_pending(current))
 DECL|macro|CALL
 mdefine_line|#define CALL(x) if ((x) == -EINTR) return -EINTR
 DECL|macro|ECALL
@@ -15516,12 +15516,12 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * If filp is NULL, we&squot;re being called from blkdev_release&n;&t; * or after a failed mount attempt.  In the former case the&n;&t; * device has already been sync&squot;ed, and in the latter no&n;&t; * sync is required.  Otherwise, sync if filp is writable.&n;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|filp
-op_logical_or
+op_logical_and
 (paren
 id|filp-&gt;f_mode
 op_amp
@@ -15532,7 +15532,6 @@ id|OPEN_WRITE_BIT
 )paren
 )paren
 )paren
-multiline_comment|/* if the file is mounted OR (writable now AND writable at&n;&t;&t; * open time) Linus: Does this cover all cases? */
 id|block_fsync
 c_func
 (paren

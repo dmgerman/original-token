@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/prctl.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -4113,6 +4114,89 @@ id|S_IRWXUGO
 suffix:semicolon
 r_return
 id|mask
+suffix:semicolon
+)brace
+DECL|function|sys_prctl
+id|asmlinkage
+r_int
+id|sys_prctl
+c_func
+(paren
+r_int
+id|option
+comma
+r_int
+r_int
+id|arg2
+comma
+r_int
+r_int
+id|arg3
+comma
+r_int
+r_int
+id|arg4
+comma
+r_int
+r_int
+id|arg5
+)paren
+(brace
+r_int
+id|error
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|sig
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|option
+)paren
+(brace
+r_case
+id|PR_SET_PDEATHSIG
+suffix:colon
+id|sig
+op_assign
+id|arg2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sig
+OG
+id|_NSIG
+)paren
+(brace
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|current-&gt;pdeath_signal
+op_assign
+id|sig
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_return
+id|error
 suffix:semicolon
 )brace
 eof

@@ -2192,6 +2192,10 @@ id|clone_flags
 op_amp
 id|CSIGNAL
 suffix:semicolon
+id|p-&gt;pdeath_signal
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * &quot;share&quot; dynamic priority between parent and child, thus the&n;&t; * total amount of dynamic priorities in the system doesnt change,&n;&t; * more scheduling fairness. This is only important in the first&n;&t; * timeslice, on the long run the scheduling behaviour is unchanged.&n;&t; */
 id|current-&gt;counter
 op_rshift_assign

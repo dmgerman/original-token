@@ -34,7 +34,7 @@ mdefine_line|#define ELF_ARCH&t;&t;EM_SPARC64
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;&t;ELFCLASS64
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA&t;&t;ELFDATA2MSB;
+mdefine_line|#define ELF_DATA&t;&t;ELFDATA2MSB
 macro_line|#endif
 macro_line|#ifndef ELF_FLAGS_INIT
 DECL|macro|ELF_FLAGS_INIT

@@ -33,7 +33,7 @@ multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n;
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA&t;ELFDATA2MSB;
+mdefine_line|#define ELF_DATA&t;ELFDATA2MSB
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_68K
 multiline_comment|/* For SVR4/m68k the function pointer to be registered with `atexit&squot; is&n;   passed in %a1.  Although my copy of the ABI has no such statement, it&n;   is actually used on ASV.  */

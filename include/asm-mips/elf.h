@@ -41,10 +41,10 @@ DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
 macro_line|#ifdef __MIPSEB__
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA       ELFDATA2MSB;
+mdefine_line|#define ELF_DATA&t;ELFDATA2MSB
 macro_line|#elif __MIPSEL__
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA       ELFDATA2LSB;
+mdefine_line|#define ELF_DATA&t;ELFDATA2LSB
 macro_line|#endif
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_MIPS

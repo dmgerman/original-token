@@ -1413,10 +1413,11 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|prev-&gt;signal
-op_amp
-op_complement
-id|prev-&gt;blocked
+id|signal_pending
+c_func
+(paren
+id|prev
+)paren
 )paren
 r_goto
 id|makerunnable
@@ -2034,13 +2035,11 @@ id|task_state
 op_eq
 id|TASK_INTERRUPTIBLE
 op_logical_and
+id|signal_pending
+c_func
 (paren
-id|tsk-&gt;signal
-op_amp
-op_complement
-id|tsk-&gt;blocked
+id|tsk
 )paren
-multiline_comment|/* signalled */
 )paren
 (brace
 id|ret

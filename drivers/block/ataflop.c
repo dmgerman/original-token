@@ -7754,12 +7754,12 @@ id|inode-&gt;i_rdev
 op_amp
 l_int|3
 suffix:semicolon
+multiline_comment|/*&n;&t; * If filp is NULL, we&squot;re being called from blkdev_release&n;&t; * or after a failed mount attempt.  In the former case the&n;&t; * device has already been sync&squot;ed, and in the latter no&n;&t; * sync is required.  Otherwise, sync if filp is writable.&n;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|filp
-op_logical_or
+op_logical_and
 (paren
 id|filp-&gt;f_mode
 op_amp
@@ -7770,7 +7770,6 @@ id|OPEN_WRITE_BIT
 )paren
 )paren
 )paren
-multiline_comment|/* if the file is mounted OR (writable now AND writable at open&n;       time) Linus: Does this cover all cases? */
 id|block_fsync
 (paren
 id|filp

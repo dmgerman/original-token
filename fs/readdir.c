@@ -294,6 +294,14 @@ id|file-&gt;f_op-&gt;readdir
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/*&n;&t; * Get the inode&squot;s semaphore to prevent changes&n;&t; * to the directory while we read it.&n;&t; */
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|file-&gt;f_op
@@ -307,6 +315,13 @@ op_amp
 id|buf
 comma
 id|fillonedir
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 r_if
@@ -697,6 +712,14 @@ id|file-&gt;f_op-&gt;readdir
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/*&n;&t; * Get the inode&squot;s semaphore to prevent changes&n;&t; * to the directory while we read it.&n;&t; */
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|file-&gt;f_op
@@ -710,6 +733,13 @@ op_amp
 id|buf
 comma
 id|filldir
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 r_if

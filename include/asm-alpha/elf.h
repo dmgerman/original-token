@@ -41,7 +41,7 @@ multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n;
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS64
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA&t;ELFDATA2LSB;
+mdefine_line|#define ELF_DATA&t;ELFDATA2LSB
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_ALPHA
 DECL|macro|USE_ELF_CORE_DUMP

@@ -818,11 +818,10 @@ id|p-&gt;state
 op_eq
 id|TASK_INTERRUPTIBLE
 op_logical_and
+id|signal_pending
+c_func
 (paren
-id|p-&gt;signal
-op_amp
-op_complement
-id|p-&gt;blocked
+id|p
 )paren
 )paren
 id|wake_up_process

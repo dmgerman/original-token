@@ -5386,11 +5386,10 @@ op_eq
 id|kbd_tail
 op_logical_and
 op_logical_neg
+id|signal_pending
+c_func
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|current
 )paren
 )paren
 (brace

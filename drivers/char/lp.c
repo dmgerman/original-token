@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; * Reverted interrupt to polling at runtime if more than one device is parport&n; * registered and joined the interrupt and polling code.&n; *                               by Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; */
 multiline_comment|/* This driver is about due for a rewrite. */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1259,10 +1259,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
 )paren
 (brace
 r_if
@@ -1913,10 +1914,11 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
 )paren
 (brace
 id|lp_select_in_high

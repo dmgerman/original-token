@@ -167,6 +167,10 @@ suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|EXT_MEM_K
 mdefine_line|#define EXT_MEM_K (*(unsigned short *)0x90002)
+macro_line|#ifndef STANDARD_MEMORY_BIOS_CALL
+DECL|macro|ALT_MEM_K
+mdefine_line|#define ALT_MEM_K (*(unsigned long *) 0x901e0)
+macro_line|#endif
 DECL|macro|SCREEN_INFO
 mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
 r_extern
@@ -1225,23 +1229,30 @@ l_int|1024
 id|error
 c_func
 (paren
-l_string|&quot;&lt;2M of mem&bslash;n&quot;
+l_string|&quot;Less than 2MB of memory.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
 r_if
 c_cond
 (paren
+(paren
+id|ALT_MEM_K
+OG
 id|EXT_MEM_K
-op_star
-l_int|64
+ques
+c_cond
+id|ALT_MEM_K
+suffix:colon
+id|EXT_MEM_K
+)paren
 OL
 l_int|1024
 )paren
 id|error
 c_func
 (paren
-l_string|&quot;&lt;2M of mem&bslash;n&quot;
+l_string|&quot;Less than 2MB of memory.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1330,9 +1341,16 @@ macro_line|#else
 r_if
 c_cond
 (paren
+(paren
+id|ALT_MEM_K
+OG
 id|EXT_MEM_K
-op_star
-l_int|64
+ques
+c_cond
+id|ALT_MEM_K
+suffix:colon
+id|EXT_MEM_K
+)paren
 OL
 (paren
 l_int|3

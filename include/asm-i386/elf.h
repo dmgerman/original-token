@@ -33,7 +33,7 @@ multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n;
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA&t;ELFDATA2LSB;
+mdefine_line|#define ELF_DATA&t;ELFDATA2LSB
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_386
 multiline_comment|/* SVR4/i386 ABI (pages 3-31, 3-32) says that when the program starts %edx&n;   contains a pointer to a function which might be registered using `atexit&squot;.&n;   This provides a mean for the dynamic linker to call DT_FINI functions for&n;   shared libraries that have been loaded before the code runs.&n;&n;   A value of 0 tells we have no such handler.  */

@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**                     Brief history&n;**&n;**  December 10 1995 by Gerard Roudier:&n;**     Initial port to Linux.&n;**&n;**  June 23 1996 by Gerard Roudier:&n;**     Support for 64 bits architectures (Alpha).&n;**&n;**  November 30 1996 by Gerard Roudier:&n;**     Support for Fast-20 scsi.&n;**     Support for large DMA fifo and 128 dwords bursting.&n;**&n;**  February 27 1997 by Gerard Roudier:&n;**     Support for Fast-40 scsi.&n;**     Support for on-Board RAM.&n;**&n;**  May 3 1997 by Gerard Roudier:&n;**     Full support for scsi scripts instructions pre-fetching.&n;**&n;**  May 19 1997 by Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;:&n;**     Support for NvRAM detection and reading.&n;**&n;**  August 18 1997 by Cort &lt;cort@cs.nmt.edu&gt;:&n;**     Support for Power/PC (Big Endian).&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;23 August 1997, version 2.5a&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;20 September 1997, version 2.5c&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
 mdefine_line|#define SCSI_NCR_DEBUG_FLAGS&t;(0)&t;&t;
 DECL|macro|NCR_GETCC_WITHMSG
@@ -564,7 +564,7 @@ r_int
 id|opcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;**&t;Head of list of NCR boards&n;**&n;**&t;Host is retrieved by its irq level.&n;**&t;If interrupts are shared, the internal host control block &n;**&t;address (struct ncb) is used as device id.&n;*/
+multiline_comment|/*&n;**&t;Head of list of NCR boards&n;**&n;**&t;For kernel version &lt; 1.3.70, host is retrieved by its irq level.&n;**&t;For later kernels, the internal host control block address &n;**&t;(struct ncb) is used as device id parameter of the irq stuff.&n;*/
 DECL|variable|first_host
 r_static
 r_struct
@@ -774,6 +774,16 @@ id|__initdata
 op_assign
 id|SCSI_NCR_DRIVER_SAFE_SETUP
 suffix:semicolon
+macro_line|#ifdef&t;MODULE
+DECL|variable|ncr53c8xx
+r_char
+op_star
+id|ncr53c8xx
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* command line passed by insmod */
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n;**&t;Other Linux definitions&n;*/
 DECL|macro|ScsiResult
@@ -11474,7 +11484,7 @@ id|SA_INTERRUPT
 comma
 l_string|&quot;ncr53c8xx&quot;
 comma
-l_int|NULL
+id|np
 )paren
 )paren
 (brace
@@ -11957,7 +11967,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*---------------------------------------------------&n;&t;**&n;&t;**&t;Assign a ccb / bind cmd&n;&t;**&t;If resetting or no free ccb,&n;&t;**&t;insert cmd into the waiting list.&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
+multiline_comment|/*---------------------------------------------------&n;&t;**&n;&t;**&t;Assign a ccb / bind cmd.&n;&t;**&t;If resetting, shorten settle_time if necessary&n;&t;**&t;in order to avoid spurious timeouts.&n;&t;**&t;If resetting or no free ccb,&n;&t;**&t;insert cmd into the waiting list.&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
 id|save_flags
 c_func
 (paren
@@ -11969,6 +11979,33 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|np-&gt;settle_time
+op_logical_and
+id|cmd-&gt;timeout_per_command
+op_ge
+id|HZ
+op_logical_and
+id|np-&gt;settle_time
+OG
+id|jiffies
+op_plus
+id|cmd-&gt;timeout_per_command
+op_minus
+id|HZ
+)paren
+(brace
+id|np-&gt;settle_time
+op_assign
+id|jiffies
+op_plus
+id|cmd-&gt;timeout_per_command
+op_minus
+id|HZ
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -13560,7 +13597,7 @@ c_func
 (paren
 id|np
 comma
-l_int|2
+id|driver_setup.settle_delay
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * First, look in the wakeup list&n; */
@@ -13982,9 +14019,6 @@ c_func
 (paren
 id|ncb_p
 id|np
-comma
-r_int
-id|irq
 )paren
 (brace
 id|ccb_p
@@ -14123,35 +14157,24 @@ c_func
 id|np
 )paren
 comma
-id|irq
+id|np-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,70)
-macro_line|#   ifdef SCSI_NCR_SHARE_IRQ
 id|free_irq
 c_func
 (paren
-id|irq
+id|np-&gt;irq
 comma
 id|np
 )paren
 suffix:semicolon
-macro_line|#   else
-id|free_irq
-c_func
-(paren
-id|irq
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#   endif
 macro_line|#else
 id|free_irq
 c_func
 (paren
-id|irq
+id|np-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -18538,6 +18561,23 @@ l_string|&quot;script&quot;
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|np-&gt;p_scripth
+OL
+id|dsp
+op_logical_and
+id|dsp
+op_le
+id|np-&gt;p_scripth
+op_plus
+r_sizeof
+(paren
+r_struct
+id|scripth
+)paren
+)paren
 (brace
 id|script_ofs
 op_assign
@@ -18566,9 +18606,28 @@ op_assign
 l_string|&quot;scripth&quot;
 suffix:semicolon
 )brace
+r_else
+(brace
+id|script_ofs
+op_assign
+id|dsp
+suffix:semicolon
+id|script_size
+op_assign
+l_int|0
+suffix:semicolon
+id|script_base
+op_assign
+l_int|0
+suffix:semicolon
+id|script_name
+op_assign
+l_string|&quot;mem&quot;
+suffix:semicolon
+)brace
 id|printf
 (paren
-l_string|&quot;%s:%d: ERROR (%x:%x) (%x-%x-%x) (%x/%x) @ %s (%x:%08x).&bslash;n&quot;
+l_string|&quot;%s:%d: ERROR (%x:%x) (%x-%x-%x) (%x/%x) @ (%s %x:%08x).&bslash;n&quot;
 comma
 id|ncr_name
 (paren
@@ -19277,7 +19336,7 @@ c_func
 (paren
 id|np
 comma
-l_int|2
+id|driver_setup.settle_delay
 )paren
 suffix:semicolon
 r_return
@@ -19308,7 +19367,7 @@ c_func
 (paren
 id|np
 comma
-l_int|2
+id|driver_setup.settle_delay
 )paren
 suffix:semicolon
 r_return
@@ -19371,7 +19430,7 @@ c_func
 (paren
 id|np
 comma
-l_int|2
+id|driver_setup.settle_delay
 )paren
 suffix:semicolon
 r_return
@@ -19600,7 +19659,7 @@ c_func
 (paren
 id|np
 comma
-l_int|2
+id|driver_setup.settle_delay
 )paren
 suffix:semicolon
 r_return
@@ -26176,6 +26235,25 @@ comma
 id|cur
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+(paren
+id|cur
+op_assign
+id|strchr
+c_func
+(paren
+id|cur
+comma
+l_char|&squot; &squot;
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -26193,6 +26271,7 @@ l_char|&squot;,&squot;
 op_ne
 l_int|NULL
 )paren
+macro_line|#endif
 op_increment
 id|cur
 suffix:semicolon
@@ -26813,6 +26892,25 @@ op_assign
 id|ncr53c8xx_proc_info
 suffix:semicolon
 macro_line|# endif
+macro_line|#endif
+macro_line|#if&t;defined(SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT) &amp;&amp; defined(MODULE)
+r_if
+c_cond
+(paren
+id|ncr53c8xx
+)paren
+id|ncr53c8xx_setup
+c_func
+(paren
+id|ncr53c8xx
+comma
+(paren
+r_int
+op_star
+)paren
+l_int|0
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* &n;&t;** Detect all 53c8xx hosts and then attach them.&n;&t;**&n;&t;** If we are using NVRAM, once all hosts are detected, we need to check&n;&t;** any NVRAM for boot order in case detect and boot order differ and&n;&t;** attach them using the order in the NVRAM.&n;&t;**&n;&t;** If no NVRAM is found or data appears invalid attach boards in the &n;&t;** the order they are detected.&n;&t;*/
 r_if
@@ -27584,6 +27682,122 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef __powerpc__
+multiline_comment|/*&n;&t; *&t;Severall fix-up for power/pc.&n;&t; *&t;Should not be performed by the driver.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|command
+op_amp
+(paren
+id|PCI_COMMAND_MASTER
+op_or
+id|PCI_COMMAND_IO
+op_or
+id|PCI_COMMAND_MEMORY
+)paren
+)paren
+op_ne
+(paren
+id|PCI_COMMAND_MASTER
+op_or
+id|PCI_COMMAND_IO
+op_or
+id|PCI_COMMAND_MEMORY
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx : setting PCI master/io/command bit&bslash;n&quot;
+)paren
+suffix:semicolon
+id|command
+op_or_assign
+id|PCI_COMMAND_MASTER
+op_or
+id|PCI_COMMAND_IO
+op_or
+id|PCI_COMMAND_MEMORY
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_COMMAND
+comma
+id|command
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|io_port
+op_ge
+l_int|0x10000000
+)paren
+(brace
+id|io_port
+op_assign
+(paren
+id|io_port
+op_amp
+l_int|0x00FFFFFF
+)paren
+op_or
+l_int|0x01000000
+suffix:semicolon
+id|pcibios_write_config_dword
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+id|io_port
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|base
+op_ge
+l_int|0x10000000
+)paren
+(brace
+id|base
+op_assign
+(paren
+id|base
+op_amp
+l_int|0x00FFFFFF
+)paren
+op_or
+l_int|0x01000000
+suffix:semicolon
+id|pcibios_write_config_dword
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_BASE_ADDRESS_1
+comma
+id|base
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * Check availability of IO space, memory space and master capability.&n;&t; */
 r_if
 c_cond
@@ -28507,7 +28721,7 @@ r_return
 id|sts
 suffix:semicolon
 )brace
-multiline_comment|/*&n;**   Linux entry point of the interrupt handler&n;*/
+multiline_comment|/*&n;**   Linux entry point of the interrupt handler.&n;**   Fort linux versions &gt; 1.3.70, we trust the kernel for &n;**   passing the internal host descriptor as &squot;dev_id&squot;.&n;**   Otherwise, we scan the host list and call the interrupt &n;**   routine for each host that uses this IRQ.&n;*/
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,70)
 DECL|function|ncr53c8xx_intr
 r_static
@@ -28527,7 +28741,51 @@ id|pt_regs
 op_star
 id|regs
 )paren
+(brace
+macro_line|#ifdef DEBUG_NCR53C8XX
+id|printk
+c_func
+(paren
+l_string|&quot;ncr53c8xx : interrupt received&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|DEBUG_FLAGS
+op_amp
+id|DEBUG_TINY
+)paren
+id|printf
+(paren
+l_string|&quot;[&quot;
+)paren
+suffix:semicolon
+id|ncr_exception
+c_func
+(paren
+(paren
+id|ncb_p
+)paren
+id|dev_id
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DEBUG_FLAGS
+op_amp
+id|DEBUG_TINY
+)paren
+id|printf
+(paren
+l_string|&quot;]&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 macro_line|#else
+DECL|function|ncr53c8xx_intr
 r_static
 r_void
 id|ncr53c8xx_intr
@@ -28541,7 +28799,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|Scsi_Host
@@ -28553,30 +28810,6 @@ id|host_data
 op_star
 id|host_data
 suffix:semicolon
-macro_line|#if 0
-id|u_long
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef DEBUG_NCR53C8XX
-id|printk
-c_func
-(paren
-l_string|&quot;ncr53c8xx : interrupt received&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -28612,25 +28845,6 @@ op_star
 )paren
 id|host-&gt;hostdata
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,70)
-macro_line|#   ifdef SCSI_NCR_SHARE_IRQ
-r_if
-c_cond
-(paren
-id|dev_id
-op_eq
-id|host_data-&gt;ncb
-)paren
-(brace
-macro_line|#else
-r_if
-c_cond
-(paren
-l_int|1
-)paren
-(brace
-macro_line|#   endif
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -28664,15 +28878,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if 0
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 macro_line|#endif
-)brace
 multiline_comment|/*&n;**   Linux entry point of the timer handler&n;*/
 DECL|function|ncr53c8xx_timeout
 r_static
@@ -28958,11 +29164,6 @@ op_star
 id|host
 )paren
 (brace
-r_struct
-id|host_data
-op_star
-id|host_data
-suffix:semicolon
 macro_line|#ifdef DEBUG_NCR53C8XX
 id|printk
 c_func
@@ -28971,47 +29172,21 @@ l_string|&quot;ncr53c8xx : release&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_for
-c_loop
+id|ncr_detach
+c_func
 (paren
-id|host
-op_assign
-id|first_host
-suffix:semicolon
-id|host
-suffix:semicolon
-id|host
-op_assign
-id|host-&gt;next
-)paren
-(brace
-r_if
-c_cond
 (paren
-id|host-&gt;hostt
-op_eq
-id|the_template
-)paren
-(brace
-id|host_data
-op_assign
 (paren
 r_struct
 id|host_data
 op_star
 )paren
 id|host-&gt;hostdata
-suffix:semicolon
-id|ncr_detach
-c_func
-(paren
-id|host_data-&gt;ncb
-comma
-id|host-&gt;irq
+)paren
+op_member_access_from_pointer
+id|ncb
 )paren
 suffix:semicolon
-)brace
-)brace
 r_return
 l_int|1
 suffix:semicolon

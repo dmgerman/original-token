@@ -3976,18 +3976,18 @@ suffix:semicolon
 multiline_comment|/*&n; * The way we support synthetic files &gt; 4K&n; * - without storing their contents in some buffer and&n; * - without walking through the entire synthetic file until we reach the&n; *   position of the requested data&n; * is to cleverly encode the current position in the file&squot;s f_pos field.&n; * There is no requirement that a read() call which returns `count&squot; bytes&n; * of data increases f_pos by exactly `count&squot;.&n; *&n; * This idea is Linus&squot; one. Bruno implemented it.&n; */
 multiline_comment|/*&n; * For the /proc/&lt;pid&gt;/maps file, we use fixed length records, each containing&n; * a single line.&n; */
 DECL|macro|MAPS_LINE_LENGTH
-mdefine_line|#define MAPS_LINE_LENGTH&t;1024
+mdefine_line|#define MAPS_LINE_LENGTH&t;4096
 DECL|macro|MAPS_LINE_SHIFT
-mdefine_line|#define MAPS_LINE_SHIFT&t;&t;10
+mdefine_line|#define MAPS_LINE_SHIFT&t;&t;12
 multiline_comment|/*&n; * f_pos = (number of the vma in the task-&gt;mm-&gt;mmap list) * MAPS_LINE_LENGTH&n; *         + (index into the line)&n; */
 multiline_comment|/* for systems with sizeof(void*) == 4: */
 DECL|macro|MAPS_LINE_FORMAT4
-mdefine_line|#define MAPS_LINE_FORMAT4&t;  &quot;%08lx-%08lx %s %08lx %s %lu&bslash;n&quot;
+mdefine_line|#define MAPS_LINE_FORMAT4&t;  &quot;%08lx-%08lx %s %08lx %s %lu&quot;
 DECL|macro|MAPS_LINE_MAX4
 mdefine_line|#define MAPS_LINE_MAX4&t;49 /* sum of 8  1  8  1 4 1 8 1 5 1 10 1 */
 multiline_comment|/* for systems with sizeof(void*) == 8: */
 DECL|macro|MAPS_LINE_FORMAT8
-mdefine_line|#define MAPS_LINE_FORMAT8&t;  &quot;%016lx-%016lx %s %016lx %s %lu&bslash;n&quot;
+mdefine_line|#define MAPS_LINE_FORMAT8&t;  &quot;%016lx-%016lx %s %016lx %s %lu&quot;
 DECL|macro|MAPS_LINE_MAX8
 mdefine_line|#define MAPS_LINE_MAX8&t;73 /* sum of 16  1  16  1 4 1 16 1 5 1 10 1 */
 DECL|macro|MAPS_LINE_MAX
@@ -4043,6 +4043,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_char
+op_star
+id|buffer
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4070,6 +4074,18 @@ l_int|0
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|buffer
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
 suffix:semicolon
 multiline_comment|/* decode f_pos */
 id|lineno
@@ -4131,12 +4147,8 @@ suffix:semicolon
 (brace
 multiline_comment|/* produce the next line */
 r_char
+op_star
 id|line
-(braket
-id|MAPS_LINE_MAX
-op_plus
-l_int|1
-)braket
 suffix:semicolon
 r_char
 id|str
@@ -4158,6 +4170,24 @@ suffix:semicolon
 r_int
 r_int
 id|ino
+suffix:semicolon
+r_int
+id|maxlen
+op_assign
+(paren
+r_sizeof
+(paren
+r_void
+op_star
+)paren
+op_eq
+l_int|4
+)paren
+ques
+c_cond
+id|MAPS_LINE_MAX4
+suffix:colon
+id|MAPS_LINE_MAX8
 suffix:semicolon
 r_int
 id|len
@@ -4248,7 +4278,50 @@ id|ino
 op_assign
 id|map-&gt;vm_dentry-&gt;d_inode-&gt;i_ino
 suffix:semicolon
+id|line
+op_assign
+id|d_path
+c_func
+(paren
+id|map-&gt;vm_dentry
+comma
+id|buffer
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|buffer
+(braket
+id|PAGE_SIZE
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;n&squot;
+suffix:semicolon
+id|line
+op_sub_assign
+id|maxlen
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|line
+OL
+id|buffer
+)paren
+(brace
+id|line
+op_assign
+id|buffer
+suffix:semicolon
 )brace
+)brace
+r_else
+id|line
+op_assign
+id|buffer
+suffix:semicolon
 id|len
 op_assign
 id|sprintf
@@ -4285,6 +4358,56 @@ id|dev
 comma
 id|ino
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|map-&gt;vm_dentry
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|len
+suffix:semicolon
+id|i
+OL
+id|maxlen
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|line
+(braket
+id|i
+)braket
+op_assign
+l_char|&squot; &squot;
+suffix:semicolon
+)brace
+id|len
+op_assign
+id|buffer
+op_plus
+id|PAGE_SIZE
+op_minus
+id|line
+suffix:semicolon
+)brace
+r_else
+id|line
+(braket
+id|len
+op_increment
+)braket
+op_assign
+l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 r_if
 c_cond
@@ -4402,6 +4525,16 @@ id|MAPS_LINE_SHIFT
 )paren
 op_plus
 id|column
+suffix:semicolon
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|buffer
+)paren
 suffix:semicolon
 r_return
 id|destptr

@@ -16,7 +16,7 @@ mdefine_line|#define file_operation_handle file_operations
 DECL|macro|connect_wrapper
 mdefine_line|#define connect_wrapper(x) 0
 DECL|macro|current_got_fatal_signal
-mdefine_line|#define current_got_fatal_signal() (current-&gt;signal &amp; ~current-&gt;blocked)
+mdefine_line|#define current_got_fatal_signal() (signal_pending(current))
 DECL|macro|current_set_timeout
 mdefine_line|#define current_set_timeout(val) current-&gt;timeout = val
 DECL|macro|module_interruptible_sleep_on
