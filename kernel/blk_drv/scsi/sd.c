@@ -2709,6 +2709,8 @@ id|i
 suffix:semicolon
 id|gdev-&gt;part
 (braket
+id|start
+op_plus
 id|i
 )braket
 dot
@@ -2718,6 +2720,8 @@ l_int|0
 suffix:semicolon
 id|gdev-&gt;part
 (braket
+id|start
+op_plus
 id|i
 )braket
 dot

@@ -1,5 +1,7 @@
 multiline_comment|/* protocols.c */
 multiline_comment|/* these headers are overkill, but until I clean up the socket header&n;   files, this is the best way. */
+multiline_comment|/* $Id: protocols.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
+multiline_comment|/* $Log: protocols.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

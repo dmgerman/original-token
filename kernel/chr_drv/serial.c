@@ -11,8 +11,12 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|WAKEUP_CHARS
 mdefine_line|#define WAKEUP_CHARS (3*TTY_BUF_SIZE/4)
+multiline_comment|/*&n; * Define this to get the AUTO_IRQ code..&n; */
 DECL|macro|AUTO_IRQ
-mdefine_line|#define AUTO_IRQ
+macro_line|#undef AUTO_IRQ
+multiline_comment|/*&n; * Define this to get support for the nonstandard&n; * serial lines.&n; */
+DECL|macro|NONSTANDARD_PORTS
+macro_line|#undef NONSTANDARD_PORTS
 multiline_comment|/*&n; * rs_event&t;&t;- Bitfield of serial lines that events pending&n; * &t;&t;&t;&t;to be processed at the next clock tick.&n; * rs_write_active&t;- Bitfield of serial lines that are actively&n; * &t;&t;&t;&t;transmitting (and therefore have a&n; * &t;&t;&t;&t;write timeout pending, in case the&n; * &t;&t;&t;&t;THRE interrupt gets lost.)&n; * IRQ_ISR[]&t;&t;- Array to store the head of the ISR linked list&n; * &t;&t;&t;&t;for each IRQ.&n; */
 DECL|variable|rs_event
 r_static
@@ -41,18 +45,6 @@ suffix:semicolon
 r_static
 r_void
 id|UART_ISR_proc
-c_func
-(paren
-id|async_ISR
-id|ISR
-comma
-r_int
-id|line
-)paren
-suffix:semicolon
-r_static
-r_void
-id|FourPort_ISR_proc
 c_func
 (paren
 id|async_ISR
@@ -126,6 +118,19 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#ifdef NONSTANDARD_PORTS
+r_static
+r_void
+id|FourPort_ISR_proc
+c_func
+(paren
+id|async_ISR
+id|ISR
+comma
+r_int
+id|line
+)paren
+suffix:semicolon
 DECL|variable|FourPort1_ISR
 r_struct
 id|struct_ISR
@@ -190,6 +195,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * This assumes you have a 1.8432 MHz clock for your UART.&n; *&n; * It&squot;d be nice if someone built a serial card with a 24.576 MHz&n; * clock, since the 16550A is capable of handling a top speed of 1.5&n; * megabits/second; but this requires the faster clock.&n; */
 DECL|macro|BASE_BAUD
 mdefine_line|#define BASE_BAUD ( 1843200 / 16 ) 
@@ -249,6 +255,7 @@ l_int|0
 comma
 )brace
 comma
+macro_line|#ifdef NONSTANDARD_PORTS&t;
 (brace
 id|BASE_BAUD
 comma
@@ -363,6 +370,7 @@ comma
 l_int|0
 )brace
 comma
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|NR_PORTS
@@ -1244,6 +1252,7 @@ id|UART_IIR_NO_INT
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef NONSTANDARD_PORTS
 multiline_comment|/*&n; * Here is the fourport ISR&n; */
 DECL|function|FourPort_ISR_proc
 r_static
@@ -1332,6 +1341,7 @@ id|ivec
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * This is the serial driver&squot;s generic interrupt routine&n; */
 DECL|function|rs_interrupt
 r_static
@@ -1529,7 +1539,7 @@ id|info-&gt;event
 )paren
 )paren
 (brace
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -5105,6 +5115,11 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 r_return
 id|kmem_start

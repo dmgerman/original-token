@@ -1579,7 +1579,7 @@ op_le
 id|UN_PATH_OFFSET
 op_logical_or
 id|sockaddr_len
-op_ge
+OG
 r_sizeof
 (paren
 r_struct
@@ -1842,7 +1842,7 @@ op_le
 id|UN_PATH_OFFSET
 op_logical_or
 id|sockaddr_len
-op_ge
+OG
 r_sizeof
 (paren
 r_struct

@@ -3,6 +3,8 @@ multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program i
 multiline_comment|/* The bsd386 version was used as an example in order to write this&n;   code */
 multiline_comment|/*&n;&t;The driver was significantly modified by Bob Harris to allow the&n;&t;software to operate with either the wd8003 or wd8013 boards.  The&n;&t;wd8013 boards will operate using full memory on board (as specified&n;&t;by the user in Space.c) and the 16 bit wide interface.  The driver&n;&t;will autodetect which board it is using on boot (i.e. &quot;using 16 bit I/F&quot;).&n;&t;In addition, the interrupts structure was significantly modified to &n;&t;respond to all the chips interrupts and to keep track of statistics.&n;&t;The statistics are not currently used.  Debug messages can be toggled&n;&t;by setting the wd_debug variable to a non-zero number.   The driver &n;&t;can detect an open or shorted cable - the wd8013 board functions after&n;&t;the problem is corrected, but the wd8003 board does not always recover.&n;&t;The driver is gradually being migrated toward the National Semiconductor&n;&t;recommendations.  Constructive comments or suggestions can be sent to:&n;&n;&t;&t;Bob Harris, rth@sparta.com&n;&t;&t;7926 Jones Branch Drive, Suite 900&n;&t;&t;McLean, Va. 22102&n;*/
 multiline_comment|/* Note:  My driver was full of bugs.  Basically if it works, credit&n;   Bob Harris.  If it&squot;s broken blame me.  -RAB */
+multiline_comment|/* $Id: we.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
+multiline_comment|/* $Log: we.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and Log&n; * */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -88,6 +90,15 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Empties tx bit bucket */
+r_static
+r_void
+id|wd_trs
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 r_static
 r_int
 DECL|function|max
@@ -619,6 +630,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+id|wd_trs
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|skb-&gt;arp
 )paren
@@ -784,7 +815,7 @@ c_cond
 id|skb-&gt;free
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -1956,6 +1987,11 @@ suffix:semicolon
 r_do
 (brace
 multiline_comment|/* find out who called */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Check for overrunning receive buffer first */
 r_if
 c_cond
@@ -2360,6 +2396,11 @@ id|count
 )paren
 suffix:semicolon
 )brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop

@@ -296,7 +296,7 @@ l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 3f&bslash;n&quot;
 l_string|&quot;2:&bslash;tmovl $1,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;jl 3f&bslash;n&bslash;t&quot;
+l_string|&quot;jb 3f&bslash;n&bslash;t&quot;
 l_string|&quot;negl %%eax&bslash;n&quot;
 l_string|&quot;3:&quot;
 suffix:colon
@@ -368,7 +368,7 @@ l_string|&quot;jne 1b&bslash;n&quot;
 l_string|&quot;2:&bslash;txorl %%eax,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;jmp 4f&bslash;n&quot;
 l_string|&quot;3:&bslash;tmovl $1,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;jl 4f&bslash;n&bslash;t&quot;
+l_string|&quot;jb 4f&bslash;n&bslash;t&quot;
 l_string|&quot;negl %%eax&bslash;n&quot;
 l_string|&quot;4:&quot;
 suffix:colon
@@ -1281,7 +1281,7 @@ l_string|&quot;repe&bslash;n&bslash;t&quot;
 l_string|&quot;cmpsb&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
 l_string|&quot;movl $1,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;jl 1f&bslash;n&bslash;t&quot;
+l_string|&quot;jb 1f&bslash;n&bslash;t&quot;
 l_string|&quot;negl %%eax&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon

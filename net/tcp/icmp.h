@@ -1,4 +1,6 @@
 multiline_comment|/* Internet Control Message Protocol (ICMP) header file */
+multiline_comment|/* $Id: icmp.h,v 0.8.4.1 1992/11/10 00:17:18 bir7 Exp $ */
+multiline_comment|/* $Log: icmp.h,v $&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 DECL|macro|ICMP_ECHOREPLY
 mdefine_line|#define ICMP_ECHOREPLY&t;&t;0
 DECL|macro|ICMP_DEST_UNREACH

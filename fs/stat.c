@@ -29,7 +29,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: using old stat() call. Recompile your binary.&bslash;n&quot;
+l_string|&quot;Warning: %s using old stat() call. Recompile your binary.&bslash;n&quot;
+comma
+id|current-&gt;comm
 )paren
 suffix:semicolon
 id|verify_area

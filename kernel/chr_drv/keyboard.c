@@ -563,7 +563,7 @@ r_int
 r_int
 id|new_head
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -615,7 +615,7 @@ id|qp-&gt;head
 op_assign
 id|new_head
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -657,7 +657,7 @@ suffix:semicolon
 r_char
 id|ch
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -720,7 +720,7 @@ op_assign
 id|new_head
 suffix:semicolon
 )brace
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp

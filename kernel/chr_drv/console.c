@@ -3924,7 +3924,7 @@ r_int
 r_int
 id|currcons
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp

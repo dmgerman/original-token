@@ -31,7 +31,7 @@ id|tty
 )paren
 r_return
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -46,7 +46,7 @@ id|tty-&gt;link
 )paren
 r_return
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -185,7 +185,7 @@ c_func
 id|to
 )paren
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -261,7 +261,7 @@ id|tty-&gt;link-&gt;close
 op_assign
 id|pty_close
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp

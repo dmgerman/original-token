@@ -133,7 +133,7 @@ c_func
 id|i
 )paren
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -455,7 +455,7 @@ c_cond
 (paren
 id|log_page
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp

@@ -33,6 +33,8 @@ suffix:semicolon
 multiline_comment|/* type of dst correction */
 )brace
 suffix:semicolon
+DECL|macro|NFDBITS
+mdefine_line|#define NFDBITS&t;&t;&t;__NFDBITS
 DECL|macro|FD_SETSIZE
 mdefine_line|#define FD_SETSIZE&t;&t;__FD_SETSIZE
 DECL|macro|FD_SET

@@ -55,6 +55,8 @@ DECL|macro|TASK_ZOMBIE
 mdefine_line|#define TASK_ZOMBIE&t;&t;3
 DECL|macro|TASK_STOPPED
 mdefine_line|#define TASK_STOPPED&t;&t;4
+DECL|macro|TASK_SWAPPING
+mdefine_line|#define TASK_SWAPPING&t;&t;5
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -847,11 +849,12 @@ id|p
 suffix:semicolon
 r_extern
 r_void
-id|wake_one_task
+id|wake_up_interruptible
 c_func
 (paren
 r_struct
-id|task_struct
+id|wait_queue
+op_star
 op_star
 id|p
 )paren

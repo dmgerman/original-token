@@ -157,7 +157,7 @@ id|mouse.ready
 op_assign
 l_int|1
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp

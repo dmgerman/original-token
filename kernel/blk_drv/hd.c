@@ -573,9 +573,10 @@ r_int
 r_char
 id|status
 op_assign
-id|controller_busy
+id|inb_p
 c_func
 (paren
+id|HD_STATUS
 )paren
 suffix:semicolon
 r_if
@@ -586,7 +587,7 @@ op_amp
 id|BUSY_STAT
 )paren
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -3292,6 +3293,8 @@ id|i
 suffix:semicolon
 id|gdev-&gt;part
 (braket
+id|start
+op_plus
 id|i
 )braket
 dot
@@ -3301,6 +3304,8 @@ l_int|0
 suffix:semicolon
 id|gdev-&gt;part
 (braket
+id|start
+op_plus
 id|i
 )braket
 dot

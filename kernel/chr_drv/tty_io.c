@@ -1358,7 +1358,7 @@ op_amp
 id|tty-&gt;secondary
 )paren
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -1381,7 +1381,7 @@ id|TTY_BUF_SIZE
 op_div
 l_int|2
 )paren
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -2055,7 +2055,7 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|wake_up
+id|wake_up_interruptible
 c_func
 (paren
 op_amp
@@ -2505,10 +2505,10 @@ l_int|0
 op_logical_or
 (paren
 id|channel
-op_plus
-l_int|1
 op_eq
 id|fg_console
+op_plus
+l_int|1
 )paren
 )paren
 )paren

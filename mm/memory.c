@@ -53,6 +53,8 @@ id|mem_map
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|macro|CODE_SPACE
+mdefine_line|#define CODE_SPACE(addr,p) ((addr) &lt; (p)-&gt;end_code)
 multiline_comment|/*&n; * oom() prints a message (so that the user knows why the process died),&n; * and gives the process an untrappable SIGSEGV.&n; */
 DECL|function|oom
 r_void
@@ -1612,7 +1614,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function puts a page in memory at the wanted address.&n; * It returns the physical address of the page gotten, 0 if&n; * out of memory (either when trying to access page-table or&n; * page.)&n; */
+multiline_comment|/*&n; * This function puts a page in memory at the wanted address.&n; * It returns the physical address of the page gotten, 0 if&n; * out of memory (either when trying to access page-table or&n; * page.)&n; * if wp = 1 the page will be write protected&n; */
 DECL|function|put_page
 r_static
 r_int
@@ -1632,6 +1634,9 @@ comma
 r_int
 r_int
 id|address
+comma
+r_int
+id|wp
 )paren
 (brace
 r_int
@@ -1833,7 +1838,14 @@ id|page
 op_or
 id|PAGE_ACCESSED
 op_or
-l_int|7
+l_int|5
+op_or
+(paren
+op_logical_neg
+id|wp
+op_lshift
+l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* no need for invalidate */
 r_return
@@ -2083,6 +2095,43 @@ id|new_page
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* check code space write */
+r_if
+c_cond
+(paren
+id|tsk
+op_eq
+id|current
+op_logical_and
+id|tsk-&gt;executable
+op_logical_and
+id|CODE_SPACE
+c_func
+(paren
+id|address
+comma
+id|current
+)paren
+)paren
+(brace
+multiline_comment|/* don&squot;t send SIGSEGV when in kernel or v86 mode */
+r_if
+c_cond
+(paren
+id|user_esp
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGSEGV
+comma
+id|tsk
+comma
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* Note that we still do the copy-on-write: if the process catches&n;&t;&t; * SIGSEGV we want things to work..&n;&t;&t; */
+)brace
 id|repeat
 suffix:colon
 id|pde
@@ -2539,6 +2588,8 @@ comma
 id|tmp
 comma
 id|address
+comma
+l_int|0
 )paren
 )paren
 id|free_page
@@ -2716,6 +2767,33 @@ id|MAP_PAGE_RESERVED
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* share them: write-protect */
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|from_page
+op_and_assign
+op_complement
+l_int|2
+suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+id|phys_addr
+op_rshift_assign
+id|PAGE_SHIFT
+suffix:semicolon
+id|mem_map
+(braket
+id|phys_addr
+)braket
+op_increment
+suffix:semicolon
 id|to
 op_assign
 op_star
@@ -2751,9 +2829,17 @@ c_cond
 op_logical_neg
 id|to
 )paren
+(brace
+id|mem_map
+(braket
+id|phys_addr
+)braket
+op_decrement
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 op_star
 (paren
 r_int
@@ -2806,18 +2892,6 @@ c_func
 l_string|&quot;try_to_share: to_page already exists&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* share them: write-protect */
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|from_page
-op_and_assign
-op_complement
-l_int|2
-suffix:semicolon
 op_star
 (paren
 r_int
@@ -2833,21 +2907,6 @@ r_int
 op_star
 )paren
 id|from_page
-suffix:semicolon
-id|invalidate
-c_func
-(paren
-)paren
-suffix:semicolon
-id|phys_addr
-op_rshift_assign
-id|PAGE_SHIFT
-suffix:semicolon
-id|mem_map
-(braket
-id|phys_addr
-)braket
-op_increment
 suffix:semicolon
 r_return
 l_int|1
@@ -3536,6 +3595,8 @@ comma
 id|BAD_PAGE
 comma
 id|address
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -3669,6 +3730,14 @@ comma
 id|page
 comma
 id|address
+comma
+id|CODE_SPACE
+c_func
+(paren
+id|address
+comma
+id|tsk
+)paren
 )paren
 )paren
 r_return

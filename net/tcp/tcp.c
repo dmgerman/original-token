@@ -1,5 +1,7 @@
 multiline_comment|/* tcp.c */
 multiline_comment|/*&n;     Copyright (C) 1992  Ross Biro&n;&n;     This program is free software; you can redistribute it and/or modify&n;     it under the terms of the GNU General Public License as published by&n;     the Free Software Foundation; either version 2, or (at your option)&n;     any later version.&n;&n;     This program is distributed in the hope that it will be useful,&n;     but WITHOUT ANY WARRANTY; without even the implied warranty of&n;     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;     GNU General Public License for more details.&n;&n;     You should have received a copy of the GNU General Public License&n;     along with this program; if not, write to the Free Software&n;     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;     The Author may be reached as bir7@leland.stanford.edu or&n;     C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n; */
+multiline_comment|/* $Id: tcp.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
+multiline_comment|/* $Log: tcp.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -3036,7 +3038,7 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -4495,7 +4497,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -4530,7 +4532,7 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* just ignore the syn.  It will get retransmitted. */
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -4887,7 +4889,7 @@ id|release_sock
 id|newsk
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -4991,7 +4993,7 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -5406,7 +5408,7 @@ id|skb2
 op_assign
 id|skb-&gt;next
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -6253,7 +6255,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|oskb
 comma
@@ -6635,7 +6637,7 @@ comma
 id|saddr
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 c_func
 (paren
 id|skb
@@ -6681,7 +6683,7 @@ comma
 id|saddr
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -7913,7 +7915,7 @@ id|newsk
 op_assign
 id|skb-&gt;sk
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -8910,7 +8912,7 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -8959,7 +8961,7 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9139,7 +9141,7 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9204,7 +9206,7 @@ id|sk-&gt;sleep
 )paren
 suffix:semicolon
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9253,7 +9255,7 @@ id|saddr
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9299,7 +9301,7 @@ id|sk-&gt;sleep
 )paren
 suffix:semicolon
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9372,7 +9374,7 @@ id|sk-&gt;sleep
 )paren
 suffix:semicolon
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9411,7 +9413,7 @@ id|saddr
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9450,7 +9452,7 @@ id|saddr
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9485,7 +9487,7 @@ id|len
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9561,7 +9563,7 @@ id|PRINTK
 l_string|&quot;packet received for closed,dead socket&bslash;n&quot;
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9612,7 +9614,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9639,7 +9641,7 @@ c_cond
 id|th-&gt;rst
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9679,7 +9681,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9733,7 +9735,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9773,7 +9775,7 @@ id|saddr
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9822,7 +9824,7 @@ id|sk-&gt;sleep
 )paren
 suffix:semicolon
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9841,7 +9843,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*      if (opt-&gt;security != 0 || opt-&gt;compartment != 0 )&n;&t;{&n;&t;  sk-&gt;err = ECONNRESET;&n;&t;  sk-&gt;state = TCP_CLOSE;&n;&t;  tcp_reset (daddr, saddr,  th, sk-&gt;prot, opt, dev);&n;&t;  if (!sk-&gt;dead)&n;&t;  {&n;&t;  wake_up (sk-&gt;sleep);&n;&t;  }&n;&t;  free_skb (skb, FREE_READ);&n;&t;  release_sock(sk);&n;&t;  return (0);&n;&t;} */
+multiline_comment|/*      if (opt-&gt;security != 0 || opt-&gt;compartment != 0 )&n;&t;{&n;&t;  sk-&gt;err = ECONNRESET;&n;&t;  sk-&gt;state = TCP_CLOSE;&n;&t;  tcp_reset (daddr, saddr,  th, sk-&gt;prot, opt, dev);&n;&t;  if (!sk-&gt;dead)&n;&t;  {&n;&t;  wake_up (sk-&gt;sleep);&n;&t;  }&n;&t;  kfree_skb (skb, FREE_READ);&n;&t;  release_sock(sk);&n;&t;  return (0);&n;&t;} */
 r_if
 c_cond
 (paren
@@ -9860,7 +9862,7 @@ op_assign
 id|TCP_SYN_RECV
 suffix:semicolon
 )brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9919,7 +9921,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -9946,7 +9948,7 @@ op_logical_neg
 id|th-&gt;syn
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -10024,7 +10026,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -10099,7 +10101,7 @@ id|saddr
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -10132,7 +10134,7 @@ comma
 id|len
 )paren
 )paren
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -10187,7 +10189,7 @@ id|saddr
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma
@@ -10221,7 +10223,7 @@ id|len
 )paren
 )paren
 (brace
-id|free_skb
+id|kfree_skb
 (paren
 id|skb
 comma

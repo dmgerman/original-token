@@ -1063,7 +1063,7 @@ l_int|NULL
 suffix:semicolon
 id|current-&gt;state
 op_assign
-id|TASK_UNINTERRUPTIBLE
+id|TASK_SWAPPING
 suffix:semicolon
 id|add_request
 c_func
