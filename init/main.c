@@ -542,6 +542,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|scsi_luns_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|sound_setup
 c_func
 (paren
@@ -955,6 +969,14 @@ macro_line|#ifdef CONFIG_INET
 l_string|&quot;ether=&quot;
 comma
 id|eth_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI
+(brace
+l_string|&quot;max_scsi_luns=&quot;
+comma
+id|scsi_luns_setup
 )brace
 comma
 macro_line|#endif

@@ -2454,6 +2454,23 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|slip_receive_room
+r_static
+r_int
+id|slip_receive_room
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+(brace
+r_return
+l_int|65536
+suffix:semicolon
+multiline_comment|/* We can handle an infinite amount of data. :-) */
+)brace
 multiline_comment|/*&n; * Handle the &squot;receiver data ready&squot; interrupt.&n; * This function is called by the &squot;tty_io&squot; module in the kernel when&n; * a block of SLIP data has been received, which can now be decapsulated&n; * and sent on to some IP layer for further processing.&n; */
 DECL|function|slip_receive_buf
 r_static
@@ -2530,6 +2547,8 @@ op_decrement
 r_if
 c_cond
 (paren
+id|fp
+op_logical_and
 op_star
 id|fp
 op_increment
@@ -3977,6 +3996,10 @@ suffix:semicolon
 id|sl_ldisc.receive_buf
 op_assign
 id|slip_receive_buf
+suffix:semicolon
+id|sl_ldisc.receive_room
+op_assign
+id|slip_receive_room
 suffix:semicolon
 id|sl_ldisc.write_wakeup
 op_assign

@@ -64,6 +64,10 @@ id|scsi_hosts
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
+id|ULTRASTOR_14F
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA152X
 id|AHA152X
 comma
@@ -103,10 +107,6 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_T128
 id|TRANTOR_T128
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
-id|ULTRASTOR_14F
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST

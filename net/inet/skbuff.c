@@ -1673,6 +1673,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* No idea about time */
+id|skb-&gt;localroute
+op_assign
+l_int|0
+suffix:semicolon
 id|net_memory
 op_add_assign
 id|size

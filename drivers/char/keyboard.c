@@ -1900,12 +1900,17 @@ r_void
 r_if
 c_cond
 (paren
+op_logical_neg
+id|tty
+op_logical_or
+(paren
 id|tty-&gt;termios
 op_logical_and
 id|I_IGNBRK
 c_func
 (paren
 id|tty
+)paren
 )paren
 )paren
 r_return

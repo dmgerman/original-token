@@ -3953,7 +3953,7 @@ id|SCpnt
 )paren
 (brace
 r_return
-id|SCSI_RESET_SNOOZE
+id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  The info routine in the WD7000 structure isn&squot;t per-adapter, so it can&squot;t&n; *  really return any useful information about an adapter.  Because of this,&n; *  I&squot;m no longer using it to return rev. level.&n; */

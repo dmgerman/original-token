@@ -1017,12 +1017,6 @@ comma
 id|bufflen
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;aha1740.c&quot;
-)paren
-suffix:semicolon
 )brace
 id|SCpnt-&gt;result
 op_assign
@@ -2331,7 +2325,7 @@ l_string|&quot;aha1740_reset called&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|SCSI_RESET_SNOOZE
+id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
 DECL|function|aha1740_biosparam

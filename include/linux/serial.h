@@ -213,6 +213,11 @@ DECL|member|event
 r_int
 id|event
 suffix:semicolon
+DECL|member|last_active
+r_int
+r_int
+id|last_active
+suffix:semicolon
 DECL|member|line
 r_int
 id|line

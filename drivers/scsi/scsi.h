@@ -510,21 +510,24 @@ mdefine_line|#define SCSI_ABORT_NOT_RUNNING 4
 multiline_comment|/* Something went wrong.  The low level driver will indicate the correct&n; error condition when it calls scsi_done, so the mid-level abort function&n; can simply wait until this comes through */
 DECL|macro|SCSI_ABORT_ERROR
 mdefine_line|#define SCSI_ABORT_ERROR 5
-multiline_comment|/* We do not know how to reset the bus, or we do not want to.  Bummer.&n;   Anyway, just wait a little more for the command in question, and hope that&n;   it eventually finishes */
+multiline_comment|/* We do not know how to reset the bus, or we do not want to.  Bummer.&n;   Anyway, just wait a little more for the command in question, and hope that&n;   it eventually finishes.  If it never finishes, the SCSI device could&n;   hang, so use this with caution. */
 DECL|macro|SCSI_RESET_SNOOZE
 mdefine_line|#define SCSI_RESET_SNOOZE 0
-multiline_comment|/* This means that we were able to reset the bus.  We have restarted all of&n;   the commands that should be restarted, and we should be able to continue&n;   on normally from here.  We do not expect any interrupts that will return&n;   DID_RESET to any of the other commands in the host_queue. */
+multiline_comment|/* We do not know how to reset the bus, or we do not want to.  Bummer.&n;   We have given up on this ever completing.  The mid-level code will&n;   request sense information to decide how to proceed from here. */
+DECL|macro|SCSI_RESET_PUNT
+mdefine_line|#define SCSI_RESET_PUNT 1
+multiline_comment|/* This means that we were able to reset the bus.  We have restarted all of&n;   the commands that should be restarted, and we should be able to continue&n;   on normally from here.  We do not expect any interrupts that will return&n;   DID_RESET to any of the other commands in the host_queue, and the mid-level&n;   code does not need to do anything special to keep the commands alive. */
 DECL|macro|SCSI_RESET_SUCCESS
-mdefine_line|#define SCSI_RESET_SUCCESS 1
+mdefine_line|#define SCSI_RESET_SUCCESS 2
 multiline_comment|/* We called for an reset of this bus, and we should get an interrupt &n;   when this succeeds.  Each command should get it&squot;s own status&n;   passed up to scsi_done, but this has not happened yet. */
 DECL|macro|SCSI_RESET_PENDING
-mdefine_line|#define SCSI_RESET_PENDING 2
+mdefine_line|#define SCSI_RESET_PENDING 3
 multiline_comment|/* We did a reset, but do not expect an interrupt to signal DID_RESET.&n;   This tells the upper level code to request the sense info, and this&n;   should keep the command alive. */
 DECL|macro|SCSI_RESET_WAKEUP
-mdefine_line|#define SCSI_RESET_WAKEUP 3
+mdefine_line|#define SCSI_RESET_WAKEUP 4
 multiline_comment|/* Something went wrong, and we do not know how to fix it. */
 DECL|macro|SCSI_RESET_ERROR
-mdefine_line|#define SCSI_RESET_ERROR 4
+mdefine_line|#define SCSI_RESET_ERROR 5
 r_void
 op_star
 id|scsi_malloc

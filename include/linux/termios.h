@@ -95,6 +95,8 @@ DECL|macro|TIOCGLCKTRMIOS
 mdefine_line|#define TIOCGLCKTRMIOS&t;0x5456
 DECL|macro|TIOCSLCKTRMIOS
 mdefine_line|#define TIOCSLCKTRMIOS&t;0x5457
+DECL|macro|TIOCSERGSTRUCT
+mdefine_line|#define TIOCSERGSTRUCT&t;0x5458 /* For debugging only */
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_DATA
 mdefine_line|#define TIOCPKT_DATA&t;&t; 0

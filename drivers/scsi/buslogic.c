@@ -5035,7 +5035,7 @@ l_string|&quot;buslogic_reset&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 r_return
-id|SCSI_RESET_SNOOZE
+id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
 DECL|function|buslogic_biosparam

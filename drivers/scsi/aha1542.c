@@ -1951,12 +1951,6 @@ comma
 id|bufflen
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;aha1542.c&quot;
-)paren
-suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -5563,8 +5557,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif
+multiline_comment|/* No active command at this time, so this means that each time we got&n;       some kind of response the last time through.  Tell the mid-level code&n;       to request sense information in order to decide what to do next. */
 r_return
-id|SCSI_RESET_PENDING
+id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_SD

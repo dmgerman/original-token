@@ -3408,7 +3408,7 @@ id|config.slot
 )paren
 (brace
 r_return
-id|SCSI_RESET_SNOOZE
+id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
 multiline_comment|/* Do not attempt a reset for the 24f */

@@ -24,6 +24,20 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* 0==ok, otherwise refer to errno codes */
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* for future use */
+DECL|member|sense_buffer
+r_int
+r_char
+id|sense_buffer
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* used only by reads */
 multiline_comment|/* command follows then data for command */
 )brace
 suffix:semicolon

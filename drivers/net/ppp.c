@@ -576,6 +576,17 @@ op_star
 suffix:semicolon
 macro_line|#ifdef NEW_TTY_DRIVERS
 r_static
+r_int
+id|ppp_receive_room
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+r_static
 r_void
 id|ppp_receive_buf
 c_func
@@ -1277,6 +1288,10 @@ macro_line|#ifdef NEW_TTY_DRIVERS
 id|ppp_ldisc.magic
 op_assign
 id|TTY_LDISC_MAGIC
+suffix:semicolon
+id|ppp_ldisc.receive_room
+op_assign
+id|ppp_receive_room
 suffix:semicolon
 id|ppp_ldisc.receive_buf
 op_assign
@@ -3781,6 +3796,23 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
+DECL|function|ppp_receive_room
+r_static
+r_int
+id|ppp_receive_room
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+(brace
+r_return
+l_int|65536
+suffix:semicolon
+multiline_comment|/* We can handle an infinite amount of data. :-) */
+)brace
 DECL|function|ppp_receive_buf
 r_static
 r_void

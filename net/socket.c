@@ -4884,6 +4884,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET
 multiline_comment|/* Initialize the DEV module. */
 id|dev_init
 c_func
@@ -4900,5 +4901,6 @@ id|routine
 op_assign
 id|net_bh
 suffix:semicolon
+macro_line|#endif
 )brace
 eof
