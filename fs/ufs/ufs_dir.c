@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &quot;ufs_swab.h&quot;
 multiline_comment|/*&n; * This is blatantly stolen from ext2fs&n; */
@@ -64,11 +64,9 @@ r_int
 id|de_reclen
 suffix:semicolon
 id|__u32
-id|s_flags
-comma
-id|bytesex
+id|flags
 suffix:semicolon
-multiline_comment|/* Isn&squot;t that already done but the upper layer??? */
+multiline_comment|/* Isn&squot;t that already done in the upper layer???&n;         * the VFS layer really needs some explicit documentation!&n;         */
 r_if
 c_cond
 (paren
@@ -90,20 +88,14 @@ id|sb
 op_assign
 id|inode-&gt;i_sb
 suffix:semicolon
-id|s_flags
+id|flags
 op_assign
 id|sb-&gt;u.ufs_sb.s_flags
-suffix:semicolon
-id|bytesex
-op_assign
-id|s_flags
-op_amp
-id|UFS_BYTESEX
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|s_flags
+id|flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -351,7 +343,11 @@ l_int|0
 )paren
 op_logical_or
 (paren
-id|de-&gt;d_namlen
+id|NAMLEN
+c_func
+(paren
+id|de
+)paren
 op_eq
 l_int|0
 )paren
@@ -382,7 +378,7 @@ r_return
 id|stored
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if 0 /* XXX */
 r_if
 c_cond
 (paren
@@ -452,7 +448,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s_flags
+id|flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -481,10 +477,10 @@ id|dirent
 comma
 id|de-&gt;d_name
 comma
-id|SWAB16
+id|NAMLEN
 c_func
 (paren
-id|de-&gt;d_namlen
+id|de
 )paren
 comma
 id|filp-&gt;f_pos

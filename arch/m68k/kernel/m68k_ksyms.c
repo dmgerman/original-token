@@ -57,13 +57,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* platform dependent support */
-DECL|variable|memcmp
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memcmp
-)paren
-suffix:semicolon
 DECL|variable|m68k_machtype
 id|EXPORT_SYMBOL
 c_func
@@ -92,13 +85,6 @@ c_func
 id|cache_push
 )paren
 suffix:semicolon
-DECL|variable|cache_push_v
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|cache_push_v
-)paren
-suffix:semicolon
 DECL|variable|cache_clear
 id|EXPORT_SYMBOL
 c_func
@@ -125,6 +111,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|mm_end_of_chunk
+)paren
+suffix:semicolon
+DECL|variable|kernel_map
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_map
 )paren
 suffix:semicolon
 DECL|variable|m68k_debug_device
@@ -176,11 +169,11 @@ c_func
 id|local_irq_count
 )paren
 suffix:semicolon
-DECL|variable|__m68k_bh_counter
+DECL|variable|local_bh_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__m68k_bh_counter
+id|local_bh_count
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */
@@ -211,6 +204,13 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|memset
+)paren
+suffix:semicolon
+DECL|variable|memcmp
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memcmp
 )paren
 suffix:semicolon
 DECL|variable|__down_failed

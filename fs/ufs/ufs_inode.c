@@ -1,4 +1,8 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_inode.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support on 19970406&n; * by Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_inode.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support on 19970406&n; * by Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
+DECL|macro|DEBUG_UFS_INODE
+macro_line|#undef DEBUG_UFS_INODE
+multiline_comment|/*#define DEBUG_UFS_INODE 1*/
+multiline_comment|/* Uncomment the line above when hacking ufs inode code */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -43,62 +47,62 @@ c_func
 l_string|&quot;  db &lt;0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x&quot;
 l_string|&quot; 0x%x 0x%x 0x%x 0x%x&gt;&bslash;n&quot;
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|0
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|1
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|2
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|3
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|4
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|5
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|6
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|7
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|8
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|9
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|10
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 l_int|11
 )braket
@@ -111,17 +115,17 @@ l_string|&quot;  gen 0x%8.8x ib &lt;0x%x 0x%x 0x%x&gt;&bslash;n&quot;
 comma
 id|inode-&gt;u.ufs_i.i_gen
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 id|UFS_IND_BLOCK
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 id|UFS_DIND_BLOCK
 )braket
 comma
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 id|UFS_TIND_BLOCK
 )braket
@@ -129,7 +133,7 @@ id|UFS_TIND_BLOCK
 suffix:semicolon
 )brace
 DECL|macro|inode_bmap
-mdefine_line|#define inode_bmap(inode, nr) ((inode)-&gt;u.ufs_i.i_data[(nr)])
+mdefine_line|#define inode_bmap(inode, nr) ((inode)-&gt;u.ufs_i.i_u1.i_data[(nr)])
 DECL|function|block_bmap
 r_static
 r_inline
@@ -157,11 +161,9 @@ r_int
 id|tmp
 suffix:semicolon
 id|__u32
-id|bytesex
+id|flags
 op_assign
 id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
-op_amp
-id|UFS_BYTESEX
 suffix:semicolon
 multiline_comment|/* XXX Split in fsize big blocks (Can&squot;t bread 8Kb). */
 id|tmp
@@ -180,11 +182,13 @@ id|bread
 (paren
 id|inode-&gt;i_dev
 comma
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_blockbase
+op_plus
 id|block
 op_plus
 id|tmp
 comma
-id|inode-&gt;i_sb-&gt;u.ufs_sb.s_fsize
+id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
 suffix:semicolon
 r_if
@@ -361,6 +365,9 @@ OL
 id|UFS_NDADDR
 )paren
 r_return
+(paren
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_blockbase
+op_plus
 id|ufs_dbn
 (paren
 id|inode-&gt;i_sb
@@ -373,6 +380,7 @@ id|lbn
 )paren
 comma
 id|boff
+)paren
 )paren
 suffix:semicolon
 id|lbn
@@ -406,6 +414,9 @@ r_return
 l_int|0
 suffix:semicolon
 r_return
+(paren
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_blockbase
+op_plus
 id|ufs_dbn
 (paren
 id|inode-&gt;i_sb
@@ -420,6 +431,7 @@ id|lbn
 )paren
 comma
 id|boff
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -484,6 +496,9 @@ r_return
 l_int|0
 suffix:semicolon
 r_return
+(paren
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_blockbase
+op_plus
 id|ufs_dbn
 (paren
 id|inode-&gt;i_sb
@@ -504,6 +519,7 @@ l_int|1
 )paren
 comma
 id|boff
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -594,6 +610,9 @@ r_return
 l_int|0
 suffix:semicolon
 r_return
+(paren
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_blockbase
+op_plus
 id|ufs_dbn
 (paren
 id|inode-&gt;i_sb
@@ -614,6 +633,7 @@ l_int|1
 )paren
 comma
 id|boff
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -645,11 +665,9 @@ op_star
 id|bh
 suffix:semicolon
 id|__u32
-id|bytesex
+id|flags
 op_assign
 id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
-op_amp
-id|UFS_BYTESEX
 suffix:semicolon
 id|sb
 op_assign
@@ -668,7 +686,7 @@ id|inode
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_inode: bad inum %lu&quot;
+l_string|&quot;ufs_read_inode: bad inum %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -676,7 +694,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#ifdef DEBUG_UFS_INODE
 id|printk
 c_func
 (paren
@@ -709,6 +727,8 @@ c_func
 (paren
 id|inode-&gt;i_dev
 comma
+id|inode-&gt;i_sb-&gt;u.ufs_sb.s_blockbase
+op_plus
 id|ufs_cgimin
 c_func
 (paren
@@ -733,7 +753,7 @@ op_div
 id|sb-&gt;u.ufs_sb.s_fsfrag
 )paren
 comma
-id|BLOCK_SIZE
+id|sb-&gt;s_blocksize
 )paren
 suffix:semicolon
 r_if
@@ -746,7 +766,7 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_inode: can&squot;t read inode %lu from dev %d/%d&quot;
+l_string|&quot;ufs_read_inode: can&squot;t read inode %lu from dev %d/%d&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -936,16 +956,15 @@ multiline_comment|/*&n;&t; * Since Linux currently only has 16-bit uid_t and gid
 r_if
 c_cond
 (paren
-id|SWAB16
+id|UFS_UID
 c_func
 (paren
-id|ufsip-&gt;ui_suid
+id|ufsip
 )paren
-op_eq
+op_ge
 id|UFS_USEEFT
 )paren
 (brace
-multiline_comment|/* EFT */
 id|inode-&gt;i_uid
 op_assign
 l_int|0
@@ -955,10 +974,10 @@ c_func
 (paren
 l_string|&quot;ufs_read_inode: EFT uid %u ino %lu dev %u/%u, using %u&bslash;n&quot;
 comma
-id|SWAB32
+id|UFS_UID
 c_func
 (paren
-id|ufsip-&gt;ui_uid
+id|ufsip
 )paren
 comma
 id|inode-&gt;i_ino
@@ -983,26 +1002,25 @@ r_else
 (brace
 id|inode-&gt;i_uid
 op_assign
-id|SWAB16
+id|UFS_UID
 c_func
 (paren
-id|ufsip-&gt;ui_suid
+id|ufsip
 )paren
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|SWAB16
+id|UFS_GID
 c_func
 (paren
-id|ufsip-&gt;ui_sgid
+id|ufsip
 )paren
-op_eq
+op_ge
 id|UFS_USEEFT
 )paren
 (brace
-multiline_comment|/* EFT */
 id|inode-&gt;i_gid
 op_assign
 l_int|0
@@ -1012,10 +1030,10 @@ c_func
 (paren
 l_string|&quot;ufs_read_inode: EFT gid %u ino %lu dev %u/%u, using %u&bslash;n&quot;
 comma
-id|SWAB32
+id|UFS_GID
 c_func
 (paren
-id|ufsip-&gt;ui_gid
+id|ufsip
 )paren
 comma
 id|inode-&gt;i_ino
@@ -1040,10 +1058,10 @@ r_else
 (brace
 id|inode-&gt;i_gid
 op_assign
-id|SWAB16
+id|UFS_GID
 c_func
 (paren
-id|ufsip-&gt;ui_sgid
+id|ufsip
 )paren
 suffix:semicolon
 )brace
@@ -1272,6 +1290,12 @@ id|inode-&gt;i_mode
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_blocks
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -1287,7 +1311,7 @@ id|i
 op_increment
 )paren
 (brace
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 id|i
 )braket
@@ -1295,7 +1319,7 @@ op_assign
 id|SWAB32
 c_func
 (paren
-id|ufsip-&gt;ui_db
+id|ufsip-&gt;ui_u2.ui_addr.ui_db
 (braket
 id|i
 )braket
@@ -1317,7 +1341,7 @@ id|i
 op_increment
 )paren
 (brace
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_data
 (braket
 id|UFS_IND_BLOCK
 op_plus
@@ -1327,10 +1351,25 @@ op_assign
 id|SWAB32
 c_func
 (paren
-id|ufsip-&gt;ui_ib
+id|ufsip-&gt;ui_u2.ui_addr.ui_ib
 (braket
 id|i
 )braket
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+multiline_comment|/* fast symlink */
+(brace
+id|memcpy
+c_func
+(paren
+id|inode-&gt;u.ufs_i.i_u1.i_symlink
+comma
+id|ufsip-&gt;ui_u2.ui_symlink
+comma
+l_int|60
 )paren
 suffix:semicolon
 )brace
@@ -1366,11 +1405,10 @@ id|__u64
 op_star
 )paren
 op_amp
-id|ufsip-&gt;ui_db
+id|ufsip-&gt;ui_u2.ui_addr.ui_db
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* XXX - implement fast and slow symlinks */
 id|inode-&gt;u.ufs_i.i_flags
 op_assign
 id|SWAB32
@@ -1393,7 +1431,7 @@ op_assign
 id|SWAB32
 c_func
 (paren
-id|ufsip-&gt;ui_shadow
+id|ufsip-&gt;ui_u3.ui_sun.ui_shadow
 )paren
 suffix:semicolon
 multiline_comment|/* XXX */
@@ -1402,7 +1440,7 @@ op_assign
 id|SWAB32
 c_func
 (paren
-id|ufsip-&gt;ui_uid
+id|ufsip-&gt;ui_u3.ui_sun.ui_uid
 )paren
 suffix:semicolon
 id|inode-&gt;u.ufs_i.i_gid
@@ -1410,7 +1448,7 @@ op_assign
 id|SWAB32
 c_func
 (paren
-id|ufsip-&gt;ui_gid
+id|ufsip-&gt;ui_u3.ui_sun.ui_gid
 )paren
 suffix:semicolon
 id|inode-&gt;u.ufs_i.i_oeftflag
@@ -1418,7 +1456,7 @@ op_assign
 id|SWAB32
 c_func
 (paren
-id|ufsip-&gt;ui_oeftflag
+id|ufsip-&gt;ui_u3.ui_sun.ui_oeftflag
 )paren
 suffix:semicolon
 id|brelse

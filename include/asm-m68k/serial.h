@@ -37,6 +37,10 @@ DECL|macro|SER_MFC_III
 mdefine_line|#define SER_MFC_III&t;107&t;/* Amiga BSC Multiface Card III (MC68681) */
 DECL|macro|SER_WHIPPET
 mdefine_line|#define SER_WHIPPET&t;108&t;/* Amiga Hisoft Whippet PCMCIA (16c550B) */
+DECL|macro|SER_SCC_MVME
+mdefine_line|#define SER_SCC_MVME&t;109&t;/* MVME162/MVME172 ports */
+DECL|macro|SER_SCC_MAC
+mdefine_line|#define SER_SCC_MAC&t;110&t;/* Macintosh SCC channel */
 DECL|struct|serial_struct
 r_struct
 id|serial_struct
@@ -117,7 +121,7 @@ DECL|macro|ASYNC_CLOSING_WAIT_NONE
 mdefine_line|#define ASYNC_CLOSING_WAIT_NONE&t;65535
 multiline_comment|/* This function tables does the abstraction from the underlying&n; * hardware:&n; *&n; *   init(): Initialize the port as necessary, set RTS and DTR and&n; *      enable interrupts. It does not need to set the speed and other&n; *      parameters, because change_speed() is called, too.&n; *   deinit(): Stop and shutdown the port (e.g. disable interrupts, ...)&n; *   enab_tx_int(): Enable or disable the Tx Buffer Empty interrupt&n; *      independently from other interrupt sources. If the int is&n; *      enabled, the transmitter should also be restarted, i.e. if there&n; *      are any chars to be sent, they should be put into the Tx&n; *      register. The real en/disabling of the interrupt may be a no-op&n; *      if there is no way to do this or it is too complex. This Tx ints&n; *      are just disabled to save some interrupts if the transmitter is&n; *      stopped anyway. But the restarting must be implemented!&n; *   check_custom_divisor(): Check the given custom divisor for legality&n; *      and return 0 if OK, non-zero otherwise.&n; *   change_speed(): Set port speed, character size, number of stop&n; *      bits and parity from the termios structure. If the user wants&n; *      to set the speed with a custom divisor, he is required to&n; *      check the baud_base first!&n; *   throttle(): Set or clear the RTS line according to &squot;status&squot;.&n; *   set_break(): Set or clear the &squot;Send a Break&squot; flag.&n; *   get_serial_info(): Fill in the baud_base and custom_divisor&n; *      fields of a serial_struct. It may also modify other fields, if&n; *      needed.&n; *   get_modem_info(): Return the status of RTS, DTR, DCD, RI, DSR and CTS.&n; *   set_modem_info(): Set the status of RTS and DTR according to&n; *      &squot;new_dtr&squot; and &squot;new_rts&squot;, resp. 0 = clear, 1 = set, -1 = don&squot;t change&n; *   ioctl(): Process any port-specific ioctl&squot;s. This pointer may be&n; *      NULL, if the port has no own ioctl&squot;s.&n; *   stop_receive(): Turn off the Rx part of the port, so no more characters&n; *      will be received. This is called before shutting the port down.&n; *   trans_empty(): Return !=0 if there are no more characters still to be&n; *      sent out (Tx buffer register and FIFOs empty)&n; *   check_open(): Is called before the port is opened. The driver can check&n; *      if that&squot;s ok and return an error code, or keep track of the opening&n; *      even before init() is called. Use deinit() for matching closing of the&n; *      port.&n; *&n; */
 r_struct
-id|async_struct
+id|m68k_async_struct
 suffix:semicolon
 r_typedef
 r_struct
@@ -130,7 +134,7 @@ id|init
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 )paren
@@ -143,7 +147,7 @@ id|deinit
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -159,7 +163,7 @@ id|enab_tx_int
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -175,7 +179,7 @@ id|check_custom_divisor
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -194,7 +198,7 @@ id|change_speed
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 )paren
@@ -207,7 +211,7 @@ id|throttle
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -223,7 +227,7 @@ id|set_break
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -239,7 +243,7 @@ id|get_serial_info
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -258,7 +262,7 @@ id|get_modem_info
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 )paren
@@ -271,7 +275,7 @@ id|set_modem_info
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -300,7 +304,7 @@ op_star
 id|file
 comma
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -321,7 +325,7 @@ id|stop_receive
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 )paren
@@ -334,7 +338,7 @@ id|trans_empty
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 )paren
@@ -347,7 +351,7 @@ id|check_open
 )paren
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -366,7 +370,7 @@ DECL|typedef|SERIALSWITCH
 )brace
 id|SERIALSWITCH
 suffix:semicolon
-multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
+multiline_comment|/*&n; * Definitions for m68k_async_struct (and serial_struct) flags field&n; */
 DECL|macro|ASYNC_HUP_NOTIFY
 mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */
 DECL|macro|ASYNC_FOURPORT
@@ -475,52 +479,37 @@ macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
-multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
-DECL|struct|async_icount
+macro_line|#include &lt;linux/config.h&gt;&t;/* for Mac SCC extensions */
+macro_line|#ifdef CONFIG_MAC
+DECL|macro|NUM_ZSREGS
+mdefine_line|#define NUM_ZSREGS    16
+DECL|struct|mac_zschannel
 r_struct
-id|async_icount
+id|mac_zschannel
 (brace
-DECL|member|cts
-DECL|member|dsr
-DECL|member|rng
-DECL|member|dcd
-DECL|member|tx
-DECL|member|rx
-id|__u32
-id|cts
-comma
-id|dsr
-comma
-id|rng
-comma
-id|dcd
-comma
-id|tx
-comma
-id|rx
+DECL|member|control
+r_volatile
+r_int
+r_char
+op_star
+id|control
 suffix:semicolon
-DECL|member|frame
-DECL|member|parity
-DECL|member|overrun
-DECL|member|brk
-id|__u32
-id|frame
-comma
-id|parity
-comma
-id|overrun
-comma
-id|brk
-suffix:semicolon
-DECL|member|buf_overrun
-id|__u32
-id|buf_overrun
+DECL|member|data
+r_volatile
+r_int
+r_char
+op_star
+id|data
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|async_struct
 r_struct
-id|async_struct
+id|m68k_async_private
+suffix:semicolon
+macro_line|#endif
+DECL|struct|m68k_async_struct
+r_struct
+id|m68k_async_struct
 (brace
 DECL|member|magic
 r_int
@@ -669,11 +658,6 @@ r_struct
 id|tq_struct
 id|tqueue
 suffix:semicolon
-DECL|member|tqueue_hangup
-r_struct
-id|tq_struct
-id|tqueue_hangup
-suffix:semicolon
 DECL|member|normal_termios
 r_struct
 id|termios
@@ -710,14 +694,14 @@ suffix:semicolon
 multiline_comment|/* kernel counters for the 4 input interrupts */
 DECL|member|next_port
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|next_port
 suffix:semicolon
 multiline_comment|/* For the linked list */
 DECL|member|prev_port
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|prev_port
 suffix:semicolon
@@ -739,8 +723,115 @@ op_star
 id|sw
 suffix:semicolon
 multiline_comment|/* functions to manage this port */
+macro_line|#ifdef CONFIG_MAC
+DECL|member|private
+r_struct
+id|m68k_async_private
+op_star
+r_private
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAC
+DECL|struct|m68k_async_private
+r_struct
+id|m68k_async_private
+(brace
+DECL|member|zs_next
+r_struct
+id|m68k_async_info
+op_star
+id|zs_next
+suffix:semicolon
+multiline_comment|/* For IRQ servicing chain */
+DECL|member|zs_channel
+r_struct
+id|mac_zschannel
+op_star
+id|zs_channel
+suffix:semicolon
+multiline_comment|/* Channel registers */
+DECL|member|zs_chan_a
+r_struct
+id|mac_zschannel
+op_star
+id|zs_chan_a
+suffix:semicolon
+multiline_comment|/* A side registers */
+DECL|member|read_reg_zero
+r_int
+r_char
+id|read_reg_zero
+suffix:semicolon
+DECL|member|soft_carrier
+r_char
+id|soft_carrier
+suffix:semicolon
+multiline_comment|/* Use soft carrier on this */
+DECL|member|break_abort
+r_char
+id|break_abort
+suffix:semicolon
+multiline_comment|/* console, process brk/abrt */
+DECL|member|kgdb_channel
+r_char
+id|kgdb_channel
+suffix:semicolon
+multiline_comment|/* Kgdb running on this channel */
+DECL|member|is_cons
+r_char
+id|is_cons
+suffix:semicolon
+multiline_comment|/* Is this our console. */
+DECL|member|tx_active
+r_int
+r_char
+id|tx_active
+suffix:semicolon
+multiline_comment|/* character being xmitted */
+DECL|member|tx_stopped
+r_int
+r_char
+id|tx_stopped
+suffix:semicolon
+multiline_comment|/* output is suspended */
+multiline_comment|/* We need to know the current clock divisor&n;&t; * to read the bps rate the chip has currently&n;&t; * loaded.&n;&t; */
+DECL|member|clk_divisor
+r_int
+r_char
+id|clk_divisor
+suffix:semicolon
+multiline_comment|/* May be 1, 16, 32, or 64 */
+DECL|member|zs_baud
+r_int
+id|zs_baud
+suffix:semicolon
+multiline_comment|/* Current write register values */
+DECL|member|curregs
+r_int
+r_char
+id|curregs
+(braket
+id|NUM_ZSREGS
+)braket
+suffix:semicolon
+multiline_comment|/* Values we need to set next opportunity */
+DECL|member|pendregs
+r_int
+r_char
+id|pendregs
+(braket
+id|NUM_ZSREGS
+)braket
+suffix:semicolon
+DECL|member|change_needed
+r_char
+id|change_needed
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|macro|SERIAL_MAGIC
 mdefine_line|#define SERIAL_MAGIC 0x5301
 multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
@@ -775,7 +866,7 @@ id|line
 suffix:semicolon
 r_extern
 r_struct
-id|async_struct
+id|m68k_async_struct
 id|rs_table
 (braket
 )braket
@@ -793,7 +884,7 @@ id|rs_sched_event
 c_func
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -832,7 +923,7 @@ id|rs_receive_char
 c_func
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -899,14 +990,10 @@ suffix:semicolon
 id|info-&gt;icount.rx
 op_increment
 suffix:semicolon
-id|queue_task
+id|tty_flip_buffer_push
 c_func
 (paren
-op_amp
-id|tty-&gt;flip.tqueue
-comma
-op_amp
-id|tq_timer
+id|tty
 )paren
 suffix:semicolon
 )brace
@@ -918,7 +1005,7 @@ id|rs_get_tx_char
 c_func
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 )paren
@@ -1008,7 +1095,7 @@ id|rs_no_more_tx
 c_func
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 )paren
@@ -1031,7 +1118,7 @@ id|rs_dcd_changed
 c_func
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -1117,14 +1204,15 @@ l_string|&quot;scheduling hangup...&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|queue_task
+r_if
+c_cond
+(paren
+id|info-&gt;tty
+)paren
+id|tty_hangup
 c_func
 (paren
-op_amp
-id|info-&gt;tqueue_hangup
-comma
-op_amp
-id|tq_scheduler
+id|info-&gt;tty
 )paren
 suffix:semicolon
 )brace
@@ -1158,7 +1246,7 @@ id|rs_check_cts
 c_func
 (paren
 r_struct
-id|async_struct
+id|m68k_async_struct
 op_star
 id|info
 comma
@@ -1188,6 +1276,7 @@ id|ASYNC_CTS_FLOW
 op_logical_and
 id|info-&gt;tty
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1249,6 +1338,7 @@ c_func
 id|info-&gt;tty
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace

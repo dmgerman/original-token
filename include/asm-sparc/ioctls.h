@@ -133,6 +133,11 @@ DECL|macro|TIOCSCTTY
 mdefine_line|#define TIOCSCTTY&t;_IO(&squot;t&squot;, 132)
 DECL|macro|TIOCGSID
 mdefine_line|#define TIOCGSID&t;_IOR(&squot;t&squot;, 133, int)
+multiline_comment|/* Get minor device of a pty master&squot;s FD -- Solaris equiv is ISPTM */
+DECL|macro|TIOCGPTN
+mdefine_line|#define TIOCGPTN&t;_IOR(&squot;t&squot;, 134, unsigned int) /* Get Pty Number */
+DECL|macro|TIOCSPTLCK
+mdefine_line|#define TIOCSPTLCK&t;_IOW(&squot;t&squot;, 135, int) /* Lock/unlock PTY */
 multiline_comment|/* Little f */
 DECL|macro|FIOCLEX
 mdefine_line|#define FIOCLEX&t;&t;_IO(&squot;f&squot;, 1)

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs_i.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs_i.h,v 1.2 1996/05/03 04:02:25 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs_i.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs_i.h,v 1.2 1996/05/03 04:02:25 davem Exp $&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
 macro_line|#ifndef _LINUX_UFS_FS_I_H
 DECL|macro|_LINUX_UFS_FS_I_H
 mdefine_line|#define _LINUX_UFS_FS_I_H
@@ -6,12 +6,28 @@ DECL|struct|ufs_inode_info
 r_struct
 id|ufs_inode_info
 (brace
+r_union
+(brace
 DECL|member|i_data
 id|__u32
 id|i_data
 (braket
 l_int|15
 )braket
+suffix:semicolon
+DECL|member|i_symlink
+id|__u8
+id|i_symlink
+(braket
+l_int|4
+op_star
+l_int|15
+)braket
+suffix:semicolon
+multiline_comment|/* fast symlink */
+DECL|member|i_u1
+)brace
+id|i_u1
 suffix:semicolon
 DECL|member|i_size
 id|__u64

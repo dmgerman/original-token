@@ -298,6 +298,13 @@ multiline_comment|/* A3000 Magic Hard Rekick */
 id|AMIGAHW_DECLARE
 c_func
 (paren
+id|PCMCIA
+)paren
+suffix:semicolon
+multiline_comment|/* PCMCIA Slot */
+id|AMIGAHW_DECLARE
+c_func
+(paren
 id|ZORRO
 )paren
 suffix:semicolon

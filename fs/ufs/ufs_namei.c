@@ -1,9 +1,9 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; * Ported to 2.1.62 by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19971109&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; * Ported to 2.1.62 by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19971109&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;ufs_swab.h&quot;
-multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; * stolen from ext2fs&n; */
+multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; * stolen from ext2fs&n; * NOTE2: flags *is* used, through this is hidden by macros like SWAB16.&n; */
 DECL|function|ufs_match
 r_static
 r_int
@@ -24,7 +24,7 @@ op_star
 id|d
 comma
 id|__u32
-id|bytesex
+id|flags
 )paren
 (brace
 r_if
@@ -49,10 +49,10 @@ op_logical_neg
 id|len
 op_logical_and
 (paren
-id|SWAB16
+id|NAMLEN
 c_func
 (paren
-id|d-&gt;d_namlen
+id|d
 )paren
 op_eq
 l_int|1
@@ -84,10 +84,10 @@ c_cond
 (paren
 id|len
 op_ne
-id|SWAB16
+id|NAMLEN
 c_func
 (paren
-id|d-&gt;d_namlen
+id|d
 )paren
 )paren
 r_return
@@ -122,7 +122,6 @@ id|dentry
 )paren
 (brace
 multiline_comment|/* XXX - this is all fucked up! */
-multiline_comment|/* XXX - and it&squot;s been broken since linux has this new dentry interface:&n;   * allows reading of files, but screws the whole dcache, even outside&n;   * of the ufs partition, so that umount&squot;ing won&squot;t suffice to fix it --&n;   * reboot needed&n;   */
 r_int
 r_int
 r_int
@@ -140,6 +139,13 @@ id|ufs_direct
 op_star
 id|d
 suffix:semicolon
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
 r_const
 r_char
 op_star
@@ -153,7 +159,7 @@ op_assign
 id|dentry-&gt;d_name.len
 suffix:semicolon
 id|__u32
-id|bytesex
+id|flags
 suffix:semicolon
 r_struct
 id|inode
@@ -178,16 +184,14 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
-id|bytesex
+id|flags
 op_assign
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
-op_amp
-id|UFS_BYTESEX
+id|sb-&gt;u.ufs_sb.s_flags
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -231,7 +235,7 @@ id|UFS_ROOTINO
 )paren
 )paren
 (brace
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_xor_assign
 id|UFS_DEBUG
 suffix:semicolon
@@ -241,7 +245,7 @@ c_func
 l_string|&quot;UFS debugging %s&bslash;n&quot;
 comma
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -257,7 +261,7 @@ id|not_found
 suffix:semicolon
 multiline_comment|/*return(-ENOENT);*/
 )brace
-multiline_comment|/*&n;&t; * Touching /xyzzy.i in a filesystem toggles debugging for ufs_inode.c.&n;&t; */
+multiline_comment|/*&n;&t; * Touching /xyzzy.i in a filesystem toggles debugging for ufs_inode.c&n;&t; */
 r_if
 c_cond
 (paren
@@ -287,7 +291,7 @@ id|UFS_ROOTINO
 )paren
 )paren
 (brace
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_xor_assign
 id|UFS_DEBUG_INODE
 suffix:semicolon
@@ -297,7 +301,7 @@ c_func
 l_string|&quot;UFS inode debugging %s&bslash;n&quot;
 comma
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_amp
 id|UFS_DEBUG_INODE
 )paren
@@ -313,6 +317,7 @@ id|not_found
 suffix:semicolon
 multiline_comment|/*return(-ENOENT);*/
 )brace
+multiline_comment|/*&n;&t; * Touching /xyzzy.n in a filesystem toggles debugging for ufs_namei.c&n;&t; */
 r_if
 c_cond
 (paren
@@ -342,7 +347,7 @@ id|UFS_ROOTINO
 )paren
 )paren
 (brace
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_xor_assign
 id|UFS_DEBUG_NAMEI
 suffix:semicolon
@@ -352,7 +357,7 @@ c_func
 l_string|&quot;UFS namei debugging %s&bslash;n&quot;
 comma
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_amp
 id|UFS_DEBUG_NAMEI
 )paren
@@ -368,6 +373,7 @@ id|not_found
 suffix:semicolon
 multiline_comment|/*return(-ENOENT);*/
 )brace
+multiline_comment|/*&n;&t; * Touching /xyzzy.l in a filesystem toggles debugging for ufs_symlink.c&n;&t; */
 r_if
 c_cond
 (paren
@@ -397,7 +403,7 @@ id|UFS_ROOTINO
 )paren
 )paren
 (brace
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_xor_assign
 id|UFS_DEBUG_LINKS
 suffix:semicolon
@@ -407,7 +413,7 @@ c_func
 l_string|&quot;UFS symlink debugging %s&bslash;n&quot;
 comma
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_amp
 id|UFS_DEBUG_LINKS
 )paren
@@ -427,7 +433,7 @@ multiline_comment|/* Now for the real thing */
 r_if
 c_cond
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|flags
 op_amp
 (paren
 id|UFS_DEBUG
@@ -447,7 +453,6 @@ id|name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* XXX - do I want i_blocks in 512-blocks or 1024-blocks? */
 r_for
 c_loop
 (paren
@@ -457,11 +462,7 @@ l_int|0
 suffix:semicolon
 id|lfragno
 OL
-(paren
 id|dir-&gt;i_blocks
-)paren
-op_rshift
-l_int|1
 suffix:semicolon
 id|lfragno
 op_increment
@@ -477,12 +478,12 @@ comma
 id|lfragno
 )paren
 suffix:semicolon
+multiline_comment|/* ufs_bmap() reads the block (frag) size in s_blocksize */
 multiline_comment|/* XXX - ufs_bmap() call needs error checking */
-multiline_comment|/* XXX - s_blocksize is actually the UFS frag size */
 r_if
 c_cond
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -523,7 +524,7 @@ id|dir-&gt;i_dev
 comma
 id|fragno
 comma
-id|dir-&gt;i_sb-&gt;s_blocksize
+id|sb-&gt;s_blocksize
 )paren
 suffix:semicolon
 r_if
@@ -580,7 +581,7 @@ id|d-&gt;d_reclen
 )paren
 )paren
 op_le
-id|dir-&gt;i_sb-&gt;s_blocksize
+id|sb-&gt;s_blocksize
 )paren
 (brace
 multiline_comment|/* XXX - skip block if d_reclen or d_namlen is 0 */
@@ -594,7 +595,11 @@ l_int|0
 )paren
 op_logical_or
 (paren
-id|d-&gt;d_namlen
+id|NAMLEN
+c_func
+(paren
+id|d
+)paren
 op_eq
 l_int|0
 )paren
@@ -604,7 +609,7 @@ multiline_comment|/* no need to SWAB16(): test against 0 */
 r_if
 c_cond
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -624,7 +629,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -664,10 +669,10 @@ c_func
 id|d-&gt;d_reclen
 )paren
 comma
-id|SWAB16
+id|NAMLEN
 c_func
 (paren
-id|d-&gt;d_namlen
+id|d
 )paren
 comma
 id|d-&gt;d_name
@@ -678,10 +683,10 @@ r_if
 c_cond
 (paren
 (paren
-id|SWAB16
+id|NAMLEN
 c_func
 (paren
-id|d-&gt;d_namlen
+id|d
 )paren
 op_eq
 id|len
@@ -698,7 +703,7 @@ id|name
 comma
 id|d
 comma
-id|bytesex
+id|flags
 )paren
 )paren
 )paren
@@ -710,7 +715,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_sb
+id|sb
 comma
 id|SWAB32
 c_func
@@ -755,7 +760,7 @@ multiline_comment|/* XXX - bounds checking */
 r_if
 c_cond
 (paren
-id|dir-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|flags
 op_amp
 id|UFS_DEBUG
 )paren
@@ -772,10 +777,10 @@ id|len
 comma
 id|d-&gt;d_name
 comma
-id|SWAB16
+id|NAMLEN
 c_func
 (paren
-id|d-&gt;d_namlen
+id|d
 )paren
 )paren
 suffix:semicolon

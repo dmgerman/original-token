@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
+macro_line|#include &lt;asm/atari_stram.h&gt;
 r_extern
 r_void
 id|atari_microwire_cmd
@@ -15,6 +16,14 @@ c_func
 r_int
 id|cmd
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|atari_MFP_init_done
+suffix:semicolon
+r_extern
+r_int
+id|atari_SCC_init_done
 suffix:semicolon
 r_extern
 r_int
@@ -27,6 +36,13 @@ c_func
 id|atari_mch_cookie
 )paren
 suffix:semicolon
+DECL|variable|atari_mch_type
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|atari_mch_type
+)paren
+suffix:semicolon
 DECL|variable|atari_hw_present
 id|EXPORT_SYMBOL
 c_func
@@ -34,18 +50,18 @@ c_func
 id|atari_hw_present
 )paren
 suffix:semicolon
-DECL|variable|is_medusa
+DECL|variable|atari_switches
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|is_medusa
+id|atari_switches
 )paren
 suffix:semicolon
-DECL|variable|is_hades
+DECL|variable|atari_dont_touch_floppy_select
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|is_hades
+id|atari_dont_touch_floppy_select
 )paren
 suffix:semicolon
 DECL|variable|atari_register_vme_int
@@ -90,6 +106,20 @@ c_func
 id|stdma_islocked
 )paren
 suffix:semicolon
+DECL|variable|atari_stram_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|atari_stram_alloc
+)paren
+suffix:semicolon
+DECL|variable|atari_stram_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|atari_stram_free
+)paren
+suffix:semicolon
 DECL|variable|atari_mouse_buttons
 id|EXPORT_SYMBOL
 c_func
@@ -109,6 +139,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|atari_MIDI_interrupt_hook
+)paren
+suffix:semicolon
+DECL|variable|atari_MFP_init_done
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|atari_MFP_init_done
+)paren
+suffix:semicolon
+DECL|variable|atari_SCC_init_done
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|atari_SCC_init_done
 )paren
 suffix:semicolon
 DECL|variable|atari_SCC_reset_done

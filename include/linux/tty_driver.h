@@ -510,6 +510,8 @@ DECL|macro|SYSTEM_TYPE_CONSOLE
 mdefine_line|#define SYSTEM_TYPE_CONSOLE&t;&t;0x0002
 DECL|macro|SYSTEM_TYPE_SYSCONS
 mdefine_line|#define SYSTEM_TYPE_SYSCONS&t;&t;0x0003
+DECL|macro|SYSTEM_TYPE_SYSPTMX
+mdefine_line|#define SYSTEM_TYPE_SYSPTMX&t;&t;0x0004
 multiline_comment|/* pty subtypes (magic, used by tty_io.c) */
 DECL|macro|PTY_TYPE_MASTER
 mdefine_line|#define PTY_TYPE_MASTER&t;&t;&t;0x0001

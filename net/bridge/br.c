@@ -6293,8 +6293,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -6318,8 +6316,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return

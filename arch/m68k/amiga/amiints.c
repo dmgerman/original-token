@@ -1490,7 +1490,10 @@ op_star
 id|fp
 )paren
 (brace
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|SYS_IRQS
 op_plus
@@ -1549,7 +1552,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|SYS_IRQS
 op_plus
@@ -2249,7 +2255,10 @@ l_string|&quot;ami  %2d: %10u &quot;
 comma
 id|i
 comma
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|SYS_IRQS
 op_plus

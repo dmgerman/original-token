@@ -131,8 +131,14 @@ id|leds
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+DECL|macro|kbd_is_sysrq
+mdefine_line|#define kbd_is_sysrq(keycode)&t;((keycode) == mach_sysrq_key &amp;&amp; &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t; (up_flag || &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;  (shift_state &amp; mach_sysrq_shift_mask) == &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;  mach_sysrq_shift_state))
+DECL|macro|kbd_sysrq_xlate
+mdefine_line|#define kbd_sysrq_xlate&t;&t;&t;mach_sysrq_xlate
+macro_line|#endif
 DECL|macro|kbd_init_hw
 mdefine_line|#define kbd_init_hw&t;mach_keyb_init
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* __ASMm68k_KEYBOARD_H */
+macro_line|#endif /* __M68K_KEYBOARD_H */
 eof

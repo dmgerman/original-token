@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/fpu.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
@@ -440,6 +441,20 @@ c_func
 id|start_thread
 )paren
 suffix:semicolon
+DECL|variable|alpha_read_fp_reg
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alpha_read_fp_reg
+)paren
+suffix:semicolon
+DECL|variable|alpha_write_fp_reg
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alpha_write_fp_reg
+)paren
+suffix:semicolon
 multiline_comment|/* In-kernel system calls.  */
 DECL|variable|__kernel_thread
 id|EXPORT_SYMBOL
@@ -561,6 +576,30 @@ c_func
 id|csum_ipv6_magic
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MATHEMU_MODULE
+r_extern
+r_int
+(paren
+op_star
+id|alpha_fp_emul_imprecise
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|variable|alpha_fp_emul_imprecise
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alpha_fp_emul_imprecise
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * The following are specially called from the uaccess assembly stubs.&n; */
 DECL|variable|__copy_user
 id|EXPORT_SYMBOL_NOVERS

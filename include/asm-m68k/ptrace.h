@@ -157,6 +157,15 @@ id|retpc
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Arbitrarily choose the same ptrace numbers as used by the Sparc code. */
+DECL|macro|PTRACE_GETREGS
+mdefine_line|#define PTRACE_GETREGS            12
+DECL|macro|PTRACE_SETREGS
+mdefine_line|#define PTRACE_SETREGS            13
+DECL|macro|PTRACE_GETFPREGS
+mdefine_line|#define PTRACE_GETFPREGS          14
+DECL|macro|PTRACE_SETFPREGS
+mdefine_line|#define PTRACE_SETFPREGS          15
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef PS_S
 DECL|macro|PS_S

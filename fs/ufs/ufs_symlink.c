@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_symlink.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Ported to 2.1.62 by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19971109&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_symlink.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Ported to 2.1.62 by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19971109&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -40,6 +40,13 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_int
 r_int
 r_int
@@ -65,7 +72,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_amp
 (paren
 id|UFS_DEBUG
@@ -116,13 +123,13 @@ c_cond
 (paren
 id|buflen
 OG
-id|inode-&gt;i_sb-&gt;s_blocksize
+id|sb-&gt;s_blocksize
 op_minus
 l_int|1
 )paren
 id|buflen
 op_assign
-id|inode-&gt;i_sb-&gt;s_blocksize
+id|sb-&gt;s_blocksize
 op_minus
 l_int|1
 suffix:semicolon
@@ -146,7 +153,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_sb-&gt;u.ufs_sb.s_flags
+id|sb-&gt;u.ufs_sb.s_flags
 op_amp
 (paren
 id|UFS_DEBUG
@@ -175,7 +182,7 @@ id|inode-&gt;i_dev
 comma
 id|block
 comma
-id|BLOCK_SIZE
+id|sb-&gt;s_blocksize
 )paren
 suffix:semicolon
 r_if
@@ -216,6 +223,7 @@ suffix:semicolon
 multiline_comment|/* no need to bswap */
 )brace
 r_else
+multiline_comment|/* fast symlink */
 (brace
 id|link
 op_assign
@@ -225,7 +233,7 @@ op_star
 )paren
 op_amp
 (paren
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_symlink
 (braket
 l_int|0
 )braket
@@ -377,7 +385,7 @@ id|inode-&gt;i_dev
 comma
 id|block
 comma
-id|BLOCK_SIZE
+id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
 suffix:semicolon
 r_if
@@ -429,8 +437,8 @@ id|bh-&gt;b_data
 suffix:semicolon
 )brace
 r_else
-(brace
 multiline_comment|/* fast symlink */
+(brace
 id|link
 op_assign
 (paren
@@ -439,7 +447,7 @@ op_star
 )paren
 op_amp
 (paren
-id|inode-&gt;u.ufs_i.i_data
+id|inode-&gt;u.ufs_i.i_u1.i_symlink
 (braket
 l_int|0
 )braket

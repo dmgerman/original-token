@@ -5,6 +5,8 @@ DECL|macro|UMSDOS_VERSION
 mdefine_line|#define UMSDOS_VERSION&t;0
 DECL|macro|UMSDOS_RELEASE
 mdefine_line|#define UMSDOS_RELEASE&t;4
+DECL|macro|UMSDOS_ROOT_INO
+mdefine_line|#define UMSDOS_ROOT_INO 1
 multiline_comment|/* This is the file acting as a directory extension */
 DECL|macro|UMSDOS_EMD_FILE
 mdefine_line|#define UMSDOS_EMD_FILE&t;&t;&quot;--linux-.---&quot;
@@ -44,6 +46,7 @@ DECL|macro|UMSDOS_MAXNAME
 mdefine_line|#define UMSDOS_MAXNAME&t;220
 multiline_comment|/* This structure is 256 bytes large, depending on the name, only part */
 multiline_comment|/* of it is written to disk */
+multiline_comment|/* nice though it would be, I can&squot;t change this and preserve backward compatibility */
 DECL|struct|umsdos_dirent
 r_struct
 id|umsdos_dirent
@@ -215,6 +218,7 @@ multiline_comment|/* causing some problem for cross compilation of the kernel */
 multiline_comment|/* Since I am not really using the structure stat, but only some field */
 multiline_comment|/* of it, I have decided to replicate the structure here */
 multiline_comment|/* for compatibility with the binaries out there */
+multiline_comment|/* FIXME PTW 1998, this has probably changed */
 r_struct
 (brace
 DECL|member|st_dev
@@ -345,11 +349,6 @@ r_extern
 r_struct
 id|inode_operations
 id|umsdos_file_inode_operations_no_bmap
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|umsdos_file_inode_operations_readpage
 suffix:semicolon
 r_extern
 r_struct

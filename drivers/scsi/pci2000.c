@@ -2412,7 +2412,7 @@ DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template
 op_assign
-id|PCI2220I
+id|PCI2000
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif

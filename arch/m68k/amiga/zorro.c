@@ -3,31 +3,32 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#ifdef CONFIG_ZORRO
-multiline_comment|/*&n;    *    Zorro Expansion Device Manufacturers and Products&n;    */
+multiline_comment|/*&n;     *  Zorro Expansion Device Manufacturers and Products&n;     */
 DECL|struct|Manufacturer
 r_struct
 id|Manufacturer
 (brace
 DECL|member|Name
+r_const
 r_char
 op_star
 id|Name
 suffix:semicolon
-DECL|member|ID
+DECL|member|Manuf
 id|u_short
-id|ID
+id|Manuf
 suffix:semicolon
 DECL|member|NumProd
 id|u_short
 id|NumProd
 suffix:semicolon
 DECL|member|Products
+r_const
 r_struct
 id|Product
 op_star
@@ -40,13 +41,18 @@ r_struct
 id|Product
 (brace
 DECL|member|Name
+r_const
 r_char
 op_star
 id|Name
 suffix:semicolon
-DECL|member|ID
+DECL|member|Class
 id|u_char
-id|ID
+id|Class
+suffix:semicolon
+DECL|member|Prod
+id|u_char
+id|Prod
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -55,64 +61,91 @@ r_struct
 id|GVP_Product
 (brace
 DECL|member|Name
+r_const
 r_char
 op_star
 id|Name
 suffix:semicolon
-DECL|member|ID
-r_enum
-id|GVP_ident
-id|ID
+DECL|member|Class
+id|u_char
+id|Class
+suffix:semicolon
+DECL|member|EPC
+id|u_char
+id|EPC
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n;    *    Macro&squot;s to make life easier&n;    */
+multiline_comment|/*&n;     *  Macro&squot;s to make life easier&n;     */
+DECL|macro|ARRAYSIZE
+mdefine_line|#define ARRAYSIZE(x)&t;&t;(sizeof(x)/sizeof(*(x)))
 DECL|macro|BEGIN_PROD
-mdefine_line|#define BEGIN_PROD(id) static struct Product Prod_##id[] = {
+mdefine_line|#define BEGIN_PROD(id) &bslash;&n;    static struct Product Prod_##id[] = {
 DECL|macro|PROD
-mdefine_line|#define PROD(name, id) &bslash;&n;   { name, PROD_##id },
+mdefine_line|#define PROD(name, class, id) &bslash;&n;    { name, ZORRO_CLASS_##class, ZORRO_PROD(ZORRO_PROD_##id) },
 DECL|macro|BEGIN_GVP_PROD
-mdefine_line|#define BEGIN_GVP_PROD static struct GVP_Product Ext_Prod_GVP[] = {
+mdefine_line|#define BEGIN_GVP_PROD &bslash;&n;    static struct GVP_Product Ext_Prod_GVP[] = {
 DECL|macro|GVP_PROD
-mdefine_line|#define GVP_PROD(name, id) &bslash;&n;   { name, GVP_##id },
+mdefine_line|#define GVP_PROD(name, class, id) &bslash;&n;    { name, ZORRO_CLASS_##class, ZORRO_EPC(ZORRO_PROD_##id) },
 DECL|macro|BEGIN_MANUF
-mdefine_line|#define BEGIN_MANUF static struct Manufacturer Manufacturers[] = {
+mdefine_line|#define BEGIN_MANUF &bslash;&n;    static struct Manufacturer Manufacturers[] = {
 DECL|macro|MANUF
-mdefine_line|#define MANUF(name, id) &bslash;&n;   { name, MANUF_##id, sizeof(Prod_##id)/sizeof(struct Product), Prod_##id },
+mdefine_line|#define MANUF(name, id) &bslash;&n;    { name, ZORRO_MANUF_##id, ARRAYSIZE(Prod_##id), Prod_##id },
 DECL|macro|END
-mdefine_line|#define END };
-multiline_comment|/*&n;    *    Known Zorro Expansion Devices&n;    *&n;    *    Warning: Make sure the Manufacturer and Product names are not too&n;    *             long (max. 80 characters per board identification line)&n;    */
+mdefine_line|#define END &bslash;&n;    };
+multiline_comment|/*&n;     *  Recognized Zorro Expansion Devices&n;     */
 id|BEGIN_PROD
 c_func
 (paren
-id|PACIFIC
+id|PACIFIC_PERIPHERALS
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;SE 2000 A500&quot;
 comma
-id|SE_2000_A500
+id|HD
+comma
+id|PACIFIC_PERIPHERALS_SE_2000_A500
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;HD Controller&quot;
+l_int|NULL
 comma
-id|PACIFIC_HD
+id|SCSI
+comma
+id|PACIFIC_PERIPHERALS_SCSI
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|KUPKE
+id|MACROSYSTEMS_USA_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Warp Engine&quot;
+comma
+id|TURBO_SCSI_RAM
+comma
+id|MACROSYSTEMS_WARP_ENGINE
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|KUPKE_1
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Golem RAM Box 2MB&quot;
 comma
-id|GOLEM_BOX_2
+id|RAM
+comma
+id|KUPKE_GOLEM_RAM_BOX_2MB
 )paren
 id|END
 id|BEGIN_PROD
@@ -125,7 +158,9 @@ c_func
 (paren
 l_string|&quot;Stormbringer&quot;
 comma
-id|STORMBRINGER
+id|TURBO
+comma
+id|MEMPHIS_STORMBRINGER
 )paren
 id|END
 id|BEGIN_PROD
@@ -137,228 +172,300 @@ id|_STATE
 id|PROD
 c_func
 (paren
-l_string|&quot;Megamix 2000 RAM&quot;
+l_string|&quot;Megamix 2000&quot;
 comma
-id|MEGAMIX_2000
+id|RAM
+comma
+l_int|3
+id|_STATE_MEGAMIX_2000
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|COMMODORE2
+id|COMMODORE_BRAUNSCHWEIG
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2088 XT Bridgeboard&quot;
+l_string|&quot;A2088 XT/A2286 AT&quot;
 comma
-id|A2088
+id|BRIDGE
+comma
+id|CBM_A2088_A2286
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2286 AT Bridgeboard&quot;
+l_string|&quot;A2286 AT&quot;
 comma
-id|A2286
+id|BRIDGE
+comma
+id|CBM_A2286
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A4091 SCSI Controller&quot;
+l_string|&quot;A4091&quot;
 comma
-id|A4091_2
+id|SCSI
+comma
+id|CBM_A4091_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2386-SX Bridgeboard&quot;
+l_string|&quot;A2386-SX&quot;
 comma
-id|A2386SX
+id|BRIDGE
+comma
+id|CBM_A2386SX_1
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|COMMODORE
+id|COMMODORE_WEST_CHESTER_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2090/A2090A HD Controller&quot;
+l_string|&quot;A2090/A2090A&quot;
 comma
-id|A2090A
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;A590 SCSI Controller&quot;
+id|SCSI
 comma
-id|A590
+id|CBM_A2090A
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2091 SCSI Controller&quot;
+l_string|&quot;A590/A2091&quot;
 comma
-id|A2091
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;A2090B 2090 Autoboot Card&quot;
+id|SCSI
 comma
-id|A2090B
+id|CBM_A590_A2091_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2060 Arcnet Card&quot;
+l_string|&quot;A590/A2091&quot;
+comma
+id|SCSI
+comma
+id|CBM_A590_A2091_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A2090B 2090 Autoboot&quot;
+comma
+id|SCSI
+comma
+id|CBM_A2090B
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A2060&quot;
 comma
 id|ARCNET
+comma
+id|CBM_A2060
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2052/58.RAM | 590/2091.RAM&quot;
+l_string|&quot;A590/A2052/A2058/A2091&quot;
 comma
-id|CBMRAM
+id|RAM
+comma
+id|CBM_A590_A2052_A2058_A2091
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A560 Memory Module&quot;
+l_string|&quot;A560&quot;
 comma
-id|A560RAM
+id|RAM
+comma
+id|CBM_A560_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2232 Serial Prototype&quot;
+l_string|&quot;A2232 Prototype&quot;
 comma
-id|A2232PROTO
+id|MULTIIO
+comma
+id|CBM_A2232_PROTOTYPE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2232 Serial Production&quot;
+l_string|&quot;A2232&quot;
 comma
-id|A2232
+id|MULTIIO
+comma
+id|CBM_A2232
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2620 68020/RAM Card&quot;
+l_string|&quot;A2620 68020/RAM&quot;
 comma
-id|A2620
+id|TURBO_RAM
+comma
+id|CBM_A2620
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2630 68030/RAM Card&quot;
+l_string|&quot;A2630 68030/RAM&quot;
 comma
-id|A2630
+id|TURBO_RAM
+comma
+id|CBM_A2630
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A4091 SCSI Controller&quot;
+l_string|&quot;A4091&quot;
 comma
-id|A4091
+id|SCSI
+comma
+id|CBM_A4091_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2065 Ethernet Card&quot;
+l_string|&quot;A2065&quot;
 comma
-id|A2065_2
+id|ETHERNET
+comma
+id|CBM_A2065_1
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Romulator Card&quot;
 comma
-id|ROMULATOR
+id|UNKNOWN
+comma
+id|CBM_ROMULATOR
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;A3000 Test Fixture&quot;
 comma
-id|A3000TESTFIX
+id|MISC
+comma
+id|CBM_A3000_TEST_FIXTURE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2386-SX Bridgeboard&quot;
+l_string|&quot;A2386-SX&quot;
 comma
-id|A2386SX_2
+id|BRIDGE
+comma
+id|CBM_A2386SX_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2065 Ethernet Card&quot;
+l_string|&quot;A2065&quot;
 comma
-id|A2065
+id|ETHERNET
+comma
+id|CBM_A2065_2
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|COMMODORE3
+id|COMMODORE_WEST_CHESTER_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2090A Combitec/MacroSystem&quot;
+l_string|&quot;A2090/A2090A Combitec/MacroSystem&quot;
 comma
-id|A2090A_CM
+id|SCSI
+comma
+id|CBM_A2090A_CM
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|KCS
+id|PROGRESSIVE_PERIPHERALS_AND_SYSTEMS_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;EXP8000&quot;
+comma
+id|RAM
+comma
+id|PPS_EXP8000
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|KOLFF_COMPUTER_SUPPLIES
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;KCS Power PC Board&quot;
 comma
-id|POWER_BOARD
+id|BRIDGE
+comma
+id|KCS_POWER_PC_BOARD
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|CARDCO
+id|CARDCO_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Kronos 2000 SCSI Controller&quot;
+l_string|&quot;Kronos 2000&quot;
 comma
-id|KRONOS_2000_SCSI
+id|SCSI
+comma
+id|CARDCO_KRONOS_2000_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A1000 SCSI Controller&quot;
+l_string|&quot;A1000&quot;
 comma
-id|A1000_SCSI
+id|SCSI
+comma
+id|CARDCO_A1000_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Escort SCSI Controller&quot;
+l_string|&quot;Escort&quot;
 comma
-id|ESCORT_SCSI
+id|SCSI
+comma
+id|CARDCO_ESCORT
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Cardco A2410 Hires Graphics card&quot;
+l_string|&quot;A2410 HiRes&quot;
 comma
-id|CC_A2410
+id|GFX
+comma
+id|CARDCO_A2410
 )paren
 id|END
 id|BEGIN_PROD
@@ -371,33 +478,39 @@ c_func
 (paren
 l_string|&quot;Live! 2000&quot;
 comma
-id|LIVE_2000
+id|VIDEO
+comma
+id|A_SQUARED_LIVE_2000
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|COMSPEC
+id|COMSPEC_COMMUNICATIONS
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;AX2000&quot;
 comma
-id|AX2000
+id|RAM
+comma
+id|COMSPEC_COMMUNICATIONS_AX2000
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|ANAKIN
+id|ANAKIN_RESEARCH
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Easyl Tablet&quot;
+l_string|&quot;Easyl&quot;
 comma
-id|EASYL
+id|TABLET
+comma
+id|ANAKIN_RESEARCH_EASYL
 )paren
 id|END
 id|BEGIN_PROD
@@ -410,107 +523,138 @@ c_func
 (paren
 l_string|&quot;StarBoard II&quot;
 comma
-id|STARBOARD_II
+id|RAM
+comma
+id|MICROBOTICS_STARBOARD_II
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;StarDrive&quot;
 comma
-id|STARDRIVE
+id|SCSI
+comma
+id|MICROBOTICS_STARDRIVE
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;8-Up (Rev A)&quot;
 comma
-l_int|8
-id|_UP_A
+id|RAM
+comma
+id|MICROBOTICS_8_UP_A
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;8-Up (Rev Z)&quot;
 comma
-l_int|8
-id|_UP_Z
+id|RAM
+comma
+id|MICROBOTICS_8_UP_Z
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Delta Card RAM&quot;
+l_string|&quot;Delta&quot;
 comma
-id|DELTA_RAM
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;8-Star RAM&quot;
+id|RAM
 comma
-l_int|8
-id|_STAR_RAM
+id|MICROBOTICS_DELTA_RAM
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;8-Star&quot;
 comma
-l_int|8
-id|_STAR
+id|RAM
+comma
+id|MICROBOTICS_8_STAR_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;VXL RAM&quot;
+l_string|&quot;8-Star&quot;
 comma
-id|VXL_RAM
+id|MISC
+comma
+id|MICROBOTICS_8_STAR
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;VXL-30 Turbo Board&quot;
+l_string|&quot;VXL RAM*32&quot;
 comma
-id|VXL_30
+id|RAM
+comma
+id|MICROBOTICS_VXL_RAM_32
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Delta Card&quot;
+l_string|&quot;VXL-30&quot;
 comma
-id|DELTA
+id|TURBO
+comma
+id|MICROBOTICS_VXL_68030
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;MBX 1200&quot;
+l_string|&quot;Delta&quot;
 comma
-id|MBX_1200
+id|MISC
+comma
+id|MICROBOTICS_DELTA
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;MBX 1200/1200z&quot;
+comma
+id|RAM
+comma
+id|MICROBOTICS_MBX_1200_1200Z_RAM
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Hardframe 2000&quot;
 comma
-id|HARDFRAME_2000
+id|SCSI
+comma
+id|MICROBOTICS_HARDFRAME_2000_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;MBX 1200&quot;
+l_string|&quot;Hardframe 2000&quot;
 comma
-id|MBX_1200_2
+id|SCSI
+comma
+id|MICROBOTICS_HARDFRAME_2000_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;MBX 1200/1200z&quot;
+comma
+id|MISC
+comma
+id|MICROBOTICS_MBX_1200_1200Z
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|ACCESS
+id|ACCESS_ASSOCIATES_ALEGRA
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|EXPANSION_TECH
+id|EXPANSION_TECHNOLOGIES
 )paren
 id|END
 id|BEGIN_PROD
@@ -521,63 +665,77 @@ id|ASDG
 id|PROD
 c_func
 (paren
-l_string|&quot;Memory Expansion&quot;
+l_int|NULL
 comma
-id|ASDG_MEMORY
+id|RAM
+comma
+id|ASDG_MEMORY_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Memory Expansion&quot;
+l_int|NULL
+comma
+id|RAM
 comma
 id|ASDG_MEMORY_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Lan Rover Ethernet&quot;
+l_string|&quot;EB-920 Lan Rover&quot;
 comma
-id|LAN_ROVER
+id|ETHERNET
+comma
+id|ASDG_EB920_LAN_ROVER
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Twin-X Serial Card&quot;
+l_string|&quot;GPIB/Dual IEEE-488/Twin-X&quot;
 comma
-id|TWIN_X
+id|MULTIIO
+comma
+id|ASDG_GPIB_DUALIEEE488_TWIN_X
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|IMTRONICS
+id|IMTRONICS_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Hurricane 2800 68030&quot;
+l_string|&quot;Hurricane 2800&quot;
 comma
-id|HURRICANE_2800
+id|TURBO_RAM
+comma
+id|IMTRONICS_HURRICANE_2800_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Hurricane 2800 68030&quot;
+l_string|&quot;Hurricane 2800&quot;
 comma
-id|HURRICANE_2800_2
+id|TURBO_RAM
+comma
+id|IMTRONICS_HURRICANE_2800_2
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|UNIV_OF_LOWELL
+id|CBM_UNIVERSITY_OF_LOWELL
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2410 Hires Graphics Card&quot;
+l_string|&quot;A2410 HiRes&quot;
 comma
-id|A2410
+id|GFX
+comma
+id|CBM_A2410
 )paren
 id|END
 id|BEGIN_PROD
@@ -588,23 +746,29 @@ id|AMERISTAR
 id|PROD
 c_func
 (paren
-l_string|&quot;A2065 Ethernet Card&quot;
+l_string|&quot;A2065&quot;
 comma
-id|AMERISTAR2065
+id|ETHERNET
+comma
+id|AMERISTAR_A2065
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A560 Arcnet Card&quot;
+l_string|&quot;A560&quot;
 comma
-id|A560
+id|ARCNET
+comma
+id|AMERISTAR_A560
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A4066 Ethernet Card&quot;
+l_string|&quot;A4066&quot;
 comma
-id|A4066
+id|ETHERNET
+comma
+id|AMERISTAR_A4066
 )paren
 id|END
 id|BEGIN_PROD
@@ -615,63 +779,99 @@ id|SUPRA
 id|PROD
 c_func
 (paren
-l_string|&quot;SupraDrive 4x4 SCSI Controller&quot;
+l_string|&quot;SupraDrive 4x4&quot;
 comma
-id|SUPRADRIVE_4x4
+id|SCSI
+comma
+id|SUPRA_SUPRADRIVE_4x4
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;2000 DMA HD&quot;
+l_string|&quot;1000&quot;
 comma
-id|SUPRA_2000
+id|RAM
+comma
+id|SUPRA_1000_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;500 HD/RAM&quot;
+l_string|&quot;2000 DMA&quot;
+comma
+id|SCSI
+comma
+id|SUPRA_2000_DMA
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;500&quot;
+comma
+id|SCSI_RAM
 comma
 id|SUPRA_500
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;500XP/2000 RAM&quot;
+l_string|&quot;500&quot;
 comma
-id|SUPRA_500XP
+id|SCSI
+comma
+id|SUPRA_500_SCSI
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;500RX/2000 RAM&quot;
+l_string|&quot;500XP/2000&quot;
 comma
-id|SUPRA_500RX
+id|RAM
+comma
+id|SUPRA_500XP_2000_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;2400zi Modem&quot;
+l_string|&quot;500RX/2000&quot;
+comma
+id|RAM
+comma
+id|SUPRA_500RX_2000_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;2400zi&quot;
+comma
+id|MODEM
 comma
 id|SUPRA_2400ZI
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Wordsync SCSI Controller&quot;
+l_string|&quot;500XP/SupraDrive WordSync&quot;
 comma
-id|WORDSYNC
+id|SCSI
+comma
+id|SUPRA_500XP_SUPRADRIVE_WORDSYNC
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Wordsync II SCSI Controller&quot;
+l_string|&quot;SupraDrive WordSync II&quot;
 comma
-id|WORDSYNC_II
+id|SCSI
+comma
+id|SUPRA_SUPRADRIVE_WORDSYNC_II
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;2400zi+ Modem&quot;
+l_string|&quot;2400zi+&quot;
+comma
+id|MODEM
 comma
 id|SUPRA_2400ZIPLUS
 )paren
@@ -679,48 +879,61 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|CSA
+id|COMPUTER_SYSTEMS_ASSOCIATES
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Magnum 40 SCSI Controller&quot;
+l_string|&quot;Magnum 40&quot;
 comma
-id|MAGNUM
+id|TURBO_SCSI
+comma
+id|CSA_MAGNUM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;12 Gauge SCSI Controller&quot;
+l_string|&quot;12 Gauge&quot;
 comma
-l_int|12
-id|GAUGE
+id|SCSI
+comma
+id|CSA_12_GAUGE
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|MTEC2
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;AT500 RAM&quot;
-comma
-id|AT500_2
+id|MARC_MICHAEL_GROTH
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|GVP3
+id|M_TECH
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Impact SCSI/Memory&quot;
+l_string|&quot;AT500&quot;
 comma
-id|IMPACT
+id|RAM
+comma
+id|MTEC_AT500_1
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|GREAT_VALLEY_PRODUCTS_1
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact Series I&quot;
+comma
+id|SCSI_RAM
+comma
+id|GVP_IMPACT_SERIES_I
 )paren
 id|END
 id|BEGIN_PROD
@@ -733,254 +946,321 @@ c_func
 (paren
 l_string|&quot;A500&quot;
 comma
+id|UNKNOWN
+comma
 id|BYTEBOX_A500
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|POWER_COMPUTING
+id|DKB_POWER_COMPUTING
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;DKB 3128 RAM&quot;
+l_string|&quot;SecureKey&quot;
 comma
-id|DKB_3128
+id|UNKNOWN
+comma
+id|DKB_POWER_COMPUTING_SECUREKEY
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Rapid Fire SCSI Controller&quot;
+l_string|&quot;DKM 3128&quot;
 comma
-id|RAPID_FIRE
+id|RAM
+comma
+id|DKB_POWER_COMPUTING_DKM_3128
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;DKB 1202 RAM&quot;
+l_string|&quot;Rapid Fire&quot;
 comma
-id|DKB_1202
+id|SCSI
+comma
+id|DKB_POWER_COMPUTING_RAPID_FIRE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;DKB Cobra / Viper II Turbo Board&quot;
+l_string|&quot;DKM 1202&quot;
 comma
-id|VIPER_II_COBRA
+id|FPU_RAM
+comma
+id|DKB_POWER_COMPUTING_DKM_1202
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;WildFire 060 Turbo Board&quot;
+l_string|&quot;Cobra/Viper II 68EC030&quot;
 comma
-id|WILDFIRE_060
+id|TURBO
+comma
+id|DKB_POWER_COMPUTING_COBRA_VIPER_II_68EC030
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;WildFire 060 Turbo Board&quot;
+l_string|&quot;WildFire 060&quot;
 comma
-id|WILDFIRE_060_2
+id|TURBO
+comma
+id|DKB_POWER_COMPUTING_WILDFIRE_060_1
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;WildFire 060&quot;
+comma
+id|TURBO
+comma
+id|DKB_POWER_COMPUTING_WILDFIRE_060_2
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|GVP
+id|GREAT_VALLEY_PRODUCTS_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Impact Series-I SCSI 4K&quot;
+l_string|&quot;Impact Series I (4K)&quot;
 comma
-id|IMPACT_I_4K
+id|SCSI
+comma
+id|GVP_IMPACT_SERIES_I_4K
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Impact Series-I SCSI 16K/2&quot;
+l_string|&quot;Impact Series I (16K/2)&quot;
 comma
-id|IMPACT_I_16K_2
+id|SCSI
+comma
+id|GVP_IMPACT_SERIES_I_16K_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Impact Series-I SCSI 16K/3&quot;
+l_string|&quot;Impact Series I (16K/2)&quot;
 comma
-id|IMPACT_I_16K_3
+id|SCSI
+comma
+id|GVP_IMPACT_SERIES_I_16K_3
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Impact 3001 IDE&quot;
+l_string|&quot;Impact 3001&quot;
 comma
-id|IMPACT_3001_IDE
-)paren
-multiline_comment|/* PROD(&quot;Impact 3001 RAM&quot;, IMPACT_3001_RAM) */
-id|PROD
-c_func
-(paren
-l_string|&quot;Generic GVP product&quot;
+id|IDE
 comma
-id|GVP
+id|GVP_IMPACT_3001_IDE_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Series II SCSI Controller&quot;
+l_string|&quot;Impact 3001&quot;
 comma
-id|GVPIISCSI
+id|RAM
+comma
+id|GVP_IMPACT_3001_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Series II SCSI Controller&quot;
+l_string|&quot;Impact Series II&quot;
 comma
-id|GVPIISCSI_2
+id|RAM
+comma
+id|GVP_IMPACT_SERIES_II_RAM_1
+)paren
+multiline_comment|/*  PROD(NULL, UNKNOWN, GVP_EPC_BASE) */
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact 3001&quot;
+comma
+id|IDE
+comma
+id|GVP_IMPACT_3001_IDE_2
+)paren
+multiline_comment|/*  PROD(&quot;A2000 030&quot;, TURBO, GVP_A2000_030) */
+multiline_comment|/*  PROD(&quot;GForce 040&quot;, TURBO_SCSI, GFORCE_040_SCSI_2) */
+id|PROD
+c_func
+(paren
+l_string|&quot;GForce 040/060&quot;
+comma
+id|TURBO_SCSI
+comma
+id|GVP_GFORCE_040_060
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Series II RAM&quot;
+l_string|&quot;Impact Vision 24&quot;
 comma
-id|GVPIIRAM
+id|GFX
+comma
+id|GVP_IMPACT_VISION_24
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A2000 68030 Turbo Board&quot;
+l_string|&quot;GForce 040&quot;
 comma
-id|GVP_A2000_030
-)paren
-multiline_comment|/* PROD(&quot;Impact 3001 IDE&quot;, IMPACT_3001_IDE_2) */
-id|PROD
-c_func
-(paren
-l_string|&quot;GFORCE 040 with SCSI Controller&quot;
+id|TURBO
 comma
-id|GFORCE_040_SCSI
+id|GVP_GFORCE_040_2
 )paren
-id|PROD
-c_func
-(paren
-l_string|&quot;IV-24 Graphics Board&quot;
-comma
-id|GVPIV_24
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;GFORCE 040 Turbo Board&quot;
-comma
-id|GFORCE_040
-)paren
-multiline_comment|/* PROD(&quot;I/O Extender&quot;, GVPIO_EXT) */
 id|END
 id|BEGIN_GVP_PROD
+multiline_comment|/* ZORRO_PROD_GVP_EPC_BASE */
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;GFORCE 040&quot;
+l_string|&quot;GForce 040&quot;
 comma
-id|GFORCE_040
+id|TURBO
+comma
+id|GVP_GFORCE_040_1
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;GFORCE 040 with SCSI controller&quot;
+l_string|&quot;GForce 040&quot;
 comma
-id|GFORCE_040_SCSI
+id|TURBO_SCSI
+comma
+id|GVP_GFORCE_040_SCSI_1
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;A1291 SCSI controller&quot;
+l_string|&quot;A1291&quot;
 comma
-id|A1291_SCSI
+id|SCSI
+comma
+id|GVP_A1291
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;COMBO 030 R4&quot;
+l_string|&quot;Combo 030 R4&quot;
 comma
-id|COMBO_R4
+id|TURBO
+comma
+id|GVP_COMBO_030_R4
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;COMBO 030 R4 with SCSI controller&quot;
+l_string|&quot;Combo 030 R4&quot;
 comma
-id|COMBO_R4_SCSI
+id|TURBO_SCSI
+comma
+id|GVP_COMBO_030_R4_SCSI
 )paren
 id|GVP_PROD
 c_func
 (paren
 l_string|&quot;Phone Pak&quot;
 comma
-id|PHONEPAK
+id|UNKNOWN
+comma
+id|GVP_PHONEPAK
 )paren
 id|GVP_PROD
 c_func
 (paren
 l_string|&quot;IO-Extender&quot;
 comma
-id|IOEXT
+id|MULTIIO
+comma
+id|GVP_IO_EXTENDER
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;GFORCE 030&quot;
+l_string|&quot;GForce 030&quot;
 comma
-id|GFORCE_030
+id|TURBO
+comma
+id|GVP_GFORCE_030
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;GFORCE 030 with SCSI controller&quot;
+l_string|&quot;GForce 030&quot;
 comma
-id|GFORCE_030_SCSI
+id|TURBO_SCSI
+comma
+id|GVP_GFORCE_030_SCSI
 )paren
 id|GVP_PROD
 c_func
 (paren
 l_string|&quot;A530&quot;
 comma
-id|A530
+id|TURBO
+comma
+id|GVP_A530
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;A530 with SCSI&quot;
+l_string|&quot;A530&quot;
 comma
-id|A530_SCSI
+id|TURBO_SCSI
+comma
+id|GVP_A530_SCSI
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;COMBO 030 R3&quot;
+l_string|&quot;Combo 030 R3&quot;
 comma
-id|COMBO_R3
+id|TURBO
+comma
+id|GVP_COMBO_030_R3
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;COMBO 030 R3 with SCSI controller&quot;
+l_string|&quot;Combo 030 R3&quot;
 comma
-id|COMBO_R3_SCSI
+id|TURBO_SCSI
+comma
+id|GVP_COMBO_030_R3_SCSI
 )paren
 id|GVP_PROD
 c_func
 (paren
-l_string|&quot;SERIES-II SCSI controller&quot;
+l_string|&quot;Series-II&quot;
 comma
-id|SERIESII
+id|SCSI
+comma
+id|GVP_SERIES_II
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|SYNERGY
+id|CALIFORNIA_ACCESS_SYNERGY
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Malibu&quot;
+comma
+id|SCSI
+comma
+id|CALIFORNIA_ACCESS_SYNERGY_MALIBU
 )paren
 id|END
 id|BEGIN_PROD
@@ -991,57 +1271,80 @@ id|XETEC
 id|PROD
 c_func
 (paren
-l_string|&quot;FastCard SCSI Controller&quot;
+l_string|&quot;FastCard&quot;
 comma
-id|FASTCARD_SCSI
+id|SCSI
+comma
+id|XETEC_FASTCARD
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;FastCard RAM&quot;
+l_string|&quot;FastCard&quot;
 comma
-id|FASTCARD_RAM
+id|RAM
+comma
+id|XETEC_FASTCARD_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;FastCard Plus&quot;
+comma
+id|SCSI
+comma
+id|XETEC_FASTCARD_PLUS
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|PPI
+id|PROGRESSIVE_PERIPHERALS_AND_SYSTEMS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Mercury Turbo Board&quot;
+l_string|&quot;Mercury&quot;
 comma
-id|MERCURY
+id|TURBO
+comma
+id|PPS_MERCURY
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;PP&amp;S A3000 68040 Turbo Board&quot;
+l_string|&quot;A3000 68040&quot;
 comma
-id|PPS_A3000_040
+id|TURBO
+comma
+id|PPS_A3000_68040
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;PP&amp;S A2000 68040 Turbo Board&quot;
+l_string|&quot;A2000 68040&quot;
 comma
-id|PPS_A2000_040
+id|TURBO
+comma
+id|PPS_A2000_68040
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Zeus SCSI Controller&quot;
+l_string|&quot;Zeus&quot;
 comma
-id|ZEUS
+id|TURBO_SCSI_RAM
+comma
+id|PPS_ZEUS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;PP&amp;S A500 68040 Turbo Board&quot;
+l_string|&quot;A500 68040&quot;
 comma
-id|PPS_A500_040
+id|TURBO
+comma
+id|PPS_A500_68040
 )paren
 id|END
 id|BEGIN_PROD
@@ -1053,81 +1356,148 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|SPIRIT
+id|SPIRIT_TECHNOLOGY
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;HDA 506 Harddisk&quot;
+l_string|&quot;Insider IN1000&quot;
 comma
-id|HDA_506
+id|RAM
+comma
+id|SPIRIT_TECHNOLOGY_INSIDER_IN1000
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;OctaByte RAM&quot;
+l_string|&quot;Insider IN500&quot;
 comma
-id|OCTABYTE_RAM
+id|RAM
+comma
+id|SPIRIT_TECHNOLOGY_INSIDER_IN500
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;SIN500&quot;
+comma
+id|RAM
+comma
+id|SPIRIT_TECHNOLOGY_SIN500
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;HDA 506&quot;
+comma
+id|HD
+comma
+id|SPIRIT_TECHNOLOGY_HDA_506
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;AX-S&quot;
+comma
+id|MISC
+comma
+id|SPIRIT_TECHNOLOGY_AX_S
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;OctaByte&quot;
+comma
+id|RAM
+comma
+id|SPIRIT_TECHNOLOGY_OCTABYTE
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Inmate&quot;
+comma
+id|SCSI_RAM
+comma
+id|SPIRIT_TECHNOLOGY_INMATE
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|BSC
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;ALF 3 SCSI Controller&quot;
-comma
-id|ALF_3_SCSI
+id|SPIRIT_TECHNOLOGY_2
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|BSC3
+id|BSC_ALFADATA_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;ALF 2 SCSI Controller&quot;
+l_string|&quot;ALF 3&quot;
 comma
-id|ALF_2_SCSI
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;ALF 2 SCSI Controller&quot;
+id|SCSI
 comma
-id|ALF_2_SCSI_2
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;ALF 3 SCSI Controller&quot;
-comma
-id|ALF_3_SCSI_2
+id|BSC_ALF_3_1
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|C_LTD
+id|BSC_ALFADATA_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Kronos SCSI Controller&quot;
+l_string|&quot;ALF 2&quot;
 comma
-id|KRONOS_SCSI
+id|SCSI
+comma
+id|BSC_ALF_2_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A1000 SCSI Controller&quot;
+l_string|&quot;ALF 2&quot;
 comma
-id|A1000_SCSI_2
+id|SCSI
+comma
+id|BSC_ALF_2_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;ALF 3&quot;
+comma
+id|SCSI
+comma
+id|BSC_ALF_3_2
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|CARDCO_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Kronos&quot;
+comma
+id|SCSI
+comma
+id|CARDCO_KRONOS_2000_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;A1000&quot;
+comma
+id|SCSI
+comma
+id|CARDCO_A1000_2
 )paren
 id|END
 id|BEGIN_PROD
@@ -1138,7 +1508,9 @@ id|JOCHHEIM
 id|PROD
 c_func
 (paren
-l_string|&quot;Jochheim RAM&quot;
+l_int|NULL
+comma
+id|RAM
 comma
 id|JOCHHEIM_RAM
 )paren
@@ -1146,14 +1518,118 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|CHECKPOINT
+id|CHECKPOINT_TECHNOLOGIES
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Serial Solution&quot;
 comma
-id|SERIAL_SOLUTION
+id|SERIAL
+comma
+id|CHECKPOINT_TECHNOLOGIES_SERIAL_SOLUTION
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|EDOTRONIK
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;IEEE-488 Interface Board&quot;
+comma
+id|UNKNOWN
+comma
+id|EDOTRONIK_IEEE_488
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;CBM-8032 Board&quot;
+comma
+id|UNKNOWN
+comma
+id|EDOTRONIK_8032
+)paren
+id|PROD
+c_func
+(paren
+l_int|NULL
+comma
+id|SERIAL
+comma
+id|EDOTRONIK_MULTISERIAL
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;24Bit Realtime Video Digitizer&quot;
+comma
+id|UNKNOWN
+comma
+id|EDOTRONIK_VIDEODIGITIZER
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;32Bit Parallel I/O Interface&quot;
+comma
+id|UNKNOWN
+comma
+id|EDOTRONIK_PARALLEL_IO
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;PIC Prototyping Board&quot;
+comma
+id|UNKNOWN
+comma
+id|EDOTRONIK_PIC_PROTOYPING
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;16 Channel ADC Interface&quot;
+comma
+id|UNKNOWN
+comma
+id|EDOTRONIK_ADC
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;VME-Bus Controller&quot;
+comma
+id|UNKNOWN
+comma
+id|EDOTRONIK_VME
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;DSP96000 Realtime Data Acquisition&quot;
+comma
+id|DSP
+comma
+id|EDOTRONIK_DSP96000
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|NES_INC
+)paren
+id|PROD
+c_func
+(paren
+l_int|NULL
+comma
+id|RAM
+comma
+id|NES_INC_RAM
 )paren
 id|END
 id|BEGIN_PROD
@@ -1164,20 +1640,51 @@ id|ICD
 id|PROD
 c_func
 (paren
-l_string|&quot;Advantage 2000 SCSI Controller&quot;
+l_string|&quot;Advantage 2000&quot;
 comma
-id|ADVANTAGE_2000
+id|SCSI
+comma
+id|ICD_ADVANTAGE_2000_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Advantage&quot;
+comma
+id|IDE
+comma
+id|ICD_ADVANTAGE_2000_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Advantage 2080&quot;
+comma
+id|RAM
+comma
+id|ICD_ADVANTAGE_2080_RAM
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|KUPKE2
+id|KUPKE_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Golem SCSI-II Controller&quot;
+l_string|&quot;Omti&quot;
+comma
+id|HD
+comma
+id|KUPKE_OMTI
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Golem SCSI-II&quot;
+comma
+id|SCSI
 comma
 id|KUPKE_SCSI_II
 )paren
@@ -1186,19 +1693,25 @@ c_func
 (paren
 l_string|&quot;Golem Box&quot;
 comma
-id|GOLEM_BOX
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;030/882 Turbo Board&quot;
+id|UNKNOWN
 comma
-id|KUPKE_TURBO
+id|KUPKE_GOLEM_BOX
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Golem SCSI/AT Controller&quot;
+l_string|&quot;030/882&quot;
+comma
+id|TURBO
+comma
+id|KUPKE_030_882
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Golem&quot;
+comma
+id|SCSI
 comma
 id|KUPKE_SCSI_AT
 )paren
@@ -1206,143 +1719,241 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|GVP4
+id|GREAT_VALLEY_PRODUCTS_3
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;A2000-RAM8/2&quot;
 comma
-id|A2000_RAM8
+id|MISC
+comma
+id|GVP_A2000_RAM8
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Impact Series II&quot;
+comma
+id|RAM
+comma
+id|GVP_IMPACT_SERIES_II_RAM_2
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|INTERWORKS_NET
+id|INTERWORKS_NETWORK
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|HARDITAL
+id|HARDITAL_SYNTHESIS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;TQM 68030+68882 Turbo Board&quot;
+l_string|&quot;TQM 68030+68882&quot;
 comma
-id|TQM
+id|TURBO
+comma
+id|HARDITAL_SYNTHESIS_TQM_68030_68882
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|BSC2
+id|APPLIED_ENGINEERING
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Oktagon 2008 SCSI Controller&quot;
+l_string|&quot;DL2000&quot;
 comma
-id|OKTAGON_SCSI
+id|MODEM
+comma
+id|APPLIED_ENGINEERING_DL2000
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Tandem AT-2008/508 IDE Controller&quot;
+l_string|&quot;RAM Works&quot;
 comma
-id|TANDEM
+id|RAM
+comma
+id|APPLIED_ENGINEERING_RAM_WORKS
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|BSC_ALFADATA_3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Oktagon 2008&quot;
+comma
+id|SCSI
+comma
+id|BSC_OKTAGON_2008
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Tandem AT-2008/508&quot;
+comma
+id|IDE
+comma
+id|BSC_TANDEM_AT_2008_508
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Alpha RAM 1200&quot;
 comma
-id|ALPHA_RAM_1200
+id|RAM
+comma
+id|BSC_ALFA_RAM_1200
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Oktagon 2008 RAM&quot;
+l_string|&quot;Oktagon 2008&quot;
 comma
-id|OKTAGON_RAM
+id|RAM
+comma
+id|BSC_OKTAGON_2008_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Alfa Data MultiFace I&quot;
+l_string|&quot;MultiFace I&quot;
 comma
-id|MULTIFACE_I
+id|MULTIIO
+comma
+id|BSC_MULTIFACE_I
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Alfa Data MultiFace II&quot;
+l_string|&quot;MultiFace II&quot;
 comma
-id|MULTIFACE_II
+id|MULTIIO
+comma
+id|BSC_MULTIFACE_II
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Alfa Data MultiFace III&quot;
+l_string|&quot;MultiFace III&quot;
 comma
-id|MULTIFACE_III
+id|MULTIIO
+comma
+id|BSC_MULTIFACE_III
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Framebuffer&quot;
 comma
-id|BSC_FRAEMBUFFER
+id|MISC
+comma
+id|BSC_FRAMEBUFFER
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Graffiti Graphics Board (RAM)&quot;
+l_string|&quot;Graffiti&quot;
 comma
-id|GRAFFITI_RAM
+id|GFXRAM
+comma
+id|BSC_GRAFFITI_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Graffiti Graphics Board (REG)&quot;
+l_string|&quot;Graffiti&quot;
 comma
-id|GRAFFITI_REG
+id|GFX
+comma
+id|BSC_GRAFFITI_REG
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;ISDN MasterCard&quot;
 comma
-id|ISDN_MASTERCARD
+id|ISDN
+comma
+id|BSC_ISDN_MASTERCARD
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;ISDN MasterCard II&quot;
 comma
-id|ISDN_MASTERCARD_2
+id|ISDN
+comma
+id|BSC_ISDN_MASTERCARD_II
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|ADV_SYS_SOFT
+id|PHOENIX
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Nexus SCSI Controller&quot;
+l_string|&quot;ST506&quot;
 comma
-id|NEXUS_SCSI
+id|HD
+comma
+id|PHOENIX_ST506
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Nexus RAM&quot;
+l_int|NULL
 comma
-id|NEXUS_RAM
+id|SCSI
+comma
+id|PHOENIX_SCSI
+)paren
+id|PROD
+c_func
+(paren
+l_int|NULL
+comma
+id|RAM
+comma
+id|PHOENIX_RAM
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|ADVANCED_STORAGE_SYSTEMS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Nexus&quot;
+comma
+id|SCSI
+comma
+id|ADVANCED_STORAGE_SYSTEMS_NEXUS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Nexus&quot;
+comma
+id|RAM
+comma
+id|ADVANCED_STORAGE_SYSTEMS_NEXUS_RAM
 )paren
 id|END
 id|BEGIN_PROD
@@ -1355,7 +1966,9 @@ c_func
 (paren
 l_string|&quot;FireCracker 24&quot;
 comma
-id|FIRECRACKER_24
+id|GFX
+comma
+id|IMPULSE_FIRECRACKER_24
 )paren
 id|END
 id|BEGIN_PROD
@@ -1366,78 +1979,98 @@ id|IVS
 id|PROD
 c_func
 (paren
-l_string|&quot;GrandSlam PIC 2 RAM&quot;
+l_string|&quot;GrandSlam PIC 2&quot;
 comma
-id|GRANDSLAM_PIC_2
+id|RAM
+comma
+id|IVS_GRANDSLAM_PIC_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;GrandSlam PIC 1 RAM&quot;
+l_string|&quot;GrandSlam PIC 1&quot;
 comma
-id|GRANDSLAM_PIC_1
+id|RAM
+comma
+id|IVS_GRANDSLAM_PIC_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;OverDrive HD&quot;
+l_string|&quot;OverDrive&quot;
+comma
+id|HD
 comma
 id|IVS_OVERDRIVE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Trumpcard Classic SCSI Controller&quot;
+l_string|&quot;TrumpCard Classic&quot;
 comma
-id|TRUMPCARD_CLASSIC
+id|SCSI
+comma
+id|IVS_TRUMPCARD_CLASSIC
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Trumpcard Pro SCSI Controller&quot;
+l_string|&quot;TrumpCard Pro/GrandSlam&quot;
 comma
-id|TRUMPCARD_PRO
+id|SCSI
+comma
+id|IVS_TRUMPCARD_PRO_GRANDSLAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Meta-4 RAM&quot;
+l_string|&quot;Meta-4&quot;
 comma
-id|META_4
+id|RAM
+comma
+id|IVS_META_4
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Wavetools Sound Board&quot;
+l_string|&quot;Wavetools&quot;
 comma
-id|WAVETOOLS
+id|AUDIO
+comma
+id|IVS_WAVETOOLS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Vector SCSI Controller&quot;
+l_string|&quot;Vector&quot;
 comma
-id|VECTOR
+id|SCSI
+comma
+id|IVS_VECTOR_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Vector SCSI Controller&quot;
+l_string|&quot;Vector&quot;
 comma
-id|VECTOR_2
+id|SCSI
+comma
+id|IVS_VECTOR_2
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|VECTOR
+id|VECTOR_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Connection Serial IO&quot;
+l_string|&quot;Connection&quot;
 comma
-id|CONNECTION
+id|MULTIIO
+comma
+id|VECTOR_CONNECTION_1
 )paren
 id|END
 id|BEGIN_PROD
@@ -1448,37 +2081,47 @@ id|XPERT_PRODEV
 id|PROD
 c_func
 (paren
-l_string|&quot;Visiona Graphics Board (RAM)&quot;
+l_string|&quot;Visiona&quot;
 comma
-id|VISIONA_RAM
+id|GFXRAM
+comma
+id|XPERT_PRODEV_VISIONA_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Visiona Graphics Board (REG)&quot;
+l_string|&quot;Visiona&quot;
 comma
-id|VISIONA_REG
+id|GFX
+comma
+id|XPERT_PRODEV_VISIONA_REG
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Merlin Graphics Board (RAM)&quot;
+l_string|&quot;Merlin&quot;
 comma
-id|MERLIN_RAM
+id|GFXRAM
+comma
+id|XPERT_PRODEV_MERLIN_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Merlin Graphics Board (REG)&quot;
+l_string|&quot;Merlin&quot;
 comma
-id|MERLIN_REG
+id|GFX
+comma
+id|XPERT_PRODEV_MERLIN_REG_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Merlin Graphics Board (REG)&quot;
+l_string|&quot;Merlin&quot;
 comma
-id|MERLIN_REG_2
+id|GFX
+comma
+id|XPERT_PRODEV_MERLIN_REG_2
 )paren
 id|END
 id|BEGIN_PROD
@@ -1489,22 +2132,44 @@ id|HYDRA_SYSTEMS
 id|PROD
 c_func
 (paren
-l_string|&quot;Amiganet Board&quot;
+l_string|&quot;Amiganet&quot;
 comma
-id|AMIGANET
+id|ETHERNET
+comma
+id|HYDRA_SYSTEMS_AMIGANET
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|SUNRIZE
+id|SUNRIZE_INDUSTRIES
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;AD516 Audio&quot;
+l_string|&quot;AD1012&quot;
 comma
-id|AD516
+id|AUDIO
+comma
+id|SUNRIZE_INDUSTRIES_AD1012
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;AD516&quot;
+comma
+id|AUDIO
+comma
+id|SUNRIZE_INDUSTRIES_AD516
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;DD512&quot;
+comma
+id|AUDIO
+comma
+id|SUNRIZE_INDUSTRIES_DD512
 )paren
 id|END
 id|BEGIN_PROD
@@ -1515,9 +2180,11 @@ id|TRICERATOPS
 id|PROD
 c_func
 (paren
-l_string|&quot;Multi I/O Board&quot;
+l_int|NULL
 comma
-id|TRICERATOPS
+id|MULTIIO
+comma
+id|TRICERATOPS_MULTI_IO
 )paren
 id|END
 id|BEGIN_PROD
@@ -1528,16 +2195,20 @@ id|APPLIED_MAGIC
 id|PROD
 c_func
 (paren
-l_string|&quot;DMI Resolver Graphics Board&quot;
+l_string|&quot;DMI Resolver&quot;
 comma
-id|DMI_RESOLVER
+id|GFX
+comma
+id|APPLIED_MAGIC_DMI_RESOLVER
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Digital Broadcaster&quot;
 comma
-id|DIGITAL_BCASTER
+id|VIDEO
+comma
+id|APPLIED_MAGIC_DIGITAL_BROADCASTER
 )paren
 id|END
 id|BEGIN_PROD
@@ -1548,16 +2219,20 @@ id|GFX_BASE
 id|PROD
 c_func
 (paren
-l_string|&quot;GDA-1 Graphics Board (RAM)&quot;
+l_string|&quot;GDA-1 VRAM&quot;
 comma
-id|GDA_1_RAM
+id|GFX
+comma
+id|GFX_BASE_GDA_1_VRAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;GDA-1 Graphics Board (REG)&quot;
+l_string|&quot;GDA-1&quot;
 comma
-id|GDA_1_REG
+id|GFX
+comma
+id|GFX_BASE_GDA_1
 )paren
 id|END
 id|BEGIN_PROD
@@ -1568,42 +2243,88 @@ id|ROCTEC
 id|PROD
 c_func
 (paren
-l_string|&quot;RH 800C Hard Disk Controller&quot;
+l_string|&quot;RH 800C&quot;
 comma
-id|RH_800C
+id|HD
+comma
+id|ROCTEC_RH_800C
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;RH 800C RAM&quot;
+l_string|&quot;RH 800C&quot;
 comma
-id|RH_800C_RAM
+id|RAM
+comma
+id|ROCTEC_RH_800C_RAM
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|HELFRICH1
+id|KATO
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Rainbow3 Graphics Board&quot;
+l_string|&quot;Melody MPEG&quot;
 comma
-id|RAINBOW3
+id|AUDIO
+comma
+id|KATO_MELODY
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Rainbow II&quot;
+comma
+id|GFX
+comma
+id|HELFRICH_RAINBOW_II
+)paren
+multiline_comment|/* ID clash!! */
+id|PROD
+c_func
+(paren
+l_string|&quot;Rainbow III&quot;
+comma
+id|GFX
+comma
+id|HELFRICH_RAINBOW_III
+)paren
+multiline_comment|/* ID clash!! */
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|ATLANTIS
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|SW_RESULT_ENTS
+id|PROTAR
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|ACS
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|SOFTWARE_RESULTS_ENTERPRISES
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;GG2+ Bus Converter&quot;
+l_string|&quot;Golden Gate 2 Bus+&quot;
 comma
-id|GG2PLUS
+id|BRIDGE
+comma
+id|SOFTWARE_RESULTS_ENTERPRISES_GOLDEN_GATE_2_BUS_PLUS
 )paren
 id|END
 id|BEGIN_PROD
@@ -1614,23 +2335,44 @@ id|MASOBOSHI
 id|PROD
 c_func
 (paren
-l_string|&quot;Master Card RAM&quot;
+l_string|&quot;MasterCard SC201&quot;
 comma
-id|MASTER_CARD_RAM
+id|RAM
+comma
+id|MASOBOSHI_MASTER_CARD_SC201
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Master Card SCSI Controller&quot;
+l_string|&quot;MasterCard MC702&quot;
 comma
-id|MASTER_CARD_SCSI
+id|SCSI_IDE
+comma
+id|MASOBOSHI_MASTER_CARD_MC702
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;MVD 819&quot;
 comma
-id|MVD_819
+id|UNKNOWN
+comma
+id|MASOBOSHI_MVD_819
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|MAINHATTAN_DATA
+)paren
+id|PROD
+c_func
+(paren
+l_int|NULL
+comma
+id|IDE
+comma
+id|MAINHATTAN_DATA_IDE
 )paren
 id|END
 id|BEGIN_PROD
@@ -1641,92 +2383,125 @@ id|VILLAGE_TRONIC
 id|PROD
 c_func
 (paren
-l_string|&quot;Domino Graphics Board (RAM)&quot;
+l_string|&quot;Domino&quot;
 comma
-id|DOMINO_RAM
+id|GFXRAM
+comma
+id|VILLAGE_TRONIC_DOMINO_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Domino Graphics Board (REG)&quot;
+l_string|&quot;Domino&quot;
 comma
-id|DOMINO_REG
+id|GFX
+comma
+id|VILLAGE_TRONIC_DOMINO_REG
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Picasso II Graphics Board (RAM)&quot;
+l_string|&quot;Domino 16M Prototype&quot;
 comma
-id|PICASSO_II_RAM
+id|GFX
+comma
+id|VILLAGE_TRONIC_DOMINO_16M_PROTOTYPE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Picasso II Graphics Board (REG)&quot;
+l_string|&quot;Picasso II/II+&quot;
 comma
-id|PICASSO_II_REG
+id|GFXRAM
+comma
+id|VILLAGE_TRONIC_PICASSO_II_II_PLUS_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Picasso II/II+ Graphics Board (Segmented Mode)&quot;
+l_string|&quot;Picasso II/II+&quot;
 comma
-id|PICASSO_II_SEGM
+id|GFX
+comma
+id|VILLAGE_TRONIC_PICASSO_II_II_PLUS_REG
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Picassio IV Graphics Board&quot;
+l_string|&quot;Picasso II/II+ (Segmented Mode)&quot;
 comma
-id|PICASSO_IV
+id|GFX
+comma
+id|VILLAGE_TRONIC_PICASSO_II_II_PLUS_SEGMENTED_MODE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Picassio IV Graphics Board&quot;
+l_string|&quot;Picasso IV Z2&quot;
 comma
-id|PICASSO_IV_2
+id|GFXRAM
+comma
+id|VILLAGE_TRONIC_PICASSO_IV_Z2_MEM1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Picassio IV Graphics Board&quot;
+l_string|&quot;Picasso IV Z2&quot;
 comma
-id|PICASSO_IV_3
+id|GFXRAM
+comma
+id|VILLAGE_TRONIC_PICASSO_IV_Z2_MEM2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Picassio IV Graphics Board&quot;
+l_string|&quot;Picasso IV Z2&quot;
 comma
-id|PICASSO_IV_4
+id|GFX
+comma
+id|VILLAGE_TRONIC_PICASSO_IV_Z2_REG
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Ariadne Ethernet Card&quot;
+l_string|&quot;Picasso IV Z3&quot;
 comma
-id|ARIADNE
+id|GFX
+comma
+id|VILLAGE_TRONIC_PICASSO_IV_Z3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Ariadne&quot;
+comma
+id|ETHERNET_PARALLEL
+comma
+id|VILLAGE_TRONIC_ARIADNE
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|UTILITIES_ULTD
+id|UTILITIES_UNLIMITED
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Emplant Deluxe SCSI Controller&quot;
+l_string|&quot;Emplant Deluxe&quot;
 comma
-id|EMPLANT_DELUXE
+id|MACEMU
+comma
+id|UTILITIES_UNLIMITED_EMPLANT_DELUXE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Emplant Deluxe SCSI Controller&quot;
+l_string|&quot;Emplant Deluxe&quot;
 comma
-id|EMPLANT_DELUXE2
+id|MACEMU
+comma
+id|UTILITIES_UNLIMITED_EMPLANT_DELUXE2
 )paren
 id|END
 id|BEGIN_PROD
@@ -1737,14 +2512,18 @@ id|AMITRIX
 id|PROD
 c_func
 (paren
-l_string|&quot;Multi-IO&quot;
+l_int|NULL
+comma
+id|MULTIIO
 comma
 id|AMITRIX_MULTI_IO
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;CD-RAM Memory&quot;
+l_string|&quot;CD-RAM&quot;
+comma
+id|RAM
 comma
 id|AMITRIX_CD_RAM
 )paren
@@ -1757,9 +2536,11 @@ id|ARMAX
 id|PROD
 c_func
 (paren
-l_string|&quot;OmniBus Graphics Board&quot;
+l_string|&quot;OmniBus&quot;
 comma
-id|OMNIBUS
+id|GFX
+comma
+id|ARMAX_OMNIBUS
 )paren
 id|END
 id|BEGIN_PROD
@@ -1772,163 +2553,231 @@ c_func
 (paren
 l_string|&quot;VideoToaster&quot;
 comma
-id|VIDEOTOASTER
+id|VIDEO
+comma
+id|NEWTEK_VIDEOTOASTER
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|MTEC
+id|M_TECH_GERMANY
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;AT500 IDE Controller&quot;
+l_string|&quot;AT500&quot;
 comma
-id|AT500
+id|IDE
+comma
+id|MTEC_AT500_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;68030 Turbo Board&quot;
+l_string|&quot;68030&quot;
+comma
+id|TURBO
 comma
 id|MTEC_68030
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;68020i Turbo Board&quot;
+l_string|&quot;68020i&quot;
+comma
+id|TURBO
 comma
 id|MTEC_68020I
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A1200 T68030/42 RTC Turbo Board&quot;
+l_string|&quot;A1200 T68030 RTC&quot;
 comma
-id|MTEC_T1230
+id|TURBO
+comma
+id|MTEC_A1200_T68030_RTC
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;8MB RAM&quot;
+l_string|&quot;Viper Mk V/E-Matrix 530&quot;
 comma
-id|MTEC_RAM
+id|TURBO_RAM
+comma
+id|MTEC_VIPER_MK_V_E_MATRIX_530
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;8MB&quot;
+comma
+id|RAM
+comma
+id|MTEC_8_MB_RAM
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Viper Mk V/E-Matrix 530 SCSI/IDE&quot;
+comma
+id|SCSI_IDE
+comma
+id|MTEC_VIPER_MK_V_E_MATRIX_530_SCSI_IDE
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|GVP2
+id|GREAT_VALLEY_PRODUCTS_4
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;EGS 28/24 Spectrum Graphics Board (RAM)&quot;
+l_string|&quot;EGS 28/24 Spectrum&quot;
 comma
-id|SPECTRUM_RAM
+id|GFX
+comma
+id|GVP_EGS_28_24_SPECTRUM_REG
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;EGS 28/24 Spectrum Graphics Board (REG)&quot;
+l_string|&quot;EGS 28/24 Spectrum&quot;
 comma
-id|SPECTRUM_REG
+id|GFXRAM
+comma
+id|GVP_EGS_28_24_SPECTRUM_RAM
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|HELFRICH2
+id|APOLLO_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Piccolo Graphics Board (RAM)&quot;
+l_string|&quot;A1200&quot;
 comma
-id|PICCOLO_RAM
+id|FPU_RAM
+comma
+id|APOLLO_A1200
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|HELFRICH_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Piccolo Graphics Board (REG)&quot;
+l_string|&quot;Piccolo&quot;
 comma
-id|PICCOLO_REG
+id|GFXRAM
+comma
+id|HELFRICH_PICCOLO_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;PeggyPlus MPEG Decoder Board&quot;
+l_string|&quot;Piccolo&quot;
 comma
-id|PEGGY_PLUS
+id|GFX
+comma
+id|HELFRICH_PICCOLO_REG
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;PeggyPlus MPEG&quot;
+comma
+id|VIDEO
+comma
+id|HELFRICH_PEGGY_PLUS_MPEG
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;VideoCruncher&quot;
 comma
-id|VIDEOCRUNCHER
+id|VIDEO
+comma
+id|HELFRICH_VIDEOCRUNCHER
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;SD64 Graphics Board (RAM)&quot;
+l_string|&quot;Piccolo SD64&quot;
 comma
-id|SD64_RAM
+id|GFXRAM
+comma
+id|HELFRICH_SD64_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;SD64 Graphics Board (REG)&quot;
+l_string|&quot;Piccolo SD64&quot;
 comma
-id|SD64_REG
+id|GFX
+comma
+id|HELFRICH_SD64_REG
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|MACROSYSTEMS
+id|MACROSYSTEMS_USA
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Warp Engine 40xx SCSI Controller&quot;
+l_string|&quot;Warp Engine 40xx&quot;
 comma
-id|WARP_ENGINE
+id|TURBO_SCSI_RAM
+comma
+id|MACROSYSTEMS_WARP_ENGINE_40xx
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|ELBOX
+id|ELBOX_COMPUTER
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Elbox 1200/4 RAM&quot;
+l_string|&quot;1200/4&quot;
 comma
-id|ELBOX_1200
+id|RAM
+comma
+id|ELBOX_COMPUTER_1200_4
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|HARMS_PROF
+id|HARMS_PROFESSIONAL
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;030 plus&quot;
+l_string|&quot;030 Plus&quot;
 comma
-id|HARMS_030_PLUS
+id|TURBO
+comma
+id|HARMS_PROFESSIONAL_030_PLUS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;3500 Turbo board&quot;
+l_string|&quot;3500 Professional&quot;
 comma
-l_int|3500
-id|_TURBO
+id|TURBO_RAM
+comma
+id|HARMS_PROFESSIONAL_3500
 )paren
 id|END
 id|BEGIN_PROD
@@ -1939,62 +2788,113 @@ id|MICRONIK
 id|PROD
 c_func
 (paren
-l_string|&quot;RCA 120 RAM&quot;
+l_string|&quot;RCA 120&quot;
 comma
-id|RCA_120
+id|RAM
+comma
+id|MICRONIK_RCA_120
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|MEGA_MICRO
+id|MICRONIK2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;SCRAM 500 SCSI Controller&quot;
+l_string|&quot;Z3i A1200 Zorro III + SCSI&quot;
 comma
-id|SCRAM_500_SCSI
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;SCRAM 500 RAM&quot;
+id|SCSI
 comma
-id|SCRAM_500_RAM
+id|MICRONIK2_Z3I
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|IMTRONICS2
+id|MEGAMICRO
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Hurricane 2800 68030&quot;
+l_string|&quot;SCRAM 500&quot;
 comma
-id|HURRICANE_2800_3
+id|SCSI
+comma
+id|MEGAMICRO_SCRAM_500
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Hurricane 2800 68030&quot;
+l_string|&quot;SCRAM 500&quot;
 comma
-id|HURRICANE_2800_4
+id|RAM
+comma
+id|MEGAMICRO_SCRAM_500_RAM
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|KUPKE3
+id|IMTRONICS_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Hurricane 2800&quot;
+comma
+id|TURBO_RAM
+comma
+id|IMTRONICS_HURRICANE_2800_3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Hurricane 2800&quot;
+comma
+id|TURBO_RAM
+comma
+id|IMTRONICS_HURRICANE_2800_4
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|INDIVIDUAL_COMPUTERS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Buddha&quot;
+comma
+id|IDE
+comma
+id|INDIVIDUAL_COMPUTERS_BUDDHA
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Catweasel&quot;
+comma
+id|IDE_FLOPPY
+comma
+id|INDIVIDUAL_COMPUTERS_CATWEASEL
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|KUPKE_3
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Golem HD 3000&quot;
 comma
-id|GOLEM_3000
+id|HD
+comma
+id|KUPKE_GOLEM_HD_3000
 )paren
 id|END
 id|BEGIN_PROD
@@ -2007,7 +2907,9 @@ c_func
 (paren
 l_string|&quot;ISDN-Master II&quot;
 comma
-id|ISDN_MASTER_II
+id|ISDN
+comma
+id|ITH_ISDN_MASTER_II
 )paren
 id|END
 id|BEGIN_PROD
@@ -2020,14 +2922,18 @@ c_func
 (paren
 l_string|&quot;ISDN Blaster Z2&quot;
 comma
-id|ISDN_BLASTER_Z2
+id|ISDN
+comma
+id|VMC_ISDN_BLASTER_Z2
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;HyperCom 4&quot;
 comma
-id|HYPERCOM_4
+id|MULTIIO
+comma
+id|VMC_HYPERCOM_4
 )paren
 id|END
 id|BEGIN_PROD
@@ -2040,7 +2946,9 @@ c_func
 (paren
 l_string|&quot;ISDN Engine I&quot;
 comma
-id|ISDN_ENGINE_I
+id|ISDN
+comma
+id|INFORMATION_ISDN_ENGINE_I
 )paren
 id|END
 id|BEGIN_PROD
@@ -2051,43 +2959,53 @@ id|VORTEX
 id|PROD
 c_func
 (paren
-l_string|&quot;Golden Gate 80386SX Board&quot;
+l_string|&quot;Golden Gate 80386SX&quot;
 comma
-id|GOLDEN_GATE_386SX
+id|BRIDGE
+comma
+id|VORTEX_GOLDEN_GATE_80386SX
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Golden Gate RAM&quot;
+l_string|&quot;Golden Gate&quot;
 comma
-id|GOLDEN_GATE_RAM
+id|RAM
+comma
+id|VORTEX_GOLDEN_GATE_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Golden Gate 80486 Board&quot;
+l_string|&quot;Golden Gate 80486&quot;
 comma
-id|GOLDEN_GATE_486
+id|BRIDGE
+comma
+id|VORTEX_GOLDEN_GATE_80486
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|DATAFLYER
+id|EXPANSION_SYSTEMS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;4000SX SCSI Controller&quot;
+l_string|&quot;DataFlyer 4000SX&quot;
 comma
-id|DATAFLYER_4000SXS
+id|SCSI
+comma
+id|EXPANSION_SYSTEMS_DATAFLYER_4000SX
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;4000SX RAM&quot;
+l_string|&quot;DataFlyer 4000SX&quot;
 comma
-id|DATAFLYER_4000SXR
+id|RAM
+comma
+id|EXPANSION_SYSTEMS_DATAFLYER_4000SX_RAM
 )paren
 id|END
 id|BEGIN_PROD
@@ -2100,7 +3018,9 @@ c_func
 (paren
 l_string|&quot;AMax II/IV&quot;
 comma
-id|AMAX
+id|MACEMU
+comma
+id|READYSOFT_AMAX_II_IV
 )paren
 id|END
 id|BEGIN_PROD
@@ -2111,93 +3031,128 @@ id|PHASE5
 id|PROD
 c_func
 (paren
-l_string|&quot;Blizzard RAM&quot;
+l_string|&quot;Blizzard&quot;
 comma
-id|BLIZZARD_RAM
+id|RAM
+comma
+id|PHASE5_BLIZZARD_RAM
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Blizzard&quot;
 comma
-id|BLIZZARD
+id|TURBO
+comma
+id|PHASE5_BLIZZARD
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Blizzard 1220-IV Turbo Board&quot;
+l_string|&quot;Blizzard 1220-IV&quot;
 comma
-id|BLIZZARD_1220_IV
+id|TURBO
+comma
+id|PHASE5_BLIZZARD_1220_IV
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;FastLane RAM&quot;
+l_string|&quot;FastLane Z3&quot;
 comma
-id|FASTLANE_RAM
+id|RAM
+comma
+id|PHASE5_FASTLANE_Z3_RAM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;FastLane/Blizzard 1230-II/CyberSCSI&quot;
+l_string|&quot;Blizzard 1230-II/Fastlane Z3/CyberSCSI/CyberStorm060&quot;
 comma
-id|FASTLANE_SCSI
+id|TURBO_SCSI
+comma
+id|PHASE5_BLIZZARD_1230_II_FASTLANE_Z3_CYBERSCSI_CYBERSTORM060
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Blizzard 1220/CyberStorm&quot;
 comma
-id|CYBERSTORM_SCSI
+id|TURBO_SCSI
+comma
+id|PHASE5_BLIZZARD_1220_CYBERSTORM
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Blizzard 1230-III Turbo Board&quot;
+l_string|&quot;Blizzard 1230&quot;
 comma
-id|BLIZZARD_1230_III
+id|TURBO
+comma
+id|PHASE5_BLIZZARD_1230
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Blizzard 1230-IV/1260 Turbo Board&quot;
+l_string|&quot;Blizzard 1230-IV/1260&quot;
 comma
-id|BLIZZARD_1230_IV
+id|TURBO
+comma
+id|PHASE5_BLIZZARD_1230_IV_1260
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Blizzard 2060 SCSI Controller&quot;
+l_string|&quot;Blizzard 2060&quot;
 comma
-id|BLIZZARD_2060SCSI
+id|TURBO
+comma
+id|PHASE5_BLIZZARD_2060
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;CyberStorm Mk II&quot;
 comma
-id|CYBERSTORM_II
+id|FLASHROM
+comma
+id|PHASE5_CYBERSTORM_MK_II
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;CyberVision64 Graphics Board&quot;
+l_string|&quot;CyberVision64&quot;
 comma
-id|CYBERVISION
+id|GFX
+comma
+id|PHASE5_CYBERVISION64
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;CyberVision64-3D Graphics Board Prototype)&quot;
+l_string|&quot;CyberVision64-3D Prototype&quot;
 comma
-id|CYBERVISION3D_PRT
+id|GFX
+comma
+id|PHASE5_CYBERVISION64_3D_PROTOTYPE
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;CyberVision64-3D Graphics Board&quot;
+l_string|&quot;CyberVision64-3D&quot;
 comma
-id|CYBERVISION3D
+id|GFX
+comma
+id|PHASE5_CYBERVISION64_3D
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;CyberStorm Mk III&quot;
+comma
+id|TURBO_SCSI
+comma
+id|PHASE5_CYBERSTORM_MK_III
 )paren
 id|END
 id|BEGIN_PROD
@@ -2210,60 +3165,72 @@ c_func
 (paren
 l_string|&quot;Personal Animation Recorder&quot;
 comma
-id|DPS_PAR
+id|VIDEO
+comma
+id|DPS_PERSONAL_ANIMATION_RECORDER
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|APOLLO2
+id|APOLLO_2
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A620 68020 Accelerator&quot;
+l_string|&quot;A620 68020&quot;
 comma
-id|A620
+id|TURBO
+comma
+id|APOLLO_A620_68020_1
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;A620 68020 Accelerator&quot;
+l_string|&quot;A620 68020&quot;
 comma
-id|A620_2
+id|TURBO
+comma
+id|APOLLO_A620_68020_2
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|APOLLO
+id|APOLLO_3
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;AT-Apollo&quot;
 comma
-id|AT_APOLLO
+id|UNKNOWN
+comma
+id|APOLLO_AT_APOLLO
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Turbo Board&quot;
+l_string|&quot;1230/1240/1260/2030/4040/4060&quot;
 comma
-id|APOLLO_TURBO
+id|TURBO
+comma
+id|APOLLO_1230_1240_1260_2030_4040_4060
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|PETSOFF
+id|PETSOFF_LP
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Delfina DSP&quot;
+l_string|&quot;Delfina&quot;
 comma
-id|DELFINA
+id|DSP
+comma
+id|PETSOFF_LP_DELFINA
 )paren
 id|END
 id|BEGIN_PROD
@@ -2276,83 +3243,105 @@ c_func
 (paren
 l_string|&quot;RAM/ROM&quot;
 comma
-id|UG_RAM_ROM
+id|MISC
+comma
+id|UWE_GERLACH_RAM_ROM
 )paren
 id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|MACROSYSTEMS2
+id|MACROSYSTEMS_GERMANY
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Maestro&quot;
 comma
-id|MAESTRO
+id|AUDIO
+comma
+id|MACROSYSTEMS_MAESTRO
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;VLab&quot;
 comma
-id|VLAB
+id|VIDEO
+comma
+id|MACROSYSTEMS_VLAB
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;Maestro Pro&quot;
 comma
-id|MAESTRO_PRO
+id|AUDIO
+comma
+id|MACROSYSTEMS_MAESTRO_PRO
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Retina Z2 Graphics Board&quot;
+l_string|&quot;Retina&quot;
 comma
-id|RETINA_Z2
+id|GFX
+comma
+id|MACROSYSTEMS_RETINA
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;MultiEvolution&quot;
 comma
-id|MULTI_EVOLUTION
+id|SCSI
+comma
+id|MACROSYSTEMS_MULTI_EVOLUTION
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Toccata Sound Board&quot;
+l_string|&quot;Toccata&quot;
 comma
-id|TOCCATA
+id|AUDIO
+comma
+id|MACROSYSTEMS_TOCCATA
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Retina Z3 Graphics Board&quot;
+l_string|&quot;Retina Z3&quot;
 comma
-id|RETINA_Z3
+id|GFX
+comma
+id|MACROSYSTEMS_RETINA_Z3
 )paren
 id|PROD
 c_func
 (paren
 l_string|&quot;VLab Motion&quot;
 comma
-id|VLAB_MOTION
+id|VIDEO
+comma
+id|MACROSYSTEMS_VLAB_MOTION
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Altais Graphics Board&quot;
+l_string|&quot;Altais&quot;
 comma
-id|ALTAIS
+id|GFX
+comma
+id|MACROSYSTEMS_ALTAIS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;Falcon &squot;040 Turbo Board&quot;
+l_string|&quot;Falcon &squot;040&quot;
 comma
-id|FALCON_040
+id|TURBO
+comma
+id|MACROSYSTEMS_FALCON_040
 )paren
 id|END
 id|BEGIN_PROD
@@ -2364,21 +3353,40 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|SKI
+id|SKI_PERIPHERALS
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;MAST Fireball SCSI Controller&quot;
+l_string|&quot;MAST Fireball&quot;
 comma
-id|MAST_FIREBALL
+id|SCSI
+comma
+id|SKI_PERIPHERALS_MAST_FIREBALL
 )paren
 id|PROD
 c_func
 (paren
-l_string|&quot;SCSI / Dual Serial&quot;
+l_string|&quot;SCSI/Dual Serial&quot;
 comma
-id|SKI_SCSI_SERIAL
+id|SCSI_SERIAL
+comma
+id|SKI_PERIPHERALS_SCSI_DUAL_SERIAL
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|REIS_WARE_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Scan King&quot;
+comma
+id|SCANNER
+comma
+id|REIS_WARE_SCAN_KING
 )paren
 id|END
 id|BEGIN_PROD
@@ -2391,7 +3399,9 @@ c_func
 (paren
 l_string|&quot;Personal A4&quot;
 comma
-id|PERSONAL_A4
+id|SCANNER
+comma
+id|CAMERON_PERSONAL_A4
 )paren
 id|END
 id|BEGIN_PROD
@@ -2404,8 +3414,74 @@ c_func
 (paren
 l_string|&quot;Handyscanner&quot;
 comma
-id|RW_HANDYSCANNER
+id|SCANNER
+comma
+id|REIS_WARE_HANDYSCANNER
 )paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|PHOENIX_2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;ST506&quot;
+comma
+id|HD
+comma
+id|PHOENIX_ST506_2
+)paren
+id|PROD
+c_func
+(paren
+l_int|NULL
+comma
+id|SCSI
+comma
+id|PHOENIX_SCSI_2
+)paren
+id|PROD
+c_func
+(paren
+l_int|NULL
+comma
+id|RAM
+comma
+id|PHOENIX_RAM_2
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|COMBITEC_2
+)paren
+id|PROD
+c_func
+(paren
+l_int|NULL
+comma
+id|HD
+comma
+id|COMBITEC_HD
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;SRAM&quot;
+comma
+id|RAM
+comma
+id|COMBITEC_SRAM
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|HACKER
+)paren
+multiline_comment|/* Unused */
 id|END
 id|BEGIN_MANUF
 id|MANUF
@@ -2413,14 +3489,21 @@ c_func
 (paren
 l_string|&quot;Pacific Peripherals&quot;
 comma
-id|PACIFIC
+id|PACIFIC_PERIPHERALS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;MacroSystems USA&quot;
+comma
+id|MACROSYSTEMS_USA_2
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Kupke&quot;
 comma
-id|KUPKE
+id|KUPKE_1
 )paren
 id|MANUF
 c_func
@@ -2440,37 +3523,44 @@ id|_STATE
 id|MANUF
 c_func
 (paren
-l_string|&quot;Commodore&quot;
+l_string|&quot;Commodore Braunschweig&quot;
 comma
-id|COMMODORE2
+id|COMMODORE_BRAUNSCHWEIG
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Commodore&quot;
+l_string|&quot;Commodore West Chester&quot;
 comma
-id|COMMODORE
+id|COMMODORE_WEST_CHESTER_1
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Commodore&quot;
+l_string|&quot;Commodore West Chester&quot;
 comma
-id|COMMODORE3
+id|COMMODORE_WEST_CHESTER_2
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Progressive Peripherals &amp; Systems&quot;
+comma
+id|PROGRESSIVE_PERIPHERALS_AND_SYSTEMS_2
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Kolff Computer Supplies&quot;
 comma
-id|KCS
+id|KOLFF_COMPUTER_SUPPLIES
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Cardco&quot;
+l_string|&quot;Cardco Ltd.&quot;
 comma
-id|CARDCO
+id|CARDCO_1
 )paren
 id|MANUF
 c_func
@@ -2482,37 +3572,37 @@ id|A_SQUARED
 id|MANUF
 c_func
 (paren
-l_string|&quot;ComSpec Communications&quot;
+l_string|&quot;Comspec Communications&quot;
 comma
-id|COMSPEC
+id|COMSPEC_COMMUNICATIONS
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Anakin&quot;
+l_string|&quot;Anakin Research&quot;
 comma
-id|ANAKIN
+id|ANAKIN_RESEARCH
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;MicroBotics&quot;
+l_string|&quot;Microbotics&quot;
 comma
 id|MICROBOTICS
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Access Associates&quot;
+l_string|&quot;Access Associates Alegra&quot;
 comma
-id|ACCESS
+id|ACCESS_ASSOCIATES_ALEGRA
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Expansion Technologies&quot;
+l_string|&quot;Expansion Technologies (Pacific Cypress)&quot;
 comma
-id|EXPANSION_TECH
+id|EXPANSION_TECHNOLOGIES
 )paren
 id|MANUF
 c_func
@@ -2524,16 +3614,16 @@ id|ASDG
 id|MANUF
 c_func
 (paren
-l_string|&quot;Imtronics&quot;
+l_string|&quot;Ronin/Imtronics&quot;
 comma
-id|IMTRONICS
+id|IMTRONICS_1
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;University of Lowell&quot;
+l_string|&quot;Commodore/University of Lowell&quot;
 comma
-id|UNIV_OF_LOWELL
+id|CBM_UNIVERSITY_OF_LOWELL
 )paren
 id|MANUF
 c_func
@@ -2552,23 +3642,30 @@ id|SUPRA
 id|MANUF
 c_func
 (paren
-l_string|&quot;Computer Systems Ass.&quot;
+l_string|&quot;Computer Systems Assosiates&quot;
 comma
-id|CSA
+id|COMPUTER_SYSTEMS_ASSOCIATES
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Marc Michael Groth&quot;
+comma
+id|MARC_MICHAEL_GROTH
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;M-Tech&quot;
 comma
-id|MTEC2
+id|M_TECH
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Great Valley Products&quot;
 comma
-id|GVP3
+id|GREAT_VALLEY_PRODUCTS_1
 )paren
 id|MANUF
 c_func
@@ -2580,23 +3677,23 @@ id|BYTEBOX
 id|MANUF
 c_func
 (paren
-l_string|&quot;Power Computing&quot;
+l_string|&quot;DKB/Power Computing&quot;
 comma
-id|POWER_COMPUTING
+id|DKB_POWER_COMPUTING
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Great Valley Products&quot;
 comma
-id|GVP
+id|GREAT_VALLEY_PRODUCTS_2
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Synergy&quot;
+l_string|&quot;California Access (Synergy)&quot;
 comma
-id|SYNERGY
+id|CALIFORNIA_ACCESS_SYNERGY
 )paren
 id|MANUF
 c_func
@@ -2608,9 +3705,9 @@ id|XETEC
 id|MANUF
 c_func
 (paren
-l_string|&quot;Progressive Peripherals&quot;
+l_string|&quot;Progressive Peripherals &amp; Systems&quot;
 comma
-id|PPI
+id|PROGRESSIVE_PERIPHERALS_AND_SYSTEMS
 )paren
 id|MANUF
 c_func
@@ -2622,30 +3719,37 @@ id|XEBEC
 id|MANUF
 c_func
 (paren
-l_string|&quot;Spirit&quot;
+l_string|&quot;Spirit Technology&quot;
 comma
-id|SPIRIT
+id|SPIRIT_TECHNOLOGY
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;BSC&quot;
+l_string|&quot;Spirit Technology&quot;
 comma
-id|BSC
+id|SPIRIT_TECHNOLOGY_2
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;BSC&quot;
+l_string|&quot;BSC/Alfadata&quot;
 comma
-id|BSC3
+id|BSC_ALFADATA_1
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;C Ltd.&quot;
+l_string|&quot;BSC/Alfadata&quot;
 comma
-id|C_LTD
+id|BSC_ALFADATA_2
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Cardco Ltd.&quot;
+comma
+id|CARDCO_2
 )paren
 id|MANUF
 c_func
@@ -2659,7 +3763,21 @@ c_func
 (paren
 l_string|&quot;Checkpoint Technologies&quot;
 comma
-id|CHECKPOINT
+id|CHECKPOINT_TECHNOLOGIES
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Edotronik&quot;
+comma
+id|EDOTRONIK
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;NES Inc.&quot;
+comma
+id|NES_INC
 )paren
 id|MANUF
 c_func
@@ -2673,42 +3791,56 @@ c_func
 (paren
 l_string|&quot;Kupke&quot;
 comma
-id|KUPKE2
+id|KUPKE_2
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Great Valley Products&quot;
 comma
-id|GVP4
+id|GREAT_VALLEY_PRODUCTS_3
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Interworks Network&quot;
 comma
-id|INTERWORKS_NET
+id|INTERWORKS_NETWORK
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Hardital Synthesis&quot;
 comma
-id|HARDITAL
+id|HARDITAL_SYNTHESIS
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;BSC&quot;
+l_string|&quot;Applied Engineering&quot;
 comma
-id|BSC2
+id|APPLIED_ENGINEERING
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Advanced Systems &amp; Software&quot;
+l_string|&quot;BSC/Alfadata&quot;
 comma
-id|ADV_SYS_SOFT
+id|BSC_ALFADATA_3
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Phoenix&quot;
+comma
+id|PHOENIX
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Advanced Storage Systems&quot;
+comma
+id|ADVANCED_STORAGE_SYSTEMS
 )paren
 id|MANUF
 c_func
@@ -2729,12 +3861,12 @@ c_func
 (paren
 l_string|&quot;Vector&quot;
 comma
-id|VECTOR
+id|VECTOR_1
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;XPert/ProDev&quot;
+l_string|&quot;XPert ProDev&quot;
 comma
 id|XPERT_PRODEV
 )paren
@@ -2750,7 +3882,7 @@ c_func
 (paren
 l_string|&quot;Sunrize Industries&quot;
 comma
-id|SUNRIZE
+id|SUNRIZE_INDUSTRIES
 )paren
 id|MANUF
 c_func
@@ -2762,7 +3894,7 @@ id|TRICERATOPS
 id|MANUF
 c_func
 (paren
-l_string|&quot;Applied Magic&quot;
+l_string|&quot;Applied Magic Inc.&quot;
 comma
 id|APPLIED_MAGIC
 )paren
@@ -2783,16 +3915,37 @@ id|ROCTEC
 id|MANUF
 c_func
 (paren
-l_string|&quot;Helfrich&quot;
+l_string|&quot;Kato&quot;
 comma
-id|HELFRICH1
+id|KATO
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Software Result Enterprises&quot;
+l_string|&quot;Atlantis&quot;
 comma
-id|SW_RESULT_ENTS
+id|ATLANTIS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Protar&quot;
+comma
+id|PROTAR
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;ACS&quot;
+comma
+id|ACS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Software Results Enterprises&quot;
+comma
+id|SOFTWARE_RESULTS_ENTERPRISES
 )paren
 id|MANUF
 c_func
@@ -2800,6 +3953,13 @@ c_func
 l_string|&quot;Masoboshi&quot;
 comma
 id|MASOBOSHI
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Mainhattan-Data (A-Team)&quot;
+comma
+id|MAINHATTAN_DATA
 )paren
 id|MANUF
 c_func
@@ -2813,7 +3973,7 @@ c_func
 (paren
 l_string|&quot;Utilities Unlimited&quot;
 comma
-id|UTILITIES_ULTD
+id|UTILITIES_UNLIMITED
 )paren
 id|MANUF
 c_func
@@ -2839,44 +3999,51 @@ id|NEWTEK
 id|MANUF
 c_func
 (paren
-l_string|&quot;M-Tech&quot;
+l_string|&quot;M-Tech Germany&quot;
 comma
-id|MTEC
+id|M_TECH_GERMANY
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Great Valley Products&quot;
 comma
-id|GVP2
+id|GREAT_VALLEY_PRODUCTS_4
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Helfrich&quot;
+l_string|&quot;Apollo&quot;
 comma
-id|HELFRICH2
+id|APOLLO_1
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;MacroSystems&quot;
+l_string|&quot;Ingenieurb&#xfffd;ro Helfrich&quot;
 comma
-id|MACROSYSTEMS
+id|HELFRICH_2
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;MacroSystems USA&quot;
+comma
+id|MACROSYSTEMS_USA
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;ElBox Computer&quot;
 comma
-id|ELBOX
+id|ELBOX_COMPUTER
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Harms Professional&quot;
 comma
-id|HARMS_PROF
+id|HARMS_PROFESSIONAL
 )paren
 id|MANUF
 c_func
@@ -2888,23 +4055,37 @@ id|MICRONIK
 id|MANUF
 c_func
 (paren
-l_string|&quot;MegaMicro&quot;
+l_string|&quot;Micronik&quot;
 comma
-id|MEGA_MICRO
+id|MICRONIK2
 )paren
 id|MANUF
 c_func
 (paren
-l_string|&quot;Imtronics&quot;
+l_string|&quot;MegaMicro&quot;
 comma
-id|IMTRONICS2
+id|MEGAMICRO
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Ronin/Imtronics&quot;
+comma
+id|IMTRONICS_2
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Individual Computers&quot;
+comma
+id|INDIVIDUAL_COMPUTERS
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Kupke&quot;
 comma
-id|KUPKE3
+id|KUPKE_3
 )paren
 id|MANUF
 c_func
@@ -2937,9 +4118,9 @@ id|VORTEX
 id|MANUF
 c_func
 (paren
-l_string|&quot;DataFlyer&quot;
+l_string|&quot;Expansion Systems&quot;
 comma
-id|DATAFLYER
+id|EXPANSION_SYSTEMS
 )paren
 id|MANUF
 c_func
@@ -2951,7 +4132,7 @@ id|READYSOFT
 id|MANUF
 c_func
 (paren
-l_string|&quot;Phase5&quot;
+l_string|&quot;Phase 5&quot;
 comma
 id|PHASE5
 )paren
@@ -2967,21 +4148,21 @@ c_func
 (paren
 l_string|&quot;Apollo&quot;
 comma
-id|APOLLO2
+id|APOLLO_2
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Apollo&quot;
 comma
-id|APOLLO
+id|APOLLO_3
 )paren
 id|MANUF
 c_func
 (paren
 l_string|&quot;Petsoff LP&quot;
 comma
-id|PETSOFF
+id|PETSOFF_LP
 )paren
 id|MANUF
 c_func
@@ -2993,9 +4174,9 @@ id|UWE_GERLACH
 id|MANUF
 c_func
 (paren
-l_string|&quot;MacroSystems&quot;
+l_string|&quot;MacroSystems Germany&quot;
 comma
-id|MACROSYSTEMS2
+id|MACROSYSTEMS_GERMANY
 )paren
 id|MANUF
 c_func
@@ -3009,7 +4190,14 @@ c_func
 (paren
 l_string|&quot;SKI Peripherals&quot;
 comma
-id|SKI
+id|SKI_PERIPHERALS
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Reis-Ware&quot;
+comma
+id|REIS_WARE_2
 )paren
 id|MANUF
 c_func
@@ -3025,14 +4213,194 @@ l_string|&quot;Reis-Ware&quot;
 comma
 id|REIS_WARE
 )paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Hacker Test Board&quot;
+comma
+id|HACKER
+)paren
+multiline_comment|/* Unused */
+id|MANUF
+c_func
+(paren
+l_string|&quot;Phoenix&quot;
+comma
+id|PHOENIX_2
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Combitec&quot;
+comma
+id|COMBITEC_2
+)paren
 id|END
 DECL|macro|NUM_MANUF
-mdefine_line|#define NUM_MANUF (sizeof(Manufacturers)/sizeof(struct Manufacturer))
+mdefine_line|#define NUM_MANUF&t;&t;(ARRAYSIZE(Manufacturers))
 DECL|macro|NUM_GVP_PROD
-mdefine_line|#define NUM_GVP_PROD (sizeof(Ext_Prod_GVP)/sizeof(struct GVP_Product))
+mdefine_line|#define NUM_GVP_PROD&t;&t;(ARRAYSIZE(Ext_Prod_GVP))
+multiline_comment|/*&n;     *  Zorro product classes&n;     *&n;     *  Make sure to keep these in sync with include/linux/zorro.h!&n;     */
+DECL|variable|classnames
+r_static
+r_const
+r_char
+op_star
+id|classnames
+(braket
+)braket
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* ZORRO_CLASS_UNKNOWN */
+l_string|&quot;ArcNet Card&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_ARCNET */
+l_string|&quot;Audio Board&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_AUDIO */
+l_string|&quot;ISA Bus Bridge&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_BRIDGE */
+l_string|&quot;DSP Board&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_DSP */
+l_string|&quot;Ethernet Card&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_ETHERNET */
+l_string|&quot;Ethernet Card and Parallel Ports&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_ETHERNET_PARALLEL */
+l_string|&quot;Flash ROM&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_FLASHROM */
+l_string|&quot;FPU and RAM Expansion&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_FPU_RAM */
+l_string|&quot;Graphics Board&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_GFX */
+l_string|&quot;Graphics Board (RAM)&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_GFXRAM */
+l_string|&quot;HD Controller&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_HD */
+l_string|&quot;HD Controller and RAM Expansion&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_HD_RAM */
+l_string|&quot;IDE Interface&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_IDE */
+l_string|&quot;IDE Interface and RAM Expansion&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_IDE_RAM */
+l_string|&quot;IDE Interface and Floppy Controller&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_IDE_FLOPPY */
+l_string|&quot;ISDN Interface&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_ISDN */
+l_string|&quot;Macintosh Emulator&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_MACEMU */
+l_string|&quot;Miscellaneous Expansion Card&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_MISC */
+l_string|&quot;Modem&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_MODEM */
+l_string|&quot;Multi I/O&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_MULTIIO */
+l_string|&quot;RAM Expansion&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_RAM */
+l_string|&quot;Scanner Interface&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_SCANNER */
+l_string|&quot;SCSI Host Adapter&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_SCSI */
+l_string|&quot;SCSI Host Adapter and IDE Interface&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_SCSI_IDE */
+l_string|&quot;SCSI Host Adapter and RAM Expansion&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_SCSI_RAM */
+l_string|&quot;SCSI Host Adapter and Serial Card&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_SCSI_SERIAL */
+l_string|&quot;Multi Serial&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_SERIAL */
+l_string|&quot;Drawing Tablet Interface&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_TABLET */
+l_string|&quot;Accelerator&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_TURBO */
+l_string|&quot;Accelerator and RAM Expansion&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_TURBO_RAM */
+l_string|&quot;Accelerator and HD Controller&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_TURBO_HD */
+l_string|&quot;Accelerator and IDE Interface&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_TURBO_IDE */
+l_string|&quot;Accelerator and SCSI Host Adapter&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_TURBO_SCSI */
+l_string|&quot;Accelerator, SCSI Host Adapter and RAM Expansion&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_TURBO_SCSI */
+l_string|&quot;Video Board&quot;
+comma
+multiline_comment|/* ZORRO_CLASS_VIDEO */
+)brace
+suffix:semicolon
+DECL|function|get_class_name
+r_static
+r_inline
+r_const
+r_char
+op_star
+id|get_class_name
+c_func
+(paren
+r_enum
+id|Zorro_Classes
+r_class
+)paren
+(brace
+r_if
+c_cond
+(paren
+r_class
+OL
+id|ARRAYSIZE
+c_func
+(paren
+id|classnames
+)paren
+)paren
+r_return
+id|classnames
+(braket
+r_class
+)braket
+suffix:semicolon
+r_else
+r_return
+l_string|&quot;(**Illegal**)&quot;
+suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_ZORRO */
-multiline_comment|/*&n;    *    Expansion Devices&n;    */
-r_int
+multiline_comment|/*&n;     *  Expansion Devices&n;     */
+DECL|variable|zorro_num_autocon
+id|u_int
 id|zorro_num_autocon
 suffix:semicolon
 DECL|variable|zorro_autocon
@@ -3045,7 +4413,7 @@ id|ZORRO_NUM_AUTO
 suffix:semicolon
 DECL|variable|BoardPartFlags
 r_static
-id|u_long
+id|u32
 id|BoardPartFlags
 (braket
 id|ZORRO_NUM_AUTO
@@ -3056,32 +4424,60 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n;    *    Find the key for the next unconfigured expansion device of a specific&n;    *    type.&n;    *&n;    *    Part is a device specific number (0 &lt;= part &lt;= 31) to allow for the&n;    *    independent configuration of independent parts of an expansion board.&n;    *    Thanks to Jes Soerensen for this idea!&n;    *&n;    *    Index is used to specify the first board in the autocon list&n;    *    to be tested. It was inserted in order to solve the problem&n;    *    with the GVP boards that uses the same product code, but&n;    *    it should help if there are other companies uses the same&n;    *    method as GVP. Drivers for boards which are not using this&n;    *    method does not need to think of this - just set index = 0.&n;    *    &n;    *    Example:&n;    *&n;    *       while ((key = zorro_find(MY_MANUF, MY_PROD, MY_PART, 0))) {&n;    *          cd = zorro_get_board(key);&n;    *          initialise_this_board;&n;    *          zorro_config_board(key, MY_PART);&n;    *       }&n;    */
+multiline_comment|/*&n;     *  Find the key for the next unconfigured expansion device of a specific&n;     *  type.&n;     *&n;     *  Part is a device specific number (0 &lt;= part &lt;= 31) to allow for the&n;     *  independent configuration of independent parts of an expansion board.&n;     *  Thanks to Jes Soerensen for this idea!&n;     *&n;     *  Index is used to specify the first board in the autocon list&n;     *  to be tested. It was inserted in order to solve the problem&n;     *  with the GVP boards that uses the same product code, but&n;     *  it should help if there are other companies which use the same&n;     *  method as GVP. Drivers for boards which are not using this&n;     *  method do not need to think of this - just set index = 0.&n;     *&n;     *  Example:&n;     *&n;     *      while ((key = zorro_find(ZORRO_PROD_MY_BOARD, MY_PART, 0))) {&n;     *      &t;cd = zorro_get_board(key);&n;     *      &t;initialise_this_board;&n;     *      &t;zorro_config_board(key, MY_PART);&n;     *      }&n;     */
 DECL|function|zorro_find
-r_int
+id|u_int
 id|zorro_find
 c_func
 (paren
-r_int
-id|manuf
+id|zorro_id
+id|id
 comma
-r_int
-id|prod
-comma
-r_int
+id|u_int
 id|part
 comma
-r_int
+id|u_int
 id|index
 )paren
 (brace
-r_int
+id|u_int
+id|manuf
+op_assign
+id|ZORRO_MANUF
+c_func
+(paren
+id|id
+)paren
+suffix:semicolon
+id|u_int
+id|prod
+op_assign
+id|ZORRO_PROD
+c_func
+(paren
+id|id
+)paren
+suffix:semicolon
+id|u_int
+id|epc
+op_assign
+id|ZORRO_EPC
+c_func
+(paren
+id|id
+)paren
+suffix:semicolon
+id|u_int
 id|key
 suffix:semicolon
+r_const
 r_struct
 id|ConfigDev
 op_star
 id|cd
+suffix:semicolon
+id|u_long
+id|addr
 suffix:semicolon
 r_if
 c_cond
@@ -3102,17 +4498,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|part
-OL
-l_int|0
-)paren
-op_logical_or
-(paren
 id|part
 OG
 l_int|31
-)paren
 )paren
 (brace
 id|printk
@@ -3154,6 +4542,13 @@ op_minus
 l_int|1
 )braket
 suffix:semicolon
+id|addr
+op_assign
+(paren
+id|u_long
+)paren
+id|cd-&gt;cd_BoardAddr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3184,6 +4579,43 @@ op_lshift
 id|part
 )paren
 )paren
+op_logical_and
+(paren
+id|manuf
+op_ne
+id|ZORRO_MANUF
+c_func
+(paren
+id|ZORRO_PROD_GVP_EPC_BASE
+)paren
+op_logical_or
+id|prod
+op_ne
+id|ZORRO_PROD
+c_func
+(paren
+id|ZORRO_PROD_GVP_EPC_BASE
+)paren
+op_logical_or
+(paren
+op_star
+(paren
+id|u_short
+op_star
+)paren
+id|ZTWO_VADDR
+c_func
+(paren
+id|addr
+op_plus
+l_int|0x8000
+)paren
+op_amp
+id|GVP_PRODMASK
+)paren
+op_eq
+id|epc
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -3199,18 +4631,20 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    *    Get the board for a specified key&n;    */
+multiline_comment|/*&n;     *  Get the board corresponding to a specific key&n;     */
 DECL|function|zorro_get_board
+r_const
 r_struct
 id|ConfigDev
 op_star
 id|zorro_get_board
 c_func
 (paren
-r_int
+id|u_int
 id|key
 )paren
 (brace
+r_const
 r_struct
 id|ConfigDev
 op_star
@@ -3256,16 +4690,16 @@ r_return
 id|cd
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    *    Mark a part of a board as configured&n;    */
+multiline_comment|/*&n;     *  Mark a part of a board as configured&n;     */
 DECL|function|zorro_config_board
 r_void
 id|zorro_config_board
 c_func
 (paren
-r_int
+id|u_int
 id|key
 comma
-r_int
+id|u_int
 id|part
 )paren
 (brace
@@ -3296,22 +4730,41 @@ r_else
 r_if
 c_cond
 (paren
-(paren
-id|part
-OL
-l_int|0
-)paren
-op_logical_or
-(paren
 id|part
 OG
 l_int|31
-)paren
 )paren
 id|printk
 c_func
 (paren
 l_string|&quot;zorro_config_board: bad part %d&bslash;n&quot;
+comma
+id|part
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|BoardPartFlags
+(braket
+id|key
+op_minus
+l_int|1
+)braket
+op_amp
+(paren
+l_int|1
+op_lshift
+id|part
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;zorro_config_board: key %d part %d is already configured&bslash;n&quot;
+comma
+id|key
 comma
 id|part
 )paren
@@ -3329,16 +4782,16 @@ op_lshift
 id|part
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    *    Mark a part of a board as unconfigured&n;    *&n;    *    This function is mainly intended for the unloading of LKMs&n;    */
+multiline_comment|/*&n;     *  Mark a part of a board as unconfigured&n;     *&n;     *  This function is mainly intended for the unloading of LKMs&n;     */
 DECL|function|zorro_unconfig_board
 r_void
 id|zorro_unconfig_board
 c_func
 (paren
-r_int
+id|u_int
 id|key
 comma
-r_int
+id|u_int
 id|part
 )paren
 (brace
@@ -3369,22 +4822,44 @@ r_else
 r_if
 c_cond
 (paren
-(paren
-id|part
-OL
-l_int|0
-)paren
-op_logical_or
-(paren
 id|part
 OG
 l_int|31
-)paren
 )paren
 id|printk
 c_func
 (paren
 l_string|&quot;zorro_unconfig_board: bad part %d&bslash;n&quot;
+comma
+id|part
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|BoardPartFlags
+(braket
+id|key
+op_minus
+l_int|1
+)braket
+op_amp
+(paren
+l_int|1
+op_lshift
+id|part
+)paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;zorro_config_board: key %d part %d is not yet configured&bslash;n&quot;
+comma
+id|key
 comma
 id|part
 )paren
@@ -3406,59 +4881,84 @@ id|part
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ZORRO
-multiline_comment|/*&n;    *    Identify an AutoConfig Expansion Device&n;    *&n;    *    If the board was configured by a Linux/m68k driver, an asterisk will&n;    *    be printed before the board address (except for unknown and `Hacker&n;    *    Test&squot; boards).&n;    */
+multiline_comment|/*&n;     *  Identify an AutoConfig Expansion Device&n;     *&n;     *  If the board was configured by a Linux/m68k driver, an asterisk will&n;     *  be printed before the board address (except for unknown and `Hacker&n;     *  Test&squot; boards).&n;     */
 DECL|function|identify
 r_static
 r_int
 id|identify
 c_func
 (paren
-r_int
+id|u_int
 id|devnum
 comma
 r_char
 op_star
 id|buf
+comma
+r_int
+id|verbose
 )paren
 (brace
+r_const
 r_struct
 id|ConfigDev
 op_star
 id|cd
+op_assign
+op_amp
+id|zorro_autocon
+(braket
+id|devnum
+)braket
 suffix:semicolon
-r_int
-id|manuf
-comma
-id|prod
-suffix:semicolon
-id|u_long
-id|addr
-comma
-id|size
-suffix:semicolon
-r_char
-op_star
-id|manufname
-comma
-op_star
-id|prodname
-comma
-op_star
-id|is_mem
-suffix:semicolon
-r_char
-id|zorro
-comma
-id|mag
-comma
+id|u32
 id|configured
+op_assign
+id|BoardPartFlags
+(braket
+id|devnum
+)braket
 suffix:semicolon
-r_int
-id|identified
+id|u_int
+id|manuf
+op_assign
+id|cd-&gt;cd_Rom.er_Manufacturer
+suffix:semicolon
+id|u_int
+id|prod
+op_assign
+id|cd-&gt;cd_Rom.er_Product
+suffix:semicolon
+id|u_int
+r_class
+op_assign
+id|ZORRO_CLASS_UNKNOWN
+suffix:semicolon
+id|u_int
+id|epc
 op_assign
 l_int|0
 suffix:semicolon
-r_int
+r_const
+r_char
+op_star
+id|manufname
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
+r_const
+r_char
+op_star
+id|prodname
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
+r_const
+r_char
+op_star
+id|classname
+suffix:semicolon
+id|u_int
 id|i
 comma
 id|j
@@ -3469,26 +4969,7 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
-r_enum
-id|GVP_ident
-id|epc
-suffix:semicolon
-id|cd
-op_assign
-op_amp
-id|zorro_autocon
-(braket
-id|devnum
-)braket
-suffix:semicolon
-id|manuf
-op_assign
-id|cd-&gt;cd_Rom.er_Manufacturer
-suffix:semicolon
-id|prod
-op_assign
-id|cd-&gt;cd_Rom.er_Product
-suffix:semicolon
+id|u_long
 id|addr
 op_assign
 (paren
@@ -3496,28 +4977,43 @@ id|u_long
 )paren
 id|cd-&gt;cd_BoardAddr
 suffix:semicolon
+id|u_long
 id|size
 op_assign
 id|cd-&gt;cd_BoardSize
 suffix:semicolon
-id|configured
+r_char
+id|mag
+suffix:semicolon
+r_int
+id|identified
 op_assign
-id|BoardPartFlags
-(braket
-id|devnum
-)braket
-ques
+l_int|0
+comma
+id|gvp
+op_assign
+l_int|0
+suffix:semicolon
+r_if
 c_cond
-l_char|&squot;*&squot;
-suffix:colon
-l_char|&squot; &squot;
-suffix:semicolon
-id|manufname
-op_assign
-id|prodname
-op_assign
-l_string|&quot;&lt;UNKNOWN&gt;&quot;
-suffix:semicolon
+(paren
+id|manuf
+op_ne
+id|ZORRO_MANUF
+c_func
+(paren
+id|ZORRO_PROD_GVP_EPC_BASE
+)paren
+op_logical_or
+id|prod
+op_ne
+id|ZORRO_PROD
+c_func
+(paren
+id|ZORRO_PROD_GVP_EPC_BASE
+)paren
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -3540,7 +5036,7 @@ id|Manufacturers
 id|i
 )braket
 dot
-id|ID
+id|Manuf
 op_eq
 id|manuf
 )paren
@@ -3586,24 +5082,9 @@ id|Products
 id|j
 )braket
 dot
-id|ID
+id|Prod
 op_eq
 id|prod
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|manuf
-op_ne
-id|MANUF_GVP
-)paren
-op_logical_or
-(paren
-id|prod
-op_ne
-id|PROD_GVP
-)paren
 )paren
 (brace
 id|prodname
@@ -3620,6 +5101,20 @@ id|j
 dot
 id|Name
 suffix:semicolon
+r_class
+op_assign
+id|Manufacturers
+(braket
+id|i
+)braket
+dot
+id|Products
+(braket
+id|j
+)braket
+dot
+id|Class
+suffix:semicolon
 id|identified
 op_assign
 l_int|1
@@ -3627,15 +5122,47 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* Put workarounds for ID clashes here */
+r_if
+c_cond
+(paren
+id|manuf
+op_eq
+id|ZORRO_MANUF
+c_func
+(paren
+id|ZORRO_PROD_HELFRICH_RAINBOW_III
+)paren
+op_logical_and
+id|prod
+op_eq
+id|ZORRO_PROD
+c_func
+(paren
+id|ZORRO_PROD_HELFRICH_RAINBOW_III
+)paren
+)paren
+id|manufname
+op_assign
+l_string|&quot;Ingenieurb&#xfffd;ro Helfrich&quot;
+suffix:semicolon
+)brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;* The epc must be read as a short from the&n;&t;&t;&t;* hardware.&n;&t;&t;&t;*/
+id|manufname
+op_assign
+l_string|&quot;Great Valley Products&quot;
+suffix:semicolon
+id|gvp
+op_assign
+l_int|1
+suffix:semicolon
 id|epc
 op_assign
 op_star
 (paren
-r_int
-r_int
+id|u_short
 op_star
 )paren
 id|ZTWO_VADDR
@@ -3665,14 +5192,14 @@ op_increment
 r_if
 c_cond
 (paren
+id|epc
+op_eq
 id|Ext_Prod_GVP
 (braket
 id|k
 )braket
 dot
-id|ID
-op_eq
-id|epc
+id|EPC
 )paren
 (brace
 id|prodname
@@ -3684,6 +5211,15 @@ id|k
 dot
 id|Name
 suffix:semicolon
+r_class
+op_assign
+id|Ext_Prod_GVP
+(braket
+id|k
+)braket
+dot
+id|Class
+suffix:semicolon
 id|identified
 op_assign
 l_int|1
@@ -3692,44 +5228,14 @@ r_break
 suffix:semicolon
 )brace
 )brace
-r_break
-suffix:semicolon
-)brace
-r_switch
-c_cond
+id|classname
+op_assign
+id|get_class_name
+c_func
 (paren
-id|cd-&gt;cd_Rom.er_Type
-op_amp
-id|ERT_TYPEMASK
+r_class
 )paren
-(brace
-r_case
-id|ERT_ZORROII
-suffix:colon
-id|zorro
-op_assign
-l_char|&squot;2&squot;
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ERT_ZORROIII
-suffix:colon
-id|zorro
-op_assign
-l_char|&squot;3&squot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|zorro
-op_assign
-l_char|&squot;?&squot;
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3761,82 +5267,76 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|verbose
+)paren
+(brace
+r_const
+r_char
+op_star
+id|zorro
+suffix:semicolon
+r_int
+id|is_mem
+op_assign
 id|cd-&gt;cd_Rom.er_Type
 op_amp
 id|ERTF_MEMLIST
-)paren
-id|is_mem
-op_assign
-l_string|&quot; MEM&quot;
 suffix:semicolon
-r_else
-id|is_mem
-op_assign
-l_string|&quot;&quot;
-suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
-id|identified
+id|cd-&gt;cd_Rom.er_Type
+op_amp
+id|ERT_TYPEMASK
 )paren
-id|len
-op_assign
-id|sprintf
-c_func
-(paren
-id|buf
-comma
-l_string|&quot; %c0x%08lx: %s %s (Z%c, %ld%c%s)&bslash;n&quot;
-comma
-id|configured
-comma
-id|addr
-comma
-id|manufname
-comma
-id|prodname
-comma
-id|zorro
-comma
-id|size
-comma
-id|mag
-comma
-id|is_mem
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|manuf
-op_eq
-id|MANUF_HACKER
-)paren
-id|len
-op_assign
-id|sprintf
-c_func
-(paren
-id|buf
-comma
-l_string|&quot;  0x%08lx: Hacker Test Board 0x%02x (Z%c, %ld%c%s)&bslash;n&quot;
-comma
-id|addr
-comma
-id|prod
-comma
-id|zorro
-comma
-id|size
-comma
-id|mag
-comma
-id|is_mem
-)paren
-suffix:semicolon
-r_else
 (brace
+r_case
+id|ERT_ZORROII
+suffix:colon
+id|zorro
+op_assign
+l_string|&quot;Zorro II&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ERT_ZORROIII
+suffix:colon
+id|zorro
+op_assign
+l_string|&quot;Zorro III&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|zorro
+op_assign
+l_string|&quot;Unknown Zorro&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|prodname
+)paren
+id|prodname
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|classname
+)paren
+id|classname
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
 id|len
 op_assign
 id|sprintf
@@ -3844,23 +5344,34 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;  0x%08lx: [%04x:%02x] made by %s (Z%c, %ld%c%s)&bslash;n&quot;
+l_string|&quot;  Device %d at 0x%08lx: ID=%04x:%02x&quot;
+comma
+id|devnum
 comma
 id|addr
 comma
 id|manuf
 comma
 id|prod
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|gvp
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
 comma
-id|manufname
+l_string|&quot;:%02x&quot;
 comma
-id|zorro
-comma
-id|size
-comma
-id|mag
-comma
-id|is_mem
+id|epc
 )paren
 suffix:semicolon
 id|len
@@ -3872,8 +5383,253 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;  Please report this unknown device to &quot;
-l_string|&quot;Geert.Uytterhoeven@cs.kuleuven.ac.be&bslash;n&quot;
+l_string|&quot;, %s, %ld%c&quot;
+comma
+id|zorro
+comma
+id|size
+comma
+id|mag
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|is_mem
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;, System RAM&quot;
+)paren
+suffix:semicolon
+r_else
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;, Configured=%08x&quot;
+comma
+id|configured
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;n&quot;
+l_string|&quot;    Manufacturer: %s&bslash;n&quot;
+l_string|&quot;    Product Name: %s&bslash;n&quot;
+l_string|&quot;    Board Class : %s&bslash;n&quot;
+comma
+id|manufname
+comma
+id|prodname
+comma
+id|classname
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|len
+op_assign
+id|sprintf
+c_func
+(paren
+id|buf
+comma
+l_string|&quot; %c%08lx: &quot;
+comma
+id|configured
+ques
+c_cond
+l_char|&squot;*&squot;
+suffix:colon
+l_char|&squot; &squot;
+comma
+id|addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|identified
+)paren
+(brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;%s&quot;
+comma
+id|manufname
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prodname
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot; %s&quot;
+comma
+id|prodname
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|classname
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot; %s&quot;
+comma
+id|classname
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|manuf
+op_eq
+id|ZORRO_MANUF_HACKER
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;Hacker Test Board %02x&quot;
+comma
+id|prod
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|gvp
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;[%04x:%02x:%02x] made by %s&quot;
+comma
+id|manuf
+comma
+id|prod
+comma
+id|epc
+comma
+id|manufname
+)paren
+suffix:semicolon
+r_else
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;[%04x:%02x] made by %s&quot;
+comma
+id|manuf
+comma
+id|prod
+comma
+id|manufname
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot; (%ld%c)&bslash;n&quot;
+comma
+id|size
+comma
+id|mag
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|identified
+op_logical_and
+id|manuf
+op_ne
+id|ZORRO_MANUF_HACKER
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    Please report this unknown device to &quot;
+l_string|&quot;zorro@linux-m68k.org&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3881,7 +5637,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    *    Identify all known AutoConfig Expansion Devices&n;    */
+multiline_comment|/*&n;     *  Identify all known AutoConfig Expansion Devices&n;     */
 DECL|function|zorro_identify
 r_void
 id|zorro_identify
@@ -3890,13 +5646,13 @@ c_func
 r_void
 )paren
 (brace
-r_int
+id|u_int
 id|i
 suffix:semicolon
 r_char
 id|tmp
 (braket
-l_int|160
+l_int|256
 )braket
 suffix:semicolon
 r_if
@@ -3938,6 +5694,8 @@ c_func
 id|i
 comma
 id|tmp
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|printk
@@ -3960,7 +5718,7 @@ l_string|&quot;No AutoConfig expansion devices present.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    *    Get the list of all AutoConfig Expansion Devices&n;    */
+multiline_comment|/*&n;     *  Get the list of all AutoConfig Expansion Devices&n;     */
 DECL|function|zorro_get_list
 r_int
 id|zorro_get_list
@@ -3971,19 +5729,19 @@ op_star
 id|buffer
 )paren
 (brace
-r_int
+id|u_int
 id|i
-comma
-id|j
 comma
 id|len
 op_assign
 l_int|0
+comma
+id|len2
 suffix:semicolon
 r_char
 id|tmp
 (braket
-l_int|160
+l_int|256
 )braket
 suffix:semicolon
 r_if
@@ -4023,7 +5781,7 @@ id|i
 op_increment
 )paren
 (brace
-id|j
+id|len2
 op_assign
 id|identify
 c_func
@@ -4031,6 +5789,8 @@ c_func
 id|i
 comma
 id|tmp
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -4038,7 +5798,7 @@ c_cond
 (paren
 id|len
 op_plus
-id|j
+id|len2
 op_ge
 l_int|4075
 )paren
@@ -4070,7 +5830,7 @@ id|tmp
 suffix:semicolon
 id|len
 op_add_assign
-id|j
+id|len2
 suffix:semicolon
 )brace
 )brace
@@ -4079,9 +5839,9 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_ZORRO */
-multiline_comment|/*&n;    *    Bitmask indicating portions of available Zorro II RAM that are unused&n;    *    by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n;    *    (128 chunks, physical 0x00200000-0x009fffff).&n;    *&n;    *    If you want to use (= allocate) portions of this RAM, you should clear&n;    *    the corresponding bits.&n;    *&n;    *    Possible uses:&n;    *       - z2ram device&n;    *       - SCSI DMA bounce buffers&n;    */
+multiline_comment|/*&n;     *  Bitmask indicating portions of available Zorro II RAM that are unused&n;     *  by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n;     *  (128 chunks, physical 0x00200000-0x009fffff).&n;     *&n;     *  If you want to use (= allocate) portions of this RAM, you should clear&n;     *  the corresponding bits.&n;     *&n;     *  Possible uses:&n;     *      - z2ram device&n;     *      - SCSI DMA bounce buffers&n;     */
 DECL|variable|zorro_unused_z2ram
-id|u_long
+id|u32
 id|zorro_unused_z2ram
 (braket
 l_int|4
@@ -4253,22 +6013,19 @@ id|Z2RAM_CHUNKSIZE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;    *    Initialization&n;    */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/*&n;     *  Initialization&n;     */
+DECL|function|zorro_init
 r_void
 id|zorro_init
 c_func
 (paren
 r_void
 )paren
-)paren
 (brace
-r_int
+id|u_int
 id|i
 suffix:semicolon
+r_const
 r_struct
 id|ConfigDev
 op_star

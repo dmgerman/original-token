@@ -340,12 +340,32 @@ DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll&t;&t;168
 DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl&t;&t;169
+DECL|macro|__NR_setresgid
+mdefine_line|#define __NR_setresgid&t;&t;170
+DECL|macro|__NR_getresgid
+mdefine_line|#define __NR_getresgid&t;&t;171
 DECL|macro|__NR_prctl
-mdefine_line|#define __NR_prctl&t;&t;170
+mdefine_line|#define __NR_prctl&t;&t;172
+DECL|macro|__NR_rt_sigreturn
+mdefine_line|#define __NR_rt_sigreturn&t;173
+DECL|macro|__NR_rt_sigaction
+mdefine_line|#define __NR_rt_sigaction&t;174
+DECL|macro|__NR_rt_sigprocmask
+mdefine_line|#define __NR_rt_sigprocmask&t;175
+DECL|macro|__NR_rt_sigpending
+mdefine_line|#define __NR_rt_sigpending&t;176
+DECL|macro|__NR_rt_sigtimedwait
+mdefine_line|#define __NR_rt_sigtimedwait&t;177
+DECL|macro|__NR_rt_sigqueueinfo
+mdefine_line|#define __NR_rt_sigqueueinfo&t;178
+DECL|macro|__NR_rt_sigsuspend
+mdefine_line|#define __NR_rt_sigsuspend&t;179
 DECL|macro|__NR_pread
-mdefine_line|#define __NR_pread&t;&t;171
+mdefine_line|#define __NR_pread&t;&t;180
 DECL|macro|__NR_pwrite
-mdefine_line|#define __NR_pwrite&t;&t;172
+mdefine_line|#define __NR_pwrite&t;&t;181
+DECL|macro|__NR_lchown
+mdefine_line|#define __NR_lchown&t;&t;182
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)
@@ -625,8 +645,7 @@ id|flags
 op_or
 id|CLONE_VM
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 id|fs

@@ -149,7 +149,11 @@ r_return
 id|fp
 suffix:semicolon
 )brace
-r_extern
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* The following two functions don&squot;t need trapb/excb instructions&n;   around the mf_fpcr/mt_fpcr instructions because (a) the kernel&n;   never generates arithmetic faults and (b) call_pal instructions&n;   are implied trap barriers.  */
+DECL|function|rdfpcr
+r_static
+r_inline
 r_int
 r_int
 id|rdfpcr
@@ -157,15 +161,94 @@ c_func
 (paren
 r_void
 )paren
+(brace
+r_int
+r_int
+id|tmp
+comma
+id|ret
 suffix:semicolon
-r_extern
+id|__asm__
+(paren
+l_string|&quot;stt $f0,%0&bslash;n&bslash;t&quot;
+l_string|&quot;mf_fpcr $f0&bslash;n&bslash;t&quot;
+l_string|&quot;stt $f0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;ldt $f0,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|tmp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|ret
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|wrfpcr
+r_static
+r_inline
 r_void
 id|wrfpcr
 c_func
 (paren
 r_int
 r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;stt $f0,%0&bslash;n&bslash;t&quot;
+l_string|&quot;ldt $f0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mt_fpcr $f0&bslash;n&bslash;t&quot;
+l_string|&quot;ldt $f0,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|tmp
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|val
+)paren
 )paren
 suffix:semicolon
+)brace
+r_extern
+r_int
+r_int
+id|alpha_read_fp_reg
+(paren
+r_int
+r_int
+id|reg
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|alpha_write_fp_reg
+(paren
+r_int
+r_int
+id|reg
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASM_ALPHA_FPU_H */
 eof

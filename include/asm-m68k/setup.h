@@ -5,16 +5,21 @@ mdefine_line|#define _M68K_SETUP_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;     *  Linux/m68k Architectures&n;     */
 DECL|macro|MACH_AMIGA
-mdefine_line|#define MACH_AMIGA   1
+mdefine_line|#define MACH_AMIGA    1
 DECL|macro|MACH_ATARI
-mdefine_line|#define MACH_ATARI   2
+mdefine_line|#define MACH_ATARI    2
 DECL|macro|MACH_MAC
-mdefine_line|#define MACH_MAC     3
+mdefine_line|#define MACH_MAC      3
 DECL|macro|MACH_APOLLO
-mdefine_line|#define MACH_APOLLO  4
+mdefine_line|#define MACH_APOLLO   4
 DECL|macro|MACH_SUN3
-mdefine_line|#define MACH_SUN3    5
-multiline_comment|/* MVME 166/167/162/147?? */
+mdefine_line|#define MACH_SUN3     5
+DECL|macro|MACH_MVME147
+mdefine_line|#define MACH_MVME147  6
+DECL|macro|MACH_MVME16x
+mdefine_line|#define MACH_MVME16x  7
+DECL|macro|MACH_BVME6000
+mdefine_line|#define MACH_BVME6000 8
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 r_extern
@@ -25,7 +30,7 @@ macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#if !defined(CONFIG_AMIGA)
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (0)
-macro_line|#elif defined(CONFIG_ATARI) || defined(CONFIG_MAC)
+macro_line|#elif defined(CONFIG_ATARI) || defined(CONFIG_MAC) || defined(CONFIG_APOLLO) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
 DECL|macro|MACH_IS_AMIGA
 macro_line|#  define MACH_IS_AMIGA (m68k_machtype == MACH_AMIGA)
 macro_line|#else
@@ -39,7 +44,7 @@ macro_line|#endif
 macro_line|#if !defined(CONFIG_ATARI)
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (0)
-macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_APOLLO) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
 DECL|macro|MACH_IS_ATARI
 macro_line|#  define MACH_IS_ATARI (m68k_machtype == MACH_ATARI)
 macro_line|#else
@@ -50,21 +55,74 @@ macro_line|#  define MACH_IS_ATARI (1)
 DECL|macro|MACH_TYPE
 macro_line|#  define MACH_TYPE (MACH_ATARI)
 macro_line|#endif
-macro_line|#if defined(CONFIG_MAC)
-macro_line|#  error Currently no Mac support!
+macro_line|#if !defined(CONFIG_MAC)
+DECL|macro|MACH_IS_MAC
+macro_line|#  define MACH_IS_MAC (0)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_ATARI) || defined(CONFIG_APOLLO)
+DECL|macro|MACH_IS_MAC
+macro_line|#  define MACH_IS_MAC (m68k_machtype == MACH_MAC)
+macro_line|#else
+DECL|macro|CONFIG_MAC_ONLY
+macro_line|#  define CONFIG_MAC_ONLY
+DECL|macro|MACH_IS_MAC
+macro_line|#  define MACH_IS_MAC (1)
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (MACH_MAC)
 macro_line|#endif
 macro_line|#if defined(CONFIG_SUN3)
 macro_line|#  error Currently no Sun-3 support!
+macro_line|#else
+DECL|macro|MACH_IS_SUN3
+mdefine_line|#define MACH_IS_SUN3 (0)
 macro_line|#endif
-macro_line|#if defined(CONFIG_APOLLO)
-macro_line|#  error Currently no Apollo support!
+macro_line|#if !defined (CONFIG_APOLLO)
+DECL|macro|MACH_IS_APOLLO
+macro_line|#  define MACH_IS_APOLLO (0)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_MVME16x) || defined(CONFIG_BVME6000)
+DECL|macro|MACH_IS_APOLLO
+macro_line|#  define MACH_IS_APOLLO (m68k_machtype == MACH_APOLLO)
+macro_line|#else
+DECL|macro|CONFIG_APOLLO_ONLY
+macro_line|#  define CONFIG_APOLLO_ONLY
+DECL|macro|MACH_IS_APOLLO
+macro_line|#  define MACH_IS_APOLLO (1)
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (MACH_APOLLO)
+macro_line|#endif
+macro_line|#if !defined (CONFIG_MVME16x)
+DECL|macro|MACH_IS_MVME16x
+macro_line|#  define MACH_IS_MVME16x (0)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_APOLLO) || defined(CONFIG_BVME6000)
+DECL|macro|MACH_IS_MVME16x
+macro_line|#  define MACH_IS_MVME16x (m68k_machtype == MACH_MVME16x)
+macro_line|#else
+DECL|macro|CONFIG_MVME16x_ONLY
+macro_line|#  define CONFIG_MVME16x_ONLY
+DECL|macro|MACH_IS_MVME16x
+macro_line|#  define MACH_IS_MVME16x (1)
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (MACH_MVME16x)
+macro_line|#endif
+macro_line|#if !defined (CONFIG_BVME6000)
+DECL|macro|MACH_IS_BVME6000
+macro_line|#  define MACH_IS_BVME6000 (0)
+macro_line|#elif defined(CONFIG_AMIGA) || defined(CONFIG_MAC) || defined(CONFIG_ATARI) &bslash;&n;&t;|| defined(CONFIG_APOLLO) || defined(CONFIG_MVME16x)
+DECL|macro|MACH_IS_BVME6000
+macro_line|#  define MACH_IS_BVME6000 (m68k_machtype == MACH_BVME6000)
+macro_line|#else
+DECL|macro|CONFIG_BVME6000_ONLY
+macro_line|#  define CONFIG_BVME6000_ONLY
+DECL|macro|MACH_IS_BVME6000
+macro_line|#  define MACH_IS_BVME6000 (1)
+DECL|macro|MACH_TYPE
+macro_line|#  define MACH_TYPE (MACH_BVME6000)
 macro_line|#endif
 macro_line|#ifndef MACH_TYPE
 DECL|macro|MACH_TYPE
 macro_line|#  define MACH_TYPE (m68k_machtype)
 macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n;     *  CPU, FPU and MMU types&n;     *&n;     *  Note: we may rely on the following equalities:&n;     *&n;     *      CPU_68020 == MMU_68851&n;     *      CPU_68030 == MMU_68030&n;     *      CPU_68040 == FPU_68040 == MMU_68040&n;     *      CPU_68060 == FPU_68060 == MMU_68060&n;     */
+multiline_comment|/*&n;     *  CPU, FPU and MMU types&n;     *&n;     *  Note: we may rely on the following equalities:&n;     *&n;     *      CPU_68020 == MMU_68851&n;     *      CPU_68030 == MMU_68030&n;     *      CPU_68040 == FPU_68040 == MMU_68040 (not strictly, think of 68LC040!)&n;     *      CPU_68060 == FPU_68060 == MMU_68060&n;     */
 DECL|macro|CPUB_68020
 mdefine_line|#define CPUB_68020     0
 DECL|macro|CPUB_68030

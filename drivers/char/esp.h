@@ -85,14 +85,17 @@ DECL|macro|ESI_NO_COMMAND
 mdefine_line|#define ESI_NO_COMMAND&t;&t;0xff
 DECL|macro|ESP_STAT_RX_TIMEOUT
 mdefine_line|#define ESP_STAT_RX_TIMEOUT&t;0x01
-DECL|macro|ESP_STAT_NEED_DMA_RX
-mdefine_line|#define ESP_STAT_NEED_DMA_RX&t;0x02
-DECL|macro|ESP_STAT_NEED_DMA_TX
-mdefine_line|#define ESP_STAT_NEED_DMA_TX    0x04
 DECL|macro|ESP_STAT_DMA_RX
-mdefine_line|#define ESP_STAT_DMA_RX&t;&t;0x08
+mdefine_line|#define ESP_STAT_DMA_RX&t;&t;0x02
 DECL|macro|ESP_STAT_DMA_TX
-mdefine_line|#define ESP_STAT_DMA_TX&t;&t;0x10
+mdefine_line|#define ESP_STAT_DMA_TX&t;&t;0x04
+DECL|macro|ESP_STAT_NEVER_DMA
+mdefine_line|#define ESP_STAT_NEVER_DMA      0x08
+DECL|macro|ESP_STAT_USE_PIO
+mdefine_line|#define ESP_STAT_USE_PIO        0x10
+multiline_comment|/* Always use PIO for this number (or less) of bytes */
+DECL|macro|ESP_PIO_THRESHOLD
+mdefine_line|#define ESP_PIO_THRESHOLD       32
 DECL|macro|ESP_EVENT_WRITE_WAKEUP
 mdefine_line|#define ESP_EVENT_WRITE_WAKEUP&t;0
 DECL|macro|ESP_MAGIC
@@ -222,12 +225,6 @@ DECL|member|xmit_cnt
 r_int
 id|xmit_cnt
 suffix:semicolon
-DECL|member|tty_buf
-r_struct
-id|tty_flip_buffer
-op_star
-id|tty_buf
-suffix:semicolon
 DECL|member|tqueue
 r_struct
 id|tq_struct
@@ -285,11 +282,25 @@ op_star
 id|next_port
 suffix:semicolon
 multiline_comment|/* For the linked list */
-DECL|member|prev_port
+)brace
+suffix:semicolon
+DECL|struct|esp_pio_buffer
 r_struct
-id|esp_struct
+id|esp_pio_buffer
+(brace
+DECL|member|data
+r_int
+r_char
+id|data
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+DECL|member|next
+r_struct
+id|esp_pio_buffer
 op_star
-id|prev_port
+id|next
 suffix:semicolon
 )brace
 suffix:semicolon

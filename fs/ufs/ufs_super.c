@@ -1,5 +1,9 @@
 multiline_comment|/*&n; *  linux/fs/ufs/ufs_super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
-multiline_comment|/*&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; */
+multiline_comment|/*&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
+DECL|macro|DEBUG_UFS_SUPER
+macro_line|#undef DEBUG_UFS_SUPER
+multiline_comment|/*#define DEBUG_UFS_SUPER 1*/
+multiline_comment|/* Uncomment the line above when hacking ufs superblock code */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -74,7 +78,7 @@ comma
 multiline_comment|/* XXX - ufs_delete_inode() */
 l_int|NULL
 comma
-multiline_comment|/* notify_change() */
+multiline_comment|/* XXX - notify_change() */
 id|ufs_put_super
 comma
 l_int|NULL
@@ -232,9 +236,10 @@ id|error_buf
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0 /* unused */
+macro_line|#ifdef DEBUG_UFS_SUPER
 r_static
 r_void
+DECL|function|ufs_print_super_stuff
 id|ufs_print_super_stuff
 c_func
 (paren
@@ -249,6 +254,11 @@ op_star
 id|usb
 )paren
 (brace
+id|__u32
+id|flags
+op_assign
+id|sb-&gt;u.ufs_sb.s_flags
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -260,7 +270,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_size: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_size:   0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_size
 )paren
@@ -268,7 +278,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_ncg: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_ncg:    0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_ncg
 )paren
@@ -276,7 +286,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_bsize: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_bsize:  0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_bsize
 )paren
@@ -284,7 +294,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_frag: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_fsize:  0x%8.8x&bslash;n&quot;
+comma
+id|usb-&gt;fs_fsize
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;fs_frag:   0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_frag
 )paren
@@ -300,7 +318,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_inopb: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_inopb:  0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_inopb
 )paren
@@ -308,7 +326,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_optim: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_optim:  0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_optim
 )paren
@@ -316,7 +334,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_ncyl: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_ncyl:   0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_ncyl
 )paren
@@ -324,15 +342,27 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_state: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_clean:  0x%8.8x&bslash;n&quot;
 comma
-id|usb-&gt;fs_state
+id|usb-&gt;fs_clean
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_magic: 0x%8.8x&bslash;n&quot;
+l_string|&quot;fs_state:  0x%8.8x&bslash;n&quot;
+comma
+id|UFS_STATE
+c_func
+(paren
+id|usb
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;fs_magic:  0x%8.8x&bslash;n&quot;
 comma
 id|usb-&gt;fs_magic
 )paren
@@ -340,7 +370,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs_fsmnt: `%s&squot;&bslash;n&quot;
+l_string|&quot;fs_fsmnt:  `%s&squot;&bslash;n&quot;
 comma
 id|usb-&gt;fs_fsmnt
 )paren
@@ -384,9 +414,28 @@ op_star
 id|bh2
 suffix:semicolon
 id|__u32
-id|bytesex
+id|flags
 op_assign
+id|UFS_DEBUG_INITIAL
+suffix:semicolon
+multiline_comment|/* for sb-&gt;u.ufs_sb.s_flags */
+r_static
+r_int
+id|offsets
+(braket
+)braket
+op_assign
+(brace
 l_int|0
+comma
+l_int|96
+comma
+l_int|160
+)brace
+suffix:semicolon
+multiline_comment|/* different superblock locations */
+r_int
+id|i
 suffix:semicolon
 multiline_comment|/* sb-&gt;s_dev and sb-&gt;s_flags are set by our caller&n;&t; * data is the mystery argument to sys_mount()&n;&t; *&n;&t; * Our caller also sets s_dev, s_covered, s_rd_only, s_dirt,&n;&t; *   and s_type when we return.&n;&t; */
 id|MOD_INC_USE_COUNT
@@ -396,11 +445,44 @@ id|lock_super
 id|sb
 )paren
 suffix:semicolon
+id|set_blocksize
+(paren
+id|sb-&gt;s_dev
+comma
+id|BLOCK_SIZE
+)paren
+suffix:semicolon
 multiline_comment|/* XXX - make everything read only for testing */
 id|sb-&gt;s_flags
 op_or_assign
 id|MS_RDONLY
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|offsets
+)paren
+op_div
+r_sizeof
+(paren
+id|offsets
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -413,6 +495,11 @@ c_func
 (paren
 id|sb-&gt;s_dev
 comma
+id|offsets
+(braket
+id|i
+)braket
+op_plus
 id|UFS_SBLOCK
 op_div
 id|BLOCK_SIZE
@@ -430,13 +517,16 @@ c_func
 (paren
 id|sb-&gt;s_dev
 comma
-(paren
-id|UFS_SBLOCK
+id|offsets
+(braket
+id|i
+)braket
 op_plus
-id|BLOCK_SIZE
-)paren
+id|UFS_SBLOCK
 op_div
 id|BLOCK_SIZE
+op_plus
+l_int|1
 comma
 id|BLOCK_SIZE
 )paren
@@ -563,8 +653,8 @@ id|usb-&gt;fs_magic
 r_case
 id|UFS_MAGIC
 suffix:colon
-id|bytesex
-op_assign
+id|flags
+op_or_assign
 id|UFS_LITTLE_ENDIAN
 suffix:semicolon
 id|ufs_superblock_le_to_cpus
@@ -573,13 +663,14 @@ c_func
 id|usb
 )paren
 suffix:semicolon
-r_break
+r_goto
+id|found
 suffix:semicolon
 r_case
 id|UFS_CIGAM
 suffix:colon
-id|bytesex
-op_assign
+id|flags
+op_or_assign
 id|UFS_BIG_ENDIAN
 suffix:semicolon
 id|ufs_superblock_be_to_cpus
@@ -588,11 +679,16 @@ c_func
 id|usb
 )paren
 suffix:semicolon
-r_break
+r_goto
+id|found
 suffix:semicolon
 multiline_comment|/* usb is now normalized to local byteorder */
 r_default
 suffix:colon
+(brace
+)brace
+)brace
+)brace
 id|printk
 (paren
 l_string|&quot;ufs_read_super: bad magic number 0x%8.8x &quot;
@@ -616,25 +712,73 @@ suffix:semicolon
 r_goto
 id|ufs_read_super_lose
 suffix:semicolon
-)brace
+id|found
+suffix:colon
+macro_line|#ifdef DEBUG_UFS_SUPER
+id|printk
+c_func
+(paren
+l_string|&quot;ufs_read_super: superblock offset 0x%2.2x&bslash;n&quot;
+comma
+id|offsets
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* We found a UFS filesystem on this device. */
 multiline_comment|/* XXX - parse args */
 r_if
 c_cond
 (paren
+(paren
 id|usb-&gt;fs_bsize
 op_ne
-id|UFS_BSIZE
+l_int|4096
+)paren
+op_logical_and
+(paren
+id|usb-&gt;fs_bsize
+op_ne
+l_int|8192
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_super: fs_bsize %d != %d&bslash;n&quot;
+l_string|&quot;ufs_read_super: invalid fs_bsize = %d&bslash;n&quot;
 comma
 id|usb-&gt;fs_bsize
+)paren
+suffix:semicolon
+r_goto
+id|ufs_read_super_lose
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|usb-&gt;fs_fsize
+op_ne
+l_int|512
+)paren
+op_logical_and
+(paren
+id|usb-&gt;fs_fsize
+op_ne
+l_int|1024
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ufs_read_super: invalid fs_fsize = %d&bslash;n&quot;
 comma
-id|UFS_BSIZE
+id|usb-&gt;fs_fsize
 )paren
 suffix:semicolon
 r_goto
@@ -646,41 +790,150 @@ c_cond
 (paren
 id|usb-&gt;fs_fsize
 op_ne
-id|UFS_FSIZE
+id|BLOCK_SIZE
 )paren
 (brace
-id|printk
-c_func
+id|set_blocksize
 (paren
-l_string|&quot;ufs_read_super: fs_fsize %d != %d&bslash;n&quot;
+id|sb-&gt;s_dev
 comma
 id|usb-&gt;fs_fsize
-comma
-id|UFS_FSIZE
 )paren
 suffix:semicolon
-r_goto
-id|ufs_read_super_lose
-suffix:semicolon
 )brace
+id|flags
+op_or_assign
+id|UFS_VANILLA
+suffix:semicolon
+multiline_comment|/* XXX more consistency check */
 macro_line|#ifdef DEBUG_UFS_SUPER
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_super: fs last mounted on &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
+l_string|&quot;ufs_read_super: maxsymlinklen 0x%8.8x&bslash;n&quot;
 comma
-id|usb-&gt;fs_fsmnt
+id|usb-&gt;fs_u.fs_44.fs_maxsymlinklen
 )paren
 suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
 (paren
-id|usb-&gt;fs_state
+id|usb-&gt;fs_u.fs_44.fs_maxsymlinklen
+op_ge
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|usb-&gt;fs_u.fs_44.fs_inodefmt
+op_ge
+id|UFS_44INODEFMT
+)paren
+(brace
+id|flags
+op_or_assign
+id|UFS_44BSD
+suffix:semicolon
+)brace
+r_else
+(brace
+id|flags
+op_or_assign
+id|UFS_OLD
+suffix:semicolon
+multiline_comment|/* 4.2BSD */
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|offsets
+(braket
+id|i
+)braket
+OG
+l_int|0
+)paren
+(brace
+id|flags
+op_or_assign
+id|UFS_NEXT
+suffix:semicolon
+)brace
+r_else
+(brace
+id|flags
+op_or_assign
+id|UFS_SUN
+suffix:semicolon
+)brace
+macro_line|#ifdef DEBUG_UFS_SUPER
+id|ufs_print_super_stuff
+c_func
+(paren
+id|sb
+comma
+id|usb
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|flags
+op_amp
+id|UFS_ST_MASK
+)paren
+op_eq
+id|UFS_ST_44BSD
+)paren
+op_logical_or
+(paren
+(paren
+id|flags
+op_amp
+id|UFS_ST_MASK
+)paren
+op_eq
+id|UFS_ST_OLD
+)paren
+op_logical_or
+(paren
+(paren
+id|flags
+op_amp
+id|UFS_ST_MASK
+)paren
+op_eq
+id|UFS_ST_NEXT
+)paren
+op_logical_or
+(paren
+(paren
+(paren
+id|flags
+op_amp
+id|UFS_ST_MASK
+)paren
+op_eq
+id|UFS_ST_SUN
+)paren
+op_logical_and
+id|UFS_STATE
+c_func
+(paren
+id|usb
+)paren
 op_eq
 id|UFS_FSOK
 op_minus
 id|usb-&gt;fs_time
+)paren
 )paren
 (brace
 r_switch
@@ -690,34 +943,9 @@ id|usb-&gt;fs_clean
 )paren
 (brace
 r_case
-id|UFS_FSCLEAN
-suffix:colon
-macro_line|#ifdef DEBUG_UFS_SUPER
-id|printk
-c_func
-(paren
-l_string|&quot;ufs_read_super: fs is clean&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
-suffix:semicolon
-r_case
-id|UFS_FSSTABLE
-suffix:colon
-macro_line|#ifdef DEBUG_UFS_SUPER
-id|printk
-c_func
-(paren
-l_string|&quot;ufs_read_super: fs is stable&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
-suffix:semicolon
-r_case
 id|UFS_FSACTIVE
 suffix:colon
+multiline_comment|/* 0x00 */
 id|printk
 c_func
 (paren
@@ -731,8 +959,52 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|UFS_FSCLEAN
+suffix:colon
+multiline_comment|/* 0x01 */
+macro_line|#ifdef DEBUG_UFS_SUPER
+id|printk
+c_func
+(paren
+l_string|&quot;ufs_read_super: fs is clean&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+r_case
+id|UFS_FSSTABLE
+suffix:colon
+multiline_comment|/* 0x02 */
+macro_line|#ifdef DEBUG_UFS_SUPER
+id|printk
+c_func
+(paren
+l_string|&quot;ufs_read_super: fs is stable&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+r_case
+id|UFS_FSOSF1
+suffix:colon
+multiline_comment|/* 0x03 */
+multiline_comment|/* XXX is this correct for DEC OSF/1? */
+macro_line|#ifdef DEBUG_UFS_SUPER
+id|printk
+c_func
+(paren
+l_string|&quot;ufs_read_super: fs is clean and stable (OSF/1)&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+r_case
 id|UFS_FSBAD
 suffix:colon
+multiline_comment|/* 0xFF */
 id|printk
 c_func
 (paren
@@ -812,9 +1084,7 @@ suffix:semicolon
 multiline_comment|/* XXX - maybe move this to the top */
 id|sb-&gt;u.ufs_sb.s_flags
 op_assign
-id|bytesex
-op_or
-id|UFS_DEBUG_INITIAL
+id|flags
 suffix:semicolon
 id|sb-&gt;u.ufs_sb.s_ncg
 op_assign
@@ -896,6 +1166,13 @@ op_assign
 id|usb-&gt;fs_frag
 suffix:semicolon
 multiline_comment|/* XXX - rename this later */
+id|sb-&gt;u.ufs_sb.s_blockbase
+op_assign
+id|offsets
+(braket
+id|i
+)braket
+suffix:semicolon
 id|sb-&gt;s_root
 op_assign
 id|d_alloc_root
@@ -935,6 +1212,13 @@ suffix:semicolon
 id|ufs_read_super_lose
 suffix:colon
 multiline_comment|/* XXX - clean up */
+id|set_blocksize
+(paren
+id|sb-&gt;s_dev
+comma
+id|BLOCK_SIZE
+)paren
+suffix:semicolon
 id|sb-&gt;s_dev
 op_assign
 l_int|0
@@ -982,6 +1266,13 @@ id|sb
 )paren
 suffix:semicolon
 multiline_comment|/* XXX - sync fs data, set state to ok, and flush buffers */
+id|set_blocksize
+(paren
+id|sb-&gt;s_dev
+comma
+id|BLOCK_SIZE
+)paren
+suffix:semicolon
 id|sb-&gt;s_dev
 op_assign
 l_int|0

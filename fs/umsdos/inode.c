@@ -20,7 +20,7 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* Useful to simulate the pseudo DOS */
 multiline_comment|/* directory. See UMSDOS_readdir_x() */
-multiline_comment|/* #Specification: convention / PRINTK Printk and printk&n;&t;Here is the convention for the use of printk inside fs/umsdos&n;&n;&t;printk carry important message (error or status).&n;&t;Printk is for debugging (it is a macro defined at the beginning of&n;&t;&t;   most source.&n;&t;PRINTK is a nulled Printk macro.&n;&n;&t;This convention makes the source easier to read, and Printk easier&n;&t;to shut off.&n;*/
+multiline_comment|/* #Specification: convention / PRINTK Printk and printk&n;   Here is the convention for the use of printk inside fs/umsdos&n;   &n;   printk carry important message (error or status).&n;   Printk is for debugging (it is a macro defined at the beginning of&n;   most source.&n;   PRINTK is a nulled Printk macro.&n;   &n;   This convention makes the source easier to read, and Printk easier&n;   to shut off.&n;*/
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 DECL|macro|Printk
@@ -36,12 +36,15 @@ op_star
 id|inode
 )paren
 (brace
-id|PRINTK
+id|Printk
 (paren
 (paren
-l_string|&quot;put inode %x owner %x pos %d dir %x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;put inode %x (%d) owner %x pos %d dir %x&bslash;n&quot;
 comma
 id|inode
+comma
+id|inode-&gt;i_ino
 comma
 id|inode-&gt;u.umsdos_i.i_emd_owner
 comma
@@ -55,8 +58,8 @@ r_if
 c_cond
 (paren
 id|inode
-op_ne
-l_int|NULL
+op_logical_and
+id|pseudo_root
 op_logical_and
 id|inode
 op_eq
@@ -65,16 +68,28 @@ id|pseudo_root
 (brace
 id|printk
 (paren
+id|KERN_ERR
 l_string|&quot;Umsdos: Oops releasing pseudo_root. Notify jacques@solucorp.qc.ca&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 1
 id|fat_put_inode
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+macro_line|#else  
+id|Printk
+(paren
+(paren
+id|KERN_WARNING
+l_string|&quot;UMSDOS_put_inode: skipping ! FIXME /mn/&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|UMSDOS_put_super
 r_void
@@ -87,6 +102,13 @@ op_star
 id|sb
 )paren
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS_put_super: /mn/ entering&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|msdos_put_super
 c_func
 (paren
@@ -96,37 +118,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|UMSDOS_statfs
-r_void
-id|UMSDOS_statfs
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-comma
-r_struct
-id|statfs
-op_star
-id|buf
-comma
-r_int
-id|bufsiz
-)paren
-(brace
-id|fat_statfs
-c_func
-(paren
-id|sb
-comma
-id|buf
-comma
-id|bufsiz
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;Call msdos_lookup, but set back the original msdos function table.&n;&t;Return 0 if ok, or a negative error code if not.&n;*/
+multiline_comment|/*&n;  Call msdos_lookup, but set back the original msdos function table.&n;  Return 0 if ok, or a negative error code if not.&n;*/
 DECL|function|umsdos_real_lookup
 r_int
 id|umsdos_real_lookup
@@ -136,50 +128,52 @@ id|inode
 op_star
 id|dir
 comma
-r_const
-r_char
-op_star
-id|name
-comma
-r_int
-id|len
-comma
 r_struct
-id|inode
+id|dentry
 op_star
-op_star
-id|result
+id|dentry
 )paren
 multiline_comment|/* Will hold inode of the file, if successful */
 (brace
 r_int
 id|ret
 suffix:semicolon
-id|atomic_inc
-c_func
+id|Printk
 (paren
-op_amp
-id|dir-&gt;i_count
+(paren
+l_string|&quot;umsdos_real_lookup /mn/: looking for %s /&quot;
+comma
+id|dentry-&gt;d_name.name
+)paren
 )paren
 suffix:semicolon
+id|dir-&gt;i_count
+op_increment
+suffix:semicolon
+multiline_comment|/* /mn/ what is this and why ? locking? */
 id|ret
 op_assign
 id|msdos_lookup
 (paren
 id|dir
 comma
-id|name
+id|dentry
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;/ returned %d&bslash;n&quot;
 comma
-id|len
-comma
-id|result
+id|ret
+)paren
 )paren
 suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Complete the setup of an directory inode.&n;&t;First, it completes the function pointers, then&n;&t;it locates the EMD file. If the EMD is there, then plug the&n;&t;umsdos function table. If not, use the msdos one.&n;*/
+multiline_comment|/*&n;  Complete the setup of an directory inode.&n;  First, it completes the function pointers, then&n;  it locates the EMD file. If the EMD is there, then plug the&n;  umsdos function table. If not, use the msdos one.&n;*/
 DECL|function|umsdos_setup_dir_inode
 r_void
 id|umsdos_setup_dir_inode
@@ -200,6 +194,15 @@ id|inode
 op_star
 id|emd_dir
 op_assign
+l_int|NULL
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|umsdos_rdir_inode_operations
+suffix:semicolon
+id|emd_dir
+op_assign
 id|umsdos_emd_dir_lookup
 (paren
 id|inode
@@ -207,24 +210,53 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|umsdos_rdir_inode_operations
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_setup_dir_inode: umsdos_emd_dir_lookup for inode=%p returned %p&bslash;n&quot;
+comma
+id|inode
+comma
+id|emd_dir
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|emd_dir
+op_eq
+l_int|NULL
+)paren
+(brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_setup_dir_inode /mn/: Setting up dir_inode_ops --&gt; eg. NOT using EMD.&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
-id|emd_dir
-op_ne
-l_int|NULL
-ques
-c_cond
-op_amp
-id|umsdos_dir_inode_operations
-suffix:colon
 op_amp
 id|umsdos_rdir_inode_operations
 suffix:semicolon
+)brace
+r_else
+(brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_setup_dir_inode /mn/: Setting up rdir_inode_ops --&gt; eg. using EMD.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|umsdos_dir_inode_operations
+suffix:semicolon
+)brace
 id|iput
 (paren
 id|emd_dir
@@ -255,6 +287,16 @@ id|f_pos
 r_struct
 id|inode
 op_star
+id|emd_owner
+suffix:semicolon
+multiline_comment|/* FIXME, I don&squot;t have a clue on this one */
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_set_dirinfo: /mn/ FIXME: no clue&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|emd_owner
 op_assign
 id|umsdos_emd_dir_lookup
@@ -319,7 +361,7 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t;Connect the proper tables in the inode and add some info.&n;*/
+multiline_comment|/*&n;  Connect the proper tables in the inode and add some info.&n;*/
 DECL|function|umsdos_patch_inode
 r_void
 id|umsdos_patch_inode
@@ -339,7 +381,7 @@ id|off_t
 id|f_pos
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;This function is called very early to setup the inode, somewhat&n;&t;&t;too early (called by UMSDOS_read_inode). At this point, we can&squot;t&n;&t;&t;do to much, such as lookup up EMD files and so on. This causes&n;&t;&t;confusion in the kernel. This is why some initialisation&n;&t;&t;will be done when dir != NULL only.&n;&n;&t;&t;UMSDOS do run piggy back on top of msdos fs. It looks like something&n;&t;&t;is missing in the VFS to accommodate stacked fs. Still unclear what&n;&t;&t;(quite honestly).&n;&n;&t;&t;Well, maybe one! A new entry &quot;may_unmount&quot; which would allow&n;&t;&t;the stacked fs to allocate some inode permanently and release&n;&t;&t;them at the end. Doing that now introduce a problem. unmount&n;&t;&t;always fail because some inodes are in use.&n;&t;*/
+multiline_comment|/*&n;    This function is called very early to setup the inode, somewhat&n;    too early (called by UMSDOS_read_inode). At this point, we can&squot;t&n;    do to much, such as lookup up EMD files and so on. This causes&n;    confusion in the kernel. This is why some initialisation&n;    will be done when dir != NULL only.&n;    &n;    UMSDOS do run piggy back on top of msdos fs. It looks like something&n;    is missing in the VFS to accommodate stacked fs. Still unclear what&n;    (quite honestly).&n;    &n;    Well, maybe one! A new entry &quot;may_unmount&quot; which would allow&n;    the stacked fs to allocate some inode permanently and release&n;    them at the end. Doing that now introduce a problem. unmount&n;    always fail because some inodes are in use.&n;  */
 r_if
 c_cond
 (paren
@@ -373,6 +415,13 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_file_inode_operations&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -381,6 +430,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_file_inode_operations_no_bmap&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -426,6 +482,13 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode /mn/: seting i_op = umsdos_symlink_inode_operations&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -443,6 +506,13 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode /mn/: seting i_op = chrdev_inode_operations&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -460,6 +530,13 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode /mn/: seting i_op = blkdev_inode_operations&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -477,6 +554,13 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode /mn/: uhm, init_fifo&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|init_fifo
 c_func
 (paren
@@ -492,8 +576,21 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* #Specification: inode / umsdos info&n;&t;&t;&t;&t;The first time an inode is seen (inode-&gt;i_count == 1),&n;&t;&t;&t;&t;the inode number of the EMD file which control this inode&n;&t;&t;&t;&t;is tagged to this inode. It allows operation such&n;&t;&t;&t;&t;as notify_change to be handled.&n;&t;&t;&t;*/
-multiline_comment|/*&n;&t;&t;&t;&t;This is done last because it also control the&n;&t;&t;&t;&t;status of umsdos_isinit()&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: inode / umsdos info&n;&t; The first time an inode is seen (inode-&gt;i_count == 1),&n;&t; the inode number of the EMD file which control this inode&n;&t; is tagged to this inode. It allows operation such&n;&t; as notify_change to be handled.&n;      */
+multiline_comment|/*&n;&t;This is done last because it also control the&n;&t;status of umsdos_isinit()&n;      */
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode /mn/: here we go: calling umsdos_set_dirinfo (%p,%p,%d)&bslash;n&quot;
+comma
+id|inode
+comma
+id|dir
+comma
+id|f_pos
+)paren
+)paren
+suffix:semicolon
 id|umsdos_set_dirinfo
 (paren
 id|inode
@@ -514,10 +611,20 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;Test to see if the info is maintained.&n;&t;&t;&t;This should be removed when the file system will be proven.&n;&t;&t;*/
+multiline_comment|/*&n;      Test to see if the info is maintained.&n;      This should be removed when the file system will be proven.&n;    */
+multiline_comment|/* FIXME, again, not a clue */
 r_struct
 id|inode
 op_star
+id|emd_owner
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_patch_inode: /mn/ Warning: untested emd_owner thingy...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|emd_owner
 op_assign
 id|umsdos_emd_dir_lookup
@@ -555,7 +662,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t;Get the inode of the directory which owns this inode.&n;&t;Return 0 if ok, -EIO if error.&n;*/
+multiline_comment|/*&n;  Get the inode of the directory which owns this inode.&n;  Return 0 if ok, -EIO if error.&n;*/
 DECL|function|umsdos_get_dirowner
 r_int
 id|umsdos_get_dirowner
@@ -663,10 +770,10 @@ op_star
 id|inode
 )paren
 (brace
-id|PRINTK
+id|Printk
 (paren
 (paren
-l_string|&quot;read inode %x ino = %d &quot;
+l_string|&quot;UMSDOS_read_inode %x ino = %d &quot;
 comma
 id|inode
 comma
@@ -683,16 +790,9 @@ suffix:semicolon
 id|PRINTK
 (paren
 (paren
-l_string|&quot;ino = %d %d&bslash;n&quot;
+l_string|&quot;ino after msdos_read_inode= %d&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
-comma
-id|atomic_read
-c_func
-(paren
-op_amp
-id|inode-&gt;i_count
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -768,7 +868,7 @@ suffix:semicolon
 id|PRINTK
 (paren
 (paren
-l_string|&quot;UMSDOS_write_inode emd %d&bslash;n&quot;
+l_string|&quot;UMSDOS_write_inode emd %d (FIXME: missing notify_change)&bslash;n&quot;
 comma
 id|inode-&gt;u.umsdos_i.i_emd_owner
 )paren
@@ -801,18 +901,8 @@ op_or
 id|ATTR_CTIME
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;UMSDOS_notify_change is convenient to call here&n;&t;&t;to update the EMD entry associated with this inode.&n;&t;&t;But it has the side effect to re&quot;dirt&quot; the inode.&n;&t;*/
-id|UMSDOS_notify_change
-(paren
-id|inode
-comma
-op_amp
-id|newattrs
-)paren
-suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* FIXME, notify_change now takes a dentry, not an&n;&t;   inode so, the emd update needs to be done here&n;&t;UMSDOS_notify_change (inode, &amp;newattrs);&n;&t;*/
+multiline_comment|/* FIXME inode-&gt;i_dirt = 0; */
 )brace
 DECL|function|UMSDOS_notify_change
 r_int
@@ -820,9 +910,9 @@ id|UMSDOS_notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 comma
 r_struct
 id|iattr
@@ -834,6 +924,20 @@ r_int
 id|ret
 op_assign
 l_int|0
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS_notify_change: /mn/ completly untested&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -863,7 +967,7 @@ OG
 l_int|0
 )paren
 (brace
-multiline_comment|/* #Specification: notify_change / i_nlink &gt; 0&n;&t;&t;&t;notify change is only done for inode with nlink &gt; 0. An inode&n;&t;&t;&t;with nlink == 0 is no longer associated with any entry in&n;&t;&t;&t;the EMD file, so there is nothing to update.&n;&t;&t;*/
+multiline_comment|/* #Specification: notify_change / i_nlink &gt; 0&n;       notify change is only done for inode with nlink &gt; 0. An inode&n;       with nlink == 0 is no longer associated with any entry in&n;       the EMD file, so there is nothing to update.&n;    */
 r_int
 r_int
 id|i_emd_owner
@@ -875,10 +979,16 @@ c_cond
 (paren
 id|inode
 op_eq
-id|inode-&gt;i_sb-&gt;s_mounted
+id|iget
+c_func
+(paren
+id|inode-&gt;i_sb
+comma
+id|UMSDOS_ROOT_INO
+)paren
 )paren
 (brace
-multiline_comment|/* #Specification: root inode / attributes&n;&t;&t;&t;&t;I don&squot;t know yet how this should work. Normally&n;&t;&t;&t;&t;the attributes (permissions bits, owner, times) of&n;&t;&t;&t;&t;a directory are stored in the EMD file of its parent.&n;&n;&t;&t;&t;&t;One thing we could do is store the attributes of the root&n;&t;&t;&t;&t;inode in its own EMD file. A simple entry named &quot;.&quot; could&n;&t;&t;&t;&t;be used for this special case. It would be read once&n;&t;&t;&t;&t;when the file system is mounted and update in&n;&t;&t;&t;&t;UMSDOS_notify_change() (right here).&n;&n;&t;&t;&t;&t;I am not sure of the behavior of the root inode for&n;&t;&t;&t;&t;a real UNIX file system. For now, this is a nop.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: root inode / attributes&n;&t; I don&squot;t know yet how this should work. Normally&n;&t; the attributes (permissions bits, owner, times) of&n;&t; a directory are stored in the EMD file of its parent.&n;&t; &n;&t; One thing we could do is store the attributes of the root&n;&t; inode in its own EMD file. A simple entry named &quot;.&quot; could&n;&t; be used for this special case. It would be read once&n;&t; when the file system is mounted and update in&n;&t; UMSDOS_notify_change() (right here).&n;&t; &n;&t; I am not sure of the behavior of the root inode for&n;&t; a real UNIX file system. For now, this is a nop.&n;      */
 )brace
 r_else
 r_if
@@ -893,7 +1003,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* This inode is not a EMD file nor an inode used internally&n;&t;&t;&t;&t;by MSDOS, so we can update its status.&n;&t;&t;&t;&t;See emd.c&n;&t;&t;&t;*/
+multiline_comment|/* This inode is not a EMD file nor an inode used internally&n;&t; by MSDOS, so we can update its status.&n;&t; See emd.c&n;      */
 r_struct
 id|inode
 op_star
@@ -906,7 +1016,7 @@ comma
 id|i_emd_owner
 )paren
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
 l_string|&quot;notify change %p &quot;
@@ -944,6 +1054,13 @@ r_struct
 id|umsdos_dirent
 id|entry
 suffix:semicolon
+id|loff_t
+id|offs
+suffix:semicolon
+id|offs
+op_assign
+l_int|0
+suffix:semicolon
 id|filp.f_pos
 op_assign
 id|inode-&gt;u.umsdos_i.pos
@@ -952,7 +1069,7 @@ id|filp.f_reada
 op_assign
 l_int|0
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
 l_string|&quot;pos = %d &quot;
@@ -980,6 +1097,9 @@ op_amp
 id|entry
 comma
 id|UMSDOS_REC_SIZE
+comma
+op_amp
+id|offs
 )paren
 suffix:semicolon
 r_if
@@ -1064,6 +1184,11 @@ id|filp.f_pos
 op_assign
 id|inode-&gt;u.umsdos_i.pos
 suffix:semicolon
+id|offs
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* FIXME */
 id|ret
 op_assign
 id|umsdos_emd_dir_write
@@ -1081,9 +1206,12 @@ op_amp
 id|entry
 comma
 id|UMSDOS_REC_SIZE
+comma
+op_amp
+id|offs
 )paren
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
 l_string|&quot;notify pos %d ret %d nlink %d &quot;
@@ -1096,7 +1224,7 @@ id|entry.nlink
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* #Specification: notify_change / msdos fs&n;&t;&t;&t;&t;&t;&t;notify_change operation are done only on the&n;&t;&t;&t;&t;&t;&t;EMD file. The msdos fs is not even called.&n;&t;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: notify_change / msdos fs&n;&t;     notify_change operation are done only on the&n;&t;     EMD file. The msdos fs is not even called.&n;&t;  */
 )brace
 id|iput
 (paren
@@ -1104,7 +1232,7 @@ id|emd_owner
 )paren
 suffix:semicolon
 )brace
-id|PRINTK
+id|Printk
 (paren
 (paren
 l_string|&quot;&bslash;n&quot;
@@ -1132,7 +1260,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* #Specification: function name / convention&n;&t;A simple convention for function name has been used in&n;&t;the UMSDOS file system. First all function use the prefix&n;&t;umsdos_ to avoid name clash with other part of the kernel.&n;&n;&t;And standard VFS entry point use the prefix UMSDOS (upper case)&n;&t;so it&squot;s easier to tell them apart.&n;*/
+multiline_comment|/* #Specification: function name / convention&n;   A simple convention for function name has been used in&n;   the UMSDOS file system. First all function use the prefix&n;   umsdos_ to avoid name clash with other part of the kernel.&n;   &n;   And standard VFS entry point use the prefix UMSDOS (upper case)&n;   so it&squot;s easier to tell them apart.&n;   N.B. (FIXME) PTW, the order and contents of this struct changed&n;*/
 DECL|variable|umsdos_sops
 r_static
 r_struct
@@ -1142,23 +1270,33 @@ op_assign
 (brace
 id|UMSDOS_read_inode
 comma
-id|UMSDOS_notify_change
-comma
+multiline_comment|/* read_inode */
 id|UMSDOS_write_inode
 comma
+multiline_comment|/* write_inode */
 id|UMSDOS_put_inode
 comma
+multiline_comment|/* put_inode */
+l_int|NULL
+comma
+multiline_comment|/* delete_inode */
+id|UMSDOS_notify_change
+comma
+multiline_comment|/* notify_change */
 id|UMSDOS_put_super
 comma
+multiline_comment|/* put_super */
 l_int|NULL
 comma
-multiline_comment|/* added in 0.96c */
-id|UMSDOS_statfs
+multiline_comment|/* write_super */
+id|fat_statfs
 comma
+multiline_comment|/* statfs */
 l_int|NULL
+multiline_comment|/* remount_fs*/
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;Read the super block of an Extended MS-DOS FS.&n;*/
+multiline_comment|/*&n;  Read the super block of an Extended MS-DOS FS.&n;*/
 DECL|function|UMSDOS_read_super
 r_struct
 id|super_block
@@ -1169,7 +1307,7 @@ c_func
 r_struct
 id|super_block
 op_star
-id|s
+id|sb
 comma
 r_void
 op_star
@@ -1179,29 +1317,62 @@ r_int
 id|silent
 )paren
 (brace
-multiline_comment|/* #Specification: mount / options&n;&t;&t;Umsdos run on top of msdos. Currently, it supports no&n;&t;&t;mount option, but happily pass all option received to&n;&t;&t;the msdos driver. I am not sure if all msdos mount option&n;&t;&t;make sense with Umsdos. Here are at least those who&n;&t;&t;are useful.&n;&t;&t;&t;uid=&n;&t;&t;&t;gid=&n;&n;&t;&t;These options affect the operation of umsdos in directories&n;&t;&t;which do not have an EMD file. They behave like normal&n;&t;&t;msdos directory, with all limitation of msdos.&n;&t;*/
+multiline_comment|/* #Specification: mount / options&n;     Umsdos run on top of msdos. Currently, it supports no&n;     mount option, but happily pass all option received to&n;     the msdos driver. I am not sure if all msdos mount option&n;     make sense with Umsdos. Here are at least those who&n;     are useful.&n;     uid=&n;     gid=&n;     &n;     These options affect the operation of umsdos in directories&n;     which do not have an EMD file. They behave like normal&n;     msdos directory, with all limitation of msdos.&n;  */
 r_struct
 id|super_block
 op_star
-id|sb
+id|res
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|pseudo
+op_assign
+l_int|NULL
+suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS /mn/: starting UMSDOS_read_super&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS /mn/: sb = %p&bslash;n&quot;
+comma
 id|sb
+)paren
+)paren
+suffix:semicolon
+id|res
 op_assign
 id|msdos_read_super
 c_func
 (paren
-id|s
+id|sb
 comma
 id|data
 comma
 id|silent
 )paren
 suffix:semicolon
+id|Printk
+(paren
+(paren
+l_string|&quot;UMSDOS /mn/: res = %p&bslash;n&quot;
+comma
+id|res
+)paren
+)paren
+suffix:semicolon
 id|printk
 (paren
-l_string|&quot;UMSDOS Beta 0.6 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;UMSDOS dentry-WIP-Beta 0.82 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION
 comma
@@ -1211,15 +1382,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sb
-op_ne
+id|res
+op_eq
 l_int|NULL
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|MSDOS_SB
 c_func
 (paren
-id|sb
+id|res
 )paren
 op_member_access_from_pointer
 id|options.dotsOK
@@ -1227,45 +1404,94 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* disable hidden==dotfile */
-id|sb-&gt;s_op
+id|res-&gt;s_op
 op_assign
 op_amp
 id|umsdos_sops
 suffix:semicolon
-id|PRINTK
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos /mn/: here goes the iget ROOT_INO&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|pseudo
+op_assign
+id|iget
+c_func
+(paren
+id|res
+comma
+id|UMSDOS_ROOT_INO
+)paren
+suffix:semicolon
+id|Printk
 (paren
 (paren
 l_string|&quot;umsdos_read_super %p&bslash;n&quot;
 comma
-id|sb-&gt;s_mounted
+id|pseudo
 )paren
 )paren
 suffix:semicolon
 id|umsdos_setup_dir_inode
 (paren
-id|sb-&gt;s_mounted
+id|pseudo
 )paren
 suffix:semicolon
-id|PRINTK
-(paren
-(paren
-l_string|&quot;End umsdos_read_super&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
+macro_line|#if 0&t;/* disabled /mn/ test FIXME */    
+multiline_comment|/* if (s == super_blocks){ FIXME, super_blocks no longer exported */
 r_if
 c_cond
 (paren
-id|s
-op_eq
-id|super_blocks
+id|pseudo
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / mount&n;&t;&t;&t;&t;When a umsdos fs is mounted, a special handling is done&n;&t;&t;&t;&t;if it is the root partition. We check for the presence&n;&t;&t;&t;&t;of the file /linux/etc/init or /linux/etc/rc or&n;&t;&t;&t;&t;/linux/sbin/init. If one is there, we do a chroot(&quot;/linux&quot;).&n;&n;&t;&t;&t;&t;We check both because (see init/main.c) the kernel&n;&t;&t;&t;&t;try to exec init at different place and if it fails&n;&t;&t;&t;&t;it tries /bin/sh /etc/rc. To be consistent with&n;&t;&t;&t;&t;init/main.c, many more test would have to be done&n;&t;&t;&t;&t;to locate init. Any complain ?&n;&n;&t;&t;&t;&t;The chroot is done manually in init/main.c but the&n;&t;&t;&t;&t;info (the inode) is located at mount time and store&n;&t;&t;&t;&t;in a global variable (pseudo_root) which is used at&n;&t;&t;&t;&t;different place in the umsdos driver. There is no&n;&t;&t;&t;&t;need to store this variable elsewhere because it&n;&t;&t;&t;&t;will always be one, not one per mount.&n;&n;&t;&t;&t;&t;This feature allows the installation&n;&t;&t;&t;&t;of a linux system within a DOS system in a subdirectory.&n;&n;&t;&t;&t;&t;A user may install its linux stuff in c:&bslash;linux&n;&t;&t;&t;&t;avoiding any clash with existing DOS file and subdirectory.&n;&t;&t;&t;&t;When linux boots, it hides this fact, showing a normal&n;&t;&t;&t;&t;root directory with /etc /bin /tmp ...&n;&n;&t;&t;&t;&t;The word &quot;linux&quot; is hardcoded in /usr/include/linux/umsdos_fs.h&n;&t;&t;&t;&t;in the macro UMSDOS_PSDROOT_NAME.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: pseudo root / mount&n;&t; When a umsdos fs is mounted, a special handling is done&n;&t; if it is the root partition. We check for the presence&n;&t; of the file /linux/etc/init or /linux/etc/rc or&n;&t; /linux/sbin/init. If one is there, we do a chroot(&quot;/linux&quot;).&n;&t; &n;&t; We check both because (see init/main.c) the kernel&n;&t; try to exec init at different place and if it fails&n;&t; it tries /bin/sh /etc/rc. To be consistent with&n;&t; init/main.c, many more test would have to be done&n;&t; to locate init. Any complain ?&n;&t; &n;&t; The chroot is done manually in init/main.c but the&n;&t; info (the inode) is located at mount time and store&n;&t; in a global variable (pseudo_root) which is used at&n;&t; different place in the umsdos driver. There is no&n;&t; need to store this variable elsewhere because it&n;&t; will always be one, not one per mount.&n;&t; &n;&t; This feature allows the installation&n;&t; of a linux system within a DOS system in a subdirectory.&n;&t; &n;&t; A user may install its linux stuff in c:&bslash;linux&n;&t; avoiding any clash with existing DOS file and subdirectory.&n;&t; When linux boots, it hides this fact, showing a normal&n;&t; root directory with /etc /bin /tmp ...&n;&t; &n;&t; The word &quot;linux&quot; is hardcoded in /usr/include/linux/umsdos_fs.h&n;&t; in the macro UMSDOS_PSDROOT_NAME.&n;      */
 r_struct
-id|inode
+id|dentry
 op_star
-id|pseudo
+id|root
+comma
+op_star
+id|etc
+comma
+op_star
+id|etc_rc
+comma
+op_star
+id|init
+comma
+op_star
+id|sbin
+suffix:semicolon
+multiline_comment|/* FIXME */
+id|root
+op_assign
+id|creat_dentry
+(paren
+id|UMSDOS_PSDROOT_NAME
+comma
+id|strlen
+c_func
+(paren
+id|UMSDOS_PSDROOT_NAME
+)paren
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|sbin
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;sbin&quot;
+comma
+l_int|4
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 id|Printk
 (paren
@@ -1279,39 +1505,26 @@ c_cond
 (paren
 id|umsdos_real_lookup
 (paren
-id|sb-&gt;s_mounted
-comma
-id|UMSDOS_PSDROOT_NAME
-comma
-id|UMSDOS_PSDROOT_LEN
-comma
-op_amp
 id|pseudo
+comma
+id|root
 )paren
 op_eq
 l_int|0
 op_logical_and
+(paren
+id|root-&gt;d_inode
+op_ne
+l_int|NULL
+)paren
+op_logical_and
 id|S_ISDIR
 c_func
 (paren
-id|pseudo-&gt;i_mode
+id|root-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|etc
-op_assign
-l_int|NULL
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|sbin
-op_assign
-l_int|NULL
-suffix:semicolon
 r_int
 id|pseudo_ok
 op_assign
@@ -1326,18 +1539,26 @@ id|UMSDOS_PSDROOT_NAME
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|etc
+op_assign
+id|creat_dentry
 (paren
-id|umsdos_real_lookup
-(paren
-id|pseudo
-comma
 l_string|&quot;etc&quot;
 comma
 l_int|3
 comma
-op_amp
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* if (umsdos_real_lookup (pseudo,&quot;etc&quot;,3,etc)==0 */
+r_if
+c_cond
+(paren
+id|umsdos_real_lookup
+c_func
+(paren
+id|pseudo
+comma
 id|etc
 )paren
 op_eq
@@ -1346,24 +1567,10 @@ op_logical_and
 id|S_ISDIR
 c_func
 (paren
-id|etc-&gt;i_mode
+id|etc-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|init
-op_assign
-l_int|NULL
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|rc
-op_assign
-l_int|NULL
-suffix:semicolon
 id|Printk
 (paren
 (paren
@@ -1373,19 +1580,38 @@ id|UMSDOS_PSDROOT_NAME
 )paren
 )paren
 suffix:semicolon
+id|init
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;init&quot;
+comma
+l_int|4
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|etc_rc
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;rc&quot;
+comma
+l_int|2
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* if ((umsdos_real_lookup (etc,&quot;init&quot;,4,init)==0*/
 r_if
 c_cond
 (paren
 (paren
 id|umsdos_real_lookup
+c_func
 (paren
-id|etc
+id|pseudo
 comma
-l_string|&quot;init&quot;
-comma
-l_int|4
-comma
-op_amp
 id|init
 )paren
 op_eq
@@ -1394,21 +1620,18 @@ op_logical_and
 id|S_ISREG
 c_func
 (paren
-id|init-&gt;i_mode
+id|init-&gt;d_inode-&gt;i_mode
 )paren
 )paren
+multiline_comment|/*&t;|| (umsdos_real_lookup (etc,&quot;rc&quot;,2,&amp;rc)==0*/
 op_logical_or
 (paren
 id|umsdos_real_lookup
+c_func
 (paren
-id|etc
+id|pseudo
 comma
-l_string|&quot;rc&quot;
-comma
-l_int|2
-comma
-op_amp
-id|rc
+id|etc_rc
 )paren
 op_eq
 l_int|0
@@ -1416,7 +1639,7 @@ op_logical_and
 id|S_ISREG
 c_func
 (paren
-id|rc-&gt;i_mode
+id|etc_rc-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 )paren
@@ -1426,32 +1649,22 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|init
-)paren
-suffix:semicolon
-id|iput
-(paren
-id|rc
-)paren
-suffix:semicolon
+multiline_comment|/* FIXME !!!!!! */
+multiline_comment|/* iput(init); */
+multiline_comment|/* iput(rc); */
 )brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|pseudo_ok
+multiline_comment|/* &amp;&amp; umsdos_real_lookup (pseudo, &quot;sbin&quot;, 4, sbin)==0*/
 op_logical_and
 id|umsdos_real_lookup
+c_func
 (paren
 id|pseudo
 comma
-l_string|&quot;sbin&quot;
-comma
-l_int|4
-comma
-op_amp
 id|sbin
 )paren
 op_eq
@@ -1460,17 +1673,10 @@ op_logical_and
 id|S_ISDIR
 c_func
 (paren
-id|sbin-&gt;i_mode
+id|sbin-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|init
-op_assign
-l_int|NULL
-suffix:semicolon
 id|Printk
 (paren
 (paren
@@ -1480,18 +1686,15 @@ id|UMSDOS_PSDROOT_NAME
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* if (umsdos_real_lookup (sbin,&quot;init&quot;,4,init)==0 */
 r_if
 c_cond
 (paren
 id|umsdos_real_lookup
+c_func
 (paren
-id|sbin
+id|pseudo
 comma
-l_string|&quot;init&quot;
-comma
-l_int|4
-comma
-op_amp
 id|init
 )paren
 op_eq
@@ -1500,7 +1703,7 @@ op_logical_and
 id|S_ISREG
 c_func
 (paren
-id|init-&gt;i_mode
+id|init-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 (brace
@@ -1509,11 +1712,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|init
-)paren
-suffix:semicolon
+multiline_comment|/* FIXME !!! &n;&t;     iput (init); */
 )brace
 r_if
 c_cond
@@ -1539,43 +1738,42 @@ id|pseudo_root
 op_assign
 id|pseudo
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|pseudo-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|pseudo
 op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|iput
-(paren
-id|sbin
-)paren
-suffix:semicolon
-id|iput
-(paren
-id|etc
-)paren
-suffix:semicolon
+multiline_comment|/* FIXME &n;&t;&n;&t;iput (sbin);&n;&t;iput (etc);&n;&t;*/
 )brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_read_super /mn/: Pseudo should be iput-ed here...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|iput
 (paren
 id|pseudo
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME */
 )brace
-)brace
-r_else
-(brace
-id|MOD_DEC_USE_COUNT
+macro_line|#endif /* disabled */
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_read_super /mn/: returning %p&bslash;n&quot;
+comma
+id|res
+)paren
+)paren
 suffix:semicolon
-)brace
 r_return
-id|sb
+id|res
 suffix:semicolon
 )brace
 DECL|variable|umsdos_fs_type

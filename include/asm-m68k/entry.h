@@ -15,21 +15,18 @@ multiline_comment|/*&n; * these are offsets into the task-struct&n; */
 id|LTASK_STATE
 op_assign
 l_int|0
-id|LTASK_COUNTER
-op_assign
-l_int|4
-id|LTASK_PRIORITY
-op_assign
-l_int|8
-id|LTASK_SIGNAL
-op_assign
-l_int|12
-id|LTASK_BLOCKED
-op_assign
-l_int|16
 id|LTASK_FLAGS
 op_assign
-l_int|20
+l_int|4
+id|LTASK_SIGPENDING
+op_assign
+l_int|8
+id|LTASK_ADDRLIMIT
+op_assign
+l_int|12
+id|LTASK_EXECDOMAIN
+op_assign
+l_int|16
 id|LTSS_KSP
 op_assign
 l_int|0
@@ -49,7 +46,7 @@ id|LTSS_FPCTXT
 op_assign
 l_int|24
 multiline_comment|/* the following macro is used when enabling interrupts */
-macro_line|#if defined(MACH_ATARI_ONLY)
+macro_line|#if defined(MACH_ATARI_ONLY) &amp;&amp; !defined(CONFIG_HADES)
 multiline_comment|/* block out HSYNC on the atari */
 DECL|macro|ALLOWINT
 mdefine_line|#define ALLOWINT 0xfbff

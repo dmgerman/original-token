@@ -1442,8 +1442,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1482,8 +1480,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1555,8 +1551,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1924,16 +1918,12 @@ id|kfree_skb
 c_func
 (paren
 id|skb2
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2744,8 +2734,6 @@ id|kfree_skb
 c_func
 (paren
 id|cb-&gt;skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|kfree

@@ -45,7 +45,7 @@ DECL|macro|PTOV
 mdefine_line|#define PTOV(addr)  (mm_ptov((unsigned long)(addr)))
 multiline_comment|/*&n; * Cache handling functions&n; */
 DECL|macro|flush_icache
-mdefine_line|#define flush_icache()&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_040_OR_060)&t;&t;&t;&t;&bslash;&n;&t;&t;asm __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;  &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;  &quot;cinva %%ic&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;  &quot;.chip 68k&quot;);&t;&t;&bslash;&n;&t;else {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _tmp;&t;&t;&t;&bslash;&n;&t;&t;asm __volatile__ (&quot;movec %%cacr,%0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;     &quot;orw %1,%0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;     &quot;movec %0,%%cacr&quot;&t;&t;&t;&bslash;&n;&t;&t;     : &quot;=&amp;d&quot; (_tmp)&t;&t;&t;&bslash;&n;&t;&t;     : &quot;id&quot; (FLUSH_I));&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define flush_icache()&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CPU_IS_040_OR_060)&t;&t;&t;&t;&bslash;&n;&t;&t;asm __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;  &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;  &quot;cinva %%ic&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;  &quot;.chip 68k&quot; : );&t;&bslash;&n;&t;else {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _tmp;&t;&t;&t;&bslash;&n;&t;&t;asm __volatile__ (&quot;movec %%cacr,%0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;     &quot;orw %1,%0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;     &quot;movec %0,%%cacr&quot;&t;&t;&t;&bslash;&n;&t;&t;     : &quot;=&amp;d&quot; (_tmp)&t;&t;&t;&bslash;&n;&t;&t;     : &quot;id&quot; (FLUSH_I));&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * invalidate the cache for the specified memory range.&n; * It starts at the physical address specified for&n; * the given number of bytes.&n; */
 r_extern
 r_void
@@ -253,18 +253,19 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Push n pages at kernel virtual address and clear the icache */
-DECL|function|flush_pages_to_ram
+DECL|function|flush_icache_range
 r_extern
 r_inline
 r_void
-id|flush_pages_to_ram
+id|flush_icache_range
 (paren
 r_int
 r_int
 id|address
 comma
 r_int
-id|n
+r_int
+id|endaddr
 )paren
 (brace
 r_if
@@ -273,6 +274,21 @@ c_cond
 id|CPU_IS_040_OR_060
 )paren
 (brace
+r_int
+id|n
+op_assign
+(paren
+id|endaddr
+op_minus
+id|address
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_div
+id|PAGE_SIZE
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -332,8 +348,6 @@ id|FLUSH_I
 suffix:semicolon
 )brace
 )brace
-DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 multiline_comment|/*&n; * flush all user-space atc entries.&n; */
 DECL|function|__flush_tlb
 r_static
@@ -562,8 +576,7 @@ c_cond
 id|CPU_IS_040_OR_060
 )paren
 (brace
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -714,6 +727,10 @@ DECL|macro|_PAGE_ACCESSED
 mdefine_line|#define _PAGE_ACCESSED&t;0x008
 DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x010
+DECL|macro|_PAGE_SUPER
+mdefine_line|#define _PAGE_SUPER&t;0x080&t;/* 68040 supervisor only */
+DECL|macro|_PAGE_FAKE_SUPER
+mdefine_line|#define _PAGE_FAKE_SUPER 0x200&t;/* fake supervisor only on 680[23]0 */
 DECL|macro|_PAGE_GLOBAL040
 mdefine_line|#define _PAGE_GLOBAL040&t;0x400&t;/* 68040 global bit, used for kva descs */
 DECL|macro|_PAGE_COW
@@ -1186,7 +1203,11 @@ c_func
 id|pte
 )paren
 op_amp
+(paren
 id|_PAGE_PRESENT
+op_or
+id|_PAGE_FAKE_SUPER
+)paren
 suffix:semicolon
 )brace
 DECL|function|pte_clear
@@ -3099,7 +3120,7 @@ r_int
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Map some physical address range into the kernel address space. The&n; * code is copied and adapted from map_chunk().&n; */
+multiline_comment|/*&n; * Map some physical address range into the kernel address space.&n; */
 r_extern
 r_int
 r_int
@@ -3121,6 +3142,17 @@ r_int
 r_int
 op_star
 id|memavailp
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Unmap a region alloced by kernel_map().&n; */
+r_extern
+r_void
+id|kernel_unmap
+c_func
+(paren
+r_int
+r_int
+id|addr
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Change the cache mode of some kernel address range.&n; */
@@ -3173,6 +3205,7 @@ id|pte
 (brace
 )brace
 multiline_comment|/*&n; * I don&squot;t know what is going on here, but since these were changed,&n; * swapping hasn&squot;t been working on the 68040.&n; */
+multiline_comment|/* With the new handling of PAGE_NONE the old definitions definitely&n;   don&squot;t work any more.  */
 DECL|macro|SWP_TYPE
 mdefine_line|#define SWP_TYPE(entry)  (((entry) &gt;&gt; 2) &amp; 0x7f)
 macro_line|#if 0

@@ -87,6 +87,151 @@ mdefine_line|#define BI_AMIGA_SERPER&t;&t;0x8007&t;/* serial port period (u_shor
 multiline_comment|/*&n;     *  Atari-specific tags&n;     */
 DECL|macro|BI_ATARI_MCH_COOKIE
 mdefine_line|#define BI_ATARI_MCH_COOKIE&t;0x8000&t;/* _MCH cookie from TOS (u_long) */
+DECL|macro|BI_ATARI_MCH_TYPE
+mdefine_line|#define BI_ATARI_MCH_TYPE&t;0x8001&t;/* special machine type (u_long) */
+multiline_comment|/* (values are ATARI_MACH_* defines */
+multiline_comment|/* mch_cookie values (upper word) */
+DECL|macro|ATARI_MCH_ST
+mdefine_line|#define ATARI_MCH_ST&t;&t;0
+DECL|macro|ATARI_MCH_STE
+mdefine_line|#define ATARI_MCH_STE&t;&t;1
+DECL|macro|ATARI_MCH_TT
+mdefine_line|#define ATARI_MCH_TT&t;&t;2
+DECL|macro|ATARI_MCH_FALCON
+mdefine_line|#define ATARI_MCH_FALCON&t;3
+multiline_comment|/* mch_type values */
+DECL|macro|ATARI_MACH_NORMAL
+mdefine_line|#define ATARI_MACH_NORMAL&t;0&t;/* no special machine type */
+DECL|macro|ATARI_MACH_MEDUSA
+mdefine_line|#define ATARI_MACH_MEDUSA&t;1&t;/* Medusa 040 */
+DECL|macro|ATARI_MACH_HADES
+mdefine_line|#define ATARI_MACH_HADES&t;2&t;/* Hades 040 or 060 */
+DECL|macro|ATARI_MACH_AB40
+mdefine_line|#define ATARI_MACH_AB40&t;&t;3&t;/* Afterburner040 on Falcon */
+multiline_comment|/*&n;     *  Macintosh-specific tags&n;     */
+DECL|macro|BI_MAC_MODEL
+mdefine_line|#define BI_MAC_MODEL&t;&t;0x8000&t;/* Mac Gestalt ID (model type) */
+DECL|macro|BI_MAC_VADDR
+mdefine_line|#define BI_MAC_VADDR&t;&t;0x8001&t;/* Mac video base address */
+DECL|macro|BI_MAC_VDEPTH
+mdefine_line|#define BI_MAC_VDEPTH&t;&t;0x8002&t;/* Mac video depth */
+DECL|macro|BI_MAC_VROW
+mdefine_line|#define BI_MAC_VROW&t;&t;0x8003&t;/* Mac video rowbytes */
+DECL|macro|BI_MAC_VDIM
+mdefine_line|#define BI_MAC_VDIM&t;&t;0x8004&t;/* Mac video dimensions */
+DECL|macro|BI_MAC_VLOGICAL
+mdefine_line|#define BI_MAC_VLOGICAL&t;&t;0x8005&t;/* Mac video logical base */
+DECL|macro|BI_MAC_SCCBASE
+mdefine_line|#define BI_MAC_SCCBASE&t;&t;0x8006&t;/* Mac SCC base address */
+DECL|macro|BI_MAC_BTIME
+mdefine_line|#define BI_MAC_BTIME&t;&t;0x8007&t;/* Mac boot time */
+DECL|macro|BI_MAC_GMTBIAS
+mdefine_line|#define BI_MAC_GMTBIAS&t;&t;0x8008&t;/* Mac GMT timezone offset */
+DECL|macro|BI_MAC_MEMSIZE
+mdefine_line|#define BI_MAC_MEMSIZE&t;&t;0x8009&t;/* Mac RAM size (sanity check) */
+DECL|macro|BI_MAC_CPUID
+mdefine_line|#define BI_MAC_CPUID&t;&t;0x800a&t;/* Mac CPU type (sanity check) */
+multiline_comment|/*&n;     * Mac: compatibility with old booter data format (temporarily)&n;     */
+macro_line|#ifndef __ASSEMBLY__
+r_struct
+id|mac_booter_data
+(brace
+r_int
+r_int
+id|videoaddr
+suffix:semicolon
+r_int
+r_int
+id|videorow
+suffix:semicolon
+r_int
+r_int
+id|videodepth
+suffix:semicolon
+r_int
+r_int
+id|dimensions
+suffix:semicolon
+r_int
+r_int
+id|args
+suffix:semicolon
+r_int
+r_int
+id|boottime
+suffix:semicolon
+r_int
+r_int
+id|gmtbias
+suffix:semicolon
+r_int
+r_int
+id|bootver
+suffix:semicolon
+r_int
+r_int
+id|videological
+suffix:semicolon
+r_int
+r_int
+id|sccbase
+suffix:semicolon
+r_int
+r_int
+id|id
+suffix:semicolon
+r_int
+r_int
+id|memsize
+suffix:semicolon
+r_int
+r_int
+id|serialmf
+suffix:semicolon
+r_int
+r_int
+id|serialhsk
+suffix:semicolon
+r_int
+r_int
+id|serialgpi
+suffix:semicolon
+r_int
+r_int
+id|printmf
+suffix:semicolon
+r_int
+r_int
+id|printhsk
+suffix:semicolon
+r_int
+r_int
+id|printgpi
+suffix:semicolon
+r_int
+r_int
+id|cpuid
+suffix:semicolon
+r_int
+r_int
+id|rombase
+suffix:semicolon
+r_int
+r_int
+id|adbdelay
+suffix:semicolon
+r_int
+r_int
+id|timedbra
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|mac_booter_data
+id|mac_bi_data
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;     * Stuff for bootinfo interface versioning&n;     *&n;     * At the start of kernel code, a &squot;struct bootversion&squot; is located.&n;     * bootstrap checks for a matching version of the interface before booting&n;     * a kernel, to avoid user confusion if kernel and bootstrap don&squot;t work&n;     * together :-)&n;     *&n;     * If incompatible changes are made to the bootinfo interface, the major&n;     * number below should be stepped (and the minor reset to 0) for the&n;     * appropriate machine. If a change is backward-compatible, the minor&n;     * should be stepped. &quot;Backwards-compatible&quot; means that booting will work,&n;     * but certain features may not.&n;     */
 DECL|macro|BOOTINFOV_MAGIC
 mdefine_line|#define BOOTINFOV_MAGIC&t;&t;&t;0x4249561A&t;/* &squot;BIV^Z&squot; */
@@ -97,27 +242,33 @@ mdefine_line|#define BI_VERSION_MAJOR(v)&t;&t;(((v) &gt;&gt; 16) &amp; 0xffff)
 DECL|macro|BI_VERSION_MINOR
 mdefine_line|#define BI_VERSION_MINOR(v)&t;&t;((v) &amp; 0xffff)
 macro_line|#ifndef __ASSEMBLY__
+DECL|struct|bootversion
 r_struct
 id|bootversion
 (brace
+DECL|member|branch
 r_int
 r_int
 id|branch
 suffix:semicolon
+DECL|member|magic
 r_int
 r_int
 id|magic
 suffix:semicolon
 r_struct
 (brace
+DECL|member|machtype
 r_int
 r_int
 id|machtype
 suffix:semicolon
+DECL|member|version
 r_int
 r_int
 id|version
 suffix:semicolon
+DECL|member|machversions
 )brace
 id|machversions
 (braket
@@ -130,13 +281,19 @@ macro_line|#endif /* __ASSEMBLY__ */
 DECL|macro|AMIGA_BOOTI_VERSION
 mdefine_line|#define AMIGA_BOOTI_VERSION    MK_BI_VERSION( 2, 0 )
 DECL|macro|ATARI_BOOTI_VERSION
-mdefine_line|#define ATARI_BOOTI_VERSION    MK_BI_VERSION( 2, 0 )
+mdefine_line|#define ATARI_BOOTI_VERSION    MK_BI_VERSION( 2, 1 )
+DECL|macro|MAC_BOOTI_VERSION
+mdefine_line|#define MAC_BOOTI_VERSION      MK_BI_VERSION( 2, 0 )
+DECL|macro|MVME16x_BOOTI_VERSION
+mdefine_line|#define MVME16x_BOOTI_VERSION  MK_BI_VERSION( 2, 0 )
 macro_line|#ifdef BOOTINFO_COMPAT_1_0
 multiline_comment|/*&n;     *  Backwards compatibility with bootinfo interface version 1.0&n;     */
 DECL|macro|COMPAT_AMIGA_BOOTI_VERSION
 mdefine_line|#define COMPAT_AMIGA_BOOTI_VERSION    MK_BI_VERSION( 1, 0 )
 DECL|macro|COMPAT_ATARI_BOOTI_VERSION
 mdefine_line|#define COMPAT_ATARI_BOOTI_VERSION    MK_BI_VERSION( 1, 0 )
+DECL|macro|COMPAT_MAC_BOOTI_VERSION
+mdefine_line|#define COMPAT_MAC_BOOTI_VERSION      MK_BI_VERSION( 1, 0 )
 macro_line|#include &lt;linux/zorro.h&gt;
 DECL|macro|COMPAT_NUM_AUTO
 mdefine_line|#define COMPAT_NUM_AUTO    16
@@ -208,6 +365,220 @@ id|mch_cookie
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifndef __ASSEMBLY__
+DECL|macro|MACHW_DECLARE
+mdefine_line|#define MACHW_DECLARE(name)    unsigned name : 1
+DECL|macro|MACHW_SET
+mdefine_line|#define MACHW_SET(name)                (boot_info.bi_mac.hw_present.name = 1)
+DECL|macro|MACHW_PRESENT
+mdefine_line|#define MACHW_PRESENT(name)    (boot_info.bi_mac.hw_present.name)
+DECL|struct|compat_bi_Macintosh
+r_struct
+id|compat_bi_Macintosh
+(brace
+DECL|member|videoaddr
+r_int
+r_int
+id|videoaddr
+suffix:semicolon
+DECL|member|videorow
+r_int
+r_int
+id|videorow
+suffix:semicolon
+DECL|member|videodepth
+r_int
+r_int
+id|videodepth
+suffix:semicolon
+DECL|member|dimensions
+r_int
+r_int
+id|dimensions
+suffix:semicolon
+DECL|member|args
+r_int
+r_int
+id|args
+suffix:semicolon
+DECL|member|boottime
+r_int
+r_int
+id|boottime
+suffix:semicolon
+DECL|member|gmtbias
+r_int
+r_int
+id|gmtbias
+suffix:semicolon
+DECL|member|bootver
+r_int
+r_int
+id|bootver
+suffix:semicolon
+DECL|member|videological
+r_int
+r_int
+id|videological
+suffix:semicolon
+DECL|member|sccbase
+r_int
+r_int
+id|sccbase
+suffix:semicolon
+DECL|member|id
+r_int
+r_int
+id|id
+suffix:semicolon
+DECL|member|memsize
+r_int
+r_int
+id|memsize
+suffix:semicolon
+DECL|member|serialmf
+r_int
+r_int
+id|serialmf
+suffix:semicolon
+DECL|member|serialhsk
+r_int
+r_int
+id|serialhsk
+suffix:semicolon
+DECL|member|serialgpi
+r_int
+r_int
+id|serialgpi
+suffix:semicolon
+DECL|member|printmf
+r_int
+r_int
+id|printmf
+suffix:semicolon
+DECL|member|printhsk
+r_int
+r_int
+id|printhsk
+suffix:semicolon
+DECL|member|printgpi
+r_int
+r_int
+id|printgpi
+suffix:semicolon
+DECL|member|cpuid
+r_int
+r_int
+id|cpuid
+suffix:semicolon
+DECL|member|rombase
+r_int
+r_int
+id|rombase
+suffix:semicolon
+DECL|member|adbdelay
+r_int
+r_int
+id|adbdelay
+suffix:semicolon
+DECL|member|timedbra
+r_int
+r_int
+id|timedbra
+suffix:semicolon
+r_struct
+(brace
+multiline_comment|/* video hardware */
+multiline_comment|/* sound hardware */
+multiline_comment|/* disk storage interfaces */
+id|MACHW_DECLARE
+c_func
+(paren
+id|MAC_SCSI
+)paren
+suffix:semicolon
+multiline_comment|/* Directly mapped NCR5380 */
+id|MACHW_DECLARE
+c_func
+(paren
+id|IDE
+)paren
+suffix:semicolon
+multiline_comment|/* IDE Interface */
+multiline_comment|/* other I/O hardware */
+id|MACHW_DECLARE
+c_func
+(paren
+id|SCC
+)paren
+suffix:semicolon
+multiline_comment|/* Serial Communications Contr. */
+multiline_comment|/* DMA */
+id|MACHW_DECLARE
+c_func
+(paren
+id|SCSI_DMA
+)paren
+suffix:semicolon
+multiline_comment|/* DMA for the NCR5380 */
+multiline_comment|/* real time clocks */
+id|MACHW_DECLARE
+c_func
+(paren
+id|RTC_CLK
+)paren
+suffix:semicolon
+multiline_comment|/* clock chip */
+multiline_comment|/* supporting hardware */
+id|MACHW_DECLARE
+c_func
+(paren
+id|VIA1
+)paren
+suffix:semicolon
+multiline_comment|/* Versatile Interface Ad. 1 */
+id|MACHW_DECLARE
+c_func
+(paren
+id|VIA2
+)paren
+suffix:semicolon
+multiline_comment|/* Versatile Interface Ad. 2 */
+id|MACHW_DECLARE
+c_func
+(paren
+id|RBV
+)paren
+suffix:semicolon
+multiline_comment|/* Versatile Interface Ad. 2+ */
+multiline_comment|/* NUBUS */
+id|MACHW_DECLARE
+c_func
+(paren
+id|NUBUS
+)paren
+suffix:semicolon
+multiline_comment|/* NUBUS */
+DECL|member|hw_present
+)brace
+id|hw_present
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#else
+DECL|macro|BI_videoaddr
+mdefine_line|#define BI_videoaddr&t;BI_un
+DECL|macro|BI_videorow
+mdefine_line|#define BI_videorow&t;BI_videoaddr+4
+DECL|macro|BI_videodepth
+mdefine_line|#define BI_videodepth&t;BI_videorow+4
+DECL|macro|BI_dimensions
+mdefine_line|#define BI_dimensions&t;BI_videodepth+4
+DECL|macro|BI_args
+mdefine_line|#define BI_args&t;&t;BI_dimensions+4
+DECL|macro|BI_cpuid
+mdefine_line|#define BI_cpuid&t;BI_args+56
+macro_line|#endif
 DECL|struct|compat_mem_info
 r_struct
 id|compat_mem_info
@@ -319,6 +690,11 @@ r_struct
 id|compat_bi_Atari
 id|bi_ata
 suffix:semicolon
+DECL|member|bi_mac
+r_struct
+id|compat_bi_Macintosh
+id|bi_mac
+suffix:semicolon
 DECL|member|bi_un
 )brace
 id|bi_un
@@ -329,6 +705,8 @@ DECL|macro|bi_amiga
 mdefine_line|#define bi_amiga&t;bi_un.bi_ami
 DECL|macro|bi_atari
 mdefine_line|#define bi_atari&t;bi_un.bi_ata
+DECL|macro|bi_mac
+mdefine_line|#define bi_mac&t;&t;bi_un.bi_mac
 macro_line|#endif /* BOOTINFO_COMPAT_1_0 */
 macro_line|#endif /* _M68K_BOOTINFO_H */
 eof

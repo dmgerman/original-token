@@ -105,7 +105,7 @@ multiline_comment|/*&n; * Here start the assembler entry points for interrupts&n
 DECL|macro|IRQ_NAME
 mdefine_line|#define IRQ_NAME(nr) atari_slow_irq_##nr##_handler(void)
 DECL|macro|BUILD_SLOW_IRQ
-mdefine_line|#define&t;BUILD_SLOW_IRQ(n)&t;&t;&t;&t;&t;&t;   &bslash;&n;asmlinkage void IRQ_NAME(n);&t;&t;&t;&t;&t;&t;   &bslash;&n;/* Dummy function to allow asm with operands.  */&t;&t;&t;   &bslash;&n;void atari_slow_irq_##n##_dummy (void) {&t;&t;&t;&t;   &bslash;&n;__asm__ (ALIGN_STR &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;SYMBOL_NAME_STR(atari_slow_irq_) #n &quot;_handler:&bslash;t&quot;&t;&t;&t;   &bslash;&n;&quot;&t;addql&t;#1,&quot;SYMBOL_NAME_STR(local_irq_count)&quot;&bslash;n&quot;&t;&t;   &bslash;&n;&t;SAVE_ALL_INT &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;GET_CURRENT(%%d0) &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;andb&t;#~(1&lt;&lt;(%c3&amp;7)),%a4:w&bslash;n&quot;&t;/* mask this interrupt */&t;   &bslash;&n;&t;/* get old IPL from stack frame */&t;&t;&t;&t;   &bslash;&n;&quot;&t;bfextu&t;%%sp@(%c2){#5,#3},%%d0&bslash;n&quot;&t;&t;&t;&t;   &bslash;&n;&quot;&t;movew&t;%%sr,%%d1&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;bfins&t;%%d0,%%d1{#21,#3}&bslash;n&quot;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;movew&t;%%d1,%%sr&bslash;n&quot;&t;&t;/* set IPL = previous value */&t;   &bslash;&n;&quot;&t;addql&t;#1,%a0&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;lea&t;%a1,%%a0&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;pea &t;%%sp@&bslash;n&quot;&t;&t;/* push addr of frame */&t;   &bslash;&n;&quot;&t;movel&t;%%a0@(4),%%sp@-&bslash;n&quot;&t;/* push handler data */&t;&t;   &bslash;&n;&quot;&t;pea &t;(%c3+8)&bslash;n&quot;&t;&t;/* push int number */&t;&t;   &bslash;&n;&quot;&t;movel&t;%%a0@,%%a0&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;jbsr&t;%%a0@&bslash;n&quot;&t;&t;/* call the handler */&t;&t;   &bslash;&n;&quot;&t;addql&t;#8,%%sp&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;addql&t;#4,%%sp&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;orw&t;#0x0600,%%sr&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;andw&t;#0xfeff,%%sr&bslash;n&quot;&t;&t;/* set IPL = 6 again */&t;&t;   &bslash;&n;&quot;&t;orb &t;#(1&lt;&lt;(%c3&amp;7)),%a4:w&bslash;n&quot;&t;/* now unmask the int again */&t;   &bslash;&n;&quot;&t;jbra&t;&quot;SYMBOL_NAME_STR(ret_from_interrupt)&quot;&bslash;n&quot;&t;&t;   &bslash;&n;&t; : : &quot;i&quot; (&amp;kstat.interrupts[n+8]), &quot;i&quot; (&amp;irq_handler[n+8]),&t;   &bslash;&n;&t;     &quot;n&quot; (PT_OFF_SR), &quot;n&quot; (n),&t;&t;&t;&t;&t;   &bslash;&n;&t;     &quot;i&quot; (n &amp; 8 ? (n &amp; 16 ? &amp;tt_mfp.int_mk_a : &amp;mfp.int_mk_a)&t;   &bslash;&n;&t;&t;        : (n &amp; 16 ? &amp;tt_mfp.int_mk_b : &amp;mfp.int_mk_b))&t;   &bslash;&n;);&t;&t;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;}
+mdefine_line|#define&t;BUILD_SLOW_IRQ(n)&t;&t;&t;&t;&t;&t;   &bslash;&n;asmlinkage void IRQ_NAME(n);&t;&t;&t;&t;&t;&t;   &bslash;&n;/* Dummy function to allow asm with operands.  */&t;&t;&t;   &bslash;&n;void atari_slow_irq_##n##_dummy (void) {&t;&t;&t;&t;   &bslash;&n;__asm__ (__ALIGN_STR &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;SYMBOL_NAME_STR(atari_slow_irq_) #n &quot;_handler:&bslash;t&quot;&t;&t;&t;   &bslash;&n;&quot;&t;addql&t;#1,&quot;SYMBOL_NAME_STR(local_irq_count)&quot;&bslash;n&quot;&t;&t;   &bslash;&n;&t;SAVE_ALL_INT &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;GET_CURRENT(%%d0) &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;andb&t;#~(1&lt;&lt;(%c3&amp;7)),%a4:w&bslash;n&quot;&t;/* mask this interrupt */&t;   &bslash;&n;&t;/* get old IPL from stack frame */&t;&t;&t;&t;   &bslash;&n;&quot;&t;bfextu&t;%%sp@(%c2){#5,#3},%%d0&bslash;n&quot;&t;&t;&t;&t;   &bslash;&n;&quot;&t;movew&t;%%sr,%%d1&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;bfins&t;%%d0,%%d1{#21,#3}&bslash;n&quot;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;movew&t;%%d1,%%sr&bslash;n&quot;&t;&t;/* set IPL = previous value */&t;   &bslash;&n;&quot;&t;addql&t;#1,%a0&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;lea&t;%a1,%%a0&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;pea &t;%%sp@&bslash;n&quot;&t;&t;/* push addr of frame */&t;   &bslash;&n;&quot;&t;movel&t;%%a0@(4),%%sp@-&bslash;n&quot;&t;/* push handler data */&t;&t;   &bslash;&n;&quot;&t;pea &t;(%c3+8)&bslash;n&quot;&t;&t;/* push int number */&t;&t;   &bslash;&n;&quot;&t;movel&t;%%a0@,%%a0&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;jbsr&t;%%a0@&bslash;n&quot;&t;&t;/* call the handler */&t;&t;   &bslash;&n;&quot;&t;addql&t;#8,%%sp&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;addql&t;#4,%%sp&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;orw&t;#0x0600,%%sr&bslash;n&quot;&t;&t;&t;&t;&t;&t;   &bslash;&n;&quot;&t;andw&t;#0xfeff,%%sr&bslash;n&quot;&t;&t;/* set IPL = 6 again */&t;&t;   &bslash;&n;&quot;&t;orb &t;#(1&lt;&lt;(%c3&amp;7)),%a4:w&bslash;n&quot;&t;/* now unmask the int again */&t;   &bslash;&n;&quot;&t;jbra&t;&quot;SYMBOL_NAME_STR(ret_from_interrupt)&quot;&bslash;n&quot;&t;&t;   &bslash;&n;&t; : : &quot;i&quot; (&amp;kstat.irqs[0][n+8]), &quot;i&quot; (&amp;irq_handler[n+8]),&t;   &bslash;&n;&t;     &quot;n&quot; (PT_OFF_SR), &quot;n&quot; (n),&t;&t;&t;&t;&t;   &bslash;&n;&t;     &quot;i&quot; (n &amp; 8 ? (n &amp; 16 ? &amp;tt_mfp.int_mk_a : &amp;mfp.int_mk_a)&t;   &bslash;&n;&t;&t;        : (n &amp; 16 ? &amp;tt_mfp.int_mk_b : &amp;mfp.int_mk_b))&t;   &bslash;&n;);&t;&t;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;}
 id|BUILD_SLOW_IRQ
 c_func
 (paren
@@ -397,7 +397,7 @@ r_void
 (brace
 id|__asm__
 (paren
-id|ALIGN_STR
+id|__ALIGN_STR
 l_string|&quot;&bslash;n&quot;
 id|SYMBOL_NAME_STR
 c_func
@@ -540,7 +540,7 @@ suffix:colon
 l_string|&quot;i&quot;
 (paren
 op_amp
-id|kstat.interrupts
+id|kstat.irqs
 )paren
 comma
 l_string|&quot;n&quot;
@@ -563,7 +563,7 @@ id|asm
 c_func
 (paren
 l_string|&quot;.text&bslash;n&quot;
-id|ALIGN_STR
+id|__ALIGN_STR
 l_string|&quot;&bslash;n&quot;
 id|SYMBOL_NAME_STR
 c_func
@@ -595,6 +595,10 @@ c_func
 r_int
 id|cmd
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|atari_SCC_reset_done
 suffix:semicolon
 multiline_comment|/*&n; * void atari_init_IRQ (void)&n; *&n; * Parameters:&t;None&n; *&n; * Returns:&t;Nothing&n; *&n; * This function should be called during kernel startup to initialize&n; * the atari IRQ handling routines.&n; */
 DECL|function|__initfunc
@@ -722,6 +726,9 @@ c_func
 (paren
 id|SCC
 )paren
+op_logical_and
+op_logical_neg
+id|atari_SCC_reset_done
 )paren
 (brace
 id|scc.cha_a_ctrl
@@ -766,7 +773,13 @@ multiline_comment|/* enable MFP and SCC ints */
 )brace
 r_else
 (brace
-multiline_comment|/* If no SCU, the HSYNC interrupt needs to be disabled this&n;&t;&t; * way. (Else _inthandler in kernel/sys_call.S gets overruns)&n;&t;&t; */
+multiline_comment|/* If no SCU and no Hades, the HSYNC interrupt needs to be&n;&t;&t; * disabled this way. (Else _inthandler in kernel/sys_call.S&n;&t;&t; * gets overruns)&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_HADES
+)paren
 id|vectors
 (braket
 id|VEC_INT2
@@ -909,6 +922,12 @@ id|dev_id
 (brace
 r_int
 id|vector
+suffix:semicolon
+multiline_comment|/*&n;&t; * The following is a hack to make some PCI card drivers work,&n;&t; * which set the SA_SHIRQ flag.&n;&t; */
+id|flags
+op_and_assign
+op_complement
+id|SA_SHIRQ
 suffix:semicolon
 r_if
 c_cond
@@ -1820,7 +1839,10 @@ l_string|&quot;auto %2d: %10u &quot;
 comma
 id|i
 comma
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|i
 )braket
@@ -1844,7 +1866,10 @@ c_func
 id|i
 )paren
 comma
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|i
 )braket

@@ -3447,8 +3447,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|netlink_set_err

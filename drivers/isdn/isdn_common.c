@@ -207,9 +207,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-id|rw
 )paren
 (brace
 id|SET_SKB_FREE
@@ -222,8 +219,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|rw
 )paren
 suffix:semicolon
 )brace

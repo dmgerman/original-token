@@ -65,7 +65,6 @@ id|data
 )paren
 (brace
 r_int
-r_int
 id|newirq
 comma
 id|oldirq

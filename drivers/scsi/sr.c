@@ -3440,23 +3440,10 @@ id|realcount
 op_lshift
 l_int|2
 suffix:semicolon
+multiline_comment|/*&n;         * Note: The scsi standard says that READ_6 is *optional*, while&n;         * READ_10 is mandatory.   Thus there is no point in using&n;         * READ_6.&n;         */
 r_if
 c_cond
 (paren
-(paren
-(paren
-id|realcount
-OG
-l_int|0xff
-)paren
-op_logical_or
-(paren
-id|block
-OG
-l_int|0x1fffff
-)paren
-)paren
-op_logical_and
 id|scsi_CDs
 (braket
 id|dev

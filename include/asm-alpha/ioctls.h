@@ -146,6 +146,10 @@ DECL|macro|TIOCCBRK
 mdefine_line|#define TIOCCBRK&t;0x5428  /* BSD compatibility */
 DECL|macro|TIOCGSID
 mdefine_line|#define TIOCGSID&t;0x5429  /* Return the session ID of FD */
+DECL|macro|TIOCGPTN
+mdefine_line|#define TIOCGPTN&t;_IOR(&squot;T&squot;,0x30, unsigned int) /* Get Pty Number (of pty-mux device) */
+DECL|macro|TIOCSPTLCK
+mdefine_line|#define TIOCSPTLCK&t;_IOW(&squot;T&squot;,0x31, int)  /* Lock/unlock Pty */
 DECL|macro|TIOCSERCONFIG
 mdefine_line|#define TIOCSERCONFIG&t;0x5453
 DECL|macro|TIOCSERGWILD

@@ -1,4 +1,5 @@
-multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster and FlashPoint SCSI Host Adapters&n;&n;  Copyright 1995 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation, provided that none of the source code or runtime&n;  copyright notices are removed or modified.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen, Jin-Lon Hon, and Alex Win of BusLogic, whose&n;  advice has been invaluable, to David Gentzel, for writing the original Linux&n;  BusLogic driver, and to Paul Gortmaker, for being such a dedicated test site.&n;&n;  Finally, special thanks to Mylex/BusLogic for making the FlashPoint SCCB&n;  Manager available as freely redistributable source code.&n;&n;*/
+multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster and FlashPoint SCSI Host Adapters&n;&n;  Copyright 1995 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen, Jin-Lon Hon, and Alex Win of BusLogic, whose&n;  advice has been invaluable, to David Gentzel, for writing the original Linux&n;  BusLogic driver, and to Paul Gortmaker, for being such a dedicated test site.&n;&n;  Finally, special thanks to Mylex/BusLogic for making the FlashPoint SCCB&n;  Manager available as freely redistributable source code.&n;&n;*/
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Define types for some of the structures that interface with the rest&n;  of the Linux Kernel and SCSI Subsystem.&n;*/
 DECL|typedef|KernelDevice_T
 r_typedef
@@ -16,6 +17,12 @@ r_typedef
 r_struct
 id|pt_regs
 id|Registers_T
+suffix:semicolon
+DECL|typedef|PartitionTable_T
+r_typedef
+r_struct
+id|partition
+id|PartitionTable_T
 suffix:semicolon
 DECL|typedef|SCSI_Host_Template_T
 r_typedef
@@ -163,9 +170,24 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n;  Define the BusLogic SCSI Host Template structure.&n;*/
 DECL|macro|BUSLOGIC
-mdefine_line|#define BUSLOGIC&t;&t;&t;&t;&t;&t;&t; &bslash;&n;  { proc_dir:          &amp;BusLogic_ProcDirectoryEntry,&t;/* /proc Directory Entry     */&t; &bslash;&n;    proc_info:         BusLogic_ProcDirectoryInfo,&t;/* /proc Info Function&t;     */&t; &bslash;&n;    name:              &quot;BusLogic&quot;,&t;&t;&t;/* Driver Name&t;&t;     */&t; &bslash;&n;    detect:            BusLogic_DetectHostAdapter,&t;/* Detect Host Adapter&t;     */&t; &bslash;&n;    release:           BusLogic_ReleaseHostAdapter,&t;/* Release Host Adapter&t;     */&t; &bslash;&n;    info:              BusLogic_DriverInfo,&t;&t;/* Driver Info Function&t;     */&t; &bslash;&n;    queuecommand:      BusLogic_QueueCommand,&t;&t;/* Queue Command Function    */&t; &bslash;&n;    abort:             BusLogic_AbortCommand,&t;&t;/* Abort Command Function    */&t; &bslash;&n;    reset:             BusLogic_ResetCommand,&t;&t;/* Reset Command Function    */&t; &bslash;&n;    bios_param:        BusLogic_BIOSDiskParameters,&t;/* BIOS Disk Parameters&t;     */&t; &bslash;&n;    unchecked_isa_dma: 1,&t;&t;&t;&t;/* Default Unchecked ISA DMA */&t; &bslash;&n;    use_clustering:    ENABLE_CLUSTERING }&t;&t;/* Enable Clustering&t;     */
+mdefine_line|#define BUSLOGIC&t;&t;&t;&t;&t;&t;&t;       &bslash;&n;  { proc_dir:       &amp;BusLogic_ProcDirectoryEntry, /* ProcFS Directory Entry */ &bslash;&n;    proc_info:      BusLogic_ProcDirectoryInfo,&t;  /* ProcFS Info Function   */ &bslash;&n;    name:           &quot;BusLogic&quot;,&t;&t;&t;  /* Driver Name            */ &bslash;&n;    detect:         BusLogic_DetectHostAdapter,&t;  /* Detect Host Adapter    */ &bslash;&n;    release:        BusLogic_ReleaseHostAdapter,  /* Release Host Adapter   */ &bslash;&n;    info:           BusLogic_DriverInfo,&t;  /* Driver Info Function   */ &bslash;&n;    queuecommand:   BusLogic_QueueCommand,&t;  /* Queue Command Function */ &bslash;&n;    abort:          BusLogic_AbortCommand,&t;  /* Abort Command Function */ &bslash;&n;    reset:          BusLogic_ResetCommand,&t;  /* Reset Command Function */ &bslash;&n;    bios_param:     BusLogic_BIOSDiskParameters,  /* BIOS Disk Parameters   */ &bslash;&n;    unchecked_isa_dma: 1,&t;&t;&t;  /* Default Initial Value  */ &bslash;&n;    use_clustering: ENABLE_CLUSTERING }&t;&t;  /* Enable Clustering&t;    */
 multiline_comment|/*&n;  BusLogic_DriverVersion protects the private portion of this file.&n;*/
 macro_line|#ifdef BusLogic_DriverVersion
+multiline_comment|/*&n;  FlashPoint support is only available for the Intel x86 Architecture with&n;  CONFIG_PCI set.&n;*/
+macro_line|#ifndef __i386__
+DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
+macro_line|#undef CONFIG_SCSI_OMIT_FLASHPOINT
+DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
+mdefine_line|#define CONFIG_SCSI_OMIT_FLASHPOINT
+macro_line|#endif
+macro_line|#ifndef CONFIG_PCI
+DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
+macro_line|#undef CONFIG_SCSI_OMIT_FLASHPOINT
+DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
+mdefine_line|#define CONFIG_SCSI_OMIT_FLASHPOINT
+DECL|macro|BusLogic_InitializeProbeInfoListISA
+mdefine_line|#define BusLogic_InitializeProbeInfoListISA &bslash;&n;  BusLogic_InitializeProbeInfoList
+macro_line|#endif
 multiline_comment|/*&n;  Define the maximum number of BusLogic Host Adapters supported by this driver.&n;*/
 DECL|macro|BusLogic_MaxHostAdapters
 mdefine_line|#define BusLogic_MaxHostAdapters&t;&t;16
@@ -175,25 +197,33 @@ mdefine_line|#define BusLogic_MaxTargetDevices&t;&t;16
 multiline_comment|/*&n;  Define the maximum number of Scatter/Gather Segments used by this driver.&n;  For optimal performance, it is important that this limit be at least as&n;  large as the largest single request generated by the I/O Subsystem.&n;*/
 DECL|macro|BusLogic_ScatterGatherLimit
 mdefine_line|#define BusLogic_ScatterGatherLimit&t;&t;128
-multiline_comment|/*&n;  Define the maximum, preferred, and default Queue Depth to allow for Target&n;  Devices depending on whether or not they support Tagged Queuing and whether&n;  or not ISA Bounce Buffers are required.&n;*/
+multiline_comment|/*&n;  Define the maximum, maximum automatic, minimum automatic, and default Queue&n;  Depth to allow for Target Devices depending on whether or not they support&n;  Tagged Queuing and whether or not ISA Bounce Buffers are required.&n;*/
 DECL|macro|BusLogic_MaxTaggedQueueDepth
-mdefine_line|#define BusLogic_MaxTaggedQueueDepth&t;&t;63
-DECL|macro|BusLogic_PreferredTaggedQueueDepth
-mdefine_line|#define BusLogic_PreferredTaggedQueueDepth&t;28
-DECL|macro|BusLogic_TaggedQueueDepthBounceBuffers
-mdefine_line|#define BusLogic_TaggedQueueDepthBounceBuffers&t;2
-DECL|macro|BusLogic_TaggedQueueDepthAutomatic
-mdefine_line|#define BusLogic_TaggedQueueDepthAutomatic&t;0
+mdefine_line|#define BusLogic_MaxTaggedQueueDepth&t;&t;64
+DECL|macro|BusLogic_MaxAutomaticTaggedQueueDepth
+mdefine_line|#define BusLogic_MaxAutomaticTaggedQueueDepth&t;28
+DECL|macro|BusLogic_MinAutomaticTaggedQueueDepth
+mdefine_line|#define BusLogic_MinAutomaticTaggedQueueDepth&t;7
+DECL|macro|BusLogic_TaggedQueueDepthBB
+mdefine_line|#define BusLogic_TaggedQueueDepthBB&t;&t;3
 DECL|macro|BusLogic_UntaggedQueueDepth
 mdefine_line|#define BusLogic_UntaggedQueueDepth&t;&t;3
+DECL|macro|BusLogic_UntaggedQueueDepthBB
+mdefine_line|#define BusLogic_UntaggedQueueDepthBB&t;&t;2
 multiline_comment|/*&n;  Define the default amount of time in seconds to wait between a Host Adapter&n;  Hard Reset which initiates a SCSI Bus Reset and issuing any SCSI commands.&n;  Some SCSI devices get confused if they receive SCSI commands too soon after&n;  a SCSI Bus Reset.&n;*/
 DECL|macro|BusLogic_DefaultBusSettleTime
 mdefine_line|#define BusLogic_DefaultBusSettleTime&t;&t;2
+multiline_comment|/*&n;  Define the maximum number of Mailboxes that should be used for MultiMaster&n;  Host Adapters.  This number is chosen to be larger than the maximum Host&n;  Adapter Queue Depth and small enough so that the Host Adapter structure&n;  does not cross an allocation block size boundary.&n;*/
+DECL|macro|BusLogic_MaxMailboxes
+mdefine_line|#define BusLogic_MaxMailboxes&t;&t;&t;211
+multiline_comment|/*&n;  Define the number of CCBs that should be allocated as a group to optimize&n;  Kernel memory allocation.&n;*/
+DECL|macro|BusLogic_CCB_AllocationGroupSize
+mdefine_line|#define BusLogic_CCB_AllocationGroupSize&t;7
 multiline_comment|/*&n;  Define the Host Adapter Line and Message Buffer Sizes.&n;*/
 DECL|macro|BusLogic_LineBufferSize
 mdefine_line|#define BusLogic_LineBufferSize&t;&t;&t;100
 DECL|macro|BusLogic_MessageBufferSize
-mdefine_line|#define BusLogic_MessageBufferSize&t;&t;9900
+mdefine_line|#define BusLogic_MessageBufferSize&t;&t;9700
 multiline_comment|/*&n;  Define the Driver Message Levels.&n;*/
 DECL|enum|BusLogic_MessageLevel
 r_typedef
@@ -237,9 +267,9 @@ id|BusLogic_MessageLevelMap
 )braket
 op_assign
 (brace
-id|KERN_INFO
+id|KERN_NOTICE
 comma
-id|KERN_INFO
+id|KERN_NOTICE
 comma
 id|KERN_NOTICE
 comma
@@ -248,6 +278,17 @@ comma
 id|KERN_ERR
 )brace
 suffix:semicolon
+multiline_comment|/*&n;  Define Driver Message macros.&n;*/
+DECL|macro|BusLogic_Announce
+mdefine_line|#define BusLogic_Announce(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_AnnounceLevel, Format, ##Arguments)
+DECL|macro|BusLogic_Info
+mdefine_line|#define BusLogic_Info(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_InfoLevel, Format, ##Arguments)
+DECL|macro|BusLogic_Notice
+mdefine_line|#define BusLogic_Notice(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_NoticeLevel, Format, ##Arguments)
+DECL|macro|BusLogic_Warning
+mdefine_line|#define BusLogic_Warning(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_WarningLevel, Format, ##Arguments)
+DECL|macro|BusLogic_Error
+mdefine_line|#define BusLogic_Error(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_ErrorLevel, Format, ##Arguments)
 multiline_comment|/*&n;  Define the types of BusLogic Host Adapters that are supported and the number&n;  of I/O Addresses required by each type.&n;*/
 r_typedef
 r_enum
@@ -277,8 +318,8 @@ DECL|macro|BusLogic_FlashPointAddressCount
 mdefine_line|#define BusLogic_FlashPointAddressCount&t;&t;256
 r_static
 r_int
-DECL|variable|BusLogic_HostAdapter_AddressCount
-id|BusLogic_HostAdapter_AddressCount
+DECL|variable|BusLogic_HostAdapterAddressCount
+id|BusLogic_HostAdapterAddressCount
 (braket
 l_int|3
 )braket
@@ -291,6 +332,18 @@ comma
 id|BusLogic_FlashPointAddressCount
 )brace
 suffix:semicolon
+multiline_comment|/*&n;  Define macros for testing the Host Adapter Type.&n;*/
+macro_line|#ifndef CONFIG_SCSI_OMIT_FLASHPOINT
+DECL|macro|BusLogic_MultiMasterHostAdapterP
+mdefine_line|#define BusLogic_MultiMasterHostAdapterP(HostAdapter) &bslash;&n;  (HostAdapter-&gt;HostAdapterType == BusLogic_MultiMaster)
+DECL|macro|BusLogic_FlashPointHostAdapterP
+mdefine_line|#define BusLogic_FlashPointHostAdapterP(HostAdapter) &bslash;&n;  (HostAdapter-&gt;HostAdapterType == BusLogic_FlashPoint)
+macro_line|#else
+DECL|macro|BusLogic_MultiMasterHostAdapterP
+mdefine_line|#define BusLogic_MultiMasterHostAdapterP(HostAdapter) &bslash;&n;  (true)
+DECL|macro|BusLogic_FlashPointHostAdapterP
+mdefine_line|#define BusLogic_FlashPointHostAdapterP(HostAdapter) &bslash;&n;  (false)
+macro_line|#endif
 multiline_comment|/*&n;  Define the possible Host Adapter Bus Types.&n;*/
 r_typedef
 r_enum
@@ -325,6 +378,12 @@ id|BusLogic_MCA_Bus
 op_assign
 l_int|5
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 DECL|typedef|BusLogic_HostAdapterBusType_T
 id|BusLogic_HostAdapterBusType_T
 suffix:semicolon
@@ -445,6 +504,13 @@ r_int
 r_int
 id|BusLogic_PCI_Address_T
 suffix:semicolon
+multiline_comment|/*&n;  Define a 32 bit Base Address data type.&n;*/
+DECL|typedef|BusLogic_Base_Address_T
+r_typedef
+r_int
+r_int
+id|BusLogic_Base_Address_T
+suffix:semicolon
 multiline_comment|/*&n;  Define a 32 bit Bus Address data type.&n;*/
 DECL|typedef|BusLogic_BusAddress_T
 r_typedef
@@ -485,6 +551,14 @@ r_typedef
 r_struct
 id|BusLogic_ProbeInfo
 (brace
+DECL|member|HostAdapterType
+id|BusLogic_HostAdapterType_T
+id|HostAdapterType
+suffix:semicolon
+DECL|member|HostAdapterBusType
+id|BusLogic_HostAdapterBusType_T
+id|HostAdapterBusType
+suffix:semicolon
 DECL|member|IO_Address
 id|BusLogic_IO_Address_T
 id|IO_Address
@@ -492,23 +566,6 @@ suffix:semicolon
 DECL|member|PCI_Address
 id|BusLogic_PCI_Address_T
 id|PCI_Address
-suffix:semicolon
-DECL|member|HostAdapterType
-id|BusLogic_HostAdapterType_T
-id|HostAdapterType
-suffix:colon
-l_int|2
-suffix:semicolon
-DECL|member|HostAdapterBusType
-id|BusLogic_HostAdapterBusType_T
-id|HostAdapterBusType
-suffix:colon
-l_int|3
-suffix:semicolon
-r_int
-r_char
-suffix:colon
-l_int|3
 suffix:semicolon
 DECL|member|Bus
 r_int
@@ -529,43 +586,11 @@ suffix:semicolon
 DECL|typedef|BusLogic_ProbeInfo_T
 id|BusLogic_ProbeInfo_T
 suffix:semicolon
-multiline_comment|/*&n;  BusLogic_ISA_StandardAddresses is the list of standard ISA I/O Addresses at&n;  which BusLogic MultiMaster Host Adapters may potentially be found.  The first&n;  I/O Address 0x330 is known as the &quot;Primary&quot; I/O Address.  A Host Adapter&n;  configured to use the Primary I/O Address will always be the preferred boot&n;  device.&n;*/
-DECL|macro|BusLogic_ISA_StandardAddressesCount
-mdefine_line|#define BusLogic_ISA_StandardAddressesCount&t;6
-r_static
-id|BusLogic_IO_Address_T
-DECL|variable|BusLogic_ISA_StandardAddresses
-id|BusLogic_ISA_StandardAddresses
-(braket
-id|BusLogic_ISA_StandardAddressesCount
-)braket
-op_assign
-(brace
-l_int|0x330
-comma
-l_int|0x334
-comma
-l_int|0x230
-comma
-l_int|0x234
-comma
-l_int|0x130
-comma
-l_int|0x134
-)brace
-suffix:semicolon
 multiline_comment|/*&n;  Define the Probe Options.&n;*/
-DECL|union|BusLogic_ProbeOptions
+DECL|struct|BusLogic_ProbeOptions
 r_typedef
-r_union
-id|BusLogic_ProbeOptions
-(brace
-DECL|member|All
-r_int
-r_int
-id|All
-suffix:semicolon
 r_struct
+id|BusLogic_ProbeOptions
 (brace
 DECL|member|NoProbe
 id|boolean
@@ -595,40 +620,78 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Bit 3 */
-DECL|member|ProbeMultiMasterFirst
+DECL|member|MultiMasterFirst
 id|boolean
-id|ProbeMultiMasterFirst
+id|MultiMasterFirst
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Bit 4 */
-DECL|member|ProbeFlashPointFirst
+DECL|member|FlashPointFirst
 id|boolean
-id|ProbeFlashPointFirst
+id|FlashPointFirst
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Bit 5 */
-DECL|member|Bits
-)brace
-id|Bits
+DECL|member|LimitedProbeISA
+id|boolean
+id|LimitedProbeISA
+suffix:colon
+l_int|1
 suffix:semicolon
+multiline_comment|/* Bit 6 */
+DECL|member|Probe330
+id|boolean
+id|Probe330
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Bit 7 */
+DECL|member|Probe334
+id|boolean
+id|Probe334
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Bit 8 */
+DECL|member|Probe230
+id|boolean
+id|Probe230
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Bit 9 */
+DECL|member|Probe234
+id|boolean
+id|Probe234
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Bit 10 */
+DECL|member|Probe130
+id|boolean
+id|Probe130
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Bit 11 */
+DECL|member|Probe134
+id|boolean
+id|Probe134
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Bit 12 */
 )brace
 DECL|typedef|BusLogic_ProbeOptions_T
 id|BusLogic_ProbeOptions_T
 suffix:semicolon
 multiline_comment|/*&n;  Define the Global Options.&n;*/
-DECL|union|BusLogic_GlobalOptions
+DECL|struct|BusLogic_GlobalOptions
 r_typedef
-r_union
-id|BusLogic_GlobalOptions
-(brace
-DECL|member|All
-r_int
-r_int
-id|All
-suffix:semicolon
 r_struct
+id|BusLogic_GlobalOptions
 (brace
 DECL|member|TraceProbe
 id|boolean
@@ -637,9 +700,9 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Bit 0 */
-DECL|member|TraceHardReset
+DECL|member|TraceHardwareReset
 id|boolean
-id|TraceHardReset
+id|TraceHardwareReset
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -658,26 +721,15 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Bit 3 */
-DECL|member|Bits
-)brace
-id|Bits
-suffix:semicolon
 )brace
 DECL|typedef|BusLogic_GlobalOptions_T
 id|BusLogic_GlobalOptions_T
 suffix:semicolon
 multiline_comment|/*&n;  Define the Local Options.&n;*/
-DECL|union|BusLogic_LocalOptions
+DECL|struct|BusLogic_LocalOptions
 r_typedef
-r_union
-id|BusLogic_LocalOptions
-(brace
-DECL|member|All
-r_int
-r_int
-id|All
-suffix:semicolon
 r_struct
+id|BusLogic_LocalOptions
 (brace
 DECL|member|InhibitTargetInquiry
 id|boolean
@@ -686,17 +738,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Bit 0 */
-DECL|member|InhibitInterruptTest
-id|boolean
-id|InhibitInterruptTest
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Bit 1 */
-DECL|member|Bits
-)brace
-id|Bits
-suffix:semicolon
 )brace
 DECL|typedef|BusLogic_LocalOptions_T
 id|BusLogic_LocalOptions_T
@@ -1543,16 +1584,16 @@ r_char
 id|HostBusType
 suffix:semicolon
 multiline_comment|/* Byte 19 */
+DECL|member|WideTransfersPermittedID0to7
 r_int
 r_char
-suffix:colon
-l_int|8
+id|WideTransfersPermittedID0to7
 suffix:semicolon
 multiline_comment|/* Byte 20 */
+DECL|member|WideTransfersActiveID0to7
 r_int
 r_char
-suffix:colon
-l_int|8
+id|WideTransfersActiveID0to7
 suffix:semicolon
 multiline_comment|/* Byte 21 */
 DECL|member|SynchronousValuesID8to15
@@ -1566,6 +1607,24 @@ r_char
 id|DisconnectPermittedID8to15
 suffix:semicolon
 multiline_comment|/* Byte 30 */
+r_int
+r_char
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* Byte 31 */
+DECL|member|WideTransfersPermittedID8to15
+r_int
+r_char
+id|WideTransfersPermittedID8to15
+suffix:semicolon
+multiline_comment|/* Byte 32 */
+DECL|member|WideTransfersActiveID8to15
+r_int
+r_char
+id|WideTransfersActiveID8to15
+suffix:semicolon
+multiline_comment|/* Byte 33 */
 )brace
 DECL|typedef|BusLogic_SetupInformation_T
 id|BusLogic_SetupInformation_T
@@ -2900,6 +2959,39 @@ multiline_comment|/* Bytes 4-7 */
 DECL|typedef|BusLogic_ScatterGatherSegment_T
 id|BusLogic_ScatterGatherSegment_T
 suffix:semicolon
+multiline_comment|/*&n;  Define the Driver CCB Status Codes.&n;*/
+r_typedef
+r_enum
+(brace
+DECL|enumerator|BusLogic_CCB_Free
+id|BusLogic_CCB_Free
+op_assign
+l_int|0
+comma
+DECL|enumerator|BusLogic_CCB_Active
+id|BusLogic_CCB_Active
+op_assign
+l_int|1
+comma
+DECL|enumerator|BusLogic_CCB_Completed
+id|BusLogic_CCB_Completed
+op_assign
+l_int|2
+comma
+DECL|enumerator|BusLogic_CCB_Reset
+id|BusLogic_CCB_Reset
+op_assign
+l_int|3
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+DECL|typedef|BusLogic_CCB_Status_T
+id|BusLogic_CCB_Status_T
+suffix:semicolon
 multiline_comment|/*&n;  Define the 32 Bit Mode Command Control Block (CCB) structure.  The first 40&n;  bytes are defined by and common to both the MultiMaster Firmware and the&n;  FlashPoint SCCB Manager.  The next 60 bytes are defined by the FlashPoint&n;  SCCB Manager.  The remaining components are defined by the Linux BusLogic&n;  Driver.  Extended LUN Format CCBs differ from Legacy LUN Format 32 Bit Mode&n;  CCBs only in having the TagEnable and QueueTag fields moved from byte 17 to&n;  byte 1, and the Logical Unit field in byte 17 expanded to 6 bits.  In theory,&n;  Extended LUN Format CCBs can support up to 64 Logical Units, but in practice&n;  many devices will respond improperly to Logical Units between 32 and 63, and&n;  the SCSI-2 specification defines Bit 5 as LUNTAR.  Extended LUN Format CCBs&n;  are used by recent versions of the MultiMaster Firmware, as well as by the&n;  FlashPoint SCCB Manager; the FlashPoint SCCB Manager only supports 32 Logical&n;  Units.  Since 64 Logical Units are unlikely to be needed in practice, and&n;  since they are problematic for the above reasons, and since limiting them to&n;  5 bits simplifies the CCB structure definition, this driver only supports&n;  32 Logical Units per Target Device.&n;*/
 DECL|struct|BusLogic_CCB
 r_typedef
@@ -3054,7 +3146,7 @@ op_star
 suffix:semicolon
 multiline_comment|/* Bytes 40-43 */
 DECL|member|BaseAddress
-id|BusLogic_IO_Address_T
+id|BusLogic_Base_Address_T
 id|BaseAddress
 suffix:semicolon
 multiline_comment|/* Bytes 44-47 */
@@ -3063,6 +3155,7 @@ id|BusLogic_CompletionCode_T
 id|CompletionCode
 suffix:semicolon
 multiline_comment|/* Byte 48 */
+macro_line|#ifndef CONFIG_SCSI_OMIT_FLASHPOINT
 r_int
 r_char
 suffix:colon
@@ -3084,47 +3177,31 @@ l_int|48
 )braket
 suffix:semicolon
 multiline_comment|/* Bytes 52-99 */
+macro_line|#endif
 multiline_comment|/*&n;    BusLogic Linux Driver Defined Portion.&n;  */
-DECL|member|HostAdapter
-r_struct
-id|BusLogic_HostAdapter
-op_star
-id|HostAdapter
+DECL|member|AllocationGroupHead
+id|boolean
+id|AllocationGroupHead
 suffix:semicolon
-DECL|member|Command
-id|SCSI_Command_T
-op_star
-id|Command
-suffix:semicolon
-DECL|enumerator|BusLogic_CCB_Free
-r_enum
-(brace
-id|BusLogic_CCB_Free
-op_assign
-l_int|0
-comma
-DECL|enumerator|BusLogic_CCB_Active
-id|BusLogic_CCB_Active
-op_assign
-l_int|1
-comma
-DECL|enumerator|BusLogic_CCB_Completed
-id|BusLogic_CCB_Completed
-op_assign
-l_int|2
-comma
-DECL|enumerator|BusLogic_CCB_Reset
 DECL|member|Status
-id|BusLogic_CCB_Reset
-op_assign
-l_int|3
-)brace
+id|BusLogic_CCB_Status_T
 id|Status
 suffix:semicolon
 DECL|member|SerialNumber
 r_int
 r_int
 id|SerialNumber
+suffix:semicolon
+DECL|member|Command
+id|SCSI_Command_T
+op_star
+id|Command
+suffix:semicolon
+DECL|member|HostAdapter
+r_struct
+id|BusLogic_HostAdapter
+op_star
+id|HostAdapter
 suffix:semicolon
 DECL|member|Next
 r_struct
@@ -3146,12 +3223,6 @@ id|BusLogic_ScatterGatherLimit
 )braket
 suffix:semicolon
 )brace
-id|__attribute__
-(paren
-(paren
-id|packed
-)paren
-)paren
 DECL|typedef|BusLogic_CCB_T
 id|BusLogic_CCB_T
 suffix:semicolon
@@ -3217,26 +3288,12 @@ multiline_comment|/* Byte 7 */
 DECL|typedef|BusLogic_IncomingMailbox_T
 id|BusLogic_IncomingMailbox_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the Linux BusLogic Driver Command Line Entry structure.&n;*/
-DECL|struct|BusLogic_CommandLineEntry
+multiline_comment|/*&n;  Define the BusLogic Driver Options structure.&n;*/
+DECL|struct|BusLogic_DriverOptions
 r_typedef
 r_struct
-id|BusLogic_CommandLineEntry
+id|BusLogic_DriverOptions
 (brace
-DECL|member|IO_Address
-id|BusLogic_IO_Address_T
-id|IO_Address
-suffix:semicolon
-DECL|member|TaggedQueueDepth
-r_int
-r_int
-id|TaggedQueueDepth
-suffix:semicolon
-DECL|member|BusSettleTime
-r_int
-r_int
-id|BusSettleTime
-suffix:semicolon
 DECL|member|TaggedQueuingPermitted
 r_int
 r_int
@@ -3247,9 +3304,22 @@ r_int
 r_int
 id|TaggedQueuingPermittedMask
 suffix:semicolon
+DECL|member|BusSettleTime
+r_int
+r_int
+id|BusSettleTime
+suffix:semicolon
 DECL|member|LocalOptions
 id|BusLogic_LocalOptions_T
 id|LocalOptions
+suffix:semicolon
+DECL|member|QueueDepth
+r_int
+r_char
+id|QueueDepth
+(braket
+id|BusLogic_MaxTargetDevices
+)braket
 suffix:semicolon
 id|BusLogic_ErrorRecoveryStrategy_T
 DECL|member|ErrorRecoveryStrategy
@@ -3259,10 +3329,62 @@ id|BusLogic_MaxTargetDevices
 )braket
 suffix:semicolon
 )brace
-DECL|typedef|BusLogic_CommandLineEntry_T
-id|BusLogic_CommandLineEntry_T
+DECL|typedef|BusLogic_DriverOptions_T
+id|BusLogic_DriverOptions_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the Host Adapter Target Device Statistics structure.&n;*/
+multiline_comment|/*&n;  Define the Host Adapter Target Flags structure.&n;*/
+DECL|struct|BusLogic_TargetFlags
+r_typedef
+r_struct
+id|BusLogic_TargetFlags
+(brace
+DECL|member|TargetExists
+id|boolean
+id|TargetExists
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|TaggedQueuingSupported
+id|boolean
+id|TaggedQueuingSupported
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|WideTransfersSupported
+id|boolean
+id|WideTransfersSupported
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|TaggedQueuingActive
+id|boolean
+id|TaggedQueuingActive
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|WideTransfersActive
+id|boolean
+id|WideTransfersActive
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|CommandSuccessfulFlag
+id|boolean
+id|CommandSuccessfulFlag
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|TargetInfoReported
+id|boolean
+id|TargetInfoReported
+suffix:colon
+l_int|1
+suffix:semicolon
+)brace
+DECL|typedef|BusLogic_TargetFlags_T
+id|BusLogic_TargetFlags_T
+suffix:semicolon
+multiline_comment|/*&n;  Define the Host Adapter Target Statistics structure.&n;*/
 DECL|macro|BusLogic_SizeBuckets
 mdefine_line|#define BusLogic_SizeBuckets&t;&t;&t;10
 DECL|typedef|BusLogic_CommandSizeBuckets_T
@@ -3274,10 +3396,10 @@ id|BusLogic_CommandSizeBuckets_T
 id|BusLogic_SizeBuckets
 )braket
 suffix:semicolon
-DECL|struct|BusLogic_TargetDeviceStatistics
+DECL|struct|BusLogic_TargetStatistics
 r_typedef
 r_struct
-id|BusLogic_TargetDeviceStatistics
+id|BusLogic_TargetStatistics
 (brace
 DECL|member|CommandsAttempted
 r_int
@@ -3361,8 +3483,8 @@ r_int
 id|HostAdapterResetsCompleted
 suffix:semicolon
 )brace
-DECL|typedef|BusLogic_TargetDeviceStatistics_T
-id|BusLogic_TargetDeviceStatistics_T
+DECL|typedef|BusLogic_TargetStatistics_T
+id|BusLogic_TargetStatistics_T
 suffix:semicolon
 multiline_comment|/*&n;  Define the FlashPoint Card Handle data type.&n;*/
 DECL|macro|FlashPoint_BadCardHandle
@@ -3380,7 +3502,7 @@ r_struct
 id|FlashPoint_Info
 (brace
 DECL|member|BaseAddress
-id|BusLogic_IO_Address_T
+id|BusLogic_Base_Address_T
 id|BaseAddress
 suffix:semicolon
 multiline_comment|/* Bytes 0-3 */
@@ -3582,7 +3704,7 @@ multiline_comment|/* Bytes 60-63 */
 DECL|typedef|FlashPoint_Info_T
 id|FlashPoint_Info_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the Linux BusLogic Driver Host Adapter structure.&n;*/
+multiline_comment|/*&n;  Define the BusLogic Driver Host Adapter structure.&n;*/
 DECL|struct|BusLogic_HostAdapter
 r_typedef
 r_struct
@@ -3592,6 +3714,14 @@ DECL|member|SCSI_Host
 id|SCSI_Host_T
 op_star
 id|SCSI_Host
+suffix:semicolon
+DECL|member|HostAdapterType
+id|BusLogic_HostAdapterType_T
+id|HostAdapterType
+suffix:semicolon
+DECL|member|HostAdapterBusType
+id|BusLogic_HostAdapterBusType_T
+id|HostAdapterBusType
 suffix:semicolon
 DECL|member|IO_Address
 id|BusLogic_IO_Address_T
@@ -3643,6 +3773,16 @@ id|InterruptLabel
 l_int|68
 )braket
 suffix:semicolon
+DECL|member|Bus
+r_int
+r_char
+id|Bus
+suffix:semicolon
+DECL|member|Device
+r_int
+r_char
+id|Device
+suffix:semicolon
 DECL|member|IRQ_Channel
 r_int
 r_char
@@ -3657,26 +3797,6 @@ DECL|member|SCSI_ID
 r_int
 r_char
 id|SCSI_ID
-suffix:semicolon
-DECL|member|Bus
-r_int
-r_char
-id|Bus
-suffix:semicolon
-DECL|member|Device
-r_int
-r_char
-id|Device
-suffix:semicolon
-DECL|member|HostAdapterType
-id|BusLogic_HostAdapterType_T
-id|HostAdapterType
-suffix:semicolon
-DECL|member|HostAdapterBusType
-id|BusLogic_HostAdapterBusType_T
-id|HostAdapterBusType
-suffix:colon
-l_int|3
 suffix:semicolon
 DECL|member|IRQ_ChannelAcquired
 id|boolean
@@ -3705,6 +3825,8 @@ suffix:semicolon
 DECL|member|BusResetEnabled
 id|boolean
 id|BusResetEnabled
+suffix:colon
+l_int|1
 suffix:semicolon
 DECL|member|LevelSensitiveInterrupt
 id|boolean
@@ -3787,10 +3909,18 @@ suffix:semicolon
 DECL|member|HostAdapterInitialized
 id|boolean
 id|HostAdapterInitialized
+suffix:colon
+l_int|1
 suffix:semicolon
-DECL|member|HostAdapterResetRequested
+DECL|member|HostAdapterExternalReset
 id|boolean
-id|HostAdapterResetRequested
+id|HostAdapterExternalReset
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|HostAdapterInternalError
+id|boolean
+id|HostAdapterInternalError
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -3851,11 +3981,6 @@ r_int
 r_int
 id|HostAdapterQueueDepth
 suffix:semicolon
-DECL|member|TaggedQueueDepth
-r_int
-r_int
-id|TaggedQueueDepth
-suffix:semicolon
 DECL|member|UntaggedQueueDepth
 r_int
 r_int
@@ -3901,34 +4026,32 @@ r_int
 r_int
 id|ExternalHostAdapterResets
 suffix:semicolon
-DECL|member|LocalOptions
-id|BusLogic_LocalOptions_T
-id|LocalOptions
+DECL|member|HostAdapterInternalErrors
+r_int
+r_int
+id|HostAdapterInternalErrors
+suffix:semicolon
+DECL|member|TargetDeviceCount
+r_int
+r_int
+id|TargetDeviceCount
+suffix:semicolon
+DECL|member|MessageBufferLength
+r_int
+r_int
+id|MessageBufferLength
 suffix:semicolon
 DECL|member|BIOS_Address
 id|BusLogic_BusAddress_T
 id|BIOS_Address
 suffix:semicolon
-DECL|member|InstalledDevices
-id|BusLogic_InstalledDevices_T
-id|InstalledDevices
-suffix:semicolon
-DECL|member|SynchronousValues
-id|BusLogic_SynchronousValues_T
-id|SynchronousValues
-suffix:semicolon
-DECL|member|SynchronousPeriod
-id|BusLogic_SynchronousPeriod_T
-id|SynchronousPeriod
-suffix:semicolon
-DECL|member|CommandLineEntry
-id|BusLogic_CommandLineEntry_T
+DECL|member|DriverOptions
+id|BusLogic_DriverOptions_T
 op_star
-id|CommandLineEntry
+id|DriverOptions
 suffix:semicolon
 DECL|member|FlashPointInfo
 id|FlashPoint_Info_T
-op_star
 id|FlashPointInfo
 suffix:semicolon
 DECL|member|CardHandle
@@ -3941,14 +4064,11 @@ id|BusLogic_HostAdapter
 op_star
 id|Next
 suffix:semicolon
-DECL|member|MessageBuffer
-r_char
+DECL|member|NextAll
+r_struct
+id|BusLogic_HostAdapter
 op_star
-id|MessageBuffer
-suffix:semicolon
-DECL|member|MessageBufferLength
-r_int
-id|MessageBufferLength
+id|NextAll
 suffix:semicolon
 DECL|member|All_CCBs
 id|BusLogic_CCB_T
@@ -3975,23 +4095,9 @@ id|ErrorRecoveryStrategy
 id|BusLogic_MaxTargetDevices
 )braket
 suffix:semicolon
-DECL|member|TaggedQueuingSupported
-id|boolean
-id|TaggedQueuingSupported
-(braket
-id|BusLogic_MaxTargetDevices
-)braket
-suffix:semicolon
-DECL|member|TaggedQueuingActive
-id|boolean
-id|TaggedQueuingActive
-(braket
-id|BusLogic_MaxTargetDevices
-)braket
-suffix:semicolon
-DECL|member|CommandSuccessfulFlag
-id|boolean
-id|CommandSuccessfulFlag
+DECL|member|TargetFlags
+id|BusLogic_TargetFlags_T
+id|TargetFlags
 (braket
 id|BusLogic_MaxTargetDevices
 )braket
@@ -4000,6 +4106,22 @@ DECL|member|QueueDepth
 r_int
 r_char
 id|QueueDepth
+(braket
+id|BusLogic_MaxTargetDevices
+)braket
+suffix:semicolon
+DECL|member|SynchronousPeriod
+r_int
+r_char
+id|SynchronousPeriod
+(braket
+id|BusLogic_MaxTargetDevices
+)braket
+suffix:semicolon
+DECL|member|SynchronousOffset
+r_int
+r_char
+id|SynchronousOffset
 (braket
 id|BusLogic_MaxTargetDevices
 )braket
@@ -4074,10 +4196,39 @@ id|BusLogic_IncomingMailbox_T
 op_star
 id|NextIncomingMailbox
 suffix:semicolon
-DECL|member|TargetDeviceStatistics
-id|BusLogic_TargetDeviceStatistics_T
+DECL|member|TargetStatistics
+id|BusLogic_TargetStatistics_T
+id|TargetStatistics
+(braket
+id|BusLogic_MaxTargetDevices
+)braket
+suffix:semicolon
+DECL|member|MailboxSpace
+r_int
+r_char
+id|MailboxSpace
+(braket
+id|BusLogic_MaxMailboxes
 op_star
-id|TargetDeviceStatistics
+(paren
+r_sizeof
+(paren
+id|BusLogic_OutgoingMailbox_T
+)paren
+op_plus
+r_sizeof
+(paren
+id|BusLogic_IncomingMailbox_T
+)paren
+)paren
+)braket
+suffix:semicolon
+DECL|member|MessageBuffer
+r_char
+id|MessageBuffer
+(braket
+id|BusLogic_MessageBufferSize
+)braket
 suffix:semicolon
 )brace
 DECL|typedef|BusLogic_HostAdapter_T
@@ -4104,6 +4255,199 @@ suffix:semicolon
 )brace
 DECL|typedef|BIOS_DiskParameters_T
 id|BIOS_DiskParameters_T
+suffix:semicolon
+multiline_comment|/*&n;  Define a structure for the SCSI Inquiry command results.&n;*/
+DECL|struct|SCSI_Inquiry
+r_typedef
+r_struct
+id|SCSI_Inquiry
+(brace
+DECL|member|PeripheralDeviceType
+r_int
+r_char
+id|PeripheralDeviceType
+suffix:colon
+l_int|5
+suffix:semicolon
+multiline_comment|/* Byte 0 Bits 0-4 */
+DECL|member|PeripheralQualifier
+r_int
+r_char
+id|PeripheralQualifier
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Byte 0 Bits 5-7 */
+DECL|member|DeviceTypeModifier
+r_int
+r_char
+id|DeviceTypeModifier
+suffix:colon
+l_int|7
+suffix:semicolon
+multiline_comment|/* Byte 1 Bits 0-6 */
+DECL|member|RMB
+id|boolean
+id|RMB
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 1 Bit 7 */
+DECL|member|ANSI_ApprovedVersion
+r_int
+r_char
+id|ANSI_ApprovedVersion
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Byte 2 Bits 0-2 */
+DECL|member|ECMA_Version
+r_int
+r_char
+id|ECMA_Version
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Byte 2 Bits 3-5 */
+DECL|member|ISO_Version
+r_int
+r_char
+id|ISO_Version
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Byte 2 Bits 6-7 */
+DECL|member|ResponseDataFormat
+r_int
+r_char
+id|ResponseDataFormat
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Byte 3 Bits 0-3 */
+r_int
+r_char
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Byte 3 Bits 4-5 */
+DECL|member|TrmIOP
+id|boolean
+id|TrmIOP
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 3 Bit 6 */
+DECL|member|AENC
+id|boolean
+id|AENC
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 3 Bit 7 */
+DECL|member|AdditionalLength
+r_int
+r_char
+id|AdditionalLength
+suffix:semicolon
+multiline_comment|/* Byte 4 */
+r_int
+r_char
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* Byte 5 */
+r_int
+r_char
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* Byte 6 */
+DECL|member|SftRe
+id|boolean
+id|SftRe
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 0 */
+DECL|member|CmdQue
+id|boolean
+id|CmdQue
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 1 */
+DECL|member|boolean
+id|boolean
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 2 */
+DECL|member|Linked
+id|boolean
+id|Linked
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 3 */
+DECL|member|Sync
+id|boolean
+id|Sync
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 4 */
+DECL|member|WBus16
+id|boolean
+id|WBus16
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 5 */
+DECL|member|WBus32
+id|boolean
+id|WBus32
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 6 */
+DECL|member|RelAdr
+id|boolean
+id|RelAdr
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Byte 7 Bit 7 */
+DECL|member|VendorIdentification
+r_int
+r_char
+id|VendorIdentification
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Bytes 8-15 */
+DECL|member|ProductIdentification
+r_int
+r_char
+id|ProductIdentification
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* Bytes 16-31 */
+DECL|member|ProductRevisionLevel
+r_int
+r_char
+id|ProductRevisionLevel
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* Bytes 32-35 */
+)brace
+DECL|typedef|SCSI_Inquiry_T
+id|SCSI_Inquiry_T
 suffix:semicolon
 multiline_comment|/*&n;  BusLogic_AcquireHostAdapterLock acquires exclusive access to Host Adapter.&n;*/
 r_static
@@ -4577,6 +4921,30 @@ id|BusAddress
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;  Virtual_to_32Bit_Virtual maps between Kernel Virtual Addresses and&n;  32 Bit Kernel Virtual Addresses.  This avoids compilation warnings&n;  on 64 Bit architectures.&n;*/
+r_static
+r_inline
+DECL|function|Virtual_to_32Bit_Virtual
+id|BusLogic_BusAddress_T
+id|Virtual_to_32Bit_Virtual
+c_func
+(paren
+r_void
+op_star
+id|VirtualAddress
+)paren
+(brace
+r_return
+(paren
+id|BusLogic_BusAddress_T
+)paren
+(paren
+r_int
+r_int
+)paren
+id|VirtualAddress
+suffix:semicolon
+)brace
 multiline_comment|/*&n;  BusLogic_IncrementErrorCounter increments Error Counter by 1, stopping at&n;  65535 rather than wrapping around to 0.&n;*/
 DECL|function|BusLogic_IncrementErrorCounter
 r_static
@@ -4674,6 +5042,7 @@ l_int|8
 op_star
 l_int|1024
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -4714,6 +5083,7 @@ suffix:colon
 l_int|3
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -4724,6 +5094,7 @@ l_int|128
 op_star
 l_int|1024
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -4764,6 +5135,7 @@ suffix:colon
 l_int|7
 )paren
 suffix:semicolon
+)brace
 r_else
 id|Index
 op_assign
@@ -4787,119 +5159,21 @@ id|Index
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  If CONFIG_PCI is not set, force CONFIG_SCSI_OMIT_FLASHPOINT, and use the&n;  ISA only probe function as the general one.&n;*/
-macro_line|#ifndef CONFIG_PCI
-DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
-macro_line|#undef CONFIG_SCSI_OMIT_FLASHPOINT
-DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
-mdefine_line|#define CONFIG_SCSI_OMIT_FLASHPOINT
-DECL|macro|BusLogic_InitializeProbeInfoListISA
-mdefine_line|#define BusLogic_InitializeProbeInfoListISA BusLogic_InitializeProbeInfoList
+multiline_comment|/*&n;  Define compatibility macros between Linux 2.0 and Linux 2.1.&n;*/
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
+DECL|macro|MODULE_PARM
+mdefine_line|#define MODULE_PARM(Variable, Type)
 macro_line|#endif
-multiline_comment|/*&n;  FlashPoint support is only available for the Intel x86 Architecture.&n;*/
-macro_line|#ifndef __i386__
-DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
-macro_line|#undef CONFIG_SCSI_OMIT_FLASHPOINT
-DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
-mdefine_line|#define CONFIG_SCSI_OMIT_FLASHPOINT
-macro_line|#endif
-multiline_comment|/*&n;  Define macros for testing the Host Adapter Type.&n;*/
-macro_line|#ifndef CONFIG_SCSI_OMIT_FLASHPOINT
-DECL|macro|BusLogic_MultiMasterHostAdapterP
-mdefine_line|#define BusLogic_MultiMasterHostAdapterP(HostAdapter) &bslash;&n;  (HostAdapter-&gt;HostAdapterType == BusLogic_MultiMaster)
-DECL|macro|BusLogic_FlashPointHostAdapterP
-mdefine_line|#define BusLogic_FlashPointHostAdapterP(HostAdapter) &bslash;&n;  (HostAdapter-&gt;HostAdapterType == BusLogic_FlashPoint)
-macro_line|#else
-DECL|macro|BusLogic_MultiMasterHostAdapterP
-mdefine_line|#define BusLogic_MultiMasterHostAdapterP(HostAdapter) &bslash;&n;  (true)
-DECL|macro|BusLogic_FlashPointHostAdapterP
-mdefine_line|#define BusLogic_FlashPointHostAdapterP(HostAdapter) &bslash;&n;  (false)
-macro_line|#endif
-multiline_comment|/*&n;  Define Driver Message Macros.&n;*/
-DECL|macro|BusLogic_Announce
-mdefine_line|#define BusLogic_Announce(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_AnnounceLevel, Format, ##Arguments)
-DECL|macro|BusLogic_Info
-mdefine_line|#define BusLogic_Info(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_InfoLevel, Format, ##Arguments)
-DECL|macro|BusLogic_Notice
-mdefine_line|#define BusLogic_Notice(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_NoticeLevel, Format, ##Arguments)
-DECL|macro|BusLogic_Warning
-mdefine_line|#define BusLogic_Warning(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_WarningLevel, Format, ##Arguments)
-DECL|macro|BusLogic_Error
-mdefine_line|#define BusLogic_Error(Format, Arguments...) &bslash;&n;  BusLogic_Message(BusLogic_ErrorLevel, Format, ##Arguments)
 multiline_comment|/*&n;  Define the version number of the FlashPoint Firmware (SCCB Manager).&n;*/
 DECL|macro|FlashPoint_FirmwareVersion
-mdefine_line|#define FlashPoint_FirmwareVersion&t;&t;&quot;5.01&quot;
+mdefine_line|#define FlashPoint_FirmwareVersion&t;&t;&quot;5.02&quot;
 multiline_comment|/*&n;  Define the possible return values from FlashPoint_HandleInterrupt.&n;*/
 DECL|macro|FlashPoint_NormalInterrupt
 mdefine_line|#define FlashPoint_NormalInterrupt&t;&t;0x00
+DECL|macro|FlashPoint_InternalError
+mdefine_line|#define FlashPoint_InternalError&t;&t;0xFE
 DECL|macro|FlashPoint_ExternalBusReset
 mdefine_line|#define FlashPoint_ExternalBusReset&t;&t;0xFF
-multiline_comment|/*&n;  Define prototypes for the FlashPoint SCCB Manager Functions.&n;*/
-r_extern
-r_int
-r_char
-id|FlashPoint_ProbeHostAdapter
-c_func
-(paren
-id|FlashPoint_Info_T
-op_star
-)paren
-suffix:semicolon
-r_extern
-id|FlashPoint_CardHandle_T
-id|FlashPoint_HardResetHostAdapter
-c_func
-(paren
-id|FlashPoint_Info_T
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|FlashPoint_StartCCB
-c_func
-(paren
-id|FlashPoint_CardHandle_T
-comma
-id|BusLogic_CCB_T
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|FlashPoint_AbortCCB
-c_func
-(paren
-id|FlashPoint_CardHandle_T
-comma
-id|BusLogic_CCB_T
-op_star
-)paren
-suffix:semicolon
-r_extern
-id|boolean
-id|FlashPoint_InterruptPending
-c_func
-(paren
-id|FlashPoint_CardHandle_T
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|FlashPoint_HandleInterrupt
-c_func
-(paren
-id|FlashPoint_CardHandle_T
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|FlashPoint_ReleaseHostAdapter
-c_func
-(paren
-id|FlashPoint_CardHandle_T
-)paren
-suffix:semicolon
 multiline_comment|/*&n;  Define prototypes for the forward referenced BusLogic Driver&n;  Internal Functions.&n;*/
 r_static
 r_void
@@ -4908,7 +5182,6 @@ c_func
 (paren
 id|BusLogic_CCB_T
 op_star
-id|CCB
 )paren
 suffix:semicolon
 r_static
@@ -4949,7 +5222,6 @@ id|BusLogic_MessageLevel_T
 comma
 r_char
 op_star
-id|Format
 comma
 id|BusLogic_HostAdapter_T
 op_star
@@ -4957,6 +5229,15 @@ comma
 dot
 dot
 dot
+)paren
+suffix:semicolon
+r_static
+r_void
+id|BusLogic_ParseDriverOptions
+c_func
+(paren
+r_char
+op_star
 )paren
 suffix:semicolon
 macro_line|#endif /* BusLogic_DriverVersion */

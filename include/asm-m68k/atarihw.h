@@ -3,19 +3,65 @@ macro_line|#ifndef _LINUX_ATARIHW_H_
 DECL|macro|_LINUX_ATARIHW_H_
 mdefine_line|#define _LINUX_ATARIHW_H_
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 r_extern
 id|u_long
 id|atari_mch_cookie
 suffix:semicolon
-multiline_comment|/* mch_cookie values (upper word) */
-DECL|macro|ATARI_MCH_ST
-mdefine_line|#define ATARI_MCH_ST&t;&t;0
-DECL|macro|ATARI_MCH_STE
-mdefine_line|#define ATARI_MCH_STE&t;&t;1
-DECL|macro|ATARI_MCH_TT
-mdefine_line|#define ATARI_MCH_TT&t;&t;2
-DECL|macro|ATARI_MCH_FALCON
-mdefine_line|#define ATARI_MCH_FALCON&t;3
+r_extern
+id|u_long
+id|atari_mch_type
+suffix:semicolon
+r_extern
+id|u_long
+id|atari_switches
+suffix:semicolon
+r_extern
+r_int
+id|atari_rtc_year_offset
+suffix:semicolon
+r_extern
+r_int
+id|atari_dont_touch_floppy_select
+suffix:semicolon
+multiline_comment|/* convenience macros for testing machine type */
+DECL|macro|MACH_IS_ST
+mdefine_line|#define MACH_IS_ST&t;((atari_mch_cookie &gt;&gt; 16) == ATARI_MCH_ST)
+DECL|macro|MACH_IS_STE
+mdefine_line|#define MACH_IS_STE&t;((atari_mch_cookie &gt;&gt; 16) == ATARI_MCH_STE &amp;&amp; &bslash;&n;&t;&t;&t; (atari_mch_cookie &amp; 0xffff) == 0)
+DECL|macro|MACH_IS_MSTE
+mdefine_line|#define MACH_IS_MSTE&t;((atari_mch_cookie &gt;&gt; 16) == ATARI_MCH_STE &amp;&amp; &bslash;&n;&t;&t;&t; (atari_mch_cookie &amp; 0xffff) == 0x10)
+DECL|macro|MACH_IS_TT
+mdefine_line|#define MACH_IS_TT&t;((atari_mch_cookie &gt;&gt; 16) == ATARI_MCH_TT)
+DECL|macro|MACH_IS_FALCON
+mdefine_line|#define MACH_IS_FALCON&t;((atari_mch_cookie &gt;&gt; 16) == ATARI_MCH_FALCON)
+DECL|macro|MACH_IS_MEDUSA
+mdefine_line|#define MACH_IS_MEDUSA&t;(atari_mch_type == ATARI_MACH_MEDUSA)
+DECL|macro|MACH_IS_HADES
+mdefine_line|#define MACH_IS_HADES&t;(atari_mch_type == ATARI_MACH_HADES)
+DECL|macro|MACH_IS_AB40
+mdefine_line|#define MACH_IS_AB40&t;(atari_mch_type == ATARI_MACH_AB40)
+multiline_comment|/* values for atari_switches */
+DECL|macro|ATARI_SWITCH_IKBD
+mdefine_line|#define ATARI_SWITCH_IKBD&t;0x01
+DECL|macro|ATARI_SWITCH_MIDI
+mdefine_line|#define ATARI_SWITCH_MIDI&t;0x02
+DECL|macro|ATARI_SWITCH_SND6
+mdefine_line|#define ATARI_SWITCH_SND6&t;0x04
+DECL|macro|ATARI_SWITCH_SND7
+mdefine_line|#define ATARI_SWITCH_SND7&t;0x08
+DECL|macro|ATARI_SWITCH_OVSC_SHIFT
+mdefine_line|#define ATARI_SWITCH_OVSC_SHIFT&t;16
+DECL|macro|ATARI_SWITCH_OVSC_IKBD
+mdefine_line|#define ATARI_SWITCH_OVSC_IKBD&t;(ATARI_SWITCH_IKBD &lt;&lt; ATARI_SWITCH_OVSC_SHIFT)
+DECL|macro|ATARI_SWITCH_OVSC_MIDI
+mdefine_line|#define ATARI_SWITCH_OVSC_MIDI&t;(ATARI_SWITCH_MIDI &lt;&lt; ATARI_SWITCH_OVSC_SHIFT)
+DECL|macro|ATARI_SWITCH_OVSC_SND6
+mdefine_line|#define ATARI_SWITCH_OVSC_SND6&t;(ATARI_SWITCH_SND6 &lt;&lt; ATARI_SWITCH_OVSC_SHIFT)
+DECL|macro|ATARI_SWITCH_OVSC_SND7
+mdefine_line|#define ATARI_SWITCH_OVSC_SND7&t;(ATARI_SWITCH_SND7 &lt;&lt; ATARI_SWITCH_OVSC_SHIFT)
+DECL|macro|ATARI_SWITCH_OVSC_MASK
+mdefine_line|#define ATARI_SWITCH_OVSC_MASK&t;0xffff0000
 multiline_comment|/*&n; * Define several Hardware-Chips for indication so that for the ATARI we do&n; * no longer decide whether it is a Falcon or other machine . It&squot;s just&n; * important what hardware the machine uses&n; */
 multiline_comment|/* ++roman 08/08/95: rewritten from ORing constants to a C bitfield */
 DECL|macro|ATARIHW_DECLARE
@@ -241,41 +287,6 @@ suffix:semicolon
 multiline_comment|/* Reading the MFP port register gives a machine independent delay, since the&n; * MFP always has a 8 MHz clock. This avoids problems with the varying length&n; * of nops on various machines. Somebody claimed that the tstb takes 600 ns.&n; */
 DECL|macro|MFPDELAY
 mdefine_line|#define&t;MFPDELAY() &bslash;&n;&t;__asm__ __volatile__ ( &quot;tstb %0&quot; : : &quot;m&quot; (mfp.par_dt_reg) : &quot;cc&quot; );
-multiline_comment|/* Memory used for screen ram and stdma buffers */
-r_void
-id|atari_stram_init
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-op_star
-id|atari_stram_alloc
-(paren
-r_int
-id|size
-comma
-r_int
-r_int
-op_star
-id|start_mem
-)paren
-suffix:semicolon
-r_void
-id|atari_stram_free
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|is_medusa
-suffix:semicolon
-r_extern
-r_int
-id|is_hades
-suffix:semicolon
 multiline_comment|/* Do cache push/invalidate for DMA read/write. This function obeys the&n; * snooping on some machines (Medusa) and processors: The Medusa itself can&n; * snoop, but only the &squot;040 can source data from its cache to DMA writes i.e.,&n; * reads from memory). Both &squot;040 and &squot;060 invalidate cache entries on snooped&n; * DMA reads (i.e., writes to memory).&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -308,7 +319,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|is_medusa
+id|MACH_IS_MEDUSA
 op_logical_or
 id|CPU_IS_060
 )paren
@@ -327,7 +338,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|is_medusa
+id|MACH_IS_MEDUSA
 )paren
 id|cache_clear
 c_func

@@ -23,9 +23,9 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;movec %/usp,%0&quot;
+l_string|&quot;move %/usp,%0&quot;
 suffix:colon
-l_string|&quot;=d&quot;
+l_string|&quot;=a&quot;
 (paren
 id|usp
 )paren
@@ -51,10 +51,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;movec %0,%/usp&quot;
+l_string|&quot;move %0,%/usp&quot;
 suffix:colon
 suffix:colon
-l_string|&quot;d&quot;
+l_string|&quot;a&quot;
 (paren
 id|usp
 )paren
@@ -93,7 +93,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__xg
 mdefine_line|#define __xg(x) ((volatile struct __xchg_dummy *)(x))
-macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
+macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC) &amp;&amp; !defined(CONFIG_HADES)
 multiline_comment|/* block out HSYNC on the atari */
 DECL|macro|__sti
 mdefine_line|#define __sti() __asm__ __volatile__ (&quot;andiw #0xfbff,%/sr&quot;: : : &quot;memory&quot;)

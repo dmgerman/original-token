@@ -7,21 +7,12 @@ DECL|macro|_M68K_IDE_H
 mdefine_line|#define _M68K_IDE_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_AMIGA
-macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/amihdreg.h&gt;
-macro_line|#include &lt;asm/amigaints.h&gt;
-macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_ATARI
-macro_line|#include &lt;linux/interrupt.h&gt;&t;/* intr_count */
-macro_line|#include &lt;asm/atarihw.h&gt;
-macro_line|#include &lt;asm/atarihdreg.h&gt;
-macro_line|#include &lt;asm/atariints.h&gt;
-macro_line|#include &lt;asm/atari_stdma.h&gt;
-macro_line|#endif /* CONFIG_ATARI */
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#ifdef CONFIG_ATARI
+macro_line|#include &lt;asm/atari_stdma.h&gt;
+macro_line|#endif
 DECL|typedef|ide_ioreg_t
 r_typedef
 r_int
@@ -31,7 +22,7 @@ id|ide_ioreg_t
 suffix:semicolon
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
-mdefine_line|#define MAX_HWIFS&t;1
+mdefine_line|#define MAX_HWIFS&t;4&t;/* same as the other archs */
 macro_line|#endif
 DECL|function|ide_default_irq
 r_static
@@ -47,133 +38,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ide_default_io_base
-r_static
-id|__inline__
-id|ide_ioreg_t
-id|ide_default_io_base
-(paren
-r_int
-id|index
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|index
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
-macro_line|#ifdef CONFIG_AMIGA
-r_if
-c_cond
-(paren
-id|MACH_IS_AMIGA
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|AMIGAHW_PRESENT
-c_func
-(paren
-id|A4000_IDE
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Gayle IDE interface (A%d style)&bslash;n&quot;
-comma
-l_int|4000
-)paren
-suffix:semicolon
-r_return
-(paren
-(paren
-id|ide_ioreg_t
-)paren
-id|ZTWO_VADDR
-c_func
-(paren
-id|HD_BASE_A4000
-)paren
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|AMIGAHW_PRESENT
-c_func
-(paren
-id|A1200_IDE
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Gayle IDE interface (A%d style)&bslash;n&quot;
-comma
-l_int|1200
-)paren
-suffix:semicolon
-r_return
-(paren
-(paren
-id|ide_ioreg_t
-)paren
-id|ZTWO_VADDR
-c_func
-(paren
-id|HD_BASE_A1200
-)paren
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_ATARI
-r_if
-c_cond
-(paren
-id|MACH_IS_ATARI
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ATARIHW_PRESENT
-c_func
-(paren
-id|IDE
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Falcon IDE interface&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-(paren
-id|ide_ioreg_t
-)paren
-id|ATA_HD_BASE
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* CONFIG_ATARI */
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
+multiline_comment|/*&n; *  Can we do this in a generic manner??&n; */
 DECL|function|ide_init_hwif_ports
 r_static
 id|__inline__
@@ -192,227 +57,12 @@ op_star
 id|irq
 )paren
 (brace
-op_star
-id|p
-op_increment
-op_assign
-id|base
-suffix:semicolon
-macro_line|#ifdef CONFIG_AMIGA
-r_if
-c_cond
-(paren
-id|MACH_IS_AMIGA
-)paren
-(brace
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_ERROR
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_NSECTOR
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_SECTOR
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_LCYL
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_HCYL
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_SELECT
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_STATUS
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|AMI_HD_CMD
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|AMIGAHW_PRESENT
+id|printk
 c_func
 (paren
-id|A4000_IDE
-)paren
-)paren
-op_star
-id|p
-op_increment
-op_assign
-(paren
-id|ide_ioreg_t
-)paren
-id|ZTWO_VADDR
-c_func
-(paren
-id|HD_A4000_IRQ
+l_string|&quot;ide_init_hwif_ports: must not be called&bslash;n&quot;
 )paren
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|AMIGAHW_PRESENT
-c_func
-(paren
-id|A1200_IDE
-)paren
-)paren
-op_star
-id|p
-op_increment
-op_assign
-(paren
-id|ide_ioreg_t
-)paren
-id|ZTWO_VADDR
-c_func
-(paren
-id|HD_A1200_IRQ
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-op_ne
-l_int|NULL
-)paren
-op_star
-id|irq
-op_assign
-id|IRQ_AMIGA_PORTS
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_AMIGA */
-macro_line|#ifdef CONFIG_ATARI
-r_if
-c_cond
-(paren
-id|MACH_IS_ATARI
-)paren
-(brace
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_ERROR
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_NSECTOR
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_SECTOR
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_LCYL
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_HCYL
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_CURRENT
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_STATUS
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
-id|ATA_HD_CMD
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-op_ne
-l_int|NULL
-)paren
-op_star
-id|irq
-op_assign
-id|IRQ_MFP_IDE
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_ATARI */
 )brace
 r_typedef
 r_union
@@ -651,91 +301,6 @@ mdefine_line|#define insw_swapw(port, buf, nr) &bslash;&n;    if ((nr) % 8) &bsl
 DECL|macro|outsw_swapw
 mdefine_line|#define outsw_swapw(port, buf, nr) &bslash;&n;    if ((nr) % 8) &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;d0&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;); &bslash;&n;    else &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; lsrl  #3,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;d0&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;)
 macro_line|#endif /* CONFIG_ATARI */
-DECL|function|ide_ack_intr
-r_static
-id|__inline__
-r_int
-id|ide_ack_intr
-(paren
-id|ide_ioreg_t
-id|status_port
-comma
-id|ide_ioreg_t
-id|irq_port
-)paren
-(brace
-macro_line|#ifdef CONFIG_AMIGA
-r_if
-c_cond
-(paren
-id|MACH_IS_AMIGA
-)paren
-(brace
-r_int
-r_char
-id|ch
-suffix:semicolon
-id|ch
-op_assign
-id|inb
-c_func
-(paren
-id|irq_port
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|ch
-op_amp
-l_int|0x80
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|AMIGAHW_PRESENT
-c_func
-(paren
-id|A1200_IDE
-)paren
-)paren
-(brace
-(paren
-r_void
-)paren
-id|inb
-c_func
-(paren
-id|status_port
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x7c
-op_or
-(paren
-id|ch
-op_amp
-l_int|0x03
-)paren
-comma
-id|irq_port
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* CONFIG_AMIGA */
-r_return
-l_int|1
-suffix:semicolon
-)brace
 DECL|macro|T_CHAR
 mdefine_line|#define T_CHAR          (0x0000)        /* char:  don&squot;t touch  */
 DECL|macro|T_SHORT
@@ -1258,6 +823,8 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_ATARI */
 )brace
+DECL|macro|ide_ack_intr
+mdefine_line|#define ide_ack_intr(hwif) (hwif)-&gt;ack_intr((hwif))
 multiline_comment|/*&n; * On the Atari, we sometimes can&squot;t enable interrupts:&n; */
 multiline_comment|/* MSch: changed sti() to STI() wherever possible in ide.c; moved STI() def. &n; * to asm/ide.h &n; */
 multiline_comment|/* The Atari interrupt structure strictly requires that the IPL isn&squot;t lowered&n; * uncontrolled in an interrupt handler. In the concrete case, the IDE&n; * interrupt is already a slow int, so the irq is already disabled at the time&n; * the handler is called, and the IPL has been lowered to the minimum value&n; * possible. To avoid going below that, STI() checks for being called inside&n; * an interrupt, and in that case it does nothing. Hope that is reasonable and&n; * works. (Roman)&n; */

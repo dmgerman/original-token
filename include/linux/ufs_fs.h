@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;rideau@ens.fr&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;rideau@ens.fr&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
 macro_line|#ifndef __LINUX_UFS_FS_H
 DECL|macro|__LINUX_UFS_FS_H
 mdefine_line|#define __LINUX_UFS_FS_H
@@ -48,17 +48,70 @@ DECL|macro|UFS_FSCLEAN
 mdefine_line|#define UFS_FSCLEAN   ((char)0x01)
 DECL|macro|UFS_FSSTABLE
 mdefine_line|#define UFS_FSSTABLE  ((char)0x02)
+DECL|macro|UFS_FSOSF1
+mdefine_line|#define UFS_FSOSF1    ((char)0x03)&t;/* is this correct for DEC OSF/1? */
 DECL|macro|UFS_FSBAD
 mdefine_line|#define UFS_FSBAD     ((char)0xff)
-multiline_comment|/* Flags for ufs_sb_info */
+multiline_comment|/* From here to next blank line, s_flags for ufs_sb_info */
+multiline_comment|/* endianness */
+DECL|macro|UFS_BYTESEX
+mdefine_line|#define UFS_BYTESEX&t;&t;0x00000001&t;/* mask; leave room to 0xF */
+DECL|macro|UFS_LITTLE_ENDIAN
+mdefine_line|#define UFS_LITTLE_ENDIAN&t;0x00000000
+DECL|macro|UFS_BIG_ENDIAN
+mdefine_line|#define UFS_BIG_ENDIAN&t;&t;0x00000001
+multiline_comment|/* directory entry encoding */
+DECL|macro|UFS_DE_MASK
+mdefine_line|#define UFS_DE_MASK&t;&t;0x00000010&t;/* mask for the following */
+DECL|macro|UFS_DE_OLD
+mdefine_line|#define UFS_DE_OLD&t;&t;0x00000000
+DECL|macro|UFS_DE_44BSD
+mdefine_line|#define UFS_DE_44BSD&t;&t;0x00000010
+multiline_comment|/* uid encoding */
+DECL|macro|UFS_UID_MASK
+mdefine_line|#define UFS_UID_MASK&t;&t;0x00000060&t;/* mask for the following */
+DECL|macro|UFS_UID_OLD
+mdefine_line|#define UFS_UID_OLD&t;&t;0x00000000
+DECL|macro|UFS_UID_44BSD
+mdefine_line|#define UFS_UID_44BSD&t;&t;0x00000020
+DECL|macro|UFS_UID_EFT
+mdefine_line|#define UFS_UID_EFT&t;&t;0x00000040
+multiline_comment|/* superblock state encoding */
+DECL|macro|UFS_ST_MASK
+mdefine_line|#define UFS_ST_MASK&t;&t;0x00000700&t;/* mask for the following */
+DECL|macro|UFS_ST_OLD
+mdefine_line|#define UFS_ST_OLD&t;&t;0x00000000
+DECL|macro|UFS_ST_44BSD
+mdefine_line|#define UFS_ST_44BSD&t;&t;0x00000100
+DECL|macro|UFS_ST_SUN
+mdefine_line|#define UFS_ST_SUN&t;&t;0x00000200
+DECL|macro|UFS_ST_NEXT
+mdefine_line|#define UFS_ST_NEXT&t;&t;0x00000400
+multiline_comment|/* filesystem flavors (combo of features) */
+DECL|macro|UFS_FEATURES
+mdefine_line|#define UFS_FEATURES&t;&t;0x00FFFFF0&t;/* room for extension */
+DECL|macro|UFS_VANILLA
+mdefine_line|#define UFS_VANILLA&t;&t;0x00000000
+DECL|macro|UFS_OLD
+mdefine_line|#define UFS_OLD&t;&t;&t;0x00000000&t;/* 4.2BSD */
+DECL|macro|UFS_44BSD
+mdefine_line|#define UFS_44BSD&t;&t;0x00000130
+DECL|macro|UFS_HURD
+mdefine_line|#define UFS_HURD&t;&t;0x00000130
+DECL|macro|UFS_SUN
+mdefine_line|#define UFS_SUN&t;&t;&t;0x00000200
+DECL|macro|UFS_NEXT
+mdefine_line|#define UFS_NEXT&t;&t;0x00000400
+multiline_comment|/* we preserve distinction in flavor identification even without difference,&n; * because yet-to-be-supported features may introduce difference in the future&n; */
+multiline_comment|/* last but not least, debug flags */
 DECL|macro|UFS_DEBUG
-mdefine_line|#define UFS_DEBUG       0x00000001
+mdefine_line|#define UFS_DEBUG       &t;0x01000000
 DECL|macro|UFS_DEBUG_INODE
-mdefine_line|#define UFS_DEBUG_INODE 0x00000002
+mdefine_line|#define UFS_DEBUG_INODE &t;0x02000000
 DECL|macro|UFS_DEBUG_NAMEI
-mdefine_line|#define UFS_DEBUG_NAMEI 0x00000004
+mdefine_line|#define UFS_DEBUG_NAMEI &t;0x04000000
 DECL|macro|UFS_DEBUG_LINKS
-mdefine_line|#define UFS_DEBUG_LINKS 0x00000008
+mdefine_line|#define UFS_DEBUG_LINKS &t;0x08000000
 macro_line|#ifdef UFS_HEAVY_DEBUG
 DECL|macro|UFS_DEBUG_INITIAL
 macro_line|#  define UFS_DEBUG_INITIAL UFS_DEBUG
@@ -66,13 +119,11 @@ macro_line|#else
 DECL|macro|UFS_DEBUG_INITIAL
 macro_line|#  define UFS_DEBUG_INITIAL 0
 macro_line|#endif
-multiline_comment|/* (!) HERE WE ASSUME EITHER BIG OR LITTLE ENDIAN UFSes */
-DECL|macro|UFS_LITTLE_ENDIAN
-mdefine_line|#define UFS_LITTLE_ENDIAN 0x00000000&t;/* 0x00010000 */
-DECL|macro|UFS_BIG_ENDIAN
-mdefine_line|#define UFS_BIG_ENDIAN    0x00010000&t;/* 0x00020000 */
-DECL|macro|UFS_BYTESEX
-mdefine_line|#define UFS_BYTESEX&t;  0x00010000&t;/* 0x00030000 */
+multiline_comment|/* fs_inodefmt options */
+DECL|macro|UFS_42INODEFMT
+mdefine_line|#define UFS_42INODEFMT&t;-1
+DECL|macro|UFS_44INODEFMT
+mdefine_line|#define UFS_44INODEFMT&t;2
 DECL|macro|UFS_ADDR_PER_BLOCK
 mdefine_line|#define UFS_ADDR_PER_BLOCK(sb)&t;&t;((sb)-&gt;u.ufs_sb.s_bsize &gt;&gt; 2)
 DECL|macro|UFS_ADDR_PER_BLOCK_BITS
@@ -92,6 +143,9 @@ multiline_comment|/* Convert an inode number to a cg number. */
 multiline_comment|/* XXX - this can be optimized if s_ipg is a power of 2. */
 DECL|macro|ufs_ino2cg
 mdefine_line|#define ufs_ino2cg(inode)  ((inode)-&gt;i_ino/(inode)-&gt;i_sb-&gt;u.ufs_sb.s_ipg)
+multiline_comment|/* current filesystem state; method depends on flags */
+DECL|macro|UFS_STATE
+mdefine_line|#define UFS_STATE(usb) &bslash;&n;&t;&t;( ((flags&amp;UFS_ST_MASK) == UFS_ST_OLD) &bslash;&n;                  ? (usb)-&gt;fs_u.fs_sun.fs_state /* old normal way */ &bslash;&n;                  : (usb)-&gt;fs_u.fs_44.fs_state /* 4.4BSD way */ )
 DECL|macro|UFS_MAXNAMLEN
 mdefine_line|#define&t;UFS_MAXNAMLEN 255
 DECL|macro|ufs_lbn
@@ -128,13 +182,35 @@ id|__u16
 id|d_reclen
 suffix:semicolon
 multiline_comment|/* length of this entry */
+r_union
+(brace
 DECL|member|d_namlen
 id|__u16
 id|d_namlen
 suffix:semicolon
 multiline_comment|/* actual length of d_name */
+r_struct
+(brace
+DECL|member|d_type
+id|__u8
+id|d_type
+suffix:semicolon
+multiline_comment|/* file type */
+DECL|member|d_namlen
+id|__u8
+id|d_namlen
+suffix:semicolon
+multiline_comment|/* length of string in d_name */
+DECL|member|d_44
+)brace
+id|d_44
+suffix:semicolon
+DECL|member|d_u
+)brace
+id|d_u
+suffix:semicolon
 DECL|member|d_name
-r_char
+id|__u8
 id|d_name
 (braket
 id|UFS_MAXNAMLEN
@@ -498,6 +574,10 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* old rotation block list head */
+r_union
+(brace
+r_struct
+(brace
 DECL|member|fs_sparecon
 id|__s32
 id|fs_sparecon
@@ -527,6 +607,69 @@ l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/* ~usb_fmask */
+DECL|member|fs_sun
+)brace
+id|fs_sun
+suffix:semicolon
+r_struct
+(brace
+DECL|member|fs_sparecon
+id|__s32
+id|fs_sparecon
+(braket
+l_int|50
+)braket
+suffix:semicolon
+multiline_comment|/* reserved for future constants */
+DECL|member|fs_contigsumsize
+id|__s32
+id|fs_contigsumsize
+suffix:semicolon
+multiline_comment|/* size of cluster summary array */
+DECL|member|fs_maxsymlinklen
+id|__s32
+id|fs_maxsymlinklen
+suffix:semicolon
+multiline_comment|/* max length of an internal symlink */
+DECL|member|fs_inodefmt
+id|__s32
+id|fs_inodefmt
+suffix:semicolon
+multiline_comment|/* format of on-disk inodes */
+DECL|member|fs_maxfilesize
+id|__u64
+id|fs_maxfilesize
+suffix:semicolon
+multiline_comment|/* max representable file size */
+DECL|member|fs_qbmask
+id|__u32
+id|fs_qbmask
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* ~usb_bmask */
+DECL|member|fs_qfmask
+id|__u32
+id|fs_qfmask
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* ~usb_fmask */
+DECL|member|fs_state
+id|__s32
+id|fs_state
+suffix:semicolon
+multiline_comment|/* file system state time stamp */
+DECL|member|fs_44
+)brace
+id|fs_44
+suffix:semicolon
+DECL|member|fs_u
+)brace
+id|fs_u
+suffix:semicolon
 DECL|member|fs_postblformat
 id|__s32
 id|fs_postblformat
@@ -577,16 +720,38 @@ id|__u16
 id|ui_nlink
 suffix:semicolon
 multiline_comment|/*  0x2 */
-DECL|member|ui_suid
+r_union
+(brace
+r_struct
+(brace
+DECL|member|suid
 id|__u16
-id|ui_suid
+id|suid
 suffix:semicolon
 multiline_comment|/*  0x4 */
-DECL|member|ui_sgid
+DECL|member|sgid
 id|__u16
-id|ui_sgid
+id|sgid
 suffix:semicolon
 multiline_comment|/*  0x6 */
+DECL|member|oldids
+)brace
+id|oldids
+suffix:semicolon
+DECL|member|inumber
+id|__u32
+id|inumber
+suffix:semicolon
+multiline_comment|/*  0x4 lsf: inode number */
+DECL|member|author
+id|__u32
+id|author
+suffix:semicolon
+multiline_comment|/*  0x4 GNU HURD: author */
+DECL|member|ui_u1
+)brace
+id|ui_u1
+suffix:semicolon
 DECL|member|ui_size
 id|__u64
 id|ui_size
@@ -610,6 +775,10 @@ id|ufs_timeval
 id|ui_ctime
 suffix:semicolon
 multiline_comment|/* 0x20 creation */
+r_union
+(brace
+r_struct
+(brace
 DECL|member|ui_db
 id|__u32
 id|ui_db
@@ -626,6 +795,28 @@ id|UFS_NINDIR
 )braket
 suffix:semicolon
 multiline_comment|/* 0x58 indirect blocks */
+DECL|member|ui_addr
+)brace
+id|ui_addr
+suffix:semicolon
+DECL|member|ui_symlink
+id|__u8
+id|ui_symlink
+(braket
+l_int|4
+op_star
+(paren
+id|UFS_NDADDR
+op_plus
+id|UFS_NINDIR
+)paren
+)braket
+suffix:semicolon
+multiline_comment|/* 0x28 fast symlink */
+DECL|member|ui_u2
+)brace
+id|ui_u2
+suffix:semicolon
 DECL|member|ui_flags
 id|__u32
 id|ui_flags
@@ -641,6 +832,10 @@ id|__u32
 id|ui_gen
 suffix:semicolon
 multiline_comment|/* 0x6c generation number XXX - what is this? */
+r_union
+(brace
+r_struct
+(brace
 DECL|member|ui_shadow
 id|__u32
 id|ui_shadow
@@ -661,6 +856,69 @@ id|__u32
 id|ui_oeftflag
 suffix:semicolon
 multiline_comment|/* 0x7c reserved */
+DECL|member|ui_sun
+)brace
+id|ui_sun
+suffix:semicolon
+r_struct
+(brace
+DECL|member|ui_uid
+id|__u32
+id|ui_uid
+suffix:semicolon
+multiline_comment|/* 0x70 File owner */
+DECL|member|ui_gid
+id|__u32
+id|ui_gid
+suffix:semicolon
+multiline_comment|/* 0x74 File group */
+DECL|member|ui_spare
+id|__s32
+id|ui_spare
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* 0x78 reserved */
+DECL|member|ui_44
+)brace
+id|ui_44
+suffix:semicolon
+r_struct
+(brace
+DECL|member|ui_uid
+id|__u32
+id|ui_uid
+suffix:semicolon
+multiline_comment|/* 0x70 */
+DECL|member|ui_gid
+id|__u32
+id|ui_gid
+suffix:semicolon
+multiline_comment|/* 0x74 */
+DECL|member|ui_modeh
+id|__u16
+id|ui_modeh
+suffix:semicolon
+multiline_comment|/* 0x78 mode high bits */
+DECL|member|ui_spare
+id|__u16
+id|ui_spare
+suffix:semicolon
+multiline_comment|/* 0x7A unused */
+DECL|member|ui_trans
+id|__u32
+id|ui_trans
+suffix:semicolon
+multiline_comment|/* 0x7c filesystem translator */
+DECL|member|ui_hurd
+)brace
+id|ui_hurd
+suffix:semicolon
+DECL|member|ui_u3
+)brace
+id|ui_u3
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

@@ -444,8 +444,8 @@ DECL|macro|__NR_sethae
 mdefine_line|#define __NR_sethae&t;&t;301
 DECL|macro|__NR_mount
 mdefine_line|#define __NR_mount&t;&t;302
-DECL|macro|__NR_adjtimex
-mdefine_line|#define __NR_adjtimex&t;&t;303
+DECL|macro|__NR_old_adjtimex
+mdefine_line|#define __NR_old_adjtimex&t;303
 DECL|macro|__NR_swapoff
 mdefine_line|#define __NR_swapoff&t;&t;304
 DECL|macro|__NR_getdents

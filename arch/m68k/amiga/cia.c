@@ -680,7 +680,10 @@ op_amp
 l_int|1
 )paren
 (brace
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|irq
 )braket
@@ -890,7 +893,10 @@ id|j
 op_plus
 id|i
 comma
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|SYS_IRQS
 op_plus

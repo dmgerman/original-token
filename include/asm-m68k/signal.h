@@ -1,17 +1,52 @@
 macro_line|#ifndef _M68K_SIGNAL_H
 DECL|macro|_M68K_SIGNAL_H
 mdefine_line|#define _M68K_SIGNAL_H
+macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/* Avoid too many header ordering problems.  */
+r_struct
+id|siginfo
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* Most things should be clean enough to redefine this at will, if care&n;   is taken to make libc match.  */
+DECL|macro|_NSIG
+mdefine_line|#define _NSIG&t;&t;64
+DECL|macro|_NSIG_BPW
+mdefine_line|#define _NSIG_BPW&t;32
+DECL|macro|_NSIG_WORDS
+mdefine_line|#define _NSIG_WORDS&t;(_NSIG / _NSIG_BPW)
+DECL|typedef|old_sigset_t
+r_typedef
+r_int
+r_int
+id|old_sigset_t
+suffix:semicolon
+multiline_comment|/* at least 32 bits */
+r_typedef
+r_struct
+(brace
+DECL|member|sig
+r_int
+r_int
+id|sig
+(braket
+id|_NSIG_WORDS
+)braket
+suffix:semicolon
+DECL|typedef|sigset_t
+)brace
+id|sigset_t
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Here we must cater to libcs that poke about in kernel headers.  */
+DECL|macro|NSIG
+mdefine_line|#define NSIG&t;&t;32
 DECL|typedef|sigset_t
 r_typedef
 r_int
 r_int
 id|sigset_t
 suffix:semicolon
-multiline_comment|/* at least 32 bits */
-DECL|macro|_NSIG
-mdefine_line|#define _NSIG             32
-DECL|macro|NSIG
-mdefine_line|#define NSIG&t;&t;_NSIG
+macro_line|#endif /* __KERNEL__ */
 DECL|macro|SIGHUP
 mdefine_line|#define SIGHUP&t;&t; 1
 DECL|macro|SIGINT
@@ -79,27 +114,40 @@ DECL|macro|SIGPWR
 mdefine_line|#define SIGPWR&t;&t;30
 DECL|macro|SIGUNUSED
 mdefine_line|#define&t;SIGUNUSED&t;31
-multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
+multiline_comment|/* These should not be considered constants from userland.  */
+DECL|macro|SIGRTMIN
+mdefine_line|#define SIGRTMIN&t;32
+DECL|macro|SIGRTMAX
+mdefine_line|#define SIGRTMAX&t;(_NSIG-1)
+multiline_comment|/*&n; * SA_FLAGS values:&n; *&n; * SA_ONSTACK is not currently supported, but will allow sigaltstack(2).&n; *   (++roman: SA_ONSTACK is supported on m68k)&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_NOCLDSTOP flag to turn off SIGCHLD when children stop.&n; * SA_RESETHAND clears the handler when the signal is delivered.&n; * SA_NOCLDWAIT flag on SIGCHLD to inhibit zombies.&n; * SA_NODEFER prevents the current signal from being masked in the handler.&n; *&n; * SA_ONESHOT and SA_NOMASK are the historical Linux names for the Single&n; * Unix names RESETHAND and NODEFER respectively.&n; */
 DECL|macro|SA_NOCLDSTOP
-mdefine_line|#define SA_NOCLDSTOP&t;1
-DECL|macro|SA_SHIRQ
-mdefine_line|#define SA_SHIRQ&t;0x04000000
-DECL|macro|SA_STACK
-mdefine_line|#define SA_STACK&t;0x08000000
+mdefine_line|#define SA_NOCLDSTOP&t;0x00000001
+DECL|macro|SA_NOCLDWAIT
+mdefine_line|#define SA_NOCLDWAIT&t;0x00000002 /* not supported yet */
+DECL|macro|SA_SIGINFO
+mdefine_line|#define SA_SIGINFO&t;0x00000004
+DECL|macro|SA_ONSTACK
+mdefine_line|#define SA_ONSTACK&t;0x08000000
 DECL|macro|SA_RESTART
 mdefine_line|#define SA_RESTART&t;0x10000000
-DECL|macro|SA_INTERRUPT
-mdefine_line|#define SA_INTERRUPT&t;0x20000000
+DECL|macro|SA_NODEFER
+mdefine_line|#define SA_NODEFER&t;0x40000000
+DECL|macro|SA_RESETHAND
+mdefine_line|#define SA_RESETHAND&t;0x80000000
 DECL|macro|SA_NOMASK
-mdefine_line|#define SA_NOMASK&t;0x40000000
+mdefine_line|#define SA_NOMASK&t;SA_NODEFER
 DECL|macro|SA_ONESHOT
-mdefine_line|#define SA_ONESHOT&t;0x80000000
+mdefine_line|#define SA_ONESHOT&t;SA_RESETHAND
+DECL|macro|SA_INTERRUPT
+mdefine_line|#define SA_INTERRUPT&t;0x20000000 /* dummy -- ignored */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; */
+multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; * SA_SHIRQ is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_PROBE
-mdefine_line|#define SA_PROBE SA_ONESHOT
+mdefine_line|#define SA_PROBE&t;&t;SA_ONESHOT
 DECL|macro|SA_SAMPLE_RANDOM
-mdefine_line|#define SA_SAMPLE_RANDOM SA_RESTART
+mdefine_line|#define SA_SAMPLE_RANDOM&t;SA_RESTART
+DECL|macro|SA_SHIRQ
+mdefine_line|#define SA_SHIRQ&t;&t;0x04000000
 macro_line|#endif
 DECL|macro|SIG_BLOCK
 mdefine_line|#define SIG_BLOCK          0&t;/* for blocking signals */
@@ -125,6 +173,79 @@ DECL|macro|SIG_IGN
 mdefine_line|#define SIG_IGN&t;((__sighandler_t)1)&t;/* ignore signal */
 DECL|macro|SIG_ERR
 mdefine_line|#define SIG_ERR&t;((__sighandler_t)-1)&t;/* error return from signal */
+macro_line|#ifdef __KERNEL__
+DECL|struct|old_sigaction
+r_struct
+id|old_sigaction
+(brace
+DECL|member|sa_handler
+id|__sighandler_t
+id|sa_handler
+suffix:semicolon
+DECL|member|sa_mask
+id|old_sigset_t
+id|sa_mask
+suffix:semicolon
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|sigaction
+r_struct
+id|sigaction
+(brace
+DECL|member|sa_handler
+id|__sighandler_t
+id|sa_handler
+suffix:semicolon
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|member|sa_mask
+id|sigset_t
+id|sa_mask
+suffix:semicolon
+multiline_comment|/* mask last for extensibility */
+)brace
+suffix:semicolon
+DECL|struct|k_sigaction
+r_struct
+id|k_sigaction
+(brace
+DECL|member|sa
+r_struct
+id|sigaction
+id|sa
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Here we must cater to libcs that poke about in kernel headers.  */
 DECL|struct|sigaction
 r_struct
 id|sigaction
@@ -154,8 +275,252 @@ r_void
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
+DECL|struct|sigaltstack
+r_typedef
+r_struct
+id|sigaltstack
+(brace
+DECL|member|ss_sp
+r_void
+op_star
+id|ss_sp
+suffix:semicolon
+DECL|member|ss_flags
+r_int
+id|ss_flags
+suffix:semicolon
+DECL|member|ss_size
+r_int
+id|ss_size
+suffix:semicolon
+DECL|typedef|stack_t
+)brace
+id|stack_t
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sigcontext.h&gt;
-macro_line|#endif
+DECL|macro|__HAVE_ARCH_SIG_BITOPS
+mdefine_line|#define __HAVE_ARCH_SIG_BITOPS
+DECL|function|sigaddset
+r_extern
+id|__inline__
+r_void
+id|sigaddset
+c_func
+(paren
+id|sigset_t
+op_star
+id|set
+comma
+r_int
+id|_sig
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;bfset %0{%1,#1}&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|set
+)paren
+suffix:colon
+l_string|&quot;id&quot;
+(paren
+(paren
+id|_sig
+op_minus
+l_int|1
+)paren
+op_xor
+l_int|31
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|sigdelset
+r_extern
+id|__inline__
+r_void
+id|sigdelset
+c_func
+(paren
+id|sigset_t
+op_star
+id|set
+comma
+r_int
+id|_sig
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;bfclr %0{%1,#1}&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|set
+)paren
+suffix:colon
+l_string|&quot;id&quot;
+(paren
+(paren
+id|_sig
+op_minus
+l_int|1
+)paren
+op_xor
+l_int|31
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|__const_sigismember
+r_extern
+id|__inline__
+r_int
+id|__const_sigismember
+c_func
+(paren
+id|sigset_t
+op_star
+id|set
+comma
+r_int
+id|_sig
+)paren
+(brace
+r_int
+r_int
+id|sig
+op_assign
+id|_sig
+op_minus
+l_int|1
+suffix:semicolon
+r_return
+l_int|1
+op_amp
+(paren
+id|set-&gt;sig
+(braket
+id|sig
+op_div
+id|_NSIG_BPW
+)braket
+op_rshift
+(paren
+id|sig
+op_mod
+id|_NSIG_BPW
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|__gen_sigismember
+r_extern
+id|__inline__
+r_int
+id|__gen_sigismember
+c_func
+(paren
+id|sigset_t
+op_star
+id|set
+comma
+r_int
+id|_sig
+)paren
+(brace
+r_char
+id|ret
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;bftst %1{%2,#1}&bslash;n&bslash;t sne %0&quot;
+suffix:colon
+l_string|&quot;=rm&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+id|set
+)paren
+comma
+l_string|&quot;id&quot;
+(paren
+(paren
+id|_sig
+op_minus
+l_int|1
+)paren
+op_xor
+l_int|31
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|macro|sigismember
+mdefine_line|#define sigismember(set,sig)&t;&t;&t;&bslash;&n;&t;(__builtin_constant_p(sig) ?&t;&t;&bslash;&n;&t; __const_sigismember(set,sig) :&t;&t;&bslash;&n;&t; __gen_sigismember(set,sig))
+DECL|macro|sigmask
+mdefine_line|#define sigmask(sig)&t;(1UL &lt;&lt; ((sig) - 1))
+DECL|function|sigfindinword
+r_extern
+id|__inline__
+r_int
+id|sigfindinword
+c_func
+(paren
+r_int
+r_int
+id|word
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;bfffo %1{#0,#0},%0&quot;
+suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|word
+)paren
+suffix:colon
+l_string|&quot;d&quot;
+(paren
+id|word
+op_amp
+op_minus
+id|word
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+r_return
+id|word
+op_xor
+l_int|31
+suffix:semicolon
+)brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _M68K_SIGNAL_H */
 eof

@@ -92,7 +92,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, __pgprot(_PAGE_PRESENT|_PAGE_ACCESSED), VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_stack) + (unsigned long) init_stack, 0, &bslash;&n;&t;PS_S, KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_stack) + (unsigned long) init_stack, 0, &bslash;&n;&t;PS_S, __KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|function|start_thread
 r_static
@@ -115,28 +115,6 @@ r_int
 id|usp
 )paren
 (brace
-r_int
-r_int
-id|nilstate
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* clear floating point state */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;.chip 68k/68881&bslash;n&bslash;t&quot;
-l_string|&quot;frestore %0@&bslash;n&bslash;t&quot;
-l_string|&quot;.chip 68k&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;a&quot;
-(paren
-op_amp
-id|nilstate
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* reads from user space */
 id|set_fs
 c_func
@@ -161,7 +139,9 @@ id|usp
 suffix:semicolon
 )brace
 multiline_comment|/* Free all resources held by a thread. */
-r_extern
+DECL|function|release_thread
+r_static
+r_inline
 r_void
 id|release_thread
 c_func
@@ -169,8 +149,22 @@ c_func
 r_struct
 id|task_struct
 op_star
+id|dead_task
 )paren
-suffix:semicolon
+(brace
+)brace
+multiline_comment|/*&n; * Free current thread data structures etc..&n; */
+DECL|function|exit_thread
+r_static
+r_inline
+r_void
+id|exit_thread
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern

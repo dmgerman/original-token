@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/atari/stmda.c&n; *&n; *  Copyright (C) 1994 Roman Hodek&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/atari/stmda.c&n; *&n; *  Copyright (C) 1994 Roman Hodek&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/* This file contains some function for controlling the access to the  */
 multiline_comment|/* ST-DMA chip that may be shared between devices. Currently we have:  */
 multiline_comment|/*   TT:     Floppy and ACSI bus                                       */
@@ -22,7 +22,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
-macro_line|#include &lt;asm/atarihdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 DECL|variable|stdma_locked

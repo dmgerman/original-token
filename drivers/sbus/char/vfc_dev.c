@@ -3309,14 +3309,6 @@ r_void
 )paren
 macro_line|#endif
 (brace
-macro_line|#ifdef MODULE
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|vfc_probe
 c_func

@@ -556,6 +556,7 @@ id|Scsi_Device
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * We should ensure that this is aligned, both for better performance&n;     * and also because some compilers (m68k) don&squot;t automatically force&n;     * alignment to a 4-byte boundary.&n;     */
 DECL|member|hostdata
 r_int
 r_int
@@ -563,8 +564,17 @@ id|hostdata
 (braket
 l_int|0
 )braket
-suffix:semicolon
 multiline_comment|/* Used for storage of host specific stuff */
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|4
+)paren
+)paren
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern

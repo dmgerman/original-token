@@ -155,7 +155,11 @@ suffix:semicolon
 )brace
 r_extern
 r_int
-id|__m68k_bh_counter
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 DECL|function|start_bh_atomic
 r_extern
@@ -167,7 +171,13 @@ c_func
 r_void
 )paren
 (brace
-id|__m68k_bh_counter
+id|local_bh_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
 op_increment
 suffix:semicolon
 id|barrier
@@ -191,14 +201,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|__m68k_bh_counter
+id|local_bh_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
 op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()  (__m68k_bh_counter ? 0 : (__m68k_bh_counter=1))
+mdefine_line|#define softirq_trylock(cpu)  (local_bh_count[cpu] ? 0 : (local_bh_count[cpu]=1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()  (__m68k_bh_counter = 0)
+mdefine_line|#define softirq_endlock(cpu)  (local_bh_count[cpu] = 0)
 macro_line|#endif
 eof

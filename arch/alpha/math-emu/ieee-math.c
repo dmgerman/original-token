@@ -450,20 +450,20 @@ l_int|2
 )braket
 )paren
 (brace
-id|asm
-(paren
-l_string|&quot;mulq  %2,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;umulh %2,%3,%1&quot;
-suffix:colon
-l_string|&quot;r=&quot;
-(paren
 id|c
 (braket
 l_int|0
 )braket
-)paren
-comma
-l_string|&quot;r=&quot;
+op_assign
+id|a
+op_star
+id|b
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;umulh %1,%2,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
 id|c
 (braket
@@ -1043,6 +1043,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|a-&gt;e
+op_logical_and
+op_logical_neg
 id|a-&gt;f
 (braket
 l_int|0
@@ -1386,6 +1389,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|a-&gt;e
+op_logical_and
+op_logical_neg
 id|a-&gt;f
 (braket
 l_int|0
@@ -1527,7 +1533,7 @@ r_if
 c_cond
 (paren
 id|a-&gt;e
-OG
+op_ge
 l_int|0x3ff
 )paren
 (brace
@@ -5334,6 +5340,8 @@ op_assign
 id|op_a.e
 op_plus
 id|op_b.e
+op_minus
+l_int|55
 suffix:semicolon
 id|mul64
 c_func
@@ -5351,18 +5359,6 @@ comma
 id|op_c.f
 )paren
 suffix:semicolon
-id|normalize
-c_func
-(paren
-op_amp
-id|op_c
-)paren
-suffix:semicolon
-id|op_c.e
-op_sub_assign
-l_int|55
-suffix:semicolon
-multiline_comment|/* drop the 55 original bits. */
 r_return
 id|round_s_ieee
 c_func
@@ -5669,6 +5665,8 @@ op_assign
 id|op_a.e
 op_plus
 id|op_b.e
+op_minus
+l_int|55
 suffix:semicolon
 id|mul64
 c_func
@@ -5686,18 +5684,6 @@ comma
 id|op_c.f
 )paren
 suffix:semicolon
-id|normalize
-c_func
-(paren
-op_amp
-id|op_c
-)paren
-suffix:semicolon
-id|op_c.e
-op_sub_assign
-l_int|55
-suffix:semicolon
-multiline_comment|/* drop the 55 original bits. */
 r_return
 id|round_t_ieee
 c_func

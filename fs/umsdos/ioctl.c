@@ -167,8 +167,8 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/* #Specification: ioctl / acces&n;&t;&t;Only root (effective id) is allowed to do IOCTL on directory&n;&t;&t;in UMSDOS. EPERM is returned for other user.&n;&t;*/
-multiline_comment|/*&n;&t;&t;Well, not all cases require write access, but it simplifies&n;&t;&t;the code, and let&squot;s face it, there is only one client (umssync)&n;&t;&t;for all this.&n;&t;*/
+multiline_comment|/* #Specification: ioctl / acces&n;     Only root (effective id) is allowed to do IOCTL on directory&n;     in UMSDOS. EPERM is returned for other user.&n;  */
+multiline_comment|/*&n;    Well, not all cases require write access, but it simplifies&n;    the code, and let&squot;s face it, there is only one client (umssync)&n;    for all this.&n;  */
 r_if
 c_cond
 (paren
@@ -232,8 +232,8 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* #Specification: ioctl / prototypes&n;&t;&t;&t;The official prototype for the umsdos ioctl on directory&n;&t;&t;&t;is:&n;&n;&t;&t;&t;int ioctl (&n;&t;&t;&t;&t;int fd,&t;&t;// File handle of the directory&n;&t;&t;&t;&t;int cmd,&t;// command&n;&t;&t;&t;&t;struct umsdos_ioctl *data)&n;&n;&t;&t;&t;The struct and the commands are defined in linux/umsdos_fs.h.&n;&n;&t;&t;&t;umsdos_progs/umsdosio.c provide an interface in C++ to all&n;&t;&t;&t;these ioctl. umsdos_progs/udosctl is a small utility showing&n;&t;&t;&t;all this.&n;&n;&t;&t;&t;These ioctl generally allow one to work on the EMD or the&n;&t;&t;&t;DOS directory independently. These are essential to implement&n;&t;&t;&t;the synchronise.&n;&t;&t;*/
-id|PRINTK
+multiline_comment|/* #Specification: ioctl / prototypes&n;       The official prototype for the umsdos ioctl on directory&n;       is:&n;       &n;       int ioctl (&n;       int fd,&t;&t;// File handle of the directory&n;       int cmd,&t;// command&n;       struct umsdos_ioctl *data)&n;       &n;       The struct and the commands are defined in linux/umsdos_fs.h.&n;       &n;       umsdos_progs/umsdosio.c provide an interface in C++ to all&n;       these ioctl. umsdos_progs/udosctl is a small utility showing&n;       all this.&n;       &n;       These ioctl generally allow one to work on the EMD or the&n;       DOS directory independently. These are essential to implement&n;       the synchronise.&n;    */
+id|Printk
 (paren
 (paren
 l_string|&quot;ioctl %d &quot;
@@ -250,7 +250,7 @@ op_eq
 id|UMSDOS_GETVERSION
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_GETVERSION&n;&t;&t;&t;&t;The field version and release of the structure&n;&t;&t;&t;&t;umsdos_ioctl are filled with the version and release&n;&t;&t;&t;&t;number of the fs code in the kernel. This will allow&n;&t;&t;&t;&t;some form of checking. Users won&squot;t be able to run&n;&t;&t;&t;&t;incompatible utility such as the synchroniser (umssync).&n;&t;&t;&t;&t;umsdos_progs/umsdosio.c enforce this checking.&n;&n;&t;&t;&t;&t;Return always 0.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_GETVERSION&n;&t; The field version and release of the structure&n;&t; umsdos_ioctl are filled with the version and release&n;&t; number of the fs code in the kernel. This will allow&n;&t; some form of checking. Users won&squot;t be able to run&n;&t; incompatible utility such as the synchroniser (umssync).&n;&t; umsdos_progs/umsdosio.c enforce this checking.&n;&t; &n;&t; Return always 0.&n;      */
 id|put_user
 c_func
 (paren
@@ -283,7 +283,7 @@ op_eq
 id|UMSDOS_READDIR_DOS
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_READDIR_DOS&n;&t;&t;&t;&t;One entry is read from the DOS directory at the current&n;&t;&t;&t;&t;file position. The entry is put as is in the dos_dirent&n;&t;&t;&t;&t;field of struct umsdos_ioctl.&n;&n;&t;&t;&t;&t;Return &gt; 0 if success.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_READDIR_DOS&n;&t; One entry is read from the DOS directory at the current&n;&t; file position. The entry is put as is in the dos_dirent&n;&t; field of struct umsdos_ioctl.&n;&t; &n;&t; Return &gt; 0 if success.&n;      */
 r_struct
 id|UMSDOS_DIR_ONCE
 id|bufk
@@ -300,8 +300,6 @@ suffix:semicolon
 id|fat_readdir
 c_func
 (paren
-id|dir
-comma
 id|filp
 comma
 op_amp
@@ -331,7 +329,7 @@ op_eq
 id|UMSDOS_READDIR_EMD
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_READDIR_EMD&n;&t;&t;&t;&t;One entry is read from the EMD at the current&n;&t;&t;&t;&t;file position. The entry is put as is in the umsdos_dirent&n;&t;&t;&t;&t;field of struct umsdos_ioctl. The corresponding mangled&n;&t;&t;&t;&t;DOS entry name is put in the dos_dirent field.&n;&n;&t;&t;&t;&t;All entries are read including hidden links. Blank&n;&t;&t;&t;&t;entries are skipped.&n;&n;&t;&t;&t;&t;Return &gt; 0 if success.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_READDIR_EMD&n;&t; One entry is read from the EMD at the current&n;&t; file position. The entry is put as is in the umsdos_dirent&n;&t; field of struct umsdos_ioctl. The corresponding mangled&n;&t; DOS entry name is put in the dos_dirent field.&n;&t; &n;&t; All entries are read including hidden links. Blank&n;&t; entries are skipped.&n;&t; &n;&t; Return &gt; 0 if success.&n;      */
 r_struct
 id|inode
 op_star
@@ -502,7 +500,7 @@ op_eq
 id|UMSDOS_INIT_EMD
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_INIT_EMD&n;&t;&t;&t;&t;The UMSDOS_INIT_EMD command make sure the EMD&n;&t;&t;&t;&t;exist for a directory. If it does not, it is&n;&t;&t;&t;&t;created. Also, it makes sure the directory functions&n;&t;&t;&t;&t;table (struct inode_operations) is set to the UMSDOS&n;&t;&t;&t;&t;semantic. This mean that umssync may be applied to&n;&t;&t;&t;&t;an &quot;opened&quot; msdos directory, and it will change behavior&n;&t;&t;&t;&t;on the fly.&n;&n;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_INIT_EMD&n;&t; The UMSDOS_INIT_EMD command make sure the EMD&n;&t; exist for a directory. If it does not, it is&n;&t; created. Also, it makes sure the directory functions&n;&t; table (struct inode_operations) is set to the UMSDOS&n;&t; semantic. This mean that umssync may be applied to&n;&t; an &quot;opened&quot; msdos directory, and it will change behavior&n;&t; on the fly.&n;&t; &n;&t; Return 0 if success.&n;      */
 r_extern
 r_struct
 id|inode_operations
@@ -570,7 +568,7 @@ op_eq
 id|UMSDOS_CREAT_EMD
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_CREAT_EMD&n;&t;&t;&t;&t;&t;The umsdos_dirent field of the struct umsdos_ioctl is used&n;&t;&t;&t;&t;&t;as is to create a new entry in the EMD of the directory.&n;&t;&t;&t;&t;&t;The DOS directory is not modified.&n;&t;&t;&t;&t;&t;No validation is done (yet).&n;&n;&t;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_CREAT_EMD&n;&t;   The umsdos_dirent field of the struct umsdos_ioctl is used&n;&t;   as is to create a new entry in the EMD of the directory.&n;&t;   The DOS directory is not modified.&n;&t;   No validation is done (yet).&n;&t;   &n;&t;   Return 0 if success.&n;&t;*/
 r_struct
 id|umsdos_info
 id|info
@@ -621,31 +619,55 @@ op_eq
 id|UMSDOS_RENAME_DOS
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_RENAME_DOS&n;&t;&t;&t;&t;&t;A file or directory is rename in a DOS directory&n;&t;&t;&t;&t;&t;(not moved across directory). The source name&n;&t;&t;&t;&t;&t;is in the dos_dirent.name field and the destination&n;&t;&t;&t;&t;&t;is in umsdos_dirent.name field.&n;&n;&t;&t;&t;&t;&t;This ioctl allows umssync to rename a mangle file&n;&t;&t;&t;&t;&t;name before syncing it back in the EMD.&n;&t;&t;&t;&t;*/
-id|atomic_add
-c_func
-(paren
-l_int|2
+r_struct
+id|dentry
+op_star
+id|old_dentry
 comma
-op_amp
+op_star
+id|new_dentry
+suffix:semicolon
+multiline_comment|/* FIXME */
+multiline_comment|/* #Specification: ioctl / UMSDOS_RENAME_DOS&n;&t;   A file or directory is rename in a DOS directory&n;&t;   (not moved across directory). The source name&n;&t;   is in the dos_dirent.name field and the destination&n;&t;   is in umsdos_dirent.name field.&n;&t;   &n;&t;   This ioctl allows umssync to rename a mangle file&n;&t;   name before syncing it back in the EMD.&n;&t;*/
 id|dir-&gt;i_count
+op_add_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/*&n;&t;  ret = msdos_rename (dir&n;&t;  ,data.dos_dirent.d_name,data.dos_dirent.d_reclen&n;&t;  ,dir&n;&t;  ,data.umsdos_dirent.name,data.umsdos_dirent.name_len);&n;&t;*/
+id|old_dentry
+op_assign
+id|creat_dentry
+(paren
+id|data.dos_dirent.d_name
+comma
+id|data.dos_dirent.d_reclen
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|new_dentry
+op_assign
+id|creat_dentry
+(paren
+id|data.umsdos_dirent.name
+comma
+id|data.umsdos_dirent.name_len
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|ret
 op_assign
 id|msdos_rename
+c_func
 (paren
 id|dir
 comma
-id|data.dos_dirent.d_name
-comma
-id|data.dos_dirent.d_reclen
+id|old_dentry
 comma
 id|dir
 comma
-id|data.umsdos_dirent.name
-comma
-id|data.umsdos_dirent.name_len
+id|new_dentry
 )paren
 suffix:semicolon
 )brace
@@ -658,7 +680,7 @@ op_eq
 id|UMSDOS_UNLINK_EMD
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_UNLINK_EMD&n;&t;&t;&t;&t;&t;The umsdos_dirent field of the struct umsdos_ioctl is used&n;&t;&t;&t;&t;&t;as is to remove an entry from the EMD of the directory.&n;&t;&t;&t;&t;&t;No validation is done (yet). The mode field is used&n;&t;&t;&t;&t;&t;to validate S_ISDIR or S_ISREG.&n;&n;&t;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_UNLINK_EMD&n;&t;  The umsdos_dirent field of the struct umsdos_ioctl is used&n;&t;  as is to remove an entry from the EMD of the directory.&n;&t;  No validation is done (yet). The mode field is used&n;&t;  to validate S_ISDIR or S_ISREG.&n;&t;  &n;&t;  Return 0 if success.&n;       */
 r_struct
 id|umsdos_info
 id|info
@@ -715,23 +737,25 @@ op_eq
 id|UMSDOS_UNLINK_DOS
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_UNLINK_DOS&n;&t;&t;&t;&t;&t;The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;&t;&t;&t;&t;execute a msdos_unlink operation. The d_name and d_reclen&n;&t;&t;&t;&t;&t;fields are used.&n;&n;&t;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;&t;*/
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|dir-&gt;i_count
-)paren
+r_struct
+id|dentry
+op_star
+id|dentry
 suffix:semicolon
+multiline_comment|/* FIXME */
+multiline_comment|/* #Specification: ioctl / UMSDOS_UNLINK_DOS&n;&t;   The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;   execute a msdos_unlink operation. The d_name and d_reclen&n;&t;   fields are used.&n;&t;   &n;&t;   Return 0 if success.&n;&t;*/
+id|dir-&gt;i_count
+op_increment
+suffix:semicolon
+multiline_comment|/*&n;&t;  ret = msdos_unlink (dir,data.dos_dirent.d_name,data.dos_dirent.d_reclen);&n;&t;*/
 id|ret
 op_assign
 id|msdos_unlink
+c_func
 (paren
 id|dir
 comma
-id|data.dos_dirent.d_name
-comma
-id|data.dos_dirent.d_reclen
+id|dentry
 )paren
 suffix:semicolon
 )brace
@@ -744,23 +768,25 @@ op_eq
 id|UMSDOS_RMDIR_DOS
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_RMDIR_DOS&n;&t;&t;&t;&t;&t;The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;&t;&t;&t;&t;execute a msdos_unlink operation. The d_name and d_reclen&n;&t;&t;&t;&t;&t;fields are used.&n;&n;&t;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;&t;*/
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|dir-&gt;i_count
-)paren
+r_struct
+id|dentry
+op_star
+id|dentry
 suffix:semicolon
+multiline_comment|/* FIXME */
+multiline_comment|/* #Specification: ioctl / UMSDOS_RMDIR_DOS&n;&t;   The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;   execute a msdos_unlink operation. The d_name and d_reclen&n;&t;   fields are used.&n;&t;   &n;&t;   Return 0 if success.&n;&t;*/
+id|dir-&gt;i_count
+op_increment
+suffix:semicolon
+multiline_comment|/*&n;&t;  ret = msdos_rmdir (dir,data.dos_dirent.d_name&n;&t;  ,data.dos_dirent.d_reclen);&n;&t;*/
 id|ret
 op_assign
 id|msdos_rmdir
+c_func
 (paren
 id|dir
 comma
-id|data.dos_dirent.d_name
-comma
-id|data.dos_dirent.d_reclen
+id|dentry
 )paren
 suffix:semicolon
 )brace
@@ -773,7 +799,7 @@ op_eq
 id|UMSDOS_STAT_DOS
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_STAT_DOS&n;&t;&t;&t;&t;&t;The dos_dirent field of the struct umsdos_ioctl is&n;&t;&t;&t;&t;&t;used to execute a stat operation in the DOS directory.&n;&t;&t;&t;&t;&t;The d_name and d_reclen fields are used.&n;&n;&t;&t;&t;&t;&t;The following field of umsdos_ioctl.stat are filled.&n;&n;&t;&t;&t;&t;&t;st_ino,st_mode,st_size,st_atime,st_mtime,st_ctime,&n;&t;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_STAT_DOS&n;&t;  The dos_dirent field of the struct umsdos_ioctl is&n;&t;  used to execute a stat operation in the DOS directory.&n;&t;  The d_name and d_reclen fields are used.&n;&t;  &n;&t;  The following field of umsdos_ioctl.stat are filled.&n;&t;  &n;&t;  st_ino,st_mode,st_size,st_atime,st_mtime,st_ctime,&n;&t;  Return 0 if success.&n;       */
 r_struct
 id|inode
 op_star
@@ -781,7 +807,7 @@ id|inode
 suffix:semicolon
 id|ret
 op_assign
-id|umsdos_real_lookup
+id|compat_umsdos_real_lookup
 (paren
 id|dir
 comma
@@ -855,7 +881,7 @@ op_eq
 id|UMSDOS_DOS_SETUP
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_DOS_SETUP&n;&t;&t;&t;&t;&t;The UMSDOS_DOS_SETUP ioctl allow changing the&n;&t;&t;&t;&t;&t;default permission of the MsDOS file system driver&n;&t;&t;&t;&t;&t;on the fly. The MsDOS driver apply global permission&n;&t;&t;&t;&t;&t;to every file and directory. Normally these permissions&n;&t;&t;&t;&t;&t;are controlled by a mount option. This is not&n;&t;&t;&t;&t;&t;available for root partition, so a special utility&n;&t;&t;&t;&t;&t;(umssetup) is provided to do this, normally in&n;&t;&t;&t;&t;&t;/etc/rc.local.&n;&n;&t;&t;&t;&t;&t;Be aware that this apply ONLY to MsDOS directory&n;&t;&t;&t;&t;&t;(those without EMD --linux-.---). Umsdos directory&n;&t;&t;&t;&t;&t;have independent (standard) permission for each&n;&t;&t;&t;&t;&t;and every file.&n;&n;&t;&t;&t;&t;&t;The field umsdos_dirent provide the information needed.&n;&t;&t;&t;&t;&t;umsdos_dirent.uid and gid sets the owner and group.&n;&t;&t;&t;&t;&t;umsdos_dirent.mode set the permissions flags.&n;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: ioctl / UMSDOS_DOS_SETUP&n;&t; The UMSDOS_DOS_SETUP ioctl allow changing the&n;&t; default permission of the MsDOS file system driver&n;&t; on the fly. The MsDOS driver apply global permission&n;&t; to every file and directory. Normally these permissions&n;&t; are controlled by a mount option. This is not&n;&t; available for root partition, so a special utility&n;&t; (umssetup) is provided to do this, normally in&n;&t; /etc/rc.local.&n;&t; &n;&t; Be aware that this apply ONLY to MsDOS directory&n;&t; (those without EMD --linux-.---). Umsdos directory&n;&t; have independent (standard) permission for each&n;&t; and every file.&n;&t; &n;&t; The field umsdos_dirent provide the information needed.&n;&t; umsdos_dirent.uid and gid sets the owner and group.&n;&t; umsdos_dirent.mode set the permissions flags.&n;      */
 id|dir-&gt;i_sb-&gt;u.msdos_sb.options.fs_uid
 op_assign
 id|data.umsdos_dirent.uid
@@ -875,7 +901,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|PRINTK
+id|Printk
 (paren
 (paren
 l_string|&quot;ioctl return %d&bslash;n&quot;

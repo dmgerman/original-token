@@ -151,10 +151,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|resched_needed
-c_func
-(paren
-)paren
+id|need_resched
 )paren
 macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
 multiline_comment|/* block out HSYNC on the atari (falcon) */
@@ -346,16 +343,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Free current thread data structures etc..&n; */
-DECL|function|exit_thread
-r_void
-id|exit_thread
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
 DECL|function|flush_thread
 r_void
 id|flush_thread
@@ -364,6 +351,12 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|zero
+op_assign
+l_int|0
+suffix:semicolon
 id|set_fs
 c_func
 (paren
@@ -372,7 +365,22 @@ id|USER_DS
 suffix:semicolon
 id|current-&gt;tss.fs
 op_assign
-id|USER_DS
+id|__USER_DS
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;.chip 68k/68881&bslash;n&bslash;t&quot;
+l_string|&quot;frestore %0@&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+op_amp
+id|zero
+)paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * &quot;m68k_fork()&quot;.. By the time we get here, the&n; * non-volatile registers have also been saved on the&n; * stack. We do some ugly pointer stuff here.. (see&n; * also copy_thread)&n; */
@@ -490,18 +498,6 @@ suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-)brace
-DECL|function|release_thread
-r_void
-id|release_thread
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|dead_task
-)paren
-(brace
 )brace
 DECL|function|copy_thread
 r_int
@@ -659,6 +655,8 @@ id|get_fs
 c_func
 (paren
 )paren
+dot
+id|seg
 suffix:semicolon
 multiline_comment|/* Copy the current fpu state */
 id|asm
@@ -681,26 +679,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
 id|CPU_IS_060
-op_logical_and
+ques
+c_cond
 id|p-&gt;tss.fpstate
 (braket
 l_int|0
 )braket
-)paren
-op_logical_or
-(paren
-id|CPU_IS_060
-op_logical_and
+suffix:colon
 id|p-&gt;tss.fpstate
 (braket
 l_int|2
 )braket
 )paren
-)paren
-(brace
 id|asm
 r_volatile
 (paren
@@ -727,7 +719,6 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Restore the state in case the fpu was busy */
 id|asm
 r_volatile
@@ -790,32 +781,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
 id|CPU_IS_060
-op_logical_and
+ques
+c_cond
 op_logical_neg
 id|fpustate
 (braket
 l_int|0
 )braket
-)paren
-op_logical_or
-(paren
-id|CPU_IS_060
-op_logical_and
+suffix:colon
 op_logical_neg
 id|fpustate
 (braket
 l_int|2
 )braket
 )paren
-)paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|asm
 r_volatile
 (paren

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/tty_io.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was an array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; *&n; * New TIOCLINUX variants added.&n; *&t;-- mj@k332.feld.cvut.cz, 19-Nov-95&n; * &n; * Restrict vt switching via ioctl()&n; *      -- grif@cs.ucr.edu, 5-Dec-95&n; *&n; * Move console and virtual terminal code to more appropriate files,&n; * implement CONFIG_VT and generalize console device interface.&n; *&t;-- Marko Kohtala &lt;Marko.Kohtala@hut.fi&gt;, March 97&n; *&n; * Rewrote init_dev and release_dev to eliminate races.&n; *&t;-- Bill Hawes &lt;whawes@star.net&gt;, June 97&n; */
+multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; *&n; * Modified by Theodore Ts&squot;o, 9/14/92, to dynamically allocate the&n; * tty_struct and tty_queue structures.  Previously there was an array&n; * of 256 tty_struct&squot;s which was statically allocated, and the&n; * tty_queue structures were allocated at boot time.  Both are now&n; * dynamically allocated only when the tty is open.&n; *&n; * Also restructured routines so that there is more of a separation&n; * between the high-level tty routines (tty_io.c and tty_ioctl.c) and&n; * the low-level tty routines (serial.c, pty.c, console.c).  This&n; * makes for cleaner and more compact code.  -TYT, 9/17/92 &n; *&n; * Modified by Fred N. van Kempen, 01/29/93, to add line disciplines&n; * which can be dynamically activated and de-activated by the line&n; * discipline handling modules (like SLIP).&n; *&n; * NOTE: pay no attention to the line discipline code (yet); its&n; * interface is still subject to change in this version...&n; * -- TYT, 1/31/92&n; *&n; * Added functionality to the OPOST tty handling.  No delays, but all&n; * other bits should be there.&n; *&t;-- Nick Holloway &lt;alfie@dcs.warwick.ac.uk&gt;, 27th May 1993.&n; *&n; * Rewrote canonical mode and added more termios flags.&n; * &t;-- julian@uhunix.uhcc.hawaii.edu (J. Cowley), 13Jan94&n; *&n; * Reorganized FASYNC support so mouse code can share it.&n; *&t;-- ctm@ardi.com, 9Sep95&n; *&n; * New TIOCLINUX variants added.&n; *&t;-- mj@k332.feld.cvut.cz, 19-Nov-95&n; * &n; * Restrict vt switching via ioctl()&n; *      -- grif@cs.ucr.edu, 5-Dec-95&n; *&n; * Move console and virtual terminal code to more appropriate files,&n; * implement CONFIG_VT and generalize console device interface.&n; *&t;-- Marko Kohtala &lt;Marko.Kohtala@hut.fi&gt;, March 97&n; *&n; * Rewrote init_dev and release_dev to eliminate races.&n; *&t;-- Bill Hawes &lt;whawes@star.net&gt;, June 97&n; *&n; * Added support for a Unix98-style ptmx device.&n; *      -- C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, 14-Jan-1998&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -37,6 +37,8 @@ DECL|macro|TTY_DEV
 mdefine_line|#define TTY_DEV MKDEV(TTYAUX_MAJOR,0)
 DECL|macro|SYSCONS_DEV
 mdefine_line|#define SYSCONS_DEV MKDEV(TTYAUX_MAJOR,1)
+DECL|macro|PTMX_DEV
+mdefine_line|#define PTMX_DEV MKDEV(TTYAUX_MAJOR,2)
 DECL|macro|TTY_DEBUG_HANGUP
 macro_line|#undef TTY_DEBUG_HANGUP
 DECL|macro|TTY_PARANOIA_CHECK
@@ -4612,9 +4614,6 @@ op_star
 id|tty
 suffix:semicolon
 r_int
-id|minor
-suffix:semicolon
-r_int
 id|noctty
 comma
 id|retval
@@ -4756,14 +4755,141 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|device
+op_eq
+id|PTMX_DEV
+)paren
+(brace
+multiline_comment|/* find a free pty. */
+r_struct
+id|tty_driver
+op_star
+id|driver
+op_assign
+id|tty_drivers
+suffix:semicolon
+r_int
+id|minor
+suffix:semicolon
+multiline_comment|/* find the pty driver */
+r_for
+c_loop
+(paren
+id|driver
+op_assign
+id|tty_drivers
+suffix:semicolon
+id|driver
+suffix:semicolon
+id|driver
+op_assign
+id|driver-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|driver-&gt;major
+op_eq
+id|PTY_MASTER_MAJOR
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|driver
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+multiline_comment|/* find a minor device that is not in use. */
+r_for
+c_loop
+(paren
 id|minor
 op_assign
-id|MINOR
+id|driver-&gt;minor_start
+suffix:semicolon
+id|minor
+OL
+id|driver-&gt;minor_start
+op_plus
+id|driver-&gt;num
+suffix:semicolon
+id|minor
+op_increment
+)paren
+(brace
+id|device
+op_assign
+id|MKDEV
+c_func
+(paren
+id|driver-&gt;major
+comma
+id|minor
+)paren
+suffix:semicolon
+id|retval
+op_assign
+id|init_dev
 c_func
 (paren
 id|device
+comma
+op_amp
+id|tty
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* success! */
+)brace
+r_if
+c_cond
+(paren
+id|minor
+op_eq
+id|driver-&gt;minor_start
+op_plus
+id|driver-&gt;num
+)paren
+multiline_comment|/* no success */
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+multiline_comment|/* no free ptys */
+id|set_bit
+c_func
+(paren
+id|TTY_PTY_LOCK
+comma
+op_amp
+id|tty-&gt;flags
+)paren
+suffix:semicolon
+multiline_comment|/* LOCK THE SLAVE */
+id|noctty
+op_assign
+l_int|1
+suffix:semicolon
+r_goto
+id|init_dev_done
+suffix:semicolon
+)brace
 id|retval
 op_assign
 id|init_dev
@@ -4784,6 +4910,8 @@ r_return
 id|retval
 suffix:semicolon
 multiline_comment|/* N.B. this error exit may leave filp-&gt;f_flags with O_NONBLOCK set */
+id|init_dev_done
+suffix:colon
 id|filp-&gt;private_data
 op_assign
 id|tty
@@ -8029,7 +8157,10 @@ comma
 id|dev_console_driver
 comma
 DECL|variable|dev_syscons_driver
+DECL|variable|dev_ptmx_driver
 id|dev_syscons_driver
+comma
+id|dev_ptmx_driver
 suffix:semicolon
 multiline_comment|/*&n; * Ok, now we can initialize the rest of the tty devices and can count&n; * on memory allocations, interrupts etc..&n; */
 DECL|function|__initfunc
@@ -8175,6 +8306,60 @@ id|panic
 c_func
 (paren
 l_string|&quot;Couldn&squot;t register /dev/console driver&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_ptmx_driver
+op_assign
+id|dev_tty_driver
+suffix:semicolon
+id|dev_ptmx_driver.driver_name
+op_assign
+l_string|&quot;/dev/ptmx&quot;
+suffix:semicolon
+id|dev_ptmx_driver.name
+op_assign
+id|dev_ptmx_driver.driver_name
+op_plus
+l_int|5
+suffix:semicolon
+id|dev_ptmx_driver.major
+op_assign
+id|MAJOR
+c_func
+(paren
+id|PTMX_DEV
+)paren
+suffix:semicolon
+id|dev_ptmx_driver.minor_start
+op_assign
+id|MINOR
+c_func
+(paren
+id|PTMX_DEV
+)paren
+suffix:semicolon
+id|dev_ptmx_driver.type
+op_assign
+id|TTY_DRIVER_TYPE_SYSTEM
+suffix:semicolon
+id|dev_ptmx_driver.subtype
+op_assign
+id|SYSTEM_TYPE_SYSPTMX
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty_register_driver
+c_func
+(paren
+op_amp
+id|dev_ptmx_driver
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Couldn&squot;t register /dev/ptmx driver&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_VT

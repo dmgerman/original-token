@@ -30,6 +30,13 @@ c_func
 id|tq_disk
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Protect the request list against multiple users..&n; */
+DECL|variable|current_lock
+id|spinlock_t
+id|current_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; * used to wait on when there are no free requests&n; */
 DECL|variable|wait_for_request
 r_struct

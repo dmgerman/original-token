@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
+macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
@@ -1234,6 +1235,7 @@ op_logical_and
 id|len
 )paren
 (brace
+multiline_comment|/*&n;&t;       * No need to page align here since it is done by&n;&t;       * virt_to_phys_040().&n;&t;       */
 id|addr
 op_add_assign
 id|PAGE_SIZE
@@ -1732,9 +1734,14 @@ op_logical_and
 id|len
 )paren
 (brace
+multiline_comment|/*&n;&t;       * We just want to jump to the first cache line&n;&t;       * in the next page.&n;&t;       */
 id|addr
 op_add_assign
 id|PAGE_SIZE
+suffix:semicolon
+id|addr
+op_and_assign
+id|PAGE_MASK
 suffix:semicolon
 id|i
 op_assign
@@ -2105,7 +2112,7 @@ l_int|0x400
 suffix:semicolon
 id|len
 op_rshift_assign
-l_int|4
+l_int|2
 suffix:semicolon
 r_while
 c_loop
@@ -2135,7 +2142,7 @@ id|addr
 suffix:semicolon
 id|addr
 op_add_assign
-l_int|16
+l_int|4
 suffix:semicolon
 )brace
 )brace
@@ -2250,6 +2257,30 @@ c_func
 suffix:semicolon
 r_return
 id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Old cruft&n; */
+DECL|function|sys_pause
+id|asmlinkage
+r_int
+id|sys_pause
+c_func
+(paren
+r_void
+)paren
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ERESTARTNOHAND
 suffix:semicolon
 )brace
 eof

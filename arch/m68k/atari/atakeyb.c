@@ -19,10 +19,6 @@ macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_int
-id|ovsc_switchmode
-suffix:semicolon
-r_extern
-r_int
 r_char
 id|mach_keyboard_type
 suffix:semicolon
@@ -3046,55 +3042,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef KEYB_WRITE_INTERRUPT
-r_if
-c_cond
-(paren
-id|acia_stat
-op_amp
-id|ACIA_TDRE
-)paren
-multiline_comment|/* transmit of character is finished */
-(brace
-r_if
-c_cond
-(paren
-id|kb_state.buf
-)paren
-(brace
-id|acia.key_data
-op_assign
-op_star
-id|kb_state.buf
-op_increment
-suffix:semicolon
-id|kb_state.len
-op_decrement
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kb_state.len
-op_eq
-l_int|0
-)paren
-(brace
-id|kb_state.buf
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kb_state.kernel_mode
-)paren
-multiline_comment|/* unblock something */
-suffix:semicolon
-)brace
-)brace
-)brace
-macro_line|#endif
 macro_line|#if 0
 r_if
 c_cond
@@ -3130,73 +3077,6 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-macro_line|#ifdef KEYB_WRITE_INTERRUPT
-DECL|function|ikbd_write
-r_void
-id|ikbd_write
-c_func
-(paren
-r_const
-r_char
-op_star
-id|str
-comma
-r_int
-id|len
-)paren
-(brace
-id|u_char
-id|acia_stat
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kb_stat.buf
-)paren
-multiline_comment|/* wait */
-suffix:semicolon
-id|acia_stat
-op_assign
-id|acia.key_ctrl
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|acia_stat
-op_amp
-id|ACIA_TDRE
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|len
-op_ne
-l_int|1
-)paren
-(brace
-id|kb_stat.buf
-op_assign
-id|str
-op_plus
-l_int|1
-suffix:semicolon
-id|kb_stat.len
-op_assign
-id|len
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-id|acia.key_data
-op_assign
-op_star
-id|str
-suffix:semicolon
-multiline_comment|/* poll */
-)brace
-)brace
-macro_line|#else
 multiline_comment|/*&n; * I write to the keyboard without using interrupts, I poll instead.&n; * This takes for the maximum length string allowed (7) at 7812.5 baud&n; * 8 data 1 start 1 stop bit: 9.0 ms&n; * If this takes too long for normal operation, interrupt driven writing&n; * is the solution. (I made a feeble attempt in that direction but I&n; * kept it simple for now.)&n; */
 DECL|function|ikbd_write
 r_void
@@ -3266,7 +3146,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif
 multiline_comment|/* Reset (without touching the clock) */
 DECL|function|ikbd_reset
 r_void
@@ -4298,11 +4177,22 @@ id|IRQ_MFP_ACIA
 suffix:semicolon
 r_do
 (brace
+multiline_comment|/* reset IKBD ACIA */
 id|acia.key_ctrl
 op_assign
 id|ACIA_RESET
+op_or
+(paren
+id|atari_switches
+op_amp
+id|ATARI_SWITCH_IKBD
+)paren
+ques
+c_cond
+id|ACIA_RHTID
+suffix:colon
+l_int|0
 suffix:semicolon
-multiline_comment|/* reset ACIA */
 (paren
 r_void
 )paren
@@ -4313,11 +4203,22 @@ r_void
 )paren
 id|acia.key_data
 suffix:semicolon
+multiline_comment|/* reset MIDI ACIA */
 id|acia.mid_ctrl
 op_assign
 id|ACIA_RESET
+op_or
+(paren
+id|atari_switches
+op_amp
+id|ATARI_SWITCH_MIDI
+)paren
+ques
+c_cond
+id|ACIA_RHTID
+suffix:colon
+l_int|0
 suffix:semicolon
-multiline_comment|/* reset other ACIA */
 (paren
 r_void
 )paren
@@ -4331,81 +4232,46 @@ suffix:semicolon
 multiline_comment|/* divide 500kHz by 64 gives 7812.5 baud */
 multiline_comment|/* 8 data no parity 1 start 1 stop bit */
 multiline_comment|/* receive interrupt enabled */
-macro_line|#ifdef KEYB_WRITE_INTERRUPT
-multiline_comment|/* RTS low, transmit interrupt enabled */
-r_if
-c_cond
-(paren
-id|ovsc_switchmode
-op_eq
-l_int|1
-)paren
+multiline_comment|/* RTS low (except if switch selected), transmit interrupt disabled */
 id|acia.key_ctrl
 op_assign
 (paren
 id|ACIA_DIV64
 op_or
 id|ACIA_D8N1S
-op_or
-id|ACIA_RHTIE
 op_or
 id|ACIA_RIE
 )paren
-suffix:semicolon
-multiline_comment|/* switch on OverScan via keyboard ACIA */
-r_else
-id|acia.key_ctrl
-op_assign
+op_or
 (paren
-id|ACIA_DIV64
-op_or
-id|ACIA_D8N1S
-op_or
-id|ACIA_RLTIE
-op_or
-id|ACIA_RIE
+(paren
+id|atari_switches
+op_amp
+id|ATARI_SWITCH_IKBD
 )paren
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* RTS low, transmit interrupt disabled */
-r_if
+ques
 c_cond
-(paren
-id|ovsc_switchmode
-op_eq
-l_int|1
-)paren
-id|acia.key_ctrl
-op_assign
-(paren
-id|ACIA_DIV64
-op_or
-id|ACIA_D8N1S
-op_or
 id|ACIA_RHTID
-op_or
-id|ACIA_RIE
-)paren
-suffix:semicolon
-r_else
-id|acia.key_ctrl
-op_assign
-(paren
-id|ACIA_DIV64
-op_or
-id|ACIA_D8N1S
-op_or
+suffix:colon
 id|ACIA_RLTID
-op_or
-id|ACIA_RIE
 )paren
 suffix:semicolon
-macro_line|#endif
 id|acia.mid_ctrl
 op_assign
 id|ACIA_DIV16
 op_or
 id|ACIA_D8N1S
+op_or
+(paren
+id|atari_switches
+op_amp
+id|ATARI_SWITCH_MIDI
+)paren
+ques
+c_cond
+id|ACIA_RHTID
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* make sure the interrupt line is up */

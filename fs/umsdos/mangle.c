@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
-multiline_comment|/*&n;&t;Complete the mangling of the MSDOS fake name&n;&t;based on the position of the entry in the EMD file.&n;&n;&t;Simply complete the job of umsdos_parse; fill the extension.&n;&n;&t;Beware that info-&gt;f_pos must be set.&n;*/
+multiline_comment|/*&n;  Complete the mangling of the MSDOS fake name&n;  based on the position of the entry in the EMD file.&n;&n;  Simply complete the job of umsdos_parse; fill the extension.&n;&n;  Beware that info-&gt;f_pos must be set.&n;*/
 DECL|function|umsdos_manglename
 r_void
 id|umsdos_manglename
@@ -20,7 +20,7 @@ c_cond
 id|info-&gt;msdos_reject
 )paren
 (brace
-multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling&n;&t;&t;&t;Each non MSDOS conforming file has a special extension&n;&t;&t;&t;build from the entry position in the EMD file.&n;&n;&t;&t;&t;This number is then transform in a base 32 number, where&n;&t;&t;&t;each digit is expressed like hexadecimal number, using&n;&t;&t;&t;digit and letter, except it uses 22 letters from &squot;a&squot; to &squot;v&squot;.&n;&t;&t;&t;The number 32 comes from 2**5. It is faster to split a binary&n;&t;&t;&t;number using a base which is a power of two. And I was 32&n;&t;&t;&t;when I started this project. Pick your answer :-) .&n;&n;&t;&t;&t;If the result is &squot;0&squot;, it is replace with &squot;_&squot;, simply&n;&t;&t;&t;to make it odd.&n;&n;&t;&t;&t;This is true for the first two character of the extension.&n;&t;&t;&t;The last one is taken from a list of odd character, which&n;&t;&t;&t;are:&n;&n;&t;&t;&t;&t;{ } ( ) ! ` ^ &amp; @&n;&n;&t;&t;&t;With this scheme, we can produce 9216 ( 9* 32 * 32)&n;&t;&t;&t;different extensions which should not clash with any useful&n;&t;&t;&t;extension already popular or meaningful. Since most directory&n;&t;&t;&t;have much less than 32 * 32 files in it, the first character&n;&t;&t;&t;of the extension of any mangle name will be {.&n;&n;&t;&t;&t;Here are the reason to do this (this kind of mangling).&n;&n;&t;&t;&t;-The mangling is deterministic. Just by the extension, we&n;&t;&t;&t; are able to locate the entry in the EMD file.&n;&n;&t;&t;&t;-By keeping to beginning of the file name almost unchanged,&n;&t;&t;&t; we are helping the MSDOS user.&n;&n;&t;&t;&t;-The mangling produces names not too ugly, so an msdos user&n;&t;&t;&t; may live with it (remember it, type it, etc...).&n;&n;&t;&t;&t;-The mangling produces names ugly enough so no one will&n;&t;&t;&t; ever think of using such a name in real life. This is not&n;&t;&t;&t; fool proof. I don&squot;t think there is a total solution to this.&n;&t;&t;*/
+multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling&n;       Each non MSDOS conforming file has a special extension&n;       build from the entry position in the EMD file.&n;&n;       This number is then transform in a base 32 number, where&n;       each digit is expressed like hexadecimal number, using&n;       digit and letter, except it uses 22 letters from &squot;a&squot; to &squot;v&squot;.&n;       The number 32 comes from 2**5. It is faster to split a binary&n;       number using a base which is a power of two. And I was 32&n;       when I started this project. Pick your answer :-) .&n;&n;       If the result is &squot;0&squot;, it is replace with &squot;_&squot;, simply&n;       to make it odd.&n;&n;       This is true for the first two character of the extension.&n;       The last one is taken from a list of odd character, which&n;       are:&n;&n;       { } ( ) ! ` ^ &amp; @&n;       &n;       With this scheme, we can produce 9216 ( 9* 32 * 32)&n;       different extensions which should not clash with any useful&n;       extension already popular or meaningful. Since most directory&n;       have much less than 32 * 32 files in it, the first character&n;       of the extension of any mangle name will be {.&n;       &n;       Here are the reason to do this (this kind of mangling).&n;       &n;       -The mangling is deterministic. Just by the extension, we&n;       are able to locate the entry in the EMD file.&n;&n;       -By keeping to beginning of the file name almost unchanged,&n;       we are helping the MSDOS user.&n;       &n;       -The mangling produces names not too ugly, so an msdos user&n;       may live with it (remember it, type it, etc...).&n;       &n;       -The mangling produces names ugly enough so no one will&n;       ever think of using such a name in real life. This is not&n;       fool proof. I don&squot;t think there is a total solution to this.&n;    */
 r_union
 (brace
 r_int
@@ -149,7 +149,7 @@ suffix:semicolon
 multiline_comment|/* Avoid mangling twice */
 )brace
 )brace
-multiline_comment|/*&n;&t;Evaluate the record size needed to store of name of len character.&n;&t;The value returned is a multiple of UMSDOS_REC_SIZE.&n;*/
+multiline_comment|/*&n;  Evaluate the record size needed to store of name of len character.&n;  The value returned is a multiple of UMSDOS_REC_SIZE.&n;*/
 DECL|function|umsdos_evalrecsize
 r_int
 id|umsdos_evalrecsize
@@ -193,7 +193,7 @@ id|nbrec
 op_star
 id|UMSDOS_REC_SIZE
 suffix:semicolon
-multiline_comment|/*&n;&t;GLU&t;This should be inlined or something to speed it up to the max.&n;&t;GLU&t;nbrec is absolutely not needed to return the value.&n;&t;*/
+multiline_comment|/*&n;    GLU&t;This should be inlined or something to speed it up to the max.&n;    GLU&t;nbrec is absolutely not needed to return the value.&n;  */
 )brace
 macro_line|#ifdef TEST
 DECL|function|umsdos_evalrecsize_old
@@ -255,7 +255,7 @@ id|UMSDOS_REC_SIZE
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t;Fill the struct info with the full and msdos name of a file&n;&t;Return 0 if all is ok, a negative error code otherwise.&n;*/
+multiline_comment|/*&n;  Fill the struct info with the full and msdos name of a file&n;  Return 0 if all is ok, a negative error code otherwise.&n;*/
 DECL|function|umsdos_parse
 r_int
 id|umsdos_parse
@@ -280,7 +280,7 @@ op_assign
 op_minus
 id|ENAMETOOLONG
 suffix:semicolon
-multiline_comment|/* #Specification: file name / too long&n;&t;&t;If a file name exceed UMSDOS maxima, the file name is silently&n;&t;&t;truncated. This makes it conformant with the other file system&n;&t;&t;of Linux (minix and ext2 at least).&n;&t;*/
+multiline_comment|/* #Specification: file name / too long&n;     If a file name exceed UMSDOS maxima, the file name is silently&n;     truncated. This makes it conformant with the other file system&n;     of Linux (minix and ext2 at least).&n;  */
 r_if
 c_cond
 (paren
@@ -301,7 +301,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* First place we saw a . in fname */
-multiline_comment|/* #Specification: file name / non MSDOS conforming / base length 0&n;&t;&t;&t;file name beginning with a period &squot;.&squot; are invalid for MsDOS.&n;&t;&t;&t;It needs absolutely a base name. So the file name is mangled&n;&t;&t;*/
+multiline_comment|/* #Specification: file name / non MSDOS conforming / base length 0&n;       file name beginning with a period &squot;.&squot; are invalid for MsDOS.&n;       It needs absolutely a base name. So the file name is mangled&n;    */
 r_int
 id|ivldchar
 op_assign
@@ -321,7 +321,7 @@ suffix:semicolon
 r_int
 id|base_len
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;cardinal_per_size tells if there exist at least one&n;&t;&t;&t;DOS pseudo devices on length n. See the test below.&n;&t;&t;*/
+multiline_comment|/*&n;      cardinal_per_size tells if there exist at least one&n;      DOS pseudo devices on length n. See the test below.&n;    */
 r_static
 r_const
 r_char
@@ -332,7 +332,7 @@ l_int|9
 op_assign
 initialization_block
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;lkp translate all character to acceptable character (for DOS).&n;&t;&t;&t;When lkp[n] == n, it means also it is an acceptable one.&n;&t;&t;&t;So it serve both as a flag and as a translator.&n;&t;&t;*/
+multiline_comment|/*&n;      lkp translate all character to acceptable character (for DOS).&n;      When lkp[n] == n, it means also it is an acceptable one.&n;      So it serve both as a flag and as a translator.&n;    */
 r_static
 r_char
 id|lkp
@@ -353,7 +353,7 @@ op_logical_neg
 id|is_init
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;Initialisation of the array is easier and less error prone&n;&t;&t;&t;&t;like this.&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;Initialisation of the array is easier and less error prone&n;&t;like this.&n;      */
 r_int
 id|i
 suffix:semicolon
@@ -524,7 +524,7 @@ op_assign
 l_char|&squot;#&squot;
 suffix:semicolon
 )brace
-multiline_comment|/*&t;GLU&n;&t;&t;&t;file name which are longer than 8+&squot;.&squot;+3 are invalid for MsDOS.&n;&t;&t;&t;So the file name is to be mangled no more test needed.&n;&t;&t;&t;This Speed Up for long and very long name.&n;&t;&t;&t;The position of the last point is no more necessary anyway.&n;&t;&t;*/
+multiline_comment|/*&t;GLU&n;&t;file name which are longer than 8+&squot;.&squot;+3 are invalid for MsDOS.&n;&t;So the file name is to be mangled no more test needed.&n;&t;This Speed Up for long and very long name.&n;&t;The position of the last point is no more necessary anyway.&n;    */
 r_if
 c_cond
 (paren
@@ -650,7 +650,7 @@ op_eq
 l_int|1
 )paren
 (brace
-multiline_comment|/* #Specification: file name / non MSDOS conforming / last char == .&n;&t;&t;&t;&t;&t;&t;&t;&t;If the last character of a file name is&n;&t;&t;&t;&t;&t;&t;&t;&t;a period, mangling is applied. MsDOS do&n;&t;&t;&t;&t;&t;&t;&t;&t;not support those file name.&n;&t;&t;&t;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: file name / non MSDOS conforming / last char == .&n;&t;&t; If the last character of a file name is&n;&t;&t; a period, mangling is applied. MsDOS do&n;&t;&t; not support those file name.&n;&t;      */
 id|ivldchar
 op_assign
 l_int|1
@@ -667,7 +667,7 @@ op_eq
 l_int|4
 )paren
 (brace
-multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling clash&n;&t;&t;&t;&t;&t;&t;&t;&t;To avoid clash with&t;the umsdos mangling, any file&n;&t;&t;&t;&t;&t;&t;&t;&t;with a special character as the first character&n;&t;&t;&t;&t;&t;&t;&t;&t;of the extension will be mangled. This solve the&n;&t;&t;&t;&t;&t;&t;&t;&t;following problem:&n;&n;&t;&t;&t;&t;&t;&t;&t;&t;#&n;&t;&t;&t;&t;&t;&t;&t;&t;touch FILE&n;&t;&t;&t;&t;&t;&t;&t;&t;# FILE is invalid for DOS, so mangling is applied&n;&t;&t;&t;&t;&t;&t;&t;&t;# file.{_1 is created in the DOS directory&n;&t;&t;&t;&t;&t;&t;&t;&t;touch file.{_1&n;&t;&t;&t;&t;&t;&t;&t;&t;# To UMSDOS file point to a single DOS entry.&n;&t;&t;&t;&t;&t;&t;&t;&t;# So file.{_1 has to be mangled.&n;&t;&t;&t;&t;&t;&t;&t;&t;#&n;&t;&t;&t;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling clash&n;&t;&t; To avoid clash with&t;the umsdos mangling, any file&n;&t;&t; with a special character as the first character&n;&t;&t; of the extension will be mangled. This solve the&n;&t;&t; following problem:&n;&t;&t; &n;&t;&t; #&n;&t;&t; touch FILE&n;&t;&t; # FILE is invalid for DOS, so mangling is applied&n;&t;&t; # file.{_1 is created in the DOS directory&n;&t;&t; touch file.{_1&n;&t;&t; # To UMSDOS file point to a single DOS entry.&n;&t;&t; # So file.{_1 has to be mangled.&n;&t;&t; #&n;&t;      */
 r_static
 r_char
 id|special
@@ -776,8 +776,8 @@ l_int|0
 )paren
 )paren
 (brace
-multiline_comment|/* #Specification: file name / --linux-.---&n;&t;&t;&t;&t;The name of the EMD file --linux-.--- is map to a mangled&n;&t;&t;&t;&t;name. So UMSDOS does not restrict its use.&n;&t;&t;&t;*/
-multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling&n;&t;&t;&t;&t;Non MSDOS conforming file name must use some alias to fit&n;&t;&t;&t;&t;in the MSDOS name space.&n;&n;&t;&t;&t;&t;The strategy is simple. The name is simply truncated to&n;&t;&t;&t;&t;8 char. points are replace with underscore and a&n;&t;&t;&t;&t;number is given as an extension. This number correspond&n;&t;&t;&t;&t;to the entry number in the EMD file. The EMD file&n;&t;&t;&t;&t;only need to carry the real name.&n;&n;&t;&t;&t;&t;Upper case is also convert to lower case.&n;&t;&t;&t;&t;Control character are converted to #.&n;&t;&t;&t;&t;Space are converted to #.&n;&t;&t;&t;&t;The following character are also converted to #.&n;&t;&t;&t;&t;#&n;&t;&t;&t;&t;&t;&quot; * + , / : ; &lt; = &gt; ? [ &bslash; ] | ~&n;&t;&t;&t;&t;#&n;&n;&t;&t;&t;&t;Sometime, the problem is not in MsDOS itself but in&n;&t;&t;&t;&t;command.com.&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: file name / --linux-.---&n;&t; The name of the EMD file --linux-.--- is map to a mangled&n;&t; name. So UMSDOS does not restrict its use.&n;      */
+multiline_comment|/* #Specification: file name / non MSDOS conforming / mangling&n;&t; Non MSDOS conforming file name must use some alias to fit&n;&t; in the MSDOS name space.&n;&t; &n;&t; The strategy is simple. The name is simply truncated to&n;&t; 8 char. points are replace with underscore and a&n;&t; number is given as an extension. This number correspond&n;&t; to the entry number in the EMD file. The EMD file&n;&t; only need to carry the real name.&n;&t; &n;&t; Upper case is also convert to lower case.&n;&t; Control character are converted to #.&n;&t; Space are converted to #.&n;&t; The following character are also converted to #.&n;&t; #&n;&t; &quot; * + , / : ; &lt; = &gt; ? [ &bslash; ] | ~&n;&t; #&n;&t; &n;&t; Sometime, the problem is not in MsDOS itself but in&n;&t; command.com.&n;      */
 r_int
 id|i
 suffix:semicolon
@@ -802,7 +802,7 @@ l_int|8
 suffix:colon
 id|msdos_len
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;There is no &squot;.&squot; any more so we know for a fact that&n;&t;&t;&t;&t;the base length is the length.&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;There is no &squot;.&squot; any more so we know for a fact that&n;&t;the base length is the length.&n;      */
 id|memcpy
 (paren
 id|info-&gt;fake.fname
@@ -854,7 +854,7 @@ id|info-&gt;msdos_reject
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;The numeric extension is added only when we know&n;&t;&t;&t;&t;the position in the EMD file, in umsdos_newentry(),&n;&t;&t;&t;&t;umsdos_delentry(), and umsdos_findentry().&n;&t;&t;&t;&t;See umsdos_manglename().&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;The numeric extension is added only when we know&n;&t;the position in the EMD file, in umsdos_newentry(),&n;&t;umsdos_delentry(), and umsdos_findentry().&n;&t;See umsdos_manglename().&n;      */
 )brace
 r_else
 (brace
@@ -900,7 +900,7 @@ id|base_len
 )braket
 )paren
 (brace
-multiline_comment|/* #Specification: file name / MSDOS devices / mangling&n;&t;&t;&t;&t;To avoid unreachable file from MsDOS, any MsDOS conforming&n;&t;&t;&t;&t;file with a basename equal to one of the MsDOS pseudo&n;&t;&t;&t;&t;devices will be mangled.&n;&n;&t;&t;&t;&t;If a file such as &quot;prn&quot; was created, it would be unreachable&n;&t;&t;&t;&t;under MsDOS because prn is assumed to be the printer, even&n;&t;&t;&t;&t;if the file does have an extension.&n;&n;&t;&t;&t;&t;Since the extension is unimportant to MsDOS, we must patch&n;&t;&t;&t;&t;the basename also. We simply insert a minus &squot;-&squot;. To avoid&n;&t;&t;&t;&t;conflict with valid file with a minus in front (such as&n;&t;&t;&t;&t;&quot;-prn&quot;), we add an mangled extension like any other&n;&t;&t;&t;&t;mangled file name.&n;&n;&t;&t;&t;&t;Here is the list of DOS pseudo devices:&n;&n;&t;&t;&t;&t;#&n;&t;&t;&t;&t;&t;&quot;prn&quot;,&quot;con&quot;,&quot;aux&quot;,&quot;nul&quot;,&n;&t;&t;&t;&t;&t;&quot;lpt1&quot;,&quot;lpt2&quot;,&quot;lpt3&quot;,&quot;lpt4&quot;,&n;&t;&t;&t;&t;&t;&quot;com1&quot;,&quot;com2&quot;,&quot;com3&quot;,&quot;com4&quot;,&n;&t;&t;&t;&t;&t;&quot;clock$&quot;&n;&t;&t;&t;&t;#&n;&n;&t;&t;&t;&t;and some standard ones for common DOS programs&n;&n;&t;&t;&t;&t;&t;&quot;emmxxxx0&quot;,&quot;xmsxxxx0&quot;,&quot;setverxx&quot;&n;&n;&t;&t;&t;&t;(Thanks to Chris Hall &lt;CAH17@PHOENIX.CAMBRIDGE.AC.UK&gt;&n;&t;&t;&t;&t; for pointing these to me).&n;&n;&t;&t;&t;&t;Is there one missing ?&n;&t;&t;&t;*/
+multiline_comment|/* #Specification: file name / MSDOS devices / mangling&n;&t; To avoid unreachable file from MsDOS, any MsDOS conforming&n;&t; file with a basename equal to one of the MsDOS pseudo&n;&t; devices will be mangled.&n;&t; &n;&t; If a file such as &quot;prn&quot; was created, it would be unreachable&n;&t; under MsDOS because prn is assumed to be the printer, even&n;&t; if the file does have an extension.&n;&t; &n;&t; Since the extension is unimportant to MsDOS, we must patch&n;&t; the basename also. We simply insert a minus &squot;-&squot;. To avoid&n;&t; conflict with valid file with a minus in front (such as&n;&t; &quot;-prn&quot;), we add an mangled extension like any other&n;&t; mangled file name.&n;&t; &n;&t; Here is the list of DOS pseudo devices:&n;&t; &n;&t; #&n;&t; &quot;prn&quot;,&quot;con&quot;,&quot;aux&quot;,&quot;nul&quot;,&n;&t; &quot;lpt1&quot;,&quot;lpt2&quot;,&quot;lpt3&quot;,&quot;lpt4&quot;,&n;&t; &quot;com1&quot;,&quot;com2&quot;,&quot;com3&quot;,&quot;com4&quot;,&n;&t; &quot;clock$&quot;&n;&t; #&n;&t; &n;&t; and some standard ones for common DOS programs&n;&t; &n;&t; &quot;emmxxxx0&quot;,&quot;xmsxxxx0&quot;,&quot;setverxx&quot;&n;&t; &n;&t; (Thanks to Chris Hall &lt;CAH17@PHOENIX.CAMBRIDGE.AC.UK&gt;&n;&t; for pointing these to me).&n;&t; &n;&t; Is there one missing ?&n;      */
 multiline_comment|/* This table must be ordered by length */
 r_static
 r_const
@@ -992,7 +992,7 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 multiline_comment|/* GLU&t;C&squot;est sur on a un 0 a la fin */
-multiline_comment|/*&n;&t;&t;&t;&t;&t;GLU&t;On ne fait cela que si necessaire, on essaye d&squot;etre le&n;&t;&t;&t;&t;&t;GLU&t;simple dans le cas general (le plus frequent).&n;&t;&t;&t;&t;&t;*/
+multiline_comment|/*&n;&t;    GLU&t;On ne fait cela que si necessaire, on essaye d&squot;etre le&n;&t;    GLU&t;simple dans le cas general (le plus frequent).&n;&t;  */
 id|info-&gt;fake.fname
 (braket
 l_int|0
@@ -1066,7 +1066,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;Evaluate how many record are needed to store this entry.&n;&t;*/
+multiline_comment|/*&n;    Evaluate how many record are needed to store this entry.&n;  */
 id|info-&gt;recsize
 op_assign
 id|umsdos_evalrecsize

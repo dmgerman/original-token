@@ -303,7 +303,29 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-multiline_comment|/* Are we prepared to handle this fault?  */
+multiline_comment|/* User mode accesses just cause a SIGSEGV */
+r_if
+c_cond
+(paren
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+(brace
+id|force_sig
+(paren
+id|SIGSEGV
+comma
+id|tsk
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Are we prepared to handle this kernel fault?  */
 r_if
 c_cond
 (paren
@@ -324,19 +346,6 @@ r_struct
 id|pt_regs
 op_star
 id|tregs
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
-comma
-id|current-&gt;comm
-comma
-id|regs-&gt;pc
-comma
-id|fixup
-)paren
 suffix:semicolon
 multiline_comment|/* Create a new four word stack frame, discarding the old&n;&t;&t;   one.  */
 id|regs-&gt;stkadj
@@ -380,28 +389,6 @@ id|regs-&gt;sr
 suffix:semicolon
 r_return
 op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|user_mode
-c_func
-(paren
-id|regs
-)paren
-)paren
-(brace
-multiline_comment|/* User memory access */
-id|force_sig
-(paren
-id|SIGSEGV
-comma
-id|tsk
-)paren
-suffix:semicolon
-r_return
 l_int|1
 suffix:semicolon
 )brace
