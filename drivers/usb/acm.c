@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Abstract Control Model based on Brad Keryan&squot;s USB busmouse driver &n; *&n; * Armin Fuerst 5/8/1999 &lt;armin.please@put.your.email.here.!!!!&gt;&n; *&n; * version 0.8: Fixed endianity bug, some cleanups. I really hate to have&n; * half of driver in form if (...) { info(&quot;x&quot;); return y; }&n; * &t;&t;&t;&t;&t;&t;Pavel Machek &lt;pavel@suse.cz&gt;&n; *&n; * version 0.7: Added usb flow control. Fixed bug in uhci.c (what idiot&n; * wrote this code? ...Oops that was me). Fixed module cleanup. Did some&n; * testing at 3Com =&gt; zmodem uload+download works, pppd had trouble but&n; * seems to work now. Changed Menuconfig texts &quot;Communications Device&n; * Class (ACM)&quot; might be a bit more intuitive. Ported to 2.3.13-1 prepatch. &n; * (2/8/99)&n; *&n; * version 0.6: Modularized driver, added disconnect code, improved&n; * assignment of device to tty minor number.&n; * (21/7/99)&n; *&n; * version 0.5: Driver now generates a tty instead of a simple character&n; * device. Moved async bulk transfer to 2.3.10 kernel version. fixed a bug&n; * in uhci_td_allocate. Commenetd out getstringtable which causes crash.&n; * (13/7/99)&n; *&n; * version 0.4: Small fixes in the FIFO, cleanup. Updated Bulk transfer in &n; * uhci.c. Should have the correct interface now. &n; * (6/6/99)&n; *&n; * version 0.3: Major changes. Changed Bulk transfer to interrupt based&n; * transfer. Using FIFO Buffers now. Consistent handling of open/close&n; * file state and detected/nondetected device. File operations behave&n; * according to this. Driver is able to send+receive now! Heureka!&n; * (27/5/99)&n; *&n; * version 0.2: Improved Bulk transfer. TX led now flashes every time data is&n; * sent. Send Encapsulated Data is not needed, nor does it do anything.&n; * Why&squot;s that ?!? Thanks to Thomas Sailer for his close look at the bulk code.&n; * He told me about some importand bugs. (5/21/99)&n; *&n; * version 0.1: Bulk transfer for uhci seems to work now, no dangling tds any&n; * more. TX led of the ISDN TA flashed the first time. Does this mean it works?&n; * The interrupt of the ctrl endpoint crashes the kernel =&gt; no read possible&n; * (5/19/99)&n; *&n; * version 0.0: Driver sets up configuration, sets up data pipes, opens misc&n; * device. No actual data transfer is done, since we don&squot;t have bulk transfer,&n; * yet. Purely skeleton for now. (5/8/99)&n; */
+multiline_comment|/*&n; * USB Abstract Control Model based on Brad Keryan&squot;s USB busmouse driver&n; *&n; * (C) Copyright 1999 Armin Fuerst &lt;armin.please@put.your.email.here.!!!!&gt;&n; * (C) Copyright 1999 Pavel Machek &lt;pavel@suse.cz&gt;&n; * (C) Copyright 1999 Johannes Erdfelt &lt;jerdfelt@valinux.com&gt;&n; *&n; * version 0.8: Fixed endianity bug, some cleanups. I really hate to have&n; * half of driver in form if (...) { info(&quot;x&quot;); return y; }&n; * &t;&t;&t;&t;&t;&t;Pavel Machek &lt;pavel@suse.cz&gt;&n; *&n; * version 0.7: Added usb flow control. Fixed bug in uhci.c (what idiot&n; * wrote this code? ...Oops that was me). Fixed module cleanup. Did some&n; * testing at 3Com =&gt; zmodem uload+download works, pppd had trouble but&n; * seems to work now. Changed Menuconfig texts &quot;Communications Device&n; * Class (ACM)&quot; might be a bit more intuitive. Ported to 2.3.13-1 prepatch.&n; * (2/8/99)&n; *&n; * version 0.6: Modularized driver, added disconnect code, improved&n; * assignment of device to tty minor number.&n; * (21/7/99)&n; *&n; * version 0.5: Driver now generates a tty instead of a simple character&n; * device. Moved async bulk transfer to 2.3.10 kernel version. fixed a bug&n; * in uhci_td_allocate. Commenetd out getstringtable which causes crash.&n; * (13/7/99)&n; *&n; * version 0.4: Small fixes in the FIFO, cleanup. Updated Bulk transfer in&n; * uhci.c. Should have the correct interface now.&n; * (6/6/99)&n; *&n; * version 0.3: Major changes. Changed Bulk transfer to interrupt based&n; * transfer. Using FIFO Buffers now. Consistent handling of open/close&n; * file state and detected/nondetected device. File operations behave&n; * according to this. Driver is able to send+receive now! Heureka!&n; * (27/5/99)&n; *&n; * version 0.2: Improved Bulk transfer. TX led now flashes every time data is&n; * sent. Send Encapsulated Data is not needed, nor does it do anything.&n; * Why&squot;s that ?!? Thanks to Thomas Sailer for his close look at the bulk code.&n; * He told me about some importand bugs. (5/21/99)&n; *&n; * version 0.1: Bulk transfer for uhci seems to work now, no dangling tds any&n; * more. TX led of the ISDN TA flashed the first time. Does this mean it works?&n; * The interrupt of the ctrl endpoint crashes the kernel =&gt; no read possible&n; * (5/19/99)&n; *&n; * version 0.0: Driver sets up configuration, sets up data pipes, opens misc&n; * device. No actual data transfer is done, since we don&squot;t have bulk transfer,&n; * yet. Purely skeleton for now. (5/8/99)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -11,15 +11,14 @@ macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
 DECL|macro|NR_PORTS
 mdefine_line|#define NR_PORTS 3
 DECL|macro|ACM_MAJOR
 mdefine_line|#define ACM_MAJOR 166&t;/* Wow, major is now officially allocated */
-singleline_comment|//#define info(message...); printk(message);
+singleline_comment|//#define info(message...) printk(KERN_DEBUG message)
 DECL|macro|info
-mdefine_line|#define info(message...);
+mdefine_line|#define info(message...)
 DECL|macro|CTRL_STAT_DTR
 mdefine_line|#define CTRL_STAT_DTR&t;1
 DECL|macro|CTRL_STAT_RTS
@@ -112,7 +111,7 @@ DECL|member|active
 r_char
 id|active
 suffix:semicolon
-singleline_comment|//someone has this acm&squot;s device open 
+singleline_comment|//someone has this acm&squot;s device open
 DECL|member|ctrlstate
 r_int
 r_int
@@ -203,6 +202,7 @@ singleline_comment|//functions for various ACM requests
 DECL|function|Set_Control_Line_Status
 r_void
 id|Set_Control_Line_Status
+c_func
 (paren
 r_int
 r_int
@@ -214,8 +214,15 @@ op_star
 id|acm
 )paren
 (brace
-id|devrequest
-id|dr
+r_struct
+id|usb_device
+op_star
+id|dev
+op_assign
+id|acm-&gt;dev
+suffix:semicolon
+r_int
+id|ret
 suffix:semicolon
 id|info
 c_func
@@ -223,49 +230,48 @@ c_func
 l_string|&quot;Set_control_Line_Status&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dr.requesttype
+id|ret
 op_assign
-l_int|0x22
-suffix:semicolon
-id|dr.request
-op_assign
-l_int|0x22
-suffix:semicolon
-id|dr.value
-op_assign
-id|status
-suffix:semicolon
-id|dr.index
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.length
-op_assign
-l_int|0
-suffix:semicolon
-id|acm-&gt;dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
-id|acm-&gt;dev
+id|dev
 comma
 id|usb_sndctrlpipe
 c_func
 (paren
-id|acm-&gt;dev
+id|dev
 comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+l_int|0x22
+comma
+l_int|0x22
+comma
+id|status
+comma
+l_int|0
 comma
 l_int|NULL
 comma
 l_int|0
 comma
 id|HZ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;acm: Set_Control_Line_Status failed&bslash;n&quot;
 )paren
 suffix:semicolon
 id|acm-&gt;ctrlstate
@@ -276,6 +282,7 @@ suffix:semicolon
 DECL|function|Set_Line_Coding
 r_void
 id|Set_Line_Coding
+c_func
 (paren
 r_int
 r_int
@@ -287,8 +294,15 @@ op_star
 id|acm
 )paren
 (brace
-id|devrequest
-id|dr
+r_struct
+id|usb_device
+op_star
+id|dev
+op_assign
+id|acm-&gt;dev
+suffix:semicolon
+r_int
+id|ret
 suffix:semicolon
 id|info
 c_func
@@ -296,43 +310,28 @@ c_func
 l_string|&quot;Set_Line_Coding&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dr.requesttype
+id|ret
 op_assign
-l_int|0x22
-suffix:semicolon
-id|dr.request
-op_assign
-l_int|0x30
-suffix:semicolon
-id|dr.value
-op_assign
-id|coding
-suffix:semicolon
-id|dr.index
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.length
-op_assign
-l_int|0
-suffix:semicolon
-id|acm-&gt;dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
-id|acm-&gt;dev
+id|dev
 comma
 id|usb_sndctrlpipe
 c_func
 (paren
-id|acm-&gt;dev
+id|dev
 comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+l_int|0x30
+comma
+l_int|0x22
+comma
+id|coding
+comma
+l_int|0
 comma
 l_int|NULL
 comma
@@ -395,6 +394,25 @@ c_func
 l_string|&quot;ACM_USB_IRQ&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|state
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;acm_irq: strange state received: %x&bslash;n&quot;
+comma
+id|state
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -483,6 +501,7 @@ multiline_comment|/* Network connection */
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Network connection: &quot;
 )paren
 suffix:semicolon
@@ -496,6 +515,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;disconnected&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -509,6 +529,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;connected&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -521,6 +542,7 @@ multiline_comment|/* Response available */
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Response available&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -533,6 +555,7 @@ multiline_comment|/* Set serial line state */
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;acm.c: Set serial control line state&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -571,6 +594,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Serstate: %02X&bslash;n&quot;
 comma
 id|acm-&gt;ctrlstate
@@ -660,7 +684,7 @@ id|state
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -707,9 +731,8 @@ id|tty
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
-multiline_comment|/* Never return 1 from this routine. It makes uhci do bad things. */
 )brace
 DECL|function|acm_write_irq
 r_static
@@ -884,6 +907,8 @@ op_increment
 r_return
 l_int|0
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* Start reading from the device */
 id|ret
 op_assign
@@ -910,8 +935,9 @@ c_cond
 id|ret
 )paren
 id|printk
+c_func
 (paren
-id|KERN_WARNING
+id|KERN_ERR
 l_string|&quot;usb-acm: usb_request_irq failed (0x%x)&bslash;n&quot;
 comma
 id|ret
@@ -940,6 +966,7 @@ id|acm
 )paren
 suffix:semicolon
 id|Set_Control_Line_Status
+c_func
 (paren
 id|CTRL_STAT_DTR
 op_or
@@ -1004,6 +1031,7 @@ id|acm-&gt;active
 r_return
 suffix:semicolon
 id|Set_Control_Line_Status
+c_func
 (paren
 l_int|0
 comma
@@ -1048,7 +1076,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-singleline_comment|//&t;usb_release_irq(acm-&gt;dev,acm-&gt;ctrltransfer, acm-&gt;ctrlpipe);
+singleline_comment|//&t;usb_release_irq(acm-&gt;dev, acm-&gt;ctrltransfer, acm-&gt;ctrlpipe);
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 DECL|function|rs_write
 r_static
@@ -1112,6 +1142,7 @@ id|acm-&gt;writing
 )paren
 (brace
 id|info
+c_func
 (paren
 l_string|&quot;already writing&bslash;n&quot;
 )paren
@@ -1202,21 +1233,10 @@ r_char
 id|ch
 )paren
 (brace
-r_struct
-id|acm_state
-op_star
-id|acm
-op_assign
-(paren
-r_struct
-id|acm_state
-op_star
-)paren
-id|tty-&gt;driver_data
-suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;acm: rs_put_char: Who called this unsupported routine?&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1357,7 +1377,7 @@ id|ACM_READY
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&t;&n;&t;if (I_IXOFF(tty))&n;&t;&t;rs_send_xchar(tty, STOP_CHAR(tty));&n;*/
+multiline_comment|/*&n;&t;if (I_IXOFF(tty))&n;&t;&t;rs_send_xchar(tty, STOP_CHAR(tty));&n;*/
 r_if
 c_cond
 (paren
@@ -1366,6 +1386,7 @@ op_amp
 id|CRTSCTS
 )paren
 id|Set_Control_Line_Status
+c_func
 (paren
 id|acm-&gt;ctrlstate
 op_amp
@@ -1414,7 +1435,7 @@ id|ACM_READY
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&t;&n;&t;if (I_IXOFF(tty))&n;&t;&t;rs_send_xchar(tty, STOP_CHAR(tty));&n;*/
+multiline_comment|/*&n;&t;if (I_IXOFF(tty))&n;&t;&t;rs_send_xchar(tty, STOP_CHAR(tty));&n;*/
 r_if
 c_cond
 (paren
@@ -1423,6 +1444,7 @@ op_amp
 id|CRTSCTS
 )paren
 id|Set_Control_Line_Status
+c_func
 (paren
 id|acm-&gt;ctrlstate
 op_or
@@ -1582,7 +1604,7 @@ suffix:semicolon
 DECL|macro|IFCLASS
 mdefine_line|#define IFCLASS(if) ((if-&gt;bInterfaceClass &lt;&lt; 24) | (if-&gt;bInterfaceSubClass &lt;&lt; 16) | (if-&gt;bInterfaceProtocol &lt;&lt; 8) | (if-&gt;bNumEndpoints))
 multiline_comment|/* FIXME: should the driver really be doing the configuration&n;&t; * selecting or should the usbcore?  [different configurations&n;&t; * can have different bandwidth requirements] -greg */
-multiline_comment|/* Now scan all configs for a ACM configuration*/
+multiline_comment|/* Now scan all configs for a ACM configuration */
 r_for
 c_loop
 (paren
@@ -1630,7 +1652,7 @@ l_int|0x02020101
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*Which uses an interrupt input */
+multiline_comment|/* Which uses an interrupt input */
 id|endpoint
 op_assign
 op_amp
@@ -2351,7 +2373,6 @@ suffix:semicolon
 id|cnt
 op_increment
 )paren
-(brace
 id|memset
 c_func
 (paren
@@ -2370,7 +2391,6 @@ id|acm_state
 )paren
 )paren
 suffix:semicolon
-)brace
 singleline_comment|//REGISTER TTY DRIVER
 id|memset
 c_func
@@ -2485,7 +2505,7 @@ id|acm_tty_driver.ioctl
 op_assign
 l_int|NULL
 suffix:semicolon
-singleline_comment|//rs_ioctl;
+singleline_comment|//rs_ioctl
 id|acm_tty_driver.set_termios
 op_assign
 l_int|NULL
@@ -2561,6 +2581,7 @@ id|acm_tty_driver
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;acm: failed to register tty driver&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2569,7 +2590,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-singleline_comment|//REGISTER USB DRIVER
 r_if
 c_cond
 (paren
@@ -2588,16 +2608,6 @@ c_func
 (paren
 op_amp
 id|acm_tty_driver
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;USB acm driver cannot register: &quot;
-l_string|&quot;minor number %d already in use&bslash;n&quot;
-comma
-id|acm_driver.minor
 )paren
 suffix:semicolon
 r_return

@@ -1773,7 +1773,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * Zap initial low-memory mappings:&n;&t; */
+multiline_comment|/*&n;&t; * Zap initial low-memory mappings.&n;&t; *&n;&t; * Note that &quot;pgd_clear()&quot; doesn&squot;t do it for&n;&t; * us in this case, because pgd_clear() is a&n;&t; * no-op in the 2-level case (pmd_clear() is&n;&t; * the thing that clears the page-tables in&n;&t; * that case).&n;&t; */
 r_for
 c_loop
 (paren
@@ -1788,13 +1788,16 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|pgd_clear
+id|pgd_val
 c_func
 (paren
 id|swapper_pg_dir
-op_plus
+(braket
 id|i
+)braket
 )paren
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables - note that the first 4MB are&n; * already mapped by head.S.&n; *&n; * This routines also unmaps the page at virtual kernel address 0, so&n; * that we can trap those pesky NULL-reference errors in the kernel.&n; */

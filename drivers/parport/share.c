@@ -516,7 +516,7 @@ c_cond
 (paren
 id|portlist
 )paren
-multiline_comment|/* The user has a parport_lowlevel alias in&n;&t;&t;&t; * conf.modules. Warn them that it won&squot;t work&n;&t;&t;&t; * for long. */
+multiline_comment|/* The user has a parport_lowlevel alias in&n;&t;&t;&t; * modules.conf. Warn them that it won&squot;t work&n;&t;&t;&t; * for long. */
 id|printk
 (paren
 id|KERN_WARNING

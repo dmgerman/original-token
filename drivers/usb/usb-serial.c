@@ -2331,16 +2331,6 @@ op_amp
 id|serial_tty_driver
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;USB serial driver cannot register: &quot;
-l_string|&quot;minor number %d already in use&bslash;n&quot;
-comma
-id|usb_serial_driver.minor
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1

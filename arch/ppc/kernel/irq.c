@@ -59,17 +59,6 @@ r_char
 op_star
 id|chrp_int_ack_special
 suffix:semicolon
-macro_line|#ifdef CONFIG_APUS
-multiline_comment|/* Rename a few functions. Requires the CONFIG_APUS protection. */
-DECL|macro|request_irq
-mdefine_line|#define request_irq nop_ppc_request_irq
-DECL|macro|free_irq
-mdefine_line|#define free_irq nop_ppc_free_irq
-DECL|macro|get_irq_list
-mdefine_line|#define get_irq_list nop_get_irq_list
-DECL|macro|VEC_SPUR
-mdefine_line|#define VEC_SPUR    (24)
-macro_line|#endif
 DECL|macro|MAXCOUNT
 mdefine_line|#define MAXCOUNT 10000000
 DECL|macro|NR_MASK_WORDS
@@ -143,9 +132,11 @@ id|atomic_t
 id|ppc_n_lost_interrupts
 suffix:semicolon
 multiline_comment|/* nasty hack for shared irq&squot;s since we need to do kmalloc calls but&n; * can&squot;t very early in the boot when we need to do a request irq.&n; * this needs to be removed.&n; * -- Cort&n; */
+DECL|macro|IRQ_KMALLOC_ENTRIES
+mdefine_line|#define IRQ_KMALLOC_ENTRIES 8
 DECL|variable|cache_bitmask
 r_static
-r_char
+r_int
 id|cache_bitmask
 op_assign
 l_int|0
@@ -156,7 +147,7 @@ r_struct
 id|irqaction
 id|malloc_cache
 (braket
-l_int|8
+id|IRQ_KMALLOC_ENTRIES
 )braket
 suffix:semicolon
 r_extern
@@ -202,8 +193,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-op_le
-l_int|3
+OL
+id|IRQ_KMALLOC_ENTRIES
 suffix:semicolon
 id|i
 op_increment
@@ -271,8 +262,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|i
-op_le
-l_int|3
+OL
+id|IRQ_KMALLOC_ENTRIES
 suffix:semicolon
 id|i
 op_increment
@@ -308,10 +299,35 @@ id|ptr
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_8xx
-DECL|function|request_irq
+macro_line|#ifdef CONFIG_8xx
+multiline_comment|/* Name change so we can catch standard drivers that potentially mess up&n; * the internal interrupt controller on 8xx and 82xx.  Just bear with me,&n; * I don&squot;t like this either and I am searching a better solution.  For&n; * now, this is what I need. -- Dan&n; */
+DECL|function|request_8xxirq
 r_int
-id|request_irq
+id|request_8xxirq
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+macro_line|#elif defined(CONFIG_APUS)
+r_int
+id|sys_request_irq
 (paren
 r_int
 r_int
@@ -334,9 +350,8 @@ op_star
 )paren
 comma
 macro_line|#else
-multiline_comment|/* Name change so we can catch standard drivers that potentially mess up&n; * the internal interrupt controller on 8xx and 82xx.  Just bear with me,&n; * I don&squot;t like this either and I am searching a better solution.  For&n; * now, this is what I need. -- Dan&n; */
 r_int
-id|request_8xxirq
+id|request_irq
 c_func
 (paren
 r_int
@@ -621,6 +636,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_APUS
+DECL|function|sys_free_irq
+r_void
+id|sys_free_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+)paren
+(brace
+id|sys_request_irq
+c_func
+(paren
+id|irq
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|dev_id
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|function|free_irq
 r_void
 id|free_irq
@@ -667,6 +713,7 @@ id|dev_id
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif
 multiline_comment|/* XXX should implement irq disable depth like on intel */
 DECL|function|disable_irq_nosync
 r_void
@@ -734,6 +781,14 @@ op_star
 id|buf
 )paren
 (brace
+macro_line|#ifdef CONFIG_APUS
+r_return
+id|apus_get_irq_list
+(paren
+id|buf
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 id|i
 comma
@@ -1044,6 +1099,7 @@ suffix:semicolon
 r_return
 id|len
 suffix:semicolon
+macro_line|#endif /* CONFIG_APUS */
 )brace
 multiline_comment|/*&n; * Eventually, this should take an array of interrupts and an array size&n; * so it can dispatch multiple interrupts.&n; */
 DECL|function|ppc_irq_dispatch_handler

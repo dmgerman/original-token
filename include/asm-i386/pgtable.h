@@ -834,8 +834,6 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|macro|page_pte_prot
-mdefine_line|#define page_pte_prot(page,prot) mk_pte(page, prot)
 DECL|macro|page_pte
 mdefine_line|#define page_pte(page) page_pte_prot(page, __pgprot(0))
 DECL|macro|pmd_page

@@ -457,6 +457,7 @@ op_amp
 (paren
 r_const
 r_int
+r_int
 op_star
 )paren
 id|addr
@@ -504,16 +505,21 @@ l_string|&quot;=r&quot;
 (paren
 id|result
 )paren
-suffix:colon
-l_string|&quot;r&quot;
+comma
+l_string|&quot;=r&quot;
 (paren
 id|word
 )paren
-comma
+suffix:colon
 l_string|&quot;0&quot;
 (paren
 op_complement
 l_int|0L
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|word
 )paren
 )paren
 suffix:semicolon
@@ -715,6 +721,18 @@ suffix:semicolon
 )brace
 DECL|macro|find_first_zero_bit
 mdefine_line|#define find_first_zero_bit(addr, size) &bslash;&n;        find_next_zero_bit((addr), (size), 0)
+macro_line|#ifdef __LITTLE_ENDIAN__
+DECL|macro|ext2_set_bit
+mdefine_line|#define ext2_set_bit(nr, addr) test_and_set_bit((nr), (addr))
+DECL|macro|ext2_clear_bit
+mdefine_line|#define ext2_clear_bit(nr, addr) test_and_clear_bit((nr), (addr))
+DECL|macro|ext2_test_bit
+mdefine_line|#define ext2_test_bit(nr, addr) test_bit((nr), (addr))
+DECL|macro|ext2_find_first_zero_bit
+mdefine_line|#define ext2_find_first_zero_bit(addr, size) find_first_zero_bit((addr), (size))
+DECL|macro|ext2_find_next_zero_bit
+mdefine_line|#define ext2_find_next_zero_bit(addr, size, offset) &bslash;&n;                find_next_zero_bit((addr), (size), (offset))
+macro_line|#else
 DECL|function|ext2_set_bit
 r_extern
 id|__inline__
@@ -1174,6 +1192,7 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Bitmap functions for the minix filesystem.  */
 DECL|macro|minix_set_bit
 mdefine_line|#define minix_set_bit(nr,addr) test_and_set_bit(nr,addr)

@@ -10,13 +10,16 @@ r_int
 id|mmu_context_cache
 suffix:semicolon
 DECL|macro|MMU_CONTEXT_ASID_MASK
-mdefine_line|#define MMU_CONTEXT_ASID_MASK 0xff
+mdefine_line|#define MMU_CONTEXT_ASID_MASK&t;&t;0x000000ff
 DECL|macro|MMU_CONTEXT_VERSION_MASK
-mdefine_line|#define MMU_CONTEXT_VERSION_MASK 0xffffff00
+mdefine_line|#define MMU_CONTEXT_VERSION_MASK&t;0xffffff00
 DECL|macro|MMU_CONTEXT_FIRST_VERSION
-mdefine_line|#define MMU_CONTEXT_FIRST_VERSION 0x100
+mdefine_line|#define MMU_CONTEXT_FIRST_VERSION&t;0x00000100
 DECL|macro|NO_CONTEXT
-mdefine_line|#define NO_CONTEXT 0
+mdefine_line|#define NO_CONTEXT&t;&t;&t;0
+multiline_comment|/* ASID is 8-bit value, so it can&squot;t be 0x100 */
+DECL|macro|MMU_NO_ASID
+mdefine_line|#define MMU_NO_ASID&t;&t;&t;0x100
 r_extern
 id|__inline__
 r_void
@@ -165,10 +168,7 @@ op_star
 id|mm
 )paren
 (brace
-id|mm-&gt;context
-op_assign
-id|NO_CONTEXT
-suffix:semicolon
+multiline_comment|/* Do nothing */
 )brace
 multiline_comment|/* Other MMU related constants. */
 macro_line|#if defined(__sh3__)
@@ -183,13 +183,13 @@ mdefine_line|#define MMU_TEA&t;&t;0xFFFFFFFC&t;/* TLB Exception Address */
 DECL|macro|MMUCR
 mdefine_line|#define MMUCR&t;&t;0xFFFFFFE0&t;/* MMU Control Register */
 DECL|macro|MMU_TLB_ADDRESS_ARRAY
-mdefine_line|#define MMU_TLB_ADDRESS_ARRAY 0xF2000000
+mdefine_line|#define MMU_TLB_ADDRESS_ARRAY&t;0xF2000000
 DECL|macro|MMU_PAGE_ASSOC_BIT
-mdefine_line|#define MMU_PAGE_ASSOC_BIT 0x80
+mdefine_line|#define MMU_PAGE_ASSOC_BIT&t;0x80
 DECL|macro|MMU_NTLB_ENTRIES
-mdefine_line|#define MMU_NTLB_ENTRIES       128&t;/* for 7708 */
+mdefine_line|#define MMU_NTLB_ENTRIES&t;128&t;/* for 7708 */
 DECL|macro|MMU_CONTROL_INIT
-mdefine_line|#define MMU_CONTROL_INIT 0x007&t;/* SV=0, TF=1, IX=1, AT=1 */
+mdefine_line|#define MMU_CONTROL_INIT&t;0x007&t;/* SV=0, TF=1, IX=1, AT=1 */
 macro_line|#elif defined(__SH4__)
 DECL|macro|MMU_PTEH
 mdefine_line|#define MMU_PTEH&t;0xFF000000&t;/* Page table entry register HIGH */
@@ -202,21 +202,22 @@ mdefine_line|#define MMU_TEA&t;&t;0xFF00000C&t;/* TLB Exception Address */
 DECL|macro|MMUCR
 mdefine_line|#define MMUCR&t;&t;0xFF000010&t;/* MMU Control Register */
 DECL|macro|MMU_ITLB_ADDRESS_ARRAY
-mdefine_line|#define MMU_ITLB_ADDRESS_ARRAY 0xF2000000
+mdefine_line|#define MMU_ITLB_ADDRESS_ARRAY&t;0xF2000000
 DECL|macro|MMU_UTLB_ADDRESS_ARRAY
-mdefine_line|#define MMU_UTLB_ADDRESS_ARRAY 0xF6000000
+mdefine_line|#define MMU_UTLB_ADDRESS_ARRAY&t;0xF6000000
 DECL|macro|MMU_PAGE_ASSOC_BIT
-mdefine_line|#define MMU_PAGE_ASSOC_BIT 0x80
+mdefine_line|#define MMU_PAGE_ASSOC_BIT&t;0x80
 DECL|macro|MMU_NTLB_ENTRIES
-mdefine_line|#define MMU_NTLB_ENTRIES       64&t;/* for 7750 */
+mdefine_line|#define MMU_NTLB_ENTRIES&t;64&t;/* for 7750 */
 DECL|macro|MMU_CONTROL_INIT
-mdefine_line|#define MMU_CONTROL_INIT 0x205&t;/* SQMD=1, SV=0, TI=1, AT=1 */
+mdefine_line|#define MMU_CONTROL_INIT&t;0x205&t;/* SQMD=1, SV=0, TI=1, AT=1 */
 macro_line|#endif
 DECL|function|set_asid
 r_extern
 id|__inline__
 r_void
 id|set_asid
+c_func
 (paren
 r_int
 r_int
@@ -252,6 +253,7 @@ id|__inline__
 r_int
 r_int
 id|get_asid
+c_func
 (paren
 r_void
 )paren
@@ -263,7 +265,7 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;mov.l %1,%0&quot;
+l_string|&quot;mov.l&t;%1,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -369,7 +371,7 @@ c_func
 (paren
 l_string|&quot;mov.l&t;%0,%1&quot;
 suffix:colon
-"&bslash;"
+multiline_comment|/* no output */
 suffix:colon
 l_string|&quot;r&quot;
 (paren

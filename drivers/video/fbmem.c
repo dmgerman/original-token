@@ -2927,7 +2927,7 @@ id|vma-&gt;vm_pgoff
 op_assign
 id|off
 op_rshift
-id|PAGE_CACHE_SHIFT
+id|PAGE_SHIFT
 suffix:semicolon
 macro_line|#if defined(__mc68000__)
 r_if

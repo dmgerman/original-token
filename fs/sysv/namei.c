@@ -1503,7 +1503,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
+(paren
 id|inode-&gt;i_size
+)paren
 op_mod
 id|SYSV_DIRSIZE
 )paren

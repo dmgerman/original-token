@@ -1,12 +1,12 @@
 macro_line|#ifndef _LINUX_PAGEMAP_H
 DECL|macro|_LINUX_PAGEMAP_H
 mdefine_line|#define _LINUX_PAGEMAP_H
-macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Page-mapping primitive inline functions&n; *&n; * Copyright 1995 Linus Torvalds&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * The page cache can done in larger chunks than&n; * one page, because it allows for more efficient&n; * throughput (it can then be mapped into user&n; * space in smaller chunks for same flexibility).&n; *&n; * Or rather, it _will_ be done in larger chunks.&n; */
 DECL|macro|PAGE_CACHE_SHIFT
 mdefine_line|#define PAGE_CACHE_SHIFT&t;PAGE_SHIFT

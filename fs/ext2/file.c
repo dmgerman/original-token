@@ -38,7 +38,7 @@ id|file
 op_star
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#endif
 DECL|macro|EXT2_MAX_SIZE
 mdefine_line|#define EXT2_MAX_SIZE(bits)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(((EXT2_NDIR_BLOCKS + (1LL &lt;&lt; (bits - 2)) + &t;&t;&t;&t;&bslash;&n;&t;   (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2)) + &t;&t;&t;&t;&bslash;&n;&t;   (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2)) * (1LL &lt;&lt; (bits - 2))) * &t;&bslash;&n;&t;  (1LL &lt;&lt; bits)) - 1)
 DECL|variable|ext2_max_sizes
@@ -95,7 +95,6 @@ l_int|13
 )paren
 )brace
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Make sure the offset never goes beyond the 32-bit mark..&n; */
 DECL|function|ext2_file_lseek
 r_static
@@ -164,12 +163,6 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if BITS_PER_LONG &lt; 64
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -188,7 +181,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -397,7 +389,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if BITS_PER_LONG &lt; 64
-multiline_comment|/*&n; * Called when an inode is about to be open.&n; * We use this to disallow opening RW large files on 32bit systems.&n; */
+multiline_comment|/*&n; * Called when an inode is about to be open.&n; * We use this to disallow opening RW large files on 32bit systems if&n; * the caller didn&squot;t specify O_LARGEFILE.&n; */
 DECL|function|ext2_open_file
 r_static
 r_int
@@ -419,10 +411,11 @@ c_cond
 (paren
 id|inode-&gt;u.ext2_i.i_high_size
 op_logical_and
+op_logical_neg
 (paren
-id|filp-&gt;f_mode
+id|filp-&gt;f_flags
 op_amp
-id|FMODE_WRITE
+id|O_LARGEFILE
 )paren
 )paren
 r_return

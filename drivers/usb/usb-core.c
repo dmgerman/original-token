@@ -47,6 +47,7 @@ c_func
 suffix:semicolon
 macro_line|#ifdef CONFIG_USB_PROC
 id|proc_usb_init
+c_func
 (paren
 )paren
 suffix:semicolon

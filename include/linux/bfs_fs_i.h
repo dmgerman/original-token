@@ -8,16 +8,19 @@ r_struct
 id|bfs_inode_info
 (brace
 DECL|member|i_dsk_ino
-id|__u32
+r_int
+r_int
 id|i_dsk_ino
 suffix:semicolon
 multiline_comment|/* inode number from the disk, can be 0 */
 DECL|member|i_sblock
-id|__u32
+r_int
+r_int
 id|i_sblock
 suffix:semicolon
 DECL|member|i_eblock
-id|__u32
+r_int
+r_int
 id|i_eblock
 suffix:semicolon
 )brace

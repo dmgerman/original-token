@@ -3125,21 +3125,6 @@ c_func
 id|raw_inode-&gt;i_size_high
 )paren
 suffix:semicolon
-macro_line|#if BITS_PER_LONG &lt; 64
-r_if
-c_cond
-(paren
-id|raw_inode-&gt;i_size_high
-)paren
-id|inode-&gt;i_size
-op_assign
-(paren
-id|__u32
-)paren
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#else
 id|inode-&gt;i_size
 op_or_assign
 (paren
@@ -3155,7 +3140,6 @@ id|raw_inode-&gt;i_size_high
 op_lshift
 l_int|32
 suffix:semicolon
-macro_line|#endif
 )brace
 id|inode-&gt;i_generation
 op_assign
@@ -3812,17 +3796,6 @@ id|inode-&gt;u.ext2_i.i_dir_acl
 )paren
 suffix:semicolon
 r_else
-(brace
-macro_line|#if BITS_PER_LONG &lt; 64
-id|raw_inode-&gt;i_size_high
-op_assign
-id|cpu_to_le32
-c_func
-(paren
-id|inode-&gt;u.ext2_i.i_high_size
-)paren
-suffix:semicolon
-macro_line|#else
 id|raw_inode-&gt;i_size_high
 op_assign
 id|cpu_to_le32
@@ -3833,8 +3806,6 @@ op_rshift
 l_int|32
 )paren
 suffix:semicolon
-macro_line|#endif
-)brace
 id|raw_inode-&gt;i_generation
 op_assign
 id|cpu_to_le32

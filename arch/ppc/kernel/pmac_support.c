@@ -275,6 +275,7 @@ c_cond
 id|nvram_naddrs
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_PMU
 r_case
 op_minus
 l_int|1
@@ -326,6 +327,7 @@ id|req.reply
 l_int|1
 )braket
 suffix:semicolon
+macro_line|#endif
 r_case
 l_int|1
 suffix:colon
@@ -400,6 +402,7 @@ c_cond
 id|nvram_naddrs
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_PMU
 r_case
 op_minus
 l_int|1
@@ -449,6 +452,7 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_case
 l_int|1
 suffix:colon

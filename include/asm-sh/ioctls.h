@@ -15,13 +15,13 @@ mdefine_line|#define FIONREAD&t;_IOR(&squot;f&squot;, 127, int)
 DECL|macro|TIOCINQ
 mdefine_line|#define TIOCINQ&t;&t;FIONREAD
 DECL|macro|TCGETS
-mdefine_line|#define TCGETS&t;&t;_IOR(&squot;t&squot;, 19, struct termios)
+mdefine_line|#define TCGETS&t;&t;0x5401
 DECL|macro|TCSETS
-mdefine_line|#define TCSETS&t;&t;_IOW(&squot;t&squot;, 20, struct termios)
+mdefine_line|#define TCSETS&t;&t;0x5402
 DECL|macro|TCSETSW
-mdefine_line|#define TCSETSW&t;&t;_IOW(&squot;t&squot;, 21, struct termios)
+mdefine_line|#define TCSETSW&t;&t;0x5403
 DECL|macro|TCSETSF
-mdefine_line|#define TCSETSF&t;&t;_IOW(&squot;t&squot;, 22, struct termios)
+mdefine_line|#define TCSETSF&t;&t;0x5404
 DECL|macro|TCGETA
 mdefine_line|#define TCGETA&t;&t;_IOR(&squot;t&squot;, 23, struct termio)
 DECL|macro|TCSETA
@@ -143,9 +143,9 @@ mdefine_line|#define TIOCSERGWILD&t;_IOR(&squot;T&squot;, 84,  int) /* 0x5454 */
 DECL|macro|TIOCSERSWILD
 mdefine_line|#define TIOCSERSWILD&t;_IOW(&squot;T&squot;, 85,  int) /* 0x5455 */
 DECL|macro|TIOCGLCKTRMIOS
-mdefine_line|#define TIOCGLCKTRMIOS&t;_IOR(&squot;T&squot;, 86, struct termios) /* 0x5456 */
+mdefine_line|#define TIOCGLCKTRMIOS&t;0x5456
 DECL|macro|TIOCSLCKTRMIOS
-mdefine_line|#define TIOCSLCKTRMIOS&t;_IOW(&squot;T&squot;, 87, struct termios) /* 0x5457 */
+mdefine_line|#define TIOCSLCKTRMIOS&t;0x5457
 DECL|macro|TIOCSERGSTRUCT
 mdefine_line|#define TIOCSERGSTRUCT&t;_IOR(&squot;T&squot;, 88, struct async_struct) /* 0x5458 */ /* For debugging only */
 DECL|macro|TIOCSERGETLSR

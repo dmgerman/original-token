@@ -139,11 +139,22 @@ r_int
 id|create
 )paren
 (brace
+r_int
+id|phys
+op_assign
+id|inode-&gt;iu_sblock
+op_plus
+id|block
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|create
+op_logical_or
+id|phys
+op_le
+id|inode-&gt;iu_eblock
 )paren
 (brace
 id|bh_result-&gt;b_dev
@@ -152,9 +163,7 @@ id|inode-&gt;i_dev
 suffix:semicolon
 id|bh_result-&gt;b_blocknr
 op_assign
-id|inode-&gt;iu_sblock
-op_plus
-id|block
+id|phys
 suffix:semicolon
 id|bh_result-&gt;b_state
 op_or_assign
@@ -168,18 +177,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_else
-id|DBG
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(create=%d) impossible!&bslash;n&quot;
-comma
-id|__FUNCTION__
-comma
-id|create
-)paren
-suffix:semicolon
+multiline_comment|/* no support for file migration, working on it */
 r_return
 op_minus
 id|EIO

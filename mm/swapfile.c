@@ -2882,11 +2882,11 @@ c_func
 id|dev
 )paren
 )braket
-op_div
+op_rshift
 (paren
-id|PAGE_SIZE
-op_div
-l_int|1024
+id|PAGE_SHIFT
+op_minus
+l_int|10
 )paren
 suffix:semicolon
 )brace
@@ -2957,8 +2957,8 @@ suffix:semicolon
 id|swapfilesize
 op_assign
 id|swap_dentry-&gt;d_inode-&gt;i_size
-op_div
-id|PAGE_SIZE
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 )brace
 r_else

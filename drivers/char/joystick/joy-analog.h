@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  joy-analog.h  Version 1.2&n; *&n; *  Copyright (c) 1996-1998 Vojtech Pavlik&n; */
 multiline_comment|/*&n; * This file is designed to be included in any joystick driver&n; * that communicates with standard analog joysticks. This currently&n; * is: joy-analog.c, joy-assasin.c, and joy-lightning.c&n; */
-multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@ucw.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
+multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 DECL|macro|JS_AN_AXES_STD
 mdefine_line|#define JS_AN_AXES_STD&t;&t;0x0f
 DECL|macro|JS_AN_BUTTONS_STD
@@ -1657,7 +1657,7 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;joy-analog: Unknown joystick device detected &quot;
-l_string|&quot;(data=%#x), contact &lt;vojtech@ucw.cz&gt;&bslash;n&quot;
+l_string|&quot;(data=%#x), contact &lt;vojtech@suse.cz&gt;&bslash;n&quot;
 comma
 id|exist
 )paren

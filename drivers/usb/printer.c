@@ -1947,22 +1947,10 @@ op_amp
 id|printer_driver
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;USB Printer driver cannot register: &quot;
-l_string|&quot;minor number %d already in use&bslash;n&quot;
-comma
-id|printer_driver.minor
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren

@@ -396,8 +396,8 @@ id|lo-&gt;lo_dentry-&gt;d_inode-&gt;i_size
 op_minus
 id|lo-&gt;lo_offset
 )paren
-op_div
-id|BLOCK_SIZE
+op_rshift
+id|BLOCK_SIZE_BITS
 suffix:semicolon
 r_else
 (brace
@@ -436,9 +436,11 @@ id|lodev
 )paren
 )braket
 op_minus
+(paren
 id|lo-&gt;lo_offset
-op_div
-id|BLOCK_SIZE
+op_rshift
+id|BLOCK_SIZE_BITS
+)paren
 suffix:semicolon
 r_else
 id|size

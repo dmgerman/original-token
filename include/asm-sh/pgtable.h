@@ -195,7 +195,7 @@ mdefine_line|#define KERNEL_PGD_PTRS (PTRS_PER_PGD-USER_PGD_PTRS)
 DECL|macro|TWOLEVEL_PGDIR_SHIFT
 mdefine_line|#define TWOLEVEL_PGDIR_SHIFT&t;22
 DECL|macro|BOOT_USER_PGD_PTRS
-mdefine_line|#define BOOT_USER_PGD_PTRS (__PAGE_OFFSET &gt;&gt; TWOLEVEL_PGDIR_SHIFT)
+mdefine_line|#define BOOT_USER_PGD_PTRS (PAGE_OFFSET &gt;&gt; TWOLEVEL_PGDIR_SHIFT)
 DECL|macro|BOOT_KERNEL_PGD_PTRS
 mdefine_line|#define BOOT_KERNEL_PGD_PTRS (1024-BOOT_USER_PGD_PTRS)
 macro_line|#ifndef __ASSEMBLY__
@@ -344,7 +344,7 @@ mdefine_line|#define pte_present(x)&t;(pte_val(x) &amp; (_PAGE_PRESENT | _PAGE_P
 DECL|macro|pte_clear
 mdefine_line|#define pte_clear(xp)&t;do { pte_val(*(xp)) = 0; } while (0)
 DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(x)&t;((unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
+mdefine_line|#define pte_pagenr(x)&t;((unsigned long)(((pte_val(x) -__MEMORY_START) &gt;&gt; PAGE_SHIFT)))
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(x)&t;(!pmd_val(x))
 DECL|macro|pmd_bad
@@ -355,7 +355,7 @@ DECL|macro|pmd_clear
 mdefine_line|#define pmd_clear(xp)&t;do { pmd_val(*(xp)) = 0; } while (0)
 multiline_comment|/*&n; * Permanent address of a page. Obviously must never be&n; * called on a highmem page.&n; */
 DECL|macro|page_address
-mdefine_line|#define page_address(page) ({ if (PageHighMem(page)) BUG(); PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT); })
+mdefine_line|#define page_address(page) ({ PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT) + __MEMORY_START; })
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x) ((x) &gt;&gt; (20-PAGE_SHIFT))
 DECL|macro|pte_page
@@ -752,6 +752,8 @@ r_int
 )paren
 id|PAGE_SIZE
 op_plus
+id|__MEMORY_START
+op_plus
 id|pgprot_val
 c_func
 (paren
@@ -858,6 +860,7 @@ c_cond
 id|ret
 )paren
 (brace
+multiline_comment|/* Clear User space */
 id|memset
 c_func
 (paren
@@ -873,6 +876,7 @@ id|pgd_t
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* XXX: Copy vmalloc-ed space??? */
 id|memcpy
 c_func
 (paren
@@ -1622,10 +1626,17 @@ id|pte_t
 id|pte
 )paren
 suffix:semicolon
+multiline_comment|/* Encode and de-code a swap entry */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((pte_val(entry)) &gt;&gt; 1) &amp; 0x3f)
+mdefine_line|#define SWP_TYPE(x)&t;&t;&t;(((x).val &gt;&gt; 1) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((pte_val(entry)) &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(x)&t;&t;&t;((x).val &gt;&gt; 8)
+DECL|macro|SWP_ENTRY
+mdefine_line|#define SWP_ENTRY(type, offset)&t;&t;((swp_entry_t) { ((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8) })
+DECL|macro|pte_to_swp_entry
+mdefine_line|#define pte_to_swp_entry(pte)&t;&t;((swp_entry_t) { pte_val(pte) })
+DECL|macro|swp_entry_to_pte
+mdefine_line|#define swp_entry_to_pte(x)&t;&t;((pte_t) { (x).val })
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

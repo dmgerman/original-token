@@ -22,8 +22,10 @@ DECL|macro|NCP_MIN_SYMLINK_SIZE
 mdefine_line|#define NCP_MIN_SYMLINK_SIZE&t;8
 DECL|macro|NCP_MAX_SYMLINK_SIZE
 mdefine_line|#define NCP_MAX_SYMLINK_SIZE&t;512
+DECL|macro|NCP_BLOCK_SHIFT
+mdefine_line|#define NCP_BLOCK_SHIFT&t;&t;9
 DECL|macro|NCP_BLOCK_SIZE
-mdefine_line|#define NCP_BLOCK_SIZE&t;&t;512
+mdefine_line|#define NCP_BLOCK_SIZE&t;&t;(1 &lt;&lt; (NCP_BLOCK_SHIFT))
 r_int
 id|ncp_negotiate_buffersize
 c_func

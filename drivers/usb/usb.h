@@ -288,19 +288,19 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_PROC_CONTROL
-mdefine_line|#define USB_PROC_CONTROL           _IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
+mdefine_line|#define USB_PROC_CONTROL&t;_IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
 DECL|macro|USB_PROC_BULK
-mdefine_line|#define USB_PROC_BULK              _IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
+mdefine_line|#define USB_PROC_BULK&t;&t;_IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
 DECL|macro|USB_PROC_OLD_CONTROL
-mdefine_line|#define USB_PROC_OLD_CONTROL       _IOWR(&squot;U&squot;, 0, struct usb_proc_old_ctrltransfer)
+mdefine_line|#define USB_PROC_OLD_CONTROL&t;_IOWR(&squot;U&squot;, 0, struct usb_proc_old_ctrltransfer)
 DECL|macro|USB_PROC_OLD_BULK
-mdefine_line|#define USB_PROC_OLD_BULK          _IOWR(&squot;U&squot;, 2, struct usb_proc_old_bulktransfer)
+mdefine_line|#define USB_PROC_OLD_BULK&t;_IOWR(&squot;U&squot;, 2, struct usb_proc_old_bulktransfer)
 DECL|macro|USB_PROC_RESETEP
-mdefine_line|#define USB_PROC_RESETEP           _IOR(&squot;U&squot;, 3, unsigned int)
+mdefine_line|#define USB_PROC_RESETEP&t;_IOR(&squot;U&squot;, 3, unsigned int)
 DECL|macro|USB_PROC_SETINTERFACE
-mdefine_line|#define USB_PROC_SETINTERFACE      _IOR(&squot;U&squot;, 4, struct usb_proc_setinterface)
+mdefine_line|#define USB_PROC_SETINTERFACE&t;_IOR(&squot;U&squot;, 4, struct usb_proc_setinterface)
 DECL|macro|USB_PROC_SETCONFIGURATION
-mdefine_line|#define USB_PROC_SETCONFIGURATION  _IOR(&squot;U&squot;, 5, unsigned int)
+mdefine_line|#define USB_PROC_SETCONFIGURATION&t;_IOR(&squot;U&squot;, 5, unsigned int)
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -326,6 +326,14 @@ suffix:semicolon
 r_extern
 r_int
 id|usb_cpia_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_dc2xx_init
 c_func
 (paren
 r_void
@@ -526,8 +534,10 @@ multiline_comment|/*&n; * This is a USB device descriptor.&n; *&n; * USB device 
 multiline_comment|/* Everything but the endpoint maximums are aribtrary */
 DECL|macro|USB_MAXCONFIG
 mdefine_line|#define USB_MAXCONFIG&t;&t;8
+DECL|macro|USB_ALTSETTINGALLOC
+mdefine_line|#define USB_ALTSETTINGALLOC&t;4
 DECL|macro|USB_MAXALTSETTING
-mdefine_line|#define USB_MAXALTSETTING&t;16
+mdefine_line|#define USB_MAXALTSETTING&t;128&t;/* Hard limit */
 DECL|macro|USB_MAXINTERFACES
 mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
@@ -659,6 +669,17 @@ DECL|member|bSynchAddress
 id|__u8
 id|bSynchAddress
 suffix:semicolon
+DECL|member|extra
+r_int
+r_char
+op_star
+id|extra
+suffix:semicolon
+multiline_comment|/* Extra descriptors */
+DECL|member|extralen
+r_int
+id|extralen
+suffix:semicolon
 )brace
 id|__attribute__
 (paren
@@ -769,17 +790,21 @@ DECL|member|iInterface
 id|__u8
 id|iInterface
 suffix:semicolon
-DECL|member|hid
-r_struct
-id|usb_hid_descriptor
-op_star
-id|hid
-suffix:semicolon
 DECL|member|endpoint
 r_struct
 id|usb_endpoint_descriptor
 op_star
 id|endpoint
+suffix:semicolon
+DECL|member|extra
+r_int
+r_char
+op_star
+id|extra
+suffix:semicolon
+DECL|member|extralen
+r_int
+id|extralen
 suffix:semicolon
 )brace
 id|__attribute__
@@ -809,6 +834,11 @@ r_int
 id|num_altsetting
 suffix:semicolon
 multiline_comment|/* number of alternate settings */
+DECL|member|max_altsetting
+r_int
+id|max_altsetting
+suffix:semicolon
+multiline_comment|/* total memory allocated */
 DECL|member|driver
 r_struct
 id|usb_driver
@@ -1481,10 +1511,6 @@ id|bandwidth_isoc_reqs
 suffix:semicolon
 multiline_comment|/* number of Isoc. requesters */
 multiline_comment|/* procfs entry */
-DECL|member|proc_busnum
-r_int
-id|proc_busnum
-suffix:semicolon
 DECL|member|proc_entry
 r_struct
 id|proc_dir_entry
@@ -1604,12 +1630,6 @@ op_star
 id|hcpriv
 suffix:semicolon
 multiline_comment|/* Host Controller private data */
-DECL|member|audiopriv
-r_void
-op_star
-id|audiopriv
-suffix:semicolon
-multiline_comment|/* May be both audio and HID */
 multiline_comment|/* procfs entry */
 DECL|member|proc_entry
 r_struct

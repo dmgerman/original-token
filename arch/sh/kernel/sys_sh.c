@@ -96,9 +96,6 @@ id|sys_mmap
 c_func
 (paren
 r_int
-id|fd
-comma
-r_int
 r_int
 id|addr
 comma
@@ -113,6 +110,9 @@ comma
 r_int
 r_int
 id|flags
+comma
+r_int
+id|fd
 comma
 r_int
 r_int

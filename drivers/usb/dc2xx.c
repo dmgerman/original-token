@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Copyright (C) 1999 by David Brownell &lt;david-b@pacbell.net&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-multiline_comment|/*&n; * USB driver for Kodak DC-2XX series digital still cameras&n; *&n; * The protocol here is the same as the one going over a serial line, but&n; * it uses USB for speed.  Set up /dev/kodak, get gphoto (www.gphoto.org),&n; * and have fun!&n; *&n; * This should also work for non-Kodak DigitaOS cameras, with minor&n; * tweaks for the relevant vendor and product IDs.&n; */
-multiline_comment|/*&n; * HISTORY&n; *&n; * 26 August, 1999 -- first release (0.1), works with my DC-240.&n; * &t;The DC-280 (2Mpixel) should also work, but isn&squot;t tested.&n; *&t;If you use gphoto, make sure you have the USB updates.&n; *&t;Lives in a 2.3.14 or so Linux kernel, in drivers/usb.&n; * 31 August, 1999 -- minor update to recognize DC-260 and handle&n; *&t;its endpoints being in a different order.  Note that as&n; *&t;of gPhoto 0.36pre, the USB updates are integrated.&n; * 12 Oct, 1999 -- handle DC-280 interface class (0xff not 0x0);&n; *&t;added timeouts to bulk_msg calls.  Minor updates, docs.&n; */
+multiline_comment|/*&n; * USB driver for Kodak DC-2XX series digital still cameras&n; *&n; * The protocol here is the same as the one going over a serial line, but&n; * it uses USB for speed.  Set up /dev/kodak, get gphoto (www.gphoto.org),&n; * and have fun!&n; *&n; * This should also work for a number of other digital (non-Kodak) cameras,&n; * by adding the vendor and product IDs to the table below.&n; */
+multiline_comment|/*&n; * HISTORY&n; *&n; * 26 August, 1999 -- first release (0.1), works with my DC-240.&n; * &t;The DC-280 (2Mpixel) should also work, but isn&squot;t tested.&n; *&t;If you use gphoto, make sure you have the USB updates.&n; *&t;Lives in a 2.3.14 or so Linux kernel, in drivers/usb.&n; * 31 August, 1999 -- minor update to recognize DC-260 and handle&n; *&t;its endpoints being in a different order.  Note that as&n; *&t;of gPhoto 0.36pre, the USB updates are integrated.&n; * 12 Oct, 1999 -- handle DC-280 interface class (0xff not 0x0);&n; *&t;added timeouts to bulk_msg calls.  Minor updates, docs.&n; * 03 Nov, 1999 -- update for 2.3.25 kernel API changes.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;usb.h&quot;
 singleline_comment|// #define&t;CAMERA_DEBUG
 multiline_comment|/* XXX need to get registered minor number, cdev 10/MINOR */
+multiline_comment|/* XXX or: cdev USB_MAJOR(180)/USB_CAMERA_MINOR */
 DECL|macro|USB_CAMERA_MINOR
 mdefine_line|#define&t;USB_CAMERA_MINOR&t;170
 multiline_comment|/* Application protocol limit is 0x8002; USB has disliked that limit! */
@@ -39,6 +40,7 @@ DECL|member|idProduct
 r_int
 id|idProduct
 suffix:semicolon
+multiline_comment|/* should get this name from the USB subsystem */
 DECL|member|nameProduct
 r_const
 r_char
@@ -68,7 +70,7 @@ comma
 l_string|&quot;Kodak DC-280&quot;
 )brace
 comma
-multiline_comment|/* Kodak has several other USB-enabled cameras, which (along with&n;&t; * models from other vendors) all use the Flashpoint &quot;Digita&n;&t; * OS&quot; and its wire protocol.  This driver should work with such&n;&t; * cameras, which need different application level protocol code&n;&t; * from the DC-240/280 models.&n;&t; */
+multiline_comment|/* Kodak has several other USB-enabled devices, which (along with&n;&t; * models from other vendors) all use the Flashpoint &quot;Digita&n;&t; * OS&quot; and its wire protocol.  This driver should work with such&n;&t; * devices, which need different application level protocol code&n;&t; * from the DC-240/280 models.  Note that Digita isn&squot;t just for&n;&t; * cameras -- Epson has a non-USB Digita photo printer.&n;&t; */
 multiline_comment|/*  { 0x040a, 0x0100, &quot;Kodak DC-220&quot; }, */
 (brace
 l_int|0x040a
@@ -81,12 +83,11 @@ comma
 multiline_comment|/*  { 0x040a, 0x0115, &quot;Kodak DC-265&quot; }, */
 multiline_comment|/*  { 0x040a, 0x0140, &quot;Kodak DC-290&quot; }, */
 multiline_comment|/*  { 0xffff, 0xffff, &quot;Minolta Dimage EX 1500&quot; }, */
-multiline_comment|/*  { 0xffff, 0xffff, &quot;HP PhotoSmart C500&quot; }, */
+multiline_comment|/*  { 0x03f0, 0xffff, &quot;HP PhotoSmart C500&quot; }, */
+multiline_comment|/* Other USB cameras may well work here too, so long as they&n;&t; * just stick to half duplex packet exchanges.&n;&t; */
 )brace
 suffix:semicolon
-multiline_comment|/* For now, we only support one camera at a time: there&squot;s one&n; * application-visible device (e.g. /dev/kodak) and the second&n; * camera detected on the bus is ignored.&n; */
 DECL|struct|camera_state
-r_static
 r_struct
 id|camera_state
 (brace
@@ -115,6 +116,7 @@ op_star
 id|info
 suffix:semicolon
 multiline_comment|/* DC-240, etc */
+multiline_comment|/* valid iff isOpen */
 DECL|member|isOpen
 r_int
 id|isOpen
@@ -131,13 +133,19 @@ op_star
 id|buf
 suffix:semicolon
 multiline_comment|/* buffer for I/O */
+multiline_comment|/* always valid */
 DECL|member|wait
 id|wait_queue_head_t
 id|wait
 suffix:semicolon
 multiline_comment|/* for timed waits */
-DECL|variable|static_camera_state
 )brace
+suffix:semicolon
+multiline_comment|/* For now, we only support one camera at a time: there&squot;s one&n; * application-visible device (e.g. /dev/kodak) and the second&n; * (to Nth) camera detected on the bus is ignored.&n; */
+DECL|variable|static_camera_state
+r_static
+r_struct
+id|camera_state
 id|static_camera_state
 suffix:semicolon
 DECL|function|camera_read
@@ -200,7 +208,7 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-multiline_comment|/* Big reads are common, for image downloading.  Smaller ones&n;&t; * are also common (even &quot;directory listing&quot; commands don&squot;t&n;&t; * send very much data).  We preserve packet boundaries here.&n;&t; */
+multiline_comment|/* Big reads are common, for image downloading.  Smaller ones&n;&t; * are also common (even &quot;directory listing&quot; commands don&squot;t&n;&t; * send very much data).  We preserve packet boundaries here,&n;&t; * they matter in the application protocol.&n;&t; */
 r_for
 c_loop
 (paren
@@ -835,7 +843,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* XXX should define some ioctls to expose camera type&n;&t; * to applications ... what USB exposes should suffice.&n;&t; * Perhaps there&squot;s a packet size limitation too?&n;&t; */
+multiline_comment|/* XXX should define some ioctls to expose camera type&n;&t; * to applications ... what USB exposes should suffice.&n;&t; * apps should be able to see the camera type.&n;&t; */
 DECL|variable|usb_camera_fops
 r_static
 r_struct
@@ -903,7 +911,8 @@ id|usb_camera_fops
 suffix:semicolon
 DECL|function|camera_probe
 r_static
-r_int
+r_void
+op_star
 id|camera_probe
 c_func
 (paren
@@ -911,6 +920,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|ifnum
 )paren
 (brace
 r_int
@@ -926,7 +939,7 @@ suffix:semicolon
 r_struct
 id|usb_interface_descriptor
 op_star
-id|intf_desc
+id|interface
 suffix:semicolon
 r_struct
 id|usb_endpoint_descriptor
@@ -1013,8 +1026,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* these have one config, one interface */
 r_if
@@ -1041,22 +1053,17 @@ l_string|&quot;Bogus camera config info&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* the interface class bit is odd -- the dc240 and dc260 return&n;&t; * a zero there, and at least some dc280s report 0xff&n;&t; */
-id|intf_desc
+singleline_comment|// interface = &amp;dev-&gt;config[0].interface[0].altsetting[0];
+id|interface
 op_assign
 op_amp
-id|dev-&gt;config
+id|dev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|altsetting
@@ -1068,24 +1075,24 @@ r_if
 c_cond
 (paren
 (paren
-id|intf_desc-&gt;bInterfaceClass
+id|interface-&gt;bInterfaceClass
 op_ne
 l_int|0
 op_logical_and
-id|intf_desc-&gt;bInterfaceClass
+id|interface-&gt;bInterfaceClass
 op_ne
 l_int|0xff
 )paren
 op_logical_or
-id|intf_desc-&gt;bInterfaceSubClass
+id|interface-&gt;bInterfaceSubClass
 op_ne
 l_int|0
 op_logical_or
-id|intf_desc-&gt;bInterfaceProtocol
+id|interface-&gt;bInterfaceProtocol
 op_ne
 l_int|0
 op_logical_or
-id|intf_desc-&gt;bNumEndpoints
+id|interface-&gt;bNumEndpoints
 op_ne
 l_int|2
 )paren
@@ -1097,8 +1104,7 @@ l_string|&quot;Bogus camera interface info&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* can only show one camera at a time through /dev ... */
@@ -1135,14 +1141,14 @@ id|camera_info-&gt;nameProduct
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
+singleline_comment|// XXX there are now masks for these constants ... see printer.c
 multiline_comment|/* get input and output endpoints (either order) */
 id|endpoint
 op_assign
-id|intf_desc-&gt;endpoint
+id|interface-&gt;endpoint
 suffix:semicolon
 id|camera-&gt;outEP
 op_assign
@@ -1268,8 +1274,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 r_if
@@ -1299,8 +1304,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 id|camera-&gt;info
@@ -1308,7 +1312,7 @@ op_assign
 id|camera_info
 suffix:semicolon
 r_return
-l_int|0
+id|camera
 suffix:semicolon
 )brace
 DECL|function|camera_disconnect
@@ -1321,6 +1325,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_void
+op_star
+id|ptr
 )paren
 (brace
 r_struct
@@ -1328,8 +1336,12 @@ id|camera_state
 op_star
 id|camera
 op_assign
-op_amp
-id|static_camera_state
+(paren
+r_struct
+id|camera_state
+op_star
+)paren
+id|ptr
 suffix:semicolon
 r_struct
 id|camera
@@ -1347,7 +1359,7 @@ id|dev
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Because this (currently) gets called whenever the USB bus&n;&t; * gets reconfigured (e.g. loading a new USB device driver)&n;&t; * we aren&squot;t reflecting this up to userland, though maybe&n;&t; * that&squot;d be better.  The good consequence is bus reconfig&n;&t; * not breaking apps, and the ability to remove camera for&n;&t; * a while without apps needing to do much more than ignore&n;&t; * some particular error returns.  On the bad side, if the&n;&t; * camera is swapped for another one, we won&squot;t be telling.&n;&t; */
+multiline_comment|/* Currently not reflecting this up to userland; at one point&n;&t; * it got called on bus reconfig, which we clearly don&squot;t want.&n;&t; * A good consequence is the ability to remove camera for&n;&t; * a while without apps needing to do much more than ignore&n;&t; * some particular error returns.  On the bad side, if one&n;&t; * camera is swapped for another one, we won&squot;t be telling.&n;&t; */
 id|camera-&gt;info
 op_assign
 l_int|NULL
@@ -1383,6 +1395,12 @@ l_int|NULL
 comma
 l_int|NULL
 )brace
+comma
+l_int|NULL
+comma
+multiline_comment|/* &amp;usb_camera_fops, */
+l_int|0
+multiline_comment|/* USB_CAMERA_MINOR */
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE
@@ -1423,16 +1441,25 @@ op_amp
 id|camera-&gt;wait
 )paren
 suffix:semicolon
-id|misc_register
+r_if
+c_cond
 (paren
-op_amp
-id|usb_camera
-)paren
-suffix:semicolon
 id|usb_register
 (paren
 op_amp
 id|camera_driver
+)paren
+OL
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|misc_register
+(paren
+op_amp
+id|usb_camera
 )paren
 suffix:semicolon
 r_return

@@ -229,7 +229,7 @@ mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
 DECL|macro|uhci_maxlen
 mdefine_line|#define uhci_maxlen(token)&t;((token) &gt;&gt; 21)
 DECL|macro|uhci_expected_length
-mdefine_line|#define uhci_expected_length(info) (((info &gt;&gt; 21) + 1) &amp; TD_CTRL_ACTLEN_MASK) /* 1-based */ 
+mdefine_line|#define uhci_expected_length(info) (((info &gt;&gt; 21) + 1) &amp; TD_CTRL_ACTLEN_MASK) /* 1-based */
 DECL|macro|uhci_toggle
 mdefine_line|#define uhci_toggle(token)&t;(((token) &gt;&gt; TD_TOKEN_TOGGLE) &amp; 1)
 DECL|macro|uhci_endpoint
@@ -309,6 +309,12 @@ op_star
 id|qh
 suffix:semicolon
 multiline_comment|/* QH this TD is a part of (ignored for Isochronous) */
+DECL|member|pipetype
+r_int
+r_char
+id|pipetype
+suffix:semicolon
+multiline_comment|/* Control, Bulk, Interrupt, Isoc */
 DECL|member|flags
 r_int
 id|flags
@@ -319,11 +325,6 @@ r_int
 id|isoc_td_number
 suffix:semicolon
 multiline_comment|/* 0-relative number within a usb_isoc_desc. */
-DECL|member|pipetype
-r_int
-id|pipetype
-suffix:semicolon
-multiline_comment|/* Control, Bulk, Interrupt, or Isoc */
 DECL|member|bandwidth_alloc
 r_int
 id|bandwidth_alloc
@@ -381,7 +382,7 @@ DECL|macro|uhci_to_usb
 mdefine_line|#define uhci_to_usb(uhci)&t;((uhci)-&gt;usb)
 DECL|macro|usb_to_uhci
 mdefine_line|#define usb_to_uhci(usb)&t;((struct uhci_device *)(usb)-&gt;hcpriv)
-multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-  -&gt;  dev1-  -&gt;  generic-  -&gt;  dev1-  -&gt;  control-  -&gt;  bulk- -&gt; ...&n; *   iso-QH      iso-QH       irq-QH      irq-QH        QH           QH&n; *      |           |            |           |           |            |&n; *     End     dev1-iso-TD1     End     dev1-irq-TD1    ...          ... &n; *                  |&n; *             dev1-iso-TD2&n; *                  |&n; *                ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * And now we don&squot;t put Iso transfers in QH&squot;s, so we don&squot;t waste one on it&n; *&n; * To keep with Linus&squot; nomenclature, this is called the QH skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s QH&squot;s&n; */
+multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-  -&gt;  dev1-  -&gt;  generic-  -&gt;  dev1-  -&gt;  control-  -&gt;  bulk- -&gt; ...&n; *   iso-QH      iso-QH       irq-QH      irq-QH        QH           QH&n; *      |           |            |           |           |            |&n; *     End     dev1-iso-TD1     End     dev1-irq-TD1    ...          ... &n; *                  |&n; *             dev1-iso-TD2&n; *                  |&n; *                ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * And now we don&squot;t put Iso transfers in QH&squot;s, so we don&squot;t waste one on it&n; * --jerdfelt&n; *&n; * To keep with Linus&squot; nomenclature, this is called the QH skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s QH&squot;s&n; */
 DECL|macro|UHCI_NUM_SKELQH
 mdefine_line|#define UHCI_NUM_SKELQH&t;&t;11
 DECL|macro|skel_int1_qh
@@ -468,7 +469,7 @@ multiline_comment|/* int4 for 4-7 ms */
 r_return
 l_int|3
 suffix:semicolon
-multiline_comment|/* int 8 for 8-15 ms */
+multiline_comment|/* int8 for 8-15 ms */
 )brace
 r_if
 c_cond

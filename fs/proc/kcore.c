@@ -1421,6 +1421,11 @@ id|acc
 op_add_assign
 id|buflen
 suffix:semicolon
+op_star
+id|fpos
+op_add_assign
+id|buflen
+suffix:semicolon
 r_return
 id|acc
 suffix:semicolon

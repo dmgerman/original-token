@@ -6114,7 +6114,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(CONFIG_GEMINI) || defined(CONFIG_ALL_PPC) */
+macro_line|#endif /* defined(CONFIG_GEMINI) */
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|HARDWARE_MAPPED_SIZE
 mdefine_line|#define HARDWARE_MAPPED_SIZE (512*1024)

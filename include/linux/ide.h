@@ -1164,6 +1164,18 @@ id|ide_drive_t
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * when ide_timer_expiry fires, invoke a handler of this type&n; * to decide what to do.&n; */
+DECL|typedef|ide_expiry_t
+r_typedef
+r_int
+(paren
+id|ide_expiry_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
 DECL|struct|hwgroup_s
 r_typedef
 r_struct
@@ -1222,6 +1234,12 @@ r_int
 id|poll_timeout
 suffix:semicolon
 multiline_comment|/* timeout value during long polls */
+DECL|member|expiry
+id|ide_expiry_t
+op_star
+id|expiry
+suffix:semicolon
+multiline_comment|/* queried upon timeouts */
 DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
@@ -1956,6 +1974,14 @@ comma
 id|ide_handler_t
 op_star
 id|handler
+comma
+r_int
+r_int
+id|timeout
+comma
+id|ide_expiry_t
+op_star
+id|expiry
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Error reporting, in human readable form (luxurious, but a memory hog).&n; */

@@ -5519,11 +5519,8 @@ id|i_size
 op_minus
 l_int|36
 )paren
-op_div
-r_sizeof
-(paren
-id|Uint32
-)paren
+op_rshift
+l_int|2
 suffix:semicolon
 )brace
 r_else
@@ -5651,11 +5648,8 @@ id|i
 dot
 id|s_start_offset
 )paren
-op_div
-r_sizeof
-(paren
-id|Uint32
-)paren
+op_rshift
+l_int|2
 suffix:semicolon
 id|udf_release_data
 c_func

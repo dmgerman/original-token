@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -80,6 +81,7 @@ multiline_comment|/*&n; * function prototypes&n; */
 r_static
 r_int
 id|uhci_get_current_frame_number
+c_func
 (paren
 r_struct
 id|usb_device
@@ -90,6 +92,7 @@ suffix:semicolon
 r_static
 r_int
 id|uhci_init_isoc
+c_func
 (paren
 r_struct
 id|usb_device
@@ -117,6 +120,7 @@ suffix:semicolon
 r_static
 r_void
 id|uhci_free_isoc
+c_func
 (paren
 r_struct
 id|usb_isoc_desc
@@ -127,6 +131,7 @@ suffix:semicolon
 r_static
 r_int
 id|uhci_run_isoc
+c_func
 (paren
 r_struct
 id|usb_isoc_desc
@@ -142,6 +147,7 @@ suffix:semicolon
 r_static
 r_int
 id|uhci_kill_isoc
+c_func
 (paren
 r_struct
 id|usb_isoc_desc
@@ -285,9 +291,6 @@ r_int
 r_int
 op_star
 id|rval
-comma
-r_int
-id|debug
 )paren
 (brace
 r_int
@@ -307,16 +310,6 @@ comma
 id|actlength
 comma
 id|explength
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rval
-)paren
-op_star
-id|rval
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Start at the TD first in the chain, if possible */
 r_if
@@ -343,6 +336,16 @@ id|tmp
 )paren
 r_return
 id|USB_ST_INTERNALERROR
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rval
+)paren
+op_star
+id|rval
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Locate the first failing td, if any */
 r_do
@@ -406,24 +409,24 @@ id|rval
 op_add_assign
 id|actlength
 suffix:semicolon
-multiline_comment|/* This check is bogus, at least for acm. It&n;                           always expects 64, but gets as many bytes&n;                           as available (typically 1) -- pavel */
 r_if
 c_cond
-(paren
-l_int|0
-op_logical_and
 (paren
 id|explength
 op_ne
 id|actlength
 )paren
-)paren
 (brace
-multiline_comment|/* Reset the data toggle on error. */
+multiline_comment|/* If the packet is short, none of the */
+multiline_comment|/*  packets after this were processed, so */
+multiline_comment|/*  fix the DT accordingly */
 r_if
 c_cond
 (paren
-id|debug
+id|in_interrupt
+c_func
+(paren
+)paren
 op_logical_or
 id|uhci_debug
 )paren
@@ -493,7 +496,7 @@ l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
-singleline_comment|// Short packet
+multiline_comment|/* Short packet */
 )brace
 )brace
 r_if
@@ -543,11 +546,6 @@ id|KERN_ERR
 l_string|&quot;runaway td&squot;s in uhci_td_result!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Force debugging on */
-id|debug
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -588,7 +586,7 @@ r_return
 id|USB_ST_NOERROR
 suffix:semicolon
 multiline_comment|/* We got to an error, but the controller hasn&squot;t finished */
-multiline_comment|/*  with it yet. */
+multiline_comment|/*  with it yet */
 r_if
 c_cond
 (paren
@@ -624,9 +622,18 @@ multiline_comment|/* Some debugging code */
 r_if
 c_cond
 (paren
-id|debug
+op_logical_neg
+id|count
+op_logical_or
+(paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
 op_logical_and
 id|uhci_debug
+)paren
 )paren
 (brace
 id|printk
@@ -975,6 +982,11 @@ r_break
 suffix:semicolon
 id|lqh
 op_assign
+(paren
+r_struct
+id|uhci_qh
+op_star
+)paren
 id|uhci_ptr_to_virt
 c_func
 (paren
@@ -1935,6 +1947,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * attention: td-&gt;link might still be in use by the&n;&t; * hardware if the td is still active and the hardware&n;&t; * was processing it. So td-&gt;link should be preserved&n;&t; * until the frame number changes. Don&squot;t know what to do...&n;&t; * udelay(1000) doesn&squot;t sound nice, and schedule()&n;&t; * can&squot;t be used as this is called from within interrupt context.&n;&t; */
+multiline_comment|/*&n;&t; * we should do the same thing as we do with the QH&squot;s&n;&t; * see uhci_insert_tds_in_qh and uhci_remove_td --jerdfelt&n;&t; */
 multiline_comment|/* for now warn if there&squot;s a possible problem */
 r_if
 c_cond
@@ -2000,6 +2013,7 @@ r_for
 c_loop
 (paren
 suffix:semicolon
+id|tdl
 suffix:semicolon
 )paren
 (brace
@@ -2068,7 +2082,7 @@ id|removeirq
 )paren
 (brace
 r_int
-id|maxcount
+id|count
 op_assign
 l_int|1000
 suffix:semicolon
@@ -2097,7 +2111,7 @@ id|curtd
 op_assign
 id|td
 suffix:semicolon
-multiline_comment|/* Remove it from the skeleton */
+multiline_comment|/* Remove the QH from the skeleton and then free it */
 id|uhci_remove_qh
 c_func
 (paren
@@ -2119,6 +2133,8 @@ op_assign
 id|curtd-&gt;link
 suffix:semicolon
 multiline_comment|/* IOC? =&gt; remove handler */
+multiline_comment|/* HACK: Don&squot;t remove if already removed. Prevents deadlock */
+multiline_comment|/*  in uhci_interrupt_notify and callbacks */
 r_if
 c_cond
 (paren
@@ -2129,6 +2145,11 @@ id|td-&gt;status
 op_amp
 id|TD_CTRL_IOC
 )paren
+op_logical_and
+id|td-&gt;irq_list.next
+op_ne
+op_amp
+id|td-&gt;irq_list
 )paren
 id|uhci_remove_irq_list
 c_func
@@ -2136,6 +2157,7 @@ c_func
 id|td
 )paren
 suffix:semicolon
+multiline_comment|/* Remove the TD and then free it */
 id|uhci_remove_td
 c_func
 (paren
@@ -2169,31 +2191,30 @@ id|uhci_ptr_to_virt
 c_func
 (paren
 id|nextlink
+op_amp
+op_complement
+id|UHCI_PTR_BITS
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|count
+op_decrement
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-op_decrement
-id|maxcount
+id|count
 )paren
-(brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
 l_string|&quot;runaway td&squot;s!?&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-r_while
-c_loop
-(paren
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2304,10 +2325,7 @@ id|qh
 )paren
 suffix:semicolon
 r_return
-(paren
-op_minus
-id|ENOMEM
-)paren
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 )brace
 multiline_comment|/* Destination: pipe destination with INPUT */
@@ -2349,6 +2367,7 @@ id|td-&gt;status
 op_assign
 id|status
 suffix:semicolon
+multiline_comment|/* In */
 id|td-&gt;info
 op_assign
 id|destination
@@ -2629,6 +2648,7 @@ DECL|function|uhci_init_isoc
 r_static
 r_int
 id|uhci_init_isoc
+c_func
 (paren
 r_struct
 id|usb_device
@@ -3710,6 +3730,7 @@ DECL|function|uhci_free_isoc
 r_static
 r_void
 id|uhci_free_isoc
+c_func
 (paren
 r_struct
 id|usb_isoc_desc
@@ -3888,6 +3909,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_int
+r_int
+id|rval
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3895,8 +3923,7 @@ op_logical_neg
 id|qh
 )paren
 r_return
-op_minus
-l_int|1
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 id|current-&gt;state
 op_assign
@@ -3979,13 +4006,9 @@ comma
 id|qh
 )paren
 suffix:semicolon
-id|uhci_qh_free
-c_func
-(paren
-id|qh
-)paren
-suffix:semicolon
-r_return
+multiline_comment|/* Need to check result before free&squot;ing the qh */
+id|ret
+op_assign
 id|uhci_td_result
 c_func
 (paren
@@ -3993,10 +4016,27 @@ id|dev
 comma
 id|last
 comma
-l_int|NULL
-comma
-l_int|1
+op_amp
+id|rval
 )paren
+suffix:semicolon
+id|uhci_qh_free
+c_func
+(paren
+id|qh
+)paren
+suffix:semicolon
+r_return
+(paren
+id|ret
+OL
+l_int|0
+)paren
+ques
+c_cond
+id|ret
+suffix:colon
+id|rval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send or receive a control message on a pipe.&n; *&n; * Note that the &quot;pipe&quot; structure is set up to map&n; * easily to the uhci destination fields.&n; *&n; * A control message is built up from three parts:&n; *  - The command itself&n; *  - [ optional ] data phase&n; *  - Status complete phase&n; *&n; * The data phase can be an arbitrary number of TD&squot;s&n; * although we currently had better not have more than&n; * 29 TD&squot;s here (we have 31 TD&squot;s allocated for control&n; * operations, and two of them are used for command and&n; * status).&n; *&n; * 29 TD&squot;s is a minimum of 232 bytes worth of control&n; * information, that&squot;s just ridiculously high. Most&n; * control messages have just a few bytes of data.&n; *&n; * 232 is not ridiculously high with many of the&n; * configurations on audio devices, etc. anyway,&n; * there is no restriction on length of transfers&n; * anymore&n; */
@@ -4089,26 +4129,6 @@ id|bytesrequested
 op_assign
 id|len
 suffix:semicolon
-r_int
-r_int
-id|bytesread
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#ifdef DUMP_RAW
-r_int
-r_char
-op_star
-id|orig_data
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|data
-suffix:semicolon
-macro_line|#endif
 id|first
 op_assign
 id|td
@@ -4126,8 +4146,7 @@ op_logical_neg
 id|td
 )paren
 r_return
-op_minus
-id|ENOMEM
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18 */
 id|destination
@@ -4242,8 +4261,7 @@ id|prevtd
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ENOMEM
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 )brace
 id|prevtd-&gt;link
@@ -4353,8 +4371,7 @@ op_logical_neg
 id|td
 )paren
 r_return
-op_minus
-id|ENOMEM
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 id|prevtd-&gt;link
 op_assign
@@ -4368,8 +4385,7 @@ id|UHCI_PTR_DEPTH
 suffix:semicolon
 multiline_comment|/* Update previous TD */
 )brace
-multiline_comment|/*&n;&t; * Build the final TD for control status &n;&t; */
-multiline_comment|/* It&squot;s only IN if the pipe is out AND we aren&squot;t expecting data */
+multiline_comment|/*&n;&t; * Build the final TD for control status &n;&t; *&n;&t; * It&squot;s IN if the pipe is an output pipe or we&squot;re not expecting&n;&t; * data back.&n;&t; */
 id|destination
 op_and_assign
 op_complement
@@ -4383,12 +4399,9 @@ c_func
 (paren
 id|pipe
 )paren
-op_or
-(paren
+op_logical_or
+op_logical_neg
 id|bytesrequested
-op_eq
-l_int|0
-)paren
 )paren
 id|destination
 op_or_assign
@@ -4467,34 +4480,6 @@ id|first
 suffix:semicolon
 r_do
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|uhci_status_bits
-c_func
-(paren
-id|td-&gt;status
-)paren
-op_logical_and
-(paren
-(paren
-id|td-&gt;info
-op_amp
-l_int|0xFF
-)paren
-op_eq
-id|USB_PID_IN
-)paren
-)paren
-id|bytesread
-op_add_assign
-id|uhci_actual_length
-c_func
-(paren
-id|td-&gt;status
-)paren
-suffix:semicolon
 id|nextlink
 op_assign
 id|td-&gt;link
@@ -4550,209 +4535,30 @@ id|KERN_ERR
 l_string|&quot;runaway td&squot;s!?&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef UHCI_DEBUG
 r_if
 c_cond
 (paren
 id|ret
-op_logical_and
-(paren
-id|bytesread
 op_ge
-id|bytesrequested
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Recovered sufficient data (asked for %ld, got %ld) from failed cmd&bslash;n&quot;
-comma
-id|bytesrequested
-comma
-id|bytesread
-)paren
-suffix:semicolon
-id|ret
-op_assign
 l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|uhci_debug
 op_logical_and
 id|ret
-)paren
-(brace
-id|__u8
-op_star
-id|p
-op_assign
-(paren
-id|__u8
-op_star
-)paren
-id|cmd
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;dev %d, pipe %X requested %ld bytes, got %ld, status=%d:&bslash;n&quot;
-comma
-id|usb_dev-&gt;devnum
-comma
-id|pipe
-comma
-id|bytesrequested
-comma
-id|bytesread
-comma
-id|ret
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Failed cmd - %02X %02X %02X %02X %02X %02X %02X %02X&bslash;n&quot;
-comma
-id|p
-(braket
-l_int|0
-)braket
-comma
-id|p
-(braket
-l_int|1
-)braket
-comma
-id|p
-(braket
-l_int|2
-)braket
-comma
-id|p
-(braket
-l_int|3
-)braket
-comma
-id|p
-(braket
-l_int|4
-)braket
-comma
-id|p
-(braket
-l_int|5
-)braket
-comma
-id|p
-(braket
-l_int|6
-)braket
-comma
-id|p
-(braket
-l_int|7
-)braket
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifdef DUMP_RAW
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ret
-op_logical_and
-id|usb_pipein
-c_func
-(paren
-id|pipe
-)paren
-)paren
-(brace
-multiline_comment|/* good Input control msg */
-r_int
-id|i
-suffix:semicolon
-id|printk
-(paren
-id|KERN_CRIT
-l_string|&quot;ctrl msg [%02x %02x %04x %04x %04x] on pipe %x returned:&bslash;n&quot;
-comma
-id|cmd-&gt;requesttype
-comma
-id|cmd-&gt;request
-comma
-id|cmd-&gt;value
-comma
-id|cmd-&gt;index
-comma
-id|cmd-&gt;length
-comma
-id|pipe
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|bytesrequested
-suffix:semicolon
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot; %02x&quot;
-comma
-id|orig_data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_increment
-id|i
-op_mod
-l_int|16
-op_eq
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-op_mod
-l_int|16
 op_ne
-l_int|0
+id|bytesrequested
+op_logical_and
+id|bytesrequested
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&quot;
+l_string|&quot;requested %ld bytes, got %d&bslash;n&quot;
+comma
+id|bytesrequested
+comma
+id|ret
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_return
 id|ret
@@ -4809,6 +4615,9 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4816,8 +4625,7 @@ op_logical_neg
 id|qh
 )paren
 r_return
-op_minus
-id|ENOMEM
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 id|current-&gt;state
 op_assign
@@ -4899,13 +4707,8 @@ comma
 id|qh
 )paren
 suffix:semicolon
-id|uhci_qh_free
-c_func
-(paren
-id|qh
-)paren
-suffix:semicolon
-r_return
+id|ret
+op_assign
 id|uhci_td_result
 c_func
 (paren
@@ -4914,9 +4717,16 @@ comma
 id|last
 comma
 id|rval
-comma
-l_int|1
 )paren
+suffix:semicolon
+id|uhci_qh_free
+c_func
+(paren
+id|qh
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send or receive a bulk message on a pipe.&n; *&n; * Note that the &quot;pipe&quot; structure is set up to map&n; * easily to the uhci destination fields.&n; *&n; * A bulk message is only built up from&n; * the data phase&n; */
@@ -4972,6 +4782,9 @@ id|td
 comma
 op_star
 id|prevtd
+comma
+op_star
+id|curtd
 suffix:semicolon
 r_int
 r_int
@@ -4980,7 +4793,13 @@ comma
 id|status
 suffix:semicolon
 r_int
+r_int
+id|nextlink
+suffix:semicolon
+r_int
 id|ret
+comma
+id|count
 suffix:semicolon
 r_int
 id|maxsze
@@ -5092,8 +4911,7 @@ op_logical_neg
 id|td
 )paren
 r_return
-op_minus
-id|ENOMEM
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 id|prevtd
 op_assign
@@ -5219,8 +5037,7 @@ op_logical_neg
 id|td
 )paren
 r_return
-op_minus
-id|ENOMEM
+id|USB_ST_INTERNALERROR
 suffix:semicolon
 id|prevtd-&gt;link
 op_assign
@@ -5281,22 +5098,13 @@ comma
 id|timeout
 )paren
 suffix:semicolon
-(brace
-r_int
 id|count
 op_assign
-l_int|100
+l_int|1000
 suffix:semicolon
-r_struct
-id|uhci_td
-op_star
 id|curtd
 op_assign
 id|first
-suffix:semicolon
-r_int
-r_int
-id|nextlink
 suffix:semicolon
 r_do
 (brace
@@ -5352,12 +5160,13 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;runaway td&squot;s!?&bslash;n&quot;
+l_string|&quot;uhci: runaway td&squot;s!?&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 id|ret
+OL
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|uhci_request_bulk
@@ -5526,6 +5335,7 @@ id|td-&gt;status
 op_assign
 id|status
 suffix:semicolon
+multiline_comment|/* Status */
 id|td-&gt;info
 op_assign
 id|destination
@@ -6099,7 +5909,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;uhci: disabling malfunctioning port %d&bslash;n&quot;
+l_string|&quot;uhci: disabling port %d&bslash;n&quot;
 comma
 id|nr
 op_plus
@@ -6110,7 +5920,8 @@ id|outw
 c_func
 (paren
 id|status
-op_or
+op_amp
+op_complement
 id|USBPORTSC_PE
 comma
 id|port
@@ -6432,6 +6243,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|uhci_isoc_callback
+r_static
 r_int
 id|uhci_isoc_callback
 c_func
@@ -6511,6 +6323,7 @@ suffix:colon
 multiline_comment|/* similar to the re-add condition below,&n;&t;&t;&t;&t; * but Not ACTIVE */
 multiline_comment|/* TBD */
 multiline_comment|/* usb_dev = td-&gt;dev-&gt;usb; */
+multiline_comment|/* Safe since uhci_interrupt_notify holds the lock */
 id|list_add
 c_func
 (paren
@@ -6620,7 +6433,168 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|uhci_bulk_callback
+r_static
+r_int
+id|uhci_bulk_callback
+c_func
+(paren
+r_struct
+id|uhci
+op_star
+id|uhci
+comma
+r_struct
+id|uhci_td
+op_star
+id|td
+comma
+r_int
+id|status
+comma
+r_int
+r_int
+id|rval
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|td
+op_member_access_from_pointer
+id|completed
+c_func
+(paren
+id|status
+comma
+id|bus_to_virt
+c_func
+(paren
+id|td-&gt;buffer
+)paren
+comma
+id|rval
+comma
+id|td-&gt;dev_id
+)paren
+)paren
+(brace
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+op_assign
+id|td-&gt;dev-&gt;usb
+suffix:semicolon
+multiline_comment|/* This is safe since uhci_interrupt_notify holds the lock */
+id|list_add
+c_func
+(paren
+op_amp
+id|td-&gt;irq_list
+comma
+op_amp
+id|uhci-&gt;interrupt_list
+)paren
+suffix:semicolon
+multiline_comment|/* Reset the status */
+id|td-&gt;status
+op_assign
+(paren
+id|td-&gt;status
+op_amp
+id|TD_CTRL_LS
+)paren
+op_or
+id|TD_CTRL_ACTIVE
+op_or
+id|TD_CTRL_IOC
+op_or
+id|TD_CTRL_SPD
+suffix:semicolon
+multiline_comment|/* Reset the info */
+id|td-&gt;info
+op_assign
+(paren
+id|td-&gt;info
+op_amp
+(paren
+id|PIPE_DEVEP_MASK
+op_or
+l_int|0xFF
+op_or
+(paren
+id|TD_CTRL_ACTLEN_MASK
+op_lshift
+l_int|21
+)paren
+)paren
+)paren
+op_or
+(paren
+id|usb_gettoggle
+c_func
+(paren
+id|usb_dev
+comma
+id|uhci_endpoint
+c_func
+(paren
+id|td-&gt;info
+)paren
+comma
+id|uhci_packetout
+c_func
+(paren
+id|td-&gt;info
+)paren
+)paren
+op_lshift
+id|TD_TOKEN_TOGGLE
+)paren
+suffix:semicolon
+multiline_comment|/* pktsze bytes of data */
+id|usb_dotoggle
+c_func
+(paren
+id|usb_dev
+comma
+id|uhci_endpoint
+c_func
+(paren
+id|td-&gt;info
+)paren
+comma
+id|uhci_packetout
+c_func
+(paren
+id|td-&gt;info
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* The HC only removes it when it completed */
+multiline_comment|/* successfully, so force remove and re-add it */
+id|uhci_remove_td
+c_func
+(paren
+id|td
+)paren
+suffix:semicolon
+id|uhci_insert_td_in_qh
+c_func
+(paren
+id|td-&gt;qh
+comma
+id|td
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|uhci_callback
+r_static
 r_int
 id|uhci_callback
 c_func
@@ -6672,6 +6646,17 @@ id|usb_dev
 op_assign
 id|td-&gt;dev-&gt;usb
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|td-&gt;pipetype
+op_ne
+id|PIPE_INTERRUPT
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* This is safe since uhci_interrupt_notify holds the lock */
 id|list_add
 c_func
 (paren
@@ -6746,7 +6731,7 @@ op_or
 id|TD_CTRL_IOC
 suffix:semicolon
 multiline_comment|/* The HC only removes it when it completed */
-multiline_comment|/* successfully, so force remove and re-add it. */
+multiline_comment|/* successfully, so force remove and re-add it */
 id|uhci_remove_td
 c_func
 (paren
@@ -6924,8 +6909,6 @@ id|td
 comma
 op_amp
 id|rval
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -6952,14 +6935,15 @@ op_amp
 id|td-&gt;irq_list
 )paren
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|td-&gt;pipetype
-op_eq
-id|PIPE_ISOCHRONOUS
 )paren
 (brace
+r_case
+id|PIPE_ISOCHRONOUS
+suffix:colon
 id|uhci_isoc_callback
 c_func
 (paren
@@ -6972,9 +6956,27 @@ comma
 id|rval
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
+r_break
+suffix:semicolon
+r_case
+id|PIPE_BULK
+suffix:colon
+id|uhci_bulk_callback
+c_func
+(paren
+id|uhci
+comma
+id|td
+comma
+id|status
+comma
+id|rval
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|uhci_callback
 c_func
 (paren
@@ -7243,10 +7245,11 @@ id|td-&gt;status
 op_assign
 id|TD_CTRL_IOC
 suffix:semicolon
+multiline_comment|/* (ignored) input packet, 0 bytes, device 127 */
 id|td-&gt;info
 op_assign
 (paren
-l_int|15
+id|UHCI_NULL_DATA_SIZE
 op_lshift
 l_int|21
 )paren
@@ -7259,7 +7262,6 @@ l_int|8
 op_or
 id|USB_PID_IN
 suffix:semicolon
-multiline_comment|/* (ignored) input packet, 16 bytes, device 127 */
 id|td-&gt;buffer
 op_assign
 l_int|0

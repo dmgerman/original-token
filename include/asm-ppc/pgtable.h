@@ -2208,12 +2208,17 @@ r_int
 id|va
 )paren
 suffix:semicolon
+multiline_comment|/* Encode and de-code a swap entry */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((pte_val(entry)) &gt;&gt; 1) &amp; 0x7f)
+mdefine_line|#define SWP_TYPE(entry) (((entry).val &gt;&gt; 1) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((pte_val(entry)) &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(entry) ((entry).val &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) __pte(((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+mdefine_line|#define SWP_ENTRY(type,offset) ((swp_entry_t) { (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8)) })
+DECL|macro|pte_to_swp_entry
+mdefine_line|#define pte_to_swp_entry(pte)&t;&t;((swp_entry_t) { pte_val(pte) })
+DECL|macro|swp_entry_to_pte
+mdefine_line|#define swp_entry_to_pte(x)&t;&t;((pte_t) { (x).val })
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

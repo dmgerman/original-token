@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.3 1999/10/12 14:46:20 gniibe Exp $&n; *&n; * User space memory access functions&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on:&n; *     MIPS implementation version 1.15 by&n; *              Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *     and i386 version.&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.6 1999/10/29 13:10:44 gniibe Exp $&n; *&n; * User space memory access functions&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on:&n; *     MIPS implementation version 1.15 by&n; *              Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *     and i386 version.&n; */
 macro_line|#ifndef __ASM_SH_UACCESS_H
 DECL|macro|__ASM_SH_UACCESS_H
 mdefine_line|#define __ASM_SH_UACCESS_H
@@ -500,16 +500,14 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mov&t;#-1,%1&bslash;n&quot;
-l_string|&quot;9:&bslash;n&bslash;t&quot;
+l_string|&quot;9:&bslash;n&quot;
 l_string|&quot;cmp/eq&t;%4,%0&bslash;n&bslash;t&quot;
-l_string|&quot;bt&t;5f&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq&t;#0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;bf/s&t;9b&bslash;n&bslash;t&quot;
+l_string|&quot;bt&t;2f&bslash;n&quot;
 l_string|&quot;1:&bslash;t&quot;
-l_string|&quot; mov.b&t;@%0+,%1&bslash;n&bslash;t&quot;
-l_string|&quot;5:&bslash;t&quot;
-l_string|&quot;sub&t;%3,%0&bslash;n&quot;
+l_string|&quot;mov.b&t;@(%0,%3),%1&bslash;n&bslash;t&quot;
+l_string|&quot;tst&t;%1,%1&bslash;n&bslash;t&quot;
+l_string|&quot;bf/s&t;9b&bslash;n&bslash;t&quot;
+l_string|&quot; add&t;#1,%0&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&bslash;n&bslash;t&quot;
@@ -524,19 +522,19 @@ l_string|&quot;&t;.balign 4&bslash;n&quot;
 l_string|&quot;&t;.long 1b,3b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=z&quot;
 (paren
 id|res
 )paren
 comma
-l_string|&quot;=&amp;z&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|__dummy
 )paren
 suffix:colon
 l_string|&quot;0&quot;
 (paren
-id|__s
+l_int|0
 )paren
 comma
 l_string|&quot;r&quot;
@@ -546,8 +544,6 @@ id|__s
 comma
 l_string|&quot;r&quot;
 (paren
-id|__s
-op_plus
 id|__n
 )paren
 comma
@@ -582,21 +578,15 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|access_ok
+id|__addr_ok
 c_func
 (paren
-id|VERIFY_READ
-comma
 id|s
-comma
-id|n
 )paren
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_else
 r_return
 id|__strnlen_user

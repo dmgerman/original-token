@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: process.c,v 1.7 1999/09/23 00:05:41 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka &amp; Kaz Kojima&n; */
+multiline_comment|/* $Id: process.c,v 1.8 1999/10/31 13:19:16 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka &amp; Kaz Kojima&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -850,15 +850,6 @@ r_int
 r_int
 )paren
 id|ret_from_fork
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p-&gt;mm
-)paren
-id|p-&gt;mm-&gt;context
-op_assign
-id|NO_CONTEXT
 suffix:semicolon
 r_return
 l_int|0

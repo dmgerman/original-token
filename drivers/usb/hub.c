@@ -487,6 +487,8 @@ id|buffer
 comma
 l_int|4
 )paren
+OL
+l_int|0
 )paren
 r_return
 op_minus
@@ -533,6 +535,8 @@ id|bitmap
 comma
 id|header-&gt;bLength
 )paren
+OL
+l_int|0
 )paren
 r_return
 op_minus
@@ -786,6 +790,8 @@ id|dev
 comma
 id|buffer
 )paren
+OL
+l_int|0
 )paren
 r_return
 op_minus
@@ -1417,6 +1423,8 @@ comma
 op_amp
 id|portsts
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
@@ -1705,6 +1713,8 @@ comma
 op_amp
 id|portsts
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
@@ -2024,22 +2034,10 @@ id|hub_driver
 OL
 l_int|0
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;USB hub driver cannot register: &quot;
-l_string|&quot;minor number %d already in use&bslash;n&quot;
-comma
-id|hub_driver.minor
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|pid
 op_assign
 id|kernel_thread
@@ -2081,6 +2079,7 @@ id|hub_driver
 )paren
 suffix:semicolon
 r_return
+op_minus
 l_int|1
 suffix:semicolon
 )brace

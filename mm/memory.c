@@ -57,6 +57,10 @@ r_struct
 id|page
 op_star
 id|to
+comma
+r_int
+r_int
+id|address
 )paren
 (brace
 r_if
@@ -67,7 +71,7 @@ op_eq
 id|ZERO_PAGE
 c_func
 (paren
-id|to
+id|address
 )paren
 )paren
 (brace
@@ -1654,6 +1658,10 @@ r_struct
 id|page
 op_star
 id|page
+comma
+r_int
+r_int
+id|vaddr
 )paren
 (brace
 r_if
@@ -1678,7 +1686,7 @@ op_eq
 id|ZERO_PAGE
 c_func
 (paren
-id|page
+id|vaddr
 )paren
 )paren
 r_return
@@ -1961,6 +1969,8 @@ id|get_page_map
 c_func
 (paren
 id|map
+comma
+id|ptr
 )paren
 suffix:semicolon
 r_if
@@ -3228,7 +3238,7 @@ comma
 id|pte_mkwrite
 c_func
 (paren
-id|page_pte_prot
+id|mk_pte
 c_func
 (paren
 id|page
@@ -3476,6 +3486,8 @@ c_func
 id|old_page
 comma
 id|new_page
+comma
+id|address
 )paren
 suffix:semicolon
 id|flush_page_to_ram

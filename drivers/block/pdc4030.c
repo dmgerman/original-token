@@ -291,12 +291,6 @@ id|hwif-&gt;drives
 l_int|0
 )braket
 suffix:semicolon
-id|drive-&gt;timeout
-op_assign
-id|HZ
-op_div
-l_int|100
-suffix:semicolon
 id|hwif2
 op_assign
 op_amp
@@ -1072,13 +1066,6 @@ id|request
 op_star
 id|rq
 suffix:semicolon
-multiline_comment|/* reset timeout */
-id|drive-&gt;timeout
-op_assign
-id|HZ
-op_div
-l_int|100
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1330,16 +1317,16 @@ op_amp
 id|BUSY_STAT
 )paren
 (brace
-id|drive-&gt;timeout
-op_assign
-id|WAIT_CMD
-suffix:semicolon
 id|ide_set_handler
 (paren
 id|drive
 comma
 op_amp
 id|promise_read_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_READ
@@ -1441,6 +1428,12 @@ id|drive
 comma
 op_amp
 id|promise_complete_pollfunc
+comma
+id|HZ
+op_div
+l_int|100
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -1569,6 +1562,12 @@ id|drive
 comma
 op_amp
 id|promise_write_pollfunc
+comma
+id|HZ
+op_div
+l_int|100
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -1625,6 +1624,12 @@ id|drive
 comma
 op_amp
 id|promise_complete_pollfunc
+comma
+id|HZ
+op_div
+l_int|100
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_WRITE
@@ -1732,6 +1737,12 @@ id|drive
 comma
 op_amp
 id|promise_write_pollfunc
+comma
+id|HZ
+op_div
+l_int|100
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -1759,6 +1770,12 @@ id|drive
 comma
 op_amp
 id|promise_complete_pollfunc
+comma
+id|HZ
+op_div
+l_int|100
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_WRITE
@@ -1884,10 +1901,6 @@ id|drive-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|drive-&gt;timeout
-op_assign
-id|WAIT_CMD
-suffix:semicolon
 id|ide_set_handler
 c_func
 (paren
@@ -1895,6 +1908,10 @@ id|drive
 comma
 op_amp
 id|promise_read_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

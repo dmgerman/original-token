@@ -831,6 +831,23 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+l_int|12
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;7400 (G4)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|50
 suffix:colon
 id|len

@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_HIGHMEM_H
 DECL|macro|_LINUX_HIGHMEM_H
 mdefine_line|#define _LINUX_HIGHMEM_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef CONFIG_HIGHMEM
 r_extern

@@ -75,10 +75,10 @@ id|__u32
 id|i_ctime
 suffix:semicolon
 DECL|member|i_padding
-id|__u8
+id|__u32
 id|i_padding
 (braket
-l_int|16
+l_int|4
 )braket
 suffix:semicolon
 )brace
@@ -154,10 +154,10 @@ l_int|6
 )braket
 suffix:semicolon
 DECL|member|s_padding
-id|__u8
+id|__u32
 id|s_padding
 (braket
-l_int|472
+l_int|118
 )braket
 suffix:semicolon
 )brace

@@ -561,6 +561,10 @@ id|drive
 comma
 op_amp
 id|read_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -722,6 +726,10 @@ id|drive
 comma
 op_amp
 id|write_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -1012,6 +1020,10 @@ id|drive
 comma
 op_amp
 id|multwrite_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_goto
@@ -1580,6 +1592,10 @@ id|drive
 comma
 op_amp
 id|read_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -1716,6 +1732,10 @@ id|drive
 comma
 op_amp
 id|multwrite_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|ide_multwrite
@@ -1735,6 +1755,10 @@ id|drive
 comma
 op_amp
 id|write_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|idedisk_output_data
@@ -2231,10 +2255,6 @@ suffix:semicolon
 id|drive-&gt;special.b.recalibrate
 op_assign
 l_int|1
-suffix:semicolon
-id|drive-&gt;timeout
-op_assign
-id|WAIT_CMD
 suffix:semicolon
 r_if
 c_cond

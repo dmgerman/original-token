@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.3 1999/10/17 10:30:15 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/time.c&n; *&n; *  Copyright (C) 1999  Tetsuya Okada &amp; Niibe Yutaka&n; *&n; *  Some code taken from i386 version.&n; *    Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: time.c,v 1.7 1999/11/06 02:00:37 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/time.c&n; *&n; *  Copyright (C) 1999  Tetsuya Okada &amp; Niibe Yutaka&n; *&n; *  Some code taken from i386 version.&n; *    Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -36,7 +36,10 @@ mdefine_line|#define TMU0_TCNT&t;0xfffffe98&t;/* Long access */
 DECL|macro|TMU0_TCR
 mdefine_line|#define TMU0_TCR&t;0xfffffe9c&t;/* Word access */
 DECL|macro|INTERVAL
-mdefine_line|#define INTERVAL&t;37500 /* (1000000*CLOCK_MHZ/HZ/2) ??? */
+mdefine_line|#define INTERVAL&t;37500 /* (1000000*CLOCK_MHZ/HZ/2) ??? for CqREEK */
+macro_line|#if 0 /* Takeshi&squot;s board */
+mdefine_line|#define INTERVAL&t;83333
+macro_line|#endif
 multiline_comment|/* SH-3 RTC */
 DECL|macro|R64CNT
 mdefine_line|#define R64CNT  &t;0xfffffec0
@@ -491,6 +494,30 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#ifdef TAKESHI
+(brace
+r_int
+r_int
+id|what_is_this
+op_assign
+l_int|0xa4000124
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+id|ctrl_inb
+c_func
+(paren
+id|what_is_this
+)paren
+op_plus
+l_int|1
+comma
+id|what_is_this
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#if 0
 r_if
 c_cond

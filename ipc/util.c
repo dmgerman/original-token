@@ -349,7 +349,7 @@ r_int
 id|size
 comma
 r_int
-id|flag
+id|shmflag
 )paren
 (brace
 r_return

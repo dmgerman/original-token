@@ -139,6 +139,12 @@ r_int
 id|cluster_size
 suffix:semicolon
 multiline_comment|/* sectors/cluster */
+DECL|member|cluster_bits
+r_int
+r_int
+id|cluster_bits
+suffix:semicolon
+multiline_comment|/* sectors/cluster */
 DECL|member|fats
 DECL|member|fat_bits
 r_int

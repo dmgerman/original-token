@@ -1027,36 +1027,13 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
+r_return
 id|usb_register
 c_func
 (paren
 op_amp
 id|usb_kbd_driver
 )paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;USB keyboard driver cannot register: &quot;
-l_string|&quot;minor number %d already in use&bslash;n&quot;
-comma
-id|usb_kbd_driver.minor
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|usb_kbd_cleanup

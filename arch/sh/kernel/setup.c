@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.7 1999/10/23 01:34:50 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/setup.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: setup.c,v 1.7 1999/10/23 01:34:50 gniibe Exp gniibe $&n; *&n; *  linux/arch/sh/kernel/setup.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -447,11 +447,7 @@ op_assign
 r_int
 r_int
 )paren
-id|__va
-c_func
-(paren
-l_int|0
-)paren
+id|PAGE_OFFSET
 op_plus
 id|__MEMORY_START
 suffix:semicolon
@@ -462,11 +458,9 @@ op_assign
 r_int
 r_int
 )paren
-id|__va
-c_func
-(paren
+id|PAGE_OFFSET
+op_plus
 l_int|0x00400000
-)paren
 op_plus
 id|__MEMORY_START
 suffix:semicolon
@@ -787,6 +781,8 @@ c_func
 id|start_pfn
 comma
 id|max_low_pfn
+comma
+id|__MEMORY_START
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * FIXME: what about high memory?&n;&t; */
@@ -900,12 +896,38 @@ c_cond
 id|LOADER_TYPE
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|INITRD_START
+op_plus
+id|INITRD_SIZE
+op_le
+(paren
+id|max_low_pfn
+op_lshift
+id|PAGE_SHIFT
+)paren
+)paren
+(brace
+id|reserve_bootmem
+c_func
+(paren
+id|INITRD_START
+comma
+id|INITRD_SIZE
+)paren
+suffix:semicolon
 id|initrd_start
 op_assign
 id|INITRD_START
 ques
 c_cond
 id|INITRD_START
+op_plus
+id|PAGE_OFFSET
+op_plus
+id|__MEMORY_START
 suffix:colon
 l_int|0
 suffix:semicolon
@@ -915,13 +937,8 @@ id|initrd_start
 op_plus
 id|INITRD_SIZE
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|initrd_end
-OG
-id|memory_end
-)paren
+)brace
+r_else
 (brace
 id|printk
 c_func
@@ -929,9 +946,13 @@ c_func
 l_string|&quot;initrd extends beyond end of memory &quot;
 l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
 comma
-id|initrd_end
+id|INITRD_START
+op_plus
+id|INITRD_SIZE
 comma
-id|memory_end
+id|max_low_pfn
+op_lshift
+id|PAGE_SHIFT
 )paren
 suffix:semicolon
 id|initrd_start
@@ -939,21 +960,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
-id|reserve_bootmem
-c_func
-(paren
-id|__pa
-c_func
-(paren
-id|initrd_start
-)paren
-op_minus
-id|__MEMORY_START
-comma
-id|INITRD_SIZE
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#if 0

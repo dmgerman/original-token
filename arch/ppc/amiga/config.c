@@ -1837,6 +1837,17 @@ suffix:semicolon
 )brace
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE 10000
+r_extern
+r_int
+r_char
+id|cia_get_irq_mask
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+suffix:semicolon
 multiline_comment|/* This is always executed with interrupts disabled.  */
 DECL|function|amiga_gettimeoffset
 r_static
@@ -1914,13 +1925,10 @@ multiline_comment|/* check for pending interrupt */
 r_if
 c_cond
 (paren
-id|cia_set_irq
+id|cia_get_irq_mask
 c_func
 (paren
-op_amp
-id|ciab_base
-comma
-l_int|0
+id|IRQ_AMIGA_CIAB
 )paren
 op_amp
 id|CIA_ICR_TA

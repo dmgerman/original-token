@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.4 1999/10/23 01:37:02 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/init.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/init.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: init.c,v 1.4 1999/10/23 01:37:02 gniibe Exp gniibe $&n; *&n; *  linux/arch/sh/mm/init.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/init.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -833,6 +833,9 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 id|pgd_t
 op_star
 id|pg_dir
@@ -842,13 +845,28 @@ id|pg_dir
 op_assign
 id|swapper_pg_dir
 suffix:semicolon
-multiline_comment|/* Unmap the original low memory mappings to detect NULL reference */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|USER_PTRS_PER_PGD
+op_star
+l_int|2
+suffix:semicolon
+id|i
+op_increment
+)paren
 id|pgd_val
 c_func
 (paren
 id|pg_dir
 (braket
-l_int|0
+id|i
 )braket
 )paren
 op_assign

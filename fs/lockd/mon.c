@@ -739,6 +739,14 @@ DECL|macro|SM_mon_id_sz
 mdefine_line|#define SM_mon_id_sz&t;(1+XDR_QUADLEN(20)+SM_my_id_sz)
 DECL|macro|SM_mon_sz
 mdefine_line|#define SM_mon_sz&t;(SM_mon_id_sz+4)
+DECL|macro|SM_monres_sz
+mdefine_line|#define SM_monres_sz&t;2
+DECL|macro|SM_unmonres_sz
+mdefine_line|#define SM_unmonres_sz&t;1
+macro_line|#ifndef MAX
+DECL|macro|MAX
+macro_line|# define MAX(a, b)&t;(((a) &gt; (b))? (a) : (b))
+macro_line|#endif
 DECL|variable|nsm_procedures
 r_static
 r_struct
@@ -797,9 +805,17 @@ id|kxdrproc_t
 )paren
 id|xdr_decode_stat_res
 comma
+id|MAX
+c_func
+(paren
 id|SM_mon_sz
 comma
+id|SM_monres_sz
+)paren
+op_lshift
 l_int|2
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -815,9 +831,17 @@ id|kxdrproc_t
 )paren
 id|xdr_decode_stat
 comma
+id|MAX
+c_func
+(paren
 id|SM_mon_id_sz
 comma
-l_int|1
+id|SM_unmonres_sz
+)paren
+op_lshift
+l_int|2
+comma
+l_int|0
 )brace
 comma
 (brace

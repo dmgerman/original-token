@@ -14,6 +14,8 @@ mdefine_line|#define MSR_SF&t;&t;(1&lt;&lt;63)
 DECL|macro|MSR_ISF
 mdefine_line|#define MSR_ISF&t;&t;(1&lt;&lt;61)
 macro_line|#endif /* CONFIG_PPC64 */
+DECL|macro|MSR_VEC
+mdefine_line|#define MSR_VEC&t;&t;(1&lt;&lt;25)&t;&t;/* Enable AltiVec */
 DECL|macro|MSR_POW
 mdefine_line|#define MSR_POW&t;&t;(1&lt;&lt;18)&t;&t;/* Enable Power Management */
 DECL|macro|MSR_TGPR
@@ -474,6 +476,12 @@ id|task_struct
 op_star
 id|last_task_used_math
 suffix:semicolon
+r_extern
+r_struct
+id|task_struct
+op_star
+id|last_task_used_altivec
+suffix:semicolon
 multiline_comment|/*&n; * this is the minimum allowable io space due to the location&n; * of the io areas on prep (first one at 0x80000000) but&n; * as soon as I get around to remapping the io areas with the BATs&n; * to match the mac we can raise this. -- Cort&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
@@ -551,6 +559,24 @@ r_int
 id|fpscr
 suffix:semicolon
 multiline_comment|/* Floating point status */
+DECL|member|vrf
+r_int
+r_int
+id|vrf
+(braket
+l_int|128
+)braket
+suffix:semicolon
+DECL|member|vscr
+r_int
+r_int
+id|vscr
+suffix:semicolon
+DECL|member|vrsave
+r_int
+r_int
+id|vrsave
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_SP

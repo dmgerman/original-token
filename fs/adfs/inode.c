@@ -745,8 +745,8 @@ suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
 id|inode-&gt;i_size
-op_div
-id|sb-&gt;s_blocksize
+op_rshift
+id|sb-&gt;s_blocksize_bits
 suffix:semicolon
 id|inode-&gt;i_mtime
 op_assign

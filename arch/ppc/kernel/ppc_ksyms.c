@@ -955,6 +955,7 @@ c_func
 id|cuda_poll
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ADB_PMU
 DECL|variable|pmu_request
 id|EXPORT_SYMBOL
 c_func
@@ -969,6 +970,7 @@ c_func
 id|pmu_poll
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_PMU */
 macro_line|#endif /* CONFIG_ADB */
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 DECL|variable|pmu_register_sleep_notifier

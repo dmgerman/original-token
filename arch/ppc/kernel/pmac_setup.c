@@ -247,6 +247,12 @@ DECL|variable|ppc_override_l2cr_value
 r_int
 id|ppc_override_l2cr_value
 suffix:semicolon
+DECL|variable|has_l2cache
+r_int
+id|has_l2cache
+op_assign
+l_int|0
+suffix:semicolon
 r_extern
 r_char
 id|saved_command_line
@@ -568,6 +574,10 @@ id|len
 comma
 l_string|&quot;L2 cache&bslash;t:&quot;
 )paren
+suffix:semicolon
+id|has_l2cache
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -1530,6 +1540,12 @@ l_int|4
 op_or_assign
 l_int|0x04000000
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|has_l2cache
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1537,6 +1553,7 @@ id|KERN_INFO
 l_string|&quot;Level 2 cache enabled&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace

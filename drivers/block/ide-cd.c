@@ -1472,6 +1472,84 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|cdrom_timer_expiry
+r_static
+r_int
+id|cdrom_timer_expiry
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+r_struct
+id|request
+op_star
+id|rq
+op_assign
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
+suffix:semicolon
+r_struct
+id|packet_command
+op_star
+id|pc
+op_assign
+(paren
+r_struct
+id|packet_command
+op_star
+)paren
+id|rq-&gt;buffer
+suffix:semicolon
+r_int
+r_int
+id|wait
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;in expiry&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* blank and format can take an extremly long time to&n;&t; * complete, if the IMMED bit was not set.&n;&t; */
+r_if
+c_cond
+(paren
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_eq
+id|GPCMD_BLANK
+op_logical_or
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_eq
+id|GPCMD_FORMAT_UNIT
+)paren
+id|wait
+op_assign
+l_int|60
+op_star
+l_int|60
+op_star
+id|HZ
+suffix:semicolon
+r_return
+id|wait
+suffix:semicolon
+)brace
 multiline_comment|/* Set up the device registers for transferring a packet command on DEV,&n;   expecting to later transfer XFERLEN bytes.  HANDLER is the routine&n;   which actually transfers the command to the drive.  If this is a&n;   drq_interrupt device, this routine will arrange for HANDLER to be&n;   called when the interrupt from the drive arrives.  Otherwise, HANDLER&n;   will be called immediately after the drive is prepared for the transfer. */
 DECL|function|cdrom_start_packet_command
 r_static
@@ -1630,6 +1708,10 @@ id|ide_set_handler
 id|drive
 comma
 id|handler
+comma
+id|WAIT_CMD
+comma
+id|cdrom_timer_expiry
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -1687,28 +1769,6 @@ op_star
 id|handler
 )paren
 (brace
-multiline_comment|/* don&squot;t timeout for blank and format commands. they may take&n;&t; * a _very_ long time. */
-r_if
-c_cond
-(paren
-id|cmd_buf
-(braket
-l_int|0
-)braket
-op_eq
-id|GPCMD_BLANK
-op_logical_or
-id|cmd_buf
-(braket
-l_int|0
-)braket
-op_eq
-id|GPCMD_FORMAT_UNIT
-)paren
-id|drive-&gt;timeout
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1769,6 +1829,10 @@ id|ide_set_handler
 id|drive
 comma
 id|handler
+comma
+id|WAIT_CMD
+comma
+id|cdrom_timer_expiry
 )paren
 suffix:semicolon
 multiline_comment|/* Send the command to the device. */
@@ -2562,6 +2626,10 @@ id|drive
 comma
 op_amp
 id|cdrom_read_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -3514,11 +3582,6 @@ op_star
 )paren
 id|rq-&gt;buffer
 suffix:semicolon
-multiline_comment|/* restore timeout after blank or format command */
-id|drive-&gt;timeout
-op_assign
-id|WAIT_CMD
-suffix:semicolon
 multiline_comment|/* Check for errors. */
 r_if
 c_cond
@@ -3819,6 +3882,10 @@ id|drive
 comma
 op_amp
 id|cdrom_pc_intr
+comma
+id|WAIT_CMD
+comma
+id|cdrom_timer_expiry
 )paren
 suffix:semicolon
 )brace
@@ -9051,10 +9118,6 @@ id|drive-&gt;ready_stat
 op_assign
 l_int|0
 suffix:semicolon
-id|drive-&gt;timeout
-op_assign
-id|WAIT_CMD
-suffix:semicolon
 id|CDROM_STATE_FLAGS
 (paren
 id|drive
@@ -9254,6 +9317,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* a testament to the nice quality of Samsung drives... */
 r_if
 c_cond
 (paren
@@ -9296,6 +9360,24 @@ op_member_access_from_pointer
 id|limit_nframes
 op_assign
 l_int|1
+suffix:semicolon
+multiline_comment|/* the 3231 model does not support the SET_CD_SPEED command */
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|drive-&gt;id-&gt;model
+comma
+l_string|&quot;SAMSUNG CD-ROM SCR-3231&quot;
+)paren
+)paren
+id|cdi-&gt;mask
+op_or_assign
+id|CDC_SELECT_SPEED
 suffix:semicolon
 )brace
 macro_line|#if ! STANDARD_ATAPI

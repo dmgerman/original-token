@@ -42,7 +42,6 @@ id|vfsmntlist
 suffix:semicolon
 multiline_comment|/* Machine specific power off function */
 DECL|variable|sysrq_power_off
-r_extern
 r_void
 (paren
 op_star

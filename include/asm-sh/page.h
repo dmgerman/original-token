@@ -74,12 +74,6 @@ DECL|macro|pgd_val
 mdefine_line|#define pgd_val(x)&t;((x).pgd)
 DECL|macro|pgprot_val
 mdefine_line|#define pgprot_val(x)&t;((x).pgprot)
-DECL|macro|__pte
-mdefine_line|#define __pte(x)&t;((pte_t) { (x) } )
-DECL|macro|__pmd
-mdefine_line|#define __pmd(x)&t;((pmd_t) { (x) } )
-DECL|macro|__pgd
-mdefine_line|#define __pgd(x)&t;((pgd_t) { (x) } )
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;((pgprot_t) { (x) } )
 macro_line|#endif /* !__ASSEMBLY__ */
@@ -87,16 +81,14 @@ multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 multiline_comment|/*&n; * IF YOU CHANGE THIS, PLEASE ALSO CHANGE&n; *&n; *&t;arch/sh/vmlinux.lds.S&n; *&n; * which has the same constant encoded..&n; */
-DECL|macro|__PAGE_OFFSET
-mdefine_line|#define __PAGE_OFFSET&t;&t;(0x80000000)
 DECL|macro|__MEMORY_START
 mdefine_line|#define __MEMORY_START&t;&t;CONFIG_MEMORY_START
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;((unsigned long)__PAGE_OFFSET+__MEMORY_START)
+mdefine_line|#define PAGE_OFFSET&t;&t;(0x80000000)
 DECL|macro|__pa
-mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-__PAGE_OFFSET)
+mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
 DECL|macro|__va
-mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)+__PAGE_OFFSET))
+mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)+PAGE_OFFSET))
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;((__pa(addr)-__MEMORY_START) &gt;&gt; PAGE_SHIFT)
 macro_line|#ifndef __ASSEMBLY__
@@ -106,7 +98,7 @@ id|console_loglevel
 suffix:semicolon
 multiline_comment|/*&n; * Tell the user there is some problem.&n; */
 DECL|macro|BUG
-mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;console_loglevel = 0; &bslash;&n;&t;asm volatile(&quot;nop&quot;); &bslash;&n;} while (0)
+mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;asm volatile(&quot;nop&quot;); &bslash;&n;} while (0)
 DECL|macro|PAGE_BUG
 mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
 macro_line|#endif
