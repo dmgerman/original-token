@@ -9335,6 +9335,10 @@ id|i
 )braket
 )paren
 suffix:semicolon
+id|STp-&gt;device
+op_assign
+l_int|NULL
+suffix:semicolon
 id|STp-&gt;capacity
 op_assign
 l_int|0xfffff

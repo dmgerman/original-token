@@ -12,24 +12,6 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* it&squot;s really int */
-r_extern
-r_int
-id|vsprintf
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_const
-r_char
-op_star
-id|fmt
-comma
-id|va_list
-id|args
-)paren
-suffix:semicolon
 DECL|function|panic
 id|NORET_TYPE
 r_void

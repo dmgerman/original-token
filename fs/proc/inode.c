@@ -655,9 +655,6 @@ suffix:semicolon
 r_case
 l_int|7
 suffix:colon
-r_case
-l_int|8
-suffix:colon
 id|inode-&gt;i_mode
 op_assign
 id|S_IFDIR

@@ -1314,12 +1314,6 @@ id|timeptr
 comma
 id|midtime
 suffix:semicolon
-r_extern
-r_struct
-id|timeval
-id|xtime
-suffix:semicolon
-multiline_comment|/* kernel/time.c */
 r_struct
 id|device
 op_star

@@ -1400,48 +1400,6 @@ r_struct
 id|inode_operations
 id|isofs_fifo_inode_operations
 suffix:semicolon
-DECL|struct|lookup_cache
-r_struct
-id|lookup_cache
-(brace
-DECL|member|dir
-r_int
-r_int
-id|dir
-suffix:semicolon
-multiline_comment|/* If this matches... */
-DECL|member|dev
-id|dev_t
-id|dev
-suffix:semicolon
-multiline_comment|/* And this matches */
-DECL|member|dlen
-r_int
-r_int
-id|dlen
-suffix:semicolon
-multiline_comment|/* and this matches... */
-DECL|member|filename
-r_char
-id|filename
-(braket
-l_int|256
-)braket
-suffix:semicolon
-multiline_comment|/* and this matches... */
-DECL|member|ino
-r_int
-r_int
-id|ino
-suffix:semicolon
-multiline_comment|/* Then this is the file we are looking for */
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|lookup_cache
-id|cache
-suffix:semicolon
 multiline_comment|/* The following macros are used to check for memory leaks. */
 macro_line|#ifdef LEAK_CHECK
 DECL|macro|free_s

@@ -1683,21 +1683,6 @@ suffix:semicolon
 )brace
 DECL|macro|vt_wake_waitactive
 mdefine_line|#define vt_wake_waitactive() wake_up(&amp;vt_activate_queue)
-r_extern
-r_int
-id|kill_proc
-c_func
-(paren
-r_int
-id|pid
-comma
-r_int
-id|sig
-comma
-r_int
-id|priv
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Performs the back end of a vt switch&n; */
 DECL|function|complete_change_console
 r_void

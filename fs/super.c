@@ -51,6 +51,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|root_mountflags
 suffix:semicolon
 DECL|variable|super_blocks

@@ -1106,11 +1106,6 @@ id|dropping
 op_assign
 l_int|0
 suffix:semicolon
-r_extern
-r_struct
-id|timeval
-id|xtime
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Any received buffers are un-owned and should be discarded&n;&t; *&t;when freed. These will be updated later as the frames get&n;&t; *&t;owners.&n;&t; */
 id|skb-&gt;sk
 op_assign

@@ -1415,11 +1415,6 @@ op_minus
 l_int|1
 )paren
 (brace
-r_struct
-id|Scsi_Device_Template
-op_star
-id|sdtpnt
-suffix:semicolon
 id|print_inquiry
 c_func
 (paren
@@ -2984,11 +2979,6 @@ c_cond
 id|host-&gt;hostt-&gt;can_queue
 )paren
 (brace
-r_extern
-r_int
-r_int
-id|intr_count
-suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func

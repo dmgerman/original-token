@@ -1912,6 +1912,7 @@ r_int
 id|error
 )paren
 (brace
+r_static
 r_char
 id|buf
 (braket

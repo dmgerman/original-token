@@ -7991,7 +7991,7 @@ r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : int NCR5380_reset (Scsi_Cmnd *cmd)&n; * &n; * Purpose : reset the SCSI bus.&n; *&n; * Returns : 0&n; *&n; */
+multiline_comment|/* &n; * Function : int NCR5380_reset (Scsi_Cmnd *cmd)&n; * &n; * Purpose : reset the SCSI bus.&n; *&n; * Returns : SCSI_RESET_WAKEUP&n; *&n; */
 macro_line|#ifndef NCR5380_reset
 r_static
 macro_line|#endif
@@ -8055,7 +8055,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|SCSI_RESET_WAKEUP
 suffix:semicolon
 )brace
 eof

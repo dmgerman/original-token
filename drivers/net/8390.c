@@ -61,26 +61,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Index to functions. */
-r_int
-id|ei_open
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* Put into the device structure. */
-r_void
-id|ei_interrupt
-c_func
-(paren
-r_int
-id|reg_ptr
-)paren
-suffix:semicolon
-multiline_comment|/* Installed as the interrupt handler. */
 r_static
 r_void
 id|ei_tx_intr
@@ -115,19 +95,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Routines generic to NS8390-based boards. */
-r_void
-id|NS8390_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|startp
-)paren
-suffix:semicolon
 r_static
 r_void
 id|NS8390_trigger_send
@@ -1082,18 +1049,6 @@ op_amp
 id|ENISR_COUNTERS
 )paren
 (brace
-r_struct
-id|ei_device
-op_star
-id|ei_local
-op_assign
-(paren
-r_struct
-id|ei_device
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
 id|ei_local-&gt;stat.rx_frame_errors
 op_add_assign
 id|inb_p

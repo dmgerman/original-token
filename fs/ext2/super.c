@@ -9,20 +9,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-r_extern
-r_int
-id|vsprintf
-(paren
-r_char
-op_star
-comma
-r_const
-r_char
-op_star
-comma
-id|va_list
-)paren
-suffix:semicolon
 DECL|function|ext2_error
 r_void
 id|ext2_error

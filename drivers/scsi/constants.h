@@ -41,6 +41,5 @@ c_func
 r_int
 )paren
 suffix:semicolon
-suffix:semicolon
 macro_line|#endif /* def _CONSTANTS_H */
 eof

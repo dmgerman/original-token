@@ -930,6 +930,8 @@ id|NCR5380_init
 c_func
 (paren
 id|instance
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -1856,13 +1856,11 @@ op_assign
 id|STATUS
 )paren
 op_amp
-id|STAT_IO
-)paren
-op_logical_or
 (paren
-id|STAT
-op_amp
+id|STAT_IO
+op_or
 id|STAT_BSY
+)paren
 )paren
 suffix:semicolon
 )paren
