@@ -3231,12 +3231,20 @@ id|sk-&gt;err
 op_ne
 l_int|0
 )paren
-r_return
-op_minus
+(brace
+id|err
+op_assign
 id|sk-&gt;err
 suffix:semicolon
-multiline_comment|/* Connection must have failed */
-r_else
+id|sk-&gt;err
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+op_minus
+id|err
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|EALREADY

@@ -3288,7 +3288,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%u %u %lu %lu&quot;
+l_string|&quot;%u %u %10lu %10lu&quot;
 comma
 id|i-&gt;fw_nsp
 comma

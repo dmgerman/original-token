@@ -72,8 +72,18 @@ suffix:colon
 l_int|2
 suffix:semicolon
 macro_line|#elif defined(BIG_ENDIAN_BITFIELD)
-DECL|member|res2
+DECL|member|doff
 id|__u16
+id|doff
+suffix:colon
+l_int|4
+comma
+DECL|member|res1
+id|res1
+suffix:colon
+l_int|4
+comma
+DECL|member|res2
 id|res2
 suffix:colon
 l_int|2
@@ -107,16 +117,6 @@ DECL|member|fin
 id|fin
 suffix:colon
 l_int|1
-comma
-DECL|member|doff
-id|doff
-suffix:colon
-l_int|4
-comma
-DECL|member|res1
-id|res1
-suffix:colon
-l_int|4
 suffix:semicolon
 macro_line|#else
 macro_line|#error&t;&quot;Adjust your &lt;asm/byteorder.h&gt; defines&quot;

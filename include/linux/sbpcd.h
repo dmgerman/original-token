@@ -6,6 +6,8 @@ DECL|macro|CDROM_PORT
 mdefine_line|#define CDROM_PORT 0x340 /* &lt;-----------&lt;&lt; port address                      */
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO      0     /* &lt;-----------&lt;&lt; interface type                    */
+DECL|macro|MAX_DRIVES
+mdefine_line|#define MAX_DRIVES 4     /* set to 1 if the card does not use &quot;drive select&quot; */
 DECL|macro|SOUND_BASE
 mdefine_line|#define SOUND_BASE 0x220 /* &lt;-----------&lt;&lt; sound address of this card or 0   */
 macro_line|#endif
@@ -14,6 +16,8 @@ DECL|macro|CDROM_PORT
 mdefine_line|#define CDROM_PORT 0x344 /* &lt;-----------&lt;&lt; port address                      */
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO      0     /* &lt;-----------&lt;&lt; interface type                    */
+DECL|macro|MAX_DRIVES
+mdefine_line|#define MAX_DRIVES 4     /* set to 1 if the card does not use &quot;drive select&quot; */
 DECL|macro|SOUND_BASE
 mdefine_line|#define SOUND_BASE 0x000 /* &lt;-----------&lt;&lt; sound address of this card or 0   */
 macro_line|#endif
@@ -22,6 +26,8 @@ DECL|macro|CDROM_PORT
 mdefine_line|#define CDROM_PORT 0x634 /* &lt;-----------&lt;&lt; port address                      */
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO      1     /* &lt;-----------&lt;&lt; interface type                    */
+DECL|macro|MAX_DRIVES
+mdefine_line|#define MAX_DRIVES 4     /* set to 1 if the card does not use &quot;drive select&quot; */
 DECL|macro|SOUND_BASE
 mdefine_line|#define SOUND_BASE 0x240 /* &lt;-----------&lt;&lt; sound address of this card or 0   */
 macro_line|#endif
@@ -30,6 +36,8 @@ DECL|macro|CDROM_PORT
 mdefine_line|#define CDROM_PORT 0x634 /* &lt;-----------&lt;&lt; port address                      */
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO      0     /* &lt;-----------&lt;&lt; interface type                    */
+DECL|macro|MAX_DRIVES
+mdefine_line|#define MAX_DRIVES 4     /* set to 1 if the card does not use &quot;drive select&quot; */
 DECL|macro|SOUND_BASE
 mdefine_line|#define SOUND_BASE 0x000 /* &lt;-----------&lt;&lt; sound address of this card or 0   */
 macro_line|#endif
@@ -511,14 +519,14 @@ DECL|macro|CMD1_SUBCHANINF
 mdefine_line|#define CMD1_SUBCHANINF&t;0x11
 DECL|macro|CMD2_SUBCHANINF
 mdefine_line|#define CMD2_SUBCHANINF&t;0x??
+DECL|macro|CMD1_ABORT
+mdefine_line|#define CMD1_ABORT&t;0x08
+DECL|macro|CMD2_ABORT
+mdefine_line|#define CMD2_ABORT&t;0x08
+DECL|macro|CMDT_ABORT
+mdefine_line|#define CMDT_ABORT&t;0x08
 DECL|macro|CMD2_x02
 mdefine_line|#define CMD2_x02&t;0x02
-DECL|macro|CMD1_x08
-mdefine_line|#define CMD1_x08&t;0x08
-DECL|macro|CMD2_x08
-mdefine_line|#define CMD2_x08&t;0x08
-DECL|macro|CMDT_x08
-mdefine_line|#define CMDT_x08&t;0x08
 DECL|macro|CMD2_SETSPEED
 mdefine_line|#define CMD2_SETSPEED&t;0xda
 DECL|macro|CMD0_PATH_CHECK
@@ -607,6 +615,8 @@ DECL|macro|CMDL_PLAY_MSF
 mdefine_line|#define CMDL_PLAY_MSF&t;0x???
 DECL|macro|CMD0_PLAY_TI
 mdefine_line|#define CMD0_PLAY_TI&t;0x0c
+DECL|macro|CMD1_PLAY_TI
+mdefine_line|#define CMD1_PLAY_TI&t;0x0f
 DECL|macro|CMD0_STATUS
 mdefine_line|#define CMD0_STATUS&t;0x81
 DECL|macro|CMD1_STATUS

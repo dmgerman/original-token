@@ -364,6 +364,13 @@ DECL|typedef|Elf32_Ehdr
 )brace
 id|Elf32_Ehdr
 suffix:semicolon
+multiline_comment|/* These constants define the permissions on sections in the program&n;   header, p_flags. */
+DECL|macro|PF_R
+mdefine_line|#define PF_R&t;&t;0x4
+DECL|macro|PF_W
+mdefine_line|#define PF_W&t;&t;0x2
+DECL|macro|PF_X
+mdefine_line|#define PF_X&t;&t;0x1
 DECL|struct|elf_phdr
 r_typedef
 r_struct
@@ -559,6 +566,40 @@ DECL|macro|EV_CURRENT
 mdefine_line|#define EV_CURRENT&t;1
 DECL|macro|EV_NUM
 mdefine_line|#define EV_NUM&t;&t;2
+multiline_comment|/* Notes used in ET_CORE */
+DECL|macro|NT_PRSTATUS
+mdefine_line|#define NT_PRSTATUS&t;1
+DECL|macro|NT_PRFPREG
+mdefine_line|#define NT_PRFPREG&t;2
+DECL|macro|NT_PRPSINFO
+mdefine_line|#define NT_PRPSINFO&t;3
+DECL|macro|NT_TASKSTRUCT
+mdefine_line|#define NT_TASKSTRUCT&t;4
+multiline_comment|/* Note header in a PT_NOTE section */
+DECL|struct|elf_note
+r_typedef
+r_struct
+id|elf_note
+(brace
+DECL|member|n_namesz
+id|Elf32_Word
+id|n_namesz
+suffix:semicolon
+multiline_comment|/* Name size */
+DECL|member|n_descsz
+id|Elf32_Word
+id|n_descsz
+suffix:semicolon
+multiline_comment|/* Content size */
+DECL|member|n_type
+id|Elf32_Word
+id|n_type
+suffix:semicolon
+multiline_comment|/* Content type */
+DECL|typedef|Elf32_Nhdr
+)brace
+id|Elf32_Nhdr
+suffix:semicolon
 DECL|macro|ELF_START_MMAP
 mdefine_line|#define ELF_START_MMAP 0x80000000
 macro_line|#endif /* _LINUX_ELF_H */

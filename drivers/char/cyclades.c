@@ -10618,7 +10618,7 @@ c_func
 l_int|10L
 )paren
 suffix:semicolon
-multiline_comment|/* The Cyclom-16Y does not decode address bit 9 and therefore&n;           cannot distinguish between references to chip 0 and a non-&n;           existent chip 4.  If the preceeding clearing of the supposed&n;           chip 4 GFRCR register appears at chip 0, there is no chip 4&n;           and this must be a Cyclom-16Y, not a Cyclom-32Ye.&n;        */
+multiline_comment|/* The Cyclom-16Y does not decode address bit 9 and therefore&n;           cannot distinguish between references to chip 0 and a non-&n;           existent chip 4.  If the preceding clearing of the supposed&n;           chip 4 GFRCR register appears at chip 0, there is no chip 4&n;           and this must be a Cyclom-16Y, not a Cyclom-32Ye.&n;        */
 r_if
 c_cond
 (paren
