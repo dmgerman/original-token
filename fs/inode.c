@@ -1857,6 +1857,10 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|inode-&gt;i_blksize
+op_assign
+id|PAGE_SIZE
+suffix:semicolon
 r_return
 id|inode
 suffix:semicolon

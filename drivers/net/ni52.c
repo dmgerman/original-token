@@ -3957,7 +3957,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/**********************************************************&n; * I never got this error , (which should occure if someone &n; * wants to blast your machine) so I couldn&squot;t debug it for now.&n; * but we _try_ to fix the receiver not ready int.&n; */
+multiline_comment|/**********************************************************&n; * I never got this error , (which should occur if someone &n; * wants to blast your machine) so I couldn&squot;t debug it for now.&n; * but we _try_ to fix the receiver not ready int.&n; */
 DECL|function|ni52_rnr_int
 r_static
 r_void
@@ -4851,7 +4851,7 @@ macro_line|#ifdef DEBUG3
 id|printk
 c_func
 (paren
-l_string|&quot;ni52: errs, crc %d, align %d, ressource %d, ovrn %d.&bslash;n&quot;
+l_string|&quot;ni52: errs, crc %d, align %d, resource %d, ovrn %d.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -4910,7 +4910,7 @@ id|num_addrs
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Currently, the Ni52 driver doesn&squot;t support promiscous or multicast mode.&bslash;n&quot;
+l_string|&quot;%s: Currently, the Ni52 driver doesn&squot;t support promiscuous or multicast mode.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren

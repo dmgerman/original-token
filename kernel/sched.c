@@ -1054,20 +1054,13 @@ id|tmp-&gt;next
 id|printk
 c_func
 (paren
-l_string|&quot;wait_queue is bad (eip = %08lx)&bslash;n&quot;
+l_string|&quot;wait_queue is bad (eip = %p)&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-id|q
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 id|printk
@@ -1202,20 +1195,13 @@ id|tmp-&gt;next
 id|printk
 c_func
 (paren
-l_string|&quot;wait_queue is bad (eip = %08lx)&bslash;n&quot;
+l_string|&quot;wait_queue is bad (eip = %p)&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-id|q
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 id|printk
@@ -1527,21 +1513,13 @@ id|timer-&gt;prev
 id|printk
 c_func
 (paren
-l_string|&quot;add_timer() called with non-zero list from %08lx&bslash;n&quot;
+l_string|&quot;add_timer() called with non-zero list from %p&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-op_amp
-id|timer
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 r_return
@@ -1703,21 +1681,13 @@ id|timer-&gt;prev
 id|printk
 c_func
 (paren
-l_string|&quot;del_timer() called from %08lx with timer not initialized&bslash;n&quot;
+l_string|&quot;del_timer() called from %p with timer not initialized&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-op_amp
-id|timer
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 id|restore_flags

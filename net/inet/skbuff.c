@@ -1095,7 +1095,7 @@ c_func
 l_string|&quot;skb_unlink: not a linked element&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -1129,21 +1129,13 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;kfree_skb: skb = NULL (from %08lx)&bslash;n&quot;
+l_string|&quot;kfree_skb: skb = NULL (from %p)&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-op_amp
-id|skb
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 r_return
@@ -1182,21 +1174,13 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: kfree_skb passed an skb that nobody set the free flag on! (from %08lx)&bslash;n&quot;
+l_string|&quot;Warning: kfree_skb passed an skb that nobody set the free flag on! (from %p)&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-op_amp
-id|skb
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 r_if
@@ -1207,21 +1191,13 @@ id|skb-&gt;next
 id|printk
 c_func
 (paren
-l_string|&quot;Warning: kfree_skb passed an skb still on a list (from %08lx).&bslash;n&quot;
+l_string|&quot;Warning: kfree_skb passed an skb still on a list (from %p).&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-op_amp
-id|skb
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 r_if
@@ -1302,7 +1278,7 @@ id|skb-&gt;sk
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;&t;&t;&t;
+macro_line|#ifdef CONFIG_SLAVE_BALANCING
 r_if
 c_cond
 (paren
@@ -1330,7 +1306,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;&t;&t;&t;
+macro_line|#ifdef CONFIG_SLAVE_BALANCING
 r_if
 c_cond
 (paren
@@ -1409,21 +1385,13 @@ l_int|5
 id|printk
 c_func
 (paren
-l_string|&quot;alloc_skb called nonatomically from interrupt %08lx&bslash;n&quot;
+l_string|&quot;alloc_skb called nonatomically from interrupt %p&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-op_amp
-id|size
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 id|priority
@@ -1488,7 +1456,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t; &t;
+macro_line|#endif
 id|net_allocs
 op_increment
 suffix:semicolon
@@ -1518,12 +1486,12 @@ id|skb-&gt;mem_addr
 op_assign
 id|skb
 suffix:semicolon
-macro_line|#ifdef CONFIG_SLAVE_BALANCING &t;
+macro_line|#ifdef CONFIG_SLAVE_BALANCING
 id|skb-&gt;in_dev_queue
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif &t;
+macro_line|#endif
 id|skb-&gt;fraglist
 op_assign
 l_int|NULL
@@ -1644,7 +1612,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|IS_SKB
 c_func
 (paren

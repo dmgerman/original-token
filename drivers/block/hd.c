@@ -1693,8 +1693,23 @@ id|dev
 op_assign
 id|id
 suffix:semicolon
-multiline_comment|/* Quantum drives go weird at this point, so reset them! In */
-multiline_comment|/* fact, do a reset in any case in case we changed the geometry */
+multiline_comment|/* Quantum drives go weird at this point, so reset them! */
+multiline_comment|/* In fact, we should probably do a reset in any case in */
+multiline_comment|/* case we changed the geometry */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id.model
+comma
+l_string|&quot;QUANTUM&quot;
+comma
+l_int|7
+)paren
+)paren
 id|special_op
 (braket
 id|dev
@@ -2034,7 +2049,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|outb
+id|outb_p
 c_func
 (paren
 id|hd_info
@@ -2049,6 +2064,27 @@ comma
 id|HD_CMD
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|1000
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|nop
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

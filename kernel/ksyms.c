@@ -2,6 +2,7 @@ multiline_comment|/* &n; * Herein lies all the functions/variables that are &quo
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -303,6 +304,43 @@ id|X
 c_func
 (paren
 id|unregister_blkdev
+)paren
+comma
+multiline_comment|/* block device driver support */
+id|X
+c_func
+(paren
+id|block_read
+)paren
+comma
+id|X
+c_func
+(paren
+id|block_write
+)paren
+comma
+id|X
+c_func
+(paren
+id|block_fsync
+)paren
+comma
+id|X
+c_func
+(paren
+id|wait_for_request
+)paren
+comma
+id|X
+c_func
+(paren
+id|blksize_size
+)paren
+comma
+id|X
+c_func
+(paren
+id|blk_dev
 )paren
 comma
 multiline_comment|/* Module creation of serial units */

@@ -630,21 +630,13 @@ l_int|5
 id|printk
 c_func
 (paren
-l_string|&quot;kmalloc called nonatomically from interrupt %08lx&bslash;n&quot;
+l_string|&quot;kmalloc called nonatomically from interrupt %p&bslash;n&quot;
 comma
+id|__builtin_return_address
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_int|0
 )paren
-op_amp
-id|size
-)paren
-(braket
-op_minus
-l_int|1
-)braket
 )paren
 suffix:semicolon
 id|priority

@@ -3069,7 +3069,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Some dumb host adapters can speed transfers by knowing the&n; * minimum tranfersize in advance.&n; *&n; * We shouldn&squot;t disconnect in the middle of a sector, but the cdrom&n; * sector size can be larger than the size of a buffer and the&n; * transfer may be split to the size of a buffer.  So it&squot;s safe to&n; * assume that we can at least transfer the minimum of the buffer&n; * size (1024) and the sector size between each connect / disconnect.&n; */
+multiline_comment|/* Some dumb host adapters can speed transfers by knowing the&n; * minimum transfersize in advance.&n; *&n; * We shouldn&squot;t disconnect in the middle of a sector, but the cdrom&n; * sector size can be larger than the size of a buffer and the&n; * transfer may be split to the size of a buffer.  So it&squot;s safe to&n; * assume that we can at least transfer the minimum of the buffer&n; * size (1024) and the sector size between each connect / disconnect.&n; */
 id|SCpnt-&gt;transfersize
 op_assign
 (paren

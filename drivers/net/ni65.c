@@ -1168,7 +1168,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* we&squot;ve found everyting */
+multiline_comment|/* we&squot;ve found everything */
 )brace
 multiline_comment|/* &n; * init lance (write init-values .. init-buffers) (open-helper)&n; */
 DECL|function|am7990_reinit

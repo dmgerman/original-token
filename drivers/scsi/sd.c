@@ -3725,11 +3725,6 @@ id|i
 )paren
 (brace
 r_int
-id|j
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 r_char
 id|cmd
 (braket
@@ -4630,7 +4625,7 @@ l_string|&quot;scsi : deleting disk entry.&bslash;n&quot;
 suffix:semicolon
 id|rscsi_disks
 (braket
-id|j
+id|i
 )braket
 dot
 id|device

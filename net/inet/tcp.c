@@ -698,7 +698,7 @@ r_if
 c_cond
 (paren
 id|sum
-op_ge
+OG
 l_int|0
 )paren
 (brace

@@ -73,7 +73,7 @@ r_int
 r_char
 id|busy
 suffix:semicolon
-multiline_comment|/* 586 clears after succesful init */
+multiline_comment|/* 586 clears after successful init */
 DECL|member|zero_dummy
 r_int
 r_char
@@ -149,7 +149,7 @@ suffix:semicolon
 multiline_comment|/* OVerrunerror counter */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * possbile command values for the command word&n; */
+multiline_comment|/*&n; * possible command values for the command word&n; */
 DECL|macro|RUC_MASK
 mdefine_line|#define RUC_MASK&t;0x0070&t;/* mask for RU commands */
 DECL|macro|RUC_NOP
@@ -184,13 +184,13 @@ DECL|macro|ACK_CNA
 mdefine_line|#define ACK_CNA&t;&t;0x2000&t;/* ack. STAT_CNA */
 DECL|macro|ACK_RNR
 mdefine_line|#define ACK_RNR&t;&t;0x1000&t;/* ack. STAT_RNR */
-multiline_comment|/*&n; * possbile status values for the status word&n; */
+multiline_comment|/*&n; * possible status values for the status word&n; */
 DECL|macro|STAT_MASK
 mdefine_line|#define STAT_MASK&t;0xf000&t;/* mask for cause of interrupt */
 DECL|macro|STAT_CX
 mdefine_line|#define STAT_CX&t;&t;0x8000&t;/* CU finished cmd with its I bit set */
 DECL|macro|STAT_FR
-mdefine_line|#define STAT_FR&t;&t;0x4000&t;/* RU finished receiveing a frame */
+mdefine_line|#define STAT_FR&t;&t;0x4000&t;/* RU finished receiving a frame */
 DECL|macro|STAT_CNA
 mdefine_line|#define STAT_CNA&t;0x2000&t;/* CU left active state */
 DECL|macro|STAT_RNR
@@ -277,7 +277,7 @@ mdefine_line|#define RFD_SUSP     0x4000&t;/* last: suspend RU after  */
 DECL|macro|RFD_ERRMASK
 mdefine_line|#define RFD_ERRMASK  0x0fe1     /* status: errormask */
 DECL|macro|RFD_MATCHADD
-mdefine_line|#define RFD_MATCHADD 0x0002     /* status: Destinationaddress !matchs IA */
+mdefine_line|#define RFD_MATCHADD 0x0002     /* status: Destinationaddress !matches IA */
 DECL|macro|RFD_RNR
 mdefine_line|#define RFD_RNR      0x0200&t;/* status: receiver out of resources */
 multiline_comment|/*&n; * Receive Buffer Descriptor (RBD)&n; */
@@ -302,7 +302,7 @@ r_char
 op_star
 id|buffer
 suffix:semicolon
-multiline_comment|/* recevie buffer address pointer */
+multiline_comment|/* receive buffer address pointer */
 DECL|member|size
 r_int
 r_int
@@ -364,7 +364,7 @@ r_int
 r_int
 id|cmd_status
 suffix:semicolon
-multiline_comment|/* statius of this command */
+multiline_comment|/* status of this command */
 DECL|member|cmd_cmd
 r_int
 r_int
@@ -594,8 +594,8 @@ DECL|macro|TCMD_MAXCOLL
 mdefine_line|#define TCMD_MAXCOLL     0x0020
 DECL|macro|TCMD_HEARTBEAT
 mdefine_line|#define TCMD_HEARTBEAT   0x0040
-DECL|macro|TCMD_DEFFERED
-mdefine_line|#define TCMD_DEFFERED    0x0080
+DECL|macro|TCMD_DEFERRED
+mdefine_line|#define TCMD_DEFERRED    0x0080
 DECL|macro|TCMD_UNDERRUN
 mdefine_line|#define TCMD_UNDERRUN    0x0100
 DECL|macro|TCMD_LOSTCTS
@@ -633,7 +633,7 @@ suffix:semicolon
 DECL|macro|TDR_LNK_OK
 mdefine_line|#define TDR_LNK_OK&t;0x8000&t;/* No link problem identified */
 DECL|macro|TDR_XCVR_PRB
-mdefine_line|#define TDR_XCVR_PRB&t;0x4000&t;/* indiactes a transceiver problem */
+mdefine_line|#define TDR_XCVR_PRB&t;0x4000&t;/* indicates a transceiver problem */
 DECL|macro|TDR_ET_OPN
 mdefine_line|#define TDR_ET_OPN&t;0x2000&t;/* open, no correct termination */
 DECL|macro|TDR_ET_SRT

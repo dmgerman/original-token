@@ -76,7 +76,7 @@ macro_line|#else
 DECL|macro|N_FDC
 mdefine_line|#define N_FDC 1
 DECL|macro|N_DRIVE
-mdefine_line|#define N_DRIVE 4
+mdefine_line|#define N_DRIVE 2
 macro_line|#endif
 DECL|macro|TYPE
 mdefine_line|#define TYPE(x) ( ((x)&gt;&gt;2) &amp; 0x1f )
@@ -1502,11 +1502,11 @@ op_assign
 l_int|NULL
 comma
 l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
 macro_line|#ifdef HAVE_2_CONTROLLERS
+comma
+l_int|NULL
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -2132,7 +2132,7 @@ op_assign
 id|NEED_2_RECAL
 suffix:semicolon
 )brace
-multiline_comment|/* selects the fdc and drive, and enables the fdc&squot;s its input/dma. */
+multiline_comment|/* selects the fdc and drive, and enables the fdc&squot;s input/dma. */
 DECL|function|set_fdc
 r_static
 r_void
@@ -2449,6 +2449,7 @@ l_int|1
 comma
 id|motor_off_callback
 )brace
+macro_line|#ifdef HAVE_2_CONTROLLERS
 comma
 (brace
 l_int|NULL
@@ -2473,7 +2474,6 @@ l_int|3
 comma
 id|motor_off_callback
 )brace
-macro_line|#ifdef HAVE_2_CONTROLLERS
 comma
 (brace
 l_int|NULL

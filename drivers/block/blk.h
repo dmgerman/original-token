@@ -1,175 +1,19 @@
 macro_line|#ifndef _BLK_H
 DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
-macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-macro_line|#include &lt;linux/genhd.h&gt;
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;64
-multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and the semaphore is used to wait&n; * for read/write completion.&n; */
-DECL|struct|request
-r_struct
-id|request
-(brace
-DECL|member|dev
-r_int
-id|dev
-suffix:semicolon
-multiline_comment|/* -1 if no request */
-DECL|member|cmd
-r_int
-id|cmd
-suffix:semicolon
-multiline_comment|/* READ or WRITE */
-DECL|member|errors
-r_int
-id|errors
-suffix:semicolon
-DECL|member|sector
-r_int
-r_int
-id|sector
-suffix:semicolon
-DECL|member|nr_sectors
-r_int
-r_int
-id|nr_sectors
-suffix:semicolon
-DECL|member|current_nr_sectors
-r_int
-r_int
-id|current_nr_sectors
-suffix:semicolon
-DECL|member|buffer
-r_char
-op_star
-id|buffer
-suffix:semicolon
-DECL|member|sem
-r_struct
-id|semaphore
-op_star
-id|sem
-suffix:semicolon
-DECL|member|bh
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
-DECL|member|bhtail
-r_struct
-id|buffer_head
-op_star
-id|bhtail
-suffix:semicolon
-DECL|member|next
-r_struct
-id|request
-op_star
-id|next
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; * reads always go before writes. This is natural: reads&n; * are much more time-critical than writes.&n; */
 DECL|macro|IN_ORDER
 mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd &lt; (s2)-&gt;cmd || ((s1)-&gt;cmd == (s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || (((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
-DECL|struct|blk_dev_struct
-r_struct
-id|blk_dev_struct
-(brace
-DECL|member|request_fn
-r_void
-(paren
-op_star
-id|request_fn
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|member|current_request
-r_struct
-id|request
-op_star
-id|current_request
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|sec_size
-r_struct
-id|sec_size
-(brace
-DECL|member|block_size
-r_int
-id|block_size
-suffix:semicolon
-DECL|member|block_size_bits
-r_int
-id|block_size_bits
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * These will have to be changed to be aware of different buffer&n; * sizes etc.. It actually needs a major cleanup.&n; */
 DECL|macro|SECTOR_MASK
 mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;&n;&t;blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] ? &bslash;&n;&t;((blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] &gt;&gt; 9) - 1) :  &bslash;&n;&t;((BLOCK_SIZE &gt;&gt; 9)  -  1))
 DECL|macro|SUBSECTOR
 mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
-r_extern
-r_struct
-id|sec_size
-op_star
-id|blk_sec
-(braket
-id|MAX_BLKDEV
-)braket
-suffix:semicolon
-r_extern
-r_struct
-id|blk_dev_struct
-id|blk_dev
-(braket
-id|MAX_BLKDEV
-)braket
-suffix:semicolon
-r_extern
-r_struct
-id|wait_queue
-op_star
-id|wait_for_request
-suffix:semicolon
-r_extern
-r_void
-id|resetup_one_dev
-c_func
-(paren
-r_struct
-id|gendisk
-op_star
-id|dev
-comma
-r_int
-id|drive
-)paren
-suffix:semicolon
-r_extern
-r_int
-op_star
-id|blk_size
-(braket
-id|MAX_BLKDEV
-)braket
-suffix:semicolon
-r_extern
-r_int
-op_star
-id|blksize_size
-(braket
-id|MAX_BLKDEV
-)braket
-suffix:semicolon
 r_extern
 r_int
 r_int
