@@ -21,6 +21,9 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_NETLINK
+macro_line|#include &lt;net/netlink.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif
@@ -565,6 +568,26 @@ id|arp_query
 )paren
 comma
 macro_line|#endif  /* CONFIG_INET */
+macro_line|#ifdef CONFIG_NETLINK
+id|X
+c_func
+(paren
+id|netlink_attach
+)paren
+comma
+id|X
+c_func
+(paren
+id|netlink_detach
+)paren
+comma
+id|X
+c_func
+(paren
+id|netlink_post
+)paren
+comma
+macro_line|#endif /* CONFIG_NETLINK */
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon

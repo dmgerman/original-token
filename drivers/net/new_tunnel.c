@@ -712,6 +712,10 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
+id|new_skb-&gt;dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
 id|memcpy
 c_func
 (paren

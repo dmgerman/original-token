@@ -1,5 +1,5 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *&t;&t;Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *&t;&t;Andrew Tridgell :       Added ARP netmask code and&n; *&t;&t;&t;&t;&t;re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; *&t;&t;Mike Shaver     :       RFC1122 checks.&n; *&t;&t;Jonathan Naylor :&t;Only lookup the hardware address for&n; *&t;&t;&t;&t;&t;the correct hardware type.&n; *&t;&t;Germano Caronni&t;:&t;Assorted subtle races.&n; *&t;&t;Craig Schlenter :&t;Don&squot;t modify permanent entry &n; *&t;&t;&t;&t;&t;during arp_rcv.&n; *&t;&t;Russ Nelson&t;:&t;Tidied up a few bits.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes to caching and behaviour,&n; *&t;&t;&t;&t;&t;eg intelligent arp probing and generation&n; *&t;&t;&t;&t;&t;of host down events.&n; *&t;&t;Alan Cox&t;:&t;Missing unlock in device events.&n; *&t;&t;Eckes&t;&t;:&t;ARP ioctl control errors.&n; *&t;&t;Alexey Kuznetsov:&t;Arp free fix.&n; *&t;&t;Manuel Rodriguez:&t;Gratuitous ARP.&n; *              Jonathan Layes  :       Added arpd support through kerneld &n; *                                      message queue (960314)&n; */
-multiline_comment|/* RFC1122 Status:&n;   2.3.2.1 (ARP Cache Validation):&n;     MUST provide mechanism to flush stale cache entries (OK)&n;     SHOULD be able to configure cache timeout (NOT YET)&n;     MUST throttle ARP retransmits (OK)&n;   2.3.2.2 (ARP Packet Queue):&n;     SHOULD save at least one packet from each &quot;conversation&quot; with an&n;       unresolved IP address.  (OK)&n;   950727 -- MS&n;*/
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses) into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry, set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - &n; *&t;check this.&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in &n; *&t;&t;&t;&t;&t;Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP &n; *&t;&t;&t;&t;&t;logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&t;&t;Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *&t;&t;Andrew Tridgell :       Added ARP netmask code and&n; *&t;&t;&t;&t;&t;re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; *&t;&t;Mike Shaver     :       RFC1122 checks.&n; *&t;&t;Jonathan Naylor :&t;Only lookup the hardware address for&n; *&t;&t;&t;&t;&t;the correct hardware type.&n; *&t;&t;Germano Caronni&t;:&t;Assorted subtle races.&n; *&t;&t;Craig Schlenter :&t;Don&squot;t modify permanent entry &n; *&t;&t;&t;&t;&t;during arp_rcv.&n; *&t;&t;Russ Nelson&t;:&t;Tidied up a few bits.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes to caching and behaviour,&n; *&t;&t;&t;&t;&t;eg intelligent arp probing and &n; *&t;&t;&t;&t;&t;generation&n; *&t;&t;&t;&t;&t;of host down events.&n; *&t;&t;Alan Cox&t;:&t;Missing unlock in device events.&n; *&t;&t;Eckes&t;&t;:&t;ARP ioctl control errors.&n; *&t;&t;Alexey Kuznetsov:&t;Arp free fix.&n; *&t;&t;Manuel Rodriguez:&t;Gratuitous ARP.&n; *              Jonathan Layes  :       Added arpd support through kerneld &n; *                                      message queue (960314)&n; *&t;&t;Mike Shaver&t;:&t;/proc/sys/net/ipv4/arp_* support&n; */
+multiline_comment|/* RFC1122 Status:&n;   2.3.2.1 (ARP Cache Validation):&n;     MUST provide mechanism to flush stale cache entries (OK)&n;     SHOULD be able to configure cache timeout (OK)&n;     MUST throttle ARP retransmits (OK)&n;   2.3.2.2 (ARP Packet Queue):&n;     SHOULD save at least one packet from each &quot;conversation&quot; with an&n;       unresolved IP address.  (OK)&n;   950727 -- MS&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -42,19 +42,24 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 multiline_comment|/*&n; *&t;Configurable Parameters&n; */
 multiline_comment|/*&n; *&t;After that time, an unused entry is deleted from the arp table.&n; *&t;RFC1122 recommends set it to 60*HZ, if your site uses proxy arp&n; *&t;and dynamic routing.&n; */
-macro_line|#ifndef CONFIG_ARPD
-DECL|macro|ARP_TIMEOUT
-mdefine_line|#define ARP_TIMEOUT&t;&t;(600*HZ)
-macro_line|#else
 DECL|macro|ARP_TIMEOUT
 mdefine_line|#define ARP_TIMEOUT&t;&t;(60*HZ)
-DECL|macro|ARPD_TIMEOUT
-mdefine_line|#define ARPD_TIMEOUT&t;&t;(600*HZ)
-macro_line|#endif
+DECL|variable|sysctl_arp_timeout
+r_int
+id|sysctl_arp_timeout
+op_assign
+id|ARP_TIMEOUT
+suffix:semicolon
 multiline_comment|/*&n; *&t;How often is ARP cache checked for expire.&n; *&t;It is useless to set ARP_CHECK_INTERVAL &gt; ARP_TIMEOUT&n; */
 DECL|macro|ARP_CHECK_INTERVAL
 mdefine_line|#define ARP_CHECK_INTERVAL&t;(60*HZ)
-multiline_comment|/*&n; *&t;Soft limit on ARP cache size.&n; *&t;Note that this number should be greater, than&n; *&t;number of simultaneously opened sockets, else&n; *&t;hardware header cache will be not efficient.&n; */
+DECL|variable|sysctl_arp_check_interval
+r_int
+id|sysctl_arp_check_interval
+op_assign
+id|ARP_CHECK_INTERVAL
+suffix:semicolon
+multiline_comment|/*&n; *&t;Soft limit on ARP cache size.&n; *&t;Note that this number should be greater than&n; *&t;number of simultaneously opened sockets, or else&n; *&t;hardware header cache will not be efficient.&n; */
 macro_line|#if RT_CACHE_DEBUG &gt;= 2
 DECL|macro|ARP_MAXSIZE
 mdefine_line|#define ARP_MAXSIZE&t;4
@@ -70,21 +75,57 @@ macro_line|#endif
 multiline_comment|/*&n; *&t;If an arp request is send, ARP_RES_TIME is the timeout value until the&n; *&t;next request is send.&n; * &t;RFC1122: OK.  Throttles ARPing, as per 2.3.2.1. (MUST)&n; *&t;The recommended minimum timeout is 1 second per destination.&n; *&n; */
 DECL|macro|ARP_RES_TIME
 mdefine_line|#define ARP_RES_TIME&t;&t;(5*HZ)
+DECL|variable|sysctl_arp_res_time
+r_int
+id|sysctl_arp_res_time
+op_assign
+id|ARP_RES_TIME
+suffix:semicolon
 multiline_comment|/*&n; *&t;The number of times an broadcast arp request is send, until&n; *&t;the host is considered temporarily unreachable.&n; */
 DECL|macro|ARP_MAX_TRIES
 mdefine_line|#define ARP_MAX_TRIES&t;&t;3
+DECL|variable|sysctl_arp_max_tries
+r_int
+id|sysctl_arp_max_tries
+op_assign
+id|ARP_MAX_TRIES
+suffix:semicolon
 multiline_comment|/*&n; *&t;The entry is reconfirmed by sending point-to-point ARP&n; *&t;request after ARP_CONFIRM_INTERVAL.&n; *&t;RFC1122 recommends 60*HZ.&n; *&n; *&t;Warning: there exist nodes, that answer only broadcast&n; *&t;ARP requests (Cisco-4000 in hot standby mode?)&n; *&t;Now arp code should work with such nodes, but&n; *&t;it still will generate redundant broadcast requests, so that&n; *&t;this interval should be enough long.&n; */
 DECL|macro|ARP_CONFIRM_INTERVAL
 mdefine_line|#define ARP_CONFIRM_INTERVAL&t;(300*HZ)
+DECL|variable|sysctl_arp_confirm_interval
+r_int
+id|sysctl_arp_confirm_interval
+op_assign
+id|ARP_CONFIRM_INTERVAL
+suffix:semicolon
 multiline_comment|/*&n; *&t;We wait for answer to unicast request for ARP_CONFIRM_TIMEOUT.&n; */
 DECL|macro|ARP_CONFIRM_TIMEOUT
 mdefine_line|#define ARP_CONFIRM_TIMEOUT&t;ARP_RES_TIME
+DECL|variable|sysctl_arp_confirm_timeout
+r_int
+id|sysctl_arp_confirm_timeout
+op_assign
+id|ARP_CONFIRM_TIMEOUT
+suffix:semicolon
 multiline_comment|/*&n; *&t;The number of times an unicast arp request is retried, until&n; *&t;the cache entry is considered suspicious.&n; *&t;Value 0 means that no unicast pings will be sent.&n; *&t;RFC1122 recommends 2.&n; */
 DECL|macro|ARP_MAX_PINGS
 mdefine_line|#define ARP_MAX_PINGS&t;&t;1
+DECL|variable|sysctl_arp_max_pings
+r_int
+id|sysctl_arp_max_pings
+op_assign
+id|ARP_MAX_PINGS
+suffix:semicolon
 multiline_comment|/*&n; *&t;When a host is dead, but someone tries to connect it,&n; *&t;we do not remove corresponding cache entry (it would&n; *&t;be useless, it will be created again immediately)&n; *&t;Instead we prolongate interval between broadcasts&n; *&t;to ARP_DEAD_RES_TIME.&n; *&t;This interval should be not very long.&n; *&t;(When the host will be up again, we will notice it only&n; *&t;when ARP_DEAD_RES_TIME expires, or when the host will arp us.&n; */
 DECL|macro|ARP_DEAD_RES_TIME
 mdefine_line|#define ARP_DEAD_RES_TIME&t;(60*HZ)
+DECL|variable|sysctl_arp_dead_res_time
+r_int
+id|sysctl_arp_dead_res_time
+op_assign
+id|ARP_DEAD_RES_TIME
+suffix:semicolon
 multiline_comment|/*&n; *&t;This structure defines the ARP mapping cache.&n; */
 DECL|struct|arp_table
 r_struct
@@ -1817,7 +1858,7 @@ id|now
 op_minus
 id|entry-&gt;last_used
 OG
-id|ARP_TIMEOUT
+id|sysctl_arp_timeout
 )paren
 (brace
 op_star
@@ -2067,7 +2108,7 @@ id|now
 op_minus
 id|entry-&gt;last_used
 OG
-id|ARP_TIMEOUT
+id|sysctl_arp_timeout
 op_logical_and
 op_logical_neg
 id|arp_count_hhs
@@ -2120,7 +2161,7 @@ id|now
 op_minus
 id|entry-&gt;last_updated
 OG
-id|ARP_CONFIRM_INTERVAL
+id|sysctl_arp_confirm_interval
 op_logical_and
 op_logical_neg
 (paren
@@ -2139,9 +2180,9 @@ id|entry-&gt;dev
 suffix:semicolon
 id|entry-&gt;retries
 op_assign
-id|ARP_MAX_TRIES
+id|sysctl_arp_max_tries
 op_plus
-id|ARP_MAX_PINGS
+id|sysctl_arp_max_pings
 suffix:semicolon
 id|del_timer
 c_func
@@ -2213,7 +2254,7 @@ id|arp_timer.expires
 op_assign
 id|jiffies
 op_plus
-id|ARP_CHECK_INTERVAL
+id|sysctl_arp_check_interval
 suffix:semicolon
 id|add_timer
 c_func
@@ -2349,7 +2390,7 @@ id|jiffies
 op_minus
 id|entry-&gt;last_updated
 op_le
-id|ARP_CONFIRM_INTERVAL
+id|sysctl_arp_confirm_interval
 )paren
 (brace
 id|restore_flags
@@ -2405,7 +2446,7 @@ id|entry-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|ARP_RES_TIME
+id|sysctl_arp_res_time
 suffix:semicolon
 id|add_timer
 c_func
@@ -2429,7 +2470,7 @@ id|dev-&gt;pa_addr
 comma
 id|entry-&gt;retries
 OG
-id|ARP_MAX_TRIES
+id|sysctl_arp_max_tries
 ques
 c_cond
 id|entry-&gt;ha
@@ -2491,7 +2532,7 @@ suffix:semicolon
 macro_line|#endif
 id|entry-&gt;retries
 op_assign
-id|ARP_MAX_TRIES
+id|sysctl_arp_max_tries
 suffix:semicolon
 id|entry-&gt;flags
 op_and_assign
@@ -2525,7 +2566,7 @@ id|entry-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|ARP_DEAD_RES_TIME
+id|sysctl_arp_dead_res_time
 suffix:semicolon
 id|add_timer
 c_func
@@ -3845,7 +3886,7 @@ id|entry-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|ARP_RES_TIME
+id|sysctl_arp_res_time
 suffix:semicolon
 r_if
 c_cond
@@ -3914,7 +3955,7 @@ id|entry-&gt;timer
 suffix:semicolon
 id|entry-&gt;retries
 op_assign
-id|ARP_MAX_TRIES
+id|sysctl_arp_max_tries
 suffix:semicolon
 macro_line|#ifdef CONFIG_ARPD
 r_if
@@ -4852,11 +4893,11 @@ id|entry-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|ARP_RES_TIME
+id|sysctl_arp_res_time
 suffix:semicolon
 id|entry-&gt;retries
 op_assign
-id|ARP_MAX_TRIES
+id|sysctl_arp_max_tries
 suffix:semicolon
 id|entry-&gt;last_used
 op_assign

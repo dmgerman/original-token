@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/mm/kmalloc.c&n; *&n; *  Copyright (C) 1991, 199
 multiline_comment|/*&n; * Modified by Alex Bligh (alex@cconcepts.co.uk) 4 Apr 1994 to use multiple&n; * pages. So for &squot;page&squot; throughout, read &squot;area&squot;.&n; *&n; * Largely rewritten.. Linus&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/* Define this if you want slow routines that try to trip errors */

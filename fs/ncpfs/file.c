@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
 macro_line|#include &lt;linux/malloc.h&gt;
 DECL|function|min
@@ -110,6 +111,12 @@ comma
 id|finfo-&gt;opened
 )paren
 suffix:semicolon
+id|lock_super
+c_func
+(paren
+id|i-&gt;i_sb
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -118,6 +125,11 @@ op_eq
 l_int|0
 )paren
 (brace
+id|finfo-&gt;access
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 multiline_comment|/* tries max. rights */
 r_if
 c_cond
@@ -188,14 +200,13 @@ op_assign
 id|O_RDONLY
 suffix:semicolon
 )brace
-r_else
-(brace
-r_return
-op_minus
-id|EACCES
+)brace
+id|unlock_super
+c_func
+(paren
+id|i-&gt;i_sb
+)paren
 suffix:semicolon
-)brace
-)brace
 r_if
 c_cond
 (paren

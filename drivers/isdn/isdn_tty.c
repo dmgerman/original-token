@@ -4832,7 +4832,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ttyI%d ioctl TIOSERGETLSR&bslash;n&quot;
+l_string|&quot;ttyI%d ioctl TIOCSERGETLSR&bslash;n&quot;
 comma
 id|info-&gt;line
 )paren

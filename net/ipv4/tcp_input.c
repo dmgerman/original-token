@@ -2587,7 +2587,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Maybe we can take some stuff off of the write queue,&n;&t; * and put it onto the xmit queue.&n;&t; * FIXME: (?) There is bizzare case being tested here, to check if&n;&t; * the data at the head of the queue ends before the start of&n;&t; * the sequence we already ACKed. This does not appear to be&n;&t; * a case that can actually occur. Why are we testing it?&n;&t; */
+multiline_comment|/*&n;&t; * Maybe we can take some stuff off of the write queue,&n;&t; * and put it onto the xmit queue.&n;&t; * FIXME: (?) There is bizarre case being tested here, to check if&n;&t; * the data at the head of the queue ends before the start of&n;&t; * the sequence we already ACKed. This does not appear to be&n;&t; * a case that can actually occur. Why are we testing it?&n;&t; */
 r_if
 c_cond
 (paren
@@ -4636,6 +4636,8 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
 r_int
 id|r
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * &quot;redo&quot; is 1 if we have already seen this skb but couldn&squot;t&n;&t; * use it at that time (the socket was locked).  In that case&n;&t; * we have already done a lot of the work (looked up the socket&n;&t; * etc).&n;&t; */

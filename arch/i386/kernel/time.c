@@ -345,7 +345,7 @@ id|edx
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; &t; * Due to rounding errors (and jiffies inconsistencies),&n;&t; * we need to check the result so that we&squot;ll get a timer&n;&t; * that is monotonous.&n;&t; */
+multiline_comment|/*&n; &t; * Due to rounding errors (and jiffies inconsistencies),&n;&t; * we need to check the result so that we&squot;ll get a timer&n;&t; * that is monotonic.&n;&t; */
 r_if
 c_cond
 (paren

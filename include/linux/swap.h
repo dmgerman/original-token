@@ -10,6 +10,7 @@ mdefine_line|#define SWAP_FLAG_PRIO_SHIFT&t;0
 DECL|macro|MAX_SWAPFILES
 mdefine_line|#define MAX_SWAPFILES 8
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|SWP_USED
 mdefine_line|#define SWP_USED&t;1
 DECL|macro|SWP_WRITEOK
@@ -93,7 +94,7 @@ r_int
 id|nr_free_pages
 suffix:semicolon
 r_extern
-r_int
+id|atomic_t
 id|nr_async_pages
 suffix:semicolon
 r_extern

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_extern
 r_int

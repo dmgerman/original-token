@@ -38,7 +38,7 @@ l_int|40
 suffix:semicolon
 multiline_comment|/* We track the number of pages currently being asynchronously swapped&n;   out, so that we don&squot;t try to swap TOO many pages out at once */
 DECL|variable|nr_async_pages
-r_int
+id|atomic_t
 id|nr_async_pages
 op_assign
 l_int|0

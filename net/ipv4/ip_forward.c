@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -547,6 +547,50 @@ id|IPFWD_MASQUERADED
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+multiline_comment|/* &n;&t;&t; *&t;Check that any ICMP packets are not for a &n;&t;&t; *&t;masqueraded connection.  If so rewrite them&n;&t;&t; *&t;and skip the firewall checks&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|iph-&gt;protocol
+op_eq
+id|IPPROTO_ICMP
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|fw_res
+op_assign
+id|ip_fw_masq_icmp
+c_func
+(paren
+op_amp
+id|skb
+comma
+id|dev2
+)paren
+)paren
+OL
+l_int|0
+)paren
+multiline_comment|/* Problem - ie bad checksum */
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fw_res
+)paren
+multiline_comment|/* ICMP matched - skip firewall */
+r_goto
+id|skip_call_fw_firewall
+suffix:semicolon
+)brace
+macro_line|#endif
 id|fw_res
 op_assign
 id|call_fw_firewall
@@ -600,6 +644,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+id|skip_call_fw_firewall
+suffix:colon
+macro_line|#endif&t;&t;
 )brace
 macro_line|#endif
 multiline_comment|/*&n;&t; * We now may allocate a new buffer, and copy the datagram into it.&n;&t; * If the indicated interface is up and running, kick it.&n;&t; */

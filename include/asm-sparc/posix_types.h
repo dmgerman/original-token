@@ -112,6 +112,20 @@ r_int
 id|__kernel_loff_t
 suffix:semicolon
 macro_line|#endif
+r_typedef
+r_struct
+(brace
+DECL|member|val
+r_int
+id|val
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|typedef|__kernel_fsid_t
+)brace
+id|__kernel_fsid_t
+suffix:semicolon
 DECL|macro|__FD_SET
 macro_line|#undef __FD_SET
 DECL|function|__FD_SET

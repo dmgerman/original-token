@@ -272,8 +272,12 @@ id|page-&gt;swap_unlock_entry
 op_assign
 id|entry
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|nr_async_pages
-op_increment
+)paren
 suffix:semicolon
 )brace
 id|ll_rw_page

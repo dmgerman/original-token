@@ -56,6 +56,11 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_int
+r_int
+id|intr_count
+suffix:semicolon
+r_extern
+r_int
 id|bh_mask_count
 (braket
 l_int|32

@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * sysctl_net.c: sysctl interface to net subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net directories for each protocol family. [MS]&n; */
+multiline_comment|/* -*- linux-c -*-&n; * sysctl_net.c: sysctl interface to net subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net directories for each protocol family. [MS]&n; *&n; * $Log: sysctl_net.c,v $&n; * Revision 1.2  1996/05/08  20:24:40  shaver&n; * Added bits for NET_BRIDGE and the NET_IPV4_ARP stuff and&n; * NET_IPV4_IP_FORWARD.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -60,6 +60,14 @@ id|ether_table
 )braket
 comma
 id|e802_table
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BRIDGE
+r_extern
+id|ctl_table
+id|bridge_table
 (braket
 )braket
 suffix:semicolon
@@ -206,6 +214,22 @@ comma
 l_int|0555
 comma
 id|ax25_table
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BRIDGE
+(brace
+id|NET_BRIDGE
+comma
+l_string|&quot;bridge&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0555
+comma
+id|bridge_table
 )brace
 comma
 macro_line|#endif

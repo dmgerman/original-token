@@ -109,7 +109,7 @@ OL
 id|jiffies
 )paren
 (brace
-multiline_comment|/* We can get here if we reset the timer on an event&n;&t;&t; * that could not fire because the interupts where disabled.&n;&t;&t; * make sure it happens soon.&n;&t;&t; */
+multiline_comment|/* We can get here if we reset the timer on an event&n;&t;&t; * that could not fire because the interrupts were disabled.&n;&t;&t; * make sure it happens soon.&n;&t;&t; */
 id|sk-&gt;retransmit_timer.expires
 op_assign
 id|jiffies

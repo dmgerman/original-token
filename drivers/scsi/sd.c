@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_DISK_MAJOR

@@ -6,11 +6,6 @@ macro_line|#include &lt;asm/param.h&gt;&t;/* for HZ */
 r_extern
 r_int
 r_int
-id|intr_count
-suffix:semicolon
-r_extern
-r_int
-r_int
 id|event
 suffix:semicolon
 macro_line|#include &lt;linux/binfmts.h&gt;

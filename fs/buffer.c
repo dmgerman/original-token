@@ -5168,8 +5168,12 @@ op_amp
 id|page-&gt;flags
 )paren
 )paren
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|nr_async_pages
-op_decrement
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -5889,6 +5893,21 @@ id|page
 op_star
 id|page
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|BH_FreeOnIO
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+)paren
+(brace
+multiline_comment|/* This is a normal buffer. */
 id|clear_bit
 c_func
 (paren
@@ -5905,21 +5924,9 @@ op_amp
 id|bh-&gt;b_wait
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|test_bit
-c_func
-(paren
-id|BH_FreeOnIO
-comma
-op_amp
-id|bh-&gt;b_state
-)paren
-)paren
 r_return
 suffix:semicolon
+)brace
 multiline_comment|/* This is a temporary buffer used for page I/O. */
 id|page
 op_assign
@@ -5967,10 +5974,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Async buffer_heads are here only as labels for IO, and get&n;           thrown away once the IO for this page is complete.  IO is&n;           deemed complete once all buffers have been visited&n;           (b_count==0) and are now unlocked. */
-id|bh-&gt;b_count
-op_decrement
-suffix:semicolon
+multiline_comment|/* Async buffer_heads are here only as labels for IO, and get&n;           thrown away once the IO for this page is complete.  IO is&n;           deemed complete once all buffers have been unlocked. */
 r_if
 c_cond
 (paren
@@ -5991,6 +5995,22 @@ id|PG_error
 comma
 op_amp
 id|page-&gt;flags
+)paren
+suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|BH_Lock
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|bh-&gt;b_wait
 )paren
 suffix:semicolon
 r_for
@@ -6021,13 +6041,15 @@ comma
 op_amp
 id|tmp-&gt;b_state
 )paren
-op_logical_or
-id|tmp-&gt;b_count
 )paren
 r_return
 suffix:semicolon
 )brace
 multiline_comment|/* OK, the async IO on this page is complete. */
+r_if
+c_cond
+(paren
+op_logical_neg
 id|clear_bit
 c_func
 (paren
@@ -6036,6 +6058,8 @@ comma
 op_amp
 id|page-&gt;flags
 )paren
+)paren
+r_return
 suffix:semicolon
 id|wake_up
 c_func

@@ -2,20 +2,14 @@ multiline_comment|/* $Id: statfs.h,v 1.3 1995/11/25 02:32:54 davem Exp $ */
 macro_line|#ifndef _SPARC_STATFS_H
 DECL|macro|_SPARC_STATFS_H
 mdefine_line|#define _SPARC_STATFS_H
-r_typedef
-r_struct
-(brace
-DECL|member|val
-r_int
-id|val
-(braket
-l_int|2
-)braket
-suffix:semicolon
+macro_line|#ifndef __KERNEL_STRICT_NAMES
+macro_line|#include &lt;linux/types.h&gt;
 DECL|typedef|fsid_t
-)brace
+r_typedef
+id|__kernel_fsid_t
 id|fsid_t
 suffix:semicolon
+macro_line|#endif
 DECL|struct|statfs
 r_struct
 id|statfs
@@ -49,7 +43,7 @@ r_int
 id|f_ffree
 suffix:semicolon
 DECL|member|f_fsid
-id|fsid_t
+id|__kernel_fsid_t
 id|f_fsid
 suffix:semicolon
 DECL|member|f_namelen

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
 DECL|struct|ncp_dirent
 r_struct
@@ -3102,6 +3103,12 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
+id|lock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 id|result_info
 op_assign
 id|ncp_find_dir_inode
@@ -3149,6 +3156,12 @@ id|server
 comma
 id|result_info
 )paren
+)paren
+suffix:semicolon
+id|unlock_super
+c_func
+(paren
+id|dir-&gt;i_sb
 )paren
 suffix:semicolon
 id|iput
@@ -3397,6 +3410,12 @@ op_ne
 l_int|0
 )paren
 (brace
+id|unlock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -3438,6 +3457,12 @@ id|finfo
 )paren
 )paren
 (brace
+id|unlock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -3449,6 +3474,12 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
+id|unlock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -3585,6 +3616,12 @@ c_func
 id|_name
 )paren
 suffix:semicolon
+id|lock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3624,6 +3661,12 @@ op_ne
 l_int|0
 )paren
 (brace
+id|unlock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -3684,6 +3727,12 @@ comma
 id|finfo.file_handle
 )paren
 suffix:semicolon
+id|unlock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -3695,6 +3744,12 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|unlock_super
+c_func
+(paren
+id|dir-&gt;i_sb
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren

@@ -138,20 +138,28 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The IMMUTABLE flag can only be changed by the super user&n;&t;&t; * when the security level is zero.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The IMMUTABLE and APPEND_ONLY flags can only be changed by&n;&t;&t; * the super user when the security level is zero.&n;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
 id|flags
 op_amp
+(paren
+id|EXT2_APPEND_FL
+op_or
 id|EXT2_IMMUTABLE_FL
+)paren
 )paren
 op_xor
 (paren
 id|inode-&gt;u.ext2_i.i_flags
 op_amp
+(paren
+id|EXT2_APPEND_FL
+op_or
 id|EXT2_IMMUTABLE_FL
+)paren
 )paren
 )paren
 (brace

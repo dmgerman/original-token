@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/segment.h&gt; /* for memcpy_to/fromfs */

@@ -72,6 +72,7 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;

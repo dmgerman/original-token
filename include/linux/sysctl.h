@@ -125,33 +125,49 @@ mdefine_line|#define VM_BDFLUSH&t;4&t;/* struct: Control buffer cache flushing *
 DECL|macro|VM_MAXID
 mdefine_line|#define VM_MAXID&t;5
 multiline_comment|/* CTL_NET names: */
-multiline_comment|/* /proc/sys/net/core */
 DECL|macro|NET_CORE
-mdefine_line|#define NET_CORE&t;&t;0x01000000
-multiline_comment|/* /proc/sys/net/ethernet */
+mdefine_line|#define NET_CORE        1
 DECL|macro|NET_ETHER
-mdefine_line|#define NET_ETHER&t;&t;0x02000000
-multiline_comment|/* /proc/sys/net/802 */
+mdefine_line|#define NET_ETHER       2
 DECL|macro|NET_802
-mdefine_line|#define NET_802         &t;0x03000000
-multiline_comment|/* /proc/sys/net/unix */
+mdefine_line|#define NET_802         3
 DECL|macro|NET_UNIX
-mdefine_line|#define NET_UNIX&t;&t;0x04000000
-multiline_comment|/* /proc/sys/net/ipv4 */
+mdefine_line|#define NET_UNIX        4
 DECL|macro|NET_IPV4
-mdefine_line|#define NET_IPV4&t;&t;0x05000000
-multiline_comment|/* /proc/sys/net/ipx */
+mdefine_line|#define NET_IPV4        5
 DECL|macro|NET_IPX
-mdefine_line|#define NET_IPX&t;&t;&t;0x06000000
-multiline_comment|/* /proc/sys/net/appletalk */
+mdefine_line|#define NET_IPX         6
 DECL|macro|NET_ATALK
-mdefine_line|#define NET_ATALK&t;&t;0x07000000
-multiline_comment|/* /proc/sys/net/netrom */
+mdefine_line|#define NET_ATALK       7
 DECL|macro|NET_NETROM
-mdefine_line|#define NET_NETROM&t;&t;0x08000000
-multiline_comment|/* /proc/sys/net/ax25 */
+mdefine_line|#define NET_NETROM      8
 DECL|macro|NET_AX25
-mdefine_line|#define NET_AX25&t;&t;0x09000000
+mdefine_line|#define NET_AX25        9
+DECL|macro|NET_BRIDGE
+mdefine_line|#define NET_BRIDGE&t;10
+multiline_comment|/* /proc/sys/net/core */
+multiline_comment|/* /proc/sys/net/ethernet */
+multiline_comment|/* /proc/sys/net/802 */
+multiline_comment|/* /proc/sys/net/unix */
+multiline_comment|/* /proc/sys/net/ipv4 */
+DECL|macro|NET_IPV4_ARP_RES_TIME
+mdefine_line|#define NET_IPV4_ARP_RES_TIME           1
+DECL|macro|NET_IPV4_ARP_DEAD_RES_TIME
+mdefine_line|#define NET_IPV4_ARP_DEAD_RES_TIME      2
+DECL|macro|NET_IPV4_ARP_MAX_TRIES
+mdefine_line|#define NET_IPV4_ARP_MAX_TRIES          3
+DECL|macro|NET_IPV4_ARP_TIMEOUT
+mdefine_line|#define NET_IPV4_ARP_TIMEOUT            4
+DECL|macro|NET_IPV4_ARP_CHECK_INTERVAL
+mdefine_line|#define NET_IPV4_ARP_CHECK_INTERVAL     5
+DECL|macro|NET_IPV4_ARP_CONFIRM_INTERVAL
+mdefine_line|#define NET_IPV4_ARP_CONFIRM_INTERVAL   6
+DECL|macro|NET_IPV4_ARP_CONFIRM_TIMEOUT
+mdefine_line|#define NET_IPV4_ARP_CONFIRM_TIMEOUT&t;7
+multiline_comment|/* /proc/sys/net/ipx */
+multiline_comment|/* /proc/sys/net/appletalk */
+multiline_comment|/* /proc/sys/net/netrom */
+multiline_comment|/* /proc/sys/net/ax25 */
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
 multiline_comment|/* CTL_DEBUG names: */
