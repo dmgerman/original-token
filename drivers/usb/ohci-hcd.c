@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what the&n; * USB people would call a HCD  for the OHCI. &n; * (ISO comming soon, Bulk disabled, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ $Log: ohci.c,v $ ]&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * &n; * v2.1 1999/05/09 ep_addr correction, code clean up&n; * v2.0 1999/05/04 &n; * virtual root hub is now an option, &n; * memory allocation based on kmalloc and kfree now, Bus error handling, &n; * INT and CTRL transfers enabled, Bulk included but disabled, ISO needs completion&n; * &n; * from Linus Torvalds (uhci.c) (APM not tested; hub, usb_device, bus and related stuff)&n; * from Greg Smith (ohci.c) (reset controller handling, hub)&n; * &n; * v1.0 1999/04/27 initial release&n; * ohci-hcd.c&n; */
+multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what &n; * the USB people would call a HCD  for the OHCI. &n; * (ISO comming soon, Bulk disabled, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb &n; * device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments &n; * (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ $Log: ohci.c,v $ ]&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * &n; * v2.1 1999/05/09 ep_addr correction, code clean up&n; * v2.0 1999/05/04 &n; * virtual root hub is now an option, &n; * memory allocation based on kmalloc and kfree now, Bus error handling, &n; * INT and CTRL transfers enabled, Bulk included but disabled, ISO needs completion&n; * &n; * from Linus Torvalds (uhci.c) (APM not tested; hub, usb_device, bus and related stuff)&n; * from Greg Smith (ohci.c) (reset controller handling, hub)&n; * &n; * v1.0 1999/04/27 initial release&n; * ohci-hcd.c&n; */
 multiline_comment|/* #define OHCI_DBG  */
 multiline_comment|/* printk some debug information */
 macro_line|#include &lt;linux/config.h&gt;
@@ -18,7 +18,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ohci-hcd.h&quot;
-macro_line|#include &quot;inits.h&quot; 
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 r_static
@@ -5042,12 +5041,23 @@ id|ohci_device
 op_star
 id|dev
 suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|tmp_root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 id|usb_dev
 op_assign
 id|sohci_usb_allocate
 c_func
 (paren
-id|ohci-&gt;root_hub-&gt;usb
+id|tmp_root_hub-&gt;usb
 )paren
 suffix:semicolon
 id|dev
@@ -5064,7 +5074,7 @@ c_func
 id|usb_dev
 )paren
 suffix:semicolon
-id|ohci-&gt;root_hub-&gt;usb-&gt;children
+id|tmp_root_hub-&gt;usb-&gt;children
 (braket
 l_int|0
 )braket
@@ -5368,6 +5378,17 @@ id|ohci_device
 op_star
 id|dev
 suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|tmp_root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 id|OHCI_DEBUG
 c_func
 (paren
@@ -5395,7 +5416,7 @@ id|usb_disconnect
 c_func
 (paren
 op_amp
-id|ohci-&gt;root_hub-&gt;usb-&gt;children
+id|tmp_root_hub-&gt;usb-&gt;children
 (braket
 id|port_nr
 )braket
@@ -5442,7 +5463,7 @@ op_assign
 id|sohci_usb_allocate
 c_func
 (paren
-id|ohci-&gt;root_hub-&gt;usb
+id|tmp_root_hub-&gt;usb
 )paren
 suffix:semicolon
 id|dev
@@ -5459,7 +5480,7 @@ c_func
 id|dev-&gt;usb
 )paren
 suffix:semicolon
-id|ohci-&gt;root_hub-&gt;usb-&gt;children
+id|tmp_root_hub-&gt;usb-&gt;children
 (braket
 id|port_nr
 )braket
@@ -5964,8 +5985,6 @@ l_int|NULL
 suffix:semicolon
 id|dev
 op_assign
-id|ohci-&gt;root_hub
-op_assign
 id|usb_to_ohci
 c_func
 (paren
@@ -5976,7 +5995,10 @@ id|usb-&gt;bus
 op_assign
 id|bus
 suffix:semicolon
-multiline_comment|/* bus-&gt;root_hub = ohci_to_usb(ohci-&gt;root_hub); */
+id|bus-&gt;root_hub
+op_assign
+id|usb
+suffix:semicolon
 id|dev-&gt;ohci
 op_assign
 id|ohci
@@ -6019,6 +6041,17 @@ id|ohci
 r_int
 id|i
 suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|tmp_root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 r_union
 id|ep_addr_
 id|ep_addr
@@ -6037,6 +6070,7 @@ l_string|&quot;USB HC release ohci &bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6109,7 +6143,7 @@ multiline_comment|/* disconnect all devices */
 r_if
 c_cond
 (paren
-id|ohci-&gt;root_hub
+id|ohci-&gt;bus-&gt;root_hub
 )paren
 r_for
 c_loop
@@ -6120,7 +6154,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ohci-&gt;root_hub-&gt;usb-&gt;maxchild
+id|tmp_root_hub-&gt;usb-&gt;maxchild
 suffix:semicolon
 id|i
 op_increment
@@ -6129,22 +6163,28 @@ op_increment
 id|usb_disconnect
 c_func
 (paren
-id|ohci-&gt;root_hub-&gt;usb-&gt;children
+id|tmp_root_hub-&gt;usb-&gt;children
 op_plus
 id|i
 )paren
 suffix:semicolon
 )brace
-id|USB_FREE
+id|usb_deregister_bus
 c_func
 (paren
-id|ohci-&gt;root_hub-&gt;usb
+id|ohci-&gt;bus
 )paren
 suffix:semicolon
 id|USB_FREE
 c_func
 (paren
-id|ohci-&gt;root_hub
+id|tmp_root_hub-&gt;usb
+)paren
+suffix:semicolon
+id|USB_FREE
+c_func
+(paren
+id|tmp_root_hub
 )paren
 suffix:semicolon
 id|USB_FREE
@@ -6173,13 +6213,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-r_void
-id|cleanup_drivers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|ohci_roothub_thread
 r_static
 r_int
@@ -6266,6 +6299,12 @@ l_int|50
 )paren
 suffix:semicolon
 multiline_comment|/* root hub power on */
+id|usb_register_bus
+c_func
+(paren
+id|ohci-&gt;bus
+)paren
+suffix:semicolon
 r_do
 (brace
 macro_line|#ifdef CONFIG_APM
@@ -6301,6 +6340,7 @@ id|ohci-&gt;intrstatus
 )paren
 suffix:semicolon
 )paren
+suffix:semicolon
 macro_line|#ifndef VROOTHUB
 multiline_comment|/*&t;if (ohci-&gt;intrstatus &amp; OHCI_INTR_RHSC)  */
 (brace
@@ -6769,28 +6809,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_APM
-id|apm_unregister_callback
-c_func
-(paren
-op_amp
-id|handle_apm_event
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-DECL|macro|ohci_hcd_init
-mdefine_line|#define ohci_hcd_init init_module
-macro_line|#endif
 DECL|macro|PCI_CLASS_SERIAL_USB_OHCI
 mdefine_line|#define PCI_CLASS_SERIAL_USB_OHCI 0x0C0310
 DECL|macro|PCI_CLASS_SERIAL_USB_OHCI_PG
@@ -6873,4 +6891,42 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+(def_block
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|ohci_hcd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#&t;ifdef CONFIG_APM
+id|apm_unregister_callback
+c_func
+(paren
+op_amp
+id|handle_apm_event
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+)brace
+macro_line|#endif 
+singleline_comment|//MODULE
 eof

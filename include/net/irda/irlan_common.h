@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.h&n; * Version:       0.8&n; * Description:   IrDA LAN access layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 14:30:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.h&n; * Version:       0.8&n; * Description:   IrDA LAN access layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Sun May  9 11:45:33 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLAN_H
 DECL|macro|IRLAN_H
 mdefine_line|#define IRLAN_H
@@ -108,7 +108,7 @@ mdefine_line|#define IRLAN_SHORT  1
 DECL|macro|IRLAN_ARRAY
 mdefine_line|#define IRLAN_ARRAY  2
 DECL|macro|IRLAN_MAX_HEADER
-mdefine_line|#define IRLAN_MAX_HEADER (TTP_HEADER+LMP_HEADER+LAP_HEADER)
+mdefine_line|#define IRLAN_MAX_HEADER (TTP_HEADER+LMP_HEADER+LAP_MAX_HEADER)
 multiline_comment|/*&n; *  IrLAN client&n; */
 DECL|struct|irlan_client_cb
 r_struct
@@ -128,6 +128,19 @@ id|tsap_cb
 op_star
 id|tsap_ctrl
 suffix:semicolon
+DECL|member|max_sdu_size
+id|__u32
+id|max_sdu_size
+suffix:semicolon
+DECL|member|max_header_size
+id|__u8
+id|max_header_size
+suffix:semicolon
+DECL|member|access_type
+r_int
+id|access_type
+suffix:semicolon
+multiline_comment|/* Access type of provider */
 DECL|member|reconnect_key
 id|__u8
 id|reconnect_key
@@ -181,6 +194,14 @@ id|tsap_cb
 op_star
 id|tsap_ctrl
 suffix:semicolon
+DECL|member|max_sdu_size
+id|__u32
+id|max_sdu_size
+suffix:semicolon
+DECL|member|max_header_size
+id|__u8
+id|max_header_size
+suffix:semicolon
 multiline_comment|/*&n;&t; *  Store some values here which are used by the provider to parse&n;&t; *  the filter operations&n;&t; */
 DECL|member|data_chan
 r_int
@@ -202,6 +223,11 @@ DECL|member|filter_entry
 r_int
 id|filter_entry
 suffix:semicolon
+DECL|member|access_type
+r_int
+id|access_type
+suffix:semicolon
+multiline_comment|/* Access type */
 DECL|member|send_arb_val
 id|__u16
 id|send_arb_val
@@ -216,7 +242,7 @@ suffix:semicolon
 multiline_comment|/* Generated MAC address for peer device */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *  IrLAN&n; */
+multiline_comment|/*&n; *  IrLAN control block&n; */
 DECL|struct|irlan_cb
 r_struct
 id|irlan_cb
@@ -271,11 +297,6 @@ r_int
 id|media
 suffix:semicolon
 multiline_comment|/* Media type */
-DECL|member|access_type
-r_int
-id|access_type
-suffix:semicolon
-multiline_comment|/* Currently used access type */
 DECL|member|version
 id|__u8
 id|version
@@ -290,6 +311,11 @@ id|tsap_cb
 op_star
 id|tsap_data
 suffix:semicolon
+DECL|member|master
+r_int
+id|master
+suffix:semicolon
+multiline_comment|/* Master instance? */
 DECL|member|use_udata
 r_int
 id|use_udata
@@ -322,6 +348,14 @@ id|irlan_provider_cb
 id|provider
 suffix:semicolon
 multiline_comment|/* Provider specific fields */
+DECL|member|max_sdu_size
+id|__u32
+id|max_sdu_size
+suffix:semicolon
+DECL|member|max_header_size
+id|__u8
+id|max_header_size
+suffix:semicolon
 DECL|member|watchdog_timer
 r_struct
 id|timer_list

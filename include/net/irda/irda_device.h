@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Haris Zukanovic &lt;haris@stud.cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Tue Apr 20 11:06:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *     Copyright (c) 1998 Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Haris Zukanovic nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Mon May 10 15:46:02 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
+macro_line|#include &lt;net/irda/dongle.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 macro_line|#include &lt;net/irda/irlap_frame.h&gt;
 multiline_comment|/* Some non-standard interface flags (should not conflict with any in if.h) */
@@ -32,6 +33,22 @@ DECL|macro|IO_XMIT
 mdefine_line|#define IO_XMIT 0x01
 DECL|macro|IO_RECV
 mdefine_line|#define IO_RECV 0x02
+DECL|struct|dongle_q
+r_struct
+id|dongle_q
+(brace
+DECL|member|q
+id|QUEUE
+id|q
+suffix:semicolon
+DECL|member|dongle
+r_struct
+id|dongle
+op_star
+id|dongle
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Chip specific info */
 DECL|struct|chipio_t
 r_struct
@@ -236,6 +253,13 @@ r_struct
 id|iobuff_t
 id|rx_buff
 suffix:semicolon
+DECL|member|dongle
+r_struct
+id|dongle
+op_star
+id|dongle
+suffix:semicolon
+multiline_comment|/* Dongle driver */
 multiline_comment|/* spinlock_t lock; */
 multiline_comment|/* For serializing operations */
 multiline_comment|/* Media busy stuff */
@@ -278,8 +302,45 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* receiving? */
-multiline_comment|/* int (*is_tbusy)(struct irda_device *); */
-multiline_comment|/* transmitting? */
+DECL|member|set_dtr_rts
+r_void
+(paren
+op_star
+id|set_dtr_rts
+)paren
+(paren
+r_struct
+id|irda_device
+op_star
+id|idev
+comma
+r_int
+id|dtr
+comma
+r_int
+id|rts
+)paren
+suffix:semicolon
+DECL|member|raw_write
+r_int
+(paren
+op_star
+id|raw_write
+)paren
+(paren
+r_struct
+id|irda_device
+op_star
+id|idev
+comma
+id|__u8
+op_star
+id|buf
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
 DECL|member|wait_until_sent
 r_void
 (paren
@@ -422,6 +483,39 @@ op_star
 id|self
 )paren
 suffix:semicolon
+r_void
+id|irda_device_init_dongle
+c_func
+(paren
+r_struct
+id|irda_device
+op_star
+id|self
+comma
+r_int
+id|type
+)paren
+suffix:semicolon
+r_void
+id|irda_device_unregister_dongle
+c_func
+(paren
+r_struct
+id|dongle
+op_star
+id|dongle
+)paren
+suffix:semicolon
+r_int
+id|irda_device_register_dongle
+c_func
+(paren
+r_struct
+id|dongle
+op_star
+id|dongle
+)paren
+suffix:semicolon
 r_int
 id|irda_device_setup
 c_func
@@ -452,8 +546,8 @@ id|mode
 suffix:semicolon
 multiline_comment|/*&n; * Function irda_get_mtt (skb)&n; *&n; *    Utility function for getting the minimum turnaround time out of &n; *    the skb, where it has been hidden in the cb field.&n; */
 DECL|function|irda_get_mtt
+r_extern
 r_inline
-r_static
 id|__u16
 id|irda_get_mtt
 c_func
@@ -519,6 +613,92 @@ suffix:semicolon
 suffix:semicolon
 r_return
 id|mtt
+suffix:semicolon
+)brace
+DECL|function|irda_device_set_dtr_rts
+r_extern
+r_inline
+r_void
+id|irda_device_set_dtr_rts
+c_func
+(paren
+r_struct
+id|irda_device
+op_star
+id|self
+comma
+r_int
+id|dtr
+comma
+r_int
+id|rts
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|self-&gt;set_dtr_rts
+)paren
+id|self
+op_member_access_from_pointer
+id|set_dtr_rts
+c_func
+(paren
+id|self
+comma
+id|dtr
+comma
+id|rts
+)paren
+suffix:semicolon
+)brace
+DECL|function|irda_device_raw_write
+r_extern
+r_inline
+r_int
+id|irda_device_raw_write
+c_func
+(paren
+r_struct
+id|irda_device
+op_star
+id|self
+comma
+id|__u8
+op_star
+id|buf
+comma
+r_int
+id|len
+)paren
+(brace
+r_int
+id|ret
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;raw_write
+)paren
+id|ret
+op_assign
+id|self
+op_member_access_from_pointer
+id|raw_write
+c_func
+(paren
+id|self
+comma
+id|buf
+comma
+id|len
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 macro_line|#endif

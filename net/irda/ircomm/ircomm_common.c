@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_common.c&n; * Version:       &n; * Description:   An implementation of IrCOMM service interface, &n; *                state machine, and incidental function(s).&n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; * Source:        irlpt_event.c&n; *&n; *     Copyright (c) 1998, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_common.c&n; * Version:       &n; * Description:   An implementation of IrCOMM service interface, &n; *                state machine, and incidental function(s).&n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; * Source:        irlpt_event.c&n; *&n; *     Copyright (c) 1998-1999, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 multiline_comment|/*&n; *    Reference: &n; *    &quot;&squot;IrCOMM&squot;:Serial and Parallel Port Emulation Over IR(Wire Replacement)&quot;&n; *    version 1.0, which is available at http://www.irda.org/.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -732,7 +732,7 @@ id|ircomm
 id|i
 )braket
 op_member_access_from_pointer
-id|maxsdusize
+id|max_sdu_size
 op_assign
 id|SAR_DISABLE
 suffix:semicolon
@@ -1074,7 +1074,10 @@ op_star
 id|qos
 comma
 id|__u32
-id|maxsdusize
+id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -1150,22 +1153,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|maxsdusize
+id|max_sdu_size
 op_eq
 id|SAR_DISABLE
 )paren
-(brace
 id|self-&gt;max_txbuff_size
 op_assign
 id|qos-&gt;data_size.value
+op_minus
+id|max_header_size
 suffix:semicolon
-)brace
 r_else
 (brace
 id|ASSERT
 c_func
 (paren
-id|maxsdusize
+id|max_sdu_size
 op_ge
 id|COMM_DEFAULT_DATA_SIZE
 comma
@@ -1175,13 +1178,17 @@ suffix:semicolon
 suffix:semicolon
 id|self-&gt;max_txbuff_size
 op_assign
-id|maxsdusize
+id|max_sdu_size
 suffix:semicolon
 multiline_comment|/* use fragmentation */
 )brace
 id|self-&gt;qos
 op_assign
 id|qos
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
 suffix:semicolon
 id|self-&gt;null_modem_mode
 op_assign
@@ -1219,7 +1226,10 @@ op_star
 id|qos
 comma
 id|__u32
-id|maxsdusize
+id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -1295,24 +1305,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|maxsdusize
+id|max_sdu_size
 op_eq
 id|SAR_DISABLE
 )paren
-(brace
 id|self-&gt;max_txbuff_size
 op_assign
 id|qos-&gt;data_size.value
+op_minus
+id|max_header_size
 suffix:semicolon
-)brace
 r_else
 id|self-&gt;max_txbuff_size
 op_assign
-id|maxsdusize
+id|max_sdu_size
 suffix:semicolon
 id|self-&gt;qos
 op_assign
 id|qos
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
 suffix:semicolon
 id|ircomm_do_event
 c_func
@@ -2306,7 +2320,7 @@ id|self-&gt;daddr
 comma
 l_int|NULL
 comma
-id|self-&gt;maxsdusize
+id|self-&gt;max_sdu_size
 comma
 id|userdata
 )paren
@@ -2397,7 +2411,6 @@ c_cond
 (paren
 id|self-&gt;notify.connect_indication
 )paren
-(brace
 id|self-&gt;notify
 dot
 id|connect_indication
@@ -2411,10 +2424,11 @@ id|qos
 comma
 l_int|0
 comma
+l_int|0
+comma
 id|skb
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#if 0
 multiline_comment|/*   it&squot;s for THREE_WIRE_RAW.*/
@@ -2436,10 +2450,10 @@ l_string|&quot;ircomm:connect_indication_threewire():not implemented!&quot;
 suffix:semicolon
 )brace
 macro_line|#endif 
-DECL|function|connect_confirmation
+DECL|function|connect_confirm
 r_static
 r_void
-id|connect_confirmation
+id|connect_confirm
 c_func
 (paren
 r_struct
@@ -2481,6 +2495,8 @@ comma
 l_int|NULL
 comma
 id|SAR_DISABLE
+comma
+l_int|0
 comma
 id|skb
 )paren
@@ -2533,18 +2549,16 @@ suffix:semicolon
 multiline_comment|/* irlmp_connect_rsp(); */
 )brace
 r_else
-(brace
 id|irttp_connect_response
 c_func
 (paren
 id|self-&gt;tsap
 comma
-id|self-&gt;maxsdusize
+id|self-&gt;max_sdu_size
 comma
 id|skb
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|issue_disconnect_request
 r_static
@@ -2672,14 +2686,12 @@ c_cond
 (paren
 id|userdata
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|userdata
 )paren
 suffix:semicolon
-)brace
 )brace
 id|self-&gt;tx_packets
 op_increment
@@ -2829,7 +2841,6 @@ id|self-&gt;notify.data_indication
 op_logical_and
 id|skb-&gt;len
 )paren
-(brace
 id|self-&gt;notify
 dot
 id|data_indication
@@ -2842,7 +2853,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|ircomm_data_indication
 r_int
@@ -3534,7 +3544,7 @@ comma
 id|COMM_CONN
 )paren
 suffix:semicolon
-id|connect_confirmation
+id|connect_confirm
 c_func
 (paren
 id|self
@@ -3996,7 +4006,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  ----------------------------------------------------------------------&n; *  IrCOMM service interfaces and supporting functions&n; *&n; *  ----------------------------------------------------------------------&n; */
-multiline_comment|/* &n; * start_discovering()&n; *&n; * start discovering and enter DISCOVERY_WAIT state&n; */
+multiline_comment|/*&n; * Function start_discovering (self)&n; *&n; *    Start discovering and enter DISCOVERY_WAIT state&n; *&n; */
 DECL|function|start_discovering
 r_static
 r_void
@@ -4173,7 +4183,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * queryias_done(self)&n; *&n; * called when discovery process got wrong results, completed, or terminated.&n; */
+multiline_comment|/*&n; * queryias_done(self)&n; *&n; * &n; */
+multiline_comment|/*&n; * Function queryias_done (self)&n; *&n; *    Called when discovery process got wrong results, completed, or&n; *    terminated.&n; * &n; */
 DECL|function|queryias_done
 r_static
 r_void
@@ -4225,14 +4236,12 @@ id|ircomm_cs
 op_ne
 l_int|1
 )paren
-(brace
 id|irlmp_unregister_service
 c_func
 (paren
 id|self-&gt;skey
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -4336,7 +4345,7 @@ l_string|&quot;THREE_WIRE_RAW is not implemented!&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * ircomm_connect_request()&n; * Impl. of this function is differ from one of the reference.&n; * This functin does discovery as well as sending connect request&n; */
+multiline_comment|/*&n; * Function ircomm_connect_request (self, servicetype)&n; *&n; *    Impl. of this function is differ from one of the reference. This&n; *    function does discovery as well as sending connect request&n; * &n; */
 DECL|function|ircomm_connect_request
 r_void
 id|ircomm_connect_request
@@ -4389,7 +4398,7 @@ id|servicetype
 suffix:semicolon
 multiline_comment|/* ircomm_control_request(self, SERVICETYPE); */
 multiline_comment|/*servictype*/
-id|self-&gt;maxsdusize
+id|self-&gt;max_sdu_size
 op_assign
 id|SAR_DISABLE
 suffix:semicolon
@@ -4420,7 +4429,7 @@ op_star
 id|userdata
 comma
 id|__u32
-id|maxsdusize
+id|max_sdu_size
 )paren
 (brace
 id|ASSERT
@@ -4471,16 +4480,14 @@ c_func
 id|COMM_DEFAULT_DATA_SIZE
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
+r_if
+c_cond
 (paren
 id|userdata
-op_ne
+op_eq
 l_int|NULL
-comma
-r_return
-suffix:semicolon
 )paren
+r_return
 suffix:semicolon
 id|skb_reserve
 c_func
@@ -4496,23 +4503,21 @@ id|self-&gt;null_modem_mode
 op_assign
 l_int|1
 suffix:semicolon
-id|self-&gt;maxsdusize
+id|self-&gt;max_sdu_size
 op_assign
-id|maxsdusize
+id|max_sdu_size
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|maxsdusize
+id|max_sdu_size
 op_ne
 id|SAR_DISABLE
 )paren
-(brace
 id|self-&gt;max_txbuff_size
 op_assign
-id|maxsdusize
+id|max_sdu_size
 suffix:semicolon
-)brace
 id|ircomm_do_event
 c_func
 (paren
@@ -5165,7 +5170,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ircomm_control_request();&n; * this function is exported as a request to send some control-channel tuples&n; * to peer device&n; */
+multiline_comment|/*&n; * Function ircomm_control_request (self, instruction)&n; *&n; *    This function is exported as a request to send some control-channel&n; *    tuples * to peer device&n; * &n; */
 DECL|function|ircomm_control_request
 r_void
 id|ircomm_control_request

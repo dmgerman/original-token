@@ -1,10 +1,11 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_provider.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 14:28:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_provider.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Sun May  9 12:22:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -20,8 +21,39 @@ macro_line|#include &lt;net/irda/irlan_event.h&gt;
 macro_line|#include &lt;net/irda/irlan_provider.h&gt;
 macro_line|#include &lt;net/irda/irlan_filter.h&gt;
 macro_line|#include &lt;net/irda/irlan_client.h&gt;
+r_static
+r_void
+id|irlan_provider_connect_indication
+c_func
+(paren
+r_void
+op_star
+id|instance
+comma
+r_void
+op_star
+id|sap
+comma
+r_struct
+id|qos_info
+op_star
+id|qos
+comma
+id|__u32
+id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function irlan_provider_control_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the control channel&n; *&n; */
 DECL|function|irlan_provider_data_indication
+r_static
 r_int
 id|irlan_provider_data_indication
 c_func
@@ -275,6 +307,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_provider_connect_indication (handle, skb, priv)&n; *&n; *    Got connection from peer IrLAN layer&n; *&n; */
 DECL|function|irlan_provider_connect_indication
+r_static
 r_void
 id|irlan_provider_connect_indication
 c_func
@@ -295,6 +328,9 @@ comma
 id|__u32
 id|max_sdu_size
 comma
+id|__u8
+id|max_header_size
+comma
 r_struct
 id|sk_buff
 op_star
@@ -307,9 +343,6 @@ op_star
 id|self
 comma
 op_star
-id|entry
-comma
-op_star
 r_new
 suffix:semicolon
 r_struct
@@ -317,10 +350,15 @@ id|tsap_cb
 op_star
 id|tsap
 suffix:semicolon
+id|__u32
+id|saddr
+comma
+id|daddr
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -366,6 +404,14 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|self-&gt;provider.max_sdu_size
+op_assign
+id|max_sdu_size
+suffix:semicolon
+id|self-&gt;provider.max_header_size
+op_assign
+id|max_header_size
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -388,40 +434,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Check if this provider is currently unused */
-r_if
-c_cond
-(paren
-id|self-&gt;daddr
-op_eq
-id|DEV_ADDR_ANY
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Rehash instance, now we have a client (daddr) to serve.&n;&t;&t; */
-id|entry
-op_assign
-id|hashbin_remove
-c_func
-(paren
-id|irlan
-comma
-id|self-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|entry
-op_eq
-id|self
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|self-&gt;daddr
+id|daddr
 op_assign
 id|irttp_get_daddr
 c_func
@@ -429,61 +442,66 @@ c_func
 id|tsap
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), daddr=%08x&bslash;n&quot;
-comma
-id|self-&gt;daddr
-)paren
-suffix:semicolon
-id|hashbin_insert
-c_func
-(paren
-id|irlan
-comma
-(paren
-id|QUEUE
-op_star
-)paren
-id|self
-comma
-id|self-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t; * If we already have the daddr set, this means that the&n;&t;&t; * client must already have started (peer mode). We must&n;&t;&t; * make sure that this connection attempt is from the same&n;&t;&t; * device as the client is dealing with!  &n;&t;&t; */
-id|ASSERT
-c_func
-(paren
-id|self-&gt;daddr
-op_eq
-id|irttp_get_daddr
-c_func
-(paren
-id|tsap
-)paren
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Update saddr, since client may have moved to a new link */
-id|self-&gt;saddr
+id|saddr
 op_assign
 id|irttp_get_saddr
 c_func
 (paren
 id|tsap
 )paren
+suffix:semicolon
+multiline_comment|/* Check if we already dealing with this client or peer */
+r_new
+op_assign
+(paren
+r_struct
+id|irlan_cb
+op_star
+)paren
+id|hashbin_find
+c_func
+(paren
+id|irlan
+comma
+id|daddr
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+r_new
+)paren
+(brace
+id|ASSERT
+c_func
+(paren
+r_new
+op_member_access_from_pointer
+id|magic
+op_eq
+id|IRLAN_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), found instance!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Update saddr, since client may have moved to a new link */
+r_new
+op_member_access_from_pointer
+id|saddr
+op_assign
+id|saddr
 suffix:semicolon
 id|DEBUG
 c_func
@@ -493,9 +511,150 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), saddr=%08x&bslash;n&quot;
 comma
-id|self-&gt;saddr
+r_new
+op_member_access_from_pointer
+id|saddr
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure that any old provider control TSAP is removed */
+r_if
+c_cond
+(paren
+(paren
+r_new
+op_ne
+id|self
+)paren
+op_logical_and
+r_new
+op_member_access_from_pointer
+id|provider.tsap_ctrl
+)paren
+(brace
+id|irttp_disconnect_request
+c_func
+(paren
+r_new
+op_member_access_from_pointer
+id|provider.tsap_ctrl
+comma
+l_int|NULL
+comma
+id|P_NORMAL
+)paren
+suffix:semicolon
+id|irttp_close_tsap
+c_func
+(paren
+r_new
+op_member_access_from_pointer
+id|provider.tsap_ctrl
+)paren
+suffix:semicolon
+r_new
+op_member_access_from_pointer
+id|provider.tsap_ctrl
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* This must be the master instance, so start a new instance */
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), starting new provider!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_new
+op_assign
+id|irlan_open
+c_func
+(paren
+id|saddr
+comma
+id|daddr
+comma
+id|TRUE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*  &n;&t; * Check if the connection came in on the master server, or the&n;&t; * slave server. If it came on the slave, then everything is&n;&t; * really, OK (reconnect), if not we need to dup the connection and&n;&t; * hand it over to the slave.  &n;&t; */
+r_if
+c_cond
+(paren
+r_new
+op_ne
+id|self
+)paren
+(brace
+multiline_comment|/* Now attach up the new &quot;socket&quot; */
+r_new
+op_member_access_from_pointer
+id|provider.tsap_ctrl
+op_assign
+id|irttp_dup
+c_func
+(paren
+id|self-&gt;provider.tsap_ctrl
+comma
+r_new
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+r_new
+op_member_access_from_pointer
+id|provider.tsap_ctrl
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), dup failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* new-&gt;stsap_sel = new-&gt;tsap-&gt;stsap_sel; */
+r_new
+op_member_access_from_pointer
+id|dtsap_sel_ctrl
+op_assign
+r_new
+op_member_access_from_pointer
+id|provider.tsap_ctrl-&gt;dtsap_sel
+suffix:semicolon
+multiline_comment|/* Clean up the original one to keep it in listen state */
+id|self-&gt;provider.tsap_ctrl-&gt;dtsap_sel
+op_assign
+id|LSAP_ANY
+suffix:semicolon
+id|self-&gt;provider.tsap_ctrl-&gt;lsap-&gt;dlsap_sel
+op_assign
+id|LSAP_ANY
+suffix:semicolon
+id|self-&gt;provider.tsap_ctrl-&gt;lsap-&gt;lsap_state
+op_assign
+id|LSAP_DISCONNECTED
+suffix:semicolon
+multiline_comment|/* &n;&t;&t; * Use the new instance from here instead of the master&n;&t;&t; * struct! &n;&t;&t; */
+id|self
+op_assign
+r_new
+suffix:semicolon
+)brace
 multiline_comment|/* Check if network device has been registered */
 r_if
 c_cond
@@ -524,7 +683,7 @@ r_if
 c_cond
 (paren
 (paren
-id|self-&gt;access_type
+id|self-&gt;provider.access_type
 op_eq
 id|ACCESS_PEER
 )paren
@@ -535,6 +694,7 @@ op_eq
 id|IRLAN_IDLE
 )paren
 )paren
+(brace
 id|irlan_client_wakeup
 c_func
 (paren
@@ -545,6 +705,7 @@ comma
 id|self-&gt;daddr
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function irlan_provider_connect_response (handle)&n; *&n; *    Accept incomming connection&n; *&n; */
 DECL|function|irlan_provider_connect_response
@@ -767,6 +928,13 @@ comma
 id|CMD_OPEN_DATA_CHANNEL
 comma
 id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Open data channel */
+id|irlan_open_data_tsap
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_return
@@ -1125,11 +1293,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;provider.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -1279,7 +1443,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|self-&gt;access_type
+id|self-&gt;provider.access_type
 )paren
 (brace
 r_case

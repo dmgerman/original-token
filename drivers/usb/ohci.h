@@ -627,13 +627,6 @@ id|usb_bus
 op_star
 id|bus
 suffix:semicolon
-DECL|member|root_hub
-r_struct
-id|ohci_device
-op_star
-id|root_hub
-suffix:semicolon
-multiline_comment|/* Root hub &amp; controller */
 DECL|member|interrupt_list
 r_struct
 id|list_head

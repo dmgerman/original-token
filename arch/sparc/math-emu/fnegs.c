@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: fnegs.c,v 1.9 1999/05/28 13:42:06 jj Exp $&n; * arch/sparc/math-emu/fnegs.c&n; *&n; * Copyright (C) 1998 Peter Maydell (pmaydell@chiark.greenend.org.uk)&n; *&n; */
 DECL|function|FNEGS
 r_int
 id|FNEGS

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Fri Apr 23 09:57:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sun May  9 15:59:05 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -135,6 +135,39 @@ id|qos
 comma
 id|__u32
 id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+r_static
+r_void
+id|iriap_connect_confirm
+c_func
+(paren
+r_void
+op_star
+id|instance
+comma
+r_void
+op_star
+id|sap
+comma
+r_struct
+id|qos_info
+op_star
+id|qos
+comma
+id|__u32
+id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -937,14 +970,12 @@ c_cond
 (paren
 id|userdata
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|userdata
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function iriap_disconnect_request (handle)&n; *&n; *    &n; *&n; */
 DECL|function|iriap_disconnect_request
@@ -1024,15 +1055,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; *  Reserve space for MUX and LAP header &n;&t; */
+multiline_comment|/* &n;&t; *  Reserve space for MUX control and LAP header &n;&t; */
 id|skb_reserve
 c_func
 (paren
 id|skb
 comma
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
+id|LMP_MAX_HEADER
 )paren
 suffix:semicolon
 id|irlmp_disconnect_request
@@ -1288,9 +1317,7 @@ c_func
 (paren
 id|skb
 comma
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -1925,9 +1952,7 @@ c_func
 (paren
 id|value-&gt;len
 op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 op_plus
 l_int|9
 )paren
@@ -1946,9 +1971,7 @@ c_func
 (paren
 id|skb
 comma
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -2569,7 +2592,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function iriap_send_ack (void)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function iriap_send_ack (void)&n; *&n; *    Currently not used&n; *&n; */
 DECL|function|iriap_send_ack
 r_void
 id|iriap_send_ack
@@ -2643,7 +2666,7 @@ c_func
 (paren
 id|skb
 comma
-l_int|4
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -2651,7 +2674,7 @@ c_func
 (paren
 id|skb
 comma
-l_int|3
+l_int|1
 )paren
 suffix:semicolon
 id|frame
@@ -2671,6 +2694,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function iriap_connect_confirm (handle, skb)&n; *&n; *    LSAP connection confirmed!&n; *&n; */
 DECL|function|iriap_connect_confirm
+r_static
 r_void
 id|iriap_connect_confirm
 c_func
@@ -2690,6 +2714,9 @@ id|qos
 comma
 id|__u32
 id|max_sdu_size
+comma
+id|__u8
+id|header_size
 comma
 r_struct
 id|sk_buff
@@ -2753,7 +2780,13 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;watchdog_timer
+)paren
+suffix:semicolon
 id|iriap_do_client_event
 c_func
 (paren
@@ -2788,6 +2821,9 @@ comma
 id|__u32
 id|max_sdu_size
 comma
+id|__u8
+id|header_size
+comma
 r_struct
 id|sk_buff
 op_star
@@ -2798,15 +2834,6 @@ r_struct
 id|iriap_cb
 op_star
 id|self
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|self
 op_assign
@@ -2834,17 +2861,6 @@ c_func
 id|self-&gt;magic
 op_eq
 id|IAS_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;mode
-op_eq
-id|IAS_SERVER
 comma
 r_return
 suffix:semicolon

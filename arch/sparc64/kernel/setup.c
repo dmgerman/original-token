@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.43 1999/04/12 08:08:24 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.44 1999/05/28 02:17:29 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2365,10 +2365,12 @@ id|ic_gateway
 op_assign
 id|gw
 suffix:semicolon
+macro_line|#if defined(CONFIG_IP_PNP_BOOTP) || defined(CONFIG_IP_PNP_RARP)
 id|ic_proto_enabled
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 macro_line|#endif

@@ -1,10 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      discovery.c&n; * Version:       0.1&n; * Description:   Routines for handling discoveries at the IrLMP layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr  6 15:33:50 1999&n; * Modified at:   Sun Apr 11 00:41:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      discovery.c&n; * Version:       0.1&n; * Description:   Routines for handling discoveries at the IrLMP layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr  6 15:33:50 1999&n; * Modified at:   Sun May  9 22:40:43 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/irda.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/discovery.h&gt;
-multiline_comment|/*&n; * Function irlmp_add_discovery (cachelog, discovery)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irlmp_add_discovery (cachelog, discovery)&n; *&n; *    Add a new discovery to the cachelog, and remove any old discoveries&n; *    from the same device&n; */
 DECL|function|irlmp_add_discovery
 r_void
 id|irlmp_add_discovery
@@ -16,46 +16,112 @@ id|cachelog
 comma
 id|discovery_t
 op_star
-id|discovery
+r_new
 )paren
 (brace
 id|discovery_t
 op_star
-id|old
+id|discovery
+comma
+op_star
+id|node
 suffix:semicolon
-id|DEBUG
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
 c_func
 (paren
-l_int|4
+op_amp
+id|irlmp-&gt;lock
 comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Check if we have discovered this device before */
-id|old
+multiline_comment|/* &n;&t; * Remove all discoveries of devices that has previously been &n;&t; * discovered on the same link with the same name (info), or the &n;&t; * same daddr. We do this since some devices (mostly PDAs) change&n;&t; * their device address between every discovery.&n;&t; */
+id|discovery
 op_assign
-id|hashbin_remove
+(paren
+id|discovery_t
+op_star
+)paren
+id|hashbin_get_first
 c_func
 (paren
 id|cachelog
-comma
-id|discovery-&gt;daddr
-comma
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|discovery
+op_ne
 l_int|NULL
+)paren
+(brace
+id|node
+op_assign
+id|discovery
+suffix:semicolon
+multiline_comment|/* Be sure to stay one item ahead */
+id|discovery
+op_assign
+(paren
+id|discovery_t
+op_star
+)paren
+id|hashbin_get_next
+c_func
+(paren
+id|cachelog
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|old
+(paren
+id|node-&gt;daddr
+op_eq
+r_new
+op_member_access_from_pointer
+id|daddr
 )paren
+op_logical_or
+(paren
+id|strcmp
+c_func
+(paren
+id|node-&gt;info
+comma
+r_new
+op_member_access_from_pointer
+id|info
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+multiline_comment|/* This discovery is a previous discovery &n;&t;&t;&t;&t; * from the same device, so just remove it&n;&t;&t;&t;&t; */
+id|hashbin_remove
+c_func
+(paren
+id|cachelog
+comma
+id|node-&gt;daddr
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
-id|old
+id|node
 )paren
 suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Insert the new and updated version */
 id|hashbin_insert
 c_func
@@ -66,15 +132,26 @@ comma
 id|QUEUE
 op_star
 )paren
-id|discovery
+r_new
 comma
-id|discovery-&gt;daddr
+r_new
+op_member_access_from_pointer
+id|daddr
 comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|irlmp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlmp_add_discovery_log (cachelog, log)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irlmp_add_discovery_log (cachelog, log)&n; *&n; *    Merge a disovery log into the cachlog.&n; *&n; */
 DECL|function|irlmp_add_discovery_log
 r_void
 id|irlmp_add_discovery_log

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_filter.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Jan 29 11:16:38 1999&n; * Modified at:   Thu Feb 25 15:10:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_filter.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri Jan 29 11:16:38 1999&n; * Modified at:   Sat May  8 15:25:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/irda/irlan_common.h&gt;
 multiline_comment|/*&n; * Function handle_filter_request (self, skb)&n; *&n; *    Handle filter request from client peer device&n; *&n; */
@@ -96,7 +96,7 @@ multiline_comment|/* Use arbitration value to generate MAC address */
 r_if
 c_cond
 (paren
-id|self-&gt;access_type
+id|self-&gt;provider.access_type
 op_eq
 id|ACCESS_PEER
 )paren
@@ -128,27 +128,25 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Just generate something for now */
-id|self-&gt;provider.mac_address
-(braket
-l_int|4
-)braket
-op_assign
-id|jiffies
-op_amp
-l_int|0xff
-suffix:semicolon
-id|self-&gt;provider.mac_address
-(braket
-l_int|5
-)braket
-op_assign
+id|get_random_bytes
+c_func
 (paren
-id|jiffies
-op_rshift
-l_int|8
+id|self-&gt;provider.mac_address
+op_plus
+l_int|4
+comma
+l_int|1
 )paren
-op_amp
-l_int|0xff
+suffix:semicolon
+id|get_random_bytes
+c_func
+(paren
+id|self-&gt;provider.mac_address
+op_plus
+l_int|5
+comma
+l_int|1
+)paren
 suffix:semicolon
 )brace
 id|skb-&gt;data
@@ -858,6 +856,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; * Function irlan_print_filter (filter_type, buf)&n; *&n; *    Print status of filter. Used by /proc file system&n; *&n; */
 DECL|function|irlan_print_filter
 r_int
 id|irlan_print_filter

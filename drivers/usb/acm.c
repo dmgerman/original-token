@@ -1,13 +1,14 @@
-multiline_comment|/*&n; * USB Abstract Control Model based on Brad Keryan&squot;s USB busmouse driver &n; *&n; * Armin Fuerst 5/8/1999&n; *&n; * version 0.0: Driver sets up configuration, setus up data pipes, opens misc&n; * device. No actual data transfer is done, since we don&squot;t have bulk transfer,&n; * yet. Purely skeleton for now.&n; */
+multiline_comment|/*&n; * USB Abstract Control Model based on Brad Keryan&squot;s USB busmouse driver &n; *&n; * Armin Fuerst 5/8/1999&n; *&n; * version 0.2: Improved Bulk transfer. TX led now flashes every time data is&n; * sent. Send Encapsulated Data is not needed, nor does it do anything.&n; * Why&squot;s that ?!? Thanks to Thomas Sailer for his close look at the bulk code.&n; * He told me about some importand bugs. (5/21/99)&n; *&n; * version 0.1: Bulk transfer for uhci seems to work now, no dangling tds any&n; * more. TX led of the ISDN TA flashed the first time. Does this mean it works?&n; * The interrupt of the ctrl endpoint crashes the kernel =&gt; no read possible&n; * (5/19/99)&n; *&n; * version 0.0: Driver sets up configuration, sets up data pipes, opens misc&n; * device. No actual data transfer is done, since we don&squot;t have bulk transfer,&n; * yet. Purely skeleton for now. (5/8/99)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
-macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
 DECL|macro|USB_ACM_MINOR
@@ -26,19 +27,47 @@ r_int
 id|active
 suffix:semicolon
 multiline_comment|/* someone is has this acm&squot;s device open */
+DECL|member|serstate
+r_int
+id|serstate
+suffix:semicolon
+multiline_comment|/* Status of the serial port (rate, handshakelines,...) */
 DECL|member|dev
 r_struct
 id|usb_device
 op_star
 id|dev
 suffix:semicolon
+DECL|member|ctrlbuffer
+r_int
+id|ctrlbuffer
+suffix:semicolon
+multiline_comment|/*buffer for control messages*/
+DECL|member|readendp
+DECL|member|writeendp
+DECL|member|ctrlendp
+r_int
+r_int
+id|readendp
+comma
+id|writeendp
+comma
+id|ctrlendp
+suffix:semicolon
 DECL|member|readpipe
 DECL|member|writepipe
+DECL|member|ctrlpipe
 r_int
 r_int
 id|readpipe
 comma
 id|writepipe
+comma
+id|ctrlpipe
+suffix:semicolon
+DECL|member|buffer
+r_char
+id|buffer
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -72,14 +101,166 @@ op_star
 id|dev_id
 )paren
 (brace
-multiline_comment|/*&n;&t;signed char *data = __buffer;&n;        struct acm_state *acm = &amp;static_acm_state; &n;&t;if(!acm-&gt;active)&n;&t;&t;return 1;&n;*/
-multiline_comment|/*We should so something useful here*/
+singleline_comment|//&t;unsigned char *data = __buffer;
+r_struct
+id|acm_state
+op_star
+id|acm
+op_assign
+op_amp
+id|static_acm_state
+suffix:semicolon
+id|devrequest
+op_star
+id|dr
+suffix:semicolon
+id|dr
+op_assign
+id|__buffer
+suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;ACM_USB_IRQ&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;reqtype: %02X&bslash;n&quot;
+comma
+id|dr-&gt;requesttype
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;request: %02X&bslash;n&quot;
+comma
+id|dr-&gt;request
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;wValue: %02X&bslash;n&quot;
+comma
+id|dr-&gt;value
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;wIndex: %02X&bslash;n&quot;
+comma
+id|dr-&gt;index
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;wLength: %02X&bslash;n&quot;
+comma
+id|dr-&gt;length
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|dr-&gt;request
+)paren
+(brace
+singleline_comment|//Network connection 
+r_case
+l_int|0x00
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Network connection: &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dr-&gt;request
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;disconnected&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dr-&gt;request
+op_eq
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;connected&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+singleline_comment|//Response available
+r_case
+l_int|0x01
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Response available&bslash;n&quot;
+)paren
+suffix:semicolon
+id|acm-&gt;buffer
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+singleline_comment|//Set serial line state
+r_case
+l_int|0x20
+suffix:colon
+r_if
+c_cond
+(paren
+(paren
+id|dr-&gt;index
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+id|dr-&gt;length
+op_eq
+l_int|2
+)paren
+)paren
+(brace
+id|acm-&gt;serstate
+op_assign
+id|acm-&gt;ctrlbuffer
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Serstate: %02X&bslash;n&quot;
+comma
+id|acm-&gt;ctrlbuffer
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;if(!acm-&gt;active)&n;&t;&t;return 1;&n;*/
 r_return
 l_int|1
 suffix:semicolon
@@ -207,11 +388,8 @@ op_star
 id|ppos
 )paren
 (brace
-r_char
-op_star
-id|buffer
-op_assign
-l_string|&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;
+id|devrequest
+id|dr
 suffix:semicolon
 r_struct
 id|acm_state
@@ -221,20 +399,18 @@ op_assign
 op_amp
 id|static_acm_state
 suffix:semicolon
+r_int
+r_int
+id|retval
+suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;USB_FILE_WRITE&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;writing:&gt;%s&lt;&bslash;n&quot;
-comma
-id|buffer
-)paren
-suffix:semicolon
+singleline_comment|//Huh, i seem to got that wrong, we don&squot;t need this ?!?
+multiline_comment|/*&n;&t;dr.requesttype = USB_TYPE_CLASS | USB_RT_ENDPOINT;&n;&t;dr.request = 0;&n;&t;dr.value = 0;&n;&t;dr.index = acm-&gt;writeendp;&n;&t;dr.length = count;&n;&t;acm-&gt;dev-&gt;bus-&gt;op-&gt;control_msg(acm-&gt;dev, usb_sndctrlpipe(acm-&gt;dev, 0), &amp;dr, NULL, 0);&n;*/
 id|acm-&gt;dev-&gt;bus-&gt;op
 op_member_access_from_pointer
 id|bulk_msg
@@ -242,49 +418,15 @@ c_func
 (paren
 id|acm-&gt;dev
 comma
+op_amp
 id|acm-&gt;writepipe
 comma
 id|buffer
 comma
-l_int|26
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;done:&gt;%s&lt;&bslash;n&quot;
+id|count
 comma
-id|buffer
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;reading:&gt;%s&lt;&bslash;n&quot;
-comma
-id|buffer
-)paren
-suffix:semicolon
-id|acm-&gt;dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
-c_func
-(paren
-id|acm-&gt;dev
-comma
-id|acm-&gt;readpipe
-comma
-id|buffer
-comma
-l_int|26
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;done:&gt;%s&lt;&bslash;n&quot;
-comma
-id|buffer
+op_amp
+id|retval
 )paren
 suffix:semicolon
 r_return
@@ -303,6 +445,7 @@ id|file
 op_star
 id|file
 comma
+r_const
 r_char
 op_star
 id|buffer
@@ -315,15 +458,70 @@ op_star
 id|ppos
 )paren
 (brace
+id|devrequest
+id|dr
+suffix:semicolon
+r_struct
+id|acm_state
+op_star
+id|acm
+op_assign
+op_amp
+id|static_acm_state
+suffix:semicolon
+r_int
+r_int
+id|retval
+suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;USB_FILE_READ&bslash;n&quot;
 )paren
 suffix:semicolon
+singleline_comment|//        if (!acm-&gt;buffer) return -1;
+id|acm-&gt;buffer
+op_assign
+l_int|0
+suffix:semicolon
+singleline_comment|//We don&squot;t need this
+multiline_comment|/*&n;&t;printk(&quot;writing control msg&bslash;n&quot;);&n;&t;dr.requesttype = USB_TYPE_CLASS | USB_RT_ENDPOINT | 0x80;&n;&t;dr.request = 1;&n;&t;dr.value = 0;&n;&t;dr.index = acm-&gt;readendp;&n;&t;dr.length = 0;&n;&t;acm-&gt;dev-&gt;bus-&gt;op-&gt;control_msg(acm-&gt;dev, usb_sndctrlpipe(acm-&gt;dev, 0), &amp;dr, NULL, 0);&n;*/
+id|printk
+c_func
+(paren
+l_string|&quot;reading:&gt;%s&lt;&bslash;n&quot;
+comma
+id|buffer
+)paren
+suffix:semicolon
+id|acm-&gt;dev-&gt;bus-&gt;op
+op_member_access_from_pointer
+id|bulk_msg
+c_func
+(paren
+id|acm-&gt;dev
+comma
+op_amp
+id|acm-&gt;readpipe
+comma
+id|buffer
+comma
+l_int|1
+comma
+op_amp
+id|retval
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;done:&gt;%s&lt;&bslash;n&quot;
+comma
+id|buffer
+)paren
+suffix:semicolon
 r_return
-op_minus
-id|EINVAL
+l_int|1
 suffix:semicolon
 )brace
 DECL|variable|usb_acm_fops
@@ -632,14 +830,8 @@ id|acm-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|acm-&gt;readpipe
+id|acm-&gt;readendp
 op_assign
-id|__create_pipe
-c_func
-(paren
-id|dev
-comma
-op_amp
 id|dev-&gt;config
 (braket
 id|cfgnum
@@ -654,16 +846,11 @@ id|endpoint
 (braket
 l_int|0
 )braket
-)paren
+dot
+id|bEndpointAddress
 suffix:semicolon
-id|acm-&gt;writepipe
+id|acm-&gt;writeendp
 op_assign
-id|__create_pipe
-c_func
-(paren
-id|dev
-comma
-op_amp
 id|dev-&gt;config
 (braket
 id|cfgnum
@@ -678,6 +865,46 @@ id|endpoint
 (braket
 l_int|1
 )braket
+dot
+id|bEndpointAddress
+suffix:semicolon
+id|acm-&gt;ctrlendp
+op_assign
+id|dev-&gt;config
+(braket
+id|cfgnum
+)braket
+dot
+id|interface
+(braket
+l_int|0
+)braket
+dot
+id|endpoint
+(braket
+l_int|0
+)braket
+dot
+id|bEndpointAddress
+suffix:semicolon
+id|acm-&gt;readpipe
+op_assign
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|dev
+comma
+id|acm-&gt;readendp
+)paren
+suffix:semicolon
+id|acm-&gt;writepipe
+op_assign
+id|usb_sndbulkpipe
+c_func
+(paren
+id|dev
+comma
+id|acm-&gt;writeendp
 )paren
 suffix:semicolon
 id|usb_request_irq
@@ -685,12 +912,18 @@ c_func
 (paren
 id|dev
 comma
+id|acm-&gt;ctrlpipe
+op_assign
 id|usb_rcvctrlpipe
 c_func
 (paren
 id|dev
 comma
-op_amp
+id|acm-&gt;ctrlendp
+)paren
+comma
+id|acm_irq
+comma
 id|dev-&gt;config
 (braket
 id|cfgnum
@@ -705,18 +938,20 @@ id|endpoint
 (braket
 l_int|0
 )braket
-)paren
+dot
+id|bInterval
 comma
-id|acm_irq
-comma
-id|endpoint-&gt;bInterval
-comma
-l_int|NULL
+op_amp
+id|acm-&gt;ctrlbuffer
 )paren
 suffix:semicolon
 id|acm-&gt;present
 op_assign
 l_int|1
+suffix:semicolon
+id|acm-&gt;buffer
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -820,7 +1055,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#ifdef MODULE
+DECL|function|init_module
 r_int
 id|init_module
 c_func
@@ -835,6 +1071,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|cleanup_module
 r_void
 id|cleanup_module
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irvtd_driver.c&n; * Version:       &n; * Description:   Virtual tty driver (the &quot;port emulation entity&quot; of IrCOMM)&n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; * Source:        serial.c by Linus Torvalds&n; *                isdn_tty.c by Fritz Elfert&n; *&n; *     Copyright (c) 1998, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irvtd_driver.c&n; * Version:       &n; * Description:   Virtual tty driver (the &quot;port emulation entity&quot; of IrCOMM)&n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; * Source:        serial.c by Linus Torvalds&n; *                isdn_tty.c by Fritz Elfert&n; *&n; *     Copyright (c) 1998-1999, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -1339,7 +1339,7 @@ id|driver-&gt;tty-&gt;write_wait
 suffix:semicolon
 )brace
 multiline_comment|/*&n; ***********************************************************************&n; *&n; * indication/confirmation handlers:&n; *&n; * these routines are handlers for IrCOMM protocol stack&n; *&n; ***********************************************************************&n; */
-multiline_comment|/*&n; * Function irvtd_connect_confirm (instance, sap, qos, max_sdu_size, skb)&n; *&n; *    ircomm_connect_request which we have send have succeed!&n; *&n; */
+multiline_comment|/*&n; * Function irvtd_connect_confirm (instance, sap, qos, max_sdu_size, skb)&n; *&n; *    ircomm_connect_request which we have send, has succeeded!&n; *&n; */
 DECL|function|irvtd_connect_confirm
 r_void
 id|irvtd_connect_confirm
@@ -1360,6 +1360,9 @@ id|qos
 comma
 id|__u32
 id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -1422,10 +1425,8 @@ id|driver-&gt;comm-&gt;servicetype
 op_eq
 id|THREE_WIRE_RAW
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* do nothing */
 id|driver-&gt;comm-&gt;dte
 op_or_assign
@@ -1543,6 +1544,9 @@ comma
 id|__u32
 id|max_sdu_size
 comma
+id|__u8
+id|max_header_size
+comma
 r_struct
 id|sk_buff
 op_star
@@ -1622,7 +1626,8 @@ c_func
 (paren
 l_int|4
 comma
-l_string|&quot;irvtd_connect_indication:sending connect_response...&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;():sending connect_response...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ircomm_connect_response
@@ -1647,10 +1652,8 @@ id|driver-&gt;comm-&gt;servicetype
 op_eq
 id|THREE_WIRE_RAW
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* do nothing */
 id|driver-&gt;comm-&gt;dte
 op_or_assign
@@ -1685,8 +1688,15 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), not implemented!&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 id|driver-&gt;msr
 op_or_assign
@@ -2247,6 +2257,10 @@ suffix:colon
 r_case
 id|DTELINE_STATE
 suffix:colon
+r_case
+id|ENQ_ACK_CHAR
+suffix:colon
+multiline_comment|/* got this from win95 */
 multiline_comment|/* (maybe) nothing to do  */
 r_break
 suffix:semicolon
@@ -2902,7 +2916,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;():alloc_skb failed!&bslash;n&quot;
+l_string|&quot;(), alloc_skb failed!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2973,12 +2987,10 @@ c_cond
 op_logical_neg
 id|driver-&gt;comm
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 multiline_comment|/* &n;         *  Register with LM-IAS as a server&n;         */
 id|obj
 op_assign

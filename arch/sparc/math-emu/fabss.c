@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: fabss.c,v 1.8 1999/05/28 13:41:33 jj Exp $&n; * arch/sparc/math-emu/fabss.c&n; *&n; * Copyright (C) 1998 Peter Maydell (pmaydell@chiark.greenend.org.uk)&n; *&n; */
 DECL|function|FABSS
 r_int
 id|FABSS
@@ -14,7 +15,6 @@ op_star
 id|rs2
 )paren
 (brace
-multiline_comment|/* Clear the sign bit (high bit of word 0) */
 id|rd
 (braket
 l_int|0

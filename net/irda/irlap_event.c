@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Fri Apr 23 11:55:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Sun May  9 22:44:32 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1049,7 +1049,7 @@ id|self-&gt;state
 op_assign
 id|state
 suffix:semicolon
-multiline_comment|/*&n;&t; *  If we are swithing away from a XMIT state then we are allowed to &n;&t; *  transmit a maximum number of bytes again when we enter the XMIT &n;&t; *  state again. Since its possible to &quot;switch&quot; from XMIT to XMIT and&n;&t; *  we cannot do this when swithing into the XMIT state :-)&n;&t; */
+multiline_comment|/*&n;&t; *  If we are swithing away from a XMIT state then we are allowed to &n;&t; *  transmit a maximum number of bytes again when we enter the XMIT &n;&t; *  state again. Since its possible to &quot;switch&quot; from XMIT to XMIT,&n;&t; *  we cannot do this when swithing into the XMIT state :-)&n;&t; */
 r_if
 c_cond
 (paren
@@ -2158,12 +2158,17 @@ id|event
 r_case
 id|CONNECT_RESPONSE
 suffix:colon
+multiline_comment|/* skb_pull(skb, 11); */
 id|skb_pull
 c_func
 (paren
 id|skb
 comma
-l_int|11
+r_sizeof
+(paren
+r_struct
+id|snrm_frame
+)paren
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2225,7 +2230,7 @@ op_amp
 id|self-&gt;qos_tx
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *  The WD-timer could be set to the duration of the P-timer &n;&t;&t; *  for this case, but it is recommomended to use twice the &n;&t;&t; *  value (note 3 IrLAP p. 60). &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  The WD-timer could be set to the duration of the P-timer &n;&t;&t; *  for this case, but it is recommended to use twice the &n;&t;&t; *  value (note 3 IrLAP p. 60). &n;&t;&t; */
 id|irlap_start_wd_timer
 c_func
 (paren
@@ -2556,6 +2561,19 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* skb_pull(skb, 11); */
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|snrm_frame
+)paren
+)paren
+suffix:semicolon
 id|irda_qos_negotiate
 c_func
 (paren
@@ -2594,7 +2612,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t; *  The WD-timer could be set to the duration of the&n;&t;&t;&t; *  P-timer for this case, but it is recommomended&n;&t;&t;&t; *  to use twice the value (note 3 IrLAP p. 60).  &n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; *  The WD-timer could be set to the duration of the&n;&t;&t;&t; *  P-timer for this case, but it is recommended&n;&t;&t;&t; *  to use twice the value (note 3 IrLAP p. 60).  &n;&t;&t;&t; */
 id|irlap_start_wd_timer
 c_func
 (paren
@@ -2658,12 +2676,17 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* skb_pull(skb, 10); */
 id|skb_pull
 c_func
 (paren
 id|skb
 comma
-l_int|10
+r_sizeof
+(paren
+r_struct
+id|ua_frame
+)paren
 )paren
 suffix:semicolon
 id|ASSERT
@@ -5881,7 +5904,16 @@ op_amp
 id|self-&gt;qos_tx
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; *  Any pending data requests?&n;&t;&t;&t;&t; */
+multiline_comment|/*  &n;&t;&t;&t;&t; * Give higher layers a chance to&n;&t;&t;&t;&t; * immediately reply with some data before&n;&t;&t;&t;&t; * we decide if we should send a RR frame&n;&t;&t;&t;&t; * or not&n;&t;&t;&t;&t; */
+id|irlap_data_indication
+c_func
+(paren
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Any pending data requests?  */
 r_if
 c_cond
 (paren
@@ -5951,14 +5983,6 @@ id|LAP_NRM_S
 )paren
 suffix:semicolon
 )brace
-id|irlap_data_indication
-c_func
-(paren
-id|self
-comma
-id|skb
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace

@@ -5970,10 +5970,9 @@ c_cond
 id|put_user
 c_func
 (paren
-id|optval
-comma
-op_amp
 id|mode
+comma
+id|optval
 )paren
 )paren
 r_return

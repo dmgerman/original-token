@@ -14,7 +14,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;ohci.h&quot;
-macro_line|#include &quot;inits.h&quot;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 r_static
@@ -45,7 +44,6 @@ macro_line|#ifdef CONFIG_USB_OHCI_DEBUG
 DECL|macro|OHCI_DEBUG
 mdefine_line|#define OHCI_DEBUG    /* to make typing it easier.. */
 macro_line|#endif
-macro_line|#ifdef OHCI_DEBUG
 DECL|variable|MegaDebug
 r_int
 id|MegaDebug
@@ -53,7 +51,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* SIGUSR2 to the control thread toggles this */
-macro_line|#endif
 macro_line|#ifdef OHCI_TIMER
 DECL|variable|ohci_timer
 r_static
@@ -501,6 +498,17 @@ id|ohci_ed
 op_star
 id|int_ed
 suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 r_int
 r_int
 id|flags
@@ -509,7 +517,7 @@ multiline_comment|/*&n;&t; * Pick a good frequency endpoint based on the request
 id|int_ed
 op_assign
 op_amp
-id|ohci-&gt;root_hub-&gt;ed
+id|root_hub-&gt;ed
 (braket
 id|ms_to_ed_int
 c_func
@@ -2020,6 +2028,8 @@ comma
 id|usb_maxpacket
 c_func
 (paren
+id|usb
+comma
 id|pipe
 )paren
 comma
@@ -2340,6 +2350,8 @@ comma
 id|usb_maxpacket
 c_func
 (paren
+id|usb
+comma
 id|pipe
 )paren
 comma
@@ -3334,6 +3346,17 @@ suffix:semicolon
 id|__u32
 id|what_to_enable
 suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 id|fminterval
 op_assign
 id|readl
@@ -3378,7 +3401,7 @@ c_func
 id|virt_to_bus
 c_func
 (paren
-id|ohci-&gt;root_hub-&gt;hcca
+id|root_hub-&gt;hcca
 )paren
 comma
 op_amp
@@ -3654,6 +3677,17 @@ id|ohci_device
 op_star
 id|dev
 suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 multiline_comment|/* memory I/O address of the port status register */
 id|__u32
 op_star
@@ -3683,7 +3717,7 @@ multiline_comment|/*&n;&t; * Because of the status change we have to forget&n;&t
 id|usb_disconnect
 c_func
 (paren
-id|ohci-&gt;root_hub-&gt;usb-&gt;children
+id|root_hub-&gt;usb-&gt;children
 op_plus
 id|port
 )paren
@@ -3751,7 +3785,7 @@ op_assign
 id|ohci_usb_allocate
 c_func
 (paren
-id|ohci-&gt;root_hub-&gt;usb
+id|root_hub-&gt;usb
 )paren
 suffix:semicolon
 id|dev
@@ -3769,7 +3803,7 @@ id|dev-&gt;usb
 )paren
 suffix:semicolon
 multiline_comment|/* link it into the bus&squot;s device tree */
-id|ohci-&gt;root_hub-&gt;usb-&gt;children
+id|root_hub-&gt;usb-&gt;children
 (braket
 id|port
 )braket
@@ -3952,9 +3986,31 @@ op_star
 id|ohci
 )paren
 (brace
+r_int
+id|num
+op_assign
+l_int|0
+suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
+r_int
+id|maxport
+op_assign
+id|root_hub-&gt;usb-&gt;maxchild
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|waitqueue_active
 c_func
 (paren
@@ -3962,16 +4018,7 @@ op_amp
 id|ohci_configure
 )paren
 )paren
-(brace
-r_int
-id|num
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|maxport
-op_assign
-id|ohci-&gt;root_hub-&gt;usb-&gt;maxchild
+r_return
 suffix:semicolon
 r_do
 (brace
@@ -4028,7 +4075,6 @@ id|maxport
 )paren
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* ohci_root_hub_events() */
 multiline_comment|/*&n; * The done list is in reverse order; we need to process TDs in the&n; * order they were finished (FIFO).  This function builds the FIFO&n; * list using the next_dl_td pointer.&n; *&n; * This function originally by Roman Weissgaerber (weissg@vienna.at)&n; *&n; * This function is called from the interrupt handler.&n; */
 DECL|function|ohci_reverse_donelist
@@ -4049,11 +4095,22 @@ id|__u32
 id|td_list_hc
 suffix:semicolon
 r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
+r_struct
 id|ohci_hcca
 op_star
 id|hcca
 op_assign
-id|ohci-&gt;root_hub-&gt;hcca
+id|root_hub-&gt;hcca
 suffix:semicolon
 r_struct
 id|ohci_td
@@ -4303,11 +4360,22 @@ op_assign
 id|ohci-&gt;regs
 suffix:semicolon
 r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
+r_struct
 id|ohci_hcca
 op_star
 id|hcca
 op_assign
-id|ohci-&gt;root_hub-&gt;hcca
+id|root_hub-&gt;hcca
 suffix:semicolon
 id|__u32
 id|status
@@ -4834,12 +4902,18 @@ l_int|NULL
 suffix:semicolon
 id|dev
 op_assign
-id|ohci-&gt;root_hub
-op_assign
 id|usb_to_ohci
 c_func
 (paren
 id|usb
+)paren
+suffix:semicolon
+id|ohci-&gt;bus-&gt;root_hub
+op_assign
+id|ohci_to_usb
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 id|usb-&gt;bus
@@ -5307,9 +5381,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ohci-&gt;root_hub
+id|ohci-&gt;bus-&gt;root_hub
 )paren
 (brace
+r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 multiline_comment|/* ensure that HC is stopped before releasing the HCCA */
 id|writel
 c_func
@@ -5327,20 +5412,20 @@ c_func
 r_int
 r_int
 )paren
-id|ohci-&gt;root_hub-&gt;hcca
+id|root_hub-&gt;hcca
 )paren
 suffix:semicolon
 id|kfree
 c_func
 (paren
-id|ohci-&gt;root_hub
+id|ohci-&gt;bus-&gt;root_hub
 )paren
 suffix:semicolon
-id|ohci-&gt;root_hub-&gt;hcca
+id|root_hub-&gt;hcca
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ohci-&gt;root_hub
+id|ohci-&gt;bus-&gt;root_hub
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -5439,6 +5524,12 @@ comma
 l_string|&quot;ohci-control&quot;
 )paren
 suffix:semicolon
+id|usb_register_bus
+c_func
+(paren
+id|ohci-&gt;bus
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Damn the torpedoes, full speed ahead&n;&t; */
 r_if
 c_cond
@@ -5462,6 +5553,12 @@ id|release_ohci
 c_func
 (paren
 id|ohci
+)paren
+suffix:semicolon
+id|usb_deregister_bus
+c_func
+(paren
+id|ohci-&gt;bus
 )paren
 suffix:semicolon
 id|printk
@@ -5669,6 +5766,12 @@ id|release_ohci
 c_func
 (paren
 id|ohci
+)paren
+suffix:semicolon
+id|usb_deregister_bus
+c_func
+(paren
+id|ohci-&gt;bus
 )paren
 suffix:semicolon
 id|printk
@@ -6197,42 +6300,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* init_ohci() */
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; *  Clean up when unloading the module&n; */
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_APM
-id|apm_unregister_callback
-c_func
-(paren
-op_amp
-id|handle_apm_event
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_MOUSE
-id|usb_mouse_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|printk
-c_func
-(paren
-l_string|&quot;usb-ohci: module unloaded&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-DECL|macro|ohci_init
-mdefine_line|#define ohci_init init_module
-macro_line|#endif
 multiline_comment|/* TODO this should be named following Linux convention and go in pci.h */
 DECL|macro|PCI_CLASS_SERIAL_USB_OHCI
 mdefine_line|#define PCI_CLASS_SERIAL_USB_OHCI ((PCI_CLASS_SERIAL_USB &lt;&lt; 8) | 0x0010)
@@ -6356,4 +6423,51 @@ suffix:semicolon
 )brace
 multiline_comment|/* ohci_init */
 multiline_comment|/* vim:sw=8&n; */
+macro_line|#ifdef MODULE
+multiline_comment|/*&n; *  Clean up when unloading the module&n; */
+DECL|function|module_cleanup
+r_void
+(def_block
+id|module_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#&t;ifdef CONFIG_APM
+id|apm_unregister_callback
+c_func
+(paren
+op_amp
+id|handle_apm_event
+)paren
+suffix:semicolon
+macro_line|#&t;endif
+id|printk
+c_func
+(paren
+l_string|&quot;usb-ohci: module unloaded&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)def_block
+DECL|function|init_module
+r_int
+(def_block
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|ohci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
+macro_line|#endif 
+singleline_comment|//MODULE
 eof

@@ -1,3 +1,5 @@
+multiline_comment|/* $Id: fdtoq.c,v 1.9 1999/05/28 13:42:01 jj Exp $&n; * arch/sparc/math-emu/fdtoq.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1998 Peter Maydell (pmaydell@chiark.greenend.org.uk)&n; *&n; */
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;quad.h&quot;
 macro_line|#include &quot;double.h&quot;
@@ -15,6 +17,8 @@ op_star
 id|rs2
 )paren
 (brace
+id|FP_DECL_EX
+suffix:semicolon
 id|FP_DECL_D
 c_func
 (paren
@@ -27,7 +31,7 @@ c_func
 id|R
 )paren
 suffix:semicolon
-id|__FP_UNPACK_D
+id|FP_UNPACK_DP
 c_func
 (paren
 id|A
@@ -51,14 +55,15 @@ comma
 id|A
 )paren
 suffix:semicolon
-r_return
-id|__FP_PACK_Q
+id|FP_PACK_QP
 c_func
 (paren
 id|rd
 comma
 id|R
 )paren
+suffix:semicolon
+id|FP_HANDLE_EXCEPTIONS
 suffix:semicolon
 )brace
 eof

@@ -733,12 +733,6 @@ op_star
 id|ed_isotail
 suffix:semicolon
 multiline_comment|/* last endpoint of iso list */
-DECL|member|root_hub
-r_struct
-id|ohci_device
-op_star
-id|root_hub
-suffix:semicolon
 DECL|member|ed_rh_ep0
 r_struct
 id|usb_ohci_ed

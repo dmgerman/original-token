@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Sat Apr 10 10:19:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon May 10 19:14:51 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRTTP_H
 DECL|macro|IRTTP_H
 mdefine_line|#define IRTTP_H
@@ -13,8 +13,10 @@ DECL|macro|TTP_MAX_CONNECTIONS
 mdefine_line|#define TTP_MAX_CONNECTIONS    LM_MAX_CONNECTIONS
 DECL|macro|TTP_HEADER
 mdefine_line|#define TTP_HEADER             1
-DECL|macro|TTP_HEADER_WITH_SAR
-mdefine_line|#define TTP_HEADER_WITH_SAR    6
+DECL|macro|TTP_MAX_HEADER
+mdefine_line|#define TTP_MAX_HEADER         (TTP_HEADER + LMP_MAX_HEADER)
+DECL|macro|TTP_SAR_HEADER
+mdefine_line|#define TTP_SAR_HEADER         5
 DECL|macro|TTP_PARAMETERS
 mdefine_line|#define TTP_PARAMETERS         0x80
 DECL|macro|TTP_MORE
@@ -51,11 +53,6 @@ r_int
 id|magic
 suffix:semicolon
 multiline_comment|/* Just in case */
-DECL|member|max_seg_size
-r_int
-id|max_seg_size
-suffix:semicolon
-multiline_comment|/* Max data that fit into an IrLAP frame */
 DECL|member|stsap_sel
 id|__u8
 id|stsap_sel
@@ -142,6 +139,15 @@ DECL|member|todo_timer
 r_struct
 id|timer_list
 id|todo_timer
+suffix:semicolon
+DECL|member|max_seg_size
+id|__u32
+id|max_seg_size
+suffix:semicolon
+multiline_comment|/* Max data that fit into an IrLAP frame */
+DECL|member|max_header_size
+id|__u8
+id|max_header_size
 suffix:semicolon
 DECL|member|rx_sdu_busy
 r_int
@@ -303,32 +309,6 @@ r_struct
 id|sk_buff
 op_star
 id|userdata
-)paren
-suffix:semicolon
-r_void
-id|irttp_connect_confirm
-c_func
-(paren
-r_void
-op_star
-id|instance
-comma
-r_void
-op_star
-id|sap
-comma
-r_struct
-id|qos_info
-op_star
-id|qos
-comma
-id|__u32
-id|max_sdu_size
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 suffix:semicolon
 r_void

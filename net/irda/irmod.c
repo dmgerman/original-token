@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Mon Apr 12 11:31:01 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Mon May 10 15:28:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/init.h&gt;
@@ -376,6 +376,13 @@ c_func
 id|irttp_udata_request
 )paren
 suffix:semicolon
+DECL|variable|irttp_dup
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irttp_dup
+)paren
+suffix:semicolon
 multiline_comment|/* Main IrDA module */
 macro_line|#ifdef CONFIG_IRDA_DEBUG
 DECL|variable|irda_debug
@@ -612,6 +619,13 @@ c_func
 id|irlmp_get_saddr
 )paren
 suffix:semicolon
+DECL|variable|irlmp_dup
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irlmp_dup
+)paren
+suffix:semicolon
 DECL|variable|lmp_reasons
 id|EXPORT_SYMBOL
 c_func
@@ -735,6 +749,27 @@ c_func
 id|irda_device_txqueue_empty
 )paren
 suffix:semicolon
+DECL|variable|irda_device_init_dongle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_device_init_dongle
+)paren
+suffix:semicolon
+DECL|variable|irda_device_register_dongle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_device_register_dongle
+)paren
+suffix:semicolon
+DECL|variable|irda_device_unregister_dongle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irda_device_unregister_dongle
+)paren
+suffix:semicolon
 DECL|variable|async_wrap_skb
 id|EXPORT_SYMBOL
 c_func
@@ -756,13 +791,7 @@ c_func
 id|irda_start_timer
 )paren
 suffix:semicolon
-DECL|variable|irda_get_mtt
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|irda_get_mtt
-)paren
-suffix:semicolon
+multiline_comment|/* EXPORT_SYMBOL(irda_get_mtt); */
 DECL|variable|setup_dma
 id|EXPORT_SYMBOL
 c_func
@@ -1835,8 +1864,7 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
-macro_line|#ifdef CONFIG_PROC_FS
+multiline_comment|/*&n; * Function irda_proc_modcount (inode, fill)&n; *&n; *    Use by the proc file system functions to prevent the irda module&n; *    being removed while the use is standing in the net/irda directory&n; */
 DECL|function|irda_proc_modcount
 r_void
 id|irda_proc_modcount
@@ -1851,6 +1879,8 @@ r_int
 id|fill
 )paren
 (brace
+macro_line|#ifdef MODULE
+macro_line|#ifdef CONFIG_PROC_FS
 r_if
 c_cond
 (paren
@@ -1861,8 +1891,10 @@ suffix:semicolon
 r_else
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-)brace
 macro_line|#endif /* CONFIG_PROC_FS */
+macro_line|#endif /* MODULE */
+)brace
+macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1872,7 +1904,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;The Linux IrDA protocol subsystem&quot;
+l_string|&quot;The Linux IrDA Protocol Subsystem&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM

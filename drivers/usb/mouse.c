@@ -8,6 +8,8 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
 DECL|macro|USB_MOUSE_MINOR
@@ -981,6 +983,12 @@ id|mouse-&gt;present
 op_assign
 l_int|0
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Mouse disconnected&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|variable|mouse_driver
 r_static
@@ -1084,4 +1092,35 @@ id|usb_mouse
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|usb_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|usb_mouse_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

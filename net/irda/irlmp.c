@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Fri Apr 23 09:13:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Sun May  9 22:45:06 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -592,7 +592,7 @@ r_return
 id|self
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlmp_close_lsap (self)&n; *&n; *    Remove an instance of LSAP&n; */
+multiline_comment|/*&n; * Function __irlmp_close_lsap (self)&n; *&n; *    Remove an instance of LSAP&n; */
 DECL|function|__irlmp_close_lsap
 r_static
 r_void
@@ -1224,9 +1224,7 @@ c_func
 (paren
 id|skb
 comma
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
+id|LMP_MAX_HEADER
 )paren
 suffix:semicolon
 )brace
@@ -1235,7 +1233,7 @@ id|skb
 op_assign
 id|userdata
 suffix:semicolon
-multiline_comment|/* Make room for MUX control header ( 3 bytes) */
+multiline_comment|/* Make room for MUX control header (3 bytes) */
 id|ASSERT
 c_func
 (paren
@@ -1507,14 +1505,11 @@ id|skb
 r_int
 id|max_seg_size
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|3
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
+r_int
+id|lap_header_size
+suffix:semicolon
+r_int
+id|max_header_size
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1560,24 +1555,66 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), slsap_sel=%02x, dlsap_sel=%02x&bslash;n&quot;
+comma
+id|self-&gt;slsap_sel
+comma
+id|self-&gt;dlsap_sel
+)paren
+suffix:semicolon
 id|self-&gt;qos
 op_assign
 op_star
 id|self-&gt;lap-&gt;qos
 suffix:semicolon
+id|lap_header_size
+op_assign
+id|irlap_get_header_size
+c_func
+(paren
+id|self-&gt;lap-&gt;irlap
+)paren
+suffix:semicolon
 id|max_seg_size
 op_assign
 id|self-&gt;lap-&gt;qos-&gt;data_size.value
+op_minus
+id|LMP_HEADER
+op_minus
+id|lap_header_size
 suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), max_seg_size=%d&bslash;n&quot;
 comma
 id|max_seg_size
+)paren
+suffix:semicolon
+id|max_header_size
+op_assign
+id|LMP_HEADER
+op_plus
+id|lap_header_size
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), max_header_size=%d&bslash;n&quot;
+comma
+id|max_header_size
 )paren
 suffix:semicolon
 multiline_comment|/* Hide LMP_CONTROL_HEADER header from layer above */
@@ -1608,6 +1645,8 @@ id|self-&gt;qos
 comma
 id|max_seg_size
 comma
+id|max_header_size
+comma
 id|skb
 )paren
 suffix:semicolon
@@ -1629,15 +1668,6 @@ op_star
 id|userdata
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|3
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1678,9 +1708,10 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
-l_string|&quot;irlmp_connect_response: slsap_sel=%02x, dlsap_sel=%02x&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), slsap_sel=%02x, dlsap_sel=%02x&bslash;n&quot;
 comma
 id|self-&gt;slsap_sel
 comma
@@ -1742,6 +1773,12 @@ id|skb
 r_int
 id|max_seg_size
 suffix:semicolon
+r_int
+id|max_header_size
+suffix:semicolon
+r_int
+id|lap_header_size
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1800,19 +1837,48 @@ op_assign
 op_star
 id|self-&gt;lap-&gt;qos
 suffix:semicolon
+id|lap_header_size
+op_assign
+id|irlap_get_header_size
+c_func
+(paren
+id|self-&gt;lap-&gt;irlap
+)paren
+suffix:semicolon
 id|max_seg_size
 op_assign
-id|self-&gt;qos.data_size.value
+id|self-&gt;lap-&gt;qos-&gt;data_size.value
+op_minus
+id|LMP_HEADER
+op_minus
+id|lap_header_size
 suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), max_seg_size=%d&bslash;n&quot;
 comma
 id|max_seg_size
+)paren
+suffix:semicolon
+id|max_header_size
+op_assign
+id|LMP_HEADER
+op_plus
+id|lap_header_size
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), max_header_size=%d&bslash;n&quot;
+comma
+id|max_header_size
 )paren
 suffix:semicolon
 multiline_comment|/* Hide LMP_CONTROL_HEADER header from layer above */
@@ -1843,6 +1909,8 @@ op_amp
 id|self-&gt;qos
 comma
 id|max_seg_size
+comma
+id|max_header_size
 comma
 id|skb
 )paren
@@ -2329,6 +2397,12 @@ id|self-&gt;dlsap_sel
 op_assign
 id|LSAP_ANY
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
+id|irlmp-&gt;cache.valid
+op_assign
+id|FALSE
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* &n;&t; *  Remove association between this LSAP and the link it used &n;&t; */
 id|ASSERT
 c_func
@@ -5332,18 +5406,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|ASSERT
-c_func
-(paren
-id|lap-&gt;magic
-op_eq
-id|LMP_LAP_MAGIC
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -5507,6 +5569,18 @@ id|lap-&gt;lsaps
 )paren
 suffix:semicolon
 )brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 id|lap
 op_assign
 (paren

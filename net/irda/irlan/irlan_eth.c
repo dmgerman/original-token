@@ -1,8 +1,9 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Thu Apr 22 14:26:39 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Mon May 10 20:23:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
@@ -96,8 +97,15 @@ id|dev-&gt;tx_queue_len
 op_assign
 id|TTP_MAX_QUEUE
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*  &n;&t; *  OK, since we are emulating an IrLAN sever we will have to give&n;&t; *  ourself an ethernet address!&n;&t; *  FIXME: this must be more dynamically&n;&t; */
+r_if
+c_cond
+(paren
+id|self-&gt;provider.access_type
+op_eq
+id|ACCESS_DIRECT
+)paren
+(brace
+multiline_comment|/*  &n;&t;&t; * Since we are emulating an IrLAN sever we will have to&n;&t;&t; * give ourself an ethernet address!  &n;&t;&t; */
 id|dev-&gt;dev_addr
 (braket
 l_int|0
@@ -126,21 +134,27 @@ l_int|3
 op_assign
 l_int|0x00
 suffix:semicolon
+id|get_random_bytes
+c_func
+(paren
 id|dev-&gt;dev_addr
-(braket
+op_plus
 l_int|4
-)braket
-op_assign
-l_int|0x23
+comma
+l_int|1
+)paren
 suffix:semicolon
+id|get_random_bytes
+c_func
+(paren
 id|dev-&gt;dev_addr
-(braket
+op_plus
 l_int|5
-)braket
-op_assign
-l_int|0x45
+comma
+l_int|1
+)paren
 suffix:semicolon
-macro_line|#endif
+)brace
 multiline_comment|/* &n;&t; * Network device has now been registered, so tell irmanager about&n;&t; * it, so it can be configured with network parameters&n;&t; */
 id|mgr_event.event
 op_assign
@@ -396,15 +410,6 @@ id|irlan_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|self
 op_assign
 (paren
@@ -484,45 +489,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Room left at head: %d&bslash;n&quot;
-comma
-id|skb_headroom
-c_func
-(paren
-id|skb
-)paren
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Room left at tail: %d&bslash;n&quot;
-comma
-id|skb_tailroom
-c_func
-(paren
-id|skb
-)paren
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Required room: %d&bslash;n&quot;
-comma
-id|IRLAN_MAX_HEADER
-)paren
-suffix:semicolon
-multiline_comment|/* skb headroom large enough to contain IR-headers? */
+multiline_comment|/* skb headroom large enough to contain all IrDA-headers? */
 r_if
 c_cond
 (paren
@@ -533,7 +500,7 @@ c_func
 id|skb
 )paren
 OL
-id|IRLAN_MAX_HEADER
+id|self-&gt;max_header_size
 )paren
 op_logical_or
 (paren
@@ -555,44 +522,28 @@ c_func
 (paren
 id|skb
 comma
-id|IRLAN_MAX_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|new_skb
-op_ne
-l_int|NULL
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb_headroom
-c_func
-(paren
-id|new_skb
-)paren
-op_ge
-id|IRLAN_MAX_HEADER
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/*  Free original skb, and use the new one */
+multiline_comment|/*  We have to free the original skb anyway */
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+multiline_comment|/* Did the realloc succeed? */
+r_if
+c_cond
+(paren
+id|new_skb
+op_eq
+l_int|NULL
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Use the new skb instead */
 id|skb
 op_assign
 id|new_skb
@@ -609,13 +560,12 @@ id|self-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Now queue the packet in the transport layer&n;&t; *  FIXME: clean up the code below! DB&n;&t; */
+multiline_comment|/* Now queue the packet in the transport layer */
 r_if
 c_cond
 (paren
 id|self-&gt;use_udata
 )paren
-(brace
 id|irttp_udata_request
 c_func
 (paren
@@ -624,14 +574,8 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
@@ -642,12 +586,11 @@ id|self-&gt;tsap_data
 comma
 id|skb
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 (brace
-multiline_comment|/*  &n;&t;&t; *  IrTTPs tx queue is full, so we just have to drop the&n;&t;&t; *  frame! You might think that we should just return -1&n;&t;&t; *  and don&squot;t deallocate the frame, but that is dangerous&n;&t;&t; *  since it&squot;s possible that we have replaced the original&n;&t;&t; *  skb with a new one with larger headroom, and that would&n;&t;&t; *  really confuse do_dev_queue_xmit() in dev.c! I have&n;&t;&t; *  tried :-) DB&n;&t;&t; */
+multiline_comment|/*   &n;&t;&t;&t; * IrTTPs tx queue is full, so we just have to&n;&t;&t;&t; * drop the frame! You might think that we should&n;&t;&t;&t; * just return -1 and don&squot;t deallocate the frame,&n;&t;&t;&t; * but that is dangerous since it&squot;s possible that&n;&t;&t;&t; * we have replaced the original skb with a new&n;&t;&t;&t; * one with larger headroom, and that would really&n;&t;&t;&t; * confuse do_dev_queue_xmit() in dev.c! I have&n;&t;&t;&t; * tried :-) DB &n;&t;&t;&t; */
 id|dev_kfree_skb
 c_func
 (paren
@@ -660,6 +603,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 id|dev-&gt;tbusy
 op_assign
@@ -883,14 +827,6 @@ id|flow
 r_case
 id|FLOW_STOP
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;IrLAN, stopping Ethernet layer&bslash;n&quot;
-)paren
-suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|1
@@ -900,20 +836,14 @@ suffix:semicolon
 r_case
 id|FLOW_START
 suffix:colon
-multiline_comment|/* &n;&t;&t; *  Tell upper layers that its time to transmit frames again&n;&t;&t; */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;IrLAN, starting Ethernet layer&bslash;n&quot;
-)paren
-suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* Tell upper layers that its time to transmit frames again */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; *  Ready to receive more frames, so schedule the network&n;&t;&t; *  layer&n;&t;&t; */
+multiline_comment|/* Schedule network layer */
 id|mark_bh
 c_func
 (paren
@@ -921,17 +851,6 @@ id|NET_BH
 )paren
 suffix:semicolon
 r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Unknown flow command!&bslash;n&quot;
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -1033,7 +952,6 @@ id|ETH_P_ARP
 comma
 id|in_dev-&gt;ifa_list-&gt;ifa_address
 comma
-op_amp
 id|dev
 comma
 id|in_dev-&gt;ifa_list-&gt;ifa_address

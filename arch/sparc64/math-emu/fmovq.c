@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: fmovq.c,v 1.2 1999/05/28 13:44:09 jj Exp $&n; * arch/sparc64/math-emu/fmovq.c&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@ultra.linux.cz)&n; *&n; */
 DECL|function|FMOVQ
 r_int
 id|FMOVQ

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.h&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Apr 23 09:51:15 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.h&n; * Version:       0.8&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sun May  9 11:38:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLAP_H
 DECL|macro|IRLAP_H
 mdefine_line|#define IRLAP_H
@@ -20,15 +20,15 @@ mdefine_line|#define LAP_CTRL_HEADER 1  /* IrLAP Control Header */
 DECL|macro|LAP_COMP_HEADER
 mdefine_line|#define LAP_COMP_HEADER 1  /* IrLAP Compression Header */
 macro_line|#ifdef CONFIG_IRDA_COMPRESSION
-DECL|macro|LAP_HEADER
-macro_line|#  define LAP_HEADER  (LAP_ADDR_HEADER + LAP_CTRL_HEADER + LAP_COMP_HEADER)
+DECL|macro|LAP_MAX_HEADER
+macro_line|#  define LAP_MAX_HEADER  (LAP_ADDR_HEADER + LAP_CTRL_HEADER + LAP_COMP_HEADER)
 DECL|macro|IRDA_COMPRESSED
 macro_line|#  define IRDA_COMPRESSED 1
 DECL|macro|IRDA_NORMAL
 macro_line|#  define IRDA_NORMAL     0
 macro_line|#else
-DECL|macro|LAP_HEADER
-mdefine_line|#define LAP_HEADER (LAP_ADDR_HEADER + LAP_CTRL_HEADER)
+DECL|macro|LAP_MAX_HEADER
+mdefine_line|#define LAP_MAX_HEADER (LAP_ADDR_HEADER + LAP_CTRL_HEADER)
 macro_line|#endif
 DECL|macro|BROADCAST
 mdefine_line|#define BROADCAST  0xffffffff /* Broadcast device address */
@@ -260,10 +260,7 @@ id|__u8
 id|vr
 suffix:semicolon
 multiline_comment|/* Next frame to be received */
-DECL|member|tmp
-r_int
-id|tmp
-suffix:semicolon
+multiline_comment|/* &t;int     tmp; */
 DECL|member|va
 id|__u8
 id|va
@@ -319,10 +316,6 @@ r_int
 id|frame_sent
 suffix:semicolon
 multiline_comment|/* Have we sent reply? */
-DECL|member|discovery_count
-r_int
-id|discovery_count
-suffix:semicolon
 DECL|member|discovery_log
 id|hashbin_t
 op_star
@@ -759,5 +752,22 @@ id|qos_info
 op_star
 )paren
 suffix:semicolon
+DECL|function|irlap_get_header_size
+r_extern
+r_inline
+id|__u8
+id|irlap_get_header_size
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
+)paren
+(brace
+r_return
+l_int|2
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

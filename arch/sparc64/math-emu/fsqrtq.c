@@ -1,3 +1,5 @@
+multiline_comment|/* $Id: fsqrtq.c,v 1.5 1999/05/28 13:44:44 jj Exp $&n; * arch/sparc64/math-emu/fsqrtq.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;quad.h&quot;
 DECL|function|FSQRTQ
@@ -14,6 +16,8 @@ op_star
 id|rs2
 )paren
 (brace
+id|FP_DECL_EX
+suffix:semicolon
 id|FP_DECL_Q
 c_func
 (paren
@@ -26,7 +30,7 @@ c_func
 id|R
 )paren
 suffix:semicolon
-id|__FP_UNPACK_Q
+id|FP_UNPACK_QP
 c_func
 (paren
 id|A
@@ -42,14 +46,15 @@ comma
 id|A
 )paren
 suffix:semicolon
-r_return
-id|__FP_PACK_Q
+id|FP_PACK_QP
 c_func
 (paren
 id|rd
 comma
 id|R
 )paren
+suffix:semicolon
+id|FP_HANDLE_EXCEPTIONS
 suffix:semicolon
 )brace
 eof

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: fabsq.c,v 1.5 1999/05/28 13:42:27 jj Exp $&n; * arch/sparc64/math-emu/fabsq.c&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@ultra.linux.cz)&n; *&n; */
 DECL|function|FABSQ
 r_int
 id|FABSQ

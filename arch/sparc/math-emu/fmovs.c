@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: fmovs.c,v 1.7 1999/05/28 13:42:05 jj Exp $&n; * arch/sparc/math-emu/fmovs.c&n; *&n; * Copyright (C) 1998 Peter Maydell (pmaydell@chiark.greenend.org.uk)&n; *&n; */
 DECL|function|FMOVS
 r_int
 id|FMOVS

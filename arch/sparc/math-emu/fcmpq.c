@@ -1,3 +1,5 @@
+multiline_comment|/* $Id: fcmpq.c,v 1.8 1999/05/28 13:41:48 jj Exp $&n; * arch/sparc/math-emu/fcmpq.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1998 Peter Maydell (pmaydell@chiark.greenend.org.uk)&n; *&n; */
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;quad.h&quot;
 DECL|function|FCMPQ
@@ -18,6 +20,8 @@ op_star
 id|rs1
 )paren
 (brace
+id|FP_DECL_EX
+suffix:semicolon
 id|FP_DECL_Q
 c_func
 (paren
@@ -37,7 +41,7 @@ r_int
 r_int
 id|fsr
 suffix:semicolon
-id|__FP_UNPACK_Q
+id|FP_UNPACK_RAW_QP
 c_func
 (paren
 id|A
@@ -45,7 +49,7 @@ comma
 id|rs1
 )paren
 suffix:semicolon
-id|__FP_UNPACK_Q
+id|FP_UNPACK_RAW_QP
 c_func
 (paren
 id|B
@@ -70,6 +74,40 @@ c_cond
 (paren
 id|ret
 op_eq
+l_int|3
+op_logical_and
+(paren
+id|FP_ISSIGNAN_Q
+c_func
+(paren
+id|A
+)paren
+op_logical_or
+id|FP_ISSIGNAN_Q
+c_func
+(paren
+id|B
+)paren
+)paren
+)paren
+id|FP_SET_EXCEPTION
+c_func
+(paren
+id|FP_EX_INVALID
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|FP_INHIBIT_RESULTS
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ret
+op_eq
 op_minus
 l_int|1
 )paren
@@ -81,7 +119,6 @@ id|fsr
 op_assign
 op_star
 (paren
-r_int
 r_int
 op_star
 )paren
@@ -103,15 +140,14 @@ suffix:semicolon
 op_star
 (paren
 r_int
-r_int
 op_star
 )paren
 id|rd
 op_assign
 id|fsr
 suffix:semicolon
-r_return
-l_int|0
+)brace
+id|FP_HANDLE_EXCEPTIONS
 suffix:semicolon
 )brace
 eof

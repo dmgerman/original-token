@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_common.h&n; * Version:       &n; * Description:   An implementation of IrCOMM service interface and state machine &n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; *&n; *     Copyright (c) 1998, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_common.h&n; * Version:       &n; * Description:   An implementation of IrCOMM service interface and state machine &n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; *&n; *     Copyright (c) 1998-1999, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRCOMM_H
 DECL|macro|IRCOMM_H
 mdefine_line|#define IRCOMM_H
@@ -119,7 +119,7 @@ mdefine_line|#define COMM_INIT_CTRL_PARAM    3          /* length of initial con
 DECL|macro|COMM_HEADER
 mdefine_line|#define COMM_HEADER             1          /* length of clen field */
 DECL|macro|COMM_HEADER_SIZE
-mdefine_line|#define COMM_HEADER_SIZE        (LAP_HEADER+LMP_HEADER+TTP_HEADER+COMM_HEADER)
+mdefine_line|#define COMM_HEADER_SIZE        (TTP_MAX_HEADER+COMM_HEADER)
 DECL|macro|COMM_DEFAULT_DATA_SIZE
 mdefine_line|#define COMM_DEFAULT_DATA_SIZE  64
 DECL|macro|IRCOMM_MAX_CONNECTION
@@ -274,9 +274,13 @@ DECL|member|max_txbuff_size
 r_int
 id|max_txbuff_size
 suffix:semicolon
-DECL|member|maxsdusize
+DECL|member|max_sdu_size
 id|__u32
-id|maxsdusize
+id|max_sdu_size
+suffix:semicolon
+DECL|member|max_header_size
+id|__u8
+id|max_header_size
 suffix:semicolon
 DECL|member|daddr
 id|__u32

@@ -8,6 +8,8 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;usb.h&quot;
@@ -6096,4 +6098,30 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|usb_cpia_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|module_cleanup
+r_void
+id|module_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif
 eof

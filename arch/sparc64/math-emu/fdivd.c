@@ -1,3 +1,5 @@
+multiline_comment|/* $Id: fdivd.c,v 1.4 1999/05/28 13:43:36 jj Exp $&n; * arch/sparc64/math-emu/fdivd.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;double.h&quot;
 DECL|function|FDIVD
@@ -18,6 +20,8 @@ op_star
 id|rs1
 )paren
 (brace
+id|FP_DECL_EX
+suffix:semicolon
 id|FP_DECL_D
 c_func
 (paren
@@ -36,12 +40,7 @@ c_func
 id|R
 )paren
 suffix:semicolon
-r_int
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-id|__FP_UNPACK_D
+id|FP_UNPACK_DP
 c_func
 (paren
 id|A
@@ -49,7 +48,7 @@ comma
 id|rs1
 )paren
 suffix:semicolon
-id|__FP_UNPACK_D
+id|FP_UNPACK_DP
 c_func
 (paren
 id|B
@@ -57,37 +56,6 @@ comma
 id|rs2
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|B_c
-op_eq
-id|FP_CLS_ZERO
-op_logical_and
-id|A_c
-op_ne
-id|FP_CLS_ZERO
-)paren
-(brace
-id|ret
-op_or_assign
-id|EFLAG_DIVZERO
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|__FPU_TRAP_P
-c_func
-(paren
-id|EFLAG_DIVZERO
-)paren
-)paren
-(brace
-r_return
-id|ret
-suffix:semicolon
-)brace
-)brace
 id|FP_DIV_D
 c_func
 (paren
@@ -98,18 +66,15 @@ comma
 id|B
 )paren
 suffix:semicolon
-r_return
-(paren
-id|ret
-op_or
-id|__FP_PACK_D
+id|FP_PACK_DP
 c_func
 (paren
 id|rd
 comma
 id|R
 )paren
-)paren
+suffix:semicolon
+id|FP_HANDLE_EXCEPTIONS
 suffix:semicolon
 )brace
 eof

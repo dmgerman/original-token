@@ -3,6 +3,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &quot;usb.h&quot;
 DECL|macro|PCKBD_PRESSED
@@ -914,8 +916,8 @@ l_string|&quot;USB HID boot protocol keyboard removed.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|usb_kbd_init
+r_int
 id|usb_kbd_init
 c_func
 (paren
@@ -933,4 +935,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|usb_kbd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|module_cleanup
+r_void
+id|module_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|usb_deregister
+c_func
+(paren
+op_amp
+id|usb_kbd_driver
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.105 1999/04/13 14:17:08 jj Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.106 1999/05/28 16:03:18 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1963,6 +1963,12 @@ id|prom_printf
 c_func
 (paren
 l_string|&quot;Inconsistent or unknown console&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;You cannot mix serial and non serial input/output devices&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_halt

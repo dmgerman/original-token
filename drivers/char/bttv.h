@@ -582,6 +582,8 @@ DECL|macro|BTTV_ZOLTRIX
 mdefine_line|#define BTTV_ZOLTRIX       0x0f
 DECL|macro|BTTV_PIXVIEWPLAYTV
 mdefine_line|#define BTTV_PIXVIEWPLAYTV 0x10
+DECL|macro|BTTV_WINVIEW_601
+mdefine_line|#define BTTV_WINVIEW_601   0x11
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -666,5 +668,19 @@ DECL|macro|TEA6300_FA
 mdefine_line|#define TEA6300_FA         0x04&t;&t;/* fader control */
 DECL|macro|TEA6300_SW
 mdefine_line|#define TEA6300_SW         0x05&t;&t;/* mute and source switch */
+DECL|macro|PT2254_L_CHANEL
+mdefine_line|#define PT2254_L_CHANEL 0x10
+DECL|macro|PT2254_R_CHANEL
+mdefine_line|#define PT2254_R_CHANEL 0x08
+DECL|macro|PT2254_DBS_IN_2
+mdefine_line|#define PT2254_DBS_IN_2 0x400
+DECL|macro|PT2254_DBS_IN_10
+mdefine_line|#define PT2254_DBS_IN_10 0x20000
+DECL|macro|WINVIEW_PT2254_CLK
+mdefine_line|#define WINVIEW_PT2254_CLK  0x40
+DECL|macro|WINVIEW_PT2254_DATA
+mdefine_line|#define WINVIEW_PT2254_DATA 0x20
+DECL|macro|WINVIEW_PT2254_STROBE
+mdefine_line|#define WINVIEW_PT2254_STROBE 0x80
 macro_line|#endif
 eof

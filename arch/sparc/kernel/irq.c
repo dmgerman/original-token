@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.93 1999/04/21 06:15:45 anton Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.94 1999/05/28 14:59:20 anton Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@metabyte.com)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; *  Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1775,13 +1775,20 @@ id|cpu
 )paren
 suffix:semicolon
 macro_line|#endif
+id|irq_enter
+c_func
+(paren
+id|cpu
+comma
+id|irq
+)paren
+suffix:semicolon
 id|disable_pil_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
-macro_line|#if 0 /* FIXME: rotating IRQs halts the machine during SCSI probe. -ecd */
 macro_line|#ifdef __SMP__
 multiline_comment|/* Only rotate on lower priority IRQ&squot;s (scsi, ethernet, etc.). */
 r_if
@@ -1800,15 +1807,6 @@ id|cpu
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#endif
-id|irq_enter
-c_func
-(paren
-id|cpu
-comma
-id|irq
-)paren
-suffix:semicolon
 id|action
 op_assign
 op_star
@@ -1871,17 +1869,17 @@ c_loop
 id|action
 )paren
 suffix:semicolon
+id|enable_pil_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
 id|irq_exit
 c_func
 (paren
 id|cpu
 comma
-id|irq
-)paren
-suffix:semicolon
-id|enable_pil_irq
-c_func
-(paren
 id|irq
 )paren
 suffix:semicolon

@@ -1,10 +1,8 @@
-multiline_comment|/*&n; * Definitions for IEEE Quad Precision&n; */
+multiline_comment|/* Software floating-point emulation.&n;   Definitions for IEEE Quad Precision.&n;   Copyright (C) 1997,1998,1999 Free Software Foundation, Inc.&n;   This file is part of the GNU C Library.&n;   Contributed by Richard Henderson (rth@cygnus.com),&n;&t;&t;  Jakub Jelinek (jj@ultra.linux.cz),&n;&t;&t;  David S. Miller (davem@redhat.com) and&n;&t;&t;  Peter Maydell (pmaydell@chiark.greenend.org.uk).&n;&n;   The GNU C Library is free software; you can redistribute it and/or&n;   modify it under the terms of the GNU Library General Public License as&n;   published by the Free Software Foundation; either version 2 of the&n;   License, or (at your option) any later version.&n;&n;   The GNU C Library is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;   Library General Public License for more details.&n;&n;   You should have received a copy of the GNU Library General Public&n;   License along with the GNU C Library; see the file COPYING.LIB.  If&n;   not, write to the Free Software Foundation, Inc.,&n;   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 macro_line|#if _FP_W_TYPE_SIZE &lt; 32
-multiline_comment|/* It appears to be traditional to abuse 16bitters in these header files... */
 macro_line|#error &quot;Here&squot;s a nickel, kid. Go buy yourself a real computer.&quot;
 macro_line|#endif
 macro_line|#if _FP_W_TYPE_SIZE &lt; 64
-multiline_comment|/* This is all terribly experimental and I don&squot;t know if it&squot;ll work properly -- PMM 02/1998 */
 DECL|macro|_FP_FRACTBITS_Q
 mdefine_line|#define _FP_FRACTBITS_Q         (4*_FP_W_TYPE_SIZE)
 macro_line|#else
@@ -161,33 +159,49 @@ DECL|macro|FP_DECL_Q
 mdefine_line|#define FP_DECL_Q(X)&t;&t;_FP_DECL(4,X)
 DECL|macro|FP_UNPACK_RAW_Q
 mdefine_line|#define FP_UNPACK_RAW_Q(X,val)&t;_FP_UNPACK_RAW_4(Q,X,val)
+DECL|macro|FP_UNPACK_RAW_QP
+mdefine_line|#define FP_UNPACK_RAW_QP(X,val)&t;_FP_UNPACK_RAW_4_P(Q,X,val)
 DECL|macro|FP_PACK_RAW_Q
 mdefine_line|#define FP_PACK_RAW_Q(val,X)&t;_FP_PACK_RAW_4(Q,val,X)
+DECL|macro|FP_PACK_RAW_QP
+mdefine_line|#define FP_PACK_RAW_QP(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    if (!FP_INHIBIT_RESULTS)&t;&t;&bslash;&n;      _FP_PACK_RAW_4_P(Q,val,X);&t;&bslash;&n;  } while (0)
 DECL|macro|FP_UNPACK_Q
 mdefine_line|#define FP_UNPACK_Q(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_UNPACK_RAW_4(Q,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(Q,4,X);&t;&bslash;&n;  } while (0)
+DECL|macro|FP_UNPACK_QP
+mdefine_line|#define FP_UNPACK_QP(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_UNPACK_RAW_4_P(Q,X,val);&t;&bslash;&n;    _FP_UNPACK_CANONICAL(Q,4,X);&t;&bslash;&n;  } while (0)
 DECL|macro|FP_PACK_Q
 mdefine_line|#define FP_PACK_Q(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(Q,4,X);&t;&t;&bslash;&n;    _FP_PACK_RAW_4(Q,val,X);&t;&t;&bslash;&n;  } while (0)
+DECL|macro|FP_PACK_QP
+mdefine_line|#define FP_PACK_QP(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(Q,4,X);&t;&t;&bslash;&n;    if (!FP_INHIBIT_RESULTS)&t;&t;&bslash;&n;      _FP_PACK_RAW_4_P(Q,val,X);&t;&bslash;&n;  } while (0)
+DECL|macro|FP_ISSIGNAN_Q
+mdefine_line|#define FP_ISSIGNAN_Q(X)&t;_FP_ISSIGNAN(Q,4,X)
 DECL|macro|FP_NEG_Q
 mdefine_line|#define FP_NEG_Q(R,X)&t;&t;_FP_NEG(Q,4,R,X)
 DECL|macro|FP_ADD_Q
 mdefine_line|#define FP_ADD_Q(R,X,Y)&t;&t;_FP_ADD(Q,4,R,X,Y)
 multiline_comment|/* single.h and double.h define FP_SUB_t this way too. However, _FP_SUB is&n; * never defined in op-common.h! Fortunately nobody seems to use the FP_SUB_t &n; * macros: I suggest a combination of FP_NEG and FP_ADD :-&gt; -- PMM 02/1998&n; */
 DECL|macro|FP_SUB_Q
-mdefine_line|#define FP_SUB_Q(R,X,Y)&t;&t;_FP_SUB(Q,4,R,X,Y)
+mdefine_line|#define FP_SUB_Q(R,X,Y)&t;&t;&t;_FP_SUB(Q,4,R,X,Y)
 DECL|macro|FP_MUL_Q
-mdefine_line|#define FP_MUL_Q(R,X,Y)&t;&t;_FP_MUL(Q,4,R,X,Y)
+mdefine_line|#define FP_MUL_Q(R,X,Y)&t;&t;&t;_FP_MUL(Q,4,R,X,Y)
 DECL|macro|FP_DIV_Q
-mdefine_line|#define FP_DIV_Q(R,X,Y)&t;&t;_FP_DIV(Q,4,R,X,Y)
+mdefine_line|#define FP_DIV_Q(R,X,Y)&t;&t;&t;_FP_DIV(Q,4,R,X,Y)
 DECL|macro|FP_SQRT_Q
-mdefine_line|#define FP_SQRT_Q(R,X)&t;&t;_FP_SQRT(Q,4,R,X)
+mdefine_line|#define FP_SQRT_Q(R,X)&t;&t;&t;_FP_SQRT(Q,4,R,X)
+DECL|macro|_FP_SQRT_MEAT_Q
+mdefine_line|#define _FP_SQRT_MEAT_Q(R,S,T,X,Q)&t;_FP_SQRT_MEAT_4(R,S,T,X,Q)
 DECL|macro|FP_CMP_Q
 mdefine_line|#define FP_CMP_Q(r,X,Y,un)&t;_FP_CMP(Q,4,r,X,Y,un)
 DECL|macro|FP_CMP_EQ_Q
 mdefine_line|#define FP_CMP_EQ_Q(r,X,Y)&t;_FP_CMP_EQ(Q,4,r,X,Y)
 DECL|macro|FP_TO_INT_Q
-mdefine_line|#define FP_TO_INT_Q(r,X,rsz,rsg)  _FP_TO_INT(Q,4,r,X,rsz,rsg)
+mdefine_line|#define FP_TO_INT_Q(r,X,rsz,rsg)&t;_FP_TO_INT(Q,4,r,X,rsz,rsg)
 DECL|macro|FP_FROM_INT_Q
-mdefine_line|#define FP_FROM_INT_Q(X,r,rs,rt)  _FP_FROM_INT(Q,4,X,r,rs,rt)
+mdefine_line|#define FP_FROM_INT_Q(X,r,rs,rt)&t;_FP_FROM_INT(Q,4,X,r,rs,rt)
+DECL|macro|_FP_FRAC_HIGH_Q
+mdefine_line|#define _FP_FRAC_HIGH_Q(X)&t;_FP_FRAC_HIGH_4(X)
+DECL|macro|_FP_FRAC_HIGH_RAW_Q
+mdefine_line|#define _FP_FRAC_HIGH_RAW_Q(X)&t;_FP_FRAC_HIGH_4(X)
 macro_line|#else   /* not _FP_W_TYPE_SIZE &lt; 64 */
 DECL|union|_FP_UNION_Q
 r_union
@@ -278,31 +292,47 @@ DECL|macro|FP_DECL_Q
 mdefine_line|#define FP_DECL_Q(X)&t;&t;_FP_DECL(2,X)
 DECL|macro|FP_UNPACK_RAW_Q
 mdefine_line|#define FP_UNPACK_RAW_Q(X,val)&t;_FP_UNPACK_RAW_2(Q,X,val)
+DECL|macro|FP_UNPACK_RAW_QP
+mdefine_line|#define FP_UNPACK_RAW_QP(X,val)&t;_FP_UNPACK_RAW_2_P(Q,X,val)
 DECL|macro|FP_PACK_RAW_Q
 mdefine_line|#define FP_PACK_RAW_Q(val,X)&t;_FP_PACK_RAW_2(Q,val,X)
+DECL|macro|FP_PACK_RAW_QP
+mdefine_line|#define FP_PACK_RAW_QP(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    if (!FP_INHIBIT_RESULTS)&t;&t;&bslash;&n;      _FP_PACK_RAW_2_P(Q,val,X);&t;&bslash;&n;  } while (0)
 DECL|macro|FP_UNPACK_Q
 mdefine_line|#define FP_UNPACK_Q(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_UNPACK_RAW_2(Q,X,val);&t;&t;&bslash;&n;    _FP_UNPACK_CANONICAL(Q,2,X);&t;&bslash;&n;  } while (0)
+DECL|macro|FP_UNPACK_QP
+mdefine_line|#define FP_UNPACK_QP(X,val)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_UNPACK_RAW_2_P(Q,X,val);&t;&bslash;&n;    _FP_UNPACK_CANONICAL(Q,2,X);&t;&bslash;&n;  } while (0)
 DECL|macro|FP_PACK_Q
 mdefine_line|#define FP_PACK_Q(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(Q,2,X);&t;&t;&bslash;&n;    _FP_PACK_RAW_2(Q,val,X);&t;&t;&bslash;&n;  } while (0)
+DECL|macro|FP_PACK_QP
+mdefine_line|#define FP_PACK_QP(val,X)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&bslash;&n;    _FP_PACK_CANONICAL(Q,2,X);&t;&t;&bslash;&n;    if (!FP_INHIBIT_RESULTS)&t;&t;&bslash;&n;      _FP_PACK_RAW_2_P(Q,val,X);&t;&bslash;&n;  } while (0)
+DECL|macro|FP_ISSIGNAN_Q
+mdefine_line|#define FP_ISSIGNAN_Q(X)&t;&t;_FP_ISSIGNAN(Q,2,X)
 DECL|macro|FP_NEG_Q
-mdefine_line|#define FP_NEG_Q(R,X)&t;&t;_FP_NEG(Q,2,R,X)
+mdefine_line|#define FP_NEG_Q(R,X)&t;&t;&t;_FP_NEG(Q,2,R,X)
 DECL|macro|FP_ADD_Q
-mdefine_line|#define FP_ADD_Q(R,X,Y)&t;&t;_FP_ADD(Q,2,R,X,Y)
+mdefine_line|#define FP_ADD_Q(R,X,Y)&t;&t;&t;_FP_ADD(Q,2,R,X,Y)
 DECL|macro|FP_SUB_Q
-mdefine_line|#define FP_SUB_Q(R,X,Y)&t;&t;_FP_SUB(Q,2,R,X,Y)
+mdefine_line|#define FP_SUB_Q(R,X,Y)&t;&t;&t;_FP_SUB(Q,2,R,X,Y)
 DECL|macro|FP_MUL_Q
-mdefine_line|#define FP_MUL_Q(R,X,Y)&t;&t;_FP_MUL(Q,2,R,X,Y)
+mdefine_line|#define FP_MUL_Q(R,X,Y)&t;&t;&t;_FP_MUL(Q,2,R,X,Y)
 DECL|macro|FP_DIV_Q
-mdefine_line|#define FP_DIV_Q(R,X,Y)&t;&t;_FP_DIV(Q,2,R,X,Y)
+mdefine_line|#define FP_DIV_Q(R,X,Y)&t;&t;&t;_FP_DIV(Q,2,R,X,Y)
 DECL|macro|FP_SQRT_Q
-mdefine_line|#define FP_SQRT_Q(R,X)&t;&t;_FP_SQRT(Q,2,R,X)
+mdefine_line|#define FP_SQRT_Q(R,X)&t;&t;&t;_FP_SQRT(Q,2,R,X)
+DECL|macro|_FP_SQRT_MEAT_Q
+mdefine_line|#define _FP_SQRT_MEAT_Q(R,S,T,X,Q)&t;_FP_SQRT_MEAT_2(R,S,T,X,Q)
 DECL|macro|FP_CMP_Q
 mdefine_line|#define FP_CMP_Q(r,X,Y,un)&t;_FP_CMP(Q,2,r,X,Y,un)
 DECL|macro|FP_CMP_EQ_Q
 mdefine_line|#define FP_CMP_EQ_Q(r,X,Y)&t;_FP_CMP_EQ(Q,2,r,X,Y)
 DECL|macro|FP_TO_INT_Q
-mdefine_line|#define FP_TO_INT_Q(r,X,rsz,rsg)  _FP_TO_INT(Q,2,r,X,rsz,rsg)
+mdefine_line|#define FP_TO_INT_Q(r,X,rsz,rsg)&t;_FP_TO_INT(Q,2,r,X,rsz,rsg)
 DECL|macro|FP_FROM_INT_Q
-mdefine_line|#define FP_FROM_INT_Q(X,r,rs,rt)  _FP_FROM_INT(Q,2,X,r,rs,rt)
+mdefine_line|#define FP_FROM_INT_Q(X,r,rs,rt)&t;_FP_FROM_INT(Q,2,X,r,rs,rt)
+DECL|macro|_FP_FRAC_HIGH_Q
+mdefine_line|#define _FP_FRAC_HIGH_Q(X)&t;_FP_FRAC_HIGH_2(X)
+DECL|macro|_FP_FRAC_HIGH_RAW_Q
+mdefine_line|#define _FP_FRAC_HIGH_RAW_Q(X)&t;_FP_FRAC_HIGH_2(X)
 macro_line|#endif /* not _FP_W_TYPE_SIZE &lt; 64 */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      crc.c&n; * Version:       0.1&n; * Description:   CRC calculation routines&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Dec 12 09:56:35 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       ppp.c by Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *                Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      crc.c&n; * Version:       0.1&n; * Description:   CRC calculation routines&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sun May  2 20:28:08 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       ppp.c by Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *                Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; ********************************************************************/
 macro_line|#include &lt;net/irda/crc.h&gt;
 multiline_comment|/*&n; * This mysterious table is just the CRC of each possible byte.  It can be&n; * computed using the standard bit-at-a-time methods.  The polynomial can&n; * be seen in entry 128, 0x8408.  This corresponds to x^0 + x^5 + x^12.&n; * Add the implicit x^16, and you have the standard CRC-CCITT.&n; */
 DECL|variable|irda_crc16_table
@@ -549,7 +549,7 @@ op_decrement
 )paren
 id|fcs
 op_assign
-id|IR_FCS
+id|irda_fcs
 c_func
 (paren
 id|fcs

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: fnegq.c,v 1.6 1999/05/28 13:44:21 jj Exp $&n; * arch/sparc64/math-emu/fnegq.c&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@ultra.linux.cz)&n; *&n; */
 DECL|function|FNEGQ
 r_int
 id|FNEGQ

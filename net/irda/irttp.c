@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Sat Apr 10 10:32:21 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon May 10 17:12:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -106,6 +106,39 @@ id|qos
 comma
 id|__u32
 id|max_sdu_size
+comma
+id|__u8
+id|header_size
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+r_static
+r_void
+id|irttp_connect_confirm
+c_func
+(paren
+r_void
+op_star
+id|instance
+comma
+r_void
+op_star
+id|sap
+comma
+r_struct
+id|qos_info
+op_star
+id|qos
+comma
+id|__u32
+id|max_sdu_size
+comma
+id|__u8
+id|header_size
 comma
 r_struct
 id|sk_buff
@@ -1188,6 +1221,23 @@ id|self-&gt;max_seg_size
 )paren
 (brace
 multiline_comment|/* Queue frame */
+id|ASSERT
+c_func
+(paren
+id|skb_headroom
+c_func
+(paren
+id|skb
+)paren
+op_ge
+id|TTP_HEADER
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
 id|frame
 op_assign
 id|skb_push
@@ -1655,9 +1705,7 @@ c_func
 (paren
 id|tx_skb
 comma
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Since we can transmit and receive frames concurrently, &n;&t; *  the code below is a critical region and we must assure that&n;&t; *  nobody messes with the credits while we update them.&n;&t; */
@@ -2299,13 +2347,7 @@ c_func
 (paren
 id|skb
 comma
-(paren
-id|TTP_HEADER
-op_plus
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
-)paren
+id|TTP_MAX_HEADER
 )paren
 suffix:semicolon
 )brace
@@ -2325,13 +2367,7 @@ c_func
 id|userdata
 )paren
 op_ge
-(paren
-id|TTP_HEADER
-op_plus
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
-)paren
+id|TTP_MAX_HEADER
 comma
 r_return
 op_minus
@@ -2420,11 +2456,9 @@ id|skb
 )paren
 op_ge
 (paren
-id|TTP_HEADER_WITH_SAR
+id|TTP_MAX_HEADER
 op_plus
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
+id|TTP_SAR_HEADER
 )paren
 comma
 r_return
@@ -2441,7 +2475,9 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER_WITH_SAR
+id|TTP_HEADER
+op_plus
+id|TTP_SAR_HEADER
 )paren
 suffix:semicolon
 id|frame
@@ -2546,6 +2582,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_connect_confirm (handle, qos, skb)&n; *&n; *    Sevice user confirms TSAP connection with peer. &n; *&n; */
 DECL|function|irttp_connect_confirm
+r_static
 r_void
 id|irttp_connect_confirm
 c_func
@@ -2565,6 +2602,9 @@ id|qos
 comma
 id|__u32
 id|max_seg_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -2648,10 +2688,12 @@ suffix:semicolon
 id|self-&gt;max_seg_size
 op_assign
 id|max_seg_size
-op_minus
-id|LMP_HEADER
-op_minus
-id|LAP_HEADER
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
+op_plus
+id|TTP_HEADER
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Check if we have got some QoS parameters back! This should be the&n;&t; *  negotiated QoS for the link.&n;&t; */
 r_if
@@ -2893,6 +2935,8 @@ id|qos
 comma
 id|self-&gt;tx_max_sdu_size
 comma
+id|self-&gt;max_header_size
+comma
 id|skb
 )paren
 suffix:semicolon
@@ -2919,6 +2963,9 @@ id|qos
 comma
 id|__u32
 id|max_seg_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -3007,10 +3054,12 @@ suffix:semicolon
 id|self-&gt;max_seg_size
 op_assign
 id|max_seg_size
-op_minus
-id|LMP_HEADER
-op_minus
-id|LAP_HEADER
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
+op_plus
+id|TTP_HEADER
 suffix:semicolon
 id|DEBUG
 c_func
@@ -3105,12 +3154,10 @@ l_int|1
 suffix:colon
 id|self-&gt;tx_max_sdu_size
 op_assign
-op_star
-(paren
 id|frame
-op_plus
+(braket
 l_int|4
-)paren
+)braket
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3231,6 +3278,8 @@ id|qos
 comma
 id|self-&gt;rx_max_sdu_size
 comma
+id|self-&gt;max_header_size
+comma
 id|skb
 )paren
 suffix:semicolon
@@ -3332,13 +3381,7 @@ c_func
 (paren
 id|skb
 comma
-(paren
-id|TTP_HEADER
-op_plus
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
-)paren
+id|TTP_MAX_HEADER
 )paren
 suffix:semicolon
 )brace
@@ -3358,13 +3401,7 @@ c_func
 id|skb
 )paren
 op_ge
-(paren
-id|TTP_HEADER
-op_plus
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
-)paren
+id|TTP_MAX_HEADER
 comma
 r_return
 suffix:semicolon
@@ -3442,11 +3479,9 @@ id|skb
 )paren
 op_ge
 (paren
-id|TTP_HEADER_WITH_SAR
+id|TTP_MAX_HEADER
 op_plus
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
+id|TTP_SAR_HEADER
 )paren
 comma
 r_return
@@ -3461,7 +3496,9 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER_WITH_SAR
+id|TTP_HEADER
+op_plus
+id|TTP_SAR_HEADER
 )paren
 suffix:semicolon
 id|frame
@@ -3985,9 +4022,7 @@ c_func
 (paren
 id|skb
 comma
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
+id|TTP_MAX_HEADER
 )paren
 suffix:semicolon
 id|userdata
@@ -4901,11 +4936,7 @@ c_func
 (paren
 id|self-&gt;max_seg_size
 op_plus
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 r_if
@@ -4921,9 +4952,7 @@ c_func
 (paren
 id|frag
 comma
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Copy data from the original skb into this fragment. We&n;&t;&t; *  first insert the TTP header with the more bit set&n;&t;&t; */

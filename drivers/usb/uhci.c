@@ -11,12 +11,15 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;uhci.h&quot;
-macro_line|#include &quot;inits.h&quot;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 r_static
@@ -1163,6 +1166,17 @@ id|usb_dev
 )paren
 suffix:semicolon
 r_struct
+id|uhci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_uhci
+c_func
+(paren
+id|dev-&gt;uhci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
+r_struct
 id|uhci_td
 op_star
 id|td
@@ -1294,7 +1308,7 @@ suffix:semicolon
 id|interrupt_qh-&gt;skel
 op_assign
 op_amp
-id|dev-&gt;uhci-&gt;root_hub-&gt;skel_int8_qh
+id|root_hub-&gt;skel_int8_qh
 suffix:semicolon
 id|uhci_add_irq_list
 c_func
@@ -1321,7 +1335,7 @@ id|uhci_insert_qh
 c_func
 (paren
 op_amp
-id|dev-&gt;uhci-&gt;root_hub-&gt;skel_int8_qh
+id|root_hub-&gt;skel_int8_qh
 comma
 id|interrupt_qh
 )paren
@@ -2466,6 +2480,17 @@ id|uhci_td
 op_star
 id|curtd
 suffix:semicolon
+r_struct
+id|uhci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_uhci
+c_func
+(paren
+id|dev-&gt;uhci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
@@ -2570,11 +2595,15 @@ id|uhci_insert_qh
 c_func
 (paren
 op_amp
-id|dev-&gt;uhci-&gt;root_hub-&gt;skel_control_qh
+id|root_hub-&gt;skel_control_qh
 comma
 id|ctrl_qh
 )paren
 suffix:semicolon
+singleline_comment|//&t;control should be full here...&t;
+singleline_comment|//&t;printk(&quot;control&bslash;n&quot;);
+singleline_comment|//&t;show_status(dev-&gt;uhci);
+singleline_comment|//&t;show_queues(dev-&gt;uhci);
 id|schedule_timeout
 c_func
 (paren
@@ -2583,6 +2612,9 @@ op_div
 l_int|10
 )paren
 suffix:semicolon
+singleline_comment|//&t;control should be empty here...&t;
+singleline_comment|//&t;show_status(dev-&gt;uhci);
+singleline_comment|//&t;show_queues(dev-&gt;uhci);
 id|remove_wait_queue
 c_func
 (paren
@@ -2617,7 +2649,7 @@ id|uhci_remove_qh
 c_func
 (paren
 op_amp
-id|dev-&gt;uhci-&gt;root_hub-&gt;skel_control_qh
+id|root_hub-&gt;skel_control_qh
 comma
 id|ctrl_qh
 )paren
@@ -3262,6 +3294,17 @@ id|uhci_td
 op_star
 id|curtd
 suffix:semicolon
+r_struct
+id|uhci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_uhci
+c_func
+(paren
+id|dev-&gt;uhci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
@@ -3361,21 +3404,18 @@ comma
 id|last
 )paren
 suffix:semicolon
-singleline_comment|//&t;bulk0 is empty here...&t;
-singleline_comment|//&t;show_status(dev-&gt;uhci);
-singleline_comment|//&t;show_queues(dev-&gt;uhci);
 multiline_comment|/* Add it into the skeleton */
-multiline_comment|/*WARNING! HUB HAS NO BULK QH TIL NOW!!!!!!!!!!!*/
 id|uhci_insert_qh
 c_func
 (paren
 op_amp
-id|dev-&gt;uhci-&gt;root_hub-&gt;skel_bulk0_qh
+id|root_hub-&gt;skel_bulk0_qh
 comma
 id|bulk_qh
 )paren
 suffix:semicolon
 singleline_comment|//&t;now we&squot;re in the queue... but don&squot;t ask WHAT is in there ;-(
+singleline_comment|//&t;printk(&quot;bulk&bslash;n&quot;);
 singleline_comment|//&t;show_status(dev-&gt;uhci);
 singleline_comment|//&t;show_queues(dev-&gt;uhci);
 id|schedule_timeout
@@ -3386,6 +3426,8 @@ op_div
 l_int|10
 )paren
 suffix:semicolon
+singleline_comment|//&t;show_status(dev-&gt;uhci);
+singleline_comment|//&t;show_queues(dev-&gt;uhci);
 id|remove_wait_queue
 c_func
 (paren
@@ -3420,7 +3462,7 @@ id|uhci_remove_qh
 c_func
 (paren
 op_amp
-id|dev-&gt;uhci-&gt;root_hub-&gt;skel_bulk0_qh
+id|root_hub-&gt;skel_bulk0_qh
 comma
 id|bulk_qh
 )paren
@@ -3550,7 +3592,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+l_int|0x000Aff00
 )paren
 op_or
 l_int|0xE1
@@ -3563,7 +3605,7 @@ op_assign
 (paren
 id|pipe
 op_amp
-l_int|0x0007ff00
+l_int|0x000Aff00
 )paren
 op_or
 l_int|0x69
@@ -3748,11 +3790,33 @@ id|pipe
 )paren
 suffix:semicolon
 )brace
-id|td-&gt;link
+id|prevtd-&gt;link
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Terminate */
+id|prevtd-&gt;status
+op_assign
+id|status
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|24
+)paren
+suffix:semicolon
+multiline_comment|/* IOC */
+id|prevtd-&gt;first
+op_assign
+id|first
+suffix:semicolon
+id|uhci_td_deallocate
+c_func
+(paren
+id|td
+)paren
+suffix:semicolon
+multiline_comment|/* CHANGE DIRECTION HERE! SAVE IT SOMEWHERE IN THE ENDPOINT!!! */
 multiline_comment|/* Start it up.. */
 id|ret
 op_assign
@@ -4413,6 +4477,17 @@ r_int
 r_int
 id|status
 suffix:semicolon
+r_struct
+id|uhci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_uhci
+c_func
+(paren
+id|uhci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4426,7 +4501,7 @@ id|usb_disconnect
 c_func
 (paren
 op_amp
-id|uhci-&gt;root_hub-&gt;usb-&gt;children
+id|root_hub-&gt;usb-&gt;children
 (braket
 id|nr
 )braket
@@ -4480,7 +4555,7 @@ op_assign
 id|uhci_usb_allocate
 c_func
 (paren
-id|uhci-&gt;root_hub-&gt;usb
+id|root_hub-&gt;usb
 )paren
 suffix:semicolon
 id|dev
@@ -4497,7 +4572,7 @@ c_func
 id|usb_dev
 )paren
 suffix:semicolon
-id|uhci-&gt;root_hub-&gt;usb-&gt;children
+id|root_hub-&gt;usb-&gt;children
 (braket
 id|nr
 )braket
@@ -4556,6 +4631,17 @@ op_star
 id|uhci
 )paren
 (brace
+r_struct
+id|uhci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_uhci
+c_func
+(paren
+id|uhci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 r_int
 r_int
 id|io_addr
@@ -4567,7 +4653,7 @@ suffix:semicolon
 r_int
 id|maxchild
 op_assign
-id|uhci-&gt;root_hub-&gt;usb-&gt;maxchild
+id|root_hub-&gt;usb-&gt;maxchild
 suffix:semicolon
 r_int
 id|nr
@@ -4862,10 +4948,21 @@ id|uhci_configure
 )paren
 )paren
 (brace
+r_struct
+id|uhci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_uhci
+c_func
+(paren
+id|uhci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
 r_int
 id|ports
 op_assign
-id|uhci-&gt;root_hub-&gt;usb-&gt;maxchild
+id|root_hub-&gt;usb-&gt;maxchild
 suffix:semicolon
 id|io_addr
 op_add_assign
@@ -5005,7 +5102,11 @@ id|uhci_device
 op_star
 id|dev
 op_assign
-id|uhci-&gt;root_hub
+id|usb_to_uhci
+c_func
+(paren
+id|uhci-&gt;bus-&gt;root_hub
+)paren
 suffix:semicolon
 r_struct
 id|uhci_td
@@ -5417,9 +5518,11 @@ id|usb
 r_return
 l_int|NULL
 suffix:semicolon
-id|dev
+id|usb-&gt;bus
 op_assign
-id|uhci-&gt;root_hub
+id|bus
+suffix:semicolon
+id|dev
 op_assign
 id|usb_to_uhci
 c_func
@@ -5427,9 +5530,13 @@ c_func
 id|usb
 )paren
 suffix:semicolon
-id|usb-&gt;bus
+id|uhci-&gt;bus-&gt;root_hub
 op_assign
-id|bus
+id|uhci_to_usb
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Initialize the root hub */
 multiline_comment|/* UHCI specs says devices must have 2 ports, but goes on to say */
@@ -5720,7 +5827,7 @@ macro_line|#if 0
 r_if
 c_cond
 (paren
-id|uhci-&gt;root_hub
+id|uhci-&gt;bus-&gt;root_hub
 )paren
 (brace
 id|uhci_usb_deallocate
@@ -5729,11 +5836,11 @@ c_func
 id|uhci_to_usb
 c_func
 (paren
-id|uhci-&gt;root_hub
+id|uhci-&gt;bus-&gt;root_hub
 )paren
 )paren
 suffix:semicolon
-id|uhci-&gt;root_hub
+id|uhci-&gt;bus-&gt;root_hub
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -5773,13 +5880,6 @@ id|uhci
 )paren
 suffix:semicolon
 )brace
-r_void
-id|cleanup_drivers
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|uhci_control_thread
 r_static
 r_int
@@ -5802,6 +5902,17 @@ id|uhci
 op_star
 )paren
 id|__uhci
+suffix:semicolon
+r_struct
+id|uhci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_uhci
+c_func
+(paren
+id|uhci-&gt;bus-&gt;root_hub
+)paren
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -5859,6 +5970,12 @@ id|start_hc
 c_func
 (paren
 id|uhci
+)paren
+suffix:semicolon
+id|usb_register_bus
+c_func
+(paren
+id|uhci-&gt;bus
 )paren
 suffix:semicolon
 r_for
@@ -5982,7 +6099,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|uhci-&gt;root_hub
+id|root_hub
 )paren
 r_for
 c_loop
@@ -5993,7 +6110,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|uhci-&gt;root_hub-&gt;usb-&gt;maxchild
+id|root_hub-&gt;usb-&gt;maxchild
 suffix:semicolon
 id|i
 op_increment
@@ -6002,16 +6119,17 @@ op_increment
 id|usb_disconnect
 c_func
 (paren
-id|uhci-&gt;root_hub-&gt;usb-&gt;children
+id|root_hub-&gt;usb-&gt;children
 op_plus
 id|i
 )paren
 suffix:semicolon
 )brace
 )brace
-id|cleanup_drivers
+id|usb_deregister_bus
 c_func
 (paren
+id|uhci-&gt;bus
 )paren
 suffix:semicolon
 id|reset_hc
@@ -6365,41 +6483,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_APM
-id|apm_unregister_callback
-c_func
-(paren
-op_amp
-id|handle_apm_event
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-DECL|function|init_modules
-r_int
-id|init_modules
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|uhci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|uhci_init
 r_int
 id|uhci_init
@@ -6511,4 +6594,40 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|uhci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_APM
+id|apm_unregister_callback
+c_func
+(paren
+op_amp
+id|handle_apm_event
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#endif 
+singleline_comment|//MODULE
 eof

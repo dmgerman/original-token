@@ -684,6 +684,11 @@ op_star
 id|root_hub
 suffix:semicolon
 multiline_comment|/* Root hub */
+DECL|member|bus_list
+r_struct
+id|list_head
+id|bus_list
+suffix:semicolon
 DECL|member|hcpriv
 r_void
 op_star
@@ -789,7 +794,7 @@ r_int
 id|maxstring
 suffix:semicolon
 multiline_comment|/* max valid index */
-multiline_comment|/*&n;&t; * Child devices - these can be either new devices&n;&t; * (if this is a hub device), or different instances&n;&t; * of this same device.&n;&t; *&n;&t; * Each instance needs its own set of data structuctures.&n;&t; */
+multiline_comment|/*&n;&t; * Child devices - these can be either new devices&n;&t; * (if this is a hub device), or different instances&n;&t; * of this same device.&n;&t; *&n;&t; * Each instance needs its own set of data structures.&n;&t; */
 DECL|member|maxchild
 r_int
 id|maxchild
@@ -835,6 +840,26 @@ c_func
 (paren
 r_struct
 id|usb_driver
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_register_bus
+c_func
+(paren
+r_struct
+id|usb_bus
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_deregister_bus
+c_func
+(paren
+r_struct
+id|usb_bus
 op_star
 )paren
 suffix:semicolon
@@ -892,7 +917,7 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|usb_device_descriptor
 c_func
 (paren
@@ -900,6 +925,28 @@ r_struct
 id|usb_device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_void
+id|usb_check_support
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
+r_void
+id|usb_driver_purge
+c_func
+(paren
+r_struct
+id|usb_driver
+op_star
+comma
+r_struct
+id|usb_device
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -1044,7 +1091,6 @@ DECL|macro|usb_snddefctrl
 mdefine_line|#define usb_snddefctrl(dev)&t;&t;((2 &lt;&lt; 30) | __default_pipe(dev))
 DECL|macro|usb_rcvdefctrl
 mdefine_line|#define usb_rcvdefctrl(dev)&t;&t;((2 &lt;&lt; 30) | __default_pipe(dev) | 0x80)
-multiline_comment|/* Create .. */
 multiline_comment|/*&n; * Send and receive control messages..&n; */
 r_void
 id|usb_new_device

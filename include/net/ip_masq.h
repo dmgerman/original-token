@@ -906,26 +906,6 @@ r_extern
 id|rwlock_t
 id|__ip_masq_lock
 suffix:semicolon
-macro_line|#ifdef __SMP__
-DECL|macro|read_lock_bh
-mdefine_line|#define read_lock_bh(lock) &t;do { start_bh_atomic(); read_lock(lock); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
-DECL|macro|read_unlock_bh
-mdefine_line|#define read_unlock_bh(lock)&t;do { read_unlock(lock); end_bh_atomic(); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
-DECL|macro|write_lock_bh
-mdefine_line|#define write_lock_bh(lock)&t;do { start_bh_atomic(); write_lock(lock); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
-DECL|macro|write_unlock_bh
-mdefine_line|#define write_unlock_bh(lock)&t;do { write_unlock(lock); end_bh_atomic(); &bslash;&n;&t;&t;&t;&t;&t;} while (0)
-macro_line|#else
-DECL|macro|read_lock_bh
-mdefine_line|#define read_lock_bh(lock)&t;start_bh_atomic()
-DECL|macro|read_unlock_bh
-mdefine_line|#define read_unlock_bh(lock)&t;end_bh_atomic()
-DECL|macro|write_lock_bh
-mdefine_line|#define write_lock_bh(lock)&t;start_bh_atomic()
-DECL|macro|write_unlock_bh
-mdefine_line|#define write_unlock_bh(lock)&t;end_bh_atomic()
-macro_line|#endif 
-multiline_comment|/*&n; *&n; */
 multiline_comment|/*&n; *&t;Debugging stuff&n; */
 r_extern
 r_int

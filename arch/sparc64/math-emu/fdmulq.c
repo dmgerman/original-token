@@ -1,3 +1,5 @@
+multiline_comment|/* $Id: fdmulq.c,v 1.4 1999/05/28 13:43:48 jj Exp $&n; * arch/sparc64/math-emu/fdmulq.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;quad.h&quot;
 macro_line|#include &quot;double.h&quot;
@@ -19,6 +21,8 @@ op_star
 id|rs1
 )paren
 (brace
+id|FP_DECL_EX
+suffix:semicolon
 id|FP_DECL_D
 c_func
 (paren
@@ -43,7 +47,7 @@ c_func
 id|R
 )paren
 suffix:semicolon
-id|__FP_UNPACK_D
+id|FP_UNPACK_DP
 c_func
 (paren
 id|IN
@@ -67,7 +71,7 @@ comma
 id|IN
 )paren
 suffix:semicolon
-id|__FP_UNPACK_D
+id|FP_UNPACK_DP
 c_func
 (paren
 id|IN
@@ -101,14 +105,15 @@ comma
 id|B
 )paren
 suffix:semicolon
-r_return
-id|__FP_PACK_Q
+id|FP_PACK_QP
 c_func
 (paren
 id|rd
 comma
 id|R
 )paren
+suffix:semicolon
+id|FP_HANDLE_EXCEPTIONS
 suffix:semicolon
 )brace
 eof

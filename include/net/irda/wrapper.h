@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.h&n; * Version:       1.0&n; * Description:   IrDA Wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Jan 29 10:15:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.h&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon May  3 09:02:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef WRAPPER_H
 DECL|macro|WRAPPER_H
 mdefine_line|#define WRAPPER_H
@@ -17,14 +17,13 @@ DECL|macro|STA
 mdefine_line|#define STA BOF  /* Start flag */
 DECL|macro|STO
 mdefine_line|#define STO EOF  /* End flag */
-DECL|macro|IR_TRANS
-mdefine_line|#define IR_TRANS 0x20    /* Asynchronous transparency modifier */       
+DECL|macro|IRDA_TRANS
+mdefine_line|#define IRDA_TRANS 0x20    /* Asynchronous transparency modifier */       
+multiline_comment|/* States for receving a frame in async mode */
 r_enum
 (brace
 DECL|enumerator|OUTSIDE_FRAME
 id|OUTSIDE_FRAME
-op_assign
-l_int|1
 comma
 DECL|enumerator|BEGIN_FRAME
 id|BEGIN_FRAME
@@ -54,6 +53,7 @@ r_int
 id|buffsize
 )paren
 suffix:semicolon
+r_inline
 r_void
 id|async_unwrap_char
 c_func
@@ -61,6 +61,7 @@ c_func
 r_struct
 id|irda_device
 op_star
+id|idev
 comma
 id|__u8
 id|byte

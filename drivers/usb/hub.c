@@ -1,18 +1,14 @@
-multiline_comment|/*&n; * USB hub driver.&n; *&n; * This is horrible, it knows about the UHCI driver&n; * internals, but it&squot;s just meant as a rough example,&n; * let&squot;s do the virtualization later when this works.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; */
+multiline_comment|/*&n; * USB hub driver.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;uhci.h&quot;
 macro_line|#include &quot;hub.h&quot;
-r_extern
-r_struct
-id|usb_operations
-id|uhci_device_operations
-suffix:semicolon
 multiline_comment|/* Wakes up khubd */
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -1926,9 +1922,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|hub_cleanup
+DECL|function|usb_hub_cleanup
 r_void
-id|hub_cleanup
+id|usb_hub_cleanup
 c_func
 (paren
 r_void
@@ -1959,4 +1955,39 @@ id|hub_driver
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+(def_block
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|usb_hub_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
+DECL|function|module_cleanup
+r_void
+(def_block
+id|module_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|usb_hub_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
+macro_line|#endif
 eof

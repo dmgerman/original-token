@@ -1,11 +1,4 @@
 r_int
-id|bp_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
 id|usb_kbd_init
 c_func
 (paren
@@ -20,7 +13,7 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|hub_init
+id|usb_hub_init
 c_func
 (paren
 r_void
@@ -41,7 +34,7 @@ r_void
 )paren
 suffix:semicolon
 r_void
-id|hub_cleanup
+id|usb_hub_cleanup
 c_func
 (paren
 r_void

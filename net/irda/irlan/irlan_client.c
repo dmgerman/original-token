@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 23:03:55 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Tue May 11 00:22:39 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -83,6 +83,9 @@ id|qos
 comma
 id|__u32
 id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -170,7 +173,7 @@ r_if
 c_cond
 (paren
 (paren
-id|self-&gt;access_type
+id|self-&gt;provider.access_type
 op_eq
 id|ACCESS_PEER
 )paren
@@ -266,7 +269,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -294,13 +297,21 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Check if we are already awake */
+multiline_comment|/* &n;&t; * Check if we are already awake, or if we are a provider in direct&n;&t; * mode (in that case we must leave the client idle&n;&t; */
 r_if
 c_cond
+(paren
 (paren
 id|self-&gt;client.state
 op_ne
 id|IRLAN_IDLE
+)paren
+op_logical_or
+(paren
+id|self-&gt;provider.access_type
+op_eq
+id|ACCESS_DIRECT
+)paren
 )paren
 r_return
 suffix:semicolon
@@ -309,7 +320,7 @@ id|self-&gt;saddr
 op_assign
 id|saddr
 suffix:semicolon
-multiline_comment|/* Check if network device is up */
+multiline_comment|/* Before we try to connect, we check if network device is up. If it&n;&t; * is up, that means that the &quot;user&quot; really wants to connect. If not&n;&t; * we notify the user about the possibility of an IrLAN connection&n;&t; */
 r_if
 c_cond
 (paren
@@ -318,12 +329,6 @@ id|self-&gt;dev.start
 (brace
 multiline_comment|/* Open TSAPs */
 id|irlan_client_open_ctrl_tsap
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
-id|irlan_provider_open_ctrl_tsap
 c_func
 (paren
 id|self
@@ -429,7 +434,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -503,10 +508,12 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;(), Found instance!&bslash;n&quot;
+l_string|&quot;(), Found instance (%08x)!&bslash;n&quot;
+comma
+id|daddr
 )paren
 suffix:semicolon
 id|irlan_client_wakeup
@@ -522,104 +529,26 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * We have no instance for daddr, so try and find an unused one&n;&t; */
-id|self
-op_assign
-id|hashbin_find
-c_func
-(paren
-id|irlan
-comma
-id|DEV_ADDR_ANY
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|self
-)paren
-(brace
+multiline_comment|/* &n;&t; * We have no instance for daddr, so start a new one&n;&t; */
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;(), Found instance with DEV_ADDR_ANY!&bslash;n&quot;
+l_string|&quot;(), starting new instance!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Rehash instance, now we have a client (daddr) to serve.&n;&t;&t; */
-id|entry
-op_assign
-id|hashbin_remove
-c_func
-(paren
-id|irlan
-comma
-id|self-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|entry
-op_eq
 id|self
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|self-&gt;daddr
 op_assign
-id|daddr
-suffix:semicolon
-id|self-&gt;saddr
-op_assign
+id|irlan_open
+c_func
+(paren
 id|saddr
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
 comma
-id|__FUNCTION__
-l_string|&quot;(), daddr=%08x&bslash;n&quot;
+id|daddr
 comma
-id|self-&gt;daddr
-)paren
-suffix:semicolon
-id|hashbin_insert
-c_func
-(paren
-id|irlan
-comma
-(paren
-id|QUEUE
-op_star
-)paren
-id|self
-comma
-id|self-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-multiline_comment|/* Check if network device has been registered */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self-&gt;netdev_registered
-)paren
-id|irlan_register_netdev
-c_func
-(paren
-id|self
+id|TRUE
 )paren
 suffix:semicolon
 multiline_comment|/* Restart watchdog timer */
@@ -631,7 +560,6 @@ comma
 id|IRLAN_TIMEOUT
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irlan_client_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the control channel&n; *&n; */
 DECL|function|irlan_client_ctrl_data_indication
@@ -1012,6 +940,9 @@ comma
 id|__u32
 id|max_sdu_size
 comma
+id|__u8
+id|max_header_size
+comma
 r_struct
 id|sk_buff
 op_star
@@ -1062,6 +993,14 @@ comma
 r_return
 suffix:semicolon
 )paren
+suffix:semicolon
+id|self-&gt;client.max_sdu_size
+op_assign
+id|max_sdu_size
+suffix:semicolon
+id|self-&gt;client.max_header_size
+op_assign
+id|max_header_size
 suffix:semicolon
 multiline_comment|/* TODO: we could set the MTU depending on the max_sdu_size */
 id|irlan_do_client_event
@@ -1149,11 +1088,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -1442,9 +1377,8 @@ r_if
 c_cond
 (paren
 id|ret
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 (brace
 id|DEBUG
@@ -1490,7 +1424,7 @@ id|value
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function check_param (param, value)&n; *&n; *    Check which parameter is received and update local variables&n; *&n; */
+multiline_comment|/*&n; * Function irlan_check_response_param (self, param, value, val_len)&n; *&n; *     Check which parameter is received and update local variables&n; *&n; */
 DECL|function|irlan_check_response_param
 r_static
 r_void
@@ -1765,7 +1699,7 @@ l_string|&quot;DIRECT&quot;
 op_eq
 l_int|0
 )paren
-id|self-&gt;access_type
+id|self-&gt;client.access_type
 op_assign
 id|ACCESS_DIRECT
 suffix:semicolon
@@ -1783,7 +1717,7 @@ l_string|&quot;PEER&quot;
 op_eq
 l_int|0
 )paren
-id|self-&gt;access_type
+id|self-&gt;client.access_type
 op_assign
 id|ACCESS_PEER
 suffix:semicolon
@@ -1801,7 +1735,7 @@ l_string|&quot;HOSTED&quot;
 op_eq
 l_int|0
 )paren
-id|self-&gt;access_type
+id|self-&gt;client.access_type
 op_assign
 id|ACCESS_HOSTED
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 23:13:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Sun May  9 11:48:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -170,7 +170,6 @@ id|__u16
 id|value_len
 )paren
 suffix:semicolon
-r_static
 r_void
 id|irlan_close_tsaps
 c_func
@@ -212,7 +211,8 @@ id|proc_dir_entry
 op_star
 id|proc_irda
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_PROC_FS */
+multiline_comment|/*&n; * Function irlan_watchdog_timer_expired (data)&n; *&n; *    &n; *&n; */
 DECL|function|irlan_watchdog_timer_expired
 r_void
 id|irlan_watchdog_timer_expired
@@ -231,9 +231,6 @@ r_struct
 id|irlan_cb
 op_star
 id|self
-comma
-op_star
-id|entry
 suffix:semicolon
 id|DEBUG
 c_func
@@ -282,6 +279,15 @@ c_cond
 id|self-&gt;dev.start
 )paren
 (brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), notifying irmanager to stop irlan!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|mgr_event.event
 op_assign
 id|EVENT_IRLAN_STOP
@@ -317,7 +323,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), recycling instance!&bslash;n&quot;
+l_string|&quot;(), closing instance!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -347,63 +353,10 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-multiline_comment|/* Unbind from daddr */
-id|entry
-op_assign
-id|hashbin_remove
+id|irlan_close
 c_func
 (paren
-id|irlan
-comma
-id|self-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|entry
-op_eq
 id|self
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|self-&gt;daddr
-op_assign
-id|DEV_ADDR_ANY
-suffix:semicolon
-id|self-&gt;saddr
-op_assign
-id|DEV_ADDR_ANY
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), daddr=%08x&bslash;n&quot;
-comma
-id|self-&gt;daddr
-)paren
-suffix:semicolon
-id|hashbin_insert
-c_func
-(paren
-id|irlan
-comma
-(paren
-id|QUEUE
-op_star
-)paren
-id|self
-comma
-id|self-&gt;daddr
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -564,7 +517,7 @@ c_func
 id|hints
 )paren
 suffix:semicolon
-multiline_comment|/* Start the first IrLAN instance */
+multiline_comment|/* Start the master IrLAN instance */
 r_new
 op_assign
 id|irlan_open
@@ -577,23 +530,18 @@ comma
 id|FALSE
 )paren
 suffix:semicolon
-id|irlan_open_data_tsap
-c_func
-(paren
-r_new
-)paren
-suffix:semicolon
-id|irlan_client_open_ctrl_tsap
-c_func
-(paren
-r_new
-)paren
-suffix:semicolon
+multiline_comment|/* The master will only open its (listen) control TSAP */
 id|irlan_provider_open_ctrl_tsap
 c_func
 (paren
 r_new
 )paren
+suffix:semicolon
+r_new
+op_member_access_from_pointer
+id|master
+op_assign
+id|TRUE
 suffix:semicolon
 multiline_comment|/* Do some fast discovery! */
 id|irlmp_discovery_request
@@ -884,7 +832,7 @@ op_assign
 id|daddr
 suffix:semicolon
 multiline_comment|/* Provider access can only be PEER, DIRECT, or HOSTED */
-id|self-&gt;access_type
+id|self-&gt;provider.access_type
 op_assign
 id|access
 suffix:semicolon
@@ -1110,10 +1058,19 @@ id|self-&gt;dev.start
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), Device still configured, closing later!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Give it a chance to reconnect */
+id|irlan_start_watchdog_timer
+c_func
+(paren
+id|self
+comma
+id|IRLAN_TIMEOUT
 )paren
 suffix:semicolon
 r_return
@@ -1160,6 +1117,7 @@ id|self
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irlan_connect_indication (instance, sap, qos, max_sdu_size, skb)&n; *&n; *    Here we receive the connect indication for the data channel&n; *&n; */
 DECL|function|irlan_connect_indication
 r_void
 id|irlan_connect_indication
@@ -1180,6 +1138,9 @@ id|qos
 comma
 id|__u32
 id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -1257,10 +1218,18 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|self-&gt;max_sdu_size
+op_assign
+id|max_sdu_size
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 l_string|&quot;IrLAN, We are now connected!&bslash;n&quot;
 )paren
@@ -1295,7 +1264,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|self-&gt;access_type
+id|self-&gt;provider.access_type
 op_eq
 id|ACCESS_PEER
 )paren
@@ -1314,7 +1283,7 @@ id|self
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Ready to transfer Ethernet frames */
+multiline_comment|/* Ready to transfer Ethernet frames (at last) */
 id|self-&gt;dev.tbusy
 op_assign
 l_int|0
@@ -1340,6 +1309,9 @@ id|qos
 comma
 id|__u32
 id|max_sdu_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -1391,6 +1363,14 @@ comma
 r_return
 suffix:semicolon
 )paren
+suffix:semicolon
+id|self-&gt;max_sdu_size
+op_assign
+id|max_sdu_size
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
 suffix:semicolon
 multiline_comment|/* TODO: we could set the MTU depending on the max_sdu_size */
 id|DEBUG
@@ -1463,7 +1443,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), reason=%d&bslash;n&quot;
@@ -1562,7 +1542,12 @@ r_case
 id|LM_USER_REQUEST
 suffix:colon
 multiline_comment|/* User request */
-singleline_comment|//irlan_close(self);
+id|irlan_close
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1674,7 +1659,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -2206,11 +2191,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;client.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -2322,11 +2303,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;client.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -2460,11 +2437,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;client.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -2588,11 +2561,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -2738,11 +2707,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;client.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -2904,11 +2869,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;client.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -3067,11 +3028,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;client.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -3214,11 +3171,7 @@ c_func
 (paren
 id|skb
 comma
-id|TTP_HEADER
-op_plus
-id|LMP_HEADER
-op_plus
-id|LAP_HEADER
+id|self-&gt;client.max_header_size
 )paren
 suffix:semicolon
 id|skb_put
@@ -4096,6 +4049,15 @@ id|len
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t display the master server */
+r_if
+c_cond
+(paren
+id|self-&gt;master
+op_eq
+l_int|0
+)paren
+(brace
 id|len
 op_add_assign
 id|sprintf
@@ -4207,7 +4169,7 @@ l_string|&quot;access type: %s&bslash;n&quot;
 comma
 id|irlan_access
 (braket
-id|self-&gt;access_type
+id|self-&gt;client.access_type
 )braket
 )paren
 suffix:semicolon
@@ -4295,6 +4257,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 id|self
 op_assign
 (paren

@@ -382,13 +382,6 @@ id|UHCI_MAXQH
 )braket
 suffix:semicolon
 macro_line|#endif
-DECL|member|root_hub
-r_struct
-id|uhci_device
-op_star
-id|root_hub
-suffix:semicolon
-multiline_comment|/* Root hub device descriptor.. */
 DECL|member|fl
 r_struct
 id|uhci_framelist

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Thu Nov 19 13:55:34 1998&n; * Modified at:   Thu Dec 10 14:06:18 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Thu Nov 19 13:55:34 1998&n; * Modified at:   Mon May  3 12:07:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef W83977AF_IR_H
 DECL|macro|W83977AF_IR_H
 mdefine_line|#define W83977AF_IR_H
@@ -196,6 +196,77 @@ DECL|macro|IRM_CR_IRX_MSL
 mdefine_line|#define IRM_CR_IRX_MSL&t;0x40
 DECL|macro|IRM_CR_AF_MNT
 mdefine_line|#define IRM_CR_AF_MNT   0x80 /* Automatic format */
+multiline_comment|/* For storing entries in the status FIFO */
+DECL|struct|st_fifo_entry
+r_struct
+id|st_fifo_entry
+(brace
+DECL|member|status
+r_int
+id|status
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|st_fifo
+r_struct
+id|st_fifo
+(brace
+DECL|member|entries
+r_struct
+id|st_fifo_entry
+id|entries
+(braket
+l_int|10
+)braket
+suffix:semicolon
+DECL|member|head
+r_int
+id|head
+suffix:semicolon
+DECL|member|tail
+r_int
+id|tail
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* Private data for each instance */
+DECL|struct|w83977af_ir
+r_struct
+id|w83977af_ir
+(brace
+DECL|member|st_fifo
+r_struct
+id|st_fifo
+id|st_fifo
+suffix:semicolon
+DECL|member|tx_buff_offsets
+r_int
+id|tx_buff_offsets
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* Offsets between frames in tx_buff */
+DECL|member|tx_len
+r_int
+id|tx_len
+suffix:semicolon
+multiline_comment|/* Number of frames in tx_buff */
+DECL|member|idev
+r_struct
+id|irda_device
+id|idev
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|function|switch_bank
 r_static
 r_inline

@@ -834,11 +834,11 @@ c_func
 id|irlpt_common_debug
 comma
 id|__FUNCTION__
-l_string|&quot;: count = %d, irlap_data_size = %d, IRLPT_MAX_HEADER = %d&bslash;n&quot;
+l_string|&quot;: count = %d, max_data_size = %d, IRLPT_MAX_HEADER = %d&bslash;n&quot;
 comma
 id|count
 comma
-id|self-&gt;irlap_data_size
+id|self-&gt;max_data_size
 comma
 id|IRLPT_MAX_HEADER
 )paren
@@ -848,20 +848,12 @@ c_cond
 (paren
 id|count
 OG
-(paren
-id|self-&gt;irlap_data_size
-op_minus
-id|IRLPT_MAX_HEADER
-)paren
+id|self-&gt;max_data_size
 )paren
 (brace
 id|count
 op_assign
-(paren
-id|self-&gt;irlap_data_size
-op_minus
-id|IRLPT_MAX_HEADER
-)paren
+id|self-&gt;max_data_size
 suffix:semicolon
 id|DEBUG
 c_func
@@ -893,7 +885,7 @@ c_func
 (paren
 id|count
 op_plus
-id|IRLPT_MAX_HEADER
+id|self-&gt;max_header_size
 )paren
 suffix:semicolon
 r_if
@@ -1462,9 +1454,7 @@ c_func
 (paren
 id|skb
 comma
-id|LMP_CONTROL_HEADER
-op_plus
-id|LAP_HEADER
+id|LMP_MAX_HEADER
 )paren
 suffix:semicolon
 id|irlmp_disconnect_request

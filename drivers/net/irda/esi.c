@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.2&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon Apr 12 11:55:30 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.4&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon May 10 15:13:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998-1999, Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -115,7 +115,7 @@ r_void
 )paren
 (brace
 r_return
-id|irtty_register_dongle
+id|irda_device_register_dongle
 c_func
 (paren
 op_amp
@@ -131,7 +131,7 @@ c_func
 r_void
 )paren
 (brace
-id|irtty_unregister_dongle
+id|irda_device_unregister_dongle
 c_func
 (paren
 op_amp
@@ -182,9 +182,20 @@ c_func
 r_struct
 id|irda_device
 op_star
-id|driver
+id|idev
 )paren
 (brace
+multiline_comment|/* Power off dongle */
+id|irda_device_set_dtr_rts
+c_func
+(paren
+id|idev
+comma
+id|FALSE
+comma
+id|FALSE
+)paren
+suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
@@ -204,27 +215,10 @@ r_int
 id|baud
 )paren
 (brace
-r_struct
-id|irtty_cb
-op_star
-id|self
-suffix:semicolon
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
 r_int
 id|dtr
 comma
 id|rts
-suffix:semicolon
-r_struct
-id|termios
-id|old_termios
-suffix:semicolon
-r_int
-id|cflag
 suffix:semicolon
 id|ASSERT
 c_func
@@ -248,65 +242,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|self
-op_assign
-(paren
-r_struct
-id|irtty_cb
-op_star
-)paren
-id|idev-&gt;priv
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|IRTTY_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self-&gt;tty
-)paren
-r_return
-suffix:semicolon
-id|tty
-op_assign
-id|self-&gt;tty
-suffix:semicolon
-id|old_termios
-op_assign
-op_star
-(paren
-id|tty-&gt;termios
-)paren
-suffix:semicolon
-id|cflag
-op_assign
-id|tty-&gt;termios-&gt;c_cflag
-suffix:semicolon
-id|cflag
-op_and_assign
-op_complement
-id|CBAUD
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -316,10 +251,6 @@ id|baud
 r_case
 l_int|19200
 suffix:colon
-id|cflag
-op_or_assign
-id|B19200
-suffix:semicolon
 id|dtr
 op_assign
 id|TRUE
@@ -333,10 +264,6 @@ suffix:semicolon
 r_case
 l_int|115200
 suffix:colon
-id|cflag
-op_or_assign
-id|B115200
-suffix:semicolon
 id|dtr
 op_assign
 id|rts
@@ -350,10 +277,6 @@ l_int|9600
 suffix:colon
 r_default
 suffix:colon
-id|cflag
-op_or_assign
-id|B9600
-suffix:semicolon
 id|dtr
 op_assign
 id|FALSE
@@ -365,26 +288,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Change speed of serial driver */
-id|tty-&gt;termios-&gt;c_cflag
-op_assign
-id|cflag
-suffix:semicolon
-id|tty-&gt;driver
-dot
-id|set_termios
+multiline_comment|/* Change speed of dongle */
+id|irda_device_set_dtr_rts
 c_func
 (paren
-id|tty
-comma
-op_amp
-id|old_termios
-)paren
-suffix:semicolon
-id|irtty_set_dtr_rts
-c_func
-(paren
-id|tty
+id|idev
 comma
 id|dtr
 comma
@@ -442,6 +350,18 @@ suffix:semicolon
 multiline_comment|/* Needs at least 10 ms */
 )brace
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Extended Systems JetEye PC dongle driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize ESI module&n; *&n; */
 DECL|function|init_module
 r_int

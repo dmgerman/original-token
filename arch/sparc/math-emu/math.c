@@ -1,14 +1,14 @@
-multiline_comment|/* &n; * arch/sparc/math-emu/math.c&n; *&n; * Copyright (C) 1998 Peter Maydell (pmaydell@chiark.greenend.org.uk)&n; * Based on the sparc64 code by Jakub Jelinek.&n; *&n; * This is a good place to start if you&squot;re trying to understand the&n; * emulation code, because it&squot;s pretty simple. What we do is &n; * essentially analyse the instruction to work out what the operation&n; * is and which registers are involved. We then execute the appropriate&n; * FXXXX function. [The floating point queue introduces a minor wrinkle;&n; * see below...]&n; * The fxxxxx.c files each emulate a single insn. They look relatively&n; * simple because the complexity is hidden away in an unholy tangle&n; * of preprocessor macros. &n; *&n; * WARNING : don&squot;t look at the macro definitions unless you &n; * absolutely have to! They&squot;re extremely ugly, rather complicated&n; * and a single line in an fxxxx.c file can expand to the equivalent &n; * of  30 lines or more of C. Of course, any error in those 30 lines &n; * is reported by the compiler as an error in the single line with the&n; * macro usage...&n; * Question: should we replace them with inline functions?&n; *&n; * The first layer of macros is single.h, double.h, quad.h. Generally&n; * these files define macros for working with floating point numbers&n; * of the three IEEE formats. FP_ADD_D(R,A,B) is for adding doubles,&n; * for instance. These macros are usually defined as calls to more&n; * generic macros (in this case _FP_ADD(D,2,R,X,Y) where the number&n; * of machine words required to store the given IEEE format is passed&n; * as a parameter. [double.h and co check the number of bits in a word&n; * and define FP_ADD_D &amp; co appropriately]. &n; * The generic macros are defined in op-common.h. This is where all&n; * the grotty stuff like handling NaNs is coded. To handle the possible&n; * word sizes macros in op-common.h use macros like _FP_FRAC_SLL_##wc()&n; * where wc is the &squot;number of machine words&squot; parameter (here 2). &n; * These are defined in the third layer of macros: op-1.h, op-2.h&n; * and op-4.h. These handle operations on floating point numbers composed&n; * of 1,2 and 4 machine words respectively. [For example, on sparc64&n; * doubles are one machine word so macros in double.h eventually use&n; * constructs in op-1.h, but on sparc32 they use op-2.h definitions.]&n; * soft-fp.h is on the same level as op-common.h, and defines some&n; * macros which are independent of both word size and FP format.&n; * Finally, sfp-machine.h is the machine dependent part of the &n; * code: it defines the word size and what type a word is. It also&n; * defines how _FP_MUL_MEAT_t() maps to _FP_MUL_MEAT_n_* : op-n.h&n; * provide several possible flavours of multiply algorithm, most&n; * of which require that you supply some form of asm or C primitive to&n; * do the actual multiply. (such asm primitives should be defined&n; * in sfp-machine.h too). udivmodti4.c is the same sort of thing.&n; *&n; * There may be some errors here because I&squot;m working from a&n; * SPARC architecture manual V9, and what I really want is V8...&n; * Also, the insns which can generate exceptions seem to be a&n; * greater subset of the FPops than for V9 (for example, FCMPED&n; * has to be emulated on V8). So I think I&squot;m going to have&n; * to emulate them all just to be on the safe side...&n; *&n; * Emulation routines originate from soft-fp package, which is&n; * part of glibc and has appropriate copyrights in it (allegedly).&n; *&n; * NB: on sparc int == long == 4 bytes, long long == 8 bytes.&n; * Most bits of the kernel seem to go for long rather than int,&n; * so we follow that practice...&n; */
-multiline_comment|/* WISHLIST:&n; *&n; * + Replace all the macros with inline functions. These should&n; * have the same effect but be much easier to work with.&n; *&n; * + Emulate the IEEE exception flags. We don&squot;t currently do this&n; * because a) it would require significant alterations to&n; * the emulation macros [see the comments about _FP_NEG()&n; * in op-common.c and note that we&squot;d need to invent a convention&n; * for passing in the flags to FXXXX fns and returning them] and &n; * b) SPARClinux doesn&squot;t let users access the flags anyway &n; * [contrast Solaris, which allows you to examine, clear or set&n; * the flags, and request that exceptions cause SIGFPE &n; * [which you then set up a signal handler for, obviously...]].&n; * Erm, (b) may quite possibly be garbage. %fsr is user-writable&n; * so you don&squot;t need a syscall. There may or may not be library&n; * support.&n; *&n; * + Emulation of FMULQ, FDIVQ, FSQRTQ, FDMULQ needs to be &n; * written!&n; * &n; * + reindent code to conform to Linux kernel standard :-&gt;&n; *&n; * + work out whether all the compile-time warnings are bogus&n; *&n; * + check that conversion to/from integers works&n; * &n; * + check with the SPARC architecture manual to see if we resolve&n; * the implementation-dependent bits of the IEEE spec in the&n; * same manner as the hardware.&n; *&n; * + more test cases for the test script always welcome!&n; *&n; * + illegal opcodes currently cause SIGFPEs. We should arrange&n; * to tell the traps.c code to SIGILL instead. Currently,&n; * everywhere that we return 0 should cause SIGILL, I think.&n; * SIGFPE should only be caused if we set an IEEE exception bit&n; * and the relevant trap bit is also set. (this means that &n; * traps.c should do this; also it should handle the case of&n; * IEEE exception generated directly by the hardware.)&n; * Should illegal_fp_register (which is a flavour of fp exception)&n; * cause SIGFPE or  SIGILL?&n; *&n; * + the test script needs to be extended to handle the quadword&n; * and comparison insns.&n; *&n; * + _FP_DIV_MEAT_2_udiv_64() appears to work but it should be&n; * checked by somebody who understands the algorithm :-&gt;&n; * &n; * + fpsave() saves the FP queue but fpload() doesn&squot;t reload it.&n; * Therefore when we context switch or change FPU ownership&n; * we have to check to see if the queue had anything in it and&n; * emulate it if it did. This is going to be a pain. &n; */
+multiline_comment|/*&n; * arch/sparc/math-emu/math.c&n; *&n; * Copyright (C) 1998 Peter Maydell (pmaydell@chiark.greenend.org.uk)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; * This is a good place to start if you&squot;re trying to understand the&n; * emulation code, because it&squot;s pretty simple. What we do is&n; * essentially analyse the instruction to work out what the operation&n; * is and which registers are involved. We then execute the appropriate&n; * FXXXX function. [The floating point queue introduces a minor wrinkle;&n; * see below...]&n; * The fxxxxx.c files each emulate a single insn. They look relatively&n; * simple because the complexity is hidden away in an unholy tangle&n; * of preprocessor macros.&n; *&n; * The first layer of macros is single.h, double.h, quad.h. Generally&n; * these files define macros for working with floating point numbers&n; * of the three IEEE formats. FP_ADD_D(R,A,B) is for adding doubles,&n; * for instance. These macros are usually defined as calls to more&n; * generic macros (in this case _FP_ADD(D,2,R,X,Y) where the number&n; * of machine words required to store the given IEEE format is passed&n; * as a parameter. [double.h and co check the number of bits in a word&n; * and define FP_ADD_D &amp; co appropriately].&n; * The generic macros are defined in op-common.h. This is where all&n; * the grotty stuff like handling NaNs is coded. To handle the possible&n; * word sizes macros in op-common.h use macros like _FP_FRAC_SLL_##wc()&n; * where wc is the &squot;number of machine words&squot; parameter (here 2).&n; * These are defined in the third layer of macros: op-1.h, op-2.h&n; * and op-4.h. These handle operations on floating point numbers composed&n; * of 1,2 and 4 machine words respectively. [For example, on sparc64&n; * doubles are one machine word so macros in double.h eventually use&n; * constructs in op-1.h, but on sparc32 they use op-2.h definitions.]&n; * soft-fp.h is on the same level as op-common.h, and defines some&n; * macros which are independent of both word size and FP format.&n; * Finally, sfp-machine.h is the machine dependent part of the&n; * code: it defines the word size and what type a word is. It also&n; * defines how _FP_MUL_MEAT_t() maps to _FP_MUL_MEAT_n_* : op-n.h&n; * provide several possible flavours of multiply algorithm, most&n; * of which require that you supply some form of asm or C primitive to&n; * do the actual multiply. (such asm primitives should be defined&n; * in sfp-machine.h too). udivmodti4.c is the same sort of thing.&n; *&n; * There may be some errors here because I&squot;m working from a&n; * SPARC architecture manual V9, and what I really want is V8...&n; * Also, the insns which can generate exceptions seem to be a&n; * greater subset of the FPops than for V9 (for example, FCMPED&n; * has to be emulated on V8). So I think I&squot;m going to have&n; * to emulate them all just to be on the safe side...&n; *&n; * Emulation routines originate from soft-fp package, which is&n; * part of glibc and has appropriate copyrights in it (allegedly).&n; *&n; * NB: on sparc int == long == 4 bytes, long long == 8 bytes.&n; * Most bits of the kernel seem to go for long rather than int,&n; * so we follow that practice...&n; */
+multiline_comment|/* TODO:&n; * fpsave() saves the FP queue but fpload() doesn&squot;t reload it.&n; * Therefore when we context switch or change FPU ownership&n; * we have to check to see if the queue had anything in it and&n; * emulate it if it did. This is going to be a pain.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 DECL|macro|FLOATFUNC
 mdefine_line|#define FLOATFUNC(x) extern int x(void *,void *,void *)
-multiline_comment|/* Current status: we don&squot;t properly emulate the difficult quadword&n; * insns (MUL, DIV, SQRT).&n; * There are also some ops involving the FP registers which we don&squot;t&n; * emulate: the branch on FP condition flags and the load/store to&n; * FP regs or FSR. I&squot;m assuming that these will never generate traps&n; * (not unreasonable if there&squot;s an FPU at all; comments in the NetBSD&n; * kernel source agree on this point). If we wanted to allow&n; * purely software-emulation of the FPU with FPU totally disabled&n; * or non-existent, we&squot;d have to emulate these as well. We&squot;d also&n; * need to alter the fp_disabled trap handler to call the math-emu&n; * code appropriately. The structure of do_one_mathemu() is also&n; * inappropriate for these ops (as it has no way to alter the pc, &n; * for a start) and it might be better to special-case them in do_mathemu().&n; * Oh, and you&squot;d need to alter the traps.c code so it didn&squot;t try to&n; * fpsave() and fpload(). If there&squot;s genuinely no FPU then there&squot;s &n; * probably bits of kernel stuff that just won&squot;t work anyway...&n; */
-multiline_comment|/* The Vn labels indicate what version of the SPARC architecture gas thinks&n; * each insn is. This is from the binutils source :-&gt; &n; */
+multiline_comment|/* The Vn labels indicate what version of the SPARC architecture gas thinks&n; * each insn is. This is from the binutils source :-&gt;&n; */
 multiline_comment|/* quadword instructions */
 DECL|variable|FSQRTQ
 id|FLOATFUNC
@@ -17,7 +17,7 @@ c_func
 id|FSQRTQ
 )paren
 suffix:semicolon
-multiline_comment|/* v8 NYI */
+multiline_comment|/* v8 */
 DECL|variable|FADDQ
 id|FLOATFUNC
 c_func
@@ -41,7 +41,7 @@ c_func
 id|FMULQ
 )paren
 suffix:semicolon
-multiline_comment|/* v8 NYI */
+multiline_comment|/* v8 */
 DECL|variable|FDIVQ
 id|FLOATFUNC
 c_func
@@ -49,7 +49,7 @@ c_func
 id|FDIVQ
 )paren
 suffix:semicolon
-multiline_comment|/* v8 NYI */
+multiline_comment|/* v8 */
 DECL|variable|FDMULQ
 id|FLOATFUNC
 c_func
@@ -57,7 +57,7 @@ c_func
 id|FDMULQ
 )paren
 suffix:semicolon
-multiline_comment|/* v8 NYI */
+multiline_comment|/* v8 */
 DECL|variable|FQTOS
 id|FLOATFUNC
 c_func
@@ -363,7 +363,7 @@ op_star
 id|fpt
 )paren
 (brace
-multiline_comment|/* regs-&gt;pc isn&squot;t necessarily the PC at which the offending insn is sitting.&n;    * The FPU maintains a queue of FPops which cause traps. &n;    * When it hits an instruction that requires that the trapped op succeeded&n;    * (usually because it reads a reg. that the trapped op wrote) then it&n;    * causes this exception. We need to emulate all the insns on the queue&n;    * and then allow the op to proceed.&n;    * This code should also handle the case where the trap was precise,&n;    * in which case the queue length is zero and regs-&gt;pc points at the &n;    * single FPop to be emulated. (this case is untested, though :-&gt;) &n;    * You&squot;ll need this case if you want to be able to emulate all FPops&n;    * because the FPU either doesn&squot;t exist or has been software-disabled.&n;    * [The UltraSPARC makes FP a precise trap; this isn&squot;t as stupid as it &n;    * might sound because the Ultra does funky things with a superscalar&n;    * architecture.]&n;    */
+multiline_comment|/* regs-&gt;pc isn&squot;t necessarily the PC at which the offending insn is sitting.&n;&t; * The FPU maintains a queue of FPops which cause traps.&n;&t; * When it hits an instruction that requires that the trapped op succeeded&n;&t; * (usually because it reads a reg. that the trapped op wrote) then it&n;&t; * causes this exception. We need to emulate all the insns on the queue&n;&t; * and then allow the op to proceed.&n;&t; * This code should also handle the case where the trap was precise,&n;&t; * in which case the queue length is zero and regs-&gt;pc points at the&n;&t; * single FPop to be emulated. (this case is untested, though :-&gt;)&n;&t; * You&squot;ll need this case if you want to be able to emulate all FPops&n;&t; * because the FPU either doesn&squot;t exist or has been software-disabled.&n;&t; * [The UltraSPARC makes FP a precise trap; this isn&squot;t as stupid as it&n;&t; * might sound because the Ultra does funky things with a superscalar&n;&t; * architecture.]&n;&t; */
 multiline_comment|/* You wouldn&squot;t believe how often I typed &squot;ftp&squot; when I meant &squot;fpt&squot; :-&gt; */
 r_int
 id|i
@@ -378,7 +378,7 @@ r_int
 r_int
 id|insn
 suffix:semicolon
-macro_line|#ifdef DEBUG_MATHEMU   
+macro_line|#ifdef DEBUG_MATHEMU
 id|printk
 c_func
 (paren
@@ -435,7 +435,7 @@ dot
 id|insn_addr
 )paren
 suffix:semicolon
-macro_line|#endif      
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -445,7 +445,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* no queue, guilty insn is at regs-&gt;pc */
-macro_line|#ifdef DEBUG_MATHEMU   
+macro_line|#ifdef DEBUG_MATHEMU
 id|printk
 c_func
 (paren
@@ -669,12 +669,12 @@ c_cond
 (paren
 id|eflag
 op_amp
-id|EFLAG_INVALID
+id|FP_EX_INVALID
 )paren
 (brace
 id|eflag
 op_assign
-id|EFLAG_INVALID
+id|FP_EX_INVALID
 suffix:semicolon
 )brace
 r_else
@@ -683,12 +683,12 @@ c_cond
 (paren
 id|eflag
 op_amp
-id|EFLAG_DIVZERO
+id|FP_EX_OVERFLOW
 )paren
 (brace
 id|eflag
 op_assign
-id|EFLAG_DIVZERO
+id|FP_EX_OVERFLOW
 suffix:semicolon
 )brace
 r_else
@@ -697,17 +697,45 @@ c_cond
 (paren
 id|eflag
 op_amp
-id|EFLAG_INEXACT
+id|FP_EX_UNDERFLOW
 )paren
 (brace
 id|eflag
 op_assign
-id|EFLAG_INEXACT
+id|FP_EX_UNDERFLOW
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|eflag
+op_amp
+id|FP_EX_DIVZERO
+)paren
+(brace
+id|eflag
+op_assign
+id|FP_EX_DIVZERO
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|eflag
+op_amp
+id|FP_EX_INEXACT
+)paren
+(brace
+id|eflag
+op_assign
+id|FP_EX_INEXACT
 suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Set CEXC, here are the rules:&n;&t; *&n;&t; * 1) In general all FPU ops will set one and only one&n;&t; *    bit in the CEXC field, this is always the case&n;&t; *    when the IEEE exception trap is enabled in TEM.&n;&t; *&n;&t; * 2) As a special case, if an overflow or underflow&n;&t; *    is being signalled, AND the trap is not enabled&n;&t; *    in TEM, then the inexact field shall also be set.&n;&t; */
+multiline_comment|/* Set CEXC, here is the rule:&n;&t; *&n;&t; *    In general all FPU ops will set one and only one&n;&t; *    bit in the CEXC field, this is always the case&n;&t; *    when the IEEE exception trap is enabled in TEM.&n;&t; */
 id|fsr
 op_and_assign
 op_complement
@@ -715,24 +743,6 @@ op_complement
 id|FSR_CEXC_MASK
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|would_trap
-op_logical_or
-(paren
-id|eflag
-op_amp
-(paren
-id|EFLAG_OVERFLOW
-op_or
-id|EFLAG_UNDERFLOW
-)paren
-)paren
-op_eq
-l_int|0
-)paren
-(brace
 id|fsr
 op_or_assign
 (paren
@@ -744,30 +754,7 @@ op_lshift
 id|FSR_CEXC_SHIFT
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|fsr
-op_or_assign
-(paren
-(paren
-(paren
-r_int
-)paren
-id|eflag
-op_lshift
-id|FSR_CEXC_SHIFT
-)paren
-op_or
-(paren
-id|EFLAG_INEXACT
-op_lshift
-id|FSR_CEXC_SHIFT
-)paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Set the AEXC field, rules are:&n;&t; *&n;&t; * 1) If a trap would not be generated, the&n;&t; *    CEXC just generated is OR&squot;d into the&n;&t; *    existing value of AEXC.&n;&t; *&n;&t; * 2) When a trap is generated, AEXC is cleared.&n;&t; */
+multiline_comment|/* Set the AEXC field, rule is:&n;&t; *&n;&t; *    If a trap would not be generated, the&n;&t; *    CEXC just generated is OR&squot;d into the&n;&t; *    existing value of AEXC.&n;&t; */
 r_if
 c_cond
 (paren
@@ -788,14 +775,6 @@ id|FSR_AEXC_SHIFT
 )paren
 suffix:semicolon
 )brace
-r_else
-id|fsr
-op_and_assign
-op_complement
-(paren
-id|FSR_AEXC_MASK
-)paren
-suffix:semicolon
 multiline_comment|/* If trapping, indicate fault trap type IEEE. */
 r_if
 c_cond
@@ -856,7 +835,7 @@ id|type
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* 01 is single, 10 is double, 11 is quad, &n;    * 000011 is rs1, 001100 is rs2, 110000 is rd (00 in rd is fcc)&n;    * 111100000000 tells which ftt that may happen in &n;    * (this field not used on sparc32 code, as we can&squot;t &n;    * extract trap type info for ops on the FP queue) &n;    */
+multiline_comment|/* 01 is single, 10 is double, 11 is quad,&n;&t; * 000011 is rs1, 001100 is rs2, 110000 is rd (00 in rd is fcc)&n;&t; * 111100000000 tells which ftt that may happen in&n;&t; * (this field not used on sparc32 code, as we can&squot;t&n;&t; * extract trap type info for ops on the FP queue)&n;&t; */
 r_int
 id|freg
 comma
@@ -905,7 +884,7 @@ comma
 id|insn
 )paren
 suffix:semicolon
-macro_line|#endif   
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1325,7 +1304,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-macro_line|#ifdef DEBUG_MATHEMU         
+macro_line|#ifdef DEBUG_MATHEMU
 id|printk
 c_func
 (paren
@@ -1340,7 +1319,7 @@ op_amp
 l_int|0x1ff
 )paren
 suffix:semicolon
-macro_line|#endif         
+macro_line|#endif
 )brace
 )brace
 r_else
@@ -1449,7 +1428,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-macro_line|#ifdef DEBUG_MATHEMU         
+macro_line|#ifdef DEBUG_MATHEMU
 id|printk
 c_func
 (paren
@@ -1464,7 +1443,7 @@ op_amp
 l_int|0x1ff
 )paren
 suffix:semicolon
-macro_line|#endif         &t;
+macro_line|#endif
 )brace
 )brace
 r_if
@@ -1523,8 +1502,8 @@ id|type
 op_amp
 l_int|0x3
 )paren
-multiline_comment|/* is rs1 single, double or quad? */
 (brace
+multiline_comment|/* is rs1 single, double or quad? */
 r_case
 l_int|3
 suffix:colon
@@ -1535,8 +1514,8 @@ id|freg
 op_amp
 l_int|3
 )paren
-multiline_comment|/* quadwords must have bits 4&amp;5 of the */
 (brace
+multiline_comment|/* quadwords must have bits 4&amp;5 of the */
 multiline_comment|/* encoded reg. number set to zero. */
 op_star
 id|fsr
@@ -1563,8 +1542,8 @@ id|freg
 op_amp
 l_int|1
 )paren
-multiline_comment|/* doublewords must have bit 5 zeroed */
 (brace
+multiline_comment|/* doublewords must have bit 5 zeroed */
 op_star
 id|fsr
 op_or_assign
@@ -1622,8 +1601,8 @@ id|freg
 op_amp
 l_int|3
 )paren
-multiline_comment|/* quadwords must have bits 4&amp;5 of the */
 (brace
+multiline_comment|/* quadwords must have bits 4&amp;5 of the */
 multiline_comment|/* encoded reg. number set to zero. */
 op_star
 id|fsr
@@ -1650,8 +1629,8 @@ id|freg
 op_amp
 l_int|1
 )paren
-multiline_comment|/* doublewords must have bit 5 zeroed */
 (brace
+multiline_comment|/* doublewords must have bit 5 zeroed */
 op_star
 id|fsr
 op_or_assign
@@ -1701,8 +1680,8 @@ l_int|4
 op_amp
 l_int|0x3
 )paren
-multiline_comment|/* and finally rd. This one&squot;s a bit different */
 (brace
+multiline_comment|/* and finally rd. This one&squot;s a bit different */
 r_case
 l_int|0
 suffix:colon
@@ -1712,8 +1691,8 @@ c_cond
 (paren
 id|freg
 )paren
-multiline_comment|/* V8 has only one set of condition codes, so */
 (brace
+multiline_comment|/* V8 has only one set of condition codes, so */
 multiline_comment|/* anything but 0 in the rd field is an error */
 op_star
 id|fsr
@@ -1754,8 +1733,8 @@ id|freg
 op_amp
 l_int|3
 )paren
-multiline_comment|/* quadwords must have bits 4&amp;5 of the */
 (brace
+multiline_comment|/* quadwords must have bits 4&amp;5 of the */
 multiline_comment|/* encoded reg. number set to zero. */
 op_star
 id|fsr
@@ -1782,8 +1761,8 @@ id|freg
 op_amp
 l_int|1
 )paren
-multiline_comment|/* doublewords must have bit 5 zeroed */
 (brace
+multiline_comment|/* doublewords must have bit 5 zeroed */
 op_star
 id|fsr
 op_or_assign
@@ -1816,14 +1795,14 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG_MATHEMU   
+macro_line|#ifdef DEBUG_MATHEMU
 id|printk
 c_func
 (paren
 l_string|&quot;executing insn...&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif   
+macro_line|#endif
 id|eflag
 op_assign
 id|func

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.3&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC v 1.3)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Tue Apr 20 11:15:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.3&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC v 1.3)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Mon May 10 22:11:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -863,7 +863,7 @@ id|idev-&gt;netdev.stop
 op_assign
 id|uircc_net_close
 suffix:semicolon
-id|irport_open
+id|irport_start
 c_func
 (paren
 id|iobase2
@@ -898,6 +898,11 @@ op_star
 id|idev
 )paren
 (brace
+r_struct
+id|uircc_cb
+op_star
+id|self
+suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
@@ -943,6 +948,15 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase
 suffix:semicolon
+id|self
+op_assign
+(paren
+r_struct
+id|uircc_cb
+op_star
+)paren
+id|idev-&gt;priv
+suffix:semicolon
 multiline_comment|/* Some magic to disable FIR and enable SIR */
 id|uircc_toshiba_cmd
 c_func
@@ -968,7 +982,7 @@ op_plus
 id|UIRCC_CR10
 )paren
 suffix:semicolon
-id|irport_close
+id|irport_stop
 c_func
 (paren
 id|idev-&gt;io.iobase2
@@ -1024,6 +1038,12 @@ id|irda_device_close
 c_func
 (paren
 id|idev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_return
@@ -1305,7 +1325,7 @@ suffix:colon
 r_case
 l_int|115200
 suffix:colon
-id|irport_open
+id|irport_start
 c_func
 (paren
 id|idev-&gt;io.iobase2
@@ -1314,7 +1334,7 @@ suffix:semicolon
 id|irport_change_speed
 c_func
 (paren
-id|idev-&gt;io.iobase2
+id|idev
 comma
 id|speed
 )paren
@@ -1370,7 +1390,7 @@ suffix:semicolon
 r_case
 l_int|4000000
 suffix:colon
-id|irport_close
+id|irport_stop
 c_func
 (paren
 id|idev-&gt;io.iobase2

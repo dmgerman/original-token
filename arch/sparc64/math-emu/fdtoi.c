@@ -1,3 +1,7 @@
+multiline_comment|/* $Id: fdtoi.c,v 1.3 1999/05/28 13:43:52 jj Exp $&n; * arch/sparc64/math-emu/fdtoi.c&n; *&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; */
+DECL|macro|FP_ROUNDMODE
+mdefine_line|#define FP_ROUNDMODE FP_RND_ZERO
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 macro_line|#include &quot;double.h&quot;
 DECL|function|FDTOI
@@ -14,6 +18,8 @@ op_star
 id|rs2
 )paren
 (brace
+id|FP_DECL_EX
+suffix:semicolon
 id|FP_DECL_D
 c_func
 (paren
@@ -23,7 +29,7 @@ suffix:semicolon
 r_int
 id|r
 suffix:semicolon
-id|__FP_UNPACK_D
+id|FP_UNPACK_DP
 c_func
 (paren
 id|A
@@ -43,13 +49,18 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|FP_INHIBIT_RESULTS
+)paren
 op_star
 id|rd
 op_assign
 id|r
 suffix:semicolon
-r_return
-l_int|0
+id|FP_HANDLE_EXCEPTIONS
 suffix:semicolon
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Tue Apr 20 11:15:00 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Corel Computer Corp.&n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       1.0&n; * Description:   FIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Thu May 13 08:03:27 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Corel Computer Corp.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,8 +17,18 @@ macro_line|#include &lt;net/irda/wrapper.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/w83977af.h&gt;
 macro_line|#include &lt;net/irda/w83977af_ir.h&gt;
-DECL|macro|NETWINDER
-mdefine_line|#define NETWINDER
+DECL|macro|CONFIG_NETWINDER
+mdefine_line|#define CONFIG_NETWINDER                 /* Adjust to NetWinder differences */
+DECL|macro|CONFIG_NETWINDER_TX_DMA_PROBLEMS
+macro_line|#undef  CONFIG_NETWINDER_TX_DMA_PROBLEMS /* Not needed */
+DECL|macro|CONFIG_NETWINDER_RX_DMA_PROBLEMS
+mdefine_line|#define CONFIG_NETWINDER_RX_DMA_PROBLEMS /* Must have this one! */
+DECL|macro|CONFIG_USE_INTERNAL_TIMER
+macro_line|#undef  CONFIG_USE_INTERNAL_TIMER        /* Just cannot make that timer work */
+DECL|macro|CONFIG_USE_W977_PNP
+mdefine_line|#define CONFIG_USE_W977_PNP              /* Currently needed */
+DECL|macro|PIO_MAX_SPEED
+mdefine_line|#define PIO_MAX_SPEED       115200 
 DECL|variable|driver_name
 r_static
 r_char
@@ -27,6 +37,14 @@ id|driver_name
 op_assign
 l_string|&quot;w83977af_ir&quot;
 suffix:semicolon
+DECL|variable|qos_mtt_bits
+r_static
+r_int
+id|qos_mtt_bits
+op_assign
+l_int|0x07
+suffix:semicolon
+multiline_comment|/* 1 ms or more */
 DECL|macro|CHIP_IO_EXTENT
 mdefine_line|#define CHIP_IO_EXTENT 8
 DECL|variable|io
@@ -77,7 +95,7 @@ id|dma
 )braket
 op_assign
 (brace
-l_int|0
+l_int|1
 comma
 l_int|0
 comma
@@ -89,7 +107,7 @@ suffix:semicolon
 DECL|variable|dev_self
 r_static
 r_struct
-id|irda_device
+id|w83977af_ir
 op_star
 id|dev_self
 (braket
@@ -103,21 +121,6 @@ comma
 l_int|NULL
 comma
 l_int|NULL
-)brace
-suffix:semicolon
-multiline_comment|/* For storing entries in the status FIFO */
-DECL|struct|st_fifo_entry
-r_struct
-id|st_fifo_entry
-(brace
-DECL|member|status
-r_int
-id|status
-suffix:semicolon
-DECL|member|len
-r_int
-id|len
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|variable|prev
@@ -493,10 +496,15 @@ id|i
 id|w83977af_close
 c_func
 (paren
+op_amp
+(paren
 id|dev_self
 (braket
 id|i
 )braket
+op_member_access_from_pointer
+id|idev
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -528,6 +536,11 @@ r_struct
 id|irda_device
 op_star
 id|idev
+suffix:semicolon
+r_struct
+id|w83977af_ir
+op_star
+id|self
 suffix:semicolon
 r_int
 id|ret
@@ -562,7 +575,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Allocate new instance of the driver&n;&t; */
-id|idev
+id|self
 op_assign
 id|kmalloc
 c_func
@@ -570,7 +583,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|irda_device
+id|w83977af_ir
 )paren
 comma
 id|GFP_KERNEL
@@ -579,7 +592,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|idev
+id|self
 op_eq
 l_int|NULL
 )paren
@@ -600,14 +613,14 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|idev
+id|self
 comma
 l_int|0
 comma
 r_sizeof
 (paren
 r_struct
-id|irda_device
+id|w83977af_ir
 )paren
 )paren
 suffix:semicolon
@@ -617,7 +630,12 @@ id|dev_self
 id|i
 )braket
 op_assign
+id|self
+suffix:semicolon
 id|idev
+op_assign
+op_amp
+id|self-&gt;idev
 suffix:semicolon
 multiline_comment|/* Initialize IO */
 id|idev-&gt;io.iobase
@@ -721,9 +739,8 @@ suffix:semicolon
 multiline_comment|/* The HP HDLS-1100 needs 1 ms according to the specs */
 id|idev-&gt;qos.min_turn_time.bits
 op_assign
-l_int|0x03
+id|qos_mtt_bits
 suffix:semicolon
-multiline_comment|/* 1ms and more */
 id|irda_qos_bits_to_value
 c_func
 (paren
@@ -803,7 +820,7 @@ id|idev
 comma
 id|driver_name
 comma
-l_int|NULL
+id|self
 )paren
 suffix:semicolon
 r_return
@@ -823,6 +840,11 @@ op_star
 id|idev
 )paren
 (brace
+r_struct
+id|w83977af_ir
+op_star
+id|self
+suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
@@ -865,6 +887,16 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase
 suffix:semicolon
+id|self
+op_assign
+(paren
+r_struct
+id|w83977af_ir
+op_star
+)paren
+id|idev-&gt;priv
+suffix:semicolon
+macro_line|#ifdef CONFIG_USE_W977_PNP
 multiline_comment|/* enter PnP configuration mode */
 id|w977_efm_enter
 c_func
@@ -891,6 +923,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_USE_W977_PNP */
 multiline_comment|/* Release the PORT that this driver is using */
 id|DEBUG
 c_func
@@ -915,6 +948,12 @@ id|irda_device_close
 c_func
 (paren
 id|idev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_return
@@ -949,6 +988,7 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_USE_W977_PNP
 multiline_comment|/* Enter PnP configuration mode */
 id|w977_efm_enter
 c_func
@@ -988,7 +1028,6 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* w977_write_reg(0x70, 0x06); */
 id|w977_write_reg
 c_func
 (paren
@@ -997,7 +1036,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
-macro_line|#ifdef NETWINDER
+macro_line|#ifdef CONFIG_NETWINDER
 id|w977_write_reg
 c_func
 (paren
@@ -1008,7 +1047,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Netwinder uses one higher than Linux */
+multiline_comment|/* Netwinder uses 1 higher than Linux */
 macro_line|#else
 id|w977_write_reg
 c_func
@@ -1024,7 +1063,7 @@ c_func
 (paren
 l_int|0x75
 comma
-id|dma
+l_int|0x04
 )paren
 suffix:semicolon
 multiline_comment|/* Disable Tx DMA */
@@ -1053,6 +1092,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Disable Advanced mode */
 id|switch_bank
 c_func
@@ -1231,7 +1271,6 @@ op_plus
 id|UFR
 )paren
 suffix:semicolon
-multiline_comment|/* &t;outb( 0xa7, iobase+UFR); */
 multiline_comment|/* Receiver frame length */
 id|switch_bank
 c_func
@@ -1327,15 +1366,6 @@ id|iobase
 suffix:semicolon
 id|__u8
 id|set
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1624,15 +1654,29 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|UFR_RXTL
-op_or
-id|UFR_TXTL
-op_or
-id|UFR_TXF_RST
-op_or
-id|UFR_RXF_RST
-op_or
+l_int|0x00
+comma
+id|iobase
+op_plus
+id|UFR
+)paren
+suffix:semicolon
+multiline_comment|/* Reset */
+id|outb
+c_func
+(paren
 id|UFR_EN_FIFO
+comma
+id|iobase
+op_plus
+id|UFR
+)paren
+suffix:semicolon
+multiline_comment|/* First we must enable FIFO */
+id|outb
+c_func
+(paren
+l_int|0xa7
 comma
 id|iobase
 op_plus
@@ -1657,7 +1701,7 @@ c_cond
 (paren
 id|speed
 OG
-l_int|115200
+id|PIO_MAX_SPEED
 )paren
 (brace
 id|outb
@@ -1822,9 +1866,13 @@ c_cond
 (paren
 id|idev-&gt;io.baudrate
 OG
-l_int|115200
+id|PIO_MAX_SPEED
 )paren
 (brace
+id|idev-&gt;tx_buff.data
+op_assign
+id|idev-&gt;tx_buff.head
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1839,10 +1887,6 @@ id|idev-&gt;tx_buff.len
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-id|idev-&gt;tx_buff.data
-op_assign
-id|idev-&gt;tx_buff.head
-suffix:semicolon
 id|mtt
 op_assign
 id|irda_get_mtt
@@ -1851,6 +1895,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_USE_INTERNAL_TIMER
 r_if
 c_cond
 (paren
@@ -1861,9 +1906,7 @@ l_int|50
 (brace
 multiline_comment|/* Adjust for timer resolution */
 id|mtt
-op_assign
-id|mtt
-op_div
+op_div_assign
 l_int|1000
 op_plus
 l_int|1
@@ -1942,6 +1985,20 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#endif
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(%ld), mtt=%d&bslash;n&quot;
+comma
+id|jiffies
+comma
+id|mtt
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1980,7 +2037,9 @@ comma
 id|iobase
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_USE_INTERNAL_TIMER
 )brace
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -2041,7 +2100,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function w83977af_dma_write (idev, iobase)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function w83977af_dma_write (idev, iobase)&n; *&n; *    Send frame using DMA&n; *&n; */
 DECL|function|w83977af_dma_write
 r_static
 r_void
@@ -2060,13 +2119,24 @@ id|iobase
 id|__u8
 id|set
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETWINDER_TX_DMA_PROBLEMS
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__u8
+id|hcr
+suffix:semicolon
+macro_line|#endif
 id|DEBUG
 c_func
 (paren
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), len=%d&bslash;n&quot;
+comma
+id|idev-&gt;tx_buff.len
 )paren
 suffix:semicolon
 multiline_comment|/* Save current set */
@@ -2108,23 +2178,6 @@ op_plus
 id|HCR
 )paren
 suffix:semicolon
-id|setup_dma
-c_func
-(paren
-id|idev-&gt;io.dma
-comma
-id|idev-&gt;tx_buff.data
-comma
-id|idev-&gt;tx_buff.len
-comma
-id|DMA_MODE_WRITE
-)paren
-suffix:semicolon
-multiline_comment|/* idev-&gt;media_busy = TRUE; */
-id|idev-&gt;io.direction
-op_assign
-id|IO_XMIT
-suffix:semicolon
 multiline_comment|/* Choose transmit DMA channel  */
 id|switch_bank
 c_func
@@ -2137,24 +2190,85 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|ADCR1
-)paren
-op_or
 id|ADCR1_D_CHSW
 op_or
-id|ADCR1_DMA_F
-op_or
+multiline_comment|/*ADCR1_DMA_F|*/
 id|ADCR1_ADV_SL
 comma
 id|iobase
 op_plus
 id|ADCR1
 )paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_NETWINDER_TX_DMA_PROBLEMS
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|disable_dma
+c_func
+(paren
+id|idev-&gt;io.dma
+)paren
+suffix:semicolon
+id|clear_dma_ff
+c_func
+(paren
+id|idev-&gt;io.dma
+)paren
+suffix:semicolon
+id|set_dma_mode
+c_func
+(paren
+id|idev-&gt;io.dma
+comma
+id|DMA_MODE_READ
+)paren
+suffix:semicolon
+id|set_dma_addr
+c_func
+(paren
+id|idev-&gt;io.dma
+comma
+id|virt_to_bus
+c_func
+(paren
+id|idev-&gt;tx_buff.data
+)paren
+)paren
+suffix:semicolon
+id|set_dma_count
+c_func
+(paren
+id|idev-&gt;io.dma
+comma
+id|idev-&gt;tx_buff.len
+)paren
+suffix:semicolon
+macro_line|#else
+id|setup_dma
+c_func
+(paren
+id|idev-&gt;io.dma
+comma
+id|idev-&gt;tx_buff.data
+comma
+id|idev-&gt;tx_buff.len
+comma
+id|DMA_MODE_WRITE
+)paren
+suffix:semicolon
+macro_line|#endif
+id|idev-&gt;io.direction
+op_assign
+id|IO_XMIT
 suffix:semicolon
 multiline_comment|/* Enable DMA */
 id|switch_bank
@@ -2165,6 +2279,42 @@ comma
 id|SET0
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETWINDER_TX_DMA_PROBLEMS
+id|hcr
+op_assign
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|HCR
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|hcr
+op_or
+id|HCR_EN_DMA
+comma
+id|iobase
+op_plus
+id|HCR
+)paren
+suffix:semicolon
+id|enable_dma
+c_func
+(paren
+id|idev-&gt;io.dma
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#else&t;
 id|outb
 c_func
 (paren
@@ -2177,12 +2327,15 @@ id|HCR
 )paren
 op_or
 id|HCR_EN_DMA
+op_or
+id|HCR_TX_WT
 comma
 id|iobase
 op_plus
 id|HCR
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Restore set register */
 id|outb
 c_func
@@ -2382,7 +2535,9 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(%ld)&bslash;n&quot;
+comma
+id|jiffies
 )paren
 suffix:semicolon
 id|ASSERT
@@ -2537,13 +2692,18 @@ op_star
 id|idev
 )paren
 (brace
+r_struct
+id|w83977af_ir
+op_star
+id|self
+suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
 id|__u8
 id|set
 suffix:semicolon
-macro_line|#ifdef NETWINDER
+macro_line|#ifdef CONFIG_NETWINDER_RX_DMA_PROBLEMS
 r_int
 r_int
 id|flags
@@ -2581,11 +2741,15 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
 )paren
+suffix:semicolon
+id|self
+op_assign
+id|idev-&gt;priv
 suffix:semicolon
 id|iobase
 op_assign
@@ -2630,7 +2794,48 @@ op_plus
 id|HCR
 )paren
 suffix:semicolon
-macro_line|#ifdef NETWINDER
+multiline_comment|/* Choose DMA Rx, DMA Fairness, and Advanced mode */
+id|switch_bank
+c_func
+(paren
+id|iobase
+comma
+id|SET2
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|ADCR1
+)paren
+op_amp
+op_complement
+id|ADCR1_D_CHSW
+)paren
+multiline_comment|/*|ADCR1_DMA_F*/
+op_or
+id|ADCR1_ADV_SL
+comma
+id|iobase
+op_plus
+id|ADCR1
+)paren
+suffix:semicolon
+id|idev-&gt;io.direction
+op_assign
+id|IO_RECV
+suffix:semicolon
+id|idev-&gt;rx_buff.data
+op_assign
+id|idev-&gt;rx_buff.head
+suffix:semicolon
+macro_line|#ifdef CONFIG_NETWINDER_RX_DMA_PROBLEMS
 id|save_flags
 c_func
 (paren
@@ -2696,16 +2901,15 @@ id|DMA_MODE_READ
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* driver-&gt;media_busy = FALSE; */
-id|idev-&gt;io.direction
-op_assign
-id|IO_RECV
-suffix:semicolon
-id|idev-&gt;rx_buff.data
-op_assign
-id|idev-&gt;rx_buff.head
-suffix:semicolon
 multiline_comment|/* &n;&t; * Reset Rx FIFO. This will also flush the ST_FIFO, it&squot;s very &n;&t; * important that we don&squot;t reset the Tx FIFO since it might not&n;&t; * be finished transmitting yet&n;&t; */
+id|switch_bank
+c_func
+(paren
+id|iobase
+comma
+id|SET0
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -2722,43 +2926,13 @@ op_plus
 id|UFR
 )paren
 suffix:semicolon
-id|prev.status
+id|self-&gt;st_fifo.len
+op_assign
+id|self-&gt;st_fifo.tail
+op_assign
+id|self-&gt;st_fifo.head
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Choose DMA Rx, DMA Fairness, and Advanced mode */
-id|switch_bank
-c_func
-(paren
-id|iobase
-comma
-id|SET2
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-(paren
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|ADCR1
-)paren
-op_amp
-op_complement
-id|ADCR1_D_CHSW
-)paren
-op_or
-id|ADCR1_DMA_F
-op_or
-id|ADCR1_ADV_SL
-comma
-id|iobase
-op_plus
-id|ADCR1
-)paren
 suffix:semicolon
 multiline_comment|/* Enable DMA */
 id|switch_bank
@@ -2769,7 +2943,7 @@ comma
 id|SET0
 )paren
 suffix:semicolon
-macro_line|#ifdef NETWINDER
+macro_line|#ifdef CONFIG_NETWINDER_RX_DMA_PROBLEMS
 id|hcr
 op_assign
 id|inb
@@ -2778,12 +2952,6 @@ c_func
 id|iobase
 op_plus
 id|HCR
-)paren
-suffix:semicolon
-id|enable_dma
-c_func
-(paren
-id|idev-&gt;io.dma
 )paren
 suffix:semicolon
 id|outb
@@ -2796,6 +2964,12 @@ comma
 id|iobase
 op_plus
 id|HCR
+)paren
+suffix:semicolon
+id|enable_dma
+c_func
+(paren
+id|idev-&gt;io.dma
 )paren
 suffix:semicolon
 id|restore_flags
@@ -2835,15 +3009,6 @@ op_plus
 id|SSR
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), done!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2865,6 +3030,16 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+r_struct
+id|w83977af_ir
+op_star
+id|self
+suffix:semicolon
+r_struct
+id|st_fifo
+op_star
+id|st_fifo
+suffix:semicolon
 r_int
 id|len
 suffix:semicolon
@@ -2880,11 +3055,20 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
 )paren
+suffix:semicolon
+id|self
+op_assign
+id|idev-&gt;priv
+suffix:semicolon
+id|st_fifo
+op_assign
+op_amp
+id|self-&gt;st_fifo
 suffix:semicolon
 id|iobase
 op_assign
@@ -2905,6 +3089,7 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase
 suffix:semicolon
+multiline_comment|/* Read status FIFO */
 id|switch_bank
 c_func
 (paren
@@ -2913,29 +3098,10 @@ comma
 id|SET5
 )paren
 suffix:semicolon
-r_if
-c_cond
+r_while
+c_loop
 (paren
-id|prev.status
-op_amp
-id|FS_FO_FSFDR
-)paren
-(brace
-id|status
-op_assign
-id|prev.status
-suffix:semicolon
-id|len
-op_assign
-id|prev.len
-suffix:semicolon
-id|prev.status
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-(brace
+(paren
 id|status
 op_assign
 id|inb
@@ -2945,7 +3111,25 @@ id|iobase
 op_plus
 id|FS_FO
 )paren
+)paren
+op_amp
+id|FS_FO_FSFDR
+)paren
+(brace
+id|st_fifo-&gt;entries
+(braket
+id|st_fifo-&gt;tail
+)braket
+dot
+id|status
+op_assign
+id|status
 suffix:semicolon
+id|st_fifo-&gt;entries
+(braket
+id|st_fifo-&gt;tail
+)braket
+dot
 id|len
 op_assign
 id|inb
@@ -2956,6 +3140,11 @@ op_plus
 id|RFLFL
 )paren
 suffix:semicolon
+id|st_fifo-&gt;entries
+(braket
+id|st_fifo-&gt;tail
+)braket
+dot
 id|len
 op_or_assign
 id|inb
@@ -2968,15 +3157,44 @@ id|RFLFH
 op_lshift
 l_int|8
 suffix:semicolon
+id|st_fifo-&gt;tail
+op_increment
+suffix:semicolon
+id|st_fifo-&gt;len
+op_increment
+suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|status
-op_amp
-id|FS_FO_FSFDR
+id|st_fifo-&gt;len
 )paren
 (brace
+multiline_comment|/* Get first entry */
+id|status
+op_assign
+id|st_fifo-&gt;entries
+(braket
+id|st_fifo-&gt;head
+)braket
+dot
+id|status
+suffix:semicolon
+id|len
+op_assign
+id|st_fifo-&gt;entries
+(braket
+id|st_fifo-&gt;head
+)braket
+dot
+id|len
+suffix:semicolon
+id|st_fifo-&gt;head
+op_increment
+suffix:semicolon
+id|st_fifo-&gt;len
+op_decrement
+suffix:semicolon
 multiline_comment|/* Check for errors */
 r_if
 c_cond
@@ -3088,12 +3306,29 @@ op_amp
 id|USR_RDR
 )paren
 (brace
+macro_line|#ifdef CONFIG_USE_INTERNAL_TIMER
 multiline_comment|/* Put this entry back in fifo */
-id|prev.status
+id|st_fifo-&gt;head
+op_decrement
+suffix:semicolon
+id|st_fifo-&gt;len
+op_increment
+suffix:semicolon
+id|st_fifo-&gt;entries
+(braket
+id|st_fifo-&gt;head
+)braket
+dot
+id|status
 op_assign
 id|status
 suffix:semicolon
-id|prev.len
+id|st_fifo-&gt;entries
+(braket
+id|st_fifo-&gt;head
+)braket
+dot
+id|len
 op_assign
 id|len
 suffix:semicolon
@@ -3112,6 +3347,15 @@ r_return
 id|FALSE
 suffix:semicolon
 multiline_comment|/* I&squot;ll be back! */
+macro_line|#else
+id|udelay
+c_func
+(paren
+l_int|80
+)paren
+suffix:semicolon
+multiline_comment|/* Should be enough!? */
+macro_line|#endif
 )brace
 id|skb
 op_assign
@@ -3225,6 +3469,9 @@ id|idev-&gt;rx_buff.data
 op_add_assign
 id|len
 suffix:semicolon
+id|idev-&gt;stats.rx_packets
+op_increment
+suffix:semicolon
 id|skb-&gt;dev
 op_assign
 op_amp
@@ -3248,51 +3495,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|idev-&gt;stats.rx_packets
-op_increment
-suffix:semicolon
 )brace
-multiline_comment|/* Read next entry in ST_FIFO */
-id|switch_bank
-c_func
-(paren
-id|iobase
-comma
-id|SET5
-)paren
-suffix:semicolon
-id|status
-op_assign
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|FS_FO
-)paren
-suffix:semicolon
-id|len
-op_assign
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|RFLFL
-)paren
-suffix:semicolon
-id|len
-op_or_assign
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|RFLFH
-)paren
-op_lshift
-l_int|8
-suffix:semicolon
 )brace
 multiline_comment|/* Restore set register */
 id|outb
@@ -3427,6 +3630,12 @@ id|new_icr
 op_assign
 l_int|0
 suffix:semicolon
+id|__u8
+id|set
+suffix:semicolon
+r_int
+id|iobase
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -3437,6 +3646,10 @@ l_string|&quot;(), isr=%#x&bslash;n&quot;
 comma
 id|isr
 )paren
+suffix:semicolon
+id|iobase
+op_assign
+id|idev-&gt;io.iobase
 suffix:semicolon
 multiline_comment|/* Transmit FIFO low on data */
 r_if
@@ -3482,19 +3695,50 @@ id|idev-&gt;tx_buff.len
 OG
 l_int|0
 )paren
+(brace
 id|new_icr
 op_or_assign
 id|ICR_ETXTHI
 suffix:semicolon
+)brace
 r_else
 (brace
-id|DEBUG
+id|set
+op_assign
+id|inb
 c_func
 (paren
-l_int|4
+id|iobase
+op_plus
+id|SSR
+)paren
+suffix:semicolon
+id|switch_bank
+c_func
+(paren
+id|iobase
 comma
-id|__FUNCTION__
-l_string|&quot;(), finished with frame!&bslash;n&quot;
+id|SET0
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|AUDR_SFEND
+comma
+id|iobase
+op_plus
+id|AUDR
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|set
+comma
+id|iobase
+op_plus
+id|SSR
 )paren
 suffix:semicolon
 id|idev-&gt;netdev.tbusy
@@ -3589,17 +3833,6 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), isr=%#x&bslash;n&quot;
-comma
-id|isr
-)paren
-suffix:semicolon
 id|iobase
 op_assign
 id|idev-&gt;io.iobase
@@ -3637,6 +3870,7 @@ id|idev
 )paren
 )paren
 (brace
+multiline_comment|/* Wait for next status FIFO interrupt */
 id|new_icr
 op_or_assign
 id|ICR_EFSFI
@@ -3722,7 +3956,7 @@ id|IR_MSL
 suffix:semicolon
 multiline_comment|/* Clear timer event */
 multiline_comment|/* switch_bank(iobase, SET0); */
-multiline_comment|/* &t;&t;outb( ASCR_CTE, iobase+ASCR); */
+multiline_comment|/* &t;&t;outb(ASCR_CTE, iobase+ASCR); */
 multiline_comment|/* Check if this is a TX timer interrupt */
 r_if
 c_cond
@@ -3776,17 +4010,8 @@ id|idev
 )paren
 suffix:semicolon
 multiline_comment|/* Check if there are more frames to be transmitted */
-r_if
-c_cond
-(paren
-id|irda_device_txqueue_empty
-c_func
-(paren
-id|idev
-)paren
-)paren
-(brace
-multiline_comment|/* Prepare for receive */
+multiline_comment|/* if (irda_device_txqueue_empty(idev)) { */
+multiline_comment|/* Prepare for receive &n;&t;&t; * &n;&t;&t; * ** Netwinder Tx DMA likes that we do this anyway **&n;&t;&t; */
 id|w83977af_dma_receive
 c_func
 (paren
@@ -3797,7 +4022,7 @@ id|new_icr
 op_assign
 id|ICR_EFSFI
 suffix:semicolon
-)brace
+multiline_comment|/* } */
 )brace
 multiline_comment|/* Restore set */
 id|outb
@@ -3951,7 +4176,7 @@ c_cond
 (paren
 id|idev-&gt;io.baudrate
 OG
-l_int|115200
+id|PIO_MAX_SPEED
 )paren
 id|icr
 op_assign
@@ -4022,7 +4247,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|6
+l_int|60
+op_star
+id|HZ
+op_div
+l_int|1000
 )paren
 suffix:semicolon
 )brace
@@ -4569,6 +4798,26 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Winbond W83977AF IrDA Device Driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|qos_mtt_bits
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    &n; *&n; */
 DECL|function|init_module
 r_int

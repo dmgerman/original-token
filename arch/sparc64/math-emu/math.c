@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: math.c,v 1.7 1999/02/10 14:16:26 davem Exp $&n; * arch/sparc64/math-emu/math.c&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; * Emulation routines originate from soft-fp package, which is part&n; * of glibc and has appropriate copyrights in it.&n; */
+multiline_comment|/* $Id: math.c,v 1.8 1999/05/28 13:43:11 jj Exp $&n; * arch/sparc64/math-emu/math.c&n; *&n; * Copyright (C) 1997,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; *&n; * Emulation routines originate from soft-fp package, which is part&n; * of glibc and has appropriate copyrights in it.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &quot;sfp-util.h&quot;
 macro_line|#include &quot;soft-fp.h&quot;
 DECL|macro|FLOATFUNC
 mdefine_line|#define FLOATFUNC(x) extern int x(void *,void *,void *);
@@ -286,12 +287,12 @@ c_cond
 (paren
 id|eflag
 op_amp
-id|EFLAG_INVALID
+id|FP_EX_INVALID
 )paren
 (brace
 id|eflag
 op_assign
-id|EFLAG_INVALID
+id|FP_EX_INVALID
 suffix:semicolon
 )brace
 r_else
@@ -300,12 +301,12 @@ c_cond
 (paren
 id|eflag
 op_amp
-id|EFLAG_DIVZERO
+id|FP_EX_OVERFLOW
 )paren
 (brace
 id|eflag
 op_assign
-id|EFLAG_DIVZERO
+id|FP_EX_OVERFLOW
 suffix:semicolon
 )brace
 r_else
@@ -314,17 +315,45 @@ c_cond
 (paren
 id|eflag
 op_amp
-id|EFLAG_INEXACT
+id|FP_EX_UNDERFLOW
 )paren
 (brace
 id|eflag
 op_assign
-id|EFLAG_INEXACT
+id|FP_EX_UNDERFLOW
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|eflag
+op_amp
+id|FP_EX_DIVZERO
+)paren
+(brace
+id|eflag
+op_assign
+id|FP_EX_DIVZERO
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|eflag
+op_amp
+id|FP_EX_INEXACT
+)paren
+(brace
+id|eflag
+op_assign
+id|FP_EX_INEXACT
 suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Set CEXC, here are the rules:&n;&t; *&n;&t; * 1) In general all FPU ops will set one and only one&n;&t; *    bit in the CEXC field, this is always the case&n;&t; *    when the IEEE exception trap is enabled in TEM.&n;&t; *&n;&t; * 2) As a special case, if an overflow or underflow&n;&t; *    is being signalled, AND the trap is not enabled&n;&t; *    in TEM, then the inexact field shall also be set.&n;&t; */
+multiline_comment|/* Set CEXC, here is the rule:&n;&t; *&n;&t; *    In general all FPU ops will set one and only one&n;&t; *    bit in the CEXC field, this is always the case&n;&t; *    when the IEEE exception trap is enabled in TEM.&n;&t; */
 id|fsr
 op_and_assign
 op_complement
@@ -332,24 +361,6 @@ op_complement
 id|FSR_CEXC_MASK
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|would_trap
-op_logical_or
-(paren
-id|eflag
-op_amp
-(paren
-id|EFLAG_OVERFLOW
-op_or
-id|EFLAG_UNDERFLOW
-)paren
-)paren
-op_eq
-l_int|0
-)paren
-(brace
 id|fsr
 op_or_assign
 (paren
@@ -361,30 +372,7 @@ op_lshift
 id|FSR_CEXC_SHIFT
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|fsr
-op_or_assign
-(paren
-(paren
-(paren
-r_int
-)paren
-id|eflag
-op_lshift
-id|FSR_CEXC_SHIFT
-)paren
-op_or
-(paren
-id|EFLAG_INEXACT
-op_lshift
-id|FSR_CEXC_SHIFT
-)paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Set the AEXC field, rules are:&n;&t; *&n;&t; * 1) If a trap would not be generated, the&n;&t; *    CEXC just generated is OR&squot;d into the&n;&t; *    existing value of AEXC.&n;&t; *&n;&t; * 2) When a trap is generated, AEXC is cleared.&n;&t; */
+multiline_comment|/* Set the AEXC field, rule is:&n;&t; *&n;&t; *    If a trap would not be generated, the&n;&t; *    CEXC just generated is OR&squot;d into the&n;&t; *    existing value of AEXC.&n;&t; */
 r_if
 c_cond
 (paren
@@ -405,14 +393,6 @@ id|FSR_AEXC_SHIFT
 )paren
 suffix:semicolon
 )brace
-r_else
-id|fsr
-op_and_assign
-op_complement
-(paren
-id|FSR_AEXC_MASK
-)paren
-suffix:semicolon
 multiline_comment|/* If trapping, indicate fault trap type IEEE. */
 r_if
 c_cond
@@ -1454,22 +1434,12 @@ r_void
 op_star
 )paren
 (paren
-(paren
-(paren
 r_int
 )paren
-op_amp
-id|current-&gt;tss.xfsr
-(braket
-l_int|0
-)braket
-)paren
-op_or
 (paren
 id|freg
 op_amp
 l_int|3
-)paren
 )paren
 suffix:semicolon
 r_break

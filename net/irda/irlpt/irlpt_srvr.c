@@ -69,6 +69,7 @@ op_star
 id|skb
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_static
 r_void
 id|irlpt_server_connect_confirm
@@ -89,6 +90,9 @@ id|qos
 comma
 id|__u32
 id|max_seg_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -117,12 +121,16 @@ comma
 id|__u32
 id|max_seg_size
 comma
+id|__u8
+id|max_header_size
+comma
 r_struct
 id|sk_buff
 op_star
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|irlpt_server_data_indication
@@ -530,7 +538,6 @@ id|proc_irda
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/*&n; * Function irlpt_init (dev)&n; *&n; *   Initializes the irlpt control structure&n; *&n; */
-multiline_comment|/*int irlpt_init( struct device *dev) {*/
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -543,6 +550,10 @@ r_void
 )paren
 )paren
 (brace
+r_struct
+id|irmanager_event
+id|mgr_event
+suffix:semicolon
 id|__u16
 id|hints
 suffix:semicolon
@@ -706,6 +717,27 @@ op_assign
 id|irlpt_server_proc_read
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
+id|mgr_event.event
+op_assign
+id|EVENT_IRLPT_START
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|mgr_event.devname
+comma
+l_string|&quot;%s&quot;
+comma
+id|irlpt_server-&gt;ifname
+)paren
+suffix:semicolon
+id|irmanager_notify
+c_func
+(paren
+op_amp
+id|mgr_event
+)paren
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -729,6 +761,10 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|irmanager_event
+id|mgr_event
+suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -811,6 +847,27 @@ id|proc_irda
 )paren
 suffix:semicolon
 macro_line|#endif
+id|mgr_event.event
+op_assign
+id|EVENT_IRLPT_STOP
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|mgr_event.devname
+comma
+l_string|&quot;%s&quot;
+comma
+id|irlpt_server-&gt;ifname
+)paren
+suffix:semicolon
+id|irmanager_notify
+c_func
+(paren
+op_amp
+id|mgr_event
+)paren
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1021,6 +1078,9 @@ comma
 id|__u32
 id|max_seg_size
 comma
+id|__u8
+id|max_header_size
+comma
 r_struct
 id|sk_buff
 op_star
@@ -1073,6 +1133,14 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|self-&gt;max_data_size
+op_assign
+id|max_seg_size
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
+suffix:semicolon
 id|self-&gt;connected
 op_assign
 id|TRUE
@@ -1121,6 +1189,9 @@ id|qos
 comma
 id|__u32
 id|max_seg_size
+comma
+id|__u8
+id|max_header_size
 comma
 r_struct
 id|sk_buff
@@ -1187,6 +1258,14 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|self-&gt;max_data_size
+op_assign
+id|max_seg_size
+suffix:semicolon
+id|self-&gt;max_header_size
+op_assign
+id|max_header_size
+suffix:semicolon
 id|self-&gt;connected
 op_assign
 id|IRLPT_CONNECTED
@@ -1213,14 +1292,12 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 id|DEBUG
 c_func
 (paren

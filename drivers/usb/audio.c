@@ -3,6 +3,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;usb.h&quot;
 r_static
 r_int
@@ -463,4 +465,37 @@ id|data
 )paren
 (brace
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|usb_audio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|module_cleanup
+r_void
+id|module_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|usb_deregister
+c_func
+(paren
+op_amp
+id|usb_audio_driver
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

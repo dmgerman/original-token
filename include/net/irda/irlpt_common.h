@@ -440,11 +440,16 @@ r_int
 id|count
 suffix:semicolon
 multiline_comment|/* open count */
-DECL|member|irlap_data_size
+DECL|member|max_data_size
 r_int
-id|irlap_data_size
+id|max_data_size
 suffix:semicolon
 multiline_comment|/* max frame size we can send */
+DECL|member|max_header_size
+r_int
+id|max_header_size
+suffix:semicolon
+multiline_comment|/* how much header space is needed */
 DECL|member|pkt_count
 r_int
 id|pkt_count
