@@ -1,10 +1,9 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/io.h&n; *&n; * Copyright (C) 1997,1998 Russell King&n; *&n; * Modifications:&n; *  06-Dec-1997&t;RMK&t;Created.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-nexuspci/io.h&n; *&n; * Copyright (C) 1997,1998 Russell King&n; *&n; * Modifications:&n; *  06-Dec-1997&t;RMK&t;Created.&n; */
 macro_line|#ifndef __ASM_ARM_ARCH_IO_H
 DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
-multiline_comment|/*&n; * This architecture does not require any delayed IO, and&n; * has the constant-optimised IO&n; */
-DECL|macro|ARCH_IO_DELAY
-macro_line|#undef&t;ARCH_IO_DELAY
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
 multiline_comment|/*&n; * Dynamic IO functions - let the compiler&n; * optimize the expressions&n; */
 DECL|macro|DECLARE_DYN_OUT
 mdefine_line|#define DECLARE_DYN_OUT(fnsuffix,instr,typ)&t;&t;&t;&t;&t;&bslash;&n;extern __inline__ void __out##fnsuffix (unsigned int value, unsigned int port)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;str&quot; ##instr## &quot;&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (value), &quot;r&quot; (PCIO_BASE), typ (port));&t;&t;&t;&t;&bslash;&n;}
@@ -93,6 +92,20 @@ DECL|macro|__inlc
 mdefine_line|#define __inlc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldr&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (result)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; (port));&t;&t;&t;&t;&t;&bslash;&n;&t;result;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__ioaddrc
 mdefine_line|#define __ioaddrc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = PCIO_BASE + port;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+DECL|macro|inb
+mdefine_line|#define inb(p)&t; &t;(__builtin_constant_p((p)) ? __inbc(p)    : __inb(p))
+DECL|macro|inw
+mdefine_line|#define inw(p)&t; &t;(__builtin_constant_p((p)) ? __inwc(p)    : __inw(p))
+DECL|macro|inl
+mdefine_line|#define inl(p)&t; &t;(__builtin_constant_p((p)) ? __inlc(p)    : __inl(p))
+DECL|macro|outb
+mdefine_line|#define outb(v,p)&t;(__builtin_constant_p((p)) ? __outbc(v,p) : __outb(v,p))
+DECL|macro|outw
+mdefine_line|#define outw(v,p)&t;(__builtin_constant_p((p)) ? __outwc(v,p) : __outw(v,p))
+DECL|macro|outl
+mdefine_line|#define outl(v,p)&t;(__builtin_constant_p((p)) ? __outlc(v,p) : __outl(v,p))
+DECL|macro|__ioaddr
+mdefine_line|#define __ioaddr(p)&t;(__builtin_constant_p((p)) ? __ioaddr(p)  : __ioaddrc(p))
 multiline_comment|/*&n; * Translated address IO functions&n; *&n; * IO address has already been translated to a virtual address&n; */
 DECL|macro|outb_t
 mdefine_line|#define outb_t(v,p)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*(volatile unsigned char *)(p) = (v))

@@ -2,29 +2,105 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/io.h&n; *&n; * Copy
 macro_line|#ifndef __ASM_ARM_ARCH_IO_H
 DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
-macro_line|#include &lt;asm/dec21285.h&gt;
-multiline_comment|/*&n; * This architecture does not require any delayed IO, and&n; * has the constant-optimised IO&n; */
-DECL|macro|ARCH_IO_DELAY
-macro_line|#undef&t;ARCH_IO_DELAY
-DECL|macro|ARCH_READWRITE
-mdefine_line|#define ARCH_READWRITE
-DECL|macro|__pci_io_addr
-mdefine_line|#define __pci_io_addr(x)&t;(PCIO_BASE + (unsigned int)(x))
-DECL|macro|__inb
-mdefine_line|#define __inb(p)&t;&t;(*(volatile unsigned char *)__pci_io_addr(p))
-DECL|macro|__inl
-mdefine_line|#define __inl(p)&t;&t;(*(volatile unsigned long *)__pci_io_addr(p))
-DECL|function|__inw
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffff
+multiline_comment|/*&n; * Translation of various region addresses to virtual addresses&n; */
+DECL|macro|__io_pci
+mdefine_line|#define __io_pci(a)&t;&t;(PCIO_BASE + (a))
+macro_line|#if 0
+mdefine_line|#define __mem_pci(a)&t;&t;((unsigned long)(a))
+mdefine_line|#define __mem_isa(a)&t;&t;(PCIMEM_BASE + (unsigned long)(a))
+macro_line|#else
+DECL|function|___mem_pci
 r_extern
 id|__inline__
 r_int
 r_int
-id|__inw
+id|___mem_pci
 c_func
 (paren
 r_int
 r_int
-id|port
+id|a
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|a
+op_le
+l_int|0xc0000000
+op_logical_or
+id|a
+op_ge
+l_int|0xe0000000
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|a
+suffix:semicolon
+)brace
+DECL|function|___mem_isa
+r_extern
+id|__inline__
+r_int
+r_int
+id|___mem_isa
+c_func
+(paren
+r_int
+r_int
+id|a
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|a
+op_ge
+l_int|16
+op_star
+l_int|1048576
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|PCIMEM_BASE
+op_plus
+id|a
+suffix:semicolon
+)brace
+DECL|macro|__mem_pci
+mdefine_line|#define __mem_pci(a)&t;&t;___mem_pci((unsigned long)(a))
+DECL|macro|__mem_isa
+mdefine_line|#define __mem_isa(a)&t;&t;___mem_isa((unsigned long)(a))
+macro_line|#endif
+multiline_comment|/* the following macro is depreciated */
+DECL|macro|__ioaddr
+mdefine_line|#define __ioaddr(p)&t;&t;__io_pci(p)
+multiline_comment|/*&n; * Generic virtual read/write&n; */
+DECL|macro|__arch_getb
+mdefine_line|#define __arch_getb(a)&t;&t;(*(volatile unsigned char *)(a))
+DECL|macro|__arch_getl
+mdefine_line|#define __arch_getl(a)&t;&t;(*(volatile unsigned long *)(a))
+DECL|function|__arch_getw
+r_extern
+id|__inline__
+r_int
+r_int
+id|__arch_getw
+c_func
+(paren
+r_int
+r_int
+id|a
 )paren
 (brace
 r_int
@@ -35,7 +111,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;ldr%?h&t;%0, [%1, %2]&t;@ inw&quot;
+l_string|&quot;ldr%?h&t;%0, [%1, #0]&t;@ getw&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -44,12 +120,7 @@ id|value
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|PCIO_BASE
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|port
+id|a
 )paren
 )paren
 suffix:semicolon
@@ -57,15 +128,15 @@ r_return
 id|value
 suffix:semicolon
 )brace
-DECL|macro|__outb
-mdefine_line|#define __outb(v,p)&t;&t;(*(volatile unsigned char *)__pci_io_addr(p) = (v))
-DECL|macro|__outl
-mdefine_line|#define __outl(v,p)&t;&t;(*(volatile unsigned long *)__pci_io_addr(p) = (v))
-DECL|function|__outw
+DECL|macro|__arch_putb
+mdefine_line|#define __arch_putb(v,a)&t;(*(volatile unsigned char *)(a) = (v))
+DECL|macro|__arch_putl
+mdefine_line|#define __arch_putl(v,a)&t;(*(volatile unsigned long *)(a) = (v))
+DECL|function|__arch_putw
 r_extern
 id|__inline__
 r_void
-id|__outw
+id|__arch_putw
 c_func
 (paren
 r_int
@@ -74,14 +145,14 @@ id|value
 comma
 r_int
 r_int
-id|port
+id|a
 )paren
 (brace
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;str%?h&t;%0, [%1, %2]&t;@ outw&quot;
+l_string|&quot;str%?h&t;%0, [%1, #0]&t;@ putw&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -91,54 +162,31 @@ id|value
 comma
 l_string|&quot;r&quot;
 (paren
-id|PCIO_BASE
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|port
+id|a
 )paren
 )paren
 suffix:semicolon
 )brace
-DECL|macro|__ioaddr
-mdefine_line|#define __ioaddr(p)&t;__pci_io_addr(p)
+DECL|macro|inb
+mdefine_line|#define inb(p)&t;&t;&t;__arch_getb(__io_pci(p))
+DECL|macro|inw
+mdefine_line|#define inw(p)&t;&t;&t;__arch_getw(__io_pci(p))
+DECL|macro|inl
+mdefine_line|#define inl(p)&t;&t;&t;__arch_getl(__io_pci(p))
+DECL|macro|outb
+mdefine_line|#define outb(v,p)&t;&t;__arch_putb(v,__io_pci(p))
+DECL|macro|outw
+mdefine_line|#define outw(v,p)&t;&t;__arch_putw(v,__io_pci(p))
+DECL|macro|outl
+mdefine_line|#define outl(v,p)&t;&t;__arch_putl(v,__io_pci(p))
+macro_line|#include &lt;asm/dec21285.h&gt;
 multiline_comment|/*&n; * ioremap support - validate a PCI memory address,&n; * and convert a PCI memory address to a physical&n; * address for the page tables.&n; */
 DECL|macro|valid_ioaddr
-mdefine_line|#define valid_ioaddr(iomem,size) ((iomem) &lt; 0x80000000 &amp;&amp; (iomem) + (size) &lt;= 0x80000000)
+mdefine_line|#define valid_ioaddr(off,sz)&t;((off) &lt; 0x80000000 &amp;&amp; (off) + (sz) &lt;= 0x80000000)
 DECL|macro|io_to_phys
-mdefine_line|#define io_to_phys(iomem)&t; ((iomem) + DC21285_PCI_MEM)
-multiline_comment|/*&n; * Fudge up IO addresses by this much.  Once we&squot;re confident that nobody&n; * is using read*() and so on with addresses they didn&squot;t get from ioremap&n; * this can go away.&n; */
-DECL|macro|IO_FUDGE_FACTOR
-mdefine_line|#define IO_FUDGE_FACTOR&t;&t;PCIMEM_BASE
-DECL|macro|__pci_mem_addr
-mdefine_line|#define __pci_mem_addr(x)&t;((void *)(IO_FUDGE_FACTOR + (unsigned long)(x)))
+mdefine_line|#define io_to_phys(off)&t;&t;((off) + DC21285_PCI_MEM)
 multiline_comment|/*&n; * ioremap takes a PCI memory address, as specified in&n; * linux/Documentation/IO-mapping.txt&n; */
-DECL|macro|ioremap
-mdefine_line|#define ioremap(iomem_addr,size)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long _addr = (iomem_addr), _size = (size);&t;&t;&bslash;&n;&t;void *_ret = NULL;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (valid_ioaddr(_addr, _size)) {&t;&t;&t;&t;&bslash;&n;&t;&t;_addr = io_to_phys(_addr);&t;&t;&t;&t;&bslash;&n;&t;&t;_ret = __ioremap(_addr, _size, 0);&t;&t;&t;&bslash;&n;&t;&t;if (_ret)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;_ret = (void *)((int) _ret - IO_FUDGE_FACTOR);&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_ret; })
-DECL|macro|ioremap_nocache
-mdefine_line|#define ioremap_nocache(iomem_addr,size) ioremap((iomem_addr),(size))
-DECL|macro|iounmap
-mdefine_line|#define iounmap(_addr)&t;do { __iounmap(__pci_mem_addr((_addr))); } while (0)
-DECL|macro|readb
-mdefine_line|#define readb(addr)&t;(*(volatile unsigned char *)__pci_mem_addr(addr))
-DECL|macro|readw
-mdefine_line|#define readw(addr)&t;(*(volatile unsigned short *)__pci_mem_addr(addr))
-DECL|macro|readl
-mdefine_line|#define readl(addr)&t;(*(volatile unsigned long *)__pci_mem_addr(addr))
-DECL|macro|writeb
-mdefine_line|#define writeb(b,addr)&t;(*(volatile unsigned char *)__pci_mem_addr(addr) = (b))
-DECL|macro|writew
-mdefine_line|#define writew(b,addr)&t;(*(volatile unsigned short *)__pci_mem_addr(addr) = (b))
-DECL|macro|writel
-mdefine_line|#define writel(b,addr)&t;(*(volatile unsigned long *)__pci_mem_addr(addr) = (b))
-DECL|macro|memset_io
-mdefine_line|#define memset_io(a,b,c)&t;memset(__pci_mem_addr(a),(b),(c))
-DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),__pci_mem_addr(b),(c))
-DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy(__pci_mem_addr(a),(b),(c))
-DECL|macro|eth_io_copy_and_sum
-mdefine_line|#define eth_io_copy_and_sum(a,b,c,d) eth_copy_and_sum((a),__pci_mem_addr(b),(c),(d))
+DECL|macro|__arch_ioremap
+mdefine_line|#define __arch_ioremap(off,size,nocache)&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long _off = (off), _size = (size);&t;&t;&bslash;&n;&t;void *_ret = NULL;&t;&t;&t;&t;&t;&bslash;&n;&t;if (valid_ioaddr(_off, _size))&t;&t;&t;&t;&bslash;&n;&t;&t;_ret = __ioremap(io_to_phys(_off), _size, 0);&t;&bslash;&n;&t;_ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 macro_line|#endif
 eof

@@ -97,6 +97,12 @@ r_int
 r_int
 id|loops_per_sec
 suffix:semicolon
+DECL|member|pgd_quick
+r_int
+r_int
+op_star
+id|pgd_quick
+suffix:semicolon
 DECL|member|pmd_quick
 r_int
 r_int

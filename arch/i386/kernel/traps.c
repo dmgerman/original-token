@@ -1677,12 +1677,9 @@ op_amp
 id|nmi_print_lock
 )paren
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|console_lock
-)paren
+id|console_lock.lock
+op_assign
+l_int|0
 suffix:semicolon
 singleline_comment|// we are in trouble anyway
 id|printk

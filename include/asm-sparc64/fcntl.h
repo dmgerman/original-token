@@ -142,8 +142,6 @@ id|__unused
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|flock64
-mdefine_line|#define flock64 flock
 macro_line|#endif
 macro_line|#endif /* !(_SPARC64_FCNTL_H) */
 eof

@@ -305,6 +305,12 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|SetPageUptodate
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|kunmap
 c_func
 (paren

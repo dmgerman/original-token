@@ -73,6 +73,9 @@ c_func
 id|cr_alignment
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 DECL|function|nowrite_setup
 r_static
@@ -109,6 +112,9 @@ c_func
 (paren
 id|cr_alignment
 )paren
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 id|__setup
@@ -1484,6 +1490,8 @@ id|i
 )braket
 dot
 id|start
+op_minus
+id|PHYS_OFFSET
 op_plus
 id|meminfo.bank
 (braket
@@ -1541,7 +1549,15 @@ l_int|0
 dot
 id|physical
 op_assign
-id|PHYS_OFFSET
+id|virt_to_phys
+c_func
+(paren
+id|alloc_bootmem_low_pages
+c_func
+(paren
+id|PAGE_SIZE
+)paren
+)paren
 suffix:semicolon
 id|init_map
 (braket
@@ -1616,8 +1632,6 @@ l_int|1
 dot
 id|physical
 op_assign
-id|PHYS_OFFSET
-op_plus
 id|meminfo.bank
 (braket
 id|i
@@ -1634,14 +1648,16 @@ l_int|1
 dot
 r_virtual
 op_assign
-id|PAGE_OFFSET
-op_plus
 id|meminfo.bank
 (braket
 id|i
 )braket
 dot
 id|start
+op_plus
+id|PAGE_OFFSET
+op_minus
+id|PHYS_OFFSET
 suffix:semicolon
 id|init_map
 (braket
@@ -1826,6 +1842,8 @@ r_int
 r_int
 id|i
 suffix:semicolon
+DECL|macro|PFN
+mdefine_line|#define PFN(x)&t;(((x) - PHYS_OFFSET) &gt;&gt; PAGE_SHIFT)
 r_for
 c_loop
 (paren
@@ -1857,14 +1875,16 @@ r_continue
 suffix:semicolon
 id|start_pfn
 op_assign
+id|PFN
+c_func
+(paren
 id|meminfo.bank
 (braket
 id|i
 )braket
 dot
 id|start
-op_rshift
-id|PAGE_SHIFT
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * subtle here - if we have a full bank, then&n;&t;&t; * start_pfn == end_pfn, and we don&squot;t want to&n;&t;&t; * set PG_skip, or next_hash&n;&t;&t; */
 r_if
@@ -1894,6 +1914,9 @@ id|start_pfn
 suffix:semicolon
 id|start_pfn
 op_assign
+id|PFN
+c_func
+(paren
 id|PAGE_ALIGN
 c_func
 (paren
@@ -1905,9 +1928,13 @@ op_plus
 l_int|1
 )paren
 )paren
+)paren
 suffix:semicolon
 id|end_pfn
 op_assign
+id|PFN
+c_func
+(paren
 id|__pa
 c_func
 (paren
@@ -1915,6 +1942,7 @@ id|pg-&gt;next_hash
 )paren
 op_amp
 id|PAGE_MASK
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1940,6 +1968,8 @@ suffix:semicolon
 )brace
 id|end_pfn
 op_assign
+id|PFN
+c_func
 (paren
 id|meminfo.bank
 (braket
@@ -1955,8 +1985,6 @@ id|i
 dot
 id|size
 )paren
-op_rshift
-id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond

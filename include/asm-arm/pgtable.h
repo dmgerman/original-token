@@ -119,7 +119,7 @@ DECL|macro|__S111
 mdefine_line|#define __S111  PAGE_SHARED
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
-DECL|variable|empty_zero_page
+r_extern
 r_struct
 id|page
 op_star

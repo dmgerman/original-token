@@ -191,6 +191,12 @@ id|size
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+id|SetPageUptodate
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|kunmap
 c_func
 (paren

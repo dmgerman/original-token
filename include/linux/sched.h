@@ -471,12 +471,6 @@ r_int
 r_int
 id|swap_address
 suffix:semicolon
-DECL|member|mmlist
-r_struct
-id|list_head
-id|mmlist
-suffix:semicolon
-multiline_comment|/* active mm list */
 multiline_comment|/*&n;&t; * This is an architecture-specific pointer: the portable&n;&t; * part of Linux does not know about any segments.&n;&t; */
 DECL|member|segments
 r_void
@@ -486,7 +480,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), ATOMIC_INIT(1), 1,&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;LIST_HEAD_INIT(init_mm.mmlist), NULL }
+mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), ATOMIC_INIT(1), 1,&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct

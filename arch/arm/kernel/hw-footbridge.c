@@ -2512,6 +2512,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_extern
+r_int
+id|isapnp_disable
+suffix:semicolon
 id|wb977_init
 c_func
 (paren
@@ -2555,6 +2559,13 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISAPNP
+multiline_comment|/*&n;&t;&t; * We must not use the kernels ISAPnP code&n;&t;&t; * on the NetWinder - it will reset the settings&n;&t;&t; * for the WaveArtist chip and render it inoperable.&n;&t;&t; */
+id|isapnp_disable
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_CATS

@@ -25,13 +25,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|mouse_rpc_init
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|struct|busmouse_data
 r_struct
 id|busmouse_data
@@ -1576,13 +1569,6 @@ r_void
 (brace
 macro_line|#ifdef CONFIG_SUN_MOUSE
 id|sun_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_RPCMOUSE
-id|mouse_rpc_init
 c_func
 (paren
 )paren

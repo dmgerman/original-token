@@ -780,6 +780,21 @@ op_star
 )paren
 id|host-&gt;hostdata
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|host-&gt;dma_channel
+op_ne
+id|NO_DMA
+)paren
+id|set_dma_speed
+c_func
+(paren
+id|host-&gt;dma_channel
+comma
+l_int|180
+)paren
+suffix:semicolon
 id|info-&gt;control.term_port
 op_assign
 id|host-&gt;io_port
@@ -838,7 +853,8 @@ id|POWERTEC_SYNC_DEPTH
 suffix:semicolon
 id|info-&gt;info.ifcfg.cntl3
 op_assign
-multiline_comment|/*CNTL3_BS8 |*/
+id|CNTL3_BS8
+op_or
 id|CNTL3_FASTSCSI
 op_or
 id|CNTL3_FASTCLK

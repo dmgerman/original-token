@@ -1,27 +1,29 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/io.h&n; *&n; * Copyright (C) 1997-1999 Russell King&n; *&n; * Modifications:&n; *  06-12-1997&t;RMK&t;Created.&n; *  07-04-1999&t;RMK&t;Major cleanup&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/io.h&n; *&n; * Copyright (C) 1997-1999 Russell King&n; *&n; * Modifications:&n; *  06-12-1997&t;RMK&t;Created.&n; *  07-04-1999&t;RMK&t;Major cleanup&n; */
 macro_line|#ifndef __ASM_ARM_ARCH_IO_H
 DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
-multiline_comment|/*&n; * This architecture does not require any delayed IO&n; */
-DECL|macro|ARCH_IO_DELAY
-macro_line|#undef&t;ARCH_IO_DELAY
-DECL|macro|__pci_io_addr
-mdefine_line|#define __pci_io_addr(x)&t;(PCIO_BASE + (unsigned int)(x))
-DECL|macro|__inb
-mdefine_line|#define __inb(p)&t;&t;(*(volatile unsigned char *)__pci_io_addr(p))
-DECL|macro|__inl
-mdefine_line|#define __inl(p)&t;&t;(*(volatile unsigned long *)__pci_io_addr(p))
-DECL|function|__inw
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
+DECL|macro|__io_pci
+mdefine_line|#define __io_pci(a)&t;&t;(PCIO_BASE + (a))
+DECL|macro|__ioaddr
+mdefine_line|#define __ioaddr(p)&t;&t;__io_pci(p)
+multiline_comment|/*&n; * Generic virtual read/write&n; */
+DECL|macro|__arch_getb
+mdefine_line|#define __arch_getb(a)&t;&t;(*(volatile unsigned char *)(a))
+DECL|macro|__arch_getl
+mdefine_line|#define __arch_getl(a)&t;&t;(*(volatile unsigned long *)(a))
+DECL|function|__arch_getw
 r_extern
 id|__inline__
 r_int
 r_int
-id|__inw
+id|__arch_getw
 c_func
 (paren
 r_int
 r_int
-id|port
+id|a
 )paren
 (brace
 r_int
@@ -32,7 +34,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;ldr%?h&t;%0, [%1, %2]&t;@ inw&quot;
+l_string|&quot;ldr%?h&t;%0, [%1, #0]&t;@ getw&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -41,12 +43,7 @@ id|value
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|PCIO_BASE
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|port
+id|a
 )paren
 )paren
 suffix:semicolon
@@ -54,15 +51,15 @@ r_return
 id|value
 suffix:semicolon
 )brace
-DECL|macro|__outb
-mdefine_line|#define __outb(v,p)&t;&t;(*(volatile unsigned char *)__pci_io_addr(p) = (v))
-DECL|macro|__outl
-mdefine_line|#define __outl(v,p)&t;&t;(*(volatile unsigned long *)__pci_io_addr(p) = (v))
-DECL|function|__outw
+DECL|macro|__arch_putb
+mdefine_line|#define __arch_putb(v,a)&t;(*(volatile unsigned char *)(a) = (v))
+DECL|macro|__arch_putl
+mdefine_line|#define __arch_putl(v,a)&t;(*(volatile unsigned long *)(a) = (v))
+DECL|function|__arch_putw
 r_extern
 id|__inline__
 r_void
-id|__outw
+id|__arch_putw
 c_func
 (paren
 r_int
@@ -71,14 +68,14 @@ id|value
 comma
 r_int
 r_int
-id|port
+id|a
 )paren
 (brace
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;str%?h&t;%0, [%1, %2]&t;@ outw&quot;
+l_string|&quot;str%?h&t;%0, [%1, #0]&t;@ putw&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -88,17 +85,22 @@ id|value
 comma
 l_string|&quot;r&quot;
 (paren
-id|PCIO_BASE
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|port
+id|a
 )paren
 )paren
 suffix:semicolon
 )brace
-DECL|macro|__ioaddr
-mdefine_line|#define __ioaddr(p)&t;__pci_io_addr(p)
+DECL|macro|inb
+mdefine_line|#define inb(p)&t;&t;&t;__arch_getb(__io_pci(p))
+DECL|macro|inw
+mdefine_line|#define inw(p)&t;&t;&t;__arch_getw(__io_pci(p))
+DECL|macro|inl
+mdefine_line|#define inl(p)&t;&t;&t;__arch_getl(__io_pci(p))
+DECL|macro|outb
+mdefine_line|#define outb(v,p)&t;&t;__arch_putb(v,__io_pci(p))
+DECL|macro|outw
+mdefine_line|#define outw(v,p)&t;&t;__arch_putw(v,__io_pci(p))
+DECL|macro|outl
+mdefine_line|#define outl(v,p)&t;&t;__arch_putl(v,__io_pci(p))
 macro_line|#endif
 eof

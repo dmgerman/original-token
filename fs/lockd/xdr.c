@@ -595,9 +595,6 @@ suffix:semicolon
 multiline_comment|/* as good as anything else */
 id|fl-&gt;fl_start
 op_assign
-(paren
-id|u_long
-)paren
 id|ntohl
 c_func
 (paren
@@ -606,7 +603,6 @@ id|p
 op_increment
 )paren
 suffix:semicolon
-singleline_comment|// Up to 4G-1
 id|len
 op_assign
 id|ntohl
@@ -734,9 +730,6 @@ op_assign
 id|htonl
 c_func
 (paren
-(paren
-id|u_long
-)paren
 id|lock-&gt;fl.fl_start
 )paren
 suffix:semicolon
@@ -761,16 +754,11 @@ op_assign
 id|htonl
 c_func
 (paren
-(paren
-id|u_long
-)paren
-(paren
 id|lock-&gt;fl.fl_end
 op_minus
 id|lock-&gt;fl.fl_start
 op_plus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -890,9 +878,6 @@ op_assign
 id|htonl
 c_func
 (paren
-(paren
-id|u_long
-)paren
 id|fl-&gt;fl_start
 )paren
 suffix:semicolon
@@ -917,16 +902,11 @@ op_assign
 id|htonl
 c_func
 (paren
-(paren
-id|u_long
-)paren
-(paren
 id|fl-&gt;fl_end
 op_minus
 id|fl-&gt;fl_start
 op_plus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2279,9 +2259,6 @@ id|F_RDLCK
 suffix:semicolon
 id|fl-&gt;fl_start
 op_assign
-(paren
-id|u_long
-)paren
 id|ntohl
 c_func
 (paren

@@ -180,30 +180,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|ds1620_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|nwbutton_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|nwflash_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|misc_read_proc
 r_static
 r_int
@@ -851,27 +827,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SGI
 id|streamable_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_DS1620
-id|ds1620_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NWBUTTON
-id|nwbutton_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NWFLASH
-id|nwflash_init
-c_func
 (paren
 )paren
 suffix:semicolon

@@ -102,7 +102,7 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * We don&squot;t use this to fix the device, but initialisation of it.&n; * It&squot;s not the correct use for this, but it works.  The actions we&n; * take are:&n; * - enable only IO&n; * - set memory region to start at zero&n; * - (0x48) enable all memory requests from ISA to be channeled to PCI&n; * - (0x42) disable ping-pong (as per errata)&n; * - (0x40) enable PCI packet retry&n; * - (0x83) don&squot;t use CPU park enable, park on last master, disable GAT bit&n; * - (0x80) default rotating priorities&n; * - (0x81) rotate bank 4&n; */
+multiline_comment|/*&n; * We don&squot;t use this to fix the device, but initialisation of it.&n; * It&squot;s not the correct use for this, but it works.  The actions we&n; * take are:&n; * - enable only IO&n; * - set memory region to start at zero&n; * - (0x48) enable all memory requests from ISA to be channeled to PCI&n; * - (0x42) disable ping-pong (as per errata)&n; * - (0x40) enable PCI packet retry&n; * - (0x44) Route INTA to IRQ11&n; * - (0x83) don&squot;t use CPU park enable, park on last master, disable GAT bit&n; * - (0x80) default rotating priorities&n; * - (0x81) rotate bank 4&n; */
 DECL|function|pci_fixup_83c553
 r_static
 r_void
@@ -187,6 +187,16 @@ comma
 l_int|0x40
 comma
 l_int|0x22
+)paren
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+l_int|0x44
+comma
+l_int|0xb000
 )paren
 suffix:semicolon
 id|pci_write_config_byte

@@ -999,8 +999,6 @@ id|ATTR_MODE
 suffix:semicolon
 id|attr-&gt;ia_mode
 op_assign
-id|type
-op_or
 id|mode
 suffix:semicolon
 multiline_comment|/* Special treatment for non-regular files according to the&n;&t; * gospel of sun micro&n;&t; */
@@ -1063,12 +1061,6 @@ id|ATTR_SIZE
 )paren
 (brace
 multiline_comment|/* If you think you&squot;ve seen the worst, grok this. */
-id|attr-&gt;ia_mode
-op_assign
-id|S_IFIFO
-op_or
-id|mode
-suffix:semicolon
 id|type
 op_assign
 id|S_IFIFO

@@ -819,16 +819,8 @@ id|fl-&gt;fl_type
 comma
 id|fl-&gt;fl_flags
 comma
-(paren
-r_int
-r_int
-)paren
 id|fl-&gt;fl_start
 comma
-(paren
-r_int
-r_int
-)paren
 id|fl-&gt;fl_end
 )paren
 suffix:semicolon

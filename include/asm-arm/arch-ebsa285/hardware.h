@@ -5,47 +5,47 @@ mdefine_line|#define __ASM_ARCH_HARDWARE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#ifdef CONFIG_HOST_FOOTBRIDGE
-multiline_comment|/*   Virtual      Physical&n; * 0xfff00000&t;0x40000000&t;X-Bus&n; * 0xff000000&t;0x7c000000&t;PCI I/O space&n; *&n; * 0xfe000000&t;0x42000000&t;CSR&n; * 0xfd000000&t;0x78000000&t;Outbound write flush&n; * 0xfc000000&t;0x79000000&t;PCI IACK/special space&n; *&n; * 0xf9000000&t;0x7a000000&t;PCI Config type 1&n; * 0xf8000000&t;0x7b000000&t;PCI Config type 0&n; * &n; */
+multiline_comment|/*   Virtual      Physical&t;Size&n; * 0xff800000&t;0x40000000&t;1MB&t;X-Bus&n; * 0xff000000&t;0x7c000000&t;1MB&t;PCI I/O space&n; *&n; * 0xfe000000&t;0x42000000&t;1MB&t;CSR&n; * 0xfd000000&t;0x78000000&t;1MB&t;Outbound write flush (not supported)&n; * 0xfc000000&t;0x79000000&t;1MB&t;PCI IACK/special space&n; *&n; * 0xfb000000&t;0x7a000000&t;16MB&t;PCI Config type 1&n; * 0xfa000000&t;0x7b000000&t;16MB&t;PCI Config type 0&n; *&n; * 0xf9000000&t;0x50000000&t;1MB&t;Cache flush&n; * 0xf8000000&t;0x41000000&t;16MB&t;Flash memory&n; *&n; * 0xe1000000&t;&t;&t;&t;unmapped (to catch bad ISA/PCI)&n; *&n; * 0xe0000000&t;0x80000000&t;16MB&t;ISA memory&n; */
 DECL|macro|XBUS_SIZE
 mdefine_line|#define XBUS_SIZE&t;&t;0x00100000
 DECL|macro|XBUS_BASE
-mdefine_line|#define XBUS_BASE&t;&t;0xfff00000
+mdefine_line|#define XBUS_BASE&t;&t;0xff800000
 DECL|macro|PCIO_SIZE
 mdefine_line|#define PCIO_SIZE&t;&t;0x00100000
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xff000000
 DECL|macro|ARMCSR_SIZE
-mdefine_line|#define ARMCSR_SIZE&t;&t;0x01000000
+mdefine_line|#define ARMCSR_SIZE&t;&t;0x00100000
 DECL|macro|ARMCSR_BASE
 mdefine_line|#define ARMCSR_BASE&t;&t;0xfe000000
 DECL|macro|WFLUSH_SIZE
-mdefine_line|#define WFLUSH_SIZE&t;&t;0x01000000
+mdefine_line|#define WFLUSH_SIZE&t;&t;0x00100000
 DECL|macro|WFLUSH_BASE
 mdefine_line|#define WFLUSH_BASE&t;&t;0xfd000000
 DECL|macro|PCIIACK_SIZE
-mdefine_line|#define PCIIACK_SIZE&t;&t;0x01000000
+mdefine_line|#define PCIIACK_SIZE&t;&t;0x00100000
 DECL|macro|PCIIACK_BASE
 mdefine_line|#define PCIIACK_BASE&t;&t;0xfc000000
 DECL|macro|PCICFG1_SIZE
 mdefine_line|#define PCICFG1_SIZE&t;&t;0x01000000
 DECL|macro|PCICFG1_BASE
-mdefine_line|#define PCICFG1_BASE&t;&t;0xf9000000
+mdefine_line|#define PCICFG1_BASE&t;&t;0xfb000000
 DECL|macro|PCICFG0_SIZE
 mdefine_line|#define PCICFG0_SIZE&t;&t;0x01000000
 DECL|macro|PCICFG0_BASE
-mdefine_line|#define PCICFG0_BASE&t;&t;0xf8000000
-DECL|macro|PCIMEM_SIZE
-mdefine_line|#define PCIMEM_SIZE&t;&t;0x18000000
-DECL|macro|PCIMEM_BASE
-mdefine_line|#define PCIMEM_BASE&t;&t;0xe0000000
+mdefine_line|#define PCICFG0_BASE&t;&t;0xfa000000
 DECL|macro|FLUSH_SIZE
 mdefine_line|#define FLUSH_SIZE&t;&t;0x00100000
 DECL|macro|FLUSH_BASE
-mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
+mdefine_line|#define FLUSH_BASE&t;&t;0xf9000000
 DECL|macro|FLASH_SIZE
-mdefine_line|#define FLASH_SIZE&t;&t;0x00400000
+mdefine_line|#define FLASH_SIZE&t;&t;0x01000000
 DECL|macro|FLASH_BASE
-mdefine_line|#define FLASH_BASE&t;&t;0xd8000000
+mdefine_line|#define FLASH_BASE&t;&t;0xf8000000
+DECL|macro|PCIMEM_SIZE
+mdefine_line|#define PCIMEM_SIZE&t;&t;0x01000000
+DECL|macro|PCIMEM_BASE
+mdefine_line|#define PCIMEM_BASE&t;&t;0xe0000000
 macro_line|#elif defined(CONFIG_ARCH_CO285)
 DECL|macro|PCIMEM_SIZE
 mdefine_line|#define PCIMEM_SIZE&t;&t;0x80000000

@@ -4746,8 +4746,6 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|reject_message
-suffix:colon
 multiline_comment|/*&n;&t; * Something strange seems to be happening here -&n;&t; * I can&squot;t use SETATN since the chip gives me an&n;&t; * invalid command interrupt when I do.  Weird.&n;&t; */
 id|outb
 c_func
@@ -7438,6 +7436,9 @@ id|TEST_UNIT_READY
 suffix:colon
 r_case
 id|MODE_SENSE
+suffix:colon
+r_case
+id|REQUEST_SENSE
 suffix:colon
 r_break
 suffix:semicolon

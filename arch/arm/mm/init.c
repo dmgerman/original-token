@@ -888,6 +888,8 @@ op_star
 id|__va
 c_func
 (paren
+id|PHYS_OFFSET
+op_plus
 id|max_low_pfn
 op_star
 id|PAGE_SIZE
@@ -1021,7 +1023,7 @@ id|PAGE_SIZE
 op_ge
 l_int|16384
 op_logical_and
-id|max_mapnr
+id|num_physpages
 op_le
 l_int|128
 )paren

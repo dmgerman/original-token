@@ -1,12 +1,215 @@
-multiline_comment|/*&n; * linux/include/asm-arm/io.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Modifications:&n; *  16-Sep-1996&t;RMK&t;Inlined the inx/outx functions &amp; optimised for both&n; *&t;&t;&t;constant addresses and variable addresses.&n; *  04-Dec-1997&t;RMK&t;Moved a lot of this stuff to the new architecture&n; *&t;&t;&t;specific IO header files.&n; *  27-Mar-1999&t;PJB&t;Second parameter of memcpy_toio is const..&n; *  04-Apr-1999&t;PJB&t;Added check_signature.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/io.h&n; *&n; * Copyright (C) 1996-1999 Russell King&n; *&n; * Modifications:&n; *  16-Sep-1996&t;RMK&t;Inlined the inx/outx functions &amp; optimised for both&n; *&t;&t;&t;constant addresses and variable addresses.&n; *  04-Dec-1997&t;RMK&t;Moved a lot of this stuff to the new architecture&n; *&t;&t;&t;specific IO header files.&n; *  27-Mar-1999&t;PJB&t;Second parameter of memcpy_toio is const..&n; *  04-Apr-1999&t;PJB&t;Added check_signature.&n; *  12-Dec-1999&t;RMK&t;More cleanups&n; */
 macro_line|#ifndef __ASM_ARM_IO_H
 DECL|macro|__ASM_ARM_IO_H
 mdefine_line|#define __ASM_ARM_IO_H
+macro_line|#include &lt;asm/arch/hardware.h&gt;
+macro_line|#include &lt;asm/arch/io.h&gt;
+macro_line|#include &lt;asm/proc/io.h&gt;
+DECL|macro|outb_p
+mdefine_line|#define outb_p(val,port)&t;&t;outb((val),(port))
+DECL|macro|outw_p
+mdefine_line|#define outw_p(val,port)&t;&t;outw((val),(port))
+DECL|macro|outl_p
+mdefine_line|#define outl_p(val,port)&t;&t;outl((val),(port))
+DECL|macro|inb_p
+mdefine_line|#define inb_p(port)&t;&t;&t;inb((port))
+DECL|macro|inw_p
+mdefine_line|#define inw_p(port)&t;&t;&t;inw((port))
+DECL|macro|inl_p
+mdefine_line|#define inl_p(port)&t;&t;&t;inl((port))
+r_extern
+r_void
+id|outsb
+c_func
+(paren
+r_int
+r_int
+id|port
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outsw
+c_func
+(paren
+r_int
+r_int
+id|port
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outsl
+c_func
+(paren
+r_int
+r_int
+id|port
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insb
+c_func
+(paren
+r_int
+r_int
+id|port
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insw
+c_func
+(paren
+r_int
+r_int
+id|port
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insl
+c_func
+(paren
+r_int
+r_int
+id|port
+comma
+r_void
+op_star
+id|from
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+DECL|macro|outsb_p
+mdefine_line|#define outsb_p(port,from,len)&t;&t;outsb(port,from,len)
+DECL|macro|outsw_p
+mdefine_line|#define outsw_p(port,from,len)&t;&t;outsw(port,from,len)
+DECL|macro|outsl_p
+mdefine_line|#define outsl_p(port,from,len)&t;&t;outsl(port,from,len)
+DECL|macro|insb_p
+mdefine_line|#define insb_p(port,to,len)&t;&t;insb(port,to,len)
+DECL|macro|insw_p
+mdefine_line|#define insw_p(port,to,len)&t;&t;insw(port,to,len)
+DECL|macro|insl_p
+mdefine_line|#define insl_p(port,to,len)&t;&t;insl(port,to,len)
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL&t;((void *) 0)
 macro_line|#endif
+macro_line|#include &lt;asm/arch/memory.h&gt;
+DECL|function|virt_to_phys
+r_extern
+id|__inline__
+r_int
+r_int
+id|virt_to_phys
+c_func
+(paren
+r_volatile
+r_void
+op_star
+id|x
+)paren
+(brace
+r_return
+id|__virt_to_phys
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|x
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|phys_to_virt
+r_extern
+id|__inline__
+r_void
+op_star
+id|phys_to_virt
+c_func
+(paren
+r_int
+r_int
+id|x
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+id|__phys_to_virt
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|x
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Virtual &lt;-&gt; DMA view memory address translations&n; */
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus(x)&t;&t;(__virt_to_bus((unsigned long)(x)))
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt(x)&t;&t;((void *)(__bus_to_virt((unsigned long)(x))))
+multiline_comment|/* the following macro is depreciated */
+DECL|macro|ioaddr
+mdefine_line|#define ioaddr(port)&t;&t;&t;__ioaddr((port))
+multiline_comment|/*&n; * ioremap and friends&n; */
 r_extern
 r_void
 op_star
@@ -36,159 +239,12 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#include &lt;asm/arch/hardware.h&gt;
-macro_line|#include &lt;asm/arch/memory.h&gt;
-macro_line|#include &lt;asm/arch/io.h&gt;
-macro_line|#include &lt;asm/proc/io.h&gt;
-multiline_comment|/* unsigned long virt_to_phys(void *x) */
-DECL|macro|virt_to_phys
-mdefine_line|#define virt_to_phys(x)&t;&t;(__virt_to_phys((unsigned long)(x)))
-multiline_comment|/* void *phys_to_virt(unsigned long x) */
-DECL|macro|phys_to_virt
-mdefine_line|#define phys_to_virt(x)&t;&t;((void *)(__phys_to_virt((unsigned long)(x))))
-multiline_comment|/*&n; * Virtual view &lt;-&gt; DMA view memory address translations&n; * virt_to_bus: Used to translate the virtual address to an&n; *              address suitable to be passed to set_dma_addr&n; * bus_to_virt: Used to convert an address for DMA operations&n; *              to an address that the kernel can use.&n; */
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus(x)&t;(__virt_to_bus((unsigned long)(x)))
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt(x)&t;((void *)(__bus_to_virt((unsigned long)(x))))
-multiline_comment|/*&n; * These macros actually build the multi-value IO function prototypes&n; */
-DECL|macro|__OUTS
-mdefine_line|#define __OUTS(s,i,x)&t;extern void outs##s(unsigned int port, const void *from, int len);
-DECL|macro|__INS
-mdefine_line|#define __INS(s,i,x)&t;extern void ins##s(unsigned int port, void *to, int len);
-DECL|macro|__IO
-mdefine_line|#define __IO(s,i,x) &bslash;&n;  __OUTS(s,i,x) &bslash;&n;  __INS(s,i,x)
-id|__IO
-c_func
-(paren
-id|b
-comma
-l_string|&quot;b&quot;
-comma
-r_char
-)paren
-id|__IO
-c_func
-(paren
-id|w
-comma
-l_string|&quot;h&quot;
-comma
-r_int
-)paren
-id|__IO
-c_func
-(paren
-id|l
-comma
-l_string|&quot;&quot;
-comma
-r_int
-)paren
-multiline_comment|/*&n; * Note that due to the way __builtin_constant_t() works, you&n; *  - can&squot;t use it inside an inline function (it will never be true)&n; *  - you don&squot;t have to worry about side effects withing the __builtin..&n; */
-macro_line|#ifdef __outbc
-DECL|macro|outb
-mdefine_line|#define outb(val,port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __outbc((val),(port)) : __outb((val),(port)))
-macro_line|#else
-mdefine_line|#define outb(val,port) __outb((val),(port))
-macro_line|#endif
-macro_line|#ifdef __outwc
-DECL|macro|outw
-mdefine_line|#define outw(val,port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __outwc((val),(port)) : __outw((val),(port)))
-macro_line|#else
-mdefine_line|#define outw(val,port) __outw((val),(port))
-macro_line|#endif
-macro_line|#ifdef __outlc
-DECL|macro|outl
-mdefine_line|#define outl(val,port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __outlc((val),(port)) : __outl((val),(port)))
-macro_line|#else
-mdefine_line|#define outl(val,port) __outl((val),(port))
-macro_line|#endif
-macro_line|#ifdef __inbc
-DECL|macro|inb
-mdefine_line|#define inb(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __inbc((port)) : __inb((port)))
-macro_line|#else
-mdefine_line|#define inb(port) __inb((port))
-macro_line|#endif
-macro_line|#ifdef __inwc
-DECL|macro|inw
-mdefine_line|#define inw(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __inwc((port)) : __inw((port)))
-macro_line|#else
-mdefine_line|#define inw(port) __inw((port))
-macro_line|#endif
-macro_line|#ifdef __inlc
-DECL|macro|inl
-mdefine_line|#define inl(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __inlc((port)) : __inl((port)))
-macro_line|#else
-mdefine_line|#define inl(port) __inl((port))
-macro_line|#endif
-multiline_comment|/*&n; * This macro will give you the translated IO address for this particular&n; * architecture, which can be used with the out_t... functions.&n; */
-macro_line|#ifdef __ioaddrc
-DECL|macro|ioaddr
-mdefine_line|#define ioaddr(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __ioaddrc((port)) : __ioaddr((port)))
-macro_line|#else
-mdefine_line|#define ioaddr(port) __ioaddr((port))
-macro_line|#endif
-macro_line|#ifndef ARCH_IO_DELAY
-multiline_comment|/*&n; * This architecture does not require any delayed IO.&n; * It is handled in the hardware.&n; */
-DECL|macro|outb_p
-mdefine_line|#define outb_p(val,port)&t;outb((val),(port))
-DECL|macro|outw_p
-mdefine_line|#define outw_p(val,port)&t;outw((val),(port))
-DECL|macro|outl_p
-mdefine_line|#define outl_p(val,port)&t;outl((val),(port))
-DECL|macro|inb_p
-mdefine_line|#define inb_p(port)&t;&t;inb((port))
-DECL|macro|inw_p
-mdefine_line|#define inw_p(port)&t;&t;inw((port))
-DECL|macro|inl_p
-mdefine_line|#define inl_p(port)&t;&t;inl((port))
-DECL|macro|outsb_p
-mdefine_line|#define outsb_p(port,from,len)&t;outsb(port,from,len)
-DECL|macro|outsw_p
-mdefine_line|#define outsw_p(port,from,len)&t;outsw(port,from,len)
-DECL|macro|outsl_p
-mdefine_line|#define outsl_p(port,from,len)&t;outsl(port,from,len)
-DECL|macro|insb_p
-mdefine_line|#define insb_p(port,to,len)&t;insb(port,to,len)
-DECL|macro|insw_p
-mdefine_line|#define insw_p(port,to,len)&t;insw(port,to,len)
-DECL|macro|insl_p
-mdefine_line|#define insl_p(port,to,len)&t;insl(port,to,len)
-macro_line|#else
-multiline_comment|/*&n; * We have to delay the IO...&n; */
-macro_line|#ifdef __outbc_p
-mdefine_line|#define outb_p(val,port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __outbc_p((val),(port)) : __outb_p((val),(port)))
-macro_line|#else
-mdefine_line|#define outb_p(val,port) __outb_p((val),(port))
-macro_line|#endif
-macro_line|#ifdef __outwc_p
-mdefine_line|#define outw_p(val,port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __outwc_p((val),(port)) : __outw_p((val),(port)))
-macro_line|#else
-mdefine_line|#define outw_p(val,port) __outw_p((val),(port))
-macro_line|#endif
-macro_line|#ifdef __outlc_p
-mdefine_line|#define outl_p(val,port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __outlc_p((val),(port)) : __outl_p((val),(port)))
-macro_line|#else
-mdefine_line|#define outl_p(val,port) __outl_p((val),(port))
-macro_line|#endif
-macro_line|#ifdef __inbc_p
-mdefine_line|#define inb_p(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __inbc_p((port)) : __inb_p((port)))
-macro_line|#else
-mdefine_line|#define inb_p(port) __inb_p((port))
-macro_line|#endif
-macro_line|#ifdef __inwc_p
-mdefine_line|#define inw_p(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __inwc_p((port)) : __inw_p((port)))
-macro_line|#else
-mdefine_line|#define inw_p(port) __inw_p((port))
-macro_line|#endif
-macro_line|#ifdef __inlc_p
-mdefine_line|#define inl_p(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? __inlc_p((port)) : __inl_p((port)))
-macro_line|#else
-mdefine_line|#define inl_p(port) __inl_p((port))
-macro_line|#endif
-macro_line|#endif
+DECL|macro|ioremap
+mdefine_line|#define ioremap(off,sz)&t;&t;&t;__arch_ioremap((off),(sz),0)
+DECL|macro|ioremap_nocache
+mdefine_line|#define ioremap_nocache(off,sz)&t;&t;__arch_ioremap((off),(sz),1)
+DECL|macro|iounmap
+mdefine_line|#define iounmap(_addr)&t;&t;&t;__iounmap(_addr)
 r_extern
 r_void
 id|__readwrite_bug
@@ -200,21 +256,6 @@ op_star
 id|fn
 )paren
 suffix:semicolon
-macro_line|#ifndef ARCH_READWRITE
-DECL|macro|readb
-mdefine_line|#define readb(p)&t;(__readwrite_bug(&quot;readb&quot;),0)
-DECL|macro|readw
-mdefine_line|#define readw(p)&t;(__readwrite_bug(&quot;readw&quot;),0)
-DECL|macro|readl
-mdefine_line|#define readl(p)&t;(__readwrite_bug(&quot;readl&quot;),0)
-DECL|macro|writeb
-mdefine_line|#define writeb(v,p)&t;__readwrite_bug(&quot;writeb&quot;)
-DECL|macro|writew
-mdefine_line|#define writew(v,p)&t;__readwrite_bug(&quot;writew&quot;)
-DECL|macro|writel
-mdefine_line|#define writel(v,p)&t;__readwrite_bug(&quot;writel&quot;)
-macro_line|#endif
-macro_line|#ifndef memcpy_fromio
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */
 r_extern
 r_void
@@ -261,20 +302,32 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(to,from,len)&t;_memcpy_fromio((to),(unsigned long)(from),(len))
-DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to),(from),(len))
+multiline_comment|/*&n; * If this architecture has PCI memory IO, then define the read/write&n; * macros.&n; */
+macro_line|#ifdef __mem_pci
+DECL|macro|readb
+mdefine_line|#define readb(addr)&t;&t;&t;__arch_getb(__mem_pci(addr))
+DECL|macro|readw
+mdefine_line|#define readw(addr)&t;&t;&t;__arch_getw(__mem_pci(addr))
+DECL|macro|readl
+mdefine_line|#define readl(addr)&t;&t;&t;__arch_getl(__mem_pci(addr))
+DECL|macro|writeb
+mdefine_line|#define writeb(val,addr)&t;&t;__arch_putb(val,__mem_pci(addr))
+DECL|macro|writew
+mdefine_line|#define writew(val,addr)&t;&t;__arch_putw(val,__mem_pci(addr))
+DECL|macro|writel
+mdefine_line|#define writel(val,addr)&t;&t;__arch_putl(val,__mem_pci(addr))
 DECL|macro|memset_io
-mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
-macro_line|#endif
-DECL|macro|IO_SPACE_LIMIT
-mdefine_line|#define IO_SPACE_LIMIT 0xffff
-multiline_comment|/*&n; * This isn&squot;t especially architecture dependent so it seems like it&n; * might as well go here as anywhere.&n; */
-DECL|function|check_signature
+mdefine_line|#define memset_io(a,b,c)&t;&t;_memset_io(__mem_pci(a),(b),(c))
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(a,b,c)&t;&t;_memcpy_fromio((a),__mem_pci(b),(c))
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(a,b,c)&t;&t;_memcpy_toio(__mem_pci(a),(b),(c))
+DECL|macro|eth_io_copy_and_sum
+mdefine_line|#define eth_io_copy_and_sum(a,b,c,d) &bslash;&n;&t;&t;&t;&t;eth_copy_and_sum((a),__mem_pci(b),(c),(d))
 r_static
 r_inline
 r_int
+DECL|function|check_signature
 id|check_signature
 c_func
 (paren
@@ -340,11 +393,139 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|macro|ARCH_READWRITE
-macro_line|#undef ARCH_READWRITE
-DECL|macro|ARCH_IO_DELAY
-macro_line|#undef ARCH_IO_DELAY
-DECL|macro|ARCH_IO_CONSTANT
-macro_line|#undef ARCH_IO_CONSTANT
-macro_line|#endif
+macro_line|#else&t;/* __mem_pci */
+DECL|macro|readb
+mdefine_line|#define readb(addr)&t;&t;&t;(__readwrite_bug(&quot;readb&quot;),0)
+DECL|macro|readw
+mdefine_line|#define readw(addr)&t;&t;&t;(__readwrite_bug(&quot;readw&quot;),0)
+DECL|macro|readl
+mdefine_line|#define readl(addr)&t;&t;&t;(__readwrite_bug(&quot;readl&quot;),0)
+DECL|macro|writeb
+mdefine_line|#define writeb(v,addr)&t;&t;&t;__readwrite_bug(&quot;writeb&quot;)
+DECL|macro|writew
+mdefine_line|#define writew(v,addr)&t;&t;&t;__readwrite_bug(&quot;writew&quot;)
+DECL|macro|writel
+mdefine_line|#define writel(v,addr)&t;&t;&t;__readwrite_bug(&quot;writel&quot;)
+DECL|macro|eth_io_copy_and_sum
+mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;__readwrite_bug(&quot;eth_io_copy_and_sum&quot;)
+DECL|macro|check_signature
+mdefine_line|#define check_signature(io,sig,len)&t;(0)
+macro_line|#endif&t;/* __mem_pci */
+multiline_comment|/*&n; * If this architecture has ISA IO, then define the isa_read/isa_write&n; * macros.&n; */
+macro_line|#ifdef __mem_isa
+DECL|macro|isa_readb
+mdefine_line|#define isa_readb(addr)&t;&t;&t;__arch_getb(__mem_isa(addr))
+DECL|macro|isa_readw
+mdefine_line|#define isa_readw(addr)&t;&t;&t;__arch_getw(__mem_isa(addr))
+DECL|macro|isa_readl
+mdefine_line|#define isa_readl(addr)&t;&t;&t;__arch_getl(__mem_isa(addr))
+DECL|macro|isa_writeb
+mdefine_line|#define isa_writeb(val,addr)&t;&t;__arch_putb(val,__mem_isa(addr))
+DECL|macro|isa_writew
+mdefine_line|#define isa_writew(val,addr)&t;&t;__arch_putw(val,__mem_isa(addr))
+DECL|macro|isa_writel
+mdefine_line|#define isa_writel(val,addr)&t;&t;__arch_putl(val,__mem_isa(addr))
+DECL|macro|isa_memset_io
+mdefine_line|#define isa_memset_io(a,b,c)&t;&t;_memset_io(__mem_isa(a),(b),(c))
+DECL|macro|isa_memcpy_fromio
+mdefine_line|#define isa_memcpy_fromio(a,b,c)&t;_memcpy_fromio((a),__mem_isa((b)),(c))
+DECL|macro|isa_memcpy_toio
+mdefine_line|#define isa_memcpy_toio(a,b,c)&t;&t;_memcpy_toio(__mem_isa((a)),(b),(c))
+DECL|macro|isa_eth_io_copy_and_sum
+mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d) &bslash;&n;&t;&t;&t;&t;eth_copy_and_sum((a),__mem_isa((b),(c),(d))
+r_static
+r_inline
+r_int
+DECL|function|isa_check_signature
+id|isa_check_signature
+c_func
+(paren
+r_int
+r_int
+id|io_addr
+comma
+r_const
+r_int
+r_char
+op_star
+id|signature
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|isa_readb
+c_func
+(paren
+id|io_addr
+)paren
+op_ne
+op_star
+id|signature
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|io_addr
+op_increment
+suffix:semicolon
+id|signature
+op_increment
+suffix:semicolon
+id|length
+op_decrement
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|length
+)paren
+suffix:semicolon
+id|retval
+op_assign
+l_int|1
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
+suffix:semicolon
+)brace
+macro_line|#else&t;/* __mem_isa */
+DECL|macro|isa_readb
+mdefine_line|#define isa_readb(addr)&t;&t;&t;(__readwrite_bug(&quot;isa_readb&quot;),0)
+DECL|macro|isa_readw
+mdefine_line|#define isa_readw(addr)&t;&t;&t;(__readwrite_bug(&quot;isa_readw&quot;),0)
+DECL|macro|isa_readl
+mdefine_line|#define isa_readl(addr)&t;&t;&t;(__readwrite_bug(&quot;isa_readl&quot;),0)
+DECL|macro|isa_writeb
+mdefine_line|#define isa_writeb(val,addr)&t;&t;__readwrite_bug(&quot;isa_writeb&quot;)
+DECL|macro|isa_writew
+mdefine_line|#define isa_writew(val,addr)&t;&t;__readwrite_bug(&quot;isa_writew&quot;)
+DECL|macro|isa_writel
+mdefine_line|#define isa_writel(val,addr)&t;&t;__readwrite_bug(&quot;isa_writel&quot;)
+DECL|macro|isa_memset_io
+mdefine_line|#define isa_memset_io(a,b,c)&t;&t;__readwrite_bug(&quot;isa_memset_io&quot;)
+DECL|macro|isa_memcpy_fromio
+mdefine_line|#define isa_memcpy_fromio(a,b,c)&t;__readwrite_bug(&quot;isa_memcpy_fromio&quot;)
+DECL|macro|isa_memcpy_toio
+mdefine_line|#define isa_memcpy_toio(a,b,c)&t;&t;__readwrite_bug(&quot;isa_memcpy_toio&quot;)
+DECL|macro|isa_eth_io_copy_and_sum
+mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d) &bslash;&n;&t;&t;&t;&t;__readwrite_bug(&quot;isa_eth_io_copy_and_sum&quot;)
+DECL|macro|isa_check_signature
+mdefine_line|#define isa_check_signature(io,sig,len)&t;(0)
+macro_line|#endif&t;/* __mem_isa */
+macro_line|#endif&t;/* __KERNEL__ */
+macro_line|#endif&t;/* __ASM_ARM_IO_H */
 eof

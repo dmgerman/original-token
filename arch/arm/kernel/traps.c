@@ -591,6 +591,8 @@ suffix:semicolon
 DECL|variable|die_lock
 id|spinlock_t
 id|die_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * This function is protected against re-entrancy.&n; */
 DECL|function|die

@@ -1498,6 +1498,11 @@ r_int
 r_int
 id|pitch
 suffix:semicolon
+DECL|member|fetch
+r_int
+r_int
+id|fetch
+suffix:semicolon
 multiline_comment|/*&n;&t; * Other&n;&t; */
 DECL|member|visual
 r_int
@@ -1568,8 +1573,6 @@ id|hw
 (brace
 r_int
 r_int
-id|fetchrow
-comma
 id|i
 suffix:semicolon
 multiline_comment|/*&n;&t; * Blank palette&n;&t; */
@@ -2005,21 +2008,14 @@ comma
 l_int|0x3c6
 )paren
 suffix:semicolon
-id|fetchrow
-op_assign
-id|hw-&gt;pitch
-op_plus
-l_int|1
-suffix:semicolon
 id|cyber2000_grphw
 c_func
 (paren
 l_int|0x14
 comma
-id|fetchrow
+id|hw-&gt;fetch
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: is this the right way round? */
 id|cyber2000_grphw
 c_func
 (paren
@@ -2027,22 +2023,22 @@ l_int|0x15
 comma
 (paren
 (paren
-id|fetchrow
+id|hw-&gt;fetch
 op_rshift
-l_int|4
+l_int|8
 )paren
 op_amp
-l_int|0xf0
+l_int|0x03
 )paren
 op_or
 (paren
 (paren
 id|hw-&gt;pitch
 op_rshift
-l_int|8
+l_int|4
 )paren
 op_amp
-l_int|0x0f
+l_int|0x30
 )paren
 )paren
 suffix:semicolon
@@ -2059,7 +2055,7 @@ c_func
 (paren
 l_int|0x33
 comma
-l_int|0x1c
+l_int|0x0c
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up accelerator registers&n;&t; */
@@ -3009,7 +3005,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The following was discovered by a good monitor,&n; * bit twiddling, theorising and but mostly luck.&n; * Strangely, it looks like everyone elses&squot; PLL!&n; *&n; * Clock registers:&n; *   fclock = fpll / div2&n; *   fpll   = fref * mult / div1&n; * where:&n; *   fref = 14.318MHz (69842ps)&n; *   mult = reg0xb0.7:0&n; *   div1 = (reg0xb1.5:0 + 1)&n; *   div2 =  2^(reg0xb1.7:6)&n; *   fpll should be between 150 and 220 MHz&n; *  (6667ps and 4545ps)&n; */
+multiline_comment|/*&n; * The following was discovered by a good monitor,&n; * bit twiddling, theorising and but mostly luck.&n; * Strangely, it looks like everyone elses&squot; PLL!&n; *&n; * Clock registers:&n; *   fclock = fpll / div2&n; *   fpll   = fref * mult / div1&n; * where:&n; *   fref = 14.318MHz (69842ps)&n; *   mult = reg0xb0.7:0&n; *   div1 = (reg0xb1.5:0 + 1)&n; *   div2 =  2^(reg0xb1.7:6)&n; *   fpll should be between 115 and 257 MHz&n; *  (8696ps and 3891ps)&n; */
 r_static
 r_int
 DECL|function|cyber2000fb_decode_clock
@@ -3204,112 +3200,401 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#else
+multiline_comment|/*&n;&t; *&t;&t;&t;&t;1600x1200 1280x1024 1152x864 1024x768 800x600 640x480&n;&t; * 5051&t;&t;5051&t;yes&t;   76*&n;&t; * 5814&t;&t;5814&t;no&t;   66&n;&t; * 6411&t;&t;6411&t;no&t;   60&n;&t; * 7408&t;&t;7408&t;yes&t;             75*&n;&t; *&t;&t;&t;&t;             74*&n;&t; * 7937&t;&t;7937&t;yes&t;             70*&n;&t; * 9091&t;&t;4545&t;yes&t;                       80*&n;&t; *&t;&t;&t;&t;                       75*     100*&n;&t; * 9260&t;&t;4630&t;yes&t;             60*&n;&t; * 10000&t;5000&t;no&t;                       70       90&n;&t; * 12500&t;6250&t;yes&t;             47-lace*  60*&n;&t; *&t;&t;&t;&t;             43-lace*&n;&t; * 12699&t;6349&t;yes&t;                                75*&n;&t; * 13334&t;6667&t;no&t;                                72&n;&t; *&t;&t;&t;&t;                                70&n;&t; * 14815&t;7407&t;yes&t;                                       100*&n;&t; * 15385&t;7692&t;yes&t;                       47-lace* 60*&n;&t; *&t;&t;&t;&t;                       43-lace*&n;&t; * 17656&t;4414&t;no&t;                                        90&n;&t; * 20000&t;5000&t;no&t;                                        72&n;&t; * 20203&t;5050&t;yes&t;                                        75*&n;&t; * 22272&t;5568&t;yes&t;                               43-lace* 70*    100*&n;&t; * 25000&t;6250&t;yes&t;                                        60*&n;&t; * 25057&t;6264&t;no&t;                                                90&n;&t; * 27778&t;6944&t;yes&t;                                        56*&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t;&t;48-lace*&n;&t; * 31747&t;7936&t;yes&t;                                                75*&n;&t; * 32052&t;8013&t;no&t;                                                72&n;&t; * 39722 /6&t;6620&t;no&n;&t; * 39722 /8&t;4965&t;yes&t;                                                60*&n;&t; */
 multiline_comment|/*  /1     /2     /4     /6     /8    */
 multiline_comment|/*                      (2010) (2000) */
 r_if
 c_cond
 (paren
 id|pll_ps
-op_eq
-l_int|4630
+op_ge
+l_int|4543
+op_logical_and
+id|pll_ps
+op_le
+l_int|4549
 )paren
 (brace
-multiline_comment|/* 216.0, 108.0, 54.00, 36.000 27.000 */
+id|mult
+op_assign
+l_int|169
+suffix:semicolon
+multiline_comment|/*u220.0  110.0  54.99  36.663 27.497 */
+id|div1
+op_assign
+l_int|11
+suffix:semicolon
+multiline_comment|/* 4546    9092  18184  27276  36367  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|4596
+op_logical_and
+id|pll_ps
+op_le
+l_int|4602
+)paren
+(brace
+id|mult
+op_assign
+l_int|243
+suffix:semicolon
+multiline_comment|/* 217.5  108.7  54.36  36.243 27.181 */
+id|div1
+op_assign
+l_int|16
+suffix:semicolon
+multiline_comment|/* 4599    9197  18395  27592  36789  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|4627
+op_logical_and
+id|pll_ps
+op_le
+l_int|4633
+)paren
+(brace
 id|mult
 op_assign
 l_int|181
 suffix:semicolon
-multiline_comment|/* 4630   9260   18520  27780  37040  */
+multiline_comment|/*u216.0, 108.0, 54.00, 36.000 27.000 */
 id|div1
 op_assign
 l_int|12
 suffix:semicolon
+multiline_comment|/* 4630    9260  18520  27780  37040  */
 )brace
 r_else
 r_if
 c_cond
 (paren
 id|pll_ps
-op_eq
-l_int|4965
+op_ge
+l_int|4962
+op_logical_and
+id|pll_ps
+op_le
+l_int|4968
 )paren
 (brace
-multiline_comment|/* 201.0, 100.5, 50.25, 33.500 25.125 */
 id|mult
 op_assign
 l_int|211
 suffix:semicolon
-multiline_comment|/* 4965   9930   19860  29790  39720  */
+multiline_comment|/*u201.0, 100.5, 50.25, 33.500 25.125 */
 id|div1
 op_assign
 l_int|15
 suffix:semicolon
+multiline_comment|/* 4965    9930  19860  29790  39720  */
 )brace
 r_else
 r_if
 c_cond
 (paren
 id|pll_ps
-op_eq
-l_int|5050
+op_ge
+l_int|5005
+op_logical_and
+id|pll_ps
+op_le
+l_int|5011
 )paren
 (brace
-multiline_comment|/* 198.0,  99.0, 49.50, 33.000 24.750 */
+id|mult
+op_assign
+l_int|251
+suffix:semicolon
+multiline_comment|/* 200.0   99.8  49.92  33.280 24.960 */
+id|div1
+op_assign
+l_int|18
+suffix:semicolon
+multiline_comment|/* 5008   10016  20032  30048  40064  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|5047
+op_logical_and
+id|pll_ps
+op_le
+l_int|5053
+)paren
+(brace
 id|mult
 op_assign
 l_int|83
 suffix:semicolon
-multiline_comment|/* 5050   10100  20200  30300  40400  */
+multiline_comment|/*u198.0,  99.0, 49.50, 33.000 24.750 */
 id|div1
 op_assign
 l_int|6
 suffix:semicolon
+multiline_comment|/* 5050   10100  20200  30300  40400  */
 )brace
 r_else
 r_if
 c_cond
 (paren
 id|pll_ps
-op_eq
-l_int|6349
+op_ge
+l_int|5490
+op_logical_and
+id|pll_ps
+op_le
+l_int|5496
 )paren
 (brace
-multiline_comment|/* 158.0,  79.0, 39.50, 26.333 19.750 */
 id|mult
 op_assign
-l_int|209
+l_int|89
 suffix:semicolon
-multiline_comment|/* 6349   12698  25396  38094  50792  */
+multiline_comment|/* 182.0   91.0  45.51  30.342 22.756 */
 id|div1
 op_assign
-l_int|19
+l_int|7
 suffix:semicolon
+multiline_comment|/* 5493   10986  21972  32958  43944  */
 )brace
 r_else
 r_if
 c_cond
 (paren
 id|pll_ps
-op_eq
-l_int|6422
+op_ge
+l_int|5567
+op_logical_and
+id|pll_ps
+op_le
+l_int|5573
 )paren
 (brace
-multiline_comment|/* 156.0,  78.0, 39.00, 26.000 19.500 */
+id|mult
+op_assign
+l_int|163
+suffix:semicolon
+multiline_comment|/*u179.5   89.8  44.88  29.921 22.441 */
+id|div1
+op_assign
+l_int|13
+suffix:semicolon
+multiline_comment|/* 5570   11140  22281  33421  44562  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|6246
+op_logical_and
+id|pll_ps
+op_le
+l_int|6252
+)paren
+(brace
 id|mult
 op_assign
 l_int|190
 suffix:semicolon
-multiline_comment|/* 6422   12844  25688  38532  51376  */
+multiline_comment|/*u160.0,  80.0, 40.00, 26.671 20.003 */
 id|div1
 op_assign
 l_int|17
 suffix:semicolon
+multiline_comment|/* 6249   12498  24996  37494  49992  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|6346
+op_logical_and
+id|pll_ps
+op_le
+l_int|6352
+)paren
+(brace
+id|mult
+op_assign
+l_int|209
+suffix:semicolon
+multiline_comment|/*u158.0,  79.0, 39.50, 26.333 19.750 */
+id|div1
+op_assign
+l_int|19
+suffix:semicolon
+multiline_comment|/* 6349   12698  25396  38094  50792  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|6648
+op_logical_and
+id|pll_ps
+op_le
+l_int|6655
+)paren
+(brace
+id|mult
+op_assign
+l_int|210
+suffix:semicolon
+multiline_comment|/*u150.3   75.2  37.58  25.057 18.792 */
+id|div1
+op_assign
+l_int|20
+suffix:semicolon
+multiline_comment|/* 6652   13303  26606  39909  53213  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|6943
+op_logical_and
+id|pll_ps
+op_le
+l_int|6949
+)paren
+(brace
+id|mult
+op_assign
+l_int|181
+suffix:semicolon
+multiline_comment|/*u144.0   72.0  36.00  23.996 17.997 */
+id|div1
+op_assign
+l_int|18
+suffix:semicolon
+multiline_comment|/* 6946   13891  27782  41674  55565  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|7404
+op_logical_and
+id|pll_ps
+op_le
+l_int|7410
+)paren
+(brace
+id|mult
+op_assign
+l_int|198
+suffix:semicolon
+multiline_comment|/*u134.0   67.5  33.75  22.500 16.875 */
+id|div1
+op_assign
+l_int|21
+suffix:semicolon
+multiline_comment|/* 7407   14815  29630  44445  59260  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|7689
+op_logical_and
+id|pll_ps
+op_le
+l_int|7695
+)paren
+(brace
+id|mult
+op_assign
+l_int|227
+suffix:semicolon
+multiline_comment|/*u130.0   65.0  32.50  21.667 16.251 */
+id|div1
+op_assign
+l_int|25
+suffix:semicolon
+multiline_comment|/* 7692   15384  30768  46152  61536  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|7808
+op_logical_and
+id|pll_ps
+op_le
+l_int|7814
+)paren
+(brace
+id|mult
+op_assign
+l_int|152
+suffix:semicolon
+multiline_comment|/* 128.0   64.0  32.00  21.337 16.003 */
+id|div1
+op_assign
+l_int|17
+suffix:semicolon
+multiline_comment|/* 7811   15623  31245  46868  62490  */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pll_ps
+op_ge
+l_int|7934
+op_logical_and
+id|pll_ps
+op_le
+l_int|7940
+)paren
+(brace
+id|mult
+op_assign
+l_int|44
+suffix:semicolon
+multiline_comment|/*u126.0   63.0  31.498 20.999 15.749 */
+id|div1
+op_assign
+l_int|5
+suffix:semicolon
+multiline_comment|/* 7937   15874  31748  47622  63494  */
 )brace
 r_else
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/* 187 13 -&gt; 4855 */
+multiline_comment|/* 181 18 -&gt; 6946 */
+multiline_comment|/* 163 13 -&gt; 5570 */
+multiline_comment|/* 169 11 -&gt; 4545 */
 macro_line|#endif
 multiline_comment|/*&n;&t; * Step 3:&n;&t; *  combine values&n;&t; */
 id|hw-&gt;clock_mult
@@ -3595,6 +3880,25 @@ suffix:semicolon
 )brace
 id|hw-&gt;width
 op_sub_assign
+l_int|1
+suffix:semicolon
+id|hw-&gt;fetch
+op_assign
+id|hw-&gt;pitch
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current_par.bus_64bit
+op_eq
+l_int|0
+)paren
+id|hw-&gt;fetch
+op_lshift_assign
+l_int|1
+suffix:semicolon
+id|hw-&gt;fetch
+op_add_assign
 l_int|1
 suffix:semicolon
 r_return
@@ -5389,7 +5693,6 @@ l_int|0x13
 comma
 l_int|0x00
 comma
-multiline_comment|/*&t;0x30, 0x21,*/
 l_int|0x31
 comma
 l_int|0x00
@@ -5450,18 +5753,17 @@ l_int|0x70
 comma
 l_int|0x0b
 comma
-multiline_comment|/*&t;0x71, 0x10,&t;0x72, 0x45,*/
 l_int|0x73
 comma
 l_int|0x30
 comma
 l_int|0x74
 comma
-l_int|0x1b
+l_int|0x0b
 comma
 l_int|0x75
 comma
-l_int|0x1e
+l_int|0x17
 comma
 l_int|0x76
 comma
@@ -5520,6 +5822,23 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+DECL|variable|__initdata
+r_static
+r_int
+r_int
+id|device_ids
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+id|PCI_DEVICE_ID_INTERG_2000
+comma
+id|PCI_DEVICE_ID_INTERG_2010
+comma
+id|PCI_DEVICE_ID_INTERG_5000
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *    Initialization&n; */
 DECL|function|cyber2000fb_init
 r_int
@@ -5551,7 +5870,35 @@ r_int
 id|err
 op_assign
 l_int|0
+comma
+id|i
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|device_ids
+)paren
+op_div
+r_sizeof
+(paren
+id|device_ids
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|dev
 op_assign
 id|pci_find_device
@@ -5559,7 +5906,10 @@ c_func
 (paren
 id|PCI_VENDOR_ID_INTERG
 comma
-id|PCI_DEVICE_ID_INTERG_2000
+id|device_ids
+(braket
+id|i
+)braket
 comma
 l_int|NULL
 )paren
@@ -5567,21 +5917,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|dev
 )paren
-id|dev
-op_assign
-id|pci_find_device
-c_func
-(paren
-id|PCI_VENDOR_ID_INTERG
-comma
-id|PCI_DEVICE_ID_INTERG_2010
-comma
-l_int|NULL
-)paren
+r_break
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5713,7 +6053,7 @@ comma
 l_int|0x46e8
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * get the video RAM size from the VGA register.&n;&t; * This should have been already initialised by the BIOS,&n;&t; * but if it&squot;s garbage, claim default 1MB VRAM (woody)&n;&t; */
+multiline_comment|/*&n;&t; * get the video RAM size and width from the VGA register.&n;&t; * This should have been already initialised by the BIOS,&n;&t; * but if it&squot;s garbage, claim default 1MB VRAM (woody)&n;&t; */
 id|cyber2000_outb
 c_func
 (paren
@@ -5722,14 +6062,24 @@ comma
 l_int|0x3ce
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
+id|i
+op_assign
 id|cyber2000_inb
 c_func
 (paren
 l_int|0x3cf
 )paren
+suffix:semicolon
+id|current_par.bus_64bit
+op_assign
+id|i
+op_amp
+l_int|4
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|i
 op_amp
 l_int|3
 )paren
@@ -5828,10 +6178,6 @@ r_goto
 id|release_smem_resource
 suffix:semicolon
 )brace
-id|current_par.screen_base
-op_add_assign
-id|IO_FUDGE_FACTOR
-suffix:semicolon
 id|current_par.screen_size
 op_assign
 id|smem_size
@@ -6119,7 +6465,6 @@ op_amp
 id|fb_info
 )paren
 suffix:semicolon
-multiline_comment|/* TODO: clean up ... */
 id|iounmap
 c_func
 (paren

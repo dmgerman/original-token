@@ -1806,6 +1806,8 @@ id|inode
 )paren
 suffix:semicolon
 id|inode-&gt;i_generation
+op_assign
+id|event
 op_increment
 suffix:semicolon
 id|mark_inode_dirty

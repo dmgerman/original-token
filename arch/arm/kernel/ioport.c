@@ -8,35 +8,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-r_int
-r_int
-DECL|function|resource_fixup
-id|resource_fixup
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-comma
-r_struct
-id|resource
-op_star
-id|res
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|size
-)paren
-(brace
-r_return
-id|start
-suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_CPU_32
 DECL|function|sys_iopl
 id|asmlinkage

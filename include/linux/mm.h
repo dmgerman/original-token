@@ -1742,57 +1742,6 @@ DECL|macro|vmlist_modify_lock
 mdefine_line|#define vmlist_modify_lock(mm)&t;&t;vmlist_access_lock(mm)
 DECL|macro|vmlist_modify_unlock
 mdefine_line|#define vmlist_modify_unlock(mm)&t;vmlist_access_unlock(mm)
-r_extern
-id|spinlock_t
-id|mm_lock
-suffix:semicolon
-DECL|macro|mmlist_access_lock
-mdefine_line|#define mmlist_access_lock()&t;&t;spin_lock(&amp;mm_lock)
-DECL|macro|mmlist_access_unlock
-mdefine_line|#define mmlist_access_unlock()&t;&t;spin_unlock(&amp;mm_lock)
-DECL|macro|mmlist_modify_lock
-mdefine_line|#define mmlist_modify_lock()&t;&t;mmlist_access_lock()
-DECL|macro|mmlist_modify_unlock
-mdefine_line|#define mmlist_modify_unlock()&t;&t;mmlist_access_unlock()
-DECL|macro|for_each_mm
-mdefine_line|#define for_each_mm(mm) &bslash;&n;&t;for (mm = list_entry(init_mm.mmlist.next, struct mm_struct, mmlist); &bslash;&n;&t;&t;(mm != &amp;init_mm);  &bslash;&n;&t;&t;(mm = list_entry(mm-&gt;mmlist.next, struct mm_struct, mmlist)))
-DECL|function|mmlist_set_pgdir
-r_static
-r_inline
-r_void
-id|mmlist_set_pgdir
-c_func
-(paren
-r_int
-r_int
-id|address
-comma
-id|pgd_t
-id|entry
-)paren
-(brace
-r_struct
-id|mm_struct
-op_star
-id|mm
-suffix:semicolon
-id|for_each_mm
-c_func
-(paren
-id|mm
-)paren
-op_star
-id|pgd_offset
-c_func
-(paren
-id|mm
-comma
-id|address
-)paren
-op_assign
-id|entry
-suffix:semicolon
-)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

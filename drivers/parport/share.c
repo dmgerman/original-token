@@ -408,6 +408,17 @@ id|drv-&gt;attach
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* For compatibility with 2.2, check the (obsolete) parport_lowlevel&n;&t; * alias in case some people haven&squot;t changed to post-install rules&n;&t; * yet.  parport_enumerate (itself deprecated) will printk a&n;&t; * friendly reminder. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|portlist
+)paren
+id|parport_enumerate
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

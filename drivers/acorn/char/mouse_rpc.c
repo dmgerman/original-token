@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -157,8 +158,10 @@ comma
 l_int|7
 )brace
 suffix:semicolon
-r_int
 DECL|function|mouse_rpc_init
+r_static
+r_int
+id|__init
 id|mouse_rpc_init
 c_func
 (paren
@@ -274,25 +277,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
+DECL|function|mouse_rpc_exit
+r_static
 r_void
-)paren
-(brace
-r_return
-id|mouse_rpc_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_int
-DECL|function|cleanup_module
-id|cleanup_module
+id|__exit
+id|mouse_rpc_exit
 c_func
 (paren
 r_void
@@ -323,5 +312,18 @@ id|mousedev
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+DECL|variable|mouse_rpc_init
+id|module_init
+c_func
+(paren
+id|mouse_rpc_init
+)paren
+suffix:semicolon
+DECL|variable|mouse_rpc_exit
+id|module_exit
+c_func
+(paren
+id|mouse_rpc_exit
+)paren
+suffix:semicolon
 eof
