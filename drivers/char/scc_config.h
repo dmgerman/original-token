@@ -152,6 +152,9 @@ DECL|macro|SCC_LDELAY
 macro_line|#undef  SCC_LDELAY&t;&t;/* slow it even a bit more down */
 DECL|macro|DONT_CHECK
 macro_line|#undef  DONT_CHECK&t;&t;/* don&squot;t look if the SCCs you specified are available */
+DECL|macro|DO_FAST_RX
+mdefine_line|#define DO_FAST_RX&t;&t;/* experimental timer routine called immediateley */
+multiline_comment|/* after every received frame */
 multiline_comment|/* The external clocking, nrz and fullduplex divider configuration is gone */
 multiline_comment|/* you can set these parameters in /etc/z8530drv.rc and initialize the  */
 multiline_comment|/* driver with sccinit */

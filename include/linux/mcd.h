@@ -4,7 +4,9 @@ DECL|macro|MCD_BASE_ADDR
 mdefine_line|#define MCD_BASE_ADDR&t;        0x300
 multiline_comment|/* *** change this to set the interrupt number */
 DECL|macro|MCD_INTR_NR
-mdefine_line|#define MCD_INTR_NR&t;&t;10
+mdefine_line|#define MCD_INTR_NR     11
+multiline_comment|/* *** make the following line uncommented, if you&squot;re sure,&n; * *** all configuration is done */
+multiline_comment|/* #define I_WAS_HERE */
 multiline_comment|/* Increase this if you get lots of timeouts */
 DECL|macro|MCD_STATUS_DELAY
 mdefine_line|#define MCD_STATUS_DELAY&t;200
@@ -162,4 +164,7 @@ id|diskTime
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifndef I_WAS_HERE
+macro_line|#error Please edit this file first.
+macro_line|#endif
 eof

@@ -93,7 +93,7 @@ mdefine_line|#define __OUT2(s,s1,s2) &bslash;&n;__asm__ __volatile__ (&quot;out&
 DECL|macro|__OUT
 mdefine_line|#define __OUT(s,s1,x) &bslash;&n;__OUT1(s,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;d&quot; (port)); } &bslash;&n;__OUT1(s##c,x) __OUT2(s,s1,&quot;&quot;) : : &quot;a&quot; (value), &quot;id&quot; (port)); } &bslash;&n;__OUT1(s##_p,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;d&quot; (port)); SLOW_DOWN_IO; } &bslash;&n;__OUT1(s##c_p,x) __OUT2(s,s1,&quot;&quot;) : : &quot;a&quot; (value), &quot;id&quot; (port)); SLOW_DOWN_IO; }
 DECL|macro|__IN1
-mdefine_line|#define __IN1(s) &bslash;&n;extern inline unsigned int __in##s(unsigned short port) { unsigned int _v;
+mdefine_line|#define __IN1(s) &bslash;&n;extern inline RETURN_TYPE __in##s(unsigned short port) { RETURN_TYPE _v;
 DECL|macro|__IN2
 mdefine_line|#define __IN2(s,s1,s2) &bslash;&n;__asm__ __volatile__ (&quot;in&quot; #s &quot; %&quot; s2 &quot;1,%&quot; s1 &quot;0&quot;
 DECL|macro|__IN
@@ -102,30 +102,31 @@ DECL|macro|__INS
 mdefine_line|#define __INS(s) &bslash;&n;extern inline void ins##s(unsigned short port, void * addr, unsigned long count) &bslash;&n;{ __asm__ __volatile__ (&quot;cld ; rep ; ins&quot; #s &bslash;&n;: &quot;=D&quot; (addr), &quot;=c&quot; (count) : &quot;d&quot; (port),&quot;0&quot; (addr),&quot;1&quot; (count)); }
 DECL|macro|__OUTS
 mdefine_line|#define __OUTS(s) &bslash;&n;extern inline void outs##s(unsigned short port, const void * addr, unsigned long count) &bslash;&n;{ __asm__ __volatile__ (&quot;cld ; rep ; outs&quot; #s &bslash;&n;: &quot;=S&quot; (addr), &quot;=c&quot; (count) : &quot;d&quot; (port),&quot;0&quot; (addr),&quot;1&quot; (count)); }
+DECL|macro|RETURN_TYPE
+mdefine_line|#define RETURN_TYPE unsigned char
+multiline_comment|/* __IN(b,&quot;b&quot;,&quot;0&quot; (0)) */
 id|__IN
 c_func
 (paren
 id|b
 comma
-l_string|&quot;b&quot;
-comma
-l_string|&quot;0&quot;
-(paren
-l_int|0
+l_string|&quot;&quot;
 )paren
-)paren
+DECL|macro|RETURN_TYPE
+macro_line|#undef RETURN_TYPE
+DECL|macro|RETURN_TYPE
+mdefine_line|#define RETURN_TYPE unsigned short
+multiline_comment|/* __IN(w,&quot;w&quot;,&quot;0&quot; (0)) */
 id|__IN
 c_func
 (paren
 id|w
 comma
-l_string|&quot;w&quot;
-comma
-l_string|&quot;0&quot;
-(paren
-l_int|0
 )paren
-)paren
+DECL|macro|RETURN_TYPE
+macro_line|#undef RETURN_TYPE
+DECL|macro|RETURN_TYPE
+mdefine_line|#define RETURN_TYPE unsigned int
 id|__IN
 c_func
 (paren

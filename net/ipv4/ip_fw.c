@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&n; *&t;All the real work was done by .....&n; *&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&n; * TODO:&n; *&t;Fix the PORT spoof crash.&n; *&n; *&t;All the real work was done by .....&n; *&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -367,6 +367,10 @@ r_int
 r_int
 id|f_flag
 suffix:semicolon
+r_int
+r_int
+id|offset
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If the chain is empty follow policy. The BSD one&n;&t; *&t;accepts anything giving you a time window while&n;&t; *&t;flushing and rebuilding the tables.&n;&t; */
 id|src
 op_assign
@@ -377,10 +381,8 @@ op_assign
 id|ip-&gt;daddr
 suffix:semicolon
 multiline_comment|/* &n;&t; *&t;This way we handle fragmented packets.&n;&t; *&t;we ignore all fragments but the first one&n;&t; *&t;so the whole packet can&squot;t be reassembled.&n;&t; *&t;This way we relay on the full info which&n;&t; *&t;stored only in first packet.&n;&t; *&n;&t; *&t;Note that this theoretically allows partial packet&n;&t; *&t;spoofing. Not very dangerous but paranoid people may&n;&t; *&t;wish to play with this. It also allows the so called&n;&t; *&t;&quot;fragment bomb&quot; denial of service attack on some types&n;&t; *&t;of system.&n;&t; */
-id|frag1
+id|offset
 op_assign
-(paren
-(paren
 id|ntohs
 c_func
 (paren
@@ -388,10 +390,29 @@ id|ip-&gt;frag_off
 )paren
 op_amp
 id|IP_OFFSET
-)paren
+suffix:semicolon
+id|frag1
+op_assign
+(paren
+id|offset
 op_eq
 l_int|0
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Don&squot;t allow a fragment of TCP 8 bytes in. Nobody&n;&t; *&t;normal causes this. Its a cracker trying to break&n;&t; *&t;in by doing a flag overwrite to pass the direction&n;&t; *&t;checks.&n;&t; */
+r_if
+c_cond
+(paren
+id|offset
+op_eq
+l_int|1
+op_logical_and
+id|ip-&gt;protocol
+op_eq
+id|IPPROTO_TCP
+)paren
+r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -418,6 +439,57 @@ id|IPPROTO_UDP
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t; Header fragment for TCP is too small to check the bits.&n;&t; */
+r_if
+c_cond
+(paren
+id|ip-&gt;protocol
+op_eq
+id|IPPROTO_TCP
+op_logical_and
+(paren
+id|ip-&gt;ihl
+op_lshift
+l_int|2
+)paren
+op_plus
+l_int|16
+OG
+id|ntohs
+c_func
+(paren
+id|ip-&gt;tot_len
+)paren
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Too short.&n;&t; */
+r_else
+r_if
+c_cond
+(paren
+id|ntohs
+c_func
+(paren
+id|ip-&gt;tot_len
+)paren
+OL
+l_int|8
+op_plus
+(paren
+id|ip-&gt;ihl
+op_lshift
+l_int|2
+)paren
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|src
 op_assign
 id|ip-&gt;saddr

@@ -1370,7 +1370,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ok - %lu.%02lu BogoMips&bslash;n&quot;
+l_string|&quot;ok - %lu.%02lu BogoMIPS&bslash;n&quot;
 comma
 id|loops_per_sec
 op_div

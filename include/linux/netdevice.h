@@ -237,6 +237,12 @@ id|MAX_ADDR_LEN
 )braket
 suffix:semicolon
 multiline_comment|/* hw bcast add&t;*/
+DECL|member|pad
+r_int
+r_char
+id|pad
+suffix:semicolon
+multiline_comment|/* make dev_addr aligned to 8 bytes */
 DECL|member|dev_addr
 r_int
 r_char
@@ -668,6 +674,18 @@ r_extern
 r_int
 r_int
 id|ip_get_mask
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|device
+op_star
+id|ip_dev_find
 c_func
 (paren
 r_int

@@ -51,6 +51,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|nfs_bl_cache_revalidate
 r_void

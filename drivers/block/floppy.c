@@ -3884,6 +3884,8 @@ id|fd_timer.expires
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 id|add_timer
@@ -4405,7 +4407,10 @@ suffix:semicolon
 r_int
 r_char
 id|status
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* keep gcc quiet */
 r_int
 r_char
 id|rstatus
@@ -4577,6 +4582,8 @@ comma
 id|counter
 comma
 id|status
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -1191,6 +1191,12 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1199,6 +1205,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+)brace
 id|adapter_reset
 c_func
 (paren

@@ -154,7 +154,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|NBPG
-mdefine_line|#define NBPG 4096
+mdefine_line|#define NBPG PAGE_SIZE
 DECL|macro|UPAGES
 mdefine_line|#define UPAGES 1
 DECL|macro|HOST_TEXT_START_ADDR

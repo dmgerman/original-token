@@ -962,7 +962,15 @@ id|proc_kcore_inode_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
+(paren
+id|MAP_NR
+c_func
+(paren
 id|high_memory
+)paren
+op_lshift
+id|PAGE_SHIFT
+)paren
 op_plus
 id|PAGE_SIZE
 suffix:semicolon

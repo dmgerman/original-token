@@ -165,6 +165,21 @@ id|invalidate
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|set_pte
+)paren
+(paren
+id|pte_t
+op_star
+id|ptep
+comma
+id|pte_t
+id|entry
+)paren
+suffix:semicolon
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)  (((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sat Feb 18 10:51:25 1995 by root@kai.home&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Thu Aug 31 00:04:12 1995 by root@kai.makisara.fi&n;*/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -15,6 +15,9 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/* The driver prints some debugging information on the console if DEBUG&n;   is defined and non-zero. */
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG 0
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_TAPE_MAJOR
 macro_line|#include &quot;../block/blk.h&quot;
@@ -23,28 +26,10 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
 macro_line|#include &quot;st.h&quot;
 macro_line|#include &quot;constants.h&quot;
-multiline_comment|/* #define DEBUG */
-multiline_comment|/* #define ST_NOWAIT */
-multiline_comment|/* #define ST_IN_FILE_POS */
-multiline_comment|/* #define ST_RECOVERED_WRITE_FATAL */
-DECL|macro|ST_TWO_FM
-mdefine_line|#define ST_TWO_FM 0
-DECL|macro|ST_FAST_MTEOM
-mdefine_line|#define ST_FAST_MTEOM 0
-DECL|macro|ST_BUFFER_WRITES
-mdefine_line|#define ST_BUFFER_WRITES 1
-DECL|macro|ST_ASYNC_WRITES
-mdefine_line|#define ST_ASYNC_WRITES 1
-DECL|macro|ST_READ_AHEAD
-mdefine_line|#define ST_READ_AHEAD 1
+multiline_comment|/* The default definitions have been moved to st_options.h */
 DECL|macro|ST_BLOCK_SIZE
 mdefine_line|#define ST_BLOCK_SIZE 1024
-DECL|macro|ST_MAX_BUFFERS
-mdefine_line|#define ST_MAX_BUFFERS (2 + ST_EXTRA_DEVS)
-DECL|macro|ST_BUFFER_BLOCKS
-mdefine_line|#define ST_BUFFER_BLOCKS 32
-DECL|macro|ST_WRITE_THRESHOLD_BLOCKS
-mdefine_line|#define ST_WRITE_THRESHOLD_BLOCKS 30
+macro_line|#include &quot;st_options.h&quot;
 DECL|macro|ST_BUFFER_SIZE
 mdefine_line|#define ST_BUFFER_SIZE (ST_BUFFER_BLOCKS * ST_BLOCK_SIZE)
 DECL|macro|ST_WRITE_THRESHOLD
@@ -53,7 +38,7 @@ multiline_comment|/* The buffer size should fit into the 24 bits for length in t
 macro_line|#if ST_BUFFER_SIZE &gt;= (2 &lt;&lt; 24 - 1)
 macro_line|#error &quot;Buffer size should not exceed (2 &lt;&lt; 24 - 1) bytes!&quot;
 macro_line|#endif
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 DECL|variable|debugging
 r_static
 r_int
@@ -108,7 +93,6 @@ op_assign
 id|ST_MAX_BUFFERS
 suffix:semicolon
 DECL|variable|scsi_tapes
-r_static
 id|Scsi_Tape
 op_star
 id|scsi_tapes
@@ -258,7 +242,7 @@ multiline_comment|/* &amp;&amp; SCpnt-&gt;sense_buffer[0] == 0 */
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -440,7 +424,7 @@ op_logical_and
 id|scode
 op_eq
 id|RECOVERED_ERROR
-macro_line|#ifdef ST_RECOVERED_WRITE_FATAL
+macro_line|#if ST_RECOVERED_WRITE_FATAL
 op_logical_and
 id|SCpnt-&gt;data_cmnd
 (braket
@@ -752,13 +736,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
 id|STp-&gt;buffer
 )paren
 op_member_access_from_pointer
 id|writing
-op_le
-l_int|0
+op_logical_or
+id|STp-&gt;write_pending
 )paren
 id|wake_up
 c_func
@@ -769,8 +754,12 @@ id|STp-&gt;waiting
 )paren
 )paren
 suffix:semicolon
+id|STp-&gt;write_pending
+op_assign
+l_int|0
+suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_else
 r_if
 c_cond
@@ -838,18 +827,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|STbuffer-&gt;last_result
-OL
-l_int|0
+id|STp-&gt;write_pending
 )paren
 (brace
-id|STbuffer-&gt;writing
-op_assign
-(paren
-op_minus
-id|STbuffer-&gt;writing
-)paren
+macro_line|#if DEBUG
+id|STp-&gt;nbr_waits
+op_increment
 suffix:semicolon
+macro_line|#endif
 id|sleep_on
 c_func
 (paren
@@ -859,14 +844,17 @@ id|STp-&gt;waiting
 )paren
 )paren
 suffix:semicolon
-id|STbuffer-&gt;writing
+id|STp-&gt;write_pending
 op_assign
-(paren
-op_minus
-id|STbuffer-&gt;writing
-)paren
+l_int|0
 suffix:semicolon
 )brace
+macro_line|#if DEBUG
+r_else
+id|STp-&gt;nbr_finished
+op_increment
+suffix:semicolon
+macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -1231,7 +1219,7 @@ op_member_access_from_pointer
 id|last_result_fatal
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -1277,6 +1265,16 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|STp-&gt;block_size
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|result
 op_assign
 l_int|0
@@ -1325,7 +1323,7 @@ id|STp-&gt;block_size
 op_star
 id|STp-&gt;block_size
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -2043,6 +2041,10 @@ id|STp-&gt;dirty
 op_assign
 l_int|0
 suffix:semicolon
+id|STp-&gt;write_pending
+op_assign
+l_int|0
+suffix:semicolon
 id|STp-&gt;rw
 op_assign
 id|ST_IDLE
@@ -2071,6 +2073,14 @@ id|STp-&gt;recover_count
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if DEBUG
+id|STp-&gt;nbr_waits
+op_assign
+id|STp-&gt;nbr_finished
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|SCpnt
 op_assign
 id|allocate_device
@@ -2438,18 +2448,6 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Mark as not busy */
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|in_use
-op_assign
-l_int|0
-suffix:semicolon
-id|STp-&gt;buffer
-op_assign
-l_int|NULL
-suffix:semicolon
 id|STp-&gt;density
 op_assign
 l_int|0
@@ -2477,6 +2475,10 @@ id|STp-&gt;drv_block
 op_assign
 l_int|0
 suffix:semicolon
+id|STp-&gt;door_locked
+op_assign
+id|ST_UNLOCKED
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2498,6 +2500,19 @@ id|device-&gt;host-&gt;hostt-&gt;usage_count
 )paren
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|st_template.usage_count
+)paren
+(brace
+(paren
+op_star
+id|st_template.usage_count
+)paren
+op_increment
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2674,7 +2689,7 @@ id|b_data
 l_int|5
 )braket
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -2705,7 +2720,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -2838,7 +2853,7 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -2853,34 +2868,24 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|b_data
-(braket
-l_int|2
-)braket
+id|STp-&gt;block_size
 op_assign
+id|ST_DEFAULT_BLOCK
+suffix:semicolon
+multiline_comment|/* Educated guess (?) */
 (paren
 id|STp-&gt;buffer
 )paren
 op_member_access_from_pointer
-id|b_data
-(braket
-l_int|3
-)braket
+id|last_result_fatal
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Prevent error propagation */
 )brace
-id|SCpnt-&gt;request.dev
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* Mark as not busy */
-macro_line|#ifdef DEBUG
+r_else
+(brace
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -3007,7 +3012,7 @@ id|b_data
 l_int|11
 )braket
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -3057,6 +3062,7 @@ id|STp-&gt;drv_buffer
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -3095,12 +3101,12 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
-r_else
-id|STp-&gt;block_size
+id|SCpnt-&gt;request.dev
 op_assign
-l_int|512
+op_minus
+l_int|1
 suffix:semicolon
-multiline_comment|/* &quot;Educated Guess&quot; (?) */
+multiline_comment|/* Mark as not busy */
 r_if
 c_cond
 (paren
@@ -3167,7 +3173,7 @@ id|read_pointer
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -3223,7 +3229,7 @@ id|STp-&gt;write_prot
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -3418,12 +3424,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
 id|debugging
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -3439,6 +3446,19 @@ id|filp-&gt;f_pos
 )paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;st%d: Async write waits %d, finished %d.&bslash;n&quot;
+comma
+id|dev
+comma
+id|STp-&gt;nbr_waits
+comma
+id|STp-&gt;nbr_finished
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 r_if
 c_cond
@@ -3637,7 +3657,7 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -3666,7 +3686,18 @@ op_logical_neg
 id|rewind
 )paren
 (brace
-macro_line|#ifndef ST_IN_FILE_POS
+macro_line|#if ST_IN_FILE_POS
+id|flush_buffer
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -3683,17 +3714,6 @@ id|back_over_eof
 c_func
 (paren
 id|dev
-)paren
-suffix:semicolon
-macro_line|#else
-id|flush_buffer
-c_func
-(paren
-id|inode
-comma
-id|filp
-comma
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3713,6 +3733,25 @@ comma
 id|MTREW
 comma
 l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|STp-&gt;door_locked
+op_eq
+id|ST_LOCKED_AUTO
+)paren
+id|st_int_ioctl
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|MTUNLOCK
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -3878,7 +3917,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -3929,6 +3968,32 @@ r_return
 op_minus
 id|EOVERFLOW
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|STp-&gt;do_auto_lock
+op_logical_and
+id|STp-&gt;door_locked
+op_eq
+id|ST_UNLOCKED
+op_logical_and
+op_logical_neg
+id|st_int_ioctl
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|MTLOCK
+comma
+l_int|0
+)paren
+)paren
+id|STp-&gt;door_locked
+op_assign
+id|ST_LOCKED_AUTO
 suffix:semicolon
 r_if
 c_cond
@@ -3999,7 +4064,7 @@ op_member_access_from_pointer
 id|last_result_fatal
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -4427,7 +4492,7 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -4630,7 +4695,7 @@ id|ENOSPC
 )paren
 suffix:semicolon
 multiline_comment|/* EOM within current request */
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -4670,7 +4735,7 @@ id|EIO
 )paren
 suffix:semicolon
 multiline_comment|/* EOM for old data */
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -4992,17 +5057,6 @@ l_int|4
 op_assign
 id|blks
 suffix:semicolon
-id|SCpnt-&gt;result
-op_assign
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|last_result
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0
@@ -5013,6 +5067,10 @@ suffix:semicolon
 id|SCpnt-&gt;request.dev
 op_assign
 id|dev
+suffix:semicolon
+id|STp-&gt;write_pending
+op_assign
+l_int|1
 suffix:semicolon
 id|scsi_do_cmd
 (paren
@@ -5155,7 +5213,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -5226,6 +5284,32 @@ multiline_comment|/* Read must be integral number of blocks */
 r_if
 c_cond
 (paren
+id|STp-&gt;do_auto_lock
+op_logical_and
+id|STp-&gt;door_locked
+op_eq
+id|ST_UNLOCKED
+op_logical_and
+op_logical_neg
+id|st_int_ioctl
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|MTLOCK
+comma
+l_int|0
+)paren
+)paren
+id|STp-&gt;door_locked
+op_assign
+id|ST_LOCKED_AUTO
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|STp-&gt;rw
 op_eq
 id|ST_WRITING
@@ -5266,7 +5350,7 @@ l_int|255
 id|STp-&gt;moves_after_eof
 op_increment
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -5581,7 +5665,7 @@ op_member_access_from_pointer
 id|last_result_fatal
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -5854,7 +5938,7 @@ id|transfer
 op_star
 id|STp-&gt;block_size
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -5920,7 +6004,7 @@ id|transfer
 op_star
 id|STp-&gt;block_size
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -5949,7 +6033,7 @@ multiline_comment|/* end of EOF, EOM, ILI test */
 r_else
 (brace
 multiline_comment|/* nonzero sense key */
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -6004,7 +6088,7 @@ op_eq
 id|BLANK_CHECK
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -6112,7 +6196,7 @@ OG
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -6436,7 +6520,17 @@ id|MT_ST_FAST_MTEOM
 op_ne
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
+id|STp-&gt;do_auto_lock
+op_assign
+(paren
+id|options
+op_amp
+id|MT_ST_AUTO_LOCK
+)paren
+op_ne
+l_int|0
+suffix:semicolon
+macro_line|#if DEBUG
 id|debugging
 op_assign
 (paren
@@ -6464,11 +6558,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;              two FMs: %d, fast mteom: %d debugging: %d&bslash;n&quot;
+l_string|&quot;              two FMs: %d, fast mteom: %d auto lock: %d, debugging: %d&bslash;n&quot;
 comma
 id|STp-&gt;two_fm
 comma
 id|STp-&gt;fast_mteom
+comma
+id|STp-&gt;do_auto_lock
 comma
 id|debugging
 )paren
@@ -6526,7 +6622,7 @@ id|STp-&gt;write_threshold
 op_assign
 id|value
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 id|printk
 c_func
 (paren
@@ -6649,6 +6745,10 @@ c_cond
 id|STp-&gt;ready
 op_ne
 id|ST_READY
+op_logical_and
+id|cmd_in
+op_ne
+id|MTLOAD
 )paren
 r_return
 (paren
@@ -6742,7 +6842,7 @@ l_int|4
 op_assign
 id|arg
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -6858,7 +6958,7 @@ l_int|4
 op_assign
 id|ltmp
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -6997,7 +7097,7 @@ l_int|4
 op_assign
 id|arg
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7106,7 +7206,7 @@ l_int|4
 op_assign
 id|ltmp
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7237,7 +7337,7 @@ l_int|4
 op_assign
 id|arg
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7349,7 +7449,7 @@ l_int|4
 op_assign
 id|ltmp
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7507,7 +7607,7 @@ id|timeout
 op_assign
 id|ST_TIMEOUT
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7613,7 +7713,7 @@ l_int|0
 op_assign
 id|REZERO_UNIT
 suffix:semicolon
-macro_line|#ifdef ST_NOWAIT
+macro_line|#if ST_NOWAIT
 id|cmd
 (braket
 l_int|1
@@ -7627,7 +7727,7 @@ op_assign
 id|ST_TIMEOUT
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7662,7 +7762,7 @@ l_int|0
 op_assign
 id|START_STOP
 suffix:semicolon
-macro_line|#ifdef ST_NOWAIT
+macro_line|#if ST_NOWAIT
 id|cmd
 (braket
 l_int|1
@@ -7676,7 +7776,7 @@ op_assign
 id|ST_TIMEOUT
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7704,7 +7804,7 @@ suffix:semicolon
 r_case
 id|MTNOP
 suffix:colon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7735,7 +7835,7 @@ l_int|0
 op_assign
 id|START_STOP
 suffix:semicolon
-macro_line|#ifdef ST_NOWAIT
+macro_line|#if ST_NOWAIT
 id|cmd
 (braket
 l_int|1
@@ -7756,7 +7856,7 @@ l_int|4
 op_assign
 l_int|3
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7852,7 +7952,7 @@ l_int|1
 op_assign
 l_int|3
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7906,7 +8006,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* To the end of tape */
-macro_line|#ifdef ST_NOWAIT
+macro_line|#if ST_NOWAIT
 id|cmd
 (braket
 l_int|1
@@ -7927,7 +8027,7 @@ op_star
 l_int|8
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -7950,6 +8050,124 @@ id|at_sm
 op_assign
 l_int|0
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MTLOCK
+suffix:colon
+id|cmd
+(braket
+l_int|0
+)braket
+op_assign
+id|ALLOW_MEDIUM_REMOVAL
+suffix:semicolon
+id|cmd
+(braket
+l_int|4
+)braket
+op_assign
+id|SCSI_REMOVAL_PREVENT
+suffix:semicolon
+macro_line|#if DEBUG
+r_if
+c_cond
+(paren
+id|debugging
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;st%d: Locking drive door.&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif;
+r_break
+suffix:semicolon
+r_case
+id|MTUNLOCK
+suffix:colon
+id|cmd
+(braket
+l_int|0
+)braket
+op_assign
+id|ALLOW_MEDIUM_REMOVAL
+suffix:semicolon
+id|cmd
+(braket
+l_int|4
+)braket
+op_assign
+id|SCSI_REMOVAL_ALLOW
+suffix:semicolon
+macro_line|#if DEBUG
+r_if
+c_cond
+(paren
+id|debugging
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;st%d: Unlocking drive door.&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif;
+r_break
+suffix:semicolon
+r_case
+id|MTLOAD
+suffix:colon
+r_case
+id|MTUNLOAD
+suffix:colon
+id|cmd
+(braket
+l_int|0
+)braket
+op_assign
+id|START_STOP
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTLOAD
+)paren
+id|cmd
+(braket
+l_int|4
+)braket
+op_or_assign
+l_int|1
+suffix:semicolon
+macro_line|#if ST_NOWAIT
+id|cmd
+(braket
+l_int|1
+)braket
+op_or_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Don&squot;t wait for completion */
+id|timeout
+op_assign
+id|ST_TIMEOUT
+suffix:semicolon
+macro_line|#else
+id|timeout
+op_assign
+id|ST_LONG_TIMEOUT
+op_star
+l_int|8
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -8068,7 +8286,7 @@ op_assign
 id|arg
 suffix:semicolon
 )brace
-macro_line|#ifdef ST_NOWAIT
+macro_line|#if ST_NOWAIT
 id|cmd
 (braket
 l_int|1
@@ -8082,7 +8300,7 @@ op_assign
 id|ST_TIMEOUT
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -8354,7 +8572,7 @@ id|timeout
 op_assign
 id|ST_TIMEOUT
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -8648,6 +8866,29 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTLOCK
+)paren
+id|STp-&gt;door_locked
+op_assign
+id|ST_LOCKED_EXPLICIT
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTUNLOCK
+)paren
+id|STp-&gt;door_locked
+op_assign
+id|ST_UNLOCKED
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9174,6 +9415,17 @@ id|STp-&gt;eof
 op_assign
 id|ST_EOD
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTLOCK
+)paren
+id|STp-&gt;door_locked
+op_assign
+id|ST_LOCK_FAILS
+suffix:semicolon
 )brace
 r_return
 id|ioctl_result
@@ -9265,7 +9517,7 @@ id|dev
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -9338,7 +9590,7 @@ op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 (paren
 r_void
@@ -9411,6 +9663,14 @@ op_logical_or
 id|mtc.mt_op
 op_eq
 id|MTEOM
+op_logical_or
+id|mtc.mt_op
+op_eq
+id|MTLOCK
+op_logical_or
+id|mtc.mt_op
+op_eq
+id|MTLOAD
 )paren
 suffix:semicolon
 r_if
@@ -9451,6 +9711,30 @@ op_assign
 id|ST_IDLE
 suffix:semicolon
 multiline_comment|/* Prevent automatic WEOF */
+r_if
+c_cond
+(paren
+id|mtc.mt_op
+op_eq
+id|MTOFFL
+op_logical_and
+id|STp-&gt;door_locked
+op_ne
+id|ST_UNLOCKED
+)paren
+id|st_int_ioctl
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+id|MTUNLOCK
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Ignore result! */
 r_if
 c_cond
 (paren
@@ -9942,7 +10226,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -10197,7 +10481,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 r_if
 c_cond
 (paren
@@ -10362,13 +10646,6 @@ id|result
 suffix:semicolon
 )brace
 r_else
-r_if
-c_cond
-(paren
-id|STp-&gt;ready
-op_eq
-id|ST_READY
-)paren
 r_return
 id|scsi_ioctl
 c_func
@@ -10382,13 +10659,6 @@ r_void
 op_star
 )paren
 id|arg
-)paren
-suffix:semicolon
-r_else
-r_return
-(paren
-op_minus
-id|EIO
 )paren
 suffix:semicolon
 )brace
@@ -10662,6 +10932,75 @@ id|mt_status-&gt;mt_type
 op_assign
 id|MT_ISSCSI2
 suffix:semicolon
+id|tpnt-&gt;dirty
+op_assign
+l_int|0
+suffix:semicolon
+id|tpnt-&gt;rw
+op_assign
+id|ST_IDLE
+suffix:semicolon
+id|tpnt-&gt;eof
+op_assign
+id|ST_NOEOF
+suffix:semicolon
+id|tpnt-&gt;waiting
+op_assign
+l_int|NULL
+suffix:semicolon
+id|tpnt-&gt;in_use
+op_assign
+l_int|0
+suffix:semicolon
+id|tpnt-&gt;drv_buffer
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Try buffering if no mode sense */
+id|tpnt-&gt;density
+op_assign
+l_int|0
+suffix:semicolon
+id|tpnt-&gt;do_buffer_writes
+op_assign
+id|ST_BUFFER_WRITES
+suffix:semicolon
+id|tpnt-&gt;do_async_writes
+op_assign
+id|ST_ASYNC_WRITES
+suffix:semicolon
+id|tpnt-&gt;do_read_ahead
+op_assign
+id|ST_READ_AHEAD
+suffix:semicolon
+id|tpnt-&gt;do_auto_lock
+op_assign
+id|ST_AUTO_LOCK
+suffix:semicolon
+id|tpnt-&gt;two_fm
+op_assign
+id|ST_TWO_FM
+suffix:semicolon
+id|tpnt-&gt;fast_mteom
+op_assign
+id|ST_FAST_MTEOM
+suffix:semicolon
+id|tpnt-&gt;write_threshold
+op_assign
+id|st_write_threshold
+suffix:semicolon
+id|tpnt-&gt;drv_block
+op_assign
+l_int|0
+suffix:semicolon
+id|tpnt-&gt;moves_after_eof
+op_assign
+l_int|1
+suffix:semicolon
+id|tpnt-&gt;at_sm
+op_assign
+l_int|0
+suffix:semicolon
 id|st_template.nr_dev
 op_increment
 suffix:semicolon
@@ -10715,6 +11054,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|variable|st_registered
+r_static
+r_int
+id|st_registered
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Driver initialization */
 DECL|function|st_init
 r_static
@@ -10730,12 +11076,6 @@ suffix:semicolon
 id|Scsi_Tape
 op_star
 id|STp
-suffix:semicolon
-r_static
-r_int
-id|st_registered
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -10759,7 +11099,7 @@ c_cond
 id|register_chrdev
 c_func
 (paren
-id|MAJOR_NR
+id|SCSI_TAPE_MAJOR
 comma
 l_string|&quot;st&quot;
 comma
@@ -10819,7 +11159,7 @@ id|st_template.dev_noticed
 op_plus
 id|ST_EXTRA_DEVS
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 id|printk
 c_func
 (paren
@@ -10904,6 +11244,10 @@ suffix:semicolon
 id|STp-&gt;do_read_ahead
 op_assign
 id|ST_READ_AHEAD
+suffix:semicolon
+id|STp-&gt;do_auto_lock
+op_assign
+id|ST_AUTO_LOCK
 suffix:semicolon
 id|STp-&gt;two_fm
 op_assign
@@ -11054,7 +11398,7 @@ op_or
 id|GFP_DMA
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if DEBUG
 multiline_comment|/*    printk(&quot;st: Buffer address: %p&bslash;n&quot;, st_buffers[i]); */
 macro_line|#endif
 id|st_buffers
@@ -11218,10 +11562,13 @@ suffix:semicolon
 id|unregister_chrdev
 c_func
 (paren
-id|SCSI_GENERIC_MAJOR
+id|SCSI_TAPE_MAJOR
 comma
 l_string|&quot;st&quot;
 )paren
+suffix:semicolon
+id|st_registered
+op_decrement
 suffix:semicolon
 r_if
 c_cond

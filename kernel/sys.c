@@ -1604,7 +1604,7 @@ id|freepages
 op_assign
 id|buffermem
 op_rshift
-l_int|12
+id|PAGE_SHIFT
 suffix:semicolon
 id|freepages
 op_add_assign
@@ -1632,7 +1632,7 @@ op_minus
 id|oldbrk
 )paren
 op_rshift
-l_int|12
+id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond

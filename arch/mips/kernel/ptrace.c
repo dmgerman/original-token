@@ -579,9 +579,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* we&squot;re bypassing pagetables, so we have to set the dirty bit ourselves */
 multiline_comment|/* this should also re-instate whatever read-only mode there was before */
-op_star
+id|set_pte
+c_func
+(paren
 id|pgtable
-op_assign
+comma
 id|pte_mkdirty
 c_func
 (paren
@@ -591,6 +593,7 @@ c_func
 id|page
 comma
 id|vma-&gt;vm_page_prot
+)paren
 )paren
 )paren
 suffix:semicolon

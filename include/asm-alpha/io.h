@@ -208,10 +208,12 @@ macro_line|# define outl(l,p) _outl((l),(p))
 macro_line|#endif
 macro_line|#endif /* !__KERNEL__ */
 multiline_comment|/*&n; * There are different version of the alpha motherboards: the&n; * &quot;interesting&quot; (read: slightly braindead) Jensen type hardware&n; * and the PCI version&n; */
-macro_line|#ifdef CONFIG_PCI
-macro_line|#include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#if defined(CONFIG_ALPHA_LCA)
+macro_line|# include &lt;asm/lca.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_APECS)
+macro_line|# include &lt;asm/apecs.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#else
-macro_line|#include &lt;asm/jensen.h&gt;
+macro_line|# include &lt;asm/jensen.h&gt;
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */

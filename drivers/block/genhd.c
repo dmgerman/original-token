@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; */
-multiline_comment|/*&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; */
+multiline_comment|/*&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; * &n; *  Added support for &quot;missing/deleted&quot; extended partitions - mlord@bnr.ca&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
@@ -345,10 +345,12 @@ id|bh-&gt;b_data
 op_plus
 l_int|510
 )paren
-op_eq
+op_ne
 l_int|0xAA55
 )paren
-(brace
+r_goto
+id|done
+suffix:semicolon
 id|p
 op_assign
 (paren
@@ -369,14 +371,18 @@ c_cond
 id|p-&gt;sys_ind
 op_eq
 id|EXTENDED_PARTITION
-op_logical_or
-op_logical_neg
-id|p-&gt;nr_sects
 )paren
 r_goto
 id|done
 suffix:semicolon
 multiline_comment|/* shouldn&squot;t happen */
+r_if
+c_cond
+(paren
+id|p-&gt;sys_ind
+op_logical_and
+id|p-&gt;nr_sects
+)paren
 id|add_partition
 c_func
 (paren
@@ -455,11 +461,6 @@ c_func
 (paren
 id|bh
 )paren
-suffix:semicolon
-)brace
-r_else
-r_goto
-id|done
 suffix:semicolon
 )brace
 id|done

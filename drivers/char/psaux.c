@@ -59,8 +59,13 @@ DECL|macro|AUX_RESET
 mdefine_line|#define AUX_RESET&t;0xff&t;&t;/* reset aux device */
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES&t;60&t;&t;/* some aux operations take long time*/
+macro_line|#if defined(__alpha__) &amp;&amp; !defined(CONFIG_PCI)
 DECL|macro|AUX_IRQ
-mdefine_line|#define AUX_IRQ&t;&t;12
+macro_line|# define AUX_IRQ&t;9&t;&t;/* Jensen is odd indeed */
+macro_line|#else
+DECL|macro|AUX_IRQ
+macro_line|# define AUX_IRQ&t;12
+macro_line|#endif
 DECL|macro|AUX_BUF_SIZE
 mdefine_line|#define AUX_BUF_SIZE&t;2048
 multiline_comment|/* 82C710 definitions */
@@ -510,6 +515,23 @@ id|AUX_BUF_SIZE
 op_minus
 l_int|1
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|AUX_STATUS
+)paren
+op_amp
+id|AUX_OBUF_FULL
+)paren
+op_ne
+id|AUX_OBUF_FULL
+)paren
+r_return
 suffix:semicolon
 id|queue-&gt;buf
 (braket
@@ -1830,6 +1852,20 @@ r_sizeof
 (paren
 r_struct
 id|aux_queue
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|queue
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|queue
+)paren
 )paren
 suffix:semicolon
 id|queue-&gt;head

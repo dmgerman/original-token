@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -540,6 +541,61 @@ suffix:semicolon
 r_return
 id|dev
 suffix:semicolon
+)brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Find the first device with a given source address.&n; */
+DECL|function|ip_dev_find
+r_struct
+id|device
+op_star
+id|ip_dev_find
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|dev_base
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+op_logical_and
+id|dev-&gt;pa_addr
+op_eq
+id|addr
+)paren
+(brace
+r_return
+id|dev
+suffix:semicolon
+)brace
 )brace
 r_return
 l_int|NULL

@@ -1468,7 +1468,6 @@ comma
 )brace
 suffix:semicolon
 DECL|function|get_unnamed_dev
-r_static
 id|dev_t
 id|get_unnamed_dev
 c_func
@@ -1521,7 +1520,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|put_unnamed_dev
-r_static
 r_void
 id|put_unnamed_dev
 c_func
@@ -2082,7 +2080,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * do_mount() does the actual mounting after sys_mount has done the ugly&n; * parameter parsing. When enough time has gone by, and everything uses the&n; * new mount() parameters, sys_mount() can then be cleaned up.&n; *&n; * We cannot mount a filesystem if it has active, used, or dirty inodes.&n; * We also have to flush all inode-data for this device, as the new mount&n; * might need new info.&n; */
 DECL|function|do_mount
-r_static
 r_int
 id|do_mount
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; *&t;&t;Alan Cox&t;:&t;Dumped the header building experiment.&n; */
+multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; *&t;&t;Alan Cox&t;:&t;Dumped the header building experiment.&n; *&t;&t;Alan Cox&t;:&t;Minor tweaks ready for multicast routing&n; *&t;&t;&t;&t;&t;and extended IGMP protocol.&n; *&t;&t;Alan Cox&t;:&t;Removed a load of inline directives. Gcc 2.5.8&n; *&t;&t;&t;&t;&t;writes utterly bogus code otherwise (sigh)&n; *&t;&t;&t;&t;&t;fixed IGMP loopback to behave in the manner&n; *&t;&t;&t;&t;&t;desired by mrouted, fixed the fact it has been&n; *&t;&t;&t;&t;&t;broken since 1.3.6 and cleaned up a few minor&n; *&t;&t;&t;&t;&t;points.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -22,8 +22,7 @@ macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#ifdef CONFIG_IP_MULTICAST
 multiline_comment|/*&n; *&t;Timer management&n; */
 DECL|function|igmp_stop_timer
-r_extern
-id|__inline__
+r_static
 r_void
 id|igmp_stop_timer
 c_func
@@ -79,8 +78,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Inlined as its only called once.&n; */
 DECL|function|igmp_start_timer
-r_extern
-id|__inline__
+r_static
 r_void
 id|igmp_start_timer
 c_func
@@ -207,7 +205,7 @@ id|IPPROTO_IGMP
 comma
 l_int|NULL
 comma
-id|skb-&gt;truesize
+l_int|28
 comma
 l_int|0
 comma
@@ -256,7 +254,7 @@ id|ih-&gt;type
 op_assign
 id|IGMP_HOST_MEMBERSHIP_REPORT
 suffix:semicolon
-id|ih-&gt;unused
+id|ih-&gt;code
 op_assign
 l_int|0
 suffix:semicolon
@@ -341,8 +339,7 @@ id|IGMP_HOST_MEMBERSHIP_REPORT
 suffix:semicolon
 )brace
 DECL|function|igmp_init_timer
-r_extern
-id|__inline__
+r_static
 r_void
 id|igmp_init_timer
 c_func
@@ -379,8 +376,7 @@ id|igmp_timer_expire
 suffix:semicolon
 )brace
 DECL|function|igmp_heard_report
-r_extern
-id|__inline__
+r_static
 r_void
 id|igmp_heard_report
 c_func
@@ -432,8 +428,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|igmp_heard_query
-r_extern
-id|__inline__
+r_static
 r_void
 id|igmp_heard_query
 c_func
@@ -464,6 +459,7 @@ id|im
 op_assign
 id|im-&gt;next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -481,6 +477,7 @@ c_func
 id|im
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; *&t;Map a multicast IP onto multicast MAC for type ethernet.&n; */
@@ -713,7 +710,6 @@ comma
 id|im-&gt;multiaddr
 )paren
 suffix:semicolon
-multiline_comment|/*&t;printk(&quot;Left group %lX&bslash;n&quot;,im-&gt;multiaddr);*/
 )brace
 DECL|function|igmp_group_added
 r_extern
@@ -734,6 +730,14 @@ c_func
 id|im
 )paren
 suffix:semicolon
+id|ip_mc_filter_add
+c_func
+(paren
+id|im-&gt;interface
+comma
+id|im-&gt;multiaddr
+)paren
+suffix:semicolon
 id|igmp_send_report
 c_func
 (paren
@@ -744,15 +748,6 @@ comma
 id|IGMP_HOST_MEMBERSHIP_REPORT
 )paren
 suffix:semicolon
-id|ip_mc_filter_add
-c_func
-(paren
-id|im-&gt;interface
-comma
-id|im-&gt;multiaddr
-)paren
-suffix:semicolon
-multiline_comment|/*&t;printk(&quot;Joined group %lX&bslash;n&quot;,im-&gt;multiaddr);*/
 )brace
 DECL|function|igmp_rcv
 r_int
@@ -801,6 +796,38 @@ id|igmphdr
 op_star
 id|ih
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Mrouted needs to able to query local interfaces. So&n;&t; *&t;report for the device this was sent at. (Which can&n;&t; *&t;be the loopback this time)&n;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_LOOPBACK
+)paren
+(brace
+id|dev
+op_assign
+id|ip_dev_find
+c_func
+(paren
+id|saddr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|dev
+op_assign
+op_amp
+id|loopback_dev
+suffix:semicolon
+)brace
+)brace
 id|ih
 op_assign
 (paren
@@ -808,21 +835,13 @@ r_struct
 id|igmphdr
 op_star
 )paren
-id|skb-&gt;data
+id|skb-&gt;h.raw
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|skb-&gt;len
-OL
-r_sizeof
-(paren
-r_struct
-id|igmphdr
-)paren
-op_logical_or
-id|skb-&gt;ip_hdr-&gt;ttl
-op_ne
+template_param
 l_int|1
 op_logical_or
 id|ip_compute_csum
@@ -1282,6 +1301,10 @@ suffix:semicolon
 id|i-&gt;multiaddr
 op_assign
 id|IGMP_ALL_HOSTS
+suffix:semicolon
+id|i-&gt;tm_running
+op_assign
+l_int|0
 suffix:semicolon
 id|i-&gt;next
 op_assign

@@ -1493,7 +1493,9 @@ id|current-&gt;timeout
 op_assign
 id|jiffies
 op_plus
-l_int|200
+l_int|2
+op_star
+id|HZ
 suffix:semicolon
 id|schedule
 c_func
@@ -2236,6 +2238,12 @@ id|result_size
 op_assign
 l_int|2
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2426,6 +2434,8 @@ id|current-&gt;timeout
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 multiline_comment|/* Wait .1 seconds on retries */
@@ -6686,6 +6696,12 @@ op_complement
 id|current-&gt;blocked
 )paren
 (brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN

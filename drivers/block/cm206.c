@@ -73,11 +73,11 @@ mdefine_line|#define READ_AHEAD 1&t;&t;/* defines private buffer, waste! */
 DECL|macro|BACK_AHEAD
 mdefine_line|#define BACK_AHEAD 1&t;&t;/* defines adapter-read ahead */
 DECL|macro|DATA_TIMEOUT
-mdefine_line|#define DATA_TIMEOUT 300&t;/* measured in jiffies (10 ms) */
+mdefine_line|#define DATA_TIMEOUT (3*HZ)&t;/* measured in jiffies (10 ms) */
 DECL|macro|UART_TIMEOUT
-mdefine_line|#define UART_TIMEOUT 5
+mdefine_line|#define UART_TIMEOUT (5*HZ/100)
 DECL|macro|DSB_TIMEOUT
-mdefine_line|#define DSB_TIMEOUT 700&t;&t;/* time for the slowest command to finish */
+mdefine_line|#define DSB_TIMEOUT (7*HZ)&t;/* time for the slowest command to finish */
 DECL|macro|RAW_SECTOR_SIZE
 mdefine_line|#define RAW_SECTOR_SIZE 2352&t;/* ok, is also defined in cdrom.h */
 DECL|macro|ISO_SECTOR_SIZE

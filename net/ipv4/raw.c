@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Setsocketopt added&n; *&t;&t;Alan Cox&t;:&t;Fixed error return for broadcasts&n; *&t;&t;Alan Cox&t;:&t;Removed wake_up calls&n; *&t;&t;Alan Cox&t;:&t;Use ttl/tos&n; *&t;&t;Alan Cox&t;:&t;Cleaned up old debugging&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addresses&n; *&t;Arnt Gulbrandsen&t;:&t;Fixed MSG_DONTROUTE in raw sockets.&n; *&t;&t;Alan Cox&t;:&t;BSD style RAW socket demultiplexing.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Setsocketopt added&n; *&t;&t;Alan Cox&t;:&t;Fixed error return for broadcasts&n; *&t;&t;Alan Cox&t;:&t;Removed wake_up calls&n; *&t;&t;Alan Cox&t;:&t;Use ttl/tos&n; *&t;&t;Alan Cox&t;:&t;Cleaned up old debugging&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addresses&n; *&t;Arnt Gulbrandsen&t;:&t;Fixed MSG_DONTROUTE in raw sockets.&n; *&t;&t;Alan Cox&t;:&t;BSD style RAW socket demultiplexing.&n; *&t;&t;Alan Cox&t;:&t;Beginnings of mrouted support.&n; *&t;&t;Alan Cox&t;:&t;Added IP_HDRINCL option.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -19,6 +20,16 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#ifdef CONFIG_IP_MROUTE
+DECL|variable|mroute_socket
+r_struct
+id|sock
+op_star
+id|mroute_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 DECL|function|min
 r_static
 r_inline
@@ -624,9 +635,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;num
-op_eq
-id|IPPROTO_RAW
+id|sk-&gt;ip_hdrincl
 )paren
 (brace
 id|err
@@ -748,6 +757,27 @@ id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MROUTE&t;
+r_if
+c_cond
+(paren
+id|sk
+op_eq
+id|mroute_socket
+)paren
+(brace
+id|mroute_close
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|mroute_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif&t;
 )brace
 DECL|function|raw_init
 r_static
@@ -813,9 +843,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-r_int
-id|truesize
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -878,10 +905,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|truesize
-op_assign
-id|skb-&gt;len
-suffix:semicolon
 id|copied
 op_assign
 id|min
@@ -889,7 +912,7 @@ c_func
 (paren
 id|len
 comma
-id|truesize
+id|skb-&gt;len
 )paren
 suffix:semicolon
 id|skb_copy_datagram
@@ -938,10 +961,9 @@ id|sk
 suffix:semicolon
 r_return
 (paren
-id|truesize
+id|copied
 )paren
 suffix:semicolon
-multiline_comment|/* len not copied. BSD returns the true size of the message so you know a bit fell off! */
 )brace
 DECL|function|raw_read
 r_int
@@ -1033,8 +1055,13 @@ l_int|NULL
 comma
 id|datagram_select
 comma
+macro_line|#ifdef CONFIG_IP_MROUTE&t;
+id|ipmr_ioctl
+comma
+macro_line|#else
 l_int|NULL
 comma
+macro_line|#endif&t;&t;
 id|raw_init
 comma
 l_int|NULL

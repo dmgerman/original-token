@@ -4,10 +4,11 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-macro_line|#ifdef CONFIG_PCI
+macro_line|#ifdef CONFIG_ALPHA_LCA
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the LCA_IOC_CONF register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | | | | | | | | | | | | | | |F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
@@ -75,7 +76,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 op_star
 (paren
 (paren
@@ -143,7 +143,6 @@ op_or
 id|where
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 op_star
 id|pci_addr
 op_assign
@@ -167,7 +166,7 @@ id|addr
 (brace
 r_int
 r_int
-id|old_ipl
+id|flags
 comma
 id|code
 comma
@@ -177,15 +176,17 @@ r_int
 r_int
 id|value
 suffix:semicolon
-id|old_ipl
-op_assign
-id|swpipl
+id|save_flags
 c_func
 (paren
-l_int|7
+id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* avoid getting hit by machine check */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* reset status register to avoid loosing errors: */
 id|stat0
 op_assign
@@ -317,10 +318,10 @@ op_assign
 l_int|0xffffffff
 suffix:semicolon
 )brace
-id|swpipl
+id|restore_flags
 c_func
 (paren
-id|old_ipl
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -344,21 +345,24 @@ id|value
 (brace
 r_int
 r_int
-id|old_ipl
+id|flags
 comma
 id|code
 comma
 id|stat0
 suffix:semicolon
-id|old_ipl
-op_assign
-id|swpipl
+id|save_flags
 c_func
 (paren
-l_int|7
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* reset status register to avoid loosing errors: */
 id|stat0
 op_assign
@@ -486,10 +490,10 @@ l_int|0x7
 suffix:semicolon
 multiline_comment|/* reset machine check */
 )brace
-id|swpipl
+id|restore_flags
 c_func
 (paren
-id|old_ipl
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -553,7 +557,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 id|addr
 op_or_assign
 (paren
@@ -636,7 +639,6 @@ r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 r_if
 c_cond
 (paren
@@ -658,7 +660,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 id|addr
 op_or_assign
 (paren
@@ -741,7 +742,6 @@ r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 r_if
 c_cond
 (paren
@@ -763,7 +763,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 id|addr
 op_or_assign
 (paren
@@ -841,7 +840,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 id|addr
 op_or_assign
 (paren
@@ -928,7 +926,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 id|addr
 op_or_assign
 (paren
@@ -1015,7 +1012,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-multiline_comment|/* if */
 id|addr
 op_or_assign
 (paren
@@ -1108,6 +1104,90 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PCI */
-multiline_comment|/*** end of lca.c ***/
+DECL|function|lca_machine_check
+r_void
+id|lca_machine_check
+(paren
+r_int
+r_int
+id|vector
+comma
+r_int
+r_int
+id|la
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|mces
+suffix:semicolon
+id|mces
+op_assign
+id|rdmces
+c_func
+(paren
+)paren
+suffix:semicolon
+id|wrmces
+c_func
+(paren
+id|mces
+)paren
+suffix:semicolon
+multiline_comment|/* reset machine check asap */
+id|printk
+c_func
+(paren
+l_string|&quot;Machine check (la=0x%lx,mces=0x%lx)&bslash;n&quot;
+comma
+id|la
+comma
+id|mces
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;esr=%lx, ear=%lx, ioc_stat0=%lx, ioc_stat1=%lx&bslash;n&quot;
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_MEM_ESR
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_MEM_EAR
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_IOC_STAT0
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_IOC_STAT1
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ALPHA_LCA */
 eof

@@ -75,6 +75,11 @@ r_int
 r_char
 id|dirty
 suffix:semicolon
+DECL|member|write_pending
+r_int
+r_char
+id|write_pending
+suffix:semicolon
 DECL|member|rw
 r_int
 r_char
@@ -130,6 +135,11 @@ r_int
 r_char
 id|do_read_ahead
 suffix:semicolon
+DECL|member|do_auto_lock
+r_int
+r_char
+id|do_auto_lock
+suffix:semicolon
 DECL|member|two_fm
 r_int
 r_char
@@ -144,6 +154,11 @@ DECL|member|density
 r_int
 r_char
 id|density
+suffix:semicolon
+DECL|member|door_locked
+r_int
+r_char
+id|door_locked
 suffix:semicolon
 DECL|member|buffer
 id|ST_buffer
@@ -195,9 +210,24 @@ DECL|member|SCpnt
 id|Scsi_Cmnd
 id|SCpnt
 suffix:semicolon
+macro_line|#if DEBUG
+DECL|member|nbr_finished
+r_int
+id|nbr_finished
+suffix:semicolon
+DECL|member|nbr_waits
+r_int
+id|nbr_waits
+suffix:semicolon
+macro_line|#endif
 DECL|typedef|Scsi_Tape
 )brace
 id|Scsi_Tape
+suffix:semicolon
+r_extern
+id|Scsi_Tape
+op_star
+id|scsi_tapes
 suffix:semicolon
 multiline_comment|/* Values of eof */
 DECL|macro|ST_NOEOF
@@ -224,6 +254,15 @@ DECL|macro|ST_NOT_READY
 mdefine_line|#define ST_NOT_READY&t;1
 DECL|macro|ST_NO_TAPE
 mdefine_line|#define ST_NO_TAPE&t;2
+multiline_comment|/* Values for door lock state */
+DECL|macro|ST_UNLOCKED
+mdefine_line|#define ST_UNLOCKED&t;0
+DECL|macro|ST_LOCKED_EXPLICIT
+mdefine_line|#define ST_LOCKED_EXPLICIT 1
+DECL|macro|ST_LOCKED_AUTO
+mdefine_line|#define ST_LOCKED_AUTO  2
+DECL|macro|ST_LOCK_FAILS
+mdefine_line|#define ST_LOCK_FAILS   3
 multiline_comment|/* Positioning SCSI-commands for Tandberg, etc. drives */
 DECL|macro|QFA_REQUEST_BLOCK
 mdefine_line|#define&t;QFA_REQUEST_BLOCK&t;0x02

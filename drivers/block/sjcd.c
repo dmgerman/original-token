@@ -1437,7 +1437,9 @@ c_func
 (paren
 id|sjcd_status_timer
 comma
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -1462,7 +1464,9 @@ c_func
 (paren
 id|sjcd_status_timer
 comma
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 id|sleep_on
@@ -5139,7 +5143,9 @@ c_func
 (paren
 id|sjcd_poll
 comma
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -5282,7 +5288,9 @@ c_func
 (paren
 id|sjcd_poll
 comma
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace

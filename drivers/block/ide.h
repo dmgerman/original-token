@@ -16,9 +16,25 @@ macro_line|#ifndef OK_TO_RESET_CONTROLLER&t;&t;/* 1 needed for good error recove
 DECL|macro|OK_TO_RESET_CONTROLLER
 mdefine_line|#define OK_TO_RESET_CONTROLLER&t;1&t;/* 0 for use with AH2372A/B interface */
 macro_line|#endif
+macro_line|#ifndef SUPPORT_RZ1000&t;&t;&t;/* 1 to support RZ1000 chipset */
+DECL|macro|SUPPORT_RZ1000
+mdefine_line|#define SUPPORT_RZ1000&t;&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
+macro_line|#ifndef SUPPORT_CMD640&t;&t;&t;/* 1 to support CMD640 chipset */
+DECL|macro|SUPPORT_CMD640
+mdefine_line|#define SUPPORT_CMD640&t;&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
+macro_line|#ifndef SUPPORT_HT6560B&t;&t;&t;/* 1 to support HT6560B chipset */
+DECL|macro|SUPPORT_HT6560B
+mdefine_line|#define SUPPORT_HT6560B&t;&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
 macro_line|#ifndef SUPPORT_DTC2278&t;&t;&t;/* 1 to support DTC2278 chipset */
 DECL|macro|SUPPORT_DTC2278
 mdefine_line|#define SUPPORT_DTC2278&t;&t;1&t;/* 0 to reduce kernel size */
+macro_line|#ifndef SET_DTC2278_MODE4
+DECL|macro|SET_DTC2278_MODE4
+mdefine_line|#define SET_DTC2278_MODE4&t;0&t;/* 1 to init primary i/f for PIO mode4 */
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifndef FANCY_STATUS_DUMPS&t;&t;/* 1 for human-readable drive errors */
 DECL|macro|FANCY_STATUS_DUMPS
@@ -809,11 +825,11 @@ id|byte
 id|major
 suffix:semicolon
 multiline_comment|/* our major number */
-DECL|member|drivecount
+DECL|member|select
 id|byte
-id|drivecount
+id|select
 suffix:semicolon
-multiline_comment|/* how many drives attached */
+multiline_comment|/* pri/sec hwif select for ht6560b */
 DECL|member|name
 r_char
 id|name
@@ -1178,8 +1194,9 @@ macro_line|#ifdef CONFIG_BLK_DEV_TRITON
 r_void
 id|ide_init_triton
 (paren
-id|ide_hwif_t
-op_star
+id|byte
+comma
+id|byte
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_TRITON */

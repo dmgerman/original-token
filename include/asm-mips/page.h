@@ -16,6 +16,9 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 DECL|typedef|mem_map_t
 r_typedef
 r_int

@@ -87,7 +87,7 @@ mdefine_line|#define DMA_MODE&t;0x03&t;/* control bits to set for DMA &amp; inte
 DECL|macro|XD_MAXDRIVES
 mdefine_line|#define XD_MAXDRIVES&t;2&t;/* maximum 2 drives */
 DECL|macro|XD_TIMEOUT
-mdefine_line|#define XD_TIMEOUT&t;100&t;/* 1 second timeout */
+mdefine_line|#define XD_TIMEOUT&t;HZ&t;/* 1 second timeout */
 DECL|macro|XD_RETRIES
 mdefine_line|#define XD_RETRIES&t;4&t;/* maximum 4 retries */
 DECL|macro|DEBUG

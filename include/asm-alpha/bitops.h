@@ -33,11 +33,11 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldq_l %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;and %0,%3,%2&bslash;n&bslash;t&quot;
 l_string|&quot;bne %2,2f&bslash;n&bslash;t&quot;
 l_string|&quot;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stq_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;beq %0,1b&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
@@ -51,7 +51,6 @@ l_string|&quot;=m&quot;
 (paren
 (paren
 r_int
-r_int
 op_star
 )paren
 id|addr
@@ -59,7 +58,7 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|6
+l_int|5
 )braket
 )paren
 comma
@@ -75,7 +74,7 @@ op_lshift
 (paren
 id|nr
 op_amp
-l_int|63
+l_int|31
 )paren
 )paren
 comma
@@ -84,7 +83,6 @@ l_string|&quot;m&quot;
 (paren
 (paren
 r_int
-r_int
 op_star
 )paren
 id|addr
@@ -92,7 +90,7 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|6
+l_int|5
 )braket
 )paren
 )paren
@@ -133,11 +131,11 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldq_l %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;and %0,%3,%2&bslash;n&bslash;t&quot;
 l_string|&quot;beq %2,2f&bslash;n&bslash;t&quot;
 l_string|&quot;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stq_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;beq %0,1b&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
@@ -151,7 +149,6 @@ l_string|&quot;=m&quot;
 (paren
 (paren
 r_int
-r_int
 op_star
 )paren
 id|addr
@@ -159,7 +156,7 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|6
+l_int|5
 )braket
 )paren
 comma
@@ -175,7 +172,7 @@ op_lshift
 (paren
 id|nr
 op_amp
-l_int|63
+l_int|31
 )paren
 )paren
 comma
@@ -184,7 +181,6 @@ l_string|&quot;m&quot;
 (paren
 (paren
 r_int
-r_int
 op_star
 )paren
 id|addr
@@ -192,7 +188,7 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|6
+l_int|5
 )braket
 )paren
 )paren
@@ -233,10 +229,10 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldq_l %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;and %0,%3,%2&bslash;n&bslash;t&quot;
 l_string|&quot;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stq_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;beq %0,1b&bslash;n&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
@@ -249,7 +245,6 @@ l_string|&quot;=m&quot;
 (paren
 (paren
 r_int
-r_int
 op_star
 )paren
 id|addr
@@ -257,7 +252,7 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|6
+l_int|5
 )braket
 )paren
 comma
@@ -273,7 +268,7 @@ op_lshift
 (paren
 id|nr
 op_amp
-l_int|63
+l_int|31
 )paren
 )paren
 comma
@@ -282,7 +277,6 @@ l_string|&quot;m&quot;
 (paren
 (paren
 r_int
-r_int
 op_star
 )paren
 id|addr
@@ -290,7 +284,7 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|6
+l_int|5
 )braket
 )paren
 )paren
@@ -324,7 +318,6 @@ op_amp
 (paren
 (paren
 r_int
-r_int
 op_star
 )paren
 id|addr
@@ -332,13 +325,13 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|6
+l_int|5
 )braket
 op_rshift
 (paren
 id|nr
 op_amp
-l_int|63
+l_int|31
 )paren
 )paren
 suffix:semicolon

@@ -1829,8 +1829,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&t;sk-&gt;err = icmp_err_convert[err &amp; 0xff].errno;  -- moved as TCP should hide non fatals internally (and does) */
 multiline_comment|/*&n;&t; * If we&squot;ve already connected we will keep trying&n;&t; * until we time out, or the user gives up.&n;&t; */
+id|err
+op_and_assign
+l_int|0xff
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1842,8 +1845,6 @@ op_logical_and
 id|icmp_err_convert
 (braket
 id|err
-op_amp
-l_int|0xff
 )braket
 dot
 id|fatal
@@ -1854,6 +1855,15 @@ id|TCP_SYN_SENT
 )paren
 )paren
 (brace
+id|sk-&gt;err
+op_assign
+id|icmp_err_convert
+(braket
+id|err
+)braket
+dot
+id|errno
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1883,17 +1893,6 @@ id|sk
 suffix:semicolon
 multiline_comment|/* Wake people up to see the error (see connect in sock.c) */
 )brace
-id|sk-&gt;err
-op_assign
-id|icmp_err_convert
-(braket
-id|err
-op_amp
-l_int|0xff
-)braket
-dot
-id|errno
-suffix:semicolon
 )brace
 r_return
 suffix:semicolon

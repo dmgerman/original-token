@@ -2570,7 +2570,11 @@ macro_line|#ifdef MODULE
 id|sbp_sleep
 c_func
 (paren
-l_int|150
+l_int|15
+op_star
+id|HZ
+op_div
+l_int|10
 )paren
 suffix:semicolon
 r_for
@@ -2629,7 +2633,11 @@ r_else
 id|sbp_sleep
 c_func
 (paren
-l_int|150
+l_int|15
+op_star
+id|HZ
+op_div
+l_int|10
 )paren
 suffix:semicolon
 r_for
@@ -2678,7 +2686,9 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|1000
+l_int|10
+op_star
+id|HZ
 comma
 id|i
 op_assign
@@ -2761,7 +2771,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 id|i
@@ -2859,7 +2871,9 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|1000
+l_int|10
+op_star
+id|HZ
 comma
 id|i
 op_assign
@@ -2942,7 +2956,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 id|i
@@ -3223,7 +3239,7 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|100
+id|HZ
 suffix:semicolon
 id|i
 OL
@@ -3296,7 +3312,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 id|j
@@ -4436,14 +4454,18 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|1600
+l_int|16
+op_star
+id|HZ
 suffix:semicolon
 r_else
 id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|400
+l_int|4
+op_star
+id|HZ
 suffix:semicolon
 id|j
 op_assign
@@ -4504,7 +4526,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 id|j
@@ -5234,7 +5258,7 @@ id|CMDT_READ_VER
 id|sbp_sleep
 c_func
 (paren
-l_int|100
+id|HZ
 )paren
 suffix:semicolon
 macro_line|#if 1
@@ -5646,7 +5670,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -5762,6 +5788,8 @@ multiline_comment|/* handled elsewhere */
 id|sbp_sleep
 c_func
 (paren
+id|HZ
+op_div
 l_int|10
 )paren
 suffix:semicolon
@@ -8943,7 +8971,9 @@ id|fam0L_drive
 id|sbp_sleep
 c_func
 (paren
-l_int|500
+l_int|5
+op_star
+id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* wait 5 seconds */
@@ -8951,7 +8981,9 @@ r_else
 id|sbp_sleep
 c_func
 (paren
-l_int|100
+l_int|1
+op_star
+id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* wait a second */
@@ -8973,7 +9005,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|300
+l_int|3
+op_star
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -9207,7 +9241,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -10128,7 +10164,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -10205,7 +10243,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -10256,7 +10296,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -15836,7 +15878,11 @@ id|delay_timer.expires
 op_assign
 id|jiffies
 op_plus
-l_int|110
+l_int|11
+op_star
+id|HZ
+op_div
+l_int|10
 suffix:semicolon
 id|timed_out_delay
 op_assign
@@ -15854,7 +15900,7 @@ c_func
 (paren
 id|DBG_TIM
 comma
-l_string|&quot;delay timer started (110).&bslash;n&quot;
+l_string|&quot;delay timer started (11*HZ/10).&bslash;n&quot;
 )paren
 suffix:semicolon
 r_do
@@ -17081,7 +17127,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|600
+l_int|6
+op_star
+id|HZ
 )paren
 suffix:semicolon
 id|OUT
@@ -17614,7 +17662,11 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|50
+l_int|5
+op_star
+id|HZ
+op_div
+l_int|10
 )paren
 suffix:semicolon
 id|OUT
@@ -24623,6 +24675,8 @@ id|busy_data
 id|sbp_sleep
 c_func
 (paren
+id|HZ
+op_div
 l_int|10
 )paren
 suffix:semicolon
@@ -24719,7 +24773,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 multiline_comment|/* wait a bit, try again */
@@ -24990,7 +25046,9 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|900
+l_int|9
+op_star
+id|HZ
 suffix:semicolon
 suffix:semicolon
 )paren
@@ -25084,7 +25142,9 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|1
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 r_try
@@ -25273,7 +25333,9 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|900
+l_int|9
+op_star
+id|HZ
 suffix:semicolon
 id|timeout
 OG
@@ -26116,7 +26178,7 @@ id|busy_audio
 id|sbp_sleep
 c_func
 (paren
-l_int|100
+id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* wait a bit */
@@ -27145,7 +27207,9 @@ suffix:semicolon
 macro_line|#if LONG_TIMING
 id|max_latency
 op_assign
-l_int|900
+l_int|9
+op_star
+id|HZ
 suffix:semicolon
 macro_line|#else
 r_if
@@ -27160,12 +27224,16 @@ id|f_multisession
 )paren
 id|max_latency
 op_assign
-l_int|900
+l_int|9
+op_star
+id|HZ
 suffix:semicolon
 r_else
 id|max_latency
 op_assign
-l_int|300
+l_int|3
+op_star
+id|HZ
 suffix:semicolon
 macro_line|#endif
 id|msg
@@ -28216,7 +28284,7 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|100
+id|HZ
 suffix:semicolon
 id|timeout
 OG
@@ -30243,7 +30311,7 @@ suffix:semicolon
 id|sbp_sleep
 c_func
 (paren
-l_int|100
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -30525,7 +30593,9 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|200
+l_int|2
+op_star
+id|HZ
 suffix:semicolon
 r_do
 (brace

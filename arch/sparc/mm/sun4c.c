@@ -2022,6 +2022,26 @@ c_func
 suffix:semicolon
 )brace
 r_void
+DECL|function|sun4c_set_pte
+id|sun4c_set_pte
+c_func
+(paren
+id|pte_t
+op_star
+id|ptep
+comma
+id|pte_t
+id|entry
+)paren
+(brace
+multiline_comment|/* for now... */
+op_star
+id|ptep
+op_assign
+id|entry
+suffix:semicolon
+)brace
+r_void
 DECL|function|sun4c_switch_to_context
 id|sun4c_switch_to_context
 c_func
@@ -3226,6 +3246,10 @@ multiline_comment|/* Functions */
 id|invalidate
 op_assign
 id|sun4c_invalidate
+suffix:semicolon
+id|set_pte
+op_assign
+id|sun4c_set_pte
 suffix:semicolon
 id|switch_to_context
 op_assign

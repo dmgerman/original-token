@@ -272,6 +272,13 @@ id|hae.cache
 )paren
 suffix:semicolon
 multiline_comment|/* sync HAE register w/hae_cache */
+id|wrmces
+c_func
+(paren
+l_int|0x7
+)paren
+suffix:semicolon
+multiline_comment|/* reset enable correctable error reports */
 id|ROOT_DEV
 op_assign
 l_int|0x0802
@@ -317,11 +324,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
+macro_line|#if defined(CONFIG_ALPHA_LCA)
 op_star
 id|memory_start_p
 op_assign
 id|lca_init
+c_func
+(paren
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_APECS)
+op_star
+id|memory_start_p
+op_assign
+id|apecs_init
 c_func
 (paren
 op_star
@@ -388,6 +409,8 @@ comma
 l_string|&quot;EV45&quot;
 )brace
 suffix:semicolon
+DECL|macro|SYSTYPE_NAME_BIAS
+macro_line|#&t;define SYSTYPE_NAME_BIAS&t;20
 r_const
 r_char
 op_star
@@ -396,6 +419,48 @@ id|systype_name
 )braket
 op_assign
 (brace
+l_string|&quot;Cabriolet&quot;
+comma
+l_string|&quot;EB66P&quot;
+comma
+l_string|&quot;-18&quot;
+comma
+l_string|&quot;-17&quot;
+comma
+l_string|&quot;-16&quot;
+comma
+l_string|&quot;-15&quot;
+comma
+l_string|&quot;-14&quot;
+comma
+l_string|&quot;-13&quot;
+comma
+l_string|&quot;-12&quot;
+comma
+l_string|&quot;-11&quot;
+comma
+l_string|&quot;-10&quot;
+comma
+l_string|&quot;-9&quot;
+comma
+l_string|&quot;-8&quot;
+comma
+l_string|&quot;-7&quot;
+comma
+l_string|&quot;-6&quot;
+comma
+l_string|&quot;-5&quot;
+comma
+l_string|&quot;-4&quot;
+comma
+l_string|&quot;-3&quot;
+comma
+l_string|&quot;-2&quot;
+comma
+l_string|&quot;-1&quot;
+comma
+l_string|&quot;0&quot;
+comma
 l_string|&quot;ADU&quot;
 comma
 l_string|&quot;Cobra&quot;
@@ -404,13 +469,13 @@ l_string|&quot;Ruby&quot;
 comma
 l_string|&quot;Flamingo&quot;
 comma
-l_string|&quot;Unknown 1&quot;
+l_string|&quot;5&quot;
 comma
 l_string|&quot;Jensen&quot;
 comma
 l_string|&quot;Pelican&quot;
 comma
-l_string|&quot;Unknown 2&quot;
+l_string|&quot;8&quot;
 comma
 l_string|&quot;Sable&quot;
 comma
@@ -426,11 +491,11 @@ l_string|&quot;Mustang&quot;
 comma
 l_string|&quot;Alcor&quot;
 comma
-l_string|&quot;Unknown 3&quot;
+l_string|&quot;16&quot;
 comma
 l_string|&quot;Mikasa&quot;
 comma
-l_string|&quot;Unknown3&quot;
+l_string|&quot;18&quot;
 comma
 l_string|&quot;EB66&quot;
 comma
@@ -445,8 +510,9 @@ suffix:semicolon
 r_int
 r_int
 id|cpu_index
-comma
-id|system_index
+suffix:semicolon
+r_int
+id|sysname_index
 suffix:semicolon
 r_extern
 r_struct
@@ -462,6 +528,9 @@ id|pc
 suffix:semicolon
 )brace
 id|unaligned
+(braket
+l_int|2
+)braket
 suffix:semicolon
 DECL|macro|N
 macro_line|#&t;define N(a)&t;(sizeof(a)/sizeof(a[0]))
@@ -493,16 +562,11 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|system_index
+id|sysname_index
 op_assign
-(paren
-r_int
-)paren
-(paren
 id|hwrpb-&gt;sys_type
-op_minus
-l_int|1
-)paren
+op_plus
+id|SYSTYPE_NAME_BIAS
 suffix:semicolon
 r_return
 id|sprintf
@@ -525,7 +589,8 @@ l_string|&quot;page size [bytes]&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;phys. address bits&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;max. addr. space #&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;BogoMIPS&bslash;t&bslash;t: %lu.%02lu&bslash;n&quot;
-l_string|&quot;unaligned accesses&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
+l_string|&quot;kernel unaligned acc&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
+l_string|&quot;user unaligned acc&bslash;t: %ld (pc=%lx,va=%lx)&bslash;n&quot;
 comma
 (paren
 id|cpu_index
@@ -556,7 +621,7 @@ op_star
 id|cpu-&gt;serial_no
 comma
 (paren
-id|system_index
+id|sysname_index
 OL
 id|N
 c_func
@@ -567,7 +632,7 @@ ques
 c_cond
 id|systype_name
 (braket
-id|system_index
+id|sysname_index
 )braket
 suffix:colon
 l_string|&quot;Unknown&quot;
@@ -617,11 +682,47 @@ l_int|5000
 op_mod
 l_int|100
 comma
-id|unaligned.count
+id|unaligned
+(braket
+l_int|0
+)braket
+dot
+id|count
 comma
-id|unaligned.pc
+id|unaligned
+(braket
+l_int|0
+)braket
+dot
+id|pc
 comma
-id|unaligned.va
+id|unaligned
+(braket
+l_int|0
+)braket
+dot
+id|va
+comma
+id|unaligned
+(braket
+l_int|1
+)braket
+dot
+id|count
+comma
+id|unaligned
+(braket
+l_int|1
+)braket
+dot
+id|pc
+comma
+id|unaligned
+(braket
+l_int|1
+)braket
+dot
+id|va
 )paren
 suffix:semicolon
 DECL|macro|N

@@ -56,6 +56,8 @@ DECL|macro|__NR_open
 mdefine_line|#define __NR_open&t;&t; 45
 DECL|macro|__NR_getxgid
 mdefine_line|#define __NR_getxgid&t;&t; 47
+DECL|macro|__NR_acct
+mdefine_line|#define __NR_acct&t;&t; 51
 DECL|macro|__NR_ioctl
 mdefine_line|#define __NR_ioctl&t;&t; 54
 DECL|macro|__NR_symlink
@@ -87,7 +89,7 @@ mdefine_line|#define __NR_getgroups&t;&t; 79
 DECL|macro|__NR_setgroups
 mdefine_line|#define __NR_setgroups&t;&t; 80
 DECL|macro|__NR_setpgrp
-mdefine_line|#define __NR_setpgrp&t;&t; 82
+mdefine_line|#define __NR_setpgrp&t;&t; 82&t;/* BSD alias for setpgid */
 DECL|macro|__NR_setitimer
 mdefine_line|#define __NR_setitimer&t;&t; 83
 DECL|macro|__NR_getitimer
@@ -225,6 +227,8 @@ DECL|macro|__NR_get_kernel_syms
 mdefine_line|#define __NR_get_kernel_syms&t;309
 DECL|macro|__NR_syslog
 mdefine_line|#define __NR_syslog&t;&t;310
+DECL|macro|__NR_reboot
+mdefine_line|#define __NR_reboot&t;&t;311
 macro_line|#ifdef __LIBRARY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

@@ -4,8 +4,13 @@ macro_line|#ifndef _LINUX_TIMEX_H
 DECL|macro|_LINUX_TIMEX_H
 mdefine_line|#define _LINUX_TIMEX_H
 multiline_comment|/*&n; * The following defines establish the engineering parameters of the PLL&n; * model. The HZ variable establishes the timer interrupt frequency, 100 Hz &n; * for the SunOS kernel, 256 Hz for the Ultrix kernel and 1024 Hz for the&n; * OSF/1 kernel. The SHIFT_HZ define expresses the same value as the&n; * nearest power of two in order to avoid hardware multiply operations.&n; */
+macro_line|#ifdef __alpha__
 DECL|macro|SHIFT_HZ
-mdefine_line|#define SHIFT_HZ 7&t;&t;/* log2(HZ) */
+macro_line|# define SHIFT_HZ 10&t;&t;/* log2(HZ) */
+macro_line|#else
+DECL|macro|SHIFT_HZ
+macro_line|# define SHIFT_HZ 7&t;&t;/* log2(HZ) */
+macro_line|#endif
 multiline_comment|/*&n; * The SHIFT_KG and SHIFT_KF defines establish the damping of the PLL&n; * and are chosen by analysis for a slightly underdamped convergence&n; * characteristic. The MAXTC define establishes the maximum time constant&n; * of the PLL. With the parameters given and the default time constant of&n; * zero, the PLL will converge in about 15 minutes.&n; */
 DECL|macro|SHIFT_KG
 mdefine_line|#define SHIFT_KG 8&t;&t;/* shift for phase increment */
@@ -35,7 +40,7 @@ mdefine_line|#define CLOCK_TICK_FACTOR&t;20&t;/* Factor of both 1000000 and CLOC
 DECL|macro|LATCH
 mdefine_line|#define LATCH  ((CLOCK_TICK_RATE + HZ/2) / HZ)&t;/* For divider */
 DECL|macro|FINETUNE
-mdefine_line|#define FINETUNE (((((LATCH * HZ - CLOCK_TICK_RATE) &lt;&lt; SHIFT_HZ) * &bslash;&n;&t;(1000000/CLOCK_TICK_FACTOR) / (CLOCK_TICK_RATE/CLOCK_TICK_FACTOR)) &bslash;&n;&t;&t;&lt;&lt; (SHIFT_SCALE-SHIFT_HZ)) / HZ)
+mdefine_line|#define FINETUNE ((((((long)LATCH * HZ - CLOCK_TICK_RATE) &lt;&lt; SHIFT_HZ) * &bslash;&n;&t;(1000000/CLOCK_TICK_FACTOR) / (CLOCK_TICK_RATE/CLOCK_TICK_FACTOR)) &bslash;&n;&t;&t;&lt;&lt; (SHIFT_SCALE-SHIFT_HZ)) / HZ)
 multiline_comment|/*&n; * syscall interface - used (mainly by NTP daemon)&n; * to discipline kernel clock oscillator&n; */
 DECL|struct|timex
 r_struct

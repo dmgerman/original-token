@@ -3013,7 +3013,12 @@ id|SCSI_ABORT_NOT_RUNNING
 )paren
 suffix:semicolon
 )brace
-r_else
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|panic
 c_func
 (paren

@@ -2629,6 +2629,26 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_void
+DECL|function|srmmu_set_pte
+id|srmmu_set_pte
+c_func
+(paren
+id|pte_t
+op_star
+id|ptep
+comma
+id|pte_t
+id|entry
+)paren
+(brace
+multiline_comment|/* for now... */
+op_star
+id|ptep
+op_assign
+id|entry
+suffix:semicolon
+)brace
 multiline_comment|/* XXX Needs to be written */
 r_void
 DECL|function|srmmu_switch_to_context
@@ -4622,6 +4642,10 @@ multiline_comment|/* Functions */
 id|invalidate
 op_assign
 id|srmmu_invalidate
+suffix:semicolon
+id|set_pte
+op_assign
+id|srmmu_set_pte
 suffix:semicolon
 id|switch_to_context
 op_assign

@@ -2880,6 +2880,11 @@ suffix:semicolon
 id|queue-&gt;num_slaves
 op_decrement
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|current
 suffix:semicolon

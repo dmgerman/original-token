@@ -155,6 +155,37 @@ DECL|macro|ELF32_ST_BIND
 mdefine_line|#define ELF32_ST_BIND(x) ((x) &gt;&gt; 4)
 DECL|macro|ELF32_ST_TYPE
 mdefine_line|#define ELF32_ST_TYPE(x) (((unsigned int) x) &amp; 0xf)
+multiline_comment|/* Symbolic values for the entries in the auxiliary table&n;   put on the initial stack */
+DECL|macro|AT_NULL
+mdefine_line|#define AT_NULL   0&t;/* end of vector */
+DECL|macro|AT_IGNORE
+mdefine_line|#define AT_IGNORE 1&t;/* entry should be ignored */
+DECL|macro|AT_EXECFD
+mdefine_line|#define AT_EXECFD 2&t;/* file descriptor of program */
+DECL|macro|AT_PHDR
+mdefine_line|#define AT_PHDR   3&t;/* program headers for program */
+DECL|macro|AT_PHENT
+mdefine_line|#define AT_PHENT  4&t;/* size of program header entry */
+DECL|macro|AT_PHNUM
+mdefine_line|#define AT_PHNUM  5&t;/* number of program headers */
+DECL|macro|AT_PAGESZ
+mdefine_line|#define AT_PAGESZ 6&t;/* system page size */
+DECL|macro|AT_BASE
+mdefine_line|#define AT_BASE   7&t;/* base address of interpreter */
+DECL|macro|AT_FLAGS
+mdefine_line|#define AT_FLAGS  8&t;/* flags */
+DECL|macro|AT_ENTRY
+mdefine_line|#define AT_ENTRY  9&t;/* entry point of program */
+DECL|macro|AT_NOTELF
+mdefine_line|#define AT_NOTELF 10&t;/* program is not ELF */
+DECL|macro|AT_UID
+mdefine_line|#define AT_UID    11&t;/* real uid */
+DECL|macro|AT_EUID
+mdefine_line|#define AT_EUID   12&t;/* effective uid */
+DECL|macro|AT_GID
+mdefine_line|#define AT_GID    13&t;/* real gid */
+DECL|macro|AT_EGID
+mdefine_line|#define AT_EGID   14&t;/* effective gid */
 DECL|struct|dynamic
 r_typedef
 r_struct

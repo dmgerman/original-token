@@ -2288,6 +2288,10 @@ id|minor
 )paren
 op_assign
 id|arg
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 r_break
 suffix:semicolon

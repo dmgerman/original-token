@@ -2054,7 +2054,11 @@ id|current-&gt;timeout
 op_assign
 id|jiffies
 op_plus
-l_int|30
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|10
 suffix:semicolon
 multiline_comment|/* nap 0.30 sec between checks, */
 id|current-&gt;state

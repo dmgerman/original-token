@@ -351,6 +351,8 @@ DECL|macro|PCI_VENDOR_ID_MATROX
 mdefine_line|#define PCI_VENDOR_ID_MATROX&t;&t;0x102B
 DECL|macro|PCI_DEVICE_ID_MATROX_MGA_2
 mdefine_line|#define PCI_DEVICE_ID_MATROX_MGA_2&t;0x0518
+DECL|macro|PCI_DEVICE_ID_MATROX_MIL
+mdefine_line|#define PCI_DEVICE_ID_MATROX_MIL&t;0x0519
 DECL|macro|PCI_DEVICE_ID_MATROX_MGA_IMP
 mdefine_line|#define PCI_DEVICE_ID_MATROX_MGA_IMP&t;0x0d10
 DECL|macro|PCI_VENDOR_ID_INTEL
@@ -375,18 +377,28 @@ DECL|macro|PCI_DEVICE_ID_INTEL_7116
 mdefine_line|#define PCI_DEVICE_ID_INTEL_7116&t;0x1223
 DECL|macro|PCI_DEVICE_ID_INTEL_82865
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82865&t;0x1227
-DECL|macro|PCI_VENDOR_ID_SMC
-mdefine_line|#define PCI_VENDOR_ID_SMC&t;&t;0x1042
-DECL|macro|PCI_DEVICE_ID_SMC_37C665
+DECL|macro|PCI_DEVICE_ID_INTEL_P6
+mdefine_line|#define PCI_DEVICE_ID_INTEL_P6&t;&t;0x84c4
+macro_line|#if 0
+mdefine_line|#define PCI_VENDOR_ID_SMC&t;&t;0x1042&t;/* Is this really correct?? */
 mdefine_line|#define PCI_DEVICE_ID_SMC_37C665&t;0x1000
-DECL|macro|PCI_DEVICE_ID_SMC_37C922
 mdefine_line|#define PCI_DEVICE_ID_SMC_37C922&t;0x1001
+macro_line|#else
+DECL|macro|PCI_VENDOR_ID_PCTECH
+mdefine_line|#define PCI_VENDOR_ID_PCTECH&t;&t;0x1042&t;/* Known to be correct */
+DECL|macro|PCI_DEVICE_ID_PCTECH_RZ1000
+mdefine_line|#define PCI_DEVICE_ID_PCTECH_RZ1000&t;0x1000
+macro_line|#endif
 DECL|macro|PCI_VENDOR_ID_ATI
 mdefine_line|#define PCI_VENDOR_ID_ATI&t;&t;0x1002
-DECL|macro|PCI_DEVICE_ID_ATI_M32
-mdefine_line|#define PCI_DEVICE_ID_ATI_M32&t;&t;0x4158
-DECL|macro|PCI_DEVICE_ID_ATI_M64
-mdefine_line|#define PCI_DEVICE_ID_ATI_M64&t;&t;0x4758
+DECL|macro|PCI_DEVICE_ID_ATI_68800
+mdefine_line|#define PCI_DEVICE_ID_ATI_68800&t;&t;0x4158
+DECL|macro|PCI_DEVICE_ID_ATI_215CT222
+mdefine_line|#define PCI_DEVICE_ID_ATI_215CT222&t;0x4354
+DECL|macro|PCI_DEVICE_ID_ATI_210888CX
+mdefine_line|#define PCI_DEVICE_ID_ATI_210888CX&t;0x4358
+DECL|macro|PCI_DEVICE_ID_ATI_210888GX
+mdefine_line|#define PCI_DEVICE_ID_ATI_210888GX&t;0x4758
 DECL|macro|PCI_VENDOR_ID_WEITEK
 mdefine_line|#define PCI_VENDOR_ID_WEITEK&t;&t;0x100e
 DECL|macro|PCI_DEVICE_ID_WEITEK_P9000
@@ -523,6 +535,8 @@ DECL|macro|PCI_VENDOR_ID_HER
 mdefine_line|#define PCI_VENDOR_ID_HER&t;&t;0xedd8
 DECL|macro|PCI_DEVICE_ID_HER_STING
 mdefine_line|#define PCI_DEVICE_ID_HER_STING&t;&t;0xa091
+DECL|macro|PCI_DEVICE_ID_HER_STINGARK
+mdefine_line|#define PCI_DEVICE_ID_HER_STINGARK&t;0xa099
 DECL|macro|PCI_VENDOR_ID_ATRONICS
 mdefine_line|#define PCI_VENDOR_ID_ATRONICS&t;&t;0x907f
 DECL|macro|PCI_DEVICE_ID_ATRONICS_2015
@@ -552,7 +566,7 @@ mdefine_line|#define PCI_DEVICE_ID_3COM_3C595MII&t;0x5952
 DECL|macro|PCI_VENDOR_ID_PROMISE
 mdefine_line|#define PCI_VENDOR_ID_PROMISE&t;&t;0x105a
 DECL|macro|PCI_DEVICE_ID_PROMISE_5300
-mdefine_line|#define&t;PCI_DEVICE_ID_PROMISE_5300&t;0x5300
+mdefine_line|#define PCI_DEVICE_ID_PROMISE_5300&t;0x5300
 DECL|macro|PCI_VENDOR_ID_QLOGIC
 mdefine_line|#define PCI_VENDOR_ID_QLOGIC&t;&t;0x1077
 DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP1020
@@ -581,6 +595,20 @@ DECL|macro|PCI_VENDOR_ID_MUTECH
 mdefine_line|#define PCI_VENDOR_ID_MUTECH&t;&t;0x1159
 DECL|macro|PCI_DEVICE_ID_MUTECH_MV1000
 mdefine_line|#define PCI_DEVICE_ID_MUTECH_MV1000&t;0x0001
+DECL|macro|PCI_VENDOR_ID_IMAGINGTECH
+mdefine_line|#define PCI_VENDOR_ID_IMAGINGTECH&t;0x112f
+DECL|macro|PCI_DEVICE_ID_IMAGINGTECH_ICPCI
+mdefine_line|#define PCI_DEVICE_ID_IMAGINGTECH_ICPCI&t;0x0000
+DECL|macro|PCI_VENDOR_ID_CYCLADES
+mdefine_line|#define PCI_VENDOR_ID_CYCLADES&t;&t;0x120e
+DECL|macro|PCI_DEVICE_ID_CYCLADES_Y
+mdefine_line|#define PCI_DEVICE_ID_CYCLADES_Y&t;0x0100
+DECL|macro|PCI_VENDOR_ID_PLX
+mdefine_line|#define PCI_VENDOR_ID_PLX&t;&t;0x113c
+DECL|macro|PCI_DEVICE_ID_PLX_9060
+mdefine_line|#define PCI_DEVICE_ID_PLX_9060&t;&t;0x0001
+DECL|macro|PCI_VENDOR_ID_OLICOM
+mdefine_line|#define PCI_VENDOR_ID_OLICOM&t;&t;0x108d
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:4 = slot&n; *&t;3:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))

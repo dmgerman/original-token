@@ -439,7 +439,7 @@ comma
 id|X
 c_func
 (paren
-id|kfree_s
+id|kfree
 )paren
 comma
 id|X

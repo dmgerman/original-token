@@ -63,11 +63,11 @@ macro_line|#       define SONY_RES_REG_FULL_BIT    0x08
 DECL|macro|LOG_START_OFFSET
 mdefine_line|#define LOG_START_OFFSET        150     /* Offset of first logical sector */
 DECL|macro|SONY_DETECT_TIMEOUT
-mdefine_line|#define SONY_DETECT_TIMEOUT     80      /* Maximum amount of time&n;                                           that drive detection code&n;                                           will wait for response&n;                                           from drive (in 1/100th&squot;s&n;                                           of seconds). */
+mdefine_line|#define SONY_DETECT_TIMEOUT&t;(8*HZ/10) /* Maximum amount of time&n;                                           that drive detection code&n;                                           will wait for response&n;                                           from drive (in 1/100th&squot;s&n;                                           of seconds). */
 DECL|macro|SONY_JIFFIES_TIMEOUT
-mdefine_line|#define SONY_JIFFIES_TIMEOUT    1000    /* Maximum number of times the&n;                                           drive will wait/try for an&n;                                           operation */
+mdefine_line|#define SONY_JIFFIES_TIMEOUT    1000&t;/* Maximum number of times the&n;                                           drive will wait/try for an&n;                                           operation */
 DECL|macro|SONY_RESET_TIMEOUT
-mdefine_line|#define SONY_RESET_TIMEOUT      100     /* Maximum number of times the&n;                                           drive will wait/try a reset&n;                                           operation */
+mdefine_line|#define SONY_RESET_TIMEOUT      100&t;/* Maximum number of times the&n;                                           drive will wait/try a reset&n;                                           operation */
 DECL|macro|SONY_READY_RETRIES
 mdefine_line|#define SONY_READY_RETRIES      20000   /* How many times to retry a&n;                                           spin waiting for a register&n;                                           to come ready */
 DECL|macro|MAX_CDU31A_RETRIES

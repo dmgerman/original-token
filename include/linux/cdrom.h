@@ -30,7 +30,7 @@ mdefine_line|#define CD_XA_HEAD                 12  /* header size of XA frame  
 DECL|macro|CD_XA_TAIL
 mdefine_line|#define CD_XA_TAIL                280  /* tail size of XA frame           */
 DECL|macro|CD_XA_SYNC_HEAD
-mdefine_line|#define CD_XA_SYNC_HEAD (CD_XA_HEAD+12)/* sync bytes + header of XA frame */
+mdefine_line|#define CD_XA_SYNC_HEAD CD_XA_HEAD+12  /* sync bytes + header of XA frame */
 multiline_comment|/*&n; *&n; * For IOCTL calls, we will commandeer byte 0x53, or &squot;S&squot;.&n; *&n; */
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */
 multiline_comment|/*&n; * Group 2 (10-byte).  All of these are called &squot;optional&squot; by SCSI-II.&n; */
@@ -920,9 +920,12 @@ mdefine_line|#define&t;CDROMRESET&t;&t;0x5312 /* hard-reset the drive */
 DECL|macro|CDROMVOLREAD
 mdefine_line|#define&t;CDROMVOLREAD&t;&t;0x5313 /* let the drive tell its volume setting */
 multiline_comment|/* (struct cdrom_volctrl) */
+multiline_comment|/* &n; *these ioctls are used in aztcd.c&n; */
 DECL|macro|CDROMREADRAW
 mdefine_line|#define CDROMREADRAW            0x5314  /*read data in raw mode*/
 DECL|macro|CDROMREADCOOKED
 mdefine_line|#define CDROMREADCOOKED         0x5315  /*read data in cooked mode*/
+DECL|macro|CDROMSEEK
+mdefine_line|#define CDROMSEEK               0x5316  /*seek msf address*/
 macro_line|#endif  _LINUX_CDROM_H
 eof

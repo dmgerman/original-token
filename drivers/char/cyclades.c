@@ -3354,6 +3354,8 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 r_while
@@ -3373,6 +3375,8 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 r_while
@@ -3546,6 +3550,10 @@ op_assign
 id|jiffies
 op_plus
 l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 r_while
 c_loop
@@ -9333,7 +9341,9 @@ c_func
 (paren
 id|tty
 comma
-l_int|3000
+l_int|30
+op_star
+id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* 30 seconds timeout */

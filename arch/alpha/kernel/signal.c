@@ -69,6 +69,26 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|ptrace_set_bpt
+(paren
+r_struct
+id|task_struct
+op_star
+id|child
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ptrace_cancel_bpt
+(paren
+r_struct
+id|task_struct
+op_star
+id|child
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The OSF/1 sigprocmask calling sequence is different from the&n; * C sigprocmask() sequence..&n; */
 DECL|function|osf_sigprocmask
 id|asmlinkage
@@ -666,6 +686,25 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+multiline_comment|/* send SIGTRAP if we&squot;re single-stepping: */
+r_if
+c_cond
+(paren
+id|ptrace_cancel_bpt
+(paren
+id|current
+)paren
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGTRAP
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set up a signal frame...&n; */
 DECL|function|setup_frame
@@ -1214,28 +1253,22 @@ suffix:semicolon
 r_int
 r_int
 id|signr
+comma
+id|single_stepping
 suffix:semicolon
 r_struct
 id|sigaction
 op_star
 id|sa
 suffix:semicolon
-r_extern
-id|ptrace_cancel_bpt
-(paren
-r_struct
-id|task_struct
-op_star
-id|child
-)paren
-suffix:semicolon
+id|single_stepping
+op_assign
 id|ptrace_cancel_bpt
 c_func
 (paren
 id|current
 )paren
 suffix:semicolon
-multiline_comment|/* make sure single-step bpt is gone */
 r_while
 c_loop
 (paren
@@ -1308,6 +1341,14 @@ suffix:semicolon
 id|schedule
 c_func
 (paren
+)paren
+suffix:semicolon
+id|single_stepping
+op_or_assign
+id|ptrace_cancel_bpt
+c_func
+(paren
+id|current
 )paren
 suffix:semicolon
 r_if
@@ -1497,6 +1538,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|single_stepping
+op_or_assign
+id|ptrace_cancel_bpt
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 r_case
@@ -1636,6 +1685,7 @@ id|regs-&gt;r0
 op_assign
 id|r0
 suffix:semicolon
+multiline_comment|/* reset v0 and a3 and replay syscall */
 id|regs-&gt;r19
 op_assign
 id|r19
@@ -1651,10 +1701,26 @@ c_cond
 op_logical_neg
 id|handler_signal
 )paren
+(brace
 multiline_comment|/* no handler will be called - return 0 */
+r_if
+c_cond
+(paren
+id|single_stepping
+)paren
+(brace
+id|ptrace_set_bpt
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/* re-set breakpoint */
+)brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|pc
 op_assign
 id|regs-&gt;pc
@@ -1791,6 +1857,20 @@ op_assign
 id|pc
 suffix:semicolon
 multiline_comment|/* &quot;return&quot; to the first handler */
+r_if
+c_cond
+(paren
+id|single_stepping
+)paren
+(brace
+id|ptrace_set_bpt
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/* re-set breakpoint */
+)brace
 r_return
 l_int|1
 suffix:semicolon

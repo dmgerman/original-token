@@ -129,6 +129,9 @@ DECL|macro|invalidate_task
 mdefine_line|#define invalidate_task(task) &bslash;&n;do { if ((task)-&gt;mm == current-&gt;mm) invalidate(); } while (0)
 DECL|macro|invalidate_page
 mdefine_line|#define invalidate_page(task,addr) &bslash;&n;do { if ((task)-&gt;mm == current-&gt;mm) invalidate(); } while (0)
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)

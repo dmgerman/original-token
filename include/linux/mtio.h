@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: /usr/src/linux-1.1.64/include/linux/mtio.h at Tue Jan 10 21:02:51 1995 by root@kai.home$&n; *&n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; */
+multiline_comment|/* &n; * linux/mtio.h header file for Linux. Written by H. Bergman&n; */
 macro_line|#ifndef _LINUX_MTIO_H
 DECL|macro|_LINUX_MTIO_H
 mdefine_line|#define _LINUX_MTIO_H
@@ -73,6 +73,14 @@ DECL|macro|MTBSS
 mdefine_line|#define MTBSS&t;26&t;/* space backward over setmarks */
 DECL|macro|MTWSM
 mdefine_line|#define MTWSM&t;27&t;/* write setmarks */
+DECL|macro|MTLOCK
+mdefine_line|#define MTLOCK  28&t;/* lock the drive door */
+DECL|macro|MTUNLOCK
+mdefine_line|#define MTUNLOCK 29&t;/* unlock the drive door */
+DECL|macro|MTLOAD
+mdefine_line|#define MTLOAD  30&t;/* execute the SCSI load command */
+DECL|macro|MTUNLOAD
+mdefine_line|#define MTUNLOAD 31&t;/* execute the SCSI unload command */
 multiline_comment|/* structure for MTIOCGET - mag tape get status command */
 DECL|struct|mtget
 r_struct
@@ -264,5 +272,7 @@ DECL|macro|MT_ST_TWO_FM
 mdefine_line|#define MT_ST_TWO_FM&t;&t;0x10
 DECL|macro|MT_ST_FAST_MTEOM
 mdefine_line|#define MT_ST_FAST_MTEOM&t;0x20
+DECL|macro|MT_ST_AUTO_LOCK
+mdefine_line|#define MT_ST_AUTO_LOCK&t;&t;0x40
 macro_line|#endif /* _LINUX_MTIO_H */
 eof

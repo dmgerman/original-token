@@ -143,7 +143,7 @@ mdefine_line|#define NO_ROOM&t;&t;&t;&t;(-6)
 DECL|macro|LOG_START_OFFSET
 mdefine_line|#define LOG_START_OFFSET        150     /* Offset of first logical sector */
 DECL|macro|SONY_JIFFIES_TIMEOUT
-mdefine_line|#define SONY_JIFFIES_TIMEOUT            500  /* Maximum number of jiffies (10ms)&n;                                                  the drive will wait/try for an&n;                                                  operation */
+mdefine_line|#define SONY_JIFFIES_TIMEOUT&t;(5*HZ)&t;/* Maximum time&n;&t;&t;&t;&t;&t;   the drive will wait/try for an&n;&t;&t;&t;&t;&t;   operation */
 DECL|macro|SONY_READY_RETRIES
 mdefine_line|#define SONY_READY_RETRIES      (50000)  /* How many times to retry a&n;                                                  spin waiting for a register&n;                                                  to come ready */
 DECL|macro|SONY535_FAST_POLLS

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
 multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -45,6 +45,13 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Taps */
+multiline_comment|/*&n; *&t;Device list lock&n; */
+DECL|variable|dev_lockct
+r_int
+id|dev_lockct
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; *&t;Our notifier list&n; */
 DECL|variable|netdev_chain
 r_struct
@@ -456,28 +463,21 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Only close a device if it is up.&n;&t; */
-r_if
-c_cond
-(paren
-id|dev-&gt;flags
-op_ne
-l_int|0
-)paren
-(brace
 r_int
 id|ct
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;flags
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Call the device specific close. This cannot fail.&n;&t;&t; */
+multiline_comment|/*&n;&t; *&t;Call the device specific close. This cannot fail.&n;&t; *&t;Only if device is UP&n;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+op_logical_and
 id|dev-&gt;stop
 )paren
 id|dev
@@ -488,7 +488,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Tell people we are going down&n;&t;&t; */
+id|dev-&gt;flags
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Tell people we are going down&n;&t; */
 id|notifier_call_chain
 c_func
 (paren
@@ -500,14 +504,14 @@ comma
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Flush the multicast chain&n;&t;&t; */
+multiline_comment|/*&n;&t; *&t;Flush the multicast chain&n;&t; */
 id|dev_mc_discard
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Blank the IP addresses&n;&t;&t; */
+multiline_comment|/*&n;&t; *&t;Blank the IP addresses&n;&t; */
 id|dev-&gt;pa_addr
 op_assign
 l_int|0
@@ -524,7 +528,7 @@ id|dev-&gt;pa_mask
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Purge any queued packets when we down the link &n;&t;&t; */
+multiline_comment|/*&n;&t; *&t;Purge any queued packets when we down the link &n;&t; */
 r_while
 c_loop
 (paren
@@ -575,7 +579,6 @@ suffix:semicolon
 id|ct
 op_increment
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|0
@@ -2630,6 +2633,12 @@ r_int
 id|old_flags
 op_assign
 id|dev-&gt;flags
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;We are not allowed to potentially close/unload&n;&t;&t;&t;&t; *&t;a device until we get this lock.&n;&t;&t;&t;&t; */
+id|dev_lock_wait
+c_func
+(paren
+)paren
 suffix:semicolon
 id|dev-&gt;flags
 op_assign

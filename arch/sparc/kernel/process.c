@@ -404,8 +404,6 @@ r_return
 id|do_fork
 c_func
 (paren
-id|COPYVM
-op_or
 id|SIGCHLD
 comma
 id|regs-&gt;u_regs

@@ -274,6 +274,10 @@ multiline_comment|/*&n;&t; *&t;Various people wanted BSD UDP semantics. Well the
 multiline_comment|/* RFC1122: OK.  Passes ICMP errors back to application, as per */
 multiline_comment|/* 4.1.3.3. */
 multiline_comment|/* After the comment above, that should be no surprise. */
+id|err
+op_and_assign
+l_int|0xff
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -284,8 +288,6 @@ op_logical_and
 id|icmp_err_convert
 (braket
 id|err
-op_amp
-l_int|0xff
 )braket
 dot
 id|fatal
@@ -296,8 +298,6 @@ op_assign
 id|icmp_err_convert
 (braket
 id|err
-op_amp
-l_int|0xff
 )braket
 dot
 id|errno

@@ -61,7 +61,7 @@ macro_line|#undef SERIAL_DEBUG_OPEN
 DECL|macro|SERIAL_DEBUG_FLOW
 macro_line|#undef SERIAL_DEBUG_FLOW
 DECL|macro|RS_STROBE_TIME
-mdefine_line|#define RS_STROBE_TIME 10
+mdefine_line|#define RS_STROBE_TIME (10*HZ)
 DECL|macro|RS_ISR_PASS_LIMIT
 mdefine_line|#define RS_ISR_PASS_LIMIT 256
 DECL|macro|_INLINE_
@@ -3230,8 +3230,6 @@ id|last_strobe
 )paren
 op_ge
 id|RS_STROBE_TIME
-op_star
-id|HZ
 )paren
 (brace
 r_for
@@ -3370,8 +3368,6 @@ op_assign
 id|jiffies
 op_plus
 id|RS_STROBE_TIME
-op_star
-id|HZ
 suffix:semicolon
 id|timer_active
 op_or_assign
@@ -4304,6 +4300,10 @@ op_assign
 id|jiffies
 op_plus
 l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 id|timer_active
 op_or_assign
@@ -6726,10 +6726,18 @@ suffix:semicolon
 id|info-&gt;close_delay
 op_assign
 id|new_serial.close_delay
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 id|info-&gt;closing_wait
 op_assign
 id|new_serial.closing_wait
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 id|release_region
 c_func
@@ -7557,6 +7565,8 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 r_while
@@ -7576,6 +7586,8 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
+id|HZ
+op_div
 l_int|10
 suffix:semicolon
 r_while
@@ -10495,6 +10507,10 @@ op_assign
 id|jiffies
 op_plus
 l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 r_while
 c_loop
@@ -11632,11 +11648,17 @@ l_int|0
 suffix:semicolon
 id|info-&gt;close_delay
 op_assign
-l_int|50
+l_int|5
+op_star
+id|HZ
+op_div
+l_int|10
 suffix:semicolon
 id|info-&gt;closing_wait
 op_assign
-l_int|3000
+l_int|30
+op_star
+id|HZ
 suffix:semicolon
 id|info-&gt;x_char
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aztcd.h,v 1.60 1995/08/09 12:38:12 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
+multiline_comment|/* $Id: aztcd.h,v 1.70 1995/08/19 16:16:45 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
 multiline_comment|/* *** change this to set the I/O port address of your CD-ROM drive*/
 DECL|macro|AZT_BASE_ADDR
 mdefine_line|#define AZT_BASE_ADDR&t;&t;0x320
@@ -14,14 +14,14 @@ mdefine_line|#define AZT_ALLOW_TRAY_LOCK&t;1
 multiline_comment|/*Set this to 1 to allow auto-eject when unmounting a disk, set to 0, if you &n;  don&squot;t want the auto-eject feature*/
 DECL|macro|AZT_AUTO_EJECT
 mdefine_line|#define AZT_AUTO_EJECT          0
-multiline_comment|/*Set this to 1, if you want multisession support. Be warned, this function has&n;not been tested !!!*/
-DECL|macro|AZT_MULTISESSION
-mdefine_line|#define AZT_MULTISESSION        1
 multiline_comment|/*Set this to 1, if you want to use incompatible ioctls for reading in raw and&n;  cooked mode */
 DECL|macro|AZT_PRIVATE_IOCTLS
 mdefine_line|#define AZT_PRIVATE_IOCTLS      1
+multiline_comment|/*Set this to 1, if you want multisession support by the ISO fs. Even if you set &n;  this value to &squot;0&squot; you can use multisession CDs. In that case the drive&squot;s firm-&n;  ware will do the appropriate redirection automatically. The CD will then look&n;  like a single session CD (but nevertheless all data may be read). Please read &n;  chapter &squot;5.1 Multisession support&squot; in README.aztcd for details. Normally it&squot;s &n;  uncritical to leave this setting untouched */
+DECL|macro|AZT_MULTISESSION
+mdefine_line|#define AZT_MULTISESSION        1
 multiline_comment|/*---------------------------------------------------------------------------*/
-multiline_comment|/*------------nothing to be configured below this line-----------------------*/
+multiline_comment|/*-----nothing to be configured for normal applications below this line------*/
 multiline_comment|/* Increase this if you get lots of timeouts; if you get kernel panic, replace&n;   STEN_LOW_WAIT by STEN_LOW in the source code */
 DECL|macro|AZT_STATUS_DELAY
 mdefine_line|#define AZT_STATUS_DELAY&t;400       /*for timer wait, STEN_LOW_WAIT*/
@@ -88,6 +88,8 @@ DECL|macro|ACMD_PLAY_READ
 mdefine_line|#define ACMD_PLAY_READ&t;&t;0x20&t;&t;/* read data track in cooked mode */
 DECL|macro|ACMD_PLAY_READ_RAW
 mdefine_line|#define ACMD_PLAY_READ_RAW      0x21&t;&t;/* reading in raw mode*/
+DECL|macro|ACMD_SEEK
+mdefine_line|#define ACMD_SEEK               0x30            /* seek msf address*/
 DECL|macro|ACMD_SEEK_TO_LEADIN
 mdefine_line|#define ACMD_SEEK_TO_LEADIN     0x31&t;&t;/* seek to leadin track*/
 DECL|macro|ACMD_GET_ERROR
@@ -164,6 +166,11 @@ r_int
 r_char
 id|first
 suffix:semicolon
+DECL|member|next
+r_int
+r_char
+id|next
+suffix:semicolon
 DECL|member|last
 r_int
 r_char
@@ -184,10 +191,15 @@ r_int
 r_char
 id|multi
 suffix:semicolon
-DECL|member|lastTrack
+DECL|member|nextSession
 r_struct
 id|msf
-id|lastTrack
+id|nextSession
+suffix:semicolon
+DECL|member|lastSession
+r_struct
+id|msf
+id|lastSession
 suffix:semicolon
 DECL|member|xa
 r_int

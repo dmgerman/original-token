@@ -3,10 +3,18 @@ DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
 multiline_comment|/*&n; * This allows for 256 file descriptors: if NR_OPEN is ever grown beyond that&n; * you&squot;ll have to change this too. But 256 fd&squot;s seem to be enough even for such&n; * &quot;real&quot; unices like SunOS, so hopefully this is one limit that doesn&squot;t have&n; * to be changed.&n; *&n; * Note that POSIX wants the FD_CLEAR(fd,fdsetp) defines to be in &lt;sys/time.h&gt;&n; * (and thus &lt;linux/time.h&gt;) - but this is a more logical place for them. Solved&n; * by having dummy defines in &lt;sys/time.h&gt;.&n; */
 multiline_comment|/*&n; * Those macros may have been defined in &lt;gnu/types.h&gt;. But we always&n; * use the ones here. &n; */
-DECL|macro|__FDSET_LONGS
-macro_line|#undef __FDSET_LONGS
-DECL|macro|__FDSET_LONGS
-mdefine_line|#define __FDSET_LONGS (256/(8*sizeof(unsigned long)))
+DECL|macro|__NFDBITS
+macro_line|#undef __NFDBITS
+DECL|macro|__NFDBITS
+mdefine_line|#define __NFDBITS&t;(8 * sizeof(unsigned int))
+DECL|macro|__FD_SETSIZE
+macro_line|#undef __FD_SETSIZE
+DECL|macro|__FD_SETSIZE
+mdefine_line|#define __FD_SETSIZE&t;256
+DECL|macro|__FDSET_INTS
+macro_line|#undef __FDSET_INTS
+DECL|macro|__FDSET_INTS
+mdefine_line|#define __FDSET_INTS&t;(__FD_SETSIZE/__NFDBITS)
 DECL|struct|fd_set
 r_typedef
 r_struct
@@ -17,21 +25,13 @@ r_int
 r_int
 id|fds_bits
 (braket
-id|__FDSET_LONGS
+id|__FDSET_INTS
 )braket
 suffix:semicolon
 DECL|typedef|fd_set
 )brace
 id|fd_set
 suffix:semicolon
-DECL|macro|__NFDBITS
-macro_line|#undef __NFDBITS
-DECL|macro|__NFDBITS
-mdefine_line|#define __NFDBITS&t;(8 * sizeof(unsigned long))
-DECL|macro|__FD_SETSIZE
-macro_line|#undef __FD_SETSIZE
-DECL|macro|__FD_SETSIZE
-mdefine_line|#define __FD_SETSIZE&t;(__FDSET_LONGS*__NFDBITS)
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#ifndef NULL
 DECL|macro|NULL

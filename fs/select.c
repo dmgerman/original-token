@@ -245,7 +245,7 @@ l_int|0
 suffix:semicolon
 id|j
 OL
-id|__FDSET_LONGS
+id|__FDSET_INTS
 suffix:semicolon
 id|j
 op_increment
@@ -254,8 +254,8 @@ op_increment
 id|i
 op_assign
 id|j
-op_lshift
-l_int|5
+op_star
+id|__NFDBITS
 suffix:semicolon
 r_if
 c_cond
@@ -698,7 +698,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|__FDSET_LONGS
+id|__FDSET_INTS
 suffix:semicolon
 id|i
 OG
@@ -783,7 +783,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|__FDSET_LONGS
+id|__FDSET_INTS
 suffix:semicolon
 id|i
 OG
@@ -830,9 +830,9 @@ suffix:semicolon
 )brace
 )brace
 DECL|macro|get_fd_set
-mdefine_line|#define get_fd_set(nr,fsp,fdp) &bslash;&n;__get_fd_set(nr, (unsigned long *) (fsp), fdp)
+mdefine_line|#define get_fd_set(nr,fsp,fdp) &bslash;&n;__get_fd_set(nr, (unsigned int *) (fsp), fdp)
 DECL|macro|set_fd_set
-mdefine_line|#define set_fd_set(nr,fsp,fdp) &bslash;&n;__set_fd_set(nr, (unsigned long *) (fsp), (unsigned long *) (fdp))
+mdefine_line|#define set_fd_set(nr,fsp,fdp) &bslash;&n;__set_fd_set(nr, (unsigned int *) (fsp), (unsigned int *) (fdp))
 multiline_comment|/*&n; * We can actually return ERESTARTSYS instead of EINTR, but I&squot;d&n; * like to be certain this leads to no problems. So I return&n; * EINTR just for safety.&n; *&n; * Update: ERESTARTSYS breaks at least the xview clock binary, so&n; * I&squot;m trying ERESTARTNOHAND which restart only when you want to.&n; */
 DECL|function|sys_select
 id|asmlinkage

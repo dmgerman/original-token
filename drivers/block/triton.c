@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 1.00  Aug 26, 1995&n; *&n; *  Copyright (c) 1995  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
-multiline_comment|/*&n; * This module provides support for the Bus Master IDE DMA function&n; * of the Intel PCI Triton chipset (82371FB).&n; *&n; * DMA is currently supported only for hard disk drives (not cdroms).&n; *&n; * Support for cdroms will likely be added at a later date,&n; * after broader experience has been obtained with hard disks.&n; *&n; * Up to four drives may be enabled for DMA, and the Triton chipset will&n; * (hopefully) arbitrate the PCI bus among them.  Note that the 82371FB chip&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the 82371FB chip.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support multi-word DMA mode2 (mword2), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (single or multi) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view supported modes&n; * for a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing was done with an ASUS P55TP4XE/100 system and the following drives:&n; *&n; *   Quantum Fireball 1080A (1Gig w/83kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 works fine (7.4MB/sec), despite the tiny on-drive buffer.&n; *&t;- This drive also does PIO mode4, slightly slower than DMA mode2.&n; *&n; *   Micropolis MC2112A (1Gig w/512kB buffer), drive pre-dates EIDE, ATA2.&n; *&t;- DMA works fine (2.2MB/sec), probably due to the large on-drive buffer.&n; *&t;- This older drive can also be tweaked for fastPIO (3,7MB/sec) by using&n; *&t;  maximum clock settings (5,4) and setting all flags except prefetch.&n; *&n; *   Western Digital AC31000H (1Gig w/128kB buffer), DMA mode1, PIO mode3.&n; *&t;- DMA does not work reliably.  The drive appears to be somewhat tardy&n; *&t;  in deasserting DMARQ at the end of a sector.  This is evident in&n; *&t;  the observation that WRITEs work most of the time, depending on&n; *&t;  cache-buffer occupancy, but multi-sector reads seldom work.&n; *&n; * Drives like the AC31000H could likely be made to work if all DMA were done&n; * one sector at a time, but that would likely negate any advantage over PIO.&n; *&n; * If you have any drive models add, email your results to:  mlord@bnr.ca&n; * Keep an eye on your /var/adm/messages for &quot;DMA disabled&quot; messages.&n; */
+multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 1.01  Aug 28, 1995&n; *&n; *  Copyright (c) 1995  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; * This module provides support for the Bus Master IDE DMA function&n; * of the Intel PCI Triton chipset (82371FB).&n; *&n; * DMA is currently supported only for hard disk drives (not cdroms).&n; *&n; * Support for cdroms will likely be added at a later date,&n; * after broader experience has been obtained with hard disks.&n; *&n; * Up to four drives may be enabled for DMA, and the Triton chipset will&n; * (hopefully) arbitrate the PCI bus among them.  Note that the 82371FB chip&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the 82371FB chip.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support multi-word DMA mode2 (mword2), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (single or multi) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view modes supported&n; * by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing was done with an ASUS P55TP4XE/100 system and the following drives:&n; *&n; *   Quantum Fireball 1080A (1Gig w/83kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 works fine (7.4MB/sec), despite the tiny on-drive buffer.&n; *&t;- This drive also does PIO mode4, at about the same speed as DMA mode2.&n; *&n; *   Micropolis MC2112A (1Gig w/508kB buffer), drive pre-dates EIDE and ATA2.&n; *&t;- DMA works fine (2.2MB/sec), probably due to the large on-drive buffer.&n; *&t;- This older drive can also be tweaked for fastPIO (3.7MB/sec) by using&n; *&t;  maximum clock settings (5,4) and setting all flags except prefetch.&n; *&n; *   Western Digital AC31000H (1Gig w/128kB buffer), DMA mode1, PIO mode3.&n; *&t;- DMA does not work reliably.  The drive appears to be somewhat tardy&n; *&t;  in deasserting DMARQ at the end of a sector.  This is evident in&n; *&t;  the observation that WRITEs work most of the time, depending on&n; *&t;  cache-buffer occupancy, but multi-sector reads seldom work.&n; *&n; * Drives like the AC31000H could likely be made to work if all DMA were done&n; * one sector at a time, but that would likely negate any advantage over PIO.&n; *&n; * If you have any drive models to add, email your results to:  mlord@bnr.ca&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; */
 DECL|macro|_TRITON_C
 mdefine_line|#define _TRITON_C
 macro_line|#include &lt;linux/config.h&gt;
@@ -113,6 +113,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* get drive status */
 r_if
 c_cond
 (paren
@@ -818,15 +819,16 @@ l_string|&quot;off&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ide_init_triton() uses the PCI BIOS to scan for a Triton i82371FB chip,&n; * and prepares the IDE driver for DMA operation if one is found.&n; * This routine is called from ide.c during driver initialization.&n; */
+multiline_comment|/*&n; * ide_init_triton() prepares the IDE driver for DMA operation.&n; * This routine is called once, from ide.c during driver initialization,&n; * for each triton chipset which is found (unlikely to be more than one).&n; */
 DECL|function|ide_init_triton
 r_void
 id|ide_init_triton
 (paren
-id|ide_hwif_t
-id|hwifs
-(braket
-)braket
+id|byte
+id|bus
+comma
+id|byte
+id|fn
 )paren
 (brace
 r_int
@@ -846,37 +848,16 @@ r_int
 r_int
 id|timings
 suffix:semicolon
-r_int
-r_char
-id|bus
-comma
-id|fn
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-(paren
-id|PCI_VENDOR_ID_INTEL
-comma
-id|PCI_DEVICE_ID_INTEL_82371
-comma
-l_int|0
-comma
-op_amp
-id|bus
-comma
-op_amp
-id|fn
-)paren
-)paren
-r_goto
-id|quit
+r_extern
+id|ide_hwif_t
+id|ide_hwifs
+(braket
+)braket
 suffix:semicolon
 op_increment
 id|fn
 suffix:semicolon
-multiline_comment|/* IDE is second function on this chip */
+multiline_comment|/* IDE interface is 2nd function on this device */
 multiline_comment|/*&n;&t; * See if IDE and BM-DMA features are enabled:&n;&t; */
 r_if
 c_cond
@@ -1064,7 +1045,7 @@ op_star
 id|hwif
 op_assign
 op_amp
-id|hwifs
+id|ide_hwifs
 (braket
 id|h
 )braket

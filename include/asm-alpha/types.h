@@ -246,7 +246,7 @@ DECL|macro|__FD_SET
 macro_line|#undef __FD_SET
 DECL|function|__FD_SET
 r_static
-r_inline
+id|__inline__
 r_void
 id|__FD_SET
 c_func
@@ -292,7 +292,7 @@ DECL|macro|__FD_CLR
 macro_line|#undef __FD_CLR
 DECL|function|__FD_CLR
 r_static
-r_inline
+id|__inline__
 r_void
 id|__FD_CLR
 c_func
@@ -339,7 +339,7 @@ DECL|macro|__FD_ISSET
 macro_line|#undef __FD_ISSET
 DECL|function|__FD_ISSET
 r_static
-r_inline
+id|__inline__
 r_int
 id|__FD_ISSET
 c_func
@@ -386,12 +386,12 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This will unroll the loop for the normal constant cases (4 or 8 longs,&n; * for 256 and 512-bit fd_sets respectively)&n; */
+multiline_comment|/*&n; * This will unroll the loop for the normal constant case (8 ints,&n; * for a 256-bit fd_set)&n; */
 DECL|macro|__FD_ZERO
 macro_line|#undef __FD_ZERO
 DECL|function|__FD_ZERO
 r_static
-r_inline
+id|__inline__
 r_void
 id|__FD_ZERO
 c_func
@@ -417,14 +417,14 @@ c_cond
 id|__builtin_constant_p
 c_func
 (paren
-id|__FDSET_LONGS
+id|__FDSET_INTS
 )paren
 )paren
 (brace
 r_switch
 c_cond
 (paren
-id|__FDSET_LONGS
+id|__FDSET_INTS
 )paren
 (brace
 r_case
@@ -488,44 +488,11 @@ l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-id|tmp
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|tmp
-(braket
-l_int|1
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|tmp
-(braket
-l_int|2
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|tmp
-(braket
-l_int|3
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 )brace
 id|i
 op_assign
-id|__FDSET_LONGS
+id|__FDSET_INTS
 suffix:semicolon
 r_while
 c_loop

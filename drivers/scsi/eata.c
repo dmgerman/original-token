@@ -3168,6 +3168,12 @@ comma
 id|SCarg-&gt;pid
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
@@ -3472,7 +3478,12 @@ r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
-r_else
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|panic
 c_func
 (paren

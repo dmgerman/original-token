@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Definitions for the Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann&n; * VERSION: @VERSION@&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harris (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software Gmbh, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * Definitions for the Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann&n; * VERSION: 1.0a&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harris (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software Gmbh, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
 multiline_comment|/*&n; *&t;The following lines are for user configuration&n; *&t;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&n; *&n; *&t;{0|1} -- 1 if you want the driver detect your drive, may crash and&n; *&t;needs a long time to seek.  The higher the address the longer the&n; *&t;seek.&n; *&n; *  WARNING: AUTOPROBE doesn&squot;t work.&n; */
 DECL|macro|MCDX_AUTOPROBE
 mdefine_line|#define MCDX_AUTOPROBE 0
@@ -7,21 +7,33 @@ macro_line|#if MCDX_AUTOPROBE == 0
 DECL|macro|MCDX_NDRIVES
 mdefine_line|#define MCDX_NDRIVES 1
 DECL|macro|MCDX_DRIVEMAP
-mdefine_line|#define MCDX_DRIVEMAP {&t;&t;&bslash;&n;&t;&t;&t;{0x300, 10},&t;&bslash;&n;&t;&t;&t;{0x304, 05},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;  &t;}
+mdefine_line|#define MCDX_DRIVEMAP {&t;&t;&bslash;&n;&t;&t;&t;{0x300, 11},&t;&bslash;&n;&t;&t;&t;{0x304, 05},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;&t;&t;{0x000, 00},  &t;&bslash;&n;&t;  &t;}
 macro_line|#else
 macro_line|#error Autoprobing is not implemented yet.
 macro_line|#endif
+macro_line|#ifndef MCDX_QUIET
+DECL|macro|MCDX_QUIET
+mdefine_line|#define MCDX_QUIET   1
+macro_line|#endif
+macro_line|#ifndef MCDX_DEBUG
+DECL|macro|MCDX_DEBUG
+mdefine_line|#define MCDX_DEBUG   0
+macro_line|#endif
+multiline_comment|/* *** make the following line uncommented, if you&squot;re sure,&n; * *** all configuration is done */
+multiline_comment|/* #define I_WAS_HERE */
 multiline_comment|/*&t;The name of the device */
-DECL|macro|MCD
-mdefine_line|#define MCD &quot;mcdx&quot;&t;
-macro_line|#ifdef NOWARN
-DECL|macro|WARN
-mdefine_line|#define WARN(x)
+DECL|macro|MCDX
+mdefine_line|#define MCDX &quot;mcdx&quot;&t;
+macro_line|#if MCDX_QUIET == 1
+DECL|macro|INFO
+mdefine_line|#define INFO(x)
 macro_line|#else
+DECL|macro|INFO
+mdefine_line|#define INFO(x) warn x
+macro_line|#endif
 DECL|macro|WARN
 mdefine_line|#define WARN(x) warn x
-macro_line|#endif
-macro_line|#if MCDX_DEBUG
+macro_line|#if MCDX_DEBUG == 1
 DECL|macro|TRACE
 mdefine_line|#define TRACE(x) trace x
 DECL|macro|INIT
@@ -33,7 +45,7 @@ mdefine_line|#define IOCTL &t;&t;0
 DECL|macro|OPENCLOSE
 mdefine_line|#define OPENCLOSE &t;0
 DECL|macro|HW
-mdefine_line|#define HW&t;&t;0
+mdefine_line|#define HW&t;&t;    0
 DECL|macro|TALK
 mdefine_line|#define TALK&t;&t;0
 DECL|macro|IRQ
@@ -42,8 +54,6 @@ DECL|macro|TRANSFER
 mdefine_line|#define TRANSFER &t;0
 DECL|macro|REQUEST
 mdefine_line|#define REQUEST&t; &t;0
-DECL|macro|MCDX_DEBUG_TALK
-mdefine_line|#define MCDX_DEBUG_TALK 0
 macro_line|#else
 DECL|macro|TRACE
 mdefine_line|#define TRACE(x)
@@ -123,7 +133,7 @@ multiline_comment|/**&t;no drive specific */
 DECL|macro|MCDX_CDBLK
 mdefine_line|#define MCDX_CDBLK&t;2048&t;/* 2048 cooked data each blk */
 DECL|macro|MCDX_DATA_TIMEOUT
-mdefine_line|#define MCDX_DATA_TIMEOUT&t;10&t;/* jiffies */
+mdefine_line|#define MCDX_DATA_TIMEOUT&t;(HZ/10)&t;/* 0.1 second */
 multiline_comment|/*&n; * Access to the msf array&n; */
 DECL|macro|MSF_MIN
 mdefine_line|#define MSF_MIN&t;&t;0&t;&t;&t;/* minute */
@@ -136,4 +146,7 @@ DECL|macro|MCDX_E
 mdefine_line|#define MCDX_E&t;&t;1&t;&t;&t;/* unspec error */
 DECL|macro|MCDX_EOM
 mdefine_line|#define MCDX_EOM&t;2&t;&t;&t;/* end of media */
+macro_line|#ifndef I_WAS_HERE
+macro_line|#error Please edit this file first.
+macro_line|#endif
 eof

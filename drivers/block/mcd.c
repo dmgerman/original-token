@@ -6577,6 +6577,12 @@ comma
 l_int|4
 )paren
 suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|mcd_irq
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

@@ -359,6 +359,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|MATROX
+comma
+id|MATROX_MIL
+comma
+l_string|&quot;Millenium&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|INTEL
 comma
 id|INTEL_82378
@@ -437,7 +447,7 @@ id|INTEL
 comma
 id|INTEL_82438
 comma
-l_string|&quot;82438&quot;
+l_string|&quot;82438/82371&quot;
 )paren
 comma
 id|DEVICE
@@ -463,6 +473,17 @@ comma
 id|DEVICE
 c_func
 (paren
+id|INTEL
+comma
+id|INTEL_P6
+comma
+l_string|&quot;Experimental P6 bridge&quot;
+)paren
+comma
+macro_line|#if 0
+id|DEVICE
+c_func
+(paren
 id|SMC
 comma
 id|SMC_37C665
@@ -480,14 +501,26 @@ comma
 l_string|&quot;FDC 37C922&quot;
 )paren
 comma
+macro_line|#else
+id|DEVICE
+c_func
+(paren
+id|PCTECH
+comma
+id|PCTECH_RZ1000
+comma
+l_string|&quot;RZ1000 (buggy)&quot;
+)paren
+comma
+macro_line|#endif
 id|DEVICE
 c_func
 (paren
 id|ATI
 comma
-id|ATI_M32
+id|ATI_68800
 comma
-l_string|&quot;Mach 32&quot;
+l_string|&quot;68800AX&quot;
 )paren
 comma
 id|DEVICE
@@ -495,9 +528,29 @@ c_func
 (paren
 id|ATI
 comma
-id|ATI_M64
+id|ATI_215CT222
 comma
-l_string|&quot;Mach 64&quot;
+l_string|&quot;215CT222&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_210888GX
+comma
+l_string|&quot;210888GX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_210888CX
+comma
+l_string|&quot;210888CX&quot;
 )paren
 comma
 id|DEVICE
@@ -707,7 +760,7 @@ id|CMD
 comma
 id|CMD_640
 comma
-l_string|&quot;640A&quot;
+l_string|&quot;640 (buggy)&quot;
 )paren
 comma
 id|DEVICE
@@ -953,6 +1006,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|HER
+comma
+id|HER_STINGARK
+comma
+l_string|&quot;Stingray ARK 2000PV&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|ATRONICS
 comma
 id|ATRONICS_2015
@@ -1116,6 +1179,36 @@ comma
 id|TEKRAM_DC290
 comma
 l_string|&quot;DC-290&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|IMAGINGTECH
+comma
+id|IMAGINGTECH_ICPCI
+comma
+l_string|&quot;MVC IC-PCI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CYCLADES
+comma
+id|CYCLADES_Y
+comma
+l_string|&quot;Cyclome-Y&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|PLX
+comma
+id|PLX_9060
+comma
+l_string|&quot;PCI9060 i960 bridge&quot;
 )paren
 )brace
 suffix:semicolon
@@ -1919,12 +2012,21 @@ suffix:colon
 r_return
 l_string|&quot;Intel&quot;
 suffix:semicolon
+macro_line|#if 0
 r_case
 id|PCI_VENDOR_ID_SMC
 suffix:colon
 r_return
 l_string|&quot;SMC&quot;
 suffix:semicolon
+macro_line|#else
+r_case
+id|PCI_VENDOR_ID_PCTECH
+suffix:colon
+r_return
+l_string|&quot;PCTECH&quot;
+suffix:semicolon
+macro_line|#endif
 r_case
 id|PCI_VENDOR_ID_ATI
 suffix:colon
@@ -2134,6 +2236,24 @@ id|PCI_VENDOR_ID_HP
 suffix:colon
 r_return
 l_string|&quot;Hewlett Packard&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_IMAGINGTECH
+suffix:colon
+r_return
+l_string|&quot;Imaging Technology&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_CYCLADES
+suffix:colon
+r_return
+l_string|&quot;Cyclades&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_OLICOM
+suffix:colon
+r_return
+l_string|&quot;Olicom&quot;
 suffix:semicolon
 r_default
 suffix:colon
@@ -4141,6 +4261,10 @@ op_assign
 id|get_pci_list
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 id|mem_start
 )paren
 suffix:semicolon
@@ -4168,6 +4292,10 @@ c_func
 (paren
 l_string|&quot;%s&bslash;n&quot;
 comma
+(paren
+r_char
+op_star
+)paren
 id|mem_start
 )paren
 suffix:semicolon

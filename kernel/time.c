@@ -329,8 +329,8 @@ id|year
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(__alpha__) &amp;&amp; defined(CONFIG_PCI)
-multiline_comment|/*&n;&t; * The meaning of life, the universe, and everything. Plus&n;&t; * this makes the year come out right.&n;&t; */
+macro_line|#ifdef ALPHA_PRE_V1_2_SRM_CONSOLE
+multiline_comment|/*&n;&t; * The meaning of life, the universe, and everything. Plus&n;&t; * this makes the year come out right on SRM consoles earlier&n;&t; * than v1.2.&n;&t; */
 id|year
 op_sub_assign
 l_int|42

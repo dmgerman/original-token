@@ -614,6 +614,12 @@ l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/* IP option pointers */
+DECL|member|ip_hdrincl
+r_int
+r_char
+id|ip_hdrincl
+suffix:semicolon
+multiline_comment|/* Include headers ? */
 macro_line|#ifdef CONFIG_IP_MULTICAST  
 DECL|member|ip_mc_ttl
 r_int

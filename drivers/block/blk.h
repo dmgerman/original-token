@@ -320,7 +320,7 @@ mdefine_line|#define DEVICE_INTR do_hd
 DECL|macro|DEVICE_TIMEOUT
 mdefine_line|#define DEVICE_TIMEOUT HD_TIMER
 DECL|macro|TIMEOUT_VALUE
-mdefine_line|#define TIMEOUT_VALUE 600
+mdefine_line|#define TIMEOUT_VALUE (6*HZ)
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_hd_request
 DECL|macro|DEVICE_NR
@@ -335,7 +335,7 @@ mdefine_line|#define DEVICE_NAME &quot;scsidisk&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_sd  
 DECL|macro|TIMEOUT_VALUE
-mdefine_line|#define TIMEOUT_VALUE 200
+mdefine_line|#define TIMEOUT_VALUE (2*HZ)
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_sd_request
 DECL|macro|DEVICE_NR

@@ -1,6 +1,6 @@
-macro_line|#ifndef __ALPHA_LCA__H
-DECL|macro|__ALPHA_LCA__H
-mdefine_line|#define __ALPHA_LCA__H
+macro_line|#ifndef __ALPHA_LCA__H__
+DECL|macro|__ALPHA_LCA__H__
+mdefine_line|#define __ALPHA_LCA__H__
 multiline_comment|/*&n; * Low Cost Alpha (LCA) definitions (these apply to 21066 and 21068,&n; * for example).&n; *&n; * This file is based on:&n; *&n; *&t;DECchip 21066 and DECchip 21068 Alpha AXP Microprocessors&n; *&t;Hardware Reference Manual; Digital Equipment Corp.; May 1994;&n; *&t;Maynard, MA; Order Number: EC-N2681-71.&n; */
 multiline_comment|/*&n; * NOTE: The LCA uses a Host Address Extension (HAE) register to access&n; *&t; PCI addresses that are beyond the first 27 bits of address&n; *&t; space.  Updating the HAE requires an external cycle (and&n; *&t; a memory barrier), which tends to be slow.  Instead of updating&n; *&t; it on each sparse memory access, we keep the current HAE value&n; *&t; cached in variable cache_hae.  Only if the cached HAE differs&n; *&t; from the desired HAE value do we actually updated HAE register.&n; *&t; The HAE register is preserved by the interrupt handler entry/exit&n; *&t; code, so this scheme works even in the presence of interrupts.&n; *&n; * Dense memory space doesn&squot;t require the HAE, but is restricted to&n; * aligned 32 and 64 bit accesses.  Special Cycle and Interrupt&n; * Acknowledge cycles may also require the use of the HAE.  The LCA&n; * limits I/O address space to the bottom 24 bits of address space,&n; * but this easily covers the 16 bit ISA I/O address space.&n; */
 multiline_comment|/*&n; * NOTE 2! The memory operations do not set any memory barriers, as&n; * it&squot;s not needed for cases like a frame buffer that is essentially&n; * memory-like.  You need to do them by hand if the operations depend&n; * on ordering.&n; *&n; * Similarly, the port I/O operations do a &quot;mb&quot; only after a write&n; * operation: if an mb is needed before (as in the case of doing&n; * memory mapped I/O first, and then a port I/O operation to the same&n; * device), it needs to be done by hand.&n; *&n; * After the above has bitten me 100 times, I&squot;ll give up and just do&n; * the mb all the time, but right now I&squot;m hoping this will work out.&n; * Avoiding mb&squot;s may potentially be a noticeable speed improvement,&n; * but I can&squot;t honestly say I&squot;ve tested it.&n; *&n; * Handling interrupts that need to do mb&squot;s to synchronize to&n; * non-interrupts is another fun race area.  Don&squot;t do it (because if&n; * you do, I&squot;ll have to do *everything* with interrupts disabled,&n; * ugh).&n; */
@@ -714,6 +714,10 @@ r_int
 r_int
 id|msb
 suffix:semicolon
+r_int
+r_int
+id|w
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -752,6 +756,28 @@ id|msb
 suffix:semicolon
 )brace
 )brace
+id|asm
+(paren
+l_string|&quot;insbl %2,%1,%0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|w
+)paren
+suffix:colon
+l_string|&quot;ri&quot;
+(paren
+id|addr
+op_amp
+l_int|0x3
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|b
+)paren
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
@@ -768,9 +794,7 @@ op_plus
 l_int|0x00
 )paren
 op_assign
-id|b
-op_star
-l_int|0x01010101
+id|w
 suffix:semicolon
 )brace
 DECL|function|__writew
@@ -793,6 +817,10 @@ r_int
 r_int
 id|msb
 suffix:semicolon
+r_int
+r_int
+id|w
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -831,6 +859,28 @@ id|msb
 suffix:semicolon
 )brace
 )brace
+id|asm
+(paren
+l_string|&quot;inswl %2,%1,%0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|w
+)paren
+suffix:colon
+l_string|&quot;ri&quot;
+(paren
+id|addr
+op_amp
+l_int|0x3
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|b
+)paren
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
@@ -847,9 +897,7 @@ op_plus
 l_int|0x08
 )paren
 op_assign
-id|b
-op_star
-l_int|0x00010001
+id|w
 suffix:semicolon
 )brace
 DECL|function|__writel
@@ -1079,10 +1127,10 @@ id|mem_end
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 DECL|macro|RTC_PORT
-mdefine_line|#define RTC_PORT(x) (0x70 + (x))
+mdefine_line|#define RTC_PORT(x)&t;(0x70 + (x))
 DECL|macro|RTC_ADDR
-mdefine_line|#define RTC_ADDR(x) (0x80 | (x))
+mdefine_line|#define RTC_ADDR(x)&t;(0x80 | (x))
 DECL|macro|RTC_ALWAYS_BCD
-mdefine_line|#define RTC_ALWAYS_BCD 0
-macro_line|#endif /* __ALPHA_LCA__H */
+mdefine_line|#define RTC_ALWAYS_BCD&t;0
+macro_line|#endif /* __ALPHA_LCA__H__ */
 eof

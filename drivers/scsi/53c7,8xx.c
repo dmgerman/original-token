@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Set these options for all host adapters.&n; * &t;- Memory mapped IO does not work.&n; *&t;- Test 1 does a bus mastering test, which will help&n; *&t;  weed out brain damaged main boards.&n; */
+multiline_comment|/* &n; * Set these options for all host adapters.&n; * &t;- Memory mapped IO does not work on x86 because of cache&n; *&t;  problems.&n; *&t;- Test 1 does a bus mastering test, which will help&n; *&t;  weed out brain damaged main boards.&n; */
 DECL|macro|PERM_OPTIONS
 mdefine_line|#define PERM_OPTIONS (OPTION_IO_MAPPED|OPTION_DEBUG_TEST1)
 multiline_comment|/*&n; * Define SCSI_MALLOC to use scsi_malloc instead of kmalloc.  Other than&n; * preventing deadlock, I&squot;m not sure why we&squot;d want to do this.&n; */
@@ -14022,6 +14022,11 @@ comma
 id|SCNTL1_RST
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -14035,6 +14040,11 @@ c_func
 id|SCNTL1_REG
 comma
 id|SCNTL1_RST
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 r_for
@@ -14370,6 +14380,11 @@ comma
 id|SCNTL1_RST
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -14383,6 +14398,11 @@ c_func
 id|SCNTL1_REG
 comma
 id|SCNTL1_RST
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|restore_flags
@@ -14457,6 +14477,11 @@ c_func
 id|hostdata-&gt;istat
 comma
 id|ISTAT_ABRT
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Eat interrupts until we find what we&squot;re looking for */
@@ -14544,6 +14569,11 @@ c_func
 id|hostdata-&gt;istat
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|tmp
