@@ -3664,7 +3664,7 @@ id|cregs-&gt;tpc
 op_assign
 id|pc
 suffix:semicolon
-id|cregs-&gt;tpc
+id|cregs-&gt;tnpc
 op_assign
 id|npc
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.7 1997/07/05 09:52:51 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.8 1997/07/14 23:45:28 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -422,4 +422,44 @@ id|tba
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+DECL|function|prom_start_cpu
+r_void
+id|prom_start_cpu
+c_func
+(paren
+r_int
+id|cpunode
+comma
+r_int
+r_int
+id|pc
+comma
+r_int
+r_int
+id|o0
+)paren
+(brace
+id|p1275_cmd
+c_func
+(paren
+l_string|&quot;SUNW,start-cpu&quot;
+comma
+id|P1275_INOUT
+c_func
+(paren
+l_int|3
+comma
+l_int|0
+)paren
+comma
+id|cpunode
+comma
+id|pc
+comma
+id|o0
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

@@ -66,6 +66,7 @@ mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;save_and_cli(flags)
 DECL|macro|write_unlock_irqrestore
 mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
 macro_line|#else /* !(__SMP__) */
+multiline_comment|/* All of these locking primitives are expected to work properly&n; * even in an RMO memory model, which currently is what the kernel&n; * runs in.&n; */
 DECL|typedef|spinlock_t
 r_typedef
 r_int
@@ -125,6 +126,8 @@ comma
 op_mod
 op_mod
 id|g2
+id|membar
+macro_line|#LoadLoad | #LoadStore
 dot
 id|text
 l_int|2
@@ -194,7 +197,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;ldstub [%1], %0&quot;
+l_string|&quot;ldstub [%1], %0&bslash;n&bslash;t&quot;
+l_string|&quot;membar #LoadLoad | #LoadStore&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -233,8 +237,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;stb %%g0, [%0]&quot;
+l_string|&quot;membar&t;#StoreStore | #LoadStore&bslash;n&bslash;t&quot;
+l_string|&quot;stb&t;%%g0, [%0]&quot;
 suffix:colon
+multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -300,6 +306,8 @@ comma
 op_mod
 op_mod
 id|g2
+id|membar
+macro_line|#LoadLoad | #LoadStore
 dot
 id|text
 l_int|2
@@ -366,6 +374,8 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
+id|membar
+macro_line|#StoreStore | #LoadStore
 id|stb
 op_mod
 op_mod
@@ -399,7 +409,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;&t;&bslash;&n;do {&t;register spinlock_t *lp asm(&quot;g1&quot;);&t;&t;&bslash;&n;&t;lp = lock;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;rdpr&t;&t;%%pil, %0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;&t;wrpr&t;&t;%%g0, 15, %%pil&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;1:&t;ldstub&t;&t;[%1], %%g2&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;&t;brnz,a,pnt&t;%%g2, 2f&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;&t; ldub&t;&t;[%1], %%g2&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;&t;.text&t;&t;2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;2:&t;brnz,a,pt&t;%%g2, 2b&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;&t; ldub&t;&t;[%1], %%g2&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;&t;b,a,pt&t;&t;%%xcc, 1b&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;&t;.previous&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (flags)&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (lp)&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;g2&quot;, &quot;memory&quot;);&t;&t;&t;&t;&bslash;&n;} while(0)
+mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;&t;&t;&bslash;&n;do {&t;register spinlock_t *lp asm(&quot;g1&quot;);&t;&t;&t;&bslash;&n;&t;lp = lock;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;rdpr&t;&t;%%pil, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;wrpr&t;&t;%%g0, 15, %%pil&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;1:&t;ldstub&t;&t;[%1], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;brnz,a,pnt&t;%%g2, 2f&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t; ldub&t;&t;[%1], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;membar&t;&t;#LoadLoad | #LoadStore&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;&t;.text&t;&t;2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&t;brnz,a,pt&t;%%g2, 2b&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t; ldub&t;&t;[%1], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;b,a,pt&t;&t;%%xcc, 1b&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (flags)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (lp)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;g2&quot;, &quot;memory&quot;);&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|function|spin_unlock_irqrestore
 r_extern
 id|__inline__
@@ -421,6 +431,8 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
+id|membar
+macro_line|#StoreStore | #LoadStore
 id|stb
 op_mod
 op_mod
@@ -555,6 +567,8 @@ comma
 op_mod
 op_mod
 id|g2
+id|membar
+macro_line|#LoadLoad | #LoadStore
 dot
 id|text
 l_int|2
@@ -615,6 +629,8 @@ l_string|&quot;g2&quot;
 comma
 l_string|&quot;g3&quot;
 comma
+l_string|&quot;cc&quot;
+comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -636,6 +652,8 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
+id|membar
+macro_line|#StoreStore | #LoadStore
 id|ldx
 (braket
 op_mod
@@ -710,6 +728,8 @@ suffix:colon
 l_string|&quot;g2&quot;
 comma
 l_string|&quot;g3&quot;
+comma
+l_string|&quot;cc&quot;
 comma
 l_string|&quot;memory&quot;
 )paren
@@ -858,6 +878,8 @@ comma
 op_mod
 op_mod
 id|g2
+id|membar
+macro_line|#LoadLoad | #LoadStore
 dot
 id|text
 l_int|2
@@ -916,6 +938,8 @@ comma
 op_mod
 op_mod
 id|g2
+id|membar
+macro_line|#LoadLoad | #LoadStore
 l_int|5
 suffix:colon
 id|ldx
@@ -996,6 +1020,8 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
+id|membar
+macro_line|#StoreStore | #LoadStore
 id|sethi
 op_mod
 op_mod

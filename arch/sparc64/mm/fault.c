@@ -960,7 +960,7 @@ l_int|0
 suffix:semicolon
 id|inode
 op_assign
-id|vma-&gt;vm_inode
+id|vma-&gt;vm_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond

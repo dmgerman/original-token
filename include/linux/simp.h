@@ -31,9 +31,6 @@ comma
 r_int
 id|size
 comma
-r_int
-id|clearable_offset
-comma
 id|structor
 id|first_ctor
 comma

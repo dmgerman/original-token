@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.33 1997/07/01 09:12:05 jj Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.34 1997/07/15 09:48:50 jj Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1353,15 +1353,12 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_inode
+id|vma-&gt;vm_dentry
 op_assign
-id|inode
-suffix:semicolon
-id|atomic_inc
+id|dget
 c_func
 (paren
-op_amp
-id|inode-&gt;i_count
+id|file-&gt;f_dentry
 )paren
 suffix:semicolon
 r_return
@@ -2319,6 +2316,16 @@ l_int|0x00
 op_lshift
 l_int|24
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__&t;
+id|printk
+c_func
+(paren
+l_string|&quot;VA %016lx &quot;
+comma
+id|fb-&gt;base
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren

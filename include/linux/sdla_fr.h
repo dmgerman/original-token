@@ -740,7 +740,7 @@ DECL|typedef|fr_dlc_conf_t
 )brace
 id|fr_dlc_conf_t
 suffix:semicolon
-multiline_comment|/*----------------------------------------------------------------------------&n; * S502 Interrupt mode control block.&n; *&t;This structure is passed to the FR_SET_INTR_FLAGS and returned by the&n; *&t;FR_READ_INTR_FLAGS commands.&n; */
+multiline_comment|/*----------------------------------------------------------------------------&n; * S502 interrupt mode control block.&n; *&t;This structure is passed to the FR_SET_INTR_FLAGS and returned by the&n; *&t;FR_READ_INTR_FLAGS commands.&n; */
 DECL|struct|fr502_intr_ctl
 r_typedef
 r_struct
@@ -764,7 +764,7 @@ DECL|typedef|fr502_intr_ctl_t
 )brace
 id|fr502_intr_ctl_t
 suffix:semicolon
-multiline_comment|/*----------------------------------------------------------------------------&n; * S508 Interrupt mode control block.&n; *&t;This structure is passed to the FR_SET_INTR_FLAGS and returned by the&n; *&t;FR_READ_INTR_FLAGS commands.&n; */
+multiline_comment|/*----------------------------------------------------------------------------&n; * S508 interrupt mode control block.&n; *&t;This structure is passed to the FR_SET_INTR_FLAGS and returned by the&n; *&t;FR_READ_INTR_FLAGS commands.&n; */
 DECL|struct|fr508_intr_ctl
 r_typedef
 r_struct
@@ -809,11 +809,11 @@ DECL|typedef|fr508_intr_ctl_t
 )brace
 id|fr508_intr_ctl_t
 suffix:semicolon
-multiline_comment|/*----------------------------------------------------------------------------&n; * Channel Status.&n; *&t;This structure is returned by the FR_READ_STATUS command.&n; */
-DECL|struct|frDLCStatus
+multiline_comment|/*----------------------------------------------------------------------------&n; * Channel status.&n; *&t;This structure is returned by the FR_READ_STATUS command.&n; */
+DECL|struct|fr_dlc_Status
 r_typedef
 r_struct
-id|frDLCStatus
+id|fr_dlc_Status
 (brace
 DECL|member|PACKED
 r_int
@@ -846,9 +846,9 @@ l_int|1
 )braket
 id|PACKED
 suffix:semicolon
-DECL|typedef|frDLCStatus_t
+DECL|typedef|fr_dlc_status_t
 )brace
-id|frDLCStatus_t
+id|fr_dlc_status_t
 suffix:semicolon
 multiline_comment|/* &squot;status&squot; defines */
 DECL|macro|FR_LINK_INOPER
@@ -866,10 +866,10 @@ mdefine_line|#define&t;FR_DLCI_NEW&t;0x08
 DECL|macro|FR_DLCI_REPORT
 mdefine_line|#define&t;FR_DLCI_REPORT&t;0x40
 multiline_comment|/*----------------------------------------------------------------------------&n; * Global Statistics Block.&n; *&t;This structure is returned by the FR_READ_STATISTICS command when&n; *&t;dcli == 0.&n; */
-DECL|struct|frLinkStat
+DECL|struct|fr_link_stat
 r_typedef
 r_struct
-id|frLinkStat
+id|fr_link_stat
 (brace
 DECL|member|PACKED
 r_int
@@ -1067,15 +1067,15 @@ id|current_N393
 id|PACKED
 suffix:semicolon
 multiline_comment|/* 36h:  */
-DECL|typedef|frLinkStat_t
+DECL|typedef|fr_link_stat_t
 )brace
-id|frLinkStat_t
+id|fr_link_stat_t
 suffix:semicolon
-multiline_comment|/*----------------------------------------------------------------------------&n; * DLCI Statistics.&n; *&t;This structure is returned by the FR_READ_STATISTICS command when&n; *&t;dlci != 0.&n; */
-DECL|struct|frDLCIStat
+multiline_comment|/*----------------------------------------------------------------------------&n; * DLCI statistics.&n; *&t;This structure is returned by the FR_READ_STATISTICS command when&n; *&t;dlci != 0.&n; */
+DECL|struct|fr_dlci_stat
 r_typedef
 r_struct
-id|frDLCIStat
+id|fr_dlci_stat
 (brace
 DECL|member|PACKED
 r_int
@@ -1161,15 +1161,15 @@ id|rx_calc_timer
 id|PACKED
 suffix:semicolon
 multiline_comment|/* 2Ch:  */
-DECL|typedef|frDLCIStat_t
+DECL|typedef|fr_dlci_stat_t
 )brace
-id|frDLCIStat_t
+id|fr_dlci_stat_t
 suffix:semicolon
-multiline_comment|/*----------------------------------------------------------------------------&n; * Communications Error Statistics.&n; *&t;This structure is returned by the FR_READ_ERROR_STATS command.&n; */
-DECL|struct|frCommStat
+multiline_comment|/*----------------------------------------------------------------------------&n; * Communications error statistics.&n; *&t;This structure is returned by the FR_READ_ERROR_STATS command.&n; */
+DECL|struct|fr_comm_stat
 r_typedef
 r_struct
-id|frCommStat
+id|fr_comm_stat
 (brace
 DECL|member|PACKED
 r_int
@@ -1234,9 +1234,9 @@ id|cts_dropped
 id|PACKED
 suffix:semicolon
 multiline_comment|/* 08h:  */
-DECL|typedef|frCommStat_t
+DECL|typedef|fr_comm_stat_t
 )brace
-id|frCommStat_t
+id|fr_comm_stat_t
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------------------&n; * Defines for the FR_ISSUE_IS_FRAME command.&n; */
 DECL|macro|FR_ISF_LVE

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fb.h,v 1.27 1997/06/06 10:56:28 jj Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fb.h,v 1.29 1997/07/15 09:48:48 jj Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_FB_H_
 DECL|macro|__SPARC_FB_H_
 mdefine_line|#define __SPARC_FB_H_
@@ -55,7 +55,7 @@ id|bits
 l_int|2
 )braket
 (braket
-l_int|32
+l_int|128
 )braket
 suffix:semicolon
 multiline_comment|/* space for mask &amp; image bits */
@@ -162,6 +162,38 @@ suffix:semicolon
 DECL|member|lowdepth
 r_int
 id|lowdepth
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ffb_info
+r_struct
+id|ffb_info
+(brace
+DECL|member|physbase
+r_int
+r_int
+id|physbase
+suffix:semicolon
+DECL|member|fbc
+r_struct
+id|ffb_fbc
+op_star
+id|fbc
+suffix:semicolon
+DECL|member|dac
+r_struct
+id|ffb_dac
+op_star
+id|dac
+suffix:semicolon
+DECL|member|dac_rev
+r_int
+id|dac_rev
+suffix:semicolon
+DECL|member|clut
+id|u32
+op_star
+id|clut
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -400,6 +432,11 @@ DECL|member|leo
 r_struct
 id|leo_info
 id|leo
+suffix:semicolon
+DECL|member|ffb
+r_struct
+id|ffb_info
+id|ffb
 suffix:semicolon
 DECL|member|info
 )brace

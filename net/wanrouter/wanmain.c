@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jun 27, 1997  Alan Cox&t;realigned with vendor code&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;*****************************************************************************/
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
 macro_line|#include &lt;linux/config.h&gt;&t;/* OS configuration options */
@@ -143,7 +143,7 @@ id|copyright
 (braket
 )braket
 op_assign
-l_string|&quot;(c) 1995-1996 Sangoma Technologies Inc.&quot;
+l_string|&quot;(c) 1995-1997 Sangoma Technologies Inc.&quot;
 suffix:semicolon
 DECL|variable|modname
 r_static
@@ -155,11 +155,10 @@ op_assign
 id|ROUTER_NAME
 suffix:semicolon
 multiline_comment|/* short module name */
-DECL|variable|devlist
-r_static
+DECL|variable|router_devlist
 id|wan_device_t
 op_star
-id|devlist
+id|router_devlist
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -443,9 +442,9 @@ l_int|NULL
 suffix:semicolon
 id|wandev-&gt;next
 op_assign
-id|devlist
+id|router_devlist
 suffix:semicolon
-id|devlist
+id|router_devlist
 op_assign
 id|wandev
 suffix:semicolon
@@ -493,7 +492,7 @@ c_loop
 (paren
 id|wandev
 op_assign
-id|devlist
+id|router_devlist
 comma
 id|prev
 op_assign
@@ -591,7 +590,7 @@ op_assign
 id|wandev-&gt;next
 suffix:semicolon
 r_else
-id|devlist
+id|router_devlist
 op_assign
 id|wandev-&gt;next
 suffix:semicolon
@@ -1932,7 +1931,7 @@ c_loop
 (paren
 id|wandev
 op_assign
-id|devlist
+id|router_devlist
 suffix:semicolon
 id|wandev
 op_logical_and

@@ -33,12 +33,7 @@ id|inode-&gt;i_size
 comma
 id|inode-&gt;i_blocks
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 )paren
 suffix:semicolon
 id|printk

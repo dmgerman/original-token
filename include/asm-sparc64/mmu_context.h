@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.16 1997/07/05 09:54:46 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.17 1997/07/13 19:13:39 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -8,9 +8,6 @@ macro_line|#include &lt;asm/spitfire.h&gt;
 DECL|macro|NO_CONTEXT
 mdefine_line|#define NO_CONTEXT     0
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/* Initialize the context related info for a new mm_struct&n; * instance.&n; */
-DECL|macro|init_new_context
-mdefine_line|#define init_new_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;do { } while(0)
 r_extern
@@ -39,6 +36,9 @@ r_int
 id|ctx
 )paren
 suffix:semicolon
+multiline_comment|/* Initialize the context related info for a new mm_struct&n; * instance.&n; */
+DECL|macro|init_new_context
+mdefine_line|#define init_new_context(mm)&t;get_new_mmu_context((mm), tlb_context_cache)
 DECL|function|get_mmu_context
 r_extern
 id|__inline__

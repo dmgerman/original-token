@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* wanproc.c&t;WAN Multiprotocol Router Module. proc filesystem interface.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;access to the router using Linux /proc filesystem.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 13, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 30, 1997&t;Alan Cox&t;Hacked around for 2.1&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanproc.c&t;WAN Router Module. /proc filesystem interface.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;access to the router using Linux /proc filesystem.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jun 29, 1997&t;Alan Cox&t;Merged with 1.0.3 vendor code&n;* Jan 29, 1997&t;Gene Kozin&t;v1.0.1. Implemented /proc read routines&n;* Jan 30, 1997&t;Alan Cox&t;Hacked around for 2.1&n;* Dec 13, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;*****************************************************************************/
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -19,8 +19,8 @@ macro_line|#ifndef&t;max
 DECL|macro|max
 mdefine_line|#define max(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#endif
-DECL|macro|ROUTER_PAGE_SZ
-mdefine_line|#define&t;ROUTER_PAGE_SZ&t;4000&t;/* buffer size for printing proc info */
+DECL|macro|PROC_BUFSZ
+mdefine_line|#define&t;PROC_BUFSZ&t;4000&t;/* buffer size for printing proc info */
 multiline_comment|/****** Data Types **********************************************************/
 DECL|struct|wan_stat_entry
 r_typedef
@@ -92,30 +92,6 @@ id|count
 )paren
 suffix:semicolon
 multiline_comment|/* Methods for preparing data for reading proc entries */
-r_static
-r_int
-id|about_get_info
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offs
-comma
-r_int
-id|len
-comma
-r_int
-id|dummy
-)paren
-suffix:semicolon
 r_static
 r_int
 id|config_get_info
@@ -200,15 +176,6 @@ id|name_root
 op_assign
 id|ROUTER_NAME
 suffix:semicolon
-DECL|variable|name_info
-r_static
-r_char
-id|name_info
-(braket
-)braket
-op_assign
-l_string|&quot;about&quot;
-suffix:semicolon
 DECL|variable|name_conf
 r_static
 r_char
@@ -227,7 +194,7 @@ id|name_stat
 op_assign
 l_string|&quot;status&quot;
 suffix:semicolon
-multiline_comment|/*&n; *&t;Structures for interfacing with the /proc filesystem.&n; *&t;Router creates its own directory /proc/net/router with the folowing&n; *&t;entries:&n; *&t;About&t;&t;general information (version, copyright, etc.)&n; *&t;Conf&t;&t;device configuration&n; *&t;Stat&t;&t;global device statistics&n; *&t;&lt;device&gt;&t;entry for each WAN device&n; */
+multiline_comment|/*&n; *&t;Structures for interfacing with the /proc filesystem.&n; *&t;Router creates its own directory /proc/net/router with the folowing&n; *&t;entries:&n; *&t;config&t;&t;device configuration&n; *&t;status&t;&t;global device statistics&n; *&t;&lt;device&gt;&t;entry for each WAN device&n; */
 multiline_comment|/*&n; *&t;Generic /proc/net/router/&lt;file&gt; file and inode operations &n; */
 DECL|variable|router_fops
 r_static
@@ -480,70 +447,6 @@ comma
 multiline_comment|/* .data */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;/proc/net/router/about &n; */
-DECL|variable|proc_router_info
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_router_info
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* .low_ino */
-r_sizeof
-(paren
-id|name_info
-)paren
-op_minus
-l_int|1
-comma
-multiline_comment|/* .namelen */
-id|name_info
-comma
-multiline_comment|/* .name */
-l_int|0444
-op_or
-id|S_IFREG
-comma
-multiline_comment|/* .mode */
-l_int|1
-comma
-multiline_comment|/* .nlink */
-l_int|0
-comma
-multiline_comment|/* .uid */
-l_int|0
-comma
-multiline_comment|/* .gid */
-l_int|0
-comma
-multiline_comment|/* .size */
-op_amp
-id|router_inode
-comma
-multiline_comment|/* .ops */
-op_amp
-id|about_get_info
-comma
-multiline_comment|/* .get_info */
-l_int|NULL
-comma
-multiline_comment|/* .fill_node */
-l_int|NULL
-comma
-multiline_comment|/* .next */
-l_int|NULL
-comma
-multiline_comment|/* .parent */
-l_int|NULL
-comma
-multiline_comment|/* .subdir */
-l_int|NULL
-comma
-multiline_comment|/* .data */
-)brace
-suffix:semicolon
 multiline_comment|/*&n; *&t;/proc/net/router/config &n; */
 DECL|variable|proc_router_conf
 r_static
@@ -671,6 +574,27 @@ comma
 multiline_comment|/* .data */
 )brace
 suffix:semicolon
+multiline_comment|/* Strings */
+DECL|variable|conf_hdr
+r_static
+r_char
+id|conf_hdr
+(braket
+)braket
+op_assign
+l_string|&quot;Device name    | port |IRQ|DMA|mem.addr|mem.size|&quot;
+l_string|&quot;option1|option2|option3|option4&bslash;n&quot;
+suffix:semicolon
+DECL|variable|stat_hdr
+r_static
+r_char
+id|stat_hdr
+(braket
+)braket
+op_assign
+l_string|&quot;Device name    |station|interface|clocking|baud rate| MTU |ndev&quot;
+l_string|&quot;|link state&bslash;n&quot;
+suffix:semicolon
 multiline_comment|/*&n; *&t;Interface functions&n; */
 multiline_comment|/*&n; *&t;Initialize router proc interface.&n; */
 DECL|function|__initfunc
@@ -690,7 +614,6 @@ op_assign
 id|proc_register
 c_func
 (paren
-op_amp
 id|proc_net
 comma
 op_amp
@@ -704,16 +627,6 @@ op_logical_neg
 id|err
 )paren
 (brace
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_router
-comma
-op_amp
-id|proc_router_info
-)paren
-suffix:semicolon
 id|proc_register
 c_func
 (paren
@@ -753,15 +666,6 @@ c_func
 op_amp
 id|proc_router
 comma
-id|proc_router_info.low_ino
-)paren
-suffix:semicolon
-id|proc_unregister
-c_func
-(paren
-op_amp
-id|proc_router
-comma
 id|proc_router_conf.low_ino
 )paren
 suffix:semicolon
@@ -777,7 +681,6 @@ suffix:semicolon
 id|proc_unregister
 c_func
 (paren
-op_amp
 id|proc_net
 comma
 id|proc_router.low_ino
@@ -1001,7 +904,7 @@ op_assign
 id|kmalloc
 c_func
 (paren
-id|ROUTER_PAGE_SZ
+id|PROC_BUFSZ
 comma
 id|GFP_KERNEL
 )paren
@@ -1102,62 +1005,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Prepare data for reading &squot;About&squot; entry.&n; *&t;Return length of data.&n; */
-DECL|function|about_get_info
-r_static
-r_int
-id|about_get_info
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offs
-comma
-r_int
-id|len
-comma
-r_int
-id|dummy
-)paren
-(brace
-r_int
-id|cnt
-op_assign
-l_int|0
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;%12s : %u.%u&bslash;n&quot;
-comma
-l_string|&quot;version&quot;
-comma
-id|ROUTER_VERSION
-comma
-id|ROUTER_RELEASE
-)paren
-suffix:semicolon
-r_return
-id|cnt
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Prepare data for reading &squot;Config&squot; entry.&n; *&t;Return length of data.&n; *&t;NOT YET IMPLEMENTED&n; */
+multiline_comment|/*&n; *&t;Prepare data for reading &squot;Config&squot; entry.&n; *&t;Return length of data.&n; */
 DECL|function|config_get_info
 r_static
 r_int
@@ -1186,8 +1034,54 @@ id|dummy
 r_int
 id|cnt
 op_assign
-l_int|0
+r_sizeof
+(paren
+id|conf_hdr
+)paren
+op_minus
+l_int|1
 suffix:semicolon
+id|wan_device_t
+op_star
+id|wandev
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|buf
+comma
+id|conf_hdr
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|wandev
+op_assign
+id|router_devlist
+suffix:semicolon
+id|wandev
+op_logical_and
+(paren
+id|cnt
+OL
+(paren
+id|PROC_BUFSZ
+op_minus
+l_int|80
+)paren
+)paren
+suffix:semicolon
+id|wandev
+op_assign
+id|wandev-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|wandev-&gt;state
+)paren
 id|cnt
 op_add_assign
 id|sprintf
@@ -1199,20 +1093,47 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%12s : %u.%u&bslash;n&quot;
+l_string|&quot;%-15s|0x%-4X|%3u|%3u|0x%-6lX|0x%-6X|%7u|%7u|%7u|%7u&bslash;n&quot;
 comma
-l_string|&quot;version&quot;
+id|wandev-&gt;name
 comma
-id|ROUTER_VERSION
+id|wandev-&gt;ioport
 comma
-id|ROUTER_RELEASE
+id|wandev-&gt;irq
+comma
+id|wandev-&gt;dma
+comma
+id|wandev-&gt;maddr
+comma
+id|wandev-&gt;msize
+comma
+id|wandev-&gt;hw_opt
+(braket
+l_int|0
+)braket
+comma
+id|wandev-&gt;hw_opt
+(braket
+l_int|1
+)braket
+comma
+id|wandev-&gt;hw_opt
+(braket
+l_int|2
+)braket
+comma
+id|wandev-&gt;hw_opt
+(braket
+l_int|3
+)braket
 )paren
 suffix:semicolon
+)brace
 r_return
 id|cnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Prepare data for reading &squot;Status&squot; entry.&n; *&t;Return length of data.&n; *&t;NOT YET IMPLEMENTED&n; */
+multiline_comment|/*&n; *&t;Prepare data for reading &squot;Status&squot; entry.&n; *&t;Return length of data.&n; */
 DECL|function|status_get_info
 r_static
 r_int
@@ -1241,7 +1162,56 @@ id|dummy
 r_int
 id|cnt
 op_assign
-l_int|0
+r_sizeof
+(paren
+id|stat_hdr
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+id|wan_device_t
+op_star
+id|wandev
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|buf
+comma
+id|stat_hdr
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|wandev
+op_assign
+id|router_devlist
+suffix:semicolon
+id|wandev
+op_logical_and
+(paren
+id|cnt
+OL
+(paren
+id|PROC_BUFSZ
+op_minus
+l_int|80
+)paren
+)paren
+suffix:semicolon
+id|wandev
+op_assign
+id|wandev-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|wandev-&gt;state
+)paren
+r_continue
 suffix:semicolon
 id|cnt
 op_add_assign
@@ -1254,15 +1224,150 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%12s : %u.%u&bslash;n&quot;
+l_string|&quot;%-15s|%-7s|%-9s|%-8s|%9u|%5u|%3u |&quot;
 comma
-l_string|&quot;version&quot;
+id|wandev-&gt;name
 comma
-id|ROUTER_VERSION
+id|wandev-&gt;station
+ques
+c_cond
+l_string|&quot; DCE&quot;
+suffix:colon
+l_string|&quot; DTE&quot;
 comma
-id|ROUTER_RELEASE
+id|wandev-&gt;interface
+ques
+c_cond
+l_string|&quot; V.35&quot;
+suffix:colon
+l_string|&quot; RS-232&quot;
+comma
+id|wandev-&gt;clocking
+ques
+c_cond
+l_string|&quot;internal&quot;
+suffix:colon
+l_string|&quot;external&quot;
+comma
+id|wandev-&gt;bps
+comma
+id|wandev-&gt;mtu
+comma
+id|wandev-&gt;ndev
 )paren
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|wandev-&gt;state
+)paren
+(brace
+r_case
+id|WAN_UNCONFIGURED
+suffix:colon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%-12s&bslash;n&quot;
+comma
+l_string|&quot;unconfigured&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|WAN_DISCONNECTED
+suffix:colon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%-12s&bslash;n&quot;
+comma
+l_string|&quot;disconnected&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|WAN_CONNECTING
+suffix:colon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%-12s&bslash;n&quot;
+comma
+l_string|&quot;connecting&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|WAN_CONNECTED
+suffix:colon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%-12s&bslash;n&quot;
+comma
+l_string|&quot;connected&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%-12s&bslash;n&quot;
+comma
+l_string|&quot;invalid&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
 r_return
 id|cnt
 suffix:semicolon
@@ -1326,6 +1431,39 @@ id|ROUTER_MAGIC
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|wandev-&gt;state
+)paren
+r_return
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;device is not configured!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Update device statistics */
+r_if
+c_cond
+(paren
+id|wandev-&gt;update
+)paren
+id|wandev
+op_member_access_from_pointer
+id|update
+c_func
+(paren
+id|wandev
+)paren
+suffix:semicolon
 id|cnt
 op_add_assign
 id|sprintf
@@ -1337,11 +1475,227 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%12s : %s&bslash;n&quot;
+l_string|&quot;%30s: %12lu&bslash;n&quot;
 comma
-l_string|&quot;name&quot;
+l_string|&quot;total frames received&quot;
 comma
-id|wandev-&gt;name
+id|wandev-&gt;stats.rx_packets
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;receiver overrun errors&quot;
+comma
+id|wandev-&gt;stats.rx_over_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;CRC errors&quot;
+comma
+id|wandev-&gt;stats.rx_crc_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;frame length errors&quot;
+comma
+id|wandev-&gt;stats.rx_length_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;frame format errors&quot;
+comma
+id|wandev-&gt;stats.rx_frame_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;aborted frames received&quot;
+comma
+id|wandev-&gt;stats.rx_missed_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;reveived frames dropped&quot;
+comma
+id|wandev-&gt;stats.rx_dropped
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;other receive errors&quot;
+comma
+id|wandev-&gt;stats.rx_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;&bslash;n%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;total frames transmitted&quot;
+comma
+id|wandev-&gt;stats.tx_packets
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;aborted frames transmitted&quot;
+comma
+id|wandev-&gt;stats.tx_aborted_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;transmit frames dropped&quot;
+comma
+id|wandev-&gt;stats.tx_dropped
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;transmit collisions&quot;
+comma
+id|wandev-&gt;stats.collisions
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;%30s: %12lu&bslash;n&quot;
+comma
+l_string|&quot;other transmit errors&quot;
+comma
+id|wandev-&gt;stats.tx_errors
 )paren
 suffix:semicolon
 r_return

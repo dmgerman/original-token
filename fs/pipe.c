@@ -1219,7 +1219,7 @@ id|inode
 )paren
 op_logical_and
 op_logical_neg
-id|PIPE_READERS
+id|PIPE_WRITERS
 c_func
 (paren
 op_star

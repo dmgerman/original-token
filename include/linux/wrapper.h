@@ -36,11 +36,11 @@ mdefine_line|#define module_unregister_blkdev unregister_blkdev
 DECL|macro|inode_get_rdev
 mdefine_line|#define inode_get_rdev(i) i-&gt;i_rdev
 DECL|macro|inode_get_count
-mdefine_line|#define inode_get_count(i) atomic_read(&amp;((i)-&gt;i_count))
+mdefine_line|#define inode_get_count(i) i-&gt;i_count
 DECL|macro|inode_inc_count
-mdefine_line|#define inode_inc_count(i) atomic_inc(&amp;((i)-&gt;i_count))
+mdefine_line|#define inode_inc_count(i) i-&gt;i_count++
 DECL|macro|inode_dec_count
-mdefine_line|#define inode_dec_count(i) atomic_dec(&amp;((i)-&gt;i_count))
+mdefine_line|#define inode_dec_count(i) i-&gt;i_count--
 DECL|macro|file_get_flags
 mdefine_line|#define file_get_flags(f) f-&gt;f_flags
 DECL|macro|vma_set_inode

@@ -19,6 +19,7 @@ suffix:semicolon
 multiline_comment|/* linked list of active bh&squot;s */
 DECL|member|sync
 r_int
+r_int
 id|sync
 suffix:semicolon
 multiline_comment|/* must be initialized to zero */

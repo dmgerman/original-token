@@ -1461,9 +1461,9 @@ id|rxRNR
 id|PACKED
 suffix:semicolon
 multiline_comment|/* 3Eh: RNR */
-DECL|typedef|X25Stats
+DECL|typedef|TX25Stats
 )brace
-id|X25Stats
+id|TX25Stats
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------------------&n; * X25_READ_HISTORY_TABLE Command.&n; */
 DECL|struct|X25EventLog

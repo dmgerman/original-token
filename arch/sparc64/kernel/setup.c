@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.9 1997/07/05 09:52:29 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.10 1997/07/08 11:07:47 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -28,6 +28,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
+macro_line|#include &lt;asm/head.h&gt;
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -1120,7 +1121,7 @@ op_plus
 id|PAGE_OFFSET
 )paren
 suffix:semicolon
-macro_line|#ifndef NO_DAVEM_DEBUGGING
+macro_line|#ifdef DAVEM_DEBUGGING
 id|prom_printf
 c_func
 (paren
@@ -1194,19 +1195,38 @@ c_cond
 id|ramdisk_image
 )paren
 (brace
-id|initrd_start
+r_int
+r_int
+id|start
 op_assign
-id|ramdisk_image
+l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|initrd_start
-OL
-id|PAGE_OFFSET
+id|ramdisk_image
+op_ge
+(paren
+r_int
+r_int
 )paren
+op_amp
+id|end
+op_minus
+l_int|2
+op_star
+id|PAGE_SIZE
+)paren
+id|ramdisk_image
+op_sub_assign
+id|KERNBASE
+suffix:semicolon
 id|initrd_start
-op_add_assign
+op_assign
+id|ramdisk_image
+op_plus
+id|phys_base
+op_plus
 id|PAGE_OFFSET
 suffix:semicolon
 id|initrd_end
@@ -1246,11 +1266,22 @@ r_if
 c_cond
 (paren
 id|initrd_start
+)paren
+id|start
+op_assign
+id|ramdisk_image
+op_plus
+id|KERNBASE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|start
 op_ge
 op_star
 id|memory_start_p
 op_logical_and
-id|initrd_start
+id|start
 OL
 op_star
 id|memory_start_p
@@ -1269,7 +1300,9 @@ id|memory_start_p
 op_assign
 id|PAGE_ALIGN
 (paren
-id|initrd_end
+id|start
+op_plus
+id|ramdisk_size
 )paren
 suffix:semicolon
 )brace

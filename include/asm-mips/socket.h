@@ -1,7 +1,6 @@
 macro_line|#ifndef __ASM_MIPS_SOCKET_H
 DECL|macro|__ASM_MIPS_SOCKET_H
 mdefine_line|#define __ASM_MIPS_SOCKET_H
-macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/sockios.h&gt;
 multiline_comment|/*&n; * For setsockoptions(2)&n; *&n; * This defines are ABI conformant as far as Linux supports these ...&n; */
 DECL|macro|SOL_SOCKET

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.18 1997/06/30 12:36:18 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.19 1997/07/08 10:17:37 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -49,7 +49,7 @@ op_plus
 (paren
 id|nr
 op_rshift
-l_int|5
+l_int|6
 )paren
 suffix:semicolon
 id|__asm__
@@ -57,7 +57,7 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
-id|lduw
+id|ldx
 (braket
 op_mod
 l_int|4
@@ -81,7 +81,7 @@ comma
 id|pn
 op_mod
 op_mod
-id|icc
+id|xcc
 comma
 l_float|2f
 op_xor
@@ -93,7 +93,7 @@ l_int|3
 comma
 op_mod
 l_int|1
-id|cas
+id|casx
 (braket
 op_mod
 l_int|4
@@ -117,11 +117,11 @@ comma
 id|pn
 op_mod
 op_mod
-id|icc
+id|xcc
 comma
 l_int|1
 id|b
-id|lduw
+id|ldx
 (braket
 op_mod
 l_int|4
@@ -155,7 +155,7 @@ op_lshift
 (paren
 id|nr
 op_amp
-l_int|31
+l_int|63
 )paren
 )paren
 comma
@@ -245,7 +245,7 @@ op_plus
 (paren
 id|nr
 op_rshift
-l_int|5
+l_int|6
 )paren
 suffix:semicolon
 id|__asm__
@@ -253,7 +253,7 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
-id|lduw
+id|ldx
 (braket
 op_mod
 l_int|4
@@ -277,7 +277,7 @@ comma
 id|pn
 op_mod
 op_mod
-id|icc
+id|xcc
 comma
 l_float|2f
 op_xor
@@ -289,7 +289,7 @@ l_int|3
 comma
 op_mod
 l_int|1
-id|cas
+id|casx
 (braket
 op_mod
 l_int|4
@@ -313,11 +313,11 @@ comma
 id|pn
 op_mod
 op_mod
-id|icc
+id|xcc
 comma
 l_int|1
 id|b
-id|lduw
+id|ldx
 (braket
 op_mod
 l_int|4
@@ -351,7 +351,7 @@ op_lshift
 (paren
 id|nr
 op_amp
-l_int|31
+l_int|63
 )paren
 )paren
 comma
@@ -441,7 +441,7 @@ op_plus
 (paren
 id|nr
 op_rshift
-l_int|5
+l_int|6
 )paren
 suffix:semicolon
 id|__asm__
@@ -449,7 +449,7 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
-id|lduw
+id|ldx
 (braket
 op_mod
 l_int|4
@@ -477,7 +477,7 @@ l_int|3
 comma
 op_mod
 l_int|1
-id|cas
+id|casx
 (braket
 op_mod
 l_int|4
@@ -501,11 +501,11 @@ comma
 id|pn
 op_mod
 op_mod
-id|icc
+id|xcc
 comma
 l_int|1
 id|b
-id|lduw
+id|ldx
 (braket
 op_mod
 l_int|4
@@ -537,7 +537,7 @@ op_lshift
 (paren
 id|nr
 op_amp
-l_int|31
+l_int|63
 )paren
 )paren
 comma
@@ -615,13 +615,13 @@ id|addr
 (braket
 id|nr
 op_rshift
-l_int|5
+l_int|6
 )braket
 op_rshift
 (paren
 id|nr
 op_amp
-l_int|31
+l_int|63
 )paren
 )paren
 suffix:semicolon

@@ -3544,6 +3544,11 @@ id|execute_command
 op_assign
 id|line
 suffix:semicolon
+multiline_comment|/* In case LILO is going to boot us with default command line,&n;&t;&t;&t; * it prepends &quot;auto&quot; before the whole cmdline which makes&n;&t;&t;&t; * the shell think it should execute a script with such name.&n;&t;&t;&t; * So we ignore all arguments entered _before_ init=... [MJ]&n;&t;&t;&t; */
+id|args
+op_assign
+l_int|0
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace

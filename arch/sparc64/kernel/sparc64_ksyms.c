@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.8 1997/07/07 04:58:14 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.11 1997/07/14 23:58:20 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -11,6 +11,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/svr4.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
@@ -278,50 +280,41 @@ c_func
 id|sparc_free_io
 )paren
 suffix:semicolon
-macro_line|#if 0
+DECL|variable|local_irq_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|io_remap_page_range
+id|local_irq_count
 )paren
 suffix:semicolon
+DECL|variable|__sparc64_bh_counter
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|mmu_unlockarea
+id|__sparc64_bh_counter
 )paren
 suffix:semicolon
+DECL|variable|sparc_ultra_unmapioaddr
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|mmu_lockarea
+id|sparc_ultra_unmapioaddr
 )paren
 suffix:semicolon
+DECL|variable|mmu_get_scsi_sgl
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|mmu_get_scsi_sgl
 )paren
 suffix:semicolon
+DECL|variable|mmu_get_scsi_one
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|mmu_get_scsi_one
 )paren
 suffix:semicolon
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|mmu_release_scsi_sgl
-)paren
-suffix:semicolon
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|mmu_release_scsi_one
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|sparc_dvma_malloc
 id|EXPORT_SYMBOL
 c_func
@@ -329,20 +322,6 @@ c_func
 id|sparc_dvma_malloc
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sun4c_unmapioaddr
-)paren
-suffix:semicolon
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|srmmu_unmapioaddr
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#if CONFIG_SBUS
 DECL|variable|SBus_chain
 id|EXPORT_SYMBOL

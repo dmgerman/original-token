@@ -6,6 +6,7 @@ DECL|macro|SPARC_BSD_EMUL
 mdefine_line|#define SPARC_BSD_EMUL &quot;usr/gnemul/sunos/&quot;
 DECL|macro|SPARC_SOL_EMUL
 mdefine_line|#define SPARC_SOL_EMUL &quot;usr/gnemul/solaris/&quot;
+macro_line|#if 0 /* XXX FIXME */
 r_extern
 r_int
 id|__namei
@@ -50,7 +51,6 @@ suffix:semicolon
 r_static
 r_inline
 r_int
-DECL|function|__prefix_namei
 id|__prefix_namei
 c_func
 (paren
@@ -214,5 +214,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* XXX FIXME */
 macro_line|#endif /* __SPARC64_NAMEI_H */
 eof

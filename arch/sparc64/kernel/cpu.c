@@ -67,6 +67,16 @@ l_string|&quot;UltraSparc I integrated FPU&quot;
 )brace
 comma
 (brace
+l_int|0x22
+comma
+l_int|0x10
+comma
+l_int|0
+comma
+l_string|&quot;UltraSparc II integrated FPU&quot;
+)brace
+comma
+(brace
 l_int|0x17
 comma
 l_int|0x11
@@ -104,6 +114,14 @@ comma
 l_int|0x10
 comma
 l_string|&quot;TI UltraSparc I   (SpitFire)&quot;
+)brace
+comma
+(brace
+l_int|0x22
+comma
+l_int|0x10
+comma
+l_string|&quot;TI UltraSparc II  (BlackBird)&quot;
 )brace
 comma
 (brace

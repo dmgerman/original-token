@@ -370,13 +370,6 @@ c_func
 id|file-&gt;f_dentry
 )paren
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|inode-&gt;i_count
-)paren
-suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
 op_amp

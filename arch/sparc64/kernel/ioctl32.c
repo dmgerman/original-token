@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.11 1997/06/16 11:05:00 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.12 1997/07/09 15:05:28 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
 macro_line|#include &lt;linux/vt.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;
@@ -3830,20 +3831,30 @@ c_cond
 id|fd
 op_ge
 id|NR_OPEN
-op_logical_or
-op_logical_neg
-(paren
+)paren
+(brace
+r_goto
+id|out
+suffix:semicolon
+)brace
 id|filp
 op_assign
 id|current-&gt;files-&gt;fd
 (braket
 id|fd
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|filp
 )paren
-)paren
+(brace
 r_goto
 id|out
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4249,6 +4260,26 @@ suffix:colon
 r_case
 id|FIGETBSZ
 suffix:colon
+multiline_comment|/* 0x02 -- Floppy ioctls */
+r_case
+id|FDSETEMSGTRESH
+suffix:colon
+r_case
+id|FDFLUSH
+suffix:colon
+r_case
+id|FDSETMAXERRS
+suffix:colon
+r_case
+id|FDGETMAXERRS
+suffix:colon
+r_case
+id|FDGETDRVTYP
+suffix:colon
+r_case
+id|FDEJECT
+suffix:colon
+multiline_comment|/* XXX The rest need struct floppy_* translations. */
 multiline_comment|/* 0x12 */
 r_case
 id|BLKRRPART

@@ -302,12 +302,8 @@ op_eq
 id|current-&gt;fs-&gt;root
 )paren
 (brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 op_star
 id|resfh
@@ -331,12 +327,8 @@ op_eq
 id|exp-&gt;ex_ino
 )paren
 (brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 op_star
 id|resfh
@@ -431,12 +423,8 @@ op_logical_neg
 id|len
 )paren
 (brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 op_star
 id|resfh
@@ -448,12 +436,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 multiline_comment|/* lookup eats the dirp inode */
 id|err
@@ -516,12 +500,8 @@ id|inode
 op_assign
 id|sb-&gt;s_covered
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 )brace
 id|fh_compose
@@ -1133,12 +1113,8 @@ id|err
 suffix:semicolon
 )brace
 )brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -1169,12 +1145,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 )paren
 id|printk
 c_func
@@ -2194,12 +2165,8 @@ id|dirp
 op_assign
 id|fhp-&gt;fh_inode
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 multiline_comment|/* dirop eats the inode */
 r_switch
@@ -2362,12 +2329,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|err
 op_assign
@@ -2688,12 +2651,8 @@ id|inode-&gt;i_op-&gt;readlink
 r_return
 id|nfserr_io
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|oldfs
 op_assign
@@ -2871,12 +2830,8 @@ id|fhp
 )paren
 suffix:semicolon
 multiline_comment|/* lock inode */
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|err
 op_assign
@@ -2930,12 +2885,8 @@ id|dirp
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Okay, now look up the inode of the new symlink.&n;&t; */
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 multiline_comment|/* lookup eats the dirp inode */
 id|err
@@ -3136,12 +3087,8 @@ id|ffhp
 )paren
 suffix:semicolon
 multiline_comment|/* lock directory inode */
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|err
 op_assign
@@ -3401,19 +3348,11 @@ id|tfhp
 )paren
 suffix:semicolon
 multiline_comment|/* lock destination directory */
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|tdir-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|fdir-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|err
 op_assign
@@ -3589,12 +3528,8 @@ id|dirp-&gt;i_op-&gt;rmdir
 r_return
 id|nfserr_notdir
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|err
 op_assign
@@ -3626,12 +3561,8 @@ id|dirp-&gt;i_op-&gt;unlink
 r_return
 id|nfserr_perm
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|dirp-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|err
 op_assign

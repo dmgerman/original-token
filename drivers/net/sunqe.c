@@ -508,7 +508,6 @@ comma
 l_int|34
 )paren
 suffix:semicolon
-multiline_comment|/* FIX FOR ULTRA */
 id|qb-&gt;qe_rxd
 (braket
 id|i
@@ -520,7 +519,13 @@ op_assign
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|skb-&gt;data
+)paren
 suffix:semicolon
 id|qb-&gt;qe_rxd
 (braket
@@ -1988,12 +1993,18 @@ op_assign
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|qep-&gt;rx_skbs
 (braket
 id|elem
 )braket
 op_member_access_from_pointer
 id|data
+)paren
 suffix:semicolon
 id|this-&gt;rx_flags
 op_assign
@@ -2083,7 +2094,6 @@ comma
 l_int|34
 )paren
 suffix:semicolon
-multiline_comment|/* FIX FOR ULTRA */
 id|rxbase
 (braket
 id|elem
@@ -2095,7 +2105,13 @@ op_assign
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|new_skb-&gt;data
+)paren
 suffix:semicolon
 id|rxbase
 (braket
@@ -2206,7 +2222,13 @@ op_assign
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|skb-&gt;data
+)paren
 suffix:semicolon
 id|rxbase
 (braket

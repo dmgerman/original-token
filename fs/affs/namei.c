@@ -1768,12 +1768,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 OG
 l_int|1
 )paren
@@ -2720,12 +2715,8 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|new_inode-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 id|result
 op_assign
@@ -2980,7 +2971,7 @@ id|end_rename
 suffix:semicolon
 id|old_inode
 op_assign
-id|__iget
+id|iget
 c_func
 (paren
 id|old_dir-&gt;i_sb
@@ -3020,7 +3011,7 @@ id|new_bh
 (brace
 id|new_inode
 op_assign
-id|__iget
+id|iget
 c_func
 (paren
 id|new_dir-&gt;i_sb
@@ -3146,12 +3137,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|new_inode-&gt;i_count
-)paren
 OG
 l_int|1
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openpromfs.c,v 1.15 1997/06/05 01:28:11 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: openpromfs.c,v 1.17 1997/07/15 05:35:05 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -294,6 +294,9 @@ comma
 id|u32
 )paren
 (paren
+r_int
+)paren
+(paren
 id|inode-&gt;u.generic_ip
 )paren
 )paren
@@ -390,6 +393,12 @@ id|openprom_property
 op_star
 id|op
 suffix:semicolon
+r_char
+id|buffer
+(braket
+l_int|64
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -417,7 +426,7 @@ id|u16
 )paren
 (paren
 (paren
-id|uint
+r_int
 )paren
 id|inode-&gt;u.generic_ip
 )paren
@@ -430,6 +439,9 @@ op_assign
 (paren
 (paren
 id|u32
+)paren
+(paren
+r_int
 )paren
 id|inode-&gt;u.generic_ip
 )paren
@@ -444,7 +456,7 @@ id|u16
 )paren
 (paren
 (paren
-id|uint
+r_int
 )paren
 id|inode-&gt;u.generic_ip
 )paren
@@ -481,6 +493,8 @@ op_assign
 id|prom_firstprop
 (paren
 id|node
+comma
+id|buffer
 )paren
 suffix:semicolon
 id|i
@@ -497,6 +511,8 @@ id|prom_nextprop
 id|node
 comma
 id|p
+comma
+id|buffer
 )paren
 comma
 id|i
@@ -543,7 +559,7 @@ id|u16
 )paren
 (paren
 (paren
-id|uint
+r_int
 )paren
 id|inode-&gt;u.generic_ip
 )paren
@@ -882,10 +898,13 @@ op_logical_neg
 id|k
 )paren
 (brace
-op_star
-id|buf
-op_assign
+id|__put_user
+c_func
+(paren
 l_char|&squot;&bslash;&squot;&squot;
+comma
+id|buf
+)paren
 suffix:semicolon
 id|k
 op_increment
@@ -958,6 +977,12 @@ c_cond
 (paren
 id|count
 )paren
+id|__put_user
+c_func
+(paren
+l_char|&squot;&bslash;&squot;&squot;
+comma
+op_amp
 id|buf
 (braket
 id|k
@@ -965,8 +990,7 @@ op_increment
 op_minus
 id|filp-&gt;f_pos
 )braket
-op_assign
-l_char|&squot;&bslash;&squot;&squot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -975,6 +999,12 @@ id|count
 OG
 l_int|1
 )paren
+id|__put_user
+c_func
+(paren
+l_char|&squot;&bslash;n&squot;
+comma
+op_amp
 id|buf
 (braket
 id|k
@@ -982,8 +1012,7 @@ op_increment
 op_minus
 id|filp-&gt;f_pos
 )braket
-op_assign
-l_char|&squot;&bslash;n&squot;
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1091,7 +1120,7 @@ op_star
 id|first
 )paren
 suffix:semicolon
-id|memcpy
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -1146,7 +1175,7 @@ op_eq
 id|first
 )paren
 (brace
-id|memcpy
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -1175,7 +1204,7 @@ op_eq
 id|last
 )paren
 (brace
-id|memcpy
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -1191,7 +1220,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|memcpy
+id|copy_to_user
 (paren
 id|buf
 comma
@@ -1228,14 +1257,17 @@ id|last_cnt
 op_eq
 l_int|9
 )paren
-op_star
+id|__put_user
+c_func
+(paren
+l_char|&squot;&bslash;n&squot;
+comma
 (paren
 id|buf
 op_minus
 l_int|1
 )paren
-op_assign
-l_char|&squot;&bslash;n&squot;
+)paren
 suffix:semicolon
 id|k
 op_add_assign
@@ -1438,13 +1470,25 @@ op_logical_neg
 id|j
 )paren
 (brace
-r_if
-c_cond
+r_char
+id|ctmp
+suffix:semicolon
+id|__get_user
+c_func
 (paren
+id|ctmp
+comma
+op_amp
 id|buf
 (braket
 id|i
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ctmp
 op_ne
 l_char|&squot;.&squot;
 )paren
@@ -1452,10 +1496,7 @@ l_char|&squot;.&squot;
 r_if
 c_cond
 (paren
-id|buf
-(braket
-id|i
-)braket
+id|ctmp
 op_ne
 l_char|&squot;&bslash;n&squot;
 )paren
@@ -1495,13 +1536,25 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_if
-c_cond
+r_char
+id|ctmp
+suffix:semicolon
+id|__get_user
+c_func
 (paren
+id|ctmp
+comma
+op_amp
 id|buf
 (braket
 id|i
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ctmp
 template_param
 l_char|&squot;f&squot;
 )paren
@@ -1730,7 +1783,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-id|memcpy
+id|copy_from_user
 (paren
 id|tmp
 op_plus
@@ -1882,7 +1935,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-id|memcpy
+id|copy_from_user
 (paren
 id|tmp
 op_plus
@@ -1971,7 +2024,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-id|memcpy
+id|copy_from_user
 (paren
 id|tmp
 comma
@@ -2029,12 +2082,29 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_char
+id|tchars
+(braket
+l_int|17
+)braket
+suffix:semicolon
+multiline_comment|/* XXX yuck... */
+id|copy_from_user
+c_func
+(paren
+id|tchars
+comma
+id|buf
+comma
+l_int|16
+)paren
+suffix:semicolon
 op_star
 id|q
 op_assign
 id|simple_strtoul
 (paren
-id|buf
+id|tchars
 comma
 l_int|0
 comma
@@ -2105,6 +2175,9 @@ id|OPP_NOTQUOTED
 )paren
 )paren
 (brace
+r_char
+id|ctmp
+suffix:semicolon
 multiline_comment|/* No way, if somebody starts writing from the middle, &n;&t;&t;&t; * we don&squot;t know whether he uses quotes around or not &n;&t;&t;&t; */
 r_if
 c_cond
@@ -2117,11 +2190,18 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|__get_user
+c_func
+(paren
+id|ctmp
+comma
+id|buf
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|buf
+id|ctmp
 op_eq
 l_char|&squot;&bslash;&squot;&squot;
 )paren
@@ -2314,7 +2394,7 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-id|memcpy
+id|copy_from_user
 (paren
 id|p
 comma
@@ -2493,7 +2573,7 @@ id|u16
 )paren
 (paren
 (paren
-id|uint
+r_int
 )paren
 id|inode-&gt;u.generic_ip
 )paren
@@ -2509,7 +2589,7 @@ id|u16
 )paren
 (paren
 (paren
-id|uint
+r_int
 )paren
 id|inode-&gt;u.generic_ip
 )paren
@@ -3357,6 +3437,12 @@ id|d
 op_assign
 l_int|NULL
 suffix:semicolon
+r_char
+id|buffer2
+(braket
+l_int|64
+)braket
+suffix:semicolon
 op_star
 id|result
 op_assign
@@ -3742,6 +3828,8 @@ op_assign
 id|prom_firstprop
 (paren
 id|n
+comma
+id|buffer2
 )paren
 suffix:semicolon
 id|p
@@ -3756,6 +3844,8 @@ id|prom_nextprop
 id|n
 comma
 id|p
+comma
+id|buffer2
 )paren
 )paren
 (brace
@@ -4078,6 +4168,9 @@ r_void
 op_star
 )paren
 (paren
+r_int
+)paren
+(paren
 id|n
 )paren
 suffix:semicolon
@@ -4186,6 +4279,9 @@ op_assign
 (paren
 r_void
 op_star
+)paren
+(paren
+r_int
 )paren
 (paren
 (paren
@@ -4310,6 +4406,12 @@ r_struct
 id|openpromfs_dev
 op_star
 id|d
+suffix:semicolon
+r_char
+id|buffer2
+(braket
+l_int|64
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -4685,6 +4787,8 @@ op_assign
 id|prom_firstprop
 (paren
 id|n
+comma
+id|buffer2
 )paren
 suffix:semicolon
 id|p
@@ -4699,6 +4803,8 @@ id|prom_nextprop
 id|n
 comma
 id|p
+comma
+id|buffer2
 )paren
 )paren
 (brace
@@ -5028,6 +5134,9 @@ op_assign
 (paren
 r_void
 op_star
+)paren
+(paren
+r_int
 )paren
 (paren
 (paren
@@ -5380,6 +5489,12 @@ op_increment
 comma
 id|i
 suffix:semicolon
+r_char
+id|buffer
+(braket
+l_int|64
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5531,6 +5646,8 @@ op_assign
 id|prom_firstprop
 (paren
 id|node
+comma
+id|buffer
 )paren
 suffix:semicolon
 id|p
@@ -5554,6 +5671,8 @@ id|prom_nextprop
 id|node
 comma
 id|p
+comma
+id|buffer
 )paren
 )paren
 id|first_prop
@@ -5573,6 +5692,8 @@ op_assign
 id|prom_firstprop
 (paren
 id|node
+comma
+id|buffer
 )paren
 suffix:semicolon
 id|p
@@ -5596,6 +5717,8 @@ id|prom_nextprop
 id|node
 comma
 id|p
+comma
+id|buffer
 )paren
 )paren
 (brace
@@ -5827,12 +5950,7 @@ id|inc
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 op_eq
 l_int|1
 )paren
@@ -5892,12 +6010,7 @@ id|inc
 comma
 id|usec
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -5910,12 +6023,7 @@ id|inc
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 op_eq
 l_int|1
 )paren
@@ -5996,6 +6104,7 @@ r_void
 )paren
 macro_line|#endif
 (brace
+macro_line|#ifndef __sparc_v9__
 r_if
 c_cond
 (paren
@@ -6009,6 +6118,7 @@ c_func
 id|ENODEV
 )paren
 suffix:semicolon
+macro_line|#endif
 id|nodes
 op_assign
 (paren

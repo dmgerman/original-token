@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: leo.c,v 1.19 1997/06/06 10:56:30 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leo.c,v 1.20 1997/07/15 09:48:46 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -810,15 +810,12 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_inode
+id|vma-&gt;vm_dentry
 op_assign
-id|inode
-suffix:semicolon
-id|atomic_inc
+id|dget
 c_func
 (paren
-op_amp
-id|inode-&gt;i_count
+id|file-&gt;f_dentry
 )paren
 suffix:semicolon
 r_return
@@ -1693,7 +1690,7 @@ op_star
 id|fb
 comma
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 id|lc
 )paren
@@ -1901,7 +1898,7 @@ op_star
 id|fb
 comma
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 id|lc
 )paren
@@ -2457,7 +2454,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 )paren
 )paren
 suffix:semicolon
@@ -2474,7 +2471,7 @@ op_assign
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2485,7 +2482,7 @@ op_plus
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2517,7 +2514,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2528,7 +2525,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2554,7 +2551,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2565,7 +2562,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2591,7 +2588,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2602,7 +2599,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2626,7 +2623,7 @@ id|fb
 comma
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2650,7 +2647,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 )paren
 )paren
 suffix:semicolon
@@ -2667,7 +2664,7 @@ op_assign
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2678,7 +2675,7 @@ op_plus
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2710,7 +2707,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2721,7 +2718,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2747,7 +2744,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2758,7 +2755,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2784,7 +2781,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2795,7 +2792,7 @@ comma
 (paren
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg
@@ -2819,7 +2816,7 @@ id|fb
 comma
 (paren
 r_struct
-id|leo_clut
+id|fb_clut
 op_star
 )paren
 id|arg

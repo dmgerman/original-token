@@ -533,9 +533,15 @@ op_star
 )paren
 id|buf
 )paren
-ques
+suffix:semicolon
+r_if
 c_cond
-suffix:colon
+(paren
+op_logical_neg
+id|retval
+)paren
+id|retval
+op_assign
 r_sizeof
 (paren
 r_int
@@ -793,9 +799,6 @@ multiline_comment|/* Store a time into the alarm */
 (brace
 multiline_comment|/*&n;&t;&t;&t; * This expects a struct rtc_time. Writing 0xff means&n;&t;&t;&t; * &quot;don&squot;t care&quot; or &quot;match all&quot;. Only the tm_hour,&n;&t;&t;&t; * tm_min and tm_sec are used.&n;&t;&t;&t; */
 r_int
-id|retval
-suffix:semicolon
-r_int
 r_char
 id|hrs
 comma
@@ -980,9 +983,6 @@ id|RTC_SET_TIME
 suffix:colon
 multiline_comment|/* Set the RTC */
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|rtc_time
 id|rtc_tm
@@ -1566,6 +1566,10 @@ r_return
 id|copy_to_user
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|arg
 comma
 op_amp

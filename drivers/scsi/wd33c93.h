@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; *    IMPORTANT: This file is for version 1.24 - 29/Jan/1997&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
+multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; *    IMPORTANT: This file is for version 1.25 - 09/Jul/1997&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
 macro_line|#ifndef WD33C93_H
 DECL|macro|WD33C93_H
 mdefine_line|#define WD33C93_H
@@ -319,6 +319,8 @@ r_int
 id|status
 )paren
 suffix:semicolon
+DECL|macro|ILLEGAL_STATUS_BYTE
+mdefine_line|#define ILLEGAL_STATUS_BYTE   0xff
 DECL|macro|DEFAULT_SX_PER
 mdefine_line|#define DEFAULT_SX_PER   376     /* (ns) fairly safe */
 DECL|macro|DEFAULT_SX_OFF

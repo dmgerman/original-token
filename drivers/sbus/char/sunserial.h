@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.h,v 1.9 1997/04/12 23:33:12 ecd Exp $&n; * serial.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.h,v 1.11 1997/07/08 10:17:23 davem Exp $&n; * serial.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_SERIAL_H
 DECL|macro|_SPARC_SERIAL_H
 mdefine_line|#define _SPARC_SERIAL_H

@@ -15,6 +15,8 @@ DECL|macro|ATARIMOUSE_MINOR
 mdefine_line|#define ATARIMOUSE_MINOR 5
 DECL|macro|SUN_MOUSE_MINOR
 mdefine_line|#define SUN_MOUSE_MINOR 6
+DECL|macro|PC110PAD_MINOR
+mdefine_line|#define PC110PAD_MINOR 9
 DECL|macro|RTC_MINOR
 mdefine_line|#define RTC_MINOR 135
 DECL|macro|SUN_OPENPROM_MINOR

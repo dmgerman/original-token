@@ -3466,7 +3466,13 @@ op_assign
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|qregs
+)paren
 suffix:semicolon
 id|qpti_host-&gt;n_io_port
 op_assign
@@ -4146,7 +4152,13 @@ op_assign
 (paren
 id|u_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|Cmnd
+)paren
 suffix:semicolon
 multiline_comment|/* magic mushroom */
 id|cmd-&gt;target_id
@@ -4630,7 +4642,13 @@ op_assign
 (paren
 id|u_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|Cmnd-&gt;SCp.ptr
+)paren
 suffix:semicolon
 id|cmd-&gt;dataseg
 (braket
@@ -5391,9 +5409,14 @@ op_assign
 id|Scsi_Cmnd
 op_star
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|sts-&gt;handle
+)paren
 suffix:semicolon
-multiline_comment|/* but_to_virt?!?! */
 r_if
 c_cond
 (paren
@@ -5638,7 +5661,13 @@ op_assign
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|Cmnd
+)paren
 )paren
 op_rshift
 l_int|16
@@ -5653,7 +5682,13 @@ op_assign
 r_int
 r_int
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|Cmnd
+)paren
 )paren
 op_amp
 l_int|0xffff

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.6 1997/06/24 17:29:14 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: string.h,v 1.7 1997/07/13 18:23:44 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_STRING_H__
 DECL|macro|__SPARC64_STRING_H__
 mdefine_line|#define __SPARC64_STRING_H__
@@ -181,50 +181,6 @@ comma
 id|n
 )paren
 suffix:semicolon
-macro_line|#if 0&t;&t;&t;
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|n
-OL
-l_int|384
-)paren
-(brace
-id|__memcpy_16plus
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-comma
-id|ASI_BLK_P
-comma
-id|ASI_BLK_P
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|__memcpy_384plus
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-comma
-id|ASI_BLK_P
-comma
-id|ASI_BLK_P
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 )brace
 r_else
 (brace
@@ -239,7 +195,6 @@ id|n
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;
 )brace
 r_return
 id|to
@@ -266,22 +221,6 @@ id|__kernel_size_t
 id|n
 )paren
 (brace
-macro_line|#if 0
-id|__memcpy_entry
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-comma
-id|ASI_BLK_P
-comma
-id|ASI_BLK_P
-)paren
-suffix:semicolon
-macro_line|#else
 id|__memcpy
 c_func
 (paren
@@ -292,7 +231,6 @@ comma
 id|n
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|to
 suffix:semicolon

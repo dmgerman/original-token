@@ -14,17 +14,19 @@ macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 DECL|macro|WD33C93_VERSION
-mdefine_line|#define WD33C93_VERSION    &quot;1.24&quot;
+mdefine_line|#define WD33C93_VERSION    &quot;1.25&quot;
 DECL|macro|WD33C93_DATE
-mdefine_line|#define WD33C93_DATE       &quot;29/Jan/1997&quot;
+mdefine_line|#define WD33C93_DATE       &quot;09/Jul/1997&quot;
+multiline_comment|/* NOTE: 1.25 for m68k is related to in2000-1.31 for x86 */
 multiline_comment|/*&n; * Note - the following defines have been moved to &squot;wd33c93.h&squot;:&n; *&n; *    PROC_INTERFACE&n; *    PROC_STATISTICS&n; *    SYNC_DEBUG&n; *    DEBUGGING_ON&n; *    DEBUG_DEFAULTS&n; *&n; */
 macro_line|#include &quot;wd33c93.h&quot;
-multiline_comment|/*&n; * setup_strings is an array of strings that define some of the operating&n; * parameters and settings for this driver. It is used unless an amiboot&n; * or insmod command line has been specified, in which case those settings&n; * are combined with the ones here. The driver recognizes the following&n; * keywords (lower case required) and arguments:&n; *&n; * -  nosync:bitmask -bitmask is a byte where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices. Set a bit to negotiate for&n; *                    asynchronous transfers on that device. To maintain&n; *                    backwards compatibility, a command-line such as&n; *                    &quot;wd33c93=255&quot; will be automatically translated to&n; *                    &quot;wd33c93=nosync:0xff&quot;.&n; * -  nodma:x        -x = 1 to disable DMA, x = 0 to enable it. Argument is&n; *                    optional - if not present, same as &quot;nodma:1&quot;.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bit mask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in wd33c93.h&n; * -  clock:x        -x = clock input in MHz for WD33c93 chip. Normal values&n; *                    would be from 8 through 20. Default is 8.&n; * -  next           -No argument. Used to separate blocks of keywords when&n; *                    there&squot;s more than one host adapter in the system.&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner, except in the case of &squot;setup_strings[]&squot; (see&n; *    below), which is simply a C array of pointers to char. Each element&n; *    in the array is a string comprising one keyword &amp; argument.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_strings[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_strings[] element.&n; * -  If a keyword is used more than once, the first one applies to the first&n; *    SCSI host found, the second to the second card, etc, unless the &squot;next&squot;&n; *    keyword is used to change the order.&n; *&n; * Some amiboot examples (for insmod, use &squot;setup_strings&squot; instead of &squot;wd33c93&squot;):&n; * -  wd33c93=nosync:255&n; * -  wd33c93=nodma&n; * -  wd33c93=nodma:1&n; * -  wd33c93=disconnect:2,nosync:0x08,period:250&n; * -  wd33c93=debug:0x1c&n; */
-DECL|variable|setup_strings
+multiline_comment|/*&n; * &squot;setup_strings&squot; is a single string used to pass operating parameters and&n; * settings from the kernel/module command-line to the driver. &squot;setup_args[]&squot;&n; * is an array of strings that define the compile-time default values for&n; * these settings. If Linux boots with an amiboot or insmod command-line,&n; * those settings are combined with &squot;setup_args[]&squot;. Note that amiboot&n; * command-lines are prefixed with &quot;wd33c93=&quot; while insmod uses a&n; * &quot;setup_strings=&quot; prefix. The driver recognizes the following keywords&n; * (lower case required) and arguments:&n; *&n; * -  nosync:bitmask -bitmask is a byte where the 1st 7 bits correspond with&n; *                    the 7 possible SCSI devices. Set a bit to negotiate for&n; *                    asynchronous transfers on that device. To maintain&n; *                    backwards compatibility, a command-line such as&n; *                    &quot;wd33c93=255&quot; will be automatically translated to&n; *                    &quot;wd33c93=nosync:0xff&quot;.&n; * -  nodma:x        -x = 1 to disable DMA, x = 0 to enable it. Argument is&n; *                    optional - if not present, same as &quot;nodma:1&quot;.&n; * -  period:ns      -ns is the minimum # of nanoseconds in a SCSI data transfer&n; *                    period. Default is 500; acceptable values are 250 - 1000.&n; * -  disconnect:x   -x = 0 to never allow disconnects, 2 to always allow them.&n; *                    x = 1 does &squot;adaptive&squot; disconnects, which is the default&n; *                    and generally the best choice.&n; * -  debug:x        -If &squot;DEBUGGING_ON&squot; is defined, x is a bit mask that causes&n; *                    various types of debug output to printed - see the DB_xxx&n; *                    defines in wd33c93.h&n; * -  clock:x        -x = clock input in MHz for WD33c93 chip. Normal values&n; *                    would be from 8 through 20. Default is 8.&n; * -  next           -No argument. Used to separate blocks of keywords when&n; *                    there&squot;s more than one host adapter in the system.&n; *&n; * Syntax Notes:&n; * -  Numeric arguments can be decimal or the &squot;0x&squot; form of hex notation. There&n; *    _must_ be a colon between a keyword and its numeric argument, with no&n; *    spaces.&n; * -  Keywords are separated by commas, no spaces, in the standard kernel&n; *    command-line manner.&n; * -  A keyword in the &squot;nth&squot; comma-separated command-line member will overwrite&n; *    the &squot;nth&squot; element of setup_args[]. A blank command-line member (in&n; *    other words, a comma with no preceding keyword) will _not_ overwrite&n; *    the corresponding setup_args[] element.&n; * -  If a keyword is used more than once, the first one applies to the first&n; *    SCSI host found, the second to the second card, etc, unless the &squot;next&squot;&n; *    keyword is used to change the order.&n; *&n; * Some amiboot examples (for insmod, use &squot;setup_strings&squot; instead of &squot;wd33c93&squot;):&n; * -  wd33c93=nosync:255&n; * -  wd33c93=nodma&n; * -  wd33c93=nodma:1&n; * -  wd33c93=disconnect:2,nosync:0x08,period:250&n; * -  wd33c93=debug:0x1c&n; */
+multiline_comment|/* Normally, no defaults are specified */
+DECL|variable|setup_args
 r_static
 r_char
 op_star
-id|setup_strings
+id|setup_args
 (braket
 )braket
 op_assign
@@ -46,14 +48,27 @@ comma
 l_string|&quot;&quot;
 comma
 l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
 )brace
 suffix:semicolon
+multiline_comment|/* filled in by &squot;insmod&squot; */
+DECL|variable|setup_strings
+r_static
+r_char
+op_star
+id|setup_strings
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef MODULE_PARM
+id|MODULE_PARM
+c_func
+(paren
+id|setup_strings
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|read_wd33c93
 r_static
 r_inline
@@ -744,10 +759,10 @@ op_assign
 id|cmd-&gt;request_bufflen
 suffix:semicolon
 )brace
-multiline_comment|/* Preset the command status to GOOD, since that&squot;s the normal case */
+multiline_comment|/* WD docs state that at the conclusion of a &quot;LEVEL2&quot; command, the&n; * status byte can be retrieved from the LUN register. Apparently,&n; * this is the case only for *uninterrupted* LEVEL2 commands! If&n; * there are any unexpected phases entered, even if they are 100%&n; * legal (different devices may choose to do things differently),&n; * the LEVEL2 command sequence is exited. This often occurs prior&n; * to receiving the status byte, in which case the driver does a&n; * status phase interrupt and gets the status byte on its own.&n; * While such a command can then be &quot;resumed&quot; (ie restarted to&n; * finish up as a LEVEL2 command), the LUN register will NOT be&n; * a valid status byte at the command&squot;s conclusion, and we must&n; * use the byte obtained during the earlier interrupt. Here, we&n; * preset SCp.Status to an illegal value (0xff) so that when&n; * this command finally completes, we can tell where the actual&n; * status byte is stored.&n; */
 id|cmd-&gt;SCp.Status
 op_assign
-id|GOOD
+id|ILLEGAL_STATUS_BYTE
 suffix:semicolon
 multiline_comment|/*&n;    * Add the cmd to the end of &squot;input_Q&squot;. Note that REQUEST SENSE&n;    * commands are added to the head of the queue so that the desired&n;    * sense data is not lost before REQUEST_SENSE executes.&n;    */
 id|save_flags
@@ -1867,6 +1882,10 @@ id|L2_DATA
 )paren
 op_logical_or
 (paren
+id|hostdata-&gt;level2
+op_eq
+id|L2_BASIC
+op_logical_and
 id|cmd-&gt;SCp.phase
 op_eq
 l_int|0
@@ -2207,7 +2226,7 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-multiline_comment|/* From esp.c:&n;&t;  * There is a window of time within the scsi_done() path&n;&t;  * of execution where interrupts are turned back on full&n;&t;  * blast and left that way.  During that time we could&n;&t;  * reconnect to a disconnected command, then we&squot;d bomb&n;&t;  * out below.  We could also end up executing two commands&n;&t;  * at _once_.  ...just so you know why the restore_flags()&n;&t;  * is here...&n;&t;  */
+multiline_comment|/* From esp.c:&n;     * There is a window of time within the scsi_done() path&n;     * of execution where interrupts are turned back on full&n;     * blast and left that way.  During that time we could&n;     * reconnect to a disconnected command, then we&squot;d bomb&n;     * out below.  We could also end up executing two commands&n;     * at _once_.  ...just so you know why the restore_flags()&n;     * is here...&n;     */
 id|restore_flags
 c_func
 (paren
@@ -2573,7 +2592,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;STATUS&quot;
+l_string|&quot;STATUS=&quot;
 )paren
 )paren
 id|cmd-&gt;SCp.Status
@@ -2584,6 +2603,19 @@ c_func
 id|regp
 )paren
 suffix:semicolon
+id|DB
+c_func
+(paren
+id|DB_INTR
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;%02x&quot;
+comma
+id|cmd-&gt;SCp.Status
+)paren
+)paren
 r_if
 c_cond
 (paren
@@ -2628,19 +2660,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DB
-c_func
-(paren
-id|DB_INTR
-comma
-id|printk
-c_func
-(paren
-l_string|&quot;=%02x&quot;
-comma
-id|cmd-&gt;SCp.Status
-)paren
-)paren
 id|hostdata-&gt;state
 op_assign
 id|S_CONNECTED
@@ -3380,20 +3399,51 @@ comma
 id|WD_TARGET_LUN
 )paren
 suffix:semicolon
+id|DB
+c_func
+(paren
+id|DB_INTR
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;:%d.%d&quot;
+comma
+id|cmd-&gt;SCp.Status
+comma
+id|lun
+)paren
+)paren
+id|hostdata-&gt;connected
+op_assign
+l_int|NULL
+suffix:semicolon
+id|hostdata-&gt;busy
+(braket
+id|cmd-&gt;target
+)braket
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|cmd-&gt;lun
+)paren
+suffix:semicolon
+id|hostdata-&gt;state
+op_assign
+id|S_UNCONNECTED
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|cmd-&gt;SCp.Status
 op_eq
-id|GOOD
+id|ILLEGAL_STATUS_BYTE
 )paren
 id|cmd-&gt;SCp.Status
 op_assign
 id|lun
-suffix:semicolon
-id|hostdata-&gt;connected
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -3402,23 +3452,9 @@ id|cmd-&gt;cmnd
 (braket
 l_int|0
 )braket
-op_ne
+op_eq
 id|REQUEST_SENSE
-)paren
-id|cmd-&gt;result
-op_assign
-id|cmd-&gt;SCp.Status
-op_or
-(paren
-id|cmd-&gt;SCp.Message
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
+op_logical_and
 id|cmd-&gt;SCp.Status
 op_ne
 id|GOOD
@@ -3437,21 +3473,16 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-id|hostdata-&gt;busy
-(braket
-id|cmd-&gt;target
-)braket
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|cmd-&gt;lun
-)paren
-suffix:semicolon
-id|hostdata-&gt;state
+r_else
+id|cmd-&gt;result
 op_assign
-id|S_UNCONNECTED
+id|cmd-&gt;SCp.Status
+op_or
+(paren
+id|cmd-&gt;SCp.Message
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
 id|cmd
 op_member_access_from_pointer
@@ -3696,23 +3727,9 @@ id|cmd-&gt;cmnd
 (braket
 l_int|0
 )braket
-op_ne
+op_eq
 id|REQUEST_SENSE
-)paren
-id|cmd-&gt;result
-op_assign
-id|cmd-&gt;SCp.Status
-op_or
-(paren
-id|cmd-&gt;SCp.Message
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
+op_logical_and
 id|cmd-&gt;SCp.Status
 op_ne
 id|GOOD
@@ -3729,6 +3746,17 @@ op_or
 id|DID_ERROR
 op_lshift
 l_int|16
+)paren
+suffix:semicolon
+r_else
+id|cmd-&gt;result
+op_assign
+id|cmd-&gt;SCp.Status
+op_or
+(paren
+id|cmd-&gt;SCp.Message
+op_lshift
+l_int|8
 )paren
 suffix:semicolon
 id|cmd
@@ -3830,6 +3858,19 @@ id|hostdata-&gt;state
 op_assign
 id|S_UNCONNECTED
 suffix:semicolon
+id|DB
+c_func
+(paren
+id|DB_INTR
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;:%d&quot;
+comma
+id|cmd-&gt;SCp.Status
+)paren
+)paren
 r_if
 c_cond
 (paren
@@ -3837,23 +3878,9 @@ id|cmd-&gt;cmnd
 (braket
 l_int|0
 )braket
-op_ne
+op_eq
 id|REQUEST_SENSE
-)paren
-id|cmd-&gt;result
-op_assign
-id|cmd-&gt;SCp.Status
-op_or
-(paren
-id|cmd-&gt;SCp.Message
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
+op_logical_and
 id|cmd-&gt;SCp.Status
 op_ne
 id|GOOD
@@ -3870,6 +3897,17 @@ op_or
 id|DID_ERROR
 op_lshift
 l_int|16
+)paren
+suffix:semicolon
+r_else
+id|cmd-&gt;result
+op_assign
+id|cmd-&gt;SCp.Status
+op_or
+(paren
+id|cmd-&gt;SCp.Message
+op_lshift
+l_int|8
 )paren
 suffix:semicolon
 id|cmd
@@ -5261,8 +5299,8 @@ suffix:semicolon
 )brace
 DECL|macro|MAX_WD33C93_HOSTS
 mdefine_line|#define MAX_WD33C93_HOSTS 4
-DECL|macro|MAX_SETUP_STRINGS
-mdefine_line|#define MAX_SETUP_STRINGS (sizeof(setup_strings) / sizeof(char *))
+DECL|macro|MAX_SETUP_ARGS
+mdefine_line|#define MAX_SETUP_ARGS (sizeof(setup_args) / sizeof(char *))
 DECL|macro|SETUP_BUFFER_SIZE
 mdefine_line|#define SETUP_BUFFER_SIZE 200
 DECL|variable|setup_buffer
@@ -5278,8 +5316,15 @@ r_static
 r_char
 id|setup_used
 (braket
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 )braket
+suffix:semicolon
+DECL|variable|done_setup
+r_static
+r_int
+id|done_setup
+op_assign
+l_int|0
 suffix:semicolon
 DECL|function|wd33c93_setup
 r_void
@@ -5416,7 +5461,7 @@ op_logical_and
 (paren
 id|i
 OL
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 )paren
 )paren
 (brace
@@ -5448,7 +5493,7 @@ id|p1
 op_ne
 id|p2
 )paren
-id|setup_strings
+id|setup_args
 (braket
 id|i
 )braket
@@ -5467,7 +5512,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|setup_strings
+id|setup_args
 (braket
 id|i
 )braket
@@ -5487,7 +5532,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 suffix:semicolon
 id|i
 op_increment
@@ -5499,12 +5544,16 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|done_setup
+op_assign
+l_int|1
+suffix:semicolon
 )brace
-multiline_comment|/* check_setup_strings() returns index if key found, 0 if not&n; */
-DECL|function|check_setup_strings
+multiline_comment|/* check_setup_args() returns index if key found, 0 if not&n; */
+DECL|function|check_setup_args
 r_static
 r_int
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 r_char
@@ -5540,7 +5589,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 suffix:semicolon
 id|x
 op_increment
@@ -5563,7 +5612,7 @@ op_logical_neg
 id|strncmp
 c_func
 (paren
-id|setup_strings
+id|setup_args
 (braket
 id|x
 )braket
@@ -5586,7 +5635,7 @@ op_logical_neg
 id|strncmp
 c_func
 (paren
-id|setup_strings
+id|setup_args
 (braket
 id|x
 )braket
@@ -5609,7 +5658,7 @@ c_cond
 (paren
 id|x
 op_eq
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 )paren
 r_return
 l_int|0
@@ -5623,7 +5672,7 @@ l_int|1
 suffix:semicolon
 id|cp
 op_assign
-id|setup_strings
+id|setup_args
 (braket
 id|x
 )braket
@@ -5734,6 +5783,22 @@ id|buf
 (braket
 l_int|32
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|done_setup
+op_logical_and
+id|setup_strings
+)paren
+id|wd33c93_setup
+c_func
+(paren
+id|setup_strings
+comma
+l_int|0
+)paren
 suffix:semicolon
 id|hostdata
 op_assign
@@ -5930,7 +5995,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;nosync&quot;
@@ -5951,7 +6016,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;nodma&quot;
@@ -5982,7 +6047,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;period&quot;
@@ -6016,7 +6081,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;disconnect&quot;
@@ -6059,7 +6124,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
+c_func
+(paren
+l_string|&quot;level2&quot;
+comma
+op_amp
+id|flags
+comma
+op_amp
+id|val
+comma
+id|buf
+)paren
+)paren
+id|hostdata-&gt;level2
+op_assign
+id|val
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;debug&quot;
@@ -6082,7 +6168,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;clock&quot;
@@ -6160,7 +6246,7 @@ c_cond
 (paren
 id|i
 op_assign
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;next&quot;
@@ -6194,7 +6280,7 @@ macro_line|#ifdef PROC_INTERFACE
 r_if
 c_cond
 (paren
-id|check_setup_strings
+id|check_setup_args
 c_func
 (paren
 l_string|&quot;proc&quot;
@@ -6292,7 +6378,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;           setup_strings=&quot;
+l_string|&quot;           setup_args=&quot;
 )paren
 suffix:semicolon
 r_for
@@ -6304,7 +6390,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|MAX_SETUP_STRINGS
+id|MAX_SETUP_ARGS
 suffix:semicolon
 id|i
 op_increment
@@ -6314,7 +6400,7 @@ c_func
 (paren
 l_string|&quot;%s,&quot;
 comma
-id|setup_strings
+id|setup_args
 (braket
 id|i
 )braket
@@ -6746,6 +6832,39 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|bp
+comma
+l_string|&quot;level2:&quot;
+comma
+l_int|7
+)paren
+)paren
+(brace
+id|bp
+op_add_assign
+l_int|7
+suffix:semicolon
+id|hd-&gt;level2
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|bp
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon
@@ -6838,7 +6957,7 @@ c_func
 (paren
 id|bp
 comma
-l_string|&quot;&bslash;nsync_xfer[] =&quot;
+l_string|&quot;&bslash;nsync_xfer[] =       &quot;
 )paren
 suffix:semicolon
 r_for
@@ -6850,7 +6969,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-l_int|8
+l_int|7
 suffix:semicolon
 id|x
 op_increment
@@ -6861,7 +6980,7 @@ c_func
 (paren
 id|tbuf
 comma
-l_string|&quot; %02x&quot;
+l_string|&quot;&bslash;t%02x&quot;
 comma
 id|hd-&gt;sync_xfer
 (braket
@@ -6883,7 +7002,7 @@ c_func
 (paren
 id|bp
 comma
-l_string|&quot;&bslash;nsync_stat[] =&quot;
+l_string|&quot;&bslash;nsync_stat[] =       &quot;
 )paren
 suffix:semicolon
 r_for
@@ -6895,7 +7014,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-l_int|8
+l_int|7
 suffix:semicolon
 id|x
 op_increment
@@ -6906,7 +7025,7 @@ c_func
 (paren
 id|tbuf
 comma
-l_string|&quot; %02x&quot;
+l_string|&quot;&bslash;t%02x&quot;
 comma
 id|hd-&gt;sync_stat
 (braket
@@ -6950,7 +7069,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-l_int|8
+l_int|7
 suffix:semicolon
 id|x
 op_increment
@@ -6961,7 +7080,7 @@ c_func
 (paren
 id|tbuf
 comma
-l_string|&quot; %ld&quot;
+l_string|&quot;&bslash;t%ld&quot;
 comma
 id|hd-&gt;cmd_cnt
 (braket
@@ -6995,7 +7114,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-l_int|8
+l_int|7
 suffix:semicolon
 id|x
 op_increment
@@ -7006,7 +7125,7 @@ c_func
 (paren
 id|tbuf
 comma
-l_string|&quot; %ld&quot;
+l_string|&quot;&bslash;t%ld&quot;
 comma
 id|hd-&gt;disc_allowed_cnt
 (braket
@@ -7040,7 +7159,7 @@ l_int|0
 suffix:semicolon
 id|x
 OL
-l_int|8
+l_int|7
 suffix:semicolon
 id|x
 op_increment
@@ -7051,7 +7170,7 @@ c_func
 (paren
 id|tbuf
 comma
-l_string|&quot; %ld&quot;
+l_string|&quot;&bslash;t%ld&quot;
 comma
 id|hd-&gt;disc_done_cnt
 (braket

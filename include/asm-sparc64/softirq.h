@@ -25,9 +25,9 @@ mdefine_line|#define remove_bh(nr)&t;&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&bs
 DECL|macro|mark_bh
 mdefine_line|#define mark_bh(nr)&t;&t;(bh_active |= (1 &lt;&lt; (nr)))
 DECL|macro|disable_bh
-mdefine_line|#define disable_bh(nr)&t;&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&bslash;&n;&t;bh_mask &amp;= ~(1 &lt;&lt; ent);&t;&bslash;&n;&t;bh_mask_count[ent]++;&t;&bslash;&n;} while(0)
+mdefine_line|#define disable_bh(nr)&t;&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&bslash;&n;&t;bh_mask &amp;= ~(1 &lt;&lt; ent);&t;&bslash;&n;&t;bh_mask_count[ent]++;&t;&bslash;&n;&t;barrier();&t;&t;&bslash;&n;} while(0)
 DECL|macro|enable_bh
-mdefine_line|#define enable_bh(nr)&t;&t;&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&t;&bslash;&n;&t;if (!--bh_mask_count[ent])&t;&bslash;&n;&t;&t;bh_mask |= 1 &lt;&lt; ent;&t;&bslash;&n;} while(0)
+mdefine_line|#define enable_bh(nr)&t;&t;&t;&bslash;&n;do {&t;int ent = nr;&t;&t;&t;&bslash;&n;&t;barrier();&t;&t;&t;&bslash;&n;&t;if (!--bh_mask_count[ent])&t;&bslash;&n;&t;&t;bh_mask |= 1 &lt;&lt; ent;&t;&bslash;&n;} while(0)
 DECL|macro|start_bh_atomic
 mdefine_line|#define start_bh_atomic() do { __sparc64_bh_counter++; barrier(); } while(0)
 DECL|macro|end_bh_atomic

@@ -102,6 +102,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BINFMT_AOUT32
+id|init_aout32_binfmt
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BINFMT_JAVA
 id|init_java_binfmt
 c_func

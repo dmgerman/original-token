@@ -3853,9 +3853,15 @@ id|KERN_INFO
 l_string|&quot;lp: driver loaded but no devices found&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else&t;
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module

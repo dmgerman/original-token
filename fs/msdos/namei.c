@@ -2231,12 +2231,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|dir-&gt;i_count
-)paren
 OG
 l_int|1
 )paren
@@ -4618,12 +4613,8 @@ op_assign
 id|new_inode
 suffix:semicolon
 multiline_comment|/* Two references now exist to free_inode so increase count */
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|free_inode-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
 multiline_comment|/* free_inode is put after putting new_inode and old_inode */
 id|iput

@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* wanrouter.h&t;Definitions for the WAN Multiprotocol Router Module.&n;*&t;&t;This module provides API and common services for WAN Link&n;*&t;&t;Drivers and is completely hardware-independent.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version (based on wanpipe.h).&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* router.h&t;Definitions for the WAN Multiprotocol Router Module.&n;*&t;&t;This module provides API and common services for WAN Link&n;*&t;&t;Drivers and is completely hardware-independent.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* May 29, 1997 &t;Jaspreet Singh&t;Added &squot;tx_int_enabled&squot; tp &squot;wan_device_t&squot;&n;* May 21, 1997&t;Jaspreet Singh&t;Added &squot;udp_port&squot; to &squot;wan_device_t&squot;&n;* Apr 25, 1997  Farhan Thawar   Added &squot;udp_port&squot; to &squot;wandev_conf_t&squot;&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version (based on wanpipe.h).&n;*****************************************************************************/
 macro_line|#ifndef&t;_ROUTER_H
 DECL|macro|_ROUTER_H
 mdefine_line|#define&t;_ROUTER_H
@@ -378,6 +378,11 @@ r_int
 id|mtu
 suffix:semicolon
 multiline_comment|/* maximum transmit unit size */
+DECL|member|udp_port
+r_int
+id|udp_port
+suffix:semicolon
+multiline_comment|/* UDP port for management */
 DECL|member|interface
 r_char
 id|interface
@@ -799,6 +804,16 @@ r_int
 id|mtu
 suffix:semicolon
 multiline_comment|/* max physical transmit unit size */
+DECL|member|udp_port
+r_int
+id|udp_port
+suffix:semicolon
+multiline_comment|/* UDP port for management */
+DECL|member|tx_int_enabled
+r_int
+id|tx_int_enabled
+suffix:semicolon
+multiline_comment|/* Transmit Interrupt enabled or not */
 DECL|member|interface
 r_char
 id|interface
@@ -996,19 +1011,10 @@ DECL|typedef|wan_device_t
 )brace
 id|wan_device_t
 suffix:semicolon
-multiline_comment|/* Init Point */
-r_extern
-r_void
-id|wanrouter_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* Public functions available for device drivers */
 r_extern
 r_int
-id|register_wan_device
+id|register_wandev
 (paren
 id|wan_device_t
 op_star
@@ -1017,7 +1023,7 @@ id|wandev
 suffix:semicolon
 r_extern
 r_int
-id|unregister_wan_device
+id|unregister_wandev
 (paren
 r_char
 op_star
@@ -1026,7 +1032,7 @@ id|name
 suffix:semicolon
 r_int
 r_int
-id|wanrouter_type_trans
+id|wan_type_trans
 (paren
 r_struct
 id|sk_buff
@@ -1040,7 +1046,7 @@ id|dev
 )paren
 suffix:semicolon
 r_int
-id|wanrouter_encapsulate
+id|wan_encapsulate
 (paren
 r_struct
 id|sk_buff
@@ -1110,6 +1116,13 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+multiline_comment|/* Public Data */
+r_extern
+id|wan_device_t
+op_star
+id|router_devlist
+suffix:semicolon
+multiline_comment|/* list of registered devices */
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* _ROUTER_H */
 eof

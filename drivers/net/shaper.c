@@ -15,14 +15,14 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
-macro_line|#include &quot;shaper.h&quot;
+macro_line|#include &lt;linux/if_shaper.h&gt;
 DECL|variable|sh_debug
 r_int
 id|sh_debug
 suffix:semicolon
 multiline_comment|/* Debug flag */
 DECL|macro|SHAPER_BANNER
-mdefine_line|#define SHAPER_BANNER&t;&quot;CymruNet Traffic Shaper BETA 0.03 for Linux 2.1&bslash;n&quot;
+mdefine_line|#define SHAPER_BANNER&t;&quot;CymruNet Traffic Shaper BETA 0.04 for Linux 2.1&bslash;n&quot;
 multiline_comment|/*&n; *&t;Locking&n; */
 DECL|function|shaper_lock
 r_static
@@ -1150,6 +1150,9 @@ id|sh
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+id|v
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1163,7 +1166,12 @@ l_string|&quot;Shaper header&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_return
+id|skb-&gt;dev
+op_assign
+id|sh-&gt;dev
+suffix:semicolon
+id|v
+op_assign
 id|sh
 op_member_access_from_pointer
 id|hard_header
@@ -1181,6 +1189,13 @@ id|saddr
 comma
 id|len
 )paren
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+r_return
+id|v
 suffix:semicolon
 )brace
 DECL|function|shaper_rebuild_header
@@ -1202,6 +1217,16 @@ id|sh
 op_assign
 id|skb-&gt;dev-&gt;priv
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+r_int
+id|v
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1215,7 +1240,12 @@ l_string|&quot;Shaper rebuild header&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_return
+id|skb-&gt;dev
+op_assign
+id|sh-&gt;dev
+suffix:semicolon
+id|v
+op_assign
 id|sh
 op_member_access_from_pointer
 id|rebuild_header
@@ -1223,6 +1253,13 @@ c_func
 (paren
 id|skb
 )paren
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+r_return
+id|v
 suffix:semicolon
 )brace
 DECL|function|shaper_cache
@@ -1434,6 +1471,7 @@ id|shdev-&gt;rebuild_header
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -1476,6 +1514,16 @@ id|shdev-&gt;header_cache_update
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#else
+id|shdev-&gt;header_cache_update
+op_assign
+l_int|NULL
+suffix:semicolon
+id|shdev-&gt;hard_header_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif&t;&t;
 id|shdev-&gt;hard_header_len
 op_assign
 id|dev-&gt;hard_header_len

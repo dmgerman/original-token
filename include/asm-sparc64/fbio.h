@@ -355,7 +355,6 @@ l_int|32
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* XXX 32-bit binary compatability item... -DaveM */
 DECL|struct|fb_wid_list
 r_struct
 id|fb_wid_list
@@ -384,6 +383,33 @@ DECL|macro|FBIO_WID_PUT
 mdefine_line|#define FBIO_WID_PUT&t;_IOW(&squot;F&squot;, 32, struct fb_wid_list)
 DECL|macro|FBIO_WID_GET
 mdefine_line|#define FBIO_WID_GET&t;_IOWR(&squot;F&squot;, 33, struct fb_wid_list)
+multiline_comment|/* Creator ioctls */
+DECL|macro|FFB_IOCTL
+mdefine_line|#define FFB_IOCTL&t;(&squot;F&squot;&lt;&lt;8)
+DECL|macro|FFB_SYS_INFO
+mdefine_line|#define FFB_SYS_INFO&t;&t;(FFB_IOCTL|80)
+DECL|macro|FFB_CLUTREAD
+mdefine_line|#define FFB_CLUTREAD&t;&t;(FFB_IOCTL|81)
+DECL|macro|FFB_CLUTPOST
+mdefine_line|#define FFB_CLUTPOST&t;&t;(FFB_IOCTL|82)
+DECL|macro|FFB_SETDIAGMODE
+mdefine_line|#define FFB_SETDIAGMODE&t;&t;(FFB_IOCTL|83)
+DECL|macro|FFB_GETMONITORID
+mdefine_line|#define FFB_GETMONITORID&t;(FFB_IOCTL|84)
+DECL|macro|FFB_GETVIDEOMODE
+mdefine_line|#define FFB_GETVIDEOMODE&t;(FFB_IOCTL|85)
+DECL|macro|FFB_SETVIDEOMODE
+mdefine_line|#define FFB_SETVIDEOMODE&t;(FFB_IOCTL|86)
+DECL|macro|FFB_SETSERVER
+mdefine_line|#define FFB_SETSERVER&t;&t;(FFB_IOCTL|87)
+DECL|macro|FFB_SETOVCTL
+mdefine_line|#define FFB_SETOVCTL&t;&t;(FFB_IOCTL|88)
+DECL|macro|FFB_GETOVCTL
+mdefine_line|#define FFB_GETOVCTL&t;&t;(FFB_IOCTL|89)
+DECL|macro|FFB_GETSAXNUM
+mdefine_line|#define FFB_GETSAXNUM&t;&t;(FFB_IOCTL|90)
+DECL|macro|FFB_FBDEBUG
+mdefine_line|#define FFB_FBDEBUG&t;&t;(FFB_IOCTL|91)
 multiline_comment|/* Cg14 ioctls */
 DECL|macro|MDI_IOCTL
 mdefine_line|#define MDI_IOCTL          (&squot;M&squot;&lt;&lt;8)
@@ -443,10 +469,10 @@ suffix:semicolon
 multiline_comment|/* SparcLinux specific ioctl for the MDI, should be replaced for&n; * the SET_XLUT/SET_CLUTn ioctls instead&n; */
 DECL|macro|MDI_CLEAR_XLUT
 mdefine_line|#define MDI_CLEAR_XLUT       (MDI_IOCTL|9)
-multiline_comment|/* leo ioctls */
-DECL|struct|leo_clut_alloc
+multiline_comment|/* leo &amp; ffb ioctls */
+DECL|struct|fb_clut_alloc
 r_struct
-id|leo_clut_alloc
+id|fb_clut_alloc
 (brace
 DECL|member|clutid
 id|__u32
@@ -463,13 +489,12 @@ id|index
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* XXX 32-bit binary compatability item... -DaveM */
-DECL|struct|leo_clut
+DECL|struct|fb_clut
 r_struct
-id|leo_clut
+id|fb_clut
 (brace
-DECL|macro|LEO_CLUT_WAIT
-mdefine_line|#define LEO_CLUT_WAIT&t;0x00000001&t;/* Not yet implemented */
+DECL|macro|FB_CLUT_WAIT
+mdefine_line|#define FB_CLUT_WAIT&t;0x00000001&t;/* Not yet implemented */
 DECL|member|flag
 id|__u32
 id|flag
@@ -503,14 +528,48 @@ id|blue
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|fb_clut32
+r_struct
+id|fb_clut32
+(brace
+DECL|member|flag
+id|__u32
+id|flag
+suffix:semicolon
+DECL|member|clutid
+id|__u32
+id|clutid
+suffix:semicolon
+DECL|member|offset
+id|__u32
+id|offset
+suffix:semicolon
+DECL|member|count
+id|__u32
+id|count
+suffix:semicolon
+DECL|member|red
+id|__u32
+id|red
+suffix:semicolon
+DECL|member|green
+id|__u32
+id|green
+suffix:semicolon
+DECL|member|blue
+id|__u32
+id|blue
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|LEO_CLUTALLOC
-mdefine_line|#define LEO_CLUTALLOC&t;_IOWR(&squot;L&squot;, 53, struct leo_clut_alloc)
+mdefine_line|#define LEO_CLUTALLOC&t;_IOWR(&squot;L&squot;, 53, struct fb_clut_alloc)
 DECL|macro|LEO_CLUTFREE
-mdefine_line|#define LEO_CLUTFREE&t;_IOW(&squot;L&squot;, 54, struct leo_clut_alloc)
+mdefine_line|#define LEO_CLUTFREE&t;_IOW(&squot;L&squot;, 54, struct fb_clut_alloc)
 DECL|macro|LEO_CLUTREAD
-mdefine_line|#define LEO_CLUTREAD&t;_IOW(&squot;L&squot;, 55, struct leo_clut)
+mdefine_line|#define LEO_CLUTREAD&t;_IOW(&squot;L&squot;, 55, struct fb_clut)
 DECL|macro|LEO_CLUTPOST
-mdefine_line|#define LEO_CLUTPOST&t;_IOW(&squot;L&squot;, 56, struct leo_clut)
+mdefine_line|#define LEO_CLUTPOST&t;_IOW(&squot;L&squot;, 56, struct fb_clut)
 DECL|macro|LEO_SETGAMMA
 mdefine_line|#define LEO_SETGAMMA&t;_IOW(&squot;L&squot;, 68, int) /* Not yet implemented */
 DECL|macro|LEO_GETGAMMA

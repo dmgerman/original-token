@@ -238,7 +238,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Support routines. Move socket addresses back and forth across the kernel/user&n; *&t;divide and look after the messy bits.&n; */
 DECL|macro|MAX_SOCK_ADDR
-mdefine_line|#define MAX_SOCK_ADDR&t;128&t;&t;/* 108 for Unix domain - &n;&t;&t;&t;&t;&t;   16 for IP, 16 for IPX,&n;&t;&t;&t;&t;&t;   24 for IPv6,&n;&t;&t;&t;&t;&t;   about 80 for AX.25 */
+mdefine_line|#define MAX_SOCK_ADDR&t;128&t;&t;/* 108 for Unix domain - &n;&t;&t;&t;&t;&t;   16 for IP, 16 for IPX,&n;&t;&t;&t;&t;&t;   24 for IPv6,&n;&t;&t;&t;&t;&t;   about 80 for AX.25 &n;&t;&t;&t;&t;&t;   must be at least one bigger than&n;&t;&t;&t;&t;&t;   the AF_UNIX size (see net/unix/af_unix.c&n;&t;&t;&t;&t;&t;   :unix_mkname()).  &n;&t;&t;&t;&t;&t; */
 DECL|function|move_addr_to_kernel
 r_int
 id|move_addr_to_kernel

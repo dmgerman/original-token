@@ -386,6 +386,7 @@ id|count
 suffix:semicolon
 DECL|member|flags
 r_int
+r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* atomic flags, some possibly updated asynchronously */

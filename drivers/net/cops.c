@@ -10,6 +10,7 @@ l_string|&quot;cops.c:v0.01 3/17/97 Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.u
 suffix:semicolon
 multiline_comment|/*&n; *  Sources:&n; *      COPS Localtalk SDK. This provides almost all of the information&n; *      needed.&n; */
 multiline_comment|/*&n; * insmod/modprobe configurable stuff.&n; *&t;- IO Port, choose one your card supports or 0 if you dare.&n; *&t;- IRQ, also choose one your card supports or nothing and let&n; *&t;  the driver figure it out.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;

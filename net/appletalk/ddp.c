@@ -6845,7 +6845,7 @@ id|sk_buff
 op_star
 id|skb2
 op_assign
-id|skb_clone
+id|skb_copy
 c_func
 (paren
 id|skb

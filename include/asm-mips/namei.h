@@ -7,6 +7,7 @@ macro_line|#ifdef CONFIG_BINFMT_IRIX
 multiline_comment|/* Only one at this time. */
 DECL|macro|IRIX32_EMUL
 mdefine_line|#define IRIX32_EMUL &quot;usr/gnemul/irix/&quot;
+macro_line|#if 0 /* XXX FIXME */
 r_extern
 r_int
 id|__namei
@@ -51,7 +52,6 @@ suffix:semicolon
 r_static
 id|__inline__
 r_int
-DECL|function|__prefix_namei
 id|__prefix_namei
 c_func
 (paren
@@ -201,6 +201,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* XXX FIXME */
 macro_line|#else /* !defined(CONFIG_BINFMT_IRIX) */
 DECL|macro|__prefix_namei
 mdefine_line|#define __prefix_namei(retrieve_mode, name, base, buf, res_dir, res_inode, &bslash;&n;&t;&t;       last_name, last_entry, last_error) 1

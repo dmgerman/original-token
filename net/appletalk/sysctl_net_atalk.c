@@ -17,6 +17,7 @@ r_extern
 r_int
 id|sysctl_aarp_resolve_time
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|variable|atalk_table
 r_static
 id|ctl_table
@@ -176,7 +177,6 @@ op_star
 id|atalk_table_header
 suffix:semicolon
 DECL|function|atalk_register_sysctl
-r_inline
 r_void
 id|atalk_register_sysctl
 c_func
@@ -196,7 +196,6 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|atalk_unregister_sysctl
-r_inline
 r_void
 id|atalk_unregister_sysctl
 c_func
@@ -211,4 +210,24 @@ id|atalk_table_header
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|atalk_register_sysctl
+r_void
+id|atalk_register_sysctl
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|function|atalk_unregister_sysctl
+r_void
+id|atalk_unregister_sysctl
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif
 eof

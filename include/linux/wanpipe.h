@@ -1,9 +1,13 @@
-multiline_comment|/*****************************************************************************&n;* wanpipe.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;User-level API definitions.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jan 02, 1997&t;Gene Kozin&t;Version 3.0.0&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanpipe.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;User-level API definitions.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Version 3.0.0&n;*****************************************************************************/
 macro_line|#ifndef&t;_WANPIPE_H
 DECL|macro|_WANPIPE_H
 mdefine_line|#define&t;_WANPIPE_H
 macro_line|#include &lt;linux/wanrouter.h&gt;
 multiline_comment|/* Defines */
+macro_line|#ifndef&t;PACKED
+DECL|macro|PACKED
+mdefine_line|#define&t;PACKED&t;__attribute__((packed))
+macro_line|#endif
 DECL|macro|WANPIPE_MAGIC
 mdefine_line|#define&t;WANPIPE_MAGIC&t;0x414C4453L&t;/* signatire: &squot;SDLA&squot; reversed */
 multiline_comment|/* IOCTL numbers (up to 16) */
@@ -74,6 +78,54 @@ DECL|typedef|sdla_exec_t
 )brace
 id|sdla_exec_t
 suffix:semicolon
+multiline_comment|/* UDP management stuff */
+DECL|struct|wum_header
+r_typedef
+r_struct
+id|wum_header
+(brace
+DECL|member|signature
+r_int
+r_char
+id|signature
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* 00h: signature */
+DECL|member|type
+r_int
+r_char
+id|type
+suffix:semicolon
+multiline_comment|/* 08h: request/reply */
+DECL|member|command
+r_int
+r_char
+id|command
+suffix:semicolon
+multiline_comment|/* 09h: commnand */
+DECL|member|reserved
+r_int
+r_char
+id|reserved
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* 0Ah: reserved */
+DECL|typedef|wum_header_t
+)brace
+id|wum_header_t
+suffix:semicolon
+DECL|macro|WUM_SIGNATURE_L
+mdefine_line|#define&t;WUM_SIGNATURE_L&t;0x50495046
+DECL|macro|WUM_SIGNATURE_H
+mdefine_line|#define&t;WUM_SIGNATURE_H&t;0x444E3845
+DECL|macro|WUM_KILL
+mdefine_line|#define&t;WUM_KILL&t;0x50
+DECL|macro|WUM_EXEC
+mdefine_line|#define&t;WUM_EXEC&t;0x51
 macro_line|#ifdef&t;__KERNEL__
 multiline_comment|/****** Kernel Interface ****************************************************/
 macro_line|#include &lt;linux/sdladrv.h&gt;&t;/* SDLA support module API definitions */
@@ -130,6 +182,8 @@ r_int
 id|state_tick
 suffix:semicolon
 multiline_comment|/* link state timestamp */
+multiline_comment|/*&t;unsigned tx_int_enabled; */
+multiline_comment|/* tranmit interrupt enabled or not */
 DECL|member|in_isr
 r_char
 id|in_isr

@@ -499,6 +499,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|tlan_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|cs89x0_probe
 c_func
 (paren
@@ -947,6 +957,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SUNLANCE
 op_logical_and
 id|sparc_lance_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_TLAN
+op_logical_and
+id|tlan_probe
 c_func
 (paren
 id|dev

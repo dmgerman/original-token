@@ -11,9 +11,9 @@ macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk(), and other useful stuff
 macro_line|#include &lt;linux/module.h&gt;&t;/* support for loadable modules */
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* request_region(), release_region() */
 macro_line|#include &lt;linux/tqueue.h&gt;&t;/* for kernel task queues */
-macro_line|#include &lt;linux/router.h&gt;&t;/* WAN router definitions */
+macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;linux/wanpipe.h&gt;&t;/* WANPIPE common user API definitions */
-macro_line|#include &lt;asm/segment.h&gt;&t;/* kernel &lt;-&gt; user copy */
+macro_line|#include &lt;asm/uaccess.h&gt;&t;/* kernel &lt;-&gt; user copy */
 multiline_comment|/****** Defines &amp; Macros ****************************************************/
 macro_line|#ifdef&t;_DEBUG_
 DECL|macro|STATIC
@@ -1293,30 +1293,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|u_dump
-op_eq
-l_int|NULL
-)paren
-op_logical_or
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|u_dump
-comma
-r_sizeof
-(paren
-id|sdla_dump_t
-)paren
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -1337,7 +1314,13 @@ r_sizeof
 id|sdla_dump_t
 )paren
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1358,29 +1341,6 @@ id|card-&gt;hw.memory
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|dump.ptr
-op_eq
-l_int|NULL
-)paren
-op_logical_or
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|dump.ptr
-comma
-id|dump.length
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|winsize
 op_assign
@@ -1465,7 +1425,17 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|memcpy_tofs
+multiline_comment|/* FIXME::: COPY TO KERNEL BUFFER FIRST ?? */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Not ideal but tough we have to do this */
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1487,6 +1457,17 @@ id|pos
 )paren
 comma
 id|len
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 id|dump.length
@@ -1558,30 +1539,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|u_exec
-op_eq
-l_int|NULL
-)paren
-op_logical_or
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|u_exec
-comma
-r_sizeof
-(paren
-id|sdla_exec_t
-)paren
-)paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -1602,7 +1560,13 @@ r_sizeof
 id|sdla_exec_t
 )paren
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.26 1997/07/07 03:05:23 davem Exp $ */
+multiline_comment|/* $Id: head.h,v 1.27 1997/07/13 17:30:43 davem Exp $ */
 macro_line|#ifndef _SPARC64_HEAD_H
 DECL|macro|_SPARC64_HEAD_H
 mdefine_line|#define _SPARC64_HEAD_H
@@ -48,7 +48,8 @@ mdefine_line|#define INDIRECT_SOLARIS_SYSCALL(tlvl) TRAP_ARG(indirect_syscall, t
 DECL|macro|TRAP_IRQ
 mdefine_line|#define TRAP_IRQ(routine, level)&t;&t;&t;&bslash;&n;&t;rdpr&t;%pil, %g2;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g0, 15, %pil;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap_irq;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;mov&t;level, %o0;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o1;&t;&bslash;&n;&t;ba,a,pt&t;%xcc, rtrap_clr_l6;
 multiline_comment|/* On UP this is ok, and worth the effort, for SMP we need&n; * a different mechanism and thus cannot do it all in trap table. -DaveM&n; */
-macro_line|#if 0 /* ndef __SMP__ */
+macro_line|#ifndef __SMP__
+DECL|macro|TRAP_IVEC
 mdefine_line|#define TRAP_IVEC&t;&t;&t;&t;&bslash;&n;&t;ldxa&t;[%g2] ASI_UDB_INTR_R, %g3;&t;&bslash;&n;&t;and&t;%g3, 0x7ff, %g3;&t;&t;&bslash;&n;&t;sllx&t;%g3, 3, %g3;&t;&t;&t;&bslash;&n;&t;ldx&t;[%g1 + %g3], %g5;&t;&t;&bslash;&n;&t;wr&t;%g5, 0x0, %set_softint;&t;&t;&bslash;&n;&t;stxa&t;%g0, [%g0] ASI_INTR_RECEIVE;&t;&bslash;&n;&t;membar&t;#Sync;&t;&t;&t;&t;&bslash;&n;&t;retry;
 macro_line|#else
 DECL|macro|TRAP_IVEC

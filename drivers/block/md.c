@@ -876,12 +876,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 OG
 l_int|1
 op_logical_or
@@ -902,12 +897,7 @@ l_string|&quot;STOP_MD md%x failed : i_count=%d, busy=%d&bslash;n&quot;
 comma
 id|minor
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 comma
 id|md_dev
 (braket
