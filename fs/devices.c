@@ -852,7 +852,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine checks whether a removable media has been changed,&n; * and invalidates all buffer-cache-entries in that case. This&n; * is a relatively slow routine, so we have to try to minimize using&n; * it. Thus it is called only upon a &squot;mount&squot; or &squot;open&squot;. This&n; * is the best way of combining speed and utility, I think.&n; * People changing diskettes in the middle of an operation deserve&n; * to loose :-)&n; */
+multiline_comment|/*&n; * This routine checks whether a removable media has been changed,&n; * and invalidates all buffer-cache-entries in that case. This&n; * is a relatively slow routine, so we have to try to minimize using&n; * it. Thus it is called only upon a &squot;mount&squot; or &squot;open&squot;. This&n; * is the best way of combining speed and utility, I think.&n; * People changing diskettes in the middle of an operation deserve&n; * to lose :-)&n; */
 DECL|function|check_disk_change
 r_int
 id|check_disk_change

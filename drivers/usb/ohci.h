@@ -1,7 +1,7 @@
 macro_line|#ifndef __LINUX_OHCI_H
 DECL|macro|__LINUX_OHCI_H
 mdefine_line|#define __LINUX_OHCI_H
-multiline_comment|/*&n; * Open Host Controller Interface data structures and defines.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; *&n; * $Id: ohci.h,v 1.15 1999/05/09 23:25:49 greg Exp $&n; */
+multiline_comment|/*&n; * Open Host Controller Interface data structures and defines.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; *&n; * $Id: ohci.h,v 1.24 1999/05/16 10:18:26 greg Exp $&n; */
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;usb.h&quot;
@@ -60,11 +60,13 @@ id|usb_device_irq
 id|completed
 suffix:semicolon
 multiline_comment|/* Completion handler routine */
-DECL|member|allocated
+DECL|member|hcd_flags
 r_int
-id|allocated
+id|hcd_flags
 suffix:semicolon
-multiline_comment|/* boolean: is this TD allocated? */
+multiline_comment|/* Flags for the HCD: */
+multiline_comment|/* bit0 = boolean: Is this TD allocated? */
+multiline_comment|/* bit1 = boolean: Is this a dummy (end of list) TD? */
 multiline_comment|/* User or Device class driver specific fields */
 DECL|member|dev_id
 r_void
@@ -117,6 +119,8 @@ DECL|macro|OHCI_TD_ERRCNT
 mdefine_line|#define OHCI_TD_ERRCNT&t;(3 &lt;&lt; 26)&t;/* error count */
 DECL|macro|td_errorcount
 mdefine_line|#define td_errorcount(td)&t;(((td).info &gt;&gt; 26) &amp; 3)
+DECL|macro|clear_td_errorcount
+mdefine_line|#define clear_td_errorcount(td)&t;((td)-&gt;info &amp;= ~(__u32)OHCI_TD_ERRCNT)
 DECL|macro|OHCI_TD_CC
 mdefine_line|#define OHCI_TD_CC&t;(0xf &lt;&lt; 28)&t;/* condition code */
 DECL|macro|OHCI_TD_CC_GET
@@ -133,12 +137,19 @@ DECL|macro|td_active
 mdefine_line|#define td_active(td)&t;(!td_cc_noerror((td)) &amp;&amp; (td_errorcount((td)) &lt; 3))
 DECL|macro|td_done
 mdefine_line|#define td_done(td)&t;(td_cc_noerror((td)) || (td_errorcount((td)) == 3))
+multiline_comment|/*&n; * Macros to use the td-&gt;hcd_flags field.&n; */
 DECL|macro|td_allocated
-mdefine_line|#define td_allocated(td)&t;((td).allocated)
+mdefine_line|#define td_allocated(td)&t;((td).hcd_flags &amp; 1)
 DECL|macro|allocate_td
-mdefine_line|#define allocate_td(td)&t;&t;((td)-&gt;allocated = 1)
+mdefine_line|#define allocate_td(td)&t;&t;((td)-&gt;hcd_flags |= 1)
 DECL|macro|ohci_free_td
-mdefine_line|#define ohci_free_td(td)&t;((td)-&gt;allocated = 0)
+mdefine_line|#define ohci_free_td(td)&t;((td)-&gt;hcd_flags &amp;= ~(__u32)1)
+DECL|macro|td_dummy
+mdefine_line|#define td_dummy(td)&t;&t;((td).hcd_flags &amp; 2)
+DECL|macro|make_dumb_td
+mdefine_line|#define make_dumb_td(td)&t;((td)-&gt;hcd_flags |= 2)
+DECL|macro|clear_dumb_td
+mdefine_line|#define clear_dumb_td(td)&t;((td)-&gt;hcd_flags &amp;= ~(__u32)2)
 multiline_comment|/*&n; * The endpoint descriptors also requires 16-byte alignment&n; */
 DECL|struct|ohci_ed
 r_struct
@@ -223,10 +234,14 @@ DECL|macro|OHCI_ED_EN
 mdefine_line|#define OHCI_ED_EN&t;(0xf &lt;&lt; 7)
 DECL|macro|OHCI_ED_FA
 mdefine_line|#define OHCI_ED_FA&t;(0x7f)
-multiline_comment|/* NOTE: bits 27-31 of the status dword are reserved for the driver */
-multiline_comment|/*&n; * We&squot;ll use this status flag for to mark if an ED is in use by the&n; * driver or not.  If the bit is set, it is used.&n; *&n; * FIXME: implement this!&n; */
-DECL|macro|ED_USED
-mdefine_line|#define ED_USED&t;(1 &lt;&lt; 31)
+multiline_comment|/* NOTE: bits 27-31 of the status dword are reserved for the HCD */
+multiline_comment|/*&n; * We&squot;ll use this status flag for to mark if an ED is in use by the&n; * driver or not.  If the bit is set, it is being used.&n; */
+DECL|macro|ED_ALLOCATED
+mdefine_line|#define ED_ALLOCATED&t;(1 &lt;&lt; 31)
+DECL|macro|ed_allocated
+mdefine_line|#define ed_allocated(ed)&t;((ed).status &amp; ED_ALLOCATED)
+DECL|macro|allocate_ed
+mdefine_line|#define allocate_ed(ed)&t;&t;((ed)-&gt;status |= ED_ALLOCATED)
 multiline_comment|/*&n; * The HCCA (Host Controller Communications Area) is a 256 byte&n; * structure defined in the OHCI spec. that the host controller is&n; * told the base address of.  It must be 256-byte aligned.&n; */
 DECL|macro|NUM_INTS
 mdefine_line|#define NUM_INTS 32&t;/* part of the OHCI standard */
@@ -346,6 +361,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* .... */
+multiline_comment|/*&n; * These are the index of the placeholder EDs for the root hub to&n; * build the interrupt transfer ED tree out of.&n; */
 DECL|macro|ED_INT_1
 mdefine_line|#define ED_INT_1&t;0
 DECL|macro|ED_INT_2
@@ -358,18 +374,12 @@ DECL|macro|ED_INT_16
 mdefine_line|#define ED_INT_16&t;4
 DECL|macro|ED_INT_32
 mdefine_line|#define ED_INT_32&t;5
-DECL|macro|ED_CONTROL
-mdefine_line|#define ED_CONTROL&t;6
-DECL|macro|ED_BULK
-mdefine_line|#define ED_BULK&t;&t;7
 DECL|macro|ED_ISO
 mdefine_line|#define ED_ISO&t;&t;ED_INT_1&t;/* same as 1ms interrupt queue */
-DECL|macro|ED_FIRST_AVAIL
-mdefine_line|#define ED_FIRST_AVAIL  8&t;&t;/* first non-reserved ED */
 multiline_comment|/*&n; * Given a period p in ms, convert it to the closest endpoint&n; * interrupt frequency; rounding down.  This is a gross macro.&n; * Feel free to toss it for actual code. (gasp!)&n; */
 DECL|macro|ms_to_ed_int
 mdefine_line|#define ms_to_ed_int(p) &bslash;&n;&t;((p &gt;= 32) ? ED_INT_32 : &bslash;&n;&t; ((p &amp; 16) ? ED_INT_16 : &bslash;&n;&t;  ((p &amp; 8) ? ED_INT_8 : &bslash;&n;&t;   ((p &amp; 4) ? ED_INT_4 : &bslash;&n;&t;    ((p &amp; 2) ? ED_INT_2 : &bslash;&n;&t;     ED_INT_1)))))  /* hmm.. scheme or lisp anyone? */
-multiline_comment|/*&n; * This is the maximum number of root hub ports.  I don&squot;t think we&squot;ll&n; * ever see more than two as that&squot;s the space available on an ATX&n; * motherboard&squot;s case, but it could happen.  The OHCI spec allows for&n; * up to 15... (which is insane!)&n; * &n; * Although I suppose several &quot;ports&quot; could be connected directly to&n; * internal laptop devices such as a keyboard, mouse, camera and&n; * serial/parallel ports.  hmm...  That&squot;d be neat.&n; */
+multiline_comment|/*&n; * This is the maximum number of root hub ports.  I don&squot;t think we&squot;ll&n; * ever see more than two as that&squot;s the space available on an ATX&n; * motherboard&squot;s case, but it could happen.  The OHCI spec allows for&n; * up to 15... (which is insane given that they each need to supply up&n; * to 500ma; that would be 7.5 amps!).  I have seen a PCI card with 4&n; * downstream ports on it.&n; * &n; * Although I suppose several &quot;ports&quot; could be connected directly to&n; * internal laptop devices such as a keyboard, mouse, camera and&n; * serial/parallel ports.  hmm...  That&squot;d be neat.&n; */
 DECL|macro|MAX_ROOT_PORTS
 mdefine_line|#define MAX_ROOT_PORTS&t;15&t;/* maximum OHCI root hub ports */
 multiline_comment|/*&n; * This is the structure of the OHCI controller&squot;s memory mapped I/O&n; * region.  This is Memory Mapped I/O.  You must use the readl() and&n; * writel() macros defined in asm/io.h to access these!!&n; */
@@ -494,6 +504,15 @@ l_int|32
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * These are used by internal ED managing functions as a&n; * parameter to state the type of ED to deal with (when it matters).&n; */
+DECL|macro|HCD_ED_ISOC
+mdefine_line|#define HCD_ED_ISOC     (0)
+DECL|macro|HCD_ED_INT
+mdefine_line|#define HCD_ED_INT      (1)
+DECL|macro|HCD_ED_CONTROL
+mdefine_line|#define HCD_ED_CONTROL  (2)
+DECL|macro|HCD_ED_BULK
+mdefine_line|#define HCD_ED_BULK     (3)
 multiline_comment|/* &n; * Read a MMIO register and re-write it after ANDing with (m)&n; */
 DECL|macro|writel_mask
 mdefine_line|#define writel_mask(m, a) writel( (readl((unsigned long)(a))) &amp; (__u32)(m), (unsigned long)(a) )
@@ -628,8 +647,8 @@ mdefine_line|#define OHCI_TIMER&t;&t;/* enable the OHCI timer */
 DECL|macro|OHCI_TIMER_FREQ
 mdefine_line|#define OHCI_TIMER_FREQ&t;(234)&t;/* ms between each root hub status check */
 DECL|macro|OHCI_RHSC_INT
-macro_line|#undef OHCI_RHSC_INT&t;&t;/* don&squot;t use root hub status interrupts */
-multiline_comment|/* Debugging code */
+macro_line|#undef OHCI_RHSC_INT&t;&t;/* Don&squot;t use root hub status interrupts! */
+multiline_comment|/* Debugging code [ohci-debug.c] */
 r_void
 id|show_ohci_ed
 c_func

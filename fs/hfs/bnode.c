@@ -520,7 +520,7 @@ c_loop
 (paren
 id|bn-&gt;lock
 op_logical_or
-id|witqueue_active
+id|waitqueue_active
 c_func
 (paren
 op_amp

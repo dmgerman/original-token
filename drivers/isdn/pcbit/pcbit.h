@@ -169,9 +169,7 @@ id|write_queue
 suffix:semicolon
 multiline_comment|/* Protocol start */
 DECL|member|set_running_wq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|set_running_wq
 suffix:semicolon
 DECL|member|set_running_timer

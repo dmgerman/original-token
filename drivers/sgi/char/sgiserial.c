@@ -29,8 +29,7 @@ DECL|macro|NUM_CHANNELS
 mdefine_line|#define NUM_CHANNELS (NUM_SERIAL * 2)
 r_extern
 r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|keypress_wait
 suffix:semicolon
 DECL|variable|zs_chips
@@ -6477,15 +6476,13 @@ op_star
 id|info
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 id|retval

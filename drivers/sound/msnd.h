@@ -450,19 +450,15 @@ mdefine_line|#define F_INT_MIDI_INUSE&t;&t;10
 DECL|macro|F_DISABLE_WRITE_NDELAY
 mdefine_line|#define F_DISABLE_WRITE_NDELAY&t;&t;11
 DECL|member|writeblock
-DECL|member|readblock
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|writeblock
-comma
-op_star
+suffix:semicolon
+DECL|member|readblock
+id|wait_queue_head_t
 id|readblock
 suffix:semicolon
 DECL|member|writeflush
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|writeflush
 suffix:semicolon
 macro_line|#ifndef LINUX20

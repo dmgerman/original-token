@@ -649,16 +649,12 @@ id|termios
 id|callout_termios
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 multiline_comment|/* Tasks waiting to open */
 DECL|member|close_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
 multiline_comment|/* and for close to end */

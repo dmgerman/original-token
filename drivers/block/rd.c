@@ -30,6 +30,7 @@ multiline_comment|/*&n; * 35 has been officially registered as the RAMDISK major
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR RAMDISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/blkpg.h&gt;
 multiline_comment|/*&n; * We use a block size of 512 bytes in comparision to BLOCK_SIZE&n; * defined in include/linux/blk.h. This because of the finer&n; * granularity for filling up a RAM disk.&n; */
 DECL|macro|RDBLK_SIZE_BITS
 mdefine_line|#define RDBLK_SIZE_BITS&t;&t;9
@@ -451,39 +452,21 @@ id|arg
 )paren
 suffix:semicolon
 r_case
+id|BLKROSET
+suffix:colon
+r_case
+id|BLKROGET
+suffix:colon
+r_case
 id|BLKSSZGET
 suffix:colon
-multiline_comment|/* Block size of media */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|arg
-)paren
 r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-r_return
-id|put_user
-c_func
-(paren
-id|rd_blocksizes
-(braket
-id|minor
-)braket
-comma
-(paren
-r_int
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-id|RO_IOCTLS
+id|blk_ioctl
 c_func
 (paren
 id|inode-&gt;i_rdev
+comma
+id|cmd
 comma
 id|arg
 )paren
@@ -1841,7 +1824,7 @@ id|RDBLK_SIZE_BITS
 id|printk
 c_func
 (paren
-l_string|&quot;RAMDISK: image too big! (%d/%d blocks)&bslash;n&quot;
+l_string|&quot;RAMDISK: image too big! (%d/%ld blocks)&bslash;n&quot;
 comma
 id|nblocks
 comma

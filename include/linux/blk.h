@@ -336,8 +336,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|macro|RO_IOCTLS
-mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: { int __val;  if (!capable(CAP_SYS_ADMIN)) return -EACCES; &bslash;&n;&t;&t;   if (get_user(__val, (int *)(where))) return -EFAULT; &bslash;&n;&t;&t;   set_device_ro((dev),__val); return 0; } &bslash;&n;  case BLKROGET: { int __val = (is_read_only(dev) != 0) ; &bslash;&n;&t;&t;    return put_user(__val,(int *) (where)); }
 macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)
 multiline_comment|/*&n; * Add entries as needed.&n; */
 macro_line|#ifdef IDE_DRIVER

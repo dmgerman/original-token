@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
+macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
@@ -1676,6 +1677,14 @@ c_func
 id|cdevname
 )paren
 suffix:semicolon
+DECL|variable|partition_name
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|partition_name
+)paren
+suffix:semicolon
+multiline_comment|/* md.c only */
 DECL|variable|simple_strtoul
 id|EXPORT_SYMBOL
 c_func

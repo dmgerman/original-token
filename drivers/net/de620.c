@@ -1951,7 +1951,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* You win some, you loose some. And sometimes plenty... */
+multiline_comment|/* You win some, you lose some. And sometimes plenty... */
 id|adapter_init
 c_func
 (paren

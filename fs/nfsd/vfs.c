@@ -2590,6 +2590,18 @@ id|nfsd_dirop_t
 )paren
 id|dirp-&gt;i_op-&gt;mkdir
 suffix:semicolon
+multiline_comment|/* Odd, indeed, but filesystems did it anyway */
+id|iap-&gt;ia_mode
+op_and_assign
+(paren
+id|S_IRWXUGO
+op_or
+id|S_ISVTX
+)paren
+op_amp
+op_complement
+id|current-&gt;fs-&gt;umask
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case

@@ -223,15 +223,11 @@ r_int
 id|event
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 DECL|member|close_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
 DECL|member|tqueue

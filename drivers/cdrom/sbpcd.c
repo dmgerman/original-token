@@ -689,14 +689,12 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*==========================================================================*/
 macro_line|#if FUTURE
-DECL|variable|sbp_waitq
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|sbp_waitq
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#endif FUTURE
 DECL|variable|teac

@@ -23,9 +23,7 @@ op_star
 id|filp
 suffix:semicolon
 DECL|member|proc_list
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|proc_list
 suffix:semicolon
 )brace

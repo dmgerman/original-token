@@ -208,14 +208,12 @@ op_lshift
 l_int|6
 )braket
 suffix:semicolon
-DECL|variable|mfm_wait_open
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|mfm_wait_open
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* Stuff from the assembly routines */
 r_extern

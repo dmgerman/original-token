@@ -1437,8 +1437,6 @@ r_int
 id|err
 comma
 id|offset
-comma
-id|retry
 suffix:semicolon
 r_if
 c_cond
@@ -1495,6 +1493,7 @@ c_loop
 l_int|1
 )paren
 (brace
+r_int
 id|retry
 op_assign
 id|trunc_direct

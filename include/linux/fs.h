@@ -178,7 +178,11 @@ mdefine_line|#define BLKSECTSET _IO(0x12,102)/* set max sectors per request (ll_
 DECL|macro|BLKSECTGET
 mdefine_line|#define BLKSECTGET _IO(0x12,103)/* get max sectors per request (ll_rw_blk.c) */
 DECL|macro|BLKSSZGET
-mdefine_line|#define BLKSSZGET  _IO(0x12,104)/* get block device sector size (reserved for) */
+mdefine_line|#define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
+macro_line|#if 0
+mdefine_line|#define BLKPG      _IO(0x12,105)/* See blkpg.h */
+multiline_comment|/* This was here just to show that the number is taken -&n;   probably all these _IO(0x12,*) ioctls should be moved to blkpg.h. */
+macro_line|#endif
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP

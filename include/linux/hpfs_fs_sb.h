@@ -124,9 +124,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* lookup tells read_inode: 1-read fnode&n;&t;&t;&t;&t;&t;   2-don&squot;t read fnode, file&n;&t;&t;&t;&t;&t;   3-don&squot;t read fnode, direcotry */
 DECL|member|sb_iget_q
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|sb_iget_q
 suffix:semicolon
 DECL|member|sb_cp_table
@@ -150,9 +148,7 @@ id|sb_c_bitmap
 suffix:semicolon
 multiline_comment|/* current bitmap */
 DECL|member|sb_creation_de
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|sb_creation_de
 suffix:semicolon
 multiline_comment|/* when creating dirents, nobody else&n;&t;&t;&t;&t;&t;   can alloc blocks */
@@ -205,8 +201,7 @@ DECL|macro|s_hpfs_was_error
 mdefine_line|#define s_hpfs_was_error u.hpfs_sb.sb_was_error
 DECL|macro|s_hpfs_chkdsk
 mdefine_line|#define s_hpfs_chkdsk u.hpfs_sb.sb_chkdsk
-DECL|macro|s_hpfs_rd_fnode
-mdefine_line|#define s_hpfs_rd_fnode u.hpfs_sb.sb_rd_fnode
+multiline_comment|/*#define s_hpfs_rd_fnode u.hpfs_sb.sb_rd_fnode*/
 DECL|macro|s_hpfs_rd_inode
 mdefine_line|#define s_hpfs_rd_inode u.hpfs_sb.sb_rd_inode
 DECL|macro|s_hpfs_cp_table

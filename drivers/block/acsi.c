@@ -27,6 +27,7 @@ suffix:semicolon
 multiline_comment|/* hack to avoid including scsi.h */
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt; /* for HDIO_GETGEO */
+macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -4343,7 +4344,7 @@ id|cmd
 r_case
 id|HDIO_GETGEO
 suffix:colon
-multiline_comment|/* HDIO_GETGEO is supported more for getting the partition&squot;s start&n;&t;&t; * sector... */
+multiline_comment|/* HDIO_GETGEO is supported more for getting the partition&squot;s&n;&t;&t; * start sector... */
 (brace
 r_struct
 id|hd_geometry
@@ -4498,50 +4499,27 @@ id|arg
 )paren
 suffix:semicolon
 r_case
+id|BLKROSET
+suffix:colon
+r_case
+id|BLKROGET
+suffix:colon
+r_case
 id|BLKFLSBUF
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|capable
-c_func
-(paren
-id|CAP_SYS_ADMIN
-)paren
-)paren
-(brace
+r_case
+id|BLKPG
+suffix:colon
 r_return
-op_minus
-id|EACCES
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode-&gt;i_rdev
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|fsync_dev
+id|blk_ioctl
 c_func
 (paren
 id|inode-&gt;i_rdev
+comma
+id|cmd
+comma
+id|arg
 )paren
-suffix:semicolon
-id|invalidate_buffers
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 r_case
 id|BLKRRPART
@@ -4568,14 +4546,6 @@ c_func
 id|inode-&gt;i_rdev
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|RO_IOCTLS
-c_func
-(paren
-id|inode-&gt;i_rdev
-comma
-id|arg
 )paren
 suffix:semicolon
 r_default

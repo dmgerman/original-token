@@ -434,9 +434,7 @@ r_int
 id|lock
 suffix:semicolon
 DECL|member|lockq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|lockq
 suffix:semicolon
 DECL|member|irq
@@ -520,9 +518,7 @@ r_int
 id|suspend
 suffix:semicolon
 DECL|member|suspendq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|suspendq
 suffix:semicolon
 DECL|member|suspended
@@ -545,9 +541,7 @@ r_int
 id|gcount
 suffix:semicolon
 DECL|member|capq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|capq
 suffix:semicolon
 DECL|member|last_fr

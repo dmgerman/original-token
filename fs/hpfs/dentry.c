@@ -76,26 +76,6 @@ l_char|&squot;.&squot;
 r_goto
 id|x
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|hpfs_chk_name
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-id|qstr-&gt;name
-comma
-id|l
-)paren
-)paren
-multiline_comment|/*return -ENAMETOOLONG;*/
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
 id|hpfs_adjust_length
 c_func
 (paren
@@ -109,6 +89,9 @@ op_amp
 id|l
 )paren
 suffix:semicolon
+multiline_comment|/*if (hpfs_chk_name((char *)qstr-&gt;name,&amp;l))*/
+multiline_comment|/*return -ENAMETOOLONG;*/
+multiline_comment|/*return -ENOENT;*/
 id|x
 suffix:colon
 id|hash
@@ -207,19 +190,7 @@ op_amp
 id|al
 )paren
 suffix:semicolon
-id|hpfs_adjust_length
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-id|b-&gt;name
-comma
-op_amp
-id|bl
-)paren
-suffix:semicolon
+multiline_comment|/*hpfs_adjust_length((char *)b-&gt;name, &amp;bl);*/
 multiline_comment|/* &squot;a&squot; is the qstr of an already existing dentry, so the name&n;&t; * must be valid. &squot;b&squot; must be validated first.&n;&t; */
 r_if
 c_cond
@@ -233,6 +204,7 @@ op_star
 )paren
 id|b-&gt;name
 comma
+op_amp
 id|bl
 )paren
 )paren

@@ -20,14 +20,12 @@ DECL|macro|NUM_APDEVS
 mdefine_line|#define NUM_APDEVS 8
 DECL|macro|MAX_REQUESTS
 mdefine_line|#define MAX_REQUESTS 1
-DECL|variable|busy_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|busy_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 DECL|variable|ap_blocksizes
 r_static

@@ -62,14 +62,12 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* data passed to isr */
-DECL|variable|stdma_wait
 r_static
-r_struct
-id|wait_queue
-op_star
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
 id|stdma_wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* wait queue for ST-DMA */
 multiline_comment|/***************************** Prototypes *****************************/

@@ -41,6 +41,10 @@ DECL|macro|ANODE_RD_AHEAD
 mdefine_line|#define ANODE_RD_AHEAD&t;16
 DECL|macro|DNODE_RD_AHEAD
 mdefine_line|#define DNODE_RD_AHEAD&t;4
+DECL|macro|FREE_DNODES_ADD
+mdefine_line|#define FREE_DNODES_ADD&t;58
+DECL|macro|FREE_DNODES_DEL
+mdefine_line|#define FREE_DNODES_DEL&t;29
 DECL|macro|CHKCOND
 mdefine_line|#define CHKCOND(x,y) if (!(x)) printk y
 macro_line|#ifdef DBG
@@ -1529,10 +1533,6 @@ comma
 r_struct
 id|quad_buffer_head
 op_star
-comma
-r_int
-op_star
-id|depth
 )paren
 suffix:semicolon
 r_void
@@ -1956,6 +1956,7 @@ r_char
 op_star
 comma
 r_int
+op_star
 )paren
 suffix:semicolon
 r_char
@@ -2242,6 +2243,17 @@ c_func
 r_struct
 id|super_block
 op_star
+)paren
+suffix:semicolon
+r_int
+id|hpfs_count_one_bitmap
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+comma
+id|secno
 )paren
 suffix:semicolon
 r_int

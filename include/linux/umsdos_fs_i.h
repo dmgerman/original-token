@@ -12,9 +12,7 @@ r_struct
 id|dir_locking_info
 (brace
 DECL|member|p
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|p
 suffix:semicolon
 DECL|member|looking

@@ -1449,9 +1449,9 @@ id|dev_lockct
 )paren
 )paren
 (brace
-id|current-&gt;counter
-op_assign
-l_int|0
+id|current-&gt;policy
+op_or_assign
+id|SCHED_YIELD
 suffix:semicolon
 id|schedule
 c_func

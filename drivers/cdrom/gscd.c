@@ -86,7 +86,7 @@ comma
 l_string|&quot;h&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Kommt spaeter vielleicht noch mal dran ...&n; *    static struct wait_queue *gscd_waitq = NULL;&n; */
+multiline_comment|/* Kommt spaeter vielleicht noch mal dran ...&n; *    static DECLARE_WAIT_QUEUE_HEAD(gscd_waitq);&n; */
 r_static
 r_void
 id|gscd_transfer

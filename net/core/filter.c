@@ -261,7 +261,7 @@ id|BPF_K
 suffix:colon
 id|A
 op_mul_assign
-id|X
+id|fentry-&gt;k
 suffix:semicolon
 r_continue
 suffix:semicolon

@@ -330,15 +330,11 @@ id|tq_struct
 id|tqueue_hangup
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|open_wait
 suffix:semicolon
 DECL|member|close_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
 multiline_comment|/* CPM Buffer Descriptor pointers.&n;&t;*/
@@ -6345,15 +6341,13 @@ id|info
 )paren
 (brace
 macro_line|#ifdef DO_THIS_LATER
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 macro_line|#endif
 r_struct

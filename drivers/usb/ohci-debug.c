@@ -558,7 +558,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;       %sMPS %d%s%s%s%s tc%d e%d fa%d&bslash;n&quot;
+l_string|&quot;       %sMPS %d%s%s%s%s tc%d e%d fa%d%s&bslash;n&quot;
 comma
 id|skip
 ques
@@ -572,7 +572,7 @@ comma
 id|isoc
 ques
 c_cond
-l_string|&quot;Isoc. &quot;
+l_string|&quot; Isoc.&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
@@ -615,6 +615,17 @@ comma
 id|endnum
 comma
 id|funcaddr
+comma
+(paren
+id|stat
+op_amp
+id|ED_ALLOCATED
+)paren
+ques
+c_cond
+l_string|&quot; Allocated&quot;
+suffix:colon
+l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -736,7 +747,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;        %s%s%s%d %s&bslash;n&quot;
+l_string|&quot;        %s%s%s%d %s %s%d&bslash;n&quot;
 comma
 id|td_round
 ques
@@ -794,22 +805,20 @@ l_int|1
 )paren
 ques
 c_cond
-l_string|&quot;Data1 &quot;
+l_string|&quot;Data1&quot;
 suffix:colon
-l_string|&quot;Data0 &quot;
+l_string|&quot;Data0&quot;
+comma
+l_string|&quot;ErrorCnt &quot;
+comma
+id|td_errcnt
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;        %s%d %s0x%x, %sAccessed, %sActive&bslash;n&quot;
-comma
-l_string|&quot;ErrorCnt &quot;
-comma
-id|td_errcnt
-comma
-l_string|&quot;ComplCode &quot;
+l_string|&quot;        ComplCode 0x%x, %sAccessed, %sActive&bslash;n&quot;
 comma
 id|td_cc
 comma
@@ -836,6 +845,25 @@ c_cond
 l_string|&quot;&quot;
 suffix:colon
 l_string|&quot;Not &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;        %s&bslash;n&quot;
+comma
+id|td_allocated
+c_func
+(paren
+op_star
+id|td
+)paren
+ques
+c_cond
+l_string|&quot;Allocated&quot;
+suffix:colon
+l_string|&quot;Free&quot;
 )paren
 suffix:semicolon
 id|printk

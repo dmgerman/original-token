@@ -21,9 +21,7 @@ id|sk_buff_head
 id|recv_queue
 suffix:semicolon
 DECL|member|recv_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|recv_wait
 suffix:semicolon
 DECL|member|errcode

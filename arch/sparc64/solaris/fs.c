@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fs.c,v 1.12 1999/01/02 16:46:06 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fs.c,v 1.13 1999/05/14 07:24:37 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

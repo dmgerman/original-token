@@ -117,7 +117,7 @@ mdefine_line|#define INIT_MMAP { &amp;init_mm, PAGE_OFFSET,  PAGE_OFFSET+0x10000
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;KERNEL_DS &bslash;&n;}
 macro_line|#include &lt;asm/ptrace.h&gt;
-multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; *&n; * Under heavy swap load I&squot;ve seen this loose in an ugly way.  So do&n; * some extra sanity checking on the ranges we expect these pointers&n; * to be in so that we can fail gracefully.  This is just for ps after&n; * all.  -- r~&n; */
+multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; *&n; * Under heavy swap load I&squot;ve seen this lose in an ugly way.  So do&n; * some extra sanity checking on the ranges we expect these pointers&n; * to be in so that we can fail gracefully.  This is just for ps after&n; * all.  -- r~&n; */
 DECL|function|thread_saved_pc
 r_extern
 r_inline

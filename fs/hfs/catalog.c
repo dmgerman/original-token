@@ -2491,7 +2491,7 @@ c_cond
 (paren
 id|dir-&gt;u.dir.readers
 op_logical_or
-id|wait_queue_active
+id|waitqueue_active
 c_func
 (paren
 op_amp
@@ -2530,7 +2530,7 @@ c_cond
 (paren
 id|dir-&gt;u.dir.writers
 op_logical_or
-id|wait_queue_active
+id|waitqueue_active
 c_func
 (paren
 op_amp

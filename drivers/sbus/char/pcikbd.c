@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.28 1999/05/12 11:15:05 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.29 1999/05/16 13:47:53 ecd Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4151,6 +4151,13 @@ r_sizeof
 op_star
 id|queue
 )paren
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|queue-&gt;proc_list
 )paren
 suffix:semicolon
 r_if

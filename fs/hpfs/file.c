@@ -290,11 +290,6 @@ op_rshift
 l_int|9
 )paren
 suffix:semicolon
-multiline_comment|/*mark_inode_dirty(i);*/
-id|i-&gt;i_hpfs_dirty
-op_assign
-l_int|1
-suffix:semicolon
 id|hpfs_write_inode
 c_func
 (paren

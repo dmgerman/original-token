@@ -223,8 +223,7 @@ id|wait
 suffix:semicolon
 DECL|member|lp_wait_q
 r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|lp_wait_q
 suffix:semicolon
 multiline_comment|/*strobe wait */

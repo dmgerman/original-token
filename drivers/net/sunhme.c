@@ -8669,7 +8669,7 @@ macro_line|#else
 DECL|macro|RXD
 mdefine_line|#define RXD(x)
 macro_line|#endif
-multiline_comment|/* Originally I use to handle the allocation failure by just giving back just&n; * that one ring buffer to the happy meal.  Problem is that usually when that&n; * condition is triggered, the happy meal expects you to do something reasonable&n; * with all of the packets it has DMA&squot;d in.  So now I just drop the entire&n; * ring when we cannot get a new skb and give them all back to the happy meal,&n; * maybe things will be &quot;happier&quot; now.&n; */
+multiline_comment|/* Originally I used to handle the allocation failure by just giving back just&n; * that one ring buffer to the happy meal.  Problem is that usually when that&n; * condition is triggered, the happy meal expects you to do something reasonable&n; * with all of the packets it has DMA&squot;d in.  So now I just drop the entire&n; * ring when we cannot get a new skb and give them all back to the happy meal,&n; * maybe things will be &quot;happier&quot; now.&n; */
 DECL|function|happy_meal_rx
 r_static
 r_inline

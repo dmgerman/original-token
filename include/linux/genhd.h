@@ -34,7 +34,7 @@ macro_line|#endif
 DECL|macro|DM6_PARTITION
 mdefine_line|#define DM6_PARTITION&t;&t;0x54&t;/* has DDO: use xlated geom &amp; offset */
 DECL|macro|EZD_PARTITION
-mdefine_line|#define EZD_PARTITION&t;&t;0x55&t;/* EZ-DRIVE:  same as DM6 (we think) */
+mdefine_line|#define EZD_PARTITION&t;&t;0x55&t;/* EZ-DRIVE */
 DECL|macro|DM6_AUX1PARTITION
 mdefine_line|#define DM6_AUX1PARTITION&t;0x51&t;/* no DDO:  use xlated geom */
 DECL|macro|DM6_AUX3PARTITION
@@ -176,13 +176,13 @@ id|hd_struct
 op_star
 id|part
 suffix:semicolon
-multiline_comment|/* partition table */
+multiline_comment|/* [indexed by minor] */
 DECL|member|sizes
 r_int
 op_star
 id|sizes
 suffix:semicolon
-multiline_comment|/* device size in blocks, copied to blk_size[] */
+multiline_comment|/* [idem], device size in blocks */
 DECL|member|nr_real
 r_int
 id|nr_real
@@ -746,6 +746,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* 408 */
 macro_line|#endif /* CONFIG_UNIXWARE_DISKLABEL */
+macro_line|#ifdef __KERNEL__
 r_extern
 r_struct
 id|gendisk
@@ -753,7 +754,6 @@ op_star
 id|gendisk_head
 suffix:semicolon
 multiline_comment|/* linked list of disks */
-multiline_comment|/*&n; * disk_name() is used by genhd.c and md.c.&n; * It formats the devicename of the indicated disk&n; * into the supplied buffer, and returns a pointer&n; * to that same buffer (for convenience).&n; */
 r_char
 op_star
 id|disk_name
@@ -771,5 +771,14 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+r_int
+id|get_hardsect_size
+c_func
+(paren
+id|kdev_t
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

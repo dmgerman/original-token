@@ -3290,7 +3290,6 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look out: this function may change a normal dentry&n; * into a directory dentry (different size)..&n; */
 DECL|function|do_mkdir
 r_static
 r_inline
@@ -3424,7 +3423,11 @@ id|dir-&gt;d_inode
 suffix:semicolon
 id|mode
 op_and_assign
-l_int|0777
+(paren
+id|S_IRWXUGO
+op_or
+id|S_ISVTX
+)paren
 op_amp
 op_complement
 id|current-&gt;fs-&gt;umask

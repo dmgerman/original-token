@@ -905,6 +905,12 @@ r_int
 id|base
 suffix:semicolon
 multiline_comment|/* base address */
+DECL|member|base_hi
+r_int
+r_int
+id|base_hi
+suffix:semicolon
+multiline_comment|/* base address (ECR) */
 DECL|member|size
 r_int
 r_int

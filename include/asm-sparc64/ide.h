@@ -1,9 +1,11 @@
-multiline_comment|/* $Id: ide.h,v 1.12 1999/04/17 14:25:29 davem Exp $&n; * ide.h: Ultra/PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ide.h,v 1.14 1999/05/15 05:02:35 davem Exp $&n; * ide.h: Ultra/PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC64_IDE_H
 DECL|macro|_SPARC64_IDE_H
 mdefine_line|#define _SPARC64_IDE_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/hdreg.h&gt;
 DECL|macro|MAX_HWIFS
 macro_line|#undef  MAX_HWIFS
 DECL|macro|MAX_HWIFS

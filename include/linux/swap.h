@@ -431,6 +431,14 @@ id|swap_info
 (braket
 )braket
 suffix:semicolon
+r_extern
+r_int
+id|is_swap_partition
+c_func
+(paren
+id|kdev_t
+)paren
+suffix:semicolon
 r_void
 id|si_swapinfo
 c_func

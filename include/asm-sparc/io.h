@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.18 1998/09/21 05:07:17 jj Exp $ */
+multiline_comment|/* $Id: io.h,v 1.19 1999/05/14 07:26:09 davem Exp $ */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H

@@ -2945,7 +2945,7 @@ op_increment
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* If the flip buffer itself is&n;                                           overflowing, we still loose&n;                                           the next incoming character.&n;                                         */
+multiline_comment|/* If the flip buffer itself is&n;                                           overflowing, we still lose&n;                                           the next incoming character.&n;                                         */
 r_if
 c_cond
 (paren

@@ -222,9 +222,7 @@ r_void
 id|interruptible_sleep_on_timeout
 c_func
 (paren
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 id|q
 comma

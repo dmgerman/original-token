@@ -1553,14 +1553,7 @@ id|S_IFDIR
 op_or
 id|S_ISVTX
 op_or
-(paren
 id|mode
-op_amp
-l_int|0777
-op_amp
-op_complement
-id|current-&gt;fs-&gt;umask
-)paren
 suffix:semicolon
 id|inode-&gt;u.affs_i.i_protect
 op_assign

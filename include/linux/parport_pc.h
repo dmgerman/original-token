@@ -4,21 +4,21 @@ mdefine_line|#define __LINUX_PARPORT_PC_H
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* --- register definitions ------------------------------- */
 DECL|macro|ECONTROL
-mdefine_line|#define ECONTROL 0x402
+mdefine_line|#define ECONTROL(p)&t;((p)-&gt;base_hi + 0x02)
 DECL|macro|CONFIGB
-mdefine_line|#define CONFIGB  0x401
+mdefine_line|#define CONFIGB(p)&t;((p)-&gt;base_hi + 0x01)
 DECL|macro|CONFIGA
-mdefine_line|#define CONFIGA  0x400
+mdefine_line|#define CONFIGA(p)&t;((p)-&gt;base_hi + 0x00)
 DECL|macro|EPPDATA
-mdefine_line|#define EPPDATA  0x4
+mdefine_line|#define EPPDATA(p)&t;((p)-&gt;base    + 0x04)
 DECL|macro|EPPADDR
-mdefine_line|#define EPPADDR  0x3
+mdefine_line|#define EPPADDR(p)&t;((p)-&gt;base    + 0x03)
 DECL|macro|CONTROL
-mdefine_line|#define CONTROL  0x2
+mdefine_line|#define CONTROL(p)&t;((p)-&gt;base    + 0x02)
 DECL|macro|STATUS
-mdefine_line|#define STATUS   0x1
+mdefine_line|#define STATUS(p)&t;((p)-&gt;base    + 0x01)
 DECL|macro|DATA
-mdefine_line|#define DATA     0
+mdefine_line|#define DATA(p)&t;&t;((p)-&gt;base    + 0x00)
 multiline_comment|/* Private data for PC low-level driver. */
 DECL|struct|parport_pc_private
 r_struct
@@ -71,9 +71,11 @@ c_func
 (paren
 id|d
 comma
-id|p-&gt;base
-op_plus
 id|EPPDATA
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -95,9 +97,11 @@ r_return
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|EPPDATA
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -123,9 +127,11 @@ c_func
 (paren
 id|d
 comma
-id|p-&gt;base
-op_plus
 id|EPPADDR
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -147,9 +153,11 @@ r_return
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|EPPADDR
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -174,9 +182,11 @@ op_logical_neg
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|STATUS
+c_func
+(paren
+id|p
+)paren
 )paren
 op_amp
 l_int|1
@@ -213,9 +223,11 @@ r_return
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|CONFIGB
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -241,9 +253,11 @@ c_func
 (paren
 id|d
 comma
-id|p-&gt;base
-op_plus
 id|DATA
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -265,9 +279,11 @@ r_return
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|DATA
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -305,9 +321,11 @@ c_func
 (paren
 id|d
 comma
-id|p-&gt;base
-op_plus
 id|CONTROL
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -386,9 +404,11 @@ id|outb
 (paren
 id|ctr
 comma
-id|p-&gt;base
-op_plus
 id|CONTROL
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -420,9 +440,11 @@ c_func
 (paren
 id|d
 comma
-id|p-&gt;base
-op_plus
 id|STATUS
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -444,9 +466,11 @@ r_return
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|STATUS
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -472,9 +496,11 @@ c_func
 (paren
 id|d
 comma
-id|p-&gt;base
-op_plus
 id|ECONTROL
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -496,9 +522,11 @@ r_return
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|ECONTROL
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -531,9 +559,11 @@ op_assign
 id|inb
 c_func
 (paren
-id|p-&gt;base
-op_plus
 id|ECONTROL
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 id|outb
@@ -550,9 +580,11 @@ op_xor
 id|val
 )paren
 comma
-id|p-&gt;base
-op_plus
 id|ECONTROL
+c_func
+(paren
+id|p
+)paren
 )paren
 suffix:semicolon
 r_return
