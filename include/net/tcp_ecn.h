@@ -302,6 +302,25 @@ suffix:semicolon
 r_static
 id|__inline__
 r_void
+DECL|function|TCP_ECN_withdraw_cwr
+id|TCP_ECN_withdraw_cwr
+c_func
+(paren
+r_struct
+id|tcp_opt
+op_star
+id|tp
+)paren
+(brace
+id|tp-&gt;ecn_flags
+op_and_assign
+op_complement
+id|TCP_ECN_DEMAND_CWR
+suffix:semicolon
+)brace
+r_static
+id|__inline__
+r_void
 DECL|function|TCP_ECN_check_ce
 id|TCP_ECN_check_ce
 c_func
@@ -579,6 +598,8 @@ DECL|macro|TCP_ECN_openreq_child
 mdefine_line|#define TCP_ECN_openreq_child(x...)&t;do { } while (0)
 DECL|macro|TCP_ECN_create_request
 mdefine_line|#define TCP_ECN_create_request(x...)&t;do { } while (0)
+DECL|macro|TCP_ECN_withdraw_cwr
+mdefine_line|#define TCP_ECN_withdraw_cwr(x...)&t;do { } while (0)
 macro_line|#endif
 macro_line|#endif
 eof

@@ -74,7 +74,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_SBUS
+macro_line|#if defined(CONFIG_SBUS) &amp;&amp; !defined(CONFIG_SUN3)
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#if ((SCSI_DATA_UNKNOWN == SBUS_DMA_BIDIRECTIONAL) &amp;&amp; (SCSI_DATA_WRITE == SBUS_DMA_TODEVICE) &amp;&amp; (SCSI_DATA_READ == SBUS_DMA_FROMDEVICE) &amp;&amp; (SCSI_DATA_NONE == SBUS_DMA_NONE))
 DECL|macro|scsi_to_sbus_dma_dir

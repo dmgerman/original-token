@@ -561,18 +561,11 @@ id|skb
 op_assign
 id|p
 suffix:semicolon
-id|skb-&gt;destructor
+id|skb-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|skb-&gt;pkt_type
-op_assign
-id|PACKET_HOST
-suffix:semicolon
-multiline_comment|/* Default type */
 id|skb-&gt;prev
-op_assign
-id|skb-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -589,7 +582,37 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* No idea about time */
+id|skb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|skb-&gt;dst
+op_assign
+l_int|NULL
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|skb-&gt;cb
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|skb-&gt;cb
+)paren
+)paren
+suffix:semicolon
+id|skb-&gt;pkt_type
+op_assign
+id|PACKET_HOST
+suffix:semicolon
+multiline_comment|/* Default type */
 id|skb-&gt;ip_summed
+op_assign
+l_int|0
+suffix:semicolon
+id|skb-&gt;priority
 op_assign
 l_int|0
 suffix:semicolon
@@ -598,7 +621,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* By default packets are insecure */
-id|skb-&gt;dst
+id|skb-&gt;destructor
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -626,23 +649,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-id|memset
-c_func
-(paren
-id|skb-&gt;cb
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|skb-&gt;cb
-)paren
-)paren
-suffix:semicolon
-id|skb-&gt;priority
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Free an skbuff by memory without cleaning the state. &n; */
 DECL|function|kfree_skbmem

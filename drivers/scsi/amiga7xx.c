@@ -13,7 +13,6 @@ macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7xx.h&quot;

@@ -705,11 +705,6 @@ id|tmp
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Link in the new vma even if an error occurred,&n;&t;&t; * so that exit_mmap() can clean up the mess.&n;&t;&t; */
-id|tmp-&gt;vm_next
-op_assign
-op_star
-id|pprev
-suffix:semicolon
 op_star
 id|pprev
 op_assign

@@ -7778,7 +7778,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|mark_buffer_dirty
+id|__mark_buffer_dirty
 c_func
 (paren
 id|bh

@@ -16,8 +16,8 @@ mdefine_line|#define INTERSIL_12H_MODE   0x00
 DECL|macro|INTERSIL_24H_MODE
 mdefine_line|#define INTERSIL_24H_MODE   0x04
 multiline_comment|/* bit 3 */
-DECL|macro|INTESIL_STOP
-mdefine_line|#define INTESIL_STOP            0x00
+DECL|macro|INTERSIL_STOP
+mdefine_line|#define INTERSIL_STOP            0x00
 DECL|macro|INTERSIL_RUN
 mdefine_line|#define INTERSIL_RUN             0x08
 multiline_comment|/* bit 4 */

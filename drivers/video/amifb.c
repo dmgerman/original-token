@@ -5489,7 +5489,19 @@ c_func
 id|videomemory
 )paren
 suffix:semicolon
-singleline_comment|//videomemory = (u_long)ioremap_writethrough(videomemory_phys, videomemorysize);
+id|videomemory
+op_assign
+(paren
+id|u_long
+)paren
+id|ioremap_writethrough
+c_func
+(paren
+id|videomemory_phys
+comma
+id|videomemorysize
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

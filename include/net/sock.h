@@ -716,6 +716,21 @@ id|__u32
 id|mdev
 suffix:semicolon
 multiline_comment|/* medium deviation&t;&t;&t;*/
+DECL|member|mdev_max
+id|__u32
+id|mdev_max
+suffix:semicolon
+multiline_comment|/* maximal mdev for the last rtt period&t;*/
+DECL|member|rttvar
+id|__u32
+id|rttvar
+suffix:semicolon
+multiline_comment|/* smoothed mdev_max&t;&t;&t;*/
+DECL|member|rtt_seq
+id|__u32
+id|rtt_seq
+suffix:semicolon
+multiline_comment|/* sequence number to update rttvar&t;*/
 DECL|member|rto
 id|__u32
 id|rto

@@ -25,6 +25,12 @@ id|sem-&gt;waking
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_RMW_INSNS
+r_extern
+id|spinlock_t
+id|semaphore_wake_lock
+suffix:semicolon
+macro_line|#endif
 DECL|function|waking_non_zero
 r_static
 r_inline

@@ -413,6 +413,7 @@ macro_line|#ifndef __ASSEMBLY__
 DECL|macro|ZORRO_NUM_AUTO
 mdefine_line|#define ZORRO_NUM_AUTO&t;&t;16
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 r_struct
 id|zorro_dev

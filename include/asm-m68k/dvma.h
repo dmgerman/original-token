@@ -5,7 +5,9 @@ mdefine_line|#define __M68K_DVMA_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SUN3
 multiline_comment|/* sun3 dvma page support */
-multiline_comment|/* memory and pmegs reserved for dvma */
+DECL|macro|DVMA_RESERVED_PMEGS
+mdefine_line|#define DVMA_RESERVED_PMEGS 2 /* 256k of dvma */
+multiline_comment|/* memory and pmegs potentially reserved for dvma */
 DECL|macro|DVMA_PMEG_START
 mdefine_line|#define DVMA_PMEG_START 10
 DECL|macro|DVMA_PMEG_END
@@ -16,11 +18,25 @@ DECL|macro|DVMA_END
 mdefine_line|#define DVMA_END 0xffe0000
 DECL|macro|DVMA_SIZE
 mdefine_line|#define DVMA_SIZE (DVMA_END-DVMA_START)
+multiline_comment|/* empirical kludge -- dvma regions only seem to work right on 0x10000 &n;   byte boundries */
+DECL|macro|DVMA_REGION_SIZE
+mdefine_line|#define DVMA_REGION_SIZE 0x10000
+DECL|macro|DVMA_ALIGN
+mdefine_line|#define DVMA_ALIGN(addr) (((addr)+DVMA_REGION_SIZE-1) &amp; &bslash;&n;                         ~(DVMA_REGION_SIZE-1))
 multiline_comment|/* virt &lt;-&gt; phys conversions */
 DECL|macro|sun3_dvma_vtop
 mdefine_line|#define sun3_dvma_vtop(x) ((unsigned long)(x) &amp; 0xffffff)
 DECL|macro|sun3_dvma_ptov
 mdefine_line|#define sun3_dvma_ptov(x) ((unsigned long)(x) | 0xf000000)
+r_extern
+r_void
+id|sun3_dvma_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 op_star
 id|sun3_dvma_malloc

@@ -7,7 +7,7 @@ multiline_comment|/*&n; * SHMMAX, SHMMNI and SHMALL are upper limits are default
 DECL|macro|SHMMAX
 mdefine_line|#define SHMMAX 0x2000000&t;&t; /* max shared seg size (bytes) */
 DECL|macro|SHMMIN
-mdefine_line|#define SHMMIN 0&t;&t;&t; /* min shared seg size (bytes) */
+mdefine_line|#define SHMMIN 1&t;&t;&t; /* min shared seg size (bytes) */
 DECL|macro|SHMMNI
 mdefine_line|#define SHMMNI 4096&t;&t;&t; /* max num of segs system wide */
 DECL|macro|SHMALL

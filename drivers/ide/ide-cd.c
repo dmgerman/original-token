@@ -93,6 +93,10 @@ id|sense
 op_eq
 l_int|NULL
 op_logical_or
+id|pc
+op_eq
+l_int|NULL
+op_logical_or
 id|pc-&gt;quiet
 )paren
 r_return

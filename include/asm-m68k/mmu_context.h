@@ -2,10 +2,6 @@ macro_line|#ifndef __M68K_MMU_CONTEXT_H
 DECL|macro|__M68K_MMU_CONTEXT_H
 mdefine_line|#define __M68K_MMU_CONTEXT_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifndef CONFIG_SUN3
-macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/pgalloc.h&gt;
 DECL|function|enter_lazy_tlb
 r_static
 r_inline
@@ -28,6 +24,10 @@ id|cpu
 )paren
 (brace
 )brace
+macro_line|#ifndef CONFIG_SUN3
+macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 r_extern
 r_inline
 r_int
@@ -345,19 +345,6 @@ r_int
 id|context
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_char
-id|ctx_next_to_die
-suffix:semicolon
-r_extern
-r_int
-r_char
-id|ctx_live
-(braket
-id|SUN3_CONTEXTS_NUM
-)braket
-suffix:semicolon
 multiline_comment|/* set the context for a new task to unmapped */
 DECL|function|init_new_context
 r_static
@@ -417,9 +404,8 @@ id|mm
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0
-multiline_comment|/* we used to clear the context after the process exited.  we still&n;   should, things are faster that way...  but very unstable.  so just&n;   clear out a context next time we need a new one..  consider this a&n;   FIXME. */
 multiline_comment|/* flush context if allocated... */
+DECL|function|destroy_context
 r_static
 r_inline
 r_void
@@ -448,43 +434,6 @@ id|mm-&gt;context
 suffix:semicolon
 )brace
 )brace
-macro_line|#else
-multiline_comment|/* mark this context as dropped and set it for next death */
-DECL|function|destroy_context
-r_static
-r_inline
-r_void
-id|destroy_context
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|mm-&gt;context
-op_ne
-id|SUN3_INVALID_CONTEXT
-)paren
-(brace
-id|ctx_next_to_die
-op_assign
-id|mm-&gt;context
-suffix:semicolon
-id|ctx_live
-(braket
-id|mm-&gt;context
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 DECL|function|activate_context
 r_static
 r_inline

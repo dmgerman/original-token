@@ -713,6 +713,11 @@ c_func
 id|vma-&gt;vm_page_prot
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t try to swap out physical pages.. */
+id|vma-&gt;vm_flags
+op_or_assign
+id|VM_RESERVED
+suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t dump addresses that are not real memory to a core file.&n;&t; */
 r_if
 c_cond

@@ -1357,13 +1357,6 @@ c_func
 id|filemap_nopage
 )paren
 suffix:semicolon
-DECL|variable|filemap_swapout
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|filemap_swapout
-)paren
-suffix:semicolon
 DECL|variable|filemap_sync
 id|EXPORT_SYMBOL
 c_func

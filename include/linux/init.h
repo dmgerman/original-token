@@ -70,7 +70,7 @@ comma
 id|__setup_end
 suffix:semicolon
 DECL|macro|__setup
-mdefine_line|#define __setup(str, fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static char __setup_str_##fn[] __initdata = str;&t;&t;&t;&t;&bslash;&n;&t;static struct kernel_param __setup_##fn __initsetup = { __setup_str_##fn, fn }
+mdefine_line|#define __setup(str, fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static char __setup_str_##fn[] __initdata = str;&t;&t;&t;&t;&bslash;&n;&t;static struct kernel_param __setup_##fn __attribute__((unused)) __initsetup = { __setup_str_##fn, fn }
 macro_line|#endif /* __ASSEMBLY__ */
 multiline_comment|/*&n; * Mark functions and data as being only used at initialization&n; * or exit time.&n; */
 DECL|macro|__init

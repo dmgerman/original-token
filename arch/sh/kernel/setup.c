@@ -50,6 +50,11 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+DECL|variable|screen_info
+r_struct
+id|screen_info
+id|screen_info
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_extern
 r_int
@@ -900,6 +905,11 @@ op_star
 id|cmdline_p
 )paren
 (brace
+r_extern
+r_struct
+id|sh_machine_vector
+id|mv_unknown
+suffix:semicolon
 r_struct
 id|sh_machine_vector
 op_star
@@ -1098,11 +1108,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_extern
-r_struct
-id|sh_machine_vector
-id|mv_unknown
-suffix:semicolon
 id|mv
 op_assign
 op_amp

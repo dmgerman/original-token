@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -15,6 +16,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/dvma.h&gt;
 r_extern
 r_void
 id|prom_reboot
@@ -521,7 +523,9 @@ r_void
 id|mmu_emu_init
 c_func
 (paren
-r_void
+r_int
+r_int
+id|bootmem_end
 )paren
 (brace
 r_int
@@ -535,16 +539,6 @@ id|i
 comma
 id|j
 suffix:semicolon
-r_extern
-r_char
-id|_stext
-comma
-id|_etext
-suffix:semicolon
-r_int
-r_int
-id|page
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -597,34 +591,23 @@ id|pmeg_ctx
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_MMU_EMU
-id|printk
+multiline_comment|/* pmeg align the end of bootmem, adding another pmeg,&n;&t; * later bootmem allocations will likely need it */
+id|bootmem_end
+op_assign
 (paren
-l_string|&quot;mmu_emu_init: stext=%p etext=%p pmegs=%u&bslash;n&quot;
-comma
-op_amp
-id|_stext
-comma
-op_amp
-id|_etext
-comma
-(paren
-op_amp
-id|_etext
-op_minus
-op_amp
-id|_stext
+id|bootmem_end
 op_plus
+(paren
+l_int|2
+op_star
 id|SUN3_PMEG_SIZE
-op_minus
-l_int|1
 )paren
-op_rshift
-id|SUN3_PMEG_SIZE_BITS
 )paren
+op_amp
+op_complement
+id|SUN3_PMEG_MASK
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* mark the pmegs copied in sun3-head.S as used */
+multiline_comment|/* mark all of the pmegs used thus far as reserved */
 r_for
 c_loop
 (paren
@@ -634,7 +617,13 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|10
+id|__pa
+c_func
+(paren
+id|bootmem_end
+)paren
+op_div
+id|SUN3_PMEG_SIZE
 suffix:semicolon
 op_increment
 id|i
@@ -669,6 +658,64 @@ id|num
 op_assign
 l_int|2
 suffix:semicolon
+)brace
+multiline_comment|/* liberate all existing mappings in the rest of kernel space */
+r_for
+c_loop
+(paren
+id|seg
+op_assign
+id|bootmem_end
+suffix:semicolon
+id|seg
+OL
+l_int|0x0f800000
+suffix:semicolon
+id|seg
+op_add_assign
+id|SUN3_PMEG_SIZE
+)paren
+(brace
+id|i
+op_assign
+id|sun3_get_segmap
+c_func
+(paren
+id|seg
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pmeg_alloc
+(braket
+id|i
+)braket
+)paren
+(brace
+macro_line|#ifdef DEBUG_MMU_EMU
+id|printk
+c_func
+(paren
+l_string|&quot;freed: &quot;
+)paren
+suffix:semicolon
+id|print_pte_vaddr
+(paren
+id|seg
+)paren
+suffix:semicolon
+macro_line|#endif
+id|sun3_put_segmap
+c_func
+(paren
+id|seg
+comma
+id|SUN3_INVALID_PMEG
+)paren
+suffix:semicolon
+)brace
 )brace
 id|j
 op_assign
@@ -747,64 +794,13 @@ id|seg
 op_assign
 l_int|2
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|SUN3_PMEG_SIZE
-suffix:semicolon
-id|i
-op_add_assign
-id|PAGE_SIZE
-)paren
-(brace
-id|page
-op_assign
-(paren
-id|sun3_get_pte
+)brace
+)brace
+id|sun3_dvma_init
 c_func
 (paren
-id|seg
-op_plus
-id|i
-)paren
-op_amp
-id|SUN3_PAGE_PGNUM_MASK
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|page
-)paren
-op_logical_and
-(paren
-id|page
-OL
-l_int|0xbff
-)paren
-)paren
-(brace
-id|rom_pages
-(braket
-id|j
-)braket
-op_assign
-id|page
-suffix:semicolon
-id|j
-op_increment
-suffix:semicolon
-)brace
-)brace
-)brace
-)brace
 multiline_comment|/* blank everything below the kernel, and we&squot;ve got the base&n;&t;   mapping to start all the contexts off with... */
 r_for
 c_loop
@@ -906,68 +902,6 @@ c_func
 id|KERNEL_DS
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* called during mem_init to create the needed holes in the mem&n;   mappings */
-DECL|function|mmu_emu_reserve_pages
-r_void
-id|mmu_emu_reserve_pages
-c_func
-(paren
-r_int
-r_int
-id|max_page
-)paren
-(brace
-r_int
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|rom_pages
-(braket
-id|i
-)braket
-op_ne
-l_int|0
-)paren
-(brace
-singleline_comment|// don&squot;t tamper with pages that wound up after end_mem
-r_if
-c_cond
-(paren
-id|rom_pages
-(braket
-id|i
-)braket
-OL
-id|max_page
-)paren
-(brace
-id|set_bit
-c_func
-(paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|rom_pages
-(braket
-id|i
-)braket
-)braket
-dot
-id|flags
-)paren
-suffix:semicolon
-)brace
-id|i
-op_increment
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* erase the mappings for a dead context.  Uses the pg_dir for hints&n;   as the pmeg tables proved somewhat unreliable, and unmapping all of&n;   TASK_SIZE was much slower and no more stable. */
 multiline_comment|/* todo: find a better way to keep track of the pmegs used by a&n;   context for when they&squot;re cleared */

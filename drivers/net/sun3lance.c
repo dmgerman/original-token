@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -1205,9 +1206,15 @@ id|dev-&gt;set_mac_address
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+singleline_comment|//&t;KLUDGE -- REMOVE ME
+id|set_bit
+c_func
+(paren
+id|__LINK_STATE_PRESENT
+comma
+op_amp
+id|dev-&gt;state
+)paren
 suffix:semicolon
 id|memset
 c_func
@@ -1399,17 +1406,11 @@ id|CSR0_STRT
 op_or
 id|CSR0_INEA
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -1688,7 +1689,11 @@ multiline_comment|/* Transmitter timeout, serious problems. */
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 r_int
@@ -1879,9 +1884,11 @@ id|CSR0_INIT
 op_or
 id|CSR0_STRT
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
@@ -1891,44 +1898,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|AREG
-op_assign
-id|CSR0
-suffix:semicolon
-singleline_comment|//&t;DPRINTK( 2, ( &quot;%s: lance_start_xmit() called, csr0 %4.4x.&bslash;n&quot;,
-singleline_comment|//&t;&t;&t;&t;  dev-&gt;name, DREG ));
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+multiline_comment|/* Block a timer-based transmit from overlapping with us by&n;&t;   stopping the queue for a bit... */
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|dev
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1961,6 +1938,12 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|AREG
+op_assign
+id|CSR0
+suffix:semicolon
+singleline_comment|//&t;DPRINTK( 2, ( &quot;%s: lance_start_xmit() called, csr0 %4.4x.&bslash;n&quot;,
+singleline_comment|//&t;&t;&t;&t;  dev-&gt;name, DREG ));
 multiline_comment|/* Fill in a Tx ring entry */
 macro_line|#if 0
 r_if
@@ -2253,9 +2236,11 @@ id|TMD1_OWN
 op_eq
 id|TMD1_OWN_HOST
 )paren
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -2304,6 +2289,12 @@ suffix:semicolon
 r_int
 id|csr0
 suffix:semicolon
+r_static
+r_int
+id|in_interrupt
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2328,7 +2319,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;interrupt
+id|in_interrupt
 )paren
 id|DPRINTK
 c_func
@@ -2342,7 +2333,7 @@ id|dev-&gt;name
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
+id|in_interrupt
 op_assign
 l_int|1
 suffix:semicolon
@@ -2647,18 +2638,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 multiline_comment|/* The ring is no longer full, clear tbusy. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_start_queue
 c_func
 (paren
-id|NET_BH
+id|dev
+)paren
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -2809,7 +2806,7 @@ id|DREG
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
+id|in_interrupt
 op_assign
 l_int|0
 suffix:semicolon
@@ -3393,13 +3390,11 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|AREG
 op_assign
@@ -3490,12 +3485,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|dev-&gt;start
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
 )paren
+)paren
+(brace
 multiline_comment|/* Only possible if board is already started */
 r_return
 suffix:semicolon
+)brace
 multiline_comment|/* We take the simple way out and always enable promiscuous mode. */
 id|DREG
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.203 2000/11/28 17:04:09 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.205 2000/12/13 18:31:48 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; *&t;&t;J Hadi Salim:&t;&t;ECN support&n; *&t; &t;Andrei Gurtov,&n; *&t;&t;Pasi Sarolahti,&n; *&t;&t;Panu Kuhlberg:&t;&t;Experimental audit of TCP (re)transmission&n; *&t;&t;&t;&t;&t;engine. Lots of bugs are found.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -118,6 +118,8 @@ DECL|macro|IsReno
 mdefine_line|#define IsReno(tp) ((tp)-&gt;sack_ok == 0)
 DECL|macro|IsFack
 mdefine_line|#define IsFack(tp) ((tp)-&gt;sack_ok &amp; 2)
+DECL|macro|IsDSack
+mdefine_line|#define IsDSack(tp) ((tp)-&gt;sack_ok &amp; 4)
 DECL|macro|TCP_REMNANT
 mdefine_line|#define TCP_REMNANT (TCP_FLAG_FIN|TCP_FLAG_URG|TCP_FLAG_SYN|TCP_FLAG_PSH)
 multiline_comment|/* Adapt the MSS value used to make delayed ack decision to the &n; * real world.&n; */
@@ -1290,6 +1292,7 @@ id|m
 OL
 l_int|0
 )paren
+(brace
 id|m
 op_assign
 op_minus
@@ -1305,11 +1308,98 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* similar update on mdev */
+multiline_comment|/* This is similar to one of Eifel findings.&n;&t;&t;&t; * Eifel blocks mdev updates when rtt decreases.&n;&t;&t;&t; * This solution is a bit different: we use finer gain&n;&t;&t;&t; * for mdev in this case (alpha*beta).&n;&t;&t;&t; * Like Eifel it also prevents growth of rto,&n;&t;&t;&t; * but also it limits too fast rto decreases,&n;&t;&t;&t; * happening in pure Eifel.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|m
+OG
+l_int|0
+)paren
+id|m
+op_rshift_assign
+l_int|3
+suffix:semicolon
+)brace
+r_else
+(brace
+id|m
+op_sub_assign
+(paren
+id|tp-&gt;mdev
+op_rshift
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* similar update on mdev */
+)brace
 id|tp-&gt;mdev
 op_add_assign
 id|m
 suffix:semicolon
 multiline_comment|/* mdev = 3/4 mdev + 1/4 new */
+r_if
+c_cond
+(paren
+id|tp-&gt;mdev
+OG
+id|tp-&gt;mdev_max
+)paren
+(brace
+id|tp-&gt;mdev_max
+op_assign
+id|tp-&gt;mdev
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tp-&gt;mdev_max
+OG
+id|tp-&gt;rttvar
+)paren
+id|tp-&gt;rttvar
+op_assign
+id|tp-&gt;mdev_max
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|after
+c_func
+(paren
+id|tp-&gt;snd_una
+comma
+id|tp-&gt;rtt_seq
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tp-&gt;mdev_max
+OL
+id|tp-&gt;rttvar
+)paren
+id|tp-&gt;rttvar
+op_sub_assign
+(paren
+id|tp-&gt;rttvar
+op_minus
+id|tp-&gt;mdev_max
+)paren
+op_rshift
+l_int|2
+suffix:semicolon
+id|tp-&gt;rtt_seq
+op_assign
+id|tp-&gt;snd_una
+suffix:semicolon
+id|tp-&gt;mdev_max
+op_assign
+id|TCP_RTO_MIN
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -1328,6 +1418,22 @@ op_lshift
 l_int|2
 suffix:semicolon
 multiline_comment|/* make sure rto = 3*rtt */
+id|tp-&gt;mdev_max
+op_assign
+id|tp-&gt;rttvar
+op_assign
+id|max
+c_func
+(paren
+id|tp-&gt;mdev
+comma
+id|TCP_RTO_MIN
+)paren
+suffix:semicolon
+id|tp-&gt;rtt_seq
+op_assign
+id|tp-&gt;snd_nxt
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Calculate rto without backoff.  This is the second half of Van Jacobson&squot;s&n; * routine referred to above.&n; */
@@ -1344,6 +1450,7 @@ op_star
 id|tp
 )paren
 (brace
+multiline_comment|/* Old crap is replaced with new one. 8)&n;&t; *&n;&t; * More seriously:&n;&t; * 1. If rtt variance happened to be less 50msec, it is hallucination.&n;&t; *    It cannot be less due to utterly erratic ACK generation made&n;&t; *    at least by solaris and freebsd. &quot;Erratic ACKs&quot; has _nothing_&n;&t; *    to do with delayed acks, because at cwnd&gt;2 true delack timeout&n;&t; *    is invisible. Actually, Linux-2.4 also generates erratic&n;&t; *    ACKs in some curcumstances.&n;&t; */
 id|tp-&gt;rto
 op_assign
 (paren
@@ -1352,30 +1459,11 @@ op_rshift
 l_int|3
 )paren
 op_plus
-id|tp-&gt;mdev
+id|tp-&gt;rttvar
 suffix:semicolon
-multiline_comment|/* I am not enough educated to understand this magic.&n;&t; * However, it smells bad. snd_cwnd&gt;31 is common case.&n;&t; */
-multiline_comment|/* OK, I found comment in 2.0 source tree, it deserves&n;&t; * to be reproduced:&n;&t; * ====&n;&t; * Note: Jacobson&squot;s algorithm is fine on BSD which has a 1/2 second&n;&t; * granularity clock, but with our 1/100 second granularity clock we&n;&t; * become too sensitive to minor changes in the round trip time.&n;&t; * We add in two compensating factors. First we multiply by 5/4.&n;&t; * For large congestion windows this allows us to tolerate burst&n;&t; * traffic delaying up to 1/4 of our packets. We also add in&n;&t; * a rtt / cong_window term. For small congestion windows this allows&n;&t; * a single packet delay, but has negligible effect&n;&t; * on the compensation for large windows.&n;&t; */
-id|tp-&gt;rto
-op_add_assign
-(paren
-id|tp-&gt;rto
-op_rshift
-l_int|2
-)paren
-op_plus
-(paren
-id|tp-&gt;rto
-op_rshift
-(paren
-id|tp-&gt;snd_cwnd
-op_minus
-l_int|1
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* 2. Fixups made earlier cannot be right.&n;&t; *    If we do not estimate RTO correctly without them,&n;&t; *    all the algo is pure shit and should be replaced&n;&t; *    with correct one. It is exaclty, which we pretend to do.&n;&t; */
 )brace
-multiline_comment|/* Keep the rto between HZ/5 and 120*HZ. 120*HZ is the upper bound&n; * on packet lifetime in the internet. We need the HZ/5 lower&n; * bound to behave correctly against BSD stacks with a fixed&n; * delayed ack.&n; * FIXME: It&squot;s not entirely clear this lower bound is the best&n; * way to avoid the problem. Is it possible to drop the lower&n; * bound and still avoid trouble with BSD stacks? Perhaps&n; * some modification to the RTO calculation that takes delayed&n; * ack bias into account? This needs serious thought. -- erics&n; */
+multiline_comment|/* NOTE: clamping at TCP_RTO_MIN is not required, current algo&n; * guarantees that rto is higher.&n; */
 DECL|function|tcp_bound_rto
 r_static
 id|__inline__
@@ -1389,18 +1477,6 @@ op_star
 id|tp
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|tp-&gt;rto
-OL
-id|TCP_RTO_MIN
-)paren
-id|tp-&gt;rto
-op_assign
-id|TCP_RTO_MIN
-suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -2062,10 +2138,24 @@ id|dst-&gt;rttvar
 OG
 id|tp-&gt;mdev
 )paren
+(brace
 id|tp-&gt;mdev
 op_assign
 id|dst-&gt;rttvar
 suffix:semicolon
+id|tp-&gt;mdev_max
+op_assign
+id|tp-&gt;rttvar
+op_assign
+id|max
+c_func
+(paren
+id|tp-&gt;mdev
+comma
+id|TCP_RTO_MIN
+)paren
+suffix:semicolon
+)brace
 id|tcp_set_rto
 c_func
 (paren
@@ -2122,6 +2212,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|tp-&gt;mdev
+op_assign
+id|tp-&gt;mdev_max
+op_assign
+id|tp-&gt;rttvar
 op_assign
 id|TCP_TIMEOUT_INIT
 suffix:semicolon
@@ -2450,6 +2544,10 @@ id|dup_sack
 op_assign
 l_int|1
 suffix:semicolon
+id|tp-&gt;sack_ok
+op_or_assign
+l_int|4
+suffix:semicolon
 id|NET_INC_STATS_BH
 c_func
 (paren
@@ -2505,6 +2603,10 @@ id|start_seq
 id|dup_sack
 op_assign
 l_int|1
+suffix:semicolon
+id|tp-&gt;sack_ok
+op_or_assign
+l_int|4
 suffix:semicolon
 id|NET_INC_STATS_BH
 c_func
@@ -4378,10 +4480,18 @@ id|tp-&gt;prior_ssthresh
 OG
 id|tp-&gt;snd_ssthresh
 )paren
+(brace
 id|tp-&gt;snd_ssthresh
 op_assign
 id|tp-&gt;prior_ssthresh
 suffix:semicolon
+id|TCP_ECN_withdraw_cwr
+c_func
+(paren
+id|tp
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -5696,6 +5806,15 @@ id|flag
 )paren
 (brace
 multiline_comment|/* We don&squot;t have a timestamp. Can only use&n;&t; * packets that are not retransmitted to determine&n;&t; * rtt estimates. Also, we must not reset the&n;&t; * backoff for rto until we get a non-retransmitted&n;&t; * packet. This allows us to deal with a situation&n;&t; * where the network delay has increased suddenly.&n;&t; * I.e. Karn&squot;s algorithm. (SIGCOMM &squot;87, p5.)&n;&t; */
+r_if
+c_cond
+(paren
+id|flag
+op_amp
+id|FLAG_RETRANS_DATA_ACKED
+)paren
+r_return
+suffix:semicolon
 id|tcp_rtt_estimator
 c_func
 (paren
@@ -5722,13 +5841,6 @@ c_cond
 (paren
 op_logical_neg
 id|tp-&gt;retransmits
-op_logical_or
-op_logical_neg
-(paren
-id|flag
-op_amp
-id|FLAG_RETRANS_DATA_ACKED
-)paren
 )paren
 id|tp-&gt;backoff
 op_assign
@@ -5867,6 +5979,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Restart timer after forward progress on connection.&n; * RFC2988 recommends (and BSD does) to restart timer to now+rto,&n; * which is certainly wrong and effectively means that&n; * rto includes one more _full_ rtt.&n; *&n; * For details see:&n; * &t;ftp://ftp.inr.ac.ru:/ip-routing/README.rto&n; */
 DECL|function|tcp_ack_packets_out
 r_static
 id|__inline__
@@ -5920,6 +6033,8 @@ id|__u32
 id|when
 op_assign
 id|tp-&gt;rto
+op_plus
+id|tp-&gt;rttvar
 op_minus
 (paren
 id|tcp_time_stamp
@@ -5940,12 +6055,15 @@ c_cond
 id|__s32
 )paren
 id|when
-op_le
-l_int|0
+OL
+(paren
+id|__s32
+)paren
+id|tp-&gt;rttvar
 )paren
 id|when
 op_assign
-id|TCP_RTO_MIN
+id|tp-&gt;rttvar
 suffix:semicolon
 id|tcp_reset_xmit_timer
 c_func
@@ -6745,13 +6863,13 @@ id|tp-&gt;snd_nxt
 r_if
 c_cond
 (paren
+id|tp-&gt;snd_nxt
+op_minus
 (paren
 id|tp-&gt;snd_una
 op_plus
 id|tp-&gt;snd_wnd
 )paren
-op_minus
-id|tp-&gt;snd_nxt
 op_ge
 (paren
 l_int|1
