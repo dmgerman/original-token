@@ -142,7 +142,6 @@ macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* These identify the driver base version and may not be removed. */
 DECL|variable|__devinitdata
 r_static
-r_const
 r_char
 id|version1
 (braket
@@ -153,7 +152,6 @@ l_string|&quot;via-rhine.c:v1.05-LK1.1.5  5/2/2000  Written by Donald Becker&bsl
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
-r_const
 r_char
 id|version2
 (braket

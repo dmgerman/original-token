@@ -3275,13 +3275,10 @@ multiline_comment|/*&n;&t; * Run the hooks that have to be done when a page I/O 
 r_if
 c_cond
 (paren
-id|test_and_clear_bit
+id|PageTestandClearDecrAfter
 c_func
 (paren
-id|PG_decr_after
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 )paren
 id|atomic_dec
@@ -8265,7 +8262,7 @@ c_func
 l_string|&quot;brw_page: page not locked for I/O&quot;
 )paren
 suffix:semicolon
-singleline_comment|//&t;clear_bit(PG_error, &amp;page-&gt;flags);
+singleline_comment|//&t;ClearPageError(page);
 multiline_comment|/*&n;&t; * We pretty much rely on the page lock for this, because&n;&t; * create_page_buffers() might sleep.&n;&t; */
 id|fresh
 op_assign

@@ -6524,6 +6524,8 @@ r_struct
 id|i2c_client
 op_star
 id|client
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|msp3400c
@@ -6577,21 +6579,17 @@ id|file-&gt;private_data
 op_assign
 id|client
 suffix:semicolon
-r_break
+r_goto
+id|match
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|MSP3400_MAX
-op_eq
-id|i
-)paren
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|match
+suffix:colon
 multiline_comment|/* lock bttv in memory while the mixer is in use  */
 r_if
 c_cond

@@ -477,8 +477,6 @@ suffix:colon
 id|unregister_serial
 c_func
 (paren
-l_int|0x40
-op_plus
 id|line
 )paren
 suffix:semicolon

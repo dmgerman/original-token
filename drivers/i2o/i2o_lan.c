@@ -6075,11 +6075,6 @@ r_sizeof
 r_struct
 id|i2o_lan_local
 )paren
-op_plus
-r_sizeof
-(paren
-l_string|&quot;fddi%d &quot;
-)paren
 suffix:semicolon
 id|dev
 op_assign
@@ -6130,24 +6125,6 @@ op_star
 id|dev
 op_plus
 l_int|1
-)paren
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|dev
-op_plus
-l_int|1
-)paren
-op_plus
-r_sizeof
-(paren
-r_struct
-id|i2o_lan_local
 )paren
 suffix:semicolon
 r_if

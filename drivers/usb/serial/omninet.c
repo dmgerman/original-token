@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; */
+multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * Please report both successes and troubles to the author at omninet@kroah.com&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_USB_SERIAL_OMNINET
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -135,13 +135,12 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/* These identify the driver base version and may not be removed. */
 DECL|variable|__devinitdata
 r_static
-r_const
 r_char
 id|version
 (braket
@@ -152,7 +151,6 @@ l_string|&quot;epic100.c:v1.09+LK1.1.2 4/28/2000 Written by Donald Becker &lt;be
 suffix:semicolon
 DECL|variable|__devinitdata
 r_static
-r_const
 r_char
 id|version2
 (braket

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;(C) Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; */
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SERIAL_TTY_MAJOR
 mdefine_line|#define SERIAL_TTY_MAJOR&t;188&t;/* Nice legal number now */
 DECL|macro|SERIAL_TTY_MINORS
-mdefine_line|#define SERIAL_TTY_MINORS&t;16&t;/* Actually we are allowed 255, but this is good for now */
+mdefine_line|#define SERIAL_TTY_MINORS&t;255&t;/* loads of devices :) */
 DECL|macro|MAX_NUM_PORTS
 mdefine_line|#define MAX_NUM_PORTS&t;&t;8&t;/* The maximum number of ports one device can grab at once */
 DECL|macro|USB_SERIAL_MAGIC

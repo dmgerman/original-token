@@ -236,13 +236,10 @@ op_logical_neg
 id|wait
 )paren
 (brace
-id|set_bit
+id|SetPageDecrAfter
 c_func
 (paren
-id|PG_decr_after
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 id|atomic_inc

@@ -3399,6 +3399,12 @@ op_amp
 id|rpciod_running
 )paren
 suffix:semicolon
+id|exit_fs
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|exit_files
 c_func
 (paren

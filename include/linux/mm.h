@@ -506,8 +506,16 @@ DECL|macro|ClearPageError
 mdefine_line|#define ClearPageError(page)&t;clear_bit(PG_error, &amp;(page)-&gt;flags)
 DECL|macro|PageReferenced
 mdefine_line|#define PageReferenced(page)&t;test_bit(PG_referenced, &amp;(page)-&gt;flags)
+DECL|macro|SetPageReferenced
+mdefine_line|#define SetPageReferenced(page)&t;set_bit(PG_referenced, &amp;(page)-&gt;flags)
+DECL|macro|PageTestandClearReferenced
+mdefine_line|#define PageTestandClearReferenced(page)&t;test_and_clear_bit(PG_referenced, &amp;(page)-&gt;flags)
 DECL|macro|PageDecrAfter
 mdefine_line|#define PageDecrAfter(page)&t;test_bit(PG_decr_after, &amp;(page)-&gt;flags)
+DECL|macro|SetPageDecrAfter
+mdefine_line|#define SetPageDecrAfter(page)&t;set_bit(PG_decr_after, &amp;(page)-&gt;flags)
+DECL|macro|PageTestandClearDecrAfter
+mdefine_line|#define PageTestandClearDecrAfter(page)&t;test_and_clear_bit(PG_decr_after, &amp;(page)-&gt;flags)
 DECL|macro|PageSlab
 mdefine_line|#define PageSlab(page)&t;&t;test_bit(PG_slab, &amp;(page)-&gt;flags)
 DECL|macro|PageSwapCache

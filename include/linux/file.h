@@ -220,7 +220,7 @@ r_return
 id|file
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * 23/12/1998 Marcin Dalecki &lt;dalecki@cs.net.pl&gt;: &n; * &n; * Since those functions where calling other functions, it was completely &n; * bogos to make them all &quot;static inline&quot;.&n; *&n; * The removal of this pseudo optimization saved me scandaleous:&n; *&n; * &t;&t;3756 (i386 arch) &n; *&n; * precious bytes from my kernel, even without counting all the code compiled&n; * as module!&n; *&n; * I suspect there are many other similar &quot;optimizations&quot; across the&n; * kernel...&n; */
+multiline_comment|/*&n; * 23/12/1998 Marcin Dalecki &lt;dalecki@cs.net.pl&gt;: &n; * &n; * Since those functions where calling other functions, it was completely &n; * bogus to make them all &quot;extern inline&quot;.&n; *&n; * The removal of this pseudo optimization saved me scandalous:&n; *&n; * &t;&t;3756 (i386 arch) &n; *&n; * precious bytes from my kernel, even without counting all the code compiled&n; * as module!&n; *&n; * I suspect there are many other similar &quot;optimizations&quot; across the&n; * kernel...&n; */
 DECL|function|fput
 r_static
 r_inline

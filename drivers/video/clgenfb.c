@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
+multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 DECL|macro|CLGEN_VERSION
-mdefine_line|#define CLGEN_VERSION &quot;1.9.4.5&quot;
+mdefine_line|#define CLGEN_VERSION &quot;1.9.5&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -35,18 +35,6 @@ macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 macro_line|#include &lt;video/fbcon-cfb32.h&gt;
 macro_line|#include &quot;clgenfb.h&quot;
 macro_line|#include &quot;vga.h&quot;
-multiline_comment|/*****************************************************************&n; *&n; * compatibility with older kernel versions&n; *&n; */
-macro_line|#ifndef LINUX_VERSION_CODE
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
-macro_line|#ifndef KERNEL_VERSION
-DECL|macro|KERNEL_VERSION
-mdefine_line|#define KERNEL_VERSION(x,y,z) (((x)&lt;&lt;16)+((y)&lt;&lt;8)+(z))
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_CIRRUS_5462
-DECL|macro|PCI_DEVICE_ID_CIRRUS_5462
-mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5462      0x00d0
-macro_line|#endif
 multiline_comment|/*****************************************************************&n; *&n; * debugging and utility macros&n; *&n; */
 multiline_comment|/* enable debug output? */
 multiline_comment|/* #define CLGEN_DEBUG 1 */
@@ -1151,18 +1139,6 @@ op_star
 id|options
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-r_static
-r_void
-id|clgenfb_cleanup
-(paren
-r_struct
-id|clgenfb_info
-op_star
-id|info
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|clgenfb_open
@@ -10817,6 +10793,7 @@ comma
 id|info-&gt;size
 )paren
 suffix:semicolon
+macro_line|#if 0 /* if system didn&squot;t claim this region, we would... */
 id|release_mem_region
 c_func
 (paren
@@ -10825,6 +10802,7 @@ comma
 l_int|65535
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -11183,6 +11161,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if 0 /* if the system didn&squot;t claim this region, we would... */
 r_if
 c_cond
 (paren
@@ -11229,6 +11208,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -12247,37 +12227,18 @@ op_star
 id|dp
 )paren
 (brace
-r_int
-id|rc
-suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;ENTER&bslash;n&quot;
-)paren
-suffix:semicolon
-id|rc
-op_assign
+r_return
 id|clgenfb_init
 (paren
 )paren
 suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;EXIT, returning %d&bslash;n&quot;
-comma
-id|rc
-)paren
-suffix:semicolon
-r_return
-id|rc
-suffix:semicolon
 )brace
 macro_line|#endif&t;&t;&t;&t;/* CONFIG_FB_OF */
 multiline_comment|/*&n;     *  Cleanup (only needed for module)&n;     */
-macro_line|#ifdef MODULE
 DECL|function|clgenfb_cleanup
 r_static
 r_void
+id|__exit
 id|clgenfb_cleanup
 (paren
 r_struct
@@ -12332,7 +12293,6 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifndef MODULE
 DECL|function|clgenfb_setup
 r_int
@@ -12471,11 +12431,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n;     *  Modularization&n;     */
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Copyright 1999 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&quot;
+l_string|&quot;Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -12484,46 +12443,11 @@ c_func
 l_string|&quot;Accelerated FBDev driver for Cirrus Logic chips&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-(paren
+DECL|function|clgenfb_exit
+r_static
 r_void
-)paren
-(brace
-macro_line|#if defined(CONFIG_FB_OF)
-multiline_comment|/* Nothing to do, must be called from offb */
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#else
-r_int
-id|i
-suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;ENTER&bslash;n&quot;
-)paren
-suffix:semicolon
-id|i
-op_assign
-id|clgenfb_init
-(paren
-)paren
-suffix:semicolon
-id|DPRINTK
-(paren
-l_string|&quot;EXIT&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|i
-suffix:semicolon
-macro_line|#endif
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|clgenfb_exit
 (paren
 r_void
 )paren
@@ -12549,7 +12473,22 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;&t;/* MODULE */
+macro_line|#ifdef MODULE
+DECL|variable|clgenfb_init
+id|module_init
+c_func
+(paren
+id|clgenfb_init
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|clgenfb_exit
+id|module_exit
+c_func
+(paren
+id|clgenfb_exit
+)paren
+suffix:semicolon
 multiline_comment|/**********************************************************************/
 multiline_comment|/* about the following functions - I have used the same names for the */
 multiline_comment|/* functions as Markus Wild did in his Retina driver for NetBSD as    */

@@ -1488,6 +1488,7 @@ id|dev-&gt;name
 comma
 id|priv-&gt;node.dev_name
 )paren
+suffix:semicolon
 id|dev-&gt;init
 op_assign
 op_amp

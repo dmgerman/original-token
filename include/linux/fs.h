@@ -473,7 +473,7 @@ id|offset
 )paren
 suffix:semicolon
 DECL|macro|touch_buffer
-mdefine_line|#define touch_buffer(bh)&t;set_bit(PG_referenced, &amp;bh-&gt;b_page-&gt;flags)
+mdefine_line|#define touch_buffer(bh)&t;SetPageReferenced(bh-&gt;b_page)
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;

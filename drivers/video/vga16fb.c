@@ -331,13 +331,6 @@ id|currcon
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|release_io_ports
-r_static
-r_int
-id|release_io_ports
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n;&t; * Open/Release the frame buffer device&n;&t; */
 DECL|function|vga16fb_open
@@ -4606,10 +4599,10 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|vga16_init
+DECL|function|vga16fb_init
 r_int
 id|__init
-id|vga16_init
+id|vga16fb_init
 c_func
 (paren
 r_void
@@ -4627,32 +4620,7 @@ id|KERN_DEBUG
 l_string|&quot;vga16fb: initializing&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|request_mem_region
-c_func
-(paren
-id|VGA_FB_PHYS
-comma
-id|VGA_FB_PHYS_LEN
-comma
-l_string|&quot;vga16fb&quot;
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;vga16fb: unable to reserve VGA memory, exiting&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
+multiline_comment|/* XXX share VGA_FB_PHYS region with vgacon */
 id|vga16fb.video_vbase
 op_assign
 id|ioremap
@@ -4764,24 +4732,7 @@ id|j
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/* note - does not cause failure, b/c vgacon probably still owns this &n;&t; * region (FIXME) */
-r_if
-c_cond
-(paren
-id|request_region
-c_func
-(paren
-l_int|0x3C0
-comma
-l_int|32
-comma
-l_string|&quot;vga16fb&quot;
-)paren
-)paren
-id|release_io_ports
-op_assign
-l_int|1
-suffix:semicolon
+multiline_comment|/* XXX share VGA I/O region with vgacon and others */
 id|disp.var
 op_assign
 id|vga16fb_defined
@@ -4878,42 +4829,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
-DECL|function|vga16fb_init
-r_int
-id|__init
-id|vga16fb_init
-c_func
-(paren
+DECL|function|vga16fb_exit
+r_static
 r_void
-)paren
-(brace
-r_return
-id|vga16_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#else /* MODULE */
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|vga16_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|vga16fb_exit
 c_func
 (paren
 r_void
@@ -4932,28 +4852,23 @@ c_func
 id|vga16fb.video_vbase
 )paren
 suffix:semicolon
-id|release_mem_region
-c_func
-(paren
-id|VGA_FB_PHYS
-comma
-id|VGA_FB_PHYS_LEN
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|release_io_ports
-)paren
-id|release_region
-c_func
-(paren
-l_int|0x3c0
-comma
-l_int|32
-)paren
-suffix:semicolon
+multiline_comment|/* XXX unshare VGA regions */
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|vga16fb_init
+id|module_init
+c_func
+(paren
+id|vga16fb_init
+)paren
+suffix:semicolon
 macro_line|#endif
+DECL|variable|vga16fb_exit
+id|module_exit
+c_func
+(paren
+id|vga16fb_exit
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */
 eof

@@ -1584,6 +1584,7 @@ c_func
 id|rd_init
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|rd_cleanup
 id|module_exit
 c_func
@@ -1591,7 +1592,6 @@ c_func
 id|rd_cleanup
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* loadable module support */
 id|MODULE_PARM
 (paren

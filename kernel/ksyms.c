@@ -183,6 +183,13 @@ c_func
 id|get_module_symbol
 )paren
 suffix:semicolon
+DECL|variable|try_inc_mod_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|try_inc_mod_count
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|get_option
 id|EXPORT_SYMBOL

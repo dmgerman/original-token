@@ -806,7 +806,7 @@ c_func
 (paren
 id|mb-&gt;dev_node
 comma
-id|FEATURE_Mediabay_IDE_enable
+id|FEATURE_IDE1_enable
 )paren
 suffix:semicolon
 id|feature_clear
@@ -897,7 +897,7 @@ c_func
 (paren
 id|bay-&gt;dev_node
 comma
-id|FEATURE_Mediabay_IDE_enable
+id|FEATURE_IDE1_enable
 )paren
 suffix:semicolon
 id|udelay
@@ -911,7 +911,7 @@ c_func
 (paren
 id|bay-&gt;dev_node
 comma
-id|FEATURE_Mediabay_IDE_reset
+id|FEATURE_IDE1_reset
 )paren
 suffix:semicolon
 id|printk
@@ -1523,7 +1523,7 @@ c_func
 (paren
 id|bay-&gt;dev_node
 comma
-id|FEATURE_Mediabay_IDE_reset
+id|FEATURE_IDE1_reset
 )paren
 suffix:semicolon
 id|bay-&gt;timer

@@ -1459,13 +1459,13 @@ comma
 r_int
 r_int
 )paren
-id|poll_timer.prev
+id|poll_timer.list.prev
 comma
 (paren
 r_int
 r_int
 )paren
-id|poll_timer.next
+id|poll_timer.list.next
 )paren
 suffix:semicolon
 macro_line|#endif

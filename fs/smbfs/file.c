@@ -136,7 +136,7 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* We can&squot;t replace this with ClearPageError. why? is it a problem? &n;&t;   fs/buffer.c:brw_page does the same. */
-multiline_comment|/* clear_bit(PG_error, &amp;page-&gt;flags); */
+multiline_comment|/* ClearPageError(page); */
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func

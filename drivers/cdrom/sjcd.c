@@ -289,14 +289,8 @@ id|timer_list
 id|sjcd_delay_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 l_int|NULL
 )brace
 suffix:semicolon

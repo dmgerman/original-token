@@ -4369,13 +4369,10 @@ id|status
 OL
 l_int|0
 )paren
-id|clear_bit
+id|ClearPageUptodate
 c_func
 (paren
-id|PG_uptodate
-comma
-op_amp
-id|page-&gt;flags
+id|page
 )paren
 suffix:semicolon
 r_return

@@ -128,8 +128,9 @@ macro_line|#include &lt;linux/delay.h&gt;
 DECL|variable|__devinitdata
 r_static
 r_char
-op_star
 id|version
+(braket
+)braket
 id|__devinitdata
 op_assign
 l_string|&quot;3c59x.c:v0.99L+LK1.1.5  30 Apr 2000  Donald Becker and others  http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html &quot;
@@ -3828,24 +3829,16 @@ multiline_comment|/* wake up and enable device */
 r_if
 c_cond
 (paren
-(paren
-id|retval
-op_assign
 id|pci_enable_device
-c_func
 (paren
 id|pdev
 )paren
 )paren
-)paren
 (brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Cannot enable device, aborting&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
+id|retval
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_goto
 id|free_region
@@ -13114,8 +13107,6 @@ r_void
 r_int
 id|rc
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|rc
 op_assign
 id|pci_module_init
@@ -13175,8 +13166,6 @@ l_int|1
 suffix:semicolon
 id|out
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|rc
 suffix:semicolon
