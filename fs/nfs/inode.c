@@ -1820,12 +1820,6 @@ id|NFS_IS_SNAPSHOT
 )paren
 op_logical_or
 (paren
-id|IS_ROOT
-c_func
-(paren
-id|dentry-&gt;d_parent
-)paren
-op_logical_and
 id|dentry-&gt;d_name.len
 op_eq
 l_int|9

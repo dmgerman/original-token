@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;$Id: ip_masq.c,v 1.28 1998/11/21 00:33:30 davem Exp $&n; *&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Richard Lynch&t;&t;:&t;Added IP Autoforward&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&t;Nigel Metheringham&t;:&t;Better handling of timeouts of TCP conns&n; *&t;Delian Delchev&t;&t;:&t;Added support for ICMP requests and replys&n; *&t;Nigel Metheringham&t;:&t;ICMP in ICMP handling, tidy ups, bug fixes, made ICMP optional&n; *&t;Juan Jose Ciarlante&t;:&t;re-assign maddr if no packet received from outside&n; *&t;Juan Jose Ciarlante&t;:&t;ported to 2.1 tree&n; *&t;Juan Jose Ciarlante&t;:&t;reworked control connections&n; *&t;Steven Clarke&t;&t;:&t;Added Port Forwarding&n; *&t;Juan Jose Ciarlante&t;:&t;Just ONE ip_masq_new (!)&n; *&t;Juan Jose Ciarlante&t;:&t;IP masq modules support&n; *&t;Juan Jose Ciarlante&t;:&t;don&squot;t go into search loop if mport specified&n; *&t;Juan Jose Ciarlante&t;:&t;locking&n; *&t;Steven Clarke&t;&t;:&t;IP_MASQ_S_xx state design&n; *&t;Juan Jose Ciarlante&t;:&t;IP_MASQ_S state implementation &n; *&t;Juan Jose Ciarlante&t;: &t;xx_get() clears timer, _put() inserts it&n; *&t;Juan Jose Ciarlante&t;: &t;create /proc/net/ip_masq/ &n; *&t;Juan Jose Ciarlante&t;: &t;reworked checksums (save payload csum if possible)&n; *&t;Juan Jose Ciarlante&t;: &t;added missing ip_fw_masquerade checksum&n; *&t;Juan Jose Ciarlante&t;: &t;csum savings&n; *&t;Juan Jose Ciarlante&t;: &t;added user-space tunnel creation/del, etc&n; *&t;Juan Jose Ciarlante&t;: &t;(last) moved to ip_masq_user runtime module&n; *&t;Juan Jose Ciarlante&t;: &t;user timeout handling again&n; *&t;Juan Jose Ciarlante&t;: &t;make new modules support optional&n; *&t;Juan Jose Ciarlante&t;: &t;u-space context =&gt; locks reworked&n; *&t;Juan Jose Ciarlante&t;: &t;fixed stupid SMP locking bug&n; *&t;Juan Jose Ciarlante&t;: &t;fixed &quot;tap&quot;ing in demasq path by copy-on-w&n; *&t;Juan Jose Ciarlante&t;: &t;make masq_proto_doff() robust against fake sized/corrupted packets&n; *&t;&n; */
+multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;$Id: ip_masq.c,v 1.32 1999/01/04 20:37:05 davem Exp $&n; *&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Richard Lynch&t;&t;:&t;Added IP Autoforward&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&t;Nigel Metheringham&t;:&t;Better handling of timeouts of TCP conns&n; *&t;Delian Delchev&t;&t;:&t;Added support for ICMP requests and replys&n; *&t;Nigel Metheringham&t;:&t;ICMP in ICMP handling, tidy ups, bug fixes, made ICMP optional&n; *&t;Juan Jose Ciarlante&t;:&t;re-assign maddr if no packet received from outside&n; *&t;Juan Jose Ciarlante&t;:&t;ported to 2.1 tree&n; *&t;Juan Jose Ciarlante&t;:&t;reworked control connections&n; *&t;Steven Clarke&t;&t;:&t;Added Port Forwarding&n; *&t;Juan Jose Ciarlante&t;:&t;Just ONE ip_masq_new (!)&n; *&t;Juan Jose Ciarlante&t;:&t;IP masq modules support&n; *&t;Juan Jose Ciarlante&t;:&t;don&squot;t go into search loop if mport specified&n; *&t;Juan Jose Ciarlante&t;:&t;locking&n; *&t;Steven Clarke&t;&t;:&t;IP_MASQ_S_xx state design&n; *&t;Juan Jose Ciarlante&t;:&t;IP_MASQ_S state implementation &n; *&t;Juan Jose Ciarlante&t;: &t;xx_get() clears timer, _put() inserts it&n; *&t;Juan Jose Ciarlante&t;: &t;create /proc/net/ip_masq/ &n; *&t;Juan Jose Ciarlante&t;: &t;reworked checksums (save payload csum if possible)&n; *&t;Juan Jose Ciarlante&t;: &t;added missing ip_fw_masquerade checksum&n; *&t;Juan Jose Ciarlante&t;: &t;csum savings&n; *&t;Juan Jose Ciarlante&t;: &t;added user-space tunnel creation/del, etc&n; *&t;Juan Jose Ciarlante&t;: &t;(last) moved to ip_masq_user runtime module&n; *&t;Juan Jose Ciarlante&t;: &t;user timeout handling again&n; *&t;Juan Jose Ciarlante&t;: &t;make new modules support optional&n; *&t;Juan Jose Ciarlante&t;: &t;u-space context =&gt; locks reworked&n; *&t;Juan Jose Ciarlante&t;: &t;fixed stupid SMP locking bug&n; *&t;Juan Jose Ciarlante&t;: &t;fixed &quot;tap&quot;ing in demasq path by copy-on-w&n; *&t;Juan Jose Ciarlante&t;: &t;make masq_proto_doff() robust against fake sized/corrupted packets&n; *&t;Kai Bankett&t;&t;:&t;do not toss other IP protos in proto_doff()&n; *&t;Dan Kegel&t;&t;:&t;pointed correct NAT behavior for UDP streams&n; *&t;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef CONFIG_KMOD
@@ -1245,6 +1245,14 @@ op_amp
 id|ip_masq_dummy
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; *&t;These flags enable non-strict d{addr,port} checks&n; *&t;Given that both (in/out) lookup tables are hashed&n; *&t;by m{addr,port} and s{addr,port} this is quite easy &n; */
+DECL|macro|MASQ_DADDR_PASS
+mdefine_line|#define MASQ_DADDR_PASS&t;(IP_MASQ_F_NO_DADDR|IP_MASQ_F_DLOOSE)
+DECL|macro|MASQ_DPORT_PASS
+mdefine_line|#define MASQ_DPORT_PASS&t;(IP_MASQ_F_NO_DPORT|IP_MASQ_F_DLOOSE)
+multiline_comment|/*&n; *&t;By default enable dest loose semantics&n; */
+DECL|macro|CONFIG_IP_MASQ_LOOSE_DEFAULT
+mdefine_line|#define CONFIG_IP_MASQ_LOOSE_DEFAULT 1
 multiline_comment|/*&n; * &t;Set masq expiration (deletion) and adds timer,&n; *&t;if timeout==0 cancel expiration.&n; *&t;Warning: it does not check/delete previous timer!&n; */
 DECL|function|__ip_masq_set_expire
 r_static
@@ -1707,6 +1715,15 @@ op_eq
 id|ms-&gt;protocol
 op_logical_and
 (paren
+id|d_addr
+op_eq
+id|ms-&gt;maddr
+op_logical_and
+id|d_port
+op_eq
+id|ms-&gt;mport
+)paren
+op_logical_and
 (paren
 id|s_addr
 op_eq
@@ -1714,8 +1731,7 @@ id|ms-&gt;daddr
 op_logical_or
 id|ms-&gt;flags
 op_amp
-id|IP_MASQ_F_NO_DADDR
-)paren
+id|MASQ_DADDR_PASS
 )paren
 op_logical_and
 (paren
@@ -1725,17 +1741,7 @@ id|ms-&gt;dport
 op_logical_or
 id|ms-&gt;flags
 op_amp
-id|IP_MASQ_F_NO_DPORT
-)paren
-op_logical_and
-(paren
-id|d_addr
-op_eq
-id|ms-&gt;maddr
-op_logical_and
-id|d_port
-op_eq
-id|ms-&gt;mport
+id|MASQ_DPORT_PASS
 )paren
 )paren
 (brace
@@ -1873,13 +1879,25 @@ id|s_port
 op_eq
 id|ms-&gt;sport
 op_logical_and
+(paren
 id|d_addr
 op_eq
 id|ms-&gt;daddr
+op_logical_or
+id|ms-&gt;flags
+op_amp
+id|MASQ_DADDR_PASS
+)paren
 op_logical_and
+(paren
 id|d_port
 op_eq
 id|ms-&gt;dport
+op_logical_or
+id|ms-&gt;flags
+op_amp
+id|MASQ_DPORT_PASS
+)paren
 )paren
 (brace
 id|IP_MASQ_DEBUG
@@ -1957,13 +1975,25 @@ id|s_addr
 op_eq
 id|ms-&gt;saddr
 op_logical_and
+(paren
 id|d_addr
 op_eq
 id|ms-&gt;daddr
+op_logical_or
+id|ms-&gt;flags
+op_amp
+id|MASQ_DADDR_PASS
+)paren
 op_logical_and
+(paren
 id|d_port
 op_eq
 id|ms-&gt;dport
+op_logical_or
+id|ms-&gt;flags
+op_amp
+id|MASQ_DPORT_PASS
+)paren
 )paren
 (brace
 id|IP_MASQ_DEBUG
@@ -2020,7 +2050,7 @@ r_return
 id|ms
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_IP_MASQUERADE_NREUSE
+macro_line|#ifdef CONFIG_IP_MASQ_NREUSE
 multiline_comment|/*&n; *&t;Returns ip_masq for given proto,m_addr,m_port.&n; *      called by allocation routine to find an unused m_port.&n; *&t;&n; *&t;Caller must lock tables&n; */
 DECL|function|__ip_masq_getbym
 r_static
@@ -2952,10 +2982,18 @@ op_logical_and
 op_logical_neg
 id|mport
 )paren
+macro_line|#ifdef CONFIG_IP_MASQ_LOOSE_DEFAULT
+multiline_comment|/*&n;&t;&t; *&t;Flag this tunnel as &quot;dest loose&quot;&n;&t;&t; *&t;&n;&t;&t; */
+id|ms-&gt;flags
+op_or_assign
+id|IP_MASQ_F_DLOOSE
+suffix:semicolon
+macro_line|#else
 id|ms-&gt;flags
 op_or_assign
 id|IP_MASQ_F_NO_DADDR
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* get masq address from rif */
 id|ms-&gt;maddr
 op_assign
@@ -3232,7 +3270,7 @@ op_amp
 id|__ip_masq_lock
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_MASQUERADE_NREUSE
+macro_line|#ifdef CONFIG_IP_MASQ_NREUSE
 id|mst
 op_assign
 id|__ip_masq_getbym
@@ -3446,7 +3484,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get transport protocol data offset, check against size&n; */
+multiline_comment|/*&n; *&t;Get transport protocol data offset, check against size&n; *&t;return:&n; *&t;&t;0  if other IP proto&n; *&t;&t;-1 if error&n; */
 DECL|function|proto_doff
 r_static
 id|__inline__
@@ -3573,6 +3611,13 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* &t;Other proto: nothing to say, by now :) */
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -3698,18 +3743,11 @@ r_if
 c_cond
 (paren
 id|doff
-OL
+op_le
 l_int|0
 )paren
 (brace
-id|IP_MASQ_DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;O-pkt invalid packet data size&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&n;&t;&t; *&t;Output path: do not pass other IP protos nor&n;&t;&t; *&t;invalid packets.&n;&t;&t; */
 r_return
 op_minus
 l_int|1
@@ -4103,6 +4141,27 @@ c_func
 id|ms-&gt;sport
 )paren
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ms-&gt;flags
+op_amp
+id|IP_MASQ_F_DLOOSE
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; *&t;update dest loose values&n;&t;&t;&t; */
+id|ms-&gt;dport
+op_assign
+id|h.portp
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|ms-&gt;daddr
+op_assign
+id|iph-&gt;daddr
 suffix:semicolon
 )brace
 )brace
@@ -5274,9 +5333,11 @@ id|len
 )paren
 (brace
 multiline_comment|/* Failed checksum! */
-id|IP_MASQ_WARNING
+id|IP_MASQ_DEBUG
 c_func
 (paren
+l_int|0
+comma
 l_string|&quot;forward ICMP: failed checksum from %d.%d.%d.%d!&bslash;n&quot;
 comma
 id|NIPQUAD
@@ -6734,14 +6795,23 @@ comma
 id|size
 )paren
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|doff
-OL
-l_int|0
 )paren
 (brace
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t; *&t;Input path: other IP protos Ok, will&n;&t;&t;&t; *&t;reach local sockets path.&n;&t;&t;&t; */
+r_return
+l_int|0
+suffix:semicolon
+r_case
+op_minus
+l_int|1
+suffix:colon
 id|IP_MASQ_DEBUG
 c_func
 (paren
@@ -7062,7 +7132,30 @@ op_and_assign
 op_complement
 id|IP_MASQ_F_NO_REPLY
 suffix:semicolon
-multiline_comment|/*&n;                 *&t;Set dport if not defined yet.&n;                 */
+multiline_comment|/*&n;&t;&t; *&t;Set daddr,dport if not defined yet&n;&t;&t; *&t;and tunnel is not setup as &quot;dest loose&quot;&n;                 */
+r_if
+c_cond
+(paren
+id|ms-&gt;flags
+op_amp
+id|IP_MASQ_F_DLOOSE
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; *&t;update dest loose values&n;&t;&t;&t; */
+id|ms-&gt;dport
+op_assign
+id|h.portp
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|ms-&gt;daddr
+op_assign
+id|iph-&gt;saddr
+suffix:semicolon
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
@@ -7131,6 +7224,7 @@ id|ms-&gt;daddr
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -8873,8 +8967,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_IP_MASQUERADE_IPMARKFW
-id|ip_markfw_init
+macro_line|#ifdef CONFIG_IP_MASQUERADE_MFW
+id|ip_mfw_init
 c_func
 (paren
 )paren

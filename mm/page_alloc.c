@@ -708,6 +708,17 @@ r_goto
 id|nopage
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * If this is a recursive call, we&squot;d better&n;&t;&t; * do our best to just allocate things without&n;&t;&t; * further thought.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_MEMALLOC
+)paren
+r_goto
+id|ok_to_allocate
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Avoid going back-and-forth between allocating&n;&t;&t; * memory and trying to free it. If we get into&n;&t;&t; * a bad memory situation, we&squot;re better off trying&n;&t;&t; * to free things up until things are better.&n;&t;&t; *&n;&t;&t; * Normally we shouldn&squot;t ever have to do this, with&n;&t;&t; * kswapd doing this in the background.&n;&t;&t; *&n;&t;&t; * Most notably, this puts most of the onus of&n;&t;&t; * freeing up memory on the processes that _use_&n;&t;&t; * the most memory, rather than on everybody.&n;&t;&t; */
 r_if
 c_cond
@@ -748,10 +759,16 @@ id|current-&gt;trashing_memory
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
+(brace
+r_int
+id|freed
+suffix:semicolon
+id|current-&gt;flags
+op_or_assign
+id|PF_MEMALLOC
+suffix:semicolon
+id|freed
+op_assign
 id|try_to_free_pages
 c_func
 (paren
@@ -759,6 +776,17 @@ id|gfp_mask
 comma
 id|SWAP_CLUSTER_MAX
 )paren
+suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_MEMALLOC
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|freed
 op_logical_and
 op_logical_neg
 (paren
@@ -774,6 +802,7 @@ id|__GFP_HIGH
 r_goto
 id|nopage
 suffix:semicolon
+)brace
 )brace
 id|ok_to_allocate
 suffix:colon

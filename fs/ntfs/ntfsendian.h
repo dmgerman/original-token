@@ -80,7 +80,7 @@ DECL|macro|NTFS_PUTU64
 mdefine_line|#define NTFS_PUTU64(p,v)     ((*(ntfs_u64*)(p))=CPU_TO_LE64(v))
 multiline_comment|/* Macros reading signed integers */
 DECL|macro|NTFS_GETS8
-mdefine_line|#define NTFS_GETS8(p)        ((*(ntfs_u8*)(p)))
+mdefine_line|#define NTFS_GETS8(p)        ((*(ntfs_s8*)(p)))
 DECL|macro|NTFS_GETS16
 mdefine_line|#define NTFS_GETS16(p)       ((ntfs_s16)LE16_TO_CPU(*(short*)(p)))
 DECL|macro|NTFS_GETS24

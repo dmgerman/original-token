@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.12 1998/08/26 12:03:24 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.14 1999/01/04 20:13:55 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1943,6 +1943,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|ZERONET
+c_func
+(paren
+id|prefix
+)paren
+op_logical_and
+op_logical_neg
 (paren
 id|ifa-&gt;ifa_flags
 op_amp
@@ -1985,13 +1992,6 @@ multiline_comment|/* Add network specific broadcasts, when it takes a sense */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|ZERONET
-c_func
-(paren
-id|prefix
-)paren
-op_logical_and
 id|ifa-&gt;ifa_prefixlen
 OL
 l_int|31

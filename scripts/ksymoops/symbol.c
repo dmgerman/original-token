@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;symbol.c.&n;&n;&t;Symbol handling routines for ksymoops.&n;&n;&t;Copyright Keith Owens &lt;kaos@ocs.com.au&gt;.&n;&t;Released under the GNU Public Licence, Version 2.&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Fix end of code calculation.&n;&n;&t;Wed Oct 28 13:47:23 EST 1998&n;&t;Version 0.4&n;&t;Split into separate sources.&n; */
+multiline_comment|/*&n;&t;symbol.c.&n;&n;&t;Symbol handling routines for ksymoops.&n;&n;&t;Copyright Keith Owens &lt;kaos@ocs.com.au&gt;.&n;&t;Released under the GNU Public Licence, Version 2.&n;&n;&t;Mon Jan  4 09:08:19 EST 1999&n;&t;Version 0.6d&n;&t;Cast Version to int, glibc 2.1 made elf_addr_t a long.&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Fix end of code calculation.&n;&n;&t;Wed Oct 28 13:47:23 EST 1998&n;&t;Version 0.4&n;&t;Split into separate sources.&n; */
 macro_line|#include &quot;ksymoops.h&quot;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;malloc.h&gt;
@@ -1928,13 +1928,22 @@ comma
 l_string|&quot;%d.%d.%d&quot;
 comma
 (paren
+r_int
+)paren
+(paren
+(paren
 id|Version
 op_rshift
 l_int|16
 )paren
 op_amp
 l_int|0xff
+)paren
 comma
+(paren
+r_int
+)paren
+(paren
 (paren
 id|Version
 op_rshift
@@ -1942,12 +1951,18 @@ l_int|8
 )paren
 op_amp
 l_int|0xff
+)paren
 comma
+(paren
+r_int
+)paren
+(paren
 (paren
 id|Version
 )paren
 op_amp
 l_int|0xff
+)paren
 )paren
 suffix:semicolon
 r_return

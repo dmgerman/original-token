@@ -10,6 +10,7 @@ DECL|macro|DEFAULT_CARD
 mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_ELSA
 DECL|macro|DEFAULT_CFG
 mdefine_line|#define DEFAULT_CFG {0,0,0,0}
+macro_line|#ifdef MODULE
 r_int
 id|elsa_init_pcmcia
 c_func
@@ -32,6 +33,7 @@ c_func
 id|elsa_init_pcmcia
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_HISAX_AVM_A1
 DECL|macro|DEFAULT_CARD

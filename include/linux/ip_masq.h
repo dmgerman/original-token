@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP_MASQ user space control interface&n; *&t;$Id: ip_masq.h,v 1.1 1998/08/29 23:50:56 davem Exp $&n; */
+multiline_comment|/*&n; *&t;IP_MASQ user space control interface&n; *&t;$Id: ip_masq.h,v 1.2 1998/12/08 05:41:48 davem Exp $&n; */
 macro_line|#ifndef _LINUX_IP_MASQ_H
 DECL|macro|_LINUX_IP_MASQ_H
 mdefine_line|#define _LINUX_IP_MASQ_H
@@ -247,10 +247,10 @@ suffix:semicolon
 multiline_comment|/* Preference value */
 )brace
 suffix:semicolon
-multiline_comment|/* &n; *&t;MARKFW stuff &n; */
-DECL|struct|ip_markfw_user
+multiline_comment|/* &n; *&t;MFW stuff &n; */
+DECL|struct|ip_mfw_user
 r_struct
-id|ip_markfw_user
+id|ip_mfw_user
 (brace
 DECL|member|fwmark
 id|u_int32_t
@@ -277,8 +277,15 @@ r_int
 id|pref
 suffix:semicolon
 multiline_comment|/* Preference value */
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* misc flags */
 )brace
 suffix:semicolon
+DECL|macro|IP_MASQ_MFW_SCHED
+mdefine_line|#define IP_MASQ_MFW_SCHED&t;0x01
 DECL|macro|IP_FW_MASQCTL_MAX
 mdefine_line|#define IP_FW_MASQCTL_MAX 256
 DECL|macro|IP_MASQ_TNAME_MAX
@@ -314,10 +321,10 @@ r_struct
 id|ip_autofw_user
 id|autofw_user
 suffix:semicolon
-DECL|member|markfw_user
+DECL|member|mfw_user
 r_struct
-id|ip_markfw_user
-id|markfw_user
+id|ip_mfw_user
+id|mfw_user
 suffix:semicolon
 DECL|member|user
 r_struct
@@ -349,7 +356,7 @@ mdefine_line|#define IP_MASQ_TARGET_USER&t;3&t;
 DECL|macro|IP_MASQ_TARGET_LAST
 mdefine_line|#define IP_MASQ_TARGET_LAST&t;4
 DECL|macro|IP_MASQ_CMD_NONE
-mdefine_line|#define IP_MASQ_CMD_NONE&t;0
+mdefine_line|#define IP_MASQ_CMD_NONE&t;0&t;/* just peek */
 DECL|macro|IP_MASQ_CMD_INSERT
 mdefine_line|#define IP_MASQ_CMD_INSERT&t;1
 DECL|macro|IP_MASQ_CMD_ADD
@@ -363,7 +370,7 @@ mdefine_line|#define IP_MASQ_CMD_GET&t;&t;5
 DECL|macro|IP_MASQ_CMD_FLUSH
 mdefine_line|#define IP_MASQ_CMD_FLUSH&t;6
 DECL|macro|IP_MASQ_CMD_LIST
-mdefine_line|#define IP_MASQ_CMD_LIST&t;7
+mdefine_line|#define IP_MASQ_CMD_LIST&t;7&t;/* actually fake: done via /proc */
 DECL|macro|IP_MASQ_CMD_ENABLE
 mdefine_line|#define IP_MASQ_CMD_ENABLE&t;8
 DECL|macro|IP_MASQ_CMD_DISABLE

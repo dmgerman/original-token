@@ -683,6 +683,11 @@ DECL|enumerator|NET_IPV4_ICMP_IGNORE_BOGUS_ERROR_RESPONSES
 id|NET_IPV4_ICMP_IGNORE_BOGUS_ERROR_RESPONSES
 op_assign
 l_int|64
+comma
+DECL|enumerator|NET_IPV4_IGMP_MAX_MEMBERSHIPS
+id|NET_IPV4_IGMP_MAX_MEMBERSHIPS
+op_assign
+l_int|65
 )brace
 suffix:semicolon
 r_enum

@@ -73,6 +73,12 @@ r_int
 id|sg_big_buff
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SYSVIPC
+r_extern
+r_int
+id|shmmax
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __sparc__
 r_extern
 r_char
@@ -1021,6 +1027,29 @@ op_amp
 id|proc_dointvec
 )brace
 comma
+macro_line|#ifdef CONFIG_SYSVIPC
+(brace
+id|KERN_SHMMAX
+comma
+l_string|&quot;shmmax&quot;
+comma
+op_amp
+id|shmmax
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0
 )brace

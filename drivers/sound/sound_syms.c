@@ -239,7 +239,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;Sound subsystem&quot;
+l_string|&quot;OSS Sound subsystem&quot;
 )paren
 suffix:semicolon
 id|MODULE_AUTHOR

@@ -3883,6 +3883,10 @@ suffix:semicolon
 op_increment
 id|chan-&gt;ifstats.rx_packets
 suffix:semicolon
+id|chan-&gt;ifstats.rx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -8080,6 +8084,10 @@ suffix:semicolon
 )brace
 op_increment
 id|chan-&gt;ifstats.tx_packets
+suffix:semicolon
+id|chan-&gt;ifstats.tx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -199,7 +199,7 @@ l_string|&quot;=&amp;d&quot;
 id|tmp
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;d&quot;
 (paren
 id|n
 op_amp

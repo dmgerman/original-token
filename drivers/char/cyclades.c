@@ -88,10 +88,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#endif
 DECL|macro|cy_put_user
 mdefine_line|#define cy_put_user&t;put_user
 DECL|function|cy_get_user
@@ -868,7 +866,6 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_int
 id|cyclades_get_proc_info
@@ -892,7 +889,6 @@ r_void
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* The Cyclades-Z polling cycle is defined by this variable */
 DECL|variable|cyz_polling_cycle
 r_static
@@ -21810,7 +21806,6 @@ id|__TIME__
 suffix:semicolon
 )brace
 multiline_comment|/* show_version */
-macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_int
 DECL|function|cyclades_get_proc_info
@@ -22107,7 +22102,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* The serial driver boot-time initialization code!&n;    Hardware I/O ports are mapped to character special devices on a&n;    first found, first allocated manner.  That is, this code searches&n;    for Cyclom cards in the system.  As each is found, it is probed&n;    to discover how many chips (and thus how many ports) are present.&n;    These ports are mapped to the tty ports 32 and upward in monotonic&n;    fashion.  If an 8-port card is replaced with a 16-port card, the&n;    port mapping on a following card will shift.&n;&n;    This approach is different from what is used in the other serial&n;    device driver because the Cyclom is more properly a multiplexer,&n;    not just an aggregation of serial ports on one card.&n;&n;    If there are more cards with more ports than have been&n;    statically allocated above, a warning is printed and the&n;    extra ports are ignored.&n; */
 DECL|function|__initfunc
 id|__initfunc
@@ -23193,7 +23187,6 @@ l_string|&quot;Cyclades-Z polling initialized&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
 id|ent
 op_assign
 id|create_proc_entry
@@ -23212,21 +23205,6 @@ id|ent-&gt;read_proc
 op_assign
 id|cyclades_get_proc_info
 suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-id|cyclades_proc_entry
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

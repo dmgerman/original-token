@@ -2,7 +2,7 @@ multiline_comment|/*+M**********************************************************
 DECL|macro|BLS
 mdefine_line|#define&t;BLS&t;(&amp;aic7xxx_buffer[size])
 DECL|macro|HDRB
-mdefine_line|#define HDRB &bslash;&n;&quot;        &lt; 512 512-1K   1-2K   2-4K   4-8K  8-16K 16-32K 32-64K 64-128K &gt;128K&quot;
+mdefine_line|#define HDRB &bslash;&n;&quot;             &lt; 2K      2K+     4K+     8K+    16K+    32K+    64K+   128K+&quot;
 macro_line|#ifdef PROC_DEBUG
 r_extern
 r_int
@@ -183,8 +183,6 @@ suffix:semicolon
 r_int
 r_char
 id|target
-comma
-id|lun
 suffix:semicolon
 id|HBAptr
 op_assign
@@ -306,35 +304,15 @@ id|target
 op_increment
 )paren
 (brace
-r_for
-c_loop
-(paren
-id|lun
-op_assign
-l_int|0
-suffix:semicolon
-id|lun
-OL
-id|MAX_LUNS
-suffix:semicolon
-id|lun
-op_increment
-)paren
-(brace
 r_if
 c_cond
 (paren
-id|p-&gt;stats
+id|p-&gt;dev_flags
 (braket
 id|target
 )braket
-(braket
-id|lun
-)braket
-dot
-id|r_total
-op_ne
-l_int|0
+op_amp
+id|DEVICE_PRESENT
 )paren
 macro_line|#ifdef AIC7XXX_PROC_STATS
 id|size
@@ -347,7 +325,6 @@ op_add_assign
 l_int|256
 suffix:semicolon
 macro_line|#endif
-)brace
 )brace
 r_if
 c_cond
@@ -1242,7 +1219,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;Statistics:&bslash;n&quot;
+l_string|&quot;Statistics:&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1260,21 +1237,6 @@ id|target
 op_increment
 )paren
 (brace
-r_for
-c_loop
-(paren
-id|lun
-op_assign
-l_int|0
-suffix:semicolon
-id|lun
-OL
-id|MAX_LUNS
-suffix:semicolon
-id|lun
-op_increment
-)paren
-(brace
 id|sp
 op_assign
 op_amp
@@ -1282,14 +1244,18 @@ id|p-&gt;stats
 (braket
 id|target
 )braket
-(braket
-id|lun
-)braket
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sp-&gt;r_total
+(paren
+id|p-&gt;dev_flags
+(braket
+id|target
+)braket
+op_amp
+id|DEVICE_PRESENT
+)paren
 op_eq
 l_int|0
 )paren
@@ -1328,7 +1294,7 @@ op_amp
 l_int|0x7
 )paren
 comma
-id|lun
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1349,7 +1315,7 @@ l_int|0
 comma
 id|target
 comma
-id|lun
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1360,7 +1326,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  Device using %s/%s&bslash;n&quot;
+l_string|&quot;  Device using %s/%s&quot;
 comma
 (paren
 id|p-&gt;transinfo
@@ -1390,9 +1356,9 @@ l_int|0
 )paren
 ques
 c_cond
-l_string|&quot;Sync transfers at&quot;
+l_string|&quot;Sync transfers at &quot;
 suffix:colon
-l_string|&quot;Async transfers.&quot;
+l_string|&quot;Async transfers.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1470,7 +1436,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  %s MByte/sec, offset %d&bslash;n&quot;
+l_string|&quot;%s MByte/sec, offset %d&bslash;n&quot;
 comma
 id|sync_rate-&gt;rate
 (braket
@@ -1495,7 +1461,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  3.3 MByte/sec, offset %d&bslash;n&quot;
+l_string|&quot;3.3 MByte/sec, offset %d&bslash;n&quot;
 comma
 id|p-&gt;transinfo
 (braket
@@ -1514,7 +1480,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;    Device Negotiation Settings&bslash;n&quot;
+l_string|&quot;  Transinfo settings: &quot;
 )paren
 suffix:semicolon
 id|size
@@ -1524,7 +1490,28 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;        Period Offset Bus Width&bslash;n&quot;
+l_string|&quot;current(%d/%d/%d), &quot;
+comma
+id|p-&gt;transinfo
+(braket
+id|target
+)braket
+dot
+id|cur_period
+comma
+id|p-&gt;transinfo
+(braket
+id|target
+)braket
+dot
+id|cur_offset
+comma
+id|p-&gt;transinfo
+(braket
+id|target
+)braket
+dot
+id|cur_width
 )paren
 suffix:semicolon
 id|size
@@ -1534,38 +1521,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;User       %03d    %03d        %d&bslash;n&quot;
-comma
-id|p-&gt;transinfo
-(braket
-id|target
-)braket
-dot
-id|user_period
-comma
-id|p-&gt;transinfo
-(braket
-id|target
-)braket
-dot
-id|user_offset
-comma
-id|p-&gt;transinfo
-(braket
-id|target
-)braket
-dot
-id|user_width
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;Goal       %03d    %03d        %d&bslash;n&quot;
+l_string|&quot;goal(%d/%d/%d), &quot;
 comma
 id|p-&gt;transinfo
 (braket
@@ -1596,28 +1552,28 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;Current    %03d    %03d        %d&bslash;n&quot;
+l_string|&quot;user(%d/%d/%d)&bslash;n&quot;
 comma
 id|p-&gt;transinfo
 (braket
 id|target
 )braket
 dot
-id|cur_period
+id|user_period
 comma
 id|p-&gt;transinfo
 (braket
 id|target
 )braket
 dot
-id|cur_offset
+id|user_offset
 comma
 id|p-&gt;transinfo
 (braket
 id|target
 )braket
 dot
-id|cur_width
+id|user_width
 )paren
 suffix:semicolon
 macro_line|#ifdef AIC7XXX_PROC_STATS
@@ -1628,27 +1584,15 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;    Total transfers %ld (%ld read;%ld written)&bslash;n&quot;
+l_string|&quot;  Total transfers %ld (%ld reads and %ld writes)&bslash;n&quot;
 comma
-id|sp-&gt;xfers
+id|sp-&gt;r_total
+op_plus
+id|sp-&gt;w_total
 comma
 id|sp-&gt;r_total
 comma
 id|sp-&gt;w_total
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;      blks(512) rd=%ld; blks(512) wr=%ld&bslash;n&quot;
-comma
-id|sp-&gt;r_total512
-comma
-id|sp-&gt;w_total512
 )paren
 suffix:semicolon
 id|size
@@ -1670,7 +1614,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot; Reads:&quot;
+l_string|&quot;   Reads:&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1699,7 +1643,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;%6ld &quot;
+l_string|&quot; %7ld&quot;
 comma
 id|sp-&gt;r_bins
 (braket
@@ -1725,7 +1669,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;Writes:&quot;
+l_string|&quot;  Writes:&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1754,7 +1698,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;%6ld &quot;
+l_string|&quot; %7ld&quot;
 comma
 id|sp-&gt;w_bins
 (braket
@@ -1763,6 +1707,16 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 macro_line|#else
 id|size
 op_add_assign
@@ -1771,7 +1725,11 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;    Total transfers: %ld/%ld read/written)&bslash;n&quot;
+l_string|&quot;  Total transfers %ld (%ld reads and %ld writes)&bslash;n&quot;
+comma
+id|sp-&gt;r_total
+op_plus
+id|sp-&gt;w_total
 comma
 id|sp-&gt;r_total
 comma
@@ -1789,7 +1747,6 @@ comma
 l_string|&quot;&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond

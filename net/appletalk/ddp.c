@@ -8033,7 +8033,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;AppleTalk 0.18 for Linux NET3.037&bslash;n&quot;
+l_string|&quot;NET4: AppleTalk 0.18 for Linux NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

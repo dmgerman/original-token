@@ -186,6 +186,13 @@ c_func
 id|devc
 )paren
 suffix:semicolon
+id|ess_mixer_reload
+(paren
+id|devc
+comma
+id|SOUND_MIXER_RECLEV
+)paren
+suffix:semicolon
 multiline_comment|/* The ALS007 seems to require that the DSP be removed from the output */
 multiline_comment|/* in order for recording to be activated properly.  This is done by   */
 multiline_comment|/* setting the appropriate bits of the output control register 4ch to  */
@@ -270,20 +277,26 @@ id|dev
 op_member_access_from_pointer
 id|devc
 suffix:semicolon
-multiline_comment|/* if we did dma juggling put the right dmap in the right place */
+multiline_comment|/* fix things if mmap turned off fullduplex */
 r_if
 c_cond
 (paren
 id|devc-&gt;duplex
 op_logical_and
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dmap_out-&gt;dma
-op_ne
-id|devc-&gt;dma8
+op_logical_neg
+id|devc-&gt;fullduplex
+op_logical_and
+(paren
+id|devc-&gt;opened
+op_amp
+id|OPEN_READ
+)paren
+op_logical_and
+(paren
+id|devc-&gt;opened
+op_amp
+id|OPEN_WRITE
+)paren
 )paren
 (brace
 r_struct

@@ -365,6 +365,13 @@ id|vmtruncate
 )paren
 suffix:semicolon
 multiline_comment|/* filesystem internal functions */
+DECL|variable|in_group_p
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|in_group_p
+)paren
+suffix:semicolon
 DECL|variable|update_atime
 id|EXPORT_SYMBOL
 c_func
@@ -377,6 +384,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_super
+)paren
+suffix:semicolon
+DECL|variable|get_fs_type
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_fs_type
 )paren
 suffix:semicolon
 DECL|variable|getname
@@ -517,6 +531,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|init_private_file
+)paren
+suffix:semicolon
+DECL|variable|filp_open
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|filp_open
 )paren
 suffix:semicolon
 DECL|variable|fput
@@ -1481,6 +1502,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sleep_on
+)paren
+suffix:semicolon
+DECL|variable|sleep_on_timeout
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sleep_on_timeout
 )paren
 suffix:semicolon
 DECL|variable|interruptible_sleep_on

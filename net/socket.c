@@ -5780,7 +5780,14 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Swansea University Computer Society NET3.039 for Linux 2.1&bslash;n&quot;
+l_string|&quot;Linux NET4.0 for Linux 2.2&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Based upon Swansea University Computer Society NET3.039&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */

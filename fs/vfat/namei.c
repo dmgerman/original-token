@@ -9042,6 +9042,7 @@ id|res
 op_ge
 l_int|0
 )paren
+(brace
 id|drop_replace_inodes
 c_func
 (paren
@@ -9050,6 +9051,13 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|d_delete
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
 )brace
 r_return
 id|res

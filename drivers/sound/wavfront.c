@@ -1,7 +1,13 @@
-multiline_comment|/*  -*- linux-c -*-&n; *&n; * sound/wavfront.c&n; *&n; * A Linux driver for Turtle Beach WaveFront Series (Maui, Tropez, Tropez Plus)&n; *&n; * This driver supports the onboard wavetable synthesizer (an ICS2115),&n; * including patch, sample and program loading and unloading, conversion&n; * of GUS patches during loading, and full user-level access to all&n; * WaveFront commands. It tries to provide semi-intelligent patch and&n; * sample management as well.&n; *&n; * It also provides support for the ICS emulation of an MPU-401.  Full&n; * support for the ICS emulation&squot;s &quot;virtual MIDI mode&quot; is provided in&n; * wf_midi.c.&n; *&n; * Support is also provided for the Tropez Plus&squot; onboard FX processor,&n; * a Yamaha YSS225. Currently, code exists to configure the YSS225,&n; * and there is an interface allowing tweaking of any of its memory&n; * addresses. However, I have been unable to decipher the logical&n; * positioning of the configuration info for various effects, so for&n; * now, you just get the YSS225 in the same state as Turtle Beach&squot;s&n; * &quot;SETUPSND.EXE&quot; utility leaves it.&n; *&n; * The boards&squot; CODEC (a Crystal CS4232) is supported by cs4232.[co],&n; * This chip also controls the configuration of the card: the wavefront&n; * synth is logical unit 4.&n; *&n; **********************************************************************&n; *&n; * Copyright (C) by Paul Barton-Davis 1998&n; *&n; * Some portions of this file are taken from work that is&n; * copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * Although the relevant code here is all new, the handling of&n; * sample/alias/multi- samples is entirely based on a driver by Matt&n; * Martin and Rutger Nijlunsing which demonstrated how to get things&n; * to most aspects of this to work correctly. The GUS patch loading&n; * code has been almost unaltered by me, except to fit formatting and&n; * function names in the rest of the file. Many thanks to them.&n; *&n; * Appreciation and thanks to Hannu Savolainen for his early work on the Maui&n; * driver, and answering a few questions while this one was developed.&n; *&n; * Absolutely NO thanks to Turtle Beach/Voyetra and Yamaha for their&n; * complete lack of help in developing this driver, and in particular&n; * for their utter silence in response to questions about undocumented&n; * aspects of configuring a WaveFront soundcard, particularly the&n; * effects processor.&n; *&n; * $Id: wavfront.c,v 0.5 1998/07/22 16:16:41 pbd Exp $&n; *&n; * This program is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*  -*- linux-c -*-&n; *&n; * sound/wavfront.c&n; *&n; * A Linux driver for Turtle Beach WaveFront Series (Maui, Tropez, Tropez Plus)&n; *&n; * This driver supports the onboard wavetable synthesizer (an ICS2115),&n; * including patch, sample and program loading and unloading, conversion&n; * of GUS patches during loading, and full user-level access to all&n; * WaveFront commands. It tries to provide semi-intelligent patch and&n; * sample management as well.&n; *&n; * It also provides support for the ICS emulation of an MPU-401.  Full&n; * support for the ICS emulation&squot;s &quot;virtual MIDI mode&quot; is provided in&n; * wf_midi.c.&n; *&n; * Support is also provided for the Tropez Plus&squot; onboard FX processor,&n; * a Yamaha YSS225. Currently, code exists to configure the YSS225,&n; * and there is an interface allowing tweaking of any of its memory&n; * addresses. However, I have been unable to decipher the logical&n; * positioning of the configuration info for various effects, so for&n; * now, you just get the YSS225 in the same state as Turtle Beach&squot;s&n; * &quot;SETUPSND.EXE&quot; utility leaves it.&n; *&n; * The boards&squot; DAC/ADC (a Crystal CS4232) is supported by cs4232.[co],&n; * This chip also controls the configuration of the card: the wavefront&n; * synth is logical unit 4.&n; *&n; *&n; * Supported devices:&n; *&n; *   /dev/dsp                      - using cs4232+ad1848 modules, OSS compatible&n; *   /dev/midiNN and /dev/midiNN+1 - using wf_midi code, OSS compatible&n; *   /dev/synth00                  - raw synth interface&n; * &n; **********************************************************************&n; *&n; * Copyright (C) by Paul Barton-Davis 1998&n; *&n; * Some portions of this file are taken from work that is&n; * copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * Although the relevant code here is all new, the handling of&n; * sample/alias/multi- samples is entirely based on a driver by Matt&n; * Martin and Rutger Nijlunsing which demonstrated how to get things&n; * to work correctly. The GUS patch loading code has been almost&n; * unaltered by me, except to fit formatting and function names in the&n; * rest of the file. Many thanks to them.&n; *&n; * Appreciation and thanks to Hannu Savolainen for his early work on the Maui&n; * driver, and answering a few questions while this one was developed.&n; *&n; * Absolutely NO thanks to Turtle Beach/Voyetra and Yamaha for their&n; * complete lack of help in developing this driver, and in particular&n; * for their utter silence in response to questions about undocumented&n; * aspects of configuring a WaveFront soundcard, particularly the&n; * effects processor.&n; *&n; * $Id: wavfront.c,v 0.7 1998/09/09 15:47:36 pbd Exp $&n; *&n; * This program is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.  */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;    
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &lt;linux/wavefront.h&gt;
@@ -10,24 +16,74 @@ mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;WaveFront MIDI&quot;
 DECL|macro|MIDI_SYNTH_CAPS
 mdefine_line|#define MIDI_SYNTH_CAPS&t;SYNTH_CAP_INPUT
 macro_line|#include &quot;midi_synth.h&quot;
-multiline_comment|/* This thing is meant to work as a module */
+multiline_comment|/* Compile-time control of the extent to which OSS is supported.&n;&n;   I consider /dev/sequencer to be an anachronism, but given its&n;   widespread usage by various Linux MIDI software, it seems worth&n;   offering support to it if its not too painful. Instead of using&n;   /dev/sequencer, I recommend:&n;&n;     for synth programming and patch loading: /dev/synthNN&n;     for kernel-synchronized MIDI sequencing: the ALSA sequencer&n;     for direct MIDI control: /dev/midiNN&n;&n;   I have never tried static compilation into the kernel. The #if&squot;s&n;   for this are really just notes to myself about what the code is&n;   for.&n;*/
+DECL|macro|OSS_SUPPORT_SEQ
+mdefine_line|#define OSS_SUPPORT_SEQ            0x1  /* use of /dev/sequencer */
+DECL|macro|OSS_SUPPORT_STATIC_INSTALL
+mdefine_line|#define OSS_SUPPORT_STATIC_INSTALL 0x2  /* static compilation into kernel */
+DECL|macro|OSS_SUPPORT_LEVEL
+mdefine_line|#define OSS_SUPPORT_LEVEL          0x1  /* just /dev/sequencer for now */
+macro_line|#if    OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_SEQ
+DECL|variable|midi_load_patch
+r_static
+r_int
+(paren
+op_star
+id|midi_load_patch
+)paren
+(paren
+r_int
+id|devno
+comma
+r_int
+id|format
+comma
+r_const
+r_char
+op_star
+id|addr
+comma
+r_int
+id|offs
+comma
+r_int
+id|count
+comma
+r_int
+id|pmgr_flag
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif OSS_SUPPORT_SEQ
+multiline_comment|/* This is meant to work as a module */
 macro_line|#if defined(CONFIG_SOUND_WAVEFRONT_MODULE) &amp;&amp; defined(MODULE)
 multiline_comment|/* if WF_DEBUG not defined, no run-time debugging messages will&n;   be available via the debug flag setting. Given the current&n;   beta state of the driver, this will remain set until a future &n;   version.&n;*/
 DECL|macro|WF_DEBUG
 mdefine_line|#define WF_DEBUG 1
+macro_line|#ifdef WF_DEBUG
+multiline_comment|/* Thank goodness for gcc&squot;s preprocessor ... */
+DECL|macro|DPRINT
+mdefine_line|#define DPRINT(cond, format, args...) &bslash;&n;       if ((dev.debug &amp; (cond)) == (cond)) { &bslash;&n;&t;     printk (KERN_DEBUG LOGNAME format, ## args); &bslash;&n;       }
+macro_line|#else
+DECL|macro|DPRINT
+mdefine_line|#define DPRINT(cond, format, args...)
+macro_line|#endif
+DECL|macro|LOGNAME
+mdefine_line|#define LOGNAME &quot;WaveFront: &quot;
 multiline_comment|/* bitmasks for WaveFront status port value */
-DECL|macro|STAT_INTR_WRITE
-mdefine_line|#define STAT_INTR_WRITE&t;&t;0x40
-DECL|macro|STAT_CAN_WRITE
-mdefine_line|#define STAT_CAN_WRITE&t;&t;0x20
-DECL|macro|STAT_WINTR_ENABLED
-mdefine_line|#define STAT_WINTR_ENABLED&t;0x10
-DECL|macro|STAT_INTR_READ
-mdefine_line|#define STAT_INTR_READ&t;&t;0x04
-DECL|macro|STAT_CAN_READ
-mdefine_line|#define STAT_CAN_READ&t;&t;0x02
 DECL|macro|STAT_RINTR_ENABLED
 mdefine_line|#define STAT_RINTR_ENABLED&t;0x01
+DECL|macro|STAT_CAN_READ
+mdefine_line|#define STAT_CAN_READ&t;&t;0x02
+DECL|macro|STAT_INTR_READ
+mdefine_line|#define STAT_INTR_READ&t;&t;0x04
+DECL|macro|STAT_WINTR_ENABLED
+mdefine_line|#define STAT_WINTR_ENABLED&t;0x10
+DECL|macro|STAT_CAN_WRITE
+mdefine_line|#define STAT_CAN_WRITE&t;&t;0x20
+DECL|macro|STAT_INTR_WRITE
+mdefine_line|#define STAT_INTR_WRITE&t;&t;0x40
 multiline_comment|/*** Module-accessible parameters ***************************************/
 DECL|variable|wf_raw
 r_int
@@ -59,6 +115,13 @@ op_assign
 l_string|&quot;/etc/sound/wavefront.os&quot;
 suffix:semicolon
 multiline_comment|/* where to find a processed&n;&t;&t;&t;&t;&t;     version of the WaveFront OS&n;&t;&t;&t;&t;&t;  */
+DECL|variable|wait_usecs
+r_int
+id|wait_usecs
+op_assign
+l_int|150
+suffix:semicolon
+multiline_comment|/* This magic number seems to give pretty optimal&n;&t;&t;&t; throughput based on my limited experimentation.&n;&t;&t;&t; If you want to play around with it and find a better&n;&t;&t;&t; value, be my guest. Remember, the idea is to&n;&t;&t;&t; get a number that causes us to just busy wait&n;&t;&t;&t; for as many WaveFront commands as possible, without&n;&t;&t;&t; coming up with a number so large that we hog the&n;&t;&t;&t; whole CPU.&n;&n;&t;&t;&t; Specifically, with this number, out of about 134,000&n;&t;&t;&t; status waits, only about 250 result in a sleep.&n;&t;&t;      */
 DECL|variable|sleep_interval
 r_int
 id|sleep_interval
@@ -73,13 +136,27 @@ op_assign
 l_int|50
 suffix:semicolon
 multiline_comment|/* number of times we&squot;ll try to sleep */
-DECL|variable|wait_usecs
+DECL|variable|reset_time
 r_int
-id|wait_usecs
+id|reset_time
 op_assign
-l_int|150
+l_int|2
 suffix:semicolon
-multiline_comment|/* This magic number seems to give pretty optimal&n;&t;&t;&t; throughput based on my limited experimentation.&n;&t;&t;&t; If you want to play around with it and find a better&n;&t;&t;&t; value, be my guest. Remember, the idea is to&n;&t;&t;&t; get a number that causes us to just busy wait&n;&t;&t;&t; for as many WaveFront commands as possible, without&n;&t;&t;&t; coming up with a number so large that we hog the&n;&t;&t;&t; whole CPU.&n;&n;&t;&t;&t; Specifically, with this number, out of about 134,000&n;&t;&t;&t; status waits, only about 250 result in a sleep.&n;&t;&t;      */
+multiline_comment|/* hundreths of a second we wait after a HW reset for&n;&t;&t;&t;      the expected interrupt.&n;&t;&t;&t;   */
+DECL|variable|ramcheck_time
+r_int
+id|ramcheck_time
+op_assign
+l_int|20
+suffix:semicolon
+multiline_comment|/* time in seconds to wait while ROM code&n;&t;&t;&t;      checks on-board RAM.&n;&t;&t;&t;   */
+DECL|variable|osrun_time
+r_int
+id|osrun_time
+op_assign
+l_int|10
+suffix:semicolon
+multiline_comment|/* time in seconds we wait for the OS to&n;&t;&t;&t;      start running.&n;&t;&t;&t;   */
 id|MODULE_PARM
 c_func
 (paren
@@ -107,6 +184,14 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
+id|wait_usecs
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
 id|sleep_interval
 comma
 l_string|&quot;i&quot;
@@ -123,7 +208,15 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|wait_usecs
+id|ospath
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|reset_time
 comma
 l_string|&quot;i&quot;
 )paren
@@ -131,71 +224,22 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|ospath
+id|ramcheck_time
 comma
-l_string|&quot;s&quot;
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|osrun_time
+comma
+l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 multiline_comment|/***************************************************************************/
-DECL|variable|wavefront_info
-r_static
-r_struct
-id|synth_info
-id|wavefront_info
-op_assign
-(brace
-l_string|&quot;Turtle Beach WaveFront&quot;
-comma
-l_int|0
-comma
-id|SYNTH_TYPE_SAMPLE
-comma
-id|SAMPLE_TYPE_WAVEFRONT
-comma
-l_int|0
-comma
-l_int|32
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|SYNTH_CAP_INPUT
-)brace
-suffix:semicolon
-DECL|variable|midi_load_patch
-r_static
-r_int
-(paren
-op_star
-id|midi_load_patch
-)paren
-(paren
-r_int
-id|dev
-comma
-r_int
-id|format
-comma
-r_const
-r_char
-op_star
-id|addr
-comma
-r_int
-id|offs
-comma
-r_int
-id|count
-comma
-r_int
-id|pmgr_flag
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/* Note: because this module doesn&squot;t export any symbols, this really isn&squot;t&n;   a global variable, even if it looks like one. I was quite confused by&n;   this when I started writing this as a (newer) module -- pbd.&n;*/
 DECL|struct|wf_config
-r_typedef
 r_struct
 id|wf_config
 (brace
@@ -255,11 +299,17 @@ r_int
 id|irq_ok
 suffix:semicolon
 multiline_comment|/* set by interrupt handler */
+DECL|member|irq_cnt
+r_volatile
+r_int
+id|irq_cnt
+suffix:semicolon
+multiline_comment|/* ditto */
 DECL|member|opened
 r_int
 id|opened
 suffix:semicolon
-multiline_comment|/* flag, holds open(1) mode */
+multiline_comment|/* flag, holds open(2) mode */
 DECL|member|debug
 r_char
 id|debug
@@ -270,21 +320,33 @@ r_int
 id|freemem
 suffix:semicolon
 multiline_comment|/* installed RAM, in bytes */
-DECL|member|synthdev
+DECL|member|synth_dev
 r_int
-id|synthdev
+id|synth_dev
 suffix:semicolon
-multiline_comment|/* OSS minor devnum for synth */
+multiline_comment|/* devno for &quot;raw&quot; synth */
 DECL|member|mididev
 r_int
 id|mididev
 suffix:semicolon
-multiline_comment|/* OSS minor devno for internal MIDI */
+multiline_comment|/* devno for internal MIDI */
 DECL|member|ext_mididev
 r_int
 id|ext_mididev
 suffix:semicolon
-multiline_comment|/* OSS minor devno for external MIDI */
+multiline_comment|/* devno for external MIDI */
+DECL|member|fx_mididev
+r_int
+id|fx_mididev
+suffix:semicolon
+multiline_comment|/* devno for FX MIDI interface */
+macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_SEQ
+DECL|member|oss_dev
+r_int
+id|oss_dev
+suffix:semicolon
+multiline_comment|/* devno for OSS sequencer synth */
+macro_line|#endif OSS_SUPPORT_SEQ
 DECL|member|fw_version
 r_char
 id|fw_version
@@ -306,6 +368,11 @@ r_char
 id|israw
 suffix:semicolon
 multiline_comment|/* needs Motorola microcode */
+DECL|member|has_fx
+r_char
+id|has_fx
+suffix:semicolon
+multiline_comment|/* has FX processor (Tropez+) */
 DECL|member|prog_status
 r_char
 id|prog_status
@@ -351,42 +418,22 @@ id|wait_queue
 op_star
 id|interrupt_sleeper
 suffix:semicolon
-macro_line|#ifdef  WF_STATS
-DECL|member|status_found_during_loop
-r_int
-r_int
-id|status_found_during_loop
-suffix:semicolon
-DECL|member|status_found_during_sleep
-r_int
-r_int
-id|status_found_during_sleep
-(braket
-l_int|4
-)braket
-suffix:semicolon
-macro_line|#endif  WF_STATS
-DECL|typedef|wf_config
+DECL|variable|dev
 )brace
-id|wf_config
+id|dev
 suffix:semicolon
-multiline_comment|/* Note: because this module doesn&squot;t export any symbols, this really isn&squot;t&n;   a global variable, even if it looks like one. I was quite confused by&n;   this when I started writing this as a (newer) module -- pbd.&n;*/
-DECL|variable|wavefront_configuration
 r_static
-id|wf_config
-id|wavefront_configuration
+r_int
+id|detect_wffx
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
-DECL|macro|wavefront_status
-mdefine_line|#define wavefront_status(hw) (inb (hw-&gt;status_port))
-multiline_comment|/* forward references */
 r_static
 r_int
 id|wffx_ioctl
 (paren
-r_struct
-id|wf_config
-op_star
-comma
 id|wavefront_fx_info
 op_star
 )paren
@@ -395,23 +442,60 @@ r_static
 r_int
 id|wffx_init
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 suffix:semicolon
 r_static
 r_int
 id|wavefront_delete_sample
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|sampnum
+)paren
+suffix:semicolon
+r_static
+r_int
+id|wavefront_find_free_sample
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* From wf_midi.c */
+r_extern
+r_int
+id|virtual_midi_enable
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|virtual_midi_disable
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|detect_wf_mpu
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|install_wf_mpu
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|uninstall_wf_mpu
+(paren
+r_void
 )paren
 suffix:semicolon
 r_typedef
@@ -1151,14 +1235,26 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
+r_inline
+r_int
+DECL|function|wavefront_status
+id|wavefront_status
+(paren
+r_void
+)paren
+(brace
+r_return
+id|inb
+(paren
+id|dev.status_port
+)paren
+suffix:semicolon
+)brace
+r_static
 r_int
 DECL|function|wavefront_sleep
 id|wavefront_sleep
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|limit
 )paren
@@ -1186,10 +1282,6 @@ r_int
 DECL|function|wavefront_wait
 id|wavefront_wait
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|mask
 )paren
@@ -1203,6 +1295,7 @@ id|short_loop_cnt
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Compute the loop count that lets us sleep for about the&n;&t;   right amount of time, cache issues, bus speeds and all&n;&t;   other issues being unequal but largely irrelevant.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -1213,26 +1306,16 @@ l_int|0
 (brace
 id|short_loop_cnt
 op_assign
-(paren
-r_int
-)paren
-(paren
-(paren
-(paren
-r_float
-)paren
 id|wait_usecs
-op_div
-l_float|1000000.0
-)paren
 op_star
 (paren
-r_float
-)paren
 id|current_cpu_data.loops_per_sec
+op_div
+l_int|1000000
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Spin for a short period of time, because &gt;99% of all&n;&t;   requests to the WaveFront can be serviced inline like this.&n;&t;*/
 r_for
 c_loop
 (paren
@@ -1254,17 +1337,11 @@ c_cond
 id|wavefront_status
 c_func
 (paren
-id|hw
 )paren
 op_amp
 id|mask
 )paren
 (brace
-macro_line|#ifdef WF_STATS
-id|hw-&gt;status_found_during_loop
-op_increment
-suffix:semicolon
-macro_line|#endif WF_STATS
 r_return
 l_int|1
 suffix:semicolon
@@ -1291,29 +1368,11 @@ c_cond
 id|wavefront_status
 c_func
 (paren
-id|hw
 )paren
 op_amp
 id|mask
 )paren
 (brace
-macro_line|#ifdef WF_STATS
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|4
-)paren
-(brace
-id|hw-&gt;status_found_during_sleep
-(braket
-id|i
-)braket
-op_increment
-suffix:semicolon
-)brace
-macro_line|#endif WF_STATS
 r_return
 l_int|1
 suffix:semicolon
@@ -1323,8 +1382,6 @@ c_cond
 (paren
 id|wavefront_sleep
 (paren
-id|hw
-comma
 id|HZ
 op_div
 id|sleep_interval
@@ -1339,7 +1396,9 @@ suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -1347,9 +1406,7 @@ r_int
 DECL|function|wavefront_read
 id|wavefront_read
 (paren
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_if
@@ -1357,34 +1414,22 @@ c_cond
 (paren
 id|wavefront_wait
 (paren
-id|hw
-comma
 id|STAT_CAN_READ
 )paren
 )paren
 r_return
 id|inb
 (paren
-id|hw-&gt;data_port
+id|dev.data_port
 )paren
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: read timeout.&bslash;n&quot;
+comma
+l_string|&quot;read timeout.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 op_minus
 l_int|1
@@ -1395,10 +1440,6 @@ r_int
 DECL|function|wavefront_write
 id|wavefront_write
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 r_char
 id|data
@@ -1409,8 +1450,6 @@ c_cond
 (paren
 id|wavefront_wait
 (paren
-id|hw
-comma
 id|STAT_CAN_WRITE
 )paren
 )paren
@@ -1419,32 +1458,23 @@ id|outb
 (paren
 id|data
 comma
-id|hw-&gt;data_port
+id|dev.data_port
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
-(paren
-id|hw-&gt;debug
-op_amp
-id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: write timeout.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|0
+suffix:semicolon
+)brace
+id|DPRINT
+(paren
+id|WF_DEBUG_DATA
+comma
+l_string|&quot;write timeout.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 r_static
@@ -1452,10 +1482,6 @@ r_int
 DECL|function|wavefront_cmd
 id|wavefront_cmd
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|cmd
 comma
@@ -1505,7 +1531,8 @@ l_int|0
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: command 0x%x not supported.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;command 0x%x not supported.&bslash;n&quot;
 comma
 id|cmd
 )paren
@@ -1536,19 +1563,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_CMD
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Wavefront: 0x%x [%s] (%d,%d,%d)&bslash;n&quot;
+comma
+l_string|&quot;0x%x [%s] (%d,%d,%d)&bslash;n&quot;
 comma
 id|cmd
 comma
@@ -1561,37 +1580,24 @@ comma
 id|wfcmd-&gt;need_ack
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_if
 c_cond
 (paren
-op_logical_neg
 id|wavefront_write
 (paren
-id|hw
-comma
 id|cmd
 )paren
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 (paren
 id|WF_DEBUG_IO
 op_or
 id|WF_DEBUG_CMD
 )paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: cannot request &quot;
+comma
+l_string|&quot;cannot request &quot;
 l_string|&quot;0x%x [%s].&bslash;n&quot;
 comma
 id|cmd
@@ -1599,8 +1605,6 @@ comma
 id|wfcmd-&gt;action
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|1
 suffix:semicolon
@@ -1613,19 +1617,11 @@ OG
 l_int|0
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: writing %d bytes &quot;
+comma
+l_string|&quot;writing %d bytes &quot;
 l_string|&quot;for 0x%x&bslash;n&quot;
 comma
 id|wfcmd-&gt;write_cnt
@@ -1633,8 +1629,6 @@ comma
 id|cmd
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_for
 c_loop
 (paren
@@ -1653,11 +1647,8 @@ op_increment
 r_if
 c_cond
 (paren
-op_logical_neg
 id|wavefront_write
 (paren
-id|hw
-comma
 id|wbuf
 (braket
 id|i
@@ -1665,19 +1656,12 @@ id|i
 )paren
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_IO
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: bad write for byte %d of 0x%x [%s].&bslash;n&quot;
+comma
+l_string|&quot;bad write for byte &quot;
+l_string|&quot;%d of 0x%x [%s].&bslash;n&quot;
 comma
 id|i
 comma
@@ -1686,25 +1670,15 @@ comma
 id|wfcmd-&gt;action
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: write[%d] = 0x%x&bslash;n&quot;
+comma
+l_string|&quot;write[%d] = 0x%x&bslash;n&quot;
 comma
 id|i
 comma
@@ -1714,8 +1688,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-macro_line|#endif WF_DEBUG
-)brace
 )brace
 )brace
 r_if
@@ -1726,19 +1698,11 @@ OG
 l_int|0
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: reading %d ints &quot;
+comma
+l_string|&quot;reading %d ints &quot;
 l_string|&quot;for 0x%x&bslash;n&quot;
 comma
 id|wfcmd-&gt;read_cnt
@@ -1746,8 +1710,6 @@ comma
 id|cmd
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_for
 c_loop
 (paren
@@ -1772,7 +1734,6 @@ op_assign
 id|wavefront_read
 c_func
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -1780,19 +1741,12 @@ op_minus
 l_int|1
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_IO
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: bad read for byte %d of 0x%x [%s].&bslash;n&quot;
+comma
+l_string|&quot;bad read for byte &quot;
+l_string|&quot;%d of 0x%x [%s].&bslash;n&quot;
 comma
 id|i
 comma
@@ -1801,8 +1755,6 @@ comma
 id|wfcmd-&gt;action
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|1
 suffix:semicolon
@@ -1824,7 +1776,6 @@ id|c
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -1832,20 +1783,14 @@ op_minus
 l_int|1
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_IO
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: bad read for error byte at &quot;
-l_string|&quot;read byte %d of 0x%x [%s].&bslash;n&quot;
+comma
+l_string|&quot;bad read for &quot;
+l_string|&quot;error byte at &quot;
+l_string|&quot;read byte %d &quot;
+l_string|&quot;of 0x%x [%s].&bslash;n&quot;
 comma
 id|i
 comma
@@ -1854,8 +1799,6 @@ comma
 id|wfcmd-&gt;action
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|1
 suffix:semicolon
@@ -1922,21 +1865,15 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_IO
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: error %d (%s) during &quot;
+comma
+l_string|&quot;error %d (%s) &quot;
+l_string|&quot;during &quot;
 l_string|&quot;read for byte &quot;
-l_string|&quot;%d of 0x%x [%s].&bslash;n&quot;
+l_string|&quot;%d of 0x%x &quot;
+l_string|&quot;[%s].&bslash;n&quot;
 comma
 id|c
 comma
@@ -1952,8 +1889,6 @@ comma
 id|wfcmd-&gt;action
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|1
 suffix:semicolon
@@ -1969,19 +1904,11 @@ op_assign
 id|c
 suffix:semicolon
 )brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: read[%d] = 0x%x&bslash;n&quot;
+comma
+l_string|&quot;read[%d] = 0x%x&bslash;n&quot;
 comma
 id|i
 comma
@@ -1991,8 +1918,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 )brace
 )brace
 r_if
@@ -2011,25 +1936,15 @@ op_logical_or
 id|wfcmd-&gt;need_ack
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_CMD
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: reading ACK for 0x%x&bslash;n&quot;
+comma
+l_string|&quot;reading ACK for 0x%x&bslash;n&quot;
 comma
 id|cmd
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 multiline_comment|/* Some commands need an ACK, but return zero instead&n;&t;&t;   of the standard value.&n;&t;&t;*/
 r_if
 c_cond
@@ -2040,7 +1955,6 @@ op_assign
 id|wavefront_read
 c_func
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -2069,27 +1983,18 @@ op_minus
 l_int|1
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_IO
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: cannot read ack for 0x%x [%s].&bslash;n&quot;
+comma
+l_string|&quot;cannot read ack for &quot;
+l_string|&quot;0x%x [%s].&bslash;n&quot;
 comma
 id|cmd
 comma
 id|wfcmd-&gt;action
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|1
 suffix:semicolon
@@ -2120,7 +2025,6 @@ id|err
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -2128,19 +2032,12 @@ op_minus
 l_int|1
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: cannot read err for 0x%x [%s].&bslash;n&quot;
+comma
+l_string|&quot;cannot read err &quot;
+l_string|&quot;for 0x%x [%s].&bslash;n&quot;
 comma
 id|cmd
 comma
@@ -2148,22 +2045,12 @@ id|wfcmd-&gt;action
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif WF_DEBUG
 )brace
-)brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_IO
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: 0x%x [%s] &quot;
+comma
+l_string|&quot;0x%x [%s] &quot;
 l_string|&quot;failed (0x%x, 0x%x, %s)&bslash;n&quot;
 comma
 id|cmd
@@ -2180,27 +2067,17 @@ id|err
 )paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 op_minus
 id|err
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: ack received &quot;
+comma
+l_string|&quot;ack received &quot;
 l_string|&quot;for 0x%x [%s]&bslash;n&quot;
 comma
 id|cmd
@@ -2209,23 +2086,13 @@ id|wfcmd-&gt;action
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif WF_DEBUG
-)brace
 r_else
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_CMD
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Wavefront: 0x%x [%s] does not need &quot;
+comma
+l_string|&quot;0x%x [%s] does not need &quot;
 l_string|&quot;ACK (%d,%d,%d)&bslash;n&quot;
 comma
 id|cmd
@@ -2239,8 +2106,6 @@ comma
 id|wfcmd-&gt;need_ack
 )paren
 suffix:semicolon
-macro_line|#endif WF_DEBUG
-)brace
 )brace
 r_return
 l_int|0
@@ -2536,10 +2401,6 @@ r_int
 DECL|function|wavefront_delete_sample
 id|wavefront_delete_sample
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|sample_num
 )paren
@@ -2580,8 +2441,6 @@ id|x
 op_assign
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_DELETE_SAMPLE
 comma
 l_int|0
@@ -2593,7 +2452,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|sample_num
 )braket
@@ -2610,11 +2469,6 @@ r_int
 DECL|function|wavefront_get_sample_status
 id|wavefront_get_sample_status
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|assume_rom
 )paren
@@ -2648,8 +2502,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_GET_NSAMPLES
 comma
 id|rbuf
@@ -2660,8 +2512,14 @@ id|wbuf
 (brace
 id|printk
 (paren
-l_string|&quot;WaveFront: cannot request sample count.&bslash;n&quot;
+id|KERN_WARNING
+id|LOGNAME
+l_string|&quot;cannot request sample count.&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|sc_real
@@ -2670,7 +2528,7 @@ id|sc_alias
 op_assign
 id|sc_multi
 op_assign
-id|hw-&gt;samples_used
+id|dev.samples_used
 op_assign
 l_int|0
 suffix:semicolon
@@ -2712,8 +2570,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_IDENTIFY_SAMPLE_TYPE
 comma
 id|rbuf
@@ -2725,13 +2581,14 @@ id|wbuf
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: cannot identify sample &quot;
+id|LOGNAME
+l_string|&quot;cannot identify sample &quot;
 l_string|&quot;type of slot %d&bslash;n&quot;
 comma
 id|i
 )paren
 suffix:semicolon
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|i
 )braket
@@ -2741,7 +2598,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|i
 )braket
@@ -2761,7 +2618,7 @@ c_cond
 id|assume_rom
 )paren
 (brace
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|i
 )braket
@@ -2814,7 +2671,8 @@ suffix:colon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: unknown sample type for &quot;
+id|LOGNAME
+l_string|&quot;unknown sample type for &quot;
 l_string|&quot;slot %d (0x%x)&bslash;n&quot;
 comma
 id|i
@@ -2837,7 +2695,7 @@ op_ne
 id|WF_ST_EMPTY
 )paren
 (brace
-id|hw-&gt;samples_used
+id|dev.samples_used
 op_increment
 suffix:semicolon
 )brace
@@ -2845,10 +2703,11 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: %d samples used (%d real, %d aliases, %d multi), &quot;
+id|LOGNAME
+l_string|&quot;%d samples used (%d real, %d aliases, %d multi), &quot;
 l_string|&quot;%d empty&bslash;n&quot;
 comma
-id|hw-&gt;samples_used
+id|dev.samples_used
 comma
 id|sc_real
 comma
@@ -2858,7 +2717,7 @@ id|sc_multi
 comma
 id|WF_MAX_SAMPLE
 op_minus
-id|hw-&gt;samples_used
+id|dev.samples_used
 )paren
 suffix:semicolon
 r_return
@@ -2872,10 +2731,7 @@ r_int
 DECL|function|wavefront_get_patch_status
 id|wavefront_get_patch_status
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_int
@@ -2946,8 +2802,6 @@ id|x
 op_assign
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_UPLOAD_PATCH
 comma
 id|patchbuf
@@ -2959,7 +2813,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|i
 )braket
@@ -2974,7 +2828,7 @@ op_star
 )paren
 id|patchbuf
 suffix:semicolon
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|p-&gt;sample_number
 op_or
@@ -2998,7 +2852,7 @@ l_int|3
 )paren
 (brace
 multiline_comment|/* Bad patch number */
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|i
 )braket
@@ -3011,13 +2865,14 @@ r_else
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: upload patch &quot;
+id|LOGNAME
+l_string|&quot;upload patch &quot;
 l_string|&quot;error 0x%x&bslash;n&quot;
 comma
 id|x
 )paren
 suffix:semicolon
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|i
 )braket
@@ -3056,7 +2911,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|i
 )braket
@@ -3071,7 +2926,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|i
 )braket
@@ -3087,7 +2942,8 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: %d patch slots filled, %d in use&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;%d patch slots filled, %d in use&bslash;n&quot;
 comma
 id|cnt
 comma
@@ -3105,10 +2961,7 @@ r_int
 DECL|function|wavefront_get_program_status
 id|wavefront_get_program_status
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_int
@@ -3161,8 +3014,6 @@ id|x
 op_assign
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_UPLOAD_PROGRAM
 comma
 id|progbuf
@@ -3175,7 +3026,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|hw-&gt;prog_status
+id|dev.prog_status
 (braket
 id|i
 )braket
@@ -3223,7 +3074,7 @@ dot
 id|mute
 )paren
 (brace
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|prog.layer
 (braket
@@ -3248,7 +3099,7 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* Bad program number */
-id|hw-&gt;prog_status
+id|dev.prog_status
 (braket
 id|i
 )braket
@@ -3261,13 +3112,14 @@ r_else
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: upload program &quot;
+id|LOGNAME
+l_string|&quot;upload program &quot;
 l_string|&quot;error 0x%x&bslash;n&quot;
 comma
 id|x
 )paren
 suffix:semicolon
-id|hw-&gt;prog_status
+id|dev.prog_status
 (braket
 id|i
 )braket
@@ -3298,7 +3150,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|hw-&gt;prog_status
+id|dev.prog_status
 (braket
 id|i
 )braket
@@ -3312,7 +3164,8 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: %d programs slots in use&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;%d programs slots in use&bslash;n&quot;
 comma
 id|cnt
 )paren
@@ -3328,10 +3181,6 @@ r_int
 DECL|function|wavefront_send_patch
 id|wavefront_send_patch
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_patch_info
 op_star
 id|header
@@ -3351,26 +3200,16 @@ r_char
 op_star
 id|bptr
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_LOAD_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: downloading patch %d&bslash;n&quot;
+comma
+l_string|&quot;downloading patch %d&bslash;n&quot;
 comma
 id|header-&gt;number
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|header-&gt;number
 )braket
@@ -3412,8 +3251,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_DOWNLOAD_PATCH
 comma
 l_int|0
@@ -3425,7 +3262,8 @@ id|buf
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: download patch failed&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;download patch failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3446,10 +3284,6 @@ r_int
 DECL|function|wavefront_send_program
 id|wavefront_send_program
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_patch_info
 op_star
 id|header
@@ -3467,26 +3301,16 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_LOAD_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: downloading program %d&bslash;n&quot;
+comma
+l_string|&quot;downloading program %d&bslash;n&quot;
 comma
 id|header-&gt;number
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
-id|hw-&gt;prog_status
+id|dev.prog_status
 (braket
 id|header-&gt;number
 )braket
@@ -3520,7 +3344,7 @@ dot
 id|mute
 )paren
 (brace
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|header-&gt;hdr.pr.layer
 (braket
@@ -3566,8 +3390,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_DOWNLOAD_PROGRAM
 comma
 l_int|0
@@ -3579,7 +3401,8 @@ id|buf
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: download patch failed&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;download patch failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3600,9 +3423,7 @@ r_int
 DECL|function|wavefront_freemem
 id|wavefront_freemem
 (paren
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_char
@@ -3616,8 +3437,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_REPORT_FREE_MEMORY
 comma
 id|rbuf
@@ -3629,7 +3448,8 @@ l_int|0
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: can&squot;t get memory stats.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;can&squot;t get memory stats.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3654,10 +3474,6 @@ r_int
 DECL|function|wavefront_send_sample
 id|wavefront_send_sample
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_patch_info
 op_star
 id|header
@@ -3731,19 +3547,11 @@ id|initial_skip
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_LOAD_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: sample %sdownload for slot %d, &quot;
+comma
+l_string|&quot;sample %sdownload for slot %d, &quot;
 l_string|&quot;type %d, %d bytes from 0x%x&bslash;n&quot;
 comma
 id|header-&gt;size
@@ -3765,8 +3573,50 @@ r_int
 id|header-&gt;dataptr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|header-&gt;number
+op_eq
+id|WAVEFRONT_FIND_FREE_SAMPLE_SLOT
+)paren
+(brace
+r_int
+id|x
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|x
+op_assign
+id|wavefront_find_free_sample
+(paren
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 )brace
-macro_line|#endif WF_DEBUG
+id|printk
+(paren
+id|KERN_DEBUG
+id|LOGNAME
+l_string|&quot;unspecified sample =&gt; %d&bslash;n&quot;
+comma
+id|x
+)paren
+suffix:semicolon
+id|header-&gt;number
+op_assign
+id|x
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3777,13 +3627,13 @@ multiline_comment|/* XXX its a debatable point whether or not RDONLY semantics&n
 r_if
 c_cond
 (paren
-id|hw-&gt;rom_samples_rdonly
+id|dev.rom_samples_rdonly
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|header-&gt;number
 )braket
@@ -3794,7 +3644,8 @@ id|WF_SLOT_ROM
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: sample slot %d &quot;
+id|LOGNAME
+l_string|&quot;sample slot %d &quot;
 l_string|&quot;write protected&bslash;n&quot;
 comma
 id|header-&gt;number
@@ -3808,8 +3659,6 @@ suffix:semicolon
 )brace
 id|wavefront_delete_sample
 (paren
-id|hw
-comma
 id|header-&gt;number
 )paren
 suffix:semicolon
@@ -3820,17 +3669,16 @@ c_cond
 id|header-&gt;size
 )paren
 (brace
-id|hw-&gt;freemem
+id|dev.freemem
 op_assign
 id|wavefront_freemem
 (paren
-id|hw
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|hw-&gt;freemem
+id|dev.freemem
 OL
 id|header-&gt;size
 )paren
@@ -3838,7 +3686,8 @@ id|header-&gt;size
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: insufficient memory to &quot;
+id|LOGNAME
+l_string|&quot;insufficient memory to &quot;
 l_string|&quot;load %d byte sample.&bslash;n&quot;
 comma
 id|header-&gt;size
@@ -3865,26 +3714,18 @@ c_cond
 id|skip
 OG
 l_int|0
-)paren
-(brace
-r_switch
-c_cond
-(paren
+op_logical_and
 id|header-&gt;hdr.s.SampleResolution
+op_ne
+id|LINEAR_16BIT
 )paren
 (brace
-r_case
-id|LINEAR_16BIT
-suffix:colon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: channel selection only possible &quot;
-l_string|&quot;on 16-bit samples&quot;
+id|LOGNAME
+l_string|&quot;channel selection only &quot;
+l_string|&quot;possible on 16-bit samples&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3894,7 +3735,6 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
-)brace
 r_switch
 c_cond
 (paren
@@ -3993,19 +3833,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_LOAD_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: channel selection: %d =&gt; &quot;
+comma
+l_string|&quot;channel selection: %d =&gt; &quot;
 l_string|&quot;initial skip = %d, skip = %d&bslash;n&quot;
 comma
 id|WF_GET_CHANNEL
@@ -4019,8 +3851,6 @@ comma
 id|skip
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 multiline_comment|/* Be safe, and zero the &quot;Unused&quot; bits ... */
 id|WF_SET_CHANNEL
 c_func
@@ -4188,8 +4018,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|header-&gt;size
 ques
 c_cond
@@ -4206,7 +4034,8 @@ id|sample_hdr
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: sample %sdownload refused.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;sample %sdownload refused.&bslash;n&quot;
 comma
 id|header-&gt;size
 ques
@@ -4311,8 +4140,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_DOWNLOAD_BLOCK
 comma
 l_int|0
@@ -4324,7 +4151,8 @@ l_int|0
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: download block &quot;
+id|LOGNAME
+l_string|&quot;download block &quot;
 l_string|&quot;request refused.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4358,7 +4186,7 @@ OL
 id|data_end
 )paren
 (brace
-id|get_user
+id|__get_user
 (paren
 id|sample_short
 comma
@@ -4447,7 +4275,7 @@ id|outw
 (paren
 id|sample_short
 comma
-id|hw-&gt;block_port
+id|dev.block_port
 )paren
 suffix:semicolon
 )brace
@@ -4457,12 +4285,12 @@ id|outw
 (paren
 id|sample_short
 comma
-id|hw-&gt;last_block_port
+id|dev.last_block_port
 )paren
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Get &quot;DMA page acknowledge&quot; */
+multiline_comment|/* Get &quot;DMA page acknowledge&quot;, even though its really&n;&t;&t;   nothing to do with DMA at all.&n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -4471,7 +4299,6 @@ id|dma_ack
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_ne
@@ -4490,7 +4317,8 @@ l_int|1
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: upload sample &quot;
+id|LOGNAME
+l_string|&quot;upload sample &quot;
 l_string|&quot;DMA ack timeout&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4506,7 +4334,8 @@ r_else
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: upload sample &quot;
+id|LOGNAME
+l_string|&quot;upload sample &quot;
 l_string|&quot;DMA ack error 0x%x&bslash;n&quot;
 comma
 id|dma_ack
@@ -4521,7 +4350,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|header-&gt;number
 )braket
@@ -4546,11 +4375,6 @@ r_int
 DECL|function|wavefront_send_alias
 id|wavefront_send_alias
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_patch_info
 op_star
 id|header
@@ -4563,19 +4387,11 @@ id|alias_hdr
 id|WF_ALIAS_BYTES
 )braket
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_LOAD_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: download alias, %d is &quot;
+comma
+l_string|&quot;download alias, %d is &quot;
 l_string|&quot;alias for %d&bslash;n&quot;
 comma
 id|header-&gt;number
@@ -4583,8 +4399,6 @@ comma
 id|header-&gt;hdr.a.OriginalSample
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 id|munge_int32
 (paren
 id|header-&gt;number
@@ -4736,8 +4550,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_DOWNLOAD_SAMPLE_ALIAS
 comma
 l_int|0
@@ -4749,7 +4561,8 @@ id|alias_hdr
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: download alias failed.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;download alias failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4759,7 +4572,7 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|header-&gt;number
 )braket
@@ -4781,11 +4594,6 @@ r_int
 DECL|function|wavefront_send_multisample
 id|wavefront_send_multisample
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_patch_info
 op_star
 id|header
@@ -4841,19 +4649,11 @@ r_char
 )paren
 id|header-&gt;hdr.ms.NumberOfSamples
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_LOAD_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: multi %d with %d=%d samples&bslash;n&quot;
+comma
+l_string|&quot;multi %d with %d=%d samples&bslash;n&quot;
 comma
 id|header-&gt;number
 comma
@@ -4862,8 +4662,6 @@ comma
 id|num_samples
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_for
 c_loop
 (paren
@@ -4879,31 +4677,14 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
-(paren
-(paren
-id|hw-&gt;debug
-op_amp
+id|DPRINT
+c_func
 (paren
 id|WF_DEBUG_LOAD_PATCH
 op_or
 id|WF_DEBUG_DATA
-)paren
-)paren
-op_eq
-(paren
-id|WF_DEBUG_LOAD_PATCH
-op_or
-id|WF_DEBUG_DATA
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: sample[%d] = %d&bslash;n&quot;
+comma
+l_string|&quot;sample[%d] = %d&bslash;n&quot;
 comma
 id|i
 comma
@@ -4913,8 +4694,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 id|munge_int32
 (paren
 id|header-&gt;hdr.ms.SampleNumber
@@ -4944,8 +4723,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_DOWNLOAD_MULTISAMPLE
 comma
 (paren
@@ -4970,7 +4747,8 @@ id|msample_hdr
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: download of multisample failed.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;download of multisample failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4980,7 +4758,7 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|header-&gt;number
 )braket
@@ -5002,11 +4780,6 @@ r_int
 DECL|function|wavefront_fetch_multisample
 id|wavefront_fetch_multisample
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_patch_info
 op_star
 id|header
@@ -5046,8 +4819,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_UPLOAD_MULTISAMPLE
 comma
 id|log_ns
@@ -5059,7 +4830,8 @@ id|number
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: upload multisample failed.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;upload multisample failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5069,19 +4841,11 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: msample %d has %d samples&bslash;n&quot;
+comma
+l_string|&quot;msample %d has %d samples&bslash;n&quot;
 comma
 id|header-&gt;number
 comma
@@ -5091,8 +4855,6 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 id|header-&gt;hdr.ms.NumberOfSamples
 op_assign
 id|log_ns
@@ -5144,7 +4906,6 @@ l_int|0
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -5155,7 +4916,8 @@ l_int|1
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: upload multisample failed &quot;
+id|LOGNAME
+l_string|&quot;upload multisample failed &quot;
 l_string|&quot;during sample loop.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5177,7 +4939,6 @@ l_int|1
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -5188,7 +4949,8 @@ l_int|1
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: upload multisample failed &quot;
+id|LOGNAME
+l_string|&quot;upload multisample failed &quot;
 l_string|&quot;during sample loop.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5216,20 +4978,11 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_DATA
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: msample &quot;
-l_string|&quot;sample[%d] = %d&bslash;n&quot;
+comma
+l_string|&quot;msample sample[%d] = %d&bslash;n&quot;
 comma
 id|i
 comma
@@ -5239,8 +4992,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 )brace
 r_return
 (paren
@@ -5253,11 +5004,6 @@ r_int
 DECL|function|wavefront_send_drum
 id|wavefront_send_drum
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_patch_info
 op_star
 id|header
@@ -5280,19 +5026,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
+id|DPRINT
 (paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_LOAD_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: downloading edrum for MIDI &quot;
+comma
+l_string|&quot;downloading edrum for MIDI &quot;
 l_string|&quot;note %d, patch = %d&bslash;n&quot;
 comma
 id|header-&gt;number
@@ -5300,8 +5038,6 @@ comma
 id|drum-&gt;PatchNumber
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 id|drumbuf
 (braket
 l_int|0
@@ -5361,8 +5097,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_DOWNLOAD_EDRUM_PROGRAM
 comma
 l_int|0
@@ -5374,7 +5108,8 @@ id|drumbuf
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: download drum failed.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;download drum failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5395,10 +5130,7 @@ r_int
 DECL|function|wavefront_find_free_sample
 id|wavefront_find_free_sample
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_int
@@ -5424,7 +5156,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|i
 )braket
@@ -5441,7 +5173,8 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: no free sample slots!&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;no free sample slots!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5454,10 +5187,7 @@ r_int
 DECL|function|wavefront_find_free_patch
 id|wavefront_find_free_patch
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_int
@@ -5483,7 +5213,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|hw-&gt;patch_status
+id|dev.patch_status
 (braket
 id|i
 )braket
@@ -5500,7 +5230,8 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: no free patch slots!&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;no free patch slots!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5588,13 +5319,8 @@ r_int
 DECL|function|wavefront_load_gus_patch
 id|wavefront_load_gus_patch
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 r_int
-id|dev
+id|devno
 comma
 r_int
 id|format
@@ -5699,7 +5425,6 @@ id|i
 op_assign
 id|wavefront_find_free_patch
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -5733,7 +5458,6 @@ id|i
 op_assign
 id|wavefront_find_free_sample
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -5990,7 +5714,7 @@ id|progp-&gt;layer
 l_int|0
 )braket
 dot
-id|updown
+id|play_below
 op_assign
 l_int|0
 suffix:semicolon
@@ -6219,8 +5943,6 @@ suffix:semicolon
 multiline_comment|/* Now ship it down */
 id|wavefront_send_sample
 (paren
-id|hw
-comma
 op_amp
 id|samp
 comma
@@ -6251,16 +5973,12 @@ l_int|0
 suffix:semicolon
 id|wavefront_send_patch
 (paren
-id|hw
-comma
 op_amp
 id|pat
 )paren
 suffix:semicolon
 id|wavefront_send_program
 (paren
-id|hw
-comma
 op_amp
 id|prog
 )paren
@@ -6270,14 +5988,14 @@ macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren
-id|hw-&gt;mididev
+id|dev.mididev
 OG
 l_int|0
 )paren
 (brace
 id|midi_synth_controller
 (paren
-id|hw-&gt;mididev
+id|dev.mididev
 comma
 id|guspatch.instr_no
 comma
@@ -6309,189 +6027,29 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|wavefront_load_patch
 id|wavefront_load_patch
 (paren
-r_int
-id|dev
-comma
-r_int
-id|format
-comma
 r_const
 r_char
 op_star
 id|addr
-comma
-r_int
-id|offs
-comma
-r_int
-id|count
-comma
-r_int
-id|pmgr_flag
 )paren
 (brace
-r_struct
-id|wf_config
-op_star
-id|hw
-op_assign
-op_amp
-id|wavefront_configuration
-suffix:semicolon
 id|wavefront_patch_info
 id|header
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|format
-op_eq
-id|SYSEX_PATCH
-)paren
-(brace
-multiline_comment|/* Handled by midi_synth.c */
-r_if
-c_cond
-(paren
-id|midi_load_patch
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;WaveFront: SYSEX not loadable: &quot;
-l_string|&quot;no midi patch loader!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-(paren
-id|EINVAL
-)paren
-suffix:semicolon
-)brace
-r_return
-id|midi_load_patch
-(paren
-id|dev
-comma
-id|format
-comma
-id|addr
-comma
-id|offs
-comma
-id|count
-comma
-id|pmgr_flag
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|format
-op_eq
-id|GUS_PATCH
-)paren
-(brace
-r_return
-id|wavefront_load_gus_patch
-(paren
-id|hw
-comma
-id|dev
-comma
-id|format
-comma
-id|addr
-comma
-id|offs
-comma
-id|count
-comma
-id|pmgr_flag
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|format
-op_ne
-id|WAVEFRONT_PATCH
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;WaveFront: unknown patch format %d&bslash;n&quot;
-comma
-id|format
-)paren
-suffix:semicolon
-r_return
-op_minus
-(paren
-id|EINVAL
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|count
-OL
-r_sizeof
-(paren
-id|wavefront_patch_info
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;WaveFront: sample header too short&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-(paren
-id|EINVAL
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* copied in so far: `offs&squot; bytes from `addr&squot;. We shouldn&squot;t copy&n;&t;   them in again, and they correspond to header-&gt;key and header-&gt;devno.&n;&t;   So now, copy the rest of the wavefront_patch_info struct, except&n;&t;   for the &squot;hdr&squot; field, since this is handled via indirection&n;&t;   through the &squot;hdrptr&squot; field.&n;&t;*/
 id|copy_from_user
 (paren
 op_amp
-(paren
-(paren
-r_char
-op_star
-)paren
-op_amp
 id|header
-)paren
-(braket
-id|offs
-)braket
 comma
-op_amp
-(paren
 id|addr
-)paren
-(braket
-id|offs
-)braket
 comma
 r_sizeof
 (paren
@@ -6502,23 +6060,28 @@ r_sizeof
 (paren
 id|wavefront_any
 )paren
-op_minus
-id|offs
 )paren
-suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
-(paren
-id|hw-&gt;debug
-op_amp
-id|WF_DEBUG_LOAD_PATCH
 )paren
 (brace
 id|printk
 (paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: download &quot;
+id|KERN_WARNING
+id|LOGNAME
+l_string|&quot;bad address for load patch.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+(paren
+id|EINVAL
+)paren
+suffix:semicolon
+)brace
+id|DPRINT
+(paren
+id|WF_DEBUG_LOAD_PATCH
+comma
+l_string|&quot;download &quot;
 l_string|&quot;Sample type: %d &quot;
 l_string|&quot;Sample number: %d &quot;
 l_string|&quot;Sample size: %d&bslash;n&quot;
@@ -6530,8 +6093,6 @@ comma
 id|header.size
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_switch
 c_cond
 (paren
@@ -6568,8 +6129,6 @@ suffix:semicolon
 r_return
 id|wavefront_send_sample
 (paren
-id|hw
-comma
 op_amp
 id|header
 comma
@@ -6607,8 +6166,6 @@ suffix:semicolon
 r_return
 id|wavefront_send_multisample
 (paren
-id|hw
-comma
 op_amp
 id|header
 )paren
@@ -6642,8 +6199,6 @@ suffix:semicolon
 r_return
 id|wavefront_send_alias
 (paren
-id|hw
-comma
 op_amp
 id|header
 )paren
@@ -6677,8 +6232,6 @@ suffix:semicolon
 r_return
 id|wavefront_send_drum
 (paren
-id|hw
-comma
 op_amp
 id|header
 )paren
@@ -6712,8 +6265,6 @@ suffix:semicolon
 r_return
 id|wavefront_send_patch
 (paren
-id|hw
-comma
 op_amp
 id|header
 )paren
@@ -6747,8 +6298,6 @@ suffix:semicolon
 r_return
 id|wavefront_send_program
 (paren
-id|hw
-comma
 op_amp
 id|header
 )paren
@@ -6758,7 +6307,8 @@ suffix:colon
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: unknown patch type %d.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;unknown patch type %d.&bslash;n&quot;
 comma
 id|header.subkey
 )paren
@@ -6957,26 +6507,13 @@ DECL|function|wavefront_synth_control
 id|wavefront_synth_control
 (paren
 r_int
-id|dev
-comma
-r_int
 id|cmd
 comma
-id|caddr_t
-id|arg
+id|wavefront_control
+op_star
+id|wc
 )paren
 (brace
-r_struct
-id|wf_config
-op_star
-id|hw
-op_assign
-op_amp
-id|wavefront_configuration
-suffix:semicolon
-id|wavefront_control
-id|wc
-suffix:semicolon
 r_int
 r_char
 id|patchnumbuf
@@ -6987,44 +6524,21 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|copy_from_user
+id|DPRINT
 (paren
-op_amp
-id|wc
-comma
-id|arg
-comma
-r_sizeof
-(paren
-id|wc
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
-(paren
-id|hw-&gt;debug
-op_amp
 id|WF_DEBUG_CMD
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;WaveFront: synth control with &quot;
+comma
+l_string|&quot;synth control with &quot;
 l_string|&quot;cmd 0x%x&bslash;n&quot;
 comma
-id|wc.cmd
+id|wc-&gt;cmd
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
-multiline_comment|/* special case handling of or for various commands */
+multiline_comment|/* Pre-handling of or for various commands */
 r_switch
 c_cond
 (paren
-id|wc.cmd
+id|wc-&gt;cmd
 )paren
 (brace
 r_case
@@ -7033,7 +6547,8 @@ suffix:colon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: interrupts disabled.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;interrupts disabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|outb
@@ -7042,10 +6557,10 @@ l_int|0x80
 op_or
 l_int|0x20
 comma
-id|hw-&gt;control_port
+id|dev.control_port
 )paren
 suffix:semicolon
-id|hw-&gt;interrupts_on
+id|dev.interrupts_on
 op_assign
 l_int|0
 suffix:semicolon
@@ -7058,21 +6573,22 @@ suffix:colon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: interrupts enabled.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;interrupts enabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x80
 op_or
-l_int|0x20
-op_or
 l_int|0x40
+op_or
+l_int|0x20
 comma
-id|hw-&gt;control_port
+id|dev.control_port
 )paren
 suffix:semicolon
-id|hw-&gt;interrupts_on
+id|dev.interrupts_on
 op_assign
 l_int|1
 suffix:semicolon
@@ -7082,12 +6598,12 @@ suffix:semicolon
 r_case
 id|WFC_INTERRUPT_STATUS
 suffix:colon
-id|wc.rbuf
+id|wc-&gt;rbuf
 (braket
 l_int|0
 )braket
 op_assign
-id|hw-&gt;interrupts_on
+id|dev.interrupts_on
 suffix:semicolon
 r_return
 l_int|0
@@ -7095,14 +6611,14 @@ suffix:semicolon
 r_case
 id|WFC_ROMSAMPLES_RDONLY
 suffix:colon
-id|hw-&gt;rom_samples_rdonly
+id|dev.rom_samples_rdonly
 op_assign
-id|wc.wbuf
+id|wc-&gt;wbuf
 (braket
 l_int|0
 )braket
 suffix:semicolon
-id|wc.status
+id|wc-&gt;status
 op_assign
 l_int|0
 suffix:semicolon
@@ -7114,13 +6630,13 @@ id|WFC_IDENTIFY_SLOT_TYPE
 suffix:colon
 id|i
 op_assign
-id|wc.wbuf
+id|wc-&gt;wbuf
 (braket
 l_int|0
 )braket
 op_or
 (paren
-id|wc.wbuf
+id|wc-&gt;wbuf
 (braket
 l_int|1
 )braket
@@ -7143,12 +6659,13 @@ id|WF_MAX_SAMPLE
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: invalid slot ID %d&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;invalid slot ID %d&bslash;n&quot;
 comma
 id|i
 )paren
 suffix:semicolon
-id|wc.status
+id|wc-&gt;status
 op_assign
 id|EINVAL
 suffix:semicolon
@@ -7156,17 +6673,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|wc.rbuf
+id|wc-&gt;rbuf
 (braket
 l_int|0
 )braket
 op_assign
-id|hw-&gt;sample_status
+id|dev.sample_status
 (braket
 id|i
 )braket
 suffix:semicolon
-id|wc.status
+id|wc-&gt;status
 op_assign
 l_int|0
 suffix:semicolon
@@ -7176,9 +6693,9 @@ suffix:semicolon
 r_case
 id|WFC_DEBUG_DRIVER
 suffix:colon
-id|hw-&gt;debug
+id|dev.debug
 op_assign
-id|wc.wbuf
+id|wc-&gt;wbuf
 (braket
 l_int|0
 )braket
@@ -7186,9 +6703,10 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: debug = 0x%x&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;debug = 0x%x&bslash;n&quot;
 comma
-id|hw-&gt;debug
+id|dev.debug
 )paren
 suffix:semicolon
 r_return
@@ -7199,14 +6717,12 @@ id|WFC_FX_IOCTL
 suffix:colon
 id|wffx_ioctl
 (paren
-id|hw
-comma
 (paren
 id|wavefront_fx_info
 op_star
 )paren
 op_amp
-id|wc.wbuf
+id|wc-&gt;wbuf
 (braket
 l_int|0
 )braket
@@ -7226,7 +6742,7 @@ op_star
 id|UINT32
 op_star
 )paren
-id|wc.wbuf
+id|wc-&gt;wbuf
 )paren
 comma
 id|patchnumbuf
@@ -7236,7 +6752,7 @@ l_int|2
 suffix:semicolon
 id|memcpy
 (paren
-id|wc.wbuf
+id|wc-&gt;wbuf
 comma
 id|patchnumbuf
 comma
@@ -7248,17 +6764,33 @@ suffix:semicolon
 r_case
 id|WFC_UPLOAD_MULTISAMPLE
 suffix:colon
+multiline_comment|/* multisamples have to be handled differently, and&n;&t;&t;   cannot be dealt with properly by wavefront_cmd() alone.&n;&t;&t;*/
+id|wc-&gt;status
+op_assign
+id|wavefront_fetch_multisample
+(paren
+(paren
+id|wavefront_patch_info
+op_star
+)paren
+id|wc-&gt;rbuf
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 id|WFC_UPLOAD_SAMPLE_ALIAS
 suffix:colon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: support for various uploads &quot;
+id|LOGNAME
+l_string|&quot;support for sample alias upload &quot;
 l_string|&quot;being considered.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|wc.status
+id|wc-&gt;status
 op_assign
 id|EINVAL
 suffix:semicolon
@@ -7267,24 +6799,22 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|wc.status
+id|wc-&gt;status
 op_assign
 id|wavefront_cmd
 (paren
-id|hw
+id|wc-&gt;cmd
 comma
-id|wc.cmd
+id|wc-&gt;rbuf
 comma
-id|wc.rbuf
-comma
-id|wc.wbuf
+id|wc-&gt;wbuf
 )paren
 suffix:semicolon
-multiline_comment|/* Special case handling of certain commands.&n;&n;&t;   In particular, if the command was an upload, demunge the data&n;&t;   so that the user-level doesn&squot;t have to think about it.&n;&t;*/
+multiline_comment|/* Post-handling of certain commands.&n;&n;&t;   In particular, if the command was an upload, demunge the data&n;&t;   so that the user-level doesn&squot;t have to think about it.&n;&t;*/
 r_if
 c_cond
 (paren
-id|wc.status
+id|wc-&gt;status
 op_eq
 l_int|0
 )paren
@@ -7292,18 +6822,18 @@ l_int|0
 r_switch
 c_cond
 (paren
-id|wc.cmd
+id|wc-&gt;cmd
 )paren
 (brace
 multiline_comment|/* intercept any freemem requests so that we know&n;&t;&t;&t;   we are always current with the user-level view&n;&t;&t;&t;   of things.&n;&t;&t;&t;*/
 r_case
 id|WFC_REPORT_FREE_MEMORY
 suffix:colon
-id|hw-&gt;freemem
+id|dev.freemem
 op_assign
 id|demunge_int32
 (paren
-id|wc.rbuf
+id|wc-&gt;rbuf
 comma
 l_int|4
 )paren
@@ -7315,9 +6845,9 @@ id|WFC_UPLOAD_PATCH
 suffix:colon
 id|demunge_buf
 (paren
-id|wc.rbuf
+id|wc-&gt;rbuf
 comma
-id|wc.rbuf
+id|wc-&gt;rbuf
 comma
 id|WF_PATCH_BYTES
 )paren
@@ -7329,9 +6859,9 @@ id|WFC_UPLOAD_PROGRAM
 suffix:colon
 id|demunge_buf
 (paren
-id|wc.rbuf
+id|wc-&gt;rbuf
 comma
-id|wc.rbuf
+id|wc-&gt;rbuf
 comma
 id|WF_PROGRAM_BYTES
 )paren
@@ -7343,9 +6873,9 @@ id|WFC_UPLOAD_EDRUM_PROGRAM
 suffix:colon
 id|demunge_buf
 (paren
-id|wc.rbuf
+id|wc-&gt;rbuf
 comma
-id|wc.rbuf
+id|wc-&gt;rbuf
 comma
 id|WF_DRUM_BYTES
 op_minus
@@ -7359,22 +6889,20 @@ id|WFC_UPLOAD_SAMPLE_HEADER
 suffix:colon
 id|process_sample_hdr
 (paren
-id|wc.rbuf
+id|wc-&gt;rbuf
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
-r_case
-id|WFC_UPLOAD_MULTISAMPLE
-suffix:colon
 r_case
 id|WFC_UPLOAD_SAMPLE_ALIAS
 suffix:colon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: support for &quot;
-l_string|&quot;various uploads &quot;
+id|LOGNAME
+l_string|&quot;support for &quot;
+l_string|&quot;sample aliases still &quot;
 l_string|&quot;being considered.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7383,32 +6911,219 @@ suffix:semicolon
 r_case
 id|WFC_VMIDI_OFF
 suffix:colon
+r_if
+c_cond
+(paren
 id|virtual_midi_disable
 (paren
-id|hw-&gt;mididev
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+(paren
+id|EIO
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
 id|WFC_VMIDI_ON
 suffix:colon
+r_if
+c_cond
+(paren
 id|virtual_midi_enable
 (paren
-id|hw-&gt;mididev
-comma
+)paren
+OL
 l_int|0
 )paren
+(brace
+r_return
+op_minus
+(paren
+id|EIO
+)paren
 suffix:semicolon
-r_break
-suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* XXX It would be nice to avoid a complete copy of the whole&n;&t;   struct sometimes. But I think its fast enough that this&n;&t;   is a low priority fix.&n;&t;*/
+r_return
+l_int|0
+suffix:semicolon
+)brace
+"&f;"
+multiline_comment|/***********************************************************************/
+multiline_comment|/* WaveFront: Linux file system interface (for access via raw synth)    */
+multiline_comment|/***********************************************************************/
+r_static
+id|loff_t
+DECL|function|wavefront_llseek
+id|wavefront_llseek
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+id|loff_t
+id|offset
+comma
+r_int
+id|origin
+)paren
+(brace
+r_return
+op_minus
+id|ESPIPE
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|wavefront_open
+id|wavefront_open
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+multiline_comment|/* XXX fix me */
+id|dev.opened
+op_assign
+id|file-&gt;f_flags
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|wavefront_release
+id|wavefront_release
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+id|dev.opened
+op_assign
+l_int|0
+suffix:semicolon
+id|dev.debug
+op_assign
+l_int|0
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|wavefront_ioctl
+id|wavefront_ioctl
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+(brace
+id|wavefront_control
+id|wc
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cmd
+)paren
+(brace
+r_case
+id|WFCTL_WFCMD
+suffix:colon
+id|copy_from_user
+(paren
+op_amp
+id|wc
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+id|wc
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|wavefront_synth_control
+(paren
+id|cmd
+comma
+op_amp
+id|wc
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 id|copy_to_user
 (paren
+(paren
+r_void
+op_star
+)paren
 id|arg
 comma
 op_amp
@@ -7420,19 +7135,179 @@ id|wc
 )paren
 )paren
 suffix:semicolon
+)brace
+r_return
+id|err
+suffix:semicolon
+r_case
+id|WFCTL_LOAD_SPP
+suffix:colon
+r_return
+id|wavefront_load_patch
+(paren
+(paren
+r_const
+r_char
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+(paren
+id|KERN_WARNING
+id|LOGNAME
+l_string|&quot;invalid ioctl %#x&bslash;n&quot;
+comma
+id|cmd
+)paren
+suffix:semicolon
+r_return
+op_minus
+(paren
+id|EINVAL
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|wavefront_fops
+r_static
+multiline_comment|/*const*/
+r_struct
+id|file_operations
+id|wavefront_fops
+op_assign
+(brace
+op_amp
+id|wavefront_llseek
+comma
+l_int|NULL
+comma
+multiline_comment|/* read */
+l_int|NULL
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* poll */
+op_amp
+id|wavefront_ioctl
+comma
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+op_amp
+id|wavefront_open
+comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
+op_amp
+id|wavefront_release
+comma
+l_int|NULL
+comma
+multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+comma
+multiline_comment|/* lock */
+)brace
+suffix:semicolon
 "&f;"
-multiline_comment|/***********************************************************************&n;WaveFront: MIDI synth interface&n;***********************************************************************/
+multiline_comment|/***********************************************************************/
+multiline_comment|/* WaveFront: OSS installation and support interface                   */
+multiline_comment|/***********************************************************************/
+macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_SEQ
+DECL|variable|wavefront_info
+r_static
+r_struct
+id|synth_info
+id|wavefront_info
+op_assign
+(brace
+l_string|&quot;Turtle Beach WaveFront&quot;
+comma
+l_int|0
+comma
+id|SYNTH_TYPE_SAMPLE
+comma
+id|SAMPLE_TYPE_WAVEFRONT
+comma
+l_int|0
+comma
+l_int|32
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SYNTH_CAP_INPUT
+)brace
+suffix:semicolon
 r_static
 r_int
-DECL|function|wavefront_ioctl
-id|wavefront_ioctl
+DECL|function|wavefront_oss_open
+id|wavefront_oss_open
 (paren
 r_int
-id|dev
+id|devno
+comma
+r_int
+id|mode
+)paren
+(brace
+id|dev.opened
+op_assign
+id|mode
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|wavefront_oss_close
+id|wavefront_oss_close
+(paren
+r_int
+id|devno
+)paren
+(brace
+id|dev.opened
+op_assign
+l_int|0
+suffix:semicolon
+id|dev.debug
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|wavefront_oss_ioctl
+id|wavefront_oss_ioctl
+(paren
+r_int
+id|devno
 comma
 r_int
 r_int
@@ -7442,19 +7317,11 @@ id|caddr_t
 id|arg
 )paren
 (brace
-id|wf_config
-op_star
-id|hw
-op_assign
-op_amp
-id|wavefront_configuration
+id|wavefront_control
+id|wc
 suffix:semicolon
 r_int
-r_char
-id|rbuf
-(braket
-l_int|4
-)braket
+id|err
 suffix:semicolon
 r_switch
 c_cond
@@ -7499,7 +7366,8 @@ suffix:colon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: cannot reset sample status in kernel.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;driver cannot reset samples.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7511,7 +7379,6 @@ suffix:semicolon
 r_case
 id|SNDCTL_SEQ_PERCMODE
 suffix:colon
-multiline_comment|/* XXX does this correspond to anything obvious ?*/
 r_return
 l_int|0
 suffix:semicolon
@@ -7524,57 +7391,87 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|wavefront_cmd
 (paren
-id|hw
-comma
-id|WFC_REPORT_FREE_MEMORY
-comma
-id|rbuf
-comma
-l_int|0
+id|dev.freemem
+op_assign
+id|wavefront_freemem
+(paren
 )paren
-op_ne
+)paren
+OL
 l_int|0
 )paren
 (brace
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: cannot get free memory size&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;cannot get memory size&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_else
 (brace
-id|hw-&gt;freemem
-op_assign
-id|demunge_int32
-(paren
-id|rbuf
-comma
-l_int|4
-)paren
-suffix:semicolon
 r_return
-id|hw-&gt;freemem
+id|dev.freemem
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 r_case
 id|SNDCTL_SYNTH_CONTROL
 suffix:colon
-r_return
-id|wavefront_synth_control
+id|copy_from_user
 (paren
-id|dev
-comma
-id|cmd
+op_amp
+id|wc
 comma
 id|arg
+comma
+r_sizeof
+(paren
+id|wc
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|wavefront_synth_control
+(paren
+id|cmd
+comma
+op_amp
+id|wc
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|copy_to_user
+(paren
+id|arg
+comma
+op_amp
+id|wc
+comma
+r_sizeof
+(paren
+id|wc
+)paren
+)paren
+suffix:semicolon
+)brace
+r_return
+id|err
 suffix:semicolon
 r_default
 suffix:colon
@@ -7586,466 +7483,164 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-r_static
 r_int
-DECL|function|wavefront_open
-id|wavefront_open
+DECL|function|wavefront_oss_load_patch
+id|wavefront_oss_load_patch
 (paren
 r_int
-id|dev
+id|devno
 comma
 r_int
-id|mode
-)paren
-(brace
-r_struct
-id|wf_config
+id|format
+comma
+r_const
+r_char
 op_star
-id|hw
-op_assign
-op_amp
-id|wavefront_configuration
-suffix:semicolon
+id|addr
+comma
+r_int
+id|offs
+comma
+r_int
+id|count
+comma
+r_int
+id|pmgr_flag
+)paren
+(brace
 r_if
 c_cond
 (paren
-id|hw-&gt;opened
+id|format
+op_eq
+id|SYSEX_PATCH
+)paren
+(brace
+multiline_comment|/* Handled by midi_synth.c */
+r_if
+c_cond
+(paren
+id|midi_load_patch
+op_eq
+l_int|NULL
 )paren
 (brace
 id|printk
 (paren
-id|KERN_WARNING
-l_string|&quot;WaveFront: warning: device in use&bslash;n&quot;
+id|KERN_ERR
+id|LOGNAME
+l_string|&quot;SYSEX not loadable: &quot;
+l_string|&quot;no midi patch loader!&bslash;n&quot;
 )paren
-suffix:semicolon
-)brace
-id|hw-&gt;opened
-op_assign
-id|mode
 suffix:semicolon
 r_return
+op_minus
 (paren
-l_int|0
+id|EINVAL
 )paren
 suffix:semicolon
 )brace
-DECL|function|wavefront_close
-r_static
-r_void
-id|wavefront_close
+r_return
+id|midi_load_patch
 (paren
-r_int
-id|dev
+id|devno
+comma
+id|format
+comma
+id|addr
+comma
+id|offs
+comma
+id|count
+comma
+id|pmgr_flag
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|format
+op_eq
+id|GUS_PATCH
 )paren
 (brace
-r_struct
-id|wf_config
-op_star
-id|hw
-op_assign
-op_amp
-id|wavefront_configuration
-suffix:semicolon
-macro_line|#ifdef WF_STATS
-r_int
-id|i
-suffix:semicolon
-id|printk
+r_return
+id|wavefront_load_gus_patch
 (paren
-l_string|&quot;Status during loop: %ld&bslash;n&quot;
+id|devno
 comma
-id|hw-&gt;status_found_during_loop
+id|format
+comma
+id|addr
+comma
+id|offs
+comma
+id|count
+comma
+id|pmgr_flag
 )paren
 suffix:semicolon
-r_for
-c_loop
+)brace
+r_else
+r_if
+c_cond
 (paren
-id|i
-op_assign
-l_int|0
+id|format
+op_ne
+id|WAVEFRONT_PATCH
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+id|LOGNAME
+l_string|&quot;unknown patch format %d&bslash;n&quot;
+comma
+id|format
+)paren
 suffix:semicolon
-id|i
+r_return
+op_minus
+(paren
+id|EINVAL
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|count
 OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
+r_sizeof
+(paren
+id|wavefront_patch_info
+)paren
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;Status during sleep[%d]: %ld&bslash;n&quot;
-comma
-id|i
-comma
-id|hw-&gt;status_found_during_sleep
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif WF_STATS
-id|hw-&gt;opened
-op_assign
-l_int|0
-suffix:semicolon
-id|hw-&gt;debug
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-DECL|function|wavefront_aftertouch
-r_static
-r_void
-id|wavefront_aftertouch
-(paren
-r_int
-id|dev
-comma
-r_int
-id|channel
-comma
-r_int
-id|pressure
-)paren
-(brace
-id|midi_synth_aftertouch
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-id|pressure
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|function|wavefront_bender
-r_static
-r_void
-id|wavefront_bender
-(paren
-r_int
-id|dev
-comma
-r_int
-id|chn
-comma
-r_int
-id|value
-)paren
-(brace
-id|midi_synth_bender
-(paren
-id|wavefront_configuration.mididev
-comma
-id|chn
-comma
-id|value
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|function|wavefront_controller
-r_static
-r_void
-id|wavefront_controller
-(paren
-r_int
-id|dev
-comma
-r_int
-id|channel
-comma
-r_int
-id|ctrl_num
-comma
-r_int
-id|value
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ctrl_num
-op_eq
-id|CTRL_PITCH_BENDER
-)paren
-(brace
-id|wavefront_bender
-c_func
-(paren
-l_int|0
-comma
-id|channel
-comma
-id|value
-)paren
-suffix:semicolon
-)brace
-id|midi_synth_controller
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-id|ctrl_num
-comma
-id|value
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|function|wavefront_panning
-r_static
-r_void
-id|wavefront_panning
-c_func
-(paren
-r_int
-id|dev
-comma
-r_int
-id|channel
-comma
-r_int
-id|pressure
-)paren
-(brace
-id|midi_synth_controller
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-id|CTL_PAN
-comma
-id|pressure
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|function|wavefront_set_instr
-r_static
-r_int
-id|wavefront_set_instr
-(paren
-r_int
-id|dev
-comma
-r_int
-id|channel
-comma
-r_int
-id|instr_no
-)paren
-(brace
-r_return
-id|midi_synth_set_instr
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-id|instr_no
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|function|wavefront_kill_note
-r_static
-r_int
-id|wavefront_kill_note
-(paren
-r_int
-id|dev
-comma
-r_int
-id|channel
-comma
-r_int
-id|note
-comma
-r_int
-id|volume
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|note
-op_eq
-l_int|255
-)paren
-r_return
-(paren
-id|midi_synth_start_note
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-l_int|0
-comma
-l_int|0
-)paren
+id|KERN_ERR
+id|LOGNAME
+l_string|&quot;sample header too short&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|midi_synth_kill_note
+op_minus
 (paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-id|note
-comma
-id|volume
+id|EINVAL
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-DECL|function|wavefront_start_note
-r_static
-r_int
-id|wavefront_start_note
-(paren
-r_int
-id|dev
-comma
-r_int
-id|channel
-comma
-r_int
-id|note
-comma
-r_int
-id|volume
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|note
-op_eq
-l_int|255
-)paren
-(brace
-id|midi_synth_aftertouch
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-id|volume
-)paren
-suffix:semicolon
+multiline_comment|/* &quot;addr&quot; points to a user-space wavefront_patch_info */
 r_return
-l_int|0
-suffix:semicolon
-)brace
-suffix:semicolon
-r_if
-c_cond
+id|wavefront_load_patch
 (paren
-id|volume
-op_eq
-l_int|0
-)paren
-(brace
-id|volume
-op_assign
-l_int|127
-suffix:semicolon
-id|midi_synth_aftertouch
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-l_int|0
+id|addr
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-id|midi_synth_start_note
-(paren
-id|wavefront_configuration.mididev
-comma
-id|channel
-comma
-id|note
-comma
-id|volume
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|function|wavefront_setup_voice
-r_static
-r_void
-id|wavefront_setup_voice
-(paren
-r_int
-id|dev
-comma
-r_int
-id|voice
-comma
-r_int
-id|chn
-)paren
-(brace
-)brace
-suffix:semicolon
-DECL|function|wavefront_reset
-r_static
-r_void
-id|wavefront_reset
-(paren
-r_int
-id|dev
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|midi_synth_kill_note
-(paren
-id|dev
-comma
-id|i
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|variable|wavefront_operations
 r_static
 r_struct
@@ -8064,41 +7659,105 @@ id|SYNTH_TYPE_SAMPLE
 comma
 id|SAMPLE_TYPE_WAVEFRONT
 comma
-id|wavefront_open
+id|wavefront_oss_open
 comma
-id|wavefront_close
+id|wavefront_oss_close
 comma
-id|wavefront_ioctl
+id|wavefront_oss_ioctl
 comma
-id|wavefront_kill_note
+id|midi_synth_kill_note
 comma
-id|wavefront_start_note
+id|midi_synth_start_note
 comma
-id|wavefront_set_instr
+id|midi_synth_set_instr
 comma
-id|wavefront_reset
-comma
-l_int|NULL
-comma
-id|wavefront_load_patch
-comma
-id|wavefront_aftertouch
-comma
-id|wavefront_controller
-comma
-id|wavefront_panning
+id|midi_synth_reset
 comma
 l_int|NULL
 comma
-id|wavefront_bender
+multiline_comment|/* hw_control */
+id|midi_synth_load_patch
+comma
+id|midi_synth_aftertouch
+comma
+id|midi_synth_controller
+comma
+id|midi_synth_panning
 comma
 l_int|NULL
 comma
-id|wavefront_setup_voice
+multiline_comment|/* volume method */
+id|midi_synth_bender
+comma
+l_int|NULL
+comma
+multiline_comment|/* alloc voice */
+id|midi_synth_setup_voice
 )brace
 suffix:semicolon
+macro_line|#endif OSS_SUPPORT_SEQ
+macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_STATIC_INSTALL
+DECL|function|attach_wavefront
+r_void
+id|attach_wavefront
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+(paren
+r_void
+)paren
+id|install_wavefront
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|probe_wavefront
+r_int
+id|probe_wavefront
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+r_return
+op_logical_neg
+id|detect_wavefront
+(paren
+id|hw_config-&gt;irq
+comma
+id|hw_config-&gt;io_base
+)paren
+suffix:semicolon
+)brace
+DECL|function|unload_wavefront
+r_void
+id|unload_wavefront
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+(paren
+r_void
+)paren
+id|uninstall_wavefront
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif OSS_SUPPORT_STATIC_INSTALL
 "&f;"
-multiline_comment|/***********************************************************************&n;WaveFront: OSS/Free and/or Linux kernel installation interface&n;***********************************************************************/
+multiline_comment|/***********************************************************************/
+multiline_comment|/* WaveFront: Linux modular sound kernel installation interface        */
+multiline_comment|/***********************************************************************/
 r_void
 DECL|function|wavefrontintr
 id|wavefrontintr
@@ -8116,21 +7775,14 @@ op_star
 id|dummy
 )paren
 (brace
-multiline_comment|/* We don&squot;t use this handler except during device&n;&t;   configuration. While the module is installed, the &n;&t;   interrupt is used to signal MIDI interrupts, and is &n;&t;   handled by the interrupt routine in wf_midi.c&n;&t; */
+r_struct
 id|wf_config
 op_star
 id|hw
 op_assign
-(paren
-id|wf_config
-op_star
-)paren
 id|dev_id
 suffix:semicolon
-id|hw-&gt;irq_ok
-op_assign
-l_int|1
-suffix:semicolon
+multiline_comment|/*&n;&t;   Some comments on interrupts. I attempted a version of this&n;&t;   driver that used interrupts throughout the code instead of&n;&t;   doing busy and/or sleep-waiting. Alas, it appears that once&n;&t;   the Motorola firmware is downloaded, the card *never*&n;&t;   generates an RX interrupt. These are successfully generated&n;&t;   during firmware loading, and after that wavefront_status()&n;&t;   reports that an interrupt is pending on the card from time&n;&t;   to time, but it never seems to be delivered to this&n;&t;   driver. Note also that wavefront_status() continues to&n;&t;   report that RX interrupts are enabled, suggesting that I&n;&t;   didn&squot;t goof up and disable them by mistake.&n;&n;&t;   Thus, I stepped back to a prior version of&n;&t;   wavefront_wait(), the only place where this really&n;&t;   matters. Its sad, but I&squot;ve looked through the code to check&n;&t;   on things, and I really feel certain that the Motorola&n;&t;   firmware prevents RX-ready interrupts.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -8138,32 +7790,36 @@ c_cond
 id|wavefront_status
 c_func
 (paren
-id|hw
 )paren
 op_amp
+(paren
+id|STAT_INTR_READ
+op_or
 id|STAT_INTR_WRITE
 )paren
-op_logical_or
-(paren
-id|wavefront_status
-c_func
-(paren
-id|hw
 )paren
-op_amp
-id|STAT_INTR_READ
-)paren
+op_eq
+l_int|0
 )paren
 (brace
-id|wake_up
+r_return
+suffix:semicolon
+)brace
+id|hw-&gt;irq_ok
+op_assign
+l_int|1
+suffix:semicolon
+id|hw-&gt;irq_cnt
+op_increment
+suffix:semicolon
+id|wake_up_interruptible
 (paren
 op_amp
 id|hw-&gt;interrupt_sleeper
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* STATUS REGISTER &n;&n;0 Host Rx Interrupt Enable (1=Enabled)&n;1 Host Rx Register Full (1=Full)&n;2 Host Rx Interrupt Pending (1=Interrupt)&n;3 Unused&n;4 Host Tx Interrupt (1=Enabled)&n;5 Host Tx Register empty (1=Empty)&n;6 Host Tx Interrupt Pending (1=Interrupt)&n;7 Unused&n;&n;11111001 &n;  Rx Intr enable&n;  nothing to read from board&n;  no rx interrupt pending&n;  unused&n;  tx interrupt enabled&n;  space to transmit&n;  tx interrupt pending&n;&n;*/
+multiline_comment|/* STATUS REGISTER &n;&n;0 Host Rx Interrupt Enable (1=Enabled)&n;1 Host Rx Register Full (1=Full)&n;2 Host Rx Interrupt Pending (1=Interrupt)&n;3 Unused&n;4 Host Tx Interrupt (1=Enabled)&n;5 Host Tx Register empty (1=Empty)&n;6 Host Tx Interrupt Pending (1=Interrupt)&n;7 Unused&n;*/
 r_int
 DECL|function|wavefront_interrupt_bits
 id|wavefront_interrupt_bits
@@ -8222,7 +7878,8 @@ suffix:colon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: invalid IRQ %d&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;invalid IRQ %d&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -8241,10 +7898,6 @@ r_void
 DECL|function|wavefront_should_cause_interrupt
 id|wavefront_should_cause_interrupt
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|val
 comma
@@ -8269,7 +7922,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hw-&gt;irq_ok
+id|dev.irq_ok
 op_assign
 l_int|0
 suffix:semicolon
@@ -8281,10 +7934,9 @@ id|port
 )paren
 suffix:semicolon
 id|interruptible_sleep_on_timeout
-c_func
 (paren
 op_amp
-id|hw-&gt;interrupt_sleeper
+id|dev.interrupt_sleeper
 comma
 id|timeout
 )paren
@@ -8300,9 +7952,7 @@ r_int
 DECL|function|wavefront_hw_reset
 id|wavefront_hw_reset
 (paren
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_int
@@ -8314,24 +7964,162 @@ id|hwv
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* Check IRQ is legal */
-r_if
-c_cond
-(paren
-(paren
+r_int
+r_int
+id|irq_mask
+suffix:semicolon
+r_int
+id|reported_irq
+suffix:semicolon
+multiline_comment|/* IRQ already checked in init_module() */
 id|bits
 op_assign
 id|wavefront_interrupt_bits
 (paren
-id|hw-&gt;irq
+id|dev.irq
 )paren
+suffix:semicolon
+id|printk
+(paren
+id|KERN_DEBUG
+id|LOGNAME
+l_string|&quot;autodetecting WaveFront IRQ&bslash;n&quot;
 )paren
+suffix:semicolon
+id|sti
+(paren
+)paren
+suffix:semicolon
+id|irq_mask
+op_assign
+id|probe_irq_on
+(paren
+)paren
+suffix:semicolon
+id|outb
+(paren
+l_int|0x0
+comma
+id|dev.control_port
+)paren
+suffix:semicolon
+id|outb
+(paren
+l_int|0x80
+op_or
+l_int|0x40
+op_or
+id|bits
+comma
+id|dev.data_port
+)paren
+suffix:semicolon
+id|wavefront_should_cause_interrupt
+c_func
+(paren
+l_int|0x80
+op_or
+l_int|0x40
+op_or
+l_int|0x10
+op_or
+l_int|0x1
+comma
+id|dev.control_port
+comma
+(paren
+id|reset_time
+op_star
+id|HZ
+)paren
+op_div
+l_int|100
+)paren
+suffix:semicolon
+id|reported_irq
+op_assign
+id|probe_irq_off
+(paren
+id|irq_mask
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reported_irq
+op_ne
+id|dev.irq
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|reported_irq
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+id|LOGNAME
+l_string|&quot;No unassigned interrupts detected &quot;
+l_string|&quot;after h/w reset&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|reported_irq
 OL
 l_int|0
 )paren
 (brace
+id|printk
+(paren
+id|KERN_ERR
+id|LOGNAME
+l_string|&quot;Multiple unassigned interrupts detected &quot;
+l_string|&quot;after h/w reset&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+(paren
+id|KERN_ERR
+id|LOGNAME
+l_string|&quot;autodetected IRQ %d not the &quot;
+l_string|&quot;value provided (%d)&bslash;n&quot;
+comma
+id|reported_irq
+comma
+id|dev.irq
+)paren
+suffix:semicolon
+)brace
+id|dev.irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_return
 l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+(paren
+id|KERN_INFO
+id|LOGNAME
+l_string|&quot;autodetected IRQ at %d&bslash;n&quot;
+comma
+id|reported_irq
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -8339,19 +8127,18 @@ c_cond
 (paren
 id|request_irq
 (paren
-id|hw-&gt;irq
+id|dev.irq
 comma
 id|wavefrontintr
 comma
-l_int|0
+id|SA_INTERRUPT
+op_or
+id|SA_SHIRQ
 comma
-l_string|&quot;WaveFront&quot;
+l_string|&quot;wavefront synth&quot;
 comma
-(paren
-r_void
-op_star
-)paren
-id|hw
+op_amp
+id|dev
 )paren
 OL
 l_int|0
@@ -8360,9 +8147,10 @@ l_int|0
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: IRQ %d not available!&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;IRQ %d not available!&bslash;n&quot;
 comma
-id|hw-&gt;irq
+id|dev.irq
 )paren
 suffix:semicolon
 r_return
@@ -8374,10 +8162,10 @@ id|outb
 (paren
 l_int|0x0
 comma
-id|hw-&gt;control_port
+id|dev.control_port
 )paren
 suffix:semicolon
-multiline_comment|/* At this point, the board is in reset, and the H/W initialization&n;&t;   register is accessed at the same address as the data port.&n;     &n;&t;   Bit 7 - Enable IRQ Driver&t;&n;&t;   0 - Tri-state the Wave-Board drivers for the PC Bus IRQs&n;&t;   1 - Enable IRQ selected by bits 5:3 to be driven onto the PC Bus.&n;     &n;&t;   Bit 6 - MIDI Interface Select&n;&n;&t;   0 - Use the MIDI Input from the 26-pin WaveBlaster&n;&t;   compatible header as the serial MIDI source&n;&t;   1 - Use the MIDI Input from the 9-pin D connector as the serial MIDI &n;&t;   source.&n;     &n;&t;   Bits 5:3 - IRQ Selection&n;&t;   0 0 0 - IRQ 2/9&n;&t;   0 0 1 - IRQ 5&n;&t;   0 1 0 - IRQ 12&n;&t;   0 1 1 - IRQ 15&n;&t;   1 0 0 - Reserved&n;&t;   1 0 1 - Reserved&n;&t;   1 1 0 - Reserved&n;&t;   1 1 1 - Reserved&n;     &n;&t;   Bits 2:1 - Reserved&n;&t;   Bit 0 - Disable Boot ROM&n;&t;   0 - memory accesses to 03FC30-03FFFFH utilize the internal Boot ROM&n;&t;   1 - memory accesses to 03FC30-03FFFFH are directed to external &n;&t;   storage.&n;     &n;&t;*/
+multiline_comment|/* At this point, the board is in reset, and the H/W initialization&n;&t;   register is accessed at the same address as the data port.&n;     &n;&t;   Bit 7 - Enable IRQ Driver&t;&n;&t;   0 - Tri-state the Wave-Board drivers for the PC Bus IRQs&n;&t;   1 - Enable IRQ selected by bits 5:3 to be driven onto the PC Bus.&n;     &n;&t;   Bit 6 - MIDI Interface Select&n;&n;&t;   0 - Use the MIDI Input from the 26-pin WaveBlaster&n;&t;   compatible header as the serial MIDI source&n;&t;   1 - Use the MIDI Input from the 9-pin D connector as the&n;&t;   serial MIDI source.&n;     &n;&t;   Bits 5:3 - IRQ Selection&n;&t;   0 0 0 - IRQ 2/9&n;&t;   0 0 1 - IRQ 5&n;&t;   0 1 0 - IRQ 12&n;&t;   0 1 1 - IRQ 15&n;&t;   1 0 0 - Reserved&n;&t;   1 0 1 - Reserved&n;&t;   1 1 0 - Reserved&n;&t;   1 1 1 - Reserved&n;     &n;&t;   Bits 2:1 - Reserved&n;&t;   Bit 0 - Disable Boot ROM&n;&t;   0 - memory accesses to 03FC30-03FFFFH utilize the internal Boot ROM&n;&t;   1 - memory accesses to 03FC30-03FFFFH are directed to external &n;&t;   storage.&n;     &n;&t;*/
 multiline_comment|/* configure hardware: IRQ, enable interrupts, &n;&t;   plus external 9-pin MIDI interface selected&n;&t;*/
 id|outb
 (paren
@@ -8387,15 +8175,13 @@ l_int|0x40
 op_or
 id|bits
 comma
-id|hw-&gt;data_port
+id|dev.data_port
 )paren
 suffix:semicolon
-multiline_comment|/* CONTROL REGISTER&n;&n;&t;   0 Host Rx Interrupt Enable (1=Enabled)      0x1&n;&t;   1 Unused                                    0x2&n;&t;   2 Unused                                    0x4&n;&t;   3 Unused                                    0x8&n;&t;   4 Host Tx Interrupt Enable                 0x10&n;&t;   5 Mute (0=Mute; 1=Play)                    0x20&n;&t;   6 Master Interrupt Enable (1=Enabled)      0x40&n;&t;   7 Master Reset (0=Reset; 1=Run)            0x80&n;&n;&t;   Take us out of reset, unmute, master + TX + RX interrupts on.&n;&t;   &n;&t;   We&squot;ll get an interrupt presumably to tell us that the TX&n;&t;   register is clear. However, this doesn&squot;t mean that the&n;&t;   board is ready. We actually have to send it a command, and&n;&t;   wait till it gets back to use. After a cold boot, this can&n;&t;   take some time.&n;&t;   &n;&t;   I think this is because its only after a cold boot that the&n;&t;   onboard ROM does its memory check, which can take &quot;up to 4&n;&t;   seconds&quot; according to the WaveFront SDK. So, since sleeping&n;&t;   doesn&squot;t cost us much, we&squot;ll give it *plenty* of time. It&n;&t;   turns out that with 12MB of RAM, it can take up to 16&n;&t;   seconds or so!! See the code after &quot;ABOUT INTERRUPTS&quot;&n;&t;*/
+multiline_comment|/* CONTROL REGISTER&n;&n;&t;   0 Host Rx Interrupt Enable (1=Enabled)      0x1&n;&t;   1 Unused                                    0x2&n;&t;   2 Unused                                    0x4&n;&t;   3 Unused                                    0x8&n;&t;   4 Host Tx Interrupt Enable                 0x10&n;&t;   5 Mute (0=Mute; 1=Play)                    0x20&n;&t;   6 Master Interrupt Enable (1=Enabled)      0x40&n;&t;   7 Master Reset (0=Reset; 1=Run)            0x80&n;&n;&t;   Take us out of reset, mute output, master + TX + RX interrupts on.&n;&t;   &n;&t;   We&squot;ll get an interrupt presumably to tell us that the TX&n;&t;   register is clear.&n;&t;*/
 id|wavefront_should_cause_interrupt
 c_func
 (paren
-id|hw
-comma
 l_int|0x80
 op_or
 l_int|0x40
@@ -8404,10 +8190,10 @@ l_int|0x10
 op_or
 l_int|0x1
 comma
-id|hw-&gt;control_port
+id|dev.control_port
 comma
 (paren
-l_int|2
+id|reset_time
 op_star
 id|HZ
 )paren
@@ -8420,35 +8206,33 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hw-&gt;irq_ok
+id|dev.irq_ok
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: intr not received after h/w un-reset.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;intr not received after h/w un-reset.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
 id|gone_bad
 suffix:semicolon
 )brace
-id|hw-&gt;interrupts_on
+id|dev.interrupts_on
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* ABOUT INTERRUPTS:&n;&t;   -----------------&n;&t;   &n;&t;   When we talk about interrupts, there are two kinds&n;&t;   generated by the ICS2115. The first is to signal MPU data&n;&t;   ready to read, and the second is to signal RX or TX status&n;&t;   changes. We *always* want interrupts for MPU stuff but we &n;&t;   generally avoid using RX/TX interrupts.&n;&n;&t;   In theory, we could use the TX and RX interrupts for all&n;&t;   communication with the card. However, there are 2 good&n;&t;   reasons not to do this.&n;&n;&t;   First of all, the MIDI interface is going to use the same&n;&t;   interrupt. This presents no practical problem since Linux&n;&t;   allows us to share IRQ&squot;s. However, there are times when it&n;&t;   makes sense for a user to ask the driver to disable&n;&t;   interrupts, to avoid bothering Linux with a stream of MIDI&n;&t;   interrupts that aren&squot;t going to be used because nothing&n;&t;   cares about them. If we rely on them for communication with&n;&t;   the WaveFront synth as well, this disabling would be&n;&t;   crippling. Since being able to disable them can save quite&n;&t;   a bit of overhead (consider the interrupt frequency of a&n;&t;   physical MIDI controller like a modwheel being shunted back&n;&t;   and forth - its higher than the mouse, and much of&n;&t;   the time is of absolutely no interest to the kernel or any&n;&t;   user space processes whatsoever), we don&squot;t want to do this.&n;&n;&t;   Secondly, much of the time, there&squot;s no reason to go to&n;&t;   sleep on a TX or RX status: the WaveFront gets back to us&n;&t;   quickly enough that its a lot more efficient to just busy&n;&t;   wait on the relevant status. Once we go to sleep, all is&n;&t;   lost anyway, and so interrupts don&squot;t really help us much anyway.&n;&n;&t;   Therefore, we don&squot;t use interrupts for communication with&n;&t;   the WaveFront synth. We just poll the relevant RX/TX status.&n;&n;&t;   However, there is one broad exception to this. During module&n;&t;   loading, to deal with several situations where timing would&n;&t;   be an issue, we use TX/RX interrupts to help us avoid busy&n;&t;   waiting for indeterminate and hard to manage periods of&n;&t;   time. So, TX/RX interrupts are enabled until the end of &n;&t;   wavefront_init(), and not used again after that.&n;&n;&t; */
-multiline_comment|/* Note: data port is now the data port, not the h/w initialization&n;&t;   port.&n;&n;&t;   At this point, only &quot;HW VERSION&quot; or &quot;DOWNLOAD OS&quot; commands&n;&t;   will work. So, issue one of them, and wait for TX&n;&t;   interrupt. This can take a *long* time after a cold boot,&n;&t;   while the ISC ROM does its RAM test. The SDK says up to 4&n;&t;   seconds - with 12MB of RAM on a Tropez+, it takes a lot&n;&t;   longer than that (~16secs). Note that the card understands&n;&t;   the difference between a warm and a cold boot, so&n;&t;   subsequent ISC2115 reboots (say, caused by module&n;&t;   reloading) will get through this much faster.&n;&n;&t;   Interesting question: why is no RX interrupt received first ?&n;&t;*/
+multiline_comment|/* Note: data port is now the data port, not the h/w initialization&n;&t;   port.&n;&n;&t;   At this point, only &quot;HW VERSION&quot; or &quot;DOWNLOAD OS&quot; commands&n;&t;   will work. So, issue one of them, and wait for TX&n;&t;   interrupt. This can take a *long* time after a cold boot,&n;&t;   while the ISC ROM does its RAM test. The SDK says up to 4&n;&t;   seconds - with 12MB of RAM on a Tropez+, it takes a lot&n;&t;   longer than that (~16secs). Note that the card understands&n;&t;   the difference between a warm and a cold boot, so&n;&t;   subsequent ISC2115 reboots (say, caused by module&n;&t;   reloading) will get through this much faster.&n;&n;&t;   XXX Interesting question: why is no RX interrupt received first ?&n;&t;*/
 id|wavefront_should_cause_interrupt
 c_func
 (paren
-id|hw
-comma
 id|WFC_HARDWARE_VERSION
 comma
-id|hw-&gt;data_port
+id|dev.data_port
 comma
-l_int|20
+id|ramcheck_time
 op_star
 id|HZ
 )paren
@@ -8457,13 +8241,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hw-&gt;irq_ok
+id|dev.irq_ok
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: post-RAM-check interrupt not received.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;post-RAM-check interrupt not received.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -8474,13 +8259,8 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|wavefront_wait
 (paren
-id|wavefront_status
-c_func
-(paren
-id|hw
-)paren
-op_amp
 id|STAT_CAN_READ
 )paren
 )paren
@@ -8488,7 +8268,8 @@ id|STAT_CAN_READ
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: no response to HW version cmd.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;no response to HW version cmd.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -8506,7 +8287,6 @@ l_int|0
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -8517,7 +8297,8 @@ l_int|1
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: board not responding correctly.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;board not responding correctly.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -8548,7 +8329,6 @@ l_int|0
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -8559,7 +8339,8 @@ l_int|1
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: on-board RAM test failed &quot;
+id|LOGNAME
+l_string|&quot;on-board RAM test failed &quot;
 l_string|&quot;(bad error code).&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8569,7 +8350,8 @@ r_else
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: on-board RAM test failed &quot;
+id|LOGNAME
+l_string|&quot;on-board RAM test failed &quot;
 l_string|&quot;(error code: 0x%x).&bslash;n&quot;
 comma
 id|hwv
@@ -8595,7 +8377,6 @@ l_int|1
 op_assign
 id|wavefront_read
 (paren
-id|hw
 )paren
 )paren
 op_eq
@@ -8606,7 +8387,8 @@ l_int|1
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: board not responding correctly(2).&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;incorrect h/w response.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -8616,7 +8398,8 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: hardware version %d.%d&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;hardware version %d.%d&bslash;n&quot;
 comma
 id|hwv
 (braket
@@ -8634,27 +8417,47 @@ l_int|0
 suffix:semicolon
 id|gone_bad
 suffix:colon
+r_if
+c_cond
+(paren
+id|dev.irq
+op_ge
+l_int|0
+)paren
+(brace
 id|free_irq
 (paren
-id|hw-&gt;irq
+id|dev.irq
 comma
-id|hw
+op_amp
+id|dev
 )paren
 suffix:semicolon
+id|dev.irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 r_return
 (paren
 l_int|1
 )paren
 suffix:semicolon
 )brace
-r_int
-DECL|function|probe_wavefront
-id|probe_wavefront
+DECL|function|__initfunc
+id|__initfunc
 (paren
-r_struct
-id|address_info
-op_star
-id|hw_config
+r_static
+r_int
+id|detect_wavefront
+(paren
+r_int
+id|irq
+comma
+r_int
+id|io_base
+)paren
 )paren
 (brace
 r_int
@@ -8669,37 +8472,13 @@ id|wbuf
 l_int|4
 )braket
 suffix:semicolon
-id|wf_config
-op_star
-id|hw
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hw_config-&gt;irq
-template_param
-l_int|16
-)paren
-(brace
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;WaveFront: impossible IRQ suggested(%d)&bslash;n&quot;
-comma
-id|hw_config-&gt;irq
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Yeah yeah, TB docs say 8, but the FX device on the Tropez Plus&n;&t;   takes up another 8 ...&n;&t;*/
+multiline_comment|/* TB docs say the device takes up 8 ports, but we know that&n;&t;   if there is an FX device present (i.e. a Tropez+) it really&n;&t;   consumes 16.&n;&t;*/
 r_if
 c_cond
 (paren
 id|check_region
 (paren
-id|hw_config-&gt;io_base
+id|io_base
 comma
 l_int|16
 )paren
@@ -8708,121 +8487,56 @@ l_int|16
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: IO address range 0x%x - 0x%x &quot;
+id|LOGNAME
+l_string|&quot;IO address range 0x%x - 0x%x &quot;
 l_string|&quot;already in use - ignored&bslash;n&quot;
 comma
-id|hw_config-&gt;io_base
+id|dev.base
 comma
-id|hw_config-&gt;io_base
+id|dev.base
 op_plus
 l_int|15
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 )brace
-id|hw
+id|dev.irq
 op_assign
-op_amp
-id|wavefront_configuration
+id|irq
 suffix:semicolon
-id|hw-&gt;irq
+id|dev.base
 op_assign
-id|hw_config-&gt;irq
+id|io_base
 suffix:semicolon
-id|hw-&gt;base
-op_assign
-id|hw_config-&gt;io_base
-suffix:semicolon
-id|hw-&gt;israw
+id|dev.israw
 op_assign
 l_int|0
 suffix:semicolon
-id|hw-&gt;debug
+id|dev.debug
 op_assign
 id|debug_default
 suffix:semicolon
-id|hw-&gt;interrupts_on
+id|dev.interrupts_on
 op_assign
 l_int|0
 suffix:semicolon
-id|hw-&gt;rom_samples_rdonly
+id|dev.irq_cnt
+op_assign
+l_int|0
+suffix:semicolon
+id|dev.rom_samples_rdonly
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* XXX default lock on ROM sample slots */
-macro_line|#ifdef WF_STATS
-id|hw-&gt;status_found_during_sleep
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|hw-&gt;status_found_during_sleep
-(braket
-l_int|1
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|hw-&gt;status_found_during_sleep
-(braket
-l_int|2
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|hw-&gt;status_found_during_sleep
-(braket
-l_int|3
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|hw-&gt;status_found_during_loop
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif WF_STATS
-id|hw_config-&gt;slots
-(braket
-id|WF_SYNTH_SLOT
-)braket
-op_assign
-id|hw-&gt;synthdev
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|hw_config-&gt;slots
-(braket
-id|WF_INTERNAL_MIDI_SLOT
-)braket
-op_assign
-id|hw-&gt;mididev
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|hw_config-&gt;slots
-(braket
-id|WF_EXTERNAL_MIDI_SLOT
-)braket
-op_assign
-id|hw-&gt;ext_mididev
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_FIRMWARE_VERSION
 comma
 id|rbuf
@@ -8833,7 +8547,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|hw-&gt;fw_version
+id|dev.fw_version
 (braket
 l_int|0
 )braket
@@ -8843,7 +8557,7 @@ id|rbuf
 l_int|0
 )braket
 suffix:semicolon
-id|hw-&gt;fw_version
+id|dev.fw_version
 (braket
 l_int|1
 )braket
@@ -8856,7 +8570,8 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: firmware %d.%d already loaded.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;firmware %d.%d already loaded.&bslash;n&quot;
 comma
 id|rbuf
 (braket
@@ -8875,8 +8590,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_HARDWARE_VERSION
 comma
 id|rbuf
@@ -8887,7 +8600,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|hw-&gt;hw_version
+id|dev.hw_version
 (braket
 l_int|0
 )braket
@@ -8897,7 +8610,7 @@ id|rbuf
 l_int|0
 )braket
 suffix:semicolon
-id|hw-&gt;hw_version
+id|dev.hw_version
 (braket
 l_int|1
 )braket
@@ -8912,8 +8625,9 @@ r_else
 (brace
 id|printk
 (paren
-id|KERN_INFO
-l_string|&quot;WaveFront: not raw, but no &quot;
+id|KERN_WARNING
+id|LOGNAME
+l_string|&quot;not raw, but no &quot;
 l_string|&quot;hardware version!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8937,29 +8651,34 @@ r_else
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: reloading firmware anyway.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;reloading firmware anyway.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|dev.israw
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 )brace
 r_else
 (brace
-id|hw-&gt;israw
+id|dev.israw
 op_assign
 l_int|1
 suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: no response to firmware probe, &quot;
-l_string|&quot;assume raw.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;no response to firmware probe, assume raw.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 id|init_waitqueue
 (paren
 op_amp
-id|hw-&gt;interrupt_sleeper
+id|dev.interrupt_sleeper
 )paren
 suffix:semicolon
 r_if
@@ -8967,20 +8686,31 @@ c_cond
 (paren
 id|wavefront_hw_reset
 (paren
-id|hw
 )paren
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: hardware reset failed&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;hardware reset failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Check for FX device, present only on Tropez+ */
+id|dev.has_fx
+op_assign
+(paren
+id|detect_wffx
+(paren
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -9003,10 +8733,6 @@ r_int
 DECL|function|wavefront_download_firmware
 id|wavefront_download_firmware
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_char
 op_star
 id|path
@@ -9078,7 +8804,8 @@ l_int|0
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: Unable to load &bslash;&quot;%s&bslash;&quot;.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;Unable to load &bslash;&quot;%s&bslash;&quot;.&bslash;n&quot;
 comma
 id|path
 )paren
@@ -9125,7 +8852,8 @@ id|section_length
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: firmware read error.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;firmware read error.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -9161,7 +8889,8 @@ id|section_length
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: firmware section &quot;
+id|LOGNAME
+l_string|&quot;firmware section &quot;
 l_string|&quot;read error.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9173,11 +8902,8 @@ multiline_comment|/* Send command */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|wavefront_write
 (paren
-id|hw
-comma
 id|WFC_DOWNLOAD_OS
 )paren
 )paren
@@ -9204,11 +8930,8 @@ op_increment
 r_if
 c_cond
 (paren
-op_logical_neg
 id|wavefront_write
 (paren
-id|hw
-comma
 id|section
 (braket
 id|i
@@ -9227,8 +8950,6 @@ c_cond
 (paren
 id|wavefront_wait
 (paren
-id|hw
-comma
 id|STAT_CAN_READ
 )paren
 )paren
@@ -9241,7 +8962,7 @@ id|c
 op_assign
 id|inb
 (paren
-id|hw-&gt;data_port
+id|dev.data_port
 )paren
 )paren
 op_ne
@@ -9251,7 +8972,8 @@ id|WF_ACK
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: download &quot;
+id|LOGNAME
+l_string|&quot;download &quot;
 l_string|&quot;of section #%d not &quot;
 l_string|&quot;acknowledged, ack = 0x%x&bslash;n&quot;
 comma
@@ -9266,45 +8988,18 @@ r_goto
 id|failure
 suffix:semicolon
 )brace
-r_else
-(brace
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
-(paren
-(paren
-id|hw-&gt;debug
-op_amp
-id|WF_DEBUG_IO
-)paren
-op_logical_and
-op_logical_neg
-(paren
-op_increment
-id|section_cnt_downloaded
-op_mod
-l_int|10
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;.&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
-)brace
 )brace
 r_else
 (brace
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: timed out &quot;
-l_string|&quot;for download ACK.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;time out for firmware ACK.&bslash;n&quot;
 )paren
+suffix:semicolon
+r_goto
+id|failure
 suffix:semicolon
 )brace
 )brace
@@ -9318,23 +9013,6 @@ id|set_fs
 id|fs
 )paren
 suffix:semicolon
-macro_line|#ifdef WF_DEBUG
-r_if
-c_cond
-(paren
-id|hw-&gt;debug
-op_amp
-id|WF_DEBUG_IO
-)paren
-(brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif WF_DEBUG
 r_return
 l_int|0
 suffix:semicolon
@@ -9360,19 +9038,15 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+(paren
 r_static
 r_int
-DECL|function|wavefront_config_midi
 id|wavefront_config_midi
 (paren
-id|wf_config
-op_star
-id|hw
-comma
-r_struct
-id|address_info
-op_star
-id|hw_config
+r_void
+)paren
 )paren
 (brace
 r_int
@@ -9390,71 +9064,60 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|probe_wf_mpu
+id|detect_wf_mpu
 (paren
-id|hw_config
+id|dev.irq
+comma
+id|dev.base
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: could not install &quot;
-l_string|&quot;MPU-401 device.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;could not find working MIDI device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Attach an modified MPU-401 driver to the master MIDI interface */
-id|hw_config-&gt;name
-op_assign
-l_string|&quot;WaveFront Internal MIDI&quot;
-suffix:semicolon
-id|attach_wf_mpu
-(paren
-id|hw_config
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|hw_config-&gt;slots
-(braket
-id|WF_INTERNAL_MIDI_SLOT
-)braket
-op_eq
-op_minus
-l_int|1
+(paren
+id|dev.mididev
+op_assign
+id|install_wf_mpu
+(paren
+)paren
+)paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: MPU-401 not configured.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;MIDI interfaces not configured&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|hw-&gt;mididev
-op_assign
-id|hw_config-&gt;slots
-(braket
-id|WF_INTERNAL_MIDI_SLOT
-)braket
-suffix:semicolon
 multiline_comment|/* Route external MIDI to WaveFront synth (by default) */
 r_if
 c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_MISYNTH_ON
 comma
 id|rbuf
@@ -9466,18 +9129,20 @@ id|wbuf
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: cannot enable MIDI-IN to synth routing.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;cannot enable MIDI-IN to synth routing.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* XXX error ? */
 )brace
+macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_SEQ
 multiline_comment|/* Get the regular MIDI patch loading function, so we can&n;&t;   use it if we ever get handed a SYSEX patch. This is&n;&t;   unlikely, because its so damn slow, but we may as well&n;&t;   leave this functionality from maui.c behind, since it&n;&t;   could be useful for sequencer applications that can&n;&t;   only use MIDI to do patch loading.&n;&t;*/
 r_if
 c_cond
 (paren
 id|midi_devs
 (braket
-id|hw-&gt;mididev
+id|dev.mididev
 )braket
 op_member_access_from_pointer
 id|converter
@@ -9489,30 +9154,29 @@ id|midi_load_patch
 op_assign
 id|midi_devs
 (braket
-id|hw-&gt;mididev
+id|dev.mididev
 )braket
 op_member_access_from_pointer
 id|converter-&gt;load_patch
 suffix:semicolon
 id|midi_devs
 (braket
-id|hw-&gt;mididev
+id|dev.mididev
 )braket
 op_member_access_from_pointer
 id|converter-&gt;load_patch
 op_assign
 op_amp
-id|wavefront_load_patch
+id|wavefront_oss_load_patch
 suffix:semicolon
 )brace
+macro_line|#endif OSS_SUPPORT_SEQ
 multiline_comment|/* Turn on Virtual MIDI, but first *always* turn it off,&n;&t;   since otherwise consectutive reloads of the driver will&n;&t;   never cause the hardware to generate the initial &quot;internal&quot; or &n;&t;   &quot;external&quot; source bytes in the MIDI data stream. This&n;&t;   is pretty important, since the internal hardware generally will&n;&t;   be used to generate none or very little MIDI output, and&n;&t;   thus the only source of MIDI data is actually external. Without&n;&t;   the switch bytes, the driver will think it all comes from&n;&t;   the internal interface. Duh.&n;&t;*/
 r_if
 c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_VMIDI_OFF
 comma
 id|rbuf
@@ -9524,50 +9188,44 @@ id|wbuf
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: cannot disable &quot;
-l_string|&quot;virtual MIDI mode&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;virtual MIDI mode not disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* XXX go ahead and try anyway ? */
-)brace
-id|hw_config-&gt;name
-op_assign
-l_string|&quot;WaveFront External MIDI&quot;
+r_return
+l_int|0
 suffix:semicolon
+multiline_comment|/* We&squot;re OK, but missing the external MIDI dev */
+)brace
 r_if
 c_cond
 (paren
+(paren
+id|dev.ext_mididev
+op_assign
 id|virtual_midi_enable
 (paren
-id|hw-&gt;mididev
-comma
-id|hw_config
 )paren
+)paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: no virtual MIDI access.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;no virtual MIDI access.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|hw-&gt;ext_mididev
-op_assign
-id|hw_config-&gt;slots
-(braket
-id|WF_EXTERNAL_MIDI_SLOT
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_VMIDI_ON
 comma
 id|rbuf
@@ -9579,12 +9237,12 @@ id|wbuf
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: cannot enable virtual MIDI mode.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;cannot enable virtual MIDI mode.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|virtual_midi_disable
 (paren
-id|hw-&gt;mididev
 )paren
 suffix:semicolon
 )brace
@@ -9598,10 +9256,6 @@ r_int
 DECL|function|wavefront_do_reset
 id|wavefront_do_reset
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|atboot
 )paren
@@ -9620,14 +9274,14 @@ id|atboot
 op_logical_and
 id|wavefront_hw_reset
 (paren
-id|hw
 )paren
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: hw reset failed.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;hw reset failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -9637,9 +9291,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hw-&gt;israw
-op_logical_or
-id|wf_raw
+id|dev.israw
 )paren
 (brace
 r_if
@@ -9647,8 +9299,6 @@ c_cond
 (paren
 id|wavefront_download_firmware
 (paren
-id|hw
-comma
 id|ospath
 )paren
 )paren
@@ -9657,17 +9307,19 @@ r_goto
 id|gone_bad
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for the OS to get running. The protocol for&n;&t;&t;   this is non-obvious, and was determined by&n;&t;&t;   using port-IO tracing in DOSemu and some&n;&t;&t;   experimentation here.&n;&t;&t;   &n;&t;&t;   Rather than busy-wait, use interrupts creatively.&n;&t;&t;*/
+id|dev.israw
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Wait for the OS to get running. The protocol for&n;&t;&t;   this is non-obvious, and was determined by&n;&t;&t;   using port-IO tracing in DOSemu and some&n;&t;&t;   experimentation here.&n;&t;&t;   &n;&t;&t;   Rather than using timed waits, use interrupts creatively.&n;&t;&t;*/
 id|wavefront_should_cause_interrupt
 (paren
-id|hw
-comma
 id|WFC_NOOP
 comma
-id|hw-&gt;data_port
+id|dev.data_port
 comma
 (paren
-l_int|10
+id|osrun_time
 op_star
 id|HZ
 )paren
@@ -9677,13 +9329,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hw-&gt;irq_ok
+id|dev.irq_ok
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: no post-OS interrupt.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;no post-OS interrupt.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -9693,11 +9346,9 @@ suffix:semicolon
 multiline_comment|/* Now, do it again ! */
 id|wavefront_should_cause_interrupt
 (paren
-id|hw
-comma
 id|WFC_NOOP
 comma
-id|hw-&gt;data_port
+id|dev.data_port
 comma
 (paren
 l_int|10
@@ -9710,46 +9361,50 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hw-&gt;irq_ok
+id|dev.irq_ok
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: no post-OS interrupt(2).&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;no post-OS interrupt(2).&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
 id|gone_bad
 suffix:semicolon
 )brace
-multiline_comment|/* OK, no (RX/TX) interrupts any more, but leave mute&n;&t;&t;   on. Master interrupts get enabled when we&squot;re done here.&n;&t;&t;*/
+multiline_comment|/* OK, no (RX/TX) interrupts any more, but leave mute&n;&t;&t;   in effect. &n;&t;&t;*/
 id|outb
 (paren
 l_int|0x80
+op_or
+l_int|0x40
 comma
-id|hw-&gt;control_port
+id|dev.control_port
 )paren
 suffix:semicolon
 multiline_comment|/* No need for the IRQ anymore */
 id|free_irq
 (paren
-id|hw-&gt;irq
+id|dev.irq
 comma
-id|hw
+op_amp
+id|dev
 )paren
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-multiline_comment|/*XXX has_fx_device() &amp;&amp; */
+id|dev.has_fx
+op_logical_and
 id|fx_raw
 )paren
 (brace
 id|wffx_init
 (paren
-id|hw
 )paren
 suffix:semicolon
 )brace
@@ -9758,11 +9413,10 @@ r_if
 c_cond
 (paren
 (paren
-id|hw-&gt;freemem
+id|dev.freemem
 op_assign
 id|wavefront_freemem
 (paren
-id|hw
 )paren
 )paren
 OL
@@ -9776,9 +9430,10 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: available DRAM %dk&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;available DRAM %dk&bslash;n&quot;
 comma
-id|hw-&gt;freemem
+id|dev.freemem
 op_div
 l_int|1024
 )paren
@@ -9786,40 +9441,34 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|wavefront_write
 (paren
-id|hw
-comma
 l_int|0xf0
 )paren
 op_logical_or
-op_logical_neg
 id|wavefront_write
 (paren
-id|hw
-comma
 l_int|1
 )paren
 op_logical_or
 (paren
 id|wavefront_read
 (paren
-id|hw
 )paren
 OL
 l_int|0
 )paren
 )paren
 (brace
-id|hw-&gt;debug
+id|dev.debug
 op_assign
 l_int|0
 suffix:semicolon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: MPU emulation mode not set.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;MPU emulation mode not set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -9838,8 +9487,6 @@ c_cond
 (paren
 id|wavefront_cmd
 (paren
-id|hw
-comma
 id|WFC_SET_NVOICES
 comma
 l_int|0
@@ -9851,8 +9498,12 @@ id|voices
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: cannot set number of voices to 32.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;cannot set number of voices to 32.&bslash;n&quot;
 )paren
+suffix:semicolon
+r_goto
+id|gone_bad
 suffix:semicolon
 )brace
 r_return
@@ -9865,16 +9516,30 @@ id|outb
 (paren
 l_int|0x0
 comma
-id|hw-&gt;control_port
+id|dev.control_port
 )paren
 suffix:semicolon
+id|dev.interrupts_on
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev.irq
+op_ge
+l_int|0
+)paren
+(brace
 id|free_irq
 (paren
-id|hw-&gt;irq
+id|dev.irq
 comma
-id|hw
+op_amp
+id|dev
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -9884,10 +9549,6 @@ r_int
 DECL|function|wavefront_init
 id|wavefront_init
 (paren
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|atboot
 )paren
@@ -9898,9 +9559,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hw-&gt;israw
-op_logical_or
-id|wf_raw
+id|dev.israw
 )paren
 (brace
 id|samples_are_from_rom
@@ -9910,6 +9569,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* XXX is this always true ? */
 id|samples_are_from_rom
 op_assign
 l_int|0
@@ -9918,9 +9578,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hw-&gt;israw
-op_logical_or
-id|wf_raw
+id|dev.israw
 op_logical_or
 id|fx_raw
 )paren
@@ -9930,35 +9588,30 @@ c_cond
 (paren
 id|wavefront_do_reset
 (paren
-id|hw
-comma
 id|atboot
 )paren
 )paren
 (brace
 r_return
+op_minus
 l_int|1
 suffix:semicolon
 )brace
 )brace
 id|wavefront_get_sample_status
 (paren
-id|hw
-comma
 id|samples_are_from_rom
 )paren
 suffix:semicolon
 id|wavefront_get_program_status
 (paren
-id|hw
 )paren
 suffix:semicolon
 id|wavefront_get_patch_status
 (paren
-id|hw
 )paren
 suffix:semicolon
-multiline_comment|/* Start normal operation: unreset, master interrupt enable&n;&t;   (for MPU interrupts) no mute&n;&t;*/
+multiline_comment|/* Start normal operation: unreset, master interrupt enabled, no mute&n;&t;*/
 id|outb
 (paren
 l_int|0x80
@@ -9967,7 +9620,7 @@ l_int|0x40
 op_or
 l_int|0x20
 comma
-id|hw-&gt;control_port
+id|dev.control_port
 )paren
 suffix:semicolon
 r_return
@@ -9976,32 +9629,54 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_void
-DECL|function|attach_wavefront
-id|attach_wavefront
+DECL|function|__initfunc
+id|__initfunc
 (paren
-r_struct
-id|address_info
-op_star
-id|hw_config
+r_static
+r_int
+id|install_wavefront
+(paren
+r_void
+)paren
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-r_struct
-id|wf_config
-op_star
-id|hw
-op_assign
-op_amp
-id|wavefront_configuration
-suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|i
+id|dev.synth_dev
+op_assign
+id|register_sound_synth
+(paren
+op_amp
+id|wavefront_fops
+comma
+op_minus
+l_int|1
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+id|LOGNAME
+l_string|&quot;cannot register raw synth&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_SEQ
+r_if
+c_cond
+(paren
+(paren
+id|dev.oss_dev
 op_assign
 id|sound_alloc_synthdev
 c_func
@@ -10016,176 +9691,155 @@ l_int|1
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: Too many synthesizers&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;Too many sequencers&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 r_else
 (brace
-id|hw_config-&gt;slots
-(braket
-id|WF_SYNTH_SLOT
-)braket
-op_assign
-id|i
-suffix:semicolon
-id|hw-&gt;synthdev
-op_assign
-id|i
-suffix:semicolon
 id|synth_devs
 (braket
-id|hw-&gt;synthdev
+id|dev.oss_dev
 )braket
 op_assign
 op_amp
 id|wavefront_operations
 suffix:semicolon
 )brace
+macro_line|#endif OSS_SUPPORT_SEQ
 r_if
 c_cond
 (paren
 id|wavefront_init
 (paren
-id|hw
-comma
 l_int|1
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: board could not &quot;
-l_string|&quot;be initialized.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;initialization failed.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_SEQ
 id|sound_unload_synthdev
 (paren
-id|i
+id|dev.oss_dev
 )paren
 suffix:semicolon
+macro_line|#endif OSS_SUPPORT_SEQ
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|request_region
 (paren
-id|hw_config-&gt;io_base
+id|dev.base
 op_plus
 l_int|2
 comma
 l_int|6
 comma
-l_string|&quot;WaveFront synth&quot;
+l_string|&quot;wavefront synth&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev.has_fx
+)paren
+(brace
 id|request_region
 (paren
-id|hw_config-&gt;io_base
+id|dev.base
 op_plus
 l_int|8
 comma
 l_int|8
 comma
-l_string|&quot;WaveFront FX&quot;
+l_string|&quot;wavefront fx&quot;
 )paren
 suffix:semicolon
-id|conf_printf2
-(paren
-l_string|&quot;WaveFront Synth&quot;
-comma
-id|hw_config-&gt;io_base
-comma
-l_int|0
-comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#if defined(CONFIG_MIDI)    
+)brace
 r_if
 c_cond
 (paren
 id|wavefront_config_midi
 (paren
-id|hw
-comma
-id|hw_config
 )paren
 )paren
 (brace
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: could not initialize MIDI.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;could not initialize MIDI.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;WaveFront: MIDI not configured at kernel-config time.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_MIDI
 r_return
+id|dev.oss_dev
 suffix:semicolon
 )brace
 r_void
-DECL|function|unload_wavefront
-id|unload_wavefront
+DECL|function|uninstall_wavefront
+id|uninstall_wavefront
 (paren
-r_struct
-id|address_info
-op_star
-id|hw_config
+r_void
 )paren
 (brace
-r_struct
-id|wf_config
-op_star
-id|hw
-op_assign
-op_amp
-id|wavefront_configuration
-suffix:semicolon
-multiline_comment|/* the first two are freed by the wf_mpu code */
+multiline_comment|/* the first two i/o addresses are freed by the wf_mpu code */
 id|release_region
 (paren
-id|hw-&gt;base
+id|dev.base
 op_plus
 l_int|2
 comma
 l_int|6
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev.has_fx
+)paren
+(brace
 id|release_region
 (paren
-id|hw-&gt;base
+id|dev.base
 op_plus
 l_int|8
 comma
 l_int|8
 )paren
 suffix:semicolon
+)brace
+id|unregister_sound_synth
+(paren
+id|dev.synth_dev
+)paren
+suffix:semicolon
+macro_line|#if OSS_SUPPORT_LEVEL &amp; OSS_SUPPORT_SEQ
 id|sound_unload_synthdev
 (paren
-id|hw-&gt;synthdev
+id|dev.oss_dev
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_MIDI)
-id|unload_wf_mpu
+macro_line|#endif OSS_SUPPORT_SEQ
+id|uninstall_wf_mpu
 (paren
-id|hw_config
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 "&f;"
 multiline_comment|/***********************************************************************/
@@ -10204,10 +9858,7 @@ r_int
 DECL|function|wffx_idle
 id|wffx_idle
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_int
@@ -10238,7 +9889,7 @@ id|x
 op_assign
 id|inb
 (paren
-id|hw-&gt;fx_status
+id|dev.fx_status
 )paren
 suffix:semicolon
 r_if
@@ -10268,7 +9919,8 @@ l_int|0x80
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: FX device never idle.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;FX device never idle.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -10281,16 +9933,91 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+(paren
+r_static
+r_int
+id|detect_wffx
+(paren
+r_void
+)paren
+)paren
+(brace
+multiline_comment|/* This is a crude check, but its the best one I have for now.&n;&t;   Certainly on the Maui and the Tropez, wffx_idle() will&n;&t;   report &quot;never idle&quot;, which suggests that this test should&n;&t;   work OK.&n;&t;*/
+r_if
+c_cond
+(paren
+id|inb
+(paren
+id|dev.fx_status
+)paren
+op_amp
+l_int|0x80
+)paren
+(brace
+id|printk
+(paren
+id|KERN_INFO
+id|LOGNAME
+l_string|&quot;Hmm, probably a Maui or Tropez.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+(paren
+r_static
+r_int
+id|attach_wffx
+(paren
+r_void
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|dev.fx_mididev
+op_assign
+id|sound_alloc_mididev
+(paren
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+id|KERN_WARNING
+id|LOGNAME
+l_string|&quot;cannot install FX Midi driver&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_static
 r_void
 DECL|function|wffx_mute
 id|wffx_mute
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|onoff
 )paren
@@ -10302,7 +10029,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 (brace
@@ -10318,7 +10044,7 @@ l_int|0x02
 suffix:colon
 l_int|0x00
 comma
-id|hw-&gt;fx_op
+id|dev.fx_op
 )paren
 suffix:semicolon
 )brace
@@ -10327,11 +10053,6 @@ r_int
 DECL|function|wffx_memset
 id|wffx_memset
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 r_int
 id|page
 comma
@@ -10358,7 +10079,8 @@ l_int|7
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: FX memset: &quot;
+id|LOGNAME
+l_string|&quot;FX memset: &quot;
 l_string|&quot;page must be &gt;= 0 and &lt;= 7&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10380,7 +10102,8 @@ l_int|0x7f
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: FX memset: &quot;
+id|LOGNAME
+l_string|&quot;FX memset: &quot;
 l_string|&quot;addr must be &gt;= 0 and &lt;= 7f&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10403,21 +10126,21 @@ id|outb
 (paren
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 id|page
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 id|addr
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
@@ -10431,7 +10154,7 @@ op_rshift
 l_int|8
 )paren
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -10445,13 +10168,14 @@ op_amp
 l_int|0xff
 )paren
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: FX: addr %d:%x set to 0x%x&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;FX: addr %d:%x set to 0x%x&bslash;n&quot;
 comma
 id|page
 comma
@@ -10475,21 +10199,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 id|page
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 id|addr
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -10518,7 +10242,7 @@ op_rshift
 l_int|8
 )paren
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -10532,7 +10256,7 @@ op_amp
 l_int|0xff
 )paren
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -10541,7 +10265,6 @@ c_cond
 op_logical_neg
 id|wffx_idle
 (paren
-id|hw
 )paren
 )paren
 (brace
@@ -10560,7 +10283,8 @@ id|cnt
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: FX memset &quot;
+id|LOGNAME
+l_string|&quot;FX memset &quot;
 l_string|&quot;(0x%x, 0x%x, 0x%x, %d) incomplete&bslash;n&quot;
 comma
 id|page
@@ -10592,11 +10316,6 @@ r_int
 DECL|function|wffx_ioctl
 id|wffx_ioctl
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
-comma
 id|wavefront_fx_info
 op_star
 id|r
@@ -10625,8 +10344,6 @@ id|WFFX_MUTE
 suffix:colon
 id|wffx_mute
 (paren
-id|hw
-comma
 id|r-&gt;data
 (braket
 l_int|0
@@ -10653,7 +10370,8 @@ l_int|0
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: cannot write &quot;
+id|LOGNAME
+l_string|&quot;cannot write &quot;
 l_string|&quot;&lt;= 0 bytes to FX&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10709,7 +10427,8 @@ id|page_data
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;WaveFront: cannot write &quot;
+id|LOGNAME
+l_string|&quot;cannot write &quot;
 l_string|&quot;&gt; 255 bytes to FX&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10748,8 +10467,6 @@ suffix:semicolon
 r_return
 id|wffx_memset
 (paren
-id|hw
-comma
 id|r-&gt;data
 (braket
 l_int|0
@@ -10776,7 +10493,8 @@ suffix:colon
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;WaveFront: FX: ioctl %d not yet supported&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;FX: ioctl %d not yet supported&bslash;n&quot;
 comma
 id|r-&gt;request
 )paren
@@ -10795,10 +10513,7 @@ r_int
 DECL|function|wffx_init
 id|wffx_init
 (paren
-r_struct
-id|wf_config
-op_star
-id|hw
+r_void
 )paren
 (brace
 r_int
@@ -10845,7 +10560,6 @@ c_cond
 op_logical_neg
 id|wffx_idle
 (paren
-id|hw
 )paren
 )paren
 (brace
@@ -10860,14 +10574,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 )brace
@@ -10879,7 +10593,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -10892,7 +10605,7 @@ id|outb
 (paren
 l_int|0x02
 comma
-id|hw-&gt;fx_op
+id|dev.fx_op
 )paren
 suffix:semicolon
 multiline_comment|/* mute on */
@@ -10903,7 +10616,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -10916,28 +10628,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x44
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -10947,7 +10659,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -10960,28 +10671,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x42
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -10991,7 +10702,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11004,28 +10714,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x43
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11035,7 +10745,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11048,28 +10757,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x7c
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11079,7 +10788,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11092,28 +10800,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x7e
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11123,7 +10831,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11136,28 +10843,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x46
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11167,7 +10874,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11180,28 +10886,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x49
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11211,7 +10917,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11224,28 +10929,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x47
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11255,7 +10960,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11268,28 +10972,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x4a
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 multiline_comment|/* either because of stupidity by TB&squot;s programmers, or because it&n;&t;   actually does something, rezero the MOD page.&n;&t;*/
@@ -11314,7 +11018,6 @@ c_cond
 op_logical_neg
 id|wffx_idle
 (paren
-id|hw
 )paren
 )paren
 (brace
@@ -11329,14 +11032,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 )brace
@@ -11347,21 +11050,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -11390,7 +11093,7 @@ id|page_zero
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -11402,7 +11105,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11412,7 +11115,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11429,21 +11131,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x01
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -11472,7 +11174,7 @@ id|page_one
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -11484,7 +11186,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11494,7 +11196,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11510,21 +11211,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x02
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -11552,7 +11253,7 @@ id|page_two
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11562,7 +11263,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11578,21 +11278,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x03
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -11620,7 +11320,7 @@ id|page_three
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11630,7 +11330,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11646,21 +11345,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x04
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -11688,7 +11387,7 @@ id|page_four
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11698,7 +11397,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11713,14 +11411,14 @@ id|outb
 (paren
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x06
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 r_for
@@ -11749,7 +11447,7 @@ id|page_six
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
@@ -11761,7 +11459,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -11773,7 +11471,7 @@ op_plus
 l_int|2
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11783,7 +11481,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11799,21 +11496,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -11842,7 +11539,7 @@ id|page_seven
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -11854,7 +11551,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -11864,7 +11561,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11894,14 +11590,14 @@ id|outb
 (paren
 l_int|0x01
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -11911,7 +11607,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11924,14 +11619,14 @@ id|outb
 (paren
 l_int|0x02
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -11941,7 +11636,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -11970,14 +11664,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x20
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -11987,7 +11681,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12016,14 +11709,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x20
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12033,7 +11726,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12062,14 +11754,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0xff
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12079,7 +11771,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12093,14 +11784,14 @@ id|outb
 (paren
 l_int|0x1e
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x40
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12110,7 +11801,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12138,14 +11828,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0xff
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12155,7 +11845,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12169,14 +11858,14 @@ id|outb
 (paren
 l_int|0x2e
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12186,7 +11875,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12214,14 +11902,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12231,7 +11919,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12245,14 +11932,14 @@ id|outb
 (paren
 l_int|0x3f
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x20
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12262,7 +11949,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12290,14 +11976,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12307,7 +11993,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12321,14 +12006,14 @@ id|outb
 (paren
 l_int|0x4e
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0e
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12338,7 +12023,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12351,14 +12035,14 @@ id|outb
 (paren
 l_int|0x4f
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0e
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12368,7 +12052,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12396,14 +12079,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12413,7 +12096,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12427,14 +12109,14 @@ id|outb
 (paren
 l_int|0x6c
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x40
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12444,7 +12126,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12457,14 +12138,14 @@ id|outb
 (paren
 l_int|0x6d
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12474,7 +12155,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12487,14 +12167,14 @@ id|outb
 (paren
 l_int|0x6e
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x40
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12504,7 +12184,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12517,14 +12196,14 @@ id|outb
 (paren
 l_int|0x6f
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x40
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12534,7 +12213,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12562,14 +12240,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0xc0
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12579,7 +12257,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12608,14 +12285,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12625,7 +12302,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12654,14 +12330,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12671,7 +12347,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12685,14 +12360,14 @@ id|outb
 (paren
 l_int|0xde
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12702,7 +12377,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12715,14 +12389,14 @@ id|outb
 (paren
 l_int|0xdf
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12732,7 +12406,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12760,14 +12433,14 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12777,7 +12450,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12806,28 +12478,28 @@ id|outb
 (paren
 l_int|0x01
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x02
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x01
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12837,7 +12509,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12851,7 +12522,7 @@ id|outb
 (paren
 l_int|0x02
 comma
-id|hw-&gt;fx_op
+id|dev.fx_op
 )paren
 suffix:semicolon
 multiline_comment|/* mute on */
@@ -12882,7 +12553,7 @@ id|coefficients
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
@@ -12894,7 +12565,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
@@ -12906,7 +12577,7 @@ op_plus
 l_int|2
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -12918,7 +12589,7 @@ op_plus
 l_int|3
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -12928,7 +12599,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12946,7 +12616,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12959,14 +12628,14 @@ id|outb
 (paren
 l_int|0x1e
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x14
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -12976,7 +12645,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -12989,14 +12657,14 @@ id|outb
 (paren
 l_int|0xde
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x20
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -13006,7 +12674,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13019,14 +12686,14 @@ id|outb
 (paren
 l_int|0xdf
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x20
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 multiline_comment|/* some more coefficients */
@@ -13037,7 +12704,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13050,28 +12716,28 @@ id|outb
 (paren
 l_int|0x06
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x78
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x40
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13081,7 +12747,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13094,28 +12759,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x03
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0f
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0xff
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13125,7 +12790,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13138,28 +12802,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0b
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0f
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0xff
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13169,7 +12833,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13182,28 +12845,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x02
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13213,7 +12876,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13226,28 +12888,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x0a
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13257,7 +12919,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13270,28 +12931,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x46
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13301,7 +12962,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13314,28 +12974,28 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x49
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 multiline_comment|/* Now, for some strange reason, lets reload every page&n;&t;   and all the coefficients over again. I have *NO* idea&n;&t;   why this is done. I do know that no sound is produced&n;&t;   is this phase is omitted.&n;&t;*/
@@ -13345,21 +13005,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -13388,7 +13048,7 @@ id|page_zero_v2
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -13400,7 +13060,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13410,7 +13070,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13426,21 +13085,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x01
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -13469,7 +13128,7 @@ id|page_one_v2
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -13481,7 +13140,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13491,7 +13150,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13508,7 +13166,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13524,7 +13181,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13539,21 +13195,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x02
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -13581,7 +13237,7 @@ id|page_two_v2
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13591,7 +13247,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13607,21 +13262,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x03
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -13649,7 +13304,7 @@ id|page_three_v2
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13659,7 +13314,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13675,21 +13329,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x04
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -13717,7 +13371,7 @@ id|page_four_v2
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13727,7 +13381,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13741,14 +13394,14 @@ id|outb
 (paren
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x06
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 multiline_comment|/* Page six v.2 is algorithmic */
@@ -13772,21 +13425,21 @@ id|outb
 (paren
 id|i
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13796,7 +13449,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13812,21 +13464,21 @@ id|FX_AUTO_INCR
 op_or
 id|FX_LSB_TRANSFER
 comma
-id|hw-&gt;fx_lcr
+id|dev.fx_lcr
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
 (paren
 l_int|0x10
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 r_for
@@ -13855,7 +13507,7 @@ id|page_seven_v2
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -13867,7 +13519,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -13877,7 +13529,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13913,7 +13564,7 @@ id|mod_v2
 id|i
 )braket
 comma
-id|hw-&gt;fx_mod_addr
+id|dev.fx_mod_addr
 )paren
 suffix:semicolon
 id|outb
@@ -13925,7 +13576,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_mod_data
+id|dev.fx_mod_data
 )paren
 suffix:semicolon
 r_if
@@ -13935,7 +13586,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -13971,7 +13621,7 @@ id|coefficients2
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|outb
@@ -13983,7 +13633,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
@@ -13995,7 +13645,7 @@ op_plus
 l_int|2
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -14007,7 +13657,7 @@ op_plus
 l_int|3
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 r_if
@@ -14017,7 +13667,6 @@ op_logical_neg
 id|wffx_idle
 c_func
 (paren
-id|hw
 )paren
 )paren
 r_return
@@ -14027,29 +13676,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|outb
-(paren
-l_int|0x00
-comma
-id|hw-&gt;fx_op
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|wffx_idle
-c_func
-(paren
-id|hw
-)paren
-)paren
-r_return
-(paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -14076,7 +13702,7 @@ id|outb
 (paren
 l_int|0x07
 comma
-id|hw-&gt;fx_dsp_page
+id|dev.fx_dsp_page
 )paren
 suffix:semicolon
 id|x
@@ -14096,7 +13722,7 @@ id|outb
 (paren
 id|x
 comma
-id|hw-&gt;fx_dsp_addr
+id|dev.fx_dsp_addr
 )paren
 suffix:semicolon
 id|outb
@@ -14106,7 +13732,7 @@ id|coefficients3
 id|i
 )braket
 comma
-id|hw-&gt;fx_dsp_msb
+id|dev.fx_dsp_msb
 )paren
 suffix:semicolon
 id|outb
@@ -14118,7 +13744,7 @@ op_plus
 l_int|1
 )braket
 comma
-id|hw-&gt;fx_dsp_lsb
+id|dev.fx_dsp_lsb
 )paren
 suffix:semicolon
 )brace
@@ -14126,10 +13752,25 @@ id|outb
 (paren
 l_int|0x00
 comma
-id|hw-&gt;fx_op
+id|dev.fx_op
 )paren
 suffix:semicolon
 multiline_comment|/* mute off */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|wffx_idle
+c_func
+(paren
+)paren
+)paren
+r_return
+(paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -14137,11 +13778,6 @@ l_int|0
 suffix:semicolon
 )brace
 id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-DECL|variable|cfg
-r_struct
-id|address_info
-id|cfg
 suffix:semicolon
 DECL|variable|io
 r_int
@@ -14157,8 +13793,17 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_AUTHOR
+(paren
+l_string|&quot;Paul Barton-Davis &lt;pbd@op.net&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+(paren
+l_string|&quot;Turtle Beach WaveFront Linux Driver&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
-c_func
 (paren
 id|io
 comma
@@ -14166,7 +13811,6 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
-c_func
 (paren
 id|irq
 comma
@@ -14187,6 +13831,7 @@ l_string|&quot;Copyright (C) by Hannu Solvainen, &quot;
 l_string|&quot;Paul Barton-Davis 1993-1998.&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* XXX t&squot;would be lovely to ask the CS4232 for these values, eh ? */
 r_if
 c_cond
 (paren
@@ -14204,8 +13849,8 @@ l_int|1
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;WaveFront: irq and io &quot;
-l_string|&quot;options must be set.&bslash;n&quot;
+id|LOGNAME
+l_string|&quot;irq and io options must be set.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -14213,23 +13858,41 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|cfg.io_base
-op_assign
-id|io
-suffix:semicolon
-id|cfg.irq
-op_assign
-id|irq
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|probe_wavefront
+id|wavefront_interrupt_bits
 (paren
-op_amp
-id|cfg
+id|irq
 )paren
-op_eq
+OL
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+id|KERN_INFO
+id|LOGNAME
+l_string|&quot;IRQ must be 9, 5, 12 or 15 (not %d)&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|detect_wavefront
+(paren
+id|irq
+comma
+id|io
+)paren
+OL
 l_int|0
 )paren
 (brace
@@ -14238,12 +13901,21 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|attach_wavefront
+r_if
+c_cond
 (paren
-op_amp
-id|cfg
+id|install_wavefront
+(paren
 )paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EIO
 suffix:semicolon
+)brace
 id|SOUND_LOCK
 suffix:semicolon
 r_return
@@ -14257,14 +13929,12 @@ id|cleanup_module
 r_void
 )paren
 (brace
-id|unload_wavefront
+id|uninstall_wavefront
 (paren
-op_amp
-id|cfg
 )paren
 suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE_AND_MODULE
+macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE &amp;&amp; MODULE
 eof

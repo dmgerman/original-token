@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.h,v 1.2 1997/10/17 12:41:16 mj Exp $&n; *&n; *  Copyright (C) 1997 Martin Mares&n; *&n; *  Automatic IP Layer Configuration&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.h,v 1.3 1999/01/04 20:13:29 davem Exp $&n; *&n; *  Copyright (C) 1997 Martin Mares&n; *&n; *  Automatic IP Layer Configuration&n; */
 r_extern
 id|__u32
 id|root_server_addr
@@ -27,14 +27,6 @@ id|ic_netmask
 suffix:semicolon
 r_extern
 r_int
-id|ic_bootp_flag
-suffix:semicolon
-r_extern
-r_int
-id|ic_rarp_flag
-suffix:semicolon
-r_extern
-r_int
 id|ic_enable
 suffix:semicolon
 r_extern
@@ -45,4 +37,12 @@ r_extern
 r_int
 id|ic_set_manually
 suffix:semicolon
+r_extern
+r_int
+id|ic_proto_enabled
+suffix:semicolon
+DECL|macro|IC_BOOTP
+mdefine_line|#define IC_BOOTP 1
+DECL|macro|IC_RARP
+mdefine_line|#define IC_RARP 2
 eof

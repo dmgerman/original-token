@@ -7,8 +7,10 @@ c_func
 r_struct
 id|file_operations
 op_star
+id|fops
 comma
 r_int
+id|unit
 )paren
 suffix:semicolon
 r_extern
@@ -20,6 +22,9 @@ r_struct
 id|file_operations
 op_star
 id|fops
+comma
+r_int
+id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -31,6 +36,9 @@ r_struct
 id|file_operations
 op_star
 id|fops
+comma
+r_int
+id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -42,6 +50,9 @@ r_struct
 id|file_operations
 op_star
 id|fops
+comma
+r_int
+id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -53,6 +64,9 @@ r_struct
 id|file_operations
 op_star
 id|fops
+comma
+r_int
+id|dev
 )paren
 suffix:semicolon
 r_extern

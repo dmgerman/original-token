@@ -2851,6 +2851,10 @@ suffix:semicolon
 op_increment
 id|card-&gt;wandev.stats.tx_packets
 suffix:semicolon
+id|card-&gt;wandev.stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 )brace
 )brace
 id|tx_done
@@ -5440,6 +5444,10 @@ id|skb
 suffix:semicolon
 op_increment
 id|card-&gt;wandev.stats.rx_packets
+suffix:semicolon
+id|card-&gt;wandev.stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 op_increment
 id|ppp_priv_area-&gt;rx_intr_bfr_passed_to_stack

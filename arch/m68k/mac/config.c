@@ -1650,7 +1650,7 @@ id|MAC_MODEL_CCL
 comma
 l_string|&quot;Color Classic&quot;
 comma
-id|MAC_ADB_IISI
+id|MAC_ADB_CUDA
 comma
 id|MAC_VIA_IIci
 comma
@@ -2128,7 +2128,7 @@ id|MAC_IDE_NONE
 comma
 id|MAC_SCC_QUADRA
 comma
-id|MAC_ETHER_NONE
+id|MAC_ETHER_SONIC
 comma
 id|MAC_NUBUS
 )brace
@@ -2148,7 +2148,7 @@ id|MAC_IDE_NONE
 comma
 id|MAC_SCC_QUADRA
 comma
-id|MAC_ETHER_NONE
+id|MAC_ETHER_SONIC
 comma
 id|MAC_NUBUS
 )brace

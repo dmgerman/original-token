@@ -796,9 +796,9 @@ id|split_point
 suffix:colon
 l_int|7
 suffix:semicolon
-DECL|member|updown
+DECL|member|play_below
 id|UCHAR8
-id|updown
+id|play_below
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -1337,6 +1337,7 @@ r_typedef
 r_struct
 id|wf_patch_info
 (brace
+multiline_comment|/* the first two fields are used by the OSS &quot;patch loading&quot; interface&n;       only, and are unused by the current user-level library.&n;    */
 DECL|member|key
 id|INT16
 id|key
@@ -1352,6 +1353,8 @@ id|UCHAR8
 id|subkey
 suffix:semicolon
 multiline_comment|/* WF_ST_{SAMPLE,ALIAS,etc.} */
+DECL|macro|WAVEFRONT_FIND_FREE_SAMPLE_SLOT
+mdefine_line|#define WAVEFRONT_FIND_FREE_SAMPLE_SLOT 999
 DECL|member|number
 id|UINT16
 id|number
@@ -1394,11 +1397,6 @@ r_typedef
 r_struct
 id|wavefront_control
 (brace
-DECL|member|devno
-r_int
-id|devno
-suffix:semicolon
-multiline_comment|/* from /dev/sequencer interface */
 DECL|member|cmd
 r_int
 id|cmd
@@ -1431,6 +1429,10 @@ DECL|typedef|wavefront_control
 )brace
 id|wavefront_control
 suffix:semicolon
+DECL|macro|WFCTL_WFCMD
+mdefine_line|#define WFCTL_WFCMD    0x1
+DECL|macro|WFCTL_LOAD_SPP
+mdefine_line|#define WFCTL_LOAD_SPP 0x2
 multiline_comment|/* Modulator table */
 DECL|macro|WF_MOD_LFO1
 mdefine_line|#define WF_MOD_LFO1      0

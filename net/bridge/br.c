@@ -3689,7 +3689,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Ethernet Bridge 005 for NET3.037 (Linux 2.1)&bslash;n&quot;
+l_string|&quot;NET4: Ethernet Bridge 005 for NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Form initial topology change time.&n;&t; * The topology change timer is only used if this is the root bridge.&n;&t; */

@@ -742,7 +742,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.config.f.x%d.x configure -state normal -fore [ cget .ref -foreground ]; &quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state normal -foreground [ cget .ref -foreground ]; &quot;
 comma
 id|menu_num
 comma
@@ -768,7 +768,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;.menu%d.config.f.x%d.x configure -state disabled -fore [ cget .ref -disabledforeground ];&quot;
+l_string|&quot;.menu%d.config.f.x%d.x configure -state disabled -foreground [ cget .ref -disabledforeground ];&quot;
 comma
 id|menu_num
 comma

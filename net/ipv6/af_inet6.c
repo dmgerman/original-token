@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.39 1998/10/03 09:38:23 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.41 1999/01/02 16:51:50 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1971,7 +1971,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;IPv6 v0.2 for NET3.037&bslash;n&quot;
+l_string|&quot;IPv6 v0.8 for NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

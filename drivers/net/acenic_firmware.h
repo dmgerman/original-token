@@ -83,7 +83,7 @@ id|tigonFwSbssLen
 op_assign
 l_int|0x28
 suffix:semicolon
-DECL|variable|__init
+DECL|variable|__initdata
 id|u32
 id|tigonFwText
 (braket
@@ -95,7 +95,7 @@ l_int|4
 op_plus
 l_int|1
 )braket
-id|__init
+id|__initdata
 op_assign
 (brace
 l_int|0x10000003

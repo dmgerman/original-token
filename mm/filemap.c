@@ -401,7 +401,11 @@ id|count
 suffix:semicolon
 id|count
 op_assign
+(paren
 id|limit
+op_lshift
+l_int|1
+)paren
 op_rshift
 id|priority
 suffix:semicolon
@@ -413,6 +417,10 @@ id|clock
 suffix:semicolon
 r_do
 (brace
+r_int
+id|referenced
+suffix:semicolon
+multiline_comment|/* This works even in the presence of PageSkip because&n;&t;&t; * the first two entries at the beginning of a hole will&n;&t;&t; * be marked, not just the first.&n;&t;&t; */
 id|page
 op_increment
 suffix:semicolon
@@ -456,9 +464,11 @@ op_assign
 id|page-&gt;map_nr
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
+id|count
+op_decrement
+suffix:semicolon
+id|referenced
+op_assign
 id|test_and_clear_bit
 c_func
 (paren
@@ -467,12 +477,6 @@ comma
 op_amp
 id|page-&gt;flags
 )paren
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/* Decrement count only for non-referenced pages */
-id|count
-op_decrement
 suffix:semicolon
 r_if
 c_cond
@@ -518,6 +522,49 @@ l_int|1
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Is it a page swap page? If so, we want to&n;&t;&t; * drop it if it is no longer used, even if it&n;&t;&t; * were to be marked referenced..&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|referenced
+op_logical_and
+id|swap_count
+c_func
+(paren
+id|page-&gt;offset
+)paren
+op_ne
+l_int|1
+)paren
+r_continue
+suffix:semicolon
+id|delete_from_swap_cache
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|referenced
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/* Is it a buffer page? */
 r_if
 c_cond
@@ -551,7 +598,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* is it a swap-cache or page-cache page? */
+multiline_comment|/* is it a page-cache page? */
 r_if
 c_cond
 (paren
@@ -568,26 +615,6 @@ c_func
 )paren
 r_continue
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|PageSwapCache
-c_func
-(paren
-id|page
-)paren
-)paren
-(brace
-id|delete_from_swap_cache
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|remove_inode_page
 c_func
 (paren

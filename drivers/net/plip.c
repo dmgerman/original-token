@@ -5089,11 +5089,6 @@ c_func
 )paren
 suffix:semicolon
 r_int
-id|devices
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 id|i
 op_assign
 l_int|0
@@ -5138,7 +5133,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* When user feeds parameters, use them */
+multiline_comment|/* If the user feeds parameters, use them */
 r_while
 c_loop
 (paren
@@ -5368,14 +5363,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|devices
-op_increment
-suffix:semicolon
-)brace
-)brace
 id|i
 op_increment
 suffix:semicolon
+)brace
+)brace
 id|pb
 op_assign
 id|pb-&gt;next
@@ -5384,7 +5376,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|devices
+id|i
 op_eq
 l_int|0
 )paren

@@ -21,6 +21,10 @@ r_static
 r_int
 id|my_dev
 suffix:semicolon
+DECL|variable|pas2_mididev
+r_int
+id|pas2_mididev
+suffix:semicolon
 DECL|variable|tmp_queue
 r_static
 r_int
@@ -62,9 +66,9 @@ r_char
 id|data
 )paren
 suffix:semicolon
+DECL|function|pas_midi_open
 r_static
 r_int
-DECL|function|pas_midi_open
 id|pas_midi_open
 c_func
 (paren
@@ -115,18 +119,10 @@ c_cond
 (paren
 id|midi_busy
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;PAS16: Midi busy&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Reset input and output FIFO pointers&n;&t; */
 id|pas_write
 c_func
@@ -269,9 +265,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pas_midi_close
 r_static
 r_void
-DECL|function|pas_midi_close
 id|pas_midi_close
 c_func
 (paren
@@ -301,9 +297,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|dump_to_midi
 r_static
 r_int
-DECL|function|dump_to_midi
 id|dump_to_midi
 c_func
 (paren
@@ -335,7 +331,7 @@ l_int|4
 op_amp
 l_int|0x0f
 suffix:semicolon
-multiline_comment|/*&n; * The MIDI FIFO space register and it&squot;s documentation is nonunderstandable.&n; * There seem to be no way to differentiate between buffer full and buffer&n; * empty situations. For this reason we don&squot;t never write the buffer&n; * completely full. In this way we can assume that 0 (or is it 15)&n; * means that the buffer is empty.&n; */
+multiline_comment|/*&n;&t; * The MIDI FIFO space register and it&squot;s documentation is nonunderstandable.&n;&t; * There seem to be no way to differentiate between buffer full and buffer&n;&t; * empty situations. For this reason we don&squot;t never write the buffer&n;&t; * completely full. In this way we can assume that 0 (or is it 15)&n;&t; * means that the buffer is empty.&n;&t; */
 r_if
 c_cond
 (paren
@@ -348,12 +344,10 @@ op_ne
 l_int|0
 )paren
 multiline_comment|/* Full (almost) */
-(brace
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Ask upper layers to retry after some time */
-)brace
 id|pas_write
 c_func
 (paren
@@ -366,9 +360,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|pas_midi_out
 r_static
 r_int
-DECL|function|pas_midi_out
 id|pas_midi_out
 c_func
 (paren
@@ -424,7 +418,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Output the byte if the local queue is empty.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Output the byte if the local queue is empty.&n;&t; */
 r_if
 c_cond
 (paren
@@ -443,7 +437,7 @@ id|midi_byte
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * Put to the local queue&n;&t; */
+multiline_comment|/*&n;&t; *&t;Put to the local queue&n;&t; */
 r_if
 c_cond
 (paren
@@ -489,9 +483,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|pas_midi_start_read
 r_static
 r_int
-DECL|function|pas_midi_start_read
 id|pas_midi_start_read
 c_func
 (paren
@@ -503,9 +497,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pas_midi_end_read
 r_static
 r_int
-DECL|function|pas_midi_end_read
 id|pas_midi_end_read
 c_func
 (paren
@@ -517,9 +511,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|pas_midi_kick
 r_static
 r_void
-DECL|function|pas_midi_kick
 id|pas_midi_kick
 c_func
 (paren
@@ -528,9 +522,9 @@ id|dev
 )paren
 (brace
 )brace
+DECL|function|pas_buffer_status
 r_static
 r_int
-DECL|function|pas_buffer_status
 id|pas_buffer_status
 c_func
 (paren
@@ -592,8 +586,8 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-r_void
 DECL|function|pas_midi_init
+r_void
 id|pas_midi_init
 c_func
 (paren
@@ -641,14 +635,18 @@ op_assign
 op_amp
 id|pas_midi_operations
 suffix:semicolon
+id|pas2_mididev
+op_assign
+id|dev
+suffix:semicolon
 id|sequencer_init
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|pas_midi_interrupt
+r_void
 id|pas_midi_interrupt
 c_func
 (paren
@@ -811,6 +809,7 @@ l_int|0x40
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;MIDI output overrun %x,%x&bslash;n&quot;
 comma
 id|pas_read

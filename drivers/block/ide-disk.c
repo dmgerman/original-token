@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.08  Dec   10, 1998&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *            and Andre Hedrick &lt;hedrick@astro.dyer.vanderbilt.edu&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; * Version 1.07&t;&t;disable door-locking if it fails&n; * Version 1.08&t;&t;fixed CHS/LBA translations for ATA4 &gt; 8GB,&n; *&t;&t;&t;process of adding new ATA4 compliance.&n; *&t;&t;&t;fixed problems in allowing fdisk to see&n; *&t;&t;&t;the entire disk.&n; */
+multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and  Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; * Version 1.07&t;&t;disable door-locking if it fails&n; * Version 1.08&t;&t;fixed CHS/LBA translations for ATA4 &gt; 8GB,&n; *&t;&t;&t;process of adding new ATA4 compliance.&n; *&t;&t;&t;fixed problems in allowing fdisk to see&n; *&t;&t;&t;the entire disk.&n; */
 DECL|macro|IDEDISK_VERSION
 mdefine_line|#define IDEDISK_VERSION&t;&quot;1.08&quot;
 DECL|macro|REALLY_SLOW_IO
@@ -266,7 +266,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* lba_capacity is our only option */
 )brace
-multiline_comment|/*&n;&t; * very large drives (8GB+) may lie about the number of cylinders&n;&t; * This is a split test for drives less than 8 Gig only.&n;&t; */
+multiline_comment|/*&n;&t; * This is a split test for drives less than 8 Gig only.&n;&t; * Drives less than 8GB sometimes declare that they have 15 heads.&n;&t; * This is an accounting trick (0-15) == (1-16), just an initial&n;&t; * zero point difference.&n;&t; */
 r_if
 c_cond
 (paren
@@ -283,9 +283,17 @@ id|chs_sects
 )paren
 op_logical_and
 (paren
+(paren
+id|id-&gt;heads
+op_eq
+l_int|15
+)paren
+op_logical_or
+(paren
 id|id-&gt;heads
 op_eq
 l_int|16
+)paren
 )paren
 op_logical_and
 (paren
@@ -295,6 +303,31 @@ l_int|63
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|id-&gt;heads
+op_eq
+l_int|15
+)paren
+id|id-&gt;cyls
+op_assign
+id|lba_sects
+op_div
+(paren
+l_int|15
+op_star
+l_int|63
+)paren
+suffix:semicolon
+multiline_comment|/* correct cyls */
+r_if
+c_cond
+(paren
+id|id-&gt;heads
+op_eq
+l_int|16
+)paren
 id|id-&gt;cyls
 op_assign
 id|lba_sects

@@ -6916,6 +6916,9 @@ c_func
 (paren
 op_amp
 id|dev_fileops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL
@@ -6969,6 +6972,9 @@ c_func
 (paren
 op_amp
 id|dev_fileops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL

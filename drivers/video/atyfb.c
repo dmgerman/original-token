@@ -14387,6 +14387,10 @@ id|addr
 )paren
 r_continue
 suffix:semicolon
+id|addr
+op_and_assign
+id|PCI_BASE_ADDRESS_MEM_MASK
+suffix:semicolon
 macro_line|#ifdef __sparc__
 multiline_comment|/*&n;&t;     * Map memory-mapped registers.&n;&t;     */
 id|info-&gt;ati_regbase

@@ -1,5 +1,5 @@
 multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * --------------------------------------------------------------------------&n; *&n; *  Modifications by Daniel M. Eischen (deischen@iworks.InterWorks.org):&n; *&n; *  Substantially modified to include support for wide and twin bus&n; *  adapters, DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  SCB paging, and other rework of the code.&n; *&n; *  Parts of this driver were also based on the FreeBSD driver by&n; *  Justin T. Gibbs.  His copyright follows:&n; *&n; * --------------------------------------------------------------------------  &n; * Copyright (c) 1994-1997 Justin Gibbs.&n; * All rights reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions, and the following disclaimer,&n; *    without modification, immediately at the beginning of the file.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. The name of the author may not be used to endorse or promote products&n; *    derived from this software without specific prior written permission.&n; *&n; * Where this Software is combined with software released under the terms of &n; * the GNU Public License (&quot;GPL&quot;) and the terms of the GPL would require the &n; * combined work to also be released under the terms of the GPL, the terms&n; * and conditions of this License will apply in addition to those of the&n; * GPL with the exception of any terms or conditions of this License that&n; * conflict with, or are expressly prohibited by, the GPL.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; *      $Id: aic7xxx.c,v 1.119 1997/06/27 19:39:18 gibbs Exp $&n; *---------------------------------------------------------------------------&n; *&n; *  Thanks also go to (in alphabetical order) the following:&n; *&n; *    Rory Bolt     - Sequencer bug fixes&n; *    Jay Estabrook - Initial DEC Alpha support&n; *    Doug Ledford  - Much needed abort/reset bug fixes&n; *    Kai Makisara  - DMAing of SCBs&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended&n; *           aic7xxx=no_reset&n; *           aic7xxx=ultra&n; *           aic7xxx=irq_trigger:[0,1]  # 0 edge, 1 level&n; *           aic7xxx=verbose&n; *&n; *  Daniel M. Eischen, deischen@iworks.InterWorks.org, 1/23/97&n; *&n; *  $Id: aic7xxx.c,v 4.1 1997/06/12 08:23:42 deang Exp $&n; *-M*************************************************************************/
-multiline_comment|/*+M**************************************************************************&n; *&n; * Further driver modifications made by Doug Ledford &lt;dledford@redhat.com&gt;&n; *&n; * Copyright (c) 1997-1998 Doug Ledford&n; *&n; * These changes are released under the same licensing terms as the FreeBSD&n; * driver written by Justin Gibbs.  Please see his Copyright notice above&n; * for the exact terms and conditions covering my changes as well as the&n; * warranty statement.&n; *&n; * Modifications made to the aic7xxx.c,v 4.1 driver from Dan Eischen include&n; * but are not limited to:&n; *&n; *  1: Import of the latest FreeBSD sequencer code for this driver&n; *  2: Modification of kernel code to accomodate different sequencer semantics&n; *  3: Extensive changes throughout kernel portion of driver to improve&n; *     abort/reset processing and error hanndling&n; *  4: Other work contributed by various people on the Internet&n; *  5: Changes to printk information and verbosity selection code&n; *  6: General reliability related changes, especially in IRQ management&n; *  7: Modifications to the default probe/attach order for supported cards&n; *  8: SMP friendliness has been improved&n; *&n; * Overall, this driver represents a significant departure from the official&n; * aic7xxx driver released by Dan Eischen in two ways.  First, in the code&n; * itself.  A diff between the two version of the driver is now a several&n; * thousand line diff.  Second, in approach to solving the same problem.  The&n; * problem is importing the FreeBSD aic7xxx driver code to linux can be a&n; * difficult and time consuming process, that also can be error prone.  Dan&n; * Eischen&squot;s official driver uses the approach that the linux and FreeBSD&n; * drivers should be as identical as possible.  To that end, his next version&n; * of this driver will be using a mid-layer code library that he is developing&n; * to moderate communications between the linux mid-level SCSI code and the&n; * low level FreeBSD driver.  He intends to be able to essentially drop the&n; * FreeBSD driver into the linux kernel with only a few minor tweaks to some&n; * include files and the like and get things working, making for fast easy&n; * imports of the FreeBSD code into linux.&n; *&n; * I disagree with Dan&squot;s approach.  Not that I don&squot;t think his way of doing&n; * things would be nice, easy to maintain, and create a more uniform driver&n; * between FreeBSD and Linux.  I have no objection to those issues.  My&n; * disagreement is on the needed functionality.  There simply are certain&n; * things that are done differently in FreeBSD than linux that will cause&n; * problems for this driver regardless of any middle ware Dan implements.&n; * The biggest example of this at the moment is interrupt semantics.  Linux&n; * doesn&squot;t provide the same protection techniques as FreeBSD does, nor can&n; * they be easily implemented in any middle ware code since they would truly&n; * belong in the kernel proper and would effect all drivers.  For the time&n; * being, I see issues such as these as major stumbling blocks to the &n; * reliability of code based upon such middle ware.  Therefore, I choose to&n; * use a different approach to importing the FreeBSD code that doesn&squot;t&n; * involve any middle ware type code.  My approach is to import the sequencer&n; * code from FreeBSD wholesale.  Then, to only make changes in the kernel&n; * portion of the driver as they are needed for the new sequencer semantics.&n; * In this way, the portion of the driver that speaks to the rest of the&n; * linux kernel is fairly static and can be changed/modified to solve&n; * any problems one might encounter without concern for the FreeBSD driver.&n; *&n; * Note: If time and experience should prove me wrong that the middle ware&n; * code Dan writes is reliable in its operation, then I&squot;ll retract my above&n; * statements.  But, for those that don&squot;t know, I&squot;m from Missouri (in the US)&n; * and our state motto is &quot;The Show-Me State&quot;.  Well, before I will put&n; * faith into it, you&squot;ll have to show me that it works :)&n; *&n; *_M*************************************************************************/
+multiline_comment|/*+M**************************************************************************&n; *&n; * Further driver modifications made by Doug Ledford &lt;dledford@redhat.com&gt;&n; *&n; * Copyright (c) 1997-1999 Doug Ledford&n; *&n; * These changes are released under the same licensing terms as the FreeBSD&n; * driver written by Justin Gibbs.  Please see his Copyright notice above&n; * for the exact terms and conditions covering my changes as well as the&n; * warranty statement.&n; *&n; * Modifications made to the aic7xxx.c,v 4.1 driver from Dan Eischen include&n; * but are not limited to:&n; *&n; *  1: Import of the latest FreeBSD sequencer code for this driver&n; *  2: Modification of kernel code to accomodate different sequencer semantics&n; *  3: Extensive changes throughout kernel portion of driver to improve&n; *     abort/reset processing and error hanndling&n; *  4: Other work contributed by various people on the Internet&n; *  5: Changes to printk information and verbosity selection code&n; *  6: General reliability related changes, especially in IRQ management&n; *  7: Modifications to the default probe/attach order for supported cards&n; *  8: SMP friendliness has been improved&n; *&n; * Overall, this driver represents a significant departure from the official&n; * aic7xxx driver released by Dan Eischen in two ways.  First, in the code&n; * itself.  A diff between the two version of the driver is now a several&n; * thousand line diff.  Second, in approach to solving the same problem.  The&n; * problem is importing the FreeBSD aic7xxx driver code to linux can be a&n; * difficult and time consuming process, that also can be error prone.  Dan&n; * Eischen&squot;s official driver uses the approach that the linux and FreeBSD&n; * drivers should be as identical as possible.  To that end, his next version&n; * of this driver will be using a mid-layer code library that he is developing&n; * to moderate communications between the linux mid-level SCSI code and the&n; * low level FreeBSD driver.  He intends to be able to essentially drop the&n; * FreeBSD driver into the linux kernel with only a few minor tweaks to some&n; * include files and the like and get things working, making for fast easy&n; * imports of the FreeBSD code into linux.&n; *&n; * I disagree with Dan&squot;s approach.  Not that I don&squot;t think his way of doing&n; * things would be nice, easy to maintain, and create a more uniform driver&n; * between FreeBSD and Linux.  I have no objection to those issues.  My&n; * disagreement is on the needed functionality.  There simply are certain&n; * things that are done differently in FreeBSD than linux that will cause&n; * problems for this driver regardless of any middle ware Dan implements.&n; * The biggest example of this at the moment is interrupt semantics.  Linux&n; * doesn&squot;t provide the same protection techniques as FreeBSD does, nor can&n; * they be easily implemented in any middle ware code since they would truly&n; * belong in the kernel proper and would effect all drivers.  For the time&n; * being, I see issues such as these as major stumbling blocks to the &n; * reliability of code based upon such middle ware.  Therefore, I choose to&n; * use a different approach to importing the FreeBSD code that doesn&squot;t&n; * involve any middle ware type code.  My approach is to import the sequencer&n; * code from FreeBSD wholesale.  Then, to only make changes in the kernel&n; * portion of the driver as they are needed for the new sequencer semantics.&n; * In this way, the portion of the driver that speaks to the rest of the&n; * linux kernel is fairly static and can be changed/modified to solve&n; * any problems one might encounter without concern for the FreeBSD driver.&n; *&n; * Note: If time and experience should prove me wrong that the middle ware&n; * code Dan writes is reliable in its operation, then I&squot;ll retract my above&n; * statements.  But, for those that don&squot;t know, I&squot;m from Missouri (in the US)&n; * and our state motto is &quot;The Show-Me State&quot;.  Well, before I will put&n; * faith into it, you&squot;ll have to show me that it works :)&n; *&n; *_M*************************************************************************/
 multiline_comment|/*&n; * The next three defines are user configurable.  These should be the only&n; * defines a user might need to get in here and change.  There are other&n; * defines buried deeper in the code, but those really shouldn&squot;t need touched&n; * under normal conditions.&n; */
 multiline_comment|/*&n; * AIC7XXX_FAKE_NEGOTIATION_CMDS&n; *   We now have two distinctly different methods of device negotiation&n; *   in this code.  The two methods are selected by either defining or not&n; *   defining this option.  The difference is as follows:&n; *&n; *   With AIC7XXX_FAKE_NEGOTIATION_CMDS not set (commented out)&n; *     When the driver is in need of issuing a negotiation command for any&n; *     given device, it will add the negotiation message on to part of a&n; *     regular SCSI command for the device.  In the process, if the device&n; *     is configured for and using tagged queueing, then the code will&n; *     also issue that single command as a non-tagged command, attach the&n; *     negotiation message to that one command, and use a temporary&n; *     queue depth of one to keep the untagged and tagged commands from&n; *     overlapping.&n; *       Pros: This doesn&squot;t use any extra SCB structures, it&squot;s simple, it&n; *         works most of the time (if not all of the time now), and&n; *         since we get the device capability info frmo the INQUIRY data&n; *         now, shouldn&squot;t cause any problems.&n; *       Cons: When we need to send a negotiation command to a device, we&n; *         must use a command that is being sent to LUN 0 of the device.&n; *         If we try sending one to high LUN numbers, then some devices&n; *         get noticeably upset.  Since we have to wait for a command with&n; *         LUN == 0 to come along, we may not be able to renegotiate when&n; *         we want if the user is actually using say LUN 1 of a CD Changer&n; *         instead of using LUN 0 for an extended period of time.&n; *&n; *   With AIC7XXX_FAKE_NEGOTIATION_CMDS defined&n; *     When we need to negotiate with a device, instead of attaching our&n; *     negotiation message to an existing command, we insert our own&n; *     fictional Scsi_Cmnd into the chain that has the negotiation message&n; *     attached to it.  We send this one command as untagged regardless&n; *     of the device type, and we fiddle with the queue depth the same as&n; *     we would with the option unset to avoid overlapping commands.  The&n; *     primary difference between this and the unset option is that the&n; *     negotiation message is no longer attached to a specific command,&n; *     instead it is its own command and is merely triggered by a&n; *     combination of both A) We need to negotiate and B) The mid level&n; *     SCSI code has sent us a command.  We still don&squot;t do any negotiation&n; *     unless there is a valid SCSI command to be processed.&n; *       Pros: This fixes the problem above in the Cons section.  Since we&n; *         issue our own fake command, we can set the LUN to 0 regardless&n; *         of what the LUN is in the real command.  It also means that if&n; *         the device get&squot;s nasty over negotiation issues, it won&squot;t be&n; *         showing up on a regular command, so we won&squot;t get any SENSE buffer&n; *         data or STATUS_BYTE returns to the mid level code that are caused&n; *         by snits in the negotiation code.&n; *       Cons: We add more code, and more complexity.  This means more ways&n; *         in which things could break.  It means a larger driver.  It means&n; *         more resource consumption for the fake commands.  However, the&n; *         biggest problem is this.  Take a system where there is a CD-ROM&n; *         on the SCSI bus.  Someone has a CD in the CD-ROM and is using it.&n; *         For some reason the SCSI bus gets reset.  We don&squot;t touch the&n; *         CD-ROM again for quite a period of time (so we don&squot;t renegotiate&n; *         after the reset until we do touch the CD-ROM again).  In the&n; *         time while we aren&squot;t using the CD-ROM, the current disc is&n; *         removed and a new one put in.  When we go to check that disc, we&n; *         will first have to renegotiate.  In so doing, we issue our fake&n; *         SCSI command, which happens to be TEST_UNIT_READY.  The CD-ROM&n; *         negotiates with us, then responds to our fake command with a&n; *         CHECK_CONDITION status.  We REQUEST_SENSE from the CD-ROM, it&n; *         then sends the SENSE data to our fake command to tell it that&n; *         it has been through a disc change.  There, now we&squot;ve cleared out&n; *         the SENSE data along with our negotiation command, and when the&n; *         real command executes, it won&squot;t pick up that the CD was changed.&n; *         That&squot;s the biggest Con to this approach.  In the future, I could&n; *         probably code around this problem though, so this option is still&n; *         viable.&n; *&n; *  So, which command style should you use?  I would appreciate it if people&n; *  could try out both types.  I want to know about any cases where one&n; *  method works and the other doesn&squot;t.  If one method works on significantly&n; *  more systems than another, then it will become the default.  If the second&n; *  option turns out to work best, then I&squot;ll find a way to work around that&n; *  big con I listed.&n; *&n; *  -- July 7, 02:33&n; *    OK...I just added some code that should make the Con listed for the&n; *    fake commands a non issue now.  However, it needs testing.  For now,&n; *    I&squot;m going to make the default to use the fake commands, we&squot;ll see how&n; *    it goes.&n; */
 DECL|macro|AIC7XXX_FAKE_NEGOTIATION_CMDS
@@ -87,7 +87,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.7&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.9&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -187,6 +187,9 @@ multiline_comment|/*&n; * You can try raising me if tagged queueing is enabled, 
 macro_line|#ifdef CONFIG_AIC7XXX_CMDS_PER_LUN
 DECL|macro|AIC7XXX_CMDS_PER_LUN
 mdefine_line|#define AIC7XXX_CMDS_PER_LUN CONFIG_AIC7XXX_CMDS_PER_LUN
+macro_line|#else
+DECL|macro|AIC7XXX_CMDS_PER_LUN
+mdefine_line|#define AIC7XXX_CMDS_PER_LUN 24
 macro_line|#endif
 multiline_comment|/* Set this to the delay in seconds after SCSI bus reset. */
 macro_line|#ifdef CONFIG_AIC7XXX_RESET_DELAY
@@ -221,7 +224,7 @@ id|adapter_tag_info_t
 suffix:semicolon
 multiline_comment|/*&n; * Make a define that will tell the driver not to use tagged queueing&n; * by default.&n; */
 DECL|macro|DEFAULT_TAG_COMMANDS
-mdefine_line|#define DEFAULT_TAG_COMMANDS {255, 255, 255, 255, 255, 255, 255, 255,&bslash;&n;                              255, 255, 255, 255, 255, 255, 255, 255}
+mdefine_line|#define DEFAULT_TAG_COMMANDS {0, 0, 0, 0, 0, 0, 0, 0,&bslash;&n;                              0, 0, 0, 0, 0, 0, 0, 0}
 multiline_comment|/*&n; * Modify this as you see fit for your system.  By setting tag_commands&n; * to 0, the driver will use it&squot;s own algorithm for determining the&n; * number of commands to use (see above).  When 255, the driver will&n; * not enable tagged queueing for that particular device.  When positive&n; * (&gt; 0) and (&lt; 255) the values in the array are used for the queue_depth.&n; * Note that the maximum value for an entry is 254, but you&squot;re insane if&n; * you try to use that many commands on one device.&n; *&n; * In this example, the first line will disable tagged queueing for all&n; * the devices on the first probed aic7xxx adapter.&n; *&n; * The second line enables tagged queueing with 4 commands/LUN for IDs&n; * (1, 2-11, 13-15), disables tagged queueing for ID 12, and tells the&n; * driver to use its own algorithm for ID 1.&n; *&n; * The third line is the same as the first line.&n; *&n; * The fourth line disables tagged queueing for devices 0 and 3.  It&n; * enables tagged queueing for the other IDs, with 16 commands/LUN&n; * for IDs 1 and 4, 127 commands/LUN for ID 8, and 4 commands/LUN for&n; * IDs 2, 5-7, and 9-15.&n; */
 multiline_comment|/*&n; * NOTE: The below structure is for reference only, the actual structure&n; *       to modify in order to change things is located around line&n; *       number 1305&n;adapter_tag_info_t aic7xxx_tag_info[] =&n;{&n;  {DEFAULT_TAG_COMMANDS},&n;  {{4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 255, 4, 4, 4}},&n;  {DEFAULT_TAG_COMMANDS},&n;  {{255, 16, 4, 255, 16, 4, 4, 4, 127, 4, 4, 4, 4, 4, 4, 4}}&n;};&n;*/
 multiline_comment|/*&n; * Define an array of board names that can be indexed by aha_type.&n; * Don&squot;t forget to change this when changing the types!&n; */
@@ -882,6 +885,11 @@ op_assign
 l_int|0x00004000
 comma
 multiline_comment|/*&n;  *  Here ends the FreeBSD defined flags and here begins the linux defined&n;  *  flags.  NOTE: I did not preserve the old flag name during this change&n;  *  specifically to force me to evaluate what flags were being used properly&n;  *  and what flags weren&squot;t.  This way, I could clean up the flag usage on&n;  *  a use by use basis.  Doug Ledford&n;  */
+DECL|enumerator|AHC_RESET_DELAY
+id|AHC_RESET_DELAY
+op_assign
+l_int|0x00080000
+comma
 DECL|enumerator|AHC_A_SCANNED
 id|AHC_A_SCANNED
 op_assign
@@ -1492,6 +1500,30 @@ id|scb_data_type
 op_star
 id|scb_data
 suffix:semicolon
+DECL|member|needsdtr
+r_volatile
+r_int
+r_int
+id|needsdtr
+suffix:semicolon
+DECL|member|sdtr_pending
+r_volatile
+r_int
+r_int
+id|sdtr_pending
+suffix:semicolon
+DECL|member|needwdtr
+r_volatile
+r_int
+r_int
+id|needwdtr
+suffix:semicolon
+DECL|member|wdtr_pending
+r_volatile
+r_int
+r_int
+id|wdtr_pending
+suffix:semicolon
 DECL|struct|aic7xxx_cmd_queue
 r_struct
 id|aic7xxx_cmd_queue
@@ -1620,6 +1652,25 @@ id|dev_commands_sent
 id|MAX_TARGETS
 )braket
 suffix:semicolon
+DECL|member|dev_timer_active
+r_int
+r_int
+id|dev_timer_active
+suffix:semicolon
+multiline_comment|/* Which devs have a timer set */
+DECL|member|dev_timer
+r_struct
+id|timer_list
+id|dev_timer
+suffix:semicolon
+DECL|member|dev_expires
+r_int
+r_int
+id|dev_expires
+(braket
+id|MAX_TARGETS
+)braket
+suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
 DECL|member|spin_lock
 id|spinlock_t
@@ -1635,12 +1686,6 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 macro_line|#endif
-DECL|member|dev_timer_active
-r_int
-r_int
-id|dev_timer_active
-suffix:semicolon
-multiline_comment|/* Which devs have a timer set */
 macro_line|#ifdef AIC7XXX_FAKE_NEGOTIATION_CMDS
 DECL|member|dev_wdtr_cmnd
 id|Scsi_Cmnd
@@ -1691,20 +1736,6 @@ id|delayed_scbs
 id|MAX_TARGETS
 )braket
 suffix:semicolon
-DECL|member|dev_expires
-r_int
-r_int
-id|dev_expires
-(braket
-id|MAX_TARGETS
-)braket
-suffix:semicolon
-DECL|member|dev_timer
-r_struct
-id|timer_list
-id|dev_timer
-suffix:semicolon
-multiline_comment|/*&n;   * The next 64....&n;   */
 DECL|member|msg_buf
 r_int
 r_char
@@ -1778,30 +1809,6 @@ r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* IRQ for this adapter */
-DECL|member|needsdtr
-r_volatile
-r_int
-r_int
-id|needsdtr
-suffix:semicolon
-DECL|member|sdtr_pending
-r_volatile
-r_int
-r_int
-id|sdtr_pending
-suffix:semicolon
-DECL|member|needwdtr
-r_volatile
-r_int
-r_int
-id|needwdtr
-suffix:semicolon
-DECL|member|wdtr_pending
-r_volatile
-r_int
-r_int
-id|wdtr_pending
-suffix:semicolon
 DECL|member|instance
 r_int
 id|instance
@@ -1825,11 +1832,6 @@ suffix:semicolon
 DECL|member|board_name_index
 r_int
 id|board_name_index
-suffix:semicolon
-DECL|member|reset_start
-r_int
-r_int
-id|reset_start
 suffix:semicolon
 DECL|member|needsdtr_copy
 r_int
@@ -1919,17 +1921,12 @@ r_int
 id|mbase
 suffix:semicolon
 multiline_comment|/* I/O memory address */
-DECL|member|last_reset
-r_int
-r_int
-id|last_reset
-suffix:semicolon
 DECL|member|chip
 id|ahc_chip
 id|chip
 suffix:semicolon
 multiline_comment|/* chip type */
-multiline_comment|/*&n;   * Statistics Kept:&n;   *&n;   * Total Xfers (count for each command that has a data xfer),&n;   * broken down further by reads &amp;&amp; writes.&n;   *&n;   * Binned sizes, writes &amp;&amp; reads:&n;   *    &lt; 512, 512, 1-2K, 2-4K, 4-8K, 8-16K, 16-32K, 32-64K, 64K-128K, &gt; 128K&n;   *&n;   * Total amounts read/written above 512 bytes (amts under ignored)&n;   *&n;   * NOTE: Enabling this feature is likely to cause a noticeable performance&n;   * decrease as the accesses into the stats structures blows apart multiple&n;   * cache lines and is CPU time consuming.  We keep the xfer count always&n;   * for use by the aic7xxx_proc.c code, but only do the bins if the&n;   * proc stats code is enabled.&n;   */
+multiline_comment|/*&n;   * Statistics Kept:&n;   *&n;   * Total Xfers (count for each command that has a data xfer),&n;   * broken down further by reads &amp;&amp; writes.&n;   *&n;   * Binned sizes, writes &amp;&amp; reads:&n;   *    &lt; 512, 512, 1-2K, 2-4K, 4-8K, 8-16K, 16-32K, 32-64K, 64K-128K, &gt; 128K&n;   *&n;   * Total amounts read/written above 512 bytes (amts under ignored)&n;   *&n;   * NOTE: Enabling this feature is likely to cause a noticeable performance&n;   * decrease as the accesses into the stats structures blows apart multiple&n;   * cache lines and is CPU time consuming.&n;   *&n;   * NOTE: Since it doesn&squot;t really buy us much, but consumes *tons* of RAM&n;   * and blows apart all sorts of cache lines, I modified this so that we&n;   * no longer look at the LUN.  All LUNs now go into the same bin on each&n;   * device for stats purposes.&n;   */
 DECL|struct|aic7xxx_xferstats
 r_struct
 id|aic7xxx_xferstats
@@ -1945,26 +1942,11 @@ id|r_total
 suffix:semicolon
 multiline_comment|/* total reads */
 macro_line|#ifdef AIC7XXX_PROC_STATS
-DECL|member|xfers
-r_int
-id|xfers
-suffix:semicolon
-multiline_comment|/* total xfer count */
-DECL|member|w_total512
-r_int
-id|w_total512
-suffix:semicolon
-multiline_comment|/* 512 byte blocks written */
-DECL|member|r_total512
-r_int
-id|r_total512
-suffix:semicolon
-multiline_comment|/* 512 byte blocks read */
 DECL|member|w_bins
 r_int
 id|w_bins
 (braket
-l_int|10
+l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* binned write */
@@ -1972,7 +1954,7 @@ DECL|member|r_bins
 r_int
 id|r_bins
 (braket
-l_int|10
+l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* binned reads */
@@ -1983,11 +1965,8 @@ id|stats
 (braket
 id|MAX_TARGETS
 )braket
-(braket
-id|MAX_LUNS
-)braket
 suffix:semicolon
-multiline_comment|/* [(channel &lt;&lt; 3)|target][lun] */
+multiline_comment|/* [(channel &lt;&lt; 3)|target] */
 macro_line|#if 0
 r_struct
 id|target_cmd
@@ -8785,11 +8764,6 @@ c_func
 id|cmd
 )paren
 )braket
-(braket
-id|cmd-&gt;lun
-op_amp
-l_int|0x7
-)braket
 suffix:semicolon
 multiline_comment|/*&n;       * For block devices, cmd-&gt;request.cmd is always == either READ or&n;       * WRITE.  For character devices, this isn&squot;t always set properly, so&n;       * we check data_cmnd[0].  This catches the conditions for st.c, but&n;       * I&squot;m still not sure if request.cmd is valid for sg devices.&n;       */
 r_if
@@ -8845,17 +8819,6 @@ l_int|0xffff
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef AIC7XXX_PROC_STATS
-id|sp-&gt;xfers
-op_increment
-suffix:semicolon
-id|sp-&gt;w_total512
-op_add_assign
-(paren
-id|actual
-op_rshift
-l_int|9
-)paren
-suffix:semicolon
 id|ptr
 op_assign
 id|sp-&gt;w_bins
@@ -8889,17 +8852,6 @@ l_int|0xffff
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef AIC7XXX_PROC_STATS
-id|sp-&gt;xfers
-op_increment
-suffix:semicolon
-id|sp-&gt;r_total512
-op_add_assign
-(paren
-id|actual
-op_rshift
-l_int|9
-)paren
-suffix:semicolon
 id|ptr
 op_assign
 id|sp-&gt;r_bins
@@ -8907,58 +8859,61 @@ suffix:semicolon
 macro_line|#endif /* AIC7XXX_PROC_STATS */
 )brace
 macro_line|#ifdef AIC7XXX_PROC_STATS
-r_for
-c_loop
-(paren
 id|x
 op_assign
-l_int|9
+op_minus
+l_int|10
 suffix:semicolon
-id|x
-op_le
-l_int|17
+r_while
+c_loop
+(paren
+id|actual
+)paren
+(brace
+id|actual
+op_rshift_assign
+l_int|1
 suffix:semicolon
 id|x
 op_increment
-)paren
-(brace
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
-id|actual
-OL
-(paren
-l_int|1
-op_lshift
 id|x
-)paren
+OL
+l_int|0
 )paren
 (brace
 id|ptr
 (braket
-id|x
-op_minus
-l_int|9
+l_int|0
 )braket
 op_increment
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
-)brace
+r_else
 r_if
 c_cond
 (paren
 id|x
 OG
-l_int|17
+l_int|7
 )paren
 (brace
 id|ptr
 (braket
+l_int|7
+)braket
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ptr
+(braket
 id|x
-op_minus
-l_int|9
 )braket
 op_increment
 suffix:semicolon
@@ -10335,7 +10290,7 @@ op_amp
 (paren
 l_int|0x01
 op_lshift
-id|p-&gt;scsi_id
+id|MAX_TARGETS
 )paren
 )paren
 op_logical_or
@@ -10377,7 +10332,7 @@ op_or_assign
 (paren
 l_int|0x01
 op_lshift
-id|p-&gt;scsi_id
+id|MAX_TARGETS
 )paren
 suffix:semicolon
 )brace
@@ -12503,23 +12458,6 @@ comma
 id|SCB_LIST_NULL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Convince Mid Level SCSI code to leave us be for a little bit...&n;   */
-id|p-&gt;last_reset
-op_assign
-id|jiffies
-suffix:semicolon
-id|p-&gt;host-&gt;last_reset
-op_assign
-(paren
-id|jiffies
-op_plus
-(paren
-id|HZ
-op_star
-id|AIC7XXX_RESET_DELAY
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12664,6 +12602,12 @@ id|DEVICE_RESET_DELAY
 op_or
 id|DEVICE_WAS_BUSY
 )paren
+)paren
+op_logical_or
+(paren
+id|p-&gt;flags
+op_amp
+id|AHC_RESET_DELAY
 )paren
 )paren
 (brace
@@ -13175,9 +13119,49 @@ op_complement
 (paren
 l_int|0x01
 op_lshift
+id|MAX_TARGETS
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p-&gt;dev_timer_active
+op_amp
+(paren
+l_int|0x01
+op_lshift
+id|p-&gt;scsi_id
+)paren
+)paren
+op_logical_and
+id|time_after_eq
+c_func
+(paren
+id|jiffies
+comma
+id|p-&gt;dev_expires
+(braket
+id|p-&gt;scsi_id
+)braket
+)paren
+)paren
+(brace
+id|p-&gt;flags
+op_and_assign
+op_complement
+id|AHC_RESET_DELAY
+suffix:semicolon
+id|p-&gt;dev_timer_active
+op_and_assign
+op_complement
+(paren
+l_int|0x01
+op_lshift
 id|p-&gt;scsi_id
 )paren
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -13196,17 +13180,12 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
 id|i
-op_eq
+op_ne
 id|p-&gt;scsi_id
 )paren
-(brace
-r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+op_logical_and
 (paren
 id|p-&gt;dev_timer_active
 op_amp
@@ -13368,7 +13347,7 @@ op_amp
 (paren
 l_int|0x01
 op_lshift
-id|p-&gt;scsi_id
+id|MAX_TARGETS
 )paren
 )paren
 (brace
@@ -13410,7 +13389,7 @@ op_or_assign
 (paren
 l_int|0x01
 op_lshift
-id|p-&gt;scsi_id
+id|MAX_TARGETS
 )paren
 suffix:semicolon
 )brace
@@ -13424,7 +13403,7 @@ op_amp
 (paren
 l_int|0x01
 op_lshift
-id|p-&gt;scsi_id
+id|MAX_TARGETS
 )paren
 )paren
 (brace
@@ -16387,7 +16366,7 @@ op_amp
 (paren
 l_int|0x01
 op_lshift
-id|p-&gt;scsi_id
+id|MAX_TARGETS
 )paren
 )paren
 )paren
@@ -16404,7 +16383,7 @@ op_or_assign
 (paren
 l_int|0x01
 op_lshift
-id|p-&gt;scsi_id
+id|MAX_TARGETS
 )paren
 suffix:semicolon
 id|add_timer
@@ -22557,18 +22536,10 @@ id|tag_enabled
 op_assign
 id|TRUE
 suffix:semicolon
-macro_line|#ifdef AIC7XXX_CMDS_PER_LUN
 id|default_depth
 op_assign
 id|AIC7XXX_CMDS_PER_LUN
 suffix:semicolon
-macro_line|#else
-id|default_depth
-op_assign
-l_int|8
-suffix:semicolon
-multiline_comment|/* Not many SCBs to work with. */
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -26280,10 +26251,6 @@ id|p-&gt;host
 op_assign
 id|host
 suffix:semicolon
-id|p-&gt;last_reset
-op_assign
-id|jiffies
-suffix:semicolon
 id|p-&gt;host_no
 op_assign
 id|host-&gt;host_no
@@ -26688,7 +26655,6 @@ comma
 id|SEQ_FLAGS
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Detect SCB parameters and initialize the SCB array.&n;   */
 id|detect_maxscb
 c_func
 (paren
@@ -32132,6 +32098,28 @@ comma
 (brace
 id|PCI_VENDOR_ID_ADAPTEC2
 comma
+id|PCI_DEVICE_ID_ADAPTEC2_78902
+comma
+id|AHC_AIC7890
+comma
+id|AHC_PAGESCBS
+op_or
+id|AHC_NEWEEPROM_FMT
+op_or
+id|AHC_BIOS_ENABLED
+comma
+id|AHC_AIC7890_FE
+comma
+l_int|20
+comma
+l_int|32
+comma
+id|C46
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_ADAPTEC2
+comma
 id|PCI_DEVICE_ID_ADAPTEC2_2940U2
 comma
 id|AHC_AIC7890
@@ -32259,14 +32247,6 @@ id|i
 comma
 id|oldverbose
 suffix:semicolon
-macro_line|#ifdef MMAPIO
-r_int
-r_int
-id|page_offset
-comma
-id|base
-suffix:semicolon
-macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,92)
 r_struct
 id|pci_dev
@@ -33022,7 +33002,85 @@ id|temp_p-&gt;unpause
 op_or
 id|PAUSE
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|temp_p-&gt;base
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|temp_p-&gt;mbase
+op_eq
+l_int|0
+)paren
+)paren
+op_logical_or
+(paren
+id|temp_p-&gt;irq
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;aic7xxx: &lt;%s&gt; at PCI %d/%d&bslash;n&quot;
+comma
+id|board_names
+(braket
+id|aic_pdevs
+(braket
+id|i
+)braket
+dot
+id|board_name_index
+)braket
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|temp_p-&gt;pdev-&gt;devfn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|temp_p-&gt;pdev-&gt;devfn
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;aic7xxx: Controller disabled by BIOS, ignoring.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|temp_p
+)paren
+suffix:semicolon
+id|temp_p
+op_assign
+l_int|NULL
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 macro_line|#ifdef MMAPIO
+(brace
+r_int
+r_int
+id|page_offset
+comma
+id|base
+suffix:semicolon
 id|base
 op_assign
 id|temp_p-&gt;mbase
@@ -33072,8 +33130,111 @@ id|temp_p-&gt;maddr
 op_add_assign
 id|page_offset
 suffix:semicolon
+multiline_comment|/*&n;               * We need to check the I/O with the MMAPed address.  Some machines&n;               * simply fail to work with MMAPed I/O and certain controllers.&n;               */
+r_if
+c_cond
+(paren
+id|aic_inb
+c_func
+(paren
+id|temp_p
+comma
+id|HCNTRL
+)paren
+op_eq
+l_int|0xff
+)paren
+(brace
+multiline_comment|/*&n;                 * OK.....we failed our test....go back to programmed I/O&n;                 */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;aic7xxx: &lt;%s&gt; at PCI %d/%d&bslash;n&quot;
+comma
+id|board_names
+(braket
+id|aic_pdevs
+(braket
+id|i
+)braket
+dot
+id|board_name_index
+)braket
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|temp_p-&gt;pdev-&gt;devfn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|temp_p-&gt;pdev-&gt;devfn
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;aic7xxx: MMAPed I/O failed, reverting to &quot;
+l_string|&quot;Programmed I/O.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
+id|iounmap
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|temp_p-&gt;maddr
+)paren
+op_amp
+id|PAGE_MASK
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|vfree
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|temp_p-&gt;maddr
+)paren
+op_amp
+id|PAGE_MASK
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|temp_p-&gt;maddr
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n;           * We HAVE to make sure the first pause_sequencer() and all other&n;           * subsequent I/O that isn&squot;t PCI config space I/O takes place&n;           * after the MMAPed I/O region is configured and tested.  The&n;           * problem is the PowerPC architecture that doesn&squot;t support&n;           * programmed I/O at all, so we have to have the MMAP I/O set up&n;           * for this pause to even work on those machines.&n;           */
 id|pause_sequencer
 c_func
 (paren
@@ -33175,21 +33336,23 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;           * Doing a switch based upon i is really gross, but since Justin&n;           * changed around the chip ID stuff, we can&squot;t use that any more.&n;           * Since we don&squot;t scan the devices the same way as FreeBSD, we end&n;           * up doing this gross hack in order to avoid totally splitting&n;           * away from Justin&squot;s init code in ahc_pci.c&n;           */
+multiline_comment|/*&n;           * We need to set the CHNL? assignments before loading the SEEPROM&n;           * The 3940 and 3985 cards (original stuff, not any of the later&n;           * stuff) are 7870 and 7880 class chips.  The Ultra2 stuff falls&n;           * under 7896 and 7897.  The 7895 is in a class by itself :)&n;           */
 r_switch
 c_cond
 (paren
-id|i
+id|temp_p-&gt;chip
+op_amp
+id|AHC_CHIPID_MASK
 )paren
 (brace
 r_case
-l_int|7
+id|AHC_AIC7870
 suffix:colon
-multiline_comment|/* 3940 */
+multiline_comment|/* 3840 / 3985 */
 r_case
-l_int|12
+id|AHC_AIC7880
 suffix:colon
-multiline_comment|/* 3940-Ultra */
+multiline_comment|/* 3840 UW / 3985 UW */
 r_switch
 c_cond
 (paren
@@ -33209,31 +33372,6 @@ id|AHC_CHNLB
 suffix:semicolon
 r_break
 suffix:semicolon
-r_default
-suffix:colon
-r_break
-suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-r_case
-l_int|8
-suffix:colon
-multiline_comment|/* 3985 */
-r_case
-l_int|13
-suffix:colon
-multiline_comment|/* 3985-Ultra */
-r_switch
-c_cond
-(paren
-id|PCI_SLOT
-c_func
-(paren
-id|temp_p-&gt;pci_device_fn
-)paren
-)paren
-(brace
 r_case
 l_int|8
 suffix:colon
@@ -33260,17 +33398,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|15
+id|AHC_AIC7895
 suffix:colon
+multiline_comment|/* 7895 */
 r_case
-l_int|18
+id|AHC_AIC7896
 suffix:colon
-r_case
-l_int|19
-suffix:colon
-r_case
-l_int|20
-suffix:colon
+multiline_comment|/* 7896/7 */
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,92)
 r_if
 c_cond
@@ -40291,17 +40425,9 @@ r_if
 c_cond
 (paren
 (paren
-(paren
-id|jiffies
-op_minus
-id|p-&gt;last_reset
-)paren
-OL
-(paren
-id|HZ
-op_star
-l_int|3
-)paren
+id|p-&gt;flags
+op_amp
+id|AHC_RESET_DELAY
 )paren
 op_logical_and
 (paren
@@ -40341,71 +40467,6 @@ suffix:semicolon
 id|action
 op_assign
 id|RESET_DELAY
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|action
-op_amp
-(paren
-id|BUS_RESET
-op_or
-id|HOST_RESET
-)paren
-)paren
-op_logical_and
-(paren
-id|p-&gt;flags
-op_amp
-id|AHC_IN_RESET
-)paren
-op_logical_and
-(paren
-(paren
-id|jiffies
-op_minus
-id|p-&gt;reset_start
-)paren
-OG
-(paren
-l_int|2
-op_star
-id|HZ
-op_star
-l_int|3
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;(scsi%d:%d:%d:%d) Yikes!!  Card must have left to go &quot;
-l_string|&quot;back to Adaptec!!&bslash;n&quot;
-comma
-id|p-&gt;host_no
-comma
-id|CTL_OF_CMD
-c_func
-(paren
-id|cmd
-)paren
-)paren
-suffix:semicolon
-id|unpause_sequencer
-c_func
-(paren
-id|p
-comma
-id|FALSE
-)paren
-suffix:semicolon
-id|DRIVER_UNLOCK
-r_return
-id|SCSI_RESET_SNOOZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  By this point, we want to already know what we are going to do and&n; *  only have the following code implement our course of action.&n; */
@@ -40508,14 +40569,89 @@ id|HOST_RESET
 suffix:colon
 r_default
 suffix:colon
-id|p-&gt;reset_start
-op_assign
-id|jiffies
-suffix:semicolon
 id|p-&gt;flags
 op_or_assign
 id|AHC_IN_RESET
+op_or
+id|AHC_RESET_DELAY
 suffix:semicolon
+id|p-&gt;dev_expires
+(braket
+id|p-&gt;scsi_id
+)braket
+op_assign
+id|jiffies
+op_plus
+(paren
+l_int|3
+op_star
+id|HZ
+)paren
+suffix:semicolon
+id|p-&gt;dev_timer_active
+op_or_assign
+(paren
+l_int|0x01
+op_lshift
+id|p-&gt;scsi_id
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|p-&gt;dev_timer_active
+op_amp
+(paren
+l_int|0x01
+op_lshift
+id|MAX_TARGETS
+)paren
+)paren
+op_logical_or
+id|time_after_eq
+c_func
+(paren
+id|p-&gt;dev_timer.expires
+comma
+id|p-&gt;dev_expires
+(braket
+id|p-&gt;scsi_id
+)braket
+)paren
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|p-&gt;dev_timer
+)paren
+suffix:semicolon
+id|p-&gt;dev_timer.expires
+op_assign
+id|p-&gt;dev_expires
+(braket
+id|p-&gt;scsi_id
+)braket
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|p-&gt;dev_timer
+)paren
+suffix:semicolon
+id|p-&gt;dev_timer_active
+op_or_assign
+(paren
+l_int|0x01
+op_lshift
+id|MAX_TARGETS
+)paren
+suffix:semicolon
+)brace
 id|aic7xxx_reset_channel
 c_func
 (paren
@@ -40561,10 +40697,6 @@ id|p
 )paren
 suffix:semicolon
 )brace
-id|p-&gt;last_reset
-op_assign
-id|jiffies
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -40652,7 +40784,7 @@ id|SCSI_RESET_SYNCHRONOUS
 (brace
 id|cmd-&gt;result
 op_assign
-id|DID_RESET
+id|DID_BUS_BUSY
 op_lshift
 l_int|16
 suffix:semicolon

@@ -2388,6 +2388,12 @@ id|lock_super
 id|sb
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_UFS_FS_WRITE
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Set default mount options&n;&t; * Parse mount options&n;&t; */
 id|sb-&gt;u.ufs_sb.s_mount_opt
 op_assign
@@ -2745,22 +2751,6 @@ r_goto
 id|failed
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|sb-&gt;s_flags
-op_amp
-id|MS_RDONLY
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;!!! warning !!! write support of ufs is still in experimental state&bslash;n&quot;
-)paren
-suffix:semicolon
 id|again
 suffix:colon
 id|set_blocksize

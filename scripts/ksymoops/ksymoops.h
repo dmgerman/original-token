@@ -498,7 +498,7 @@ id|i
 suffix:semicolon
 multiline_comment|/* oops.c */
 r_extern
-r_void
+r_int
 id|Oops_read
 c_func
 (paren
@@ -510,6 +510,12 @@ op_star
 r_const
 op_star
 id|filename
+comma
+r_int
+id|code_bytes
+comma
+r_int
+id|one_shot
 )paren
 suffix:semicolon
 multiline_comment|/* re.c */

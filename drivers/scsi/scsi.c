@@ -1073,6 +1073,18 @@ id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
+l_string|&quot;iomega&quot;
+comma
+l_string|&quot;jaz 1GB&quot;
+comma
+l_string|&quot;J.86&quot;
+comma
+id|BLIST_NOTQ
+op_or
+id|BLIST_NOLUN
+)brace
+comma
 multiline_comment|/*&n; * Must be at end of list...&n; */
 (brace
 l_int|NULL

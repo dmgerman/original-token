@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;ksyms.c.&n;&n;&t;Process ksyms for ksymoops.&n;&n;&t;Copyright Keith Owens &lt;kaos@ocs.com.au&gt;.&n;&t;Released under the GNU Public Licence, Version 2.&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Read lsmod (/proc/modules).&n;&t;Move &quot;Using_Version&quot; copy to map.c.&n;&n;&t;Wed Oct 28 13:47:23 EST 1998&n;&t;Version 0.4&n;&t;Split into separate sources.&n; */
+multiline_comment|/*&n;&t;ksyms.c.&n;&n;&t;Process ksyms for ksymoops.&n;&n;&t;Copyright Keith Owens &lt;kaos@ocs.com.au&gt;.&n;&t;Released under the GNU Public Licence, Version 2.&n;&n;&t;Fri Nov  6 10:38:42 EST 1998&n;&t;Version 0.6b&n;&t;Remove false warnings when comparing ksyms and lsmod.&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Read lsmod (/proc/modules).&n;&t;Move &quot;Using_Version&quot; copy to map.c.&n;&n;&t;Wed Oct 28 13:47:23 EST 1998&n;&t;Version 0.4&n;&t;Split into separate sources.&n; */
 macro_line|#include &quot;ksymoops.h&quot;
 macro_line|#include &lt;malloc.h&gt;
 macro_line|#include &lt;string.h&gt;
@@ -1147,6 +1147,18 @@ id|procname
 )braket
 op_assign
 l_string|&quot;compare_ksyms_lsmod&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ss_lsmod.used
+op_logical_and
+id|ss_ksyms_modules
+)paren
+)paren
+r_return
 suffix:semicolon
 id|s
 op_assign

@@ -415,24 +415,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_struct
-id|list_head
-op_star
-id|insert
-op_assign
-op_amp
-id|inode_in_use
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode-&gt;i_count
-)paren
-id|insert
-op_assign
-id|inode_in_use.prev
-suffix:semicolon
 id|list_del
 c_func
 (paren
@@ -446,7 +428,8 @@ c_func
 op_amp
 id|inode-&gt;i_list
 comma
-id|insert
+op_amp
+id|inode_in_use
 )paren
 suffix:semicolon
 multiline_comment|/* Set I_LOCK, reset I_DIRTY */
@@ -2680,7 +2663,8 @@ c_func
 op_amp
 id|inode-&gt;i_list
 comma
-id|inode_in_use.prev
+op_amp
+id|inode_in_use
 )paren
 suffix:semicolon
 )brace

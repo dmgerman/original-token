@@ -1,9 +1,10 @@
 multiline_comment|/*&n;&t;ksymoops.c.&n;&n;&t;Read a kernel Oops file and make the best stab at converting the code to&n;&t;instructions and mapping stack values to kernel symbols.&n;&n;&t;Copyright Keith Owens &lt;kaos@ocs.com.au&gt;.&n;&t;Released under the GNU Public Licence, Version 2.&n;*/
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;0.6&quot;
-multiline_comment|/*&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Read lsmod (/proc/modules).&n;&t;Ignore addresses 0-4095 when mapping address to symbol.&n;&t;Discard default objects if -o specified.&n;&t;Oops file must be regular.&n;&t;Add &quot;invalid operand&quot; to Oops_print.&n;&t;Move &quot;Using_Version&quot; copy to map.c.&n;&t;Add Makefile defaults for vmlinux, ksyms, objects, System.map, lsmod.&n;&t;Minor adjustment to re for ppc.&n;&t;Minor adjustment to re for objdump lines with &lt;_EIP+xxx&gt;.&n;&t;Convert from a.out to bfd, using same format as ksymoops.&n;&t;Added MIPS.&n;&t;PPC handling based on patches by &quot;Ryan Nielsen&quot; &lt;ran@krazynet.com&gt;&n;&n;&t;Wed Oct 28 23:14:55 EST 1998&n;&t;Version 0.5&n;&t;No longer read vmlinux by default, it only duplicates System.map.&n;&n;&t;Wed Oct 28 13:47:38 EST 1998&n;&t;Version 0.4&n;&t;Split into separate sources.&n;&n;&t;Mon Oct 26 00:01:47 EST 1998&n;&t;Version 0.3c&n;&t;Add alpha (arm) processing.&n;&n;&t;Mon Oct 26 00:01:47 EST 1998&n;&t;Version 0.3b&n;&t;Add sparc processing.&n;&t;Handle kernel symbol versions.&n;&n;&t;Fri Oct 23 13:11:20 EST 1998&n;&t;Version 0.3&n;&t;Add -follow to find command for people who use symlinks to modules.&n;&t;Add Version_ checking.&n;&n;&t;Thu Oct 22 22:28:30 EST 1998&n;&t;Version 0.2.&n;&t;Generalise text prefix handling.&n;&t;Handle messages on Code: line.&n;&t;Format addresses with leading zeroes.&n;&t;Minor bug fixes.&n;&n;&t;Wed Oct 21 23:28:48 EST 1998&n;&t;Version 0.1.  Rewrite from scratch in C.&n;&n;&t;CREDITS.&n;&t;Oops disassembly based on ksymoops.cc,&n;&t;  Copyright (C) 1995 Greg McGary &lt;gkm@magilla.cichlid.com&gt;&n;&t;m68k code based on ksymoops.cc changes by&n;&t;  Andreas Schwab &lt;schwab@issan.informatik.uni-dortmund.de&gt;&n; */
+mdefine_line|#define VERSION &quot;0.6e&quot;
+multiline_comment|/*&n;&n;&t;Tue Jan  5 19:26:02 EST 1999&n;&t;Version 0.6e&n;&t;Added to kernel.&n;&n;&t;Mon Jan  4 09:48:13 EST 1999&n;&t;Version 0.6d&n;&t;Add ARM support.&n;&n;&t;Thu Nov 26 16:37:46 EST 1998&n;&t;Version 0.6c&n;&t;Typo in oops_code.&n;&t;Add -c option.&n;&t;Add -1 option.&n;&t;Report if options were specified or defaulted.&n;&n;&t;Fri Nov  6 10:38:42 EST 1998&n;&t;Version 0.6b&n;&t;Remove false warnings when comparing ksyms and lsmod.&n;&n;&t;Tue Nov  3 23:33:04 EST 1998&n;&t;Version 0.6a&n;&t;Performance inprovements.&n;&n;&t;Tue Nov  3 02:31:01 EST 1998&n;&t;Version 0.6&n;&t;Read lsmod (/proc/modules).&n;&t;Ignore addresses 0-4095 when mapping address to symbol.&n;&t;Discard default objects if -o specified.&n;&t;Oops file must be regular.&n;&t;Add &quot;invalid operand&quot; to Oops_print.&n;&t;Move &quot;Using_Version&quot; copy to map.c.&n;&t;Add Makefile defaults for vmlinux, ksyms, objects, System.map, lsmod.&n;&t;Minor adjustment to re for ppc.&n;&t;Minor adjustment to re for objdump lines with &lt;_EIP+xxx&gt;.&n;&t;Convert from a.out to bfd, using same format as ksymoops.&n;&t;Added MIPS.&n;&t;PPC handling based on patches by &quot;Ryan Nielsen&quot; &lt;ran@krazynet.com&gt;&n;&n;&t;Wed Oct 28 23:14:55 EST 1998&n;&t;Version 0.5&n;&t;No longer read vmlinux by default, it only duplicates System.map.&n;&n;&t;Wed Oct 28 13:47:38 EST 1998&n;&t;Version 0.4&n;&t;Split into separate sources.&n;&n;&t;Mon Oct 26 00:01:47 EST 1998&n;&t;Version 0.3c&n;&t;Add alpha (arm) processing.&n;&n;&t;Mon Oct 26 00:01:47 EST 1998&n;&t;Version 0.3b&n;&t;Add sparc processing.&n;&t;Handle kernel symbol versions.&n;&n;&t;Fri Oct 23 13:11:20 EST 1998&n;&t;Version 0.3&n;&t;Add -follow to find command for people who use symlinks to modules.&n;&t;Add Version_ checking.&n;&n;&t;Thu Oct 22 22:28:30 EST 1998&n;&t;Version 0.2.&n;&t;Generalise text prefix handling.&n;&t;Handle messages on Code: line.&n;&t;Format addresses with leading zeroes.&n;&t;Minor bug fixes.&n;&n;&t;Wed Oct 21 23:28:48 EST 1998&n;&t;Version 0.1.  Rewrite from scratch in C.&n;&n;&t;CREDITS.&n;&t;Oops disassembly based on ksymoops.cc,&n;&t;  Copyright (C) 1995 Greg McGary &lt;gkm@magilla.cichlid.com&gt;&n;&t;m68k code based on ksymoops.cc changes by&n;&t;  Andreas Schwab &lt;schwab@issan.informatik.uni-dortmund.de&gt;&n; */
 macro_line|#include &quot;ksymoops.h&quot;
 macro_line|#include &lt;ctype.h&gt;
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;malloc.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;string.h&gt;
@@ -175,6 +176,8 @@ l_string|&quot;&bslash;t&bslash;t[-M]&bslash;t&bslash;tNo System.map is availabl
 l_string|&quot;&bslash;t&bslash;t[-s save.map]&bslash;tSave consolidated map&bslash;n&quot;
 l_string|&quot;&bslash;t&bslash;t[-d]&bslash;t&bslash;tIncrease debug level by 1&bslash;n&quot;
 l_string|&quot;&bslash;t&bslash;t[-h]&bslash;t&bslash;tPrint help text&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t[-c code_bytes]&bslash;tHow many bytes in each unit of code&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t[-1]&bslash;t&bslash;tOne shot toggle (exit after first Oops)&bslash;n&quot;
 l_string|&quot;&bslash;t&bslash;t&lt;Oops.file&bslash;tOops report to decode&bslash;n&quot;
 l_string|&quot;&bslash;n&quot;
 l_string|&quot;&bslash;t&bslash;tAll flags can occur more than once.  With the exception &quot;
@@ -245,8 +248,12 @@ macro_line|#else
 l_string|&quot;-M&quot;
 macro_line|#endif
 l_string|&quot;&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t&bslash;t-c %d&bslash;n&quot;
+multiline_comment|/* DEF_CODE_BYTES */
 l_string|&quot;&bslash;t&bslash;t&bslash;tOops report is read from stdin&bslash;n&quot;
 l_string|&quot;&bslash;n&quot;
+comma
+id|DEF_CODE_BYTES
 )paren
 suffix:semicolon
 )brace
@@ -789,6 +796,52 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Report if the option was specified or defaulted */
+DECL|function|spec_or_default
+r_static
+r_void
+id|spec_or_default
+c_func
+(paren
+r_int
+id|spec
+comma
+r_int
+op_star
+id|some_spec
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|spec
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot; (specified)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|some_spec
+)paren
+op_star
+id|some_spec
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+id|printf
+c_func
+(paren
+l_string|&quot; (default)&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Parse the options.  Verbose but what&squot;s new with getopt? */
 DECL|function|parse
 r_static
@@ -852,6 +905,14 @@ comma
 r_int
 op_star
 id|spec_h
+comma
+r_int
+op_star
+id|code_bytes
+comma
+r_int
+op_star
+id|one_shot
 )paren
 (brace
 r_int
@@ -905,9 +966,18 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
+id|spec_c
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|c
 comma
 id|i
+comma
+id|some_spec
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 op_star
@@ -926,7 +996,7 @@ id|argc
 comma
 id|argv
 comma
-l_string|&quot;v:Vo:Ok:Kl:Lm:Ms:dh&quot;
+l_string|&quot;v:Vo:Ok:Kl:Lm:Ms:dhc:1&quot;
 )paren
 )paren
 op_ne
@@ -1289,6 +1359,112 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+l_char|&squot;c&squot;
+suffix:colon
+op_increment
+id|spec_c
+suffix:semicolon
+id|errno
+op_assign
+l_int|0
+suffix:semicolon
+op_star
+id|code_bytes
+op_assign
+id|strtoul
+c_func
+(paren
+id|optarg
+comma
+op_amp
+id|p
+comma
+l_int|10
+)paren
+suffix:semicolon
+multiline_comment|/* Oops_code_values assumes that code_bytes is a&n;&t;&t;&t; * multiple of 2.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+op_star
+id|optarg
+op_logical_or
+op_star
+id|p
+op_logical_or
+id|errno
+op_logical_or
+(paren
+op_star
+id|code_bytes
+op_ne
+l_int|1
+op_logical_and
+op_star
+id|code_bytes
+op_ne
+l_int|2
+op_logical_and
+op_star
+id|code_bytes
+op_ne
+l_int|4
+op_logical_and
+op_star
+id|code_bytes
+op_ne
+l_int|8
+)paren
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;%s Invalid value for -c &squot;%s&squot;&bslash;n&quot;
+comma
+id|prefix
+comma
+id|optarg
+)paren
+suffix:semicolon
+op_increment
+id|errors
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|errno
+)paren
+id|perror
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+op_star
+id|code_bytes
+op_assign
+id|DEF_CODE_BYTES
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+l_char|&squot;1&squot;
+suffix:colon
+op_star
+id|one_shot
+op_assign
+op_logical_neg
+op_star
+id|one_shot
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_char|&squot;?&squot;
 suffix:colon
 id|usage
@@ -1475,6 +1651,23 @@ c_func
 l_string|&quot; -V&quot;
 )paren
 suffix:semicolon
+id|spec_or_default
+c_func
+(paren
+id|spec_v
+op_logical_or
+id|spec_V
+comma
+op_amp
+id|some_spec
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;             &quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1519,6 +1712,23 @@ c_func
 l_string|&quot; -O&quot;
 )paren
 suffix:semicolon
+id|spec_or_default
+c_func
+(paren
+id|spec_o
+op_logical_or
+id|spec_O
+comma
+op_amp
+id|some_spec
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;             &quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1539,6 +1749,23 @@ id|printf
 c_func
 (paren
 l_string|&quot; -K&quot;
+)paren
+suffix:semicolon
+id|spec_or_default
+c_func
+(paren
+id|spec_k
+op_logical_or
+id|spec_K
+comma
+op_amp
+id|some_spec
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;             &quot;
 )paren
 suffix:semicolon
 r_if
@@ -1563,6 +1790,23 @@ c_func
 l_string|&quot; -L&quot;
 )paren
 suffix:semicolon
+id|spec_or_default
+c_func
+(paren
+id|spec_l
+op_logical_or
+id|spec_L
+comma
+op_amp
+id|some_spec
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;             &quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1585,12 +1829,89 @@ c_func
 l_string|&quot; -M&quot;
 )paren
 suffix:semicolon
+id|spec_or_default
+c_func
+(paren
+id|spec_m
+op_logical_or
+id|spec_M
+comma
+op_amp
+id|some_spec
+)paren
+suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;n&quot;
+l_string|&quot;             &quot;
 )paren
 suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot; -c %d&quot;
+comma
+op_star
+id|code_bytes
+)paren
+suffix:semicolon
+id|spec_or_default
+c_func
+(paren
+id|spec_c
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|one_shot
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;             &quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot; -1&quot;
+)paren
+suffix:semicolon
+)brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|some_spec
+)paren
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;You did not tell me where to find symbol information.  I will assume&bslash;n&quot;
+l_string|&quot;that the log matches the kernel and modules that are running right now&bslash;n&quot;
+l_string|&quot;and I&squot;ll use the default options above for symbol resolution.&bslash;n&quot;
+l_string|&quot;If the current kernel and/or modules do not match the log, you can get&bslash;n&quot;
+l_string|&quot;more accurate output by telling me the kernel version and where to find&bslash;n&quot;
+l_string|&quot;map, modules, ksyms etc.  ksymoops -h explains the options.&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+op_increment
+id|warnings
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Read environment variables */
 DECL|function|read_env
@@ -1747,7 +2068,19 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* -h was specified */
 r_int
+id|code_bytes
+op_assign
+id|DEF_CODE_BYTES
+suffix:semicolon
+r_int
+id|one_shot
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|i
+comma
+id|ret
 suffix:semicolon
 id|prefix
 op_assign
@@ -1895,6 +2228,12 @@ id|filecount
 comma
 op_amp
 id|spec_h
+comma
+op_amp
+id|code_bytes
+comma
+op_amp
+id|one_shot
 )paren
 suffix:semicolon
 r_if
@@ -1910,6 +2249,14 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* just the help text */
+r_if
+c_cond
+(paren
+id|errors
+)paren
+r_return
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2068,12 +2415,18 @@ id|save_system_map
 )paren
 suffix:semicolon
 multiline_comment|/* After all that work, it is finally time to read the Oops report */
+id|ret
+op_assign
 id|Oops_read
 c_func
 (paren
 id|filecount
 comma
 id|filename
+comma
+id|code_bytes
+comma
+id|one_shot
 )paren
 suffix:semicolon
 r_if
@@ -2153,12 +2506,18 @@ c_func
 l_string|&quot;issued.  Results may not be reliable.&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
 r_return
 l_int|1
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 eof

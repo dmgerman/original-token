@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/block/ide-probe.c&t;Version 1.03  Dec  5, 1997&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; */
+multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -2646,6 +2646,13 @@ op_assign
 id|drive
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hwgroup-&gt;hwif
+)paren
+(brace
 id|hwgroup-&gt;hwif
 op_assign
 id|HWIF
@@ -2654,6 +2661,17 @@ c_func
 id|hwgroup-&gt;drive
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;%s : Adding missed hwif to hwgroup!!&bslash;n&quot;
+comma
+id|hwif-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 id|restore_flags
 c_func
 (paren

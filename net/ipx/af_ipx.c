@@ -9965,7 +9965,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Swansea University Computer Society IPX 0.38 for NET3.037&bslash;n&quot;
+l_string|&quot;NET4: Linux IPX 0.38 for NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

@@ -3552,12 +3552,11 @@ multiline_comment|/*&n;&t; * Rough estimation for SMP scheduling, this is the nu
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86
-op_le
-l_int|4
+op_logical_neg
+id|cpu_hz
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * this basically disables processor-affinity&n;&t;&t; * scheduling on &lt;=i486 based SMP boards.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * this basically disables processor-affinity&n;&t;&t; * scheduling on SMP without a TSC.&n;&t;&t; */
 id|cacheflush_time
 op_assign
 l_int|0

@@ -21490,6 +21490,9 @@ c_func
 (paren
 op_amp
 id|mixer_fops
+comma
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -23300,6 +23303,9 @@ c_func
 (paren
 op_amp
 id|sq_fops
+comma
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 r_if

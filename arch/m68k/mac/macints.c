@@ -346,6 +346,23 @@ id|mac_irqs
 l_int|8
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * Some special nutcases ...&n; */
+DECL|variable|mac_ide_irqs
+r_static
+r_int
+r_int
+id|mac_ide_irqs
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|nubus_stuck_events
+r_static
+r_int
+r_int
+id|nubus_stuck_events
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * VIA/RBV/OSS/PSC register base pointers&n; */
 DECL|variable|via2_regp
 r_volatile
@@ -612,9 +629,15 @@ id|regs
 )paren
 suffix:semicolon
 multiline_comment|/* #define DEBUG_MACINTS */
-multiline_comment|/* #define DEBUG_NUBUS_INT */
+DECL|macro|DEBUG_SPURIOUS
+mdefine_line|#define DEBUG_SPURIOUS
+DECL|macro|DEBUG_NUBUS_SPURIOUS
+mdefine_line|#define DEBUG_NUBUS_SPURIOUS
+DECL|macro|DEBUG_NUBUS_INT
+mdefine_line|#define DEBUG_NUBUS_INT
 multiline_comment|/* #define DEBUG_VIA */
-multiline_comment|/* #define DEBUG_VIA_NUBUS */
+DECL|macro|DEBUG_VIA_NUBUS
+mdefine_line|#define DEBUG_VIA_NUBUS
 DECL|function|mac_init_IRQ
 r_void
 id|mac_init_IRQ
@@ -1289,6 +1312,13 @@ id|nubus_irqs
 l_int|0
 )braket
 suffix:semicolon
+multiline_comment|/*&n;&t; * Nubus Macs: turn off the Nubus dispatch interrupt for now&n;&t; */
+id|mac_turnoff_irq
+c_func
+(paren
+id|IRQ_MAC_NUBUS
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;AV Macs: shutup the PSC ints&n;&t; */
 r_if
 c_cond
@@ -1700,7 +1730,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* add similar hack for Nubus pseudo-irq here - hide nubus_request_irq */
+multiline_comment|/* &n;&t; * code below: only for VIA irqs currently &n;&t; * add similar hack for Nubus pseudo-irq here - hide nubus_request_irq&n;&t; */
 id|via
 op_assign
 (paren
@@ -3047,6 +3077,7 @@ id|pending
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * for /proc/interrupts: log interrupt stats broken down by &n; * autovector int first, then by actual interrupt source.&n; */
 DECL|function|mac_get_irq_list
 r_int
 id|mac_get_irq_list
@@ -3085,6 +3116,7 @@ op_increment
 id|i
 )paren
 (brace
+multiline_comment|/* XXX fixme: IRQ_SRC_MASK should cover VIA1 - Nubus */
 id|srcidx
 op_assign
 (paren
@@ -3390,6 +3422,136 @@ comma
 id|num_spurious
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * XXX Fixme: Nubus sources are never logged above ...&n;&t; */
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;Nubus interrupts:&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|7
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|nubus_handler
+(braket
+id|i
+)braket
+dot
+id|handler
+op_eq
+id|nubus_wtf
+)paren
+r_continue
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;nubus %01X: %10lu &quot;
+comma
+id|i
+op_plus
+l_int|9
+comma
+id|nubus_irqs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|nubus_param
+(braket
+id|i
+)braket
+dot
+id|devname
+)paren
+suffix:semicolon
+)brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;nubus spurious ints: %10lu&bslash;n&quot;
+comma
+id|nubus_irqs
+(braket
+l_int|7
+)braket
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;nubus stuck events : %10lu&bslash;n&quot;
+comma
+id|nubus_stuck_events
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;nubus/IDE interrupt: %10lu&bslash;n&quot;
+comma
+id|mac_ide_irqs
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 r_return
 id|len
 suffix:semicolon
@@ -3497,7 +3659,14 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#ifdef DEBUG_VIA
+macro_line|#ifdef DEBUG_SPURIOUS
+r_if
+c_cond
+(paren
+id|console_loglevel
+OG
+l_int|6
+)paren
 id|printk
 c_func
 (paren
@@ -3841,6 +4010,45 @@ macro_line|#endif
 id|in_nmi
 op_decrement
 suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Unexpected via interrupt&n; */
+DECL|function|via_wtf
+r_void
+id|via_wtf
+c_func
+(paren
+r_int
+id|slot
+comma
+r_void
+op_star
+id|via
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+macro_line|#ifdef DEBUG_SPURIOUS
+r_if
+c_cond
+(paren
+id|console_loglevel
+OG
+l_int|6
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Unexpected nubus event %d on via %p&bslash;n&quot;
+comma
+id|slot
+comma
+id|via
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * The generic VIA interrupt routines (shamelessly stolen from Alan Cox&squot;s&n; * via6522.c :-), disable/pending masks added.&n; * The int *viaidx etc. is just to keep the prototype happy ...&n; */
 DECL|function|via_irq
@@ -4937,38 +5145,6 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; *&t;Unexpected via interrupt&n; */
-DECL|function|via_wtf
-r_void
-id|via_wtf
-c_func
-(paren
-r_int
-id|slot
-comma
-r_void
-op_star
-id|via
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-macro_line|#ifdef DEBUG_VIA
-id|printk
-c_func
-(paren
-l_string|&quot;Unexpected event %d on via %p&bslash;n&quot;
-comma
-id|slot
-comma
-id|via
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
 multiline_comment|/*&n; *&t;Nubus / SCSI interrupts; OSS style&n; *&t;The OSS is even more different than the RBV. OSS appears to stand for &n; *&t;Obscenely Screwed Silicon ... &n; *&n; *&t;Latest NetBSD sources suggest the OSS should behave like a RBV, but &n; *&t;that&squot;s probably true for the 0x203 offset (Nubus/ADB-SWIM IOP) at best&n; */
 DECL|function|oss_irq
 r_void
@@ -5553,7 +5729,14 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#ifdef DEBUG_VIA_NUBUS
+macro_line|#ifdef DEBUG_NUBUS_SPURIOUS
+r_if
+c_cond
+(paren
+id|console_loglevel
+OG
+l_int|6
+)paren
 id|printk
 c_func
 (paren
@@ -5614,6 +5797,7 @@ id|handler
 op_ne
 id|mac_default_handler
 )paren
+(brace
 (paren
 id|scc_handler
 (braket
@@ -5635,6 +5819,13 @@ comma
 id|regs
 )paren
 suffix:semicolon
+id|scc_irqs
+(braket
+id|i
+)braket
+op_increment
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;PSC interrupt handler&n; */
 DECL|function|psc_irq
@@ -6263,6 +6454,12 @@ comma
 id|via_do_nubus
 )paren
 suffix:semicolon
+id|mac_turnon_irq
+c_func
+(paren
+id|IRQ_MAC_NUBUS
+)paren
+suffix:semicolon
 )brace
 id|nubus_active
 op_or_assign
@@ -6533,6 +6730,16 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|mac_ide_irq_p_hook
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Nubus dispatch handler - VIA/RBV style&n; */
 DECL|function|via_do_nubus
@@ -6557,6 +6764,8 @@ id|regs
 r_int
 r_char
 id|map
+comma
+id|allints
 suffix:semicolon
 r_int
 id|i
@@ -6566,8 +6775,13 @@ id|ct
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&t;printk(&quot;nubus interrupt&bslash;n&quot;);*/
+r_int
+id|ide_pending
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* lock the nubus interrupt */
+multiline_comment|/* That&squot;s just &squot;clear Nubus IRQ bit in VIA2&squot; BTW. Pretty obsolete ? */
 r_if
 c_cond
 (paren
@@ -6601,6 +6815,7 @@ c_cond
 (paren
 id|mac_ide_intr_hook
 )paren
+(brace
 multiline_comment|/* &squot;slot&squot; is lacking the machspec bit in 2.0 */
 multiline_comment|/* need to pass proper dev_id = hwgroup here */
 id|mac_ide_intr_hook
@@ -6613,6 +6828,10 @@ comma
 id|regs
 )paren
 suffix:semicolon
+id|mac_ide_irqs
+op_increment
+suffix:semicolon
+)brace
 macro_line|#endif
 r_while
 c_loop
@@ -6625,7 +6844,7 @@ c_cond
 (paren
 id|via2_is_rbv
 )paren
-id|map
+id|allints
 op_assign
 op_complement
 id|via_read
@@ -6637,7 +6856,7 @@ id|rBufA
 )paren
 suffix:semicolon
 r_else
-id|map
+id|allints
 op_assign
 op_complement
 id|via_read
@@ -6648,15 +6867,17 @@ comma
 id|vBufA
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_NUBUS_INT
-id|printk
+macro_line|#ifdef CONFIG_BLK_DEV_MAC_IDE
+r_if
+c_cond
+(paren
+id|mac_ide_irq_p_hook
+)paren
+id|ide_pending
+op_assign
+id|mac_ide_irq_p_hook
 c_func
 (paren
-l_string|&quot;nubus_irq: map %x mask %x&bslash;n&quot;
-comma
-id|map
-comma
-id|nubus_active
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -6667,24 +6888,46 @@ c_cond
 id|map
 op_assign
 (paren
-id|map
+id|allints
 op_amp
 id|nubus_active
 )paren
 )paren
 op_eq
 l_int|0
+macro_line|#ifdef CONFIG_BLK_DEV_MAC_IDE
+op_logical_and
+op_logical_neg
+id|ide_pending
+macro_line|#endif
 )paren
 (brace
-macro_line|#ifdef DEBUG_NUBUS_INT
+r_if
+c_cond
+(paren
+id|ct
+op_eq
+l_int|0
+)paren
+(brace
+macro_line|#ifdef DEBUG_VIA_NUBUS
+r_if
+c_cond
+(paren
+id|console_loglevel
+OG
+l_int|5
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;nubus_irq: nothing pending, map %x mask %x&bslash;n&quot;
+l_string|&quot;nubus_irq: nothing pending, map %x mask %x active %x&bslash;n&quot;
 comma
-id|map
+id|allints
 comma
 id|nubus_active
+comma
+id|map
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -6694,9 +6937,87 @@ l_int|7
 )braket
 op_increment
 suffix:semicolon
+)brace
+multiline_comment|/* clear it */
+r_if
+c_cond
+(paren
+id|allints
+)paren
+r_if
+c_cond
+(paren
+id|via2_is_rbv
+)paren
+id|via_write
+c_func
+(paren
+id|rbv_regp
+comma
+id|rIFR
+comma
+l_int|0x02
+)paren
+suffix:semicolon
+r_else
+id|via_write
+c_func
+(paren
+id|via2_regp
+comma
+id|vIFR
+comma
+l_int|0x02
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#ifdef DEBUG_VIA_NUBUS
+r_if
+c_cond
+(paren
+id|console_loglevel
+OG
+l_int|6
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;nubus_irq: map %x mask %x active %x&bslash;n&quot;
+comma
+id|allints
+comma
+id|nubus_active
+comma
+id|map
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_MAC_IDE
+r_if
+c_cond
+(paren
+id|mac_ide_intr_hook
+op_logical_and
+id|ide_pending
+)paren
+(brace
+id|mac_ide_intr_hook
+c_func
+(paren
+id|IRQ_MAC_NUBUS
+comma
+id|via
+comma
+id|regs
+)paren
+suffix:semicolon
+id|mac_ide_irqs
+op_increment
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6706,18 +7027,30 @@ OG
 l_int|2
 )paren
 (brace
-macro_line|#ifdef DEBUG_NUBUS_INT
+r_if
+c_cond
+(paren
+id|console_loglevel
+OG
+l_int|5
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;nubus stuck events - %d/%d&bslash;n&quot;
+l_string|&quot;nubus stuck events - %x/%x/%x ide %x&bslash;n&quot;
+comma
+id|allints
+comma
+id|nubus_active
 comma
 id|map
 comma
-id|nubus_active
+id|ide_pending
 )paren
 suffix:semicolon
-macro_line|#endif
+id|nubus_stuck_events
+op_increment
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -6938,6 +7271,14 @@ op_eq
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ct
+op_eq
+l_int|0
+)paren
+(brace
 macro_line|#ifdef CONFIG_BLK_DEV_MAC_IDE
 r_if
 c_cond
@@ -6962,6 +7303,7 @@ l_int|7
 )braket
 op_increment
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace

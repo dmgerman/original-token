@@ -8,34 +8,49 @@ suffix:semicolon
 r_struct
 id|ntfs_sb_info
 suffix:semicolon
-multiline_comment|/* Duplicate definitions from ntfs/types.h */
+multiline_comment|/* Duplicate definitions from ntfs/ntfstypes.h */
 macro_line|#ifndef NTFS_INTEGRAL_TYPES
 DECL|macro|NTFS_INTEGRAL_TYPES
 mdefine_line|#define NTFS_INTEGRAL_TYPES
 DECL|typedef|ntfs_u8
 r_typedef
-r_int
-r_char
+id|u8
 id|ntfs_u8
 suffix:semicolon
 DECL|typedef|ntfs_u16
 r_typedef
-r_int
-r_int
+id|u16
 id|ntfs_u16
 suffix:semicolon
 DECL|typedef|ntfs_u32
 r_typedef
-r_int
-r_int
+id|u32
 id|ntfs_u32
 suffix:semicolon
 DECL|typedef|ntfs_u64
 r_typedef
-r_int
-r_int
-r_int
+id|u64
 id|ntfs_u64
+suffix:semicolon
+DECL|typedef|ntfs_s8
+r_typedef
+id|s8
+id|ntfs_s8
+suffix:semicolon
+DECL|typedef|ntfs_s16
+r_typedef
+id|s16
+id|ntfs_s16
+suffix:semicolon
+DECL|typedef|ntfs_s32
+r_typedef
+id|s32
+id|ntfs_s32
+suffix:semicolon
+DECL|typedef|ntfs_s64
+r_typedef
+id|s64
+id|ntfs_s64
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef NTMODE_T

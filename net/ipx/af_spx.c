@@ -4020,7 +4020,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Sequenced Packet eXchange (SPX) 0.02 for Linux NET3.037&bslash;n&quot;
+l_string|&quot;NET4: Sequenced Packet eXchange (SPX) 0.02 for Linux NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -15229,6 +15229,9 @@ c_func
 (paren
 op_amp
 id|es1371_audio_fops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL
@@ -15248,6 +15251,9 @@ c_func
 (paren
 op_amp
 id|es1371_mixer_fops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL
@@ -15267,6 +15273,9 @@ c_func
 (paren
 op_amp
 id|es1371_dac_fops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL
@@ -15286,6 +15295,9 @@ c_func
 (paren
 op_amp
 id|es1371_midi_fops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL

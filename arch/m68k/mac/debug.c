@@ -1521,10 +1521,12 @@ id|mac_console_driver.write
 op_assign
 id|mac_scca_console_write
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 id|mac_console_driver.wait_key
 op_assign
 id|mac_scca_console_wait_key
 suffix:semicolon
+macro_line|#endif
 id|scc_port
 op_assign
 l_int|0
@@ -1559,10 +1561,12 @@ id|mac_console_driver.write
 op_assign
 id|mac_sccb_console_write
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 id|mac_console_driver.wait_key
 op_assign
 id|mac_sccb_console_wait_key
 suffix:semicolon
+macro_line|#endif
 id|scc_port
 op_assign
 l_int|1

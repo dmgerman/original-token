@@ -6127,6 +6127,9 @@ suffix:colon
 r_case
 id|PROC_PID_CMDLINE
 suffix:colon
+r_case
+id|PROC_PID_CPU
+suffix:colon
 r_return
 l_int|0
 suffix:semicolon

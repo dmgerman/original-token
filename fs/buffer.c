@@ -353,14 +353,6 @@ id|nr_unused_buffer_heads
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|refilled
-r_static
-r_int
-id|refilled
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Set NZ when a buffer freelist is refilled &n;&t;&t;&t;&t;  this is used by the loop device */
 multiline_comment|/* This is used by some architectures to estimate available memory. */
 DECL|variable|buffermem
 r_int
@@ -484,9 +476,13 @@ l_int|25
 comma
 l_int|0
 comma
-l_int|100
+l_int|1
+op_star
+id|HZ
 comma
-l_int|100
+l_int|1
+op_star
+id|HZ
 comma
 l_int|1
 comma
@@ -511,9 +507,13 @@ l_int|2000
 comma
 l_int|100
 comma
-l_int|60000
+l_int|600
+op_star
+id|HZ
 comma
-l_int|60000
+l_int|600
+op_star
+id|HZ
 comma
 l_int|2047
 comma
@@ -6459,7 +6459,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; * Here we attempt to write back old buffers.  We also try to flush inodes &n; * and supers as well, since this function is essentially &quot;update&quot;, and &n; * otherwise there would be no way of ensuring that these quantities ever &n; * get written back.  Ideally, we would have a timestamp on the inodes&n; * and superblocks so that we could write back only the old ones as well&n; */
 DECL|function|sync_old_buffers
-id|asmlinkage
+r_static
 r_int
 id|sync_old_buffers
 c_func
@@ -7073,10 +7073,6 @@ id|ndirty
 op_assign
 l_int|0
 suffix:semicolon
-id|refilled
-op_assign
-l_int|0
-suffix:semicolon
 id|repeat
 suffix:colon
 id|bh
@@ -7212,17 +7208,6 @@ id|bh-&gt;b_dev
 )paren
 suffix:semicolon
 multiline_comment|/* Should we write back buffers that are shared or not??&n;&t;&t;&t;&t;&t;     currently dirty buffers are not shared, so it does not matter */
-r_if
-c_cond
-(paren
-id|refilled
-op_logical_and
-id|major
-op_eq
-id|LOOP_MAJOR
-)paren
-r_continue
-suffix:semicolon
 id|next-&gt;b_count
 op_increment
 suffix:semicolon

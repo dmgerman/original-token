@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_PORTFW masquerading module&n; *&n; *&n; *&t;$Id: ip_masq_portfw.c,v 1.2 1998/08/29 23:51:11 davem Exp $&n; *&n; * Author:&t;Steven Clarke &lt;steven.clarke@monmouth.demon.co.uk&gt;&n; *&n; * Fixes:&t;&n; *&t;Juan Jose Ciarlante&t;: created this new file from ip_masq.c and ip_fw.c&n; *&t;Juan Jose Ciarlante&t;: modularized &n; *&t;Juan Jose Ciarlante &t;: use GFP_KERNEL&n; *&t;Juan Jose Ciarlante &t;: locking&n; *&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_PORTFW masquerading module&n; *&n; *&n; *&t;$Id: ip_masq_portfw.c,v 1.3 1998/12/08 05:42:12 davem Exp $&n; *&n; * Author:&t;Steven Clarke &lt;steven.clarke@monmouth.demon.co.uk&gt;&n; *&n; * Fixes:&t;&n; *&t;Juan Jose Ciarlante&t;: created this new file from ip_masq.c and ip_fw.c&n; *&t;Juan Jose Ciarlante&t;: modularized &n; *&t;Juan Jose Ciarlante &t;: use GFP_KERNEL&n; *&t;Juan Jose Ciarlante &t;: locking&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1024,14 +1024,27 @@ comma
 id|cmd
 )paren
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|cmd
-op_ne
-id|IP_MASQ_CMD_FLUSH
 )paren
 (brace
+r_case
+id|IP_MASQ_CMD_NONE
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|IP_MASQ_CMD_FLUSH
+suffix:colon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
 r_if
 c_cond
 (paren

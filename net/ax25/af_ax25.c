@@ -7147,7 +7147,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;G4KLX/GW4PTS AX.25 for Linux. Version 0.37 for Linux NET3.038 (Linux 2.1)&bslash;n&quot;
+l_string|&quot;NET4: G4KLX/GW4PTS AX.25 for Linux. Version 0.37 for Linux NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

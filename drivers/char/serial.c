@@ -9933,6 +9933,25 @@ comma
 id|timeout
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * If the transmitter hasn&squot;t cleared in twice the approximate&n;&t; * amount of time to send the entire FIFO, it probably won&squot;t&n;&t; * ever clear.  This assumes the UART isn&squot;t doing flow&n;&t; * control, which is currently the case.  Hence, if it ever&n;&t; * takes longer than info-&gt;timeout, this is probably due to a&n;&t; * UART bug of some kind.  So, we clamp the timeout parameter at&n;&t; * 2*info-&gt;timeout.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|timeout
+op_logical_or
+id|timeout
+OG
+l_int|2
+op_star
+id|info-&gt;timeout
+)paren
+id|timeout
+op_assign
+l_int|2
+op_star
+id|info-&gt;timeout
+suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_RS_WAIT_UNTIL_SENT
 id|printk
 c_func

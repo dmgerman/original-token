@@ -1151,9 +1151,16 @@ id|ret
 op_ne
 id|CDS_DISC_OK
 )paren
+(brace
+id|ret
+op_assign
+op_minus
+id|ENOMEDIUM
+suffix:semicolon
 r_goto
 id|clean_up_and_return
 suffix:semicolon
+)brace
 )brace
 id|cdrom_count_tracks
 c_func

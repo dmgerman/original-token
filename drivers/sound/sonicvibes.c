@@ -13768,6 +13768,9 @@ c_func
 (paren
 op_amp
 id|sv_audio_fops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL
@@ -13787,6 +13790,9 @@ c_func
 (paren
 op_amp
 id|sv_mixer_fops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL
@@ -13806,6 +13812,9 @@ c_func
 (paren
 op_amp
 id|sv_midi_fops
+comma
+op_minus
+l_int|1
 )paren
 )paren
 OL

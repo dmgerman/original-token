@@ -5124,6 +5124,16 @@ c_func
 (paren
 id|ADAPTEC2
 comma
+id|ADAPTEC2_78902
+comma
+l_string|&quot;AIC-7890/1&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ADAPTEC2
+comma
 id|ADAPTEC2_7890
 comma
 l_string|&quot;AIC-7890/1&quot;

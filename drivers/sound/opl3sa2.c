@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/opl3sa2.c&n; *&n; * A low level driver for Yamaha OPL3-SA2 and SA3 cards.&n; * SAx cards should work, as they are just variants of the SA3.&n; *&n; * Copyright 1998 Scott Murray &lt;scottm@interlog.com&gt;&n; *&n; * Originally based on the CS4232 driver (in cs4232.c) by Hannu Savolainen&n; * and others.  Now incorporates code/ideas from pss.c, also by Hannu&n; * Savolainen.  Both of those files are distributed with the following&n; * license:&n; *&n; * &quot;Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; *  OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; *  Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; *  for more info.&quot;&n; *&n; * As such, in accordance with the above license, this file, opl3sa2.c, is&n; * distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2 (June 1991).&n; * See the &quot;COPYING&quot; file distributed with this software for more information.&n; *&n; * Change History&n; * --------------&n; * Scott Murray            Original driver (Jun 14, 1998)&n; * Paul J.Y. Lahaie        Changed probing / attach code order&n; * Scott Murray            Added mixer support (Dec 03, 1998)&n; *&n; */
+multiline_comment|/*&n; * sound/opl3sa2.c&n; *&n; * A low level driver for Yamaha OPL3-SA2 and SA3 cards.&n; * SAx cards should work, as they are just variants of the SA3.&n; *&n; * Copyright 1998 Scott Murray &lt;scottm@interlog.com&gt;&n; *&n; * Originally based on the CS4232 driver (in cs4232.c) by Hannu Savolainen&n; * and others.  Now incorporates code/ideas from pss.c, also by Hannu&n; * Savolainen.  Both of those files are distributed with the following&n; * license:&n; *&n; * &quot;Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; *  OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; *  Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; *  for more info.&quot;&n; *&n; * As such, in accordance with the above license, this file, opl3sa2.c, is&n; * distributed under the GNU GENERAL PUBLIC LICENSE (GPL) Version 2 (June 1991).&n; * See the &quot;COPYING&quot; file distributed with this software for more information.&n; *&n; * Change History&n; * --------------&n; * Scott Murray            Original driver (Jun 14, 1998)&n; * Paul J.Y. Lahaie        Changed probing / attach code order&n; * Scott Murray            Added mixer support (Dec 03, 1998)&n; * Scott Murray            Changed detection code to be more forgiving,&n; *                         added force option as last resort,&n; *                         fixed ioctl return values. (Dec 30, 1998)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -25,6 +25,7 @@ DECL|macro|DEFAULT_MIC
 mdefine_line|#define DEFAULT_MIC    50
 DECL|macro|DEFAULT_TIMBRE
 mdefine_line|#define DEFAULT_TIMBRE 0
+multiline_comment|/*&n; * NOTE: CHIPSET_UNKNOWN should match the default value of&n; *       CONFIG_OPL3SA2_CHIPSET in Config.in to make everything&n; *       work right in all situations.&n; */
 DECL|macro|CHIPSET_UNKNOWN
 mdefine_line|#define CHIPSET_UNKNOWN -1
 DECL|macro|CHIPSET_OPL3SA2
@@ -35,13 +36,24 @@ DECL|macro|CHIPSET_OPL3SAX
 mdefine_line|#define CHIPSET_OPL3SAX  4
 macro_line|#ifdef CONFIG_OPL3SA2
 multiline_comment|/* What&squot;s my version? */
-DECL|variable|chipset_version
+macro_line|#ifdef CONFIG_OPL3SA2_CHIPSET
+multiline_comment|/* Set chipset if compiled into the kernel */
+DECL|variable|chipset
 r_static
 r_int
-id|chipset_version
+id|chipset
+op_assign
+id|CONFIG_OPL3SA2_CHIPSET
+suffix:semicolon
+macro_line|#else
+DECL|variable|chipset
+r_static
+r_int
+id|chipset
 op_assign
 id|CHIPSET_UNKNOWN
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Oh well, let&squot;s just cache the name */
 DECL|variable|chipset_name
 r_static
@@ -1154,7 +1166,13 @@ comma
 id|devc-&gt;volume_r
 )paren
 suffix:semicolon
-r_return
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
+op_assign
 id|ret_vol_stereo
 c_func
 (paren
@@ -1162,6 +1180,9 @@ id|devc-&gt;volume_l
 comma
 id|devc-&gt;volume_r
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SOUND_MIXER_MIC
@@ -1189,12 +1210,21 @@ comma
 id|devc-&gt;mic
 )paren
 suffix:semicolon
-r_return
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
+op_assign
 id|ret_vol_mono
 c_func
 (paren
 id|devc-&gt;mic
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SOUND_MIXER_BASS
@@ -1202,7 +1232,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|chipset_version
+id|chipset
 op_ne
 id|CHIPSET_OPL3SA2
 )paren
@@ -1230,12 +1260,21 @@ comma
 id|devc-&gt;bass
 )paren
 suffix:semicolon
-r_return
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
+op_assign
 id|ret_vol_mono
 c_func
 (paren
 id|devc-&gt;bass
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_return
@@ -1248,7 +1287,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|chipset_version
+id|chipset
 op_ne
 id|CHIPSET_OPL3SA2
 )paren
@@ -1276,12 +1315,21 @@ comma
 id|devc-&gt;treble
 )paren
 suffix:semicolon
-r_return
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
+op_assign
 id|ret_vol_mono
 c_func
 (paren
 id|devc-&gt;treble
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_return
@@ -1336,16 +1384,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* no mixer devices */
-r_if
-c_cond
-(paren
-id|chipset_version
-op_ne
-id|CHIPSET_OPL3SA2
-)paren
-(brace
-r_return
-(paren
 op_star
 (paren
 r_int
@@ -1353,30 +1391,37 @@ op_star
 )paren
 id|arg
 op_or_assign
+(paren
 id|SOUND_MASK_VOLUME
 op_or
 id|SOUND_MASK_MIC
-op_or
+)paren
+suffix:semicolon
+multiline_comment|/* OPL3-SA2 has no bass and treble mixers */
+r_if
+c_cond
+(paren
+id|chipset
+op_ne
+id|CHIPSET_OPL3SA2
+)paren
+(brace
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
+op_or_assign
+(paren
 id|SOUND_MASK_BASS
 op_or
 id|SOUND_MASK_TREBLE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* OPL3-SA2 has no bass and treble mixers */
 r_return
-(paren
-op_star
-(paren
-r_int
-op_star
-)paren
-id|arg
-op_or_assign
-id|SOUND_MASK_VOLUME
-op_or
-id|SOUND_MASK_MIC
-)paren
+l_int|0
 suffix:semicolon
 r_case
 id|SOUND_MIXER_STEREODEVS
@@ -1409,8 +1454,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* no stereo devices */
-r_return
-(paren
 op_star
 (paren
 r_int
@@ -1419,7 +1462,9 @@ op_star
 id|arg
 op_or_assign
 id|SOUND_MASK_VOLUME
-)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SOUND_MIXER_RECMASK
@@ -1446,6 +1491,8 @@ id|arg
 suffix:semicolon
 )brace
 r_else
+(brace
+multiline_comment|/* No recording devices */
 r_return
 (paren
 op_star
@@ -1458,7 +1505,7 @@ op_assign
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* no record devices */
+)brace
 r_case
 id|SOUND_MIXER_CAPS
 suffix:colon
@@ -1484,8 +1531,7 @@ id|arg
 suffix:semicolon
 )brace
 r_else
-r_return
-(paren
+(brace
 op_star
 (paren
 r_int
@@ -1494,8 +1540,11 @@ op_star
 id|arg
 op_assign
 id|SOUND_CAP_EXCL_INPUT
-)paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_case
 id|SOUND_MIXER_RECSRC
 suffix:colon
@@ -1521,6 +1570,8 @@ id|arg
 suffix:semicolon
 )brace
 r_else
+(brace
+multiline_comment|/* No recording source */
 r_return
 (paren
 op_star
@@ -1533,12 +1584,10 @@ op_assign
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* no record source */
+)brace
 r_case
 id|SOUND_MIXER_VOLUME
 suffix:colon
-r_return
-(paren
 op_star
 (paren
 r_int
@@ -1553,13 +1602,13 @@ id|devc-&gt;volume_l
 comma
 id|devc-&gt;volume_r
 )paren
-)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SOUND_MIXER_MIC
 suffix:colon
-r_return
-(paren
 op_star
 (paren
 r_int
@@ -1572,7 +1621,9 @@ c_func
 (paren
 id|devc-&gt;mic
 )paren
-)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 r_case
 id|SOUND_MIXER_BASS
@@ -1580,13 +1631,11 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|chipset_version
+id|chipset
 op_ne
 id|CHIPSET_OPL3SA2
 )paren
 (brace
-r_return
-(paren
 op_star
 (paren
 r_int
@@ -1599,26 +1648,29 @@ c_func
 (paren
 id|devc-&gt;bass
 )paren
-)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
+r_else
+(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_case
 id|SOUND_MIXER_TREBLE
 suffix:colon
 r_if
 c_cond
 (paren
-id|chipset_version
+id|chipset
 op_ne
 id|CHIPSET_OPL3SA2
 )paren
 (brace
-r_return
-(paren
 op_star
 (paren
 r_int
@@ -1631,13 +1683,18 @@ c_func
 (paren
 id|devc-&gt;treble
 )paren
-)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
+r_else
+(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_default
 suffix:colon
 r_return
@@ -1962,6 +2019,46 @@ op_star
 id|hw_config
 )paren
 (brace
+r_int
+r_char
+id|chipsets
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+id|CHIPSET_UNKNOWN
+comma
+multiline_comment|/* 0 */
+id|CHIPSET_OPL3SA2
+comma
+multiline_comment|/* 1 */
+id|CHIPSET_OPL3SA3
+comma
+multiline_comment|/* 2 */
+id|CHIPSET_UNKNOWN
+comma
+multiline_comment|/* 3 */
+id|CHIPSET_OPL3SAX
+comma
+multiline_comment|/* 4 */
+id|CHIPSET_OPL3SAX
+comma
+multiline_comment|/* 5 */
+id|CHIPSET_UNKNOWN
+comma
+multiline_comment|/* 6 */
+id|CHIPSET_OPL3SA3
+comma
+multiline_comment|/* 7 */
+)brace
+suffix:semicolon
+r_int
+r_char
+id|version
+op_assign
+l_int|0
+suffix:semicolon
 r_char
 id|tag
 suffix:semicolon
@@ -1982,7 +2079,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;opl3sa2.c: Control I/O port 0x%03x not free&bslash;n&quot;
+l_string|&quot;%s: Control I/O port 0x%03x not free&bslash;n&quot;
+comma
+id|__FILE__
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -1991,11 +2090,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Look at chipset version in lower 3 bits of index 0x0A, miscellaneous&n;&t; */
-id|chipset_version
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&n;&t; * Determine chipset type (SA2, SA3, or SAx)&n;&t; *&n;&t; * Have to handle two possible override situations:&n;&t; * 1) User compiled driver into the kernel and forced chipset type&n;&t; * 2) User built a module, but wants to override the chipset type&n;&t; */
+r_if
+c_cond
+(paren
+id|chipset
+op_eq
+id|CHIPSET_UNKNOWN
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|hw_config-&gt;card_subtype
+op_eq
+id|CHIPSET_UNKNOWN
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * Look at chipset version in lower 3 bits of index 0x0A, miscellaneous&n;&t;&t;&t; */
 id|opl3sa2_read
 c_func
 (paren
@@ -2009,17 +2121,124 @@ r_char
 op_star
 )paren
 op_amp
-id|chipset_version
+id|version
 )paren
 suffix:semicolon
-id|chipset_version
+id|version
 op_and_assign
-l_int|0x0007
+l_int|0x07
 suffix:semicolon
+multiline_comment|/* Match version number to appropiate chipset */
+id|chipset
+op_assign
+id|chipsets
+(braket
+id|version
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Use user specified chipset */
 r_switch
 c_cond
 (paren
-id|chipset_version
+id|hw_config-&gt;card_subtype
+)paren
+(brace
+r_case
+l_int|2
+suffix:colon
+id|chipset
+op_assign
+id|CHIPSET_OPL3SA2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|chipset
+op_assign
+id|CHIPSET_OPL3SA3
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Unknown chipset %d&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|hw_config-&gt;card_subtype
+)paren
+suffix:semicolon
+id|chipset
+op_assign
+id|CHIPSET_UNKNOWN
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* Use user compiled in chipset */
+r_switch
+c_cond
+(paren
+id|chipset
+)paren
+(brace
+r_case
+l_int|2
+suffix:colon
+id|chipset
+op_assign
+id|CHIPSET_OPL3SA2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|chipset
+op_assign
+id|CHIPSET_OPL3SA3
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Unknown chipset %d&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|chipset
+)paren
+suffix:semicolon
+id|chipset
+op_assign
+id|CHIPSET_UNKNOWN
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Do chipset specific stuff: */
+r_switch
+c_cond
+(paren
+id|chipset
 )paren
 (brace
 r_case
@@ -2079,16 +2298,27 @@ id|KERN_ERR
 l_string|&quot;No Yamaha audio controller found&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* If we&squot;ve actually checked the version, print it out */
+r_if
+c_cond
+(paren
+id|version
+)paren
+(brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;opl3sa2.c: chipset version = %x&bslash;n&quot;
+l_string|&quot;%s: chipset version = %x&bslash;n&quot;
 comma
-id|chipset_version
+id|__FILE__
+comma
+id|version
 )paren
 suffix:semicolon
-id|chipset_version
+)brace
+multiline_comment|/* Set some sane values */
+id|chipset
 op_assign
 id|CHIPSET_UNKNOWN
 suffix:semicolon
@@ -2102,7 +2332,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|chipset_version
+id|chipset
 op_ne
 id|CHIPSET_UNKNOWN
 )paren
@@ -2232,6 +2462,13 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|variable|force
+r_int
+id|force
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -2328,6 +2565,22 @@ comma
 l_string|&quot;Set MSS (audio) second DMA channel (0, 1, 3)&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|force
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|force
+comma
+l_string|&quot;Force audio controller chipset (2, 3)&quot;
+)paren
+suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
@@ -2402,7 +2655,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;opl3sa2.c: io, mss_io, irq, dma, and dma2 must be set.&bslash;n&quot;
+l_string|&quot;%s: io, mss_io, irq, dma, and dma2 must be set.&bslash;n&quot;
+comma
+id|__FILE__
 )paren
 suffix:semicolon
 r_return
@@ -2426,6 +2681,26 @@ suffix:semicolon
 id|cfg.dma2
 op_assign
 id|dma2
+suffix:semicolon
+multiline_comment|/* Does the user want to override the chipset type? */
+r_if
+c_cond
+(paren
+id|force
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|cfg.card_subtype
+op_assign
+id|force
+suffix:semicolon
+)brace
+r_else
+id|cfg.card_subtype
+op_assign
+id|CHIPSET_UNKNOWN
 suffix:semicolon
 multiline_comment|/* The MSS config: */
 id|mss_cfg.io_base

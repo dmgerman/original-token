@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.36 1998/10/21 05:26:59 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
+multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.38 1999/01/02 16:51:48 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -143,6 +143,11 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_icmp_echoreply_time
+suffix:semicolon
+multiline_comment|/* From igmp.c */
+r_extern
+r_int
+id|sysctl_igmp_max_memberships
 suffix:semicolon
 DECL|variable|tcp_retr1_max
 r_int
@@ -938,6 +943,29 @@ comma
 id|ipv4_route_table
 )brace
 comma
+macro_line|#ifdef CONFIG_IP_MULTICAST
+(brace
+id|NET_IPV4_IGMP_MAX_MEMBERSHIPS
+comma
+l_string|&quot;igmp_max_memberships&quot;
+comma
+op_amp
+id|sysctl_igmp_max_memberships
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0
 )brace

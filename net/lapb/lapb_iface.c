@@ -1406,7 +1406,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;LAPB for Linux. Version 0.01 for Linux NET3.038 (Linux 2.1)&bslash;n&quot;
+l_string|&quot;NET4: LAPB for Linux. Version 0.01 for NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

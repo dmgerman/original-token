@@ -644,22 +644,6 @@ c_func
 id|page
 )paren
 )paren
-(brace
-multiline_comment|/* PARANOID */
-r_if
-c_cond
-(paren
-id|page-&gt;inode
-op_ne
-op_amp
-id|swapper_inode
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;swap cache page has wrong inode&bslash;n&quot;
-)paren
-suffix:semicolon
 id|count
 op_add_assign
 id|swap_count
@@ -670,7 +654,6 @@ id|page-&gt;offset
 op_minus
 l_int|2
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
