@@ -1717,6 +1717,13 @@ c_func
 id|sysctl_tcp_wmem
 )paren
 suffix:semicolon
+DECL|variable|sysctl_tcp_ecn
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sysctl_tcp_ecn
+)paren
+suffix:semicolon
 DECL|variable|tcp_cwnd_application_limited
 id|EXPORT_SYMBOL
 c_func

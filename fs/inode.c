@@ -2725,6 +2725,9 @@ id|inode-&gt;i_state
 op_or_assign
 id|I_FREEING
 suffix:semicolon
+id|inodes_stat.nr_inodes
+op_decrement
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -2871,6 +2874,9 @@ id|inode-&gt;i_state
 op_or_assign
 id|I_FREEING
 suffix:semicolon
+id|inodes_stat.nr_inodes
+op_decrement
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -2886,9 +2892,6 @@ id|inode
 suffix:semicolon
 )brace
 )brace
-id|inodes_stat.nr_inodes
-op_decrement
-suffix:semicolon
 id|destroy_inode
 c_func
 (paren

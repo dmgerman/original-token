@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/video/hgafb.c -- Hercules graphics adaptor frame buffer device&n; * &n; *      Created 25 Nov 1999 by Ferenc Bakonyi (fero@drama.obuda.kando.hu)&n; *      Based on skeletonfb.c by Geert Uytterhoeven and&n; *               mdacon.c by Andrew Apted&n; *&n; * History:&n; *&n; * - Revision 0.1.5 (13 Mar 2000): spinlocks instead of saveflags();cli();etc&n; *                                 minor fixes&n; * - Revision 0.1.4 (24 Jan 2000): fixed a bug in hga_card_detect() for &n; *                                  HGA-only systems&n; * - Revision 0.1.3 (22 Jan 2000): modified for the new fb_info structure&n; *                                 screen is cleared after rmmod&n; *                                 virtual resolutions&n; *                                 kernel parameter &squot;video=hga:font:{fontname}&squot;&n; *                                 module parameter &squot;font={fontname}&squot;&n; *                                 module parameter &squot;nologo={0|1}&squot;&n; *                                 the most important: boot logo :)&n; * - Revision 0.1.0  (6 Dec 1999): faster scrolling and minor fixes&n; * - First release  (25 Nov 1999)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/drivers/video/hgafb.c -- Hercules graphics adaptor frame buffer device&n; * &n; *      Created 25 Nov 1999 by Ferenc Bakonyi (fero@drama.obuda.kando.hu)&n; *      Based on skeletonfb.c by Geert Uytterhoeven and&n; *               mdacon.c by Andrew Apted&n; *&n; * History:&n; *&n; * - Revision 0.1.6 (17 Aug 2000): new style structs&n; *                                 documentation&n; * - Revision 0.1.5 (13 Mar 2000): spinlocks instead of saveflags();cli();etc&n; *                                 minor fixes&n; * - Revision 0.1.4 (24 Jan 2000): fixed a bug in hga_card_detect() for &n; *                                  HGA-only systems&n; * - Revision 0.1.3 (22 Jan 2000): modified for the new fb_info structure&n; *                                 screen is cleared after rmmod&n; *                                 virtual resolutions&n; *                                 kernel parameter &squot;video=hga:font:{fontname}&squot;&n; *                                 module parameter &squot;font={fontname}&squot;&n; *                                 module parameter &squot;nologo={0|1}&squot;&n; *                                 the most important: boot logo :)&n; * - Revision 0.1.0  (6 Dec 1999): faster scrolling and minor fixes&n; * - First release  (25 Nov 1999)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -133,27 +133,40 @@ id|fb_var_screeninfo
 id|hga_default_var
 op_assign
 (brace
+id|xres
+suffix:colon
 l_int|720
 comma
+id|yres
+suffix:colon
 l_int|348
 comma
-multiline_comment|/* xres, yres */
+id|xres_virtual
+suffix:colon
 l_int|720
 comma
+id|yres_virtual
+suffix:colon
 l_int|348
 comma
-multiline_comment|/* xres_virtual, yres_virtual */
+id|xoffset
+suffix:colon
 l_int|0
 comma
+id|yoffset
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* xoffset, yoffset */
+id|bits_per_pixel
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* bits_per_pixel */
+id|grayscale
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* grayscale */
+id|red
+suffix:colon
 (brace
 l_int|0
 comma
@@ -162,7 +175,8 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* red */
+id|green
+suffix:colon
 (brace
 l_int|0
 comma
@@ -171,7 +185,8 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* green */
+id|blue
+suffix:colon
 (brace
 l_int|0
 comma
@@ -180,7 +195,8 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* blue */
+id|transp
+suffix:colon
 (brace
 l_int|0
 comma
@@ -189,23 +205,29 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* transp */
+id|nonstd
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* nonstd (FB_NONSTD_HGA ?) */
+multiline_comment|/* (FB_NONSTD_HGA ?) */
+id|activate
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* activate */
+id|height
+suffix:colon
 op_minus
 l_int|1
 comma
+id|width
+suffix:colon
 op_minus
 l_int|1
 comma
-multiline_comment|/* height, width */
+id|accel_flags
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* accel_flags */
 multiline_comment|/* pixclock */
 multiline_comment|/* left_margin, right_margin */
 multiline_comment|/* upper_margin, lower_margin */
@@ -221,48 +243,63 @@ id|fb_fix_screeninfo
 id|hga_fix
 op_assign
 (brace
+id|id
+suffix:colon
 l_string|&quot;HGA&quot;
 comma
-multiline_comment|/* id */
+id|smem_start
+suffix:colon
 (paren
 r_int
 r_int
 )paren
 l_int|NULL
 comma
-multiline_comment|/* smem_start */
+id|smem_len
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* smem_len */
+id|type
+suffix:colon
 id|FB_TYPE_PACKED_PIXELS
 comma
-multiline_comment|/* type (not sure) */
+multiline_comment|/* (not sure) */
+id|type_aux
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* type_aux (not sure) */
+multiline_comment|/* (not sure) */
+id|visual
+suffix:colon
 id|FB_VISUAL_MONO10
 comma
-multiline_comment|/* visual */
+id|xpanstep
+suffix:colon
 l_int|8
 comma
-multiline_comment|/* xpanstep */
+id|ypanstep
+suffix:colon
 l_int|8
 comma
-multiline_comment|/* ypanstep */
+id|ywrapstep
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* ywrapstep */
+id|line_length
+suffix:colon
 l_int|90
 comma
-multiline_comment|/* line_length */
+id|mmio_start
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* mmio_start */
+id|mmio_len
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* mmio_len */
+id|accel
+suffix:colon
 id|FB_ACCEL_NONE
-multiline_comment|/* accel */
 )brace
 suffix:semicolon
 DECL|variable|fb_info
@@ -1471,7 +1508,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------- *&n; *&n; * dispsw functions&n; *&n; * ------------------------------------------------------------------------- */
-multiline_comment|/*&n;&t; * Get the Fixed Part of the Display&n;&t; */
+multiline_comment|/**&n; *&t;hga_get_fix - get the fixed part of the display&n; *&t;@fix:struct fb_fix_screeninfo to fill in&n; *&t;@con:unused&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&n; *&t;This wrapper function copies @info-&gt;fix to @fix.&n; *&t;A zero is returned on success and %-EINVAL for failure.&n; */
 DECL|function|hga_get_fix
 r_int
 id|hga_get_fix
@@ -1526,7 +1563,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Get the User Defined Part of the Display&n;&t; */
+multiline_comment|/**&n; *&t;hga_get_var - get the user defined part of the display&n; *&t;@var:struct fb_var_screeninfo to fill in&n; *&t;@con:unused&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&n; *&t;This wrapper function copies @info-&gt;var to @var.&n; *&t;A zero is returned on success and %-EINVAL for failure.&n; */
 DECL|function|hga_get_var
 r_int
 id|hga_get_var
@@ -1581,7 +1618,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Set the User Defined Part of the Display&n;&t; * This is the most mystical function (at least for me).&n;&t; * What is the exact specification of xxx_set_var?&n;&t; * Should it handle xoffset, yoffset? Should it do pannig?&n;&t; * What does vmode mean?&n;&t; */
+multiline_comment|/**&n; *&t;hga_set_var - set the user defined part of the display&n; *&t;@var:new video mode&n; *&t;@con:unused&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&t;&n; *&t;This function is called for changing video modes. Since HGA cards have&n; *&t;only one fixed mode we have not much to do. After checking input &n; *&t;parameters @var is copied to @info-&gt;var and @info-&gt;changevar is called.&n; *&t;A zero is returned on success and %-EINVAL for failure.&n; *&t;&n; *&t;FIXME:&n; *&t;This is the most mystical function (at least for me).&n; *&t;What is the exact specification of xxx_set_var()?&n; *&t;Should it handle xoffset, yoffset? Should it do panning?&n; *&t;What does vmode mean?&n; */
 DECL|function|hga_set_var
 r_int
 id|hga_set_var
@@ -1699,7 +1736,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Get the Colormap&n;&t; */
+multiline_comment|/**&n; *&t;hga_getcolreg - read color registers&n; *&t;@regno:register index to read out&n; *&t;@red:red value&n; *&t;@green:green value&n; *&t;@blue:blue value&n; *&t;@transp:transparency value&n; *&t;@info:unused&n; *&n; *&t;This callback function is used to read the color registers of a HGA&n; *&t;board. Since we have only two fixed colors, RGB values are 0x0000 &n; *&t;for register0 and 0xaaaa for register1.&n; *&t;A zero is returned on success and 1 for failure.&n; */
 DECL|function|hga_getcolreg
 r_static
 r_int
@@ -1790,6 +1827,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;hga_get_cmap - get the colormap&n; *&t;@cmap:struct fb_cmap to fill in&n; *&t;@kspc:called from kernel space?&n; *&t;@con:unused&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&n; *&t;This wrapper function passes it&squot;s input parameters to fb_get_cmap().&n; *&t;Callback function hga_getcolreg() is used to read the color registers.&n; */
 DECL|function|hga_get_cmap
 r_int
 id|hga_get_cmap
@@ -1841,7 +1879,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Set the Colormap&n;&t; */
+multiline_comment|/**&n; *&t;hga_setcolreg - set color registers&n; *&t;@regno:register index to set&n; *&t;@red:red value, unused&n; *&t;@green:green value, unused&n; *&t;@blue:blue value, unused&n; *&t;@transp:transparency value, unused&n; *&t;@info:unused&n; *&n; *&t;This callback function is used to set the color registers of a HGA&n; *&t;board. Since we have only two fixed colors only @regno is checked.&n; *&t;A zero is returned on success and 1 for failure.&n; */
 DECL|function|hga_setcolreg
 r_static
 r_int
@@ -1883,6 +1921,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;hga_set_cmap - set the colormap&n; *&t;@cmap:struct fb_cmap to set&n; *&t;@kspc:called from kernel space?&n; *&t;@con:unused&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&n; *&t;This wrapper function passes it&squot;s input parameters to fb_set_cmap().&n; *&t;Callback function hga_setcolreg() is used to set the color registers.&n; */
 DECL|function|hga_set_cmap
 r_int
 id|hga_set_cmap
@@ -1934,7 +1973,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Pan or Wrap the Display&n;&t; *&n;&t; *  This call looks only at xoffset, yoffset and the FB_VMODE_YWRAP flag&n;&t; */
+multiline_comment|/**&n; *&t;hga_pan_display - pan or wrap the display&n; *&t;@var:contains new xoffset, yoffset and vmode values&n; *&t;@con:unused&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&n; *&t;This function looks only at xoffset, yoffset and the %FB_VMODE_YWRAP&n; *&t;flag in @var. If input parameters are correct it calls hga_pan() to &n; *&t;program the hardware. @info-&gt;var is updated to the new values.&n; *&t;A zero is returned on success and %-EINVAL for failure.&n; */
 DECL|function|hga_pan_display
 r_int
 id|hga_pan_display
@@ -2104,6 +2143,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------------------- *&n; *&n; * Functions in fb_info&n; * &n; * ------------------------------------------------------------------------- */
+multiline_comment|/**&n; *&t;hgafbcon_switch - switch console&n; *&t;@con:new console to switch to&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&n; *&t;This function should install a new colormap and change the video mode.&n; *&t;Since we have fixed colors and only one video mode we have nothing to &n; *&t;do.&n; *&t;Only console administration is done but it should go to fbcon.c IMHO.&n; *&t;A zero is returned on success and %-EINVAL for failure.&n; */
 DECL|function|hgafbcon_switch
 r_static
 r_int
@@ -2266,6 +2306,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;hgafbcon_updatevar - update the user defined part of the display&n; *&t;@con:console to update or -1 when no consoles defined on this fb&n; *&t;@info:pointer to fb_info object containing info for current hga board&n; *&n; *&t;This function is called when @var is changed by fbcon.c without calling &n; *&t;hga_set_var(). It usually means scrolling.  hga_pan_display() is called&n; *&t;to update the hardware and @info-&gt;var.&n; *&t;A zero is returned on success and %-EINVAL for failure.&n; */
 DECL|function|hgafbcon_updatevar
 r_static
 r_int
@@ -2335,6 +2376,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;hgafbcon_blank - (un)blank the screen&n; *&t;@blank_mode:blanking method to use&n; *&t;@info:unused&n; *&t;&n; *&t;Blank the screen if blank_mode != 0, else unblank. &n; *&t;Implements VESA suspend and powerdown modes on hardware that supports &n; *&t;disabling hsync/vsync:&n; *&t;&t;@blank_mode == 2 means suspend vsync,&n; *&t;&t;@blank_mode == 3 means suspend hsync,&n; *&t;&t;@blank_mode == 4 means powerdown.&n; */
 DECL|function|hgafbcon_blank
 r_static
 r_void
@@ -2350,7 +2392,6 @@ op_star
 id|info
 )paren
 (brace
-multiline_comment|/*&n;&t; *  Blank the screen if blank_mode != 0, else unblank. &n;&t; *  Implements VESA suspend and powerdown modes on hardware &n;&t; *  that supports disabling hsync/vsync:&n;&t; *    blank_mode == 2: suspend vsync&n;&t; *    blank_mode == 3: suspend hsync&n;&t; *    blank_mode == 4: powerdown&n;&t; */
 id|CHKINFO
 c_func
 (paren

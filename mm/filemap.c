@@ -1327,7 +1327,7 @@ r_continue
 suffix:semicolon
 id|bh-&gt;b_flushtime
 op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
 id|ll_rw_block
 c_func

@@ -2701,6 +2701,13 @@ c_func
 id|strspn
 )paren
 suffix:semicolon
+DECL|variable|strsep
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strsep
+)paren
+suffix:semicolon
 multiline_comment|/* software interrupts */
 DECL|variable|tasklet_hi_vec
 id|EXPORT_SYMBOL

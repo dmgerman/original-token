@@ -1255,7 +1255,7 @@ id|bh_orig-&gt;b_state
 suffix:semicolon
 id|bh-&gt;b_flushtime
 op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
 id|bh-&gt;b_next_free
 op_assign

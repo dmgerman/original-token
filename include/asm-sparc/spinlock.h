@@ -5,7 +5,7 @@ mdefine_line|#define __SPARC_SPINLOCK_H
 macro_line|#include &lt;linux/threads.h&gt;&t;/* For NR_CPUS */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/psr.h&gt;
-multiline_comment|/*&n; * Define this to use the verbose/debugging versions in&n; * arch/sparc/lib/debuglocks.c&n; *&n; * Be sure to make check_asm whenever changing this option.&n; */
+multiline_comment|/*&n; * Define this to use the verbose/debugging versions in&n; * arch/sparc/lib/debuglocks.c&n; *&n; * Be sure to make dep whenever changing this option.&n; */
 DECL|macro|SPIN_LOCK_DEBUG
 mdefine_line|#define SPIN_LOCK_DEBUG
 macro_line|#ifdef SPIN_LOCK_DEBUG
@@ -34,7 +34,7 @@ suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED&t;(spinlock_t) { 0, 0 }
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(lp)&t;do { (lp)-&gt;owner_pc = 0; (lp)-&gt;lock = 0; } while(0)
+mdefine_line|#define spin_lock_init(lp)&t;do { *(lp)= SPIN_LOCK_UNLOCKED; } while(0)
 DECL|macro|spin_is_locked
 mdefine_line|#define spin_is_locked(lp)  (*((volatile unsigned char *)(&amp;((lp)-&gt;lock))) != 0)
 DECL|macro|spin_unlock_wait
@@ -112,6 +112,8 @@ id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0, 0, {0} }
+DECL|macro|rwlock_init
+mdefine_line|#define rwlock_init(lp)&t;do { *(lp)= RW_LOCK_UNLOCKED; } while(0)
 r_extern
 r_void
 id|_do_read_lock
@@ -378,6 +380,8 @@ id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
+DECL|macro|rwlock_init
+mdefine_line|#define rwlock_init(lp)&t;do { *(lp)= RW_LOCK_UNLOCKED; } while(0)
 multiline_comment|/* Sort of like atomic_t&squot;s on Sparc, but even more clever.&n; *&n; *&t;------------------------------------&n; *&t;| 24-bit counter           | wlock |  rwlock_t&n; *&t;------------------------------------&n; *&t; 31                       8 7     0&n; *&n; * wlock signifies the one writer is in or somebody is updating&n; * counter. For a writer, if he successfully acquires the wlock,&n; * but counter is non-zero, he has to release the lock and wait,&n; * till both counter and wlock are zero.&n; *&n; * Unfortunately this scheme limits us to ~16,000,000 cpus.&n; */
 DECL|function|_read_lock
 r_extern

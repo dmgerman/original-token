@@ -132,6 +132,28 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+DECL|macro|SMB_NLS_MAXNAMELEN
+mdefine_line|#define SMB_NLS_MAXNAMELEN 20
+DECL|struct|smb_nls_codepage
+r_struct
+id|smb_nls_codepage
+(brace
+DECL|member|local_name
+r_char
+id|local_name
+(braket
+id|SMB_NLS_MAXNAMELEN
+)braket
+suffix:semicolon
+DECL|member|remote_name
+r_char
+id|remote_name
+(braket
+id|SMB_NLS_MAXNAMELEN
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|SMB_MAXNAMELEN
 mdefine_line|#define SMB_MAXNAMELEN 255
 DECL|macro|SMB_MAXPATHLEN

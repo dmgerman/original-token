@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/system.h&n; *&n; * Copyright (c) 1996-1999 Russell King and Dave Gilbert&n; */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|function|arch_idle
 r_static
 r_void

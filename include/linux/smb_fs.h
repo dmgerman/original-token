@@ -101,13 +101,6 @@ DECL|macro|SMB_F_CACHEVALID
 mdefine_line|#define SMB_F_CACHEVALID&t;0x01&t;/* directory cache valid */
 DECL|macro|SMB_F_LOCALWRITE
 mdefine_line|#define SMB_F_LOCALWRITE&t;0x02&t;/* file modified locally */
-multiline_comment|/*&n; * Bug fix flags&n; */
-DECL|macro|SMB_FIX_WIN95
-mdefine_line|#define SMB_FIX_WIN95&t;0x0001&t;/* Win 95 server */
-DECL|macro|SMB_FIX_OLDATTR
-mdefine_line|#define SMB_FIX_OLDATTR&t;0x0002&t;/* Use core getattr (Win 95 speedup) */
-DECL|macro|SMB_FIX_DIRATTR
-mdefine_line|#define SMB_FIX_DIRATTR&t;0x0004&t;/* Use find_first for getattr */
 multiline_comment|/* NT1 protocol capability bits */
 DECL|macro|SMB_CAP_RAW_MODE
 mdefine_line|#define SMB_CAP_RAW_MODE         0x0001
@@ -288,6 +281,21 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* linux/fs/smbfs/proc.c */
+r_int
+id|smb_setcodepage
+c_func
+(paren
+r_struct
+id|smb_sb_info
+op_star
+id|server
+comma
+r_struct
+id|smb_nls_codepage
+op_star
+id|cp
+)paren
+suffix:semicolon
 id|__u32
 id|smb_len
 c_func

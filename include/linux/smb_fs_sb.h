@@ -27,7 +27,7 @@ id|sock_file
 suffix:semicolon
 DECL|member|mnt
 r_struct
-id|smb_mount_data
+id|smb_mount_data_kernel
 op_star
 id|mnt
 suffix:semicolon
@@ -82,11 +82,57 @@ r_int
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/* We use our on data_ready callback, but need the original one */
+multiline_comment|/* We use our own data_ready callback, but need the original one */
 DECL|member|data_ready
 r_void
 op_star
 id|data_ready
+suffix:semicolon
+multiline_comment|/* nls pointers for codepage conversions */
+DECL|member|remote_nls
+r_struct
+id|nls_table
+op_star
+id|remote_nls
+suffix:semicolon
+DECL|member|local_nls
+r_struct
+id|nls_table
+op_star
+id|local_nls
+suffix:semicolon
+multiline_comment|/* utf8 can make strings longer so we can&squot;t do in-place conversion.&n;&t;   This is a buffer for temporary stuff. We only need one so no need&n;&t;   to put it on the stack. This points to temp_buf space. */
+DECL|member|name_buf
+r_char
+op_star
+id|name_buf
+suffix:semicolon
+DECL|member|convert
+r_int
+(paren
+op_star
+id|convert
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+comma
+r_const
+r_char
+op_star
+comma
+r_int
+comma
+r_struct
+id|nls_table
+op_star
+comma
+r_struct
+id|nls_table
+op_star
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.68 2000/08/12 20:49:49 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.70 2000/08/14 05:39:07 jj Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -304,8 +304,8 @@ DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll               153 /* Common                                      */
 DECL|macro|__NR_getdents64
 mdefine_line|#define __NR_getdents64&t;&t;154 /* Linux specific&t;&t;&t;&t;   */
-DECL|macro|__NR_fstat64
-mdefine_line|#define __NR_fstat64&t;&t;155 /* Linux sparc32 Specific                      */
+DECL|macro|__NR_fcntl64
+mdefine_line|#define __NR_fcntl64&t;&t;155 /* Linux sparc32 Specific                      */
 multiline_comment|/* #define __NR_getdirentries   156    SunOS Specific                              */
 DECL|macro|__NR_statfs
 mdefine_line|#define __NR_statfs             157 /* Common                                      */

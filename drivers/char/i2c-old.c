@@ -94,24 +94,6 @@ id|driver_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_VIDEO_BT848
-r_extern
-r_int
-id|i2c_tuner_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|msp3400c_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_BUZ
 r_extern
 r_int
@@ -171,18 +153,6 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* anything to do here ? */
-macro_line|#ifdef CONFIG_VIDEO_BT848
-id|i2c_tuner_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|msp3400c_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#ifdef CONFIG_VIDEO_BUZ
 id|saa7111_init
 c_func

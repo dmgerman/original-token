@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.220 2000/08/09 00:00:15 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.221 2000/08/14 00:46:13 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -400,12 +400,13 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-DECL|function|srmmu_pte_pagenr
+DECL|function|srmmu_pte_page
 r_static
 r_inline
-r_int
-r_int
-id|srmmu_pte_pagenr
+r_struct
+id|page
+op_star
+id|srmmu_pte_page
 c_func
 (paren
 id|pte_t
@@ -413,6 +414,14 @@ id|pte
 )paren
 (brace
 r_return
+(paren
+id|mem_map
+op_plus
+(paren
+r_int
+r_int
+)paren
+(paren
 id|srmmu_device_memory
 c_func
 (paren
@@ -443,6 +452,8 @@ l_int|4
 )paren
 op_rshift
 id|PAGE_SHIFT
+)paren
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -10966,9 +10977,9 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|sparc_pte_pagenr
+id|pte_page
 comma
-id|srmmu_pte_pagenr
+id|srmmu_pte_page
 comma
 id|BTFIXUPCALL_NORM
 )paren

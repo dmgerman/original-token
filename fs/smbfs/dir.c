@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
+macro_line|#include &lt;linux/smb_mount.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &quot;smb_debug.h&quot;
 DECL|macro|SMBFS_MAX_AGE
@@ -532,7 +533,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Note: in order to allow the smbclient process to open the&n; * mount point, we don&squot;t revalidate if conn_pid is NULL.&n; */
+multiline_comment|/*&n; * Note: in order to allow the smbmount process to open the&n; * mount point, we don&squot;t revalidate if conn_pid is NULL.&n; */
 r_static
 r_int
 DECL|function|smb_dir_open
@@ -718,6 +719,23 @@ comma
 id|d_compare
 suffix:colon
 id|smb_compare_dentry
+comma
+id|d_delete
+suffix:colon
+id|smb_delete_dentry
+comma
+)brace
+suffix:semicolon
+DECL|variable|smbfs_dentry_operations_case
+r_static
+r_struct
+id|dentry_operations
+id|smbfs_dentry_operations_case
+op_assign
+(brace
+id|d_revalidate
+suffix:colon
+id|smb_lookup_validate
 comma
 id|d_delete
 suffix:colon
@@ -1149,6 +1167,11 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
+r_struct
+id|smb_sb_info
+op_star
+id|server
+suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -1255,6 +1278,27 @@ id|inode
 (brace
 id|add_entry
 suffix:colon
+id|server
+op_assign
+id|server_from_dentry
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|server-&gt;mnt-&gt;flags
+op_amp
+id|SMB_MOUNT_CASE
+)paren
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|smbfs_dentry_operations_case
+suffix:semicolon
+r_else
 id|dentry-&gt;d_op
 op_assign
 op_amp

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.197 2000/08/09 00:00:15 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.198 2000/08/14 00:46:13 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -10212,11 +10212,12 @@ id|pgprot
 )paren
 suffix:semicolon
 )brace
-DECL|function|sun4c_pte_pagenr
+DECL|function|sun4c_pte_page
 r_static
-r_int
-r_int
-id|sun4c_pte_pagenr
+r_struct
+id|page
+op_star
+id|sun4c_pte_page
 c_func
 (paren
 id|pte_t
@@ -10225,6 +10226,13 @@ id|pte
 (brace
 r_return
 (paren
+id|mem_map
+op_plus
+(paren
+r_int
+r_int
+)paren
+(paren
 id|pte_val
 c_func
 (paren
@@ -10232,6 +10240,7 @@ id|pte
 )paren
 op_amp
 id|SUN4C_PFN_MASK
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -12830,9 +12839,9 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|sparc_pte_pagenr
+id|pte_page
 comma
-id|sun4c_pte_pagenr
+id|sun4c_pte_page
 comma
 id|BTFIXUPCALL_NORM
 )paren

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * include/asm-arm/arch-arc/irq.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Changelog:&n; *   24-09-1996&t;RMK&t;Created&n; *   10-10-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *   22-10-1996&t;RMK&t;Changed interrupt numbers &amp; uses new inb/outb macros&n; *   11-01-1998&t;RMK&t;Added mask_and_ack_irq&n; *   22-08-1998&t;RMK&t;Restructured IRQ routines&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ioc.h&gt;
 macro_line|#ifdef CONFIG_ARCH_ARC
 DECL|macro|a_clf
