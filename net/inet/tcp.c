@@ -418,6 +418,10 @@ l_int|0xff
 )braket
 dot
 id|fatal
+op_logical_or
+id|sk-&gt;state
+op_eq
+id|TCP_SYN_SENT
 )paren
 (brace
 r_if

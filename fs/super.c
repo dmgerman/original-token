@@ -3071,7 +3071,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to gram floppy IRQ/DMA for mounting root floppy&bslash;n&quot;
+l_string|&quot;Unable to grab floppy IRQ/DMA for mounting root floppy&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

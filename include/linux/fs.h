@@ -160,6 +160,8 @@ DECL|macro|BLKFLSBUF
 mdefine_line|#define BLKFLSBUF 4705 /* flush buffer cache */
 DECL|macro|BLKRASET
 mdefine_line|#define BLKRASET 4706 /* Set read ahead for block device */
+DECL|macro|BLKRAGET
+mdefine_line|#define BLKRAGET 4707 /* get current read ahead setting */
 multiline_comment|/* These are a few other constants  only used by scsi  devices */
 DECL|macro|SCSI_IOCTL_GET_IDLUN
 mdefine_line|#define SCSI_IOCTL_GET_IDLUN 0x5382

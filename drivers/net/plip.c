@@ -3357,6 +3357,12 @@ multiline_comment|/* time out */
 r_return
 l_int|1
 suffix:semicolon
+id|udelay
+c_func
+(paren
+id|PLIP_DELAY_UNIT
+)paren
+suffix:semicolon
 )brace
 id|outb
 c_func
@@ -3444,6 +3450,12 @@ l_int|0
 multiline_comment|/* time out */
 r_return
 l_int|1
+suffix:semicolon
+id|udelay
+c_func
+(paren
+id|PLIP_DELAY_UNIT
+)paren
 suffix:semicolon
 )brace
 r_return

@@ -1910,6 +1910,10 @@ id|n-&gt;users
 op_assign
 l_int|0
 suffix:semicolon
+id|n-&gt;pkt_type
+op_assign
+id|skb-&gt;pkt_type
+suffix:semicolon
 r_return
 id|n
 suffix:semicolon

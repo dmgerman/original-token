@@ -125,5 +125,250 @@ DECL|macro|HDIO_SETMULTCOUNT
 mdefine_line|#define HDIO_SETMULTCOUNT&t;0x305
 DECL|macro|HDIO_SETFEATURE
 mdefine_line|#define HDIO_SETFEATURE  &t;0x306
+DECL|macro|HDIO_GETIDENTITY
+mdefine_line|#define HDIO_GETIDENTITY &t;0x307
 macro_line|#endif
+multiline_comment|/* structure returned by HDIO_GETIDENTITY, as per ASC X3T9.2 rev 4a */
+DECL|struct|hd_driveid
+r_struct
+id|hd_driveid
+(brace
+DECL|member|config
+r_int
+r_int
+id|config
+suffix:semicolon
+multiline_comment|/* lots of obsolete bit flags */
+DECL|member|cyls
+r_int
+r_int
+id|cyls
+suffix:semicolon
+multiline_comment|/* &quot;physical&quot; cyls */
+DECL|member|reserved0
+r_int
+r_int
+id|reserved0
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|heads
+r_int
+r_int
+id|heads
+suffix:semicolon
+multiline_comment|/* &quot;physical&quot; heads */
+DECL|member|track_bytes
+r_int
+r_int
+id|track_bytes
+suffix:semicolon
+multiline_comment|/* unformatted bytes per track */
+DECL|member|sector_bytes
+r_int
+r_int
+id|sector_bytes
+suffix:semicolon
+multiline_comment|/* unformatted bytes per sector */
+DECL|member|sectors
+r_int
+r_int
+id|sectors
+suffix:semicolon
+multiline_comment|/* &quot;physical&quot; sectors per track */
+DECL|member|vendor0
+r_int
+r_int
+id|vendor0
+suffix:semicolon
+multiline_comment|/* vendor unique */
+DECL|member|vendor1
+r_int
+r_int
+id|vendor1
+suffix:semicolon
+multiline_comment|/* vendor unique */
+DECL|member|vendor2
+r_int
+r_int
+id|vendor2
+suffix:semicolon
+multiline_comment|/* vendor unique */
+DECL|member|serial_no
+r_int
+r_char
+id|serial_no
+(braket
+l_int|20
+)braket
+suffix:semicolon
+multiline_comment|/* big_endian; 0 = not_specified */
+DECL|member|buf_type
+r_int
+r_int
+id|buf_type
+suffix:semicolon
+DECL|member|buf_size
+r_int
+r_int
+id|buf_size
+suffix:semicolon
+multiline_comment|/* 512 byte increments; 0 = not_specified */
+DECL|member|ecc_bytes
+r_int
+r_int
+id|ecc_bytes
+suffix:semicolon
+multiline_comment|/* for r/w long cmds; 0 = not_specified */
+DECL|member|fw_rev
+r_int
+r_char
+id|fw_rev
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* big_endian; 0 = not_specified */
+DECL|member|model
+r_int
+r_char
+id|model
+(braket
+l_int|40
+)braket
+suffix:semicolon
+multiline_comment|/* big_endian; 0 = not_specified */
+DECL|member|max_multsect
+r_int
+r_char
+id|max_multsect
+suffix:semicolon
+multiline_comment|/* 0=not_implemented */
+DECL|member|vendor3
+r_int
+r_char
+id|vendor3
+suffix:semicolon
+multiline_comment|/* vendor unique */
+DECL|member|dword_io
+r_int
+r_int
+id|dword_io
+suffix:semicolon
+multiline_comment|/* 0=not_implemented; 1=implemented */
+DECL|member|vendor4
+r_int
+r_char
+id|vendor4
+suffix:semicolon
+multiline_comment|/* vendor unique */
+DECL|member|capability
+r_int
+r_char
+id|capability
+suffix:semicolon
+multiline_comment|/* bit0:DMA, bit1:LBA */
+DECL|member|reserved1
+r_int
+r_int
+id|reserved1
+suffix:semicolon
+multiline_comment|/* reserved */
+DECL|member|vendor5
+r_int
+r_char
+id|vendor5
+suffix:semicolon
+multiline_comment|/* vendor unique */
+DECL|member|tPIO
+r_int
+r_char
+id|tPIO
+suffix:semicolon
+multiline_comment|/* 0=slow, 1=medium, 2=fast */
+DECL|member|vendor6
+r_int
+r_char
+id|vendor6
+suffix:semicolon
+multiline_comment|/* vendor unique */
+DECL|member|tDMA
+r_int
+r_char
+id|tDMA
+suffix:semicolon
+multiline_comment|/* 0=slow, 1=medium, 2=fast */
+DECL|member|cur_valid
+r_int
+r_int
+id|cur_valid
+suffix:semicolon
+multiline_comment|/* when (bit0==1) use logical geom */
+DECL|member|cur_cyls
+r_int
+r_int
+id|cur_cyls
+suffix:semicolon
+multiline_comment|/* logical cylinders */
+DECL|member|cur_heads
+r_int
+r_int
+id|cur_heads
+suffix:semicolon
+multiline_comment|/* logical heads */
+DECL|member|cur_sectors
+r_int
+r_int
+id|cur_sectors
+suffix:semicolon
+multiline_comment|/* logical sectors per track */
+DECL|member|cur_capacity0
+r_int
+r_int
+id|cur_capacity0
+suffix:semicolon
+multiline_comment|/* logical total sectors on drive */
+DECL|member|cur_capacity1
+r_int
+r_int
+id|cur_capacity1
+suffix:semicolon
+multiline_comment|/*  (2 words, misaligned int)     */
+DECL|member|multsect
+r_int
+r_char
+id|multsect
+suffix:semicolon
+multiline_comment|/* current multiple sector count */
+DECL|member|multsect_valid
+r_int
+r_char
+id|multsect_valid
+suffix:semicolon
+multiline_comment|/* when (bit0==1) multsect is ok */
+DECL|member|lba_capacity
+r_int
+r_int
+id|lba_capacity
+suffix:semicolon
+multiline_comment|/* total number of sectors */
+DECL|member|dma_1word
+r_int
+r_int
+id|dma_1word
+suffix:semicolon
+multiline_comment|/* single-word dma info */
+DECL|member|dma_mword
+r_int
+r_int
+id|dma_mword
+suffix:semicolon
+multiline_comment|/* multiple-word dma info */
+multiline_comment|/* unsigned short reserved2[64];*/
+multiline_comment|/* reserved */
+multiline_comment|/* unsigned short vendor7  [32];*/
+multiline_comment|/* vendor unique */
+multiline_comment|/* unsigned short reserved3[96];*/
+multiline_comment|/* reserved */
+)brace
+suffix:semicolon
 eof
