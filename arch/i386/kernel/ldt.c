@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/ldt.c&n; *&n; * Copyright (C) 1992 Krishna Balasubramanian and Linus Torvalds&n; * Copyright (C) 1998 Ingo Molnar&n; */
+multiline_comment|/*&n; * linux/kernel/ldt.c&n; *&n; * Copyright (C) 1992 Krishna Balasubramanian and Linus Torvalds&n; * Copyright (C) 1999 Ingo Molnar &lt;mingo@redhat.com&gt;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

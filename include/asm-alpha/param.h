@@ -1,9 +1,15 @@
 macro_line|#ifndef _ASM_ALPHA_PARAM_H
 DECL|macro|_ASM_ALPHA_PARAM_H
 mdefine_line|#define _ASM_ALPHA_PARAM_H
+multiline_comment|/* ??? Gross.  I don&squot;t want to parameterize this, and supposedly the&n;   hardware ignores reprogramming.  We also need userland buy-in to the &n;   change in HZ, since this is visible in the wait4 resources etc.  */
 macro_line|#ifndef HZ
+macro_line|# ifndef CONFIG_ALPHA_RAWHIDE
 DECL|macro|HZ
-macro_line|# define HZ&t;1024
+macro_line|#  define HZ&t;1024
+macro_line|# else
+DECL|macro|HZ
+macro_line|#  define HZ&t;1200
+macro_line|# endif
 macro_line|#endif
 DECL|macro|EXEC_PAGESIZE
 mdefine_line|#define EXEC_PAGESIZE&t;8192

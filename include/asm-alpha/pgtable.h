@@ -71,10 +71,6 @@ op_star
 id|mm
 )paren
 (brace
-id|mm-&gt;context
-op_assign
-l_int|0
-suffix:semicolon
 id|get_new_mmu_context
 c_func
 (paren

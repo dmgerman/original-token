@@ -131,6 +131,13 @@ id|error
 suffix:semicolon
 id|out_putf
 suffix:colon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|files-&gt;file_lock
+)paren
+suffix:semicolon
 id|fput
 c_func
 (paren

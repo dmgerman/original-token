@@ -3938,6 +3938,10 @@ op_plus
 id|hwrpb-&gt;processor_offset
 )paren
 suffix:semicolon
+id|w
+op_assign
+id|cpu-&gt;type
+suffix:semicolon
 r_if
 c_cond
 (paren

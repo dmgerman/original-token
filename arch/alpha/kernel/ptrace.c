@@ -1268,10 +1268,6 @@ op_star
 id|child
 suffix:semicolon
 r_int
-r_int
-id|tmp
-suffix:semicolon
-r_int
 id|ret
 suffix:semicolon
 id|lock_kernel

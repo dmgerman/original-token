@@ -1573,6 +1573,8 @@ l_string|&quot;b&quot;
 id|flags
 op_or
 id|CLONE_VM
+op_or
+id|CLONE_TLB
 )paren
 suffix:colon
 l_string|&quot;memory&quot;

@@ -4,14 +4,17 @@ mdefine_line|#define _ALPHA_SOFTIRQ_H
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#ifndef __SMP__
 r_extern
 r_int
-r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
+id|__local_bh_count
 suffix:semicolon
+DECL|macro|local_bh_count
+mdefine_line|#define local_bh_count(cpu)&t;((void)(cpu), __local_bh_count)
+macro_line|#else
+DECL|macro|local_bh_count
+mdefine_line|#define local_bh_count(cpu)&t;(cpu_data[cpu].bh_count)
+macro_line|#endif
 DECL|function|cpu_bh_disable
 r_extern
 r_inline
@@ -24,9 +27,10 @@ id|cpu
 )paren
 (brace
 id|local_bh_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_increment
 suffix:semicolon
 id|mb
@@ -52,9 +56,10 @@ c_func
 )paren
 suffix:semicolon
 id|local_bh_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_decrement
 suffix:semicolon
 )brace
@@ -71,18 +76,20 @@ id|cpu
 (brace
 r_return
 id|local_bh_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 ques
 c_cond
 l_int|0
 suffix:colon
 (paren
 id|local_bh_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_assign
 l_int|1
 )paren
@@ -100,9 +107,10 @@ id|cpu
 )paren
 (brace
 id|local_bh_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_assign
 l_int|0
 suffix:semicolon

@@ -87,12 +87,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* The full version of the ASN including serial number.&n;&n;&t;   Two threads running on two different processors must of necessity&n;&t;   have different serial numbers.  Having this duplicated from&n;&t;   mm-&gt;context allows them to be slightly out of sync preventing &n;&t;   the asn from incrementing each and every time the two threads&n;&t;   are scheduled.  */
-DECL|member|mm_context
-r_int
-r_int
-id|mm_context
-suffix:semicolon
 multiline_comment|/* Perform syscall argument validation (get/set_fs). */
 DECL|member|fs
 id|mm_segment_t
@@ -124,7 +118,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, PAGE_OFFSET,  PAGE_OFFSET+0x10000000, &bslash;&n;&t;NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, &bslash;&n;&t;KERNEL_DS &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;KERNEL_DS &bslash;&n;}
 macro_line|#include &lt;asm/ptrace.h&gt;
 multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; *&n; * Under heavy swap load I&squot;ve seen this lose in an ugly way.  So do&n; * some extra sanity checking on the ranges we expect these pointers&n; * to be in so that we can fail gracefully.  This is just for ps after&n; * all.  -- r~&n; */
 DECL|function|thread_saved_pc

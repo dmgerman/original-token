@@ -29,6 +29,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/cache.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;

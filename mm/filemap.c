@@ -1737,9 +1737,6 @@ id|PG_referenced
 suffix:semicolon
 id|page-&gt;owner
 op_assign
-(paren
-r_int
-)paren
 id|current
 suffix:semicolon
 multiline_comment|/* REMOVEME */
@@ -6989,9 +6986,6 @@ c_cond
 (paren
 id|page-&gt;owner
 op_ne
-(paren
-r_int
-)paren
 id|current
 )paren
 (brace

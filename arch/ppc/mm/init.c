@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.170 1999/06/29 12:33:51 davem Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.171 1999/07/08 23:20:14 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -29,6 +29,7 @@ macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/mbx.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/bootx.h&gt;
+macro_line|#include &lt;asm/machdep.h&gt;
 multiline_comment|/* APUS includes */
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -4362,7 +4363,6 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*memset(p, 0, PAGE_SIZE);*/
 id|__clear_user
 c_func
 (paren
@@ -4623,6 +4623,21 @@ id|first_cpu_booted
 r_return
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;MMU:enter&quot;
+comma
+l_int|0x111
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
 r_if
 c_cond
@@ -4662,6 +4677,21 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;MMU:hash init&quot;
+comma
+l_int|0x300
+)paren
+suffix:semicolon
 id|hash_init
 c_func
 (paren
@@ -4685,6 +4715,21 @@ id|ioremap_base
 op_assign
 l_int|0xf8000000
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;MMU:mapin&quot;
+comma
+l_int|0x301
+)paren
+suffix:semicolon
 multiline_comment|/* Map in all of RAM starting at KERNELBASE */
 id|mapin_ram
 c_func
@@ -4692,6 +4737,21 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Setup the bat mappings we&squot;re going to load that cover&n;&t; * the io areas.  RAM was mapped by mapin_ram().&n;&t; * -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;MMU:setbat&quot;
+comma
+l_int|0x302
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -4948,6 +5008,21 @@ l_int|0x4000
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;MMU:exit&quot;
+comma
+l_int|0x211
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find some memory for setup_arch to return.&n; * We use the largest chunk of available memory as the area&n; * that setup_arch returns, making sure that there are at&n; * least 32 pages unused before this for MMU_get_page to use.&n; */
 DECL|function|__initfunc
@@ -5985,7 +6060,7 @@ id|i
 suffix:semicolon
 multiline_comment|/* max amount of RAM we allow -- Cort */
 DECL|macro|RAM_LIMIT
-mdefine_line|#define RAM_LIMIT (768&lt;&lt;20)
+mdefine_line|#define RAM_LIMIT (256&lt;&lt;20)
 id|memory_node
 op_assign
 id|find_devices
@@ -6759,6 +6834,21 @@ id|hash_page
 (braket
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;hash:enter&quot;
+comma
+l_int|0x105
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Allow 64k of hash table for every 16MB of memory,&n;&t; * up to a maximum of 2MB.&n;&t; */
 id|ramsize
 op_assign
@@ -6896,6 +6986,21 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#endif /* NO_RELOAD_HTAB */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;hash:find piece&quot;
+comma
+l_int|0x322
+)paren
+suffix:semicolon
 multiline_comment|/* Find some memory for the hash table. */
 r_if
 c_cond
@@ -6945,15 +7050,6 @@ mdefine_line|#define b(x) ((unsigned int*)(((unsigned long)(x)) - KERNELBASE + 0
 macro_line|#else
 mdefine_line|#define b(x) (x)
 macro_line|#endif
-multiline_comment|/*memset(Hash, 0, Hash_size);*/
-id|__clear_user
-c_func
-(paren
-id|Hash
-comma
-id|Hash_size
-)paren
-suffix:semicolon
 id|Hash_end
 op_assign
 (paren
@@ -6968,6 +7064,29 @@ r_int
 id|Hash
 op_plus
 id|Hash_size
+)paren
+suffix:semicolon
+id|__clear_user
+c_func
+(paren
+id|Hash
+comma
+id|Hash_size
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;hash:patch&quot;
+comma
+l_int|0x345
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Patch up the instructions in head.S:hash_page&n;&t;&t; */
@@ -7236,6 +7355,21 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;hash:done&quot;
+comma
+l_int|0x205
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* ndef CONFIG_8xx */
 eof

@@ -181,7 +181,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
-r_void
+r_int
 DECL|function|cpu_idle
 id|cpu_idle
 c_func
@@ -1094,12 +1094,6 @@ multiline_comment|/* set FEN, clear everything else */
 id|p-&gt;tss.flags
 op_assign
 id|current-&gt;tss.flags
-suffix:semicolon
-id|p-&gt;tss.mm_context
-op_assign
-id|p-&gt;tss.asn
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0

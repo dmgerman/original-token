@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;pcnet32.c:v1.21 31.3.99 tsbogend@alpha.franken.de&bslash;n&quot;
+l_string|&quot;pcnet32.c:v1.23 6.7.1999 tsbogend@alpha.franken.de&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -200,7 +200,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * &t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
-multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; * v1.10:  workaround for stopped transmitter&n; *         added port selection for modules&n; *         detect special T1/E1 WAN card and setup port selection&n; * v1.11:  fixed wrong checking of Tx errors&n; * v1.20:  added check of return value kmalloc (cpeterso@cs.washington.edu)&n; *         added save original kmalloc addr for freeing (mcr@solidum.com)&n; *         added support for PCnetHome chip (joe@MIT.EDU)&n; *         rewritten PCI card detection&n; *         added dwio mode to get driver working on some PPC machines&n; * v1.21:  added mii selection and mii ioctl&n; */
+multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; * v1.10:  workaround for stopped transmitter&n; *         added port selection for modules&n; *         detect special T1/E1 WAN card and setup port selection&n; * v1.11:  fixed wrong checking of Tx errors&n; * v1.20:  added check of return value kmalloc (cpeterso@cs.washington.edu)&n; *         added save original kmalloc addr for freeing (mcr@solidum.com)&n; *         added support for PCnetHome chip (joe@MIT.EDU)&n; *         rewritten PCI card detection&n; *         added dwio mode to get driver working on some PPC machines&n; * v1.21:  added mii selection and mii ioctl&n; * v1.22:  changed pci scanning code to make PPC people happy&n; *         fixed switching to 32bit mode in pcnet32_open() (thanks&n; *         to Michael Richard &lt;mcr@solidum.com&gt; for noticing this one)&n; *&t;   added sub vendor/device id matching (thanks again to &n; *&t;   Michael Richard &lt;mcr@solidum.com&gt;)&n; *         added chip id for 79c973/975 (thanks to Zach Brown &lt;zab@zabbo.net&gt;)&n; * v1.23   fixed small bug, when manual selecting MII speed/duplex&n; */
 multiline_comment|/*&n; * Set the number of Tx and Rx buffers, using Log_2(# buffers).&n; * Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n; * That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4).&n; */
 macro_line|#ifndef PCNET32_LOG_TX_BUFFERS
 DECL|macro|PCNET32_LOG_TX_BUFFERS
@@ -241,6 +241,17 @@ DECL|macro|PCNET32_DWIO_BDP
 mdefine_line|#define PCNET32_DWIO_BDP&t;0x1C
 DECL|macro|PCNET32_TOTAL_SIZE
 mdefine_line|#define PCNET32_TOTAL_SIZE 0x20
+multiline_comment|/* some PCI ids */
+macro_line|#ifndef PCI_DEVICE_ID_AMD_LANCE
+DECL|macro|PCI_VENDOR_ID_AMD
+mdefine_line|#define PCI_VENDOR_ID_AMD&t;      0x1022
+DECL|macro|PCI_DEVICE_ID_AMD_LANCE
+mdefine_line|#define PCI_DEVICE_ID_AMD_LANCE&t;      0x2000
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_AMD_PCNETHOME
+DECL|macro|PCI_DEVICE_ID_AMD_PCNETHOME
+mdefine_line|#define PCI_DEVICE_ID_AMD_PCNETHOME   0x2001
+macro_line|#endif
 DECL|macro|CRC_POLYNOMIAL_LE
 mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL  /* Ethernet CRC, little endian */
 multiline_comment|/* The PCNET32 Rx and Tx ring descriptors. */
@@ -754,14 +765,17 @@ id|name
 suffix:semicolon
 DECL|member|vendor_id
 DECL|member|device_id
-DECL|member|device_id_mask
+DECL|member|svid
+DECL|member|sdid
 DECL|member|flags
 id|u16
 id|vendor_id
 comma
 id|device_id
 comma
-id|device_id_mask
+id|svid
+comma
+id|sdid
 comma
 id|flags
 suffix:semicolon
@@ -805,11 +819,33 @@ op_assign
 (brace
 l_string|&quot;AMD PCnetPCI series&quot;
 comma
-l_int|0x1022
+id|PCI_VENDOR_ID_AMD
 comma
-l_int|0x2000
+id|PCI_DEVICE_ID_AMD_LANCE
 comma
-l_int|0xfffe
+l_int|0
+comma
+l_int|0
+comma
+id|PCI_USES_IO
+op_or
+id|PCI_USES_MASTER
+comma
+id|PCNET32_TOTAL_SIZE
+comma
+id|pcnet32_probe1
+)brace
+comma
+(brace
+l_string|&quot;AMD PCnetHome series&quot;
+comma
+id|PCI_VENDOR_ID_AMD
+comma
+id|PCI_DEVICE_ID_AMD_PCNETHOME
+comma
+l_int|0
+comma
+l_int|0
 comma
 id|PCI_USES_IO
 op_or
@@ -1443,15 +1479,8 @@ r_struct
 id|pci_dev
 op_star
 id|pdev
-suffix:semicolon
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-r_int
-id|pci_index
+op_assign
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func
@@ -1459,77 +1488,54 @@ c_func
 l_string|&quot;pcnet32.c: PCI bios is present, checking for devices...&bslash;n&quot;
 )paren
 suffix:semicolon
-r_for
+r_while
 c_loop
 (paren
-id|pci_index
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_index
-OL
-l_int|0xff
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-id|u16
-id|vendor
-comma
-id|device
-comma
-id|pci_command
-suffix:semicolon
-r_int
-id|chip_idx
-suffix:semicolon
-r_if
-c_cond
 (paren
-id|pcibios_find_class
+id|pdev
+op_assign
+id|pci_find_class
 (paren
 id|PCI_CLASS_NETWORK_ETHERNET
 op_lshift
 l_int|8
 comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
+id|pdev
 )paren
-op_ne
-id|PCIBIOS_SUCCESSFUL
 )paren
-r_break
+)paren
+(brace
+id|u16
+id|pci_command
 suffix:semicolon
-id|pcibios_read_config_word
+r_int
+id|chip_idx
+suffix:semicolon
+id|u16
+id|sdid
+comma
+id|svid
+suffix:semicolon
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
+id|pdev
 comma
-id|pci_device_fn
-comma
-id|PCI_VENDOR_ID
+id|PCI_SUBSYSTEM_VENDOR_ID
 comma
 op_amp
-id|vendor
+id|sdid
 )paren
 suffix:semicolon
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
+id|pdev
 comma
-id|pci_device_fn
-comma
-id|PCI_DEVICE_ID
+id|PCI_SUBSYSTEM_ID
 comma
 op_amp
-id|device
+id|svid
 )paren
 suffix:semicolon
 r_for
@@ -1552,7 +1558,8 @@ op_increment
 r_if
 c_cond
 (paren
-id|vendor
+(paren
+id|pdev-&gt;vendor
 op_eq
 id|pcnet32_tbl
 (braket
@@ -1560,17 +1567,10 @@ id|chip_idx
 )braket
 dot
 id|vendor_id
+)paren
 op_logical_and
 (paren
-id|device
-op_amp
-id|pcnet32_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|device_id_mask
-)paren
+id|pdev-&gt;device
 op_eq
 id|pcnet32_tbl
 (braket
@@ -1578,6 +1578,51 @@ id|chip_idx
 )braket
 dot
 id|device_id
+)paren
+op_logical_and
+(paren
+id|pcnet32_tbl
+(braket
+id|chip_idx
+)braket
+dot
+id|svid
+op_eq
+l_int|0
+op_logical_or
+(paren
+id|svid
+op_eq
+id|pcnet32_tbl
+(braket
+id|chip_idx
+)braket
+dot
+id|svid
+)paren
+)paren
+op_logical_and
+(paren
+id|pcnet32_tbl
+(braket
+id|chip_idx
+)braket
+dot
+id|sdid
+op_eq
+l_int|0
+op_logical_or
+(paren
+id|sdid
+op_eq
+id|pcnet32_tbl
+(braket
+id|chip_idx
+)braket
+dot
+id|sdid
+)paren
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -1594,16 +1639,6 @@ op_eq
 l_int|0
 )paren
 r_continue
-suffix:semicolon
-id|pdev
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-)paren
 suffix:semicolon
 id|ioaddr
 op_assign
@@ -2126,6 +2161,23 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+l_int|0x2625
+suffix:colon
+id|chipname
+op_assign
+l_string|&quot;PCnet/FAST III 79C973&quot;
+suffix:semicolon
+id|fdx
+op_assign
+l_int|1
+suffix:semicolon
+id|mii
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|0x2626
 suffix:colon
 id|chipname
@@ -2196,6 +2248,21 @@ id|media
 )paren
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+l_int|0x2627
+suffix:colon
+id|chipname
+op_assign
+l_string|&quot;PCnet/FAST III 79C975&quot;
+suffix:semicolon
+id|fdx
+op_assign
+l_int|1
+suffix:semicolon
+id|mii
+op_assign
+l_int|1
 suffix:semicolon
 r_default
 suffix:colon
@@ -2817,7 +2884,7 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* switch pcnet32 to 32bit mode */
-id|lp-&gt;a.write_csr
+id|lp-&gt;a.write_bcr
 (paren
 id|ioaddr
 comma
@@ -3003,6 +3070,7 @@ c_cond
 (paren
 id|lp-&gt;mii
 op_amp
+op_logical_neg
 (paren
 id|lp-&gt;options
 op_amp
@@ -4196,6 +4264,8 @@ id|ioaddr
 suffix:semicolon
 id|u16
 id|csr0
+comma
+id|rap
 suffix:semicolon
 r_int
 id|boguscnt
@@ -4252,6 +4322,16 @@ suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 l_int|1
+suffix:semicolon
+id|rap
+op_assign
+id|lp-&gt;a
+dot
+id|read_rap
+c_func
+(paren
+id|ioaddr
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -4688,6 +4768,16 @@ comma
 l_int|0
 comma
 l_int|0x7940
+)paren
+suffix:semicolon
+id|lp-&gt;a
+dot
+id|write_rap
+c_func
+(paren
+id|ioaddr
+comma
+id|rap
 )paren
 suffix:semicolon
 r_if

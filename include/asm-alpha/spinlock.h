@@ -67,15 +67,17 @@ DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0 }
 macro_line|#endif
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(lock)&t;&t;&t;((void) 0)
+mdefine_line|#define spin_lock_init(lock)&t;&t;&t;((void)(lock))
 DECL|macro|spin_lock
-mdefine_line|#define spin_lock(lock)&t;&t;&t;&t;((void) 0)
+mdefine_line|#define spin_lock(lock)&t;&t;&t;&t;((void)(lock))
 DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock)&t;&t;&t;(1)
+mdefine_line|#define spin_trylock(lock)&t;&t;&t;((void)(lock), 1)
 DECL|macro|spin_unlock_wait
-mdefine_line|#define spin_unlock_wait(lock)&t;&t;&t;((void) 0)
+mdefine_line|#define spin_unlock_wait(lock)&t;&t;&t;((void)(lock))
 DECL|macro|spin_unlock
-mdefine_line|#define spin_unlock(lock)&t;&t;&t;((void) 0)
+mdefine_line|#define spin_unlock(lock)&t;&t;&t;((void)(lock))
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(lock)&t;&t;&t;((void)(lock), 0)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; *&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
 macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|typedef|rwlock_t
@@ -103,13 +105,13 @@ DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 macro_line|#endif
 DECL|macro|read_lock
-mdefine_line|#define read_lock(lock)&t;&t;&t;&t;((void) 0)
+mdefine_line|#define read_lock(lock)&t;&t;&t;&t;((void)(lock))
 DECL|macro|read_unlock
-mdefine_line|#define read_unlock(lock)&t;&t;&t;((void) 0)
+mdefine_line|#define read_unlock(lock)&t;&t;&t;((void)(lock))
 DECL|macro|write_lock
-mdefine_line|#define write_lock(lock)&t;&t;&t;((void) 0)
+mdefine_line|#define write_lock(lock)&t;&t;&t;((void)(lock))
 DECL|macro|write_unlock
-mdefine_line|#define write_unlock(lock)&t;&t;&t;((void) 0)
+mdefine_line|#define write_unlock(lock)&t;&t;&t;((void)(lock))
 macro_line|#else /* __SMP__ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/current.h&gt;
@@ -170,8 +172,10 @@ mdefine_line|#define SPIN_LOCK_UNLOCKED&t;(spinlock_t) { 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;((x)-&gt;lock = 0)
 macro_line|#endif
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(x)&t;((x)-&gt;lock != 0)
 DECL|macro|spin_unlock_wait
-mdefine_line|#define spin_unlock_wait(x) &bslash;&n;&t;({ do { barrier(); } while(((volatile spinlock_t *)x)-&gt;lock); })
+mdefine_line|#define spin_unlock_wait(x)&t;({ do { barrier(); } while ((x)-&gt;lock); })
 DECL|member|a
 DECL|typedef|__dummy_lock_t
 r_typedef

@@ -43,8 +43,13 @@ mdefine_line|#define cpu_last_asn(cpuid)&t;last_asn
 macro_line|#endif /* __SMP__ */
 DECL|macro|WIDTH_HARDWARE_ASN
 mdefine_line|#define WIDTH_HARDWARE_ASN&t;8
+macro_line|#ifdef __SMP__
 DECL|macro|WIDTH_THIS_PROCESSOR
 mdefine_line|#define WIDTH_THIS_PROCESSOR&t;5
+macro_line|#else
+DECL|macro|WIDTH_THIS_PROCESSOR
+mdefine_line|#define WIDTH_THIS_PROCESSOR&t;0
+macro_line|#endif
 DECL|macro|ASN_FIRST_VERSION
 mdefine_line|#define ASN_FIRST_VERSION (1UL &lt;&lt; (WIDTH_THIS_PROCESSOR + WIDTH_HARDWARE_ASN))
 DECL|macro|HARDWARE_ASN_MASK
@@ -116,12 +121,11 @@ r_if
 c_cond
 (paren
 (paren
-id|next
-op_xor
 id|asn
-)paren
 op_amp
-op_complement
+id|HARDWARE_ASN_MASK
+)paren
+op_ge
 id|MAX_ASN
 )paren
 (brace
@@ -153,11 +157,6 @@ c_func
 op_assign
 id|next
 suffix:semicolon
-id|mm-&gt;context
-op_assign
-id|next
-suffix:semicolon
-multiline_comment|/* full version + asn */
 r_return
 id|next
 suffix:semicolon
@@ -175,6 +174,7 @@ id|p
 )paren
 (brace
 multiline_comment|/* As described, ASN&squot;s are broken.  But we can optimize for&n;&t;   switching between threads -- if the mm is unchanged from&n;&t;   current we needn&squot;t flush.  */
+multiline_comment|/* ??? May not be needed because EV4 PALcode recognizes that&n;&t;   ASN&squot;s are broken and does a tbiap itself on swpctx, under&n;&t;   the &quot;Must set ASN or flush&quot; rule.  At least this is true&n;&t;   for a 1992 SRM, reports Joseph Martin (jmartin@hlo.dec.com).&n;&t;   I&squot;m going to leave this here anyway, just to Be Sure.  -- r~  */
 r_if
 c_cond
 (paren
@@ -201,6 +201,8 @@ id|p
 )paren
 (brace
 multiline_comment|/* Check if our ASN is of an older version, or on a different CPU,&n;&t;   and thus invalid.  */
+multiline_comment|/* ??? If we have two threads on different cpus, we&squot;ll continually&n;&t;   fight over the context.  Find a way to record a per-mm, per-cpu&n;&t;   value for the asn.  */
+r_int
 r_int
 id|asn
 op_assign
@@ -221,6 +223,7 @@ op_assign
 id|p-&gt;mm
 suffix:semicolon
 r_int
+r_int
 id|mmc
 op_assign
 id|mm-&gt;context
@@ -229,19 +232,6 @@ r_if
 c_cond
 (paren
 (paren
-id|p-&gt;tss.mm_context
-op_xor
-id|asn
-)paren
-op_amp
-op_complement
-id|HARDWARE_ASN_MASK
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
 id|mmc
 op_xor
 id|asn
@@ -250,6 +240,7 @@ op_amp
 op_complement
 id|HARDWARE_ASN_MASK
 )paren
+(brace
 id|mmc
 op_assign
 id|__get_new_mmu_context
@@ -260,17 +251,18 @@ comma
 id|mm
 )paren
 suffix:semicolon
-id|p-&gt;tss.mm_context
+id|mm-&gt;context
 op_assign
 id|mmc
 suffix:semicolon
+)brace
+multiline_comment|/* Always update the PCB ASN.  Another thread may have allocated&n;&t;   a new mm-&gt;context (via flush_tlb_mm) without the ASN serial&n;&t;   number wrapping.  We have no way to detect when this is needed.  */
 id|p-&gt;tss.asn
 op_assign
 id|mmc
 op_amp
 id|HARDWARE_ASN_MASK
 suffix:semicolon
-)brace
 )brace
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|get_mmu_context

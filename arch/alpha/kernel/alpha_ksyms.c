@@ -122,20 +122,6 @@ c_func
 id|alpha_mv
 )paren
 suffix:semicolon
-DECL|variable|local_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_bh_count
-)paren
-suffix:semicolon
-DECL|variable|local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_irq_count
-)paren
-suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -862,6 +848,21 @@ id|read_lock
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#else /* __SMP__ */
+DECL|variable|__local_bh_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__local_bh_count
+)paren
+suffix:semicolon
+DECL|variable|__local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__local_irq_count
+)paren
+suffix:semicolon
 macro_line|#endif /* __SMP__ */
 multiline_comment|/*&n; * The following are special because they&squot;re not called&n; * explicitly (the C compiler or assembler generates them in&n; * response to division operations).  Fortunately, their&n; * interface isn&squot;t gonna change any time soon now, so it&squot;s OK&n; * to leave it out of version control.&n; */
 DECL|macro|memcpy

@@ -3,7 +3,6 @@ DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;linux/tasks.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/pal.h&gt;
 DECL|struct|cpuinfo_alpha
 r_struct
@@ -51,9 +50,25 @@ r_int
 r_int
 id|prof_counter
 suffix:semicolon
-DECL|variable|__cacheline_aligned
+DECL|member|irq_count
+DECL|member|bh_count
+r_int
+id|irq_count
+comma
+id|bh_count
+suffix:semicolon
 )brace
-id|__cacheline_aligned
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|64
+)paren
+)paren
+)paren
 suffix:semicolon
 r_extern
 r_struct

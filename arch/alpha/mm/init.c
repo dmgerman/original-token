@@ -770,9 +770,8 @@ r_int
 suffix:semicolon
 r_static
 r_inline
-r_struct
-id|thread_struct
-op_star
+r_int
+r_int
 DECL|function|load_PCB
 id|load_PCB
 c_func
@@ -838,9 +837,8 @@ id|memdesc_struct
 op_star
 id|memdesc
 suffix:semicolon
-r_struct
-id|thread_struct
-op_star
+r_int
+r_int
 id|original_pcb_ptr
 suffix:semicolon
 multiline_comment|/* initialize mem_map[] */
@@ -1062,10 +1060,6 @@ multiline_comment|/* Save off the contents of the original PCB so that we can&n;
 r_if
 c_cond
 (paren
-(paren
-r_int
-r_int
-)paren
 id|original_pcb_ptr
 OL
 id|PAGE_OFFSET
@@ -1074,17 +1068,12 @@ id|PAGE_OFFSET
 id|original_pcb_ptr
 op_assign
 (paren
-r_struct
-id|thread_struct
-op_star
+r_int
+r_int
 )paren
 id|phys_to_virt
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|original_pcb_ptr
 )paren
 suffix:semicolon
@@ -1092,6 +1081,11 @@ suffix:semicolon
 id|original_pcb
 op_assign
 op_star
+(paren
+r_struct
+id|thread_struct
+op_star
+)paren
 id|original_pcb_ptr
 suffix:semicolon
 r_return

@@ -213,7 +213,7 @@ multiline_comment|/* fp[31] is fpcr */
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) ((regs)-&gt;ps &amp; 8)
+mdefine_line|#define user_mode(regs) (((regs)-&gt;ps &amp; 8) != 0)
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;pc)
 r_extern

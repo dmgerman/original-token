@@ -740,8 +740,8 @@ op_amp
 id|FMODE_WRITE
 )paren
 )paren
-r_return
-l_int|0
+r_goto
+id|too_bad
 suffix:semicolon
 )brace
 id|file_list_unlock

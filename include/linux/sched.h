@@ -40,6 +40,8 @@ DECL|macro|CLONE_PTRACE
 mdefine_line|#define CLONE_PTRACE&t;0x00002000&t;/* set if we want to let tracing continue on the child too */
 DECL|macro|CLONE_VFORK
 mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mm_release */
+DECL|macro|CLONE_TLB
+mdefine_line|#define CLONE_TLB&t;0x00008000&t;/* system thread does lazy TLB flushing (kernel-internal only!) */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -893,6 +895,8 @@ DECL|macro|PF_MEMALLOC
 mdefine_line|#define PF_MEMALLOC&t;0x00000800&t;/* Allocating memory */
 DECL|macro|PF_VFORK
 mdefine_line|#define PF_VFORK&t;0x00001000&t;/* Wake up parent in mm_release */
+DECL|macro|PF_LAZY_TLB
+mdefine_line|#define PF_LAZY_TLB&t;0x00002000&t;/* thread does lazy TLB switching */
 DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* task used FPU this quantum (SMP) */
 DECL|macro|PF_DTRACE

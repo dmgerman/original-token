@@ -150,6 +150,24 @@ id|smp_boot_cpuid
 )paren
 r_return
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Not SMP, do kernel PC profiling here.  */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+id|alpha_do_profile
+c_func
+(paren
+id|regs-&gt;pc
+)paren
+suffix:semicolon
 macro_line|#endif
 id|write_lock
 c_func

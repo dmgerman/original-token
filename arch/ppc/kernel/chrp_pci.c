@@ -408,7 +408,7 @@ r_int
 r_int
 id|python_busnr
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 DECL|function|python_pcibios_read_config_byte
 r_int
@@ -1979,7 +1979,7 @@ l_int|12
 (brace
 id|pci_dram_offset
 op_assign
-l_int|0x80000000
+l_int|0x0
 suffix:semicolon
 id|isa_mem_base
 op_assign

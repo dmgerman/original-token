@@ -31,6 +31,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

@@ -402,7 +402,8 @@ op_star
 id|buffers
 suffix:semicolon
 DECL|member|owner
-r_int
+r_void
+op_star
 id|owner
 suffix:semicolon
 multiline_comment|/* temporary debugging check */
@@ -456,11 +457,11 @@ mdefine_line|#define ClearPageUptodate(page)&t;do { clear_bit(PG_uptodate, &amp;
 DECL|macro|PageLocked
 mdefine_line|#define PageLocked(page)&t;(test_bit(PG_locked, &amp;(page)-&gt;flags))
 DECL|macro|LockPage
-mdefine_line|#define LockPage(page)&t;&t;&bslash;&n;&t;do { int _ret = test_and_set_bit(PG_locked, &amp;(page)-&gt;flags); &bslash;&n;&t;if (_ret) PAGE_BUG(page); &bslash;&n;&t;if (page-&gt;owner) PAGE_BUG(page); &bslash;&n;&t;page-&gt;owner = (int)current; } while (0)
+mdefine_line|#define LockPage(page)&t;&t;&bslash;&n;&t;do { int _ret = test_and_set_bit(PG_locked, &amp;(page)-&gt;flags); &bslash;&n;&t;if (_ret) PAGE_BUG(page); &bslash;&n;&t;if (page-&gt;owner) PAGE_BUG(page); &bslash;&n;&t;page-&gt;owner = current; } while (0)
 DECL|macro|TryLockPage
-mdefine_line|#define TryLockPage(page)&t;({ int _ret = test_and_set_bit(PG_locked, &amp;(page)-&gt;flags); &bslash;&n;&t;&t;&t;&t;if (!_ret) page-&gt;owner = (int)current; _ret; })
+mdefine_line|#define TryLockPage(page)&t;({ int _ret = test_and_set_bit(PG_locked, &amp;(page)-&gt;flags); &bslash;&n;&t;&t;&t;&t;if (!_ret) page-&gt;owner = current; _ret; })
 DECL|macro|UnlockPage
-mdefine_line|#define UnlockPage(page)&t;do { &bslash;&n;&t;&t;&t;&t;&t;if (page-&gt;owner != (int)current) { &bslash;&n;BUG(); } page-&gt;owner = 0; &bslash;&n;if (!test_and_clear_bit(PG_locked, &amp;(page)-&gt;flags)) { &bslash;&n;&t;&t;&t;PAGE_BUG(page); } wake_up(&amp;page-&gt;wait); } while (0)
+mdefine_line|#define UnlockPage(page)&t;do { &bslash;&n;&t;&t;&t;&t;&t;if (page-&gt;owner != current) { &bslash;&n;BUG(); } page-&gt;owner = 0; &bslash;&n;if (!test_and_clear_bit(PG_locked, &amp;(page)-&gt;flags)) { &bslash;&n;&t;&t;&t;PAGE_BUG(page); } wake_up(&amp;page-&gt;wait); } while (0)
 DECL|macro|PageError
 mdefine_line|#define PageError(page)&t;&t;(test_bit(PG_error, &amp;(page)-&gt;flags))
 DECL|macro|SetPageError

@@ -547,8 +547,6 @@ id|mm
 comma
 id|new_addr
 comma
-id|new_addr
-op_plus
 id|len
 )paren
 suffix:semicolon

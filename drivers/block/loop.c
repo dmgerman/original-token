@@ -1485,7 +1485,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|inode-&gt;i_op-&gt;bmap
+id|inode-&gt;i_op-&gt;get_block
 )paren
 (brace
 id|printk

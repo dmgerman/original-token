@@ -2340,9 +2340,12 @@ macro_line|#endif /* __SMP__ */
 id|kstat.context_swtch
 op_increment
 suffix:semicolon
+multiline_comment|/*&n;&t; * there are 3 processes which are affected by a context switch:&n;&t; *&n;&t; * prev == .... ==&gt; (last =&gt; next)&n;&t; *&n;&t; * It&squot;s the &squot;much more previous&squot; &squot;prev&squot; that is on next&squot;s stack,&n;&t; * but prev is set to (the just run) &squot;last&squot; process by switch_to().&n;&t; * This might sound slightly confusing but makes tons of sense.&n;&t; */
 id|get_mmu_context
 c_func
 (paren
+id|prev
+comma
 id|next
 )paren
 suffix:semicolon
@@ -2354,6 +2357,14 @@ comma
 id|next
 comma
 id|prev
+)paren
+suffix:semicolon
+id|put_mmu_context
+c_func
+(paren
+id|prev
+comma
+id|next
 )paren
 suffix:semicolon
 id|__schedule_tail
@@ -6268,6 +6279,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|p-&gt;flags
+op_amp
+id|PF_LAZY_TLB
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; (L-TLB) &quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot; (NOTLB) &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|p-&gt;p_ysptr
 )paren
 id|printk
@@ -6756,6 +6787,18 @@ id|IMMEDIATE_BH
 comma
 id|immediate_bh
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * The boot idle thread does lazy MMU switching as well:&n;&t; */
+id|mmget
+c_func
+(paren
+op_amp
+id|init_mm
+)paren
+suffix:semicolon
+id|current-&gt;flags
+op_or_assign
+id|PF_LAZY_TLB
 suffix:semicolon
 )brace
 eof

@@ -76,7 +76,7 @@ comma
 id|mm
 )paren
 suffix:semicolon
-id|p-&gt;tss.mm_context
+id|mm-&gt;context
 op_assign
 r_new
 suffix:semicolon

@@ -1770,12 +1770,15 @@ comma
 id|monet_swizzle
 )paren
 suffix:semicolon
-multiline_comment|/* es1888_init(); */
-multiline_comment|/* later? */
 id|SMC669_Init
 c_func
 (paren
 l_int|1
+)paren
+suffix:semicolon
+id|es1888_init
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

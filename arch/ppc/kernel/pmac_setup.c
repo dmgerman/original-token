@@ -37,6 +37,7 @@ macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;pmac_pic.h&quot;
@@ -865,6 +866,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_SD
 r_for
 c_loop
 (paren
@@ -908,6 +910,7 @@ c_func
 id|i
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_SD */
 r_return
 l_int|0
 suffix:semicolon
@@ -2206,9 +2209,16 @@ id|ns
 id|_insw_ns
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
 id|port
 op_plus
 id|_IO_BASE
+)paren
 comma
 id|buf
 comma
@@ -2235,9 +2245,16 @@ id|ns
 id|_outsw_ns
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
 id|port
 op_plus
 id|_IO_BASE
+)paren
 comma
 id|buf
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.136 1999/06/18 07:11:35 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.138 1999/07/11 16:32:21 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -27,6 +27,7 @@ macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 r_extern
 r_void
 id|pmac_init
@@ -1233,6 +1234,21 @@ r_return
 l_int|0
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;id mach(): start&quot;
+comma
+l_int|0x100
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_MACH_SPECIFIC
 multiline_comment|/* boot loader will tell us if we&squot;re APUS */
 r_if
@@ -1826,6 +1842,21 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;id mach(): done&quot;
+comma
+l_int|0x200
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2089,6 +2120,22 @@ c_func
 id|memory_start_p
 comma
 id|memory_end_p
+)paren
+suffix:semicolon
+multiline_comment|/* clear the progress line */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot; &quot;
+comma
+l_int|0xffff
 )paren
 suffix:semicolon
 )brace

@@ -78,7 +78,6 @@ r_int
 id|rm
 comma
 r_int
-r_int
 id|a
 comma
 r_int

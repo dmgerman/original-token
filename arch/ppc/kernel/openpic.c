@@ -459,6 +459,21 @@ c_func
 l_string|&quot;No OpenPIC found&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;openpic enter&quot;
+comma
+l_int|0x122
+)paren
+suffix:semicolon
 id|t
 op_assign
 id|openpic_read
@@ -595,6 +610,21 @@ c_cond
 id|main_pic
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;openpic main&quot;
+comma
+l_int|0x3ff
+)paren
+suffix:semicolon
 multiline_comment|/* Initialize timer interrupts */
 r_for
 c_loop
@@ -664,6 +694,21 @@ id|i
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;openpic initirq&quot;
+comma
+l_int|0x3bb
+)paren
+suffix:semicolon
 multiline_comment|/* Initialize external interrupts */
 multiline_comment|/* SIOint (8259 cascade) is special */
 id|openpic_initirq
@@ -678,6 +723,21 @@ comma
 l_int|1
 comma
 l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;openpic map&quot;
+comma
+l_int|0x3cc
 )paren
 suffix:semicolon
 multiline_comment|/* Processor 0 */
@@ -789,6 +849,21 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot;openpic exit&quot;
+comma
+l_int|0x222
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Reset the OpenPIC&n;     */
 DECL|function|openpic_reset

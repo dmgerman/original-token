@@ -22,30 +22,17 @@ DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
-DECL|variable|local_irq_count
+multiline_comment|/* Only uniprocessor needs this IRQ/BH locking depth, on SMP it lives&n;   in the per-cpu structure for cache reasons.  */
+macro_line|#ifndef __SMP__
+DECL|variable|__local_irq_count
 r_int
-r_int
-id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
+id|__local_irq_count
 suffix:semicolon
-DECL|variable|local_bh_count
+DECL|variable|__local_bh_count
 r_int
-r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
+id|__local_bh_count
 suffix:semicolon
-DECL|variable|hardirq_no
-r_int
-r_int
-id|hardirq_no
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
+macro_line|#endif
 macro_line|#if NR_IRQS &gt; 64
 macro_line|#  error Unable to handle more than 64 irq levels.
 macro_line|#endif
@@ -1341,6 +1328,8 @@ op_star
 id|where
 )paren
 suffix:semicolon
+DECL|macro|SYNC_OTHER_CPUS
+mdefine_line|#define SYNC_OTHER_CPUS(x)&t;udelay((x)+1);
 r_static
 r_inline
 r_void
@@ -1385,9 +1374,10 @@ r_if
 c_cond
 (paren
 id|local_bh_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_logical_or
 op_logical_neg
 id|atomic_read
@@ -1446,23 +1436,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|SYNC_OTHER_CORES
+id|SYNC_OTHER_CPUS
 c_func
 (paren
 id|cpu
 )paren
 suffix:semicolon
-macro_line|#else
-id|udelay
-c_func
-(paren
-id|cpu
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#endif
 id|__cli
 c_func
 (paren
@@ -1483,7 +1462,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|global_irq_lock.lock
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
 )paren
 r_continue
 suffix:semicolon
@@ -1492,9 +1476,10 @@ c_cond
 (paren
 op_logical_neg
 id|local_bh_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 op_logical_and
 id|atomic_read
 c_func
@@ -1617,6 +1602,11 @@ r_void
 (brace
 r_int
 id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
 suffix:semicolon
 r_void
 op_star
@@ -1632,7 +1622,6 @@ multiline_comment|/*&n;&t; * Maximize ipl.  If ipl was previously 0 and if this 
 r_if
 c_cond
 (paren
-(paren
 id|swpipl
 c_func
 (paren
@@ -1640,18 +1629,13 @@ l_int|7
 )paren
 op_eq
 l_int|0
-)paren
 op_logical_and
 op_logical_neg
 id|local_irq_count
-(braket
-id|cpu
-op_assign
-id|smp_processor_id
 c_func
 (paren
+id|cpu
 )paren
-)braket
 )paren
 id|get_irqlock
 c_func
@@ -1683,18 +1667,17 @@ c_cond
 (paren
 op_logical_neg
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
 )paren
-(brace
+)paren
 id|release_irqlock
 c_func
 (paren
 id|cpu
 )paren
 suffix:semicolon
-)brace
 id|__sti
 c_func
 (paren
@@ -1759,9 +1742,10 @@ c_cond
 (paren
 op_logical_neg
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 )paren
 (brace
 r_if
@@ -1870,7 +1854,7 @@ mdefine_line|#define INIT_STUCK (1&lt;&lt;26)
 DECL|macro|STUCK
 macro_line|#undef STUCK
 DECL|macro|STUCK
-mdefine_line|#define STUCK&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  if (!--stuck) {&t;&t;&t;&t;&t;&t;&bslash;&n;    printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,&t;&bslash;&n;&t;   irq, cpu,global_irq_holder);&t;&t;&t;&t;&bslash;&n;    stuck = INIT_STUCK;&t;&t;&t;&t;&t;&t;&bslash;&n;  }
+mdefine_line|#define STUCK&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  if (!--stuck) {&t;&t;&t;&t;&t;&t;&bslash;&n;    printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,&t;&bslash;&n;&t;   irq, cpu, global_irq_holder);&t;&t;&t;&bslash;&n;    stuck = INIT_STUCK;&t;&t;&t;&t;&t;&t;&bslash;&n;  }
 DECL|macro|VERBOSE_IRQLOCK_DEBUGGING
 macro_line|#undef VERBOSE_IRQLOCK_DEBUGGING
 r_void
@@ -1916,7 +1900,12 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|global_irq_lock.lock
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
 )paren
 (brace
 r_if
@@ -1930,7 +1919,12 @@ id|global_irq_holder
 r_int
 id|globl_locked
 op_assign
-id|global_irq_lock.lock
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|global_irq_lock
+)paren
 suffix:semicolon
 r_int
 id|globl_icount
@@ -1946,9 +1940,10 @@ r_int
 id|local_count
 op_assign
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 suffix:semicolon
 multiline_comment|/* It is very important that we load the state&n;&t;&t;&t;   variables before we do the first call to&n;&t;&t;&t;   printk() as printk() could end up changing&n;&t;&t;&t;   them...  */
 id|printk
@@ -2054,48 +2049,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_int
-id|global_count
-op_assign
-id|atomic_read
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-r_int
-id|local_count0
-op_assign
-id|local_irq_count
-(braket
-l_int|0
-)braket
-suffix:semicolon
-r_int
-id|local_count1
-op_assign
-id|local_irq_count
-(braket
-l_int|1
-)braket
-suffix:semicolon
-r_int
-id|hardirq_no0
-op_assign
-id|hardirq_no
-(braket
-l_int|0
-)braket
-suffix:semicolon
-r_int
-id|hardirq_no1
-op_assign
-id|hardirq_no
-(braket
-l_int|1
-)braket
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2111,17 +2064,28 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;irq:  %d [%d(0x%016lx) %d(0x%016lx)]&bslash;n&quot;
+l_string|&quot;irq:  %d [%d %d]&bslash;n&quot;
 comma
-id|global_count
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
 comma
-id|local_count0
+id|cpu_data
+(braket
+l_int|0
+)braket
+dot
+id|irq_count
 comma
-id|hardirq_no0
-comma
-id|local_count1
-comma
-id|hardirq_no1
+id|cpu_data
+(braket
+l_int|1
+)braket
+dot
+id|irq_count
 )paren
 suffix:semicolon
 id|printk
@@ -2136,15 +2100,19 @@ op_amp
 id|global_bh_count
 )paren
 comma
-id|local_bh_count
+id|cpu_data
 (braket
 l_int|0
 )braket
+dot
+id|bh_count
 comma
-id|local_bh_count
+id|cpu_data
 (braket
 l_int|1
 )braket
+dot
+id|bh_count
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -2253,6 +2221,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* nothing .. wait for the other bh&squot;s to go away */
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -2286,39 +2259,18 @@ c_func
 op_amp
 id|global_bh_count
 )paren
-)paren
-(brace
-r_int
-id|cpu
-op_assign
-id|smp_processor_id
+op_logical_and
+op_logical_neg
+id|in_interrupt
 c_func
 (paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|local_irq_count
-(braket
-id|cpu
-)braket
-op_logical_and
-op_logical_neg
-id|local_bh_count
-(braket
-id|cpu
-)braket
 )paren
-(brace
 id|wait_on_bh
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 multiline_comment|/*&n; * From its use, I infer that synchronize_irq() stalls a thread until&n; * the effects of a command to an external device are known to have&n; * taken hold.  Typically, the command is to stop sending interrupts.&n; * The strategy here is wait until there is at most one processor&n; * (this one) in an irq.  The memory barrier serializes the write to&n; * the device and the subsequent accesses of global_irq_count.&n; * --jmartin&n; */
 DECL|macro|DEBUG_SYNCHRONIZE_IRQ
@@ -2331,6 +2283,8 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/* Joe&squot;s version.  */
 r_int
 id|cpu
 op_assign
@@ -2372,9 +2326,10 @@ r_do
 id|local_count
 op_assign
 id|local_irq_count
-(braket
+c_func
+(paren
 id|cpu
-)braket
+)paren
 suffix:semicolon
 id|global_count
 op_assign
@@ -2430,12 +2385,37 @@ op_ne
 id|local_count
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Jay&squot;s version.  */
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 macro_line|#else /* !__SMP__ */
 DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
+mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count(cpu))
 DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
+mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count(cpu))
 macro_line|#endif /* __SMP__ */
 r_static
 r_void
@@ -3099,10 +3079,6 @@ id|pt_regs
 id|regs
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3113,23 +3089,11 @@ r_case
 l_int|0
 suffix:colon
 macro_line|#ifdef __SMP__
-id|__save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|handle_ipi
 c_func
 (paren
 op_amp
 id|regs
-)paren
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -3147,12 +3111,6 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-id|__save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|handle_irq
 c_func
 (paren
@@ -3163,12 +3121,6 @@ l_int|1
 comma
 op_amp
 id|regs
-)paren
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -3194,12 +3146,6 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
-id|__save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|alpha_mv
 dot
 id|device_interrupt
@@ -3209,12 +3155,6 @@ id|vector
 comma
 op_amp
 id|regs
-)paren
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return

@@ -138,6 +138,13 @@ l_int|0x022c
 )paren
 suffix:semicolon
 multiline_comment|/* enable extended mode */
+id|inb
+c_func
+(paren
+l_int|0x022a
+)paren
+suffix:semicolon
+multiline_comment|/* pause, also forces the write */
 r_while
 c_loop
 (paren
@@ -230,5 +237,12 @@ l_int|0x022c
 )paren
 suffix:semicolon
 multiline_comment|/* set DMA channel 1 */
+id|inb
+c_func
+(paren
+l_int|0x022c
+)paren
+suffix:semicolon
+multiline_comment|/* force the write */
 )brace
 eof
