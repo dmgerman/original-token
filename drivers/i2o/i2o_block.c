@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;I2O block device driver. &n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a beta test release. Most of the good code was taken&n; *&t;from the nbd driver by Pavel Machek, who in turn took some of it&n; *&t;from loop.c. Isn&squot;t free software great for reusability 8)&n; *&n; *&t;Fixes:&n; *&t;&t;Steve Ralston:&t;Multiple device handling error fixes,&n; *&t;&t;&t;&t;Added a queue depth.&n; *&n; *&t;Todo:&n; *&t;&t;64bit cleanness.&n; *&t;&t;Remove the queue walk. We can do that better.&n; */
+multiline_comment|/*&n; *&t;I2O block device driver. &n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a beta test release. Most of the good code was taken&n; *&t;from the nbd driver by Pavel Machek, who in turn took some of it&n; *&t;from loop.c. Isn&squot;t free software great for reusability 8)&n; *&n; *&t;Fixes:&n; *&t;&t;Steve Ralston:&t;Multiple device handling error fixes,&n; *&t;&t;&t;&t;Added a queue depth.&n; *&t;&t;Alan Cox:&t;FC920 has an rmw bug. Dont or in the&n; *&t;&t;&t;&t;end marker.&n; *&t;&t;&t;&t;Removed queue walk, fixed for 64bitness.&n; *&t;To do:&n; *&t;&t;Multiple majors&n; *&t;&t;Serial number scanning to find duplicates for FC multipathing&n; *&t;&t;Set the new max_sectors according to max message size&n; *&t;&t;Use scatter gather chains for bigger I/O sizes&n; */
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -23,7 +23,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|MAX_I2OB
 mdefine_line|#define MAX_I2OB&t;16
 DECL|macro|MAX_I2OB_DEPTH
-mdefine_line|#define MAX_I2OB_DEPTH&t;8
+mdefine_line|#define MAX_I2OB_DEPTH&t;32
 multiline_comment|/*&n; *&t;Some of these can be made smaller later&n; */
 DECL|variable|i2ob_blksizes
 r_static
@@ -129,6 +129,29 @@ id|done_flag
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;FIXME:&n; *&t;We should cache align these to avoid ping-ponging lines on SMP&n; *&t;boxes under heavy I/O load...&n; */
+DECL|struct|i2ob_request
+r_struct
+id|i2ob_request
+(brace
+DECL|member|next
+r_struct
+id|i2ob_request
+op_star
+id|next
+suffix:semicolon
+DECL|member|req
+r_struct
+id|request
+op_star
+id|req
+suffix:semicolon
+DECL|member|num
+r_int
+id|num
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; *&t;Each I2O disk is one of these.&n; */
 DECL|variable|i2ob_dev
 r_static
@@ -172,6 +195,24 @@ id|atomic_t
 id|queue_depth
 suffix:semicolon
 multiline_comment|/* For flow control later on */
+DECL|variable|i2ob_queue
+r_static
+r_struct
+id|i2ob_request
+id|i2ob_queue
+(braket
+id|MAX_I2OB_DEPTH
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+DECL|variable|i2ob_qhead
+r_static
+r_struct
+id|i2ob_request
+op_star
+id|i2ob_qhead
+suffix:semicolon
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG( s )
 multiline_comment|/* #define DEBUG( s ) printk( s ) &n; */
@@ -253,9 +294,9 @@ op_star
 id|dev
 comma
 r_struct
-id|request
+id|i2ob_request
 op_star
-id|req
+id|ireq
 comma
 id|u32
 id|base
@@ -286,6 +327,13 @@ id|mptr
 suffix:semicolon
 id|u64
 id|offset
+suffix:semicolon
+r_struct
+id|request
+op_star
+id|req
+op_assign
+id|ireq-&gt;req
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -336,12 +384,8 @@ id|msg
 l_int|3
 )braket
 op_assign
-(paren
-id|u32
-)paren
-id|req
+id|ireq-&gt;num
 suffix:semicolon
-multiline_comment|/* 64bit issue again here */
 id|msg
 (braket
 l_int|5
@@ -434,11 +478,30 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Its best to do this in one not or it in&n;&t;&t;&t; *&t;later. mptr is in PCI space so fast to write&n;&t;&t;&t; *&t;sucky to read.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|bh-&gt;b_reqnext
+)paren
+(brace
 op_star
 id|mptr
 op_increment
 op_assign
 l_int|0x10000000
+op_or
+(paren
+id|bh-&gt;b_size
+)paren
+suffix:semicolon
+)brace
+r_else
+op_star
+id|mptr
+op_increment
+op_assign
+l_int|0xD0000000
 op_or
 (paren
 id|bh-&gt;b_size
@@ -505,11 +568,29 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|bh-&gt;b_reqnext
+)paren
+(brace
 op_star
 id|mptr
 op_increment
 op_assign
 l_int|0x14000000
+op_or
+(paren
+id|bh-&gt;b_size
+)paren
+suffix:semicolon
+)brace
+r_else
+op_star
+id|mptr
+op_increment
+op_assign
+l_int|0xD4000000
 op_or
 (paren
 id|bh-&gt;b_size
@@ -535,14 +616,6 @@ id|bh-&gt;b_reqnext
 suffix:semicolon
 )brace
 )brace
-id|mptr
-(braket
-op_minus
-l_int|2
-)braket
-op_or_assign
-l_int|0xC0000000
-suffix:semicolon
 id|msg
 (braket
 l_int|0
@@ -641,113 +714,28 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Remove a request from the _locked_ request list. We update both the&n; *&t;list chain and if this is the last item the tail pointer.&n; */
+multiline_comment|/*&n; *&t;Remove a request from the _locked_ request list. We update both the&n; *&t;list chain and if this is the last item the tail pointer. Caller&n; *&t;must hold the lock.&n; */
 DECL|function|i2ob_unhook_request
 r_static
+r_inline
 r_void
 id|i2ob_unhook_request
 c_func
 (paren
 r_struct
-id|i2ob_device
+id|i2ob_request
 op_star
-id|dev
-comma
-r_struct
-id|request
-op_star
-id|req
+id|ireq
 )paren
 (brace
-r_struct
-id|request
-op_star
-op_star
-id|p
+id|ireq-&gt;next
 op_assign
-op_amp
-id|dev-&gt;head
+id|i2ob_qhead
 suffix:semicolon
-r_struct
-id|request
-op_star
-id|nt
+id|i2ob_qhead
 op_assign
-l_int|NULL
+id|ireq
 suffix:semicolon
-r_static
-r_int
-id|crap
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-op_star
-id|p
-op_ne
-l_int|NULL
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_star
-id|p
-op_eq
-id|req
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dev-&gt;tail
-op_eq
-id|req
-)paren
-(brace
-id|dev-&gt;tail
-op_assign
-id|nt
-suffix:semicolon
-)brace
-op_star
-id|p
-op_assign
-id|req-&gt;next
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|nt
-op_assign
-op_star
-id|p
-suffix:semicolon
-id|p
-op_assign
-op_amp
-(paren
-id|nt-&gt;next
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|crap
-op_increment
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2o_block: request queue corrupt!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; *&t;Request completion handler&n; */
 DECL|function|i2ob_end_request
@@ -763,6 +751,7 @@ id|req
 )paren
 (brace
 multiline_comment|/*&n;&t; * Loop until all of the buffers that are linked&n;&t; * to this request have been marked updated and&n;&t; * unlocked.&n;&t; */
+singleline_comment|//&t;printk(&quot;ending request %p: &quot;, req);
 r_while
 c_loop
 (paren
@@ -777,14 +766,18 @@ comma
 l_string|&quot;i2o block&quot;
 )paren
 )paren
-suffix:semicolon
+(brace
+singleline_comment|//&t;&t;printk(&quot; +&bslash;n&quot;);
+)brace
 multiline_comment|/*&n;&t; * It is now ok to complete the request.&n;&t; */
+singleline_comment|//&t;printk(&quot;finishing &quot;);
 id|end_that_request_last
 c_func
 (paren
 id|req
 )paren
 suffix:semicolon
+singleline_comment|//&t;printk(&quot;done&bslash;n&quot;);
 )brace
 multiline_comment|/*&n; *&t;OSM reply handler. This gets all the message replies&n; */
 DECL|function|i2o_block_reply
@@ -810,9 +803,9 @@ id|msg
 )paren
 (brace
 r_struct
-id|request
+id|i2ob_request
 op_star
-id|req
+id|ireq
 suffix:semicolon
 id|u8
 id|st
@@ -1019,16 +1012,15 @@ id|m
 )paren
 suffix:semicolon
 multiline_comment|/* We need to up the request failure count here and maybe&n;&t;&t;   abort it */
-id|req
+id|ireq
 op_assign
-(paren
-r_struct
-id|request
-op_star
-)paren
+op_amp
+id|i2ob_queue
+(braket
 id|m
 (braket
 l_int|3
+)braket
 )braket
 suffix:semicolon
 multiline_comment|/* Now flush the message by making it a NOP */
@@ -1117,16 +1109,15 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Lets see what is cooking. We stuffed the&n;&t;&t; *&t;request in the context.&n;&t;&t; */
-id|req
+id|ireq
 op_assign
-(paren
-r_struct
-id|request
-op_star
-)paren
+op_amp
+id|i2ob_queue
+(braket
 id|m
 (braket
 l_int|3
+)braket
 )braket
 suffix:semicolon
 id|st
@@ -1159,7 +1150,7 @@ l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Now error out the request block&n;&t;&t;&t; */
-id|req-&gt;errors
+id|ireq-&gt;req-&gt;errors
 op_increment
 suffix:semicolon
 )brace
@@ -1182,19 +1173,13 @@ suffix:semicolon
 id|i2ob_unhook_request
 c_func
 (paren
-op_amp
-id|i2ob_dev
-(braket
-id|unit
-)braket
-comma
-id|req
+id|ireq
 )paren
 suffix:semicolon
 id|i2ob_end_request
 c_func
 (paren
-id|req
+id|ireq-&gt;req
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We may be able to do more I/O&n;&t; */
@@ -1241,69 +1226,6 @@ comma
 id|I2O_CLASS_RANDOM_BLOCK_STORAGE
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;Flush all pending requests as errors. Must call with the queue&n; *&t;locked.&n; */
-macro_line|#if 0
-r_static
-r_void
-id|i2ob_clear_queue
-c_func
-(paren
-r_struct
-id|i2ob_device
-op_star
-id|dev
-)paren
-(brace
-r_struct
-id|request
-op_star
-id|req
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-id|req
-op_assign
-id|dev-&gt;tail
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|req
-)paren
-r_return
-suffix:semicolon
-id|req-&gt;errors
-op_increment
-suffix:semicolon
-id|i2ob_end_request
-c_func
-(paren
-id|req
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tail
-op_eq
-id|dev-&gt;head
-)paren
-id|dev-&gt;head
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;tail
-op_assign
-id|dev-&gt;tail-&gt;next
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 multiline_comment|/*&n; *&t;The I2O block driver is listed as one of those that pulls the&n; *&t;front entry off the queue before processing it. This is important&n; *&t;to remember here. If we drop the io lock then CURRENT will change&n; *&t;on us. We must unlink CURRENT in this routine before we return, if&n; *&t;we use it.&n; */
 DECL|function|do_i2ob_request
 r_static
@@ -1318,6 +1240,11 @@ r_struct
 id|request
 op_star
 id|req
+suffix:semicolon
+r_struct
+id|i2ob_request
+op_star
+id|ireq
 suffix:semicolon
 r_int
 id|unit
@@ -1428,34 +1355,22 @@ id|req-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;head
-op_eq
+id|req-&gt;sem
+op_assign
 l_int|NULL
-)paren
-(brace
-id|dev-&gt;head
+suffix:semicolon
+id|ireq
+op_assign
+id|i2ob_qhead
+suffix:semicolon
+id|i2ob_qhead
+op_assign
+id|ireq-&gt;next
+suffix:semicolon
+id|ireq-&gt;req
 op_assign
 id|req
 suffix:semicolon
-id|dev-&gt;tail
-op_assign
-id|req
-suffix:semicolon
-)brace
-r_else
-(brace
-id|dev-&gt;tail-&gt;next
-op_assign
-id|req
-suffix:semicolon
-id|dev-&gt;tail
-op_assign
-id|req
-suffix:semicolon
-)brace
 id|i2ob_send
 c_func
 (paren
@@ -1463,7 +1378,7 @@ id|m
 comma
 id|dev
 comma
-id|req
+id|ireq
 comma
 id|i2ob
 (braket
@@ -3041,7 +2956,6 @@ id|i2ob_sizes
 id|unit
 )braket
 suffix:semicolon
-multiline_comment|/* Setting this higher than 1024 breaks the symbios for some reason */
 id|limit
 op_assign
 l_int|4096
@@ -4073,7 +3987,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O block device OSM v0.06. (C) 1999 Red Hat Software.&bslash;n&quot;
+l_string|&quot;I2O block device OSM v0.07. (C) 1999 Red Hat Software.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Register the block device interfaces&n;&t; */
@@ -4248,6 +4162,65 @@ op_assign
 l_int|2
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Set up the queue&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_I2OB_DEPTH
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|i2ob_queue
+(braket
+id|i
+)braket
+dot
+id|next
+op_assign
+op_amp
+id|i2ob_queue
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+id|i2ob_queue
+(braket
+id|i
+)braket
+dot
+id|num
+op_assign
+id|i
+suffix:semicolon
+)brace
+multiline_comment|/* Queue is MAX_I2OB + 1... */
+id|i2ob_queue
+(braket
+id|i
+)braket
+dot
+id|next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|i2ob_qhead
+op_assign
+op_amp
+id|i2ob_queue
+(braket
+l_int|0
+)braket
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Register the OSM handler as we will need this to probe for&n;&t; *&t;drives, geometry and other goodies.&n;&t; */
 r_if
 c_cond
@@ -4365,13 +4338,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;i2o_block: cleanup_module failed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;i2o_block: module cleaned up.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Why isnt register/unregister gendisk in the kernel ???&n;&t; */

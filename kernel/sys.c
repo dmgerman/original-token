@@ -69,14 +69,6 @@ id|nb
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_void
-id|adjust_clock
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|sys_ni_syscall
 id|asmlinkage
 r_int

@@ -561,6 +561,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|sun3lance_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|a2065_probe
 c_func
 (paren
@@ -1713,6 +1723,14 @@ op_assign
 macro_line|#ifdef CONFIG_ATARILANCE&t;/* Lance-based Atari ethernet boards */
 (brace
 id|atarilance_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN3LANCE         /* sun3 onboard Lance chip */
+(brace
+id|sun3lance_probe
 comma
 l_int|0
 )brace

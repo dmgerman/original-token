@@ -41,6 +41,9 @@ comma
 DECL|enumerator|PROC_NUBUS
 id|PROC_NUBUS
 comma
+DECL|enumerator|PROC_MAC_VIA
+id|PROC_MAC_VIA
+comma
 DECL|enumerator|PROC_SELF
 id|PROC_SELF
 comma
@@ -683,6 +686,12 @@ id|PROC_BUS_ZORRO_DEVICES
 comma
 DECL|enumerator|PROC_BUS_ECARD_DEVICES
 id|PROC_BUS_ECARD_DEVICES
+comma
+DECL|enumerator|PROC_BUS_NUBUS
+id|PROC_BUS_NUBUS
+comma
+DECL|enumerator|PROC_BUS_NUBUS_DEVICES
+id|PROC_BUS_NUBUS_DEVICES
 comma
 DECL|enumerator|PROC_BUS_LAST
 id|PROC_BUS_LAST

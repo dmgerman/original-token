@@ -1013,9 +1013,9 @@ id|mpnt-&gt;vm_file
 op_assign
 l_int|NULL
 suffix:semicolon
-id|mpnt-&gt;vm_pte
+id|mpnt-&gt;vm_private_data
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|insert_vm_struct
 c_func

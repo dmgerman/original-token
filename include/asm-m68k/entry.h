@@ -3,6 +3,7 @@ DECL|macro|__M68K_ENTRY_H
 mdefine_line|#define __M68K_ENTRY_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef CONFIG_KGDB
 macro_line|#include &lt;asm/kgdb.h&gt;
 macro_line|#endif
@@ -423,7 +424,7 @@ comma
 "&bslash;"
 id|reg
 id|andw
-macro_line|#-8192,&bslash;reg
+macro_line|#-KTHREAD_SIZE,&bslash;reg
 DECL|variable|reg
 id|movel
 "&bslash;"
@@ -444,7 +445,7 @@ mdefine_line|#define SAVE_ALL_INT&t;&t;&t;&t;&bslash;&n;&t;&quot;clrl&t;%%sp@-;&
 macro_line|#else
 mdefine_line|#define SAVE_ALL_INT&t;&t;&t;&t;&bslash;&n;&t;&quot;clrl&t;%%sp@-&bslash;n&bslash;t&quot; /* stk_adj */&t;&bslash;&n;&t;&quot;pea&t;-1:w&bslash;n&bslash;t&quot;   /* orig d0 = -1 */&t;&bslash;&n;&t;&quot;movel&t;%%d0,%%sp@-&bslash;n&bslash;t&quot; /* d0 */&t;&bslash;&n;&t;&quot;moveml&t;%%d1-%%d5/%%a0-%%a2,%%sp@-&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;moveml&t;%%d6-%%d7,kgdb_registers+&quot;STR(GDBOFFA_D6)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;moveml&t;%%a3-%%a6,kgdb_registers+&quot;STR(GDBOFFA_A3)
 macro_line|#endif
-mdefine_line|#define GET_CURRENT(tmp) &bslash;&n;&t;&quot;movel&t;%%sp,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andw&t;#-8192,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movel&t;&quot;#tmp&quot;,%%a2&quot;
+mdefine_line|#define GET_CURRENT(tmp) &bslash;&n;&t;&quot;movel&t;%%sp,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andw&t;#-KTHREAD_SIZE,&quot;#tmp&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movel&t;&quot;#tmp&quot;,%%a2&quot;
 macro_line|#endif
 macro_line|#endif /* __M68K_ENTRY_H */
 eof

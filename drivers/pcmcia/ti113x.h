@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ti113x.h 1.14 1999/08/28 04:01:47&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
+multiline_comment|/*&n; * ti113x.h 1.15 1999/09/03 16:43:35&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
 macro_line|#ifndef _LINUX_TI113X_H
 DECL|macro|_LINUX_TI113X_H
 mdefine_line|#define _LINUX_TI113X_H
@@ -34,14 +34,6 @@ macro_line|#ifndef PCI_DEVICE_ID_TI_1210
 DECL|macro|PCI_DEVICE_ID_TI_1210
 mdefine_line|#define PCI_DEVICE_ID_TI_1210&t;&t;0xac1a
 macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1251A
-DECL|macro|PCI_DEVICE_ID_TI_1251A
-mdefine_line|#define PCI_DEVICE_ID_TI_1251A&t;&t;0xac1d
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1251B
-DECL|macro|PCI_DEVICE_ID_TI_1251B
-mdefine_line|#define PCI_DEVICE_ID_TI_1251B&t;&t;0xac1f
-macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_TI_1450
 DECL|macro|PCI_DEVICE_ID_TI_1450
 mdefine_line|#define PCI_DEVICE_ID_TI_1450&t;&t;0xac1b
@@ -49,6 +41,22 @@ macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_TI_1225
 DECL|macro|PCI_DEVICE_ID_TI_1225
 mdefine_line|#define PCI_DEVICE_ID_TI_1225&t;&t;0xac1c
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TI_1251A
+DECL|macro|PCI_DEVICE_ID_TI_1251A
+mdefine_line|#define PCI_DEVICE_ID_TI_1251A&t;&t;0xac1d
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TI_1211
+DECL|macro|PCI_DEVICE_ID_TI_1211
+mdefine_line|#define PCI_DEVICE_ID_TI_1211&t;&t;0xac1e
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TI_1251B
+DECL|macro|PCI_DEVICE_ID_TI_1251B
+mdefine_line|#define PCI_DEVICE_ID_TI_1251B&t;&t;0xac1f
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TI_1420
+DECL|macro|PCI_DEVICE_ID_TI_1420
+mdefine_line|#define PCI_DEVICE_ID_TI_1420&t;&t;0xac51
 macro_line|#endif
 multiline_comment|/* Register definitions for TI 113X PCI-to-CardBus bridges */
 multiline_comment|/* System Control Register */

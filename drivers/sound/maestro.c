@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n; *&n; *      ESS Maestro/Maestro-2/Maestro-2E driver for Linux 2.2.x&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;(c) Copyright 1999&t; Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *&t;Based heavily on SonicVibes.c:&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;Heavily modified by Zach Brown &lt;zab@redhat.com&gt; based on lunch&n; *&t;with ESS engineers.  Many thanks to Howard Kim for providing &n; *&t;contacts and hardware.  Honorable mention goes to Eric &n; *&t;Brombaugh for the BOB routines and nice hacking in general.&n; *&n; *  Supported devices:&n; *  /dev/dsp0-7    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *&n; *  Hardware Description&n; *&n; *&t;A working Maestro setup contains the Maestro chip wired to a &n; *&t;codec or 2.  In the Maestro we have the APUs, the ASP, and the&n; *&t;Wavecache.  The APUs can be though of as virtual audio routing&n; *&t;channels.  They can take data from a number of sources and perform&n; *&t;basic encodings of the data.  The wavecache is a storehouse for&n; *&t;PCM data.  Typically it deals with PCI and interracts with the&n; *&t;APUs.  The ASP is a wacky DSP like device that ESS is loathe&n; *&t;to release docs on.  Thankfully it isn&squot;t required on the Maestro&n; *&t;until you start doing insane things like FM emulation and surround&n; *&t;encoding.  The codecs are almost always AC-97 compliant codecs, &n; *&t;but it appears that early Maestros may have had PT101 (an ESS&n; *&t;part?) wired to them.  The only real difference in the Maestro&n; *&t;families is external goop like docking capability, memory for&n; *&t;the ASP, and trivial initialization differences.&n; *&n; *  Driver Operation&n; *&n; *&t;We only drive the APU/Wavecache as typical DACs and drive the&n; *&t;mixers in the codecs.  There are 64 APUs.  We assign 4 to each&n; *&t;/dev/dsp? device.  2 channels for both in and out.&n; *&n; *&t;For output we maintain a ring buffer of data that we are dmaing&n; *&t;to the card.  In mono operation this is nice and easy.  When&n; *&t;we receive data we tack it onto the ring buffer and make sure&n; *&t;the APU assigned to it is playing over the data.  When we fill&n; *&t;the ring buffer we put the client to sleep until there is&n; *&t;room again.  Easy.&n; *&n; *&t;However, this starts to stink when we use stereo.  The APUs&n; *&t;supposedly can decode LRLR packed stereo data, but it&n; *&t;doesn&squot;t work.  So we&squot;re forced to use dual mono APUs walking over&n; *&t;mono encoded data.  This requires us to split the input from&n; *&t;the client and complicates the buffer maths tremendously.  Ick.&n; *&n; *&t;Once input is actually written, it will be worth pointing out&n; *&t;that only 44/16 input actually works.&n; *&n; * TODO&n; *&t;Leaks memory?&n; *&t;recording is horribly broken&n; *&t;apus or dmas get out sync&n; *&t;bob can be started twice&n; *&t;anyone have a pt101 codec?&n; *&t;ess&squot;s ac97 codec (es1921) doesn&squot;t work&n; *&t;generally test across codecs..&n; *&t;mmap(), but beware stereo encoding nastiness.&n; */
+multiline_comment|/*****************************************************************************&n; *&n; *      ESS Maestro/Maestro-2/Maestro-2E driver for Linux 2.2.x&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;(c) Copyright 1999&t; Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *&t;Based heavily on SonicVibes.c:&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;Heavily modified by Zach Brown &lt;zab@redhat.com&gt; based on lunch&n; *&t;with ESS engineers.  Many thanks to Howard Kim for providing &n; *&t;contacts and hardware.  Honorable mention goes to Eric &n; *&t;Brombaugh for the BOB routines and nice hacking in general.&n; *&n; *  Supported devices:&n; *  /dev/dsp0-7    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *&n; *  Hardware Description&n; *&n; *&t;A working Maestro setup contains the Maestro chip wired to a &n; *&t;codec or 2.  In the Maestro we have the APUs, the ASP, and the&n; *&t;Wavecache.  The APUs can be though of as virtual audio routing&n; *&t;channels.  They can take data from a number of sources and perform&n; *&t;basic encodings of the data.  The wavecache is a storehouse for&n; *&t;PCM data.  Typically it deals with PCI and interracts with the&n; *&t;APUs.  The ASP is a wacky DSP like device that ESS is loathe&n; *&t;to release docs on.  Thankfully it isn&squot;t required on the Maestro&n; *&t;until you start doing insane things like FM emulation and surround&n; *&t;encoding.  The codecs are almost always AC-97 compliant codecs, &n; *&t;but it appears that early Maestros may have had PT101 (an ESS&n; *&t;part?) wired to them.  The only real difference in the Maestro&n; *&t;families is external goop like docking capability, memory for&n; *&t;the ASP, and trivial initialization differences.&n; *&n; *  Driver Operation&n; *&n; *&t;We only drive the APU/Wavecache as typical DACs and drive the&n; *&t;mixers in the codecs.  There are 64 APUs.  We assign 4 to each&n; *&t;/dev/dsp? device.  2 channels for both in and out.&n; *&n; *&t;For output we maintain a ring buffer of data that we are dmaing&n; *&t;to the card.  In mono operation this is nice and easy.  When&n; *&t;we receive data we tack it onto the ring buffer and make sure&n; *&t;the APU assigned to it is playing over the data.  When we fill&n; *&t;the ring buffer we put the client to sleep until there is&n; *&t;room again.  Easy.&n; *&n; *&t;However, this starts to stink when we use stereo.  The APUs&n; *&t;supposedly can decode LRLR packed stereo data, but it&n; *&t;doesn&squot;t work.  So we&squot;re forced to use dual mono APUs walking over&n; *&t;mono encoded data.  This requires us to split the input from&n; *&t;the client and complicates the buffer maths tremendously.  Ick.&n; *&n; *&t;Once input is actually written, it will be worth pointing out&n; *&t;that only 44/16 input actually works.&n; *&n; * History&n; *  v0.04 - Sep 01 1999 - Zach Brown &lt;zab@redhat.com&gt;&n; *&t;copied memory leak fix from sonicvibes driver&n; *&t;different ac97 reset, play with 2.0 ac97, simplify ring bus setup&n; *&t;bob freq code, region sanity, jitter sync fix; all from eric &n; *&n; * TODO&n; *&t;recording is horribly broken&n; *&t;codec timeouts (we&squot;re way under the example source&squot;s 20ms(!?))&n; *&t;some people get indir reg timeouts?&n; *&t;mixer interface broken?&n; *&t;anyone have a pt101 codec?&n; *&t;ess&squot;s ac97 codec (es1921) doesn&squot;t work&n; *&t;mmap(), but beware stereo encoding nastiness.&n; *&t;actually post pci writes&n; *&t;check for bogon bios set irq/io windows&n; *&t;compare our pci setup to the dos one, explains register timeouts?&n; *&t;look really hard at the apu/bob/dma buffer code paths.&n; *&n; *&t;the entire issue of smp safety needs to be looked at.  cli() needs&n; *&t;to be replaced with spinlock_irqsave, being very careful of call&n; *&t;paths avoiding deadlock.  if lock hold times are quick just&n; *&t;use one big ass per device spinlock.. &n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
@@ -44,7 +44,7 @@ mdefine_line|#define M_printk(x)
 macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|DRIVER_VERSION
-mdefine_line|#define DRIVER_VERSION &quot;0.03&quot;
+mdefine_line|#define DRIVER_VERSION &quot;0.04&quot;
 macro_line|#ifndef PCI_VENDOR_ESS
 DECL|macro|PCI_VENDOR_ESS
 mdefine_line|#define PCI_VENDOR_ESS&t;&t;&t;0x125D
@@ -637,13 +637,12 @@ op_plus
 id|ESS_AC97_DATA
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* should actually be delaying 10 milliseconds? */
 id|outb
 c_func
 (paren
@@ -654,7 +653,7 @@ op_plus
 id|ESS_AC97_INDEX
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|1
@@ -677,7 +676,7 @@ id|cmd
 r_int
 id|sanity
 op_assign
-l_int|100000
+l_int|10000
 suffix:semicolon
 id|u16
 id|data
@@ -734,7 +733,7 @@ op_plus
 id|ESS_AC97_INDEX
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|1
@@ -786,7 +785,7 @@ op_plus
 id|ESS_AC97_DATA
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
 l_int|1
@@ -819,7 +818,7 @@ id|vend1
 comma
 id|vend2
 suffix:semicolon
-macro_line|#if 0 /* an experiment for another time */
+macro_line|#if 0  /* this needs to be thought about harder */
 multiline_comment|/* aim at the second codec */
 id|outw
 c_func
@@ -892,15 +891,48 @@ l_int|0xffff
 id|printk
 c_func
 (paren
-l_string|&quot;maestro: It seems you have a second codec: %x %x, please report this.&bslash;n&quot;
+l_string|&quot;maestro: second codec 0x%4x%4x found, enabling both.  please report this.&bslash;n&quot;
 comma
 id|vend1
 comma
 id|vend2
 )paren
 suffix:semicolon
+multiline_comment|/* enable them both */
+id|outw
+c_func
+(paren
+l_int|0x00
+comma
+id|iobase
+op_plus
+l_int|0x38
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0xFFFC
+comma
+id|iobase
+op_plus
+l_int|0x3a
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x000C
+comma
+id|iobase
+op_plus
+l_int|0x3c
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/* back to the first */
+r_else
+(brace
+multiline_comment|/* back to the first only */
 id|outw
 c_func
 (paren
@@ -931,7 +963,25 @@ op_plus
 l_int|0x3c
 )paren
 suffix:semicolon
+)brace
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 macro_line|#endif
+multiline_comment|/* perform codec reset */
+id|maestro_ac97_set
+c_func
+(paren
+id|iobase
+comma
+l_int|0x00
+comma
+l_int|0x0000
+)paren
+suffix:semicolon
 multiline_comment|/* should make sure we&squot;re ac97 2.1? */
 id|vend1
 op_assign
@@ -990,6 +1040,8 @@ comma
 id|caps
 )paren
 suffix:semicolon
+multiline_comment|/* XXX endianness, dork head. */
+multiline_comment|/* magic vendor specifc init code, _no_ idea what these do */
 r_switch
 c_cond
 (paren
@@ -1005,8 +1057,42 @@ op_or
 id|vend2
 )paren
 (brace
-multiline_comment|/* magic vendor specifc init code, _no_ idea what these do */
-macro_line|#if 0
+r_case
+l_int|0x545200ff
+suffix:colon
+multiline_comment|/* TriTech */
+id|maestro_ac97_set
+c_func
+(paren
+id|iobase
+comma
+l_int|0x2a
+comma
+l_int|0x0001
+)paren
+suffix:semicolon
+id|maestro_ac97_set
+c_func
+(paren
+id|iobase
+comma
+l_int|0x2c
+comma
+l_int|0x0000
+)paren
+suffix:semicolon
+id|maestro_ac97_set
+c_func
+(paren
+id|iobase
+comma
+l_int|0x2c
+comma
+l_int|0xffff
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|0x83847609
 suffix:colon
@@ -1062,7 +1148,6 @@ l_int|20
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 r_break
@@ -1246,6 +1331,64 @@ comma
 l_int|0x000F
 )paren
 suffix:semicolon
+multiline_comment|/* lets see if they actually default to the spec :) */
+r_if
+c_cond
+(paren
+id|maestro_ac97_get
+c_func
+(paren
+id|iobase
+comma
+l_int|0x36
+)paren
+op_eq
+l_int|0x8080
+)paren
+(brace
+r_int
+id|reg
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;maestro: your ac97 might be 2.0, see if this makes sense:&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|reg
+op_assign
+l_int|0x28
+suffix:semicolon
+id|reg
+op_le
+l_int|0x58
+suffix:semicolon
+id|reg
+op_add_assign
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;   0x%2x: %4x&bslash;n&quot;
+comma
+id|reg
+comma
+id|maestro_ac97_get
+c_func
+(paren
+id|iobase
+comma
+id|reg
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1422,6 +1565,78 @@ r_int
 id|ioaddr
 )paren
 (brace
+multiline_comment|/*&t;outw(0x2000,  ioaddr+0x36);&n;&t;inb(ioaddr);&n;&t;mdelay(1);&n;&t;outw(0x0000,  ioaddr+0x36);&n;&t;inb(ioaddr);&n;&t;mdelay(1);*/
+multiline_comment|/* well this seems to work a little&n;&t;&t;better on the 2e */
+multiline_comment|/* this screws around with the gpio&n;&t;&t;mask/input/direction.. */
+id|outw
+c_func
+(paren
+l_int|0x0000
+comma
+id|ioaddr
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0xFFFE
+comma
+id|ioaddr
+op_plus
+l_int|0x64
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x1
+comma
+id|ioaddr
+op_plus
+l_int|0x68
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x0
+comma
+id|ioaddr
+op_plus
+l_int|0x60
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x1
+comma
+id|ioaddr
+op_plus
+l_int|0x60
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+multiline_comment|/* other source says 500ms.. INSANE */
 id|outw
 c_func
 (paren
@@ -1441,7 +1656,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0000
+l_int|0x3000
 comma
 id|ioaddr
 op_plus
@@ -1452,6 +1667,108 @@ id|udelay
 c_func
 (paren
 l_int|200
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x0001
+comma
+id|ioaddr
+op_plus
+l_int|0x68
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0xFFFF
+comma
+id|ioaddr
+op_plus
+l_int|0x64
+)paren
+suffix:semicolon
+multiline_comment|/* strange strange reset tickling the ring bus */
+id|outw
+c_func
+(paren
+l_int|0x0
+comma
+id|ioaddr
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x200
+comma
+id|ioaddr
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+multiline_comment|/* first codec only */
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x0
+comma
+id|ioaddr
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x2000
+comma
+id|ioaddr
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x3000
+comma
+id|ioaddr
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
 )paren
 suffix:semicolon
 )brace
@@ -2125,7 +2442,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|1
 )paren
 suffix:semicolon
 id|outw
@@ -2141,7 +2458,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2851,6 +3168,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Load the frequency, turn on 6dB, turn off the effects */
 multiline_comment|/*&t;&t;apu_set_register(ess, channel, 2, (rate&amp;0xFF)&lt;&lt;8|0x10);&n;&t;&t;apu_set_register(ess, channel, 3, rate&gt;&gt;8);*/
+multiline_comment|/* XXX think about endianess when writing these registers */
 multiline_comment|/* Load the buffer into the wave engine */
 id|apu_set_register
 c_func
@@ -2874,7 +3192,6 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-multiline_comment|/* XXX reg is little endian.. */
 id|apu_set_register
 c_func
 (paren
@@ -3583,7 +3900,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
-multiline_comment|/* nice HW BOB implementation.  cheers, eric. */
+multiline_comment|/* nice HW BOB implementation. */
 DECL|function|stop_bob
 r_static
 r_void
@@ -3637,6 +3954,8 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* eventually we could be clever and limit bob ints&n;&t;to the frequency at which our smallest duration&n;&t;chunks may expire */
+DECL|macro|ESS_SYSCLK
+mdefine_line|#define ESS_SYSCLK&t;50000000
 DECL|function|start_bob
 r_static
 r_void
@@ -3649,13 +3968,157 @@ op_star
 id|s
 )paren
 (brace
+r_int
+id|prescale
+suffix:semicolon
+r_int
+id|divide
+suffix:semicolon
+r_int
+id|freq
+op_assign
+l_int|200
+suffix:semicolon
+multiline_comment|/* requested frequency - calculate what we want here. */
 id|stop_bob
 c_func
 (paren
 id|s
 )paren
 suffix:semicolon
-singleline_comment|// make sure bob&squot;s not already running
+multiline_comment|/* make sure bob&squot;s not already running */
+multiline_comment|/* compute ideal interrupt frequency for buffer size &amp; play rate */
+multiline_comment|/* first, find best prescaler value to match freq */
+r_for
+c_loop
+(paren
+id|prescale
+op_assign
+l_int|5
+suffix:semicolon
+id|prescale
+OL
+l_int|12
+suffix:semicolon
+id|prescale
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|freq
+OG
+(paren
+id|ESS_SYSCLK
+op_rshift
+(paren
+id|prescale
+op_plus
+l_int|9
+)paren
+)paren
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* next, back off prescaler whilst getting divider into optimum range */
+id|divide
+op_assign
+l_int|1
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|prescale
+OG
+l_int|5
+)paren
+op_logical_and
+(paren
+id|divide
+OL
+l_int|32
+)paren
+)paren
+(brace
+id|prescale
+op_decrement
+suffix:semicolon
+id|divide
+op_lshift_assign
+l_int|1
+suffix:semicolon
+)brace
+id|divide
+op_rshift_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* now fine-tune the divider for best match */
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|divide
+OL
+l_int|31
+suffix:semicolon
+id|divide
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|freq
+op_ge
+(paren
+(paren
+id|ESS_SYSCLK
+op_rshift
+(paren
+id|prescale
+op_plus
+l_int|9
+)paren
+)paren
+op_div
+(paren
+id|divide
+op_plus
+l_int|1
+)paren
+)paren
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* divide = 0 is illegal, but don&squot;t let prescale = 4! */
+r_if
+c_cond
+(paren
+id|divide
+op_eq
+l_int|0
+)paren
+(brace
+id|divide
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prescale
+OG
+l_int|5
+)paren
+(brace
+id|prescale
+op_decrement
+suffix:semicolon
+)brace
+)brace
 id|maestro_write
 c_func
 (paren
@@ -3663,24 +4126,18 @@ id|s
 comma
 l_int|6
 comma
-l_int|0x8000
+l_int|0x9000
 op_or
 (paren
-l_int|1
-op_lshift
-l_int|12
-)paren
-op_or
-(paren
-l_int|5
+id|prescale
 op_lshift
 l_int|5
 )paren
 op_or
-l_int|11
+id|divide
 )paren
 suffix:semicolon
-singleline_comment|// (50MHz/2^14)/12 = 254 Hz = 40 mS
+multiline_comment|/* set reg */
 multiline_comment|/* Now set IDR 11/17 */
 id|maestro_write
 c_func
@@ -3719,8 +4176,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif 
-singleline_comment|// ESS_HW_TIMER
+macro_line|#endif /* ESS_HW_TIMER */
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|adc_active
 r_static
@@ -3810,8 +4266,7 @@ op_and_assign
 op_complement
 l_int|1
 suffix:semicolon
-singleline_comment|//&t;if(!adc_active)
-singleline_comment|//&t;&t;stop_bob(s);
+multiline_comment|/*&t;if(!adc_active)&n;&t;&t;stop_bob(s); */
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -3902,8 +4357,7 @@ op_and_assign
 op_complement
 l_int|2
 suffix:semicolon
-singleline_comment|//&t;if(!adc_active)
-singleline_comment|//&t;&t;stop_bob(s);
+multiline_comment|/*&t;if(!adc_active)&n;&t;&t;stop_bob(s); */
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4025,8 +4479,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-singleline_comment|//&t;if(!adc_active)
-singleline_comment|//&t;&t;start_bob(s);
+multiline_comment|/*&t;if(!adc_active)&n;&t;&t;start_bob(s);*/
 id|adc_active
 op_or_assign
 l_int|2
@@ -4152,8 +4605,7 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-singleline_comment|//&t;if(!adc_active)
-singleline_comment|//&t;&t;start_bob(s);
+multiline_comment|/*&t;if(!adc_active)&n;&t;&t;start_bob(s); */
 id|adc_active
 op_or_assign
 l_int|1
@@ -4420,13 +4872,14 @@ suffix:semicolon
 id|order
 op_ge
 id|DMABUF_MINORDER
-op_logical_and
-op_logical_neg
-id|db-&gt;rawbuf
 suffix:semicolon
 id|order
 op_decrement
 )paren
+r_if
+c_cond
+(paren
+(paren
 id|db-&gt;rawbuf
 op_assign
 (paren
@@ -4442,7 +4895,12 @@ id|GFP_DMA
 comma
 id|order
 )paren
+)paren
+)paren
+(brace
+r_break
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4789,10 +5247,10 @@ multiline_comment|/* FILL */
 )brace
 r_else
 (brace
-singleline_comment|//set_dmaa(s, virt_to_bus(db-&gt;rawbuf), db-&gt;numfrag &lt;&lt; db-&gt;fragshift);
+multiline_comment|/* set_dmaa(s, virt_to_bus(db-&gt;rawbuf), db-&gt;numfrag &lt;&lt; db-&gt;fragshift); */
 multiline_comment|/* program enhanced mode registers */
 multiline_comment|/* FILL */
-singleline_comment|//set_dac_rate(s, s-&gt;ratedac);&t;// redundant
+multiline_comment|/*set_dac_rate(s, s-&gt;ratedac);&t; redundant */
 id|ess_play_setup
 c_func
 (paren
@@ -4827,6 +5285,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* XXX haha, way broken with our split stereo setup.  giggle. */
 DECL|function|clear_advance
 r_extern
 id|__inline__
@@ -4952,6 +5411,7 @@ suffix:semicolon
 r_int
 id|diff
 suffix:semicolon
+multiline_comment|/* ADC is way broken.  compare to DAC.. */
 multiline_comment|/* update ADC pointer */
 r_if
 c_cond
@@ -4959,12 +5419,6 @@ c_cond
 id|s-&gt;dma_adc.ready
 )paren
 (brace
-id|M_printk
-c_func
-(paren
-l_string|&quot;adc ready.. &bslash;n&quot;
-)paren
-suffix:semicolon
 id|hwptr
 op_assign
 (paren
@@ -5054,8 +5508,7 @@ op_and_assign
 op_complement
 id|ESS_ENABLE_RE
 suffix:semicolon
-multiline_comment|/* FILL ME */
-singleline_comment|//&t;&t;&t;&t;wrindir(s, SV_CIENABLE, s-&gt;enable);
+multiline_comment|/* FILL ME &n;&t;&t;&t;&t;wrindir(s, SV_CIENABLE, s-&gt;enable); */
 id|stop_adc
 c_func
 (paren
@@ -5075,6 +5528,7 @@ c_cond
 id|s-&gt;dma_dac.ready
 )paren
 (brace
+multiline_comment|/* this is so gross.  */
 id|hwptr
 op_assign
 (paren
@@ -5143,6 +5597,7 @@ id|s-&gt;dma_dac.count
 op_sub_assign
 id|diff
 suffix:semicolon
+multiline_comment|/*&t;&t;&t;M_printk(&quot;maestro: ess_update_ptr: diff: %d, count: %d&bslash;n&quot;, diff, s-&gt;dma_dac.count); */
 r_if
 c_cond
 (paren
@@ -5156,13 +5611,26 @@ op_and_assign
 op_complement
 id|ESS_ENABLE_PE
 suffix:semicolon
-multiline_comment|/* FILL ME */
-singleline_comment|//&t;&t;&t;&t;wrindir(s, SV_CIENABLE, s-&gt;enable);
+multiline_comment|/* FILL ME &n;&t;&t;&t;&t;wrindir(s, SV_CIENABLE, s-&gt;enable); */
+multiline_comment|/* XXX how on earth can calling this with the lock held work.. */
 id|stop_dac
 c_func
 (paren
 id|s
 )paren
+suffix:semicolon
+multiline_comment|/* brute force everyone back in sync, sigh */
+id|s-&gt;dma_dac.count
+op_assign
+l_int|0
+suffix:semicolon
+id|s-&gt;dma_dac.swptr
+op_assign
+l_int|0
+suffix:semicolon
+id|s-&gt;dma_dac.hwptr
+op_assign
+l_int|0
 suffix:semicolon
 id|s-&gt;dma_dac.error
 op_increment
@@ -7681,8 +8149,7 @@ id|s-&gt;dma_adc.fragshift
 suffix:semicolon
 multiline_comment|/* program enhanced mode registers */
 multiline_comment|/* FILL ME */
-singleline_comment|//&t;&t;&t;&t;wrindir(s, SV_CIDMACBASECOUNT1, (s-&gt;dma_adc.fragsamples-1) &gt;&gt; 8);
-singleline_comment|//&t;&t;&t;&t;wrindir(s, SV_CIDMACBASECOUNT0, s-&gt;dma_adc.fragsamples-1);
+multiline_comment|/*&t;&t;&t;&t;wrindir(s, SV_CIDMACBASECOUNT1, (s-&gt;dma_adc.fragsamples-1) &gt;&gt; 8);&n;&t;&t;&t;&t;wrindir(s, SV_CIDMACBASECOUNT0, s-&gt;dma_adc.fragsamples-1); */
 id|s-&gt;dma_adc.count
 op_assign
 id|s-&gt;dma_adc.hwptr
@@ -7834,7 +8301,7 @@ r_int
 id|mode
 )paren
 (brace
-multiline_comment|/* oh, bother.&t;stereo decoding APU&squot;s don&squot;t work in 16bit so we&n;&t;use dual linear decoders.  which means we have to hack up stereo&n;&t;buffer&squot;s we&squot;re given.  yuck. &n;&n;&t;and we have to be able to work a byte at a time..*/
+multiline_comment|/* oh, bother.&t;stereo decoding APU&squot;s don&squot;t work in 16bit so we&n;&t;use dual linear decoders.  which means we have to hack up stereo&n;&t;buffer&squot;s we&squot;re given.  yuck.  */
 r_int
 r_char
 op_star
@@ -8083,6 +8550,7 @@ suffix:semicolon
 r_int
 id|cnt
 suffix:semicolon
+multiline_comment|/*&t;printk(&quot;maestro: ess_write: count %d&bslash;n&quot;, count);*/
 id|VALIDATE_STATE
 c_func
 (paren
@@ -8149,7 +8617,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-multiline_comment|/* I wish we could be more clever than this */
+multiline_comment|/* XXX be more clever than this.. */
 r_if
 c_cond
 (paren
@@ -8422,8 +8890,7 @@ id|s-&gt;dma_dac.fragshift
 )paren
 suffix:semicolon
 multiline_comment|/* program enhanced mode registers */
-singleline_comment|//&t;&t;&t;&t;wrindir(s, SV_CIDMAABASECOUNT1, (s-&gt;dma_dac.fragsamples-1) &gt;&gt; 8);
-singleline_comment|//&t;&t;&t;&t;wrindir(s, SV_CIDMAABASECOUNT0, s-&gt;dma_dac.fragsamples-1);
+multiline_comment|/*&t;&t;&t;&t;wrindir(s, SV_CIDMAABASECOUNT1, (s-&gt;dma_dac.fragsamples-1) &gt;&gt; 8);&n;&t;&t;&t;&t;wrindir(s, SV_CIDMAABASECOUNT0, s-&gt;dma_dac.fragsamples-1); */
 multiline_comment|/* FILL ME */
 id|s-&gt;dma_dac.count
 op_assign
@@ -9103,6 +9570,7 @@ id|fmtm
 comma
 id|fmtd
 suffix:semicolon
+multiline_comment|/*&t;printk(&quot;maestro: ess_ioctl: cmd %d&bslash;n&quot;, cmd);*/
 id|VALIDATE_STATE
 c_func
 (paren
@@ -10916,7 +11384,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-singleline_comment|//&t;return mixer_ioctl(s, cmd, arg);
 r_return
 op_minus
 id|EINVAL
@@ -11511,9 +11978,7 @@ id|index
 id|u16
 id|w
 suffix:semicolon
-id|u32
-id|n
-suffix:semicolon
+multiline_comment|/*&t;u32 n;*/
 r_int
 id|iobase
 suffix:semicolon
@@ -11547,6 +12012,31 @@ l_int|0
 dot
 id|start
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|iobase
+comma
+l_int|256
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;maestro: can&squot;t allocate 256 bytes I/O at 0x%4.4x&bslash;n&quot;
+comma
+id|iobase
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|card
 op_assign
 id|kmalloc
@@ -12205,10 +12695,117 @@ comma
 id|w
 )paren
 suffix:semicolon
+multiline_comment|/* stake our claim on the iospace */
+id|request_region
+c_func
+(paren
+id|iobase
+comma
+l_int|256
+comma
+id|card_names
+(braket
+id|card_type
+)braket
+)paren
+suffix:semicolon
 id|sound_reset
 c_func
 (paren
 id|iobase
+)paren
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* reset the ring bus */
+id|outw
+c_func
+(paren
+id|inw
+c_func
+(paren
+id|iobase
+op_plus
+l_int|0x36
+)paren
+op_amp
+l_int|0xdfff
+comma
+id|iobase
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+multiline_comment|/* disable */
+id|outw
+c_func
+(paren
+l_int|0xC090
+comma
+id|iobase
+op_plus
+l_int|0x34
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|inw
+c_func
+(paren
+id|iobase
+op_plus
+l_int|0x36
+)paren
+op_or
+l_int|0x2000
+comma
+id|iobase
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+multiline_comment|/* enable */
+macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Ring Bus Setup&n;&t; */
+multiline_comment|/* setup usual 0x34 stuff.. 0x36 may be chip specific */
+id|outw
+c_func
+(paren
+l_int|0xC090
+comma
+id|iobase
+op_plus
+l_int|0x34
+)paren
+suffix:semicolon
+multiline_comment|/* direct sound, stereo */
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x3000
+comma
+id|iobase
+op_plus
+l_int|0x36
+)paren
+suffix:semicolon
+multiline_comment|/* direct sound, stereo */
+id|udelay
+c_func
+(paren
+l_int|20
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Reset the CODEC&n;&t; */
@@ -12218,6 +12815,7 @@ c_func
 id|iobase
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/*&n;&t; *&t;Ring Bus Setup&n;&t; */
 id|n
 op_assign
@@ -12241,6 +12839,16 @@ op_lshift
 l_int|12
 suffix:semicolon
 multiline_comment|/* Direct Sound, Stereo */
+id|outl
+c_func
+(paren
+id|n
+comma
+id|iobase
+op_plus
+l_int|0x34
+)paren
+suffix:semicolon
 id|n
 op_assign
 id|inl
@@ -12643,6 +13251,9 @@ op_plus
 l_int|0x18
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#if 0
+multiline_comment|/* asp crap */
 id|outb
 c_func
 (paren
@@ -12673,6 +13284,7 @@ op_plus
 l_int|0xA6
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -13256,11 +13868,73 @@ comma
 id|card-&gt;irq
 )paren
 suffix:semicolon
+id|unregister_sound_mixer
+c_func
+(paren
+id|card-&gt;dev_mixer
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_struct
+id|ess_state
+op_star
+id|s
+op_assign
+op_amp
+id|card-&gt;channels
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s-&gt;dev_audio
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|unregister_sound_dsp
+c_func
+(paren
+id|s-&gt;dev_audio
+)paren
+suffix:semicolon
+)brace
+)brace
+id|release_region
+c_func
+(paren
+id|card-&gt;iobase
+comma
+l_int|256
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-singleline_comment|//&t;ess_play_test(ess);
 id|printk
 c_func
 (paren
@@ -13544,7 +14218,6 @@ id|devs
 op_assign
 id|devs-&gt;next
 suffix:semicolon
-singleline_comment|//&t;&t;ess_play_test(&amp;s-&gt;channels[0]);
 macro_line|#ifndef ESS_HW_TIMER
 id|kill_bob
 c_func
@@ -13568,12 +14241,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-singleline_comment|//&t;&t;outb(~0, s-&gt;ioenh + SV_CODEC_INTMASK);  /* disable ints */
-singleline_comment|//&t;&t;synchronize_irq();
-singleline_comment|//&t;&t;inb(s-&gt;ioenh + SV_CODEC_STATUS); /* ack interrupts */
-singleline_comment|//&t;&t;wrindir(s, SV_CIENABLE, 0);     /* disable DMAA and DMAC */
-singleline_comment|//outb(0, s-&gt;iodmaa + SV_DMA_RESET);
-singleline_comment|//outb(0, s-&gt;iodmac + SV_DMA_RESET);
 id|free_irq
 c_func
 (paren
@@ -13631,6 +14298,14 @@ id|ess-&gt;dev_audio
 suffix:semicolon
 )brace
 )brace
+id|release_region
+c_func
+(paren
+id|s-&gt;iobase
+comma
+l_int|256
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren

@@ -78,6 +78,8 @@ r_extern
 r_struct
 id|desc_struct
 id|default_ldt
+(braket
+)braket
 suffix:semicolon
 r_extern
 r_void
@@ -150,8 +152,11 @@ id|cpu
 comma
 op_amp
 id|default_ldt
+(braket
+l_int|0
+)braket
 comma
-l_int|1
+l_int|5
 )paren
 suffix:semicolon
 id|__load_LDT
@@ -204,10 +209,13 @@ id|segments
 op_assign
 op_amp
 id|default_ldt
+(braket
+l_int|0
+)braket
 suffix:semicolon
 id|count
 op_assign
-l_int|1
+l_int|5
 suffix:semicolon
 )brace
 id|set_ldt_desc

@@ -1714,8 +1714,8 @@ suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 DECL|function|mm_ptov
-r_void
-op_star
+r_int
+r_int
 id|mm_ptov
 (paren
 r_int
@@ -1776,15 +1776,9 @@ id|voff
 suffix:semicolon
 macro_line|#endif
 r_return
-(paren
-r_void
-op_star
-)paren
-(paren
 id|poff
 op_plus
 id|voff
-)paren
 suffix:semicolon
 )brace
 id|voff
@@ -1851,10 +1845,6 @@ op_star
 l_int|1024
 )paren
 r_return
-(paren
-r_void
-op_star
-)paren
 id|ZTWO_VADDR
 c_func
 (paren
@@ -1863,10 +1853,6 @@ id|paddr
 suffix:semicolon
 macro_line|#endif
 r_return
-(paren
-r_void
-op_star
-)paren
 op_minus
 l_int|1
 suffix:semicolon
@@ -1890,21 +1876,6 @@ mdefine_line|#define&t;pushcli040(paddr)&t;&t;&t;&bslash;&n;&t;do { push040(padd
 multiline_comment|/*&n; * 040: Hit every page containing an address in the range paddr..paddr+len-1.&n; * (Low order bits of the ea of a CINVP/CPUSHP are &quot;don&squot;t care&quot;s).&n; * Hit every page until there is a page or less to go. Hit the next page,&n; * and the one after that if the range hits it.&n; */
 multiline_comment|/* ++roman: A little bit more care is required here: The CINVP instruction&n; * invalidates cache entries WITHOUT WRITING DIRTY DATA BACK! So the beginning&n; * and the end of the region must be treated differently if they are not&n; * exactly at the beginning or end of a page boundary. Else, maybe too much&n; * data becomes invalidated and thus lost forever. CPUSHP does what we need:&n; * it invalidates the page after pushing dirty data to memory. (Thanks to Jes&n; * for discovering the problem!)&n; */
 multiline_comment|/* ... but on the &squot;060, CPUSH doesn&squot;t invalidate (for us, since we have set&n; * the DPI bit in the CACR; would it cause problems with temporarily changing&n; * this?). So we have to push first and then additionally to invalidate.&n; */
-macro_line|#ifdef CONFIG_M68K_L2_CACHE
-multiline_comment|/*&n; *&t;Jes was worried about performance (urhh ???) so its optional&n; */
-DECL|variable|mach_l2_flush
-r_void
-(paren
-op_star
-id|mach_l2_flush
-)paren
-(paren
-r_int
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * cache_clear() semantics: Clear any cache entries for the area in question,&n; * without writing back dirty entries first. This is useful if the data will&n; * be overwritten anyway, e.g. by DMA to memory. The range is defined by a&n; * _physical_ address.&n; */
 DECL|function|cache_clear
 r_void

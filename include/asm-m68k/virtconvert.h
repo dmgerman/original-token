@@ -9,6 +9,7 @@ macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; */
+macro_line|#ifndef CONFIG_SUN3
 r_extern
 r_int
 r_int
@@ -58,6 +59,54 @@ r_const
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|function|mm_vtop
+r_extern
+r_inline
+r_int
+r_int
+id|mm_vtop
+c_func
+(paren
+r_int
+r_int
+id|vaddr
+)paren
+(brace
+r_return
+id|__pa
+c_func
+(paren
+id|vaddr
+)paren
+suffix:semicolon
+)brace
+DECL|function|mm_ptov
+r_extern
+r_inline
+r_int
+r_int
+id|mm_ptov
+c_func
+(paren
+r_int
+r_int
+id|paddr
+)paren
+(brace
+r_return
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|paddr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif 
 macro_line|#ifdef CONFIG_SINGLE_MEMORY_CHUNK
 DECL|function|virt_to_phys
 r_extern

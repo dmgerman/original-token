@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.95 1999/08/28 04:01:46&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.96 1999/09/02 18:35:34&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -41,7 +41,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ds.c 1.95 1999/08/28 04:01:46 (David Hinds)&quot;
+l_string|&quot;ds.c 1.96 1999/09/02 18:35:34 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -3320,6 +3320,69 @@ id|s-&gt;handle
 comma
 op_amp
 id|buf.region
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|DS_GET_FIRST_WINDOW
+suffix:colon
+id|buf.win_info.handle
+op_assign
+(paren
+id|window_handle_t
+)paren
+id|s-&gt;handle
+suffix:semicolon
+id|ret
+op_assign
+id|CardServices
+c_func
+(paren
+id|GetFirstWindow
+comma
+op_amp
+id|buf.win_info.handle
+comma
+op_amp
+id|buf.win_info.window
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|DS_GET_NEXT_WINDOW
+suffix:colon
+id|ret
+op_assign
+id|CardServices
+c_func
+(paren
+id|GetNextWindow
+comma
+op_amp
+id|buf.win_info.handle
+comma
+op_amp
+id|buf.win_info.window
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|DS_GET_MEM_PAGE
+suffix:colon
+id|ret
+op_assign
+id|CardServices
+c_func
+(paren
+id|GetMemPage
+comma
+id|buf.win_info.handle
+comma
+op_amp
+id|buf.win_info.map
 )paren
 suffix:semicolon
 r_break

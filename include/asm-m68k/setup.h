@@ -77,7 +77,12 @@ DECL|macro|MACH_TYPE
 macro_line|#  define MACH_TYPE (MACH_MAC)
 macro_line|#endif
 macro_line|#if defined(CONFIG_SUN3)
-macro_line|#  error Currently no Sun-3 support!
+DECL|macro|MACH_IS_SUN3
+mdefine_line|#define MACH_IS_SUN3 (1)
+DECL|macro|MACH_SUN3_ONLY
+mdefine_line|#define MACH_SUN3_ONLY (1)
+DECL|macro|MACH_TYPE
+mdefine_line|#define MACH_TYPE (MACH_SUN3)
 macro_line|#else
 DECL|macro|MACH_IS_SUN3
 mdefine_line|#define MACH_IS_SUN3 (0)
@@ -273,50 +278,87 @@ macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#if !defined(CONFIG_M68020)
 DECL|macro|CPU_IS_020
 macro_line|#  define CPU_IS_020 (0)
+DECL|macro|MMU_IS_851
+macro_line|#  define MMU_IS_851 (0)
+DECL|macro|MMU_IS_SUN3
+macro_line|#  define MMU_IS_SUN3 (0)
 macro_line|#elif defined(CONFIG_M68030) || defined(CONFIG_M68040) || defined(CONFIG_M68060)
 DECL|macro|CPU_IS_020
 macro_line|#  define CPU_IS_020 (m68k_cputype &amp; CPU_68020)
+DECL|macro|MMU_IS_851
+macro_line|#  define MMU_IS_851 (m68k_cputype &amp; MMU_68851)
+DECL|macro|MMU_IS_SUN3
+macro_line|#  define MMU_IS_SUN3 (0)&t;/* Sun3 not supported with other CPU enabled */
 macro_line|#else
 DECL|macro|CPU_M68020_ONLY
 macro_line|#  define CPU_M68020_ONLY
 DECL|macro|CPU_IS_020
 macro_line|#  define CPU_IS_020 (1)
+macro_line|#ifdef MACH_SUN3_ONLY
+DECL|macro|MMU_IS_SUN3
+macro_line|#  define MMU_IS_SUN3 (1)
+DECL|macro|MMU_IS_851
+macro_line|#  define MMU_IS_851 (0)
+macro_line|#else
+DECL|macro|MMU_IS_SUN3
+macro_line|#  define MMU_IS_SUN3 (0)
+DECL|macro|MMU_IS_851
+macro_line|#  define MMU_IS_851 (1)
+macro_line|#endif
 macro_line|#endif
 macro_line|#if !defined(CONFIG_M68030)
 DECL|macro|CPU_IS_030
 macro_line|#  define CPU_IS_030 (0)
+DECL|macro|MMU_IS_030
+macro_line|#  define MMU_IS_030 (0)
 macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68040) || defined(CONFIG_M68060)
 DECL|macro|CPU_IS_030
 macro_line|#  define CPU_IS_030 (m68k_cputype &amp; CPU_68030)
+DECL|macro|MMU_IS_030
+macro_line|#  define MMU_IS_030 (m68k_mmutype &amp; MMU_68030)
 macro_line|#else
 DECL|macro|CPU_M68030_ONLY
 macro_line|#  define CPU_M68030_ONLY
 DECL|macro|CPU_IS_030
 macro_line|#  define CPU_IS_030 (1)
+DECL|macro|MMU_IS_030
+macro_line|#  define MMU_IS_030 (1)
 macro_line|#endif
 macro_line|#if !defined(CONFIG_M68040)
 DECL|macro|CPU_IS_040
 macro_line|#  define CPU_IS_040 (0)
+DECL|macro|MMU_IS_040
+macro_line|#  define MMU_IS_040 (0)
 macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68030) || defined(CONFIG_M68060)
 DECL|macro|CPU_IS_040
 macro_line|#  define CPU_IS_040 (m68k_cputype &amp; CPU_68040)
+DECL|macro|MMU_IS_040
+macro_line|#  define MMU_IS_040 (m68k_mmutype &amp; MMU_68040)
 macro_line|#else
 DECL|macro|CPU_M68040_ONLY
 macro_line|#  define CPU_M68040_ONLY
 DECL|macro|CPU_IS_040
 macro_line|#  define CPU_IS_040 (1)
+DECL|macro|MMU_IS_040
+macro_line|#  define MMU_IS_040 (1)
 macro_line|#endif
 macro_line|#if !defined(CONFIG_M68060)
 DECL|macro|CPU_IS_060
 macro_line|#  define CPU_IS_060 (0)
+DECL|macro|MMU_IS_060
+macro_line|#  define MMU_IS_060 (0)
 macro_line|#elif defined(CONFIG_M68020) || defined(CONFIG_M68030) || defined(CONFIG_M68040)
 DECL|macro|CPU_IS_060
 macro_line|#  define CPU_IS_060 (m68k_cputype &amp; CPU_68060)
+DECL|macro|MMU_IS_060
+macro_line|#  define MMU_IS_060 (m68k_mmutype &amp; MMU_68060)
 macro_line|#else
 DECL|macro|CPU_M68060_ONLY
 macro_line|#  define CPU_M68060_ONLY
 DECL|macro|CPU_IS_060
 macro_line|#  define CPU_IS_060 (1)
+DECL|macro|MMU_IS_060
+macro_line|#  define MMU_IS_060 (1)
 macro_line|#endif
 macro_line|#if !defined(CONFIG_M68020) &amp;&amp; !defined(CONFIG_M68030)
 DECL|macro|CPU_IS_020_OR_030

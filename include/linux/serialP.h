@@ -428,6 +428,7 @@ macro_line|#else
 DECL|macro|ALPHA_KLUDGE_MCR
 mdefine_line|#define ALPHA_KLUDGE_MCR 0
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n; * Structures and definitions for PCI support&n; */
 DECL|struct|pci_board
 r_struct
@@ -517,6 +518,7 @@ suffix:semicolon
 macro_line|#ifndef PCI_ANY_ID
 DECL|macro|PCI_ANY_ID
 mdefine_line|#define PCI_ANY_ID (~0)
+macro_line|#endif
 macro_line|#endif
 DECL|macro|SPCI_FL_BASE_MASK
 mdefine_line|#define SPCI_FL_BASE_MASK&t;0x0007

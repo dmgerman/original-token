@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -348,6 +349,30 @@ id|mach_reset
 r_void
 )paren
 suffix:semicolon
+DECL|variable|mach_halt
+r_void
+(paren
+op_star
+id|mach_halt
+)paren
+(paren
+r_void
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|mach_power_off
+r_void
+(paren
+op_star
+id|mach_power_off
+)paren
+(paren
+r_void
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|variable|mach_max_dma_address
 r_int
 id|mach_max_dma_address
@@ -474,6 +499,20 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_M68K_L2_CACHE
+DECL|variable|mach_l2_flush
+r_void
+(paren
+op_star
+id|mach_l2_flush
+)paren
+(paren
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|base_trap_init
@@ -583,7 +622,13 @@ r_void
 id|config_sun3
 c_func
 (paren
-r_void
+r_int
+r_int
+op_star
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -640,6 +685,24 @@ id|config_sun3x
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mac_debugging_short
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mac_debugging_long
+(paren
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|macro|MASK_256K
@@ -995,11 +1058,15 @@ id|m68k_is040or060
 op_assign
 l_int|6
 suffix:semicolon
+macro_line|#ifndef CONFIG_SUN3
 id|base_trap_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
+multiline_comment|/* FIXME: m68k_fputype is passed in by Penguin booter, which can&n;&t; * be confused by software FPU emulation. BEWARE.&n;&t; * We should really do our own FPU check at startup.&n;&t; * [what do we do with buggy 68LC040s? if we have problems&n;&t; *  with them, we should add a test to check_bugs() below] */
+macro_line|#ifndef CONFIG_M68KFPU_EMU_ONLY
 multiline_comment|/* clear the fpu if we have one */
 r_if
 c_cond
@@ -1036,6 +1103,7 @@ id|zero
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 id|init_mm.start_code
 op_assign
 id|PAGE_OFFSET
@@ -1358,6 +1426,9 @@ suffix:colon
 id|config_sun3
 c_func
 (paren
+id|memory_start_p
+comma
+id|memory_end_p
 )paren
 suffix:semicolon
 r_break
@@ -1482,6 +1553,7 @@ id|m68k_ramdisk.size
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifndef CONFIG_SUN3
 op_star
 id|memory_start_p
 op_assign
@@ -1518,6 +1590,7 @@ id|size
 op_amp
 id|MASK_256K
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|get_cpuinfo
 r_int
@@ -1627,6 +1700,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_M68KFPU_EMU_ONLY
+id|fpu
+op_assign
+l_string|&quot;none(soft float)&quot;
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1691,6 +1770,7 @@ id|fpu
 op_assign
 l_string|&quot;none&quot;
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2050,6 +2130,20 @@ id|i
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|variable|register_serial
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_serial
+)paren
+suffix:semicolon
+DECL|variable|unregister_serial
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_serial
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 DECL|function|serial_console_init
 r_int
@@ -2088,6 +2182,10 @@ id|kmem_start
 comma
 id|kmem_end
 )paren
+suffix:semicolon
+macro_line|#else
+r_return
+id|kmem_start
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -2240,7 +2338,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef CONFIG_FPU_EMU
+macro_line|#ifndef CONFIG_M68KFPU_EMU
 r_if
 c_cond
 (paren

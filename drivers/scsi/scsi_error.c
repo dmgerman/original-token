@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  scsi_error.c Copyright (C) 1997 Eric Youngdale&n; *&n; *  SCSI error/timeout handling&n; *      Initial versions: Eric Youngdale.  Based upon conversations with&n; *&t;&t;&t;  Leonard Zubkoff and David Miller at Linux Expo, &n; *&t;&t;&t;  ideas originating from all over the place.&n; *&n; */
+multiline_comment|/*&n; *  scsi_error.c Copyright (C) 1997 Eric Youngdale&n; *&n; *  SCSI error/timeout handling&n; *      Initial versions: Eric Youngdale.  Based upon conversations with&n; *                        Leonard Zubkoff and David Miller at Linux Expo, &n; *                        ideas originating from all over the place.&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -64,6 +64,7 @@ suffix:semicolon
 id|STATIC
 r_int
 id|scsi_check_sense
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -82,6 +83,7 @@ suffix:semicolon
 id|STATIC
 r_void
 id|scsi_send_eh_cmnd
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -205,9 +207,9 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function:    scsi_add_timer()&n; *&n; * Purpose:     Start timeout timer for a single scsi command.&n; *&n; * Arguments:   SCset   - command that is about to start running.&n; *              timeout - amount of time to allow this command to run.&n; *              complete - timeout function to call if timer isn&squot;t&n; *                      canceled.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:&t;This should be turned into an inline function.&n; *&n; * More Notes:  Each scsi command has it&squot;s own timer, and as it is added to&n; *              the queue, we set up the timer.  When the command completes,&n; *              we cancel the timer.  Pretty simple, really, especially&n; *              compared to the old way of handling this crap.&n; */
-r_void
+multiline_comment|/*&n; * Function:    scsi_add_timer()&n; *&n; * Purpose:     Start timeout timer for a single scsi command.&n; *&n; * Arguments:   SCset   - command that is about to start running.&n; *              timeout - amount of time to allow this command to run.&n; *              complete - timeout function to call if timer isn&squot;t&n; *                      canceled.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       This should be turned into an inline function.&n; *&n; * More Notes:  Each scsi command has it&squot;s own timer, and as it is added to&n; *              the queue, we set up the timer.  When the command completes,&n; *              we cancel the timer.  Pretty simple, really, especially&n; *              compared to the old way of handling this crap.&n; */
 DECL|function|scsi_add_timer
+r_void
 id|scsi_add_timer
 c_func
 (paren
@@ -229,7 +231,7 @@ op_star
 )paren
 )paren
 (brace
-multiline_comment|/*&n;     * If the clock was already running for this command, then&n;     * first delete the timer.  The timer handling code gets rather&n;     * confused if we don&squot;t do this.&n;     */
+multiline_comment|/*&n;&t; * If the clock was already running for this command, then&n;&t; * first delete the timer.  The timer handling code gets rather&n;&t; * confused if we don&squot;t do this.&n;&t; */
 r_if
 c_cond
 (paren
@@ -300,9 +302,9 @@ id|SCset-&gt;eh_timeout
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_delete_timer()&n; *&n; * Purpose:     Delete/cancel timer for a given function.&n; *&n; * Arguments:   SCset   - command that we are canceling timer for.&n; *&n; * Returns:     Amount of time remaining before command would have timed out.&n; *&n; * Notes:&t;This should be turned into an inline function.&n; */
-r_int
+multiline_comment|/*&n; * Function:    scsi_delete_timer()&n; *&n; * Purpose:     Delete/cancel timer for a given function.&n; *&n; * Arguments:   SCset   - command that we are canceling timer for.&n; *&n; * Returns:     Amount of time remaining before command would have timed out.&n; *&n; * Notes:       This should be turned into an inline function.&n; */
 DECL|function|scsi_delete_timer
+r_int
 id|scsi_delete_timer
 c_func
 (paren
@@ -362,15 +364,16 @@ DECL|function|do_scsi_times_out
 r_static
 r_void
 id|do_scsi_times_out
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
 id|SCpnt
 )paren
 (brace
-multiline_comment|/* &n;     * Notify the low-level code that this operation failed and we are&n;     * reposessing the command.  &n;     */
+multiline_comment|/* &n;&t; * Notify the low-level code that this operation failed and we are&n;&t; * reposessing the command.  &n;&t; */
 macro_line|#ifdef ERIC_neverdef
-multiline_comment|/*&n;     * FIXME(eric)&n;     * Allow the host adapter to push a queue ordering tag&n;     * out to the bus to force the command in question to complete.&n;     * If the host wants to do this, then we just restart the timer&n;     * for the command.  Before we really do this, some real thought&n;     * as to the optimum way to handle this should be done.  We *do*&n;     * need to force ordering every so often to ensure that all requests&n;     * do eventually complete, but I am not sure if this is the best way&n;     * to actually go about it.&n;     *&n;     * Better yet, force a sync here, but don&squot;t block since we are in an&n;     * interrupt.&n;     */
+multiline_comment|/*&n;&t; * FIXME(eric)&n;&t; * Allow the host adapter to push a queue ordering tag&n;&t; * out to the bus to force the command in question to complete.&n;&t; * If the host wants to do this, then we just restart the timer&n;&t; * for the command.  Before we really do this, some real thought&n;&t; * as to the optimum way to handle this should be done.  We *do*&n;&t; * need to force ordering every so often to ensure that all requests&n;&t; * do eventually complete, but I am not sure if this is the best way&n;&t; * to actually go about it.&n;&t; *&n;&t; * Better yet, force a sync here, but don&squot;t block since we are in an&n;&t; * interrupt.&n;&t; */
 r_if
 c_cond
 (paren
@@ -403,14 +406,17 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;     * FIXME(eric) - add a second special interface to handle this&n;     * case.  Ideally that interface can also be used to request&n;     * a queu&n;     */
+multiline_comment|/*&n;&t; * FIXME(eric) - add a second special interface to handle this&n;&t; * case.  Ideally that interface can also be used to request&n;&t; * a queu&n;&t; */
 r_if
 c_cond
 (paren
 id|SCpnt-&gt;host-&gt;can_queue
 )paren
 (brace
-id|SCpnt-&gt;host-&gt;hostt-&gt;queuecommand
+id|SCpnt-&gt;host-&gt;hostt
+op_member_access_from_pointer
+id|queuecommand
+c_func
 (paren
 id|SCpnt
 comma
@@ -466,7 +472,7 @@ id|SCpnt-&gt;host-&gt;host_failed
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * If the host is having troubles, then look to see if this was the last&n;     * command that might have failed.  If so, wake up the error handler.&n;     */
+multiline_comment|/*&n;&t; * If the host is having troubles, then look to see if this was the last&n;&t; * command that might have failed.  If so, wake up the error handler.&n;&t; */
 r_if
 c_cond
 (paren
@@ -486,6 +492,7 @@ suffix:semicolon
 DECL|function|scsi_times_out
 r_void
 id|scsi_times_out
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -522,8 +529,8 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function     scsi_block_when_processing_errors&n; *&n; * Purpose:     Prevent more commands from being queued while error recovery&n; *              is taking place.&n; *&n; * Arguments:   SDpnt - device on which we are performing recovery.&n; *&n; * Returns:     FALSE   The device was taken offline by error recovery.&n; *              TRUE    OK to proceed.&n; *&n; * Notes:       We block until the host is out of error recovery, and then&n; *              check to see whether the host or the device is offline.&n; */
-r_int
 DECL|function|scsi_block_when_processing_errors
+r_int
 id|scsi_block_when_processing_errors
 c_func
 (paren
@@ -559,11 +566,12 @@ r_return
 id|SDpnt-&gt;online
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_eh_times_out()&n; *&n; * Purpose:     Timeout function for error handling.&n; *&n; * Arguments:   SCpnt   - command that is timing out.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:&t;During error handling, the kernel thread will be sleeping&n; *&t;&t;waiting for some action to complete on the device.  Our only&n; *&t;&t;job is to record that it timed out, and to wake up the&n; *&t;&t;thread.&n; */
+multiline_comment|/*&n; * Function:    scsi_eh_times_out()&n; *&n; * Purpose:     Timeout function for error handling.&n; *&n; * Arguments:   SCpnt   - command that is timing out.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:       During error handling, the kernel thread will be sleeping&n; *              waiting for some action to complete on the device.  Our only&n; *              job is to record that it timed out, and to wake up the&n; *              thread.&n; */
 id|STATIC
 DECL|function|scsi_eh_times_out
 r_void
 id|scsi_eh_times_out
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -596,7 +604,7 @@ id|SCpnt-&gt;owner
 op_assign
 id|SCSI_OWNER_LOWLEVEL
 suffix:semicolon
-multiline_comment|/*&n;   * As far as the low level driver is concerned, this command is still&n;   * active, so we must give the low level driver a chance to abort it. (DB)&n;   */
+multiline_comment|/*&n;&t; * As far as the low level driver is concerned, this command is still&n;&t; * active, so we must give the low level driver a chance to abort it. (DB)&n;&t; */
 r_if
 c_cond
 (paren
@@ -664,11 +672,12 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_eh_done()&n; *&n; * Purpose:     Completion function for error handling.&n; *&n; * Arguments:   SCpnt   - command that is timing out.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:&t;During error handling, the kernel thread will be sleeping&n; *&t;&t;waiting for some action to complete on the device.  Our only&n; *&t;&t;job is to record that the action completed, and to wake up the&n; *&t;&t;thread.&n; */
+multiline_comment|/*&n; * Function:    scsi_eh_done()&n; *&n; * Purpose:     Completion function for error handling.&n; *&n; * Arguments:   SCpnt   - command that is timing out.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:       During error handling, the kernel thread will be sleeping&n; *              waiting for some action to complete on the device.  Our only&n; *              job is to record that the action completed, and to wake up the&n; *              thread.&n; */
 id|STATIC
 DECL|function|scsi_eh_done
 r_void
 id|scsi_eh_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -717,11 +726,12 @@ id|SCpnt-&gt;host-&gt;eh_action
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_eh_action_done()&n; *&n; * Purpose:     Completion function for error handling.&n; *&n; * Arguments:   SCpnt   - command that is timing out.&n; *&t;&t;answer  - boolean that indicates whether operation succeeded.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:&t;This callback is only used for abort and reset operations.&n; */
+multiline_comment|/*&n; * Function:    scsi_eh_action_done()&n; *&n; * Purpose:     Completion function for error handling.&n; *&n; * Arguments:   SCpnt   - command that is timing out.&n; *              answer  - boolean that indicates whether operation succeeded.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:       This callback is only used for abort and reset operations.&n; */
 id|STATIC
 DECL|function|scsi_eh_action_done
 r_void
 id|scsi_eh_action_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -764,9 +774,9 @@ id|SCpnt-&gt;host-&gt;eh_action
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_sense_valid()&n; *&n; * Purpose:&t;Determine whether a host has automatically obtained sense&n; *&t;&t;information or not.  If we have it, then give a recommendation&n; *&t;&t;as to what we should do next.&n; */
-r_int
+multiline_comment|/*&n; * Function:  scsi_sense_valid()&n; *&n; * Purpose:     Determine whether a host has automatically obtained sense&n; *              information or not.  If we have it, then give a recommendation&n; *              as to what we should do next.&n; */
 DECL|function|scsi_sense_valid
+r_int
 id|scsi_sense_valid
 c_func
 (paren
@@ -802,10 +812,10 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_eh_retry_command()&n; *&n; * Purpose:&t;Retry the original command&n; *&n; * Returns:&t;SUCCESS - we were able to get the sense data.&n; *&t;&t;FAILED  - we were not able to get the sense data.&n; * &n; * Notes:&t;This function will *NOT* return until the command either&n; *&t;&t;times out, or it completes.&n; */
+multiline_comment|/*&n; * Function:  scsi_eh_retry_command()&n; *&n; * Purpose:     Retry the original command&n; *&n; * Returns:     SUCCESS - we were able to get the sense data.&n; *              FAILED  - we were not able to get the sense data.&n; * &n; * Notes:       This function will *NOT* return until the command either&n; *              times out, or it completes.&n; */
+DECL|function|scsi_eh_retry_command
 id|STATIC
 r_int
-DECL|function|scsi_eh_retry_command
 id|scsi_eh_retry_command
 c_func
 (paren
@@ -815,6 +825,7 @@ id|SCpnt
 )paren
 (brace
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -851,21 +862,22 @@ op_assign
 id|SCpnt-&gt;old_cmd_len
 suffix:semicolon
 id|scsi_send_eh_cmnd
+c_func
 (paren
 id|SCpnt
 comma
 id|SCpnt-&gt;timeout_per_command
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Hey, we are done.  Let&squot;s look to see what happened.&n;   */
+multiline_comment|/*&n;&t; * Hey, we are done.  Let&squot;s look to see what happened.&n;&t; */
 r_return
 id|SCpnt-&gt;eh_state
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_request_sense()&n; *&n; * Purpose:&t;Request sense data from a particular target.&n; *&n; * Returns:&t;SUCCESS - we were able to get the sense data.&n; *&t;&t;FAILED  - we were not able to get the sense data.&n; * &n; * Notes:&t;Some hosts automatically obtain this information, others&n; *&t;&t;require that we obtain it on our own.&n; *&n; *&t;&t;This function will *NOT* return until the command either&n; *&t;&t;times out, or it completes.&n; */
+multiline_comment|/*&n; * Function:  scsi_request_sense()&n; *&n; * Purpose:     Request sense data from a particular target.&n; *&n; * Returns:     SUCCESS - we were able to get the sense data.&n; *              FAILED  - we were not able to get the sense data.&n; * &n; * Notes:       Some hosts automatically obtain this information, others&n; *              require that we obtain it on our own.&n; *&n; *              This function will *NOT* return until the command either&n; *              times out, or it completes.&n; */
+DECL|function|scsi_request_sense
 id|STATIC
 r_int
-DECL|function|scsi_request_sense
 id|scsi_request_sense
 c_func
 (paren
@@ -909,6 +921,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -952,6 +965,7 @@ l_int|0
 )braket
 suffix:colon
 id|scsi_init_malloc
+c_func
 (paren
 l_int|512
 comma
@@ -978,8 +992,9 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Zero the sense buffer.  Some host adapters automatically always request&n;   * sense, so it is not a good idea that SCpnt-&gt;request_buffer and&n;   * SCpnt-&gt;sense_buffer point to the same address (DB).&n;   * 0 is not a valid sense code. &n;   */
+multiline_comment|/*&n;&t; * Zero the sense buffer.  Some host adapters automatically always request&n;&t; * sense, so it is not a good idea that SCpnt-&gt;request_buffer and&n;&t; * SCpnt-&gt;sense_buffer point to the same address (DB).&n;&t; * 0 is not a valid sense code. &n;&t; */
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -996,6 +1011,7 @@ id|SCpnt-&gt;sense_buffer
 )paren
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -1032,6 +1048,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|scsi_send_eh_cmnd
+c_func
 (paren
 id|SCpnt
 comma
@@ -1082,14 +1099,16 @@ op_ne
 l_int|NULL
 )paren
 id|scsi_init_free
+c_func
 (paren
 id|scsi_result
 comma
 l_int|512
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * When we eventually call scsi_finish, we really wish to complete&n;   * the original request, so let&squot;s restore the original data. (DB)&n;   */
+multiline_comment|/*&n;&t; * When we eventually call scsi_finish, we really wish to complete&n;&t; * the original request, so let&squot;s restore the original data. (DB)&n;&t; */
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -1125,15 +1144,15 @@ id|SCpnt-&gt;cmd_len
 op_assign
 id|SCpnt-&gt;old_cmd_len
 suffix:semicolon
-multiline_comment|/*&n;   * Hey, we are done.  Let&squot;s look to see what happened.&n;   */
+multiline_comment|/*&n;&t; * Hey, we are done.  Let&squot;s look to see what happened.&n;&t; */
 r_return
 id|SCpnt-&gt;eh_state
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_test_unit_ready()&n; *&n; * Purpose:&t;Run test unit ready command to see if the device is talking to us or not.&n; *&n; */
+multiline_comment|/*&n; * Function:  scsi_test_unit_ready()&n; *&n; * Purpose:     Run test unit ready command to see if the device is talking to us or not.&n; *&n; */
+DECL|function|scsi_test_unit_ready
 id|STATIC
 r_int
-DECL|function|scsi_test_unit_ready
 id|scsi_test_unit_ready
 c_func
 (paren
@@ -1177,6 +1196,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -1220,6 +1240,7 @@ l_int|0
 )braket
 suffix:colon
 id|scsi_init_malloc
+c_func
 (paren
 l_int|512
 comma
@@ -1246,8 +1267,9 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Zero the sense buffer.  Some host adapters automatically always request&n;   * sense, so it is not a good idea that SCpnt-&gt;request_buffer and&n;   * SCpnt-&gt;sense_buffer point to the same address (DB).&n;   * 0 is not a valid sense code. &n;   */
+multiline_comment|/*&n;&t; * Zero the sense buffer.  Some host adapters automatically always request&n;&t; * sense, so it is not a good idea that SCpnt-&gt;request_buffer and&n;&t; * SCpnt-&gt;sense_buffer point to the same address (DB).&n;&t; * 0 is not a valid sense code. &n;&t; */
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -1264,6 +1286,7 @@ id|SCpnt-&gt;sense_buffer
 )paren
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -1300,6 +1323,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|scsi_send_eh_cmnd
+c_func
 (paren
 id|SCpnt
 comma
@@ -1350,14 +1374,16 @@ op_ne
 l_int|NULL
 )paren
 id|scsi_init_free
+c_func
 (paren
 id|scsi_result
 comma
 l_int|512
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * When we eventually call scsi_finish, we really wish to complete&n;   * the original request, so let&squot;s restore the original data. (DB)&n;   */
+multiline_comment|/*&n;&t; * When we eventually call scsi_finish, we really wish to complete&n;&t; * the original request, so let&squot;s restore the original data. (DB)&n;&t; */
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -1393,7 +1419,7 @@ id|SCpnt-&gt;cmd_len
 op_assign
 id|SCpnt-&gt;old_cmd_len
 suffix:semicolon
-multiline_comment|/*&n;   * Hey, we are done.  Let&squot;s look to see what happened.&n;   */
+multiline_comment|/*&n;&t; * Hey, we are done.  Let&squot;s look to see what happened.&n;&t; */
 r_return
 id|SCpnt-&gt;eh_state
 suffix:semicolon
@@ -1403,6 +1429,7 @@ id|STATIC
 DECL|function|scsi_sleep_done
 r_void
 id|scsi_sleep_done
+c_func
 (paren
 r_struct
 id|semaphore
@@ -1429,6 +1456,7 @@ suffix:semicolon
 DECL|function|scsi_sleep
 r_void
 id|scsi_sleep
+c_func
 (paren
 r_int
 id|timeout
@@ -1530,11 +1558,12 @@ id|timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_send_eh_cmnd&n; *&n; * Purpose:&t;Send a command out to a device as part of error recovery.&n; *&n; * Notes:&t;The initialization of the structures is quite a bit different&n; *&t;&t;in this case, and furthermore, there is a different completion&n; *&t;&t;handler.&n; */
+multiline_comment|/*&n; * Function:  scsi_send_eh_cmnd&n; *&n; * Purpose:     Send a command out to a device as part of error recovery.&n; *&n; * Notes:       The initialization of the structures is quite a bit different&n; *              in this case, and furthermore, there is a different completion&n; *              handler.&n; */
 DECL|function|scsi_send_eh_cmnd
 id|STATIC
 r_void
 id|scsi_send_eh_cmnd
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -1555,7 +1584,7 @@ id|SCpnt-&gt;host
 suffix:semicolon
 id|retry
 suffix:colon
-multiline_comment|/*&n;     * We will use a queued command if possible, otherwise we will emulate the&n;     * queuing and calling of completion function ourselves.&n;     */
+multiline_comment|/*&n;&t; * We will use a queued command if possible, otherwise we will emulate the&n;&t; * queuing and calling of completion function ourselves.&n;&t; */
 id|SCpnt-&gt;owner
 op_assign
 id|SCSI_OWNER_LOWLEVEL
@@ -1586,7 +1615,7 @@ comma
 id|scsi_eh_times_out
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set up the semaphore so we wait for the command to complete.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Set up the semaphore so we wait for the command to complete.&n;&t;&t; */
 id|SCpnt-&gt;host-&gt;eh_action
 op_assign
 op_amp
@@ -1596,7 +1625,10 @@ id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_BUSY
 suffix:semicolon
-id|host-&gt;hostt-&gt;queuecommand
+id|host-&gt;hostt
+op_member_access_from_pointer
+id|queuecommand
+c_func
 (paren
 id|SCpnt
 comma
@@ -1635,7 +1667,7 @@ op_amp
 id|SCpnt-&gt;eh_timeout
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * See if timeout.  If so, tell the host to forget about it.&n;&t; * In other words, we don&squot;t want a callback any more.&n;&t; */
+multiline_comment|/*&n;&t;&t; * See if timeout.  If so, tell the host to forget about it.&n;&t;&t; * In other words, we don&squot;t want a callback any more.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1671,10 +1703,13 @@ r_else
 r_int
 id|temp
 suffix:semicolon
-multiline_comment|/*&n;&t; * We damn well had better never use this code.  There is no timeout&n;&t; * protection here, since we would end up waiting in the actual low&n;&t; * level driver, we don&squot;t know how to wake it up.&n;&t; */
+multiline_comment|/*&n;&t;&t; * We damn well had better never use this code.  There is no timeout&n;&t;&t; * protection here, since we would end up waiting in the actual low&n;&t;&t; * level driver, we don&squot;t know how to wake it up.&n;&t;&t; */
 id|temp
 op_assign
-id|host-&gt;hostt-&gt;command
+id|host-&gt;hostt
+op_member_access_from_pointer
+id|command
+c_func
 (paren
 id|SCpnt
 )paren
@@ -1706,7 +1741,7 @@ id|FAILED
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;     * Now examine the actual status codes to see whether the command actually&n;     * did complete normally.&n;     */
+multiline_comment|/*&n;&t; * Now examine the actual status codes to see whether the command actually&n;&t; * did complete normally.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1761,10 +1796,10 @@ id|FAILED
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_unit_is_ready()&n; *&n; * Purpose:&t;Called after TEST_UNIT_READY is run, to test to see if&n; *&t;&t;the unit responded in a way that indicates it is ready.&n; */
+multiline_comment|/*&n; * Function:  scsi_unit_is_ready()&n; *&n; * Purpose:     Called after TEST_UNIT_READY is run, to test to see if&n; *              the unit responded in a way that indicates it is ready.&n; */
+DECL|function|scsi_unit_is_ready
 id|STATIC
 r_int
-DECL|function|scsi_unit_is_ready
 id|scsi_unit_is_ready
 c_func
 (paren
@@ -1785,6 +1820,7 @@ c_cond
 (paren
 (paren
 id|driver_byte
+c_func
 (paren
 id|SCpnt-&gt;result
 )paren
@@ -1794,6 +1830,7 @@ id|DRIVER_SENSE
 op_logical_or
 (paren
 id|status_byte
+c_func
 (paren
 id|SCpnt-&gt;result
 )paren
@@ -1872,9 +1909,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function:    scsi_eh_finish_command&n; *&n; * Purpose:     Handle a command that we are finished with WRT error handling.&n; *&n; * Arguments:   SClist - pointer to list into which we are putting completed commands.&n; *              SCpnt  - command that is completing&n; *&n; * Notes:       We don&squot;t want to use the normal command completion while we are&n; *              are still handling errors - it may cause other commands to be queued,&n; *              and that would disturb what we are doing.  Thus we really want to keep&n; *              a list of pending commands for final completion, and once we&n; *              are ready to leave error handling we handle completion for real.&n; */
+DECL|function|scsi_eh_finish_command
 id|STATIC
 r_void
-DECL|function|scsi_eh_finish_command
 id|scsi_eh_finish_command
 c_func
 (paren
@@ -1897,7 +1934,7 @@ op_assign
 op_star
 id|SClist
 suffix:semicolon
-multiline_comment|/*&n;     * Set this back so that the upper level can correctly free up&n;     * things.&n;     */
+multiline_comment|/*&n;&t; * Set this back so that the upper level can correctly free up&n;&t; * things.&n;&t; */
 id|SCpnt-&gt;use_sg
 op_assign
 id|SCpnt-&gt;old_use_sg
@@ -1908,10 +1945,10 @@ op_assign
 id|SCpnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_try_to_abort_command&n; *&n; * Purpose:&t;Ask host adapter to abort a running command.&n; *&n; * Returns:&t;FAILED&t;&t;Operation failed or not supported.&n; *&t;&t;SUCCESS&t;&t;Succeeded.&n; *&n; * Notes:&t;This function will not return until the user&squot;s completion&n; *&t;&t;function has been called.  There is no timeout on this&n; *              operation.  If the author of the low-level driver wishes&n; *              this operation to be timed, they can provide this facility&n; *              themselves.  Helper functions in scsi_error.c can be supplied&n; *              to make this easier to do.&n; *&n; * Notes:&t;It may be possible to combine this with all of the reset&n; *&t;&t;handling to eliminate a lot of code duplication.  I don&squot;t&n; *&t;&t;know what makes more sense at the moment - this is just a&n; *&t;&t;prototype.&n; */
+multiline_comment|/*&n; * Function:  scsi_try_to_abort_command&n; *&n; * Purpose:     Ask host adapter to abort a running command.&n; *&n; * Returns:     FAILED          Operation failed or not supported.&n; *              SUCCESS         Succeeded.&n; *&n; * Notes:       This function will not return until the user&squot;s completion&n; *              function has been called.  There is no timeout on this&n; *              operation.  If the author of the low-level driver wishes&n; *              this operation to be timed, they can provide this facility&n; *              themselves.  Helper functions in scsi_error.c can be supplied&n; *              to make this easier to do.&n; *&n; * Notes:       It may be possible to combine this with all of the reset&n; *              handling to eliminate a lot of code duplication.  I don&squot;t&n; *              know what makes more sense at the moment - this is just a&n; *              prototype.&n; */
+DECL|function|scsi_try_to_abort_command
 id|STATIC
 r_int
-DECL|function|scsi_try_to_abort_command
 id|scsi_try_to_abort_command
 c_func
 (paren
@@ -1940,7 +1977,7 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/* &n;   * scsi_done was called just after the command timed out and before&n;   * we had a chance to process it. (DB)&n;   */
+multiline_comment|/* &n;&t; * scsi_done was called just after the command timed out and before&n;&t; * we had a chance to process it. (DB)&n;&t; */
 r_if
 c_cond
 (paren
@@ -1965,10 +2002,10 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_try_bus_device_reset&n; *&n; * Purpose:&t;Ask host adapter to perform a bus device reset for a given&n; *&t;&t;device.&n; *&n; * Returns:&t;FAILED&t;&t;Operation failed or not supported.&n; *&t;&t;SUCCESS&t;&t;Succeeded.&n; *&n; * Notes:&t;There is no timeout for this operation.  If this operation is&n; *              unreliable for a given host, then the host itself needs to put a&n; *              timer on it, and set the host back to a consistent state prior&n; *              to returning.&n; */
+multiline_comment|/*&n; * Function:  scsi_try_bus_device_reset&n; *&n; * Purpose:     Ask host adapter to perform a bus device reset for a given&n; *              device.&n; *&n; * Returns:     FAILED          Operation failed or not supported.&n; *              SUCCESS         Succeeded.&n; *&n; * Notes:       There is no timeout for this operation.  If this operation is&n; *              unreliable for a given host, then the host itself needs to put a&n; *              timer on it, and set the host back to a consistent state prior&n; *              to returning.&n; */
+DECL|function|scsi_try_bus_device_reset
 id|STATIC
 r_int
-DECL|function|scsi_try_bus_device_reset
 id|scsi_try_bus_device_reset
 c_func
 (paren
@@ -2029,10 +2066,10 @@ r_return
 id|SCpnt-&gt;eh_state
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_try_bus_reset&n; *&n; * Purpose:&t;Ask host adapter to perform a bus reset for a host.&n; *&n; * Returns:&t;FAILED&t;&t;Operation failed or not supported.&n; *&t;&t;SUCCESS&t;&t;Succeeded.&n; *&n; * Notes:&t;&n; */
+multiline_comment|/*&n; * Function:  scsi_try_bus_reset&n; *&n; * Purpose:     Ask host adapter to perform a bus reset for a host.&n; *&n; * Returns:     FAILED          Operation failed or not supported.&n; *              SUCCESS         Succeeded.&n; *&n; * Notes:       &n; */
+DECL|function|scsi_try_bus_reset
 id|STATIC
 r_int
-DECL|function|scsi_try_bus_reset
 id|scsi_try_bus_reset
 c_func
 (paren
@@ -2090,7 +2127,7 @@ id|SCpnt-&gt;eh_state
 op_assign
 id|SUCCESS
 suffix:semicolon
-multiline_comment|/*&n;   * If we had a successful bus reset, mark the command blocks to expect&n;   * a condition code of unit attention.&n;   */
+multiline_comment|/*&n;&t; * If we had a successful bus reset, mark the command blocks to expect&n;&t; * a condition code of unit attention.&n;&t; */
 id|scsi_sleep
 c_func
 (paren
@@ -2146,10 +2183,10 @@ r_return
 id|SCpnt-&gt;eh_state
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_try_host_reset&n; *&n; * Purpose:&t;Ask host adapter to reset itself, and the bus.&n; *&n; * Returns:&t;FAILED&t;&t;Operation failed or not supported.&n; *&t;&t;SUCCESS&t;&t;Succeeded.&n; *&n; * Notes:&n; */
+multiline_comment|/*&n; * Function:  scsi_try_host_reset&n; *&n; * Purpose:     Ask host adapter to reset itself, and the bus.&n; *&n; * Returns:     FAILED          Operation failed or not supported.&n; *              SUCCESS         Succeeded.&n; *&n; * Notes:&n; */
+DECL|function|scsi_try_host_reset
 id|STATIC
 r_int
-DECL|function|scsi_try_host_reset
 id|scsi_try_host_reset
 c_func
 (paren
@@ -2207,7 +2244,7 @@ id|SCpnt-&gt;eh_state
 op_assign
 id|SUCCESS
 suffix:semicolon
-multiline_comment|/*&n;     * If we had a successful host reset, mark the command blocks to expect&n;     * a condition code of unit attention.&n;     */
+multiline_comment|/*&n;&t; * If we had a successful host reset, mark the command blocks to expect&n;&t; * a condition code of unit attention.&n;&t; */
 id|scsi_sleep
 c_func
 (paren
@@ -2254,10 +2291,11 @@ r_return
 id|SCpnt-&gt;eh_state
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_decide_disposition&n; *&n; * Purpose:&t;Examine a command block that has come back from the low-level&n; *&t;&t;and figure out what to do next.&n; *&n; * Returns:&t;SUCCESS&t;&t;- pass on to upper level.&n; *&t;&t;FAILED&t;&t;- pass on to error handler thread.&n; *&t;&t;RETRY&t;&t;- command should be retried.&n; *&t;&t;SOFTERR&t;&t;- command succeeded, but we need to log&n; *&t;&t;&t;&t;  a soft error.&n; *&n; * Notes:&t;This is *ONLY* called when we are examining the status&n; *&t;&t;after sending out the actual data command.  Any commands&n; *&t;&t;that are queued for error recovery (i.e. TEST_UNIT_READY)&n; *&t;&t;do *NOT* come through here.&n; *&n; *              NOTE - When this routine returns FAILED, it means the error&n; *              handler thread is woken.  In cases where the error code&n; *              indicates an error that doesn&squot;t require the error handler&n; *              thread (i.e. we don&squot;t need to abort/reset), then this function&n; *              should return SUCCESS.&n; */
+multiline_comment|/*&n; * Function:  scsi_decide_disposition&n; *&n; * Purpose:     Examine a command block that has come back from the low-level&n; *              and figure out what to do next.&n; *&n; * Returns:     SUCCESS         - pass on to upper level.&n; *              FAILED          - pass on to error handler thread.&n; *              RETRY           - command should be retried.&n; *              SOFTERR         - command succeeded, but we need to log&n; *                                a soft error.&n; *&n; * Notes:       This is *ONLY* called when we are examining the status&n; *              after sending out the actual data command.  Any commands&n; *              that are queued for error recovery (i.e. TEST_UNIT_READY)&n; *              do *NOT* come through here.&n; *&n; *              NOTE - When this routine returns FAILED, it means the error&n; *              handler thread is woken.  In cases where the error code&n; *              indicates an error that doesn&squot;t require the error handler&n; *              thread (i.e. we don&squot;t need to abort/reset), then this function&n; *              should return SUCCESS.&n; */
 DECL|function|scsi_decide_disposition
 r_int
 id|scsi_decide_disposition
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -2267,7 +2305,7 @@ id|SCpnt
 r_int
 id|rtn
 suffix:semicolon
-multiline_comment|/*&n;   * If the device is offline, then we clearly just pass the result back&n;   * up to the top level.&n;   */
+multiline_comment|/*&n;&t; * If the device is offline, then we clearly just pass the result back&n;&t; * up to the top level.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2292,7 +2330,7 @@ r_return
 id|SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * First check the host byte, to see if there is anything in there&n;   * that would indicate what we need to do.&n;   */
+multiline_comment|/*&n;&t; * First check the host byte, to see if there is anything in there&n;&t; * that would indicate what we need to do.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -2306,7 +2344,7 @@ id|SCpnt-&gt;result
 r_case
 id|DID_PASSTHROUGH
 suffix:colon
-multiline_comment|/*&n;         * No matter what, pass this through to the upper layer.&n;         * Nuke this special code so that it looks like we are saying&n;         * DID_OK.&n;         */
+multiline_comment|/*&n;&t;&t; * No matter what, pass this through to the upper layer.&n;&t;&t; * Nuke this special code so that it looks like we are saying&n;&t;&t; * DID_OK.&n;&t;&t; */
 id|SCpnt-&gt;result
 op_and_assign
 l_int|0xff00ffff
@@ -2317,7 +2355,7 @@ suffix:semicolon
 r_case
 id|DID_OK
 suffix:colon
-multiline_comment|/*&n;       * Looks good.  Drop through, and check the next byte.&n;       */
+multiline_comment|/*&n;&t;&t; * Looks good.  Drop through, and check the next byte.&n;&t;&t; */
 r_break
 suffix:semicolon
 r_case
@@ -2329,11 +2367,11 @@ suffix:colon
 r_case
 id|DID_ABORT
 suffix:colon
-multiline_comment|/*&n;       * Note - this means that we just report the status back to the&n;       * top level driver, not that we actually think that it indicates&n;       * success.&n;       */
+multiline_comment|/*&n;&t;&t; * Note - this means that we just report the status back to the&n;&t;&t; * top level driver, not that we actually think that it indicates&n;&t;&t; * success.&n;&t;&t; */
 r_return
 id|SUCCESS
 suffix:semicolon
-multiline_comment|/*&n;       * When the low level driver returns DID_SOFT_ERROR,&n;       * it is responsible for keeping an internal retry counter &n;       * in order to avoid endless loops (DB)&n;       */
+multiline_comment|/*&n;&t;&t; * When the low level driver returns DID_SOFT_ERROR,&n;&t;&t; * it is responsible for keeping an internal retry counter &n;&t;&t; * in order to avoid endless loops (DB)&n;&t;&t; */
 r_case
 id|DID_SOFT_ERROR
 suffix:colon
@@ -2355,7 +2393,7 @@ suffix:semicolon
 r_case
 id|DID_TIME_OUT
 suffix:colon
-multiline_comment|/*&n;         * When we scan the bus, we get timeout messages for&n;         * these commands if there is no device available.&n;         * Other hosts report DID_NO_CONNECT for the same thing.&n;         */
+multiline_comment|/*&n;&t;&t;   * When we scan the bus, we get timeout messages for&n;&t;&t;   * these commands if there is no device available.&n;&t;&t;   * Other hosts report DID_NO_CONNECT for the same thing.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2389,7 +2427,7 @@ suffix:semicolon
 r_case
 id|DID_RESET
 suffix:colon
-multiline_comment|/*&n;       * In the normal case where we haven&squot;t initiated a reset, this is&n;       * a failure.&n;       */
+multiline_comment|/*&n;&t;&t; * In the normal case where we haven&squot;t initiated a reset, this is&n;&t;&t; * a failure.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2407,9 +2445,10 @@ r_goto
 id|maybe_retry
 suffix:semicolon
 )brace
-multiline_comment|/*&n;       * Examine the sense data to figure out how to proceed from here.&n;       * If there is no sense data, we will be forced into the error&n;       * handler thread, where we get to examine the thing in a lot more&n;       * detail.&n;       */
+multiline_comment|/*&n;&t;&t; * Examine the sense data to figure out how to proceed from here.&n;&t;&t; * If there is no sense data, we will be forced into the error&n;&t;&t; * handler thread, where we get to examine the thing in a lot more&n;&t;&t; * detail.&n;&t;&t; */
 r_return
 id|scsi_check_sense
+c_func
 (paren
 id|SCpnt
 )paren
@@ -2420,7 +2459,7 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Next, check the message byte.&n;   */
+multiline_comment|/*&n;&t; * Next, check the message byte.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2437,7 +2476,7 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Now, check the status byte to see if this indicates anything special.&n;   */
+multiline_comment|/*&n;&t; * Now, check the status byte to see if this indicates anything special.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -2451,7 +2490,7 @@ id|SCpnt-&gt;result
 r_case
 id|QUEUE_FULL
 suffix:colon
-multiline_comment|/*&n;       * The case of trying to send too many commands to a tagged queueing&n;       * device.&n;       */
+multiline_comment|/*&n;&t;&t; * The case of trying to send too many commands to a tagged queueing&n;&t;&t; * device.&n;&t;&t; */
 r_return
 id|ADD_TO_MLQUEUE
 suffix:semicolon
@@ -2499,7 +2538,7 @@ suffix:colon
 r_case
 id|INTERMEDIATE_C_GOOD
 suffix:colon
-multiline_comment|/*&n;       * Who knows?  FIXME(eric)&n;       */
+multiline_comment|/*&n;&t;&t; * Who knows?  FIXME(eric)&n;&t;&t; */
 r_return
 id|SUCCESS
 suffix:semicolon
@@ -2545,11 +2584,12 @@ id|FAILED
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_eh_completed_normally&n; *&n; * Purpose:&t;Examine a command block that has come back from the low-level&n; *&t;&t;and figure out what to do next.&n; *&n; * Returns:&t;SUCCESS&t;&t;- pass on to upper level.&n; *&t;&t;FAILED&t;&t;- pass on to error handler thread.&n; *&t;&t;RETRY&t;&t;- command should be retried.&n; *&t;&t;SOFTERR&t;&t;- command succeeded, but we need to log&n; *&t;&t;&t;&t;  a soft error.&n; *&n; * Notes:&t;This is *ONLY* called when we are examining the status&n; *&t;&t;of commands queued during error recovery.  The main&n; *&t;&t;difference here is that we don&squot;t allow for the possibility&n; *&t;&t;of retries here, and we are a lot more restrictive about what&n; *              we consider acceptable.&n; */
+multiline_comment|/*&n; * Function:  scsi_eh_completed_normally&n; *&n; * Purpose:     Examine a command block that has come back from the low-level&n; *              and figure out what to do next.&n; *&n; * Returns:     SUCCESS         - pass on to upper level.&n; *              FAILED          - pass on to error handler thread.&n; *              RETRY           - command should be retried.&n; *              SOFTERR         - command succeeded, but we need to log&n; *                                a soft error.&n; *&n; * Notes:       This is *ONLY* called when we are examining the status&n; *              of commands queued during error recovery.  The main&n; *              difference here is that we don&squot;t allow for the possibility&n; *              of retries here, and we are a lot more restrictive about what&n; *              we consider acceptable.&n; */
 DECL|function|scsi_eh_completed_normally
 id|STATIC
 r_int
 id|scsi_eh_completed_normally
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -2559,7 +2599,7 @@ id|SCpnt
 r_int
 id|rtn
 suffix:semicolon
-multiline_comment|/*&n;   * First check the host byte, to see if there is anything in there&n;   * that would indicate what we need to do.&n;   */
+multiline_comment|/*&n;&t; * First check the host byte, to see if there is anything in there&n;&t; * that would indicate what we need to do.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2580,7 +2620,7 @@ op_amp
 id|IS_RESETTING
 )paren
 (brace
-multiline_comment|/*&n;&t;  * OK, this is normal.  We don&squot;t know whether in fact the&n;&t;  * command in question really needs to be rerun or not - &n;&t;  * if this was the original data command then the answer is yes,&n;&t;  * otherwise we just flag it as success.&n;&t;  */
+multiline_comment|/*&n;&t;&t;&t; * OK, this is normal.  We don&squot;t know whether in fact the&n;&t;&t;&t; * command in question really needs to be rerun or not - &n;&t;&t;&t; * if this was the original data command then the answer is yes,&n;&t;&t;&t; * otherwise we just flag it as success.&n;&t;&t;&t; */
 id|SCpnt-&gt;flags
 op_and_assign
 op_complement
@@ -2590,9 +2630,10 @@ r_return
 id|NEEDS_RETRY
 suffix:semicolon
 )brace
-multiline_comment|/*&n;      * Rats.  We are already in the error handler, so we now get to try&n;      * and figure out what to do next.  If the sense is valid, we have&n;      * a pretty good idea of what to do.  If not, we mark it as failed.&n;      */
+multiline_comment|/*&n;&t;&t; * Rats.  We are already in the error handler, so we now get to try&n;&t;&t; * and figure out what to do next.  If the sense is valid, we have&n;&t;&t; * a pretty good idea of what to do.  If not, we mark it as failed.&n;&t;&t; */
 r_return
 id|scsi_check_sense
+c_func
 (paren
 id|SCpnt
 )paren
@@ -2614,7 +2655,7 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Next, check the message byte.&n;   */
+multiline_comment|/*&n;&t; * Next, check the message byte.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2631,7 +2672,7 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Now, check the status byte to see if this indicates anything special.&n;   */
+multiline_comment|/*&n;&t; * Now, check the status byte to see if this indicates anything special.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -2686,7 +2727,7 @@ suffix:colon
 r_case
 id|INTERMEDIATE_C_GOOD
 suffix:colon
-multiline_comment|/*&n;       * Who knows?  FIXME(eric)&n;       */
+multiline_comment|/*&n;&t;&t; * Who knows?  FIXME(eric)&n;&t;&t; */
 r_return
 id|SUCCESS
 suffix:semicolon
@@ -2709,11 +2750,12 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_check_sense&n; *&n; * Purpose:&t;Examine sense information - give suggestion as to what&n; *&t;&t;we should do with it.&n; */
+multiline_comment|/*&n; * Function:  scsi_check_sense&n; *&n; * Purpose:     Examine sense information - give suggestion as to what&n; *              we should do with it.&n; */
 DECL|function|scsi_check_sense
 id|STATIC
 r_int
 id|scsi_check_sense
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -2784,7 +2826,7 @@ suffix:colon
 r_case
 id|UNIT_ATTENTION
 suffix:colon
-multiline_comment|/*&n;         * If we are expecting a CC/UA because of a bus reset that we&n;         * performed, treat this just as a retry.  Otherwise this is&n;         * information that we should pass up to the upper-level driver&n;         * so that we can deal with it there.&n;         */
+multiline_comment|/*&n;&t;&t; * If we are expecting a CC/UA because of a bus reset that we&n;&t;&t; * performed, treat this just as a retry.  Otherwise this is&n;&t;&t; * information that we should pass up to the upper-level driver&n;&t;&t; * so that we can deal with it there.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2840,10 +2882,10 @@ id|SUCCESS
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_restart_operations&n; *&n; * Purpose:&t;Restart IO operations to the specified host.&n; *&n; * Arguments:&t;host  - host that we are restarting&n; *&n; * Returns:&t;Nothing&n; *&n; * Notes:&t;When we entered the error handler, we blocked all further&n; *&t;&t;I/O to this device.  We need to &squot;reverse&squot; this process.&n; */
+multiline_comment|/*&n; * Function:  scsi_restart_operations&n; *&n; * Purpose:     Restart IO operations to the specified host.&n; *&n; * Arguments:   host  - host that we are restarting&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       When we entered the error handler, we blocked all further&n; *              I/O to this device.  We need to &squot;reverse&squot; this process.&n; */
+DECL|function|scsi_restart_operations
 id|STATIC
 r_void
-DECL|function|scsi_restart_operations
 id|scsi_restart_operations
 c_func
 (paren
@@ -2857,7 +2899,7 @@ id|Scsi_Device
 op_star
 id|SDpnt
 suffix:semicolon
-multiline_comment|/*&n;   * Next free up anything directly waiting upon the host.  This will be&n;   * requests for character device operations, and also for ioctls to queued&n;   * block devices.&n;   */
+multiline_comment|/*&n;&t; * Next free up anything directly waiting upon the host.  This will be&n;&t; * requests for character device operations, and also for ioctls to queued&n;&t; * block devices.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -2877,7 +2919,7 @@ op_amp
 id|host-&gt;host_wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;    * Finally, block devices need an extra kick in the pants.  This is because&n;    * the request queueing mechanism may have queued lots of pending requests&n;    * and there won&squot;t be a process waiting in a place where we can simply wake&n;    * it up.  Thus we simply go through and call the request function to goose&n;    * the various top level drivers and get things moving again.&n;    */
+multiline_comment|/*&n;&t; * Finally, block devices need an extra kick in the pants.  This is because&n;&t; * the request queueing mechanism may have queued lots of pending requests&n;&t; * and there won&squot;t be a process waiting in a place where we can simply wake&n;&t; * it up.  Thus we simply go through and call the request function to goose&n;&t; * the various top level drivers and get things moving again.&n;&t; */
 r_for
 c_loop
 (paren
@@ -2911,7 +2953,6 @@ id|SDpnt-&gt;scsi_request_fn
 op_ne
 l_int|NULL
 )paren
-(brace
 (paren
 op_star
 id|SDpnt-&gt;scsi_request_fn
@@ -2921,11 +2962,10 @@ id|SDpnt-&gt;scsi_request_fn
 suffix:semicolon
 )brace
 )brace
-)brace
-multiline_comment|/*&n; * Function:&t;scsi_unjam_host&n; *&n; * Purpose:&t;Attempt to fix a host which has a command that failed for&n; *&t;&t;some reason.&n; *&n; * Arguments:&t;host&t;- host that needs unjamming.&n; * &n; * Returns:&t;Nothing&n; *&n; * Notes:&t;When we come in here, we *know* that all commands on the&n; *&t;&t;bus have either completed, failed or timed out.  We also&n; *&t;&t;know that no further commands are being sent to the host,&n; *&t;&t;so things are relatively quiet and we have freedom to&n; *&t;&t;fiddle with things as we wish.&n; *&n; * Additional note:  This is only the *default* implementation.  It is possible&n; *&t;&t;for individual drivers to supply their own version of this&n; *&t;&t;function, and if the maintainer wishes to do this, it is&n; *&t;&t;strongly suggested that this function be taken as a template&n; *&t;&t;and modified.  This function was designed to correctly handle&n; *&t;&t;problems for about 95% of the different cases out there, and&n; *&t;&t;it should always provide at least a reasonable amount of error&n; *&t;&t;recovery.&n; *&n; * Note3:       Any command marked &squot;FAILED&squot; or &squot;TIMEOUT&squot; must eventually&n; *              have scsi_finish_command() called for it.  We do all of&n; *              the retry stuff here, so when we restart the host after we&n; *              return it should have an empty queue.&n; */
+multiline_comment|/*&n; * Function:  scsi_unjam_host&n; *&n; * Purpose:     Attempt to fix a host which has a command that failed for&n; *              some reason.&n; *&n; * Arguments:   host    - host that needs unjamming.&n; * &n; * Returns:     Nothing&n; *&n; * Notes:       When we come in here, we *know* that all commands on the&n; *              bus have either completed, failed or timed out.  We also&n; *              know that no further commands are being sent to the host,&n; *              so things are relatively quiet and we have freedom to&n; *              fiddle with things as we wish.&n; *&n; * Additional note:  This is only the *default* implementation.  It is possible&n; *              for individual drivers to supply their own version of this&n; *              function, and if the maintainer wishes to do this, it is&n; *              strongly suggested that this function be taken as a template&n; *              and modified.  This function was designed to correctly handle&n; *              problems for about 95% of the different cases out there, and&n; *              it should always provide at least a reasonable amount of error&n; *              recovery.&n; *&n; * Note3:       Any command marked &squot;FAILED&squot; or &squot;TIMEOUT&squot; must eventually&n; *              have scsi_finish_command() called for it.  We do all of&n; *              the retry stuff here, so when we restart the host after we&n; *              return it should have an empty queue.&n; */
+DECL|function|scsi_unjam_host
 id|STATIC
 r_int
-DECL|function|scsi_unjam_host
 id|scsi_unjam_host
 c_func
 (paren
@@ -2979,7 +3019,7 @@ id|SCdone
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * First, protect against any sort of race condition.  If any of the outstanding&n;   * commands are in states that indicate that we are not yet blocked (i.e. we are&n;   * not in a quiet state) then we got woken up in error.  If we ever end up here,&n;   * we need to re-examine some of the assumptions.&n;   */
+multiline_comment|/*&n;&t; * First, protect against any sort of race condition.  If any of the outstanding&n;&t; * commands are in states that indicate that we are not yet blocked (i.e. we are&n;&t; * not in a quiet state) then we got woken up in error.  If we ever end up here,&n;&t; * we need to re-examine some of the assumptions.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3031,7 +3071,7 @@ id|SCSI_STATE_UNUSED
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;           * Rats.  Something is still floating around out there.  This could&n;           * be the result of the fact that the upper level drivers are still frobbing&n;           * commands that might have succeeded.  There are two outcomes.  One is that&n;           * the command block will eventually be freed, and the other one is that&n;           * the command will be queued and will be finished along the way.&n;           */
+multiline_comment|/*&n;&t;&t;&t; * Rats.  Something is still floating around out there.  This could&n;&t;&t;&t; * be the result of the fact that the upper level drivers are still frobbing&n;&t;&t;&t; * commands that might have succeeded.  There are two outcomes.  One is that&n;&t;&t;&t; * the command block will eventually be freed, and the other one is that&n;&t;&t;&t; * the command will be queued and will be finished along the way.&n;&t;&t;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -3053,7 +3093,7 @@ suffix:semicolon
 multiline_comment|/*&n; *        panic(&quot;SCSI Error handler woken too early&bslash;n&quot;);&n; *&n; * This is no longer a problem, since now the code cares only about&n; * SCSI_STATE_TIMEOUT and SCSI_STATE_FAILED.&n; * Other states are useful only to release active commands when devices are&n; * set offline. If (host-&gt;host_active == host-&gt;host_busy) we can safely assume&n; * that there are no commands in state other then TIMEOUT od FAILED. (DB)&n; *&n; * FIXME:&n; * It is not easy to release correctly commands according to their state when &n; * devices are set offline, when the state is neither TIMEOUT nor FAILED.&n; * When a device is set offline, we can have some command with&n; * rq_status=RQ_SCSY_BUSY, owner=SCSI_STATE_HIGHLEVEL, &n; * state=SCSI_STATE_INITIALIZING and the driver module cannot be released.&n; * (DB, 17 May 1998)&n; */
 )brace
 )brace
-multiline_comment|/*&n;   * Next, see if we need to request sense information.  if so,&n;   * then get it now, so we have a better idea of what to do.&n;   * FIXME(eric) this has the unfortunate side effect that if a host&n;   * adapter does not automatically request sense information, that we end&n;   * up shutting it down before we request it.  All hosts should be doing this&n;   * anyways, so for now all I have to say is tough noogies if you end up in here.&n;   * On second thought, this is probably a good idea.  We *really* want to give&n;   * authors an incentive to automatically request this.&n;   */
+multiline_comment|/*&n;&t; * Next, see if we need to request sense information.  if so,&n;&t; * then get it now, so we have a better idea of what to do.&n;&t; * FIXME(eric) this has the unfortunate side effect that if a host&n;&t; * adapter does not automatically request sense information, that we end&n;&t; * up shutting it down before we request it.  All hosts should be doing this&n;&t; * anyways, so for now all I have to say is tough noogies if you end up in here.&n;&t; * On second thought, this is probably a good idea.  We *really* want to give&n;&t; * authors an incentive to automatically request this.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -3182,7 +3222,7 @@ c_func
 id|SCpnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;           * If the result was normal, then just pass it along to the&n;           * upper level.&n;           */
+multiline_comment|/*&n;&t;&t;&t; * If the result was normal, then just pass it along to the&n;&t;&t;&t; * upper level.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3215,7 +3255,7 @@ id|NEEDS_RETRY
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* &n;           * We only come in here if we want to retry a&n;           * command.  The test to see whether the command&n;           * should be retried should be keeping track of the&n;           * number of tries, so we don&squot;t end up looping, of&n;           * course.  &n;           */
+multiline_comment|/* &n;&t;&t;&t; * We only come in here if we want to retry a&n;&t;&t;&t; * command.  The test to see whether the command&n;&t;&t;&t; * should be retried should be keeping track of the&n;&t;&t;&t; * number of tries, so we don&squot;t end up looping, of&n;&t;&t;&t; * course.  &n;&t;&t;&t; */
 id|SCpnt-&gt;state
 op_assign
 id|NEEDS_RETRY
@@ -3239,7 +3279,7 @@ id|SUCCESS
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;           * We eventually hand this one back to the top level.&n;           */
+multiline_comment|/*&n;&t;&t;&t; * We eventually hand this one back to the top level.&n;&t;&t;&t; */
 id|SCpnt-&gt;host-&gt;host_failed
 op_decrement
 suffix:semicolon
@@ -3254,7 +3294,7 @@ id|SCpnt
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * Go through the list of commands and figure out where we stand and how bad things&n;   * really are.&n;   */
+multiline_comment|/*&n;&t; * Go through the list of commands and figure out where we stand and how bad things&n;&t; * really are.&n;&t; */
 id|numfailed
 op_assign
 l_int|0
@@ -3407,7 +3447,7 @@ r_goto
 id|leave
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Next, try and see whether or not it makes sense to try and abort&n;   * the running command.  This only works out to be the case if we have&n;   * one command that has timed out.  If the command simply failed, it&n;   * makes no sense to try and abort the command, since as far as the&n;   * host adapter is concerned, it isn&squot;t running.&n;   */
+multiline_comment|/*&n;&t; * Next, try and see whether or not it makes sense to try and abort&n;&t; * the running command.  This only works out to be the case if we have&n;&t; * one command that has timed out.  If the command simply failed, it&n;&t; * makes no sense to try and abort the command, since as far as the&n;&t; * host adapter is concerned, it isn&squot;t running.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -3532,7 +3572,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;   * If we have corrected all of the problems, then we are done.&n;   */
+multiline_comment|/*&n;&t; * If we have corrected all of the problems, then we are done.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3549,7 +3589,7 @@ r_goto
 id|leave
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Either the abort wasn&squot;t appropriate, or it didn&squot;t succeed.&n;   * Now try a bus device reset.  Still, look to see whether we have&n;   * multiple devices that are jammed or not - if we have multiple devices,&n;   * it makes no sense to try BUS_DEVICE_RESET - we really would need&n;   * to try a BUS_RESET instead.&n;   *&n;   * Does this make sense - should we try BDR on each device individually?&n;   * Yes, definitely.&n;   */
+multiline_comment|/*&n;&t; * Either the abort wasn&squot;t appropriate, or it didn&squot;t succeed.&n;&t; * Now try a bus device reset.  Still, look to see whether we have&n;&t; * multiple devices that are jammed or not - if we have multiple devices,&n;&t; * it makes no sense to try BUS_DEVICE_RESET - we really would need&n;&t; * to try a BUS_RESET instead.&n;&t; *&n;&t; * Does this make sense - should we try BDR on each device individually?&n;&t; * Yes, definitely.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -3617,7 +3657,7 @@ l_int|NULL
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;       * OK, we have a device that is having problems.  Try and send&n;       * a bus device reset to it.&n;       *&n;       * FIXME(eric) - make sure we handle the case where multiple&n;       * commands to the same device have failed. They all must&n;       * get properly restarted.&n;       */
+multiline_comment|/*&n;&t;&t; * OK, we have a device that is having problems.  Try and send&n;&t;&t; * a bus device reset to it.&n;&t;&t; *&n;&t;&t; * FIXME(eric) - make sure we handle the case where multiple&n;&t;&t; * commands to the same device have failed. They all must&n;&t;&t; * get properly restarted.&n;&t;&t; */
 id|rtn
 op_assign
 id|scsi_try_bus_device_reset
@@ -3706,7 +3746,7 @@ r_goto
 id|leave
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * If we ended up here, we have serious problems.  The only thing left&n;   * to try is a full bus reset.  If someone has grabbed the bus and isn&squot;t&n;   * letting go, then perhaps this will help.&n;   */
+multiline_comment|/*&n;&t; * If we ended up here, we have serious problems.  The only thing left&n;&t; * to try is a full bus reset.  If someone has grabbed the bus and isn&squot;t&n;&t; * letting go, then perhaps this will help.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -3719,7 +3759,7 @@ l_string|&quot;scsi_unjam_host: Try hard bus reset&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;   * We really want to loop over the various channels, and do this on&n;   * a channel by channel basis.  We should also check to see if any&n;   * of the failed commands are on soft_reset devices, and if so, skip&n;   * the reset.  &n;   */
+multiline_comment|/* &n;&t; * We really want to loop over the various channels, and do this on&n;&t; * a channel by channel basis.  We should also check to see if any&n;&t; * of the failed commands are on soft_reset devices, and if so, skip&n;&t; * the reset.  &n;&t; */
 r_for
 c_loop
 (paren
@@ -3765,7 +3805,7 @@ id|SCSI_STATE_TIMEOUT
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;           * We have a failed command.  Make sure there are no other failed&n;           * commands on the same channel that are timed out and implement a&n;           * soft reset.&n;           */
+multiline_comment|/*&n;&t;&t;&t; * We have a failed command.  Make sure there are no other failed&n;&t;&t;&t; * commands on the same channel that are timed out and implement a&n;&t;&t;&t; * soft reset.&n;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -3830,8 +3870,8 @@ op_eq
 id|SCSI_STATE_TIMEOUT
 )paren
 (brace
-multiline_comment|/* &n;                       * If this device uses the soft reset option, and this&n;                       * is one of the devices acting up, then our only&n;                       * option is to wait a bit, since the command is&n;                       * supposedly still running.  &n;                       *&n;                       * FIXME(eric) - right now we will just end up falling&n;                       * through to the &squot;take device offline&squot; case.&n;                       *&n;                       * FIXME(eric) - It is possible that the command completed&n;                       * *after* the error recovery procedure started, and if this&n;                       * is the case, we are worrying about nothing here.&n;                       */
-multiline_comment|/*&n;                       * Due to the spinlock, we will never get out of this&n;                       * loop without a proper wait (DB)&n;                       */
+multiline_comment|/* &n;&t;&t;&t;&t;&t;&t; * If this device uses the soft reset option, and this&n;&t;&t;&t;&t;&t;&t; * is one of the devices acting up, then our only&n;&t;&t;&t;&t;&t;&t; * option is to wait a bit, since the command is&n;&t;&t;&t;&t;&t;&t; * supposedly still running.  &n;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t; * FIXME(eric) - right now we will just end up falling&n;&t;&t;&t;&t;&t;&t; * through to the &squot;take device offline&squot; case.&n;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t; * FIXME(eric) - It is possible that the command completed&n;&t;&t;&t;&t;&t;&t; * *after* the error recovery procedure started, and if this&n;&t;&t;&t;&t;&t;&t; * is the case, we are worrying about nothing here.&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Due to the spinlock, we will never get out of this&n;&t;&t;&t;&t;&t;&t; * loop without a proper wait (DB)&n;&t;&t;&t;&t;&t;&t; */
 id|scsi_sleep
 c_func
 (paren
@@ -3846,7 +3886,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;           * We now know that we are able to perform a reset for the&n;           * bus that SCpnt points to.  There are no soft-reset devices&n;           * with outstanding timed out commands.&n;           */
+multiline_comment|/*&n;&t;&t;&t; * We now know that we are able to perform a reset for the&n;&t;&t;&t; * bus that SCpnt points to.  There are no soft-reset devices&n;&t;&t;&t; * with outstanding timed out commands.&n;&t;&t;&t; */
 id|rtn
 op_assign
 id|scsi_try_bus_reset
@@ -3969,7 +4009,7 @@ id|SCloop
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;                       * If the bus reset worked, but we are still unable to&n;                       * talk to the device, take it offline.&n;                       * FIXME(eric) - is this really the correct thing to do?&n;                       */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * If the bus reset worked, but we are still unable to&n;&t;&t;&t;&t;&t;&t; * talk to the device, take it offline.&n;&t;&t;&t;&t;&t;&t; * FIXME(eric) - is this really the correct thing to do?&n;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4016,7 +4056,7 @@ r_goto
 id|leave
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * If we ended up here, we have serious problems.  The only thing left&n;   * to try is a full host reset - perhaps the firmware on the device&n;   * crashed, or something like that.&n;   *&n;   * It is assumed that a succesful host reset will cause *all* information&n;   * about the command to be flushed from both the host adapter *and* the&n;   * device.&n;   *&n;   * FIXME(eric) - it isn&squot;t clear that devices that implement the soft reset&n;   * option can ever be cleared except via cycling the power.  The problem is&n;   * that sending the host reset command will cause the host to forget&n;   * about the pending command, but the device won&squot;t forget.  For now, we&n;   * skip the host reset option if any of the failed devices are configured&n;   * to use the soft reset option.&n;   */
+multiline_comment|/*&n;&t; * If we ended up here, we have serious problems.  The only thing left&n;&t; * to try is a full host reset - perhaps the firmware on the device&n;&t; * crashed, or something like that.&n;&t; *&n;&t; * It is assumed that a succesful host reset will cause *all* information&n;&t; * about the command to be flushed from both the host adapter *and* the&n;&t; * device.&n;&t; *&n;&t; * FIXME(eric) - it isn&squot;t clear that devices that implement the soft reset&n;&t; * option can ever be cleared except via cycling the power.  The problem is&n;&t; * that sending the host reset command will cause the host to forget&n;&t; * about the pending command, but the device won&squot;t forget.  For now, we&n;&t; * skip the host reset option if any of the failed devices are configured&n;&t; * to use the soft reset option.&n;&t; */
 r_for
 c_loop
 (paren
@@ -4072,7 +4112,7 @@ op_eq
 id|SCSI_STATE_TIMEOUT
 )paren
 (brace
-multiline_comment|/* &n;               * If this device uses the soft reset option, and this&n;               * is one of the devices acting up, then our only&n;               * option is to wait a bit, since the command is&n;               * supposedly still running.  &n;               *&n;               * FIXME(eric) - right now we will just end up falling&n;               * through to the &squot;take device offline&squot; case.&n;               */
+multiline_comment|/* &n;&t;&t;&t;&t; * If this device uses the soft reset option, and this&n;&t;&t;&t;&t; * is one of the devices acting up, then our only&n;&t;&t;&t;&t; * option is to wait a bit, since the command is&n;&t;&t;&t;&t; * supposedly still running.  &n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; * FIXME(eric) - right now we will just end up falling&n;&t;&t;&t;&t; * through to the &squot;take device offline&squot; case.&n;&t;&t;&t;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -4085,7 +4125,7 @@ l_string|&quot;scsi_unjam_host: Unable to try hard host reset&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                * Due to the spinlock, we will never get out of this&n;                * loop without a proper wait. (DB)&n;                */
+multiline_comment|/*&n;&t;&t;&t;&t; * Due to the spinlock, we will never get out of this&n;&t;&t;&t;&t; * loop without a proper wait. (DB)&n;&t;&t;&t;&t; */
 id|scsi_sleep
 c_func
 (paren
@@ -4110,7 +4150,7 @@ l_string|&quot;scsi_unjam_host: Try hard host reset&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;           * FIXME(eric) - we need to obtain a valid SCpnt to perform this call.&n;           */
+multiline_comment|/*&n;&t;&t;&t; * FIXME(eric) - we need to obtain a valid SCpnt to perform this call.&n;&t;&t;&t; */
 id|rtn
 op_assign
 id|scsi_try_host_reset
@@ -4127,7 +4167,7 @@ op_eq
 id|SUCCESS
 )paren
 (brace
-multiline_comment|/*&n;               * FIXME(eric) we assume that all commands are flushed from the&n;               * controller.  We should get a DID_RESET for all of the commands&n;               * that were pending.  We should ignore these so that we can&n;               * guarantee that we are in a consistent state.&n;               *&n;               * I believe this to be the case right now, but this needs to be&n;               * tested.&n;               */
+multiline_comment|/*&n;&t;&t;&t;&t; * FIXME(eric) we assume that all commands are flushed from the&n;&t;&t;&t;&t; * controller.  We should get a DID_RESET for all of the commands&n;&t;&t;&t;&t; * that were pending.  We should ignore these so that we can&n;&t;&t;&t;&t; * guarantee that we are in a consistent state.&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; * I believe this to be the case right now, but this needs to be&n;&t;&t;&t;&t; * tested.&n;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -4253,7 +4293,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;   * If we solved all of the problems, then let&squot;s rev up the engines again.&n;   */
+multiline_comment|/*&n;&t; * If we solved all of the problems, then let&squot;s rev up the engines again.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4270,7 +4310,7 @@ r_goto
 id|leave
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * If the HOST RESET failed, then for now we assume that the entire host&n;   * adapter is too hosed to be of any use.  For our purposes, however, it is&n;   * easier to simply take the devices offline that correspond to commands&n;   * that failed.&n;   */
+multiline_comment|/*&n;&t; * If the HOST RESET failed, then for now we assume that the entire host&n;&t; * adapter is too hosed to be of any use.  For our purposes, however, it is&n;&t; * easier to simply take the devices offline that correspond to commands&n;&t; * that failed.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -4327,7 +4367,7 @@ id|SCloop-&gt;device-&gt;online
 op_assign
 id|FALSE
 suffix:semicolon
-multiline_comment|/*&n;               * This should pass the failure up to the top level driver, and&n;               * it will have to try and do something intelligent with it.&n;               */
+multiline_comment|/*&n;&t;&t;&t;&t; * This should pass the failure up to the top level driver, and&n;&t;&t;&t;&t; * it will have to try and do something intelligent with it.&n;&t;&t;&t;&t; */
 id|SCloop-&gt;host-&gt;host_failed
 op_decrement
 suffix:semicolon
@@ -4409,12 +4449,12 @@ id|FALSE
 suffix:semicolon
 id|leave
 suffix:colon
-multiline_comment|/*&n;   * We should have a list of commands that we &squot;finished&squot; during the course of&n;   * error recovery.  This should be the same as the list of commands that timed out&n;   * or failed.  We are currently holding these things in a linked list - we didn&squot;t&n;   * put them in the bottom half queue because we wanted to keep things quiet while&n;   * we were working on recovery, and passing them up to the top level could easily&n;   * cause the top level to try and queue something else again.&n;   *&n;   * Start by marking that the host is no longer in error recovery.&n;   */
+multiline_comment|/*&n;&t; * We should have a list of commands that we &squot;finished&squot; during the course of&n;&t; * error recovery.  This should be the same as the list of commands that timed out&n;&t; * or failed.  We are currently holding these things in a linked list - we didn&squot;t&n;&t; * put them in the bottom half queue because we wanted to keep things quiet while&n;&t; * we were working on recovery, and passing them up to the top level could easily&n;&t; * cause the top level to try and queue something else again.&n;&t; *&n;&t; * Start by marking that the host is no longer in error recovery.&n;&t; */
 id|host-&gt;in_recovery
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * Take the list of commands, and stick them in the bottom half queue.&n;   * The current implementation of scsi_done will do this for us - if need&n;   * be we can create a special version of this function to do the&n;   * same job for us.&n;   */
+multiline_comment|/*&n;&t; * Take the list of commands, and stick them in the bottom half queue.&n;&t; * The current implementation of scsi_done will do this for us - if need&n;&t; * be we can create a special version of this function to do the&n;&t; * same job for us.&n;&t; */
 r_for
 c_loop
 (paren
@@ -4452,9 +4492,9 @@ id|ourrtn
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:&t;scsi_error_handler&n; *&n; * Purpose:&t;Handle errors/timeouts of scsi commands, try and clean up&n; *&t;&t;and unjam the bus, and restart things.&n; *&n; * Arguments:&t;host&t;- host for which we are running.&n; *&n; * Returns:&t;Never returns.&n; *&n; * Notes:&t;This is always run in the context of a kernel thread.  The&n; *&t;&t;idea is that we start this thing up when the kernel starts&n; *&t;&t;up (one per host that we detect), and it immediately goes to&n; *&t;&t;sleep and waits for some event (i.e. failure).  When this&n; *&t;&t;takes place, we have the job of trying to unjam the bus&n; *&t;&t;and restarting things.&n; *&n; */
-r_void
+multiline_comment|/*&n; * Function:  scsi_error_handler&n; *&n; * Purpose:     Handle errors/timeouts of scsi commands, try and clean up&n; *              and unjam the bus, and restart things.&n; *&n; * Arguments:   host    - host for which we are running.&n; *&n; * Returns:     Never returns.&n; *&n; * Notes:       This is always run in the context of a kernel thread.  The&n; *              idea is that we start this thing up when the kernel starts&n; *              up (one per host that we detect), and it immediately goes to&n; *              sleep and waits for some event (i.e. failure).  When this&n; *              takes place, we have the job of trying to unjam the bus&n; *              and restarting things.&n; *&n; */
 DECL|function|scsi_error_handler
+r_void
 id|scsi_error_handler
 c_func
 (paren
@@ -4570,7 +4610,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;         * Wake up the thread that created us.&n;         */
+multiline_comment|/*&n;&t; * Wake up the thread that created us.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -4597,7 +4637,7 @@ c_loop
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;     * If we get a signal, it means we are supposed to go&n;&t;     * away and die.  This typically happens if the user is&n;&t;     * trying to unload a module.&n;&t;     */
+multiline_comment|/*&n;&t;&t; * If we get a signal, it means we are supposed to go&n;&t;&t; * away and die.  This typically happens if the user is&n;&t;&t; * trying to unload a module.&n;&t;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
 c_func
 (paren
@@ -4611,6 +4651,7 @@ l_string|&quot;Error handler sleeping&bslash;n&quot;
 )paren
 suffix:semicolon
 id|down_interruptible
+c_func
 (paren
 op_amp
 id|sem
@@ -4652,7 +4693,7 @@ id|host-&gt;eh_active
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;     * We have a host that is failing for some reason.  Figure out&n;&t;     * what we need to do to get it up and online again (if we can).&n;&t;     * If we fail, we end up taking the thing offline.&n;&t;     */
+multiline_comment|/*&n;&t;&t; * We have a host that is failing for some reason.  Figure out&n;&t;&t; * what we need to do to get it up and online again (if we can).&n;&t;&t; * If we fail, we end up taking the thing offline.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4687,7 +4728,7 @@ id|host-&gt;eh_active
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;     * Note - if the above fails completely, the action is to take&n;&t;     * individual devices offline and flush the queue of any&n;&t;     * outstanding requests that may have been pending.  When we&n;&t;     * restart, we restart any I/O to any other devices on the bus&n;&t;     * which are still online.&n;&t;     */
+multiline_comment|/*&n;&t;&t; * Note - if the above fails completely, the action is to take&n;&t;&t; * individual devices offline and flush the queue of any&n;&t;&t; * outstanding requests that may have been pending.  When we&n;&t;&t; * restart, we restart any I/O to any other devices on the bus&n;&t;&t; * which are still online.&n;&t;&t; */
 id|scsi_restart_operations
 c_func
 (paren
@@ -4743,14 +4784,12 @@ id|host-&gt;eh_notify
 op_ne
 l_int|NULL
 )paren
-(brace
 id|up
 c_func
 (paren
 id|host-&gt;eh_notify
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

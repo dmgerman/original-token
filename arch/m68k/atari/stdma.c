@@ -16,6 +16,7 @@ multiline_comment|/* chip. The interrupt is routed to falhd.c if IDE is configur
 multiline_comment|/* model is a Falcon and the interrupt was caused by the HD controller */
 multiline_comment|/* (can be determined by looking at its status register).              */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

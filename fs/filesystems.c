@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/efs_fs.h&gt;
 macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/auto_fs.h&gt;
 macro_line|#include &lt;linux/qnx4_fs.h&gt;
+macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#include &lt;linux/ntfs_fs.h&gt;
 macro_line|#include &lt;linux/hfs_fs.h&gt;
 macro_line|#include &lt;linux/devpts_fs.h&gt;
@@ -230,6 +231,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_QNX4FS_FS
 id|init_qnx4_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_UDF_FS
+id|init_udf_fs
 c_func
 (paren
 )paren

@@ -1,7 +1,7 @@
 macro_line|#ifndef _ST_H
 DECL|macro|_ST_H
 mdefine_line|#define _ST_H
-multiline_comment|/*&n;&t;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/st.h,v 1.1 1992/04/24 18:01:50 root Exp root $&n;*/
+multiline_comment|/*&n;   $Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/st.h,v 1.1 1992/04/24 18:01:50 root Exp root $&n; */
 macro_line|#ifndef _SCSI_H
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#endif
@@ -288,7 +288,7 @@ DECL|member|long_timeout
 r_int
 id|long_timeout
 suffix:semicolon
-multiline_comment|/* timeout for commands known to take long time*/
+multiline_comment|/* timeout for commands known to take long time */
 multiline_comment|/* Mode characteristics */
 DECL|member|modes
 id|ST_mode

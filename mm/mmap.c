@@ -983,9 +983,9 @@ id|vma-&gt;vm_file
 op_assign
 l_int|NULL
 suffix:semicolon
-id|vma-&gt;vm_pte
+id|vma-&gt;vm_private_data
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Clear old maps */
 id|error
@@ -2080,9 +2080,9 @@ id|mpnt-&gt;vm_file
 op_assign
 id|area-&gt;vm_file
 suffix:semicolon
-id|mpnt-&gt;vm_pte
+id|mpnt-&gt;vm_private_data
 op_assign
-id|area-&gt;vm_pte
+id|area-&gt;vm_private_data
 suffix:semicolon
 r_if
 c_cond
@@ -3018,9 +3018,9 @@ id|vma-&gt;vm_file
 op_assign
 l_int|NULL
 suffix:semicolon
-id|vma-&gt;vm_pte
+id|vma-&gt;vm_private_data
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * merge_segments may merge our vma, so we can&squot;t refer to it&n;&t; * after the call.  Save the values we need now ...&n;&t; */
 id|flags
@@ -3647,9 +3647,9 @@ id|prev-&gt;vm_file
 )paren
 op_logical_or
 (paren
-id|mpnt-&gt;vm_pte
+id|mpnt-&gt;vm_private_data
 op_ne
-id|prev-&gt;vm_pte
+id|prev-&gt;vm_private_data
 )paren
 op_logical_or
 (paren

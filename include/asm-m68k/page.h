@@ -3,14 +3,29 @@ DECL|macro|_M68K_PAGE_H
 mdefine_line|#define _M68K_PAGE_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|PAGE_SHIFT
-mdefine_line|#define PAGE_SHIFT&t;12
+mdefine_line|#define PAGE_SHIFT&t;(12)
 DECL|macro|PAGE_SIZE
-mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
+mdefine_line|#define PAGE_SIZE&t;(4096)
+macro_line|#else
+DECL|macro|PAGE_SHIFT
+mdefine_line|#define PAGE_SHIFT&t;(13)
+DECL|macro|PAGE_SIZE
+mdefine_line|#define PAGE_SIZE&t;(8192)
+macro_line|#endif
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#if PAGE_SHIFT &lt; 13
+DECL|macro|KTHREAD_SIZE
+mdefine_line|#define KTHREAD_SIZE (8192)
+macro_line|#else
+DECL|macro|KTHREAD_SIZE
+mdefine_line|#define KTHREAD_SIZE PAGE_SIZE
+macro_line|#endif
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
 DECL|macro|get_user_page
@@ -352,8 +367,14 @@ multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 multiline_comment|/* This handles the memory map.. */
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0
+macro_line|#else
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;&t;0x0E000000
+macro_line|#endif
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
 multiline_comment|/*&n; * A hacky workaround for the problems with mmap() of frame buffer&n; * memory in the lower 16MB physical memoryspace.&n; *&n; * This is a short term solution, we will have to deal properly&n; * with this in 2.3.x.&n; */
@@ -407,10 +428,133 @@ id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
+macro_line|#else&t;/* !CONFIG_SUN3 */
+multiline_comment|/* This #define is a horrible hack to suppress lots of warnings. --m */
+DECL|macro|__pa
+mdefine_line|#define __pa(x) ___pa((unsigned long)x)
+DECL|function|___pa
+r_static
+r_inline
+r_int
+r_int
+id|___pa
+c_func
+(paren
+r_int
+r_int
+id|x
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|x
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|x
+OG
+id|PAGE_OFFSET
+)paren
+(brace
+r_return
+(paren
+id|x
+op_minus
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
+)brace
+r_else
+r_return
+(paren
+id|x
+op_plus
+l_int|0x2000000
+)paren
+suffix:semicolon
+)brace
+DECL|function|__va
+r_static
+r_inline
+r_void
+op_star
+id|__va
+c_func
+(paren
+r_int
+r_int
+id|x
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|x
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|x
+OL
+l_int|0x2000000
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+id|x
+op_plus
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
+)brace
+r_else
+r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+id|x
+op_minus
+l_int|0x2000000
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif&t;/* CONFIG_SUN3 */
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+macro_line|#endif /* !__ASSEMBLY__ */
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|BUG
 mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;asm volatile(&quot;illegal&quot;); &bslash;&n;} while (0)
+macro_line|#else
+DECL|macro|BUG
+mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;panic(&quot;BUG!&quot;); &bslash;&n;} while (0)
+macro_line|#endif
 DECL|macro|PAGE_BUG
 mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
 macro_line|#endif /* __KERNEL__ */

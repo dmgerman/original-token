@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  fs/partitions/msdos.c&n; *&n; *  Code extracted from drivers/block/genhd.c&n; *  Copyright (C) 1991-1998  Linus Torvalds&n; *  Re-organised Feb 1998 Russell King&n; */
+multiline_comment|/*&n; *  fs/partitions/mac.c&n; *&n; *  Code extracted from drivers/block/genhd.c&n; *  Copyright (C) 1991-1998  Linus Torvalds&n; *  Re-organised Feb 1998 Russell King&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;

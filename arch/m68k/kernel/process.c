@@ -81,7 +81,7 @@ comma
 id|aligned
 c_func
 (paren
-id|THREAD_SIZE
+id|KTHREAD_SIZE
 )paren
 )paren
 )paren
@@ -224,6 +224,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+suffix:semicolon
 )brace
 DECL|function|machine_halt
 r_void
@@ -233,6 +240,23 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|mach_halt
+)paren
+id|mach_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+suffix:semicolon
 )brace
 DECL|function|machine_power_off
 r_void
@@ -250,6 +274,23 @@ id|APM_STATE_OFF
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|mach_power_off
+)paren
+id|mach_power_off
+c_func
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+suffix:semicolon
 )brace
 DECL|function|show_regs
 r_void
@@ -416,7 +457,7 @@ l_string|&quot;tstl %0&bslash;n&bslash;t&quot;
 multiline_comment|/* child or parent */
 l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
 multiline_comment|/* parent - jump */
-l_string|&quot;lea %%sp@(-8192),%6&bslash;n&bslash;t&quot;
+l_string|&quot;lea %%sp@(%c7),%6&bslash;n&bslash;t&quot;
 multiline_comment|/* reload current */
 l_string|&quot;movel %3,%%sp@-&bslash;n&bslash;t&quot;
 multiline_comment|/* push argument */
@@ -462,6 +503,12 @@ comma
 l_string|&quot;r&quot;
 (paren
 id|current
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+op_minus
+id|KTHREAD_SIZE
 )paren
 suffix:colon
 l_string|&quot;d0&quot;
@@ -691,7 +738,7 @@ id|retp
 suffix:semicolon
 id|stack_offset
 op_assign
-id|THREAD_SIZE
+id|KTHREAD_SIZE
 op_minus
 r_sizeof
 (paren

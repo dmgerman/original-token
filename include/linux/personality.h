@@ -41,6 +41,8 @@ DECL|macro|PER_IRIX64
 mdefine_line|#define PER_IRIX64              (0x000b | STICKY_TIMEOUTS) /* IRIX6 64-bit     */
 DECL|macro|PER_RISCOS
 mdefine_line|#define PER_RISCOS&t;&t;(0x000c)
+DECL|macro|PER_SOLARIS
+mdefine_line|#define PER_SOLARIS&t;&t;(0x000d | STICKY_TIMEOUTS)
 multiline_comment|/* Prototype for an lcall7 syscall handler. */
 DECL|typedef|lcall7_func
 r_typedef
@@ -50,6 +52,8 @@ op_star
 id|lcall7_func
 )paren
 (paren
+r_int
+comma
 r_struct
 id|pt_regs
 op_star

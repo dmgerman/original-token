@@ -5,12 +5,17 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;check.h&quot;
 macro_line|#include &quot;atari.h&quot;
 multiline_comment|/* ++guenther: this should be settable by the user (&quot;make config&quot;)?.&n; */
 DECL|macro|ICD_PARTS
 mdefine_line|#define ICD_PARTS
+multiline_comment|/* check if a partition entry looks valid -- Atari format is assumed if at&n;   least one of the primary entries is ok this way */
+DECL|macro|VALID_PARTITION
+mdefine_line|#define&t;VALID_PARTITION(pi,hdsiz)&t;&t;&t;&t;&t;     &bslash;&n;    (((pi)-&gt;flg &amp; 1) &amp;&amp;&t;&t;&t;&t;&t;&t;&t;     &bslash;&n;     isalnum((pi)-&gt;id[0]) &amp;&amp; isalnum((pi)-&gt;id[1]) &amp;&amp; isalnum((pi)-&gt;id[2]) &amp;&amp; &bslash;&n;     be32_to_cpu((pi)-&gt;st) &lt;= (hdsiz) &amp;&amp;&t;&t;&t;&t;     &bslash;&n;     be32_to_cpu((pi)-&gt;st) + be32_to_cpu((pi)-&gt;siz) &lt;= (hdsiz))
 DECL|function|atari_partition
 r_int
 id|atari_partition
@@ -57,15 +62,11 @@ id|partition_info
 op_star
 id|pi
 suffix:semicolon
-id|ulong
+id|u32
 id|extensect
 suffix:semicolon
-r_int
-r_int
-id|psum
-suffix:semicolon
-r_int
-id|i
+id|u32
+id|hd_size
 suffix:semicolon
 macro_line|#ifdef ICD_PARTS
 r_int
@@ -108,67 +109,6 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Verify this is an Atari rootsector: */
-id|psum
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|256
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|psum
-op_add_assign
-id|ntohs
-c_func
-(paren
-(paren
-(paren
-id|__u16
-op_star
-)paren
-(paren
-id|bh-&gt;b_data
-)paren
-)paren
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|psum
-op_amp
-l_int|0xFFFF
-)paren
-op_ne
-l_int|0x1234
-)paren
-(brace
-id|brelse
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|rs
 op_assign
 (paren
@@ -178,6 +118,78 @@ op_star
 )paren
 id|bh-&gt;b_data
 suffix:semicolon
+id|hd_size
+op_assign
+id|hd-&gt;part
+(braket
+id|minor
+op_minus
+l_int|1
+)braket
+dot
+id|nr_sects
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|VALID_PARTITION
+c_func
+(paren
+op_amp
+id|rs-&gt;part
+(braket
+l_int|0
+)braket
+comma
+id|hd_size
+)paren
+op_logical_and
+op_logical_neg
+id|VALID_PARTITION
+c_func
+(paren
+op_amp
+id|rs-&gt;part
+(braket
+l_int|1
+)braket
+comma
+id|hd_size
+)paren
+op_logical_and
+op_logical_neg
+id|VALID_PARTITION
+c_func
+(paren
+op_amp
+id|rs-&gt;part
+(braket
+l_int|2
+)braket
+comma
+id|hd_size
+)paren
+op_logical_and
+op_logical_neg
+id|VALID_PARTITION
+c_func
+(paren
+op_amp
+id|rs-&gt;part
+(braket
+l_int|3
+)braket
+comma
+id|hd_size
+)paren
+)paren
+(brace
+multiline_comment|/* if there&squot;s no valid primary partition, assume that no Atari&n;&t; format partition table (there&squot;s no reliable magic or the like&n;&t; :-() */
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|pi
 op_assign
 op_amp
@@ -268,7 +280,7 @@ id|partsect
 op_assign
 id|extensect
 op_assign
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|pi-&gt;st
@@ -390,7 +402,7 @@ id|minor
 comma
 id|partsect
 op_plus
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|xrs-&gt;part
@@ -401,7 +413,7 @@ dot
 id|st
 )paren
 comma
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|xrs-&gt;part
@@ -477,7 +489,7 @@ suffix:semicolon
 )brace
 id|partsect
 op_assign
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|xrs-&gt;part
@@ -532,13 +544,13 @@ id|hd
 comma
 id|minor
 comma
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|pi-&gt;st
 )paren
 comma
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|pi-&gt;siz
@@ -731,13 +743,13 @@ id|hd
 comma
 id|minor
 comma
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|pi-&gt;st
 )paren
 comma
-id|ntohl
+id|be32_to_cpu
 c_func
 (paren
 id|pi-&gt;siz

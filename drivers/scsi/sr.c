@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt&n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *&t; provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; *&t; Modified by Jens Axboe &lt;axboe@image.dk&gt; - Uniform sr_packet()&n; *&t; interface, capabilities probe additions, ioctl cleanups, etc.&n; *&n; */
+multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *           Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *      sd.c Copyright (C) 1992 Drew Eckhardt&n; *      Linux scsi disk driver by&n; *              Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *          Modified by Eric Youngdale eric@aib.com to support loadable&n; *          low-level scsi drivers.&n; *&n; *       Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *       provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; *       Modified by Jens Axboe &lt;axboe@image.dk&gt; - Uniform sr_packet()&n; *       interface, capabilities probe additions, ioctl cleanups, etc.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,7 +17,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sr.h&quot;
-macro_line|#include &lt;scsi/scsi_ioctl.h&gt;   /* For the door lock/unlock commands */
+macro_line|#include &lt;scsi/scsi_ioctl.h&gt;&t;/* For the door lock/unlock commands */
 macro_line|#include &quot;constants.h&quot;
 id|MODULE_PARM
 c_func
@@ -29,9 +29,9 @@ l_string|&quot;i&quot;
 suffix:semicolon
 multiline_comment|/* see sr_ioctl.c */
 DECL|macro|MAX_RETRIES
-mdefine_line|#define MAX_RETRIES 3
+mdefine_line|#define MAX_RETRIES&t;3
 DECL|macro|SR_TIMEOUT
-mdefine_line|#define SR_TIMEOUT (30 * HZ)
+mdefine_line|#define SR_TIMEOUT&t;(30 * HZ)
 r_static
 r_int
 id|sr_init
@@ -163,6 +163,7 @@ r_int
 suffix:semicolon
 r_void
 id|requeue_sr_request
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -287,14 +288,12 @@ c_cond
 (paren
 id|sr_template.module
 )paren
-(brace
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|sr_template.module
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|variable|sr_dops
 r_static
@@ -384,7 +383,6 @@ suffix:semicolon
 multiline_comment|/*&n; * This function checks to see if the media has been changed in the&n; * CDROM drive.  It is possible that we have already sensed a change,&n; * or the drive may have sensed one and not yet reported it.  We must&n; * be ready for either case. This function always reports the current&n; * value of the changed bit.  If flag is 0, then the changed bit is reset.&n; * This function could be done as an ioctl, but we would need to have&n; * an inode for that to work, and we do not always have one.&n; */
 DECL|function|sr_media_change
 r_int
-(def_block
 id|sr_media_change
 c_func
 (paren
@@ -458,7 +456,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* This will force a flush, if called from&n;                           * check_disk_change */
+multiline_comment|/* This will force a flush, if called from&n;&t;&t;&t;&t; * check_disk_change */
 )brace
 suffix:semicolon
 id|retval
@@ -487,7 +485,7 @@ id|device-&gt;changed
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* If the disk changed, the capacity will now be different,&n;         * so we force a re-read of this information */
+multiline_comment|/* If the disk changed, the capacity will now be different,&n;&t; * so we force a re-read of this information */
 r_if
 c_cond
 (paren
@@ -501,7 +499,7 @@ c_func
 id|cdi
 )paren
 suffix:semicolon
-multiline_comment|/* &n;                  * If the disk changed, the capacity will now be different,&n;                  * so we force a re-read of this information &n;                  * Force 2048 for the sector size so that filesystems won&squot;t&n;                  * be trying to use something that is too small if the disc&n;                  * has changed.&n;                  */
+multiline_comment|/* &n;&t;&t; * If the disk changed, the capacity will now be different,&n;&t;&t; * so we force a re-read of this information &n;&t;&t; * Force 2048 for the sector size so that filesystems won&squot;t&n;&t;&t; * be trying to use something that is too small if the disc&n;&t;&t; * has changed.&n;&t;&t; */
 id|scsi_CDs
 (braket
 id|MINOR
@@ -533,12 +531,12 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-)def_block
 multiline_comment|/*&n; * rw_intr is the interrupt routine for the device driver.  It will be notified on the&n; * end of a SCSI read / write, and will take on of several actions based on success or failure.&n; */
 DECL|function|rw_intr
 r_static
 r_void
 id|rw_intr
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -586,7 +584,7 @@ id|SCpnt-&gt;request.bh-&gt;b_data
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;      Handle MEDIUM ERRORs or VOLUME OVERFLOWs that indicate partial success.&n;      Since this is a relatively rare error condition, no care is taken to&n;      avoid unnecessary additional work such as memcpy&squot;s that could be avoided.&n;    */
+multiline_comment|/*&n;&t;   Handle MEDIUM ERRORs or VOLUME OVERFLOWs that indicate partial success.&n;&t;   Since this is a relatively rare error condition, no care is taken to&n;&t;   avoid unnecessary additional work such as memcpy&squot;s that could be avoided.&n;&t; */
 r_if
 c_cond
 (paren
@@ -745,7 +743,7 @@ id|good_sectors
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;      The SCSI specification allows for the value returned by READ&n;&t;      CAPACITY to be up to 75 2K sectors past the last readable&n;&t;      block.  Therefore, if we hit a medium error within the last&n;&t;      75 2K sectors, we decrease the saved size value.&n;&t;    */
+multiline_comment|/*&n;&t;&t;   The SCSI specification allows for the value returned by READ&n;&t;&t;   CAPACITY to be up to 75 2K sectors past the last readable&n;&t;&t;   block.  Therefore, if we hit a medium error within the last&n;&t;&t;   75 2K sectors, we decrease the saved size value.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -843,7 +841,7 @@ op_lshift
 l_int|9
 )paren
 suffix:semicolon
-multiline_comment|/* Even though we are not using scatter-gather, we look&n;&t;&t; * ahead and see if there is a linked request for the&n;&t;&t; * other half of this buffer.  If there is, then satisfy&n;&t;&t; * it. */
+multiline_comment|/* Even though we are not using scatter-gather, we look&n;&t;&t;&t;&t; * ahead and see if there is a linked request for the&n;&t;&t;&t;&t; * other half of this buffer.  If there is, then satisfy&n;&t;&t;&t;&t; * it. */
 r_if
 c_cond
 (paren
@@ -1034,12 +1032,10 @@ id|SCpnt-&gt;request.sector
 op_mod
 l_int|4
 )paren
-(brace
 id|good_sectors
 op_sub_assign
 l_int|2
 suffix:semicolon
-)brace
 multiline_comment|/* See   if there is a padding record at the end that needs to be removed */
 r_if
 c_cond
@@ -1048,12 +1044,10 @@ id|good_sectors
 OG
 id|SCpnt-&gt;request.nr_sectors
 )paren
-(brace
 id|good_sectors
 op_sub_assign
 l_int|2
 suffix:semicolon
-)brace
 )brace
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -1280,7 +1274,7 @@ op_eq
 id|UNIT_ATTENTION
 )paren
 (brace
-multiline_comment|/* detected disc change.  set a bit and quietly refuse&n;&t;&t;&t;&t; * further access.&t;*/
+multiline_comment|/* detected disc change.  set a bit and quietly refuse&n;&t;&t;&t;&t; * further access.    */
 id|scsi_CDs
 (braket
 id|DEVICE_NR
@@ -1750,7 +1744,7 @@ id|ENXIO
 suffix:semicolon
 multiline_comment|/* No such device */
 )brace
-multiline_comment|/*&n;     * If the device is in error recovery, wait until it is done.&n;     * If the device is offline, then disallow any access to it.&n;     */
+multiline_comment|/*&n;&t; * If the device is in error recovery, wait until it is done.&n;&t; * If the device is offline, then disallow any access to it.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1822,15 +1816,13 @@ c_cond
 (paren
 id|sr_template.module
 )paren
-(brace
 id|__MOD_INC_USE_COUNT
 c_func
 (paren
 id|sr_template.module
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* If this device did not have media in the drive at boot time, then&n;     * we would have been unable to get the sector size.  Check to see if&n;     * this is the case, and try again.&n;     */
+multiline_comment|/* If this device did not have media in the drive at boot time, then&n;&t; * we would have been unable to get the sector size.  Check to see if&n;&t; * this is the case, and try again.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1845,7 +1837,6 @@ id|cdi-&gt;dev
 dot
 id|needs_sector_size
 )paren
-(brace
 id|get_sectorsize
 c_func
 (paren
@@ -1856,7 +1847,6 @@ id|cdi-&gt;dev
 )paren
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1866,6 +1856,7 @@ DECL|function|do_sr_request
 r_static
 r_void
 id|do_sr_request
+c_func
 (paren
 r_void
 )paren
@@ -1931,7 +1922,7 @@ id|CURRENT-&gt;rq_dev
 dot
 id|device
 suffix:semicolon
-multiline_comment|/*&n;         * If the host for this device is in error recovery mode, don&squot;t&n;         * do anything at all here.  When the host leaves error recovery&n;         * mode, it will automatically restart things and start queueing&n;         * commands again.&n;         */
+multiline_comment|/*&n;&t;&t; * If the host for this device is in error recovery mode, don&squot;t&n;&t;&t; * do anything at all here.  When the host leaves error recovery&n;&t;&t; * mode, it will automatically restart things and start queueing&n;&t;&t; * commands again.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1941,14 +1932,14 @@ id|SDev-&gt;host-&gt;in_recovery
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * I am not sure where the best place to do this is.  We need&n;&t; * to hook in a place where we are likely to come if in user&n;&t; * space.&n;&t; */
+multiline_comment|/*&n;&t;&t; * I am not sure where the best place to do this is.  We need&n;&t;&t; * to hook in a place where we are likely to come if in user&n;&t;&t; * space.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|SDev-&gt;was_reset
 )paren
 (brace
-multiline_comment|/*&n; &t;     * We need to relock the door, but we might&n; &t;     * be in an interrupt handler.  Only do this&n; &t;     * from user space, since we do not want to&n; &t;     * sleep from an interrupt.&n; &t;     */
+multiline_comment|/*&n;&t;&t;&t; * We need to relock the door, but we might&n;&t;&t;&t; * be in an interrupt handler.  Only do this&n;&t;&t;&t; * from user space, since we do not want to&n;&t;&t;&t; * sleep from an interrupt.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2000,7 +1991,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* we do lazy blocksize switching (when reading XA sectors,&n;&t; * see CDROMREADMODE2 ioctl) */
+multiline_comment|/* we do lazy blocksize switching (when reading XA sectors,&n;&t;&t; * see CDROMREADMODE2 ioctl) */
 r_if
 c_cond
 (paren
@@ -2084,7 +2075,7 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;&t; * try to find a queueable request (i.e. device not busy, and host able to&n;&t; * accept another command.  If we find one, then we queue it. This can&n;&t; * make a big difference on systems with more than one disk drive.  We want&n;&t; * to have the interrupts off when monkeying with the request list, because&n;&t; * otherwise the kernel might try to slip in a request in between somewhere. */
+multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;&t;&t; * try to find a queueable request (i.e. device not busy, and host able to&n;&t;&t; * accept another command.  If we find one, then we queue it. This can&n;&t;&t; * make a big difference on systems with more than one disk drive.  We want&n;&t;&t; * to have the interrupts off when monkeying with the request list, because&n;&t;&t; * otherwise the kernel might try to slip in a request in between somewhere. */
 r_if
 c_cond
 (paren
@@ -2139,10 +2130,8 @@ c_cond
 (paren
 id|SCpnt
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|req1
 op_assign
 id|req
@@ -2209,6 +2198,7 @@ multiline_comment|/* While */
 DECL|function|requeue_sr_request
 r_void
 id|requeue_sr_request
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -2295,7 +2285,7 @@ op_ge
 id|sr_template.nr_dev
 )paren
 (brace
-multiline_comment|/* printk(&quot;CD-ROM request error: invalid device.&bslash;n&quot;);&t;&t;&t;*/
+multiline_comment|/* printk(&quot;CD-ROM request error: invalid device.&bslash;n&quot;);                   */
 id|SCpnt
 op_assign
 id|end_scsi_request
@@ -2328,7 +2318,7 @@ dot
 id|use
 )paren
 (brace
-multiline_comment|/* printk(&quot;CD-ROM request error: device marked not in use.&bslash;n&quot;);&t;&t;*/
+multiline_comment|/* printk(&quot;CD-ROM request error: device marked not in use.&bslash;n&quot;);         */
 id|SCpnt
 op_assign
 id|end_scsi_request
@@ -2392,8 +2382,8 @@ dot
 id|device-&gt;changed
 )paren
 (brace
-multiline_comment|/*&n;&t; * quietly refuse to do anything to a changed disc&n;&t; * until the changed bit has been reset&n;&t; */
-multiline_comment|/* printk(&quot;CD-ROM has been changed.  Prohibiting further I/O.&bslash;n&quot;);&t;*/
+multiline_comment|/*&n;&t;&t; * quietly refuse to do anything to a changed disc&n;&t;&t; * until the changed bit has been reset&n;&t;&t; */
+multiline_comment|/* printk(&quot;CD-ROM has been changed.  Prohibiting further I/O.&bslash;n&quot;);      */
 id|SCpnt
 op_assign
 id|end_scsi_request
@@ -2455,6 +2445,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|panic
+c_func
 (paren
 l_string|&quot;Unknown sr command %d&bslash;n&quot;
 comma
@@ -2475,7 +2466,7 @@ l_int|5
 op_amp
 l_int|0xe0
 suffix:semicolon
-multiline_comment|/*&n;     * Now do the grungy work of figuring out which sectors we need, and&n;     * where in memory we are going to put them.&n;     *&n;     * The variables we need are:&n;     *&n;     * this_count= number of 512 byte sectors being read&n;     * block     = starting cdrom sector to read.&n;     * realcount = # of cdrom sectors to read&n;     *&n;     * The major difference between a scsi disk and a scsi cdrom&n;     * is that we will always use scatter-gather if we can, because we can&n;     * work around the fact that the buffer cache has a block size of 1024,&n;     * and we have 2048 byte sectors.  This code should work for buffers that&n;     * are any multiple of 512 bytes long.&n;     */
+multiline_comment|/*&n;&t; * Now do the grungy work of figuring out which sectors we need, and&n;&t; * where in memory we are going to put them.&n;&t; *&n;&t; * The variables we need are:&n;&t; *&n;&t; * this_count= number of 512 byte sectors being read&n;&t; * block     = starting cdrom sector to read.&n;&t; * realcount = # of cdrom sectors to read&n;&t; *&n;&t; * The major difference between a scsi disk and a scsi cdrom&n;&t; * is that we will always use scatter-gather if we can, because we can&n;&t; * work around the fact that the buffer cache has a block size of 1024,&n;&t; * and we have 2048 byte sectors.  This code should work for buffers that&n;&t; * are any multiple of 512 bytes long.&n;&t; */
 id|SCpnt-&gt;use_sg
 op_assign
 l_int|0
@@ -2542,7 +2533,7 @@ l_int|0xff
 op_lshift
 l_int|4
 suffix:semicolon
-multiline_comment|/* Calculate how many links we can use.  First see if we need&n;&t; * a padding record at the start */
+multiline_comment|/* Calculate how many links we can use.  First see if we need&n;&t;&t; * a padding record at the start */
 id|this_count
 op_assign
 id|SCpnt-&gt;request.sector
@@ -2554,11 +2545,9 @@ c_cond
 (paren
 id|this_count
 )paren
-(brace
 id|count
 op_increment
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -2803,14 +2792,12 @@ id|count
 dot
 id|address
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;SCSI DMA pool exhausted.&quot;
 )paren
 suffix:semicolon
-)brace
 id|sgpnt
 (braket
 id|count
@@ -2825,7 +2812,7 @@ id|count
 dot
 id|address
 suffix:semicolon
-multiline_comment|/* Flag to delete&n;&t;&t;&t;&t;&t;&t;&t;&t;    if needed */
+multiline_comment|/* Flag to delete&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   if needed */
 id|count
 op_increment
 suffix:semicolon
@@ -2915,14 +2902,12 @@ id|count
 dot
 id|address
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;SCSI DMA pool exhausted.&quot;
 )paren
 suffix:semicolon
-)brace
 id|sgpnt
 (braket
 id|count
@@ -3007,7 +2992,7 @@ id|count
 dot
 id|address
 suffix:semicolon
-multiline_comment|/* We try to avoid exhausting the DMA pool, since it is easier&n;&t;&t;     * to control usage here.  In other places we might have a more&n;&t;&t;     * pressing need, and we would be screwed if we ran out */
+multiline_comment|/* We try to avoid exhausting the DMA pool, since it is easier&n;&t;&t;&t;&t;&t; * to control usage here.  In other places we might have a more&n;&t;&t;&t;&t;&t; * pressing need, and we would be screwed if we ran out */
 r_if
 c_cond
 (paren
@@ -3063,7 +3048,7 @@ id|length
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* If we start running low on DMA buffers, we abort the scatter-gather&n;&t;&t;     * operation, and free all of the memory we have allocated.  We want to&n;&t;&t;     * ensure that all scsi operations are able to do at least a non-scatter/gather&n;&t;&t;     * operation */
+multiline_comment|/* If we start running low on DMA buffers, we abort the scatter-gather&n;&t;&t;&t;&t;&t; * operation, and free all of the memory we have allocated.  We want to&n;&t;&t;&t;&t;&t; * ensure that all scsi operations are able to do at least a non-scatter/gather&n;&t;&t;&t;&t;&t; * operation */
 r_if
 c_cond
 (paren
@@ -3104,7 +3089,6 @@ id|count
 dot
 id|alt_address
 )paren
-(brace
 id|scsi_free
 c_func
 (paren
@@ -3123,7 +3107,6 @@ dot
 id|length
 )paren
 suffix:semicolon
-)brace
 )brace
 suffix:semicolon
 id|SCpnt-&gt;use_sg
@@ -3180,7 +3163,6 @@ suffix:semicolon
 id|count
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3210,7 +3192,6 @@ dot
 id|length
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 suffix:semicolon
@@ -3425,7 +3406,7 @@ id|realcount
 op_lshift
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;         * Note: The scsi standard says that READ_6 is *optional*, while&n;         * READ_10 is mandatory.   Thus there is no point in using&n;         * READ_6.&n;         */
+multiline_comment|/*&n;&t; * Note: The scsi standard says that READ_6 is *optional*, while&n;&t; * READ_10 is mandatory.   Thus there is no point in using&n;&t; * READ_6.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3728,7 +3709,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3740,7 +3720,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -3750,7 +3729,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Some dumb host adapters can speed transfers by knowing the&n;     * minimum transfersize in advance.&n;     *&n;     * We shouldn&squot;t disconnect in the middle of a sector, but the cdrom&n;     * sector size can be larger than the size of a buffer and the&n;     * transfer may be split to the size of a buffer.  So it&squot;s safe to&n;     * assume that we can at least transfer the minimum of the buffer&n;     * size (1024) and the sector size between each connect / disconnect.&n;     */
+multiline_comment|/* Some dumb host adapters can speed transfers by knowing the&n;&t; * minimum transfersize in advance.&n;&t; *&n;&t; * We shouldn&squot;t disconnect in the middle of a sector, but the cdrom&n;&t; * sector size can be larger than the size of a buffer and the&n;&t; * transfer may be split to the size of a buffer.  So it&squot;s safe to&n;&t; * assume that we can at least transfer the minimum of the buffer&n;&t; * size (1024) and the sector size between each connect / disconnect.&n;&t; */
 id|SCpnt-&gt;transfersize
 op_assign
 (paren
@@ -3779,6 +3758,7 @@ op_assign
 id|this_count
 suffix:semicolon
 id|scsi_do_cmd
+c_func
 (paren
 id|SCpnt
 comma
@@ -3810,7 +3790,6 @@ suffix:semicolon
 DECL|function|sr_detect
 r_static
 r_int
-(def_block
 id|sr_detect
 c_func
 (paren
@@ -3830,11 +3809,9 @@ id|SDp-&gt;type
 op_ne
 id|TYPE_WORM
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -3856,11 +3833,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-)def_block
 DECL|function|sr_attach
 r_static
 r_int
-(def_block
 id|sr_attach
 c_func
 (paren
@@ -3887,11 +3862,9 @@ id|SDp-&gt;type
 op_ne
 id|TYPE_WORM
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3934,10 +3907,8 @@ c_cond
 op_logical_neg
 id|cpnt-&gt;device
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3945,13 +3916,12 @@ id|i
 op_ge
 id|sr_template.dev_max
 )paren
-(brace
 id|panic
+c_func
 (paren
 l_string|&quot;scsi_devices corrupt (sr)&quot;
 )paren
 suffix:semicolon
-)brace
 id|SDp-&gt;scsi_request_fn
 op_assign
 id|do_sr_request
@@ -3975,22 +3945,21 @@ id|sr_template.nr_dev
 OG
 id|sr_template.dev_max
 )paren
-(brace
 id|panic
+c_func
 (paren
 l_string|&quot;scsi_devices corrupt (sr)&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
 DECL|function|sr_init_done
 r_static
 r_void
 id|sr_init_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -4030,7 +3999,6 @@ suffix:semicolon
 )brace
 DECL|function|get_sectorsize
 r_void
-(def_block
 id|get_sectorsize
 c_func
 (paren
@@ -4125,6 +4093,7 @@ op_amp
 l_int|0xe0
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -4183,6 +4152,7 @@ id|flags
 )paren
 suffix:semicolon
 id|scsi_do_cmd
+c_func
 (paren
 id|SCpnt
 comma
@@ -4239,9 +4209,7 @@ id|the_result
 op_logical_and
 id|retries
 )paren
-(brace
 suffix:semicolon
-)brace
 id|wake_up
 c_func
 (paren
@@ -4418,7 +4386,7 @@ dot
 id|sector_size
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * HP 4020i CD-Recorder reports 2340 byte sectors&n;&t;&t; * Philips CD-Writers report 2352 byte sectors&n;&t;&t; *&n;&t;&t; * Use 2k sectors for them..&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * HP 4020i CD-Recorder reports 2340 byte sectors&n;&t;&t;&t; * Philips CD-Writers report 2352 byte sectors&n;&t;&t;&t; *&n;&t;&t;&t; * Use 2k sectors for them..&n;&t;&t;&t; */
 r_case
 l_int|0
 suffix:colon
@@ -4459,6 +4427,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;sr%d: unsupported sector size %d.&bslash;n&quot;
 comma
@@ -4491,7 +4460,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;         * Add this so that we have the ability to correctly gauge&n;         * what the device is capable of.&n;         */
+multiline_comment|/*&n;&t;&t; * Add this so that we have the ability to correctly gauge&n;&t;&t; * what the device is capable of.&n;&t;&t; */
 id|scsi_CDs
 (braket
 id|i
@@ -4530,10 +4499,8 @@ l_int|512
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|get_capabilities
 r_void
-(def_block
 id|get_capabilities
 c_func
 (paren
@@ -5041,8 +5008,7 @@ l_int|512
 )paren
 suffix:semicolon
 )brace
-)def_block
-multiline_comment|/*&n; * sr_packet() is the entry point for the generic commands generated&n; * by the Uniform CD-ROM layer. &n;*/
+multiline_comment|/*&n; * sr_packet() is the entry point for the generic commands generated&n; * by the Uniform CD-ROM layer. &n; */
 DECL|function|sr_packet
 r_static
 r_int
@@ -5156,6 +5122,7 @@ id|flags
 )paren
 suffix:semicolon
 id|scsi_do_cmd
+c_func
 (paren
 id|SCpnt
 comma
@@ -5250,11 +5217,9 @@ id|sr_template.dev_noticed
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5394,7 +5359,7 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * These are good guesses for the time being.&n;     */
+multiline_comment|/*&n;&t; * These are good guesses for the time being.&n;&t; */
 r_for
 c_loop
 (paren
@@ -5409,7 +5374,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|sr_blocksizes
 (braket
 id|i
@@ -5417,7 +5381,6 @@ id|i
 op_assign
 l_int|2048
 suffix:semicolon
-)brace
 id|blksize_size
 (braket
 id|MAJOR_NR
@@ -5476,7 +5439,7 @@ op_increment
 id|i
 )paren
 (brace
-multiline_comment|/* If we have already seen this, then skip it.  Comes up&n;&t; * with loadable modules. */
+multiline_comment|/* If we have already seen this, then skip it.  Comes up&n;&t;&t; * with loadable modules. */
 r_if
 c_cond
 (paren
@@ -5716,7 +5679,7 @@ id|cdi
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If our host adapter is capable of scatter-gather, then we increase&n;     * the read-ahead to 16 blocks (32 sectors).  If not, we use&n;     * a two block (4 sector) read ahead. */
+multiline_comment|/* If our host adapter is capable of scatter-gather, then we increase&n;&t; * the read-ahead to 16 blocks (32 sectors).  If not, we use&n;&t; * a two block (4 sector) read ahead. */
 r_if
 c_cond
 (paren
@@ -5734,7 +5697,6 @@ l_int|0
 dot
 id|device-&gt;host-&gt;sg_tablesize
 )paren
-(brace
 id|read_ahead
 (braket
 id|MAJOR_NR
@@ -5742,7 +5704,6 @@ id|MAJOR_NR
 op_assign
 l_int|32
 suffix:semicolon
-)brace
 multiline_comment|/* 32 sector read-ahead.  Always removable. */
 r_else
 id|read_ahead
@@ -5825,7 +5786,7 @@ c_func
 id|devi
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;     * Since the cdrom is read-only, no need to sync the device.&n;&t;     * We should be kind to our buffer cache, however.&n;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * Since the cdrom is read-only, no need to sync the device.&n;&t;&t;&t; * We should be kind to our buffer cache, however.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5843,7 +5804,7 @@ c_func
 id|devi
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;     * Reset things back to a sane state so that one can re-load a new&n;&t;     * driver (perhaps the same one).&n;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * Reset things back to a sane state so that one can re-load a new&n;&t;&t;&t; * driver (perhaps the same one).&n;&t;&t;&t; */
 id|unregister_cdrom
 c_func
 (paren
@@ -6043,6 +6004,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

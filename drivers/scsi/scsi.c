@@ -27,7 +27,7 @@ macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.38 1997/01/19 23:07:18 davem Exp $&quot;;&n;*/
+multiline_comment|/*&n;   static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.38 1997/01/19 23:07:18 davem Exp $&quot;;&n; */
 multiline_comment|/*&n; * Definitions and constants.&n; */
 DECL|macro|INTERNAL_ERROR
 mdefine_line|#define INTERNAL_ERROR (panic (&quot;Internal error in file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__))
@@ -51,7 +51,7 @@ r_int
 id|FreeSectorBitmap
 suffix:semicolon
 macro_line|#else
-macro_line|# error You lose.
+macro_line|#error You lose.
 macro_line|#endif
 DECL|macro|MIN_RESET_DELAY
 mdefine_line|#define MIN_RESET_DELAY (2*HZ)
@@ -310,6 +310,7 @@ suffix:semicolon
 r_extern
 r_void
 id|scsi_times_out
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -319,6 +320,7 @@ suffix:semicolon
 r_static
 r_int
 id|scan_scsis_single
+c_func
 (paren
 r_int
 id|channel
@@ -380,6 +382,7 @@ multiline_comment|/*&n; * These are the interface to the old error handling code
 r_extern
 r_void
 id|scsi_old_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -389,6 +392,7 @@ suffix:semicolon
 r_extern
 r_void
 id|scsi_old_times_out
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -700,7 +704,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes&n;&t;&t;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;SEAGATE&quot;
 comma
@@ -711,7 +715,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t;&t;&t; * for aha152x controller, which causes&n;&t;&t;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;SEAGATE&quot;
 comma
@@ -806,7 +810,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes&n;&t;&t;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;TEXEL&quot;
 comma
@@ -817,7 +821,7 @@ comma
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes&n;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1&n;&t;&t;&t;&t;&t;&t;&t;&t; * for seagate controller, which causes&n;&t;&t;&t;&t;&t;&t;&t;&t; * SCSI code to reset bus.*/
 (brace
 l_string|&quot;QUANTUM&quot;
 comma
@@ -1152,7 +1156,7 @@ op_or
 id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/*&n; * Must be at end of list...&n; */
+multiline_comment|/*&n;&t; * Must be at end of list...&n;&t; */
 (brace
 l_int|NULL
 comma
@@ -1165,7 +1169,6 @@ suffix:semicolon
 DECL|function|get_device_flags
 r_static
 r_int
-(def_block
 id|get_device_flags
 c_func
 (paren
@@ -1210,11 +1213,9 @@ id|vendor
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|pnt
 op_assign
 op_amp
@@ -1234,11 +1235,9 @@ id|pnt
 op_eq
 l_char|&squot; &squot;
 )paren
-(brace
 id|pnt
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1266,10 +1265,8 @@ id|vendor
 )paren
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 id|pnt
 op_assign
 op_amp
@@ -1289,11 +1286,9 @@ id|pnt
 op_eq
 l_char|&squot; &squot;
 )paren
-(brace
 id|pnt
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1321,10 +1316,8 @@ id|model
 )paren
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_return
 id|device_list
 (braket
@@ -1338,10 +1331,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
 multiline_comment|/*&n; * Function:    scsi_make_blocked_list&n; *&n; * Purpose:     Build linked list of hosts that require blocking.&n; *&n; * Arguments:   None.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       Blocking is sort of a hack that is used to prevent more than one&n; *              host adapter from being active at one time.  This is used in cases&n; *              where the ISA bus becomes unreliable if you have more than one&n; *              host adapter really pumping data through.&n; *&n; *              We spent a lot of time examining the problem, and I *believe* that&n; *              the problem is bus related as opposed to being a driver bug.&n; *&n; *              The blocked list is used as part of the synchronization object&n; *              that we use to ensure that only one host is active at one time.&n; *              I (ERY) would like to make this go away someday, but this would&n; *              require that we have a recursive mutex object.&n; */
-r_void
 DECL|function|scsi_make_blocked_list
+r_void
 id|scsi_make_blocked_list
 c_func
 (paren
@@ -1366,7 +1358,7 @@ comma
 op_star
 id|shpnt
 suffix:semicolon
-multiline_comment|/*&n;     * Create a circular linked list from the scsi hosts which have&n;     * the &quot;wish_block&quot; field in the Scsi_Host structure set.&n;     * The blocked list should include all the scsi hosts using ISA DMA.&n;     * In some systems, using two dma channels simultaneously causes&n;     * unpredictable results.&n;     * Among the scsi hosts in the blocked list, only one host at a time&n;     * is allowed to have active commands queued. The transition from&n;     * one active host to the next one is allowed only when host_busy == 0&n;     * for the active host (which implies host_busy == 0 for all the hosts&n;     * in the list). Moreover for block devices the transition to a new&n;     * active host is allowed only when a request is completed, since a&n;     * block device request can be divided into multiple scsi commands&n;     * (when there are few sg lists or clustering is disabled).&n;     *&n;     * (DB, 4 Feb 1995)&n;     */
+multiline_comment|/*&n;&t; * Create a circular linked list from the scsi hosts which have&n;&t; * the &quot;wish_block&quot; field in the Scsi_Host structure set.&n;&t; * The blocked list should include all the scsi hosts using ISA DMA.&n;&t; * In some systems, using two dma channels simultaneously causes&n;&t; * unpredictable results.&n;&t; * Among the scsi hosts in the blocked list, only one host at a time&n;&t; * is allowed to have active commands queued. The transition from&n;&t; * one active host to the next one is allowed only when host_busy == 0&n;&t; * for the active host (which implies host_busy == 0 for all the hosts&n;&t; * in the list). Moreover for block devices the transition to a new&n;&t; * active host is allowed only when a request is completed, since a&n;&t; * block device request can be divided into multiple scsi commands&n;&t; * (when there are few sg lists or clustering is disabled).&n;&t; *&n;&t; * (DB, 4 Feb 1995)&n;&t; */
 id|host_active
 op_assign
 l_int|NULL
@@ -1386,7 +1378,7 @@ id|shpnt-&gt;next
 )paren
 (brace
 macro_line|#if 0
-multiline_comment|/*&n;&t; * Is this is a candidate for the blocked list?&n;&t; * Useful to put into the blocked list all the hosts whose driver&n;&t; * does not know about the host-&gt;block feature.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Is this is a candidate for the blocked list?&n;&t;&t; * Useful to put into the blocked list all the hosts whose driver&n;&t;&t; * does not know about the host-&gt;block feature.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1514,6 +1506,7 @@ DECL|function|scan_scsis_done
 r_static
 r_void
 id|scan_scsis_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -1526,6 +1519,7 @@ c_func
 l_int|1
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scan_scsis_done(%p, %06x)&bslash;n&quot;
 comma
@@ -1575,6 +1569,7 @@ r_static
 r_int
 id|__init
 id|scsi_logging_setup
+c_func
 (paren
 r_char
 op_star
@@ -1678,6 +1673,7 @@ r_static
 r_int
 id|__init
 id|scsi_luns_setup
+c_func
 (paren
 r_char
 op_star
@@ -1739,6 +1735,7 @@ DECL|function|scan_scsis
 r_static
 r_void
 id|scan_scsis
+c_func
 (paren
 r_struct
 id|Scsi_Host
@@ -1808,6 +1805,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 id|scsi_init_malloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -1865,6 +1863,7 @@ l_int|0
 )braket
 suffix:colon
 id|scsi_init_malloc
+c_func
 (paren
 l_int|512
 comma
@@ -1883,6 +1882,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Unable to obtain scsi_result buffer&bslash;n&quot;
 )paren
@@ -1891,7 +1891,7 @@ r_goto
 id|leave
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * We must chain ourself in the host_queue, so commands can time out &n;   */
+multiline_comment|/*&n;&t; * We must chain ourself in the host_queue, so commands can time out &n;&t; */
 id|SCpnt-&gt;next
 op_assign
 l_int|NULL
@@ -1915,7 +1915,7 @@ op_amp
 id|SDpnt-&gt;device_wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Next, hook the device to the host in question.&n;   */
+multiline_comment|/*&n;&t; * Next, hook the device to the host in question.&n;&t; */
 id|SDpnt-&gt;prev
 op_assign
 l_int|NULL
@@ -1943,12 +1943,10 @@ id|SDtail-&gt;next
 op_ne
 l_int|NULL
 )paren
-(brace
 id|SDtail
 op_assign
 id|SDtail-&gt;next
 suffix:semicolon
-)brace
 id|SDtail-&gt;next
 op_assign
 id|SDpnt
@@ -1965,7 +1963,7 @@ op_assign
 id|SDpnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * We need to increment the counter for this one device so we can track when&n;   * things are quiet.&n;   */
+multiline_comment|/*&n;&t; * We need to increment the counter for this one device so we can track when&n;&t; * things are quiet.&n;&t; */
 id|atomic_inc
 c_func
 (paren
@@ -2003,11 +2001,9 @@ id|channel
 OG
 id|shpnt-&gt;max_channel
 )paren
-(brace
 r_goto
 id|leave
 suffix:semicolon
-)brace
 id|dev
 op_assign
 id|hid
@@ -2019,11 +2015,9 @@ id|dev
 op_ge
 id|shpnt-&gt;max_id
 )paren
-(brace
 r_goto
 id|leave
 suffix:semicolon
-)brace
 id|lun
 op_assign
 id|hlun
@@ -2035,12 +2029,11 @@ id|lun
 op_ge
 id|shpnt-&gt;max_lun
 )paren
-(brace
 r_goto
 id|leave
 suffix:semicolon
-)brace
 id|scan_scsis_single
+c_func
 (paren
 id|channel
 comma
@@ -2093,7 +2086,6 @@ id|sdtpnt-&gt;init
 op_logical_and
 id|sdtpnt-&gt;dev_noticed
 )paren
-(brace
 (paren
 op_star
 id|sdtpnt-&gt;init
@@ -2101,7 +2093,6 @@ id|sdtpnt-&gt;init
 (paren
 )paren
 suffix:semicolon
-)brace
 id|oldSDpnt-&gt;scsi_request_fn
 op_assign
 l_int|NULL
@@ -2244,7 +2235,6 @@ c_cond
 (paren
 id|shpnt-&gt;reverse_ordering
 )paren
-(brace
 multiline_comment|/* Shift to scanning 15,14,13... or 7,6,5,4, */
 id|order_dev
 op_assign
@@ -2254,7 +2244,6 @@ id|dev
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_else
 id|order_dev
 op_assign
@@ -2268,7 +2257,7 @@ op_ne
 id|order_dev
 )paren
 (brace
-multiline_comment|/*&n;           * We need the for so our continue, etc. work fine. We put this in&n;           * a variable so that we can override it during the scan if we&n;           * detect a device *KNOWN* to have multiple logical units.&n;           */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * We need the for so our continue, etc. work fine. We put this in&n;&t;&t;&t;&t;&t; * a variable so that we can override it during the scan if we&n;&t;&t;&t;&t;&t; * detect a device *KNOWN* to have multiple logical units.&n;&t;&t;&t;&t;&t; */
 id|max_dev_lun
 op_assign
 (paren
@@ -2306,6 +2295,7 @@ c_cond
 (paren
 op_logical_neg
 id|scan_scsis_single
+c_func
 (paren
 id|channel
 comma
@@ -2345,7 +2335,7 @@ multiline_comment|/* for dev ends */
 multiline_comment|/* for channel ends */
 )brace
 multiline_comment|/* if/else hardcoded */
-multiline_comment|/*&n;   * We need to decrement the counter for this one device&n;   * so we know when everything is quiet.&n;   */
+multiline_comment|/*&n;&t; * We need to decrement the counter for this one device&n;&t; * so we know when everything is quiet.&n;&t; */
 id|atomic_dec
 c_func
 (paren
@@ -2383,10 +2373,8 @@ id|dqptr
 op_assign
 id|dqptr-&gt;next
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2406,12 +2394,10 @@ c_cond
 (paren
 id|prev
 )paren
-(brace
 id|prev-&gt;next
 op_assign
 id|next
 suffix:semicolon
-)brace
 r_else
 id|shpnt-&gt;host_queue
 op_assign
@@ -2422,12 +2408,10 @@ c_cond
 (paren
 id|next
 )paren
-(brace
 id|next-&gt;prev
 op_assign
 id|prev
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* Last device block does not exist.  Free memory. */
@@ -2439,6 +2423,7 @@ op_ne
 l_int|NULL
 )paren
 id|scsi_init_free
+c_func
 (paren
 (paren
 r_char
@@ -2460,6 +2445,7 @@ op_ne
 l_int|NULL
 )paren
 id|scsi_init_free
+c_func
 (paren
 (paren
 r_char
@@ -2491,6 +2477,7 @@ l_int|NULL
 )paren
 (brace
 id|scsi_init_free
+c_func
 (paren
 id|scsi_result
 comma
@@ -2599,6 +2586,7 @@ multiline_comment|/*&n; * The worker for scan_scsis.&n; * Returning 0 means Plea
 DECL|function|scan_scsis_single
 r_int
 id|scan_scsis_single
+c_func
 (paren
 r_int
 id|channel
@@ -2692,7 +2680,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;   * Assume that the device will have handshaking problems, and then fix this&n;   * field later if it turns out it doesn&squot;t&n;   */
+multiline_comment|/*&n;&t; * Assume that the device will have handshaking problems, and then fix this&n;&t; * field later if it turns out it doesn&squot;t&n;&t; */
 id|SDpnt-&gt;borken
 op_assign
 l_int|1
@@ -2787,6 +2775,7 @@ id|io_request_lock
 )paren
 suffix:semicolon
 id|scsi_do_cmd
+c_func
 (paren
 id|SCpnt
 comma
@@ -2823,6 +2812,7 @@ id|io_request_lock
 )paren
 suffix:semicolon
 id|down
+c_func
 (paren
 op_amp
 id|sem
@@ -2839,6 +2829,7 @@ c_func
 l_int|3
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi: scan_scsis_single id %d lun %d. Return code 0x%08x&bslash;n&quot;
 comma
@@ -2898,6 +2889,7 @@ c_cond
 (paren
 (paren
 id|driver_byte
+c_func
 (paren
 id|SCpnt-&gt;result
 )paren
@@ -2907,6 +2899,7 @@ id|DRIVER_SENSE
 op_logical_or
 (paren
 id|status_byte
+c_func
 (paren
 id|SCpnt-&gt;result
 )paren
@@ -2992,12 +2985,13 @@ c_func
 l_int|3
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi: performing INQUIRY&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Build an INQUIRY command block.&n;   */
+multiline_comment|/*&n;&t; * Build an INQUIRY command block.&n;&t; */
 id|scsi_cmd
 (braket
 l_int|0
@@ -3074,6 +3068,7 @@ id|io_request_lock
 )paren
 suffix:semicolon
 id|scsi_do_cmd
+c_func
 (paren
 id|SCpnt
 comma
@@ -3106,6 +3101,7 @@ id|io_request_lock
 )paren
 suffix:semicolon
 id|down
+c_func
 (paren
 op_amp
 id|sem
@@ -3122,6 +3118,7 @@ c_func
 l_int|3
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi: INQUIRY %s with code 0x%x&bslash;n&quot;
 comma
@@ -3145,7 +3142,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* assume no peripheral if any sort of error */
-multiline_comment|/*&n;   * Check the peripheral qualifier field - this tells us whether LUNS&n;   * are supported here or not.&n;   */
+multiline_comment|/*&n;&t; * Check the peripheral qualifier field - this tells us whether LUNS&n;&t; * are supported here or not.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3166,12 +3163,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* assume no peripheral if any sort of error */
 )brace
-multiline_comment|/*&n;   * It would seem some TOSHIBA CDROM gets things wrong&n;   */
+multiline_comment|/*&n;&t; * It would seem some TOSHIBA CDROM gets things wrong&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|scsi_result
 op_plus
@@ -3184,6 +3182,7 @@ l_int|7
 op_logical_and
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|scsi_result
 op_plus
@@ -3219,6 +3218,7 @@ suffix:semicolon
 multiline_comment|/* removable */
 )brace
 id|memcpy
+c_func
 (paren
 id|SDpnt-&gt;vendor
 comma
@@ -3230,6 +3230,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 id|SDpnt-&gt;model
 comma
@@ -3241,6 +3242,7 @@ l_int|16
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 id|SDpnt-&gt;rev
 comma
@@ -3288,7 +3290,7 @@ id|SDpnt-&gt;has_cmdblocks
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * Currently, all sequential devices are assumed to be tapes, all random&n;   * devices disk, with the appropriate read only flags set for ROM / WORM&n;   * treated as RO.&n;   */
+multiline_comment|/*&n;&t; * Currently, all sequential devices are assumed to be tapes, all random&n;&t; * devices disk, with the appropriate read only flags set for ROM / WORM&n;&t; * treated as RO.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -3346,6 +3348,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;scsi: unknown type %d&bslash;n&quot;
 comma
@@ -3411,6 +3414,7 @@ l_int|0x1f
 )paren
 suffix:semicolon
 id|print_inquiry
+c_func
 (paren
 id|scsi_result
 )paren
@@ -3479,20 +3483,21 @@ l_int|1
 id|SDpnt-&gt;scsi_level
 op_increment
 suffix:semicolon
-multiline_comment|/*&n;   * Accommodate drivers that want to sleep when they should be in a polling&n;   * loop.&n;   */
+multiline_comment|/*&n;&t; * Accommodate drivers that want to sleep when they should be in a polling&n;&t; * loop.&n;&t; */
 id|SDpnt-&gt;disconnect
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * Get any flags for this device.&n;   */
+multiline_comment|/*&n;&t; * Get any flags for this device.&n;&t; */
 id|bflags
 op_assign
 id|get_device_flags
+c_func
 (paren
 id|scsi_result
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Set the tagged_queue flag for SCSI-II devices that purport to support&n;   * tagged queuing in the INQUIRY data.&n;   */
+multiline_comment|/*&n;&t; * Set the tagged_queue flag for SCSI-II devices that purport to support&n;&t; * tagged queuing in the INQUIRY data.&n;&t; */
 id|SDpnt-&gt;tagged_queue
 op_assign
 l_int|0
@@ -3532,7 +3537,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Some revisions of the Texel CD ROM drives have handshaking problems when&n;   * used with the Seagate controllers.  Before we know what type of device&n;   * we&squot;re talking to, we assume it&squot;s borken and then change it here if it&n;   * turns out that it isn&squot;t a TEXEL drive.&n;   */
+multiline_comment|/*&n;&t; * Some revisions of the Texel CD ROM drives have handshaking problems when&n;&t; * used with the Seagate controllers.  Before we know what type of device&n;&t; * we&squot;re talking to, we assume it&squot;s borken and then change it here if it&n;&t; * turns out that it isn&squot;t a TEXEL drive.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3548,7 +3553,7 @@ id|SDpnt-&gt;borken
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * If we want to only allow I/O to one of the luns attached to this device&n;   * at a time, then we set this flag.&n;   */
+multiline_comment|/*&n;&t; * If we want to only allow I/O to one of the luns attached to this device&n;&t; * at a time, then we set this flag.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3560,7 +3565,7 @@ id|SDpnt-&gt;single_lun
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;   * These devices need this &quot;key&quot; to unlock the devices so we can use it&n;   */
+multiline_comment|/*&n;&t; * These devices need this &quot;key&quot; to unlock the devices so we can use it&n;&t; */
 r_if
 c_cond
 (paren
@@ -3574,6 +3579,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Unlocked floptical drive.&bslash;n&quot;
 )paren
@@ -3658,6 +3664,7 @@ id|io_request_lock
 )paren
 suffix:semicolon
 id|scsi_do_cmd
+c_func
 (paren
 id|SCpnt
 comma
@@ -3690,6 +3697,7 @@ id|io_request_lock
 )paren
 suffix:semicolon
 id|down
+c_func
 (paren
 op_amp
 id|sem
@@ -3701,12 +3709,12 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * Detach the command from the device. It was just a temporary to be used while&n;   * scanning the bus - the real ones will be allocated later.&n;   */
+multiline_comment|/*&n;&t; * Detach the command from the device. It was just a temporary to be used while&n;&t; * scanning the bus - the real ones will be allocated later.&n;&t; */
 id|SDpnt-&gt;device_queue
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * This device was already hooked up to the host in question,&n;   * so at this point we just let go of it and it should be fine.  We do need to&n;   * allocate a new one and attach it to the host so that we can further scan the bus.&n;   */
+multiline_comment|/*&n;&t; * This device was already hooked up to the host in question,&n;&t; * so at this point we just let go of it and it should be fine.  We do need to&n;&t; * allocate a new one and attach it to the host so that we can further scan the bus.&n;&t; */
 id|SDpnt
 op_assign
 (paren
@@ -3714,6 +3722,7 @@ id|Scsi_Device
 op_star
 )paren
 id|scsi_init_malloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -3736,6 +3745,7 @@ id|SDpnt
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi: scan_scsis_single: Cannot malloc&bslash;n&quot;
 )paren
@@ -3744,7 +3754,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * And hook up our command block to the new device we will be testing&n;   * for.&n;   */
+multiline_comment|/*&n;&t; * And hook up our command block to the new device we will be testing&n;&t; * for.&n;&t; */
 id|SDpnt-&gt;device_queue
 op_assign
 id|SCpnt
@@ -3760,7 +3770,7 @@ op_amp
 id|SDpnt-&gt;device_wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Since we just found one device, there had damn well better be one in the list&n;   * already.&n;   */
+multiline_comment|/*&n;&t; * Since we just found one device, there had damn well better be one in the list&n;&t; * already.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3768,14 +3778,12 @@ id|shpnt-&gt;host_queue
 op_eq
 l_int|NULL
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;scan_scsis_single: Host queue == NULL&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|SDtail
 op_assign
 id|shpnt-&gt;host_queue
@@ -3804,7 +3812,7 @@ id|SDpnt-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * Some scsi devices cannot be polled for lun != 0 due to firmware bugs&n;   */
+multiline_comment|/*&n;&t; * Some scsi devices cannot be polled for lun != 0 due to firmware bugs&n;&t; */
 r_if
 c_cond
 (paren
@@ -3816,7 +3824,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* break; */
-multiline_comment|/*&n;   * If this device is known to support sparse multiple units, override the&n;   * other settings, and scan all of them.&n;   */
+multiline_comment|/*&n;&t; * If this device is known to support sparse multiple units, override the&n;&t; * other settings, and scan all of them.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3839,7 +3847,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * If this device is known to support multiple units, override the other&n;   * settings, and scan all of them.&n;   */
+multiline_comment|/*&n;&t; * If this device is known to support multiple units, override the other&n;&t; * settings, and scan all of them.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3857,7 +3865,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * REGAL CDC-4X: avoid hang after LUN 4&n;   */
+multiline_comment|/*&n;&t; * REGAL CDC-4X: avoid hang after LUN 4&n;&t; */
 r_if
 c_cond
 (paren
@@ -3875,7 +3883,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * We assume the device can&squot;t handle lun!=0 if: - it reports scsi-0 (ANSI&n;   * SCSI Revision 0) (old drives like MAXTOR XT-3280) or - it reports scsi-1&n;   * (ANSI SCSI Revision 1) and Response Data Format 0&n;   */
+multiline_comment|/*&n;&t; * We assume the device can&squot;t handle lun!=0 if: - it reports scsi-0 (ANSI&n;&t; * SCSI Revision 0) (old drives like MAXTOR XT-3280) or - it reports scsi-1&n;&t; * (ANSI SCSI Revision 1) and Response Data Format 0&n;&t; */
 r_if
 c_cond
 (paren
@@ -3939,6 +3947,7 @@ DECL|function|scsi_request_queueable
 id|Scsi_Cmnd
 op_star
 id|scsi_request_queueable
+c_func
 (paren
 r_struct
 id|request
@@ -3980,6 +3989,7 @@ op_logical_neg
 id|device
 )paren
 id|panic
+c_func
 (paren
 l_string|&quot;No device passed to scsi_request_queueable().&bslash;n&quot;
 )paren
@@ -3999,7 +4009,7 @@ c_func
 l_string|&quot;Inactive in scsi_request_queueable&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Look for a free command block.  If we have been instructed not to queue&n;     * multiple commands to multi-lun devices, then check to see what else is&n;     * going for this device first.&n;     */
+multiline_comment|/*&n;&t; * Look for a free command block.  If we have been instructed not to queue&n;&t; * multiple commands to multi-lun devices, then check to see what else is&n;&t; * going for this device first.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4024,10 +4034,8 @@ id|SCpnt-&gt;request.rq_status
 op_eq
 id|RQ_INACTIVE
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|SCpnt
 op_assign
 id|SCpnt-&gt;next
@@ -4092,7 +4100,7 @@ op_ne
 id|RQ_INACTIVE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;     * I think that we should really limit things to one&n;&t;&t;     * outstanding command per device - this is what tends&n;                     * to trip up buggy firmware.&n;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * I think that we should really limit things to one&n;&t;&t;&t;&t;&t; * outstanding command per device - this is what tends&n;&t;&t;&t;&t;&t; * to trip up buggy firmware.&n;&t;&t;&t;&t;&t; */
 r_return
 l_int|NULL
 suffix:semicolon
@@ -4168,13 +4176,11 @@ c_cond
 op_logical_neg
 id|tablesize
 )paren
-(brace
 id|bh
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
-multiline_comment|/* Take a quick look through the table to see how big it is.&n;&t; * We already have our copy of req, so we can mess with that&n;&t; * if we want to.&n;&t; */
+multiline_comment|/* Take a quick look through the table to see how big it is.&n;&t;&t; * We already have our copy of req, so we can mess with that&n;&t;&t; * if we want to.&n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -4202,11 +4208,9 @@ comma
 id|bhp
 )paren
 )paren
-(brace
 id|tablesize
 op_decrement
 suffix:semicolon
-)brace
 id|req-&gt;nr_sectors
 op_sub_assign
 id|bh-&gt;b_size
@@ -4225,10 +4229,8 @@ c_cond
 op_logical_neg
 id|tablesize
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|bh
 op_assign
 id|bhp
@@ -4309,7 +4311,7 @@ id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* And no one is waiting for the device&n;&t;&t;&t;&t;      * either */
+multiline_comment|/* And no one is waiting for the device&n;&t;&t;&t;&t;&t;&t; * either */
 )brace
 id|atomic_inc
 c_func
@@ -4360,7 +4362,7 @@ id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Since not everyone seems to set the device info correctly&n; * before Scsi_Cmnd gets send out to scsi_do_command, we do it here.&n; */
+multiline_comment|/*&n;&t; *&t;Since not everyone seems to set the device info correctly&n;&t; *&t;before Scsi_Cmnd gets send out to scsi_do_command, we do it here.&n;&t; */
 id|SCpnt-&gt;channel
 op_assign
 id|device-&gt;channel
@@ -4390,6 +4392,7 @@ DECL|function|scsi_allocate_device
 id|Scsi_Cmnd
 op_star
 id|scsi_allocate_device
+c_func
 (paren
 r_struct
 id|request
@@ -4456,6 +4459,7 @@ op_logical_neg
 id|device
 )paren
 id|panic
+c_func
 (paren
 l_string|&quot;No device passed to scsi_allocate_device().&bslash;n&quot;
 )paren
@@ -4470,7 +4474,7 @@ op_assign
 op_star
 id|reqp
 suffix:semicolon
-multiline_comment|/* See if this request has already been queued by an interrupt routine */
+multiline_comment|/*&n;&t; * See if this request has already been queued by an &n;&t; * interrupt routine &n;&t; */
 r_if
 c_cond
 (paren
@@ -4484,11 +4488,9 @@ id|req-&gt;rq_status
 op_eq
 id|RQ_INACTIVE
 )paren
-(brace
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 id|dev
 op_assign
 id|req-&gt;rq_dev
@@ -4559,10 +4561,8 @@ id|SCpnt-&gt;request.rq_status
 op_eq
 id|RQ_INACTIVE
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|SCpnt
 op_assign
 id|SCpnt-&gt;next
@@ -4631,7 +4631,7 @@ op_ne
 id|RQ_INACTIVE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * I think that we should really limit things to one&n;&t;&t;&t; * outstanding command per device - this is what tends&n;                         * to trip up buggy firmware.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * I think that we should really limit things to one&n;&t;&t;&t;&t;&t;&t; * outstanding command per device - this is what tends&n;&t;&t;&t;&t;&t;&t; * to trip up buggy firmware.&n;&t;&t;&t;&t;&t;&t; */
 id|found
 op_assign
 l_int|NULL
@@ -4650,7 +4650,7 @@ op_assign
 id|found
 suffix:semicolon
 )brace
-multiline_comment|/* See if this request has already been queued by an interrupt routine&n;&t; */
+multiline_comment|/* See if this request has already been queued by an interrupt routine&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4681,8 +4681,8 @@ id|SCpnt-&gt;request.rq_status
 op_ne
 id|RQ_INACTIVE
 )paren
-multiline_comment|/* Might have changed */
 (brace
+multiline_comment|/* Might have changed */
 r_if
 c_cond
 (paren
@@ -4798,13 +4798,11 @@ c_cond
 op_logical_neg
 id|tablesize
 )paren
-(brace
 id|bh
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
-multiline_comment|/* Take a quick look through the table to see how big it is.&n;&t;&t; * We already have our copy of req, so we can mess with that&n;&t;&t; * if we want to.&n;&t;&t; */
+multiline_comment|/* Take a quick look through the table to see how big it is.&n;&t;&t;&t;&t; * We already have our copy of req, so we can mess with that&n;&t;&t;&t;&t; * if we want to.&n;&t;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -4832,11 +4830,9 @@ comma
 id|bhp
 )paren
 )paren
-(brace
 id|tablesize
 op_decrement
 suffix:semicolon
-)brace
 id|req-&gt;nr_sectors
 op_sub_assign
 id|bh-&gt;b_size
@@ -4855,10 +4851,8 @@ c_cond
 op_logical_neg
 id|tablesize
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|bh
 op_assign
 id|bhp
@@ -4911,7 +4905,7 @@ id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Wait until whole thing done*/
+multiline_comment|/* Wait until whole thing done */
 )brace
 r_else
 (brace
@@ -4943,7 +4937,7 @@ id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* And no one is waiting for this&n;&t;&t;&t;&t;&t;      * to complete */
+multiline_comment|/* And no one is waiting for this&n;&t;&t;&t;&t;&t;&t;&t;&t; * to complete */
 )brace
 id|atomic_inc
 c_func
@@ -5000,7 +4994,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do not flag underflow conditions */
-multiline_comment|/* Since not everyone seems to set the device info correctly&n;     * before Scsi_Cmnd gets send out to scsi_do_command, we do it here.&n;     * FIXME(eric) This doesn&squot;t make any sense.&n;     */
+multiline_comment|/* Since not everyone seems to set the device info correctly&n;&t; * before Scsi_Cmnd gets send out to scsi_do_command, we do it here.&n;&t; * FIXME(eric) This doesn&squot;t make any sense.&n;&t; */
 id|SCpnt-&gt;channel
 op_assign
 id|device-&gt;channel
@@ -5026,8 +5020,8 @@ id|SCpnt
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function:    scsi_release_command&n; *&n; * Purpose:     Release a command block.&n; *&n; * Arguments:   SCpnt - command block we are releasing.&n; *&n; * Notes:       The command block can no longer be used by the caller once&n; *              this funciton is called.  This is in effect the inverse&n; *              of scsi_allocate_device/scsi_request_queueable.&n; */
-r_void
 DECL|function|scsi_release_command
+r_void
 id|scsi_release_command
 c_func
 (paren
@@ -5103,7 +5097,7 @@ id|SCpnt-&gt;host-&gt;eh_active
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * If the host is having troubles, then look to see if this was the last&n;   * command that might have failed.  If so, wake up the error handler.&n;   */
+multiline_comment|/*&n;&t; * If the host is having troubles, then look to see if this was the last&n;&t; * command that might have failed.  If so, wake up the error handler.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5149,6 +5143,7 @@ DECL|function|internal_cmnd
 r_inline
 r_int
 id|internal_cmnd
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -5186,6 +5181,7 @@ suffix:semicolon
 macro_line|#ifdef __mips__
 id|__asm__
 id|__volatile__
+c_func
 (paren
 l_string|&quot;move&bslash;t%0,$31&quot;
 suffix:colon
@@ -5227,7 +5223,7 @@ id|SCpnt-&gt;serial_number
 op_assign
 id|serial_number
 suffix:semicolon
-multiline_comment|/*&n;     * We will wait MIN_RESET_DELAY clock ticks after the last reset so&n;     * we can avoid the drive not being ready.&n;     */
+multiline_comment|/*&n;&t; * We will wait MIN_RESET_DELAY clock ticks after the last reset so&n;&t; * we can avoid the drive not being ready.&n;&t; */
 id|timeout
 op_assign
 id|host-&gt;last_reset
@@ -5255,7 +5251,7 @@ id|timeout
 op_minus
 id|jiffies
 suffix:semicolon
-multiline_comment|/*&n;&t; * NOTE: This may be executed from within an interrupt&n;&t; * handler!  This is bad, but for now, it&squot;ll do.  The irq&n;&t; * level of the interrupt handler has been masked out by the&n;&t; * platform dependent interrupt handling code already, so the&n;&t; * sti() here will not cause another call to the SCSI host&squot;s&n;&t; * interrupt handler (assuming there is one irq-level per&n;&t; * host).&n;&t; */
+multiline_comment|/*&n;&t;&t; * NOTE: This may be executed from within an interrupt&n;&t;&t; * handler!  This is bad, but for now, it&squot;ll do.  The irq&n;&t;&t; * level of the interrupt handler has been masked out by the&n;&t;&t; * platform dependent interrupt handling code already, so the&n;&t;&t; * sti() here will not cause another call to the SCSI host&squot;s&n;&t;&t; * interrupt handler (assuming there is one irq-level per&n;&t;&t; * host).&n;&t;&t; */
 id|spin_unlock_irq
 c_func
 (paren
@@ -5323,7 +5319,7 @@ id|scsi_old_times_out
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * We will use a queued command if possible, otherwise we will emulate the&n;     * queuing and calling of completion function ourselves.&n;     */
+multiline_comment|/*&n;&t; * We will use a queued command if possible, otherwise we will emulate the&n;&t; * queuing and calling of completion function ourselves.&n;&t; */
 id|SCSI_LOG_MLQUEUE
 c_func
 (paren
@@ -5379,7 +5375,7 @@ id|host-&gt;hostt-&gt;queuecommand
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;         * Use the old error handling code if we haven&squot;t converted the driver&n;         * to use the new one yet.  Note - only the new queuecommand variant&n;         * passes a meaningful return value.&n;         */
+multiline_comment|/*&n;&t;&t; * Use the old error handling code if we haven&squot;t converted the driver&n;&t;&t; * to use the new one yet.  Note - only the new queuecommand variant&n;&t;&t; * passes a meaningful return value.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5388,7 +5384,10 @@ id|host-&gt;hostt-&gt;use_new_eh_code
 (brace
 id|rtn
 op_assign
-id|host-&gt;hostt-&gt;queuecommand
+id|host-&gt;hostt
+op_member_access_from_pointer
+id|queuecommand
+c_func
 (paren
 id|SCpnt
 comma
@@ -5415,7 +5414,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|host-&gt;hostt-&gt;queuecommand
+id|host-&gt;hostt
+op_member_access_from_pointer
+id|queuecommand
+c_func
 (paren
 id|SCpnt
 comma
@@ -5445,7 +5447,10 @@ id|host-&gt;hostt-&gt;command
 suffix:semicolon
 id|temp
 op_assign
-id|host-&gt;hostt-&gt;command
+id|host-&gt;hostt
+op_member_access_from_pointer
+id|command
+c_func
 (paren
 id|SCpnt
 )paren
@@ -5549,6 +5554,7 @@ multiline_comment|/*&n; * scsi_do_cmd sends all the commands out to the low-leve
 DECL|function|scsi_do_cmd
 r_void
 id|scsi_do_cmd
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -5615,6 +5621,7 @@ op_assign
 id|SCpnt-&gt;target
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;scsi_do_cmd (host = %d, channel = %d target = %d, &quot;
 l_string|&quot;buffer =%p, bufflen = %d, done = %p, timeout = %d, &quot;
@@ -5652,6 +5659,7 @@ op_increment
 id|i
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;%02x  &quot;
 comma
@@ -5685,12 +5693,13 @@ id|host
 )paren
 (brace
 id|panic
+c_func
 (paren
 l_string|&quot;Invalid or not present host.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * We must prevent reentrancy to the lowlevel host driver.  This prevents&n;     * it - we enter a loop until the host we want to talk to is not busy.&n;     * Race conditions are prevented, as interrupts are disabled in between the&n;     * time we check for the host being not busy, and the time we mark it busy&n;     * ourselves.&n;     */
+multiline_comment|/*&n;&t; * We must prevent reentrancy to the lowlevel host driver.  This prevents&n;&t; * it - we enter a loop until the host we want to talk to is not busy.&n;&t; * Race conditions are prevented, as interrupts are disabled in between the&n;&t; * time we check for the host being not busy, and the time we mark it busy&n;&t; * ourselves.&n;&t; */
 id|SCpnt-&gt;pid
 op_assign
 id|scsi_pid
@@ -5763,8 +5772,9 @@ suffix:semicolon
 id|device-&gt;device_busy
 op_increment
 suffix:semicolon
-multiline_comment|/*&n;     * Our own function scsi_done (which marks the host as not busy, disables&n;     * the timeout counter, etc) will be called by us or by the&n;     * scsi_hosts[host].queuecommand() function needs to also call&n;     * the completion function for the high level driver.&n;     */
+multiline_comment|/*&n;&t; * Our own function scsi_done (which marks the host as not busy, disables&n;&t; * the timeout counter, etc) will be called by us or by the&n;&t; * scsi_hosts[host].queuecommand() function needs to also call&n;&t; * the completion function for the high level driver.&n;&t; */
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -5823,6 +5833,7 @@ op_assign
 id|timeout
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -5840,8 +5851,9 @@ comma
 l_int|12
 )paren
 suffix:semicolon
-multiline_comment|/* Zero the sense buffer.  Some host adapters automatically request&n;     * sense on error.  0 is not a valid sense code.&n;     */
+multiline_comment|/* Zero the sense buffer.  Some host adapters automatically request&n;&t; * sense on error.  0 is not a valid sense code.&n;&t; */
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -5903,6 +5915,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|internal_cmnd
+c_func
 (paren
 id|SCpnt
 )paren
@@ -5913,6 +5926,7 @@ c_func
 l_int|3
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;Leaving scsi_do_cmd()&bslash;n&quot;
 )paren
@@ -5920,16 +5934,17 @@ l_string|&quot;Leaving scsi_do_cmd()&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/* This function is the mid-level interrupt routine, which decides how&n; *  to handle error conditions.  Each invocation of this function must&n; *  do one and *only* one of the following:&n; *&n; *      1) Insert command in BH queue.&n; *      2) Activate error handler for host.&n; *&n; * FIXME(eric) - I am concerned about stack overflow (still).  An interrupt could&n; * come while we are processing the bottom queue, which would cause another command&n; * to be stuffed onto the bottom queue, and it would in turn be processed as that&n; * interrupt handler is returning.  Given a sufficiently steady rate of returning&n; * commands, this could cause the stack to overflow.  I am not sure what is the most&n; * appropriate solution here - we should probably keep a depth count, and not process&n; * any commands while we still have a bottom handler active higher in the stack.&n; *&n; * There is currently code in the bottom half handler to monitor recursion in the bottom&n; * handler and report if it ever happens.  If this becomes a problem, it won&squot;t be hard to&n; * engineer something to deal with it so that only the outer layer ever does any real&n; * processing.&n; */
-r_void
 DECL|function|scsi_done
+r_void
 id|scsi_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
 id|SCpnt
 )paren
 (brace
-multiline_comment|/*&n;   * We don&squot;t have to worry about this one timing out any more.&n;   */
+multiline_comment|/*&n;&t; * We don&squot;t have to worry about this one timing out any more.&n;&t; */
 id|scsi_delete_timer
 c_func
 (paren
@@ -5941,7 +5956,7 @@ id|SCpnt-&gt;serial_number
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * First, see whether this command already timed out.  If so, we ignore&n;   * the response.  We treat it as if the command never finished.&n;   *&n;   * Since serial_number is now 0, the error handler cound detect this&n;   * situation and avoid to call the the low level driver abort routine.&n;   * (DB)&n;   */
+multiline_comment|/*&n;&t; * First, see whether this command already timed out.  If so, we ignore&n;&t; * the response.  We treat it as if the command never finished.&n;&t; *&n;&t; * Since serial_number is now 0, the error handler cound detect this&n;&t; * situation and avoid to call the the low level driver abort routine.&n;&t; * (DB)&n;&t; */
 r_if
 c_cond
 (paren
@@ -5983,7 +5998,7 @@ id|SCpnt-&gt;bh_next
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * Next, put this command in the BH queue.&n;   * &n;   * We need a spinlock here, or compare and exchange if we can reorder incoming&n;   * Scsi_Cmnds, as it happens pretty often scsi_done is called multiple times&n;   * before bh is serviced. -jj&n;   *&n;   * We already have the io_request_lock here, since we are called from the&n;   * interrupt handler or the error handler. (DB)&n;   *&n;   */
+multiline_comment|/*&n;&t; * Next, put this command in the BH queue.&n;&t; * &n;&t; * We need a spinlock here, or compare and exchange if we can reorder incoming&n;&t; * Scsi_Cmnds, as it happens pretty often scsi_done is called multiple times&n;&t; * before bh is serviced. -jj&n;&t; *&n;&t; * We already have the io_request_lock here, since we are called from the&n;&t; * interrupt handler or the error handler. (DB)&n;&t; *&n;&t; */
 r_if
 c_cond
 (paren
@@ -6011,7 +6026,7 @@ op_assign
 id|SCpnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Mark the bottom half handler to be run.&n;   */
+multiline_comment|/*&n;&t; * Mark the bottom half handler to be run.&n;&t; */
 id|mark_bh
 c_func
 (paren
@@ -6117,7 +6132,7 @@ id|SCpnt
 r_case
 id|SUCCESS
 suffix:colon
-multiline_comment|/*&n;               * Add to BH queue.&n;               */
+multiline_comment|/*&n;&t;&t;&t;&t; * Add to BH queue.&n;&t;&t;&t;&t; */
 id|SCSI_LOG_MLCOMPLETE
 c_func
 (paren
@@ -6147,7 +6162,7 @@ suffix:semicolon
 r_case
 id|NEEDS_RETRY
 suffix:colon
-multiline_comment|/*&n;               * We only come in here if we want to retry a command.  The&n;               * test to see whether the command should be retried should be&n;               * keeping track of the number of tries, so we don&squot;t end up looping,&n;               * of course.&n;               */
+multiline_comment|/*&n;&t;&t;&t;&t; * We only come in here if we want to retry a command.  The&n;&t;&t;&t;&t; * test to see whether the command should be retried should be&n;&t;&t;&t;&t; * keeping track of the number of tries, so we don&squot;t end up looping,&n;&t;&t;&t;&t; * of course.&n;&t;&t;&t;&t; */
 id|SCSI_LOG_MLCOMPLETE
 c_func
 (paren
@@ -6177,7 +6192,7 @@ suffix:semicolon
 r_case
 id|ADD_TO_MLQUEUE
 suffix:colon
-multiline_comment|/* &n;               * This typically happens for a QUEUE_FULL message -&n;               * typically only when the queue depth is only&n;               * approximate for a given device.  Adding a command&n;               * to the queue for the device will prevent further commands&n;               * from being sent to the device, so we shouldn&squot;t end up&n;               * with tons of things being sent down that shouldn&squot;t be.&n;               */
+multiline_comment|/* &n;&t;&t;&t;&t; * This typically happens for a QUEUE_FULL message -&n;&t;&t;&t;&t; * typically only when the queue depth is only&n;&t;&t;&t;&t; * approximate for a given device.  Adding a command&n;&t;&t;&t;&t; * to the queue for the device will prevent further commands&n;&t;&t;&t;&t; * from being sent to the device, so we shouldn&squot;t end up&n;&t;&t;&t;&t; * with tons of things being sent down that shouldn&squot;t be.&n;&t;&t;&t;&t; */
 id|scsi_mlqueue_insert
 c_func
 (paren
@@ -6190,7 +6205,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/*&n;               * Here we have a fatal error of some sort.  Turn it over to&n;               * the error handler.&n;               */
+multiline_comment|/*&n;&t;&t;&t;&t; * Here we have a fatal error of some sort.  Turn it over to&n;&t;&t;&t;&t; * the error handler.&n;&t;&t;&t;&t; */
 id|SCSI_LOG_MLCOMPLETE
 c_func
 (paren
@@ -6218,12 +6233,13 @@ id|SCpnt-&gt;host-&gt;host_failed
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;               * Dump the sense information too.&n;               */
+multiline_comment|/*&n;&t;&t;&t;&t; * Dump the sense information too.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
 id|status_byte
+c_func
 (paren
 id|SCpnt-&gt;result
 )paren
@@ -6272,7 +6288,7 @@ id|SCpnt-&gt;host-&gt;in_recovery
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;                   * If the host is having troubles, then look to see if this was the last&n;                   * command that might have failed.  If so, wake up the error handler.&n;                   */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * If the host is having troubles, then look to see if this was the last&n;&t;&t;&t;&t;&t; * command that might have failed.  If so, wake up the error handler.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -6310,7 +6326,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;                   * We only get here if the error recovery thread has died.&n;                   */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * We only get here if the error recovery thread has died.&n;&t;&t;&t;&t;&t; */
 id|scsi_finish_command
 c_func
 (paren
@@ -6334,8 +6350,8 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function:    scsi_retry_command&n; *&n; * Purpose:     Send a command back to the low level to be retried.&n; *&n; * Notes:       This command is always executed in the context of the&n; *              bottom half handler, or the error handler thread. Low&n; *              level drivers should not become re-entrant as a result of&n; *              this.&n; */
-r_int
 DECL|function|scsi_retry_command
+r_int
 id|scsi_retry_command
 c_func
 (paren
@@ -6345,6 +6361,7 @@ id|SCpnt
 )paren
 (brace
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -6385,6 +6402,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -6400,14 +6418,15 @@ id|SCpnt-&gt;sense_buffer
 suffix:semicolon
 r_return
 id|internal_cmnd
+c_func
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function:    scsi_finish_command&n; *&n; * Purpose:     Pass command off to upper layer for finishing of I/O&n; *              request, waking processes that are waiting on results,&n; *              etc.&n; */
-r_void
 DECL|function|scsi_finish_command
+r_void
 id|scsi_finish_command
 c_func
 (paren
@@ -6500,7 +6519,7 @@ id|next-&gt;host_wait
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;     * Now try and drain the mid-level queue if any commands have been&n;     * inserted.  Check to see whether the queue even has anything in&n;     * it first, as otherwise this is useless overhead.&n;     */
+multiline_comment|/*&n;&t; * Now try and drain the mid-level queue if any commands have been&n;&t; * inserted.  Check to see whether the queue even has anything in&n;&t; * it first, as otherwise this is useless overhead.&n;&t; */
 r_if
 c_cond
 (paren
@@ -6525,7 +6544,7 @@ op_amp
 id|host-&gt;host_wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * If we have valid sense information, then some kind of recovery&n;     * must have taken place.  Make a note of this.&n;     */
+multiline_comment|/*&n;&t; * If we have valid sense information, then some kind of recovery&n;&t; * must have taken place.  Make a note of this.&n;&t; */
 r_if
 c_cond
 (paren
@@ -6574,7 +6593,10 @@ id|SCpnt-&gt;use_sg
 op_assign
 id|SCpnt-&gt;old_use_sg
 suffix:semicolon
-id|SCpnt-&gt;done
+id|SCpnt
+op_member_access_from_pointer
+id|done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -6635,11 +6657,9 @@ id|len
 OG
 id|PAGE_SIZE
 )paren
-(brace
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 id|nbits
 op_assign
 id|len
@@ -6832,6 +6852,7 @@ suffix:semicolon
 macro_line|#ifdef __mips__
 id|__asm__
 id|__volatile__
+c_func
 (paren
 l_string|&quot;move&bslash;t%0,$31&quot;
 suffix:colon
@@ -6978,6 +6999,7 @@ id|SECTORS_PER_PAGE
 )paren
 )paren
 id|panic
+c_func
 (paren
 l_string|&quot;scsi_free:Bad memory alignment&quot;
 )paren
@@ -7077,7 +7099,7 @@ r_void
 op_star
 id|retval
 suffix:semicolon
-multiline_comment|/*&n;     * For buffers used by the DMA pool, we assume page aligned &n;     * structures.&n;     */
+multiline_comment|/*&n;&t; * For buffers used by the DMA pool, we assume page aligned &n;&t; * structures.&n;&t; */
 r_if
 c_cond
 (paren
@@ -7179,7 +7201,7 @@ r_int
 id|size
 )paren
 (brace
-multiline_comment|/*&n;     * We need this special code here because the DMA pool assumes&n;     * page aligned data.  Besides, it is wasteful to allocate&n;     * page sized chunks with kmalloc.&n;     */
+multiline_comment|/*&n;&t; * We need this special code here because the DMA pool assumes&n;&t; * page aligned data.  Besides, it is wasteful to allocate&n;&t; * page sized chunks with kmalloc.&n;&t; */
 r_if
 c_cond
 (paren
@@ -7464,7 +7486,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE /* { */
+macro_line|#ifndef MODULE&t;&t;&t;/* { */
 multiline_comment|/*&n; * scsi_dev_init() is our initialization routine, which in turn calls host&n; * initialization, bus scanning, and sd/st initialization routines.&n; * This is only used at boot time.&n; */
 DECL|function|scsi_dev_init
 r_int
@@ -7523,7 +7545,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * This is where the processing takes place for most everything&n;     * when commands are completed.  Until we do this, we will not be able&n;     * to queue any commands.&n;     */
+multiline_comment|/*&n;&t; * This is where the processing takes place for most everything&n;&t; * when commands are completed.  Until we do this, we will not be able&n;&t; * to queue any commands.&n;&t; */
 id|init_bh
 c_func
 (paren
@@ -7651,7 +7673,6 @@ id|sdtpnt-&gt;init
 op_logical_and
 id|sdtpnt-&gt;dev_noticed
 )paren
-(brace
 (paren
 op_star
 id|sdtpnt-&gt;init
@@ -7659,7 +7680,6 @@ id|sdtpnt-&gt;init
 (paren
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -7707,7 +7727,6 @@ c_cond
 (paren
 id|sdtpnt-&gt;attach
 )paren
-(brace
 (paren
 op_star
 id|sdtpnt-&gt;attach
@@ -7716,7 +7735,6 @@ id|sdtpnt-&gt;attach
 id|SDpnt
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7748,13 +7766,13 @@ multiline_comment|/* What to do now ?? */
 )brace
 )brace
 )brace
-multiline_comment|/*&n;     * This should build the DMA pool.&n;     */
+multiline_comment|/*&n;&t; * This should build the DMA pool.&n;&t; */
 id|resize_dma_pool
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * OK, now we finish the initialization by doing spin-up, read&n;     * capacity, etc, etc&n;     */
+multiline_comment|/*&n;&t; * OK, now we finish the initialization by doing spin-up, read&n;&t; * capacity, etc, etc&n;&t; */
 r_for
 c_loop
 (paren
@@ -7775,7 +7793,6 @@ id|sdtpnt-&gt;finish
 op_logical_and
 id|sdtpnt-&gt;nr_dev
 )paren
-(brace
 (paren
 op_star
 id|sdtpnt-&gt;finish
@@ -7783,7 +7800,6 @@ id|sdtpnt-&gt;finish
 (paren
 )paren
 suffix:semicolon
-)brace
 id|scsi_loadable_module_flag
 op_assign
 l_int|1
@@ -7792,7 +7808,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */   /* } */
+macro_line|#endif&t;/* MODULE */&t;&t;/* } */
 DECL|function|print_inquiry
 r_static
 r_void
@@ -8154,7 +8170,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;         * First, see if there are any attached devices or not.&n;         */
+multiline_comment|/*&n;&t;&t; * First, see if there are any attached devices or not.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -8355,12 +8371,10 @@ id|len
 OG
 id|length
 )paren
-(brace
 id|len
 op_assign
 id|length
 suffix:semicolon
-)brace
 multiline_comment|/* Ending slop */
 r_return
 (paren
@@ -8388,13 +8402,13 @@ comma
 l_int|4
 )paren
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;     * Usage: echo &quot;scsi dump #N&quot; &gt; /proc/scsi/scsi&n;     * to dump status of all scsi commands.  The number is used to specify the level&n;     * of detail in the dump.&n;     */
+multiline_comment|/*&n;&t; * Usage: echo &quot;scsi dump #N&quot; &gt; /proc/scsi/scsi&n;&t; * to dump status of all scsi commands.  The number is used to specify the level&n;&t; * of detail in the dump.&n;&t; */
 r_if
 c_cond
 (paren
@@ -8430,14 +8444,12 @@ id|p
 op_eq
 l_char|&squot;&bslash;0&squot;
 )paren
-(brace
 r_return
 (paren
 op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-)brace
 id|level
 op_assign
 id|simple_strtoul
@@ -8457,8 +8469,8 @@ id|level
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Usage: echo &quot;scsi log token #N&quot; &gt; /proc/scsi/scsi&n;     * where token is one of [error,scan,mlqueue,mlcomplete,llqueue,&n;     * llcomplete,hlqueue,hlcomplete]&n;     */
-macro_line|#if CONFIG_SCSI_LOGGING /* { */
+multiline_comment|/*&n;&t; * Usage: echo &quot;scsi log token #N&quot; &gt; /proc/scsi/scsi&n;&t; * where token is one of [error,scan,mlqueue,mlcomplete,llqueue,&n;&t; * llcomplete,hlqueue,hlcomplete]&n;&t; */
+macro_line|#if CONFIG_SCSI_LOGGING&t;&t;/* { */
 r_if
 c_cond
 (paren
@@ -8542,7 +8554,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;                 * Turn on absolutely everything.&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Turn on absolutely everything.&n;&t;&t;&t;&t; */
 id|scsi_logging_level
 op_assign
 op_complement
@@ -8566,7 +8578,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;                 * Turn off absolutely everything.&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Turn off absolutely everything.&n;&t;&t;&t;&t; */
 id|scsi_logging_level
 op_assign
 l_int|0
@@ -8602,7 +8614,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;             * Now figure out what to do with it.&n;             */
+multiline_comment|/*&n;&t;&t;&t; * Now figure out what to do with it.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -8841,8 +8853,8 @@ id|scsi_logging_level
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_SCSI_LOGGING */ /* } */
-multiline_comment|/*&n;     * Usage: echo &quot;scsi add-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     * Consider this feature BETA.&n;     *     CAUTION: This is not for hotplugging your peripherals. As&n;     *     SCSI was not designed for this you could damage your&n;     *     hardware !&n;     * However perhaps it is legal to switch on an&n;     * already connected device. It is perhaps not&n;     * guaranteed this device doesn&squot;t corrupt an ongoing data transfer.&n;     */
+macro_line|#endif&t;/* CONFIG_SCSI_LOGGING */ /* } */
+multiline_comment|/*&n;&t; * Usage: echo &quot;scsi add-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;&t; * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;&t; * Consider this feature BETA.&n;&t; *     CAUTION: This is not for hotplugging your peripherals. As&n;&t; *     SCSI was not designed for this you could damage your&n;&t; *     hardware !&n;&t; * However perhaps it is legal to switch on an&n;&t; * already connected device. It is perhaps not&n;&t; * guaranteed this device doesn&squot;t corrupt an ongoing data transfer.&n;&t; */
 r_if
 c_cond
 (paren
@@ -8970,12 +8982,12 @@ c_cond
 op_logical_neg
 id|HBA_ptr
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|ENXIO
+)paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -9017,14 +9029,15 @@ c_cond
 (paren
 id|scd
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|ENOSYS
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* We do not yet support unplugging */
 id|scan_scsis
+c_func
 (paren
 id|HBA_ptr
 comma
@@ -9037,7 +9050,7 @@ comma
 id|lun
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME (DB) This assumes that the queue_depth routines can be used&n;           in this context as well, while they were all designed to be&n;           called only once after the detect routine. (DB) */
+multiline_comment|/* FIXME (DB) This assumes that the queue_depth routines can be used&n;&t;&t;   in this context as well, while they were all designed to be&n;&t;&t;   called only once after the detect routine. (DB) */
 r_if
 c_cond
 (paren
@@ -9055,10 +9068,12 @@ id|HBA_ptr-&gt;host_queue
 )paren
 suffix:semicolon
 r_return
+(paren
 id|length
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Usage: echo &quot;scsi remove-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;     * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;     *&n;     * Consider this feature pre-BETA.&n;     *&n;     *     CAUTION: This is not for hotplugging your peripherals. As&n;     *     SCSI was not designed for this you could damage your&n;     *     hardware and thoroughly confuse the SCSI subsystem.&n;     *&n;     */
+multiline_comment|/*&n;&t; * Usage: echo &quot;scsi remove-single-device 0 1 2 3&quot; &gt;/proc/scsi/scsi&n;&t; * with  &quot;0 1 2 3&quot; replaced by your &quot;Host Channel Id Lun&quot;.&n;&t; *&n;&t; * Consider this feature pre-BETA.&n;&t; *&n;&t; *     CAUTION: This is not for hotplugging your peripherals. As&n;&t; *     SCSI was not designed for this you could damage your&n;&t; *     hardware and thoroughly confuse the SCSI subsystem.&n;&t; *&n;&t; */
 r_else
 r_if
 c_cond
@@ -9173,12 +9188,12 @@ c_cond
 op_logical_neg
 id|HBA_ptr
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|ENODEV
+)paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -9222,24 +9237,24 @@ id|scd
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|ENODEV
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* there is no such device attached */
 r_if
 c_cond
 (paren
 id|scd-&gt;access_count
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|EBUSY
+)paren
 suffix:semicolon
-)brace
 id|SDTpnt
 op_assign
 id|scsi_devicelist
@@ -9257,7 +9272,6 @@ c_cond
 (paren
 id|SDTpnt-&gt;detach
 )paren
-(brace
 (paren
 op_star
 id|SDTpnt-&gt;detach
@@ -9266,7 +9280,6 @@ id|SDTpnt-&gt;detach
 id|scd
 )paren
 suffix:semicolon
-)brace
 id|SDTpnt
 op_assign
 id|SDTpnt-&gt;next
@@ -9280,7 +9293,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;             * Nobody is using this device any more.&n;             * Free all of the command structures.&n;             */
+multiline_comment|/*&n;&t;&t;&t; * Nobody is using this device any more.&n;&t;&t;&t; * Free all of the command structures.&n;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -9324,12 +9337,10 @@ id|scd-&gt;next
 op_ne
 l_int|NULL
 )paren
-(brace
 id|scd-&gt;next-&gt;prev
 op_assign
 id|scd-&gt;prev
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -9337,12 +9348,10 @@ id|scd-&gt;prev
 op_ne
 l_int|NULL
 )paren
-(brace
 id|scd-&gt;prev-&gt;next
 op_assign
 id|scd-&gt;next
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -9375,17 +9384,23 @@ suffix:semicolon
 r_else
 (brace
 r_return
+(paren
 op_minus
 id|EBUSY
+)paren
 suffix:semicolon
 )brace
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -9462,7 +9477,7 @@ op_logical_neg
 id|scsi_hostlist
 )paren
 (brace
-multiline_comment|/*&n;&t; * Free up the DMA pool.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Free up the DMA pool.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -9470,7 +9485,6 @@ id|scsi_dma_free_sectors
 op_ne
 id|dma_sectors
 )paren
-(brace
 id|panic
 c_func
 (paren
@@ -9481,7 +9495,6 @@ comma
 id|dma_sectors
 )paren
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -9498,7 +9511,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|scsi_init_free
 c_func
 (paren
@@ -9510,7 +9522,6 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -9632,12 +9643,10 @@ id|shpnt
 op_assign
 id|shpnt-&gt;next
 )paren
-(brace
 id|new_dma_sectors
 op_add_assign
 id|SECTORS_PER_PAGE
 suffix:semicolon
-)brace
 multiline_comment|/* Increment for each host */
 r_for
 c_loop
@@ -9667,7 +9676,7 @@ op_assign
 id|SDpnt-&gt;next
 )paren
 (brace
-multiline_comment|/*&n;             * sd and sr drivers allocate scatterlists.&n;             * sr drivers may allocate for each command 1x2048 or 2x1024 extra&n;             * buffers for 2k sector size and 1k fs.&n;             * sg driver allocates buffers &lt; 4k.&n;             * st driver does not need buffers from the dma pool.&n;             * estimate 4k buffer/command for devices of unknown type (should panic).&n;             */
+multiline_comment|/*&n;&t;&t;&t; * sd and sr drivers allocate scatterlists.&n;&t;&t;&t; * sr drivers may allocate for each command 1x2048 or 2x1024 extra&n;&t;&t;&t; * buffers for 2k sector size and 1k fs.&n;&t;&t;&t; * sg driver allocates buffers &lt; 4k.&n;&t;&t;&t; * st driver does not need buffers from the dma pool.&n;&t;&t;&t; * estimate 4k buffer/command for devices of unknown type (should panic).&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -9843,8 +9852,8 @@ l_int|15
 op_amp
 l_int|0xfff0
 suffix:semicolon
-multiline_comment|/*&n;     * We never shrink the buffers - this leads to&n;     * race conditions that I would rather not even think&n;     * about right now.&n;     */
-macro_line|#if 0  /* Why do this? No gain and risks out_of_space */
+multiline_comment|/*&n;&t; * We never shrink the buffers - this leads to&n;&t; * race conditions that I would rather not even think&n;&t; * about right now.&n;&t; */
+macro_line|#if 0&t;&t;&t;&t;/* Why do this? No gain and risks out_of_space */
 r_if
 c_cond
 (paren
@@ -9852,12 +9861,10 @@ id|new_dma_sectors
 OL
 id|dma_sectors
 )paren
-(brace
 id|new_dma_sectors
 op_assign
 id|dma_sectors
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -9866,10 +9873,8 @@ id|new_dma_sectors
 op_le
 id|dma_sectors
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* best to quit while we are in front */
 r_for
 c_loop
@@ -10199,7 +10204,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* When we dick with the actual DMA list, we need to&n;     * protect things&n;     */
+multiline_comment|/* When we dick with the actual DMA list, we need to&n;&t; * protect things&n;&t; */
 r_if
 c_cond
 (paren
@@ -10389,12 +10394,12 @@ id|tpnt-&gt;detect
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* Must be already loaded, or&n;&t;&t;&t;&t;&t;       * no detect routine available&n;&t;&t;&t;&t;&t;       */
+multiline_comment|/* Must be already loaded, or&n;&t;&t;&t;&t; * no detect routine available&n;&t;&t;&t;&t; */
 id|pcount
 op_assign
 id|next_scsi_host
 suffix:semicolon
-multiline_comment|/* The detect routine must carefully spinunlock/spinlock if &n;       it enables interrupts, since all interrupt handlers do &n;       spinlock as well.&n;       All lame drivers are going to fail due to the following &n;       spinlock. For the time beeing let&squot;s use it only for drivers &n;       using the new scsi code. NOTE: the detect routine could&n;       redefine the value tpnt-&gt;use_new_eh_code. (DB, 13 May 1998) */
+multiline_comment|/* The detect routine must carefully spinunlock/spinlock if &n;&t;   it enables interrupts, since all interrupt handlers do &n;&t;   spinlock as well.&n;&t;   All lame drivers are going to fail due to the following &n;&t;   spinlock. For the time beeing let&squot;s use it only for drivers &n;&t;   using the new scsi code. NOTE: the detect routine could&n;&t;   redefine the value tpnt-&gt;use_new_eh_code. (DB, 13 May 1998) */
 r_if
 c_cond
 (paren
@@ -10479,7 +10484,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* &n;             * The low-level driver failed to register a driver.  We&n;&t;     *  can do this now.&n;&t;     */
+multiline_comment|/* &n;&t;&t;&t; * The low-level driver failed to register a driver.  We&n;&t;&t;&t; *  can do this now.&n;&t;&t;&t; */
 id|scsi_register
 c_func
 (paren
@@ -10507,7 +10512,7 @@ id|tpnt
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;         * Add the kernel threads for each host adapter that will&n;         * handle error correction.&n;         */
+multiline_comment|/*&n;&t;&t; * Add the kernel threads for each host adapter that will&n;&t;&t; * handle error correction.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -10567,8 +10572,9 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                 * Now wait for the kernel error thread to initialize itself&n;                 * as it might be needed when we scan the bus.&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Now wait for the kernel error thread to initialize itself&n;&t;&t;&t;&t; * as it might be needed when we scan the bus.&n;&t;&t;&t;&t; */
 id|down
+c_func
 (paren
 op_amp
 id|sem
@@ -10627,6 +10633,7 @@ id|tpnt-&gt;name
 suffix:semicolon
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d : %s&bslash;n&quot;
 comma
@@ -10639,6 +10646,7 @@ suffix:semicolon
 )brace
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi : %d host%s.&bslash;n&quot;
 comma
@@ -10661,7 +10669,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* The next step is to call scan_scsis here.  This generates the&n;&t; * Scsi_Devices entries&n;&t; */
+multiline_comment|/* The next step is to call scan_scsis here.  This generates the&n;&t;&t; * Scsi_Devices entries&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -10739,7 +10747,6 @@ id|sdtpnt-&gt;init
 op_logical_and
 id|sdtpnt-&gt;dev_noticed
 )paren
-(brace
 (paren
 op_star
 id|sdtpnt-&gt;init
@@ -10748,8 +10755,7 @@ id|sdtpnt-&gt;init
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n;         * Next we create the Scsi_Cmnd structures for this host &n;         */
+multiline_comment|/*&n;&t;&t; * Next we create the Scsi_Cmnd structures for this host &n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -10803,7 +10809,6 @@ c_cond
 (paren
 id|sdtpnt-&gt;attach
 )paren
-(brace
 (paren
 op_star
 id|sdtpnt-&gt;attach
@@ -10812,7 +10817,6 @@ id|sdtpnt-&gt;attach
 id|SDpnt
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -10839,7 +10843,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t; * Now that we have all of the devices, resize the DMA pool,&n;&t; * as required.  */
+multiline_comment|/*&n;&t;&t; * Now that we have all of the devices, resize the DMA pool,&n;&t;&t; * as required.  */
 r_if
 c_cond
 (paren
@@ -10886,6 +10890,7 @@ suffix:semicolon
 )brace
 macro_line|#if defined(USE_STATIC_SCSI_MEMORY)
 id|printk
+c_func
 (paren
 l_string|&quot;SCSI memory: total %ldKb, used %ldKb, free %ldKb.&bslash;n&quot;
 comma
@@ -10992,7 +10997,7 @@ id|Scsi_Host_Template
 op_star
 id|SHTp
 suffix:semicolon
-multiline_comment|/*&n;     * First verify that this host adapter is completely free with no pending&n;     * commands &n;     */
+multiline_comment|/*&n;&t; * First verify that this host adapter is completely free with no pending&n;&t; * commands &n;&t; */
 r_for
 c_loop
 (paren
@@ -11036,14 +11041,12 @@ c_func
 id|SDpnt-&gt;host-&gt;hostt-&gt;module
 )paren
 )paren
-(brace
 r_return
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t; * FIXME(eric) - We need to find a way to notify the&n;&t;&t;&t; * low level driver that we are shutting down - via the&n;&t;&t;&t; * special device entry that still needs to get added. &n;&t;&t;&t; *&n;&t;&t;&t; * Is detach interface below good enough for this?&n;&t;&t;&t; */
 )brace
-multiline_comment|/* &n;             * FIXME(eric) - We need to find a way to notify the&n;             * low level driver that we are shutting down - via the&n;             * special device entry that still needs to get added. &n;             *&n;             * Is detach interface below good enough for this?&n;             */
 )brace
-)brace
-multiline_comment|/*&n;     * FIXME(eric) put a spinlock on this.  We force all of the devices offline&n;     * to help prevent race conditions where other hosts/processors could try and&n;     * get in and queue a command.&n;     */
+multiline_comment|/*&n;&t; * FIXME(eric) put a spinlock on this.  We force all of the devices offline&n;&t; * to help prevent race conditions where other hosts/processors could try and&n;&t; * get in and queue a command.&n;&t; */
 r_for
 c_loop
 (paren
@@ -11079,12 +11082,10 @@ id|SDpnt-&gt;host-&gt;hostt
 op_eq
 id|tpnt
 )paren
-(brace
 id|SDpnt-&gt;online
 op_assign
 id|FALSE
 suffix:semicolon
-)brace
 )brace
 )brace
 r_for
@@ -11126,7 +11127,7 @@ op_assign
 id|SDpnt-&gt;next
 )paren
 (brace
-multiline_comment|/*&n;             * Loop over all of the commands associated with the device.  If any of&n;             * them are busy, then set the state back to inactive and bail.&n;             */
+multiline_comment|/*&n;&t;&t;&t; * Loop over all of the commands associated with the device.  If any of&n;&t;&t;&t; * them are busy, then set the state back to inactive and bail.&n;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -11207,12 +11208,10 @@ id|SCpnt-&gt;request.rq_status
 op_eq
 id|RQ_SCSI_DISCONNECTING
 )paren
-(brace
 id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_INACTIVE
 suffix:semicolon
-)brace
 )brace
 id|SDpnt-&gt;online
 op_assign
@@ -11227,7 +11226,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;                 * No, this device is really free.  Mark it as such, and&n;                 * continue on.&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * No, this device is really free.  Mark it as such, and&n;&t;&t;&t;&t; * continue on.&n;&t;&t;&t;&t; */
 id|SCpnt-&gt;state
 op_assign
 id|SCSI_STATE_DISCONNECTING
@@ -11298,7 +11297,6 @@ c_cond
 (paren
 id|sdtpnt-&gt;detach
 )paren
-(brace
 (paren
 op_star
 id|sdtpnt-&gt;detach
@@ -11307,7 +11305,6 @@ id|sdtpnt-&gt;detach
 id|SDpnt
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* If something still attached, punt */
 r_if
 c_cond
@@ -11328,7 +11325,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;     * Next, kill the kernel error recovery thread for this host.&n;     */
+multiline_comment|/*&n;&t; * Next, kill the kernel error recovery thread for this host.&n;&t; */
 r_for
 c_loop
 (paren
@@ -11487,7 +11484,7 @@ id|Scsi_Device
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Next we go through and remove the instances of the individual hosts&n;     * that were detected */
+multiline_comment|/* Next we go through and remove the instances of the individual hosts&n;&t; * that were detected */
 r_for
 c_loop
 (paren
@@ -11542,7 +11539,6 @@ c_cond
 (paren
 id|tpnt-&gt;release
 )paren
-(brace
 (paren
 op_star
 id|tpnt-&gt;release
@@ -11551,10 +11547,9 @@ id|tpnt-&gt;release
 id|shpnt
 )paren
 suffix:semicolon
-)brace
 r_else
 (brace
-multiline_comment|/* This is the default case for the release function.&n;&t;&t;     * It should do the right thing for most correctly&n;&t;&t;     * written host adapters.&n;&t;&t;     */
+multiline_comment|/* This is the default case for the release function.&n;&t;&t;&t;&t;&t; * It should do the right thing for most correctly&n;&t;&t;&t;&t;&t; * written host adapters.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -11604,35 +11599,32 @@ id|pcount
 op_eq
 id|next_scsi_host
 )paren
-(brace
 id|scsi_unregister
 c_func
 (paren
 id|shpnt
 )paren
 suffix:semicolon
-)brace
 id|tpnt-&gt;present
 op_decrement
 suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;     * If there are absolutely no more hosts left, it is safe&n;     * to completely nuke the DMA pool.  The resize operation will&n;     * do the right thing and free everything.&n;     */
+multiline_comment|/*&n;&t; * If there are absolutely no more hosts left, it is safe&n;&t; * to completely nuke the DMA pool.  The resize operation will&n;&t; * do the right thing and free everything.&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|scsi_hosts
 )paren
-(brace
 id|resize_dma_pool
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi : %d host%s.&bslash;n&quot;
 comma
@@ -11652,6 +11644,7 @@ l_string|&quot;s&quot;
 suffix:semicolon
 macro_line|#if defined(USE_STATIC_SCSI_MEMORY)
 id|printk
+c_func
 (paren
 l_string|&quot;SCSI memory: total %ldKb, used %ldKb, free %ldKb.&bslash;n&quot;
 comma
@@ -11686,7 +11679,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* There were some hosts that were loaded at boot time, so we cannot&n;       do any more than this */
+multiline_comment|/* There were some hosts that were loaded at boot time, so we cannot&n;&t;   do any more than this */
 r_if
 c_cond
 (paren
@@ -11694,7 +11687,7 @@ id|tpnt-&gt;present
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* OK, this is the very last step.  Remove this host adapter from the&n;       linked list. */
+multiline_comment|/* OK, this is the very last step.  Remove this host adapter from the&n;&t;   linked list. */
 r_for
 c_loop
 (paren
@@ -11729,12 +11722,10 @@ c_cond
 (paren
 id|SHTp
 )paren
-(brace
 id|SHTp-&gt;next
 op_assign
 id|SHT-&gt;next
 suffix:semicolon
-)brace
 r_else
 id|scsi_hosts
 op_assign
@@ -11802,7 +11793,7 @@ c_func
 id|tpnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * First scan the devices that we know about, and see if we notice them.&n;     */
+multiline_comment|/*&n;&t; * First scan the devices that we know about, and see if we notice them.&n;&t; */
 r_for
 c_loop
 (paren
@@ -11836,7 +11827,6 @@ c_cond
 (paren
 id|tpnt-&gt;detect
 )paren
-(brace
 id|SDpnt-&gt;attached
 op_add_assign
 (paren
@@ -11849,8 +11839,7 @@ id|SDpnt
 suffix:semicolon
 )brace
 )brace
-)brace
-multiline_comment|/*&n;     * If any of the devices would match this driver, then perform the&n;     * init function.&n;     */
+multiline_comment|/*&n;&t; * If any of the devices would match this driver, then perform the&n;&t; * init function.&n;&t; */
 r_if
 c_cond
 (paren
@@ -11871,7 +11860,7 @@ id|tpnt-&gt;init
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;     * Now actually connect the devices to the new driver.&n;     */
+multiline_comment|/*&n;&t; * Now actually connect the devices to the new driver.&n;&t; */
 r_for
 c_loop
 (paren
@@ -11905,7 +11894,6 @@ c_cond
 (paren
 id|tpnt-&gt;attach
 )paren
-(brace
 (paren
 op_star
 id|tpnt-&gt;attach
@@ -11914,8 +11902,7 @@ id|tpnt-&gt;attach
 id|SDpnt
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;             * If this driver attached to the device, and don&squot;t have any&n;             * command blocks for this device, allocate some.&n;             */
+multiline_comment|/*&n;&t;&t;&t; * If this driver attached to the device, and don&squot;t have any&n;&t;&t;&t; * command blocks for this device, allocate some.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -11950,7 +11937,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;     * This does any final handling that is required.&n;     */
+multiline_comment|/*&n;&t; * This does any final handling that is required.&n;&t; */
 r_if
 c_cond
 (paren
@@ -11958,7 +11945,6 @@ id|tpnt-&gt;finish
 op_logical_and
 id|tpnt-&gt;nr_dev
 )paren
-(brace
 (paren
 op_star
 id|tpnt-&gt;finish
@@ -11966,7 +11952,6 @@ id|tpnt-&gt;finish
 (paren
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12037,7 +12022,7 @@ id|Scsi_Device_Template
 op_star
 id|prev_spnt
 suffix:semicolon
-multiline_comment|/*&n;     * If we are busy, this is not going to fly.&n;     */
+multiline_comment|/*&n;&t; * If we are busy, this is not going to fly.&n;&t; */
 r_if
 c_cond
 (paren
@@ -12049,12 +12034,10 @@ id|tpnt-&gt;module
 op_ne
 l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
-multiline_comment|/*&n;     * Next, detach the devices from the driver.&n;     */
+multiline_comment|/*&n;&t; * Next, detach the devices from the driver.&n;&t; */
 r_for
 c_loop
 (paren
@@ -12088,7 +12071,6 @@ c_cond
 (paren
 id|tpnt-&gt;detach
 )paren
-(brace
 (paren
 op_star
 id|tpnt-&gt;detach
@@ -12097,7 +12079,6 @@ id|tpnt-&gt;detach
 id|SDpnt
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -12110,7 +12091,7 @@ id|SDpnt-&gt;online
 op_assign
 id|FALSE
 suffix:semicolon
-multiline_comment|/*&n;&t;         * Nobody is using this device any more.  Free all of the&n;&t;         * command structures.&n;&t;         */
+multiline_comment|/*&n;&t;&t;&t;&t; * Nobody is using this device any more.  Free all of the&n;&t;&t;&t;&t; * command structures.&n;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -12132,12 +12113,10 @@ id|SCpnt
 op_eq
 id|SDpnt-&gt;device_queue
 )paren
-(brace
 id|SDpnt-&gt;device_queue
 op_assign
 id|SCpnt-&gt;next
 suffix:semicolon
-)brace
 id|scsi_init_free
 c_func
 (paren
@@ -12162,7 +12141,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;     * Extract the template from the linked list.&n;     */
+multiline_comment|/*&n;&t; * Extract the template from the linked list.&n;&t; */
 id|spnt
 op_assign
 id|scsi_devicelist
@@ -12195,12 +12174,10 @@ id|prev_spnt
 op_eq
 l_int|NULL
 )paren
-(brace
 id|scsi_devicelist
 op_assign
 id|tpnt-&gt;next
 suffix:semicolon
-)brace
 r_else
 id|prev_spnt-&gt;next
 op_assign
@@ -12208,7 +12185,7 @@ id|spnt-&gt;next
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-multiline_comment|/*&n;     * Final cleanup for the driver is done in the driver sources in the&n;     * cleanup function.&n;     */
+multiline_comment|/*&n;&t; * Final cleanup for the driver is done in the driver sources in the&n;&t; * cleanup function.&n;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -12282,7 +12259,7 @@ multiline_comment|/* Load constants.o */
 r_case
 id|MODULE_SCSI_CONST
 suffix:colon
-multiline_comment|/* Load specialized ioctl handler for some device.  Intended for&n;&t; * cdroms that have non-SCSI2 audio command sets. */
+multiline_comment|/* Load specialized ioctl handler for some device.  Intended for&n;&t;&t; * cdroms that have non-SCSI2 audio command sets. */
 r_case
 id|MODULE_SCSI_IOCTL
 suffix:colon
@@ -12360,11 +12337,11 @@ suffix:colon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;/* CONFIG_MODULES */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_MODULES */
 multiline_comment|/*&n; * Function:    scsi_dump_status&n; *&n; * Purpose:     Brain dump of scsi system, used for problem solving.&n; *&n; * Arguments:   level - used to indicate level of detail.&n; *&n; * Notes:       The level isn&squot;t used at all yet, but we need to find some way&n; *              of sensibly logging varying degrees of information.  A quick one-line&n; *              display of each command, plus the status would be most useful.&n; *&n; *              This does depend upon CONFIG_SCSI_LOGGING - I do want some way of turning&n; *              it all off if the user wants a lean and mean kernel.  It would probably&n; *              also be useful to allow the user to specify one single host to be dumped.&n; *              A second argument to the function would be useful for that purpose.&n; *&n; *              FIXME - some formatting of the output into tables would be very handy.&n; */
+DECL|function|scsi_dump_status
 r_static
 r_void
-DECL|function|scsi_dump_status
 id|scsi_dump_status
 c_func
 (paren
@@ -12373,7 +12350,7 @@ id|level
 )paren
 (brace
 macro_line|#if CONFIG_PROC_FS
-macro_line|#if CONFIG_SCSI_LOGGING /* { */
+macro_line|#if CONFIG_SCSI_LOGGING&t;&t;/* { */
 r_int
 id|i
 suffix:semicolon
@@ -12689,8 +12666,8 @@ comma
 id|wait_for_request
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_SCSI_LOGGING */ /* } */
-macro_line|#endif /* CONFIG_PROC_FS */
+macro_line|#endif&t;/* CONFIG_SCSI_LOGGING */ /* } */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_PROC_FS */
 )brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -12710,7 +12687,7 @@ id|has_space
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * This makes /proc/scsi visible.&n;     */
+multiline_comment|/*&n;&t; * This makes /proc/scsi visible.&n;&t; */
 macro_line|#if CONFIG_PROC_FS
 id|dispatch_scsi_info_ptr
 op_assign
@@ -12743,7 +12720,7 @@ id|scsi_dma_free_sectors
 op_assign
 id|dma_sectors
 suffix:semicolon
-multiline_comment|/*&n;     * Set up a minimal DMA buffer list - this will be used during scan_scsis&n;     * in some cases.&n;     */
+multiline_comment|/*&n;&t; * Set up a minimal DMA buffer list - this will be used during scan_scsis&n;&t; * in some cases.&n;&t; */
 multiline_comment|/* One bit per sector to indicate free/busy */
 id|size
 op_assign
@@ -12908,7 +12885,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * This is where the processing takes place for most everything&n;     * when commands are completed.&n;     */
+multiline_comment|/*&n;&t; * This is where the processing takes place for most everything&n;&t; * when commands are completed.&n;&t; */
 id|init_bh
 c_func
 (paren
@@ -12950,13 +12927,13 @@ op_assign
 l_int|0L
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;     * Free up the DMA pool.&n;     */
+multiline_comment|/*&n;&t; * Free up the DMA pool.&n;&t; */
 id|resize_dma_pool
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/kdev_t.h&gt;
 DECL|macro|I2O_SCSI_ID
 mdefine_line|#define I2O_SCSI_ID 15
 DECL|macro|I2O_SCSI_CAN_QUEUE
-mdefine_line|#define I2O_SCSI_CAN_QUEUE 8
+mdefine_line|#define I2O_SCSI_CAN_QUEUE 4
 DECL|macro|I2O_SCSI_CMD_PER_LUN
 mdefine_line|#define I2O_SCSI_CMD_PER_LUN 6
 r_extern

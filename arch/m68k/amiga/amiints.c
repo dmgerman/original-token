@@ -392,7 +392,7 @@ suffix:semicolon
 DECL|function|amiga_insert_irq
 r_static
 r_inline
-r_void
+r_int
 id|amiga_insert_irq
 c_func
 (paren
@@ -462,6 +462,8 @@ op_amp
 id|SA_SHIRQ
 )paren
 r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * There should never be more than one&n;&t;&t; */
 r_while
@@ -518,6 +520,9 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|amiga_delete_irq
@@ -662,6 +667,11 @@ id|dev_id
 id|irq_node_t
 op_star
 id|node
+suffix:semicolon
+r_int
+id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -812,6 +822,8 @@ id|node-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|error
+op_assign
 id|amiga_insert_irq
 c_func
 (paren
@@ -888,7 +900,7 @@ id|irq
 )braket
 suffix:semicolon
 r_return
-l_int|0
+id|error
 suffix:semicolon
 )brace
 DECL|function|amiga_free_irq

@@ -4813,17 +4813,6 @@ id|TCP_LISTEN
 r_goto
 id|out
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|backlog
-OG
-id|SOMAXCONN
-)paren
-id|backlog
-op_assign
-id|SOMAXCONN
-suffix:semicolon
 id|sk-&gt;max_ack_backlog
 op_assign
 id|backlog

@@ -1359,20 +1359,6 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* No listens on an unbound socket */
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-id|backlog
-OG
-id|SOMAXCONN
-)paren
-id|backlog
-op_assign
-id|SOMAXCONN
-suffix:semicolon
 id|unix_state_wlock
 c_func
 (paren

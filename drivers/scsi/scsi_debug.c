@@ -119,9 +119,9 @@ mdefine_line|#define DEB(x)
 macro_line|#endif
 macro_line|#ifdef SPEEDY
 DECL|macro|VERIFY1_DEBUG
-mdefine_line|#define VERIFY1_DEBUG(RW) 
+mdefine_line|#define VERIFY1_DEBUG(RW)
 DECL|macro|VERIFY_DEBUG
-mdefine_line|#define VERIFY_DEBUG(RW) 
+mdefine_line|#define VERIFY_DEBUG(RW)
 macro_line|#else
 DECL|macro|VERIFY1_DEBUG
 mdefine_line|#define VERIFY1_DEBUG(RW)                           &bslash;&n;    if (bufflen != 1024) {printk(&quot;%d&quot;, bufflen); panic(&quot;(1)Bad bufflen&quot;);};         &bslash;&n;    start = 0;                          &bslash;&n;    if ((MINOR(SCpnt-&gt;request.rq_dev) &amp; 0xf) != 0) start = starts[(MINOR(SCpnt-&gt;request.rq_dev) &amp; 0xf) - 1];        &bslash;&n;    if (bh){                            &bslash;&n;&t;if (bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);    &bslash;&n;&t;if ((bh-&gt;b_blocknr &lt;&lt; 1) + start != block)          &bslash;&n;&t;{   printk(&quot;Wrong bh block# %d %d &quot;,bh-&gt;b_blocknr, block);  &bslash;&n;&t;    panic (&quot;Wrong bh block#&quot;); &bslash;&n;&t;};  &bslash;&n;&t;if (bh-&gt;b_dev != SCpnt-&gt;request.rq_dev)  &bslash;&n;&t;    panic (&quot;Bad bh target&quot;); &bslash;&n;    };
@@ -222,7 +222,6 @@ suffix:semicolon
 DECL|function|scsi_dump
 r_static
 r_void
-(def_block
 id|scsi_dump
 c_func
 (paren
@@ -621,7 +620,6 @@ id|scsi_dma_free_sectors
 )paren
 suffix:semicolon
 )brace
-)def_block
 DECL|function|scsi_debug_queuecommand
 r_int
 id|scsi_debug_queuecommand
@@ -710,7 +708,7 @@ id|sgpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;     * If we are being notified of the mid-level reposessing a command due to timeout,&n;     * just return.&n;     */
+multiline_comment|/*&n;&t; * If we are being notified of the mid-level reposessing a command due to timeout,&n;&t; * just return.&n;&t; */
 r_if
 c_cond
 (paren
@@ -906,7 +904,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -918,7 +915,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -1199,7 +1195,6 @@ id|NR_REAL
 OL
 l_int|0
 )paren
-(brace
 id|NR_REAL
 op_assign
 (paren
@@ -1214,7 +1209,6 @@ l_int|4
 op_amp
 l_int|0x0f
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -1397,14 +1391,12 @@ c_cond
 (paren
 id|delay
 )paren
-(brace
 id|usleep
 c_func
 (paren
 id|delay
 )paren
 suffix:semicolon
-)brace
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -1490,7 +1482,7 @@ id|bufflen
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* If this is block 0, then we want to read the partition table for this&n;&t;     * device.  Let&squot;s make one up */
+multiline_comment|/* If this is block 0, then we want to read the partition table for this&n;&t;&t;&t; * device.  Let&squot;s make one up */
 r_if
 c_cond
 (paren
@@ -1748,7 +1740,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -1760,7 +1751,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -1788,7 +1778,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* End phony disk change code */
-macro_line|#endif
+macro_line|#
 macro_line|#ifdef CLEAR
 id|memcpy
 c_func
@@ -1904,14 +1894,12 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;Too few blocks for linked request.&quot;
 )paren
 suffix:semicolon
-)brace
 id|buff
 op_assign
 id|sgpnt
@@ -1939,9 +1927,7 @@ c_loop
 (paren
 id|nbytes
 )paren
-(brace
 suffix:semicolon
-)brace
 id|SCpnt-&gt;result
 op_assign
 l_int|0
@@ -1969,7 +1955,6 @@ c_cond
 (paren
 id|bh
 )paren
-(brace
 id|scsi_dump
 c_func
 (paren
@@ -1978,7 +1963,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -2094,6 +2078,7 @@ op_ne
 id|SCpnt-&gt;request.nr_sectors
 )paren
 id|panic
+c_func
 (paren
 l_string|&quot;Trying to write wrong number of blocks&bslash;n&quot;
 )paren
@@ -2187,7 +2172,7 @@ suffix:semicolon
 r_case
 id|MODE_SENSE
 suffix:colon
-multiline_comment|/*&n;         * Used to detect write protected status.&n;         */
+multiline_comment|/*&n;&t;&t; * Used to detect write protected status.&n;&t;&t; */
 id|scsi_debug_errsts
 op_assign
 l_int|0
@@ -2276,13 +2261,11 @@ id|function
 op_eq
 l_int|NULL
 )paren
-(brace
 r_break
 suffix:semicolon
 )brace
-)brace
 suffix:semicolon
-multiline_comment|/*&n;     * If all of the slots are full, just return 1.  The new error handling scheme&n;     * allows this, and the mid-level should queue things.&n;     */
+multiline_comment|/*&n;&t; * If all of the slots are full, just return 1.  The new error handling scheme&n;&t; * allows this, and the mid-level should queue things.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2871,7 +2854,6 @@ suffix:semicolon
 )brace
 DECL|function|scsi_debug_biosparam
 r_int
-(def_block
 id|scsi_debug_biosparam
 c_func
 (paren
@@ -2940,7 +2922,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
 DECL|function|scsi_debug_reset
 r_int
 id|scsi_debug_reset
@@ -3221,7 +3202,7 @@ id|length
 op_decrement
 suffix:semicolon
 )brace
-multiline_comment|/*&n;             * OK, we are getting some kind of command.  Figure out&n;             * what we are supposed to do here.  Simulate bus lockups&n;             * to test our reset capability.&n;             */
+multiline_comment|/*&n;&t;&t;&t; * OK, we are getting some kind of command.  Figure out&n;&t;&t;&t; * what we are supposed to do here.  Simulate bus lockups&n;&t;&t;&t; * to test our reset capability.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3369,14 +3350,14 @@ id|len
 OG
 id|length
 )paren
-(brace
 id|len
 op_assign
 id|length
 suffix:semicolon
-)brace
 r_return
+(paren
 id|len
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

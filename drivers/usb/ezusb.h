@@ -48,8 +48,6 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|EZUSB_CONTROL
-mdefine_line|#define EZUSB_CONTROL        _IOWR(&squot;E&squot;, 0, struct ezusb_ctrltransfer)
 DECL|struct|ezusb_bulktransfer
 r_struct
 id|ezusb_bulktransfer
@@ -71,10 +69,6 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|EZUSB_BULK
-mdefine_line|#define EZUSB_BULK           _IOWR(&squot;E&squot;, 2, struct ezusb_bulktransfer)
-DECL|macro|EZUSB_RESETEP
-mdefine_line|#define EZUSB_RESETEP        _IOR(&squot;E&squot;, 3, unsigned int)
 DECL|struct|ezusb_setinterface
 r_struct
 id|ezusb_setinterface
@@ -91,52 +85,67 @@ id|altsetting
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|EZUSB_SETINTERFACE
-mdefine_line|#define EZUSB_SETINTERFACE   _IOR(&squot;E&squot;, 4, struct ezusb_setinterface)
-DECL|struct|ezusb_isotransfer
+DECL|struct|ezusb_isoframestat
 r_struct
-id|ezusb_isotransfer
+id|ezusb_isoframestat
 (brace
-DECL|member|ep
+DECL|member|length
 r_int
 r_int
-id|ep
+id|length
 suffix:semicolon
-DECL|member|pktsz
+DECL|member|status
 r_int
 r_int
-id|pktsz
-suffix:semicolon
-DECL|member|framesperint
-r_int
-r_int
-id|framesperint
+id|status
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|ezusb_isodata
+DECL|struct|ezusb_asynccompleted
 r_struct
-id|ezusb_isodata
+id|ezusb_asynccompleted
+(brace
+DECL|member|status
+r_int
+id|status
+suffix:semicolon
+DECL|member|length
+r_int
+id|length
+suffix:semicolon
+DECL|member|context
+r_void
+op_star
+id|context
+suffix:semicolon
+DECL|member|isostat
+r_struct
+id|ezusb_isoframestat
+id|isostat
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ezusb_asyncbulk
+r_struct
+id|ezusb_asyncbulk
 (brace
 DECL|member|ep
 r_int
 r_int
 id|ep
 suffix:semicolon
-DECL|member|size
+DECL|member|len
 r_int
 r_int
-id|size
+id|len
 suffix:semicolon
-DECL|member|bufqueued
-r_int
-r_int
-id|bufqueued
-suffix:semicolon
-DECL|member|buffree
-r_int
-r_int
-id|buffree
+DECL|member|context
+r_void
+op_star
+id|context
 suffix:semicolon
 DECL|member|data
 r_void
@@ -145,16 +154,67 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|EZUSB_STARTISO
-mdefine_line|#define EZUSB_STARTISO&t;&t;_IOR(&squot;E&squot;, 8, struct ezusb_isotransfer)
-DECL|macro|EZUSB_STOPISO
-mdefine_line|#define EZUSB_STOPISO&t;&t;_IOR(&squot;E&squot;, 9, unsigned int)
-DECL|macro|EZUSB_ISODATA
-mdefine_line|#define EZUSB_ISODATA&t;&t;_IOWR(&squot;E&squot;, 10, struct ezusb_isodata)
-DECL|macro|EZUSB_PAUSEISO
-mdefine_line|#define EZUSB_PAUSEISO&t;&t;_IOR(&squot;E&squot;, 11, unsigned int)
-DECL|macro|EZUSB_RESUMEISO
-mdefine_line|#define EZUSB_RESUMEISO&t;&t;_IOR(&squot;E&squot;, 12, unsigned int)
+DECL|struct|ezusb_asynciso
+r_struct
+id|ezusb_asynciso
+(brace
+DECL|member|ep
+r_int
+r_int
+id|ep
+suffix:semicolon
+DECL|member|framecnt
+r_int
+r_int
+id|framecnt
+suffix:semicolon
+DECL|member|startframe
+r_int
+r_int
+id|startframe
+suffix:semicolon
+DECL|member|context
+r_void
+op_star
+id|context
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+DECL|member|isostat
+r_struct
+id|ezusb_isoframestat
+id|isostat
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|EZUSB_CONTROL
+mdefine_line|#define EZUSB_CONTROL           _IOWR(&squot;E&squot;, 0, struct ezusb_ctrltransfer)
+DECL|macro|EZUSB_BULK
+mdefine_line|#define EZUSB_BULK              _IOWR(&squot;E&squot;, 2, struct ezusb_bulktransfer)
+DECL|macro|EZUSB_RESETEP
+mdefine_line|#define EZUSB_RESETEP           _IOR(&squot;E&squot;, 3, unsigned int)
+DECL|macro|EZUSB_SETINTERFACE
+mdefine_line|#define EZUSB_SETINTERFACE      _IOR(&squot;E&squot;, 4, struct ezusb_setinterface)
+DECL|macro|EZUSB_SETCONFIGURATION
+mdefine_line|#define EZUSB_SETCONFIGURATION  _IOR(&squot;E&squot;, 5, unsigned int)
+DECL|macro|EZUSB_ASYNCCOMPLETED
+mdefine_line|#define EZUSB_ASYNCCOMPLETED    _IOW(&squot;E&squot;, 8, struct ezusb_asynccompleted)
+DECL|macro|EZUSB_ASYNCCOMPLETEDNB
+mdefine_line|#define EZUSB_ASYNCCOMPLETEDNB  _IOW(&squot;E&squot;, 9, struct ezusb_asynccompleted)
+DECL|macro|EZUSB_REQUESTBULK
+mdefine_line|#define EZUSB_REQUESTBULK       _IOR(&squot;E&squot;, 16, struct ezusb_asyncbulk)
+DECL|macro|EZUSB_REQUESTISO
+mdefine_line|#define EZUSB_REQUESTISO        _IOR(&squot;E&squot;, 17, struct ezusb_asynciso)
+DECL|macro|EZUSB_TERMINATEASYNC
+mdefine_line|#define EZUSB_TERMINATEASYNC    _IOR(&squot;E&squot;, 18, void *)
+DECL|macro|EZUSB_GETFRAMENUMBER
+mdefine_line|#define EZUSB_GETFRAMENUMBER    _IOW(&squot;E&squot;, 18, unsigned int)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#endif /* _LINUX_EZUSB_H */
 eof

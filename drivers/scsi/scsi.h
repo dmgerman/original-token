@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  scsi.h Copyright (C) 1992 Drew Eckhardt &n; *        
 macro_line|#ifndef _SCSI_H
 DECL|macro|_SCSI_H
 mdefine_line|#define _SCSI_H
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_SCSI_LOGGING */
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_SCSI_LOGGING */
 multiline_comment|/*&n; * Some of the public constants are being moved to this file.&n; * We include it here so that what came from where is transparent.&n; */
 macro_line|#include &lt;scsi/scsi.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
@@ -12,11 +12,11 @@ macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Some defs, in case these are not defined elsewhere.&n; */
 macro_line|#ifndef TRUE
 DECL|macro|TRUE
-macro_line|# define TRUE 1
+mdefine_line|#define TRUE 1
 macro_line|#endif
 macro_line|#ifndef FALSE
 DECL|macro|FALSE
-macro_line|# define FALSE 0
+mdefine_line|#define FALSE 0
 macro_line|#endif
 DECL|macro|MAX_SCSI_DEVICE_CODE
 mdefine_line|#define MAX_SCSI_DEVICE_CODE 14
@@ -103,7 +103,7 @@ mdefine_line|#define COMMAND_SIZE(opcode) scsi_command_size[((opcode) &gt;&gt; 5
 DECL|macro|IDENTIFY_BASE
 mdefine_line|#define IDENTIFY_BASE       0x80
 DECL|macro|IDENTIFY
-mdefine_line|#define IDENTIFY(can_disconnect, lun)   (IDENTIFY_BASE |&bslash;&n;&t;&t;     ((can_disconnect) ?  0x40 : 0) |&bslash;&n;&t;&t;     ((lun) &amp; 0x07)) 
+mdefine_line|#define IDENTIFY(can_disconnect, lun)   (IDENTIFY_BASE |&bslash;&n;&t;&t;     ((can_disconnect) ?  0x40 : 0) |&bslash;&n;&t;&t;     ((lun) &amp; 0x07))
 multiline_comment|/*&n; * This defines the scsi logging feature.  It is a means by which the&n; * user can select how much information they get about various goings on,&n; * and it can be really useful for fault tracing.  The logging word is divided&n; * into 8 nibbles, each of which describes a loglevel.  The division of things&n; * is somewhat arbitrary, and the division of the word could be changed if it&n; * were really needed for any reason.  The numbers below are the only place where these&n; * are specified.  For a first go-around, 3 bits is more than enough, since this&n; * gives 8 levels of logging (really 7, since 0 is always off).  Cutting to 2 bits&n; * might be wise at some point.&n; */
 DECL|macro|SCSI_LOG_ERROR_SHIFT
 mdefine_line|#define SCSI_LOG_ERROR_SHIFT              0
@@ -200,31 +200,31 @@ DECL|macro|SCSI_SET_IOCTL_LOGGING
 mdefine_line|#define SCSI_SET_IOCTL_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_IOCTL_SHIFT, SCSI_LOG_IOCTL_BITS, LEVEL);
 multiline_comment|/*&n; *  the return of the status word will be in the following format :&n; *  The low byte is the status returned by the SCSI command, &n; *  with vendor specific bits masked.&n; *  &n; *  The next byte is the message which followed the SCSI status.&n; *  This allows a stos to be used, since the Intel is a little&n; *  endian machine.&n; *  &n; *  The final byte is a host return code, which is one of the following.&n; *  &n; *  IE &n; *  lsb     msb&n; *  status  msg host code   &n; *  &n; *  Our errors returned by OUR driver, NOT SCSI message.  Or&squot;d with&n; *  SCSI message passed back to driver &lt;IF any&gt;.&n; */
 DECL|macro|DID_OK
-mdefine_line|#define DID_OK          0x00 /* NO error                                */
+mdefine_line|#define DID_OK          0x00&t;/* NO error                                */
 DECL|macro|DID_NO_CONNECT
-mdefine_line|#define DID_NO_CONNECT  0x01 /* Couldn&squot;t connect before timeout period  */
+mdefine_line|#define DID_NO_CONNECT  0x01&t;/* Couldn&squot;t connect before timeout period  */
 DECL|macro|DID_BUS_BUSY
-mdefine_line|#define DID_BUS_BUSY    0x02 /* BUS stayed busy through time out period */
+mdefine_line|#define DID_BUS_BUSY    0x02&t;/* BUS stayed busy through time out period */
 DECL|macro|DID_TIME_OUT
-mdefine_line|#define DID_TIME_OUT    0x03 /* TIMED OUT for other reason              */
+mdefine_line|#define DID_TIME_OUT    0x03&t;/* TIMED OUT for other reason              */
 DECL|macro|DID_BAD_TARGET
-mdefine_line|#define DID_BAD_TARGET  0x04 /* BAD target.                             */
+mdefine_line|#define DID_BAD_TARGET  0x04&t;/* BAD target.                             */
 DECL|macro|DID_ABORT
-mdefine_line|#define DID_ABORT       0x05 /* Told to abort for some other reason     */
+mdefine_line|#define DID_ABORT       0x05&t;/* Told to abort for some other reason     */
 DECL|macro|DID_PARITY
-mdefine_line|#define DID_PARITY      0x06 /* Parity error                            */
+mdefine_line|#define DID_PARITY      0x06&t;/* Parity error                            */
 DECL|macro|DID_ERROR
-mdefine_line|#define DID_ERROR       0x07 /* Internal error                          */
+mdefine_line|#define DID_ERROR       0x07&t;/* Internal error                          */
 DECL|macro|DID_RESET
-mdefine_line|#define DID_RESET       0x08 /* Reset by somebody.                      */
+mdefine_line|#define DID_RESET       0x08&t;/* Reset by somebody.                      */
 DECL|macro|DID_BAD_INTR
-mdefine_line|#define DID_BAD_INTR    0x09 /* Got an interrupt we weren&squot;t expecting.  */ 
+mdefine_line|#define DID_BAD_INTR    0x09&t;/* Got an interrupt we weren&squot;t expecting.  */
 DECL|macro|DID_PASSTHROUGH
-mdefine_line|#define DID_PASSTHROUGH 0x0a /* Force command past mid-layer            */
+mdefine_line|#define DID_PASSTHROUGH 0x0a&t;/* Force command past mid-layer            */
 DECL|macro|DID_SOFT_ERROR
-mdefine_line|#define DID_SOFT_ERROR  0x0b /* The low level driver just wish a retry  */
+mdefine_line|#define DID_SOFT_ERROR  0x0b&t;/* The low level driver just wish a retry  */
 DECL|macro|DRIVER_OK
-mdefine_line|#define DRIVER_OK       0x00 /* Driver status                           */ 
+mdefine_line|#define DRIVER_OK       0x00&t;/* Driver status                           */
 multiline_comment|/*&n; *  These indicate the error that occurred, and what is available.&n; */
 DECL|macro|DRIVER_BUSY
 mdefine_line|#define DRIVER_BUSY         0x01
@@ -233,7 +233,7 @@ mdefine_line|#define DRIVER_SOFT         0x02
 DECL|macro|DRIVER_MEDIA
 mdefine_line|#define DRIVER_MEDIA        0x03
 DECL|macro|DRIVER_ERROR
-mdefine_line|#define DRIVER_ERROR        0x04    
+mdefine_line|#define DRIVER_ERROR        0x04
 DECL|macro|DRIVER_INVALID
 mdefine_line|#define DRIVER_INVALID      0x05
 DECL|macro|DRIVER_TIMEOUT
@@ -245,7 +245,7 @@ mdefine_line|#define DRIVER_SENSE&t;    0x08
 DECL|macro|SUGGEST_RETRY
 mdefine_line|#define SUGGEST_RETRY       0x10
 DECL|macro|SUGGEST_ABORT
-mdefine_line|#define SUGGEST_ABORT       0x20 
+mdefine_line|#define SUGGEST_ABORT       0x20
 DECL|macro|SUGGEST_REMAP
 mdefine_line|#define SUGGEST_REMAP       0x30
 DECL|macro|SUGGEST_DIE
@@ -315,6 +315,7 @@ multiline_comment|/*&n; *  Initializes all SCSI devices.  This scans all scsi bu
 r_extern
 r_int
 id|scsi_dev_init
+c_func
 (paren
 r_void
 )paren
@@ -356,7 +357,7 @@ r_int
 r_int
 id|scsi_need_isa_buffer
 suffix:semicolon
-multiline_comment|/* True if some devices need indirection&n;&t;&t;&t;&t;&t;* buffers */
+multiline_comment|/* True if some devices need indirection&n;&t;&t;&t;&t;&t;&t;   * buffers */
 r_extern
 r_void
 id|scsi_make_blocked_list
@@ -406,6 +407,7 @@ suffix:semicolon
 r_extern
 r_void
 id|scsi_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -462,6 +464,7 @@ suffix:semicolon
 r_extern
 r_int
 id|scsi_decide_disposition
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -489,6 +492,7 @@ multiline_comment|/*&n; *  scsi_abort aborts the current command that is executi
 r_extern
 r_void
 id|scsi_do_cmd
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -631,7 +635,7 @@ r_struct
 id|scsi_device
 (brace
 multiline_comment|/* private: */
-multiline_comment|/*&n;     * This information is private to the scsi mid-layer.  Wrapping it in a&n;     * struct private is a way of marking it in a sort of C++ type of way.&n;     */
+multiline_comment|/*&n;&t; * This information is private to the scsi mid-layer.  Wrapping it in a&n;&t; * struct private is a way of marking it in a sort of C++ type of way.&n;&t; */
 DECL|member|next
 r_struct
 id|scsi_device
@@ -650,7 +654,7 @@ DECL|member|device_wait
 id|wait_queue_head_t
 id|device_wait
 suffix:semicolon
-multiline_comment|/* Used to wait if&n;                                                      device is busy */
+multiline_comment|/* Used to wait if&n;&t;&t;&t;&t;&t;   device is busy */
 DECL|member|host
 r_struct
 id|Scsi_Host
@@ -674,7 +678,7 @@ id|scsi_request_fn
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* Used to jumpstart things after an &n;                                     * ioctl */
+multiline_comment|/* Used to jumpstart things after an &n;&t;&t;&t;&t;&t;&t;   * ioctl */
 DECL|member|device_queue
 id|Scsi_Cmnd
 op_star
@@ -698,12 +702,12 @@ r_int
 r_int
 id|manufacturer
 suffix:semicolon
-multiline_comment|/* Manufacturer of device, for using &n;&t;&t;&t;&t;     * vendor-specific cmd&squot;s */
+multiline_comment|/* Manufacturer of device, for using &n;&t;&t;&t;&t;&t; * vendor-specific cmd&squot;s */
 DECL|member|attached
 r_int
 id|attached
 suffix:semicolon
-multiline_comment|/* # of high level drivers attached to &n;&t;&t;&t;&t;     * this */
+multiline_comment|/* # of high level drivers attached to &n;&t;&t;&t;&t; * this */
 DECL|member|access_count
 r_int
 id|access_count
@@ -823,7 +827,7 @@ id|borken
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Tell the Seagate driver to be &n;&t;&t;&t;&t;     * painfully slow on this device */
+multiline_comment|/* Tell the Seagate driver to be &n;&t;&t;&t;&t; * painfully slow on this device */
 DECL|member|tagged_supported
 r_int
 id|tagged_supported
@@ -872,21 +876,21 @@ id|single_lun
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Indicates we should only allow I/O to&n;                                     * one of the luns for the device at a &n;                                     * time. */
+multiline_comment|/* Indicates we should only allow I/O to&n;&t;&t;&t;&t; * one of the luns for the device at a &n;&t;&t;&t;&t; * time. */
 DECL|member|was_reset
 r_int
 id|was_reset
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* There was a bus reset on the bus for &n;                                     * this device */
+multiline_comment|/* There was a bus reset on the bus for &n;&t;&t;&t;&t; * this device */
 DECL|member|expecting_cc_ua
 r_int
 id|expecting_cc_ua
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Expecting a CHECK_CONDITION/UNIT_ATTN&n;                                     * because we did a bus reset. */
+multiline_comment|/* Expecting a CHECK_CONDITION/UNIT_ATTN&n;&t;&t;&t;&t;&t; * because we did a bus reset. */
 DECL|member|device_blocked
 r_int
 id|device_blocked
@@ -959,7 +963,7 @@ r_struct
 id|scsi_cmnd
 (brace
 multiline_comment|/* private: */
-multiline_comment|/*&n;     * This information is private to the scsi mid-layer.  Wrapping it in a&n;     * struct private is a way of marking it in a sort of C++ type of way.&n;     */
+multiline_comment|/*&n;&t; * This information is private to the scsi mid-layer.  Wrapping it in a&n;&t; * struct private is a way of marking it in a sort of C++ type of way.&n;&t; */
 DECL|member|host
 r_struct
 id|Scsi_Host
@@ -1011,7 +1015,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Mid-level done function */
-multiline_comment|/*&n;      A SCSI Command is assigned a nonzero serial_number when internal_cmnd&n;      passes it to the driver&squot;s queue command function.  The serial_number&n;      is cleared when scsi_done is entered indicating that the command has&n;      been completed.  If a timeout occurs, the serial number at the moment&n;      of timeout is copied into serial_number_at_timeout.  By subsequently&n;      comparing the serial_number and serial_number_at_timeout fields&n;      during abort or reset processing, we can detect whether the command&n;      has already completed.  This also detects cases where the command has&n;      completed and the SCSI Command structure has already being reused&n;      for another command, so that we can avoid incorrectly aborting or&n;      resetting the new command.&n;      */
+multiline_comment|/*&n;&t;   A SCSI Command is assigned a nonzero serial_number when internal_cmnd&n;&t;   passes it to the driver&squot;s queue command function.  The serial_number&n;&t;   is cleared when scsi_done is entered indicating that the command has&n;&t;   been completed.  If a timeout occurs, the serial number at the moment&n;&t;   of timeout is copied into serial_number_at_timeout.  By subsequently&n;&t;   comparing the serial_number and serial_number_at_timeout fields&n;&t;   during abort or reset processing, we can detect whether the command&n;&t;   has already completed.  This also detects cases where the command has&n;&t;   completed and the SCSI Command structure has already being reused&n;&t;   for another command, so that we can avoid incorrectly aborting or&n;&t;   resetting the new command.&n;&t; */
 DECL|member|serial_number
 r_int
 r_int
@@ -1042,7 +1046,7 @@ DECL|member|timeout
 r_int
 id|timeout
 suffix:semicolon
-multiline_comment|/*&n;     * We handle the timeout differently if it happens when a reset, &n;     * abort, etc are in process. &n;     */
+multiline_comment|/*&n;&t; * We handle the timeout differently if it happens when a reset, &n;&t; * abort, etc are in process. &n;&t; */
 DECL|member|internal_timeout
 r_int
 r_volatile
@@ -1055,7 +1059,7 @@ id|scsi_cmnd
 op_star
 id|bh_next
 suffix:semicolon
-multiline_comment|/* To enumerate the commands waiting &n;                                     to be processed. */
+multiline_comment|/* To enumerate the commands waiting &n;&t;&t;&t;&t;&t;   to be processed. */
 multiline_comment|/* public: */
 DECL|member|target
 r_int
@@ -1122,7 +1126,7 @@ r_int
 r_int
 id|old_use_sg
 suffix:semicolon
-multiline_comment|/* We save  use_sg here when requesting&n;                                         * sense info */
+multiline_comment|/* We save  use_sg here when requesting&n;&t;&t;&t;&t;&t; * sense info */
 DECL|member|use_sg
 r_int
 r_int
@@ -1140,7 +1144,7 @@ r_int
 r_int
 id|abort_reason
 suffix:semicolon
-multiline_comment|/* If the mid-level code requests an&n;                                         * abort, this is the reason. */
+multiline_comment|/* If the mid-level code requests an&n;&t;&t;&t;&t;&t; * abort, this is the reason. */
 DECL|member|bufflen
 r_int
 id|bufflen
@@ -1156,18 +1160,18 @@ DECL|member|underflow
 r_int
 id|underflow
 suffix:semicolon
-multiline_comment|/* Return error if less than&n;                                           this amount is transfered */
+multiline_comment|/* Return error if less than&n;&t;&t;&t;&t;   this amount is transfered */
 DECL|member|transfersize
 r_int
 id|transfersize
 suffix:semicolon
-multiline_comment|/* How much we are guaranteed to&n;                                           transfer with each SCSI transfer&n;                                           (ie, between disconnect / &n;                                           reconnects.&t; Probably == sector&n;                                           size */
+multiline_comment|/* How much we are guaranteed to&n;&t;&t;&t;&t;   transfer with each SCSI transfer&n;&t;&t;&t;&t;   (ie, between disconnect / &n;&t;&t;&t;&t;   reconnects.   Probably == sector&n;&t;&t;&t;&t;   size */
 DECL|member|request
 r_struct
 id|request
 id|request
 suffix:semicolon
-multiline_comment|/* A copy of the command we are&n;                                             working on */
+multiline_comment|/* A copy of the command we are&n;&t;&t;&t;&t;   working on */
 DECL|member|sense_buffer
 r_int
 r_char
@@ -1176,12 +1180,12 @@ id|sense_buffer
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* Sense for this command, &n;                                             needed */
+multiline_comment|/* Sense for this command, &n;&t;&t;&t;&t;&t;&t;   needed */
 DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;     * These two flags are used to track commands that are in the&n;     * mid-level queue.  The idea is that a command can be there for&n;     * one of two reasons - either the host is busy or the device is&n;     * busy.  Thus when a command on the host finishes, we only try&n;     * and requeue commands that we might expect to be queueable.&n;     */
+multiline_comment|/*&n;&t; * These two flags are used to track commands that are in the&n;&t; * mid-level queue.  The idea is that a command can be there for&n;&t; * one of two reasons - either the host is busy or the device is&n;&t; * busy.  Thus when a command on the host finishes, we only try&n;&t; * and requeue commands that we might expect to be queueable.&n;&t; */
 DECL|member|host_wait
 r_int
 id|host_wait
@@ -1194,13 +1198,13 @@ id|device_wait
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* These variables are for the cdrom only. Once we have variable size &n;     * buffers in the buffer cache, they will go away. */
+multiline_comment|/* These variables are for the cdrom only. Once we have variable size &n;&t; * buffers in the buffer cache, they will go away. */
 DECL|member|this_count
 r_int
 id|this_count
 suffix:semicolon
 multiline_comment|/* End of special cdrom variables */
-multiline_comment|/* Low-level done function - can be used by low-level driver to point&n;     *&t;to completion function.&t; Not used by mid/upper level code. */
+multiline_comment|/* Low-level done function - can be used by low-level driver to point&n;&t; *        to completion function.  Not used by mid/upper level code. */
 DECL|member|scsi_done
 r_void
 (paren
@@ -1213,7 +1217,7 @@ id|scsi_cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * The following fields can be written to by the host specific code. &n;     * Everything else should be left alone. &n;     */
+multiline_comment|/*&n;&t; * The following fields can be written to by the host specific code. &n;&t; * Everything else should be left alone. &n;&t; */
 DECL|member|SCp
 id|Scsi_Pointer
 id|SCp
@@ -1225,7 +1229,7 @@ r_char
 op_star
 id|host_scribble
 suffix:semicolon
-multiline_comment|/* The host adapter is allowed to&n;&t;&t;&t;&t;    * call scsi_malloc and get some memory&n;&t;&t;&t;&t;    * and hang it here.&t; The host adapter&n;&t;&t;&t;&t;    * is also expected to call scsi_free&n;&t;&t;&t;&t;    * to release this memory.  (The memory&n;&t;&t;&t;&t;    * obtained by scsi_malloc is guaranteed&n;&t;&t;&t;&t;    * to be at an address &lt; 16Mb). */
+multiline_comment|/* The host adapter is allowed to&n;&t;&t;&t;&t;&t;   * call scsi_malloc and get some memory&n;&t;&t;&t;&t;&t;   * and hang it here.     The host adapter&n;&t;&t;&t;&t;&t;   * is also expected to call scsi_free&n;&t;&t;&t;&t;&t;   * to release this memory.  (The memory&n;&t;&t;&t;&t;&t;   * obtained by scsi_malloc is guaranteed&n;&t;&t;&t;&t;&t;   * to be at an address &lt; 16Mb). */
 DECL|member|result
 r_int
 id|result
@@ -1437,9 +1441,7 @@ id|sectors
 op_logical_and
 id|bh
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

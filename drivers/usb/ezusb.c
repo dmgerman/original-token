@@ -900,7 +900,7 @@ id|list_empty
 c_func
 (paren
 op_amp
-id|ez-&gt;async_completed
+id|ez-&gt;async_pending
 )paren
 )paren
 (brace
@@ -2080,6 +2080,8 @@ r_if
 c_cond
 (paren
 id|i
+OL
+l_int|0
 )paren
 (brace
 r_if
@@ -2414,6 +2416,8 @@ r_if
 c_cond
 (paren
 id|ret
+OL
+l_int|0
 )paren
 (brace
 r_if
@@ -2600,6 +2604,8 @@ id|interface
 comma
 id|altsetting
 )paren
+OL
+l_int|0
 )paren
 r_return
 op_minus
@@ -2635,6 +2641,8 @@ id|usbdev
 comma
 id|config
 )paren
+OL
+l_int|0
 )paren
 r_return
 op_minus
@@ -3420,7 +3428,11 @@ suffix:semicolon
 )brace
 id|as-&gt;desc.iso-&gt;start_type
 op_assign
-id|START_ASAP
+id|START_ABSOLUTE
+suffix:semicolon
+id|as-&gt;desc.iso-&gt;start_frame
+op_assign
+id|ai-&gt;startframe
 suffix:semicolon
 id|as-&gt;desc.iso-&gt;callback_frames
 op_assign
@@ -5015,6 +5027,8 @@ l_int|0
 dot
 id|bConfigurationValue
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
@@ -5058,6 +5072,8 @@ l_int|0
 comma
 l_int|1
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|printk

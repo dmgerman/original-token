@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ds.h 1.53 1999/08/28 04:12:33&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
+multiline_comment|/*&n; * ds.h 1.54 1999/09/03 16:44:49&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
 macro_line|#ifndef _LINUX_DS_H
 DECL|macro|_LINUX_DS_H
 mdefine_line|#define _LINUX_DS_H
@@ -27,6 +27,27 @@ suffix:semicolon
 DECL|typedef|tuple_parse_t
 )brace
 id|tuple_parse_t
+suffix:semicolon
+DECL|struct|win_info_t
+r_typedef
+r_struct
+id|win_info_t
+(brace
+DECL|member|handle
+id|window_handle_t
+id|handle
+suffix:semicolon
+DECL|member|window
+id|win_req_t
+id|window
+suffix:semicolon
+DECL|member|map
+id|memreq_t
+id|map
+suffix:semicolon
+DECL|typedef|win_info_t
+)brace
+id|win_info_t
 suffix:semicolon
 DECL|struct|bind_info_t
 r_typedef
@@ -144,6 +165,10 @@ DECL|member|mtd_info
 id|mtd_info_t
 id|mtd_info
 suffix:semicolon
+DECL|member|win_info
+id|win_info_t
+id|win_info
+suffix:semicolon
 DECL|member|cisdump
 id|cisdump_t
 id|cisdump
@@ -188,6 +213,12 @@ DECL|macro|DS_GET_NEXT_REGION
 mdefine_line|#define DS_GET_NEXT_REGION&t;&t;_IOWR(&squot;d&squot;, 17, region_info_t)
 DECL|macro|DS_REPLACE_CIS
 mdefine_line|#define DS_REPLACE_CIS&t;&t;&t;_IOWR(&squot;d&squot;, 18, cisdump_t)
+DECL|macro|DS_GET_FIRST_WINDOW
+mdefine_line|#define DS_GET_FIRST_WINDOW&t;&t;_IOR (&squot;d&squot;, 19, win_info_t)
+DECL|macro|DS_GET_NEXT_WINDOW
+mdefine_line|#define DS_GET_NEXT_WINDOW&t;&t;_IOWR(&squot;d&squot;, 20, win_info_t)
+DECL|macro|DS_GET_MEM_PAGE
+mdefine_line|#define DS_GET_MEM_PAGE&t;&t;&t;_IOWR(&squot;d&squot;, 21, win_info_t)
 DECL|macro|DS_BIND_REQUEST
 mdefine_line|#define DS_BIND_REQUEST&t;&t;&t;_IOWR(&squot;d&squot;, 60, bind_info_t)
 DECL|macro|DS_GET_DEVICE_INFO

@@ -600,7 +600,7 @@ c_func
 id|c
 )paren
 suffix:semicolon
-id|iofree
+id|iounmap
 c_func
 (paren
 id|mem

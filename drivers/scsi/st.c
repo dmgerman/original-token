@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1999 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sat Aug  7 13:54:31 1999 by makisara@kai.makisara.local&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;   Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 1999 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Sat Aug  7 13:54:31 1999 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -439,9 +439,9 @@ id|arg
 suffix:semicolon
 "&f;"
 multiline_comment|/* Convert the result to success code */
+DECL|function|st_chk_result
 r_static
 r_int
-DECL|function|st_chk_result
 id|st_chk_result
 c_func
 (paren
@@ -863,10 +863,11 @@ id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/* Wakeup from interrupt */
+DECL|function|st_sleep_done
 r_static
 r_void
-DECL|function|st_sleep_done
 id|st_sleep_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -1368,9 +1369,9 @@ id|SCpnt
 suffix:semicolon
 )brace
 multiline_comment|/* Handle the write-behind checking (downs the semaphore) */
+DECL|function|write_behind_check
 r_static
 r_void
-DECL|function|write_behind_check
 id|write_behind_check
 c_func
 (paren
@@ -1519,9 +1520,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Step over EOF if it has been inadvertently crossed (ioctl not used because&n;   it messes up the block number). */
+DECL|function|cross_eof
 r_static
 r_int
-DECL|function|cross_eof
 id|cross_eof
 c_func
 (paren
@@ -1720,9 +1721,9 @@ id|last_result_fatal
 suffix:semicolon
 )brace
 multiline_comment|/* Flush the write buffer (never need to write if variable blocksize). */
+DECL|function|flush_write_buffer
 r_static
 r_int
-DECL|function|flush_write_buffer
 id|flush_write_buffer
 c_func
 (paren
@@ -2156,9 +2157,9 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* Flush the tape buffer. The tape will be positioned correctly unless&n;   seek_next is true. */
+DECL|function|flush_buffer
 r_static
 r_int
-DECL|function|flush_buffer
 id|flush_buffer
 c_func
 (paren
@@ -2216,20 +2217,18 @@ id|STbuffer
 op_assign
 id|STp-&gt;buffer
 suffix:semicolon
-multiline_comment|/*&n;   * If there was a bus reset, block further access&n;   * to this device.&n;   */
+multiline_comment|/*&n;&t; * If there was a bus reset, block further access&n;&t; * to this device.&n;&t; */
 r_if
 c_cond
 (paren
 id|STp-&gt;device-&gt;was_reset
 )paren
-(brace
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2438,9 +2437,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Set the mode parameters */
+DECL|function|set_mode_densblk
 r_static
 r_int
-DECL|function|set_mode_densblk
 id|set_mode_densblk
 c_func
 (paren
@@ -2585,9 +2584,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Open the device */
+DECL|function|scsi_tape_open
 r_static
 r_int
-DECL|function|scsi_tape_open
 id|scsi_tape_open
 c_func
 (paren
@@ -3094,15 +3093,14 @@ c_cond
 (paren
 id|st_template.module
 )paren
-(brace
 id|__MOD_INC_USE_COUNT
 c_func
 (paren
 id|st_template.module
 )paren
 suffix:semicolon
-)brace
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -3179,14 +3177,12 @@ c_cond
 (paren
 id|st_template.module
 )paren
-(brace
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|st_template.module
 )paren
 suffix:semicolon
-)brace
 r_return
 (paren
 op_minus
@@ -3222,6 +3218,7 @@ id|UNIT_ATTENTION
 (brace
 multiline_comment|/* New media? */
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -3485,6 +3482,7 @@ suffix:semicolon
 r_else
 (brace
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -3653,6 +3651,7 @@ macro_line|#endif
 )brace
 )brace
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -4010,14 +4009,12 @@ c_cond
 (paren
 id|st_template.module
 )paren
-(brace
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|st_template.module
 )paren
 suffix:semicolon
-)brace
 r_return
 (paren
 op_minus
@@ -4211,14 +4208,12 @@ c_cond
 (paren
 id|st_template.module
 )paren
-(brace
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|st_template.module
 )paren
 suffix:semicolon
-)brace
 r_return
 (paren
 op_minus
@@ -4237,7 +4232,7 @@ OL
 l_int|1
 )paren
 (brace
-multiline_comment|/* This code is reached when the device is opened for the first time&n;&t; after the driver has been initialized with tape in the drive and the&n;&t; partition support has been enabled. */
+multiline_comment|/* This code is reached when the device is opened for the first time&n;&t;&t;   after the driver has been initialized with tape in the drive and the&n;&t;&t;   partition support has been enabled. */
 macro_line|#if DEBUG
 r_if
 c_cond
@@ -4308,14 +4303,12 @@ c_cond
 (paren
 id|st_template.module
 )paren
-(brace
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|st_template.module
 )paren
 suffix:semicolon
-)brace
 r_return
 id|STp-&gt;partition
 suffix:semicolon
@@ -4410,14 +4403,12 @@ c_cond
 (paren
 id|st_template.module
 )paren
-(brace
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|st_template.module
 )paren
 suffix:semicolon
-)brace
 r_return
 id|i
 suffix:semicolon
@@ -4466,9 +4457,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Flush the tape buffer before close */
+DECL|function|scsi_tape_flush
 r_static
 r_int
-DECL|function|scsi_tape_flush
 id|scsi_tape_flush
 c_func
 (paren
@@ -5102,9 +5093,9 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* Close the device and release it */
+DECL|function|scsi_tape_close
 r_static
 r_int
-DECL|function|scsi_tape_close
 id|scsi_tape_close
 c_func
 (paren
@@ -5224,14 +5215,12 @@ c_cond
 (paren
 id|st_template.module
 )paren
-(brace
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
 id|st_template.module
 )paren
 suffix:semicolon
-)brace
 r_return
 id|result
 suffix:semicolon
@@ -5341,7 +5330,7 @@ id|dev
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * If we are in the middle of error recovery, don&squot;t let anyone&n;     * else try and use this device.  Also, if error recovery fails, it&n;     * may try and take the device offline, in which case all further&n;     * access to the device is prohibited.&n;     */
+multiline_comment|/*&n;&t; * If we are in the middle of error recovery, don&squot;t let anyone&n;&t; * else try and use this device.  Also, if error recovery fails, it&n;&t; * may try and take the device offline, in which case all further&n;&t; * access to the device is prohibited.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5434,20 +5423,18 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * If there was a bus reset, block further access&n;     * to this device.&n;     */
+multiline_comment|/*&n;&t; * If there was a bus reset, block further access&n;&t; * to this device.&n;&t; */
 r_if
 c_cond
 (paren
 id|STp-&gt;device-&gt;was_reset
 )paren
-(brace
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
-)brace
 macro_line|#if DEBUG
 r_if
 c_cond
@@ -5824,7 +5811,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-multiline_comment|/* Check the buffer readability in cases where copy_user might catch&n;       the problems after some tape movement. */
+multiline_comment|/* Check the buffer readability in cases where copy_user might catch&n;&t;   the problems after some tape movement. */
 r_if
 c_cond
 (paren
@@ -6870,14 +6857,16 @@ op_assign
 id|ST_NOEOF
 suffix:semicolon
 r_return
+(paren
 id|total
+)paren
 suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Read data from the tape. Returns zero in the normal case, one if the&n;   eof status has changed, and the negative error code in case of a&n;   fatal error. Otherwise updates the buffer and the eof state. */
+DECL|function|read_tape
 r_static
 r_int
-DECL|function|read_tape
 id|read_tape
 c_func
 (paren
@@ -7931,7 +7920,7 @@ id|dev
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * If we are in the middle of error recovery, don&squot;t let anyone&n;     * else try and use this device.  Also, if error recovery fails, it&n;     * may try and take the device offline, in which case all further&n;     * access to the device is prohibited.&n;     */
+multiline_comment|/*&n;&t; * If we are in the middle of error recovery, don&squot;t let anyone&n;&t; * else try and use this device.  Also, if error recovery fails, it&n;&t; * may try and take the device offline, in which case all further&n;&t; * access to the device is prohibited.&n;&t; */
 r_if
 c_cond
 (paren
@@ -8253,7 +8242,7 @@ id|EIO
 suffix:semicolon
 multiline_comment|/* EOM or Blank Check */
 )brace
-multiline_comment|/* Check the buffer writability before any tape movement. Don&squot;t alter&n;       buffer data. */
+multiline_comment|/* Check the buffer writability before any tape movement. Don&squot;t alter&n;&t;   buffer data. */
 r_if
 c_cond
 (paren
@@ -8653,9 +8642,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Set the driver options */
+DECL|function|st_log_options
 r_static
 r_void
-DECL|function|st_log_options
 id|st_log_options
 c_func
 (paren
@@ -8747,9 +8736,9 @@ id|debugging
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|function|st_set_options
 r_static
 r_int
-DECL|function|st_set_options
 id|st_set_options
 c_func
 (paren
@@ -9684,9 +9673,9 @@ mdefine_line|#define DCC_MASK  0x40
 DECL|macro|RED_MASK
 mdefine_line|#define RED_MASK  0x60
 multiline_comment|/* Control the compression with mode page 15. Algorithm not changed if zero. */
+DECL|function|st_compression
 r_static
 r_int
-DECL|function|st_compression
 id|st_compression
 c_func
 (paren
@@ -10156,9 +10145,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* Internal ioctl function */
+DECL|function|st_int_ioctl
 r_static
 r_int
-DECL|function|st_int_ioctl
 id|st_int_ioctl
 c_func
 (paren
@@ -11329,7 +11318,7 @@ l_int|4
 op_or_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;        * If arg &gt;= 1 &amp;&amp; arg &lt;= 6 Enhanced load/unload in HP C1553A&n;       */
+multiline_comment|/*&n;&t;&t; * If arg &gt;= 1 &amp;&amp; arg &lt;= 6 Enhanced load/unload in HP C1553A&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -11578,7 +11567,7 @@ id|ST_EOD_1
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* The next lines would hide the number of spaced FileMarks&n;&t;    That&squot;s why I inserted the previous lines. I had no luck&n;&t;    with detecting EOM with FSF, so we go now to EOM.&n;&t;    Joerg Weule */
+multiline_comment|/* The next lines would hide the number of spaced FileMarks&n;&t;&t;&t;   That&squot;s why I inserted the previous lines. I had no luck&n;&t;&t;&t;   with detecting EOM with FSF, so we go now to EOM.&n;&t;&t;&t;   Joerg Weule */
 )brace
 r_else
 id|fileno
@@ -11740,7 +11729,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif;
+macro_line|#endif&t;/* ; */
 r_break
 suffix:semicolon
 r_case
@@ -11779,7 +11768,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif;
+macro_line|#endif&t;/* ; */
 r_break
 suffix:semicolon
 r_case
@@ -12568,7 +12557,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* SCSI command was not completely successful. Don&squot;t return&n;&t;        from this block without releasing the SCSI command block! */
+multiline_comment|/* SCSI command was not completely successful. Don&squot;t return&n;&t;&t;&t;&t;   from this block without releasing the SCSI command block! */
 r_if
 c_cond
 (paren
@@ -13016,10 +13005,10 @@ id|ioctl_result
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/* Get the tape position. If bt == 2, arg points into a kernel space mt_loc&n;    structure. */
+multiline_comment|/* Get the tape position. If bt == 2, arg points into a kernel space mt_loc&n;   structure. */
+DECL|function|get_location
 r_static
 r_int
-DECL|function|get_location
 id|get_location
 c_func
 (paren
@@ -13092,6 +13081,7 @@ id|EIO
 )paren
 suffix:semicolon
 id|memset
+c_func
 (paren
 id|scmd
 comma
@@ -13460,9 +13450,9 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* Set the tape block and partition. Negative partition means that only the&n;   block should be set in vendor specific way. */
+DECL|function|set_location
 r_static
 r_int
-DECL|function|set_location
 id|set_location
 c_func
 (paren
@@ -13677,6 +13667,7 @@ macro_line|#endif
 )brace
 )brace
 id|memset
+c_func
 (paren
 id|scmd
 comma
@@ -14039,9 +14030,9 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* Find the current partition number for the drive status. Called from open and&n;   returns either partition number of negative error code. */
+DECL|function|find_partition
 r_static
 r_int
-DECL|function|find_partition
 id|find_partition
 c_func
 (paren
@@ -14104,9 +14095,9 @@ id|partition
 suffix:semicolon
 )brace
 multiline_comment|/* Change the partition if necessary */
+DECL|function|update_partition
 r_static
 r_int
-DECL|function|update_partition
 id|update_partition
 c_func
 (paren
@@ -14194,9 +14185,9 @@ mdefine_line|#define PART_PAGE   0x11
 DECL|macro|PART_PAGE_LENGTH
 mdefine_line|#define PART_PAGE_LENGTH 10
 multiline_comment|/* Get the number of partitions on the tape. As a side effect reads the&n;   mode page into the tape buffer. */
+DECL|function|nbr_partitions
 r_static
 r_int
-DECL|function|nbr_partitions
 id|nbr_partitions
 c_func
 (paren
@@ -14258,6 +14249,7 @@ id|EIO
 )paren
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -14423,9 +14415,9 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* Partition the tape into two partitions if size &gt; 0 or one partition if&n;   size == 0 */
+DECL|function|partition_tape
 r_static
 r_int
-DECL|function|partition_tape
 id|partition_tape
 c_func
 (paren
@@ -14792,9 +14784,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* The ioctl command */
+DECL|function|st_ioctl
 r_static
 r_int
-DECL|function|st_ioctl
 id|st_ioctl
 c_func
 (paren
@@ -14916,7 +14908,7 @@ id|STp-&gt;partition
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * If we are in the middle of error recovery, don&squot;t let anyone&n;     * else try and use this device.  Also, if error recovery fails, it&n;     * may try and take the device offline, in which case all further&n;     * access to the device is prohibited.&n;     */
+multiline_comment|/*&n;&t; * If we are in the middle of error recovery, don&squot;t let anyone&n;&t; * else try and use this device.  Also, if error recovery fails, it&n;&t; * may try and take the device offline, in which case all further&n;&t; * access to the device is prohibited.&n;&t; */
 r_if
 c_cond
 (paren
@@ -15242,7 +15234,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;* If there was a bus reset, block further access&n;&t;* to this device.  If the user wants to rewind the tape,&n;&t;* then reset the flag and allow access again.&n;&t;*/
+multiline_comment|/*&n;&t;&t;&t; * If there was a bus reset, block further access&n;&t;&t;&t; * to this device.  If the user wants to rewind the tape,&n;&t;&t;&t; * then reset the flag and allow access again.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -15270,14 +15262,12 @@ id|mtc.mt_op
 op_ne
 id|MTEOM
 )paren
-(brace
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
-)brace
 id|STp-&gt;device-&gt;was_reset
 op_assign
 l_int|0
@@ -16449,7 +16439,7 @@ id|priority
 op_or_assign
 id|GFP_DMA
 suffix:semicolon
-multiline_comment|/* Try to allocate the first segment up to ST_FIRST_ORDER and the&n;       others big enough to reach the goal */
+multiline_comment|/* Try to allocate the first segment up to ST_FIRST_ORDER and the&n;&t;&t;   others big enough to reach the goal */
 r_for
 c_loop
 (paren
@@ -16883,9 +16873,9 @@ id|tb
 suffix:semicolon
 )brace
 multiline_comment|/* Try to allocate a temporary enlarged tape buffer */
+DECL|function|enlarge_buffer
 r_static
 r_int
-DECL|function|enlarge_buffer
 id|enlarge_buffer
 c_func
 (paren
@@ -17143,9 +17133,9 @@ id|TRUE
 suffix:semicolon
 )brace
 multiline_comment|/* Release the extra buffer */
+DECL|function|normalize_buffer
 r_static
 r_void
-DECL|function|normalize_buffer
 id|normalize_buffer
 c_func
 (paren
@@ -17230,9 +17220,9 @@ id|STbuffer-&gt;orig_sg_segs
 suffix:semicolon
 )brace
 multiline_comment|/* Move data from the user buffer to the tape buffer. Returns zero (success) or&n;   negative error code. */
+DECL|function|append_to_buffer
 r_static
 r_int
-DECL|function|append_to_buffer
 id|append_to_buffer
 c_func
 (paren
@@ -17429,9 +17419,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Move data from the tape buffer to the user buffer. Returns zero (success) or&n;   negative error code. */
+DECL|function|from_buffer
 r_static
 r_int
-DECL|function|from_buffer
 id|from_buffer
 c_func
 (paren
@@ -17726,7 +17716,7 @@ id|max_sg_segs
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-multiline_comment|/* Set the boot options. Syntax is defined in README.st.&n;*/
+multiline_comment|/* Set the boot options. Syntax is defined in README.st.&n; */
 DECL|function|st_setup
 r_static
 r_int
@@ -18036,7 +18026,6 @@ suffix:semicolon
 DECL|function|st_attach
 r_static
 r_int
-(def_block
 id|st_attach
 c_func
 (paren
@@ -18112,10 +18101,8 @@ c_cond
 op_logical_neg
 id|tpnt-&gt;device
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -18123,13 +18110,12 @@ id|i
 op_ge
 id|st_template.dev_max
 )paren
-(brace
 id|panic
+c_func
 (paren
 l_string|&quot;scsi_devices corrupt (st)&quot;
 )paren
 suffix:semicolon
-)brace
 id|scsi_tapes
 (braket
 id|i
@@ -18407,7 +18393,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-)def_block
 suffix:semicolon
 DECL|function|st_detect
 r_static
@@ -18427,11 +18412,9 @@ id|SDp-&gt;type
 op_ne
 id|TYPE_TAPE
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -19083,6 +19066,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -19166,6 +19150,7 @@ id|this_size
 )paren
 suffix:semicolon
 )brace
+)brace
 id|scsi_init_free
 c_func
 (paren
@@ -19198,5 +19183,5 @@ l_string|&quot;st: Unloaded.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 eof

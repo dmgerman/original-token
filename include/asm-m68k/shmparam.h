@@ -2,10 +2,17 @@ macro_line|#ifndef _M68K_SHMPARAM_H
 DECL|macro|_M68K_SHMPARAM_H
 mdefine_line|#define _M68K_SHMPARAM_H
 multiline_comment|/* address range for shared memory attaches if no address passed to shmat() */
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|SHM_RANGE_START
 mdefine_line|#define SHM_RANGE_START&t;0xC0000000
 DECL|macro|SHM_RANGE_END
 mdefine_line|#define SHM_RANGE_END&t;0xD0000000
+macro_line|#else
+DECL|macro|SHM_RANGE_START
+mdefine_line|#define SHM_RANGE_START&t;0x0C000000
+DECL|macro|SHM_RANGE_END
+mdefine_line|#define SHM_RANGE_END&t;0x0D000000
+macro_line|#endif
 multiline_comment|/*&n; * Format of a swap-entry for shared memory pages currently out in&n; * swap space (see also mm/swap.c).&n; *&n; * SWP_TYPE = SHM_SWP_TYPE&n; * SWP_OFFSET is used as follows:&n; *&n; *  bits 0..6 : id of shared memory segment page belongs to (SHM_ID)&n; *  bits 7..21: index of page within shared memory segment (SHM_IDX)&n; *&t;&t;(actually fewer bits get used since SHMMAX is so low)&n; */
 multiline_comment|/*&n; * Keep _SHM_ID_BITS as low as possible since SHMMNI depends on it and&n; * there is a static array of size SHMMNI.&n; */
 DECL|macro|_SHM_ID_BITS

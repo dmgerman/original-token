@@ -745,7 +745,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_SERIAL_CONSOLE
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) || defined(DEBUG_SERIAL)
 DECL|function|mac_sccb_console_wait_key
 r_int
 id|mac_sccb_console_wait_key
@@ -1463,6 +1463,42 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG_SERIAL */
+DECL|function|mac_init_scca_port
+r_void
+id|mac_init_scca_port
+c_func
+(paren
+r_int
+id|cflag
+)paren
+(brace
+id|mac_init_scc_port
+c_func
+(paren
+id|cflag
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|function|mac_init_sccb_port
+r_void
+id|mac_init_sccb_port
+c_func
+(paren
+r_int
+id|cflag
+)paren
+(brace
+id|mac_init_scc_port
+c_func
+(paren
+id|cflag
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
 DECL|function|mac_debug_init
 r_void
 id|__init

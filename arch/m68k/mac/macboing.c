@@ -271,6 +271,19 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|MAC_MODEL_C660
+suffix:colon
+r_case
+id|MAC_MODEL_Q840
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t; * The Quadra 660AV and 840AV use the &quot;Singer&quot; custom ASIC for sound I/O.&n;&t;&t;&t; * It appears to be similar to the &quot;AWACS&quot; custom ASIC in the Power Mac &n;&t;&t;&t; * [678]100.  Because Singer and AWACS may have a similar hardware &n;&t;&t;&t; * interface, this would imply that the code in drivers/sound/dmasound.c &n;&t;&t;&t; * for AWACS could be used as a basis for Singer support.  All we have to&n;&t;&t;&t; * do is figure out how to do DMA on the 660AV/840AV through the PSC and &n;&t;&t;&t; * figure out where the Singer hardware sits in memory. (I&squot;d look in the&n;&t;&t;&t; * vicinity of the AWACS location in a Power Mac [678]100 first, or the &n;&t;&t;&t; * current location of the Apple Sound Chip--ASC--in other Macs.)  The &n;&t;&t;&t; * Power Mac [678]100 info can be found in MkLinux Mach kernel sources.&n;&t;&t;&t; *&n;&t;&t;&t; * Quoted from Apple&squot;s Tech Info Library, article number 16405:&n;&t;&t;&t; *   &quot;Among desktop Macintosh computers, only the 660AV, 840AV, and Power&n;&t;&t;&t; *   Macintosh models have 16-bit audio input and output capability&n;&t;&t;&t; *   because of the AT&amp;T DSP3210 hardware circuitry and the 16-bit Singer&n;&t;&t;&t; *   codec circuitry in the AVs.  The Audio Waveform Amplifier and&n;&t;&t;&t; *   Converter (AWAC) chip in the Power Macintosh performs the same &n;&t;&t;&t; *   16-bit I/O functionality.  The PowerBook 500 series computers&n;&t;&t;&t; *   support 16-bit stereo output, but only mono input.&quot;&n;&t;&t;&t; *&n;&t;&t;&t; *   http://til.info.apple.com/techinfo.nsf/artnum/n16405&n;&t;&t;&t; *&n;&t;&t;&t; * --David Kilzer&n;&t;&t;&t; */
+id|mac_special_bell
+op_assign
+id|mac_av_start_bell
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|MAC_MODEL_Q650
 suffix:colon
 r_case
@@ -286,10 +299,18 @@ r_case
 id|MAC_MODEL_Q950
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t; * Currently not implemented!&n;&t;&t;&t; */
-multiline_comment|/*&n;&t;&t;&t; * The Quadra 660AV and 840AV use the &quot;Singer&quot; custom ASIC for sound I/O.&n;&t;&t;&t; * It appears to be similar to the &quot;AWACS&quot; custom ASIC in the Power Mac &n;&t;&t;&t; * [678]100.  Because Singer and AWACS may have a similar hardware &n;&t;&t;&t; * interface, this would imply that the code in drivers/sound/dmasound.c &n;&t;&t;&t; * for AWACS could be used as a basis for Singer support.  All we have to&n;&t;&t;&t; * do is figure out how to do DMA on the 660AV/840AV through the PSC and &n;&t;&t;&t; * figure out where the Singer hardware sits in memory. (I&squot;d look in the&n;&t;&t;&t; * vicinity of the AWACS location in a Power Mac [678]100 first, or the &n;&t;&t;&t; * current location of the Apple Sound Chip--ASC--in other Macs.)  The &n;&t;&t;&t; * Power Mac [678]100 info can be found in MkLinux Mach kernel sources.&n;&t;&t;&t; *&n;&t;&t;&t; * Quoted from Apple&squot;s Tech Info Library, article number 16405:&n;&t;&t;&t; *   &quot;Among desktop Macintosh computers, only the 660AV, 840AV, and Power&n;&t;&t;&t; *   Macintosh models have 16-bit audio input and output capability&n;&t;&t;&t; *   because of the AT&amp;T DSP3210 hardware circuitry and the 16-bit Singer&n;&t;&t;&t; *   codec circuitry in the AVs.  The Audio Waveform Amplifier and&n;&t;&t;&t; *   Converter (AWAC) chip in the Power Macintosh performs the same &n;&t;&t;&t; *   16-bit I/O functionality.  The PowerBook 500 series computers&n;&t;&t;&t; *   support 16-bit stereo output, but only mono input.&quot;&n;&t;&t;&t; *&n;&t;&t;&t; *   http://til.info.apple.com/techinfo.nsf/artnum/n16405&n;&t;&t;&t; *&n;&t;&t;&t; * --David Kilzer&n;&t;&t;&t; */
 id|mac_special_bell
 op_assign
-id|mac_av_start_bell
+l_int|NULL
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t; * Every switch needs a default&n;&t;&t;&t; */
+id|mac_special_bell
+op_assign
+l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -370,6 +391,18 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mac_special_bell
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* Do nothing */
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

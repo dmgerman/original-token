@@ -2,6 +2,34 @@ multiline_comment|/* $Id: dvma.h,v 1.4 1999/03/27 20:23:41 tsbogend Exp $&n; * i
 macro_line|#ifndef __M68K_DVMA_H
 DECL|macro|__M68K_DVMA_H
 mdefine_line|#define __M68K_DVMA_H
+macro_line|#ifdef CONFIG_SUN3
+multiline_comment|/* sun3 dvma page support */
+multiline_comment|/* memory and pmegs reserved for dvma */
+DECL|macro|DVMA_PMEG_START
+mdefine_line|#define DVMA_PMEG_START 10
+DECL|macro|DVMA_PMEG_END
+mdefine_line|#define DVMA_PMEG_END 16
+DECL|macro|DVMA_START
+mdefine_line|#define DVMA_START 0xff00000
+DECL|macro|DVMA_END
+mdefine_line|#define DVMA_END 0xffe0000
+DECL|macro|DVMA_SIZE
+mdefine_line|#define DVMA_SIZE (DVMA_END-DVMA_START)
+multiline_comment|/* virt &lt;-&gt; phys conversions */
+DECL|macro|sun3_dvma_vtop
+mdefine_line|#define sun3_dvma_vtop(x) ((unsigned long)(x) &amp; 0xffffff)
+DECL|macro|sun3_dvma_ptov
+mdefine_line|#define sun3_dvma_ptov(x) ((unsigned long)(x) | 0xf000000)
+r_void
+op_star
+id|sun3_dvma_malloc
+c_func
+(paren
+r_int
+id|len
+)paren
+suffix:semicolon
+macro_line|#else /* Sun3x */
 multiline_comment|/* Structure to describe the current status of DMA registers on the Sparc */
 DECL|struct|sparc_dma_registers
 r_struct
@@ -303,5 +331,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif /* !CONFIG_SUN3 */
 macro_line|#endif /* !(__M68K_DVMA_H) */
 eof

@@ -18,9 +18,12 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &quot;busmouse.h&quot;
-macro_line|#if 0
+macro_line|#if AMIGA_OLD_INT
+DECL|macro|AMI_MSE_INT_ON
 mdefine_line|#define AMI_MSE_INT_ON()&t;mouseint_allowed = 1
+DECL|macro|AMI_MSE_INT_OFF
 mdefine_line|#define AMI_MSE_INT_OFF()&t;mouseint_allowed = 0
+DECL|variable|mouseint_allowed
 r_static
 r_int
 id|mouseint_allowed
@@ -80,7 +83,7 @@ id|joy0dat
 comma
 id|potgor
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if AMIGA_OLD_INT
 r_if
 c_cond
 (paren
@@ -353,7 +356,7 @@ comma
 id|buttons
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if AMIGA_OLD_INT
 id|AMI_MSE_INT_ON
 c_func
 (paren
@@ -387,7 +390,7 @@ comma
 id|mouse_interrupt
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if AMIGA_OLD_INT
 id|AMI_MSE_INT_OFF
 c_func
 (paren
@@ -451,7 +454,7 @@ suffix:semicolon
 )brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if AMIGA_OLD_INT
 id|AMI_MSE_INT_ON
 c_func
 (paren
@@ -511,7 +514,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* reset counters */
-macro_line|#if 0
+macro_line|#if AMIGA_OLD_INT
 id|AMI_MSE_INT_OFF
 c_func
 (paren
@@ -560,36 +563,32 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
+DECL|function|amiga_mouse_exit
+r_void
+id|__exit
+id|amiga_mouse_exit
 c_func
 (paren
 r_void
 )paren
 (brace
-r_return
-id|amiga_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unregsiter_busmouse
+id|unregister_busmouse
 c_func
 (paren
 id|msedev
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+id|module_init
+c_func
+(paren
+id|amiga_mouse_init
+)paren
+id|module_exit
+c_func
+(paren
+id|amiga_mouse_exit
+)paren
 macro_line|#endif
 eof

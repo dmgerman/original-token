@@ -1368,7 +1368,7 @@ id|drive
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
-multiline_comment|/*&n;this is the last interrupt for any drive access, happens after&n;release (from floppy_off). So we have to wait until now to decrease&n;the use count.&n;*/
+multiline_comment|/*&n;  this is the last interrupt for any drive access, happens after&n;  release (from floppy_off). So we have to wait until now to decrease&n;  the use count.&n;*/
 r_if
 c_cond
 (paren
@@ -4131,7 +4131,7 @@ r_int
 r_int
 id|crc
 suffix:semicolon
-multiline_comment|/* on 68000 we got an alignment problem, &n;                           but this compiler solves it  by adding silently &n;                           adding a pad byte so data won&squot;t fit&n;                           and this took about 3h to discover.... */
+multiline_comment|/* on 68000 we got an alignment problem, &n;&t;&t;&t;&t;   but this compiler solves it  by adding silently &n;&t;&t;&t;&t;   adding a pad byte so data won&squot;t fit&n;&t;&t;&t;&t;   and this took about 3h to discover.... */
 DECL|member|gap1
 r_int
 r_char
@@ -5660,7 +5660,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;dos_read: no hdr sync on track %d, unit %d for sector %d&bslash;n&quot;
+l_string|&quot;dos_read: no hdr sync on &quot;
+l_string|&quot;track %d, unit %d for sector %d&bslash;n&quot;
 comma
 id|unit
 (braket
@@ -5886,7 +5887,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;dos_read: unknown sector len descriptor %d&bslash;n&quot;
+l_string|&quot;dos_read: unknown sector len &quot;
+l_string|&quot;descriptor %d&bslash;n&quot;
 comma
 id|hdr.len_desc
 )paren
@@ -5923,7 +5925,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;dos_read: no data sync on track %d, unit %d for sector%d, disk sector %d&bslash;n&quot;
+l_string|&quot;dos_read: no data sync on track &quot;
+l_string|&quot;%d, unit %d for sector%d, disk sector %d&bslash;n&quot;
 comma
 id|unit
 (braket
@@ -5970,7 +5973,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;dos_read: no data mark after sync (%d,%d,%d,%d) sc=%d&bslash;n&quot;
+l_string|&quot;dos_read: no data mark after &quot;
+l_string|&quot;sync (%d,%d,%d,%d) sc=%d&bslash;n&quot;
 comma
 id|hdr.track
 comma
@@ -6085,7 +6089,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;dos_read: MFM_DATA (%d,%d,%d,%d) sc=%d, %x %x&bslash;n&quot;
+l_string|&quot;dos_read: MFM_DATA (%d,%d,%d,%d) &quot;
+l_string|&quot;sc=%d, %x %x&bslash;n&quot;
 comma
 id|hdr.track
 comma
@@ -7118,7 +7123,8 @@ id|nr
 id|printk
 (paren
 id|KERN_NOTICE
-l_string|&quot;floppy disk write protected in write!&bslash;n&quot;
+l_string|&quot;floppy disk write protected &quot;
+l_string|&quot;in write!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|writepending
@@ -7613,7 +7619,8 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;access to track %d, sector %d, with buffer at 0x%08lx&bslash;n&quot;
+l_string|&quot;access to track %d, sector %d, with buffer at &quot;
+l_string|&quot;0x%08lx&bslash;n&quot;
 comma
 id|track
 comma
@@ -8482,7 +8489,8 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;fd_probe: unsupported drive type %08lx found&bslash;n&quot;
+l_string|&quot;fd_probe: unsupported drive type &quot;
+l_string|&quot;%08lx found&bslash;n&quot;
 comma
 id|code
 )paren
@@ -9526,10 +9534,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|request_irq
 c_func
 (paren
-id|IRQ_FLOPPY
+id|IRQ_AMIGA_DSKBLK
 comma
 id|fd_block_done
 comma
@@ -9539,8 +9548,6 @@ l_string|&quot;floppy_dma&quot;
 comma
 l_int|NULL
 )paren
-op_ne
-l_int|0
 )paren
 (brace
 id|printk
@@ -9571,6 +9578,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|request_irq
 c_func
 (paren
@@ -9584,8 +9592,6 @@ l_string|&quot;floppy_timer&quot;
 comma
 l_int|NULL
 )paren
-op_ne
-l_int|0
 )paren
 (brace
 id|printk
@@ -9597,7 +9603,7 @@ suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|IRQ_FLOPPY
+id|IRQ_AMIGA_DSKBLK
 comma
 l_int|NULL
 )paren
@@ -9644,7 +9650,7 @@ suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|IRQ_FLOPPY
+id|IRQ_AMIGA_DSKBLK
 comma
 l_int|NULL
 )paren
@@ -10004,7 +10010,7 @@ suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|IRQ_FLOPPY
+id|IRQ_AMIGA_DSKBLK
 comma
 l_int|NULL
 )paren

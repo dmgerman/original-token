@@ -959,7 +959,7 @@ id|current
 )paren
 )paren
 r_goto
-id|out
+id|out_nolock
 suffix:semicolon
 r_if
 c_cond

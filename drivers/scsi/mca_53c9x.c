@@ -425,7 +425,7 @@ c_func
 id|esp
 )paren
 suffix:semicolon
-id|unregister_scsi
+id|scsi_unregister
 c_func
 (paren
 id|esp-&gt;ehost
@@ -469,7 +469,7 @@ c_func
 id|esp
 )paren
 suffix:semicolon
-id|unregister_scsi
+id|scsi_unregister
 c_func
 (paren
 id|esp-&gt;ehost

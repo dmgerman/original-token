@@ -22,8 +22,8 @@ DECL|macro|VENDOR_WRITER
 mdefine_line|#define VENDOR_WRITER          4   /* pre-scsi3 writers */
 DECL|macro|VENDOR_ID
 mdefine_line|#define VENDOR_ID (scsi_CDs[minor].vendor)
-r_void
 DECL|function|sr_vendor_init
+r_void
 id|sr_vendor_init
 c_func
 (paren
@@ -204,8 +204,8 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* small handy function for switching block length using MODE SELECT,&n; * used by sr_read_sector() */
-r_int
 DECL|function|sr_set_blocklength
+r_int
 id|sr_set_blocklength
 c_func
 (paren

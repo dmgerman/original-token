@@ -12,6 +12,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|mac_poweroff
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|mac_init_IRQ
 c_func
 (paren
@@ -83,6 +91,15 @@ r_int
 suffix:semicolon
 r_extern
 r_int
+id|mac_irq_pending
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|mac_get_irq_list
 c_func
 (paren
@@ -131,18 +148,6 @@ id|mac_boom
 c_func
 (paren
 r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|mac_video_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Floppy driver magic hook - probably shouldnt be here&n; */
@@ -236,6 +241,8 @@ DECL|macro|MAC_ADB_PB1
 mdefine_line|#define MAC_ADB_PB1&t;&t;4
 DECL|macro|MAC_ADB_PB2
 mdefine_line|#define MAC_ADB_PB2&t;&t;5
+DECL|macro|MAC_ADB_IOP
+mdefine_line|#define MAC_ADB_IOP&t;&t;6
 DECL|macro|MAC_VIA_II
 mdefine_line|#define MAC_VIA_II&t;&t;1
 DECL|macro|MAC_VIA_IIci
@@ -361,6 +368,8 @@ DECL|macro|MAC_MODEL_CCLII
 mdefine_line|#define MAC_MODEL_CCLII&t;&t;83&t;/* aka: P275 */
 DECL|macro|MAC_MODEL_PB165
 mdefine_line|#define MAC_MODEL_PB165&t;&t;84
+DECL|macro|MAC_MODEL_PB190
+mdefine_line|#define MAC_MODEL_PB190&t;&t;85&t;/* aka: PB190CS */
 DECL|macro|MAC_MODEL_TV
 mdefine_line|#define MAC_MODEL_TV&t;&t;88
 DECL|macro|MAC_MODEL_P475
@@ -381,8 +390,6 @@ DECL|macro|MAC_MODEL_PB280C
 mdefine_line|#define MAC_MODEL_PB280C&t;103
 DECL|macro|MAC_MODEL_PB150
 mdefine_line|#define MAC_MODEL_PB150&t;&t;115
-DECL|macro|MAC_MODEL_PB190
-mdefine_line|#define MAC_MODEL_PB190&t;&t;122&t;/* aka: PB190CS */
 r_extern
 r_struct
 id|mac_model

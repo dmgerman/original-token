@@ -300,18 +300,6 @@ r_int
 id|bufferram
 suffix:semicolon
 multiline_comment|/* Memory used by buffers */
-DECL|member|totalbig
-r_int
-r_int
-id|totalbig
-suffix:semicolon
-multiline_comment|/* Total big memory size */
-DECL|member|freebig
-r_int
-r_int
-id|freebig
-suffix:semicolon
-multiline_comment|/* Available big memory size */
 DECL|member|totalswap
 r_int
 r_int
@@ -330,6 +318,33 @@ r_int
 id|procs
 suffix:semicolon
 multiline_comment|/* Number of current processes */
+DECL|member|totalbig
+r_int
+r_int
+id|totalbig
+suffix:semicolon
+multiline_comment|/* Total big memory size */
+DECL|member|freebig
+r_int
+r_int
+id|freebig
+suffix:semicolon
+multiline_comment|/* Available big memory size */
+DECL|member|_f
+r_char
+id|_f
+(braket
+l_int|22
+op_minus
+l_int|2
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+)braket
+suffix:semicolon
+multiline_comment|/* Padding: libc5 uses this.. */
 )brace
 suffix:semicolon
 macro_line|#endif

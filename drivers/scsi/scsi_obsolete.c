@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; *&n; *  Improved compatibility with 2.0 behaviour by Manfred Spraul&n; *  &lt;masp0008@stud.uni-sb.de&gt;&n; */
-multiline_comment|/*&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *&t;&t;NOTE - NOTE - NOTE - NOTE - NOTE - NOTE - NOTE&n; *&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *&n; * This file contains the &squot;old&squot; scsi error handling.  It is only present&n; * while the new error handling code is being debugged, and while the low&n; * level drivers are being converted to use the new code.  Once the last&n; * driver uses the new code this *ENTIRE* file will be nuked.&n; */
+multiline_comment|/*&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *              NOTE - NOTE - NOTE - NOTE - NOTE - NOTE - NOTE&n; *&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *&n; * This file contains the &squot;old&squot; scsi error handling.  It is only present&n; * while the new error handling code is being debugged, and while the low&n; * level drivers are being converted to use the new code.  Once the last&n; * driver uses the new code this *ENTIRE* file will be nuked.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -21,12 +21,13 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /mnt/ide/home/eric/CVSROOT/linux/drivers/scsi/scsi_obsolete.c,v 1.1 1997/05/18 23:27:21 eric Exp $&quot;;&n;*/
+multiline_comment|/*&n;   static const char RCSid[] = &quot;$Header: /mnt/ide/home/eric/CVSROOT/linux/drivers/scsi/scsi_obsolete.c,v 1.1 1997/05/18 23:27:21 eric Exp $&quot;;&n; */
 DECL|macro|INTERNAL_ERROR
 mdefine_line|#define INTERNAL_ERROR (panic (&quot;Internal error in file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__))
 r_static
 r_int
 id|scsi_abort
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -38,6 +39,7 @@ suffix:semicolon
 r_static
 r_int
 id|scsi_reset
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -49,6 +51,7 @@ suffix:semicolon
 r_extern
 r_void
 id|scsi_old_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -57,6 +60,7 @@ id|SCpnt
 suffix:semicolon
 r_int
 id|update_timeout
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -67,6 +71,7 @@ suffix:semicolon
 r_extern
 r_void
 id|scsi_old_times_out
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -76,6 +81,7 @@ suffix:semicolon
 r_extern
 r_void
 id|internal_cmnd
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -165,6 +171,7 @@ multiline_comment|/*&n; * This is our time out function, called when the timer e
 DECL|function|scsi_old_times_out
 r_void
 id|scsi_old_times_out
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -222,6 +229,7 @@ c_cond
 (paren
 op_logical_neg
 id|scsi_abort
+c_func
 (paren
 id|SCpnt
 comma
@@ -248,6 +256,7 @@ c_cond
 (paren
 op_logical_neg
 id|scsi_reset
+c_func
 (paren
 id|SCpnt
 comma
@@ -266,7 +275,7 @@ op_or
 id|IN_RESET
 )paren
 suffix:colon
-multiline_comment|/* This might be controversial, but if there is a bus hang,&n;&t; * you might conceivably want the machine up and running&n;&t; * esp if you have an ide disk.&n;&t; */
+multiline_comment|/* This might be controversial, but if there is a bus hang,&n;&t;&t; * you might conceivably want the machine up and running&n;&t;&t; * esp if you have an ide disk.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -290,6 +299,7 @@ op_or_assign
 id|IN_RESET2
 suffix:semicolon
 id|scsi_reset
+c_func
 (paren
 id|SCpnt
 comma
@@ -310,7 +320,7 @@ op_or
 id|IN_RESET2
 )paren
 suffix:colon
-multiline_comment|/* Obviously the bus reset didn&squot;t work.&n;&t; * Let&squot;s try even harder and call for an HBA reset.&n;         * Maybe the HBA itself crashed and this will shake it loose.&n;&t; */
+multiline_comment|/* Obviously the bus reset didn&squot;t work.&n;&t;&t; * Let&squot;s try even harder and call for an HBA reset.&n;&t;&t; * Maybe the HBA itself crashed and this will shake it loose.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -335,6 +345,7 @@ op_or_assign
 id|IN_RESET3
 suffix:semicolon
 id|scsi_reset
+c_func
 (paren
 id|SCpnt
 comma
@@ -381,6 +392,7 @@ DECL|function|scsi_request_sense
 r_static
 r_void
 id|scsi_request_sense
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -402,6 +414,7 @@ id|SENSE_TIMEOUT
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -422,6 +435,7 @@ id|generic_sense
 )paren
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -488,6 +502,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|internal_cmnd
+c_func
 (paren
 id|SCpnt
 )paren
@@ -497,13 +512,14 @@ DECL|function|check_sense
 r_static
 r_int
 id|check_sense
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
 id|SCpnt
 )paren
 (brace
-multiline_comment|/* If there is no sense information, request it.  If we have already&n;     * requested it, there is no point in asking again - the firmware must&n;     * be confused.&n;     */
+multiline_comment|/* If there is no sense information, request it.  If we have already&n;&t; * requested it, there is no point in asking again - the firmware must&n;&t; * be confused.&n;&t; */
 r_if
 c_cond
 (paren
@@ -533,11 +549,9 @@ op_amp
 id|ASKED_FOR_SENSE
 )paren
 )paren
-(brace
 r_return
 id|SUGGEST_SENSE
 suffix:semicolon
-)brace
 r_else
 r_return
 id|SUGGEST_RETRY
@@ -622,7 +636,7 @@ suffix:colon
 r_case
 id|UNIT_ATTENTION
 suffix:colon
-multiline_comment|/*&n;         * If we are expecting a CC/UA because of a bus reset that we&n;         * performed, treat this just as a retry.  Otherwise this is&n;         * information that we should pass up to the upper-level driver&n;         * so that we can deal with it there.&n;         */
+multiline_comment|/*&n;&t;&t; * If we are expecting a CC/UA because of a bus reset that we&n;&t;&t; * performed, treat this just as a retry.  Otherwise this is&n;&t;&t; * information that we should pass up to the upper-level driver&n;&t;&t; * so that we can deal with it there.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -679,6 +693,7 @@ multiline_comment|/* This function is the mid-level interrupt routine, which dec
 DECL|function|scsi_old_done
 r_void
 id|scsi_old_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -737,7 +752,6 @@ c_cond
 (paren
 id|result
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -750,9 +764,8 @@ comma
 id|SCpnt-&gt;lun
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
-multiline_comment|/* If we requested an abort, (and we got it) then fix up the return&n;     *  status to say why&n;     */
+multiline_comment|/* If we requested an abort, (and we got it) then fix up the return&n;&t; *  status to say why&n;&t; */
 r_if
 c_cond
 (paren
@@ -766,7 +779,6 @@ id|DID_ABORT
 op_logical_and
 id|SCpnt-&gt;abort_reason
 )paren
-(brace
 id|SCpnt-&gt;result
 op_assign
 id|result
@@ -783,7 +795,6 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-)brace
 DECL|macro|CMD_FINISHED
 mdefine_line|#define CMD_FINISHED 0
 DECL|macro|MAYREDO
@@ -812,7 +823,7 @@ op_amp
 id|SYNC_RESET
 )paren
 (brace
-multiline_comment|/*&n;        * The behaviou of scsi_reset(SYNC) was changed in 2.1.? .&n;        * The scsi mid-layer does a REDO after every sync reset, the driver&n;        * must not do that any more. In order to prevent old drivers from&n;        * crashing, all scsi_done() calls during sync resets are ignored.&n;        */
+multiline_comment|/*&n;&t;&t;   * The behaviou of scsi_reset(SYNC) was changed in 2.1.? .&n;&t;&t;   * The scsi mid-layer does a REDO after every sync reset, the driver&n;&t;&t;   * must not do that any more. In order to prevent old drivers from&n;&t;&t;   * crashing, all scsi_done() calls during sync resets are ignored.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -877,7 +888,7 @@ op_and_assign
 op_complement
 id|WAS_SENSE
 suffix:semicolon
-macro_line|#if 0&t;/* This cannot possibly be correct. */
+macro_line|#if 0&t;&t;&t;&t;/* This cannot possibly be correct. */
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
@@ -978,6 +989,7 @@ id|WAS_SENSE
 (brace
 macro_line|#ifdef DEBUG
 id|printk
+c_func
 (paren
 l_string|&quot;In scsi_done, GOOD status, COMMAND COMPLETE, &quot;
 l_string|&quot;parsing sense information.&bslash;n&quot;
@@ -989,7 +1001,7 @@ op_and_assign
 op_complement
 id|WAS_SENSE
 suffix:semicolon
-macro_line|#if 0&t;/* This cannot possibly be correct. */
+macro_line|#if 0&t;&t;&t;&t;/* This cannot possibly be correct. */
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
@@ -1113,6 +1125,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;Internal error %s %d &bslash;n&quot;
 comma
@@ -1228,6 +1241,7 @@ r_case
 id|SUGGEST_SENSE
 suffix:colon
 id|scsi_request_sense
+c_func
 (paren
 id|SCpnt
 )paren
@@ -1303,6 +1317,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;Internal error %s %d &bslash;n&quot;
 l_string|&quot;status byte = %d &bslash;n&quot;
@@ -1365,7 +1380,7 @@ l_string|&quot;Aborting&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;      Allow TEST_UNIT_READY and INQUIRY commands to timeout early&n;&t;      without causing resets.  All other commands should be retried.&n;&t;    */
+multiline_comment|/*&n;&t;&t;&t;   Allow TEST_UNIT_READY and INQUIRY commands to timeout early&n;&t;&t;&t;   without causing resets.  All other commands should be retried.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1400,6 +1415,7 @@ r_else
 (brace
 macro_line|#ifdef DEBUG
 id|printk
+c_func
 (paren
 l_string|&quot;Retrying.&bslash;n&quot;
 )paren
@@ -1594,6 +1610,7 @@ r_case
 id|SUGGEST_SENSE
 suffix:colon
 id|scsi_request_sense
+c_func
 (paren
 id|SCpnt
 )paren
@@ -1756,6 +1773,7 @@ suffix:semicolon
 r_else
 (brace
 id|memcpy
+c_func
 (paren
 (paren
 r_void
@@ -1776,6 +1794,7 @@ id|SCpnt-&gt;data_cmnd
 )paren
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_void
@@ -1812,6 +1831,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|internal_cmnd
+c_func
 (paren
 id|SCpnt
 )paren
@@ -1934,7 +1954,10 @@ id|SCpnt-&gt;cmd_len
 op_assign
 id|SCpnt-&gt;old_cmd_len
 suffix:semicolon
-id|SCpnt-&gt;done
+id|SCpnt
+op_member_access_from_pointer
+id|done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -1955,6 +1978,7 @@ DECL|function|scsi_abort
 r_static
 r_int
 id|scsi_abort
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -1980,7 +2004,7 @@ c_loop
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t; * Protect against races here.  If the command is done, or we are&n;&t; * on a different command forget it.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Protect against races here.  If the command is done, or we are&n;&t;&t; * on a different command forget it.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2056,7 +2080,7 @@ op_logical_and
 id|SCpnt-&gt;device-&gt;soft_reset
 )paren
 (brace
-multiline_comment|/* OK, this command must have died when we did the&n;&t;&t; *  reset.  The device itself must have lied.&n;&t;&t; */
+multiline_comment|/* OK, this command must have died when we did the&n;&t;&t;&t;&t; *  reset.  The device itself must have lied.&n;&t;&t;&t;&t; */
 id|printk
 c_func
 (paren
@@ -2122,6 +2146,7 @@ id|SCpnt-&gt;lun
 )paren
 suffix:semicolon
 id|print_command
+c_func
 (paren
 id|SCpnt-&gt;cmnd
 )paren
@@ -2151,11 +2176,11 @@ id|SCpnt
 )paren
 )paren
 (brace
-multiline_comment|/* We do not know how to abort.  Try waiting another&n;&t;&t; * time increment and see if this helps. Set the&n;&t;&t; * WAS_TIMEDOUT flag set so we do not try this twice&n;&t;&t; */
+multiline_comment|/* We do not know how to abort.  Try waiting another&n;&t;&t;&t;&t; * time increment and see if this helps. Set the&n;&t;&t;&t;&t; * WAS_TIMEDOUT flag set so we do not try this twice&n;&t;&t;&t;&t; */
 r_case
 id|SCSI_ABORT_BUSY
 suffix:colon
-multiline_comment|/* Tough call - returning 1 from&n;&t;&t;&t;&t;   * this is too severe&n;&t;&t;&t;&t;   */
+multiline_comment|/* Tough call - returning 1 from&n;&t;&t;&t;&t;&t;&t; * this is too severe&n;&t;&t;&t;&t;&t;&t; */
 r_case
 id|SCSI_ABORT_SNOOZE
 suffix:colon
@@ -2183,7 +2208,7 @@ id|WAS_TIMEDOUT
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* Indicate we cannot handle this.&n;&t;&t;&t;&t;   * We drop down into the reset handler&n;&t;&t;&t;&t;   * and try again&n;&t;&t;&t;&t;   */
+multiline_comment|/* Indicate we cannot handle this.&n;&t;&t;&t;&t;&t;&t;&t;&t; * We drop down into the reset handler&n;&t;&t;&t;&t;&t;&t;&t;&t; * and try again&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 )brace
 r_else
 (brace
@@ -2234,7 +2259,7 @@ suffix:semicolon
 r_case
 id|SCSI_ABORT_SUCCESS
 suffix:colon
-multiline_comment|/* We should have already aborted this one.  No&n;&t;&t; * need to adjust timeout&n;&t;&t; */
+multiline_comment|/* We should have already aborted this one.  No&n;&t;&t;&t;&t; * need to adjust timeout&n;&t;&t;&t;&t; */
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
@@ -2426,6 +2451,7 @@ DECL|function|scsi_reset
 r_static
 r_int
 id|scsi_reset
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -2465,12 +2491,12 @@ id|SCpnt-&gt;channel
 )paren
 suffix:semicolon
 macro_line|#if 0
-multiline_comment|/*&n;     * First of all, we need to make a recommendation to the low-level&n;     * driver as to whether a BUS_DEVICE_RESET should be performed,&n;     * or whether we should do a full BUS_RESET.  There is no simple&n;     * algorithm here - we basically use a series of heuristics&n;     * to determine what we should do.&n;     */
+multiline_comment|/*&n;&t; * First of all, we need to make a recommendation to the low-level&n;&t; * driver as to whether a BUS_DEVICE_RESET should be performed,&n;&t; * or whether we should do a full BUS_RESET.  There is no simple&n;&t; * algorithm here - we basically use a series of heuristics&n;&t; * to determine what we should do.&n;&t; */
 id|SCpnt-&gt;host-&gt;suggest_bus_reset
 op_assign
 id|FALSE
 suffix:semicolon
-multiline_comment|/*&n;     * First see if all of the active devices on the bus have&n;     * been jammed up so that we are attempting resets.  If so,&n;     * then suggest a bus reset.  Forcing a bus reset could&n;     * result in some race conditions, but no more than&n;     * you would usually get with timeouts.  We will cross&n;     * that bridge when we come to it.&n;     *&n;     * This is actually a pretty bad idea, since a sequence of&n;     * commands will often timeout together and this will cause a&n;     * Bus Device Reset followed immediately by a SCSI Bus Reset.&n;     * If all of the active devices really are jammed up, the&n;     * Bus Device Reset will quickly timeout and scsi_times_out&n;     * will follow up with a SCSI Bus Reset anyway.&n;     */
+multiline_comment|/*&n;&t; * First see if all of the active devices on the bus have&n;&t; * been jammed up so that we are attempting resets.  If so,&n;&t; * then suggest a bus reset.  Forcing a bus reset could&n;&t; * result in some race conditions, but no more than&n;&t; * you would usually get with timeouts.  We will cross&n;&t; * that bridge when we come to it.&n;&t; *&n;&t; * This is actually a pretty bad idea, since a sequence of&n;&t; * commands will often timeout together and this will cause a&n;&t; * Bus Device Reset followed immediately by a SCSI Bus Reset.&n;&t; * If all of the active devices really are jammed up, the&n;&t; * Bus Device Reset will quickly timeout and scsi_times_out&n;&t; * will follow up with a SCSI Bus Reset anyway.&n;&t; */
 id|SCpnt1
 op_assign
 id|host-&gt;host_queue
@@ -2500,10 +2526,8 @@ id|IS_RESETTING
 op_eq
 l_int|0
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|SCpnt1
 op_assign
 id|SCpnt1-&gt;next
@@ -2522,7 +2546,7 @@ op_or_assign
 id|SCSI_RESET_SUGGEST_BUS_RESET
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * If the code that called us is suggesting a hard reset, then&n;     * definitely request it.  This usually occurs because a&n;     * BUS_DEVICE_RESET times out.&n;     *&n;     * Passing reset_flags along takes care of this automatically.&n;     */
+multiline_comment|/*&n;&t; * If the code that called us is suggesting a hard reset, then&n;&t; * definitely request it.  This usually occurs because a&n;&t; * BUS_DEVICE_RESET times out.&n;&t; *&n;&t; * Passing reset_flags along takes care of this automatically.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2543,7 +2567,7 @@ c_loop
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t; * Protect against races here.  If the command is done, or we are&n;&t; * on a different command forget it.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Protect against races here.  If the command is done, or we are&n;&t;&t; * on a different command forget it.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2711,7 +2735,7 @@ id|host-&gt;resetting
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * I suppose that the host reset callback will not play&n;&t;&t; * with the resetting field. We have just set the resetting&n;&t;&t; * flag here. -arca&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * I suppose that the host reset callback will not play&n;&t;&t;&t;&t; * with the resetting field. We have just set the resetting&n;&t;&t;&t;&t; * flag here. -arca&n;&t;&t;&t;&t; */
 id|temp
 op_assign
 id|host-&gt;hostt
@@ -2724,7 +2748,7 @@ comma
 id|reset_flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;  This test allows the driver to introduce an additional bus&n;&t;&t;  settle time delay by setting last_reset up to 20 seconds in&n;&t;&t;  the future.  In the normal case where the driver does not&n;&t;&t;  modify last_reset, it must be assumed that the actual bus&n;&t;&t;  reset occurred immediately prior to the return to this code,&n;&t;&t;  and so last_reset must be updated to the current time, so&n;&t;&t;  that the delay in internal_cmnd will guarantee at least a&n;&t;&t;  MIN_RESET_DELAY bus settle time.&n;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;   This test allows the driver to introduce an additional bus&n;&t;&t;&t;&t;   settle time delay by setting last_reset up to 20 seconds in&n;&t;&t;&t;&t;   the future.  In the normal case where the driver does not&n;&t;&t;&t;&t;   modify last_reset, it must be assumed that the actual bus&n;&t;&t;&t;&t;   reset occurred immediately prior to the return to this code,&n;&t;&t;&t;&t;   and so last_reset must be updated to the current time, so&n;&t;&t;&t;&t;   that the delay in internal_cmnd will guarantee at least a&n;&t;&t;&t;&t;   MIN_RESET_DELAY bus settle time.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2768,7 +2792,7 @@ op_or
 id|IS_RESETTING
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * I suppose that the host reset callback will not play&n;&t;&t; * with the resetting field. We have just set the resetting&n;&t;&t; * flag here. -arca&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * I suppose that the host reset callback will not play&n;&t;&t;&t;&t; * with the resetting field. We have just set the resetting&n;&t;&t;&t;&t; * flag here. -arca&n;&t;&t;&t;&t; */
 id|temp
 op_assign
 id|host-&gt;hostt
@@ -2842,7 +2866,7 @@ id|temp
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;             * Now figure out what we need to do, based upon&n;             * what the low level driver said that it did.&n;&t;     * If the result is SCSI_RESET_SUCCESS, SCSI_RESET_PENDING,&n;&t;     * or SCSI_RESET_WAKEUP, then the low level driver did a&n;&t;     * bus device reset or bus reset, so we should go through&n;&t;     * and mark one or all of the devices on that bus&n;&t;     * as having been reset.&n;             */
+multiline_comment|/*&n;&t;&t;&t; * Now figure out what we need to do, based upon&n;&t;&t;&t; * what the low level driver said that it did.&n;&t;&t;&t; * If the result is SCSI_RESET_SUCCESS, SCSI_RESET_PENDING,&n;&t;&t;&t; * or SCSI_RESET_WAKEUP, then the low level driver did a&n;&t;&t;&t; * bus device reset or bus reset, so we should go through&n;&t;&t;&t; * and mark one or all of the devices on that bus&n;&t;&t;&t; * as having been reset.&n;&t;&t;&t; */
 r_switch
 c_cond
 (paren
@@ -2964,6 +2988,7 @@ id|IN_RESET3
 )paren
 suffix:semicolon
 id|scsi_request_sense
+c_func
 (paren
 id|SCpnt
 )paren
@@ -3022,11 +3047,12 @@ id|IN_RESET3
 )paren
 suffix:semicolon
 id|scsi_request_sense
+c_func
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                 * If a bus reset was performed, we&n;                 * need to wake up each and every command&n;                 * that was active on the bus or if it was a HBA&n;                 * reset all active commands on all channels&n;                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * If a bus reset was performed, we&n;&t;&t;&t;&t; * need to wake up each and every command&n;&t;&t;&t;&t; * that was active on the bus or if it was a HBA&n;&t;&t;&t;&t; * reset all active commands on all channels&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3071,6 +3097,7 @@ op_ne
 id|SCpnt
 )paren
 id|scsi_request_sense
+c_func
 (paren
 id|SCpnt1
 )paren
@@ -3130,13 +3157,12 @@ id|SCpnt1-&gt;channel
 op_eq
 id|SCpnt-&gt;channel
 )paren
-(brace
 id|scsi_request_sense
+c_func
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
-)brace
 id|SCpnt1
 op_assign
 id|SCpnt1-&gt;next
@@ -3150,7 +3176,7 @@ suffix:semicolon
 r_case
 id|SCSI_RESET_SNOOZE
 suffix:colon
-multiline_comment|/* In this case, we set the timeout field to 0&n;&t;&t; * so that this command does not time out any more,&n;&t;&t; * and we return 1 so that we get a message on the&n;&t;&t; * screen.&n;&t;&t; */
+multiline_comment|/* In this case, we set the timeout field to 0&n;&t;&t;&t;&t; * so that this command does not time out any more,&n;&t;&t;&t;&t; * and we return 1 so that we get a message on the&n;&t;&t;&t;&t; * screen.&n;&t;&t;&t;&t; */
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
@@ -3203,7 +3229,7 @@ id|timeout
 r_int
 id|rtn
 suffix:semicolon
-multiline_comment|/*&n;   * We are using the new error handling code to actually register/deregister&n;   * timers for timeout.&n;   */
+multiline_comment|/*&n;&t; * We are using the new error handling code to actually register/deregister&n;&t; * timers for timeout.&n;&t; */
 r_if
 c_cond
 (paren

@@ -114,12 +114,12 @@ id|file
 op_star
 id|vm_file
 suffix:semicolon
-DECL|member|vm_pte
-r_int
-r_int
-id|vm_pte
+DECL|member|vm_private_data
+r_void
+op_star
+id|vm_private_data
 suffix:semicolon
-multiline_comment|/* shared mem */
+multiline_comment|/* was vm_pte (shared mem) */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * vm_flags..&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * cs_internal.h 1.41 1999/08/28 04:01:47&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n; *  are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; */
+multiline_comment|/*&n; * cs_internal.h 1.43 1999/09/07 15:19:04&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n; *  are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; */
 macro_line|#ifndef _LINUX_CS_INTERNAL_H
 DECL|macro|_LINUX_CS_INTERNAL_H
 mdefine_line|#define _LINUX_CS_INTERNAL_H
@@ -580,6 +580,24 @@ mdefine_line|#define CHECK_ERASEQ(q) &bslash;&n;    (((q) == NULL) || ((q)-&gt;e
 DECL|macro|EVENT
 mdefine_line|#define EVENT(h, e, p) &bslash;&n;    ((h)-&gt;event_handler((e), (p), &amp;(h)-&gt;event_callback_args))
 multiline_comment|/* In cardbus.c */
+r_int
+id|cb_alloc
+c_func
+(paren
+id|socket_info_t
+op_star
+id|s
+)paren
+suffix:semicolon
+r_void
+id|cb_free
+c_func
+(paren
+id|socket_info_t
+op_star
+id|s
+)paren
+suffix:semicolon
 r_int
 id|cb_config
 c_func
@@ -1228,17 +1246,15 @@ id|proc_pccard
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef PCMCIA_DEBUG
-DECL|macro|_printk
-mdefine_line|#define _printk(args...) printk(KERN_DEBUG args)
 r_extern
 r_int
 id|pc_debug
 suffix:semicolon
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args) do { if (pc_debug&gt;(n)) _printk args; } while (0)
+mdefine_line|#define DEBUG(n, args...) do { if (pc_debug&gt;(n)) printk(args); } while (0)
 macro_line|#else
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args) do { } while (0)
+mdefine_line|#define DEBUG(n, args...) do { } while (0)
 macro_line|#endif
 macro_line|#endif /* _LINUX_CS_INTERNAL_H */
 eof

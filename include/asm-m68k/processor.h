@@ -66,11 +66,26 @@ id|usp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * User space process size: 3.75GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xF0000000UL)
+macro_line|#else
+macro_line|#ifdef __ASSEMBLY__
+DECL|macro|TASK_SIZE
+mdefine_line|#define TASK_SIZE&t;(0x0E000000)
+macro_line|#else
+DECL|macro|TASK_SIZE
+mdefine_line|#define TASK_SIZE&t;(0x0E000000UL)
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
+macro_line|#ifndef CONFIG_SUN3
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;0xC0000000UL
+macro_line|#else
+DECL|macro|TASK_UNMAPPED_BASE
+mdefine_line|#define TASK_UNMAPPED_BASE&t;0x0A000000UL
+macro_line|#endif
 DECL|macro|TASK_UNMAPPED_ALIGN
 mdefine_line|#define TASK_UNMAPPED_ALIGN(addr, off)&t;PAGE_ALIGN(addr)
 multiline_comment|/*&n; * Bus types&n; */

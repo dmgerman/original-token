@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    Device driver for Intel 82365 and compatible PC Card controllers,&n;    and Yenta-compatible PCI-to-CardBus controllers.&n;&n;    i82365.c $Revision: 1.249 $ $Date: 1999/08/28 04:01:46 $&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    Device driver for Intel 82365 and compatible PC Card controllers,&n;    and Yenta-compatible PCI-to-CardBus controllers.&n;&n;    i82365.c 1.251 1999/09/07 15:19:23&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -49,7 +49,7 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args) do { if (pc_debug&gt;(n)) printk(KERN_DEBUG args); } while (0)
+mdefine_line|#define DEBUG(n, args...) do { if (pc_debug&gt;(n)) printk(KERN_DEBUG args); } while (0)
 DECL|variable|version
 r_static
 r_const
@@ -61,7 +61,7 @@ l_string|&quot;i82365.c $Revision: 1.249 $ $Date: 1999/08/28 04:01:46 $ (David H
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args) do { } while (0)
+mdefine_line|#define DEBUG(n, args...) do { } while (0)
 macro_line|#endif
 r_static
 r_void
@@ -1224,6 +1224,8 @@ DECL|enumerator|IS_TI1251A
 DECL|enumerator|IS_TI1251B
 DECL|enumerator|IS_TI1450
 DECL|enumerator|IS_TI1225
+DECL|enumerator|IS_TI1211
+DECL|enumerator|IS_TI1420
 id|IS_TI1251A
 comma
 id|IS_TI1251B
@@ -1231,6 +1233,10 @@ comma
 id|IS_TI1450
 comma
 id|IS_TI1225
+comma
+id|IS_TI1211
+comma
+id|IS_TI1420
 comma
 DECL|enumerator|IS_TOPIC95_A
 DECL|enumerator|IS_TOPIC95_B
@@ -1718,6 +1724,34 @@ comma
 id|PCI_VENDOR_ID_TI
 comma
 id|PCI_DEVICE_ID_TI_1225
+)brace
+comma
+(brace
+l_string|&quot;TI 1211&quot;
+comma
+id|IS_TI
+op_or
+id|IS_CARDBUS
+op_or
+id|IS_DF_PWR
+comma
+id|PCI_VENDOR_ID_TI
+comma
+id|PCI_DEVICE_ID_TI_1211
+)brace
+comma
+(brace
+l_string|&quot;TI 1420&quot;
+comma
+id|IS_TI
+op_or
+id|IS_CARDBUS
+op_or
+id|IS_DF_PWR
+comma
+id|PCI_VENDOR_ID_TI
+comma
+id|PCI_DEVICE_ID_TI_1420
 )brace
 comma
 (brace
@@ -6539,7 +6573,6 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;  testing %s irq %d&bslash;n&quot;
 comma
 id|pci
@@ -6550,7 +6583,6 @@ suffix:colon
 l_string|&quot;ISA&quot;
 comma
 id|irq
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -6701,8 +6733,6 @@ comma
 id|CB_SOCKET_FORCE
 comma
 id|CB_SE_CSTSCHG
-op_or
-l_int|0x410
 )paren
 suffix:semicolon
 id|udelay
@@ -6793,11 +6823,9 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;    hits = %d&bslash;n&quot;
 comma
 id|irq_hits
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -9130,6 +9158,18 @@ l_int|0
 r_int
 id|i
 suffix:semicolon
+id|pci_writew
+c_func
+(paren
+id|bus
+comma
+id|devfn
+comma
+id|PCI_COMMAND
+comma
+id|CMD_DFLT
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -9186,7 +9226,7 @@ multiline_comment|/* Simple sanity checks */
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
 (paren
 id|readb
 c_func
@@ -9198,7 +9238,10 @@ op_plus
 id|I365_IDENT
 )paren
 op_amp
-l_int|0x70
+l_int|0xf0
+)paren
+op_eq
+l_int|0x80
 )paren
 op_logical_and
 op_logical_neg
@@ -9270,6 +9313,14 @@ id|PCI_BASE_ADDRESS_0
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|s-&gt;cb_phys
+op_assign
+l_int|0
+suffix:semicolon
+id|s-&gt;cb_virt
+op_assign
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func
@@ -9607,6 +9658,10 @@ suffix:semicolon
 id|child-&gt;parent
 op_assign
 id|parent
+suffix:semicolon
+id|child-&gt;ops
+op_assign
+id|parent-&gt;ops
 suffix:semicolon
 id|child-&gt;next
 op_assign
@@ -10208,11 +10263,9 @@ c_func
 (paren
 l_int|0
 comma
-(paren
 l_string|&quot;%s&bslash;n&quot;
 comma
 id|version
-)paren
 )paren
 suffix:semicolon
 id|printk
@@ -10754,11 +10807,9 @@ c_func
 (paren
 l_int|4
 comma
-(paren
 l_string|&quot;i82365: pcic_interrupt(%d)&bslash;n&quot;
 comma
 id|irq
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -11031,13 +11082,11 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;i82365: socket %d event 0x%02x&bslash;n&quot;
 comma
 id|i
 comma
 id|events
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -11569,14 +11618,12 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;i82365: GetStatus(%d) = %#4.4x&bslash;n&quot;
 comma
 id|sock
 comma
 op_star
 id|value
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -12124,7 +12171,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;i82365: GetSocket(%d) = flags %#3.3x, Vcc %d, Vpp %d, &quot;
 l_string|&quot;io_irq %d, csc_mask %#2.2x&bslash;n&quot;
 comma
@@ -12139,7 +12185,6 @@ comma
 id|state-&gt;io_irq
 comma
 id|state-&gt;csc_mask
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -12180,7 +12225,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;i82365: SetSocket(%d, flags %#3.3x, Vcc %d, Vpp %d, &quot;
 l_string|&quot;io_irq %d, csc_mask %#2.2x)&bslash;n&quot;
 comma
@@ -12195,7 +12239,6 @@ comma
 id|state-&gt;io_irq
 comma
 id|state-&gt;csc_mask
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* First set global controller options */
@@ -13029,7 +13072,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;i82365: GetIOMap(%d, %d) = %#2.2x, %d ns, &quot;
 l_string|&quot;%#4.4x-%#4.4x&bslash;n&quot;
 comma
@@ -13044,7 +13086,6 @@ comma
 id|io-&gt;start
 comma
 id|io-&gt;stop
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -13078,7 +13119,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;i82365: SetIOMap(%d, %d, %#2.2x, %d ns, &quot;
 l_string|&quot;%#4.4x-%#4.4x)&bslash;n&quot;
 comma
@@ -13093,7 +13133,6 @@ comma
 id|io-&gt;start
 comma
 id|io-&gt;stop
-)paren
 )paren
 suffix:semicolon
 id|map
@@ -13645,7 +13684,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;i82365: GetMemMap(%d, %d) = %#2.2x, %d ns, %#5.5lx-%#5.&quot;
 l_string|&quot;5lx, %#5.5x&bslash;n&quot;
 comma
@@ -13662,7 +13700,6 @@ comma
 id|mem-&gt;sys_stop
 comma
 id|mem-&gt;card_start
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -13699,7 +13736,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;i82365: SetMemMap(%d, %d, %#2.2x, %d ns, %#5.5lx-%#5.5&quot;
 l_string|&quot;lx, %#5.5x)&bslash;n&quot;
 comma
@@ -13716,7 +13752,6 @@ comma
 id|mem-&gt;sys_stop
 comma
 id|mem-&gt;card_start
-)paren
 )paren
 suffix:semicolon
 id|map
@@ -14430,14 +14465,12 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;yenta: GetStatus(%d) = %#4.4x&bslash;n&quot;
 comma
 id|sock
 comma
 op_star
 id|value
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -14539,7 +14572,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;yenta: GetSocket(%d) = flags %#3.3x, Vcc %d, Vpp %d, &quot;
 l_string|&quot;io_irq %d, csc_mask %#2.2x&bslash;n&quot;
 comma
@@ -14554,7 +14586,6 @@ comma
 id|state-&gt;io_irq
 comma
 id|state-&gt;csc_mask
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -14594,7 +14625,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;yenta: SetSocket(%d, flags %#3.3x, Vcc %d, Vpp %d, &quot;
 l_string|&quot;io_irq %d, csc_mask %#2.2x)&bslash;n&quot;
 comma
@@ -14609,7 +14639,6 @@ comma
 id|state-&gt;io_irq
 comma
 id|state-&gt;csc_mask
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* First set global controller options */
@@ -14914,7 +14943,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;yenta: GetBridge(%d, %d) = %#2.2x, %#4.4x-%#4.4x&bslash;n&quot;
 comma
 id|sock
@@ -14926,7 +14954,6 @@ comma
 id|m-&gt;start
 comma
 id|m-&gt;stop
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -14966,7 +14993,6 @@ c_func
 (paren
 l_int|1
 comma
-(paren
 l_string|&quot;yenta: SetBridge(%d, %d, %#2.2x, %#4.4x-%#4.4x)&bslash;n&quot;
 comma
 id|sock
@@ -14978,7 +15004,6 @@ comma
 id|m-&gt;start
 comma
 id|m-&gt;stop
-)paren
 )paren
 suffix:semicolon
 id|map
@@ -16239,7 +16264,6 @@ c_func
 (paren
 l_int|2
 comma
-(paren
 l_string|&quot;pcic_ioctl(%d, %d, 0x%p)&bslash;n&quot;
 comma
 id|sock
@@ -16247,7 +16271,6 @@ comma
 id|cmd
 comma
 id|arg
-)paren
 )paren
 suffix:semicolon
 r_if

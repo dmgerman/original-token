@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      sr.h by David Giller&n; *      CD-ROM disk driver header file&n; *      &n; *      adapted from:&n; *&t;sd.h Copyright (C) 1992 Drew Eckhardt &n; *&t;SCSI disk driver header file by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@aib.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
+multiline_comment|/*&n; *      sr.h by David Giller&n; *      CD-ROM disk driver header file&n; *      &n; *      adapted from:&n; *      sd.h Copyright (C) 1992 Drew Eckhardt &n; *      SCSI disk driver header file by&n; *              Drew Eckhardt &n; *&n; *      &lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@aib.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#ifndef _SR_H
 DECL|macro|_SR_H
 mdefine_line|#define _SR_H
@@ -10,12 +10,12 @@ DECL|member|capacity
 r_int
 id|capacity
 suffix:semicolon
-multiline_comment|/* size in blocks &t;&t;&t;*/
+multiline_comment|/* size in blocks                       */
 DECL|member|sector_size
 r_int
 id|sector_size
 suffix:semicolon
-multiline_comment|/* size in bytes &t;&t;&t;*/
+multiline_comment|/* size in bytes                        */
 DECL|member|device
 id|Scsi_Device
 op_star
@@ -38,13 +38,13 @@ r_int
 r_char
 id|sector_bit_size
 suffix:semicolon
-multiline_comment|/* sector size = 2^sector_bit_size&t;*/
+multiline_comment|/* sector size = 2^sector_bit_size      */
 DECL|member|sector_bit_shift
 r_int
 r_char
 id|sector_bit_shift
 suffix:semicolon
-multiline_comment|/* sectors/FS block = 2^sector_bit_shift*/
+multiline_comment|/* sectors/FS block = 2^sector_bit_shift */
 DECL|member|needs_sector_size
 r_int
 id|needs_sector_size
@@ -58,21 +58,21 @@ id|ten
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* support ten byte commands&t;&t;*/
+multiline_comment|/* support ten byte commands            */
 DECL|member|remap
 r_int
 id|remap
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* support remapping&t;&t;&t;*/
+multiline_comment|/* support remapping                    */
 DECL|member|use
 r_int
 id|use
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* is this device still supportable&t;*/
+multiline_comment|/* is this device still supportable     */
 DECL|member|xa_flag
 r_int
 id|xa_flag

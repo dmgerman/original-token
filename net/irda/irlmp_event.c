@@ -1204,8 +1204,8 @@ c_func
 (paren
 id|self-&gt;lsaps
 )paren
-op_eq
-l_int|1
+OG
+l_int|0
 )paren
 id|irlmp_start_idle_timer
 c_func
@@ -1215,6 +1215,24 @@ comma
 id|LM_IDLE_TIMEOUT
 )paren
 suffix:semicolon
+r_else
+(brace
+multiline_comment|/* No more connections, so close IrLAP */
+id|irlmp_next_lap_state
+c_func
+(paren
+id|self
+comma
+id|LAP_STANDBY
+)paren
+suffix:semicolon
+id|irlap_disconnect_request
+c_func
+(paren
+id|self-&gt;irlap
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -1232,15 +1250,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), no more LSAPs so time to close IrLAP&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlmp_next_lap_state
 c_func
 (paren

@@ -670,6 +670,19 @@ DECL|macro|_PAGE_CACHE040
 mdefine_line|#define _PAGE_CACHE040&t;0x020&t;/* 68040 cache mode, cachable, copyback */
 DECL|macro|_PAGE_CACHE040W
 mdefine_line|#define _PAGE_CACHE040W&t;0x000&t;/* 68040 cache mode, cachable, write-through */
+multiline_comment|/* Page protection values within PTE. */
+DECL|macro|SUN3_PAGE_VALID
+mdefine_line|#define SUN3_PAGE_VALID     (0x80000000)
+DECL|macro|SUN3_PAGE_WRITEABLE
+mdefine_line|#define SUN3_PAGE_WRITEABLE (0x40000000)
+DECL|macro|SUN3_PAGE_SYSTEM
+mdefine_line|#define SUN3_PAGE_SYSTEM    (0x20000000)
+DECL|macro|SUN3_PAGE_NOCACHE
+mdefine_line|#define SUN3_PAGE_NOCACHE   (0x10000000)
+DECL|macro|SUN3_PAGE_ACCESSED
+mdefine_line|#define SUN3_PAGE_ACCESSED  (0x02000000)
+DECL|macro|SUN3_PAGE_MODIFIED
+mdefine_line|#define SUN3_PAGE_MODIFIED  (0x01000000)
 DECL|macro|_DESCTYPE_MASK
 mdefine_line|#define _DESCTYPE_MASK&t;0x003
 DECL|macro|_CACHEMASK040

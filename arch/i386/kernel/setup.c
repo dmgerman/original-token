@@ -1931,33 +1931,6 @@ id|i
 op_increment
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;type=%d, addr=%08x, size=%08x&quot;
-comma
-id|e820.map
-(braket
-id|i
-)braket
-dot
-id|type
-comma
-id|e820.map
-(braket
-id|i
-)braket
-dot
-id|addr
-comma
-id|e820.map
-(braket
-id|i
-)braket
-dot
-id|size
-)paren
-suffix:semicolon
 multiline_comment|/* RAM? */
 r_if
 c_cond

@@ -2249,6 +2249,7 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Enable APIC (bit==1) */
+macro_line|#if 0
 id|value
 op_and_assign
 op_complement
@@ -2259,6 +2260,17 @@ l_int|9
 )paren
 suffix:semicolon
 multiline_comment|/* Enable focus processor (bit==0) */
+macro_line|#else
+id|value
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|9
+)paren
+suffix:semicolon
+multiline_comment|/* Disable focus processor (bit==1) */
+macro_line|#endif
 id|value
 op_or_assign
 l_int|0xff

@@ -4,7 +4,7 @@ r_struct
 id|partition_info
 (brace
 DECL|member|flg
-id|u_char
+id|u8
 id|flg
 suffix:semicolon
 multiline_comment|/* bit 0: active; bit 7: bootable */
@@ -17,12 +17,12 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* &quot;GEM&quot;, &quot;BGM&quot;, &quot;XGM&quot;, or other */
 DECL|member|st
-id|u_long
+id|u32
 id|st
 suffix:semicolon
 multiline_comment|/* start of partition */
 DECL|member|siz
-id|u_long
+id|u32
 id|siz
 suffix:semicolon
 multiline_comment|/* length of partition */
@@ -57,7 +57,7 @@ l_int|0xc
 )braket
 suffix:semicolon
 DECL|member|hd_siz
-id|u_long
+id|u32
 id|hd_siz
 suffix:semicolon
 multiline_comment|/* size of disk in blocks */
@@ -70,17 +70,17 @@ l_int|4
 )braket
 suffix:semicolon
 DECL|member|bsl_st
-id|u_long
+id|u32
 id|bsl_st
 suffix:semicolon
 multiline_comment|/* start of bad sector list */
 DECL|member|bsl_cnt
-id|u_long
+id|u32
 id|bsl_cnt
 suffix:semicolon
 multiline_comment|/* length of bad sector list */
 DECL|member|checksum
-id|u_short
+id|u16
 id|checksum
 suffix:semicolon
 multiline_comment|/* checksum for bootable disks */

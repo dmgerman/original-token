@@ -28,6 +28,7 @@ op_assign
 l_int|31
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|Scsi_Dest_ID
 comma
@@ -35,6 +36,7 @@ id|pDCB-&gt;UnitSCSIID
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|Sync_Period
 comma
@@ -42,6 +44,7 @@ id|pDCB-&gt;SyncPeriod
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|Sync_Offset
 comma
@@ -49,6 +52,7 @@ id|pDCB-&gt;SyncOffset
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg1
 comma
@@ -56,6 +60,7 @@ id|pDCB-&gt;CtrlR1
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg3
 comma
@@ -63,6 +68,7 @@ id|pDCB-&gt;CtrlR3
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg4
 comma
@@ -70,6 +76,7 @@ id|pDCB-&gt;CtrlR4
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -81,6 +88,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Start SCSI command: %02x (Sync:%02x)&bslash;n&quot;
@@ -115,8 +123,8 @@ op_amp
 id|EN_ATN_STOP
 )paren
 )paren
-multiline_comment|/* Don&squot;t always try send Extended messages on arbitration */
 (brace
+multiline_comment|/* Don&squot;t always try send Extended messages on arbitration */
 r_if
 c_cond
 (paren
@@ -151,6 +159,7 @@ l_int|0xBF
 suffix:semicolon
 multiline_comment|/* No DisConn */
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -169,6 +178,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: No DisCn, No TagQ (%02x, %02x)&bslash;n&quot;
@@ -221,9 +231,10 @@ suffix:semicolon
 )brace
 )brace
 r_else
-multiline_comment|/* TagQ ? */
 (brace
+multiline_comment|/* TagQ ? */
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -239,6 +250,7 @@ id|EN_TAG_QUEUEING
 )paren
 (brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -249,6 +261,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: %sDisCn, TagQ (%02x, %02x, %08lx)&bslash;n&quot;
@@ -302,6 +315,7 @@ op_or_assign
 id|wlval
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -316,6 +330,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: SRB %p (Cmd %li), Tag %02x queued&bslash;n&quot;
@@ -338,8 +353,8 @@ id|SRB_START_
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* No TagQ */
 (brace
+multiline_comment|/* No TagQ */
 id|bval1
 op_assign
 id|SEL_W_ATN
@@ -348,6 +363,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: %sDisCn, No TagQ (%02x, %02x, %08lx)&bslash;n&quot;
@@ -379,8 +395,8 @@ suffix:semicolon
 )brace
 )brace
 r_else
-multiline_comment|/* ATN_STOP: Always try to establish Sync nego */
 (brace
+multiline_comment|/* ATN_STOP: Always try to establish Sync nego */
 r_if
 c_cond
 (paren
@@ -415,6 +431,7 @@ l_int|0xBF
 suffix:semicolon
 multiline_comment|/* No DisConn */
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -429,6 +446,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: No DisCn, No TagQ (%02x, %02x)&bslash;n&quot;
@@ -486,9 +504,10 @@ suffix:semicolon
 )brace
 )brace
 r_else
-multiline_comment|/* TagQ ? */
 (brace
+multiline_comment|/* TagQ ? */
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -514,6 +533,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: %sDisCn, TagQ (%02x, %02x, %08lx)&bslash;n&quot;
@@ -574,6 +594,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: SRB %p (Cmd %li), Tag %02x queued&bslash;n&quot;
@@ -608,8 +629,8 @@ suffix:semicolon
 multiline_comment|/* ?? */
 )brace
 r_else
-multiline_comment|/* No TagQ */
 (brace
+multiline_comment|/* No TagQ */
 id|pSRB-&gt;MsgOutBuf
 (braket
 l_int|0
@@ -633,6 +654,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: %sDisCn, No TagQ (%02x, %02x, %08lx)&bslash;n&quot;
@@ -682,6 +704,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -689,6 +712,7 @@ id|REQUEST_SENSE
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -698,6 +722,7 @@ l_int|5
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -705,6 +730,7 @@ id|bval
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -712,6 +738,7 @@ id|bval
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -722,6 +749,7 @@ id|pSRB-&gt;pcmd-&gt;sense_buffer
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -732,6 +760,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: AutoReqSense !&bslash;n&quot;
@@ -740,8 +769,8 @@ suffix:semicolon
 )paren
 )brace
 r_else
-multiline_comment|/* write cmnd to bus */
 (brace
+multiline_comment|/* write cmnd to bus */
 id|PUCHAR
 id|ptr
 suffix:semicolon
@@ -770,6 +799,7 @@ id|i
 op_increment
 )paren
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -788,6 +818,7 @@ r_if
 c_cond
 (paren
 id|DC390_read8
+c_func
 (paren
 id|Scsi_Status
 )paren
@@ -812,6 +843,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;DC390: Interrupt during StartSCSI!&bslash;n&quot;
@@ -837,6 +869,7 @@ id|pACB-&gt;pActiveDCB
 )paren
 "&bslash;"
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;DC390: ActiveDCB != 0&bslash;n&quot;
@@ -852,6 +885,7 @@ id|pDCB-&gt;pActiveSRB
 )paren
 "&bslash;"
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;DC390: ActiveSRB != 0&bslash;n&quot;
@@ -868,6 +902,7 @@ id|pSRB
 suffix:semicolon
 singleline_comment|//DC390_write8 (DMA_Cmd, DMA_IDLE_CMD);
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -888,6 +923,7 @@ r_static
 id|UCHAR
 DECL|function|dc390_dma_intr
 id|dc390_dma_intr
+c_func
 (paren
 id|PACB
 id|pACB
@@ -918,6 +954,7 @@ id|DEBUG0
 c_func
 (paren
 id|PCI_READ_CONFIG_WORD
+c_func
 (paren
 id|PDEV
 comma
@@ -954,6 +991,7 @@ id|pstate
 suffix:semicolon
 "&bslash;"
 id|PCI_WRITE_CONFIG_WORD
+c_func
 (paren
 id|PDEV
 comma
@@ -972,6 +1010,7 @@ suffix:semicolon
 id|dstate
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|DMA_Status
 )paren
@@ -1010,6 +1049,7 @@ id|PCI_MS_ABORT
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;DC390: DMA error (%02x)!&bslash;n&quot;
@@ -1046,6 +1086,7 @@ c_cond
 op_logical_neg
 (paren
 id|DC390_read8
+c_func
 (paren
 id|DMA_Cmd
 )paren
@@ -1060,6 +1101,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;DC390: read residual bytes ... &bslash;n&quot;
@@ -1069,6 +1111,7 @@ suffix:semicolon
 id|dstate
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|DMA_Status
 )paren
@@ -1076,11 +1119,13 @@ suffix:semicolon
 id|residual
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Low
 )paren
 op_or
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Mid
 )paren
@@ -1088,6 +1133,7 @@ op_lshift
 l_int|8
 op_or
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_High
 )paren
@@ -1097,6 +1143,7 @@ suffix:semicolon
 id|residual
 op_add_assign
 id|DC390_read8
+c_func
 (paren
 id|Current_Fifo
 )paren
@@ -1127,11 +1174,13 @@ op_logical_neg
 id|ctr
 )paren
 id|printk
+c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;DC390: dma_intr: DMA aborted unfinished: %06x bytes remain!!&bslash;n&quot;
 comma
 id|DC390_read32
+c_func
 (paren
 id|DMA_Wk_ByteCntr
 )paren
@@ -1163,8 +1212,9 @@ id|pSRB-&gt;SGToBeXferLen
 op_assign
 id|residual
 suffix:semicolon
-macro_line|# ifdef DC390_DEBUG0
+macro_line|#ifdef DC390_DEBUG0
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: DMA: residual = %i, xfer = %i&bslash;n&quot;
@@ -1182,8 +1232,9 @@ r_int
 id|xferCnt
 )paren
 suffix:semicolon
-macro_line|# endif
+macro_line|#endif
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -1325,6 +1376,7 @@ id|irq
 id|sstatus
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|Scsi_Status
 )paren
@@ -1336,10 +1388,8 @@ id|sstatus
 op_amp
 id|INTERRUPT
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_else
 id|pACB
 op_assign
@@ -1358,6 +1408,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;sstatus=%02x,&quot;
@@ -1387,6 +1438,7 @@ suffix:semicolon
 id|dstatus
 op_assign
 id|dc390_dma_intr
+c_func
 (paren
 id|pACB
 )paren
@@ -1399,6 +1451,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;dstatus=%02x,&quot;
@@ -1422,6 +1475,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;DC390 Int w/o SCSI actions (only DMA?)&bslash;n&quot;
@@ -1449,6 +1503,7 @@ multiline_comment|/* Allow _other_ CPUs to process IRQ (useful for shared IRQs) 
 id|istate
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|Intern_State
 )paren
@@ -1456,6 +1511,7 @@ suffix:semicolon
 id|istatus
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|INT_Status
 )paren
@@ -1465,6 +1521,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;Istatus(Res,Inv,Dis,Serv,Succ,ReS,SelA,Sel)=%02x,&quot;
@@ -1500,6 +1557,7 @@ id|ILLEGAL_OP_ERR
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: Illegal Operation detected (%08lx)!&bslash;n&quot;
 comma
@@ -1507,6 +1565,7 @@ id|dc390_laststatus
 )paren
 suffix:semicolon
 id|dc390_dumpinfo
+c_func
 (paren
 id|pACB
 comma
@@ -1577,6 +1636,7 @@ id|pDCB
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;DC390: Suc. op/ Serv. req: pActiveDCB = 0!&bslash;n&quot;
@@ -1598,15 +1658,14 @@ id|pDCB-&gt;DCBFlag
 op_amp
 id|ABORT_DEV_
 )paren
-(brace
 id|dc390_EnableMsgOut_Abort
+c_func
 (paren
 id|pACB
 comma
 id|pSRB
 )paren
 suffix:semicolon
-)brace
 id|phase
 op_assign
 id|pSRB-&gt;ScsiPhase
@@ -1615,6 +1674,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: [%i]%s(0) (%02x)&bslash;n&quot;
@@ -1673,6 +1733,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: [%i]%s(1) (%02x)&bslash;n&quot;
@@ -1764,8 +1825,8 @@ id|DC390_UNLOCK_DRV
 suffix:semicolon
 multiline_comment|/* Restore initial flags */
 )brace
-r_void
 DECL|function|do_DC390_Interrupt
+r_void
 id|do_DC390_Interrupt
 c_func
 (paren
@@ -1786,6 +1847,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Irq (%i) caught: &quot;
@@ -1809,14 +1871,15 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;.. IRQ returned&bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
 )brace
-r_void
 DECL|function|dc390_DataOut_0
+r_void
 id|dc390_DataOut_0
 c_func
 (paren
@@ -1873,12 +1936,10 @@ op_or
 id|ILLEGAL_OP_ERR
 )paren
 )paren
-(brace
 id|pSRB-&gt;SRBStatus
 op_or_assign
 id|PARITY_ERROR
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1905,6 +1966,7 @@ op_logical_neg
 id|dstate
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|DMA_Status
 )paren
@@ -1915,9 +1977,7 @@ id|DMA_XFER_DONE
 op_logical_and
 id|pSRB-&gt;SGToBeXferLen
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1925,11 +1985,13 @@ op_logical_neg
 id|ctr
 )paren
 id|printk
+c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;DC390: Deadlock in DataOut_0: DMA aborted unfinished: %06x bytes remain!!&bslash;n&quot;
 comma
 id|DC390_read32
+c_func
 (paren
 id|DMA_Wk_ByteCntr
 )paren
@@ -1998,6 +2060,7 @@ op_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|Current_Fifo
 )paren
@@ -2010,6 +2073,7 @@ op_or_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_High
 )paren
@@ -2022,6 +2086,7 @@ op_or_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Mid
 )paren
@@ -2034,6 +2099,7 @@ op_add_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Low
 )paren
@@ -2059,6 +2125,7 @@ suffix:semicolon
 )brace
 )brace
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -2069,8 +2136,8 @@ id|DMA_IDLE_CMD
 suffix:semicolon
 multiline_comment|/* | DMA_INT */
 )brace
-r_void
 DECL|function|dc390_DataIn_0
+r_void
 id|dc390_DataIn_0
 c_func
 (paren
@@ -2131,12 +2198,10 @@ op_or
 id|ILLEGAL_OP_ERR
 )paren
 )paren
-(brace
 id|pSRB-&gt;SRBStatus
 op_or_assign
 id|PARITY_ERROR
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2168,6 +2233,7 @@ op_logical_neg
 id|dstate
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|DMA_Status
 )paren
@@ -2178,9 +2244,7 @@ id|DMA_XFER_DONE
 op_logical_and
 id|pSRB-&gt;SGToBeXferLen
 )paren
-(brace
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2188,11 +2252,13 @@ op_logical_neg
 id|ctr
 )paren
 id|printk
+c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;DC390: Deadlock in DataIn_0: DMA aborted unfinished: %06x bytes remain!!&bslash;n&quot;
 comma
 id|DC390_read32
+c_func
 (paren
 id|DMA_Wk_ByteCntr
 )paren
@@ -2205,6 +2271,7 @@ op_logical_neg
 id|ctr
 )paren
 id|printk
+c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;DC390: DataIn_0: DMA State: %i&bslash;n&quot;
@@ -2233,6 +2300,7 @@ op_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_High
 )paren
@@ -2246,6 +2314,7 @@ op_plus
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Mid
 )paren
@@ -2259,6 +2328,7 @@ op_plus
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Low
 )paren
@@ -2269,6 +2339,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;Count_2_Zero (ResidCnt=%li,ToBeXfer=%li),&quot;
@@ -2280,6 +2351,7 @@ id|pSRB-&gt;SGToBeXferLen
 suffix:semicolon
 )paren
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -2334,8 +2406,8 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* phase changed */
 (brace
+multiline_comment|/* phase changed */
 id|residual
 op_assign
 l_int|0
@@ -2343,6 +2415,7 @@ suffix:semicolon
 id|bval
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|Current_Fifo
 )paren
@@ -2359,6 +2432,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;Check for residuals,&quot;
@@ -2395,6 +2469,7 @@ op_increment
 id|bval
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|Current_Fifo
 )paren
@@ -2409,11 +2484,9 @@ op_amp
 l_int|0x1f
 )paren
 )paren
-(brace
 r_goto
 id|din_1
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -2438,6 +2511,7 @@ r_else
 id|bval
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|Current_Fifo
 )paren
@@ -2446,6 +2520,7 @@ suffix:semicolon
 id|din_1
 suffix:colon
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -2470,6 +2545,7 @@ op_decrement
 id|bval
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|DMA_Status
 )paren
@@ -2492,6 +2568,7 @@ op_logical_neg
 id|i
 )paren
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;DC390: DMA Blast aborted unfinished!&bslash;n&quot;
@@ -2513,6 +2590,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;Blast: Read %li times DMA_Status %02x&quot;
@@ -2531,6 +2609,7 @@ op_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_High
 )paren
@@ -2545,6 +2624,7 @@ op_or_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Mid
 )paren
@@ -2559,6 +2639,7 @@ op_or_assign
 id|ULONG
 )paren
 id|DC390_read8
+c_func
 (paren
 id|CtcReg_Low
 )paren
@@ -2590,6 +2671,7 @@ id|residual
 id|bval
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|ScsiFifo
 )paren
@@ -2628,6 +2710,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;Xfered: %li, Total: %li, Remaining: %li&bslash;n&quot;
@@ -2644,9 +2727,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|dc390_Command_0
 r_static
 r_void
-DECL|function|dc390_Command_0
 id|dc390_Command_0
 c_func
 (paren
@@ -2661,9 +2744,9 @@ id|psstatus
 )paren
 (brace
 )brace
+DECL|function|dc390_Status_0
 r_static
 r_void
-DECL|function|dc390_Status_0
 id|dc390_Status_0
 c_func
 (paren
@@ -2680,6 +2763,7 @@ id|psstatus
 id|pSRB-&gt;TargetStatus
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|ScsiFifo
 )paren
@@ -2688,6 +2772,7 @@ singleline_comment|//udelay (1);
 id|pSRB-&gt;EndMessage
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|ScsiFifo
 )paren
@@ -2703,6 +2788,7 @@ op_assign
 id|SRB_COMPLETED
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -2710,9 +2796,9 @@ id|MSG_ACCEPTED_CMD
 )paren
 suffix:semicolon
 )brace
+DECL|function|dc390_MsgOut_0
 r_static
 r_void
-DECL|function|dc390_MsgOut_0
 id|dc390_MsgOut_0
 c_func
 (paren
@@ -2737,13 +2823,11 @@ op_plus
 id|SRB_ABORT_SENT
 )paren
 )paren
-(brace
 op_star
 id|psstatus
 op_assign
 id|SCSI_NOP0
 suffix:semicolon
-)brace
 singleline_comment|//DC390_write8 (DMA_Cmd, DMA_IDLE_CMD);
 )brace
 r_static
@@ -2751,6 +2835,7 @@ r_void
 id|__inline__
 DECL|function|dc390_reprog
 id|dc390_reprog
+c_func
 (paren
 id|PACB
 id|pACB
@@ -2760,6 +2845,7 @@ id|pDCB
 )paren
 (brace
 id|DC390_write8
+c_func
 (paren
 id|Sync_Period
 comma
@@ -2767,6 +2853,7 @@ id|pDCB-&gt;SyncPeriod
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|Sync_Offset
 comma
@@ -2774,6 +2861,7 @@ id|pDCB-&gt;SyncOffset
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg3
 comma
@@ -2781,6 +2869,7 @@ id|pDCB-&gt;CtrlR3
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg4
 comma
@@ -2788,6 +2877,7 @@ id|pDCB-&gt;CtrlR4
 )paren
 suffix:semicolon
 id|dc390_SetXferRate
+c_func
 (paren
 id|pACB
 comma
@@ -2797,10 +2887,11 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef DC390_DEBUG0
+DECL|function|dc390_printMsg
 r_static
 r_void
-DECL|function|dc390_printMsg
 id|dc390_printMsg
+c_func
 (paren
 id|UCHAR
 op_star
@@ -2814,6 +2905,7 @@ r_int
 id|i
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot; %02x&quot;
 comma
@@ -2838,6 +2930,7 @@ id|i
 op_increment
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot; %02x&quot;
 comma
@@ -2848,6 +2941,7 @@ id|i
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -2863,6 +2957,7 @@ r_void
 id|__inline__
 DECL|function|dc390_MsgIn_reject
 id|dc390_MsgIn_reject
+c_func
 (paren
 id|PACB
 id|pACB
@@ -2885,8 +2980,10 @@ suffix:semicolon
 id|DC390_ENABLE_MSGOUT
 suffix:semicolon
 id|DEBUG0
+c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Reject message&bslash;n&quot;
@@ -2900,6 +2997,7 @@ r_void
 id|__inline__
 DECL|function|dc390_EnableMsgOut_Abort
 id|dc390_EnableMsgOut_Abort
+c_func
 (paren
 id|PACB
 id|pACB
@@ -2931,6 +3029,7 @@ r_static
 id|PSRB
 DECL|function|dc390_MsgIn_QTag
 id|dc390_MsgIn_QTag
+c_func
 (paren
 id|PACB
 id|pACB
@@ -3021,11 +3120,9 @@ op_amp
 id|SRB_DISCONNECT
 )paren
 )paren
-(brace
 r_goto
 id|mingx0
 suffix:semicolon
-)brace
 id|pDCB-&gt;pActiveSRB
 op_assign
 id|pSRB
@@ -3070,10 +3167,11 @@ id|pSRB
 suffix:semicolon
 )brace
 multiline_comment|/* set async transfer mode */
+DECL|function|dc390_MsgIn_set_async
 r_static
 r_void
-DECL|function|dc390_MsgIn_set_async
 id|dc390_MsgIn_set_async
+c_func
 (paren
 id|PACB
 id|pACB
@@ -3098,6 +3196,7 @@ id|DO_SYNC_NEGO
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: Target %i initiates Non-Sync?&bslash;n&quot;
 comma
@@ -3142,6 +3241,7 @@ id|pACB-&gt;glitch_cfg
 suffix:semicolon
 multiline_comment|/* glitch eater */
 id|dc390_reprog
+c_func
 (paren
 id|pACB
 comma
@@ -3150,10 +3250,11 @@ id|pDCB
 suffix:semicolon
 )brace
 multiline_comment|/* set sync transfer mode */
+DECL|function|dc390_MsgIn_set_sync
 r_static
 r_void
-DECL|function|dc390_MsgIn_set_sync
 id|dc390_MsgIn_set_sync
+c_func
 (paren
 id|PACB
 id|pACB
@@ -3197,6 +3298,7 @@ id|DO_SYNC_NEGO
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: Target %i initiates Sync: %ins %i ... answer ...&bslash;n&quot;
 comma
@@ -3231,6 +3333,7 @@ l_int|15
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: Lower Sync Offset to 15&bslash;n&quot;
 )paren
@@ -3255,6 +3358,7 @@ id|pDCB-&gt;NegoPeriod
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: Set sync nego period to %ins&bslash;n&quot;
 comma
@@ -3273,6 +3377,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 id|pSRB-&gt;MsgOutBuf
 comma
@@ -3356,11 +3461,9 @@ l_int|25
 op_ne
 id|wval
 )paren
-(brace
 id|wval1
 op_increment
 suffix:semicolon
-)brace
 id|bval
 op_assign
 id|FAST_CLK
@@ -3493,6 +3596,7 @@ id|wval1
 op_increment
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: Target %i: Sync transfer %i.%1i MHz, Offset %i&bslash;n&quot;
 comma
@@ -3525,6 +3629,7 @@ l_int|0x0f
 suffix:semicolon
 )brace
 id|dc390_reprog
+c_func
 (paren
 id|pACB
 comma
@@ -3542,6 +3647,7 @@ id|UCHAR
 id|__inline__
 DECL|function|dc390_MsgIn_complete
 id|dc390_MsgIn_complete
+c_func
 (paren
 id|UCHAR
 op_star
@@ -3616,8 +3722,8 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* read and eval received messages */
-r_void
 DECL|function|dc390_MsgIn_0
+r_void
 id|dc390_MsgIn_0
 c_func
 (paren
@@ -3644,6 +3750,7 @@ op_increment
 )braket
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|ScsiFifo
 )paren
@@ -3654,6 +3761,7 @@ r_if
 c_cond
 (paren
 id|dc390_MsgIn_complete
+c_func
 (paren
 id|pSRB-&gt;MsgInBuf
 comma
@@ -3662,14 +3770,17 @@ id|pACB-&gt;MsgLen
 )paren
 (brace
 id|DEBUG0
+c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: MsgIn:&quot;
 )paren
 suffix:semicolon
 id|dc390_printMsg
+c_func
 (paren
 id|pSRB-&gt;MsgInBuf
 comma
@@ -3708,6 +3819,7 @@ suffix:colon
 id|pSRB
 op_assign
 id|dc390_MsgIn_QTag
+c_func
 (paren
 id|pACB
 comma
@@ -3725,6 +3837,7 @@ r_case
 id|MSG_REJECT_
 suffix:colon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -3743,15 +3856,14 @@ id|pSRB-&gt;SRBState
 op_amp
 id|DO_SYNC_NEGO
 )paren
-(brace
 id|dc390_MsgIn_set_async
+c_func
 (paren
 id|pACB
 comma
 id|pSRB
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -3776,6 +3888,7 @@ op_ne
 id|EXTENDED_SDTR
 )paren
 id|dc390_MsgIn_reject
+c_func
 (paren
 id|pACB
 comma
@@ -3802,6 +3915,7 @@ op_eq
 l_int|0
 )paren
 id|dc390_MsgIn_set_async
+c_func
 (paren
 id|pACB
 comma
@@ -3810,6 +3924,7 @@ id|pSRB
 suffix:semicolon
 r_else
 id|dc390_MsgIn_set_sync
+c_func
 (paren
 id|pACB
 comma
@@ -3836,6 +3951,7 @@ r_case
 id|MSG_RESTORE_PTR
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: RESTORE POINTER message received ... reject&bslash;n&quot;
 )paren
@@ -3845,6 +3961,7 @@ singleline_comment|// reject unknown messages
 r_default
 suffix:colon
 id|dc390_MsgIn_reject
+c_func
 (paren
 id|pACB
 comma
@@ -3870,6 +3987,7 @@ op_assign
 id|SCSI_NOP0
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -3878,8 +3996,8 @@ id|MSG_ACCEPTED_CMD
 suffix:semicolon
 singleline_comment|//DC390_write8 (DMA_Cmd, DMA_IDLE_CMD);
 )brace
-r_void
 DECL|function|dc390_DataIO_Comm
+r_void
 id|dc390_DataIO_Comm
 c_func
 (paren
@@ -3908,6 +4026,7 @@ id|pSRB-&gt;SGcount
 )paren
 (brace
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -3947,6 +4066,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot; DC390: Next SG segment.&quot;
@@ -3962,6 +4082,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot; DC390: Transfer %li bytes (address %08lx)&bslash;n&quot;
@@ -3973,6 +4094,7 @@ id|pSRB-&gt;SGBusAddr
 suffix:semicolon
 )paren
 id|DC390_write8
+c_func
 (paren
 id|CtcReg_Low
 comma
@@ -3987,6 +4109,7 @@ op_rshift_assign
 l_int|8
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtcReg_Mid
 comma
@@ -4001,6 +4124,7 @@ op_rshift_assign
 l_int|8
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtcReg_High
 comma
@@ -4011,6 +4135,7 @@ id|lval
 )paren
 suffix:semicolon
 id|DC390_write32
+c_func
 (paren
 id|DMA_XferCnt
 comma
@@ -4018,6 +4143,7 @@ id|pSRB-&gt;SGToBeXferLen
 )paren
 suffix:semicolon
 id|DC390_write32
+c_func
 (paren
 id|DMA_XferAddr
 comma
@@ -4030,6 +4156,7 @@ op_assign
 id|SRB_DATA_XFER
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4039,6 +4166,7 @@ id|INFO_XFER_CMD
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -4054,8 +4182,8 @@ singleline_comment|//DEBUG1(printk (KERN_DEBUG &quot;DC390: DMA_Status: %02x&bsl
 singleline_comment|//DEBUG1(DC390_write32 (DMA_ScsiBusCtrl, EN_INT_ON_PCI_ABORT);)
 )brace
 r_else
-multiline_comment|/* xfer pad */
 (brace
+multiline_comment|/* xfer pad */
 r_if
 c_cond
 (paren
@@ -4074,6 +4202,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot; DC390: Overrun -&quot;
@@ -4085,6 +4214,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot; Clear transfer pad &bslash;n&quot;
@@ -4092,6 +4222,7 @@ l_string|&quot; Clear transfer pad &bslash;n&quot;
 suffix:semicolon
 )paren
 id|DC390_write8
+c_func
 (paren
 id|CtcReg_Low
 comma
@@ -4099,6 +4230,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtcReg_Mid
 comma
@@ -4106,6 +4238,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtcReg_High
 comma
@@ -4117,6 +4250,7 @@ op_or_assign
 id|SRB_XFERPAD
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4125,12 +4259,12 @@ op_plus
 id|XFER_PAD_BYTE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;DC390_write8 (DMA_Cmd, DMA_IDLE_CMD | ioDir); // | DMA_INT;&n;&t;DC390_write8 (DMA_Cmd, DMA_START_CMD | ioDir | DMA_INT);&n;*/
+multiline_comment|/*&n;   DC390_write8 (DMA_Cmd, DMA_IDLE_CMD | ioDir); // | DMA_INT;&n;   DC390_write8 (DMA_Cmd, DMA_START_CMD | ioDir | DMA_INT);&n; */
 )brace
 )brace
+DECL|function|dc390_DataOutPhase
 r_static
 r_void
-DECL|function|dc390_DataOutPhase
 id|dc390_DataOutPhase
 c_func
 (paren
@@ -4145,6 +4279,7 @@ id|psstatus
 )paren
 (brace
 id|dc390_DataIO_Comm
+c_func
 (paren
 id|pACB
 comma
@@ -4154,9 +4289,9 @@ id|WRITE_DIRECTION
 )paren
 suffix:semicolon
 )brace
+DECL|function|dc390_DataInPhase
 r_static
 r_void
-DECL|function|dc390_DataInPhase
 id|dc390_DataInPhase
 c_func
 (paren
@@ -4171,6 +4306,7 @@ id|psstatus
 )paren
 (brace
 id|dc390_DataIO_Comm
+c_func
 (paren
 id|pACB
 comma
@@ -4180,8 +4316,8 @@ id|READ_DIRECTION
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|dc390_CommandPhase
+r_void
 id|dc390_CommandPhase
 c_func
 (paren
@@ -4207,6 +4343,7 @@ id|PUCHAR
 id|ptr
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4214,6 +4351,7 @@ id|RESET_ATN_CMD
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4259,8 +4397,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4272,7 +4410,6 @@ op_increment
 )paren
 suffix:semicolon
 )brace
-)brace
 r_else
 (brace
 id|UCHAR
@@ -4281,6 +4418,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4292,6 +4430,7 @@ op_assign
 id|pACB-&gt;pActiveDCB
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4301,6 +4440,7 @@ l_int|5
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4308,6 +4448,7 @@ id|bval
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4315,6 +4456,7 @@ id|bval
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4325,6 +4467,7 @@ id|pSRB-&gt;pcmd-&gt;sense_buffer
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4337,6 +4480,7 @@ op_assign
 id|SRB_COMMAND
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4344,9 +4488,9 @@ id|INFO_XFER_CMD
 )paren
 suffix:semicolon
 )brace
+DECL|function|dc390_StatusPhase
 r_static
 r_void
-DECL|function|dc390_StatusPhase
 id|dc390_StatusPhase
 c_func
 (paren
@@ -4361,6 +4505,7 @@ id|psstatus
 )paren
 (brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4372,6 +4517,7 @@ op_assign
 id|SRB_STATUS
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4380,8 +4526,8 @@ id|INITIATOR_CMD_CMPLTE
 suffix:semicolon
 singleline_comment|//DC390_write8 (DMA_Cmd, DMA_IDLE_CMD);
 )brace
-r_void
 DECL|function|dc390_MsgOutPhase
+r_void
 id|dc390_MsgOutPhase
 c_func
 (paren
@@ -4409,6 +4555,7 @@ id|PDCB
 id|pDCB
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4461,8 +4608,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4473,7 +4620,6 @@ op_increment
 )paren
 )paren
 suffix:semicolon
-)brace
 id|pSRB-&gt;MsgCnt
 op_assign
 l_int|0
@@ -4496,12 +4642,10 @@ op_eq
 id|MSG_ABORT
 )paren
 )paren
-(brace
 id|pSRB-&gt;SRBState
 op_assign
 id|SRB_ABORT_SENT
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -4545,13 +4689,12 @@ id|pDCB-&gt;SyncMode
 op_amp
 id|SYNC_ENABLE
 )paren
-(brace
 r_goto
 id|mop1
 suffix:semicolon
 )brace
-)brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4560,6 +4703,7 @@ id|bval
 suffix:semicolon
 )brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4573,6 +4717,7 @@ id|mop1
 suffix:colon
 singleline_comment|//printk (&quot;DC390: Send SDTR message to %i %i ... &bslash;n&quot;, pDCB-&gt;UnitSCSIID, pDCB-&gt;UnitSCSILUN);
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4580,6 +4725,7 @@ id|MSG_EXTENDED
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4588,6 +4734,7 @@ l_int|3
 suffix:semicolon
 multiline_comment|/*    ;length of extended msg */
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4596,6 +4743,7 @@ id|EXTENDED_SDTR
 suffix:semicolon
 multiline_comment|/*    ; sync nego */
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4610,6 +4758,7 @@ op_amp
 l_int|0x0f
 )paren
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4618,6 +4767,7 @@ id|pDCB-&gt;SyncOffset
 suffix:semicolon
 r_else
 id|DC390_write8
+c_func
 (paren
 id|ScsiFifo
 comma
@@ -4629,6 +4779,7 @@ op_or_assign
 id|DO_SYNC_NEGO
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4637,9 +4788,9 @@ id|INFO_XFER_CMD
 suffix:semicolon
 )brace
 )brace
+DECL|function|dc390_MsgInPhase
 r_static
 r_void
-DECL|function|dc390_MsgInPhase
 id|dc390_MsgInPhase
 c_func
 (paren
@@ -4654,6 +4805,7 @@ id|psstatus
 )paren
 (brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4682,6 +4834,7 @@ id|SRB_MSGIN
 suffix:semicolon
 )brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4690,9 +4843,9 @@ id|INFO_XFER_CMD
 suffix:semicolon
 singleline_comment|//DC390_write8 (DMA_Cmd, DMA_IDLE_CMD);
 )brace
+DECL|function|dc390_Nop_0
 r_static
 r_void
-DECL|function|dc390_Nop_0
 id|dc390_Nop_0
 c_func
 (paren
@@ -4707,9 +4860,9 @@ id|psstatus
 )paren
 (brace
 )brace
+DECL|function|dc390_Nop_1
 r_static
 r_void
-DECL|function|dc390_Nop_1
 id|dc390_Nop_1
 c_func
 (paren
@@ -4724,9 +4877,9 @@ id|psstatus
 )paren
 (brace
 )brace
+DECL|function|dc390_SetXferRate
 r_static
 r_void
-DECL|function|dc390_SetXferRate
 id|dc390_SetXferRate
 c_func
 (paren
@@ -4837,8 +4990,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_void
 DECL|function|dc390_Disconnect
+r_void
 id|dc390_Disconnect
 c_func
 (paren
@@ -4919,17 +5072,20 @@ op_decrement
 id|j
 )paren
 id|udelay
+c_func
 (paren
 l_int|1000
 )paren
 suffix:semicolon
 id|DC390_read8
+c_func
 (paren
 id|INT_Status
 )paren
 suffix:semicolon
 multiline_comment|/* Reset Pending INT */
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -4952,6 +5108,7 @@ op_assign
 id|SCSI_NOP0
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -5183,8 +5340,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|dc390_Reselect
+r_void
 id|dc390_Reselect
 c_func
 (paren
@@ -5230,6 +5387,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;(ActiveDCB != 0)&quot;
 )paren
@@ -5265,6 +5423,7 @@ suffix:semicolon
 id|bval
 op_assign
 id|DC390_read8
+c_func
 (paren
 id|ScsiFifo
 )paren
@@ -5274,6 +5433,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Dev %02x,&quot;
 comma
@@ -5309,6 +5469,7 @@ op_or_assign
 id|USHORT
 )paren
 id|DC390_read8
+c_func
 (paren
 id|ScsiFifo
 )paren
@@ -5323,6 +5484,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;(ID %02x, LUN %02x),&quot;
 comma
@@ -5372,6 +5534,7 @@ id|pACB-&gt;pLinkDCB
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;DC390: Reselect from non existing device (ID %02x, LUN %02x)&bslash;n&quot;
@@ -5444,6 +5607,7 @@ op_assign
 id|SRB_UNEXPECT_RESEL
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;DC390: Reselect without outstanding cmnd (ID %02x, LUN %02x)&bslash;n&quot;
@@ -5466,6 +5630,7 @@ op_assign
 id|pSRB
 suffix:semicolon
 id|dc390_EnableMsgOut_Abort
+c_func
 (paren
 id|pACB
 comma
@@ -5488,6 +5653,7 @@ op_assign
 id|SRB_ABORT_SENT
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Reselect: Abort (ID %02x, LUN %02x)&bslash;n&quot;
@@ -5525,6 +5691,7 @@ id|DEBUG1
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;Resel SRB(%p): TagNum (%02x)&bslash;n&quot;
@@ -5540,6 +5707,7 @@ op_assign
 id|SCSI_NOP0
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|Scsi_Dest_ID
 comma
@@ -5547,6 +5715,7 @@ id|pDCB-&gt;UnitSCSIID
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|Sync_Period
 comma
@@ -5554,6 +5723,7 @@ id|pDCB-&gt;SyncPeriod
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|Sync_Offset
 comma
@@ -5561,6 +5731,7 @@ id|pDCB-&gt;SyncOffset
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg1
 comma
@@ -5568,6 +5739,7 @@ id|pDCB-&gt;CtrlR1
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg3
 comma
@@ -5575,6 +5747,7 @@ id|pDCB-&gt;CtrlR3
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|CtrlReg4
 comma
@@ -5583,6 +5756,7 @@ id|pDCB-&gt;CtrlR4
 suffix:semicolon
 multiline_comment|/* ; Glitch eater */
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -5591,10 +5765,11 @@ id|MSG_ACCEPTED_CMD
 suffix:semicolon
 multiline_comment|/* ;to release the /ACK signal */
 )brace
+DECL|function|dc390_remove_dev
 r_static
 r_void
-DECL|function|dc390_remove_dev
 id|dc390_remove_dev
+c_func
 (paren
 id|PACB
 id|pACB
@@ -5632,6 +5807,7 @@ id|DCBDEBUG
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Driver won&squot;t free DCB (ID %i, LUN %i): 0x%08x because of SRBCnt %i&bslash;n&quot;
@@ -5715,6 +5891,7 @@ id|DCBDEBUG
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Driver about to free DCB (ID %i, LUN %i): 0x%08x&bslash;n&quot;
@@ -5732,6 +5909,7 @@ id|pDCB
 suffix:semicolon
 )paren
 id|kfree
+c_func
 (paren
 id|pDCB
 )paren
@@ -5758,6 +5936,7 @@ id|UCHAR
 id|__inline__
 DECL|function|dc390_tagq_blacklist
 id|dc390_tagq_blacklist
+c_func
 (paren
 r_char
 op_star
@@ -5785,6 +5964,7 @@ r_if
 c_cond
 (paren
 id|memcmp
+c_func
 (paren
 id|name
 comma
@@ -5806,10 +5986,11 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|dc390_disc_tagq_set
 r_static
 r_void
-DECL|function|dc390_disc_tagq_set
 id|dc390_disc_tagq_set
+c_func
 (paren
 id|PDCB
 id|pDCB
@@ -5854,9 +6035,10 @@ op_amp
 id|TAG_QUEUEING_
 )paren
 op_logical_and
-multiline_comment|/* ((pDCB-&gt;DevType == TYPE_DISK) &n;&t;&t;|| (pDCB-&gt;DevType == TYPE_MOD)) &amp;&amp;*/
+multiline_comment|/* ((pDCB-&gt;DevType == TYPE_DISK) &n;&t;&t;   || (pDCB-&gt;DevType == TYPE_MOD)) &amp;&amp; */
 op_logical_neg
 id|dc390_tagq_blacklist
+c_func
 (paren
 (paren
 (paren
@@ -5891,8 +6073,8 @@ r_if
 c_cond
 (paren
 l_int|0
-multiline_comment|/*(pDCB-&gt;DevMode &amp; EN_DISCONNECT_)*/
-multiline_comment|/* &amp;&amp; ((pDCB-&gt;DevType == TYPE_DISK) &n;&t;&t;     || (pDCB-&gt;DevType == TYPE_MOD))*/
+multiline_comment|/*(pDCB-&gt;DevMode &amp; EN_DISCONNECT_) */
+multiline_comment|/* &amp;&amp; ((pDCB-&gt;DevType == TYPE_DISK) &n;&t;&t;&t;   || (pDCB-&gt;DevType == TYPE_MOD)) */
 )paren
 id|pDCB-&gt;SyncMode
 op_or_assign
@@ -5909,10 +6091,11 @@ suffix:semicolon
 )brace
 )brace
 suffix:semicolon
+DECL|function|dc390_add_dev
 r_static
 r_void
-DECL|function|dc390_add_dev
 id|dc390_add_dev
+c_func
 (paren
 id|PACB
 id|pACB
@@ -5937,6 +6120,7 @@ id|bval1
 suffix:semicolon
 multiline_comment|/* if (bval1 == TYPE_DISK || bval1 == TYPE_MOD) */
 id|dc390_disc_tagq_set
+c_func
 (paren
 id|pDCB
 comma
@@ -5945,8 +6129,8 @@ id|ptr
 suffix:semicolon
 )brace
 suffix:semicolon
-r_void
 DECL|function|dc390_SRBdone
+r_void
 id|dc390_SRBdone
 c_func
 (paren
@@ -5994,6 +6178,7 @@ id|DEBUG0
 c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot; SRBdone (%02x,%08x), SRB %p, pid %li&bslash;n&quot;
 comma
@@ -6046,6 +6231,7 @@ r_case
 id|NOT_READY
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: ReqSense: NOT_READY (Cmnd = 0x%02x, Dev = %i-%i, Stat = %i, Scan = %i)&bslash;n&quot;
@@ -6070,6 +6256,7 @@ r_case
 id|UNIT_ATTENTION
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: ReqSense: UNIT_ATTENTION (Cmnd = 0x%02x, Dev = %i-%i, Stat = %i, Scan = %i)&bslash;n&quot;
@@ -6094,6 +6281,7 @@ r_case
 id|ILLEGAL_REQUEST
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: ReqSense: ILLEGAL_REQUEST (Cmnd = 0x%02x, Dev = %i-%i, Stat = %i, Scan = %i)&bslash;n&quot;
@@ -6118,6 +6306,7 @@ r_case
 id|MEDIUM_ERROR
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: ReqSense: MEDIUM_ERROR (Cmnd = 0x%02x, Dev = %i-%i, Stat = %i, Scan = %i)&bslash;n&quot;
@@ -6142,6 +6331,7 @@ r_case
 id|HARDWARE_ERROR
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: ReqSense: HARDWARE_ERROR (Cmnd = 0x%02x, Dev = %i-%i, Stat = %i, Scan = %i)&bslash;n&quot;
@@ -6226,7 +6416,6 @@ op_ge
 id|pcmd-&gt;underflow
 )paren
 )paren
-(brace
 id|pcmd-&gt;result
 op_or_assign
 (paren
@@ -6235,7 +6424,6 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-)brace
 r_else
 id|pcmd-&gt;result
 op_assign
@@ -6285,8 +6473,8 @@ id|ckc_e
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* Retry */
 (brace
+multiline_comment|/* Retry */
 id|pSRB-&gt;RetryCnt
 op_decrement
 suffix:semicolon
@@ -6445,7 +6633,6 @@ c_cond
 (paren
 id|pcmd-&gt;use_sg
 )paren
-(brace
 id|pSRB-&gt;pSegmentList
 op_assign
 (paren
@@ -6453,7 +6640,6 @@ id|PSGL
 )paren
 id|pcmd-&gt;request_buffer
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -6494,7 +6680,6 @@ comma
 id|pSRB
 )paren
 )paren
-(brace
 id|dc390_RewaitSRB
 c_func
 (paren
@@ -6503,7 +6688,6 @@ comma
 id|pSRB
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -6526,6 +6710,7 @@ id|REMOVABLEDEBUG
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Scsi_Stat_CheckCond (Cmd %02x, Id %02x, LUN %02x)&bslash;n&quot;
@@ -6784,7 +6969,6 @@ c_cond
 (paren
 id|pcmd-&gt;use_sg
 )paren
-(brace
 id|pSRB-&gt;pSegmentList
 op_assign
 (paren
@@ -6792,7 +6976,6 @@ id|PSGL
 )paren
 id|pcmd-&gt;request_buffer
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -6833,7 +7016,6 @@ comma
 id|pSRB
 )paren
 )paren
-(brace
 id|dc390_RewaitSRB
 c_func
 (paren
@@ -6842,7 +7024,6 @@ comma
 id|pSRB
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -6933,8 +7114,8 @@ l_int|8
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* No error */
 (brace
+multiline_comment|/* No error */
 id|pSRB-&gt;AdaptStatus
 op_assign
 l_int|0
@@ -6974,6 +7155,7 @@ id|TEST_UNIT_READY
 (brace
 macro_line|#ifdef DC390_DEBUG0
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: Test_Unit_Ready: result: %08x&quot;
@@ -6991,6 +7173,7 @@ op_lshift
 l_int|24
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot; (sense: %02x %02x %02x %02x)&bslash;n&quot;
 comma
@@ -7017,6 +7200,7 @@ l_int|3
 suffix:semicolon
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -7090,6 +7274,7 @@ l_int|16
 (brace
 multiline_comment|/* device not present: remove */
 id|dc390_remove_dev
+c_func
 (paren
 id|pACB
 comma
@@ -7123,12 +7308,10 @@ l_int|1
 )paren
 )paren
 )paren
-(brace
 id|pACB-&gt;scan_devices
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -7152,12 +7335,10 @@ op_minus
 l_int|1
 )paren
 )paren
-(brace
 id|pACB-&gt;scan_devices
 op_assign
 id|END_SCAN
 suffix:semicolon
-)brace
 multiline_comment|/* pACB-&gt;DeviceCnt++; */
 multiline_comment|/* Dev is added on INQUIRY */
 )brace
@@ -7200,7 +7381,6 @@ c_cond
 (paren
 id|pcmd-&gt;use_sg
 )paren
-(brace
 id|ptr
 op_assign
 (paren
@@ -7217,7 +7397,6 @@ op_member_access_from_pointer
 id|address
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7232,6 +7411,7 @@ id|TYPE_NODEV
 (brace
 multiline_comment|/* device not present: remove */
 id|dc390_remove_dev
+c_func
 (paren
 id|pACB
 comma
@@ -7243,6 +7423,7 @@ r_else
 (brace
 multiline_comment|/* device found: add */
 id|dc390_add_dev
+c_func
 (paren
 id|pACB
 comma
@@ -7279,12 +7460,10 @@ op_minus
 l_int|1
 )paren
 )paren
-(brace
 id|pACB-&gt;scan_devices
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 )brace
 suffix:semicolon
 multiline_comment|/*  dc390_ReleaseSRB( pDCB, pSRB ); */
@@ -7314,12 +7493,10 @@ id|psrb-&gt;pNextSRB
 op_ne
 id|pSRB
 )paren
-(brace
 id|psrb
 op_assign
 id|psrb-&gt;pNextSRB
 suffix:semicolon
-)brace
 id|psrb-&gt;pNextSRB
 op_assign
 id|pSRB-&gt;pNextSRB
@@ -7331,12 +7508,10 @@ id|pSRB
 op_eq
 id|pDCB-&gt;pGoingLast
 )paren
-(brace
 id|pDCB-&gt;pGoingLast
 op_assign
 id|psrb
 suffix:semicolon
-)brace
 )brace
 id|pSRB-&gt;pNextSRB
 op_assign
@@ -7372,7 +7547,6 @@ c_cond
 (paren
 id|pDCB-&gt;QIORBCnt
 )paren
-(brace
 id|dc390_DoNextCmd
 c_func
 (paren
@@ -7381,13 +7555,12 @@ comma
 id|pDCB
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Remove all SRBs and tell midlevel code DID_RESET */
-r_void
 DECL|function|dc390_DoingSRB_Done
+r_void
 id|dc390_DoingSRB_Done
 c_func
 (paren
@@ -7462,7 +7635,7 @@ id|DID_RESET
 op_lshift
 l_int|16
 suffix:semicolon
-multiline_comment|/*&t;    ReleaseSRB( pDCB, pSRB ); */
+multiline_comment|/*          ReleaseSRB( pDCB, pSRB ); */
 id|psrb-&gt;pNextSRB
 op_assign
 id|pACB-&gt;pFreeSRB
@@ -7513,13 +7686,11 @@ id|pdcb
 op_ne
 id|pDCB
 )paren
-(brace
 suffix:semicolon
 )brace
-)brace
+DECL|function|dc390_ResetSCSIBus
 r_static
 r_void
-DECL|function|dc390_ResetSCSIBus
 id|dc390_ResetSCSIBus
 c_func
 (paren
@@ -7532,6 +7703,7 @@ op_or_assign
 id|RESET_DEV
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -7539,11 +7711,13 @@ id|RST_DEVICE_CMD
 )paren
 suffix:semicolon
 id|udelay
+c_func
 (paren
 l_int|250
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -7551,6 +7725,7 @@ id|NOP_CMD
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -7558,6 +7733,7 @@ id|CLEAR_FIFO_CMD
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -7565,6 +7741,7 @@ id|DMA_IDLE_CMD
 )paren
 suffix:semicolon
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -7574,9 +7751,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|dc390_ScsiRstDetect
 r_static
 r_void
-DECL|function|dc390_ScsiRstDetect
 id|dc390_ScsiRstDetect
 c_func
 (paren
@@ -7585,6 +7762,7 @@ id|pACB
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;DC390: Rst_Detect: laststat = %08lx&bslash;n&quot;
 comma
@@ -7593,6 +7771,7 @@ id|dc390_laststatus
 suffix:semicolon
 singleline_comment|//DEBUG0(printk(KERN_INFO &quot;RST_DETECT,&quot;);)
 id|DC390_write8
+c_func
 (paren
 id|DMA_Cmd
 comma
@@ -7624,6 +7803,7 @@ l_int|1000
 suffix:semicolon
 )brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
@@ -7637,12 +7817,10 @@ id|pACB-&gt;ACBFlag
 op_amp
 id|RESET_DEV
 )paren
-(brace
 id|pACB-&gt;ACBFlag
 op_or_assign
 id|RESET_DONE
 suffix:semicolon
-)brace
 r_else
 (brace
 id|pACB-&gt;ACBFlag
@@ -7655,7 +7833,7 @@ c_func
 id|pACB
 )paren
 suffix:semicolon
-multiline_comment|/*&t;dc390_DoingSRB_Done( pACB ); ???? */
+multiline_comment|/*      dc390_DoingSRB_Done( pACB ); ???? */
 id|dc390_RecoverSRB
 c_func
 (paren
@@ -7704,6 +7882,7 @@ id|REMOVABLEDEBUG
 c_func
 (paren
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;DC390: RequestSense (Cmd %02x, Id %02x, LUN %02x)&bslash;n&quot;
@@ -7882,7 +8061,6 @@ comma
 id|pSRB
 )paren
 )paren
-(brace
 id|dc390_RewaitSRB
 c_func
 (paren
@@ -7891,7 +8069,6 @@ comma
 id|pSRB
 )paren
 suffix:semicolon
-)brace
 )brace
 r_static
 r_void
@@ -7915,14 +8092,13 @@ op_plus
 id|SRB_MSGOUT
 )paren
 )paren
-(brace
 id|DC390_write8
+c_func
 (paren
 id|ScsiCmd
 comma
 id|CLEAR_FIFO_CMD
 )paren
 suffix:semicolon
-)brace
 )brace
 eof

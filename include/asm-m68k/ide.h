@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef CONFIG_ATARI
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_MAC
@@ -82,6 +83,9 @@ c_cond
 id|MACH_IS_Q40
 )paren
 r_return
+(paren
+id|ide_ioreg_t
+)paren
 id|q40ide_default_io_base
 c_func
 (paren
@@ -161,6 +165,13 @@ id|irq
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|data_port
+op_logical_or
+id|ctrl_port
+)paren
 id|printk
 c_func
 (paren
@@ -234,25 +245,6 @@ DECL|typedef|select_t
 )brace
 id|select_t
 suffix:semicolon
-macro_line|#ifdef CONFIG_MAC&t;/* MSch: Hack; wrapper for ide_intr */
-r_void
-id|mac_ide_intr
-c_func
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|ide_request_irq
 r_static
 id|__inline__
@@ -344,31 +336,21 @@ c_cond
 (paren
 id|MACH_IS_MAC
 )paren
-macro_line|#if 0&t;/* MSch Hack: maybe later we&squot;ll call ide_intr without a wrapper */
 r_return
-id|nubus_request_irq
+id|request_irq
 c_func
 (paren
-l_int|12
-comma
-id|dev_id
+id|irq
 comma
 id|handler
-)paren
-suffix:semicolon
-macro_line|#else
-r_return
-id|nubus_request_irq
-c_func
-(paren
-l_int|12
+comma
+l_int|0
+comma
+id|device
 comma
 id|dev_id
-comma
-id|mac_ide_intr
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* CONFIG_MAC */
 r_return
 l_int|0
@@ -426,10 +408,12 @@ c_cond
 (paren
 id|MACH_IS_MAC
 )paren
-id|nubus_free_irq
+id|free_irq
 c_func
 (paren
-l_int|12
+id|irq
+comma
+id|dev_id
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_MAC */

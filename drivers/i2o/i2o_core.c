@@ -893,7 +893,7 @@ id|c-&gt;users
 id|printk
 c_func
 (paren
-l_string|&quot;Someones using controller iop%d&bslash;n&quot;
+l_string|&quot;Someone is using controller iop%d&bslash;n&quot;
 comma
 id|c-&gt;unit
 )paren

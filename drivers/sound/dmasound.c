@@ -29795,11 +29795,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PPC
 id|sq_release_read_buffers
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sq_release_buffers
 c_func
 (paren

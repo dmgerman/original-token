@@ -174,7 +174,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_PROC_CONTROL
-mdefine_line|#define USB_PROC_CONTROL        _IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
+mdefine_line|#define USB_PROC_CONTROL           _IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
 DECL|struct|usb_proc_bulktransfer
 r_struct
 id|usb_proc_bulktransfer
@@ -197,9 +197,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_PROC_BULK
-mdefine_line|#define USB_PROC_BULK           _IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
+mdefine_line|#define USB_PROC_BULK              _IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
 DECL|macro|USB_PROC_RESETEP
-mdefine_line|#define USB_PROC_RESETEP        _IOR(&squot;U&squot;, 3, unsigned int)
+mdefine_line|#define USB_PROC_RESETEP           _IOR(&squot;U&squot;, 3, unsigned int)
 DECL|struct|usb_proc_setinterface
 r_struct
 id|usb_proc_setinterface
@@ -217,7 +217,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_PROC_SETINTERFACE
-mdefine_line|#define USB_PROC_SETINTERFACE   _IOR(&squot;U&squot;, 4, struct usb_proc_setinterface)
+mdefine_line|#define USB_PROC_SETINTERFACE      _IOR(&squot;U&squot;, 4, struct usb_proc_setinterface)
+DECL|macro|USB_PROC_SETCONFIGURATION
+mdefine_line|#define USB_PROC_SETCONFIGURATION  _IOR(&squot;U&squot;, 5, unsigned int)
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;

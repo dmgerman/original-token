@@ -7,6 +7,9 @@ r_void
 id|no_lcall7
 c_func
 (paren
+r_int
+id|segment
+comma
 r_struct
 id|pt_regs
 op_star
@@ -135,6 +138,9 @@ r_void
 id|no_lcall7
 c_func
 (paren
+r_int
+id|segment
+comma
 r_struct
 id|pt_regs
 op_star
@@ -197,6 +203,8 @@ op_member_access_from_pointer
 id|handler
 c_func
 (paren
+id|segment
+comma
 id|regs
 )paren
 suffix:semicolon

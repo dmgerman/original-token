@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * scsicam.c - SCSI CAM support functions, use for HDIO_GETGEO, etc.&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@Colorado.EDU&n; *&t;+1 (303) 786-7975&n; *&n; * For more information, please consult the SCSI-CAM draft.&n; */
+multiline_comment|/*&n; * scsicam.c - SCSI CAM support functions, use for HDIO_GETGEO, etc.&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * For more information, please consult the SCSI-CAM draft.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -36,10 +36,11 @@ op_star
 id|secs
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function : int scsicam_bios_param (Disk *disk, int dev, int *ip)&n; *&n; * Purpose : to determine the BIOS mapping used for a drive in a &n; *&t;SCSI-CAM system, storing the results in ip as required&n; *&t;by the HDIO_GETGEO ioctl().&n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; */
+multiline_comment|/*&n; * Function : int scsicam_bios_param (Disk *disk, int dev, int *ip)&n; *&n; * Purpose : to determine the BIOS mapping used for a drive in a &n; *      SCSI-CAM system, storing the results in ip as required&n; *      by the HDIO_GETGEO ioctl().&n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; */
 DECL|function|scsicam_bios_param
 r_int
 id|scsicam_bios_param
+c_func
 (paren
 id|Disk
 op_star
@@ -116,6 +117,7 @@ multiline_comment|/* try to infer mapping from partition table */
 id|ret_code
 op_assign
 id|scsi_partsize
+c_func
 (paren
 id|bh
 comma
@@ -154,6 +156,7 @@ l_int|1
 )paren
 suffix:semicolon
 id|brelse
+c_func
 (paren
 id|bh
 )paren
@@ -167,10 +170,11 @@ op_minus
 l_int|1
 )paren
 (brace
-multiline_comment|/* pick some standard mapping with at most 1024 cylinders,&n;&t;   and at most 62 sectors per track - this works up to&n;&t;   7905 MB */
+multiline_comment|/* pick some standard mapping with at most 1024 cylinders,&n;&t;&t;   and at most 62 sectors per track - this works up to&n;&t;&t;   7905 MB */
 id|ret_code
 op_assign
 id|setsize
+c_func
 (paren
 (paren
 r_int
@@ -207,7 +211,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* if something went wrong, then apparently we have to return&n;       a geometry with more than 1024 cylinders */
+multiline_comment|/* if something went wrong, then apparently we have to return&n;&t;   a geometry with more than 1024 cylinders */
 r_if
 c_cond
 (paren
@@ -305,7 +309,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : static int scsi_partsize(struct buffer_head *bh, unsigned long &n; *     capacity,unsigned int *cyls, unsigned int *hds, unsigned int *secs);&n; *&n; * Purpose : to determine the BIOS mapping used to create the partition&n; *&t;table, storing the results in *cyls, *hds, and *secs &n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; */
+multiline_comment|/*&n; * Function : static int scsi_partsize(struct buffer_head *bh, unsigned long &n; *     capacity,unsigned int *cyls, unsigned int *hds, unsigned int *secs);&n; *&n; * Purpose : to determine the BIOS mapping used to create the partition&n; *      table, storing the results in *cyls, *hds, and *secs &n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; */
 DECL|function|scsi_partsize
 r_int
 id|scsi_partsize
@@ -434,6 +438,7 @@ r_continue
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
+c_func
 (paren
 l_string|&quot;scsicam_bios_param : partition %d has system &bslash;n&quot;
 comma
@@ -517,14 +522,13 @@ id|end_sector
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG
 id|printk
+c_func
 (paren
 l_string|&quot;scsicam_bios_param : end at h = %d, c = %d, s = %d&bslash;n&quot;
 comma
@@ -681,6 +685,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG
 id|printk
+c_func
 (paren
 l_string|&quot;scsicam_bios_param : logical (%u) != physical (%u)&bslash;n&quot;
 comma
@@ -696,7 +701,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : static int setsize(unsigned long capacity,unsigned int *cyls,&n; *&t;unsigned int *hds, unsigned int *secs);&n; *&n; * Purpose : to determine a near-optimal int 0x13 mapping for a&n; *&t;SCSI disk in terms of lost space of size capacity, storing&n; *&t;the results in *cyls, *hds, and *secs.&n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; * Extracted from&n; *&n; * WORKING                                                    X3T9.2&n; * DRAFT                                                        792D&n; *&n; *&n; *                                                        Revision 6&n; *                                                         10-MAR-94&n; * Information technology -&n; * SCSI-2 Common access method&n; * transport and SCSI interface module&n; * &n; * ANNEX A :&n; *&n; * setsize() converts a read capacity value to int 13h&n; * head-cylinder-sector requirements. It minimizes the value for&n; * number of heads and maximizes the number of cylinders. This&n; * will support rather large disks before the number of heads&n; * will not fit in 4 bits (or 6 bits). This algorithm also&n; * minimizes the number of sectors that will be unused at the end&n; * of the disk while allowing for very large disks to be&n; * accommodated. This algorithm does not use physical geometry. &n; */
+multiline_comment|/*&n; * Function : static int setsize(unsigned long capacity,unsigned int *cyls,&n; *      unsigned int *hds, unsigned int *secs);&n; *&n; * Purpose : to determine a near-optimal int 0x13 mapping for a&n; *      SCSI disk in terms of lost space of size capacity, storing&n; *      the results in *cyls, *hds, and *secs.&n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; * Extracted from&n; *&n; * WORKING                                                    X3T9.2&n; * DRAFT                                                        792D&n; *&n; *&n; *                                                        Revision 6&n; *                                                         10-MAR-94&n; * Information technology -&n; * SCSI-2 Common access method&n; * transport and SCSI interface module&n; * &n; * ANNEX A :&n; *&n; * setsize() converts a read capacity value to int 13h&n; * head-cylinder-sector requirements. It minimizes the value for&n; * number of heads and maximizes the number of cylinders. This&n; * will support rather large disks before the number of heads&n; * will not fit in 4 bits (or 6 bits). This algorithm also&n; * minimizes the number of sectors that will be unused at the end&n; * of the disk while allowing for very large disks to be&n; * accommodated. This algorithm does not use physical geometry. &n; */
 DECL|function|setsize
 r_static
 r_int
@@ -789,7 +794,7 @@ id|capacity
 op_div
 id|temp
 suffix:semicolon
-multiline_comment|/* Compute value for sectors per&n;&t;&t;&t;&t;&t;       track */
+multiline_comment|/* Compute value for sectors per&n;&t;&t;&t;&t;&t;&t;   track */
 r_if
 c_cond
 (paren
@@ -864,7 +869,9 @@ r_int
 id|heads
 suffix:semicolon
 r_return
+(paren
 id|rv
+)paren
 suffix:semicolon
 )brace
 eof

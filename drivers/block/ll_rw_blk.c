@@ -14,6 +14,17 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+multiline_comment|/*&n; * MAC Floppy IWM hooks&n; */
+macro_line|#ifdef CONFIG_MAC_FLOPPY_IWM
+r_extern
+r_int
+id|mac_floppy_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|all_requests
 r_static
@@ -3331,6 +3342,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MAC_FLOPPY
 id|swim3_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SWIM_IOP
+id|swimiop_init
 c_func
 (paren
 )paren

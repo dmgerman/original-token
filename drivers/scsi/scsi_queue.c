@@ -22,7 +22,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
-multiline_comment|/*&n; * TODO:&n; *&t;1) Prevent multiple traversals of list to look for commands to&n; *&t;   queue.&n; *&t;2) Protect against multiple insertions of list at the same time.&n; * DONE:&n; *&t;1) Set state of scsi command to a new state value for ml queue.&n; *&t;2) Insert into queue when host rejects command.&n; *&t;3) Make sure status code is properly passed from low-level queue func&n; *&t;   so that internal_cmnd properly returns the right value.&n; *&t;4) Insert into queue when QUEUE_FULL.&n; *&t;5) Cull queue in bottom half handler.&n; *&t;6) Check usage count prior to queue insertion.  Requeue if usage&n; *&t;   count is 0.&n; *&t;7) Don&squot;t send down any more commands if the host/device is busy.&n; */
+multiline_comment|/*&n; * TODO:&n; *      1) Prevent multiple traversals of list to look for commands to&n; *         queue.&n; *      2) Protect against multiple insertions of list at the same time.&n; * DONE:&n; *      1) Set state of scsi command to a new state value for ml queue.&n; *      2) Insert into queue when host rejects command.&n; *      3) Make sure status code is properly passed from low-level queue func&n; *         so that internal_cmnd properly returns the right value.&n; *      4) Insert into queue when QUEUE_FULL.&n; *      5) Cull queue in bottom half handler.&n; *      6) Check usage count prior to queue insertion.  Requeue if usage&n; *         count is 0.&n; *      7) Don&squot;t send down any more commands if the host/device is busy.&n; */
 DECL|variable|RCSid
 r_static
 r_const
@@ -46,9 +46,9 @@ id|scsi_mlqueue_remove_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/*&n; * Function:    scsi_mlqueue_insert()&n; *&n; * Purpose:     Insert a command in the midlevel queue.&n; *&n; * Arguments:   cmd    - command that we are adding to queue.&n; *&t;&t;reason - why we are inserting command to queue.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:&t;We do this for one of two cases.  Either the host is busy&n; *&t;&t;and it cannot accept any more commands for the time being,&n; *&t;&t;or the device returned QUEUE_FULL and can accept no more&n; *&t;&t;commands.&n; * Notes:&t;This could be called either from an interrupt context or a&n; *&t;&t;normal process context.&n; */
-r_int
+multiline_comment|/*&n; * Function:    scsi_mlqueue_insert()&n; *&n; * Purpose:     Insert a command in the midlevel queue.&n; *&n; * Arguments:   cmd    - command that we are adding to queue.&n; *              reason - why we are inserting command to queue.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:       We do this for one of two cases.  Either the host is busy&n; *              and it cannot accept any more commands for the time being,&n; *              or the device returned QUEUE_FULL and can accept no more&n; *              commands.&n; * Notes:       This could be called either from an interrupt context or a&n; *              normal process context.&n; */
 DECL|function|scsi_mlqueue_insert
+r_int
 id|scsi_mlqueue_insert
 c_func
 (paren
@@ -87,7 +87,7 @@ id|cmd
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * We are inserting the command into the ml queue.  First, we&n;     * cancel the timer, so it doesn&squot;t time out.&n;     */
+multiline_comment|/*&n;&t; * We are inserting the command into the ml queue.  First, we&n;&t; * cancel the timer, so it doesn&squot;t time out.&n;&t; */
 id|scsi_delete_timer
 c_func
 (paren
@@ -98,7 +98,7 @@ id|host
 op_assign
 id|cmd-&gt;host
 suffix:semicolon
-multiline_comment|/*&n;     * Next, set the appropriate busy bit for the device/host.&n;     */
+multiline_comment|/*&n;&t; * Next, set the appropriate busy bit for the device/host.&n;&t; */
 r_if
 c_cond
 (paren
@@ -107,7 +107,7 @@ op_eq
 id|SCSI_MLQUEUE_HOST_BUSY
 )paren
 (brace
-multiline_comment|/*&n;&t; * Protect against race conditions.  If the host isn&squot;t busy,&n;&t; * assume that something actually completed, and that we should&n;&t; * be able to queue a command now.  Note that there is an implicit&n;&t; * assumption that every host can always queue at least one command.&n;&t; * If a host is inactive and cannot queue any commands, I don&squot;t see&n;&t; * how things could possibly work anyways.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Protect against race conditions.  If the host isn&squot;t busy,&n;&t;&t; * assume that something actually completed, and that we should&n;&t;&t; * be able to queue a command now.  Note that there is an implicit&n;&t;&t; * assumption that every host can always queue at least one command.&n;&t;&t; * If a host is inactive and cannot queue any commands, I don&squot;t see&n;&t;&t; * how things could possibly work anyways.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -144,7 +144,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t; * Protect against race conditions.  If the device isn&squot;t busy,&n;&t; * assume that something actually completed, and that we should&n;&t; * be able to queue a command now.  Note that there is an implicit&n;&t; * assumption that every host can always queue at least one command.&n;&t; * If a host is inactive and cannot queue any commands, I don&squot;t see&n;&t; * how things could possibly work anyways.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Protect against race conditions.  If the device isn&squot;t busy,&n;&t;&t; * assume that something actually completed, and that we should&n;&t;&t; * be able to queue a command now.  Note that there is an implicit&n;&t;&t; * assumption that every host can always queue at least one command.&n;&t;&t; * If a host is inactive and cannot queue any commands, I don&squot;t see&n;&t;&t; * how things could possibly work anyways.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -179,7 +179,7 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Register the fact that we own the thing for now.&n;     */
+multiline_comment|/*&n;&t; * Register the fact that we own the thing for now.&n;&t; */
 id|cmd-&gt;state
 op_assign
 id|SCSI_STATE_MLQUEUE
@@ -192,7 +192,7 @@ id|cmd-&gt;bh_next
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;     * As a performance enhancement, look to see whether the list is&n;     * empty.  If it is, then we can just atomicly insert the command&n;     * in the list and return without locking.&n;     */
+multiline_comment|/*&n;&t; * As a performance enhancement, look to see whether the list is&n;&t; * empty.  If it is, then we can just atomicly insert the command&n;&t; * in the list and return without locking.&n;&t; */
 r_if
 c_cond
 (paren
@@ -224,7 +224,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Rats.  Something slipped in while we were exchanging.&n;&t; * Swap it back and fall through to do it the hard way.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Rats.  Something slipped in while we were exchanging.&n;&t;&t; * Swap it back and fall through to do it the hard way.&n;&t;&t; */
 id|cmd
 op_assign
 id|xchg
@@ -237,7 +237,7 @@ id|cpnt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Next append the command to the list of pending commands.&n;     */
+multiline_comment|/*&n;&t; * Next append the command to the list of pending commands.&n;&t; */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -299,9 +299,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_mlqueue_finish()&n; *&n; * Purpose:     Try and queue commands from the midlevel queue.&n; *&n; * Arguments:   host    - host that just finished a command.&n; *&t;&t;device  - device that just finished a command.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:&t;This could be called either from an interrupt context or a&n; *&t;&t;normal process context.&n; */
-r_int
+multiline_comment|/*&n; * Function:    scsi_mlqueue_finish()&n; *&n; * Purpose:     Try and queue commands from the midlevel queue.&n; *&n; * Arguments:   host    - host that just finished a command.&n; *              device  - device that just finished a command.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:       This could be called either from an interrupt context or a&n; *              normal process context.&n; */
 DECL|function|scsi_mlqueue_finish
+r_int
 id|scsi_mlqueue_finish
 c_func
 (paren
@@ -351,7 +351,7 @@ l_string|&quot;scsi_mlqueue_finish starting&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * First, clear the flag for the host/device.  We will then start&n;     * pushing commands through until either something else blocks, or&n;     * the queue is empty.&n;     */
+multiline_comment|/*&n;&t; * First, clear the flag for the host/device.  We will then start&n;&t; * pushing commands through until either something else blocks, or&n;&t; * the queue is empty.&n;&t; */
 r_if
 c_cond
 (paren
@@ -382,7 +382,7 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Walk the list of commands to see if there is anything we can&n;     * queue.  This probably needs to be optimized for performance at&n;     * some point.&n;     */
+multiline_comment|/*&n;&t; * Walk the list of commands to see if there is anything we can&n;&t; * queue.  This probably needs to be optimized for performance at&n;&t; * some point.&n;&t; */
 id|prev
 op_assign
 l_int|NULL
@@ -414,7 +414,7 @@ id|next
 op_assign
 id|cpnt-&gt;bh_next
 suffix:semicolon
-multiline_comment|/*&n;&t; * First, see if this command is suitable for being retried now.&n;&t; */
+multiline_comment|/*&n;&t;&t; * First, see if this command is suitable for being retried now.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -423,7 +423,7 @@ op_eq
 id|SCSI_MLQUEUE_HOST_BUSY
 )paren
 (brace
-multiline_comment|/*&n;&t;     * The host was busy, but isn&squot;t any more.  Thus we may be&n;&t;     * able to queue the command now, but we were waiting for&n;&t;     * the device, then we should keep waiting.  Similarily, if&n;&t;     * the device is now busy, we should also keep waiting.&n;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * The host was busy, but isn&squot;t any more.  Thus we may be&n;&t;&t;&t; * able to queue the command now, but we were waiting for&n;&t;&t;&t; * the device, then we should keep waiting.  Similarily, if&n;&t;&t;&t; * the device is now busy, we should also keep waiting.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -456,7 +456,7 @@ op_eq
 id|SCSI_MLQUEUE_DEVICE_BUSY
 )paren
 (brace
-multiline_comment|/*&n;&t;     * The device was busy, but isn&squot;t any more.  Thus we may be&n;&t;     * able to queue the command now, but we were waiting for&n;&t;     * the host, then we should keep waiting.  Similarily, if&n;&t;     * the host is now busy, we should also keep waiting.&n;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * The device was busy, but isn&squot;t any more.  Thus we may be&n;&t;&t;&t; * able to queue the command now, but we were waiting for&n;&t;&t;&t; * the host, then we should keep waiting.  Similarily, if&n;&t;&t;&t; * the host is now busy, we should also keep waiting.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -481,7 +481,7 @@ r_continue
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * First, remove the command from the list.&n;&t; */
+multiline_comment|/*&n;&t;&t; * First, remove the command from the list.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -514,7 +514,7 @@ c_func
 id|cpnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we got a non-zero return value, it means that the host rejected&n;&t; * the command.  The internal_cmnd function will have added the&n;&t; * command back to the end of the list, so we don&squot;t have anything&n;&t; * more to do here except return.&n;&t; */
+multiline_comment|/*&n;&t;&t; * If we got a non-zero return value, it means that the host rejected&n;&t;&t; * the command.  The internal_cmnd function will have added the&n;&t;&t; * command back to the end of the list, so we don&squot;t have anything&n;&t;&t; * more to do here except return.&n;&t;&t; */
 r_if
 c_cond
 (paren

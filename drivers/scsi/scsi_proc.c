@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/scsi/scsi_proc.c&n; *&n; * The functions in this file provide an interface between&n; * the PROC file system and the SCSI device drivers&n; * It is mainly used for debugging, statistics and to pass &n; * information directly to the lowlevel driver.&n; *&n; * (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de &n; * Version: 0.99.8   last change: 95/09/13&n; * &n; * generic command parser provided by: &n; * Andreas Heilwagen &lt;crashcar@informatik.uni-koblenz.de&gt;&n; *&n; * generic_proc_info() support of xxxx_info() by:&n; * Michael A. Griffith &lt;grif@acm.org&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_PROC_FS */
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PROC_FS */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -118,12 +118,12 @@ id|inout
 op_eq
 id|TRUE
 )paren
-(brace
 r_return
+(paren
 op_minus
 id|ENOSYS
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* This is a no-op */
 id|begin
 op_assign
@@ -215,14 +215,14 @@ id|len
 OG
 id|length
 )paren
-(brace
 id|len
 op_assign
 id|length
 suffix:semicolon
-)brace
 r_return
+(paren
 id|len
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* dispatch_scsi_info is the central dispatcher &n; * It is the interface between the proc-fs and the SCSI subsystem code&n; */
@@ -269,8 +269,9 @@ op_eq
 id|PROC_SCSI_SCSI
 )paren
 (brace
-multiline_comment|/*&n;         * This is for the scsi core, rather than any specific&n;         * lowlevel driver.&n;         */
+multiline_comment|/*&n;&t;&t; * This is for the scsi core, rather than any specific&n;&t;&t; * lowlevel driver.&n;&t;&t; */
 r_return
+(paren
 id|scsi_proc_info
 c_func
 (paren
@@ -285,6 +286,7 @@ comma
 l_int|0
 comma
 id|func
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -313,7 +315,6 @@ id|hpnt-&gt;hostt-&gt;proc_info
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 id|generic_proc_info
 c_func
@@ -335,9 +336,9 @@ comma
 id|hpnt
 )paren
 suffix:semicolon
-)brace
 r_else
 r_return
+(paren
 id|hpnt-&gt;hostt
 op_member_access_from_pointer
 id|proc_info
@@ -355,6 +356,7 @@ id|hpnt-&gt;host_no
 comma
 id|func
 )paren
+)paren
 suffix:semicolon
 )brace
 id|hpnt
@@ -363,8 +365,10 @@ id|hpnt-&gt;next
 suffix:semicolon
 )brace
 r_return
+(paren
 op_minus
 id|EBADF
+)paren
 suffix:semicolon
 )brace
 DECL|function|scsi_proc_fill_inode
@@ -505,14 +509,12 @@ id|scsi_hba_dir
 op_eq
 l_int|NULL
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;Not enough memory to register SCSI HBA in /proc/scsi !&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -573,7 +575,7 @@ id|hpnt-&gt;next
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *  parseHandle *parseInit(char *buf, char *cmdList, int cmdNum); &n; *&t; &t;gets a pointer to a null terminated data buffer&n; *&t;&t;and a list of commands with blanks as delimiter &n; *      in between. &n; *      The commands have to be alphanumerically sorted. &n; *      cmdNum has to contain the number of commands.&n; *&t;&t;On success, a pointer to a handle structure&n; *&t;&t;is returned, NULL on failure&n; *&n; *&t;int parseOpt(parseHandle *handle, char **param);&n; *&t;&t;processes the next parameter. On success, the&n; *&t;&t;index of the appropriate command in the cmdList&n; *&t;&t;is returned, starting with zero.&n; *&t;&t;param points to the null terminated parameter string.&n; *&t;&t;On failure, -1 is returned.&n; *&n; *&t;The databuffer buf may only contain pairs of commands&n; *&t;    options, separated by blanks:&n; *&t;&t;&lt;Command&gt; &lt;Parameter&gt; [&lt;Command&gt; &lt;Parameter&gt;]*&n; */
+multiline_comment|/*&n; *  parseHandle *parseInit(char *buf, char *cmdList, int cmdNum); &n; *              gets a pointer to a null terminated data buffer&n; *              and a list of commands with blanks as delimiter &n; *      in between. &n; *      The commands have to be alphanumerically sorted. &n; *      cmdNum has to contain the number of commands.&n; *              On success, a pointer to a handle structure&n; *              is returned, NULL on failure&n; *&n; *      int parseOpt(parseHandle *handle, char **param);&n; *              processes the next parameter. On success, the&n; *              index of the appropriate command in the cmdList&n; *              is returned, starting with zero.&n; *              param points to the null terminated parameter string.&n; *              On failure, -1 is returned.&n; *&n; *      The databuffer buf may only contain pairs of commands&n; *          options, separated by blanks:&n; *              &lt;Command&gt; &lt;Parameter&gt; [&lt;Command&gt; &lt;Parameter&gt;]*&n; */
 r_typedef
 r_struct
 (brace
@@ -611,26 +613,31 @@ DECL|function|parseFree
 r_inline
 r_int
 id|parseFree
+c_func
 (paren
 id|parseHandle
 op_star
 id|handle
 )paren
-multiline_comment|/* free memory     */
 (brace
+multiline_comment|/* free memory     */
 id|kfree
+c_func
 (paren
 id|handle-&gt;cmdPos
 )paren
 suffix:semicolon
 id|kfree
+c_func
 (paren
 id|handle
 )paren
 suffix:semicolon
 r_return
+(paren
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 )brace
 DECL|function|parseInit
@@ -672,7 +679,9 @@ id|cmdList
 )paren
 multiline_comment|/* bad input ?     */
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -699,7 +708,9 @@ op_eq
 l_int|0
 )paren
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* out of memory   */
 r_if
@@ -737,7 +748,9 @@ id|handle
 )paren
 suffix:semicolon
 r_return
+(paren
 l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* out of memory   */
 )brace
@@ -808,7 +821,9 @@ suffix:semicolon
 )brace
 )brace
 r_return
+(paren
 id|handle
+)paren
 suffix:semicolon
 )brace
 DECL|function|parseOpt
@@ -847,10 +862,12 @@ id|handle
 )paren
 multiline_comment|/* invalid handle  */
 r_return
+(paren
 id|parseFree
 c_func
 (paren
 id|handle
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* skip spaces     */
@@ -884,10 +901,12 @@ id|handle-&gt;bufPos
 )paren
 )paren
 r_return
+(paren
 id|parseFree
 c_func
 (paren
 id|handle
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* end of data     */
@@ -969,10 +988,12 @@ id|cmdLen
 )paren
 )paren
 r_return
+(paren
 id|parseFree
 c_func
 (paren
 id|handle
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* unknown command */
@@ -984,10 +1005,12 @@ op_ge
 id|handle-&gt;cmdNum
 )paren
 r_return
+(paren
 id|parseFree
 c_func
 (paren
 id|handle
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* unknown command */
@@ -1052,7 +1075,9 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+(paren
 id|cmdIndex
+)paren
 suffix:semicolon
 )brace
 DECL|function|proc_print_scsidevice
@@ -1460,6 +1485,6 @@ id|len
 )paren
 (brace
 )brace
-macro_line|#endif /* CONFIG_PROC_FS */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_PROC_FS */
 multiline_comment|/*&n; * Overrides for Emacs so that we get a uniform tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

@@ -1253,6 +1253,7 @@ l_int|100
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;This code is badly broken. We cannot simply pick ports as the &n; *&t;ISAPnP specification implies. We should try 4 or 5 safe ports&n; *&t;then bale by default.&n; *&n; *&t;This code touches NE2K cards or other devices and your box is&n; *&t;history.&n; */
 DECL|function|isapnp_isolate_rdp_select
 r_static
 r_int
@@ -11666,6 +11667,13 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Print a message. The existing ISAPnP code is hanging machines&n;&t; *&t;so let the user know where.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;isapnp: Scanning for Pnp cards...&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -59,5 +59,5 @@ mdefine_line|#define SCSI_RESET_HOST_RESET 0x200
 multiline_comment|/*&n; * Used to mask off bits and to obtain the basic action that was&n; * performed.  &n; */
 DECL|macro|SCSI_RESET_ACTION
 mdefine_line|#define SCSI_RESET_ACTION   0xff
-macro_line|#endif /* SCSI_OBSOLETE_H */
+macro_line|#endif&t;&t;&t;&t;/* SCSI_OBSOLETE_H */
 eof

@@ -68,13 +68,9 @@ l_int|0
 )braket
 op_amp
 l_int|1
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
 )paren
 op_or
+(paren
 (paren
 id|buf
 (braket
@@ -82,11 +78,9 @@ l_int|0
 )braket
 op_amp
 l_int|2
-ques
-c_cond
-l_int|4
-suffix:colon
-l_int|0
+)paren
+op_lshift
+l_int|1
 )paren
 op_or
 (paren
@@ -117,6 +111,8 @@ l_int|2
 )braket
 comma
 id|buttons
+op_xor
+l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/*    ikbd_mouse_rel_pos(); */

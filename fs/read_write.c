@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|default_llseek
-r_static
 id|loff_t
 id|default_llseek
 c_func

@@ -16,17 +16,17 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 DECL|macro|NORMAL_RETRIES
-mdefine_line|#define NORMAL_RETRIES 5   
+mdefine_line|#define NORMAL_RETRIES&t;&t;&t;5
 DECL|macro|NORMAL_TIMEOUT
-mdefine_line|#define NORMAL_TIMEOUT (10 * HZ)
+mdefine_line|#define NORMAL_TIMEOUT&t;&t;&t;(10 * HZ)
 DECL|macro|FORMAT_UNIT_TIMEOUT
-mdefine_line|#define FORMAT_UNIT_TIMEOUT (2 * 60 * 60 * HZ)
+mdefine_line|#define FORMAT_UNIT_TIMEOUT&t;&t;(2 * 60 * 60 * HZ)
 DECL|macro|START_STOP_TIMEOUT
-mdefine_line|#define START_STOP_TIMEOUT (60 * HZ)
+mdefine_line|#define START_STOP_TIMEOUT&t;&t;(60 * HZ)
 DECL|macro|MOVE_MEDIUM_TIMEOUT
-mdefine_line|#define MOVE_MEDIUM_TIMEOUT (5 * 60 * HZ)
+mdefine_line|#define MOVE_MEDIUM_TIMEOUT&t;&t;(5 * 60 * HZ)
 DECL|macro|READ_ELEMENT_STATUS_TIMEOUT
-mdefine_line|#define READ_ELEMENT_STATUS_TIMEOUT (5 * 60 * HZ)
+mdefine_line|#define READ_ELEMENT_STATUS_TIMEOUT&t;(5 * 60 * HZ)
 DECL|macro|MAX_BUF
 mdefine_line|#define MAX_BUF PAGE_SIZE
 DECL|macro|max
@@ -117,7 +117,6 @@ c_cond
 (paren
 id|host-&gt;hostt-&gt;info
 )paren
-(brace
 id|string
 op_assign
 id|host-&gt;hostt
@@ -128,7 +127,6 @@ c_func
 id|host
 )paren
 suffix:semicolon
-)brace
 r_else
 id|string
 op_assign
@@ -182,6 +180,7 @@ r_return
 id|result
 suffix:semicolon
 id|copy_to_user
+c_func
 (paren
 id|buffer
 comma
@@ -196,11 +195,12 @@ r_return
 id|temp
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &n; * The SCSI_IOCTL_SEND_COMMAND ioctl sends a command out to the SCSI host.&n; * The NORMAL_TIMEOUT and NORMAL_RETRIES  variables are used.  &n; * &n; * dev is the SCSI device struct ptr, *(int *) arg is the length of the&n; * input data, if any, not including the command string &amp; counts, &n; * *((int *)arg + 1) is the output buffer size in bytes.&n; * &n; * *(char *) ((int *) arg)[2] the actual command byte.   &n; * &n; * Note that if more than MAX_BUF bytes are requested to be transfered,&n; * the ioctl will fail with error EINVAL.  MAX_BUF can be increased in&n; * the future by increasing the size that scsi_malloc will accept.&n; * &n; * This size *does not* include the initial lengths that were passed.&n; * &n; * The SCSI command is read from the memory location immediately after the&n; * length words, and the input data is right after the command.  The SCSI&n; * routines know the command size based on the opcode decode.  &n; * &n; * The output area is then filled in starting from the command byte. &n; */
+multiline_comment|/*&n;&n; * The SCSI_IOCTL_SEND_COMMAND ioctl sends a command out to the SCSI host.&n; * The NORMAL_TIMEOUT and NORMAL_RETRIES  variables are used.  &n; * &n; * dev is the SCSI device struct ptr, *(int *) arg is the length of the&n; * input data, if any, not including the command string &amp; counts, &n; * *((int *)arg + 1) is the output buffer size in bytes.&n; * &n; * *(char *) ((int *) arg)[2] the actual command byte.   &n; * &n; * Note that if more than MAX_BUF bytes are requested to be transfered,&n; * the ioctl will fail with error EINVAL.  MAX_BUF can be increased in&n; * the future by increasing the size that scsi_malloc will accept.&n; * &n; * This size *does not* include the initial lengths that were passed.&n; * &n; * The SCSI command is read from the memory location immediately after the&n; * length words, and the input data is right after the command.  The SCSI&n; * routines know the command size based on the opcode decode.  &n; * &n; * The output area is then filled in starting from the command byte. &n; */
 DECL|function|scsi_ioctl_done
 r_static
 r_void
 id|scsi_ioctl_done
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -421,12 +421,10 @@ l_int|0
 op_eq
 id|ALLOW_MEDIUM_REMOVAL
 )paren
-(brace
 id|dev-&gt;lockable
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -679,7 +677,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;     * Verify that we can read at least this much.&n;     */
+multiline_comment|/*&n;&t; * Verify that we can read at least this much.&n;&t; */
 id|result
 op_assign
 id|verify_area
@@ -703,7 +701,7 @@ id|result
 r_return
 id|result
 suffix:semicolon
-multiline_comment|/*&n;     * The structure that we are passed should look like:&n;     *&n;     * struct sdata {&n;     *&t;unsigned int inlen;&n;     *&t;unsigned int outlen;&n;     *&t;unsigned char  cmd[];  # However many bytes are used for cmd.&n;     *&t;unsigned char  data[];&n;     * };&n;     */
+multiline_comment|/*&n;&t; * The structure that we are passed should look like:&n;&t; *&n;&t; * struct sdata {&n;&t; *  unsigned int inlen;&n;&t; *  unsigned int outlen;&n;&t; *  unsigned char  cmd[];  # However many bytes are used for cmd.&n;&t; *  unsigned char  data[];&n;&t; * };&n;&t; */
 id|get_user
 c_func
 (paren
@@ -722,7 +720,7 @@ op_amp
 id|sic-&gt;outlen
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * We do not transfer more than MAX_BUF with this interface.&n;     * If the user needs to transfer more data than this, they&n;     * should use scsi_generics instead.&n;     */
+multiline_comment|/*&n;&t; * We do not transfer more than MAX_BUF with this interface.&n;&t; * If the user needs to transfer more data than this, they&n;&t; * should use scsi_generics instead.&n;&t; */
 r_if
 c_cond
 (paren
@@ -730,12 +728,10 @@ id|inlen
 OG
 id|MAX_BUF
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -743,12 +739,10 @@ id|outlen
 OG
 id|MAX_BUF
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 id|cmd_in
 op_assign
 id|sic-&gt;data
@@ -860,7 +854,7 @@ id|buf
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;     * Obtain the command from the user&squot;s address space.&n;     */
+multiline_comment|/*&n;&t; * Obtain the command from the user&squot;s address space.&n;&t; */
 id|cmdlen
 op_assign
 id|COMMAND_SIZE
@@ -901,6 +895,7 @@ r_return
 id|result
 suffix:semicolon
 id|copy_from_user
+c_func
 (paren
 (paren
 r_void
@@ -913,8 +908,9 @@ comma
 id|cmdlen
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Obtain the data to be sent to the device (if any).&n;     */
+multiline_comment|/*&n;&t; * Obtain the data to be sent to the device (if any).&n;&t; */
 id|copy_from_user
+c_func
 (paren
 (paren
 r_void
@@ -935,7 +931,7 @@ comma
 id|inlen
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Set the lun field to the correct value.&n;     */
+multiline_comment|/*&n;&t; * Set the lun field to the correct value.&n;&t; */
 id|cmd
 (braket
 l_int|1
@@ -1100,7 +1096,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* &n;     * If there was an error condition, pass the info back to the user. &n;     */
+multiline_comment|/* &n;&t; * If there was an error condition, pass the info back to the user. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1171,6 +1167,7 @@ r_return
 id|result
 suffix:semicolon
 id|copy_to_user
+c_func
 (paren
 (paren
 r_void
@@ -1236,7 +1233,6 @@ c_cond
 (paren
 id|SDpnt-&gt;scsi_request_fn
 )paren
-(brace
 (paren
 op_star
 id|SDpnt-&gt;scsi_request_fn
@@ -1244,7 +1240,6 @@ id|SDpnt-&gt;scsi_request_fn
 (paren
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -1364,6 +1359,7 @@ multiline_comment|/*&n; * the scsi_ioctl() function differs from most ioctls in 
 DECL|function|scsi_ioctl
 r_int
 id|scsi_ioctl
+c_func
 (paren
 id|Scsi_Device
 op_star
@@ -1397,7 +1393,7 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-multiline_comment|/*&n;     * If we are in the middle of error recovery, don&squot;t let anyone&n;     * else try and use this device.  Also, if error recovery fails, it&n;     * may try and take the device offline, in which case all further&n;     * access to the device is prohibited.&n;     */
+multiline_comment|/*&n;&t; * If we are in the middle of error recovery, don&squot;t let anyone&n;&t; * else try and use this device.  Also, if error recovery fails, it&n;&t; * may try and take the device offline, in which case all further&n;&t; * access to the device is prohibited.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1563,24 +1559,20 @@ c_func
 id|CAP_SYS_ADMIN
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EACCES
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|dev-&gt;tagged_supported
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 id|dev-&gt;tagged_queue
 op_assign
 l_int|1
@@ -1605,24 +1597,20 @@ c_func
 id|CAP_SYS_ADMIN
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EACCES
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|dev-&gt;tagged_supported
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 id|dev-&gt;tagged_queue
 op_assign
 l_int|0
@@ -1659,12 +1647,10 @@ c_func
 id|CAP_SYS_ADMIN
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EACCES
 suffix:semicolon
-)brace
 r_return
 id|scsi_ioctl_send_command
 c_func
@@ -2016,6 +2002,8 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+(brace
+)brace
 r_if
 c_cond
 (paren
@@ -2048,6 +2036,7 @@ multiline_comment|/*&n; * Just like scsi_ioctl, only callable from kernel space 
 DECL|function|kernel_scsi_ioctl
 r_int
 id|kernel_scsi_ioctl
+c_func
 (paren
 id|Scsi_Device
 op_star
@@ -2086,6 +2075,7 @@ suffix:semicolon
 id|tmp
 op_assign
 id|scsi_ioctl
+c_func
 (paren
 id|dev
 comma
