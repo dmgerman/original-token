@@ -101,7 +101,10 @@ l_int|0
 comma
 multiline_comment|/* ega_ax, ega_bx, ega_cx */
 l_int|25
+comma
 multiline_comment|/* orig-video-lines */
+l_int|16
+multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
 DECL|function|find_end_memory
@@ -269,17 +272,10 @@ op_assign
 l_int|0x0802
 suffix:semicolon
 multiline_comment|/* sda2 */
-macro_line|#ifndef CONFIG_PCI
 id|aux_device_present
 op_assign
 l_int|0xaa
 suffix:semicolon
-macro_line|#else
-id|aux_device_present
-op_assign
-l_int|0x00
-suffix:semicolon
-macro_line|#endif
 id|command_line
 (braket
 id|COMMAND_LINE_SIZE

@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;

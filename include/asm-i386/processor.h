@@ -459,5 +459,34 @@ op_assign
 id|esp
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
+DECL|function|thread_saved_pc
+r_extern
+r_inline
+r_int
+r_int
+id|thread_saved_pc
+c_func
+(paren
+r_struct
+id|thread_struct
+op_star
+id|t
+)paren
+(brace
+r_return
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|t-&gt;esp
+)paren
+(braket
+l_int|3
+)braket
+suffix:semicolon
+)brace
 macro_line|#endif /* __ASM_I386_PROCESSOR_H */
 eof

@@ -238,11 +238,9 @@ id|atype
 op_eq
 id|IS_BROADCAST
 op_logical_or
-id|IN_MULTICAST
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
+id|atype
+op_eq
+id|IS_MULTICAST
 )paren
 (brace
 r_return

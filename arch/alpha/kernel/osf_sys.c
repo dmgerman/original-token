@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -106,13 +107,16 @@ r_const
 r_char
 op_star
 id|specialfile
+comma
+r_int
+id|swap_flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * OSF/1 directory handling functions...&n; *&n; * The &quot;getdents()&quot; interface is much more sane: the &quot;basep&quot; stuff is&n; * braindamage (it can&squot;t really handle filesystems where the directory&n; * offset differences aren&squot;t the same as &quot;d_reclen&quot;).&n; */
 DECL|macro|NAME_OFFSET
 mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
 DECL|macro|ROUND_UP
-mdefine_line|#define ROUND_UP(x) (((x)+7) &amp; ~7)
+mdefine_line|#define ROUND_UP(x) (((x)+3) &amp; ~3)
 DECL|struct|osf_dirent
 r_struct
 id|osf_dirent
@@ -480,7 +484,8 @@ id|file-&gt;f_inode
 comma
 id|file
 comma
-id|dirent
+op_amp
+id|buf
 comma
 id|osf_filldir
 )paren
@@ -2229,12 +2234,14 @@ r_int
 id|hiwat
 )paren
 (brace
-multiline_comment|/* for now, simply ignore flags, lowat and hiwat... */
+multiline_comment|/* for now, simply ignore lowat and hiwat... */
 r_return
 id|sys_swapon
 c_func
 (paren
 id|path
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -2440,6 +2447,58 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|osf_shmat
+id|asmlinkage
+r_int
+id|osf_shmat
+c_func
+(paren
+r_int
+id|shmid
+comma
+r_void
+op_star
+id|shmaddr
+comma
+r_int
+id|shmflg
+)paren
+(brace
+r_int
+r_int
+id|raddr
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+id|err
+op_assign
+id|sys_shmat
+c_func
+(paren
+id|shmid
+comma
+id|shmaddr
+comma
+id|shmflg
+comma
+op_amp
+id|raddr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
+suffix:semicolon
+multiline_comment|/*&n;&t; * This works because all user-level addresses are&n;&t; * non-negative longs!&n;&t; */
+r_return
+id|raddr
 suffix:semicolon
 )brace
 eof

@@ -3171,7 +3171,7 @@ c_func
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef __i386__
+macro_line|#if ((~0UL) == 0xffffffff)
 r_if
 c_cond
 (paren
@@ -3191,17 +3191,40 @@ c_func
 (paren
 l_string|&quot; %08lX &quot;
 comma
+id|thread_saved_pc
+c_func
 (paren
+op_amp
+id|p-&gt;tss
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
 (paren
-r_int
-r_int
-op_star
+id|p
+op_eq
+id|current
 )paren
-id|p-&gt;tss.esp
+id|printk
+c_func
+(paren
+l_string|&quot;   current task   &quot;
 )paren
-(braket
-l_int|3
-)braket
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot; %016lx &quot;
+comma
+id|thread_saved_pc
+c_func
+(paren
+op_amp
+id|p-&gt;tss
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3214,7 +3237,12 @@ l_int|1
 suffix:semicolon
 id|free
 OL
-l_int|1024
+id|PAGE_SIZE
+op_div
+r_sizeof
+(paren
+r_int
+)paren
 suffix:semicolon
 id|free
 op_increment
@@ -3244,8 +3272,11 @@ c_func
 l_string|&quot;%5lu %5d %6d &quot;
 comma
 id|free
-op_lshift
-l_int|2
+op_star
+r_sizeof
+(paren
+r_int
+)paren
 comma
 id|p-&gt;pid
 comma
@@ -3324,9 +3355,11 @@ r_void
 r_int
 id|i
 suffix:semicolon
+macro_line|#if ((~0UL) == 0xffffffff)
 id|printk
 c_func
 (paren
+l_string|&quot;&bslash;n&quot;
 l_string|&quot;                         free                        sibling&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3336,6 +3369,21 @@ c_func
 l_string|&quot;  task             PC    stack   pid father child younger older&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+l_string|&quot;                                 free                        sibling&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  task                 PC        stack   pid father child younger older&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren

@@ -29,6 +29,21 @@ r_int
 id|options
 )paren
 suffix:semicolon
+id|asmlinkage
+r_int
+id|do_signal
+c_func
+(paren
+r_int
+r_int
+id|oldmask
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * atomically swap in the new signal mask, and wait for a signal.&n; */
 DECL|function|sys_sigsuspend
 id|asmlinkage

@@ -4,53 +4,7 @@ mdefine_line|#define __A_OUT_GNU_H__
 DECL|macro|__GNU_EXEC_MACROS__
 mdefine_line|#define __GNU_EXEC_MACROS__
 macro_line|#ifndef __STRUCT_EXEC_OVERRIDE__
-DECL|struct|exec
-r_struct
-id|exec
-(brace
-DECL|member|a_info
-r_int
-r_int
-id|a_info
-suffix:semicolon
-multiline_comment|/* Use macros N_MAGIC, etc for access */
-DECL|member|a_text
-r_int
-id|a_text
-suffix:semicolon
-multiline_comment|/* length of text, in bytes */
-DECL|member|a_data
-r_int
-id|a_data
-suffix:semicolon
-multiline_comment|/* length of data, in bytes */
-DECL|member|a_bss
-r_int
-id|a_bss
-suffix:semicolon
-multiline_comment|/* length of uninitialized data area for file, in bytes */
-DECL|member|a_syms
-r_int
-id|a_syms
-suffix:semicolon
-multiline_comment|/* length of symbol table data in file, in bytes */
-DECL|member|a_entry
-r_int
-id|a_entry
-suffix:semicolon
-multiline_comment|/* start address */
-DECL|member|a_trsize
-r_int
-id|a_trsize
-suffix:semicolon
-multiline_comment|/* length of relocation info for text, in bytes */
-DECL|member|a_drsize
-r_int
-id|a_drsize
-suffix:semicolon
-multiline_comment|/* length of relocation info for data, in bytes */
-)brace
-suffix:semicolon
+macro_line|#include &lt;asm/a.out.h&gt;
 macro_line|#endif /* __STRUCT_EXEC_OVERRIDE__ */
 multiline_comment|/* these go in the N_MACHTYPE field */
 DECL|enum|machine_type
@@ -200,8 +154,13 @@ mdefine_line|#define SEGMENT_SIZE PAGE_SIZE
 macro_line|#endif
 macro_line|#ifdef linux
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#ifdef __i386__
 DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE&t;1024
+macro_line|#else
+DECL|macro|SEGMENT_SIZE
+mdefine_line|#define SEGMENT_SIZE&t;PAGE_SIZE
+macro_line|#endif
 macro_line|#endif
 DECL|macro|_N_SEGMENT_ROUND
 mdefine_line|#define _N_SEGMENT_ROUND(x) (((x) + SEGMENT_SIZE - 1) &amp; ~(SEGMENT_SIZE - 1))

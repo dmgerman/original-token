@@ -1,5 +1,3 @@
-DECL|macro|DEBUG
-mdefine_line|#define  DEBUG
 multiline_comment|/*&n; * bios32.c - PCI BIOS functions for Alpha systems not using BIOS&n; *&t;      emulation code.&n; *&n; * Written by Dave Rusling (david.rusling@reo.mts.dec.com)&n; *&n; * Adapted to 64-bit kernel and then rewritten by David Mosberger&n; * (davidm@cs.arizona.edu)&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef CONFIG_PCI
@@ -166,9 +164,9 @@ op_logical_neg
 id|base
 )paren
 (brace
-r_break
+multiline_comment|/* this base-address register is unused */
+r_continue
 suffix:semicolon
-multiline_comment|/* done with this device */
 )brace
 multiline_comment|/*&n;&t;&t; * We&squot;ve read the base address register back after&n;&t;&t; * writing all ones and so now we must decode it.&n;&t;&t; */
 r_if
@@ -1465,6 +1463,118 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* !PCI_MODIFY */
+multiline_comment|/*&n;&t; * The SRM console *disables* the IDE interface, this code *&n;&t; * enables it.&t;With the miniloader, this may not be necessary&n;&t; * but it shouldn&squot;t hurt either.&n;&t; *&n;&t; * This code bangs on a control register of the 87312 Super&n;&t; * I/O chip that implements parallel port/serial&n;&t; * ports/IDE/FDI.  Depending on the motherboard, the Super I/O&n;&t; * chip can be configured through a pair of registers that are&n;&t; * located either at I/O ports 0x26e/0x26f or 0x398/0x399.&n;&t; * Unfortunately, autodetecting which base address is in use&n;&t; * works only once (right after a reset).  On the other hand,&n;&t; * the Noname board hardwires the I/O ports to 0x26e/0x26f so&n;&t; * we just use those.  The Super I/O chip has the additional&n;&t; * quirk that configuration register data must be written&n;&t; * twice (I believe this is a saftey feature to prevent&n;&t; * accidental modification---happy PC world...).&n;&t; */
+(brace
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|data
+suffix:semicolon
+multiline_comment|/* update needs to be atomic: */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+l_int|0x26e
+)paren
+suffix:semicolon
+multiline_comment|/* set the index register for reg #0 */
+id|data
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x26f
+)paren
+suffix:semicolon
+multiline_comment|/* read the current contents */
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;base @ 0x26e: reg#0 0x%x&bslash;n&quot;
+comma
+id|data
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb
+c_func
+(paren
+l_int|0
+comma
+l_int|0x26e
+)paren
+suffix:semicolon
+multiline_comment|/* set the index register for reg #0 */
+id|outb
+c_func
+(paren
+id|data
+op_or
+l_int|0x40
+comma
+l_int|0x26f
+)paren
+suffix:semicolon
+multiline_comment|/* turn on IDE */
+id|outb
+c_func
+(paren
+id|data
+op_or
+l_int|0x40
+comma
+l_int|0x26f
+)paren
+suffix:semicolon
+multiline_comment|/* yes, we really mean it... */
+macro_line|#ifdef DEBUG
+id|outb
+c_func
+(paren
+l_int|0
+comma
+l_int|0x26e
+)paren
+suffix:semicolon
+id|data
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x26f
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;base @ 0x26e: reg#0 0x%x&bslash;n&quot;
+comma
+id|data
+)paren
+suffix:semicolon
+macro_line|#endif
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|pcibios_fixup
 r_int
@@ -1524,6 +1634,74 @@ suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon
+)brace
+DECL|function|pcibios_strerror
+r_char
+op_star
+id|pcibios_strerror
+(paren
+r_int
+id|error
+)paren
+(brace
+r_static
+r_char
+id|buf
+(braket
+l_int|80
+)braket
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|error
+)paren
+(brace
+r_case
+id|PCIBIOS_SUCCESSFUL
+suffix:colon
+r_return
+l_string|&quot;SUCCESSFUL&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_FUNC_NOT_SUPPORTED
+suffix:colon
+r_return
+l_string|&quot;FUNC_NOT_SUPPORTED&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_BAD_VENDOR_ID
+suffix:colon
+r_return
+l_string|&quot;SUCCESSFUL&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_DEVICE_NOT_FOUND
+suffix:colon
+r_return
+l_string|&quot;DEVICE_NOT_FOUND&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:colon
+r_return
+l_string|&quot;BAD_REGISTER_NUMBER&quot;
+suffix:semicolon
+r_default
+suffix:colon
+id|sprintf
+(paren
+id|buf
+comma
+l_string|&quot;UNKNOWN RETURN 0x%x&quot;
+comma
+id|error
+)paren
+suffix:semicolon
+r_return
+id|buf
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* CONFIG_PCI */
 eof

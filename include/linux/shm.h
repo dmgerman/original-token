@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_SHM_H_
 DECL|macro|_LINUX_SHM_H_
 mdefine_line|#define _LINUX_SHM_H_
 macro_line|#include &lt;linux/ipc.h&gt;
+macro_line|#include &lt;asm/shmparam.h&gt;
 DECL|struct|shmid_ds
 r_struct
 id|shmid_ds
@@ -115,38 +116,6 @@ id|shmall
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* address range for shared memory attaches if no address passed to shmat() */
-DECL|macro|SHM_RANGE_START
-mdefine_line|#define SHM_RANGE_START&t;0x50000000
-DECL|macro|SHM_RANGE_END
-mdefine_line|#define SHM_RANGE_END&t;0x60000000
-multiline_comment|/* format of page table entries that correspond to shared memory pages&n;   currently out in swap space (see also mm/swap.c):&n;   bit 0 (PAGE_PRESENT) is  = 0&n;   bits 7..1 (SWP_TYPE) are = SHM_SWP_TYPE&n;   bits 31..8 are used like this:&n;   bits 14..8 (SHM_ID) the id of the shared memory segment&n;   bits 29..15 (SHM_IDX) the index of the page within the shared memory segment&n;                    (actually only bits 24..15 get used since SHMMAX is so low)&n;*/
-DECL|macro|SHM_ID_SHIFT
-mdefine_line|#define SHM_ID_SHIFT&t;8
-multiline_comment|/* Keep _SHM_ID_BITS as low as possible since SHMMNI depends on it and&n;   there is a static array of size SHMMNI. */
-DECL|macro|_SHM_ID_BITS
-mdefine_line|#define _SHM_ID_BITS&t;7
-DECL|macro|SHM_ID_MASK
-mdefine_line|#define SHM_ID_MASK&t;((1&lt;&lt;_SHM_ID_BITS)-1)
-DECL|macro|SHM_IDX_SHIFT
-mdefine_line|#define SHM_IDX_SHIFT&t;(SHM_ID_SHIFT+_SHM_ID_BITS)
-DECL|macro|_SHM_IDX_BITS
-mdefine_line|#define _SHM_IDX_BITS&t;15
-DECL|macro|SHM_IDX_MASK
-mdefine_line|#define SHM_IDX_MASK&t;((1&lt;&lt;_SHM_IDX_BITS)-1)
-multiline_comment|/* We must have SHM_ID_SHIFT + _SHM_ID_BITS + _SHM_IDX_BITS &lt;= 32&n;   and SHMMAX &lt;= (PAGE_SIZE &lt;&lt; _SHM_IDX_BITS). */
-DECL|macro|SHMMAX
-mdefine_line|#define SHMMAX 0x3fa000&t;&t;&t;&t;/* max shared seg size (bytes) */
-DECL|macro|SHMMIN
-mdefine_line|#define SHMMIN 1&t; /* really PAGE_SIZE */&t;/* min shared seg size (bytes) */
-DECL|macro|SHMMNI
-mdefine_line|#define SHMMNI (1&lt;&lt;_SHM_ID_BITS)&t;&t;/* max num of segs system wide */
-DECL|macro|SHMALL
-mdefine_line|#define SHMALL (1&lt;&lt;(_SHM_IDX_BITS+_SHM_ID_BITS))/* max shm system wide (pages) */
-DECL|macro|SHMLBA
-mdefine_line|#define&t;SHMLBA 0x1000&t;&t;&t;&t;/* attach addr a multiple of this */
-DECL|macro|SHMSEG
-mdefine_line|#define SHMSEG SHMMNI&t;&t;&t;&t;/* max shared segs per process */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* shm_mode upper byte flags */
 DECL|macro|SHM_DEST
@@ -190,6 +159,68 @@ id|ulong
 id|swap_successes
 suffix:semicolon
 )brace
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_int
+id|sys_shmget
+(paren
+id|key_t
+id|key
+comma
+r_int
+id|size
+comma
+r_int
+id|flag
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_int
+id|sys_shmat
+(paren
+r_int
+id|shmid
+comma
+r_char
+op_star
+id|shmaddr
+comma
+r_int
+id|shmflg
+comma
+id|ulong
+op_star
+id|addr
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_int
+id|sys_shmdt
+(paren
+r_char
+op_star
+id|shmaddr
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_int
+id|sys_shmctl
+(paren
+r_int
+id|shmid
+comma
+r_int
+id|cmd
+comma
+r_struct
+id|shmid_ds
+op_star
+id|buf
+)paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SHM_H_ */

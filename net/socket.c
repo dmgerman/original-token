@@ -1925,10 +1925,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Perform the socket system call. we locate the appropriate&n; *&t;family, then create a fresh socket.&n; */
-DECL|function|sock_socket
-r_static
+DECL|function|sys_socket
+id|asmlinkage
 r_int
-id|sock_socket
+id|sys_socket
 c_func
 (paren
 r_int
@@ -2071,7 +2071,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;NET: sock_socket: no more sockets&bslash;n&quot;
+l_string|&quot;NET: sys_socket: no more sockets&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2154,10 +2154,10 @@ id|fd
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Create a pair of connected sockets.&n; */
-DECL|function|sock_socketpair
-r_static
+DECL|function|sys_socketpair
+id|asmlinkage
 r_int
-id|sock_socketpair
+id|sys_socketpair
 c_func
 (paren
 r_int
@@ -2202,7 +2202,7 @@ c_cond
 (paren
 id|fd1
 op_assign
-id|sock_socket
+id|sys_socket
 c_func
 (paren
 id|family
@@ -2253,7 +2253,7 @@ c_cond
 (paren
 id|fd2
 op_assign
-id|sock_socket
+id|sys_socket
 c_func
 (paren
 id|family
@@ -2408,10 +2408,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Bind a name to a socket. Nothing much to do here since it&squot;s&n; *&t;the protocol&squot;s responsibility to handle the local address.&n; *&n; *&t;We move the socket address to kernel space before we call&n; *&t;the protocol layer (having also checked the address is ok).&n; */
-DECL|function|sock_bind
-r_static
+DECL|function|sys_bind
+id|asmlinkage
 r_int
-id|sock_bind
+id|sys_bind
 c_func
 (paren
 r_int
@@ -2545,10 +2545,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Perform a listen. Basically, we allow the protocol to do anything&n; *&t;necessary for a listen, and if that works, we mark the socket as&n; *&t;ready for listening.&n; */
-DECL|function|sock_listen
-r_static
+DECL|function|sys_listen
+id|asmlinkage
 r_int
-id|sock_listen
+id|sys_listen
 c_func
 (paren
 r_int
@@ -2644,10 +2644,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;For accept, we attempt to create a new socket, set up the link&n; *&t;with the client, wake up the client, then return the new&n; *&t;connected fd. We collect the address of the connector in kernel&n; *&t;space and move it to user at the very end. This is buggy because&n; *&t;we open the socket then return an error.&n; */
-DECL|function|sock_accept
-r_static
+DECL|function|sys_accept
+id|asmlinkage
 r_int
-id|sock_accept
+id|sys_accept
 c_func
 (paren
 r_int
@@ -2937,10 +2937,10 @@ id|fd
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Attempt to connect to a socket with the server address.  The address&n; *&t;is in user space so we verify it is OK and move it to kernel space.&n; */
-DECL|function|sock_connect
-r_static
+DECL|function|sys_connect
+id|asmlinkage
 r_int
-id|sock_connect
+id|sys_connect
 c_func
 (paren
 r_int
@@ -3132,10 +3132,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Get the local address (&squot;name&squot;) of a socket object. Move the obtained&n; *&t;name to user space.&n; */
-DECL|function|sock_getsockname
-r_static
+DECL|function|sys_getsockname
+id|asmlinkage
 r_int
-id|sock_getsockname
+id|sys_getsockname
 c_func
 (paren
 r_int
@@ -3273,10 +3273,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Get the remote address (&squot;name&squot;) of a socket object. Move the obtained&n; *&t;name to user space.&n; */
-DECL|function|sock_getpeername
-r_static
+DECL|function|sys_getpeername
+id|asmlinkage
 r_int
-id|sock_getpeername
+id|sys_getpeername
 c_func
 (paren
 r_int
@@ -3414,10 +3414,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Send a datagram down a socket. The datagram as with write() is&n; *&t;in user space. We check it can be read.&n; */
-DECL|function|sock_send
-r_static
+DECL|function|sys_send
+id|asmlinkage
 r_int
-id|sock_send
+id|sys_send
 c_func
 (paren
 r_int
@@ -3553,10 +3553,10 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Send a datagram to a given address. We move the address into kernel&n; *&t;space and check the user space data area is readable before invoking&n; *&t;the protocol.&n; */
-DECL|function|sock_sendto
-r_static
+DECL|function|sys_sendto
+id|asmlinkage
 r_int
-id|sock_sendto
+id|sys_sendto
 c_func
 (paren
 r_int
@@ -3739,10 +3739,10 @@ id|addr_len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Receive a datagram from a socket. This isn&squot;t really right. The BSD manual&n; *&t;pages explicitly state that recv is recvfrom with a NULL to argument. The&n; *&t;Linux stack gets the right results for the wrong reason and this need to&n; *&t;be tidied in the inet layer and removed from here.&n; *&t;We check the buffer is writable and valid.&n; */
-DECL|function|sock_recv
-r_static
+DECL|function|sys_recv
+id|asmlinkage
 r_int
-id|sock_recv
+id|sys_recv
 c_func
 (paren
 r_int
@@ -3890,10 +3890,10 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Receive a frame from the socket and optionally record the address of the &n; *&t;sender. We verify the buffers are writable and if needed move the&n; *&t;sender address from kernel to user space.&n; */
-DECL|function|sock_recvfrom
-r_static
+DECL|function|sys_recvfrom
+id|asmlinkage
 r_int
-id|sock_recvfrom
+id|sys_recvfrom
 c_func
 (paren
 r_int
@@ -4115,10 +4115,10 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Set a socket option. Because we don&squot;t know the option lengths we have&n; *&t;to pass the user mode parameter for the protocols to sort out.&n; */
-DECL|function|sock_setsockopt
-r_static
+DECL|function|sys_setsockopt
+id|asmlinkage
 r_int
-id|sock_setsockopt
+id|sys_setsockopt
 c_func
 (paren
 r_int
@@ -4215,10 +4215,10 @@ id|optlen
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Get a socket option. Because we don&squot;t know the option lengths we have&n; *&t;to pass a user mode parameter for the protocols to sort out.&n; */
-DECL|function|sock_getsockopt
-r_static
+DECL|function|sys_getsockopt
+id|asmlinkage
 r_int
-id|sock_getsockopt
+id|sys_getsockopt
 c_func
 (paren
 r_int
@@ -4325,10 +4325,10 @@ id|optlen
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Shutdown a socket.&n; */
-DECL|function|sock_shutdown
-r_static
+DECL|function|sys_shutdown
+id|asmlinkage
 r_int
-id|sock_shutdown
+id|sys_shutdown
 c_func
 (paren
 r_int
@@ -4578,7 +4578,7 @@ r_case
 id|SYS_SOCKET
 suffix:colon
 r_return
-id|sock_socket
+id|sys_socket
 c_func
 (paren
 id|a0
@@ -4598,7 +4598,7 @@ r_case
 id|SYS_BIND
 suffix:colon
 r_return
-id|sock_bind
+id|sys_bind
 c_func
 (paren
 id|a0
@@ -4623,7 +4623,7 @@ r_case
 id|SYS_CONNECT
 suffix:colon
 r_return
-id|sock_connect
+id|sys_connect
 c_func
 (paren
 id|a0
@@ -4648,7 +4648,7 @@ r_case
 id|SYS_LISTEN
 suffix:colon
 r_return
-id|sock_listen
+id|sys_listen
 c_func
 (paren
 id|a0
@@ -4660,7 +4660,7 @@ r_case
 id|SYS_ACCEPT
 suffix:colon
 r_return
-id|sock_accept
+id|sys_accept
 c_func
 (paren
 id|a0
@@ -4689,7 +4689,7 @@ r_case
 id|SYS_GETSOCKNAME
 suffix:colon
 r_return
-id|sock_getsockname
+id|sys_getsockname
 c_func
 (paren
 id|a0
@@ -4718,7 +4718,7 @@ r_case
 id|SYS_GETPEERNAME
 suffix:colon
 r_return
-id|sock_getpeername
+id|sys_getpeername
 c_func
 (paren
 id|a0
@@ -4747,7 +4747,7 @@ r_case
 id|SYS_SOCKETPAIR
 suffix:colon
 r_return
-id|sock_socketpair
+id|sys_socketpair
 c_func
 (paren
 id|a0
@@ -4780,7 +4780,7 @@ r_case
 id|SYS_SEND
 suffix:colon
 r_return
-id|sock_send
+id|sys_send
 c_func
 (paren
 id|a0
@@ -4812,7 +4812,7 @@ r_case
 id|SYS_SENDTO
 suffix:colon
 r_return
-id|sock_sendto
+id|sys_sendto
 c_func
 (paren
 id|a0
@@ -4865,7 +4865,7 @@ r_case
 id|SYS_RECV
 suffix:colon
 r_return
-id|sock_recv
+id|sys_recv
 c_func
 (paren
 id|a0
@@ -4897,7 +4897,7 @@ r_case
 id|SYS_RECVFROM
 suffix:colon
 r_return
-id|sock_recvfrom
+id|sys_recvfrom
 c_func
 (paren
 id|a0
@@ -4954,7 +4954,7 @@ r_case
 id|SYS_SHUTDOWN
 suffix:colon
 r_return
-id|sock_shutdown
+id|sys_shutdown
 c_func
 (paren
 id|a0
@@ -4966,7 +4966,7 @@ r_case
 id|SYS_SETSOCKOPT
 suffix:colon
 r_return
-id|sock_setsockopt
+id|sys_setsockopt
 c_func
 (paren
 id|a0
@@ -5006,7 +5006,7 @@ r_case
 id|SYS_GETSOCKOPT
 suffix:colon
 r_return
-id|sock_getsockopt
+id|sys_getsockopt
 c_func
 (paren
 id|a0

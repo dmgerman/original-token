@@ -528,14 +528,6 @@ id|memory_end
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|term
-r_static
-r_char
-id|term
-(braket
-l_int|21
-)braket
-suffix:semicolon
 DECL|variable|rows
 DECL|variable|cols
 r_int
@@ -585,7 +577,7 @@ op_assign
 (brace
 l_string|&quot;HOME=/&quot;
 comma
-id|term
+l_string|&quot;TERM=linux&quot;
 comma
 l_int|NULL
 comma
@@ -616,7 +608,7 @@ op_assign
 (brace
 l_string|&quot;HOME=/&quot;
 comma
-id|term
+l_string|&quot;TERM=linux&quot;
 comma
 l_int|NULL
 )brace
@@ -646,7 +638,7 @@ op_assign
 (brace
 l_string|&quot;HOME=/usr/root&quot;
 comma
-id|term
+l_string|&quot;TERM=linux&quot;
 comma
 l_int|NULL
 )brace
@@ -1278,6 +1270,7 @@ r_char
 op_star
 id|next
 suffix:semicolon
+r_static
 r_char
 op_star
 id|devnames
@@ -1312,6 +1305,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+r_static
 r_int
 id|devnums
 (braket
@@ -1367,7 +1361,7 @@ id|envs
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* TERM is set to &squot;console&squot; by default */
+multiline_comment|/* TERM is set to &squot;linux&squot; by default */
 id|next
 op_assign
 id|line
@@ -2082,18 +2076,6 @@ suffix:semicolon
 id|setup
 c_func
 (paren
-)paren
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|term
-comma
-l_string|&quot;TERM=con%dx%d&quot;
-comma
-id|ORIG_VIDEO_COLS
-comma
-id|ORIG_VIDEO_LINES
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_UMSDOS_FS

@@ -60,6 +60,14 @@ op_star
 id|filename
 suffix:semicolon
 multiline_comment|/* Name of binary */
+DECL|member|loader
+DECL|member|exec
+r_int
+r_int
+id|loader
+comma
+id|exec
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure defines the functions that are used to load the binary formats that&n; * linux accepts.&n; */
@@ -165,6 +173,9 @@ comma
 r_int
 r_int
 id|count
+comma
+r_int
+id|to_kmem
 )paren
 suffix:semicolon
 r_extern
@@ -219,11 +230,10 @@ r_char
 op_star
 id|p
 comma
-r_int
-id|argc
-comma
-r_int
-id|envc
+r_struct
+id|linux_binprm
+op_star
+id|bprm
 comma
 r_int
 id|ibcs

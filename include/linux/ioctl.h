@@ -31,9 +31,12 @@ DECL|macro|IOCBASECMD
 mdefine_line|#define IOCBASECMD(cmd)&t;((cmd) &amp; ~IOCPARM_MASK)
 DECL|macro|IOCGROUP
 mdefine_line|#define IOCGROUP(cmd)&t;(((cmd) &gt;&gt; 8) &amp; 0xFF)
+macro_line|#ifndef _IO
 multiline_comment|/* _IO(magic, subcode); size field is zero and the &n; * subcode determines the command.&n; */
 DECL|macro|_IO
 mdefine_line|#define _IO(c,d)&t;(IOC_VOID | ((c)&lt;&lt;8) | (d)) /* param encoded */
+macro_line|#endif
+macro_line|#ifndef _IOW
 multiline_comment|/* _IOXX(magic, subcode, arg_t); where arg_t is the type of the&n; * (last) argument field in the ioctl call, if present.&n; */
 DECL|macro|_IOW
 mdefine_line|#define _IOW(c,d,t)&t;(IOC_IN | ((sizeof(t)&lt;&lt;16) &amp; IOCSIZE_MASK) | &bslash;&n;&t;&t;&t;&t;  ((c)&lt;&lt;8) | (d))
@@ -42,5 +45,6 @@ mdefine_line|#define _IOR(c,d,t)&t;(IOC_OUT | ((sizeof(t)&lt;&lt;16) &amp; IOCSI
 multiline_comment|/* WR rather than RW to avoid conflict with stdio.h */
 DECL|macro|_IOWR
 mdefine_line|#define _IOWR(c,d,t)&t;(IOC_INOUT | ((sizeof(t)&lt;&lt;16) &amp; IOCSIZE_MASK) | &bslash;&n;&t;&t;&t;&t;     ((c)&lt;&lt;8) | (d))
+macro_line|#endif /* !_IOW */
 macro_line|#endif /* _LINUX_IOCTL_H */
 eof

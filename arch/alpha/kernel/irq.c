@@ -1215,6 +1215,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_PCI
 DECL|function|local_device_interrupt
 r_static
 r_void
@@ -1305,6 +1306,7 @@ id|vector
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* !CONFIG_PCI */
 multiline_comment|/*&n; * The vector is 0x8X0 for EISA interrupt X, and 0x9X0 for the local&n; * motherboard interrupts.. This is for the Jensen.&n; *&n; *&t;0x660 - NMI&n; *&n; *&t;0x800 - IRQ0  interval timer (not used, as we use the RTC timer)&n; *&t;0x810 - IRQ1  line printer (duh..)&n; *&t;0x860 - IRQ6  floppy disk&n; *&t;0x8E0 - IRQ14 SCSI controller&n; *&n; *&t;0x900 - COM1&n; *&t;0x920 - COM2&n; *&t;0x980 - keyboard&n; *&t;0x990 - mouse&n; *&n; * The PCI version is more sane: it doesn&squot;t have the local interrupts at&n; * all, and has only normal PCI interrupts from devices. Happily it&squot;s easy&n; * enough to do a sane mapping from the Jensen.. Note that this means&n; * that we may have to do a hardware &quot;ack&quot; to a different interrupt than&n; * we report to the rest of the world..&n; */
 DECL|function|device_interrupt
 r_static
@@ -1693,6 +1695,46 @@ c_func
 l_string|&quot;Machine check&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef LCA_MEM_ESR
+id|printk
+c_func
+(paren
+l_string|&quot;esr=%lx, ear=%lx, ioc_stat0=%lx, ioc_stat1=%lx&bslash;n&quot;
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_MEM_ESR
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_MEM_EAR
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_IOC_STAT0
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|LCA_IOC_STAT1
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|do_entInt
 id|asmlinkage

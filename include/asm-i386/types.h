@@ -210,5 +210,21 @@ r_int
 id|u64
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
+DECL|macro|__FD_SET
+macro_line|#undef&t;__FD_SET
+DECL|macro|__FD_SET
+mdefine_line|#define __FD_SET(fd,fdsetp) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;btsl %1,%0&quot;: &bslash;&n;&t;&t;&t;&quot;=m&quot; (*(fd_set *) (fdsetp)):&quot;r&quot; ((int) (fd)))
+DECL|macro|__FD_CLR
+macro_line|#undef&t;__FD_CLR
+DECL|macro|__FD_CLR
+mdefine_line|#define __FD_CLR(fd,fdsetp) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;btrl %1,%0&quot;: &bslash;&n;&t;&t;&t;&quot;=m&quot; (*(fd_set *) (fdsetp)):&quot;r&quot; ((int) (fd)))
+DECL|macro|__FD_ISSET
+macro_line|#undef&t;__FD_ISSET
+DECL|macro|__FD_ISSET
+mdefine_line|#define __FD_ISSET(fd,fdsetp) (__extension__ ({ &bslash;&n;&t;&t;unsigned char __result; &bslash;&n;&t;&t;__asm__ __volatile__(&quot;btl %1,%2 ; setb %0&quot; &bslash;&n;&t;&t;&t;:&quot;=q&quot; (__result) :&quot;r&quot; ((int) (fd)), &bslash;&n;&t;&t;&t;&quot;m&quot; (*(fd_set *) (fdsetp))); &bslash;&n;&t;&t;__result; }))
+DECL|macro|__FD_ZERO
+macro_line|#undef&t;__FD_ZERO
+DECL|macro|__FD_ZERO
+mdefine_line|#define __FD_ZERO(fdsetp) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;cld ; rep ; stosl&quot; &bslash;&n;&t;&t;&t;:&quot;=m&quot; (*(fd_set *) (fdsetp)) &bslash;&n;&t;&t;&t;:&quot;a&quot; (0), &quot;c&quot; (__FDSET_LONGS), &bslash;&n;&t;&t;&t;&quot;D&quot; ((fd_set *) (fdsetp)) :&quot;cx&quot;,&quot;di&quot;)
 macro_line|#endif
 eof

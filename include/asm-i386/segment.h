@@ -122,7 +122,7 @@ id|y
 )paren
 )paren
 suffix:colon
-l_string|&quot;iq&quot;
+l_string|&quot;ir&quot;
 (paren
 (paren
 r_int
@@ -252,7 +252,7 @@ id|__asm__
 (paren
 l_string|&quot;movw %%fs:%1,%w0&quot;
 suffix:colon
-l_string|&quot;=q&quot;
+l_string|&quot;=r&quot;
 (paren
 id|result
 )paren
@@ -1319,7 +1319,7 @@ l_int|4
 suffix:semicolon
 op_star
 (paren
-l_int|1
+l_int|2
 op_plus
 (paren
 r_int

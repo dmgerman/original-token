@@ -156,6 +156,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|sys_msgsnd
+id|asmlinkage
 r_int
 id|sys_msgsnd
 (paren
@@ -204,6 +205,9 @@ id|msgsz
 OG
 id|MSGMAX
 op_logical_or
+(paren
+r_int
+)paren
 id|msgsz
 OL
 l_int|0
@@ -543,6 +547,7 @@ id|msgsz
 suffix:semicolon
 )brace
 DECL|function|sys_msgrcv
+id|asmlinkage
 r_int
 id|sys_msgrcv
 (paren
@@ -603,6 +608,9 @@ id|msqid
 OL
 l_int|0
 op_logical_or
+(paren
+r_int
+)paren
 id|msgsz
 OL
 l_int|0
@@ -1368,6 +1376,7 @@ id|id
 suffix:semicolon
 )brace
 DECL|function|sys_msgget
+id|asmlinkage
 r_int
 id|sys_msgget
 (paren
@@ -1674,6 +1683,7 @@ id|msq
 suffix:semicolon
 )brace
 DECL|function|sys_msgctl
+id|asmlinkage
 r_int
 id|sys_msgctl
 (paren

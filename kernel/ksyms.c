@@ -951,12 +951,6 @@ multiline_comment|/* Signal interfaces */
 id|X
 c_func
 (paren
-id|do_signal
-)paren
-comma
-id|X
-c_func
-(paren
 id|send_sig
 )paren
 comma

@@ -329,6 +329,13 @@ id|year
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(__alpha__) &amp;&amp; defined(CONFIG_PCI)
+multiline_comment|/*&n;&t; * The meaning of life, the universe, and everything. Plus&n;&t; * this makes the year come out right.&n;&t; */
+id|year
+op_sub_assign
+l_int|42
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -195,23 +195,6 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/*  */
-r_static
-r_int
-r_int
-id|eql_type_trans
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/*  */
 multiline_comment|/* ioctl() handlers&n;   ---------------- */
 r_static
 r_int
@@ -1361,30 +1344,6 @@ id|skb
 (brace
 r_return
 l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
-r_int
-DECL|function|eql_type_trans
-id|eql_type_trans
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_return
-id|htons
-(paren
-id|ETH_P_IP
-)paren
 suffix:semicolon
 )brace
 "&f;"

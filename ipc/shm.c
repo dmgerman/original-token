@@ -671,6 +671,7 @@ id|id
 suffix:semicolon
 )brace
 DECL|function|sys_shmget
+id|asmlinkage
 r_int
 id|sys_shmget
 (paren
@@ -1074,6 +1075,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|sys_shmctl
+id|asmlinkage
 r_int
 id|sys_shmctl
 (paren
@@ -1967,10 +1969,10 @@ c_func
 (paren
 l_string|&quot;shm_close: shm segment (id=%ld) attach list inconsistent&bslash;n&quot;
 comma
+id|SWP_OFFSET
+c_func
 (paren
 id|shmd-&gt;vm_pte
-op_rshift
-id|SHM_ID_SHIFT
 )paren
 op_amp
 id|SHM_ID_MASK
@@ -2122,7 +2124,11 @@ id|shm_sgn
 op_assign
 id|shmd-&gt;vm_pte
 op_plus
+id|SWP_ENTRY
+c_func
 (paren
+l_int|0
+comma
 (paren
 id|shmd-&gt;vm_offset
 op_rshift
@@ -2149,7 +2155,11 @@ id|PAGE_SIZE
 comma
 id|shm_sgn
 op_add_assign
+id|SWP_ENTRY
+c_func
 (paren
+l_int|0
+comma
 l_int|1
 op_lshift
 id|SHM_IDX_SHIFT
@@ -2227,6 +2237,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fix shmaddr, allocate descriptor, map shm, add attach descriptor to lists.&n; */
 DECL|function|sys_shmat
+id|asmlinkage
 r_int
 id|sys_shmat
 (paren
@@ -2395,19 +2406,20 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If shm segment goes below stack, make sure there is some&n;&t; * space left for the stack to grow (presently 4 pages).&n;&t; */
 r_if
 c_cond
 (paren
-(paren
 id|addr
-OG
+template_param
 id|current-&gt;mm-&gt;start_stack
-op_minus
-l_int|16384
 op_minus
 id|PAGE_SIZE
 op_star
+(paren
 id|shp-&gt;shm_npages
+op_plus
+l_int|4
 )paren
 )paren
 (brace
@@ -2742,10 +2754,10 @@ id|shp
 suffix:semicolon
 id|id
 op_assign
+id|SWP_OFFSET
+c_func
 (paren
 id|shmd-&gt;vm_pte
-op_rshift
-id|SHM_ID_SHIFT
 )paren
 op_amp
 id|SHM_ID_MASK
@@ -2829,10 +2841,10 @@ suffix:semicolon
 multiline_comment|/* remove from the list of attaches of the shm segment */
 id|id
 op_assign
+id|SWP_OFFSET
+c_func
 (paren
 id|shmd-&gt;vm_pte
-op_rshift
-id|SHM_ID_SHIFT
 )paren
 op_amp
 id|SHM_ID_MASK
@@ -2881,6 +2893,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * detach and kill segment if marked destroyed.&n; * The work is done in shm_close.&n; */
 DECL|function|sys_shmdt
+id|asmlinkage
 r_int
 id|sys_shmdt
 (paren
@@ -2984,10 +2997,10 @@ id|idx
 suffix:semicolon
 id|id
 op_assign
+id|SWP_OFFSET
+c_func
 (paren
 id|code
-op_rshift
-id|SHM_ID_SHIFT
 )paren
 op_amp
 id|SHM_ID_MASK
@@ -2998,10 +3011,10 @@ c_cond
 id|id
 op_ne
 (paren
+id|SWP_OFFSET
+c_func
 (paren
 id|shmd-&gt;vm_pte
-op_rshift
-id|SHM_ID_SHIFT
 )paren
 op_amp
 id|SHM_ID_MASK
@@ -3014,10 +3027,10 @@ l_string|&quot;shm_swap_in: code id = %d and shmd id = %ld differ&bslash;n&quot;
 comma
 id|id
 comma
+id|SWP_OFFSET
+c_func
 (paren
 id|shmd-&gt;vm_pte
-op_rshift
-id|SHM_ID_SHIFT
 )paren
 op_amp
 id|SHM_ID_MASK
@@ -3079,7 +3092,11 @@ suffix:semicolon
 id|idx
 op_assign
 (paren
+id|SWP_OFFSET
+c_func
+(paren
 id|code
+)paren
 op_rshift
 id|SHM_IDX_SHIFT
 )paren
@@ -3613,13 +3630,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|SWP_OFFSET
+c_func
 (paren
 id|shmd-&gt;vm_pte
-op_rshift
-id|SHM_ID_SHIFT
+)paren
 op_amp
 id|SHM_ID_MASK
-)paren
 op_ne
 id|id
 )paren
@@ -3630,9 +3647,11 @@ l_string|&quot;shm_swap: id=%ld does not match shmd-&gt;vm_pte.id=%ld&bslash;n&q
 comma
 id|id
 comma
+id|SWP_OFFSET
+c_func
+(paren
 id|shmd-&gt;vm_pte
-op_rshift
-id|SHM_ID_SHIFT
+)paren
 op_amp
 id|SHM_ID_MASK
 )paren
@@ -3844,10 +3863,16 @@ id|page_table
 )paren
 op_assign
 id|shmd-&gt;vm_pte
-op_or
+op_plus
+id|SWP_ENTRY
+c_func
+(paren
+l_int|0
+comma
 id|idx
 op_lshift
 id|SHM_IDX_SHIFT
+)paren
 suffix:semicolon
 id|mem_map
 (braket

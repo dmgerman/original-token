@@ -4289,7 +4289,7 @@ id|spintime
 op_logical_and
 id|spintime
 op_plus
-l_int|50
+l_int|100
 op_star
 id|HZ
 OG

@@ -46,19 +46,7 @@ op_star
 id|tv
 )paren
 suffix:semicolon
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-DECL|macro|FD_SETSIZE
-mdefine_line|#define FD_SETSIZE&t;&t;__FD_SETSIZE
-DECL|macro|FD_SET
-mdefine_line|#define FD_SET(fd,fdsetp)&t;set_bit(fd,fdsetp)
-DECL|macro|FD_CLR
-mdefine_line|#define FD_CLR(fd,fdsetp)&t;clear_bit(fd,fdsetp)
-DECL|macro|FD_ISSET
-mdefine_line|#define FD_ISSET(fd,fdsetp)&t;(0 != test_bit(fd,fdsetp))
-DECL|macro|FD_ZERO
-mdefine_line|#define FD_ZERO(fdsetp)&t;&t;memset(fdsetp, 0, sizeof(struct fd_set))
-macro_line|#else
+macro_line|#endif
 DECL|macro|FD_SETSIZE
 mdefine_line|#define FD_SETSIZE&t;&t;__FD_SETSIZE
 DECL|macro|FD_SET
@@ -69,7 +57,6 @@ DECL|macro|FD_ISSET
 mdefine_line|#define FD_ISSET(fd,fdsetp)&t;__FD_ISSET(fd,fdsetp)
 DECL|macro|FD_ZERO
 mdefine_line|#define FD_ZERO(fdsetp)&t;&t;__FD_ZERO(fdsetp)
-macro_line|#endif
 multiline_comment|/*&n; * Names of the interval timers, and structure&n; * defining a timer setting.&n; */
 DECL|macro|ITIMER_REAL
 mdefine_line|#define&t;ITIMER_REAL&t;0

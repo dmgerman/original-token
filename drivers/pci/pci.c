@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * drivers/pci/pci.c&n; *&n; * PCI services that are built on top of the BIOS32 service.&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
@@ -382,6 +383,26 @@ comma
 id|DEVICE
 c_func
 (paren
+id|INTEL
+comma
+id|INTEL_82437
+comma
+l_string|&quot;82437 Triton&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82371
+comma
+l_string|&quot;82471 Triton&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|SMC
 comma
 id|SMC_37C665
@@ -537,6 +558,16 @@ comma
 id|AL_M1451
 comma
 l_string|&quot;M1451&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M4803
+comma
+l_string|&quot;M4803&quot;
 )paren
 comma
 id|DEVICE
@@ -817,16 +848,6 @@ comma
 id|EF_ATM
 comma
 l_string|&quot;155P-MF1&quot;
-)paren
-comma
-id|DEVICE
-c_func
-(paren
-id|HER
-comma
-id|HER_STING
-comma
-l_string|&quot;Stingray&quot;
 )paren
 comma
 id|DEVICE

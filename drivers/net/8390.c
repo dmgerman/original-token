@@ -510,7 +510,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Mask interrupts from the ethercard. */
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|0x00

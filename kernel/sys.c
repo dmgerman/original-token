@@ -1633,7 +1633,7 @@ r_return
 id|brk
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This needs some heave checking ...&n; * I just haven&squot;t get the stomach for it. I also don&squot;t fully&n; * understand sessions/pgrp etc. Let somebody who does explain it.&n; *&n; * OK, I think I have the protection semantics right.... this is really&n; * only important on a multi-user system anyway, to make sure one user&n; * can&squot;t send a signal to a process owned by another.  -TYT, 12/12/91&n; *&n; * Auch. Had to add the &squot;did_exec&squot; flag to conform completely to POSIX.&n; * LBT 04.03.94&n; */
+multiline_comment|/*&n; * This needs some heavy checking ...&n; * I just haven&squot;t the stomach for it. I also don&squot;t fully&n; * understand sessions/pgrp etc. Let somebody who does explain it.&n; *&n; * OK, I think I have the protection semantics right.... this is really&n; * only important on a multi-user system anyway, to make sure one user&n; * can&squot;t send a signal to a process owned by another.  -TYT, 12/12/91&n; *&n; * Auch. Had to add the &squot;did_exec&squot; flag to conform completely to POSIX.&n; * LBT 04.03.94&n; */
 DECL|function|sys_setpgid
 id|asmlinkage
 r_int

@@ -179,12 +179,15 @@ id|count
 suffix:semicolon
 DECL|member|start_code
 DECL|member|end_code
+DECL|member|start_data
 DECL|member|end_data
 r_int
 r_int
 id|start_code
 comma
 id|end_code
+comma
+id|start_data
 comma
 id|end_data
 suffix:semicolon
@@ -279,7 +282,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
+mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
 DECL|struct|task_struct
 r_struct
 id|task_struct
@@ -893,19 +896,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-id|asmlinkage
-r_int
-id|do_signal
-c_func
-(paren
-r_int
-r_int
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * The wait-queues are circular lists, and you have to be *very* sure&n; * to keep them correct. Use only these two functions to add/remove&n; * entries in the queues.&n; */
 DECL|function|add_wait_queue
 r_extern
@@ -937,27 +927,28 @@ c_cond
 id|wait-&gt;next
 )paren
 (brace
+id|__label__
+id|here
+suffix:semicolon
 r_int
 r_int
 id|pc
 suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
+id|pc
+op_assign
 (paren
-l_string|&quot;call 1f&bslash;n&quot;
-l_string|&quot;1:&bslash;tpopl %0&quot;
+r_int
+r_int
+)paren
+op_logical_and
+id|here
+suffix:semicolon
+id|here
 suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|pc
-)paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;add_wait_queue (%08x): wait-&gt;next = %08x&bslash;n&quot;
+l_string|&quot;add_wait_queue (%08lx): wait-&gt;next = %08lx&bslash;n&quot;
 comma
 id|pc
 comma
@@ -1166,6 +1157,18 @@ op_logical_neg
 id|ok
 )paren
 (brace
+id|__label__
+id|here
+suffix:semicolon
+id|ok
+op_assign
+(paren
+r_int
+r_int
+)paren
+op_logical_and
+id|here
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1175,7 +1178,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;list = %08x, queue = %08x&bslash;n&quot;
+l_string|&quot;list = %08lx, queue = %08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1190,21 +1193,12 @@ r_int
 id|wait
 )paren
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;call 1f&bslash;n1:&bslash;tpopl %0&quot;
+id|here
 suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|ok
-)paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eip = %08x&bslash;n&quot;
+l_string|&quot;eip = %08lx&bslash;n&quot;
 comma
 id|ok
 )paren

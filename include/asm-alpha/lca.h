@@ -8,53 +8,6 @@ DECL|macro|LCA_DMA_WIN_BASE
 mdefine_line|#define LCA_DMA_WIN_BASE&t;(1024*1024*1024)
 DECL|macro|LCA_DMA_WIN_SIZE
 mdefine_line|#define LCA_DMA_WIN_SIZE&t;(1024*1024*1024)
-multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-DECL|function|virt_to_bus
-r_extern
-r_inline
-r_int
-r_int
-id|virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-op_plus
-id|LCA_DMA_WIN_BASE
-suffix:semicolon
-)brace
-DECL|function|bus_to_virt
-r_extern
-r_inline
-r_void
-op_star
-id|bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-op_minus
-id|LCA_DMA_WIN_BASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Memory Controller registers:&n; */
 DECL|macro|LCA_MEM_BCR0
 mdefine_line|#define LCA_MEM_BCR0&t;&t;(IDENT_ADDR + 0x120000000UL)
@@ -171,6 +124,54 @@ DECL|macro|LCA_IOC_STAT0_P_NBR_MASK
 mdefine_line|#define LCA_IOC_STAT0_P_NBR_MASK&t;0x7ffff
 DECL|macro|HAE_ADDRESS
 mdefine_line|#define HAE_ADDRESS&t;LCA_IOC_HAE
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
+DECL|function|virt_to_bus
+r_extern
+r_inline
+r_int
+r_int
+id|virt_to_bus
+c_func
+(paren
+r_void
+op_star
+id|address
+)paren
+(brace
+r_return
+id|virt_to_phys
+c_func
+(paren
+id|address
+)paren
+op_plus
+id|LCA_DMA_WIN_BASE
+suffix:semicolon
+)brace
+DECL|function|bus_to_virt
+r_extern
+r_inline
+r_void
+op_star
+id|bus_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+id|phys_to_virt
+c_func
+(paren
+id|address
+op_minus
+id|LCA_DMA_WIN_BASE
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * Unlike Jensen, the Noname machines have no concept of local&n; * I/O---everything goes over the PCI bus.&n; *&n; * There is plenty room for optimization here.  In particular,&n; * the Alpha&squot;s insb/insw/extb/extw should be useful in moving&n; * data to/from the right byte-lanes.&n; */
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
@@ -956,6 +957,75 @@ r_int
 id|addr
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * String versions of in/out ops:&n; */
+r_extern
+r_void
+id|insw
+(paren
+r_int
+r_int
+id|port
+comma
+r_void
+op_star
+id|src
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insl
+(paren
+r_int
+r_int
+id|port
+comma
+r_void
+op_star
+id|src
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outsw
+(paren
+r_int
+r_int
+id|port
+comma
+r_void
+op_star
+id|dst
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|outsl
+(paren
+r_int
+r_int
+id|port
+comma
+r_void
+op_star
+id|dst
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
 r_extern
 r_int
 r_int
@@ -1034,5 +1104,12 @@ r_int
 id|mem_end
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
+DECL|macro|RTC_PORT
+mdefine_line|#define RTC_PORT(x) (0x70 + (x))
+DECL|macro|RTC_ADDR
+mdefine_line|#define RTC_ADDR(x) (0x80 | (x))
+DECL|macro|RTC_ALWAYS_BCD
+mdefine_line|#define RTC_ALWAYS_BCD 0
+macro_line|#endif /* __ALPHA_LCA__H */
 eof

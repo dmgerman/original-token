@@ -137,6 +137,8 @@ DECL|macro|TIOCSWINSZ
 mdefine_line|#define TIOCSWINSZ&t;_IOW(&squot;t&squot;, 103, struct winsize)
 DECL|macro|TIOCGWINSZ
 mdefine_line|#define TIOCGWINSZ&t;_IOR(&squot;t&squot;, 104, struct winsize)
+DECL|macro|TIOCOUTQ
+mdefine_line|#define TIOCOUTQ        _IOR(&squot;t&squot;, 115, int)     /* output queue size */
 DECL|macro|TIOCGLTC
 mdefine_line|#define TIOCGLTC&t;_IOR(&squot;t&squot;, 116, struct ltchars)
 DECL|macro|TIOCSLTC
@@ -151,8 +153,6 @@ DECL|macro|TIOCNXCL
 mdefine_line|#define TIOCNXCL&t;0x540D
 DECL|macro|TIOCSCTTY
 mdefine_line|#define TIOCSCTTY&t;0x540E
-DECL|macro|TIOCOUTQ
-mdefine_line|#define TIOCOUTQ&t;0x5411
 DECL|macro|TIOCSTI
 mdefine_line|#define TIOCSTI&t;&t;0x5412
 DECL|macro|TIOCMGET

@@ -1597,11 +1597,8 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;IP: queue_glue: no memory for gluing queue 0x%X&bslash;n&quot;
+l_string|&quot;IP: queue_glue: no memory for gluing queue %p&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|qp
 )paren
 )paren

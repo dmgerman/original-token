@@ -512,6 +512,7 @@ id|id
 suffix:semicolon
 )brace
 DECL|function|sys_semget
+id|asmlinkage
 r_int
 id|sys_semget
 (paren
@@ -1599,6 +1600,7 @@ id|sma
 suffix:semicolon
 )brace
 DECL|function|sys_semctl
+id|asmlinkage
 r_int
 id|sys_semctl
 (paren
@@ -2725,6 +2727,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_semop
+id|asmlinkage
 r_int
 id|sys_semop
 (paren

@@ -389,6 +389,25 @@ id|iph-&gt;check
 op_assign
 l_int|0
 suffix:semicolon
+id|iph-&gt;tot_len
+op_assign
+id|htons
+c_func
+(paren
+id|fraglen
+)paren
+suffix:semicolon
+multiline_comment|/* This is right as you cant frag&n;&t;&t;&t;&t;&t;   RAW packets */
+multiline_comment|/*&n;&t; &t; *&t;Deliberate breach of modularity to keep &n;&t; &t; *&t;ip_build_xmit clean (well less messy).&n;&t;&t; */
+id|iph-&gt;id
+op_assign
+id|htons
+c_func
+(paren
+id|ip_id_count
+op_increment
+)paren
+suffix:semicolon
 id|iph-&gt;check
 op_assign
 id|ip_fast_csum

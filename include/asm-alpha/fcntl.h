@@ -51,17 +51,33 @@ mdefine_line|#define F_GETOWN&t;6&t;/*  for sockets. */
 multiline_comment|/* for F_[GET|SET]FL */
 DECL|macro|FD_CLOEXEC
 mdefine_line|#define FD_CLOEXEC&t;1&t;/* actually anything with low bit set goes */
+multiline_comment|/* for posix fcntl() and lockf() */
 DECL|macro|F_RDLCK
 mdefine_line|#define F_RDLCK&t;&t;1
 DECL|macro|F_WRLCK
 mdefine_line|#define F_WRLCK&t;&t;2
 DECL|macro|F_UNLCK
 mdefine_line|#define F_UNLCK&t;&t;8
-multiline_comment|/* For bsd flock () */
+multiline_comment|/* for old implementation of bsd flock () */
 DECL|macro|F_EXLCK
 mdefine_line|#define F_EXLCK&t;&t;16&t;/* or 3 */
 DECL|macro|F_SHLCK
 mdefine_line|#define F_SHLCK&t;&t;32&t;/* or 4 */
+multiline_comment|/* operations for bsd flock(), also used by the kernel implementation */
+DECL|macro|LOCK_SH
+mdefine_line|#define LOCK_SH&t;&t;1&t;/* shared lock */
+DECL|macro|LOCK_EX
+mdefine_line|#define LOCK_EX&t;&t;2&t;/* exclusive lock */
+DECL|macro|LOCK_NB
+mdefine_line|#define LOCK_NB&t;&t;4&t;/* or&squot;d with one of the above to prevent&n;&t;&t;&t;&t;   blocking */
+DECL|macro|LOCK_UN
+mdefine_line|#define LOCK_UN&t;&t;8&t;/* remove lock */
+macro_line|#ifdef __KERNEL__
+DECL|macro|F_POSIX
+mdefine_line|#define F_POSIX&t;&t;1
+DECL|macro|F_FLOCK
+mdefine_line|#define F_FLOCK&t;&t;2
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|flock
 r_struct
 id|flock

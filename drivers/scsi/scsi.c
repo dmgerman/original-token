@@ -3537,24 +3537,6 @@ r_int
 id|clock
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|SCpnt
-OL
-id|current-&gt;kernel_stack_page
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Kernel stack overflow.&quot;
-)paren
-suffix:semicolon
 id|host
 op_assign
 id|SCpnt-&gt;host

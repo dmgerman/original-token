@@ -331,6 +331,11 @@ id|page_table
 op_assign
 id|entry
 suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
 id|filemap_sync_page
 c_func
 (paren
