@@ -2086,12 +2086,6 @@ comma
 multiline_comment|/* Fasync */
 l_int|NULL
 comma
-multiline_comment|/* CheckMediaChange */
-l_int|NULL
-comma
-multiline_comment|/* Revalidate */
-l_int|NULL
-comma
 multiline_comment|/* Lock */
 )brace
 suffix:semicolon

@@ -303,6 +303,8 @@ DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;        ((struct task_struct *) __get_free_pages(GFP_KERNEL,1))
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(p)     free_pages((unsigned long)(p),1)
+DECL|macro|get_task_struct
+mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;mem_map[MAP_NR(tsk)].count)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

@@ -1388,12 +1388,6 @@ l_int|NULL
 comma
 multiline_comment|/* fasync(struct file*, int) */
 l_int|NULL
-comma
-multiline_comment|/* check_media_change(kdev_t dev) */
-l_int|NULL
-comma
-multiline_comment|/* revalidate(kdev_t dev) */
-l_int|NULL
 multiline_comment|/* lock(struct file*, int, struct file_lock*) */
 )brace
 suffix:semicolon

@@ -49,11 +49,6 @@ multiline_comment|/* fsync&t;&t;*/
 l_int|NULL
 comma
 multiline_comment|/* fasync&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* check_media_change&t;*/
-l_int|NULL
-multiline_comment|/* revalidate&t;&t;*/
 )brace
 suffix:semicolon
 DECL|variable|adfs_file_inode_operations

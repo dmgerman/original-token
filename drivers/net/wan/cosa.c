@@ -1103,12 +1103,6 @@ l_int|NULL
 comma
 macro_line|#endif
 l_int|NULL
-comma
-multiline_comment|/* check media change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
 multiline_comment|/* lock */
 )brace
 suffix:semicolon

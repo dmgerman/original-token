@@ -1031,8 +1031,9 @@ op_amp
 op_complement
 l_int|0xf
 )paren
+op_or
+id|state-&gt;io_irq
 suffix:semicolon
-singleline_comment|// | state-&gt;io_irq;
 id|exca_writeb
 c_func
 (paren
@@ -1060,7 +1061,11 @@ comma
 id|I365_INTCTL
 )paren
 op_amp
+(paren
 id|I365_RING_ENA
+op_or
+id|I365_INTR_ENA
+)paren
 suffix:semicolon
 id|reg
 op_or_assign
@@ -1088,11 +1093,6 @@ id|I365_PC_IOCARD
 suffix:colon
 l_int|0
 suffix:semicolon
-id|reg
-op_or_assign
-id|I365_INTR_ENA
-suffix:semicolon
-multiline_comment|/* CSC to PCI interrupt */
 id|reg
 op_or_assign
 id|state-&gt;io_irq
@@ -2638,6 +2638,7 @@ id|bridge_ctrl
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Probe for usable interrupts using the force&n;&t; * register to generate bogus card status events.&n;&t; */
 id|cb_writel
 c_func
 (paren
@@ -2757,6 +2758,8 @@ c_func
 (paren
 id|val
 )paren
+op_amp
+l_int|0xffff
 suffix:semicolon
 )brace
 DECL|function|yenta_clear_maps

@@ -1894,39 +1894,22 @@ suffix:semicolon
 DECL|variable|nbd_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|nbd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
-id|nbd_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|nbd_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|nbd_release
-multiline_comment|/* release */
+comma
+id|ioctl
+suffix:colon
+id|nbd_ioctl
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * And here should be modules and kernel interface &n; *  (Just smiley confuses emacs :-)&n; */

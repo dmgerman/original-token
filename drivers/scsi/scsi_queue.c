@@ -163,6 +163,13 @@ id|cmd-&gt;bh_next
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t; * Decrement the counters, since these commands are no longer&n;&t; * active on the host/device.&n;&t; */
+id|cmd-&gt;host-&gt;host_busy
+op_decrement
+suffix:semicolon
+id|cmd-&gt;device-&gt;device_busy
+op_decrement
+suffix:semicolon
 multiline_comment|/*&n;&t; * Insert this command at the head of the queue for it&squot;s device.&n;&t; * It will go before all other commands that are already in the queue.&n;&t; */
 id|scsi_insert_special_cmd
 c_func

@@ -358,36 +358,7 @@ id|file_operations
 id|h8_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-multiline_comment|/* fasync */
+multiline_comment|/* twelve lines of crap^WNULLs were here */
 )brace
 suffix:semicolon
 DECL|variable|h8_device

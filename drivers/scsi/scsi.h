@@ -596,6 +596,7 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Prototypes for functions in scsi.c&n; */
 multiline_comment|/*&n; *  scsi_abort aborts the current command that is executing on host host.&n; *  The error code, if non zero is returned in the host byte, otherwise &n; *  DID_ABORT is returned in the hostbyte.&n; */
 r_extern
 r_void
@@ -685,20 +686,6 @@ comma
 r_int
 comma
 r_int
-)paren
-suffix:semicolon
-r_extern
-id|Scsi_Cmnd
-op_star
-id|scsi_request_queueable
-c_func
-(paren
-r_struct
-id|request
-op_star
-comma
-id|Scsi_Device
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -814,6 +801,11 @@ DECL|member|request_queue
 id|request_queue_t
 id|request_queue
 suffix:semicolon
+DECL|member|device_active
+id|atomic_t
+id|device_active
+suffix:semicolon
+multiline_comment|/* commands checked out for device */
 DECL|member|device_busy
 r_volatile
 r_int
@@ -1452,21 +1444,6 @@ id|reason
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|scsi_mlqueue_finish
-c_func
-(paren
-r_struct
-id|Scsi_Host
-op_star
-id|host
-comma
-id|Scsi_Device
-op_star
-id|device
-)paren
-suffix:semicolon
-r_extern
 id|Scsi_Cmnd
 op_star
 id|scsi_end_request
@@ -1499,19 +1476,18 @@ r_int
 id|block_sectors
 )paren
 suffix:semicolon
-macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != SCSI_TAPE_MAJOR)
-macro_line|#include &quot;hosts.h&quot;
-multiline_comment|/* This is just like INIT_REQUEST, but we need to be aware of the fact&n; * that an interrupt may start another request, so we run this with interrupts&n; * turned off &n; */
-macro_line|#if MAJOR_NR == SCSI_DISK0_MAJOR
-DECL|macro|CHECK_INITREQ_SD_MAJOR
-mdefine_line|#define CHECK_INITREQ_SD_MAJOR(major) SCSI_DISK_MAJOR(major)
-macro_line|#else
-DECL|macro|CHECK_INITREQ_SD_MAJOR
-mdefine_line|#define CHECK_INITREQ_SD_MAJOR(major) ((major) == MAJOR_NR)
-macro_line|#endif
-DECL|macro|INIT_SCSI_REQUEST
-mdefine_line|#define INIT_SCSI_REQUEST       &t;&t;&t;&bslash;&n;    if (!CURRENT) {             &t;&t;&t;&bslash;&n;&t;CLEAR_INTR;             &t;&t;&t;&bslash;&n;&t;return;                 &t;&t;&t;&bslash;&n;    }                           &t;&t;&t;&bslash;&n;    if (!CHECK_INITREQ_SD_MAJOR(MAJOR(CURRENT-&gt;rq_dev)))&bslash;&n;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;);&t;&bslash;&n;    if (CURRENT-&gt;bh) {                                &t;&bslash;&n;&t;if (!buffer_locked(CURRENT-&gt;bh))              &t;&bslash;&n;&t;    panic(DEVICE_NAME &quot;: block not locked&quot;);  &t;&bslash;&n;    }
-macro_line|#endif
+r_extern
+r_struct
+id|Scsi_Device_Template
+op_star
+id|scsi_get_request_dev
+c_func
+(paren
+r_struct
+id|request
+op_star
+)paren
+suffix:semicolon
 DECL|macro|SCSI_SLEEP
 mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;    &bslash;&n;    if (CONDITION) {&t;&t;&t;            &bslash;&n;&t;DECLARE_WAITQUEUE(wait, current);&t;    &bslash;&n;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;    &bslash;&n;&t;for(;;) {&t;&t;&t;            &bslash;&n;&t;set_current_state(TASK_UNINTERRUPTIBLE);    &bslash;&n;&t;if (CONDITION) {&t;&t;            &bslash;&n;            if (in_interrupt())&t;                    &bslash;&n;&t;        panic(&quot;scsi: trying to call schedule() in interrupt&quot; &bslash;&n;&t;&t;      &quot;, file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;&t;    schedule();&t;&t;&t;&bslash;&n;        }&t;&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;        &bslash;&n;&t;    break;      &t;&t;&bslash;&n;&t;}&t;&t;&t;        &bslash;&n;&t;remove_wait_queue(QUEUE, &amp;wait);&bslash;&n;&t;current-&gt;state = TASK_RUNNING;&t;&bslash;&n;    }; }
 macro_line|#endif

@@ -798,51 +798,26 @@ multiline_comment|/* kernel glue structures */
 DECL|variable|pf_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|pf_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
-id|pf_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|pf_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|pf_release
 comma
-multiline_comment|/* release */
-id|block_fsync
+id|ioctl
+suffix:colon
+id|pf_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
+id|check_media_change
+suffix:colon
 id|pf_check_media
 comma
-multiline_comment|/* media change ? */
-l_int|NULL
-multiline_comment|/* revalidate new media */
 )brace
 suffix:semicolon
 DECL|function|pf_init_units

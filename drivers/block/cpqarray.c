@@ -998,52 +998,28 @@ suffix:semicolon
 )brace
 )brace
 DECL|variable|ida_fops
+r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|ida_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
-id|ida_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|ida_open
 comma
-multiline_comment|/* open code */
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|ida_release
 comma
-multiline_comment|/* release */
-id|block_fsync
+id|ioctl
+suffix:colon
+id|ida_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* Disk change */
+id|revalidate
+suffix:colon
 id|frevalidate_logvol
 comma
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS

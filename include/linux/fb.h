@@ -5,15 +5,9 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/* Definitions of frame buffers&t;&t;&t;&t;&t;&t;*/
 DECL|macro|FB_MAJOR
-mdefine_line|#define FB_MAJOR&t;29
-DECL|macro|FB_MODES_SHIFT
-mdefine_line|#define FB_MODES_SHIFT&t;&t;5&t;/* 32 modes per framebuffer */
-DECL|macro|FB_NUM_MINORS
-mdefine_line|#define FB_NUM_MINORS&t;&t;256&t;/* 256 Minors               */
+mdefine_line|#define FB_MAJOR&t;&t;29
 DECL|macro|FB_MAX
-mdefine_line|#define FB_MAX&t;&t;&t;(FB_NUM_MINORS / (1 &lt;&lt; FB_MODES_SHIFT))
-DECL|macro|GET_FB_IDX
-mdefine_line|#define GET_FB_IDX(node)&t;(MINOR(node) &gt;&gt; FB_MODES_SHIFT)
+mdefine_line|#define FB_MAX&t;&t;&t;32&t;/* sufficient for now */
 multiline_comment|/* ioctls&n;   0x46 is &squot;F&squot;&t;&t;&t;&t;&t;&t;&t;&t;*/
 DECL|macro|FBIOGET_VSCREENINFO
 mdefine_line|#define FBIOGET_VSCREENINFO&t;0x4600
@@ -528,6 +522,20 @@ multiline_comment|/* supports DPMS */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+macro_line|#if 1 /* to go away in 2.4.0 */
+r_extern
+r_int
+id|GET_FB_IDX
+c_func
+(paren
+id|kdev_t
+id|rdev
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|GET_FB_IDX
+mdefine_line|#define GET_FB_IDX(node)&t;(MINOR(node))
+macro_line|#endif
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 r_struct

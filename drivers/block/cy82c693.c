@@ -686,11 +686,38 @@ id|hwif-&gt;index
 OG
 l_int|0
 )paren
+(brace
 multiline_comment|/* drive is on the secondary channel */
 id|dev
 op_assign
-id|dev-&gt;next
+id|pci_find_slot
+c_func
+(paren
+id|dev
+comma
+id|dev-&gt;devfn
+op_plus
+l_int|1
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: tune_drive: Cannot find secondary interface!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
 macro_line|#if CY82C693_DEBUG_LOGS
 multiline_comment|/* for debug let&squot;s show the register values */
 r_if

@@ -752,17 +752,6 @@ l_int|NULL
 comma
 id|ip2_ipl_open
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* NULL, NULL 2.2 */
 )brace
 suffix:semicolon
 DECL|variable|irq_counter

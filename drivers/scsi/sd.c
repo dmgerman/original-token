@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -55,8 +56,6 @@ DECL|macro|SD_TIMEOUT
 mdefine_line|#define SD_TIMEOUT (30 * HZ)
 DECL|macro|SD_MOD_TIMEOUT
 mdefine_line|#define SD_MOD_TIMEOUT (75 * HZ)
-DECL|macro|CLUSTERABLE_DEVICE
-mdefine_line|#define CLUSTERABLE_DEVICE(SC) (SC-&gt;host-&gt;use_clustering &amp;&amp; &bslash;&n;&t;&t;&t;&t;SC-&gt;device-&gt;type != TYPE_MOD)
 DECL|variable|sd
 r_struct
 id|hd_struct
@@ -64,6 +63,7 @@ op_star
 id|sd
 suffix:semicolon
 DECL|variable|rscsi_disks
+r_static
 id|Scsi_Disk
 op_star
 id|rscsi_disks
@@ -175,6 +175,77 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_PPC)
+multiline_comment|/*&n; * Moved from arch/ppc/pmac_setup.c.  This is where it really belongs.&n; */
+id|kdev_t
+id|__init
+DECL|function|sd_find_target
+id|sd_find_target
+c_func
+(paren
+r_void
+op_star
+id|host
+comma
+r_int
+id|tgt
+)paren
+(brace
+id|Scsi_Disk
+op_star
+id|dp
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|dp
+op_assign
+id|rscsi_disks
+comma
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|sd_template.dev_max
+suffix:semicolon
+op_increment
+id|i
+comma
+op_increment
+id|dp
+)paren
+r_if
+c_cond
+(paren
+id|dp-&gt;device
+op_ne
+l_int|NULL
+op_logical_and
+id|dp-&gt;device-&gt;host
+op_eq
+id|host
+op_logical_and
+id|dp-&gt;device-&gt;id
+op_eq
+id|tgt
+)paren
+r_return
+id|MKDEV_SD
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|sd_ioctl
 r_static
 r_int
@@ -785,12 +856,14 @@ id|Scsi_Disk
 op_star
 id|dpnt
 suffix:semicolon
+macro_line|#if CONFIG_SCSI_LOGGING
 r_char
 id|nbuff
 (braket
 l_int|6
 )braket
 suffix:semicolon
+macro_line|#endif
 id|devm
 op_assign
 id|SD_PARTITION
@@ -884,18 +957,6 @@ id|SCpnt-&gt;request.nr_sectors
 )paren
 )paren
 suffix:semicolon
-id|SCpnt
-op_assign
-id|scsi_end_request
-c_func
-(paren
-id|SCpnt
-comma
-l_int|0
-comma
-id|SCpnt-&gt;request.nr_sectors
-)paren
-suffix:semicolon
 id|SCSI_LOG_HLQUEUE
 c_func
 (paren
@@ -931,18 +992,6 @@ id|dpnt-&gt;device-&gt;changed
 (brace
 multiline_comment|/*&n;&t;&t; * quietly refuse to do anything to a changed disc until the changed&n;&t;&t; * bit has been reset&n;&t;&t; */
 multiline_comment|/* printk(&quot;SCSI disk has been changed. Prohibiting further I/O.&bslash;n&quot;); */
-id|SCpnt
-op_assign
-id|scsi_end_request
-c_func
-(paren
-id|SCpnt
-comma
-l_int|0
-comma
-id|SCpnt-&gt;request.nr_sectors
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1010,18 +1059,6 @@ c_func
 l_string|&quot;sd.c:Bad block number requested&quot;
 )paren
 suffix:semicolon
-id|SCpnt
-op_assign
-id|scsi_end_request
-c_func
-(paren
-id|SCpnt
-comma
-l_int|0
-comma
-id|SCpnt-&gt;request.nr_sectors
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1072,18 +1109,6 @@ c_func
 l_string|&quot;sd.c:Bad block number requested&quot;
 )paren
 suffix:semicolon
-id|SCpnt
-op_assign
-id|scsi_end_request
-c_func
-(paren
-id|SCpnt
-comma
-l_int|0
-comma
-id|SCpnt-&gt;request.nr_sectors
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1120,18 +1145,6 @@ op_logical_neg
 id|dpnt-&gt;device-&gt;writeable
 )paren
 (brace
-id|SCpnt
-op_assign
-id|scsi_end_request
-c_func
-(paren
-id|SCpnt
-comma
-l_int|0
-comma
-id|SCpnt-&gt;request.nr_sectors
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1877,51 +1890,29 @@ suffix:semicolon
 DECL|variable|sd_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|sd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
-id|sd_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|sd_open
 comma
-multiline_comment|/* open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|sd_release
 comma
-multiline_comment|/* release */
-id|block_fsync
+id|ioctl
+suffix:colon
+id|sd_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
+id|check_media_change
+suffix:colon
 id|check_scsidisk_media_change
 comma
-multiline_comment|/* Disk change */
+id|revalidate
+suffix:colon
 id|fop_revalidate_scsidisk
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *    If we need more than one SCSI disk major (i.e. more than&n; *      16 SCSI disks), we&squot;ll have to kmalloc() more gendisks later.&n; */
@@ -2055,12 +2046,14 @@ id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
+macro_line|#if CONFIG_SCSI_LOGGING
 r_char
 id|nbuff
 (braket
 l_int|6
 )braket
 suffix:semicolon
+macro_line|#endif
 r_int
 id|this_count
 op_assign
@@ -2574,94 +2567,6 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-DECL|function|sd_wait_cmd
-r_static
-r_void
-id|sd_wait_cmd
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|SCpnt
-comma
-r_const
-r_void
-op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buffer
-comma
-r_int
-id|bufflen
-comma
-r_void
-(paren
-op_star
-id|done
-)paren
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-comma
-r_int
-id|timeout
-comma
-r_int
-id|retries
-)paren
-(brace
-id|DECLARE_MUTEX_LOCKED
-c_func
-(paren
-id|sem
-)paren
-suffix:semicolon
-id|SCpnt-&gt;request.sem
-op_assign
-op_amp
-id|sem
-suffix:semicolon
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_SCSI_BUSY
-suffix:semicolon
-id|scsi_do_cmd
-c_func
-(paren
-id|SCpnt
-comma
-(paren
-r_void
-op_star
-)paren
-id|cmnd
-comma
-id|buffer
-comma
-id|bufflen
-comma
-id|done
-comma
-id|timeout
-comma
-id|retries
-)paren
-suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|sem
-)paren
-suffix:semicolon
-id|SCpnt-&gt;request.sem
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 DECL|function|sd_init_done
 r_static
 r_void
@@ -2891,7 +2796,7 @@ l_int|2
 op_assign
 l_int|0
 suffix:semicolon
-id|sd_wait_cmd
+id|scsi_wait_cmd
 (paren
 id|SCpnt
 comma
@@ -3059,7 +2964,7 @@ l_int|2
 op_assign
 l_int|0
 suffix:semicolon
-id|sd_wait_cmd
+id|scsi_wait_cmd
 c_func
 (paren
 id|SCpnt
@@ -3256,7 +3161,7 @@ l_int|2
 op_assign
 l_int|0
 suffix:semicolon
-id|sd_wait_cmd
+id|scsi_wait_cmd
 c_func
 (paren
 id|SCpnt
@@ -3918,7 +3823,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* same code as READCAPA !! */
-id|sd_wait_cmd
+id|scsi_wait_cmd
 c_func
 (paren
 id|SCpnt

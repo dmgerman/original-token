@@ -2858,11 +2858,10 @@ OL
 l_int|20
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: process %d (%s) used obsolete EZUSB_CONTROL ioctl&bslash;n&quot;
+l_string|&quot;process %d (%s) used obsolete EZUSB_CONTROL ioctl&quot;
 comma
 id|current-&gt;pid
 comma
@@ -3126,11 +3125,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;procusb: EZUSB_CONTROL failed rqt %u rq %u len %u ret %d&bslash;n&quot;
+l_string|&quot;EZUSB_CONTROL failed rqt %u rq %u len %u ret %d&quot;
 comma
 id|ctrl.requesttype
 comma
@@ -3159,11 +3157,10 @@ OL
 l_int|20
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: process %d (%s) used obsolete EZUSB_BULK ioctl&bslash;n&quot;
+l_string|&quot;process %d (%s) used obsolete EZUSB_BULK ioctl&quot;
 comma
 id|current-&gt;pid
 comma
@@ -3464,11 +3461,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;procusb: EZUSB_BULK failed ep 0x%x len %u ret %d&bslash;n&quot;
+l_string|&quot;EZUSB_BULK failed ep 0x%x len %u ret %d&quot;
 comma
 id|bulk.ep
 comma
@@ -3495,11 +3491,10 @@ OL
 l_int|20
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: process %d (%s) used obsolete EZUSB_OLD_CONTROL ioctl&bslash;n&quot;
+l_string|&quot;process %d (%s) used obsolete EZUSB_OLD_CONTROL ioctl&quot;
 comma
 id|current-&gt;pid
 comma
@@ -3745,11 +3740,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;procusb: EZUSB_OLD_CONTROL failed rqt %u rq %u len %u ret %d&bslash;n&quot;
+l_string|&quot;EZUSB_OLD_CONTROL failed rqt %u rq %u len %u ret %d&quot;
 comma
 id|octrl.requesttype
 comma
@@ -3778,11 +3772,10 @@ OL
 l_int|20
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: process %d (%s) used obsolete EZUSB_OLD_BULK ioctl&bslash;n&quot;
+l_string|&quot;process %d (%s) used obsolete EZUSB_OLD_BULK ioctl&quot;
 comma
 id|current-&gt;pid
 comma
@@ -4071,11 +4064,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;procusb: EZUSB_OLD_BULK failed ep 0x%x len %u ret %d&bslash;n&quot;
+l_string|&quot;EZUSB_OLD_BULK failed ep 0x%x len %u ret %d&quot;
 comma
 id|obulk.ep
 comma
@@ -4102,11 +4094,10 @@ OL
 l_int|20
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: process %d (%s) used obsolete EZUSB_RESETEP ioctl&bslash;n&quot;
+l_string|&quot;process %d (%s) used obsolete EZUSB_RESETEP ioctl&quot;
 comma
 id|current-&gt;pid
 comma
@@ -4196,11 +4187,10 @@ OL
 l_int|20
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: process %d (%s) used obsolete EZUSB_SETINTERFACE ioctl&bslash;n&quot;
+l_string|&quot;process %d (%s) used obsolete EZUSB_SETINTERFACE ioctl&quot;
 comma
 id|current-&gt;pid
 comma
@@ -4277,11 +4267,10 @@ OL
 l_int|20
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: process %d (%s) used obsolete EZUSB_SETCONFIGURATION ioctl&bslash;n&quot;
+l_string|&quot;process %d (%s) used obsolete EZUSB_SETCONFIGURATION ioctl&quot;
 comma
 id|current-&gt;pid
 comma
@@ -4701,11 +4690,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: USB_PROC_CONTROL failed rqt %u rq %u len %u ret %d&bslash;n&quot;
+l_string|&quot;USB_PROC_CONTROL failed rqt %u rq %u len %u ret %d&quot;
 comma
 id|ctrl.requesttype
 comma
@@ -5011,11 +4999,10 @@ c_cond
 id|i
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: USB_PROC_BULK failed ep 0x%x len %u ret %d&bslash;n&quot;
+l_string|&quot;USB_PROC_BULK failed ep 0x%x len %u ret %d&quot;
 comma
 id|bulk.ep
 comma
@@ -5272,11 +5259,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: USB_PROC_OLD_CONTROL failed rqt %u rq %u len %u ret %d&bslash;n&quot;
+l_string|&quot;USB_PROC_OLD_CONTROL failed rqt %u rq %u len %u ret %d&quot;
 comma
 id|octrl.requesttype
 comma
@@ -5575,11 +5561,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;/proc/bus/usb: USB_PROC_OLD_BULK failed ep 0x%x len %u ret %d&bslash;n&quot;
+l_string|&quot;USB_PROC_OLD_BULK failed ep 0x%x len %u ret %d&quot;
 comma
 id|obulk.ep
 comma
@@ -6183,9 +6168,10 @@ op_logical_neg
 id|usbdir
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-l_string|&quot;proc_usb: cannot create /proc/bus/usb entry&bslash;n&quot;
+l_string|&quot;cannot create /proc/bus/usb entry&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6212,9 +6198,10 @@ op_logical_neg
 id|driversdir
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-l_string|&quot;proc_usb: cannot create /proc/bus/usb/drivers entry&bslash;n&quot;
+l_string|&quot;cannot create /proc/bus/usb/drivers entry&quot;
 )paren
 suffix:semicolon
 id|proc_usb_cleanup
@@ -6251,9 +6238,10 @@ op_logical_neg
 id|devicesdir
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-l_string|&quot;proc_usb: cannot create /proc/bus/usb/devices entry&bslash;n&quot;
+l_string|&quot;cannot create /proc/bus/usb/devices entry&quot;
 )paren
 suffix:semicolon
 id|proc_usb_cleanup

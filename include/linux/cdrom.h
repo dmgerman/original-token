@@ -1784,10 +1784,10 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* the general file operations structure: */
+multiline_comment|/* the general block_device operations structure: */
 r_extern
 r_struct
-id|file_operations
+id|block_device_operations
 id|cdrom_fops
 suffix:semicolon
 r_extern

@@ -1853,11 +1853,6 @@ multiline_comment|/* fsync */
 l_int|NULL
 comma
 multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|romfs_file_inode_operations
@@ -1941,35 +1936,6 @@ multiline_comment|/* write - bad */
 id|romfs_readdir
 comma
 multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* Merged dir/symlink op table.  readdir/lookup/readlink/follow_link&n; * will protect from type mismatch.&n; */

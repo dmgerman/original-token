@@ -221,6 +221,8 @@ DECL|macro|KEY_KP0
 mdefine_line|#define KEY_KP0&t;&t;&t;82&t;&t;
 DECL|macro|KEY_KPDOT
 mdefine_line|#define KEY_KPDOT&t;&t;83&t;&t;
+DECL|macro|KEY_103RD
+mdefine_line|#define KEY_103RD&t;&t;84
 DECL|macro|KEY_F13
 mdefine_line|#define KEY_F13&t;&t;&t;85&t;&t;
 DECL|macro|KEY_102ND
@@ -361,6 +363,16 @@ DECL|macro|KEY_DIRECTION
 mdefine_line|#define KEY_DIRECTION&t;&t;153&t;&t;
 DECL|macro|KEY_CYCLEWINDOWS
 mdefine_line|#define KEY_CYCLEWINDOWS&t;154&t;&t;
+DECL|macro|KEY_MAIL
+mdefine_line|#define KEY_MAIL&t;&t;155
+DECL|macro|KEY_BOOKMARKS
+mdefine_line|#define KEY_BOOKMARKS&t;&t;156
+DECL|macro|KEY_COMPUTER
+mdefine_line|#define KEY_COMPUTER&t;&t;157
+DECL|macro|KEY_BACK
+mdefine_line|#define KEY_BACK&t;&t;158
+DECL|macro|KEY_FORWARD
+mdefine_line|#define KEY_FORWARD&t;&t;159
 DECL|macro|KEY_CLOSECD
 mdefine_line|#define KEY_CLOSECD&t;&t;160&t;&t;
 DECL|macro|KEY_EJECTCD

@@ -336,11 +336,6 @@ multiline_comment|/* fsync */
 l_int|NULL
 comma
 multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|ufs_file_inode_operations

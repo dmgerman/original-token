@@ -10,12 +10,12 @@ macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/input.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;linux/list.h&gt;
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;hid.h&quot;
-macro_line|#ifdef CONFIG_USB_HID_DEBUG_LOTS
+macro_line|#ifdef DEBUG
 macro_line|#include &quot;hid-debug.h&quot;
 macro_line|#else
 DECL|macro|hid_dump_input
@@ -133,7 +133,7 @@ l_int|27
 comma
 l_int|43
 comma
-l_int|192
+l_int|84
 comma
 l_int|39
 comma
@@ -853,7 +853,7 @@ r_return
 id|field
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;too many fields in report&quot;
@@ -931,7 +931,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;collection stack overflow&quot;
@@ -971,7 +971,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;collection stack underflow&quot;
@@ -1066,7 +1066,7 @@ op_ge
 id|MAX_USAGES
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;usage index exceeded&quot;
@@ -1146,7 +1146,7 @@ id|parser-&gt;global.report_id
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;hid_register_report failed&quot;
@@ -1175,7 +1175,7 @@ op_le
 id|parser-&gt;global.logical_minimum
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;logical range invalid %d %d&quot;
@@ -1479,7 +1479,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|hid_parser
+id|hid_global
 )paren
 )paren
 suffix:semicolon
@@ -1487,7 +1487,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;global enviroment stack overflow&quot;
@@ -1522,7 +1522,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|hid_parser
+id|hid_global
 )paren
 )paren
 suffix:semicolon
@@ -1530,7 +1530,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;global enviroment stack underflow&quot;
@@ -1657,7 +1657,7 @@ OG
 l_int|32
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;invalid report_size %d&quot;
@@ -1692,7 +1692,7 @@ OG
 id|MAX_USAGES
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;invalid report_count %d&quot;
@@ -1727,7 +1727,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;report_id 0 is invalid&quot;
@@ -1743,7 +1743,7 @@ l_int|0
 suffix:semicolon
 r_default
 suffix:colon
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unknown global tag 0x%x&quot;
@@ -1786,7 +1786,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;item data expected for local item&quot;
@@ -1829,7 +1829,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;nested delimiters&quot;
@@ -1857,7 +1857,7 @@ OL
 l_int|1
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;bogus close delimiter&quot;
@@ -1913,7 +1913,7 @@ id|data
 )paren
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;alternative usage ignored&quot;
@@ -1958,7 +1958,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;alternative usage ignored&quot;
@@ -2024,7 +2024,7 @@ id|n
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;hid_add_usage failed&bslash;n&quot;
@@ -2039,7 +2039,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;alternative usage ignored&quot;
@@ -2050,7 +2050,7 @@ l_int|0
 suffix:semicolon
 r_default
 suffix:colon
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unknown local item tag 0x%x&quot;
@@ -2184,7 +2184,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unknown main item tag 0x%x&quot;
@@ -2234,7 +2234,7 @@ op_star
 id|item
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;reserved item type, tag 0x%x&quot;
@@ -2900,7 +2900,7 @@ op_ne
 id|HID_ITEM_FORMAT_SHORT
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unexpected long global item&quot;
@@ -2937,7 +2937,7 @@ id|item
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;item %u %u %u %u parsing failed&bslash;n&quot;
@@ -2990,7 +2990,7 @@ c_cond
 id|parser-&gt;collection_stack_ptr
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unbalanced collection at end of report description&quot;
@@ -3018,7 +3018,7 @@ c_cond
 id|parser-&gt;local.delimiter_depth
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;unbalanced delimiter at end of report description&quot;
@@ -3051,7 +3051,7 @@ id|device
 suffix:semicolon
 )brace
 )brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;item fetching failed at offset %d&bslash;n&quot;
@@ -4394,7 +4394,7 @@ c_cond
 id|urb-&gt;status
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;nonzero status in irq %d&quot;
@@ -4412,7 +4412,7 @@ op_logical_neg
 id|len
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;empty report&quot;
@@ -4421,12 +4421,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_USB_HID_DEBUG_LOTS
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;hid: report (size %u) (%snumbered) = &quot;
+id|__FILE__
+l_string|&quot;: report (size %u) (%snumbered) = &quot;
 comma
 id|len
 comma
@@ -4506,7 +4507,7 @@ id|n
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;undefined report_id %d received&quot;
@@ -4514,12 +4515,13 @@ comma
 id|n
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_USB_HID_DEBUG
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;hid: report (size %u) = &quot;
+id|__FILE__
+l_string|&quot;: report (size %u) = &quot;
 comma
 id|len
 )paren
@@ -4577,7 +4579,7 @@ op_plus
 l_int|1
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;report %d is too short, (%d &lt; %d)&quot;
@@ -4631,6 +4633,197 @@ id|data
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * hid_read_report() s intended to read the hid devices values even&n; * before the input device is registered, so that the userland interface&n; * modules start with real values. This is especially important for joydev.c&n; * automagic calibration. Doesn&squot;t work yet, though. Don&squot;t know why, the control&n; * request just times out on most devices I have and returns nonsense on others.&n; */
+DECL|function|hid_read_report
+r_static
+r_void
+id|hid_read_report
+c_func
+(paren
+r_struct
+id|hid_device
+op_star
+id|hid
+comma
+r_struct
+id|hid_report
+op_star
+id|report
+)paren
+(brace
+macro_line|#if 0
+r_int
+id|rlen
+op_assign
+(paren
+(paren
+id|report-&gt;size
+op_minus
+l_int|1
+)paren
+op_rshift
+l_int|3
+)paren
+op_plus
+l_int|1
+op_plus
+id|report_enum-&gt;numbered
+suffix:semicolon
+r_char
+id|rdata
+(braket
+id|rlen
+)braket
+suffix:semicolon
+r_struct
+id|urb
+id|urb
+suffix:semicolon
+r_int
+id|read
+suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|urb
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|urb
+)paren
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|rdata
+comma
+l_int|0
+comma
+id|rlen
+)paren
+suffix:semicolon
+id|urb.transfer_buffer
+op_assign
+id|rdata
+suffix:semicolon
+id|urb.actual_length
+op_assign
+id|rlen
+suffix:semicolon
+id|urb.context
+op_assign
+id|hid
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;getting report type %d id %d len %d&quot;
+comma
+id|report-&gt;type
+op_plus
+l_int|1
+comma
+id|report-&gt;id
+comma
+id|rlen
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|read
+op_assign
+id|usb_get_report
+c_func
+(paren
+id|hid-&gt;dev
+comma
+id|report-&gt;type
+op_plus
+l_int|1
+comma
+id|report-&gt;id
+comma
+id|hid-&gt;ifnum
+comma
+id|rdata
+comma
+id|rlen
+)paren
+)paren
+op_ne
+id|rlen
+)paren
+(brace
+id|dbg
+c_func
+(paren
+l_string|&quot;reading report failed rlen %d read %d&quot;
+comma
+id|rlen
+comma
+id|read
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|__FILE__
+l_string|&quot;: report = &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|rlen
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; %02x&quot;
+comma
+id|rdata
+(braket
+id|j
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_continue
+suffix:semicolon
+)brace
+id|hid_irq
+c_func
+(paren
+op_amp
+id|urb
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Configure the input layer interface&n; * Read all reports and initalize the absoulte field values.&n; */
 DECL|function|hid_init_input
@@ -4689,26 +4882,6 @@ op_star
 )paren
 id|list
 suffix:semicolon
-r_int
-id|rlen
-op_assign
-(paren
-(paren
-id|report-&gt;size
-op_minus
-l_int|1
-)paren
-op_rshift
-l_int|3
-)paren
-op_plus
-l_int|1
-op_plus
-id|report_enum-&gt;numbered
-suffix:semicolon
-r_int
-id|read
-suffix:semicolon
 id|list
 op_assign
 id|list-&gt;next
@@ -4766,159 +4939,14 @@ op_plus
 id|j
 )paren
 suffix:semicolon
-macro_line|#if 1
-(brace
-r_char
-id|rdata
-(braket
-id|rlen
-)braket
-suffix:semicolon
-r_struct
-id|urb
-id|urb
-suffix:semicolon
-id|memset
+id|hid_read_report
 c_func
 (paren
-op_amp
-id|urb
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|urb
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|rdata
-comma
-l_int|0
-comma
-id|rlen
-)paren
-suffix:semicolon
-id|urb.transfer_buffer
-op_assign
-id|rdata
-suffix:semicolon
-id|urb.actual_length
-op_assign
-id|rlen
-suffix:semicolon
-id|urb.context
-op_assign
 id|hid
-suffix:semicolon
-id|hid_debug
-c_func
-(paren
-l_string|&quot;getting report type %d id %d len %d&quot;
 comma
-id|report-&gt;type
-op_plus
-l_int|1
-comma
-id|report-&gt;id
-comma
-id|rlen
+id|report
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|read
-op_assign
-id|usb_get_report
-c_func
-(paren
-id|hid-&gt;dev
-comma
-id|report-&gt;type
-op_plus
-l_int|1
-comma
-id|report-&gt;id
-comma
-id|hid-&gt;ifnum
-comma
-id|rdata
-comma
-id|rlen
-)paren
-)paren
-op_ne
-id|rlen
-)paren
-(brace
-id|hid_debug
-c_func
-(paren
-l_string|&quot;reading report failed rlen %d read %d&quot;
-comma
-id|rlen
-comma
-id|read
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_USB_HID_DEBUG
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;hid: report = &quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|j
-op_assign
-l_int|0
-suffix:semicolon
-id|j
-OL
-id|rlen
-suffix:semicolon
-id|j
-op_increment
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; %02x&quot;
-comma
-id|rdata
-(braket
-id|j
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_continue
-suffix:semicolon
-)brace
-id|hid_irq
-c_func
-(paren
-op_amp
-id|urb
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; * Output the field into the report.&n; */
@@ -5121,7 +5149,7 @@ op_ge
 id|field-&gt;report_count
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;offset exceeds report_count&quot;
@@ -5160,7 +5188,7 @@ id|size
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;value %d is out of range&quot;
@@ -5190,7 +5218,7 @@ id|field-&gt;logical_minimum
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;value %d is invalid&quot;
@@ -5305,7 +5333,7 @@ id|hdesc
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;class descriptor not present&bslash;n&quot;
@@ -5365,7 +5393,7 @@ OG
 l_int|1024
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;weird size of report descriptor (%u)&quot;
@@ -5410,7 +5438,7 @@ OL
 l_int|0
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;reading report descriptor failed&quot;
@@ -5420,12 +5448,13 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_USB_HID_DEBUG
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;hid: report (size %u, read %d) = &quot;
+id|__FILE__
+l_string|&quot;: report (size %u, read %d) = &quot;
 comma
 id|rsize
 comma
@@ -5484,7 +5513,7 @@ id|rsize
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;parsing report descriptor failed&quot;
@@ -5618,7 +5647,7 @@ id|hid-&gt;urb
 )paren
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;submitting interrupt URB failed&quot;
@@ -5638,7 +5667,7 @@ op_eq
 id|interface-&gt;bNumEndpoints
 )paren
 (brace
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;couldn&squot;t find an input interrupt endpoint&quot;
@@ -5722,7 +5751,7 @@ id|hid_device
 op_star
 id|hid
 suffix:semicolon
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;HID probe called for ifnum %d&quot;
@@ -5830,7 +5859,7 @@ id|hid
 op_assign
 id|ptr
 suffix:semicolon
-id|hid_debug
+id|dbg
 c_func
 (paren
 l_string|&quot;cleanup called&quot;

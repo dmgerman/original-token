@@ -2183,22 +2183,9 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This thread doesn&squot;t need any user-level access,&n;&t; * so get rid of all our resources&n;&t; */
-id|exit_mm
+id|daemonize
 c_func
 (paren
-id|current
-)paren
-suffix:semicolon
-id|exit_files
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|exit_fs
-c_func
-(paren
-id|current
 )paren
 suffix:semicolon
 multiline_comment|/* Setup a nice name */

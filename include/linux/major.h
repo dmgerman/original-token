@@ -172,6 +172,8 @@ DECL|macro|COMPAQ_SMART2_MAJOR6
 mdefine_line|#define COMPAQ_SMART2_MAJOR6&t;78
 DECL|macro|COMPAQ_SMART2_MAJOR7
 mdefine_line|#define COMPAQ_SMART2_MAJOR7&t;79
+DECL|macro|LVM_BLK_MAJOR
+mdefine_line|#define LVM_BLK_MAJOR&t;58&t;/* Logical Volume Manager */
 DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR

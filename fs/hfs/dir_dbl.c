@@ -235,11 +235,6 @@ multiline_comment|/* fsync - default */
 l_int|NULL
 comma
 multiline_comment|/* fasync - default */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change - none */
-l_int|NULL
-multiline_comment|/* revalidate - none */
 )brace
 suffix:semicolon
 DECL|variable|hfs_dbl_dir_inode_operations

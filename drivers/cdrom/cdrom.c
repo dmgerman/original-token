@@ -323,51 +323,26 @@ l_int|NULL
 suffix:semicolon
 DECL|variable|cdrom_fops
 r_struct
-id|file_operations
+id|block_device_operations
 id|cdrom_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-id|cdrom_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|cdrom_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|cdrom_release
 comma
-multiline_comment|/* release */
-l_int|NULL
+id|ioctl
+suffix:colon
+id|cdrom_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
+id|check_media_change
+suffix:colon
 id|cdrom_media_changed
 comma
-multiline_comment|/* media_change */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* This macro makes sure we don&squot;t have to check on cdrom_device_ops&n; * existence in the run-time routines below. Change_capability is a&n; * hack to have the capability flags defined const, while we can still&n; * change it here without gcc complaining at every line.&n; */

@@ -481,51 +481,26 @@ suffix:semicolon
 DECL|variable|gscd_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|gscd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-id|gscd_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|gscd_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|gscd_release
 comma
-multiline_comment|/* release */
-l_int|NULL
+id|ioctl
+suffix:colon
+id|gscd_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync*/
+id|check_media_change
+suffix:colon
 id|check_gscd_med_chg
 comma
-multiline_comment|/* media change */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* &n; * Checking if the media has been changed&n; * (not yet implemented)&n; */

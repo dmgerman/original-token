@@ -15141,54 +15141,32 @@ suffix:semicolon
 )brace
 DECL|variable|ide_fops
 r_struct
-id|file_operations
+id|block_device_operations
 id|ide_fops
 (braket
 )braket
 op_assign
 (brace
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-id|ide_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|ide_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|ide_release
 comma
-multiline_comment|/* release */
-id|block_fsync
+id|ioctl
+suffix:colon
+id|ide_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
+id|check_media_change
+suffix:colon
 id|ide_check_media_change
 comma
-multiline_comment|/* check_media_change */
+id|revalidate
+suffix:colon
 id|ide_revalidate_disk
-multiline_comment|/* revalidate */
 )brace
 )brace
 suffix:semicolon

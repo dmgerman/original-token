@@ -298,8 +298,6 @@ op_star
 suffix:semicolon
 DECL|macro|get_task_struct
 mdefine_line|#define get_task_struct(p)&t;atomic_inc(&amp;(p)-&gt;thread.refcount)
-DECL|macro|put_task_struct
-mdefine_line|#define put_task_struct(p)&t;free_task_struct(p)
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(p)&t;&t;&t;&t;&t;&bslash;&n; do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (atomic_dec_and_test(&amp;(p)-&gt;thread.refcount))&t;&t;&bslash;&n;&t;&t;__free_task_struct((p));&t;&t;&t;&bslash;&n; } while (0)
 DECL|macro|init_task

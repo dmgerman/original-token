@@ -1620,6 +1620,10 @@ op_increment
 )paren
 (brace
 r_return
+(paren
+r_void
+op_star
+)paren
 id|p
 op_minus
 l_int|1

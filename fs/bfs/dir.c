@@ -429,14 +429,6 @@ id|fasync
 suffix:colon
 l_int|NULL
 comma
-id|check_media_change
-suffix:colon
-l_int|NULL
-comma
-id|revalidate
-suffix:colon
-l_int|NULL
-comma
 )brace
 suffix:semicolon
 r_extern

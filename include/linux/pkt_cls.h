@@ -306,5 +306,33 @@ comma
 suffix:semicolon
 DECL|macro|TCA_FW_MAX
 mdefine_line|#define TCA_FW_MAX TCA_FW_POLICE
+multiline_comment|/* TC index filter */
+r_enum
+(brace
+DECL|enumerator|TCA_TCINDEX_UNSPEC
+id|TCA_TCINDEX_UNSPEC
+comma
+DECL|enumerator|TCA_TCINDEX_HASH
+id|TCA_TCINDEX_HASH
+comma
+DECL|enumerator|TCA_TCINDEX_MASK
+id|TCA_TCINDEX_MASK
+comma
+DECL|enumerator|TCA_TCINDEX_SHIFT
+id|TCA_TCINDEX_SHIFT
+comma
+DECL|enumerator|TCA_TCINDEX_FALL_THROUGH
+id|TCA_TCINDEX_FALL_THROUGH
+comma
+DECL|enumerator|TCA_TCINDEX_CLASSID
+id|TCA_TCINDEX_CLASSID
+comma
+DECL|enumerator|TCA_TCINDEX_POLICE
+id|TCA_TCINDEX_POLICE
+comma
+)brace
+suffix:semicolon
+DECL|macro|TCA_TCINDEX_MAX
+mdefine_line|#define TCA_TCINDEX_MAX        TCA_TCINDEX_POLICE
 macro_line|#endif
 eof

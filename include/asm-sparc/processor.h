@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.73 1999/12/15 14:18:52 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.75 2000/01/07 20:21:42 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -486,6 +486,7 @@ DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() BTFIXUP_CALL(alloc_task_struct)()
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(tsk) BTFIXUP_CALL(free_task_struct)(tsk)
+multiline_comment|/* XXX Anton, here is where you implement get_task_struct et al. */
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

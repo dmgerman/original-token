@@ -108,11 +108,10 @@ l_int|16
 )braket
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;Error registering %s driver&bslash;n&quot;
+l_string|&quot;error registering %s driver&quot;
 comma
 id|new_driver-&gt;name
 )paren
@@ -132,10 +131,10 @@ op_assign
 id|new_driver
 suffix:semicolon
 )brace
-id|printk
+id|info
 c_func
 (paren
-l_string|&quot;usbcore: Registered new driver %s&bslash;n&quot;
+l_string|&quot;registered new driver %s&quot;
 comma
 id|new_driver-&gt;name
 )paren
@@ -224,11 +223,10 @@ op_logical_neg
 id|dev
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usbcore: null device being purged!!!&bslash;n&quot;
+l_string|&quot;null device being purged!!!&quot;
 )paren
 suffix:semicolon
 r_return
@@ -356,10 +354,10 @@ id|list_head
 op_star
 id|tmp
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-l_string|&quot;usbcore: Deregistering driver %s&bslash;n&quot;
+l_string|&quot;deregistering driver %s&quot;
 comma
 id|driver-&gt;name
 )paren
@@ -854,11 +852,10 @@ id|busnum
 suffix:semicolon
 )brace
 r_else
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: too many buses&bslash;n&quot;
+l_string|&quot;too many buses&quot;
 )paren
 suffix:semicolon
 id|proc_usb_add_bus
@@ -878,10 +875,10 @@ op_amp
 id|usb_bus_list
 )paren
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-l_string|&quot;New USB bus registered, assigned bus number %d&bslash;n&quot;
+l_string|&quot;new USB bus registered, assigned bus number %d&quot;
 comma
 id|bus-&gt;busnum
 )paren
@@ -898,10 +895,10 @@ op_star
 id|bus
 )paren
 (brace
-id|printk
+id|info
 c_func
 (paren
-l_string|&quot;usbcore: USB bus %d deregistered&bslash;n&quot;
+l_string|&quot;USB bus %d deregistered&quot;
 comma
 id|bus-&gt;busnum
 )paren
@@ -952,11 +949,10 @@ op_logical_neg
 id|dev
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usbcore: null device being checked!!!&bslash;n&quot;
+l_string|&quot;null device being checked!!!&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1196,11 +1192,10 @@ id|dev-&gt;actconfig-&gt;bNumInterfaces
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb-core: bad find_interface_driver params&bslash;n&quot;
+l_string|&quot;bad find_interface_driver params&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2637,11 +2632,10 @@ comma
 id|wd-&gt;context
 )paren
 )paren
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: legacy irq callback returned 0!!!&bslash;n&quot;
+l_string|&quot;legacy irq callback returned 0!!!&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2729,7 +2723,7 @@ id|handle
 op_assign
 l_int|NULL
 suffix:semicolon
-singleline_comment|//printk(&quot;irq: dev:%p pipe:%08X handler:%p period:%d dev_id:%p max:%d&bslash;n&quot;, dev, pipe, handler, period, dev_id, maxsze);
+singleline_comment|//dbg(&quot;irq: dev:%p pipe:%08X handler:%p period:%d dev_id:%p max:%d&quot;, dev, pipe, handler, period, dev_id, maxsze);
 multiline_comment|/* Check host controller&squot;s bandwidth for this int. request. */
 id|bustime
 op_assign
@@ -3231,11 +3225,10 @@ OG
 id|size
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: ran out of descriptors parsing&bslash;n&quot;
+l_string|&quot;ran out of descriptors parsing&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3251,11 +3244,10 @@ op_ne
 id|USB_DT_ENDPOINT
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: unexpected descriptor 0x%X, expecting endpoint descriptor, type 0x%X&bslash;n&quot;
+l_string|&quot;unexpected descriptor 0x%X, expecting endpoint descriptor, type 0x%X&quot;
 comma
 id|endpoint-&gt;bDescriptorType
 comma
@@ -3352,11 +3344,10 @@ OL
 l_int|2
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: invalid descriptor length of %d&bslash;n&quot;
+l_string|&quot;invalid descriptor length of %d&quot;
 comma
 id|header-&gt;bLength
 )paren
@@ -3397,11 +3388,10 @@ id|USB_DT_DEVICE
 )paren
 r_break
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: skipping descriptor 0x%X&bslash;n&quot;
+l_string|&quot;skipping descriptor 0x%X&quot;
 comma
 id|header-&gt;bDescriptorType
 )paren
@@ -3427,11 +3417,10 @@ c_cond
 (paren
 id|numskipped
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: skipped %d class/vendor specific endpoint descriptors&bslash;n&quot;
+l_string|&quot;skipped %d class/vendor specific endpoint descriptors&quot;
 comma
 id|numskipped
 )paren
@@ -3485,11 +3474,10 @@ op_logical_neg
 id|endpoint-&gt;extra
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;Couldn&squot;t allocate memory for endpoint extra descriptors&bslash;n&quot;
+l_string|&quot;couldn&squot;t allocate memory for endpoint extra descriptors&quot;
 )paren
 suffix:semicolon
 id|endpoint-&gt;extralen
@@ -3606,11 +3594,10 @@ op_logical_neg
 id|interface-&gt;altsetting
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;couldn&squot;t kmalloc interface-&gt;altsetting&bslash;n&quot;
+l_string|&quot;couldn&squot;t kmalloc interface-&gt;altsetting&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3657,11 +3644,10 @@ OG
 id|USB_MAXALTSETTING
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;usb: too many alternate settings (max %d)&bslash;n&quot;
+l_string|&quot;too many alternate settings (max %d)&quot;
 comma
 id|USB_MAXALTSETTING
 )paren
@@ -3698,10 +3684,10 @@ op_logical_neg
 id|interface-&gt;altsetting
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;couldn&squot;t kmalloc interface-&gt;altsetting&bslash;n&quot;
+l_string|&quot;couldn&squot;t kmalloc interface-&gt;altsetting&quot;
 )paren
 suffix:semicolon
 id|interface-&gt;altsetting
@@ -3806,11 +3792,10 @@ OL
 l_int|2
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: invalid descriptor length of %d&bslash;n&quot;
+l_string|&quot;invalid descriptor length of %d&quot;
 comma
 id|header-&gt;bLength
 )paren
@@ -3872,11 +3857,10 @@ c_cond
 (paren
 id|numskipped
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: skipped %d class/vendor specific interface descriptors&bslash;n&quot;
+l_string|&quot;skipped %d class/vendor specific interface descriptors&quot;
 comma
 id|numskipped
 )paren
@@ -3929,11 +3913,10 @@ op_logical_neg
 id|ifp-&gt;extra
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;couldn&squot;t allocate memory for interface extra descriptors&bslash;n&quot;
+l_string|&quot;couldn&squot;t allocate memory for interface extra descriptors&quot;
 )paren
 suffix:semicolon
 id|ifp-&gt;extralen
@@ -4008,11 +3991,10 @@ OG
 id|USB_MAXENDPOINTS
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;usb: too many endpoints&bslash;n&quot;
+l_string|&quot;too many endpoints&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4048,11 +4030,10 @@ op_logical_neg
 id|ifp-&gt;endpoint
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;usb: out of memory&bslash;n&quot;
+l_string|&quot;out of memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4108,11 +4089,10 @@ OG
 id|size
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: ran out of descriptors parsing&bslash;n&quot;
+l_string|&quot;ran out of descriptors parsing&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4254,11 +4234,10 @@ OG
 id|USB_MAXINTERFACES
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;usb: too many interfaces&bslash;n&quot;
+l_string|&quot;too many interfaces&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4287,10 +4266,10 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-id|printk
+id|dbg
 c_func
 (paren
-l_string|&quot;kmalloc IF %p, numif %i&bslash;n&quot;
+l_string|&quot;kmalloc IF %p, numif %i&quot;
 comma
 id|config-&gt;interface
 comma
@@ -4304,11 +4283,10 @@ op_logical_neg
 id|config-&gt;interface
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;usb: out of memory&bslash;n&quot;
+l_string|&quot;out of memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4372,11 +4350,10 @@ OG
 id|size
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: ran out of descriptors parsing&bslash;n&quot;
+l_string|&quot;ran out of descriptors parsing&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4392,11 +4369,10 @@ op_ne
 id|USB_DT_INTERFACE
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: unexpected descriptor 0x%X&bslash;n&quot;
+l_string|&quot;unexpected descriptor 0x%X&quot;
 comma
 id|header-&gt;bDescriptorType
 )paren
@@ -4760,11 +4736,10 @@ OL
 l_int|2
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: invalid descriptor length of %d&bslash;n&quot;
+l_string|&quot;invalid descriptor length of %d&quot;
 comma
 id|header-&gt;bLength
 )paren
@@ -4842,10 +4817,10 @@ id|pdev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-l_string|&quot;usbcore: USB disconnect on device %d&bslash;n&quot;
+l_string|&quot;USB disconnect on device %d&quot;
 comma
 id|dev-&gt;devnum
 )paren
@@ -5998,11 +5973,10 @@ op_logical_neg
 id|iface
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: selecting invalid interface %d&bslash;n&quot;
+l_string|&quot;selecting invalid interface %d&quot;
 comma
 id|interface
 )paren
@@ -6141,11 +6115,10 @@ op_logical_neg
 id|cp
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: selecting invalid configuration %d&bslash;n&quot;
+l_string|&quot;selecting invalid configuration %d&quot;
 comma
 id|configuration
 )paren
@@ -6331,7 +6304,7 @@ c_func
 (paren
 id|dev
 comma
-id|usb_rcvctrlpipe
+id|usb_sndctrlpipe
 c_func
 (paren
 id|dev
@@ -6411,11 +6384,10 @@ OG
 id|USB_MAXCONFIG
 )paren
 (brace
-id|printk
+id|warn
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;usb: too many configurations&bslash;n&quot;
+l_string|&quot;too many configurations&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6451,11 +6423,10 @@ op_logical_neg
 id|dev-&gt;config
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;usb: out of memory.&bslash;n&quot;
+l_string|&quot;out of memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6520,11 +6491,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: unable to get descriptor&bslash;n&quot;
+l_string|&quot;unable to get descriptor&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -6556,11 +6526,10 @@ op_logical_neg
 id|bigbuffer
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;unable to allocate memory for configuration descriptors&bslash;n&quot;
+l_string|&quot;unable to allocate memory for configuration descriptors&quot;
 )paren
 suffix:semicolon
 id|result
@@ -6597,11 +6566,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;couldn&squot;t get all of config descriptors&bslash;n&quot;
+l_string|&quot;couldn&squot;t get all of config descriptors&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -6643,11 +6611,10 @@ id|result
 OG
 l_int|0
 )paren
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;usb: descriptor data left&bslash;n&quot;
+l_string|&quot;descriptor data left&quot;
 )paren
 suffix:semicolon
 r_else
@@ -6793,11 +6760,10 @@ l_int|0
 )paren
 suffix:semicolon
 r_else
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: error getting string!&bslash;n&quot;
+l_string|&quot;error getting string&quot;
 )paren
 suffix:semicolon
 id|dev-&gt;string_langid
@@ -6848,11 +6814,10 @@ l_int|0
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: error retrieving string&bslash;n&quot;
+l_string|&quot;error retrieving string&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6908,11 +6873,10 @@ op_logical_neg
 id|ptr
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usb: couldn&squot;t allocate memory for string&bslash;n&quot;
+l_string|&quot;couldn&squot;t allocate memory for string&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6982,11 +6946,10 @@ id|addr
 comma
 id|err
 suffix:semicolon
-id|printk
+id|info
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;USB new device connect, assigned device number %d&bslash;n&quot;
+l_string|&quot;USB new device connect, assigned device number %d&quot;
 comma
 id|dev-&gt;devnum
 )paren
@@ -7044,11 +7007,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usbcore: USB device not responding, giving up (error=%d)&bslash;n&quot;
+l_string|&quot;USB device not responding, giving up (error=%d)&quot;
 comma
 id|err
 )paren
@@ -7148,11 +7110,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usbcore: USB device not accepting new address (error=%d)&bslash;n&quot;
+l_string|&quot;USB device not accepting new address (error=%d)&quot;
 comma
 id|err
 )paren
@@ -7198,11 +7159,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usbcore: unable to get device descriptor (error=%d)&bslash;n&quot;
+l_string|&quot;unable to get device descriptor (error=%d)&quot;
 comma
 id|err
 )paren
@@ -7241,11 +7201,10 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usbcore: unable to get configuration (error=%d)&bslash;n&quot;
+l_string|&quot;unable to get configuration (error=%d)&quot;
 comma
 id|err
 )paren
@@ -7296,11 +7255,10 @@ id|bConfigurationValue
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;usbcore: failed to set default configuration&bslash;n&quot;
+l_string|&quot;failed to set default configuration&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7488,10 +7446,10 @@ id|usb_fops
 )paren
 )paren
 (brace
-id|printk
+id|err
 c_func
 (paren
-l_string|&quot;unable to get major %d for usb devices&bslash;n&quot;
+l_string|&quot;unable to get major %d for usb devices&quot;
 comma
 id|USB_MAJOR
 )paren

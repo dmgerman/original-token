@@ -5267,17 +5267,6 @@ multiline_comment|/* fsync */
 l_int|NULL
 comma
 multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-macro_line|#ifndef LINUX20
-l_int|NULL
-comma
-multiline_comment|/* lock */
-macro_line|#endif
 )brace
 suffix:semicolon
 DECL|function|reset_dsp

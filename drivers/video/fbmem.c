@@ -589,6 +589,17 @@ id|fb_drivers
 id|__initdata
 op_assign
 (brace
+macro_line|#ifdef CONFIG_FB_SBUS
+multiline_comment|/*&n;&t; * Sbusfb must be initialized _before_ other frame buffer devices that&n;&t; * use PCI probing&n;&t; */
+(brace
+l_string|&quot;sbus&quot;
+comma
+id|sbusfb_init
+comma
+id|sbusfb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_3DFX
 (brace
 l_string|&quot;tdfx&quot;
@@ -696,16 +707,6 @@ comma
 id|clgenfb_init
 comma
 id|clgenfb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_SBUS
-(brace
-l_string|&quot;sbus&quot;
-comma
-id|sbusfb_init
-comma
-id|sbusfb_setup
 )brace
 comma
 macro_line|#endif
@@ -948,10 +949,6 @@ id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
-DECL|macro|GET_INODE
-mdefine_line|#define GET_INODE(i) MKDEV(FB_MAJOR, (i) &lt;&lt; FB_MODES_SHIFT)
-DECL|macro|GET_FB_VAR_IDX
-mdefine_line|#define GET_FB_VAR_IDX(node) (MINOR(node) &amp; ((1 &lt;&lt; FB_MODES_SHIFT)-1)) 
 DECL|variable|registered_fb
 r_struct
 id|fb_info
@@ -2733,6 +2730,88 @@ l_int|0
 suffix:semicolon
 macro_line|#endif /* !sparc32 */
 )brace
+macro_line|#if 1 /* to go away in 2.4.0 */
+DECL|function|GET_FB_IDX
+r_int
+id|GET_FB_IDX
+c_func
+(paren
+id|kdev_t
+id|rdev
+)paren
+(brace
+r_int
+id|fbidx
+op_assign
+id|MINOR
+c_func
+(paren
+id|rdev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fbidx
+op_ge
+l_int|32
+)paren
+(brace
+r_int
+id|newfbidx
+op_assign
+id|fbidx
+op_rshift
+l_int|5
+suffix:semicolon
+r_static
+r_int
+id|warned
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|warned
+op_amp
+(paren
+l_int|1
+op_lshift
+id|newfbidx
+)paren
+)paren
+)paren
+(brace
+id|warned
+op_or_assign
+l_int|1
+op_lshift
+id|newfbidx
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: Remapping obsolete /dev/fb* minor %d to %d&bslash;n&quot;
+comma
+id|fbidx
+comma
+id|newfbidx
+)paren
+suffix:semicolon
+)brace
+id|fbidx
+op_assign
+id|newfbidx
+suffix:semicolon
+)brace
+r_return
+id|fbidx
+suffix:semicolon
+)brace
+macro_line|#endif
 r_static
 r_int
 DECL|function|fb_open
@@ -2975,9 +3054,11 @@ r_break
 suffix:semicolon
 id|fb_info-&gt;node
 op_assign
-id|GET_INODE
+id|MKDEV
 c_func
 (paren
+id|FB_MAJOR
+comma
 id|i
 )paren
 suffix:semicolon
@@ -3713,4 +3794,13 @@ c_func
 id|unregister_framebuffer
 )paren
 suffix:semicolon
+macro_line|#if 1 /* to go away in 2.4.0 */
+DECL|variable|GET_FB_IDX
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|GET_FB_IDX
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

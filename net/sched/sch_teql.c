@@ -1814,7 +1814,7 @@ id|teql_master_mtu
 suffix:semicolon
 id|dev-&gt;type
 op_assign
-l_int|0
+id|ARPHRD_VOID
 suffix:semicolon
 id|dev-&gt;mtu
 op_assign

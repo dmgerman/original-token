@@ -3891,41 +3891,22 @@ suffix:semicolon
 DECL|variable|ddv_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|ddv_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read */
-id|block_write
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-id|ddv_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|ddv_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|ddv_release
 comma
-id|block_fsync
-multiline_comment|/* fsync */
+id|ioctl
+suffix:colon
+id|ddv_ioctl
+comma
 )brace
 suffix:semicolon
 DECL|function|ddv_status

@@ -85,11 +85,6 @@ multiline_comment|/* fsync */
 l_int|NULL
 comma
 multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * directories can handle most operations...&n; */

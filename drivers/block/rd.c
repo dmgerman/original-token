@@ -1104,42 +1104,22 @@ suffix:semicolon
 DECL|variable|fd_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|fd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - block dev read */
-id|block_write
-comma
-multiline_comment|/* write - block dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - not here! */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-id|rd_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|rd_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|rd_release
 comma
-multiline_comment|/* module needs to decrement use count */
-id|block_fsync
-multiline_comment|/* fsync */
+id|ioctl
+suffix:colon
+id|rd_ioctl
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* Before freeing the module, invalidate all of the protected buffers! */

@@ -5043,12 +5043,6 @@ comma
 multiline_comment|/* fasync */
 l_int|NULL
 comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
@@ -9197,12 +9191,6 @@ comma
 multiline_comment|/* fasync */
 l_int|NULL
 comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
@@ -11520,12 +11508,6 @@ comma
 multiline_comment|/* fasync */
 l_int|NULL
 comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
 multiline_comment|/* lock */
 )brace
 suffix:semicolon
@@ -13103,12 +13085,6 @@ multiline_comment|/* fsync */
 l_int|NULL
 comma
 multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
 l_int|NULL
 comma
 multiline_comment|/* lock */

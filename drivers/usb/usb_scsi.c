@@ -1,10 +1,9 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug-in&n; * device-specific filter modules, which can do their own thing when required.&n; *&n; * Further reference:&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the protocol used to communicate with such&n; *      devices.  Clearly, the designers had SCSI commands in mind when they&n; *      created this document.  The commands are all similar to commands&n; *      in the SCSI-II specification.&n; *&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Further reference:&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the protocol used to communicate with such&n; *      devices.  Clearly, the designers had SCSI commands in mind when they&n; *      created this document.  The commands are all similar to commands&n; *      in the SCSI-II specification.&n; *&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -94,22 +93,15 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
-macro_line|#ifdef REWRITE_PROJECT
-DECL|macro|IRQ_PERIOD
-mdefine_line|#define IRQ_PERIOD&t;&t;255
-macro_line|#else
-DECL|macro|IRQ_PERIOD
-mdefine_line|#define IRQ_PERIOD&t;&t;0    /* single IRQ transfer then remove it */
-macro_line|#endif
 multiline_comment|/*&n; * Per device data&n; */
 DECL|variable|my_host_number
 r_static
 r_int
 id|my_host_number
 suffix:semicolon
-DECL|variable|usbscsi_debug
+DECL|variable|usb_stor_debug
 r_int
-id|usbscsi_debug
+id|usb_stor_debug
 op_assign
 l_int|1
 suffix:semicolon
@@ -130,19 +122,6 @@ id|usb_device
 op_star
 id|pusb_dev
 suffix:semicolon
-DECL|member|filter
-r_struct
-id|usb_scsi_filter
-op_star
-id|filter
-suffix:semicolon
-multiline_comment|/* filter driver */
-DECL|member|fdata
-r_void
-op_star
-id|fdata
-suffix:semicolon
-multiline_comment|/* filter data */
 DECL|member|flags
 r_int
 r_int
@@ -324,17 +303,10 @@ id|us_data
 op_star
 id|us_list
 suffix:semicolon
-DECL|variable|filters
-r_static
-r_struct
-id|usb_scsi_filter
-op_star
-id|filters
-suffix:semicolon
 r_static
 r_void
 op_star
-id|scsi_probe
+id|storage_probe
 c_func
 (paren
 r_struct
@@ -349,7 +321,7 @@ id|ifnum
 suffix:semicolon
 r_static
 r_void
-id|scsi_disconnect
+id|storage_disconnect
 c_func
 (paren
 r_struct
@@ -362,18 +334,18 @@ op_star
 id|ptr
 )paren
 suffix:semicolon
-DECL|variable|scsi_driver
+DECL|variable|storage_driver
 r_static
 r_struct
 id|usb_driver
-id|scsi_driver
+id|storage_driver
 op_assign
 (brace
-l_string|&quot;usb_scsi&quot;
+l_string|&quot;usb-storage&quot;
 comma
-id|scsi_probe
+id|storage_probe
 comma
-id|scsi_disconnect
+id|storage_disconnect
 comma
 (brace
 l_int|NULL
@@ -382,7 +354,8 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* Data handling, using SG if required */
+multiline_comment|/***********************************************************************&n; * Data transfer routines&n; ***********************************************************************/
+multiline_comment|/* transfer one buffer (breaking into packets if necessary) */
 DECL|function|us_one_transfer
 r_static
 r_int
@@ -439,12 +412,14 @@ id|maxtry
 op_assign
 l_int|100
 suffix:semicolon
+multiline_comment|/* while we have data to transfer */
 r_while
 c_loop
 (paren
 id|length
 )paren
 (brace
+multiline_comment|/* calculate how long this will be -- maximum or a remainder */
 id|this_xfer
 op_assign
 id|length
@@ -462,6 +437,7 @@ id|this_xfer
 suffix:semicolon
 r_do
 (brace
+multiline_comment|/* transfer the data */
 id|US_DEBUGP
 c_func
 (paren
@@ -509,6 +485,7 @@ comma
 id|this_xfer
 )paren
 suffix:semicolon
+multiline_comment|/* if we stall, we need to clear it before we go on */
 r_if
 c_cond
 (paren
@@ -553,19 +530,7 @@ op_eq
 id|USB_ST_TIMEOUT
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|partial
-op_ne
-id|this_xfer
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* I do not like this */
-)brace
+multiline_comment|/* if our try counter reaches 0, bail out */
 r_if
 c_cond
 (paren
@@ -575,6 +540,7 @@ op_decrement
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/* otherwise, we did transmit some data, and we update pointers */
 id|this_xfer
 op_sub_assign
 id|partial
@@ -596,7 +562,7 @@ op_ne
 id|this_xfer
 )paren
 (brace
-multiline_comment|/* short data - assume end */
+multiline_comment|/* result is an error, not a NAK, and short data - assume end */
 id|result
 op_assign
 id|USB_ST_DATAUNDERRUN
@@ -617,6 +583,8 @@ op_eq
 id|US_PR_CB
 )paren
 (brace
+multiline_comment|/* for CB devices, a stall isn&squot;t fatal? */
+multiline_comment|/* if our try counter reaches 0, bail out */
 r_if
 c_cond
 (paren
@@ -635,9 +603,7 @@ op_add_assign
 id|partial
 suffix:semicolon
 )brace
-r_else
-r_break
-suffix:semicolon
+multiline_comment|/* continue until this transfer is done */
 )brace
 r_while
 c_loop
@@ -645,6 +611,7 @@ c_loop
 id|this_xfer
 )paren
 suffix:semicolon
+multiline_comment|/* if we have some nonzero result, we return it here */
 r_if
 c_cond
 (paren
@@ -653,15 +620,18 @@ id|result
 r_return
 id|result
 suffix:semicolon
+multiline_comment|/* otherwise, we advance the buf pointer&n;&t;&t; * note that the code above doesn&squot;t advance the pointer if all&n;&t;&t; * goes well&n;&t;&t; */
 id|buf
 op_add_assign
 id|this_xfer
 suffix:semicolon
 )brace
+multiline_comment|/* if we get here, we&squot;re done and successful */
 r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* transfer one SCSI command, using scatter-gather if requested */
 DECL|function|us_transfer
 r_static
 r_int
@@ -818,6 +788,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/* calculate the length of the data transfer (not the command) for any&n; * given SCSI command&n; */
 DECL|function|us_transfer_length
 r_static
 r_int
@@ -927,10 +898,11 @@ r_return
 id|srb-&gt;request_bufflen
 suffix:semicolon
 )brace
-DECL|function|pop_CBI_irq
+multiline_comment|/***********************************************************************&n; * Transport routines&n; ***********************************************************************/
+DECL|function|CBI_irq
 r_static
 r_int
-id|pop_CBI_irq
+id|CBI_irq
 c_func
 (paren
 r_int
@@ -963,7 +935,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;pop_CBI_irq() called!!&bslash;n&quot;
+l_string|&quot;CBI_irq() called!!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1013,7 +985,7 @@ id|us-&gt;ip_waitq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* we don&squot;t want another interrupt */
+multiline_comment|/* this return code is truly meaningless */
 r_return
 l_int|0
 suffix:semicolon
@@ -1983,10 +1955,14 @@ c_func
 l_string|&quot;CBI gets a command:&bslash;n&quot;
 )paren
 suffix:semicolon
+id|US_DEBUG
+c_func
+(paren
 id|us_show_command
 c_func
 (paren
 id|srb
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* run the command */
@@ -2863,26 +2839,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|us-&gt;filter
-)paren
-id|us-&gt;filter
-op_member_access_from_pointer
-id|release
-c_func
-(paren
-id|us-&gt;fdata
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|us-&gt;pusb_dev
 )paren
 id|usb_deregister
 c_func
 (paren
 op_amp
-id|scsi_driver
+id|storage_driver
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME - leaves hanging host template copy */
@@ -3055,6 +3018,12 @@ id|srb-&gt;host-&gt;hostdata
 l_int|0
 )braket
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Bus reset requested&bslash;n&quot;
+)paren
+suffix:semicolon
 id|us
 op_member_access_from_pointer
 id|pop_reset
@@ -3088,9 +3057,9 @@ DECL|macro|SPRINTF
 macro_line|#undef SPRINTF
 DECL|macro|SPRINTF
 mdefine_line|#define SPRINTF(args...) do { if (pos &lt; (buffer + length)) pos += sprintf (pos, ## args); } while (0)
-DECL|function|usb_scsi_proc_info
+DECL|function|usb_stor_proc_info
 r_int
-id|usb_scsi_proc_info
+id|usb_stor_proc_info
 (paren
 r_char
 op_star
@@ -3419,7 +3388,7 @@ multiline_comment|/* module */
 l_int|NULL
 comma
 multiline_comment|/* proc_dir */
-id|usb_scsi_proc_info
+id|usb_stor_proc_info
 comma
 l_int|NULL
 comma
@@ -3537,10 +3506,10 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
-DECL|function|usbscsi_control_thread
+DECL|function|usb_stor_control_thread
 r_static
 r_int
-id|usbscsi_control_thread
+id|usb_stor_control_thread
 c_func
 (paren
 r_void
@@ -3569,19 +3538,11 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This thread doesn&squot;t need any user-level access,&n;&t; * so get rid of all our resources..&n;&t; */
-id|exit_mm
+id|daemonize
 c_func
 (paren
-id|current
 )paren
 suffix:semicolon
-id|exit_files
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-singleline_comment|//exit_fs(current);
 id|sprintf
 c_func
 (paren
@@ -3740,26 +3701,6 @@ id|us-&gt;srb
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|us-&gt;filter
-op_logical_and
-id|us-&gt;filter-&gt;command
-)paren
-id|us-&gt;srb-&gt;result
-op_assign
-id|us-&gt;filter
-op_member_access_from_pointer
-id|command
-c_func
-(paren
-id|us-&gt;fdata
-comma
-id|us-&gt;srb
-)paren
-suffix:semicolon
-r_else
 r_if
 c_cond
 (paren
@@ -5010,10 +4951,10 @@ op_eq
 id|SIGUSR2
 )paren
 (brace
-id|usbscsi_debug
+id|usb_stor_debug
 op_assign
 op_logical_neg
-id|usbscsi_debug
+id|usb_stor_debug
 suffix:semicolon
 id|printk
 c_func
@@ -5021,7 +4962,7 @@ c_func
 id|USB_SCSI
 l_string|&quot;debug toggle = %d&bslash;n&quot;
 comma
-id|usbscsi_debug
+id|usb_stor_debug
 )paren
 suffix:semicolon
 )brace
@@ -5037,7 +4978,7 @@ singleline_comment|//  MOD_DEC_USE_COUNT;
 id|printk
 c_func
 (paren
-l_string|&quot;usbscsi_control_thread exiting&bslash;n&quot;
+l_string|&quot;usb_stor_control_thread exiting&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5045,11 +4986,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Probe to see if a new device is actually a SCSI device */
-DECL|function|scsi_probe
+DECL|function|storage_probe
 r_static
 r_void
 op_star
-id|scsi_probe
+id|storage_probe
 c_func
 (paren
 r_struct
@@ -5089,19 +5030,6 @@ r_struct
 id|us_data
 op_star
 id|ss
-op_assign
-l_int|NULL
-suffix:semicolon
-r_struct
-id|usb_scsi_filter
-op_star
-id|filter
-op_assign
-id|filters
-suffix:semicolon
-r_void
-op_star
-id|fdata
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -5192,78 +5120,7 @@ comma
 id|dev-&gt;descriptor.iSerialNumber
 )paren
 suffix:semicolon
-multiline_comment|/* probe with filters first */
-multiline_comment|/* MDD: What are filters?  What do they do? &n;&t; * They look like some way to catch certain specific devices and set&n;&t; * flags for them.  Probably a good idea if we have lots of different&n;&t; * types of devices.&n;&t; */
-r_if
-c_cond
-(paren
-id|mf
-op_logical_and
-id|prod
-)paren
-(brace
-r_while
-c_loop
-(paren
-id|filter
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|fdata
-op_assign
-id|filter
-op_member_access_from_pointer
-id|probe
-c_func
-(paren
-id|dev
-comma
-id|mf
-comma
-id|prod
-comma
-id|serial
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|flags
-op_assign
-id|filter-&gt;flags
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;USB Scsi filter %s&bslash;n&quot;
-comma
-id|filter-&gt;name
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|filter
-op_assign
-id|filter-&gt;next
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* generic devices next */
-multiline_comment|/* MDD: Isn&squot;t this always true? */
-r_if
-c_cond
-(paren
-id|fdata
-op_eq
-l_int|NULL
-)paren
-(brace
+multiline_comment|/* let&squot;s examine the device now */
 multiline_comment|/* We make an exception for the shuttle E-USB */
 r_if
 c_cond
@@ -5367,7 +5224,7 @@ l_string|&quot;0&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Now check if we have seen this GUID before, and restore&n;&t;&t; * the flags if we find it&n;&t;&t; */
+multiline_comment|/* Now check if we have seen this GUID before, and restore&n;&t; * the flags if we find it&n;&t; */
 r_for
 c_loop
 (paren
@@ -5421,8 +5278,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-)brace
-multiline_comment|/* if (fdata == NULL) */
 multiline_comment|/* If ss == NULL, then this is a new device.  Allocate memory for it */
 r_if
 c_cond
@@ -5466,19 +5321,6 @@ id|USB_SCSI
 l_string|&quot;Out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|filter
-)paren
-id|filter
-op_member_access_from_pointer
-id|release
-c_func
-(paren
-id|fdata
-)paren
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -5502,14 +5344,6 @@ multiline_comment|/* Initialize the us_data structure with some useful info */
 id|interface
 op_assign
 id|altsetting
-suffix:semicolon
-id|ss-&gt;filter
-op_assign
-id|filter
-suffix:semicolon
-id|ss-&gt;fdata
-op_assign
-id|fdata
 suffix:semicolon
 id|ss-&gt;flags
 op_assign
@@ -5821,19 +5655,6 @@ id|ss-&gt;htmplt
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|filter
-)paren
-id|filter
-op_member_access_from_pointer
-id|release
-c_func
-(paren
-id|fdata
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -6021,19 +5842,6 @@ id|USB_SCSI
 l_string|&quot;Out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|filter
-)paren
-id|filter
-op_member_access_from_pointer
-id|release
-c_func
-(paren
-id|fdata
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -6171,9 +5979,9 @@ id|ss-&gt;pusb_dev
 comma
 id|ss-&gt;irqpipe
 comma
-id|pop_CBI_irq
+id|CBI_irq
 comma
-id|IRQ_PERIOD
+l_int|255
 comma
 (paren
 r_void
@@ -6204,23 +6012,6 @@ op_star
 l_int|6
 )paren
 suffix:semicolon
-macro_line|#ifdef REWRITE_PROJECT
-multiline_comment|/* FIXME: Don&squot;t know if this release_irq() call is at the&n;&t;&t;&t;   right place/time. */
-id|usb_release_irq
-c_func
-(paren
-id|ss-&gt;pusb_dev
-comma
-id|ss-&gt;irq_handle
-comma
-id|ss-&gt;irqpipe
-)paren
-suffix:semicolon
-id|ss-&gt;irq_handle
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 r_if
@@ -6262,7 +6053,7 @@ id|ss-&gt;pusb_dev
 comma
 id|ss-&gt;irqpipe
 comma
-id|pop_CBI_irq
+id|CBI_irq
 comma
 l_int|255
 comma
@@ -6317,7 +6108,7 @@ op_assign
 id|kernel_thread
 c_func
 (paren
-id|usbscsi_control_thread
+id|usb_stor_control_thread
 comma
 id|ss
 comma
@@ -6348,19 +6139,6 @@ id|kfree
 c_func
 (paren
 id|htmplt
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|filter
-)paren
-id|filter
-op_member_access_from_pointer
-id|release
-c_func
-(paren
-id|fdata
 )paren
 suffix:semicolon
 id|kfree
@@ -6437,10 +6215,10 @@ id|ss
 suffix:semicolon
 )brace
 multiline_comment|/* Handle a disconnect event from the USB core */
-DECL|function|scsi_disconnect
+DECL|function|storage_disconnect
 r_static
 r_void
-id|scsi_disconnect
+id|storage_disconnect
 c_func
 (paren
 r_struct
@@ -6468,19 +6246,6 @@ id|ss
 )paren
 r_return
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ss-&gt;filter
-)paren
-id|ss-&gt;filter
-op_member_access_from_pointer
-id|release
-c_func
-(paren
-id|ss-&gt;fdata
-)paren
-suffix:semicolon
 id|ss-&gt;pusb_dev
 op_assign
 l_int|NULL
@@ -6488,9 +6253,9 @@ suffix:semicolon
 singleline_comment|//  MOD_DEC_USE_COUNT;
 )brace
 multiline_comment|/***********************************************************************&n; * Initialization and registration&n; ***********************************************************************/
-DECL|function|usb_scsi_init
+DECL|function|usb_stor_init
 r_int
-id|usb_scsi_init
+id|usb_stor_init
 c_func
 (paren
 r_void
@@ -6504,7 +6269,7 @@ id|usb_register
 c_func
 (paren
 op_amp
-id|scsi_driver
+id|storage_driver
 )paren
 OL
 l_int|0
@@ -6524,95 +6289,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Functions to handle filters.&t; These are designed to allow us to handle&n; * certain odd devices &n; */
-DECL|function|usb_scsi_register
-r_int
-id|usb_scsi_register
-c_func
-(paren
-r_struct
-id|usb_scsi_filter
-op_star
-id|filter
-)paren
-(brace
-r_struct
-id|usb_scsi_filter
-op_star
-id|prev
-op_assign
-(paren
-r_struct
-id|usb_scsi_filter
-op_star
-)paren
-op_amp
-id|filters
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|prev-&gt;next
-)paren
-id|prev
-op_assign
-id|prev-&gt;next
-suffix:semicolon
-id|prev-&gt;next
-op_assign
-id|filter
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|usb_scsi_deregister
-r_void
-id|usb_scsi_deregister
-c_func
-(paren
-r_struct
-id|usb_scsi_filter
-op_star
-id|filter
-)paren
-(brace
-r_struct
-id|usb_scsi_filter
-op_star
-id|prev
-op_assign
-(paren
-r_struct
-id|usb_scsi_filter
-op_star
-)paren
-op_amp
-id|filters
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|prev-&gt;next
-op_logical_and
-id|prev-&gt;next
-op_ne
-id|filter
-)paren
-id|prev
-op_assign
-id|prev-&gt;next
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|prev-&gt;next
-)paren
-id|prev-&gt;next
-op_assign
-id|filter-&gt;next
-suffix:semicolon
-)brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -6624,7 +6300,7 @@ r_void
 (brace
 multiline_comment|/* MDD: Perhaps we should register the host here */
 r_return
-id|usb_scsi_init
+id|usb_stor_init
 c_func
 (paren
 )paren
@@ -6642,7 +6318,7 @@ id|usb_deregister
 c_func
 (paren
 op_amp
-id|scsi_driver
+id|storage_driver
 )paren
 suffix:semicolon
 )brace

@@ -892,91 +892,10 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SCSI
-multiline_comment|/* Find the device number for the disk (if any) at target tgt&n;   on host adaptor host.&n;   XXX this really really should be in drivers/scsi/sd.c. */
+multiline_comment|/* Find the device number for the disk (if any) at target tgt&n;   on host adaptor host.  We just need to get the prototype from&n;   sd.h */
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &quot;../../../drivers/scsi/scsi.h&quot;
 macro_line|#include &quot;../../../drivers/scsi/sd.h&quot;
-macro_line|#include &quot;../../../drivers/scsi/hosts.h&quot;
-DECL|macro|SD_MAJOR
-mdefine_line|#define SD_MAJOR(i)&t;&t;(!(i) ? SCSI_DISK0_MAJOR : SCSI_DISK1_MAJOR-1+(i))
-DECL|macro|SD_MAJOR_NUMBER
-mdefine_line|#define SD_MAJOR_NUMBER(i)&t;SD_MAJOR((i) &gt;&gt; 8)
-DECL|macro|SD_MINOR_NUMBER
-mdefine_line|#define SD_MINOR_NUMBER(i)&t;((i) &amp; 255)
-DECL|macro|MKDEV_SD_PARTITION
-mdefine_line|#define MKDEV_SD_PARTITION(i)&t;MKDEV(SD_MAJOR_NUMBER(i), SD_MINOR_NUMBER(i))
-DECL|macro|MKDEV_SD
-mdefine_line|#define MKDEV_SD(index)&t;&t;MKDEV_SD_PARTITION((index) &lt;&lt; 4)
-id|__init
-DECL|function|sd_find_target
-id|kdev_t
-id|sd_find_target
-c_func
-(paren
-r_void
-op_star
-id|host
-comma
-r_int
-id|tgt
-)paren
-(brace
-id|Scsi_Disk
-op_star
-id|dp
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_SD
-r_for
-c_loop
-(paren
-id|dp
-op_assign
-id|rscsi_disks
-comma
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|sd_template.dev_max
-suffix:semicolon
-op_increment
-id|i
-comma
-op_increment
-id|dp
-)paren
-r_if
-c_cond
-(paren
-id|dp-&gt;device
-op_ne
-l_int|NULL
-op_logical_and
-id|dp-&gt;device-&gt;host
-op_eq
-id|host
-op_logical_and
-id|dp-&gt;device-&gt;id
-op_eq
-id|tgt
-)paren
-r_return
-id|MKDEV_SD
-c_func
-(paren
-id|i
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_SD */
-r_return
-l_int|0
-suffix:semicolon
-)brace
 macro_line|#endif
 multiline_comment|/*&n; * Dummy mksound function that does nothing.&n; * The real one is in the dmasound driver.&n; */
 id|__pmac

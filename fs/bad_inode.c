@@ -101,9 +101,7 @@ comma
 multiline_comment|/* fasync */
 id|EIO_ERROR
 comma
-multiline_comment|/* check_media_change */
-id|EIO_ERROR
-multiline_comment|/* revalidate */
+multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|bad_inode_ops

@@ -10,22 +10,15 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
-singleline_comment|// #include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-singleline_comment|// #define DEBUG
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ohci-hcd.h&quot;
-macro_line|#ifdef DEBUG
-DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...) printk(format, ## arg)
-macro_line|#else
-DECL|macro|dbg
-mdefine_line|#define dbg(format, arg...)
-macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 r_static
@@ -212,11 +205,10 @@ op_logical_neg
 id|urb-&gt;dev-&gt;bus
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot; %s URB: no dev&bslash;n&quot;
+l_string|&quot;%s URB: no dev&quot;
 comma
 id|str
 )paren
@@ -224,11 +216,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;%s URB:[%4x] dev:%2d,ep:%2d-%c,type:%s,&quot;
-l_string|&quot;flags:%4x,len:%d/%d,stat:%d(%x)&bslash;n&quot;
+l_string|&quot;%s URB:[%4x] dev:%2d,ep:%2d-%c,type:%s,flags:%4x,len:%d/%d,stat:%d(%x)&quot;
 comma
 id|str
 comma
@@ -319,7 +310,8 @@ id|pipe
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot; cmd(8):&quot;
+id|__FILE__
+l_string|&quot;: cmd(8):&quot;
 )paren
 suffix:semicolon
 r_for
@@ -371,7 +363,8 @@ id|urb-&gt;transfer_buffer
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot; data(%d/%d):&quot;
+id|__FILE__
+l_string|&quot;: data(%d/%d):&quot;
 comma
 id|urb-&gt;actual_length
 comma
@@ -488,7 +481,8 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot; %s branch int %2d(%2x): &quot;
+id|__FILE__
+l_string|&quot; %s branch int %2d(%2x):&quot;
 comma
 id|str
 comma
@@ -521,7 +515,7 @@ op_decrement
 (brace
 id|printk
 (paren
-l_string|&quot;ed: %4x; &quot;
+l_string|&quot; ed: %4x;&quot;
 comma
 (paren
 (paren
@@ -1519,11 +1513,10 @@ id|wait
 suffix:semicolon
 )brace
 r_else
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;unlink URB timeout!&bslash;n&quot;
+l_string|&quot;unlink URB timeout!&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3560,11 +3553,10 @@ op_ge
 id|urb_priv-&gt;length
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;internal OHCI error: TD index &gt; length&bslash;n&quot;
+l_string|&quot;internal OHCI error: TD index &gt; length&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4199,7 +4191,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
 r_if
 c_cond
 (paren
@@ -4208,17 +4199,15 @@ op_ne
 id|cnt
 )paren
 id|dbg
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot; ********* TD LENGTH %d != CNT %d&bslash;n&quot;
+l_string|&quot;TD LENGTH %d != CNT %d&quot;
 comma
 id|urb_priv-&gt;length
 comma
 id|cnt
 )paren
 suffix:semicolon
-macro_line|#endif 
 )brace
 multiline_comment|/*-------------------------------------------------------------------------*&n; * Done List handling functions&n; *-------------------------------------------------------------------------*/
 multiline_comment|/* replies to the request have to be on a FIFO basis so&n; * we reverse the reversed done-list */
@@ -4317,10 +4306,9 @@ op_star
 id|td_list-&gt;urb-&gt;hcpriv
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;**** USB-error/status: %x : %p &bslash;n&quot;
+l_string|&quot; USB-error/status: %x : %p&quot;
 comma
 id|TD_CC_GET
 (paren
@@ -6707,10 +6695,9 @@ id|TD_CC_STALL
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB HC roothubstat1: %x &bslash;n&quot;
+l_string|&quot;USB HC roothubstat1: %x&quot;
 comma
 id|readl
 (paren
@@ -6725,10 +6712,9 @@ l_int|0
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB HC roothubstat2: %x &bslash;n&quot;
+l_string|&quot;USB HC roothubstat2: %x&quot;
 comma
 id|readl
 (paren
@@ -6876,11 +6862,10 @@ id|ohci-&gt;regs-&gt;cmdstatus
 )paren
 suffix:semicolon
 multiline_comment|/* request ownership */
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB HC TakeOver from SMM&bslash;n&quot;
+l_string|&quot;USB HC TakeOver from SMM&quot;
 )paren
 suffix:semicolon
 r_while
@@ -6909,11 +6894,10 @@ op_eq
 l_int|0
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;USB HC TakeOver failed!&bslash;n&quot;
+l_string|&quot;USB HC TakeOver failed!&quot;
 )paren
 suffix:semicolon
 r_break
@@ -6935,10 +6919,9 @@ id|ohci-&gt;regs-&gt;intrdisable
 suffix:semicolon
 multiline_comment|/* Disable HC interrupts */
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB HC reset_hc: %x ; &bslash;n&quot;
+l_string|&quot;USB HC reset_hc: %x ;&quot;
 comma
 id|readl
 (paren
@@ -6992,11 +6975,10 @@ op_eq
 l_int|0
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;USB HC reset timed out!&bslash;n&quot;
+l_string|&quot;USB HC reset timed out!&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7310,10 +7292,9 @@ r_return
 suffix:semicolon
 )brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;Interrupt: %x frame: %x &bslash;n&quot;
+l_string|&quot;Interrupt: %x frame: %x&quot;
 comma
 id|ints
 comma
@@ -7367,10 +7348,9 @@ id|OHCI_INTR_SO
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot; USB Schedule overrun &bslash;n&quot;
+l_string|&quot;USB Schedule overrun&quot;
 )paren
 suffix:semicolon
 id|writel
@@ -7649,10 +7629,9 @@ id|ohci
 )paren
 (brace
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB HC release ohci&bslash;n&quot;
+l_string|&quot;USB HC release ohci&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* disconnect all devices */
@@ -7754,10 +7733,9 @@ op_star
 id|ohci
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB HC found: irq= %d membase= %x &bslash;n&quot;
+l_string|&quot;USB HC found: irq= %d membase= %x&quot;
 comma
 id|irq
 comma
@@ -7858,11 +7836,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;request interrupt %d failed&bslash;n&quot;
+l_string|&quot;request interrupt %d failed&quot;
 comma
 id|irq
 )paren
@@ -7952,11 +7929,10 @@ op_logical_neg
 id|mem_base
 )paren
 (brace
-id|printk
+id|err
+c_func
 (paren
-id|KERN_ERR
-id|MODSTR
-l_string|&quot;Error mapping OHCI memory&bslash;n&quot;
+l_string|&quot;Error mapping OHCI memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -8161,12 +8137,10 @@ c_cond
 id|down
 )paren
 (brace
-id|printk
+id|dbg
 c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;received extra suspend event&bslash;n&quot;
+l_string|&quot;received extra suspend event&quot;
 )paren
 suffix:semicolon
 r_break
@@ -8201,10 +8175,9 @@ id|ohci_hcd_list
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB-Bus suspend: %p&bslash;n&quot;
+l_string|&quot;USB-Bus suspend: %p&quot;
 comma
 id|ohci
 )paren
@@ -8244,11 +8217,10 @@ op_logical_neg
 id|down
 )paren
 (brace
-id|printk
+id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;received bogus resume event&bslash;n&quot;
+l_string|&quot;received bogus resume event&quot;
 )paren
 suffix:semicolon
 r_break
@@ -8284,10 +8256,9 @@ id|ohci_hcd_list
 )paren
 suffix:semicolon
 id|dbg
+c_func
 (paren
-id|KERN_DEBUG
-id|MODSTR
-l_string|&quot;USB-Bus resume: %p&bslash;n&quot;
+l_string|&quot;USB-Bus resume: %p&quot;
 comma
 id|ohci
 )paren

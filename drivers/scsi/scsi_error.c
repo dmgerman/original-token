@@ -333,9 +333,11 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;Clearing timer for command %p&bslash;n&quot;
+l_string|&quot;Clearing timer for command %p %d&bslash;n&quot;
 comma
 id|SCset
+comma
+id|rtn
 )paren
 )paren
 suffix:semicolon
@@ -2699,8 +2701,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;                 * No more retries - report this one back to upper level.&n;                 */
 r_return
-id|FAILED
+id|SUCCESS
 suffix:semicolon
 )brace
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.58 1999/12/15 14:19:14 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.60 2000/01/07 20:21:45 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -402,6 +402,8 @@ DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct()   ((struct task_struct *)__get_free_pages(GFP_KERNEL, 1))
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(tsk) free_pages((unsigned long)(tsk),1)
+DECL|macro|get_task_struct
+mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;mem_map[MAP_NR(tsk)].count)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

@@ -2426,11 +2426,6 @@ multiline_comment|/* no special dsp56k_fsync */
 l_int|NULL
 comma
 multiline_comment|/* no special dsp56k_fasync */
-l_int|NULL
-comma
-multiline_comment|/* no special dsp56k_check_media_change */
-l_int|NULL
-multiline_comment|/* no special dsp56k_revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/****** Init and module functions ******/

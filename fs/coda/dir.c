@@ -400,11 +400,6 @@ multiline_comment|/* release */
 id|coda_fsync
 comma
 multiline_comment|/* fsync */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* inode operations for directories */

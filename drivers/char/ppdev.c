@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;ppdev.h&quot;
+macro_line|#include &lt;linux/ppdev.h&gt;
 DECL|macro|PP_VERSION
 mdefine_line|#define PP_VERSION &quot;ppdev: user-space parallel port driver&quot;
 DECL|macro|CHRDEV

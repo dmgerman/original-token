@@ -7117,52 +7117,30 @@ macro_line|#endif /* CONFIG_ATARI_SLM_MODULE */
 DECL|variable|acsi_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|acsi_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
-id|acsi_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|acsi_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|acsi_release
 comma
-multiline_comment|/* release */
-id|block_fsync
+id|ioctl
+suffix:colon
+id|acsi_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
+id|check_media_change
+suffix:colon
 id|acsi_media_change
 comma
-multiline_comment|/* media_change */
+id|revalidate
+suffix:colon
 id|acsi_revalidate
 comma
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|acsi_init

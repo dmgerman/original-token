@@ -11,10 +11,13 @@ r_void
 )paren
 (brace
 r_return
-id|pci_devices.next
-op_ne
+op_logical_neg
+id|list_empty
+c_func
+(paren
 op_amp
 id|pci_devices
+)paren
 suffix:semicolon
 )brace
 r_int

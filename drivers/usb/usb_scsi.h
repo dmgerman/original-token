@@ -4,7 +4,7 @@ DECL|macro|USB_SCSI
 mdefine_line|#define USB_SCSI &quot;usbscsi: &quot;
 r_extern
 r_int
-id|usbscsi_debug
+id|usb_stor_debug
 suffix:semicolon
 macro_line|#ifdef CONFIG_USB_SCSI_DEBUG
 r_void
@@ -17,11 +17,11 @@ id|srb
 )paren
 suffix:semicolon
 DECL|macro|US_DEBUGP
-mdefine_line|#define US_DEBUGP(x...) { if(usbscsi_debug) printk( KERN_DEBUG USB_SCSI ## x ); }
+mdefine_line|#define US_DEBUGP(x...) { if(usb_stor_debug) printk( KERN_DEBUG USB_SCSI ## x ); }
 DECL|macro|US_DEBUGPX
-mdefine_line|#define US_DEBUGPX(x...) { if(usbscsi_debug) printk( ## x ); }
+mdefine_line|#define US_DEBUGPX(x...) { if(usb_stor_debug) printk( ## x ); }
 DECL|macro|US_DEBUG
-mdefine_line|#define US_DEBUG(x)  { if(usbscsi_debug) x; }
+mdefine_line|#define US_DEBUG(x)  { if(usb_stor_debug) x; }
 macro_line|#else
 DECL|macro|US_DEBUGP
 mdefine_line|#define US_DEBUGP(x...)

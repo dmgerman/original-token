@@ -100,12 +100,6 @@ l_int|NULL
 comma
 multiline_comment|/* fasync - default */
 l_int|NULL
-comma
-multiline_comment|/* check_media_change - none */
-l_int|NULL
-comma
-multiline_comment|/* revalidate - none */
-l_int|NULL
 multiline_comment|/* lock - none */
 )brace
 suffix:semicolon

@@ -3751,15 +3751,6 @@ comma
 multiline_comment|/* mmap */
 id|aux_no_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
 )brace
 suffix:semicolon
 DECL|variable|psaux_mouse

@@ -1004,51 +1004,29 @@ suffix:semicolon
 DECL|variable|pd_fops
 r_static
 r_struct
-id|file_operations
+id|block_device_operations
 id|pd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|block_read
-comma
-multiline_comment|/* read - general block-dev read */
-id|block_write
-comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
-id|pd_ioctl
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|pd_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|pd_release
 comma
-multiline_comment|/* release */
-id|block_fsync
+id|ioctl
+suffix:colon
+id|pd_ioctl
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
+id|check_media_change
+suffix:colon
 id|pd_check_media
 comma
-multiline_comment|/* media change ? */
+id|revalidate
+suffix:colon
 id|pd_revalidate
-multiline_comment|/* revalidate new media */
 )brace
 suffix:semicolon
 DECL|function|pd_init_units

@@ -751,12 +751,6 @@ multiline_comment|/*&t;fsync&t;*/
 l_int|NULL
 comma
 multiline_comment|/*&t;fasync&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;check_media_change&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;revalidate&t;*/
 )brace
 suffix:semicolon
 DECL|variable|sx_fw_device

@@ -1602,10 +1602,8 @@ r_int
 id|i
 )paren
 suffix:semicolon
-DECL|macro|__pcidev
-mdefine_line|#define __pcidev(entry)&t;list_entry(entry, struct pci_dev, global_list)
 DECL|macro|pci_for_each_dev
-mdefine_line|#define pci_for_each_dev(dev) &bslash;&n;&t;for(dev = __pcidev(pci_devices.next); dev != __pcidev(&amp;pci_devices); dev = __pcidev(dev-&gt;global_list.next))
+mdefine_line|#define pci_for_each_dev(dev) &bslash;&n;&t;for(dev = pci_dev_g(pci_devices.next); dev != pci_dev_g(&amp;pci_devices); dev = pci_dev_g(dev-&gt;global_list.next))
 multiline_comment|/* Helper functions for low-level code (drivers/pci/setup.c) */
 r_int
 id|pci_claim_resource

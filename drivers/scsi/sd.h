@@ -66,11 +66,6 @@ DECL|typedef|Scsi_Disk
 id|Scsi_Disk
 suffix:semicolon
 r_extern
-id|Scsi_Disk
-op_star
-id|rscsi_disks
-suffix:semicolon
-r_extern
 r_int
 id|revalidate_scsidisk
 c_func
@@ -80,6 +75,20 @@ id|dev
 comma
 r_int
 id|maxusage
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Used by pmac to find the device associated with a target.&n; */
+r_extern
+id|kdev_t
+id|sd_find_target
+c_func
+(paren
+r_void
+op_star
+id|host
+comma
+r_int
+id|tgt
 )paren
 suffix:semicolon
 DECL|macro|N_SD_MAJORS

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.69 2000/01/04 23:54:44 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.70 2000/01/07 18:15:18 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -580,6 +580,28 @@ id|write_unlock
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* rw semaphores */
+DECL|variable|__down_read_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_read_failed
+)paren
+suffix:semicolon
+DECL|variable|__down_write_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_write_failed
+)paren
+suffix:semicolon
+DECL|variable|__rwsem_wake
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__rwsem_wake
+)paren
+suffix:semicolon
 multiline_comment|/* Kernel wide locking */
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL

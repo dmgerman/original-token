@@ -98,6 +98,8 @@ DECL|macro|TC_H_UNSPEC
 mdefine_line|#define TC_H_UNSPEC&t;(0U)
 DECL|macro|TC_H_ROOT
 mdefine_line|#define TC_H_ROOT&t;(0xFFFFFFFFU)
+DECL|macro|TC_H_INGRESS
+mdefine_line|#define TC_H_INGRESS    (0xFFFFFFF1U)
 DECL|struct|tc_ratespec
 r_struct
 id|tc_ratespec
@@ -384,6 +386,127 @@ suffix:semicolon
 multiline_comment|/* cell size for idle damping */
 )brace
 suffix:semicolon
+multiline_comment|/* GRED section */
+DECL|macro|MAX_DPs
+mdefine_line|#define MAX_DPs 16
+r_enum
+(brace
+DECL|enumerator|TCA_GRED_UNSPEC
+id|TCA_GRED_UNSPEC
+comma
+DECL|enumerator|TCA_GRED_PARMS
+id|TCA_GRED_PARMS
+comma
+DECL|enumerator|TCA_GRED_STAB
+id|TCA_GRED_STAB
+comma
+DECL|enumerator|TCA_GRED_DPS
+id|TCA_GRED_DPS
+comma
+)brace
+suffix:semicolon
+DECL|macro|TCA_SET_OFF
+mdefine_line|#define TCA_SET_OFF TCA_GRED_PARMS
+DECL|struct|tc_gred_qopt
+r_struct
+id|tc_gred_qopt
+(brace
+DECL|member|limit
+id|__u32
+id|limit
+suffix:semicolon
+multiline_comment|/* HARD maximal queue length (bytes)    &n;*/
+DECL|member|qth_min
+id|__u32
+id|qth_min
+suffix:semicolon
+multiline_comment|/* Min average length threshold (bytes) &n;*/
+DECL|member|qth_max
+id|__u32
+id|qth_max
+suffix:semicolon
+multiline_comment|/* Max average length threshold (bytes) &n;*/
+DECL|member|DP
+id|__u32
+id|DP
+suffix:semicolon
+multiline_comment|/* upto 2^32 DPs */
+DECL|member|backlog
+id|__u32
+id|backlog
+suffix:semicolon
+DECL|member|qave
+id|__u32
+id|qave
+suffix:semicolon
+DECL|member|forced
+id|__u32
+id|forced
+suffix:semicolon
+DECL|member|early
+id|__u32
+id|early
+suffix:semicolon
+DECL|member|other
+id|__u32
+id|other
+suffix:semicolon
+DECL|member|pdrop
+id|__u32
+id|pdrop
+suffix:semicolon
+DECL|member|Wlog
+r_int
+r_char
+id|Wlog
+suffix:semicolon
+multiline_comment|/* log(W)               */
+DECL|member|Plog
+r_int
+r_char
+id|Plog
+suffix:semicolon
+multiline_comment|/* log(P_max/(qth_max-qth_min)) */
+DECL|member|Scell_log
+r_int
+r_char
+id|Scell_log
+suffix:semicolon
+multiline_comment|/* cell size for idle damping */
+DECL|member|prio
+id|__u8
+id|prio
+suffix:semicolon
+multiline_comment|/* prio of this VQ */
+DECL|member|packets
+id|__u32
+id|packets
+suffix:semicolon
+DECL|member|bytesin
+id|__u32
+id|bytesin
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* gred setup */
+DECL|struct|tc_gred_sopt
+r_struct
+id|tc_gred_sopt
+(brace
+DECL|member|DPs
+id|__u32
+id|DPs
+suffix:semicolon
+DECL|member|def_DP
+id|__u32
+id|def_DP
+suffix:semicolon
+DECL|member|grio
+id|__u8
+id|grio
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* CBQ section */
 DECL|macro|TC_CBQ_MAXPRIO
 mdefine_line|#define TC_CBQ_MAXPRIO&t;&t;8
@@ -604,6 +727,30 @@ comma
 suffix:semicolon
 DECL|macro|TCA_CBQ_MAX
 mdefine_line|#define TCA_CBQ_MAX&t;TCA_CBQ_POLICE
+multiline_comment|/* dsmark section */
+r_enum
+(brace
+DECL|enumerator|TCA_DSMARK_UNSPEC
+id|TCA_DSMARK_UNSPEC
+comma
+DECL|enumerator|TCA_DSMARK_INDICES
+id|TCA_DSMARK_INDICES
+comma
+DECL|enumerator|TCA_DSMARK_DEFAULT_INDEX
+id|TCA_DSMARK_DEFAULT_INDEX
+comma
+DECL|enumerator|TCA_DSMARK_SET_TC_INDEX
+id|TCA_DSMARK_SET_TC_INDEX
+comma
+DECL|enumerator|TCA_DSMARK_MASK
+id|TCA_DSMARK_MASK
+comma
+DECL|enumerator|TCA_DSMARK_VALUE
+id|TCA_DSMARK_VALUE
+)brace
+suffix:semicolon
+DECL|macro|TCA_DSMARK_MAX
+mdefine_line|#define TCA_DSMARK_MAX TCA_DSMARK_VALUE
 multiline_comment|/* ATM  section */
 r_enum
 (brace

@@ -18675,12 +18675,6 @@ id|ixj_fasync
 comma
 multiline_comment|/* ixj_fasync */
 l_int|NULL
-comma
-multiline_comment|/* media change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-l_int|NULL
 multiline_comment|/* lock */
 )brace
 suffix:semicolon

@@ -2312,6 +2312,14 @@ id|rsvp
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_CLS_TCINDEX
+id|INIT_TC_FILTER
+c_func
+(paren
+id|tcindex
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_NET_CLS_RSVP6
 id|INIT_TC_FILTER
 c_func

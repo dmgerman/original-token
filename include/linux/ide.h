@@ -2521,7 +2521,7 @@ suffix:semicolon
 macro_line|#ifndef _IDE_C
 r_extern
 r_struct
-id|file_operations
+id|block_device_operations
 id|ide_fops
 (braket
 )braket

@@ -400,6 +400,13 @@ DECL|member|private
 r_private
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_SCHED
+DECL|member|tc_index
+id|__u32
+id|tc_index
+suffix:semicolon
+multiline_comment|/* traffic control index */
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* These are just the default values. This is run time configurable.&n; * FIXME: Probably the config option should go away. -- erics&n; */
