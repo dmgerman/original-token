@@ -36,13 +36,16 @@ DECL|macro|ELF_DATA
 mdefine_line|#define ELF_DATA&t;ELFDATA2LSB;
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_386
-multiline_comment|/* SVR4/i386 ABI (pages 3-31, 3-32) says that when the program&n;&t;   starts %edx contains a pointer to a function which might be&n;&t;   registered using `atexit&squot;.  This provides a mean for the&n;&t;   dynamic linker to call DT_FINI functions for shared libraries&n;&t;   that have been loaded before the code runs.&n;&n;&t;   A value of 0 tells we have no such handler.  */
+multiline_comment|/* SVR4/i386 ABI (pages 3-31, 3-32) says that when the program starts %edx&n;   contains a pointer to a function which might be registered using `atexit&squot;.&n;   This provides a mean for the dynamic linker to call DT_FINI functions for&n;   shared libraries that have been loaded before the code runs.&n;&n;   A value of 0 tells we have no such handler.  */
 DECL|macro|ELF_PLAT_INIT
 mdefine_line|#define ELF_PLAT_INIT(_r)&t;_r-&gt;edx = 0
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
+multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
+DECL|macro|ELF_ET_DYN_BASE
+mdefine_line|#define ELF_ET_DYN_BASE         (2 * TASK_SIZE / 3)
 multiline_comment|/* Wow, the &quot;main&quot; arch needs arch dependent functions too.. :) */
 multiline_comment|/* regs is struct pt_regs, pr_reg is elf_gregset_t (which is&n;   now struct_user_regs, they are different) */
 DECL|macro|ELF_CORE_COPY_REGS

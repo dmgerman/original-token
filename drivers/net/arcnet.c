@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c:&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;v2.91 ALPHA (97/19/08)&n;&t;  - Add counting of octets in/out.&n;&n;&t;v2.90 ALPHA (97/08/08)&n;&t;  - Add support for kernel command line parsing so that chipset&n;&t;    drivers are usable when compiled in.&n;&n;&t;v2.80 ALPHA (97/08/01)&n;&t;  - Split source into multiple files; generic arcnet support and&n;&t;    individual chipset drivers. &lt;dwmw2@cam.ac.uk&gt;&n;&n;&t;v2.61 ALPHA (97/07/30)    by David Woodhouse (dwmw2@cam.ac.uk) for&n;&t;                            Nortel (Northern Telecom).&n;          - Added support for IO-mapped modes and for SMC COM20020 chipset.&n;&t;  - Fixed (avoided) race condition in send_packet routines which was&n;            discovered when the buffer copy routines got slow (?).&n;          - Fixed support for device naming at load time.&n;&t;  - Added backplane, clock and timeout options for COM20020.&n;&t;  - Added support for promiscuous mode.&n;&n;&t;v2.60 ALPHA (96/11/23)&n;&t;  - Added patch from Vojtech Pavlik &lt;vojtech@atrey.karlin.mff.cuni.cz&gt;&n;&t;    and Martin Mares &lt;mj@k332.feld.cvut.cz&gt; to make the driver work&n;&t;    with the new Linux 2.1.x memory management.  I modified their&n;&t;    patch quite a bit though; bugs are my fault.  More changes should&n;&t;    be made to get eliminate any remaining phys_to_virt calls.&n;&t;  - Quietly ignore protocol id&squot;s 0, 1, 8, and 243.  Thanks to Jake&n;&t;    Messinger &lt;jake@ams.com&gt; for reporting these codes and their&n;&t;    meanings.&n;&t;  - Smarter shmem probe for cards with 4k mirrors. (does it work?)&n;&t;  - Initial support for RIM I type cards which use no I/O ports at&n;&t;    all.  To use this option, you need to compile with RIM_I_MODE&n;&t;    enabled.  Thanks to Kolja Waschk &lt;kawk@yo.com&gt; for explaining&n;&t;    RIM I programming to me.  Now, does my RIM I code actually&n;&t;    work?&n;&n;&t;v2.56 (96/10/18)&n;&t;  - Turned arc0e/arc0s startup messages back on by default, as most&n;&t;    people will probably not notice the additional devices&n;&t;    otherwise.  This causes undue confusion.&n;&t;  - Fixed a tiny but noticeable bug in the packet debugging routines&n;&t;    (thanks Tomasz)&n;&n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package at&n;&t;&t;http://www.foxnet.net/~apenwarr/arcnet&n;&n;&t;v2.50 (96/02/24)&n;&t;  - Massively improved autoprobe routines; they now work even as a&n;&t;    module.  Thanks to Vojtech Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;&n;&t;    for his ideas and help in this area.&n;&t;  - Changed printk&squot;s around quite a lot.&n;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;&n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&n;&n;&t;TO DO: (semi-prioritized)&n;&n;         - Use cleaner &quot;architecture-independent&quot; shared memory access.&n;           This is half-done in ARCnet 2.60, but still uses some&n;           undocumented i386 stuff.  (We shouldn&squot;t call phys_to_virt,&n;           for example.)&n;&t; - Allow use of RFC1051 or Ether devices without RFC1201.&n;&t; - Keep separate stats for each device.&n;         - Support &quot;arpless&quot; mode like NetBSD does, and as recommended&n;           by the (obsoleted) RFC1051.&n;         - Smarter recovery from RECON-during-transmit conditions. (ie.&n;           retransmit immediately)&n;         - Add support for the new 1.3.x IP header cache, and other features.&n;         - Debug level should be changed with a system call, not a hack to&n;           the &quot;metric&quot; flag.&n;&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;     Does this work now, with IO_MAPPED_BUFFERS?&n;&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - ATA protocol support??&n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - The official ARCnet COM20020 data sheets.&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
+multiline_comment|/*&t;$Id: arcnet.c,v 1.30 1997/09/05 08:57:46 mj Exp $&n;&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;v2.92 ALPHA (97/02/09)&n;&t;  - Code cleanup [Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;]&n;&t;  - Better probing for the COM90xx chipset, although only as&n;&t;    a temporary solution until we implement adding of all found&n;&t;    devices at once. [mj]&n;&n;&t;v2.91 ALPHA (97/19/08)&n;&t;  - Add counting of octets in/out.&n;&n;&t;v2.90 ALPHA (97/08/08)&n;&t;  - Add support for kernel command line parsing so that chipset&n;&t;    drivers are usable when compiled in.&n;&n;&t;v2.80 ALPHA (97/08/01)&n;&t;  - Split source into multiple files; generic arcnet support and&n;&t;    individual chipset drivers. &lt;dwmw2@cam.ac.uk&gt;&n;&n;&t;v2.61 ALPHA (97/07/30)    by David Woodhouse (dwmw2@cam.ac.uk) for&n;&t;                            Nortel (Northern Telecom).&n;          - Added support for IO-mapped modes and for SMC COM20020 chipset.&n;&t;  - Fixed (avoided) race condition in send_packet routines which was&n;            discovered when the buffer copy routines got slow (?).&n;          - Fixed support for device naming at load time.&n;&t;  - Added backplane, clock and timeout options for COM20020.&n;&t;  - Added support for promiscuous mode.&n;&n;&t;v2.60 ALPHA (96/11/23)&n;&t;  - Added patch from Vojtech Pavlik &lt;vojtech@atrey.karlin.mff.cuni.cz&gt;&n;&t;    and Martin Mares &lt;mj@k332.feld.cvut.cz&gt; to make the driver work&n;&t;    with the new Linux 2.1.x memory management.  I modified their&n;&t;    patch quite a bit though; bugs are my fault.  More changes should&n;&t;    be made to get eliminate any remaining phys_to_virt calls.&n;&t;  - Quietly ignore protocol id&squot;s 0, 1, 8, and 243.  Thanks to Jake&n;&t;    Messinger &lt;jake@ams.com&gt; for reporting these codes and their&n;&t;    meanings.&n;&t;  - Smarter shmem probe for cards with 4k mirrors. (does it work?)&n;&t;  - Initial support for RIM I type cards which use no I/O ports at&n;&t;    all.  To use this option, you need to compile with RIM_I_MODE&n;&t;    enabled.  Thanks to Kolja Waschk &lt;kawk@yo.com&gt; for explaining&n;&t;    RIM I programming to me.  Now, does my RIM I code actually&n;&t;    work?&n;&n;&t;v2.56 (96/10/18)&n;&t;  - Turned arc0e/arc0s startup messages back on by default, as most&n;&t;    people will probably not notice the additional devices&n;&t;    otherwise.  This causes undue confusion.&n;&t;  - Fixed a tiny but noticeable bug in the packet debugging routines&n;&t;    (thanks Tomasz)&n;&n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package at&n;&t;&t;http://www.foxnet.net/~apenwarr/arcnet&n;&n;&t;v2.50 (96/02/24)&n;&t;  - Massively improved autoprobe routines; they now work even as a&n;&t;    module.  Thanks to Vojtech Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;&n;&t;    for his ideas and help in this area.&n;&t;  - Changed printk&squot;s around quite a lot.&n;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;&n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&n;&n;&t;TO DO: (semi-prioritized)&n;&n;         - Use cleaner &quot;architecture-independent&quot; shared memory access.&n;           This is half-done in ARCnet 2.60, but still uses some&n;           undocumented i386 stuff.  (We shouldn&squot;t call phys_to_virt,&n;           for example.)&n;&t; - Allow use of RFC1051 or Ether devices without RFC1201.&n;&t; - Keep separate stats for each device.&n;         - Support &quot;arpless&quot; mode like NetBSD does, and as recommended&n;           by the (obsoleted) RFC1051.&n;         - Smarter recovery from RECON-during-transmit conditions. (ie.&n;           retransmit immediately)&n;         - Add support for the new 1.3.x IP header cache, and other features.&n;         - Replace setting of debug level with the &quot;metric&quot; flag hack by&n;&t;   something better. SIOCDEVPRIVATE is a good candidate, but it would&n;&t;   require an extra user-level utility.&n;&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;           Does this work now, with IO_MAPPED_BUFFERS?&n;&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - ATA protocol support??&n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - The official ARCnet COM20020 data sheets.&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c: v2.91 97/08/19 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
+l_string|&quot;arcnet.c: v2.92 97/09/02 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -40,7 +40,7 @@ multiline_comment|/* Define this if you want to make it easier to use the &quot;
 DECL|macro|static
 macro_line|#undef static
 multiline_comment|/**************************************************************************/
-multiline_comment|/* These are now provided by the chipset driver. There&squot;s a performance &n; * overhead in using them.&n; */
+multiline_comment|/* These are now provided by the chipset driver. There&squot;s a performance&n; * overhead in using them.&n; */
 DECL|macro|AINTMASK
 mdefine_line|#define AINTMASK(x) ((*lp-&gt;asetmask)(dev, x))
 DECL|macro|ARCSTATUS
@@ -974,7 +974,7 @@ id|dev-&gt;pa_alen
 op_assign
 l_int|4
 suffix:semicolon
-multiline_comment|/* Put in this stuff here, so we don&squot;t have to export the symbols &n;&t; * to the chipset drivers.&n;&t; */
+multiline_comment|/* Put in this stuff here, so we don&squot;t have to export the symbols&n;&t; * to the chipset drivers.&n;&t; */
 id|dev-&gt;open
 op_assign
 id|arcnet_open
@@ -1092,40 +1092,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* reset the card twice in case something goes wrong the first time.&n;   */
-r_if
-c_cond
-(paren
-(paren
-op_star
-(paren
-id|lp-&gt;arcnet_reset
-)paren
-)paren
-(paren
-id|dev
-comma
-l_int|1
-)paren
-op_logical_and
-(paren
-op_star
-(paren
-id|lp-&gt;arcnet_reset
-)paren
-)paren
-(paren
-id|dev
-comma
-l_int|1
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-macro_line|#endif
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -3052,7 +3018,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Receiver routines                                                        *&n; *                                                                          *&n; ****************************************************************************/
-multiline_comment|/* &n; * This is a generic packet receiver that calls arcnet??_rx depending on the&n; * protocol ID found.&n; */
+multiline_comment|/*&n; * This is a generic packet receiver that calls arcnet??_rx depending on the&n; * protocol ID found.&n; */
 DECL|function|arcnet_rx
 r_void
 id|arcnet_rx
@@ -6532,20 +6498,21 @@ id|MAX_ARCNET_DEVS
 l_int|10
 )braket
 suffix:semicolon
-DECL|function|arcnet_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|arcnet_init
 c_func
 (paren
 r_void
 )paren
+)paren
 (brace
 r_int
 id|c
 suffix:semicolon
-(paren
-r_void
-)paren
 id|init_module
 c_func
 (paren
@@ -6708,16 +6675,30 @@ id|c
 )paren
 suffix:semicolon
 )brace
-r_static
 macro_line|#endif /* MODULE */
+macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module
 c_func
 (paren
+r_void
 )paren
+macro_line|#else
+id|__initfunc
+c_func
+(paren
+r_static
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+)paren
+macro_line|#endif
 (brace
-macro_line|#if 1
+macro_line|#ifdef ALPHA_WARNING
 id|BUGLVL
 c_func
 (paren
@@ -6765,8 +6746,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;%sGeneric arcnet support for Linux kernel.&bslash;n&quot;
-l_string|&quot;Available protocols: ARCnet RFC1201&quot;
+l_string|&quot;%sAvailable protocols: ARCnet RFC1201&quot;
 macro_line|#ifdef CONFIG_ARCNET_ETH
 l_string|&quot;, Ethernet-Encap&quot;
 macro_line|#endif
@@ -6795,22 +6775,34 @@ op_star
 id|device
 )paren
 (brace
-id|__u32
-id|arcmask
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|device
 op_star
 id|dev
 suffix:semicolon
-r_char
-op_star
-id|c
-suffix:semicolon
 r_int
 id|arcnum
+suffix:semicolon
+id|arcnum
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|device
+comma
+l_string|&quot;arc%d&quot;
+comma
+id|arcnum
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -6825,143 +6817,34 @@ id|dev
 op_assign
 id|dev-&gt;next
 )paren
-(brace
-id|arcnum
-op_assign
-l_int|0
+r_if
+c_cond
+(paren
+id|dev-&gt;name
+op_ne
+id|device
+op_logical_and
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|dev-&gt;name
+comma
+id|device
+)paren
+)paren
+r_break
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|strncmp
-c_func
-(paren
-id|dev-&gt;name
-comma
-l_string|&quot;arc&quot;
-comma
-l_int|3
+id|dev
 )paren
-)paren
-(brace
-id|c
-op_assign
-op_amp
-id|dev-&gt;name
-(braket
-l_int|3
-)braket
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-op_star
-id|c
-)paren
-op_ge
-l_char|&squot;0&squot;
-op_logical_and
-(paren
-op_star
-id|c
-)paren
-op_le
-l_char|&squot;9&squot;
-)paren
-(brace
-id|arcnum
-op_mul_assign
-l_int|10
-suffix:semicolon
-id|arcnum
-op_add_assign
-(paren
-op_star
-(paren
-id|c
-op_increment
-)paren
-op_minus
-l_char|&squot;0&squot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|arcnum
-OL
-l_int|32
-)paren
-id|arcmask
-op_or_assign
-(paren
-(paren
-id|__u32
-)paren
-l_int|1
-op_lshift
-id|arcnum
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* arcmask now holds a mask of the first 32 arcnet names available */
-r_if
-c_cond
-(paren
-(paren
-id|__u32
-)paren
-op_complement
-id|arcmask
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|arcnum
-op_assign
-l_int|0
-suffix:semicolon
-id|arcmask
-op_amp
-l_int|1
+r_return
 suffix:semicolon
 id|arcnum
 op_increment
-comma
-id|arcmask
-op_rshift_assign
-l_int|1
-)paren
-suffix:semicolon
-id|sprintf
-(paren
-id|device
-comma
-l_string|&quot;arc%d&quot;
-comma
-id|arcnum
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;arcnet: Can&squot;t find name for device&bslash;n&quot;
-)paren
-suffix:semicolon
-id|sprintf
-(paren
-id|device
-comma
-l_string|&quot;arc???&quot;
-)paren
 suffix:semicolon
 )brace
 )brace

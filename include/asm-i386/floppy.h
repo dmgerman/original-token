@@ -1171,6 +1171,8 @@ DECL|macro|N_FDC
 mdefine_line|#define N_FDC 2
 DECL|macro|N_DRIVE
 mdefine_line|#define N_DRIVE 8
+DECL|macro|FLOPPY_MOTOR_MASK
+mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
 multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 16MB&n; *&n; * Went back to the 1MB limit, as some people had problems with the floppy&n; * driver otherwise. It doesn&squot;t matter much for performance anyway, as most&n; * floppy accesses go through the track buffer.&n; */
 DECL|macro|CROSS_64KB
 mdefine_line|#define CROSS_64KB(a,s) (((unsigned long)(a)/K_64 != ((unsigned long)(a) + (s) - 1) / K_64) &amp;&amp; ! (use_virtual_dma &amp; 1))

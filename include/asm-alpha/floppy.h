@@ -68,6 +68,8 @@ DECL|macro|N_FDC
 mdefine_line|#define N_FDC 2
 DECL|macro|N_DRIVE
 mdefine_line|#define N_DRIVE 8
+DECL|macro|FLOPPY_MOTOR_MASK
+mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
 multiline_comment|/*&n; * Most Alphas have no problems with floppy DMA crossing 64k borders. Sigh...&n; */
 macro_line|#ifdef CONFIG_ALPHA_XL
 DECL|macro|CROSS_64KB

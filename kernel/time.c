@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  This file contains the interface functions for the various&n; *  time related system calls: time, stime, gettimeofday, settimeofday,&n; *&t;&t;&t;       adjtime&n; */
-multiline_comment|/*&n; * Modification history kernel/time.c&n; * &n; * 1993-09-02    Philip Gladstone&n; *      Created file with time related functions from sched.c and adjtimex() &n; * 1993-10-08    Torsten Duwe&n; *      adjtime interface update and CMOS clock write code&n; * 1995-08-13    Torsten Duwe&n; *      kernel PLL updated to 1994-12-13 specs (rfc-1489)&n; */
+multiline_comment|/*&n; * Modification history kernel/time.c&n; * &n; * 1993-09-02    Philip Gladstone&n; *      Created file with time related functions from sched.c and adjtimex() &n; * 1993-10-08    Torsten Duwe&n; *      adjtime interface update and CMOS clock write code&n; * 1995-08-13    Torsten Duwe&n; *      kernel PLL updated to 1994-12-13 specs (rfc-1589)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

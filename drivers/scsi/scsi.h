@@ -19,6 +19,16 @@ macro_line|#endif
 DECL|macro|MAX_SCSI_DEVICE_CODE
 mdefine_line|#define MAX_SCSI_DEVICE_CODE 10
 r_extern
+r_const
+r_char
+op_star
+r_const
+id|scsi_device_types
+(braket
+id|MAX_SCSI_DEVICE_CODE
+)braket
+suffix:semicolon
+r_extern
 r_void
 id|scsi_make_blocked_list
 c_func

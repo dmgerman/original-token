@@ -1,5 +1,6 @@
 multiline_comment|/* esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Maybe disable parity checking in config register one for SCSI1&n; *    targets.  (Gilmore says parity error on the SBus can lock up&n; *    old sun4c&squot;s)&n; * 2) Add support for DMA2 pipelining.&n; * 3) Add tagged queueing.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -20,6 +21,7 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 DECL|macro|DEBUG_ESP
 mdefine_line|#define DEBUG_ESP
@@ -2452,6 +2454,12 @@ id|tpnt
 )paren
 )paren
 (brace
+macro_line|#ifdef __sparc_v9__
+r_struct
+id|devid_cookie
+id|dcookie
+suffix:semicolon
+macro_line|#endif
 r_struct
 id|Sparc_ESP
 op_star
@@ -2532,12 +2540,18 @@ op_logical_neg
 id|SBus_chain
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 id|panic
 c_func
 (paren
 l_string|&quot;No SBUS in esp_detect()&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|for_each_sbus
 c_func
@@ -3115,6 +3129,7 @@ l_int|0
 dot
 id|pri
 suffix:semicolon
+macro_line|#ifndef __sparc_v9__
 multiline_comment|/* Allocate the irq only if necessary */
 id|for_each_esp
 c_func
@@ -3181,6 +3196,78 @@ comma
 id|esp-&gt;ehost-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* On Ultra we must always call request_irq for each&n;&t;&t;&t; * esp, so that imap registers get setup etc.&n;&t;&t;&t; */
+id|dcookie.real_dev_id
+op_assign
+id|esp
+suffix:semicolon
+id|dcookie.imap
+op_assign
+id|dcookie.iclr
+op_assign
+l_int|0
+suffix:semicolon
+id|dcookie.pil
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|dcookie.bus_cookie
+op_assign
+id|sbus
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|esp-&gt;ehost-&gt;irq
+comma
+id|esp_intr
+comma
+(paren
+id|SA_SHIRQ
+op_or
+id|SA_SBUS
+op_or
+id|SA_DCOOKIE
+)paren
+comma
+l_string|&quot;Sparc ESP SCSI&quot;
+comma
+op_amp
+id|dcookie
+)paren
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;Cannot acquire ESP irq line&quot;
+)paren
+suffix:semicolon
+)brace
+id|esp-&gt;ehost-&gt;irq
+op_assign
+id|esp-&gt;irq
+op_assign
+id|dcookie.ret_ino
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;esp%d: INO[%x] IRQ %d &quot;
+comma
+id|esp-&gt;esp_id
+comma
+id|esp-&gt;ehost-&gt;irq
+comma
+id|dcookie.ret_pil
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Figure out our scsi ID on the bus */
 id|esp-&gt;scsi_id
 op_assign
@@ -9753,38 +9840,6 @@ id|esp-&gt;esp_id
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-id|ESPLOG
-c_func
-(paren
-(paren
-l_string|&quot;esp%d: local_irq_count[%x:%x:%x:%x]&bslash;n&quot;
-comma
-id|esp-&gt;esp_id
-comma
-id|local_irq_count
-(braket
-l_int|0
-)braket
-comma
-id|local_irq_count
-(braket
-l_int|1
-)braket
-comma
-id|local_irq_count
-(braket
-l_int|2
-)braket
-comma
-id|local_irq_count
-(braket
-l_int|3
-)braket
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|esp_do_phase_determine
 c_func
@@ -10065,38 +10120,6 @@ id|SCptr-&gt;SCp.this_residual
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-id|ESPLOG
-c_func
-(paren
-(paren
-l_string|&quot;esp%d: local_irq_count[%x:%x:%x:%x]&bslash;n&quot;
-comma
-id|esp-&gt;esp_id
-comma
-id|local_irq_count
-(braket
-l_int|0
-)braket
-comma
-id|local_irq_count
-(braket
-l_int|1
-)braket
-comma
-id|local_irq_count
-(braket
-l_int|2
-)braket
-comma
-id|local_irq_count
-(braket
-l_int|3
-)braket
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|bytes_sent
 op_assign
 l_int|0
@@ -17121,6 +17144,7 @@ suffix:colon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifndef __sparc_v9__
 macro_line|#ifndef __SMP__
 DECL|function|esp_intr
 r_static
@@ -17162,8 +17186,6 @@ c_func
 id|esp
 )paren
 (brace
-multiline_comment|/* XXX Ultra: This is gross, what we really need&n;&t;&t; * XXX is a sbusirq_to_sparc_pil() function, call&n;&t;&t; * XXX that and stick the result in the esp soft&n;&t;&t; * XXX state structure. -DaveM&n;&t;&t; */
-macro_line|#ifndef __sparc_v9__
 r_if
 c_cond
 (paren
@@ -17176,7 +17198,6 @@ op_eq
 id|irq
 )paren
 (brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -17228,9 +17249,7 @@ id|esp-&gt;dregs
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef __sparc_v9__
 )brace
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -17244,21 +17263,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
-multiline_comment|/* XXX Gross hack for sun4u SMP, fix it right later... -DaveM */
-macro_line|#ifdef __sparc_v9__
-r_extern
-r_int
-r_char
-id|ino_to_pil
-(braket
-)braket
-suffix:semicolon
-DECL|macro|INO_TO_PIL
-mdefine_line|#define INO_TO_PIL(esp)&t;&t;(ino_to_pil[(esp)-&gt;irq])
-macro_line|#else
-DECL|macro|INO_TO_PIL
-mdefine_line|#define INO_TO_PIL(esp)&t;&t;((esp)-&gt;irq &amp; 0xf)
-macro_line|#endif
 multiline_comment|/* For SMP we only service one ESP on the list list at our IRQ level! */
 DECL|function|esp_intr
 r_static
@@ -17294,10 +17298,14 @@ id|esp
 r_if
 c_cond
 (paren
-id|INO_TO_PIL
-c_func
+(paren
 (paren
 id|esp
+)paren
+op_member_access_from_pointer
+id|irq
+op_amp
+l_int|0xf
 )paren
 op_eq
 id|irq
@@ -17358,6 +17366,87 @@ r_return
 suffix:semicolon
 )brace
 )brace
+)brace
+)brace
+macro_line|#endif
+macro_line|#else /* __sparc_v9__ */
+DECL|function|esp_intr
+r_static
+r_void
+id|esp_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|pregs
+)paren
+(brace
+r_struct
+id|Sparc_ESP
+op_star
+id|esp
+op_assign
+id|dev_id
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DMA_IRQ_P
+c_func
+(paren
+id|esp-&gt;dregs
+)paren
+)paren
+(brace
+id|DMA_INTSOFF
+c_func
+(paren
+id|esp-&gt;dregs
+)paren
+suffix:semicolon
+id|ESPIRQ
+c_func
+(paren
+(paren
+l_string|&quot;I[%d:%d](&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|esp-&gt;esp_id
+)paren
+)paren
+suffix:semicolon
+id|esp_handle
+c_func
+(paren
+id|esp
+)paren
+suffix:semicolon
+id|ESPIRQ
+c_func
+(paren
+(paren
+l_string|&quot;)&quot;
+)paren
+)paren
+suffix:semicolon
+id|DMA_INTSON
+c_func
+(paren
+id|esp-&gt;dregs
+)paren
+suffix:semicolon
 )brace
 )brace
 macro_line|#endif

@@ -144,10 +144,6 @@ DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt; /* for the compatibility eject ioctl */
-macro_line|#ifndef FLOPPY_MOTOR_MASK
-DECL|macro|FLOPPY_MOTOR_MASK
-mdefine_line|#define FLOPPY_MOTOR_MASK 0xf0
-macro_line|#endif
 macro_line|#ifndef fd_get_dma_residue
 DECL|macro|fd_get_dma_residue
 mdefine_line|#define fd_get_dma_residue() get_dma_residue(FLOPPY_DMA)

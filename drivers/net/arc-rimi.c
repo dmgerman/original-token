@@ -1,4 +1,4 @@
-multiline_comment|/* arc-rimi.c:&n;        Derived from the original arcnet.c,&n;        Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
+multiline_comment|/*&t;$Id: arc-rimi.c,v 1.2 1997/09/05 08:57:51 mj Exp $&n;&n;        Derived from the original arcnet.c,&n;        Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -31,172 +31,6 @@ multiline_comment|/*************************************************************
 multiline_comment|/* On a fast computer, the buffer copy from memory to the ARCnet card during&n; * a transmit can hog the bus just a little too long.  SLOW_XMIT_COPY&n; * replaces the fast memcpy() with a slower for() loop that seems to solve&n; * my problems with ftape.&n; *&n; * Probably a better solution would be to use memcpy_toio (more portable&n; * anyway) and modify that routine to support REALLY_SLOW_IO-style&n; * defines; ARCnet probably is not the only driver that can screw up an&n; * ftape DMA transfer.&n; *&n; * Turn this on if you have timing-sensitive DMA (ie. a tape drive) and&n; * would like to sacrifice a little bit of network speed to reduce tape&n; * write retries or some related problem.&n; */
 DECL|macro|SLOW_XMIT_COPY
 macro_line|#undef SLOW_XMIT_COPY
-multiline_comment|/* External functions from arcnet.c */
-macro_line|#if ARCNET_DEBUG_MAX &amp; D_SKB
-r_extern
-r_void
-id|arcnet_dump_skb
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_char
-op_star
-id|desc
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|arcnet_dump_skb
-mdefine_line|#define arcnet_dump_skb(dev,skb,desc) ;
-macro_line|#endif
-macro_line|#if (ARCNET_DEBUG_MAX &amp; D_RX) || (ARCNET_DEBUG_MAX &amp; D_TX)
-r_extern
-r_void
-id|arcnet_dump_packet
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-id|u_char
-op_star
-id|buffer
-comma
-r_int
-id|ext
-comma
-r_char
-op_star
-id|desc
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|arcnet_dump_packet
-mdefine_line|#define arcnet_dump_packet(dev,buffer,ext,desc) ;
-macro_line|#endif
-r_extern
-r_void
-id|arcnet_tx_done
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|arcnet_local
-op_star
-id|lp
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_makename
-c_func
-(paren
-r_char
-op_star
-id|device
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_setup
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|arcnet_go_tx
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|enable_irq
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnetA_continue_tx
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_rx
-c_func
-(paren
-r_struct
-id|arcnet_local
-op_star
-id|lp
-comma
-id|u_char
-op_star
-id|arcsoft
-comma
-r_int
-id|length
-comma
-r_int
-id|saddr
-comma
-r_int
-id|daddr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_use_count
-c_func
-(paren
-r_int
-id|open
-)paren
-suffix:semicolon
 multiline_comment|/* Internal function declarations */
 r_static
 r_int
@@ -484,7 +318,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arc-rimi.c: v2.91 97/08/19 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
+l_string|&quot;arc-rimi.c: v2.92 97/09/02 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* We cannot probe for a RIM I card; one reason is I don&squot;t know how to reset&n; * them.  In fact, we can&squot;t even get their node ID automatically.  So, we&n; * need to be passed a specific shmem address, IRQ, and node ID.&n; */

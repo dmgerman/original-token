@@ -483,6 +483,7 @@ id|dor
 suffix:semicolon
 DECL|member|address
 r_int
+r_int
 id|address
 suffix:semicolon
 multiline_comment|/* io address */

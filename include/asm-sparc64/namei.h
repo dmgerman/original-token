@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.7 1997/09/04 15:46:31 jj Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/* $Id: namei.h,v 1.8 1997/09/06 02:25:27 davem Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __SPARC64_NAMEI_H
 DECL|macro|__SPARC64_NAMEI_H
 mdefine_line|#define __SPARC64_NAMEI_H
@@ -24,9 +24,6 @@ r_int
 id|follow_link
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 r_struct
 id|dentry
 op_star

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 id|asmlinkage
 r_int
 id|system_call
@@ -1275,6 +1276,17 @@ c_func
 l_int|0x61
 )paren
 suffix:semicolon
+r_extern
+id|atomic_t
+id|nmi_counter
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|nmi_counter
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1580,12 +1592,15 @@ r_int
 id|error_code
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/* No need to warn about this any longer. */
 id|printk
 c_func
 (paren
 l_string|&quot;Ignoring P6 Local APIC Spurious Interrupt Bug...&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *  &squot;math_state_restore()&squot; saves the current math information in the&n; * old math state array, and gets the new ones from the current task&n; *&n; * Careful.. There are problems with IBM-designed IRQ13 behaviour.&n; * Don&squot;t touch unless you *really* know how it works.&n; */
 DECL|function|math_state_restore

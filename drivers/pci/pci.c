@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/pci/pci.c&n; *&n; * PCI services that are built on top of the BIOS32 service.&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; */
+multiline_comment|/*&n; * $Id: pci.c,v 1.44 1997/09/03 05:08:22 richard Exp $&n; *&n; * PCI services that are built on top of the BIOS32 service.&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -300,6 +300,16 @@ c_func
 (paren
 id|NS
 comma
+id|NS_87415
+comma
+l_string|&quot;87415&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|NS
+comma
 id|NS_87410
 comma
 l_string|&quot;87410&quot;
@@ -404,7 +414,7 @@ id|DEC
 comma
 id|DEC_TGA
 comma
-l_string|&quot;DC21030&quot;
+l_string|&quot;TGA&quot;
 )paren
 comma
 id|DEVICE
@@ -415,6 +425,16 @@ comma
 id|DEC_TULIP_FAST
 comma
 l_string|&quot;DC21140&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|DEC
+comma
+id|DEC_TGA2
+comma
+l_string|&quot;TGA2&quot;
 )paren
 comma
 id|DEVICE
@@ -1429,6 +1449,38 @@ comma
 id|OLICOM_OC6151
 comma
 l_string|&quot;OC-6151/6152&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SUN
+comma
+id|SUN_EBUS
+comma
+l_string|&quot;EBUS&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SUN
+comma
+id|SUN_HAPPYMEAL
+comma
+l_string|&quot;Happy Meal&quot;
+)paren
+comma
+id|BRIDGE
+c_func
+(paren
+id|SUN
+comma
+id|SUN_PBM
+comma
+l_string|&quot;PCI Bus Module&quot;
+comma
+l_int|0x02
 )paren
 comma
 id|DEVICE
@@ -4260,6 +4312,12 @@ r_return
 l_string|&quot;Olicom&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_SUN
+suffix:colon
+r_return
+l_string|&quot;Sun Microsystems&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_CMD
 suffix:colon
 r_return
@@ -4653,6 +4711,85 @@ id|info-&gt;name
 suffix:colon
 l_string|&quot;Unknown device&quot;
 suffix:semicolon
+)brace
+DECL|function|pcibios_strerror
+r_const
+r_char
+op_star
+id|pcibios_strerror
+c_func
+(paren
+r_int
+id|error
+)paren
+(brace
+r_static
+r_char
+id|buf
+(braket
+l_int|32
+)braket
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|error
+)paren
+(brace
+r_case
+id|PCIBIOS_SUCCESSFUL
+suffix:colon
+r_case
+id|PCIBIOS_BAD_VENDOR_ID
+suffix:colon
+r_return
+l_string|&quot;SUCCESSFUL&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_FUNC_NOT_SUPPORTED
+suffix:colon
+r_return
+l_string|&quot;FUNC_NOT_SUPPORTED&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_DEVICE_NOT_FOUND
+suffix:colon
+r_return
+l_string|&quot;DEVICE_NOT_FOUND&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:colon
+r_return
+l_string|&quot;BAD_REGISTER_NUMBER&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_SET_FAILED
+suffix:colon
+r_return
+l_string|&quot;SET_FAILED&quot;
+suffix:semicolon
+r_case
+id|PCIBIOS_BUFFER_TOO_SMALL
+suffix:colon
+r_return
+l_string|&quot;BUFFER_TOO_SMALL&quot;
+suffix:semicolon
+r_default
+suffix:colon
+id|sprintf
+(paren
+id|buf
+comma
+l_string|&quot;PCI ERROR 0x%x&quot;
+comma
+id|error
+)paren
+suffix:semicolon
+r_return
+id|buf
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Turn on/off PCI bridge optimization. This should allow benchmarking.&n; */
 DECL|function|__initfunc
@@ -5387,7 +5524,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;IRQ %d.  &quot;
+l_string|&quot;IRQ %x.  &quot;
 comma
 id|dev-&gt;irq
 )paren
@@ -5502,15 +5639,14 @@ c_loop
 (paren
 id|reg
 op_assign
-id|PCI_BASE_ADDRESS_0
+l_int|0
 suffix:semicolon
 id|reg
-op_le
-id|PCI_BASE_ADDRESS_5
+OL
+l_int|6
 suffix:semicolon
 id|reg
-op_add_assign
-l_int|4
+op_increment
 )paren
 (brace
 r_if
@@ -5535,12 +5671,30 @@ id|bus
 comma
 id|devfn
 comma
+id|PCI_BASE_ADDRESS_0
+op_plus
+(paren
 id|reg
+op_lshift
+l_int|2
+)paren
 comma
 op_amp
 id|l
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|l
+op_eq
+l_int|0xffffffff
+)paren
+id|base
+op_assign
+l_int|0
+suffix:semicolon
+r_else
 id|base
 op_assign
 id|l
@@ -5551,10 +5705,8 @@ c_cond
 op_logical_neg
 id|base
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5572,11 +5724,16 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;n      I/O at 0x%lx.&quot;
+l_string|&quot;&bslash;n      I/O at 0x%lx [0x%lx].&quot;
 comma
 id|base
 op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
+comma
+id|dev-&gt;base_address
+(braket
+id|reg
+)braket
 )paren
 suffix:semicolon
 )brace
@@ -5687,7 +5844,7 @@ op_plus
 id|len
 comma
 l_string|&quot;&bslash;n      %srefetchable %s memory at &quot;
-l_string|&quot;0x%lx.&quot;
+l_string|&quot;0x%lx [0x%lx].&quot;
 comma
 id|pref
 comma
@@ -5696,6 +5853,11 @@ comma
 id|base
 op_amp
 id|PCI_BASE_ADDRESS_MEM_MASK
+comma
+id|dev-&gt;base_address
+(braket
+id|reg
+)braket
 )paren
 suffix:semicolon
 )brace
@@ -5860,6 +6022,10 @@ l_string|&quot;...pci_malloc(size=%ld,mem=%p)&quot;
 comma
 id|size
 comma
+(paren
+r_void
+op_star
+)paren
 op_star
 id|mem_startp
 )paren
@@ -5914,14 +6080,10 @@ r_return
 id|mem
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_static
+DECL|function|pci_scan_bus
 r_int
 r_int
-id|scan_bus
+id|pci_scan_bus
 c_func
 (paren
 r_struct
@@ -5933,7 +6095,6 @@ r_int
 r_int
 op_star
 id|mem_startp
-)paren
 )paren
 (brace
 r_int
@@ -5949,6 +6110,8 @@ r_char
 id|cmd
 comma
 id|tmp
+comma
+id|irq
 comma
 id|hdr_type
 op_assign
@@ -5969,14 +6132,21 @@ id|pci_bus
 op_star
 id|child
 suffix:semicolon
+r_int
+id|reg
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;...scan_bus(busno=%d,mem=%p)&bslash;n&quot;
+l_string|&quot;...pci_scan_bus(busno=%d,mem=%p)&bslash;n&quot;
 comma
 id|bus-&gt;number
 comma
+(paren
+r_void
+op_star
+)paren
 op_star
 id|mem_startp
 )paren
@@ -6144,7 +6314,7 @@ id|info
 id|printk
 c_func
 (paren
-l_string|&quot;Warning : Unknown PCI device (%x:%x).  Please read include/linux/pci.h &bslash;n&quot;
+l_string|&quot;PCI: Warning: Unknown PCI device (%x:%x).  Please read include/linux/pci.h&bslash;n&quot;
 comma
 id|dev-&gt;vendor
 comma
@@ -6253,9 +6423,71 @@ comma
 id|PCI_INTERRUPT_LINE
 comma
 op_amp
-id|dev-&gt;irq
+id|irq
 )paren
 suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|irq
+suffix:semicolon
+multiline_comment|/* read base address registers, again pcibios_fixup() can&n;&t;&t; * tweak these&n;&t;&t; */
+r_for
+c_loop
+(paren
+id|reg
+op_assign
+l_int|0
+suffix:semicolon
+id|reg
+OL
+l_int|6
+suffix:semicolon
+id|reg
+op_increment
+)paren
+(brace
+id|pcibios_read_config_dword
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|devfn
+comma
+id|PCI_BASE_ADDRESS_0
+op_plus
+(paren
+id|reg
+op_lshift
+l_int|2
+)paren
+comma
+op_amp
+id|l
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|l
+op_eq
+l_int|0xffffffff
+)paren
+id|dev-&gt;base_address
+(braket
+id|reg
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|dev-&gt;base_address
+(braket
+id|reg
+)braket
+op_assign
+id|l
+suffix:semicolon
+)brace
 multiline_comment|/* check to see if this device is a PCI-PCI bridge: */
 id|pcibios_read_config_dword
 c_func
@@ -6455,7 +6687,7 @@ id|child-&gt;secondary
 suffix:semicolon
 id|max
 op_assign
-id|scan_bus
+id|pci_scan_bus
 c_func
 (paren
 id|child
@@ -6526,7 +6758,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;     * Now we can scan all subordinate buses:&n;&t;&t;&t;     */
 id|max
 op_assign
-id|scan_bus
+id|pci_scan_bus
 c_func
 (paren
 id|child
@@ -6632,7 +6864,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;pci_init: no PCI BIOS detected&bslash;n&quot;
+l_string|&quot;PCI: No PCI bus detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6661,7 +6893,7 @@ id|pci_root
 suffix:semicolon
 id|pci_root.subordinate
 op_assign
-id|scan_bus
+id|pci_scan_bus
 c_func
 (paren
 op_amp

@@ -9,12 +9,22 @@ mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE 1
 multiline_comment|/*&n; * The fs value determines whether argument validity checking should be&n; * performed or not.  If get_fs() == USER_DS, checking is performed, with&n; * get_fs() == KERNEL_DS, checking is bypassed.&n; *&n; * For historical reasons, these macros are grossly misnamed.&n; */
+r_extern
+r_int
+r_int
+id|__bad_fs_size
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|get_fs
 mdefine_line|#define get_fs()&t;(current-&gt;tss.segment)
-DECL|macro|set_fs
-mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment = (x))
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
+multiline_comment|/* Some architectures -- Alpha for one -- use &quot;segment&quot; schemes that &n;   require all bits to be preserved, thus the i386 traditional `ushort&squot;&n;   doesn&squot;t work.  To head off problems early, force the Intel folks&n;   to do it Right as well.  */
+DECL|macro|set_fs
+mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment =&t;&t;&t;&t;&bslash;&n;&t;&t;&t; sizeof(x) == sizeof(unsigned long) ? (x) &t;&bslash;&n;&t;&t;&t; : __bad_fs_size())
 multiline_comment|/*&n; * Address Ok:&n; *&n; *&t;&t;&t;    low two bits of segment&n; *&t;&t;&t;00 (kernel)&t;&t;11 (user)&n; *&n; * high&t;&t;00&t;1&t;&t;&t;1&n; * two &t;&t;01&t;1&t;&t;&t;1&n; * bits of&t;10&t;1&t;&t;&t;1&n; * address&t;11&t;1&t;&t;&t;0&n; */
 DECL|macro|__addr_ok
 mdefine_line|#define __addr_ok(x) &bslash;&n;&t;((((unsigned long)(x)&gt;&gt;30)&amp;get_fs()) != 3)

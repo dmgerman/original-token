@@ -128,6 +128,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|acq_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|pcwatchdog_init
 c_func
 (paren
@@ -153,6 +161,14 @@ suffix:semicolon
 r_extern
 r_int
 id|nvram_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hfmodem_init
 c_func
 (paren
 r_void
@@ -808,6 +824,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ACQUIRE_WDT
+id|acq_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SOFT_WATCHDOG
 id|watchdog_init
 c_func
@@ -822,6 +845,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_H8
+id|h8_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_RTC
 id|rtc_init
 c_func
@@ -831,6 +861,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_DSP56K
 id|dsp56k_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_HFMODEM
+id|hfmodem_init
 c_func
 (paren
 )paren

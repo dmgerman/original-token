@@ -1,7 +1,6 @@
 macro_line|#ifndef _INET_COMMON_H
 DECL|macro|_INET_COMMON_H
 mdefine_line|#define _INET_COMMON_H
-macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_struct
 id|proto_ops

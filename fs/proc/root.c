@@ -2332,7 +2332,13 @@ l_string|&quot;ppc_htab&quot;
 comma
 id|S_IFREG
 op_or
-id|S_IRUGO
+id|S_IRUSR
+op_or
+id|S_IWUSR
+op_or
+id|S_IRGRP
+op_or
+id|S_IROTH
 comma
 l_int|1
 comma
@@ -2344,6 +2350,19 @@ l_int|0
 comma
 op_amp
 id|proc_ppc_htab_inode_operations
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* get_info, fill_inode */
+l_int|NULL
+comma
+multiline_comment|/* next */
+l_int|NULL
+comma
+l_int|NULL
+multiline_comment|/* parent, subdir */
 )brace
 suffix:semicolon
 macro_line|#endif

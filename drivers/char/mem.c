@@ -1583,39 +1583,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|read_full
-r_static
-r_int
-id|read_full
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|node
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|count
-)paren
-(brace
-id|file-&gt;f_pos
-op_add_assign
-id|count
-suffix:semicolon
-r_return
-id|count
-suffix:semicolon
-)brace
 DECL|function|write_full
 r_static
 r_int
@@ -1756,8 +1723,12 @@ DECL|macro|mmap_kmem
 mdefine_line|#define mmap_kmem&t;mmap_mem
 DECL|macro|zero_lseek
 mdefine_line|#define zero_lseek&t;null_lseek
+DECL|macro|full_lseek
+mdefine_line|#define full_lseek      null_lseek
 DECL|macro|write_zero
 mdefine_line|#define write_zero&t;write_null
+DECL|macro|read_full
+mdefine_line|#define read_full       read_zero
 DECL|variable|mem_fops
 r_static
 r_struct
@@ -1934,7 +1905,7 @@ id|file_operations
 id|full_fops
 op_assign
 (brace
-id|memory_lseek
+id|full_lseek
 comma
 id|read_full
 comma

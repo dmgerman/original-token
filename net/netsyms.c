@@ -1548,6 +1548,13 @@ c_func
 id|arp_rcv
 )paren
 suffix:semicolon
+DECL|variable|if_port_text
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|if_port_text
+)paren
+suffix:semicolon
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 
 macro_line|#include&lt;linux/if_ltalk.h&gt;
 DECL|variable|ltalk_setup

@@ -3,7 +3,7 @@ DECL|macro|__ALPHA_UACCESS_H
 mdefine_line|#define __ALPHA_UACCESS_H
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-multiline_comment|/*&n; * The fs value determines whether argument validity checking should be&n; * performed or not.  If get_fs() == USER_DS, checking is performed, with&n; * get_fs() == KERNEL_DS, checking is bypassed.&n; *&n; * For historical reasons, these macros are grossly misnamed.&n; */
+multiline_comment|/*&n; * The fs value determines whether argument validity checking should be&n; * performed or not.  If get_fs() == USER_DS, checking is performed, with&n; * get_fs() == KERNEL_DS, checking is bypassed.&n; *&n; * Or at least it did once upon a time.  Nowadays it is a mask that&n; * defines which bits of the address space are off limits.  This is a&n; * wee bit faster than the above.&n; *&n; * For historical reasons, these macros are grossly misnamed.&n; */
 DECL|macro|KERNEL_DS
 mdefine_line|#define KERNEL_DS&t;(0UL)
 DECL|macro|USER_DS
@@ -14,10 +14,20 @@ DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE&t;1
 DECL|macro|get_fs
 mdefine_line|#define get_fs()  (current-&gt;tss.fs)
-DECL|macro|set_fs
-mdefine_line|#define set_fs(x) (current-&gt;tss.fs = (x))
 DECL|macro|get_ds
 mdefine_line|#define get_ds()  (KERNEL_DS)
+multiline_comment|/* Our scheme relies on all bits being preserved.  Trap those evil &n;   Intellists in their plot to use unsigned short.  */
+r_extern
+r_int
+r_int
+id|__bad_fs_size
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|set_fs
+mdefine_line|#define set_fs(x) (current-&gt;tss.fs =&t;&t;&t;&t;&bslash;&n;&t;&t;   sizeof(x) == sizeof(unsigned long) ? (x) &t;&bslash;&n;&t;&t;   : __bad_fs_size())
 multiline_comment|/*&n; * Is a address valid? This does a straighforward calculation rather&n; * than tests.&n; *&n; * Address valid if:&n; *  - &quot;addr&quot; doesn&squot;t have any high-bits set&n; *  - AND &quot;size&quot; doesn&squot;t have any high-bits set&n; *  - AND &quot;addr+size&quot; doesn&squot;t have any high-bits set&n; *  - OR we are in kernel mode.&n; */
 DECL|macro|__access_ok
 mdefine_line|#define __access_ok(addr,size,mask) &bslash;&n;&t;(((mask) &amp; (addr | size | (addr+size))) == 0)

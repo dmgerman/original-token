@@ -1241,7 +1241,6 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* The debug level */
-macro_line|#endif
 multiline_comment|/* A list of all installed Speedo devices, for removing the driver module. */
 DECL|variable|root_speedo_dev
 r_static
@@ -1252,6 +1251,7 @@ id|root_speedo_dev
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 DECL|function|eepro100_init
 r_int
 id|eepro100_init

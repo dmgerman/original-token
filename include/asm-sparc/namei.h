@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.7 1997/08/29 15:52:27 jj Exp $&n; * linux/include/asm-sparc/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/* $Id: namei.h,v 1.8 1997/09/05 12:38:51 jj Exp $&n; * linux/include/asm-sparc/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __SPARC_NAMEI_H
 DECL|macro|__SPARC_NAMEI_H
 mdefine_line|#define __SPARC_NAMEI_H
@@ -91,7 +91,8 @@ id|base
 r_return
 id|base
 suffix:semicolon
-r_return
+id|base
+op_assign
 id|lookup_dentry
 (paren
 id|name
@@ -100,6 +101,42 @@ id|base
 comma
 id|follow_link
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_ERR
+(paren
+id|base
+)paren
+)paren
+r_return
+id|base
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|base-&gt;d_inode
+)paren
+(brace
+id|dput
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+r_return
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOENT
+)paren
+suffix:semicolon
+)brace
+r_return
+id|base
 suffix:semicolon
 )brace
 DECL|macro|__prefix_lookup_dentry

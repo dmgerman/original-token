@@ -1,4 +1,4 @@
-multiline_comment|/* com20020.c:&n;        Written 1997 by David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n;&n;&t;Derived from the original arcnet.c,&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
+multiline_comment|/*&t;$Id: com20020.c,v 1.2 1997/09/05 08:57:50 mj Exp $&n;&n;        Written 1997 by David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n;&n;&t;Derived from the original arcnet.c,&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -27,172 +27,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-multiline_comment|/* External functions from arcnet.c */
-macro_line|#if ARCNET_DEBUG_MAX &amp; D_SKB
-r_extern
-r_void
-id|arcnet_dump_skb
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_char
-op_star
-id|desc
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|arcnet_dump_skb
-mdefine_line|#define arcnet_dump_skb(dev,skb,desc) ;
-macro_line|#endif
-macro_line|#if (ARCNET_DEBUG_MAX &amp; D_RX) || (ARCNET_DEBUG_MAX &amp; D_TX)
-r_extern
-r_void
-id|arcnet_dump_packet
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-id|u_char
-op_star
-id|buffer
-comma
-r_int
-id|ext
-comma
-r_char
-op_star
-id|desc
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|arcnet_dump_packet
-mdefine_line|#define arcnet_dump_packet(dev,buffer,ext,desc) ;
-macro_line|#endif
-r_extern
-r_void
-id|arcnet_tx_done
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|arcnet_local
-op_star
-id|lp
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_makename
-c_func
-(paren
-r_char
-op_star
-id|device
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_setup
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|arcnet_go_tx
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|enable_irq
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnetA_continue_tx
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_rx
-c_func
-(paren
-r_struct
-id|arcnet_local
-op_star
-id|lp
-comma
-id|u_char
-op_star
-id|arcsoft
-comma
-r_int
-id|length
-comma
-r_int
-id|saddr
-comma
-r_int
-id|daddr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_use_count
-c_func
-(paren
-r_int
-id|open
-)paren
-suffix:semicolon
 multiline_comment|/* Internal function declarations */
 r_static
 r_int
@@ -589,7 +423,7 @@ id|clockrates
 op_assign
 initialization_block
 suffix:semicolon
-multiline_comment|/* The number of low I/O ports used by the ethercard. */
+multiline_comment|/* The number of low I/O ports used by the card. */
 DECL|macro|ARCNET_TOTAL_SIZE
 mdefine_line|#define ARCNET_TOTAL_SIZE 9
 DECL|macro|_INTMASK
@@ -918,7 +752,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;com20020.c: v2.91 97/08/19 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
+l_string|&quot;com20020.c: v2.92 97/09/02 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* We cannot probe for an IO mapped card either, although we can check that&n; * it&squot;s where we were told it was, and even autoirq&n; */
@@ -1878,7 +1712,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Utility routines for arcnet.c                                            *&n; *                                                                          *&n; ****************************************************************************/
+multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Utility routines                                                         *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* Do a hardware reset on the card, and set up necessary registers.&n; *&n; * This should be called as little as possible, because it disrupts the&n; * token on the network (causes a RECON) and requires a significant delay.&n; *&n; * However, it does make sure the card is in a defined state.&n; */
 DECL|function|arc20020_reset
 r_int

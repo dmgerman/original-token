@@ -33,8 +33,6 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 macro_line|#endif
-DECL|macro|CR0_NE
-mdefine_line|#define CR0_NE 32
 DECL|variable|local_irq_count
 r_int
 r_int
@@ -75,6 +73,10 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
+DECL|variable|nmi_counter
+id|atomic_t
+id|nmi_counter
+suffix:semicolon
 multiline_comment|/*&n; * This contains the irq mask for both irq controllers&n; */
 DECL|variable|cached_irq_mask
 r_static
@@ -753,15 +755,17 @@ id|buf
 (brace
 r_int
 id|i
-comma
-id|len
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|irqaction
 op_star
 id|action
+suffix:semicolon
+r_char
+op_star
+id|p
+op_assign
+id|buf
 suffix:semicolon
 r_for
 c_loop
@@ -793,16 +797,14 @@ id|action
 )paren
 r_continue
 suffix:semicolon
-id|len
+id|p
 op_add_assign
 id|sprintf
 c_func
 (paren
-id|buf
-op_plus
-id|len
+id|p
 comma
-l_string|&quot;%2d: %10u   %s&quot;
+l_string|&quot;%3d: %10u   %s&quot;
 comma
 id|i
 comma
@@ -828,14 +830,12 @@ op_assign
 id|action-&gt;next
 )paren
 (brace
-id|len
+id|p
 op_add_assign
 id|sprintf
 c_func
 (paren
-id|buf
-op_plus
-id|len
+id|p
 comma
 l_string|&quot;, %s&quot;
 comma
@@ -843,38 +843,48 @@ id|action-&gt;name
 )paren
 suffix:semicolon
 )brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;&bslash;n&quot;
-)paren
+op_star
+id|p
+op_increment
+op_assign
+l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Linus - should you add NMI counts here ?????&n; */
-macro_line|#ifdef __SMP_PROF__
-id|len
+id|p
 op_add_assign
 id|sprintf
 c_func
 (paren
-id|buf
-op_plus
-id|len
+id|p
 comma
-l_string|&quot;IPI: %8lu received&bslash;n&quot;
+l_string|&quot;NMI: %10u&bslash;n&quot;
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|nmi_counter
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP_PROF__
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;IPI: %10lu&bslash;n&quot;
 comma
 id|ipi_count
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;
 r_return
-id|len
+id|p
+op_minus
+id|buf
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP_PROF__

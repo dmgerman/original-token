@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  NET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the ARCnet handlers.&n; *&n; * Version:&t;@(#)arcdevice.h&t;1.0&t;31/07/97&n; *&n; * Authors:&t;Avery Pennarun &lt;apenwarr@bond.net&gt;&n; *              David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  NET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the ARCnet handlers.&n; *&n; * Version:&t;$Id: arcdevice.h,v 1.2 1997/09/05 08:57:56 mj Exp $&n; *&n; * Authors:&t;Avery Pennarun &lt;apenwarr@bond.net&gt;&n; *              David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#ifndef _LINUX_ARCDEVICE_H
 DECL|macro|_LINUX_ARCDEVICE_H
 mdefine_line|#define _LINUX_ARCDEVICE_H
@@ -26,6 +26,9 @@ mdefine_line|#define RECON_THRESHOLD 30
 multiline_comment|/* Define this to the minimum &quot;timeout&quot; value.  If a transmit takes longer&n; * than TX_TIMEOUT jiffies, Linux will abort the TX and retry.  On a large&n; * network, or one with heavy network traffic, this timeout may need to be&n; * increased.  The larger it is, though, the longer it will be between&n; * necessary transmits - don&squot;t set this too large.&n; */
 DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT 20
+multiline_comment|/* Display warnings about the driver being an ALPHA version.&n; */
+DECL|macro|ALPHA_WARNING
+mdefine_line|#define ALPHA_WARNING
 multiline_comment|/* New debugging bitflags: each option can be enabled individually.&n; *&n; * These can be set while the driver is running by typing:&n; *&t;ifconfig arc0 down metric 1xxx HOSTNAME&n; *&t;&t;where 1xxx is 1000 + the debug level you want&n; *&t;&t;and HOSTNAME is your hostname/ip address&n; * and then resetting your routes.&n; *&n; * An ioctl() should be used for this instead, someday.&n; *&n; * Note: only debug flags included in the ARCNET_DEBUG_MAX define will&n; *   actually be available.  GCC will (at least, GCC 2.7.0 will) notice&n; *   lines using a BUGLVL not in ARCNET_DEBUG_MAX and automatically optimize&n; *   them out.&n; */
 DECL|macro|D_NORMAL
 mdefine_line|#define D_NORMAL&t;1&t;/* important operational info&t;&t;*/
@@ -588,6 +591,172 @@ suffix:semicolon
 multiline_comment|/* RFC1051 protocol device */
 macro_line|#endif
 )brace
+suffix:semicolon
+multiline_comment|/* Functions exported by arcnet.c&n; */
+macro_line|#if ARCNET_DEBUG_MAX &amp; D_SKB
+r_extern
+r_void
+id|arcnet_dump_skb
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_char
+op_star
+id|desc
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|arcnet_dump_skb
+mdefine_line|#define arcnet_dump_skb(dev,skb,desc) ;
+macro_line|#endif
+macro_line|#if (ARCNET_DEBUG_MAX &amp; D_RX) || (ARCNET_DEBUG_MAX &amp; D_TX)
+r_extern
+r_void
+id|arcnet_dump_packet
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+id|u_char
+op_star
+id|buffer
+comma
+r_int
+id|ext
+comma
+r_char
+op_star
+id|desc
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|arcnet_dump_packet
+mdefine_line|#define arcnet_dump_packet(dev,buffer,ext,desc) ;
+macro_line|#endif
+r_extern
+r_void
+id|arcnet_tx_done
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|arcnet_local
+op_star
+id|lp
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|arcnet_makename
+c_func
+(paren
+r_char
+op_star
+id|device
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|arcnet_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|arcnet_setup
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|arcnet_go_tx
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|enable_irq
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|arcnetA_continue_tx
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|arcnet_rx
+c_func
+(paren
+r_struct
+id|arcnet_local
+op_star
+id|lp
+comma
+id|u_char
+op_star
+id|arcsoft
+comma
+r_int
+id|length
+comma
+r_int
+id|saddr
+comma
+r_int
+id|daddr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|arcnet_use_count
+c_func
+(paren
+r_int
+id|open
+)paren
 suffix:semicolon
 macro_line|#endif  /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_ARCDEVICE_H */

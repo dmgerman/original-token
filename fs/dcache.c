@@ -1178,11 +1178,6 @@ op_star
 id|target
 )paren
 (brace
-r_struct
-id|list_head
-op_star
-id|oldhead
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -127,6 +127,8 @@ DECL|macro|VIDEO_TYPE_TGAC
 mdefine_line|#define VIDEO_TYPE_TGAC&t;&t;0x40&t;/* DEC TGA */
 DECL|macro|VIDEO_TYPE_SUN
 mdefine_line|#define VIDEO_TYPE_SUN          0x50    /* Sun frame buffer. */
+DECL|macro|VIDEO_TYPE_SUNPCI
+mdefine_line|#define VIDEO_TYPE_SUNPCI       0x51    /* Sun PCI based frame buffer. */
 DECL|macro|VIDEO_TYPE_PMAC
 mdefine_line|#define VIDEO_TYPE_PMAC&t;&t;0x60&t;/* PowerMacintosh frame buffer. */
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR has no character etc)&n; */

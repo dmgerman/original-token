@@ -347,6 +347,19 @@ id|base
 )paren
 (brace
 multiline_comment|/* this base-address register is unused */
+id|dev-&gt;base_address
+(braket
+(paren
+id|reg
+op_minus
+id|PCI_BASE_ADDRESS_0
+)paren
+op_rshift
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace

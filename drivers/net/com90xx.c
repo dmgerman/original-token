@@ -1,4 +1,4 @@
-multiline_comment|/* com90xx.c:&n;&t;Derived from the original arcnet.c,&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
+multiline_comment|/*&t;$Id: com90xx.c,v 1.3 1997/09/05 18:27:23 mj Exp $&n;&n;&t;Derived from the original arcnet.c,&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -34,174 +34,8 @@ macro_line|#undef SLOW_XMIT_COPY
 multiline_comment|/* Define this to speed up the autoprobe by assuming if only one io port and&n; * shmem are left in the list at Stage 5, they must correspond to each&n; * other.&n; *&n; * This is undefined by default because it might not always be true, and the&n; * extra check makes the autoprobe even more careful.  Speed demons can turn&n; * it on - I think it should be fine if you only have one ARCnet card&n; * installed.&n; *&n; * If no ARCnet cards are installed, this delay never happens anyway and thus&n; * the option has no effect.&n; */
 DECL|macro|FAST_PROBE
 macro_line|#undef FAST_PROBE
-multiline_comment|/* External functions from arcnet.c */
-macro_line|#if ARCNET_DEBUG_MAX &amp; D_SKB
-r_extern
-r_void
-id|arcnet_dump_skb
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_char
-op_star
-id|desc
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|arcnet_dump_skb
-mdefine_line|#define arcnet_dump_skb(dev,skb,desc) ;
-macro_line|#endif
-macro_line|#if (ARCNET_DEBUG_MAX &amp; D_RX) || (ARCNET_DEBUG_MAX &amp; D_TX)
-r_extern
-r_void
-id|arcnet_dump_packet
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-id|u_char
-op_star
-id|buffer
-comma
-r_int
-id|ext
-comma
-r_char
-op_star
-id|desc
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|arcnet_dump_packet
-mdefine_line|#define arcnet_dump_packet(dev,buffer,ext,desc) ;
-macro_line|#endif
-r_extern
-r_void
-id|arcnet_tx_done
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|arcnet_local
-op_star
-id|lp
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_makename
-c_func
-(paren
-r_char
-op_star
-id|device
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_setup
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|arcnet_go_tx
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|enable_irq
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnetA_continue_tx
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_rx
-c_func
-(paren
-r_struct
-id|arcnet_local
-op_star
-id|lp
-comma
-id|u_char
-op_star
-id|arcsoft
-comma
-r_int
-id|length
-comma
-r_int
-id|saddr
-comma
-r_int
-id|daddr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_use_count
-c_func
-(paren
-r_int
-id|open
-)paren
-suffix:semicolon
 multiline_comment|/* Internal function declarations */
-macro_line|#ifdef MODULE 
+macro_line|#ifdef MODULE
 r_static
 macro_line|#endif
 r_int
@@ -246,6 +80,9 @@ id|airq
 comma
 id|u_long
 id|shmem
+comma
+r_int
+id|more
 )paren
 suffix:semicolon
 r_static
@@ -460,7 +297,7 @@ id|arcnet_num_devs
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Handy defines for ARCnet specific stuff */
-multiline_comment|/* The number of low I/O ports used by the ethercard. */
+multiline_comment|/* The number of low I/O ports used by the card. */
 DECL|macro|ARCNET_TOTAL_SIZE
 mdefine_line|#define ARCNET_TOTAL_SIZE&t;16
 multiline_comment|/* COM 9026 controller chip --&gt; ARCnet register addresses */
@@ -485,11 +322,11 @@ mdefine_line|#define RDDATAflag      0x00     /* Next access is a read/~write */
 DECL|macro|ARCSTATUS
 mdefine_line|#define ARCSTATUS&t;inb(_STATUS)
 DECL|macro|ACOMMAND
-mdefine_line|#define ACOMMAND(cmd) outb((cmd),_COMMAND)
+mdefine_line|#define ACOMMAND(cmd) &t;outb((cmd),_COMMAND)
 DECL|macro|AINTMASK
 mdefine_line|#define AINTMASK(msk)&t;outb((msk),_INTMASK)
 DECL|macro|SETCONF
-mdefine_line|#define SETCONF&t;outb(lp-&gt;config,_CONFIG)
+mdefine_line|#define SETCONF&t;&t;outb(lp-&gt;config,_CONFIG)
 DECL|macro|ARCRESET
 mdefine_line|#define ARCRESET&t;inb(_RESET)
 DECL|variable|version
@@ -499,7 +336,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;com90xx.c: v2.91 97/08/19 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
+l_string|&quot;com90xx.c: v2.92 97/09/02 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* Check for an ARCnet network adaptor, and return &squot;0&squot; if one exists.&n; *  If dev-&gt;base_addr == 0, probe all likely locations.&n; *  If dev-&gt;base_addr == 1, always return failure.&n; *  If dev-&gt;base_addr == 2, allocate space for the device and return success&n; *  &t;&t;&t;    (detachable devices only).&n; *&n; * NOTE: the list of possible ports/shmems is static, so it is retained&n; * across calls to arcnet_probe.  So, if more than one ARCnet probe is made,&n; * values that were discarded once will not even be tried again.&n; *&n; * FIXME: grab all devices in one shot and eliminate the big static array.&n; */
@@ -695,11 +532,6 @@ l_int|2048
 op_assign
 id|count
 suffix:semicolon
-id|init_once
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 id|BUGLVL
 c_func
 (paren
@@ -738,6 +570,10 @@ r_sizeof
 id|shmems
 )paren
 )paren
+suffix:semicolon
+)brace
+id|init_once
+op_increment
 suffix:semicolon
 id|BUGMSG
 c_func
@@ -805,7 +641,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Stage 1: abandon any reserved ports, or ones with status==0xFF&n;&t; * (empty), and reset any others by reading the reset port.&n;&t; */
+multiline_comment|/* Stage 1: abandon any reserved ports, or ones with status==0xFF&n;   * (empty), and reset any others by reading the reset port.&n;   */
 id|BUGMSG
 c_func
 (paren
@@ -1145,7 +981,7 @@ c_func
 id|RESETtime
 )paren
 suffix:semicolon
-multiline_comment|/* Stage 3: abandon any shmem addresses that don&squot;t have the signature&n;&t; * 0xD1 byte in the right place, or are read-only.&n;&t; */
+multiline_comment|/* Stage 3: abandon any shmem addresses that don&squot;t have the signature&n;   * 0xD1 byte in the right place, or are read-only.&n;   */
 id|BUGMSG
 c_func
 (paren
@@ -1299,7 +1135,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* By writing 0x42 to the TESTvalue location, we also make&n;&t;&t; * sure no &quot;mirror&quot; shmem areas show up - if they occur&n;&t;&t; * in another pass through this loop, they will be discarded&n;&t;&t; * because *cptr != TESTvalue.&n;&t;&t; */
+multiline_comment|/* By writing 0x42 to the TESTvalue location, we also make&n;       * sure no &quot;mirror&quot; shmem areas show up - if they occur&n;       * in another pass through this loop, they will be discarded&n;       * because *cptr != TESTvalue.&n;       */
 id|writeb
 c_func
 (paren
@@ -1409,7 +1245,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Stage 4: something of a dummy, to report the shmems that are&n;&t; * still possible after stage 3.&n;&t; */
+multiline_comment|/* Stage 4: something of a dummy, to report the shmems that are&n;   * still possible after stage 3.&n;   */
 id|BUGMSG
 c_func
 (paren
@@ -1495,7 +1331,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Stage 5: for any ports that have the correct status, can disable&n;&t; * the RESET flag, and (if no irq is given) generate an autoirq,&n;&t; * register an ARCnet device.&n;&t; *&n;&t; * Currently, we can only register one device per probe, so quit&n;&t; * after the first one is found.&n;&t; */
+multiline_comment|/* Stage 5: for any ports that have the correct status, can disable&n;   * the RESET flag, and (if no irq is given) generate an autoirq,&n;   * register an ARCnet device.&n;   *&n;   * Currently, we can only register one device per probe, so quit&n;   * after the first one is found.&n;   */
 id|BUGMSG
 c_func
 (paren
@@ -1715,7 +1551,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* skip this completely if an IRQ was given, because maybe&n;&t;     * we&squot;re on a machine that locks during autoirq!&n;&t;     */
+multiline_comment|/* skip this completely if an IRQ was given, because maybe&n;       * we&squot;re on a machine that locks during autoirq!&n;       */
 r_if
 c_cond
 (paren
@@ -1723,7 +1559,7 @@ op_logical_neg
 id|dev-&gt;irq
 )paren
 (brace
-multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the&n;&t;&t;     * card has just reset and the NORXflag is on until&n;&t;&t;     * we tell it to start receiving.&n;&t;&t;     */
+multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the&n;&t;   * card has just reset and the NORXflag is on until&n;&t;   * we tell it to start receiving.&n;&t;   */
 id|airqmask
 op_assign
 id|probe_irq_on
@@ -1833,7 +1669,7 @@ id|openparen
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Everything seems okay.  But which shmem, if any, puts&n;&t;&t; * back its signature byte when the card is reset?&n;&t;&t; *&n;&t;&t; * If there are multiple cards installed, there might be&n;&t;&t; * multiple shmems still in the list.&n;&t;&t; */
+multiline_comment|/* Everything seems okay.  But which shmem, if any, puts&n;       * back its signature byte when the card is reset?&n;       *&n;       * If there are multiple cards installed, there might be&n;       * multiple shmems still in the list.&n;       */
 macro_line|#ifdef FAST_PROBE
 r_if
 c_cond
@@ -1928,6 +1764,9 @@ id|TESTvalue
 )paren
 multiline_comment|/* found one */
 (brace
+r_int
+id|probe_more
+suffix:semicolon
 id|BUGMSG2
 c_func
 (paren
@@ -1944,6 +1783,28 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* register the card */
+r_if
+c_cond
+(paren
+id|init_once
+op_eq
+l_int|1
+op_logical_and
+id|numshmems
+OG
+l_int|1
+)paren
+id|probe_more
+op_assign
+id|numshmems
+op_minus
+l_int|1
+suffix:semicolon
+r_else
+id|probe_more
+op_assign
+l_int|0
+suffix:semicolon
 id|retval
 op_assign
 id|arc90xx_found
@@ -1958,6 +1819,8 @@ id|airq
 comma
 op_star
 id|shmem
+comma
+id|probe_more
 )paren
 suffix:semicolon
 r_if
@@ -2069,7 +1932,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Now put back TESTvalue on all leftover shmems.&n;&t; */
+multiline_comment|/* Now put back TESTvalue on all leftover shmems.&n;   */
 r_for
 c_loop
 (paren
@@ -2121,6 +1984,7 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
+r_static
 r_int
 id|arc90xx_found
 c_func
@@ -2138,6 +2002,9 @@ id|airq
 comma
 id|u_long
 id|shmem
+comma
+r_int
+id|more
 )paren
 )paren
 (brace
@@ -2220,7 +2087,7 @@ DECL|macro|BUFFER_SIZE
 mdefine_line|#define BUFFER_SIZE (512)
 DECL|macro|MIRROR_SIZE
 mdefine_line|#define MIRROR_SIZE (BUFFER_SIZE*4)
-multiline_comment|/* guess the actual size of one &quot;memory mirror&quot; - the number of&n;&t; * bytes between copies of the shared memory.  On most cards, it&squot;s&n;&t; * 2k (or there are no mirrors at all) but on some, it&squot;s 4k.&n;&t; */
+multiline_comment|/* guess the actual size of one &quot;memory mirror&quot; - the number of&n;   * bytes between copies of the shared memory.  On most cards, it&squot;s&n;   * 2k (or there are no mirrors at all) but on some, it&squot;s 4k.&n;   */
 id|mirror_size
 op_assign
 id|MIRROR_SIZE
@@ -2585,16 +2452,18 @@ comma
 id|mirror_size
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCNET_COM90xx
-multiline_comment|/* OK. We&squot;re finished. Now do we need to probe for other cards? */
-r_if
-c_cond
+multiline_comment|/* OK. We&squot;re finished. If there are probably other cards, add other&n;   * COM90xx drivers to the device chain, so they get probed later.&n;   */
+macro_line|#ifndef MODULE
+r_while
+c_loop
 (paren
 op_logical_neg
 id|com90xx_explicit
+op_logical_and
+id|more
+op_decrement
 )paren
 (brace
-multiline_comment|/* We need to check whether there&squot;s another card here.&n;       * Just add another COM90xx driver to the device chain.&n;       */
 r_if
 c_cond
 (paren
@@ -2620,7 +2489,11 @@ id|arcnet_devs
 id|arcnet_num_devs
 )braket
 suffix:semicolon
-id|dev-&gt;next-&gt;name
+id|dev
+op_assign
+id|dev-&gt;next
+suffix:semicolon
+id|dev-&gt;name
 op_assign
 (paren
 r_char
@@ -2638,111 +2511,25 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_while
-c_loop
-(paren
-id|dev-&gt;next
-)paren
-id|dev
-op_assign
-id|dev-&gt;next
-suffix:semicolon
-id|dev-&gt;next
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|device
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;next
-)paren
-(brace
 id|BUGMSG
 c_func
 (paren
 id|D_NORMAL
 comma
-l_string|&quot;No memory for allocating next device - no more &quot;
-l_string|&quot;will be probed for.&bslash;n&quot;
+l_string|&quot;Too many arcnet devices - no more will be probed for.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|dev-&gt;next
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|device
-)paren
-)paren
-suffix:semicolon
-id|dev-&gt;next-&gt;name
-op_assign
-id|kmalloc
-c_func
-(paren
-l_int|10
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;next-&gt;name
-)paren
-(brace
-id|BUGMSG
-c_func
-(paren
-id|D_NORMAL
-comma
-l_string|&quot;No memory for allocating next device - no more &quot;
-l_string|&quot;will be probed for.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;next
-)paren
-suffix:semicolon
-id|dev-&gt;next
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 )brace
 id|arcnet_makename
 c_func
 (paren
-id|dev-&gt;next-&gt;name
+id|dev-&gt;name
 )paren
 suffix:semicolon
-id|dev-&gt;next-&gt;init
+id|dev-&gt;init
 op_assign
 id|arc90xx_probe
 suffix:semicolon
@@ -3106,7 +2893,7 @@ id|didsomething
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* RESET flag was enabled - card is resetting and if RX&n;&t;&t; * is disabled, it&squot;s NOT because we just got a packet.&n;&t;&t; */
+multiline_comment|/* RESET flag was enabled - card is resetting and if RX&n;       * is disabled, it&squot;s NOT because we just got a packet.&n;       */
 r_if
 c_cond
 (paren
@@ -3373,7 +3160,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* if more than one segment, and not all segments&n;&t;&t;&t; * are done, then continue xmit.&n;&t;&t;&t; */
+multiline_comment|/* if more than one segment, and not all segments&n;&t;   * are done, then continue xmit.&n;&t;   */
 r_if
 c_cond
 (paren
@@ -3395,7 +3182,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* if segnum==numsegs, the transmission is finished;&n;&t;&t;&t; * free the skb.&n;&t;&t;&t; */
+multiline_comment|/* if segnum==numsegs, the transmission is finished;&n;&t;   * free the skb.&n;&t;   */
 r_if
 c_cond
 (paren
@@ -3609,7 +3396,7 @@ comma
 id|lp-&gt;network_down
 )paren
 suffix:semicolon
-multiline_comment|/* if network is marked up;&n;&t;&t;&t; * and first_recon and last_recon are 60+ sec&n;&t;&t;&t; *   apart;&n;&t;&t;&t; * and the average no. of recons counted is&n;&t;&t;&t; *   &gt; RECON_THRESHOLD/min;&n;&t;&t;&t; * then print a warning message.&n;&t;&t;&t; */
+multiline_comment|/* if network is marked up;&n;&t;       * and first_recon and last_recon are 60+ sec&n;&t;       *   apart;&n;&t;       * and the average no. of recons counted is&n;&t;       *   &gt; RECON_THRESHOLD/min;&n;&t;       * then print a warning message.&n;&t;       */
 r_if
 c_cond
 (paren
@@ -3660,7 +3447,7 @@ op_star
 l_int|60
 )paren
 (brace
-multiline_comment|/* reset counters if we&squot;ve gone for&n;&t;&t;&t;     * over a minute.&n;&t;&t;&t;     */
+multiline_comment|/* reset counters if we&squot;ve gone for&n;&t;&t;   * over a minute.&n;&t;&t;   */
 id|lp-&gt;first_recon
 op_assign
 id|lp-&gt;last_recon
@@ -4617,7 +4404,7 @@ id|NORXcmd
 suffix:semicolon
 multiline_comment|/* disable receive */
 macro_line|#if defined(IO_MAPPED_BUFFERS) &amp;&amp; !defined(COM20020)
-multiline_comment|/* Set the thing back to MMAP mode, in case the old&n;        &t;&t;   driver is loaded later */
+multiline_comment|/* Set the thing back to MMAP mode, in case the old&n;&t; driver is loaded later */
 id|outb
 c_func
 (paren

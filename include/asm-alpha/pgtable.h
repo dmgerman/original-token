@@ -15,6 +15,8 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+DECL|macro|flush_icache_range
+mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 multiline_comment|/*&n; * Force a context reload. This is needed when we&n; * change the page table pointer or when we update&n; * the ASN of the current process.&n; */
 DECL|function|reload_context
 r_static

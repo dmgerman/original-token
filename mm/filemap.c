@@ -2823,13 +2823,15 @@ id|offset
 )paren
 (brace
 r_int
-id|old_fs
-comma
 id|retval
 suffix:semicolon
 r_int
 r_int
 id|size
+suffix:semicolon
+r_int
+r_int
+id|old_fs
 suffix:semicolon
 id|size
 op_assign

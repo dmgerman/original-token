@@ -11,129 +11,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-DECL|macro|kver
-mdefine_line|#define kver(a,b,c) (((a) &lt;&lt; 16) + ((b) &lt;&lt; 8) + (c)) 
-macro_line|#if LINUX_VERSION_CODE &lt; kver(2,1,0)
-multiline_comment|/* Segmentation stuff for pre-2.1 kernels */
-macro_line|#include &lt;asm/segment.h&gt;
-DECL|function|copy_to_user
-r_static
-r_inline
-r_int
-id|copy_to_user
-c_func
-(paren
-r_void
-op_star
-id|dst
-comma
-r_void
-op_star
-id|src
-comma
-r_int
-r_int
-id|len
-)paren
-(brace
-r_int
-id|rv
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|dst
-comma
-id|len
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rv
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|dst
-comma
-id|src
-comma
-id|len
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|copy_from_user
-r_static
-r_inline
-r_int
-id|copy_from_user
-c_func
-(paren
-r_void
-op_star
-id|dst
-comma
-r_void
-op_star
-id|src
-comma
-r_int
-r_int
-id|len
-)paren
-(brace
-r_int
-id|rv
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|src
-comma
-id|len
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rv
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-id|memcpy_fromfs
-c_func
-(paren
-id|dst
-comma
-id|src
-comma
-id|len
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#else
-multiline_comment|/* Segmentation stuff for post-2.1 kernels */
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|register_symtab
-mdefine_line|#define register_symtab(x)&t;((void)0)
-macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(D) (printk D)
@@ -143,9 +21,10 @@ mdefine_line|#define DPRINTK(D) ((void)0)
 macro_line|#endif
 DECL|macro|AUTOFS_SUPER_MAGIC
 mdefine_line|#define AUTOFS_SUPER_MAGIC 0x0187
+multiline_comment|/*&n; * If the daemon returns a negative response (AUTOFS_IOC_FAIL) then the&n; * kernel will keep the negative response cached for up to the time given&n; * here, although the time can be shorter if the kernel throws the dcache&n; * entry away.  This probably should be settable from user space.&n; */
 DECL|macro|AUTOFS_NEGATIVE_TIMEOUT
-mdefine_line|#define AUTOFS_NEGATIVE_TIMEOUT (60*HZ)&t;/* Time before asking the daemon again */
-multiline_comment|/* Structures associated with the root directory hash */
+mdefine_line|#define AUTOFS_NEGATIVE_TIMEOUT (60*HZ)&t;/* 1 minute */
+multiline_comment|/* Structures associated with the root directory hash table */
 DECL|macro|AUTOFS_HASH_SIZE
 mdefine_line|#define AUTOFS_HASH_SIZE 67
 DECL|struct|autofs_dir_ent
@@ -364,7 +243,7 @@ id|AUTOFS_SYMLINK_BITMAP_LEN
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* autofs_oz_mode(): do we see the man behind the curtain? */
+multiline_comment|/* autofs_oz_mode(): do we see the man behind the curtain?  (The&n;   processes which do manipulations for us in user space sees the raw&n;   filesystem without &quot;magic&quot;.) */
 DECL|function|autofs_oz_mode
 r_static
 r_inline
@@ -386,26 +265,6 @@ op_eq
 id|sbi-&gt;oz_pgrp
 suffix:semicolon
 )brace
-multiline_comment|/* Debug the mysteriously disappearing wait list */
-macro_line|#ifdef DEBUG_WAITLIST
-DECL|macro|CHECK_WAITLIST
-mdefine_line|#define CHECK_WAITLIST(S,O) autofs_check_waitlist_integrity(S,O)
-r_void
-id|autofs_check_waitlist_integrity
-c_func
-(paren
-r_struct
-id|autofs_sb_info
-op_star
-comma
-r_char
-op_star
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|CHECK_WAITLIST
-mdefine_line|#define CHECK_WAITLIST(S,O)
-macro_line|#endif
 multiline_comment|/* Hash operations */
 r_void
 id|autofs_initialize_hash
@@ -592,6 +451,6 @@ id|len
 suffix:semicolon
 macro_line|#else
 DECL|macro|autofs_say
-mdefine_line|#define autofs_say(n,l)
+mdefine_line|#define autofs_say(n,l) ((void)0)
 macro_line|#endif
 eof

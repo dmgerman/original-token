@@ -1,12 +1,7 @@
 multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/init.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;autofs_i.h&quot;
-macro_line|#if LINUX_VERSION_CODE &lt; kver(2,1,36)
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(X) X
-macro_line|#else
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#endif
+macro_line|#include &quot;autofs_i.h&quot;
 DECL|variable|autofs_fs_type
 r_static
 r_struct
@@ -17,7 +12,6 @@ op_assign
 l_string|&quot;autofs&quot;
 comma
 l_int|0
-multiline_comment|/* FS_NO_DCACHE doesn&squot;t work correctly */
 comma
 id|autofs_read_super
 comma
@@ -33,33 +27,13 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|status
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_assign
+r_return
 id|register_filesystem
 c_func
 (paren
 op_amp
 id|autofs_fs_type
 )paren
-)paren
-op_eq
-l_int|0
-)paren
-id|register_symtab
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|status
 suffix:semicolon
 )brace
 DECL|function|cleanup_module

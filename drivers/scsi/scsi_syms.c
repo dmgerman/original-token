@@ -268,5 +268,12 @@ c_func
 id|scsi_devices
 )paren
 suffix:semicolon
+DECL|variable|scsi_device_types
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scsi_device_types
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_MODULES */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.17 1997/09/03 11:54:49 ecd Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.18 1997/09/06 02:25:13 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -23,11 +23,6 @@ macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#include &lt;asm/vuid_event.h&gt;
 macro_line|#include &lt;asm/rtc.h&gt;
 macro_line|#include &lt;asm/openpromio.h&gt;
-multiline_comment|/*&n; * XXX: for DaveM:&n; * This is the kludge to know what size of buffer to&n; * copy back to the user... (ecd)&n; */
-DECL|variable|ifr_data_len
-r_int
-id|ifr_data_len
-suffix:semicolon
 multiline_comment|/* As gcc will warn about casting u32 to some ptr, we have to cast it to&n; * unsigned long first, and that&squot;s what is A() for.&n; * You just do (void *)A(x), instead of having to type (void *)((unsigned long)x)&n; * or instead of just (void *)x, which will produce warnings.&n; */
 DECL|macro|A
 mdefine_line|#define A(x) ((unsigned long)x)
@@ -1092,6 +1087,9 @@ suffix:colon
 id|u32
 id|data
 suffix:semicolon
+r_int
+id|len
+suffix:semicolon
 id|__get_user
 c_func
 (paren
@@ -1116,7 +1114,52 @@ id|ifr_ifru.ifru_data
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * XXX: for DaveM:&n;&t;&t;&t; * Here we use &squot;ifr_data_len&squot; to know what size of buffer to&n;&t;&t;&t; * copy back to the user... (ecd)&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|SIOCGPPPVER
+)paren
+(brace
+id|len
+op_assign
+id|strlen
+c_func
+(paren
+id|PPP_VERSION
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|SIOCGPPPCSTATS
+)paren
+(brace
+id|len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|ppp_comp_stats
+)paren
+suffix:semicolon
+)brace
+r_else
+id|len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|ppp_stats
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1135,7 +1178,7 @@ id|data
 comma
 id|ifr.ifr_data
 comma
-id|ifr_data_len
+id|len
 )paren
 )paren
 r_return
