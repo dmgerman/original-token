@@ -120,6 +120,19 @@ l_string|&quot; Seagate ST11M/R&quot;
 comma
 multiline_comment|/* Risto Kankkunen, risto.kankkunen@cs.helsinki.fi */
 (brace
+l_int|0x0010
+comma
+l_string|&quot;ST11 BIOS V1.7&quot;
+comma
+id|xd_seagate_init_controller
+comma
+id|xd_seagate_init_drive
+comma
+l_string|&quot; Seagate ST11R&quot;
+)brace
+comma
+multiline_comment|/* Alan Hourihane, alanh@fairlite.demon.co.uk */
+(brace
 l_int|0x1000
 comma
 l_string|&quot;(c)Copyright 1987 SMS&quot;

@@ -402,7 +402,6 @@ id|proto-&gt;datalink_header
 op_assign
 id|p8022_datalink_header
 suffix:semicolon
-)brace
 id|proto-&gt;next
 op_assign
 id|p8022_list
@@ -411,6 +410,7 @@ id|p8022_list
 op_assign
 id|proto
 suffix:semicolon
+)brace
 r_return
 id|proto
 suffix:semicolon

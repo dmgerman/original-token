@@ -412,6 +412,15 @@ l_string|&quot;3110&quot;
 comma
 multiline_comment|/* Locks sometimes if polled for lun != 0 */
 (brace
+l_string|&quot;QUANTUM&quot;
+comma
+l_string|&quot;PD1225S&quot;
+comma
+l_string|&quot;3110&quot;
+)brace
+comma
+multiline_comment|/* Locks sometimes if polled for lun != 0 */
+(brace
 l_int|NULL
 comma
 l_int|NULL

@@ -1,12 +1,12 @@
 multiline_comment|/* lance.c: An AMD LANCE ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;    with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;    The author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v0.14g 12/21/93 becker@super.org&bslash;n&quot;
+l_string|&quot;lance.c:v1.01 8/31/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -23,12 +23,6 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(addr, size)&t;0
-DECL|macro|snarf_region
-mdefine_line|#define snarf_region(addr, size)&t;do ; while(0)
-macro_line|#endif
 r_struct
 id|device
 op_star
@@ -49,6 +43,56 @@ op_star
 id|mem_startp
 )paren
 suffix:semicolon
+DECL|variable|lance_portlist
+r_static
+r_int
+r_int
+id|lance_portlist
+(braket
+)braket
+op_assign
+(brace
+l_int|0x300
+comma
+l_int|0x320
+comma
+l_int|0x340
+comma
+l_int|0x360
+comma
+l_int|0
+)brace
+suffix:semicolon
+r_int
+r_int
+id|lance_probe1
+c_func
+(paren
+r_int
+id|ioaddr
+comma
+r_int
+r_int
+id|mem_start
+)paren
+suffix:semicolon
+macro_line|#ifdef HAVE_DEVLIST
+DECL|variable|lance_drv
+r_struct
+id|netdev_entry
+id|lance_drv
+op_assign
+(brace
+l_string|&quot;lance&quot;
+comma
+id|lance_probe1
+comma
+id|LANCE_TOTAL_SIZE
+comma
+id|lance_portlist
+)brace
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef LANCE_DEBUG
 DECL|variable|lance_debug
 r_int
@@ -64,11 +108,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef LANCE_DMA
-DECL|macro|LANCE_DMA
-mdefine_line|#define LANCE_DMA&t;5
-macro_line|#endif
-multiline_comment|/*&n;  &t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the AMD 79C960, the &quot;PCnet-ISA&n;single-chip ethernet controller for ISA&quot;.  This chip is used in a wide&n;variety of boards from vendors such as Allied Telesis, HP, Kingston,&n;and Boca.  This driver is also intended to work with older AMD 7990&n;designs, such as the NE1500 and NE2100.  For convenience, I use the name&n;LANCE to refer to either AMD chip.&n;&n;II. Board-specific settings&n;&n;The driver is designed to work the boards that use the faster&n;bus-master mode, rather than in shared memory mode.  (Only older designs&n;have on-board buffer memory needed to support the slower shared memory mode.)&n;&n;Most boards have jumpered settings for the I/O base, IRQ line, and DMA channel.&n;This driver probes the likely base addresses, {0x300, 0x320, 0x340, 0x360}.&n;After the board is found it generates an DMA-timeout interrupt and uses&n;autoIRQ to find the IRQ line.  The DMA channel defaults to LANCE_DMA, or it&n;can be set with the low bits of the otherwise-unused dev-&gt;mem_start value.&n;&n;The HP-J2405A board is an exception: with this board it&squot;s easy to read the&n;EEPROM-set values for the base, IRQ, and DMA.  Of course you must already&n;_know_ the base address, but that entry is for changing the EEPROM.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;The LANCE uses ring buffers of Tx and Rx descriptors.  Each entry describes&n;the base and length of the data buffer, along with status bits.  The length&n;of these buffers is set by LANCE_LOG_{RX,TX}_BUFFERS, which is log_2() of&n;the buffer length (rather than being directly the buffer length) for&n;implementation ease.  The current values are 2 (Tx) and 4 (Rx), which leads to&n;ring sizes of 4 (Tx) and 16 (Rx).  Increasing the number of ring entries&n;needlessly uses extra space and reduces the chance that an upper layer will&n;be able to reorder queued Tx packets based on priority.  Decreasing the number&n;of entries makes it more difficult to achieve back-to-back packet transmission&n;and increases the chance that Rx ring will overflow.  (Consider the worst case&n;of receiving back-to-back minimum-sized packets.)&n;&n;The LANCE has the capability to &quot;chain&quot; both Rx and Tx buffers, but this driver&n;statically allocates full-sized (slightly oversized -- PKT_BUF_SZ) buffers to&n;avoid the administrative overhead. For the Rx side this avoids dynamically&n;allocating full-sized buffers &quot;just in case&quot;, at the expense of a&n;memory-to-memory data copy for each packet received.  For most systems this&n;is an good tradeoff: the Rx buffer will always be in low memory, the copy&n;is inexpensive, and it primes the cache for later packet processing.  For Tx&n;the buffers are only used when needed as low-memory bounce buffers.&n;&n;IIIB. 16M memory limitations.&n;For the ISA bus master mode all structures used directly by the LANCE,&n;the initialization block, Rx and Tx rings, and data buffers, must be&n;accessible from the ISA bus, i.e. in the lower 16M of real memory.&n;This is a problem for current Linux kernels on &gt;16M machines. The network&n;devices are initialized after memory initialization, and the kernel doles out&n;memory from the top of memory downward.  The current solution is to have a&n;special network initialization routine that&squot;s called before memory&n;initialization; this will eventually be generalized for all network devices.&n;As mentioned before, low-memory &quot;bounce-buffers&quot; are used when needed.&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  (The Tx-done interrupt can&squot;t be selectively turned off, so&n;we can&squot;t avoid the interrupt overhead by having the Tx routine reap the Tx&n;stats.)  After reaping the stats, it marks the queue entry as empty by setting&n;the &squot;base&squot; to zero.  Iff the &squot;lp-&gt;tx_full&squot; flag is set, it clears both the&n;tx_full and tbusy flags.&n;&n;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the AMD 79C960, the &quot;PCnet-ISA&n;single-chip ethernet controller for ISA&quot;.  This chip is used in a wide&n;variety of boards from vendors such as Allied Telesis, HP, Kingston,&n;and Boca.  This driver is also intended to work with older AMD 7990&n;designs, such as the NE1500 and NE2100, and newer 79C961.  For convenience,&n;I use the name LANCE to refer to all of the AMD chips, even though it properly&n;refers only to the original 7990.&n;&n;II. Board-specific settings&n;&n;The driver is designed to work the boards that use the faster&n;bus-master mode, rather than in shared memory mode.&t; (Only older designs&n;have on-board buffer memory needed to support the slower shared memory mode.)&n;&n;Most ISA boards have jumpered settings for the I/O base, IRQ line, and DMA&n;channel.  This driver probes the likely base addresses:&n;{0x300, 0x320, 0x340, 0x360}.&n;After the board is found it generates an DMA-timeout interrupt and uses&n;autoIRQ to find the IRQ line.  The DMA channel can be set with the low bits&n;of the otherwise-unused dev-&gt;mem_start value (aka PARAM1).  If unset it is&n;probed for by enabling each free DMA channel in turn and checking if&n;initialization succeeds.&n;&n;The HP-J2405A board is an exception: with this board it&squot;s easy to read the&n;EEPROM-set values for the base, IRQ, and DMA.  (Of course you must already&n;_know_ the base address -- that field is for writing the EEPROM.)&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;The LANCE uses ring buffers of Tx and Rx descriptors.  Each entry describes&n;the base and length of the data buffer, along with status bits.&t; The length&n;of these buffers is set by LANCE_LOG_{RX,TX}_BUFFERS, which is log_2() of&n;the buffer length (rather than being directly the buffer length) for&n;implementation ease.  The current values are 2 (Tx) and 4 (Rx), which leads to&n;ring sizes of 4 (Tx) and 16 (Rx).  Increasing the number of ring entries&n;needlessly uses extra space and reduces the chance that an upper layer will&n;be able to reorder queued Tx packets based on priority.&t; Decreasing the number&n;of entries makes it more difficult to achieve back-to-back packet transmission&n;and increases the chance that Rx ring will overflow.  (Consider the worst case&n;of receiving back-to-back minimum-sized packets.)&n;&n;The LANCE has the capability to &quot;chain&quot; both Rx and Tx buffers, but this driver&n;statically allocates full-sized (slightly oversized -- PKT_BUF_SZ) buffers to&n;avoid the administrative overhead. For the Rx side this avoids dynamically&n;allocating full-sized buffers &quot;just in case&quot;, at the expense of a&n;memory-to-memory data copy for each packet received.  For most systems this&n;is an good tradeoff: the Rx buffer will always be in low memory, the copy&n;is inexpensive, and it primes the cache for later packet processing.  For Tx&n;the buffers are only used when needed as low-memory bounce buffers.&n;&n;IIIB. 16M memory limitations.&n;For the ISA bus master mode all structures used directly by the LANCE,&n;the initialization block, Rx and Tx rings, and data buffers, must be&n;accessable from the ISA bus, i.e. in the lower 16M of real memory.&n;This is a problem for current Linux kernels on &gt;16M machines. The network&n;devices are initialized after memory initialization, and the kernel doles out&n;memory from the top of memory downward.&t; The current solution is to have a&n;special network initialization routine that&squot;s called before memory&n;initialization; this will eventually be generalized for all network devices.&n;As mentioned before, low-memory &quot;bounce-buffers&quot; are used when needed.&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  (The Tx-done interrupt can&squot;t be selectively turned off, so&n;we can&squot;t avoid the interrupt overhead by having the Tx routine reap the Tx&n;stats.)&t; After reaping the stats, it marks the queue entry as empty by setting&n;the &squot;base&squot; to zero.&t; Iff the &squot;lp-&gt;tx_full&squot; flag is set, it clears both the&n;tx_full and tbusy flags.&n;&n;*/
 multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n;   That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4). */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
@@ -77,19 +117,19 @@ DECL|macro|LANCE_LOG_RX_BUFFERS
 mdefine_line|#define LANCE_LOG_RX_BUFFERS 4
 macro_line|#endif
 DECL|macro|TX_RING_SIZE
-mdefine_line|#define TX_RING_SIZE&t;&t;(1 &lt;&lt; (LANCE_LOG_TX_BUFFERS))
+mdefine_line|#define TX_RING_SIZE&t;&t;&t;(1 &lt;&lt; (LANCE_LOG_TX_BUFFERS))
 DECL|macro|TX_RING_MOD_MASK
-mdefine_line|#define TX_RING_MOD_MASK&t;(TX_RING_SIZE - 1)
+mdefine_line|#define TX_RING_MOD_MASK&t;&t;(TX_RING_SIZE - 1)
 DECL|macro|TX_RING_LEN_BITS
-mdefine_line|#define TX_RING_LEN_BITS&t;((LANCE_LOG_TX_BUFFERS) &lt;&lt; 29)
+mdefine_line|#define TX_RING_LEN_BITS&t;&t;((LANCE_LOG_TX_BUFFERS) &lt;&lt; 29)
 DECL|macro|RX_RING_SIZE
-mdefine_line|#define RX_RING_SIZE&t;&t;(1 &lt;&lt; (LANCE_LOG_RX_BUFFERS))
+mdefine_line|#define RX_RING_SIZE&t;&t;&t;(1 &lt;&lt; (LANCE_LOG_RX_BUFFERS))
 DECL|macro|RX_RING_MOD_MASK
-mdefine_line|#define RX_RING_MOD_MASK&t;(RX_RING_SIZE - 1)
+mdefine_line|#define RX_RING_MOD_MASK&t;&t;(RX_RING_SIZE - 1)
 DECL|macro|RX_RING_LEN_BITS
-mdefine_line|#define RX_RING_LEN_BITS&t;((LANCE_LOG_RX_BUFFERS) &lt;&lt; 29)
+mdefine_line|#define RX_RING_LEN_BITS&t;&t;((LANCE_LOG_RX_BUFFERS) &lt;&lt; 29)
 DECL|macro|PKT_BUF_SZ
-mdefine_line|#define PKT_BUF_SZ&t;1544
+mdefine_line|#define PKT_BUF_SZ&t;&t;1544
 multiline_comment|/* Offsets from base I/O address. */
 DECL|macro|LANCE_DATA
 mdefine_line|#define LANCE_DATA 0x10
@@ -114,7 +154,7 @@ DECL|member|buf_length
 r_int
 id|buf_length
 suffix:semicolon
-multiline_comment|/* This length is 2&squot;s complement (negative)! */
+multiline_comment|/* This length is 2s complement (negative)! */
 DECL|member|msg_length
 r_int
 id|msg_length
@@ -134,7 +174,7 @@ DECL|member|length
 r_int
 id|length
 suffix:semicolon
-multiline_comment|/* Length is 2&squot;s complement (negative)! */
+multiline_comment|/* Length is 2s complement (negative)! */
 DECL|member|misc
 r_int
 id|misc
@@ -192,7 +232,7 @@ id|devname
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* These must aligned on 8-byte boundaries. */
+multiline_comment|/* The Tx and Rx ring entries must aligned on 8-byte boundaries. */
 DECL|member|rx_ring
 r_struct
 id|lance_rx_head
@@ -213,6 +253,16 @@ DECL|member|init_block
 r_struct
 id|lance_init_block
 id|init_block
+suffix:semicolon
+multiline_comment|/* The saved address of a sent-in-place packet/buffer, for skfree(). */
+DECL|member|tx_skbuff
+r_struct
+id|sk_buff
+op_star
+id|tx_skbuff
+(braket
+id|TX_RING_SIZE
+)braket
 suffix:semicolon
 DECL|member|rx_buffs
 r_int
@@ -255,9 +305,14 @@ r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
-DECL|member|old_lance
+DECL|member|chip_version
 r_char
-id|old_lance
+id|chip_version
+suffix:semicolon
+multiline_comment|/* See lance_chip_type. */
+DECL|member|tx_full
+r_char
+id|tx_full
 suffix:semicolon
 DECL|member|lock
 r_char
@@ -270,21 +325,122 @@ id|pad0
 comma
 id|pad1
 suffix:semicolon
-multiline_comment|/* Used for alignment */
+multiline_comment|/* Used for 8-byte alignment */
 )brace
 suffix:semicolon
+multiline_comment|/* A mapping from the chip ID number to the part number and features. */
+DECL|struct|lance_chip_type
+r_static
+r_struct
+id|lance_chip_type
+(brace
+DECL|member|id_number
 r_int
+id|id_number
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|flags
 r_int
-id|lance_probe1
-c_func
-(paren
-r_int
-id|ioaddr
+id|flags
+suffix:semicolon
+DECL|variable|chip_table
+)brace
+id|chip_table
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x0000
 comma
-r_int
-r_int
-id|mem_start
-)paren
+l_string|&quot;LANCE 7990&quot;
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Ancient lance chip.  */
+(brace
+l_int|0x0003
+comma
+l_string|&quot;PCnet/ISA 79C960&quot;
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* 79C960 PCnet/ISA.  */
+(brace
+l_int|0x2260
+comma
+l_string|&quot;PCnet/ISA+ 79C961&quot;
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* 79C961 PCnet/ISA+ for Plug-n-Play.  */
+(brace
+l_int|0x2420
+comma
+l_string|&quot;PCnet/PCI 79C970&quot;
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* 79C970 or 79C974 PCnet-SCSI for PCI  */
+(brace
+l_int|0x2430
+comma
+l_string|&quot;PCnet/VLB 79C965&quot;
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* 79C965 PCnet for VL bus. */
+(brace
+l_int|0x0
+comma
+l_string|&quot;PCnet (unknown)&quot;
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|enumerator|OLD_LANCE
+DECL|enumerator|PCNET_ISA
+DECL|enumerator|PCNET_ISAP
+DECL|enumerator|PCNET_PCI
+DECL|enumerator|PCNET_VLB
+DECL|enumerator|LANCE_UNKNOWN
+r_enum
+(brace
+id|OLD_LANCE
+op_assign
+l_int|0
+comma
+id|PCNET_ISA
+op_assign
+l_int|1
+comma
+id|PCNET_ISAP
+op_assign
+l_int|2
+comma
+id|PCNET_PCI
+op_assign
+l_int|3
+comma
+id|PCNET_VLB
+op_assign
+l_int|4
+comma
+id|LANCE_UNKNOWN
+op_assign
+l_int|5
+)brace
 suffix:semicolon
 r_static
 r_int
@@ -389,6 +545,7 @@ id|addrs
 suffix:semicolon
 macro_line|#endif
 "&f;"
+multiline_comment|/* This lance probe is unlike the other board probes in 1.0.*.  The LANCE may&n;   have to allocate a contiguous low-memory region for bounce buffers.&n;   This requirement is satified by having the lance initialization occur before the&n;   memory management system is started, and thus well before the other probes. */
 DECL|function|lance_init
 r_int
 r_int
@@ -407,33 +564,13 @@ id|mem_end
 r_int
 op_star
 id|port
-comma
-id|ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x300
-comma
-l_int|0x320
-comma
-l_int|0x340
-comma
-l_int|0x360
-comma
-l_int|0
-)brace
 suffix:semicolon
 r_for
 c_loop
 (paren
 id|port
 op_assign
-op_amp
-id|ports
-(braket
-l_int|0
-)braket
+id|lance_portlist
 suffix:semicolon
 op_star
 id|port
@@ -523,15 +660,123 @@ op_star
 id|lp
 suffix:semicolon
 r_int
+id|i
+comma
+id|reset_val
+comma
+id|lance_version
+suffix:semicolon
+multiline_comment|/* Flags for specific chips or boards. */
+r_int
+r_char
 id|hpJ2405A
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* HP ISA adaptor */
 r_int
-id|i
-comma
-id|reset_val
+id|hp_builtin
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* HP on-board ethernet. */
+r_static
+r_int
+id|did_version
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Already printed version info. */
+multiline_comment|/* First we look for special cases.&n;&t;   Check for HP&squot;s on-board ethernet by looking for &squot;HP&squot; in the BIOS.&n;&t;   This method provided by Laurent Julliard, Laurent_Julliard@grenoble.hp.com.&n;&t;   */
+r_if
+c_cond
+(paren
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+l_int|0x000f0102
+)paren
+op_eq
+l_int|0x5048
+)paren
+(brace
+r_int
+id|ioaddr_table
+(braket
+)braket
+op_assign
+(brace
+l_int|0x300
+comma
+l_int|0x320
+comma
+l_int|0x340
+comma
+l_int|0x360
+)brace
+suffix:semicolon
+multiline_comment|/* There are two HP versions, check the BIOS for the configuration port. */
+r_int
+id|hp_port
+op_assign
+(paren
+op_star
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+l_int|0x000f00f1
+)paren
+op_amp
+l_int|1
+)paren
+ques
+c_cond
+l_int|0x499
+suffix:colon
+l_int|0x99
+suffix:semicolon
+multiline_comment|/* We can have boards other than the built-in!  Verify this is on-board. */
+r_if
+c_cond
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|hp_port
+)paren
+op_amp
+l_int|0xc0
+)paren
+op_eq
+l_int|0x80
+op_logical_and
+id|ioaddr_table
+(braket
+id|inb
+c_func
+(paren
+id|hp_port
+)paren
+op_amp
+l_int|3
+)braket
+op_eq
+id|ioaddr
+)paren
+id|hp_builtin
+op_assign
+id|hp_port
+suffix:semicolon
+)brace
+multiline_comment|/* We might misrecognize the HP Vectra on-board here, but we check below. */
 id|hpJ2405A
 op_assign
 (paren
@@ -564,7 +809,7 @@ op_eq
 l_int|0x09
 )paren
 suffix:semicolon
-multiline_comment|/* Reset the LANCE.  */
+multiline_comment|/* Reset the LANCE.&t; */
 id|reset_val
 op_assign
 id|inw
@@ -576,7 +821,7 @@ id|LANCE_RESET
 )paren
 suffix:semicolon
 multiline_comment|/* Reset the LANCE */
-multiline_comment|/* The Un-Reset needed is only needed for the real NE2100, and will&n;       confuse the HP board. */
+multiline_comment|/* The Un-Reset needed is only needed for the real NE2100, and will&n;&t;   confuse the HP board. */
 r_if
 c_cond
 (paren
@@ -620,6 +865,145 @@ l_int|0x0004
 r_return
 id|mem_start
 suffix:semicolon
+multiline_comment|/* Get the version of the chip. */
+id|outw
+c_func
+(paren
+l_int|88
+comma
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+op_ne
+l_int|88
+)paren
+(brace
+id|lance_version
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Good, it&squot;s a newer chip. */
+r_int
+id|chip_version
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|89
+comma
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+id|chip_version
+op_or_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+op_lshift
+l_int|16
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lance_debug
+OG
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;  LANCE chip version is %#x.&bslash;n&quot;
+comma
+id|chip_version
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|chip_version
+op_amp
+l_int|0xfff
+)paren
+op_ne
+l_int|0x003
+)paren
+r_return
+id|mem_start
+suffix:semicolon
+id|chip_version
+op_assign
+(paren
+id|chip_version
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0xffff
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|lance_version
+op_assign
+l_int|1
+suffix:semicolon
+id|chip_table
+(braket
+id|lance_version
+)braket
+dot
+id|id_number
+suffix:semicolon
+id|lance_version
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|chip_table
+(braket
+id|lance_version
+)braket
+dot
+id|id_number
+op_eq
+id|chip_version
+)paren
+r_break
+suffix:semicolon
+)brace
+)brace
 id|dev
 op_assign
 id|init_etherdev
@@ -648,14 +1032,21 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: LANCE at %#3x,&quot;
+l_string|&quot;%s: %s at %#3x,&quot;
 comma
 id|dev-&gt;name
+comma
+id|chip_table
+(braket
+id|lance_version
+)braket
+dot
+id|name
 comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* There is a 16 byte station address PROM at the base address.&n;       The first six bytes are the station address. */
+multiline_comment|/* There is a 16 byte station address PROM at the base address.&n;&t;   The first six bytes are the station address. */
 r_for
 c_loop
 (paren
@@ -789,51 +1180,10 @@ id|mem_start
 suffix:semicolon
 )brace
 macro_line|#endif
-id|outw
-c_func
-(paren
-l_int|88
-comma
-id|ioaddr
-op_plus
-id|LANCE_ADDR
-)paren
-suffix:semicolon
-id|lp-&gt;old_lance
+id|lp-&gt;chip_version
 op_assign
-(paren
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|LANCE_DATA
-)paren
-op_ne
-l_int|0x3003
-)paren
+id|lance_version
 suffix:semicolon
-macro_line|#if defined(notdef)
-id|printk
-c_func
-(paren
-id|lp-&gt;old_lance
-ques
-c_cond
-l_string|&quot; original LANCE (%04x)&quot;
-suffix:colon
-l_string|&quot; PCnet-ISA LANCE (%04x)&quot;
-comma
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|LANCE_DATA
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|lp-&gt;init_block.mode
 op_assign
 l_int|0x0003
@@ -905,6 +1255,14 @@ op_plus
 id|LANCE_ADDR
 )paren
 suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -927,6 +1285,14 @@ c_func
 (paren
 l_int|0x0002
 comma
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+id|inw
+c_func
+(paren
 id|ioaddr
 op_plus
 id|LANCE_ADDR
@@ -960,6 +1326,100 @@ op_plus
 id|LANCE_ADDR
 )paren
 suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hp_builtin
+)paren
+(brace
+r_char
+id|dma_tbl
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+l_int|3
+comma
+l_int|5
+comma
+l_int|6
+comma
+l_int|0
+)brace
+suffix:semicolon
+r_char
+id|irq_tbl
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+l_int|3
+comma
+l_int|4
+comma
+l_int|5
+comma
+l_int|9
+)brace
+suffix:semicolon
+r_int
+r_char
+id|port_val
+op_assign
+id|inb
+c_func
+(paren
+id|hp_builtin
+)paren
+suffix:semicolon
+id|dev-&gt;dma
+op_assign
+id|dma_tbl
+(braket
+(paren
+id|port_val
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|3
+)braket
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|irq_tbl
+(braket
+(paren
+id|port_val
+op_rshift
+l_int|2
+)paren
+op_amp
+l_int|3
+)braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; HP Vectra IRQ %d DMA %d.&bslash;n&quot;
+comma
+id|dev-&gt;irq
+comma
+id|dev-&gt;dma
+)paren
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -1055,42 +1515,90 @@ id|dev-&gt;dma
 suffix:semicolon
 )brace
 r_else
-(brace
-multiline_comment|/* The DMA channel may be passed in on this parameter. */
 r_if
 c_cond
 (paren
-id|dev-&gt;mem_start
-op_amp
-l_int|0x07
-)paren
-id|dev-&gt;dma
-op_assign
-id|dev-&gt;mem_start
-op_amp
-l_int|0x07
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|dev-&gt;dma
+id|lance_version
 op_eq
-l_int|0
+id|PCNET_ISAP
+)paren
+(brace
+multiline_comment|/* The plug-n-play version. */
+r_int
+id|bus_info
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|8
+comma
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+id|bus_info
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_BUS_IF
+)paren
+suffix:semicolon
+id|dev-&gt;dma
+op_assign
+id|bus_info
+op_amp
+l_int|0x07
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+(paren
+id|bus_info
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x0F
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* The DMA channel may be passed in PARAM1. */
+r_if
+c_cond
+(paren
+id|dev-&gt;mem_start
+op_amp
+l_int|0x07
 )paren
 id|dev-&gt;dma
 op_assign
-id|LANCE_DMA
+id|dev-&gt;mem_start
+op_amp
+l_int|0x07
 suffix:semicolon
-multiline_comment|/* To auto-IRQ we enable the initialization-done and DMA err,&n;&t;   interrupts. For now we will always get a DMA error. */
+)brace
 r_if
 c_cond
 (paren
 id|dev-&gt;irq
-OL
+op_ge
 l_int|2
 )paren
+id|printk
+c_func
+(paren
+l_string|&quot; assigned IRQ %d&quot;
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+r_else
 (brace
+multiline_comment|/* To auto-IRQ we enable the initialization-done and DMA error&n;&t;&t;   interrupts. For ISA boards we get a DMA error, but VLB and PCI&n;&t;&t;   boards will work. */
 id|autoirq_setup
 c_func
 (paren
@@ -1124,11 +1632,9 @@ id|dev-&gt;irq
 id|printk
 c_func
 (paren
-l_string|&quot;, probed IRQ %d, fixed at DMA %d.&bslash;n&quot;
+l_string|&quot;, probed IRQ %d&quot;
 comma
 id|dev-&gt;irq
-comma
-id|dev-&gt;dma
 )paren
 suffix:semicolon
 r_else
@@ -1143,27 +1649,276 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-)brace
-r_else
-id|printk
+multiline_comment|/* Check for the initialization done bit, 0x0100, which means&n;&t;&t;   that we don&squot;t need a DMA channel. */
+r_if
+c_cond
+(paren
+id|inw
 c_func
 (paren
-l_string|&quot; assigned IRQ %d DMA %d.&bslash;n&quot;
-comma
-id|dev-&gt;irq
-comma
-id|dev-&gt;dma
+id|ioaddr
+op_plus
+id|LANCE_DATA
 )paren
+op_amp
+l_int|0x0100
+)paren
+id|dev-&gt;dma
+op_assign
+l_int|4
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-op_logical_neg
-id|lp-&gt;old_lance
+id|dev-&gt;dma
+op_eq
+l_int|4
 )paren
 (brace
-multiline_comment|/* Turn on auto-select of media (10baseT or BNC) so that the user&n;&t;   can watch the LEDs even if the board isn&squot;t opened. */
+id|printk
+c_func
+(paren
+l_string|&quot;, no DMA needed.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|dev-&gt;dma
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|dev-&gt;dma
+comma
+l_string|&quot;lance&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;DMA %d allocation failed.&bslash;n&quot;
+comma
+id|dev-&gt;dma
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;, assigned DMA %d.&bslash;n&quot;
+comma
+id|dev-&gt;dma
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* OK, we have to auto-DMA. */
+r_int
+id|dmas
+(braket
+)braket
+op_assign
+(brace
+l_int|5
+comma
+l_int|6
+comma
+l_int|7
+comma
+l_int|3
+)brace
+comma
+id|boguscnt
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_int
+id|dma
+op_assign
+id|dmas
+(braket
+id|i
+)braket
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x7f04
+comma
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the memory error bits. */
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;lance&quot;
+)paren
+)paren
+r_continue
+suffix:semicolon
+id|enable_dma
+c_func
+(paren
+id|dma
+)paren
+suffix:semicolon
+id|set_dma_mode
+c_func
+(paren
+id|dma
+comma
+id|DMA_MODE_CASCADE
+)paren
+suffix:semicolon
+multiline_comment|/* Trigger an initialization. */
+id|outw
+c_func
+(paren
+l_int|0x0001
+comma
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|boguscnt
+op_assign
+l_int|100
+suffix:semicolon
+id|boguscnt
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|boguscnt
+)paren
+r_if
+c_cond
+(paren
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+op_amp
+l_int|0x0900
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+op_amp
+l_int|0x0100
+)paren
+(brace
+id|dev-&gt;dma
+op_assign
+id|dma
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;, DMA %d.&bslash;n&quot;
+comma
+id|dev-&gt;dma
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_else
+(brace
+id|disable_dma
+c_func
+(paren
+id|dma
+)paren
+suffix:semicolon
+id|free_dma
+c_func
+(paren
+id|dma
+)paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|4
+)paren
+(brace
+multiline_comment|/* Failure: bail. */
+id|printk
+c_func
+(paren
+l_string|&quot;DMA detection failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|lp-&gt;chip_version
+op_ne
+id|OLD_LANCE
+)paren
+(brace
+multiline_comment|/* Turn on auto-select of media (10baseT or BNC) so that the user&n;&t;&t;   can watch the LEDs even if the board isn&squot;t opened. */
 id|outw
 c_func
 (paren
@@ -1190,6 +1945,11 @@ c_cond
 (paren
 id|lance_debug
 OG
+l_int|0
+op_logical_and
+id|did_version
+op_increment
+op_eq
 l_int|0
 )paren
 id|printk
@@ -1283,29 +2043,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|request_dma
-c_func
-(paren
-id|dev-&gt;dma
-comma
-l_string|&quot;lance&quot;
-)paren
-)paren
-(brace
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
+multiline_comment|/* We used to allocate DMA here, but that was silly.&n;&t;   DMA lines can&squot;t be shared!  We now permanently snarf them. */
 id|irq2dev_map
 (braket
 id|dev-&gt;irq
@@ -1341,7 +2079,9 @@ multiline_comment|/* Un-Reset the LANCE, needed only for the NE2100. */
 r_if
 c_cond
 (paren
-id|lp-&gt;old_lance
+id|lp-&gt;chip_version
+op_eq
+id|OLD_LANCE
 )paren
 id|outw
 c_func
@@ -1356,8 +2096,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|lp-&gt;old_lance
+id|lp-&gt;chip_version
+op_ne
+id|OLD_LANCE
 )paren
 (brace
 multiline_comment|/* This is 79C960-specific: Turn on auto-select of media (AUI, BNC). */
@@ -1635,6 +2376,10 @@ suffix:semicolon
 id|lp-&gt;lock
 op_assign
 l_int|0
+comma
+id|lp-&gt;tx_full
+op_assign
+l_int|0
 suffix:semicolon
 id|lp-&gt;cur_rx
 op_assign
@@ -1691,7 +2436,7 @@ op_minus
 id|PKT_BUF_SZ
 suffix:semicolon
 )brace
-multiline_comment|/* The Tx buffer address is filled in as needed, but we do need to clear&n;       the upper ownership bit. */
+multiline_comment|/* The Tx buffer address is filled in as needed, but we do need to clear&n;&t;   the upper ownership bit. */
 r_for
 c_loop
 (paren
@@ -2106,7 +2851,7 @@ id|LANCE_DATA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;       done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
+multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
 r_if
 c_cond
 (paren
@@ -2185,12 +2930,14 @@ id|lp-&gt;cur_tx
 op_amp
 id|TX_RING_MOD_MASK
 suffix:semicolon
-multiline_comment|/* Caution: the write order is important here, set the base address&n;       with the &quot;ownership&quot; bits last. */
+multiline_comment|/* Caution: the write order is important here, set the base address&n;&t;   with the &quot;ownership&quot; bits last. */
 multiline_comment|/* The old LANCE chips doesn&squot;t automatically pad buffers to min. size. */
 r_if
 c_cond
 (paren
-id|lp-&gt;old_lance
+id|lp-&gt;chip_version
+op_eq
+id|OLD_LANCE
 )paren
 (brace
 id|lp-&gt;tx_ring
@@ -2233,7 +2980,7 @@ id|misc
 op_assign
 l_int|0x0000
 suffix:semicolon
-multiline_comment|/* If any part of this buffer is &gt;16M we must copy it to a low-memory&n;       buffer. */
+multiline_comment|/* If any part of this buffer is &gt;16M we must copy it to a low-memory&n;&t;   buffer. */
 r_if
 c_cond
 (paren
@@ -2313,6 +3060,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|lp-&gt;tx_skbuff
+(braket
+id|entry
+)braket
+op_assign
+id|skb
+suffix:semicolon
 id|lp-&gt;tx_ring
 (braket
 id|entry
@@ -2388,6 +3142,11 @@ l_int|0
 id|dev-&gt;tbusy
 op_assign
 l_int|0
+suffix:semicolon
+r_else
+id|lp-&gt;tx_full
+op_assign
+l_int|1
 suffix:semicolon
 id|sti
 c_func
@@ -2615,10 +3374,6 @@ id|entry
 dot
 id|base
 suffix:semicolon
-r_void
-op_star
-id|databuff
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2637,18 +3392,6 @@ dot
 id|base
 op_assign
 l_int|0
-suffix:semicolon
-id|databuff
-op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-id|status
-op_amp
-l_int|0x00ffffff
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2730,60 +3473,34 @@ id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* We don&squot;t free the skb if it&squot;s a data-only copy in the bounce&n;&t;       buffer.  The address checks here are sorted -- the first test&n;&t;       should always work.  */
+multiline_comment|/* We must free the original skb if it&squot;s not a data-only copy&n;&t;&t;&t;   in the bounce buffer. */
 r_if
 c_cond
 (paren
-id|databuff
-op_ge
-(paren
-r_void
-op_star
-)paren
-(paren
-op_amp
-id|lp-&gt;tx_bounce_buffs
+id|lp-&gt;tx_skbuff
 (braket
-id|TX_RING_SIZE
+id|entry
 )braket
 )paren
-op_logical_or
-id|databuff
-OL
-(paren
-r_void
-op_star
-)paren
-(paren
-id|lp-&gt;tx_bounce_buffs
-)paren
-)paren
 (brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-op_assign
-(paren
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|databuff
-)paren
-op_minus
-l_int|1
-suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
-id|skb
+id|lp-&gt;tx_skbuff
+(braket
+id|entry
+)braket
 comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-multiline_comment|/* Warning: skb may well vanish at the point you call&n;&t;&t;   device_release! */
+id|lp-&gt;tx_skbuff
+(braket
+id|entry
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 id|dirty_tx
 op_increment
@@ -2819,6 +3536,8 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|lp-&gt;tx_full
+op_logical_and
 id|dev-&gt;tbusy
 op_logical_and
 id|dirty_tx
@@ -2831,6 +3550,10 @@ l_int|2
 )paren
 (brace
 multiline_comment|/* The ring is no longer full, clear tbusy. */
+id|lp-&gt;tx_full
+op_assign
+l_int|0
+suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2855,6 +3578,7 @@ op_amp
 l_int|0x8000
 )paren
 (brace
+multiline_comment|/* Check the error summary bit. */
 r_if
 c_cond
 (paren
@@ -2865,6 +3589,7 @@ l_int|0x4000
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
+multiline_comment|/* Tx babble. */
 r_if
 c_cond
 (paren
@@ -2875,8 +3600,9 @@ l_int|0x1000
 id|lp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
+multiline_comment|/* Missed a Rx frame. */
 )brace
-multiline_comment|/* Clear the interrupts we&squot;ve handled. */
+multiline_comment|/* Clear any other interrupt. */
 id|outw
 c_func
 (paren
@@ -3004,7 +3730,7 @@ l_int|0x03
 )paren
 (brace
 multiline_comment|/* There was an error. */
-multiline_comment|/* There is an tricky error noted by John Murphy,&n;&t;       &lt;murf@perftech.com&gt; to Russ Nelson: Even with full-sized&n;&t;       buffers it&squot;s possible for a jabber packet to use two&n;&t;       buffers, with only the last correctly noting the error. */
+multiline_comment|/* There is an tricky error noted by John Murphy,&n;&t;&t;&t;   &lt;murf@perftech.com&gt; to Russ Nelson: Even with full-sized&n;&t;&t;&t;   buffers it&squot;s possible for a jabber packet to use two&n;&t;&t;&t;   buffers, with only the last correctly noting the error. */
 r_if
 c_cond
 (paren
@@ -3225,6 +3951,17 @@ id|base
 op_or_assign
 l_int|0x80000000
 suffix:semicolon
+multiline_comment|/* The docs say that the buffer length isn&squot;t touched, but Andrew Boyd&n;&t;&t;   of QNX reports that some revs of the 79C965 clear it. */
+id|lp-&gt;rx_ring
+(braket
+id|entry
+)braket
+dot
+id|buf_length
+op_assign
+op_minus
+id|PKT_BUF_SZ
+suffix:semicolon
 id|entry
 op_assign
 (paren
@@ -3235,7 +3972,7 @@ op_amp
 id|RX_RING_MOD_MASK
 suffix:semicolon
 )brace
-multiline_comment|/* We should check that at least two ring entries are free.  If not,&n;       we should free one and mark stats-&gt;rx_dropped++. */
+multiline_comment|/* We should check that at least two ring entries are free.&t; If not,&n;&t;   we should free one and mark stats-&gt;rx_dropped++. */
 r_return
 l_int|0
 suffix:semicolon
@@ -3330,7 +4067,7 @@ id|LANCE_DATA
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* We stop the LANCE here -- it occasionally polls&n;       memory if we don&squot;t. */
+multiline_comment|/* We stop the LANCE here -- it occasionally polls&n;&t;   memory if we don&squot;t. */
 id|outw
 c_func
 (paren
@@ -3351,12 +4088,6 @@ id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
-)paren
-suffix:semicolon
-id|free_dma
-c_func
-(paren
-id|dev-&gt;dma
 )paren
 suffix:semicolon
 id|irq2dev_map
@@ -3459,7 +4190,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;   &t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;&t;&t;&t;best-effort filtering.&n; */
 r_static
 r_void
 DECL|function|set_multicast_list
@@ -3505,7 +4236,7 @@ op_plus
 id|LANCE_DATA
 )paren
 suffix:semicolon
-multiline_comment|/* Temporarily stop the lance.  */
+multiline_comment|/* Temporarily stop the lance.&t; */
 id|outw
 c_func
 (paren
@@ -3646,43 +4377,6 @@ id|LANCE_DATA
 suffix:semicolon
 multiline_comment|/* Resume normal operation. */
 )brace
-macro_line|#ifdef HAVE_DEVLIST
-DECL|variable|lance_portlist
-r_static
-r_int
-r_int
-id|lance_portlist
-(braket
-)braket
-op_assign
-(brace
-l_int|0x300
-comma
-l_int|0x320
-comma
-l_int|0x340
-comma
-l_int|0x360
-comma
-l_int|0
-)brace
-suffix:semicolon
-DECL|variable|lance_drv
-r_struct
-id|netdev_entry
-id|lance_drv
-op_assign
-(brace
-l_string|&quot;lance&quot;
-comma
-id|lance_probe1
-comma
-id|LANCE_TOTAL_SIZE
-comma
-id|lance_portlist
-)brace
-suffix:semicolon
-macro_line|#endif
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c lance.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c lance.c&quot;&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

@@ -940,6 +940,10 @@ c_cond
 id|major
 op_eq
 id|HD_MAJOR
+op_logical_or
+id|major
+op_eq
+id|FLOPPY_MAJOR
 )paren
 id|req
 op_assign

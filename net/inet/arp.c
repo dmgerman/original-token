@@ -1,4 +1,4 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; */
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -101,78 +101,6 @@ id|sk_buff_head
 id|skb
 suffix:semicolon
 multiline_comment|/* list of queued packets &t;*/
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *&t;This structure defines an ethernet arp header.&n; */
-DECL|struct|arphdr
-r_struct
-id|arphdr
-(brace
-DECL|member|ar_hrd
-r_int
-r_int
-id|ar_hrd
-suffix:semicolon
-multiline_comment|/* format of hardware address&t;*/
-DECL|member|ar_pro
-r_int
-r_int
-id|ar_pro
-suffix:semicolon
-multiline_comment|/* format of protocol address&t;*/
-DECL|member|ar_hln
-r_int
-r_char
-id|ar_hln
-suffix:semicolon
-multiline_comment|/* length of hardware address&t;*/
-DECL|member|ar_pln
-r_int
-r_char
-id|ar_pln
-suffix:semicolon
-multiline_comment|/* length of protocol address&t;*/
-DECL|member|ar_op
-r_int
-r_int
-id|ar_op
-suffix:semicolon
-multiline_comment|/* ARP opcode (command)&t;&t;*/
-macro_line|#if 0
-multiline_comment|/*&n;&t;  *&t; Ethernet looks like this : This bit is variable sized however...&n;&t;  */
-r_int
-r_char
-id|ar_sha
-(braket
-id|ETH_ALEN
-)braket
-suffix:semicolon
-multiline_comment|/* sender hardware address&t;*/
-r_int
-r_char
-id|ar_sip
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* sender IP address&t;&t;*/
-r_int
-r_char
-id|ar_tha
-(braket
-id|ETH_ALEN
-)braket
-suffix:semicolon
-multiline_comment|/* target hardware address&t;*/
-r_int
-r_char
-id|ar_tip
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* target IP address&t;&t;*/
-macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Configurable Parameters (don&squot;t touch unless you know what you are doing&n; */

@@ -396,6 +396,13 @@ op_star
 )paren
 l_int|0xf0000
 comma
+(paren
+r_void
+op_star
+)paren
+l_int|0xeb800
+comma
+multiline_comment|/* VTech Platinum SMP */
 )brace
 suffix:semicolon
 DECL|macro|ADDRESS_COUNT

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the ARP (RFC 826) protocol.&n; *&n; * Version:&t;@(#)if_arp.h&t;1.0.1&t;04/16/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;Portions taken from the KA9Q/NOS (v2.00m PA0GRI) source.&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the ARP (RFC 826) protocol.&n; *&n; * Version:&t;@(#)if_arp.h&t;1.0.1&t;04/16/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;Portions taken from the KA9Q/NOS (v2.00m PA0GRI) source.&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_IF_ARP_H
 DECL|macro|_LINUX_IF_ARP_H
 mdefine_line|#define _LINUX_IF_ARP_H
@@ -78,5 +78,77 @@ DECL|macro|ATF_PUBL
 mdefine_line|#define&t;ATF_PUBL&t;0x08&t;&t;/* publish entry&t;&t;*/
 DECL|macro|ATF_USETRAILERS
 mdefine_line|#define&t;ATF_USETRAILERS&t;0x10&t;&t;/* has requested trailers&t;*/
+multiline_comment|/*&n; *&t;This structure defines an ethernet arp header.&n; */
+DECL|struct|arphdr
+r_struct
+id|arphdr
+(brace
+DECL|member|ar_hrd
+r_int
+r_int
+id|ar_hrd
+suffix:semicolon
+multiline_comment|/* format of hardware address&t;*/
+DECL|member|ar_pro
+r_int
+r_int
+id|ar_pro
+suffix:semicolon
+multiline_comment|/* format of protocol address&t;*/
+DECL|member|ar_hln
+r_int
+r_char
+id|ar_hln
+suffix:semicolon
+multiline_comment|/* length of hardware address&t;*/
+DECL|member|ar_pln
+r_int
+r_char
+id|ar_pln
+suffix:semicolon
+multiline_comment|/* length of protocol address&t;*/
+DECL|member|ar_op
+r_int
+r_int
+id|ar_op
+suffix:semicolon
+multiline_comment|/* ARP opcode (command)&t;&t;*/
+macro_line|#if 0
+multiline_comment|/*&n;&t;  *&t; Ethernet looks like this : This bit is variable sized however...&n;&t;  */
+r_int
+r_char
+id|ar_sha
+(braket
+id|ETH_ALEN
+)braket
+suffix:semicolon
+multiline_comment|/* sender hardware address&t;*/
+r_int
+r_char
+id|ar_sip
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* sender IP address&t;&t;*/
+r_int
+r_char
+id|ar_tha
+(braket
+id|ETH_ALEN
+)braket
+suffix:semicolon
+multiline_comment|/* target hardware address&t;*/
+r_int
+r_char
+id|ar_tip
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* target IP address&t;&t;*/
+macro_line|#endif
+)brace
+suffix:semicolon
 macro_line|#endif&t;/* _LINUX_IF_ARP_H */
 eof

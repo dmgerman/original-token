@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
+multiline_comment|/*&n; * NET&t;&t;An implementation of the SOCKET network access protocol.&n; *&n; * Version:&t;@(#)socket.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Anonymous&t;:&t;NOTSOCK/BADF cleanup. Error fix in&n; *&t;&t;&t;&t;&t;shutdown()&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixes&n; *&t;&t;Alan Cox&t;: &t;Removed DDI&n; *&t;&t;Jonathan Kamens&t;:&t;SOCK_DGRAM reconnect bug&n; *&t;&t;Alan Cox&t;:&t;Moved a load of checks to the very&n; *&t;&t;&t;&t;&t;top level.&n; *&t;&t;Alan Cox&t;:&t;Move address structures to/from user&n; *&t;&t;&t;&t;&t;mode above the protocol layers.&n; *&t;&t;Rob Janssen&t;:&t;Allow 0 length sends&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;This module is effectively the top level interface to the BSD socket&n; *&t;paradigm. Because it is very simple it works well for Unix domain sockets,&n; *&t;but requires a whole layer of substructure for the other protocols.&n; *&n; *&t;In addition it lacks an effective kernel -&gt; kernel interface to go with&n; *&t;the user one.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -3475,18 +3475,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|len
-op_eq
-l_int|0
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|err
 op_assign
 id|verify_area
@@ -3638,18 +3626,6 @@ l_int|0
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|len
-op_eq
-l_int|0
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 id|err
