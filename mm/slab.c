@@ -2798,7 +2798,7 @@ op_sub_assign
 id|slab_align_size
 suffix:semicolon
 )brace
-multiline_comment|/* Offset must be a factor of the alignment. */
+multiline_comment|/* Offset must be a multiple of the alignment. */
 id|offset
 op_add_assign
 (paren

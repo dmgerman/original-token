@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.35 1999/05/08 03:03:20 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.36 1999/05/25 16:53:34 jj Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -41,10 +41,10 @@ suffix:semicolon
 multiline_comment|/* Initialize/destroy the context related info for a new mm_struct&n; * instance.&n; */
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(__mm)&t;((__mm)-&gt;context = NO_CONTEXT)
-multiline_comment|/* Kernel threads like rpciod and nfsd drop their mm, and then use&n; * init_mm, when this happens we must make sure the tsk-&gt;tss.ctx is&n; * updated as well.  Otherwise we have disasters relating to&n; * set_fs/get_fs usage later on.&n; *&n; * Also we can only clear the mmu_context_bmap bit when this is&n; * the final reference to the address space.&n; */
+multiline_comment|/* Kernel threads like rpciod and nfsd drop their mm, and then use&n; * init_mm, when this happens we must make sure the secondary context is&n; * updated as well.  Otherwise we have disasters relating to&n; * set_fs/get_fs usage later on.&n; *&n; * Also we can only clear the mmu_context_bmap bit when this is&n; * the final reference to the address space.&n; */
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(__mm)&t;do { &t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__mm)-&gt;context != NO_CONTEXT &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;    atomic_read(&amp;(__mm)-&gt;count) == 1) { &t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((__mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&bslash;&n;&t;&t;&t;clear_bit((__mm)-&gt;context &amp; ~(CTX_VERSION_MASK),&t;&bslash;&n;&t;&t;&t;&t;  mmu_context_bmap);&t;&t;&t;&t;&bslash;&n;&t;&t;(__mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if(current-&gt;mm == (__mm)) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;spitfire_set_secondary_context(0);&t;&t;&t;&bslash;&n;&t;&t;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
-multiline_comment|/* This routine must called with interrupts off,&n; * this is necessary to guarentee that the current-&gt;tss.ctx&n; * to CPU secontary context register relationship is maintained&n; * when traps can happen.&n; *&n; * Also the caller must flush the current set of user windows&n; * to the stack (if necessary) before we get here.&n; */
+multiline_comment|/* The caller must flush the current set of user windows&n; * to the stack (if necessary) before we get here.&n; */
 DECL|function|__get_mmu_context
 r_extern
 id|__inline__
@@ -84,6 +84,10 @@ op_star
 id|mm
 op_assign
 id|tsk-&gt;mm
+suffix:semicolon
+r_int
+r_int
+id|asi
 suffix:semicolon
 r_if
 c_cond
@@ -128,6 +132,27 @@ id|mm
 )paren
 suffix:semicolon
 )brace
+id|tsk-&gt;tss.ctx
+op_assign
+id|mm-&gt;context
+op_amp
+l_int|0x3ff
+suffix:semicolon
+id|spitfire_set_secondary_context
+c_func
+(paren
+id|mm-&gt;context
+op_amp
+l_int|0x3ff
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;flush %g6&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -146,21 +171,6 @@ c_func
 )paren
 )paren
 (brace
-id|spitfire_set_secondary_context
-c_func
-(paren
-id|mm-&gt;context
-op_amp
-l_int|0x3ff
-)paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;flush %g6&quot;
-)paren
-suffix:semicolon
 id|spitfire_flush_dtlb_secondary_context
 c_func
 (paren
@@ -179,25 +189,13 @@ l_string|&quot;flush %g6&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Don&squot;t worry, set_fs() will restore it... */
-multiline_comment|/* Sigh, damned include loops... just poke seg directly.  */
-id|tsk-&gt;tss.ctx
+id|asi
 op_assign
-(paren
 id|tsk-&gt;tss.current_ds.seg
-ques
-c_cond
-(paren
-id|mm-&gt;context
-op_amp
-l_int|0x3ff
-)paren
-suffix:colon
-l_int|0
-)paren
 suffix:semicolon
 )brace
 r_else
+(brace
 id|tsk-&gt;tss.ctx
 op_assign
 l_int|0
@@ -205,7 +203,7 @@ suffix:semicolon
 id|spitfire_set_secondary_context
 c_func
 (paren
-id|tsk-&gt;tss.ctx
+l_int|0
 )paren
 suffix:semicolon
 id|__asm__
@@ -213,6 +211,24 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;flush %g6&quot;
+)paren
+suffix:semicolon
+id|asi
+op_assign
+id|ASI_P
+suffix:semicolon
+)brace
+multiline_comment|/* Sigh, damned include loops... just poke seg directly.  */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;wr %%g0, %0, %%asi&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|asi
+)paren
 )paren
 suffix:semicolon
 id|paddr

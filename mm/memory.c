@@ -367,16 +367,6 @@ id|page_dir
 op_assign
 id|mm-&gt;pgd
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|page_dir
-op_logical_and
-id|page_dir
-op_ne
-id|swapper_pg_dir
-)paren
-(brace
 id|page_dir
 op_add_assign
 id|first
@@ -406,7 +396,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * This function just free&squot;s the page directory - the&n; * pages tables themselves have been freed earlier by &n; * clear_page_tables().&n; */
 DECL|function|free_page_tables

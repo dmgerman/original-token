@@ -2,6 +2,7 @@ multiline_comment|/* -*- mode: c; c-basic-offset: 2 -*- */
 macro_line|#ifndef _LINUX_ISDN_PPP_H
 DECL|macro|_LINUX_ISDN_PPP_H
 mdefine_line|#define _LINUX_ISDN_PPP_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|CALLTYPE_INCOMING
 mdefine_line|#define CALLTYPE_INCOMING 0x1
 DECL|macro|CALLTYPE_OUTGOING

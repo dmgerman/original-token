@@ -2338,10 +2338,6 @@ c_func
 id|dev-&gt;priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
 id|release_region
 c_func
 (paren
@@ -2355,6 +2351,10 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 )brace

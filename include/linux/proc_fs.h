@@ -373,11 +373,8 @@ comma
 DECL|enumerator|PROC_NET_DN_ADJ
 id|PROC_NET_DN_ADJ
 comma
-DECL|enumerator|PROC_NET_DN_L1
-id|PROC_NET_DN_L1
-comma
-DECL|enumerator|PROC_NET_DN_L2
-id|PROC_NET_DN_L2
+DECL|enumerator|PROC_NET_DN_ROUTE
+id|PROC_NET_DN_ROUTE
 comma
 DECL|enumerator|PROC_NET_DN_CACHE
 id|PROC_NET_DN_CACHE
@@ -385,8 +382,11 @@ comma
 DECL|enumerator|PROC_NET_DN_SKT
 id|PROC_NET_DN_SKT
 comma
-DECL|enumerator|PROC_NET_DN_FW
-id|PROC_NET_DN_FW
+DECL|enumerator|PROC_NET_DN_FW_CHAINS
+id|PROC_NET_DN_FW_CHAINS
+comma
+DECL|enumerator|PROC_NET_DN_FW_CHAIN_NAMES
+id|PROC_NET_DN_FW_CHAIN_NAMES
 comma
 DECL|enumerator|PROC_NET_DN_RAW
 id|PROC_NET_DN_RAW

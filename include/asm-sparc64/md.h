@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: md.h,v 1.2 1997/12/27 16:28:38 jj Exp $&n; * md.h: High speed xor_block operation for RAID4/5 &n; *            utilizing the UltraSparc Visual Instruction Set.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: md.h,v 1.3 1999/05/25 16:53:28 jj Exp $&n; * md.h: High speed xor_block operation for RAID4/5 &n; *            utilizing the UltraSparc Visual Instruction Set.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __ASM_MD_H
 DECL|macro|__ASM_MD_H
 mdefine_line|#define __ASM_MD_H
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 DECL|macro|HAVE_ARCH_XORBLOCK
-mdefine_line|#define HAVE_ARCH_XORBLOCK
+macro_line|#undef HAVE_ARCH_XORBLOCK
 DECL|macro|MD_XORBLOCK_ALIGNMENT
 mdefine_line|#define MD_XORBLOCK_ALIGNMENT&t;64
 multiline_comment|/*&t;void __xor_block (char *dest, char *src, long len)&n; *&t;{&n; *&t;&t;while (len--) *dest++ ^= *src++;&n; * &t;}&n; *&n; *&t;Requirements:&n; *&t;!(((long)dest | (long)src) &amp; (MD_XORBLOCK_ALIGNMENT - 1)) &amp;&amp;&n; *&t;!(len &amp; 127) &amp;&amp; len &gt;= 256&n; */

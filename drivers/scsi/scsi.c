@@ -73,6 +73,8 @@ DECL|macro|BLIST_NOTQ
 mdefine_line|#define BLIST_NOTQ&t;0x20
 DECL|macro|BLIST_SPARSELUN
 mdefine_line|#define BLIST_SPARSELUN 0x40
+DECL|macro|BLIST_MAX5LUN
+mdefine_line|#define BLIST_MAX5LUN&t;0x80
 multiline_comment|/*&n; * Data declarations.&n; */
 DECL|variable|scsi_pid
 r_int
@@ -964,6 +966,18 @@ comma
 l_string|&quot;*&quot;
 comma
 id|BLIST_FORCELUN
+op_or
+id|BLIST_SINGLELUN
+)brace
+comma
+(brace
+l_string|&quot;REGAL&quot;
+comma
+l_string|&quot;CDC-4X&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_MAX5LUN
 op_or
 id|BLIST_SINGLELUN
 )brace
@@ -3750,6 +3764,24 @@ op_star
 id|max_dev_lun
 op_assign
 l_int|8
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n;   * REGAL CDC-4X: avoid hang after LUN 4&n;   */
+r_if
+c_cond
+(paren
+id|bflags
+op_amp
+id|BLIST_MAX5LUN
+)paren
+(brace
+op_star
+id|max_dev_lun
+op_assign
+l_int|5
 suffix:semicolon
 r_return
 l_int|1

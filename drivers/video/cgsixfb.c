@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsixfb.c,v 1.16 1999/03/09 14:01:49 davem Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsixfb.c,v 1.17 1999/05/25 01:00:31 davem Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3494,7 +3494,7 @@ r_static
 r_char
 id|idstring
 (braket
-l_int|60
+l_int|70
 )braket
 id|__initdata
 op_assign
@@ -3567,6 +3567,10 @@ suffix:semicolon
 r_char
 op_star
 id|p
+suffix:semicolon
+r_char
+op_star
+id|cardtype
 suffix:semicolon
 r_struct
 id|bt_regs
@@ -3927,18 +3931,78 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|conf
+op_rshift
+id|CG6_FHC_REV_SHIFT
+)paren
+op_amp
+id|CG6_FHC_REV_MASK
+)paren
+op_ge
+l_int|11
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fix-&gt;smem_len
+op_le
+l_int|0x100000
+)paren
+(brace
+id|cardtype
+op_assign
+l_string|&quot;TurboGX&quot;
+suffix:semicolon
+)brace
+r_else
+(brace
+id|cardtype
+op_assign
+l_string|&quot;TurboGX+&quot;
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|fix-&gt;smem_len
+op_le
+l_int|0x100000
+)paren
+(brace
+id|cardtype
+op_assign
+l_string|&quot;GX&quot;
+suffix:semicolon
+)brace
+r_else
+(brace
+id|cardtype
+op_assign
+l_string|&quot;GX+&quot;
+suffix:semicolon
+)brace
+)brace
 id|sprintf
 c_func
 (paren
 id|idstring
 comma
 macro_line|#ifdef __sparc_v9__
-l_string|&quot;cgsix at %016lx TEC Rev %x CPU %s Rev %x&quot;
+l_string|&quot;cgsix at %016lx TEC Rev %x CPU %s Rev %x [%s]&quot;
 comma
 id|phys
 comma
 macro_line|#else&t;
-l_string|&quot;cgsix at %x.%08lx TEC Rev %x CPU %s Rev %x&quot;
+l_string|&quot;cgsix at %x.%08lx TEC Rev %x CPU %s Rev %x [%s]&quot;
 comma
 id|fb-&gt;iospace
 comma
@@ -3960,6 +4024,8 @@ op_rshift
 id|CG6_FHC_REV_SHIFT
 op_amp
 id|CG6_FHC_REV_MASK
+comma
+id|cardtype
 )paren
 suffix:semicolon
 id|cg6_reset

@@ -1,10 +1,10 @@
-multiline_comment|/* $Id: processor.h,v 1.70 1999/03/24 11:42:44 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.71 1999/05/27 04:52:43 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
-multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+multiline_comment|/*&n; * Sparc32 implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
-mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
+mdefine_line|#define current_text_addr() ({ void *pc; __asm__(&quot;sethi %%hi(1f), %0; or %0, %%lo(1f), %0;&bslash;n1:&quot; : &quot;=r&quot; (pc)); pc; })
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;

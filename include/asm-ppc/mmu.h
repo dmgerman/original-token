@@ -2,6 +2,7 @@ multiline_comment|/*&n; * PowerPC memory management structures&n; */
 macro_line|#ifndef _PPC_MMU_H_
 DECL|macro|_PPC_MMU_H_
 mdefine_line|#define _PPC_MMU_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Hardware Page Table Entry */
 DECL|struct|_PTE

@@ -721,6 +721,12 @@ id|IFLA_QDISC
 comma
 DECL|enumerator|IFLA_STATS
 id|IFLA_STATS
+comma
+DECL|enumerator|IFLA_COST
+id|IFLA_COST
+comma
+DECL|enumerator|IFLA_PRIORITY
+id|IFLA_PRIORITY
 )brace
 suffix:semicolon
 DECL|macro|IFLA_MAX
@@ -821,6 +827,10 @@ DECL|macro|RTMGRP_IPV6_MROUTE
 mdefine_line|#define RTMGRP_IPV6_MROUTE&t;0x200
 DECL|macro|RTMGRP_IPV6_ROUTE
 mdefine_line|#define RTMGRP_IPV6_ROUTE&t;0x400
+DECL|macro|RTMGRP_DECnet_IFADDR
+mdefine_line|#define RTMGRP_DECnet_IFADDR    0x1000
+DECL|macro|RTMGRP_DECnet_ROUTE
+mdefine_line|#define RTMGRP_DECnet_ROUTE     0x4000
 multiline_comment|/* End of information exported to user level */
 macro_line|#ifdef __KERNEL__
 r_extern

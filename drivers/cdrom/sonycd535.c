@@ -496,7 +496,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|wait_queue_active
+id|waitqueue_active
 c_func
 (paren
 op_amp

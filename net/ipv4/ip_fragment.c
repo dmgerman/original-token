@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.40 1999/03/20 23:58:34 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.41 1999/05/27 00:38:07 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -147,6 +147,7 @@ suffix:semicolon
 DECL|macro|IPQ_HASHSZ
 mdefine_line|#define IPQ_HASHSZ&t;64
 DECL|variable|ipq_hash
+r_static
 r_struct
 id|ipq
 op_star
@@ -154,6 +155,13 @@ id|ipq_hash
 (braket
 id|IPQ_HASHSZ
 )braket
+suffix:semicolon
+DECL|variable|ipfrag_lock
+r_static
+id|spinlock_t
+id|ipfrag_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|macro|ipqhashfn
 mdefine_line|#define ipqhashfn(id, saddr, daddr, prot) &bslash;&n;&t;((((id) &gt;&gt; 1) ^ (saddr) ^ (daddr) ^ (prot)) &amp; (IPQ_HASHSZ - 1))
@@ -461,7 +469,7 @@ id|ipq
 op_star
 id|qp
 suffix:semicolon
-multiline_comment|/* Always, we are in a BH context, so no locking.  -DaveM */
+multiline_comment|/* We are always in BH context, and protected by the&n;&t; * ipfrag lock.&n;&t; */
 r_for
 c_loop
 (paren
@@ -514,7 +522,7 @@ r_return
 id|qp
 suffix:semicolon
 )brace
-multiline_comment|/* Remove an entry from the &quot;incomplete datagrams&quot; queue, either&n; * because we completed, reassembled and processed it, or because&n; * it timed out.&n; *&n; * This is called _only_ from BH contexts, on packet reception&n; * processing and from frag queue expiration timers.  -DaveM&n; */
+multiline_comment|/* Remove an entry from the &quot;incomplete datagrams&quot; queue, either&n; * because we completed, reassembled and processed it, or because&n; * it timed out.&n; *&n; * This is called _only_ from BH contexts with the ipfrag lock held,&n; * on packet reception processing and from frag queue expiration&n; * timers.  -DaveM&n; */
 DECL|function|ip_free
 r_static
 r_void
@@ -647,6 +655,13 @@ op_star
 )paren
 id|arg
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ipfrag_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -694,8 +709,15 @@ c_func
 id|qp
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ipfrag_lock
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/* Memory limiting on fragments.  Evictor trashes the oldest &n; * fragment queue until we are back under the low threshold.&n; */
+multiline_comment|/* Memory limiting on fragments.  Evictor trashes the oldest &n; * fragment queue until we are back under the low threshold.&n; *&n; * We are always called in BH with the ipfrag lock held.&n; */
 DECL|function|ip_evictor
 r_static
 r_void
@@ -751,7 +773,6 @@ id|sysctl_ipfrag_low_thresh
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* We are in a BH context, so these queue&n;&t;&t; * accesses are safe.  -DaveM&n;&t;&t; */
 id|qp
 op_assign
 id|ipq_hash
@@ -967,7 +988,7 @@ comma
 id|iph-&gt;protocol
 )paren
 suffix:semicolon
-multiline_comment|/* We are in a BH context, no locking necessary.  -DaveM */
+multiline_comment|/* In a BH context and ipfrag lock is held.  -DaveM */
 r_if
 c_cond
 (paren
@@ -1474,6 +1495,13 @@ suffix:semicolon
 id|ip_statistics.IpReasmReqds
 op_increment
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ipfrag_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Start by cleaning up the memory. */
 r_if
 c_cond
@@ -1967,6 +1995,13 @@ id|qp
 suffix:semicolon
 id|out_skb
 suffix:colon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ipfrag_lock
+)paren
+suffix:semicolon
 r_return
 id|skb
 suffix:semicolon
@@ -1988,6 +2023,13 @@ suffix:semicolon
 multiline_comment|/* ~ 30 seconds */
 id|out
 suffix:colon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ipfrag_lock
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.127 1999/05/08 03:00:38 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.128 1999/05/25 16:53:24 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/iommu.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -3567,6 +3568,18 @@ id|pstate
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|enter
+)paren
+id|set_fs
+c_func
+(paren
+id|current-&gt;tss.current_ds
+)paren
 suffix:semicolon
 r_if
 c_cond

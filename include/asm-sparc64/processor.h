@@ -1,10 +1,10 @@
-multiline_comment|/* $Id: processor.h,v 1.53 1999/01/19 07:57:51 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.55 1999/05/27 04:52:54 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
-multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+multiline_comment|/*&n; * Sparc64 implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
-mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
+mdefine_line|#define current_text_addr() ({ void *pc; __asm__(&quot;rd %%pc, %0&quot; : &quot;=r&quot; (pc)); pc; })
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/a.out.h&gt;
 macro_line|#include &lt;asm/pstate.h&gt;
@@ -41,7 +41,7 @@ r_struct
 (brace
 DECL|member|seg
 r_int
-r_int
+r_char
 id|seg
 suffix:semicolon
 DECL|typedef|mm_segment_t
@@ -84,10 +84,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-DECL|member|ctx
-r_int
-r_int
-id|ctx
+DECL|member|current_ds
+id|mm_segment_t
+id|current_ds
 suffix:semicolon
 DECL|member|w_saved
 multiline_comment|/*DC2*/
@@ -100,27 +99,53 @@ r_int
 r_int
 id|new_signal
 suffix:semicolon
-DECL|member|___pad
+DECL|member|ctx
 r_int
 r_int
-id|___pad
-suffix:semicolon
-DECL|member|current_ds
-id|mm_segment_t
-id|current_ds
+id|ctx
 suffix:semicolon
 DECL|member|kregs
-multiline_comment|/*DC3*/
 r_struct
 id|pt_regs
 op_star
 id|kregs
 suffix:semicolon
 DECL|member|utraps
+multiline_comment|/*DC3*/
 r_int
 r_int
 op_star
 id|utraps
+suffix:semicolon
+DECL|member|fpdepth
+r_int
+r_char
+id|fpdepth
+suffix:semicolon
+DECL|member|fpsaved
+r_int
+r_char
+id|fpsaved
+(braket
+l_int|7
+)braket
+suffix:semicolon
+DECL|member|gsr
+multiline_comment|/*DC4*/
+r_int
+r_char
+id|gsr
+(braket
+l_int|7
+)braket
+suffix:semicolon
+DECL|member|xfsr
+r_int
+r_int
+id|xfsr
+(braket
+l_int|7
+)braket
 suffix:semicolon
 DECL|member|reg_window
 r_struct
@@ -196,35 +221,6 @@ DECL|member|pcr_reg
 id|u64
 id|pcr_reg
 suffix:semicolon
-DECL|member|fpdepth
-r_int
-r_char
-id|fpdepth
-suffix:semicolon
-DECL|member|fpsaved
-r_int
-r_char
-id|fpsaved
-(braket
-l_int|7
-)braket
-suffix:semicolon
-DECL|member|gsr
-r_int
-r_char
-id|gsr
-(braket
-l_int|7
-)braket
-suffix:semicolon
-DECL|member|xfsr
-r_int
-r_int
-id|xfsr
-(braket
-l_int|7
-)braket
-suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
@@ -243,7 +239,7 @@ mdefine_line|#define SPARC_FLAG_PERFCTR&t;0x200    /* task has performance count
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffff80000000000, 0xfffff80001000000, &bslash;&n;&t;&t;    NULL, PAGE_SHARED , VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, wstate, cwp, flags,              ctx, */ &t;&t;&bslash;&n;   0,   0,      0,   SPARC_FLAG_KTHREAD, 0,&t;&t;&t;&bslash;&n;/* w_saved, new_signal, padding, current_ds, */&t;&t;&t;&bslash;&n;   0,       0,          0,       KERNEL_DS,&t;&t;&t;&bslash;&n;/* kregs,   utraps, */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,       0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&bslash;&n;   { { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&bslash;&n;/* user_cntd0, user_cndd1, kernel_cntd0, kernel_cntd0, pcr_reg */ &bslash;&n;   0,          0,          0,&t;&t; 0,            0,&t;&bslash;&n;/* fpdepth, fpsaved, gsr,   xfsr */&t;&t;&t;&t;&bslash;&n;   0,       { 0 },   { 0 }, { 0 },&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, wstate, cwp, flags,              current_ds, */ &t;&bslash;&n;   0,   0,      0,   SPARC_FLAG_KTHREAD, KERNEL_DS,&t;&t;&bslash;&n;/* w_saved, new_signal, ctx,&t;&t; kregs, */&t;&t;&bslash;&n;   0,       0,          0,&t;&t; 0,&t;&t;&t;&bslash;&n;/* utraps, */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0,&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* fpdepth, fpsaved, gsr,   xfsr */&t;&t;&t;&t;&bslash;&n;   0,       { 0 },   { 0 }, { 0 },&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&bslash;&n;   { { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&bslash;&n;/* user_cntd0, user_cndd1, kernel_cntd0, kernel_cntd0, pcr_reg */ &bslash;&n;   0,          0,          0,&t;&t; 0,            0,&t;&bslash;&n;}
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc

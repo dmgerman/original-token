@@ -2531,14 +2531,5 @@ id|name
 id|__init
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* This is too ugly to live! */
-macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
-macro_line|#include &quot;pdc4030.h&quot;
-DECL|macro|IS_PDC4030_DRIVE
-mdefine_line|#define IS_PDC4030_DRIVE (HWIF(drive)-&gt;chipset == ide_pdc4030)
-macro_line|#else
-DECL|macro|IS_PDC4030_DRIVE
-mdefine_line|#define IS_PDC4030_DRIVE (0)&t;/* auto-NULLs out pdc4030 code */
-macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 macro_line|#endif /* _IDE_H */
 eof

@@ -1294,6 +1294,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_CMPCI
+id|init_cmpci
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_ES1370
 id|init_es1370
 c_func

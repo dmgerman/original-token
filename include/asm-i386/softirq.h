@@ -320,6 +320,10 @@ c_func
 op_decrement
 suffix:semicolon
 )brace
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;(local_bh_count[smp_processor_id()]++)
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;(local_bh_count[smp_processor_id()]--)
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
 mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh_count[cpu]=1))

@@ -1023,16 +1023,6 @@ id|dev_base_lock
 suffix:semicolon
 multiline_comment|/* Device list lock */
 r_extern
-r_struct
-id|packet_type
-op_star
-id|ptype_base
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* Hashed types */
-r_extern
 r_int
 id|netdev_dropping
 suffix:semicolon

@@ -427,6 +427,13 @@ id|global_bh_lock
 )paren
 op_eq
 l_int|0
+op_logical_and
+id|local_bh_count
+(braket
+id|cpu
+)braket
+op_eq
+l_int|0
 )paren
 (brace
 op_increment
@@ -476,6 +483,10 @@ id|global_bh_count
 )paren
 suffix:semicolon
 )brace
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;(local_bh_count[smp_processor_id()]++)
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;(local_bh_count[smp_processor_id()]--)
 macro_line|#else
 r_extern
 r_int
@@ -493,6 +504,10 @@ DECL|macro|softirq_endlock
 mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count = 0)
 DECL|macro|synchronize_bh
 mdefine_line|#define synchronize_bh()&t;barrier()
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;(local_bh_count++)
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;(local_bh_count--)
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
 DECL|function|disable_bh
 r_extern

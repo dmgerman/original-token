@@ -24,6 +24,13 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
+DECL|macro|IS_PDC4030_DRIVE
+mdefine_line|#define IS_PDC4030_DRIVE (HWIF(drive)-&gt;chipset == ide_pdc4030)
+macro_line|#else
+DECL|macro|IS_PDC4030_DRIVE
+mdefine_line|#define IS_PDC4030_DRIVE (0)&t;/* auto-NULLs out pdc4030 code */
+macro_line|#endif
 DECL|function|idedisk_bswap_data
 r_static
 r_void
@@ -1322,23 +1329,6 @@ r_int
 id|block
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
-id|ide_hwif_t
-op_star
-id|hwif
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-suffix:semicolon
-r_int
-id|use_pdc4030_io
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 r_if
 c_cond
 (paren
@@ -1361,50 +1351,12 @@ id|IDE_NSECTOR_REG
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
-macro_line|#ifdef CONFIG_BLK_DEV_PDC4030_TESTING
-r_if
-c_cond
-(paren
-id|IS_PDC4030_DRIVE
-)paren
-(brace
-id|use_pdc4030_io
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|IS_PDC4030_DRIVE
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|hwif-&gt;channel
-op_ne
-l_int|0
-op_logical_or
-id|rq-&gt;cmd
-op_eq
-id|READ
-)paren
-(brace
-id|use_pdc4030_io
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* CONFIG_BLK_DEV_PDC4030_TESTING */
 r_if
 c_cond
 (paren
 id|drive-&gt;select.b.lba
 op_logical_or
-id|use_pdc4030_io
+id|IS_PDC4030_DRIVE
 )paren
 (brace
 macro_line|#else /* !CONFIG_BLK_DEV_PDC4030 */
@@ -1607,7 +1559,7 @@ macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
-id|use_pdc4030_io
+id|IS_PDC4030_DRIVE
 )paren
 (brace
 r_extern

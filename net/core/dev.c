@@ -81,6 +81,7 @@ l_string|&quot;100baseFX&quot;
 suffix:semicolon
 multiline_comment|/*&n; *&t;The list of packet types we will receive (as opposed to discard)&n; *&t;and the routines to invoke.&n; *&n; *&t;Why 16. Because with 16 the only overlap we get on a hash of the&n; *&t;low nibble of the protocol value is RARP/SNAP/X.25. &n; *&n; *&t;&t;0800&t;IP&n; *&t;&t;0001&t;802.3&n; *&t;&t;0002&t;AX.25&n; *&t;&t;0004&t;802.2&n; *&t;&t;8035&t;RARP&n; *&t;&t;0005&t;SNAP&n; *&t;&t;0805&t;X.25&n; *&t;&t;0806&t;ARP&n; *&t;&t;8137&t;IPX&n; *&t;&t;0009&t;Localtalk&n; *&t;&t;86DD&t;IPv6&n; */
 DECL|variable|ptype_base
+r_static
 r_struct
 id|packet_type
 op_star
@@ -91,6 +92,7 @@ l_int|16
 suffix:semicolon
 multiline_comment|/* 16 way hashed list */
 DECL|variable|ptype_all
+r_static
 r_struct
 id|packet_type
 op_star
@@ -99,6 +101,13 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Taps */
+DECL|variable|ptype_lock
+r_static
+id|rwlock_t
+id|ptype_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; *&t;Device list lock. Setting it provides that interface&n; *&t;will not disappear unexpectedly while kernel sleeps.&n; */
 DECL|variable|dev_lockct
 id|atomic_t
@@ -195,6 +204,13 @@ id|pt-&gt;dev
 suffix:semicolon
 )brace
 macro_line|#endif
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -246,6 +262,13 @@ op_assign
 id|pt
 suffix:semicolon
 )brace
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Remove a protocol ID from the list.&n; */
 DECL|function|dev_remove_pack
@@ -301,6 +324,13 @@ op_amp
 l_int|15
 )braket
 suffix:semicolon
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -341,11 +371,6 @@ id|pt1
 op_assign
 id|pt-&gt;next
 suffix:semicolon
-id|synchronize_bh
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
 r_if
 c_cond
@@ -356,10 +381,24 @@ id|netdev_fastroute_obstacles
 op_decrement
 suffix:semicolon
 macro_line|#endif
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 )brace
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1300,6 +1339,13 @@ op_amp
 id|skb-&gt;stamp
 )paren
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1438,6 +1484,13 @@ id|ptype
 suffix:semicolon
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Fast path for loopback frames.&n; */
 DECL|function|dev_loopback_xmit
@@ -2684,6 +2737,13 @@ id|pt_prev
 op_assign
 l_int|NULL
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2879,6 +2939,13 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|ptype_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* End of queue loop */
 multiline_comment|/*&n;  &t; *&t;We have emptied the queue&n;  &t; */

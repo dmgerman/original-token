@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/block/alim15x3.c&t;Version 0.04&t;Feb. 8, 1999&n; *&n; *  Copyright (C) 1998-99 Michel Aubry, Maintainer&n; *  Copyright (C) 1998-99 Andrzej Krzysztofowicz, Maintainer&n; *  Copyright (C) 1998-99 Andre Hedrick, Integrater and Maintainer&n; *&n; *  (U)DMA capable version of ali 1533/1543(C)&n; *&n; *  Default disable (U)DMA on all devices execpt hard disks.&n; *  This measure of overkill is needed to stablize the chipset code.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

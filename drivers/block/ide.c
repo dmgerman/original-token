@@ -620,8 +620,20 @@ l_string|&quot;SunDisk SDCFB&quot;
 comma
 l_int|13
 )paren
-)paren
 multiline_comment|/* SunDisk */
+op_logical_or
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;HAGIWARA HPC&quot;
+comma
+l_int|12
+)paren
+)paren
+multiline_comment|/* Hagiwara */
 (brace
 r_return
 l_int|1
@@ -6391,10 +6403,19 @@ c_func
 id|sem
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
 (paren
-id|IS_PDC4030_DRIVE
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|chipset
+op_eq
+id|ide_pdc4030
 op_logical_and
 id|rq-&gt;buffer
 op_ne
@@ -6405,6 +6426,7 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 multiline_comment|/* special drive cmds not supported */
+macro_line|#endif
 id|rq-&gt;errors
 op_assign
 l_int|0
@@ -7662,6 +7684,14 @@ id|hwif-&gt;drives
 (braket
 id|unit
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|drive-&gt;present
+)paren
+r_continue
 suffix:semicolon
 id|minor
 op_assign
@@ -13183,17 +13213,15 @@ multiline_comment|/* &quot;dc4030&quot; */
 (brace
 r_extern
 r_void
-id|setup_pdc4030
+id|init_pdc4030
 c_func
 (paren
-id|ide_hwif_t
-op_star
+r_void
 )paren
 suffix:semicolon
-id|setup_pdc4030
+id|init_pdc4030
 c_func
 (paren
-id|hwif
 )paren
 suffix:semicolon
 r_goto
@@ -14117,7 +14145,7 @@ macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 (brace
 r_extern
 r_int
-id|init_pdc4030
+id|ide_probe_for_pdc4030
 c_func
 (paren
 r_void
@@ -14126,7 +14154,7 @@ suffix:semicolon
 (paren
 r_void
 )paren
-id|init_pdc4030
+id|ide_probe_for_pdc4030
 c_func
 (paren
 )paren

@@ -345,6 +345,8 @@ r_if
 c_cond
 (paren
 id|result
+OL
+l_int|0
 )paren
 id|result
 op_assign

@@ -9,7 +9,6 @@ l_string|&quot;$Revision: 2.31 $&quot;
 suffix:semicolon
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 DECL|macro|TIMER3_VALUE

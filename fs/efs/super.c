@@ -544,6 +544,7 @@ id|KERN_NOTICE
 l_string|&quot;EFS: partition table contained no EFS partitions&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 )brace
 r_else
 (brace
@@ -567,6 +568,7 @@ comma
 id|sblock
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 id|sblock
@@ -823,7 +825,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;EFS: unable to read superblock&bslash;n&quot;
+l_string|&quot;EFS: cannot read superblock&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -847,6 +849,7 @@ id|bh-&gt;b_data
 )paren
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -858,6 +861,7 @@ op_plus
 id|EFS_SUPER
 )paren
 suffix:semicolon
+macro_line|#endif
 id|brelse
 c_func
 (paren

@@ -213,13 +213,12 @@ r_char
 op_star
 id|stl_tmpwritebuf
 suffix:semicolon
-DECL|variable|stl_tmpwritesem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|stl_tmpwritesem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Define a local default termios struct. All ports will be created&n; *&t;with this termios initially. Basically all it defines is a raw port&n; *&t;at 9600, 8 data bits, 1 stop bit.&n; */
 DECL|variable|stl_deftermios

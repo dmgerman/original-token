@@ -253,16 +253,6 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 r_extern
-r_struct
-id|dst_entry
-op_star
-id|dst_garbage_list
-suffix:semicolon
-r_extern
-id|atomic_t
-id|dst_total
-suffix:semicolon
-r_extern
 id|__inline__
 DECL|function|dst_clone
 r_struct

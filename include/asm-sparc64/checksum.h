@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.11 1998/04/17 02:37:22 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.12 1999/05/25 16:53:36 jj Exp $ */
 macro_line|#ifndef __SPARC64_CHECKSUM_H
 DECL|macro|__SPARC64_CHECKSUM_H
 mdefine_line|#define __SPARC64_CHECKSUM_H
@@ -77,10 +77,19 @@ r_int
 id|sum
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
+r_int
+r_char
+id|cur_ds
+op_assign
+id|current-&gt;tss.current_ds.seg
+suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;wr&t;%%g0, %0, %%asi&quot;
+l_string|&quot;wr %%g0, %0, %%asi&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;i&quot;
@@ -89,7 +98,8 @@ id|ASI_P
 )paren
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|csum_partial_copy_sparc64
 c_func
 (paren
@@ -101,6 +111,21 @@ id|len
 comma
 id|sum
 )paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;wr %%g0, %0, %%asi&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|cur_ds
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 r_extern
@@ -135,36 +160,10 @@ id|err
 id|__asm__
 id|__volatile__
 (paren
-"&quot;"
-id|wr
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|asi
-id|stx
-op_mod
-l_int|1
-comma
-(braket
-op_mod
-op_mod
-id|sp
-op_plus
-l_int|0x7ff
-op_plus
-l_int|128
-)braket
-l_string|&quot; : : &quot;
-id|i
-l_string|&quot; (ASI_S), &quot;
-id|r
-"&quot;"
+l_string|&quot;stx&t;%0, [%%sp + 0x7ff + 128]&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
 (paren
 id|err
 )paren

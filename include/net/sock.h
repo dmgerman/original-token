@@ -3370,5 +3370,10 @@ macro_line|#else
 DECL|macro|NETDEBUG
 mdefine_line|#define NETDEBUG(x)&t;do { x; } while (0)
 macro_line|#endif
+multiline_comment|/*&n; * Macros for sleeping on a socket. Use them like this:&n; *&n; * SOCK_SLEEP_PRE(sk)&n; * if (condition)&n; * &t;schedule();&n; * SOCK_SLEEP_POST(sk)&n; *&n; */
+DECL|macro|SOCK_SLEEP_PRE
+mdefine_line|#define SOCK_SLEEP_PRE(sk) &t;{ struct task_struct *tsk = current; &bslash;&n;&t;&t;&t;&t;DECLARE_WAITQUEUE(wait, tsk); &bslash;&n;&t;&t;&t;&t;tsk-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;&t;&t;&t;add_wait_queue((sk)-&gt;sleep, &amp;wait); &bslash;&n;&t;&t;&t;&t;release_sock(sk);
+DECL|macro|SOCK_SLEEP_POST
+mdefine_line|#define SOCK_SLEEP_POST(sk)&t;tsk-&gt;state = TASK_RUNNING; &bslash;&n;&t;&t;&t;&t;remove_wait_queue((sk)-&gt;sleep, &amp;wait); &bslash;&n;&t;&t;&t;&t;lock_sock(sk); &bslash;&n;&t;&t;&t;&t;}
 macro_line|#endif&t;/* _SOCK_H */
 eof

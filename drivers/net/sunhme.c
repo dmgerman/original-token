@@ -7652,8 +7652,6 @@ c_cond
 id|status
 op_amp
 (paren
-id|GREG_STAT_RFIFOVF
-op_or
 id|GREG_STAT_STSTERR
 op_or
 id|GREG_STAT_TFIFO_UND
@@ -7703,18 +7701,15 @@ op_amp
 id|GREG_STAT_RFIFOVF
 )paren
 (brace
-multiline_comment|/* The receive FIFO overflowwed, usually a DMA error. */
+multiline_comment|/* Receive FIFO overflow is harmless and the hardware will take&n;&t;&t;   care of it, just some packets are lost. Who cares. */
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Happy Meal receive FIFO overflow.&bslash;n&quot;
 comma
 id|hp-&gt;dev-&gt;name
 )paren
-suffix:semicolon
-id|reset
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 r_if

@@ -666,13 +666,6 @@ c_func
 id|__dst_free
 )paren
 suffix:semicolon
-DECL|variable|dst_total
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dst_total
-)paren
-suffix:semicolon
 DECL|variable|dst_destroy
 id|EXPORT_SYMBOL
 c_func

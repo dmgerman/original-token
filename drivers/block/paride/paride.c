@@ -1055,7 +1055,7 @@ op_star
 id|pi
 )paren
 suffix:semicolon
-id|init_wait_queue_head
+id|init_waitqueue_head
 c_func
 (paren
 op_amp
@@ -1783,7 +1783,7 @@ id|pi-&gt;pardev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|init_wait_queue_head
+id|init_waitqueue_head
 c_func
 (paren
 op_amp

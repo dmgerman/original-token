@@ -11,13 +11,16 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
+multiline_comment|/* Locking strategy:&n; * 1) Garbage collection state of dead destination cache&n; *    entries is protected by dst_lock.&n; * 2) GC is run only from BH context, and is the only remover&n; *    of entries.&n; * 3) Entries are added to the garbage list from both BH&n; *    and non-BH context, so local BH disabling is needed.&n; * 4) All operations modify state, so a spinlock is used.&n; */
 DECL|variable|dst_garbage_list
+r_static
 r_struct
 id|dst_entry
 op_star
 id|dst_garbage_list
 suffix:semicolon
 DECL|variable|dst_total
+r_static
 id|atomic_t
 id|dst_total
 op_assign
@@ -26,6 +29,13 @@ c_func
 (paren
 l_int|0
 )paren
+suffix:semicolon
+DECL|variable|dst_lock
+r_static
+id|spinlock_t
+id|dst_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|variable|dst_gc_timer_expires
 r_static
@@ -99,6 +109,13 @@ op_star
 op_star
 id|dstp
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dst_lock
+)paren
+suffix:semicolon
 id|del_timer
 c_func
 (paren
@@ -169,7 +186,8 @@ id|dst_gc_timer_inc
 op_assign
 id|DST_GC_MAX
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -221,6 +239,15 @@ c_func
 (paren
 op_amp
 id|dst_gc_timer
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dst_lock
 )paren
 suffix:semicolon
 )brace
@@ -400,9 +427,11 @@ op_star
 id|dst
 )paren
 (brace
-id|start_bh_atomic
+id|spin_lock_bh
 c_func
 (paren
+op_amp
+id|dst_lock
 )paren
 suffix:semicolon
 multiline_comment|/* The first case (dev==NULL) is required, when&n;&t;   protocol module is unloaded.&n;&t; */
@@ -484,9 +513,11 @@ id|dst_gc_timer
 )paren
 suffix:semicolon
 )brace
-id|end_bh_atomic
+id|spin_unlock_bh
 c_func
 (paren
+op_amp
+id|dst_lock
 )paren
 suffix:semicolon
 )brace

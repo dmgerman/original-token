@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/blk.h&gt;&t;&t;&t;/* for set_device_ro() */
 macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;&t;&t;&t;/* for is_swap_partition() */
+macro_line|#include &lt;linux/module.h&gt;               /* for EXPORT_SYMBOL */
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * What is the data describing a partition?&n; *&n; * 1. a device number (kdev_t)&n; * 2. a starting sector and number of sectors (hd_struct)&n; *    given in the part[] array of the gendisk structure for the drive.&n; *&n; * The number of sectors is replicated in the sizes[] array of&n; * the gendisk structure for the major, which again is copied to&n; * the blk_size[][] array.&n; * (However, hd_struct has the number of 512-byte sectors,&n; *  g-&gt;sizes[] and blk_size[][] have the number of 1024-byte blocks.)&n; * Note that several drives may have the same major.&n; */
 multiline_comment|/* a linear search, superfluous when dev is a pointer */
@@ -1137,4 +1138,11 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+DECL|variable|blk_ioctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|blk_ioctl
+)paren
+suffix:semicolon
 eof
