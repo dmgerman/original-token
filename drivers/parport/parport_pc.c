@@ -494,18 +494,6 @@ id|priv
 op_assign
 id|p-&gt;physport-&gt;private_data
 suffix:semicolon
-multiline_comment|/* Prevent further data transfer. */
-id|frob_econtrol
-(paren
-id|p
-comma
-l_int|0xe0
-comma
-id|ECR_TST
-op_lshift
-l_int|5
-)paren
-suffix:semicolon
 multiline_comment|/* Adjust for the contents of the FIFO. */
 r_for
 c_loop
@@ -3473,9 +3461,17 @@ multiline_comment|/* Switch to reverse mode if necessary. */
 r_if
 c_cond
 (paren
+(paren
 id|port-&gt;ieee1284.phase
 op_ne
 id|IEEE1284_PH_REV_IDLE
+)paren
+op_logical_and
+(paren
+id|port-&gt;ieee1284.phase
+op_ne
+id|IEEE1284_PH_REV_DATA
+)paren
 )paren
 (brace
 multiline_comment|/* Event 38: Set nAutoFd low */
@@ -3520,7 +3516,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set up ECP parallel port mode.*/
+multiline_comment|/* Set up ECP FIFO mode.*/
 id|parport_pc_data_reverse
 (paren
 id|port
@@ -3779,20 +3775,34 @@ id|left
 op_decrement
 suffix:semicolon
 )brace
-multiline_comment|/* Finish up. */
-r_if
-c_cond
-(paren
-id|change_mode
+id|port-&gt;ieee1284.phase
+op_assign
+id|IEEE1284_PH_REV_IDLE
+suffix:semicolon
+multiline_comment|/* Go to forward idle mode to shut the peripheral up. */
+id|parport_frob_control
 (paren
 id|port
 comma
-id|ECR_PS2
+id|PARPORT_CONTROL_INIT
+comma
+l_int|0
 )paren
-op_eq
-op_minus
-id|EBUSY
+suffix:semicolon
+id|parport_wait_peripheral
+(paren
+id|port
+comma
+id|PARPORT_STATUS_PAPEROUT
+comma
+id|PARPORT_STATUS_PAPEROUT
 )paren
+suffix:semicolon
+id|port-&gt;ieee1284.phase
+op_assign
+id|IEEE1284_PH_FWD_IDLE
+suffix:semicolon
+multiline_comment|/* Finish up. */
 (brace
 r_int
 id|lost
@@ -3802,6 +3812,12 @@ id|get_fifo_residue
 id|port
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lost
+)paren
+multiline_comment|/* Shouldn&squot;t happen with compliant peripherals. */
 id|printk
 (paren
 id|KERN_DEBUG
@@ -3813,10 +3829,6 @@ id|lost
 )paren
 suffix:semicolon
 )brace
-id|port-&gt;ieee1284.phase
-op_assign
-id|IEEE1284_PH_REV_IDLE
-suffix:semicolon
 r_return
 id|length
 op_minus

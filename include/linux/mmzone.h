@@ -272,6 +272,11 @@ comma
 r_int
 r_int
 id|paddr
+comma
+r_int
+r_int
+op_star
+id|zholes_size
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_DISCONTIGMEM

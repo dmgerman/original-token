@@ -1040,6 +1040,26 @@ id|strcmp
 (paren
 id|this_char
 comma
+l_string|&quot;nocheck&quot;
+)paren
+)paren
+id|clear_opt
+(paren
+op_star
+id|mount_options
+comma
+id|CHECK
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+(paren
+id|this_char
+comma
 l_string|&quot;nogrpid&quot;
 )paren
 op_logical_or
@@ -1606,13 +1626,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#if 0 /* ibasket&squot;s still have unresolved bugs... -DaveM */
-multiline_comment|/* [T. Schoebel-Theuer] This limit should be maintained on disk.&n;&t; * This is just provisionary.&n;&t; */
-id|sb-&gt;s_ibasket_max
-op_assign
-l_int|100
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|ext2_check_descriptors
 r_static

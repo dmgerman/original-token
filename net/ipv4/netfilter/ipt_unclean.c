@@ -7,8 +7,6 @@ macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/icmp.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 DECL|macro|limpk
 mdefine_line|#define limpk(format, args...)&t;&t;&t;&t;&t;&t; &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;if (net_ratelimit())&t;&t;&t;&t;&t;&t; &bslash;&n;&t;&t;printk(&quot;ipt_unclean: %s&quot; format,&t;&t;&t; &bslash;&n;&t;&t;       embedded ? &quot;(embedded packet) &quot; : &quot;&quot; , ## args);  &bslash;&n;} while(0)
 DECL|enum|icmp_error_status

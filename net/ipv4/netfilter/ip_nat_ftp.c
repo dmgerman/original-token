@@ -10,8 +10,6 @@ macro_line|#include &lt;linux/netfilter_ipv4/ip_nat_rule.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_nat_ftp.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack_ftp.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack_helper.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 macro_line|#if 0
 mdefine_line|#define DEBUGP printk
 macro_line|#else
@@ -1934,12 +1932,6 @@ comma
 id|ftp_nat_expected
 )brace
 suffix:semicolon
-r_extern
-r_struct
-id|module
-op_star
-id|ip_conntrack_ftp
-suffix:semicolon
 DECL|function|init
 r_static
 r_int
@@ -1983,16 +1975,9 @@ r_if
 c_cond
 (paren
 id|ret
-op_eq
+op_ne
 l_int|0
 )paren
-id|__MOD_INC_USE_COUNT
-c_func
-(paren
-id|ip_conntrack_ftp
-)paren
-suffix:semicolon
-r_else
 id|ip_nat_expect_unregister
 c_func
 (paren
@@ -2015,12 +2000,6 @@ c_func
 r_void
 )paren
 (brace
-id|__MOD_DEC_USE_COUNT
-c_func
-(paren
-id|ip_conntrack_ftp
-)paren
-suffix:semicolon
 id|ip_nat_helper_unregister
 c_func
 (paren

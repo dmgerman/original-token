@@ -167,11 +167,6 @@ id|out
 suffix:semicolon
 )brace
 multiline_comment|/* handle signals */
-id|error
-op_assign
-op_minus
-id|ERESTARTSYS
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -182,7 +177,7 @@ id|current
 )paren
 )paren
 r_goto
-id|out
+id|interrupted
 suffix:semicolon
 op_star
 id|timeo_p
@@ -211,6 +206,17 @@ id|wait
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|interrupted
+suffix:colon
+id|error
+op_assign
+id|sock_intr_errno
+c_func
+(paren
+op_star
+id|timeo_p
+)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -687,9 +693,14 @@ op_or
 id|POLLWRBAND
 suffix:semicolon
 r_else
+id|set_bit
+c_func
+(paren
+id|SOCK_ASYNC_NOSPACE
+comma
+op_amp
 id|sk-&gt;socket-&gt;flags
-op_or_assign
-id|SO_NOSPACE
+)paren
 suffix:semicolon
 r_return
 id|mask

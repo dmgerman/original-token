@@ -958,17 +958,4 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|ip_conntrack_protocol_tcp_init
-r_int
-id|__init
-id|ip_conntrack_protocol_tcp_init
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 eof

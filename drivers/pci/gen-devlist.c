@@ -1,6 +1,8 @@
-multiline_comment|/*&n; *&t;Generate devlist.h and classlist.h from the PCI ID file.&n; *&n; *&t;(c) 1999 Martin Mares &lt;mj@suse.cz&gt;&n; */
+multiline_comment|/*&n; *&t;Generate devlist.h and classlist.h from the PCI ID file.&n; *&n; *&t;(c) 1999--2000 Martin Mares &lt;mj@suse.cz&gt;&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
+DECL|macro|MAX_NAME_SIZE
+mdefine_line|#define MAX_NAME_SIZE 79
 r_static
 r_void
 DECL|function|pq
@@ -72,6 +74,9 @@ comma
 op_star
 id|c
 comma
+op_star
+id|bra
+comma
 id|vend
 (braket
 l_int|8
@@ -84,6 +89,16 @@ l_int|0
 suffix:semicolon
 r_int
 id|mode
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|lino
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|vendor_len
 op_assign
 l_int|0
 suffix:semicolon
@@ -155,6 +170,9 @@ id|stdin
 )paren
 )paren
 (brace
+id|lino
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -339,6 +357,89 @@ op_increment
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vendor_len
+op_plus
+id|strlen
+c_func
+(paren
+id|c
+)paren
+op_plus
+l_int|1
+OG
+id|MAX_NAME_SIZE
+)paren
+(brace
+multiline_comment|/* Too long, try cutting off long description */
+id|bra
+op_assign
+id|strchr
+c_func
+(paren
+id|c
+comma
+l_char|&squot;[&squot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bra
+op_logical_and
+id|bra
+OG
+id|c
+op_logical_and
+id|bra
+(braket
+op_minus
+l_int|1
+)braket
+op_eq
+l_char|&squot; &squot;
+)paren
+id|bra
+(braket
+op_minus
+l_int|1
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vendor_len
+op_plus
+id|strlen
+c_func
+(paren
+id|c
+)paren
+op_plus
+l_int|1
+OG
+id|MAX_NAME_SIZE
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Line %d: Device name too long&bslash;n&quot;
+comma
+id|lino
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+)brace
 id|fprintf
 c_func
 (paren
@@ -512,6 +613,38 @@ comma
 id|line
 )paren
 suffix:semicolon
+id|vendor_len
+op_assign
+id|strlen
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vendor_len
+op_plus
+l_int|24
+OG
+id|MAX_NAME_SIZE
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Line %d: Vendor name too long&bslash;n&quot;
+comma
+id|lino
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|fprintf
 c_func
 (paren
@@ -552,7 +685,9 @@ c_func
 (paren
 id|stderr
 comma
-l_string|&quot;Syntax error in mode %d: %s&bslash;n&quot;
+l_string|&quot;Line %d: Syntax error in mode %d: %s&bslash;n&quot;
+comma
+id|lino
 comma
 id|mode
 comma

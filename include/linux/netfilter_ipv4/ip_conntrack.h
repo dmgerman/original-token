@@ -88,12 +88,12 @@ id|expectant
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_IP_NF_NAT) || defined(CONFIG_IP_NF_NAT_MODULE)
+macro_line|#ifdef CONFIG_IP_NF_NAT_NEEDED
 macro_line|#include &lt;linux/netfilter_ipv4/ip_nat.h&gt;
 macro_line|#endif
 macro_line|#if defined(CONFIG_IP_NF_FTP) || defined(CONFIG_IP_NF_FTP_MODULE)
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack_ftp.h&gt;
-macro_line|#if defined(CONFIG_IP_NF_NAT) || defined(CONFIG_IP_NF_NAT_MODULE)
+macro_line|#ifdef CONFIG_IP_NF_NAT_NEEDED
 macro_line|#include &lt;linux/netfilter_ipv4/ip_nat_ftp.h&gt;
 macro_line|#endif
 macro_line|#endif
@@ -181,7 +181,7 @@ DECL|member|help
 )brace
 id|help
 suffix:semicolon
-macro_line|#if defined(CONFIG_IP_NF_NAT) || defined(CONFIG_IP_NF_NAT_MODULE)
+macro_line|#ifdef CONFIG_IP_NF_NAT_NEEDED
 r_struct
 (brace
 DECL|member|info
@@ -215,7 +215,7 @@ DECL|member|nat
 )brace
 id|nat
 suffix:semicolon
-macro_line|#endif /* CONFIG_IP_NF_NAT || CONFIG_IP_NF_NAT_MODULE */
+macro_line|#endif /* CONFIG_IP_NF_NAT_NEEDED */
 )brace
 suffix:semicolon
 multiline_comment|/* Alter reply tuple (maybe alter helper).  If it&squot;s already taken,&n;   return 0 and don&squot;t do alteration. */

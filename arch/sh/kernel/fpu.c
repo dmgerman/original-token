@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fpu.c,v 1.27 2000/03/05 01:48:34 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/fpu.c&n; *&n; * Save/restore floating point context for signal handlers.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999, 2000  Kaz Kojima &amp; Niibe Yutaka&n; *&n; * FIXME! These routines can be optimized in big endian case.&n; */
+multiline_comment|/* $Id: fpu.c,v 1.29 2000/03/22 13:42:10 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/fpu.c&n; *&n; * Save/restore floating point context for signal handlers.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999, 2000  Kaz Kojima &amp; Niibe Yutaka&n; *&n; * FIXME! These routines can be optimized in big endian case.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -147,9 +147,6 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Load the FPU with signalling NANS.  This bit pattern we&squot;re using&n; * has the property that no matter wether considered as single or as&n; * double precission represents signaling NANS.  &n; */
-multiline_comment|/* Double presision, NANS as NANS, rounding to nearest, no exceptions */
-DECL|macro|FPU_DEFAULT
-mdefine_line|#define FPU_DEFAULT  0x00080000
 DECL|function|fpu_init
 r_void
 id|fpu_init
@@ -207,7 +204,7 @@ l_int|0
 comma
 l_string|&quot;r&quot;
 (paren
-id|FPU_DEFAULT
+id|FPSCR_INIT
 )paren
 )paren
 suffix:semicolon

@@ -71,13 +71,15 @@ DECL|typedef|socket_state
 )brace
 id|socket_state
 suffix:semicolon
-DECL|macro|SO_ACCEPTCON
-mdefine_line|#define SO_ACCEPTCON&t;(1&lt;&lt;16)&t;&t;/* performed a listen&t;&t;*/
-DECL|macro|SO_WAITDATA
-mdefine_line|#define SO_WAITDATA&t;(1&lt;&lt;17)&t;&t;/* wait data to read&t;&t;*/
-DECL|macro|SO_NOSPACE
-mdefine_line|#define SO_NOSPACE&t;(1&lt;&lt;18)&t;&t;/* no space to write&t;&t;*/
+DECL|macro|__SO_ACCEPTCON
+mdefine_line|#define __SO_ACCEPTCON&t;(1&lt;&lt;16)&t;&t;/* performed a listen&t;&t;*/
 macro_line|#ifdef __KERNEL__
+DECL|macro|SOCK_ASYNC_NOSPACE
+mdefine_line|#define SOCK_ASYNC_NOSPACE&t;0
+DECL|macro|SOCK_ASYNC_WAITDATA
+mdefine_line|#define SOCK_ASYNC_WAITDATA&t;1
+DECL|macro|SOCK_NOSPACE
+mdefine_line|#define SOCK_NOSPACE&t;&t;2
 DECL|struct|socket
 r_struct
 id|socket

@@ -3156,7 +3156,7 @@ c_cond
 id|put_user
 c_func
 (paren
-id|lv-&gt;lv_read_ahead
+id|lv_ptr-&gt;lv_read_ahead
 comma
 (paren
 r_int

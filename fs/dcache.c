@@ -14,22 +14,6 @@ multiline_comment|/* #define DCACHE_DEBUG 1 */
 multiline_comment|/* Right now the dcache depends on the kernel lock */
 DECL|macro|check_lock
 mdefine_line|#define check_lock()&t;if (!kernel_locked()) BUG()
-multiline_comment|/* For managing the dcache */
-r_extern
-r_int
-r_int
-id|num_physpages
-comma
-id|page_cache_size
-suffix:semicolon
-r_extern
-r_int
-id|inodes_stat
-(braket
-)braket
-suffix:semicolon
-DECL|macro|nr_inodes
-mdefine_line|#define nr_inodes (inodes_stat[0])
 DECL|variable|dentry_cache
 id|kmem_cache_t
 op_star
@@ -2174,11 +2158,6 @@ op_star
 id|dentry
 )paren
 (brace
-id|check_lock
-c_func
-(paren
-)paren
-suffix:semicolon
 id|check_lock
 c_func
 (paren

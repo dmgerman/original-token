@@ -1843,8 +1843,11 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|ERESTARTSYS
+id|sock_intr_errno
+c_func
+(paren
+id|timeo
+)paren
 suffix:semicolon
 )brace
 r_goto

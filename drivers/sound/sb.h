@@ -140,6 +140,27 @@ r_struct
 id|mixer_def
 id|mixer_ent
 suffix:semicolon
+DECL|struct|sb_module_options
+r_struct
+id|sb_module_options
+(brace
+DECL|member|esstype
+r_int
+id|esstype
+suffix:semicolon
+multiline_comment|/* ESS chip type */
+DECL|member|acer
+r_int
+id|acer
+suffix:semicolon
+multiline_comment|/* Do acer notebook init? */
+DECL|member|sm_games
+r_int
+id|sm_games
+suffix:semicolon
+multiline_comment|/* Logitech soundman games? */
+)brace
+suffix:semicolon
 DECL|struct|sb_devc
 r_typedef
 r_struct
@@ -370,6 +391,12 @@ op_star
 id|midi_irq_cookie
 suffix:semicolon
 multiline_comment|/* IRQ cookie for the midi */
+DECL|member|sbmo
+r_struct
+id|sb_module_options
+id|sbmo
+suffix:semicolon
+multiline_comment|/* Module options */
 DECL|typedef|sb_devc
 )brace
 id|sb_devc
@@ -451,6 +478,11 @@ id|pci
 comma
 r_int
 id|pciio
+comma
+r_struct
+id|sb_module_options
+op_star
+id|sbmo
 )paren
 suffix:semicolon
 r_int
@@ -597,10 +629,6 @@ c_func
 r_int
 id|dev
 )paren
-suffix:semicolon
-r_extern
-r_int
-id|acer
 suffix:semicolon
 r_extern
 id|sb_devc

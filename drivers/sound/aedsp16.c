@@ -4410,6 +4410,9 @@ id|ints
 l_int|6
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 id|__setup
 c_func

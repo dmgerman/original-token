@@ -1,7 +1,7 @@
 macro_line|#ifndef _PPP_CHANNEL_H_
 DECL|macro|_PPP_CHANNEL_H_
 mdefine_line|#define _PPP_CHANNEL_H_
-multiline_comment|/*&n; * Definitions for the interface between the generic PPP code&n; * and a PPP channel.&n; *&n; * A PPP channel provides a way for the generic PPP code to send&n; * and receive packets over some sort of communications medium.&n; * Packets are stored in sk_buffs and have the 2-byte PPP protocol&n; * number at the start, but not the address and control bytes.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * ==FILEVERSION 20000225==&n; */
+multiline_comment|/*&n; * Definitions for the interface between the generic PPP code&n; * and a PPP channel.&n; *&n; * A PPP channel provides a way for the generic PPP code to send&n; * and receive packets over some sort of communications medium.&n; * Packets are stored in sk_buffs and have the 2-byte PPP protocol&n; * number at the start, but not the address and control bytes.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * ==FILEVERSION 20000322==&n; */
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 r_struct
@@ -158,7 +158,18 @@ id|ppp_channel
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Get the unit number associated with a channel */
+multiline_comment|/* Get the channel number for a channel */
+r_extern
+r_int
+id|ppp_channel_index
+c_func
+(paren
+r_struct
+id|ppp_channel
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get the unit number associated with a channel, or -1 if none */
 r_extern
 r_int
 id|ppp_unit_number

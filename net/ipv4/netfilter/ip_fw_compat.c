@@ -13,8 +13,6 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/compat_firewall.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 DECL|variable|fwops
 r_static
 r_struct

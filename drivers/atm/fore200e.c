@@ -19,9 +19,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#ifdef CONFIG_ATM_FORE200E_PCA
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_ATM_FORE200E_SBA
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;

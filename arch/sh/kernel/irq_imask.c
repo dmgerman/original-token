@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq_imask.c,v 1.2 2000/02/11 04:57:40 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_imask.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; * Simple interrupt handling using IMASK of SR register.&n; *&n; */
+multiline_comment|/* $Id: irq_imask.c,v 1.6 2000/03/06 14:11:32 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_imask.c&n; *&n; * Copyright (C) 1999, 2000  Niibe Yutaka&n; *&n; * Simple interrupt handling using IMASK of SR register.&n; *&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -124,6 +124,56 @@ comma
 id|end_imask_irq
 )brace
 suffix:semicolon
+DECL|function|set_interrupt_registers
+r_void
+r_static
+r_inline
+id|set_interrupt_registers
+c_func
+(paren
+r_int
+id|ip
+)paren
+(brace
+r_int
+r_int
+id|__dummy
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;ldc&t;%2, $r5_bank&bslash;n&bslash;t&quot;
+l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;and&t;#0xf0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;shlr8&t;%0&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq&t;#0x0f, %0&bslash;n&bslash;t&quot;
+l_string|&quot;bt&t;1f&t;! CLI-ed&bslash;n&bslash;t&quot;
+l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;and&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;%2, %0&bslash;n&bslash;t&quot;
+l_string|&quot;ldc&t;%0, $sr&bslash;n&quot;
+l_string|&quot;1:&quot;
+suffix:colon
+l_string|&quot;=&amp;z&quot;
+(paren
+id|__dummy
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_complement
+l_int|0xf0
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|ip
+op_lshift
+l_int|4
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|disable_imask_irq
 r_void
 id|disable_imask_irq
@@ -134,10 +184,6 @@ r_int
 id|irq
 )paren
 (brace
-r_int
-r_int
-id|__dummy
-suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -162,30 +208,10 @@ id|IMASK_PRIORITY
 op_minus
 id|irq
 suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
-l_string|&quot;and&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;or&t;%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;ldc&t;%0,sr&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|__dummy
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-l_int|0xffffff0f
-)paren
-comma
-l_string|&quot;r&quot;
+id|set_interrupt_registers
+c_func
 (paren
 id|interrupt_priority
-op_lshift
-l_int|4
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -200,10 +226,6 @@ r_int
 id|irq
 )paren
 (brace
-r_int
-r_int
-id|__dummy
-suffix:semicolon
 id|set_bit
 c_func
 (paren
@@ -223,30 +245,10 @@ c_func
 id|imask_mask
 )paren
 suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
-l_string|&quot;and&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;or&t;%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;ldc&t;%0,sr&quot;
-suffix:colon
-l_string|&quot;=&amp;r&quot;
-(paren
-id|__dummy
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-l_int|0xffffff0f
-)paren
-comma
-l_string|&quot;r&quot;
+id|set_interrupt_registers
+c_func
 (paren
 id|interrupt_priority
-op_lshift
-l_int|4
-)paren
 )paren
 suffix:semicolon
 )brace

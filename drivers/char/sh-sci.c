@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sh-sci.c,v 1.32 2000-03-05 13:56:18+09 gniibe Exp $&n; *&n; *  linux/drivers/char/sh-sci.c&n; *&n; *  SuperH on-chip serial module support.  (SCI with no FIFO / with FIFO)&n; *  Copyright (C) 1999, 2000  Niibe Yutaka&n; *&n; * TTY code is based on sx.c (Specialix SX driver) by:&n; *&n; *   (C) 1998 R.E.Wolff@BitWizard.nl&n; *&n; */
+multiline_comment|/* $Id: sh-sci.c,v 1.36 2000/03/22 13:32:10 gniibe Exp $&n; *&n; *  linux/drivers/char/sh-sci.c&n; *&n; *  SuperH on-chip serial module support.  (SCI with no FIFO / with FIFO)&n; *  Copyright (C) 1999, 2000  Niibe Yutaka&n; *  Copyright (C) 2000  Sugioka Toshinobu&n; *&n; * TTY code is based on sx.c (Specialix SX driver) by:&n; *&n; *   (C) 1998 R.E.Wolff@BitWizard.nl&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -24,7 +24,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &quot;generic_serial.h&quot;
+macro_line|#include &lt;linux/generic_serial.h&gt;
 macro_line|#include &quot;sh-sci.h&quot;
 macro_line|#ifdef CONFIG_DEBUG_KERNEL_WITH_GDB_STUB
 r_static
@@ -106,7 +106,7 @@ id|ptr
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|sci_set_real_termios
 c_func
 (paren
@@ -400,6 +400,38 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|t
+op_ge
+l_int|256
+)paren
+(brace
+id|ctrl_out
+c_func
+(paren
+(paren
+id|ctrl_in
+c_func
+(paren
+id|SCSMR
+)paren
+op_amp
+op_complement
+l_int|3
+)paren
+op_or
+l_int|1
+comma
+id|SCSMR
+)paren
+suffix:semicolon
+id|t
+op_rshift_assign
+l_int|2
+suffix:semicolon
+)brace
 id|ctrl_outb
 c_func
 (paren
@@ -463,8 +495,6 @@ suffix:semicolon
 r_int
 r_int
 id|smr_val
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#if defined(CONFIG_SH_SCIF_SERIAL)
 r_int
@@ -522,6 +552,16 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+id|smr_val
+op_assign
+id|ctrl_in
+c_func
+(paren
+id|SCSMR
+)paren
+op_amp
+l_int|3
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -642,7 +682,7 @@ suffix:semicolon
 )brace
 DECL|function|sci_set_real_termios
 r_static
-r_void
+r_int
 id|sci_set_real_termios
 c_func
 (paren
@@ -735,6 +775,9 @@ comma
 op_amp
 id|port-&gt;gs.tty-&gt;flags
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ********************************************************************** *&n; *                   the interrupt related routines                       *&n; * ********************************************************************** */
@@ -1326,6 +1369,10 @@ id|port
 op_assign
 id|ptr
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1343,10 +1390,41 @@ op_amp
 id|SCI_RX_THROTTLE
 )paren
 )paren
+(brace
 id|sci_receive_chars
 c_func
 (paren
 id|port
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|ctrl_out
+c_func
+(paren
+id|ctrl_in
+c_func
+(paren
+id|SCSCR
+)paren
+op_amp
+op_complement
+id|SCI_CTRL_FLAGS_RIE
+comma
+id|SCSCR
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1383,16 +1461,43 @@ id|port-&gt;gs.flags
 op_amp
 id|GS_ACTIVE
 )paren
-r_if
-c_cond
-(paren
-id|port-&gt;gs.xmit_cnt
-)paren
-(brace
 id|sci_transmit_chars
 c_func
 (paren
 id|port
+)paren
+suffix:semicolon
+r_else
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|ctrl_out
+c_func
+(paren
+id|ctrl_in
+c_func
+(paren
+id|SCSCR
+)paren
+op_amp
+op_complement
+id|SCI_CTRL_FLAGS_TIE
+comma
+id|SCSCR
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace

@@ -439,6 +439,10 @@ DECL|macro|__NR_setfsgid32
 mdefine_line|#define __NR_setfsgid32&t;&t;216
 DECL|macro|__NR_pivot_root
 mdefine_line|#define __NR_pivot_root&t;&t;217
+DECL|macro|__NR_mincore
+mdefine_line|#define __NR_mincore&t;&t;218
+DECL|macro|__NR_madvise
+mdefine_line|#define __NR_madvise&t;&t;219
 multiline_comment|/* user-visible error numbers are in the range -1 - -125: see &lt;asm-sh/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* Avoid using &quot;res&quot; which is declared to be in register r0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

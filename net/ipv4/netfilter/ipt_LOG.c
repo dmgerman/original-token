@@ -29,9 +29,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* FIXME evil kludge */
-multiline_comment|/* Make init and cleanup non-static, so gcc doesn&squot;t warn about unused,&n;   but don&squot;t export the symbols */
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 multiline_comment|/* Use lock to serialize, so printks don&squot;t overlap */
 DECL|variable|log_lock
 r_static

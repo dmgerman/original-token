@@ -5,14 +5,14 @@ r_char
 op_star
 id|sg_version_str
 op_assign
-l_string|&quot;Version: 3.1.12 (20000222)&quot;
+l_string|&quot;Version: 3.1.13 (20000323)&quot;
 suffix:semicolon
 DECL|variable|sg_version_num
 r_static
 r_int
 id|sg_version_num
 op_assign
-l_int|30112
+l_int|30113
 suffix:semicolon
 multiline_comment|/* 2 digits for each component */
 multiline_comment|/*&n; *  D. P. Gilbert (dgilbert@interlog.com, dougg@triode.net.au), notes:&n; *      - scsi logging is available via SCSI_LOG_TIMEOUT macros. First&n; *        the kernel/module needs to be built with CONFIG_SCSI_LOGGING&n; *        (otherwise the macros compile to empty statements).&n; *        Then before running the program to be debugged enter:&n; *          # echo &quot;scsi log timeout 7&quot; &gt; /proc/scsi/scsi&n; *        This will send copious output to the console and the log which&n; *        is usually /var/log/messages. To turn off debugging enter:&n; *          # echo &quot;scsi log timeout 0&quot; &gt; /proc/scsi/scsi&n; *        The &squot;timeout&squot; token was chosen because it is relatively unused.&n; *        The token &squot;hlcomplete&squot; should be used but that triggers too&n; *        much output from the sd device driver. To dump the current&n; *        state of the SCSI mid level data structures enter:&n; *          # echo &quot;scsi dump 1&quot; &gt; /proc/scsi/scsi&n; *        To dump the state of sg&squot;s data structures use:&n; *          # cat /proc/scsi/sg/debug&n; *&n; */
@@ -47,6 +47,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_static
 r_void
 id|sg_proc_cleanup
@@ -55,6 +56,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
@@ -2882,6 +2884,12 @@ id|hp-&gt;mx_sb_len
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 1
+id|hp-&gt;dxfer_direction
+op_assign
+id|SG_DXFER_UNKNOWN
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2920,6 +2928,7 @@ id|SG_DXFER_FROM_DEV
 suffix:colon
 id|SG_DXFER_NONE
 suffix:semicolon
+macro_line|#endif
 id|hp-&gt;dxfer_len
 op_assign
 id|mxsize
@@ -3640,6 +3649,15 @@ suffix:colon
 id|SCpnt-&gt;sc_data_direction
 op_assign
 id|SCSI_DATA_WRITE
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SG_DXFER_UNKNOWN
+suffix:colon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_UNKNOWN
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -6536,16 +6554,10 @@ r_if
 c_cond
 (paren
 id|k
-op_ge
+OL
 id|sg_template.dev_max
 )paren
 (brace
-id|panic
-(paren
-l_string|&quot;sg_dev_arr corrupt&quot;
-)paren
-suffix:semicolon
-)brace
 id|sdp
 op_assign
 (paren
@@ -6562,6 +6574,12 @@ id|Sg_device
 comma
 id|GFP_ATOMIC
 )paren
+suffix:semicolon
+)brace
+r_else
+id|sdp
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -7254,6 +7272,11 @@ r_int
 )paren
 id|hp-&gt;dxfer_len
 suffix:semicolon
+r_int
+id|dxfer_dir
+op_assign
+id|hp-&gt;dxfer_direction
+suffix:semicolon
 id|Sg_scatter_hold
 op_star
 id|req_schp
@@ -7286,21 +7309,33 @@ r_if
 c_cond
 (paren
 (paren
+id|dxfer_len
+op_le
+l_int|0
+)paren
+op_logical_or
+(paren
+id|dxfer_dir
+op_eq
+id|SG_DXFER_NONE
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|hp-&gt;flags
 op_amp
 id|SG_FLAG_DIRECT_IO
 )paren
 op_logical_and
 (paren
-id|dxfer_len
-OG
-l_int|0
-)paren
-op_logical_and
-(paren
-id|hp-&gt;dxfer_direction
+id|dxfer_dir
 op_ne
-id|SG_DXFER_NONE
+id|SG_DXFER_UNKNOWN
 )paren
 op_logical_and
 (paren
@@ -8721,6 +8756,11 @@ r_int
 id|hp-&gt;iovec_count
 suffix:semicolon
 r_int
+id|dxfer_dir
+op_assign
+id|hp-&gt;dxfer_direction
+suffix:semicolon
+r_int
 r_char
 op_star
 id|p
@@ -8748,15 +8788,21 @@ r_if
 c_cond
 (paren
 (paren
+id|SG_DXFER_UNKNOWN
+op_eq
+id|dxfer_dir
+)paren
+op_logical_or
+(paren
 id|SG_DXFER_TO_DEV
 op_eq
-id|hp-&gt;dxfer_direction
+id|dxfer_dir
 )paren
 op_logical_or
 (paren
 id|SG_DXFER_TO_FROM_DEV
 op_eq
-id|hp-&gt;dxfer_direction
+id|dxfer_dir
 )paren
 )paren
 (brace
@@ -9685,6 +9731,11 @@ r_int
 id|hp-&gt;iovec_count
 suffix:semicolon
 r_int
+id|dxfer_dir
+op_assign
+id|hp-&gt;dxfer_direction
+suffix:semicolon
+r_int
 r_char
 op_star
 id|p
@@ -9712,15 +9763,21 @@ r_if
 c_cond
 (paren
 (paren
+id|SG_DXFER_UNKNOWN
+op_eq
+id|dxfer_dir
+)paren
+op_logical_or
+(paren
 id|SG_DXFER_FROM_DEV
 op_eq
-id|hp-&gt;dxfer_direction
+id|dxfer_dir
 )paren
 op_logical_or
 (paren
 id|SG_DXFER_TO_FROM_DEV
 op_eq
-id|hp-&gt;dxfer_direction
+id|dxfer_dir
 )paren
 )paren
 (brace
@@ -13770,6 +13827,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|sg_proc_cleanup
 r_static
 r_void
@@ -13846,6 +13904,7 @@ id|proc_scsi
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sg_proc_dressz_read
 r_static
 r_int
@@ -14148,7 +14207,7 @@ suffix:semicolon
 id|PRINT_PROC
 c_func
 (paren
-l_string|&quot;dev_max=%d max_active_device=%d (origin 1)&bslash;n&quot;
+l_string|&quot;dev_max(currently)=%d max_active_device=%d (origin 1)&bslash;n&quot;
 comma
 id|sg_template.dev_max
 comma
@@ -14248,6 +14307,16 @@ c_func
 id|sdp-&gt;i_rdev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|fp
+op_assign
+id|sdp-&gt;headfp
+)paren
+)paren
+(brace
 id|PRINT_PROC
 c_func
 (paren
@@ -14279,10 +14348,7 @@ comma
 id|sdp-&gt;exclude
 )paren
 suffix:semicolon
-id|fp
-op_assign
-id|sdp-&gt;headfp
-suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -14384,7 +14450,7 @@ c_func
 id|srp-&gt;res_used
 ques
 c_cond
-l_string|&quot;     reserved_buff&gt;&gt; &quot;
+l_string|&quot;     rb&gt;&gt; &quot;
 suffix:colon
 (paren
 (paren
@@ -14438,12 +14504,6 @@ comma
 id|srp-&gt;header.pack_id
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|srp-&gt;res_used
-)paren
 id|PRINT_PROC
 c_func
 (paren

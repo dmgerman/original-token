@@ -1,6 +1,6 @@
 multiline_comment|/*&t;$Id: if_ppp.h,v 1.19 1999/03/31 06:07:57 paulus Exp $&t;*/
 multiline_comment|/*&n; * if_ppp.h - Point-to-Point Protocol definitions.&n; *&n; * Copyright (c) 1989 Carnegie Mellon University.&n; * All rights reserved.&n; *&n; * Redistribution and use in source and binary forms are permitted&n; * provided that the above copyright notice and this paragraph are&n; * duplicated in all such forms and that any documentation,&n; * advertising materials, and other materials related to such&n; * distribution and use acknowledge that the software was developed&n; * by Carnegie Mellon University.  The name of the&n; * University may not be used to endorse or promote products derived&n; * from this software without specific prior written permission.&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND WITHOUT ANY EXPRESS OR&n; * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED&n; * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.&n; *&n; */
-multiline_comment|/*&n; *  ==FILEVERSION 20000115==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     if_ppp.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new if_ppp.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*&n; *  ==FILEVERSION 20000324==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     if_ppp.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new if_ppp.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 macro_line|#ifndef _IF_PPP_H_
 DECL|macro|_IF_PPP_H_
 mdefine_line|#define _IF_PPP_H_
@@ -200,6 +200,8 @@ DECL|macro|PPPIOCDISCONN
 mdefine_line|#define PPPIOCDISCONN&t;_IO(&squot;t&squot;, 57)&t;&t;/* disconnect channel */
 DECL|macro|PPPIOCATTCHAN
 mdefine_line|#define PPPIOCATTCHAN&t;_IOW(&squot;t&squot;, 56, int)&t;/* attach to ppp channel */
+DECL|macro|PPPIOCGCHAN
+mdefine_line|#define PPPIOCGCHAN&t;_IOR(&squot;t&squot;, 55, int)&t;/* get ppp channel number */
 DECL|macro|SIOCGPPPSTATS
 mdefine_line|#define SIOCGPPPSTATS   (SIOCDEVPRIVATE + 0)
 DECL|macro|SIOCGPPPVER

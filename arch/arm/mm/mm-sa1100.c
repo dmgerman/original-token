@@ -45,7 +45,6 @@ l_int|0x00400000
 )brace
 comma
 multiline_comment|/* 4MB */
-macro_line|#if 0&t;/* only two banks until the bootmem stuff is fixed... */
 (brace
 l_int|0xd0000000
 comma
@@ -59,7 +58,6 @@ comma
 l_int|0x00400000
 )brace
 multiline_comment|/* 4MB */
-macro_line|#endif
 macro_line|#elif defined(CONFIG_SA1100_EMPEG)
 (brace
 l_int|0xc0000000
@@ -109,6 +107,13 @@ comma
 l_int|0x00400000
 )brace
 multiline_comment|/* 4MB */
+macro_line|#elif defined(CONFIG_SA1100_THINCLIENT)
+(brace
+l_int|0xc0000000
+comma
+l_int|0x01000000
+)brace
+multiline_comment|/* 16MB */
 macro_line|#elif defined(CONFIG_SA1100_TIFON)
 (brace
 l_int|0xc0000000
@@ -190,6 +195,70 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Flash */
+macro_line|#elif defined(CONFIG_SA1100_THINCLIENT)
+macro_line|#if 1
+multiline_comment|/* ThinClient: only one of those... */
+singleline_comment|//&t;{ 0xd0000000,      0x00000000,  0x01000000, DOMAIN_IO, 1, 1, 0, 0 }, /* Flash bank 0 when JP1 2-4 */
+(brace
+l_int|0xd0000000
+comma
+l_int|0x08000000
+comma
+l_int|0x01000000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Flash bank 1 when JP1 3-4 */
+macro_line|#else
+multiline_comment|/* GraphicsClient: */
+(brace
+l_int|0xd0000000
+comma
+l_int|0x08000000
+comma
+l_int|0x00800000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Flash bank 1 */
+(brace
+l_int|0xd0800000
+comma
+l_int|0x18000000
+comma
+l_int|0x00800000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Flash bank 3 */
+macro_line|#endif
 macro_line|#elif defined(CONFIG_SA1100_TIFON)
 (brace
 l_int|0xd0000000
@@ -230,7 +299,7 @@ l_int|0
 comma
 multiline_comment|/* Flash bank 2 */
 macro_line|#endif
-macro_line|#ifdef CONFIG_SA1101
+macro_line|#if defined( CONFIG_SA1101 )
 (brace
 l_int|0xdc000000
 comma
@@ -250,6 +319,26 @@ l_int|0
 )brace
 comma
 multiline_comment|/* SA1101 */
+macro_line|#elif defined( CONFIG_SA1100_THINCLIENT )
+(brace
+l_int|0xdc000000
+comma
+l_int|0x10000000
+comma
+l_int|0x00400000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* CPLD */
 macro_line|#endif
 (brace
 l_int|0xe0000000

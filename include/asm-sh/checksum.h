@@ -139,53 +139,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* Not used at the moment. It is difficult to imagine for what purpose&n;   it can be used :-) Please, do not forget to verify_area before it --ANK&n; */
-multiline_comment|/*&n; * This combination is currently not used, but possible:&n; */
-r_extern
-id|__inline__
-r_int
-r_int
-id|csum_partial_copy_to_user
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-comma
-r_int
-id|sum
-comma
-r_int
-op_star
-id|err_ptr
-)paren
-(brace
-r_return
-id|csum_partial_copy_generic
-(paren
-id|src
-comma
-id|dst
-comma
-id|len
-comma
-id|sum
-comma
-l_int|NULL
-comma
-id|err_ptr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n; * These are the old (and unsafe) way of doing checksums, a warning message will be&n; * printed if they are used and an exeption occurs.&n; *&n; * these functions should go away after some time.&n; */
 DECL|macro|csum_partial_copy_fromuser
 mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
@@ -232,12 +185,12 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;clrt&bslash;n&bslash;t&quot;
-l_string|&quot;mov&t;%0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%0, %1&bslash;n&bslash;t&quot;
 l_string|&quot;shll16&t;%0&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%0, %1&bslash;n&bslash;t&quot;
 l_string|&quot;movt&t;%0&bslash;n&bslash;t&quot;
 l_string|&quot;shlr16&t;%1&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;%1,%0&quot;
+l_string|&quot;add&t;%1, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -289,24 +242,24 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mov.l&t;@%1+,%0&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;#-4,%2&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@%1+, %0&bslash;n&bslash;t&quot;
+l_string|&quot;add&t;#-4, %2&bslash;n&bslash;t&quot;
 l_string|&quot;clrt&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+,%3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+,%3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+,%3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3,%0&bslash;n&quot;
+l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%3, %0&bslash;n&quot;
 l_string|&quot;1:&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+,%3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3,%0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
 l_string|&quot;movt&t;%3&bslash;n&bslash;t&quot;
 l_string|&quot;dt&t;%2&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;1b&bslash;n&bslash;t&quot;
-l_string|&quot; cmp/eq #1,%3&bslash;n&bslash;t&quot;
-l_string|&quot;mov&t;#0,%3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3,%0&bslash;n&bslash;t&quot;
+l_string|&quot; cmp/eq #1, %3&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;#0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
 multiline_comment|/* Since the input registers which are loaded with iph and ihl&n;&t;   are modified, we must also specify them as outputs, or gcc&n;&t;   will assume they contain their original values. */
 suffix:colon
 l_string|&quot;=r&quot;
@@ -414,11 +367,11 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;clrt&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3,%1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%0, %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%2, %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%3, %1&bslash;n&bslash;t&quot;
 l_string|&quot;movt&t;%0&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;%1,%0&quot;
+l_string|&quot;add&t;%1, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -580,26 +533,26 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;clrt&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(0,%2),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(4,%2),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(8,%2),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(12,%2),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(0,%3),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(4,%3),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(8,%3),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@(12,%3),%1&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%4,%0&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%5,%0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(0,%2), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(4,%2), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(8,%2), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(12,%2), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(0,%3), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(4,%3), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(8,%3), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@(12,%3), %1&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%4, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%5, %0&bslash;n&bslash;t&quot;
 l_string|&quot;movt&t;%1&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;%1,%0&bslash;n&quot;
+l_string|&quot;add&t;%1, %0&bslash;n&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

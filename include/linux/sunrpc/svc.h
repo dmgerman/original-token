@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/linux/sunrpc/svc.h&n; *&n; * RPC server 
 macro_line|#ifndef SUNRPC_SVC_H
 DECL|macro|SUNRPC_SVC_H
 mdefine_line|#define SUNRPC_SVC_H
+macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/sunrpc/types.h&gt;
 macro_line|#include &lt;linux/sunrpc/xdr.h&gt;
 macro_line|#include &lt;linux/sunrpc/svcauth.h&gt;

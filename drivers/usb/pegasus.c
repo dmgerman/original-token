@@ -15,12 +15,16 @@ op_star
 id|version
 op_assign
 id|__FILE__
-l_string|&quot;: v0.3.5 2000/03/21 Written by Petko Manolov (petkan@spct.net)&bslash;n&quot;
+l_string|&quot;: v0.3.7 2000/03/23 Written by Petko Manolov (petkan@spct.net)&bslash;n&quot;
 suffix:semicolon
 DECL|macro|PEGASUS_MTU
 mdefine_line|#define&t;PEGASUS_MTU&t;&t;1500
 DECL|macro|PEGASUS_MAX_MTU
 mdefine_line|#define PEGASUS_MAX_MTU&t;&t;1536
+DECL|macro|SROM_WRITE
+mdefine_line|#define&t;SROM_WRITE&t;&t;0x01
+DECL|macro|SROM_READ
+mdefine_line|#define&t;SROM_READ&t;&t;0x02
 DECL|macro|PEGASUS_TX_TIMEOUT
 mdefine_line|#define&t;PEGASUS_TX_TIMEOUT&t;(HZ*5)
 DECL|macro|ALIGN
@@ -164,11 +168,51 @@ id|usb_dev_id
 op_assign
 (brace
 (brace
+l_string|&quot;Billionton USB-100&quot;
+comma
+l_int|0x08dd
+comma
+l_int|0x0986
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;Corega FEter USB-TX&quot;
+comma
+l_int|0x7aa
+comma
+l_int|0x0004
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;MELCO LUA-TX&quot;
+comma
+l_int|0x0411
+comma
+l_int|0x0001
+comma
+l_int|NULL
+)brace
+comma
+(brace
 l_string|&quot;D-Link DSB-650TX&quot;
 comma
 l_int|0x2001
 comma
-l_int|0x4001
+l_int|0x4002
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;D-Link DSB-650TX(PNA)&quot;
+comma
+l_int|0x2001
+comma
+l_int|0x4003
 comma
 l_int|NULL
 )brace
@@ -194,7 +238,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_string|&quot;ADMtek AN986 (Pegasus) USB Ethernet&quot;
+l_string|&quot;ADMtek AN986 &bslash;&quot;Pegasus&bslash;&quot; USB Ethernet (eval board)&quot;
 comma
 l_int|0x07a6
 comma
@@ -463,10 +507,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|pegasus_read_srom_word
+DECL|function|pegasus_rw_srom_word
 r_static
 r_int
-id|pegasus_read_srom_word
+id|pegasus_rw_srom_word
 c_func
 (paren
 r_struct
@@ -480,6 +524,9 @@ comma
 id|__u16
 op_star
 id|retdata
+comma
+id|__u8
+id|direction
 )paren
 (brace
 r_int
@@ -498,7 +545,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0x02
+id|direction
 )brace
 suffix:semicolon
 id|pegasus_set_registers
@@ -581,7 +628,7 @@ suffix:semicolon
 id|warn
 c_func
 (paren
-l_string|&quot;read_srom_word() failed&quot;
+l_string|&quot;pegasus_rw_srom_word() failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -624,7 +671,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|pegasus_read_srom_word
+id|pegasus_rw_srom_word
 c_func
 (paren
 id|dev
@@ -642,6 +689,8 @@ id|i
 op_star
 l_int|2
 )braket
+comma
+id|SROM_READ
 )paren
 )paren
 r_return
@@ -1964,10 +2013,16 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|info
+c_func
+(paren
+l_string|&quot;%s set allmulti&quot;
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
-id|dbg
+id|info
 c_func
 (paren
 l_string|&quot;%s: set Rx mode&quot;
@@ -2038,14 +2093,14 @@ id|product
 )paren
 )paren
 r_return
-l_int|0
+id|i
 suffix:semicolon
 id|i
 op_increment
 suffix:semicolon
 )brace
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|pegasus_probe
@@ -2075,15 +2130,23 @@ id|pegasus
 op_star
 id|pegasus
 suffix:semicolon
+r_int
+id|dev_indx
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|dev_indx
+op_assign
 id|check_device_ids
 c_func
 (paren
 id|dev-&gt;descriptor.idVendor
 comma
 id|dev-&gt;descriptor.idProduct
+)paren
 )paren
 )paren
 (brace
@@ -2332,9 +2395,16 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: ADMtek AN986 Pegasus usb device&bslash;n&quot;
+l_string|&quot;%s: %s&bslash;n&quot;
 comma
 id|net-&gt;name
+comma
+id|usb_dev_id
+(braket
+id|dev_indx
+)braket
+dot
+id|name
 )paren
 suffix:semicolon
 r_return

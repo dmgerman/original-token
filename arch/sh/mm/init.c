@@ -988,6 +988,8 @@ comma
 id|zones_size
 comma
 id|__MEMORY_START
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

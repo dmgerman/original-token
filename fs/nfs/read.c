@@ -115,6 +115,10 @@ id|req-&gt;ra_res.count
 op_assign
 id|rsize
 suffix:semicolon
+id|req-&gt;ra_fattr.valid
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a page synchronously.&n; */
 r_static
@@ -302,6 +306,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|nfs_refresh_inode
+c_func
+(paren
+id|inode
+comma
+op_amp
+id|rqst.ra_fattr
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Even if we had a partial success we can&squot;t mark the page&n;&t;&t; * cache valid.&n;&t;&t; */
 r_if
 c_cond
@@ -395,25 +408,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/* Note: we don&squot;t refresh if the call returned error */
-r_if
-c_cond
-(paren
-id|refresh
-op_logical_and
-id|result
-op_ge
-l_int|0
-)paren
-id|nfs_refresh_inode
-c_func
-(paren
-id|inode
-comma
-op_amp
-id|rqst.ra_fattr
-)paren
-suffix:semicolon
 r_return
 id|result
 suffix:semicolon
@@ -487,6 +481,15 @@ comma
 id|result
 )paren
 suffix:semicolon
+id|nfs_refresh_inode
+c_func
+(paren
+id|req-&gt;ra_inode
+comma
+op_amp
+id|req-&gt;ra_fattr
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -526,15 +529,6 @@ id|result
 )paren
 suffix:semicolon
 )brace
-id|nfs_refresh_inode
-c_func
-(paren
-id|req-&gt;ra_inode
-comma
-op_amp
-id|req-&gt;ra_fattr
-)paren
-suffix:semicolon
 id|SetPageUptodate
 c_func
 (paren

@@ -284,18 +284,6 @@ id|diskinfo
 l_int|4
 )braket
 suffix:semicolon
-r_struct
-id|hd_geometry
-op_star
-id|loc
-op_assign
-(paren
-r_struct
-id|hd_geometry
-op_star
-)paren
-id|arg
-suffix:semicolon
 id|SDev
 op_assign
 id|rscsi_disks
@@ -336,6 +324,19 @@ r_case
 id|HDIO_GETGEO
 suffix:colon
 multiline_comment|/* Return BIOS disk parameters */
+(brace
+r_struct
+id|hd_geometry
+op_star
+id|loc
+op_assign
+(paren
+r_struct
+id|hd_geometry
+op_star
+)paren
+id|arg
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -515,6 +516,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_case
 id|BLKGETSIZE
 suffix:colon

@@ -5594,7 +5594,7 @@ id|router
 comma
 id|reg
 comma
-id|y
+id|x
 )paren
 suffix:semicolon
 id|msg

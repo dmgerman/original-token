@@ -4402,7 +4402,7 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_add  */
-multiline_comment|/**&n; *&t;mtrr_del&n; *&t;@reg: Register returned by mtrr_add&n; *&t;@base: Physical base address&n; *&t;@size: Size of region&n; *&n; *&t;If register is supplied then base and size are ignored. This is&n; *&t;how drivers should call it.&n; *&n; *&t;Releases an MTRR region. If the usage count drops to zero the &n; *&t;register is freed and the region returns to default state.&n; *&t;On success the register is returned, on failure a negative error&n; *&t;code.&n; */
+multiline_comment|/**&n; *&t;mtrr_del - delete a memory type region&n; *&t;@reg: Register returned by mtrr_add&n; *&t;@base: Physical base address&n; *&t;@size: Size of region&n; *&n; *&t;If register is supplied then base and size are ignored. This is&n; *&t;how drivers should call it.&n; *&n; *&t;Releases an MTRR region. If the usage count drops to zero the &n; *&t;register is freed and the region returns to default state.&n; *&t;On success the register is returned, on failure a negative error&n; *&t;code.&n; */
 DECL|function|mtrr_del
 r_int
 id|mtrr_del

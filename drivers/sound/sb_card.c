@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the Sound Blaster cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * 26-11-1999 Patched to compile without ISA PnP support in the&n; * kernel - Daniel Stone (tamriel@ductape.net) &n; *&n; * 06-01-2000 Refined and bugfixed ISA PnP support, added&n; *  CMI 8330 support - Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 18-01-2000 Separated sb_card and sb_common&n; *  Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * 04-02-2000 Added Soundblaster AWE 64 PnP support, isapnpjump&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 11-02-2000 Added Soundblaster AWE 32 PnP support, refined PnP code&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-02-2000 Hopefully fixed awe/sb16 related bugs, code cleanup&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-03-2000 Added some more cards, thanks to Torsten Werner.&n; *  Removed joystick and wavetable code, there are better places for them.&n; *  Code cleanup plus some fixes. &n; *&n; */
+multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the Sound Blaster cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * 26-11-1999 Patched to compile without ISA PnP support in the&n; * kernel - Daniel Stone (tamriel@ductape.net) &n; *&n; * 06-01-2000 Refined and bugfixed ISA PnP support, added&n; *  CMI 8330 support - Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 18-01-2000 Separated sb_card and sb_common&n; *  Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * 04-02-2000 Added Soundblaster AWE 64 PnP support, isapnpjump&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 11-02-2000 Added Soundblaster AWE 32 PnP support, refined PnP code&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-02-2000 Hopefully fixed awe/sb16 related bugs, code cleanup&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; * 13-03-2000 Added some more cards, thanks to Torsten Werner.&n; *  Removed joystick and wavetable code, there are better places for them.&n; *  Code cleanup plus some fixes. &n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; * &n; * 26-03-2000 Fixed acer, esstype and sm_games module options.&n; *  Alessandro Zummo &lt;azummo@ita.flashnet.it&gt;&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -20,6 +20,88 @@ r_void
 op_star
 id|smw_free
 suffix:semicolon
+multiline_comment|/*&n; *    Note DMA2 of -1 has the right meaning in the SB16 driver as well&n; *    as here. It will cause either an error if it is needed or a fallback&n; *    to the 8bit channel.&n; */
+DECL|variable|mpu_io
+r_static
+r_int
+id|__initdata
+id|mpu_io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|io
+r_static
+r_int
+id|__initdata
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_static
+r_int
+id|__initdata
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma
+r_static
+r_int
+id|__initdata
+id|dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma16
+r_static
+r_int
+id|__initdata
+id|dma16
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Set this for modules that need it */
+DECL|variable|type
+r_static
+r_int
+id|__initdata
+id|type
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Can set this to a specific card type */
+DECL|variable|esstype
+r_static
+r_int
+id|__initdata
+id|esstype
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ESS chip type */
+DECL|variable|acer
+r_static
+r_int
+id|__initdata
+id|acer
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Do acer notebook init? */
+DECL|variable|sm_games
+r_static
+r_int
+id|__initdata
+id|sm_games
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Logitech soundman games? */
 DECL|function|attach_sb_card
 r_static
 r_void
@@ -69,6 +151,10 @@ op_star
 id|hw_config
 )paren
 (brace
+r_struct
+id|sb_module_options
+id|sbmo
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -336,7 +422,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/* This is useless since is done by sb_dsp_detect - azummo */
+multiline_comment|/* This is useless since it is done by sb_dsp_detect - azummo */
 r_if
 c_cond
 (paren
@@ -362,6 +448,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Setup extra module options */
+id|sbmo.acer
+op_assign
+id|acer
+suffix:semicolon
+id|sbmo.sm_games
+op_assign
+id|sm_games
+suffix:semicolon
+id|sbmo.esstype
+op_assign
+id|esstype
+suffix:semicolon
 r_return
 id|sb_dsp_detect
 c_func
@@ -371,6 +470,9 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+op_amp
+id|sbmo
 )paren
 suffix:semicolon
 )brace
@@ -409,11 +511,6 @@ id|sbmpu
 suffix:semicolon
 )brace
 )brace
-r_extern
-r_int
-id|esstype
-suffix:semicolon
-multiline_comment|/* ESS chip type */
 DECL|variable|cfg
 r_static
 r_struct
@@ -440,61 +537,6 @@ id|mpu_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *    Note DMA2 of -1 has the right meaning in the SB16 driver as well&n; *    as here. It will cause either an error if it is needed or a fallback&n; *    to the 8bit channel.&n; */
-DECL|variable|mpu_io
-r_static
-r_int
-id|__initdata
-id|mpu_io
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|io
-r_static
-r_int
-id|__initdata
-id|io
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|irq
-r_static
-r_int
-id|__initdata
-id|irq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|dma
-r_static
-r_int
-id|__initdata
-id|dma
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|dma16
-r_static
-r_int
-id|__initdata
-id|dma16
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* Set this for modules that need it */
-DECL|variable|type
-r_static
-r_int
-id|__initdata
-id|type
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Can set this to a specific card type */
 macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 DECL|variable|isapnp
 r_static

@@ -52,7 +52,7 @@ id|x
 id|__asm__
 c_func
 (paren
-l_string|&quot;swap.b %0,%0&quot;
+l_string|&quot;swap.b %0, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

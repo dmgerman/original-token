@@ -5,8 +5,6 @@ macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ipt_MARK.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 r_static
 r_int
 r_int

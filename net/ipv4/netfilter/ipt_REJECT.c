@@ -3,15 +3,13 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
-macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;net/ip.h&gt;
 r_struct
 id|in_device
 suffix:semicolon
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ipt_REJECT.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 macro_line|#if 0
 mdefine_line|#define DEBUGP printk
 macro_line|#else
@@ -65,6 +63,7 @@ id|reject
 op_assign
 id|targinfo
 suffix:semicolon
+multiline_comment|/* WARNING: This code has causes reentry within iptables.&n;&t;   This means that the iptables jump stack is now crap.  We&n;&t;   must return an absolute verdict. --RR */
 r_switch
 c_cond
 (paren
@@ -263,18 +262,6 @@ id|pskb
 suffix:semicolon
 )brace
 )brace
-r_break
-suffix:semicolon
-r_case
-id|IPT_TCP_RESET
-suffix:colon
-id|tcp_v4_send_reset
-c_func
-(paren
-op_star
-id|pskb
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -503,40 +490,6 @@ id|DEBUGP
 c_func
 (paren
 l_string|&quot;REJECT: ECHOREPLY illegal for non-ping&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|rejinfo-&gt;with
-op_eq
-id|IPT_TCP_RESET
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|e-&gt;ip.proto
-op_ne
-id|IPPROTO_TCP
-op_logical_or
-(paren
-id|e-&gt;ip.invflags
-op_amp
-id|IPT_INV_PROTO
-)paren
-)paren
-(brace
-id|DEBUGP
-c_func
-(paren
-l_string|&quot;REJECT: TCP_RESET illegal for non-tcp&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

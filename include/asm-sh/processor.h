@@ -74,18 +74,18 @@ DECL|macro|cpu_data
 mdefine_line|#define cpu_data (&amp;boot_cpu_data)
 DECL|macro|current_cpu_data
 mdefine_line|#define current_cpu_data boot_cpu_data
-multiline_comment|/*&n; * User space process size: 2GB.&n; */
+multiline_comment|/*&n; * User space process size: 2GB.&n; *&n; * Since SH7709 and SH7750 have &quot;area 7&quot;, we can&squot;t use 0x7c000000--0x7fffffff&n; */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;0x80000000
+mdefine_line|#define TASK_SIZE&t;0x7c000000UL
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
-multiline_comment|/*&n; * FPU structure and data&n; */
-multiline_comment|/* FD-bit of SR register.&n; * When it&squot;s set, it means the processor doesn&squot;t have right to use FPU,&n; * and it results exception when the floating operation is executed.&n; */
+multiline_comment|/*&n; * Bit of SR register&n; *&n; * FD-bit:&n; *     When it&squot;s set, it means the processor doesn&squot;t have right to use FPU,&n; *     and it results exception when the floating operation is executed.&n; *&n; * IMASK-bit:&n; *     Interrupt level mask&n; */
 DECL|macro|SR_FD
-mdefine_line|#define SR_FD&t;0x00008000
-DECL|macro|NUM_FPU_REGS
-mdefine_line|#define NUM_FPU_REGS&t;16
+mdefine_line|#define SR_FD    0x00008000
+DECL|macro|SR_IMASK
+mdefine_line|#define SR_IMASK 0x000000f0
+multiline_comment|/*&n; * FPU structure and data&n; */
 DECL|struct|sh_fpu_hard_struct
 r_struct
 id|sh_fpu_hard_struct
@@ -95,15 +95,16 @@ r_int
 r_int
 id|fp_regs
 (braket
-id|NUM_FPU_REGS
+l_int|16
 )braket
 suffix:semicolon
-DECL|member|xf_regs
+DECL|member|xd_regs
 r_int
 r_int
-id|xf_regs
+r_int
+id|xd_regs
 (braket
-id|NUM_FPU_REGS
+l_int|8
 )braket
 suffix:semicolon
 DECL|member|fpscr
@@ -133,7 +134,16 @@ r_int
 r_int
 id|fp_regs
 (braket
-id|NUM_FPU_REGS
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|xd_regs
+r_int
+r_int
+r_int
+id|xd_regs
+(braket
+l_int|8
 )braket
 suffix:semicolon
 DECL|member|fpscr
@@ -145,14 +155,6 @@ DECL|member|fpul
 r_int
 r_int
 id|fpul
-suffix:semicolon
-DECL|member|xf_regs
-r_int
-r_int
-id|xf_regs
-(braket
-id|NUM_FPU_REGS
-)braket
 suffix:semicolon
 DECL|member|lookahead
 r_int
@@ -224,7 +226,7 @@ DECL|macro|INIT_THREAD
 mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* sp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t; /* pc */&t;&bslash;&n;&t;0, 0, &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0, &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{{{0,}},} &t;&t;&t;&t;/* fpu state */&t;&bslash;&n;}
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs, new_pc, new_sp)&t; &bslash;&n;&t;set_fs(USER_DS);&t;&t;&t; &bslash;&n;&t;regs-&gt;pr = 0;   &t;&t; &t; &bslash;&n;&t;regs-&gt;sr = 0;&t;&t;/* User mode. */ &bslash;&n;&t;regs-&gt;pc = new_pc;&t;&t;&t; &bslash;&n;&t;regs-&gt;sp = new_sp
+mdefine_line|#define start_thread(regs, new_pc, new_sp)&t; &bslash;&n;&t;set_fs(USER_DS);&t;&t;&t; &bslash;&n;&t;regs-&gt;pr = 0;   &t;&t; &t; &bslash;&n;&t;regs-&gt;sr = 0;&t;&t;/* User mode. */ &bslash;&n;&t;regs-&gt;pc = new_pc;&t;&t;&t; &bslash;&n;&t;regs-&gt;regs[15] = new_sp
 multiline_comment|/* Forward declaration, a strange C thing */
 r_struct
 id|task_struct
@@ -371,6 +373,9 @@ DECL|macro|unlazy_fpu
 mdefine_line|#define unlazy_fpu(tsk) do { &t;&t;&t;&bslash;&n;&t;if ((tsk)-&gt;flags &amp; PF_USEDFPU) {&t;&bslash;&n;&t;&t;grab_fpu();&t;&t;&t;&bslash;&n;&t;&t;save_fpu(tsk); &t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|clear_fpu
 mdefine_line|#define clear_fpu(tsk) do { &t;&t;&t;&bslash;&n;&t;if ((tsk)-&gt;flags &amp; PF_USEDFPU)&t; &t;&bslash;&n;&t;&t;(tsk)-&gt;flags &amp;= ~PF_USEDFPU; &t;&bslash;&n;} while (0)
+multiline_comment|/* Double presision, NANS as NANS, rounding to nearest, no exceptions */
+DECL|macro|FPSCR_INIT
+mdefine_line|#define FPSCR_INIT  0x00080000
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern

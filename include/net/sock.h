@@ -604,8 +604,12 @@ id|__u8
 id|retransmits
 suffix:semicolon
 DECL|member|__empty1
-id|__u16
+id|__u8
 id|__empty1
+suffix:semicolon
+DECL|member|sorry
+id|__u8
+id|sorry
 suffix:semicolon
 DECL|member|defer_accept
 id|__u8
@@ -1999,7 +2003,7 @@ suffix:semicolon
 DECL|macro|lock_sock
 mdefine_line|#define lock_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;if ((__sk)-&gt;lock.users != 0) &bslash;&n;&t;&t;__lock_sock(__sk); &bslash;&n;&t;(__sk)-&gt;lock.users = 1; &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
 DECL|macro|release_sock
-mdefine_line|#define release_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;if ((__sk)-&gt;backlog.tail != NULL) &bslash;&n;&t;&t;__release_sock(__sk); &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;&t;wake_up(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
+mdefine_line|#define release_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;if ((__sk)-&gt;backlog.tail != NULL) &bslash;&n;&t;&t;__release_sock(__sk); &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;        if (waitqueue_active(&amp;((__sk)-&gt;lock.wq))) wake_up(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
 multiline_comment|/* BH context may only use the following locking interface. */
 DECL|macro|bh_lock_sock
 mdefine_line|#define bh_lock_sock(__sk)&t;spin_lock(&amp;((__sk)-&gt;lock.slock))
@@ -3755,6 +3759,43 @@ r_return
 id|amt
 suffix:semicolon
 )brace
+DECL|function|sk_wake_async
+r_extern
+id|__inline__
+r_void
+id|sk_wake_async
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|how
+comma
+r_int
+id|band
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;socket
+op_logical_and
+id|sk-&gt;socket-&gt;fasync_list
+)paren
+id|sock_wake_async
+c_func
+(paren
+id|sk-&gt;socket
+comma
+id|how
+comma
+id|band
+)paren
+suffix:semicolon
+)brace
 DECL|macro|SOCK_MIN_SNDBUF
 mdefine_line|#define SOCK_MIN_SNDBUF 2048
 DECL|macro|SOCK_MIN_RCVBUF
@@ -3890,6 +3931,31 @@ id|sk-&gt;rcvlowat
 comma
 id|len
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* Alas, with timeout socket operations are not restartable.&n; * Compare this to poll().&n; */
+DECL|function|sock_intr_errno
+r_extern
+id|__inline__
+r_int
+id|sock_intr_errno
+c_func
+(paren
+r_int
+id|timeo
+)paren
+(brace
+r_return
+id|timeo
+op_eq
+id|MAX_SCHEDULE_TIMEOUT
+ques
+c_cond
+op_minus
+id|ERESTARTSYS
+suffix:colon
+op_minus
+id|EINTR
 suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;Enable debug/info messages &n; */

@@ -1,19 +1,130 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/system.h&n; *&n; * Copyright (c) 1999 Nicolas Pitre &lt;nico@cam.org&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
+DECL|function|arch_idle
+r_extern
+id|__inline__
+r_void
+id|arch_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|current-&gt;need_resched
+op_logical_and
+op_logical_neg
+id|hlt_counter
+)paren
+(brace
+id|cpu_do_idle
+c_func
+(paren
+id|IDLE_CLOCK_SLOW
+)paren
+suffix:semicolon
+id|cpu_do_idle
+c_func
+(paren
+id|IDLE_WAIT_FAST
+)paren
+suffix:semicolon
+id|cpu_do_idle
+c_func
+(paren
+id|IDLE_CLOCK_FAST
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#ifdef CONFIG_SA1100_VICTOR
+DECL|function|arch_power_off
+r_extern
+r_inline
+r_void
+id|arch_power_off
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* switch off power supply */
+id|mdelay
+c_func
+(paren
+l_int|2000
+)paren
+suffix:semicolon
+id|GPCR
+op_assign
+id|GPIO_GPIO23
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* power off unconditionally */
 DECL|macro|arch_reset
-mdefine_line|#define arch_reset( x ) {&t;&t;&t;&t;&t;&bslash;&n;&t;/* switch off power supply */&t;&t;&t;&t;&bslash;&n;&t;mdelay(2000); &t;&t;&t;&t;&t;&t;&bslash;&n;&t;GPCR = GPIO_GPIO23;&t;&t;&t;&t;&t;&bslash;&n;&t;while(1);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define arch_reset(x) arch_power_off()
 macro_line|#else
-DECL|macro|arch_reset
-mdefine_line|#define arch_reset(x)&t;cpu_reset(0)
-macro_line|#endif
-macro_line|#if 0
-mdefine_line|#define arch_do_idle()          cpu_do_idle()
-macro_line|#else
-multiline_comment|/* Enter SA1100 idle mode (see data sheet sec 9.5).&n; * It seems that the wait-on-interrupt just hang the CPU forever if it&squot;s&n; * on the end of a cache line.  Workaround: we force an explicit alignment&n; * before it.&n; */
-DECL|macro|arch_do_idle
-mdefine_line|#define arch_do_idle() &bslash;&n;&t;do { &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c15, c2, 2&t;@ Disable clock switching &bslash;n&quot; &bslash;&n;&quot;&t;ldr&t;%0, [%0]&t;&t;@ Must perform a non-cached access &bslash;n&quot; &bslash;&n;&quot;&t;b&t;1f&t;&t;&t;@ Seems we must align the next &bslash;n&quot; &bslash;&n;&quot;&t;.align 5&t;&t;&t;@ instruction on a cache line &bslash;n&quot; &bslash;&n;&quot;1:&t;mcr&t;p15, 0, %0, c15, c8, 2&t;@ Wait for interrupts &bslash;n&quot; &bslash;&n;&quot;&t;mov&t;r0, r0&t;&t;&t;@ insert NOP to ensure SA1100 re-awakes&bslash;n&quot; &bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c15, c1, 2&t;@ Reenable clock switching &bslash;n&quot; &bslash;&n;&t;: : &quot;r&quot; (&amp;ICIP) : &quot;cc&quot; ); &bslash;&n;&t;} while (0)
-macro_line|#endif
+DECL|function|arch_reset
+r_extern
+r_inline
+r_void
+id|arch_reset
+c_func
+(paren
+r_char
+id|mode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mode
+op_eq
+l_char|&squot;s&squot;
+)paren
+(brace
+multiline_comment|/* Jump into ROM at address 0 */
+id|cpu_reset
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Activate SA1100 watchdog and wait for the trigger... */
+id|OSMR3
+op_assign
+id|OSCR
+op_plus
+l_int|3686400
+op_div
+l_int|2
+suffix:semicolon
+multiline_comment|/* in 1/2 sec */
+id|OWER
+op_or_assign
+id|OWER_WME
+suffix:semicolon
+id|OIER
+op_or_assign
+id|OIER_E3
+suffix:semicolon
+)brace
+)brace
 DECL|macro|arch_power_off
 mdefine_line|#define arch_power_off()&t;do { } while (0)
+macro_line|#endif
 eof

@@ -3055,10 +3055,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_extern
-r_int
-id|sm_games
-suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -3072,7 +3068,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sm_games
+id|devc-&gt;sbmo.sm_games
 )paren
 id|devc-&gt;levels
 op_assign

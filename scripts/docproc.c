@@ -30,7 +30,7 @@ r_char
 op_star
 id|vec
 (braket
-l_int|1024
+l_int|8192
 )braket
 suffix:semicolon
 r_char
@@ -100,7 +100,7 @@ l_int|1
 suffix:semicolon
 id|vp
 OL
-l_int|1021
+l_int|8189
 suffix:semicolon
 id|i
 op_increment
@@ -296,7 +296,7 @@ suffix:semicolon
 id|perror
 c_func
 (paren
-l_string|&quot;exec&quot;
+l_string|&quot;exec scripts/kernel-doc&quot;
 )paren
 suffix:semicolon
 m_exit

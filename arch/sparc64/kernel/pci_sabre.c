@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_sabre.c,v 1.15 2000/03/10 02:42:16 davem Exp $&n; * pci_sabre.c: Sabre specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_sabre.c,v 1.16 2000/03/25 05:18:12 davem Exp $&n; * pci_sabre.c: Sabre specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -4544,6 +4544,15 @@ id|list_head
 op_star
 id|walk
 suffix:semicolon
+multiline_comment|/* The APB bridge speaks to the Sabre host PCI bridge&n;&t; * at 66Mhz, but the front side of APB runs at 33Mhz&n;&t; * for both segments.&n;&t; */
+id|p-&gt;pbm_A.is_66mhz_capable
+op_assign
+l_int|0
+suffix:semicolon
+id|p-&gt;pbm_B.is_66mhz_capable
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Unlike for PSYCHO, we can only have one SABRE&n;&t; * in a system.  Having multiple SABREs is thus&n;&t; * and error, and as a consequence we do not need&n;&t; * to do any bus renumbering but we do have to have&n;&t; * the pci_bus2pbm array setup properly.&n;&t; *&n;&t; * Also note that the SABRE host bridge is hardwired&n;&t; * to live at bus 0.&n;&t; */
 r_if
 c_cond
@@ -4582,6 +4591,49 @@ op_amp
 id|p-&gt;pbm_A
 )paren
 suffix:semicolon
+(brace
+r_int
+r_int
+id|devfn
+suffix:semicolon
+id|u8
+op_star
+id|addr
+suffix:semicolon
+id|devfn
+op_assign
+id|PCI_DEVFN
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|sabre_pci_config_mkaddr
+c_func
+(paren
+op_amp
+id|p-&gt;pbm_A
+comma
+l_int|0
+comma
+id|devfn
+comma
+id|PCI_LATENCY_TIMER
+)paren
+suffix:semicolon
+id|pci_config_write8
+c_func
+(paren
+id|addr
+comma
+l_int|32
+)paren
+suffix:semicolon
+)brace
 id|apb_init
 c_func
 (paren
@@ -4695,6 +4747,22 @@ id|pbus
 )paren
 suffix:semicolon
 id|pci_fixup_irq
+c_func
+(paren
+id|pbm
+comma
+id|pbus
+)paren
+suffix:semicolon
+id|pci_determine_66mhz_disposition
+c_func
+(paren
+id|pbm
+comma
+id|pbus
+)paren
+suffix:semicolon
+id|pci_setup_busmastering
 c_func
 (paren
 id|pbm

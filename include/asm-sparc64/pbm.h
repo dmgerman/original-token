@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.21 2000/03/10 02:42:17 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.22 2000/03/25 05:18:30 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -270,6 +270,15 @@ DECL|member|mem_space
 r_struct
 id|resource
 id|mem_space
+suffix:semicolon
+multiline_comment|/* State of 66MHz capabilities on this PBM. */
+DECL|member|is_66mhz_capable
+r_int
+id|is_66mhz_capable
+suffix:semicolon
+DECL|member|all_devs_66mhz
+r_int
+id|all_devs_66mhz
 suffix:semicolon
 multiline_comment|/* This PBM&squot;s streaming buffer. */
 DECL|member|stc

@@ -2,18 +2,18 @@ multiline_comment|/*&n; * NFSv3 protocol definitions&n; */
 macro_line|#ifndef _LINUX_NFS3_H
 DECL|macro|_LINUX_NFS3_H
 mdefine_line|#define _LINUX_NFS3_H
-macro_line|#include &lt;linux/sunrpc/msg_prot.h&gt;
-macro_line|#include &lt;linux/nfs.h&gt;
 DECL|macro|NFS3_PORT
 mdefine_line|#define NFS3_PORT&t;&t;2049
 DECL|macro|NFS3_MAXDATA
-mdefine_line|#define NFS3_MAXDATA&t;&t;8192
+mdefine_line|#define NFS3_MAXDATA&t;&t;32768
 DECL|macro|NFS3_MAXPATHLEN
 mdefine_line|#define NFS3_MAXPATHLEN&t;&t;PATH_MAX
 DECL|macro|NFS3_MAXNAMLEN
 mdefine_line|#define NFS3_MAXNAMLEN&t;&t;NAME_MAX
 DECL|macro|NFS3_MAXGROUPS
 mdefine_line|#define NFS3_MAXGROUPS&t;&t;16
+DECL|macro|NFS3_FHSIZE
+mdefine_line|#define NFS3_FHSIZE&t;&t;64
 DECL|macro|NFS3_COOKIESIZE
 mdefine_line|#define NFS3_COOKIESIZE&t;&t;4
 DECL|macro|NFS3_FIFO_DEV
@@ -48,12 +48,26 @@ mdefine_line|#define NFS3_ACCESS_DELETE&t;0x0010
 DECL|macro|NFS3_ACCESS_EXECUTE
 mdefine_line|#define NFS3_ACCESS_EXECUTE&t;0x0020
 multiline_comment|/* Flags for create mode */
-DECL|macro|NFS3_CREATE_UNCHECKED
-mdefine_line|#define NFS3_CREATE_UNCHECKED&t;0
-DECL|macro|NFS3_CREATE_GUARDED
-mdefine_line|#define NFS3_CREATE_GUARDED&t;1
-DECL|macro|NFS3_CREATE_EXCLUSIVE
-mdefine_line|#define NFS3_CREATE_EXCLUSIVE&t;2
+DECL|enum|nfs3_createmode
+r_enum
+id|nfs3_createmode
+(brace
+DECL|enumerator|NFS3_CREATE_UNCHECKED
+id|NFS3_CREATE_UNCHECKED
+op_assign
+l_int|0
+comma
+DECL|enumerator|NFS3_CREATE_GUARDED
+id|NFS3_CREATE_GUARDED
+op_assign
+l_int|1
+comma
+DECL|enumerator|NFS3_CREATE_EXCLUSIVE
+id|NFS3_CREATE_EXCLUSIVE
+op_assign
+l_int|2
+)brace
+suffix:semicolon
 multiline_comment|/* NFSv3 file system properties */
 DECL|macro|NFS3_FSF_LINK
 mdefine_line|#define NFS3_FSF_LINK&t;&t;0x0001
@@ -123,239 +137,67 @@ l_int|8
 suffix:semicolon
 DECL|macro|NFS3_VERSION
 mdefine_line|#define NFS3_VERSION&t;&t;3
-DECL|macro|NFSPROC_NULL
-mdefine_line|#define NFSPROC_NULL&t;&t;0
-DECL|macro|NFSPROC_GETATTR
-mdefine_line|#define NFSPROC_GETATTR&t;&t;1
-DECL|macro|NFSPROC_SETATTR
-mdefine_line|#define NFSPROC_SETATTR&t;&t;2
-DECL|macro|NFSPROC_ROOT
-mdefine_line|#define NFSPROC_ROOT&t;&t;3
-DECL|macro|NFSPROC_LOOKUP
-mdefine_line|#define NFSPROC_LOOKUP&t;&t;4
-DECL|macro|NFSPROC_READLINK
-mdefine_line|#define NFSPROC_READLINK&t;5
-DECL|macro|NFSPROC_READ
-mdefine_line|#define NFSPROC_READ&t;&t;6
-DECL|macro|NFSPROC_WRITECACHE
-mdefine_line|#define NFSPROC_WRITECACHE&t;7
-DECL|macro|NFSPROC_WRITE
-mdefine_line|#define NFSPROC_WRITE&t;&t;8
-DECL|macro|NFSPROC_CREATE
-mdefine_line|#define NFSPROC_CREATE&t;&t;9
-DECL|macro|NFSPROC_REMOVE
-mdefine_line|#define NFSPROC_REMOVE&t;&t;10
-DECL|macro|NFSPROC_RENAME
-mdefine_line|#define NFSPROC_RENAME&t;&t;11
-DECL|macro|NFSPROC_LINK
-mdefine_line|#define NFSPROC_LINK&t;&t;12
-DECL|macro|NFSPROC_SYMLINK
-mdefine_line|#define NFSPROC_SYMLINK&t;&t;13
-DECL|macro|NFSPROC_MKDIR
-mdefine_line|#define NFSPROC_MKDIR&t;&t;14
-DECL|macro|NFSPROC_RMDIR
-mdefine_line|#define NFSPROC_RMDIR&t;&t;15
-DECL|macro|NFSPROC_READDIR
-mdefine_line|#define NFSPROC_READDIR&t;&t;16
-DECL|macro|NFSPROC_STATFS
-mdefine_line|#define NFSPROC_STATFS&t;&t;17
+DECL|macro|NFS3PROC_NULL
+mdefine_line|#define NFS3PROC_NULL&t;&t;0
+DECL|macro|NFS3PROC_GETATTR
+mdefine_line|#define NFS3PROC_GETATTR&t;1
+DECL|macro|NFS3PROC_SETATTR
+mdefine_line|#define NFS3PROC_SETATTR&t;2
+DECL|macro|NFS3PROC_LOOKUP
+mdefine_line|#define NFS3PROC_LOOKUP&t;&t;3
+DECL|macro|NFS3PROC_ACCESS
+mdefine_line|#define NFS3PROC_ACCESS&t;&t;4
+DECL|macro|NFS3PROC_READLINK
+mdefine_line|#define NFS3PROC_READLINK&t;5
+DECL|macro|NFS3PROC_READ
+mdefine_line|#define NFS3PROC_READ&t;&t;6
+DECL|macro|NFS3PROC_WRITE
+mdefine_line|#define NFS3PROC_WRITE&t;&t;7
+DECL|macro|NFS3PROC_CREATE
+mdefine_line|#define NFS3PROC_CREATE&t;&t;8
+DECL|macro|NFS3PROC_MKDIR
+mdefine_line|#define NFS3PROC_MKDIR&t;&t;9
+DECL|macro|NFS3PROC_SYMLINK
+mdefine_line|#define NFS3PROC_SYMLINK&t;10
+DECL|macro|NFS3PROC_MKNOD
+mdefine_line|#define NFS3PROC_MKNOD&t;&t;11
+DECL|macro|NFS3PROC_REMOVE
+mdefine_line|#define NFS3PROC_REMOVE&t;&t;12
+DECL|macro|NFS3PROC_RMDIR
+mdefine_line|#define NFS3PROC_RMDIR&t;&t;13
+DECL|macro|NFS3PROC_RENAME
+mdefine_line|#define NFS3PROC_RENAME&t;&t;14
+DECL|macro|NFS3PROC_LINK
+mdefine_line|#define NFS3PROC_LINK&t;&t;15
+DECL|macro|NFS3PROC_READDIR
+mdefine_line|#define NFS3PROC_READDIR&t;16
+DECL|macro|NFS3PROC_READDIRPLUS
+mdefine_line|#define NFS3PROC_READDIRPLUS&t;17
+DECL|macro|NFS3PROC_FSSTAT
+mdefine_line|#define NFS3PROC_FSSTAT&t;&t;18
+DECL|macro|NFS3PROC_FSINFO
+mdefine_line|#define NFS3PROC_FSINFO&t;&t;19
+DECL|macro|NFS3PROC_PATHCONF
+mdefine_line|#define NFS3PROC_PATHCONF&t;20
+DECL|macro|NFS3PROC_COMMIT
+mdefine_line|#define NFS3PROC_COMMIT&t;&t;21
+DECL|macro|NFS_MNT3_PROGRAM
+mdefine_line|#define NFS_MNT3_PROGRAM&t;100005
+DECL|macro|NFS_MNT3_VERSION
+mdefine_line|#define NFS_MNT3_VERSION&t;3
+DECL|macro|MOUNTPROC3_NULL
+mdefine_line|#define MOUNTPROC3_NULL&t;&t;0
+DECL|macro|MOUNTPROC3_MNT
+mdefine_line|#define MOUNTPROC3_MNT&t;&t;1
+DECL|macro|MOUNTPROC3_UMNT
+mdefine_line|#define MOUNTPROC3_UMNT&t;&t;3
+DECL|macro|MOUNTPROC3_UMNTALL
+mdefine_line|#define MOUNTPROC3_UMNTALL&t;4
 macro_line|#if defined(__KERNEL__) || defined(NFS_NEED_KERNEL_TYPES)
 multiline_comment|/* Number of 32bit words in post_op_attr */
 DECL|macro|NFS3_POST_OP_ATTR_WORDS
 mdefine_line|#define NFS3_POST_OP_ATTR_WORDS&t;&t;22
-DECL|struct|nfs3_fattr
-r_struct
-id|nfs3_fattr
-(brace
-DECL|member|type
-r_enum
-id|nfs3_ftype
-id|type
-suffix:semicolon
-DECL|member|mode
-id|__u32
-id|mode
-suffix:semicolon
-DECL|member|nlink
-id|__u32
-id|nlink
-suffix:semicolon
-DECL|member|uid
-id|__u32
-id|uid
-suffix:semicolon
-DECL|member|gid
-id|__u32
-id|gid
-suffix:semicolon
-DECL|member|size
-id|__u64
-id|size
-suffix:semicolon
-DECL|member|used
-id|__u64
-id|used
-suffix:semicolon
-DECL|member|rdev_maj
-id|__u32
-id|rdev_maj
-suffix:semicolon
-DECL|member|rdev_min
-id|__u32
-id|rdev_min
-suffix:semicolon
-DECL|member|fsid
-id|__u32
-id|fsid
-suffix:semicolon
-DECL|member|fileid
-id|__u32
-id|fileid
-suffix:semicolon
-DECL|member|atime
-r_struct
-id|nfs_time
-id|atime
-suffix:semicolon
-DECL|member|mtime
-r_struct
-id|nfs_time
-id|mtime
-suffix:semicolon
-DECL|member|ctime
-r_struct
-id|nfs_time
-id|ctime
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_wcc_attr
-r_struct
-id|nfs3_wcc_attr
-(brace
-DECL|member|size
-id|__u64
-id|size
-suffix:semicolon
-DECL|member|mtime
-r_struct
-id|nfs_time
-id|mtime
-suffix:semicolon
-DECL|member|ctime
-r_struct
-id|nfs_time
-id|ctime
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_wcc_data
-r_struct
-id|nfs3_wcc_data
-(brace
-DECL|member|before
-r_struct
-id|nfs3_wcc_attr
-id|before
-suffix:semicolon
-DECL|member|after
-r_struct
-id|nfs3_wcc_attr
-id|after
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_sattr
-r_struct
-id|nfs3_sattr
-(brace
-DECL|member|valid
-id|__u32
-id|valid
-suffix:semicolon
-DECL|member|mode
-id|__u32
-id|mode
-suffix:semicolon
-DECL|member|uid
-id|__u32
-id|uid
-suffix:semicolon
-DECL|member|gid
-id|__u32
-id|gid
-suffix:semicolon
-DECL|member|size
-id|__u64
-id|size
-suffix:semicolon
-DECL|member|atime
-r_struct
-id|nfs_time
-id|atime
-suffix:semicolon
-DECL|member|mtime
-r_struct
-id|nfs_time
-id|mtime
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_entry
-r_struct
-id|nfs3_entry
-(brace
-DECL|member|fileid
-id|__u32
-id|fileid
-suffix:semicolon
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|length
-r_int
-r_int
-id|length
-suffix:semicolon
-DECL|member|cookie
-id|__u32
-id|cookie
-suffix:semicolon
-DECL|member|eof
-id|__u32
-id|eof
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_fsinfo
-r_struct
-id|nfs3_fsinfo
-(brace
-DECL|member|tsize
-id|__u32
-id|tsize
-suffix:semicolon
-DECL|member|bsize
-id|__u32
-id|bsize
-suffix:semicolon
-DECL|member|blocks
-id|__u32
-id|blocks
-suffix:semicolon
-DECL|member|bfree
-id|__u32
-id|bfree
-suffix:semicolon
-DECL|member|bavail
-id|__u32
-id|bavail
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#ifdef NFS_NEED_XDR_TYPES
+macro_line|#ifdef NFS_NEED_NFS3_XDR_TYPES
 DECL|struct|nfs3_sattrargs
 r_struct
 id|nfs3_sattrargs
@@ -368,9 +210,18 @@ id|fh
 suffix:semicolon
 DECL|member|sattr
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
+suffix:semicolon
+DECL|member|guard
+r_int
+r_int
+id|guard
+suffix:semicolon
+DECL|member|guardtime
+id|__u64
+id|guardtime
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -390,11 +241,15 @@ r_char
 op_star
 id|name
 suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|nfs3_readargs
+DECL|struct|nfs3_accessargs
 r_struct
-id|nfs3_readargs
+id|nfs3_accessargs
 (brace
 DECL|member|fh
 r_struct
@@ -402,44 +257,9 @@ id|nfs_fh
 op_star
 id|fh
 suffix:semicolon
-DECL|member|offset
+DECL|member|access
 id|__u32
-id|offset
-suffix:semicolon
-DECL|member|count
-id|__u32
-id|count
-suffix:semicolon
-DECL|member|buffer
-r_void
-op_star
-id|buffer
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_writeargs
-r_struct
-id|nfs3_writeargs
-(brace
-DECL|member|fh
-r_struct
-id|nfs_fh
-op_star
-id|fh
-suffix:semicolon
-DECL|member|offset
-id|__u32
-id|offset
-suffix:semicolon
-DECL|member|count
-id|__u32
-id|count
-suffix:semicolon
-DECL|member|buffer
-r_const
-r_void
-op_star
-id|buffer
+id|access
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -459,11 +279,130 @@ r_char
 op_star
 id|name
 suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
 DECL|member|sattr
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
+suffix:semicolon
+DECL|member|createmode
+r_enum
+id|nfs3_createmode
+id|createmode
+suffix:semicolon
+DECL|member|verifier
+id|__u32
+id|verifier
+(braket
+l_int|2
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|nfs3_mkdirargs
+r_struct
+id|nfs3_mkdirargs
+(brace
+DECL|member|fh
+r_struct
+id|nfs_fh
+op_star
+id|fh
+suffix:semicolon
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|sattr
+r_struct
+id|iattr
+op_star
+id|sattr
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|nfs3_symlinkargs
+r_struct
+id|nfs3_symlinkargs
+(brace
+DECL|member|fromfh
+r_struct
+id|nfs_fh
+op_star
+id|fromfh
+suffix:semicolon
+DECL|member|fromname
+r_const
+r_char
+op_star
+id|fromname
+suffix:semicolon
+DECL|member|fromlen
+r_int
+id|fromlen
+suffix:semicolon
+DECL|member|topath
+r_const
+r_char
+op_star
+id|topath
+suffix:semicolon
+DECL|member|tolen
+r_int
+id|tolen
+suffix:semicolon
+DECL|member|sattr
+r_struct
+id|iattr
+op_star
+id|sattr
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|nfs3_mknodargs
+r_struct
+id|nfs3_mknodargs
+(brace
+DECL|member|fh
+r_struct
+id|nfs_fh
+op_star
+id|fh
+suffix:semicolon
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|type
+r_enum
+id|nfs3_ftype
+id|type
+suffix:semicolon
+DECL|member|sattr
+r_struct
+id|iattr
+op_star
+id|sattr
+suffix:semicolon
+DECL|member|rdev
+id|dev_t
+id|rdev
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -483,6 +422,10 @@ r_char
 op_star
 id|fromname
 suffix:semicolon
+DECL|member|fromlen
+r_int
+id|fromlen
+suffix:semicolon
 DECL|member|tofh
 r_struct
 id|nfs_fh
@@ -494,6 +437,10 @@ r_const
 r_char
 op_star
 id|toname
+suffix:semicolon
+DECL|member|tolen
+r_int
+id|tolen
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -519,35 +466,9 @@ r_char
 op_star
 id|toname
 suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_symlinkargs
-r_struct
-id|nfs3_symlinkargs
-(brace
-DECL|member|fromfh
-r_struct
-id|nfs_fh
-op_star
-id|fromfh
-suffix:semicolon
-DECL|member|fromname
-r_const
-r_char
-op_star
-id|fromname
-suffix:semicolon
-DECL|member|topath
-r_const
-r_char
-op_star
-id|topath
-suffix:semicolon
-DECL|member|sattr
-r_struct
-id|nfs_sattr
-op_star
-id|sattr
+DECL|member|tolen
+r_int
+id|tolen
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -562,8 +483,15 @@ op_star
 id|fh
 suffix:semicolon
 DECL|member|cookie
-id|__u32
+id|__u64
 id|cookie
+suffix:semicolon
+DECL|member|verf
+id|__u32
+id|verf
+(braket
+l_int|2
+)braket
 suffix:semicolon
 DECL|member|buffer
 r_void
@@ -575,12 +503,22 @@ r_int
 r_int
 id|bufsiz
 suffix:semicolon
+DECL|member|plus
+r_int
+id|plus
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|nfs3_diropok
+DECL|struct|nfs3_diropres
 r_struct
-id|nfs3_diropok
+id|nfs3_diropres
 (brace
+DECL|member|dir_attr
+r_struct
+id|nfs_fattr
+op_star
+id|dir_attr
+suffix:semicolon
 DECL|member|fh
 r_struct
 id|nfs_fh
@@ -595,9 +533,9 @@ id|fattr
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|nfs3_readres
+DECL|struct|nfs3_accessres
 r_struct
-id|nfs3_readres
+id|nfs3_accessres
 (brace
 DECL|member|fattr
 r_struct
@@ -605,45 +543,22 @@ id|nfs_fattr
 op_star
 id|fattr
 suffix:semicolon
-DECL|member|count
-r_int
-r_int
-id|count
+DECL|member|access
+id|__u32
+id|access
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|nfs3_readlinkres
+DECL|struct|nfs3_readlinkargs
 r_struct
-id|nfs3_readlinkres
+id|nfs3_readlinkargs
 (brace
-DECL|member|string
-r_char
-op_star
-op_star
-id|string
-suffix:semicolon
-DECL|member|lenp
-r_int
-r_int
-op_star
-id|lenp
-suffix:semicolon
-DECL|member|maxlen
-r_int
-r_int
-id|maxlen
-suffix:semicolon
-DECL|member|buffer
-r_void
-op_star
-id|buffer
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nfs3_readdirres
+DECL|member|fh
 r_struct
-id|nfs3_readdirres
-(brace
+id|nfs_fh
+op_star
+id|fh
+suffix:semicolon
 DECL|member|buffer
 r_void
 op_star
@@ -656,43 +571,96 @@ id|bufsiz
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The following are for NFSv3&n; */
-DECL|struct|nfs3_fh
+DECL|struct|nfs3_readlinkres
 r_struct
-id|nfs3_fh
+id|nfs3_readlinkres
 (brace
-DECL|member|size
-id|__u32
-id|size
+DECL|member|fattr
+r_struct
+id|nfs_fattr
+op_star
+id|fattr
 suffix:semicolon
-id|__u8
-id|data
-(braket
-id|NFS3_FHSIZE
-)braket
+DECL|member|buffer
+r_void
+op_star
+id|buffer
+suffix:semicolon
+DECL|member|bufsiz
+r_int
+r_int
+id|bufsiz
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|nfs3_wcc_attr
+DECL|struct|nfs3_renameres
 r_struct
-id|nfs3_wcc_attr
+id|nfs3_renameres
 (brace
-DECL|member|size
-id|__u64
-id|size
-suffix:semicolon
-DECL|member|mtime
+DECL|member|fromattr
 r_struct
-id|nfs_time
-id|mtime
+id|nfs_fattr
+op_star
+id|fromattr
 suffix:semicolon
-DECL|member|ctime
+DECL|member|toattr
 r_struct
-id|nfs_time
-id|ctime
+id|nfs_fattr
+op_star
+id|toattr
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|nfs3_linkres
+r_struct
+id|nfs3_linkres
+(brace
+DECL|member|dir_attr
+r_struct
+id|nfs_fattr
+op_star
+id|dir_attr
+suffix:semicolon
+DECL|member|fattr
+r_struct
+id|nfs_fattr
+op_star
+id|fattr
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|nfs3_readdirres
+r_struct
+id|nfs3_readdirres
+(brace
+DECL|member|dir_attr
+r_struct
+id|nfs_fattr
+op_star
+id|dir_attr
+suffix:semicolon
+DECL|member|verf
+id|__u32
+op_star
+id|verf
+suffix:semicolon
+DECL|member|buffer
+r_void
+op_star
+id|buffer
+suffix:semicolon
+DECL|member|bufsiz
+r_int
+r_int
+id|bufsiz
+suffix:semicolon
+DECL|member|plus
+r_int
+id|plus
 suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* NFS_NEED_XDR_TYPES */
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif
+macro_line|#endif /* _LINUX_NFS3_H */
 eof

@@ -4,8 +4,9 @@ mdefine_line|#define NFS_NEED_XDR_TYPES
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
-macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
+macro_line|#include &lt;linux/nfs2.h&gt;
+macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

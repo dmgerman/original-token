@@ -38,11 +38,11 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;@%1+,%2&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;%2,@%0&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq&t;#0,%2&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%1+, %2&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;%2, @%0&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq&t;#0, %2&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;1b&bslash;n&bslash;t&quot;
-l_string|&quot; add&t;#1,%0&bslash;n&bslash;t&quot;
+l_string|&quot; add&t;#1, %0&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -125,13 +125,13 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&bslash;n&quot;
-l_string|&quot;mov.b&t;@%1+,%2&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;%2,@%0&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq&t;#0,%2&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%1+, %2&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;%2, @%0&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq&t;#0, %2&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;2f&bslash;n&bslash;t&quot;
 l_string|&quot; cmp/eq&t;%5,%1&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;1b&bslash;n&bslash;t&quot;
-l_string|&quot; add&t;#1,%0&bslash;n&quot;
+l_string|&quot; add&t;#1, %0&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -205,17 +205,17 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mov.b&t;@%1+,%3&bslash;n&quot;
+l_string|&quot;mov.b&t;@%1+, %3&bslash;n&quot;
 l_string|&quot;1:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;@%0+,%2&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq #0,%3&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%0+, %2&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq #0, %3&bslash;n&bslash;t&quot;
 l_string|&quot;bt&t;2f&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq %2,%3&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq %2, %3&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;1b&bslash;n&bslash;t&quot;
-l_string|&quot; mov.b&t;@%1+,%3&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;#-2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;@%1,%3&bslash;n&bslash;t&quot;
-l_string|&quot;sub&t;%3,%2&bslash;n&quot;
+l_string|&quot; mov.b&t;@%1+, %3&bslash;n&bslash;t&quot;
+l_string|&quot;add&t;#-2, %1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%1, %3&bslash;n&bslash;t&quot;
+l_string|&quot;sub&t;%3, %2&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -288,20 +288,20 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mov.b&t;@%1+,%3&bslash;n&quot;
+l_string|&quot;mov.b&t;@%1+, %3&bslash;n&quot;
 l_string|&quot;1:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;@%0+,%2&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq %6,%0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%0+, %2&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq %6, %0&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;2f&bslash;n&bslash;t&quot;
-l_string|&quot; cmp/eq #0,%3&bslash;n&bslash;t&quot;
+l_string|&quot; cmp/eq #0, %3&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;3f&bslash;n&bslash;t&quot;
-l_string|&quot; cmp/eq %3,%2&bslash;n&bslash;t&quot;
+l_string|&quot; cmp/eq %3, %2&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;1b&bslash;n&bslash;t&quot;
-l_string|&quot; mov.b&t;@%1+,%3&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;#-2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;@%1,%3&bslash;n&quot;
+l_string|&quot; mov.b&t;@%1+, %3&bslash;n&bslash;t&quot;
+l_string|&quot;add&t;#-2, %1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%1, %3&bslash;n&quot;
 l_string|&quot;2:&bslash;n&bslash;t&quot;
-l_string|&quot;sub&t;%3,%2&bslash;n&quot;
+l_string|&quot;sub&t;%3, %2&bslash;n&quot;
 l_string|&quot;3:&quot;
 suffix:colon
 l_string|&quot;=r&quot;

@@ -1,8 +1,8 @@
 macro_line|#ifndef _NFS_FS_I
 DECL|macro|_NFS_FS_I
 mdefine_line|#define _NFS_FS_I
-macro_line|#include &lt;linux/nfs.h&gt;
-macro_line|#include &lt;linux/pipe_fs_i.h&gt;
+macro_line|#include &lt;asm/types.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
 multiline_comment|/*&n; * nfs fs inode data in memory&n; */
 DECL|struct|nfs_inode_info
 r_struct
@@ -10,11 +10,11 @@ id|nfs_inode_info
 (brace
 multiline_comment|/*&n;&t; * The 64bit &squot;inode number&squot;&n;&t; */
 DECL|member|fsid
-id|__u32
+id|__u64
 id|fsid
 suffix:semicolon
 DECL|member|fileid
-id|__u32
+id|__u64
 id|fileid
 suffix:semicolon
 multiline_comment|/*&n;&t; * Various flags&n;&t; */
@@ -29,15 +29,39 @@ r_int
 r_int
 id|read_cache_jiffies
 suffix:semicolon
+DECL|member|read_cache_ctime
+id|__u64
+id|read_cache_ctime
+suffix:semicolon
 DECL|member|read_cache_mtime
-r_int
-r_int
+id|__u64
 id|read_cache_mtime
+suffix:semicolon
+DECL|member|read_cache_atime
+id|__u64
+id|read_cache_atime
+suffix:semicolon
+DECL|member|read_cache_isize
+id|__u64
+id|read_cache_isize
 suffix:semicolon
 DECL|member|attrtimeo
 r_int
 r_int
 id|attrtimeo
+suffix:semicolon
+DECL|member|attrtimeo_timestamp
+r_int
+r_int
+id|attrtimeo_timestamp
+suffix:semicolon
+multiline_comment|/*&n;&t; * This is the cookie verifier used for NFSv3 readdir&n;&t; * operations&n;&t; */
+DECL|member|cookieverf
+id|__u32
+id|cookieverf
+(braket
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/*&n;&t; * This is the list of dirty unwritten pages.&n;&t; */
 DECL|member|dirty
@@ -82,19 +106,11 @@ r_int
 r_int
 id|nextscan
 suffix:semicolon
-multiline_comment|/* Readdir caching information. */
-DECL|member|cookies
-r_void
-op_star
-id|cookies
-suffix:semicolon
-DECL|member|direof
-id|u32
-id|direof
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Legal inode flag values&n; */
+DECL|macro|NFS_INO_ADVISE_RDPLUS
+mdefine_line|#define NFS_INO_ADVISE_RDPLUS   0x0002          /* advise readdirplus */
 DECL|macro|NFS_INO_REVALIDATING
 mdefine_line|#define NFS_INO_REVALIDATING&t;0x0004&t;&t;/* revalidating attrs */
 DECL|macro|NFS_IS_SNAPSHOT

@@ -2665,7 +2665,7 @@ id|val
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return a mask of triggered interrupts (this&n; * can handle only legacy ISA interrupts).&n; */
-multiline_comment|/**&n; *&t;probe_irq_mask&n; *&t;@val:&t;mask of interrupts to consider&n; *&n; *&t;Scan the ISA bus interrupt lines and return a bitmap of&n; *&t;active interrupts. The interrupt probe logic state is then&n; *&t;returned to its previous value.&n; */
+multiline_comment|/**&n; *&t;probe_irq_mask - scan a bitmap of interrupt lines&n; *&t;@val:&t;mask of interrupts to consider&n; *&n; *&t;Scan the ISA bus interrupt lines and return a bitmap of&n; *&t;active interrupts. The interrupt probe logic state is then&n; *&t;returned to its previous value.&n; */
 DECL|function|probe_irq_mask
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.94 2000/03/15 06:47:04 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.95 2000/03/25 05:18:15 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -12765,10 +12765,6 @@ r_int
 id|hpreg_base
 suffix:semicolon
 r_int
-r_int
-id|pci_command
-suffix:semicolon
-r_int
 id|i
 comma
 id|node
@@ -13618,56 +13614,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* If we don&squot;t do this, nothing works. */
-id|pci_read_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|pci_command
-)paren
-suffix:semicolon
-id|pci_command
-op_or_assign
-id|PCI_COMMAND_MASTER
-suffix:semicolon
-id|pci_write_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-id|pci_command
-)paren
-suffix:semicolon
-multiline_comment|/* Set the latency timer and cache line size as well,&n;&t; * PROM leaves it at zero.&n;&t; */
-id|pci_write_config_byte
-c_func
-(paren
-id|pdev
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|64
-)paren
-suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-multiline_comment|/* NOTE: Cache line size is in 32-bit word units. */
-id|pci_write_config_byte
-c_func
-(paren
-id|pdev
-comma
-id|PCI_CACHE_LINE_SIZE
-comma
-l_int|0x10
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef MODULE
 multiline_comment|/* We are home free at this point, link us in to the happy&n;&t; * module device list.&n;&t; */
 id|dev-&gt;ifindex

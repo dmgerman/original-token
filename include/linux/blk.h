@@ -254,6 +254,24 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_ARCH_S390)
+r_extern
+r_int
+id|mdisk_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|dasd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ARCH_S390 */
 r_extern
 r_void
 id|set_device_ro
@@ -760,6 +778,28 @@ DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_nbd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == MDISK_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;mdisk&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST mdisk_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == DASD_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;dasd&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_dasd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; PARTN_BITS)
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) 
 DECL|macro|DEVICE_OFF

@@ -858,6 +858,7 @@ id|skb-&gt;end
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_queue_empty - check if a queue is empty&n; *&t;@list: queue head&n; *&n; *&t;Returns true if the queue is empty, false otherwise&n; */
 DECL|function|skb_queue_empty
 r_extern
 id|__inline__
@@ -884,6 +885,7 @@ id|list
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_get - reference buffer&n; *&t;@skb: buffer to reference&n; *&n; *&t;Makes another reference to a socket buffer and returns a pointer&n; *&t;to the buffer.&n; */
 DECL|function|skb_get
 r_extern
 id|__inline__
@@ -910,7 +912,8 @@ r_return
 id|skb
 suffix:semicolon
 )brace
-multiline_comment|/* If users==1, we are the only owner and are can avoid redundant&n; * atomic change.&n; */
+multiline_comment|/*&n; * If users==1, we are the only owner and are can avoid redundant&n; * atomic change.&n; */
+multiline_comment|/**&n; *&t;kfree_skb - free an sk_buff&n; *&t;@skb: The buffer to free&n; *&n; *&t;Drop a reference to the buffer and free it if the usage count has&n; *&t;hit zero.&n; */
 DECL|function|kfree_skb
 r_extern
 id|__inline__
@@ -990,6 +993,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_cloned - is the buffer a clone&n; *&t;@skb: Buffer to check&n; *&n; *&t;Returns true if the buffer was generated with skb_clone and is&n; *&t;one of multiple shared copies of the buffer. Cloned buffers are&n; *&t;shared data so must not be written to under normal circumstances.&n; */
 DECL|function|skb_cloned
 r_extern
 id|__inline__
@@ -1019,6 +1023,7 @@ op_ne
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_shared - is the buffer shared&n; *&t;@skb: buffer to check&n; *&n; *&t;Returns true if more than one person has a reference to this&n; *&t;buffer.&n; */
 DECL|function|skb_shared
 r_extern
 id|__inline__
@@ -1045,6 +1050,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/** &n; *&t;skb_share_check - check if buffer is shared and if so clone it&n; *&t;@skb: buffer to check&n; *&t;@pri: priority for memory allocation&n; *&t;&n; *&t;If the buffer is shared the buffer is cloned and the old copy&n; *&t;drops a reference. A new clone with a single reference is returned.&n; *&t;If the buffer is not shared the original buffer is returned. When&n; *&t;being called from interrupt status or with spinlocks held pri must&n; *&t;be GFP_ATOMIC.&n; *&n; *&t;NULL is returned on a memory allocation failure.&n; */
 DECL|function|skb_share_check
 r_extern
 id|__inline__
@@ -1103,6 +1109,7 @@ id|skb
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Copy shared buffers into a new sk_buff. We effectively do COW on&n; *&t;packets to handle cases where we have a local reader and forward&n; *&t;and a couple of other messy ones. The normal one is tcpdumping&n; *&t;a packet thats being forwarded.&n; */
+multiline_comment|/**&n; *&t;skb_unshare - make a copy of a shared buffer&n; *&t;@skb: buffer to check&n; *&t;@pri: priority for memory allocation&n; *&n; *&t;If the socket buffer is a clone then this function creates a new&n; *&t;copy of the data, drops a reference count on the old copy and returns&n; *&t;the new copy with the reference count at 1. If the buffer is not a clone&n; *&t;the original buffer is returned. When called with a spinlock held or&n; *&t;from interrupt state pri must be GFP_ATOMIC&n; *&n; *&t;NULL is returned on a memory allocation failure.&n; */
 DECL|function|skb_unshare
 r_extern
 id|__inline__
@@ -1162,7 +1169,7 @@ r_return
 id|nskb
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Peek an sk_buff. Unlike most other operations you _MUST_&n; *&t;be careful with this one. A peek leaves the buffer on the&n; *&t;list and someone else may run off with it. For an interrupt&n; *&t;type system cli() peek the buffer copy the data and sti();&n; */
+multiline_comment|/**&n; *&t;skb_peek&n; *&t;@list_: list to peek at&n; *&n; *&t;Peek an sk_buff. Unlike most other operations you _MUST_&n; *&t;be careful with this one. A peek leaves the buffer on the&n; *&t;list and someone else may run off with it. You must hold&n; *&t;the appropriate locks or have a private queue to do this.&n; *&n; *&t;Returns NULL for an empty list or a pointer to the head element.&n; *&t;The reference count is not incremented and the reference is therefore&n; *&t;volatile. Use with caution.&n; */
 DECL|function|skb_peek
 r_extern
 id|__inline__
@@ -1214,6 +1221,7 @@ r_return
 id|list
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_peek_tail&n; *&t;@list_: list to peek at&n; *&n; *&t;Peek an sk_buff. Unlike most other operations you _MUST_&n; *&t;be careful with this one. A peek leaves the buffer on the&n; *&t;list and someone else may run off with it. You must hold&n; *&t;the appropriate locks or have a private queue to do this.&n; *&n; *&t;Returns NULL for an empty list or a pointer to the tail element.&n; *&t;The reference count is not incremented and the reference is therefore&n; *&t;volatile. Use with caution.&n; */
 DECL|function|skb_peek_tail
 r_extern
 id|__inline__
@@ -1265,7 +1273,7 @@ r_return
 id|list
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Return the length of an sk_buff queue&n; */
+multiline_comment|/**&n; *&t;skb_queue_len&t;- get queue length&n; *&t;@list_: list to measure&n; *&n; *&t;Return the length of an sk_buff queue. &n; */
 DECL|function|skb_queue_len
 r_extern
 id|__inline__
@@ -1327,6 +1335,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Insert an sk_buff at the start of a list.&n; *&n; *&t;The &quot;__skb_xxxx()&quot; functions are the non-atomic ones that&n; *&t;can only be called with interrupts disabled.&n; */
+multiline_comment|/**&n; *&t;__skb_queue_head - queue a buffer at the list head&n; *&t;@list: list to use&n; *&t;@newsk: buffer to queue&n; *&n; *&t;Queue a buffer at the start of a list. This function takes no locks&n; *&t;and you must therefore hold required locks before calling it.&n; *&n; *&t;A buffer cannot be placed on two lists at the same time.&n; */
 DECL|function|__skb_queue_head
 r_extern
 id|__inline__
@@ -1390,6 +1399,7 @@ op_assign
 id|newsk
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_queue_head - queue a buffer at the list head&n; *&t;@list: list to use&n; *&t;@newsk: buffer to queue&n; *&n; *&t;Queue a buffer at the start of the list. This function takes the&n; *&t;list lock and can be used safely with other locking sk_buff functions&n; *&t;safely.&n; *&n; *&t;A buffer cannot be placed on two lists at the same time.&n; */
 DECL|function|skb_queue_head
 r_extern
 id|__inline__
@@ -1439,7 +1449,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Insert an sk_buff at the end of a list.&n; */
+multiline_comment|/**&n; *&t;__skb_queue_tail - queue a buffer at the list tail&n; *&t;@list: list to use&n; *&t;@newsk: buffer to queue&n; *&n; *&t;Queue a buffer at the end of a list. This function takes no locks&n; *&t;and you must therefore hold required locks before calling it.&n; *&n; *&t;A buffer cannot be placed on two lists at the same time.&n; */
 DECL|function|__skb_queue_tail
 r_extern
 id|__inline__
@@ -1503,6 +1513,7 @@ op_assign
 id|newsk
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_queue_tail - queue a buffer at the list tail&n; *&t;@list: list to use&n; *&t;@newsk: buffer to queue&n; *&n; *&t;Queue a buffer at the tail of the list. This function takes the&n; *&t;list lock and can be used safely with other locking sk_buff functions&n; *&t;safely.&n; *&n; *&t;A buffer cannot be placed on two lists at the same time.&n; */
 DECL|function|skb_queue_tail
 r_extern
 id|__inline__
@@ -1552,7 +1563,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Remove an sk_buff from a list.&n; */
+multiline_comment|/**&n; *&t;__skb_dequeue - remove from the head of the queue&n; *&t;@list: list to dequeue from&n; *&n; *&t;Remove the head of the list. This function does not take any locks&n; *&t;so must be used with appropriate locks held only. The head item is&n; *&t;returned or NULL if the list is empty.&n; */
 DECL|function|__skb_dequeue
 r_extern
 id|__inline__
@@ -1640,6 +1651,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_dequeue - remove from the head of the queue&n; *&t;@list: list to dequeue from&n; *&n; *&t;Remove the head of the list. The list lock is taken so the function&n; *&t;may be used safely with other locking list functions. The head item is&n; *&t;returned or NULL if the list is empty.&n; */
 DECL|function|skb_dequeue
 r_extern
 id|__inline__
@@ -1746,7 +1758,7 @@ id|list-&gt;qlen
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Place a packet before a given packet in a list&n; */
+multiline_comment|/**&n; *&t;skb_insert&t;-&t;insert a buffer&n; *&t;@old: buffer to insert before&n; *&t;@newsk: buffer to insert&n; *&n; *&t;Place a packet before a given packet in a list. The list locks are taken&n; *&t;and this function is atomic with respect to other list locked calls&n; *&t;A buffer cannot be placed on two lists at the same time.&n; */
 DECL|function|skb_insert
 r_extern
 id|__inline__
@@ -1832,6 +1844,7 @@ id|old-&gt;list
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_append&t;-&t;append a buffer&n; *&t;@old: buffer to insert after&n; *&t;@newsk: buffer to insert&n; *&n; *&t;Place a packet after a given packet in a list. The list locks are taken&n; *&t;and this function is atomic with respect to other list locked calls.&n; *&t;A buffer cannot be placed on two lists at the same time.&n; */
 DECL|function|skb_append
 r_extern
 id|__inline__
@@ -1940,7 +1953,7 @@ op_assign
 id|next
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Remove an sk_buff from its list. Works even without knowing the list it&n; *&t;is sitting on, which can be handy at times. It also means that THE LIST&n; *&t;MUST EXIST when you unlink. Thus a list must have its contents unlinked&n; *&t;_FIRST_.&n; */
+multiline_comment|/**&n; *&t;skb_unlink&t;-&t;remove a buffer from a list&n; *&t;@skb: buffer to remove&n; *&n; *&t;Place a packet after a given packet in a list. The list locks are taken&n; *&t;and this function is atomic with respect to other list locked calls&n; *&t;&n; *&t;Works even without knowing the list it is sitting on, which can be &n; *&t;handy at times. It also means that THE LIST MUST EXIST when you &n; *&t;unlink. Thus a list must have its contents unlinked before it is&n; *&t;destroyed.&n; */
 DECL|function|skb_unlink
 r_extern
 id|__inline__
@@ -2009,6 +2022,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* XXX: more streamlined implementation */
+multiline_comment|/**&n; *&t;__skb_dequeue_tail - remove from the tail of the queue&n; *&t;@list: list to dequeue from&n; *&n; *&t;Remove the tail of the list. This function does not take any locks&n; *&t;so must be used with appropriate locks held only. The tail item is&n; *&t;returned or NULL if the list is empty.&n; */
 DECL|function|__skb_dequeue_tail
 r_extern
 id|__inline__
@@ -2052,6 +2066,7 @@ r_return
 id|skb
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_dequeue - remove from the head of the queue&n; *&t;@list: list to dequeue from&n; *&n; *&t;Remove the head of the list. The list lock is taken so the function&n; *&t;may be used safely with other locking list functions. The tail item is&n; *&t;returned or NULL if the list is empty.&n; */
 DECL|function|skb_dequeue_tail
 r_extern
 id|__inline__
@@ -2144,6 +2159,7 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_put - add data to a buffer&n; *&t;@skb: buffer to use &n; *&t;@len: amount of data to add&n; *&n; *&t;This function extends the used data area of the buffer. If this would&n; *&t;exceed the total buffer size the kernel will panic. A pointer to the&n; *&t;first byte of the extra data is returned&n; */
 DECL|function|skb_put
 r_extern
 id|__inline__
@@ -2235,6 +2251,7 @@ r_return
 id|skb-&gt;data
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_push - add data to the start of a buffer&n; *&t;@skb: buffer to use &n; *&t;@len: amount of data to add&n; *&n; *&t;This function extends the used data area of the buffer at the buffer&n; *&t;start. If this would  exceed the total buffer headroom the kernel will&n; *&t; panic. A pointer to the first byte of the extra data is returned&n; */
 DECL|function|skb_push
 r_extern
 id|__inline__
@@ -2316,6 +2333,7 @@ op_add_assign
 id|len
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_pull - remove data from the start of a buffer&n; *&t;@skb: buffer to use &n; *&t;@len: amount of data to remove&n; *&n; *&t;This function  removes data from the start of a buffer, returning&n; *&t;the memory to the headroom. A pointer to the next data in the buffer&n; *&t;is returned. Once the data has been pulled future pushes will overwrite&n; *&t;the old data&n; */
 DECL|function|skb_pull
 r_extern
 id|__inline__
@@ -2355,6 +2373,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_headroom - bytes at buffer head&n; *&t;@skb: buffer to check&n; *&n; *&t;Return the number of bytes of free space at the head of an sk_buff&n; */
 DECL|function|skb_headroom
 r_extern
 id|__inline__
@@ -2375,6 +2394,7 @@ op_minus
 id|skb-&gt;head
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_tailroom - bytes at buffer end&n; *&t;@skb: buffer to check&n; *&n; *&t;Return the number of bytes of free space at the tail of an sk_buff&n; */
 DECL|function|skb_tailroom
 r_extern
 id|__inline__
@@ -2395,6 +2415,7 @@ op_minus
 id|skb-&gt;tail
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_reserve - adjust headroom&n; *&t;@skb: buffer to alter&n; *&t;@len: bytes to move&n; *&n; *&t;Increase the headroom of an empty sk_buff by reducing the tail&n; *&t;room. This is only allowed for an empty buffer.&n; */
 DECL|function|skb_reserve
 r_extern
 id|__inline__
@@ -2449,6 +2470,7 @@ op_plus
 id|len
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_trim - remove end from a buffer&n; *&t;@skb: buffer to alter&n; *&t;@len: new length&n; *&n; *&t;Cut the length of a buffer down by removing data from the tail. If&n; *&t;the buffer is already under the length specified it is not modified.&n; */
 DECL|function|skb_trim
 r_extern
 id|__inline__
@@ -2484,6 +2506,7 @@ id|len
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;skb_orphan - orphan a buffer&n; *&t;@skb: buffer to orphan&n; *&n; *&t;If a buffer currently has an owner then we call the owners&n; *&t;destructor function and make the skb unowned. The buffer continues&n; *&t;to exist but is no longer charged to its former owner.&n; */
 DECL|function|skb_orphan
 r_extern
 id|__inline__
@@ -2519,6 +2542,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_purge - empty a list&n; *&t;@list: list to empty&n; *&n; *&t;Delete all buffers on an sk_buff list. Each buffer is removed from&n; *&t;the list and one reference dropped. This function takes the list&n; *&t;lock and is atomic with respect to other list locking functions.&n; */
 DECL|function|skb_queue_purge
 r_extern
 id|__inline__
@@ -2559,6 +2583,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;__skb_purge - empty a list&n; *&t;@list: list to empty&n; *&n; *&t;Delete all buffers on an sk_buff list. Each buffer is removed from&n; *&t;the list and one reference dropped. This function does not take the&n; *&t;list lock and the caller must hold the relevant locks to use it.&n; */
 DECL|function|__skb_queue_purge
 r_extern
 id|__inline__
@@ -2599,6 +2624,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;dev_alloc_skb - allocate an skbuff for sending&n; *&t;@length: length to allocate&n; *&n; *&t;Allocate a new sk_buff and assign it a usage count of one. The&n; *&t;buffer has unspecified headroom built in. Users should allocate&n; *&t;the headroom they think they need without accounting for the&n; *&t;built in space. The built in space is used for optimisations.&n; *&n; *&t;NULL is returned in there is no free memory. Although this function&n; *&t;allocates memory it can be called from an interrupt.&n; */
 DECL|function|dev_alloc_skb
 r_extern
 id|__inline__
@@ -2647,6 +2673,7 @@ r_return
 id|skb
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_cow - copy a buffer if need be&n; *&t;@skb: buffer to copy&n; *&t;@headroom: needed headroom&n; *&n; *&t;If the buffer passed lacks sufficient headroom or is a clone then&n; *&t;it is copied and the additional headroom made available. If there&n; *&t;is no free memory NULL is returned. The new buffer is returned if&n; *&t;a copy was made (and the old one dropped a reference). The existing&n; *&t;buffer is returned otherwise.&n; *&n; *&t;This function primarily exists to avoid making two copies when making&n; *&t;a writable copy of a buffer and then growing the headroom.&n; */
 r_extern
 id|__inline__
 r_struct

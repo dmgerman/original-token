@@ -120,7 +120,7 @@ mdefine_line|#define __FP_PACK_RAW_2(fs, val, X)&t;&t;&t;&bslash;&n;  do {&t;&t;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|__FPU_FPSCR
-mdefine_line|#define __FPU_FPSCR&t;(current-&gt;tss.fpscr)
+mdefine_line|#define __FPU_FPSCR&t;(current-&gt;thread.fpscr)
 multiline_comment|/* We only actually write to the destination register&n; * if exceptions signalled (if any) will not trap.&n; */
 DECL|macro|__FPU_ENABLED_EXC
 mdefine_line|#define __FPU_ENABLED_EXC &bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(__FPU_FPSCR &gt;&gt; 3) &amp; 0x1f;&t;&bslash;&n;})

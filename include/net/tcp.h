@@ -2003,17 +2003,6 @@ id|skb
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|tcp_v4_send_reset
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|tcp_v4_conn_request
 c_func
@@ -2955,6 +2944,9 @@ multiline_comment|/* Sequence number ACK&squot;d&t;*/
 suffix:semicolon
 DECL|macro|TCP_SKB_CB
 mdefine_line|#define TCP_SKB_CB(__skb)&t;((struct tcp_skb_cb *)&amp;((__skb)-&gt;cb[0]))
+multiline_comment|/*&n; *&t;Compute minimal free write space needed to queue new packets. &n; */
+DECL|macro|tcp_min_write_space
+mdefine_line|#define tcp_min_write_space(__sk) &bslash;&n;&t;(atomic_read(&amp;(__sk)-&gt;wmem_alloc) / 2)
 multiline_comment|/* This determines how many packets are &quot;in the network&quot; to the best&n; * of our knowledge.  In many cases it is conservative, but where&n; * detailed information is available from the receiver (via SACK&n; * blocks etc.) we can make more aggressive calculations.&n; *&n; * Use this for decisions involving congestion control, use just&n; * tp-&gt;packets_out to determine if the send queue is empty or not.&n; *&n; * Read this equation as:&n; *&n; *&t;&quot;Packets sent once on transmission queue&quot; MINUS&n; *&t;&quot;Packets acknowledged by FACK information&quot; PLUS&n; *&t;&quot;Packets fast retransmitted&quot;&n; */
 DECL|function|tcp_packets_in_flight
 r_static
@@ -4725,6 +4717,48 @@ comma
 id|sysctl_rmem_max
 )paren
 suffix:semicolon
+multiline_comment|/* Reserve slack space to reduce jitter of advertised window. */
+r_if
+c_cond
+(paren
+id|tp-&gt;window_clamp
+op_ge
+id|tcp_full_space
+c_func
+(paren
+id|sk
+)paren
+)paren
+(brace
+r_int
+id|nwin
+op_assign
+id|tcp_full_space
+c_func
+(paren
+id|sk
+)paren
+op_minus
+id|tp-&gt;mss_clamp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nwin
+op_ge
+id|MAX_TCP_WINDOW
+op_logical_and
+id|nwin
+op_ge
+l_int|2
+op_star
+id|tp-&gt;advmss
+)paren
+id|tp-&gt;window_clamp
+op_assign
+id|nwin
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

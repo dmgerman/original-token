@@ -1,7 +1,6 @@
 macro_line|#ifndef __LINUX_OV511_H
 DECL|macro|__LINUX_OV511_H
 mdefine_line|#define __LINUX_OV511_H
-singleline_comment|//#include &lt;linux/list.h&gt;
 DECL|macro|OV511_DEBUG
 mdefine_line|#define OV511_DEBUG&t;/* Turn on debug messages */
 macro_line|#ifdef OV511_DEBUG
@@ -115,19 +114,23 @@ DECL|macro|OV511_REG_SYSTEM_SNAPSHOT
 mdefine_line|#define OV511_REG_SYSTEM_SNAPSHOT&t;&t;&t;0x52
 DECL|macro|OV511_REG_SYSTEM_INIT
 mdefine_line|#define OV511_REG_SYSTEM_INIT         &t;&t;0x53
+DECL|macro|OV511_REG_SYSTEM_PWR_CLK
+mdefine_line|#define OV511_REG_SYSTEM_PWR_CLK      &t;&t;0x54    /* OV511+ only */
+DECL|macro|OV511_REG_SYSTEM_LED_CTL
+mdefine_line|#define OV511_REG_SYSTEM_LED_CTL      &t;&t;0x55    /* OV511+ only */
 DECL|macro|OV511_REG_SYSTEM_USER_DEFINED
 mdefine_line|#define OV511_REG_SYSTEM_USER_DEFINED&t;&t;0x5E
 DECL|macro|OV511_REG_SYSTEM_CUSTOM_ID
 mdefine_line|#define OV511_REG_SYSTEM_CUSTOM_ID&t;&t;&t;0x5F
 multiline_comment|/* OmniCE register numbers */
-DECL|macro|OV511_OMNICE_PREDICATION_HORIZ_Y
-mdefine_line|#define OV511_OMNICE_PREDICATION_HORIZ_Y&t;0x70
-DECL|macro|OV511_OMNICE_PREDICATION_HORIZ_UV
-mdefine_line|#define OV511_OMNICE_PREDICATION_HORIZ_UV&t;0x71
-DECL|macro|OV511_OMNICE_PREDICATION_VERT_Y
-mdefine_line|#define OV511_OMNICE_PREDICATION_VERT_Y&t;&t;0x72
-DECL|macro|OV511_OMNICE_PREDICATION_VERT_UV
-mdefine_line|#define OV511_OMNICE_PREDICATION_VERT_UV&t;0x73
+DECL|macro|OV511_OMNICE_PREDICTION_HORIZ_Y
+mdefine_line|#define OV511_OMNICE_PREDICTION_HORIZ_Y&t;0x70
+DECL|macro|OV511_OMNICE_PREDICTION_HORIZ_UV
+mdefine_line|#define OV511_OMNICE_PREDICTION_HORIZ_UV&t;0x71
+DECL|macro|OV511_OMNICE_PREDICTION_VERT_Y
+mdefine_line|#define OV511_OMNICE_PREDICTION_VERT_Y&t;&t;0x72
+DECL|macro|OV511_OMNICE_PREDICTION_VERT_UV
+mdefine_line|#define OV511_OMNICE_PREDICTION_VERT_UV&t;0x73
 DECL|macro|OV511_OMNICE_QUANTIZATION_HORIZ_Y
 mdefine_line|#define OV511_OMNICE_QUANTIZATION_HORIZ_Y&t;0x74
 DECL|macro|OV511_OMNICE_QUANTIZATION_HORIZ_UV
@@ -148,23 +151,40 @@ DECL|macro|OV511_OMNICE_UV_LUT_BEGIN
 mdefine_line|#define OV511_OMNICE_UV_LUT_BEGIN&t;&t;&t;0xA0
 DECL|macro|OV511_OMNICE_UV_LUT_END
 mdefine_line|#define OV511_OMNICE_UV_LUT_END&t;&t;&t;&t;0xBF
-multiline_comment|/* Alternate numbers for various max packet sizes */
-DECL|macro|OV511_ALTERNATE_SIZE_992
-mdefine_line|#define OV511_ALTERNATE_SIZE_992&t;0
-DECL|macro|OV511_ALTERNATE_SIZE_993
-mdefine_line|#define OV511_ALTERNATE_SIZE_993&t;1
-DECL|macro|OV511_ALTERNATE_SIZE_768
-mdefine_line|#define OV511_ALTERNATE_SIZE_768&t;2
-DECL|macro|OV511_ALTERNATE_SIZE_769
-mdefine_line|#define OV511_ALTERNATE_SIZE_769&t;3
-DECL|macro|OV511_ALTERNATE_SIZE_512
-mdefine_line|#define OV511_ALTERNATE_SIZE_512&t;4
-DECL|macro|OV511_ALTERNATE_SIZE_513
-mdefine_line|#define OV511_ALTERNATE_SIZE_513&t;5
-DECL|macro|OV511_ALTERNATE_SIZE_257
-mdefine_line|#define OV511_ALTERNATE_SIZE_257&t;6
-DECL|macro|OV511_ALTERNATE_SIZE_0
-mdefine_line|#define OV511_ALTERNATE_SIZE_0&t;&t;7
+multiline_comment|/* Alternate numbers for various max packet sizes (OV511 only) */
+DECL|macro|OV511_ALT_SIZE_992
+mdefine_line|#define OV511_ALT_SIZE_992&t;0
+DECL|macro|OV511_ALT_SIZE_993
+mdefine_line|#define OV511_ALT_SIZE_993&t;1
+DECL|macro|OV511_ALT_SIZE_768
+mdefine_line|#define OV511_ALT_SIZE_768&t;2
+DECL|macro|OV511_ALT_SIZE_769
+mdefine_line|#define OV511_ALT_SIZE_769&t;3
+DECL|macro|OV511_ALT_SIZE_512
+mdefine_line|#define OV511_ALT_SIZE_512&t;4
+DECL|macro|OV511_ALT_SIZE_513
+mdefine_line|#define OV511_ALT_SIZE_513&t;5
+DECL|macro|OV511_ALT_SIZE_257
+mdefine_line|#define OV511_ALT_SIZE_257&t;6
+DECL|macro|OV511_ALT_SIZE_0
+mdefine_line|#define OV511_ALT_SIZE_0&t;7
+multiline_comment|/* Alternate numbers for various max packet sizes (OV511+ only) */
+DECL|macro|OV511PLUS_ALT_SIZE_0
+mdefine_line|#define OV511PLUS_ALT_SIZE_0&t;0
+DECL|macro|OV511PLUS_ALT_SIZE_33
+mdefine_line|#define OV511PLUS_ALT_SIZE_33&t;1
+DECL|macro|OV511PLUS_ALT_SIZE_129
+mdefine_line|#define OV511PLUS_ALT_SIZE_129&t;2
+DECL|macro|OV511PLUS_ALT_SIZE_257
+mdefine_line|#define OV511PLUS_ALT_SIZE_257&t;3
+DECL|macro|OV511PLUS_ALT_SIZE_385
+mdefine_line|#define OV511PLUS_ALT_SIZE_385&t;4
+DECL|macro|OV511PLUS_ALT_SIZE_513
+mdefine_line|#define OV511PLUS_ALT_SIZE_513&t;5
+DECL|macro|OV511PLUS_ALT_SIZE_769
+mdefine_line|#define OV511PLUS_ALT_SIZE_769&t;6
+DECL|macro|OV511PLUS_ALT_SIZE_961
+mdefine_line|#define OV511PLUS_ALT_SIZE_961&t;7
 multiline_comment|/* ov7610 registers */
 DECL|macro|OV7610_REG_GAIN
 mdefine_line|#define OV7610_REG_GAIN          0x00
@@ -257,7 +277,9 @@ mdefine_line|#define SCRATCH_BUF_SIZE 384
 DECL|macro|FRAMES_PER_DESC
 mdefine_line|#define FRAMES_PER_DESC&t;&t;10  /* FIXME - What should this be? */
 DECL|macro|FRAME_SIZE_PER_DESC
-mdefine_line|#define FRAME_SIZE_PER_DESC&t;993&t;/* FIXME - Shouldn&squot;t be hardcoded */
+mdefine_line|#define FRAME_SIZE_PER_DESC&t;993&t;/* FIXME - Deprecated */
+DECL|macro|MAX_FRAME_SIZE_PER_DESC
+mdefine_line|#define MAX_FRAME_SIZE_PER_DESC&t;993  /* For statically allocated stuff */
 singleline_comment|// FIXME - should this be 0x81 (endpoint address) or 0x01 (endpoint number)?
 DECL|macro|OV511_ENDPOINT_ADDRESS
 mdefine_line|#define OV511_ENDPOINT_ADDRESS 0x81 /* Address of isoc endpoint */
@@ -301,6 +323,34 @@ r_int
 r_char
 id|value
 )paren
+suffix:semicolon
+multiline_comment|/* Bridge types */
+r_enum
+(brace
+DECL|enumerator|BRG_OV511
+id|BRG_OV511
+comma
+DECL|enumerator|BRG_OV511PLUS
+id|BRG_OV511PLUS
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* Sensor types */
+r_enum
+(brace
+DECL|enumerator|SEN_UNKNOWN
+id|SEN_UNKNOWN
+comma
+DECL|enumerator|SEN_OV7610
+id|SEN_OV7610
+comma
+DECL|enumerator|SEN_OV7620
+id|SEN_OV7620
+comma
+DECL|enumerator|SEN_OV7620AE
+id|SEN_OV7620AE
+comma
+)brace
 suffix:semicolon
 r_enum
 (brace
@@ -625,6 +675,21 @@ r_int
 id|snap_enabled
 suffix:semicolon
 multiline_comment|/* Snapshot mode enabled */
+DECL|member|bridge
+r_int
+id|bridge
+suffix:semicolon
+multiline_comment|/* Type of bridge (OV511 or OV511+) */
+DECL|member|sensor
+r_int
+id|sensor
+suffix:semicolon
+multiline_comment|/* Type of image sensor chip */
+DECL|member|packet_size
+r_int
+id|packet_size
+suffix:semicolon
+multiline_comment|/* Frame size per isoc desc */
 )brace
 suffix:semicolon
 macro_line|#endif

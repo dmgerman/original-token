@@ -20,8 +20,16 @@ macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/arch/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/*&n; * Values for cpu_do_idle()&n; */
+DECL|macro|IDLE_WAIT_SLOW
+mdefine_line|#define IDLE_WAIT_SLOW&t;0
+DECL|macro|IDLE_WAIT_FAST
+mdefine_line|#define IDLE_WAIT_FAST&t;1
+DECL|macro|IDLE_CLOCK_SLOW
+mdefine_line|#define IDLE_CLOCK_SLOW&t;2
+DECL|macro|IDLE_CLOCK_FAST
+mdefine_line|#define IDLE_CLOCK_FAST&t;3
 r_extern
 r_char
 op_star
@@ -53,9 +61,11 @@ l_string|&quot;ret_from_sys_call&quot;
 suffix:semicolon
 DECL|variable|hlt_counter
 r_static
+r_volatile
 r_int
 id|hlt_counter
 suffix:semicolon
+macro_line|#include &lt;asm/arch/system.h&gt;
 DECL|function|disable_hlt
 r_void
 id|disable_hlt
@@ -136,7 +146,7 @@ comma
 id|hlt_setup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The idle loop on an ARM...&n; */
+multiline_comment|/*&n; * The idle thread.  We try to conserve power, while trying to keep&n; * overall latency low.  The architecture specific idle is passed&n; * a value to indicate the level of &quot;idleness&quot; of the system.&n; */
 DECL|function|cpu_idle
 r_void
 id|cpu_idle
@@ -166,23 +176,11 @@ c_loop
 l_int|1
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|hlt_counter
-)paren
-id|arch_do_idle
+id|arch_idle
 c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;need_resched
-)paren
-(brace
 id|schedule
 c_func
 (paren
@@ -195,7 +193,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
 )brace
 )brace
 DECL|variable|reboot_mode
@@ -224,7 +221,7 @@ l_int|0
 )braket
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 id|__setup

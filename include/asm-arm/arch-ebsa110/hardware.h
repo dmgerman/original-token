@@ -18,6 +18,8 @@ mdefine_line|#define IO_BASE&t;&t;&t;0xe0000000
 multiline_comment|/*&n; * RAM definitions&n; */
 DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x40000000
+DECL|macro|UNCACHEABLE_ADDR
+mdefine_line|#define UNCACHEABLE_ADDR&t;0xf3000000
 macro_line|#else&t;/* __ASSEMBLY__ */
 DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0

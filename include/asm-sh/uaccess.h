@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.6 1999/10/29 13:10:44 gniibe Exp $&n; *&n; * User space memory access functions&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on:&n; *     MIPS implementation version 1.15 by&n; *              Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *     and i386 version.&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.10 2000/03/24 13:53:45 gniibe Exp $&n; *&n; * User space memory access functions&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on:&n; *     MIPS implementation version 1.15 by&n; *              Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *     and i386 version.&n; */
 macro_line|#ifndef __ASM_SH_UACCESS_H
 DECL|macro|__ASM_SH_UACCESS_H
 mdefine_line|#define __ASM_SH_UACCESS_H
@@ -27,7 +27,7 @@ DECL|macro|__addr_ok
 mdefine_line|#define __addr_ok(addr) ((unsigned long)(addr) &lt; (current-&gt;addr_limit.seg))
 multiline_comment|/*&n; * Uhhuh, this needs 33-bit arithmetic. We have a carry..&n; *&n; * sum := addr + size;  carry? --&gt; flag = true;&n; * if (sum &gt;= addr_limit) flag = true;&n; */
 DECL|macro|__range_ok
-mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag,sum; &bslash;&n;&t;__asm__(&quot;clrt; addc %3,%1; movt %0; cmp/hi %4,%1; rotcl %0&quot; &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &bslash;&n;&t;&t;:&quot;1&quot; (addr), &quot;r&quot; ((int)(size)), &quot;r&quot; (current-&gt;addr_limit.seg)); &bslash;&n;&t;flag; })
+mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag,sum; &bslash;&n;&t;__asm__(&quot;clrt; addc %3, %1; movt %0; cmp/hi %4, %1; rotcl %0&quot; &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &bslash;&n;&t;&t;:&quot;1&quot; (addr), &quot;r&quot; ((int)(size)), &quot;r&quot; (current-&gt;addr_limit.seg)); &bslash;&n;&t;flag; })
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size) (__range_ok(addr,size) == 0)
 DECL|macro|__access_ok
@@ -110,7 +110,7 @@ mdefine_line|#define __get_user_nocheck(x,ptr,size) ({ &bslash;&n;long __gu_err;
 DECL|macro|__get_user_check
 mdefine_line|#define __get_user_check(x,ptr,size) ({ &bslash;&n;long __gu_err; &bslash;&n;__typeof__(*(ptr)) __gu_val; &bslash;&n;long __gu_addr; &bslash;&n;__asm__(&quot;&quot;:&quot;=r&quot; (__gu_val)); &bslash;&n;__gu_addr = (long) (ptr); &bslash;&n;__asm__(&quot;&quot;:&quot;=r&quot; (__gu_err)); &bslash;&n;if (__access_ok(__gu_addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm(&quot;b&quot;); break; &bslash;&n;case 2: __get_user_asm(&quot;w&quot;); break; &bslash;&n;case 4: __get_user_asm(&quot;l&quot;); break; &bslash;&n;default: __get_user_unknown(); break; &bslash;&n;} } x = (__typeof__(*(ptr))) __gu_val; __gu_err; })
 DECL|macro|__get_user_asm
-mdefine_line|#define __get_user_asm(insn) &bslash;&n;({ &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.&quot; insn &quot;&t;%2,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0,%0&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.section&t;.fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;3:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.l&t;4f,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot; mov&t;%3,%0&bslash;n&quot; &bslash;&n;&t;&quot;4:&t;.long&t;2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.section&t;__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long&t;1b, 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&quot; &bslash;&n;&t;:&quot;=&amp;r&quot; (__gu_err), &quot;=&amp;r&quot; (__gu_val) &bslash;&n;&t;:&quot;m&quot; (__m(__gu_addr)), &quot;i&quot; (-EFAULT)); })
+mdefine_line|#define __get_user_asm(insn) &bslash;&n;({ &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.&quot; insn &quot;&t;%2, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0, %0&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;.fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;3:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.l&t;4f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot; mov&t;%3, %0&bslash;n&quot; &bslash;&n;&t;&quot;4:&t;.long&t;2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long&t;1b, 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&quot; &bslash;&n;&t;:&quot;=&amp;r&quot; (__gu_err), &quot;=&amp;r&quot; (__gu_val) &bslash;&n;&t;:&quot;m&quot; (__m(__gu_addr)), &quot;i&quot; (-EFAULT)); })
 r_extern
 r_void
 id|__get_user_unknown
@@ -124,7 +124,7 @@ mdefine_line|#define __put_user_nocheck(x,ptr,size) ({ &bslash;&n;long __pu_err;
 DECL|macro|__put_user_check
 mdefine_line|#define __put_user_check(x,ptr,size) ({ &bslash;&n;long __pu_err; &bslash;&n;__typeof__(*(ptr)) __pu_val; &bslash;&n;long __pu_addr; &bslash;&n;__pu_val = (x); &bslash;&n;__pu_addr = (long) (ptr); &bslash;&n;__asm__(&quot;&quot;:&quot;=r&quot; (__pu_err)); &bslash;&n;if (__access_ok(__pu_addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm(&quot;b&quot;); break; &bslash;&n;case 2: __put_user_asm(&quot;w&quot;); break; &bslash;&n;case 4: __put_user_asm(&quot;l&quot;); break; &bslash;&n;default: __put_user_unknown(); break; &bslash;&n;} } __pu_err; })
 DECL|macro|__put_user_asm
-mdefine_line|#define __put_user_asm(insn) &bslash;&n;({ &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.&quot; insn &quot;&t;%1,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0,%0&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.section&t;.fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;3:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.l&t;4f,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;%3,%0&bslash;n&quot; &bslash;&n;&t;&quot;4:&t;.long&t;2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.section&t;__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long&t;1b, 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&quot; &bslash;&n;&t;:&quot;=&amp;r&quot; (__pu_err) &bslash;&n;&t;:&quot;r&quot; (__pu_val), &quot;m&quot; (__m(__pu_addr)), &quot;i&quot; (-EFAULT)); })
+mdefine_line|#define __put_user_asm(insn) &bslash;&n;({ &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.&quot; insn &quot;&t;%1, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;#0, %0&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;.fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;3:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov.l&t;4f, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;%3, %0&bslash;n&quot; &bslash;&n;&t;&quot;4:&t;.long&t;2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&bslash;n&quot; &bslash;&n;&t;&quot;.section&t;__ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long&t;1b, 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.previous&quot; &bslash;&n;&t;:&quot;=&amp;r&quot; (__pu_err) &bslash;&n;&t;:&quot;r&quot; (__pu_val), &quot;m&quot; (__m(__pu_addr)), &quot;i&quot; (-EFAULT)); })
 r_extern
 r_void
 id|__put_user_unknown
@@ -172,18 +172,18 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;9:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;@%2+,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%2+, %1&bslash;n&bslash;t&quot;
 l_string|&quot;dt&t;%0&bslash;n&quot;
 l_string|&quot;1:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;%1,@%3&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;%1, @%3&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;9b&bslash;n&bslash;t&quot;
-l_string|&quot; add&t;#1,%3&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot; add&t;#1, %3&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;5f,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;5f, %1&bslash;n&bslash;t&quot;
 l_string|&quot;jmp&t;@%1&bslash;n&bslash;t&quot;
-l_string|&quot; mov&t;%7,%0&bslash;n&bslash;t&quot;
+l_string|&quot; mov&t;%7, %0&bslash;n&bslash;t&quot;
 l_string|&quot;.balign 4&bslash;n&quot;
 l_string|&quot;5:&t;.long 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
@@ -193,7 +193,7 @@ l_string|&quot;&t;.long 9b,3b&bslash;n&quot;
 l_string|&quot;&t;.long 1b,2b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|res
 )paren
@@ -203,12 +203,12 @@ l_string|&quot;=&amp;z&quot;
 id|__dummy
 )paren
 comma
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|_f
 )paren
 comma
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|_t
 )paren
@@ -273,32 +273,26 @@ id|__kernel_size_t
 id|size
 )paren
 (brace
-id|__kernel_size_t
-id|res
-suffix:semicolon
 r_int
 r_int
 id|__a
-comma
-id|__s
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;9:&bslash;n&bslash;t&quot;
-l_string|&quot;dt&t;%2&bslash;n&quot;
+l_string|&quot;dt&t;%0&bslash;n&quot;
 l_string|&quot;1:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;%5,@%1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;%4, @%1&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;9b&bslash;n&bslash;t&quot;
-l_string|&quot; add&t;#1,%1&bslash;n&bslash;t&quot;
-l_string|&quot;sub&t;%2,%0&bslash;n&quot;
+l_string|&quot; add&t;#1, %1&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;4f,%0&bslash;n&bslash;t&quot;
-l_string|&quot;jmp&t;@%0&bslash;n&bslash;t&quot;
-l_string|&quot; mov&t;%7,%0&bslash;n&quot;
+l_string|&quot;mov.l&t;4f, %1&bslash;n&bslash;t&quot;
+l_string|&quot;jmp&t;@%1&bslash;n&bslash;t&quot;
+l_string|&quot; nop&bslash;n&quot;
 l_string|&quot;.balign 4&bslash;n&quot;
 l_string|&quot;4:&t;.long 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
@@ -307,50 +301,34 @@ l_string|&quot;&t;.balign 4&bslash;n&quot;
 l_string|&quot;&t;.long 1b,3b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
-id|res
+id|size
 )paren
 comma
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|__a
 )paren
-comma
-l_string|&quot;=&amp;r&quot;
-(paren
-id|__s
-)paren
 suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|size
+)paren
+comma
 l_string|&quot;1&quot;
 (paren
 id|addr
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|size
 )paren
 comma
 l_string|&quot;r&quot;
 (paren
 l_int|0
 )paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|size
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-op_minus
-id|EFAULT
-)paren
 )paren
 suffix:semicolon
 r_return
-id|res
+id|size
 suffix:semicolon
 )brace
 DECL|macro|clear_user
@@ -390,31 +368,31 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;9:&bslash;n&quot;
-l_string|&quot;mov.b&t;@%2+,%1&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq&t;#0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@%2+, %1&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq&t;#0, %1&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;2f&bslash;n&quot;
 l_string|&quot;1:&bslash;n&quot;
-l_string|&quot;mov.b&t;%1,@%3&bslash;n&bslash;t&quot;
-l_string|&quot;dt&t;%0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;%1, @%3&bslash;n&bslash;t&quot;
+l_string|&quot;dt&t;%7&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;9b&bslash;n&bslash;t&quot;
-l_string|&quot; add&t;#1,%3&bslash;n&bslash;t&quot;
-l_string|&quot;sub&t;%6,%0&bslash;n&quot;
-l_string|&quot;2:&bslash;n&quot;
+l_string|&quot; add&t;#1, %3&bslash;n&bslash;t&quot;
+l_string|&quot;2:&bslash;n&bslash;t&quot;
+l_string|&quot;sub&t;%7, %0&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
-l_string|&quot;3:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;4f,%1&bslash;n&bslash;t&quot;
+l_string|&quot;4:&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;5f, %1&bslash;n&bslash;t&quot;
 l_string|&quot;jmp&t;@%1&bslash;n&bslash;t&quot;
-l_string|&quot; mov&t;%8,%0&bslash;n&bslash;t&quot;
+l_string|&quot; mov&t;%8, %0&bslash;n&bslash;t&quot;
 l_string|&quot;.balign 4&bslash;n&quot;
-l_string|&quot;4:&t;.long 2b&bslash;n&quot;
+l_string|&quot;5:&t;.long 3b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;&t;.balign 4&bslash;n&quot;
-l_string|&quot;&t;.long 9b,3b&bslash;n&quot;
-l_string|&quot;&t;.long 1b,2b&bslash;n&quot;
+l_string|&quot;&t;.long 9b,4b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|res
 )paren
@@ -424,16 +402,21 @@ l_string|&quot;=&amp;z&quot;
 id|__dummy
 )paren
 comma
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|_s
 )paren
 comma
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|_d
 )paren
 suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|__count
+)paren
+comma
 l_string|&quot;2&quot;
 (paren
 id|__src
@@ -445,11 +428,6 @@ id|__dest
 )paren
 comma
 l_string|&quot;r&quot;
-(paren
-id|__count
-)paren
-comma
-l_string|&quot;0&quot;
 (paren
 id|__count
 )paren
@@ -501,19 +479,19 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;9:&bslash;n&quot;
-l_string|&quot;cmp/eq&t;%4,%0&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq&t;%4, %0&bslash;n&bslash;t&quot;
 l_string|&quot;bt&t;2f&bslash;n&quot;
 l_string|&quot;1:&bslash;t&quot;
-l_string|&quot;mov.b&t;@(%0,%3),%1&bslash;n&bslash;t&quot;
-l_string|&quot;tst&t;%1,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.b&t;@(%0,%3), %1&bslash;n&bslash;t&quot;
+l_string|&quot;tst&t;%1, %1&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;9b&bslash;n&bslash;t&quot;
-l_string|&quot; add&t;#1,%0&bslash;n&quot;
+l_string|&quot; add&t;#1, %0&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;4f,%1&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;4f, %1&bslash;n&bslash;t&quot;
 l_string|&quot;jmp&t;@%1&bslash;n&bslash;t&quot;
-l_string|&quot; mov&t;%5,%0&bslash;n&quot;
+l_string|&quot; mov&t;%5, %0&bslash;n&quot;
 l_string|&quot;.balign 4&bslash;n&quot;
 l_string|&quot;4:&t;.long 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;

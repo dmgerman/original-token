@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/brlock.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 multiline_comment|/* This rwlock protects the main hash table, protocol/helper/expected&n;   registrations, conntrack timers*/
 DECL|macro|ASSERT_READ_LOCK
 mdefine_line|#define ASSERT_READ_LOCK(x) MUST_BE_READ_LOCKED(&amp;ip_conntrack_lock)
@@ -56,14 +57,14 @@ id|conntrack
 op_assign
 l_int|NULL
 suffix:semicolon
-r_static
+DECL|variable|expect_list
 id|LIST_HEAD
 c_func
 (paren
 id|expect_list
 )paren
 suffix:semicolon
-r_static
+DECL|variable|protocol_list
 id|LIST_HEAD
 c_func
 (paren
@@ -107,6 +108,12 @@ r_struct
 id|list_head
 op_star
 id|ip_conntrack_hash
+suffix:semicolon
+DECL|variable|ip_conntrack_cachep
+r_static
+id|kmem_cache_t
+op_star
+id|ip_conntrack_cachep
 suffix:semicolon
 r_extern
 r_struct
@@ -586,9 +593,11 @@ c_func
 id|ct
 )paren
 suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|ip_conntrack_cachep
+comma
 id|ct
 )paren
 suffix:semicolon
@@ -1489,14 +1498,10 @@ suffix:semicolon
 )brace
 id|conntrack
 op_assign
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|ip_conntrack
-)paren
+id|ip_conntrack_cachep
 comma
 id|GFP_ATOMIC
 )paren
@@ -1641,9 +1646,11 @@ id|skb-&gt;len
 )paren
 )paren
 (brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|ip_conntrack_cachep
+comma
 id|conntrack
 )paren
 suffix:semicolon
@@ -1685,9 +1692,11 @@ c_func
 l_string|&quot;ip_conntrack: Wow someone raced us!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|ip_conntrack_cachep
+comma
 id|conntrack
 )paren
 suffix:semicolon
@@ -3629,6 +3638,7 @@ DECL|macro|NET_IP_CONNTRACK_MAX
 mdefine_line|#define NET_IP_CONNTRACK_MAX 2089
 DECL|macro|NET_IP_CONNTRACK_MAX_NAME
 mdefine_line|#define NET_IP_CONNTRACK_MAX_NAME &quot;ip_conntrack_max&quot;
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|variable|ip_conntrack_sysctl_header
 r_static
 r_struct
@@ -3743,6 +3753,7 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
+macro_line|#endif /*CONFIG_SYSCTL*/
 DECL|function|kill_all
 r_static
 r_int
@@ -3773,18 +3784,26 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_SYSCTL
 id|unregister_sysctl_table
 c_func
 (paren
 id|ip_conntrack_sysctl_header
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ip_ct_selective_cleanup
 c_func
 (paren
 id|kill_all
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|kmem_cache_destroy
+c_func
+(paren
+id|ip_conntrack_cachep
 )paren
 suffix:semicolon
 id|vfree
@@ -3906,6 +3925,60 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|ip_conntrack_cachep
+op_assign
+id|kmem_cache_create
+c_func
+(paren
+l_string|&quot;ip_conntrack&quot;
+comma
+r_sizeof
+(paren
+r_struct
+id|ip_conntrack
+)paren
+comma
+l_int|0
+comma
+id|SLAB_HWCACHE_ALIGN
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ip_conntrack_cachep
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Unable to create ip_conntrack slab cache&bslash;n&quot;
+)paren
+suffix:semicolon
+id|vfree
+c_func
+(paren
+id|ip_conntrack_hash
+)paren
+suffix:semicolon
+id|nf_unregister_sockopt
+c_func
+(paren
+op_amp
+id|so_getorigdst
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/* Don&squot;t NEED lock here, but good form anyway. */
 id|WRITE_LOCK
 c_func
@@ -3996,6 +4069,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|kmem_cache_destroy
+c_func
+(paren
+id|ip_conntrack_cachep
+)paren
+suffix:semicolon
 id|vfree
 c_func
 (paren
@@ -4015,41 +4094,6 @@ id|ENOMEM
 suffix:semicolon
 )brace
 macro_line|#endif /*CONFIG_SYSCTL*/
-id|ret
-op_assign
-id|ip_conntrack_protocol_tcp_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-op_ne
-l_int|0
-)paren
-(brace
-id|unregister_sysctl_table
-c_func
-(paren
-id|ip_conntrack_sysctl_header
-)paren
-suffix:semicolon
-id|vfree
-c_func
-(paren
-id|ip_conntrack_hash
-)paren
-suffix:semicolon
-id|nf_unregister_sockopt
-c_func
-(paren
-op_amp
-id|so_getorigdst
-)paren
-suffix:semicolon
-)brace
 r_return
 id|ret
 suffix:semicolon

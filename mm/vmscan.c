@@ -1601,8 +1601,6 @@ l_int|1
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * If we actually get into a low-memory situation,&n;&t;&t; * the processes needing more memory will wake us&n;&t;&t; * up on a more timely basis.&n;&t;&t; */
-r_do
-(brace
 id|pgdat
 op_assign
 id|pgdat_list
@@ -1633,6 +1631,16 @@ op_assign
 id|pgdat-&gt;node_zones
 op_plus
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tsk-&gt;need_resched
+)paren
+id|schedule
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1668,14 +1676,6 @@ c_func
 (paren
 op_amp
 id|tq_disk
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_logical_neg
-id|tsk-&gt;need_resched
 )paren
 suffix:semicolon
 id|tsk-&gt;state

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Generic PPP layer for Linux.&n; *&n; * Copyright 1999-2000 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * The generic PPP layer handles the PPP network interfaces, the&n; * /dev/ppp device, packet and VJ compression, and multilink.&n; * It talks to PPP `channels&squot; via the interface defined in&n; * include/linux/ppp_channel.h.  Channels provide the basic means for&n; * sending and receiving PPP frames on some kind of communications&n; * channel.&n; *&n; * Part of the code in this driver was inspired by the old async-only&n; * PPP driver, written by Michael Callahan and Al Longyear, and&n; * subsequently hacked by Paul Mackerras.&n; *&n; * ==FILEVERSION 20000313==&n; */
+multiline_comment|/*&n; * Generic PPP layer for Linux.&n; *&n; * Copyright 1999-2000 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * The generic PPP layer handles the PPP network interfaces, the&n; * /dev/ppp device, packet and VJ compression, and multilink.&n; * It talks to PPP `channels&squot; via the interface defined in&n; * include/linux/ppp_channel.h.  Channels provide the basic means for&n; * sending and receiving PPP frames on some kind of communications&n; * channel.&n; *&n; * Part of the code in this driver was inspired by the old async-only&n; * PPP driver, written by Michael Callahan and Al Longyear, and&n; * subsequently hacked by Paul Mackerras.&n; *&n; * ==FILEVERSION 20000323==&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -34,9 +34,9 @@ mdefine_line|#define NP_AT&t;3&t;&t;/* Appletalk protocol */
 DECL|macro|NUM_NP
 mdefine_line|#define NUM_NP&t;4&t;&t;/* Number of NPs. */
 DECL|macro|MPHDRLEN
-mdefine_line|#define MPHDRLEN&t;4&t;/* multilink protocol header length */
+mdefine_line|#define MPHDRLEN&t;6&t;/* multilink protocol header length */
 DECL|macro|MPHDRLEN_SSN
-mdefine_line|#define MPHDRLEN_SSN&t;2&t;/* ditto with short sequence numbers */
+mdefine_line|#define MPHDRLEN_SSN&t;4&t;/* ditto with short sequence numbers */
 DECL|macro|MIN_FRAG_SIZE
 mdefine_line|#define MIN_FRAG_SIZE&t;64
 multiline_comment|/*&n; * An instance of /dev/ppp can be associated with either a ppp&n; * interface unit or a ppp channel.  In both cases, file-&gt;private_data&n; * points to one of these.&n; */
@@ -1238,11 +1238,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|ret
-op_assign
-op_minus
-id|EAGAIN
-suffix:semicolon
 id|skb
 op_assign
 id|skb_dequeue
@@ -1258,6 +1253,34 @@ c_cond
 id|skb
 )paren
 r_break
+suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pf-&gt;kind
+op_eq
+id|CHANNEL
+op_logical_and
+id|PF_TO_CHANNEL
+c_func
+(paren
+id|pf
+)paren
+op_member_access_from_pointer
+id|chan
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EAGAIN
 suffix:semicolon
 r_if
 c_cond
@@ -1915,6 +1938,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|chan
+op_logical_and
 id|chan-&gt;ops-&gt;ioctl
 )paren
 id|err
@@ -4253,15 +4278,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb_queue_len
-c_func
-(paren
-op_amp
-id|pch-&gt;file.xq
+id|pch-&gt;chan
 )paren
-op_eq
-l_int|0
-op_logical_and
+(brace
+r_if
+c_cond
+(paren
 id|pch-&gt;chan-&gt;ops
 op_member_access_from_pointer
 id|start_xmit
@@ -4271,6 +4293,41 @@ id|pch-&gt;chan
 comma
 id|skb
 )paren
+)paren
+id|skb
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* channel got unregistered */
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|skb
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|skb_queue_len
+c_func
+(paren
+op_amp
+id|pch-&gt;file.xq
+)paren
+op_eq
+l_int|0
+op_logical_and
+id|skb
+op_eq
+l_int|0
 )paren
 id|ppp-&gt;xmit_pending
 op_assign
@@ -4705,6 +4762,22 @@ id|hdrlen
 )paren
 suffix:semicolon
 multiline_comment|/* make the MP header */
+id|q
+(braket
+l_int|0
+)braket
+op_assign
+id|PPP_MP
+op_rshift
+l_int|8
+suffix:semicolon
+id|q
+(braket
+l_int|1
+)braket
+op_assign
+id|PPP_MP
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4715,7 +4788,7 @@ id|SC_MP_XSHORTSEQ
 (brace
 id|q
 (braket
-l_int|0
+l_int|2
 )braket
 op_assign
 id|bits
@@ -4732,7 +4805,7 @@ l_int|0xf
 suffix:semicolon
 id|q
 (braket
-l_int|1
+l_int|3
 )braket
 op_assign
 id|ppp-&gt;nxseq
@@ -4742,14 +4815,14 @@ r_else
 (brace
 id|q
 (braket
-l_int|0
+l_int|2
 )braket
 op_assign
 id|bits
 suffix:semicolon
 id|q
 (braket
-l_int|1
+l_int|3
 )braket
 op_assign
 id|ppp-&gt;nxseq
@@ -4758,7 +4831,7 @@ l_int|16
 suffix:semicolon
 id|q
 (braket
-l_int|2
+l_int|4
 )braket
 op_assign
 id|ppp-&gt;nxseq
@@ -4767,7 +4840,7 @@ l_int|8
 suffix:semicolon
 id|q
 (braket
-l_int|3
+l_int|5
 )braket
 op_assign
 id|ppp-&gt;nxseq
@@ -4846,6 +4919,10 @@ c_func
 op_amp
 id|pch-&gt;downl
 )paren
+suffix:semicolon
+id|pch-&gt;had_frag
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|p
@@ -5122,12 +5199,12 @@ op_eq
 l_int|0
 op_logical_or
 id|proto
-op_eq
-id|PPP_LCP
+op_ge
+l_int|0xc000
 op_logical_or
 id|proto
 op_eq
-l_int|0x80fb
+id|PPP_CCPFRAG
 )paren
 (brace
 multiline_comment|/* put it on the channel queue */
@@ -5617,58 +5694,11 @@ op_le
 l_int|0
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;PPP: VJ decompression error&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;PPP: len = %d data =&quot;
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-op_logical_and
-id|i
-OL
-id|skb-&gt;len
-suffix:semicolon
-op_increment
-id|i
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; %.2x&quot;
-comma
-id|skb-&gt;data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -6189,9 +6219,9 @@ id|SC_MP_SHORTSEQ
 )paren
 ques
 c_cond
-l_int|2
+id|MPHDRLEN_SSN
 suffix:colon
-l_int|4
+id|MPHDRLEN
 suffix:semicolon
 r_if
 c_cond
@@ -6200,7 +6230,11 @@ id|skb-&gt;len
 OL
 id|mphdrlen
 op_plus
-l_int|3
+l_int|1
+op_logical_or
+id|ppp-&gt;mrru
+op_eq
+l_int|0
 )paren
 r_goto
 id|err
@@ -6285,11 +6319,9 @@ c_func
 id|skb
 comma
 id|mphdrlen
-op_plus
-l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* pull off PPP and MP headers*/
+multiline_comment|/* pull off PPP and MP headers */
 multiline_comment|/* Expand sequence number to 32 bits */
 id|seq
 op_or_assign
@@ -6401,10 +6433,10 @@ c_func
 (paren
 id|ch-&gt;lastseq
 comma
-id|seq
+id|minseq
 )paren
 )paren
-id|seq
+id|minseq
 op_assign
 id|ch-&gt;lastseq
 suffix:semicolon
@@ -6660,7 +6692,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ppp_mp_reconstruct bad seq %x &lt; %x&bslash;n&quot;
+l_string|&quot;ppp_mp_reconstruct bad seq %u &lt; %u&bslash;n&quot;
 comma
 id|p-&gt;sequence
 comma
@@ -6716,15 +6748,17 @@ op_assign
 id|seq_before
 c_func
 (paren
-id|p-&gt;sequence
-comma
 id|minseq
+comma
+id|p-&gt;sequence
 )paren
 ques
 c_cond
-id|p-&gt;sequence
-suffix:colon
 id|minseq
+op_plus
+l_int|1
+suffix:colon
+id|p-&gt;sequence
 suffix:semicolon
 id|next
 op_assign
@@ -6793,10 +6827,22 @@ c_cond
 id|len
 OG
 id|ppp-&gt;mrru
+op_plus
+l_int|2
 )paren
 (brace
 op_increment
 id|ppp-&gt;stats.rx_length_errors
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;PPP: reconstructed packet&quot;
+l_string|&quot; is too long (%d)&bslash;n&quot;
+comma
+id|len
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -6819,6 +6865,14 @@ l_int|NULL
 op_increment
 id|ppp-&gt;stats.rx_missed_errors
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;PPP: no memory for &quot;
+l_string|&quot;reconstructed packet&quot;
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -6829,6 +6883,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|ppp-&gt;nextseq
+op_assign
+id|seq
+op_plus
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * If this is the ending fragment of a packet,&n;&t;&t; * and we haven&squot;t found a complete valid packet yet,&n;&t;&t; * we can discard up to and including this fragment.&n;&t;&t; */
 r_if
@@ -6863,12 +6923,34 @@ id|head-&gt;sequence
 op_ne
 id|ppp-&gt;nextseq
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|ppp-&gt;debug
+op_amp
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  missed pkts %u..%u&bslash;n&quot;
+comma
+id|ppp-&gt;nextseq
+comma
+id|head-&gt;sequence
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 id|ppp_receive_error
 c_func
 (paren
 id|ppp
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* uncompress protocol ID */
 r_if
 c_cond
@@ -7058,6 +7140,13 @@ id|pch-&gt;file.hdrlen
 op_assign
 id|chan-&gt;hdrlen
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPP_MULTILINK
+id|pch-&gt;lastseq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif /* CONFIG_PPP_MULTILINK */
 id|spin_lock_init
 c_func
 (paren
@@ -7104,7 +7193,30 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Return the unit number associated with a channel.&n; */
+multiline_comment|/*&n; * Return the index of a channel.&n; */
+DECL|function|ppp_channel_index
+r_int
+id|ppp_channel_index
+c_func
+(paren
+r_struct
+id|ppp_channel
+op_star
+id|chan
+)paren
+(brace
+r_struct
+id|channel
+op_star
+id|pch
+op_assign
+id|chan-&gt;ppp
+suffix:semicolon
+r_return
+id|pch-&gt;file.index
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Return the PPP unit number to which a channel is connected.&n; */
 DECL|function|ppp_unit_number
 r_int
 id|ppp_unit_number
@@ -7123,8 +7235,48 @@ id|pch
 op_assign
 id|chan-&gt;ppp
 suffix:semicolon
-r_return
+r_int
+id|unit
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pch
+op_ne
+l_int|0
+)paren
+(brace
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|pch-&gt;upl
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pch-&gt;ppp
+op_ne
+l_int|0
+)paren
+id|unit
+op_assign
 id|pch-&gt;ppp-&gt;file.index
+suffix:semicolon
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|pch-&gt;upl
+)paren
+suffix:semicolon
+)brace
+r_return
+id|unit
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Disconnect a channel from the generic layer.&n; * This can be called from mainline or BH/softirq level.&n; */
@@ -7540,6 +7692,20 @@ id|ENOTTY
 suffix:semicolon
 r_int
 id|unit
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -9093,6 +9259,20 @@ op_amp
 id|ppp-&gt;wlock
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPP_MULTILINK
+id|ppp-&gt;minseq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|ppp-&gt;mrq
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PPP_MULTILINK */
 id|ppp-&gt;dev
 op_assign
 id|dev
@@ -9652,7 +9832,7 @@ id|ppp-&gt;dev-&gt;hard_header_len
 op_assign
 id|hdrlen
 suffix:semicolon
-id|list_add
+id|list_add_tail
 c_func
 (paren
 op_amp
@@ -9938,6 +10118,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|ppp_unregister_channel
+)paren
+suffix:semicolon
+DECL|variable|ppp_channel_index
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ppp_channel_index
 )paren
 suffix:semicolon
 DECL|variable|ppp_unit_number

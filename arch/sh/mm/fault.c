@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.12 2000/03/01 11:15:27 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/fault.c&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/fault.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: fault.c,v 1.13 2000/03/07 12:05:24 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/fault.c&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/fault.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1091,11 +1091,6 @@ id|saved_asid
 op_assign
 id|MMU_NO_ASID
 suffix:semicolon
-macro_line|#if defined(__SH4__)
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1167,6 +1162,11 @@ id|addr
 )paren
 suffix:semicolon
 macro_line|#elif defined(__SH4__)
+id|jump_to_P2
+c_func
+(paren
+)paren
+suffix:semicolon
 id|addr
 op_assign
 id|MMU_UTLB_ADDRESS_ARRAY
@@ -1187,6 +1187,11 @@ id|data
 comma
 id|addr
 )paren
+suffix:semicolon
+macro_line|#if 0 &t;/* Not need when using ASSOC. ??? */
+(brace
+r_int
+id|i
 suffix:semicolon
 r_for
 c_loop
@@ -1250,6 +1255,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
+)brace
+macro_line|#endif
+id|back_to_P1
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 r_if
 c_cond

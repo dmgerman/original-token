@@ -880,6 +880,11 @@ r_goto
 id|cleanup_outops
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ip_conntrack_module
+)paren
 id|__MOD_INC_USE_COUNT
 c_func
 (paren
@@ -891,6 +896,11 @@ id|ret
 suffix:semicolon
 id|cleanup
 suffix:colon
+r_if
+c_cond
+(paren
+id|ip_conntrack_module
+)paren
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren
@@ -998,6 +1008,7 @@ c_func
 id|fini
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 DECL|variable|ip_nat_setup_info
 id|EXPORT_SYMBOL
 c_func
@@ -1040,4 +1051,5 @@ c_func
 id|ip_nat_cheat_check
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

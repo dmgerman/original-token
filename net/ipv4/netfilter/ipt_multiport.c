@@ -11,8 +11,6 @@ macro_line|#else
 DECL|macro|duprintf
 mdefine_line|#define duprintf(format, args...)
 macro_line|#endif
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 multiline_comment|/* Returns 1 if the port is matched by the test, 0 otherwise. */
 r_static
 r_inline

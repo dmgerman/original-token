@@ -4437,6 +4437,13 @@ op_star
 id|srb
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;usb-storage: abort() requested but not implemented&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4467,6 +4474,13 @@ id|srb-&gt;host-&gt;hostdata
 (braket
 l_int|0
 )braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;usb-storage: bus_reset() requested but not implemented&bslash;n&quot;
+)paren
 suffix:semicolon
 id|US_DEBUGP
 c_func
@@ -4505,6 +4519,13 @@ op_star
 id|srb
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;usb-storage: host_reset() requested but not implemented&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4895,87 +4916,79 @@ id|Scsi_Host_Template
 id|my_host_template
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* next */
-l_int|NULL
-comma
-multiline_comment|/* module */
-l_int|NULL
-comma
-multiline_comment|/* proc_dir */
+id|proc_info
+suffix:colon
 id|usb_stor_proc_info
 comma
-l_int|NULL
-comma
-multiline_comment|/* name - points to unique */
+id|detect
+suffix:colon
 id|us_detect
 comma
+id|release
+suffix:colon
 id|us_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* info */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
+id|command
+suffix:colon
 id|us_command
 comma
+id|queuecommand
+suffix:colon
 id|us_queuecommand
 comma
-l_int|NULL
-comma
-multiline_comment|/* eh_strategy */
+id|eh_abort_handler
+suffix:colon
 id|us_abort
 comma
+id|eh_device_reset_handler
+suffix:colon
 id|us_bus_reset
 comma
+id|eh_bus_reset_handler
+suffix:colon
 id|us_bus_reset
 comma
+id|eh_host_reset_handler
+suffix:colon
 id|us_host_reset
 comma
-l_int|NULL
-comma
-multiline_comment|/* abort */
-l_int|NULL
-comma
-multiline_comment|/* reset */
-l_int|NULL
-comma
-multiline_comment|/* slave_attach */
-l_int|NULL
-comma
-multiline_comment|/* bios_param */
-l_int|NULL
-comma
-multiline_comment|/* select_queue_depths */
+id|can_queue
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* can_queue */
+id|this_id
+suffix:colon
 op_minus
 l_int|1
 comma
-multiline_comment|/* this_id */
+id|sg_tablesize
+suffix:colon
 id|SG_ALL
 comma
-multiline_comment|/* sg_tablesize */
+id|cmd_per_lun
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* cmd_per_lun */
+id|present
+suffix:colon
 l_int|0
 comma
-multiline_comment|/* present */
+id|unchecked_isa_dma
+suffix:colon
 id|FALSE
 comma
-multiline_comment|/* unchecked_isa_dma */
+id|use_clustering
+suffix:colon
 id|TRUE
 comma
-multiline_comment|/* use_clustering */
+id|use_new_eh_code
+suffix:colon
 id|TRUE
 comma
-multiline_comment|/* use_new_eh_code */
+id|emulated
+suffix:colon
 id|TRUE
-multiline_comment|/* emulated */
+comma
 )brace
 suffix:semicolon
 DECL|variable|sense_notready
@@ -6738,8 +6751,7 @@ suffix:semicolon
 multiline_comment|/* now register - our detect function will be called */
 id|ss-&gt;htmplt.module
 op_assign
-op_amp
-id|__this_module
+id|THIS_MODULE
 suffix:semicolon
 id|scsi_register_module
 c_func
@@ -6897,44 +6909,6 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* &n;&t; * Check to see if the host template is a different size from&n;&t; * what we&squot;re expected -- people have updated this in the past&n;&t; * and forgotten about this driver.&n;&t; */
-r_if
-c_cond
-(paren
-r_sizeof
-(paren
-id|my_host_template
-)paren
-op_ne
-id|SCSI_HOST_TEMPLATE_SIZE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;usb-storage: SCSI_HOST_TEMPLATE_SIZE bad&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;usb-storage: expected %d bytes, got %d bytes&bslash;n&quot;
-comma
-id|SCSI_HOST_TEMPLATE_SIZE
-comma
-r_sizeof
-(paren
-id|my_host_template
-)paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* register the driver, return -1 if error */
 r_if
 c_cond

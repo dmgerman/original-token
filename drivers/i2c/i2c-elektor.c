@@ -759,7 +759,6 @@ comma
 )brace
 suffix:semicolon
 DECL|function|i2c_pcfisa_init
-r_static
 r_int
 id|__init
 id|i2c_pcfisa_init

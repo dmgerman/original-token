@@ -899,7 +899,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -974,7 +974,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -1060,7 +1060,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -1135,7 +1135,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -1203,7 +1203,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -1221,7 +1221,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2070,7 +2070,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2088,7 +2088,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2106,7 +2106,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2129,7 +2129,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2147,7 +2147,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2165,7 +2165,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2188,7 +2188,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2206,7 +2206,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2224,7 +2224,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2242,7 +2242,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2283,7 +2283,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2355,7 +2355,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2393,7 +2393,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2416,7 +2416,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2434,7 +2434,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2457,7 +2457,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2475,7 +2475,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2517,7 +2517,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2574,7 +2574,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2653,7 +2653,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2671,7 +2671,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn
@@ -2814,7 +2814,7 @@ r_void
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|insn

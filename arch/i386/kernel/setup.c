@@ -3247,9 +3247,13 @@ l_int|0
 )paren
 op_or
 (paren
+(paren
 id|mbytes
 op_div
 l_int|4
+)paren
+op_lshift
+l_int|1
 )paren
 suffix:semicolon
 id|save_flags

@@ -20,8 +20,8 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;&t;/* For the statistics structure. */
 macro_line|#include &lt;linux/if_arp.h&gt;&t;/* For ARPHRD_ETHER */
-DECL|macro|LOOPBACK_MTU
-mdefine_line|#define LOOPBACK_MTU&t;(PAGE_SIZE - 172)
+DECL|macro|LOOPBACK_OVERHEAD
+mdefine_line|#define LOOPBACK_OVERHEAD (128 + MAX_HEADER + 16 + 16)
 multiline_comment|/*&n; * The higher levels take care of making this non-reentrant (it&squot;s&n; * called with bh&squot;s disabled).&n; */
 DECL|function|loopback_xmit
 r_static
@@ -51,25 +51,6 @@ id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Take this out if the debug says its ok&n;&t; */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-op_logical_or
-id|dev
-op_eq
-l_int|NULL
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;loopback fed NULL data - splat&bslash;n&quot;
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Optimise so buffers with skb-&gt;free=1 are not copied but&n;&t; *&t;instead are lobbed from tx queue to rx queue &n;&t; */
 r_if
@@ -217,7 +198,9 @@ id|dev
 (brace
 id|dev-&gt;mtu
 op_assign
-id|LOOPBACK_MTU
+id|PAGE_SIZE
+op_minus
+id|LOOPBACK_OVERHEAD
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
@@ -304,6 +287,31 @@ suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 id|get_stats
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num_physpages
+op_ge
+(paren
+(paren
+l_int|128
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
+id|dev-&gt;mtu
+op_assign
+l_int|4096
+op_star
+l_int|4
+op_minus
+id|LOOPBACK_OVERHEAD
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Fill in the generic fields of the device structure. &n;&t; */
 id|dev_init_buffers

@@ -16,7 +16,7 @@ r_int
 r_int
 id|sc_regs
 (braket
-l_int|15
+l_int|16
 )braket
 suffix:semicolon
 DECL|member|sc_gbr
@@ -39,11 +39,6 @@ r_int
 r_int
 id|sc_pr
 suffix:semicolon
-DECL|member|sc_sp
-r_int
-r_int
-id|sc_sp
-suffix:semicolon
 DECL|member|sc_sr
 r_int
 r_int
@@ -54,6 +49,41 @@ r_int
 r_int
 id|sc_pc
 suffix:semicolon
+macro_line|#if defined(__SH4__)
+multiline_comment|/* FPU registers */
+DECL|member|sc_fpregs
+r_int
+r_int
+id|sc_fpregs
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|sc_xdregs
+r_int
+r_int
+r_int
+id|sc_xdregs
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|sc_fpscr
+r_int
+r_int
+id|sc_fpscr
+suffix:semicolon
+DECL|member|sc_fpul
+r_int
+r_int
+id|sc_fpul
+suffix:semicolon
+DECL|member|sc_ownedfp
+r_int
+r_int
+id|sc_ownedfp
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 macro_line|#endif /* __ASM_SH_SIGCONTEXT_H */

@@ -1176,6 +1176,7 @@ c_func
 id|fini
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 DECL|variable|ip_conntrack_protocol_register
 id|EXPORT_SYMBOL
 c_func
@@ -1232,27 +1233,6 @@ c_func
 id|ip_conntrack_helper_unregister
 )paren
 suffix:semicolon
-DECL|variable|ip_conntrack_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ip_conntrack_lock
-)paren
-suffix:semicolon
-DECL|variable|find_proto
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|find_proto
-)paren
-suffix:semicolon
-DECL|variable|get_tuple
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|get_tuple
-)paren
-suffix:semicolon
 DECL|variable|ip_ct_selective_cleanup
 id|EXPORT_SYMBOL
 c_func
@@ -1288,4 +1268,5 @@ c_func
 id|ip_ct_gather_frags
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

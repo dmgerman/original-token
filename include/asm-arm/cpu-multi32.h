@@ -296,7 +296,8 @@ op_star
 id|_do_idle
 )paren
 (paren
-r_void
+r_int
+id|mode
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * flush I cache for a page&n;&t; */
@@ -342,7 +343,7 @@ mdefine_line|#define cpu_proc_init()&t;&t;&t;&t;processor._proc_init()
 DECL|macro|cpu_proc_fin
 mdefine_line|#define cpu_proc_fin()&t;&t;&t;&t;processor._proc_fin()
 DECL|macro|cpu_do_idle
-mdefine_line|#define cpu_do_idle()&t;&t;&t;&t;processor._do_idle()
+mdefine_line|#define cpu_do_idle(mode)&t;&t;&t;processor._do_idle(mode)
 DECL|macro|cpu_flush_cache_all
 mdefine_line|#define cpu_flush_cache_all()&t;&t;&t;processor._flush_cache_all()
 DECL|macro|cpu_flush_cache_area

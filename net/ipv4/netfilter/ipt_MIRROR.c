@@ -10,8 +10,6 @@ r_struct
 id|in_device
 suffix:semicolon
 macro_line|#include &lt;net/route.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 macro_line|#if 0
 mdefine_line|#define DEBUGP printk
 macro_line|#else
@@ -77,7 +75,7 @@ r_if
 c_cond
 (paren
 id|skb-&gt;rx_dev
-op_ne
+op_eq
 id|rt-&gt;u.dst.dev
 )paren
 (brace

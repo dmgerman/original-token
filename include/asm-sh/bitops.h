@@ -496,7 +496,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;1:&bslash;n&bslash;t&quot;
 l_string|&quot;shlr&t;%1&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;1b&bslash;n&bslash;t&quot;
 l_string|&quot; add&t;#1, %0&quot;

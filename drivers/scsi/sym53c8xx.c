@@ -36795,23 +36795,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#endif&t;/* __powerpc__ */
-macro_line|#ifdef __sparc__
-multiline_comment|/*&n;&t;**    Fix-ups for sparc.&n;&t;*/
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cache_line_size
-)paren
-id|suggested_cache_line_size
-op_assign
-l_int|16
-suffix:semicolon
-id|driver_setup.pci_fix_up
-op_or_assign
-l_int|0x7
-suffix:semicolon
-macro_line|#endif&t;/* __sparc__ */
 macro_line|#if defined(__i386__) &amp;&amp; !defined(MODULE)
 r_if
 c_cond

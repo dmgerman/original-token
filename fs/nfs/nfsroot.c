@@ -306,7 +306,7 @@ comma
 l_string|&quot;lock&quot;
 comma
 op_complement
-id|NFS_MOUNT_LOCK
+id|NFS_MOUNT_NONLM
 comma
 l_int|0
 )brace

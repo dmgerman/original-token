@@ -52,6 +52,11 @@ comma
 r_int
 r_int
 id|zone_start_paddr
+comma
+r_int
+r_int
+op_star
+id|zholes_size
 )paren
 (brace
 id|free_area_init_core
@@ -71,6 +76,8 @@ comma
 id|zones_size
 comma
 id|zone_start_paddr
+comma
+id|zholes_size
 )paren
 suffix:semicolon
 )brace
@@ -189,6 +196,11 @@ comma
 r_int
 r_int
 id|zone_start_paddr
+comma
+r_int
+r_int
+op_star
+id|zholes_size
 )paren
 (brace
 r_int
@@ -235,6 +247,8 @@ comma
 id|zones_size
 comma
 id|zone_start_paddr
+comma
+id|zholes_size
 )paren
 suffix:semicolon
 id|pgdat-&gt;node_id

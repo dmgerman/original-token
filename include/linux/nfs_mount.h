@@ -2,6 +2,8 @@ macro_line|#ifndef _LINUX_NFS_MOUNT_H
 DECL|macro|_LINUX_NFS_MOUNT_H
 mdefine_line|#define _LINUX_NFS_MOUNT_H
 multiline_comment|/*&n; *  linux/include/linux/nfs_mount.h&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  structure passed from user-space to kernel-space during an nfs mount&n; */
+macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/nfs.h&gt;
 multiline_comment|/*&n; * WARNING!  Do not delete or change the order of these fields.  If&n; * a new field is required then add it to the end.  The version field&n; * tracks which fields are present.  This will ensure some measure of&n; * mount-to-kernel version compatibility.  Some of these aren&squot;t used yet&n; * but here they are anyway.&n; */
 DECL|macro|NFS_MOUNT_VERSION
 mdefine_line|#define NFS_MOUNT_VERSION&t;3
@@ -118,5 +120,12 @@ DECL|macro|NFS_MOUNT_KERBEROS
 mdefine_line|#define NFS_MOUNT_KERBEROS&t;0x0100&t;/* 3 */
 DECL|macro|NFS_MOUNT_NONLM
 mdefine_line|#define NFS_MOUNT_NONLM&t;&t;0x0200&t;/* 3 */
+DECL|macro|NFS_MOUNT_FLAGMASK
+mdefine_line|#define NFS_MOUNT_FLAGMASK&t;0xFFFF
+multiline_comment|/*&n; * Private flags - not to be set by mount program&n; */
+macro_line|#ifdef __KERNEL__
+DECL|macro|NFS_NONMONOTONE_COOKIES
+mdefine_line|#define NFS_NONMONOTONE_COOKIES&t;0x00010000
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

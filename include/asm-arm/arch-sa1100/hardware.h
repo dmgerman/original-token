@@ -9,6 +9,8 @@ DECL|macro|FLUSH_BASE
 mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
 DECL|macro|FLUSH_BASE_MINICACHE
 mdefine_line|#define FLUSH_BASE_MINICACHE&t;0xdf800000
+DECL|macro|UNCACHEABLE_ADDR
+mdefine_line|#define UNCACHEABLE_ADDR&t;0xfa050000
 multiline_comment|/*&n; * PCMCIA IO is mapped to 0xe0000000.  We are likely to use in*()/out*()&n; * IO macros for what might appear there...&n; * The SA1100 PCMCIA interface can be seen like a PC ISA bus for IO.&n; */
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xe0000000&t;/* PCMCIA0 IO space */

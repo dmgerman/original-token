@@ -41,13 +41,6 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|usb_cpia_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
 id|usb_ibmcam_init
 c_func
 (paren
@@ -144,13 +137,6 @@ suffix:semicolon
 macro_line|#ifndef CONFIG_USB_MODULE
 macro_line|#ifdef CONFIG_USB_AUDIO
 id|usb_audio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_CPIA
-id|usb_cpia_init
 c_func
 (paren
 )paren

@@ -90,8 +90,6 @@ DECL|macro|FS_NO_DCACHE
 mdefine_line|#define FS_NO_DCACHE&t;2 /* Only dcache the necessary things. */
 DECL|macro|FS_NO_PRELIM
 mdefine_line|#define FS_NO_PRELIM&t;4 /* prevent preloading of dentries, even if&n;&t;&t;&t;   * FS_NO_DCACHE is not set.&n;&t;&t;&t;   */
-DECL|macro|FS_IBASKET
-mdefine_line|#define FS_IBASKET&t;8 /* FS does callback to free_ibasket() if space gets low. */
 multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
 DECL|macro|MS_RDONLY
 mdefine_line|#define MS_RDONLY&t; 1&t;/* Mount read-only */
@@ -1640,22 +1638,6 @@ suffix:semicolon
 DECL|member|s_wait
 id|wait_queue_head_t
 id|s_wait
-suffix:semicolon
-DECL|member|s_ibasket
-r_struct
-id|inode
-op_star
-id|s_ibasket
-suffix:semicolon
-DECL|member|s_ibasket_count
-r_int
-r_int
-id|s_ibasket_count
-suffix:semicolon
-DECL|member|s_ibasket_max
-r_int
-r_int
-id|s_ibasket_max
 suffix:semicolon
 DECL|member|s_dirty
 r_struct

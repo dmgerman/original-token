@@ -1,7 +1,7 @@
 macro_line|#ifndef __ASM_SH_SYSTEM_H
 DECL|macro|__ASM_SH_SYSTEM_H
 mdefine_line|#define __ASM_SH_SYSTEM_H
-multiline_comment|/*&n; * Copyright (C) 1999, 2000  Niibe Yutaka&n; */
+multiline_comment|/*&n; * Copyright (C) 1999, 2000  Niibe Yutaka  &amp;  Kaz Kojima&n; */
 multiline_comment|/*&n; *&t;switch_to() should switch tasks to task nr n, first&n; */
 r_typedef
 r_struct
@@ -104,7 +104,9 @@ r_void
 (brace
 r_int
 r_int
-id|__dummy
+id|__dummy0
+comma
+id|__dummy1
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -112,16 +114,24 @@ c_func
 (paren
 l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
 l_string|&quot;and&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;stc&t;$r5_bank, %1&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;%1, %0&bslash;n&bslash;t&quot;
 l_string|&quot;ldc&t;%0, $sr&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
-id|__dummy
+id|__dummy0
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|__dummy1
 )paren
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;1&quot;
 (paren
-l_int|0xefffffff
+op_complement
+l_int|0xf0
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -147,29 +157,32 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
-l_string|&quot;or&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;#0xf0, %0&bslash;n&bslash;t&quot;
 l_string|&quot;ldc&t;%0, $sr&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=&amp;z&quot;
 (paren
 id|__dummy
 )paren
 suffix:colon
-l_string|&quot;r&quot;
-(paren
-l_int|0x10000000
-)paren
+multiline_comment|/* no inputs */
 suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(x) &t;&t;&t;&bslash;&n;x = (__extension__ ({&t;unsigned long __sr;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %0&quot;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (__sr)&t;&t;&t;&bslash;&n;&t;&t;: /* no inputs */&t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t; (__sr &amp; 0xffff7f0f);}))
+mdefine_line|#define __save_flags(x) &t;&t;&t;&bslash;&n;x = (__extension__ ({&t;unsigned long __sr;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %0&quot;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (__sr)&t;&t;&t;&bslash;&n;&t;&t;: /* no inputs */&t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;);&t;&t;&t;&bslash;&n;&t; (__sr &amp; 0x000000f0);}))
 DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(x)    &t;&t;&t;&t;&bslash;&n;x = (__extension__ ({&t;unsigned long __dummy,__sr;&t;&bslash;&n;&t;__asm__ __volatile__(                   &t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %1&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;or&t;%0, %1&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;ldc&t;%1, $sr&quot;     &t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (__sr), &quot;=&amp;r&quot; (__dummy) &t;&t;&bslash;&n;&t;&t;: &quot;0&quot; (0x10000000) &t;&t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;); (__sr &amp; 0xffff7f0f); }))
+mdefine_line|#define __save_and_cli(x)    &t;&t;&t;&t;&bslash;&n;x = (__extension__ ({&t;unsigned long __dummy,__sr;&t;&bslash;&n;&t;__asm__ __volatile__(                   &t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %1&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;mov&t;%1, %0&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;or&t;#0xf0, %0&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;ldc&t;%0, $sr&quot;     &t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;z&quot; (__dummy), &quot;=&amp;r&quot; (__sr)&t;&t;&bslash;&n;&t;&t;: /* no inputs */ &t;&t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;); (__sr &amp; 0x000000f0); }))
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(x) do { &t;&t;&t;&bslash;&n;&t;unsigned long __dummy;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;and&t;%1, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;or&t;%2, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;ldc&t;%0, $sr&quot;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (__dummy)&t;&t;&t;&bslash;&n;&t;&t;: &quot;r&quot; (0x000080f0), /* IMASK+FD */&t;&bslash;&n;&t;&t;  &quot;r&quot; (x)&t;&t; &t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;); &t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define __restore_flags(x) do { &t;&t;&t;&bslash;&n;&t;unsigned long __dummy0, __dummy1;&t;&t;&bslash;&n;&t;if (x != 0xf0)&t;/* not CLI-ed? */&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;       &t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;and&t;%1, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;stc&t;$r5_bank, %1&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&quot;or&t;%1, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;ldc&t;%0, $sr&quot;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (__dummy0), &quot;=r&quot; (__dummy1)&t;&bslash;&n;&t;&t;: &quot;1&quot; (0xffffff0f)&t; &t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;); &t;&t;&t;&t;&bslash;&n;} while (0)
+multiline_comment|/*&n; * Jump to P2 area.&n; * When handling TLB or caches, we need to do it from P2 area.&n; */
+DECL|macro|jump_to_P2
+mdefine_line|#define jump_to_P2()&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&bslash;&n;&t;&t;&quot;mov.l&t;1f, %0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot;or&t;%1, %0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot; nop&bslash;n&bslash;t&quot; &t;&t;&bslash;&n;&t;&t;&quot;.balign 4&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;1:&t;.long 2f&bslash;n&quot;&t;&bslash;&n;&t;&t;&quot;2:&quot;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (__dummy)&t;&bslash;&n;&t;&t;: &quot;r&quot; (0x20000000));&t;&bslash;&n;} while (0)
+multiline_comment|/*&n; * Back to P1 area.&n; */
+DECL|macro|back_to_P1
+mdefine_line|#define back_to_P1()&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&t;&t;&quot;nop;nop;nop;nop;nop;nop&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot;mov.l&t;1f, %0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&quot; nop&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;.balign 4&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&t;.long 2f&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;2:&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (__dummy));&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* For spinlocks etc */
 DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(x)&t;__save_and_cli(x)

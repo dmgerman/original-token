@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sh-sci.h,v 1.5 2000-03-05 13:54:32+09 gniibe Exp $&n; *&n; *  linux/drivers/char/sh-sci.h&n; *&n; *  SuperH on-chip serial module support.  (SCI with no FIFO / with FIFO)&n; *  Copyright (C) 1999, 2000  Niibe Yutaka&n; *  Copyright (C) 2000  Greg Banks&n; *&n; */
+multiline_comment|/* $Id: sh-sci.h,v 1.8 2000/03/08 15:19:39 gniibe Exp $&n; *&n; *  linux/drivers/char/sh-sci.h&n; *&n; *  SuperH on-chip serial module support.  (SCI with no FIFO / with FIFO)&n; *  Copyright (C) 1999, 2000  Niibe Yutaka&n; *  Copyright (C) 2000  Greg Banks&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SH_SCI_SERIAL)
 macro_line|#if defined(__sh3__)
@@ -16,13 +16,24 @@ DECL|macro|SC_RDR
 mdefine_line|#define SC_RDR  0xfffffe8a
 DECL|macro|SCSPTR
 mdefine_line|#define SCSPTR 0xffffff7c
+macro_line|#elif defined(__SH4__)
+DECL|macro|SCSMR
+mdefine_line|#define SCSMR&t;(volatile unsigned char *)0xffe00000
+DECL|macro|SCBRR
+mdefine_line|#define SCBRR&t;0xffe00004
+DECL|macro|SCSCR
+mdefine_line|#define SCSCR&t;(volatile unsigned char *)0xffe00008
+DECL|macro|SC_TDR
+mdefine_line|#define SC_TDR&t;0xffe0000c
+DECL|macro|SC_SR
+mdefine_line|#define SC_SR&t;(volatile unsigned char *)0xffe00010
+DECL|macro|SC_RDR
+mdefine_line|#define SC_RDR&t;0xffe00014
+DECL|macro|SCSPTR
+mdefine_line|#define SCSPTR&t;0xffe0001c
+macro_line|#endif
 DECL|macro|SCSCR_INIT
 mdefine_line|#define SCSCR_INIT&t;0x30&t;/* TIE=0,RIE=0,TE=1,RE=1 */
-macro_line|#elif defined(__SH4__)
-id|Not
-id|yet
-dot
-macro_line|#endif
 DECL|macro|SCI_TD_E
 mdefine_line|#define SCI_TD_E  0x80
 DECL|macro|SCI_RD_F
@@ -56,8 +67,6 @@ DECL|macro|SCI_CTRL_FLAGS_CKE1
 mdefine_line|#define SCI_CTRL_FLAGS_CKE1 0x02
 DECL|macro|SCI_CTRL_FLAGS_CKE0
 mdefine_line|#define SCI_CTRL_FLAGS_CKE0 0x01
-DECL|macro|RFCR
-mdefine_line|#define RFCR    0xffffff74
 DECL|macro|SCI_ERI_IRQ
 mdefine_line|#define SCI_ERI_IRQ&t;23
 DECL|macro|SCI_RXI_IRQ
@@ -94,26 +103,35 @@ DECL|macro|SCSPTR
 macro_line|#undef  SCSPTR /* Is there any register for RTS?? */
 DECL|macro|SCLSR
 macro_line|#undef  SCLSR
-DECL|macro|RFCR
-mdefine_line|#define RFCR   0xffffff74
 DECL|macro|SCSCR_INIT
 mdefine_line|#define SCSCR_INIT&t;0x30&t;/* TIE=0,RIE=0,TE=1,RE=1 */
 multiline_comment|/* 0x33 when external clock is used */
 DECL|macro|SCI_IPR_OFFSET
 mdefine_line|#define SCI_IPR_OFFSET&t;(64+4)
 macro_line|#elif defined(__SH4__)
+DECL|macro|SCSMR
 mdefine_line|#define SCSMR  (volatile unsigned short *)0xFFE80000
+DECL|macro|SCBRR
 mdefine_line|#define SCBRR  0xFFE80004
+DECL|macro|SCSCR
 mdefine_line|#define SCSCR  (volatile unsigned short *)0xFFE80008
+DECL|macro|SC_TDR
 mdefine_line|#define SC_TDR 0xFFE8000C
+DECL|macro|SC_SR
 mdefine_line|#define SC_SR  (volatile unsigned short *)0xFFE80010
+DECL|macro|SC_RDR
 mdefine_line|#define SC_RDR 0xFFE80014
+DECL|macro|SCFCR
 mdefine_line|#define SCFCR  (volatile unsigned short *)0xFFE80018
+DECL|macro|SCFDR
 mdefine_line|#define SCFDR  0xFFE8001C
+DECL|macro|SCSPTR
 mdefine_line|#define SCSPTR 0xFFE80020
+DECL|macro|SCLSR
 mdefine_line|#define SCLSR  0xFFE80024
-mdefine_line|#define RFCR   0xFF800028
+DECL|macro|SCSCR_INIT
 mdefine_line|#define SCSCR_INIT&t;0x0038&t;/* TIE=0,RIE=0,TE=1,RE=1,REIE=1 */
+DECL|macro|SCI_IPR_OFFSET
 mdefine_line|#define SCI_IPR_OFFSET&t;(32+4)
 macro_line|#endif
 DECL|macro|SCI_ER
@@ -166,14 +184,26 @@ mdefine_line|#define SCI_TXI_IRQ&t;59
 DECL|macro|SCI_IRQ_END
 mdefine_line|#define SCI_IRQ_END&t;60
 macro_line|#elif defined(__SH4__)
+DECL|macro|SCI_ERI_IRQ
 mdefine_line|#define SCI_ERI_IRQ&t;40
+DECL|macro|SCI_RXI_IRQ
 mdefine_line|#define SCI_RXI_IRQ&t;41
+DECL|macro|SCI_BRI_IRQ
 mdefine_line|#define SCI_BRI_IRQ&t;42
+DECL|macro|SCI_TXI_IRQ
 mdefine_line|#define SCI_TXI_IRQ&t;43
+DECL|macro|SCI_IRQ_END
 mdefine_line|#define SCI_IRQ_END&t;44
 macro_line|#endif
 macro_line|#endif
 "&f;"
+macro_line|#if defined(__sh3__)
+DECL|macro|RFCR
+mdefine_line|#define RFCR   0xffffff74
+macro_line|#elif defined(__SH4__)
+DECL|macro|RFCR
+mdefine_line|#define RFCR   0xFF800028
+macro_line|#endif
 DECL|macro|SCI_PRIORITY
 mdefine_line|#define SCI_PRIORITY&t;3
 DECL|macro|SCI_MINOR_START
@@ -206,21 +236,24 @@ DECL|macro|WAIT_RFCR_COUNTER
 mdefine_line|#define WAIT_RFCR_COUNTER 200
 multiline_comment|/*&n; * Values for the BitRate Register (SCBRR)&n; *&n; * The values are actually divisors for a frequency which can&n; * be internal to the SH3 (14.7456MHz) or derived from an external&n; * clock source.  This driver assumes the internal clock is used;&n; * to support using an external clock source, config options or&n; * possibly command-line options would need to be added.&n; *&n; * Also, to support speeds below 2400 (why?) the lower 2 bits of&n; * the SCSMR register would also need to be set to non-zero values.&n; *&n; * -- Greg Banks 27Feb2000&n; */
 macro_line|#if defined(__sh3__)
-DECL|macro|BPS_2400
-mdefine_line|#define BPS_2400       191
-DECL|macro|BPS_4800
-mdefine_line|#define BPS_4800       95
-DECL|macro|BPS_9600
-mdefine_line|#define BPS_9600       47
-DECL|macro|BPS_19200
-mdefine_line|#define BPS_19200      23
-DECL|macro|BPS_38400
-mdefine_line|#define BPS_38400      11
-DECL|macro|BPS_115200
-mdefine_line|#define BPS_115200     3
+DECL|macro|PCLK
+mdefine_line|#define PCLK           14745600
 macro_line|#elif defined(__SH4__)
-multiline_comment|/* Values for SH-4 please! */
-DECL|macro|BPS_115200
-mdefine_line|#define BPS_115200     8
+DECL|macro|PCLK
+mdefine_line|#define PCLK           33333333
 macro_line|#endif
+DECL|macro|SCBRR_VALUE
+mdefine_line|#define SCBRR_VALUE(bps) (PCLK/(32*bps)-1)
+DECL|macro|BPS_2400
+mdefine_line|#define BPS_2400       SCBRR_VALUE(2400)
+DECL|macro|BPS_4800
+mdefine_line|#define BPS_4800       SCBRR_VALUE(4800)
+DECL|macro|BPS_9600
+mdefine_line|#define BPS_9600       SCBRR_VALUE(9600)
+DECL|macro|BPS_19200
+mdefine_line|#define BPS_19200      SCBRR_VALUE(19200)
+DECL|macro|BPS_38400
+mdefine_line|#define BPS_38400      SCBRR_VALUE(38400)
+DECL|macro|BPS_115200
+mdefine_line|#define BPS_115200     SCBRR_VALUE(115200)
 eof

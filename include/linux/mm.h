@@ -1160,6 +1160,11 @@ comma
 r_int
 r_int
 id|zone_start_paddr
+comma
+r_int
+r_int
+op_star
+id|zholes_size
 )paren
 suffix:semicolon
 r_extern

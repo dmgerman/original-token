@@ -3607,10 +3607,6 @@ l_int|0
 r_goto
 id|bummer
 suffix:semicolon
-id|sock-&gt;flags
-op_or_assign
-id|SO_ACCEPTCON
-suffix:semicolon
 )brace
 r_if
 c_cond

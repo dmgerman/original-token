@@ -2,8 +2,32 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-nexuspci/system.h&n; *&n; *
 macro_line|#ifndef __ASM_ARCH_SYSTEM_H
 DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
-DECL|macro|arch_do_idle
-mdefine_line|#define arch_do_idle()&t;&t;cpu_do_idle()
+DECL|function|arch_idle
+r_extern
+id|__inline__
+r_void
+id|arch_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|current-&gt;need_resched
+op_logical_and
+op_logical_neg
+id|hlt_counter
+)paren
+id|cpu_do_idle
+c_func
+(paren
+id|IDLE_WAIT_SLOW
+)paren
+suffix:semicolon
+)brace
 DECL|macro|arch_reset
 mdefine_line|#define arch_reset(mode)&t;do { } while (0)
 DECL|macro|arch_power_off

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.46 1999/11/19 05:52:48 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1999  David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.47 2000/03/25 05:18:10 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1999  David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1492,10 +1492,6 @@ op_star
 id|cookie
 suffix:semicolon
 r_int
-r_int
-id|pci_command
-suffix:semicolon
-r_int
 id|nd
 comma
 id|ebusnd
@@ -1681,59 +1677,6 @@ op_assign
 id|pbm
 op_assign
 id|cookie-&gt;pbm
-suffix:semicolon
-multiline_comment|/* Enable BUS Master. */
-id|pci_read_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|pci_command
-)paren
-suffix:semicolon
-id|pci_command
-op_or_assign
-id|PCI_COMMAND_MASTER
-suffix:semicolon
-id|pci_write_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-id|pci_command
-)paren
-suffix:semicolon
-multiline_comment|/* Set reasonable cache line size and latency timer values. */
-id|pci_write_config_byte
-c_func
-(paren
-id|pdev
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|64
-)paren
-suffix:semicolon
-multiline_comment|/* NOTE: Cache line size is in 32-bit word units. */
-id|pci_write_config_byte
-c_func
-(paren
-id|pdev
-comma
-id|PCI_CACHE_LINE_SIZE
-comma
-l_int|64
-op_div
-r_sizeof
-(paren
-id|u32
-)paren
-)paren
 suffix:semicolon
 id|ebus_ranges_init
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_impl.h,v 1.5 2000/02/08 05:11:32 jj Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_impl.h,v 1.6 2000/03/25 05:18:11 davem Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef PCI_IMPL_H
 DECL|macro|PCI_IMPL_H
 mdefine_line|#define PCI_IMPL_H
@@ -88,6 +88,38 @@ suffix:semicolon
 r_extern
 r_void
 id|pci_fixup_irq
+c_func
+(paren
+r_struct
+id|pci_pbm_info
+op_star
+id|pbm
+comma
+r_struct
+id|pci_bus
+op_star
+id|pbus
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|pci_determine_66mhz_disposition
+c_func
+(paren
+r_struct
+id|pci_pbm_info
+op_star
+id|pbm
+comma
+r_struct
+id|pci_bus
+op_star
+id|pbus
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|pci_setup_busmastering
 c_func
 (paren
 r_struct

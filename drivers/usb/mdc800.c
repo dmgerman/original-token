@@ -1,11 +1,10 @@
 multiline_comment|/*&n; * copyright (C) 1999/2000 by Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; *&t;The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 10 171&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.1&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; *&t;first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
+multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; *&t;The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 180 32&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.1&n; * The mdc800 driver gets assigned the USB Minor 32-47. The Registration&n; * was updated to use these values.&n; * (26/03/2000)&n; *&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; *&t;first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -15,7 +14,7 @@ macro_line|#include &lt;linux/usb.h&gt;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &t;&t;&quot;0.7.1&quot;
 DECL|macro|RELEASE_DATE
-mdefine_line|#define RELEASE_DATE &quot;(01/03/2000)&quot;
+mdefine_line|#define RELEASE_DATE &quot;(26/03/2000)&quot;
 multiline_comment|/* Vendor and Product Information */
 DECL|macro|MDC800_VENDOR_ID
 mdefine_line|#define MDC800_VENDOR_ID &t;0x055f
@@ -34,9 +33,9 @@ DECL|macro|TO_WRITE_GET_READY
 mdefine_line|#define TO_WRITE_GET_READY&t;&t;&t;3000
 DECL|macro|TO_DEFAULT_COMMAND
 mdefine_line|#define TO_DEFAULT_COMMAND&t;&t;&t;5000
-multiline_comment|/* Minor Number of the device (create with mknod /dev/mustek c 10 171) */
-DECL|macro|MDC800_DEVICE_MINOR
-mdefine_line|#define MDC800_DEVICE_MINOR 171
+multiline_comment|/* Minor Number of the device (create with mknod /dev/mustek c 180 32) */
+DECL|macro|MDC800_DEVICE_MINOR_BASE
+mdefine_line|#define MDC800_DEVICE_MINOR_BASE 32
 multiline_comment|/**************************************************************************&n;&t;Data and structs&n;***************************************************************************/
 r_typedef
 r_enum
@@ -2384,31 +2383,6 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/***************************************************************************&n;&t;Init and Cleanup this driver (Structs and types)&n;****************************************************************************/
-multiline_comment|/*&n; * USB Driver Struct for this device&n; */
-DECL|variable|mdc800_usb_driver
-r_static
-r_struct
-id|usb_driver
-id|mdc800_usb_driver
-op_assign
-(brace
-l_string|&quot;mdc800&quot;
-comma
-id|mdc800_usb_probe
-comma
-id|mdc800_usb_disconnect
-comma
-(brace
-l_int|0
-comma
-l_int|0
-)brace
-comma
-l_int|0
-comma
-l_int|0
-)brace
-suffix:semicolon
 multiline_comment|/* File Operations of this drivers */
 DECL|variable|mdc800_device_ops
 r_static
@@ -2456,20 +2430,30 @@ singleline_comment|//&t;0,&t;&t;&t;&t;&t;/* revalidate */
 singleline_comment|//&t;0&t;&t;&t;&t;&t;/* lock */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The Misc Device Configuration Struct&n; */
-DECL|variable|mdc800_device
+multiline_comment|/*&n; * USB Driver Struct for this device&n; */
+DECL|variable|mdc800_usb_driver
 r_static
 r_struct
-id|miscdevice
-id|mdc800_device
+id|usb_driver
+id|mdc800_usb_driver
 op_assign
 (brace
-id|MDC800_DEVICE_MINOR
+l_string|&quot;mdc800&quot;
 comma
-l_string|&quot;USB Mustek MDC800 Camera&quot;
+id|mdc800_usb_probe
+comma
+id|mdc800_usb_disconnect
+comma
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 comma
 op_amp
 id|mdc800_device_ops
+comma
+id|MDC800_DEVICE_MINOR_BASE
 )brace
 suffix:semicolon
 multiline_comment|/************************************************************************&n;&t;Init and Cleanup this driver (Main Functions)&n;*************************************************************************/
@@ -2629,20 +2613,6 @@ l_int|0
 r_goto
 id|cleanup_on_fail
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|misc_register
-(paren
-op_amp
-id|mdc800_device
-)paren
-OL
-l_int|0
-)paren
-r_goto
-id|cleanup_on_misc_register_fail
-suffix:semicolon
 id|info
 (paren
 l_string|&quot;Mustek Digital Camera Driver &quot;
@@ -2660,14 +2630,6 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Clean driver up, when something fails */
-id|cleanup_on_misc_register_fail
-suffix:colon
-id|usb_deregister
-(paren
-op_amp
-id|mdc800_usb_driver
-)paren
-suffix:semicolon
 id|cleanup_on_fail
 suffix:colon
 r_if
@@ -2740,12 +2702,6 @@ id|usb_deregister
 (paren
 op_amp
 id|mdc800_usb_driver
-)paren
-suffix:semicolon
-id|misc_deregister
-(paren
-op_amp
-id|mdc800_device
 )paren
 suffix:semicolon
 id|usb_free_urb

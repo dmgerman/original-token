@@ -58,6 +58,7 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Keep out-of-line to prevent kernel bloat.&n; *&t;__builtin_return_address is not used because it is not always&n; *&t;reliable. &n; */
+multiline_comment|/**&n; *&t;skb_over_panic&t;- &t;private function&n; *&t;@skb: buffer&n; *&t;@sz: size&n; *&t;@here: address&n; *&n; *&t;Out of line support code for skb_put. Not user callable&n; */
 DECL|function|skb_over_panic
 r_void
 id|skb_over_panic
@@ -105,6 +106,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_under_panic&t;- &t;private function&n; *&t;@skb: buffer&n; *&t;@sz: size&n; *&t;@here: address&n; *&n; *&t;Out of line support code for skb_push. Not user callable&n; */
 DECL|function|skb_under_panic
 r_void
 id|skb_under_panic
@@ -305,6 +307,7 @@ id|skb
 suffix:semicolon
 )brace
 multiline_comment|/* &t;Allocate a new skbuff. We do this ourselves so we can fill in a few&n; *&t;&squot;private&squot; fields and also do memory statistics to find all the&n; *&t;[BEEP] leaks.&n; * &n; */
+multiline_comment|/**&n; *&t;alloc_skb&t;-&t;allocate a network buffer&n; *&t;@size: size to allocate&n; *&t;@gfp_mask: allocation mask&n; *&n; *&t;Allocate a new sk_buff. The returned buffer has no headroom and a&n; *&t;tail room of size bytes. The object has a reference count of one.&n; *&t;The return is the buffer. On a failure the return is NULL.&n; *&n; *&t;Buffers may only be allocated from interrupts using a gfp_mask of&n; *&t;GFP_ATOMIC.&n; */
 DECL|function|alloc_skb
 r_struct
 id|sk_buff
@@ -702,7 +705,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Free an sk_buff. Release anything attached to the buffer. Clean the state.&n; */
+multiline_comment|/**&n; *&t;__kfree_skb - private function &n; *&t;@skb: buffer&n; *&n; *&t;Free an sk_buff. Release anything attached to the buffer. &n; *&t;Clean the state. This is an internal helper function. Users should&n; *&t;always call kfree_skb&n; */
 DECL|function|__kfree_skb
 r_void
 id|__kfree_skb
@@ -829,7 +832,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Duplicate an sk_buff. The new one is not owned by a socket.&n; */
+multiline_comment|/**&n; *&t;skb_clone&t;-&t;duplicate an sk_buff&n; *&t;@skb: buffer to clone&n; *&t;@gfp_mask: allocation priority&n; *&n; *&t;Duplicate an sk_buff. The new one is not owned by a socket. Both&n; *&t;copies share the same packet data but not structure. The new&n; *&t;buffer has a reference count of 1. If the allocation fails the &n; *&t;function returns NULL otherwise the new buffer is returned.&n; *&t;&n; *&t;If this function is called from an interrupt gfp_mask must be&n; *&t;GFP_ATOMIC.&n; */
 DECL|function|skb_clone
 r_struct
 id|sk_buff
@@ -1176,7 +1179,7 @@ id|old-&gt;tc_index
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; *&t;This is slower, and copies the whole data area &n; */
+multiline_comment|/**&n; *&t;skb_copy&t;-&t;copy an sk_buff&n; *&t;@skb: buffer to copy&n; *&t;@gfp_mask: allocation priority&n; *&n; *&t;Make a copy of both an sk_buff and its data. This is used when the&n; *&t;caller wishes to modify the data and needs a private copy of the &n; *&t;data to alter. Returns NULL on failure or the pointer to the buffer&n; *&t;on success. The returned buffer has a reference count of 1.&n; *&n; *&t;You must pass GFP_ATOMIC as the allocation priority if this function&n; *&t;is called from an interrupt.&n; */
 DECL|function|skb_copy
 r_struct
 id|sk_buff
@@ -1273,6 +1276,7 @@ r_return
 id|n
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;skb_copy&t;-&t;copy and expand sk_buff&n; *&t;@skb: buffer to copy&n; *&t;@newheadroom: new free bytes at head&n; *&t;@newtailroom: new free bytes at tail&n; *&t;@gfp_mask: allocation priority&n; *&n; *&t;Make a copy of both an sk_buff and its data and while doing so &n; *&t;allocate additional space.&n; *&n; *&t;This is used when the caller wishes to modify the data and needs a &n; *&t;private copy of the data to alter as well as more space for new fields.&n; *&t; Returns NULL on failure or the pointer to the buffer&n; *&t;on success. The returned buffer has a reference count of 1.&n; *&n; *&t;You must pass GFP_ATOMIC as the allocation priority if this function&n; *&t;is called from an interrupt.&n; */
 DECL|function|skb_copy_expand
 r_struct
 id|sk_buff

@@ -572,9 +572,9 @@ id|dev-&gt;slot_name
 )paren
 suffix:semicolon
 multiline_comment|/* We&squot;ll assign a new address later */
-id|r-&gt;start
-op_sub_assign
 id|r-&gt;end
+op_sub_assign
+id|r-&gt;start
 suffix:semicolon
 id|r-&gt;start
 op_assign
@@ -959,6 +959,20 @@ op_or_assign
 id|PCI_COMMAND_MEMORY
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
+)paren
+id|cmd
+op_or_assign
+id|PCI_COMMAND_MEMORY
+suffix:semicolon
 r_if
 c_cond
 (paren

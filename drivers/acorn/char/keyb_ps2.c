@@ -36,8 +36,6 @@ DECL|variable|kbd_read_mask
 r_int
 id|kbd_read_mask
 suffix:semicolon
-DECL|macro|IRQ_KEYBOARDRX
-mdefine_line|#define IRQ_KEYBOARDRX 15
 DECL|macro|VERSION
 mdefine_line|#define VERSION 100
 DECL|macro|KBD_REPORT_ERR
@@ -1678,6 +1676,23 @@ r_void
 r_int
 r_int
 id|flags
+suffix:semicolon
+multiline_comment|/* Reset the keyboard state machine. */
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|IOMD_KCTRL
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|8
+comma
+id|IOMD_KCTRL
+)paren
 suffix:semicolon
 id|save_flags_cli
 (paren

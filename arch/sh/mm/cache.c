@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cache.c,v 1.9 2000/02/14 12:45:26 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/cache.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: cache.c,v 1.10 2000/03/07 11:58:34 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/cache.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -101,10 +101,6 @@ mdefine_line|#define CACHE_OC_NUM_WAYS&t;  1
 DECL|macro|CACHE_IC_NUM_WAYS
 mdefine_line|#define CACHE_IC_NUM_WAYS&t;  1
 macro_line|#endif
-DECL|macro|jump_to_p2
-mdefine_line|#define jump_to_p2(__dummy) &bslash;&n;&t;asm volatile(&quot;mova&t;1f,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;add&t;%1,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp&t;@r0&t;&t;! Jump to P2 area&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot; nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;.balign 4&bslash;n&quot; &bslash;&n;&t;&t;     &quot;1:&quot; &bslash;&n;&t;&t;     : &quot;=&amp;z&quot; (__dummy) &bslash;&n;&t;&t;     : &quot;r&quot; (0x20000000))
-DECL|macro|back_to_p1
-mdefine_line|#define back_to_p1(__dummy) &bslash;&n;&t;asm volatile(&quot;nop;nop;nop;nop;nop;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;mova&t;9f,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;sub&t;%1,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp&t;@r0&t;&t;! Back to P1 area&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot; nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;.balign 4&bslash;n&quot; &bslash;&n;&t;&t;     &quot;9:&quot; &bslash;&n;&t;&t;     : &quot;=&amp;z&quot; (__dummy) &bslash;&n;&t;&t;     : &quot;r&quot; (0x20000000), &quot;0&quot; (__dummy))
 multiline_comment|/* Write back caches to memory (if needed) and invalidates the caches */
 DECL|function|cache_flush_area
 r_void
@@ -123,8 +119,6 @@ id|end
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 r_int
 r_int
@@ -151,10 +145,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 r_for
@@ -231,10 +224,9 @@ id|v
 suffix:semicolon
 macro_line|#endif
 )brace
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags
@@ -263,8 +255,6 @@ id|end
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 r_int
 r_int
@@ -293,10 +283,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 r_for
@@ -421,10 +410,9 @@ id|v
 suffix:semicolon
 macro_line|#endif
 )brace
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags
@@ -452,8 +440,6 @@ id|end
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 r_int
 r_int
@@ -474,10 +460,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 r_for
@@ -619,10 +604,9 @@ id|v
 suffix:semicolon
 macro_line|#endif
 )brace
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags
@@ -645,8 +629,6 @@ r_void
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 r_int
 r_int
@@ -664,10 +646,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 r_for
@@ -752,10 +733,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags
@@ -777,8 +757,6 @@ r_void
 macro_line|#if defined(__sh3__)
 r_int
 r_int
-id|__dummy
-comma
 id|addr0
 comma
 id|addr1
@@ -791,10 +769,9 @@ id|data2
 comma
 id|data3
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 multiline_comment|/* Check if the entry shadows or not.&n;&t; * When shadowed, it&squot;s 128-entry system.&n;&t; * Otherwise, it&squot;s 256-entry system.&n;&t; */
@@ -891,10 +868,9 @@ comma
 id|addr1
 )paren
 suffix:semicolon
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 r_if
@@ -965,8 +941,6 @@ r_void
 (brace
 r_int
 r_int
-id|__dummy
-comma
 id|ccr
 suffix:semicolon
 id|detect_cpu_and_cache_system
@@ -1004,10 +978,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|ctrl_outl
@@ -1018,10 +991,9 @@ comma
 id|CCR
 )paren
 suffix:semicolon
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 )brace
@@ -1045,8 +1017,6 @@ id|pg
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 r_int
 r_int
@@ -1062,10 +1032,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|v
@@ -1125,10 +1094,9 @@ comma
 id|addr
 )paren
 suffix:semicolon
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1155,8 +1123,6 @@ id|end
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 r_int
 r_int
@@ -1181,10 +1147,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 r_for
@@ -1253,10 +1218,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1277,8 +1241,6 @@ r_void
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 multiline_comment|/* Write back Operand Cache */
 id|cache_wback_all
@@ -1292,10 +1254,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|ctrl_outl
@@ -1306,10 +1267,9 @@ comma
 id|CCR
 )paren
 suffix:semicolon
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1360,8 +1320,6 @@ id|end
 r_int
 r_int
 id|flags
-comma
-id|__dummy
 suffix:semicolon
 r_int
 r_int
@@ -1386,10 +1344,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|jump_to_p2
+id|jump_to_P2
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 r_for
@@ -1460,10 +1417,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-id|back_to_p1
+id|back_to_P1
 c_func
 (paren
-id|__dummy
 )paren
 suffix:semicolon
 id|restore_flags

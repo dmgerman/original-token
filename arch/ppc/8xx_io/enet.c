@@ -20,7 +20,7 @@ macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;commproc.h&quot;
-multiline_comment|/*&n; *&t;&t;&t;&t;Theory of Operation&n; *&n; * The MPC8xx CPM performs the Ethernet processing on SCC1.  It can use&n; * an aribtrary number of buffers on byte boundaries, but must have at&n; * least two receive buffers to prevent constant overrun conditions.&n; *&n; * The buffer descriptors are allocated from the CPM dual port memory&n; * with the data buffers allocated from host memory, just like all other&n; * serial communication protocols.  The host memory buffers are allocated&n; * from the free page pool, and then divided into smaller receive and&n; * transmit buffers.  The size of the buffers should be a power of two,&n; * since that nicely divides the page.  This creates a ring buffer&n; * structure similar to the LANCE and other controllers.&n; *&n; * Like the LANCE driver:&n; * The driver runs as two independent, single-threaded flows of control.  One&n; * is the send-packet routine, which enforces single-threaded use by the&n; * dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n; * threaded by the hardware and other software.&n; *&n; * The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n; * flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n; * queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n; * the &squot;lp-&gt;tx_full&squot; flag.&n; *&n; * The MBX has a control register external to the MPC8xx that has some&n; * control of the Ethernet interface.  Control Register 1 has the&n; * following format:&n; *&t;bit 0 - Set to enable Ethernet transceiver&n; *&t;bit 1 - Set to enable Ethernet internal loopback&n; *&t;bit 2 - Set to auto select AUI or TP port&n; *&t;bit 3 - if bit 2 is 0, set to select TP port&n; *&t;bit 4 - Set to disable full duplex (loopback)&n; *&t;bit 5 - Set to disable XCVR collision test&n; *&t;bit 6, 7 - Used for RS-232 control.&n; *&n; * EPPC-Bug sets this register to 0x98 for normal Ethernet operation,&n; * so we should not have to touch it.&n; *&n; * The following I/O is used by the MBX implementation of the MPC8xx to&n; * the MC68160 transceiver.  It DOES NOT exactly follow the cookbook&n; * example from the MPC860 manual.&n; *&t;Port A, 15 - SCC1 Ethernet Rx&n; *&t;Port A, 14 - SCC1 Ethernet Tx&n; *&t;Port A, 6 (CLK2) - SCC1 Ethernet Tx Clk&n; *&t;Port A, 4 (CLK4) - SCC1 Ethernet Rx Clk&n; *&t;Port C, 15 - SCC1 Ethernet Tx Enable&n; *&t;Port C, 11 - SCC1 Ethernet Collision&n; *&t;Port C, 10 - SCC1 Ethernet Rx Enable&n; *&n; * The RPX-Lite (that I had :-), was the MPC850SAR.  It has a control&n; * register to enable Ethernet functions in the 68160, and the Ethernet&n; * was controlled by SCC2.  So, the pin I/O was like this:&n; *&t;Port A, 13 - SCC2 Ethernet Rx&n; *&t;Port A, 12 - SCC2 Ethernet Tx&n; *&t;Port A,  6 (CLK2) - Ethernet Tx Clk&n; *&t;Port A,  4 (CLK4) - Ethernet Rx Clk&n; *&t;Port B, 18 (RTS2) - Ethernet Tx Enable&n; *&t;Port C,  8 (CD2) - Ethernet Rx Enable&n; *&t;Port C,  9 (CTS2) - SCC Ethernet Collision&n; */
+multiline_comment|/*&n; *&t;&t;&t;&t;Theory of Operation&n; *&n; * The MPC8xx CPM performs the Ethernet processing on SCC1.  It can use&n; * an aribtrary number of buffers on byte boundaries, but must have at&n; * least two receive buffers to prevent constant overrun conditions.&n; *&n; * The buffer descriptors are allocated from the CPM dual port memory&n; * with the data buffers allocated from host memory, just like all other&n; * serial communication protocols.  The host memory buffers are allocated&n; * from the free page pool, and then divided into smaller receive and&n; * transmit buffers.  The size of the buffers should be a power of two,&n; * since that nicely divides the page.  This creates a ring buffer&n; * structure similar to the LANCE and other controllers.&n; *&n; * Like the LANCE driver:&n; * The driver runs as two independent, single-threaded flows of control.  One&n; * is the send-packet routine, which enforces single-threaded use by the&n; * cep-&gt;tx_busy flag.  The other thread is the interrupt handler, which is&n; * single threaded by the hardware and other software.&n; *&n; * The send packet thread has partial control over the Tx ring and the&n; * &squot;cep-&gt;tx_busy&squot; flag.  It sets the tx_busy flag whenever it&squot;s queuing a Tx&n; * packet. If the next queue slot is empty, it clears the tx_busy flag when&n; * finished otherwise it sets the &squot;lp-&gt;tx_full&squot; flag.&n; *&n; * The MBX has a control register external to the MPC8xx that has some&n; * control of the Ethernet interface.  Control Register 1 has the&n; * following format:&n; *&t;bit 0 - Set to enable Ethernet transceiver&n; *&t;bit 1 - Set to enable Ethernet internal loopback&n; *&t;bit 2 - Set to auto select AUI or TP port&n; *&t;bit 3 - if bit 2 is 0, set to select TP port&n; *&t;bit 4 - Set to disable full duplex (loopback)&n; *&t;bit 5 - Set to disable XCVR collision test&n; *&t;bit 6, 7 - Used for RS-232 control.&n; *&n; * EPPC-Bug sets this register to 0x98 for normal Ethernet operation,&n; * so we should not have to touch it.&n; *&n; * The following I/O is used by the MBX implementation of the MPC8xx to&n; * the MC68160 transceiver.  It DOES NOT exactly follow the cookbook&n; * example from the MPC860 manual.&n; *&t;Port A, 15 - SCC1 Ethernet Rx&n; *&t;Port A, 14 - SCC1 Ethernet Tx&n; *&t;Port A, 6 (CLK2) - SCC1 Ethernet Tx Clk&n; *&t;Port A, 4 (CLK4) - SCC1 Ethernet Rx Clk&n; *&t;Port C, 15 - SCC1 Ethernet Tx Enable&n; *&t;Port C, 11 - SCC1 Ethernet Collision&n; *&t;Port C, 10 - SCC1 Ethernet Rx Enable&n; *&n; * The RPX-Lite (that I had :-), was the MPC850SAR.  It has a control&n; * register to enable Ethernet functions in the 68160, and the Ethernet&n; * was controlled by SCC2.  So, the pin I/O was like this:&n; *&t;Port A, 13 - SCC2 Ethernet Rx&n; *&t;Port A, 12 - SCC2 Ethernet Tx&n; *&t;Port A,  6 (CLK2) - Ethernet Tx Clk&n; *&t;Port A,  4 (CLK4) - Ethernet Rx Clk&n; *&t;Port B, 18 (RTS2) - Ethernet Tx Enable&n; *&t;Port C,  8 (CD2) - Ethernet Rx Enable&n; *&t;Port C,  9 (CTS2) - SCC Ethernet Collision&n; */
 multiline_comment|/* The number of Tx and Rx buffers.  These are allocated from the page&n; * pool.  The code may assume these are power of two, so it is best&n; * to keep them that size.&n; * We don&squot;t need to allocate pages for the transmitter.  We just use&n; * the skbuffer directly.&n; */
 DECL|macro|CPM_ENET_RX_PAGES
 mdefine_line|#define CPM_ENET_RX_PAGES&t;4
@@ -103,13 +103,21 @@ id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|tx_full
-r_char
+id|uint
 id|tx_full
+suffix:semicolon
+DECL|member|tx_busy
+id|uint
+id|tx_busy
 suffix:semicolon
 DECL|member|lock
 r_int
 r_int
 id|lock
+suffix:semicolon
+DECL|member|interrupt
+r_int
+id|interrupt
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -232,17 +240,11 @@ id|dev
 )paren
 (brace
 multiline_comment|/* I should reset the ring buffers here, but I don&squot;t yet know&n;&t; * a simple way to do that.&n;&t; */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -291,7 +293,7 @@ multiline_comment|/* Transmitter timeout, serious problems. */
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|cep-&gt;tx_busy
 )paren
 (brace
 r_int
@@ -416,7 +418,7 @@ id|bdp-&gt;cbd_bufaddr
 suffix:semicolon
 )brace
 macro_line|#endif
-id|dev-&gt;tbusy
+id|cep-&gt;tx_busy
 op_assign
 l_int|0
 suffix:semicolon
@@ -428,7 +430,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
+multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t; * done with atomic_swap(1, cep-&gt;tx_busy), but set_bit() works as well.&n;&t; */
 r_if
 c_cond
 (paren
@@ -442,7 +444,7 @@ r_void
 op_star
 )paren
 op_amp
-id|dev-&gt;tbusy
+id|cep-&gt;tx_busy
 )paren
 op_ne
 l_int|0
@@ -487,7 +489,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* don&squot;t clear dev-&gt;tbusy flag. */
+multiline_comment|/* don&squot;t clear cep-&gt;tx_busy flag. */
 r_return
 l_int|1
 suffix:semicolon
@@ -506,7 +508,7 @@ op_amp
 id|BD_ENET_TX_READY
 )paren
 (brace
-multiline_comment|/* Ooops.  All transmit buffers are full.  Bail out.&n;&t;&t; * This should not happen, since dev-&gt;tbusy should be set.&n;&t;&t; */
+multiline_comment|/* Ooops.  All transmit buffers are full.  Bail out.&n;&t;&t; * This should not happen, since cep-&gt;tx_busy should be set.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -654,7 +656,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_else
-id|dev-&gt;tbusy
+id|cep-&gt;tx_busy
 op_assign
 l_int|0
 suffix:semicolon
@@ -724,7 +726,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;interrupt
+id|cep-&gt;interrupt
 )paren
 id|printk
 c_func
@@ -734,7 +736,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
+id|cep-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
@@ -905,14 +907,13 @@ id|cep-&gt;stats.collisions
 op_increment
 suffix:semicolon
 multiline_comment|/* Free the sk buffer associated with this last transmit.&n;&t;&t;*/
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|cep-&gt;tx_skbuff
 (braket
 id|cep-&gt;skb_dirty
 )braket
-multiline_comment|/*, FREE_WRITE*/
 )paren
 suffix:semicolon
 id|cep-&gt;skb_dirty
@@ -948,21 +949,21 @@ c_cond
 (paren
 id|cep-&gt;tx_full
 op_logical_and
-id|dev-&gt;tbusy
+id|cep-&gt;tx_busy
 )paren
 (brace
 id|cep-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
+id|cep-&gt;tx_busy
 op_assign
 l_int|0
 suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -1032,7 +1033,7 @@ l_string|&quot;CPM ENET: BSY can&squot;t happen.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
+id|cep-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
@@ -1339,6 +1340,12 @@ id|dev
 )paren
 (brace
 multiline_comment|/* Don&squot;t know what to do yet.&n;&t;*/
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -1,12 +1,10 @@
-multiline_comment|/* Kernel module to match various things tied to sockets associated with&n;   locally generated outgoing packets.&n;&n;   (C)2000 Marc Boucher&n; */
+multiline_comment|/* Kernel module to match various things tied to sockets associated with&n;   locally generated outgoing packets.&n;&n;   Copyright (C) 2000 Marc Boucher&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ipt_owner.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 r_static
 r_int
 DECL|function|match_pid

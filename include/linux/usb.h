@@ -1,12 +1,6 @@
 macro_line|#ifndef __LINUX_USB_H
 DECL|macro|__LINUX_USB_H
 mdefine_line|#define __LINUX_USB_H
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/ioctl.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;&t;/* for in_interrupt() */
 multiline_comment|/* USB constants */
 multiline_comment|/*&n; * Device and/or Interface Class codes&n; */
 DECL|macro|USB_CLASS_PER_INTERFACE
@@ -169,6 +163,12 @@ mdefine_line|#define USB_REQ_SET_IDLE&t;&t;0x0A
 DECL|macro|USB_REQ_SET_PROTOCOL
 mdefine_line|#define USB_REQ_SET_PROTOCOL&t;&t;0x0B
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;&t;/* for in_interrupt() */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 DECL|macro|USB_MAJOR
@@ -836,7 +836,7 @@ r_void
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* -------------------------------------------------------------------------------------* &n; * New USB Structures                                                                   *&n; * -------------------------------------------------------------------------------------*/
+multiline_comment|/*----------------------------------------------------------------------------* &n; * New USB Structures                                                         *&n; *----------------------------------------------------------------------------*/
 DECL|macro|USB_DISABLE_SPD
 mdefine_line|#define USB_DISABLE_SPD         0x0001
 DECL|macro|USB_ISO_ASAP
@@ -1163,7 +1163,7 @@ id|handler
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* ------------------------------------------------------------------------------------- */
+multiline_comment|/* -------------------------------------------------------------------------- */
 DECL|struct|usb_operations
 r_struct
 id|usb_operations

@@ -37,6 +37,8 @@ DECL|macro|SCREEN1_BASE
 mdefine_line|#define SCREEN1_BASE&t;&t;0xd0000000
 DECL|macro|FLUSH_BASE
 mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
+DECL|macro|UNCACHEABLE_ADDR
+mdefine_line|#define UNCACHEABLE_ADDR&t;0xdf010000
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * for use with inb/outb&n; */
 DECL|macro|IO_VIDC_AUDIO_BASE

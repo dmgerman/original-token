@@ -36,6 +36,7 @@ multiline_comment|/*#define DEBUG_ALLOW_ALL*/
 multiline_comment|/* Useful for remote debugging */
 multiline_comment|/*#define DEBUG_IP_FIREWALL_USER*/
 multiline_comment|/*#define DEBUG_IP_FIREWALL_LOCKING*/
+macro_line|#if defined(CONFIG_NETLINK_DEV) || defined(CONFIG_NETLINK_DEV_MODULE)
 DECL|variable|ipfwsk
 r_static
 r_struct
@@ -43,6 +44,7 @@ id|sock
 op_star
 id|ipfwsk
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SMP
 DECL|macro|SLOT_NUMBER
 mdefine_line|#define SLOT_NUMBER() (cpu_number_map(smp_processor_id())*2 + !in_interrupt())

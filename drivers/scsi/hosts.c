@@ -139,6 +139,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_T128
 macro_line|#include &quot;t128.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DMX3191D
+macro_line|#include &quot;dmx3191d.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DTC3280
 macro_line|#include &quot;dtc.h&quot;
 macro_line|#endif
@@ -461,6 +464,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_T128
 id|TRANTOR_T128
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_DMX3191D
+id|DMX3191D
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DTC3280

@@ -190,10 +190,6 @@ id|KERN_ERR
 l_string|&quot;kHTTPd: Error listening on socket &bslash;n&quot;
 )paren
 suffix:semicolon
-id|sock-&gt;flags
-op_or_assign
-id|SO_ACCEPTCON
-suffix:semicolon
 id|MainSocket
 op_assign
 id|sock

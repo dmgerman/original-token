@@ -326,6 +326,26 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
+macro_line|#ifdef CONFIG_HWC
+r_extern
+r_void
+id|hwc_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_3215
+r_extern
+r_void
+id|con3215_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_3215 */
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -9263,6 +9283,20 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_3215
+id|con3215_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_HWC
+id|hwc_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 DECL|variable|dev_tty_driver

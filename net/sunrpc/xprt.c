@@ -655,9 +655,14 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|sock-&gt;flags
+id|test_bit
+c_func
+(paren
+id|SOCK_NOSPACE
+comma
 op_amp
-id|SO_NOSPACE
+id|sock-&gt;flags
+)paren
 )paren
 id|result
 op_assign

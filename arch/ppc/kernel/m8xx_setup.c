@@ -875,10 +875,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-id|ppc8xx_pic.irq_offset
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren

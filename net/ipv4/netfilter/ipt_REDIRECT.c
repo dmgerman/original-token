@@ -11,8 +11,6 @@ macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_nat_rule.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 macro_line|#if 0
 mdefine_line|#define DEBUGP printk
 macro_line|#else

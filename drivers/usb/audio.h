@@ -53,7 +53,7 @@ mdefine_line|#define MAX_IFACE&t;&t;&t;8
 DECL|macro|MAX_FORMAT
 mdefine_line|#define MAX_FORMAT&t;&t;&t;8
 DECL|macro|MAX_ALT
-mdefine_line|#define MAX_ALT&t;&t;&t;&t;8
+mdefine_line|#define MAX_ALT&t;&t;&t;&t;32 &t;/* Sorry, we need quite a few for the Philips webcams */
 DECL|struct|usb_audio_terminal
 r_struct
 id|usb_audio_terminal

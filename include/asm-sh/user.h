@@ -15,15 +15,16 @@ r_int
 r_int
 id|fp_regs
 (braket
-id|NUM_FPU_REGS
+l_int|16
 )braket
 suffix:semicolon
-DECL|member|xf_regs
+DECL|member|xd_regs
 r_int
 r_int
-id|xf_regs
+r_int
+id|xd_regs
 (braket
-id|NUM_FPU_REGS
+l_int|8
 )braket
 suffix:semicolon
 DECL|member|fpscr
@@ -53,12 +54,12 @@ r_struct
 id|user_fpu_struct
 id|fpu
 suffix:semicolon
-multiline_comment|/* Math Co-processor registers. */
+multiline_comment|/* Math Co-processor registers  */
 DECL|member|u_fpvalid
 r_int
 id|u_fpvalid
 suffix:semicolon
-multiline_comment|/* True if math co-processor being used. */
+multiline_comment|/* True if math co-processor being used */
 DECL|member|u_tsize
 r_int
 id|u_tsize
@@ -111,7 +112,7 @@ id|user_fpu_struct
 op_star
 id|u_fpstate
 suffix:semicolon
-multiline_comment|/* Math Co-processor pointer. */
+multiline_comment|/* Math Co-processor pointer */
 DECL|member|magic
 r_int
 r_int

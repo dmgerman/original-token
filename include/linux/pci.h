@@ -604,7 +604,7 @@ DECL|member|name
 r_char
 id|name
 (braket
-l_int|48
+l_int|80
 )braket
 suffix:semicolon
 multiline_comment|/* device name */
@@ -1658,6 +1658,16 @@ id|pci_assign_unassigned_resources
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_void
+id|pdev_assign_unassigned_resources
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
 )paren
 suffix:semicolon
 r_void

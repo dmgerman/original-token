@@ -19,10 +19,6 @@ id|IPT_ICMP_PORT_UNREACHABLE
 comma
 DECL|enumerator|IPT_ICMP_ECHOREPLY
 id|IPT_ICMP_ECHOREPLY
-comma
-DECL|enumerator|IPT_TCP_RESET
-id|IPT_TCP_RESET
-comma
 )brace
 suffix:semicolon
 DECL|struct|ipt_reject_info

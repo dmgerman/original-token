@@ -5580,12 +5580,6 @@ op_star
 id|ad1816_dev
 op_assign
 l_int|NULL
-comma
-DECL|variable|mpu_dev
-op_star
-id|mpu_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|activated
 r_static

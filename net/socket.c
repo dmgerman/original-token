@@ -2479,9 +2479,14 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|sock-&gt;flags
+id|test_bit
+c_func
+(paren
+id|SOCK_ASYNC_WAITDATA
+comma
 op_amp
-id|SO_WAITDATA
+id|sock-&gt;flags
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -2495,18 +2500,16 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|test_and_clear_bit
+c_func
 (paren
-id|sock-&gt;flags
+id|SOCK_ASYNC_NOSPACE
+comma
 op_amp
-id|SO_NOSPACE
+id|sock-&gt;flags
 )paren
 )paren
 r_break
-suffix:semicolon
-id|sock-&gt;flags
-op_and_assign
-op_complement
-id|SO_NOSPACE
 suffix:semicolon
 multiline_comment|/* fall through */
 r_case
@@ -2514,15 +2517,6 @@ l_int|0
 suffix:colon
 id|call_kill
 suffix:colon
-multiline_comment|/* read_lock(&amp;sock-&gt;sk-&gt;callback_lock); */
-r_if
-c_cond
-(paren
-id|sock-&gt;fasync_list
-op_ne
-l_int|NULL
-)paren
-(brace
 id|kill_fasync
 c_func
 (paren
@@ -2533,8 +2527,6 @@ comma
 id|band
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* read_unlock(&amp;sock-&gt;sk-&gt;callback_lock); */
 r_break
 suffix:semicolon
 r_case

@@ -1,8 +1,6 @@
 macro_line|#ifndef _NFS_FS_SB
 DECL|macro|_NFS_FS_SB
 mdefine_line|#define _NFS_FS_SB
-macro_line|#include &lt;linux/nfs.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
 multiline_comment|/*&n; * NFS client parameters stored in the superblock.&n; */
 DECL|struct|nfs_server
 r_struct
@@ -22,14 +20,22 @@ suffix:semicolon
 multiline_comment|/* various flags */
 DECL|member|rsize
 r_int
+r_int
 id|rsize
 suffix:semicolon
 multiline_comment|/* read size */
 DECL|member|wsize
 r_int
+r_int
 id|wsize
 suffix:semicolon
 multiline_comment|/* write size */
+DECL|member|dtsize
+r_int
+r_int
+id|dtsize
+suffix:semicolon
+multiline_comment|/* readdir size */
 DECL|member|bsize
 r_int
 r_int
@@ -81,11 +87,6 @@ DECL|member|s_server
 r_struct
 id|nfs_server
 id|s_server
-suffix:semicolon
-DECL|member|s_root
-r_struct
-id|nfs_fh
-id|s_root
 suffix:semicolon
 )brace
 suffix:semicolon

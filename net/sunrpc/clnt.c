@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
+macro_line|#include &lt;linux/nfs.h&gt;
 DECL|macro|RPC_SLACK_SPACE
 mdefine_line|#define RPC_SLACK_SPACE&t;&t;1024&t;/* total overkill */
 macro_line|#ifdef RPC_DEBUG
@@ -2686,7 +2687,7 @@ c_cond
 (paren
 id|task-&gt;tk_client-&gt;cl_prog
 op_eq
-l_int|100003
+id|NFS_PROGRAM
 op_logical_and
 (paren
 id|ntohl

@@ -45,7 +45,7 @@ mdefine_line|#define FLASH_BASE&t;&t;0xf8000000
 DECL|macro|PCIMEM_SIZE
 mdefine_line|#define PCIMEM_SIZE&t;&t;0x01000000
 DECL|macro|PCIMEM_BASE
-mdefine_line|#define PCIMEM_BASE&t;&t;0xe0000000
+mdefine_line|#define PCIMEM_BASE&t;&t;0xf0000000
 macro_line|#elif defined(CONFIG_ARCH_CO285)
 DECL|macro|PCIMEM_SIZE
 mdefine_line|#define PCIMEM_SIZE&t;&t;0x80000000
@@ -104,6 +104,8 @@ DECL|macro|PARAMS_BASE
 mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + PARAMS_OFFSET)
 DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x50000000
+DECL|macro|UNCACHEABLE_ADDR
+mdefine_line|#define UNCACHEABLE_ADDR&t;(ARMCSR_BASE + 0x108)
 multiline_comment|/* PIC irq control */
 DECL|macro|PIC_LO
 mdefine_line|#define PIC_LO&t;&t;&t;0x20

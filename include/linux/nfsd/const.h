@@ -3,20 +3,13 @@ macro_line|#ifndef _LINUX_NFSD_CONST_H
 DECL|macro|_LINUX_NFSD_CONST_H
 mdefine_line|#define _LINUX_NFSD_CONST_H
 macro_line|#include &lt;linux/nfs.h&gt;
+macro_line|#include &lt;linux/nfs2.h&gt;
 multiline_comment|/*&n; * Maximum protocol version supported by knfsd&n; */
 DECL|macro|NFSSVC_MAXVERS
 mdefine_line|#define NFSSVC_MAXVERS&t;&t;3
 multiline_comment|/*&n; * Maximum blocksize supported by daemon currently at 8K&n; */
 DECL|macro|NFSSVC_MAXBLKSIZE
 mdefine_line|#define NFSSVC_MAXBLKSIZE&t;8192
-DECL|macro|NFS2_MAXPATHLEN
-mdefine_line|#define NFS2_MAXPATHLEN&t;&t;1024
-DECL|macro|NFS2_MAXNAMLEN
-mdefine_line|#define NFS2_MAXNAMLEN&t;&t;255
-DECL|macro|NFS2_FHSIZE
-mdefine_line|#define NFS2_FHSIZE&t;&t;NFS_FHSIZE
-DECL|macro|NFS2_COOKIESIZE
-mdefine_line|#define NFS2_COOKIESIZE&t;&t;4
 DECL|macro|NFS3_MAXPATHLEN
 mdefine_line|#define NFS3_MAXPATHLEN&t;&t;PATH_MAX
 DECL|macro|NFS3_MAXNAMLEN

@@ -4,8 +4,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ipt_state.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 r_static
 r_int
 DECL|function|match
@@ -192,6 +190,12 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* NULL if ip_conntrack not a module */
+r_if
+c_cond
+(paren
+id|ip_conntrack_module
+)paren
 id|__MOD_INC_USE_COUNT
 c_func
 (paren
@@ -224,6 +228,11 @@ op_amp
 id|state_match
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ip_conntrack_module
+)paren
 id|__MOD_DEC_USE_COUNT
 c_func
 (paren

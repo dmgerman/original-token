@@ -5371,7 +5371,7 @@ comma
 id|info
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
+macro_line|#if 0/*def CONFIG_FB_COMPAT_XPMAC*/
 macro_line|#if 0 /* use this when macmodes gets updated */
 r_if
 c_cond

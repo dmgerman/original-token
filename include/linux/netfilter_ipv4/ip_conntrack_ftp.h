@@ -31,7 +31,6 @@ op_assign
 id|IP_CT_DIR_REPLY
 )brace
 suffix:semicolon
-multiline_comment|/* Protected by ip_conntrack_lock */
 multiline_comment|/* We record seq number and length of ftp ip/port text here: all in&n;   host order. */
 DECL|struct|ip_ct_ftp
 r_struct

@@ -60,6 +60,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_VIDEO_CPIA
+r_extern
+r_int
+id|cpia_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_PLANB
 r_extern
 r_int
@@ -357,6 +369,8 @@ id|modname
 l_int|20
 )braket
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|sprintf
 (paren
 id|modname
@@ -380,6 +394,8 @@ id|video_device
 (braket
 id|minor
 )braket
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond

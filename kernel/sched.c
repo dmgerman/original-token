@@ -1099,6 +1099,10 @@ op_star
 id|prev
 )paren
 (brace
+id|current-&gt;need_resched
+op_or_assign
+id|prev-&gt;need_resched
+suffix:semicolon
 macro_line|#ifdef __SMP__
 r_if
 c_cond

@@ -18,7 +18,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;tst&t;%0,%0&bslash;n&bslash;t&quot;
+l_string|&quot;tst&t;%0, %0&bslash;n&bslash;t&quot;
 l_string|&quot;1:&bslash;t&quot;
 l_string|&quot;bf/s&t;1b&bslash;n&bslash;t&quot;
 l_string|&quot; dt&t;%0&quot;
@@ -59,8 +59,8 @@ multiline_comment|/* 2**32 / 1000000 */
 id|__asm__
 c_func
 (paren
-l_string|&quot;dmulu.l&t;%0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;sts&t;mach,%0&quot;
+l_string|&quot;dmulu.l&t;%0, %2&bslash;n&bslash;t&quot;
+l_string|&quot;sts&t;$mach, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

@@ -14,13 +14,6 @@ DECL|macro|ESSTYPE_LIKE20
 mdefine_line|#define ESSTYPE_LIKE20&t;-1&t;&t;/* Mimic 2.0 behaviour&t;&t;&t;&t;&t;*/
 DECL|macro|ESSTYPE_DETECT
 mdefine_line|#define ESSTYPE_DETECT&t;0&t;&t;/* Mimic 2.0 behaviour&t;&t;&t;&t;&t;*/
-DECL|variable|esstype
-r_int
-id|esstype
-op_assign
-id|ESSTYPE_DETECT
-suffix:semicolon
-multiline_comment|/* module parameter in sb_card.c */
 DECL|macro|SUBMDL_ES1788
 mdefine_line|#define SUBMDL_ES1788&t;0x10&t;/* Subtype ES1788 for specific handling */
 DECL|macro|SUBMDL_ES1868
@@ -3775,7 +3768,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|esstype
+id|devc-&gt;sbmo.esstype
 )paren
 (brace
 r_case
@@ -3874,7 +3867,7 @@ id|printk
 id|KERN_ERR
 l_string|&quot;Invalid esstype=%d specified&bslash;n&quot;
 comma
-id|esstype
+id|devc-&gt;sbmo.esstype
 )paren
 suffix:semicolon
 r_return
@@ -3901,7 +3894,7 @@ id|modelname
 comma
 l_string|&quot;ES%d&quot;
 comma
-id|esstype
+id|devc-&gt;sbmo.esstype
 )paren
 suffix:semicolon
 id|chip
@@ -3947,7 +3940,7 @@ id|chip
 op_eq
 l_int|NULL
 op_logical_and
-id|esstype
+id|devc-&gt;sbmo.esstype
 op_eq
 id|ESSTYPE_LIKE20
 )paren
@@ -4205,11 +4198,11 @@ comma
 id|chip
 comma
 (paren
-id|esstype
+id|devc-&gt;sbmo.esstype
 op_eq
 id|ESSTYPE_DETECT
 op_logical_or
-id|esstype
+id|devc-&gt;sbmo.esstype
 op_eq
 id|ESSTYPE_LIKE20
 ques
@@ -4220,7 +4213,7 @@ l_string|&quot;specified&quot;
 )paren
 comma
 (paren
-id|esstype
+id|devc-&gt;sbmo.esstype
 op_eq
 id|ESSTYPE_LIKE20
 ques

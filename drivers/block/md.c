@@ -13427,7 +13427,7 @@ id|minor
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif

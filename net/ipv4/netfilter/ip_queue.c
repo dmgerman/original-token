@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This is a module which is used for queueing IPv4 packets and&n; * communicating with userspace via netlink.&n; *&n; * (C) 2000 James Morris&n; */
+multiline_comment|/*&n; * This is a module which is used for queueing IPv4 packets and&n; * communicating with userspace via netlink.&n; *&n; * Copyright (C) 2000 James Morris&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -14,8 +14,6 @@ macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_queue.h&gt;
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 DECL|macro|IPQ_THR_NAME
 mdefine_line|#define IPQ_THR_NAME &quot;kipq&quot;
 DECL|macro|IPQ_NAME

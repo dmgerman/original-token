@@ -5,8 +5,13 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
+macro_line|#ifdef CONFIG_USB_DEBUG
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
+macro_line|#else
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
+macro_line|#endif
 macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/*&n; * Prototypes for the device driver probing/loading functions&n; */
 r_static
@@ -7320,7 +7325,7 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* always use the first langid listed */
-id|info
+id|dbg
 c_func
 (paren
 l_string|&quot;USB device number %d default language ID 0x%x&quot;
@@ -7831,7 +7836,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|info
+id|dbg
 c_func
 (paren
 l_string|&quot;new device strings: Mfr=%d, Product=%d, SerialNumber=%d&quot;
@@ -7843,6 +7848,7 @@ comma
 id|dev-&gt;descriptor.iSerialNumber
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 r_if
 c_cond
 (paren
@@ -7888,6 +7894,7 @@ comma
 id|dev-&gt;descriptor.iSerialNumber
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* now that the basic setup is over, add a /proc/bus/usb entry */
 id|usbdevfs_add_device
 c_func

@@ -310,7 +310,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
 r_void
 DECL|function|pdev_assign_unassigned_resources
 id|pdev_assign_unassigned_resources

@@ -1205,6 +1205,8 @@ comma
 id|start_pfn
 op_lshift
 id|PAGE_SHIFT
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|PLAT_NODE_DATA
