@@ -8814,7 +8814,7 @@ id|nr_buffers_type
 (braket
 id|BUF_DIRTY
 )braket
-OL
+op_le
 (paren
 id|nr_buffers
 op_minus

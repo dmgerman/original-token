@@ -1854,7 +1854,7 @@ l_int|8
 multiline_comment|/* Each instruction is eight bytes */
 suffix:semicolon
 multiline_comment|/* Note that alignment will be guaranteed, since we put the command&n;       allocated at probe time after the fixed-up SCSI script, which &n;       consists of 32 bit words, aligned on a 32 bit boundary. */
-multiline_comment|/* Allocate fixed part of hostdata, dynamic part to hold appropriate&n;       SCSI SCRIPT(tm) plus a single, maximum-sized NCR53c7x0_cmd structure.&n;&n;       We need a NCR53c7x0_cmd structure for scan_scsis() when we are &n;       not loaded as a module, and when we&squot;re loaded as a module, we &n;       can&squot;t use a non-dynamically allocated structure because modules&n;       are vmalloc()&squot;d, which can allow structures to cross page &n;       boundaries and breaks our physical/virtual address assumptions&n;       for DMA.&n;&n;       So, we stick it past the end of our hostdata structure.&n;&n;       ASSUMPTION : &n;       &t; Irregardless of how many simultaenous SCSI commands we allow,&n;         the probe code only executes a _single_ instruction at a time,&n;&t; so we only need one here, and don&squot;t need to allocate NCR53c7x0_cmd&n;&t; structures for each target until we are no longer in scan_scsis&n;&t; and kmalloc() has become functional (memory_init() happens &n;&t; after all device driver initialization).&n;    */
+multiline_comment|/* Allocate fixed part of hostdata, dynamic part to hold appropriate&n;       SCSI SCRIPT(tm) plus a single, maximum-sized NCR53c7x0_cmd structure.&n;&n;       We need a NCR53c7x0_cmd structure for scan_scsis() when we are &n;       not loaded as a module, and when we&squot;re loaded as a module, we &n;       can&squot;t use a non-dynamically allocated structure because modules&n;       are vmalloc()&squot;d, which can allow structures to cross page &n;       boundaries and breaks our physical/virtual address assumptions&n;       for DMA.&n;&n;       So, we stick it past the end of our hostdata structure.&n;&n;       ASSUMPTION : &n;       &t; Regardless of how many simultaneous SCSI commands we allow,&n;         the probe code only executes a _single_ instruction at a time,&n;&t; so we only need one here, and don&squot;t need to allocate NCR53c7x0_cmd&n;&t; structures for each target until we are no longer in scan_scsis&n;&t; and kmalloc() has become functional (memory_init() happens &n;&t; after all device driver initialization).&n;    */
 id|size
 op_assign
 r_sizeof
@@ -8555,7 +8555,7 @@ id|STEST3_800_TE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function static struct NCR53c7x0_cmd *create_cmd (Scsi_Cmnd *cmd) &n; *&n; * Purpose : If we have not allready allocated enough NCR53c7x0_cmd&n; *&t;structures to satisfy any allowable number of simultaenous &n; *&t;commands for this host; do so (using either scsi_malloc()&n; *&t;or kmalloc() depending on configuration), and add them to the &n; *&t;hostdata free list.  Take the first structure off the free list, &n; *&t;initialize it based on the Scsi_Cmnd structure passed in, &n; *&t;including dsa and Linux field initialization, and dsa code relocation.&n; *&n; * Inputs : cmd - SCSI command&n; *&n; * Returns : NCR53c7x0_cmd structure corresponding to cmd,&n; *&t;NULL on failure.&n; */
+multiline_comment|/*&n; * Function static struct NCR53c7x0_cmd *create_cmd (Scsi_Cmnd *cmd) &n; *&n; * Purpose : If we have not already allocated enough NCR53c7x0_cmd&n; *&t;structures to satisfy any allowable number of simultaneous &n; *&t;commands for this host; do so (using either scsi_malloc()&n; *&t;or kmalloc() depending on configuration), and add them to the &n; *&t;hostdata free list.  Take the first structure off the free list, &n; *&t;initialize it based on the Scsi_Cmnd structure passed in, &n; *&t;including dsa and Linux field initialization, and dsa code relocation.&n; *&n; * Inputs : cmd - SCSI command&n; *&n; * Returns : NCR53c7x0_cmd structure corresponding to cmd,&n; *&t;NULL on failure.&n; */
 r_static
 r_struct
 id|NCR53c7x0_cmd
@@ -8648,7 +8648,7 @@ c_func
 id|cmd-&gt;host
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME : when we start doing multiple simultaenous commands per LUN, &n;   we will need to either&n;    &t;- Do an attach_slave() and detach_slave() the right way (alocate&n;    &t;  memory in attach_slave() as we do in scsi_register).&n;    &t;- Make sure this code works&n;    with the former being cleaner.  At the same time, we can also go with&n;    a per-device host_scribble, and introduce a NCR53c7x0_device structure&n;    to replace the messy fixed length arrays we&squot;re starting to use. */
+multiline_comment|/* FIXME : when we start doing multiple simultaneous commands per LUN, &n;   we will need to either&n;    &t;- Do an attach_slave() and detach_slave() the right way (allocate&n;    &t;  memory in attach_slave() as we do in scsi_register).&n;    &t;- Make sure this code works&n;    with the former being cleaner.  At the same time, we can also go with&n;    a per-device host_scribble, and introduce a NCR53c7x0_device structure&n;    to replace the messy fixed length arrays we&squot;re starting to use. */
 macro_line|#ifdef notyet
 r_if
 c_cond
@@ -8692,7 +8692,7 @@ id|i
 )paren
 (brace
 macro_line|#ifdef SCSI_MALLOC
-multiline_comment|/* scsi_malloc must allocate with a 512 byte granularity, but allways&n;       returns buffers which are aligned on a 512 boundary */
+multiline_comment|/* scsi_malloc must allocate with a 512 byte granularity, but always&n;       returns buffers which are aligned on a 512 boundary */
 id|size
 op_assign
 (paren
@@ -13831,7 +13831,7 @@ c_func
 l_int|25
 )paren
 suffix:semicolon
-multiline_comment|/* Minimum ammount of time to assert RST */
+multiline_comment|/* Minimum amount of time to assert RST */
 id|NCR53c7x0_write8
 c_func
 (paren
@@ -14190,7 +14190,7 @@ c_func
 l_int|25
 )paren
 suffix:semicolon
-multiline_comment|/* Minimum ammount of time to assert RST */
+multiline_comment|/* Minimum amount of time to assert RST */
 id|NCR53c7x0_write8
 c_func
 (paren

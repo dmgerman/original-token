@@ -1,7 +1,5 @@
-DECL|macro|rw_bugfix
-mdefine_line|#define rw_bugfix
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it support the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    13/04/95 -- Change in philosophy. We now monitor ENISR_RDC for&n;    handshaking the Tx PIO xfers. If we don&squot;t get a RDC within a&n;    reasonable period of time, we know the 8390 has gone south, and we&n;    kick the board before it locks the system. Also use set_bit() to&n;    create atomic locks on the PIO xfers, and added some defines&n;    that the end user can play with to save memory.&t;-- Paul Gortmaker&n;&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
 DECL|variable|version
 r_static
@@ -18,6 +16,15 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
+multiline_comment|/* Some defines that people can play with if so inclined. */
+multiline_comment|/* Do we support clones that don&squot;t adhere to 14,15 of the SAprom ? */
+DECL|macro|CONFIG_NE_BAD_CLONES
+mdefine_line|#define CONFIG_NE_BAD_CLONES
+multiline_comment|/* Do we perform extra sanity checks on stuff ? */
+multiline_comment|/* #define CONFIG_NE_SANITY */
+multiline_comment|/* Do we implement the read before write bugfix ? */
+multiline_comment|/* #define CONFIG_NE_RW_BUGFIX */
+multiline_comment|/* ---- No user-servicable parts below ---- */
 r_extern
 r_struct
 id|device
@@ -62,6 +69,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_NE_BAD_CLONES
 multiline_comment|/* A list of bad clones that we none-the-less recognize. */
 DECL|member|name8
 DECL|member|name16
@@ -151,11 +159,58 @@ l_int|0x79
 )brace
 comma
 (brace
+l_string|&quot;NE1000&quot;
+comma
+l_string|&quot;NE2000-invalid&quot;
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0xd8
+)brace
+)brace
+comma
+multiline_comment|/* Ancient real NE1000. */
+(brace
+l_string|&quot;NN1000&quot;
+comma
+l_string|&quot;NN2000&quot;
+comma
+(brace
+l_int|0x08
+comma
+l_int|0x03
+comma
+l_int|0x08
+)brace
+)brace
+comma
+multiline_comment|/* Outlaw no-name clone. */
+(brace
+l_string|&quot;4-DIM8&quot;
+comma
+l_string|&quot;4-DIM16&quot;
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x4d
+comma
+)brace
+)brace
+comma
+multiline_comment|/* Outlaw 4-Dimension cards. */
+(brace
 l_int|0
 comma
 )brace
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|macro|NE_BASE
 mdefine_line|#define NE_BASE&t; (dev-&gt;base_addr)
 DECL|macro|NE_CMD
@@ -174,6 +229,8 @@ DECL|macro|NESM_START_PG
 mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
+DECL|macro|NE_RDC_TIMEOUT
+mdefine_line|#define NE_RDC_TIMEOUT&t;0x03&t;/* Max wait in jiffies for Tx RDC */
 r_int
 id|ne_probe
 c_func
@@ -435,7 +492,7 @@ suffix:semicolon
 r_int
 id|reg0
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 id|ioaddr
@@ -533,7 +590,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|regd
@@ -976,6 +1033,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef CONFIG_NE_BAD_CLONES
 multiline_comment|/* Ack!  Well, there might be a *bad* NE*000 clone there.&n;&t;   Check for total bogus addresses. */
 r_for
 c_loop
@@ -1111,6 +1169,17 @@ r_return
 id|ENXIO
 suffix:semicolon
 )brace
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot; not found.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|ENXIO
+suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -1220,7 +1289,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot; autoirq is %d&quot;
+l_string|&quot; autoirq is %d&bslash;n&quot;
 comma
 id|dev-&gt;irq
 )paren
@@ -1252,7 +1321,14 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;ne&quot;
+id|wordlength
+op_eq
+l_int|2
+ques
+c_cond
+l_string|&quot;ne2000&quot;
+suffix:colon
+l_string|&quot;ne1000&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1286,7 +1362,14 @@ id|ioaddr
 comma
 id|NE_IO_EXTENT
 comma
+id|wordlength
+op_eq
+l_int|2
+ques
+c_cond
 l_string|&quot;ne2000&quot;
+suffix:colon
+l_string|&quot;ne1000&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1531,20 +1614,34 @@ r_int
 id|ring_offset
 )paren
 (brace
+macro_line|#ifdef CONFIG_NE_SANITY
 r_int
 id|xfer_count
 op_assign
 id|count
 suffix:semicolon
+macro_line|#endif
 r_int
 id|nic_base
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+multiline_comment|/* This *shouldn&squot;t* happen. If it does, it&squot;s the last thing you&squot;ll see */
 r_if
 c_cond
 (paren
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
 id|ei_status.dmaing
+)paren
 )paren
 (brace
 r_if
@@ -1575,7 +1672,7 @@ suffix:semicolon
 )brace
 id|ei_status.dmaing
 op_or_assign
-l_int|0x01
+l_int|0x02
 suffix:semicolon
 id|outb_p
 c_func
@@ -1678,6 +1775,7 @@ id|count
 op_amp
 l_int|0x01
 )paren
+(brace
 id|buf
 (braket
 id|count
@@ -1692,10 +1790,13 @@ id|NE_BASE
 op_plus
 id|NE_DATAPORT
 )paren
-comma
+suffix:semicolon
+macro_line|#ifdef CONFIG_NE_SANITY
 id|xfer_count
 op_increment
 suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 r_else
 (brace
@@ -1712,7 +1813,7 @@ id|count
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       encountering problems that it is still here.  If you see&n;       this message you either 1) have a slightly incompatible clone&n;       or 2) have noise/speed problems with your bus. */
+multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here.  If you see&n;       this message you either 1) have a slightly incompatible clone&n;       or 2) have noise/speed problems with your bus. */
 macro_line|#ifdef CONFIG_NE_SANITY
 r_if
 c_cond
@@ -1732,7 +1833,7 @@ l_int|20
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* DON&squot;T check for &squot;inb_p(EN0_ISR) &amp; ENISR_RDC&squot; here&n;&t;       -- it&squot;s broken! Check the &quot;DMA&quot; address instead. */
+multiline_comment|/* DON&squot;T check for &squot;inb_p(EN0_ISR) &amp; ENISR_RDC&squot; here&n;&t;       -- it&squot;s broken for Rx on some cards! */
 r_int
 id|high
 op_assign
@@ -1816,10 +1917,21 @@ id|addr
 suffix:semicolon
 )brace
 macro_line|#endif
+id|outb_p
+c_func
+(paren
+id|ENISR_RDC
+comma
+id|nic_base
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
+multiline_comment|/* Ack intr. */
 id|ei_status.dmaing
 op_and_assign
 op_complement
-l_int|0x01
+l_int|0x03
 suffix:semicolon
 r_return
 id|ring_offset
@@ -1852,15 +1964,21 @@ r_int
 id|start_page
 )paren
 (brace
+macro_line|#ifdef CONFIG_NE_SANITY
 r_int
 id|retries
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_int
 id|nic_base
 op_assign
 id|NE_BASE
+suffix:semicolon
+r_int
+r_int
+id|dma_start
 suffix:semicolon
 multiline_comment|/* Round the count up for word writes.  Do we need to do this?&n;       What effect will an odd byte count have on the 8390?&n;       I should check someday. */
 r_if
@@ -1877,10 +1995,22 @@ l_int|0x01
 id|count
 op_increment
 suffix:semicolon
+multiline_comment|/* This *shouldn&squot;t* happen. If it does, it&squot;s the last thing you&squot;ll see */
 r_if
 c_cond
 (paren
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
 id|ei_status.dmaing
+)paren
 )paren
 (brace
 r_if
@@ -1910,7 +2040,7 @@ suffix:semicolon
 )brace
 id|ei_status.dmaing
 op_or_assign
-l_int|0x02
+l_int|0x04
 suffix:semicolon
 multiline_comment|/* We should already be in page 0, but to be safe... */
 id|outb_p
@@ -1927,9 +2057,11 @@ op_plus
 id|NE_CMD
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NE_SANITY
 id|retry
 suffix:colon
-macro_line|#if defined(rw_bugfix)
+macro_line|#endif
+macro_line|#ifdef CONFIG_NE_RW_BUGFIX 
 multiline_comment|/* Handle the read-before-write bug the same way as the&n;       Crynwr packet driver -- the NatSemi method doesn&squot;t work.&n;       Actually this doesn&squot;t always work either, but if you have&n;       problems with your NEx000 this is better than nothing! */
 id|outb_p
 c_func
@@ -1991,6 +2123,20 @@ suffix:semicolon
 id|SLOW_DOWN_IO
 suffix:semicolon
 macro_line|#endif  /* rw_bugfix */
+id|dma_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|ENISR_RDC
+comma
+id|nic_base
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
 multiline_comment|/* Now the normal output. */
 id|outb_p
 c_func
@@ -2085,7 +2231,7 @@ id|count
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NE_SANITY
-multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       encountering problems that it is still here. */
+multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here. */
 r_if
 c_cond
 (paren
@@ -2104,7 +2250,6 @@ l_int|20
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* DON&squot;T check for &squot;inb_p(EN0_ISR) &amp; ENISR_RDC&squot; here&n;&t;       -- it&squot;s broken! Check the &quot;DMA&quot; address instead. */
 r_int
 id|high
 op_assign
@@ -2203,10 +2348,73 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+r_while
+c_loop
+(paren
+(paren
+id|inb_p
+c_func
+(paren
+id|nic_base
+op_plus
+id|EN0_ISR
+)paren
+op_amp
+id|ENISR_RDC
+)paren
+op_eq
+l_int|0
+)paren
+r_if
+c_cond
+(paren
+id|jiffies
+op_minus
+id|dma_start
+OG
+id|NE_RDC_TIMEOUT
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: timeout waiting for Tx RDC.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|ne_reset_8390
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|NS8390_init
+c_func
+(paren
+id|dev
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|outb_p
+c_func
+(paren
+id|ENISR_RDC
+comma
+id|nic_base
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
+multiline_comment|/* Ack intr. */
 id|ei_status.dmaing
 op_and_assign
 op_complement
-l_int|0x02
+l_int|0x05
 suffix:semicolon
 r_return
 suffix:semicolon

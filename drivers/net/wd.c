@@ -1923,6 +1923,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Change from 16-bit to 8-bit shared memory so reboot works. */
 id|outb
 c_func

@@ -68,7 +68,7 @@ DECL|macro|NCR53c7xx_release
 mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
 DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect, &t;&bslash;&n;    &t;NULL, /* info */ NULL, /* command, depricated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 , &t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect, &t;&bslash;&n;    &t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 , &t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
 multiline_comment|/* Register addresses, ordered numerically */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-cd.c  (BETA)&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_dev_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_dev_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; *                       &n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
 macro_line|#include &lt;linux/cdrom.h&gt;
 DECL|macro|SECTOR_SIZE
 mdefine_line|#define SECTOR_SIZE 512
@@ -181,11 +181,18 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Saved TOC information is current. */
+DECL|member|no_lba_toc
+r_int
+id|no_lba_toc
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive cannot return TOC info in LBA format */
 DECL|member|reserved
 r_int
 id|reserved
 suffix:colon
-l_int|4
+l_int|3
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -3689,6 +3696,9 @@ id|dev
 )paren
 (brace
 r_int
+id|msf_flag
+suffix:semicolon
+r_int
 id|stat
 comma
 id|ntracks
@@ -3799,6 +3809,18 @@ id|toc_valid
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Some drives can&squot;t return TOC data in LBA format. */
+id|msf_flag
+op_assign
+(paren
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|no_lba_toc
+)paren
+suffix:semicolon
 multiline_comment|/* First read just the header, so we know how long the TOC is. */
 id|stat
 op_assign
@@ -3808,7 +3830,7 @@ id|dev
 comma
 l_int|0
 comma
-l_int|0
+id|msf_flag
 comma
 (paren
 r_char
@@ -3876,7 +3898,7 @@ id|dev
 comma
 l_int|0
 comma
-l_int|0
+id|msf_flag
 comma
 (paren
 r_char
@@ -3931,6 +3953,58 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|msf_flag
+)paren
+(brace
+id|byte
+op_star
+id|adr
+op_assign
+(paren
+id|byte
+op_star
+)paren
+op_amp
+(paren
+id|toc-&gt;ent
+(braket
+id|i
+)braket
+dot
+id|lba
+)paren
+suffix:semicolon
+id|toc-&gt;ent
+(braket
+id|i
+)braket
+dot
+id|lba
+op_assign
+id|msf_to_lba
+(paren
+id|adr
+(braket
+l_int|1
+)braket
+comma
+id|adr
+(braket
+l_int|2
+)braket
+comma
+id|adr
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+)brace
+r_else
 id|byte_swap_long
 (paren
 op_amp
@@ -3942,6 +4016,7 @@ dot
 id|lba
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Remember that we&squot;ve read this stuff. */
 id|CDROM_FLAGS
 (paren
@@ -6193,6 +6268,15 @@ id|CDROM_FLAGS
 id|dev
 )paren
 op_member_access_from_pointer
+id|no_lba_toc
+op_assign
+l_int|0
+suffix:semicolon
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
 id|drq_interrupt
 op_assign
 (paren
@@ -6204,6 +6288,84 @@ l_int|0x0060
 op_eq
 l_int|0x20
 )paren
+suffix:semicolon
+multiline_comment|/* Accommodate some broken drives... */
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|dev-&gt;id-&gt;model
+comma
+l_string|&quot;CD220E&quot;
+)paren
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Creative Labs */
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|no_lba_toc
+op_assign
+l_int|1
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|dev-&gt;id-&gt;model
+comma
+l_string|&quot;TO-ICSLYAL&quot;
+)paren
+op_eq
+l_int|0
+op_logical_or
+multiline_comment|/* Acer CD525E */
+id|strcmp
+(paren
+id|dev-&gt;id-&gt;model
+comma
+l_string|&quot;OTI-SCYLLA&quot;
+)paren
+op_eq
+l_int|0
+)paren
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|no_lba_toc
+op_assign
+l_int|1
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|dev-&gt;id-&gt;model
+comma
+l_string|&quot;CDA26803I SE&quot;
+)paren
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Aztech */
+id|CDROM_FLAGS
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|no_lba_toc
+op_assign
+l_int|1
 suffix:semicolon
 id|cdrom_info
 (braket

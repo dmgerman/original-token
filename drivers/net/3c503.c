@@ -1446,6 +1446,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

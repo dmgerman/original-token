@@ -9299,6 +9299,12 @@ l_string|&quot;rs_hangup&quot;
 )paren
 r_return
 suffix:semicolon
+id|rs_flush_buffer
+c_func
+(paren
+id|tty
+)paren
+suffix:semicolon
 id|shutdown
 c_func
 (paren

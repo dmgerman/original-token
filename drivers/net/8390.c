@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  13/04/95 -- Don&squot;t blindly swallow ENISR_RDC interrupts for non-shared&n;  memory cards. We need to follow these closely for neX000 cards.&n;  Plus other minor cleanups.   -- Paul Gortmaker&n;&n;  */
 DECL|variable|version
 r_static
 r_char
@@ -54,7 +54,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Max number of packets received at one Intr.&n;   Current this may only be examined by a kernel debugger. */
+multiline_comment|/* Max number of packets received at one Intr.&n;   Currently this may only be examined by a kernel debugger. */
 DECL|variable|high_water_mark
 r_static
 r_int
@@ -245,7 +245,11 @@ id|length
 comma
 id|send_length
 suffix:semicolon
-multiline_comment|/* We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n;&t;   existing code does anyway.&n;&t;   If it has been too long (&gt; 100 or 150ms.) since the last Tx we assume&n;&t;   the board has died and kick it. */
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n; *  We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n; *  existing code does anyway. If it has been too long since the&n; *  last Tx, we assume the board has died and kick it.&n; */
 r_if
 c_cond
 (paren
@@ -278,12 +282,16 @@ c_cond
 (paren
 id|tickssofar
 OL
-l_int|10
+id|TX_TIMEOUT
 op_logical_or
 (paren
 id|tickssofar
 OL
-l_int|15
+(paren
+id|TX_TIMEOUT
+op_plus
+l_int|5
+)paren
 op_logical_and
 op_logical_neg
 (paren
@@ -438,9 +446,21 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Block a timer-based transmit from overlapping. */
 r_if
 c_cond
+(paren
 (paren
 id|set_bit
 c_func
@@ -457,13 +477,32 @@ id|dev-&gt;tbusy
 op_ne
 l_int|0
 )paren
+op_logical_or
+id|ei_local-&gt;irqlock
+)paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
+l_string|&quot;%s: Tx access conflict. irq=%d lock=%d tx1=%d tx2=%d last=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|dev-&gt;interrupt
+comma
+id|ei_local-&gt;irqlock
+comma
+id|ei_local-&gt;tx1
+comma
+id|ei_local-&gt;tx2
+comma
+id|ei_local-&gt;lasttx
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -484,6 +523,12 @@ suffix:semicolon
 id|ei_local-&gt;irqlock
 op_assign
 l_int|1
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|send_length
 op_assign
@@ -599,9 +644,17 @@ id|ei_debug
 id|printk
 c_func
 (paren
-l_string|&quot;%s: No packet buffer space for ping-pong use.&bslash;n&quot;
+l_string|&quot;%s: No Tx buffers free. irq=%d tx1=%d tx2=%d last=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|dev-&gt;interrupt
+comma
+id|ei_local-&gt;tx1
+comma
+id|ei_local-&gt;tx2
+comma
+id|ei_local-&gt;lasttx
 )paren
 suffix:semicolon
 id|ei_local-&gt;irqlock
@@ -645,6 +698,10 @@ op_logical_neg
 id|ei_local-&gt;txing
 )paren
 (brace
+id|ei_local-&gt;txing
+op_assign
+l_int|1
+suffix:semicolon
 id|NS8390_trigger_send
 c_func
 (paren
@@ -687,10 +744,6 @@ op_assign
 op_minus
 l_int|2
 suffix:semicolon
-id|ei_local-&gt;txing
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 r_else
 id|ei_local-&gt;txqueue
@@ -719,6 +772,10 @@ id|skb-&gt;data
 comma
 id|ei_local-&gt;tx_start_page
 )paren
+suffix:semicolon
+id|ei_local-&gt;txing
+op_assign
+l_int|1
 suffix:semicolon
 id|NS8390_trigger_send
 c_func
@@ -804,7 +861,7 @@ suffix:semicolon
 r_int
 id|interrupts
 comma
-id|boguscount
+id|nr_serviced
 op_assign
 l_int|0
 suffix:semicolon
@@ -853,11 +910,6 @@ id|ei_local-&gt;irqlock
 )paren
 (brace
 multiline_comment|/* The &quot;irqlock&quot; check is only for testing. */
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -894,12 +946,6 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Allow other interrupts. */
 multiline_comment|/* Change to page 0 and read the intr status reg. */
 id|outb_p
 c_func
@@ -955,9 +1001,9 @@ op_ne
 l_int|0
 op_logical_and
 op_increment
-id|boguscount
+id|nr_serviced
 OL
-l_int|9
+id|MAX_SERVICE
 )paren
 (brace
 r_if
@@ -981,26 +1027,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|interrupts
-op_amp
-id|ENISR_RDC
-)paren
-(brace
-multiline_comment|/* Ack meaningless DMA complete. */
-id|outb_p
-c_func
-(paren
-id|ENISR_RDC
-comma
-id|e8390_base
-op_plus
-id|EN0_ISR
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -1127,6 +1153,30 @@ id|EN0_ISR
 suffix:semicolon
 multiline_comment|/* Ack intr. */
 )brace
+r_if
+c_cond
+(paren
+id|interrupts
+op_amp
+id|ENISR_RDC
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev-&gt;mem_start
+)paren
+id|outb_p
+c_func
+(paren
+id|ENISR_RDC
+comma
+id|e8390_base
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
+)brace
 id|outb_p
 c_func
 (paren
@@ -1145,39 +1195,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|interrupts
+op_amp
+op_complement
+id|ENISR_RDC
+)paren
 op_logical_and
 id|ei_debug
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|boguscount
-op_eq
-l_int|9
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Too much work at interrupt, status %#2.2x&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|interrupts
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;%s: unknown interrupt %#2x&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|interrupts
-)paren
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1192,6 +1219,48 @@ op_plus
 id|E8390_CMD
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_serviced
+op_eq
+id|MAX_SERVICE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Too much work at interrupt, status %#2.2x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|interrupts
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|ENISR_ALL
+comma
+id|e8390_base
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
+multiline_comment|/* Ack. most intrs. */
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: unknown interrupt %#2x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|interrupts
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1203,6 +1272,7 @@ id|EN0_ISR
 )paren
 suffix:semicolon
 multiline_comment|/* Ack. all intrs. */
+)brace
 )brace
 id|dev-&gt;interrupt
 op_assign
@@ -1320,6 +1390,10 @@ OG
 l_int|0
 )paren
 (brace
+id|ei_local-&gt;txing
+op_assign
+l_int|1
+suffix:semicolon
 id|NS8390_trigger_send
 c_func
 (paren
@@ -1335,10 +1409,6 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
-suffix:semicolon
-id|ei_local-&gt;txing
-op_assign
-l_int|1
 suffix:semicolon
 id|ei_local-&gt;tx2
 op_assign
@@ -1409,6 +1479,10 @@ OG
 l_int|0
 )paren
 (brace
+id|ei_local-&gt;txing
+op_assign
+l_int|1
+suffix:semicolon
 id|NS8390_trigger_send
 c_func
 (paren
@@ -1422,10 +1496,6 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
-suffix:semicolon
-id|ei_local-&gt;txing
-op_assign
-l_int|1
 suffix:semicolon
 id|ei_local-&gt;tx1
 op_assign
@@ -1655,7 +1725,7 @@ op_plus
 id|E8390_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Remove one frame from the ring.  Boundary is alway a page behind. */
+multiline_comment|/* Remove one frame from the ring.  Boundary is always a page behind. */
 id|this_frame
 op_assign
 id|inb_p
@@ -2001,7 +2071,7 @@ id|ei_local-&gt;stop_page
 id|printk
 c_func
 (paren
-l_string|&quot;%s: next frame inconsistency, %#2x..&quot;
+l_string|&quot;%s: next frame inconsistency, %#2x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2017,7 +2087,7 @@ id|ei_local-&gt;current_page
 op_assign
 id|next_frame
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|next_frame
@@ -2251,6 +2321,18 @@ id|ei_device
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+multiline_comment|/* If the card is stopped, just return the present stats. */
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+op_eq
+l_int|0
+)paren
+r_return
+op_amp
+id|ei_local-&gt;stat
 suffix:semicolon
 multiline_comment|/* Read the counter registers, assuming we are in page 0. */
 id|ei_local-&gt;stat.rx_frame_errors
@@ -2542,6 +2624,10 @@ id|ENDCFG_WTS
 suffix:colon
 l_int|0x48
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* Follow National Semi&squot;s recommendations for initing the DP83902. */
 id|outb_p
 c_func
@@ -2688,6 +2774,12 @@ id|EN0_IMR
 )paren
 suffix:semicolon
 multiline_comment|/* Copy the station address into the DS8390 registers,&n;       and set the multicast hash bitmap to receive all multicasts. */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2788,9 +2880,10 @@ comma
 id|e8390_base
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|dev-&gt;tbusy
@@ -2900,10 +2993,6 @@ r_int
 id|e8390_base
 op_assign
 id|dev-&gt;base_addr
-suffix:semicolon
-id|ei_status.txing
-op_assign
-l_int|1
 suffix:semicolon
 id|outb_p
 c_func

@@ -197,13 +197,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Transmit Active */
-DECL|member|dmaing
-r_int
-id|dmaing
-suffix:colon
-l_int|2
-suffix:semicolon
-multiline_comment|/* Remote DMA Active */
 DECL|member|irqlock
 r_int
 id|irqlock
@@ -247,11 +240,12 @@ r_char
 id|txqueue
 suffix:semicolon
 multiline_comment|/* Tx Packet buffer queue length. */
-DECL|member|in_interrupt
+DECL|member|dmaing
 r_int
 r_char
-id|in_interrupt
+id|dmaing
 suffix:semicolon
+multiline_comment|/* Remote DMA (Tx/Rx/Active) */
 DECL|member|tx1
 DECL|member|tx2
 r_int
@@ -291,6 +285,12 @@ id|stat
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* The maximum number of 8390 interrupt serivce routines called per IRQ. */
+DECL|macro|MAX_SERVICE
+mdefine_line|#define MAX_SERVICE 12
+multiline_comment|/* The maximum number of jiffies waited before assuming a Tx failed. */
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT 20 
 DECL|macro|ei_status
 mdefine_line|#define ei_status (*(struct ei_device *)(dev-&gt;priv))
 multiline_comment|/* Some generic ethernet register configurations. */

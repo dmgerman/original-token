@@ -780,7 +780,7 @@ id|mask
 id|__asm__
 c_func
 (paren
-l_string|&quot;bsf %2,%1&bslash;n&bslash;t&quot;
+l_string|&quot;bsf %3,%1&bslash;n&bslash;t&quot;
 l_string|&quot;btrl %1,%0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
@@ -793,6 +793,11 @@ l_string|&quot;=r&quot;
 id|signr
 )paren
 suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|current-&gt;signal
+)paren
+comma
 l_string|&quot;1&quot;
 (paren
 id|signr
