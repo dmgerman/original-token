@@ -501,6 +501,9 @@ r_int
 id|notify_change
 c_func
 (paren
+r_int
+id|flags
+comma
 r_struct
 id|inode
 op_star
@@ -522,6 +525,8 @@ op_member_access_from_pointer
 id|notify_change
 c_func
 (paren
+id|flags
+comma
 id|inode
 )paren
 suffix:semicolon

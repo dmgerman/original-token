@@ -313,6 +313,7 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Initialized just to stop compiler warnings. */
 id|mod
 op_assign
 (paren

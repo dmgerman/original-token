@@ -76,9 +76,12 @@ suffix:semicolon
 )brace
 DECL|macro|HD_DELAY
 mdefine_line|#define&t;HD_DELAY&t;0
-multiline_comment|/* Max read/write errors/sector */
 DECL|macro|MAX_ERRORS
-mdefine_line|#define MAX_ERRORS&t;7
+mdefine_line|#define MAX_ERRORS     16&t;/* Max read/write errors/sector */
+DECL|macro|RESET_FREQ
+mdefine_line|#define RESET_FREQ      8&t;/* Reset controller every 8th retry */
+DECL|macro|RECAL_FREQ
+mdefine_line|#define RECAL_FREQ      4&t;/* Recalibrate every 4th retry */
 DECL|macro|MAX_HD
 mdefine_line|#define MAX_HD&t;&t;2
 r_static
@@ -149,6 +152,13 @@ DECL|variable|reset
 r_static
 r_int
 id|reset
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|hd_error
+r_static
+r_int
+id|hd_error
 op_assign
 l_int|0
 suffix:semicolon
@@ -429,10 +439,16 @@ op_or
 id|SEEK_STAT
 )paren
 )paren
+(brace
+id|hd_error
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* ok */
+)brace
 id|printk
 c_func
 (paren
@@ -449,7 +465,7 @@ op_amp
 l_int|1
 )paren
 (brace
-id|i
+id|hd_error
 op_assign
 id|inb
 c_func
@@ -462,7 +478,7 @@ c_func
 (paren
 l_string|&quot;HD: win_result: error = 0x%02x&bslash;n&quot;
 comma
-id|i
+id|hd_error
 )paren
 suffix:semicolon
 )brace
@@ -1040,7 +1056,7 @@ r_if
 c_cond
 (paren
 (paren
-id|i
+id|hd_error
 op_assign
 id|inb
 c_func
@@ -1056,7 +1072,7 @@ c_func
 (paren
 l_string|&quot;HD-controller reset failed: %02x&bslash;n&bslash;r&quot;
 comma
-id|i
+id|hd_error
 )paren
 suffix:semicolon
 )brace
@@ -1211,6 +1227,7 @@ suffix:semicolon
 id|SET_TIMER
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * bad_rw_intr() now tries to be a bit smarter and does things&n; * according to the error returned by the controller.&n; * -Mika Liljeberg (liljeber@cs.Helsinki.FI)&n; */
 DECL|function|bad_rw_intr
 r_static
 r_void
@@ -1221,7 +1238,7 @@ r_void
 )paren
 (brace
 r_int
-id|i
+id|dev
 suffix:semicolon
 r_if
 c_cond
@@ -1231,6 +1248,16 @@ id|CURRENT
 )paren
 r_return
 suffix:semicolon
+id|dev
+op_assign
+id|MINOR
+c_func
+(paren
+id|CURRENT-&gt;dev
+)paren
+op_rshift
+l_int|6
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1238,49 +1265,66 @@ op_increment
 id|CURRENT-&gt;errors
 op_ge
 id|MAX_ERRORS
+op_logical_or
+(paren
+id|hd_error
+op_amp
+id|BBD_ERR
 )paren
+)paren
+(brace
 id|end_request
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
+id|recalibrate
+(braket
+id|dev
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
 (paren
 id|CURRENT-&gt;errors
-OG
-id|MAX_ERRORS
-op_div
-l_int|2
+op_mod
+id|RESET_FREQ
+op_eq
+l_int|0
 )paren
 id|reset
 op_assign
 l_int|1
 suffix:semicolon
 r_else
-r_for
-c_loop
+r_if
+c_cond
 (paren
-id|i
-op_assign
+(paren
+id|hd_error
+op_amp
+id|TRK0_ERR
+)paren
+op_logical_or
+id|CURRENT-&gt;errors
+op_mod
+id|RECAL_FREQ
+op_eq
 l_int|0
-suffix:semicolon
-id|i
-OL
-id|NR_HD
-suffix:semicolon
-id|i
-op_increment
 )paren
 id|recalibrate
 (braket
-id|i
+id|dev
 )braket
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* Otherwise just retry */
 )brace
 DECL|function|wait_DRQ
 r_static
@@ -1412,7 +1456,7 @@ op_amp
 id|ERR_STAT
 )paren
 (brace
-id|i
+id|hd_error
 op_assign
 (paren
 r_int
@@ -1428,7 +1472,7 @@ c_func
 (paren
 l_string|&quot;HD: read_intr: error = 0x%02x&bslash;n&quot;
 comma
-id|i
+id|hd_error
 )paren
 suffix:semicolon
 )brace
@@ -1666,7 +1710,7 @@ op_amp
 id|ERR_STAT
 )paren
 (brace
-id|i
+id|hd_error
 op_assign
 (paren
 r_int
@@ -1682,7 +1726,7 @@ c_func
 (paren
 l_string|&quot;HD: write_intr: error = 0x%02x&bslash;n&quot;
 comma
-id|i
+id|hd_error
 )paren
 suffix:semicolon
 )brace

@@ -848,6 +848,14 @@ op_logical_and
 id|l-&gt;l_type
 op_ne
 id|F_WRLCK
+op_logical_and
+id|l-&gt;l_type
+op_ne
+id|F_SHLCK
+op_logical_and
+id|l-&gt;l_type
+op_ne
+id|F_EXLCK
 )paren
 r_return
 l_int|0

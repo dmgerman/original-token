@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#ifdef NFS_PROC_DEBUG
 DECL|variable|proc_debug
 r_static
 r_int
@@ -18,7 +19,6 @@ id|proc_debug
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef NFS_PROC_DEBUG
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK if (proc_debug) printk
 macro_line|#else
@@ -269,8 +269,12 @@ comma
 r_char
 op_star
 id|string
+comma
+r_int
+id|maxlen
 )paren
 (brace
+r_int
 r_int
 id|len
 suffix:semicolon
@@ -283,6 +287,16 @@ op_star
 id|p
 op_increment
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|maxlen
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 id|memcpy
 c_func
@@ -427,8 +441,12 @@ comma
 r_int
 op_star
 id|lenp
+comma
+r_int
+id|maxlen
 )paren
 (brace
+r_int
 r_int
 id|len
 suffix:semicolon
@@ -444,6 +462,16 @@ op_star
 id|p
 op_increment
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|maxlen
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 id|memcpy
 c_func
@@ -799,6 +827,11 @@ id|p
 op_increment
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
 id|p
 op_assign
 id|xdr_decode_string
@@ -807,7 +840,13 @@ c_func
 id|p
 comma
 id|entry-&gt;name
+comma
+id|NFS_MAXNAMLEN
 )paren
+)paren
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 id|entry-&gt;cookie
 op_assign
@@ -1056,6 +1095,15 @@ l_string|&quot;NFS reply getattr&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply getattr failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1247,6 +1295,15 @@ l_string|&quot;NFS reply setattr&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply setattr failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1474,6 +1531,15 @@ l_string|&quot;NFS reply lookup&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply lookup failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1632,6 +1698,11 @@ op_eq
 id|NFS_OK
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
 id|p
 op_assign
 id|xdr_decode_string
@@ -1640,8 +1711,24 @@ c_func
 id|p
 comma
 id|res
+comma
+id|NFS_MAXPATHLEN
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_proc_readlink: giant pathname&bslash;n&quot;
 )paren
 suffix:semicolon
+id|status
+op_assign
+id|NFSERR_IO
+suffix:semicolon
+)brace
+r_else
 id|PRINTK
 c_func
 (paren
@@ -1651,6 +1738,15 @@ id|res
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply readlink failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1871,6 +1967,11 @@ comma
 id|fattr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
 id|p
 op_assign
 id|xdr_decode_data
@@ -1882,8 +1983,24 @@ id|data
 comma
 op_amp
 id|len
+comma
+id|count
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_proc_read: giant data size&bslash;n&quot;
 )paren
 suffix:semicolon
+id|status
+op_assign
+id|NFSERR_IO
+suffix:semicolon
+)brace
+r_else
 id|PRINTK
 c_func
 (paren
@@ -1893,6 +2010,15 @@ id|len
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply read failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -2136,6 +2262,15 @@ l_string|&quot;NFS reply write&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply write failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -2358,6 +2493,15 @@ l_string|&quot;NFS reply create&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply create failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -2535,6 +2679,15 @@ l_string|&quot;NFS reply remove&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply remove failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -2743,6 +2896,15 @@ l_string|&quot;NFS reply rename&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply rename failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -2935,6 +3097,15 @@ l_string|&quot;NFS reply link&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply link failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -3143,6 +3314,15 @@ l_string|&quot;NFS reply symlink&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply symlink failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -3365,6 +3545,15 @@ l_string|&quot;NFS reply mkdir&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply mkdir failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -3542,6 +3731,15 @@ l_string|&quot;NFS reply rmdir&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply rmdir failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -3765,6 +3963,12 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
 id|p
 op_assign
 id|xdr_decode_entry
@@ -3775,7 +3979,31 @@ comma
 id|entry
 op_increment
 )paren
+)paren
+)paren
+r_break
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_proc_readdir: giant filename&bslash;n&quot;
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|NFSERR_IO
+suffix:semicolon
+)brace
+r_else
+(brace
 id|eof
 op_assign
 (paren
@@ -3836,6 +4064,16 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 )brace
+)brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply readdir failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -4021,6 +4259,15 @@ l_string|&quot;NFS reply statfs&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|PRINTK
+c_func
+(paren
+l_string|&quot;NFS reply statfs failed = %d&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -4350,6 +4597,7 @@ id|p
 )paren
 (brace
 r_int
+r_int
 id|n
 suffix:semicolon
 id|p
@@ -4382,7 +4630,7 @@ id|n
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 r_if
@@ -4412,7 +4660,46 @@ id|n
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|n
+op_assign
+id|ntohl
+c_func
+(paren
+op_star
+id|p
+op_increment
+)paren
+)paren
+(brace
+r_case
+id|RPC_AUTH_NULL
+suffix:colon
+r_case
+id|RPC_AUTH_UNIX
+suffix:colon
+r_case
+id|RPC_AUTH_SHORT
+suffix:colon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_rpc_verify: bad RPC authentication type: %d&bslash;n&quot;
+comma
+id|n
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 r_if
@@ -4429,36 +4716,20 @@ id|p
 op_increment
 )paren
 )paren
-op_ne
-id|RPC_AUTH_NULL
-op_logical_and
-id|n
-op_ne
-id|RPC_AUTH_UNIX
+OG
+l_int|400
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;nfs_rpc_verify: bad RPC authentication type: %d&bslash;n&quot;
-comma
-id|n
+l_string|&quot;nfs_rpc_verify: giant auth size&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
-id|n
-op_assign
-id|ntohl
-c_func
-(paren
-op_star
-id|p
-op_increment
-)paren
-suffix:semicolon
 id|p
 op_add_assign
 (paren
@@ -4496,7 +4767,7 @@ id|n
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 r_return

@@ -437,7 +437,7 @@ id|sb
 id|printk
 c_func
 (paren
-l_string|&quot;trying to get new block from nonexistant device&bslash;n&quot;
+l_string|&quot;trying to get new block from nonexistent device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -585,24 +585,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;new_block: cannot get block&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|bh-&gt;b_count
-op_ne
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;new block: count is != 1&quot;
 )paren
 suffix:semicolon
 r_return

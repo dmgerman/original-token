@@ -1016,6 +1016,7 @@ id|int_type
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Needed only to stop compiler warnings */
 r_if
 c_cond
 (paren

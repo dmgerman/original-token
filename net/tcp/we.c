@@ -3,8 +3,8 @@ multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program i
 multiline_comment|/* The bsd386 version was used as an example in order to write this&n;   code */
 multiline_comment|/*&n;&t;The driver was significantly modified by Bob Harris to allow the&n;&t;software to operate with either the wd8003 or wd8013 boards.  The&n;&t;wd8013 boards will operate using full memory on board (as specified&n;&t;by the user in Space.c) and the 16 bit wide interface.  The driver&n;&t;will autodetect which board it is using on boot (i.e. &quot;using 16 bit I/F&quot;).&n;&t;In addition, the interrupts structure was significantly modified to &n;&t;respond to all the chips interrupts and to keep track of statistics.&n;&t;The statistics are not currently used.  Debug messages can be toggled&n;&t;by setting the wd_debug variable to a non-zero number.   The driver &n;&t;can detect an open or shorted cable - the wd8013 board functions after&n;&t;the problem is corrected, but the wd8003 board does not always recover.&n;&t;The driver is gradually being migrated toward the National Semiconductor&n;&t;recommendations.  Constructive comments or suggestions can be sent to:&n;&n;&t;&t;Bob Harris, rth@sparta.com&n;&t;&t;7926 Jones Branch Drive, Suite 900&n;&t;&t;McLean, Va. 22102&n;*/
 multiline_comment|/* Note:  My driver was full of bugs.  Basically if it works, credit&n;   Bob Harris.  If it&squot;s broken blame me.  -RAB */
-multiline_comment|/* $Id: we.c,v 0.8.4.8 1992/12/12 19:25:04 bir7 Exp $ */
-multiline_comment|/* $Log: we.c,v $&n; * Revision 0.8.4.8  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.7  1992/12/12  01:50:49  bir7&n; * made ring buffer volatile.&n; *&n; * Revision 0.8.4.6  1992/12/06  11:31:47  bir7&n; * Added missing braces in if statement.&n; *&n; * Revision 0.8.4.5  1992/12/05  21:35:53  bir7&n; * Added check for bad hardware returning runt packets.&n; *&n; * Revision 0.8.4.4  1992/12/03  19:52:20  bir7&n; * Added better queue checking.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more checking in start_xmit to make sure packet doesn&squot;t disapear&n; * out from under us.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
+multiline_comment|/* $Id: we.c,v 0.8.4.10 1993/01/23 18:00:11 bir7 Exp $ */
+multiline_comment|/* $Log: we.c,v $&n; * Revision 0.8.4.10  1993/01/23  18:00:11  bir7&n; * Added volatile keyword and converted entry points.&n; *&n; * Revision 0.8.4.9  1993/01/22  22:58:08  bir7&n; * Check in for merge with previous .99 pl 4.&n; *&n; * Revision 0.8.4.8  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.7  1992/12/12  01:50:49  bir7&n; * made ring buffer volatile.&n; *&n; * Revision 0.8.4.6  1992/12/06  11:31:47  bir7&n; * Added missing braces in if statement.&n; *&n; * Revision 0.8.4.5  1992/12/05  21:35:53  bir7&n; * Added check for bad hardware returning runt packets.&n; *&n; * Revision 0.8.4.4  1992/12/03  19:52:20  bir7&n; * Added better queue checking.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more checking in start_xmit to make sure packet doesn&squot;t disapear&n; * out from under us.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;timer.h&quot;
@@ -32,23 +33,6 @@ r_static
 r_int
 r_char
 id|interrupt_mask
-suffix:semicolon
-multiline_comment|/* format of status byte. &n;   bit &n;    0&t;start&n;    1&t;open&n;    2   transmitter in use */
-DECL|macro|START
-mdefine_line|#define START 1
-DECL|macro|OPEN
-mdefine_line|#define OPEN  2
-DECL|macro|TRS_BUSY
-mdefine_line|#define TRS_BUSY 0x400
-DECL|macro|IN_INT
-mdefine_line|#define IN_INT 8
-multiline_comment|/* We need to get rid of all these statics and move them into the&n;   device structure that way we can have more than one wd8003 board&n;   in the system at once. */
-DECL|variable|status
-r_static
-r_volatile
-r_int
-r_int
-id|status
 suffix:semicolon
 DECL|variable|stats
 r_static
@@ -199,9 +183,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|status
-op_or_assign
-id|START
+id|dev-&gt;start
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_int
@@ -483,10 +467,6 @@ comma
 id|WD_RCC
 )paren
 suffix:semicolon
-id|status
-op_assign
-id|OPEN
-suffix:semicolon
 id|wd_start
 c_func
 (paren
@@ -607,9 +587,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status
-op_amp
-id|TRS_BUSY
+id|dev-&gt;tbusy
 )paren
 (brace
 multiline_comment|/* put in a time out. */
@@ -635,9 +613,9 @@ l_string|&quot;wd8003 transmit timed out. &bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|status
-op_or_assign
-id|TRS_BUSY
+id|dev-&gt;tbusy
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -728,10 +706,9 @@ id|cli
 )paren
 suffix:semicolon
 multiline_comment|/* arp_queue turns them back on. */
-id|status
-op_and_assign
-op_complement
-id|TRS_BUSY
+id|dev-&gt;tbusy
+op_assign
+l_int|0
 suffix:semicolon
 id|sti
 c_func
@@ -812,9 +789,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|status
-op_amp
-id|IN_INT
+id|dev-&gt;interrupt
 )paren
 )paren
 id|outb
@@ -1309,17 +1284,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* get the packet */
-multiline_comment|/* see if we need to process this packet again. */
-r_if
-c_cond
-(paren
-id|done
-op_eq
-op_minus
-l_int|1
-)paren
-r_continue
-suffix:semicolon
 multiline_comment|/* Calculate next packet location */
 id|pkt
 op_assign
@@ -1653,12 +1617,7 @@ id|dev
 (brace
 r_int
 r_char
-id|cmd
-comma
 id|errors
-suffix:semicolon
-r_int
-id|len
 suffix:semicolon
 r_if
 c_cond
@@ -1718,6 +1677,16 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+(paren
+id|INET_BH
+)paren
+suffix:semicolon
+macro_line|#if 0&t;&t;
 multiline_comment|/* attempt to start a new transmission. */
 id|len
 op_assign
@@ -1799,11 +1768,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|status
-op_and_assign
-op_complement
-id|TRS_BUSY
-suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|0
 id|interrupt_mask
 op_and_assign
 op_complement
@@ -1812,6 +1779,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -2034,9 +2002,9 @@ id|ISR
 )paren
 )paren
 suffix:semicolon
-id|status
-op_or_assign
-id|IN_INT
+id|dev-&gt;interrupt
+op_assign
+l_int|1
 suffix:semicolon
 r_do
 (brace
@@ -2472,10 +2440,9 @@ l_int|0
 (brace
 suffix:semicolon
 )brace
-id|status
-op_and_assign
-op_complement
-id|IN_INT
+id|dev-&gt;interrupt
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|wd8003_sigaction
@@ -2558,10 +2525,6 @@ id|dev-&gt;base_addr
 )paren
 suffix:semicolon
 multiline_comment|/* make sure no one can attempt to open the device. */
-id|status
-op_assign
-id|OPEN
-suffix:semicolon
 r_return
 (paren
 l_int|1
@@ -2840,9 +2803,10 @@ r_break
 suffix:semicolon
 )brace
 r_else
-id|status
-op_assign
-id|OPEN
+r_return
+(paren
+l_int|1
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2960,7 +2924,11 @@ id|printk
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|status
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon

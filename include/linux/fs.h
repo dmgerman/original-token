@@ -133,6 +133,15 @@ DECL|macro|FIBMAP
 mdefine_line|#define FIBMAP&t;   1&t;/* bmap access */
 DECL|macro|FIGETBSZ
 mdefine_line|#define FIGETBSZ   2&t;/* get the block size used for bmap */
+multiline_comment|/* these flags tell notify_change what is being changed */
+DECL|macro|NOTIFY_SIZE
+mdefine_line|#define NOTIFY_SIZE&t;1
+DECL|macro|NOTIFY_MODE
+mdefine_line|#define NOTIFY_MODE&t;2
+DECL|macro|NOTIFY_TIME
+mdefine_line|#define NOTIFY_TIME&t;4
+DECL|macro|NOTIFY_UIDGID
+mdefine_line|#define NOTIFY_UIDGID&t;8
 DECL|typedef|buffer_block
 r_typedef
 r_char
@@ -1125,6 +1134,9 @@ op_star
 id|notify_change
 )paren
 (paren
+r_int
+id|flags
+comma
 r_struct
 id|inode
 op_star
@@ -1442,6 +1454,9 @@ r_int
 id|notify_change
 c_func
 (paren
+r_int
+id|flags
+comma
 r_struct
 id|inode
 op_star

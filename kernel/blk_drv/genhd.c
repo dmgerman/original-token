@@ -139,18 +139,8 @@ l_int|1024
 )paren
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to read partition table of device %04x&bslash;n&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;   * This block is from a device that we&squot;re about to stomp on.&n;&t;   * So make sure nobody thinks this block is usable.&n;&t;   */
 id|bh-&gt;b_dirt
 op_assign
@@ -226,41 +216,21 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  Logical part %d start %d size %d end %d&bslash;n&bslash;r&quot;
+l_string|&quot; %s%c%d&quot;
+comma
+id|hd-&gt;major_name
+comma
+l_char|&squot;a&squot;
+op_plus
+(paren
+id|current_minor
+op_rshift
+id|hd-&gt;minor_shift
+)paren
 comma
 id|mask
 op_amp
 id|current_minor
-comma
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|start_sect
-comma
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|nr_sects
-comma
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|start_sect
-op_plus
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|nr_sects
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 id|current_minor
@@ -359,6 +329,12 @@ r_int
 id|dev
 )paren
 (brace
+r_static
+r_int
+id|first_time
+op_assign
+l_int|1
+suffix:semicolon
 r_int
 id|i
 comma
@@ -390,6 +366,21 @@ id|hd-&gt;minor_shift
 )paren
 op_minus
 l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|first_time
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Partition check:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|first_time
+op_assign
+l_int|0
 suffix:semicolon
 id|first_sector
 op_assign
@@ -426,7 +417,7 @@ l_int|1024
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to read partition table of device %04x&bslash;n&quot;
+l_string|&quot;  unable to read partition table of device %04x&bslash;n&quot;
 comma
 id|dev
 )paren
@@ -437,7 +428,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s%c :&bslash;n&bslash;r&quot;
+l_string|&quot;  %s%c:&quot;
 comma
 id|hd-&gt;major_name
 comma
@@ -535,39 +526,19 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; part %d start %d size %d end %d &bslash;n&bslash;r&quot;
+l_string|&quot; %s%c%d&quot;
+comma
+id|hd-&gt;major_name
+comma
+l_char|&squot;a&squot;
+op_plus
+(paren
+id|minor
+op_rshift
+id|hd-&gt;minor_shift
+)paren
 comma
 id|i
-comma
-id|hd-&gt;part
-(braket
-id|minor
-)braket
-dot
-id|start_sect
-comma
-id|hd-&gt;part
-(braket
-id|minor
-)braket
-dot
-id|nr_sects
-comma
-id|hd-&gt;part
-(braket
-id|minor
-)braket
-dot
-id|start_sect
-op_plus
-id|hd-&gt;part
-(braket
-id|minor
-)braket
-dot
-id|nr_sects
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -591,6 +562,12 @@ op_eq
 id|EXTENDED_PARTITION
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot; &lt;&quot;
+)paren
+suffix:semicolon
 id|extended_partition
 c_func
 (paren
@@ -603,6 +580,12 @@ l_int|8
 )paren
 op_or
 id|minor
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; &gt;&quot;
 )paren
 suffix:semicolon
 )brace
@@ -705,41 +688,21 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; DM part %d start %d size %d end %d&bslash;n&bslash;r&quot;
+l_string|&quot; %s%c%d&quot;
+comma
+id|hd-&gt;major_name
+comma
+l_char|&squot;a&squot;
+op_plus
+(paren
+id|current_minor
+op_rshift
+id|hd-&gt;minor_shift
+)paren
 comma
 id|current_minor
 op_amp
 id|mask
-comma
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|start_sect
-comma
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|nr_sects
-comma
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|start_sect
-op_plus
-id|hd-&gt;part
-(braket
-id|current_minor
-)braket
-dot
-id|nr_sects
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -749,9 +712,13 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Bad partition table on dev %04x&bslash;n&quot;
-comma
-id|dev
+l_string|&quot; bad partition table&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|brelse
@@ -1077,28 +1044,6 @@ op_add_assign
 id|p-&gt;nr_real
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|nr
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Partition table%s ok.&bslash;n&bslash;r&quot;
-comma
-(paren
-id|nr
-OG
-l_int|1
-)paren
-ques
-c_cond
-l_string|&quot;s&quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

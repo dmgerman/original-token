@@ -1,7 +1,7 @@
 multiline_comment|/* udp.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: udp.c,v 0.8.4.9 1992/12/12 19:25:04 bir7 Exp $ */
-multiline_comment|/* $Log: udp.c,v $&n; * Revision 0.8.4.9  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.8  1992/12/12  01:50:49  bir7&n; * Changed connect.&n; *&n; * Revision 0.8.4.7  1992/12/05  21:35:53  bir7&n; * Added more debuggin code.&n; *&n; * Revision 0.8.4.6  1992/12/03  19:52:20  bir7&n; * fixed problems in udp_error.&n; *&n; * Revision 0.8.4.5  1992/11/18  15:38:03  bir7&n; * fixed minor problem in waiting for memory.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Fixed ctrl-h and added NULL checking to print_uh&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
+multiline_comment|/* $Id: udp.c,v 0.8.4.12 1993/01/26 22:04:00 bir7 Exp $ */
+multiline_comment|/* $Log: udp.c,v $&n; * Revision 0.8.4.12  1993/01/26  22:04:00  bir7&n; * Added support for proc fs.&n; *&n; * Revision 0.8.4.11  1993/01/23  18:00:11  bir7&n; * added volatile keyword.&n; *&n; * Revision 0.8.4.10  1993/01/22  23:21:38  bir7&n; * Merged with 99 pl4&n; *&n; * Revision 0.8.4.9  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.8  1992/12/12  01:50:49  bir7&n; * Changed connect.&n; *&n; * Revision 0.8.4.7  1992/12/05  21:35:53  bir7&n; * Added more debuggin code.&n; *&n; * Revision 0.8.4.6  1992/12/03  19:52:20  bir7&n; * fixed problems in udp_error.&n; *&n; * Revision 0.8.4.5  1992/11/18  15:38:03  bir7&n; * fixed minor problem in waiting for memory.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Fixed ctrl-h and added NULL checking to print_uh&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -1314,17 +1314,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;udp_sendto: write buffer full?&bslash;n&quot;
-)paren
-suffix:semicolon
-id|print_sk
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|tmp
 op_assign
 id|sk-&gt;wmem_alloc
@@ -2124,6 +2113,10 @@ id|ERESTARTSYS
 suffix:semicolon
 )brace
 )brace
+id|sk-&gt;inuse
+op_assign
+l_int|1
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -2162,6 +2155,11 @@ r_else
 (brace
 id|sk-&gt;rqueue
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|sk-&gt;rqueue
 op_member_access_from_pointer
 id|next
@@ -2806,11 +2804,6 @@ l_string|&quot;&lt;&lt; &bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|print_sk
-(paren
-id|sk
-)paren
-suffix:semicolon
 multiline_comment|/* now add it to the data chain and wake things up. */
 r_if
 c_cond
@@ -2944,6 +2937,8 @@ comma
 l_int|NULL
 comma
 )brace
+comma
+l_string|&quot;UDP&quot;
 )brace
 suffix:semicolon
 eof

@@ -20,10 +20,12 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
+multiline_comment|/* defined in tty.h */
 DECL|member|type
 r_int
 id|type
 suffix:semicolon
+multiline_comment|/* UART type */
 DECL|member|tty
 r_struct
 id|tty_struct
@@ -60,6 +62,22 @@ DECL|member|line
 r_int
 id|line
 suffix:semicolon
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/* # of fd on device */
+DECL|member|blocked_open
+r_int
+id|blocked_open
+suffix:semicolon
+multiline_comment|/* # of blocked opens */
+DECL|member|open_wait
+r_struct
+id|wait_queue
+op_star
+id|open_wait
+suffix:semicolon
 DECL|member|next_port
 r_struct
 id|async_struct
@@ -86,6 +104,8 @@ DECL|macro|RS_EVENT_BREAK_INT
 mdefine_line|#define RS_EVENT_BREAK_INT&t;3
 DECL|macro|RS_EVENT_DO_SAK
 mdefine_line|#define RS_EVENT_DO_SAK&t;&t;4
+DECL|macro|RS_EVENT_OPEN_WAKEUP
+mdefine_line|#define RS_EVENT_OPEN_WAKEUP&t;5
 multiline_comment|/*&n; * These are the UART port assignments, expressed as offsets from the base&n; * register.  These assignments should hold for any serial port based on&n; * a 8250, 16450, or 16550(A).&n; */
 DECL|macro|UART_RX
 mdefine_line|#define UART_RX&t;&t;0&t;/* In:  Receive buffer (DLAB=0) */

@@ -1,7 +1,7 @@
 multiline_comment|/* timer.c */
 multiline_comment|/*&n;  Copyright (C) 1992  Ross Biro&n;  &n;  This program is free software; you can redistribute it and/or modify&n;  it under the terms of the GNU General Public License as published by&n;  the Free Software Foundation; either version 1, or (at your option)&n;  any later version.&n;  &n;  This program is distributed in the hope that it will be useful,&n;  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;  GNU General Public License for more details.&n;  &n;  You should have received a copy of the GNU General Public License&n;  along with this program; if not, write to the Free Software&n;  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;  &n;  The Author may be reached as bir7@leland.stanford.edu or&n;  C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;  */
-multiline_comment|/* $Id: timer.c,v 0.8.4.5 1992/12/12 19:25:04 bir7 Exp $ */
-multiline_comment|/* $Log: timer.c,v $&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/12  01:50:49  bir7&n; * Fixed timeouts.&n; *&n; * Revision 0.8.4.3  1992/12/06  23:29:59  bir7&n; * Fixed bugs in timeout.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
+multiline_comment|/* $Id: timer.c,v 0.8.4.8 1993/01/23 18:00:11 bir7 Exp $ */
+multiline_comment|/* $Log: timer.c,v $&n; * Revision 0.8.4.8  1993/01/23  18:00:11  bir7&n; * added volatile keyword.&n; *&n; * Revision 0.8.4.7  1993/01/22  23:21:38  bir7&n; * Merged with 99 pl4&n; *&n; * Revision 0.8.4.6  1993/01/22  22:58:08  bir7&n; * Check in for merge with previous .99 pl 4.&n; *&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/12  01:50:49  bir7&n; * Fixed timeouts.&n; *&n; * Revision 0.8.4.3  1992/12/06  23:29:59  bir7&n; * Fixed bugs in timeout.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -30,6 +30,7 @@ mdefine_line|#define PRINTK(x) /**/
 macro_line|#endif
 DECL|variable|timer_base
 r_static
+r_volatile
 r_struct
 id|timer
 op_star
@@ -145,6 +146,11 @@ c_loop
 (paren
 id|tm
 op_assign
+(paren
+r_struct
+id|timer
+op_star
+)paren
 id|timer_base
 suffix:semicolon
 id|tm-&gt;next
@@ -153,6 +159,11 @@ l_int|NULL
 suffix:semicolon
 id|tm
 op_assign
+(paren
+r_struct
+id|timer
+op_star
+)paren
 id|tm-&gt;next
 )paren
 (brace
@@ -334,11 +345,21 @@ c_loop
 (paren
 id|tm
 op_assign
+(paren
+r_struct
+id|timer
+op_star
+)paren
 id|timer_base
 suffix:semicolon
 suffix:semicolon
 id|tm
 op_assign
+(paren
+r_struct
+id|timer
+op_star
+)paren
 id|tm-&gt;next
 )paren
 (brace
@@ -472,6 +493,11 @@ id|TIME_KEEPOPEN
 suffix:semicolon
 id|reset_timer
 (paren
+(paren
+r_struct
+id|timer
+op_star
+)paren
 id|timer_base
 )paren
 suffix:semicolon
@@ -485,6 +511,11 @@ suffix:semicolon
 id|delete_timer
 c_func
 (paren
+(paren
+r_struct
+id|timer
+op_star
+)paren
 id|timer_base
 )paren
 suffix:semicolon
@@ -568,11 +599,6 @@ l_string|&quot;possible memory leak.  sk = %X&bslash;n&quot;
 comma
 id|sk
 )paren
-)paren
-suffix:semicolon
-id|print_sk
-(paren
-id|sk
 )paren
 suffix:semicolon
 id|reset_timer

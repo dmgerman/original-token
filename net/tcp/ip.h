@@ -1,7 +1,7 @@
 multiline_comment|/* ip.h */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: ip.h,v 0.8.4.1 1992/11/10 00:17:18 bir7 Exp $ */
-multiline_comment|/* $Log: ip.h,v $&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: ip.h,v $&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
+multiline_comment|/* $Id: ip.h,v 0.8.4.2 1993/01/23 18:00:11 bir7 Exp $ */
+multiline_comment|/* $Log: ip.h,v $&n; * Revision 0.8.4.2  1993/01/23  18:00:11  bir7&n; * added volatile keyword to many variables.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: ip.h,v $&n; * Revision 0.8.4.2  1993/01/23  18:00:11  bir7&n; * added volatile keyword to many variables.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
 macro_line|#ifndef _TCP_IP_H
 DECL|macro|_TCP_IP_H
 mdefine_line|#define _TCP_IP_H
@@ -393,6 +393,7 @@ id|ipprot
 )paren
 suffix:semicolon
 DECL|member|next
+r_volatile
 r_struct
 id|ip_protocol
 op_star
@@ -424,6 +425,7 @@ op_star
 id|ip_protocol_base
 suffix:semicolon
 r_extern
+r_volatile
 r_struct
 id|ip_protocol
 op_star
@@ -442,8 +444,12 @@ id|ip_addr
 id|MAX_IP_ADDRES
 )braket
 suffix:semicolon
+r_extern
+r_int
+id|ip_ads
+suffix:semicolon
 DECL|macro|MY_IP_ADDR
-mdefine_line|#define MY_IP_ADDR ip_addr[0];
+mdefine_line|#define MY_IP_ADDR ip_addr[0]
 r_int
 id|my_ip_addr
 c_func

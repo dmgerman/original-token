@@ -102,6 +102,18 @@ id|dummy
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|SOCK_INODE
+mdefine_line|#define SOCK_INODE(S) ((struct inode *)(S)-&gt;dummy)
+r_extern
+r_struct
+id|socket
+id|sockets
+(braket
+id|NSOCKETS
+)braket
+suffix:semicolon
+DECL|macro|last_socket
+mdefine_line|#define last_socket (sockets + NSOCKETS - 1)
 DECL|struct|proto_ops
 r_struct
 id|proto_ops

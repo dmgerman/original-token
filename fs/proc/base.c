@@ -398,11 +398,11 @@ id|result
 r_int
 r_int
 id|pid
+comma
+id|ino
 suffix:semicolon
 r_int
 id|i
-comma
-id|ino
 suffix:semicolon
 op_star
 id|result

@@ -1,7 +1,7 @@
 multiline_comment|/* sock.h */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: sock.h,v 0.8.4.5 1992/12/12 01:50:49 bir7 Exp $ */
-multiline_comment|/* $Log: sock.h,v $&n; * Revision 0.8.4.5  1992/12/12  01:50:49  bir7&n; * Fixed support for half duplex connections.&n; *&n; * Revision 0.8.4.4  1992/12/06  23:29:59  bir7&n; * Added mss and support for half completed packets.&n; *&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
+multiline_comment|/* $Id: sock.h,v 0.8.4.7 1993/01/26 22:04:00 bir7 Exp $ */
+multiline_comment|/* $Log: sock.h,v $&n; * Revision 0.8.4.7  1993/01/26  22:04:00  bir7&n; * Added support for proc fs.&n; *&n; * Revision 0.8.4.6  1993/01/23  18:00:11  bir7&n; * Added volatile keyword&n; *&n; * Revision 0.8.4.5  1992/12/12  01:50:49  bir7&n; * Fixed support for half duplex connections.&n; *&n; * Revision 0.8.4.4  1992/12/06  23:29:59  bir7&n; * Added mss and support for half completed packets.&n; *&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#ifndef _TCP_SOCK_H
 DECL|macro|_TCP_SOCK_H
 mdefine_line|#define _TCP_SOCK_H
@@ -19,11 +19,13 @@ op_star
 id|opt
 suffix:semicolon
 DECL|member|wmem_alloc
+r_volatile
 r_int
 r_int
 id|wmem_alloc
 suffix:semicolon
 DECL|member|rmem_alloc
+r_volatile
 r_int
 r_int
 id|rmem_alloc
@@ -58,9 +60,11 @@ r_int
 r_int
 id|fin_seq
 suffix:semicolon
+multiline_comment|/* not all are volatile, but some are, so we might as&n;     well say they all are. */
 DECL|member|inuse
 DECL|member|dead
 DECL|member|urginline
+r_volatile
 r_int
 r_int
 id|inuse
@@ -166,9 +170,11 @@ op_star
 id|send_head
 suffix:semicolon
 DECL|member|back_log
+r_volatile
 r_struct
 id|sk_buff
 op_star
+r_volatile
 id|back_log
 suffix:semicolon
 DECL|member|send_tmp
@@ -244,21 +250,25 @@ r_int
 id|num
 suffix:semicolon
 DECL|member|cong_window
+r_volatile
 r_int
 r_int
 id|cong_window
 suffix:semicolon
 DECL|member|packets_out
+r_volatile
 r_int
 r_int
 id|packets_out
 suffix:semicolon
 DECL|member|urg
+r_volatile
 r_int
 r_int
 id|urg
 suffix:semicolon
 DECL|member|shutdown
+r_volatile
 r_int
 r_int
 id|shutdown
@@ -269,10 +279,12 @@ r_int
 id|mss
 suffix:semicolon
 DECL|member|rtt
+r_volatile
 r_int
 id|rtt
 suffix:semicolon
 DECL|member|err
+r_volatile
 r_int
 id|err
 suffix:semicolon
@@ -282,11 +294,13 @@ r_char
 id|protocol
 suffix:semicolon
 DECL|member|state
+r_volatile
 r_int
 r_char
 id|state
 suffix:semicolon
 DECL|member|ack_backlog
+r_volatile
 r_int
 r_char
 id|ack_backlog
@@ -308,6 +322,7 @@ id|dummy_th
 suffix:semicolon
 multiline_comment|/* I may be able to get rid of this. */
 DECL|member|time_wait
+r_volatile
 r_struct
 id|timer
 id|time_wait
@@ -876,6 +891,13 @@ id|sock_array
 id|SOCK_ARRAY_SIZE
 )braket
 suffix:semicolon
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|80
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|TIME_WRITE
@@ -900,18 +922,21 @@ r_struct
 id|sk_buff
 (brace
 DECL|member|next
+r_volatile
 r_struct
 id|sk_buff
 op_star
 id|next
 suffix:semicolon
 DECL|member|prev
+r_volatile
 r_struct
 id|sk_buff
 op_star
 id|prev
 suffix:semicolon
 DECL|member|link3
+r_volatile
 r_struct
 id|sk_buff
 op_star
@@ -925,6 +950,7 @@ op_star
 id|sk
 suffix:semicolon
 DECL|member|when
+r_volatile
 r_int
 r_int
 id|when
@@ -1018,6 +1044,7 @@ DECL|member|free
 DECL|member|arp
 DECL|member|urg_used
 DECL|member|lock
+r_volatile
 r_int
 r_int
 id|acked

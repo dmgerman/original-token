@@ -389,6 +389,8 @@ op_assign
 id|notify_change
 c_func
 (paren
+id|NOTIFY_SIZE
+comma
 id|inode
 )paren
 suffix:semicolon
@@ -514,6 +516,8 @@ r_return
 id|notify_change
 c_func
 (paren
+id|NOTIFY_SIZE
+comma
 id|inode
 )paren
 suffix:semicolon
@@ -709,6 +713,8 @@ op_assign
 id|notify_change
 c_func
 (paren
+id|NOTIFY_TIME
+comma
 id|inode
 )paren
 suffix:semicolon
@@ -1192,6 +1198,8 @@ r_return
 id|notify_change
 c_func
 (paren
+id|NOTIFY_MODE
+comma
 id|inode
 )paren
 suffix:semicolon
@@ -1334,6 +1342,8 @@ op_assign
 id|notify_change
 c_func
 (paren
+id|NOTIFY_MODE
+comma
 id|inode
 )paren
 suffix:semicolon
@@ -1502,6 +1512,8 @@ r_return
 id|notify_change
 c_func
 (paren
+id|NOTIFY_UIDGID
+comma
 id|inode
 )paren
 suffix:semicolon
@@ -1658,6 +1670,8 @@ op_assign
 id|notify_change
 c_func
 (paren
+id|NOTIFY_UIDGID
+comma
 id|inode
 )paren
 suffix:semicolon
@@ -1894,6 +1908,8 @@ op_assign
 id|notify_change
 c_func
 (paren
+id|NOTIFY_SIZE
+comma
 id|inode
 )paren
 )paren

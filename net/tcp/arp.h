@@ -1,7 +1,7 @@
 multiline_comment|/* arp.h */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: arp.h,v 0.8.4.3 1992/12/03 19:54:12 bir7 Exp $ */
-multiline_comment|/* $Log: arp.h,v $&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: arp.h,v $&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
+multiline_comment|/* $Id: arp.h,v 0.8.4.4 1993/01/23 18:00:11 bir7 Exp $ */
+multiline_comment|/* $Log: arp.h,v $&n; * Revision 0.8.4.4  1993/01/23  18:00:11  bir7&n; * Added ioctls as supplied by R.P. Bellis &lt;rpb@psy.ox.ac.uk&gt;&n; *&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: arp.h,v $&n; * Revision 0.8.4.4  1993/01/23  18:00:11  bir7&n; * Added ioctls as supplied by R.P. Bellis &lt;rpb@psy.ox.ac.uk&gt;&n; *&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
 macro_line|#ifndef _TCP_ARP_H
 DECL|macro|_TCP_ARP_H
 mdefine_line|#define _TCP_ARP_H
@@ -41,12 +41,14 @@ r_struct
 id|arp_table
 (brace
 DECL|member|next
+r_volatile
 r_struct
 id|arp_table
 op_star
 id|next
 suffix:semicolon
 DECL|member|last_used
+r_volatile
 r_int
 r_int
 id|last_used
@@ -72,6 +74,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|variable|arp_q
+r_volatile
 r_struct
 id|sk_buff
 op_star
@@ -171,6 +174,36 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+)paren
+suffix:semicolon
+r_int
+id|arp_ioctl_set
+c_func
+(paren
+r_struct
+id|arpreq
+op_star
+id|req
+)paren
+suffix:semicolon
+r_int
+id|arp_ioctl_get
+c_func
+(paren
+r_struct
+id|arpreq
+op_star
+id|req
+)paren
+suffix:semicolon
+r_int
+id|arp_ioctl_del
+c_func
+(paren
+r_struct
+id|arpreq
+op_star
+id|req
 )paren
 suffix:semicolon
 DECL|macro|ARP_TABLE_SIZE

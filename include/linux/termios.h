@@ -72,6 +72,10 @@ DECL|macro|FIONBIO
 mdefine_line|#define FIONBIO&t;&t;0x5421
 DECL|macro|TIOCNOTTY
 mdefine_line|#define TIOCNOTTY&t;0x5422
+DECL|macro|TIOCSETD
+mdefine_line|#define TIOCSETD&t;0x5423
+DECL|macro|TIOCGETD
+mdefine_line|#define TIOCGETD&t;0x5424
 DECL|macro|FIONCLEX
 mdefine_line|#define FIONCLEX&t;0x5450  /* these numbers need to be adjusted. */
 DECL|macro|FIOCLEX
@@ -474,5 +478,12 @@ DECL|macro|TCSADRAIN
 mdefine_line|#define&t;TCSADRAIN&t;1
 DECL|macro|TCSAFLUSH
 mdefine_line|#define&t;TCSAFLUSH&t;2
+multiline_comment|/* line disciplines */
+DECL|macro|N_TTY
+mdefine_line|#define N_TTY&t;&t;0
+DECL|macro|N_SLIP
+mdefine_line|#define N_SLIP&t;&t;1
+DECL|macro|N_MOUSE
+mdefine_line|#define N_MOUSE&t;&t;2
 macro_line|#endif
 eof

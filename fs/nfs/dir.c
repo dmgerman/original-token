@@ -3300,6 +3300,7 @@ c_cond
 op_logical_neg
 id|error
 )paren
+(brace
 id|nfs_lookup_cache_remove
 c_func
 (paren
@@ -3310,6 +3311,17 @@ comma
 id|old_filename
 )paren
 suffix:semicolon
+id|nfs_lookup_cache_remove
+c_func
+(paren
+id|new_dir
+comma
+l_int|NULL
+comma
+id|new_filename
+)paren
+suffix:semicolon
+)brace
 id|iput
 c_func
 (paren

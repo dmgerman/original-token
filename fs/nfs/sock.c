@@ -406,7 +406,7 @@ suffix:semicolon
 id|result
 op_assign
 op_minus
-id|EINTR
+id|ERESTARTSYS
 suffix:semicolon
 r_break
 suffix:semicolon

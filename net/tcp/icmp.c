@@ -1,7 +1,7 @@
 multiline_comment|/* Internet Control Message Protocol (ICMP) icmp.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Bob Harris&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author of tcpip package may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;&n;    The author of this file may be reached at rth@sparta.com or Sparta, Inc.&n;    7926 Jones Branch Dr. Suite 900, McLean Va 22102.&n;*/
-multiline_comment|/* $Id: icmp.c,v 0.8.4.7 1992/12/12 19:25:04 bir7 Exp $ */
-multiline_comment|/* $Log: icmp.c,v $&n; * Revision 0.8.4.7  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.6  1992/12/12  01:50:49  bir7&n; * Fixed bug in call to err routine.&n; *&n; * Revision 0.8.4.5  1992/12/05  21:35:53  bir7&n; * fixed type mismatch.&n; *&n; * Revision 0.8.4.4  1992/12/03  19:52:20  bir7&n; * Fixed minor pugs in icmp_reply.&n; *&n; * Revision 0.8.4.3  1992/11/18  15:38:03  bir7&n; * Fixed some printk&squot;s.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
+multiline_comment|/* $Id: icmp.c,v 0.8.4.9 1993/01/23 18:00:11 bir7 Exp $ */
+multiline_comment|/* $Log: icmp.c,v $&n; * Revision 0.8.4.9  1993/01/23  18:00:11  bir7&n; * added volatile keyword to many variables.&n; *&n; * Revision 0.8.4.8  1993/01/22  23:21:38  bir7&n; * Merged with 99 pl4&n; *&n; * Revision 0.8.4.7  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.6  1992/12/12  01:50:49  bir7&n; * Fixed bug in call to err routine.&n; *&n; * Revision 0.8.4.5  1992/12/05  21:35:53  bir7&n; * fixed type mismatch.&n; *&n; * Revision 0.8.4.4  1992/12/03  19:52:20  bir7&n; * Fixed minor pugs in icmp_reply.&n; *&n; * Revision 0.8.4.3  1992/11/18  15:38:03  bir7&n; * Fixed some printk&squot;s.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 multiline_comment|/* modified by Ross Biro bir7@leland.stanford.edu to do more than just&n;   echo responses. */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -672,6 +672,11 @@ c_loop
 (paren
 id|ipprot
 op_assign
+(paren
+r_struct
+id|ip_protocol
+op_star
+)paren
 id|ip_protos
 (braket
 id|hash
@@ -690,6 +695,11 @@ id|nextip
 suffix:semicolon
 id|nextip
 op_assign
+(paren
+r_struct
+id|ip_protocol
+op_star
+)paren
 id|ipprot-&gt;next
 suffix:semicolon
 multiline_comment|/* pass it off to everyone who wants it. */

@@ -317,10 +317,7 @@ multiline_comment|/* no special open code... */
 id|sock_close
 )brace
 suffix:semicolon
-DECL|macro|SOCK_INODE
-mdefine_line|#define SOCK_INODE(S) ((struct inode *)(S)-&gt;dummy)
 DECL|variable|sockets
-r_static
 r_struct
 id|socket
 id|sockets
@@ -328,8 +325,6 @@ id|sockets
 id|NSOCKETS
 )braket
 suffix:semicolon
-DECL|macro|last_socket
-mdefine_line|#define last_socket (sockets + NSOCKETS - 1)
 DECL|variable|socket_wait_free
 r_static
 r_struct
@@ -735,6 +730,26 @@ id|i_mode
 op_assign
 id|S_IFSOCK
 suffix:semicolon
+id|SOCK_INODE
+c_func
+(paren
+id|sock
+)paren
+op_member_access_from_pointer
+id|i_uid
+op_assign
+id|current-&gt;euid
+suffix:semicolon
+id|SOCK_INODE
+c_func
+(paren
+id|sock
+)paren
+op_member_access_from_pointer
+id|i_gid
+op_assign
+id|current-&gt;egid
+suffix:semicolon
 id|sock-&gt;wait
 op_assign
 op_amp
@@ -750,7 +765,7 @@ id|PRINTK
 c_func
 (paren
 (paren
-l_string|&quot;sock_alloc: socket 0x%x, inode 0x%x&bslash;n&quot;
+l_string|&quot;sock_alloc: socket 0x%x,inode 0x%x&bslash;n&quot;
 comma
 id|sock
 comma
@@ -4863,26 +4878,6 @@ op_increment
 id|i
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;sock_init: initializing family %d (%s)&bslash;n&quot;
-comma
-id|proto_table
-(braket
-id|i
-)braket
-dot
-id|family
-comma
-id|proto_table
-(braket
-id|i
-)braket
-dot
-id|name
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4904,7 +4899,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sock_init: init failed.&bslash;n&quot;
+l_string|&quot;sock_init: init failed family %d (%s)&bslash;n&quot;
 comma
 id|proto_table
 (braket
@@ -4912,6 +4907,13 @@ id|i
 )braket
 dot
 id|family
+comma
+id|proto_table
+(braket
+id|i
+)braket
+dot
+id|name
 )paren
 suffix:semicolon
 id|proto_table

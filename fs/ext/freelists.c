@@ -39,12 +39,16 @@ c_cond
 op_logical_neg
 id|sb
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;trying to free block on nonexistent device&quot;
+l_string|&quot;trying to free block on non-existent device&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|lock_super
 (paren
 id|sb
@@ -247,12 +251,17 @@ c_cond
 op_logical_neg
 id|sb
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;trying to get new block from nonexistant device&quot;
+l_string|&quot;trying to get new block from non-existent device&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -373,10 +382,14 @@ comma
 id|j
 )paren
 suffix:semicolon
-id|panic
+id|printk
+c_func
 (paren
 l_string|&quot;allocating block not in data zone&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|sb-&gt;u.ext_sb.s_freeblockscount
@@ -404,25 +417,17 @@ id|sb-&gt;s_blocksize
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
 l_string|&quot;new_block: cannot get block&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|bh-&gt;b_count
-op_ne
-l_int|1
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;new block: count is != 1&quot;
-)paren
+r_return
+l_int|0
 suffix:semicolon
+)brace
 id|clear_block
 c_func
 (paren
@@ -709,7 +714,7 @@ id|inode-&gt;i_sb
 id|printk
 c_func
 (paren
-l_string|&quot;free_inode: inode on nonexistent device&bslash;n&quot;
+l_string|&quot;free_inode: inode on non-existent device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -731,7 +736,7 @@ id|inode-&gt;i_sb-&gt;u.ext_sb.s_ninodes
 id|printk
 c_func
 (paren
-l_string|&quot;free_inode: inode 0 or nonexistent inode&bslash;n&quot;
+l_string|&quot;free_inode: inode 0 or non-existent inode&bslash;n&quot;
 )paren
 suffix:semicolon
 id|unlock_super

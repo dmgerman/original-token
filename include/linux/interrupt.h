@@ -56,6 +56,9 @@ comma
 DECL|enumerator|SERIAL_BH
 id|SERIAL_BH
 comma
+DECL|enumerator|TTY_BH
+id|TTY_BH
+comma
 DECL|enumerator|INET_BH
 id|INET_BH
 comma

@@ -1,7 +1,7 @@
 multiline_comment|/* Space.c */
 multiline_comment|/* Holds initial configuration information for devices. */
-multiline_comment|/* $Id: Space.c,v 0.8.4.5 1992/12/12 19:25:04 bir7 Exp $ */
-multiline_comment|/* $Log: Space.c,v $&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/05  21:35:53  bir7&n; * Updated dev-&gt;init type.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Removed ctrl-h so diff no longer thinks it&squot;s a binary file.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
+multiline_comment|/* $Id: Space.c,v 0.8.4.7 1993/01/22 23:21:38 bir7 Exp $ */
+multiline_comment|/* $Log: Space.c,v $&n; * Revision 0.8.4.7  1993/01/22  23:21:38  bir7&n; * Merged with 99 pl4&n; *&n; * Revision 0.8.4.6  1993/01/22  22:58:08  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/05  21:35:53  bir7&n; * Updated dev-&gt;init type.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Removed ctrl-h so diff no longer thinks it&squot;s a binary file.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &lt;linux/stddef.h&gt;
 r_extern

@@ -1,7 +1,7 @@
 multiline_comment|/* sock.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: sock.c,v 0.8.4.12 1992/12/12 19:25:04 bir7 Exp $ */
-multiline_comment|/* $Log: sock.c,v $&n; * Revision 0.8.4.12  1992/12/12  19:25:04  bir7&n; * Made memory leak checking more leanent.&n; *&n; * Revision 0.8.4.11  1992/12/12  01:50:49  bir7&n; * Fixed memory leak in accept.&n; *&n; * Revision 0.8.4.10  1992/12/08  20:49:15  bir7&n; * Added support for -EINPROGRESS&n; *&n; * Revision 0.8.4.9  1992/12/06  23:29:59  bir7&n; * Added mss and support for half completed packets.&n; *&n; * Revision 0.8.4.8  1992/12/05  21:35:53  bir7&n; * changed dev-&gt;init to return an int.&n; *&n; * Revision 0.8.4.7  1992/12/03  19:52:20  bir7&n; * added paranoid queue checking&n; *&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * Fixed minor problem in setsockopt.&n; *&n; * Revision 0.8.4.5  1992/11/17  14:19:47  bir7&n; *&n; * Revision 0.8.4.4  1992/11/16  16:13:40  bir7&n; * Fixed some error returns and undid one of the accept changes.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Added more checking for a packet being on a queue before it&squot;s&n; * dropped when a socket is closed.  Added check to see if it&squot;s&n; * on the arp_q also.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
+multiline_comment|/* $Id: sock.c,v 0.8.4.16 1993/01/26 22:04:00 bir7 Exp $ */
+multiline_comment|/* $Log: sock.c,v $&n; * Revision 0.8.4.16  1993/01/26  22:04:00  bir7&n; * Added support for proc fs.&n; *&n; * Revision 0.8.4.15  1993/01/23  18:00:11  bir7&n; * Added volatile keyword&n; *&n; * Revision 0.8.4.14  1993/01/22  23:21:38  bir7&n; * Merged with 99 pl4&n; *&n; * Revision 0.8.4.13  1993/01/22  22:58:08  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.12  1992/12/12  19:25:04  bir7&n; * Made memory leak checking more leanent.&n; *&n; * Revision 0.8.4.11  1992/12/12  01:50:49  bir7&n; * Fixed memory leak in accept.&n; *&n; * Revision 0.8.4.10  1992/12/08  20:49:15  bir7&n; * Added support for -EINPROGRESS&n; *&n; * Revision 0.8.4.9  1992/12/06  23:29:59  bir7&n; * Added mss and support for half completed packets.&n; *&n; * Revision 0.8.4.8  1992/12/05  21:35:53  bir7&n; * changed dev-&gt;init to return an int.&n; *&n; * Revision 0.8.4.7  1992/12/03  19:52:20  bir7&n; * added paranoid queue checking&n; *&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * Fixed minor problem in setsockopt.&n; *&n; * Revision 0.8.4.5  1992/11/17  14:19:47  bir7&n; *&n; * Revision 0.8.4.4  1992/11/16  16:13:40  bir7&n; * Fixed some error returns and undid one of the accept changes.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Added more checking for a packet being on a queue before it&squot;s&n; * dropped when a socket is closed.  Added check to see if it&squot;s&n; * on the arp_q also.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sock_ioctl.h&gt;
 macro_line|#include &quot;../kern_sock.h&quot;
 macro_line|#include &quot;timer.h&quot;
@@ -549,6 +550,7 @@ comma
 id|ip_proto_getsockopt
 comma
 id|ip_proto_fcntl
+comma
 )brace
 suffix:semicolon
 r_void
@@ -569,54 +571,43 @@ op_logical_neg
 id|sk
 )paren
 (brace
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  print_sk(NULL)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  wmem_alloc = %d&bslash;n&quot;
 comma
 id|sk-&gt;wmem_alloc
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  rmem_alloc = %d&bslash;n&quot;
 comma
 id|sk-&gt;rmem_alloc
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  send_head = %X&bslash;n&quot;
 comma
 id|sk-&gt;send_head
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  state = %d&bslash;n&quot;
 comma
 id|sk-&gt;state
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  wback = %X, rqueue = %X&bslash;n&quot;
 comma
@@ -624,19 +615,15 @@ id|sk-&gt;wback
 comma
 id|sk-&gt;rqueue
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  wfront = %X&bslash;n&quot;
 comma
 id|sk-&gt;wfront
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  daddr = %X, saddr = %X&bslash;n&quot;
 comma
@@ -644,28 +631,22 @@ id|sk-&gt;daddr
 comma
 id|sk-&gt;saddr
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  num = %d&quot;
 comma
 id|sk-&gt;num
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot; next = %X&bslash;n&quot;
 comma
 id|sk-&gt;next
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  send_seq = %d, acked_seq = %d, copied_seq = %d&bslash;n&quot;
 comma
@@ -675,10 +656,8 @@ id|sk-&gt;acked_seq
 comma
 id|sk-&gt;copied_seq
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  rcv_ack_seq = %d, window_seq = %d, fin_seq = %d&bslash;n&quot;
 comma
@@ -688,19 +667,15 @@ id|sk-&gt;window_seq
 comma
 id|sk-&gt;fin_seq
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  prot = %X&bslash;n&quot;
 comma
 id|sk-&gt;prot
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  pair = %X, back_log = %X&bslash;n&quot;
 comma
@@ -708,10 +683,8 @@ id|sk-&gt;pair
 comma
 id|sk-&gt;back_log
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  inuse = %d , blog = %d&bslash;n&quot;
 comma
@@ -719,10 +692,8 @@ id|sk-&gt;inuse
 comma
 id|sk-&gt;blog
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  dead = %d delay_acks=%d&bslash;n&quot;
 comma
@@ -730,10 +701,8 @@ id|sk-&gt;dead
 comma
 id|sk-&gt;delay_acks
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  retransmits = %d, timeout = %d&bslash;n&quot;
 comma
@@ -741,10 +710,8 @@ id|sk-&gt;retransmits
 comma
 id|sk-&gt;timeout
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  cong_window = %d, packets_out = %d&bslash;n&quot;
 comma
@@ -752,6 +719,14 @@ id|sk-&gt;cong_window
 comma
 id|sk-&gt;packets_out
 )paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;  urg = %d shutdown=%d&bslash;n&quot;
+comma
+id|sk-&gt;urg
+comma
+id|sk-&gt;shutdown
 )paren
 suffix:semicolon
 )brace
@@ -773,18 +748,15 @@ op_logical_neg
 id|skb
 )paren
 (brace
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  print_skb(NULL)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  prev = %X, next = %X&bslash;n&quot;
 comma
@@ -792,10 +764,8 @@ id|skb-&gt;prev
 comma
 id|skb-&gt;next
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  sk = %X link3 = %X&bslash;n&quot;
 comma
@@ -803,10 +773,8 @@ id|skb-&gt;sk
 comma
 id|skb-&gt;link3
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  mem_addr = %X, mem_len = %d&bslash;n&quot;
 comma
@@ -814,17 +782,14 @@ id|skb-&gt;mem_addr
 comma
 id|skb-&gt;mem_len
 )paren
-)paren
 suffix:semicolon
-id|PRINTK
-(paren
+id|printk
 (paren
 l_string|&quot;  used = %d free = %d&bslash;n&quot;
 comma
 id|skb-&gt;used
 comma
 id|skb-&gt;free
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1825,6 +1790,11 @@ id|skb2
 suffix:semicolon
 id|skb2
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|skb-&gt;next
 suffix:semicolon
 r_if
@@ -1887,6 +1857,11 @@ id|skb2
 suffix:semicolon
 id|skb2
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|skb-&gt;next
 suffix:semicolon
 multiline_comment|/* this will take care of closing sockets that were&n;&t;     listening and didn&squot;t accept everything. */
@@ -1976,6 +1951,7 @@ l_int|NULL
 )paren
 (brace
 r_extern
+r_volatile
 r_struct
 id|sk_buff
 op_star
@@ -2244,6 +2220,11 @@ c_func
 suffix:semicolon
 id|skb2
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|skb-&gt;link3
 suffix:semicolon
 id|kfree_skb
@@ -2285,6 +2266,11 @@ c_func
 suffix:semicolon
 id|skb
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|sk-&gt;back_log
 suffix:semicolon
 r_do
@@ -2296,6 +2282,11 @@ id|skb2
 suffix:semicolon
 id|skb2
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|skb-&gt;next
 suffix:semicolon
 id|kfree_skb
@@ -2392,11 +2383,6 @@ l_string|&quot;possible memory leak in socket = %X&bslash;n&quot;
 comma
 id|sk
 )paren
-)paren
-suffix:semicolon
-id|print_sk
-(paren
-id|sk
 )paren
 suffix:semicolon
 id|sk-&gt;destroy
@@ -2498,6 +2484,40 @@ id|cmd
 r_case
 id|F_SETOWN
 suffix:colon
+multiline_comment|/* this is a little restrictive, but it&squot;s the only way to make&n;&t;  sure that you can&squot;t send a sigurg to another process. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+op_logical_and
+id|current-&gt;pgrp
+op_ne
+op_minus
+id|arg
+op_logical_and
+id|current-&gt;pid
+op_ne
+id|arg
+)paren
+r_return
+(paren
+op_minus
+id|EPERM
+)paren
+suffix:semicolon
+id|sk-&gt;proc
+op_assign
+id|arg
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
 id|sk-&gt;proc
 op_assign
 id|arg
@@ -3237,6 +3257,11 @@ suffix:semicolon
 multiline_comment|/* add all the protocols. */
 id|tmp
 op_assign
+(paren
+r_struct
+id|ip_protocol
+op_star
+)paren
 id|p-&gt;next
 suffix:semicolon
 id|add_ip_protocol
@@ -3752,6 +3777,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|sk-&gt;linger
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;rtt
 op_assign
 l_int|0
 suffix:semicolon
@@ -4361,6 +4390,7 @@ id|addr_len
 )paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4370,13 +4400,16 @@ id|addr.sin_family
 op_ne
 id|AF_INET
 )paren
+(brace
+multiline_comment|/* this is really a bug in BSD which we need to emulate because&n;&t; ftp expects it. */
 r_return
 (paren
 op_minus
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/* this needs to be changed. */
+)brace
+macro_line|#endif
 id|snum
 op_assign
 id|net16
@@ -4394,11 +4427,6 @@ id|sk
 comma
 id|snum
 )paren
-)paren
-suffix:semicolon
-id|print_sk
-(paren
-id|sk
 )paren
 suffix:semicolon
 id|sk
@@ -4496,20 +4524,6 @@ l_int|1
 )paren
 )braket
 )paren
-)paren
-suffix:semicolon
-id|print_sk
-(paren
-id|sk-&gt;prot-&gt;sock_array
-(braket
-id|snum
-op_amp
-(paren
-id|SOCK_ARRAY_SIZE
-op_minus
-l_int|1
-)paren
-)braket
 )paren
 suffix:semicolon
 multiline_comment|/* make sure we are allowed to bind here. */
@@ -4802,14 +4816,6 @@ op_minus
 id|EOPNOTSUPP
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;intr
-op_eq
-l_int|0
-)paren
-(brace
 id|err
 op_assign
 id|sk-&gt;prot-&gt;connect
@@ -4838,7 +4844,6 @@ r_return
 id|err
 )paren
 suffix:semicolon
-)brace
 id|sock-&gt;state
 op_assign
 id|SS_CONNECTING
@@ -4899,14 +4904,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sk-&gt;intr
-op_assign
-l_int|1
-suffix:semicolon
-id|sock-&gt;state
-op_assign
-id|SS_UNCONNECTED
-suffix:semicolon
 r_return
 (paren
 op_minus
@@ -4923,10 +4920,6 @@ suffix:semicolon
 id|sock-&gt;state
 op_assign
 id|SS_CONNECTED
-suffix:semicolon
-id|sk-&gt;intr
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -5385,6 +5378,18 @@ id|sin.sin_port
 op_assign
 id|sk-&gt;dummy_th.source
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;saddr
+op_eq
+l_int|0
+)paren
+id|sin.sin_addr.s_addr
+op_assign
+id|MY_IP_ADDR
+suffix:semicolon
+r_else
 id|sin.sin_addr.s_addr
 op_assign
 id|sk-&gt;saddr
@@ -6583,6 +6588,87 @@ id|arg
 )paren
 suffix:semicolon
 r_case
+id|SIOCSARP
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+(paren
+op_minus
+id|EPERM
+)paren
+suffix:semicolon
+r_return
+(paren
+id|arp_ioctl_set
+c_func
+(paren
+(paren
+r_struct
+id|arpreq
+op_star
+)paren
+id|arg
+)paren
+)paren
+suffix:semicolon
+r_case
+id|SIOCGARP
+suffix:colon
+r_return
+(paren
+id|arp_ioctl_get
+c_func
+(paren
+(paren
+r_struct
+id|arpreq
+op_star
+)paren
+id|arg
+)paren
+)paren
+suffix:semicolon
+r_case
+id|SIOCDARP
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+(paren
+op_minus
+id|EPERM
+)paren
+suffix:semicolon
+r_return
+(paren
+id|arp_ioctl_del
+c_func
+(paren
+(paren
+r_struct
+id|arpreq
+op_star
+)paren
+id|arg
+)paren
+)paren
+suffix:semicolon
+r_case
 id|FIOSETOWN
 suffix:colon
 r_case
@@ -7441,6 +7527,11 @@ l_int|1
 suffix:semicolon
 id|skb
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|sk-&gt;back_log
 suffix:semicolon
 id|PRINTK
@@ -7450,12 +7541,6 @@ l_string|&quot;release_sock: skb = %X:&bslash;n&quot;
 comma
 id|skb
 )paren
-)paren
-suffix:semicolon
-id|print_skb
-c_func
-(paren
-id|skb
 )paren
 suffix:semicolon
 r_if

@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAX_TASKS_PER_USER
-mdefine_line|#define MAX_TASKS_PER_USER ((NR_TASKS/4)*3)
+mdefine_line|#define MAX_TASKS_PER_USER (NR_TASKS/2)
 DECL|variable|last_pid
 r_int
 id|last_pid
@@ -90,8 +90,6 @@ id|task_nr
 suffix:semicolon
 r_int
 id|this_user_tasks
-op_assign
-l_int|0
 suffix:semicolon
 id|repeat
 suffix:colon
@@ -103,11 +101,15 @@ op_increment
 id|last_pid
 )paren
 op_amp
-l_int|0xffff0000
+l_int|0xffff8000
 )paren
 id|last_pid
 op_assign
 l_int|1
+suffix:semicolon
+id|this_user_tasks
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop

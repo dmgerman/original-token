@@ -841,6 +841,10 @@ r_int
 id|error_code
 )paren
 (brace
+id|ignore_irq13
+op_assign
+l_int|1
+suffix:semicolon
 id|send_sig
 c_func
 (paren

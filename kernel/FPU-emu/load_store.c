@@ -108,6 +108,7 @@ id|pop_ptr
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Initialized just to stop compiler warnings. */
 r_switch
 c_cond
 (paren

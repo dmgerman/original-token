@@ -1,7 +1,7 @@
 multiline_comment|/* packet.c - implements raw packet sockets. */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: packet.c,v 0.8.4.5 1992/12/12 19:25:04 bir7 Exp $ */
-multiline_comment|/* $Log: packet.c,v $&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/12  01:50:49  bir7&n; * Fixed bug in call to err routine.&n; *&n; * Revision 0.8.4.3  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
+multiline_comment|/* $Id: packet.c,v 0.8.4.7 1993/01/26 22:04:00 bir7 Exp $ */
+multiline_comment|/* $Log: packet.c,v $&n; * Revision 0.8.4.7  1993/01/26  22:04:00  bir7&n; * Added support for proc fs.&n; *&n; * Revision 0.8.4.6  1993/01/23  18:00:11  bir7&n; * Added volatile keyword&n; *&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/12  01:50:49  bir7&n; * Fixed bug in call to err routine.&n; *&n; * Revision 0.8.4.3  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -362,8 +362,6 @@ r_sizeof
 op_star
 id|skb
 )paren
-op_plus
-id|sk-&gt;prot-&gt;max_header
 comma
 l_int|0
 comma
@@ -382,11 +380,6 @@ l_int|NULL
 id|PRINTK
 (paren
 l_string|&quot;packet_sendto: write buffer full?&bslash;n&quot;
-)paren
-suffix:semicolon
-id|print_sk
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return
@@ -413,8 +406,6 @@ r_sizeof
 op_star
 id|skb
 )paren
-op_plus
-id|sk-&gt;prot-&gt;max_header
 suffix:semicolon
 id|skb-&gt;sk
 op_assign
@@ -604,6 +595,10 @@ r_struct
 id|packet_type
 )paren
 )paren
+suffix:semicolon
+id|sk-&gt;pair
+op_assign
+l_int|NULL
 suffix:semicolon
 id|release_sock
 (paren
@@ -887,6 +882,10 @@ id|ERESTARTSYS
 suffix:semicolon
 )brace
 )brace
+id|sk-&gt;inuse
+op_assign
+l_int|1
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -925,6 +924,11 @@ r_else
 (brace
 id|sk-&gt;rqueue
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|sk-&gt;rqueue
 op_member_access_from_pointer
 id|next
@@ -1188,6 +1192,8 @@ comma
 l_int|NULL
 comma
 )brace
+comma
+l_string|&quot;PACKET&quot;
 )brace
 suffix:semicolon
 eof

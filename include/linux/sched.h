@@ -811,6 +811,10 @@ r_extern
 r_int
 id|hard_math
 suffix:semicolon
+r_extern
+r_int
+id|ignore_irq13
+suffix:semicolon
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (startup_time+(jiffies+jiffies_offset)/HZ)
 r_extern

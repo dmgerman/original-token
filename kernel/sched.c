@@ -28,6 +28,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* set by boot/head.S */
+DECL|variable|ignore_irq13
+r_int
+id|ignore_irq13
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* set if exception 16 works */
 DECL|variable|prof_buffer
 r_int
 r_int
@@ -1447,6 +1454,10 @@ id|timer_list
 op_star
 id|p
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1454,6 +1465,12 @@ op_logical_neg
 id|fn
 )paren
 r_return
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -1573,10 +1590,20 @@ op_assign
 id|p-&gt;next
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|p-&gt;next
+)paren
+id|p-&gt;next-&gt;jiffies
+op_sub_assign
+id|p-&gt;jiffies
+suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace

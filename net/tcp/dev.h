@@ -1,7 +1,7 @@
 multiline_comment|/* dev.h */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: dev.h,v 0.8.4.5 1992/12/08 20:49:15 bir7 Exp $ */
-multiline_comment|/* $Log: dev.h,v $&n; * Revision 0.8.4.5  1992/12/08  20:49:15  bir7&n; * Edited ctrl-h&squot;s out of log messages.&n; *&n; * Revision 0.8.4.4  1992/12/06  23:29:59  bir7&n; * Converted to using lower half interrupt routine.&n; *&n; * Revision 0.8.4.3  1992/12/05  21:35:53  bir7&n; * Updated dev-&gt;init type.&n; *&n; * Revision 0.8.4.2  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
+multiline_comment|/* $Id: dev.h,v 0.8.4.7 1993/01/23 18:00:11 bir7 Exp $ */
+multiline_comment|/* $Log: dev.h,v $&n; * Revision 0.8.4.7  1993/01/23  18:00:11  bir7&n; * Fixed problems from merging.&n; *&n; * Revision 0.8.4.6  1993/01/22  22:58:08  bir7&n; * Changed so transmitting takes place in bottom half of interrupt routine.&n; *&n; * Revision 0.8.4.5  1992/12/08  20:49:15  bir7&n; * Edited ctrl-h&squot;s out of log messages.&n; *&n; * Revision 0.8.4.4  1992/12/06  23:29:59  bir7&n; * Converted to using lower half interrupt routine.&n; *&n; * Revision 0.8.4.3  1992/12/05  21:35:53  bir7&n; * Updated dev-&gt;init type.&n; *&n; * Revision 0.8.4.2  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#ifndef _TCP_DEV_H
 DECL|macro|_TCP_DEV_H
 mdefine_line|#define _TCP_DEV_H
@@ -54,6 +54,7 @@ r_char
 id|irq
 suffix:semicolon
 DECL|member|start
+r_volatile
 r_int
 r_char
 id|start
@@ -105,9 +106,11 @@ r_int
 id|trans_start
 suffix:semicolon
 DECL|member|buffs
+r_volatile
 r_struct
 id|sk_buff
 op_star
+r_volatile
 id|buffs
 (braket
 id|DEV_NUMBUFFS
@@ -294,6 +297,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* no longer&n;&t;&t;&t;&t;&t;&t;&t;&t;   used */
 DECL|member|private
 r_void
 op_star
@@ -441,15 +445,9 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-r_int
-r_int
+r_void
 id|dev_tint
 (paren
-r_int
-r_char
-op_star
-id|buff
-comma
 r_struct
 id|device
 op_star

@@ -4,8 +4,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 DECL|function|pty_close
 r_static
 r_void
@@ -28,6 +29,12 @@ c_cond
 (paren
 op_logical_neg
 id|tty
+op_logical_or
+(paren
+id|tty-&gt;count
+OG
+l_int|1
+)paren
 )paren
 r_return
 suffix:semicolon
@@ -179,6 +186,28 @@ op_amp
 id|from-&gt;write_q.proc_list
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|from-&gt;write_data_cnt
+)paren
+(brace
+id|set_bit
+c_func
+(paren
+id|from-&gt;line
+comma
+op_amp
+id|tty_check_write
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|TTY_BH
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * This routine gets called when tty_write has put something into&n; * the write_queue. It copies the input to the output-queue of it&squot;s&n; * slave.&n; */
 DECL|function|pty_write

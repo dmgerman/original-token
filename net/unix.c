@@ -8,6 +8,8 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;kern_sock.h&quot;
@@ -550,9 +552,41 @@ comma
 id|unix_proto_getsockopt
 comma
 l_int|NULL
+comma
 multiline_comment|/* unix_proto_fcntl. */
 )brace
 suffix:semicolon
+r_static
+r_inline
+r_int
+DECL|function|min
+id|min
+(paren
+r_int
+id|a
+comma
+r_int
+id|b
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|a
+OL
+id|b
+)paren
+r_return
+(paren
+id|a
+)paren
+suffix:semicolon
+r_return
+(paren
+id|b
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef SOCK_DEBUG
 r_void
 DECL|function|sockaddr_un_printk
@@ -654,7 +688,7 @@ id|UN_PATH_OFFSET
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+macro_line|#endif /* SOCK_DEBUG */
 multiline_comment|/* don&squot;t have to do anything. */
 r_static
 r_int
