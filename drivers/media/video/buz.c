@@ -416,6 +416,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|v4l_fbuffer_free
+c_func
+(paren
+id|zr
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOBUFS

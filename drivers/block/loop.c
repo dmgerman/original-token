@@ -2502,6 +2502,21 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|LO_CRYPT_XOR
+op_logical_and
+id|info.lo_encrypt_key_size
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|err
 op_assign
 id|loop_release_xfer
@@ -3596,15 +3611,6 @@ op_assign
 l_int|8
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;loop: registered device at major %d&bslash;n&quot;
-comma
-id|MAJOR_NR
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren

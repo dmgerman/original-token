@@ -611,8 +611,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Kernel &lt;--&gt; Venus communications.&n; */
 DECL|macro|CODA_ROOT
 mdefine_line|#define CODA_ROOT&t;2
-DECL|macro|CODA_SYNC
-mdefine_line|#define CODA_SYNC&t;3
+DECL|macro|CODA_OPEN_BY_FD
+mdefine_line|#define CODA_OPEN_BY_FD&t;3
 DECL|macro|CODA_OPEN
 mdefine_line|#define CODA_OPEN&t;4
 DECL|macro|CODA_CLOSE
@@ -639,16 +639,12 @@ DECL|macro|CODA_MKDIR
 mdefine_line|#define CODA_MKDIR&t;15
 DECL|macro|CODA_RMDIR
 mdefine_line|#define CODA_RMDIR&t;16
-DECL|macro|CODA_READDIR
-mdefine_line|#define CODA_READDIR&t;17
 DECL|macro|CODA_SYMLINK
 mdefine_line|#define CODA_SYMLINK&t;18
 DECL|macro|CODA_READLINK
 mdefine_line|#define CODA_READLINK&t;19
 DECL|macro|CODA_FSYNC
 mdefine_line|#define CODA_FSYNC&t;20
-DECL|macro|CODA_INACTIVE
-mdefine_line|#define CODA_INACTIVE&t;21
 DECL|macro|CODA_VGET
 mdefine_line|#define CODA_VGET&t;22
 DECL|macro|CODA_SIGNAL
@@ -673,19 +669,17 @@ DECL|macro|CODA_REINTEGRATE
 mdefine_line|#define CODA_REINTEGRATE 33
 DECL|macro|CODA_STATFS
 mdefine_line|#define CODA_STATFS&t; 34
-DECL|macro|CODA_MAKE_CINODE
-mdefine_line|#define CODA_MAKE_CINODE 35 /* DOWNCALL */
 DECL|macro|CODA_NCALLS
-mdefine_line|#define CODA_NCALLS 36
+mdefine_line|#define CODA_NCALLS 35
 DECL|macro|DOWNCALL
-mdefine_line|#define DOWNCALL(opcode) &bslash;&n;&t;((opcode &gt;= CODA_REPLACE &amp;&amp; opcode &lt;= CODA_PURGEFID) || &bslash;&n;&t; opcode == CODA_MAKE_CINODE)
+mdefine_line|#define DOWNCALL(opcode) (opcode &gt;= CODA_REPLACE &amp;&amp; opcode &lt;= CODA_PURGEFID)
 DECL|macro|VC_MAXDATASIZE
 mdefine_line|#define VC_MAXDATASIZE&t;    8192
 DECL|macro|VC_MAXMSGSIZE
 mdefine_line|#define VC_MAXMSGSIZE      sizeof(union inputArgs)+sizeof(union outputArgs) +&bslash;&n;                            VC_MAXDATASIZE  
 DECL|macro|CIOC_KERNEL_VERSION
 mdefine_line|#define CIOC_KERNEL_VERSION _IOWR(&squot;c&squot;, 10, sizeof (int))
-macro_line|#if&t;0
+macro_line|#if 0
 mdefine_line|#define CODA_KERNEL_VERSION 0 /* don&squot;t care about kernel version number */
 mdefine_line|#define CODA_KERNEL_VERSION 1 /* The old venus 4.6 compatible interface */
 macro_line|#endif
@@ -779,8 +773,6 @@ id|in
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* coda_sync: */
-multiline_comment|/* Nothing needed for coda_sync */
 multiline_comment|/* coda_open: */
 DECL|struct|coda_open_in
 r_struct
@@ -1290,50 +1282,6 @@ id|out
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* coda_readdir: */
-DECL|struct|coda_readdir_in
-r_struct
-id|coda_readdir_in
-(brace
-DECL|member|ih
-r_struct
-id|coda_in_hdr
-id|ih
-suffix:semicolon
-DECL|member|VFid
-id|ViceFid
-id|VFid
-suffix:semicolon
-DECL|member|count
-r_int
-id|count
-suffix:semicolon
-DECL|member|offset
-r_int
-id|offset
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|coda_readdir_out
-r_struct
-id|coda_readdir_out
-(brace
-DECL|member|oh
-r_struct
-id|coda_out_hdr
-id|oh
-suffix:semicolon
-DECL|member|size
-r_int
-id|size
-suffix:semicolon
-DECL|member|data
-id|caddr_t
-id|data
-suffix:semicolon
-multiline_comment|/* Place holder for data. */
-)brace
-suffix:semicolon
 multiline_comment|/* coda_symlink: NO_OUT */
 DECL|struct|coda_symlink_in
 r_struct
@@ -1435,22 +1383,6 @@ DECL|member|out
 r_struct
 id|coda_out_hdr
 id|out
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* coda_inactive: NO_OUT */
-DECL|struct|coda_inactive_in
-r_struct
-id|coda_inactive_in
-(brace
-DECL|member|ih
-r_struct
-id|coda_in_hdr
-id|ih
-suffix:semicolon
-DECL|member|VFid
-id|ViceFid
-id|VFid
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1583,91 +1515,6 @@ id|CodaFid
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|coda_make_cinode_out
-r_struct
-id|coda_make_cinode_out
-(brace
-DECL|member|oh
-r_struct
-id|coda_out_hdr
-id|oh
-suffix:semicolon
-DECL|member|CodaFid
-id|ViceFid
-id|CodaFid
-suffix:semicolon
-DECL|member|attr
-r_struct
-id|coda_vattr
-id|attr
-suffix:semicolon
-DECL|member|fd
-r_int
-id|fd
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* coda_rdwr: */
-DECL|struct|coda_rdwr_in
-r_struct
-id|coda_rdwr_in
-(brace
-DECL|member|ih
-r_struct
-id|coda_in_hdr
-id|ih
-suffix:semicolon
-DECL|member|VFid
-id|ViceFid
-id|VFid
-suffix:semicolon
-DECL|member|rwflag
-r_int
-id|rwflag
-suffix:semicolon
-DECL|member|count
-r_int
-id|count
-suffix:semicolon
-DECL|member|offset
-r_int
-id|offset
-suffix:semicolon
-DECL|member|ioflag
-r_int
-id|ioflag
-suffix:semicolon
-DECL|member|data
-id|caddr_t
-id|data
-suffix:semicolon
-multiline_comment|/* Place holder for data. */
-)brace
-suffix:semicolon
-DECL|struct|coda_rdwr_out
-r_struct
-id|coda_rdwr_out
-(brace
-DECL|member|oh
-r_struct
-id|coda_out_hdr
-id|oh
-suffix:semicolon
-DECL|member|rwflag
-r_int
-id|rwflag
-suffix:semicolon
-DECL|member|count
-r_int
-id|count
-suffix:semicolon
-DECL|member|data
-id|caddr_t
-id|data
-suffix:semicolon
-multiline_comment|/* Place holder for data. */
-)brace
-suffix:semicolon
 multiline_comment|/* coda_replace: */
 multiline_comment|/* CODA_REPLACE is a venus-&gt;kernel call */
 DECL|struct|coda_replace_out
@@ -1687,6 +1534,41 @@ suffix:semicolon
 DECL|member|OldFid
 id|ViceFid
 id|OldFid
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* coda_open_by_fd: */
+DECL|struct|coda_open_by_fd_in
+r_struct
+id|coda_open_by_fd_in
+(brace
+DECL|member|ih
+r_struct
+id|coda_in_hdr
+id|ih
+suffix:semicolon
+DECL|member|VFid
+id|ViceFid
+id|VFid
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|coda_open_by_fd_out
+r_struct
+id|coda_open_by_fd_out
+(brace
+DECL|member|oh
+r_struct
+id|coda_out_hdr
+id|oh
+suffix:semicolon
+DECL|member|fd
+r_int
+id|fd
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1831,11 +1713,6 @@ r_struct
 id|coda_rmdir_in
 id|coda_rmdir
 suffix:semicolon
-DECL|member|coda_readdir
-r_struct
-id|coda_readdir_in
-id|coda_readdir
-suffix:semicolon
 DECL|member|coda_symlink
 r_struct
 id|coda_symlink_in
@@ -1851,20 +1728,15 @@ r_struct
 id|coda_fsync_in
 id|coda_fsync
 suffix:semicolon
-DECL|member|coda_inactive
-r_struct
-id|coda_inactive_in
-id|coda_inactive
-suffix:semicolon
 DECL|member|coda_vget
 r_struct
 id|coda_vget_in
 id|coda_vget
 suffix:semicolon
-DECL|member|coda_rdwr
+DECL|member|coda_open_by_fd
 r_struct
-id|coda_rdwr_in
-id|coda_rdwr
+id|coda_open_by_fd_in
+id|coda_open_by_fd
 suffix:semicolon
 DECL|member|coda_open_by_path
 r_struct
@@ -1923,11 +1795,6 @@ r_struct
 id|coda_mkdir_out
 id|coda_mkdir
 suffix:semicolon
-DECL|member|coda_readdir
-r_struct
-id|coda_readdir_out
-id|coda_readdir
-suffix:semicolon
 DECL|member|coda_readlink
 r_struct
 id|coda_readlink_out
@@ -1963,20 +1830,15 @@ r_struct
 id|coda_purgefid_out
 id|coda_purgefid
 suffix:semicolon
-DECL|member|coda_rdwr
-r_struct
-id|coda_rdwr_out
-id|coda_rdwr
-suffix:semicolon
 DECL|member|coda_replace
 r_struct
 id|coda_replace_out
 id|coda_replace
 suffix:semicolon
-DECL|member|coda_make_cinode
+DECL|member|coda_open_by_fd
 r_struct
-id|coda_make_cinode_out
-id|coda_make_cinode
+id|coda_open_by_fd_out
+id|coda_open_by_fd
 suffix:semicolon
 DECL|member|coda_open_by_path
 r_struct
@@ -2092,5 +1954,23 @@ DECL|macro|CTL_FILE
 mdefine_line|#define&t;CTL_FILE&t;&t;&quot;/coda/.CONTROL&quot;
 DECL|macro|IS_CTL_FID
 mdefine_line|#define&t;IS_CTL_FID(fidp)&t;((fidp)-&gt;Volume == CTL_VOL &amp;&amp;&bslash;&n;&t;&t;&t;&t; (fidp)-&gt;Vnode == CTL_VNO &amp;&amp;&bslash;&n;&t;&t;&t;&t; (fidp)-&gt;Unique == CTL_UNI)
+multiline_comment|/* Data passed to mount */
+DECL|macro|CODA_MOUNT_VERSION
+mdefine_line|#define CODA_MOUNT_VERSION 1
+DECL|struct|coda_mount_data
+r_struct
+id|coda_mount_data
+(brace
+DECL|member|version
+r_int
+id|version
+suffix:semicolon
+DECL|member|fd
+r_int
+id|fd
+suffix:semicolon
+multiline_comment|/* Opened device */
+)brace
+suffix:semicolon
 macro_line|#endif 
 eof

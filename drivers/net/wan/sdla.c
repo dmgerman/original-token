@@ -5683,6 +5683,12 @@ id|mem.len
 )paren
 )paren
 (brace
+id|kfree
+c_func
+(paren
+id|temp
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EFAULT
@@ -5731,6 +5737,12 @@ id|mem.len
 )paren
 )paren
 (brace
+id|kfree
+c_func
+(paren
+id|temp
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EFAULT

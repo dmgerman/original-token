@@ -230,17 +230,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|netdev_boot_setup_check
-c_func
-(paren
-id|dev
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
 id|dev_alloc_name
 c_func
 (paren
@@ -268,16 +257,12 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-)brace
-r_else
-(brace
 id|netdev_boot_setup_check
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Configure via the caller provided setup function then&n;&t; *&t;register if needed.&n;&t; */
 id|setup
 c_func

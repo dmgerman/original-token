@@ -297,6 +297,10 @@ DECL|macro|OV7610_I2C_WRITE_ID
 mdefine_line|#define OV7610_I2C_WRITE_ID 0x42
 DECL|macro|OV7610_I2C_READ_ID
 mdefine_line|#define OV7610_I2C_READ_ID  0x43
+DECL|macro|OV6xx0_I2C_WRITE_ID
+mdefine_line|#define OV6xx0_I2C_WRITE_ID 0xC0
+DECL|macro|OV6xx0_I2C_READ_ID
+mdefine_line|#define OV6xx0_I2C_READ_ID  0xC1
 DECL|macro|OV511_I2C_CLOCK_PRESCALER
 mdefine_line|#define OV511_I2C_CLOCK_PRESCALER 0x03
 multiline_comment|/* Prototypes */
@@ -357,6 +361,9 @@ id|SEN_OV7620
 comma
 DECL|enumerator|SEN_OV7620AE
 id|SEN_OV7620AE
+comma
+DECL|enumerator|SEN_OV6620
+id|SEN_OV6620
 comma
 )brace
 suffix:semicolon
@@ -507,6 +514,7 @@ suffix:semicolon
 multiline_comment|/* Sub-capture mode for this frame? */
 DECL|member|format
 r_int
+r_int
 id|format
 suffix:semicolon
 multiline_comment|/* Format for this frame */
@@ -594,6 +602,15 @@ DECL|member|iface
 r_int
 r_char
 id|iface
+suffix:semicolon
+multiline_comment|/* Determined by sensor type */
+DECL|member|maxwidth
+r_int
+id|maxwidth
+suffix:semicolon
+DECL|member|maxheight
+r_int
+id|maxheight
 suffix:semicolon
 DECL|member|brightness
 r_int
@@ -840,10 +857,6 @@ suffix:semicolon
 DECL|member|common_A
 id|u8
 id|common_A
-suffix:semicolon
-DECL|member|common_C
-id|u8
-id|common_C
 suffix:semicolon
 DECL|member|common_L
 id|u8

@@ -151,6 +151,13 @@ id|__u8
 id|bHubContrCurrent
 suffix:semicolon
 multiline_comment|/* DeviceRemovable and PortPwrCtrlMask want to be variable-length &n;&t;   bitmaps that hold max 256 entries, but for now they&squot;re ignored */
+DECL|member|bitmap
+id|__u8
+id|bitmap
+(braket
+l_int|0
+)braket
+suffix:semicolon
 )brace
 id|__attribute__
 (paren
@@ -162,78 +169,23 @@ suffix:semicolon
 r_struct
 id|usb_device
 suffix:semicolon
-r_typedef
-r_enum
-(brace
-DECL|enumerator|USB_PORT_UNPOWERED
-id|USB_PORT_UNPOWERED
-op_assign
-l_int|0
-comma
-multiline_comment|/* Default state */
-DECL|enumerator|USB_PORT_POWERED
-id|USB_PORT_POWERED
-comma
-multiline_comment|/* When we&squot;ve put power to it */
-DECL|enumerator|USB_PORT_ENABLED
-id|USB_PORT_ENABLED
-comma
-multiline_comment|/* When it&squot;s been enabled */
-DECL|enumerator|USB_PORT_DISABLED
-id|USB_PORT_DISABLED
-comma
-multiline_comment|/* If it&squot;s been disabled */
-DECL|enumerator|USB_PORT_ADMINDISABLED
-id|USB_PORT_ADMINDISABLED
-comma
-multiline_comment|/* Forced down */
-DECL|typedef|usb_hub_port_state
-)brace
-id|usb_hub_port_state
-suffix:semicolon
-DECL|struct|usb_hub_port
-r_struct
-id|usb_hub_port
-(brace
-DECL|member|cstate
-id|usb_hub_port_state
-id|cstate
-suffix:semicolon
-multiline_comment|/* Configuration state */
-DECL|member|child
-r_struct
-id|usb_device
-op_star
-id|child
-suffix:semicolon
-multiline_comment|/* Device attached to this port */
-DECL|member|parent
-r_struct
-id|usb_hub
-op_star
-id|parent
-suffix:semicolon
-multiline_comment|/* Parent hub */
-)brace
-suffix:semicolon
 DECL|struct|usb_hub
 r_struct
 id|usb_hub
 (brace
-multiline_comment|/* Device structure */
 DECL|member|dev
 r_struct
 id|usb_device
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* Interrupt polling pipe */
 DECL|member|urb
 r_struct
 id|urb
 op_star
 id|urb
 suffix:semicolon
+multiline_comment|/* Interrupt polling pipe */
 DECL|member|buffer
 r_char
 id|buffer
@@ -243,13 +195,19 @@ op_div
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* List of hubs */
+DECL|member|error
+r_int
+id|error
+suffix:semicolon
+DECL|member|nerrors
+r_int
+id|nerrors
+suffix:semicolon
 DECL|member|hub_list
 r_struct
 id|list_head
 id|hub_list
 suffix:semicolon
-multiline_comment|/* Temporary event list */
 DECL|member|event_list
 r_struct
 id|list_head
@@ -260,15 +218,12 @@ DECL|member|nports
 r_int
 id|nports
 suffix:semicolon
-DECL|member|ports
+DECL|member|descriptor
 r_struct
-id|usb_hub_port
-id|ports
-(braket
-l_int|0
-)braket
+id|usb_hub_descriptor
+op_star
+id|descriptor
 suffix:semicolon
-multiline_comment|/* Dynamically allocated */
 )brace
 suffix:semicolon
 macro_line|#endif

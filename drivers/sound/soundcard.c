@@ -1088,6 +1088,10 @@ l_int|0x0f
 r_case
 id|SND_DEV_CTL
 suffix:colon
+id|dev
+op_rshift_assign
+l_int|4
+suffix:semicolon
 r_if
 c_cond
 (paren

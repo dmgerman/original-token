@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/* ips.h -- driver for the IBM ServeRAID adapter                             */
+multiline_comment|/* ips.h -- driver for the IBM ServeRAID controller                          */
 multiline_comment|/*                                                                           */
 multiline_comment|/* Written By: Keith Mitchell, IBM Corporation                               */
 multiline_comment|/*                                                                           */
@@ -46,6 +46,7 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef _IPS_H_
 DECL|macro|_IPS_H_
 mdefine_line|#define _IPS_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* Prototypes */
@@ -66,27 +67,6 @@ c_func
 r_struct
 id|Scsi_Host
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ips_abort
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ips_reset
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-comma
-r_int
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -175,6 +155,18 @@ DECL|macro|IPS_HA
 mdefine_line|#define IPS_HA(x)                   ((ips_ha_t *) x-&gt;hostdata)
 DECL|macro|IPS_COMMAND_ID
 mdefine_line|#define IPS_COMMAND_ID(ha, scb)     (int) (scb - ha-&gt;scbs)
+DECL|macro|IPS_IS_TROMBONE
+mdefine_line|#define IPS_IS_TROMBONE(ha)         (((ha-&gt;device_id == IPS_COPPERHEAD_DEVICEID) &amp;&amp; &bslash;&n;                                         (ha-&gt;revision_id &gt;= IPS_REVID_TROMBONE32) &amp;&amp; &bslash;&n;                                         (ha-&gt;revision_id &lt;= IPS_REVID_TROMBONE64)) ? 1 : 0)
+DECL|macro|IPS_IS_CLARINET
+mdefine_line|#define IPS_IS_CLARINET(ha)         (((ha-&gt;device_id == IPS_COPPERHEAD_DEVICEID) &amp;&amp; &bslash;&n;                                         (ha-&gt;revision_id &gt;= IPS_REVID_CLARINETP1) &amp;&amp; &bslash;&n;                                         (ha-&gt;revision_id &lt;= IPS_REVID_CLARINETP3)) ? 1 : 0)
+DECL|macro|IPS_IS_MORPHEUS
+mdefine_line|#define IPS_IS_MORPHEUS(ha)         (ha-&gt;device_id == IPS_MORPHEUS_DEVICEID)
+DECL|macro|IPS_USE_I2O_DELIVER
+mdefine_line|#define IPS_USE_I2O_DELIVER(ha)     ((IPS_IS_MORPHEUS(ha) || &bslash;&n;                                         (IPS_IS_TROMBONE(ha) &amp;&amp; &bslash;&n;                                          (ips_force_i2o))) ? 1 : 0)
+DECL|macro|IPS_USE_I2O_STATUS
+mdefine_line|#define IPS_USE_I2O_STATUS(ha)      (IPS_IS_MORPHEUS(ha))
+DECL|macro|IPS_USE_MEMIO
+mdefine_line|#define IPS_USE_MEMIO(ha)           ((IPS_IS_MORPHEUS(ha) || &bslash;&n;                                         ((IPS_IS_TROMBONE(ha) || IPS_IS_CLARINET(ha)) &amp;&amp; &bslash;&n;                                          (ips_force_memio))) ? 1 : 0)
 macro_line|#ifndef VIRT_TO_BUS
 DECL|macro|VIRT_TO_BUS
 mdefine_line|#define VIRT_TO_BUS(x)           (unsigned int)virt_to_bus((void *) x)
@@ -245,6 +237,22 @@ DECL|macro|IPS_REG_FLAP
 mdefine_line|#define IPS_REG_FLAP                 0x18    /* Flash address port          */
 DECL|macro|IPS_REG_FLDP
 mdefine_line|#define IPS_REG_FLDP                 0x1C    /* Flash data port             */
+DECL|macro|IPS_REG_NDAE
+mdefine_line|#define IPS_REG_NDAE                 0x38    /* Anaconda 64 NDAE Register   */
+DECL|macro|IPS_REG_I2O_INMSGQ
+mdefine_line|#define IPS_REG_I2O_INMSGQ           0x40    /* I2O Inbound Message Queue   */
+DECL|macro|IPS_REG_I2O_OUTMSGQ
+mdefine_line|#define IPS_REG_I2O_OUTMSGQ          0x44    /* I2O Outbound Message Queue  */
+DECL|macro|IPS_REG_I2O_HIR
+mdefine_line|#define IPS_REG_I2O_HIR              0x30    /* I2O Interrupt Status        */
+DECL|macro|IPS_REG_I960_IDR
+mdefine_line|#define IPS_REG_I960_IDR             0x20    /* i960 Inbound Doorbell       */
+DECL|macro|IPS_REG_I960_MSG0
+mdefine_line|#define IPS_REG_I960_MSG0            0x18    /* i960 Outbound Reg 0         */
+DECL|macro|IPS_REG_I960_MSG1
+mdefine_line|#define IPS_REG_I960_MSG1            0x1C    /* i960 Outbound Reg 1         */
+DECL|macro|IPS_REG_I960_OIMR
+mdefine_line|#define IPS_REG_I960_OIMR            0x34    /* i960 Oubound Int Mask Reg   */
 multiline_comment|/*&n;    * Adapter register bit equates&n;    */
 DECL|macro|IPS_BIT_GHI
 mdefine_line|#define IPS_BIT_GHI                  0x04    /* HISR General Host Interrupt */
@@ -268,6 +276,12 @@ DECL|macro|IPS_BIT_EI
 mdefine_line|#define IPS_BIT_EI                   0x80    /* HISR Enable Interrupts      */
 DECL|macro|IPS_BIT_OP
 mdefine_line|#define IPS_BIT_OP                   0x01    /* OP bit in CBSP              */
+DECL|macro|IPS_BIT_I2O_OPQI
+mdefine_line|#define IPS_BIT_I2O_OPQI             0x08    /* General Host Interrupt      */
+DECL|macro|IPS_BIT_I960_MSG0I
+mdefine_line|#define IPS_BIT_I960_MSG0I           0x01    /* Message Register 0 Interrupt*/
+DECL|macro|IPS_BIT_I960_MSG1I
+mdefine_line|#define IPS_BIT_I960_MSG1I           0x02    /* Message Register 1 Interrupt*/
 multiline_comment|/*&n;    * Adapter Command ID Equates&n;    */
 DECL|macro|IPS_CMD_GET_LD_INFO
 mdefine_line|#define IPS_CMD_GET_LD_INFO          0x19
@@ -354,14 +368,18 @@ DECL|macro|IPS_ADAPTER_ID
 mdefine_line|#define IPS_ADAPTER_ID               0xF
 DECL|macro|IPS_VENDORID
 mdefine_line|#define IPS_VENDORID                 0x1014
-DECL|macro|IPS_DEVICEID
-mdefine_line|#define IPS_DEVICEID                 0x002E
+DECL|macro|IPS_COPPERHEAD_DEVICEID
+mdefine_line|#define IPS_COPPERHEAD_DEVICEID      0x002E
+DECL|macro|IPS_MORPHEUS_DEVICEID
+mdefine_line|#define IPS_MORPHEUS_DEVICEID        0x01BD
 DECL|macro|IPS_IOCTL_SIZE
 mdefine_line|#define IPS_IOCTL_SIZE               8192
 DECL|macro|IPS_STATUS_SIZE
 mdefine_line|#define IPS_STATUS_SIZE              4
 DECL|macro|IPS_STATUS_Q_SIZE
 mdefine_line|#define IPS_STATUS_Q_SIZE            (IPS_MAX_CMDS+1) * IPS_STATUS_SIZE
+DECL|macro|IPS_MEMMAP_SIZE
+mdefine_line|#define IPS_MEMMAP_SIZE              128
 DECL|macro|IPS_ONE_MSEC
 mdefine_line|#define IPS_ONE_MSEC                 1
 DECL|macro|IPS_ONE_SEC
@@ -533,8 +551,13 @@ mdefine_line|#define IPS_DAYS_LEAP_YEAR           366
 DECL|macro|IPS_EPOCH_YEAR
 mdefine_line|#define IPS_EPOCH_YEAR               1970
 multiline_comment|/*&n;    * Scsi_Host Template&n;    */
+macro_line|#if LINUX_VERSION_CODE &lt; LinuxVersionCode(2,3,27)
 DECL|macro|IPS
-mdefine_line|#define IPS {                            &bslash;&n;    next : NULL,                          &bslash;&n;    module : NULL,                        &bslash;&n;    proc_info : NULL,                     &bslash;&n;    name : NULL,                          &bslash;&n;    detect : ips_detect,                  &bslash;&n;    release : ips_release,                &bslash;&n;    info : ips_info,                      &bslash;&n;    command : NULL,                       &bslash;&n;    queuecommand : ips_queue,             &bslash;&n;    eh_strategy_handler : NULL,           &bslash;&n;    eh_abort_handler : ips_eh_abort,      &bslash;&n;    eh_device_reset_handler : NULL,       &bslash;&n;    eh_bus_reset_handler : NULL,          &bslash;&n;    eh_host_reset_handler : ips_eh_reset, &bslash;&n;    abort : ips_abort,                    &bslash;&n;    reset : ips_reset,                    &bslash;&n;    slave_attach : NULL,                  &bslash;&n;    bios_param : ips_biosparam,           &bslash;&n;    can_queue : 0,                        &bslash;&n;    this_id: -1,                          &bslash;&n;    sg_tablesize : IPS_MAX_SG,            &bslash;&n;    cmd_per_lun: 16,                      &bslash;&n;    present : 0,                          &bslash;&n;    unchecked_isa_dma : 0,                &bslash;&n;    use_clustering : ENABLE_CLUSTERING,   &bslash;&n;    use_new_eh_code : 1                   &bslash;&n; }
+mdefine_line|#define IPS {                            &bslash;&n;    next : NULL,                          &bslash;&n;    module : NULL,                        &bslash;&n;    proc_info : NULL,                     &bslash;&n;    proc_dir : NULL,                      &bslash;&n;    name : NULL,                          &bslash;&n;    detect : ips_detect,                  &bslash;&n;    release : ips_release,                &bslash;&n;    info : ips_info,                      &bslash;&n;    command : NULL,                       &bslash;&n;    queuecommand : ips_queue,             &bslash;&n;    eh_strategy_handler : NULL,           &bslash;&n;    eh_abort_handler : ips_eh_abort,      &bslash;&n;    eh_device_reset_handler : NULL,       &bslash;&n;    eh_bus_reset_handler : NULL,          &bslash;&n;    eh_host_reset_handler : ips_eh_reset, &bslash;&n;    abort : NULL,                         &bslash;&n;    reset : NULL,                         &bslash;&n;    slave_attach : NULL,                  &bslash;&n;    bios_param : ips_biosparam,           &bslash;&n;    can_queue : 0,                        &bslash;&n;    this_id: -1,                          &bslash;&n;    sg_tablesize : IPS_MAX_SG,            &bslash;&n;    cmd_per_lun: 16,                      &bslash;&n;    present : 0,                          &bslash;&n;    unchecked_isa_dma : 0,                &bslash;&n;    use_clustering : ENABLE_CLUSTERING,   &bslash;&n;    use_new_eh_code : 1                   &bslash;&n;}
+macro_line|#else
+DECL|macro|IPS
+mdefine_line|#define IPS {                            &bslash;&n;    next : NULL,                          &bslash;&n;    module : NULL,                        &bslash;&n;    proc_info : NULL,                     &bslash;&n;    name : NULL,                          &bslash;&n;    detect : ips_detect,                  &bslash;&n;    release : ips_release,                &bslash;&n;    info : ips_info,                      &bslash;&n;    command : NULL,                       &bslash;&n;    queuecommand : ips_queue,             &bslash;&n;    eh_strategy_handler : NULL,           &bslash;&n;    eh_abort_handler : ips_eh_abort,      &bslash;&n;    eh_device_reset_handler : NULL,       &bslash;&n;    eh_bus_reset_handler : NULL,          &bslash;&n;    eh_host_reset_handler : ips_eh_reset, &bslash;&n;    abort : NULL,                         &bslash;&n;    reset : NULL,                         &bslash;&n;    slave_attach : NULL,                  &bslash;&n;    bios_param : ips_biosparam,           &bslash;&n;    can_queue : 0,                        &bslash;&n;    this_id: -1,                          &bslash;&n;    sg_tablesize : IPS_MAX_SG,            &bslash;&n;    cmd_per_lun: 16,                      &bslash;&n;    present : 0,                          &bslash;&n;    unchecked_isa_dma : 0,                &bslash;&n;    use_clustering : ENABLE_CLUSTERING,   &bslash;&n;    use_new_eh_code : 1                   &bslash;&n;}
+macro_line|#endif
 multiline_comment|/*&n; * IBM PCI Raid Command Formats&n; */
 r_typedef
 r_struct
@@ -1193,6 +1216,8 @@ op_star
 id|PIPS_DCDB_TABLE
 suffix:semicolon
 r_typedef
+r_union
+(brace
 r_struct
 (brace
 DECL|member|reserved
@@ -1214,6 +1239,15 @@ DECL|member|extended_status
 r_volatile
 id|u8
 id|extended_status
+suffix:semicolon
+DECL|member|fields
+)brace
+id|fields
+suffix:semicolon
+DECL|member|value
+r_volatile
+id|u32
+id|value
 suffix:semicolon
 DECL|typedef|IPS_STATUS
 DECL|typedef|PIPS_STATUS
@@ -2282,9 +2316,34 @@ DECL|member|pos
 r_int
 id|pos
 suffix:semicolon
+DECL|member|localpos
+r_int
+id|localpos
+suffix:semicolon
 DECL|typedef|IPS_INFOSTR
 )brace
 id|IPS_INFOSTR
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|option_name
+r_char
+op_star
+id|option_name
+suffix:semicolon
+DECL|member|option_flag
+r_int
+op_star
+id|option_flag
+suffix:semicolon
+DECL|member|option_value
+r_int
+id|option_value
+suffix:semicolon
+DECL|typedef|IPS_OPTION
+)brace
+id|IPS_OPTION
 suffix:semicolon
 multiline_comment|/*&n; * Status Info&n; */
 DECL|struct|ips_stat
@@ -2428,6 +2487,175 @@ suffix:semicolon
 DECL|typedef|ips_copp_queue_t
 )brace
 id|ips_copp_queue_t
+suffix:semicolon
+multiline_comment|/* forward decl for host structure */
+r_struct
+id|ips_ha
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|reset
+r_int
+(paren
+op_star
+id|reset
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|issue
+r_int
+(paren
+op_star
+id|issue
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+comma
+r_struct
+id|ips_scb
+op_star
+)paren
+suffix:semicolon
+DECL|member|isinit
+r_int
+(paren
+op_star
+id|isinit
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|isintr
+r_int
+(paren
+op_star
+id|isintr
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|init
+r_int
+(paren
+op_star
+id|init
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|erasebios
+r_int
+(paren
+op_star
+id|erasebios
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|programbios
+r_int
+(paren
+op_star
+id|programbios
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|verifybios
+r_int
+(paren
+op_star
+id|verifybios
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|statupd
+id|u32
+(paren
+op_star
+id|statupd
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|statinit
+r_void
+(paren
+op_star
+id|statinit
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|intr
+r_void
+(paren
+op_star
+id|intr
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|member|enableint
+r_void
+(paren
+op_star
+id|enableint
+)paren
+(paren
+r_struct
+id|ips_ha
+op_star
+)paren
+suffix:semicolon
+DECL|typedef|ips_hw_func_t
+)brace
+id|ips_hw_func_t
 suffix:semicolon
 DECL|struct|ips_ha
 r_typedef
@@ -2615,7 +2843,54 @@ id|u8
 id|revision_id
 suffix:semicolon
 multiline_comment|/* Revision level             */
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,0)
+DECL|member|device_id
+id|u16
+id|device_id
+suffix:semicolon
+multiline_comment|/* PCI device ID              */
+DECL|member|reserved
+id|u8
+id|reserved
+suffix:semicolon
+DECL|member|mem_addr
+id|u32
+id|mem_addr
+suffix:semicolon
+multiline_comment|/* Memory mapped address      */
+DECL|member|io_len
+id|u32
+id|io_len
+suffix:semicolon
+multiline_comment|/* Size of IO Address         */
+DECL|member|mem_len
+id|u32
+id|mem_len
+suffix:semicolon
+multiline_comment|/* Size of memory address     */
+DECL|member|mem_ptr
+r_char
+op_star
+id|mem_ptr
+suffix:semicolon
+multiline_comment|/* Memory mapped Ptr          */
+DECL|member|ioremap_ptr
+r_char
+op_star
+id|ioremap_ptr
+suffix:semicolon
+multiline_comment|/* ioremapped memory pointer  */
+DECL|member|func
+id|ips_hw_func_t
+id|func
+suffix:semicolon
+multiline_comment|/* hw function pointers       */
+DECL|member|pcidev
+r_struct
+id|pci_dev
+op_star
+id|pcidev
+suffix:semicolon
+multiline_comment|/* PCI device handle          */
 DECL|member|scb_lock
 id|spinlock_t
 id|scb_lock
@@ -2628,7 +2903,6 @@ DECL|member|ips_lock
 id|spinlock_t
 id|ips_lock
 suffix:semicolon
-macro_line|#endif
 DECL|typedef|ips_ha_t
 )brace
 id|ips_ha_t

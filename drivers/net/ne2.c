@@ -59,7 +59,7 @@ mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
 multiline_comment|/* From the .ADF file: */
-DECL|variable|addresses
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -67,6 +67,7 @@ id|addresses
 (braket
 l_int|7
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x1000
@@ -84,13 +85,14 @@ comma
 l_int|0xc3d0
 )brace
 suffix:semicolon
-DECL|variable|irqs
+DECL|variable|__initdata
 r_static
 r_int
 id|irqs
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|3
@@ -118,13 +120,14 @@ id|name
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|variable|ne2_adapters
-r_const
+DECL|variable|__initdata
+r_static
 r_struct
 id|ne2_adapters_t
 id|ne2_adapters
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/arm/mach-shark/arch.c&n; *&n; *  Architecture specific fixups.  This is where any&n; *  parameters in the params struct are fixed up, or&n; *  any additional architecture specific information&n; *  is pulled from the params struct.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;

@@ -10,6 +10,7 @@ l_string|&quot;cs89x0.c: v2.3.99-pre1-2 Russell Nelson &lt;nelson@crynwr.com&gt;
 suffix:semicolon
 multiline_comment|/* ======================= end of configuration ======================= */
 multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/arm/mach-shark/pci.c&n; *&n; *  PCI bios-type initialisation for PCI machines&n; *&n; *  Bits taken from various places.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

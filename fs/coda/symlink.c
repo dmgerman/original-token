@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
-macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_proc.h&gt;
 DECL|function|coda_symlink_filler
 r_static

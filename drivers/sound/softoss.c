@@ -5050,6 +5050,12 @@ id|offs
 )paren
 )paren
 (brace
+id|vfree
+c_func
+(paren
+id|patch
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EFAULT

@@ -24,25 +24,43 @@ id|u_short
 id|c_flags
 suffix:semicolon
 multiline_comment|/* flags (see below) */
-DECL|member|c_cnhead
-r_struct
-id|list_head
-id|c_cnhead
-suffix:semicolon
-multiline_comment|/* head of cache entries */
 DECL|member|c_volrootlist
 r_struct
 id|list_head
 id|c_volrootlist
 suffix:semicolon
 multiline_comment|/* list of volroot cnoddes */
+DECL|member|c_cilist
+r_struct
+id|list_head
+id|c_cilist
+suffix:semicolon
+multiline_comment|/* list of all coda inodes */
 DECL|member|c_vnode
 r_struct
 id|inode
 op_star
 id|c_vnode
 suffix:semicolon
-multiline_comment|/*  inode associated with cnode */
+multiline_comment|/* inode associated with cnode */
+DECL|member|c_contcount
+r_int
+r_int
+id|c_contcount
+suffix:semicolon
+multiline_comment|/* refcount for container inode */
+DECL|member|c_cached_cred
+r_struct
+id|coda_cred
+id|c_cached_cred
+suffix:semicolon
+multiline_comment|/* credentials of cached perms */
+DECL|member|c_cached_perm
+r_int
+r_int
+id|c_cached_perm
+suffix:semicolon
+multiline_comment|/* cached access permissions */
 DECL|member|c_magic
 r_int
 id|c_magic

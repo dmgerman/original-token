@@ -3850,6 +3850,8 @@ op_complement
 id|USBDEVFS_URB_ISO_ASAP
 op_or
 id|USBDEVFS_URB_DISABLE_SPD
+op_or
+id|USBDEVFS_URB_QUEUE_BULK
 )paren
 )paren
 r_return

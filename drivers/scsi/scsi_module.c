@@ -43,7 +43,7 @@ id|driver_template
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|exit_this_scsi_driver

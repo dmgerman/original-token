@@ -8028,14 +8028,6 @@ id|dev
 r_int
 id|err
 suffix:semicolon
-id|info
-c_func
-(paren
-l_string|&quot;USB new device connect, assigned device number %d&quot;
-comma
-id|dev-&gt;devnum
-)paren
-suffix:semicolon
 multiline_comment|/* USB v1.1 5.5.3 */
 multiline_comment|/* We read the first 8 bytes from the device descriptor to get to */
 multiline_comment|/*  the bMaxPacketSize0 field. Then we set the maximum packet size */

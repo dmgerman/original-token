@@ -2797,7 +2797,7 @@ comma
 id|nbuff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the device is offline, don&squot;t try and read capacity or any of the other&n;&t; * nicities.&n;&t; */
+multiline_comment|/*&n;&t; * If the device is offline, don&squot;t try and read capacity or any&n;&t; * of the other niceties.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2810,12 +2810,10 @@ id|device-&gt;online
 op_eq
 id|FALSE
 )paren
-(brace
 r_return
 id|i
 suffix:semicolon
-)brace
-multiline_comment|/* We need to retry the READ_CAPACITY because a UNIT_ATTENTION is&n;&t; * considered a fatal error, and many devices report such an error&n;&t; * just after a scsi bus reset.&n;&t; */
+multiline_comment|/*&n;&t; * We need to retry the READ_CAPACITY because a UNIT_ATTENTION is&n;&t; * considered a fatal error, and many devices report such an error&n;&t; * just after a scsi bus reset.&n;&t; */
 id|SRpnt
 op_assign
 id|scsi_allocate_request
@@ -3408,7 +3406,7 @@ op_logical_and
 id|retries
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * The SCSI standard says:&n;&t; * &quot;READ CAPACITY is necessary for self configuring software&quot;&n;&t; *  While not mandatory, support of READ CAPACITY is strongly encouraged.&n;&t; *  We used to die if we couldn&squot;t successfully do a READ CAPACITY.&n;&t; *  But, now we go on about our way.  The side effects of this are&n;&t; *&n;&t; *  1. We can&squot;t know block size with certainty. I have said &quot;512 bytes&n;&t; *     is it&quot; as this is most common.&n;&t; *&n;&t; *  2. Recovery from when some one attempts to read past the end of the&n;&t; *     raw device will be slower.&n;&t; */
+multiline_comment|/*&n;&t; * The SCSI standard says:&n;&t; * &quot;READ CAPACITY is necessary for self configuring software&quot;&n;&t; *  While not mandatory, support of READ CAPACITY is strongly&n;&t; *  encouraged.&n;&t; *  We used to die if we couldn&squot;t successfully do a READ CAPACITY.&n;&t; *  But, now we go on about our way.  The side effects of this are&n;&t; *&n;&t; *  1. We can&squot;t know block size with certainty. I have said&n;&t; *     &quot;512 bytes is it&quot; as this is most common.&n;&t; *&n;&t; *  2. Recovery from when someone attempts to read past the&n;&t; *     end of the raw device will be slower.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3506,7 +3504,7 @@ id|sector_size
 op_assign
 l_int|512
 suffix:semicolon
-multiline_comment|/* Set dirty bit for removable devices if not ready - sometimes drives&n;&t;&t; * will not report this properly. */
+multiline_comment|/* Set dirty bit for removable devices if not ready -&n;&t;&t; * sometimes drives will not report this properly. */
 r_if
 c_cond
 (paren
@@ -3536,7 +3534,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * FLOPTICAL , if read_capa is ok , drive is assumed to be ready&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * FLOPTICAL, if read_capa is ok, drive is assumed to be ready&n;&t;&t; */
 id|rscsi_disks
 (braket
 id|i
@@ -3739,18 +3737,27 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * The msdos fs needs to know the hardware sector size&n;&t;&t;&t; * So I have created this table. See ll_rw_blk.c&n;&t;&t;&t; * Jacques Gelinas (Jacques@solucorp.qc.ca)&n;&t;&t;&t; */
 r_int
 id|m
-comma
-id|mb
-suffix:semicolon
-r_int
-id|sz_quot
-comma
-id|sz_rem
 suffix:semicolon
 r_int
 id|hard_sector
 op_assign
 id|sector_size
+suffix:semicolon
+r_int
+id|sz
+op_assign
+id|rscsi_disks
+(braket
+id|i
+)braket
+dot
+id|capacity
+op_star
+(paren
+id|hard_sector
+op_div
+l_int|256
+)paren
 suffix:semicolon
 multiline_comment|/* There are 16 minors allocated for each major device */
 r_for
@@ -3786,57 +3793,13 @@ op_assign
 id|hard_sector
 suffix:semicolon
 )brace
-id|mb
-op_assign
-id|rscsi_disks
-(braket
-id|i
-)braket
-dot
-id|capacity
-op_div
-l_int|1024
-op_star
-id|hard_sector
-op_div
-l_int|1024
-suffix:semicolon
-multiline_comment|/* sz = div(m/100, 10);  this seems to not be in the libr */
-id|m
-op_assign
-(paren
-id|mb
-op_plus
-l_int|50
-)paren
-op_div
-l_int|100
-suffix:semicolon
-id|sz_quot
-op_assign
-id|m
-op_div
-l_int|10
-suffix:semicolon
-id|sz_rem
-op_assign
-id|m
-op_minus
-(paren
-l_int|10
-op_star
-id|sz_quot
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI device %s: hdwr sector= %d bytes.&quot;
-l_string|&quot; Sectors= %d [%d MB] [%d.%1d GB]&bslash;n&quot;
+l_string|&quot;SCSI device %s: &quot;
+l_string|&quot;%d %d-byte hdwr sectors (%d MB)&bslash;n&quot;
 comma
 id|nbuff
-comma
-id|hard_sector
 comma
 id|rscsi_disks
 (braket
@@ -3845,14 +3808,25 @@ id|i
 dot
 id|capacity
 comma
-id|mb
+id|hard_sector
 comma
-id|sz_quot
-comma
-id|sz_rem
+(paren
+id|sz
+op_div
+l_int|2
+op_minus
+id|sz
+op_div
+l_int|1250
+op_plus
+l_int|974
+)paren
+op_div
+l_int|1950
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Rescale capacity to 512-byte units */
 r_if
 c_cond
 (paren
@@ -3885,7 +3859,6 @@ id|capacity
 op_lshift_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* Change into 512 byte sectors */
 r_if
 c_cond
 (paren
@@ -3902,7 +3875,6 @@ id|capacity
 op_lshift_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Change into 512 byte sectors */
 r_if
 c_cond
 (paren
@@ -3919,7 +3891,6 @@ id|capacity
 op_rshift_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Change into 512 byte sectors */
 )brace
 multiline_comment|/*&n;&t; * Unless otherwise specified, this is not write protected.&n;&t; */
 id|rscsi_disks

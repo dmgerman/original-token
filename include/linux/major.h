@@ -179,6 +179,22 @@ DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR
 mdefine_line|#define SPECIALIX_CALLOUT_MAJOR 76
+DECL|macro|COMPAQ_CISS_MAJOR
+mdefine_line|#define COMPAQ_CISS_MAJOR &t;104
+DECL|macro|COMPAQ_CISS_MAJOR1
+mdefine_line|#define COMPAQ_CISS_MAJOR1&t;105
+DECL|macro|COMPAQ_CISS_MAJOR2
+mdefine_line|#define COMPAQ_CISS_MAJOR2      106
+DECL|macro|COMPAQ_CISS_MAJOR3
+mdefine_line|#define COMPAQ_CISS_MAJOR3      107
+DECL|macro|COMPAQ_CISS_MAJOR4
+mdefine_line|#define COMPAQ_CISS_MAJOR4      108
+DECL|macro|COMPAQ_CISS_MAJOR5
+mdefine_line|#define COMPAQ_CISS_MAJOR5      109
+DECL|macro|COMPAQ_CISS_MAJOR6
+mdefine_line|#define COMPAQ_CISS_MAJOR6      110
+DECL|macro|COMPAQ_CISS_MAJOR7
+mdefine_line|#define COMPAQ_CISS_MAJOR7      111
 DECL|macro|DASD_MAJOR
 mdefine_line|#define DASD_MAJOR      94&t;/* Official assignations from Peter */
 DECL|macro|MDISK_MAJOR

@@ -817,8 +817,6 @@ DECL|macro|USB_DISABLE_SPD
 mdefine_line|#define USB_DISABLE_SPD         0x0001
 DECL|macro|USB_ISO_ASAP
 mdefine_line|#define USB_ISO_ASAP            0x0002
-DECL|macro|USB_URB_EARLY_COMPLETE
-mdefine_line|#define USB_URB_EARLY_COMPLETE  0x0004
 DECL|macro|USB_ASYNC_UNLINK
 mdefine_line|#define USB_ASYNC_UNLINK        0x0008
 DECL|macro|USB_QUEUE_BULK

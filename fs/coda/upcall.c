@@ -2771,7 +2771,13 @@ c_func
 id|sb
 )paren
 comma
-id|insize
+id|SIZE
+c_func
+(paren
+id|ioctl
+)paren
+op_plus
+id|data-&gt;vi.in_size
 comma
 op_amp
 id|outsize
@@ -3049,6 +3055,11 @@ r_struct
 id|upc_req
 op_star
 id|vmp
+comma
+r_struct
+id|venus_comm
+op_star
+id|vcommp
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -3138,7 +3149,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|coda_upc_comm.vc_inuse
+id|vcommp-&gt;vc_inuse
 )paren
 r_break
 suffix:semicolon
@@ -3232,9 +3243,11 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_RUNNING
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3367,8 +3380,7 @@ id|ENTRY
 suffix:semicolon
 id|vcommp
 op_assign
-op_amp
-id|coda_upc_comm
+id|sbi-&gt;sbi_vcomm
 suffix:semicolon
 r_if
 c_cond
@@ -3516,6 +3528,8 @@ id|coda_waitfor_upcall
 c_func
 (paren
 id|req
+comma
+id|vcommp
 )paren
 suffix:semicolon
 id|coda_upcall_stats
@@ -3593,29 +3607,6 @@ op_star
 id|req-&gt;uc_data
 suffix:semicolon
 multiline_comment|/* here we map positive Venus errors to kernel errors */
-r_if
-c_cond
-(paren
-id|out-&gt;oh.result
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Tell Peter: Venus returns negative error %ld, for oc %ld!&bslash;n&quot;
-comma
-id|out-&gt;oh.result
-comma
-id|out-&gt;oh.opcode
-)paren
-suffix:semicolon
-id|out-&gt;oh.result
-op_assign
-id|EINTR
-suffix:semicolon
-)brace
 id|error
 op_assign
 op_minus
@@ -4004,6 +3995,8 @@ id|coda_cache_clear_all
 c_func
 (paren
 id|sb
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|shrink_dcache_sb
@@ -4067,7 +4060,7 @@ c_func
 id|CODA_PURGEUSER
 )paren
 suffix:semicolon
-id|coda_cache_clear_cred
+id|coda_cache_clear_all
 c_func
 (paren
 id|sb

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * NetChip 1080 Driver (USB Host-to-Host Link)&n; * Copyright (C) 2000 by David Brownell &lt;dbrownell@users.sourceforge.net&gt;&n; */
 multiline_comment|/*&n; * This talks to the NetChip 1080, which can appear in &quot;network cables&quot;&n; * and other designs.  This driver interoperates with the Win32 network&n; * drivers from NetChip, using the NetChip reference design.&n; *&n; * The IP-over-USB protocol here may be of interest.  Embedded devices&n; * could implement it at the cost of two bulk endpoints, and whatever&n; * other system resources the desired IP-based applications need.&n; * Some Linux palmtops could support that today.&n; * &n; * STATUS:&n; *&n; * 13-sept-2000&t;&t;experimental, new&n; *&n; * This doesn&squot;t yet do any network hotplugging, and there&squot;s no matching&n; * ifup policy script ... it should arrange bridging with &quot;brctl&quot;, and&n; * should handle static and dynamic (&quot;pump&quot;) setups.&n; *&n; * RX/TX queue sizes currently fixed at one due to URB unlink problems.&n; * &n; *-------------------------------------------------------------------------*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -1,5 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.39 2000/09/08 21:20:06 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.44 2000/09/14 22:56:36 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;scsiglue.h&quot;
 macro_line|#include &quot;transport.h&quot;
@@ -18,6 +17,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_USB_STORAGE_FREECOM
 macro_line|#include &quot;freecom.h&quot;
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1050,6 +1050,28 @@ id|us_unusual_dev_list
 op_assign
 (brace
 (brace
+l_int|0x03ee
+comma
+l_int|0x0000
+comma
+l_int|0x0000
+comma
+l_int|0x0245
+comma
+l_string|&quot;Mitsumi&quot;
+comma
+l_string|&quot;CD-R/RW Drive&quot;
+comma
+id|US_SC_8020
+comma
+id|US_PR_CBI
+comma
+l_int|NULL
+comma
+id|US_FL_SINGLE_LUN
+)brace
+comma
+(brace
 l_int|0x03f0
 comma
 l_int|0x0107
@@ -1348,13 +1370,13 @@ l_int|0x054c
 comma
 l_int|0x0010
 comma
-l_int|0x0210
+l_int|0x0106
 comma
 l_int|0x0210
 comma
 l_string|&quot;Sony&quot;
 comma
-l_string|&quot;DSC-S30/S70/505V&quot;
+l_string|&quot;DSC-S30/S70/505V/F505&quot;
 comma
 id|US_SC_SCSI
 comma
@@ -1683,7 +1705,7 @@ l_string|&quot;Freecom&quot;
 comma
 l_string|&quot;USB-IDE&quot;
 comma
-id|US_SC_8070
+id|US_SC_QIC
 comma
 id|US_PR_FREECOM
 comma
@@ -2523,6 +2545,12 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* At this point, we&squot;re committed to using the device */
+id|usb_inc_dev_use
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* clear the GUID and fetch the strings */
 id|GUID_CLEAR
 c_func
@@ -2758,6 +2786,32 @@ id|ss
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* allocate the URB we&squot;re going to use */
+id|ss-&gt;current_urb
+op_assign
+id|usb_alloc_urb
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ss-&gt;current_urb
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|ss
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/* Re-Initialize the device if it needs it */
 r_if
 c_cond
@@ -3531,9 +3585,10 @@ id|unusual_dev
 op_logical_and
 id|unusual_dev-&gt;initFunction
 )paren
-(paren
-id|unusual_dev-&gt;initFunction
-)paren
+id|unusual_dev
+op_member_access_from_pointer
+id|initFunction
+c_func
 (paren
 id|ss
 )paren
@@ -3727,7 +3782,7 @@ id|ss-&gt;irq_urb
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;-- releasing irq handle&bslash;n&quot;
+l_string|&quot;-- releasing irq URB&bslash;n&quot;
 )paren
 suffix:semicolon
 id|result
@@ -3737,10 +3792,6 @@ c_func
 (paren
 id|ss-&gt;irq_urb
 )paren
-suffix:semicolon
-id|ss-&gt;irq_urb
-op_assign
-l_int|NULL
 suffix:semicolon
 id|US_DEBUGP
 c_func
@@ -3756,6 +3807,10 @@ c_func
 id|ss-&gt;irq_urb
 )paren
 suffix:semicolon
+id|ss-&gt;irq_urb
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 id|up
 c_func
@@ -3766,12 +3821,51 @@ id|ss-&gt;irq_urb_sem
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* free up the main URB for this device */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- releasing main URB&bslash;n&quot;
+)paren
+suffix:semicolon
+id|result
+op_assign
+id|usb_unlink_urb
+c_func
+(paren
+id|ss-&gt;current_urb
+)paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- usb_unlink_urb() returned %d&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
+id|usb_free_urb
+c_func
+(paren
+id|ss-&gt;current_urb
+)paren
+suffix:semicolon
+id|ss-&gt;current_urb
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* mark the device as gone */
+id|usb_dec_dev_use
+c_func
+(paren
+id|ss-&gt;pusb_dev
+)paren
+suffix:semicolon
 id|ss-&gt;pusb_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* lock access to the device data structure */
+multiline_comment|/* unlock access to the device data structure */
 id|up
 c_func
 (paren
@@ -3921,10 +4015,10 @@ c_cond
 (paren
 id|us_list-&gt;extra_destructor
 )paren
-(paren
-op_star
-id|us_list-&gt;extra_destructor
-)paren
+id|us_list
+op_member_access_from_pointer
+id|extra_destructor
+c_func
 (paren
 id|us_list-&gt;extra
 )paren

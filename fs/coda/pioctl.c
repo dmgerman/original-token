@@ -15,7 +15,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
-macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 multiline_comment|/* pioctl ops */
 r_static
@@ -53,7 +52,7 @@ id|cmd
 comma
 r_int
 r_int
-id|arg
+id|user_data
 )paren
 suffix:semicolon
 multiline_comment|/* exported from this file */

@@ -3,7 +3,6 @@ DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef CONFIG_MODULES
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -347,5 +346,4 @@ c_func
 id|scsi_device_types
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;/* CONFIG_MODULES */
 eof

@@ -232,6 +232,13 @@ l_int|0x2040
 )brace
 comma
 multiline_comment|/* Prisa AcerScan 620U (!) */
+(brace
+l_int|0x04a5
+comma
+l_int|0x2022
+)brace
+comma
+multiline_comment|/* Vuego Scan Brisa 340U */
 multiline_comment|/* Agfa */
 (brace
 l_int|0x06bd
@@ -300,6 +307,13 @@ l_int|0x0401
 )brace
 comma
 multiline_comment|/* 5200C */
+(brace
+l_int|0x03f0
+comma
+l_int|0x0701
+)brace
+comma
+multiline_comment|/* 5300C */
 (brace
 l_int|0x03f0
 comma
@@ -380,6 +394,34 @@ l_int|0x0001
 )brace
 comma
 multiline_comment|/* 1200 CU */
+(brace
+l_int|0x0400
+comma
+l_int|0x1000
+)brace
+comma
+multiline_comment|/* BearPaw 1200 */
+(brace
+l_int|0x055f
+comma
+l_int|0x0002
+)brace
+comma
+multiline_comment|/* 600 CU */
+(brace
+l_int|0x055f
+comma
+l_int|0x0003
+)brace
+comma
+multiline_comment|/* 1200 USB */
+(brace
+l_int|0x055f
+comma
+l_int|0x0006
+)brace
+comma
+multiline_comment|/* 1200 UB */
 multiline_comment|/* Primax/Colorado */
 (brace
 l_int|0x0461
@@ -487,6 +529,13 @@ l_int|0x0104
 )brace
 comma
 multiline_comment|/* Perfection 1200U and 1200Photo */
+(brace
+l_int|0x04b8
+comma
+l_int|0x0107
+)brace
+comma
+multiline_comment|/* Expression 1600 */
 multiline_comment|/* Umax */
 (brace
 l_int|0x1606
@@ -523,21 +572,42 @@ comma
 l_int|0x0221
 )brace
 comma
-multiline_comment|/* OneTouch 5300 */
+multiline_comment|/* OneTouch 5300 USB */
 (brace
 l_int|0x04a7
 comma
-l_int|0x0221
+l_int|0x0211
 )brace
 comma
-multiline_comment|/* OneTouch 7600 duplicate ID (!) */
+multiline_comment|/* OneTouch 7600 USB */
 (brace
 l_int|0x04a7
 comma
 l_int|0x0231
 )brace
 comma
-multiline_comment|/* 6100 */
+multiline_comment|/* 6100 USB */
+(brace
+l_int|0x04a7
+comma
+l_int|0x0311
+)brace
+comma
+multiline_comment|/* 6200 EPP/USB */
+(brace
+l_int|0x04a7
+comma
+l_int|0x0321
+)brace
+comma
+multiline_comment|/* OneTouch 8100 EPP/USB */
+(brace
+l_int|0x04a7
+comma
+l_int|0x0331
+)brace
+comma
+multiline_comment|/* OneTouch 8600 EPP/USB */
 )brace
 suffix:semicolon
 multiline_comment|/* Forward declarations */

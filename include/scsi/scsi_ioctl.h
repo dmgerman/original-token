@@ -68,6 +68,29 @@ DECL|typedef|Scsi_Idlun
 )brace
 id|Scsi_Idlun
 suffix:semicolon
+multiline_comment|/* Fibre Channel WWN, port_id struct */
+DECL|struct|scsi_fctargaddress
+r_typedef
+r_struct
+id|scsi_fctargaddress
+(brace
+DECL|member|host_port_id
+id|__u32
+id|host_port_id
+suffix:semicolon
+DECL|member|host_wwn
+r_int
+r_char
+id|host_wwn
+(braket
+l_int|8
+)braket
+suffix:semicolon
+singleline_comment|// include NULL term.
+DECL|typedef|Scsi_FCTargAddress
+)brace
+id|Scsi_FCTargAddress
+suffix:semicolon
 r_extern
 r_int
 id|scsi_ioctl

@@ -23,6 +23,20 @@ DECL|macro|DRIVER_NAME
 mdefine_line|#define DRIVER_NAME &quot;Compaq SMART2 Driver (v 2.4.0)&quot;
 DECL|macro|DRIVER_VERSION
 mdefine_line|#define DRIVER_VERSION SMART2_DRIVER_VERSION(2,4,0)
+multiline_comment|/* Embedded module documentation macros - see modules.h */
+multiline_comment|/* Original author Chris Frantz - Compaq Computer Corporation */
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Compaq Computer Corporation&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Driver for Compaq Smart2 Array Controllers&quot;
+)paren
+suffix:semicolon
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR COMPAQ_SMART2_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -3373,6 +3387,14 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|c-&gt;pci_bus
+op_assign
+id|bus
+suffix:semicolon
+id|c-&gt;pci_dev_fn
+op_assign
+id|device_fn
+suffix:semicolon
 id|pdev
 op_assign
 id|pci_find_slot
@@ -4280,6 +4302,26 @@ id|board_id
 op_assign
 id|board_id
 suffix:semicolon
+id|hba
+(braket
+id|nr_ctlr
+)braket
+op_member_access_from_pointer
+id|pci_bus
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* not PCI */
+id|hba
+(braket
+id|nr_ctlr
+)braket
+op_member_access_from_pointer
+id|pci_dev_fn
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* not PCI */
 id|DBGINFO
 c_func
 (paren
@@ -4855,6 +4897,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;doreq cmd for %d, %x at %p&bslash;n&quot;
 comma
 id|ctlr
@@ -6331,6 +6374,81 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
+id|IDAGETPCIINFO
+suffix:colon
+(brace
+id|ida_pci_info_struct
+id|pciinfo
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|arg
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|pciinfo.bus
+op_assign
+id|hba
+(braket
+id|ctlr
+)braket
+op_member_access_from_pointer
+id|pci_bus
+suffix:semicolon
+id|pciinfo.dev_fn
+op_assign
+id|hba
+(braket
+id|ctlr
+)braket
+op_member_access_from_pointer
+id|pci_dev_fn
+suffix:semicolon
+id|pciinfo.board_id
+op_assign
+id|hba
+(braket
+id|ctlr
+)braket
+op_member_access_from_pointer
+id|board_id
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+op_amp
+id|pciinfo
+comma
+r_sizeof
+(paren
+id|ida_pci_info_struct
+)paren
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_case
 id|BLKFLSBUF
 suffix:colon
 r_case
@@ -6363,7 +6481,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-id|EBADRQC
+id|EINVAL
 suffix:semicolon
 )brace
 )brace
@@ -7212,6 +7330,17 @@ c_func
 id|info_p
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|c
+)paren
+(brace
+r_return
+id|IO_ERROR
+suffix:semicolon
+)brace
 id|c-&gt;ctlr
 op_assign
 id|ctlr

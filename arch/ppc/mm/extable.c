@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/ppc/mm/extable.c&n; *&n; * from linux/arch/i386/mm/extable.c&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern

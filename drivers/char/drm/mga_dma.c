@@ -875,6 +875,11 @@ id|failed
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|return_null
+op_assign
+l_int|0
+suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
@@ -916,10 +921,6 @@ op_amp
 id|dev_priv-&gt;dispatch_status
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -944,6 +945,10 @@ id|dev
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
 suffix:semicolon
 r_if
 c_cond
@@ -984,6 +989,9 @@ id|current
 )paren
 )paren
 (brace
+op_increment
+id|return_null
+suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -993,8 +1001,7 @@ op_amp
 id|dev_priv-&gt;dispatch_status
 )paren
 suffix:semicolon
-r_goto
-id|failed_getbuf
+r_break
 suffix:semicolon
 )brace
 )brace
@@ -1011,6 +1018,14 @@ comma
 op_amp
 id|entry
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|return_null
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 r_if
@@ -1055,8 +1070,6 @@ r_return
 id|next-&gt;buf
 suffix:semicolon
 )brace
-id|failed_getbuf
-suffix:colon
 id|failed
 op_increment
 suffix:semicolon

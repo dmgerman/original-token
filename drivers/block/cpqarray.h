@@ -213,6 +213,18 @@ DECL|member|phys_drives
 r_int
 id|phys_drives
 suffix:semicolon
+DECL|member|pci_bus
+r_int
+r_char
+id|pci_bus
+suffix:semicolon
+multiline_comment|/* 0 if EISA */
+DECL|member|pci_dev_fn
+r_int
+r_char
+id|pci_dev_fn
+suffix:semicolon
+multiline_comment|/* 0 if EISA */
 DECL|member|board_id
 id|__u32
 id|board_id

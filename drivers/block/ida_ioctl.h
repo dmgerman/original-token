@@ -14,6 +14,31 @@ DECL|macro|IDAREVALIDATEVOLS
 mdefine_line|#define IDAREVALIDATEVOLS&t;0x30303131
 DECL|macro|IDADRIVERVERSION
 mdefine_line|#define IDADRIVERVERSION&t;0x31313232
+DECL|macro|IDAGETPCIINFO
+mdefine_line|#define IDAGETPCIINFO&t;&t;0x32323333
+DECL|struct|_ida_pci_info_struct
+r_typedef
+r_struct
+id|_ida_pci_info_struct
+(brace
+DECL|member|bus
+r_int
+r_char
+id|bus
+suffix:semicolon
+DECL|member|dev_fn
+r_int
+r_char
+id|dev_fn
+suffix:semicolon
+DECL|member|board_id
+id|__u32
+id|board_id
+suffix:semicolon
+DECL|typedef|ida_pci_info_struct
+)brace
+id|ida_pci_info_struct
+suffix:semicolon
 multiline_comment|/*&n; * Normally, the ioctl determines the logical unit for this command by&n; * the major,minor number of the fd passed to ioctl.  If you need to send&n; * a command to a different/nonexistant unit (such as during config), you&n; * can override the normal behavior by setting the unit valid bit. (Normally,&n; * it should be zero) The controller the command is sent to is still&n; * determined by the major number of the open device.&n; */
 DECL|macro|UNITVALID
 mdefine_line|#define UNITVALID&t;0x80
@@ -76,7 +101,7 @@ r_int
 r_char
 id|buf
 (braket
-l_int|512
+l_int|1024
 )braket
 suffix:semicolon
 DECL|member|id_ctlr

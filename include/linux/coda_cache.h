@@ -2,34 +2,6 @@ multiline_comment|/* Coda filesystem -- Linux Minicache&n; *&n; * Copyright (C) 
 macro_line|#ifndef _CFSNC_HEADER_
 DECL|macro|_CFSNC_HEADER_
 mdefine_line|#define _CFSNC_HEADER_
-multiline_comment|/*&n; * Structure for an element in the Coda Credential Cache.&n; */
-DECL|struct|coda_cache
-r_struct
-id|coda_cache
-(brace
-DECL|member|cc_cclist
-r_struct
-id|list_head
-id|cc_cclist
-suffix:semicolon
-multiline_comment|/* list of all cache entries */
-DECL|member|cc_cnlist
-r_struct
-id|list_head
-id|cc_cnlist
-suffix:semicolon
-multiline_comment|/* list of cache entries/cnode */
-DECL|member|cc_mask
-r_int
-id|cc_mask
-suffix:semicolon
-DECL|member|cc_cred
-r_struct
-id|coda_cred
-id|cc_cred
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/* credential cache */
 r_void
 id|coda_cache_enter
@@ -55,16 +27,6 @@ op_star
 suffix:semicolon
 r_void
 id|coda_cache_clear_all
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-suffix:semicolon
-r_void
-id|coda_cache_clear_cred
 c_func
 (paren
 r_struct

@@ -757,7 +757,7 @@ macro_line|#       define R128_CCE_PACKET1_REG1_MASK&t;0x003ff800
 DECL|macro|R128_MAX_USEC_TIMEOUT
 mdefine_line|#define R128_MAX_USEC_TIMEOUT&t;100000&t;/* 100 ms */
 DECL|macro|R128_BASE
-mdefine_line|#define R128_BASE(reg)&t;&t;((u32)(dev_priv-&gt;mmio-&gt;handle))
+mdefine_line|#define R128_BASE(reg)&t;&t;((unsigned long)(dev_priv-&gt;mmio-&gt;handle))
 DECL|macro|R128_ADDR
 mdefine_line|#define R128_ADDR(reg)&t;&t;(R128_BASE(reg) + reg)
 DECL|macro|R128_DEREF

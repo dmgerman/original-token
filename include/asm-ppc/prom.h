@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Definitions for talking to the Open Firmware PROM on&n
 macro_line|#ifndef _PPC_PROM_H
 DECL|macro|_PPC_PROM_H
 mdefine_line|#define _PPC_PROM_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|typedef|phandle
 r_typedef
 r_void

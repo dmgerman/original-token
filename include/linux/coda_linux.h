@@ -118,6 +118,29 @@ id|iattr
 op_star
 )paren
 suffix:semicolon
+r_int
+id|coda_pioctl
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
 multiline_comment|/* global variables */
 r_extern
 r_int
@@ -381,9 +404,9 @@ mdefine_line|#define ENTRY    &bslash;&n;    if(coda_print_entry) printk(&quot;P
 DECL|macro|EXIT
 mdefine_line|#define EXIT    &bslash;&n;    if(coda_print_entry) printk(&quot;Process %d leaving %s&bslash;n&quot;,current-&gt;pid,__FUNCTION__)
 DECL|macro|CODA_ALLOC
-mdefine_line|#define CODA_ALLOC(ptr, cast, size)                                       &bslash;&n;do {                                                                      &bslash;&n;    if (size &lt; 3000) {                                                    &bslash;&n;        ptr = (cast)kmalloc((unsigned long) size, GFP_KERNEL);            &bslash;&n;                CDEBUG(D_MALLOC, &quot;kmalloced: %lx at %p.&bslash;n&quot;, (long)size, ptr);&bslash;&n;     }  else {                                                             &bslash;&n;        ptr = (cast)vmalloc((unsigned long) size);                        &bslash;&n;&t;CDEBUG(D_MALLOC, &quot;vmalloced: %lx at %p .&bslash;n&quot;, (long)size, ptr);}&bslash;&n;    if (ptr == 0) {                                                       &bslash;&n;        printk(&quot;kernel malloc returns 0 at %s:%d&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;    }                                                                     &bslash;&n;    memset( ptr, 0, size );                                                   &bslash;&n;} while (0)
+mdefine_line|#define CODA_ALLOC(ptr, cast, size)                                       &bslash;&n;do {                                                                      &bslash;&n;    if (size &lt; PAGE_SIZE) {                                               &bslash;&n;        ptr = (cast)kmalloc((unsigned long) size, GFP_KERNEL);            &bslash;&n;        CDEBUG(D_MALLOC, &quot;kmalloced: %lx at %p.&bslash;n&quot;, (long)size, ptr);     &bslash;&n;     }  else {                                                            &bslash;&n;        ptr = (cast)vmalloc((unsigned long) size);                        &bslash;&n;&t;CDEBUG(D_MALLOC, &quot;vmalloced: %lx at %p .&bslash;n&quot;, (long)size, ptr);}   &bslash;&n;    if (ptr == 0) {                                                       &bslash;&n;        printk(&quot;kernel malloc returns 0 at %s:%d&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;    }                                                                     &bslash;&n;    else memset( ptr, 0, size );                                          &bslash;&n;} while (0)
 DECL|macro|CODA_FREE
-mdefine_line|#define CODA_FREE(ptr,size) do {if (size &lt; 3000) { kfree((ptr)); CDEBUG(D_MALLOC, &quot;kfreed: %lx at %p.&bslash;n&quot;, (long) size, ptr); } else { vfree((ptr)); CDEBUG(D_MALLOC, &quot;vfreed: %lx at %p.&bslash;n&quot;, (long) size, ptr);} } while (0)
+mdefine_line|#define CODA_FREE(ptr,size) do {if (size &lt; PAGE_SIZE) { kfree((ptr)); CDEBUG(D_MALLOC, &quot;kfreed: %lx at %p.&bslash;n&quot;, (long) size, ptr); } else { vfree((ptr)); CDEBUG(D_MALLOC, &quot;vfreed: %lx at %p.&bslash;n&quot;, (long) size, ptr);} } while (0)
 multiline_comment|/* inode to cnode access functions */
 DECL|function|coda_i2f
 r_static

@@ -14,7 +14,6 @@ macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
-macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_proc.h&gt;
 r_static
 id|ssize_t
@@ -47,8 +46,27 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|container
+op_assign
+(paren
+r_struct
+id|inode
+op_star
+)paren
+id|inode-&gt;i_mapping-&gt;host
+suffix:semicolon
 id|ssize_t
 id|n
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|container-&gt;i_sem
+)paren
 suffix:semicolon
 id|n
 op_assign
@@ -66,16 +84,14 @@ id|ppos
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
+id|container-&gt;i_size
+suffix:semicolon
+id|up
+c_func
 (paren
-(paren
-r_struct
-id|inode
-op_star
+op_amp
+id|container-&gt;i_sem
 )paren
-id|inode-&gt;i_mapping-&gt;host
-)paren
-op_member_access_from_pointer
-id|i_size
 suffix:semicolon
 r_return
 id|n
@@ -210,6 +226,10 @@ r_if
 c_cond
 (paren
 id|result
+op_eq
+l_int|0
+op_logical_and
+id|datasync
 op_eq
 l_int|0
 )paren

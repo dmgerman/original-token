@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Driver for the SWIM3 (Super Woz Integrated Machine 3)&n; * floppy controller found on Power Macintoshes.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * TODO:&n; * handle 2 drives&n; * handle GCR disks&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

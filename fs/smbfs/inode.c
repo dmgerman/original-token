@@ -21,6 +21,14 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;smb_debug.h&quot;
 macro_line|#include &quot;getopt.h&quot;
+multiline_comment|/* Always pick a default string */
+macro_line|#ifdef CONFIG_SMB_NLS_REMOTE
+DECL|macro|SMB_NLS_REMOTE
+mdefine_line|#define SMB_NLS_REMOTE CONFIG_SMB_NLS_REMOTE
+macro_line|#else
+DECL|macro|SMB_NLS_REMOTE
+mdefine_line|#define SMB_NLS_REMOTE &quot;&quot;
+macro_line|#endif
 r_static
 r_void
 id|smb_delete_inode
@@ -1637,7 +1645,7 @@ c_func
 (paren
 id|mnt-&gt;codepage.remote_name
 comma
-id|CONFIG_SMB_NLS_REMOTE
+id|SMB_NLS_REMOTE
 comma
 id|SMB_NLS_MAXNAMELEN
 )paren

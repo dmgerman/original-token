@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;Machine Check Handler For PII/PIII&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -74,16 +73,16 @@ id|printk
 c_func
 (paren
 id|KERN_EMERG
-l_string|&quot;CPU %d: Machine Check Exception: %08x%08x&quot;
+l_string|&quot;CPU %d: Machine Check Exception: %08x%08x&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
 (paren
 )paren
 comma
-id|mcgstl
-comma
 id|mcgsth
+comma
+id|mcgstl
 )paren
 suffix:semicolon
 r_for
@@ -198,7 +197,7 @@ l_int|27
 id|rdmsr
 c_func
 (paren
-l_int|0x403
+l_int|0x402
 op_plus
 id|i
 op_star
@@ -257,6 +256,7 @@ id|low
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Clear it */
 id|wrmsr
 c_func
 (paren
@@ -266,13 +266,13 @@ id|i
 op_star
 l_int|4
 comma
-id|low
+l_int|0UL
 comma
-id|high
+l_int|0UL
 )paren
 suffix:semicolon
 multiline_comment|/* Serialize */
-id|mb
+id|wmb
 c_func
 (paren
 )paren

@@ -1660,7 +1660,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* Pad device name to IFNAMSIZ=16. F.e. __PAD6 is tring of 9 zeros. */
+multiline_comment|/* Pad device name to IFNAMSIZ=16. F.e. __PAD6 is string of 9 zeros. */
 DECL|macro|__PAD6
 mdefine_line|#define __PAD6 &quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 DECL|macro|__PAD5

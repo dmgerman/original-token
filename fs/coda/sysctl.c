@@ -307,13 +307,13 @@ op_assign
 l_string|&quot;totals      &quot;
 comma
 multiline_comment|/*  0 */
-l_string|&quot;noop        &quot;
+l_string|&quot;-           &quot;
 comma
 multiline_comment|/*  1 */
 l_string|&quot;root        &quot;
 comma
 multiline_comment|/*  2 */
-l_string|&quot;sync        &quot;
+l_string|&quot;open_by_fd  &quot;
 comma
 multiline_comment|/*  3 */
 l_string|&quot;open        &quot;
@@ -367,7 +367,7 @@ multiline_comment|/* 19 */
 l_string|&quot;fsync       &quot;
 comma
 multiline_comment|/* 20 */
-l_string|&quot;inactive    &quot;
+l_string|&quot;-           &quot;
 comma
 multiline_comment|/* 21 */
 l_string|&quot;vget        &quot;
@@ -391,7 +391,7 @@ multiline_comment|/* 27 */
 l_string|&quot;zapdir      &quot;
 comma
 multiline_comment|/* 28 */
-l_string|&quot;noop2       &quot;
+l_string|&quot;-           &quot;
 comma
 multiline_comment|/* 29 */
 l_string|&quot;purgefid    &quot;
@@ -407,10 +407,7 @@ l_string|&quot;reintegrate &quot;
 comma
 multiline_comment|/* 33 */
 l_string|&quot;statfs      &quot;
-comma
 multiline_comment|/* 34 */
-l_string|&quot;make_cinode &quot;
-multiline_comment|/* 35 */
 )brace
 suffix:semicolon
 DECL|function|reset_coda_vfs_stats

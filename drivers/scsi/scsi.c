@@ -5459,7 +5459,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t;&t;&t; * The low-level driver failed to register a driver.  We&n;&t;&t;&t; *  can do this now.&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; * The low-level driver failed to register a driver.&n;&t;&t;&t; * We can do this now.&n;&t;&t;&t; */
 id|scsi_register
 c_func
 (paren
@@ -5620,25 +5620,6 @@ id|name
 suffix:semicolon
 )brace
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;scsi : %d host%s.&bslash;n&quot;
-comma
-id|next_scsi_host
-comma
-(paren
-id|next_scsi_host
-op_eq
-l_int|1
-)paren
-ques
-c_cond
-l_string|&quot;&quot;
-suffix:colon
-l_string|&quot;s&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* The next step is to call scan_scsis here.  This generates the&n;&t;&t; * Scsi_Devices entries&n;&t;&t; */
 r_for
 c_loop
@@ -5930,6 +5911,8 @@ r_int
 id|online_status
 suffix:semicolon
 r_int
+id|pcount0
+comma
 id|pcount
 suffix:semicolon
 id|Scsi_Cmnd
@@ -6433,6 +6416,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Next we go through and remove the instances of the individual hosts&n;&t; * that were detected */
+id|pcount0
+op_assign
+id|next_scsi_host
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -6570,10 +6557,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcount0
+op_ne
+id|next_scsi_host
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;scsi : %d host%s.&bslash;n&quot;
+l_string|&quot;scsi : %d host%s left.&bslash;n&quot;
 comma
 id|next_scsi_host
 comma

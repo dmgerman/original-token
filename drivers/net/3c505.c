@@ -53,48 +53,48 @@ l_string|&quot;*** invalid pcb length %d at %s:%s (line %d) ***&bslash;n&quot;
 suffix:semicolon
 DECL|macro|INVALID_PCB_MSG
 mdefine_line|#define INVALID_PCB_MSG(len) &bslash;&n;&t;printk(invalid_pcb_msg, (len),filename,__FUNCTION__,__LINE__)
-DECL|variable|search_msg
+DECL|variable|__initdata
 r_static
-r_const
 r_char
 op_star
 id|search_msg
+id|__initdata
 op_assign
 l_string|&quot;%s: Looking for 3c505 adapter at address %#x...&quot;
 suffix:semicolon
-DECL|variable|stilllooking_msg
+DECL|variable|__initdata
 r_static
-r_const
 r_char
 op_star
 id|stilllooking_msg
+id|__initdata
 op_assign
 l_string|&quot;still looking...&quot;
 suffix:semicolon
-DECL|variable|found_msg
+DECL|variable|__initdata
 r_static
-r_const
 r_char
 op_star
 id|found_msg
+id|__initdata
 op_assign
 l_string|&quot;found.&bslash;n&quot;
 suffix:semicolon
-DECL|variable|notfound_msg
+DECL|variable|__initdata
 r_static
-r_const
 r_char
 op_star
 id|notfound_msg
+id|__initdata
 op_assign
 l_string|&quot;not found (reason = %d)&bslash;n&quot;
 suffix:semicolon
-DECL|variable|couldnot_msg
+DECL|variable|__initdata
 r_static
-r_const
 r_char
 op_star
 id|couldnot_msg
+id|__initdata
 op_assign
 l_string|&quot;%s: 3c505 not found&bslash;n&quot;
 suffix:semicolon
@@ -131,7 +131,6 @@ macro_line|#endif
 multiline_comment|/*****************************************************************&n; *&n; * List of I/O-addresses we try to auto-sense&n; * Last element MUST BE 0!&n; *****************************************************************/
 DECL|variable|__initdata
 r_static
-r_const
 r_int
 id|addr_list
 (braket

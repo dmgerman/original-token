@@ -800,6 +800,26 @@ id|BLIST_FORCELUN
 )brace
 comma
 (brace
+l_string|&quot;DEC&quot;
+comma
+l_string|&quot;HSG80&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+)brace
+comma
+(brace
+l_string|&quot;COMPAQ&quot;
+comma
+l_string|&quot;LOGICAL VOLUME&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+)brace
+comma
+(brace
 l_string|&quot;NEC&quot;
 comma
 l_string|&quot;PD-1 ODX654P&quot;
@@ -899,6 +919,26 @@ id|BLIST_FORCELUN
 )brace
 comma
 singleline_comment|// DDS3 &amp; DDS4 autoloaders
+(brace
+l_string|&quot;DELL&quot;
+comma
+l_string|&quot;PERCRAID&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+)brace
+comma
+(brace
+l_string|&quot;HP&quot;
+comma
+l_string|&quot;NetRAID-4M&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+)brace
+comma
 multiline_comment|/*&n;&t; * Must be at end of list...&n;&t; */
 (brace
 l_int|NULL

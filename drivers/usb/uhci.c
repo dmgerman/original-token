@@ -1962,12 +1962,6 @@ id|urb-&gt;hcpriv
 op_assign
 id|urbp
 suffix:semicolon
-id|usb_inc_dev_use
-c_func
-(paren
-id|urb-&gt;dev
-)paren
-suffix:semicolon
 r_return
 id|urbp
 suffix:semicolon
@@ -2221,12 +2215,6 @@ c_func
 id|uhci_up_cachep
 comma
 id|urbp
-)paren
-suffix:semicolon
-id|usb_dec_dev_use
-c_func
-(paren
-id|urb-&gt;dev
 )paren
 suffix:semicolon
 id|unlock
@@ -3012,12 +3000,6 @@ c_func
 id|uhci
 comma
 id|urb
-)paren
-suffix:semicolon
-id|usb_inc_dev_use
-c_func
-(paren
-id|urb-&gt;dev
 )paren
 suffix:semicolon
 r_return
@@ -5654,6 +5636,12 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+id|usb_inc_dev_use
+c_func
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -5681,6 +5669,12 @@ op_amp
 id|urb-&gt;lock
 comma
 id|flags
+)paren
+suffix:semicolon
+id|usb_dec_dev_use
+c_func
+(paren
+id|urb-&gt;dev
 )paren
 suffix:semicolon
 r_return
@@ -5726,6 +5720,7 @@ multiline_comment|/* not yet checked/allocated */
 id|bustime
 op_assign
 id|usb_check_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma
@@ -5762,6 +5757,7 @@ op_minus
 id|EINPROGRESS
 )paren
 id|usb_claim_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma
@@ -5775,7 +5771,6 @@ suffix:semicolon
 )brace
 )brace
 r_else
-(brace
 multiline_comment|/* bandwidth is already set */
 id|ret
 op_assign
@@ -5785,7 +5780,6 @@ c_func
 id|urb
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -5834,6 +5828,7 @@ suffix:semicolon
 id|bustime
 op_assign
 id|usb_check_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma
@@ -5872,6 +5867,7 @@ op_minus
 id|EINPROGRESS
 )paren
 id|usb_claim_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma
@@ -5884,7 +5880,6 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
-(brace
 multiline_comment|/* bandwidth is already set */
 id|ret
 op_assign
@@ -5894,7 +5889,6 @@ c_func
 id|urb
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 )brace
@@ -5924,12 +5918,20 @@ op_assign
 l_int|0
 suffix:semicolon
 r_else
+(brace
 id|uhci_unlink_generic
 c_func
 (paren
 id|urb
 )paren
 suffix:semicolon
+id|usb_dec_dev_use
+c_func
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
@@ -5947,6 +5949,13 @@ op_star
 id|urb
 )paren
 (brace
+r_struct
+id|usb_device
+op_star
+id|dev
+op_assign
+id|urb-&gt;dev
+suffix:semicolon
 r_struct
 id|urb
 op_star
@@ -6093,6 +6102,7 @@ c_cond
 id|urb-&gt;bandwidth
 )paren
 id|usb_release_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma
@@ -6113,6 +6123,12 @@ r_case
 id|PIPE_INTERRUPT
 suffix:colon
 multiline_comment|/* Interrupts are an exception */
+r_if
+c_cond
+(paren
+id|urb-&gt;interval
+)paren
+(brace
 id|urb
 op_member_access_from_pointer
 id|complete
@@ -6121,19 +6137,15 @@ c_func
 id|urb
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|urb-&gt;interval
-)paren
 id|uhci_reset_interrupt
 c_func
 (paren
 id|urb
 )paren
 suffix:semicolon
-r_else
-(brace
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Release bandwidth for Interrupt or Isoc. transfers */
 multiline_comment|/* Spinlock needed ? */
 r_if
@@ -6142,6 +6154,7 @@ c_cond
 id|urb-&gt;bandwidth
 )paren
 id|usb_release_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma
@@ -6156,10 +6169,8 @@ c_func
 id|urb
 )paren
 suffix:semicolon
-)brace
-r_return
+r_break
 suffix:semicolon
-multiline_comment|/* &lt;-- Note the return */
 )brace
 r_if
 c_cond
@@ -6229,16 +6240,8 @@ c_cond
 (paren
 id|urb-&gt;complete
 op_logical_and
-(paren
 op_logical_neg
 id|proceed
-op_logical_or
-(paren
-id|urb-&gt;transfer_flags
-op_amp
-id|USB_URB_EARLY_COMPLETE
-)paren
-)paren
 )paren
 (brace
 id|urb
@@ -6313,13 +6316,6 @@ r_if
 c_cond
 (paren
 id|urb-&gt;complete
-op_logical_and
-op_logical_neg
-(paren
-id|urb-&gt;transfer_flags
-op_amp
-id|USB_URB_EARLY_COMPLETE
-)paren
 )paren
 id|urb
 op_member_access_from_pointer
@@ -6330,6 +6326,13 @@ id|urb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* We decrement the usage count after we&squot;re done with everything */
+id|usb_dec_dev_use
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 DECL|function|uhci_unlink_generic
 r_static
@@ -6427,6 +6430,10 @@ c_func
 (paren
 id|urb
 )paren
+suffix:semicolon
+id|urb-&gt;dev
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 l_int|0
@@ -6531,6 +6538,7 @@ r_case
 id|PIPE_INTERRUPT
 suffix:colon
 id|usb_release_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma
@@ -6545,6 +6553,7 @@ r_case
 id|PIPE_ISOCHRONOUS
 suffix:colon
 id|usb_release_bandwidth
+c_func
 (paren
 id|urb-&gt;dev
 comma

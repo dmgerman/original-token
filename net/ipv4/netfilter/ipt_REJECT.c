@@ -29,6 +29,9 @@ r_struct
 id|sk_buff
 op_star
 id|oldskb
+comma
+r_int
+id|local
 )paren
 (brace
 r_struct
@@ -433,7 +436,7 @@ comma
 id|nskb-&gt;nh.iph-&gt;ihl
 )paren
 suffix:semicolon
-multiline_comment|/* Routing */
+multiline_comment|/* Routing: if not headed for us, route won&squot;t like source */
 r_if
 c_cond
 (paren
@@ -445,7 +448,12 @@ id|rt
 comma
 id|nskb-&gt;nh.iph-&gt;daddr
 comma
+id|local
+ques
+c_cond
 id|nskb-&gt;nh.iph-&gt;saddr
+suffix:colon
+l_int|0
 comma
 id|RT_TOS
 c_func
@@ -804,6 +812,10 @@ c_func
 (paren
 op_star
 id|pskb
+comma
+id|hooknum
+op_eq
+id|NF_IP_LOCAL_IN
 )paren
 suffix:semicolon
 r_break

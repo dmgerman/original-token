@@ -9195,6 +9195,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef notdef
 r_if
 c_cond
 (paren
@@ -9364,6 +9365,7 @@ r_int
 id|cs-&gt;hw.hfcpci.pci_io
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

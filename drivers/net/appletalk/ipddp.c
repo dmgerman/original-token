@@ -778,6 +778,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|kfree
+c_func
+(paren
+id|rt
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus

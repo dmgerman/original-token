@@ -12,39 +12,39 @@ mdefine_line|#define ___swab64(x) &bslash;&n;&t;((__u64)( &bslash;&n;&t;&t;(__u6
 multiline_comment|/*&n; * provide defaults when no architecture-specific optimization is detected&n; */
 macro_line|#ifndef __arch__swab16
 DECL|macro|__arch__swab16
-macro_line|#  define __arch__swab16(x) ___swab16(x)
+macro_line|#  define __arch__swab16(x) ({ __u16 __tmp = (x) ; ___swab16(__tmp); })
 macro_line|#endif
 macro_line|#ifndef __arch__swab32
 DECL|macro|__arch__swab32
-macro_line|#  define __arch__swab32(x) ___swab32(x)
+macro_line|#  define __arch__swab32(x) ({ __u32 __tmp = (x) ; ___swab32(__tmp); })
 macro_line|#endif
 macro_line|#ifndef __arch__swab64
 DECL|macro|__arch__swab64
-macro_line|#  define __arch__swab64(x) ___swab64(x)
+macro_line|#  define __arch__swab64(x) ({ __u64 __tmp = (x) ; ___swab64(__tmp); })
 macro_line|#endif
 macro_line|#ifndef __arch__swab16p
 DECL|macro|__arch__swab16p
-macro_line|#  define __arch__swab16p(x) __swab16(*(x))
+macro_line|#  define __arch__swab16p(x) __arch__swab16(*(x))
 macro_line|#endif
 macro_line|#ifndef __arch__swab32p
 DECL|macro|__arch__swab32p
-macro_line|#  define __arch__swab32p(x) __swab32(*(x))
+macro_line|#  define __arch__swab32p(x) __arch__swab32(*(x))
 macro_line|#endif
 macro_line|#ifndef __arch__swab64p
 DECL|macro|__arch__swab64p
-macro_line|#  define __arch__swab64p(x) __swab64(*(x))
+macro_line|#  define __arch__swab64p(x) __arch__swab64(*(x))
 macro_line|#endif
 macro_line|#ifndef __arch__swab16s
 DECL|macro|__arch__swab16s
-macro_line|#  define __arch__swab16s(x) do { *(x) = __swab16p((x)); } while (0)
+macro_line|#  define __arch__swab16s(x) do { *(x) = __arch__swab16p((x)); } while (0)
 macro_line|#endif
 macro_line|#ifndef __arch__swab32s
 DECL|macro|__arch__swab32s
-macro_line|#  define __arch__swab32s(x) do { *(x) = __swab32p((x)); } while (0)
+macro_line|#  define __arch__swab32s(x) do { *(x) = __arch__swab32p((x)); } while (0)
 macro_line|#endif
 macro_line|#ifndef __arch__swab64s
 DECL|macro|__arch__swab64s
-macro_line|#  define __arch__swab64s(x) do { *(x) = __swab64p((x)); } while (0)
+macro_line|#  define __arch__swab64s(x) do { *(x) = __arch__swab64p((x)); } while (0)
 macro_line|#endif
 multiline_comment|/*&n; * Allow constant folding&n; */
 macro_line|#if defined(__GNUC__) &amp;&amp; (__GNUC__ &gt;= 2) &amp;&amp; defined(__OPTIMIZE__)

@@ -248,13 +248,14 @@ id|name
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|variable|mc32_adapters
-r_const
+DECL|variable|__initdata
+r_static
 r_struct
 id|mca_adapters_t
 id|mc32_adapters
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace

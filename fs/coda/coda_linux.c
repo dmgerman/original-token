@@ -14,7 +14,6 @@ macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
-macro_line|#include &lt;linux/coda_cache.h&gt;
 multiline_comment|/* initialize the debugging variables */
 DECL|variable|coda_debug
 r_int
@@ -197,34 +196,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* is this a volume root FID */
-DECL|function|coda_fid_is_volroot
-r_int
-id|coda_fid_is_volroot
-c_func
-(paren
-r_struct
-id|ViceFid
-op_star
-id|fid
-)paren
-(brace
-r_return
-(paren
-(paren
-id|fid-&gt;Vnode
-op_eq
-l_int|1
-)paren
-op_logical_and
-(paren
-id|fid-&gt;Unique
-op_eq
-l_int|1
-)paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|coda_fid_is_weird
 r_int
