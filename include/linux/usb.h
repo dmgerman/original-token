@@ -747,6 +747,32 @@ DECL|member|minor
 r_int
 id|minor
 suffix:semicolon
+DECL|member|serialize
+r_struct
+id|semaphore
+id|serialize
+suffix:semicolon
+DECL|member|ioctl
+r_int
+(paren
+op_star
+id|ioctl
+)paren
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|code
+comma
+r_void
+op_star
+id|buf
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Pointer to a device endpoint interrupt function -greg&n; *   Parameters:&n; *     int status - This needs to be defined.  Right now each HCD&n; *         passes different transfer status bits back.  Don&squot;t use it&n; *         until we come up with a common meaning.&n; *     void *buffer - This is a pointer to the data used in this&n; *         USB transfer.&n; *     int length - This is the number of bytes transferred in or out&n; *         of the buffer by this transfer.  (-1 = unknown/unsupported)&n; *     void *dev_id - This is a user defined pointer set when the IRQ&n; *         is requested that is passed back.&n; *&n; *   Special Cases:&n; *     if (status == USB_ST_REMOVED), don&squot;t trust buffer or len.&n; */
@@ -770,6 +796,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------------------* &n; * New USB Structures                                                         *&n; *----------------------------------------------------------------------------*/
+multiline_comment|/*&n; * urb-&gt;transfer_flags:&n; */
 DECL|macro|USB_DISABLE_SPD
 mdefine_line|#define USB_DISABLE_SPD         0x0001
 DECL|macro|USB_ISO_ASAP
@@ -900,6 +927,11 @@ r_int
 id|actual_length
 suffix:semicolon
 singleline_comment|// actual data buffer length&t;
+DECL|member|bandwidth
+r_int
+id|bandwidth
+suffix:semicolon
+singleline_comment|// bandwidth for this transfer request (INT or ISO)
 DECL|member|setup_packet
 r_int
 r_char
@@ -917,7 +949,7 @@ DECL|member|number_of_packets
 r_int
 id|number_of_packets
 suffix:semicolon
-singleline_comment|// number of packets in this request (iso/irq only)
+singleline_comment|// number of packets in this request (iso)
 DECL|member|interval
 r_int
 id|interval
@@ -1209,7 +1241,6 @@ suffix:semicolon
 multiline_comment|/* Host Controller private data */
 DECL|member|bandwidth_allocated
 r_int
-r_int
 id|bandwidth_allocated
 suffix:semicolon
 multiline_comment|/* on this Host Controller; */
@@ -1275,13 +1306,6 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* endpoint halts; one bit per endpoint # &amp; direction; */
 multiline_comment|/* [0] = IN, [1] = OUT */
-DECL|member|actconfig
-r_struct
-id|usb_config_descriptor
-op_star
-id|actconfig
-suffix:semicolon
-multiline_comment|/* the active configuration */
 DECL|member|epmaxpacketin
 r_int
 id|epmaxpacketin
@@ -1324,6 +1348,20 @@ op_star
 id|config
 suffix:semicolon
 multiline_comment|/* All of the configs */
+DECL|member|actconfig
+r_struct
+id|usb_config_descriptor
+op_star
+id|actconfig
+suffix:semicolon
+multiline_comment|/* the active configuration */
+DECL|member|rawdescriptors
+r_char
+op_star
+op_star
+id|rawdescriptors
+suffix:semicolon
+multiline_comment|/* Raw descriptors for each config */
 DECL|member|have_langid
 r_int
 id|have_langid
@@ -1367,6 +1405,22 @@ id|USB_MAXCHILDREN
 )braket
 suffix:semicolon
 )brace
+suffix:semicolon
+r_extern
+r_struct
+id|usb_interface
+op_star
+id|usb_ifnum_to_if
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|ifnum
+)paren
 suffix:semicolon
 r_extern
 r_int
@@ -1518,6 +1572,42 @@ suffix:semicolon
 DECL|macro|usb_dec_dev_use
 mdefine_line|#define usb_dec_dev_use usb_free_dev
 r_extern
+r_int
+id|usb_check_bandwidth
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_struct
+id|urb
+op_star
+id|urb
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_claim_bandwidth
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_struct
+id|urb
+op_star
+id|urb
+comma
+r_int
+id|bustime
+comma
+r_int
+id|isoc
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|usb_release_bandwidth
 c_func
@@ -1525,8 +1615,15 @@ c_func
 r_struct
 id|usb_device
 op_star
+id|dev
+comma
+r_struct
+id|urb
+op_star
+id|urb
 comma
 r_int
+id|isoc
 )paren
 suffix:semicolon
 r_extern
@@ -1914,6 +2011,16 @@ id|data
 )paren
 suffix:semicolon
 r_int
+id|usb_get_configuration
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_int
 id|usb_get_protocol
 c_func
 (paren
@@ -2077,6 +2184,16 @@ id|dev
 comma
 r_int
 id|pipe
+)paren
+suffix:semicolon
+r_void
+id|usb_set_maxpacket
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
 )paren
 suffix:semicolon
 DECL|macro|usb_get_extra_descriptor

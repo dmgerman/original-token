@@ -827,6 +827,17 @@ id|version
 suffix:semicolon
 multiline_comment|/* we only display this string ONCE */
 )brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/* Verify that I/O enable bit is set (PCI slot is enabled) */
 id|pci_read_config_word
 c_func
@@ -882,12 +893,12 @@ suffix:semicolon
 multiline_comment|/* Get I/O base address from PCI Configuration Space */
 id|port
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pdev
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 multiline_comment|/* Verify port address range is not already being used */
 id|port_len

@@ -132,7 +132,7 @@ l_int|8
 comma
 (paren
 id|ioaddr
-op_xor
+op_plus
 id|translate_code
 )paren
 op_minus

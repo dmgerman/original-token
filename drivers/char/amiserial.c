@@ -8347,6 +8347,27 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+multiline_comment|/*&n;&t; *  We request SERDAT and SERPER only, because the serial registers are&n;&t; *  too spreaded over the custom register space&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x30
+comma
+l_int|4
+comma
+l_string|&quot;amiserial [Paula]&quot;
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 id|init_bh
 c_func
 (paren
@@ -8934,6 +8955,16 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|release_mem_region
+c_func
+(paren
+id|CUSTOM_PHYSADDR
+op_plus
+l_int|0x30
+comma
+l_int|4
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -pipe -fno-strength-reduce  -march=i686 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h   -DEXPORT_SYMTAB -c amiserial.c&quot;&n;  End:&n;*/

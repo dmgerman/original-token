@@ -1779,6 +1779,10 @@ id|mem_size
 op_sub_assign
 id|HIGH_MEMORY
 suffix:semicolon
+id|usermem
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 id|add_memory_region
 c_func
@@ -2848,7 +2852,7 @@ id|dummy_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_X86_FX
+macro_line|#ifdef CONFIG_X86_FXSR
 r_if
 c_cond
 (paren
@@ -3494,15 +3498,19 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CPU: L1 I Cache: %dK  L1 D Cache: %dK&bslash;n&quot;
+l_string|&quot;CPU: L1 I Cache: %dK  L1 D Cache: %dK (%d bytes/line)&bslash;n&quot;
+comma
+id|edx
+op_rshift
+l_int|24
 comma
 id|ecx
 op_rshift
 l_int|24
 comma
 id|edx
-op_rshift
-l_int|24
+op_amp
+l_int|0xFF
 )paren
 suffix:semicolon
 id|c-&gt;x86_cache_size
@@ -4571,6 +4579,17 @@ suffix:semicolon
 id|fcr_clr
 op_assign
 id|DPDC
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Disabling bugged TSC.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|c-&gt;x86_capability
+op_and_assign
+op_complement
+id|X86_FEATURE_TSC
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5748,7 +5767,7 @@ l_string|&quot;Pentium III (Coppermine)&quot;
 comma
 l_int|NULL
 comma
-l_int|NULL
+l_string|&quot;Pentium III (Cascades)&quot;
 comma
 l_int|NULL
 comma
@@ -5850,11 +5869,11 @@ l_string|&quot;Athlon&quot;
 comma
 l_string|&quot;Athlon&quot;
 comma
-l_int|NULL
+l_string|&quot;Athlon&quot;
 comma
 l_int|NULL
 comma
-l_int|NULL
+l_string|&quot;Athlon&quot;
 comma
 l_int|NULL
 comma
@@ -6042,10 +6061,50 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|function|identify_cpu
+multiline_comment|/*&n; *&t;Detect a NexGen CPU running without BIOS hypercode new enough&n; *&t;to have CPUID. (Thanks to Herbert Oppmann)&n; */
+DECL|function|deep_magic_nexgen_probe
+r_static
+r_int
+id|deep_magic_nexgen_probe
+c_func
+(paren
 r_void
-id|__init
-id|identify_cpu
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&t;movw&t;$0x5555, %%ax&bslash;n&quot;
+l_string|&quot;&t;xorw&t;%%dx,%%dx&bslash;n&quot;
+l_string|&quot;&t;movw&t;$2, %%cx&bslash;n&quot;
+l_string|&quot;&t;divw&t;%%cx&bslash;n&quot;
+l_string|&quot;&t;movl&t;$0, %%eax&bslash;n&quot;
+l_string|&quot;&t;jnz&t;1f&bslash;n&quot;
+l_string|&quot;&t;movl&t;$1, %%eax&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+suffix:colon
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;dx&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|squash_the_stupid_serial_number
+r_static
+r_void
+id|squash_the_stupid_serial_number
 c_func
 (paren
 r_struct
@@ -6054,33 +6113,6 @@ op_star
 id|c
 )paren
 (brace
-r_int
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-r_char
-op_star
-id|p
-op_assign
-l_int|NULL
-suffix:semicolon
-id|c-&gt;loops_per_sec
-op_assign
-id|loops_per_sec
-suffix:semicolon
-id|c-&gt;x86_cache_size
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|get_cpu_vendor
-c_func
-(paren
-id|c
-)paren
-suffix:semicolon
-multiline_comment|/* It should be possible for the user to override this. */
 r_if
 c_cond
 (paren
@@ -6132,6 +6164,45 @@ l_string|&quot;CPU serial number disabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|function|identify_cpu
+r_void
+id|__init
+id|identify_cpu
+c_func
+(paren
+r_struct
+id|cpuinfo_x86
+op_star
+id|c
+)paren
+(brace
+r_int
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_char
+op_star
+id|p
+op_assign
+l_int|NULL
+suffix:semicolon
+id|c-&gt;loops_per_sec
+op_assign
+id|loops_per_sec
+suffix:semicolon
+id|c-&gt;x86_cache_size
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|get_cpu_vendor
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -6148,8 +6219,33 @@ id|c-&gt;cpuid_level
 OL
 l_int|0
 )paren
+(brace
+multiline_comment|/* It may be a nexgen with cpuid disabled.. */
+r_if
+c_cond
+(paren
+id|deep_magic_nexgen_probe
+c_func
+(paren
+)paren
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|c-&gt;x86_model_id
+comma
+l_string|&quot;Nx586&quot;
+)paren
+suffix:semicolon
+id|c-&gt;x86_vendor
+op_assign
+id|X86_VENDOR_NEXGEN
+suffix:semicolon
+)brace
 r_return
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -6193,6 +6289,12 @@ suffix:semicolon
 r_case
 id|X86_VENDOR_INTEL
 suffix:colon
+id|squash_the_stupid_serial_number
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6248,6 +6350,7 @@ suffix:semicolon
 r_case
 l_int|0x41
 suffix:colon
+multiline_comment|/* 4-way 128 */
 id|c-&gt;x86_cache_size
 op_assign
 l_int|128
@@ -6257,10 +6360,11 @@ suffix:semicolon
 r_case
 l_int|0x42
 suffix:colon
+multiline_comment|/* 4-way 256 */
 r_case
 l_int|0x82
 suffix:colon
-multiline_comment|/*Detect 256-Kbyte cache on Coppermine*/
+multiline_comment|/* 8-way 256 */
 id|c-&gt;x86_cache_size
 op_assign
 l_int|256
@@ -6270,6 +6374,7 @@ suffix:semicolon
 r_case
 l_int|0x43
 suffix:colon
+multiline_comment|/* 4-way 512 */
 id|c-&gt;x86_cache_size
 op_assign
 l_int|512
@@ -6279,6 +6384,11 @@ suffix:semicolon
 r_case
 l_int|0x44
 suffix:colon
+multiline_comment|/* 4-way 1024 */
+r_case
+l_int|0x84
+suffix:colon
+multiline_comment|/* 8-way 1024 */
 id|c-&gt;x86_cache_size
 op_assign
 l_int|1024
@@ -6288,6 +6398,11 @@ suffix:semicolon
 r_case
 l_int|0x45
 suffix:colon
+multiline_comment|/* 4-way 2048 */
+r_case
+l_int|0x85
+suffix:colon
+multiline_comment|/* 8-way 2048 */
 id|c-&gt;x86_cache_size
 op_assign
 l_int|2048
@@ -6401,9 +6516,30 @@ c_func
 id|c
 )paren
 suffix:semicolon
+id|squash_the_stupid_serial_number
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* may be changed in the switch so needs to be after */
+r_if
+c_cond
+(paren
+id|c-&gt;x86_vendor
+op_eq
+id|X86_VENDOR_NEXGEN
+)paren
+(brace
+id|c-&gt;x86_cache_size
+op_assign
+l_int|256
+suffix:semicolon
+)brace
+multiline_comment|/* A few had 1Mb.. */
 r_for
 c_loop
 (paren
@@ -7018,10 +7154,24 @@ l_string|&quot;fcmov&quot;
 suffix:semicolon
 id|x86_cap_flags
 (braket
+l_int|16
+)braket
+op_assign
+l_string|&quot;pat&quot;
+suffix:semicolon
+id|x86_cap_flags
+(braket
 l_int|22
 )braket
 op_assign
 l_string|&quot;mmxext&quot;
+suffix:semicolon
+id|x86_cap_flags
+(braket
+l_int|24
+)braket
+op_assign
+l_string|&quot;fxsr&quot;
 suffix:semicolon
 id|x86_cap_flags
 (braket
@@ -7284,6 +7434,44 @@ op_minus
 id|buffer
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_X86_TSC
+DECL|variable|__initdata
+r_static
+r_int
+id|tsc_disable
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|tsc_setup
+r_static
+r_int
+id|__init
+id|tsc_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+id|tsc_disable
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;notsc&quot;
+comma
+id|tsc_setup
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|__initdata
 r_static
 r_int
@@ -7383,6 +7571,34 @@ op_or
 id|X86_CR4_DE
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_X86_TSC
+r_if
+c_cond
+(paren
+id|tsc_disable
+op_logical_and
+id|cpu_has_tsc
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Disabling TSC...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|boot_cpu_data.x86_capability
+op_and_assign
+op_complement
+id|X86_FEATURE_TSC
+suffix:semicolon
+id|set_in_cr4
+c_func
+(paren
+id|X86_CR4_TSD
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func

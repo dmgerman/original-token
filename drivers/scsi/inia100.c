@@ -763,6 +763,17 @@ id|pdev
 r_if
 c_cond
 (paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|iAdapters
 op_ge
 id|MAX_SUPPORTED_ADAPTERS
@@ -793,12 +804,13 @@ id|pdev-&gt;devfn
 suffix:semicolon
 id|dRegValue
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -831,7 +843,7 @@ id|WORD
 )paren
 id|dRegValue
 suffix:semicolon
-multiline_comment|/* Now read the interrupt line  */
+multiline_comment|/* Now read the interrupt line value */
 id|dRegValue
 op_assign
 id|pdev-&gt;irq
@@ -839,39 +851,8 @@ suffix:semicolon
 id|bInterrupt
 op_assign
 id|dRegValue
-op_amp
-l_int|0xFF
 suffix:semicolon
 multiline_comment|/* Assign interrupt line      */
-id|pci_read_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|command
-)paren
-suffix:semicolon
-id|pci_write_config_word
-c_func
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-id|command
-op_or
-id|PCI_COMMAND_MASTER
-op_or
-id|PCI_COMMAND_IO
-)paren
-suffix:semicolon
-id|wBASE
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
 id|wBIOS
 op_assign
 id|ORC_RDWORD
@@ -880,6 +861,12 @@ c_func
 id|wBASE
 comma
 l_int|0x50
+)paren
+suffix:semicolon
+id|pci_set_master
+c_func
+(paren
+id|pdev
 )paren
 suffix:semicolon
 macro_line|#ifdef MMAPIO
@@ -1298,17 +1285,6 @@ c_func
 id|pHCB-&gt;HCS_virEscbArray
 )paren
 suffix:semicolon
-id|request_region
-c_func
-(paren
-id|pHCB-&gt;HCS_Base
-comma
-l_int|0x100
-comma
-l_string|&quot;inia100&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Register */
 id|get_orcPCIConfig
 c_func
 (paren
@@ -1360,6 +1336,17 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|request_region
+c_func
+(paren
+id|pHCB-&gt;HCS_Base
+comma
+l_int|256
+comma
+l_string|&quot;inia100&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Register */
 id|hreg
 op_assign
 id|scsi_register
@@ -1470,7 +1457,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1493,7 +1480,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1516,7 +1503,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1539,7 +1526,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1562,7 +1549,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1585,7 +1572,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1608,7 +1595,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1631,7 +1618,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;inia100&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -3072,6 +3059,38 @@ c_func
 (paren
 l_string|&quot;inia100 panic&quot;
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Release ressources&n; */
+DECL|function|inia100_release
+r_int
+id|inia100_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|hreg
+)paren
+(brace
+id|free_irq
+c_func
+(paren
+id|hreg-&gt;irq
+comma
+id|hreg
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|hreg-&gt;io_port
+comma
+l_int|256
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*#include &quot;inia100scsi.c&quot; */

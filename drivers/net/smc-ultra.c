@@ -324,6 +324,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -381,6 +382,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -485,6 +487,7 @@ l_int|0x40
 )paren
 multiline_comment|/* SMC EtherEZ */
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Select the station address register set. */
@@ -536,20 +539,8 @@ op_ne
 l_int|0xFF
 )paren
 r_return
-id|ENODEV
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;smc-ultra.c&quot;
-)paren
-)paren
-r_return
 op_minus
-id|ENOSYS
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond
@@ -2123,6 +2114,19 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;smc-ultra.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2231,6 +2235,11 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Got at least one. */
+id|unload_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -2319,7 +2328,7 @@ id|dev-&gt;priv
 suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

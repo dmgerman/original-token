@@ -486,11 +486,12 @@ suffix:semicolon
 DECL|macro|MODINC
 mdefine_line|#define MODINC(x,y) (x = x++ % y)
 multiline_comment|/*&n; * I2O configuration spinlock. This isnt a big deal for contention&n; * so we have one only&n; */
-DECL|variable|i2o_configuration_lock
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|i2o_configuration_lock
+)paren
 suffix:semicolon
 multiline_comment|/* &n; * Event spinlock.  Used to keep event queue sane and from&n; * handling multiple events simultaneously.&n; */
 DECL|variable|i2o_evt_lock
@@ -2716,9 +2717,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;iop%d: Out of resources&bslash;n&quot;
+l_string|&quot;%s: Out of resources&bslash;n&quot;
 comma
-id|c-&gt;unit
+id|c-&gt;name
 )paren
 suffix:semicolon
 r_break
@@ -2730,9 +2731,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;iop%d: Power failure&bslash;n&quot;
+l_string|&quot;%s: Power failure&bslash;n&quot;
 comma
-id|c-&gt;unit
+id|c-&gt;name
 )paren
 suffix:semicolon
 r_break
@@ -3233,14 +3234,18 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O: Dynamic LCT Update&bslash;n&quot;
+l_string|&quot;%s: Dynamic LCT Update&bslash;n&quot;
+comma
+id|c-&gt;name
 )paren
 suffix:semicolon
 id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O: Dynamic LCT contains %d entries&bslash;n&quot;
+l_string|&quot;%s: Dynamic LCT contains %d entries&bslash;n&quot;
+comma
+id|c-&gt;name
 comma
 id|entries
 )paren
@@ -3256,9 +3261,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;iop%d: Empty LCT???&bslash;n&quot;
+l_string|&quot;%s: Empty LCT???&bslash;n&quot;
 comma
-id|c-&gt;unit
+id|c-&gt;name
 )paren
 suffix:semicolon
 r_continue
@@ -3331,7 +3336,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Deleted device!&bslash;n&quot;
+l_string|&quot;i2o_core: Deleted device!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|spin_lock
@@ -3463,11 +3468,6 @@ id|u32
 op_star
 id|msg
 suffix:semicolon
-r_int
-id|count
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; * Old 960 steppings had a bug in the I2O unit that caused&n;&t; * the queue to appear empty when it wasn&squot;t.&n;&t; */
 r_if
 c_cond
@@ -3527,9 +3527,6 @@ id|u32
 op_star
 )paren
 id|m
-suffix:semicolon
-id|count
-op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Temporary Debugging&n;&t;&t; */
 r_if
@@ -5736,7 +5733,9 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Reset in progress, waiting for reboot&bslash;n&quot;
+l_string|&quot;%s: Reset in progress, waiting for reboot...&bslash;n&quot;
+comma
+id|c-&gt;name
 )paren
 suffix:semicolon
 id|time
@@ -6769,7 +6768,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Activating I2O controllers&bslash;n&quot;
+l_string|&quot;Activating I2O controllers...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -6798,7 +6797,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Calling i2o_activate_controller for %s&bslash;n&quot;
+l_string|&quot;Calling i2o_activate_controller for %s...&bslash;n&quot;
 comma
 id|iop-&gt;name
 )paren
@@ -6842,7 +6841,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;calling i2o_build_sys_table&bslash;n&quot;
+l_string|&quot;i2o_core: Calling i2o_build_sys_table...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -6887,7 +6886,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Calling i2o_online_controller for %s&bslash;n&quot;
+l_string|&quot;Calling i2o_online_controller for %s...&bslash;n&quot;
 comma
 id|iop-&gt;name
 )paren
@@ -7049,7 +7048,10 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Unable to obtain status of IOP, attempting a reset.&bslash;n&quot;
+l_string|&quot;Unable to obtain status of %s, &quot;
+l_string|&quot;attempting a reset.&bslash;n&quot;
+comma
+id|iop-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -7093,6 +7095,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|iop-&gt;status_block-&gt;i2o_version
+OG
+id|I2OVER15
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Not running vrs. 1.5. of the I2O Specification.&bslash;n&quot;
+comma
+id|iop-&gt;name
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|iop-&gt;status_block-&gt;iop_state
 op_eq
 id|ADAPTER_STATE_READY
@@ -7110,37 +7134,13 @@ op_eq
 id|ADAPTER_STATE_FAILED
 )paren
 (brace
-id|u32
-id|m
-(braket
-id|MSG_FRAME_SIZE
-)braket
-suffix:semicolon
 id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Already running, trying to reset&bslash;n&quot;
+l_string|&quot;%s: Already running, trying to reset...&bslash;n&quot;
 comma
 id|iop-&gt;name
-)paren
-suffix:semicolon
-id|i2o_init_outbound_q
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
-id|I2O_REPLY_WRITE32
-c_func
-(paren
-id|iop
-comma
-id|virt_to_bus
-c_func
-(paren
-id|m
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -7237,7 +7237,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Initializing Outbound Queue&bslash;n&quot;
+l_string|&quot;%s: Initializing Outbound Queue...&bslash;n&quot;
 comma
 id|c-&gt;name
 )paren
@@ -8009,9 +8009,9 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Attempting to enable iop%d&bslash;n&quot;
+l_string|&quot;%s: Attempting to enable...&bslash;n&quot;
 comma
-id|iop-&gt;unit
+id|iop-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -8034,9 +8034,9 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Attempting to get/parse lct iop%d&bslash;n&quot;
+l_string|&quot;%s: Attempting to get/parse lct...&bslash;n&quot;
 comma
-id|iop-&gt;unit
+id|iop-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -8210,7 +8210,7 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;%s: Deleting b/c could not get status while&quot;
-l_string|&quot;attempting to build system table&quot;
+l_string|&quot;attempting to build system table&bslash;n&quot;
 comma
 id|iop-&gt;name
 )paren
@@ -9362,13 +9362,6 @@ id|buflen
 suffix:semicolon
 multiline_comment|/* cut off header */
 r_return
-id|buflen
-OL
-id|size
-ques
-c_cond
-id|buflen
-suffix:colon
 id|size
 suffix:semicolon
 )brace
@@ -9574,7 +9567,7 @@ r_return
 id|size
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * &t;if oper == I2O_PARAMS_TABLE_GET, get from all rows &n; * &t;&t;if fieldcount == -1 return all fields&n; *&t;&t;&t;ibuf and ibuflen are unused (use NULL, 0)&n; * &t;&t;else return specific fields&n; *  &t;&t;&t;ibuf contains fieldindexes&n; *&n; * &t;if oper == I2O_PARAMS_LIST_GET, gte form specific rows&n; * &t;&t;if fieldcount == -1 return all fields&n; *&t;&t;&t;ibuf contains rowcount, keyvalues&n; * &t;&t;else return specific fields&n; *&t;&t;&t;fieldcount is # of fieldindexes&n; *  &t;&t;&t;ibuf contains fieldindexes, rowcount, keyvalues&n; *&n; *&t;You could also use directly function i2o_issue_params().&n; */
+multiline_comment|/* &n; * &t;if oper == I2O_PARAMS_TABLE_GET, get from all rows &n; * &t;&t;if fieldcount == -1 return all fields&n; *&t;&t;&t;ibuf and ibuflen are unused (use NULL, 0)&n; * &t;&t;else return specific fields&n; *  &t;&t;&t;ibuf contains fieldindexes&n; *&n; * &t;if oper == I2O_PARAMS_LIST_GET, get from specific rows&n; * &t;&t;if fieldcount == -1 return all fields&n; *&t;&t;&t;ibuf contains rowcount, keyvalues&n; * &t;&t;else return specific fields&n; *&t;&t;&t;fieldcount is # of fieldindexes&n; *  &t;&t;&t;ibuf contains fieldindexes, rowcount, keyvalues&n; *&n; *&t;You could also use directly function i2o_issue_params().&n; */
 DECL|function|i2o_query_table
 r_int
 id|i2o_query_table
@@ -11357,6 +11350,7 @@ c_func
 id|detailed_status
 )paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -11934,7 +11928,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;event thread created as pid %d&bslash;n&quot;
+l_string|&quot;I2O: Event thread created as pid %d&bslash;n&quot;
 comma
 id|evt_pid
 )paren
@@ -12031,6 +12025,7 @@ c_loop
 id|evt_running
 op_logical_and
 id|count
+op_decrement
 )paren
 (brace
 id|current-&gt;state
@@ -12148,13 +12143,6 @@ id|KERN_INFO
 l_string|&quot;Loading I2O Core - (c) Copyright 1999 Red Hat Software&bslash;n&quot;
 )paren
 suffix:semicolon
-id|init_MUTEX
-c_func
-(paren
-op_amp
-id|i2o_configuration_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12263,13 +12251,6 @@ c_func
 suffix:semicolon
 macro_line|#ifdef CONFIG_I2O_BLOCK
 id|i2o_block_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_I2O_SCSI
-id|i2o_scsi_init
 c_func
 (paren
 )paren

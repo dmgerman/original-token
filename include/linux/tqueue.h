@@ -69,8 +69,8 @@ id|tqueue_lock
 suffix:semicolon
 multiline_comment|/*&n; * queue_task&n; */
 DECL|function|queue_task
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|queue_task
 c_func
@@ -135,8 +135,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Call all &quot;bottom halfs&quot; on a given list.&n; */
 DECL|function|run_task_queue
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|run_task_queue
 c_func

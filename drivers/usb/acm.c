@@ -1147,6 +1147,15 @@ id|EINPROGRESS
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|count
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|count
 op_assign
 (paren

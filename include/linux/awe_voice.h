@@ -523,6 +523,7 @@ suffix:semicolon
 multiline_comment|/* pitch tuning (in cents) */
 DECL|member|low
 DECL|member|high
+r_int
 r_char
 id|low
 comma
@@ -531,6 +532,7 @@ suffix:semicolon
 multiline_comment|/* key note range */
 DECL|member|vellow
 DECL|member|velhigh
+r_int
 r_char
 id|vellow
 comma
@@ -539,6 +541,7 @@ suffix:semicolon
 multiline_comment|/* velocity range */
 DECL|member|fixkey
 DECL|member|fixvel
+r_int
 r_char
 id|fixkey
 comma
@@ -547,6 +550,7 @@ suffix:semicolon
 multiline_comment|/* fixed key, velocity */
 DECL|member|pan
 DECL|member|fixpan
+r_int
 r_char
 id|pan
 comma

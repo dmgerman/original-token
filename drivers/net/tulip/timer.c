@@ -861,24 +861,12 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Restart the transmit process. */
-id|tulip_outl_CSR6
+id|tulip_restart_rxtx
 c_func
 (paren
 id|tp
 comma
 id|tp-&gt;csr6
-op_or
-l_int|0x0002
-)paren
-suffix:semicolon
-id|tulip_outl_CSR6
-c_func
-(paren
-id|tp
-comma
-id|tp-&gt;csr6
-op_or
-l_int|0x2002
 )paren
 suffix:semicolon
 id|next_tick

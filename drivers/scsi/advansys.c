@@ -10719,6 +10719,17 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pci_devp
+)paren
+op_eq
+l_int|0
+)paren
 id|pci_devicep
 (braket
 id|pci_card_cnt_max
@@ -10903,14 +10914,13 @@ suffix:semicolon
 macro_line|#else /* version &gt;= v2.3.13 */ 
 id|iop
 op_assign
-id|pci_devp-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_devp
+comma
 l_int|0
-)braket
-dot
-id|start
-op_amp
-id|PCI_IOADDRESS_MASK
+)paren
 suffix:semicolon
 macro_line|#endif /* version &gt;= v2.3.13 */ 
 id|ASC_DBG2
@@ -11418,12 +11428,13 @@ suffix:semicolon
 macro_line|#else /* version &gt;= v2.3.13 */ 
 id|pci_memory_address
 op_assign
-id|pci_devp-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_devp
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 macro_line|#endif /* version &gt;= v2.3.13 */ 
 id|ASC_DBG1

@@ -78,6 +78,10 @@ id|res-&gt;flags
 op_or_assign
 id|PCI_ROM_ADDRESS_ENABLE
 suffix:semicolon
+r_new
+op_or_assign
+id|PCI_ROM_ADDRESS_ENABLE
+suffix:semicolon
 id|reg
 op_assign
 id|dev-&gt;rom_base_reg

@@ -483,6 +483,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Support routines. Move socket addresses back and forth across the kernel/user&n; *&t;divide and look after the messy bits.&n; */
 DECL|macro|MAX_SOCK_ADDR
 mdefine_line|#define MAX_SOCK_ADDR&t;128&t;&t;/* 108 for Unix domain - &n;&t;&t;&t;&t;&t;   16 for IP, 16 for IPX,&n;&t;&t;&t;&t;&t;   24 for IPv6,&n;&t;&t;&t;&t;&t;   about 80 for AX.25 &n;&t;&t;&t;&t;&t;   must be at least one bigger than&n;&t;&t;&t;&t;&t;   the AF_UNIX size (see net/unix/af_unix.c&n;&t;&t;&t;&t;&t;   :unix_mkname()).  &n;&t;&t;&t;&t;&t; */
+multiline_comment|/**&n; *&t;move_addr_to_kernel&t;-&t;copy a socket address into kernel space&n; *&t;@uaddr: Address in user space&n; *&t;@kaddr: Address in kernel space&n; *&t;@ulen: Length in user space&n; *&n; *&t;The address is copied into kernel space. If the provided address is&n; *&t;too long an error code of -EINVAL is returned. If the copy gives&n; *&t;invalid addresses -EFAULT is returned. On a success 0 is returned.&n; */
 DECL|function|move_addr_to_kernel
 r_int
 id|move_addr_to_kernel
@@ -547,6 +548,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;move_addr_to_user&t;-&t;copy an address to user space&n; *&t;@kaddr: kernel space address&n; *&t;@klen: length of address in kernel&n; *&t;@uaddr: user space address&n; *&t;@ulen: pointer to user length field&n; *&n; *&t;The value pointed to by ulen on entry is the buffer length available.&n; *&t;This is overwritten with the buffer space used. -EINVAL is returned&n; *&t;if an overlong buffer is specified or a negative buffer size. -EFAULT&n; *&t;is returned if either the buffer or the length field are not&n; *&t;accessible.&n; *&t;After copying the data up to the limit the user specifies, the true&n; *&t;length of the data is written over the length limit the user&n; *&t;specified. Zero is returned for a success.&n; */
 DECL|function|move_addr_to_user
 r_int
 id|move_addr_to_user
@@ -817,9 +819,8 @@ op_amp
 id|inode-&gt;u.socket_i
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Go from a file number to its socket slot.&n; */
+multiline_comment|/**&n; *&t;sockfd_lookup&t;- &t;Go from a file number to its socket slot&n; *&t;@fd: file handle&n; *&t;@err: pointer to an error code return&n; *&n; *&t;The file handle passed in is locked and the socket it is bound&n; *&t;too is returned. If an error occurs the err pointer is overwritten&n; *&t;with a negative errno code and NULL is returned. The function checks&n; *&t;for both invalid handles and passing a handle which is not a socket.&n; *&n; *&t;On a success the socket object pointer is returned.&n; */
 DECL|function|sockfd_lookup
-r_extern
 r_struct
 id|socket
 op_star
@@ -959,7 +960,7 @@ id|sock-&gt;file
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Allocate a socket.&n; */
+multiline_comment|/**&n; *&t;sock_alloc&t;-&t;allocate a socket&n; *&t;&n; *&t;Allocate a new inode and socket object. The two are bound together&n; *&t;and initialised. The socket is then returned. If we are out of inodes&n; *&t;NULL is returned.&n; */
 DECL|function|sock_alloc
 r_struct
 id|socket
@@ -1095,6 +1096,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;sock_release&t;-&t;close a socket&n; *&t;@sock: socket to close&n; *&n; *&t;The socket is released from the protocol stack if it has a release&n; *&t;callback, and the inode is then released if the socket is bound to&n; *&t;an inode not a file. &n; */
 DECL|function|sock_release
 r_void
 id|sock_release
@@ -6183,6 +6185,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BRIDGE
+r_extern
+r_int
+id|br_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_WAN_ROUTER
 r_extern
 r_void
@@ -6250,6 +6262,14 @@ suffix:semicolon
 macro_line|#ifdef SLAB_SKB
 multiline_comment|/*&n;&t; *&t;Initialize skbuff SLAB cache &n;&t; */
 id|skb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Ethernet bridge layer.&n;&t; */
+macro_line|#ifdef CONFIG_BRIDGE
+id|br_init
 c_func
 (paren
 )paren

@@ -437,12 +437,18 @@ id|bdp-&gt;cbd_sc
 op_amp
 id|BD_ENET_TX_READY
 )paren
+(brace
 id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+id|cep-&gt;tx_full
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|cep-&gt;cur_tx
 op_assign
 (paren
@@ -866,6 +872,10 @@ c_cond
 id|cep-&gt;tx_full
 )paren
 (brace
+id|cep-&gt;tx_full
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2139,12 +2149,9 @@ suffix:semicolon
 multiline_comment|/* Make it uncached.&n;&t;&t;*/
 id|pte
 op_assign
-id|find_pte
+id|va_to_pte
 c_func
 (paren
-op_amp
-id|init_mm
-comma
 id|mem_addr
 )paren
 suffix:semicolon

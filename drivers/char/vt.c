@@ -55,7 +55,7 @@ id|keyboard_type
 op_assign
 id|KB_101
 suffix:semicolon
-macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__mips__) &amp;&amp; !defined(__arm__)
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__mips__) &amp;&amp; !defined(__arm__) &amp;&amp; !defined(__sh__)
 id|asmlinkage
 r_int
 id|sys_ioperm
@@ -2099,7 +2099,7 @@ suffix:semicolon
 r_goto
 id|setchar
 suffix:semicolon
-macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__mips__) &amp;&amp; !defined(__arm__)
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__mips__) &amp;&amp; !defined(__arm__) &amp;&amp; !defined(__sh__)
 multiline_comment|/*&n;&t;&t; * These cannot be implemented on any machine that implements&n;&t;&t; * ioperm() in user level (such as Alpha PCs).&n;&t;&t; */
 r_case
 id|KDADDIO
@@ -2520,6 +2520,22 @@ suffix:colon
 r_case
 id|KDSETKEYCODE
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_ADMIN
+)paren
+)paren
+(brace
+id|perm
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_return
 id|do_kbkeycode_ioctl
 c_func

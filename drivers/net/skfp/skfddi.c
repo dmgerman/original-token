@@ -1147,6 +1147,17 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
 macro_line|#ifndef MEM_MAPPED_IO
 multiline_comment|/* Verify that I/O enable bit is set (PCI slot is enabled) */
 id|pci_read_config_word
@@ -1348,12 +1359,13 @@ id|command
 suffix:semicolon
 id|port
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|port
 op_assign

@@ -2,7 +2,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amipcmcia.h&gt;
 r_extern
 r_volatile
@@ -19,6 +21,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|amiga_model
+)paren
+suffix:semicolon
+DECL|variable|amiga_chipset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|amiga_chipset
 )paren
 suffix:semicolon
 DECL|variable|amiga_hw_present
@@ -82,6 +91,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|amiga_audio_min_period
+)paren
+suffix:semicolon
+DECL|variable|amiga_do_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|amiga_do_irq
+)paren
+suffix:semicolon
+DECL|variable|amiga_do_irq_list
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|amiga_do_irq_list
+)paren
+suffix:semicolon
+DECL|variable|amiga_intena_vals
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|amiga_intena_vals
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_AMIGA_PCMCIA

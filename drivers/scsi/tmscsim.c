@@ -284,7 +284,7 @@ macro_line|# define PCI_SET_MASTER pci_set_master (pdev)
 DECL|macro|PCI_FIND_DEVICE
 macro_line|# define PCI_FIND_DEVICE(vend, id) (pdev = pci_find_device (vend, id, pdev))
 DECL|macro|PCI_GET_IO_AND_IRQ
-macro_line|# define PCI_GET_IO_AND_IRQ io_port = pdev-&gt;resource[0].start; irq = pdev-&gt;irq
+macro_line|# define PCI_GET_IO_AND_IRQ io_port = pci_resource_start(pdev, 0); irq = pdev-&gt;irq;
 macro_line|#else
 macro_line|# include &lt;linux/bios32.h&gt;
 DECL|macro|PDEV
@@ -6931,6 +6931,17 @@ id|PCI_DEVICE_ID_AMD53C974
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|DC390_LOCK_IO
 suffix:semicolon
 multiline_comment|/* Remove this when going to new eh */

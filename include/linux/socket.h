@@ -135,7 +135,7 @@ mdefine_line|#define CMSG_FIRSTHDR(msg)&t;__CMSG_FIRSTHDR((msg)-&gt;msg_control,
 multiline_comment|/*&n; *&t;This mess will go away with glibc&n; */
 macro_line|#ifdef __KERNEL__
 DECL|macro|__KINLINE
-mdefine_line|#define __KINLINE extern __inline__
+mdefine_line|#define __KINLINE static inline
 macro_line|#elif  defined(__GNUC__) 
 DECL|macro|__KINLINE
 mdefine_line|#define __KINLINE static __inline__

@@ -2608,6 +2608,8 @@ op_star
 id|dev
 )paren
 (brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|ei_open
 c_func
 (paren
@@ -2646,12 +2648,13 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

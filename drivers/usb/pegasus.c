@@ -15,7 +15,7 @@ op_star
 id|version
 op_assign
 id|__FILE__
-l_string|&quot;: v0.3.12 2000/05/22 (C) 1999-2000 Petko Manolov (petkan@spct.net)&bslash;n&quot;
+l_string|&quot;: v0.3.14 2000/06/09 (C) 1999-2000 Petko Manolov (petkan@spct.net)&bslash;n&quot;
 suffix:semicolon
 DECL|macro|PEGASUS_MTU
 mdefine_line|#define&t;PEGASUS_MTU&t;&t;1500
@@ -234,6 +234,26 @@ l_int|NULL
 )brace
 comma
 (brace
+l_string|&quot;D-Link DU-10&quot;
+comma
+l_int|0x07b8
+comma
+l_int|0xabc1
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;D-Link DU-E100&quot;
+comma
+l_int|0x07b8
+comma
+l_int|0x4002
+comma
+l_int|NULL
+)brace
+comma
+(brace
 l_string|&quot;Linksys USB100TX&quot;
 comma
 l_int|0x066b
@@ -249,6 +269,16 @@ comma
 l_int|0x066b
 comma
 l_int|0x2204
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;Linksys USB Ethernet Adapter&quot;
+comma
+l_int|0x066b
+comma
+l_int|0x2206
 comma
 l_int|NULL
 )brace
@@ -319,7 +349,7 @@ mdefine_line|#define pegasus_get_registers(dev, indx, size, data)&bslash;&n;&t;u
 DECL|macro|pegasus_set_registers
 mdefine_line|#define pegasus_set_registers(dev, indx, size, data)&bslash;&n;&t;usb_control_msg(dev, usb_sndctrlpipe(dev,0), 0xf1, 0x40, 0, indx, data, size, HZ);
 DECL|macro|pegasus_set_register
-mdefine_line|#define pegasus_set_register(dev, indx, value)&t;&bslash;&n;&t;{ __u8&t;data = value;&t;&t;&t;&bslash;&n;&t;usb_control_msg(dev, usb_sndctrlpipe(dev,0), 0xf1, 0x40, data, indx, &amp;data, 1, HZ);}
+mdefine_line|#define pegasus_set_register(dev, indx, value)&t;&bslash;&n;&t;{ __u8&t;__data = value;&t;&t;&t;&bslash;&n;&t;usb_control_msg(dev, usb_sndctrlpipe(dev,0), 0xf1, 0x40, __data, indx, &amp;__data, 1, HZ);}
 DECL|function|pegasus_read_phy_word
 r_static
 r_int
@@ -1150,7 +1180,7 @@ c_cond
 id|urb-&gt;status
 )paren
 (brace
-id|info
+id|dbg
 c_func
 (paren
 l_string|&quot;%s: RX status %d&quot;
@@ -1828,6 +1858,14 @@ c_func
 id|net
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pegasus-&gt;rx_urb.status
+op_eq
+op_minus
+id|EINPROGRESS
+)paren
 id|usb_unlink_urb
 c_func
 (paren
@@ -1835,6 +1873,14 @@ op_amp
 id|pegasus-&gt;rx_urb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pegasus-&gt;tx_urb.status
+op_eq
+op_minus
+id|EINPROGRESS
+)paren
 id|usb_unlink_urb
 c_func
 (paren
@@ -1842,6 +1888,14 @@ op_amp
 id|pegasus-&gt;tx_urb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pegasus-&gt;intr_urb.status
+op_eq
+op_minus
+id|EINPROGRESS
+)paren
 id|usb_unlink_urb
 c_func
 (paren
@@ -2525,6 +2579,14 @@ c_func
 id|pegasus-&gt;net
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pegasus-&gt;rx_urb.status
+op_eq
+op_minus
+id|EINPROGRESS
+)paren
 id|usb_unlink_urb
 c_func
 (paren
@@ -2532,6 +2594,14 @@ op_amp
 id|pegasus-&gt;rx_urb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pegasus-&gt;tx_urb.status
+op_eq
+op_minus
+id|EINPROGRESS
+)paren
 id|usb_unlink_urb
 c_func
 (paren
@@ -2539,6 +2609,14 @@ op_amp
 id|pegasus-&gt;tx_urb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pegasus-&gt;intr_urb.status
+op_eq
+op_minus
+id|EINPROGRESS
+)paren
 id|usb_unlink_urb
 c_func
 (paren

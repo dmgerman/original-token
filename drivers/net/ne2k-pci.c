@@ -907,26 +907,6 @@ id|EN0_ISR
 suffix:semicolon
 multiline_comment|/* Ack all intr. */
 )brace
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;ne2k-pci.c&quot;
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;ne2k-pci: cannot load 8390 module&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|err_out_free_netdev
-suffix:semicolon
-)brace
 multiline_comment|/* Read the 16 bytes of station address PROM.&n;&t;   We must first initialize registers, similar to NS8390_init(eifdev, 0).&n;&t;   We can&squot;t reliably read the SAPROM address without this.&n;&t;   (I learned the hard way!). */
 (brace
 r_struct
@@ -2574,10 +2554,18 @@ r_void
 r_int
 id|rc
 suffix:semicolon
-id|lock_8390_module
+r_if
+c_cond
+(paren
+id|load_8390_module
 c_func
 (paren
+l_string|&quot;ne2k-pci.c&quot;
 )paren
+)paren
+r_return
+op_minus
+id|ENOSYS
 suffix:semicolon
 id|rc
 op_assign
@@ -2588,6 +2576,7 @@ id|ne2k_driver
 )paren
 suffix:semicolon
 multiline_comment|/* XXX should this test CONFIG_HOTPLUG like pci_module_init? */
+multiline_comment|/* YYY No. If we&squot;re returning non-zero, we&squot;re being unloaded&n;&t; * &t;   immediately. dwmw2 &n;&t; */
 r_if
 c_cond
 (paren
@@ -2595,7 +2584,7 @@ id|rc
 op_le
 l_int|0
 )paren
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren
@@ -2620,7 +2609,7 @@ op_amp
 id|ne2k_driver
 )paren
 suffix:semicolon
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

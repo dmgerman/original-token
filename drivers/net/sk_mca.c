@@ -1,6 +1,4 @@
-multiline_comment|/* &n;net-3-driver for the SKNET MCA-based cards&n;&n;This is an extension to the Linux operating system, and is covered by the&n;same Gnu Public License that covers that work.&n;&n;Copyright 1999 by Alfred Arnold (alfred@ccac.rwth-aachen.de, aarnold@elsa.de)&n;&n;This driver is based both on the 3C523 driver and the SK_G16 driver.&n;&n;paper sources:&n;  &squot;PC Hardware: Aufbau, Funktionsweise, Programmierung&squot; by &n;  Hans-Peter Messmer for the basic Microchannel stuff&n;  &n;  &squot;Linux Geraetetreiber&squot; by Allesandro Rubini, Kalle Dalheimer&n;  for help on Ethernet driver programming&n;&n;  &squot;Ethernet/IEEE 802.3 Family 1992 World Network Data Book/Handbook&squot; by AMD&n;  for documentation on the AM7990 LANCE&n;&n;  &squot;SKNET Personal Technisches Manual&squot;, Version 1.2 by Schneider&amp;Koch&n;  for documentation on the Junior board&n;&n;  &squot;SK-NET MC2+ Technical Manual&quot;, Version 1.1 by Schneider&amp;Koch for&n;  documentation on the MC2 bord&n;  &n;  A big thank you to the S&amp;K support for providing me so quickly with&n;  documentation!&n;&n;  Also see http://www.syskonnect.com/&n;&n;  Missing things:&n;&n;  -&gt; set debug level via ioctl instead of compile-time switches&n;  -&gt; I didn&squot;t follow the development of the 2.1.x kernels, so my&n;     assumptions about which things changed with which kernel version &n;     are probably nonsense&n;&n;History:&n;  May 16th, 1999&n;  &t;startup&n;  May 22st, 1999&n;&t;added private structure, methods&n;        begun building data structures in RAM&n;  May 23nd, 1999&n;&t;can receive frames, send frames&n;  May 24th, 1999&n;        modularized intialization of LANCE&n;        loadable as module&n;&t;still Tx problem :-(&n;  May 26th, 1999&n;  &t;MC2 works&n;  &t;support for multiple devices&n;  &t;display media type for MC2+&n;  May 28th, 1999&n;&t;fixed problem in GetLANCE leaving interrupts turned off&n;        increase TX queue to 4 packets to improve send performance&n;  May 29th, 1999&n;&t;a few corrections in statistics, caught rcvr overruns &n;        reinitialization of LANCE/board in critical situations&n;        MCA info implemented&n;&t;implemented LANCE multicast filter&n;  Jun 6th, 1999&n;&t;additions for Linux 2.2&n;  Aug 2nd, 1999&n;&t;small fixes (David Weinehall)&n;&n; *************************************************************************/
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
+multiline_comment|/* &n;net-3-driver for the SKNET MCA-based cards&n;&n;This is an extension to the Linux operating system, and is covered by the&n;same Gnu Public License that covers that work.&n;&n;Copyright 1999 by Alfred Arnold (alfred@ccac.rwth-aachen.de, aarnold@elsa.de)&n;&n;This driver is based both on the 3C523 driver and the SK_G16 driver.&n;&n;paper sources:&n;  &squot;PC Hardware: Aufbau, Funktionsweise, Programmierung&squot; by &n;  Hans-Peter Messmer for the basic Microchannel stuff&n;  &n;  &squot;Linux Geraetetreiber&squot; by Allesandro Rubini, Kalle Dalheimer&n;  for help on Ethernet driver programming&n;&n;  &squot;Ethernet/IEEE 802.3 Family 1992 World Network Data Book/Handbook&squot; by AMD&n;  for documentation on the AM7990 LANCE&n;&n;  &squot;SKNET Personal Technisches Manual&squot;, Version 1.2 by Schneider&amp;Koch&n;  for documentation on the Junior board&n;&n;  &squot;SK-NET MC2+ Technical Manual&quot;, Version 1.1 by Schneider&amp;Koch for&n;  documentation on the MC2 bord&n;  &n;  A big thank you to the S&amp;K support for providing me so quickly with&n;  documentation!&n;&n;  Also see http://www.syskonnect.com/&n;&n;  Missing things:&n;&n;  -&gt; set debug level via ioctl instead of compile-time switches&n;  -&gt; I didn&squot;t follow the development of the 2.1.x kernels, so my&n;     assumptions about which things changed with which kernel version &n;     are probably nonsense&n;&n;History:&n;  May 16th, 1999&n;  &t;startup&n;  May 22st, 1999&n;&t;added private structure, methods&n;        begun building data structures in RAM&n;  May 23nd, 1999&n;&t;can receive frames, send frames&n;  May 24th, 1999&n;        modularized intialization of LANCE&n;        loadable as module&n;&t;still Tx problem :-(&n;  May 26th, 1999&n;  &t;MC2 works&n;  &t;support for multiple devices&n;  &t;display media type for MC2+&n;  May 28th, 1999&n;&t;fixed problem in GetLANCE leaving interrupts turned off&n;        increase TX queue to 4 packets to improve send performance&n;  May 29th, 1999&n;&t;a few corrections in statistics, caught rcvr overruns &n;        reinitialization of LANCE/board in critical situations&n;        MCA info implemented&n;&t;implemented LANCE multicast filter&n;  Jun 6th, 1999&n;&t;additions for Linux 2.2&n;  Dec 25th, 1999&n;  &t;unfortunately there seem to be newer MC2+ boards that react&n;  &t;on IRQ 3/5/9/10 instead of 3/5/10/11, so we have to autoprobe&n;  &t;in questionable cases...&n;  Dec 28th, 1999&n;&t;integrated patches from David Weinehall &amp; Bill Wendling for 2.3&n;&t;kernels (isa_...functions).  Things are defined in a way that&n;        it still works with 2.0.x 8-)&n;  Dec 30th, 1999&n;&t;added handling of the remaining interrupt conditions.  That&n;        should cure the spurious hangs.&n;  Jan 30th, 2000&n;&t;newer kernels automatically probe more than one board, so the&n;&t;&squot;startslot&squot; as a variable is also needed here&n;  June 1st, 2000&n;&t;added changes for recent 2.3 kernels&n;&n; *************************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -14,6 +12,10 @@ macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -124,7 +126,7 @@ id|dumpmem
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 comma
@@ -177,7 +179,7 @@ c_func
 (paren
 l_string|&quot; %02x&quot;
 comma
-id|readb
+id|SKMCA_READB
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -433,6 +435,7 @@ suffix:colon
 op_star
 id|irq
 op_assign
+op_minus
 l_int|10
 suffix:semicolon
 r_break
@@ -443,6 +446,7 @@ suffix:colon
 op_star
 id|irq
 op_assign
+op_minus
 l_int|11
 suffix:semicolon
 r_break
@@ -569,7 +573,7 @@ id|ResetBoard
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -584,7 +588,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|CTRL_RESET_ON
@@ -598,13 +602,89 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|CTRL_RESET_OFF
 comma
 id|priv-&gt;ctrladdr
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* wait for LANCE interface to become not busy */
+DECL|function|WaitLANCE
+r_static
+r_int
+id|WaitLANCE
+c_func
+(paren
+r_struct
+id|SKMCA_NETDEV
+op_star
+id|dev
+)paren
+(brace
+id|skmca_priv
+op_star
+id|priv
+op_assign
+(paren
+id|skmca_priv
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|t
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|SKMCA_READB
+c_func
+(paren
+id|priv-&gt;ctrladdr
+)paren
+op_amp
+id|STAT_IO_BUSY
+)paren
+op_eq
+id|STAT_IO_BUSY
+)paren
+(brace
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|t
+OG
+l_int|1000
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: LANCE access timeout&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* set LANCE register - must be atomic */
@@ -615,7 +695,7 @@ id|SetLANCE
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 comma
@@ -653,24 +733,14 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* wait until no transfer is pending */
-r_while
-c_loop
-(paren
-(paren
-id|readb
+id|WaitLANCE
 c_func
 (paren
-id|priv-&gt;ctrladdr
-)paren
-op_amp
-id|STAT_IO_BUSY
-)paren
-op_eq
-id|STAT_IO_BUSY
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* transfer register address to RAP */
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|CTRL_RESET_OFF
@@ -682,7 +752,7 @@ comma
 id|priv-&gt;ctrladdr
 )paren
 suffix:semicolon
-id|writew
+id|SKMCA_WRITEW
 c_func
 (paren
 id|addr
@@ -690,7 +760,7 @@ comma
 id|priv-&gt;ioregaddr
 )paren
 suffix:semicolon
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|IOCMD_GO
@@ -704,24 +774,14 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|readb
+id|WaitLANCE
 c_func
 (paren
-id|priv-&gt;ctrladdr
-)paren
-op_amp
-id|STAT_IO_BUSY
-)paren
-op_eq
-id|STAT_IO_BUSY
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* transfer data to register */
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|CTRL_RESET_OFF
@@ -733,7 +793,7 @@ comma
 id|priv-&gt;ctrladdr
 )paren
 suffix:semicolon
-id|writew
+id|SKMCA_WRITEW
 c_func
 (paren
 id|value
@@ -741,7 +801,7 @@ comma
 id|priv-&gt;ioregaddr
 )paren
 suffix:semicolon
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|IOCMD_GO
@@ -755,20 +815,10 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|readb
+id|WaitLANCE
 c_func
 (paren
-id|priv-&gt;ctrladdr
-)paren
-op_amp
-id|STAT_IO_BUSY
-)paren
-op_eq
-id|STAT_IO_BUSY
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* reenable interrupts */
@@ -787,7 +837,7 @@ id|GetLANCE
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 comma
@@ -826,24 +876,14 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* wait until no transfer is pending */
-r_while
-c_loop
-(paren
-(paren
-id|readb
+id|WaitLANCE
 c_func
 (paren
-id|priv-&gt;ctrladdr
-)paren
-op_amp
-id|STAT_IO_BUSY
-)paren
-op_eq
-id|STAT_IO_BUSY
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* transfer register address to RAP */
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|CTRL_RESET_OFF
@@ -855,7 +895,7 @@ comma
 id|priv-&gt;ctrladdr
 )paren
 suffix:semicolon
-id|writew
+id|SKMCA_WRITEW
 c_func
 (paren
 id|addr
@@ -863,7 +903,7 @@ comma
 id|priv-&gt;ioregaddr
 )paren
 suffix:semicolon
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|IOCMD_GO
@@ -877,24 +917,14 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|readb
+id|WaitLANCE
 c_func
 (paren
-id|priv-&gt;ctrladdr
-)paren
-op_amp
-id|STAT_IO_BUSY
-)paren
-op_eq
-id|STAT_IO_BUSY
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* transfer data from register */
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|CTRL_RESET_OFF
@@ -906,7 +936,7 @@ comma
 id|priv-&gt;ctrladdr
 )paren
 suffix:semicolon
-id|writeb
+id|SKMCA_WRITEB
 c_func
 (paren
 id|IOCMD_GO
@@ -920,25 +950,15 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|readb
+id|WaitLANCE
 c_func
 (paren
-id|priv-&gt;ctrladdr
-)paren
-op_amp
-id|STAT_IO_BUSY
-)paren
-op_eq
-id|STAT_IO_BUSY
+id|dev
 )paren
 suffix:semicolon
 id|res
 op_assign
-id|readw
+id|SKMCA_READW
 c_func
 (paren
 id|priv-&gt;ioregaddr
@@ -963,7 +983,7 @@ id|InitDscrs
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -1014,7 +1034,7 @@ id|descr.Status
 op_assign
 l_int|0
 suffix:semicolon
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1039,7 +1059,7 @@ id|LANCE_TxDescr
 )paren
 )paren
 suffix:semicolon
-id|memset_io
+id|SKMCA_SETIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1097,7 +1117,7 @@ id|descr.Len
 op_assign
 l_int|0
 suffix:semicolon
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1122,7 +1142,7 @@ id|LANCE_RxDescr
 )paren
 )paren
 suffix:semicolon
-id|isa_memset_io
+id|SKMCA_SETIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1371,7 +1391,7 @@ id|InitLANCE
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -1452,12 +1472,19 @@ l_int|0xff
 )paren
 suffix:semicolon
 multiline_comment|/* we don&squot;t get ready until the LANCE has read the init block */
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
 id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* let LANCE read the initialization block.  LANCE is ready&n;&t;   when we receive the corresponding interrupt. */
 id|SetLANCE
 c_func
@@ -1480,18 +1507,25 @@ id|StopLANCE
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
 (brace
 multiline_comment|/* can&squot;t take frames any more */
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
 id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* disable interrupts, stop it */
 id|SetLANCE
 c_func
@@ -1512,7 +1546,7 @@ id|InitBoard
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -1587,7 +1621,7 @@ op_lshift
 l_int|29
 )paren
 suffix:semicolon
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -1619,7 +1653,7 @@ id|DeinitBoard
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -1639,8 +1673,130 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* probe for device&squot;s irq */
+DECL|function|ProbeIRQ
+r_static
+r_int
+id|ProbeIRQ
+c_func
+(paren
+r_struct
+id|SKMCA_NETDEV
+op_star
+id|dev
+)paren
+(brace
+r_int
+r_int
+id|imaskval
+comma
+id|njiffies
+comma
+id|irq
+suffix:semicolon
+id|u16
+id|csr0val
+suffix:semicolon
+multiline_comment|/* enable all interrupts */
+id|imaskval
+op_assign
+id|probe_irq_on
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* initialize the board. Wait for interrupt &squot;Initialization done&squot;. */
+id|ResetBoard
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|InitBoard
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|njiffies
+op_assign
+id|jiffies
+op_plus
+l_int|100
+suffix:semicolon
+r_do
+(brace
+id|csr0val
+op_assign
+id|GetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+(paren
+id|csr0val
+op_amp
+id|CSR0_IDON
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|jiffies
+op_ne
+id|njiffies
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* turn of interrupts again */
+id|irq
+op_assign
+id|probe_irq_off
+c_func
+(paren
+id|imaskval
+)paren
+suffix:semicolon
+multiline_comment|/* if we found something, ack the interrupt */
+r_if
+c_cond
+(paren
+id|irq
+)paren
+id|SetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+comma
+id|csr0val
+op_or
+id|CSR0_IDON
+)paren
+suffix:semicolon
+multiline_comment|/* back to idle state */
+id|DeinitBoard
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+id|irq
+suffix:semicolon
+)brace
 multiline_comment|/* ------------------------------------------------------------------------&n; * interrupt handler(s)&n; * ------------------------------------------------------------------------ */
-multiline_comment|/* LANCE has read initializazion block -&gt; start it */
+multiline_comment|/* LANCE has read initialization block -&gt; start it */
 DECL|function|irqstart_handler
 r_static
 id|u16
@@ -1648,7 +1804,7 @@ id|irqstart_handler
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 comma
@@ -1657,12 +1813,19 @@ id|oldcsr0
 )paren
 (brace
 multiline_comment|/* now we&squot;re ready to transmit */
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
 id|netif_wake_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* reset IDON bit, start LANCE */
 id|SetLANCE
 c_func
@@ -1688,6 +1851,59 @@ id|LANCE_CSR0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* did we loose blocks due to a FIFO overrun ? */
+DECL|function|irqmiss_handler
+r_static
+id|u16
+id|irqmiss_handler
+c_func
+(paren
+r_struct
+id|SKMCA_NETDEV
+op_star
+id|dev
+comma
+id|u16
+id|oldcsr0
+)paren
+(brace
+id|skmca_priv
+op_star
+id|priv
+op_assign
+(paren
+id|skmca_priv
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+multiline_comment|/* update statistics */
+id|priv-&gt;stat.rx_fifo_errors
+op_increment
+suffix:semicolon
+multiline_comment|/* reset MISS bit */
+id|SetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+comma
+id|oldcsr0
+op_or
+id|CSR0_MISS
+)paren
+suffix:semicolon
+r_return
+id|GetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* receive interrupt */
 DECL|function|irqrx_handler
 r_static
@@ -1696,7 +1912,7 @@ id|irqrx_handler
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 comma
@@ -1721,17 +1937,6 @@ r_int
 r_int
 id|descraddr
 suffix:semicolon
-multiline_comment|/* did we loose blocks due to a FIFO overrun ? */
-r_if
-c_cond
-(paren
-id|oldcsr0
-op_amp
-id|CSR0_MISS
-)paren
-id|priv-&gt;stat.rx_fifo_errors
-op_increment
-suffix:semicolon
 multiline_comment|/* run through queue until we reach a descriptor we do not own */
 id|descraddr
 op_assign
@@ -1753,7 +1958,7 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* read descriptor */
-id|isa_memcpy_fromio
+id|SKMCA_FROMIO
 c_func
 (paren
 op_amp
@@ -1891,7 +2096,7 @@ op_increment
 suffix:semicolon
 r_else
 (brace
-id|isa_memcpy_fromio
+id|SKMCA_FROMIO
 c_func
 (paren
 id|skb_put
@@ -1954,7 +2159,7 @@ op_or_assign
 id|RXDSCR_FLAGS_OWN
 suffix:semicolon
 multiline_comment|/* update descriptor in shared RAM */
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -2030,7 +2235,7 @@ id|irqtx_handler
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 comma
@@ -2078,7 +2283,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* read descriptor */
-id|isa_memcpy_fromio
+id|SKMCA_FROMIO
 c_func
 (paren
 op_amp
@@ -2274,12 +2479,26 @@ id|LANCE_CSR0
 )paren
 suffix:semicolon
 multiline_comment|/* at least one descriptor is freed.  Therefore we can accept&n;&t;   a new one */
+multiline_comment|/* inform upper layers we&squot;re in business again */
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
 id|netif_wake_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|oldcsr0
 suffix:semicolon
@@ -2305,13 +2524,13 @@ id|regs
 )paren
 (brace
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 )paren
 id|device
@@ -2344,6 +2563,24 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
+macro_line|#if 0
+id|set_bit
+c_func
+(paren
+id|LINK_STATE_RXSEM
+comma
+op_amp
+id|dev-&gt;state
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#else
+id|dev-&gt;interrupt
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* loop through the interrupt bits until everything is clear */
 r_do
 (brace
@@ -2395,6 +2632,27 @@ c_cond
 (paren
 id|csr0val
 op_amp
+id|CSR0_MISS
+)paren
+op_ne
+l_int|0
+)paren
+id|csr0val
+op_assign
+id|irqmiss_handler
+c_func
+(paren
+id|dev
+comma
+id|csr0val
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|csr0val
+op_amp
 id|CSR0_TINT
 )paren
 op_ne
@@ -2410,6 +2668,76 @@ comma
 id|csr0val
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|csr0val
+op_amp
+id|CSR0_MERR
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|SetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+comma
+id|csr0val
+op_or
+id|CSR0_MERR
+)paren
+suffix:semicolon
+id|csr0val
+op_assign
+id|GetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|csr0val
+op_amp
+id|CSR0_BABL
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|SetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+comma
+id|csr0val
+op_or
+id|CSR0_BABL
+)paren
+suffix:semicolon
+id|csr0val
+op_assign
+id|GetLANCE
+c_func
+(paren
+id|dev
+comma
+id|LANCE_CSR0
+)paren
+suffix:semicolon
+)brace
 )brace
 r_while
 c_loop
@@ -2423,6 +2751,24 @@ op_ne
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
+macro_line|#if 0
+id|clear_bit
+c_func
+(paren
+id|LINK_STATE_RXSEM
+comma
+op_amp
+id|dev-&gt;state
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#else
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* ------------------------------------------------------------------------&n; * driver methods&n; * ------------------------------------------------------------------------ */
 multiline_comment|/* MCA info */
@@ -2452,13 +2798,13 @@ comma
 id|i
 suffix:semicolon
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 op_assign
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 )paren
 id|d
@@ -2630,7 +2976,7 @@ id|skmca_open
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -2700,6 +3046,28 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* set up flags */
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#else
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -2716,7 +3084,7 @@ id|skmca_close
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -2769,7 +3137,7 @@ op_star
 id|skb
 comma
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -2802,12 +3170,32 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|netif_stop_queue
+multiline_comment|/* if we get called with a NULL descriptor, the Ethernet layer thinks &n;&t;   our card is stuck an we should reset it.  We&squot;ll do this completely: */
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+id|DeinitBoard
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+id|InitBoard
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* don&squot;t try to free the block here ;-) */
+)brace
 multiline_comment|/* is there space in the Tx queue ? If no, the upper layer gave us a&n;&t;   packet in spite of us not being ready and is really in trouble.&n;&t;   We&squot;ll do the dropping for him: */
 r_if
 c_cond
@@ -2843,7 +3231,7 @@ id|LANCE_TxDescr
 )paren
 )paren
 suffix:semicolon
-id|isa_memcpy_fromio
+id|SKMCA_FROMIO
 c_func
 (paren
 op_amp
@@ -2918,7 +3306,7 @@ OL
 id|tmplen
 )paren
 (brace
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -2939,7 +3327,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* do the real data copying */
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -3006,21 +3394,29 @@ suffix:semicolon
 id|priv-&gt;txbusy
 op_increment
 suffix:semicolon
+multiline_comment|/* are we saturated ? */
 r_if
 c_cond
 (paren
 id|priv-&gt;txbusy
-OL
+op_ge
 id|TXCOUNT
 )paren
-id|netif_wake_queue
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
+id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* write descriptor back to RAM */
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -3065,12 +3461,23 @@ suffix:semicolon
 id|tx_done
 suffix:colon
 multiline_comment|/* When did that change exactly ? */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020200
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|retval
 suffix:semicolon
@@ -3085,7 +3492,7 @@ id|skmca_stats
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -3115,7 +3522,7 @@ id|skmca_config
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 comma
@@ -3137,7 +3544,7 @@ id|skmca_set_multicast_list
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -3153,7 +3560,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* ...then modify the initialization block... */
-id|isa_memcpy_fromio
+id|SKMCA_FROMIO
 c_func
 (paren
 op_amp
@@ -3272,7 +3679,7 @@ l_int|7
 suffix:semicolon
 )brace
 )brace
-id|isa_memcpy_toio
+id|SKMCA_TOIO
 c_func
 (paren
 id|dev-&gt;mem_start
@@ -3297,24 +3704,19 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------&n; * hardware check&n; * ------------------------------------------------------------------------ */
-macro_line|#ifdef MODULE
 DECL|variable|startslot
 r_static
 r_int
 id|startslot
 suffix:semicolon
 multiline_comment|/* counts through slots when probing multiple devices */
-macro_line|#else
-DECL|macro|startslot
-mdefine_line|#define startslot 0&t;&t;/* otherwise a dummy, since there is only eth0 in-kern */
-macro_line|#endif
 DECL|function|skmca_probe
 r_int
 id|skmca_probe
 c_func
 (paren
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 )paren
@@ -3356,6 +3758,7 @@ op_eq
 l_int|0
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* start address of 1 --&gt; forced detection */
@@ -3426,7 +3829,7 @@ op_amp
 id|medium
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020200
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020300
 multiline_comment|/* slot already in use ? */
 r_if
 c_cond
@@ -3682,10 +4085,6 @@ id|base
 op_plus
 l_int|0x3ff3
 suffix:semicolon
-id|priv-&gt;realirq
-op_assign
-id|irq
-suffix:semicolon
 id|priv-&gt;medium
 op_assign
 id|medium
@@ -3721,6 +4120,64 @@ op_assign
 id|base
 op_plus
 l_int|0x4000
+suffix:semicolon
+multiline_comment|/* autoprobe ? */
+r_if
+c_cond
+(paren
+id|irq
+OL
+l_int|0
+)paren
+(brace
+r_int
+id|nirq
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;%s: ambigous POS bit combination, must probe for IRQ...&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|nirq
+op_assign
+id|ProbeIRQ
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nirq
+op_le
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: IRQ probe failed, assuming IRQ %d&quot;
+comma
+id|dev-&gt;name
+comma
+id|priv-&gt;realirq
+op_assign
+op_minus
+id|irq
+)paren
+suffix:semicolon
+r_else
+id|priv-&gt;realirq
+op_assign
+id|nirq
+suffix:semicolon
+)brace
+r_else
+id|priv-&gt;realirq
+op_assign
+id|irq
 suffix:semicolon
 multiline_comment|/* set methods */
 id|dev-&gt;open
@@ -3782,7 +4239,7 @@ id|dev-&gt;dev_addr
 id|i
 )braket
 op_assign
-id|readb
+id|SKMCA_READB
 c_func
 (paren
 id|priv-&gt;macbase
@@ -3862,14 +4319,12 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|startslot
 op_assign
 id|slot
 op_plus
 l_int|1
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3878,10 +4333,11 @@ multiline_comment|/* -----------------------------------------------------------
 macro_line|#ifdef MODULE
 DECL|macro|DEVMAX
 mdefine_line|#define DEVMAX 5
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x020369)
 DECL|variable|moddevs
 r_static
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 id|moddevs
 (braket
 id|DEVMAX
@@ -3889,7 +4345,7 @@ id|DEVMAX
 op_assign
 (brace
 (brace
-l_string|&quot;&quot;
+l_string|&quot;    &quot;
 comma
 l_int|0
 comma
@@ -3915,7 +4371,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-l_string|&quot;&quot;
+l_string|&quot;    &quot;
 comma
 l_int|0
 comma
@@ -3941,7 +4397,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-l_string|&quot;&quot;
+l_string|&quot;    &quot;
 comma
 l_int|0
 comma
@@ -3967,7 +4423,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-l_string|&quot;&quot;
+l_string|&quot;    &quot;
 comma
 l_int|0
 comma
@@ -3993,7 +4449,7 @@ id|skmca_probe
 )brace
 comma
 (brace
-l_string|&quot;&quot;
+l_string|&quot;    &quot;
 comma
 l_int|0
 comma
@@ -4019,6 +4475,169 @@ id|skmca_probe
 )brace
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|variable|NameSpace
+r_static
+r_char
+id|NameSpace
+(braket
+l_int|8
+op_star
+id|DEVMAX
+)braket
+suffix:semicolon
+DECL|variable|moddevs
+r_static
+r_struct
+id|SKMCA_NETDEV
+id|moddevs
+(braket
+id|DEVMAX
+)braket
+op_assign
+(brace
+(brace
+id|NameSpace
+op_plus
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|skmca_probe
+)brace
+comma
+(brace
+id|NameSpace
+op_plus
+l_int|8
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|skmca_probe
+)brace
+comma
+(brace
+id|NameSpace
+op_plus
+l_int|16
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|skmca_probe
+)brace
+comma
+(brace
+id|NameSpace
+op_plus
+l_int|24
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|skmca_probe
+)brace
+comma
+(brace
+id|NameSpace
+op_plus
+l_int|32
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|skmca_probe
+)brace
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|variable|irq
 r_int
 id|irq
@@ -4120,7 +4739,7 @@ r_void
 )paren
 (brace
 r_struct
-id|net_device
+id|SKMCA_NETDEV
 op_star
 id|dev
 suffix:semicolon

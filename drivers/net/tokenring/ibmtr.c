@@ -3000,6 +3000,14 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+multiline_comment|/* init the spinlock */
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|ti-&gt;lock
+)paren
+suffix:semicolon
 id|SET_PAGE
 c_func
 (paren
@@ -3336,14 +3344,6 @@ id|tok_info
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-multiline_comment|/* init the spinlock */
-id|spin_lock_init
-c_func
-(paren
-op_amp
-id|ti-&gt;lock
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8725,7 +8725,7 @@ id|IPv4_p
 )paren
 id|chksum
 op_assign
-id|csum_partial_copy_generic
+id|csum_partial_copy_nocheck
 c_func
 (paren
 id|bus_to_virt
@@ -8746,10 +8746,6 @@ suffix:colon
 id|rbuffer_len
 comma
 id|chksum
-comma
-l_int|NULL
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_else

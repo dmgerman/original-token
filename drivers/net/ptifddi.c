@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptifddi.c,v 1.11 1999/10/25 01:50:16 zaitcev Exp $&n; * ptifddi.c: Network driver for Performance Technologies single-attach&n; *            and dual-attach FDDI sbus cards.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ptifddi.c,v 1.12 2000/06/19 06:24:46 davem Exp $&n; * ptifddi.c: Network driver for Performance Technologies single-attach&n; *            and dual-attach FDDI sbus cards.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -722,6 +722,7 @@ l_string|&quot;ptiFDDI: Cannot map DPRAM I/O area.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -763,6 +764,7 @@ l_string|&quot;ptiFDDI: Cannot map RESET byte.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -804,6 +806,7 @@ l_string|&quot;ptiFDDI: Cannot map UNRESET byte.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -836,6 +839,7 @@ l_string|&quot;ptiFDDI: Bootup card test fails.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -905,6 +909,7 @@ id|called
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1008,6 +1013,7 @@ id|cards
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

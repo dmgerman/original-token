@@ -692,6 +692,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
@@ -802,6 +803,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -882,14 +884,25 @@ id|pdev
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 multiline_comment|/* Avoid already found cards from previous calls */
 r_if
@@ -1276,6 +1289,7 @@ op_eq
 l_int|0xFF
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Do a preliminary verification that we have a 8390. */
@@ -1372,23 +1386,11 @@ l_int|0x0d
 suffix:semicolon
 multiline_comment|/* Restore the old values. */
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;ne.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -1538,6 +1540,7 @@ l_string|&quot; not found (no reset ack).&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2120,6 +2123,7 @@ l_int|15
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 )brace
@@ -2131,6 +2135,7 @@ l_string|&quot; not found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 macro_line|#endif
@@ -2269,6 +2274,7 @@ l_string|&quot; failed to detect IRQ line.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -2343,6 +2349,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -3806,6 +3813,19 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;ne.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3884,11 +3904,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Got at least one. */
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3923,16 +3938,16 @@ id|KERN_NOTICE
 l_string|&quot;ne.c: No PCI cards found. Use &bslash;&quot;io=0xNNN&bslash;&quot; value(s) for ISA cards.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|unload_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4043,7 +4058,7 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

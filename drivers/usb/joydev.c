@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  joydev.c  Version 0.1&n; *&n; *  Copyright (c) 1999 Vojtech Pavlik                                       &n; *  Copyright (c) 1999 Colin Van Dyke &n; *&n; *  Joystick device driver for the input driver suite.&n; *&n; *  Sponsored by SuSE and Intel&n; */
+multiline_comment|/*&n; * $Id: joydev.c,v 1.7 2000/05/29 09:01:52 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *  Copyright (c) 1999 Colin Van Dyke &n; *&n; *  Joystick device driver for the input driver suite.&n; *&n; *  Sponsored by SuSE and Intel&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -36,13 +36,6 @@ suffix:semicolon
 DECL|member|minor
 r_int
 id|minor
-suffix:semicolon
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|32
-)braket
 suffix:semicolon
 DECL|member|handle
 r_struct
@@ -501,14 +494,10 @@ id|list-&gt;startup
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|list-&gt;fasync
-)paren
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|list-&gt;fasync
 comma
 id|SIGIO
@@ -710,8 +699,6 @@ c_func
 id|list
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -766,8 +753,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -789,8 +774,6 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -1528,6 +1511,13 @@ id|joydev
 op_assign
 id|list-&gt;joydev
 suffix:semicolon
+r_struct
+id|input_dev
+op_star
+id|dev
+op_assign
+id|joydev-&gt;handle.dev
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1855,11 +1845,22 @@ l_int|0
 (brace
 r_int
 id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;name
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|len
 op_assign
 id|strlen
 c_func
 (paren
-id|joydev-&gt;name
+id|dev-&gt;name
 )paren
 op_plus
 l_int|1
@@ -1895,7 +1896,7 @@ op_star
 )paren
 id|arg
 comma
-id|joydev-&gt;name
+id|dev-&gt;name
 comma
 id|len
 )paren
@@ -1921,6 +1922,10 @@ id|file_operations
 id|joydev_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|joydev_read
@@ -2131,16 +2136,6 @@ c_func
 (paren
 op_amp
 id|joydev-&gt;wait
-)paren
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|joydev-&gt;name
-comma
-l_string|&quot;joydev%d&quot;
-comma
-id|joydev-&gt;minor
 )paren
 suffix:semicolon
 id|joydev-&gt;minor
@@ -2539,6 +2534,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;js%d: Joystick device for input%d&bslash;n&quot;
 comma
 id|minor

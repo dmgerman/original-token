@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   &t;i2o_lan.h&t;&t;&t;I2O LAN Class definitions&n; *&n; *      I2O LAN CLASS OSM       &t;April 3rd 2000&n; *&n; *      (C) Copyright 1999, 2000&t;University of Helsinki,&n; *&t;&t;&t;&t;&t;Department of Computer Science&n; *&n; *      This code is still under development / test.&n; *&n; *&t;Author:&t;&t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Taneli V&#xfffd;h&#xfffd;kangas &lt;Taneli.Vahakangas@cs.Helsinki.FI&gt;&n; */
+multiline_comment|/*&n; *   &t;i2o_lan.h&t;&t;&t;I2O LAN Class definitions&n; *&n; *      I2O LAN CLASS OSM       &t;May 26th 2000&n; *&n; *      (C) Copyright 1999, 2000&t;University of Helsinki,&n; *&t;&t;&t;&t;&t;Department of Computer Science&n; *&n; *      This code is still under development / test.&n; *&n; *&t;Author:&t;&t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Taneli V&#xfffd;h&#xfffd;kangas &lt;Taneli.Vahakangas@cs.Helsinki.FI&gt;&n; */
 macro_line|#ifndef _I2O_LAN_H
 DECL|macro|_I2O_LAN_H
 mdefine_line|#define _I2O_LAN_H
@@ -14,7 +14,7 @@ mdefine_line|#define I2O_LAN_TX_TIMEOUT &t;(1*HZ)
 DECL|macro|I2O_LAN_TX_BATCH_MODE
 mdefine_line|#define I2O_LAN_TX_BATCH_MODE&t;2&t;/* 2=automatic, 1=on, 0=off */
 DECL|macro|I2O_LAN_EVENT_MASK
-mdefine_line|#define I2O_LAN_EVENT_MASK&t;0;&t;/* 0=None, 0xFFC00002=All */
+mdefine_line|#define I2O_LAN_EVENT_MASK&t;0&t;/* 0=None, 0xFFC00002=All */
 multiline_comment|/* LAN types */
 DECL|macro|I2O_LAN_ETHERNET
 mdefine_line|#define I2O_LAN_ETHERNET&t;0x0030
@@ -136,8 +136,8 @@ DECL|macro|I2O_LAN_DSC_DEST_ADDRESS_OMITTED
 mdefine_line|#define I2O_LAN_DSC_DEST_ADDRESS_OMITTED&t;0x0F
 DECL|macro|I2O_LAN_DSC_PARTIAL_PACKET_RETURNED
 mdefine_line|#define I2O_LAN_DSC_PARTIAL_PACKET_RETURNED&t;0x10
-DECL|macro|I2O_LAN_DSC_TEMP_SUSPENDED_STATE
-mdefine_line|#define I2O_LAN_DSC_TEMP_SUSPENDED_STATE&t;0x11
+DECL|macro|I2O_LAN_DSC_SUSPENDED
+mdefine_line|#define I2O_LAN_DSC_SUSPENDED&t;&t;&t;0x11
 DECL|struct|i2o_packet_info
 r_struct
 id|i2o_packet_info
@@ -292,6 +292,11 @@ DECL|member|tx_lock
 id|spinlock_t
 id|tx_lock
 suffix:semicolon
+DECL|member|max_size_mc_table
+id|u32
+id|max_size_mc_table
+suffix:semicolon
+multiline_comment|/* max number of multicast addresses */
 multiline_comment|/* LAN OSM configurable parameters are here: */
 DECL|member|max_buckets_out
 id|u16

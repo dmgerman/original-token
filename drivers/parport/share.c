@@ -323,6 +323,12 @@ id|parport_driver
 op_star
 id|drv
 suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|driverlist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -354,6 +360,12 @@ id|port
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+(paren
+op_amp
+id|driverlist_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Ask kmod for some lowlevel drivers. */
 DECL|function|get_lowlevel_driver
@@ -407,6 +419,13 @@ op_amp
 id|driverlist_lock
 )paren
 suffix:semicolon
+multiline_comment|/* We have to take the portlist lock for this to be sure&n;&t; * that port is valid for the duration of the callback. */
+id|spin_lock
+(paren
+op_amp
+id|parportlist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -423,6 +442,12 @@ id|port-&gt;next
 id|drv-&gt;attach
 (paren
 id|port
+)paren
+suffix:semicolon
+id|spin_unlock
+(paren
+op_amp
+id|parportlist_lock
 )paren
 suffix:semicolon
 r_if
@@ -508,6 +533,12 @@ id|driverlist_lock
 )paren
 suffix:semicolon
 multiline_comment|/* Call the driver&squot;s detach routine for each&n;&t;&t;&t; * port to clean up any resources that the&n;&t;&t;&t; * attach routine acquired. */
+id|spin_lock
+(paren
+op_amp
+id|parportlist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -524,6 +555,12 @@ id|port-&gt;next
 id|drv-&gt;detach
 (paren
 id|port
+)paren
+suffix:semicolon
+id|spin_unlock
+(paren
+op_amp
+id|parportlist_lock
 )paren
 suffix:semicolon
 r_return
@@ -550,6 +587,7 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Don&squot;t use this: use parport_register_driver instead. */
 r_if
 c_cond
 (paren
@@ -864,6 +902,7 @@ op_amp
 id|parportlist_lock
 )paren
 suffix:semicolon
+multiline_comment|/* We are locked against anyone else performing alterations, but&n;&t; * because of parport_enumerate people can still _read_ the list&n;&t; * while we are changing it; so be careful..&n;&t; *&n;&t; * It&squot;s okay to have portlist_tail a little bit out of sync&n;&t; * since it&squot;s only used for changing the list, not for reading&n;&t; * from it.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1188,6 +1227,7 @@ op_amp
 id|parportlist_lock
 )paren
 suffix:semicolon
+multiline_comment|/* We are protected from other people changing the list, but&n;&t; * they can see see it (using parport_enumerate).  So be&n;&t; * careful about the order of writes.. */
 r_if
 c_cond
 (paren
@@ -1277,6 +1317,7 @@ op_amp
 id|parportlist_lock
 )paren
 suffix:semicolon
+multiline_comment|/* Yes, parport_enumerate _is_ unsafe.  Don&squot;t use it. */
 r_if
 c_cond
 (paren
@@ -1600,6 +1641,12 @@ id|tmp-&gt;next
 op_assign
 id|port-&gt;physport-&gt;devices
 suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure that tmp-&gt;next is written before it&squot;s&n;                  added to the list; see comments marked &squot;no locking&n;                  required&squot; */
 r_if
 c_cond
 (paren
@@ -1879,6 +1926,7 @@ id|free_port
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* Yes, that&squot;s right, someone _could_ still have a pointer to&n;&t; * port, if they used parport_enumerate.  That&squot;s why they&n;&t; * shouldn&squot;t use it (and use parport_register_driver instead)..&n;&t; */
 )brace
 multiline_comment|/**&n; *&t;parport_claim - claim access to a parallel port device&n; *&t;@dev: pointer to structure representing a device on the port&n; *&n; *&t;This function will not block and so can be used from interrupt&n; *&t;context.  If parport_claim() succeeds in claiming access to&n; *&t;the port it returns zero and the port is available to use.  It&n; *&t;may fail (returning non-zero) if the port is in use by another&n; *&t;driver and that driver is not willing to relinquish control of&n; *&t;the port.&n; **/
 DECL|function|parport_claim
@@ -2057,12 +2105,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Take ourselves out of the wait list again.  */
-id|spin_lock_irqsave
+id|spin_lock_irq
 (paren
 op_amp
 id|port-&gt;waitlist_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -2093,12 +2139,10 @@ id|port-&gt;waittail
 op_assign
 id|dev-&gt;waitprev
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 (paren
 op_amp
 id|port-&gt;waitlist_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|dev-&gt;waitprev
@@ -2635,7 +2679,7 @@ id|pd-&gt;name
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Nobody was waiting, so walk the list to see if anyone is&n;&t;   interested in being woken up.  */
+multiline_comment|/* Nobody was waiting, so walk the list to see if anyone is&n;&t;   interested in being woken up. (Note: no locking required) */
 r_for
 c_loop
 (paren

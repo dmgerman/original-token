@@ -608,7 +608,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;8390 reset done (%ld).&quot;
+l_string|&quot;8390 reset done (%ld).&bslash;n&quot;
 comma
 id|jiffies
 )paren
@@ -997,6 +997,7 @@ r_int
 id|output_page
 )paren
 (brace
+macro_line|#if 0
 id|STNIC_WRITE
 (paren
 id|PG0_RBCR0
@@ -1015,6 +1016,51 @@ op_or
 id|CR_STA
 )paren
 suffix:semicolon
+macro_line|#else  /* XXX: I don&squot;t know why but this works.  -- gniibe  */
+id|STNIC_WRITE
+(paren
+id|PG0_RBCR0
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+id|STNIC_WRITE
+(paren
+id|PG0_RBCR1
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+id|STNIC_WRITE
+(paren
+id|PG0_RBCR0
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+id|STNIC_WRITE
+(paren
+id|PG0_RBCR1
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+id|STNIC_WRITE
+(paren
+id|STNIC_CR
+comma
+id|CR_RRD
+op_or
+id|CR_PG0
+op_or
+id|CR_STA
+)paren
+suffix:semicolon
+id|STNIC_DELAY
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|STNIC_WRITE
 (paren
 id|PG0_RSAR0
@@ -1237,4 +1283,5 @@ c_func
 id|stnic_probe
 )paren
 suffix:semicolon
+multiline_comment|/* No cleanup routine - if there were one, it should do a:&n;   unload_8390_module()&n;*/
 eof

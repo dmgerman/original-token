@@ -2178,6 +2178,18 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 macro_line|#if DEBUG_DETECT
 id|printk
 c_func
@@ -2204,12 +2216,13 @@ macro_line|#endif
 multiline_comment|/* We now have the appropriate device function for the FD board so we&n;      just read the PCI config info from the registers.  */
 id|pci_base
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|pci_irq
 op_assign

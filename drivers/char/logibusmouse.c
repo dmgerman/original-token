@@ -280,8 +280,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -325,8 +323,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|MSE_INT_ON
 c_func
 (paren
@@ -346,6 +342,8 @@ op_assign
 id|LOGITECH_BUSMOUSE
 comma
 l_string|&quot;busmouse&quot;
+comma
+id|THIS_MODULE
 comma
 id|open_mouse
 comma

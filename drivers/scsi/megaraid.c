@@ -5439,6 +5439,17 @@ id|pdev
 r_if
 c_cond
 (paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|flag
 op_amp
@@ -5528,12 +5539,12 @@ suffix:semicolon
 multiline_comment|/* Read the base port and IRQ from PCI */
 id|megaBase
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|megaIrq
 op_assign
@@ -5546,11 +5557,6 @@ id|flag
 op_amp
 id|BOARD_QUARTZ
 )paren
-(brace
-id|megaBase
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
 id|megaBase
 op_assign
 (paren
@@ -5563,18 +5569,11 @@ comma
 l_int|128
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
-id|megaBase
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
 id|megaBase
 op_add_assign
 l_int|0x10
 suffix:semicolon
-)brace
 multiline_comment|/* Initialize SCSI Host structure */
 id|host
 op_assign
@@ -5909,7 +5908,7 @@ l_string|&quot;megaraid: with those firmware versions on this specific card.  In
 l_string|&quot;megaraid: to protect your data, please upgrade your firmware to version&bslash;n&quot;
 l_string|&quot;megaraid: 3.10 or later, available from the Dell Technical Support web&bslash;n&quot;
 l_string|&quot;megaraid: site at&bslash;n&quot;
-l_string|&quot;http://support.dell.com/us/en/filelib/download/index.asp?fileid=2489&bslash;n&quot;
+l_string|&quot;http://support.dell.com/us/en/filelib/download/index.asp?fileid=2940&bslash;n&quot;
 )paren
 suffix:semicolon
 id|megaraid_release

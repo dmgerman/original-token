@@ -1815,8 +1815,6 @@ l_int|NULL
 suffix:semicolon
 r_int
 id|irq
-comma
-id|j
 suffix:semicolon
 r_while
 c_loop
@@ -7481,9 +7479,11 @@ r_for
 c_loop
 (paren
 suffix:semicolon
-id|vp-&gt;dirty_rx
-OL
 id|vp-&gt;cur_rx
+op_minus
+id|vp-&gt;dirty_rx
+OG
+l_int|0
 suffix:semicolon
 id|vp-&gt;dirty_rx
 op_increment

@@ -2559,6 +2559,17 @@ id|pdev
 )paren
 r_break
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|b
 op_increment
 suffix:semicolon

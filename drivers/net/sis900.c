@@ -1,4 +1,4 @@
-multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Copyright 1999 Silicon Integrated System Corporation &n;   Revision:&t;1.06.04&t;Feb 11 2000&n;   &n;   Modified from the driver which is originally written by Donald Becker. &n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;&n;   Rev 1.06.04 Feb. 11 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; softnet and init for kernel 2.4&n;   Rev 1.06.03 Dec. 23 1999 Ollie Lho Third release&n;   Rev 1.06.02 Nov. 23 1999 Ollie Lho bug in mac probing fixed &n;   Rev 1.06.01 Nov. 16 1999 Ollie Lho CRC calculation provide by Joseph Zbiciak (im14u2c@primenet.com)&n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx  &n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
+multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Copyright 1999 Silicon Integrated System Corporation &n;   Revision:&t;1.07&t;Mar. 07 2000&n;   &n;   Modified from the driver which is originally written by Donald Becker. &n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;&n;   Rev 1.07 Mar. 07 2000 Ollie Lho bug fix in Rx buffer ring&n;   Rev 1.06.04 Feb. 11 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; softnet and init for kernel 2.4&n;   Rev 1.06.03 Dec. 23 1999 Ollie Lho Third release&n;   Rev 1.06.02 Nov. 23 1999 Ollie Lho bug in mac probing fixed &n;   Rev 1.06.01 Nov. 16 1999 Ollie Lho CRC calculation provide by Joseph Zbiciak (im14u2c@primenet.com)&n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx  &n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -80,8 +80,8 @@ id|SIS_900
 op_assign
 l_int|0
 comma
-DECL|enumerator|SIS_7018
-id|SIS_7018
+DECL|enumerator|SIS_7016
+id|SIS_7016
 )brace
 suffix:semicolon
 DECL|variable|card_names
@@ -98,14 +98,14 @@ comma
 l_string|&quot;SiS 7016 PCI Fast Ethernet&quot;
 )brace
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_device_id
 id|sis900_pci_tbl
 (braket
 )braket
-id|__initdata
+id|__devinitdata
 op_assign
 (brace
 (brace
@@ -137,7 +137,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|SIS_7018
+id|SIS_7016
 )brace
 comma
 (brace
@@ -792,12 +792,13 @@ suffix:semicolon
 )brace
 id|pci_io_base
 op_assign
-id|pci_dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_dev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -863,7 +864,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-l_int|1
+id|ENODEV
 suffix:semicolon
 r_return
 l_int|0
@@ -895,12 +896,13 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|pci_dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_dev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_struct
 id|net_device
@@ -2343,6 +2345,8 @@ id|ioaddr
 op_assign
 id|net_dev-&gt;base_addr
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* Soft reset the chip. */
 id|sis900_reset
 c_func
@@ -2369,13 +2373,13 @@ id|net_dev
 )paren
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|sis900_init_rxfilter
 c_func
 (paren

@@ -584,15 +584,10 @@ id|i2o_config_lock
 suffix:semicolon
 singleline_comment|//&t;&t;printk(KERN_INFO &quot;File %p w/id %d has %d events&bslash;n&quot;,
 singleline_comment|//&t;&t;&t;inf-&gt;fp, inf-&gt;q_id, inf-&gt;q_len);&t;
-r_if
-c_cond
-(paren
-id|inf-&gt;fasync
-)paren
-(brace
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|inf-&gt;fasync
 comma
 id|SIGIO
@@ -600,7 +595,6 @@ comma
 id|POLL_IN
 )paren
 suffix:semicolon
-)brace
 )brace
 r_return
 suffix:semicolon
@@ -4046,8 +4040,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4184,8 +4176,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4279,6 +4269,10 @@ id|file_operations
 id|config_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|cfg_llseek

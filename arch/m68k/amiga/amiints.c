@@ -108,10 +108,10 @@ id|ami_irq_list
 id|AMI_STD_IRQS
 )braket
 suffix:semicolon
-DECL|variable|ami_intena_vals
+DECL|variable|amiga_intena_vals
 r_int
 r_int
-id|ami_intena_vals
+id|amiga_intena_vals
 (braket
 id|AMI_STD_IRQS
 )braket
@@ -894,7 +894,7 @@ id|custom.intena
 op_assign
 id|IF_SETCLR
 op_or
-id|ami_intena_vals
+id|amiga_intena_vals
 (braket
 id|irq
 )braket
@@ -1039,7 +1039,7 @@ id|IRQ_AMIGA_PORTS
 )paren
 id|custom.intena
 op_assign
-id|ami_intena_vals
+id|amiga_intena_vals
 (braket
 id|irq
 )braket
@@ -1114,7 +1114,7 @@ l_int|NULL
 suffix:semicolon
 id|custom.intena
 op_assign
-id|ami_intena_vals
+id|amiga_intena_vals
 (braket
 id|irq
 )braket
@@ -1287,7 +1287,7 @@ id|custom.intena
 op_assign
 id|IF_SETCLR
 op_or
-id|ami_intena_vals
+id|amiga_intena_vals
 (braket
 id|irq
 )braket
@@ -1414,7 +1414,7 @@ suffix:semicolon
 multiline_comment|/* disable the interrupt */
 id|custom.intena
 op_assign
-id|ami_intena_vals
+id|amiga_intena_vals
 (braket
 id|irq
 )braket
@@ -1522,7 +1522,7 @@ l_int|1
 suffix:semicolon
 id|intena
 op_assign
-id|ami_intena_vals
+id|amiga_intena_vals
 (braket
 id|irq
 )braket

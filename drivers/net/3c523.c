@@ -1383,6 +1383,7 @@ l_int|0
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1791,6 +1792,7 @@ id|ELMC_IO_EXTENT
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

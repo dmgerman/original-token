@@ -327,6 +327,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -376,6 +377,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -453,6 +455,7 @@ op_ne
 l_int|0x1d
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Verify by making certain that there is a 8390 at there. */
@@ -493,6 +496,7 @@ op_ne
 l_int|0x23
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Read the station address PROM.  */
@@ -545,19 +549,6 @@ id|E21_ASIC
 )paren
 suffix:semicolon
 multiline_comment|/* and disable the secondary interface. */
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;e2100.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -753,6 +744,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -1010,6 +1002,7 @@ id|dev
 )paren
 (brace
 r_return
+op_minus
 id|EBUSY
 suffix:semicolon
 )brace
@@ -1708,6 +1701,19 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;e2100.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1829,15 +1835,15 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Got at least one. */
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|unload_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -1847,11 +1853,6 @@ id|found
 op_increment
 suffix:semicolon
 )brace
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1930,7 +1931,7 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

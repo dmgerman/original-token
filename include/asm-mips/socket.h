@@ -72,19 +72,25 @@ mdefine_line|#define SO_DETACH_FILTER        27
 macro_line|#ifdef __KERNEL__
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME             28
-multiline_comment|/* Types of sockets.  */
+multiline_comment|/* Nast libc5 fixup - bletch */
+macro_line|#if defined(__KERNEL__)
+multiline_comment|/* Socket types. */
 DECL|macro|SOCK_DGRAM
-mdefine_line|#define SOCK_DGRAM 1&t;&t;/* Connectionless, unreliable datagrams&n;&t;&t;&t;&t;   of fixed maximum length.  */
+mdefine_line|#define SOCK_DGRAM&t;1&t;&t;/* datagram (conn.less) socket&t;*/
 DECL|macro|SOCK_STREAM
-mdefine_line|#define SOCK_STREAM 2&t;&t;/* Sequenced, reliable, connection-based&n;&t;&t;&t;&t;   byte streams.  */
+mdefine_line|#define SOCK_STREAM&t;2&t;&t;/* stream (connection) socket&t;*/
 DECL|macro|SOCK_RAW
-mdefine_line|#define SOCK_RAW 3&t;&t;/* Raw protocol interface.  */
+mdefine_line|#define SOCK_RAW&t;3&t;&t;/* raw socket&t;&t;&t;*/
 DECL|macro|SOCK_RDM
-mdefine_line|#define SOCK_RDM 4&t;&t;/* Reliably-delivered messages.  */
+mdefine_line|#define SOCK_RDM&t;4&t;&t;/* reliably-delivered message&t;*/
 DECL|macro|SOCK_SEQPACKET
-mdefine_line|#define SOCK_SEQPACKET 5&t;/* Sequenced, reliable, connection-based,&n;&t;&t;&t;&t;   datagrams of fixed maximum length.  */
+mdefine_line|#define SOCK_SEQPACKET&t;5&t;&t;/* sequential packet socket&t;*/
 DECL|macro|SOCK_PACKET
-mdefine_line|#define SOCK_PACKET 10&t;&t;/* Linux specific way of getting packets at&n;&t;&t;&t;&t;   the dev level.  For writing rarp and&n;&t;&t;&t;&t;   other similar things on the user level.  */
-macro_line|#endif /* __KERNEL__ */
+mdefine_line|#define SOCK_PACKET&t;10&t;&t;/* linux specific way of&t;*/
+multiline_comment|/* getting packets at the dev&t;*/
+multiline_comment|/* level.  For writing rarp and&t;*/
+multiline_comment|/* other similar things on the&t;*/
+multiline_comment|/* user level.&t;&t;&t;*/
+macro_line|#endif
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

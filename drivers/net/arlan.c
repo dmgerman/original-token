@@ -5618,6 +5618,7 @@ l_string|&quot;arlan: No Arlan devices found &bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -5632,6 +5633,7 @@ l_string|&quot;arlan_probe_everywhere&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -9746,6 +9748,7 @@ id|dev
 )paren
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|arlans_found

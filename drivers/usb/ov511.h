@@ -780,46 +780,31 @@ DECL|member|height
 r_int
 id|height
 suffix:semicolon
-DECL|member|mode
+DECL|member|color
 r_int
-id|mode
+id|color
 suffix:semicolon
+multiline_comment|/* 0=grayscale, 1=color */
 DECL|member|pxcnt
 id|u8
 id|pxcnt
 suffix:semicolon
+multiline_comment|/* pixel counter */
 DECL|member|lncnt
 id|u8
 id|lncnt
 suffix:semicolon
+multiline_comment|/* line counter */
 DECL|member|pxdv
 id|u8
 id|pxdv
 suffix:semicolon
+multiline_comment|/* pixel divisor */
 DECL|member|lndv
 id|u8
 id|lndv
 suffix:semicolon
-DECL|member|s_pxcnt
-id|u8
-id|s_pxcnt
-suffix:semicolon
-DECL|member|s_lncnt
-id|u8
-id|s_lncnt
-suffix:semicolon
-DECL|member|s_pxdv
-id|u8
-id|s_pxdv
-suffix:semicolon
-DECL|member|s_lndv
-id|u8
-id|s_lndv
-suffix:semicolon
-DECL|member|clock
-id|u8
-id|clock
-suffix:semicolon
+multiline_comment|/* line divisor */
 DECL|member|m420
 id|u8
 id|m420

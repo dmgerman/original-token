@@ -572,6 +572,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -636,6 +637,7 @@ l_string|&quot;cs89x0: no cs8900 or cs8920 detected.  Be sure to disable PnP wit
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1219,6 +1221,7 @@ op_ne
 id|ADD_SIG
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|outw

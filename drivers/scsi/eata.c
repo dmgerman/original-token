@@ -1919,22 +1919,21 @@ id|dev
 )paren
 r_break
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_read_config_dword
-c_func
+id|addr
+op_assign
+id|pci_resource_start
 (paren
 id|dev
 comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|addr
+l_int|0
 )paren
-)paren
-r_continue
 suffix:semicolon
+id|pci_enable_device
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* XXX handle error */
 macro_line|#if defined(DEBUG_PCI_DETECT)
 id|printk
 c_func

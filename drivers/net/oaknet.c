@@ -388,32 +388,6 @@ id|ENODEV
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We&squot;re dependent on the 8390 generic driver module, make&n;&t; * sure its symbols are loaded.&n;&t; */
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;oaknet.c&quot;
-)paren
-)paren
-(brace
-id|release_region
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|OAKNET_IO_SIZE
-)paren
-suffix:semicolon
-r_return
-(paren
-op_minus
-id|ENOSYS
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * We&squot;re not using the old-style probing API, so we have to allocate&n;&t; * our own device structure.&n;&t; */
 id|dev
 op_assign
@@ -2009,6 +1983,22 @@ r_void
 r_int
 id|status
 suffix:semicolon
+multiline_comment|/*&n;&t; * We&squot;re dependent on the 8390 generic driver module, make&n;&t; * sure its symbols are loaded.&n;&t; */
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;oaknet.c&quot;
+)paren
+)paren
+r_return
+(paren
+op_minus
+id|ENOSYS
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2032,10 +2022,10 @@ r_if
 c_cond
 (paren
 id|status
-op_eq
+op_ne
 l_int|0
 )paren
-id|lock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren
@@ -2117,7 +2107,7 @@ id|oaknet_devs
 op_assign
 l_int|NULL
 suffix:semicolon
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  1/11/00 - Added spinlocks for smp&n; *  2/23/00 - Updated to dev_kfree_irq &n; *  3/10/00 - Fixed FDX enable which triggered other bugs also &n; *            squashed.&n; *&n; *  To Do:&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
+multiline_comment|/*&n; *   olympic.c (c) 1999 Peter De Schrijver All Rights Reserved&n; *&t;&t;   1999 Mike Phillips (phillim@amtrak.com)&n; *&n; *  Linux driver for IBM PCI tokenring cards based on the Pit/Pit-Phy/Olympic&n; *  chipset. &n; *&n; *  Base Driver Skeleton:&n; *      Written 1993-94 by Donald Becker.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *  Thanks to Erik De Cock, Adrian Bridgett and Frank Fiene for their &n; *  assistance and perserverance with the testing of this driver.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; * &n; *  4/27/99 - Alpha Release 0.1.0&n; *            First release to the public&n; *&n; *  6/8/99  - Official Release 0.2.0   &n; *            Merged into the kernel code &n; *  8/18/99 - Updated driver for 2.3.13 kernel to use new pci&n; *&t;      resource. Driver also reports the card name returned by&n; *            the pci resource.&n; *  1/11/00 - Added spinlocks for smp&n; *  2/23/00 - Updated to dev_kfree_irq &n; *  3/10/00 - Fixed FDX enable which triggered other bugs also &n; *            squashed.&n; *  5/20/00 - Changes to handle Olympic on LinuxPPC. Endian changes.&n; *            The odd thing about the changes is that the fix for&n; *            endian issues with the big-endian data in the arb, asb...&n; *            was to always swab() the bytes, no matter what CPU.&n; *            That&squot;s because the read[wl]() functions always swap the&n; *            bytes on the way in on PPC.&n; *            Fixing the hardware descriptors was another matter,&n; *            because they weren&squot;t going through read[wl](), there all&n; *            the results had to be in memory in le32 values. kdaaker&n; *&n; *&n; *  To Do:&n; *&n; *  If Problems do Occur&n; *  Most problems can be rectified by either closing and opening the interface&n; *  (ifconfig down and up) or rmmod and insmod&squot;ing the driver (a bit difficult&n; *  if compiled into the kernel).&n; */
 multiline_comment|/* Change OLYMPIC_DEBUG to 1 to get verbose, and I mean really verbose, messages */
 DECL|macro|OLYMPIC_DEBUG
 mdefine_line|#define OLYMPIC_DEBUG 0
@@ -469,6 +469,48 @@ id|pci_device
 )paren
 )paren
 (brace
+id|__u16
+id|pci_command
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pci_device
+)paren
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* These lines are needed by the PowerPC, it appears&n;that these flags&n;&t;&t;&t; * are not being set properly for the PPC, this may&n;well be fixed with&n;&t;&t;&t; * the new PCI code */
+id|pci_read_config_word
+c_func
+(paren
+id|pci_device
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|pci_command
+)paren
+suffix:semicolon
+id|pci_command
+op_or_assign
+id|PCI_COMMAND_IO
+op_or
+id|PCI_COMMAND_MEMORY
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|pci_device
+comma
+id|PCI_COMMAND
+comma
+id|pci_command
+)paren
+suffix:semicolon
 id|pci_set_master
 c_func
 (paren
@@ -482,12 +524,13 @@ c_cond
 id|check_region
 c_func
 (paren
-id|pci_device-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_device
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 comma
 id|OLYMPIC_IO_SPACE
 )paren
@@ -581,12 +624,13 @@ id|pci_device-&gt;irq
 suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
-id|pci_device-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_device
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|dev-&gt;init
 op_assign
@@ -611,12 +655,13 @@ op_assign
 id|ioremap
 c_func
 (paren
-id|pci_device-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_device
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 comma
 l_int|256
 )paren
@@ -626,12 +671,13 @@ op_assign
 id|ioremap
 c_func
 (paren
-id|pci_device-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_device
+comma
 l_int|2
-)braket
-dot
-id|start
+)paren
 comma
 l_int|2048
 )paren
@@ -1408,7 +1454,7 @@ suffix:semicolon
 )brace
 id|uaa_addr
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -1523,7 +1569,7 @@ l_int|6
 suffix:semicolon
 id|olympic_priv-&gt;olympic_addr_table_addr
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -1537,7 +1583,7 @@ l_int|12
 suffix:semicolon
 id|olympic_priv-&gt;olympic_parms_addr
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -1898,7 +1944,7 @@ macro_line|#if OLYMPIC_NETWORK_MONITOR
 id|writew
 c_func
 (paren
-id|ntohs
+id|swab16
 c_func
 (paren
 id|OPEN_ADAPTER_ENABLE_FDX
@@ -1919,7 +1965,7 @@ macro_line|#else
 id|writew
 c_func
 (paren
-id|ntohs
+id|swab16
 c_func
 (paren
 id|OPEN_ADAPTER_ENABLE_FDX
@@ -2153,7 +2199,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;%x &quot;
+l_string|&quot;%02x &quot;
 comma
 id|readb
 c_func
@@ -2526,7 +2572,7 @@ id|olympic_priv-&gt;olympic_ring_speed
 suffix:semicolon
 id|olympic_priv-&gt;asb
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -2540,7 +2586,7 @@ l_int|8
 suffix:semicolon
 id|olympic_priv-&gt;srb
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -2554,7 +2600,7 @@ l_int|10
 suffix:semicolon
 id|olympic_priv-&gt;arb
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -2568,7 +2614,7 @@ l_int|12
 suffix:semicolon
 id|olympic_priv-&gt;trb
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -2667,10 +2713,14 @@ id|i
 dot
 id|buffer
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;data
+)paren
 )paren
 suffix:semicolon
 id|olympic_priv-&gt;olympic_rx_ring
@@ -2680,7 +2730,11 @@ id|i
 dot
 id|res_length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|olympic_priv-&gt;pkt_buf_sz
+)paren
 suffix:semicolon
 id|olympic_priv-&gt;rx_ring_skb
 (braket
@@ -3665,6 +3719,9 @@ c_loop
 id|rx_status-&gt;status_buffercnt
 )paren
 (brace
+id|__u32
+id|l_status_buffercnt
+suffix:semicolon
 id|olympic_priv-&gt;rx_status_last_received
 op_increment
 suffix:semicolon
@@ -3696,21 +3753,37 @@ c_func
 (paren
 l_string|&quot;rx status: %x rx len: %x &bslash;n&quot;
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|rx_status-&gt;status_buffercnt
+)paren
 comma
+id|le32_to_cpu
+c_func
+(paren
 id|rx_status-&gt;fragmentcnt_framelen
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
 id|length
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|rx_status-&gt;fragmentcnt_framelen
+)paren
 op_amp
 l_int|0xffff
 suffix:semicolon
 id|buffer_cnt
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|rx_status-&gt;status_buffercnt
+)paren
 op_amp
 l_int|0xffff
 suffix:semicolon
@@ -3721,7 +3794,11 @@ suffix:semicolon
 multiline_comment|/* Need buffer_cnt later for rxenq update */
 id|frag_len
 op_assign
+id|le32_to_cpu
+c_func
+(paren
 id|rx_status-&gt;fragmentcnt_framelen
+)paren
 op_rshift
 l_int|16
 suffix:semicolon
@@ -3739,10 +3816,18 @@ id|buffer_cnt
 )paren
 suffix:semicolon
 macro_line|#endif
+id|l_status_buffercnt
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|rx_status-&gt;status_buffercnt
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|rx_status-&gt;status_buffercnt
+id|l_status_buffercnt
 op_amp
 l_int|0xC0000000
 )paren
@@ -3750,7 +3835,7 @@ l_int|0xC0000000
 r_if
 c_cond
 (paren
-id|rx_status-&gt;status_buffercnt
+id|l_status_buffercnt
 op_amp
 l_int|0x3B000000
 )paren
@@ -3764,7 +3849,7 @@ id|olympic_priv-&gt;olympic_message_level
 r_if
 c_cond
 (paren
-id|rx_status-&gt;status_buffercnt
+id|l_status_buffercnt
 op_amp
 (paren
 l_int|1
@@ -3785,7 +3870,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rx_status-&gt;status_buffercnt
+id|l_status_buffercnt
 op_amp
 (paren
 l_int|1
@@ -3806,7 +3891,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rx_status-&gt;status_buffercnt
+id|l_status_buffercnt
 op_amp
 (paren
 l_int|1
@@ -3827,7 +3912,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rx_status-&gt;status_buffercnt
+id|l_status_buffercnt
 op_amp
 (paren
 l_int|1
@@ -3848,7 +3933,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rx_status-&gt;status_buffercnt
+id|l_status_buffercnt
 op_amp
 (paren
 l_int|1
@@ -4009,10 +4094,14 @@ id|rx_ring_last_received
 dot
 id|buffer
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;data
+)paren
 )paren
 suffix:semicolon
 id|olympic_priv-&gt;olympic_rx_ring
@@ -4022,7 +4111,11 @@ id|rx_ring_last_received
 dot
 id|res_length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|olympic_priv-&gt;pkt_buf_sz
+)paren
 suffix:semicolon
 id|olympic_priv-&gt;rx_ring_skb
 (braket
@@ -4078,7 +4171,11 @@ ques
 c_cond
 id|frag_len
 suffix:colon
+id|le32_to_cpu
+c_func
+(paren
 id|rx_desc-&gt;res_length
+)paren
 )paren
 suffix:semicolon
 id|memcpy
@@ -4095,7 +4192,11 @@ comma
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpu
+c_func
+(paren
 id|rx_desc-&gt;buffer
+)paren
 )paren
 comma
 id|cpy_length
@@ -4781,10 +4882,14 @@ id|olympic_priv-&gt;tx_ring_free
 dot
 id|buffer
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|skb-&gt;data
+)paren
 )paren
 suffix:semicolon
 id|olympic_priv-&gt;olympic_tx_ring
@@ -4794,10 +4899,14 @@ id|olympic_priv-&gt;tx_ring_free
 dot
 id|status_length
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|skb-&gt;len
 op_or
 (paren
 l_int|0x80000000
+)paren
 )paren
 suffix:semicolon
 id|olympic_priv-&gt;tx_ring_skb
@@ -6502,7 +6611,7 @@ suffix:semicolon
 multiline_comment|/* 802.5 Token-Ring Header Length */
 id|frame_len
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -6516,7 +6625,7 @@ l_int|10
 suffix:semicolon
 id|buff_off
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -6658,7 +6767,7 @@ id|frame_data
 suffix:semicolon
 id|buffer_len
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -6979,7 +7088,7 @@ id|ARB_LAN_CHANGE_STATUS
 multiline_comment|/* Lan.change.status */
 id|lan_status
 op_assign
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8623,7 +8732,7 @@ op_plus
 l_int|5
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8641,7 +8750,7 @@ id|acc_priority
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8659,7 +8768,7 @@ id|auth_source_class
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8799,7 +8908,7 @@ op_plus
 l_int|5
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8817,7 +8926,7 @@ id|beacon_type
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8835,7 +8944,7 @@ id|major_vector
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8853,7 +8962,7 @@ id|lan_status
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8871,7 +8980,7 @@ id|local_ring
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8889,7 +8998,7 @@ id|mon_error
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8935,7 +9044,7 @@ l_string|&quot;%6s:                :  %02x  :  %02x  : %02x:%02x:%02x:%02x:%02x:
 comma
 id|dev-&gt;name
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw
@@ -8953,7 +9062,7 @@ id|beacon_transmit
 )paren
 )paren
 comma
-id|ntohs
+id|swab16
 c_func
 (paren
 id|readw

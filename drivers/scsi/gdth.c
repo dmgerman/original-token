@@ -2362,6 +2362,17 @@ l_int|NULL
 r_if
 c_cond
 (paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|cnt
 op_ge
 id|MAXHA

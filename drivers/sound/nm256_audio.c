@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;nm256.h&quot;

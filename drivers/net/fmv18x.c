@@ -351,6 +351,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -408,6 +409,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -651,6 +653,7 @@ id|irq
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  wacom.c  Version 0.5&n; *&n; *  Copyright (c) 2000 Vojtech Pavlik&t;&t;&lt;vojtech@suse.cz&gt;&n; *  Copyright (c) 2000 Andreas Bach Aaen&t;&lt;abach@stofanet.dk&gt;&n; *  Copyright (c) 2000 Clifford Wolf&t;&t;&lt;clifford@clifford.at&gt;&n; *  Copyright (c) 2000 Sam Mosel&t;&t;&lt;sam.mosel@computer.org&gt;&n; *&n; *  USB Wacom Graphire and Wacom Intuos tablet support&n; *&n; *  Sponsored by SuSE&n; *&n; *  ChangeLog:&n; *      v0.1 (vp)  - Initial release&n; *      v0.2 (aba) - Support for all buttons / combinations&n; *      v0.3 (vp)  - Support for Intuos added&n; *&t;v0.4 (sm)  - Support for more Intuos models, menustrip&n; *&t;&t;&t;relative mode, proximity.&n; *&t;v0.5 (vp)  - Big cleanup, nifty features removed,&n; * &t;&t;&t;they belong in userspace&n; */
+multiline_comment|/*&n; * $Id: wacom.c,v 1.9 2000/05/29 09:01:52 vojtech Exp $&n; *&n; *  Copyright (c) 2000 Vojtech Pavlik&t;&t;&lt;vojtech@suse.cz&gt;&n; *  Copyright (c) 2000 Andreas Bach Aaen&t;&lt;abach@stofanet.dk&gt;&n; *  Copyright (c) 2000 Clifford Wolf&t;&t;&lt;clifford@clifford.at&gt;&n; *  Copyright (c) 2000 Sam Mosel&t;&t;&lt;sam.mosel@computer.org&gt;&n; *&n; *  USB Wacom Graphire and Wacom Intuos tablet support&n; *&n; *  Sponsored by SuSE&n; *&n; *  ChangeLog:&n; *      v0.1 (vp)  - Initial release&n; *      v0.2 (aba) - Support for all buttons / combinations&n; *      v0.3 (vp)  - Support for Intuos added&n; *&t;v0.4 (sm)  - Support for more Intuos models, menustrip&n; *&t;&t;&t;relative mode, proximity.&n; *&t;v0.5 (vp)  - Big cleanup, nifty features removed,&n; * &t;&t;&t;they belong in userspace&n; *&t;v1.8 (vp)  - Submit URB only when operating, moved to CVS,&n; *&t;&t;&t;use input_report_key instead of report_btn and&n; *&t;&t;&t;other cleanups&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -119,6 +119,10 @@ suffix:semicolon
 DECL|member|tool
 r_int
 id|tool
+suffix:semicolon
+DECL|member|open
+r_int
+id|open
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -265,7 +269,7 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* Pen */
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -286,7 +290,7 @@ r_case
 l_int|1
 suffix:colon
 multiline_comment|/* Rubber */
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -307,7 +311,7 @@ r_case
 l_int|2
 suffix:colon
 multiline_comment|/* Mouse */
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -322,7 +326,7 @@ OG
 l_int|24
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -337,7 +341,7 @@ op_amp
 l_int|0x01
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -352,7 +356,7 @@ op_amp
 l_int|0x02
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -425,7 +429,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -440,7 +444,7 @@ op_amp
 l_int|0x01
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -455,7 +459,7 @@ op_amp
 l_int|0x02
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -593,6 +597,9 @@ r_break
 suffix:semicolon
 multiline_comment|/* Inking pen */
 r_case
+l_int|0x822
+suffix:colon
+r_case
 l_int|0x022
 suffix:colon
 id|wacom-&gt;tool
@@ -633,6 +640,9 @@ r_break
 suffix:semicolon
 multiline_comment|/* Lens cursor */
 r_case
+l_int|0x82a
+suffix:colon
+r_case
 l_int|0x0fa
 suffix:colon
 id|wacom-&gt;tool
@@ -662,7 +672,7 @@ r_break
 suffix:semicolon
 multiline_comment|/* Unknown tool */
 )brace
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -729,7 +739,7 @@ l_int|0x80
 )paren
 (brace
 multiline_comment|/* Exit report */
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -887,7 +897,7 @@ op_amp
 l_int|0x7f
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -902,7 +912,7 @@ op_amp
 l_int|2
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -917,7 +927,7 @@ op_amp
 l_int|4
 )paren
 suffix:semicolon
-id|input_report_btn
+id|input_report_key
 c_func
 (paren
 id|dev
@@ -941,7 +951,7 @@ id|wacom_features
 op_assign
 (brace
 (brace
-l_string|&quot;Graphire&quot;
+l_string|&quot;Wacom Graphire&quot;
 comma
 l_int|0x10
 comma
@@ -993,7 +1003,7 @@ l_int|0
 )brace
 comma
 (brace
-l_string|&quot;Intuos 4x5&quot;
+l_string|&quot;Wacom Intuos 4x5&quot;
 comma
 l_int|0x20
 comma
@@ -1031,7 +1041,7 @@ id|WACOM_INTUOS_TOOLS
 )brace
 comma
 (brace
-l_string|&quot;Intuos 6x8&quot;
+l_string|&quot;Wacom Intuos 6x8&quot;
 comma
 l_int|0x21
 comma
@@ -1069,7 +1079,7 @@ id|WACOM_INTUOS_TOOLS
 )brace
 comma
 (brace
-l_string|&quot;Intuos 9x12&quot;
+l_string|&quot;Wacom Intuos 9x12&quot;
 comma
 l_int|0x22
 comma
@@ -1107,7 +1117,7 @@ id|WACOM_INTUOS_TOOLS
 )brace
 comma
 (brace
-l_string|&quot;Intuos 12x12&quot;
+l_string|&quot;Wacom Intuos 12x12&quot;
 comma
 l_int|0x23
 comma
@@ -1145,7 +1155,7 @@ id|WACOM_INTUOS_TOOLS
 )brace
 comma
 (brace
-l_string|&quot;Intuos 12x18&quot;
+l_string|&quot;Wacom Intuos 12x18&quot;
 comma
 l_int|0x24
 comma
@@ -1189,6 +1199,90 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
+DECL|function|wacom_open
+r_static
+r_int
+id|wacom_open
+c_func
+(paren
+r_struct
+id|input_dev
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|wacom
+op_star
+id|wacom
+op_assign
+id|dev
+op_member_access_from_pointer
+r_private
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|wacom-&gt;open
+op_increment
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|usb_submit_urb
+c_func
+(paren
+op_amp
+id|wacom-&gt;irq
+)paren
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|wacom_close
+r_static
+r_void
+id|wacom_close
+c_func
+(paren
+r_struct
+id|input_dev
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|wacom
+op_star
+id|wacom
+op_assign
+id|dev
+op_member_access_from_pointer
+r_private
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|wacom-&gt;open
+)paren
+id|usb_unlink_urb
+c_func
+(paren
+op_amp
+id|wacom-&gt;irq
+)paren
+suffix:semicolon
+)brace
 DECL|function|wacom_probe
 r_static
 r_void
@@ -1491,6 +1585,40 @@ id|ABS_TILT_Y
 op_assign
 l_int|127
 suffix:semicolon
+id|wacom-&gt;dev
+dot
+r_private
+op_assign
+id|wacom
+suffix:semicolon
+id|wacom-&gt;dev.open
+op_assign
+id|wacom_open
+suffix:semicolon
+id|wacom-&gt;dev.close
+op_assign
+id|wacom_close
+suffix:semicolon
+id|wacom-&gt;dev.name
+op_assign
+id|wacom-&gt;features-&gt;name
+suffix:semicolon
+id|wacom-&gt;dev.idbus
+op_assign
+id|BUS_USB
+suffix:semicolon
+id|wacom-&gt;dev.idvendor
+op_assign
+id|dev-&gt;descriptor.idVendor
+suffix:semicolon
+id|wacom-&gt;dev.idproduct
+op_assign
+id|dev-&gt;descriptor.idProduct
+suffix:semicolon
+id|wacom-&gt;dev.idversion
+op_assign
+id|dev-&gt;descriptor.bcdDevice
+suffix:semicolon
 id|FILL_INT_URB
 c_func
 (paren
@@ -1518,27 +1646,6 @@ comma
 id|endpoint-&gt;bInterval
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|usb_submit_urb
-c_func
-(paren
-op_amp
-id|wacom-&gt;irq
-)paren
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|wacom
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 id|input_register_device
 c_func
 (paren
@@ -1550,13 +1657,17 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;input%d: Wacom %s on usb%d&bslash;n&quot;
+l_string|&quot;input%d: %s on usb%d:%d.%d&bslash;n&quot;
 comma
 id|wacom-&gt;dev.number
 comma
 id|wacom-&gt;features-&gt;name
 comma
+id|dev-&gt;bus-&gt;busnum
+comma
 id|dev-&gt;devnum
+comma
+id|ifnum
 )paren
 suffix:semicolon
 r_return

@@ -70,7 +70,7 @@ op_assign
 r_new
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Insert a new entry after the specified head..&n; */
+multiline_comment|/**&n; * list_add - add a new entry&n; * @new: new entry to be added&n; * @head: list head to add it after&n; *&n; * Insert a new entry after the specified head.&n; * This is good for implementing stacks.&n; */
 DECL|function|list_add
 r_static
 id|__inline__
@@ -100,7 +100,7 @@ id|head-&gt;next
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Insert a new entry before the specified head..&n; */
+multiline_comment|/**&n; * list_add_tail - add a new entry&n; * @new: new entry to be added&n; * @head: list head to add it before&n; *&n; * Insert a new entry before the specified head.&n; * This is useful for implementing queues.&n; */
 DECL|function|list_add_tail
 r_static
 id|__inline__
@@ -158,6 +158,7 @@ op_assign
 id|next
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * list_del - deletes entry from list.&n; * @entry: the element to delete from the list.&n; */
 DECL|function|list_del
 r_static
 id|__inline__
@@ -180,6 +181,7 @@ id|entry-&gt;next
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * list_empty - tests whether a list is empty&n; * @head: the list to test.&n; */
 DECL|function|list_empty
 r_static
 id|__inline__
@@ -199,7 +201,7 @@ op_eq
 id|head
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Splice in &quot;list&quot; into &quot;head&quot;&n; */
+multiline_comment|/**&n; * list_splice - join two lists&n; * @list: the new list to add.&n; * @head: the place to add it in the first list.&n; */
 DECL|function|list_splice
 r_static
 id|__inline__
@@ -265,8 +267,10 @@ id|last
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; * list_entry - get the struct for this entry&n; * @ptr:&t;the &amp;struct list_head pointer.&n; * @type:&t;the type of the struct this is embedded in.&n; * @member:&t;the name of the list_struct within the struct.&n; */
 DECL|macro|list_entry
 mdefine_line|#define list_entry(ptr, type, member) &bslash;&n;&t;((type *)((char *)(ptr)-(unsigned long)(&amp;((type *)0)-&gt;member)))
+multiline_comment|/**&n; * list_for_each&t;-&t;iterate over a list&n; * @pos:&t;the &amp;struct list_head to use as a loop counter.&n; * @head:&t;the head for your list.&n; */
 DECL|macro|list_for_each
 mdefine_line|#define list_for_each(pos, head) &bslash;&n;&t;for (pos = (head)-&gt;next; pos != (head); pos = pos-&gt;next)
 macro_line|#endif /* __KERNEL__ */

@@ -119,6 +119,24 @@ DECL|macro|MODEM_PARANOIA_CHECK
 mdefine_line|#define MODEM_PARANOIA_CHECK
 DECL|macro|MODEM_DO_RESTART
 mdefine_line|#define MODEM_DO_RESTART
+macro_line|#ifdef CONFIG_DEVFS_FS
+DECL|variable|isdn_ttyname_ttyI
+r_static
+r_char
+op_star
+id|isdn_ttyname_ttyI
+op_assign
+l_string|&quot;isdn/ttyI%d&quot;
+suffix:semicolon
+DECL|variable|isdn_ttyname_cui
+r_static
+r_char
+op_star
+id|isdn_ttyname_cui
+op_assign
+l_string|&quot;isdn/cui%d&quot;
+suffix:semicolon
+macro_line|#else
 DECL|variable|isdn_ttyname_ttyI
 r_static
 r_char
@@ -135,6 +153,7 @@ id|isdn_ttyname_cui
 op_assign
 l_string|&quot;cui&quot;
 suffix:semicolon
+macro_line|#endif
 DECL|variable|bit2si
 r_static
 r_int

@@ -297,6 +297,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -410,6 +411,7 @@ id|dev
 suffix:semicolon
 macro_line|#else
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 macro_line|#endif
@@ -468,6 +470,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -525,6 +528,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -588,6 +592,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -638,6 +643,7 @@ l_int|1
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -743,22 +749,10 @@ l_int|0x406
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;3c503.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -2880,6 +2874,19 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;3c503.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2994,15 +3001,15 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Got at least one. */
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|unload_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -3012,11 +3019,6 @@ id|found
 op_increment
 suffix:semicolon
 )brace
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3095,7 +3097,7 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

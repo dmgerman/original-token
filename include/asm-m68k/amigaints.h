@@ -187,6 +187,13 @@ op_star
 id|server
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|amiga_intena_vals
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/* CIA interrupt control register bits */
 DECL|macro|CIA_ICR_TA
 mdefine_line|#define CIA_ICR_TA&t;0x01

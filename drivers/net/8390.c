@@ -4033,14 +4033,6 @@ c_func
 id|NS8390_init
 )paren
 suffix:semicolon
-DECL|variable|NS8390_module
-r_struct
-id|module
-op_star
-id|NS8390_module
-op_assign
-l_int|NULL
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -4049,11 +4041,6 @@ c_func
 r_void
 )paren
 (brace
-id|NS8390_module
-op_assign
-op_amp
-id|__this_module
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4066,10 +4053,6 @@ c_func
 r_void
 )paren
 (brace
-id|NS8390_module
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

@@ -226,8 +226,8 @@ id|data
 )paren
 suffix:semicolon
 DECL|function|__cpu_raise_softirq
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|__cpu_raise_softirq
 c_func
@@ -255,8 +255,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* I do not want to use atomic variables now, so that cli/sti */
 DECL|function|raise_softirq
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|raise_softirq
 c_func
@@ -408,8 +408,8 @@ DECL|macro|tasklet_unlock
 mdefine_line|#define tasklet_unlock(t) do { } while (0)
 macro_line|#endif
 DECL|function|tasklet_schedule
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tasklet_schedule
 c_func
@@ -487,8 +487,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|tasklet_hi_schedule
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tasklet_hi_schedule
 c_func
@@ -566,8 +566,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|tasklet_disable_nosync
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tasklet_disable_nosync
 c_func
@@ -587,8 +587,8 @@ id|t-&gt;count
 suffix:semicolon
 )brace
 DECL|function|tasklet_disable
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tasklet_disable
 c_func
@@ -613,8 +613,8 @@ id|t
 suffix:semicolon
 )brace
 DECL|function|tasklet_enable
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|tasklet_enable
 c_func
@@ -694,8 +694,8 @@ id|spinlock_t
 id|global_bh_lock
 suffix:semicolon
 DECL|function|mark_bh
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|mark_bh
 c_func

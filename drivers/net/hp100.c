@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** hp100.c &n;** HP CASCADE Architecture Driver for 100VG-AnyLan Network Adapters&n;**&n;** $Id: hp100.c,v 1.57 1998/04/10 16:27:23 perex Exp perex $&n;**&n;** Based on the HP100 driver written by Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** Extended for new busmaster capable chipsets by &n;** Siegfried &quot;Frieder&quot; Loeffler (dg1sek) &lt;floeff@mathematik.uni-stuttgart.de&gt;&n;**&n;** Maintained by: Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** &n;** This driver has only been tested with&n;** -- HP J2585B 10/100 Mbit/s PCI Busmaster&n;** -- HP J2585A 10/100 Mbit/s PCI &n;** -- HP J2970  10 Mbit/s PCI Combo 10base-T/BNC&n;** -- HP J2973  10 Mbit/s PCI 10base-T&n;** -- HP J2573  10/100 ISA&n;** -- Compex ReadyLink ENET100-VG4  10/100 Mbit/s PCI / EISA&n;** -- Compex FreedomLine 100/VG  10/100 Mbit/s ISA / EISA / PCI&n;** &n;** but it should also work with the other CASCADE based adapters.&n;**&n;** TODO:&n;**       -  J2573 seems to hang sometimes when in shared memory mode.&n;**       -  Mode for Priority TX&n;**       -  Check PCI registers, performance might be improved?&n;**       -  To reduce interrupt load in busmaster, one could switch off&n;**          the interrupts that are used to refill the queues whenever the&n;**          queues are filled up to more than a certain threshold.&n;**       -  some updates for EISA version of card&n;**&n;**&n;**   This code is free software; you can redistribute it and/or modify&n;**   it under the terms of the GNU General Public License as published by&n;**   the Free Software Foundation; either version 2 of the License, or&n;**   (at your option) any later version.&n;**&n;**   This code is distributed in the hope that it will be useful,&n;**   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**   GNU General Public License for more details.&n;**&n;**   You should have received a copy of the GNU General Public License&n;**   along with this program; if not, write to the Free Software&n;**   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**&n;** 1.56 -&gt; 1.57&n;**   - updates for new PCI interface for 2.1 kernels&n;**&n;** 1.55 -&gt; 1.56&n;**   - removed printk in misc. interrupt and update statistics to allow&n;**     monitoring of card status&n;**   - timing changes in xmit routines, relogin to 100VG hub added when&n;**     driver does reset&n;**   - included fix for Compex FreedomLine PCI adapter&n;** &n;** 1.54 -&gt; 1.55&n;**   - fixed bad initialization in init_module&n;**   - added Compex FreedomLine adapter&n;**   - some fixes in card initialization&n;**&n;** 1.53 -&gt; 1.54&n;**   - added hardware multicast filter support (doesn&squot;t work)&n;**   - little changes in hp100_sense_lan routine &n;**     - added support for Coax and AUI (J2970)&n;**   - fix for multiple cards and hp100_mode parameter (insmod)&n;**   - fix for shared IRQ &n;**&n;** 1.52 -&gt; 1.53&n;**   - fixed bug in multicast support&n;**&n;*/
+multiline_comment|/*&n;** hp100.c &n;** HP CASCADE Architecture Driver for 100VG-AnyLan Network Adapters&n;**&n;** $Id: hp100.c,v 1.57 1998/04/10 16:27:23 perex Exp perex $&n;**&n;** Based on the HP100 driver written by Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** Extended for new busmaster capable chipsets by &n;** Siegfried &quot;Frieder&quot; Loeffler (dg1sek) &lt;floeff@mathematik.uni-stuttgart.de&gt;&n;**&n;** Maintained by: Jaroslav Kysela &lt;perex@suse.cz&gt;&n;** &n;** This driver has only been tested with&n;** -- HP J2585B 10/100 Mbit/s PCI Busmaster&n;** -- HP J2585A 10/100 Mbit/s PCI &n;** -- HP J2970  10 Mbit/s PCI Combo 10base-T/BNC&n;** -- HP J2973  10 Mbit/s PCI 10base-T&n;** -- HP J2573  10/100 ISA&n;** -- Compex ReadyLink ENET100-VG4  10/100 Mbit/s PCI / EISA&n;** -- Compex FreedomLine 100/VG  10/100 Mbit/s ISA / EISA / PCI&n;** &n;** but it should also work with the other CASCADE based adapters.&n;**&n;** TODO:&n;**       -  J2573 seems to hang sometimes when in shared memory mode.&n;**       -  Mode for Priority TX&n;**       -  Check PCI registers, performance might be improved?&n;**       -  To reduce interrupt load in busmaster, one could switch off&n;**          the interrupts that are used to refill the queues whenever the&n;**          queues are filled up to more than a certain threshold.&n;**       -  some updates for EISA version of card&n;**&n;**&n;**   This code is free software; you can redistribute it and/or modify&n;**   it under the terms of the GNU General Public License as published by&n;**   the Free Software Foundation; either version 2 of the License, or&n;**   (at your option) any later version.&n;**&n;**   This code is distributed in the hope that it will be useful,&n;**   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**   GNU General Public License for more details.&n;**&n;**   You should have received a copy of the GNU General Public License&n;**   along with this program; if not, write to the Free Software&n;**   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**&n;** 1.56 -&gt; 1.57&n;**   - updates for new PCI interface for 2.1 kernels&n;**&n;** 1.55 -&gt; 1.56&n;**   - removed printk in misc. interrupt and update statistics to allow&n;**     monitoring of card status&n;**   - timing changes in xmit routines, relogin to 100VG hub added when&n;**     driver does reset&n;**   - included fix for Compex FreedomLine PCI adapter&n;** &n;** 1.54 -&gt; 1.55&n;**   - fixed bad initialization in init_module&n;**   - added Compex FreedomLine adapter&n;**   - some fixes in card initialization&n;**&n;** 1.53 -&gt; 1.54&n;**   - added hardware multicast filter support (doesn&squot;t work)&n;**   - little changes in hp100_sense_lan routine &n;**     - added support for Coax and AUI (J2970)&n;**   - fix for multiple cards and hp100_mode parameter (insmod)&n;**   - fix for shared IRQ &n;**&n;** 1.52 -&gt; 1.53&n;**   - fixed bug in multicast support&n;**&n;*/
 DECL|macro|HP100_DEFAULT_PRIORITY_TX
 mdefine_line|#define HP100_DEFAULT_PRIORITY_TX 0 
 DECL|macro|HP100_DEBUG
@@ -37,7 +37,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/config.h&gt;  /* for CONFIG_PCI */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|macro|LINUX_2_1
 mdefine_line|#define LINUX_2_1
 DECL|typedef|hp100_stats_t
@@ -48,19 +47,6 @@ id|hp100_stats_t
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#else
-macro_line|#include &lt;linux/bios32.h&gt;
-DECL|macro|ioremap
-mdefine_line|#define ioremap vremap
-DECL|macro|iounmap
-mdefine_line|#define iounmap vfree
-DECL|typedef|hp100_stats_t
-r_typedef
-r_struct
-id|enet_statistics
-id|hp100_stats_t
-suffix:semicolon
-macro_line|#endif
 macro_line|#include &quot;hp100.h&quot;
 multiline_comment|/*&n; *  defines&n; */
 DECL|macro|HP100_BUS_ISA
@@ -189,23 +175,12 @@ DECL|member|bus
 id|u_char
 id|bus
 suffix:semicolon
-macro_line|#ifndef LINUX_2_1
-DECL|member|pci_bus
-id|u_char
-id|pci_bus
-suffix:semicolon
-DECL|member|pci_device_fn
-id|u_char
-id|pci_device_fn
-suffix:semicolon
-macro_line|#else
 DECL|member|pci_dev
 r_struct
 id|pci_dev
 op_star
 id|pci_dev
 suffix:semicolon
-macro_line|#endif
 DECL|member|mem_mapped
 r_int
 id|mem_mapped
@@ -504,7 +479,6 @@ id|hp100_mode
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|MODULE_PARM
 c_func
 (paren
@@ -529,9 +503,7 @@ comma
 l_string|&quot;1i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *  prototypes&n; */
-macro_line|#ifdef LINUX_2_1
 r_static
 r_int
 id|hp100_probe1
@@ -554,31 +526,6 @@ op_star
 id|pci_dev
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|hp100_probe1
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_int
-id|ioaddr
-comma
-id|u_char
-id|bus
-comma
-id|u_char
-id|pci_bus
-comma
-id|u_char
-id|pci_device_fn
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|hp100_open
@@ -1030,7 +977,6 @@ id|base_addr
 OL
 l_int|0x400
 )paren
-macro_line|#ifdef LINUX_2_1
 r_return
 id|hp100_probe1
 c_func
@@ -1044,23 +990,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-id|hp100_probe1
-c_func
-(paren
-id|dev
-comma
-id|base_addr
-comma
-id|HP100_BUS_ISA
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1082,7 +1011,6 @@ l_int|0x3ff
 op_eq
 l_int|0
 )paren
-macro_line|#ifdef LINUX_2_1
 r_return
 id|hp100_probe1
 c_func
@@ -1096,25 +1024,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-id|hp100_probe1
-c_func
-(paren
-id|dev
-comma
-id|base_addr
-comma
-id|HP100_BUS_EISA
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
-macro_line|#ifdef LINUX_2_1
 id|printk
 c_func
 (paren
@@ -1123,31 +1033,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-l_string|&quot;hp100: %s: You may specify card # in i/o address parameter for PCI bus...&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-id|hp100_probe1
-c_func
-(paren
-id|dev
-comma
-id|base_addr
-comma
-id|HP100_BUS_PCI
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#else
 r_return
 op_minus
@@ -1207,7 +1092,6 @@ c_func
 r_int
 id|pci_index
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 r_struct
 id|pci_dev
 op_star
@@ -1221,7 +1105,6 @@ suffix:semicolon
 id|u_short
 id|pci_command
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef HP100_DEBUG_PCI
 id|printk
 c_func
@@ -1232,7 +1115,6 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef LINUX_2_1
 id|pci_index
 op_assign
 l_int|0
@@ -1300,17 +1182,26 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pci_dev
+)paren
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/* found... */
 id|ioaddr
 op_assign
+id|pci_resource_start
+(paren
 id|pci_dev
-op_member_access_from_pointer
-id|resource
-(braket
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1442,244 +1333,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-macro_line|#else /* old PCI interface */
-r_for
-c_loop
-(paren
-id|pci_index
-op_assign
-id|pci_start_index
-op_amp
-l_int|7
-suffix:semicolon
-id|pci_index
-OL
-l_int|8
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-id|u_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-id|u_short
-id|pci_command
-suffix:semicolon
-r_int
-id|pci_id_index
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|pci_id_index
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_id_index
-OL
-id|HP100_PCI_IDS_SIZE
-suffix:semicolon
-id|pci_id_index
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-c_func
-(paren
-id|hp100_pci_ids
-(braket
-id|pci_id_index
-)braket
-dot
-id|vendor
-comma
-id|hp100_pci_ids
-(braket
-id|pci_id_index
-)braket
-dot
-id|device
-comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-op_eq
-l_int|0
-)paren
-r_goto
-id|__pci_found
-suffix:semicolon
-r_break
-suffix:semicolon
-id|__pci_found
-suffix:colon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|ioaddr
-)paren
-suffix:semicolon
-id|ioaddr
-op_and_assign
-op_complement
-l_int|3
-suffix:semicolon
-multiline_comment|/* remove I/O space marker in bit 0. */
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|ioaddr
-comma
-id|HP100_REGION_SIZE
-)paren
-)paren
-r_continue
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|pci_command
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|pci_command
-op_amp
-id|PCI_COMMAND_IO
-)paren
-)paren
-(brace
-macro_line|#ifdef HP100_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;hp100: %s: PCI I/O Bit has not been set. Setting...&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-id|pci_command
-op_or_assign
-id|PCI_COMMAND_IO
-suffix:semicolon
-id|pcibios_write_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_COMMAND
-comma
-id|pci_command
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|pci_command
-op_amp
-id|PCI_COMMAND_MASTER
-)paren
-)paren
-(brace
-macro_line|#ifdef HP100_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;hp100: %s: PCI Master Bit has not been set. Setting...&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-id|pci_command
-op_or_assign
-id|PCI_COMMAND_MASTER
-suffix:semicolon
-id|pcibios_write_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_COMMAND
-comma
-id|pci_command
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifdef HP100_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;hp100: %s: PCI adapter found at 0x%x&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|hp100_probe1
-c_func
-(paren
-id|dev
-comma
-id|ioaddr
-comma
-id|HP100_BUS_PCI
-comma
-id|pci_bus
-comma
-id|pci_device_fn
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -1725,7 +1378,6 @@ id|HP100_REGION_SIZE
 )paren
 r_continue
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 r_if
 c_cond
 (paren
@@ -1746,30 +1398,6 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|hp100_probe1
-c_func
-(paren
-id|dev
-comma
-id|ioaddr
-comma
-id|HP100_BUS_EISA
-comma
-l_int|0
-comma
-l_int|0
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* Third Probe all ISA possible port regions */
 r_for
@@ -1801,7 +1429,6 @@ id|HP100_REGION_SIZE
 )paren
 r_continue
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 r_if
 c_cond
 (paren
@@ -1822,30 +1449,6 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|hp100_probe1
-c_func
-(paren
-id|dev
-comma
-id|ioaddr
-comma
-id|HP100_BUS_ISA
-comma
-l_int|0
-comma
-l_int|0
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 op_minus
@@ -1853,7 +1456,6 @@ id|ENODEV
 suffix:semicolon
 )brace
 "&f;"
-macro_line|#ifdef LINUX_2_1
 DECL|function|hp100_probe1
 r_static
 r_int
@@ -1877,31 +1479,6 @@ id|pci_dev
 op_star
 id|pci_dev
 )paren
-macro_line|#else
-r_static
-r_int
-id|__init
-id|hp100_probe1
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_int
-id|ioaddr
-comma
-id|u_char
-id|bus
-comma
-id|u_char
-id|pci_bus
-comma
-id|u_char
-id|pci_device_fn
-)paren
-macro_line|#endif
 (brace
 r_int
 id|i
@@ -1990,6 +1567,7 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 r_return
+op_minus
 id|EIO
 suffix:semicolon
 )brace
@@ -3113,21 +2691,10 @@ id|lp-&gt;bus
 op_assign
 id|bus
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|lp-&gt;pci_dev
 op_assign
 id|pci_dev
 suffix:semicolon
-macro_line|#else
-id|lp-&gt;pci_bus
-op_assign
-id|pci_bus
-suffix:semicolon
-id|lp-&gt;pci_device_fn
-op_assign
-id|pci_device_fn
-suffix:semicolon
-macro_line|#endif
 id|lp-&gt;priority_tx
 op_assign
 id|hp100_priority_tx
@@ -3240,7 +2807,6 @@ op_amp
 id|hp100_set_multicast_list
 suffix:semicolon
 multiline_comment|/* Ask the card for which IRQ line it is configured */
-macro_line|#ifdef LINUX_2_1
 r_if
 c_cond
 (paren
@@ -3256,7 +2822,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#endif
 id|hp100_page
 c_func
 (paren
@@ -3284,9 +2849,7 @@ id|dev-&gt;irq
 op_assign
 l_int|9
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6422,14 +5985,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-macro_line|#ifndef LINUX_2_1
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -6859,12 +6414,10 @@ multiline_comment|/* Update statistics */
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|lp-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -6994,23 +6547,12 @@ id|donecount
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb_any
 c_func
 (paren
 id|lp-&gt;txrhead-&gt;skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb_any
-c_func
-(paren
-id|lp-&gt;txrhead-&gt;skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
 id|lp-&gt;txrhead-&gt;skb
 op_assign
 (paren
@@ -7098,14 +6640,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-macro_line|#ifndef LINUX_2_1
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -7745,12 +7279,10 @@ multiline_comment|/* send packet */
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|lp-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -7760,23 +7292,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb_any
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb_any
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef HP100_DEBUG_TX
 id|printk
 c_func
@@ -8154,12 +7675,10 @@ suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|lp-&gt;stats.rx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef HP100_DEBUG_RX
 id|printk
 c_func
@@ -8604,12 +8123,10 @@ multiline_comment|/* Up and away... */
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|lp-&gt;stats.rx_bytes
 op_add_assign
 id|ptr-&gt;skb-&gt;len
 suffix:semicolon
-macro_line|#endif
 )brace
 r_switch
 c_cond
@@ -8662,7 +8179,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb_any
 c_func
 (paren
@@ -8670,16 +8186,6 @@ id|ptr-&gt;skb
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-id|dev_kfree_skb_any
-c_func
-(paren
-id|ptr-&gt;skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-macro_line|#endif
 id|lp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
@@ -12580,7 +12086,6 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|MODULE_PARM
 c_func
 (paren
@@ -12589,7 +12094,6 @@ comma
 l_string|&quot;1-5i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Allocate 5 string of length IFNAMSIZ, one string for each device */
 DECL|variable|hp100_name
 r_char
@@ -12613,7 +12117,6 @@ comma
 l_string|&quot;&quot;
 )brace
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 multiline_comment|/* Allow insmod to write those 5 strings individually */
 id|MODULE_PARM
 c_func
@@ -12628,7 +12131,6 @@ id|IFNAMSIZ
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* List of devices */
 DECL|variable|hp100_devlist
 r_static

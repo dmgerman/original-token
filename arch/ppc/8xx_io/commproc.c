@@ -192,12 +192,9 @@ id|PAGE_SIZE
 suffix:semicolon
 id|pte
 op_assign
-id|find_pte
+id|va_to_pte
 c_func
 (paren
-op_amp
-id|init_mm
-comma
 id|host_page_addr
 )paren
 suffix:semicolon
@@ -213,7 +210,7 @@ suffix:semicolon
 id|flush_tlb_page
 c_func
 (paren
-id|current-&gt;mm-&gt;mmap
+id|init_mm.mmap
 comma
 id|host_buffer
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Spanning tree protocol; generic parts&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_stp.c,v 1.3 2000/05/05 02:17:17 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Spanning tree protocol; generic parts&n; *&t;Linux ethernet bridge&n; *&n; *&t;Authors:&n; *&t;Lennert Buytenhek&t;&t;&lt;buytenh@gnu.org&gt;&n; *&n; *&t;$Id: br_stp.c,v 1.4 2000/06/19 10:13:35 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -1121,7 +1121,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: topology change detected, &quot;
+l_string|&quot;%s: topology change detected&quot;
 comma
 id|br-&gt;dev.name
 )paren
@@ -1139,7 +1139,7 @@ id|br
 id|printk
 c_func
 (paren
-l_string|&quot;propagating&bslash;n&quot;
+l_string|&quot;, propagating&quot;
 )paren
 suffix:semicolon
 id|br-&gt;topology_change
@@ -1167,7 +1167,7 @@ id|br-&gt;topology_change_detected
 id|printk
 c_func
 (paren
-l_string|&quot;sending tcn bpdu&bslash;n&quot;
+l_string|&quot;, sending tcn bpdu&quot;
 )paren
 suffix:semicolon
 id|br_transmit_tcn
@@ -1186,6 +1186,12 @@ id|jiffies
 )paren
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 id|br-&gt;topology_change_detected
 op_assign
 l_int|1

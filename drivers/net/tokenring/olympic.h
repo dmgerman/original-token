@@ -307,6 +307,7 @@ mdefine_line|#define OLYMPIC_TX_RING_SIZE 8 /* should be a power of 2 */
 DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ 4096 /* Default packet size */
 multiline_comment|/* Olympic data structures */
+multiline_comment|/* xxxx These structures are all little endian in hardware. */
 DECL|struct|olympic_tx_desc
 r_struct
 id|olympic_tx_desc
@@ -359,6 +360,8 @@ id|status_buffercnt
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* xxxx END These structures are all little endian in hardware. */
+multiline_comment|/* xxxx There may be more, but I&squot;m pretty sure about these */
 DECL|struct|mac_receive_buffer
 r_struct
 id|mac_receive_buffer
@@ -393,18 +396,22 @@ DECL|member|srb
 id|__u16
 id|srb
 suffix:semicolon
+multiline_comment|/* be16 */
 DECL|member|trb
 id|__u16
 id|trb
 suffix:semicolon
+multiline_comment|/* be16 */
 DECL|member|arb
 id|__u16
 id|arb
 suffix:semicolon
+multiline_comment|/* be16 */
 DECL|member|asb
 id|__u16
 id|asb
 suffix:semicolon
+multiline_comment|/* be16 */
 DECL|member|olympic_mmio
 id|__u8
 op_star

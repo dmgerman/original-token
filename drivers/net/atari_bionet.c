@@ -998,6 +998,7 @@ op_logical_or
 id|no_more_found
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|printk
@@ -1074,6 +1075,7 @@ l_string|&quot;No BioNet 100 found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1085,6 +1087,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_if

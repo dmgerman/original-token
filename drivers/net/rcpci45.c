@@ -611,12 +611,12 @@ id|pdev-&gt;irq
 suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 macro_line|#ifdef RCDEBUG
 id|printk
@@ -652,6 +652,17 @@ id|pci_ioaddr
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_break
+suffix:semicolon
 id|pci_set_master
 c_func
 (paren

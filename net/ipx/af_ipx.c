@@ -1944,7 +1944,7 @@ id|skb
 suffix:semicolon
 r_return
 (paren
-l_int|NULL
+id|skb2
 )paren
 suffix:semicolon
 )brace

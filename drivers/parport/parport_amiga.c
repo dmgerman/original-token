@@ -2,6 +2,7 @@ multiline_comment|/* Low-level parallel port routines for the Amiga buildin port
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -818,6 +819,25 @@ id|AMI_PARALLEL
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+c_func
+(paren
+id|CIAA_PHYSADDR
+op_plus
+l_int|0x100
+comma
+l_int|1
+comma
+l_string|&quot;parallel&quot;
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|ciaa.ddrb
 op_assign
 l_int|0xff
@@ -852,9 +872,21 @@ id|pp_amiga_ops
 )paren
 )paren
 )paren
+(brace
+id|release_mem_region
+c_func
+(paren
+id|CIAA_PHYSADDR
+op_plus
+l_int|0x100
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -877,6 +909,16 @@ id|p
 id|parport_unregister_port
 (paren
 id|p
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CIAA_PHYSADDR
+op_plus
+l_int|0x100
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -970,7 +1012,7 @@ id|PARPORT_IRQ_NONE
 id|free_irq
 c_func
 (paren
-id|IRQ_MFP_BUSY
+id|IRQ_AMIGA_CIAA_FLG
 comma
 id|this_port
 )paren
@@ -985,6 +1027,16 @@ id|parport_unregister_port
 c_func
 (paren
 id|this_port
+)paren
+suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|CIAA_PHYSADDR
+op_plus
+l_int|0x100
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace

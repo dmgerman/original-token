@@ -1455,7 +1455,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_X86_FX
+macro_line|#ifdef CONFIG_X86_FXSR
 DECL|function|i387_hard_to_user
 r_int
 id|i387_hard_to_user

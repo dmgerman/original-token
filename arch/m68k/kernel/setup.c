@@ -513,6 +513,13 @@ r_int
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|mach_heartbeat
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mach_heartbeat
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_M68K_L2_CACHE
 DECL|variable|mach_l2_flush

@@ -15,10 +15,12 @@ DECL|macro|DEBUGGING_ON
 mdefine_line|#define DEBUGGING_ON       /* enable command-line debugging bitmask */
 DECL|macro|DEBUG_DEFAULTS
 mdefine_line|#define DEBUG_DEFAULTS 0   /* default bitmask - change from command-line */
+macro_line|#ifdef __i386__
 DECL|macro|FAST_READ_IO
 mdefine_line|#define FAST_READ_IO       /* No problems with these on my machine */
 DECL|macro|FAST_WRITE_IO
 mdefine_line|#define FAST_WRITE_IO
+macro_line|#endif
 macro_line|#ifdef DEBUGGING_ON
 DECL|macro|DB
 mdefine_line|#define DB(f,a) if (hostdata-&gt;args &amp; (f)) a;
@@ -40,11 +42,13 @@ DECL|macro|write1_io
 mdefine_line|#define write1_io(b,a)  (outb((b),hostdata-&gt;io_base+(a)))
 DECL|macro|write2_io
 mdefine_line|#define write2_io(w,a)  (outw((w),hostdata-&gt;io_base+(a)))
+macro_line|#ifdef __i386__
 multiline_comment|/* These inline assembly defines are derived from a patch&n; * sent to me by Bill Earnest. He&squot;s done a lot of very&n; * valuable thinking, testing, and coding during his effort&n; * to squeeze more speed out of this driver. I really think&n; * that we are doing IO at close to the maximum now with&n; * the fifo. (And yes, insw uses &squot;edi&squot; while outsw uses&n; * &squot;esi&squot;. Thanks Bill!)&n; */
 DECL|macro|FAST_READ2_IO
 mdefine_line|#define FAST_READ2_IO()    &bslash;&n;({ &bslash;&n;int __dummy_1,__dummy_2; &bslash;&n;   __asm__ __volatile__ (&quot;&bslash;n &bslash;&n;   cld                    &bslash;n &bslash;&n;   orl %%ecx, %%ecx       &bslash;n &bslash;&n;   jz 1f                  &bslash;n &bslash;&n;   rep                    &bslash;n &bslash;&n;   insw (%%dx),%%es:(%%edi) &bslash;n &bslash;&n;1: &quot;                       &bslash;&n;   : &quot;=D&quot; (sp) ,&quot;=c&quot; (__dummy_1) ,&quot;=d&quot; (__dummy_2)  /* output */   &bslash;&n;   : &quot;2&quot; (f), &quot;0&quot; (sp), &quot;1&quot; (i)  /* input */    &bslash;&n;   );       /* trashed */ &bslash;&n;})
 DECL|macro|FAST_WRITE2_IO
 mdefine_line|#define FAST_WRITE2_IO()   &bslash;&n;({ &bslash;&n;int __dummy_1,__dummy_2; &bslash;&n;   __asm__ __volatile__ (&quot;&bslash;n &bslash;&n;   cld                    &bslash;n &bslash;&n;   orl %%ecx, %%ecx       &bslash;n &bslash;&n;   jz 1f                  &bslash;n &bslash;&n;   rep                    &bslash;n &bslash;&n;   outsw %%ds:(%%esi),(%%dx) &bslash;n &bslash;&n;1: &quot;                       &bslash;&n;   : &quot;=S&quot; (sp) ,&quot;=c&quot; (__dummy_1) ,&quot;=d&quot; (__dummy_2)/* output */   &bslash;&n;   : &quot;2&quot; (f), &quot;0&quot; (sp), &quot;1&quot; (i)  /* input */    &bslash;&n;   );       /* trashed */ &bslash;&n;})
+macro_line|#endif
 multiline_comment|/* IN2000 io_port offsets */
 DECL|macro|IO_WD_ASR
 mdefine_line|#define IO_WD_ASR       0x00     /* R - 3393 auxstat reg */

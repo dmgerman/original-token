@@ -853,6 +853,24 @@ op_star
 id|p
 op_increment
 suffix:semicolon
+multiline_comment|/* there is no phy information, don&squot;t even try to build mtable */
+r_if
+c_cond
+(paren
+id|count
+op_eq
+l_int|0
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;no phy info, aborting mtable build&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|mtable
 op_assign
 (paren

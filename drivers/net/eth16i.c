@@ -915,6 +915,7 @@ l_int|0
 (brace
 multiline_comment|/* Don&squot;t probe at all */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 )brace
@@ -1029,6 +1030,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

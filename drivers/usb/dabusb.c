@@ -2480,7 +2480,11 @@ r_if
 c_cond
 (paren
 id|devnum
-template_param
+OL
+id|DABUSB_MINOR
+op_logical_or
+id|devnum
+op_ge
 (paren
 id|DABUSB_MINOR
 op_plus
@@ -2490,8 +2494,6 @@ id|NRDABUSB
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|s
 op_assign
@@ -2538,8 +2540,6 @@ op_amp
 id|O_NONBLOCK
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -2561,8 +2561,6 @@ id|current
 )paren
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -2595,8 +2593,6 @@ c_func
 (paren
 l_string|&quot;set_interface failed&quot;
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -2711,8 +2707,6 @@ id|wake_up
 op_amp
 id|s-&gt;remove_ok
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|s-&gt;opened
 op_assign
@@ -2975,6 +2969,10 @@ id|file_operations
 id|dabusb_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|dabusb_llseek

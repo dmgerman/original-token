@@ -2403,11 +2403,6 @@ l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;  
-id|usb_dec_dev_use
-(paren
-id|urb-&gt;dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2418,6 +2413,13 @@ id|urb-&gt;pipe
 op_eq
 id|ohci-&gt;rh.devnum
 )paren
+(brace
+id|usb_dec_dev_use
+c_func
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
 r_return
 id|rh_unlink_urb
 (paren
@@ -2425,6 +2427,7 @@ id|urb
 )paren
 suffix:semicolon
 multiline_comment|/* a request to the virtual root hub */
+)brace
 r_if
 c_cond
 (paren
@@ -2492,6 +2495,11 @@ id|USB_ASYNC_UNLINK
 )paren
 )paren
 (brace
+id|usb_dec_dev_use
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
 id|add_wait_queue
 (paren
 op_amp
@@ -2539,14 +2547,22 @@ id|ENOENT
 suffix:semicolon
 )brace
 r_else
+(brace
+multiline_comment|/* usb_dec_dev_use done in dl_del_list() */
 id|urb-&gt;status
 op_assign
 op_minus
 id|EINPROGRESS
 suffix:semicolon
 )brace
+)brace
 r_else
 (brace
+id|usb_dec_dev_use
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
 id|urb_rm_priv
 (paren
 id|urb
@@ -9398,12 +9414,13 @@ id|dev
 suffix:semicolon
 id|mem_base
 op_assign
-id|dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|mem_base
 op_assign

@@ -1586,6 +1586,9 @@ id|thisdev
 op_assign
 id|numdevs
 suffix:semicolon
+r_int
+id|detected
+suffix:semicolon
 r_char
 op_star
 id|deviceid
@@ -1860,6 +1863,12 @@ id|udelay
 l_int|2
 )paren
 suffix:semicolon
+id|detected
+op_assign
+id|numdevs
+op_minus
+id|thisdev
+suffix:semicolon
 id|DPRINTK
 (paren
 id|KERN_DEBUG
@@ -1867,9 +1876,7 @@ l_string|&quot;%s: Found %d daisy-chained devices&bslash;n&quot;
 comma
 id|port-&gt;name
 comma
-id|numdevs
-op_minus
-id|thisdev
+id|detected
 )paren
 suffix:semicolon
 multiline_comment|/* Ask the new devices to introduce themselves. */
@@ -1923,9 +1930,7 @@ id|deviceid
 )paren
 suffix:semicolon
 r_return
-id|numdevs
-op_minus
-id|thisdev
+id|detected
 suffix:semicolon
 )brace
 multiline_comment|/* Find a device with a particular manufacturer and model string,&n;   starting from a given device number.  Like the PCI equivalent,&n;   &squot;from&squot; itself is skipped. */

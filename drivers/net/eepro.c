@@ -1,5 +1,5 @@
 multiline_comment|/* eepro.c: Intel EtherExpress Pro/10 device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;Copyright (C) 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;This software may be used and distributed&n;&t;according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached at bao.ha@srs.gov &n;&t;or 418 Hastings Place, Martinez, GA 30907.&n;&n;&t;Things remaining to do:&n;&t;Better record keeping of errors.&n;&t;Eliminate transmit interrupt to reduce overhead.&n;&t;Implement &quot;concurrent processing&quot;. I won&squot;t be doing it!&n;&n;&t;Bugs:&n;&n;&t;If you have a problem of not detecting the 82595 during a&n;&t;reboot (warm reset), disable the FLASH memory should fix it.&n;&t;This is a compatibility hardware problem.&n;&n;&t;Versions:&n;&t;0.11e   some tweaks about multiple cards support (PdP, jul/aug 1999)&n;&t;0.11d&t;added __initdata, __init stuff; call spin_lock_init&n;&t;        in eepro_probe1. Replaced &quot;eepro&quot; by dev-&gt;name. Augmented &n;&t;&t;the code protected by spin_lock in interrupt routine &n;&t;&t;(PdP, 12/12/1998)&n;&t;0.11c   minor cleanup (PdP, RMC, 09/12/1998)  &n;&t;0.11b   Pascal Dupuis (dupuis@lei.ucl.ac.be): works as a module &n;&t;        under 2.1.xx. Debug messages are flagged as KERN_DEBUG to &n;&t;&t;avoid console flooding. Added locking at critical parts. Now &n;&t;&t;the dawn thing is SMP safe.&n;&t;0.11a   Attempt to get 2.1.xx support up (RMC)&n;&t;0.11&t;Brian Candler added support for multiple cards. Tested as&n;&t;&t;a module, no idea if it works when compiled into kernel.&n;&n;&t;0.10e&t;Rick Bressler notified me that ifconfig up;ifconfig down fails&n;&t;&t;because the irq is lost somewhere. Fixed that by moving &n;&t;&t;request_irq and free_irq to eepro_open and eepro_close respectively.&n;&t;0.10d&t;Ugh! Now Wakeup works. Was seriously broken in my first attempt.&n;&t;&t;I&squot;ll need to find a way to specify an ioport other than&n;&t;&t;the default one in the PnP case. PnP definitively sucks.&n;&t;&t;And, yes, this is not the only reason.&n;&t;0.10c&t;PnP Wakeup Test for 595FX. uncomment #define PnPWakeup;&n;&t;&t;to use.&n;&t;0.10b&t;Should work now with (some) Pro/10+. At least for &n;&t;&t;me (and my two cards) it does. _No_ guarantee for &n;&t;&t;function with non-Pro/10+ cards! (don&squot;t have any)&n;&t;&t;(RMC, 9/11/96)&n;&n;&t;0.10&t;Added support for the Etherexpress Pro/10+.  The&n;&t;&t;IRQ map was changed significantly from the old&n;&t;&t;pro/10.  The new interrupt map was provided by&n;&t;&t;Rainer M. Canavan (Canavan@Zeus.cs.bonn.edu).&n;&t;&t;(BCH, 9/3/96)&n;&n;&t;0.09&t;Fixed a race condition in the transmit algorithm,&n;&t;&t;which causes crashes under heavy load with fast&n;&t;&t;pentium computers.  The performance should also&n;&t;&t;improve a bit.  The size of RX buffer, and hence&n;&t;&t;TX buffer, can also be changed via lilo or insmod.&n;&t;&t;(BCH, 7/31/96)&n;&n;&t;0.08&t;Implement 32-bit I/O for the 82595TX and 82595FX&n;&t;&t;based lan cards.  Disable full-duplex mode if TPE&n;&t;&t;is not used.  (BCH, 4/8/96)&n;&n;&t;0.07a&t;Fix a stat report which counts every packet as a&n;&t;&t;heart-beat failure. (BCH, 6/3/95)&n;&n;&t;0.07&t;Modified to support all other 82595-based lan cards.  &n;&t;&t;The IRQ vector of the EtherExpress Pro will be set&n;&t;&t;according to the value saved in the EEPROM.  For other&n;&t;&t;cards, I will do autoirq_request() to grab the next&n;&t;&t;available interrupt vector. (BCH, 3/17/95)&n;&n;&t;0.06a,b&t;Interim released.  Minor changes in the comments and&n;&t;&t;print out format. (BCH, 3/9/95 and 3/14/95)&n;&n;&t;0.06&t;First stable release that I am comfortable with. (BCH,&n;&t;&t;3/2/95)&t;&n;&n;&t;0.05&t;Complete testing of multicast. (BCH, 2/23/95)&t;&n;&n;&t;0.04&t;Adding multicast support. (BCH, 2/14/95)&t;&n;&n;&t;0.03&t;First widely alpha release for public testing. &n;&t;&t;(BCH, 2/14/95)&t;&n;&n;*/
+multiline_comment|/*&n;&t;Written 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;Copyright (C) 1994, 1995,1996 by Bao C. Ha.&n;&n;&t;This software may be used and distributed&n;&t;according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached at bao.ha@srs.gov &n;&t;or 418 Hastings Place, Martinez, GA 30907.&n;&n;&t;Things remaining to do:&n;&t;Better record keeping of errors.&n;&t;Eliminate transmit interrupt to reduce overhead.&n;&t;Implement &quot;concurrent processing&quot;. I won&squot;t be doing it!&n;&n;&t;Bugs:&n;&n;&t;If you have a problem of not detecting the 82595 during a&n;&t;reboot (warm reset), disable the FLASH memory should fix it.&n;&t;This is a compatibility hardware problem.&n;&n;&t;Versions:&n;&t;0.12a   port of version 0.12a of 2.2.x kernels to 2.3.x&n;&t;&t;(aris (aris@conectiva.com.br), 05/19/2000)&n;&t;0.11e   some tweaks about multiple cards support (PdP, jul/aug 1999)&n;&t;0.11d&t;added __initdata, __init stuff; call spin_lock_init&n;&t;        in eepro_probe1. Replaced &quot;eepro&quot; by dev-&gt;name. Augmented &n;&t;&t;the code protected by spin_lock in interrupt routine &n;&t;&t;(PdP, 12/12/1998)&n;&t;0.11c   minor cleanup (PdP, RMC, 09/12/1998)  &n;&t;0.11b   Pascal Dupuis (dupuis@lei.ucl.ac.be): works as a module &n;&t;        under 2.1.xx. Debug messages are flagged as KERN_DEBUG to &n;&t;&t;avoid console flooding. Added locking at critical parts. Now &n;&t;&t;the dawn thing is SMP safe.&n;&t;0.11a   Attempt to get 2.1.xx support up (RMC)&n;&t;0.11&t;Brian Candler added support for multiple cards. Tested as&n;&t;&t;a module, no idea if it works when compiled into kernel.&n;&n;&t;0.10e&t;Rick Bressler notified me that ifconfig up;ifconfig down fails&n;&t;&t;because the irq is lost somewhere. Fixed that by moving &n;&t;&t;request_irq and free_irq to eepro_open and eepro_close respectively.&n;&t;0.10d&t;Ugh! Now Wakeup works. Was seriously broken in my first attempt.&n;&t;&t;I&squot;ll need to find a way to specify an ioport other than&n;&t;&t;the default one in the PnP case. PnP definitively sucks.&n;&t;&t;And, yes, this is not the only reason.&n;&t;0.10c&t;PnP Wakeup Test for 595FX. uncomment #define PnPWakeup;&n;&t;&t;to use.&n;&t;0.10b&t;Should work now with (some) Pro/10+. At least for &n;&t;&t;me (and my two cards) it does. _No_ guarantee for &n;&t;&t;function with non-Pro/10+ cards! (don&squot;t have any)&n;&t;&t;(RMC, 9/11/96)&n;&n;&t;0.10&t;Added support for the Etherexpress Pro/10+.  The&n;&t;&t;IRQ map was changed significantly from the old&n;&t;&t;pro/10.  The new interrupt map was provided by&n;&t;&t;Rainer M. Canavan (Canavan@Zeus.cs.bonn.edu).&n;&t;&t;(BCH, 9/3/96)&n;&n;&t;0.09&t;Fixed a race condition in the transmit algorithm,&n;&t;&t;which causes crashes under heavy load with fast&n;&t;&t;pentium computers.  The performance should also&n;&t;&t;improve a bit.  The size of RX buffer, and hence&n;&t;&t;TX buffer, can also be changed via lilo or insmod.&n;&t;&t;(BCH, 7/31/96)&n;&n;&t;0.08&t;Implement 32-bit I/O for the 82595TX and 82595FX&n;&t;&t;based lan cards.  Disable full-duplex mode if TPE&n;&t;&t;is not used.  (BCH, 4/8/96)&n;&n;&t;0.07a&t;Fix a stat report which counts every packet as a&n;&t;&t;heart-beat failure. (BCH, 6/3/95)&n;&n;&t;0.07&t;Modified to support all other 82595-based lan cards.  &n;&t;&t;The IRQ vector of the EtherExpress Pro will be set&n;&t;&t;according to the value saved in the EEPROM.  For other&n;&t;&t;cards, I will do autoirq_request() to grab the next&n;&t;&t;available interrupt vector. (BCH, 3/17/95)&n;&n;&t;0.06a,b&t;Interim released.  Minor changes in the comments and&n;&t;&t;print out format. (BCH, 3/9/95 and 3/14/95)&n;&n;&t;0.06&t;First stable release that I am comfortable with. (BCH,&n;&t;&t;3/2/95)&t;&n;&n;&t;0.05&t;Complete testing of multicast. (BCH, 2/23/95)&t;&n;&n;&t;0.04&t;Adding multicast support. (BCH, 2/14/95)&t;&n;&n;&t;0.03&t;First widely alpha release for public testing. &n;&t;&t;(BCH, 2/14/95)&t;&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eepro.c: v0.11d 08/12/1998 dupuis@lei.ucl.ac.be&bslash;n&quot;
+l_string|&quot;eepro.c: v0.12a 04/26/2000 aris@conectiva.com.br&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n;  Sources:&n;&n;&t;This driver wouldn&squot;t have been written without the availability &n;&t;of the Crynwr&squot;s Lan595 driver source code.  It helps me to &n;&t;familiarize with the 82595 chipset while waiting for the Intel &n;&t;documentation.  I also learned how to detect the 82595 using &n;&t;the packet driver&squot;s technique.&n;&n;&t;This driver is written by cutting and pasting the skeleton.c driver&n;&t;provided by Donald Becker.  I also borrowed the EEPROM routine from&n;&t;Donald Becker&squot;s 82586 driver.&n;&n;&t;Datasheet for the Intel 82595 (including the TX and FX version). It &n;&t;provides just enough info that the casual reader might think that it &n;&t;documents the i82595.&n;&n;&t;The User Manual for the 82595.  It provides a lot of the missing&n;&t;information.&n;&n;*/
@@ -99,6 +99,8 @@ DECL|macro|LAN595TX
 mdefine_line|#define&t;LAN595TX&t;1
 DECL|macro|LAN595FX
 mdefine_line|#define&t;LAN595FX&t;2
+DECL|macro|LAN595FX_10ISA
+mdefine_line|#define&t;LAN595FX_10ISA&t;3
 multiline_comment|/* Information that need to be kept for each board. */
 DECL|struct|eepro_local
 r_struct
@@ -432,6 +434,11 @@ id|ioaddr
 comma
 r_int
 id|location
+comma
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 suffix:semicolon
 r_static
@@ -464,30 +471,48 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;Details of the i82595.&n;&n;You will need either the datasheet or the user manual to understand what&n;is going on here.  The 82595 is very different from the 82586, 82593.&n;&n;The receive algorithm in eepro_rx() is just an implementation of the&n;RCV ring structure that the Intel 82595 imposes at the hardware level.&n;The receive buffer is set at 24K, and the transmit buffer is 8K.  I&n;am assuming that the total buffer memory is 32K, which is true for the&n;Intel EtherExpress Pro/10.  If it is less than that on a generic card,&n;the driver will be broken.&n;&n;The transmit algorithm in the hardware_send_packet() is similar to the&n;one in the eepro_rx().  The transmit buffer is a ring linked list.&n;I just queue the next available packet to the end of the list.  In my&n;system, the 82595 is so fast that the list seems to always contain a&n;single packet.  In other systems with faster computers and more congested&n;network traffics, the ring linked list should improve performance by&n;allowing up to 8K worth of packets to be queued.&n;&n;The sizes of the receive and transmit buffers can now be changed via lilo &n;or insmod.  Lilo uses the appended line &quot;ether=io,irq,debug,rx-buffer,eth0&quot;&n;where rx-buffer is in KB unit.  Modules uses the parameter mem which is&n;also in KB unit, for example &quot;insmod io=io-address irq=0 mem=rx-buffer.&quot;  &n;The receive buffer has to be more than 3K or less than 29K.  Otherwise,&n;it is reset to the default of 24K, and, hence, 8K for the trasnmit&n;buffer (transmit-buffer = 32K - receive-buffer).&n;&n;*/
+multiline_comment|/* now this section could be used by both boards: the oldies and the ee10:&n; * ee10 uses tx buffer before of rx buffer and the oldies the inverse.&n; * (aris)&n; */
 DECL|macro|RAM_SIZE
-mdefine_line|#define&t;RAM_SIZE&t;0x8000
+mdefine_line|#define RAM_SIZE        0x8000
 DECL|macro|RCV_HEADER
-mdefine_line|#define&t;RCV_HEADER&t;8
+mdefine_line|#define RCV_HEADER      8
+DECL|macro|RCV_DEFAULT_RAM
+mdefine_line|#define RCV_DEFAULT_RAM 0x6000
 DECL|macro|RCV_RAM
-mdefine_line|#define RCV_RAM &t;0x6000  /* 24KB default for RCV buffer */
-DECL|macro|RCV_LOWER_LIMIT
-mdefine_line|#define RCV_LOWER_LIMIT 0x00    /* 0x0000 */
-multiline_comment|/* #define RCV_UPPER_LIMIT ((RCV_RAM - 2) &gt;&gt; 8) */
-multiline_comment|/* 0x5ffe */
-DECL|macro|RCV_UPPER_LIMIT
-mdefine_line|#define RCV_UPPER_LIMIT (((rcv_ram) - 2) &gt;&gt; 8)   
-multiline_comment|/* #define XMT_RAM         (RAM_SIZE - RCV_RAM) */
-multiline_comment|/* 8KB for XMT buffer */
-DECL|macro|XMT_RAM
-mdefine_line|#define XMT_RAM         (RAM_SIZE - (rcv_ram))    /* 8KB for XMT buffer */
-multiline_comment|/* #define XMT_LOWER_LIMIT (RCV_RAM &gt;&gt; 8) */
-multiline_comment|/* 0x6000 */
-DECL|macro|XMT_LOWER_LIMIT
-mdefine_line|#define XMT_LOWER_LIMIT ((rcv_ram) &gt;&gt; 8) 
-DECL|macro|XMT_UPPER_LIMIT
-mdefine_line|#define XMT_UPPER_LIMIT ((RAM_SIZE - 2) &gt;&gt; 8)   /* 0x7ffe */
+mdefine_line|#define RCV_RAM         rcv_ram
+DECL|variable|rcv_ram
+r_static
+r_int
+id|rcv_ram
+op_assign
+id|RCV_DEFAULT_RAM
+suffix:semicolon
 DECL|macro|XMT_HEADER
-mdefine_line|#define&t;XMT_HEADER&t;8
+mdefine_line|#define XMT_HEADER      8
+DECL|macro|XMT_RAM
+mdefine_line|#define XMT_RAM         (RAM_SIZE - RCV_RAM)
+DECL|macro|XMT_START
+mdefine_line|#define XMT_START       ((rcv_start + RCV_RAM) % RAM_SIZE)
+DECL|macro|RCV_LOWER_LIMIT
+mdefine_line|#define RCV_LOWER_LIMIT (rcv_start &gt;&gt; 8)
+DECL|macro|RCV_UPPER_LIMIT
+mdefine_line|#define RCV_UPPER_LIMIT (((rcv_start + RCV_RAM) - 2) &gt;&gt; 8)
+DECL|macro|XMT_LOWER_LIMIT
+mdefine_line|#define XMT_LOWER_LIMIT (XMT_START &gt;&gt; 8)
+DECL|macro|XMT_UPPER_LIMIT
+mdefine_line|#define XMT_UPPER_LIMIT (((XMT_START + XMT_RAM) - 2) &gt;&gt; 8)
+DECL|macro|RCV_START_PRO
+mdefine_line|#define RCV_START_PRO   0x00
+DECL|macro|RCV_START_10
+mdefine_line|#define RCV_START_10    XMT_RAM
+multiline_comment|/* by default the old driver */
+DECL|variable|rcv_start
+r_static
+r_int
+id|rcv_start
+op_assign
+id|RCV_START_PRO
+suffix:semicolon
 DECL|macro|RCV_DONE
 mdefine_line|#define&t;RCV_DONE&t;0x0008
 DECL|macro|RX_OK
@@ -569,8 +594,17 @@ DECL|macro|RCV_BAR
 mdefine_line|#define&t;RCV_BAR&t;&t;0x04&t;/* The following are word (16-bit) registers */
 DECL|macro|RCV_STOP
 mdefine_line|#define&t;RCV_STOP&t;0x06
-DECL|macro|XMT_BAR
-mdefine_line|#define&t;XMT_BAR&t;&t;0x0a
+DECL|macro|XMT_BAR_PRO
+mdefine_line|#define&t;XMT_BAR_PRO&t;0x0a
+DECL|macro|XMT_BAR_10
+mdefine_line|#define&t;XMT_BAR_10&t;0x0b
+DECL|variable|xmt_bar
+r_static
+r_int
+id|xmt_bar
+op_assign
+id|XMT_BAR_PRO
+suffix:semicolon
 DECL|macro|HOST_ADDRESS_REG
 mdefine_line|#define&t;HOST_ADDRESS_REG&t;0x0c
 DECL|macro|IO_PORT
@@ -590,10 +624,28 @@ DECL|macro|RCV_LOWER_LIMIT_REG
 mdefine_line|#define&t;RCV_LOWER_LIMIT_REG&t;0x08
 DECL|macro|RCV_UPPER_LIMIT_REG
 mdefine_line|#define&t;RCV_UPPER_LIMIT_REG&t;0x09
-DECL|macro|XMT_LOWER_LIMIT_REG
-mdefine_line|#define&t;XMT_LOWER_LIMIT_REG&t;0x0a
-DECL|macro|XMT_UPPER_LIMIT_REG
-mdefine_line|#define&t;XMT_UPPER_LIMIT_REG&t;0x0b
+DECL|macro|XMT_LOWER_LIMIT_REG_PRO
+mdefine_line|#define&t;XMT_LOWER_LIMIT_REG_PRO 0x0a
+DECL|macro|XMT_UPPER_LIMIT_REG_PRO
+mdefine_line|#define&t;XMT_UPPER_LIMIT_REG_PRO 0x0b
+DECL|macro|XMT_LOWER_LIMIT_REG_10
+mdefine_line|#define&t;XMT_LOWER_LIMIT_REG_10  0x0b
+DECL|macro|XMT_UPPER_LIMIT_REG_10
+mdefine_line|#define&t;XMT_UPPER_LIMIT_REG_10  0x0a
+DECL|variable|xmt_lower_limit_reg
+r_static
+r_int
+id|xmt_lower_limit_reg
+op_assign
+id|XMT_LOWER_LIMIT_REG_PRO
+suffix:semicolon
+DECL|variable|xmt_upper_limit_reg
+r_static
+r_int
+id|xmt_upper_limit_reg
+op_assign
+id|XMT_UPPER_LIMIT_REG_PRO
+suffix:semicolon
 multiline_comment|/* Bank 2 registers */
 DECL|macro|XMT_Chain_Int
 mdefine_line|#define&t;XMT_Chain_Int&t;0x20&t;/* Interrupt at the end of the transmit chain */
@@ -631,8 +683,17 @@ DECL|macro|I_ADD_REG4
 mdefine_line|#define&t;I_ADD_REG4&t;0x08
 DECL|macro|I_ADD_REG5
 mdefine_line|#define&t;I_ADD_REG5&t;0x09
-DECL|macro|EEPROM_REG
-mdefine_line|#define EEPROM_REG 0x0a
+DECL|macro|EEPROM_REG_PRO
+mdefine_line|#define&t;EEPROM_REG_PRO 0x0a
+DECL|macro|EEPROM_REG_10
+mdefine_line|#define&t;EEPROM_REG_10  0x0b
+DECL|variable|eeprom_reg
+r_static
+r_int
+id|eeprom_reg
+op_assign
+id|EEPROM_REG_PRO
+suffix:semicolon
 DECL|macro|EESK
 mdefine_line|#define EESK 0x01
 DECL|macro|EECS
@@ -641,6 +702,55 @@ DECL|macro|EEDI
 mdefine_line|#define EEDI 0x04
 DECL|macro|EEDO
 mdefine_line|#define EEDO 0x08
+multiline_comment|/* do a full reset */
+DECL|macro|eepro_reset
+mdefine_line|#define eepro_reset(ioaddr) outb(RESET_CMD, ioaddr)
+multiline_comment|/* do a nice reset */
+DECL|macro|eepro_sel_reset
+mdefine_line|#define eepro_sel_reset(ioaddr) &t;{ &bslash;&n;&t;&t;&t;&t;&t;outb(SEL_RESET_CMD, ioaddr); &bslash;&n;&t;&t;&t;&t;&t;SLOW_DOWN; &bslash;&n;&t;&t;&t;&t;&t;SLOW_DOWN; &bslash;&n;&t;&t;&t;&t;&t;}
+multiline_comment|/* disable all interrupts */
+DECL|macro|eepro_dis_int
+mdefine_line|#define eepro_dis_int(ioaddr) outb(ALL_MASK, ioaddr + INT_MASK_REG)
+multiline_comment|/* clear all interrupts */
+DECL|macro|eepro_clear_int
+mdefine_line|#define eepro_clear_int(ioaddr) outb(ALL_MASK, ioaddr + STATUS_REG)
+multiline_comment|/* enable tx/rx */
+DECL|macro|eepro_en_int
+mdefine_line|#define eepro_en_int(ioaddr) outb(ALL_MASK &amp; ~(RX_MASK | TX_MASK), &bslash;&n;&t;&t;&t;&t;&t;&t;&t;ioaddr + INT_MASK_REG)
+multiline_comment|/* enable exec event interrupt */
+DECL|macro|eepro_en_intexec
+mdefine_line|#define eepro_en_intexec(ioaddr) outb(ALL_MASK &amp; ~(EXEC_MASK), ioaddr + INT_MASK_REG)
+multiline_comment|/* enable rx */
+DECL|macro|eepro_en_rx
+mdefine_line|#define eepro_en_rx(ioaddr) outb(RCV_ENABLE_CMD, ioaddr)
+multiline_comment|/* disable rx */
+DECL|macro|eepro_dis_rx
+mdefine_line|#define eepro_dis_rx(ioaddr) outb(RCV_DISABLE_CMD, ioaddr)
+multiline_comment|/* switch bank */
+DECL|macro|eepro_sw2bank0
+mdefine_line|#define eepro_sw2bank0(ioaddr) outb(BANK0_SELECT, ioaddr)
+DECL|macro|eepro_sw2bank1
+mdefine_line|#define eepro_sw2bank1(ioaddr) outb(BANK1_SELECT, ioaddr)
+DECL|macro|eepro_sw2bank2
+mdefine_line|#define eepro_sw2bank2(ioaddr) outb(BANK2_SELECT, ioaddr)
+multiline_comment|/* enable interrupt line */
+DECL|macro|eepro_en_intline
+mdefine_line|#define eepro_en_intline(ioaddr) outb(inb(ioaddr + REG1) | INT_ENABLE,&bslash;&n;&t;&t;&t;&t;ioaddr + REG1)
+multiline_comment|/* disable interrupt line */
+DECL|macro|eepro_dis_intline
+mdefine_line|#define eepro_dis_intline(ioaddr) outb(inb(ioaddr + REG1) &amp; 0x7f, &bslash;&n;&t;&t;&t;&t;ioaddr + REG1);
+multiline_comment|/* set diagnose flag */
+DECL|macro|eepro_diag
+mdefine_line|#define eepro_diag(ioaddr) outb(DIAGNOSE_CMD, ioaddr)
+multiline_comment|/* ack for rx/tx int */
+DECL|macro|eepro_ack_rxtx
+mdefine_line|#define eepro_ack_rxtx(ioaddr) outb (RX_INT | TX_INT, ioaddr + STATUS_REG)
+multiline_comment|/* ack for rx int */
+DECL|macro|eepro_ack_rx
+mdefine_line|#define eepro_ack_rx(ioaddr) outb (RX_INT, ioaddr + STATUS_REG)
+multiline_comment|/* ack for tx int */
+DECL|macro|eepro_ack_tx
+mdefine_line|#define eepro_ack_tx(ioaddr) outb (TX_INT, ioaddr + STATUS_REG)
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
 macro_line|#ifdef HAVE_DEVLIST
 multiline_comment|/* Support for an alternate probe manager, which will eliminate the&n;   boilerplate below. */
@@ -831,6 +941,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -888,6 +999,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -899,6 +1011,11 @@ c_func
 (paren
 r_int
 id|ioaddr
+comma
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 (brace
 r_int
@@ -936,6 +1053,8 @@ c_func
 id|ioaddr
 comma
 id|i
+comma
+id|dev
 )paren
 suffix:semicolon
 id|printk
@@ -956,6 +1075,8 @@ c_func
 id|ioaddr
 comma
 l_int|0
+comma
+id|dev
 )paren
 suffix:semicolon
 id|printk
@@ -1047,6 +1168,8 @@ c_func
 id|ioaddr
 comma
 l_int|1
+comma
+id|dev
 )paren
 suffix:semicolon
 id|printk
@@ -1167,6 +1290,8 @@ c_func
 id|ioaddr
 comma
 l_int|5
+comma
+id|dev
 )paren
 suffix:semicolon
 id|printk
@@ -1278,6 +1403,8 @@ c_func
 id|ioaddr
 comma
 l_int|6
+comma
+id|dev
 )paren
 suffix:semicolon
 id|printk
@@ -1317,6 +1444,8 @@ c_func
 id|ioaddr
 comma
 l_int|7
+comma
+id|dev
 )paren
 suffix:semicolon
 id|printk
@@ -1421,6 +1550,13 @@ id|irqMask
 suffix:semicolon
 r_int
 id|eepro
+op_assign
+l_int|0
+suffix:semicolon
+r_struct
+id|eepro_local
+op_star
+id|lp
 suffix:semicolon
 r_const
 r_char
@@ -1462,23 +1598,6 @@ c_func
 id|ioaddr
 op_plus
 id|ID_REG
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot; id: %#x &quot;
-comma
-id|id
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; io: %#x &quot;
-comma
-id|ioaddr
 )paren
 suffix:semicolon
 r_if
@@ -1531,6 +1650,72 @@ l_int|0x40
 )paren
 (brace
 multiline_comment|/* Yes, the 82595 has been found */
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot; id: %#x &quot;
+comma
+id|id
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; io: %#x &quot;
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* Initialize the device structure */
+id|dev-&gt;priv
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|eepro_local
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|dev-&gt;priv
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|eepro_local
+)paren
+)paren
+suffix:semicolon
+id|lp
+op_assign
+(paren
+r_struct
+id|eepro_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 multiline_comment|/* Now, get the ethernet hardware address from&n;&t;&t;&t;   the EEPROM */
 id|station_addr
 (braket
@@ -1543,8 +1728,69 @@ c_func
 id|ioaddr
 comma
 l_int|2
+comma
+id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME - find another way to know that we&squot;ve found&n;&t;&t;&t; * an Etherexpress 10&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|station_addr
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0x0000
+op_logical_or
+id|station_addr
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0xffff
+)paren
+(brace
+id|eepro
+op_assign
+l_int|3
+suffix:semicolon
+id|lp-&gt;eepro
+op_assign
+id|LAN595FX_10ISA
+suffix:semicolon
+id|eeprom_reg
+op_assign
+id|EEPROM_REG_10
+suffix:semicolon
+id|rcv_start
+op_assign
+id|RCV_START_10
+suffix:semicolon
+id|xmt_lower_limit_reg
+op_assign
+id|XMT_LOWER_LIMIT_REG_10
+suffix:semicolon
+id|xmt_upper_limit_reg
+op_assign
+id|XMT_UPPER_LIMIT_REG_10
+suffix:semicolon
+id|station_addr
+(braket
+l_int|0
+)braket
+op_assign
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|2
+comma
+id|dev
+)paren
+suffix:semicolon
+)brace
 id|station_addr
 (braket
 l_int|1
@@ -1556,6 +1802,8 @@ c_func
 id|ioaddr
 comma
 l_int|3
+comma
+id|dev
 )paren
 suffix:semicolon
 id|station_addr
@@ -1569,22 +1817,28 @@ c_func
 id|ioaddr
 comma
 l_int|4
+comma
+id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Check the station address for the manufacturer&squot;s code */
 r_if
 c_cond
 (paren
-id|net_debug
-OG
-l_int|3
+id|eepro
 )paren
-id|printEEPROMInfo
+(brace
+id|printk
 c_func
 (paren
+l_string|&quot;%s: Intel EtherExpress 10 ISA&bslash;n at %#x,&quot;
+comma
+id|dev-&gt;name
+comma
 id|ioaddr
 )paren
 suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -1594,6 +1848,8 @@ c_func
 id|ioaddr
 comma
 l_int|7
+comma
+id|dev
 )paren
 op_eq
 id|ee_FX_INT2IRQ
@@ -1717,6 +1973,14 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|dev-&gt;mem_start
+op_assign
+(paren
+id|RCV_LOWER_LIMIT
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1731,18 +1995,40 @@ l_int|29
 multiline_comment|/* and less than 29K */
 id|dev-&gt;mem_end
 op_assign
-id|RCV_RAM
+(paren
+id|RCV_UPPER_LIMIT
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
-multiline_comment|/* or it will be set to 24K */
 r_else
+(brace
 id|dev-&gt;mem_end
 op_assign
-l_int|1024
-op_star
+(paren
 id|dev-&gt;mem_end
+op_star
+l_int|1024
+)paren
+op_plus
+(paren
+id|RCV_LOWER_LIMIT
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
-multiline_comment|/* Maybe I should shift &lt;&lt; 10 */
-multiline_comment|/* From now on, dev-&gt;mem_end contains the actual size of rx buffer */
+id|rcv_ram
+op_assign
+id|dev-&gt;mem_end
+op_minus
+(paren
+id|RCV_LOWER_LIMIT
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* From now on, dev-&gt;mem_end - dev-&gt;mem_start contains &n;&t;&t;&t; * the actual size of rx buffer &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1778,6 +2064,8 @@ c_func
 id|ioaddr
 comma
 l_int|5
+comma
+id|dev
 )paren
 comma
 id|ee_BNC_TPE
@@ -1817,6 +2105,8 @@ c_func
 id|ioaddr
 comma
 l_int|1
+comma
+id|dev
 )paren
 suffix:semicolon
 id|irqMask
@@ -1827,6 +2117,8 @@ c_func
 id|ioaddr
 comma
 l_int|7
+comma
+id|dev
 )paren
 suffix:semicolon
 id|i
@@ -1900,9 +2192,7 @@ multiline_comment|/* count bits set in irqMask */
 r_if
 c_cond
 (paren
-id|dev
-op_member_access_from_pointer
-id|irq
+id|dev-&gt;irq
 OL
 l_int|2
 )paren
@@ -1914,21 +2204,10 @@ l_string|&quot; Duh! illegal interrupt vector stored in EEPROM.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|dev-&gt;irq
-op_eq
-l_int|2
-)paren
-id|dev-&gt;irq
-op_assign
-l_int|9
-suffix:semicolon
 r_else
 r_if
 c_cond
@@ -2011,6 +2290,8 @@ c_func
 id|ioaddr
 comma
 l_int|5
+comma
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -2051,46 +2332,6 @@ comma
 id|EEPRO_IO_EXTENT
 comma
 id|dev-&gt;name
-)paren
-suffix:semicolon
-multiline_comment|/* Initialize the device structure */
-id|dev-&gt;priv
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|eepro_local
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;priv
-op_eq
-l_int|NULL
-)paren
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|dev-&gt;priv
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|eepro_local
-)paren
 )paren
 suffix:semicolon
 (paren
@@ -2142,21 +2383,36 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|outb
+multiline_comment|/* Check the station address for the manufacturer&squot;s code */
+r_if
+c_cond
+(paren
+id|net_debug
+OG
+l_int|3
+)paren
+id|printEEPROMInfo
 c_func
 (paren
-id|RESET_CMD
-comma
 id|ioaddr
+comma
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* RESET the 82595 */
+id|eepro_reset
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 r_else
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2174,6 +2430,7 @@ l_string|&quot;EtherExpress Pro probed failed!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2326,81 +2583,46 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|outb
+id|eepro_sw2bank1
 c_func
 (paren
-id|BANK1_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* be CAREFUL, BANK 1 now */
 multiline_comment|/* Enable the interrupt line. */
-id|temp_reg
-op_assign
-id|inb
+id|eepro_en_intline
 c_func
 (paren
-id|ioaddr
-op_plus
-id|REG1
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|temp_reg
-op_or
-id|INT_ENABLE
-comma
-id|ioaddr
-op_plus
-id|REG1
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* be CAREFUL, BANK 0 now */
-multiline_comment|/* clear all interrupts */
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|STATUS_REG
+)paren
+suffix:semicolon
+multiline_comment|/* clear all interrupts */
+id|eepro_clear_int
+c_func
+(paren
+id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* Let EXEC event to interrupt */
-id|outb
+id|eepro_en_intexec
 c_func
 (paren
-id|ALL_MASK
-op_amp
-op_complement
-(paren
-id|EXEC_MASK
-)paren
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
 r_do
 (brace
-id|outb
+id|eepro_sw2bank1
 c_func
 (paren
-id|BANK1_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -2435,11 +2657,9 @@ op_plus
 id|INT_NO_REG
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -2471,11 +2691,9 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|outb
+id|eepro_diag
 c_func
 (paren
-id|DIAGNOSE_CMD
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -2496,14 +2714,10 @@ multiline_comment|/* It&squot;s a good IRQ line */
 r_break
 suffix:semicolon
 multiline_comment|/* clear all interrupts */
-id|outb
+id|eepro_clear_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|STATUS_REG
 )paren
 suffix:semicolon
 )brace
@@ -2516,67 +2730,39 @@ op_increment
 id|irqp
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank1
 c_func
 (paren
-id|BANK1_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* Switch back to Bank 1 */
 multiline_comment|/* Disable the physical interrupt line. */
-id|temp_reg
-op_assign
-id|inb
+id|eepro_dis_intline
 c_func
 (paren
 id|ioaddr
-op_plus
-id|REG1
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|temp_reg
-op_amp
-l_int|0x7f
-comma
-id|ioaddr
-op_plus
-id|REG1
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* Switch back to Bank 0 */
 multiline_comment|/* Mask all the interrupts. */
-id|outb
+id|eepro_dis_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
 multiline_comment|/* clear all interrupts */
-id|outb
+id|eepro_clear_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|STATUS_REG
 )paren
 suffix:semicolon
 r_return
@@ -2612,10 +2798,6 @@ comma
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-comma
-id|rcv_ram
-op_assign
-id|dev-&gt;mem_end
 suffix:semicolon
 r_struct
 id|eepro_local
@@ -2645,10 +2827,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|irqMask
 op_assign
 id|read_eeprom
@@ -2657,8 +2835,38 @@ c_func
 id|ioaddr
 comma
 l_int|7
+comma
+id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;eepro
+op_eq
+id|LAN595FX_10ISA
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|net_debug
+OG
+l_int|3
+)paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;p-&gt;eepro = 3;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|irqMask
 op_eq
 id|ee_FX_INT2IRQ
 )paren
@@ -2848,11 +3056,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Initialize the 82595. */
-id|outb
+id|eepro_sw2bank2
 c_func
 (paren
-id|BANK2_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -2864,7 +3070,7 @@ c_func
 (paren
 id|ioaddr
 op_plus
-id|EEPROM_REG
+id|eeprom_reg
 )paren
 suffix:semicolon
 id|lp-&gt;stepping
@@ -2907,7 +3113,7 @@ l_int|0xef
 comma
 id|ioaddr
 op_plus
-id|EEPROM_REG
+id|eeprom_reg
 )paren
 suffix:semicolon
 r_for
@@ -3014,11 +3220,9 @@ id|REG3
 suffix:semicolon
 multiline_comment|/* clear test mode */
 multiline_comment|/* Set the receiving mode */
-id|outb
+id|eepro_sw2bank1
 c_func
 (paren
-id|BANK1_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -3040,6 +3244,10 @@ c_cond
 id|lp-&gt;eepro
 op_eq
 l_int|2
+op_logical_or
+id|lp-&gt;eepro
+op_eq
+id|LAN595FX_10ISA
 )paren
 id|outb
 c_func
@@ -3096,6 +3304,10 @@ c_cond
 id|lp-&gt;eepro
 op_eq
 l_int|2
+op_logical_or
+id|lp-&gt;eepro
+op_eq
+id|LAN595FX_10ISA
 )paren
 id|outb
 c_func
@@ -3182,7 +3394,7 @@ id|XMT_LOWER_LIMIT
 comma
 id|ioaddr
 op_plus
-id|XMT_LOWER_LIMIT_REG
+id|xmt_lower_limit_reg
 )paren
 suffix:semicolon
 id|outb
@@ -3192,68 +3404,35 @@ id|XMT_UPPER_LIMIT
 comma
 id|ioaddr
 op_plus
-id|XMT_UPPER_LIMIT_REG
+id|xmt_upper_limit_reg
 )paren
 suffix:semicolon
 multiline_comment|/* Enable the interrupt line. */
-id|temp_reg
-op_assign
-id|inb
+id|eepro_en_intline
 c_func
 (paren
-id|ioaddr
-op_plus
-id|REG1
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|temp_reg
-op_or
-id|INT_ENABLE
-comma
-id|ioaddr
-op_plus
-id|REG1
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* Switch back to Bank 0 */
-multiline_comment|/* Let RX and TX events to interrupt */
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|ALL_MASK
-op_amp
-op_complement
-(paren
-id|RX_MASK
-op_or
-id|TX_MASK
-)paren
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
+)paren
+suffix:semicolon
+multiline_comment|/* Let RX and TX events to interrupt */
+id|eepro_en_int
+c_func
+(paren
+id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* clear all interrupts */
-id|outb
+id|eepro_clear_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|STATUS_REG
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize RCV */
@@ -3303,7 +3482,7 @@ l_int|8
 comma
 id|ioaddr
 op_plus
-id|XMT_BAR
+id|xmt_bar
 )paren
 suffix:semicolon
 multiline_comment|/* Check for the i82595TX and i82595FX */
@@ -3464,11 +3643,9 @@ id|TPE
 )paren
 (brace
 multiline_comment|/* Hopefully, this will fix the&n;&t;&t;&t;&t;&t;&t;&t;problem of using Pentiums and&n;&t;&t;&t;&t;&t;&t;&t;pro/10 w/ BNC. */
-id|outb
+id|eepro_sw2bank2
 c_func
 (paren
-id|BANK2_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -3499,11 +3676,9 @@ comma
 id|REG13
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -3546,18 +3721,11 @@ l_string|&quot;i82595TX detected!&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-id|outb
+id|eepro_sel_reset
 c_func
 (paren
-id|SEL_RESET_CMD
-comma
 id|ioaddr
 )paren
-suffix:semicolon
-multiline_comment|/* We are supposed to wait for 2 us after a SEL_RESET */
-id|SLOW_DOWN
-suffix:semicolon
-id|SLOW_DOWN
 suffix:semicolon
 id|lp-&gt;tx_start
 op_assign
@@ -3567,7 +3735,6 @@ id|XMT_LOWER_LIMIT
 op_lshift
 l_int|8
 suffix:semicolon
-multiline_comment|/* or = RCV_RAM */
 id|lp-&gt;tx_last
 op_assign
 l_int|0
@@ -3594,11 +3761,10 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|outb
+multiline_comment|/* enabling rx */
+id|eepro_en_rx
 c_func
 (paren
-id|RCV_ENABLE_CMD
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -3636,11 +3802,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-id|rcv_ram
-op_assign
-id|dev-&gt;mem_end
-suffix:semicolon
 multiline_comment|/* if (net_debug &gt; 1) */
 id|printk
 (paren
@@ -3667,24 +3828,18 @@ id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* Try to restart the adaptor. */
-id|outb
+id|eepro_sel_reset
+c_func
 (paren
-id|SEL_RESET_CMD
-comma
 id|ioaddr
 )paren
-suffix:semicolon
-multiline_comment|/* We are supposed to wait for 2 us after a SEL_RESET */
-id|SLOW_DOWN
-suffix:semicolon
-id|SLOW_DOWN
 suffix:semicolon
 multiline_comment|/* Do I also need to flush the transmit buffers here? YES? */
 id|lp-&gt;tx_start
 op_assign
 id|lp-&gt;tx_end
 op_assign
-id|rcv_ram
+id|XMT_LOWER_LIMIT
 suffix:semicolon
 id|lp-&gt;tx_last
 op_assign
@@ -3699,10 +3854,17 @@ id|netif_wake_queue
 id|dev
 )paren
 suffix:semicolon
-id|outb
+multiline_comment|/* enabling interrupts */
+id|eepro_en_int
+c_func
 (paren
-id|RCV_ENABLE_CMD
-comma
+id|ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* enabling rx */
+id|eepro_en_rx
+c_func
+(paren
 id|ioaddr
 )paren
 suffix:semicolon
@@ -3945,8 +4107,11 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_do
-(brace
+r_while
+c_loop
+(paren
+(paren
+(paren
 id|status
 op_assign
 id|inb
@@ -3956,7 +4121,67 @@ id|ioaddr
 op_plus
 id|STATUS_REG
 )paren
+)paren
+op_amp
+l_int|0x06
+)paren
+op_logical_and
+(paren
+id|boguscount
+op_decrement
+)paren
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|RX_INT
+op_or
+id|TX_INT
+)paren
+)paren
+(brace
+r_case
+(paren
+id|RX_INT
+op_or
+id|TX_INT
+)paren
+suffix:colon
+id|eepro_ack_rxtx
+c_func
+(paren
+id|ioaddr
+)paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|RX_INT
+suffix:colon
+id|eepro_ack_rx
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|TX_INT
+suffix:colon
+id|eepro_ack_tx
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3981,17 +4206,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* Acknowledge the RX_INT */
-id|outb
-c_func
-(paren
-id|RX_INT
-comma
-id|ioaddr
-op_plus
-id|STATUS_REG
-)paren
-suffix:semicolon
 multiline_comment|/* Get the received packets */
 id|eepro_rx
 c_func
@@ -4000,7 +4214,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
@@ -4025,17 +4238,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* Acknowledge the TX_INT */
-id|outb
-c_func
-(paren
-id|TX_INT
-comma
-id|ioaddr
-op_plus
-id|STATUS_REG
-)paren
-suffix:semicolon
 multiline_comment|/* Process the status of transmitted packets */
 id|eepro_transmit_interrupt
 c_func
@@ -4045,23 +4247,6 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-r_while
-c_loop
-(paren
-(paren
-id|boguscount
-op_decrement
-OG
-l_int|0
-)paren
-op_logical_and
-(paren
-id|status
-op_amp
-l_int|0x06
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4118,11 +4303,6 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_int
-id|rcv_ram
-op_assign
-id|dev-&gt;mem_end
-suffix:semicolon
-r_int
 id|temp_reg
 suffix:semicolon
 id|netif_stop_queue
@@ -4131,11 +4311,9 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank1
 c_func
 (paren
-id|BANK1_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4163,11 +4341,9 @@ op_plus
 id|REG1
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4185,40 +4361,34 @@ id|lp-&gt;tx_start
 op_assign
 id|lp-&gt;tx_end
 op_assign
-id|rcv_ram
+(paren
+id|XMT_LOWER_LIMIT
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
 id|lp-&gt;tx_last
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Mask all the interrupts. */
-id|outb
+id|eepro_dis_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
 multiline_comment|/* clear all interrupts */
-id|outb
+id|eepro_clear_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|STATUS_REG
 )paren
 suffix:semicolon
 multiline_comment|/* Reset the 82595 */
-id|outb
+id|eepro_reset
 c_func
 (paren
-id|RESET_CMD
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4241,12 +4411,6 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Update the statistics here. What statistics? */
-multiline_comment|/* We are supposed to wait for 200 us after a RESET */
-id|SLOW_DOWN
-suffix:semicolon
-id|SLOW_DOWN
-suffix:semicolon
-multiline_comment|/* May not be enough? */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -4347,11 +4511,9 @@ id|dev-&gt;flags
 op_or_assign
 id|IFF_PROMISC
 suffix:semicolon
-id|outb
+id|eepro_sw2bank2
 c_func
 (paren
-id|BANK2_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4399,11 +4561,9 @@ id|REG3
 )paren
 suffix:semicolon
 multiline_comment|/* writing reg. 3 to complete the update */
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4426,11 +4586,9 @@ op_eq
 l_int|0
 )paren
 (brace
-id|outb
+id|eepro_sw2bank2
 c_func
 (paren
-id|BANK2_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4479,11 +4637,9 @@ id|REG3
 )paren
 suffix:semicolon
 multiline_comment|/* writing reg. 3 to complete the update */
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4506,21 +4662,15 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Disable RX and TX interrupts.  Necessary to avoid&n;&t;&t;   corruption of the HOST_ADDRESS_REG by interrupt&n;&t;&t;   service routines. */
-id|outb
+id|eepro_dis_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank2
 c_func
 (paren
-id|BANK2_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4568,11 +4718,9 @@ id|REG3
 )paren
 suffix:semicolon
 multiline_comment|/* writing reg. 3 to complete the update */
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -4753,7 +4901,7 @@ id|lp-&gt;tx_end
 comma
 id|ioaddr
 op_plus
-id|XMT_BAR
+id|xmt_bar
 )paren
 suffix:semicolon
 id|outb
@@ -4966,29 +5114,16 @@ l_int|100
 )paren
 suffix:semicolon
 multiline_comment|/* Re-enable RX and TX interrupts */
-id|outb
+id|eepro_en_int
 c_func
 (paren
-id|ALL_MASK
-op_amp
-op_complement
-(paren
-id|RX_MASK
-op_or
-id|TX_MASK
-)paren
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
 )brace
-id|outb
+id|eepro_en_rx
 c_func
 (paren
-id|RCV_ENABLE_CMD
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -5010,6 +5145,11 @@ id|ioaddr
 comma
 r_int
 id|location
+comma
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 (brace
 r_int
@@ -5026,7 +5166,19 @@ id|ee_addr
 op_assign
 id|ioaddr
 op_plus
-id|EEPROM_REG
+id|eeprom_reg
+suffix:semicolon
+r_struct
+id|eepro_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|eepro_local
+op_star
+)paren
+id|dev-&gt;priv
 suffix:semicolon
 r_int
 id|read_cmd
@@ -5040,11 +5192,35 @@ id|ctrl_val
 op_assign
 id|EECS
 suffix:semicolon
+multiline_comment|/* XXXX - this is not the final version. We must test this on other&n;&t; *&t;  boards other than eepro10. I think that it won&squot;t let other&n;&t; *&t;  boards to fail. (aris)&n;&t; */
+r_if
+c_cond
+(paren
+id|lp-&gt;eepro
+op_eq
+id|LAN595FX_10ISA
+)paren
+(brace
+id|eepro_sw2bank1
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
-id|BANK2_SELECT
+l_int|0x00
 comma
+id|ioaddr
+op_plus
+id|STATUS_REG
+)paren
+suffix:semicolon
+)brace
+id|eepro_sw2bank2
+c_func
+(paren
 id|ioaddr
 )paren
 suffix:semicolon
@@ -5242,11 +5418,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|eepro_sw2bank0
 c_func
 (paren
-id|BANK0_SELECT
-comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -5291,11 +5465,6 @@ op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
 r_int
-id|rcv_ram
-op_assign
-id|dev-&gt;mem_end
-suffix:semicolon
-r_int
 id|status
 comma
 id|tx_available
@@ -5334,14 +5503,10 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Disable RX and TX interrupts.  Necessary to avoid&n;&t;&t;corruption of the HOST_ADDRESS_REG by interrupt&n;&t;&t;service routines. */
-id|outb
+id|eepro_dis_int
 c_func
 (paren
-id|ALL_MASK
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
 multiline_comment|/* determine how much of the transmit buffer space is available */
@@ -5416,21 +5581,10 @@ id|dev
 suffix:semicolon
 multiline_comment|/* Clean up the transmiting queue */
 multiline_comment|/* Enable RX and TX interrupts */
-id|outb
+id|eepro_en_int
 c_func
 (paren
-id|ALL_MASK
-op_amp
-op_complement
-(paren
-id|RX_MASK
-op_or
-id|TX_MASK
-)paren
-comma
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
 r_continue
@@ -5465,7 +5619,11 @@ c_cond
 (paren
 id|end
 op_ge
-id|RAM_SIZE
+(paren
+id|XMT_UPPER_LIMIT
+op_lshift
+l_int|8
+)paren
 )paren
 (brace
 multiline_comment|/* the transmit buffer is wrapped around */
@@ -5473,7 +5631,11 @@ r_if
 c_cond
 (paren
 (paren
-id|RAM_SIZE
+(paren
+id|XMT_UPPER_LIMIT
+op_lshift
+l_int|8
+)paren
 op_minus
 id|last
 )paren
@@ -5484,7 +5646,11 @@ id|XMT_HEADER
 multiline_comment|/* Arrrr!!!, must keep the xmt header together,&n;&t;&t;&t;&t;several days were lost to chase this one down. */
 id|last
 op_assign
-id|rcv_ram
+(paren
+id|XMT_LOWER_LIMIT
+op_lshift
+l_int|8
+)paren
 suffix:semicolon
 id|end
 op_assign
@@ -5510,12 +5676,16 @@ suffix:semicolon
 r_else
 id|end
 op_assign
-id|rcv_ram
+(paren
+id|XMT_LOWER_LIMIT
+op_lshift
+l_int|8
+)paren
 op_plus
 (paren
 id|end
 op_minus
-id|RAM_SIZE
+id|XMT_RAM
 )paren
 suffix:semicolon
 )brace
@@ -5681,7 +5851,7 @@ id|last
 comma
 id|ioaddr
 op_plus
-id|XMT_BAR
+id|xmt_bar
 )paren
 suffix:semicolon
 id|outb
@@ -5799,22 +5969,25 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Enable RX and TX interrupts */
-id|outb
+multiline_comment|/* now we are serializing tx. queue won&squot;t come back until&n;&t;&t; * the tx interrupt&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|lp-&gt;eepro
+op_eq
+id|LAN595FX_10ISA
+)paren
+id|netif_stop_queue
 c_func
 (paren
-id|ALL_MASK
-op_amp
-op_complement
-(paren
-id|RX_MASK
-op_or
-id|TX_MASK
+id|dev
 )paren
-comma
+suffix:semicolon
+multiline_comment|/* Enable RX and TX interrupts */
+id|eepro_en_int
+c_func
+(paren
 id|ioaddr
-op_plus
-id|INT_MASK_REG
 )paren
 suffix:semicolon
 r_if
@@ -5836,6 +6009,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|eepro_en_int
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
 id|netif_stop_queue
 c_func
 (paren
@@ -5887,10 +6066,6 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-comma
-id|rcv_ram
-op_assign
-id|dev-&gt;mem_end
 suffix:semicolon
 r_int
 id|boguscount
@@ -5925,6 +6100,13 @@ id|KERN_DEBUG
 l_string|&quot;%s: entering eepro_rx routine.&bslash;n&quot;
 comma
 id|dev-&gt;name
+)paren
+suffix:semicolon
+multiline_comment|/* clear all interrupts */
+id|eepro_clear_int
+c_func
+(paren
+id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* Set the read pointer to the start of the RCV */
@@ -6332,6 +6514,13 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/* enable tx/rx interrupts */
+id|eepro_en_int
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -6377,6 +6566,8 @@ c_loop
 id|lp-&gt;tx_start
 op_ne
 id|lp-&gt;tx_end
+op_logical_and
+id|boguscount
 )paren
 (brace
 id|outw
@@ -6410,8 +6601,19 @@ id|TX_DONE_BIT
 op_eq
 l_int|0
 )paren
-r_break
+(brace
+id|udelay
+c_func
+(paren
+l_int|40
+)paren
 suffix:semicolon
+id|boguscount
+op_decrement
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|xmt_status
 op_assign
 id|inw
@@ -6432,6 +6634,54 @@ op_plus
 id|IO_PORT
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;eepro
+op_eq
+id|LAN595FX_10ISA
+)paren
+(brace
+id|lp-&gt;tx_start
+op_assign
+(paren
+id|XMT_LOWER_LIMIT
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+id|lp-&gt;tx_end
+op_assign
+id|lp-&gt;tx_start
+suffix:semicolon
+multiline_comment|/* yeah, black magic :( */
+id|eepro_sw2bank0
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+id|eepro_en_int
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* disabling rx */
+id|eepro_dis_rx
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* enabling rx */
+id|eepro_en_rx
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+)brace
 id|netif_wake_queue
 (paren
 id|dev
@@ -6459,12 +6709,37 @@ id|xmt_status
 op_amp
 l_int|0x0400
 )paren
+(brace
 id|lp-&gt;stats.tx_carrier_errors
 op_increment
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
+l_string|&quot;%s: carrier error&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: XMT status = %#x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|xmt_status
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
 l_string|&quot;%s: XMT status = %#x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -6483,6 +6758,55 @@ comma
 id|xmt_status
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|lp-&gt;eepro
+op_eq
+id|LAN595FX_10ISA
+)paren
+(brace
+multiline_comment|/* Try to restart the adaptor. */
+multiline_comment|/* We are supposed to wait for 2 us after a SEL_RESET */
+id|eepro_sel_reset
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* first enable interrupts */
+id|eepro_sw2bank0
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|ALL_MASK
+op_amp
+op_complement
+(paren
+id|RX_INT
+op_or
+id|TX_INT
+)paren
+comma
+id|ioaddr
+op_plus
+id|STATUS_REG
+)paren
+suffix:semicolon
+multiline_comment|/* enabling rx */
+id|eepro_en_rx
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -6517,15 +6841,8 @@ id|lp-&gt;stats.tx_heartbeat_errors
 op_increment
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_decrement
 id|boguscount
-op_eq
-l_int|0
-)paren
-r_break
+op_decrement
 suffix:semicolon
 )brace
 )brace
@@ -6547,30 +6864,6 @@ id|io
 (braket
 id|MAX_EEPRO
 )braket
-op_assign
-(brace
-macro_line|#ifdef PnPWakeup
-l_int|0x210
-comma
-multiline_comment|/*: default for PnP enabled FX chips */
-macro_line|#else
-l_int|0x200
-comma
-multiline_comment|/* Why? */
-macro_line|#endif
-(braket
-l_int|1
-dot
-dot
-dot
-id|MAX_EEPRO
-op_minus
-l_int|1
-)braket
-op_assign
-op_minus
-l_int|1
-)brace
 suffix:semicolon
 DECL|variable|irq
 r_static
@@ -6614,10 +6907,15 @@ op_minus
 l_int|1
 )braket
 op_assign
-id|RCV_RAM
+id|RCV_DEFAULT_RAM
 op_div
 l_int|1024
 )brace
+suffix:semicolon
+DECL|variable|autodetect
+r_static
+r_int
+id|autodetect
 suffix:semicolon
 DECL|variable|n_eepro
 r_static
@@ -6681,6 +6979,20 @@ id|MAX_EEPRO
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|autodetect
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+l_int|1
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 r_int
 DECL|function|init_module
@@ -6690,6 +7002,9 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6699,26 +7014,63 @@ l_int|0
 )braket
 op_eq
 l_int|0
+op_logical_and
+id|autodetect
+op_eq
+l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;eepro_init_module: You should not use auto-probing with insmod!&bslash;n&quot;
+l_string|&quot;eepro_init_module: Probe is very dangerous in ISA boards!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|printk
+c_func
 (paren
-id|n_eepro
-OL
-id|MAX_EEPRO
-op_logical_and
+l_string|&quot;eepro_init_module: Please add &bslash;&quot;autodetect=1&bslash;&quot; to force probe&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|autodetect
+)paren
+(brace
+multiline_comment|/* if autodetect is set then we must force detection */
 id|io
 (braket
-id|n_eepro
-)braket
-op_ge
 l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;eepro_init_module: Auto-detecting boards (May God protect us...)&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_EEPRO
+suffix:semicolon
+id|i
+op_increment
 )paren
 (brace
 r_struct
@@ -6743,7 +7095,7 @@ id|d-&gt;base_addr
 op_assign
 id|io
 (braket
-id|n_eepro
+l_int|0
 )braket
 suffix:semicolon
 id|d-&gt;irq

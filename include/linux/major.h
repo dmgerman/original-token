@@ -112,6 +112,9 @@ DECL|macro|IDE2_MAJOR
 mdefine_line|#define IDE2_MAJOR&t;33
 DECL|macro|IDE3_MAJOR
 mdefine_line|#define IDE3_MAJOR&t;34
+DECL|macro|XPRAM_MAJOR
+mdefine_line|#define XPRAM_MAJOR     35      /* expanded storage on S/390 = &quot;slow ram&quot; */
+multiline_comment|/* proposed by Peter                      */
 DECL|macro|NETLINK_MAJOR
 mdefine_line|#define NETLINK_MAJOR&t;36
 DECL|macro|PS2ESDI_MAJOR

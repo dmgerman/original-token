@@ -1,7 +1,7 @@
 macro_line|#ifndef __HID_H
 DECL|macro|__HID_H
 mdefine_line|#define __HID_H
-multiline_comment|/*&n; *  drivers/usb/hid.h  Version 0.8&n; *&n; *  Copyright (c) 1999 Andreas Gal&n; *  Copyright (c) 2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: hid.h,v 1.4 2000/05/29 09:01:52 vojtech Exp $&n; *&n; *  Copyright (c) 1999 Andreas Gal&n; *  Copyright (c) 2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; *&n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -583,11 +583,24 @@ id|input_dev
 id|input
 suffix:semicolon
 multiline_comment|/* input device structure */
+DECL|member|open
+r_int
+id|open
+suffix:semicolon
+multiline_comment|/* is the device open by input? */
 DECL|member|quirks
 r_int
 id|quirks
 suffix:semicolon
 multiline_comment|/* Various nasty tricks the device can pull on us */
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|128
+)braket
+suffix:semicolon
+multiline_comment|/* Device name */
 )brace
 suffix:semicolon
 DECL|macro|HID_GLOBAL_STACK_SIZE

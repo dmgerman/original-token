@@ -392,19 +392,6 @@ id|ARIADNE2_BASE
 op_star
 l_int|2
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;ariadne2.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -1150,15 +1137,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_get_8390_hdr &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.dmaing
 comma
 id|ei_status.irqlock
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 r_return
@@ -1369,15 +1354,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_block_input &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.dmaing
 comma
 id|ei_status.irqlock
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 r_return
@@ -1611,15 +1594,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne_block_output.&quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld]&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d]&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.dmaing
 comma
 id|ei_status.irqlock
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 r_return
@@ -1888,6 +1869,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;ariadne2.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|err
 op_assign
@@ -1914,15 +1908,15 @@ c_func
 l_string|&quot;No AriadNE2 ethernet card found.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-id|err
-suffix:semicolon
-)brace
-id|lock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1965,7 +1959,7 @@ op_amp
 id|ariadne2_dev
 )paren
 suffix:semicolon
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

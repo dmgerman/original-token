@@ -345,6 +345,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -402,6 +403,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -488,6 +490,7 @@ op_eq
 l_int|0xffff
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* assume that 0xffff == no device */
@@ -528,6 +531,7 @@ id|old_stat
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -569,6 +573,7 @@ l_int|0xffff
 (brace
 multiline_comment|/* assume that 0xffff == no device */
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -611,6 +616,7 @@ id|old_rear
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -808,6 +814,7 @@ id|SEEQ_CFG1
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1427,6 +1434,7 @@ id|irqval
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -1592,6 +1600,7 @@ id|irqval
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace

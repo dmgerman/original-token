@@ -522,6 +522,17 @@ comma
 id|FD
 )brace
 comma
+multiline_comment|/* Added for 2.2.16 by Matthias_Heidbrink@b.maus.de */
+(brace
+l_string|&quot;IBM F1 V1.2009/22/93&quot;
+comma
+l_int|5
+comma
+l_int|25
+comma
+id|FD
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NUM_SIGNATURES

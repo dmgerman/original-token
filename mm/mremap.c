@@ -706,7 +706,7 @@ suffix:semicolon
 id|vmlist_modify_unlock
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|current-&gt;mm
 )paren
 suffix:semicolon
 id|do_munmap

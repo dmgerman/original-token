@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.95 2000/03/25 05:18:15 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.96 2000/06/09 07:35:27 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -11951,6 +11951,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_for
@@ -11987,6 +11988,7 @@ op_eq
 l_int|4
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12228,6 +12230,7 @@ l_string|&quot;happymeal: Would you like that for here or to go?&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12296,6 +12299,7 @@ l_string|&quot;happymeal: Cannot map Happy Meal global registers.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12332,6 +12336,7 @@ l_string|&quot;happymeal: Cannot map Happy Meal MAC Transmit registers.&bslash;n
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12368,6 +12373,7 @@ l_string|&quot;happymeal: Cannot map Happy Meal MAC Receive registers.&bslash;n&
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12404,6 +12410,7 @@ l_string|&quot;happymeal: Cannot map Happy Meal BIGMAC registers.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12440,6 +12447,7 @@ l_string|&quot;happymeal: Cannot map Happy Meal Tranceiver registers.&bslash;n&q
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12806,6 +12814,7 @@ l_string|&quot;happymeal(PCI): Some PCI device info missing&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -12866,6 +12875,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_for
@@ -12902,6 +12912,7 @@ op_eq
 l_int|4
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -13173,12 +13184,13 @@ suffix:semicolon
 )brace
 id|hpreg_base
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -13205,13 +13217,10 @@ l_string|&quot;happymeal(PCI): Cannot find proper PCI device base address.&bslas
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|hpreg_base
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
 id|hpreg_base
 op_assign
 (paren
@@ -13453,6 +13462,7 @@ l_string|&quot;happymeal(PCI): Cannot get hme init block.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -13908,6 +13918,7 @@ c_cond
 id|called
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|called
@@ -13955,6 +13966,7 @@ op_logical_neg
 id|cards
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_return

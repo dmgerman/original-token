@@ -2347,6 +2347,18 @@ id|pdev
 )paren
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+r_continue
+suffix:semicolon
 macro_line|#else
 r_while
 c_loop
@@ -2371,8 +2383,8 @@ id|pci_devfn
 )paren
 )paren
 )paren
-macro_line|#endif
 (brace
+macro_line|#endif
 multiline_comment|/* found a adapter */
 id|host
 op_assign
@@ -2434,17 +2446,16 @@ id|host-&gt;irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-multiline_comment|/* this depends on release 2.3.18 */
 id|host-&gt;io_port
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
-multiline_comment|/* MRS&t;host-&gt;io_port = (unsigned int) pdev-&gt;base_address[0]; */
 id|ha-&gt;pci_bus
 op_assign
 id|pdev-&gt;bus-&gt;number
@@ -2504,6 +2515,10 @@ r_int
 )paren
 id|piobase
 suffix:semicolon
+id|host-&gt;io_port
+op_and_assign
+id|PCI_BASE_ADDRESS_IO_MASK
+suffix:semicolon
 id|ha-&gt;pci_bus
 op_assign
 id|pci_bus
@@ -2517,17 +2532,9 @@ id|ha-&gt;device_id
 op_assign
 id|bdp-&gt;device_id
 suffix:semicolon
-id|host-&gt;io_port
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
 id|ha-&gt;devnum
 op_assign
 id|i
-suffix:semicolon
-id|host-&gt;io_port
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 r_if
 c_cond

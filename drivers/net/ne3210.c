@@ -278,6 +278,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_if
@@ -296,6 +297,7 @@ l_string|&quot;ne3210-debug: Not an EISA bus. Not probing high ports.&bslash;n&q
 suffix:semicolon
 macro_line|#endif
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 )brace
@@ -347,6 +349,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -466,6 +469,7 @@ id|NE3210_ID
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -556,23 +560,11 @@ l_string|&quot; (invalid prefix).&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;ne3210.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
@@ -793,6 +785,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -937,6 +930,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
+op_minus
 id|EINVAL
 suffix:semicolon
 )brace
@@ -1004,6 +998,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -1645,6 +1640,19 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;ne3210.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1746,15 +1754,15 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Got at least one. */
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|unload_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -1764,11 +1772,6 @@ id|found
 op_increment
 suffix:semicolon
 )brace
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1869,7 +1872,7 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

@@ -123,9 +123,14 @@ mdefine_line|#define DBG_CNT(s)
 multiline_comment|/* We overload some of the items in the data structure to meet our&n; * needs.  For example, the port address is the CPM parameter ram&n; * offset for the SCC or SMC.  The maximum number of ports is 4 SCCs and&n; * 2 SMCs.  The &quot;hub6&quot; field is used to indicate the channel number, with&n; * 0 and 1 indicating the SMCs and 2, 3, 4, and 5 are the SCCs.&n; * Since these ports are so versatile, I don&squot;t yet have a strategy for&n; * their management.  For example, SCC1 is used for Ethernet.  Right&n; * now, just don&squot;t put them in the table.  Of course, right now I just&n; * want the SMC to work as a uart :-)..&n; * The &quot;type&quot; field is currently set to 0, for PORT_UNKNOWN.  It is&n; * not currently used.  I should probably use it to indicate the port&n; * type of CMS or SCC.&n; * The SMCs do not support any modem control signals.&n; */
 DECL|macro|smc_scc_num
 mdefine_line|#define smc_scc_num&t;hub6
+macro_line|#ifdef CONFIG_8xxSMC2
 multiline_comment|/* SMC2 is sometimes used for low performance TDM interfaces.  Define&n; * this as 1 if you want SMC2 as a serial port UART managed by this driver.&n; * Define this as 0 if you wish to use SMC2 for something else.&n; */
 DECL|macro|USE_SMC2
 mdefine_line|#define USE_SMC2 1
+macro_line|#else
+DECL|macro|USE_SMC2
+mdefine_line|#define USE_SMC2 0
+macro_line|#endif
 multiline_comment|/* Define SCC to ttySx mapping.&n;*/
 DECL|macro|SCC_NUM_BASE
 mdefine_line|#define SCC_NUM_BASE&t;(USE_SMC2 + 1)&t;/* SCC base tty &quot;number&quot; */
@@ -175,7 +180,7 @@ l_int|1
 comma
 multiline_comment|/* SMC2 ttyS1 */
 macro_line|#endif
-macro_line|#if defined(CONFIG_MPC860) || defined(CONFIG_MPC860T)
+macro_line|#ifdef CONFIG_8xxSCC
 (brace
 l_int|0
 comma
@@ -9346,6 +9351,20 @@ r_sizeof
 (paren
 id|ser_info_t
 )paren
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|info-&gt;open_wait
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|info-&gt;close_wait
 )paren
 suffix:semicolon
 id|info-&gt;magic

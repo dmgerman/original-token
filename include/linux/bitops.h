@@ -3,8 +3,8 @@ DECL|macro|_LINUX_BITOPS_H
 mdefine_line|#define _LINUX_BITOPS_H
 multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
 DECL|function|generic_ffs
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|generic_ffs
 c_func
@@ -133,8 +133,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
 DECL|function|generic_hweight32
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 id|generic_hweight32
@@ -238,8 +238,8 @@ l_int|0x0000FFFF
 suffix:semicolon
 )brace
 DECL|function|generic_hweight16
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 id|generic_hweight16
@@ -325,8 +325,8 @@ l_int|0x00FF
 suffix:semicolon
 )brace
 DECL|function|generic_hweight8
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 id|generic_hweight8

@@ -645,20 +645,32 @@ mdefine_line|#define TCP_TW_RECYCLE_SLOTS_LOG&t;5
 DECL|macro|TCP_TW_RECYCLE_SLOTS
 mdefine_line|#define TCP_TW_RECYCLE_SLOTS&t;&t;(1&lt;&lt;TCP_TW_RECYCLE_SLOTS_LOG)
 multiline_comment|/* If time &gt; 4sec, it is &quot;slow&quot; path, no recycling is required,&n;   so that we select tick to get range about 4 seconds.&n; */
-macro_line|#if HZ == 20
+macro_line|#if HZ &lt;= 16 || HZ &gt; 4096
+macro_line|# error Unsupported: HZ &lt;= 16 or HZ &gt; 4096
+macro_line|#elif HZ &lt;= 32
 DECL|macro|TCP_TW_RECYCLE_TICK
 macro_line|# define TCP_TW_RECYCLE_TICK (5+2-TCP_TW_RECYCLE_SLOTS_LOG)
-macro_line|#elif HZ == 64
+macro_line|#elif HZ &lt;= 64
 DECL|macro|TCP_TW_RECYCLE_TICK
 macro_line|# define TCP_TW_RECYCLE_TICK (6+2-TCP_TW_RECYCLE_SLOTS_LOG)
-macro_line|#elif HZ == 100 || HZ == 128
+macro_line|#elif HZ &lt;= 128
 DECL|macro|TCP_TW_RECYCLE_TICK
 macro_line|# define TCP_TW_RECYCLE_TICK (7+2-TCP_TW_RECYCLE_SLOTS_LOG)
-macro_line|#elif HZ == 1024 || HZ == 1000
+macro_line|#elif HZ &lt;= 256
+DECL|macro|TCP_TW_RECYCLE_TICK
+macro_line|# define TCP_TW_RECYCLE_TICK (8+2-TCP_TW_RECYCLE_SLOTS_LOG)
+macro_line|#elif HZ &lt;= 512
+DECL|macro|TCP_TW_RECYCLE_TICK
+macro_line|# define TCP_TW_RECYCLE_TICK (9+2-TCP_TW_RECYCLE_SLOTS_LOG)
+macro_line|#elif HZ &lt;= 1024
 DECL|macro|TCP_TW_RECYCLE_TICK
 macro_line|# define TCP_TW_RECYCLE_TICK (10+2-TCP_TW_RECYCLE_SLOTS_LOG)
+macro_line|#elif HZ &lt;= 2048
+DECL|macro|TCP_TW_RECYCLE_TICK
+macro_line|# define TCP_TW_RECYCLE_TICK (11+2-TCP_TW_RECYCLE_SLOTS_LOG)
 macro_line|#else
-macro_line|# error HZ != 20 &amp;&amp; HZ != 64 &amp;&amp; HZ != 100 &amp;&amp; HZ != 1000 &amp;&amp; HZ != 1024
+DECL|macro|TCP_TW_RECYCLE_TICK
+macro_line|# define TCP_TW_RECYCLE_TICK (12+2-TCP_TW_RECYCLE_SLOTS_LOG)
 macro_line|#endif
 multiline_comment|/*&n; *&t;TCP option&n; */
 DECL|macro|TCPOPT_NOP

@@ -5807,8 +5807,14 @@ id|skb
 OL
 l_int|22
 )paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|newskb
+suffix:semicolon
 multiline_comment|/* 22 bytes - 12 ether, 2 len, 3 802.2 5 snap */
-id|skb
+id|newskb
 op_assign
 id|skb_realloc_headroom
 c_func
@@ -5818,6 +5824,13 @@ comma
 l_int|32
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 r_else
 id|skb
 op_assign

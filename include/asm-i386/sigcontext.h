@@ -62,7 +62,7 @@ r_int
 r_int
 id|status
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86_FX
+macro_line|#ifdef CONFIG_X86_FXSR
 DECL|member|mxcsr
 r_int
 r_int

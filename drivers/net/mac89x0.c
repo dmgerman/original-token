@@ -448,6 +448,7 @@ c_cond
 id|once_is_enough
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|once_is_enough
@@ -474,6 +475,7 @@ op_ne
 l_int|NULL
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* The pseudo-ISA bits always live at offset 0x300 (gee,&n;           wonder why...) */
@@ -561,6 +563,7 @@ op_logical_neg
 id|card_present
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -596,6 +599,7 @@ id|CHIP_EISA_ID_SIG
 )paren
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Initialize the net_device structure. */
@@ -837,6 +841,7 @@ l_string|&quot;&bslash;nmac89x0: No EEPROM, giving up now.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

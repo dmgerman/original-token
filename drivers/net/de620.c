@@ -2763,6 +2763,7 @@ l_string|&quot; not identified in the printer port&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -2788,6 +2789,7 @@ id|dev-&gt;base_addr
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EBUSY
 suffix:semicolon
 )brace

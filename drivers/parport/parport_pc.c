@@ -11178,6 +11178,8 @@ comma
 id|parport_pc_pci_tbl
 (braket
 id|i
+op_plus
+id|last_sio
 )braket
 dot
 id|vendor
@@ -11185,6 +11187,8 @@ comma
 id|parport_pc_pci_tbl
 (braket
 id|i
+op_plus
+id|last_sio
 )braket
 dot
 id|device

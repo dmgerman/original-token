@@ -611,6 +611,7 @@ l_string|&quot;No Z-Note ethernet adaptor found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -816,6 +817,7 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EBUSY
 suffix:semicolon
 )brace

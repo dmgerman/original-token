@@ -219,6 +219,7 @@ op_logical_neg
 id|EISA_bus
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* EISA spec allows for up to 16 slots, but 8 is typical. */
@@ -339,6 +340,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -417,6 +419,7 @@ l_int|0x20
 )paren
 multiline_comment|/* SMC Ultra */
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Select the station address register set. */
@@ -468,20 +471,8 @@ op_ne
 l_int|0xff
 )paren
 r_return
-id|ENODEV
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;smc-ultra32.c&quot;
-)paren
-)paren
-r_return
 op_minus
-id|ENOSYS
+id|ENODEV
 suffix:semicolon
 multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
@@ -656,6 +647,7 @@ l_string|&quot;Run EISA config utility.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1647,6 +1639,19 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|load_8390_module
+c_func
+(paren
+l_string|&quot;smc-ultra32.c&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1698,15 +1703,15 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Got at least one. */
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|unload_8390_module
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1723,11 +1728,6 @@ id|found
 op_increment
 suffix:semicolon
 )brace
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1813,7 +1813,7 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
+id|unload_8390_module
 c_func
 (paren
 )paren

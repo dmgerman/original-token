@@ -79,7 +79,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|ELEVATOR_DEFAULTS
-mdefine_line|#define ELEVATOR_DEFAULTS&t;&t;&t;&t;&bslash;&n;((elevator_t) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;/* sequence */&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;128,&t;&t;&t;/* read_latency */&t;&bslash;&n;&t;8192,&t;&t;&t;/* write_latency */&t;&bslash;&n;&t;4,&t;&t;&t;/* max_bomb_segments */&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;/* nr_segments */&t;&bslash;&n;&t;0,&t;&t;&t;/* read_pendings */&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;elevator_default,&t;/* elevator_fn */&t;&bslash;&n;&t;})
+mdefine_line|#define ELEVATOR_DEFAULTS&t;&t;&t;&t;&bslash;&n;((elevator_t) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;/* sequence */&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;128,&t;&t;&t;/* read_latency */&t;&bslash;&n;&t;8192,&t;&t;&t;/* write_latency */&t;&bslash;&n;&t;32,&t;&t;&t;/* max_bomb_segments */&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;/* nr_segments */&t;&bslash;&n;&t;0,&t;&t;&t;/* read_pendings */&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;elevator_default,&t;/* elevator_fn */&t;&bslash;&n;&t;})
 DECL|struct|blkelv_ioctl_arg_s
 r_typedef
 r_struct

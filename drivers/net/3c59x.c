@@ -1,6 +1,14 @@
 multiline_comment|/* EtherLinkXL.c: A 3Com EtherLink PCI III/XL ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1996-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com &quot;Vortex&quot; and &quot;Boomerang&quot; series ethercards.&n;&t;Members of the series include Fast EtherLink 3c590/3c592/3c595/3c597&n;&t;and the EtherLink XL 3c900 and 3c905 cards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Linux Kernel Additions:&n;&t;&n; &t;0.99H+lk0.9 - David S. Miller - softnet, PCI DMA updates&n; &t;0.99H+lk1.0 - Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Remove compatibility defines for kernel versions &lt; 2.2.x.&n;&t;&t;Update for new 2.3.x module interface&n;&t;LK1.1.2 (March 19, 2000)&n;&t;* New PCI interface (jgarzik)&n;&n;    LK1.1.3 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;&n;    - Merged with 3c575_cb.c&n;    - Don&squot;t set RxComplete in boomerang interrupt enable reg&n;    - spinlock in vortex_timer to protect mdio functions&n;    - disable local interrupts around call to vortex_interrupt in&n;      vortex_tx_timeout() (So vortex_interrupt can use spin_lock())&n;    - Select window 3 in vortex_timer()&squot;s write to Wn3_MAC_Ctrl&n;    - In vortex_start_xmit(), move the lock to _after_ we&squot;ve altered&n;      vp-&gt;cur_tx and vp-&gt;tx_full.  This defeats the race between&n;      vortex_start_xmit() and vortex_interrupt which was identified&n;      by Bogdan Costescu.&n;    - Merged back support for six new cards from various sources&n;    - Set vortex_have_pci if pci_module_init returns zero (fixes cardbus&n;      insertion oops)&n;    - Tell it that 3c905C has NWAY for 100bT autoneg&n;    - Fix handling of SetStatusEnd in &squot;Too much work..&squot; code, as&n;      per 2.3.99&squot;s 3c575_cb (Dave Hinds).&n;    - Split ISR into two for vortex &amp; boomerang&n;    - Fix MOD_INC/DEC races&n;    - Handle resource allocation failures.&n;    - Fix 3CCFE575CT LED polarity&n;    - Make tx_interrupt_mitigation the default&n;&n;    LK1.1.4 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;    &n;    - Add extra TxReset to vortex_up() to fix 575_cb hotplug initialisation probs.&n;    - Put vortex_info_tbl into __devinitdata&n;    - In the vortex_error StatsFull HACK, disable stats in vp-&gt;intr_enable as well&n;      as in the hardware.&n;    - Increased the loop counter in wait_for_completion from 2,000 to 4,000.&n;&n;    LK1.1.5 28 April 2000, andrewm&n;    - Added powerpc defines&n;    - Some extra diagnostics&n;    - In vortex_error(), reset the Tx on maxCollisions.  Otherwise most&n;      chips usually get a Tx timeout.&n;    - Added extra_reset module parm&n;    - Replaced some inline timer manip with mod_timer&n;      (Franois romieu &lt;Francois.Romieu@nic.fr&gt;)&n;    - In vortex_up(), don&squot;t make Wn3_config initialisation dependent upon has_nway&n;      (this came across from 3c575_cb).&n;&n;    - See http://www.uow.edu.au/~andrewm/linux/#3c59x-2.3 for more details.&n;*/
+multiline_comment|/*&n;&t;Written 1996-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com &quot;Vortex&quot; and &quot;Boomerang&quot; series ethercards.&n;&t;Members of the series include Fast EtherLink 3c590/3c592/3c595/3c597&n;&t;and the EtherLink XL 3c900 and 3c905 cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Linux Kernel Additions:&n;&t;&n; &t;0.99H+lk0.9 - David S. Miller - softnet, PCI DMA updates&n; &t;0.99H+lk1.0 - Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Remove compatibility defines for kernel versions &lt; 2.2.x.&n;&t;&t;Update for new 2.3.x module interface&n;&t;LK1.1.2 (March 19, 2000)&n;&t;* New PCI interface (jgarzik)&n;&n;    LK1.1.3 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;&n;    - Merged with 3c575_cb.c&n;    - Don&squot;t set RxComplete in boomerang interrupt enable reg&n;    - spinlock in vortex_timer to protect mdio functions&n;    - disable local interrupts around call to vortex_interrupt in&n;      vortex_tx_timeout() (So vortex_interrupt can use spin_lock())&n;    - Select window 3 in vortex_timer()&squot;s write to Wn3_MAC_Ctrl&n;    - In vortex_start_xmit(), move the lock to _after_ we&squot;ve altered&n;      vp-&gt;cur_tx and vp-&gt;tx_full.  This defeats the race between&n;      vortex_start_xmit() and vortex_interrupt which was identified&n;      by Bogdan Costescu.&n;    - Merged back support for six new cards from various sources&n;    - Set vortex_have_pci if pci_module_init returns zero (fixes cardbus&n;      insertion oops)&n;    - Tell it that 3c905C has NWAY for 100bT autoneg&n;    - Fix handling of SetStatusEnd in &squot;Too much work..&squot; code, as&n;      per 2.3.99&squot;s 3c575_cb (Dave Hinds).&n;    - Split ISR into two for vortex &amp; boomerang&n;    - Fix MOD_INC/DEC races&n;    - Handle resource allocation failures.&n;    - Fix 3CCFE575CT LED polarity&n;    - Make tx_interrupt_mitigation the default&n;&n;    LK1.1.4 25 April 2000, Andrew Morton &lt;andrewm@uow.edu.au&gt;    &n;    - Add extra TxReset to vortex_up() to fix 575_cb hotplug initialisation probs.&n;    - Put vortex_info_tbl into __devinitdata&n;    - In the vortex_error StatsFull HACK, disable stats in vp-&gt;intr_enable as well&n;      as in the hardware.&n;    - Increased the loop counter in wait_for_completion from 2,000 to 4,000.&n;&n;    LK1.1.5 28 April 2000, andrewm&n;    - Added powerpc defines (John Daniel &lt;jdaniel@etresoft.com&gt; said these work...)&n;    - Some extra diagnostics&n;    - In vortex_error(), reset the Tx on maxCollisions.  Otherwise most&n;      chips usually get a Tx timeout.&n;    - Added extra_reset module parm&n;    - Replaced some inline timer manip with mod_timer&n;      (Franois romieu &lt;Francois.Romieu@nic.fr&gt;)&n;    - In vortex_up(), don&squot;t make Wn3_config initialisation dependent upon has_nway&n;      (this came across from 3c575_cb).&n;&n;    LK1.1.6 06 Jun 2000, andrewm&n;    - Backed out the PPC defines.&n;    - Use del_timer_sync(), mod_timer().&n;    - Fix wrapped ulong comparison in boomerang_rx()&n;    - Add IS_TORNADO, use it to suppress 3c905C checksum error msg&n;      (Donald Becker, I Lee Hetherington &lt;ilh@sls.lcs.mit.edu&gt;)&n;    - Replace union wn3_config with BFINS/BFEXT manipulation for&n;      sparc64 (Pete Zaitcev, Peter Jones)&n;    - In vortex_error, do_tx_reset and vortex_tx_timeout(Vortex):&n;      do a netif_wake_queue() to better recover from errors. (Anders Pedersen,&n;      Donald Becker)&n;    - Print a warning on out-of-memory (rate limited to 1 per 10 secs)&n;    - Added two more Cardbus 575 NICs: 5b57 and 6564 (Paul Wagland)&n;&n;    - See http://www.uow.edu.au/~andrewm/linux/#3c59x-2.3 for more details.&n;*/
 multiline_comment|/*&n; * FIXME: This driver _could_ support MTU changing, but doesn&squot;t.  See Don&squot;s hamaci.c implementation&n; * as well as other drivers&n; *&n; * NOTE: If you make &squot;vortex_debug&squot; a constant (#define vortex_debug 0) the driver shrinks by 2k&n; * due to dead code elimination.  There will be some performance benefits from this due to&n; * elimination of all the tests and reduced cache footprint.&n; */
+multiline_comment|/* A few values that may be tweaked. */
+multiline_comment|/* Keep the ring sizes a power of two for efficiency. */
+DECL|macro|TX_RING_SIZE
+mdefine_line|#define TX_RING_SIZE&t;16
+DECL|macro|RX_RING_SIZE
+mdefine_line|#define RX_RING_SIZE&t;32
+DECL|macro|PKT_BUF_SZ
+mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
 multiline_comment|/* &quot;Knobs&quot; that adjust features and parameters. */
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-frames scheme.&n;   Setting to &gt; 1512 effectively disables this feature. */
 DECL|variable|rx_copybreak
@@ -36,7 +44,15 @@ id|extra_reset
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Allow aggregation of Tx interrupts.  Saves CPU load at the cost&n; * of possible Tx stalls if the system is blocking interrupts&n; * somewhere else.  Undefine this to disable.&n; * AKPM 26 April 2000: enabling this still gets vestigial Tx timeouts&n; * in a heavily loaded (collision-prone) 10BaseT LAN.  Should be OK with&n; * switched Ethernet.&n; */
+multiline_comment|/* Tx timeout interval (millisecs) */
+DECL|variable|watchdog
+r_static
+r_int
+id|watchdog
+op_assign
+l_int|400
+suffix:semicolon
+multiline_comment|/* Allow aggregation of Tx interrupts.  Saves CPU load at the cost&n; * of possible Tx stalls if the system is blocking interrupts&n; * somewhere else.  Undefine this to disable.&n; * AKPM 26 April 2000: enabling this still gets vestigial Tx timeouts&n; * in a heavily loaded (collision-prone) 10BaseT LAN.  Should be OK with&n; * switched Ethernet.&n; * AKPM 24May00: vestigial timeouts have been removed by later fixes.&n; */
 DECL|macro|tx_interrupt_mitigation
 mdefine_line|#define tx_interrupt_mitigation 1
 multiline_comment|/* Put out somewhat more debugging messages. (0: no msg, 1 minimal .. 6). */
@@ -80,17 +96,6 @@ l_int|0
 comma
 id|rx_csumhits
 suffix:semicolon
-multiline_comment|/* A few values that may be tweaked. */
-multiline_comment|/* Time in jiffies before concluding the transmitter is hung. */
-DECL|macro|TX_TIMEOUT
-mdefine_line|#define TX_TIMEOUT  ((400*HZ)/1000)
-multiline_comment|/* Keep the ring sizes a power of two for efficiency. */
-DECL|macro|TX_RING_SIZE
-mdefine_line|#define TX_RING_SIZE&t;16
-DECL|macro|RX_RING_SIZE
-mdefine_line|#define RX_RING_SIZE&t;32
-DECL|macro|PKT_BUF_SZ
-mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
 macro_line|#ifndef __OPTIMIZE__
 macro_line|#error You must compile this file with the correct options!
 macro_line|#error See the last lines of the source file.
@@ -114,13 +119,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;&t;&t;&t;/* For NR_IRQS only. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/* John Daniel &lt;jdaniel@etresoft.com&gt; said these work... */
-macro_line|#ifdef __powerpc__
-DECL|macro|outsl
-mdefine_line|#define outsl outsl_ns
-DECL|macro|insl
-mdefine_line|#define insl insl_ns
-macro_line|#endif
 multiline_comment|/* Kernel compatibility defines, some common to David Hinds&squot; PCMCIA package.&n;   This is only in the support-all-kernels source code. */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
@@ -133,13 +131,13 @@ id|version
 )braket
 id|__devinitdata
 op_assign
-l_string|&quot;3c59x.c:v0.99L+LK1.1.5  30 Apr 2000  Donald Becker and others  http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html &quot;
-l_string|&quot;$Revision: 1.78 $&bslash;n&quot;
+l_string|&quot;3c59x.c:v0.99L+LK1.1.6  28 May 2000  Donald Becker and others. http://www.scyld.com/network/vortex.html &quot;
+l_string|&quot;$Revision: 1.97 $&bslash;n&quot;
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Donald Becker &lt;becker@cesdis.gsfc.nasa.gov&gt;&quot;
+l_string|&quot;Donald Becker &lt;becker@scyld.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -232,6 +230,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|watchdog
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Operational parameter that usually are not changed. */
 multiline_comment|/* The Vortex size is twice that of the original EtherLinkIII series: the&n;   runtime register window, window 1, is now always mapped in.&n;   The Boomerang size is twice as large as the Vortex -- it has additional&n;   bus master control registers. */
 DECL|macro|VORTEX_TOTAL_SIZE
@@ -302,6 +308,7 @@ suffix:semicolon
 DECL|enumerator|IS_VORTEX
 DECL|enumerator|IS_BOOMERANG
 DECL|enumerator|IS_CYCLONE
+DECL|enumerator|IS_TORNADO
 r_enum
 (brace
 id|IS_VORTEX
@@ -316,31 +323,35 @@ id|IS_CYCLONE
 op_assign
 l_int|4
 comma
-DECL|enumerator|EEPROM_230
-id|EEPROM_230
+id|IS_TORNADO
 op_assign
 l_int|8
 comma
-multiline_comment|/* AKPM: Uses 0x230 as the base bitmpas for EEPROM reads */
+DECL|enumerator|EEPROM_230
+id|EEPROM_230
+op_assign
+l_int|0x10
+comma
+multiline_comment|/* AKPM: Uses 0x230 as the base bitmaps for EEPROM reads */
 DECL|enumerator|HAS_PWR_CTRL
 DECL|enumerator|HAS_MII
 DECL|enumerator|HAS_NWAY
 DECL|enumerator|HAS_CB_FNS
 id|HAS_PWR_CTRL
 op_assign
-l_int|0x10
+l_int|0x20
 comma
 id|HAS_MII
 op_assign
-l_int|0x20
+l_int|0x40
 comma
 id|HAS_NWAY
 op_assign
-l_int|0x40
+l_int|0x80
 comma
 id|HAS_CB_FNS
 op_assign
-l_int|0x80
+l_int|0x100
 comma
 )brace
 suffix:semicolon
@@ -367,9 +378,6 @@ id|CH_3C595_2
 comma
 DECL|enumerator|CH_3C595_3
 id|CH_3C595_3
-comma
-DECL|enumerator|CH_VORTEX
-id|CH_VORTEX
 comma
 DECL|enumerator|CH_3C900_1
 id|CH_3C900_1
@@ -410,11 +418,17 @@ comma
 DECL|enumerator|CH_3C980
 id|CH_3C980
 comma
+DECL|enumerator|CH_3C9805
+id|CH_3C9805
+comma
 DECL|enumerator|CH_3CSOHO100_TX
 id|CH_3CSOHO100_TX
 comma
 DECL|enumerator|CH_3C555
 id|CH_3C555
+comma
+DECL|enumerator|CH_3C575
+id|CH_3C575
 comma
 DECL|enumerator|CH_3C575_1
 id|CH_3C575_1
@@ -430,6 +444,9 @@ id|CH_3CCFE656
 comma
 DECL|enumerator|CH_3CCFEM656
 id|CH_3CCFEM656
+comma
+DECL|enumerator|CH_3CCFEM656_1
+id|CH_3CCFEM656_1
 comma
 DECL|enumerator|CH_3C450
 id|CH_3C450
@@ -468,6 +485,8 @@ id|vortex_info_tbl
 id|__devinitdata
 op_assign
 (brace
+DECL|macro|EISA_TBL_OFFSET
+mdefine_line|#define EISA_TBL_OFFSET&t;0&t;&t;/* Offset of this entry for vortex_eisa_init */
 (brace
 l_string|&quot;3c590 Vortex 10Mbps&quot;
 comma
@@ -545,21 +564,6 @@ comma
 id|IS_VORTEX
 comma
 l_int|32
-comma
-)brace
-comma
-DECL|macro|EISA_TBL_OFFSET
-mdefine_line|#define EISA_TBL_OFFSET&t;6&t;&t;/* Offset of this entry for vortex_eisa_init */
-(brace
-l_string|&quot;3Com Vortex&quot;
-comma
-id|PCI_USES_IO
-op_or
-id|PCI_USES_MASTER
-comma
-id|IS_BOOMERANG
-comma
-l_int|64
 comma
 )brace
 comma
@@ -723,7 +727,7 @@ id|PCI_USES_IO
 op_or
 id|PCI_USES_MASTER
 comma
-id|IS_CYCLONE
+id|IS_TORNADO
 op_or
 id|HAS_NWAY
 comma
@@ -733,6 +737,19 @@ comma
 comma
 (brace
 l_string|&quot;3c980 Cyclone&quot;
+comma
+id|PCI_USES_IO
+op_or
+id|PCI_USES_MASTER
+comma
+id|IS_CYCLONE
+comma
+l_int|128
+comma
+)brace
+comma
+(brace
+l_string|&quot;3c980 10/100 Base-TX NIC(Python-T)&quot;
 comma
 id|PCI_USES_IO
 op_or
@@ -771,6 +788,23 @@ comma
 )brace
 comma
 (brace
+l_string|&quot;3c575 [Megahertz] 10/100 LAN &t;CardBus&quot;
+comma
+id|PCI_USES_IO
+op_or
+id|PCI_USES_MASTER
+comma
+id|IS_BOOMERANG
+op_or
+id|HAS_MII
+op_or
+id|EEPROM_230
+comma
+l_int|128
+comma
+)brace
+comma
+(brace
 l_string|&quot;3c575 Boomerang CardBus&quot;
 comma
 id|PCI_USES_IO
@@ -783,7 +817,7 @@ id|HAS_MII
 op_or
 id|EEPROM_230
 comma
-l_int|64
+l_int|128
 comma
 )brace
 comma
@@ -864,14 +898,34 @@ comma
 )brace
 comma
 (brace
-l_string|&quot;3c450 Cyclone/unknown&quot;
+l_string|&quot;3CCFEM656 Cyclone CardBus(0x6564)&quot;
 comma
-multiline_comment|/* AKPM: from Don&squot;s 0.99N */
+multiline_comment|/* From pcmcia-cs-3.1.5 */
 id|PCI_USES_IO
 op_or
 id|PCI_USES_MASTER
 comma
 id|IS_CYCLONE
+op_or
+id|HAS_NWAY
+op_or
+id|HAS_CB_FNS
+op_or
+id|EEPROM_230
+comma
+l_int|128
+comma
+)brace
+comma
+(brace
+l_string|&quot;3c450 HomePNA Tornado&quot;
+comma
+multiline_comment|/* AKPM: from Don&squot;s 0.99Q */
+id|PCI_USES_IO
+op_or
+id|PCI_USES_MASTER
+comma
+id|IS_TORNADO
 op_or
 id|HAS_NWAY
 comma
@@ -991,22 +1045,6 @@ comma
 l_int|0
 comma
 id|CH_3C595_3
-)brace
-comma
-(brace
-l_int|0x10B7
-comma
-l_int|0x5900
-comma
-id|PCI_ANY_ID
-comma
-id|PCI_ANY_ID
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|CH_VORTEX
 )brace
 comma
 (brace
@@ -1220,6 +1258,22 @@ comma
 (brace
 l_int|0x10B7
 comma
+l_int|0x9805
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|CH_3C9805
+)brace
+comma
+(brace
+l_int|0x10B7
+comma
 l_int|0x7646
 comma
 id|PCI_ANY_ID
@@ -1247,6 +1301,22 @@ comma
 l_int|0
 comma
 id|CH_3C555
+)brace
+comma
+(brace
+l_int|0x10B7
+comma
+l_int|0x5b57
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|CH_3C575
 )brace
 comma
 (brace
@@ -1327,6 +1397,22 @@ comma
 l_int|0
 comma
 id|CH_3CCFEM656
+)brace
+comma
+(brace
+l_int|0x10B7
+comma
+l_int|0x6564
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|CH_3CCFEM656_1
 )brace
 comma
 (brace
@@ -1896,80 +1982,24 @@ l_int|8
 comma
 )brace
 suffix:semicolon
-DECL|union|wn3_config
-r_union
-id|wn3_config
-(brace
-DECL|member|i
-r_int
-id|i
-suffix:semicolon
-DECL|struct|w3_config_fields
-r_struct
-id|w3_config_fields
-(brace
-DECL|member|ram_size
-DECL|member|ram_width
-DECL|member|ram_speed
-DECL|member|rom_size
-r_int
-r_int
-id|ram_size
-suffix:colon
-l_int|3
-comma
-id|ram_width
-suffix:colon
-l_int|1
-comma
-id|ram_speed
-suffix:colon
-l_int|2
-comma
-id|rom_size
-suffix:colon
-l_int|2
-suffix:semicolon
-DECL|member|pad8
-r_int
-id|pad8
-suffix:colon
-l_int|8
-suffix:semicolon
-DECL|member|ram_split
-DECL|member|pad18
-DECL|member|xcvr
-DECL|member|autoselect
-r_int
-r_int
-id|ram_split
-suffix:colon
-l_int|2
-comma
-id|pad18
-suffix:colon
-l_int|2
-comma
-id|xcvr
-suffix:colon
-l_int|4
-comma
-id|autoselect
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|pad24
-r_int
-id|pad24
-suffix:colon
-l_int|7
-suffix:semicolon
-DECL|member|u
-)brace
-id|u
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|BFEXT
+mdefine_line|#define BFEXT(value, offset, bitcount)  &bslash;&n;    ((((unsigned long)(value)) &gt;&gt; (offset)) &amp; ((1 &lt;&lt; (bitcount)) - 1))
+DECL|macro|BFINS
+mdefine_line|#define BFINS(lhs, rhs, offset, bitcount)&t;&t;&t;&t;&t;&bslash;&n;&t;(((lhs) &amp; ~((((1 &lt;&lt; (bitcount)) - 1)) &lt;&lt; (offset))) |&t;&bslash;&n;&t;(((rhs) &amp; ((1 &lt;&lt; (bitcount)) - 1)) &lt;&lt; (offset)))
+DECL|macro|RAM_SIZE
+mdefine_line|#define RAM_SIZE(v)&t;&t;BFEXT(v, 0, 3)
+DECL|macro|RAM_WIDTH
+mdefine_line|#define RAM_WIDTH(v)&t;BFEXT(v, 3, 1)
+DECL|macro|RAM_SPEED
+mdefine_line|#define RAM_SPEED(v)&t;BFEXT(v, 4, 2)
+DECL|macro|ROM_SIZE
+mdefine_line|#define ROM_SIZE(v)&t;&t;BFEXT(v, 6, 2)
+DECL|macro|RAM_SPLIT
+mdefine_line|#define RAM_SPLIT(v)&t;BFEXT(v, 16, 2)
+DECL|macro|XCVR
+mdefine_line|#define XCVR(v)&t;&t;&t;BFEXT(v, 20, 4)
+DECL|macro|AUTOSELECT
+mdefine_line|#define AUTOSELECT(v)&t;BFEXT(v, 24, 1)
 DECL|enum|Window4
 r_enum
 id|Window4
@@ -2092,7 +2122,9 @@ comma
 suffix:semicolon
 multiline_comment|/* The Rx and Tx descriptor lists.&n;   Caution Alpha hackers: these types are 32 bits!  Note also the 8 byte&n;   alignment contraint on tx_ring[] and rx_ring[]. */
 DECL|macro|LAST_FRAG
-mdefine_line|#define LAST_FRAG  0x80000000&t;&t;&t;/* Last Addr/Len pair in descriptor. */
+mdefine_line|#define LAST_FRAG &t;0x80000000&t;&t;&t;/* Last Addr/Len pair in descriptor. */
+DECL|macro|DN_COMPLETE
+mdefine_line|#define DN_COMPLETE&t;0x00010000&t;&t;&t;/* This packet has been downloaded */
 DECL|struct|boom_rx_desc
 r_struct
 id|boom_rx_desc
@@ -3627,6 +3659,18 @@ suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
+r_struct
+id|vortex_chip_info
+op_star
+r_const
+id|vci
+op_assign
+op_amp
+id|vortex_info_tbl
+(braket
+id|chip_idx
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3699,12 +3743,7 @@ l_string|&quot;PCI&quot;
 suffix:colon
 l_string|&quot;EISA&quot;
 comma
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|name
+id|vci-&gt;name
 comma
 id|ioaddr
 )paren
@@ -3729,12 +3768,7 @@ suffix:semicolon
 id|vp-&gt;has_nway
 op_assign
 (paren
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|drv_flags
+id|vci-&gt;drv_flags
 op_amp
 id|HAS_NWAY
 )paren
@@ -3746,12 +3780,7 @@ l_int|0
 suffix:semicolon
 id|vp-&gt;io_size
 op_assign
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|io_size
+id|vci-&gt;io_size
 suffix:semicolon
 multiline_comment|/* module list only for EISA devices */
 r_if
@@ -3787,12 +3816,7 @@ id|request_region
 (paren
 id|ioaddr
 comma
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|io_size
+id|vci-&gt;io_size
 comma
 id|dev-&gt;name
 )paren
@@ -3805,12 +3829,7 @@ l_string|&quot;%s: Cannot reserve I/O resource 0x%x @ 0x%lx, aborting&bslash;n&q
 comma
 id|dev-&gt;name
 comma
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|io_size
+id|vci-&gt;io_size
 comma
 id|ioaddr
 )paren
@@ -3847,12 +3866,7 @@ multiline_comment|/* enable bus-mastering if necessary */
 r_if
 c_cond
 (paren
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|flags
+id|vci-&gt;flags
 op_amp
 id|PCI_USES_MASTER
 )paren
@@ -4084,12 +4098,7 @@ r_int
 id|base
 op_assign
 (paren
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|drv_flags
+id|vci-&gt;drv_flags
 op_amp
 id|EEPROM_230
 )paren
@@ -4263,9 +4272,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|checksum
 op_ne
 l_int|0x00
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|vci-&gt;drv_flags
+op_amp
+id|IS_TORNADO
+)paren
 )paren
 id|printk
 c_func
@@ -4429,12 +4447,7 @@ c_cond
 (paren
 id|pdev
 op_logical_and
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|drv_flags
+id|vci-&gt;drv_flags
 op_amp
 id|HAS_CB_FNS
 )paren
@@ -4582,8 +4595,8 @@ comma
 l_string|&quot;3:5&quot;
 )brace
 suffix:semicolon
-r_union
-id|wn3_config
+r_int
+r_int
 id|config
 suffix:semicolon
 id|EL3WINDOW
@@ -4618,7 +4631,7 @@ id|vp-&gt;available_media
 op_assign
 l_int|0x40
 suffix:semicolon
-id|config.i
+id|config
 op_assign
 id|inl
 c_func
@@ -4642,7 +4655,7 @@ id|KERN_DEBUG
 l_string|&quot;  Internal config register is %4.4x, &quot;
 l_string|&quot;transceivers %#x.&bslash;n&quot;
 comma
-id|config.i
+id|config
 comma
 id|inw
 c_func
@@ -4661,9 +4674,17 @@ l_string|&quot;  %dK %s-wide RAM %s Rx:Tx split, %s%s interface.&bslash;n&quot;
 comma
 l_int|8
 op_lshift
-id|config.u.ram_size
+id|RAM_SIZE
+c_func
+(paren
+id|config
+)paren
 comma
-id|config.u.ram_width
+id|RAM_WIDTH
+c_func
+(paren
+id|config
+)paren
 ques
 c_cond
 l_string|&quot;word&quot;
@@ -4672,17 +4693,29 @@ l_string|&quot;byte&quot;
 comma
 id|ram_split
 (braket
-id|config.u.ram_split
+id|RAM_SPLIT
+c_func
+(paren
+id|config
+)paren
 )braket
 comma
-id|config.u.autoselect
+id|AUTOSELECT
+c_func
+(paren
+id|config
+)paren
 ques
 c_cond
 l_string|&quot;autoselect/&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
-id|config.u.xcvr
+id|XCVR
+c_func
+(paren
+id|config
+)paren
 OG
 id|XCVR_ExtMII
 ques
@@ -4691,7 +4724,11 @@ l_string|&quot;&lt;invalid transceiver&gt;&quot;
 suffix:colon
 id|media_tbl
 (braket
-id|config.u.xcvr
+id|XCVR
+c_func
+(paren
+id|config
+)paren
 )braket
 dot
 id|name
@@ -4699,11 +4736,19 @@ id|name
 suffix:semicolon
 id|vp-&gt;default_media
 op_assign
-id|config.u.xcvr
+id|XCVR
+c_func
+(paren
+id|config
+)paren
 suffix:semicolon
 id|vp-&gt;autoselect
 op_assign
-id|config.u.autoselect
+id|AUTOSELECT
+c_func
+(paren
+id|config
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -5043,7 +5088,13 @@ id|vortex_tx_timeout
 suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
-id|TX_TIMEOUT
+(paren
+id|watchdog
+op_star
+id|HZ
+)paren
+op_div
+l_int|1000
 suffix:semicolon
 r_return
 l_int|0
@@ -5054,12 +5105,7 @@ id|release_region
 (paren
 id|ioaddr
 comma
-id|vortex_info_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|io_size
+id|vci-&gt;io_size
 )paren
 suffix:semicolon
 id|free_dev
@@ -5198,8 +5244,8 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_union
-id|wn3_config
+r_int
+r_int
 id|config
 suffix:semicolon
 r_int
@@ -5229,7 +5275,7 @@ c_func
 l_int|3
 )paren
 suffix:semicolon
-id|config.i
+id|config
 op_assign
 id|inl
 c_func
@@ -5444,9 +5490,19 @@ id|vp-&gt;full_duplex
 op_assign
 id|vp-&gt;force_fd
 suffix:semicolon
-id|config.u.xcvr
+id|config
 op_assign
+id|BFINS
+c_func
+(paren
+id|config
+comma
 id|dev-&gt;if_port
+comma
+l_int|20
+comma
+l_int|4
+)paren
 suffix:semicolon
 singleline_comment|//AKPM&t;if (!vp-&gt;has_nway)
 (brace
@@ -5463,13 +5519,13 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;vortex_up(): writing 0x%x to InternalConfig&bslash;n&quot;
 comma
-id|config.i
+id|config
 )paren
 suffix:semicolon
 id|outl
 c_func
 (paren
-id|config.i
+id|config
 comma
 id|ioaddr
 op_plus
@@ -5661,7 +5717,7 @@ l_string|&quot;%s: vortex_up() InternalConfig %8.8x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|config.i
+id|config
 )paren
 suffix:semicolon
 )brace
@@ -6161,11 +6217,6 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Turn on statistics. */
-id|netif_start_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|outw
 c_func
 (paren
@@ -6376,6 +6427,11 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 )brace
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 r_static
 r_int
@@ -6721,6 +6777,7 @@ id|vortex_debug
 OG
 l_int|1
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -6737,6 +6794,16 @@ dot
 id|name
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;dev-&gt;watchdog_timeo=%d&bslash;n&quot;
+comma
+id|dev-&gt;watchdog_timeo
+)paren
+suffix:semicolon
+)brace
 id|disable_irq
 c_func
 (paren
@@ -7112,8 +7179,8 @@ op_logical_neg
 id|ok
 )paren
 (brace
-r_union
-id|wn3_config
+r_int
+r_int
 id|config
 suffix:semicolon
 r_do
@@ -7250,7 +7317,7 @@ c_func
 l_int|3
 )paren
 suffix:semicolon
-id|config.i
+id|config
 op_assign
 id|inl
 c_func
@@ -7260,14 +7327,24 @@ op_plus
 id|Wn3_Config
 )paren
 suffix:semicolon
-id|config.u.xcvr
+id|config
 op_assign
+id|BFINS
+c_func
+(paren
+id|config
+comma
 id|dev-&gt;if_port
+comma
+l_int|20
+comma
+l_int|4
+)paren
 suffix:semicolon
 id|outl
 c_func
 (paren
-id|config.i
+id|config
 comma
 id|ioaddr
 op_plus
@@ -7304,7 +7381,7 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;wrote 0x%08x to Wn3_Config&bslash;n&quot;
 comma
-id|config.i
+id|config
 )paren
 suffix:semicolon
 multiline_comment|/* AKPM: FIXME: Should reset Rx &amp; Tx here.  P60 of 3c90xc.pdf */
@@ -7344,19 +7421,17 @@ dot
 id|name
 )paren
 suffix:semicolon
-id|vp-&gt;timer.expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|vp-&gt;timer
+comma
 id|RUN_AT
 c_func
 (paren
 id|next_tick
 )paren
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|vp-&gt;timer
 )paren
 suffix:semicolon
 r_if
@@ -7372,6 +7447,13 @@ comma
 id|ioaddr
 op_plus
 id|EL3_CMD
+)paren
+suffix:semicolon
+id|timer_exit
+c_func
+(paren
+op_amp
+id|vp-&gt;timer
 )paren
 suffix:semicolon
 r_return
@@ -7535,7 +7617,7 @@ c_cond
 (paren
 id|vortex_debug
 OG
-l_int|1
+l_int|0
 )paren
 id|dump_tx_ring
 c_func
@@ -7677,9 +7759,17 @@ id|EL3_CMD
 suffix:semicolon
 )brace
 r_else
+(brace
 id|vp-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Issue Tx Enable */
 id|outw
 c_func
@@ -8314,6 +8404,12 @@ comma
 id|ioaddr
 op_plus
 id|EL3_CMD
+)paren
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -9769,6 +9865,7 @@ id|dirty_tx
 op_mod
 id|TX_RING_SIZE
 suffix:semicolon
+macro_line|#if 1&t;/* AKPM: the latter is faster, but cyclone-only */
 r_if
 c_cond
 (paren
@@ -9793,6 +9890,27 @@ id|boom_tx_desc
 r_break
 suffix:semicolon
 multiline_comment|/* It still hasn&squot;t been processed. */
+macro_line|#else
+r_if
+c_cond
+(paren
+(paren
+id|vp-&gt;tx_ring
+(braket
+id|entry
+)braket
+dot
+id|status
+op_amp
+id|DN_COMPLETE
+)paren
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* It still hasn&squot;t been processed. */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9907,16 +10025,6 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|vp-&gt;tx_full
-)paren
-id|netif_stop_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/* Check for all uncommon interrupts at once. */
 r_if
 c_cond
@@ -10087,11 +10195,7 @@ id|EL3_STATUS
 )paren
 )paren
 op_amp
-(paren
 id|IntLatch
-op_or
-id|RxComplete
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -11034,9 +11138,11 @@ r_for
 c_loop
 (paren
 suffix:semicolon
-id|vp-&gt;dirty_rx
-OL
 id|vp-&gt;cur_rx
+op_minus
+id|vp-&gt;dirty_rx
+OG
+l_int|0
 suffix:semicolon
 id|vp-&gt;dirty_rx
 op_increment
@@ -11079,9 +11185,44 @@ id|skb
 op_eq
 l_int|NULL
 )paren
+(brace
+r_static
+r_int
+r_int
+id|last_jif
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|jiffies
+op_minus
+id|last_jif
+)paren
+OG
+l_int|10
+op_star
+id|HZ
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: memory shortage&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|last_jif
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 multiline_comment|/* Bad news!  */
+)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -11186,7 +11327,7 @@ id|netif_stop_queue
 id|dev
 )paren
 suffix:semicolon
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
@@ -11640,7 +11781,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
+id|KERN_ERR
 l_string|&quot;  Flags; bus-master %d, full %d; dirty %d(%d) &quot;
 l_string|&quot;current %d(%d).&bslash;n&quot;
 comma
@@ -11664,7 +11805,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
+id|KERN_ERR
 l_string|&quot;  Transmit list %8.8x vs. %p.&bslash;n&quot;
 comma
 id|inl
@@ -11702,7 +11843,7 @@ op_increment
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
+id|KERN_ERR
 l_string|&quot;  %d: @%p  length %8.8x status %8.8x&bslash;n&quot;
 comma
 id|i

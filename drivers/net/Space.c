@@ -469,26 +469,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|a2065_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ariadne_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|ariadne2_probe
 c_func
 (paren
@@ -1355,22 +1335,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SUN3LANCE         /* sun3 onboard Lance chip */
 (brace
 id|sun3lance_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_A2065&t;&t;/* Commodore/Ameristar A2065 Ethernet Board */
-(brace
-id|a2065_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_ARIADNE&t;&t;/* Village Tronic Ariadne Ethernet Board */
-(brace
-id|ariadne_probe
 comma
 l_int|0
 )brace

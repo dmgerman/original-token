@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  mousedev.c  Version 0.1&n; *&n; *  Copyright (c) 1999 Vojtech Pavlik&n; *&n; *  Input driver to PS/2 or ImPS/2 device driver module.&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: mousedev.c,v 1.8 2000/05/28 17:31:36 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Input driver to PS/2 or ImPS/2 device driver module.&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 DECL|macro|MOUSEDEV_MINOR_BASE
 mdefine_line|#define MOUSEDEV_MINOR_BASE &t;32
@@ -561,14 +561,10 @@ id|list-&gt;ready
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|list-&gt;fasync
-)paren
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|list-&gt;fasync
 comma
 id|SIGIO
@@ -840,8 +836,6 @@ c_func
 id|list
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -896,8 +890,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -918,14 +910,10 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -1541,14 +1529,10 @@ op_assign
 id|list-&gt;bufsiz
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|list-&gt;fasync
-)paren
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|list-&gt;fasync
 comma
 id|SIGIO
@@ -1816,6 +1800,10 @@ id|file_operations
 id|mousedev_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|mousedev_read
@@ -2092,6 +2080,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;mouse%d: PS/2 mouse device for input%d&bslash;n&quot;
 comma
 id|minor
@@ -2267,6 +2256,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;mice: PS/2 mouse device common for all mice&bslash;n&quot;
 )paren
 suffix:semicolon

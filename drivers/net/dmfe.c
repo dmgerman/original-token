@@ -78,7 +78,7 @@ mdefine_line|#define DMFE_AUTO       8
 DECL|macro|DMFE_TIMER_WUT
 mdefine_line|#define DMFE_TIMER_WUT  jiffies+(HZ*2)/2&t;/* timer wakeup time : 1 second */
 DECL|macro|DMFE_TX_TIMEOUT
-mdefine_line|#define DMFE_TX_TIMEOUT HZ*1.5&t;/* tx packet time-out time 1.5 s&quot; */
+mdefine_line|#define DMFE_TX_TIMEOUT ((HZ*3)/2)&t;/* tx packet time-out time 1.5 s&quot; */
 DECL|macro|DMFE_DBUG
 mdefine_line|#define DMFE_DBUG(dbug_now, msg, vaule) if (dmfe_debug || dbug_now) printk(&quot;DBUG: %s %x&bslash;n&quot;, msg, vaule)
 DECL|macro|DELAY_5US
@@ -1546,13 +1546,13 @@ r_if
 c_cond
 (paren
 (paren
-id|pci_id
+id|net_dev-&gt;device
 op_ne
 id|PCI_DM9102_ID
 )paren
 op_logical_and
 (paren
-id|pci_id
+id|net_dev-&gt;device
 op_ne
 id|PCI_DM9132_ID
 )paren
@@ -1561,24 +1561,29 @@ r_continue
 suffix:semicolon
 id|pci_iobase
 op_assign
-id|net_dev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|net_dev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|pci_irqline
 op_assign
 id|net_dev-&gt;irq
 suffix:semicolon
 multiline_comment|/* Enable Master/IO access, Disable memory access */
+r_if
+c_cond
+(paren
 id|pci_enable_device
+c_func
 (paren
 id|net_dev
 )paren
+)paren
+r_continue
 suffix:semicolon
-multiline_comment|/* XXX check return val */
 id|pci_set_master
 c_func
 (paren
@@ -1628,23 +1633,6 @@ id|dev_rev
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;dmfe: I/O conflict : IO=%lx Range=%x&bslash;n&quot;
-comma
-id|pci_iobase
-comma
-id|CHK_IO_SIZE
-c_func
-(paren
-id|pci_id
-comma
-id|dev_rev
-)paren
-)paren
-suffix:semicolon
 r_continue
 suffix:semicolon
 )brace

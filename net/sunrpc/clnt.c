@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/net/sunrpc/rpcclnt.c&n; *&n; *  This file contains the high-level RPC interface.&n; *  It is modeled as a finite state machine to support both synchronous&n; *  and asynchronous requests.&n; *&n; *  -&t;RPC header generation and argument serialization.&n; *  -&t;Credential refresh.&n; *  -&t;TCP reconnect handling (when finished).&n; *  -&t;Retry of operation when it is suspected the operation failed because&n; *&t;of uid squashing on the server, or when the credentials were stale&n; *&t;and need to be refreshed, or when a packet was damaged in transit.&n; *&t;This may be have to be moved to the VFS layer.&n; *&n; *  NB: BSD uses a more intelligent approach to guessing when a request&n; *  or reply has been lost by keeping the RTO estimate for each procedure.&n; *  We currently make do with a constant timeout value.&n; *&n; *  Copyright (C) 1992,1993 Rick Sladkey &lt;jrs@world.std.com&gt;&n; *  Copyright (C) 1995,1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;

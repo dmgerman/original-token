@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * printer.c  Version 0.4&n; *&n; * Copyright (c) 1999 Michael Gee &t;&lt;michael@linuxspecific.com&gt;&n; * Copyright (c) 1999 Pavel Machek      &lt;pavel@suse.cz&gt;&n; * Copyright (c) 2000 Vojtech Pavlik    &lt;vojtech@suse.cz&gt;&n; *&n; * USB Printer Device Class driver for USB printers and printer cables&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.1 - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.2 - some more cleanups&n; *&t;v0.3 - cleaner again, waitqueue fixes&n; *&t;v0.4 - fixes in unidirectional mode&n; */
+multiline_comment|/*&n; * printer.c  Version 0.5&n; *&n; * Copyright (c) 1999 Michael Gee&t;&lt;michael@linuxspecific.com&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 2000 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; * Copyright (c) 2000 Randy Dunlap&t;&lt;randy.dunlap@intel.com&gt;&n; *&n; * USB Printer Device Class driver for USB printers and printer cables&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.1 - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.2 - some more cleanups&n; *&t;v0.3 - cleaner again, waitqueue fixes&n; *&t;v0.4 - fixes in unidirectional mode&n; *&t;v0.5 - add DEVICE_ID string support&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,6 +13,13 @@ mdefine_line|#define DEBUG
 macro_line|#include &lt;linux/usb.h&gt;
 DECL|macro|USBLP_BUF_SIZE
 mdefine_line|#define USBLP_BUF_SIZE&t;&t;8192
+DECL|macro|DEVICE_ID_SIZE
+mdefine_line|#define DEVICE_ID_SIZE&t;&t;1024
+DECL|macro|IOCNR_GET_DEVICE_ID
+mdefine_line|#define IOCNR_GET_DEVICE_ID&t;1
+DECL|macro|LPIOC_GET_DEVICE_ID
+mdefine_line|#define LPIOC_GET_DEVICE_ID(len) _IOC(_IOC_READ, &squot;P&squot;, IOCNR_GET_DEVICE_ID, len)&t;/* get device_id string */
+multiline_comment|/*&n; * A DEVICE_ID string may include the printer&squot;s serial number.&n; * It should end with a semi-colon (&squot;;&squot;).&n; * An example from an HP 970C DeskJet printer is (this is one long string,&n; * with the serial number changed):&n;MFG:HEWLETT-PACKARD;MDL:DESKJET 970C;CMD:MLC,PCL,PML;CLASS:PRINTER;DESCRIPTION:Hewlett-Packard DeskJet 970C;SERN:US970CSEPROF;VSTATUS:$HB0$NC0,ff,DN,IDLE,CUT,K1,C0,DP,NR,KP000,CP027;VP:0800,FL,B0;VJ:                    ;&n; */
 multiline_comment|/*&n; * USB Printer Requests&n; */
 DECL|macro|USBLP_REQ_GET_ID
 mdefine_line|#define USBLP_REQ_GET_ID&t;0x00
@@ -78,6 +85,14 @@ r_char
 id|bidir
 suffix:semicolon
 multiline_comment|/* interface is bidirectional */
+DECL|member|device_id_string
+r_int
+r_char
+op_star
+id|device_id_string
+suffix:semicolon
+multiline_comment|/* IEEE 1284 DEVICE ID string (ptr) */
+multiline_comment|/* first 2 bytes are (big-endian) length */
 )brace
 suffix:semicolon
 DECL|variable|usblp_table
@@ -116,6 +131,9 @@ id|dir
 comma
 r_int
 id|recip
+comma
+r_int
+id|value
 comma
 r_void
 op_star
@@ -160,7 +178,7 @@ id|dir
 op_or
 id|recip
 comma
-l_int|0
+id|value
 comma
 id|usblp-&gt;ifnum
 comma
@@ -176,7 +194,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;usblp_control_msg: rq: 0x%02x dir: %d recip: %d len: %#x result: %d&quot;
+l_string|&quot;usblp_control_msg: rq: 0x%02x dir: %d recip: %d value: %d len: %#x result: %d&quot;
 comma
 id|request
 comma
@@ -185,6 +203,8 @@ op_logical_neg
 id|dir
 comma
 id|recip
+comma
+id|value
 comma
 id|len
 comma
@@ -203,11 +223,11 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|macro|usblp_read_status
-mdefine_line|#define usblp_read_status(usblp, status)&bslash;&n;&t;usblp_ctrl_msg(usblp, USBLP_REQ_GET_STATUS, USB_DIR_IN, USB_RECIP_INTERFACE, status, 1)
+mdefine_line|#define usblp_read_status(usblp, status)&bslash;&n;&t;usblp_ctrl_msg(usblp, USBLP_REQ_GET_STATUS, USB_DIR_IN, USB_RECIP_INTERFACE, 0, status, 1)
 DECL|macro|usblp_get_id
-mdefine_line|#define usblp_get_id(usblp, id, maxlen)&bslash;&n;&t;usblp_ctrl_msg(usblp, USBLP_REQ_GET_ID, USB_DIR_IN, USB_RECIP_INTERFACE, id, maxlen)
+mdefine_line|#define usblp_get_id(usblp, config, id, maxlen)&bslash;&n;&t;usblp_ctrl_msg(usblp, USBLP_REQ_GET_ID, USB_DIR_IN, USB_RECIP_INTERFACE, config, id, maxlen)
 DECL|macro|usblp_reset
-mdefine_line|#define usblp_reset(usblp)&bslash;&n;&t;usblp_ctrl_msg(usblp, USBLP_REQ_RESET, USB_DIR_OUT, USB_RECIP_OTHER, NULL, 0)
+mdefine_line|#define usblp_reset(usblp)&bslash;&n;&t;usblp_ctrl_msg(usblp, USBLP_REQ_RESET, USB_DIR_OUT, USB_RECIP_OTHER, 0, NULL, 0)
 multiline_comment|/*&n; * URB callback.&n; */
 DECL|function|usblp_bulk
 r_static
@@ -307,6 +327,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_complement
 id|status
 op_amp
 id|LP_PERRORP
@@ -463,8 +484,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -479,8 +498,6 @@ id|usblp
 )paren
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -576,8 +593,6 @@ op_amp
 id|usblp-&gt;writeurb
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -592,10 +607,14 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
-id|usblp
+id|usblp-&gt;device_id_string
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
+id|kfree
+c_func
+(paren
+id|usblp
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -670,6 +689,178 @@ id|POLLOUT
 op_or
 id|POLLWRNORM
 )paren
+suffix:semicolon
+)brace
+DECL|function|usblp_ioctl
+r_static
+r_int
+id|usblp_ioctl
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+(brace
+r_int
+id|length
+suffix:semicolon
+r_struct
+id|usblp
+op_star
+id|usblp
+op_assign
+id|file-&gt;private_data
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|_IOC_TYPE
+c_func
+(paren
+id|cmd
+)paren
+op_ne
+l_char|&squot;P&squot;
+)paren
+op_logical_or
+(paren
+id|_IOC_DIR
+c_func
+(paren
+id|cmd
+)paren
+op_ne
+id|_IOC_READ
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|_IOC_NR
+c_func
+(paren
+id|cmd
+)paren
+)paren
+(brace
+r_case
+id|IOCNR_GET_DEVICE_ID
+suffix:colon
+multiline_comment|/* get the DEVICE_ID string */
+id|length
+op_assign
+(paren
+id|usblp-&gt;device_id_string
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+id|usblp-&gt;device_id_string
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* big-endian */
+macro_line|#if 0
+id|dbg
+(paren
+l_string|&quot;usblp_ioctl GET_DEVICE_ID: actlen=%d, user size=%d, string=&squot;%s&squot;&quot;
+comma
+id|length
+comma
+id|_IOC_SIZE
+c_func
+(paren
+id|cmd
+)paren
+comma
+op_amp
+id|usblp-&gt;device_id_string
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|length
+OG
+id|_IOC_SIZE
+c_func
+(paren
+id|cmd
+)paren
+)paren
+id|length
+op_assign
+id|_IOC_SIZE
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
+multiline_comment|/* truncate */
+r_if
+c_cond
+(paren
+id|copy_to_user
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|arg
+comma
+id|usblp-&gt;device_id_string
+comma
+(paren
+r_int
+r_int
+)paren
+id|length
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|usblp_write
@@ -861,11 +1052,13 @@ id|usblp
 id|err
 c_func
 (paren
-l_string|&quot;usblp%d: error %d writing to printer&quot;
+l_string|&quot;usblp%d: error %d writing to printer (retval=%d)&quot;
 comma
 id|usblp-&gt;minor
 comma
 id|usblp-&gt;writeurb.status
+comma
+id|retval
 )paren
 suffix:semicolon
 r_return
@@ -1169,6 +1362,11 @@ comma
 id|bidir
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|length
+comma
+id|err
 suffix:semicolon
 r_char
 op_star
@@ -1552,6 +1750,45 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|usblp-&gt;device_id_string
+op_assign
+id|kmalloc
+c_func
+(paren
+id|DEVICE_ID_SIZE
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;out of memory&quot;
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|usblp
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|FILL_BULK_URB
 c_func
 (paren
@@ -1609,6 +1846,120 @@ comma
 id|usblp
 )paren
 suffix:semicolon
+multiline_comment|/* Get the device_id string if possible. FIXME: Could make this kmalloc(length). */
+id|err
+op_assign
+id|usblp_get_id
+c_func
+(paren
+id|usblp
+comma
+l_int|0
+comma
+id|usblp-&gt;device_id_string
+comma
+id|DEVICE_ID_SIZE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+op_ge
+l_int|0
+)paren
+(brace
+id|length
+op_assign
+(paren
+id|usblp-&gt;device_id_string
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+id|usblp-&gt;device_id_string
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* big-endian */
+r_if
+c_cond
+(paren
+id|length
+OL
+id|DEVICE_ID_SIZE
+)paren
+id|usblp-&gt;device_id_string
+(braket
+id|length
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_else
+id|usblp-&gt;device_id_string
+(braket
+id|DEVICE_ID_SIZE
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|dbg
+(paren
+l_string|&quot;usblp%d Device ID string [%d]=%s&quot;
+comma
+id|minor
+comma
+id|length
+comma
+op_amp
+id|usblp-&gt;device_id_string
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|err
+(paren
+l_string|&quot;usblp%d: error = %d reading IEEE-1284 Device ID string&quot;
+comma
+id|minor
+comma
+id|err
+)paren
+suffix:semicolon
+id|usblp-&gt;device_id_string
+(braket
+l_int|0
+)braket
+op_assign
+id|usblp-&gt;device_id_string
+(braket
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+)brace
+macro_line|#ifdef DEBUG
+id|usblp_check_status
+c_func
+(paren
+id|usblp
+)paren
+suffix:semicolon
+macro_line|#endif
 id|info
 c_func
 (paren
@@ -1717,6 +2068,12 @@ id|usblp-&gt;used
 )paren
 r_return
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|usblp-&gt;device_id_string
+)paren
+suffix:semicolon
 id|usblp_table
 (braket
 id|usblp-&gt;minor
@@ -1738,6 +2095,10 @@ id|file_operations
 id|usblp_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|usblp_read
@@ -1746,6 +2107,14 @@ id|write
 suffix:colon
 id|usblp_write
 comma
+id|poll
+suffix:colon
+id|usblp_poll
+comma
+id|ioctl
+suffix:colon
+id|usblp_ioctl
+comma
 id|open
 suffix:colon
 id|usblp_open
@@ -1753,10 +2122,6 @@ comma
 id|release
 suffix:colon
 id|usblp_release
-comma
-id|poll
-suffix:colon
-id|usblp_poll
 comma
 )brace
 suffix:semicolon

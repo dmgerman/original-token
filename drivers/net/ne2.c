@@ -390,6 +390,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -721,6 +722,7 @@ l_string|&quot; disabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -836,6 +838,7 @@ l_string|&quot;NE/2 adapter not responding&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -904,6 +907,7 @@ l_string|&quot; not found (no reset ack).&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1154,6 +1158,7 @@ id|irqval
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace

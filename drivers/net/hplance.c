@@ -256,6 +256,7 @@ op_logical_neg
 id|cards
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_return

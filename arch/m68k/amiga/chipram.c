@@ -114,6 +114,8 @@ suffix:semicolon
 id|chipram.end
 op_assign
 id|amiga_chip_size
+op_minus
+l_int|1
 suffix:semicolon
 id|request_resource
 c_func

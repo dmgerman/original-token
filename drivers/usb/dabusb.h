@@ -174,7 +174,7 @@ suffix:semicolon
 DECL|macro|_DABUSB_IF
 mdefine_line|#define _DABUSB_IF 2
 DECL|macro|_DABUSB_ISOPIPE
-mdefine_line|#define _DABUSB_ISOPIPE 0x89
+mdefine_line|#define _DABUSB_ISOPIPE 0x09
 DECL|macro|_ISOPIPESIZE
 mdefine_line|#define _ISOPIPESIZE&t;16384
 DECL|macro|_BULK_DATA_LEN

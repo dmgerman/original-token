@@ -5801,7 +5801,7 @@ op_assign
 (brace
 id|MAJOR_NR
 comma
-l_string|&quot;i2ohd&quot;
+l_string|&quot;i2o/hd&quot;
 comma
 l_int|4
 comma

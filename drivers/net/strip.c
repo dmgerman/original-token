@@ -10935,6 +10935,7 @@ suffix:semicolon
 macro_line|#else
 multiline_comment|/* Return &quot;not found&quot;, so that dev_init() will unlink&n;     * the placeholder device entry for us.&n;     */
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 macro_line|#endif

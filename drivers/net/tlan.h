@@ -11,9 +11,9 @@ mdefine_line|#define FALSE&t;&t;&t;0
 DECL|macro|TRUE
 mdefine_line|#define TRUE&t;&t;&t;1
 DECL|macro|TLAN_MIN_FRAME_SIZE
-mdefine_line|#define TLAN_MIN_FRAME_SIZE&t;64
+mdefine_line|#define TLAN_MIN_FRAME_SIZE&t;60
 DECL|macro|TLAN_MAX_FRAME_SIZE
-mdefine_line|#define TLAN_MAX_FRAME_SIZE&t;1600
+mdefine_line|#define TLAN_MAX_FRAME_SIZE&t;1536
 DECL|macro|TLAN_NUM_RX_LISTS
 mdefine_line|#define TLAN_NUM_RX_LISTS&t;4
 DECL|macro|TLAN_NUM_TX_LISTS
@@ -689,6 +689,16 @@ DECL|macro|TLAN_TS_TPENERGY
 mdefine_line|#define&t;&t;TLAN_TS_TPENERGY&t;0x1000
 DECL|macro|TLAN_TS_RESERVED
 mdefine_line|#define&t;&t;TLAN_TS_RESERVED&t;0x0FFF
+DECL|macro|TLAN_TLPHY_PAR
+mdefine_line|#define TLAN_TLPHY_PAR&t;&t;&t;0x19
+DECL|macro|TLAN_PHY_CIM_STAT
+mdefine_line|#define&t;&t;TLAN_PHY_CIM_STAT&t;0x0020
+DECL|macro|TLAN_PHY_SPEED_100
+mdefine_line|#define&t;&t;TLAN_PHY_SPEED_100&t;0x0040
+DECL|macro|TLAN_PHY_DUPLEX_FULL
+mdefine_line|#define&t;&t;TLAN_PHY_DUPLEX_FULL&t;0x0080
+DECL|macro|TLAN_PHY_AN_EN_STAT
+mdefine_line|#define&t;&t;TLAN_PHY_AN_EN_STAT     0x0400
 DECL|macro|CIRC_INC
 mdefine_line|#define CIRC_INC( a, b ) if ( ++a &gt;= b ) a = 0
 multiline_comment|/* Routines to access internal registers. */

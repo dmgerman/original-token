@@ -1,5 +1,7 @@
 multiline_comment|/*&n;&t;drivers/net/tulip/21142.c&n;&n;&t;Maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;Copyright 2000  The Linux Kernel Team&n;&t;Written/copyright 1994-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Please refer to Documentation/networking/tulip.txt for more&n;&t;information on this driver.&n;&n;*/
 macro_line|#include &quot;tulip.h&quot;
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 DECL|variable|t21142_csr13
 r_static
 id|u16
@@ -464,24 +466,12 @@ op_plus
 id|CSR12
 )paren
 suffix:semicolon
-id|tulip_outl_CSR6
+id|tulip_restart_rxtx
 c_func
 (paren
 id|tp
 comma
 id|tp-&gt;csr6
-op_or
-l_int|0x0002
-)paren
-suffix:semicolon
-id|tulip_outl_CSR6
-c_func
-(paren
-id|tp
-comma
-id|tp-&gt;csr6
-op_or
-l_int|0x2002
 )paren
 suffix:semicolon
 )brace
@@ -560,6 +550,12 @@ l_int|1
 op_or
 l_int|0xffbf
 suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;ENTER&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dev-&gt;if_port
 op_assign
 l_int|0
@@ -587,7 +583,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: Restarting 21143 autonegotiation, %8.8x.&bslash;n&quot;
+l_string|&quot;%s: Restarting 21143 autonegotiation, csr14=%8.8x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -602,6 +598,12 @@ comma
 id|ioaddr
 op_plus
 id|CSR13
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
 )paren
 suffix:semicolon
 id|outl
@@ -652,12 +654,14 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-id|tulip_outl_CSR6
+id|tulip_outl_csr
 c_func
 (paren
 id|tp
 comma
 id|tp-&gt;csr6
+comma
+id|CSR6
 )paren
 suffix:semicolon
 r_if
@@ -1066,14 +1070,16 @@ id|CSR13
 suffix:semicolon
 )brace
 macro_line|#if 0&t;&t;&t;&t;&t;&t;&t;/* Restart shouldn&squot;t be needed. */
-id|tulip_outl_CSR6
+id|tulip_outl_csr
 c_func
 (paren
 id|tp
 comma
 id|tp-&gt;csr6
 op_or
-l_int|0x0000
+id|csr6_sr
+comma
+id|CSR6
 )paren
 suffix:semicolon
 r_if
@@ -1101,14 +1107,18 @@ id|CSR5
 )paren
 suffix:semicolon
 macro_line|#endif
-id|tulip_outl_CSR6
+id|tulip_outl_csr
 c_func
 (paren
 id|tp
 comma
 id|tp-&gt;csr6
 op_or
-l_int|0x2002
+id|csr6_st
+op_or
+id|csr6_sr
+comma
+id|CSR6
 )paren
 suffix:semicolon
 r_if
@@ -1453,24 +1463,12 @@ op_plus
 id|CSR12
 )paren
 suffix:semicolon
-id|tulip_outl_CSR6
+id|tulip_restart_rxtx
 c_func
 (paren
 id|tp
 comma
 id|tp-&gt;csr6
-op_or
-l_int|0x0002
-)paren
-suffix:semicolon
-id|tulip_outl_CSR6
-c_func
-(paren
-id|tp
-comma
-id|tp-&gt;csr6
-op_or
-l_int|0x2002
 )paren
 suffix:semicolon
 )brace

@@ -1195,6 +1195,7 @@ c_cond
 id|ioaddr
 )paren
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -4577,6 +4578,7 @@ op_logical_neg
 id|dev-&gt;priv
 )paren
 r_return
+op_minus
 id|ENOMEM
 suffix:semicolon
 id|memset
@@ -4820,6 +4822,7 @@ id|dev-&gt;priv
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_break

@@ -2709,17 +2709,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;uss720: probe: vendor id 0x%x, device id 0x%x&bslash;n&quot;
-comma
-id|usbdev-&gt;descriptor.idVendor
-comma
-id|usbdev-&gt;descriptor.idProduct
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2755,6 +2744,17 @@ l_int|0x1284
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;uss720: probe: vendor id 0x%x, device id 0x%x&bslash;n&quot;
+comma
+id|usbdev-&gt;descriptor.idVendor
+comma
+id|usbdev-&gt;descriptor.idProduct
+)paren
 suffix:semicolon
 multiline_comment|/* our known interfaces have 3 alternate settings */
 r_if

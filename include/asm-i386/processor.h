@@ -512,7 +512,7 @@ DECL|macro|IO_BITMAP_OFFSET
 mdefine_line|#define IO_BITMAP_OFFSET offsetof(struct tss_struct,io_bitmap)
 DECL|macro|INVALID_IO_BITMAP_OFFSET
 mdefine_line|#define INVALID_IO_BITMAP_OFFSET 0x8000
-macro_line|#ifndef CONFIG_X86_FX
+macro_line|#ifndef CONFIG_X86_FXSR
 DECL|macro|i387_save_hard
 mdefine_line|#define i387_save_hard(x) &bslash;&n;&t;__asm__(&quot;fnsave %0&bslash;n&bslash;tfwait&quot;: :&quot;m&quot; (x))
 DECL|macro|i387_restore_hard

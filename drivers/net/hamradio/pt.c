@@ -3805,6 +3805,7 @@ id|irqval
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace

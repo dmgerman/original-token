@@ -1,5 +1,5 @@
 multiline_comment|/* drivers/net/eepro100.c: An Intel i82557-559 Ethernet driver for Linux. */
-multiline_comment|/*&n;   NOTICE: For use with late 2.3 kernels only.&n;   May not compile for kernels 2.3.43-47.&n;&t;Written 1996-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Intel EtherExpress Pro100 (Speedo3) design.&n;&t;It should work with all i82557/558/559 boards.&n;&n;&t;The author may be reached as becker@CESDIS.usra.edu, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, NASA Goddard Space Flight Center, Greenbelt MD 20771&n;&t;For updates see&n;&t;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/eepro100.html&n;&t;For installation instructions&n;&t;&t;http://cesdis.gsfc.nasa.gov/linux/misc/modules.html&n;&t;There is a Majordomo mailing list based at&n;&t;&t;linux-eepro100@cesdis.gsfc.nasa.gov&n;&n;&t;The driver also contains updates by different kernel developers&n;&t;(see incomplete list below).&n;&t;This driver clone is maintained by Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt;.&n;&t;Please use this email address and linux-kernel mailing list for bug reports.&n;&n;&t;Version history:&n;&t;1998 Apr - 2000 Feb  Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt;&n;&t;&t;Serious fixes for multicast filter list setting, TX timeout routine;&n;&t;&t;RX ring refilling logic;  other stuff&n;&t;2000 Feb  Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Convert to new PCI driver interface&n;&t;2000 Mar 24  Dragan Stancevic &lt;visitor@valinux.com&gt;&n;&t;&t;Disabled FC and ER, to avoid lockups when when we get FCP interrupts.&n;&t;&t;Dragan Stancevic &lt;visitor@valinux.com&gt; March 24th, 2000.&n;*/
+multiline_comment|/*&n;   NOTICE: For use with late 2.3 kernels only.&n;   May not compile for kernels 2.3.43-47.&n;&t;Written 1996-1999 by Donald Becker.&n;&n;&t;The driver also contains updates by different kernel developers&n;&t;(see incomplete list below).&n;&t;Current maintainer is Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt;.&n;&t;Please use this email address and linux-kernel mailing list for bug reports.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Intel EtherExpress Pro100 (Speedo3) design.&n;&t;It should work with all i82557/558/559 boards.&n;&n;&t;Version history:&n;&t;1998 Apr - 2000 Feb  Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt;&n;&t;&t;Serious fixes for multicast filter list setting, TX timeout routine;&n;&t;&t;RX ring refilling logic;  other stuff&n;&t;2000 Feb  Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Convert to new PCI driver interface&n;&t;2000 Mar 24  Dragan Stancevic &lt;visitor@valinux.com&gt;&n;&t;&t;Disabled FC and ER, to avoid lockups when when we get FCP interrupts.&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -8,7 +8,7 @@ op_star
 id|version
 op_assign
 l_string|&quot;eepro100.c:v1.09j-t 9/29/99 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/eepro100.html&bslash;n&quot;
-l_string|&quot;eepro100.c: $Revision: 1.29 $ 2000/03/30 Modified by Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt; and others&bslash;n&quot;
+l_string|&quot;eepro100.c: $Revision: 1.33 $ 2000/05/24 Modified by Andrey V. Savochkin &lt;saw@saw.sw.com.sg&gt; and others&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values that apply to all boards.&n;   First set is undocumented and spelled per Intel recommendations. */
 DECL|variable|congenb
@@ -552,9 +552,14 @@ id|direction
 (brace
 )brace
 macro_line|#endif
-multiline_comment|/* The total I/O port extent of the board.&n;   The registers beyond 0x18 only exist on the i82558. */
-DECL|macro|SPEEDO3_TOTAL_SIZE
-mdefine_line|#define SPEEDO3_TOTAL_SIZE 0x20
+macro_line|#ifndef PCI_DEVICE_ID_INTEL_ID1029
+DECL|macro|PCI_DEVICE_ID_INTEL_ID1029
+mdefine_line|#define PCI_DEVICE_ID_INTEL_ID1029 0x1029
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_INTEL_ID1030
+DECL|macro|PCI_DEVICE_ID_INTEL_ID1030
+mdefine_line|#define PCI_DEVICE_ID_INTEL_ID1030 0x1030
+macro_line|#endif
 DECL|variable|speedo_debug
 r_int
 id|speedo_debug
@@ -576,29 +581,12 @@ r_int
 id|ioaddr
 comma
 r_int
-id|irq
-comma
-r_int
-id|chip_idx
-comma
-r_int
 id|fnd_cnt
 comma
 r_int
 id|acpi_idle_state
 )paren
 suffix:semicolon
-macro_line|#ifdef USE_IO
-DECL|macro|SPEEDO_IOTYPE
-mdefine_line|#define SPEEDO_IOTYPE   PCI_USES_MASTER|PCI_USES_IO|PCI_ADDR1
-DECL|macro|SPEEDO_SIZE
-mdefine_line|#define SPEEDO_SIZE&t;&t;32
-macro_line|#else
-DECL|macro|SPEEDO_IOTYPE
-mdefine_line|#define SPEEDO_IOTYPE   PCI_USES_MASTER|PCI_USES_MEM|PCI_ADDR0
-DECL|macro|SPEEDO_SIZE
-mdefine_line|#define SPEEDO_SIZE&t;&t;0x1000
-macro_line|#endif
 DECL|enum|pci_flags_bit
 r_enum
 id|pci_flags_bit
@@ -648,6 +636,52 @@ l_int|3
 comma
 )brace
 suffix:semicolon
+DECL|function|io_inw
+r_static
+r_inline
+r_int
+r_int
+id|io_inw
+c_func
+(paren
+r_int
+r_int
+id|port
+)paren
+(brace
+r_return
+id|inw
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
+)brace
+DECL|function|io_outw
+r_static
+r_inline
+r_void
+id|io_outw
+c_func
+(paren
+r_int
+r_int
+id|val
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+id|outw
+c_func
+(paren
+id|val
+comma
+id|port
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifndef USE_IO
 multiline_comment|/* Currently alpha headers define in/out macros.&n;   Undefine them.  2000/03/30  SAW */
 DECL|macro|inb
@@ -711,6 +745,22 @@ l_int|0
 (brace
 suffix:semicolon
 )brace
+macro_line|#ifndef final_version
+r_if
+c_cond
+(paren
+id|wait
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;eepro100: wait_for_cmd_done timeout!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Offsets to the various registers.&n;   All accesses need not be longword aligned. */
 DECL|enum|speedo_offsets
@@ -2373,10 +2423,6 @@ id|pdev
 comma
 id|ioaddr
 comma
-id|irq
-comma
-l_int|0
-comma
 id|cards_found
 comma
 id|acpi_idle_state
@@ -2472,12 +2518,6 @@ id|pdev
 comma
 r_int
 id|ioaddr
-comma
-r_int
-id|irq
-comma
-r_int
-id|chip_idx
 comma
 r_int
 id|card_idx
@@ -2648,18 +2688,31 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Read the station address EEPROM before doing the reset.&n;&t;   Nominally his should even be done before accepting the device, but&n;&t;   then we wouldn&squot;t have a device name with which to report the error.&n;&t;   The size test is for 6 bit vs. 8 bit address serial EEPROMs.&n;&t;*/
 (brace
-id|u16
-id|sum
-op_assign
-l_int|0
-suffix:semicolon
 r_int
-id|j
+r_int
+id|iobase
 suffix:semicolon
 r_int
 id|read_cmd
 comma
 id|ee_size
+suffix:semicolon
+id|u16
+id|sum
+suffix:semicolon
+r_int
+id|j
+suffix:semicolon
+multiline_comment|/* Use IO only to avoid postponed writes and satisfy EEPROM timing&n;&t;&t;   requirements. */
+id|iobase
+op_assign
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2668,7 +2721,7 @@ c_cond
 id|do_eeprom_cmd
 c_func
 (paren
-id|ioaddr
+id|iobase
 comma
 id|EE_READ_CMD
 op_lshift
@@ -2717,6 +2770,10 @@ comma
 id|i
 op_assign
 l_int|0
+comma
+id|sum
+op_assign
+l_int|0
 suffix:semicolon
 id|i
 OL
@@ -2732,7 +2789,7 @@ op_assign
 id|do_eeprom_cmd
 c_func
 (paren
-id|ioaddr
+id|iobase
 comma
 id|read_cmd
 op_or
@@ -2803,7 +2860,7 @@ comma
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/* Don&squot;t  unregister_netdev(dev);  as the EEPro may actually be&n;&t;&t;   usable, especially if the MAC address is set later. */
+multiline_comment|/* Don&squot;t  unregister_netdev(dev);  as the EEPro may actually be&n;&t;&t;   usable, especially if the MAC address is set later.&n;&t;&t;   On the other hand, it may be unusable if MDI data is corrupted. */
 )brace
 multiline_comment|/* Reset the chip: stop Tx and Rx processes and clear counters.&n;&t;   This takes less than 10usec and will easily finish before the next&n;&t;   action. */
 id|outl
@@ -2897,7 +2954,7 @@ c_func
 (paren
 l_string|&quot;IRQ %d.&bslash;n&quot;
 comma
-id|irq
+id|pdev-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#if 1 || defined(kernel_bloat)
@@ -3454,7 +3511,7 @@ id|ioaddr
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
-id|irq
+id|pdev-&gt;irq
 suffix:semicolon
 id|sp
 op_assign
@@ -3672,9 +3729,7 @@ DECL|macro|EE_WRITE_1
 mdefine_line|#define EE_WRITE_1&t;&t;0x4806
 DECL|macro|EE_OFFSET
 mdefine_line|#define EE_OFFSET&t;&t;SCBeeprom
-multiline_comment|/* Delay between EEPROM clock transitions.&n;   The code works with no delay on 33Mhz PCI.  */
-DECL|macro|eeprom_delay
-mdefine_line|#define eeprom_delay()&t;inw(ee_addr)
+multiline_comment|/* The fixes for the code were kindly provided by Dragan Stancevic&n;   &lt;visitor@valinux.com&gt; to strictly follow Intel specifications of EEPROM&n;   access timing.&n;   The publicly available sheet 64486302 (sec. 3.1) specifies 1us access&n;   interval for serial EEPROM.  However, it looks like that there is an&n;   additional requirement dictating larger udelay&squot;s in the code below.&n;   2000/05/24  SAW */
 DECL|function|do_eeprom_cmd
 r_static
 r_int
@@ -3703,7 +3758,21 @@ id|ioaddr
 op_plus
 id|SCBeeprom
 suffix:semicolon
-id|outw
+id|io_outw
+c_func
+(paren
+id|EE_ENB
+comma
+id|ee_addr
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+id|io_outw
 c_func
 (paren
 id|EE_ENB
@@ -3711,6 +3780,12 @@ op_or
 id|EE_SHIFT_CLK
 comma
 id|ee_addr
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* Shift the command bits out. */
@@ -3734,7 +3809,7 @@ id|EE_WRITE_1
 suffix:colon
 id|EE_WRITE_0
 suffix:semicolon
-id|outw
+id|io_outw
 c_func
 (paren
 id|dataval
@@ -3742,12 +3817,13 @@ comma
 id|ee_addr
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
+l_int|2
 )paren
 suffix:semicolon
-id|outw
+id|io_outw
 c_func
 (paren
 id|dataval
@@ -3757,9 +3833,10 @@ comma
 id|ee_addr
 )paren
 suffix:semicolon
-id|eeprom_delay
+id|udelay
 c_func
 (paren
+l_int|2
 )paren
 suffix:semicolon
 id|retval
@@ -3772,7 +3849,7 @@ l_int|1
 op_or
 (paren
 (paren
-id|inw
+id|io_inw
 c_func
 (paren
 id|ee_addr
@@ -3797,7 +3874,7 @@ op_ge
 l_int|0
 )paren
 suffix:semicolon
-id|outw
+id|io_outw
 c_func
 (paren
 id|EE_ENB
@@ -3805,8 +3882,14 @@ comma
 id|ee_addr
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
 multiline_comment|/* Terminate the EEPROM access. */
-id|outw
+id|io_outw
 c_func
 (paren
 id|EE_ENB
@@ -3815,6 +3898,12 @@ op_complement
 id|EE_CS
 comma
 id|ee_addr
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|4
 )paren
 suffix:semicolon
 r_return
@@ -4824,6 +4913,7 @@ id|speedo_debug
 OG
 l_int|2
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -4833,6 +4923,22 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Old partner %x, new %x, adv %x.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|sp-&gt;partner
+comma
+id|partner
+comma
+id|sp-&gt;advertising
+)paren
+suffix:semicolon
+)brace
 id|sp-&gt;partner
 op_assign
 id|partner
@@ -4985,6 +5091,15 @@ op_amp
 id|sp-&gt;timer
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,43)
+id|timer_exit
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+macro_line|#endif /* LINUX_VERSION_CODE */
 )brace
 DECL|function|speedo_show_state
 r_static
@@ -5203,6 +5318,7 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_for
 c_loop
 (paren
@@ -5254,6 +5370,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/* Initialize the Rx and Tx rings, along with various &squot;dev&squot; bits. */
 r_static
@@ -5659,10 +5776,10 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-DECL|function|speedo_tx_timeout
+DECL|function|reset_mii
 r_static
 r_void
-id|speedo_tx_timeout
+id|reset_mii
 c_func
 (paren
 r_struct
@@ -5688,285 +5805,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-id|status
-op_assign
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|SCBStatus
-)paren
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Transmit timed out: status %4.4x &quot;
-l_string|&quot; %4.4x at %d/%d command %8.8x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|status
-comma
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
-comma
-id|sp-&gt;dirty_tx
-comma
-id|sp-&gt;cur_tx
-comma
-id|sp-&gt;tx_ring
-(braket
-id|sp-&gt;dirty_tx
-op_mod
-id|TX_RING_SIZE
-)braket
-dot
-id|status
-)paren
-suffix:semicolon
-multiline_comment|/* Trigger a stats dump to give time before the reset. */
-id|speedo_get_stats
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|speedo_show_state
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-id|status
-op_amp
-l_int|0x00C0
-)paren
-op_ne
-l_int|0x0080
-op_logical_and
-(paren
-id|status
-op_amp
-l_int|0x003C
-)paren
-op_eq
-l_int|0x0010
-)paren
-(brace
-multiline_comment|/* Only the command unit has stopped. */
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Trying to restart the transmitter...&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|outl
-(paren
-id|cpu_to_le32
-(paren
-id|TX_RING_ELEM_DMA
-(paren
-id|sp
-comma
-id|dirty_tx
-op_mod
-id|TX_RING_SIZE
-)braket
-)paren
-)paren
-comma
-id|ioaddr
-op_plus
-id|SCBPointer
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|CUStart
-comma
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-macro_line|#else
-(brace
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Ensure that timer routine doesn&squot;t run! */
-id|del_timer
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-suffix:semicolon
-id|end_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* LINUX_VERSION_CODE */
-macro_line|#ifdef CONFIG_SMP
-id|del_timer_sync
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-suffix:semicolon
-macro_line|#else /* SMP */
-id|del_timer
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-suffix:semicolon
-macro_line|#endif /* SMP */
-macro_line|#endif /* LINUX_VERSION_CODE */
-multiline_comment|/* Reset the Tx and Rx units. */
-id|outl
-c_func
-(paren
-id|PortReset
-comma
-id|ioaddr
-op_plus
-id|SCBPort
-)paren
-suffix:semicolon
-multiline_comment|/* We may get spurious interrupts here.  But I don&squot;t think that they&n;&t;&t;   may do much harm.  1999/12/09 SAW */
-id|udelay
-c_func
-(paren
-l_int|10
-)paren
-suffix:semicolon
-multiline_comment|/* Disable interrupts. */
-id|outw
-c_func
-(paren
-id|SCBMaskAll
-comma
-id|ioaddr
-op_plus
-id|SCBCmd
-)paren
-suffix:semicolon
-id|synchronize_irq
-c_func
-(paren
-)paren
-suffix:semicolon
-id|speedo_tx_buffer_gc
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* Free as much as possible.&n;&t;&t;   It helps to recover from a hang because of out-of-memory.&n;&t;&t;   It also simplifies speedo_resume() in case TX ring is full or&n;&t;&t;   close-to-be full. */
-id|speedo_purge_tx
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|speedo_refill_rx_buffers
-c_func
-(paren
-id|dev
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|sp-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|speedo_resume
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|sp-&gt;rx_mode
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|sp-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|set_rx_mode
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* it takes the spinlock itself --SAW */
-id|sp-&gt;timer.expires
-op_assign
-id|RUN_AT
-c_func
-(paren
-l_int|2
-op_star
-id|HZ
-)paren
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|sp-&gt;timer
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Reset the MII transceiver, suggested by Fred Young @ scalable.com. */
 r_if
 c_cond
@@ -6121,6 +5959,318 @@ id|advertising
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
+)brace
+DECL|function|speedo_tx_timeout
+r_static
+r_void
+id|speedo_tx_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|speedo_private
+op_star
+id|sp
+op_assign
+(paren
+r_struct
+id|speedo_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_int
+id|status
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBStatus
+)paren
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Transmit timed out: status %4.4x &quot;
+l_string|&quot; %4.4x at %d/%d command %8.8x.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|status
+comma
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+comma
+id|sp-&gt;dirty_tx
+comma
+id|sp-&gt;cur_tx
+comma
+id|sp-&gt;tx_ring
+(braket
+id|sp-&gt;dirty_tx
+op_mod
+id|TX_RING_SIZE
+)braket
+dot
+id|status
+)paren
+suffix:semicolon
+multiline_comment|/* Trigger a stats dump to give time before the reset. */
+id|speedo_get_stats
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|speedo_show_state
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#if 0
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_amp
+l_int|0x00C0
+)paren
+op_ne
+l_int|0x0080
+op_logical_and
+(paren
+id|status
+op_amp
+l_int|0x003C
+)paren
+op_eq
+l_int|0x0010
+)paren
+(brace
+multiline_comment|/* Only the command unit has stopped. */
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Trying to restart the transmitter...&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|outl
+(paren
+id|cpu_to_le32
+(paren
+id|TX_RING_ELEM_DMA
+(paren
+id|sp
+comma
+id|dirty_tx
+op_mod
+id|TX_RING_SIZE
+)braket
+)paren
+)paren
+comma
+id|ioaddr
+op_plus
+id|SCBPointer
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|CUStart
+comma
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
+id|reset_mii
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+macro_line|#else
+(brace
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Ensure that timer routine doesn&squot;t run! */
+id|del_timer
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else /* LINUX_VERSION_CODE */
+id|del_timer_sync
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+macro_line|#endif /* LINUX_VERSION_CODE */
+multiline_comment|/* Reset the Tx and Rx units. */
+id|outl
+c_func
+(paren
+id|PortReset
+comma
+id|ioaddr
+op_plus
+id|SCBPort
+)paren
+suffix:semicolon
+multiline_comment|/* We may get spurious interrupts here.  But I don&squot;t think that they&n;&t;&t;   may do much harm.  1999/12/09 SAW */
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+multiline_comment|/* Disable interrupts. */
+id|outw
+c_func
+(paren
+id|SCBMaskAll
+comma
+id|ioaddr
+op_plus
+id|SCBCmd
+)paren
+suffix:semicolon
+id|synchronize_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+id|speedo_tx_buffer_gc
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Free as much as possible.&n;&t;&t;   It helps to recover from a hang because of out-of-memory.&n;&t;&t;   It also simplifies speedo_resume() in case TX ring is full or&n;&t;&t;   close-to-be full. */
+id|speedo_purge_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|speedo_refill_rx_buffers
+c_func
+(paren
+id|dev
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|sp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|speedo_resume
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|sp-&gt;rx_mode
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|sp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|set_rx_mode
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* it takes the spinlock itself --SAW */
+multiline_comment|/* Reset MII transceiver.  Do it before starting the timer to serialize&n;&t;&t;   mdio_xxx operations.  Yes, it&squot;s a paranoya :-)  2000/05/09 SAW */
+id|reset_mii
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|sp-&gt;timer.expires
+op_assign
+id|RUN_AT
+c_func
+(paren
+l_int|2
+op_star
+id|HZ
+)paren
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
 )brace
 r_return
 suffix:semicolon
@@ -6427,9 +6577,7 @@ c_func
 (paren
 id|sp
 comma
-id|sp-&gt;cur_tx
-op_mod
-id|TX_RING_SIZE
+id|entry
 )paren
 op_plus
 id|TX_DESCR_BUF_OFFSET
@@ -9098,7 +9246,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* Take a spinlock to make wait_for_cmd_done and sending the&n;&t;&t;&t; * command atomic.  --SAW */
+multiline_comment|/* Take a spinlock to make wait_for_cmd_done and sending the&n;&t;&t;&t;   command atomic.  --SAW */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -9226,7 +9374,7 @@ op_plus
 l_int|1
 suffix:colon
 multiline_comment|/* Read the specified MII register. */
-multiline_comment|/* FIXME: these operations probably need to be serialized with MDIO&n;&t;&t;   access from the timer routine and timeout handler.  2000/03/08 SAW */
+multiline_comment|/* FIXME: these operations need to be serialized with MDIO&n;&t;&t;   access from the timeout handler.&n;&t;&t;   They are currently serialized only with MDIO access from the&n;&t;&t;   timer routine.  2000/05/09 SAW */
 id|saved_acpi
 op_assign
 id|pci_set_power_state
@@ -9235,6 +9383,12 @@ c_func
 id|sp-&gt;pdev
 comma
 l_int|0
+)paren
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
+id|start_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 id|data
@@ -9258,6 +9412,49 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else /* LINUX_VERSION_CODE */
+id|del_timer_sync
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+id|data
+(braket
+l_int|3
+)braket
+op_assign
+id|mdio_read
+c_func
+(paren
+id|ioaddr
+comma
+id|data
+(braket
+l_int|0
+)braket
+comma
+id|data
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+multiline_comment|/* may be set to the past  --SAW */
+macro_line|#endif /* LINUX_VERSION_CODE */
 id|pci_set_power_state
 c_func
 (paren
@@ -9299,6 +9496,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,43)
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mdio_write
 c_func
 (paren
@@ -9320,6 +9523,49 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else /* LINUX_VERSION_CODE */
+id|del_timer_sync
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+id|mdio_write
+c_func
+(paren
+id|ioaddr
+comma
+id|data
+(braket
+l_int|0
+)braket
+comma
+id|data
+(braket
+l_int|1
+)braket
+comma
+id|data
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|sp-&gt;timer
+)paren
+suffix:semicolon
+multiline_comment|/* may be set to the past  --SAW */
+macro_line|#endif /* LINUX_VERSION_CODE */
 id|pci_set_power_state
 c_func
 (paren
@@ -10693,6 +10939,28 @@ comma
 id|PCI_VENDOR_ID_INTEL
 comma
 id|PCI_DEVICE_ID_INTEL_82559ER
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_ID1029
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_ID1030
 comma
 id|PCI_ANY_ID
 comma

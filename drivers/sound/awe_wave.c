@@ -17182,10 +17182,6 @@ id|sf-&gt;infos
 suffix:semicolon
 id|p
 suffix:semicolon
-id|prev
-op_assign
-id|p
-comma
 id|p
 op_assign
 id|next
@@ -17250,7 +17246,22 @@ id|p
 )paren
 suffix:semicolon
 )brace
+r_else
+id|prev
+op_assign
+id|p
+suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|removed
+)paren
+id|rebuild_preset_list
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|removed
 suffix:semicolon
@@ -17475,7 +17486,7 @@ suffix:semicolon
 r_case
 id|AWE_WR_REPLACE
 suffix:colon
-multiline_comment|/* replace mode - remoe the instrument if it already exists */
+multiline_comment|/* replace mode - remove the instrument if it already exists */
 id|remove_info
 c_func
 (paren

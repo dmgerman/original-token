@@ -562,6 +562,7 @@ op_lshift
 l_int|24
 )paren
 comma
+multiline_comment|/* scramble mode flag: can&squot;t be set */
 DECL|enumerator|csr6_pcs
 id|csr6_pcs
 op_assign
@@ -571,6 +572,7 @@ op_lshift
 l_int|23
 )paren
 comma
+multiline_comment|/* Enables PCS functions (symbol mode requires csr6_ps be set) default is set */
 DECL|enumerator|csr6_ttm
 id|csr6_ttm
 op_assign
@@ -580,6 +582,7 @@ op_lshift
 l_int|22
 )paren
 comma
+multiline_comment|/* Transmit Threshold Mode, set for 10baseT, 0 for 100BaseTX */
 DECL|enumerator|csr6_sf
 id|csr6_sf
 op_assign
@@ -589,6 +592,7 @@ op_lshift
 l_int|21
 )paren
 comma
+multiline_comment|/* Store and forward. If set ignores TR bits */
 DECL|enumerator|csr6_hbd
 id|csr6_hbd
 op_assign
@@ -598,6 +602,7 @@ op_lshift
 l_int|19
 )paren
 comma
+multiline_comment|/* Heart beat disable. Disables SQE function in 10baseT */
 DECL|enumerator|csr6_ps
 id|csr6_ps
 op_assign
@@ -607,6 +612,7 @@ op_lshift
 l_int|18
 )paren
 comma
+multiline_comment|/* Port Select. 0 (defualt) = 10baseT, 1 = 100baseTX: can&squot;t be set */
 DECL|enumerator|csr6_ca
 id|csr6_ca
 op_assign
@@ -616,6 +622,29 @@ op_lshift
 l_int|17
 )paren
 comma
+multiline_comment|/* Collision Offset Enable. If set uses special algorithm in low collision situations */
+DECL|enumerator|csr6_trh
+id|csr6_trh
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|15
+)paren
+comma
+multiline_comment|/* Transmit Threshold high bit */
+DECL|enumerator|csr6_trl
+id|csr6_trl
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|14
+)paren
+comma
+multiline_comment|/* Transmit Threshold low bit */
+multiline_comment|/***************************************************************&n;&t; * This table shows transmit threshold values based on media   *&n;&t; * and these two registers (from PNIC1 &amp; 2 docs) Note: this is *&n;&t; * all meaningless if sf is set.                               *&n;&t; ***************************************************************/
+multiline_comment|/***********************************&n;&t; * (trh,trl) * 100BaseTX * 10BaseT *&n;&t; ***********************************&n;&t; *   (0,0)   *     128   *    72   *&n;&t; *   (0,1)   *     256   *    96   *&n;&t; *   (1,0)   *     512   *   128   *&n;&t; *   (1,1)   *    1024   *   160   *&n;&t; ***********************************/
 DECL|enumerator|csr6_st
 id|csr6_st
 op_assign
@@ -625,6 +654,7 @@ op_lshift
 l_int|13
 )paren
 comma
+multiline_comment|/* Transmit conrol: 1 = transmit, 0 = stop */
 DECL|enumerator|csr6_fc
 id|csr6_fc
 op_assign
@@ -634,6 +664,7 @@ op_lshift
 l_int|12
 )paren
 comma
+multiline_comment|/* Forces a collision in next transmission (for testing in loopback mode) */
 DECL|enumerator|csr6_om_int_loop
 id|csr6_om_int_loop
 op_assign
@@ -643,6 +674,7 @@ op_lshift
 l_int|10
 )paren
 comma
+multiline_comment|/* internal (FIFO) loopback flag */
 DECL|enumerator|csr6_om_ext_loop
 id|csr6_om_ext_loop
 op_assign
@@ -652,6 +684,8 @@ op_lshift
 l_int|11
 )paren
 comma
+multiline_comment|/* external (PMD) loopback flag */
+multiline_comment|/* set both and you get (PHY) loopback */
 DECL|enumerator|csr6_fd
 id|csr6_fd
 op_assign
@@ -661,6 +695,7 @@ op_lshift
 l_int|9
 )paren
 comma
+multiline_comment|/* Full duplex mode, disables hearbeat, no loopback */
 DECL|enumerator|csr6_pm
 id|csr6_pm
 op_assign
@@ -670,6 +705,7 @@ op_lshift
 l_int|7
 )paren
 comma
+multiline_comment|/* Pass All Multicast */
 DECL|enumerator|csr6_pr
 id|csr6_pr
 op_assign
@@ -679,6 +715,7 @@ op_lshift
 l_int|6
 )paren
 comma
+multiline_comment|/* Promiscuous mode */
 DECL|enumerator|csr6_sb
 id|csr6_sb
 op_assign
@@ -688,6 +725,7 @@ op_lshift
 l_int|5
 )paren
 comma
+multiline_comment|/* Start(1)/Stop(0) backoff counter */
 DECL|enumerator|csr6_if
 id|csr6_if
 op_assign
@@ -697,6 +735,7 @@ op_lshift
 l_int|4
 )paren
 comma
+multiline_comment|/* Inverse Filtering, rejects only addresses in address table: can&squot;t be set */
 DECL|enumerator|csr6_pb
 id|csr6_pb
 op_assign
@@ -706,6 +745,7 @@ op_lshift
 l_int|3
 )paren
 comma
+multiline_comment|/* Pass Bad Frames, (1) causes even bad frames to be passed on */
 DECL|enumerator|csr6_ho
 id|csr6_ho
 op_assign
@@ -715,6 +755,7 @@ op_lshift
 l_int|2
 )paren
 comma
+multiline_comment|/* Hash-only filtering mode: can&squot;t be set */
 DECL|enumerator|csr6_sr
 id|csr6_sr
 op_assign
@@ -724,6 +765,7 @@ op_lshift
 l_int|1
 )paren
 comma
+multiline_comment|/* Start(1)/Stop(0) Receive */
 DECL|enumerator|csr6_hp
 id|csr6_hp
 op_assign
@@ -733,6 +775,7 @@ op_lshift
 l_int|0
 )paren
 comma
+multiline_comment|/* Hash/Perfect Receive Filtering Mode: can&squot;t be set */
 DECL|enumerator|csr6_mask_capture
 id|csr6_mask_capture
 op_assign
@@ -751,8 +794,8 @@ op_or
 id|csr6_mbo
 )paren
 comma
-DECL|enumerator|csr6_mask_fullcap
-id|csr6_mask_fullcap
+DECL|enumerator|csr6_mask_hdcap
+id|csr6_mask_hdcap
 op_assign
 (paren
 id|csr6_mask_defstate
@@ -760,14 +803,57 @@ op_or
 id|csr6_hbd
 op_or
 id|csr6_ps
-op_or
-(paren
-l_int|3
-op_lshift
-l_int|14
 )paren
+comma
+DECL|enumerator|csr6_mask_hdcaptt
+id|csr6_mask_hdcaptt
+op_assign
+(paren
+id|csr6_mask_hdcap
+op_or
+id|csr6_trh
+op_or
+id|csr6_trl
+)paren
+comma
+DECL|enumerator|csr6_mask_fullcap
+id|csr6_mask_fullcap
+op_assign
+(paren
+id|csr6_mask_hdcaptt
 op_or
 id|csr6_fd
+)paren
+comma
+DECL|enumerator|csr6_mask_fullpromisc
+id|csr6_mask_fullpromisc
+op_assign
+(paren
+id|csr6_pr
+op_or
+id|csr6_pm
+)paren
+comma
+DECL|enumerator|csr6_mask_filters
+id|csr6_mask_filters
+op_assign
+(paren
+id|csr6_hp
+op_or
+id|csr6_ho
+op_or
+id|csr6_if
+)paren
+comma
+DECL|enumerator|csr6_mask_100bt
+id|csr6_mask_100bt
+op_assign
+(paren
+id|csr6_scr
+op_or
+id|csr6_pcs
+op_or
+id|csr6_hbd
 )paren
 comma
 )brace
@@ -1540,11 +1626,11 @@ id|t21041_csr15
 (braket
 )braket
 suffix:semicolon
-DECL|function|tulip_outl_CSR6
-r_extern
+DECL|function|tulip_outl_csr
+r_static
 r_inline
 r_void
-id|tulip_outl_CSR6
+id|tulip_outl_csr
 (paren
 r_struct
 id|tulip_private
@@ -1552,20 +1638,96 @@ op_star
 id|tp
 comma
 id|u32
-id|newcsr6
+id|newValue
+comma
+r_enum
+id|tulip_offsets
+id|offset
 )paren
 (brace
-r_int
-id|ioaddr
-op_assign
-id|tp-&gt;base_addr
-suffix:semicolon
 id|outl
 (paren
-id|newcsr6
+id|newValue
 comma
-id|ioaddr
+id|tp-&gt;base_addr
 op_plus
+id|offset
+)paren
+suffix:semicolon
+)brace
+DECL|function|tulip_stop_rxtx
+r_static
+r_inline
+r_void
+id|tulip_stop_rxtx
+c_func
+(paren
+r_struct
+id|tulip_private
+op_star
+id|tp
+comma
+id|u32
+id|csr6mask
+)paren
+(brace
+id|tulip_outl_csr
+c_func
+(paren
+id|tp
+comma
+id|csr6mask
+op_amp
+op_complement
+(paren
+id|csr6_st
+op_or
+id|csr6_sr
+)paren
+comma
+id|CSR6
+)paren
+suffix:semicolon
+)brace
+DECL|function|tulip_restart_rxtx
+r_static
+r_inline
+r_void
+id|tulip_restart_rxtx
+c_func
+(paren
+r_struct
+id|tulip_private
+op_star
+id|tp
+comma
+id|u32
+id|csr6mask
+)paren
+(brace
+id|tulip_outl_csr
+c_func
+(paren
+id|tp
+comma
+id|csr6mask
+op_or
+id|csr6_sr
+comma
+id|CSR6
+)paren
+suffix:semicolon
+id|tulip_outl_csr
+c_func
+(paren
+id|tp
+comma
+id|csr6mask
+op_or
+id|csr6_st
+op_or
+id|csr6_sr
+comma
 id|CSR6
 )paren
 suffix:semicolon

@@ -1782,7 +1782,7 @@ id|num
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Create a cache:&n; * Returns a ptr to the cache on success, NULL on failure.&n; * Cannot be called within a int, but can be interrupted.&n; */
+multiline_comment|/**&n; * kmem_cache_create - Create a cache.&n; * @name: A string which is used in /proc/slabinfo to identify this cache.&n; * @size: The size of objects to be created in this cache.&n; * @offset: The offset to use within the page.  &n; * @flags: SLAB flags&n; * @ctor: A constructor for the objects.&n; * @dtor: A destructor for the objects.&n; *&n; * Returns a ptr to the cache on success, NULL on failure.&n; * Cannot be called within a int, but can be interrupted.&n; * The @ctor is run when new pages are allocated by the cache&n; * and the @dtor is run before the pages are handed back.&n; * The flags are&n; *&n; * %SLAB_POISON - Poison the slab with a known test pattern (a5a5a5a5)&n; * to catch references to uninitialised memory.&n; *&n; * %SLAB_RED_ZONE - Insert `Red&squot; zones around the allocated memory to check&n; * for buffer overruns.&n; *&n; * %SLAB_NO_REAP - Don&squot;t automatically reap this cache when we&squot;re under&n; * memory pressure.&n; *&n; * %SLAB_HWCACHE_ALIGN - Align the objects in this cache to a hardware&n; * cacheline.  This can be beneficial if you&squot;re counting cycles as closely&n; * as davem.&n; */
 id|kmem_cache_t
 op_star
 DECL|function|kmem_cache_create
@@ -3357,7 +3357,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Shrink a cache.  Releases as many slabs as possible for a cache.&n; * To help debugging, a zero exit status indicates all slabs were released.&n; */
+multiline_comment|/**&n; * kmem_cache_shrink - Shrink a cache.&n; * @cachep: The cache to shrink.&n; *&n; * Releases as many slabs as possible for a cache.&n; * To help debugging, a zero exit status indicates all slabs were released.&n; */
 r_int
 DECL|function|kmem_cache_shrink
 id|kmem_cache_shrink
@@ -3415,7 +3415,7 @@ id|cachep
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Remove a kmem_cache_t object from the slab cache. When returns 0 it&n; * completed succesfully. -arca&n; *&n; * It is expected this function will be called by a module when it is&n; * unloaded.  This will remove the cache completely, and avoid a duplicate&n; * cache being allocated each time a module is loaded and unloaded, if the&n; * module doesn&squot;t have persistent in-kernel storage across loads and unloads.&n; *&n; */
+multiline_comment|/**&n; * kmem_cache_destroy - delete a cache&n; * @cachep: the cache to destroy&n; *&n; * Remove a kmem_cache_t object from the slab cache.&n; * Returns 0 on success.&n; *&n; * It is expected this function will be called by a module when it is&n; * unloaded.  This will remove the cache completely, and avoid a duplicate&n; * cache being allocated each time a module is loaded and unloaded, if the&n; * module doesn&squot;t have persistent in-kernel storage across loads and unloads.&n; *&n; */
 DECL|function|kmem_cache_destroy
 r_int
 id|kmem_cache_destroy
@@ -5860,6 +5860,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * kmem_cache_alloc - Allocate an object&n; * @cachep: The cache to allocate from.&n; * @flags: See kmalloc().&n; *&n; * Allocate an object from this cache.  The flags are only relevant&n; * if the cache has no available objects.&n; */
 r_void
 op_star
 DECL|function|kmem_cache_alloc
@@ -5884,6 +5885,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * kmem_cache_free - Deallocate an object&n; * @cachep: The cache the allocation was from.&n; * @objp: The previously allocated object.&n; *&n; * Free an object which was previously allocated from this&n; * cache.&n; */
 r_void
 DECL|function|kmem_cache_free
 id|kmem_cache_free
@@ -5907,6 +5909,7 @@ id|objp
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * kmalloc - allocate memory&n; * @size: how many bytes of memory are required.&n; * @flags: the type of memory to allocate.&n; *&n; * kmalloc is the normal method of allocating memory&n; * in the kernel.  The @flags argument may be one of:&n; * &n; * %GFP_BUFFER - XXX&n; *&n; * %GFP_ATOMIC - allocation will not sleep.  Use inside interrupt handlers.&n; *&n; * %GFP_USER - allocate memory on behalf of user.  May sleep.&n; *&n; * %GFP_KERNEL - allocate normal kernel ram.  May sleep.&n; *&n; * %GFP_NFS - has a slightly lower probability of sleeping than %GFP_KERNEL.&n; * Don&squot;t use unless you&squot;re in the NFS code.&n; *&n; * %GFP_KSWAPD - Don&squot;t use unless you&squot;re modifying kswapd.&n; */
 r_void
 op_star
 DECL|function|kmalloc
@@ -5972,6 +5975,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * kfree - free previously allocated memory&n; * @objp: pointer returned by kmalloc.&n; *&n; * Don&squot;t free memory not originally allocated by kmalloc()&n; * or you will run into trouble.&n; */
 r_void
 DECL|function|kfree
 id|kfree
@@ -6102,6 +6106,7 @@ suffix:colon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * kfree_s - free previously allocated memory&n; * @objp: pointer returned by kmalloc.&n; * @size: size of object which is being freed.&n; *&n; * This function performs the same task as kfree() except&n; * that it can use the extra information to speed up deallocation&n; * or perform additional tests.&n; * Don&squot;t free memory not originally allocated by kmalloc()&n; * or allocated with a different size, or you will run into trouble.&n; */
 r_void
 DECL|function|kfree_s
 id|kfree_s
@@ -6276,7 +6281,7 @@ r_return
 id|csizep-&gt;cs_cachep
 suffix:semicolon
 )brace
-multiline_comment|/* Called from try_to_free_page().&n; * This function _cannot_ be called within a int, but it&n; * can be interrupted.&n; */
+multiline_comment|/**&n; * kmem_cache_reap - Reclaim memory from caches.&n; * @gfp_mask: the type of memory required.&n; *&n; * Called from try_to_free_page().&n; * This function _cannot_ be called within a int, but it&n; * can be interrupted.&n; */
 r_void
 DECL|function|kmem_cache_reap
 id|kmem_cache_reap
@@ -6869,7 +6874,7 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;/* SLAB_SELFTEST */
 macro_line|#if&t;defined(CONFIG_PROC_FS)
-multiline_comment|/* /proc/slabinfo&n; * cache-name num-active-objs total-objs num-active-slabs total-slabs num-pages-per-slab&n; */
+multiline_comment|/**&n; * get_slabinfo - generates /proc/slabinfo&n; * @buf: the buffer to write it into&n; *&n; * The contents of the buffer are&n; * cache-name&n; * num-active-objs&n; * total-objs&n; * num-active-slabs&n; * total-slabs&n; * num-pages-per-slab&n; */
 r_int
 DECL|function|get_slabinfo
 id|get_slabinfo

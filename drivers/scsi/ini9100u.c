@@ -829,6 +829,17 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pDev
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|pci_read_config_dword
 c_func
 (paren
@@ -1304,17 +1315,6 @@ op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* SRB save queue lock */
-id|request_region
-c_func
-(paren
-id|pHCB-&gt;HCS_Base
-comma
-l_int|0x100
-comma
-l_string|&quot;i91u&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Register */
 id|get_tulipPCIConfig
 c_func
 (paren
@@ -1363,6 +1363,17 @@ comma
 l_int|10
 )paren
 suffix:semicolon
+id|request_region
+c_func
+(paren
+id|pHCB-&gt;HCS_Base
+comma
+l_int|256
+comma
+l_string|&quot;i91u&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Register */
 id|pHCB-&gt;HCS_Index
 op_assign
 id|i
@@ -3241,6 +3252,38 @@ c_func
 (paren
 l_string|&quot;i91u panic&quot;
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Release ressources&n; */
+DECL|function|i91u_release
+r_int
+id|i91u_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|hreg
+)paren
+(brace
+id|free_irq
+c_func
+(paren
+id|hreg-&gt;irq
+comma
+id|hreg
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|hreg-&gt;io_port
+comma
+l_int|256
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

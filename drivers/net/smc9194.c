@@ -1,4 +1,4 @@
-multiline_comment|/*------------------------------------------------------------------------&n; . smc9194.c&n; . This is a driver for SMC&squot;s 9000 series of Ethernet cards.&n; .&n; . Copyright (C) 1996 by Erik Stahlman&n; . This software may be used and distributed according to the terms&n; . of the GNU Public License, incorporated herein by reference.&n; .&n; . &quot;Features&quot; of the SMC chip:&n; .   4608 byte packet memory. ( for the 91C92.  Others have more )&n; .   EEPROM for configuration&n; .   AUI/TP selection  ( mine has 10Base2/10BaseT select )&n; .&n; . Arguments:&n; . &t;io&t;&t; = for the base address&n; .&t;irq&t; = for the IRQ&n; .&t;ifport = 0 for autodetect, 1 for TP, 2 for AUI ( or 10base2 )&n; .&n; . author:&n; . &t;Erik Stahlman&t;&t;&t;&t;( erik@vt.edu )&n; .&n; . Hardware multicast code from Peter Cammaert ( pc@denkart.be )&n; .&n; . Sources:&n; .    o   SMC databook&n; .    o   skeleton.c by Donald Becker ( becker@cesdis.gsfc.nasa.gov )&n; .    o   ( a LOT of advice from Becker as well )&n; .&n; . History:&n; .&t;12/07/95  Erik Stahlman  written, got receive/xmit handled&n; . &t;01/03/96  Erik Stahlman  worked out some bugs, actually usable!!! :-)&n; .&t;01/06/96  Erik Stahlman&t; cleaned up some, better testing, etc&n; .&t;01/29/96  Erik Stahlman&t; fixed autoirq, added multicast&n; . &t;02/01/96  Erik Stahlman&t; 1. disabled all interrupts in smc_reset&n; .&t;&t;   &t;&t; 2. got rid of post-decrementing bug -- UGH.&n; .&t;02/13/96  Erik Stahlman  Tried to fix autoirq failure.  Added more&n; .&t;&t;&t;&t; descriptive error messages.&n; .&t;02/15/96  Erik Stahlman  Fixed typo that caused detection failure&n; . &t;02/23/96  Erik Stahlman&t; Modified it to fit into kernel tree&n; .&t;&t;&t;&t; Added support to change hardware address&n; .&t;&t;&t;&t; Cleared stats on opens&n; .&t;02/26/96  Erik Stahlman&t; Trial support for Kernel 1.2.13&n; .&t;&t;&t;&t; Kludge for automatic IRQ detection&n; .&t;03/04/96  Erik Stahlman&t; Fixed kernel 1.3.70 +&n; .&t;&t;&t;&t; Fixed bug reported by Gardner Buchanan in&n; .&t;&t;&t;&t;   smc_enable, with outw instead of outb&n; .&t;03/06/96  Erik Stahlman  Added hardware multicast from Peter Cammaert&n; ----------------------------------------------------------------------------*/
+multiline_comment|/*------------------------------------------------------------------------&n; . smc9194.c&n; . This is a driver for SMC&squot;s 9000 series of Ethernet cards.&n; .&n; . Copyright (C) 1996 by Erik Stahlman&n; . This software may be used and distributed according to the terms&n; . of the GNU Public License, incorporated herein by reference.&n; .&n; . &quot;Features&quot; of the SMC chip:&n; .   4608 byte packet memory. ( for the 91C92.  Others have more )&n; .   EEPROM for configuration&n; .   AUI/TP selection  ( mine has 10Base2/10BaseT select )&n; .&n; . Arguments:&n; . &t;io&t;&t; = for the base address&n; .&t;irq&t; = for the IRQ&n; .&t;ifport = 0 for autodetect, 1 for TP, 2 for AUI ( or 10base2 )&n; .&n; . author:&n; . &t;Erik Stahlman&t;&t;&t;&t;( erik@vt.edu )&n; .&n; . Hardware multicast code from Peter Cammaert ( pc@denkart.be )&n; .&n; . Sources:&n; .    o   SMC databook&n; .    o   skeleton.c by Donald Becker ( becker@cesdis.gsfc.nasa.gov )&n; .    o   ( a LOT of advice from Becker as well )&n; .&n; . History:&n; .&t;12/07/95  Erik Stahlman  written, got receive/xmit handled&n; . &t;01/03/96  Erik Stahlman  worked out some bugs, actually usable!!! :-)&n; .&t;01/06/96  Erik Stahlman&t; cleaned up some, better testing, etc&n; .&t;01/29/96  Erik Stahlman&t; fixed autoirq, added multicast&n; . &t;02/01/96  Erik Stahlman&t; 1. disabled all interrupts in smc_reset&n; .&t;&t;   &t;&t; 2. got rid of post-decrementing bug -- UGH.&n; .&t;02/13/96  Erik Stahlman  Tried to fix autoirq failure.  Added more&n; .&t;&t;&t;&t; descriptive error messages.&n; .&t;02/15/96  Erik Stahlman  Fixed typo that caused detection failure&n; . &t;02/23/96  Erik Stahlman&t; Modified it to fit into kernel tree&n; .&t;&t;&t;&t; Added support to change hardware address&n; .&t;&t;&t;&t; Cleared stats on opens&n; .&t;02/26/96  Erik Stahlman&t; Trial support for Kernel 1.2.13&n; .&t;&t;&t;&t; Kludge for automatic IRQ detection&n; .&t;03/04/96  Erik Stahlman&t; Fixed kernel 1.3.70 +&n; .&t;&t;&t;&t; Fixed bug reported by Gardner Buchanan in&n; .&t;&t;&t;&t;   smc_enable, with outw instead of outb&n; .&t;03/06/96  Erik Stahlman  Added hardware multicast from Peter Cammaert&n; .&t;04/14/00  Heiko Pruessing (SMA Regelsysteme)  Fixed bug in chip memory&n; .&t;&t;&t;&t; allocation&n; ----------------------------------------------------------------------------*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc9194.c:v0.12 03/06/96 by Erik Stahlman (erik@vt.edu)&bslash;n&quot;
+l_string|&quot;smc9194.c:v0.13 04/14/00 by Erik Stahlman (erik@vt.edu)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -1038,10 +1038,18 @@ id|skb-&gt;len
 suffix:colon
 id|ETH_ZLEN
 suffix:semicolon
-multiline_comment|/*&n;&t;. the MMU wants the number of pages to be the number of 256 bytes&n;    &t;. &squot;pages&squot;, minus 1 ( since a packet can&squot;t ever have 0 pages :) )&n;&t;*/
+multiline_comment|/*&n;&t;** The MMU wants the number of pages to be the number of 256 bytes&n;&t;** &squot;pages&squot;, minus 1 ( since a packet can&squot;t ever have 0 pages :) )&n;&t;**&n;&t;** Pkt size for allocating is data length +6 (for additional status words,&n;&t;** length and ctl!) If odd size last byte is included in this header.&n;&t;*/
 id|numPages
 op_assign
+(paren
+(paren
 id|length
+op_amp
+l_int|0xfffe
+)paren
+op_plus
+l_int|6
+)paren
 op_div
 l_int|256
 suffix:semicolon

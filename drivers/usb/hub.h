@@ -119,6 +119,8 @@ DECL|macro|HUB_CHANGE_LOCAL_POWER
 mdefine_line|#define HUB_CHANGE_LOCAL_POWER&t;0x0001
 DECL|macro|HUB_CHANGE_OVERCURRENT
 mdefine_line|#define HUB_CHANGE_OVERCURRENT&t;0x0002
+DECL|macro|HUB_DESCRIPTOR_MAX_SIZE
+mdefine_line|#define HUB_DESCRIPTOR_MAX_SIZE&t;39&t;/* enough for 127 ports on a hub */
 multiline_comment|/* Hub descriptor */
 DECL|struct|usb_hub_descriptor
 r_struct

@@ -39,9 +39,11 @@ id|camera
 (brace
 DECL|member|idVendor
 r_int
+r_int
 id|idVendor
 suffix:semicolon
 DECL|member|idProduct
+r_int
 r_int
 id|idProduct
 suffix:semicolon
@@ -97,7 +99,13 @@ l_int|0x0112
 )brace
 comma
 singleline_comment|// Kodak DC-290
-singleline_comment|//  { 0x03f0, 0xffff },&t;&t;// HP PhotoSmart C500
+(brace
+l_int|0xf003
+comma
+l_int|0x6002
+)brace
+comma
+singleline_comment|// HP PhotoSmart C500
 multiline_comment|/* Other USB devices may well work here too, so long as they&n;&t; * just stick to half duplex bulk packet exchanges.  That&n;&t; * means, among other things, no iso or interrupt endpoints.&n;&t; */
 )brace
 suffix:semicolon
@@ -823,9 +831,6 @@ id|dbg
 l_string|&quot;open&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Keep driver from being unloaded while it&squot;s in use */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|camera-&gt;isActive
 op_assign
 l_int|0
@@ -894,8 +899,6 @@ id|camera
 )paren
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|dbg
 (paren
 l_string|&quot;close&quot;
@@ -915,6 +918,10 @@ id|usb_camera_fops
 op_assign
 (brace
 multiline_comment|/* Uses GCC initializer extension; simpler to maintain */
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|camera_read

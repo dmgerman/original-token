@@ -167,35 +167,10 @@ comma
 id|label
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Attach the &quot;Prev&quot;, &quot;Next&quot; and &quot;OK&quot; buttons at the end of the window.&n;     */
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tframe $w.f&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|toplevel
-)paren
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tbutton $w.f.back -text &bslash;&quot;Main Menu&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;tbutton $w.f.back -text &bslash;&quot;OK&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot;catch {focus $oldFocus}; destroy $w; unregister_active %d&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&bslash;tbind $w &lt;Escape&gt; &bslash;&quot;catch {focus $oldFocus}; destroy $w; unregister_active %d; break&bslash;&quot;&bslash;n&quot;
 comma
 id|menu_num
 )paren
@@ -203,13 +178,13 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tbutton $w.f.next -text &bslash;&quot;Next&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;tset nextscript &quot;
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot;catch {focus $oldFocus}; &quot;
+l_string|&quot;&bslash;&quot;catch {focus $oldFocus}; &quot;
 )paren
 suffix:semicolon
 multiline_comment|/* &n;     * We are checking which windows should be destroyed and which are &n;     * common parrents with the next one. Remember that menu_num field&n;     * in mainmenu_option record reports number of its *parent* menu.&n;     */
@@ -306,6 +281,51 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * Attach the &quot;Prev&quot;, &quot;Next&quot; and &quot;OK&quot; buttons at the end of the window.&n;     */
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tframe $w.f&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|toplevel
+)paren
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbutton $w.f.back -text &bslash;&quot;Main Menu&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbutton $w.f.back -text &bslash;&quot;OK&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t&bslash;t-width 15 -command &bslash;&quot;catch {focus $oldFocus}; destroy $w; unregister_active %d&bslash;&quot;&bslash;n&quot;
+comma
+id|menu_num
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbutton $w.f.next -text &bslash;&quot;Next&bslash;&quot; -underline 0&bslash;&bslash;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;t&bslash;t-width 15 -command $nextscript&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -313,16 +333,35 @@ id|menu_num
 op_eq
 id|tot_menu_num
 )paren
+(brace
 id|printf
 c_func
 (paren
 l_string|&quot;&bslash;t$w.f.next configure -state disabled&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* &n;         *  this is a bit hackish but Alt-n must be rebound&n;         *  otherwise if the user press Alt-n on the last menu&n;         *  it will give him/her the next menu of one of the &n;         *  previous options&n;         */
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tbutton $w.f.prev -text &bslash;&quot;Prev&bslash;&quot; &bslash;&bslash;&bslash;n&quot;
+l_string|&quot;&bslash;tbind all &lt;Alt-n&gt; &bslash;&quot;puts &bslash;&bslash;&bslash;&quot;no more menus&bslash;&bslash;&bslash;&quot; &bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;         * I should be binding to $w not all - but if I do nehat I get the error &quot;unknown path&quot;&n;         */
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind all &lt;Alt-n&gt; $nextscript&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbutton $w.f.prev -text &bslash;&quot;Prev&bslash;&quot; -underline 0&bslash;&bslash;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -348,12 +387,33 @@ id|menu_num
 op_eq
 l_int|1
 )paren
+(brace
 id|printf
 c_func
 (paren
 l_string|&quot;&bslash;t$w.f.prev configure -state disabled&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind $w &lt;Alt-p&gt; &bslash;&quot;catch {focus $oldFocus}; destroy $w; unregister_active %d; menu%d .menu%d &bslash;&bslash;&bslash;&quot;$title&bslash;&bslash;&bslash;&quot;;break&bslash;&quot;&bslash;n&quot;
+comma
+id|menu_num
+comma
+id|menu_num
+op_minus
+l_int|1
+comma
+id|menu_num
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|printf
 c_func
 (paren
@@ -439,6 +499,42 @@ id|printf
 c_func
 (paren
 l_string|&quot;&bslash;tframe $w.config.f&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind $w &lt;Key-Down&gt; &bslash;&quot;$w.config.canvas yview scroll  1 unit;break;&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind $w &lt;Key-Up&gt; &bslash;&quot;$w.config.canvas yview scroll  -1 unit;break;&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind $w &lt;Key-Next&gt; &bslash;&quot;$w.config.canvas yview scroll  1 page;break;&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind $w &lt;Key-Prior&gt; &bslash;&quot;$w.config.canvas yview scroll  -1 page;break;&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind $w &lt;Key-Home&gt; &bslash;&quot;$w.config.canvas yview moveto 0;break;&bslash;&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tbind $w &lt;Key-End&gt; &bslash;&quot;$w.config.canvas yview moveto 1 ;break;&bslash;&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -4004,7 +4100,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;twm geometry $w +$winx+$winy&bslash;n&quot;
+l_string|&quot;&bslash;tif {[winfo exists $w]} then {wm geometry $w +$winx+$winy}&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Now that the whole window is in place, we need to wait for an &quot;update&quot;&n;     * so we can tell the canvas what its virtual size should be.&n;     *&n;     * Unfortunately, this causes some ugly screen-flashing because the whole&n;     * window is drawn, and then it is immediately resized.  It seems&n;     * unavoidable, though, since &quot;frame&quot; objects won&squot;t tell us their size&n;     * until after an update, and &quot;canvas&quot; objects can&squot;t automatically pack&n;     * around frames.  Sigh.&n;     */
@@ -4017,7 +4113,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t$w.config.canvas create window 0 0 -anchor nw -window $w.config.f&bslash;n&bslash;n&quot;
+l_string|&quot;&bslash;tif {[winfo exists $w]} then  {$w.config.canvas create window 0 0 -anchor nw -window $w.config.f&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -4096,7 +4192,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t}&bslash;n&quot;
+l_string|&quot;&bslash;t&bslash;t}&bslash;n&bslash;t}&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Limit the min/max window size.  Height can vary, but not width,&n;     * because of the limitations of canvas and our laziness.&n;     */
@@ -4109,7 +4205,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;twm maxsize $w [winfo width $w] [winfo screenheight $w]&bslash;n&quot;
+l_string|&quot;&bslash;tif {[winfo exists $w]} then {&bslash;n&bslash;twm maxsize $w [winfo width $w] [winfo screenheight $w]&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -4127,7 +4223,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;}&bslash;n&bslash;n&bslash;n&quot;
+l_string|&quot;}&bslash;n}&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Now we generate the companion procedure for the menu we just&n;     * generated.  This procedure contains all of the code to&n;     * disable/enable widgets based upon the settings of the other&n;     * widgets, and will be called first when the window is mapped,&n;     * and each time one of the buttons in the window are clicked.&n;     */
@@ -5087,7 +5183,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tmenu $w.config.f.x%d.x.menu -title &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&bslash;tmenu $w.config.f.x%d.x.menu -tearoffcommand &bslash;&quot;menutitle &bslash;&bslash;&bslash;&quot;%s&bslash;&bslash;&bslash;&quot;&bslash;&quot;&bslash;n&quot;
 comma
 id|cfg-&gt;menu_line
 comma

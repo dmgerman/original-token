@@ -183,8 +183,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -206,9 +204,6 @@ op_star
 id|file
 )paren
 (brace
-multiline_comment|/* Lock module as request_irq may sleep */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -226,14 +221,10 @@ comma
 l_int|NULL
 )paren
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
 id|ATIXL_MSE_INT_ON
 c_func
 (paren
@@ -254,6 +245,8 @@ op_assign
 id|ATIXL_BUSMOUSE
 comma
 l_string|&quot;atixl&quot;
+comma
+id|THIS_MODULE
 comma
 id|open_mouse
 comma

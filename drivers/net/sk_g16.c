@@ -713,6 +713,7 @@ id|base_addr
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Sorry, but on specified address NO SK_G16 */
@@ -728,6 +729,7 @@ l_int|0
 multiline_comment|/* Don&squot;t probe at all */
 (brace
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 )brace
@@ -835,6 +837,7 @@ id|base_addr
 suffix:semicolon
 multiline_comment|/* Write back original base_addr */
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Failed to find or init driver */
@@ -1353,6 +1356,7 @@ id|SK_NAME
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* NO SK_G16 found */

@@ -316,7 +316,7 @@ op_amp
 id|BD_ENET_TX_READY
 )paren
 (brace
-multiline_comment|/* Ooops.  All transmit buffers are full.  Bail out.&n;&t;&t; * This should not happen, since cep-&gt;tx_busy should be set.&n;&t;&t; */
+multiline_comment|/* Ooops.  All transmit buffers are full.  Bail out.&n;&t;&t; * This should not happen, since cep-&gt;tx_full should be set.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -389,29 +389,6 @@ l_int|1
 op_amp
 id|TX_RING_MOD_MASK
 suffix:semicolon
-multiline_comment|/* Push the data cache so the CPM does not get stale memory&n;&t; * data.&n;&t; */
-id|flush_dcache_range
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-(paren
-id|skb-&gt;data
-)paren
-comma
-(paren
-r_int
-r_int
-)paren
-(paren
-id|skb-&gt;data
-op_plus
-id|skb-&gt;len
-)paren
-)paren
-suffix:semicolon
 id|spin_lock_irq
 c_func
 (paren
@@ -459,12 +436,18 @@ id|bdp-&gt;cbd_sc
 op_amp
 id|BD_ENET_TX_READY
 )paren
+(brace
 id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+id|cep-&gt;tx_full
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|cep-&gt;cur_tx
 op_assign
 (paren
@@ -549,6 +532,14 @@ id|bdp
 op_assign
 id|cep-&gt;tx_bd_base
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; Tx @base %p :&bslash;n&quot;
+comma
+id|bdp
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -581,6 +572,14 @@ suffix:semicolon
 id|bdp
 op_assign
 id|cep-&gt;rx_bd_base
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; Rx @base %p :&bslash;n&quot;
+comma
+id|bdp
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -896,6 +895,10 @@ c_cond
 id|cep-&gt;tx_full
 )paren
 (brace
+id|cep-&gt;tx_full
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

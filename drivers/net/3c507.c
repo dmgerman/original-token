@@ -594,6 +594,7 @@ op_ne
 l_int|0
 )paren
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 multiline_comment|/* Don&squot;t probe at all. */
@@ -652,6 +653,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -807,6 +809,7 @@ l_char|&squot;O&squot;
 suffix:semicolon
 r_else
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
@@ -903,6 +906,7 @@ id|irqval
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace

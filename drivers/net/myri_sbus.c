@@ -5372,6 +5372,7 @@ l_string|&quot;MyriCOM: Cannot map MyriCOM registers.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -5798,6 +5799,7 @@ l_string|&quot;MyriCOM: Cannot register interrupt handler.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -5984,6 +5986,7 @@ c_cond
 id|called
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|called
@@ -6069,6 +6072,7 @@ op_logical_neg
 id|cards
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_return

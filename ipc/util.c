@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#if defined(CONFIG_SYSVIPC)
 macro_line|#include &quot;util.h&quot;
+multiline_comment|/**&n; *&t;ipc_init&t;-&t;initialise IPC subsystem&n; *&n; *&t;The various system5 IPC resources (semaphores, messages and shared&n; *&t;memory are initialised&n; */
 DECL|function|ipc_init
 r_void
 id|__init
@@ -36,6 +37,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ipc_init_ids&t;&t;-&t;initialise IPC identifiers&n; *&t;@ids: Identifier set&n; *&t;@size: Number of identifiers&n; *&n; *&t;Given a size for the ipc identifier range (limited below IPCMNI)&n; *&t;set up the sequence range to use then allocate and initialise the&n; *&t;array itself. &n; */
 DECL|function|ipc_init_ids
 r_void
 id|__init
@@ -184,6 +186,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;ipc_findkey&t;-&t;find a key in an ipc identifier set&t;&n; *&t;@ids: Identifier set&n; *&t;@key: The key to find&n; *&n; *&t;Returns the identifier if found or -1 if not.&n; */
 DECL|function|ipc_findkey
 r_int
 id|ipc_findkey
@@ -425,6 +428,7 @@ r_return
 id|ids-&gt;size
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ipc_addid &t;-&t;add an IPC identifier&n; *&t;@ids: IPC identifier set&n; *&t;@new: new IPC permission set&n; *&t;@size: new size limit for the id array&n; *&n; *&t;Add an entry &squot;new&squot; to the IPC arrays. The permissions object is&n; *&t;initialised and the first free entry is set up and the id assigned&n; *&t;is returned. The list is returned in a locked state on success.&n; *&t;On failure the list is not locked and -1 is returned.&n; */
 DECL|function|ipc_addid
 r_int
 id|ipc_addid
@@ -570,6 +574,7 @@ r_return
 id|id
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ipc_rmid&t;-&t;remove an IPC identifier&n; *&t;@ids: identifier set&n; *&t;@id: Identifier to remove&n; *&n; *&t;The identifier must be valid, and in use. The kernel will panic if&n; *&t;fed an invalid identifier. The entry is removed and internal&n; *&t;variables recomputed. The object associated with the identifier&n; *&t;is returned.&n; */
 DECL|function|ipc_rmid
 r_struct
 id|kern_ipc_perm
@@ -695,6 +700,7 @@ r_return
 id|p
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ipc_alloc&t;-&t;allocate ipc space&n; *&t;@size: size desired&n; *&n; *&t;Allocate memory from the appropriate pools and return a pointer to it.&n; *&t;NULL is returned if the allocation fails&n; */
 DECL|function|ipc_alloc
 r_void
 op_star
@@ -741,6 +747,7 @@ r_return
 id|out
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ipc_free&t;-&t;free ipc space&n; *&t;@ptr: pointer returned by ipc_alloc&n; *&t;@size: size of block&n; *&n; *&t;Free a block created with ipc_alloc. The caller must know the size&n; *&t;used in the allocation call.&n; */
 DECL|function|ipc_free
 r_void
 id|ipc_free
@@ -777,7 +784,7 @@ id|ptr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Check user, group, other permissions for access&n; * to ipc resources. return 0 if allowed&n; */
+multiline_comment|/**&n; *&t;ipcperms&t;-&t;check IPC permissions&n; *&t;@ipcp: IPC permission set&n; *&t;@flag: desired permission set.&n; *&n; *&t;Check user, group, other permissions for access&n; *&t;to ipc resources. return 0 if allowed&n; */
 DECL|function|ipcperms
 r_int
 id|ipcperms
@@ -881,6 +888,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Functions to convert between the kern_ipc_perm structure and the&n; * old/new ipc_perm structures&n; */
+multiline_comment|/**&n; *&t;kernel_to_ipc64_perm&t;-&t;convert kernel ipc permissions to user&n; *&t;@in: kernel permissions&n; *&t;@out: new style IPC permissions&n; *&n; *&t;Turn the kernel object &squot;in&squot; into a set of permissions descriptions&n; *&t;for returning to userspace (out).&n; */
 DECL|function|kernel_to_ipc64_perm
 r_void
 id|kernel_to_ipc64_perm
@@ -925,6 +933,7 @@ op_assign
 id|in-&gt;seq
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ipc64_perm_to_ipc_perm&t;-&t;convert old ipc permissions to new&n; *&t;@in: new style IPC permissions&n; *&t;@out: old style IPC permissions&n; *&n; *&t;Turn the new style permissions object in into a compatibility&n; *&t;object and store it into the &squot;out&squot; pointer.&n; */
 DECL|function|ipc64_perm_to_ipc_perm
 r_void
 id|ipc64_perm_to_ipc_perm
@@ -985,6 +994,7 @@ op_assign
 id|in-&gt;seq
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;ipc_parse_version&t;-&t;IPC call version&n; *&t;@cmd: pointer to command&n; *&n; *&t;Return IPC_64 for new style IPC and IPC_OLD for old style IPC. &n; *&t;The cmd value is turned from an encoding command and version into&n; *&t;just the command code.&n; */
 DECL|function|ipc_parse_version
 r_int
 id|ipc_parse_version

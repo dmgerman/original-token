@@ -1451,8 +1451,6 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1461,8 +1459,6 @@ op_eq
 id|NOT_CONNECTED
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -1474,8 +1470,6 @@ c_cond
 id|mdc800-&gt;open
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -1539,8 +1533,6 @@ id|retval
 comma
 id|mdc800-&gt;irq_urb-&gt;status
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -1627,8 +1619,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -2433,6 +2423,10 @@ id|file_operations
 id|mdc800_device_ops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|mdc800_device_read

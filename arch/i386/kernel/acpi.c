@@ -3094,14 +3094,12 @@ id|ENODEV
 suffix:semicolon
 id|base
 op_assign
-id|dev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|dev
+comma
 id|PCI_BRIDGE_RESOURCES
-)braket
-dot
-id|start
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3380,10 +3378,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|base
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
 id|pci_read_config_byte
 c_func
 (paren
@@ -3649,14 +3643,14 @@ id|acpi_init_via
 comma
 )brace
 suffix:semicolon
-DECL|variable|acpi_pci_tbl
-r_const
+DECL|variable|__initdata
 r_static
 r_struct
 id|pci_device_id
 id|acpi_pci_tbl
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -5132,6 +5126,12 @@ c_func
 id|ACPI_D3
 )paren
 suffix:semicolon
+singleline_comment|// disable interrupts globally while suspended
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|acpi_sleep_state
 op_assign
 id|state
@@ -5241,6 +5241,12 @@ id|acpi_enter_dx
 c_func
 (paren
 id|ACPI_D0
+)paren
+suffix:semicolon
+singleline_comment|// reenable interrupts globally after resume
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 id|acpi_sleep_state

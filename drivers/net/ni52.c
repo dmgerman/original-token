@@ -1161,6 +1161,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 macro_line|#ifdef MODULE
@@ -1352,6 +1353,7 @@ op_assign
 id|base_addr
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1431,6 +1433,7 @@ id|NI52_ADDR2
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1485,6 +1488,7 @@ id|size
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1518,6 +1522,7 @@ id|size
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1588,6 +1593,7 @@ id|dev-&gt;mem_start
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1656,6 +1662,7 @@ l_string|&quot;?memprobe, Can&squot;t find io-memory!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

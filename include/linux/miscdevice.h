@@ -36,6 +36,8 @@ DECL|macro|NVRAM_MINOR
 mdefine_line|#define NVRAM_MINOR 144
 DECL|macro|I2O_MINOR
 mdefine_line|#define I2O_MINOR 166
+DECL|macro|MICROCODE_MINOR
+mdefine_line|#define MICROCODE_MINOR&t;&t;184
 DECL|macro|MISC_DYNAMIC_MINOR
 mdefine_line|#define MISC_DYNAMIC_MINOR 255
 DECL|macro|SGI_GRAPHICS_MINOR

@@ -321,6 +321,15 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|put_module_symbol
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|try_inc_mod_count
 c_func

@@ -8714,12 +8714,13 @@ suffix:semicolon
 multiline_comment|/* Get the board I/O address (64 bits on sparc64) */
 id|iobase
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 multiline_comment|/* Fetch the IRQ to be used */
 id|irq
@@ -9179,12 +9180,13 @@ suffix:semicolon
 multiline_comment|/* Get the board I/O address (64 bits on sparc64) */
 id|iobase
 op_assign
-id|this_dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|this_dev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 multiline_comment|/* Fetch the IRQ to be used */
 id|irq

@@ -1553,7 +1553,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;AIMSlab Radiotrack/radioreveal card driver.&bslash;n&quot;
+l_string|&quot;AIMSlab RadioTrack/RadioReveal card driver.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Set up the I/O locking */

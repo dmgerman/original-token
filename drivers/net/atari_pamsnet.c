@@ -1923,6 +1923,7 @@ c_cond
 id|no_more_found
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 id|no_more_found
@@ -2126,6 +2127,7 @@ l_int|0
 )paren
 )paren
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 r_if

@@ -1811,6 +1811,7 @@ id|DATA_PORT
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1929,6 +1930,7 @@ l_string|&quot; not identified in the printer port&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -1954,6 +1956,7 @@ id|DE600_IO
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EBUSY
 suffix:semicolon
 )brace

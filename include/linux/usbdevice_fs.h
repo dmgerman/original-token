@@ -104,6 +104,44 @@ id|context
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|USBDEVFS_MAXDRIVERNAME
+mdefine_line|#define USBDEVFS_MAXDRIVERNAME 255
+DECL|struct|usbdevfs_getdriver
+r_struct
+id|usbdevfs_getdriver
+(brace
+DECL|member|interface
+r_int
+r_int
+id|interface
+suffix:semicolon
+DECL|member|driver
+r_char
+id|driver
+(braket
+id|USBDEVFS_MAXDRIVERNAME
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|usbdevfs_connectinfo
+r_struct
+id|usbdevfs_connectinfo
+(brace
+DECL|member|devnum
+r_int
+r_int
+id|devnum
+suffix:semicolon
+DECL|member|slow
+r_int
+r_char
+id|slow
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|USBDEVFS_URB_DISABLE_SPD
 mdefine_line|#define USBDEVFS_URB_DISABLE_SPD           1
 DECL|macro|USBDEVFS_URB_ISO_ASAP
@@ -206,6 +244,49 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* ioctls for talking to drivers in the usbcore module: */
+DECL|struct|usbdevfs_ioctl
+r_struct
+id|usbdevfs_ioctl
+(brace
+DECL|member|ifno
+r_int
+id|ifno
+suffix:semicolon
+multiline_comment|/* interface 0..N ; negative numbers reserved */
+DECL|member|ioctl_code
+r_int
+id|ioctl_code
+suffix:semicolon
+multiline_comment|/* MUST encode size + direction of data so the&n;&t;&t;&t;&t; * macros in &lt;asm/ioctl.h&gt; give correct values */
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* param buffer (in, or out) */
+)brace
+suffix:semicolon
+multiline_comment|/* You can do most things with hubs just through control messages,&n; * except find out what device connects to what port. */
+DECL|struct|usbdevfs_hub_portinfo
+r_struct
+id|usbdevfs_hub_portinfo
+(brace
+DECL|member|nports
+r_char
+id|nports
+suffix:semicolon
+multiline_comment|/* number of downstream ports in this hub */
+DECL|member|port
+r_char
+id|port
+(braket
+l_int|127
+)braket
+suffix:semicolon
+multiline_comment|/* e.g. port 3 connects to device 27 */
+)brace
+suffix:semicolon
 DECL|macro|USBDEVFS_CONTROL
 mdefine_line|#define USBDEVFS_CONTROL           _IOWR(&squot;U&squot;, 0, struct usbdevfs_ctrltransfer)
 DECL|macro|USBDEVFS_BULK
@@ -216,6 +297,8 @@ DECL|macro|USBDEVFS_SETINTERFACE
 mdefine_line|#define USBDEVFS_SETINTERFACE      _IOR(&squot;U&squot;, 4, struct usbdevfs_setinterface)
 DECL|macro|USBDEVFS_SETCONFIGURATION
 mdefine_line|#define USBDEVFS_SETCONFIGURATION  _IOR(&squot;U&squot;, 5, unsigned int)
+DECL|macro|USBDEVFS_GETDRIVER
+mdefine_line|#define USBDEVFS_GETDRIVER         _IOW(&squot;U&squot;, 8, struct usbdevfs_getdriver)
 DECL|macro|USBDEVFS_SUBMITURB
 mdefine_line|#define USBDEVFS_SUBMITURB         _IOR(&squot;U&squot;, 10, struct usbdevfs_urb)
 DECL|macro|USBDEVFS_DISCARDURB
@@ -230,6 +313,14 @@ DECL|macro|USBDEVFS_CLAIMINTERFACE
 mdefine_line|#define USBDEVFS_CLAIMINTERFACE    _IOR(&squot;U&squot;, 15, unsigned int)
 DECL|macro|USBDEVFS_RELEASEINTERFACE
 mdefine_line|#define USBDEVFS_RELEASEINTERFACE  _IOR(&squot;U&squot;, 16, unsigned int)
+DECL|macro|USBDEVFS_CONNECTINFO
+mdefine_line|#define USBDEVFS_CONNECTINFO       _IOW(&squot;U&squot;, 17, struct usbdevfs_connectinfo)
+DECL|macro|USBDEVFS_IOCTL
+mdefine_line|#define USBDEVFS_IOCTL             _IOWR(&squot;U&squot;, 18, struct usbdevfs_ioctl)
+DECL|macro|USBDEVFS_HUB_PORTINFO
+mdefine_line|#define USBDEVFS_HUB_PORTINFO      _IOR(&squot;U&squot;, 19, struct usbdevfs_hub_portinfo)
+DECL|macro|USBDEVFS_RESET
+mdefine_line|#define USBDEVFS_RESET             _IO(&squot;U&squot;, 20)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/list.h&gt;
