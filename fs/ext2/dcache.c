@@ -1,9 +1,8 @@
-multiline_comment|/*&n; *  linux/fs/ext2/dcache.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/dcache.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; */
 multiline_comment|/*&n; * dcache.c contains the code that handles the directory cache used by&n; * lookup() and readdir()&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#ifndef DONT_USE_DCACHE
 DECL|macro|DCACHE_NAME_LEN

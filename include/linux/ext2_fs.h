@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ext2_fs.h&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/include/linux/ext2_fs.h&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#ifndef _LINUX_EXT2_FS_H
 DECL|macro|_LINUX_EXT2_FS_H
 mdefine_line|#define _LINUX_EXT2_FS_H
@@ -15,17 +15,17 @@ macro_line|#undef EXT2FS_CHECK_CACHE
 multiline_comment|/*&n; * Define EXT2FS_PRE_02B_COMPAT to convert ext 2 fs prior to 0.2b&n; */
 DECL|macro|EXT2FS_PRE_02B_COMPAT
 macro_line|#undef EXT2FS_PRE_02B_COMPAT
-multiline_comment|/*&n; * Define EXT2FS_PRE_04_COMPAT to convert ext2 fs prior to 0.4&n; */
-DECL|macro|EXT2_PRE_04_COMPAT
-mdefine_line|#define EXT2_PRE_04_COMPAT
 multiline_comment|/*&n; * Define DONT_USE_DCACHE to inhibit the directory cache&n; */
 DECL|macro|DONT_USE_DCACHE
 mdefine_line|#define DONT_USE_DCACHE
+multiline_comment|/*&n; * Define EXT2_PREALLOCATE to preallocate data blocks for expanding files&n; */
+DECL|macro|EXT2_PREALLOCATE
+mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;93/11/19&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;93/12/30&quot;
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.4a&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.4b&quot;
 multiline_comment|/*&n; * Debug code&n; */
 macro_line|#ifdef EXT2FS_DEBUG
 DECL|macro|ext2_debug
@@ -451,11 +451,40 @@ mdefine_line|#define&t;EXT2_VALID_FS&t;&t;&t;0x0001&t;/* Unmounted cleany */
 DECL|macro|EXT2_ERROR_FS
 mdefine_line|#define&t;EXT2_ERROR_FS&t;&t;&t;0x0002&t;/* Errors detected */
 multiline_comment|/*&n; * Mount flags&n; */
+DECL|macro|EXT2_MOUNT_CHECK_NORMAL
+mdefine_line|#define EXT2_MOUNT_CHECK_NORMAL&t;&t;0x0001&t;/* Do some more checks */
+DECL|macro|EXT2_MOUNT_CHECK_STRICT
+mdefine_line|#define EXT2_MOUNT_CHECK_STRICT&t;&t;0x0002&t;/* Do again more checks */
 DECL|macro|EXT2_MOUNT_CHECK
-mdefine_line|#define EXT2_MOUNT_CHECK&t;&t;0x0001&t;/* Do some more checks */
+mdefine_line|#define EXT2_MOUNT_CHECK&t;&t;(EXT2_MOUNT_CHECK_NORMAL | &bslash;&n;&t;&t;&t;&t;&t; EXT2_MOUNT_CHECK_STRICT)
+DECL|macro|EXT2_MOUNT_GRPID
+mdefine_line|#define EXT2_MOUNT_GRPID&t;&t;0x0004&t;/* Create files with directory&squot;s group */
+DECL|macro|EXT2_MOUNT_DEBUG
+mdefine_line|#define EXT2_MOUNT_DEBUG&t;&t;0x0008&t;/* Some debugging messages */
+DECL|macro|EXT2_MOUNT_ERRORS_CONT
+mdefine_line|#define EXT2_MOUNT_ERRORS_CONT&t;&t;0x0010&t;/* Continue on errors */
+DECL|macro|EXT2_MOUNT_ERRORS_RO
+mdefine_line|#define EXT2_MOUNT_ERRORS_RO&t;&t;0x0020&t;/* Remount fs ro on errors */
+DECL|macro|EXT2_MOUNT_ERRORS_PANIC
+mdefine_line|#define EXT2_MOUNT_ERRORS_PANIC&t;&t;0x0040&t;/* Panic on errors */
+DECL|macro|clear_opt
+mdefine_line|#define clear_opt(o, opt)&t;&t;o &amp;= ~EXT2_MOUNT_##opt
+DECL|macro|set_opt
+mdefine_line|#define set_opt(o, opt)&t;&t;&t;o |= EXT2_MOUNT_##opt
+DECL|macro|test_opt
+mdefine_line|#define test_opt(sb, opt)&t;&t;((sb)-&gt;u.ext2_sb.s_mount_opt &amp; &bslash;&n;&t;&t;&t;&t;&t; EXT2_MOUNT_##opt)
 multiline_comment|/*&n; * Maximal mount counts between two filesystem checks&n; */
 DECL|macro|EXT2_DFL_MAX_MNT_COUNT
 mdefine_line|#define EXT2_DFL_MAX_MNT_COUNT&t;&t;20&t;/* Allow 20 mounts */
+multiline_comment|/*&n; * Behaviour when detecting errors&n; */
+DECL|macro|EXT2_ERRORS_CONTINUE
+mdefine_line|#define EXT2_ERRORS_CONTINUE&t;&t;1&t;/* Continue execution */
+DECL|macro|EXT2_ERRORS_RO
+mdefine_line|#define EXT2_ERRORS_RO&t;&t;&t;2&t;/* Remount fs read-only */
+DECL|macro|EXT2_ERRORS_PANIC
+mdefine_line|#define EXT2_ERRORS_PANIC&t;&t;3&t;/* Panic */
+DECL|macro|EXT2_ERRORS_DEFAULT
+mdefine_line|#define EXT2_ERRORS_DEFAULT&t;&t;EXT2_ERRORS_CONTINUE
 multiline_comment|/*&n; * Structure of the super block&n; */
 DECL|struct|ext2_super_block
 r_struct
@@ -562,12 +591,23 @@ r_int
 id|s_state
 suffix:semicolon
 multiline_comment|/* File system state */
+DECL|member|s_errors
+r_int
+r_int
+id|s_errors
+suffix:semicolon
+multiline_comment|/* Behaviour when detecting errors */
+DECL|member|s_pad
+r_int
+r_int
+id|s_pad
+suffix:semicolon
 DECL|member|s_reserved
 r_int
 r_int
 id|s_reserved
 (braket
-l_int|241
+l_int|240
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
@@ -617,6 +657,22 @@ DECL|macro|EXT2_DIR_REC_LEN
 mdefine_line|#define EXT2_DIR_REC_LEN(name_len)&t;(((name_len) + 8 + EXT2_DIR_ROUND) &amp; &bslash;&n;&t;&t;&t;&t;&t; ~EXT2_DIR_ROUND)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Function prototypes&n; */
+multiline_comment|/*&n; * Ok, these declarations are also in &lt;linux/kernel.h&gt; but none of the&n; * ext2 source programs needs to include it so they are duplicated here.&n; */
+macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 5)
+DECL|macro|NORET_TYPE
+macro_line|# define NORET_TYPE    __volatile__
+DECL|macro|ATTRIB_NORET
+macro_line|# define ATTRIB_NORET  /**/
+DECL|macro|NORET_AND
+macro_line|# define NORET_AND     /**/
+macro_line|#else
+DECL|macro|NORET_TYPE
+macro_line|# define NORET_TYPE    /**/
+DECL|macro|ATTRIB_NORET
+macro_line|# define ATTRIB_NORET  __attribute__((noreturn))
+DECL|macro|NORET_AND
+macro_line|# define NORET_AND     noreturn,
+macro_line|#endif
 multiline_comment|/* acl.c */
 r_extern
 r_int
@@ -640,15 +696,26 @@ op_star
 comma
 r_int
 r_int
+comma
+r_int
+r_int
+op_star
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|ext2_free_block
+id|ext2_free_blocks
 (paren
 r_struct
 id|super_block
 op_star
+comma
+r_int
+r_int
 comma
 r_int
 r_int
@@ -954,6 +1021,15 @@ id|inode
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ext2_discard_prealloc
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* ioctl.c */
 r_extern
 r_int
@@ -1208,7 +1284,7 @@ l_int|4
 )paren
 suffix:semicolon
 r_extern
-r_volatile
+id|NORET_TYPE
 r_void
 id|ext2_panic
 (paren
@@ -1231,6 +1307,7 @@ dot
 id|__attribute__
 (paren
 (paren
+id|NORET_AND
 id|format
 (paren
 id|printf
@@ -1303,6 +1380,9 @@ id|super_block
 op_star
 comma
 r_int
+op_star
+comma
+r_char
 op_star
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ext2_fs_sb.h&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs_sb.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/include/linux/ext2_fs_sb.h&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs_sb.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#ifndef _LINUX_EXT2_FS_SB
 DECL|macro|_LINUX_EXT2_FS_SB
 mdefine_line|#define _LINUX_EXT2_FS_SB
@@ -47,6 +47,12 @@ r_int
 id|s_inodes_per_group
 suffix:semicolon
 multiline_comment|/* Number of inodes in a group */
+DECL|member|s_itb_per_group
+r_int
+r_int
+id|s_itb_per_group
+suffix:semicolon
+multiline_comment|/* Number of inode table blocks per group */
 DECL|member|s_desc_per_block
 r_int
 r_int

@@ -1,11 +1,11 @@
-multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
@@ -17,7 +17,9 @@ DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-multiline_comment|/* static */
+macro_line|#ifndef CONFIG_EXT2_FS_DIR_READ
+r_static
+macro_line|#endif
 r_int
 id|ext2_file_read
 (paren
@@ -51,6 +53,19 @@ r_char
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ext2_release_file
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the ext2 filesystem.&n; */
@@ -85,7 +100,7 @@ multiline_comment|/* mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
-l_int|NULL
+id|ext2_release_file
 comma
 multiline_comment|/* release */
 id|ext2_sync_file
@@ -145,8 +160,10 @@ id|ext2_permission
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
+macro_line|#ifndef CONFIG_EXT2_FS_DIR_READ
+r_static
+macro_line|#endif
 DECL|function|ext2_file_read
-multiline_comment|/* static */
 r_int
 id|ext2_file_read
 (paren
@@ -432,7 +449,7 @@ op_minus
 id|block
 suffix:semicolon
 )brace
-multiline_comment|/* We do this in a two stage process.  We first try and request&n;&t;   as many blocks as we can, then we wait for the first one to&n;&t;   complete, and then we try and wrap up as many as are actually&n;&t;   done.  This routine is rather generic, in that it can be used&n;&t;   in a filesystem by substituting the appropriate function in&n;&t;   for getblk&n;&n;&t;   This routine is optimized to make maximum use of the various&n;&t;   buffers and caches. */
+multiline_comment|/*&n;&t; * We do this in a two stage process.  We first try and request&n;&t; * as many blocks as we can, then we wait for the first one to&n;&t; * complete, and then we try and wrap up as many as are actually&n;&t; * done.  This routine is rather generic, in that it can be used&n;&t; * in a filesystem by substituting the appropriate function in&n;&t; * for getblk&n;&t; *&n;&t; * This routine is optimized to make maximum use of the various&n;&t; * buffers and caches.&n;&t; */
 r_do
 (brace
 id|bhrequest
@@ -513,7 +530,7 @@ id|bhb
 op_assign
 id|buflist
 suffix:semicolon
-multiline_comment|/* If the block we have on hand is uptodate, go ahead&n;&t;&t;&t;   and complete processing */
+multiline_comment|/*&n;&t;&t;&t; * If the block we have on hand is uptodate, go ahead&n;&t;&t;&t; * and complete processing&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -531,7 +548,7 @@ id|bhe
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Now request them all */
+multiline_comment|/*&n;&t;&t; * Now request them all&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -548,7 +565,7 @@ id|bhreq
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* Finish off all I/O that has actually completed */
+multiline_comment|/*&n;&t;&t;&t; * Finish off all I/O that has actually completed&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -747,7 +764,7 @@ OG
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Release the read-ahead blocks */
+multiline_comment|/*&n;&t; * Release the read-ahead blocks&n;&t; */
 r_while
 c_loop
 (paren
@@ -886,6 +903,18 @@ suffix:semicolon
 id|sb
 op_assign
 id|inode-&gt;i_sb
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+multiline_comment|/*&n;&t;&t; * This fs has been automatically remounted ro because of errors&n;&t;&t; */
+r_return
+op_minus
+id|ENOSPC
 suffix:semicolon
 r_if
 c_cond
@@ -1135,6 +1164,36 @@ l_int|1
 suffix:semicolon
 r_return
 id|written
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Called when a inode is released. Note that this is different&n; * from ext2_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
+DECL|function|ext2_release_file
+r_static
+r_void
+id|ext2_release_file
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|filp-&gt;f_mode
+op_amp
+l_int|2
+)paren
+id|ext2_discard_prealloc
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 eof

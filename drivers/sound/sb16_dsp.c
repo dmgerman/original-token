@@ -594,11 +594,6 @@ id|mode
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|mode
-)paren
 id|dsp_stereo
 op_assign
 id|mode

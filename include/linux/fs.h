@@ -1355,6 +1355,9 @@ op_star
 comma
 r_int
 op_star
+comma
+r_char
+op_star
 )paren
 suffix:semicolon
 )brace

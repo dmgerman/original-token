@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *                      Laboratoire MASI - Institut Blaise Pascal&n; *                      Universite Pierre et Marie Curie (Paris VI)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -762,7 +762,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* Don&squot;t sync fast links! */
 r_if
 c_cond
 (paren
@@ -777,6 +776,7 @@ op_logical_neg
 id|inode-&gt;i_blocks
 )paren
 )paren
+multiline_comment|/*&n;&t;&t; * Don&squot;t sync fast links!&n;&t;&t; */
 r_goto
 id|skip
 suffix:semicolon

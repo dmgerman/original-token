@@ -54,7 +54,6 @@ DECL|enumerator|RPC_AUTH_SHORT
 id|RPC_AUTH_SHORT
 op_assign
 l_int|2
-comma
 )brace
 suffix:semicolon
 DECL|enum|rpc_msg_type
@@ -70,7 +69,6 @@ DECL|enumerator|RPC_REPLY
 id|RPC_REPLY
 op_assign
 l_int|1
-comma
 )brace
 suffix:semicolon
 DECL|enum|rpc_reply_stat
@@ -86,7 +84,6 @@ DECL|enumerator|RPC_MSG_DENIED
 id|RPC_MSG_DENIED
 op_assign
 l_int|1
-comma
 )brace
 suffix:semicolon
 DECL|enum|rpc_accept_stat
@@ -117,7 +114,6 @@ DECL|enumerator|RPC_GARBAGE_ARGS
 id|RPC_GARBAGE_ARGS
 op_assign
 l_int|4
-comma
 )brace
 suffix:semicolon
 DECL|enum|rpc_reject_stat
@@ -133,7 +129,6 @@ DECL|enumerator|RPC_AUTH_ERROR
 id|RPC_AUTH_ERROR
 op_assign
 l_int|1
-comma
 )brace
 suffix:semicolon
 DECL|enum|rpc_auth_stat
@@ -164,7 +159,6 @@ DECL|enumerator|RPC_AUTH_TOOWEAK
 id|RPC_AUTH_TOOWEAK
 op_assign
 l_int|5
-comma
 )brace
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
@@ -267,7 +261,6 @@ DECL|enumerator|NFSERR_WFLUSH
 id|NFSERR_WFLUSH
 op_assign
 l_int|99
-comma
 )brace
 suffix:semicolon
 DECL|enum|nfs_ftype
@@ -318,7 +311,6 @@ DECL|enumerator|NFFIFO
 id|NFFIFO
 op_assign
 l_int|8
-comma
 )brace
 suffix:semicolon
 DECL|macro|NFS_PROGRAM

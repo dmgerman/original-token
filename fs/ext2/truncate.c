@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/truncate.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/truncate.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
@@ -206,11 +206,13 @@ id|brelse
 id|bh
 )paren
 suffix:semicolon
-id|ext2_free_block
+id|ext2_free_blocks
 (paren
 id|inode-&gt;i_sb
 comma
 id|tmp
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -518,11 +520,13 @@ id|brelse
 id|bh
 )paren
 suffix:semicolon
-id|ext2_free_block
+id|ext2_free_blocks
 (paren
 id|inode-&gt;i_sb
 comma
 id|tmp
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|inode-&gt;i_blocks
@@ -606,11 +610,13 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|ext2_free_block
+id|ext2_free_blocks
 (paren
 id|inode-&gt;i_sb
 comma
 id|tmp
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -928,11 +934,13 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|ext2_free_block
+id|ext2_free_blocks
 (paren
 id|inode-&gt;i_sb
 comma
 id|tmp
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1245,11 +1253,13 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|ext2_free_block
+id|ext2_free_blocks
 (paren
 id|inode-&gt;i_sb
 comma
 id|tmp
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1328,6 +1338,12 @@ id|inode-&gt;i_mode
 )paren
 )paren
 r_return
+suffix:semicolon
+id|ext2_discard_prealloc
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -1438,28 +1454,6 @@ suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
 l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Called when a inode is released. Note that this is different&n; * from ext2_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
-DECL|function|ext2_release
-r_void
-id|ext2_release
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;ext2_release not implemented&bslash;n&quot;
-)paren
 suffix:semicolon
 )brace
 eof

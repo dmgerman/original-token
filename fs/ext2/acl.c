@@ -1,9 +1,8 @@
-multiline_comment|/*&n; * linux/fs/ext2/acl.c&n; *&n; * Copyright (C) 1993  Remy Card (card@masi.ibp.fr)&n; */
+multiline_comment|/*&n; * linux/fs/ext2/acl.c&n; *&n; * Copyright (C) 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                           Laboratoire MASI - Institut Blaise Pascal&n; *                           Universite Pierre et Marie Curie (Paris VI)&n; */
 multiline_comment|/*&n; * This file will contain the Access Control Lists management for the&n; * second extended file system.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 multiline_comment|/*&n; * ext2_permission ()&n; *&n; * Check for access rights&n; */
@@ -26,7 +25,7 @@ id|mode
 op_assign
 id|inode-&gt;i_mode
 suffix:semicolon
-multiline_comment|/* Special case, access is always granted for root */
+multiline_comment|/*&n;&t; * Special case, access is always granted for root&n;&t; */
 r_if
 c_cond
 (paren
@@ -37,7 +36,7 @@ id|suser
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* If no ACL, checks using the file mode */
+multiline_comment|/*&n;&t; * If no ACL, checks using the file mode&n;&t; */
 r_else
 r_if
 c_cond

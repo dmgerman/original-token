@@ -574,10 +574,6 @@ id|mask
 op_assign
 id|dev-&gt;pa_mask
 suffix:semicolon
-id|dst
-op_and_assign
-id|mask
-suffix:semicolon
 id|flags
 op_and_assign
 op_complement
@@ -604,6 +600,10 @@ c_func
 (paren
 id|dst
 )paren
+suffix:semicolon
+id|dst
+op_and_assign
+id|mask
 suffix:semicolon
 )brace
 r_if

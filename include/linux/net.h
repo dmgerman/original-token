@@ -61,7 +61,6 @@ comma
 multiline_comment|/* connected to socket&t;&t;*/
 DECL|enumerator|SS_DISCONNECTING
 id|SS_DISCONNECTING
-comma
 multiline_comment|/* in process of disconnecting&t;*/
 DECL|typedef|socket_state
 )brace

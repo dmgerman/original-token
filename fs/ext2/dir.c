@@ -1,11 +1,13 @@
-multiline_comment|/*&n; *  linux/fs/ext2/dir.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/dir.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/dir.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/dir.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 directory handling functions&n; */
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#if 0
+macro_line|#ifndef CONFIG_EXT2_FS_DIR_READ
+DECL|function|ext2_dir_read
 r_static
 r_int
 id|ext2_dir_read
@@ -33,8 +35,7 @@ op_minus
 id|EISDIR
 suffix:semicolon
 )brace
-macro_line|#endif
-multiline_comment|/* static */
+macro_line|#else
 r_int
 id|ext2_file_read
 (paren
@@ -52,6 +53,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|ext2_readdir
@@ -81,9 +83,15 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
+macro_line|#ifdef CONFIG_EXT2_FS_DIR_READ
 id|ext2_file_read
 comma
 multiline_comment|/* read */
+macro_line|#else
+id|ext2_dir_read
+comma
+multiline_comment|/* read */
+macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* write - bad */
@@ -331,14 +339,27 @@ id|count
 r_int
 r_int
 id|offset
+comma
+id|blk
 suffix:semicolon
 r_int
 id|i
+comma
+id|num
 suffix:semicolon
 r_struct
 id|buffer_head
 op_star
 id|bh
+comma
+op_star
+id|tmp
+comma
+op_star
+id|bha
+(braket
+l_int|16
+)braket
 suffix:semicolon
 r_struct
 id|ext2_dir_entry
@@ -392,12 +413,8 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|bh
+id|blk
 op_assign
-id|ext2_bread
-(paren
-id|inode
-comma
 (paren
 id|filp-&gt;f_pos
 )paren
@@ -407,6 +424,14 @@ c_func
 (paren
 id|sb
 )paren
+suffix:semicolon
+id|bh
+op_assign
+id|ext2_bread
+(paren
+id|inode
+comma
+id|blk
 comma
 l_int|0
 comma
@@ -429,6 +454,123 @@ id|offset
 suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * Do the readahead&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|offset
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|16
+op_rshift
+(paren
+id|EXT2_BLOCK_SIZE_BITS
+c_func
+(paren
+id|sb
+)paren
+op_minus
+l_int|9
+)paren
+comma
+id|num
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+id|i
+op_decrement
+)paren
+(brace
+id|tmp
+op_assign
+id|ext2_getblk
+(paren
+id|inode
+comma
+op_increment
+id|blk
+comma
+l_int|0
+comma
+op_amp
+id|err
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_logical_and
+op_logical_neg
+id|tmp-&gt;b_uptodate
+op_logical_and
+op_logical_neg
+id|tmp-&gt;b_lock
+)paren
+id|bha
+(braket
+id|num
+op_increment
+)braket
+op_assign
+id|tmp
+suffix:semicolon
+r_else
+id|brelse
+(paren
+id|tmp
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|num
+)paren
+(brace
+id|ll_rw_block
+(paren
+id|READA
+comma
+id|num
+comma
+id|bha
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|num
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|brelse
+(paren
+id|bha
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
 )brace
 id|de
 op_assign
