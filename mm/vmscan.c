@@ -123,7 +123,7 @@ id|page_table
 r_goto
 id|out_failed_unlock
 suffix:semicolon
-multiline_comment|/*&n;&t; * Dont be too eager to get aging right if&n;&t; * memory is dangerously low.&n;&t; */
+multiline_comment|/* Don&squot;t look at this pte if it&squot;s been accessed recently. */
 r_if
 c_cond
 (paren

@@ -1425,7 +1425,7 @@ id|IRQ_AMIGA_PORTS
 comma
 id|mfc3_interrupt
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 id|p-&gt;name
 comma

@@ -480,8 +480,6 @@ comma
 id|j
 comma
 id|count
-comma
-id|flags
 suffix:semicolon
 r_int
 id|do_clear

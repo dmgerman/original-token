@@ -9,7 +9,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/q40_master.h&gt;
 macro_line|#include &lt;asm/q40ints.h&gt;
-multiline_comment|/* &n; * Q40 IRQs are defined as follows: &n; *            3,4,5,6,7,10,11,14,15 : ISA dev IRQs&n; *            16-31: reserved&n; *            32   : keyboard int&n; *            33   : frame int (50 Hz periodic timer)&n; *            34   : sample int (10/20 KHz periodic timer)&n; *          &n;*/
+multiline_comment|/* &n; * Q40 IRQs are defined as follows: &n; *            3,4,5,6,7,10,11,14,15 : ISA dev IRQs&n; *            16-31: reserved&n; *            32   : keyboard int&n; *            33   : frame int (50/200 Hz periodic timer)&n; *            34   : sample int (10/20 KHz periodic timer)&n; *          &n;*/
 r_extern
 r_int
 id|ints_inited
@@ -83,11 +83,12 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This should ideally be 4 elements only, for speed.&n; */
 DECL|macro|DEVNAME_SIZE
 mdefine_line|#define DEVNAME_SIZE 24
+DECL|struct|q40_irq_node
 r_static
 r_struct
+id|q40_irq_node
 (brace
 DECL|member|handler
 r_void
@@ -116,6 +117,7 @@ r_void
 op_star
 id|dev_id
 suffix:semicolon
+multiline_comment|/*        struct q40_irq_node *next;*/
 DECL|member|devname
 r_char
 id|devname
@@ -127,9 +129,24 @@ DECL|member|count
 r_int
 id|count
 suffix:semicolon
+DECL|member|state
+r_int
+r_int
+id|state
+suffix:semicolon
 DECL|variable|irq_tab
 )brace
 id|irq_tab
+(braket
+id|Q40_IRQ_MAX
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+DECL|variable|q40_ablecount
+r_int
+r_int
+id|q40_ablecount
 (braket
 id|Q40_IRQ_MAX
 op_plus
@@ -189,6 +206,7 @@ id|dev_id
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&t;&t;irq_tab[i].next = NULL;*/
 id|irq_tab
 (braket
 id|i
@@ -210,6 +228,23 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+id|irq_tab
+(braket
+id|i
+)braket
+dot
+id|state
+op_assign
+l_int|0
+suffix:semicolon
+id|q40_ablecount
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* all enabled */
 )brace
 multiline_comment|/* setup handler for ISA ints */
 id|sys_request_irq
@@ -331,14 +366,6 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* test for ISA ints not implemented by HW */
-r_if
-c_cond
-(paren
-id|irq
-OL
-l_int|15
-)paren
-(brace
 r_switch
 c_cond
 (paren
@@ -379,28 +406,9 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-r_default
-suffix:colon
-(brace
-)brace
-)brace
-)brace
-r_if
-c_cond
-(paren
-id|irq
-OL
-id|Q40_IRQ_TIMER
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|irq
-op_eq
+r_case
 l_int|11
-)paren
-(brace
+suffix:colon
 id|printk
 c_func
 (paren
@@ -411,7 +419,19 @@ id|irq
 op_assign
 l_int|10
 suffix:semicolon
+r_default
+suffix:colon
+(brace
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|irq
+OL
+id|Q40_IRQ_TIMER
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -539,6 +559,15 @@ comma
 id|DEVNAME_SIZE
 )paren
 suffix:semicolon
+id|irq_tab
+(braket
+id|irq
+)braket
+dot
+id|state
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -630,14 +659,6 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* test for ISA ints not implemented by HW */
-r_if
-c_cond
-(paren
-id|irq
-OL
-l_int|15
-)paren
-(brace
 r_switch
 c_cond
 (paren
@@ -679,10 +700,16 @@ id|dev_id
 suffix:semicolon
 r_return
 suffix:semicolon
+r_case
+l_int|11
+suffix:colon
+id|irq
+op_assign
+l_int|10
+suffix:semicolon
 r_default
 suffix:colon
 (brace
-)brace
 )brace
 )brace
 r_if
@@ -693,17 +720,6 @@ OL
 id|Q40_IRQ_TIMER
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|irq
-op_eq
-l_int|11
-)paren
-id|irq
-op_assign
-l_int|10
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -761,6 +777,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* irq_tab[irq].devname = NULL; */
+multiline_comment|/* do not reset state !! */
 )brace
 r_else
 (brace
@@ -842,7 +859,7 @@ id|eirqs
 op_assign
 initialization_block
 suffix:semicolon
-multiline_comment|/* complaiun only this many times about spurious ints : */
+multiline_comment|/* complain only this many times about spurious ints : */
 DECL|variable|ccleirq
 r_static
 r_int
@@ -859,7 +876,18 @@ op_assign
 l_int|60
 suffix:semicolon
 multiline_comment|/* internal */
-multiline_comment|/* FIX: add IRQ_INPROGRESS,mask,unmask,probing.... */
+multiline_comment|/* FIX: add shared ints,mask,unmask,probing.... */
+multiline_comment|/* this is an awfull hack.. */
+DECL|macro|IRQ_INPROGRESS
+mdefine_line|#define IRQ_INPROGRESS 1
+DECL|variable|disabled
+r_static
+r_int
+id|disabled
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*static unsigned short saved_mask;*/
 DECL|function|q40_irq2_handler
 r_void
 id|q40_irq2_handler
@@ -895,7 +923,6 @@ id|irq
 comma
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; *  more than 1 bit might be set, must handle atmost 1 int source,&n;&t; *  - handle only those with explicitly set handler&n;&t; */
 r_if
 c_cond
 (paren
@@ -983,9 +1010,63 @@ id|handler
 op_eq
 id|q40_defhand
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;handler for IRQ %d not defined&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 multiline_comment|/* ignore uninited INTs :-( */
+)brace
+r_if
+c_cond
+(paren
+id|irq_tab
+(braket
+id|irq
+)braket
+dot
+id|state
+op_amp
+id|IRQ_INPROGRESS
+)paren
+(brace
+multiline_comment|/*printk(&quot;IRQ_INPROGRESS detected for irq %d, disabling - %s disabled&bslash;n&quot;,irq,disabled ? &quot;already&quot; : &quot;not yet&quot;); */
+multiline_comment|/*saved_mask = fp-&gt;sr;*/
+id|fp-&gt;sr
+op_assign
+(paren
+id|fp-&gt;sr
+op_amp
+(paren
+op_complement
+l_int|0x700
+)paren
+)paren
+op_plus
+l_int|0x200
+suffix:semicolon
+id|disabled
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|irq_tab
+(braket
+id|irq
+)braket
+dot
+id|state
+op_or_assign
+id|IRQ_INPROGRESS
+suffix:semicolon
 id|irq_tab
 (braket
 id|irq
@@ -1004,6 +1085,57 @@ dot
 id|dev_id
 comma
 id|fp
+)paren
+suffix:semicolon
+multiline_comment|/* naively enable everything, if that fails than    */
+multiline_comment|/* this function will be reentered immediately thus */
+multiline_comment|/* getting another chance to disable the IRQ        */
+id|irq_tab
+(braket
+id|irq
+)braket
+dot
+id|state
+op_and_assign
+op_complement
+id|IRQ_INPROGRESS
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|disabled
+)paren
+(brace
+multiline_comment|/*printk(&quot;reenabling irq %d&bslash;n&quot;,irq); */
+id|fp-&gt;sr
+op_assign
+(paren
+id|fp-&gt;sr
+op_amp
+(paren
+op_complement
+l_int|0x700
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*saved_mask; */
+id|disabled
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|fp-&gt;sr
+op_amp
+l_int|0x200
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;exiting irq handler: fp-&gt;sr &amp;0x200 !!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1097,6 +1229,31 @@ id|q40_defhand
 r_continue
 suffix:semicolon
 multiline_comment|/* ignore uninited INTs :-( */
+multiline_comment|/* the INPROGRESS stuff should be completely useless*/
+multiline_comment|/* for internal ints, nevertheless test it..*/
+r_if
+c_cond
+(paren
+id|irq_tab
+(braket
+id|irq
+)braket
+dot
+id|state
+op_amp
+id|IRQ_INPROGRESS
+)paren
+(brace
+multiline_comment|/*disable_irq(irq);&n;&t;&t;&t;  return;*/
+id|printk
+c_func
+(paren
+l_string|&quot;rentering handler for IRQ %d !!&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+)brace
 id|irq_tab
 (braket
 id|irq
@@ -1117,6 +1274,18 @@ comma
 id|fp
 )paren
 suffix:semicolon
+id|irq_tab
+(braket
+id|irq
+)braket
+dot
+id|state
+op_and_assign
+op_complement
+id|IRQ_INPROGRESS
+suffix:semicolon
+multiline_comment|/*enable_irq(irq);*/
+multiline_comment|/* better not try luck !*/
 r_return
 suffix:semicolon
 )brace
@@ -1349,6 +1518,12 @@ comma
 id|sys_default_handler
 )brace
 suffix:semicolon
+DECL|variable|irq_disabled
+r_int
+id|irq_disabled
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|q40_enable_irq
 r_void
 id|q40_enable_irq
@@ -1358,6 +1533,117 @@ r_int
 id|irq
 )paren
 (brace
+multiline_comment|/* enable ISA iqs */
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+l_int|0
+op_logical_and
+id|irq
+op_le
+l_int|15
+)paren
+multiline_comment|/* the moderately bad case */
+id|master_outb
+c_func
+(paren
+l_int|1
+comma
+id|EXT_ENABLE_REG
+)paren
+suffix:semicolon
+macro_line|#if 0
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+l_int|10
+op_logical_and
+id|irq
+op_le
+l_int|15
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+op_decrement
+id|q40_ablecount
+(braket
+id|irq
+)braket
+)paren
+)paren
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|10
+comma
+id|irq_disabled
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+l_int|15
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|irq_disabled
+op_or_assign
+(paren
+id|q40_ablecount
+(braket
+id|irq
+)braket
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irq_disabled
+)paren
+(brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+op_amp
+(paren
+op_complement
+l_int|0x700
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 )brace
 DECL|function|q40_disable_irq
 r_void
@@ -1368,6 +1654,70 @@ r_int
 id|irq
 )paren
 (brace
+multiline_comment|/* disable ISA iqs : only do something if the driver has been&n;  * verified to be Q40 &quot;compatible&quot; - right now only IDE&n;  * Any driver should not attempt to sleep accross disable_irq !!&n;  */
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+l_int|10
+op_logical_and
+id|irq
+op_le
+l_int|15
+)paren
+multiline_comment|/* the moderately bad case */
+id|master_outb
+c_func
+(paren
+l_int|0
+comma
+id|EXT_ENABLE_REG
+)paren
+suffix:semicolon
+macro_line|#if 0
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ge
+l_int|10
+op_logical_and
+id|irq
+op_le
+l_int|15
+)paren
+(brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+op_or
+l_int|0x200
+)paren
+suffix:semicolon
+id|irq_disabled
+op_assign
+l_int|1
+suffix:semicolon
+id|q40_ablecount
+(braket
+id|irq
+)braket
+op_increment
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|q40_probe_irq_on
 r_int
@@ -1380,11 +1730,12 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;sorry, irq probing not yet implemented - reconfigure the driver to avoid this&bslash;n&quot;
+l_string|&quot;irq probing not working - reconfigure the driver to avoid this&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|q40_probe_irq_off

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * CIA is the internal name for the 2117x chipset which provides&n; * memory controller and PCI access for the 21164 chip based systems.&n; *&n; * This file is based on:&n; *&n; * DECchip 21171 Core Logic Chipset &n; * Technical Reference Manual&n; *&n; * EC-QE18B-TE&n; *&n; * david.rusling@reo.mts.dec.com Initial Version.&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------------**&n;**                                                                        **&n;**  EB164 I/O procedures                                                  **&n;**                                                                        **&n;**      inport[b|w|t|l], outport[b|w|t|l] 8:16:24:32 IO xfers             **&n;**&t;inportbxt: 8 bits only                                            **&n;**      inport:    alias of inportw                                       **&n;**      outport:   alias of outportw                                      **&n;**                                                                        **&n;**      inmem[b|w|t|l], outmem[b|w|t|l] 8:16:24:32 ISA memory xfers       **&n;**&t;inmembxt: 8 bits only                                             **&n;**      inmem:    alias of inmemw                                         **&n;**      outmem:   alias of outmemw                                        **&n;**                                                                        **&n;**------------------------------------------------------------------------*/
-multiline_comment|/* CIA ADDRESS BIT DEFINITIONS&n; *&n; *  3 3 3 3|3 3 3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * |1| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |0|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &n; *  |                                                                        &bslash;_/ &bslash;_/&n; *  |                                                                         |   |&n; *  +-- IO space, not cached.                                   Byte Enable --+   |&n; *                                                              Transfer Length --+&n; *&n; *&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
+multiline_comment|/* CIA ADDRESS BIT DEFINITIONS&n; *&n; *  3333 3333 3322 2222 2222 1111 1111 11 &n; *  9876 5432 1098 7654 3210 9876 5432 1098 7654 3210&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  1                                             000&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  |                                             |&bslash;|&n; *  |                               Byte Enable --+ |&n; *  |                             Transfer Length --+&n; *  +-- IO space, not cached&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
 DECL|macro|CIA_MEM_R1_MASK
 mdefine_line|#define CIA_MEM_R1_MASK 0x1fffffff  /* SPARSE Mem region 1 mask is 29 bits */
 DECL|macro|CIA_MEM_R2_MASK
@@ -879,6 +879,40 @@ id|mask
 comma
 id|base
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|CIA_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
+id|addr
+op_sub_assign
+id|CIA_DENSE_MEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -956,6 +990,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;cia: address 0x%lx not covered by HAE&bslash;n&quot;
 comma
 id|addr
@@ -1120,19 +1155,23 @@ id|addr
 r_int
 r_int
 id|work
-op_assign
-id|cia_srm_base
-c_func
-(paren
-id|addr
-)paren
 comma
 id|w
 suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|work
+op_assign
+id|cia_srm_base
+c_func
+(paren
+id|addr
+)paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|work
@@ -1180,19 +1219,27 @@ id|addr
 r_int
 r_int
 id|work
+comma
+id|w
+suffix:semicolon
+id|addr
+op_sub_assign
+id|CIA_DENSE_MEM
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|work
 op_assign
 id|cia_srm_base
 c_func
 (paren
 id|addr
 )paren
-comma
-id|w
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|work
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|work
@@ -1240,6 +1287,33 @@ id|result
 comma
 id|msb
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that CIA_DENSE_MEM has no bits not masked in these &n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1304,6 +1378,33 @@ id|result
 comma
 id|msb
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that CIA_DENSE_MEM has no bits not masked in these &n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1371,6 +1472,33 @@ id|msb
 comma
 id|w
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that CIA_DENSE_MEM has no bits not masked in these &n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1439,6 +1567,33 @@ id|msb
 comma
 id|w
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that CIA_DENSE_MEM has no bits not masked in these &n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1498,16 +1653,38 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|CIA_DENSE_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|cia_readq
@@ -1522,16 +1699,38 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|CIA_DENSE_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|cia_writel
@@ -1549,15 +1748,37 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|CIA_DENSE_MEM
-)paren
 op_assign
 id|b
 suffix:semicolon
@@ -1577,25 +1798,46 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;cia: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|CIA_DENSE_MEM
-)paren
 op_assign
 id|b
 suffix:semicolon
 )brace
-multiline_comment|/* Find the DENSE memory area for a given bus address.  */
-DECL|function|cia_dense_mem
+DECL|function|cia_ioremap
 id|__EXTERN_INLINE
 r_int
 r_int
-id|cia_dense_mem
+id|cia_ioremap
 c_func
 (paren
 r_int
@@ -1605,6 +1847,27 @@ id|addr
 (brace
 r_return
 id|CIA_DENSE_MEM
+op_plus
+id|addr
+suffix:semicolon
+)brace
+DECL|function|cia_is_ioaddr
+id|__EXTERN_INLINE
+r_int
+id|cia_is_ioaddr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|addr
+op_ge
+id|IDENT_ADDR
+op_plus
+l_int|0x8000000000UL
 suffix:semicolon
 )brace
 DECL|macro|vip
@@ -1657,8 +1920,10 @@ DECL|macro|__writel
 mdefine_line|#define __writel&t;cia_writel
 DECL|macro|__writeq
 mdefine_line|#define __writeq&t;cia_writeq
-DECL|macro|dense_mem
-mdefine_line|#define dense_mem&t;cia_dense_mem
+DECL|macro|__ioremap
+mdefine_line|#define __ioremap&t;cia_ioremap
+DECL|macro|__is_ioaddr
+mdefine_line|#define __is_ioaddr&t;cia_is_ioaddr
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
@@ -1671,14 +1936,16 @@ DECL|macro|inl
 mdefine_line|#define inl(port)&t;__inl(port)
 DECL|macro|outl
 mdefine_line|#define outl(x,port)&t;__outl((x),(port))
-DECL|macro|readl
-mdefine_line|#define readl(a)&t;__readl((unsigned long)(a))
-DECL|macro|readq
-mdefine_line|#define readq(a)&t;__readq((unsigned long)(a))
-DECL|macro|writel
-mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
-DECL|macro|writeq
-mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#if !__DEBUG_IOREMAP
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+DECL|macro|__raw_readq
+mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+DECL|macro|__raw_writeq
+mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

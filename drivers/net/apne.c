@@ -1084,7 +1084,7 @@ id|IRQ_AMIGA_PORTS
 comma
 id|apne_interrupt
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;apne Ethernet&quot;
 comma

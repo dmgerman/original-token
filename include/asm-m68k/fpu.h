@@ -9,6 +9,9 @@ mdefine_line|#define FPSTATESIZE (216/sizeof(unsigned char))
 macro_line|#elif defined(CONFIG_M68040)
 DECL|macro|FPSTATESIZE
 mdefine_line|#define FPSTATESIZE (96/sizeof(unsigned char))
+macro_line|#elif defined(CONFIG_M68KFPU_EMU)
+DECL|macro|FPSTATESIZE
+mdefine_line|#define FPSTATESIZE (28/sizeof(unsigned char))
 macro_line|#elif defined(CONFIG_M68060)
 DECL|macro|FPSTATESIZE
 mdefine_line|#define FPSTATESIZE (12/sizeof(unsigned char))

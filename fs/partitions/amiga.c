@@ -9,11 +9,6 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/affs_hardblocks.h&gt;
 macro_line|#include &quot;check.h&quot;
 macro_line|#include &quot;amiga.h&quot;
-DECL|variable|current_minor
-r_static
-r_int
-id|current_minor
-suffix:semicolon
 r_static
 id|__inline__
 id|u32
@@ -42,7 +37,7 @@ op_decrement
 )paren
 id|sum
 op_add_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 op_star
@@ -126,6 +121,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|blocksize
+OL
+l_int|512
+)paren
+id|blocksize
+op_assign
+l_int|512
+suffix:semicolon
 id|set_blocksize
 c_func
 (paren
@@ -200,7 +206,7 @@ op_star
 )paren
 id|bh-&gt;b_data
 op_eq
-id|htonl
+id|cpu_to_be32
 c_func
 (paren
 id|IDNAME_RIGIDDISK
@@ -228,7 +234,7 @@ op_star
 )paren
 id|bh-&gt;b_data
 comma
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|rdb-&gt;rdb_SummedLongs
@@ -266,7 +272,7 @@ op_star
 )paren
 id|bh-&gt;b_data
 comma
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|rdb-&gt;rdb_SummedLongs
@@ -317,7 +323,7 @@ l_string|&quot; RDSK&quot;
 suffix:semicolon
 id|blk
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|rdb-&gt;rdb_PartitionList
@@ -396,7 +402,7 @@ id|bh-&gt;b_data
 suffix:semicolon
 id|blk
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Next
@@ -407,7 +413,7 @@ c_cond
 (paren
 id|pb-&gt;pb_ID
 op_eq
-id|htonl
+id|cpu_to_be32
 c_func
 (paren
 id|IDNAME_PARTITION
@@ -422,7 +428,7 @@ op_star
 )paren
 id|pb
 comma
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_SummedLongs
@@ -443,7 +449,7 @@ op_logical_neg
 id|nr_sects
 op_assign
 (paren
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Environment
@@ -454,7 +460,7 @@ l_int|10
 op_plus
 l_int|1
 op_minus
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Environment
@@ -464,7 +470,7 @@ l_int|9
 )paren
 )paren
 op_star
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Environment
@@ -473,7 +479,7 @@ l_int|3
 )braket
 )paren
 op_star
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Environment
@@ -495,7 +501,7 @@ suffix:semicolon
 )brace
 id|start_sect
 op_assign
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Environment
@@ -504,7 +510,7 @@ l_int|9
 )braket
 )paren
 op_star
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Environment
@@ -513,7 +519,7 @@ l_int|3
 )braket
 )paren
 op_star
-id|htonl
+id|be32_to_cpu
 c_func
 (paren
 id|pb-&gt;pb_Environment
@@ -527,14 +533,14 @@ c_func
 (paren
 id|hd
 comma
-id|current_minor
+id|first_part_minor
 comma
 id|start_sect
 comma
 id|nr_sects
 )paren
 suffix:semicolon
-id|current_minor
+id|first_part_minor
 op_increment
 suffix:semicolon
 id|res
@@ -554,6 +560,8 @@ c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_else

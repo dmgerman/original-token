@@ -640,9 +640,9 @@ comma
 id|j
 suffix:semicolon
 r_struct
-id|usb_alternate_setting
+id|usb_interface
 op_star
-id|as
+id|intf
 suffix:semicolon
 r_if
 c_cond
@@ -698,15 +698,15 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|config-&gt;num_altsetting
+id|config-&gt;bNumInterfaces
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
-id|as
+id|intf
 op_assign
-id|config-&gt;altsetting
+id|config-&gt;interface
 op_plus
 id|i
 suffix:semicolon
@@ -714,7 +714,7 @@ r_if
 c_cond
 (paren
 (paren
-id|as
+id|intf
 )paren
 op_eq
 l_int|NULL
@@ -730,7 +730,7 @@ l_int|0
 suffix:semicolon
 id|j
 OL
-id|config-&gt;bNumInterfaces
+id|intf-&gt;num_altsetting
 suffix:semicolon
 id|j
 op_increment
@@ -740,7 +740,7 @@ c_cond
 (paren
 id|usb_dump_interface
 (paren
-id|as-&gt;interface
+id|intf-&gt;altsetting
 op_plus
 id|j
 comma

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * PYXIS is the internal name for a core logic chipset which provides&n; * memory controller and PCI access for the 21164A chip based systems.&n; *&n; * This file is based on:&n; *&n; * Pyxis Chipset Spec&n; * 14-Jun-96&n; * Rev. X2.0&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------------**&n;**                                                                        **&n;**  I/O procedures                                                        **&n;**                                                                        **&n;**      inport[b|w|t|l], outport[b|w|t|l] 8:16:24:32 IO xfers             **&n;**&t;inportbxt: 8 bits only                                            **&n;**      inport:    alias of inportw                                       **&n;**      outport:   alias of outportw                                      **&n;**                                                                        **&n;**      inmem[b|w|t|l], outmem[b|w|t|l] 8:16:24:32 ISA memory xfers       **&n;**&t;inmembxt: 8 bits only                                             **&n;**      inmem:    alias of inmemw                                         **&n;**      outmem:   alias of outmemw                                        **&n;**                                                                        **&n;**------------------------------------------------------------------------*/
-multiline_comment|/* CIA ADDRESS BIT DEFINITIONS&n; *&n; *  3 3 3 3|3 3 3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * |1| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |0|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &n; *  |                                                                        &bslash;_/ &bslash;_/&n; *  |                                                                         |   |&n; *  +-- IO space, not cached.                                   Byte Enable --+   |&n; *                                                              Transfer Length --+&n; *&n; *&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
+multiline_comment|/* PYXIS ADDRESS BIT DEFINITIONS&n; *&n; *  3333 3333 3322 2222 2222 1111 1111 11&n; *  9876 5432 1098 7654 3210 9876 5432 1098 7654 3210&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  1                                             000&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  |&t;&t;&t;&t;&t;&t;  |&bslash;|&n; *  |                               Byte Enable --+ |&n; *  |                             Transfer Length --+&n; *  +-- IO space, not cached&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
 DECL|macro|PYXIS_MEM_R1_MASK
 mdefine_line|#define PYXIS_MEM_R1_MASK 0x1fffffff  /* SPARSE Mem region 1 mask is 29 bits */
 DECL|macro|PYXIS_MEM_R2_MASK
@@ -872,7 +872,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Memory functions.  64-bit and 32-bit accesses are done through&n; * dense memory space, everything else through sparse space.&n; * &n; * For reading and writing 8 and 16 bit quantities we need to &n; * go through one of the three sparse address mapping regions&n; * and use the HAE_MEM CSR to provide some bits of the address.&n; * The following few routines use only sparse address region 1&n; * which gives 1Gbyte of accessible space which relates exactly&n; * to the amount of PCI memory mapping *into* system address space.&n; * See p 6-17 of the specification but it looks something like this:&n; *&n; * 21164 Address:&n; * &n; *          3         2         1                                                               &n; * 9876543210987654321098765432109876543210&n; * 1ZZZZ0.PCI.QW.Address............BBLL                 &n; *&n; * ZZ = SBZ&n; * BB = Byte offset&n; * LL = Transfer length&n; *&n; * PCI Address:&n; *&n; * 3         2         1                                                               &n; * 10987654321098765432109876543210&n; * HHH....PCI.QW.Address........ 00&n; *&n; * HHH = 31:29 HAE_MEM CSR&n; * &n; */
+multiline_comment|/*&n; * Memory functions.  64-bit and 32-bit accesses are done through&n; * dense memory space, everything else through sparse space.&n; *&n; * For reading and writing 8 and 16 bit quantities we need to&n; * go through one of the three sparse address mapping regions&n; * and use the HAE_MEM CSR to provide some bits of the address.&n; * The following few routines use only sparse address region 1&n; * which gives 1Gbyte of accessible space which relates exactly&n; * to the amount of PCI memory mapping *into* system address space.&n; * See p 6-17 of the specification but it looks something like this:&n; *&n; * 21164 Address:&n; *&n; *          3         2         1&n; * 9876543210987654321098765432109876543210&n; * 1ZZZZ0.PCI.QW.Address............BBLL&n; *&n; * ZZ = SBZ&n; * BB = Byte offset&n; * LL = Transfer length&n; *&n; * PCI Address:&n; *&n; * 3         2         1&n; * 10987654321098765432109876543210&n; * HHH....PCI.QW.Address........ 00&n; *&n; * HHH = 31:29 HAE_MEM CSR&n; *&n; */
 DECL|function|pyxis_bw_readb
 id|__EXTERN_INLINE
 r_int
@@ -885,6 +885,36 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|__kernel_ldbu
 c_func
@@ -893,11 +923,7 @@ op_star
 (paren
 id|vucp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -913,6 +939,36 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|__kernel_ldwu
 c_func
@@ -921,11 +977,7 @@ op_star
 (paren
 id|vusp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -941,16 +993,42 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|pyxis_bw_readq
@@ -965,16 +1043,42 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|pyxis_bw_writeb
@@ -992,6 +1096,36 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 id|__kernel_stb
 c_func
 (paren
@@ -1001,16 +1135,7 @@ op_star
 (paren
 id|vucp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1029,6 +1154,36 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 id|__kernel_stw
 c_func
 (paren
@@ -1038,16 +1193,7 @@ op_star
 (paren
 id|vusp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1066,15 +1212,41 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
 op_assign
 id|b
 suffix:semicolon
@@ -1094,17 +1266,61 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_BW_MEM
-)paren
 op_assign
 id|b
+suffix:semicolon
+)brace
+DECL|function|pyxis_bw_ioremap
+id|__EXTERN_INLINE
+r_int
+r_int
+id|pyxis_bw_ioremap
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|PYXIS_BW_MEM
+op_plus
+id|addr
 suffix:semicolon
 )brace
 DECL|function|pyxis_srm_base
@@ -1124,6 +1340,40 @@ r_int
 id|mask
 comma
 id|base
+suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_BW_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
+id|addr
+op_sub_assign
+id|PYXIS_BW_MEM
 suffix:semicolon
 r_if
 c_cond
@@ -1365,6 +1615,8 @@ id|addr
 (brace
 r_int
 r_int
+id|w
+comma
 id|work
 op_assign
 id|pyxis_srm_base
@@ -1384,15 +1636,25 @@ op_add_assign
 l_int|0x00
 suffix:semicolon
 multiline_comment|/* add transfer length */
+id|w
+op_assign
+id|__kernel_insbl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
 )paren
 id|work
 op_assign
-id|b
-op_star
-l_int|0x01010101
+id|w
 suffix:semicolon
 )brace
 )brace
@@ -1413,6 +1675,8 @@ id|addr
 (brace
 r_int
 r_int
+id|w
+comma
 id|work
 op_assign
 id|pyxis_srm_base
@@ -1432,15 +1696,25 @@ op_add_assign
 l_int|0x08
 suffix:semicolon
 multiline_comment|/* add transfer length */
+id|w
+op_assign
+id|__kernel_inswl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
 )paren
 id|work
 op_assign
-id|b
-op_star
-l_int|0x00010001
+id|w
 suffix:semicolon
 )brace
 )brace
@@ -1466,6 +1740,33 @@ id|work
 comma
 id|temp
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that PYXIS_DENSE_MEM has no bits not masked in these&n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1540,6 +1841,33 @@ id|work
 comma
 id|temp
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that PYXIS_DENSE_MEM has no bits not masked in these&n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1610,7 +1938,36 @@ id|addr
 r_int
 r_int
 id|msb
+comma
+id|w
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that PYXIS_DENSE_MEM has no bits not masked in these&n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1625,6 +1982,18 @@ id|set_hae
 c_func
 (paren
 id|msb
+)paren
+suffix:semicolon
+id|w
+op_assign
+id|__kernel_insbl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
 )paren
 suffix:semicolon
 op_star
@@ -1643,9 +2012,7 @@ op_plus
 l_int|0x00
 )paren
 op_assign
-id|b
-op_star
-l_int|0x01010101
+id|w
 suffix:semicolon
 )brace
 DECL|function|pyxis_writew
@@ -1666,7 +2033,36 @@ id|addr
 r_int
 r_int
 id|msb
+comma
+id|w
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Note that PYXIS_DENSE_MEM has no bits not masked in these&n;&t;   operations, so we don&squot;t have to subtract it back out.  */
 id|msb
 op_assign
 id|addr
@@ -1681,6 +2077,18 @@ id|set_hae
 c_func
 (paren
 id|msb
+)paren
+suffix:semicolon
+id|w
+op_assign
+id|__kernel_inswl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
 )paren
 suffix:semicolon
 op_star
@@ -1699,9 +2107,7 @@ op_plus
 l_int|0x08
 )paren
 op_assign
-id|b
-op_star
-l_int|0x00010001
+id|w
 suffix:semicolon
 )brace
 DECL|function|pyxis_readl
@@ -1716,16 +2122,42 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_DENSE_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|pyxis_readq
@@ -1740,16 +2172,42 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_DENSE_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|pyxis_writel
@@ -1767,15 +2225,41 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_DENSE_MEM
-)paren
 op_assign
 id|b
 suffix:semicolon
@@ -1795,25 +2279,50 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;pyxis: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|PYXIS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|PYXIS_DENSE_MEM
-)paren
 op_assign
 id|b
 suffix:semicolon
 )brace
-multiline_comment|/* Find the DENSE memory area for a given bus address.  */
-DECL|function|pyxis_dense_mem
+DECL|function|pyxis_ioremap
 id|__EXTERN_INLINE
 r_int
 r_int
-id|pyxis_dense_mem
+id|pyxis_ioremap
 c_func
 (paren
 r_int
@@ -1823,6 +2332,27 @@ id|addr
 (brace
 r_return
 id|PYXIS_DENSE_MEM
+op_plus
+id|addr
+suffix:semicolon
+)brace
+DECL|function|pyxis_is_ioaddr
+id|__EXTERN_INLINE
+r_int
+id|pyxis_is_ioaddr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|addr
+op_ge
+id|IDENT_ADDR
+op_plus
+l_int|0x8000000000UL
 suffix:semicolon
 )brace
 DECL|macro|vucp
@@ -1869,6 +2399,8 @@ DECL|macro|__writel
 macro_line|# define __writel&t;pyxis_bw_writel
 DECL|macro|__writeq
 macro_line|# define __writeq&t;pyxis_bw_writeq
+DECL|macro|__ioremap
+macro_line|# define __ioremap&t;pyxis_bw_ioremap
 macro_line|#else
 DECL|macro|__inb
 macro_line|# define __inb&t;&t;pyxis_inb
@@ -1909,44 +2441,50 @@ DECL|macro|__writel
 macro_line|# define __writel&t;pyxis_writel
 DECL|macro|__writeq
 macro_line|# define __writeq&t;pyxis_writeq
+DECL|macro|__ioremap
+macro_line|# define __ioremap&t;pyxis_ioremap
 macro_line|#endif /* BWIO */
-DECL|macro|dense_mem
-mdefine_line|#define dense_mem&t;pyxis_dense_mem
+DECL|macro|__is_ioaddr
+mdefine_line|#define __is_ioaddr&t;pyxis_is_ioaddr
 macro_line|#if defined(BWIO_ENABLED) &amp;&amp; !defined(CONFIG_ALPHA_RUFFIAN)
 DECL|macro|inb
-macro_line|# define inb(port) __inb((port))
+macro_line|# define inb(port)&t;&t;__inb((port))
 DECL|macro|inw
-macro_line|# define inw(port) __inw((port))
+macro_line|# define inw(port)&t;&t;__inw((port))
 DECL|macro|inl
-macro_line|# define inl(port) __inl((port))
+macro_line|# define inl(port)&t;&t;__inl((port))
 DECL|macro|outb
-macro_line|# define outb(x, port) __outb((x),(port))
+macro_line|# define outb(x, port)&t;&t;__outb((x),(port))
 DECL|macro|outw
-macro_line|# define outw(x, port) __outw((x),(port))
+macro_line|# define outw(x, port)&t;&t;__outw((x),(port))
 DECL|macro|outl
-macro_line|# define outl(x, port) __outl((x),(port))
-DECL|macro|readb
-macro_line|# define readb(addr) __readb((addr))
-DECL|macro|readw
-macro_line|# define readw(addr) __readw((addr))
-DECL|macro|writeb
-macro_line|# define writeb(b, addr) __writeb((b),(addr))
-DECL|macro|writew
-macro_line|# define writew(b, addr) __writew((b),(addr))
+macro_line|# define outl(x, port)&t;&t;__outl((x),(port))
+macro_line|# if !__DEBUG_IOREMAP
+DECL|macro|__raw_readb
+macro_line|#  define __raw_readb(addr)&t;__readb((addr))
+DECL|macro|__raw_readw
+macro_line|#  define __raw_readw(addr)&t;__readw((addr))
+DECL|macro|__raw_writeb
+macro_line|#  define __raw_writeb(b, addr)&t;__writeb((b),(addr))
+DECL|macro|__raw_writeb
+macro_line|#  define __raw_writeb(b, addr)&t;__writew((b),(addr))
+macro_line|# endif
 macro_line|#else
 DECL|macro|inb
 macro_line|# define inb(port) &bslash;&n;  (__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
 macro_line|# define outb(x, port) &bslash;&n;  (__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
 macro_line|#endif /* BWIO */
-DECL|macro|readl
-mdefine_line|#define readl(a)&t;__readl((unsigned long)(a))
-DECL|macro|readq
-mdefine_line|#define readq(a)&t;__readq((unsigned long)(a))
-DECL|macro|writel
-mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
-DECL|macro|writeq
-mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#if !__DEBUG_IOREMAP
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+DECL|macro|__raw_readq
+mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+DECL|macro|__raw_writeq
+mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

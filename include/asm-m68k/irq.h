@@ -119,7 +119,8 @@ r_void
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * various flags for request_irq()&n; */
+multiline_comment|/*&n; * various flags for request_irq() - the Amiga now uses the standard&n; * mechanism like all other architectures - SA_INTERRUPT and SA_SHIRQ&n; * are your friends.&n; */
+macro_line|#ifndef CONFIG_AMIGA
 DECL|macro|IRQ_FLG_LOCK
 mdefine_line|#define IRQ_FLG_LOCK&t;(0x0001)&t;/* handler is not replaceable&t;*/
 DECL|macro|IRQ_FLG_REPLACE
@@ -130,6 +131,7 @@ DECL|macro|IRQ_FLG_SLOW
 mdefine_line|#define IRQ_FLG_SLOW&t;(0x0008)
 DECL|macro|IRQ_FLG_STD
 mdefine_line|#define IRQ_FLG_STD&t;(0x8000)&t;/* internally used&t;&t;*/
+macro_line|#endif
 multiline_comment|/*&n; * This structure is used to chain together the ISRs for a particular&n; * interrupt source (if it supports chaining).&n; */
 DECL|struct|irq_node
 r_typedef

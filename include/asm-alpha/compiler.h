@@ -3,10 +3,8 @@ DECL|macro|__ALPHA_COMPILER_H
 mdefine_line|#define __ALPHA_COMPILER_H
 multiline_comment|/* &n; * Herein are macros we use when describing various patterns we want to GCC.&n; * In all cases we can get better schedules out of the compiler if we hide&n; * as little as possible inside inline assembly.  However, we want to be&n; * able to know what we&squot;ll get out before giving up inline assembly.  Thus&n; * these tests and macros.&n; */
 multiline_comment|/*&n; * EGCS (of varying versions) does a good job of using insxl and extxl.&n; */
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
-DECL|macro|__kernel_insbl
+macro_line|#if 0 &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91)
 mdefine_line|#define __kernel_insbl(val, shift) &bslash;&n;  (((unsigned long)(val) &amp; 0xfful) &lt;&lt; ((shift) * 8))
-DECL|macro|__kernel_inswl
 mdefine_line|#define __kernel_inswl(val, shift) &bslash;&n;  (((unsigned long)(val) &amp; 0xfffful) &lt;&lt; ((shift) * 8))
 macro_line|#else
 DECL|macro|__kernel_insbl
@@ -14,10 +12,8 @@ mdefine_line|#define __kernel_insbl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ un
 DECL|macro|__kernel_inswl
 mdefine_line|#define __kernel_inswl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;inswl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;rI&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
 macro_line|#endif
-macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 92
-DECL|macro|__kernel_extbl
+macro_line|#if 0 &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 92)
 mdefine_line|#define __kernel_extbl(val, shift)  (((val) &gt;&gt; (((shift) &amp; 7) * 8)) &amp; 0xfful)
-DECL|macro|__kernel_extwl
 mdefine_line|#define __kernel_extwl(val, shift)  (((val) &gt;&gt; (((shift) &amp; 7) * 8)) &amp; 0xfffful)
 macro_line|#else
 DECL|macro|__kernel_extbl

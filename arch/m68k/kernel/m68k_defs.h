@@ -9,32 +9,52 @@ DECL|macro|TASK_SIGPENDING
 mdefine_line|#define TASK_SIGPENDING 8
 DECL|macro|TASK_NEEDRESCHED
 mdefine_line|#define TASK_NEEDRESCHED 20
-DECL|macro|TASK_TSS
-mdefine_line|#define TASK_TSS 470
+DECL|macro|TASK_THREAD
+mdefine_line|#define TASK_THREAD 482
 DECL|macro|TASK_MM
-mdefine_line|#define TASK_MM 622
-DECL|macro|TSS_KSP
-mdefine_line|#define TSS_KSP 0
-DECL|macro|TSS_USP
-mdefine_line|#define TSS_USP 4
-DECL|macro|TSS_SR
-mdefine_line|#define TSS_SR 8
-DECL|macro|TSS_FS
-mdefine_line|#define TSS_FS 10
-DECL|macro|TSS_CRP
-mdefine_line|#define TSS_CRP 12
-DECL|macro|TSS_ESP0
-mdefine_line|#define TSS_ESP0 20
-DECL|macro|TSS_FPREG
-mdefine_line|#define TSS_FPREG 24
-DECL|macro|TSS_FPCNTL
-mdefine_line|#define TSS_FPCNTL 120
-DECL|macro|TSS_FPSTATE
-mdefine_line|#define TSS_FPSTATE 132
+mdefine_line|#define TASK_MM 634
+DECL|macro|TASK_ACTIVE_MM
+mdefine_line|#define TASK_ACTIVE_MM 638
+DECL|macro|THREAD_KSP
+mdefine_line|#define THREAD_KSP 0
+DECL|macro|THREAD_USP
+mdefine_line|#define THREAD_USP 4
+DECL|macro|THREAD_SR
+mdefine_line|#define THREAD_SR 8
+DECL|macro|THREAD_FS
+mdefine_line|#define THREAD_FS 10
+DECL|macro|THREAD_CRP
+mdefine_line|#define THREAD_CRP 12
+DECL|macro|THREAD_ESP0
+mdefine_line|#define THREAD_ESP0 20
+DECL|macro|THREAD_FPREG
+mdefine_line|#define THREAD_FPREG 24
+DECL|macro|THREAD_FPCNTL
+mdefine_line|#define THREAD_FPCNTL 120
+DECL|macro|THREAD_FPSTATE
+mdefine_line|#define THREAD_FPSTATE 132
 DECL|macro|PT_D0
 mdefine_line|#define PT_D0 32
 DECL|macro|PT_ORIG_D0
 mdefine_line|#define PT_ORIG_D0 36
+DECL|macro|PT_D1
+mdefine_line|#define PT_D1 0
+DECL|macro|PT_D2
+mdefine_line|#define PT_D2 4
+DECL|macro|PT_D3
+mdefine_line|#define PT_D3 8
+DECL|macro|PT_D4
+mdefine_line|#define PT_D4 12
+DECL|macro|PT_D5
+mdefine_line|#define PT_D5 16
+DECL|macro|PT_A0
+mdefine_line|#define PT_A0 20
+DECL|macro|PT_A1
+mdefine_line|#define PT_A1 24
+DECL|macro|PT_A2
+mdefine_line|#define PT_A2 28
+DECL|macro|PT_PC
+mdefine_line|#define PT_PC 46
 DECL|macro|PT_SR
 mdefine_line|#define PT_SR 44
 DECL|macro|PT_VECTOR
@@ -65,6 +85,14 @@ DECL|macro|FBCON_FONT_DESC_DATA
 mdefine_line|#define FBCON_FONT_DESC_DATA 16
 DECL|macro|FBCON_FONT_DESC_PREF
 mdefine_line|#define FBCON_FONT_DESC_PREF 20
+DECL|macro|SIGSEGV
+mdefine_line|#define SIGSEGV 11
+DECL|macro|SEGV_MAPERR
+mdefine_line|#define SEGV_MAPERR 1
+DECL|macro|SIGTRAP
+mdefine_line|#define SIGTRAP 5
+DECL|macro|TRAP_TRACE
+mdefine_line|#define TRAP_TRACE 2
 DECL|macro|CUSTOMBASE
 mdefine_line|#define CUSTOMBASE -2132807680
 DECL|macro|C_INTENAR

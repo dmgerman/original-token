@@ -1,7 +1,10 @@
 macro_line|#ifndef __ALPHA_IO_H
 DECL|macro|__ALPHA_IO_H
 mdefine_line|#define __ALPHA_IO_H
+DECL|macro|__DEBUG_IOREMAP
+mdefine_line|#define __DEBUG_IOREMAP 1
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* We don&squot;t use IO slowdowns on the Alpha, but.. */
 DECL|macro|__SLOW_DOWN_IO
@@ -204,6 +207,10 @@ DECL|macro|__writel
 macro_line|# define __writel(v,a)&t;alpha_mv.mv_writel((v),(unsigned long)(a))
 DECL|macro|__writeq
 macro_line|# define __writeq(v,a)&t;alpha_mv.mv_writeq((v),(unsigned long)(a))
+DECL|macro|__ioremap
+macro_line|# define __ioremap(a)&t;alpha_mv.mv_ioremap(a)
+DECL|macro|__is_ioaddr
+macro_line|# define __is_ioaddr(a)&t;alpha_mv.mv_is_ioaddr(a)
 DECL|macro|inb
 macro_line|# define inb&t;&t;__inb
 DECL|macro|inw
@@ -216,24 +223,22 @@ DECL|macro|outw
 macro_line|# define outw&t;&t;__outw
 DECL|macro|outl
 macro_line|# define outl&t;&t;__outl
-DECL|macro|readb
-macro_line|# define readb&t;&t;__readb
-DECL|macro|readw
-macro_line|# define readw&t;&t;__readw
-DECL|macro|readl
-macro_line|# define readl&t;&t;__readl
-DECL|macro|readq
-macro_line|# define readq&t;&t;__readq
-DECL|macro|writeb
-macro_line|# define writeb&t;&t;__writeb
-DECL|macro|writew
-macro_line|# define writew&t;&t;__writew
-DECL|macro|writel
-macro_line|# define writel&t;&t;__writel
-DECL|macro|writeq
-macro_line|# define writeq&t;&t;__writeq
-DECL|macro|dense_mem
-macro_line|# define dense_mem(a)&t;alpha_mv.mv_dense_mem(a)
+DECL|macro|__raw_readb
+macro_line|# define __raw_readb&t;__readb
+DECL|macro|__raw_readw
+macro_line|# define __raw_readw&t;__readw
+DECL|macro|__raw_readl
+macro_line|# define __raw_readl&t;__readl
+DECL|macro|__raw_readq
+macro_line|# define __raw_readq&t;__readq
+DECL|macro|__raw_writeb
+macro_line|# define __raw_writeb&t;__writeb
+DECL|macro|__raw_writeb
+macro_line|# define __raw_writeb&t;__writew
+DECL|macro|__raw_writel
+macro_line|# define __raw_writel&t;__writel
+DECL|macro|__raw_writeq
+macro_line|# define __raw_writeq&t;__writeq
 macro_line|#else
 multiline_comment|/* Control how and what gets defined within the core logic headers.  */
 DECL|macro|__WANT_IO_DEF
@@ -631,7 +636,7 @@ id|addr
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either an integer or a&n; * pointer. We will accept both, thus the casts.&n; *&n; * On the alpha, we have the whole physical address space mapped at all&n; * times, so &quot;ioremap()&quot; and &quot;iounmap()&quot; do not need to do anything.&n; */
+multiline_comment|/*&n; * On Alpha, we have the whole of I/O space mapped at all times, but&n; * at odd and sometimes discontinuous addresses.  Note that the &n; * discontinuities are all across busses, so we need not care for that&n; * for any one device.&n; *&n; * Map the I/O space address into the kernel&squot;s virtual address space.&n; */
 DECL|function|ioremap
 r_static
 r_inline
@@ -654,7 +659,11 @@ r_return
 r_void
 op_star
 )paren
+id|__ioremap
+c_func
+(paren
 id|offset
+)paren
 suffix:semicolon
 )brace
 DECL|function|iounmap
@@ -670,6 +679,171 @@ id|addr
 )paren
 (brace
 )brace
+multiline_comment|/* Indirect back to the macros provided.  */
+r_extern
+r_int
+r_int
+id|___raw_readb
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|___raw_readw
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|___raw_readl
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|___raw_readq
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|___raw_writeb
+c_func
+(paren
+r_int
+r_char
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|___raw_writeb
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|___raw_writel
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|___raw_writeq
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+macro_line|#ifdef __raw_readb
+DECL|macro|readb
+macro_line|# define readb(a)&t;({ unsigned long r_ = __raw_readb(a); mb(); r_; })
+macro_line|#endif
+macro_line|#ifdef __raw_readw
+DECL|macro|readw
+macro_line|# define readw(a)&t;({ unsigned long r_ = __raw_readw(a); mb(); r_; })
+macro_line|#endif
+macro_line|#ifdef __raw_readl
+DECL|macro|readl
+macro_line|# define readl(a)&t;({ unsigned long r_ = __raw_readl(a); mb(); r_; })
+macro_line|#endif
+macro_line|#ifdef __raw_readq
+DECL|macro|readq
+macro_line|# define readq(a)&t;({ unsigned long r_ = __raw_readq(a); mb(); r_; })
+macro_line|#endif
+macro_line|#ifdef __raw_writeb
+DECL|macro|writeb
+macro_line|# define writeb(v,a)&t;({ __raw_writeb((v),(a)); mb(); })
+macro_line|#endif
+macro_line|#ifdef __raw_writeb
+DECL|macro|writew
+macro_line|# define writew(v,a)&t;({ __raw_writeb((v),(a)); mb(); })
+macro_line|#endif
+macro_line|#ifdef __raw_writel
+DECL|macro|writel
+macro_line|# define writel(v,a)&t;({ __raw_writel((v),(a)); mb(); })
+macro_line|#endif
+macro_line|#ifdef __raw_writeq
+DECL|macro|writeq
+macro_line|# define writeq(v,a)&t;({ __raw_writeq((v),(a)); mb(); })
+macro_line|#endif
+macro_line|#ifndef __raw_readb
+DECL|macro|__raw_readb
+macro_line|# define __raw_readb(a)&t;___raw_readb((unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef __raw_readw
+DECL|macro|__raw_readw
+macro_line|# define __raw_readw(a)&t;___raw_readw((unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef __raw_readl
+DECL|macro|__raw_readl
+macro_line|# define __raw_readl(a)&t;___raw_readl((unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef __raw_readq
+DECL|macro|__raw_readq
+macro_line|# define __raw_readq(a)&t;___raw_readq((unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef __raw_writeb
+DECL|macro|__raw_writeb
+macro_line|# define __raw_writeb(v,a)  ___raw_writeb((v),(unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef __raw_writeb
+DECL|macro|__raw_writeb
+macro_line|# define __raw_writeb(v,a)  ___raw_writeb((v),(unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef __raw_writel
+DECL|macro|__raw_writel
+macro_line|# define __raw_writel(v,a)  ___raw_writel((v),(unsigned long)(a))
+macro_line|#endif
+macro_line|#ifndef __raw_writeq
+DECL|macro|__raw_writeq
+macro_line|# define __raw_writeq(v,a)  ___raw_writeq((v),(unsigned long)(a))
+macro_line|#endif
 macro_line|#ifndef readb
 DECL|macro|readb
 macro_line|# define readb(a)&t;_readb((unsigned long)(a))

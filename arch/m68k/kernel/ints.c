@@ -238,16 +238,13 @@ op_assign
 id|dummy_free_irq
 suffix:semicolon
 multiline_comment|/*&n; * void init_IRQ(void)&n; *&n; * Parameters:&t;None&n; *&n; * Returns:&t;Nothing&n; *&n; * This function should be called during kernel startup to initialize&n; * the IRQ handling routines.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_IRQ
 r_void
+id|__init
 id|init_IRQ
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -295,7 +292,7 @@ id|i
 dot
 id|flags
 op_assign
-id|IRQ_FLG_STD
+l_int|0
 suffix:semicolon
 id|irq_list
 (braket
@@ -547,6 +544,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -634,6 +632,7 @@ id|EBUSY
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|irq_list
 (braket
 id|irq
@@ -760,7 +759,7 @@ id|irq
 dot
 id|flags
 op_assign
-id|IRQ_FLG_STD
+l_int|0
 suffix:semicolon
 id|irq_list
 (braket
@@ -1104,31 +1103,6 @@ suffix:colon
 id|num_spurious
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq_list
-(braket
-id|i
-)braket
-dot
-id|flags
-op_amp
-id|IRQ_FLG_LOCK
-)paren
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;L &quot;
-)paren
-suffix:semicolon
-r_else
 id|len
 op_add_assign
 id|sprintf

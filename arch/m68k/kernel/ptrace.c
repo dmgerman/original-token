@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -1971,6 +1972,7 @@ id|addr
 OL
 l_int|49
 )paren
+(brace
 id|tmp
 op_assign
 id|child-&gt;thread.fp
@@ -1980,6 +1982,50 @@ op_minus
 l_int|21
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_M68KFPU_EMU
+multiline_comment|/* Convert internal fpu reg representation&n;&t;&t;&t;&t; * into long double format&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|FPU_IS_EMU
+op_logical_and
+(paren
+id|addr
+OL
+l_int|45
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|addr
+op_mod
+l_int|3
+)paren
+)paren
+id|tmp
+op_assign
+(paren
+(paren
+id|tmp
+op_amp
+l_int|0xffff0000
+)paren
+op_lshift
+l_int|15
+)paren
+op_or
+(paren
+(paren
+id|tmp
+op_amp
+l_int|0x0000ffff
+)paren
+op_lshift
+l_int|16
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 r_else
 r_goto
 id|out
@@ -2168,6 +2214,57 @@ OL
 l_int|48
 )paren
 (brace
+macro_line|#ifdef CONFIG_M68KFPU_EMU
+multiline_comment|/* Convert long double format&n;&t;&t;&t;&t; * into internal fpu reg representation&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|FPU_IS_EMU
+op_logical_and
+(paren
+id|addr
+OL
+l_int|45
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|addr
+op_mod
+l_int|3
+)paren
+)paren
+(brace
+id|data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|data
+op_lshift
+l_int|15
+suffix:semicolon
+id|data
+op_assign
+(paren
+id|data
+op_amp
+l_int|0xffff0000
+)paren
+op_or
+(paren
+(paren
+id|data
+op_amp
+l_int|0x0000ffff
+)paren
+op_rshift
+l_int|1
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|child-&gt;thread.fp
 (braket
 id|addr

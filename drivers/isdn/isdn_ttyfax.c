@@ -5,7 +5,6 @@ DECL|macro|ISDN_TTY_FAX_CMD_DEBUG
 macro_line|#undef ISDN_TTY_FAX_CMD_DEBUG
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#include &quot;isdn_common.h&quot;

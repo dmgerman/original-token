@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/video/vga.h -- standard VGA chipset inte
 macro_line|#ifndef __linux_video_vga_h__
 DECL|macro|__linux_video_vga_h__
 mdefine_line|#define __linux_video_vga_h__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef CONFIG_AMIGA

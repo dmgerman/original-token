@@ -377,9 +377,6 @@ mdefine_line|#define  ISDN_NET_DM_AUTO&t;0x80    /* this interface is autodial  
 DECL|macro|ISDN_NET_DIALMODE
 mdefine_line|#define ISDN_NET_DIALMODE(x) ((&amp;(x))-&gt;flags &amp; ISDN_NET_DIALMODE_MASK)
 macro_line|#ifdef __KERNEL__
-macro_line|#ifndef STANDALONE
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;

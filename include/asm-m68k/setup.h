@@ -352,6 +352,18 @@ macro_line|#  endif
 macro_line|#endif
 DECL|macro|CPU_TYPE
 mdefine_line|#define CPU_TYPE (m68k_cputype)
+macro_line|#ifdef CONFIG_M68KFPU_EMU
+macro_line|#  ifdef CONFIG_M68KFPU_EMU_ONLY
+DECL|macro|FPU_IS_EMU
+macro_line|#    define FPU_IS_EMU (1)
+macro_line|#  else
+DECL|macro|FPU_IS_EMU
+macro_line|#    define FPU_IS_EMU (!m68k_fputype)
+macro_line|#  endif
+macro_line|#else
+DECL|macro|FPU_IS_EMU
+macro_line|#  define FPU_IS_EMU (0)
+macro_line|#endif
 multiline_comment|/*&n;     *  Miscellaneous&n;     */
 DECL|macro|NUM_MEMINFO
 mdefine_line|#define NUM_MEMINFO&t;4

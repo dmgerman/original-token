@@ -1157,6 +1157,47 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Memory functions.  all accesses are done through linear space.&n; */
+DECL|function|tsunami_ioremap
+id|__EXTERN_INLINE
+r_int
+r_int
+id|tsunami_ioremap
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|XADDR
+op_plus
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
+suffix:semicolon
+)brace
+DECL|function|tsunami_is_ioaddr
+id|__EXTERN_INLINE
+r_int
+id|tsunami_is_ioaddr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|addr
+op_ge
+id|IDENT_ADDR
+op_plus
+id|TS_BIAS
+suffix:semicolon
+)brace
 DECL|function|tsunami_readb
 id|__EXTERN_INLINE
 r_int
@@ -1169,6 +1210,40 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|__kernel_ldbu
 c_func
@@ -1177,15 +1252,7 @@ op_star
 (paren
 id|vucp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 )paren
 suffix:semicolon
 )brace
@@ -1201,6 +1268,40 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|__kernel_ldwu
 c_func
@@ -1209,15 +1310,7 @@ op_star
 (paren
 id|vusp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 )paren
 suffix:semicolon
 )brace
@@ -1233,20 +1326,46 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vuip
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 suffix:semicolon
 )brace
 DECL|function|tsunami_readq
@@ -1261,20 +1380,46 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vulp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 suffix:semicolon
 )brace
 DECL|function|tsunami_writeb
@@ -1292,6 +1437,40 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|__kernel_stb
 c_func
 (paren
@@ -1301,20 +1480,7 @@ op_star
 (paren
 id|vucp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
+id|addr
 )paren
 suffix:semicolon
 )brace
@@ -1333,6 +1499,40 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|__kernel_stw
 c_func
 (paren
@@ -1342,20 +1542,7 @@ op_star
 (paren
 id|vusp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
+id|addr
 )paren
 suffix:semicolon
 )brace
@@ -1374,26 +1561,47 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vuip
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 op_assign
 id|b
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
 suffix:semicolon
 )brace
 DECL|function|tsunami_writeq
@@ -1411,47 +1619,47 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x1000000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|tsunami_ioremap
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vulp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 op_assign
 id|b
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Find the DENSE memory area for a given bus address.  */
-DECL|function|tsunami_dense_mem
-id|__EXTERN_INLINE
-r_int
-r_int
-id|tsunami_dense_mem
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_return
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
 suffix:semicolon
 )brace
 DECL|macro|vucp
@@ -1499,8 +1707,10 @@ DECL|macro|__writel
 mdefine_line|#define __writel&t;tsunami_writel
 DECL|macro|__writeq
 mdefine_line|#define __writeq&t;tsunami_writeq
-DECL|macro|dense_mem
-mdefine_line|#define dense_mem&t;tsunami_dense_mem
+DECL|macro|__ioremap
+mdefine_line|#define __ioremap&t;tsunami_ioremap
+DECL|macro|__is_ioaddr
+mdefine_line|#define __is_ioaddr&t;tsunami_is_ioaddr
 DECL|macro|inb
 mdefine_line|#define inb(port) __inb((port))
 DECL|macro|inw
@@ -1513,22 +1723,24 @@ DECL|macro|outw
 mdefine_line|#define outw(v, port) __outw((v),(port))
 DECL|macro|outl
 mdefine_line|#define outl(v, port) __outl((v),(port))
-DECL|macro|readb
-mdefine_line|#define readb(a)&t;__readb((unsigned long)(a))
-DECL|macro|readw
-mdefine_line|#define readw(a)&t;__readw((unsigned long)(a))
-DECL|macro|readl
-mdefine_line|#define readl(a)&t;__readl((unsigned long)(a))
-DECL|macro|readq
-mdefine_line|#define readq(a)&t;__readq((unsigned long)(a))
-DECL|macro|writeb
-mdefine_line|#define writeb(v,a)&t;__writeb((v),(unsigned long)(a))
-DECL|macro|writew
-mdefine_line|#define writew(v,a)&t;__writew((v),(unsigned long)(a))
-DECL|macro|writel
-mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
-DECL|macro|writeq
-mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#if !__DEBUG_IOREMAP
+DECL|macro|__raw_readb
+mdefine_line|#define __raw_readb(a)&t;&t;__readb((unsigned long)(a))
+DECL|macro|__raw_readw
+mdefine_line|#define __raw_readw(a)&t;&t;__readw((unsigned long)(a))
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+DECL|macro|__raw_readq
+mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+DECL|macro|__raw_writeb
+mdefine_line|#define __raw_writeb(v,a)&t;__writeb((v),(unsigned long)(a))
+DECL|macro|__raw_writeb
+mdefine_line|#define __raw_writeb(v,a)&t;__writew((v),(unsigned long)(a))
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+DECL|macro|__raw_writeq
+mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

@@ -1,6 +1,7 @@
 multiline_comment|/* $Id: bkm_a8.c,v 1.6 1999/08/11 21:01:24 keil Exp $&n; * bkm_a8.c     low level stuff for Scitel Quadro (4*S0, passive)&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: bkm_a8.c,v $&n; * Revision 1.6  1999/08/11 21:01:24  keil&n; * new PCI codefix&n; *&n; * Revision 1.5  1999/08/10 16:01:48  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.4  1999/07/14 11:43:15  keil&n; * correct PCI_SUBSYSTEM_VENDOR_ID&n; *&n; * Revision 1.3  1999/07/12 21:04:59  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:54  keil&n; * Initial version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;ipac.h&quot;

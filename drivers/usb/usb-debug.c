@@ -29,7 +29,7 @@ c_func
 r_struct
 id|usb_interface_descriptor
 op_star
-id|interface
+id|altsetting
 )paren
 (brace
 r_int
@@ -38,7 +38,7 @@ suffix:semicolon
 id|usb_show_interface_descriptor
 c_func
 (paren
-id|interface
+id|altsetting
 )paren
 suffix:semicolon
 r_for
@@ -50,7 +50,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|interface-&gt;bNumEndpoints
+id|altsetting-&gt;bNumEndpoints
 suffix:semicolon
 id|i
 op_increment
@@ -58,7 +58,7 @@ op_increment
 id|usb_show_endpoint
 c_func
 (paren
-id|interface-&gt;endpoint
+id|altsetting-&gt;endpoint
 op_plus
 id|i
 )paren
@@ -82,9 +82,9 @@ comma
 id|j
 suffix:semicolon
 r_struct
-id|usb_alternate_setting
+id|usb_interface
 op_star
-id|as
+id|intf
 suffix:semicolon
 id|usb_show_config_descriptor
 c_func
@@ -101,15 +101,15 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|config-&gt;num_altsetting
+id|config-&gt;bNumInterfaces
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
-id|as
+id|intf
 op_assign
-id|config-&gt;altsetting
+id|config-&gt;interface
 op_plus
 id|i
 suffix:semicolon
@@ -117,7 +117,7 @@ r_if
 c_cond
 (paren
 (paren
-id|as
+id|intf
 )paren
 op_eq
 l_int|NULL
@@ -127,7 +127,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n  Alternate Setting: %d&bslash;n&quot;
+l_string|&quot;&bslash;n  Interface: %d&bslash;n&quot;
 comma
 id|i
 )paren
@@ -141,7 +141,7 @@ l_int|0
 suffix:semicolon
 id|j
 OL
-id|config-&gt;bNumInterfaces
+id|intf-&gt;num_altsetting
 suffix:semicolon
 id|j
 op_increment
@@ -149,7 +149,7 @@ op_increment
 id|usb_show_interface
 c_func
 (paren
-id|as-&gt;interface
+id|intf-&gt;altsetting
 op_plus
 id|j
 )paren
@@ -459,7 +459,9 @@ id|desc
 id|printk
 c_func
 (paren
-l_string|&quot;  Interface:&bslash;n&quot;
+l_string|&quot;  Alternate Setting: %2d&bslash;n&quot;
+comma
+id|desc-&gt;bAlternateSetting
 )paren
 suffix:semicolon
 id|printk
@@ -545,6 +547,21 @@ id|desc
 (brace
 r_char
 op_star
+id|bLengthCommentString
+op_assign
+(paren
+id|USB_DT_AUCLSTEP_SIZE
+op_eq
+id|desc-&gt;bLength
+)paren
+ques
+c_cond
+l_string|&quot; (!Audio)&quot;
+suffix:colon
+l_string|&quot; (!!!)&quot;
+suffix:semicolon
+r_char
+op_star
 id|EndpointType
 (braket
 l_int|4
@@ -580,7 +597,7 @@ ques
 c_cond
 l_string|&quot;&quot;
 suffix:colon
-l_string|&quot; (!!!)&quot;
+id|bLengthCommentString
 )paren
 suffix:semicolon
 id|printk
@@ -641,6 +658,31 @@ comma
 id|desc-&gt;bInterval
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|USB_DT_AUCLSTEP_SIZE
+op_eq
+id|desc-&gt;bLength
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;      bRefresh            = %04x&bslash;n&quot;
+comma
+id|desc-&gt;bRefresh
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;      bSynchAddress       =   %02x&bslash;n&quot;
+comma
+id|desc-&gt;bSynchAddress
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|usb_show_hub_descriptor
 r_void

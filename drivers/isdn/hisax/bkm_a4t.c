@@ -1,6 +1,7 @@
 multiline_comment|/* $Id: bkm_a4t.c,v 1.6 1999/08/11 21:01:22 keil Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: bkm_a4t.c,v $&n; * Revision 1.6  1999/08/11 21:01:22  keil&n; * new PCI codefix&n; *&n; * Revision 1.5  1999/08/10 16:01:46  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.4  1999/07/14 11:43:14  keil&n; * correct PCI_SUBSYSTEM_VENDOR_ID&n; *&n; * Revision 1.3  1999/07/12 21:04:58  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:53  keil&n; * Initial version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;

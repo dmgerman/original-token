@@ -28,7 +28,6 @@ macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef USE_BOTTOM_HALF
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

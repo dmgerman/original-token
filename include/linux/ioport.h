@@ -2,6 +2,26 @@ multiline_comment|/*&n; * ioport.h&t;Definitions of routines for detecting, rese
 macro_line|#ifndef _LINUX_IOPORT_H
 DECL|macro|_LINUX_IOPORT_H
 mdefine_line|#define _LINUX_IOPORT_H
+DECL|macro|DEVICE_IO_NOTSET
+mdefine_line|#define DEVICE_IO_NOTSET&t;(~0)
+DECL|macro|DEVICE_IO_AUTO
+mdefine_line|#define DEVICE_IO_AUTO&t;&t;((~0)-1)
+DECL|macro|DEVICE_IO_FLAG_WRITEABLE
+mdefine_line|#define DEVICE_IO_FLAG_WRITEABLE&t;(1&lt;&lt;0)
+DECL|macro|DEVICE_IO_FLAG_CACHEABLE
+mdefine_line|#define DEVICE_IO_FLAG_CACHEABLE&t;(1&lt;&lt;1)
+DECL|macro|DEVICE_IO_FLAG_RANGELENGTH
+mdefine_line|#define DEVICE_IO_FLAG_RANGELENGTH&t;(1&lt;&lt;2)
+DECL|macro|DEVICE_IO_FLAG_SHADOWABLE
+mdefine_line|#define DEVICE_IO_FLAG_SHADOWABLE&t;(1&lt;&lt;4)
+DECL|macro|DEVICE_IO_FLAG_EXPANSIONROM
+mdefine_line|#define DEVICE_IO_FLAG_EXPANSIONROM&t;(1&lt;&lt;5)
+DECL|macro|DEVICE_IO_TYPE_8BIT
+mdefine_line|#define DEVICE_IO_TYPE_8BIT&t;&t;0
+DECL|macro|DEVICE_IO_TYPE_16BIT
+mdefine_line|#define DEVICE_IO_TYPE_16BIT&t;&t;1
+DECL|macro|DEVICE_IO_TYPE_8AND16BIT
+mdefine_line|#define DEVICE_IO_TYPE_8AND16BIT&t;2
 multiline_comment|/*&n; * Resources are tree-like, allowing&n; * nesting etc..&n; */
 DECL|struct|resource
 r_struct
@@ -26,6 +46,30 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+DECL|member|bits
+r_int
+r_char
+id|bits
+suffix:semicolon
+multiline_comment|/* decoded bits */
+DECL|member|fixed
+r_int
+r_char
+id|fixed
+suffix:semicolon
+multiline_comment|/* fixed range */
+DECL|member|hw_flags
+r_int
+r_int
+id|hw_flags
+suffix:semicolon
+multiline_comment|/* hardware flags */
+DECL|member|type
+r_int
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* region type */
 DECL|member|parent
 DECL|member|sibling
 DECL|member|child

@@ -1350,6 +1350,40 @@ id|result
 comma
 id|msb
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
+id|addr
+op_sub_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1427,6 +1461,40 @@ id|result
 comma
 id|msb
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
+id|addr
+op_sub_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1498,16 +1566,42 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|APECS_DENSE_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|apecs_readq
@@ -1522,16 +1616,42 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|APECS_DENSE_MEM
-)paren
 suffix:semicolon
 )brace
 DECL|function|apecs_writeb
@@ -1552,6 +1672,40 @@ id|addr
 r_int
 r_int
 id|msb
+suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
+id|addr
+op_sub_assign
+id|APECS_DENSE_MEM
 suffix:semicolon
 r_if
 c_cond
@@ -1622,6 +1776,40 @@ r_int
 r_int
 id|msb
 suffix:semicolon
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
+id|addr
+op_sub_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1687,15 +1875,41 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vuip
 )paren
-(paren
 id|addr
-op_plus
-id|APECS_DENSE_MEM
-)paren
 op_assign
 id|b
 suffix:semicolon
@@ -1715,25 +1929,50 @@ r_int
 id|addr
 )paren
 (brace
+macro_line|#if __DEBUG_IOREMAP
+r_if
+c_cond
+(paren
+id|addr
+op_le
+l_int|0x100000000
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;apecs: 0x%lx not ioremapped (%p)&bslash;n&quot;
+comma
+id|addr
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|APECS_DENSE_MEM
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 (paren
 id|vulp
 )paren
-(paren
 id|addr
-op_plus
-id|APECS_DENSE_MEM
-)paren
 op_assign
 id|b
 suffix:semicolon
 )brace
-multiline_comment|/* Find the DENSE memory area for a given bus address.  */
-DECL|function|apecs_dense_mem
+DECL|function|apecs_ioremap
 id|__EXTERN_INLINE
 r_int
 r_int
-id|apecs_dense_mem
+id|apecs_ioremap
 c_func
 (paren
 r_int
@@ -1743,6 +1982,27 @@ id|addr
 (brace
 r_return
 id|APECS_DENSE_MEM
+op_plus
+id|addr
+suffix:semicolon
+)brace
+DECL|function|apecs_is_ioaddr
+id|__EXTERN_INLINE
+r_int
+id|apecs_is_ioaddr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|addr
+op_ge
+id|IDENT_ADDR
+op_plus
+l_int|0x100000000UL
 suffix:semicolon
 )brace
 DECL|macro|vip
@@ -1791,20 +2051,24 @@ DECL|macro|__writel
 mdefine_line|#define __writel&t;apecs_writel
 DECL|macro|__writeq
 mdefine_line|#define __writeq&t;apecs_writeq
-DECL|macro|dense_mem
-mdefine_line|#define dense_mem&t;apecs_dense_mem
+DECL|macro|__ioremap
+mdefine_line|#define __ioremap&t;apecs_ioremap
+DECL|macro|__is_ioaddr
+mdefine_line|#define __is_ioaddr&t;apecs_is_ioaddr
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
 mdefine_line|#define outb(x, port) &bslash;&n;(__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
-DECL|macro|readl
-mdefine_line|#define readl(a)&t;__readl((unsigned long)(a))
-DECL|macro|readq
-mdefine_line|#define readq(a)&t;__readq((unsigned long)(a))
-DECL|macro|writel
-mdefine_line|#define writel(v,a)&t;__writel((v),(unsigned long)(a))
-DECL|macro|writeq
-mdefine_line|#define writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#if !__DEBUG_IOREMAP
+DECL|macro|__raw_readl
+mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+DECL|macro|__raw_readq
+mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+DECL|macro|__raw_writeq
+mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

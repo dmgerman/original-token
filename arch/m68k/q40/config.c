@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/m68k/q40/config.c&n; *&n; * originally based on:&n; *&n; *  linux/bvme/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; *  arch/m68k/q40/config.c&n; *&n; *  Copyright (C) 1999 Richard Zidlicky&n; *&n; * originally based on:&n; *&n; *  linux/bvme/config.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;asm/rtc.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -597,11 +598,6 @@ id|printk
 (paren
 l_string|&quot;&bslash;n&bslash;n*******************************************&bslash;n&quot;
 l_string|&quot;Called q40_reset : press the RESET button!! &bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;*******************************************&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -927,6 +923,25 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+DECL|variable|rtc_oldsecs
+r_static
+r_int
+id|rtc_oldsecs
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|rtc_irq_flags
+r_int
+id|rtc_irq_flags
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|rtc_irq_ctrl
+r_int
+id|rtc_irq_ctrl
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|q40_timer_int
 r_static
 r_void
@@ -1011,6 +1026,34 @@ op_assign
 id|sval
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_Q40RTC
+r_if
+c_cond
+(paren
+id|rtc_irq_ctrl
+op_logical_and
+(paren
+id|rtc_oldsecs
+op_ne
+id|RTC_SECS
+)paren
+)paren
+(brace
+id|rtc_oldsecs
+op_assign
+id|RTC_SECS
+suffix:semicolon
+id|rtc_irq_flags
+op_assign
+id|RTC_UIE
+suffix:semicolon
+id|rtc_interrupt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

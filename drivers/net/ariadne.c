@@ -1133,7 +1133,7 @@ id|IRQ_AMIGA_PORTS
 comma
 id|ariadne_interrupt
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;Ariadne Ethernet&quot;
 comma

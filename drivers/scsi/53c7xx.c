@@ -2598,7 +2598,7 @@ id|host-&gt;irq
 comma
 id|NCR53c7x0_intr
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;53c7xx&quot;
 comma

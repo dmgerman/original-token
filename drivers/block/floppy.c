@@ -17749,10 +17749,9 @@ id|config_params
 op_assign
 initialization_block
 suffix:semicolon
-DECL|macro|FLOPPY_SETUP
-mdefine_line|#define FLOPPY_SETUP
 DECL|function|floppy_setup
-r_void
+r_static
+r_int
 id|__init
 id|floppy_setup
 c_func
@@ -17924,6 +17923,7 @@ id|param
 suffix:semicolon
 )brace
 r_return
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -17998,6 +17998,9 @@ c_func
 (paren
 l_string|&quot;Read linux/drivers/block/README.fd&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 DECL|variable|have_no_fdc
@@ -19660,6 +19663,13 @@ macro_line|#ifdef __cplusplus
 )brace
 macro_line|#endif
 macro_line|#else
+id|__setup
+(paren
+l_string|&quot;floppy=&quot;
+comma
+id|floppy_setup
+)paren
+suffix:semicolon
 multiline_comment|/* eject the boot floppy (if we need the drive for a different root floppy) */
 multiline_comment|/* This should only be called at boot time when we&squot;re sure that there&squot;s no&n; * resource contention. */
 DECL|function|floppy_eject

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/m68k/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
-multiline_comment|/*&n; * Linux/m68k support by Hamish Macdonald&n; *&n; * 68060 fixes by Jesper Skov&n; *&n; * 1997-12-01  Modified for POSIX.1b signals by Andreas Schwab&n; */
+multiline_comment|/*&n; * Linux/m68k support by Hamish Macdonald&n; *&n; * 68060 fixes by Jesper Skov&n; *&n; * 1997-12-01  Modified for POSIX.1b signals by Andreas Schwab&n; *&n; * mathemu support by Roman Zippel&n; *  (Note: fpstate in the signal context is completly ignored for the emulator&n; *         and the internal floating point format is put on stack)&n; */
 multiline_comment|/*&n; * ++roman (07/09/96): implemented signal stacks (specially for tosemu on&n; * Atari :-) Current limitation: Only one sigstack can be active at one time.&n; * If a second signal with SA_ONSTACK set arrives while working on a sigstack,&n; * SA_ONSTACK is ignored. This behaviour avoids lots of trouble with nested&n; * signal handlers!&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -768,6 +768,37 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|FPU_IS_EMU
+)paren
+(brace
+multiline_comment|/* restore registers */
+id|memcpy
+c_func
+(paren
+id|current-&gt;thread.fpcntl
+comma
+id|sc-&gt;sc_fpcntl
+comma
+l_int|12
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|current-&gt;thread.fp
+comma
+id|sc-&gt;sc_fpregs
+comma
+l_int|24
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|CPU_IS_060
 ques
 c_cond
@@ -1037,6 +1068,51 @@ id|err
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|FPU_IS_EMU
+)paren
+(brace
+multiline_comment|/* restore fpu control register */
+r_if
+c_cond
+(paren
+id|__copy_from_user
+c_func
+(paren
+id|current-&gt;thread.fpcntl
+comma
+op_amp
+id|uc-&gt;uc_mcontext.fpregs.f_pcr
+comma
+l_int|12
+)paren
+)paren
+r_goto
+id|out
+suffix:semicolon
+multiline_comment|/* restore all other fpu register */
+r_if
+c_cond
+(paren
+id|__copy_from_user
+c_func
+(paren
+id|current-&gt;thread.fp
+comma
+id|uc-&gt;uc_mcontext.fpregs.f_fpregs
+comma
+l_int|96
+)paren
+)paren
+r_goto
+id|out
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2496,6 +2572,36 @@ op_star
 id|regs
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|FPU_IS_EMU
+)paren
+(brace
+multiline_comment|/* save registers */
+id|memcpy
+c_func
+(paren
+id|sc-&gt;sc_fpcntl
+comma
+id|current-&gt;thread.fpcntl
+comma
+l_int|12
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|sc-&gt;sc_fpregs
+comma
+id|current-&gt;thread.fp
+comma
+l_int|24
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|__asm__
 r_volatile
 (paren
@@ -2650,6 +2756,43 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|FPU_IS_EMU
+)paren
+(brace
+multiline_comment|/* save fpu control register */
+id|err
+op_or_assign
+id|copy_to_user
+c_func
+(paren
+op_amp
+id|uc-&gt;uc_mcontext.fpregs.f_pcr
+comma
+id|current-&gt;thread.fpcntl
+comma
+l_int|12
+)paren
+suffix:semicolon
+multiline_comment|/* save all other fpu register */
+id|err
+op_or_assign
+id|copy_to_user
+c_func
+(paren
+id|uc-&gt;uc_mcontext.fpregs.f_fpregs
+comma
+id|current-&gt;thread.fp
+comma
+l_int|96
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
 id|__asm__
 r_volatile
 (paren

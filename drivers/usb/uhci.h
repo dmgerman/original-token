@@ -187,6 +187,14 @@ DECL|macro|TD_CTRL_CRCTIME
 mdefine_line|#define TD_CTRL_CRCTIME&t;&t;(1 &lt;&lt; 18)&t;/* CTC/Time Out Error */
 DECL|macro|TD_CTRL_BITSTUFF
 mdefine_line|#define TD_CTRL_BITSTUFF&t;(1 &lt;&lt; 17)&t;/* Bit Stuff Error */
+DECL|macro|TD_CTRL_ACTLEN_MASK
+mdefine_line|#define TD_CTRL_ACTLEN_MASK&t;0x7ff&t;&t;/* actual length, encoded as n - 1 */
+DECL|macro|TD_CTRL_ANY_ERROR
+mdefine_line|#define TD_CTRL_ANY_ERROR&t;(TD_CTRL_STALLED | TD_CTRL_DBUFERR | &bslash;&n;&t;&t;&t;&t; TD_CTRL_BABBLE | TD_CTRL_CRCTIME | TD_CTRL_BITSTUFF)
+DECL|macro|uhci_status_bits
+mdefine_line|#define uhci_status_bits(ctrl_sts)&t;((ctrl_sts &gt;&gt; 16) &amp; 0xff)
+DECL|macro|uhci_actual_length
+mdefine_line|#define uhci_actual_length(ctrl_sts)&t;((ctrl_sts + 1) &amp; TD_CTRL_ACTLEN_MASK) /* 1-based */
 DECL|macro|uhci_ptr_to_virt
 mdefine_line|#define uhci_ptr_to_virt(x)&t;bus_to_virt(x &amp; ~UHCI_PTR_BITS)
 multiline_comment|/*&n; * for TD &lt;flags&gt;:&n; */

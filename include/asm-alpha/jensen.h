@@ -996,12 +996,11 @@ op_rshift
 l_int|32
 suffix:semicolon
 )brace
-multiline_comment|/* Find the DENSE memory area for a given bus address.&n;   Whee, there is none.  */
-DECL|function|jensen_dense_mem
+DECL|function|jensen_ioremap
 id|__EXTERN_INLINE
 r_int
 r_int
-id|jensen_dense_mem
+id|jensen_ioremap
 c_func
 (paren
 r_int
@@ -1010,6 +1009,26 @@ id|addr
 )paren
 (brace
 r_return
+id|addr
+suffix:semicolon
+)brace
+DECL|function|jensen_is_ioaddr
+id|__EXTERN_INLINE
+r_int
+id|jensen_is_ioaddr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+(paren
+r_int
+)paren
+id|addr
+op_ge
 l_int|0
 suffix:semicolon
 )brace
@@ -1048,8 +1067,10 @@ DECL|macro|__writel
 mdefine_line|#define __writel&t;jensen_writel
 DECL|macro|__writeq
 mdefine_line|#define __writeq&t;jensen_writeq
-DECL|macro|dense_mem
-mdefine_line|#define dense_mem&t;jensen_dense_mem
+DECL|macro|__ioremap
+mdefine_line|#define __ioremap&t;jensen_ioremap
+DECL|macro|__is_ioaddr
+mdefine_line|#define __is_ioaddr&t;jensen_is_ioaddr
 multiline_comment|/*&n; * The above have so much overhead that it probably doesn&squot;t make&n; * sense to have them inlined (better icache behaviour).&n; */
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))

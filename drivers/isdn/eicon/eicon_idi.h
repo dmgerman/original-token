@@ -2,6 +2,7 @@ multiline_comment|/* $Id: eicon_idi.h,v 1.6 1999/07/25 15:12:04 armin Exp $&n; *
 macro_line|#ifndef IDI_H
 DECL|macro|IDI_H
 mdefine_line|#define IDI_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|ASSIGN
 mdefine_line|#define ASSIGN  0x01
 DECL|macro|REMOVE

@@ -992,7 +992,7 @@ id|IRQ_AMIGA_PORTS
 comma
 id|hydra_interrupt
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;Hydra Ethernet&quot;
 comma

@@ -75,7 +75,7 @@ id|uhci_list
 suffix:semicolon
 DECL|macro|UHCI_DEBUG
 mdefine_line|#define UHCI_DEBUG
-multiline_comment|/*&n; * Map status to standard result codes&n; */
+multiline_comment|/*&n; * Map status to standard result codes.&n; *&n; * &lt;status&gt; is ((td-&gt;status &gt;&gt; 16) &amp; 0xff) [a.k.a. uhci_status_bits(td-&gt;status)]&n; * &lt;dir_out&gt; is True for output TDs and False for input TDs.&n; */
 DECL|function|uhci_map_status
 r_static
 r_int
@@ -256,13 +256,11 @@ r_do
 (brace
 id|status
 op_assign
+id|uhci_status_bits
+c_func
 (paren
 id|tmp-&gt;status
-op_rshift
-l_int|16
 )paren
-op_amp
-l_int|0xff
 suffix:semicolon
 r_if
 c_cond
@@ -304,27 +302,23 @@ c_func
 (paren
 id|dev-&gt;usb
 comma
-id|usb_pipeendpoint
+id|uhci_endpoint
 c_func
 (paren
 id|tmp-&gt;info
 )paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|tmp-&gt;info
 )paren
-op_xor
-l_int|1
 comma
+id|uhci_toggle
+c_func
 (paren
 id|tmp-&gt;info
-op_rshift
-l_int|19
 )paren
-op_amp
-l_int|1
 )paren
 suffix:semicolon
 r_break
@@ -340,13 +334,11 @@ id|rval
 op_star
 id|rval
 op_add_assign
+id|uhci_actual_length
+c_func
 (paren
 id|tmp-&gt;status
-op_amp
-l_int|0x3ff
 )paren
-op_plus
-l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -486,19 +478,17 @@ c_func
 (paren
 id|dev-&gt;usb
 comma
-id|usb_pipeendpoint
+id|uhci_endpoint
 c_func
 (paren
 id|tmp-&gt;info
 )paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|tmp-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -530,13 +520,11 @@ c_func
 (paren
 id|status
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|tmp-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -1609,7 +1597,7 @@ id|pipe
 )paren
 )paren
 op_lshift
-l_int|19
+id|TD_TOKEN_TOGGLE
 )paren
 suffix:semicolon
 id|td-&gt;buffer
@@ -1886,13 +1874,11 @@ suffix:semicolon
 r_int
 id|n
 op_assign
+id|uhci_actual_length
+c_func
 (paren
 id|td-&gt;status
-op_plus
-l_int|1
 )paren
-op_amp
-l_int|0x7FF
 suffix:semicolon
 r_if
 c_cond
@@ -1922,13 +1908,11 @@ multiline_comment|/* Debugging */
 r_if
 c_cond
 (paren
+id|uhci_status_bits
+c_func
 (paren
 id|td-&gt;status
-op_rshift
-l_int|16
 )paren
-op_amp
-l_int|0xFF
 )paren
 id|printk
 c_func
@@ -3087,7 +3071,7 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18, 0x2D is SETUP */
+multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18. */
 id|destination
 op_assign
 (paren
@@ -3096,7 +3080,7 @@ op_amp
 id|PIPE_DEVEP_MASK
 )paren
 op_or
-l_int|0x2D
+id|USB_PID_SETUP
 suffix:semicolon
 multiline_comment|/* 3 errors */
 id|status
@@ -3142,13 +3126,13 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If direction is &quot;send&quot;, change the frame from SETUP (0x2D)&n;&t; * to OUT (0xE1). Else change it from SETUP to IN (0x69)&n;&t; */
+multiline_comment|/*&n;&t; * If direction is &quot;send&quot;, change the frame from SETUP (0x2D)&n;&t; * to OUT (0xE1). Else change it from SETUP to IN (0x69).&n;&t; */
 id|destination
 op_xor_assign
 (paren
-l_int|0x2D
+id|USB_PID_SETUP
 op_xor
-l_int|0x69
+id|USB_PID_IN
 )paren
 suffix:semicolon
 multiline_comment|/* SETUP -&gt; IN */
@@ -3164,9 +3148,9 @@ id|pipe
 id|destination
 op_xor_assign
 (paren
-l_int|0xE1
+id|USB_PID_OUT
 op_xor
-l_int|0x69
+id|USB_PID_IN
 )paren
 suffix:semicolon
 multiline_comment|/* IN -&gt; OUT */
@@ -3233,7 +3217,7 @@ id|destination
 op_xor_assign
 l_int|1
 op_lshift
-l_int|19
+id|TD_TOKEN_TOGGLE
 suffix:semicolon
 id|td-&gt;status
 op_assign
@@ -3314,9 +3298,9 @@ multiline_comment|/*&n;&t; * Build the final TD for control status &n;&t; */
 id|destination
 op_xor_assign
 (paren
-l_int|0xE1
+id|USB_PID_OUT
 op_xor
-l_int|0x69
+id|USB_PID_IN
 )paren
 suffix:semicolon
 multiline_comment|/* OUT -&gt; IN */
@@ -3324,7 +3308,7 @@ id|destination
 op_or_assign
 l_int|1
 op_lshift
-l_int|19
+id|TD_TOKEN_TOGGLE
 suffix:semicolon
 multiline_comment|/* End in Data1 */
 id|td-&gt;status
@@ -3841,14 +3825,14 @@ op_or
 (paren
 id|pipe
 op_amp
-l_int|0x80
+id|USB_DIR_IN
 )paren
 )paren
 )paren
 r_return
 id|USB_ST_STALL
 suffix:semicolon
-multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18 */
+multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18. */
 id|destination
 op_assign
 (paren
@@ -3970,7 +3954,7 @@ id|pipe
 )paren
 )paren
 op_lshift
-l_int|19
+id|TD_TOKEN_TOGGLE
 )paren
 suffix:semicolon
 multiline_comment|/* pktsze bytes of data */
@@ -4255,7 +4239,7 @@ id|pipe
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18, 0x69 is IN */
+multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18. */
 id|destination
 op_assign
 (paren
@@ -4361,7 +4345,7 @@ id|pipe
 )paren
 )paren
 op_lshift
-l_int|19
+id|TD_TOKEN_TOGGLE
 )paren
 suffix:semicolon
 multiline_comment|/* pktsze bytes of data */
@@ -5368,15 +5352,17 @@ c_func
 id|uhci_map_status
 c_func
 (paren
+id|uhci_status_bits
+c_func
+(paren
 id|status
+)paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|td-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 comma
 id|bus_to_virt
@@ -5426,19 +5412,17 @@ c_func
 (paren
 id|usb_dev
 comma
-id|usb_pipeendpoint
+id|uhci_endpoint
 c_func
 (paren
 id|td-&gt;info
 )paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|td-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 suffix:semicolon
 id|td-&gt;info
@@ -5447,7 +5431,7 @@ op_complement
 (paren
 l_int|1
 op_lshift
-l_int|19
+id|TD_TOKEN_TOGGLE
 )paren
 suffix:semicolon
 multiline_comment|/* clear data toggle */
@@ -5458,22 +5442,20 @@ c_func
 (paren
 id|usb_dev
 comma
-id|usb_pipeendpoint
+id|uhci_endpoint
 c_func
 (paren
 id|td-&gt;info
 )paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|td-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 op_lshift
-l_int|19
+id|TD_TOKEN_TOGGLE
 suffix:semicolon
 multiline_comment|/* toggle between data0 and data1 */
 id|td-&gt;status
@@ -5526,19 +5508,17 @@ c_func
 (paren
 id|usb_dev
 comma
-id|usb_pipeendpoint
+id|uhci_endpoint
 c_func
 (paren
 id|td-&gt;info
 )paren
 comma
-id|usb_pipeout
+id|uhci_packetout
 c_func
 (paren
 id|td-&gt;info
 )paren
-op_xor
-l_int|1
 )paren
 suffix:semicolon
 id|uhci_remove_qh
@@ -5808,7 +5788,13 @@ op_lshift
 l_int|21
 )paren
 op_or
-l_int|0x7f69
+(paren
+l_int|0x7f
+op_lshift
+l_int|8
+)paren
+op_or
+id|USB_PID_IN
 suffix:semicolon
 multiline_comment|/* (ignored) input packet, 16 bytes, device 127 */
 id|td-&gt;buffer

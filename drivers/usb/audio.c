@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;usb.h&quot;
+DECL|macro|AUDIO_DEBUG
+mdefine_line|#define AUDIO_DEBUG 1
 r_static
 r_int
 id|usb_audio_probe
@@ -131,7 +133,7 @@ id|dev
 r_struct
 id|usb_interface_descriptor
 op_star
-id|interface
+id|intf_desc
 suffix:semicolon
 r_struct
 id|usb_endpoint_descriptor
@@ -144,30 +146,17 @@ op_star
 id|aud
 suffix:semicolon
 r_int
+id|bEndpointAddress
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 r_int
 id|na
 op_assign
 l_int|0
-suffix:semicolon
-id|interface
-op_assign
-op_amp
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|altsetting
-(braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
-)braket
 suffix:semicolon
 r_for
 c_loop
@@ -189,18 +178,23 @@ id|i
 op_increment
 )paren
 (brace
-id|endpoint
+id|intf_desc
 op_assign
 op_amp
-id|interface-&gt;endpoint
+id|dev-&gt;config-&gt;interface
 (braket
 id|i
+)braket
+dot
+id|altsetting
+(braket
+l_int|0
 )braket
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|interface-&gt;bInterfaceClass
+id|intf_desc-&gt;bInterfaceClass
 op_ne
 l_int|1
 )paren
@@ -218,7 +212,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|interface-&gt;bInterfaceSubClass
+id|intf_desc-&gt;bInterfaceSubClass
 )paren
 (brace
 r_case
@@ -316,40 +310,17 @@ r_private
 op_assign
 id|aud
 suffix:semicolon
-id|endpoint
-op_assign
-op_amp
-id|interface-&gt;endpoint
-(braket
-l_int|0
-)braket
-suffix:semicolon
 singleline_comment|//        &t;if (usb_set_configuration(dev, dev-&gt;config[0].bConfigurationValue)) {
 singleline_comment|//&t;&t;&t;printk (KERN_INFO &quot; Failed usb_set_configuration: Audio&bslash;n&quot;);
 singleline_comment|//&t;&t;&t;break;
 singleline_comment|//&t;&t;}
 singleline_comment|//        &t;usb_set_protocol(dev, 0);
 singleline_comment|//        &t;usb_set_idle(dev, 0, 0);
-id|usb_request_irq
-c_func
-(paren
-id|dev
-comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|dev
-comma
-id|endpoint-&gt;bEndpointAddress
-)paren
-comma
-id|usb_audio_irq
-comma
-id|endpoint-&gt;bInterval
-comma
-id|aud
-)paren
-suffix:semicolon
+singleline_comment|//        &t;usb_request_irq(dev,
+singleline_comment|//                        usb_rcvctrlpipe(dev, bEndpointAddress),
+singleline_comment|//                        usb_audio_irq,
+singleline_comment|//                        endpoint-&gt;bInterval,
+singleline_comment|//                        aud);
 id|list_add
 c_func
 (paren
@@ -474,6 +445,15 @@ op_star
 id|data
 )paren
 (brace
+macro_line|#ifdef AUDIO_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;usb_audio_interface.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|usb_audio_endpoint
 r_void
@@ -490,6 +470,15 @@ op_star
 id|data
 )paren
 (brace
+macro_line|#ifdef AUDIO_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;usb_audio_interface.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 DECL|function|init_module

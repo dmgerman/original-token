@@ -84,7 +84,7 @@ DECL|macro|T2_HAE_4
 mdefine_line|#define T2_HAE_4&t;&t;(IDENT_ADDR + GAMMA_BIAS + 0x38e000260UL)
 DECL|macro|T2_HAE_ADDRESS
 mdefine_line|#define T2_HAE_ADDRESS&t;&t;T2_HAE_1
-multiline_comment|/*  T2 CSRs are in the non-cachable primary IO space from 3.8000.0000 to&n; 3.8fff.ffff&n; *&n; *  +--------------+ 3 8000 0000&n; *  | CPU 0 CSRs   |            &n; *  +--------------+ 3 8100 0000&n; *  | CPU 1 CSRs   |            &n; *  +--------------+ 3 8200 0000&n; *  | CPU 2 CSRs   |            &n; *  +--------------+ 3 8300 0000&n; *  | CPU 3 CSRs   |            &n; *  +--------------+ 3 8400 0000&n; *  | CPU Reserved |            &n; *  +--------------+ 3 8700 0000&n; *  | Mem Reserved |            &n; *  +--------------+ 3 8800 0000&n; *  | Mem 0 CSRs   |            &n; *  +--------------+ 3 8900 0000&n; *  | Mem 1 CSRs   |            &n; *  +--------------+ 3 8a00 0000&n; *  | Mem 2 CSRs   |            &n; *  +--------------+ 3 8b00 0000&n; *  | Mem 3 CSRs   |            &n; *  +--------------+ 3 8c00 0000           &n; *  | Mem Reserved |            &n; *  +--------------+ 3 8e00 0000           &n; *  | PCI Bridge   |            &n; *  +--------------+ 3 8f00 0000           &n; *  | Expansion IO |            &n; *  +--------------+ 3 9000 0000           &n; *                                              &n; *&n; */
+multiline_comment|/*  T2 CSRs are in the non-cachable primary IO space from 3.8000.0000 to&n; 3.8fff.ffff&n; *&n; *  +--------------+ 3 8000 0000&n; *  | CPU 0 CSRs   |&n; *  +--------------+ 3 8100 0000&n; *  | CPU 1 CSRs   |&n; *  +--------------+ 3 8200 0000&n; *  | CPU 2 CSRs   |&n; *  +--------------+ 3 8300 0000&n; *  | CPU 3 CSRs   |&n; *  +--------------+ 3 8400 0000&n; *  | CPU Reserved |&n; *  +--------------+ 3 8700 0000&n; *  | Mem Reserved |&n; *  +--------------+ 3 8800 0000&n; *  | Mem 0 CSRs   |&n; *  +--------------+ 3 8900 0000&n; *  | Mem 1 CSRs   |&n; *  +--------------+ 3 8a00 0000&n; *  | Mem 2 CSRs   |&n; *  +--------------+ 3 8b00 0000&n; *  | Mem 3 CSRs   |&n; *  +--------------+ 3 8c00 0000&n; *  | Mem Reserved |&n; *  +--------------+ 3 8e00 0000&n; *  | PCI Bridge   |&n; *  +--------------+ 3 8f00 0000&n; *  | Expansion IO |&n; *  +--------------+ 3 9000 0000&n; *&n; *&n; */
 DECL|macro|T2_CPU0_BASE
 mdefine_line|#define T2_CPU0_BASE            (IDENT_ADDR + GAMMA_BIAS + 0x380000000L)
 DECL|macro|T2_CPU1_BASE
@@ -459,7 +459,7 @@ suffix:semicolon
 multiline_comment|/* Backup Cache Tag Probe Results. */
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Sable processor specific Machine Check Data segment.&n; */
+multiline_comment|/*&n; * Sable processor specific Machine Check Data segment.&n; */
 DECL|struct|el_t2_logout_header
 r_struct
 id|el_t2_logout_header
@@ -1000,7 +1000,7 @@ id|elcpb_bc_tag
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Sable error log data structure&n; * Note there are 4 memory slots on sable (see t2.h)&n; */
+multiline_comment|/*&n; * Sable error log data structure&n; * Note there are 4 memory slots on sable (see t2.h)&n; */
 DECL|struct|el_t2_frame_mcheck
 r_struct
 id|el_t2_frame_mcheck
@@ -1047,7 +1047,7 @@ suffix:semicolon
 multiline_comment|/* empty */
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * Sable error log data structures on memory errors&n; */
+multiline_comment|/*&n; * Sable error log data structures on memory errors&n; */
 DECL|struct|el_t2_frame_corrected
 r_struct
 id|el_t2_frame_corrected
@@ -1400,7 +1400,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Memory functions.  64-bit and 32-bit accesses are done through&n; * dense memory space, everything else through sparse space.&n; * &n; * For reading and writing 8 and 16 bit quantities we need to &n; * go through one of the three sparse address mapping regions&n; * and use the HAE_MEM CSR to provide some bits of the address.&n; * The following few routines use only sparse address region 1&n; * which gives 1Gbyte of accessible space which relates exactly&n; * to the amount of PCI memory mapping *into* system address space.&n; * See p 6-17 of the specification but it looks something like this:&n; *&n; * 21164 Address:&n; * &n; *          3         2         1                                                               &n; * 9876543210987654321098765432109876543210&n; * 1ZZZZ0.PCI.QW.Address............BBLL                 &n; *&n; * ZZ = SBZ&n; * BB = Byte offset&n; * LL = Transfer length&n; *&n; * PCI Address:&n; *&n; * 3         2         1                                                               &n; * 10987654321098765432109876543210&n; * HHH....PCI.QW.Address........ 00&n; *&n; * HHH = 31:29 HAE_MEM CSR&n; * &n; */
+multiline_comment|/*&n; * Memory functions.&n; *&n; * For reading and writing 8 and 16 bit quantities we need to&n; * go through one of the three sparse address mapping regions&n; * and use the HAE_MEM CSR to provide some bits of the address.&n; * The following few routines use only sparse address region 1&n; * which gives 1Gbyte of accessible space which relates exactly&n; * to the amount of PCI memory mapping *into* system address space.&n; * See p 6-17 of the specification but it looks something like this:&n; *&n; * 21164 Address:&n; *&n; *          3         2         1&n; * 9876543210987654321098765432109876543210&n; * 1ZZZZ0.PCI.QW.Address............BBLL&n; *&n; * ZZ = SBZ&n; * BB = Byte offset&n; * LL = Transfer length&n; *&n; * PCI Address:&n; *&n; * 3         2         1&n; * 10987654321098765432109876543210&n; * HHH....PCI.QW.Address........ 00&n; *&n; * HHH = 31:29 HAE_MEM CSR&n; *&n; */
 DECL|function|t2_srm_base
 id|__EXTERN_INLINE
 r_int
@@ -1735,6 +1735,8 @@ id|addr
 (brace
 r_int
 r_int
+id|w
+comma
 id|work
 op_assign
 id|t2_srm_base
@@ -1754,15 +1756,25 @@ op_add_assign
 l_int|0x00
 suffix:semicolon
 multiline_comment|/* add transfer length */
+id|w
+op_assign
+id|__kernel_insbl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
 )paren
 id|work
 op_assign
-id|b
-op_star
-l_int|0x01010101
+id|w
 suffix:semicolon
 )brace
 )brace
@@ -1783,6 +1795,8 @@ id|addr
 (brace
 r_int
 r_int
+id|w
+comma
 id|work
 op_assign
 id|t2_srm_base
@@ -1802,15 +1816,25 @@ op_add_assign
 l_int|0x08
 suffix:semicolon
 multiline_comment|/* add transfer length */
+id|w
+op_assign
+id|__kernel_inswl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
 )paren
 id|work
 op_assign
-id|b
-op_star
-l_int|0x00010001
+id|w
 suffix:semicolon
 )brace
 )brace
@@ -2207,6 +2231,8 @@ id|addr
 r_int
 r_int
 id|msb
+comma
+id|w
 suffix:semicolon
 id|msb
 op_assign
@@ -2222,6 +2248,18 @@ id|set_hae
 c_func
 (paren
 id|msb
+)paren
+suffix:semicolon
+id|w
+op_assign
+id|__kernel_insbl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
 )paren
 suffix:semicolon
 op_star
@@ -2240,9 +2278,7 @@ op_plus
 l_int|0x00
 )paren
 op_assign
-id|b
-op_star
-l_int|0x01010101
+id|w
 suffix:semicolon
 )brace
 DECL|function|t2_writew
@@ -2263,6 +2299,8 @@ id|addr
 r_int
 r_int
 id|msb
+comma
+id|w
 suffix:semicolon
 id|msb
 op_assign
@@ -2278,6 +2316,18 @@ id|set_hae
 c_func
 (paren
 id|msb
+)paren
+suffix:semicolon
+id|w
+op_assign
+id|__kernel_inswl
+c_func
+(paren
+id|b
+comma
+id|addr
+op_amp
+l_int|3
 )paren
 suffix:semicolon
 op_star
@@ -2296,9 +2346,7 @@ op_plus
 l_int|0x08
 )paren
 op_assign
-id|b
-op_star
-l_int|0x00010001
+id|w
 suffix:semicolon
 )brace
 multiline_comment|/* On SABLE with T2, we must use SPARSE memory even for 32-bit access. */
@@ -2432,12 +2480,11 @@ op_rshift
 l_int|32
 suffix:semicolon
 )brace
-multiline_comment|/* Find the DENSE memory area for a given bus address.  */
-DECL|function|t2_dense_mem
+DECL|function|t2_ioremap
 id|__EXTERN_INLINE
 r_int
 r_int
-id|t2_dense_mem
+id|t2_ioremap
 c_func
 (paren
 r_int
@@ -2446,7 +2493,27 @@ id|addr
 )paren
 (brace
 r_return
-id|T2_DENSE_MEM
+id|addr
+suffix:semicolon
+)brace
+DECL|function|t2_is_ioaddr
+id|__EXTERN_INLINE
+r_int
+id|t2_is_ioaddr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+(paren
+r_int
+)paren
+id|addr
+op_ge
+l_int|0
 suffix:semicolon
 )brace
 DECL|macro|vip
@@ -2505,8 +2572,10 @@ mdefine_line|#define __writel&t;t2_writel
 DECL|macro|__writeq
 mdefine_line|#define __writeq&t;t2_writeq
 macro_line|#endif
-DECL|macro|dense_mem
-mdefine_line|#define dense_mem&t;t2_dense_mem
+DECL|macro|__ioremap
+mdefine_line|#define __ioremap&t;t2_ioremap
+DECL|macro|__is_ioaddr
+mdefine_line|#define __is_ioaddr&t;t2_is_ioaddr
 DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb

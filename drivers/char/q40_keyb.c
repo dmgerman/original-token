@@ -1737,54 +1737,24 @@ DECL|macro|disable_keyboard
 mdefine_line|#define disable_keyboard()&t;
 DECL|macro|enable_keyboard
 mdefine_line|#define enable_keyboard()&t;
-DECL|function|q40kbd_pretranslate
+DECL|function|q40kbd_translate
 r_int
-id|q40kbd_pretranslate
+id|q40kbd_translate
 c_func
 (paren
 r_int
 r_char
 id|scancode
 comma
+r_int
+r_char
+op_star
+id|keycode
+comma
 r_char
 id|raw_mode
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|scancode
-op_eq
-l_int|0xff
-)paren
-(brace
-multiline_comment|/* in scancode mode 1, my ESC key generates 0xff */
-multiline_comment|/* the calculator keys on a FOCUS 9000 generate 0xff */
-macro_line|#ifndef KBD_IS_FOCUS_9000
-macro_line|#ifdef KBD_REPORT_ERR
-r_if
-c_cond
-(paren
-op_logical_neg
-id|raw_mode
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Keyboard error&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-id|prev_scancode
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1805,29 +1775,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-DECL|function|q40kbd_translate
-r_int
-id|q40kbd_translate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-comma
-r_int
-r_char
-op_star
-id|keycode
-comma
-r_char
-id|raw_mode
-)paren
-(brace
-multiline_comment|/*printk(&quot;translate ...&bslash;n&quot;);*/
 r_if
 c_cond
 (paren
@@ -2183,6 +2130,8 @@ id|handle_scancode
 c_func
 (paren
 id|qprev
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_goto
@@ -2261,15 +2210,9 @@ id|handle_scancode
 c_func
 (paren
 id|scancode
-op_or
-(paren
+comma
+op_logical_neg
 id|keyup
-ques
-c_cond
-l_int|0200
-suffix:colon
-l_int|0
-)paren
 )paren
 suffix:semicolon
 id|keyup

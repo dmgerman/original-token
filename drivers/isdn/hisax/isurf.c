@@ -1,7 +1,6 @@
 multiline_comment|/* $Id: isurf.c,v 1.3 1999/07/12 21:05:18 keil Exp $&n;&n; * isurf.c  low level stuff for Siemens I-Surf/I-Talk cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * $Log: isurf.c,v $&n; * Revision 1.3  1999/07/12 21:05:18  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:56  keil&n; * Initial version&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;isar.h&quot;

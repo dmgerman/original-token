@@ -1933,7 +1933,7 @@ id|IRQ_AMIGA_PORTS
 comma
 id|lance_interrupt
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;a2065 Ethernet&quot;
 comma

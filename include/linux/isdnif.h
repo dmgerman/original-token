@@ -2,6 +2,7 @@ multiline_comment|/* $Id: isdnif.h,v 1.29 1999/07/31 13:00:02 armin Exp $&n; *&n
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/isdn_compat.h&gt;
 multiline_comment|/*&n; * Values for general protocol-selection&n; */
 DECL|macro|ISDN_PTYPE_UNKNOWN

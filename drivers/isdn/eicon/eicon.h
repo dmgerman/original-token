@@ -414,6 +414,7 @@ id|eicon_manifbuf
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Kernel includes */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;

@@ -2,6 +2,7 @@ multiline_comment|/*&n;* cyclomx.h&t;CYCLOM X Multiprotocol WAN Link Driver.&n;*
 macro_line|#ifndef&t;_CYCLOMX_H
 DECL|macro|_CYCLOMX_H
 mdefine_line|#define&t;_CYCLOMX_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#ifdef&t;__KERNEL__
