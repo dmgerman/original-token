@@ -10,24 +10,24 @@ r_struct
 id|tcphdr
 (brace
 DECL|member|source
-id|u16
+id|__u16
 id|source
 suffix:semicolon
 DECL|member|dest
-id|u16
+id|__u16
 id|dest
 suffix:semicolon
 DECL|member|seq
-id|u32
+id|__u32
 id|seq
 suffix:semicolon
 DECL|member|ack_seq
-id|u32
+id|__u32
 id|ack_seq
 suffix:semicolon
 macro_line|#if defined(__i386__)
 DECL|member|res1
-id|u16
+id|__u16
 id|res1
 suffix:colon
 l_int|4
@@ -74,7 +74,7 @@ l_int|2
 suffix:semicolon
 macro_line|#elif defined(__mc68000__)
 DECL|member|res2
-id|u16
+id|__u16
 id|res2
 suffix:colon
 l_int|2
@@ -121,7 +121,7 @@ l_int|4
 suffix:semicolon
 macro_line|#elif defined(__alpha__)
 DECL|member|res1
-id|u16
+id|__u16
 id|res1
 suffix:colon
 l_int|4
@@ -170,15 +170,15 @@ macro_line|#else
 macro_line|#error&t;&quot;Adjust this structure for your cpu alignment rules&quot;
 macro_line|#endif&t;
 DECL|member|window
-id|u16
+id|__u16
 id|window
 suffix:semicolon
 DECL|member|check
-id|u16
+id|__u16
 id|check
 suffix:semicolon
 DECL|member|urg_ptr
-id|u16
+id|__u16
 id|urg_ptr
 suffix:semicolon
 )brace

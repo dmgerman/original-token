@@ -2250,7 +2250,7 @@ id|STp-&gt;density
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Clear the errorneus &quot;residue&quot; */
+multiline_comment|/* Clear the erroneous &quot;residue&quot; */
 id|STp-&gt;write_prot
 op_assign
 l_int|0

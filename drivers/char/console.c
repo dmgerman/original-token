@@ -430,6 +430,7 @@ l_int|60
 op_star
 id|HZ
 suffix:semicolon
+macro_line|#ifndef CONFIG_VESA_PSPM
 DECL|variable|blank_origin
 DECL|variable|blank__origin
 DECL|variable|unblank_origin
@@ -441,6 +442,7 @@ id|blank__origin
 comma
 id|unblank_origin
 suffix:semicolon
+macro_line|#endif
 DECL|struct|vc_data
 r_struct
 id|vc_data
@@ -936,6 +938,685 @@ DECL|macro|vcmode
 mdefine_line|#define vcmode&t;&t;(vt_cons[currcons]-&gt;vc_mode)
 DECL|macro|structsize
 mdefine_line|#define structsize&t;(sizeof(struct vc_data) + sizeof(struct vt_struct))
+macro_line|#ifdef CONFIG_VESA_PSPM
+multiline_comment|/*&n; * This section(s) handles the VESA Power Saving Protocol that let a&t;*&n; * monitor be powered down whenever not needed for a longer time.&t;*&n; * VESA protocol defines:&t;&t;&t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; *  Mode/Status&t;&t;HSync&t;VSync&t;Video&t;&t;&t;&t;*&n; *  ----------------------------------------------&t;&t;&t;*&n; *  &quot;On&quot;&t;&t;on&t;on&t;active&t;&t;&t;&t;*&n; *  &quot;Suspend&quot; {either}&t;on&t;off&t;blank&t;&t;&t;&t;*&n; *            {  or  }&t;off&t;on&t;blank&t;&t;&t;&t;*&n; *  &quot;Off&quot;               off&t;off&t;blank&t;&lt;&lt;  PSPM_FORCE_OFF&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; * Original code taken from the Power Management Utility (PMU) of&t;*&n; * Huang shi chao, delivered together with many new monitor models&t;*&n; * capable of the VESA Power Saving Protocol.&t;&t;&t;&t;*&n; * Adapted to Linux by Christoph Rimek (chrimek@toppoint.de)  15-may-94&t;*&n; * Re-Adapted by Nicholas Leon (nicholas@neko.binary9.com) 10/94 *&n; *                 (with minor reorganization/changes)                          *&n; */
+r_static
+r_void
+id|vesa_blank
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|vesa_unblank
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|seq_port_reg
+mdefine_line|#define seq_port_reg&t;(0x3c4)&t;&t;/* Sequencer register select port&t;*/
+DECL|macro|seq_port_val
+mdefine_line|#define seq_port_val&t;(0x3c5)&t;&t;/* Sequencer register value port&t;*/
+DECL|macro|video_misc_rd
+mdefine_line|#define video_misc_rd&t;(0x3cc)&t;&t;/* Video misc. read port&t;*/
+DECL|macro|video_misc_wr
+mdefine_line|#define video_misc_wr&t;(0x3c2)&t;&t;/* Video misc. write port&t;*/
+multiline_comment|/* structure holding original VGA register settings */
+r_static
+r_struct
+(brace
+DECL|member|SeqCtrlIndex
+r_int
+r_char
+id|SeqCtrlIndex
+suffix:semicolon
+multiline_comment|/* Sequencer Index reg.   */
+DECL|member|CrtCtrlIndex
+r_int
+r_char
+id|CrtCtrlIndex
+suffix:semicolon
+multiline_comment|/* CRT-Contr. Index reg.  */
+DECL|member|CrtMiscIO
+r_int
+r_char
+id|CrtMiscIO
+suffix:semicolon
+multiline_comment|/* Miscellaneous register */
+macro_line|#ifdef CONFIG_PSPM_FORCE_OFF
+DECL|member|HorizontalTotal
+r_int
+r_char
+id|HorizontalTotal
+suffix:semicolon
+multiline_comment|/* CRT-Controller:00h */
+DECL|member|HorizDisplayEnd
+r_int
+r_char
+id|HorizDisplayEnd
+suffix:semicolon
+multiline_comment|/* CRT-Controller:01h */
+DECL|member|StartHorizRetrace
+r_int
+r_char
+id|StartHorizRetrace
+suffix:semicolon
+multiline_comment|/* CRT-Controller:04h */
+DECL|member|EndHorizRetrace
+r_int
+r_char
+id|EndHorizRetrace
+suffix:semicolon
+multiline_comment|/* CRT-Controller:05h */
+macro_line|#endif
+DECL|member|Overflow
+r_int
+r_char
+id|Overflow
+suffix:semicolon
+multiline_comment|/* CRT-Controller:07h */
+DECL|member|StartVertRetrace
+r_int
+r_char
+id|StartVertRetrace
+suffix:semicolon
+multiline_comment|/* CRT-Controller:10h */
+DECL|member|EndVertRetrace
+r_int
+r_char
+id|EndVertRetrace
+suffix:semicolon
+multiline_comment|/* CRT-Controller:11h */
+DECL|member|ModeControl
+r_int
+r_char
+id|ModeControl
+suffix:semicolon
+multiline_comment|/* CRT-Controller:17h */
+DECL|member|ClockingMode
+r_int
+r_char
+id|ClockingMode
+suffix:semicolon
+multiline_comment|/* Seq-Controller:01h */
+DECL|variable|vga
+)brace
+id|vga
+suffix:semicolon
+multiline_comment|/* routine to blank a vesa screen */
+DECL|function|vesa_blank
+r_static
+r_void
+id|vesa_blank
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* save original values of VGA controller registers */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|vga.SeqCtrlIndex
+op_assign
+id|inb_p
+c_func
+(paren
+id|seq_port_reg
+)paren
+suffix:semicolon
+id|vga.CrtCtrlIndex
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_reg
+)paren
+suffix:semicolon
+id|vga.CrtMiscIO
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_misc_rd
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PSPM_FORCE_OFF
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* HorizontalTotal */
+id|vga.HorizontalTotal
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x01
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* HorizDisplayEnd */
+id|vga.HorizDisplayEnd
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x04
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* StartHorizRetrace */
+id|vga.StartHorizRetrace
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x05
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* EndHorizRetrace */
+id|vga.EndHorizRetrace
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb_p
+c_func
+(paren
+l_int|0x07
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* Overflow */
+id|vga.Overflow
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x10
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* StartVertRetrace */
+id|vga.StartVertRetrace
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x11
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* EndVertRetrace */
+id|vga.EndVertRetrace
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x17
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* ModeControl */
+id|vga.ModeControl
+op_assign
+id|inb_p
+c_func
+(paren
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x01
+comma
+id|seq_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* ClockingMode */
+id|vga.ClockingMode
+op_assign
+id|inb_p
+c_func
+(paren
+id|seq_port_val
+)paren
+suffix:semicolon
+multiline_comment|/* assure that video is enabled */
+multiline_comment|/* &quot;0x20&quot; is VIDEO_ENABLE_bit in register 01 of sequencer */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x01
+comma
+id|seq_port_reg
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|vga.ClockingMode
+op_or
+l_int|0x20
+comma
+id|seq_port_val
+)paren
+suffix:semicolon
+multiline_comment|/*&t;sti(); &n;&t;cli(); */
+multiline_comment|/* test for vertical retrace in process.... */
+r_if
+c_cond
+(paren
+(paren
+id|vga.CrtMiscIO
+op_amp
+l_int|0x80
+)paren
+op_eq
+l_int|0x80
+)paren
+id|outb_p
+c_func
+(paren
+id|vga.CrtMiscIO
+op_amp
+l_int|0xef
+comma
+id|video_misc_wr
+)paren
+suffix:semicolon
+multiline_comment|/*  Set &lt;End of vertical retrace&gt; to minimum (0) and&t;&t;*&n;&t; *  &lt;Start of vertical Retrace&gt; to maximum (incl. overflow)&t;*&n;&t; *  Result: turn off vertical sync (VSync) pulse&t;&t;*/
+id|outb_p
+c_func
+(paren
+l_int|0x10
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* StartVertRetrace */
+id|outb_p
+c_func
+(paren
+l_int|0xff
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+multiline_comment|/* maximum value */
+id|outb_p
+c_func
+(paren
+l_int|0x11
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* EndVertRetrace */
+id|outb_p
+c_func
+(paren
+l_int|0x40
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+multiline_comment|/* minimum (bits 0..3)  */
+id|outb_p
+c_func
+(paren
+l_int|0x07
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* Overflow */
+id|outb_p
+c_func
+(paren
+id|vga.Overflow
+op_or
+l_int|0x84
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+multiline_comment|/* bits 9,10 of  */
+multiline_comment|/* vert. retrace */
+macro_line|#ifdef CONFIG_PSPM_FORCE_OFF
+multiline_comment|/*  Set &lt;End of horizontal retrace&gt; to minimum (0) and&t;*&n;&t; *  &lt;Start of horizontal Retrace&gt; to maximum&t;&t;*&n;&t; *  Result: turn off horizontal sync (HSync) pulse&t;*/
+id|outb_p
+c_func
+(paren
+l_int|0x04
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* StartHorizRetrace */
+id|outb_p
+c_func
+(paren
+l_int|0xff
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+multiline_comment|/* maximum */
+id|outb_p
+c_func
+(paren
+l_int|0x05
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* EndHorizRetrace */
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+multiline_comment|/* minimum (0) */
+macro_line|#endif
+multiline_comment|/* restore both index registers */
+id|outb_p
+c_func
+(paren
+id|vga.SeqCtrlIndex
+comma
+id|seq_port_reg
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|vga.CrtCtrlIndex
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* routine to unblank a vesa screen */
+DECL|function|vesa_unblank
+r_static
+r_void
+id|vesa_unblank
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* restore original values of VGA controller registers */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|vga.CrtMiscIO
+comma
+id|video_misc_wr
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PSPM_FORCE_OFF
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* HorizontalTotal */
+id|outb_p
+c_func
+(paren
+id|vga.HorizontalTotal
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x01
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* HorizDisplayEnd */
+id|outb_p
+c_func
+(paren
+id|vga.HorizDisplayEnd
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x04
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* StartHorizRetrace */
+id|outb_p
+c_func
+(paren
+id|vga.StartHorizRetrace
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x05
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* EndHorizRetrace */
+id|outb_p
+c_func
+(paren
+id|vga.EndHorizRetrace
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb_p
+c_func
+(paren
+l_int|0x07
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* Overflow */
+id|outb_p
+c_func
+(paren
+id|vga.Overflow
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x10
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* StartVertRetrace */
+id|outb_p
+c_func
+(paren
+id|vga.StartVertRetrace
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x11
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* EndVertRetrace */
+id|outb_p
+c_func
+(paren
+id|vga.EndVertRetrace
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x17
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* ModeControl */
+id|outb_p
+c_func
+(paren
+id|vga.ModeControl
+comma
+id|video_port_val
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x01
+comma
+id|seq_port_reg
+)paren
+suffix:semicolon
+multiline_comment|/* ClockingMode */
+id|outb_p
+c_func
+(paren
+id|vga.ClockingMode
+comma
+id|seq_port_val
+)paren
+suffix:semicolon
+multiline_comment|/* restore index/control registers */
+id|outb_p
+c_func
+(paren
+id|vga.SeqCtrlIndex
+comma
+id|seq_port_reg
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|vga.CrtCtrlIndex
+comma
+id|video_port_reg
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_VESA_PSPM */
 DECL|function|memsetw
 r_static
 r_void
@@ -9051,9 +9732,11 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef CONFIG_VESA_PSPM
 r_int
 id|currcons
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9095,6 +9778,13 @@ id|fn
 op_assign
 id|unblank_screen
 suffix:semicolon
+macro_line|#ifdef CONFIG_VESA_PSPM
+id|vesa_blank
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
 multiline_comment|/* try not to lose information by blanking, and not to waste memory */
 id|currcons
 op_assign
@@ -9149,6 +9839,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|console_blanked
 op_assign
 id|fg_console
@@ -9167,12 +9858,14 @@ r_void
 r_int
 id|currcons
 suffix:semicolon
+macro_line|#ifndef CONFIG_VESA_PSPM
 r_int
 id|resetorg
 suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9243,6 +9936,17 @@ id|currcons
 op_assign
 id|fg_console
 suffix:semicolon
+macro_line|#ifdef CONFIG_VESA_PSPM
+id|vesa_unblank
+c_func
+(paren
+)paren
+suffix:semicolon
+id|console_blanked
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 id|offset
 op_assign
 l_int|0
@@ -9323,6 +10027,7 @@ c_func
 id|blank__origin
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|update_screen
 r_void

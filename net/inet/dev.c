@@ -4188,6 +4188,12 @@ suffix:colon
 r_case
 id|SIOCSIFSLAVE
 suffix:colon
+r_case
+id|SIOCADDMULTI
+suffix:colon
+r_case
+id|SIOCDELMULTI
+suffix:colon
 r_if
 c_cond
 (paren

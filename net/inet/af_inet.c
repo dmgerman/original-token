@@ -1436,6 +1436,18 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* We might as well re use these. */
+multiline_comment|/*&n;&t; * note that the backlog is &quot;unsigned char&quot;, so truncate it&n;&t; * somewhere. We might as well truncate it to what everybody&n;&t; * else does..&n;&t; */
+r_if
+c_cond
+(paren
+id|backlog
+OG
+l_int|5
+)paren
+id|backlog
+op_assign
+l_int|5
+suffix:semicolon
 id|sk-&gt;max_ack_backlog
 op_assign
 id|backlog
@@ -2271,6 +2283,10 @@ op_star
 id|sk-&gt;ip_mc_name
 op_assign
 l_int|0
+suffix:semicolon
+id|sk-&gt;ip_mc_list
+op_assign
+l_int|NULL
 suffix:semicolon
 macro_line|#endif
 id|sk-&gt;state_change

@@ -26,6 +26,9 @@ macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;pci.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_char
@@ -45,8 +48,6 @@ r_int
 id|flag
 )paren
 suffix:semicolon
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/locks.h&gt;
 r_extern
 r_void
 op_star
@@ -187,6 +188,57 @@ c_func
 id|wp_works_ok
 )paren
 comma
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/* PCI BIOS support */
+id|X
+c_func
+(paren
+id|pcibios_find_class
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_find_device
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_read_config_byte
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_read_config_word
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_read_config_dword
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_write_config_byte
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_write_config_word
+)paren
+comma
+id|X
+c_func
+(paren
+id|pcibios_write_config_dword
+)paren
+comma
+macro_line|#endif
 multiline_comment|/* process memory management */
 id|X
 c_func

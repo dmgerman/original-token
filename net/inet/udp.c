@@ -1796,7 +1796,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb-&gt;dev-&gt;pa_addr
+op_logical_neg
+id|dev
+op_logical_or
+id|dev-&gt;pa_addr
 op_ne
 id|daddr
 )paren
@@ -2036,7 +2039,7 @@ id|uh
 comma
 id|skb1
 comma
-id|skb-&gt;dev
+id|dev
 comma
 id|saddr
 comma
@@ -2152,7 +2155,7 @@ id|uh
 comma
 id|skb
 comma
-id|skb-&gt;dev
+id|dev
 comma
 id|saddr
 comma

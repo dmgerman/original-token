@@ -4,14 +4,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * It would seem some PCI bioses are buggy, so we don&squot;t actually use these&n; * routines unless we need to..&n; */
-macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
-DECL|macro|CONFIG_PCI
-mdefine_line|#define CONFIG_PCI
-macro_line|#else
-DECL|macro|CONFIG_PCI
-macro_line|#undef CONFIG_PCI
-macro_line|#endif
 DECL|macro|PCIBIOS_PCI_FUNCTION_ID
 mdefine_line|#define PCIBIOS_PCI_FUNCTION_ID &t;0xb1XX
 DECL|macro|PCIBIOS_PCI_BIOS_PRESENT

@@ -1,6 +1,57 @@
 macro_line|#ifndef _I386_TYPES_H
 DECL|macro|_I386_TYPES_H
 mdefine_line|#define _I386_TYPES_H
+multiline_comment|/*&n; * __xx is ok: it doesn&squot;t pollute the POSIX namespace. Use these in the&n; * header files exported to user space&n; */
+DECL|typedef|__s8
+r_typedef
+r_int
+r_char
+id|__s8
+suffix:semicolon
+DECL|typedef|__u8
+r_typedef
+r_int
+r_char
+id|__u8
+suffix:semicolon
+DECL|typedef|__s16
+r_typedef
+r_int
+r_int
+id|__s16
+suffix:semicolon
+DECL|typedef|__u16
+r_typedef
+r_int
+r_int
+id|__u16
+suffix:semicolon
+DECL|typedef|__s32
+r_typedef
+r_int
+r_int
+id|__s32
+suffix:semicolon
+DECL|typedef|__u32
+r_typedef
+r_int
+r_int
+id|__u32
+suffix:semicolon
+DECL|typedef|__s64
+r_typedef
+r_int
+r_int
+r_int
+id|__s64
+suffix:semicolon
+DECL|typedef|__u64
+r_typedef
+r_int
+r_int
+r_int
+id|__u64
+suffix:semicolon
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
 macro_line|#ifdef __KERNEL__
 DECL|typedef|s8

@@ -4883,6 +4883,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
 id|iph
 op_assign
 id|skb-&gt;h.iph

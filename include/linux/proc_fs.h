@@ -149,6 +149,24 @@ DECL|enumerator|PROC_NET_RARP
 id|PROC_NET_RARP
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MULTICAST
+DECL|enumerator|PROC_NET_IGMP
+id|PROC_NET_IGMP
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_FIREWALL
+DECL|enumerator|PROC_NET_IPFWFWD
+id|PROC_NET_IPFWFWD
+comma
+DECL|enumerator|PROC_NET_IPBLFWD
+id|PROC_NET_IPBLFWD
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_ACCT
+DECL|enumerator|PROC_NET_IPACCT
+id|PROC_NET_IPACCT
+comma
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPX
 DECL|enumerator|PROC_NET_IPX_ROUTE
