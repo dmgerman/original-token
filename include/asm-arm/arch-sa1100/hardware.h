@@ -55,6 +55,9 @@ macro_line|#else
 DECL|macro|machine_has_neponset
 mdefine_line|#define machine_has_neponset()&t;(0)
 macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_CERF
+macro_line|#include &quot;cerf.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SA1100_EMPEG
 macro_line|#include &quot;empeg.h&quot;
 macro_line|#endif

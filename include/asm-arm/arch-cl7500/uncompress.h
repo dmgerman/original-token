@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-cl7500/uncompress.h&n; *&n; * Copyright (C) 1999 Nexus Electronics Ltd.&n; */
 DECL|macro|BASE
 mdefine_line|#define BASE 0x03010000
+DECL|macro|SERBASE
+mdefine_line|#define SERBASE (BASE + (0x3f8 &lt;&lt; 2))
 DECL|function|putc
 r_static
 id|__inline__
@@ -26,9 +28,9 @@ r_int
 op_star
 )paren
 (paren
-id|BASE
+id|SERBASE
 op_plus
-l_int|0xbf4
+l_int|0x14
 )paren
 )paren
 op_amp
@@ -45,9 +47,7 @@ r_int
 op_star
 )paren
 (paren
-id|BASE
-op_plus
-l_int|0xbe0
+id|SERBASE
 )paren
 )paren
 op_assign
@@ -118,7 +118,7 @@ op_div
 (paren
 l_int|9600
 op_star
-l_int|16
+l_int|32
 )paren
 suffix:semicolon
 op_star
@@ -130,9 +130,9 @@ r_int
 op_star
 )paren
 (paren
-id|BASE
+id|SERBASE
 op_plus
-l_int|0xBEC
+l_int|0xC
 )paren
 )paren
 op_assign
@@ -147,9 +147,9 @@ r_int
 op_star
 )paren
 (paren
-id|BASE
+id|SERBASE
 op_plus
-l_int|0xBE0
+l_int|0x0
 )paren
 )paren
 op_assign
@@ -166,9 +166,9 @@ r_int
 op_star
 )paren
 (paren
-id|BASE
+id|SERBASE
 op_plus
-l_int|0xBE4
+l_int|0x4
 )paren
 )paren
 op_assign
@@ -189,9 +189,9 @@ r_int
 op_star
 )paren
 (paren
-id|BASE
+id|SERBASE
 op_plus
-l_int|0xBEC
+l_int|0xC
 )paren
 )paren
 op_assign
@@ -207,9 +207,9 @@ r_int
 op_star
 )paren
 (paren
-id|BASE
+id|SERBASE
 op_plus
-l_int|0xBF0
+l_int|0x10
 )paren
 )paren
 op_assign

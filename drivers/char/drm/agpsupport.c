@@ -1698,11 +1698,20 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|VIA_APOLLO_SUPER
+id|VIA_APOLLO_KX133
 suffix:colon
 id|head-&gt;chipset
 op_assign
-l_string|&quot;VIA Apollo Super&quot;
+l_string|&quot;VIA Apollo KX133&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|VIA_APOLLO_KT133
+suffix:colon
+id|head-&gt;chipset
+op_assign
+l_string|&quot;VIA Apollo KT133&quot;
 suffix:semicolon
 r_break
 suffix:semicolon

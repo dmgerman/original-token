@@ -1,9 +1,12 @@
-multiline_comment|/* Support for the latches on the old Archimedes which control the floppy,&n; * hard disc and printer&n; *&n; * (c) David Alan Gilbert 1995/1996&n; */
+multiline_comment|/* Support for the latches on the old Archimedes which control the floppy,&n; * hard disc and printer&n; *&n; * (c) David Alan Gilbert 1995/1996,2000&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
+macro_line|#include &lt;asm/arch/oldlatches.h&gt;
 DECL|variable|latch_a_copy
 r_static
 r_int

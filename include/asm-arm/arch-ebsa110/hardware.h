@@ -32,7 +32,7 @@ DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xf0000000
 DECL|macro|UNCACHEABLE_ADDR
 mdefine_line|#define UNCACHEABLE_ADDR&t;0xf3000000
-DECL|macro|PARAMS_BASE
-mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + 0x400)
+DECL|macro|PARAMS_OFFSET
+mdefine_line|#define PARAMS_OFFSET&t;&t;0x400
 macro_line|#endif
 eof

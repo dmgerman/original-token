@@ -164,7 +164,6 @@ multiline_comment|/* adapter data space */
 multiline_comment|/* Kernel Loadable Module Entry Points */
 multiline_comment|/*&n; * Module &squot;insert&squot; entry point.&n; * o print announcement&n; * o allocate adapter data space&n; * o initialize static data&n; * o register all cards with WAN router&n; * o calibrate Cyclom 2X shared memory access delay.&n; *&n; * Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; * Context:&t;process&n; */
 DECL|function|cyclomx_init
-r_static
 r_int
 id|__init
 id|cyclomx_init

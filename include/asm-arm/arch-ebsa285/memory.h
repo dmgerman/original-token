@@ -3,40 +3,8 @@ macro_line|#ifndef __ASM_ARCH_MMU_H
 DECL|macro|__ASM_ARCH_MMU_H
 mdefine_line|#define __ASM_ARCH_MMU_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_FOOTBRIDGE_HOST)
-multiline_comment|/*&n; * Task size: 3GB&n; */
-DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;&t;(0xc0000000UL)
-DECL|macro|TASK_SIZE_26
-mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
-multiline_comment|/*&n; * Page offset: 3GB&n; */
-DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;(0xc0000000UL)
-DECL|macro|PHYS_OFFSET
-mdefine_line|#define PHYS_OFFSET&t;&t;(0x00000000UL)
-DECL|macro|__virt_to_bus__is_a_macro
-mdefine_line|#define __virt_to_bus__is_a_macro
-DECL|macro|__virt_to_bus
-mdefine_line|#define __virt_to_bus(x)&t;((x) - 0xe0000000)
-DECL|macro|__bus_to_virt__is_a_macro
-mdefine_line|#define __bus_to_virt__is_a_macro
-DECL|macro|__bus_to_virt
-mdefine_line|#define __bus_to_virt(x)&t;((x) + 0xe0000000)
-macro_line|#elif defined(CONFIG_FOOTBRIDGE_ADDIN)
-macro_line|#if defined(CONFIG_ARCH_CO285)
-multiline_comment|/*&n; * Task size: 1.5GB&n; */
-DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;&t;(0x60000000UL)
-DECL|macro|TASK_SIZE_26
-mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
-multiline_comment|/*&n; * Page offset: 1.5GB&n; */
-DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;(0x60000000UL)
-DECL|macro|PHYS_OFFSET
-mdefine_line|#define PHYS_OFFSET&t;&t;(0x00000000UL)
-macro_line|#else
-macro_line|#error Add in your architecture here
-macro_line|#endif
+macro_line|#if defined(CONFIG_FOOTBRIDGE_ADDIN)
+multiline_comment|/*&n; * If we may be using add-in footbridge mode, then we must&n; * use the out-of-line translation that makes use of the&n; * PCI BAR&n; */
 macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_int
@@ -59,8 +27,38 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#elif defined(CONFIG_FOOTBRIDGE_HOST)
+DECL|macro|__virt_to_bus__is_a_macro
+mdefine_line|#define __virt_to_bus__is_a_macro
+DECL|macro|__virt_to_bus
+mdefine_line|#define __virt_to_bus(x)&t;((x) - 0xe0000000)
+DECL|macro|__bus_to_virt__is_a_macro
+mdefine_line|#define __bus_to_virt__is_a_macro
+DECL|macro|__bus_to_virt
+mdefine_line|#define __bus_to_virt(x)&t;((x) + 0xe0000000)
+macro_line|#else
+macro_line|#error &quot;Undefined footbridge mode&quot;
 macro_line|#endif
-multiline_comment|/*&n; * On Footbridge machines, the dram is contiguous.&n; * On Host Footbridge, these conversions are constant.&n; * On an add-in footbridge, these depend on register settings.&n; */
+macro_line|#if defined(CONFIG_ARCH_FOOTBRIDGE)
+multiline_comment|/* Task size and page offset at 3GB */
+DECL|macro|TASK_SIZE
+mdefine_line|#define TASK_SIZE&t;&t;(0xc0000000UL)
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;&t;(0xc0000000UL)
+macro_line|#elif defined(CONFIG_ARCH_CO285)
+multiline_comment|/* Task size and page offset at 1.5GB */
+DECL|macro|TASK_SIZE
+mdefine_line|#define TASK_SIZE&t;&t;(0x60000000UL)
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;&t;(0x60000000UL)
+macro_line|#else
+macro_line|#error &quot;Undefined footbridge architecture&quot;
+macro_line|#endif
+DECL|macro|TASK_SIZE_26
+mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
+DECL|macro|PHYS_OFFSET
+mdefine_line|#define PHYS_OFFSET&t;&t;(0x00000000UL)
+multiline_comment|/*&n; * The DRAM is always contiguous.&n; */
 DECL|macro|__virt_to_phys__is_a_macro
 mdefine_line|#define __virt_to_phys__is_a_macro
 DECL|macro|__virt_to_phys

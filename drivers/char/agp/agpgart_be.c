@@ -1479,7 +1479,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* End - Routines for handling swapping of agp_memory into the GATT */
-multiline_comment|/* &n; * Driver routines - start&n; * Currently this module supports the &n; * i810, 440lx, 440bx, 440gx, via vp3, via mvp3,&n; * amd irongate, ALi M1541 and generic support for the&n; * SiS chipsets.&n; */
+multiline_comment|/* &n; * Driver routines - start&n; * Currently this module supports the following chipsets:&n; * i810, 440lx, 440bx, 440gx, via vp3, via mvp3, via kx133, via kt133,&n; * amd irongate, ALi M1541, and generic support for the SiS chipsets.&n; */
 multiline_comment|/* Generic Agp routines - Start */
 DECL|function|agp_generic_agp_enable
 r_static
@@ -8827,20 +8827,6 @@ comma
 macro_line|#endif /* CONFIG_AGP_SIS */
 macro_line|#ifdef CONFIG_AGP_VIA
 (brace
-id|PCI_DEVICE_ID_VIA_8371_0
-comma
-id|PCI_VENDOR_ID_VIA
-comma
-id|VIA_APOLLO_SUPER
-comma
-l_string|&quot;Via&quot;
-comma
-l_string|&quot;Apollo Super&quot;
-comma
-id|via_generic_setup
-)brace
-comma
-(brace
 id|PCI_DEVICE_ID_VIA_8501_0
 comma
 id|PCI_VENDOR_ID_VIA
@@ -8892,6 +8878,34 @@ comma
 l_string|&quot;Via&quot;
 comma
 l_string|&quot;Apollo Pro&quot;
+comma
+id|via_generic_setup
+)brace
+comma
+(brace
+id|PCI_DEVICE_ID_VIA_8371_0
+comma
+id|PCI_VENDOR_ID_VIA
+comma
+id|VIA_APOLLO_KX133
+comma
+l_string|&quot;Via&quot;
+comma
+l_string|&quot;Apollo Pro KX133&quot;
+comma
+id|via_generic_setup
+)brace
+comma
+(brace
+id|PCI_DEVICE_ID_VIA_8363_0
+comma
+id|PCI_VENDOR_ID_VIA
+comma
+id|VIA_APOLLO_KT133
+comma
+l_string|&quot;Via&quot;
+comma
+l_string|&quot;Apollo Pro KT133&quot;
 comma
 id|via_generic_setup
 )brace

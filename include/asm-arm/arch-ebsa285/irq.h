@@ -2,9 +2,11 @@ multiline_comment|/*&n; * include/asm-arm/arch-ebsa285/irq.h&n; *&n; * Copyright
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 multiline_comment|/*&n; * Footbridge IRQ translation table&n; *  Converts from our IRQ numbers into FootBridge masks&n; */
 DECL|variable|dc21285_irq_mask
 r_static
+r_const
 r_int
 id|dc21285_irq_mask
 (braket
@@ -93,6 +95,7 @@ r_int
 id|irq
 )paren
 (brace
+macro_line|#ifdef PCIIACK_BASE
 r_if
 c_cond
 (paren
@@ -110,6 +113,7 @@ op_star
 )paren
 id|PCIIACK_BASE
 suffix:semicolon
+macro_line|#endif
 r_return
 id|irq
 suffix:semicolon

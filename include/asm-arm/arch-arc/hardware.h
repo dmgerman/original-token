@@ -75,8 +75,8 @@ mdefine_line|#define PCIO_BASE&t;&t;0x03010000
 multiline_comment|/*&n; * RAM definitions&n; */
 DECL|macro|GET_MEMORY_END
 mdefine_line|#define GET_MEMORY_END(p)&t;(PAGE_OFFSET + (p-&gt;u1.s.page_size) * (p-&gt;u1.s.nr_pages))
-DECL|macro|PARAMS_BASE
-mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + 0x7c000)
+DECL|macro|PARAMS_OFFSET
+mdefine_line|#define PARAMS_OFFSET&t;&t;0x7c000
 macro_line|#else
 DECL|macro|IOEB_BASE
 mdefine_line|#define IOEB_BASE&t;&t;0x03350050

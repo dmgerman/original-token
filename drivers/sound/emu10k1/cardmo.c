@@ -1,6 +1,9 @@
 multiline_comment|/*     &n; **********************************************************************&n; *     cardmo.c - MIDI UART output HAL for emu10k1 driver &n; *     Copyright 1999, 2000 Creative Labs, Inc. &n; * &n; ********************************************************************** &n; * &n; *     Date                 Author          Summary of changes &n; *     ----                 ------          ------------------ &n; *     October 20, 1999     Bertrand Lee    base code release &n; *     November 2, 1999     Alan Cox        cleaned up&n; * &n; ********************************************************************** &n; * &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version. &n; * &n; *     This program is distributed in the hope that it will be useful, &n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of &n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the &n; *     GNU General Public License for more details. &n; * &n; *     You should have received a copy of the GNU General Public &n; *     License along with this program; if not, write to the Free &n; *     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, &n; *     USA. &n; * &n; ********************************************************************** &n; */
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &quot;hwaccess.h&quot;
+macro_line|#include &quot;8010.h&quot;
 macro_line|#include &quot;cardmo.h&quot;
+macro_line|#include &quot;irqmgr.h&quot;
 multiline_comment|/* Installs the IRQ handler for the MPU out port               *&n; * and initialize parameters                                    */
 DECL|function|emu10k1_mpuout_open
 r_int
@@ -44,7 +47,8 @@ id|FLAGS_AVAILABLE
 )paren
 )paren
 r_return
-id|CTSTATUS_INUSE
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* Copy open info and mark channel as in use */
 id|card_mpuout-&gt;intr
@@ -86,7 +90,7 @@ id|card
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|emu10k1_mpuout_close
@@ -214,7 +218,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* If there isn&squot;t enough buffer space, reject Midi Buffer.     *&n;* Otherwise, disable TX, create object to hold Midi            *&n;*  uffer, update buffer flags and other parameters             *&n;* before enabling TX again.                                    */
@@ -266,7 +270,7 @@ op_eq
 id|CARDMIDIOUT_STATE_SUSPEND
 )paren
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 id|midihdr-&gt;flags
 op_or_assign
@@ -306,7 +310,8 @@ l_int|NULL
 (brace
 multiline_comment|/* Message lost */
 r_return
-id|CTSTATUS_NOMEMORY
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|midiq-&gt;next
@@ -400,7 +405,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|emu10k1_mpuout_bh
@@ -436,9 +441,6 @@ r_int
 id|cByteSent
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-id|status
 suffix:semicolon
 r_struct
 id|midi_queue
@@ -487,8 +489,9 @@ op_logical_and
 id|midiq-&gt;sizeLeft
 )paren
 (brace
-id|status
-op_assign
+r_if
+c_cond
+(paren
 id|emu10k1_mpu_write_data
 c_func
 (paren
@@ -497,14 +500,20 @@ comma
 op_star
 id|midiq-&gt;midibyte
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-op_eq
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
+(brace
+id|DPF
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;emu10k1_mpuoutDpcCallback error!!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 op_increment
 id|cByteSent
@@ -514,17 +523,6 @@ id|midiq-&gt;sizeLeft
 suffix:semicolon
 op_increment
 id|midiq-&gt;midibyte
-suffix:semicolon
-)brace
-r_else
-(brace
-id|DPF
-c_func
-(paren
-l_int|2
-comma
-l_string|&quot;emu10k1_mpuoutDpcCallback error!!&bslash;n&quot;
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -747,7 +745,7 @@ id|card_mpuout-&gt;tasklet
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 eof

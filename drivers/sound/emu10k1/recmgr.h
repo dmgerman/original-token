@@ -2,68 +2,8 @@ multiline_comment|/*     &n; ***************************************************
 macro_line|#ifndef _RECORDMGR_H
 DECL|macro|_RECORDMGR_H
 mdefine_line|#define _RECORDMGR_H
-DECL|struct|record
-r_struct
-id|record
-(brace
-DECL|member|card
-r_struct
-id|emu10k1_card
-op_star
-id|card
-suffix:semicolon
-DECL|member|recbuffer
-id|u8
-op_star
-id|recbuffer
-suffix:semicolon
-DECL|member|recpos
-id|u32
-id|recpos
-suffix:semicolon
-DECL|member|is_stereo
-r_int
-id|is_stereo
-suffix:semicolon
-DECL|member|is_16bit
-r_int
-id|is_16bit
-suffix:semicolon
-DECL|member|recbufsize
-id|u32
-id|recbufsize
-suffix:semicolon
-DECL|member|bufsize
-id|u32
-id|bufsize
-suffix:semicolon
-DECL|member|bufsizereg
-id|u32
-id|bufsizereg
-suffix:semicolon
-DECL|member|bufaddrreg
-id|u32
-id|bufaddrreg
-suffix:semicolon
-DECL|member|bufidxreg
-id|u32
-id|bufidxreg
-suffix:semicolon
-DECL|member|adcctl
-id|u32
-id|adcctl
-suffix:semicolon
-DECL|member|busaddx
-r_int
-r_int
-id|busaddx
-suffix:semicolon
-DECL|member|samplingrate
-id|u32
-id|samplingrate
-suffix:semicolon
-)brace
-suffix:semicolon
+macro_line|#include &quot;hwaccess.h&quot;
+macro_line|#include &quot;cardwi.h&quot;
 multiline_comment|/* Recording resources */
 DECL|macro|WAVERECORD_AC97
 mdefine_line|#define WAVERECORD_AC97&t;&t;0x01
@@ -76,7 +16,11 @@ id|emu10k1_start_record
 c_func
 (paren
 r_struct
-id|record
+id|emu10k1_card
+op_star
+comma
+r_struct
+id|wavein_buffer
 op_star
 )paren
 suffix:semicolon
@@ -85,7 +29,11 @@ id|emu10k1_stop_record
 c_func
 (paren
 r_struct
-id|record
+id|emu10k1_card
+op_star
+comma
+r_struct
+id|wavein_buffer
 op_star
 )paren
 suffix:semicolon
@@ -94,10 +42,13 @@ id|emu10k1_set_record_src
 c_func
 (paren
 r_struct
-id|record
+id|emu10k1_card
 op_star
 comma
-id|u8
+r_struct
+id|wiinst
+op_star
+id|wiinst
 )paren
 suffix:semicolon
 macro_line|#endif /* _RECORDMGR_H */

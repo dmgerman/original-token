@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/irqs.h&n; *&n; * Copyright (C) 1998 Russell King&n; * Copyright (C) 1998 Phil Blundell&n; *&n; * Changelog:&n; *  20-Jan-1998&t;RMK&t;Started merge of EBSA286, CATS and NetWinder&n; *  01-Feb-1999&t;PJB&t;ISA IRQs start at 0 not 16&n; */
+macro_line|#include &lt;asm/mach-types.h&gt;
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS&t;&t;&t;36
 DECL|macro|NR_DC21285_IRQS

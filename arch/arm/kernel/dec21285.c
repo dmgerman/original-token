@@ -1115,7 +1115,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;PCI: DC21285 footbridge, revision %02lX in &quot;
+l_string|&quot;PCI: DC21285 footbridge, revision %02lX, in &quot;
 l_string|&quot;%s mode&bslash;n&quot;
 comma
 op_star

@@ -2,38 +2,24 @@ multiline_comment|/*&n; ********************************************************
 macro_line|#ifndef _HWACCESS_H
 DECL|macro|_HWACCESS_H
 mdefine_line|#define _HWACCESS_H
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sound.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;emu_wrapper.h&gt;
-DECL|enum|GlobalErrorCode
-r_enum
-id|GlobalErrorCode
-(brace
-DECL|enumerator|CTSTATUS_SUCCESS
-id|CTSTATUS_SUCCESS
-op_assign
-l_int|0x0000
-comma
-DECL|enumerator|CTSTATUS_ERROR
-id|CTSTATUS_ERROR
-comma
-DECL|enumerator|CTSTATUS_NOMEMORY
-id|CTSTATUS_NOMEMORY
-comma
-DECL|enumerator|CTSTATUS_INUSE
-id|CTSTATUS_INUSE
-comma
-)brace
-suffix:semicolon
+macro_line|#include &quot;emu_wrapper.h&quot;
+DECL|macro|EMUPAGESIZE
+mdefine_line|#define EMUPAGESIZE     4096            /* don&squot;t change */
+DECL|macro|NUM_G
+mdefine_line|#define NUM_G           64              /* use all channels */
+DECL|macro|NUM_FXSENDS
+mdefine_line|#define NUM_FXSENDS     4               /* don&squot;t change */
+multiline_comment|/* setting this to other than a power of two may break some applications */
+DECL|macro|MAXBUFSIZE
+mdefine_line|#define MAXBUFSIZE&t;65536
+DECL|macro|MAXPAGES
+mdefine_line|#define MAXPAGES&t;8192 
+DECL|macro|BUFMAXPAGES
+mdefine_line|#define BUFMAXPAGES     (MAXBUFSIZE / PAGE_SIZE)
 DECL|macro|FLAGS_AVAILABLE
 mdefine_line|#define FLAGS_AVAILABLE     0x0001
 DECL|macro|FLAGS_READY
@@ -44,39 +30,20 @@ DECL|struct|memhandle
 r_struct
 id|memhandle
 (brace
-DECL|member|busaddx
-r_int
-r_int
-id|busaddx
+DECL|member|dma_handle
+id|dma_addr_t
+id|dma_handle
 suffix:semicolon
-DECL|member|virtaddx
+DECL|member|addr
 r_void
 op_star
-id|virtaddx
+id|addr
 suffix:semicolon
-DECL|member|order
+DECL|member|size
 id|u32
-id|order
+id|size
 suffix:semicolon
 )brace
-suffix:semicolon
-r_struct
-id|memhandle
-op_star
-id|emu10k1_alloc_memphysical
-c_func
-(paren
-id|u32
-)paren
-suffix:semicolon
-r_void
-id|emu10k1_free_memphysical
-c_func
-(paren
-r_struct
-id|memhandle
-op_star
-)paren
 suffix:semicolon
 DECL|macro|DEBUG_LEVEL
 mdefine_line|#define DEBUG_LEVEL 2
@@ -85,43 +52,88 @@ DECL|macro|DPD
 macro_line|# define DPD(level,x,y...) do {if(level &lt;= DEBUG_LEVEL) printk( KERN_NOTICE &quot;emu10k1: %s: %d: &quot; x , __FILE__ , __LINE__ , y );} while(0)
 DECL|macro|DPF
 macro_line|# define DPF(level,x)   do {if(level &lt;= DEBUG_LEVEL) printk( KERN_NOTICE &quot;emu10k1: %s: %d: &quot; x , __FILE__ , __LINE__ );} while(0)
-DECL|macro|ERROR
-mdefine_line|#define ERROR() DPF(1,&quot;error&bslash;n&quot;);
 macro_line|#else
 DECL|macro|DPD
-macro_line|# define DPD(level,x,y...) /* not debugging: nothing */
+macro_line|# define DPD(level,x,y...) do { } while (0) /* not debugging: nothing */
 DECL|macro|DPF
-macro_line|# define DPF(level,x)
-DECL|macro|ERROR
-mdefine_line|#define ERROR()
+macro_line|# define DPF(level,x) do { } while (0)
 macro_line|#endif /* EMU10K1_DEBUG */
-macro_line|#include &quot;8010.h&quot;
-macro_line|#include &quot;voicemgr.h&quot;
-r_int
-id|emu10k1_addxmgr_alloc
-c_func
-(paren
-id|u32
-comma
-r_struct
-id|emu10k1_card
-op_star
-)paren
-suffix:semicolon
-r_void
-id|emu10k1_addxmgr_free
-c_func
-(paren
-r_struct
-id|emu10k1_card
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#include &quot;timer.h&quot;
-macro_line|#include &quot;irqmgr.h&quot;
+DECL|macro|ERROR
+mdefine_line|#define ERROR() DPF(1,&quot;error&bslash;n&quot;)
 multiline_comment|/* DATA STRUCTURES */
+DECL|struct|emu10k1_waveout
+r_struct
+id|emu10k1_waveout
+(brace
+DECL|member|send_routing
+id|u16
+id|send_routing
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|send_a
+id|u8
+id|send_a
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|send_b
+id|u8
+id|send_b
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|send_c
+id|u8
+id|send_c
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|send_d
+id|u8
+id|send_d
+(braket
+l_int|3
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|emu10k1_wavein
+r_struct
+id|emu10k1_wavein
+(brace
+DECL|member|ac97
+r_struct
+id|wiinst
+op_star
+id|ac97
+suffix:semicolon
+DECL|member|mic
+r_struct
+id|wiinst
+op_star
+id|mic
+suffix:semicolon
+DECL|member|fx
+r_struct
+id|wiinst
+op_star
+id|fx
+suffix:semicolon
+DECL|member|recsrc
+id|u8
+id|recsrc
+suffix:semicolon
+DECL|member|fxwc
+id|u32
+id|fxwc
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|emu10k1_card
 r_struct
 id|emu10k1_card
@@ -134,33 +146,28 @@ suffix:semicolon
 DECL|member|virtualpagetable
 r_struct
 id|memhandle
-op_star
 id|virtualpagetable
 suffix:semicolon
 DECL|member|tankmem
 r_struct
 id|memhandle
-op_star
 id|tankmem
-suffix:semicolon
-DECL|member|tmemsize
-id|u32
-id|tmemsize
 suffix:semicolon
 DECL|member|silentpage
 r_struct
 id|memhandle
-op_star
 id|silentpage
 suffix:semicolon
 DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
-DECL|member|voicemgr
-r_struct
-id|voice_manager
-id|voicemgr
+DECL|member|voicetable
+id|u8
+id|voicetable
+(braket
+id|NUM_G
+)braket
 suffix:semicolon
 DECL|member|emupagetable
 id|u16
@@ -193,45 +200,45 @@ r_int
 r_int
 id|iobase
 suffix:semicolon
-DECL|member|mixeraddx
+DECL|member|length
 r_int
 r_int
-id|mixeraddx
+id|length
+suffix:semicolon
+DECL|member|model
+r_int
+r_int
+id|model
 suffix:semicolon
 DECL|member|irq
-id|u32
+r_int
+r_int
 id|irq
+suffix:semicolon
+DECL|member|audio_num
+r_int
+id|audio_num
 suffix:semicolon
 DECL|member|audio1_num
 r_int
-r_int
 id|audio1_num
 suffix:semicolon
-DECL|member|audio2_num
-r_int
-r_int
-id|audio2_num
-suffix:semicolon
 DECL|member|mixer_num
-r_int
 r_int
 id|mixer_num
 suffix:semicolon
 DECL|member|midi_num
-r_int
 r_int
 id|midi_num
 suffix:semicolon
 DECL|member|waveout
 r_struct
 id|emu10k1_waveout
-op_star
 id|waveout
 suffix:semicolon
 DECL|member|wavein
 r_struct
 id|emu10k1_wavein
-op_star
 id|wavein
 suffix:semicolon
 DECL|member|mpuout
@@ -260,7 +267,11 @@ DECL|member|digmix
 id|u32
 id|digmix
 (braket
-l_int|96
+l_int|9
+op_star
+l_int|6
+op_star
+l_int|2
 )braket
 suffix:semicolon
 DECL|member|modcnt
@@ -296,7 +307,33 @@ id|u8
 id|chiprev
 suffix:semicolon
 multiline_comment|/* Chip revision                */
+DECL|member|isaps
+r_int
+id|isaps
+suffix:semicolon
 )brace
+suffix:semicolon
+r_int
+id|emu10k1_addxmgr_alloc
+c_func
+(paren
+id|u32
+comma
+r_struct
+id|emu10k1_card
+op_star
+)paren
+suffix:semicolon
+r_void
+id|emu10k1_addxmgr_free
+c_func
+(paren
+r_struct
+id|emu10k1_card
+op_star
+comma
+r_int
+)paren
 suffix:semicolon
 macro_line|#ifdef PRIVATE_PCM_VOLUME
 DECL|macro|MAX_PCM_CHANNELS
@@ -351,15 +388,11 @@ id|sblive_pcm_volume
 (braket
 )braket
 suffix:semicolon
+r_extern
+id|u16
+id|pcm_last_mixer
+suffix:semicolon
 macro_line|#endif
-DECL|macro|ENABLE
-mdefine_line|#define ENABLE &t;&t;&t;0xffffffff
-DECL|macro|DISABLE
-mdefine_line|#define DISABLE &t;&t;0x00000000
-DECL|macro|ENV_ON
-mdefine_line|#define ENV_ON&t;&t;&t;0x80
-DECL|macro|ENV_OFF
-mdefine_line|#define ENV_OFF&t;&t;&t;0x00
 DECL|macro|TIMEOUT
 mdefine_line|#define TIMEOUT &t;&t;    16384
 id|u32
@@ -382,32 +415,13 @@ id|list_head
 id|emu10k1_devs
 suffix:semicolon
 multiline_comment|/* Hardware Abstraction Layer access functions */
-DECL|macro|WRITE_FN0
-mdefine_line|#define WRITE_FN0(a,b,c) sblive_wrtmskfn0((a),(u8)(b), ((1 &lt;&lt; (((b) &gt;&gt; 24) &amp; 0x3f)) - 1) &lt;&lt; (((b) &gt;&gt; 16) &amp; 0x1f), (c) &lt;&lt; (((b) &gt;&gt; 16) &amp; 0x1f))
-DECL|macro|READ_FN0
-mdefine_line|#define READ_FN0(a,b) sblive_rdmskfn0((a),(u8)(b),((1 &lt;&lt; (((b) &gt;&gt; 24) &amp; 0x3f)) - 1) &lt;&lt; (((b) &gt;&gt; 16) &amp; 0x1f)) &gt;&gt; (((b) &gt;&gt; 16) &amp; 0x1f)
 r_void
-id|sblive_writefn0
+id|emu10k1_writefn0
 c_func
 (paren
 r_struct
 id|emu10k1_card
 op_star
-comma
-id|u8
-comma
-id|u32
-)paren
-suffix:semicolon
-r_void
-id|sblive_wrtmskfn0
-c_func
-(paren
-r_struct
-id|emu10k1_card
-op_star
-comma
-id|u8
 comma
 id|u32
 comma
@@ -415,25 +429,12 @@ id|u32
 )paren
 suffix:semicolon
 id|u32
-id|sblive_readfn0
+id|emu10k1_readfn0
 c_func
 (paren
 r_struct
 id|emu10k1_card
 op_star
-comma
-id|u8
-)paren
-suffix:semicolon
-id|u32
-id|sblive_rdmskfn0
-c_func
-(paren
-r_struct
-id|emu10k1_card
-op_star
-comma
-id|u8
 comma
 id|u32
 )paren
@@ -453,6 +454,25 @@ comma
 id|u32
 )paren
 suffix:semicolon
+r_void
+id|sblive_writeptr_tag
+c_func
+(paren
+r_struct
+id|emu10k1_card
+op_star
+id|card
+comma
+id|u32
+id|channel
+comma
+dot
+dot
+dot
+)paren
+suffix:semicolon
+DECL|macro|TAGLIST_END
+mdefine_line|#define TAGLIST_END 0
 id|u32
 id|sblive_readptr
 c_func
@@ -462,6 +482,28 @@ id|emu10k1_card
 op_star
 comma
 id|u32
+comma
+id|u32
+)paren
+suffix:semicolon
+r_void
+id|emu10k1_irq_enable
+c_func
+(paren
+r_struct
+id|emu10k1_card
+op_star
+comma
+id|u32
+)paren
+suffix:semicolon
+r_void
+id|emu10k1_irq_disable
+c_func
+(paren
+r_struct
+id|emu10k1_card
+op_star
 comma
 id|u32
 )paren

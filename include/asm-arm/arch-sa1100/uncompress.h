@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-brutus/uncompress.h&n; *&n; * (C) 1999 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&n; * Reorganised to use machine_is_*() macros.&n; */
 macro_line|#include &quot;hardware.h&quot;
 macro_line|#include &quot;serial_reg.h&quot;
+macro_line|#include &lt;asm/mach-types.h&gt;
 multiline_comment|/* Assabet&squot;s Status Control &quot;Register&quot; */
 DECL|variable|SCR_value
 r_int
@@ -82,6 +83,11 @@ r_if
 c_cond
 (paren
 id|machine_is_brutus
+c_func
+(paren
+)paren
+op_logical_or
+id|machine_is_nanoengine
 c_func
 (paren
 )paren

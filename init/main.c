@@ -178,14 +178,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|usb_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|free_initmem
 c_func
@@ -2712,14 +2704,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB
-id|usb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Do this before doing initcalls, so that we can make&n;&t;&t;&t;usbcore initialize here, and all drivers initialize later */
 macro_line|#endif
 macro_line|#ifdef CONFIG_TC
 id|tc_init

@@ -1,10 +1,7 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/keyboard.h&n; *&n; * Keyboard driver definitions for EBSA285 architecture&n; *&n; * (C) 1998 Russell King&n; * (C) 1998 Phil Blundell&n; */
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-r_extern
-r_int
-id|have_isa_bridge
-suffix:semicolon
 r_extern
 r_int
 id|pckbd_setkeycode
@@ -109,7 +106,7 @@ DECL|macro|SYSRQ_KEY
 mdefine_line|#define SYSRQ_KEY&t;0x54
 multiline_comment|/* resource allocation */
 DECL|macro|kbd_request_region
-mdefine_line|#define kbd_request_region()
+mdefine_line|#define kbd_request_region()&t;request_region(0x60, 16, &quot;keyboard&quot;)
 DECL|macro|kbd_request_irq
 mdefine_line|#define kbd_request_irq(handler) request_irq(KEYBOARD_IRQ, handler, 0, &bslash;&n;&t;&t;&t;&t;&t;     &quot;keyboard&quot;, NULL)
 multiline_comment|/* How to access the keyboard macros on this platform.  */

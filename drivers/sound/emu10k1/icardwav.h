@@ -2,39 +2,43 @@ multiline_comment|/*     &n; ***************************************************
 macro_line|#ifndef _ICARDWAV_H
 DECL|macro|_ICARDWAV_H
 mdefine_line|#define _ICARDWAV_H
-multiline_comment|/* Enumeration for SetControl */
-r_enum
-(brace
-DECL|enumerator|WAVECURPOS
-id|WAVECURPOS
-op_assign
-l_int|0x10
-comma
-)brace
-suffix:semicolon
 DECL|struct|wave_format
 r_struct
 id|wave_format
 (brace
 DECL|member|samplingrate
-id|u32
+r_int
 id|samplingrate
 suffix:semicolon
 DECL|member|bitsperchannel
-id|u32
+id|u8
 id|bitsperchannel
 suffix:semicolon
 DECL|member|channels
-id|u32
+id|u8
 id|channels
 suffix:semicolon
 multiline_comment|/* 1 = Mono, 2 = Stereo */
+DECL|member|bytesperchannel
+id|u8
+id|bytesperchannel
+suffix:semicolon
+DECL|member|bytespersample
+id|u8
+id|bytespersample
+suffix:semicolon
+DECL|member|bytespersec
+r_int
+id|bytespersec
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* emu10k1_wave states */
-DECL|macro|CARDWAVE_STATE_STOPPED
-mdefine_line|#define CARDWAVE_STATE_STOPPED     0x0001
-DECL|macro|CARDWAVE_STATE_STARTED
-mdefine_line|#define CARDWAVE_STATE_STARTED     0x0002
+DECL|macro|WAVE_STATE_OPEN
+mdefine_line|#define WAVE_STATE_OPEN&t;&t;0x01&t;
+DECL|macro|WAVE_STATE_STARTED
+mdefine_line|#define WAVE_STATE_STARTED&t;0x02
+DECL|macro|WAVE_STATE_CLOSED
+mdefine_line|#define WAVE_STATE_CLOSED&t;0x04
 macro_line|#endif /* _ICARDWAV_H */
 eof

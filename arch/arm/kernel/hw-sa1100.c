@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 multiline_comment|/*&n; * SA1100 GPIO edge detection for IRQs:&n; * IRQs are generated on Falling-Edge, Rising-Edge, or both.&n; * This must be called *before* the appropriate IRQ is registered.&n; * Use this instead of directly setting GRER/GFER.&n; */
 DECL|variable|GPIO_IRQ_rising_edge
 r_int
@@ -362,12 +363,132 @@ op_or
 id|SKCR_OE_EN
 suffix:semicolon
 multiline_comment|/* SA-1111 Register Access Bus should now be available. Clocks for&n;   * any other SA-1111 functional blocks must be enabled separately&n;   * using the SKPCR.&n;   */
+(brace
+multiline_comment|/*&n;   * SA1111 DMA bus master setup &n;   */
+r_int
+id|cas
+suffix:semicolon
+multiline_comment|/* SA1111 side */
+r_switch
+c_cond
+(paren
+(paren
+id|MDCNFG
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0x03
+)paren
+(brace
+r_case
+l_int|0x02
+suffix:colon
+id|cas
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x03
+suffix:colon
+id|cas
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|cas
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|SMCR
+op_assign
+l_int|1
+multiline_comment|/* 1: memory is SDRAM */
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|1
+)paren
+multiline_comment|/* 1:MBGNT is enable */
+op_or
+(paren
+(paren
+(paren
+id|MDCNFG
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x07
+)paren
+op_lshift
+l_int|2
+)paren
+multiline_comment|/* row address lines */
+op_or
+(paren
+id|cas
+op_lshift
+l_int|5
+)paren
+suffix:semicolon
+multiline_comment|/* CAS latency */
+multiline_comment|/* SA1110 side */
+id|GPDR
+op_or_assign
+l_int|1
+op_lshift
+l_int|21
+suffix:semicolon
+id|GPDR
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+l_int|22
+)paren
+suffix:semicolon
+id|GAFR
+op_or_assign
+(paren
+(paren
+l_int|1
+op_lshift
+l_int|21
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|22
+)paren
+)paren
+suffix:semicolon
+id|TUCR
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|10
+)paren
+suffix:semicolon
+)brace
 )brace
 )def_block
 macro_line|#endif
 DECL|function|hw_sa1100_init
 r_static
-r_void
+r_int
 id|__init
 id|hw_sa1100_init
 c_func
@@ -414,6 +535,25 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_xp860
+c_func
+(paren
+)paren
+)paren
+(brace
+id|sa1111_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|hw_sa1100_init
 id|module_init

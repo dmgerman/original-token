@@ -468,7 +468,7 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_SERIAL_RSA
+macro_line|#if defined(CONFIG_SERIAL_RSA) &amp;&amp; defined(MODULE)
 DECL|macro|PORT_RSA_MAX
 mdefine_line|#define PORT_RSA_MAX 4
 DECL|variable|probe_rsa
@@ -487,7 +487,6 @@ id|force_rsa
 id|PORT_RSA_MAX
 )braket
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -532,7 +531,6 @@ comma
 l_string|&quot;Force I/O ports for RSA&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* CONFIG_SERIAL_RSA  */
 DECL|variable|rs_table
 r_static

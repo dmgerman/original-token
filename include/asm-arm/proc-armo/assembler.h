@@ -1,7 +1,4 @@
 multiline_comment|/*&n; * linux/asm-arm/proc-armo/assembler.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * This file contains arm architecture specific defines&n; * for the different processors&n; */
-macro_line|#ifndef __ASSEMBLY__
-macro_line|#error &quot;Only include this from assembly code&quot;
-macro_line|#endif
 DECL|macro|MODE_USR
 mdefine_line|#define MODE_USR&t;USR26_MODE
 DECL|macro|MODE_FIQ
@@ -41,4 +38,49 @@ DECL|macro|USERMODE
 mdefine_line|#define USERMODE(tmpreg)&bslash;&n;&t;teqp&t;pc, $0x00000000;&bslash;&n;&t;mov&t;r0, r0
 DECL|macro|SVCMODE
 mdefine_line|#define SVCMODE(tmpreg)&bslash;&n;&t;teqp&t;pc, $0x00000003;&bslash;&n;&t;mov&t;r0, r0
+multiline_comment|/*&n; * Save the current IRQ state and disable IRQs&n; * Note that this macro assumes FIQs are enabled, and&n; * that the processor is in SVC mode.&n; */
+DECL|variable|oldcpsr
+dot
+id|macro
+id|save_and_disable_irqs
+comma
+id|oldcpsr
+comma
+id|temp
+DECL|variable|oldcpsr
+id|mov
+"&bslash;"
+id|oldcpsr
+comma
+id|pc
+DECL|variable|temp
+DECL|variable|oldcpsr
+id|orr
+"&bslash;"
+id|temp
+comma
+"&bslash;"
+id|oldcpsr
+comma
+macro_line|#0x08000000
+DECL|variable|temp
+id|teqp
+"&bslash;"
+id|temp
+comma
+macro_line|#0
+dot
+id|endm
+multiline_comment|/*&n; * Restore interrupt state previously stored in&n; * a register&n; * ** Actually do nothing on Arc - hope that the caller uses a MOVS PC soon&n; * after!&n; */
+dot
+id|macro
+id|restore_irqs
+comma
+id|oldcpsr
+"@"
+id|This
+id|be
+id|restore_irqs
+dot
+id|endm
 eof

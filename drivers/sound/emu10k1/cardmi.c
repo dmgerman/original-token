@@ -1,6 +1,10 @@
 multiline_comment|/*&n; **********************************************************************&n; *     sblive_mi.c - MIDI UART input HAL for emu10k1 driver&n; *     Copyright 1999, 2000 Creative Labs, Inc.&n; *&n; **********************************************************************&n; *&n; *     Date                 Author          Summary of changes&n; *     ----                 ------          ------------------&n; *     October 20, 1999     Bertrand Lee    base code release&n; *     November 2, 1999     Alan Cox        clean up&n; *&n; **********************************************************************&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *     GNU General Public License for more details.&n; *&n; *     You should have received a copy of the GNU General Public&n; *     License along with this program; if not, write to the Free&n; *     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *     USA.&n; *&n; **********************************************************************&n; */
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &quot;hwaccess.h&quot;
+macro_line|#include &quot;8010.h&quot;
 macro_line|#include &quot;cardmi.h&quot;
+macro_line|#include &quot;irqmgr.h&quot;
 r_static
 r_struct
 (brace
@@ -134,7 +138,8 @@ id|FLAGS_AVAILABLE
 )paren
 )paren
 r_return
-id|CTSTATUS_INUSE
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* Copy open info and mark channel as in use */
 id|card_mpuin-&gt;openinfo
@@ -194,7 +199,7 @@ id|card
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|emu10k1_mpuin_close
@@ -238,7 +243,8 @@ c_func
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Disable RX interrupt */
@@ -268,7 +274,7 @@ id|FLAGS_MIDM_STARTED
 suffix:semicolon
 multiline_comment|/* clear */
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Adds MIDI buffer to local queue list                         */
@@ -346,7 +352,8 @@ l_int|NULL
 (brace
 multiline_comment|/* Message lost */
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|midiq-&gt;next
@@ -428,7 +435,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* First set the Time Stamp if MIDI IN has not started.         */
@@ -485,6 +492,7 @@ r_else
 r_while
 c_loop
 (paren
+op_logical_neg
 id|emu10k1_mpu_read_data
 c_func
 (paren
@@ -493,8 +501,6 @@ comma
 op_amp
 id|dummy
 )paren
-op_eq
-id|CTSTATUS_SUCCESS
 )paren
 suffix:semicolon
 id|card_mpuin-&gt;status
@@ -541,7 +547,7 @@ id|INTE_MIDIRXENABLE
 suffix:semicolon
 )brace
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Disable the RX Irq.  If a partial recorded buffer            */
@@ -692,7 +698,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Disable the RX Irq.  If any buffer                           */
@@ -807,7 +813,7 @@ op_complement
 id|FLAGS_MIDM_STARTED
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Passes the message with the data back to the client          */
@@ -991,7 +997,7 @@ id|callback_msg
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|emu10k1_mpuin_bh
@@ -1154,9 +1160,14 @@ comma
 op_amp
 id|MPUIvalue
 )paren
-op_eq
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
+(brace
+r_break
+suffix:semicolon
+)brace
+r_else
 (brace
 op_increment
 id|count
@@ -1196,11 +1207,6 @@ op_mod
 id|MIDIIN_MAX_BUFFER_SIZE
 suffix:semicolon
 )brace
-r_else
-(brace
-r_break
-suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -1221,7 +1227,7 @@ id|card_mpuin-&gt;tasklet
 suffix:semicolon
 )brace
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
@@ -1270,7 +1276,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* FIXME: This should be a macro */
@@ -1427,7 +1433,8 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 r_case
 l_int|0x2
@@ -1489,7 +1496,8 @@ l_string|&quot;BUG: default case hit&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 r_return
@@ -1690,7 +1698,8 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|card_mpuin-&gt;data
@@ -1810,7 +1819,8 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|card_mpuin-&gt;curstate
@@ -1866,7 +1876,7 @@ l_int|3
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sblive_miState2Byte
@@ -2051,7 +2061,8 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|card_mpuin-&gt;curstate
@@ -2093,7 +2104,7 @@ l_int|2
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sblive_miStateSysCommon2
@@ -2219,7 +2230,8 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|card_mpuin-&gt;curstate
@@ -2261,7 +2273,7 @@ l_int|2
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sblive_miStateSysCommon3
@@ -2387,7 +2399,8 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|card_mpuin-&gt;data
@@ -2513,7 +2526,8 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|card_mpuin-&gt;curstate
@@ -2569,7 +2583,7 @@ l_int|3
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sblive_miStateSysExNorm
@@ -2724,7 +2738,8 @@ id|midiq
 suffix:semicolon
 )brace
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -2840,7 +2855,7 @@ id|midiq
 suffix:semicolon
 )brace
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 r_if

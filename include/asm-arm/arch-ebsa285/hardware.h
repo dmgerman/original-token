@@ -4,7 +4,7 @@ DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
-macro_line|#ifdef CONFIG_FOOTBRIDGE_HOST
+macro_line|#ifdef CONFIG_ARCH_FOOTBRIDGE
 multiline_comment|/*   Virtual      Physical&t;Size&n; * 0xff800000&t;0x40000000&t;1MB&t;X-Bus&n; * 0xff000000&t;0x7c000000&t;1MB&t;PCI I/O space&n; *&n; * 0xfe000000&t;0x42000000&t;1MB&t;CSR&n; * 0xfd000000&t;0x78000000&t;1MB&t;Outbound write flush (not supported)&n; * 0xfc000000&t;0x79000000&t;1MB&t;PCI IACK/special space&n; *&n; * 0xfb000000&t;0x7a000000&t;16MB&t;PCI Config type 1&n; * 0xfa000000&t;0x7b000000&t;16MB&t;PCI Config type 0&n; *&n; * 0xf9000000&t;0x50000000&t;1MB&t;Cache flush&n; * 0xf8000000&t;0x41000000&t;16MB&t;Flash memory&n; *&n; * 0xe1000000&t;&t;&t;&t;unmapped (to catch bad ISA/PCI)&n; *&n; * 0xe0000000&t;0x80000000&t;16MB&t;ISA memory&n; */
 DECL|macro|XBUS_SIZE
 mdefine_line|#define XBUS_SIZE&t;&t;0x00100000
@@ -47,6 +47,7 @@ mdefine_line|#define PCIMEM_SIZE&t;&t;0x01000000
 DECL|macro|PCIMEM_BASE
 mdefine_line|#define PCIMEM_BASE&t;&t;0xf0000000
 macro_line|#elif defined(CONFIG_ARCH_CO285)
+multiline_comment|/*&n; * This is the COEBSA285 cut-down mapping&n; */
 DECL|macro|PCIMEM_SIZE
 mdefine_line|#define PCIMEM_SIZE&t;&t;0x80000000
 DECL|macro|PCIMEM_BASE
@@ -76,7 +77,7 @@ mdefine_line|#define PCIO_SIZE&t;&t;0x00010000
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0x7ced0000
 macro_line|#else
-macro_line|#error Add your add-in architecture here
+macro_line|#error &quot;Undefined footbridge architecture&quot;
 macro_line|#endif
 DECL|macro|XBUS_LEDS
 mdefine_line|#define XBUS_LEDS&t;&t;((volatile unsigned char *)(XBUS_BASE + 0x12000))
@@ -100,8 +101,6 @@ DECL|macro|XBUS_SWITCH_J17_9
 mdefine_line|#define XBUS_SWITCH_J17_9&t;((*XBUS_SWITCH) &amp; (1 &lt;&lt; 6))
 DECL|macro|PARAMS_OFFSET
 mdefine_line|#define PARAMS_OFFSET&t;&t;0x0100
-DECL|macro|PARAMS_BASE
-mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + PARAMS_OFFSET)
 DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x50000000
 DECL|macro|UNCACHEABLE_ADDR

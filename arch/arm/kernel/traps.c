@@ -28,6 +28,7 @@ id|pmode
 )paren
 suffix:semicolon
 DECL|variable|processor_modes
+r_const
 r_char
 op_star
 id|processor_modes
@@ -1825,10 +1826,14 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUG
-c_func
+op_star
 (paren
+r_int
+op_star
 )paren
+l_int|0
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|__readwrite_bug

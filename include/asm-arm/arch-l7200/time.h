@@ -83,10 +83,6 @@ c_func
 r_void
 )paren
 (brace
-id|xtime.tv_sec
-op_assign
-id|RTC_RTCDR
-suffix:semicolon
 id|RTC_RTCC
 op_assign
 l_int|0

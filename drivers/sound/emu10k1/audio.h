@@ -2,13 +2,36 @@ multiline_comment|/*&n; ********************************************************
 macro_line|#ifndef _AUDIO_H
 DECL|macro|_AUDIO_H
 mdefine_line|#define _AUDIO_H
-DECL|macro|__NO_VERSION__
-mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/poll.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|MINFRAGS
 mdefine_line|#define MINFRAGS&t;2&t;/* _don&squot;t_ got bellow 2 */
+DECL|struct|emu10k1_wavedevice
+r_struct
+id|emu10k1_wavedevice
+(brace
+DECL|member|card
+r_struct
+id|emu10k1_card
+op_star
+id|card
+suffix:semicolon
+DECL|member|wiinst
+r_struct
+id|wiinst
+op_star
+id|wiinst
+suffix:semicolon
+DECL|member|woinst
+r_struct
+id|woinst
+op_star
+id|woinst
+suffix:semicolon
+DECL|member|enablebits
+id|u16
+id|enablebits
+suffix:semicolon
+)brace
+suffix:semicolon
 r_void
 id|emu10k1_waveout_bh
 c_func

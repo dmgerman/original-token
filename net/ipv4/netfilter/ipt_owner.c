@@ -211,7 +211,7 @@ id|p
 )paren
 (brace
 r_struct
-id|file
+id|files_struct
 op_star
 id|files
 suffix:semicolon

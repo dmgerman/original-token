@@ -1,49 +1,8 @@
-multiline_comment|/* $Id: eicon_dsp.h,v 1.5 2000/01/23 21:21:23 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon active cards.&n; *        DSP definitions&n; *&n; * Copyright 1999,2000  by Armin Schindler (mac@melware.de)&n; * Copyright 1999,2000  Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: eicon_dsp.h,v $&n; * Revision 1.5  2000/01/23 21:21:23  armin&n; * Added new trace capability and some updates.&n; * DIVA Server BRI now supports data for ISDNLOG.&n; *&n; * Revision 1.4  1999/07/25 15:12:02  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.3  1999/07/11 17:16:24  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.2  1999/03/29 11:19:42  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.1  1999/03/02 12:18:54  armin&n; * First checkin of DSP defines for audio features.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon_dsp.h,v 1.7 2000/05/07 08:51:04 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon active cards.&n; *        DSP definitions&n; *&n; * Copyright 1999,2000  by Armin Schindler (mac@melware.de)&n; * Copyright 1999,2000  Cytronics &amp; Melware (info@melware.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; */
 macro_line|#ifndef DSP_H 
 DECL|macro|DSP_H
 mdefine_line|#define DSP_H
-DECL|macro|DSP_UDATA_REQUEST_RECONFIGURE
-mdefine_line|#define DSP_UDATA_REQUEST_RECONFIGURE           0
-multiline_comment|/*&n;parameters:&n;  &lt;word&gt; reconfigure delay (in 8kHz samples)&n;  &lt;word&gt; reconfigure code&n;  &lt;byte&gt; reconfigure hdlc preamble flags&n;*/
-DECL|macro|DSP_RECONFIGURE_TX_FLAG
-mdefine_line|#define DSP_RECONFIGURE_TX_FLAG             0x8000
-DECL|macro|DSP_RECONFIGURE_SHORT_TRAIN_FLAG
-mdefine_line|#define DSP_RECONFIGURE_SHORT_TRAIN_FLAG    0x4000
-DECL|macro|DSP_RECONFIGURE_ECHO_PROTECT_FLAG
-mdefine_line|#define DSP_RECONFIGURE_ECHO_PROTECT_FLAG   0x2000
-DECL|macro|DSP_RECONFIGURE_HDLC_FLAG
-mdefine_line|#define DSP_RECONFIGURE_HDLC_FLAG           0x1000
-DECL|macro|DSP_RECONFIGURE_SYNC_FLAG
-mdefine_line|#define DSP_RECONFIGURE_SYNC_FLAG           0x0800
-DECL|macro|DSP_RECONFIGURE_PROTOCOL_MASK
-mdefine_line|#define DSP_RECONFIGURE_PROTOCOL_MASK       0x00ff
-DECL|macro|DSP_RECONFIGURE_IDLE
-mdefine_line|#define DSP_RECONFIGURE_IDLE                0
-DECL|macro|DSP_RECONFIGURE_V25
-mdefine_line|#define DSP_RECONFIGURE_V25                 1
-DECL|macro|DSP_RECONFIGURE_V21_CH2
-mdefine_line|#define DSP_RECONFIGURE_V21_CH2             2
-DECL|macro|DSP_RECONFIGURE_V27_2400
-mdefine_line|#define DSP_RECONFIGURE_V27_2400            3
-DECL|macro|DSP_RECONFIGURE_V27_4800
-mdefine_line|#define DSP_RECONFIGURE_V27_4800            4
-DECL|macro|DSP_RECONFIGURE_V29_7200
-mdefine_line|#define DSP_RECONFIGURE_V29_7200            5
-DECL|macro|DSP_RECONFIGURE_V29_9600
-mdefine_line|#define DSP_RECONFIGURE_V29_9600            6
-DECL|macro|DSP_RECONFIGURE_V33_12000
-mdefine_line|#define DSP_RECONFIGURE_V33_12000           7
-DECL|macro|DSP_RECONFIGURE_V33_14400
-mdefine_line|#define DSP_RECONFIGURE_V33_14400           8
-DECL|macro|DSP_RECONFIGURE_V17_7200
-mdefine_line|#define DSP_RECONFIGURE_V17_7200            9
-DECL|macro|DSP_RECONFIGURE_V17_9600
-mdefine_line|#define DSP_RECONFIGURE_V17_9600            10
-DECL|macro|DSP_RECONFIGURE_V17_12000
-mdefine_line|#define DSP_RECONFIGURE_V17_12000           11
-DECL|macro|DSP_RECONFIGURE_V17_14400
-mdefine_line|#define DSP_RECONFIGURE_V17_14400           12
-multiline_comment|/*&n;data indications if transparent framer&n;  &lt;byte&gt; data 0&n;  &lt;byte&gt; data 1&n;  ...&n;&n;data indications if HDLC framer&n;  &lt;byte&gt; data 0&n;  &lt;byte&gt; data 1&n;  ...&n;  &lt;byte&gt; CRC 0&n;  &lt;byte&gt; CRC 1&n;  &lt;byte&gt; preamble flags&n;*/
+macro_line|#include &quot;dsp_defs.h&quot;
 DECL|macro|DSP_UDATA_REQUEST_SWITCH_FRAMER
 mdefine_line|#define DSP_UDATA_REQUEST_SWITCH_FRAMER         1
 multiline_comment|/*&n;parameters:&n;  &lt;byte&gt; transmit framer type&n;  &lt;byte&gt; receive framer type&n;*/
@@ -62,21 +21,6 @@ multiline_comment|/*&n;parameters:&n;  - none -&n;*/
 DECL|macro|DSP_UDATA_REQUEST_TX_CONFIRMATION_OFF
 mdefine_line|#define DSP_UDATA_REQUEST_TX_CONFIRMATION_OFF   4
 multiline_comment|/*&n;parameters:&n;  - none -&n;*/
-DECL|macro|DSP_UDATA_INDICATION_SYNC
-mdefine_line|#define DSP_UDATA_INDICATION_SYNC               0
-multiline_comment|/*&n;returns:&n;  &lt;word&gt; time of sync (sampled from counter at 8kHz)&n;*/
-DECL|macro|DSP_UDATA_INDICATION_DCD_OFF
-mdefine_line|#define DSP_UDATA_INDICATION_DCD_OFF            1
-multiline_comment|/*&n;returns:&n;  &lt;word&gt; time of DCD off (sampled from counter at 8kHz)&n;*/
-DECL|macro|DSP_UDATA_INDICATION_DCD_ON
-mdefine_line|#define DSP_UDATA_INDICATION_DCD_ON             2
-multiline_comment|/*&n;returns:&n;  &lt;word&gt; time of DCD on (sampled from counter at 8kHz)&n;  &lt;byte&gt; connected norm&n;  &lt;word&gt; connected options&n;  &lt;dword&gt; connected speed (bit/s, max of tx and rx speed)&n;  &lt;word&gt; roundtrip delay (ms)&n;  &lt;dword&gt; connected speed tx (bit/s)&n;  &lt;dword&gt; connected speed rx (bit/s)&n;*/
-DECL|macro|DSP_UDATA_INDICATION_CTS_OFF
-mdefine_line|#define DSP_UDATA_INDICATION_CTS_OFF            3
-multiline_comment|/*&n;returns:&n;  &lt;word&gt; time of CTS off (sampled from counter at 8kHz)&n;*/
-DECL|macro|DSP_UDATA_INDICATION_CTS_ON
-mdefine_line|#define DSP_UDATA_INDICATION_CTS_ON             4
-multiline_comment|/*&n;returns:&n;  &lt;word&gt; time of CTS on (sampled from counter at 8kHz)&n;  &lt;byte&gt; connected norm&n;  &lt;word&gt; connected options&n;  &lt;dword&gt; connected speed (bit/s, max of tx and rx speed)&n;  &lt;word&gt; roundtrip delay (ms)&n;  &lt;dword&gt; connected speed tx (bit/s)&n;  &lt;dword&gt; connected speed rx (bit/s)&n;*/
 DECL|struct|eicon_dsp_ind
 r_typedef
 r_struct
@@ -156,44 +100,6 @@ DECL|typedef|eicon_dsp_ind
 )brace
 id|eicon_dsp_ind
 suffix:semicolon
-DECL|macro|DSP_CONNECTED_NORM_UNSPECIFIED
-mdefine_line|#define DSP_CONNECTED_NORM_UNSPECIFIED      0
-DECL|macro|DSP_CONNECTED_NORM_V21
-mdefine_line|#define DSP_CONNECTED_NORM_V21              1
-DECL|macro|DSP_CONNECTED_NORM_V23
-mdefine_line|#define DSP_CONNECTED_NORM_V23              2
-DECL|macro|DSP_CONNECTED_NORM_V22
-mdefine_line|#define DSP_CONNECTED_NORM_V22              3
-DECL|macro|DSP_CONNECTED_NORM_V22_BIS
-mdefine_line|#define DSP_CONNECTED_NORM_V22_BIS          4
-DECL|macro|DSP_CONNECTED_NORM_V32_BIS
-mdefine_line|#define DSP_CONNECTED_NORM_V32_BIS          5
-DECL|macro|DSP_CONNECTED_NORM_V34
-mdefine_line|#define DSP_CONNECTED_NORM_V34              6
-DECL|macro|DSP_CONNECTED_NORM_V8
-mdefine_line|#define DSP_CONNECTED_NORM_V8               7
-DECL|macro|DSP_CONNECTED_NORM_BELL_212A
-mdefine_line|#define DSP_CONNECTED_NORM_BELL_212A        8
-DECL|macro|DSP_CONNECTED_NORM_BELL_103
-mdefine_line|#define DSP_CONNECTED_NORM_BELL_103         9
-DECL|macro|DSP_CONNECTED_NORM_V29_LEASED_LINE
-mdefine_line|#define DSP_CONNECTED_NORM_V29_LEASED_LINE  10
-DECL|macro|DSP_CONNECTED_NORM_V33_LEASED_LINE
-mdefine_line|#define DSP_CONNECTED_NORM_V33_LEASED_LINE  11
-DECL|macro|DSP_CONNECTED_NORM_V90
-mdefine_line|#define DSP_CONNECTED_NORM_V90              12
-DECL|macro|DSP_CONNECTED_NORM_V21_CH2
-mdefine_line|#define DSP_CONNECTED_NORM_V21_CH2          13
-DECL|macro|DSP_CONNECTED_NORM_V27_TER
-mdefine_line|#define DSP_CONNECTED_NORM_V27_TER          14
-DECL|macro|DSP_CONNECTED_NORM_V29
-mdefine_line|#define DSP_CONNECTED_NORM_V29              15
-DECL|macro|DSP_CONNECTED_NORM_V33
-mdefine_line|#define DSP_CONNECTED_NORM_V33              16
-DECL|macro|DSP_CONNECTED_NORM_V17
-mdefine_line|#define DSP_CONNECTED_NORM_V17              17
-DECL|macro|DSP_CONNECTED_OPTION_TRELLIS
-mdefine_line|#define DSP_CONNECTED_OPTION_TRELLIS             0x0001
 DECL|macro|DSP_CONNECTED_OPTION_V42_TRANS
 mdefine_line|#define DSP_CONNECTED_OPTION_V42_TRANS           0x0002
 DECL|macro|DSP_CONNECTED_OPTION_V42_LAPM

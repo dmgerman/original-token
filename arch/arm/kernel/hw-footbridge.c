@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 DECL|macro|IRDA_IO_BASE
 mdefine_line|#define IRDA_IO_BASE&t;&t;0x180
 DECL|macro|GP1_IO_BASE

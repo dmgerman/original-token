@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.9 2000/08/12 13:25:53 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.10 2000/08/12 20:49:49 jj Exp $ */
 macro_line|#ifndef _SPARC64_FCNTL_H
 DECL|macro|_SPARC64_FCNTL_H
 mdefine_line|#define _SPARC64_FCNTL_H
@@ -59,6 +59,14 @@ DECL|macro|F_SETSIG
 mdefine_line|#define F_SETSIG&t;10&t;/*  for sockets. */
 DECL|macro|F_GETSIG
 mdefine_line|#define F_GETSIG&t;11&t;/*  for sockets. */
+macro_line|#ifdef __KERNEL__
+DECL|macro|F_GETLK64
+mdefine_line|#define F_GETLK64&t;12
+DECL|macro|F_SETLK64
+mdefine_line|#define F_SETLK64&t;13
+DECL|macro|F_SETLKW64
+mdefine_line|#define F_SETLKW64&t;14
+macro_line|#endif
 multiline_comment|/* for F_[GET|SET]FL */
 DECL|macro|FD_CLOEXEC
 mdefine_line|#define FD_CLOEXEC&t;1&t;/* actually anything with low bit set goes */

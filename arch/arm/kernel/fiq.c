@@ -124,13 +124,14 @@ id|fiq_handler
 id|default_owner
 op_assign
 (brace
-l_int|NULL
-comma
+id|name
+suffix:colon
 l_string|&quot;default&quot;
 comma
+id|fiq_op
+suffix:colon
 id|fiq_def_op
 comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|current_fiq

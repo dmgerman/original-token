@@ -2,6 +2,8 @@ multiline_comment|/*&n; ********************************************************
 macro_line|#ifndef _TIMER_H
 DECL|macro|_TIMER_H
 mdefine_line|#define _TIMER_H
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &quot;hwaccess.h&quot;
 DECL|struct|emu_timer
 r_struct
 id|emu_timer
@@ -16,9 +18,9 @@ r_struct
 id|tasklet_struct
 id|tasklet
 suffix:semicolon
-DECL|member|active
-r_int
-id|active
+DECL|member|state
+id|u8
+id|state
 suffix:semicolon
 DECL|member|count
 id|u32
@@ -37,9 +39,7 @@ suffix:semicolon
 multiline_comment|/* timer delay */
 )brace
 suffix:semicolon
-r_struct
-id|emu_timer
-op_star
+r_void
 id|emu10k1_timer_install
 c_func
 (paren
@@ -47,17 +47,9 @@ r_struct
 id|emu10k1_card
 op_star
 comma
-r_void
-(paren
+r_struct
+id|emu_timer
 op_star
-)paren
-(paren
-r_int
-r_int
-)paren
-comma
-r_int
-r_int
 comma
 id|u32
 )paren
@@ -102,6 +94,12 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|TIMER_STOPPED
-mdefine_line|#define TIMER_STOPPED 0xffffffff 
+mdefine_line|#define TIMER_STOPPED &t;&t;&t;0xffffffff 
+DECL|macro|TIMER_STATE_INSTALLED
+mdefine_line|#define TIMER_STATE_INSTALLED &t;&t;0x01
+DECL|macro|TIMER_STATE_ACTIVE
+mdefine_line|#define TIMER_STATE_ACTIVE&t;&t;0x02
+DECL|macro|TIMER_STATE_UNINSTALLED
+mdefine_line|#define TIMER_STATE_UNINSTALLED &t;0x04
 macro_line|#endif /* _TIMER_H */
 eof

@@ -925,6 +925,12 @@ id|KERN_ERR
 l_string|&quot;Z8530 series device not found.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_goto
 id|dmafail2
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-l7200/ide.h&n; *&n; * Copyright (c) 2000 Steve Hill (sjhill@cotw.com)&n; *&n; * Changelog:&n; *  29-03-2000&t;SJH&t;Created file placeholder&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-l7200/ide.h&n; *&n; * Copyright (c) 2000 Steve Hill (sjhill@cotw.com)&n; *&n; * Changelog:&n; *  03-29-2000&t;SJH&t;Created file placeholder&n; */
 macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/*&n; * Set up a hw structure for a specified data port, control port and IRQ.&n; * This should follow whatever the default interface uses.&n; */
 r_static

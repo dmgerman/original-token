@@ -5,10 +5,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
 r_int
-id|have_isa_bridge
-suffix:semicolon
-r_extern
-r_int
 id|pckbd_setkeycode
 c_func
 (paren

@@ -2,23 +2,41 @@ multiline_comment|/*&n; ********************************************************
 macro_line|#ifndef _8010_H
 DECL|macro|_8010_H
 mdefine_line|#define _8010_H
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* ------------------- DEFINES -------------------- */
-DECL|macro|EMUPAGESIZE
-mdefine_line|#define EMUPAGESIZE&t;4096&t;&t;/* don&squot;t change */
-DECL|macro|RESERVED
-mdefine_line|#define RESERVED&t;0
-DECL|macro|NUM_G
-mdefine_line|#define NUM_G&t;&t;64&t;&t;/* use all channels */
-DECL|macro|NUM_FXSENDS
-mdefine_line|#define NUM_FXSENDS&t;4&t;&t;/* don&squot;t change */
-DECL|macro|MAXPAGES
-mdefine_line|#define MAXPAGES        (32768 * NUM_G / EMUPAGESIZE)      /* WAVEOUT_MAXBUFSIZE * NUM_G / EMUPAGESIZE */
-DECL|macro|TMEMSIZE
-mdefine_line|#define TMEMSIZE&t;256*1024
-DECL|macro|TMEMSIZEREG
-mdefine_line|#define TMEMSIZEREG&t;4
-DECL|macro|IP_TO_CP
-mdefine_line|#define IP_TO_CP(ip) ((ip == 0) ? 0 : (((0x00001000uL | (ip &amp; 0x00000FFFL)) &lt;&lt; (((ip &gt;&gt; 12) &amp; 0x000FL) + 4)) &amp; 0xFFFF0000uL))
+DECL|macro|CMD_WRITEFN0
+mdefine_line|#define CMD_WRITEFN0&t;&t;0x0
+DECL|macro|CMD_READFN0
+mdefine_line|#define CMD_READFN0&t;&t;0x1
+DECL|macro|CMD_WRITEPTR
+mdefine_line|#define CMD_WRITEPTR&t;&t;0x2
+DECL|macro|CMD_READPTR
+mdefine_line|#define CMD_READPTR&t;&t;0x3
+DECL|macro|CMD_SETRECSRC
+mdefine_line|#define CMD_SETRECSRC&t;&t;0x4
+DECL|macro|CMD_GETRECSRC
+mdefine_line|#define CMD_GETRECSRC&t;&t;0x5
+DECL|macro|CMD_GETVOICEPARAM
+mdefine_line|#define CMD_GETVOICEPARAM&t;0x6
+DECL|macro|CMD_SETVOICEPARAM
+mdefine_line|#define CMD_SETVOICEPARAM&t;0x7
+DECL|struct|mixer_private_ioctl
+r_struct
+id|mixer_private_ioctl
+(brace
+DECL|member|cmd
+id|u32
+id|cmd
+suffix:semicolon
+DECL|member|val
+id|u32
+id|val
+(braket
+l_int|10
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/************************************************************************************************/
 multiline_comment|/* PCI function 0 registers, address = &lt;val&gt; + PCIBASE0&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/************************************************************************************************/
@@ -222,6 +240,8 @@ DECL|macro|HCFG_AC3ENABLE_ZVIDEO
 mdefine_line|#define HCFG_AC3ENABLE_ZVIDEO&t;0x00000080&t;/* Channels 0 and 1 replace ZVIDEO&t;&t;*/
 DECL|macro|HCFG_AC3ENABLE_CDSPDIF
 mdefine_line|#define HCFG_AC3ENABLE_CDSPDIF&t;0x00000040&t;/* Channels 0 and 1 replace CDSPDIF&t;&t;*/
+DECL|macro|HCFG_AC3ENABLE_GPSPDIF
+mdefine_line|#define HCFG_AC3ENABLE_GPSPDIF  0x00000020      /* Channels 0 and 1 replace GPSPDIF             */
 DECL|macro|HCFG_AUTOMUTE
 mdefine_line|#define HCFG_AUTOMUTE&t;&t;0x00000010&t;/* When set, the async sample rate convertors&t;*/
 multiline_comment|/* will automatically mute their output when&t;*/
@@ -230,9 +250,11 @@ multiline_comment|/* async audio source  &t;&t;&t;&t;*/
 DECL|macro|HCFG_LOCKSOUNDCACHE
 mdefine_line|#define HCFG_LOCKSOUNDCACHE&t;0x00000008&t;/* 1 = Cancel bustmaster accesses to soundcache */
 multiline_comment|/* NOTE: This should generally never be used.  &t;*/
-DECL|macro|HCFG_LOCKTANKCACHE
-mdefine_line|#define HCFG_LOCKTANKCACHE&t;0x00000004&t;/* 1 = Cancel bustmaster accesses to tankcache&t;*/
+DECL|macro|HCFG_LOCKTANKCACHE_MASK
+mdefine_line|#define HCFG_LOCKTANKCACHE_MASK&t;0x00000004&t;/* 1 = Cancel bustmaster accesses to tankcache&t;*/
 multiline_comment|/* NOTE: This should generally never be used.  &t;*/
+DECL|macro|HCFG_LOCKTANKCACHE
+mdefine_line|#define HCFG_LOCKTANKCACHE&t;0x01020014
 DECL|macro|HCFG_MUTEBUTTONENABLE
 mdefine_line|#define HCFG_MUTEBUTTONENABLE&t;0x00000002&t;/* 1 = Master mute button sets AUDIOENABLE = 0.&t;*/
 multiline_comment|/* NOTE: This is a &squot;cheap&squot; way to implement a&t;*/
@@ -337,8 +359,8 @@ DECL|macro|AC97_RECORDGAIN
 mdefine_line|#define AC97_RECORDGAIN&t;&t;0x1c
 DECL|macro|AC97_RECORDGAINMIC
 mdefine_line|#define AC97_RECORDGAINMIC&t;0x1e
-DECL|macro|AC97_GENERALPUPOSE
-mdefine_line|#define AC97_GENERALPUPOSE&t;0x20
+DECL|macro|AC97_GENERALPURPOSE
+mdefine_line|#define AC97_GENERALPURPOSE&t;0x20
 DECL|macro|AC97_3DCONTROL
 mdefine_line|#define AC97_3DCONTROL&t;&t;0x22
 DECL|macro|AC97_MODEMRATE
@@ -458,13 +480,17 @@ mdefine_line|#define CCCA_CURRADDR&t;&t;0x18000008
 DECL|macro|CCR
 mdefine_line|#define CCR&t;&t;&t;0x09&t;&t;/* Cache control register&t;&t;&t;&t;*/
 DECL|macro|CCR_CACHEINVALIDSIZE
-mdefine_line|#define CCR_CACHEINVALIDSIZE&t;0xfe000000&t;/* Number of invalid samples cache for this channel    &t;*/
+mdefine_line|#define CCR_CACHEINVALIDSIZE&t;0x07190009
+DECL|macro|CCR_CACHEINVALIDSIZE_MASK
+mdefine_line|#define CCR_CACHEINVALIDSIZE_MASK&t;0xfe000000&t;/* Number of invalid samples cache for this channel    &t;*/
 DECL|macro|CCR_CACHELOOPFLAG
 mdefine_line|#define CCR_CACHELOOPFLAG&t;0x01000000&t;/* 1 = Cache has a loop service pending&t;&t;&t;*/
 DECL|macro|CCR_INTERLEAVEDSAMPLES
 mdefine_line|#define CCR_INTERLEAVEDSAMPLES&t;0x00800000&t;/* 1 = A cache service will fetch interleaved samples&t;*/
 DECL|macro|CCR_WORDSIZEDSAMPLES
 mdefine_line|#define CCR_WORDSIZEDSAMPLES&t;0x00400000&t;/* 1 = A cache service will fetch word sized samples&t;*/
+DECL|macro|CCR_READADDRESS
+mdefine_line|#define CCR_READADDRESS&t;&t;0x06100009
 DECL|macro|CCR_READADDRESS_MASK
 mdefine_line|#define CCR_READADDRESS_MASK&t;0x003f0000&t;/* Location of cache just beyond current cache service&t;*/
 DECL|macro|CCR_LOOPINVALSIZE

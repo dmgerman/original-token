@@ -1291,10 +1291,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|sock_mnt-&gt;mnt_sb
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1303,6 +1299,10 @@ id|inode
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+id|inode-&gt;i_sb
+op_assign
+id|sock_mnt-&gt;mnt_sb
 suffix:semicolon
 id|sock
 op_assign
@@ -6569,6 +6569,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|sock_fs_type
+)paren
+suffix:semicolon
+id|sock_mnt
+op_assign
+id|kern_mount
+c_func
+(paren
+op_amp
+id|sock_fs_type
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;The netlink device handler may be needed early.&n;&t; */
 macro_line|#ifdef  CONFIG_RTNETLINK
 id|rtnetlink_init
@@ -6591,22 +6607,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|register_filesystem
-c_func
-(paren
-op_amp
-id|sock_fs_type
-)paren
-suffix:semicolon
-id|sock_mnt
-op_assign
-id|kern_mount
-c_func
-(paren
-op_amp
-id|sock_fs_type
-)paren
-suffix:semicolon
 )brace
 DECL|function|socket_get_info
 r_int

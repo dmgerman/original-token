@@ -3,7 +3,6 @@ macro_line|#ifndef _ASMARM_PGALLOC_H
 DECL|macro|_ASMARM_PGALLOC_H
 mdefine_line|#define _ASMARM_PGALLOC_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * Get the cache handling stuff now.&n; */
 macro_line|#include &lt;asm/proc/cache.h&gt;

@@ -94,6 +94,10 @@ mdefine_line|#define __sti()&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&bsl
 multiline_comment|/*&n; * Disable IRQs&n; */
 DECL|macro|__cli
 mdefine_line|#define __cli()&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&t;&t;@ cli&bslash;n&quot;&t;&bslash;&n;&quot;&t;orr&t;%0, %0, #0x08000000&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;teqp&t;%0, #0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&t;&bslash;&n;&t;  :&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&t;&bslash;&n;&t;} while(0)
+DECL|macro|__clf
+mdefine_line|#define __clf()&t;do {&t;&t;&t;&t;&bslash;&n;&t;unsigned long temp;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&t;&t;@ clf&bslash;n&quot;&t;&bslash;&n;&quot;&t;orr&t;%0, %0, #0x04000000&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;teqp&t;%0, #0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (temp));&t;&t;&t;&t;&bslash;&n;    } while(0)
+DECL|macro|__stf
+mdefine_line|#define __stf()&t;do {&t;&t;&t;&t;&bslash;&n;&t;unsigned long temp;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&t;&t;@ stf&bslash;n&quot;&t;&bslash;&n;&quot;&t;bic&t;%0, %0, #0x04000000&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;teqp&t;%0, #0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (temp));&t;&t;&t;&t;&bslash;&n;    } while(0)
 multiline_comment|/*&n; * save current IRQ &amp; FIQ state&n; */
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(x)&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&t;&t;@ save_flags&bslash;n&quot;&t;&bslash;&n;&quot;&t;and&t;%0, %0, #0x0c000000&bslash;n&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (x));&t;&t;&t;&t;&bslash;&n;&t;} while (0)

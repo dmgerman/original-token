@@ -3,6 +3,7 @@ macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 DECL|function|arch_idle
 r_static
 r_void

@@ -1264,7 +1264,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This is virtual DMA - we don&squot;t need anything here.&n; */
 DECL|function|sound_enable_disable_dma
 r_static
-r_int
+r_void
 id|sound_enable_disable_dma
 c_func
 (paren

@@ -51,11 +51,14 @@ comma
 DECL|enumerator|VIA_MVP4
 id|VIA_MVP4
 comma
-DECL|enumerator|VIA_APOLLO_SUPER
-id|VIA_APOLLO_SUPER
-comma
 DECL|enumerator|VIA_APOLLO_PRO
 id|VIA_APOLLO_PRO
+comma
+DECL|enumerator|VIA_APOLLO_KX133
+id|VIA_APOLLO_KX133
+comma
+DECL|enumerator|VIA_APOLLO_KT133
+id|VIA_APOLLO_KT133
 comma
 DECL|enumerator|SIS_GENERIC
 id|SIS_GENERIC

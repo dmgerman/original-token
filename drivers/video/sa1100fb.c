@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/video/sa1100fb.c -- StrongARM 1100 LCD Controller Frame Buffer Device&n; *&n; *  Copyright (C) 1999 Eric A. Thomas&n; *  &n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
-multiline_comment|/*&n; *   Code Status:&n; *&t;4/1/99 - Driver appears to be working for Brutus 320x200x8bpp mode.  Other&n; *               resolutions are working, but only the 8bpp mode is supported.&n; *               Changes need to be made to the palette encode and decode routines&n; *               to support 4 and 16 bpp modes.  &n; *               Driver is not designed to be a module.  The FrameBuffer is statically&n; *               allocated since dynamic allocation of a 300k buffer cannot be guaranteed. &n; *&n; *     6/17/99 - FrameBuffer memory is now allocated at run-time when the&n; *               driver is initialized.    &n; *&n; */
+multiline_comment|/*&n; *   Code Status:&n; * 1999/04/01:&n; * &t;Driver appears to be working for Brutus 320x200x8bpp mode.  Other&n; * &t;resolutions are working, but only the 8bpp mode is supported.&n; * &t;Changes need to be made to the palette encode and decode routines&n; * &t;to support 4 and 16 bpp modes.  &n; * &t;Driver is not designed to be a module.  The FrameBuffer is statically&n; * &t;allocated since dynamic allocation of a 300k buffer cannot be &n; * &t;guaranteed. &n; * &n; * 1999/06/17:&n; * &t;FrameBuffer memory is now allocated at run-time when the&n; * &t;driver is initialized.    &n; *&n; * 2000/04/10:&n; * &t;Big cleanup for dynamic selection of machine type at run time.&n; * &t;&t;Nicolas Pitre &lt;nico@cam.org&gt;&n; * &n; * 2000/07/19:&n; * &t;Support for Bitsy aka Compaq iPAQ H3600 added.&n; * &t;&t;Jamey Hicks &lt;jamey@crl.dec.com&gt;&n; * &n; * 2000/08/07:&n; * &t;Resolved an issue caused by a change made to the Assabet&squot;s PLD &n; * &t;earlier this year which broke the framebuffer driver for newer &n; * &t;Phase 4 Assabets.  Some other parameters were changed to optimize for&n; * &t;the Sharp display.&n; * &t;&t;Tak-Shing Chan &lt;tchan.rd@idthk.com&gt;&n; * &t;&t;Jeff Sutherland &lt;jsutherland@accelent.com&gt;&n; * &n; * 2000/08/09:&n; * &t;XP860 support added&n; * &t;&t;Kunihiko IMAI &lt;???&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/proc/pgtable.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
@@ -1226,7 +1227,7 @@ op_star
 id|par
 )paren
 (brace
-singleline_comment|// Don&squot;t know if really want to var on entry.
+singleline_comment|// Don&squot;t know if really want to zero var on entry.
 singleline_comment|// Look at set_var to see.  If so, may need to add extra params to par     
 singleline_comment|//&t;memset(var, 0, sizeof(struct fb_var_screeninfo));
 id|var-&gt;xres
@@ -1297,17 +1298,61 @@ singleline_comment|// This case should differ for Active/Passive mode
 r_case
 l_int|16
 suffix:colon
+r_if
+c_cond
+(paren
+id|machine_is_bitsy
+c_func
+(paren
+)paren
+)paren
+(brace
 id|var-&gt;red.length
+op_assign
+l_int|4
+suffix:semicolon
+id|var-&gt;blue.length
+op_assign
+l_int|4
+suffix:semicolon
+id|var-&gt;green.length
+op_assign
+l_int|4
+suffix:semicolon
+id|var-&gt;transp.length
+op_assign
+l_int|0
+suffix:semicolon
+id|var-&gt;red.offset
+op_assign
+l_int|12
+suffix:semicolon
+id|var-&gt;green.offset
+op_assign
+l_int|7
+suffix:semicolon
+id|var-&gt;blue.offset
+op_assign
+l_int|1
+suffix:semicolon
+id|var-&gt;transp.offset
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|var-&gt;red.length
+op_assign
+l_int|5
+suffix:semicolon
+id|var-&gt;blue.length
 op_assign
 l_int|5
 suffix:semicolon
 id|var-&gt;green.length
 op_assign
 l_int|6
-suffix:semicolon
-id|var-&gt;blue.length
-op_assign
-l_int|5
 suffix:semicolon
 id|var-&gt;transp.length
 op_assign
@@ -1329,6 +1374,7 @@ id|var-&gt;transp.offset
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -1609,6 +1655,28 @@ suffix:semicolon
 id|DPRINTK
 c_func
 (paren
+l_string|&quot;palette_size = 0x%08lx&bslash;n&quot;
+comma
+(paren
+id|u_long
+)paren
+id|par-&gt;palette_size
+)paren
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;palette_mem_size = 0x%08lx&bslash;n&quot;
+comma
+(paren
+id|u_long
+)paren
+id|palette_mem_size
+)paren
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
 l_string|&quot;p_screen_base  = 0x%08lx&bslash;n&quot;
 comma
 (paren
@@ -1787,16 +1855,6 @@ op_amp
 id|global_disp
 suffix:semicolon
 multiline_comment|/* Default display settings */
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;xres = %d, yres = %d&bslash;n&quot;
-comma
-id|var-&gt;xres
-comma
-id|var-&gt;yres
-)paren
-suffix:semicolon
 multiline_comment|/* Decode var contents into a par structure, adjusting any */
 multiline_comment|/* out of range values. */
 r_if
@@ -1973,14 +2031,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;chgvar=%d&bslash;n&quot;
-comma
-id|chgvar
-)paren
-suffix:semicolon
 id|display-&gt;var
 op_assign
 op_star
@@ -2029,20 +2079,6 @@ suffix:semicolon
 id|display-&gt;inverse
 op_assign
 l_int|0
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;display-&gt;var.bits_per_pixel=%d xres=%d yres=%d display-&gt;dispsw=%p&bslash;n&quot;
-comma
-id|display-&gt;var.bits_per_pixel
-comma
-id|var-&gt;xres
-comma
-id|var-&gt;yres
-comma
-id|display-&gt;dispsw
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -2158,18 +2194,6 @@ id|fb_default_cmap
 c_func
 (paren
 id|current_par.palette_size
-)paren
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;visual=%d palette_size=%d cmap=%p&bslash;n&quot;
-comma
-id|current_par.visual
-comma
-id|current_par.palette_size
-comma
-id|cmap
 )paren
 suffix:semicolon
 id|fb_set_cmap
@@ -2511,6 +2535,10 @@ id|init_var.sync
 op_assign
 l_int|0
 suffix:semicolon
+id|init_var.pixclock
+op_assign
+l_int|171521
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -2536,15 +2564,27 @@ l_int|16
 suffix:semicolon
 id|init_var.red.length
 op_assign
-l_int|5
+l_int|4
 suffix:semicolon
 id|init_var.green.length
 op_assign
-l_int|6
+l_int|4
 suffix:semicolon
 id|init_var.blue.length
 op_assign
-l_int|5
+l_int|4
+suffix:semicolon
+id|init_var.red.offset
+op_assign
+l_int|12
+suffix:semicolon
+id|init_var.green.offset
+op_assign
+l_int|7
+suffix:semicolon
+id|init_var.blue.offset
+op_assign
+l_int|1
 suffix:semicolon
 id|init_var.grayscale
 op_assign
@@ -2799,6 +2839,65 @@ suffix:semicolon
 id|init_var.vmode
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_xp860
+c_func
+(paren
+)paren
+)paren
+(brace
+id|current_par.max_xres
+op_assign
+l_int|1024
+suffix:semicolon
+id|current_par.max_yres
+op_assign
+l_int|768
+suffix:semicolon
+id|current_par.max_bpp
+op_assign
+l_int|8
+suffix:semicolon
+id|init_var.red.length
+op_assign
+l_int|4
+suffix:semicolon
+id|init_var.green
+op_assign
+id|init_var.red
+suffix:semicolon
+id|init_var.blue
+op_assign
+id|init_var.red
+suffix:semicolon
+id|init_var.hsync_len
+op_assign
+l_int|4
+suffix:semicolon
+id|init_var.left_margin
+op_assign
+l_int|3
+suffix:semicolon
+id|init_var.right_margin
+op_assign
+l_int|2
+suffix:semicolon
+id|init_var.vsync_len
+op_assign
+l_int|3
+suffix:semicolon
+id|init_var.upper_margin
+op_assign
+l_int|2
+suffix:semicolon
+id|init_var.lower_margin
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|current_par.p_palette_base
@@ -3090,16 +3189,6 @@ op_or
 id|L_PTE_WRITE
 )paren
 suffix:semicolon
-id|memset
-c_func
-(paren
-id|VideoMemRegion
-comma
-l_int|0xAA
-comma
-id|ALLOCATED_FB_MEM_SIZE
-)paren
-suffix:semicolon
 r_return
 (paren
 id|VideoMemRegion
@@ -3211,6 +3300,43 @@ l_int|12
 suffix:semicolon
 multiline_comment|/* the last multiplication by 1.2 is to handle */
 multiline_comment|/* sync problems */
+)brace
+r_if
+c_cond
+(paren
+id|machine_is_assabet
+c_func
+(paren
+)paren
+)paren
+(brace
+id|pcd
+op_assign
+id|frequency
+(braket
+id|PPCR
+op_amp
+l_int|0xf
+)braket
+op_div
+l_int|1000
+suffix:semicolon
+id|pcd
+op_mul_assign
+id|pixclock
+op_div
+l_int|1000
+suffix:semicolon
+id|pcd
+op_assign
+id|pcd
+op_div
+l_int|1000000
+suffix:semicolon
+id|pcd
+op_increment
+suffix:semicolon
+multiline_comment|/* make up for integer math truncations */
 )brace
 r_return
 id|pcd
@@ -3366,7 +3492,7 @@ op_plus
 id|LCCR2_VrtSnchWdth
 c_func
 (paren
-l_int|2
+l_int|1
 )paren
 op_plus
 id|LCCR2_BegFrmDel
@@ -3402,7 +3528,7 @@ op_plus
 id|LCCR3_PixClkDiv
 c_func
 (paren
-l_int|38
+id|pcd
 )paren
 suffix:semicolon
 multiline_comment|/* Set board control register to handle new color depth */
@@ -3472,13 +3598,13 @@ op_plus
 id|LCCR1_BegLnDel
 c_func
 (paren
-l_int|0x1f
+l_int|0xC
 )paren
 op_plus
 id|LCCR1_EndLnDel
 c_func
 (paren
-l_int|0x1f
+l_int|0x11
 )paren
 suffix:semicolon
 id|lcd_shadow.lccr2
@@ -3487,29 +3613,44 @@ id|LCCR2_DisHght
 c_func
 (paren
 id|var-&gt;yres
+op_plus
+l_int|1
 )paren
 op_plus
 id|LCCR2_VrtSnchWdth
 c_func
 (paren
-l_int|1
+l_int|3
 )paren
 op_plus
 id|LCCR2_BegFrmDel
 c_func
 (paren
-l_int|0
+l_int|10
 )paren
 op_plus
 id|LCCR2_EndFrmDel
 c_func
 (paren
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 id|lcd_shadow.lccr3
 op_assign
-l_int|15
+(paren
+multiline_comment|/* PCD */
+l_int|0x10
+op_or
+multiline_comment|/* ACB */
+l_int|0
+op_or
+multiline_comment|/* API */
+l_int|0
+op_or
+id|LCCR3_VrtSnchL
+op_or
+id|LCCR3_HorSnchL
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -4099,6 +4240,109 @@ id|LCCR3_VrtSnchH
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;((current_var.sync &amp; FB_SYNC_HOR_HIGH_ACT) ? LCCR3_HorSnchH : LCCR3_HorSnchL) +&n;&t;&t;&t;((current_var.sync &amp; FB_SYNC_VERT_HIGH_ACT) ? LCCR3_VrtSnchH : LCCR3_VrtSnchL);&n;&t;&t;*/
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_xp860
+c_func
+(paren
+)paren
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Configuring XP860 LCD&bslash;n&quot;
+)paren
+suffix:semicolon
+id|lcd_shadow.lccr0
+op_assign
+id|LCCR0_LEN
+op_plus
+id|LCCR0_Color
+op_plus
+id|LCCR0_Sngl
+op_plus
+id|LCCR0_Act
+op_plus
+id|LCCR0_LtlEnd
+op_plus
+id|LCCR0_LDM
+op_plus
+id|LCCR0_ERM
+op_plus
+id|LCCR0_DMADel
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|lcd_shadow.lccr1
+op_assign
+id|LCCR1_DisWdth
+c_func
+(paren
+id|var-&gt;xres
+)paren
+op_plus
+id|LCCR1_HorSnchWdth
+c_func
+(paren
+id|var-&gt;hsync_len
+)paren
+op_plus
+id|LCCR1_BegLnDel
+c_func
+(paren
+id|var-&gt;left_margin
+)paren
+op_plus
+id|LCCR1_EndLnDel
+c_func
+(paren
+id|var-&gt;right_margin
+)paren
+suffix:semicolon
+id|lcd_shadow.lccr2
+op_assign
+id|LCCR2_DisHght
+c_func
+(paren
+id|var-&gt;yres
+)paren
+op_plus
+id|LCCR2_VrtSnchWdth
+c_func
+(paren
+id|var-&gt;vsync_len
+)paren
+op_plus
+id|LCCR2_BegFrmDel
+c_func
+(paren
+id|var-&gt;upper_margin
+)paren
+op_plus
+id|LCCR2_EndFrmDel
+c_func
+(paren
+id|var-&gt;lower_margin
+)paren
+suffix:semicolon
+id|lcd_shadow.lccr3
+op_assign
+id|LCCR3_PixClkDiv
+c_func
+(paren
+l_int|6
+)paren
+op_plus
+id|LCCR3_HorSnchL
+op_plus
+id|LCCR3_VrtSnchL
+suffix:semicolon
+)brace
 multiline_comment|/* Restore interrupt status */
 id|restore_flags
 c_func
@@ -4178,6 +4422,11 @@ op_amp
 id|LCSR_LDD
 )paren
 (brace
+r_int
+id|controller_state
+op_assign
+id|current_par.controller_state
+suffix:semicolon
 multiline_comment|/* Disable Done Flag is set */
 id|LCCR0
 op_or_assign
@@ -4191,11 +4440,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current_par.controller_state
+id|controller_state
 op_eq
 id|LCD_MODE_DISABLE_BEFORE_ENABLE
 )paren
 (brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;sa1100fb_inter_handler: re-enabling LCD controller&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sa1100fb_enable_lcd_controller
 c_func
 (paren
@@ -4283,6 +4538,13 @@ c_func
 )paren
 (brace
 macro_line|#ifdef CONFIG_SA1100_BITSY
+r_if
+c_cond
+(paren
+id|current_par.controller_state
+op_ne
+id|LCD_MODE_DISABLE_BEFORE_ENABLE
+)paren
 id|clr_bitsy_egpio
 c_func
 (paren
@@ -4502,6 +4764,7 @@ id|EGPIO_BITSY_LCD_5V_ON
 op_or
 id|EGPIO_BITSY_LVDD_ON
 )paren
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -4730,6 +4993,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* TODO: Bitsy support for blanking display */
 )brace
 multiline_comment|/*&n; *  sa1100fb_switch():       &n; *&t;Change to the specified console.  Palette and video mode&n; *      are changed to the console&squot;s stored parameters. &n; */
 r_static
@@ -4945,6 +5209,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sa1100fb: failed in request_irq&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5084,6 +5349,25 @@ l_int|24
 )paren
 suffix:semicolon
 multiline_comment|/* set GPIO24 to output */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_xp860
+c_func
+(paren
+)paren
+)paren
+(brace
+id|GPDR
+op_or_assign
+l_int|0x3fc
+suffix:semicolon
+id|GAFR
+op_or_assign
+l_int|0x3fc
+suffix:semicolon
 )brace
 r_if
 c_cond

@@ -1,7 +1,6 @@
 macro_line|#ifndef __ASM_ARM_TERMBITS_H
 DECL|macro|__ASM_ARM_TERMBITS_H
 mdefine_line|#define __ASM_ARM_TERMBITS_H
-macro_line|#include &lt;linux/posix_types.h&gt;
 DECL|typedef|cc_t
 r_typedef
 r_int

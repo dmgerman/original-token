@@ -761,6 +761,14 @@ id|KERN_ERR
 l_string|&quot;Memory allocation failed.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|ioport
+comma
+id|iolen
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -1374,9 +1382,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 r_return
-op_minus
-op_logical_neg
-id|ns558
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|ns558_exit

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * bluetooth.c   Version 0.3&n; *&n; * Copyright (c) 2000 Greg Kroah-Hartman&t;&lt;greg@kroah.com&gt;&n; * Copyright (c) 2000 Mark Douglas Corner&t;&lt;mcorner@umich.edu&gt;&n; *&n; * USB Bluetooth driver, based on the Bluetooth Spec version 1.0B&n; *&n; *&n; * (08/03/2000) Version 0.3 gkh mdc&n; *&t;Merged in Mark&squot;s changes to make the driver play nice with the Axis&n; *&t;stack.&n; *&t;Made the write bulk use an urb pool to enable larger transfers with&n; *&t;fewer calls to the driver.&n; *&t;Fixed off by one bug in acl pkt receive&n; *&t;Made packet counters specific to each bluetooth device &n; *&t;Added checks for zero length callbacks&n; *&t;Added buffers for int and bulk packets.  Had to do this otherwise &n; *&t;packet types could intermingle.&n; *&t;Made a control urb pool for the control messages.&n; *&n; * (07/11/2000) Version 0.2 gkh&n; *&t;Fixed a small bug found by Nils Faerber in the usb_bluetooth_probe &n; *&t;function.&n; *&n; * (07/09/2000) Version 0.1 gkh&n; *&t;Initial release. Has support for sending ACL data (which is really just&n; *&t;a HCI frame.) Raw HCI commands and HCI events are not supported.&n; *&t;A ioctl will probably be needed for the HCI commands and events in the&n; *&t;future. All isoch endpoints are ignored at this time also.&n; *&t;This driver should work for all currently shipping USB Bluetooth &n; *&t;devices at this time :)&n; * &n; */
+multiline_comment|/*&n; * bluetooth.c   Version 0.4&n; *&n; * Copyright (c) 2000 Greg Kroah-Hartman&t;&lt;greg@kroah.com&gt;&n; * Copyright (c) 2000 Mark Douglas Corner&t;&lt;mcorner@umich.edu&gt;&n; *&n; * USB Bluetooth driver, based on the Bluetooth Spec version 1.0B&n; *&n; *&n; * (07/11/2000) Version 0.4 gkh&n; *&t;Fixed bug in disconnect for when we call tty_hangup&n; *&t;Fixed bug in bluetooth_ctrl_msg where the bluetooth struct was not&n; *&t;getting attached to the control urb properly.&n; *&t;Fixed bug in bluetooth_write where we pay attention to the result&n; *&t;of bluetooth_ctrl_msg.&n; *&n; * (08/03/2000) Version 0.3 gkh mdc&n; *&t;Merged in Mark&squot;s changes to make the driver play nice with the Axis&n; *&t;stack.&n; *&t;Made the write bulk use an urb pool to enable larger transfers with&n; *&t;fewer calls to the driver.&n; *&t;Fixed off by one bug in acl pkt receive&n; *&t;Made packet counters specific to each bluetooth device &n; *&t;Added checks for zero length callbacks&n; *&t;Added buffers for int and bulk packets.  Had to do this otherwise &n; *&t;packet types could intermingle.&n; *&t;Made a control urb pool for the control messages.&n; *&n; * (07/11/2000) Version 0.2 gkh&n; *&t;Fixed a small bug found by Nils Faerber in the usb_bluetooth_probe &n; *&t;function.&n; *&n; * (07/09/2000) Version 0.1 gkh&n; *&t;Initial release. Has support for sending ACL data (which is really just&n; *&t;a HCI frame.) Raw HCI commands and HCI events are not supported.&n; *&t;A ioctl will probably be needed for the HCI commands and events in the&n; *&t;future. All isoch endpoints are ignored at this time also.&n; *&t;This driver should work for all currently shipping USB Bluetooth &n; *&t;devices at this time :)&n; * &n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -824,7 +824,7 @@ id|len
 comma
 id|bluetooth_ctrl_callback
 comma
-l_int|0
+id|bluetooth
 )paren
 suffix:semicolon
 multiline_comment|/* send it down the pipe */
@@ -1397,6 +1397,9 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|bluetooth_ctrl_msg
 (paren
 id|bluetooth
@@ -1411,7 +1414,19 @@ id|count
 op_minus
 l_int|1
 )paren
+op_ne
+l_int|0
+)paren
+(brace
+id|kfree
+(paren
+id|new_buffer
+)paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* need to free new_buffer somehow... FIXME */
 r_return
 id|count
@@ -4396,6 +4411,23 @@ c_cond
 id|bluetooth
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|bluetooth-&gt;active
+)paren
+op_logical_and
+(paren
+id|bluetooth-&gt;tty
+)paren
+)paren
+id|tty_hangup
+c_func
+(paren
+id|bluetooth-&gt;tty
+)paren
+suffix:semicolon
 id|bluetooth-&gt;active
 op_assign
 l_int|0
@@ -4460,17 +4492,6 @@ op_amp
 id|bluetooth_tty_driver
 comma
 id|bluetooth-&gt;minor
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bluetooth-&gt;tty
-)paren
-id|tty_hangup
-c_func
-(paren
-id|bluetooth-&gt;tty
 )paren
 suffix:semicolon
 r_for

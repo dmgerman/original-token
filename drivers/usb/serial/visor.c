@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (07/23/2000) gkh&n; *&t;Added pool of write urbs to speed up transfers to the visor.&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (08/08/2000) gkh&n; *&t;Fixed endian problem in visor_startup.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; * &n; * (07/23/2000) gkh&n; *&t;Added pool of write urbs to speed up transfers to the visor.&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -99,6 +99,16 @@ suffix:semicolon
 r_static
 r_int
 id|visor_startup
+(paren
+r_struct
+id|usb_serial
+op_star
+id|serial
+)paren
+suffix:semicolon
+r_static
+r_void
+id|visor_shutdown
 (paren
 r_struct
 id|usb_serial
@@ -242,6 +252,10 @@ id|startup
 suffix:colon
 id|visor_startup
 comma
+id|shutdown
+suffix:colon
+id|visor_shutdown
+comma
 id|ioctl
 suffix:colon
 id|visor_ioctl
@@ -315,6 +329,18 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+op_increment
+id|port-&gt;open_count
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port-&gt;active
+)paren
+(brace
 id|port-&gt;active
 op_assign
 l_int|1
@@ -336,10 +362,9 @@ id|__FUNCTION__
 l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
 )paren
 suffix:semicolon
+)brace
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
 DECL|function|visor_close
@@ -386,6 +411,19 @@ comma
 id|port-&gt;number
 )paren
 suffix:semicolon
+op_decrement
+id|port-&gt;open_count
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|port-&gt;open_count
+op_le
+l_int|0
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -439,12 +477,7 @@ id|transfer_buffer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* shutdown our bulk reads and writes */
-id|usb_unlink_urb
-(paren
-id|port-&gt;write_urb
-)paren
-suffix:semicolon
+multiline_comment|/* shutdown our bulk read */
 id|usb_unlink_urb
 (paren
 id|port-&gt;read_urb
@@ -454,6 +487,11 @@ id|port-&gt;active
 op_assign
 l_int|0
 suffix:semicolon
+id|port-&gt;open_count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 DECL|function|visor_write
 r_static
@@ -1057,6 +1095,13 @@ r_char
 op_star
 id|string
 suffix:semicolon
+id|le16_to_cpus
+c_func
+(paren
+op_amp
+id|connection_info-&gt;num_ports
+)paren
+suffix:semicolon
 id|info
 c_func
 (paren
@@ -1227,6 +1272,68 @@ r_return
 l_int|0
 )paren
 suffix:semicolon
+)brace
+DECL|function|visor_shutdown
+r_static
+r_void
+id|visor_shutdown
+(paren
+r_struct
+id|usb_serial
+op_star
+id|serial
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|dbg
+(paren
+id|__FUNCTION__
+)paren
+suffix:semicolon
+multiline_comment|/* stop reads and writes on all ports */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|serial-&gt;num_ports
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|serial-&gt;port
+(braket
+id|i
+)braket
+dot
+id|open_count
+OG
+l_int|0
+)paren
+(brace
+id|visor_close
+(paren
+op_amp
+id|serial-&gt;port
+(braket
+id|i
+)braket
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 DECL|function|visor_ioctl
 r_static

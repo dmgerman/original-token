@@ -1,9 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/system.h&n; *&n; * Copyright (c) 1996-1999 Russell King and Dave Gilbert&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_ARCH_ARC
-DECL|macro|cliIF
-mdefine_line|#define cliIF()&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;orr %0, %0, #0x0c000000&bslash;n&quot;&t;&bslash;&n;&quot;&t;teqp&t;%0, #0&bslash;n&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&bslash;&n;    : );&t;&bslash;&n;  } while(0)
-macro_line|#endif
 DECL|function|arch_idle
 r_static
 r_void

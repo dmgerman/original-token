@@ -565,9 +565,16 @@ suffix:semicolon
 multiline_comment|/* sector number of a code_page_data&n;&t;&t;&t;&t;&t;   containing c.p. array */
 DECL|member|index
 r_int
+r_int
 id|index
 suffix:semicolon
 multiline_comment|/* index in c.p. array in that sector*/
+DECL|member|unknown
+r_int
+r_int
+id|unknown
+suffix:semicolon
+multiline_comment|/* some unknown value; usually 0;&n;    &t;&t;&t;&t;&t;   2 in Japanese version */
 DECL|member|array
 )brace
 id|array
@@ -626,11 +633,12 @@ r_int
 id|code_page_number
 suffix:semicolon
 multiline_comment|/* code page number */
-DECL|member|zero1
+DECL|member|unknown
 r_int
 r_int
-id|zero1
+id|unknown
 suffix:semicolon
+multiline_comment|/* the same as in cp directory */
 DECL|member|map
 r_int
 r_char

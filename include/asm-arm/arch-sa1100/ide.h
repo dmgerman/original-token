@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/ide.h&n; *&n; * Copyright (c) 1998 Hugo Fiennes &amp; Nicolas Pitre&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/arch/hardware.h&gt;
+macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 multiline_comment|/*&n; * Set up a hw structure for a specified data port, control port and IRQ.&n; * This should follow whatever the default interface uses.&n; */
 r_static
 id|__inline__
@@ -409,6 +409,68 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 )brace
-)brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_lart
+c_func
+(paren
+)paren
+)paren
+(brace
+macro_line|#ifdef CONFIG_SA1100_LART
+id|hw_regs_t
+id|hw
+suffix:semicolon
+multiline_comment|/* Enable GPIO as interrupt line */
+id|GPDR
+op_and_assign
+op_complement
+id|GPIO_GPIO1
+suffix:semicolon
+id|set_GPIO_IRQ_edge
+c_func
+(paren
+id|GPIO_GPIO1
+comma
+id|GPIO_RISING_EDGE
+)paren
+suffix:semicolon
+multiline_comment|/* set PCMCIA interface timing */
+id|MECR
+op_assign
+l_int|0x00060006
+suffix:semicolon
+multiline_comment|/* init the interface */
+multiline_comment|/*         ide_init_hwif_ports(&amp;hw, 0xe00000000, 0xe00001000, NULL); */
+id|ide_init_hwif_ports
+c_func
+(paren
+op_amp
+id|hw
+comma
+l_int|0xe00001000
+comma
+l_int|0xe00000000
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|hw.irq
+op_assign
+id|IRQ_GPIO1
+suffix:semicolon
+id|ide_register_hw
+c_func
+(paren
+op_amp
+id|hw
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 macro_line|#endif
+)brace
+)brace
 eof

@@ -6,7 +6,7 @@ mdefine_line|#define RTC_ALWAYS_BCD&t;&t;0
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 DECL|variable|rtc_base
 r_static
 r_int

@@ -758,6 +758,11 @@ r_int
 id|disabled
 suffix:semicolon
 multiline_comment|/* e.g. got a UE, we&squot;re hung */
+DECL|member|resume_count
+id|atomic_t
+id|resume_count
+suffix:semicolon
+multiline_comment|/* defending against multiple resumes */
 DECL|member|regs
 r_struct
 id|ohci_regs
@@ -853,11 +858,16 @@ r_struct
 id|virt_root_hub
 id|rh
 suffix:semicolon
+multiline_comment|/* PCI device handle and settings */
 DECL|member|ohci_dev
 r_struct
 id|pci_dev
 op_star
 id|ohci_dev
+suffix:semicolon
+DECL|member|pci_latency
+id|u8
+id|pci_latency
 suffix:semicolon
 DECL|typedef|ohci_t
 )brace

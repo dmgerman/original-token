@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-lusl7200.c&n; *&n; * Extra MM routines for LUSL7200 architecture&n; *&n; * Copyright (C) 2000 Steven J. Hill&n; */
+multiline_comment|/*&n; * arch/arm/mm/mm-lusl7200.c&n; *&n; * Extra MM routines for L7200 architecture&n; *&n; * Copyright (C) 2000 Steve Hill (sjhill@cotw.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/page.h&gt;

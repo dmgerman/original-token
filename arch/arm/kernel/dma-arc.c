@@ -6,6 +6,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/fiq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 macro_line|#include &quot;dma.h&quot;
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(x...) printk(KERN_DEBUG x)

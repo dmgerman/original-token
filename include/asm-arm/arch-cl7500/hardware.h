@@ -64,11 +64,12 @@ DECL|macro|PCIO_FLOPPYDMABASE
 mdefine_line|#define PCIO_FLOPPYDMABASE&t;((volatile unsigned char *)0xe002a000)
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xe0010000
+multiline_comment|/* in/out bias for the ISA slot region */
+DECL|macro|ISASLOT_IO
+mdefine_line|#define ISASLOT_IO&t;&t;0x80400000
 multiline_comment|/*&n; * RAM definitions&n; */
 DECL|macro|GET_MEMORY_END
 mdefine_line|#define GET_MEMORY_END(p)&t;(PAGE_OFFSET + p-&gt;u1.s.page_size * &bslash;&n;&t;&t;&t;&t;&t;&t;(p-&gt;u1.s.pages_in_bank[0] + &bslash;&n;&t;&t;&t;&t;&t;&t; p-&gt;u1.s.pages_in_bank[1] + &bslash;&n;&t;&t;&t;&t;&t;&t; p-&gt;u1.s.pages_in_bank[2] + &bslash;&n;&t;&t;&t;&t;&t;&t; p-&gt;u1.s.pages_in_bank[3]))
-DECL|macro|PARAMS_BASE
-mdefine_line|#define PARAMS_BASE&t;&t;0
 DECL|macro|FLUSH_BASE_PHYS
 mdefine_line|#define FLUSH_BASE_PHYS&t;&t;0x00000000&t;/* ROM */
 macro_line|#else

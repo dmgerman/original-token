@@ -290,6 +290,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|cpi
+op_ge
+l_int|3
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;HPFS: Code page index out of array&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|cpd

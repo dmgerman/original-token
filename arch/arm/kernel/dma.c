@@ -814,13 +814,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-DECL|function|no_dma
-r_static
+DECL|function|get_dma_residue
 r_int
-id|no_dma
+id|get_dma_residue
 c_func
 (paren
-r_void
+id|dmach_t
+id|channel
 )paren
 (brace
 r_return
@@ -834,7 +834,7 @@ c_func
 (paren
 id|disable_dma
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -842,7 +842,7 @@ c_func
 (paren
 id|enable_dma
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -850,15 +850,7 @@ c_func
 (paren
 id|free_dma
 comma
-id|no_dma
-)paren
-suffix:semicolon
-id|GLOBAL_ALIAS
-c_func
-(paren
 id|get_dma_residue
-comma
-id|no_dma
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -866,7 +858,7 @@ c_func
 (paren
 id|get_dma_list
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -874,7 +866,7 @@ c_func
 (paren
 id|set_dma_mode
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -882,7 +874,7 @@ c_func
 (paren
 id|set_dma_page
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -890,7 +882,7 @@ c_func
 (paren
 id|set_dma_count
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -898,7 +890,7 @@ c_func
 (paren
 id|set_dma_addr
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -906,7 +898,7 @@ c_func
 (paren
 id|set_dma_sg
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -914,7 +906,7 @@ c_func
 (paren
 id|set_dma_speed
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 id|GLOBAL_ALIAS
@@ -922,7 +914,7 @@ c_func
 (paren
 id|init_dma
 comma
-id|no_dma
+id|get_dma_residue
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -70,8 +70,6 @@ mdefine_line|#define PARAMS_OFFSET&t;&t;0x0100
 multiline_comment|/*&n; * RAM definitions&n; */
 DECL|macro|GET_MEMORY_END
 mdefine_line|#define GET_MEMORY_END(p)&t;(PAGE_OFFSET + p-&gt;u1.s.page_size * &bslash;&n;&t;&t;&t;&t;&t;&t;(p-&gt;u1.s.pages_in_bank[0] + &bslash;&n;&t;&t;&t;&t;&t;&t; p-&gt;u1.s.pages_in_bank[1] + &bslash;&n;&t;&t;&t;&t;&t;&t; p-&gt;u1.s.pages_in_bank[2] + &bslash;&n;&t;&t;&t;&t;&t;&t; p-&gt;u1.s.pages_in_bank[3]))
-DECL|macro|PARAMS_BASE
-mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + PARAMS_OFFSET)
 DECL|macro|Z_PARAMS_BASE
 mdefine_line|#define Z_PARAMS_BASE&t;&t;(RAM_START + PARAMS_OFFSET)
 DECL|macro|FLUSH_BASE_PHYS

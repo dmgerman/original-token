@@ -46,6 +46,10 @@ id|led_red_on
 comma
 DECL|enumerator|led_red_off
 id|led_red_off
+comma
+multiline_comment|/*&n;&t; * I want this between led_timer and led_start, but&n;&t; * someone has decided to export this to user space&n;&t; */
+DECL|enumerator|led_halted
+id|led_halted
 DECL|typedef|led_event_t
 )brace
 id|led_event_t
@@ -62,13 +66,9 @@ id|leds_event
 id|led_event_t
 )paren
 suffix:semicolon
-DECL|macro|set_leds_event
-mdefine_line|#define set_leds_event(r)&t;leds_event = r
 macro_line|#else
 DECL|macro|leds_event
 mdefine_line|#define leds_event(e)
-DECL|macro|set_leds_event
-mdefine_line|#define set_leds_event(r)
 macro_line|#endif
 macro_line|#endif
 eof

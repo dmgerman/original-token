@@ -1,7 +1,4 @@
 multiline_comment|/*&n; * linux/asm-arm/proc-armv/assembler.h&n; *&n; * Copyright (C) 1996-2000 Russell King&n; *&n; * This file contains ARM processor specifics for&n; * the ARM6 and better processors.&n; */
-macro_line|#ifndef __ASSEMBLY__
-macro_line|#error &quot;Only include this from assembly code&quot;
-macro_line|#endif
 DECL|macro|MODE_USR
 mdefine_line|#define MODE_USR&t;USR_MODE
 DECL|macro|MODE_FIQ
@@ -23,7 +20,7 @@ macro_line|#endif
 multiline_comment|/*&n; * Build a return instruction for this processor type.&n; */
 DECL|macro|RETINSTR
 mdefine_line|#define RETINSTR(instr, regs...)&bslash;&n;&t;instr&t;regs
-multiline_comment|/*&n; * Save the current IRQ state and disable IRQs&n; * Note that this macro assumes FIQs are enabled, and&n; * that the processor is in SVC mode.&n; */
+multiline_comment|/*&n; * Save the current IRQ state and disable IRQs.  Note that this macro&n; * assumes FIQs are enabled, and that the processor is in SVC mode.&n; */
 DECL|variable|oldcpsr
 dot
 id|macro
@@ -52,7 +49,7 @@ comma
 id|temp
 dot
 id|endm
-multiline_comment|/*&n; * Restore interrupt state previously stored in&n; * a register&n; */
+multiline_comment|/*&n; * Restore interrupt state previously stored in a register.  We don&squot;t&n; * guarantee that this will preserve the flags.&n; */
 dot
 id|macro
 id|restore_irqs

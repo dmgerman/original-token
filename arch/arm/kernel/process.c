@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Values for cpu_do_idle()&n; */
 DECL|macro|IDLE_WAIT_SLOW
@@ -25,6 +26,7 @@ mdefine_line|#define IDLE_CLOCK_SLOW&t;2
 DECL|macro|IDLE_CLOCK_FAST
 mdefine_line|#define IDLE_CLOCK_FAST&t;3
 r_extern
+r_const
 r_char
 op_star
 id|processor_modes
@@ -282,6 +284,12 @@ c_func
 r_void
 )paren
 (brace
+id|leds_event
+c_func
+(paren
+id|led_halted
+)paren
+suffix:semicolon
 )brace
 DECL|function|machine_power_off
 r_void
@@ -291,6 +299,12 @@ c_func
 r_void
 )paren
 (brace
+id|leds_event
+c_func
+(paren
+id|led_halted
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

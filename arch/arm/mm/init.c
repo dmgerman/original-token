@@ -14,11 +14,9 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#endif
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
@@ -456,30 +454,7 @@ id|node_size
 suffix:semicolon
 r_do
 (brace
-r_if
-c_cond
-(paren
-id|PageSkip
-c_func
-(paren
-id|page
-)paren
-)paren
-(brace
-id|page
-op_assign
-id|page-&gt;next_hash
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|page
-op_eq
-l_int|NULL
-)paren
-r_break
-suffix:semicolon
-)brace
+multiline_comment|/* This is currently broken&n; * PG_skip is used on sparc/sparc64 architectures to &quot;skip&quot; certain&n; * parts of the address space.&n; *&n; * #define PG_skip&t;10&n; * #define PageSkip(page) (machine_is_riscpc() &amp;&amp; test_bit(PG_skip, &amp;(page)-&gt;flags))&n; *&t;&t;&t;if (PageSkip(page)) {&n; *&t;&t;&t;&t;page = page-&gt;next_hash;&n; *&t;&t;&t;&t;if (page == NULL)&n; *&t;&t;&t;&t;&t;break;&n; *&t;&t;&t;}&n; */
 id|total
 op_increment
 suffix:semicolon
@@ -1987,11 +1962,13 @@ id|meminfo.end
 suffix:semicolon
 id|max_mapnr
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|high_memory
 )paren
+op_minus
+id|mem_map
 suffix:semicolon
 multiline_comment|/*&n;&t; * We may have non-contiguous memory.&n;&t; */
 r_if
@@ -2189,17 +2166,6 @@ id|addr
 op_rshift
 l_int|10
 suffix:semicolon
-r_struct
-id|page
-op_star
-id|page
-op_assign
-id|virt_to_page
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2211,11 +2177,19 @@ suffix:semicolon
 id|addr
 op_add_assign
 id|PAGE_SIZE
-comma
-id|page
-op_increment
 )paren
 (brace
+r_struct
+id|page
+op_star
+id|page
+op_assign
+id|virt_to_page
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
 id|ClearPageReserved
 c_func
 (paren
@@ -2248,11 +2222,11 @@ id|size
 id|printk
 c_func
 (paren
-l_string|&quot; %dk %s&quot;
-comma
-id|size
+l_string|&quot;Freeing %s memory: %dK&bslash;n&quot;
 comma
 id|s
+comma
+id|size
 )paren
 suffix:semicolon
 )brace
@@ -2264,12 +2238,6 @@ c_func
 r_void
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Freeing unused kernel memory:&quot;
-)paren
-suffix:semicolon
 id|free_area
 c_func
 (paren
@@ -2294,12 +2262,6 @@ comma
 l_string|&quot;init&quot;
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 DECL|variable|keep_initrd
@@ -2321,79 +2283,22 @@ r_int
 id|end
 )paren
 (brace
-r_int
-r_int
-id|addr
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|keep_initrd
 )paren
-(brace
-r_for
-c_loop
+id|free_area
+c_func
 (paren
-id|addr
-op_assign
 id|start
-suffix:semicolon
-id|addr
-OL
-id|end
-suffix:semicolon
-id|addr
-op_add_assign
-id|PAGE_SIZE
-)paren
-(brace
-id|ClearPageReserved
-c_func
-(paren
-id|virt_to_page
-c_func
-(paren
-id|addr
-)paren
-)paren
-suffix:semicolon
-id|set_page_count
-c_func
-(paren
-id|virt_to_page
-c_func
-(paren
-id|addr
-)paren
 comma
-l_int|1
-)paren
-suffix:semicolon
-id|free_page
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-id|totalram_pages
-op_increment
-suffix:semicolon
-)brace
-id|printk
-(paren
-l_string|&quot;Freeing initrd memory: %ldk freed&bslash;n&quot;
-comma
-(paren
 id|end
-op_minus
-id|start
-)paren
-op_rshift
-l_int|10
+comma
+l_string|&quot;initrd&quot;
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|keepinitrd_setup
 r_static

@@ -14,7 +14,7 @@ macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/procinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 macro_line|#include &quot;arch.h&quot;
 macro_line|#ifndef MEM_SIZE
 DECL|macro|MEM_SIZE
@@ -98,6 +98,11 @@ DECL|variable|processor_id
 r_int
 r_int
 id|processor_id
+suffix:semicolon
+DECL|variable|compat
+r_int
+r_int
+id|compat
 suffix:semicolon
 DECL|variable|__machine_arch_type
 r_int
@@ -598,6 +603,35 @@ c_func
 l_string|&quot;Architecture: %s&bslash;n&quot;
 comma
 id|list-&gt;name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|compat
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Using compatability code &quot;
+l_string|&quot;scheduled for removal in v%d.%d.%d&bslash;n&quot;
+comma
+id|compat
+op_rshift
+l_int|24
+comma
+(paren
+id|compat
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0x3ff
+comma
+id|compat
+op_amp
+l_int|0x3ff
 )paren
 suffix:semicolon
 r_return
@@ -1244,17 +1278,6 @@ id|meminfo
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ARCH_ARC)
-id|__machine_arch_type
-op_assign
-id|MACH_TYPE_ARCHIMEDES
-suffix:semicolon
-macro_line|#elif defined(CONFIG_ARCH_A5K)
-id|__machine_arch_type
-op_assign
-id|MACH_TYPE_A5K
-suffix:semicolon
-macro_line|#endif
 id|setup_processor
 c_func
 (paren

@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;waveartist.h&quot;

@@ -143,7 +143,6 @@ mdefine_line|#define N_HDLC&t;&t;13&t;/* synchronous HDLC */
 DECL|macro|N_SYNC_PPP
 mdefine_line|#define N_SYNC_PPP&t;14
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */
 DECL|macro|SET_LOW_TERMIOS_BITS
 mdefine_line|#define SET_LOW_TERMIOS_BITS(termios, termio, x) {&t;&t;&bslash;&n;&t;unsigned short __tmp;&t;&t;&t;&t;&t;&bslash;&n;&t;get_user(__tmp,&amp;(termio)-&gt;x);&t;&t;&t;&t;&bslash;&n;&t;*(unsigned short *) &amp;(termios)-&gt;x = __tmp;&t;&t;&bslash;&n;}

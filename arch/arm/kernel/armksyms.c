@@ -22,6 +22,7 @@ macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -888,22 +889,6 @@ c_func
 id|__arch_strnlen_user
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_CPU_26)
-DECL|variable|uaccess_kernel
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|uaccess_kernel
-)paren
-suffix:semicolon
-DECL|variable|uaccess_user
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|uaccess_user
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* consistent area handling */
 DECL|variable|pci_alloc_consistent
 id|EXPORT_SYMBOL
@@ -933,6 +918,22 @@ c_func
 id|consistent_sync
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_CPU_26)
+DECL|variable|uaccess_kernel
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|uaccess_kernel
+)paren
+suffix:semicolon
+DECL|variable|uaccess_user
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|uaccess_user
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* gcc lib functions */
 DECL|variable|__gcc_bcmp
 id|EXPORT_SYMBOL_NOVERS

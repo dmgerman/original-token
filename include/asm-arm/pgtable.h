@@ -5,7 +5,6 @@ mdefine_line|#define _ASMARM_PGTABLE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * PMD_SHIFT determines the size of the area a second-level page table can map&n; * PGDIR_SHIFT determines what a third-level page table entry can map&n; */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;&t;20
@@ -157,11 +156,11 @@ DECL|macro|pte_clear
 mdefine_line|#define pte_clear(ptep)&t;&t;set_pte((ptep), __pte(0))
 macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x)&t;&t;(mem_map + (unsigned long)(((pte_val(pte) - PHYS_OFFSET) &gt;&gt; PAGE_SHIFT)))
+mdefine_line|#define pte_page(x)&t;&t;(mem_map + (pte_val((x)) &gt;&gt; PAGE_SHIFT) - &bslash;&n;&t;&t;&t;&t; (PHYS_OFFSET &gt;&gt; PAGE_SHIFT))
 macro_line|#else
 multiline_comment|/*&n; * I&squot;m not happy with this - we needlessly convert a physical address&n; * to a virtual one, and then immediately back to a physical address,&n; * which, if __va and __pa are expensive causes twice the expense for&n; * zero gain. --rmk&n; */
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x)&t;&t;(mem_map + MAP_NR(__va(pte_val(pte))))
+mdefine_line|#define pte_page(x)&t;&t;(mem_map + MAP_NR(__va(pte_val((x)))))
 macro_line|#endif
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(pmd)&t;&t;(!pmd_val(pmd))
@@ -307,9 +306,6 @@ DECL|macro|module_map
 mdefine_line|#define module_map&t;&t;vmalloc
 DECL|macro|module_unmap
 mdefine_line|#define module_unmap&t;&t;vfree
-multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
-DECL|macro|PageSkip
-mdefine_line|#define PageSkip(page)&t;&t;(machine_is_riscpc() &amp;&amp; test_bit(PG_skip, &amp;(page)-&gt;flags))
 DECL|macro|io_remap_page_range
 mdefine_line|#define io_remap_page_range&t;remap_page_range
 macro_line|#endif /* !__ASSEMBLY__ */

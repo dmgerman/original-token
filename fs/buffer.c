@@ -7522,10 +7522,10 @@ id|uptodate
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * For brw_kiovec: submit a set of buffer_head temporary IOs and wait&n; * for them to complete.  Clean up the buffer_heads afterwards.  &n; */
-DECL|function|do_kio
+DECL|function|wait_kio
 r_static
 r_int
-id|do_kio
+id|wait_kio
 c_func
 (paren
 r_int
@@ -7555,27 +7555,6 @@ r_struct
 id|buffer_head
 op_star
 id|tmp
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rw
-op_eq
-id|WRITE
-)paren
-id|rw
-op_assign
-id|WRITERAW
-suffix:semicolon
-id|ll_rw_block
-c_func
-(paren
-id|rw
-comma
-id|nr
-comma
-id|bh
-)paren
 suffix:semicolon
 id|iosize
 op_assign
@@ -8053,7 +8032,15 @@ op_amp
 id|iobuf-&gt;io_count
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t;&t; * Start the IO if we have got too much &n;&t;&t;&t;&t; */
+id|generic_make_request
+c_func
+(paren
+id|rw
+comma
+id|tmp
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t; * Wait for IO if we have got too much &n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -8064,7 +8051,7 @@ id|KIO_MAX_SECTORS
 (brace
 id|err
 op_assign
-id|do_kio
+id|wait_kio
 c_func
 (paren
 id|rw
@@ -8126,7 +8113,7 @@ id|bhind
 (brace
 id|err
 op_assign
-id|do_kio
+id|wait_kio
 c_func
 (paren
 id|rw

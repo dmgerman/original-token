@@ -1,5 +1,16 @@
 multiline_comment|/*&n; * include/asm-arm/arch-arc/irq.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Changelog:&n; *   24-09-1996&t;RMK&t;Created&n; *   10-10-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *   22-10-1996&t;RMK&t;Changed interrupt numbers &amp; uses new inb/outb macros&n; *   11-01-1998&t;RMK&t;Added mask_and_ack_irq&n; *   22-08-1998&t;RMK&t;Restructured IRQ routines&n; */
 macro_line|#include &lt;asm/ioc.h&gt;
+macro_line|#ifdef CONFIG_ARCH_ARC
+DECL|macro|a_clf
+mdefine_line|#define a_clf()&t;clf()
+DECL|macro|a_stf
+mdefine_line|#define a_stf()&t;stf()
+macro_line|#else
+DECL|macro|a_clf
+mdefine_line|#define a_clf()&t;do { } while (0)
+DECL|macro|a_stf
+mdefine_line|#define a_stf()&t;do { } while (0)
+macro_line|#endif
 DECL|macro|fixup_irq
 mdefine_line|#define fixup_irq(x) (x)
 DECL|function|arc_mask_irq_ack_a
@@ -16,6 +27,11 @@ id|irq
 r_int
 r_int
 id|temp
+suffix:semicolon
+id|a_clf
+c_func
+(paren
+)paren
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -61,6 +77,11 @@ id|IOC_IRQCLRA
 )paren
 )paren
 suffix:semicolon
+id|a_stf
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|arc_mask_irq_a
 r_static
@@ -76,6 +97,11 @@ id|irq
 r_int
 r_int
 id|temp
+suffix:semicolon
+id|a_clf
+c_func
+(paren
+)paren
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -111,6 +137,11 @@ id|IOC_IRQMASKA
 )paren
 )paren
 suffix:semicolon
+id|a_stf
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|arc_unmask_irq_a
 r_static
@@ -126,6 +157,11 @@ id|irq
 r_int
 r_int
 id|temp
+suffix:semicolon
+id|a_clf
+c_func
+(paren
+)paren
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -159,6 +195,11 @@ c_func
 id|IOC_IRQMASKA
 )paren
 )paren
+)paren
+suffix:semicolon
+id|a_stf
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

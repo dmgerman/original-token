@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|LED_STATE_ENABLED
 mdefine_line|#define LED_STATE_ENABLED&t;1
@@ -32,7 +33,7 @@ r_extern
 id|spinlock_t
 id|gpio_lock
 suffix:semicolon
-macro_line|#ifdef CONFIG_FOOTBRIDGE
+macro_line|#if defined(CONFIG_ARCH_EBSA285) || defined(CONFIG_ARCH_CO285)
 DECL|function|ebsa285_leds_event
 r_static
 r_void
@@ -165,7 +166,7 @@ id|LED_STATE_CLAIMED
 )paren
 id|hw_led_state
 op_or_assign
-id|XBUS_LED_RED
+id|XBUS_LED_AMBER
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -185,11 +186,31 @@ id|LED_STATE_CLAIMED
 id|hw_led_state
 op_and_assign
 op_complement
-id|XBUS_LED_RED
+id|XBUS_LED_AMBER
 suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+r_case
+id|led_halted
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|led_state
+op_amp
+id|LED_STATE_CLAIMED
+)paren
+)paren
+id|hw_led_state
+op_and_assign
+op_complement
+id|XBUS_LED_RED
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|led_green_on
 suffix:colon
@@ -460,6 +481,25 @@ r_break
 suffix:semicolon
 macro_line|#endif
 r_case
+id|led_halted
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|led_state
+op_amp
+id|LED_STATE_CLAIMED
+)paren
+)paren
+id|hw_led_state
+op_or_assign
+id|GPIO_RED_LED
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|led_green_on
 suffix:colon
 r_if
@@ -657,7 +697,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_FOOTBRIDGE
+macro_line|#if defined(CONFIG_ARCH_EBSA285) || defined(CONFIG_ARCH_CO285)
 r_if
 c_cond
 (paren

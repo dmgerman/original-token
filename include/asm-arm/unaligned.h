@@ -1,7 +1,7 @@
 macro_line|#ifndef __ASM_ARM_UNALIGNED_H
 DECL|macro|__ASM_ARM_UNALIGNED_H
 mdefine_line|#define __ASM_ARM_UNALIGNED_H
-macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/types.h&gt;
 r_extern
 r_int
 id|__bug_unaligned_x

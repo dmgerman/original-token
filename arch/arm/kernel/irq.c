@@ -14,11 +14,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifndef cliIF
-DECL|macro|cliIF
-mdefine_line|#define cliIF()
-macro_line|#endif
-multiline_comment|/*&n; * Maximum IRQ count.  Currently, this is arbitary.&n; * However, it should not be set too low to prevent&n; * false triggering.  Conversely, if it is set too&n; * high, then you could miss a stuck IRQ.&n; *&n; * Maybe we ought to set a timer and re-enable the&n; * IRQ at a later time?&n; */
+multiline_comment|/*&n; * Maximum IRQ count.  Currently, this is arbitary.  However, it should&n; * not be set too low to prevent false triggering.  Conversely, if it&n; * is set too high, then you could miss a stuck IRQ.&n; *&n; * Maybe we ought to set a timer and re-enable the IRQ at a later time?&n; */
 DECL|macro|MAX_IRQ_CNT
 mdefine_line|#define MAX_IRQ_CNT&t;100000
 DECL|variable|irq_controller_lock
@@ -237,11 +233,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|cliIF
-c_func
-(paren
-)paren
-suffix:semicolon
 id|irq_desc
 (braket
 id|irq
@@ -293,11 +284,6 @@ op_amp
 id|irq_controller_lock
 comma
 id|flags
-)paren
-suffix:semicolon
-id|cliIF
-c_func
-(paren
 )paren
 suffix:semicolon
 id|irq_desc

@@ -481,9 +481,13 @@ macro_line|#ifndef PCI_DEVICE_ID_VIA_82C691_0
 DECL|macro|PCI_DEVICE_ID_VIA_82C691_0
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C691_0      0x0691
 macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_VIA_82C691_1
-DECL|macro|PCI_DEVICE_ID_VIA_82C691_1
-mdefine_line|#define PCI_DEVICE_ID_VIA_82C691_1      0x8691
+macro_line|#ifndef PCI_DEVICE_ID_VIA_8371_0
+DECL|macro|PCI_DEVICE_ID_VIA_8371_0
+mdefine_line|#define PCI_DEVICE_ID_VIA_8371_0      0x0391
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_VIA_8363_0
+DECL|macro|PCI_DEVICE_ID_VIA_8363_0
+mdefine_line|#define PCI_DEVICE_ID_VIA_8363_0      0x0305
 macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_INTEL_810_0
 DECL|macro|PCI_DEVICE_ID_INTEL_810_0

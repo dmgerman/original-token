@@ -2,6 +2,7 @@ multiline_comment|/*&n; * driver/usb/usb-core.c&n; *&n; * (C) Copyright David Wa
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 multiline_comment|/*&n; * USB core&n; */
 r_int
@@ -90,11 +91,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Cleanup&n; */
-DECL|function|cleanup_module
+DECL|function|usb_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|usb_exit
 c_func
 (paren
 r_void
@@ -117,21 +119,15 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Init&n; */
-DECL|function|init_module
+DECL|function|usb_init
+r_static
 r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
-r_int
+id|__init
 id|usb_init
 c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 id|usb_major_init
 c_func
@@ -217,4 +213,18 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|usb_init
+id|module_init
+c_func
+(paren
+id|usb_init
+)paren
+suffix:semicolon
+DECL|variable|usb_exit
+id|module_exit
+c_func
+(paren
+id|usb_exit
+)paren
+suffix:semicolon
 eof

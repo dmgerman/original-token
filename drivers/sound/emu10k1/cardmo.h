@@ -3,6 +3,7 @@ macro_line|#ifndef _CARDMO_H
 DECL|macro|_CARDMO_H
 mdefine_line|#define _CARDMO_H
 macro_line|#include &quot;icardmid.h&quot;
+macro_line|#include &lt;linux/interrupt.h&gt;
 DECL|macro|CARDMIDIOUT_STATE_DEFAULT
 mdefine_line|#define CARDMIDIOUT_STATE_DEFAULT    0x00000000
 DECL|macro|CARDMIDIOUT_STATE_SUSPEND

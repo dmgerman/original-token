@@ -3769,6 +3769,7 @@ op_amp
 l_int|0x7f
 )paren
 suffix:semicolon
+r_return
 id|usb_clear_halt
 c_func
 (paren
@@ -3776,9 +3777,6 @@ id|ps-&gt;dev
 comma
 id|pipe
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|proc_getdriver

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; **********************************************************************&n; *     irqmgr.c - IRQ manager for emu10k1 driver&n; *     Copyright 1999, 2000 Creative Labs, Inc.&n; *&n; **********************************************************************&n; *&n; *     Date                 Author          Summary of changes&n; *     ----                 ------          ------------------&n; *     October 20, 1999     Bertrand Lee    base code release&n; *&n; **********************************************************************&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *     GNU General Public License for more details.&n; *&n; *     You should have received a copy of the GNU General Public&n; *     License along with this program; if not, write to the Free&n; *     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *     USA.&n; *&n; **********************************************************************&n; */
 macro_line|#include &quot;hwaccess.h&quot;
+macro_line|#include &quot;8010.h&quot;
 macro_line|#include &quot;cardmi.h&quot;
 macro_line|#include &quot;cardmo.h&quot;
 macro_line|#include &quot;irqmgr.h&quot;
@@ -37,8 +38,6 @@ suffix:semicolon
 id|u32
 id|irqstatus
 comma
-id|ptr
-comma
 id|tmp
 suffix:semicolon
 r_if
@@ -48,7 +47,7 @@ op_logical_neg
 (paren
 id|irqstatus
 op_assign
-id|sblive_readfn0
+id|emu10k1_readfn0
 c_func
 (paren
 id|card
@@ -67,17 +66,6 @@ comma
 l_string|&quot;emu10k1_interrupt called, irq =  %u&bslash;n&quot;
 comma
 id|irq
-)paren
-suffix:semicolon
-multiline_comment|/* Preserve PTR register */
-id|ptr
-op_assign
-id|sblive_readfn0
-c_func
-(paren
-id|card
-comma
-id|PTR
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; ** NOTE :&n;&t; ** We do a &squot;while loop&squot; here cos on certain machines, with both&n;&t; ** playback and recording going on at the same time, IRQs will&n;&t; ** stop coming in after a while. Checking IPND indeed shows that&n;&t; ** there are interrupts pending but the PIC says no IRQs pending.&n;&t; ** I suspect that some boards need edge-triggered IRQs but are not&n;&t; ** getting that condition if we don&squot;t completely clear the IPND&n;&t; ** (make sure no more interrupts are pending).&n;&t; ** - Eric&n;&t; */
@@ -170,7 +158,7 @@ comma
 id|irqstatus
 )paren
 suffix:semicolon
-id|sblive_writefn0
+id|emu10k1_writefn0
 c_func
 (paren
 id|card
@@ -187,7 +175,7 @@ c_loop
 (paren
 id|irqstatus
 op_assign
-id|sblive_readfn0
+id|emu10k1_readfn0
 c_func
 (paren
 id|card
@@ -197,101 +185,7 @@ id|IPR
 )paren
 )paren
 suffix:semicolon
-id|sblive_writefn0
-c_func
-(paren
-id|card
-comma
-id|PTR
-comma
-id|ptr
-)paren
-suffix:semicolon
 r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Enables the specified irq service */
-DECL|function|emu10k1_irq_enable
-r_int
-id|emu10k1_irq_enable
-c_func
-(paren
-r_struct
-id|emu10k1_card
-op_star
-id|card
-comma
-id|u32
-id|irqtype
-)paren
-(brace
-multiline_comment|/*&n;&t; * TODO :&n;&t; * put protection here so that we don&squot;t accidentally&n;&t; * screw-up another cardxxx objects irqs&n;&t; */
-id|DPD
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;emu10k1_irq_enable %x&bslash;n&quot;
-comma
-id|irqtype
-)paren
-suffix:semicolon
-id|sblive_wrtmskfn0
-c_func
-(paren
-id|card
-comma
-id|INTE
-comma
-id|irqtype
-comma
-id|ENABLE
-)paren
-suffix:semicolon
-r_return
-id|CTSTATUS_SUCCESS
-suffix:semicolon
-)brace
-multiline_comment|/* Disables the specified irq service */
-DECL|function|emu10k1_irq_disable
-r_int
-id|emu10k1_irq_disable
-c_func
-(paren
-r_struct
-id|emu10k1_card
-op_star
-id|card
-comma
-id|u32
-id|irqtype
-)paren
-(brace
-multiline_comment|/*&n;&t; * TODO :&n;&t; * put protection here so that we don&squot;t accidentally&n;&t; * screw-up another cardxxx objects irqs&n;&t; */
-id|DPD
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;emu10k1_irq_disable %x&bslash;n&quot;
-comma
-id|irqtype
-)paren
-suffix:semicolon
-id|sblive_wrtmskfn0
-c_func
-(paren
-id|card
-comma
-id|INTE
-comma
-id|irqtype
-comma
-id|DISABLE
-)paren
-suffix:semicolon
-r_return
-id|CTSTATUS_SUCCESS
 suffix:semicolon
 )brace
 eof

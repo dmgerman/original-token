@@ -2,6 +2,8 @@ multiline_comment|/*&n; ********************************************************
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -142,7 +144,8 @@ id|midihdr
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -155,8 +158,8 @@ id|midi_dev-&gt;card-&gt;mpuin
 comma
 id|midihdr
 )paren
-op_ne
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
 (brace
 id|ERROR
@@ -177,7 +180,8 @@ id|midihdr
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 op_star
@@ -196,7 +200,7 @@ id|midi_dev-&gt;mid_hdrs
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|emu10k1_midi_open
@@ -484,8 +488,8 @@ comma
 op_amp
 id|dsCardMidiOpenInfo
 )paren
-op_ne
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
 (brace
 id|ERROR
@@ -516,8 +520,8 @@ comma
 op_amp
 id|midihdr1
 )paren
-op_ne
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
 (brace
 id|kfree
@@ -542,8 +546,8 @@ comma
 op_amp
 id|midihdr2
 )paren
-op_ne
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
 (brace
 id|list_del
@@ -608,8 +612,8 @@ comma
 op_amp
 id|dsCardMidiOpenInfo
 )paren
-op_ne
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
 (brace
 id|ERROR
@@ -1021,8 +1025,8 @@ c_func
 (paren
 id|midi_dev-&gt;card
 )paren
-op_ne
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
 (brace
 id|ERROR
@@ -1470,8 +1474,8 @@ id|midi_dev-&gt;card
 comma
 id|midihdr
 )paren
-op_ne
-id|CTSTATUS_SUCCESS
+OL
+l_int|0
 )paren
 (brace
 id|ERROR
@@ -1809,7 +1813,8 @@ r_default
 suffix:colon
 multiline_comment|/* Unknown message */
 r_return
-id|CTSTATUS_ERROR
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|spin_unlock_irqrestore
@@ -1822,7 +1827,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|CTSTATUS_SUCCESS
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* MIDI file operations */

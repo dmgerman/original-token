@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/ide.h&n; *&n; * Copyright (c) 1997,1998 Russell King&n; *&n; * IDE definitions for the Acorn Archimedes/A5000&n; * architecture&n; *&n; * Modifications:&n; *  04-04-1998&t;PJB&t;Merged `arc&squot; and `a5k&squot; versions&n; *  01-07-1998&t;RMK&t;Added new ide_ioregspec_t&n; *  29-07-1998&t;RMK&t;Major re-work of IDE architecture specific code&n; */
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 multiline_comment|/*&n; * Set up a hw structure for a specified data port, control port and IRQ.&n; * This should follow whatever the default interface uses.&n; */
 r_static
 id|__inline__

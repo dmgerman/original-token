@@ -55,6 +55,15 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|card-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -62,8 +71,6 @@ id|index
 OL
 (paren
 id|MAXPAGES
-op_minus
-id|RESERVED
 op_minus
 l_int|1
 )paren
@@ -107,15 +114,6 @@ op_ge
 id|numpages
 )paren
 (brace
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|card-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Block is large enough */
 multiline_comment|/* If free block is larger than the block requested&n;&t;&t;&t;&t; * then adjust the size of the block remaining */
 r_if
@@ -180,6 +178,15 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|card-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-l7200/system.h&n; *&n; * Copyright (c) 2000 Steven Hill (sjhill@cotw.com)&n; *&n; * Changelog&n; *  03-21-2000  SJH&t;Created&n; *  04-26-2000  SJH&t;Fixed functions&n; *  05-03-2000  SJH&t;Removed usage of obsolete &squot;iomd.h&squot;&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-l7200/system.h&n; *&n; * Copyright (c) 2000 Steve Hill (sjhill@cotw.com)&n; *&n; * Changelog&n; *  03-21-2000  SJH&t;Created&n; *  04-26-2000  SJH&t;Fixed functions&n; *  05-03-2000  SJH&t;Removed usage of obsolete &squot;iomd.h&squot;&n; *  05-31-2000  SJH&t;Properly implemented &squot;arch_idle&squot;&n; */
 macro_line|#ifndef __ASM_ARCH_SYSTEM_H
 DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
@@ -21,9 +21,13 @@ op_logical_neg
 id|hlt_counter
 )paren
 (brace
-)brace
+id|cpu_do_idle
+c_func
+(paren
+id|IDLE_WAIT_SLOW
+)paren
 suffix:semicolon
-multiline_comment|/*                outb(0, IOMD_SUSMODE);*/
+)brace
 )brace
 DECL|function|arch_reset
 r_extern

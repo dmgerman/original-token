@@ -16,6 +16,35 @@ multiline_comment|/*&n; * The mapping when the footbridge is in host mode.&n; */
 DECL|macro|MAPPING
 mdefine_line|#define MAPPING &bslash;&n; { FLASH_BASE,   DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIMEM_BASE,  DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCICFG0_BASE, DC21285_PCI_TYPE_0_CONFIG,&t;PCICFG0_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCICFG1_BASE, DC21285_PCI_TYPE_1_CONFIG,&t;PCICFG1_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIIACK_BASE, DC21285_PCI_IACK,&t;&t;PCIIACK_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { WFLUSH_BASE,  DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIO_BASE,    DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { XBUS_BASE,    0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }
 macro_line|#else
+multiline_comment|/*&n; * The mapping when the footbridge is in add-in mode.&n; */
+DECL|macro|MAPPING
+mdefine_line|#define MAPPING &bslash;&n; { PCIO_BASE,&t; DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { XBUS_BASE,&t; 0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { WFLUSH_BASE,&t; DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { FLASH_BASE,&t; DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIMEM_BASE,&t; DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }
+macro_line|#endif
+DECL|variable|__initdata
+r_struct
+id|map_desc
+id|io_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+id|MAPPING
+)brace
+suffix:semicolon
+DECL|variable|io_desc_size
+r_int
+r_int
+id|__initdata
+id|io_desc_size
+op_assign
+id|SIZE
+c_func
+(paren
+id|io_desc
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_FOOTBRIDGE_ADDIN
 multiline_comment|/*&n; * These two functions convert virtual addresses to PCI addresses&n; * and PCI addresses to virtual addresses.  Note that it is only&n; * legal to use these on memory obtained via get_free_page or&n; * kmalloc.&n; */
 DECL|function|__virt_to_bus
 r_int
@@ -135,32 +164,5 @@ r_return
 id|res
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The mapping when the footbridge is in add-in mode.&n; */
-DECL|macro|MAPPING
-mdefine_line|#define MAPPING &bslash;&n; { PCIO_BASE,&t; DC21285_PCI_IO,&t;&t;PCIO_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { XBUS_BASE,&t; 0x40000000,&t;&t;&t;XBUS_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { ARMCSR_BASE,  DC21285_ARMCSR_BASE,&t;&t;ARMCSR_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { WFLUSH_BASE,&t; DC21285_OUTBOUND_WRITE_FLUSH,&t;WFLUSH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { FLASH_BASE,&t; DC21285_FLASH,&t;&t;&t;FLASH_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }, &bslash;&n; { PCIMEM_BASE,&t; DC21285_PCI_MEM,&t;&t;PCIMEM_SIZE,&t;DOMAIN_IO, 0, 1, 0, 0 }
 macro_line|#endif
-DECL|variable|__initdata
-r_struct
-id|map_desc
-id|io_desc
-(braket
-)braket
-id|__initdata
-op_assign
-(brace
-id|MAPPING
-)brace
-suffix:semicolon
-DECL|variable|io_desc_size
-r_int
-r_int
-id|__initdata
-id|io_desc_size
-op_assign
-id|SIZE
-c_func
-(paren
-id|io_desc
-)paren
-suffix:semicolon
 eof

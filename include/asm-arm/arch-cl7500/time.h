@@ -1,12 +1,4 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-cl7500/time.h&n; *&n; * Copyright (c) 1996-2000 Russell King.&n; *&n; * Changelog:&n; *  24-Sep-1996&t;RMK&t;Created&n; *  10-Oct-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/time.c&n; */
-r_extern
-r_void
-id|ioctime_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|timer_interrupt
 r_static
 r_void
@@ -99,11 +91,6 @@ c_func
 r_void
 )paren
 (brace
-id|ioctime_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|timer_irq.handler
 op_assign
 id|timer_interrupt

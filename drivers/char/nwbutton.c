@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/mach-types.h&gt;
 DECL|macro|__NWBUTTON_C
 mdefine_line|#define __NWBUTTON_C&t;&t;/* Tell the header file who we are */
 macro_line|#include &quot;nwbutton.h&quot;
