@@ -1179,7 +1179,7 @@ id|line_length
 op_assign
 id|fix.line_length
 suffix:semicolon
-macro_line|#ifdef CONFIG_FBCON_MFB
+macro_line|#ifdef FBCON_HAS_MFB
 id|disp
 (braket
 id|con

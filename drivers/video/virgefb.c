@@ -1229,7 +1229,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *    Text console acceleration&n; */
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 DECL|variable|fbcon_virge8
 r_static
 r_struct
@@ -3569,7 +3569,7 @@ c_cond
 id|display-&gt;var.bits_per_pixel
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|8
 suffix:colon
@@ -3597,7 +3597,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 r_case
 l_int|16
 suffix:colon
@@ -4875,7 +4875,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Text console acceleration&n; */
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 DECL|function|fbcon_virge8_bmove
 r_static
 r_void
@@ -5076,6 +5076,8 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+id|fbcon_cfb8_clear_margins
 comma
 id|FONTWIDTH
 c_func

@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  8 bpp packed pixel (cfb8)&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_CFB8) || defined(CONFIG_FBCON_CFB8_MODULE)
+DECL|macro|FBCON_HAS_CFB8
+mdefine_line|#define FBCON_HAS_CFB8
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_CFB8)
+DECL|macro|FBCON_HAS_CFB8
+mdefine_line|#define FBCON_HAS_CFB8
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch
@@ -143,6 +154,22 @@ id|xx
 comma
 r_int
 id|yy
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|fbcon_cfb8_clear_margins
+c_func
+(paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
+r_struct
+id|display
+op_star
+id|p
 )paren
 suffix:semicolon
 eof

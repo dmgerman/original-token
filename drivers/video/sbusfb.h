@@ -173,6 +173,10 @@ id|size
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|SBUS_MMAP_FBSIZE
+mdefine_line|#define SBUS_MMAP_FBSIZE(n) (-n)
+DECL|macro|SBUS_MMAP_EMPTY
+mdefine_line|#define SBUS_MMAP_EMPTY&t;0x80000000
 DECL|struct|fb_info_sbusfb
 r_struct
 id|fb_info_sbusfb
@@ -278,10 +282,6 @@ suffix:semicolon
 DECL|member|vtconsole
 r_int
 id|vtconsole
-suffix:semicolon
-DECL|member|lastconsole
-r_int
-id|lastconsole
 suffix:semicolon
 DECL|member|consolecnt
 r_int
@@ -467,6 +467,18 @@ r_void
 (paren
 op_star
 id|switch_from_graph
+)paren
+(paren
+r_struct
+id|fb_info_sbusfb
+op_star
+)paren
+suffix:semicolon
+DECL|member|restore_palette
+r_void
+(paren
+op_star
+id|restore_palette
 )paren
 (paren
 r_struct

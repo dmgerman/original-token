@@ -6,13 +6,18 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-multiline_comment|/*&n; *  Dummy console driver&n; *&n; */
+multiline_comment|/*&n; *  Dummy console driver&n; */
 macro_line|#ifdef __sparc__
 multiline_comment|/* Some reasonable defaults, so that we don&squot;t loose any text */
 DECL|macro|DUMMY_COLUMNS
 mdefine_line|#define DUMMY_COLUMNS&t;128
 DECL|macro|DUMMY_ROWS
 mdefine_line|#define DUMMY_ROWS&t;54
+macro_line|#elif defined(CONFIG_ARM)
+DECL|macro|DUMMY_COLUMNS
+mdefine_line|#define DUMMY_COLUMNS&t;ORIG_VIDEO_COLS
+DECL|macro|DUMMY_ROWS
+mdefine_line|#define DUMMY_ROWS&t;ORIG_VIDEO_LINES
 macro_line|#else
 DECL|macro|DUMMY_COLUMNS
 mdefine_line|#define DUMMY_COLUMNS&t;80
@@ -177,14 +182,7 @@ op_star
 )paren
 id|dummycon_dummy
 comma
-multiline_comment|/* con_get_font */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
-comma
-multiline_comment|/* con_set_font */
+multiline_comment|/* con_font_op */
 (paren
 r_void
 op_star

@@ -2653,8 +2653,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -3015,8 +3013,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -3827,8 +3823,6 @@ l_int|9
 )braket
 dot
 id|address
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|head_list-&gt;buffer
@@ -5712,8 +5706,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|list-&gt;buffer
@@ -5772,8 +5764,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|list-&gt;buffer

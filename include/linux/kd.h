@@ -317,7 +317,60 @@ DECL|macro|KDSETKEYCODE
 mdefine_line|#define KDSETKEYCODE&t;0x4B4D&t;/* write kernel keycode table entry */
 DECL|macro|KDSIGACCEPT
 mdefine_line|#define KDSIGACCEPT&t;0x4B4E&t;/* accept kbd generated signals */
+DECL|macro|KDFONTOP
+mdefine_line|#define KDFONTOP&t;0x4B72&t;/* font operations */
+DECL|struct|console_font_op
+r_struct
+id|console_font_op
+(brace
+DECL|member|op
+r_int
+r_int
+id|op
+suffix:semicolon
+multiline_comment|/* operation code KD_FONT_OP_* */
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* KD_FONT_FLAG_* */
+DECL|member|width
+DECL|member|height
+r_int
+r_int
+id|width
+comma
+id|height
+suffix:semicolon
+multiline_comment|/* font size */
+DECL|member|charcount
+r_int
+r_int
+id|charcount
+suffix:semicolon
+DECL|member|data
+r_int
+r_char
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* font data with height fixed to 32 */
+)brace
+suffix:semicolon
+DECL|macro|KD_FONT_OP_SET
+mdefine_line|#define KD_FONT_OP_SET&t;&t;0&t;/* Set font */
+DECL|macro|KD_FONT_OP_GET
+mdefine_line|#define KD_FONT_OP_GET&t;&t;1&t;/* Get font */
+DECL|macro|KD_FONT_OP_SET_DEFAULT
+mdefine_line|#define KD_FONT_OP_SET_DEFAULT&t;2&t;/* Set font to default, data points to name / NULL */
+DECL|macro|KD_FONT_OP_COPY
+mdefine_line|#define KD_FONT_OP_COPY&t;&t;3&t;/* Copy from another console */
+DECL|macro|KD_FONT_FLAG_GLOBAL
+mdefine_line|#define KD_FONT_FLAG_GLOBAL&t;&t;1&t;/* Change on _all_ consoles */
+DECL|macro|KD_FONT_FLAG_DONT_RECALC
+mdefine_line|#define KD_FONT_FLAG_DONT_RECALC &t;2&t;/* Don&squot;t recalculate hw charcell size [compat] */
 multiline_comment|/* note: 0x4B00-0x4B4E all have had a value at some time;&n;   don&squot;t reuse for the time being */
-multiline_comment|/* note: 0x4B60-0x4B6D, 0x4B70, 0x4B71 used above */
+multiline_comment|/* note: 0x4B60-0x4B6D, 0x4B70-0x4B72 used above */
 macro_line|#endif /* _LINUX_KD_H */
 eof

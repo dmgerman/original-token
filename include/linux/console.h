@@ -5,12 +5,14 @@ mdefine_line|#define _LINUX_CONSOLE_H_ 1
 r_struct
 id|vc_data
 suffix:semicolon
+r_struct
+id|console_font_op
+suffix:semicolon
 multiline_comment|/*&n; * this is what the terminal answers to a ESC-Z or csi0c query.&n; */
 DECL|macro|VT100ID
 mdefine_line|#define VT100ID &quot;&bslash;033[?1;2c&quot;
 DECL|macro|VT102ID
 mdefine_line|#define VT102ID &quot;&bslash;033[?6c&quot;
-multiline_comment|/* DPC: 1994-04-13 !!! con_putcs is new entry !!! */
 DECL|struct|consw
 r_struct
 id|consw
@@ -198,43 +200,19 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|member|con_get_font
+DECL|member|con_font_op
 r_int
 (paren
 op_star
-id|con_get_font
+id|con_font_op
 )paren
 (paren
 r_struct
 id|vc_data
 op_star
 comma
-r_int
-op_star
-comma
-r_int
-op_star
-comma
-r_char
-op_star
-)paren
-suffix:semicolon
-DECL|member|con_set_font
-r_int
-(paren
-op_star
-id|con_set_font
-)paren
-(paren
 r_struct
-id|vc_data
-op_star
-comma
-r_int
-comma
-r_int
-comma
-r_char
+id|console_font_op
 op_star
 )paren
 suffix:semicolon
@@ -290,6 +268,45 @@ id|con_save_screen
 r_struct
 id|vc_data
 op_star
+)paren
+suffix:semicolon
+DECL|member|con_build_attr
+id|u8
+(paren
+op_star
+id|con_build_attr
+)paren
+(paren
+r_struct
+id|vc_data
+op_star
+comma
+id|u8
+comma
+id|u8
+comma
+id|u8
+comma
+id|u8
+comma
+id|u8
+)paren
+suffix:semicolon
+DECL|member|con_invert_region
+r_void
+(paren
+op_star
+id|con_invert_region
+)paren
+(paren
+r_struct
+id|vc_data
+op_star
+comma
+id|u16
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 )brace
@@ -553,7 +570,7 @@ id|console
 op_star
 id|console_drivers
 suffix:semicolon
-multiline_comment|/* VEA Blanking Levels */
+multiline_comment|/* VESA Blanking Levels */
 DECL|macro|VESA_NO_BLANKING
 mdefine_line|#define VESA_NO_BLANKING        0
 DECL|macro|VESA_VSYNC_SUSPEND
@@ -562,5 +579,5 @@ DECL|macro|VESA_HSYNC_SUSPEND
 mdefine_line|#define VESA_HSYNC_SUSPEND      2
 DECL|macro|VESA_POWERDOWN
 mdefine_line|#define VESA_POWERDOWN          3
-macro_line|#endif /* linux/console.h */
+macro_line|#endif /* _LINUX_CONSOLE_H */
 eof

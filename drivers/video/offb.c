@@ -20,6 +20,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &quot;fbcon.h&quot;
 macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &quot;macmodes.h&quot;
 DECL|variable|currcon
 r_static
 r_int
@@ -1958,7 +1959,7 @@ id|disp-&gt;inverse
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 id|disp-&gt;dispsw
 op_assign
 op_amp

@@ -223,7 +223,6 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_VGA_CONSOLE
 r_extern
 r_void
 id|no_scroll
@@ -238,7 +237,6 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_void
 id|kbd_reset_setup
@@ -3318,20 +3316,6 @@ id|hfmodem_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_PMAC_CONSOLE
-(brace
-l_string|&quot;console=&quot;
-comma
-id|pmac_cons_setup
-)brace
-comma
-(brace
-l_string|&quot;vmode=&quot;
-comma
-id|pmac_vmode_setup
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_FTAPE
 (brace
 l_string|&quot;ftape=&quot;
@@ -3345,6 +3329,14 @@ macro_line|#ifdef CONFIG_MD_BOOT
 l_string|&quot;md=&quot;
 comma
 id|md_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MACMOUSE
+(brace
+l_string|&quot;adb_buttons=&quot;
+comma
+id|adb_mouse_setup
 )brace
 comma
 macro_line|#endif

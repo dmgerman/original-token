@@ -3814,7 +3814,7 @@ c_cond
 id|tga_type
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|0
 suffix:colon
@@ -3824,14 +3824,10 @@ op_assign
 op_amp
 id|fbcon_cfb8
 suffix:semicolon
-id|disp.scrollmode
-op_assign
-id|SCROLL_YREDRAW
-suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB32
+macro_line|#ifdef FBCON_HAS_CFB32
 r_case
 l_int|1
 suffix:colon
@@ -3845,10 +3841,6 @@ op_assign
 op_amp
 id|fbcon_cfb32
 suffix:semicolon
-id|disp.scrollmode
-op_assign
-id|SCROLL_YREDRAW
-suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -3859,6 +3851,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|disp.scrollmode
+op_assign
+id|SCROLL_YREDRAW
+suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -4199,7 +4195,7 @@ id|blue
 op_assign
 id|blue
 suffix:semicolon
-macro_line|#ifdef CONFIG_FBCON_CFB32
+macro_line|#ifdef FBCON_HAS_CFB32
 r_if
 c_cond
 (paren
@@ -4230,7 +4226,7 @@ l_int|8
 op_or
 id|blue
 suffix:semicolon
-macro_line|#endif /* CONFIG_FBCON_CFB32 */
+macro_line|#endif
 multiline_comment|/* How to set a single color register?? */
 r_return
 l_int|0

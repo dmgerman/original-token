@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  16 bpp packed pixel (cfb16)&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_CFB16) || defined(CONFIG_FBCON_CFB16_MODULE)
+DECL|macro|FBCON_HAS_CFB16
+mdefine_line|#define FBCON_HAS_CFB16
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_CFB16)
+DECL|macro|FBCON_HAS_CFB16
+mdefine_line|#define FBCON_HAS_CFB16
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch

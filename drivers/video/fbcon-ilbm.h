@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  Amiga interleaved bitplanes (ilbm)&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_ILBM) || defined(CONFIG_FBCON_ILBM_MODULE)  
+DECL|macro|FBCON_HAS_ILBM
+mdefine_line|#define FBCON_HAS_ILBM 
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_ILBM) 
+DECL|macro|FBCON_HAS_ILBM
+mdefine_line|#define FBCON_HAS_ILBM 
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch

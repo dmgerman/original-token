@@ -586,7 +586,7 @@ c_cond
 id|video_bpp
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|8
 suffix:colon
@@ -598,7 +598,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 r_case
 l_int|15
 suffix:colon
@@ -613,7 +613,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB32
+macro_line|#ifdef FBCON_HAS_CFB32
 r_case
 l_int|32
 suffix:colon
@@ -854,7 +854,7 @@ c_cond
 id|video_bpp
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|8
 suffix:colon
@@ -894,7 +894,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 r_case
 l_int|15
 suffix:colon
@@ -923,7 +923,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB24
+macro_line|#ifdef FBCON_HAS_CFB24
 r_case
 l_int|24
 suffix:colon
@@ -931,7 +931,7 @@ multiline_comment|/* FIXME: todo */
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB32
+macro_line|#ifdef FBCON_HAS_CFB32
 r_case
 l_int|32
 suffix:colon

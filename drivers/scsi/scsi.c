@@ -1460,7 +1460,10 @@ id|SCpnt-&gt;request.sem
 )paren
 suffix:semicolon
 )brace
-DECL|function|scsi_logging_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|scsi_logging_setup
 c_func
@@ -1472,6 +1475,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -1529,7 +1533,10 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-DECL|function|scsi_luns_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|scsi_luns_setup
 c_func
@@ -1541,6 +1548,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if

@@ -1106,42 +1106,6 @@ mdefine_line|#define MEM_BNDRY_EN&t;&t;0x00040000
 multiline_comment|/* ATI PCI constants */
 DECL|macro|PCI_ATI_VENDOR_ID
 mdefine_line|#define PCI_ATI_VENDOR_ID&t;0x1002
-multiline_comment|/* mach64GX family */
-DECL|macro|PCI_MACH64_GX
-mdefine_line|#define PCI_MACH64_GX&t;&t;0x4758&t;/* mach64GX (ATI888GX00) */
-DECL|macro|PCI_MACH64_CX
-mdefine_line|#define PCI_MACH64_CX&t;&t;0x4358&t;/* mach64CX (ATI888CX00) */
-multiline_comment|/* mach64CT family */
-DECL|macro|PCI_MACH64_CT
-mdefine_line|#define PCI_MACH64_CT&t;&t;0x4354&t;/* mach64CT (ATI264CT) */
-DECL|macro|PCI_MACH64_ET
-mdefine_line|#define PCI_MACH64_ET&t;&t;0x4554&t;/* mach64ET (ATI264ET) */
-multiline_comment|/* mach64CT family / mach64VT class */
-DECL|macro|PCI_MACH64_VT
-mdefine_line|#define PCI_MACH64_VT&t;&t;0x5654&t;/* mach64VT (ATI264VT) */
-DECL|macro|PCI_MACH64_VTB
-mdefine_line|#define PCI_MACH64_VTB&t;&t;0x5655&t;/* mach64VTB (ATI264VTB) */
-DECL|macro|PCI_MACH64_VT4
-mdefine_line|#define PCI_MACH64_VT4&t;&t;0x5656&t;/* mach64VT4 (ATI264VT4) */
-multiline_comment|/* mach64CT family / mach64GT (3D RAGE) class */
-DECL|macro|PCI_MACH64_GB
-mdefine_line|#define PCI_MACH64_GB&t;&t;0x4742&t;/* RAGE PRO, BGA, AGP 1x and 2x */
-DECL|macro|PCI_MACH64_GD
-mdefine_line|#define PCI_MACH64_GD&t;&t;0x4744&t;/* RAGE PRO, BGA, AGP 1x only */
-DECL|macro|PCI_MACH64_GI
-mdefine_line|#define PCI_MACH64_GI&t;&t;0x4749&t;/* RAGE PRO, BGA, PCI33 only */
-DECL|macro|PCI_MACH64_GP
-mdefine_line|#define PCI_MACH64_GP&t;&t;0x4750&t;/* RAGE PRO, PQFP, PCI33, full 3D */
-DECL|macro|PCI_MACH64_GQ
-mdefine_line|#define PCI_MACH64_GQ&t;&t;0x4751&t;/* RAGE PRO, PQFP, PCI33, limited 3D */
-DECL|macro|PCI_MACH64_GT
-mdefine_line|#define PCI_MACH64_GT&t;&t;0x4754&t;/* 3D RAGE II/II+ */
-DECL|macro|PCI_MACH64_GTB
-mdefine_line|#define PCI_MACH64_GTB&t;&t;0x4755&t;/* 3D II+ */
-DECL|macro|PCI_MACH64_GTC
-mdefine_line|#define PCI_MACH64_GTC&t;&t;0x4756&t;/* 3D RAGE IIC */
-DECL|macro|PCI_MACH64_LT
-mdefine_line|#define PCI_MACH64_LT&t;&t;0x4c47&t;/* 3D RAGE LT */
 multiline_comment|/* CONFIG_CHIP_ID register constants */
 DECL|macro|CFG_CHIP_TYPE
 mdefine_line|#define CFG_CHIP_TYPE&t;&t;0x0000FFFF
@@ -1157,41 +1121,43 @@ DECL|macro|CFG_CHIP_MINOR
 mdefine_line|#define CFG_CHIP_MINOR&t;&t;0xC0000000
 multiline_comment|/* Chip IDs read from CONFIG_CHIP_ID */
 multiline_comment|/* mach64GX family */
-DECL|macro|MACH64_GX_ID
-mdefine_line|#define MACH64_GX_ID&t;&t;0xD7&t;/* mach64GX (ATI888GX00) */
-DECL|macro|MACH64_CX_ID
-mdefine_line|#define MACH64_CX_ID&t;&t;0x57&t;/* mach64CX (ATI888CX00) */
+DECL|macro|GX_CHIP_ID
+mdefine_line|#define GX_CHIP_ID&t;0xD7&t;/* mach64GX (ATI888GX00) */
+DECL|macro|CX_CHIP_ID
+mdefine_line|#define CX_CHIP_ID&t;0x57&t;/* mach64CX (ATI888CX00) */
+DECL|macro|GX_PCI_ID
+mdefine_line|#define GX_PCI_ID&t;0x4758&t;/* mach64GX (ATI888GX00) */
+DECL|macro|CX_PCI_ID
+mdefine_line|#define CX_PCI_ID&t;0x4358&t;/* mach64CX (ATI888CX00) */
 multiline_comment|/* mach64CT family */
-DECL|macro|MACH64_CT_ID
-mdefine_line|#define MACH64_CT_ID&t;&t;PCI_MACH64_CT
-DECL|macro|MACH64_ET_ID
-mdefine_line|#define MACH64_ET_ID&t;&t;PCI_MACH64_ET
+DECL|macro|CT_CHIP_ID
+mdefine_line|#define CT_CHIP_ID&t;0x4354&t;/* mach64CT (ATI264CT) */
+DECL|macro|ET_CHIP_ID
+mdefine_line|#define ET_CHIP_ID&t;0x4554&t;/* mach64ET (ATI264ET) */
 multiline_comment|/* mach64CT family / mach64VT class */
-DECL|macro|MACH64_VT_ID
-mdefine_line|#define MACH64_VT_ID&t;&t;PCI_MACH64_VT
-DECL|macro|MACH64_VTB_ID
-mdefine_line|#define MACH64_VTB_ID&t;&t;PCI_MACH64_VTB
-DECL|macro|MACH64_VT4_ID
-mdefine_line|#define MACH64_VT4_ID&t;&t;PCI_MACH64_VT4
+DECL|macro|VT_CHIP_ID
+mdefine_line|#define VT_CHIP_ID&t;0x5654&t;/* mach64VT (ATI264VT) */
+DECL|macro|VU_CHIP_ID
+mdefine_line|#define VU_CHIP_ID&t;0x5655&t;/* mach64VTB (ATI264VTB) */
 multiline_comment|/* mach64CT family / mach64GT (3D RAGE) class */
-DECL|macro|MACH64_GB_ID
-mdefine_line|#define MACH64_GB_ID&t;&t;PCI_MACH64_GB
-DECL|macro|MACH64_GD_ID
-mdefine_line|#define MACH64_GD_ID&t;&t;PCI_MACH64_GD
-DECL|macro|MACH64_GI_ID
-mdefine_line|#define MACH64_GI_ID&t;&t;PCI_MACH64_GI
-DECL|macro|MACH64_GP_ID
-mdefine_line|#define MACH64_GP_ID&t;&t;PCI_MACH64_GP
-DECL|macro|MACH64_GQ_ID
-mdefine_line|#define MACH64_GQ_ID&t;&t;PCI_MACH64_GQ
-DECL|macro|MACH64_GT_ID
-mdefine_line|#define MACH64_GT_ID&t;&t;PCI_MACH64_GT
-DECL|macro|MACH64_GTB_ID
-mdefine_line|#define MACH64_GTB_ID&t;&t;PCI_MACH64_GTB
-DECL|macro|MACH64_GTC_ID
-mdefine_line|#define MACH64_GTC_ID&t;&t;PCI_MACH64_GTC
-DECL|macro|MACH64_LT_ID
-mdefine_line|#define MACH64_LT_ID&t;&t;PCI_MACH64_LT
+DECL|macro|LT_CHIP_ID
+mdefine_line|#define LT_CHIP_ID&t;0x4c54&t;/* 3D RAGE LT */
+DECL|macro|LG_CHIP_ID
+mdefine_line|#define LG_CHIP_ID&t;0x4c47&t;/* 3D RAGE LG */
+DECL|macro|GT_CHIP_ID
+mdefine_line|#define GT_CHIP_ID&t;0x4754&t;/* 3D RAGE (GT) */
+DECL|macro|GU_CHIP_ID
+mdefine_line|#define GU_CHIP_ID&t;0x4755&t;/* 3D RAGE II/II+ (GTB) */
+DECL|macro|GB_CHIP_ID
+mdefine_line|#define GB_CHIP_ID&t;0x4742&t;/* RAGE PRO, BGA, AGP 1x and 2x */
+DECL|macro|GD_CHIP_ID
+mdefine_line|#define GD_CHIP_ID&t;0x4744&t;/* RAGE PRO, BGA, AGP 1x only */
+DECL|macro|GI_CHIP_ID
+mdefine_line|#define GI_CHIP_ID&t;0x4749&t;/* RAGE PRO, BGA, PCI33 only */
+DECL|macro|GP_CHIP_ID
+mdefine_line|#define GP_CHIP_ID&t;0x4750&t;/* RAGE PRO, PQFP, PCI33, full 3D */
+DECL|macro|GQ_CHIP_ID
+mdefine_line|#define GQ_CHIP_ID&t;0x4751&t;/* RAGE PRO, PQFP, PCI33, limited 3D */
 multiline_comment|/* Mach64 major ASIC revisions */
 DECL|macro|MACH64_ASIC_NEC_VT_A3
 mdefine_line|#define MACH64_ASIC_NEC_VT_A3&t;&t;0x08

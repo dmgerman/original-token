@@ -562,7 +562,7 @@ id|info
 )paren
 (brace
 multiline_comment|/*&n;     *  Return a pointer to appropriate low level text console operations for&n;     *  the video mode `par&squot; of your video hardware. These can be generic&n;     *  software routines, or hardware accelerated routines specifically&n;     *  tailored for your hardware.&n;     *  If you don&squot;t have any appropriate operations, simple fill in the NULL&n;     *  pointer, and there will be no text output.&n;     */
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_if
 c_cond
 (paren
@@ -573,7 +573,7 @@ op_amp
 id|fbcon_cfb8
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 r_if
 c_cond
 (paren
@@ -584,7 +584,7 @@ op_amp
 id|fbcon_cfb16
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB32
+macro_line|#ifdef FBCON_HAS_CFB32
 r_if
 c_cond
 (paren

@@ -407,6 +407,12 @@ DECL|macro|VIDEO_PALETTE_RGB555
 mdefine_line|#define VIDEO_PALETTE_RGB555&t;6&t;/* 555 15bit RGB */
 DECL|macro|VIDEO_PALETTE_YUV422
 mdefine_line|#define VIDEO_PALETTE_YUV422&t;7&t;/* YUV422 capture */
+DECL|macro|VIDEO_PALETTE_YUYV
+mdefine_line|#define VIDEO_PALETTE_YUYV&t;8
+DECL|macro|VIDEO_PALETTE_UYVY
+mdefine_line|#define VIDEO_PALETTE_UYVY&t;9&t;/* The great thing about standards is ... */
+DECL|macro|VIDEO_PALETTE_YUV420
+mdefine_line|#define VIDEO_PALETTE_YUV420&t;10
 )brace
 suffix:semicolon
 DECL|struct|video_audio
@@ -662,6 +668,8 @@ DECL|macro|VID_HARDWARE_ZOLTRIX
 mdefine_line|#define VID_HARDWARE_ZOLTRIX&t;10
 DECL|macro|VID_HARDWARE_SAA7146
 mdefine_line|#define VID_HARDWARE_SAA7146    11
+DECL|macro|VID_HARDWARE_VIDEUM
+mdefine_line|#define VID_HARDWARE_VIDEUM&t;12&t;/* Reserved for Winnov videum */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

@@ -1,26 +1,8 @@
+macro_line|#include &quot;font.h&quot;
 DECL|macro|FONTDATAMAX
 mdefine_line|#define FONTDATAMAX 5632
-DECL|variable|fontname_sun12x22
-r_char
-id|fontname_sun12x22
-(braket
-)braket
-op_assign
-l_string|&quot;SUN12x22&quot;
-suffix:semicolon
-DECL|variable|fontheight_sun12x22
-r_int
-id|fontheight_sun12x22
-op_assign
-l_int|22
-suffix:semicolon
-DECL|variable|fontwidth_sun12x22
-r_int
-id|fontwidth_sun12x22
-op_assign
-l_int|12
-suffix:semicolon
 DECL|variable|fontdata_sun12x22
+r_static
 r_int
 r_int
 id|fontdata_sun12x22
@@ -17236,6 +17218,30 @@ multiline_comment|/* 000000000000 */
 l_int|0x0000
 comma
 multiline_comment|/* 000000000000 */
+)brace
+suffix:semicolon
+DECL|variable|font_sun_12x22
+r_struct
+id|fbcon_font_desc
+id|font_sun_12x22
+op_assign
+(brace
+id|SUN12x22_IDX
+comma
+l_string|&quot;SUN12x22&quot;
+comma
+l_int|12
+comma
+l_int|22
+comma
+id|fontdata_sun12x22
+comma
+macro_line|#ifdef __sparc__
+l_int|5
+macro_line|#else
+op_minus
+l_int|1
+macro_line|#endif
 )brace
 suffix:semicolon
 eof

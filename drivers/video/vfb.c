@@ -1080,7 +1080,7 @@ c_cond
 id|var-&gt;bits_per_pixel
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_MFB
+macro_line|#ifdef FBCON_HAS_MFB
 r_case
 l_int|1
 suffix:colon
@@ -1092,7 +1092,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB2
+macro_line|#ifdef FBCON_HAS_CFB2
 r_case
 l_int|2
 suffix:colon
@@ -1104,7 +1104,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB4
+macro_line|#ifdef FBCON_HAS_CFB4
 r_case
 l_int|4
 suffix:colon
@@ -1116,7 +1116,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|8
 suffix:colon
@@ -1128,7 +1128,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 r_case
 l_int|16
 suffix:colon
@@ -1140,7 +1140,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB24
+macro_line|#ifdef FBCON_HAS_CFB24
 r_case
 l_int|24
 suffix:colon
@@ -1152,7 +1152,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB32
+macro_line|#ifdef FBCON_HAS_CFB32
 r_case
 l_int|32
 suffix:colon

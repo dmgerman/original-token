@@ -27,24 +27,12 @@ macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
-macro_line|#ifdef CONFIG_FBCON_CFB8
 macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB16
 macro_line|#include &quot;fbcon-cfb16.h&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_IPLAN2P2
 macro_line|#include &quot;fbcon-iplan2p2.h&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_IPLAN2P4
 macro_line|#include &quot;fbcon-iplan2p4.h&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_IPLAN2P8
 macro_line|#include &quot;fbcon-iplan2p8.h&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_MFB
 macro_line|#include &quot;fbcon-mfb.h&quot;
-macro_line|#endif
 DECL|macro|SWITCH_ACIA
 mdefine_line|#define SWITCH_ACIA 0x01&t;&t;/* modes for switch on OverScan */
 DECL|macro|SWITCH_SND6
@@ -7457,7 +7445,7 @@ op_lshift
 l_int|3
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 id|fbcon_cfb16_cmap
 (braket
 id|regno
@@ -11084,7 +11072,7 @@ c_cond
 id|var.bits_per_pixel
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_IPLAN2P2
+macro_line|#ifdef FBCON_HAS_IPLAN2P2
 r_case
 l_int|2
 suffix:colon
@@ -11096,7 +11084,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_IPLAN2P4
+macro_line|#ifdef FBCON_HAS_IPLAN2P4
 r_case
 l_int|4
 suffix:colon
@@ -11108,7 +11096,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_IPLAN2P8
+macro_line|#ifdef FBCON_HAS_IPLAN2P8
 r_case
 l_int|8
 suffix:colon
@@ -11132,7 +11120,7 @@ c_cond
 id|var.bits_per_pixel
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_MFB
+macro_line|#ifdef FBCON_HAS_MFB
 r_case
 l_int|1
 suffix:colon
@@ -11144,7 +11132,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_case
 l_int|8
 suffix:colon
@@ -11156,7 +11144,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 r_case
 l_int|16
 suffix:colon

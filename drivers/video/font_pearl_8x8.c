@@ -8,29 +8,11 @@ multiline_comment|/*       font (from earlier versions of       */
 multiline_comment|/*       linux-m86k) by John Shifflett        */
 multiline_comment|/*                                            */
 multiline_comment|/**********************************************/
+macro_line|#include &quot;font.h&quot;
 DECL|macro|FONTDATAMAX
 mdefine_line|#define FONTDATAMAX 2048
-DECL|variable|fontname_pearl8x8
-r_char
-id|fontname_pearl8x8
-(braket
-)braket
-op_assign
-l_string|&quot;PEARL8x8&quot;
-suffix:semicolon
-DECL|variable|fontheight_pearl8x8
-r_int
-id|fontheight_pearl8x8
-op_assign
-l_int|8
-suffix:semicolon
-DECL|variable|fontwidth_pearl8x8
-r_int
-id|fontwidth_pearl8x8
-op_assign
-l_int|8
-suffix:semicolon
 DECL|variable|fontdata_pearl8x8
+r_static
 r_int
 r_char
 id|fontdata_pearl8x8
@@ -6439,6 +6421,25 @@ multiline_comment|/* 00000000 */
 l_int|0x00
 comma
 multiline_comment|/* 00000000 */
+)brace
+suffix:semicolon
+DECL|variable|font_pearl_8x8
+r_struct
+id|fbcon_font_desc
+id|font_pearl_8x8
+op_assign
+(brace
+id|PEARL8x8_IDX
+comma
+l_string|&quot;PEARL8x8&quot;
+comma
+l_int|8
+comma
+l_int|8
+comma
+id|fontdata_pearl8x8
+comma
+l_int|2
 )brace
 suffix:semicolon
 eof

@@ -5198,7 +5198,7 @@ c_cond
 id|fix.type
 )paren
 (brace
-macro_line|#ifdef CONFIG_FBCON_ILBM
+macro_line|#ifdef FBCON_HAS_ILBM
 r_case
 id|FB_TYPE_INTERLEAVED_PLANES
 suffix:colon
@@ -5210,7 +5210,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_AFB
+macro_line|#ifdef FBCON_HAS_AFB
 r_case
 id|FB_TYPE_PLANES
 suffix:colon
@@ -5222,7 +5222,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_FBCON_MFB
+macro_line|#ifdef FBCON_HAS_MFB
 r_case
 id|FB_TYPE_PACKED_PIXELS
 suffix:colon
@@ -8243,7 +8243,7 @@ id|fix-&gt;smem_len
 op_assign
 id|videomemorysize
 suffix:semicolon
-macro_line|#ifdef CONFIG_FBCON_MFB
+macro_line|#ifdef FBCON_HAS_MFB
 r_if
 c_cond
 (paren

@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  Mac variable bpp packed pixels (mac)&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_MAC) || defined(CONFIG_FBCON_MAC_MODULE)
+DECL|macro|FBCON_HAS_MAC
+mdefine_line|#define FBCON_HAS_MAC
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_MAC)
+DECL|macro|FBCON_HAS_MAC
+mdefine_line|#define FBCON_HAS_MAC
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch

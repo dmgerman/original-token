@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  Amiga bitplanes (afb)&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_AFB) || defined(CONFIG_FBCON_AFB_MODULE)
+DECL|macro|FBCON_HAS_AFB
+mdefine_line|#define FBCON_HAS_AFB
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_AFB)
+DECL|macro|FBCON_HAS_AFB
+mdefine_line|#define FBCON_HAS_AFB
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch

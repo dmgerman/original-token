@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/char/vc_screen.c&n; *&n; * Provide access to virtual console memory.&n; * /dev/vcs0: the screen as it is being viewed right now (possibly scrolled)&n; * /dev/vcsN: the screen of /dev/ttyN (1 &lt;= N &lt;= 63)&n; *            [minor: N]&n; *&n; * /dev/vcsaN: idem, but including attributes, and prefixed with&n; *&t;the 4 bytes lines,columns,x,y (as screendump used to give)&n; *            [minor: N+128]&n; *&n; * This replaces screendump and part of selection, so that the system&n; * administrator can control access using file system permissions.&n; *&n; * aeb@cwi.nl - efter Friedas begravelse - 950211&n; *&n; * machek@k332.feld.cvut.cz - modified not to send characters to wrong console&n; *&t; - fixed some fatal off-by-one bugs (0-- no longer == -1 -&gt; looping and looping and looping...)&n; *&t; - making it shorter - scr_readw are macros which expand in PRETTY long code&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -763,8 +764,12 @@ r_char
 op_star
 id|buf0
 suffix:semicolon
-r_int
-r_int
+id|u16
+op_star
+id|org0
+op_assign
+l_int|NULL
+comma
 op_star
 id|org
 op_assign
@@ -884,6 +889,8 @@ op_logical_neg
 id|attr
 )paren
 (brace
+id|org0
+op_assign
 id|org
 op_assign
 id|screen_pos
@@ -1029,6 +1036,8 @@ id|p
 op_sub_assign
 id|HEADER_SIZE
 suffix:semicolon
+id|org0
+op_assign
 id|org
 op_assign
 id|screen_pos
@@ -1239,15 +1248,24 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|currcons
-op_eq
-id|fg_console
+id|org0
 )paren
-multiline_comment|/* Horribly inefficient if count &lt; screen size.  */
-id|update_screen
+id|update_region
 c_func
 (paren
 id|currcons
+comma
+(paren
+r_int
+r_int
+)paren
+(paren
+id|org0
+)paren
+comma
+id|org
+op_minus
+id|org0
 )paren
 suffix:semicolon
 id|written

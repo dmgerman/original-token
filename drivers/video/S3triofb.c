@@ -361,7 +361,7 @@ id|con
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;     *  Text console acceleration&n;     */
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 DECL|variable|fbcon_trio8
 r_static
 r_struct
@@ -2961,7 +2961,7 @@ id|disp.inverse
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 r_if
 c_cond
 (paren
@@ -2986,6 +2986,17 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+id|disp.scrollmode
+op_assign
+id|fb_var.accel_flags
+op_amp
+id|FB_ACCELF_TEXT
+ques
+c_cond
+l_int|0
+suffix:colon
+id|SCROLL_YREDRAW
+suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -4216,7 +4227,7 @@ l_int|0x3d5
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Text console acceleration&n;     */
-macro_line|#ifdef CONFIG_FBCON_CFB8
+macro_line|#ifdef FBCON_HAS_CFB8
 DECL|function|fbcon_trio8_bmove
 r_static
 r_void
@@ -4561,6 +4572,8 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+id|fbcon_cfb8_clear_margins
 comma
 id|FONTWIDTH
 c_func

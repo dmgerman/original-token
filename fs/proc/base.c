@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|proc_base_operations
 r_static
 r_struct
@@ -443,7 +444,7 @@ id|S_IRUSR
 op_or
 id|S_IXUSR
 comma
-l_int|1
+l_int|2
 comma
 l_int|0
 comma
@@ -704,12 +705,16 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|proc_base_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|proc_base_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#if CONFIG_AP1000

@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  VGA characters/attributes&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_VGA) || defined(CONFIG_FBCON_VGA_MODULE)
+DECL|macro|FBCON_HAS_VGA
+mdefine_line|#define FBCON_HAS_VGA
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_VGA)
+DECL|macro|FBCON_HAS_VGA
+mdefine_line|#define FBCON_HAS_VGA
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch

@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure and defines shared between console.c, vga.c and tga.c&n; */
+multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure describing single virtual console except for data&n; * used by vt.c.&n; *&n; * Fields marked with [#] must be set by the low-level driver.&n; * Fields marked with [!] can be changed by the low-level driver&n; * to achieve effects such as fast scrolling by changing the origin.&n; */
 multiline_comment|/*&n; * You can set here how should the cursor look by default.&n; * In case you set CONFIG_SOFTCURSOR, this might be really interesting.&n; */
 DECL|macro|CUR_DEFAULT
 mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
 DECL|struct|vc_data
@@ -19,7 +20,7 @@ r_int
 r_int
 id|vc_cols
 suffix:semicolon
-multiline_comment|/* Console size */
+multiline_comment|/* [#] Console size */
 DECL|member|vc_rows
 r_int
 r_int
@@ -91,6 +92,18 @@ r_char
 id|vc_halfcolor
 suffix:semicolon
 multiline_comment|/* Color for half intensity mode */
+DECL|member|vc_complement_mask
+r_int
+r_int
+id|vc_complement_mask
+suffix:semicolon
+multiline_comment|/* [#] Xor mask for mouse pointer */
+DECL|member|vc_hi_font_mask
+r_int
+r_int
+id|vc_hi_font_mask
+suffix:semicolon
+multiline_comment|/* [#] Attribute set for upper 256 chars or font or 0 if not supported */
 DECL|member|vc_x
 DECL|member|vc_y
 r_int
@@ -127,30 +140,24 @@ id|NPAR
 )braket
 suffix:semicolon
 multiline_comment|/* Parameters of current escape sequence */
-DECL|member|vc_scr_top
-r_int
-r_int
-id|vc_scr_top
-suffix:semicolon
-multiline_comment|/* Top of video memory */
 DECL|member|vc_origin
 r_int
 r_int
 id|vc_origin
 suffix:semicolon
-multiline_comment|/* Start of real screen */
+multiline_comment|/* [!] Start of real screen */
 DECL|member|vc_scr_end
 r_int
 r_int
 id|vc_scr_end
 suffix:semicolon
-multiline_comment|/* End of real screen */
+multiline_comment|/* [!] End of real screen */
 DECL|member|vc_visible_origin
 r_int
 r_int
 id|vc_visible_origin
 suffix:semicolon
-multiline_comment|/* Top of visible window */
+multiline_comment|/* [!] Top of visible window */
 DECL|member|vc_pos
 r_int
 r_int
@@ -430,7 +437,7 @@ op_star
 op_star
 id|vc_display_fg
 suffix:semicolon
-multiline_comment|/* Ptr to var holding fg console for this display */
+multiline_comment|/* [!] Ptr to var holding fg console for this display */
 multiline_comment|/* additional information is in vt_kern.h */
 )brace
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: creatorfb.c,v 1.5 1998/07/13 12:47:12 jj Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: creatorfb.c,v 1.7 1998/07/21 10:36:48 jj Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -673,7 +673,6 @@ id|fbc-&gt;unk2
 op_assign
 l_int|8
 suffix:semicolon
-multiline_comment|/* FIXME: Optimize this by allowing 8/16 fontheigh only and introduce p-&gt;fontheightlog */
 r_if
 c_cond
 (paren
@@ -2201,6 +2200,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|FONTWIDTHRANGE
 c_func
 (paren
@@ -2763,6 +2764,10 @@ suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign
 id|PAGE_SIZE
+suffix:semicolon
+id|fix-&gt;accel
+op_assign
+id|FB_ACCEL_SUN_CREATOR
 suffix:semicolon
 id|var-&gt;bits_per_pixel
 op_assign

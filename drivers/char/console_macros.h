@@ -128,6 +128,10 @@ DECL|macro|cursor_type
 mdefine_line|#define cursor_type&t;(vc_cons[currcons].d-&gt;vc_cursor_type)
 DECL|macro|display_fg
 mdefine_line|#define display_fg&t;(vc_cons[currcons].d-&gt;vc_display_fg)
+DECL|macro|complement_mask
+mdefine_line|#define complement_mask (vc_cons[currcons].d-&gt;vc_complement_mask)
+DECL|macro|hi_font_mask
+mdefine_line|#define hi_font_mask&t;(vc_cons[currcons].d-&gt;vc_hi_font_mask)
 DECL|macro|vcmode
 mdefine_line|#define vcmode&t;&t;(vt_cons[currcons]-&gt;vc_mode)
 DECL|macro|structsize

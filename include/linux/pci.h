@@ -929,6 +929,8 @@ DECL|macro|PCI_DEVICE_ID_CMD_643
 mdefine_line|#define PCI_DEVICE_ID_CMD_643&t;&t;0x0643
 DECL|macro|PCI_DEVICE_ID_CMD_646
 mdefine_line|#define PCI_DEVICE_ID_CMD_646&t;&t;0x0646
+DECL|macro|PCI_DEVICE_ID_CMD_647
+mdefine_line|#define PCI_DEVICE_ID_CMD_647&t;&t;0x0647
 DECL|macro|PCI_DEVICE_ID_CMD_670
 mdefine_line|#define PCI_DEVICE_ID_CMD_670&t;&t;0x0670
 DECL|macro|PCI_VENDOR_ID_VISION

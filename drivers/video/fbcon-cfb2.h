@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  2 bpp packed pixel (cfb2)&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_CFB2) || defined(CONFIG_FBCON_CFB2_MODULE)
+DECL|macro|FBCON_HAS_CFB2
+mdefine_line|#define FBCON_HAS_CFB2
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_CFB2)
+DECL|macro|FBCON_HAS_CFB2
+mdefine_line|#define FBCON_HAS_CFB2
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch

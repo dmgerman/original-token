@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
@@ -2717,12 +2718,16 @@ multiline_comment|/* parent, subdir */
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|proc_root_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|proc_root_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|proc_base_init

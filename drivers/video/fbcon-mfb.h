@@ -1,4 +1,15 @@
 multiline_comment|/*&n;     *  Monochrome (mfb)&n;     */
+macro_line|#ifdef MODULE
+macro_line|#if defined(CONFIG_FBCON_MFB) || defined(CONFIG_FBCON_MFB_MODULE)
+DECL|macro|FBCON_HAS_MFB
+mdefine_line|#define FBCON_HAS_MFB
+macro_line|#endif
+macro_line|#else
+macro_line|#if defined(CONFIG_FBCON_MFB)
+DECL|macro|FBCON_HAS_MFB
+mdefine_line|#define FBCON_HAS_MFB
+macro_line|#endif
+macro_line|#endif
 r_extern
 r_struct
 id|display_switch

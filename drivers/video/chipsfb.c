@@ -25,6 +25,7 @@ macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &quot;fbcon.h&quot;
 macro_line|#include &quot;fbcon-cfb8.h&quot;
 macro_line|#include &quot;fbcon-cfb16.h&quot;
+macro_line|#include &quot;macmodes.h&quot;
 DECL|variable|currcon
 r_static
 r_int
@@ -1508,7 +1509,7 @@ comma
 id|blue
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FBCON_CFB16
+macro_line|#ifdef FBCON_HAS_CFB16
 r_if
 c_cond
 (paren
@@ -1763,11 +1764,18 @@ id|var-&gt;blue.length
 op_assign
 l_int|5
 suffix:semicolon
+macro_line|#ifdef FBCON_HAS_CFB16
 id|disp-&gt;dispsw
 op_assign
 op_amp
 id|fbcon_cfb16
 suffix:semicolon
+macro_line|#else
+id|disp-&gt;dispsw
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 r_if
@@ -1847,11 +1855,18 @@ id|var-&gt;blue.length
 op_assign
 l_int|8
 suffix:semicolon
+macro_line|#ifdef FBCON_HAS_CFB8
 id|disp-&gt;dispsw
 op_assign
 op_amp
 id|fbcon_cfb8
 suffix:semicolon
+macro_line|#else
+id|disp-&gt;dispsw
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 )brace
 id|var-&gt;bits_per_pixel
 op_assign

@@ -16,6 +16,7 @@ id|nibbletab_cfb4
 )braket
 op_assign
 (brace
+macro_line|#if defined(__BIG_ENDIAN)
 l_int|0x0000
 comma
 l_int|0x000f
@@ -47,6 +48,41 @@ comma
 l_int|0xfff0
 comma
 l_int|0xffff
+macro_line|#elif defined(__LITTLE_ENDIAN)
+l_int|0x0000
+comma
+l_int|0xf000
+comma
+l_int|0x0f00
+comma
+l_int|0xff00
+comma
+l_int|0x00f0
+comma
+l_int|0xf0f0
+comma
+l_int|0x0ff0
+comma
+l_int|0xfff0
+comma
+l_int|0x000f
+comma
+l_int|0xf00f
+comma
+l_int|0x0f0f
+comma
+l_int|0xff0f
+comma
+l_int|0x00ff
+comma
+l_int|0xf0ff
+comma
+l_int|0x0fff
+comma
+l_int|0xffff
+macro_line|#else
+macro_line|#error FIXME: No endianness??
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|function|fbcon_cfb4_setup
@@ -1052,6 +1088,8 @@ comma
 id|fbcon_cfb4_putcs
 comma
 id|fbcon_cfb4_revc
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma

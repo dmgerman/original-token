@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * proc_tty.c -- handles /proc/tty&n; *&n; * Copyright 1997, Theodore Ts&squot;o&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -770,12 +771,16 @@ id|ent
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called by proc_root_init() to initialize the /proc/tty subtree&n; */
-DECL|function|proc_tty_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|proc_tty_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

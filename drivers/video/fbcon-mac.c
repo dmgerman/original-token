@@ -2582,6 +2582,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|FONTWIDTHRANGE
 c_func
 (paren
