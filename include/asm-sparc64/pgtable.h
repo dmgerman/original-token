@@ -2636,6 +2636,16 @@ DECL|macro|pte_alloc_kernel
 mdefine_line|#define pte_alloc_kernel(pmd, addr)&t;pte_alloc(pmd, addr)
 DECL|macro|pmd_alloc_kernel
 mdefine_line|#define pmd_alloc_kernel(pgd, addr)&t;pmd_alloc(pgd, addr)
+r_extern
+r_int
+id|do_check_pgt_cache
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|function|set_pgdir
 r_extern
 r_inline

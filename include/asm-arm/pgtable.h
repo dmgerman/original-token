@@ -7,5 +7,15 @@ DECL|macro|module_map
 mdefine_line|#define module_map&t;vmalloc
 DECL|macro|module_unmap
 mdefine_line|#define module_unmap&t;vfree
+r_extern
+r_int
+id|do_check_pgt_cache
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 macro_line|#endif /* _ASMARM_PGTABLE_H */
 eof

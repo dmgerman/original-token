@@ -138,6 +138,11 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#if 0 
 singleline_comment|//def ARCH_IDLE_OK
 r_if

@@ -1399,6 +1399,17 @@ comma
 id|pgd_t
 op_star
 )paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_int
+comma
+id|do_check_pgt_cache
+comma
+r_int
+comma
+r_int
+)paren
 DECL|macro|get_pte_fast
 mdefine_line|#define get_pte_fast() BTFIXUP_CALL(get_pte_fast)()
 DECL|function|get_pmd_fast
@@ -1439,6 +1450,8 @@ id|pmd
 )brace
 DECL|macro|free_pgd_slow
 mdefine_line|#define free_pgd_slow(pgd) BTFIXUP_CALL(free_pgd_slow)(pgd)
+DECL|macro|do_check_pgt_cache
+mdefine_line|#define do_check_pgt_cache(low,high) BTFIXUP_CALL(do_check_pgt_cache)(low,high)
 multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any, and marks the page tables reserved.&n; */
 id|BTFIXUPDEF_CALL
 c_func

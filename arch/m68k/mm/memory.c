@@ -671,7 +671,7 @@ id|pmdp
 suffix:semicolon
 )brace
 DECL|function|free_pointer_table
-r_void
+r_int
 id|free_pointer_table
 (paren
 id|pmd_t
@@ -819,6 +819,7 @@ id|dp
 )paren
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -864,6 +865,9 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 )brace

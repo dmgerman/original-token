@@ -1887,6 +1887,16 @@ id|page
 suffix:semicolon
 )brace
 r_extern
+r_int
+id|do_check_pgt_cache
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
 id|pgd_t
 id|swapper_pg_dir
 (braket

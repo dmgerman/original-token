@@ -5,7 +5,18 @@ macro_line|#ifndef __SMP__
 DECL|macro|DEBUG_SPINLOCKS
 mdefine_line|#define DEBUG_SPINLOCKS&t;0&t;/* 0 == no debugging, 1 == maintain lock state, 2 == full debug */
 macro_line|#if (DEBUG_SPINLOCKS &lt; 1)
-multiline_comment|/*&n; * Your basic spinlocks, allowing only a single CPU anywhere&n; */
+multiline_comment|/*&n; * Your basic spinlocks, allowing only a single CPU anywhere&n; *&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC_MINOR__ &gt;= 8)
+DECL|typedef|spinlock_t
+r_typedef
+r_struct
+(brace
+)brace
+id|spinlock_t
+suffix:semicolon
+DECL|macro|SPIN_LOCK_UNLOCKED
+mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
+macro_line|#else
 DECL|member|gcc_is_buggy
 DECL|typedef|spinlock_t
 r_typedef
@@ -19,6 +30,7 @@ id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
+macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock

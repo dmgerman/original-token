@@ -2293,7 +2293,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|free_pointer_table
 c_func
 (paren
@@ -2551,7 +2551,7 @@ suffix:semicolon
 DECL|function|free_pmd_slow
 r_extern
 id|__inline__
-r_void
+r_int
 id|free_pmd_slow
 c_func
 (paren
@@ -2560,6 +2560,7 @@ op_star
 id|pmd
 )paren
 (brace
+r_return
 id|free_pointer_table
 c_func
 (paren
@@ -3177,6 +3178,16 @@ r_return
 id|pgd
 suffix:semicolon
 )brace
+r_extern
+r_int
+id|do_check_pgt_cache
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|function|set_pgdir
 r_extern
 r_inline
