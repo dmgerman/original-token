@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** atarikb.h -- This header contains the prototypes of functions of&n;**              the intelligent keyboard of the Atari needed by the&n;**              mouse and joystick drivers.&n;**&n;** Copyright 1994 by Robert de Vries&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;** Created: 20 Feb 1994 by Robert de Vries&n;*/
+multiline_comment|/*&n;** atarikb.h -- This header contains the prototypes of functions of&n;**              the intelligent keyboard of the Atari needed by the&n;**              mouse and joystick drivers.&n;**&n;** Copyright 1994 by Robert de Vries&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created: 20 Feb 1994 by Robert de Vries&n;*/
 macro_line|#ifndef _LINUX_ATARIKB_H
 DECL|macro|_LINUX_ATARIKB_H
 mdefine_line|#define _LINUX_ATARIKB_H

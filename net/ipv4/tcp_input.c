@@ -321,6 +321,12 @@ id|daddr
 comma
 id|u16
 id|dport
+comma
+id|u32
+id|paddr
+comma
+id|u16
+id|pport
 )paren
 (brace
 r_struct
@@ -375,6 +381,10 @@ comma
 id|sport
 comma
 id|daddr
+comma
+id|paddr
+comma
+id|pport
 )paren
 suffix:semicolon
 r_if
@@ -1479,6 +1489,17 @@ id|newsk-&gt;dummy_th.dest
 op_assign
 id|skb-&gt;h.th-&gt;source
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+multiline_comment|/* &n;&t; *&t;Deal with possibly redirected traffic by setting num to&n;&t; *&t;the intended destination port of the received packet.&n;&t; */
+id|newsk-&gt;num
+op_assign
+id|ntohs
+c_func
+(paren
+id|skb-&gt;h.th-&gt;dest
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Swap these two, they are from our point of view. &n;&t; */
 id|newsk-&gt;daddr
 op_assign
@@ -4484,6 +4505,95 @@ r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+multiline_comment|/*&n; *&t;Check whether a received TCP packet might be for one of our&n; *&t;connections.&n; */
+DECL|function|tcp_chkaddr
+r_int
+id|tcp_chkaddr
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_struct
+id|iphdr
+op_star
+id|iph
+op_assign
+id|skb-&gt;h.iph
+suffix:semicolon
+r_struct
+id|tcphdr
+op_star
+id|th
+op_assign
+(paren
+r_struct
+id|tcphdr
+op_star
+)paren
+(paren
+id|skb-&gt;h.raw
+op_plus
+id|iph-&gt;ihl
+op_star
+l_int|4
+)paren
+suffix:semicolon
+r_struct
+id|sock
+op_star
+id|sk
+suffix:semicolon
+id|sk
+op_assign
+id|get_sock
+c_func
+(paren
+op_amp
+id|tcp_prot
+comma
+id|th-&gt;dest
+comma
+id|iph-&gt;saddr
+comma
+id|th-&gt;source
+comma
+id|iph-&gt;daddr
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* 0 means accept all LOCAL addresses here, not all the world... */
+r_if
+c_cond
+(paren
+id|sk-&gt;rcv_saddr
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;A TCP packet has arrived.&n; *&t;&t;skb-&gt;h.raw is the TCP header.&n; */
 DECL|function|tcp_rcv
 r_int
@@ -4539,6 +4649,11 @@ id|syn_ok
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+r_int
+id|r
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * &quot;redo&quot; is 1 if we have already seen this skb but couldn&squot;t&n;&t; * use it at that time (the socket was locked).  In that case&n;&t; * we have already done a lot of the work (looked up the socket&n;&t; * etc).&n;&t; */
 id|th
 op_assign
@@ -4646,6 +4761,10 @@ comma
 id|daddr
 comma
 id|th-&gt;dest
+comma
+id|dev-&gt;pa_addr
+comma
+id|skb-&gt;redirport
 )paren
 suffix:semicolon
 r_if
@@ -4826,6 +4945,35 @@ id|sk-&gt;ip_ttl
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;&t; *&t;We don&squot;t care for RST, and non SYN are absorbed (old segments)&n;&t;&t;&t; *&t;Broadcast/multicast SYN isn&squot;t allowed. Note - bug if you change the&n;&t;&t;&t; *&t;netmask on a running connection it can go broadcast. Even Sun&squot;s have&n;&t;&t;&t; *&t;this problem so I&squot;m ignoring it &n;&t;&t;&t; */
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+multiline_comment|/*&n;&t;&t;&t; * We may get non-local addresses and still want to&n;&t;&t;&t; * handle them locally, due to transparent proxying.&n;&t;&t;&t; * Thus, narrow down the test to what is really meant.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|th-&gt;rst
+op_logical_or
+op_logical_neg
+id|th-&gt;syn
+op_logical_or
+id|th-&gt;ack
+op_logical_or
+(paren
+id|r
+op_assign
+id|ip_chk_addr
+c_func
+(paren
+id|daddr
+)paren
+op_eq
+id|IS_BROADCAST
+op_logical_or
+id|r
+op_eq
+id|IS_MULTICAST
+)paren
+)paren
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -4844,6 +4992,7 @@ id|daddr
 op_ne
 id|IS_MYADDR
 )paren
+macro_line|#endif
 (brace
 id|kfree_skb
 c_func
@@ -5308,6 +5457,10 @@ comma
 id|th-&gt;source
 comma
 id|daddr
+comma
+id|dev-&gt;pa_addr
+comma
+id|skb-&gt;redirport
 )paren
 suffix:semicolon
 multiline_comment|/* this is not really correct: we should check sk-&gt;users */

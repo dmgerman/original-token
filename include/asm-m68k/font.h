@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  asm-m68k/font.h -- `Soft&squot; font definitions&n; *&n; *  Created 1995 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file README.legal in the main directory of this archive&n; *  for more details.&n; */
+multiline_comment|/*&n; *  asm-m68k/font.h -- `Soft&squot; font definitions&n; *&n; *  Created 1995 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
 macro_line|#ifndef _ASM_M68K_FONT_H_
 DECL|macro|_ASM_M68K_FONT_H_
 mdefine_line|#define _ASM_M68K_FONT_H_

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** linux/amigatypes.h -- Types used in Amiga Linux kernel source&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;** Created 09/29/92 by Greg Harp&n;**&n;** Moved all Zorro definitions to asm/zorro.h which is where they&n;** really belong - 24/11/95 Jes Sorensen&n;*/
+multiline_comment|/*&n;** linux/amigatypes.h -- Types used in Amiga Linux kernel source&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;** Created 09/29/92 by Greg Harp&n;**&n;** Moved all Zorro definitions to asm/zorro.h which is where they&n;** really belong - 24/11/95 Jes Sorensen&n;*/
 macro_line|#ifndef _LINUX_AMIGATYPES_H_
 DECL|macro|_LINUX_AMIGATYPES_H_
 mdefine_line|#define _LINUX_AMIGATYPES_H_

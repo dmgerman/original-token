@@ -167,6 +167,9 @@ r_int
 r_int
 comma
 id|isrfunc
+comma
+r_void
+op_star
 )paren
 suffix:semicolon
 DECL|variable|mach_process_int

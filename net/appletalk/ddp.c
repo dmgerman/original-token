@@ -5349,6 +5349,8 @@ comma
 id|skb-&gt;dev
 comma
 id|ddp
+comma
+l_int|NULL
 )paren
 op_ne
 id|FW_ACCEPT
@@ -5455,6 +5457,8 @@ comma
 id|skb-&gt;dev
 comma
 id|ddp
+comma
+l_int|NULL
 )paren
 op_ne
 id|FW_ACCEPT
@@ -6479,6 +6483,8 @@ comma
 id|skb-&gt;dev
 comma
 id|ddp
+comma
+l_int|NULL
 )paren
 op_ne
 id|FW_ACCEPT

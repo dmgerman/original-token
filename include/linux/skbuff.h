@@ -357,6 +357,11 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Destruct function&t;&t;*/
+DECL|member|redirport
+id|__u16
+id|redirport
+suffix:semicolon
+multiline_comment|/* Redirect port&t;&t;&t;&t;*/
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_SKB_LARGE

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/console.h&n; *&n; *  Copyright (C) 1993        Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; *&n; * Changed:&n; * 10-Mar-94: Arno Griffioen: Conversion for vt100 emulator port from PC LINUX&n; */
+multiline_comment|/*&n; *  linux/include/linux/console.h&n; *&n; *  Copyright (C) 1993        Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * Changed:&n; * 10-Mar-94: Arno Griffioen: Conversion for vt100 emulator port from PC LINUX&n; */
 macro_line|#ifndef _LINUX_CONSOLE_H_
 DECL|macro|_LINUX_CONSOLE_H_
 mdefine_line|#define _LINUX_CONSOLE_H_ 1

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: llglue.c,v 1.3 1996/05/01 14:19:57 fritz Exp $&n; *&n; * $Log: llglue.c,v $&n; * Revision 1.3  1996/05/01 14:19:57  fritz&n; * Added ISDN_FEADTURE_L2_TRANS&n; *&n; * Revision 1.2  1996/04/29 23:01:46  fritz&n; * Added driverId and channel to readstatus().&n; *&n; * Revision 1.1  1996/04/13 10:26:29  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: llglue.c,v 1.3 1996/05/01 14:19:57 fritz Exp $&n; *&n; * $Log: llglue.c,v $&n; * Revision 1.3  1996/05/01 14:19:57  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.2  1996/04/29 23:01:46  fritz&n; * Added driverId and channel to readstatus().&n; *&n; * Revision 1.1  1996/04/13 10:26:29  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;

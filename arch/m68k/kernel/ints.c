@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ints.c -- 680x0 Linux general interrupt handling code&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; *&n; * 07/03/96: Timer initialization, and thus mach_sched_init(),&n; *           removed from request_irq() and moved to init_time().&n; *           We should therefore consider renaming our add_isr() and&n; *           remove_isr() to request_irq() and free_irq()&n; *           respectively, so they are compliant with the other&n; *           architectures.                                     /Jes&n; */
+multiline_comment|/*&n; * ints.c -- 680x0 Linux general interrupt handling code&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * 07/03/96: Timer initialization, and thus mach_sched_init(),&n; *           removed from request_irq() and moved to init_time().&n; *           We should therefore consider renaming our add_isr() and&n; *           remove_isr() to request_irq() and free_irq()&n; *           respectively, so they are compliant with the other&n; *           architectures.                                     /Jes&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -127,6 +127,10 @@ id|listp
 comma
 id|isrfunc
 id|isr
+comma
+r_void
+op_star
+id|data
 )paren
 (brace
 r_int
@@ -175,6 +179,10 @@ c_cond
 id|np-&gt;isr
 op_eq
 id|isr
+op_logical_and
+id|np-&gt;data
+op_eq
+id|data
 )paren
 (brace
 op_star
@@ -401,6 +409,10 @@ id|source
 comma
 id|isrfunc
 id|isr
+comma
+r_void
+op_star
+id|data
 )paren
 (brace
 r_if
@@ -416,6 +428,8 @@ id|mach_remove_isr
 id|source
 comma
 id|isr
+comma
+id|data
 )paren
 suffix:semicolon
 r_if
@@ -448,6 +462,8 @@ l_int|1
 )braket
 comma
 id|isr
+comma
+id|data
 )paren
 suffix:semicolon
 r_return

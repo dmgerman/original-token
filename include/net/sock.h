@@ -1560,6 +1560,12 @@ r_int
 comma
 r_int
 r_int
+comma
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

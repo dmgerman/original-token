@@ -709,7 +709,7 @@ comma
 (brace
 id|MT_N1_INFO
 comma
-l_string|&quot;INFOmation&quot;
+l_string|&quot;INFOrmation&quot;
 )brace
 comma
 (brace

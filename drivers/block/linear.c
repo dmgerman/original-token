@@ -72,10 +72,7 @@ suffix:semicolon
 multiline_comment|/*&n;     Find out the smallest device. This was previously done&n;     at registry time, but since it violates modularity,&n;     I moved it here... Any comment ? ;-)&n;   */
 id|data-&gt;smallest
 op_assign
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 suffix:semicolon
 r_for
 c_loop
@@ -96,10 +93,7 @@ c_cond
 (paren
 id|data-&gt;smallest-&gt;size
 OG
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 (braket
 id|i
 )braket
@@ -108,10 +102,7 @@ id|size
 )paren
 id|data-&gt;smallest
 op_assign
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 op_plus
 id|i
 suffix:semicolon
@@ -157,10 +148,7 @@ id|GFP_KERNEL
 suffix:semicolon
 id|size
 op_assign
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 (braket
 id|cur
 )braket
@@ -186,10 +174,7 @@ id|i
 dot
 id|dev0
 op_assign
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 op_plus
 id|cur
 suffix:semicolon
@@ -235,10 +220,7 @@ r_continue
 suffix:semicolon
 id|size
 op_assign
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 (braket
 id|cur
 )braket
@@ -278,10 +260,7 @@ suffix:semicolon
 multiline_comment|/* Here, we use a 2nd dev to fill the slot */
 id|size
 op_assign
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 (braket
 id|cur
 )braket
@@ -296,10 +275,7 @@ op_increment
 dot
 id|dev1
 op_assign
-id|devices
-(braket
-id|minor
-)braket
+id|mddev-&gt;devices
 op_plus
 id|cur
 suffix:semicolon

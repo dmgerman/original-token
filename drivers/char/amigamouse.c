@@ -1141,6 +1141,8 @@ c_func
 id|IRQ_AMIGA_VERTB
 comma
 id|mouse_interrupt
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|misc_deregister

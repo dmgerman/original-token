@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** bootstrap.h -- This file is a part of the Atari bootloader.&n;**&n;** Copyright 1993 by Arjan Knor&n;**&n;** Modified by Andreas Schwab&n;** - clear transparent translation registers&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;*/
+multiline_comment|/*&n;** bootstrap.h -- This file is a part of the Atari bootloader.&n;**&n;** Copyright 1993 by Arjan Knor&n;**&n;** Modified by Andreas Schwab&n;** - clear transparent translation registers&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
 macro_line|#ifndef BOOTSTRAP_H
 DECL|macro|BOOTSTRAP_H
 mdefine_line|#define BOOTSTRAP_H

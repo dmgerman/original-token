@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/amiga/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; *  linux/amiga/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Miscellaneous Amiga stuff&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -89,6 +89,9 @@ r_int
 r_int
 comma
 id|isrfunc
+comma
+r_void
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -1058,7 +1061,6 @@ id|mach_add_isr
 op_assign
 id|amiga_add_isr
 suffix:semicolon
-macro_line|#if 0 /* ++1.3++ */
 id|mach_remove_isr
 op_assign
 id|amiga_remove_isr
@@ -1071,7 +1073,6 @@ id|mach_disable_irq
 op_assign
 id|amiga_disable_irq
 suffix:semicolon
-macro_line|#endif
 id|mach_get_irq_list
 op_assign
 id|amiga_get_irq_list

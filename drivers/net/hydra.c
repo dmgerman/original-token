@@ -10,6 +10,7 @@ multiline_comment|/* Linux distribution for more details.                       
 multiline_comment|/* The Amiganet is a Zorro-II board made by Hydra Systems. It contains a    */
 multiline_comment|/* NS8390 NIC (network interface controller) clone, 16 or 64K on-board RAM  */
 multiline_comment|/* and 10BASE-2 (thin coax) and AUI connectors.                             */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -19,6 +20,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -34,26 +36,6 @@ DECL|macro|HAVE_MULTICAST
 macro_line|#undef HAVE_MULTICAST
 DECL|macro|HYDRA_VERSION
 mdefine_line|#define HYDRA_VERSION &quot;v2.1 BETA&quot;
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 DECL|macro|HYDRA_DEBUG
 macro_line|#undef HYDRA_DEBUG        /* define this for (lots of) debugging information */
 macro_line|#if 0                         /* currently hardwired to one transmit buffer */
@@ -118,6 +100,10 @@ r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
+DECL|member|key
+r_int
+id|key
+suffix:semicolon
 )brace
 suffix:semicolon
 r_static
@@ -181,6 +167,7 @@ id|hydra_private
 op_star
 id|priv
 comma
+r_volatile
 id|u_char
 op_star
 id|nicbase
@@ -360,7 +347,6 @@ suffix:semicolon
 macro_line|#endif
 DECL|function|hydra_probe
 r_int
-r_int
 id|hydra_probe
 c_func
 (paren
@@ -531,8 +517,6 @@ c_func
 id|dev
 comma
 l_int|0
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|dev-&gt;priv
@@ -597,6 +581,10 @@ id|board
 )paren
 op_plus
 id|HYDRA_NIC_BASE
+suffix:semicolon
+id|priv-&gt;key
+op_assign
+id|key
 suffix:semicolon
 id|dev-&gt;open
 op_assign
@@ -666,14 +654,8 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_static
-r_int
-id|interruptinstalled
-op_assign
-l_int|0
-suffix:semicolon
-id|u_char
 r_volatile
+id|u_char
 op_star
 id|nicbase
 op_assign
@@ -998,13 +980,6 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|interruptinstalled
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
 id|add_isr
 c_func
 (paren
@@ -1025,11 +1000,8 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|interruptinstalled
-op_assign
-l_int|1
+id|MOD_INC_USE_COUNT
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1058,8 +1030,8 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|u_char
 r_volatile
+id|u_char
 op_star
 id|nicbase
 op_assign
@@ -1134,6 +1106,18 @@ id|n
 (brace
 suffix:semicolon
 )brace
+id|remove_isr
+c_func
+(paren
+id|IRQ_AMIGA_PORTS
+comma
+id|hydra_interrupt
+comma
+id|dev
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1157,8 +1141,8 @@ op_star
 id|data
 )paren
 (brace
-id|u_char
 r_volatile
+id|u_char
 op_star
 id|nicbase
 suffix:semicolon
@@ -1660,8 +1644,8 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|u_char
 r_volatile
+id|u_char
 op_star
 id|nicbase
 op_assign
@@ -1951,8 +1935,11 @@ l_int|0x80000000
 id|printk
 c_func
 (paren
-l_string|&quot;weirdness: memcpyw(txbuf, skbdata, len): txbuf = %0x&bslash;n&quot;
+l_string|&quot;weirdness: memcpyw(txbuf, skbdata, len): txbuf = 0x%x&bslash;n&quot;
 comma
+(paren
+id|u_int
+)paren
 (paren
 id|priv-&gt;hydra_base
 op_plus
@@ -2098,13 +2085,14 @@ id|hydra_private
 op_star
 id|priv
 comma
+r_volatile
 id|u_char
 op_star
 id|nicbase
 )paren
 (brace
-id|u_short
 r_volatile
+id|u_short
 op_star
 id|board_ram_ptr
 suffix:semicolon
@@ -2670,4 +2658,145 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+DECL|variable|hydra_dev
+r_static
+r_struct
+id|device
+id|hydra_dev
+op_assign
+(brace
+id|devicename
+comma
+multiline_comment|/* filled in by register_netdev() */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* memory */
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* base, irq */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|hydra_probe
+comma
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|register_netdev
+c_func
+(paren
+op_amp
+id|hydra_dev
+)paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|err
+op_eq
+op_minus
+id|EIO
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;No Hydra board found. Module not loaded.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|hydra_private
+op_star
+id|priv
+op_assign
+(paren
+r_struct
+id|hydra_private
+op_star
+)paren
+id|hydra_dev.priv
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|hydra_dev
+)paren
+suffix:semicolon
+id|zorro_unconfig_board
+c_func
+(paren
+id|priv-&gt;key
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|priv
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
 eof

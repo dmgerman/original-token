@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/m68k/kernel/ptrace.c&n; *&n; *  Copyright (C) 1994 by Hamish Macdonald&n; *  Taken from linux/kernel/ptrace.c and modified for M680x0.&n; *  linux/kernel/ptrace.c is by Ross Biro 1/23/92, edited by Linus Torvalds&n; *&n; * This file is subject to the terms and conditions of the GNU General&n; * Public License.  See the file README.legal in the main directory of&n; * this archive for more details.&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/kernel/ptrace.c&n; *&n; *  Copyright (C) 1994 by Hamish Macdonald&n; *  Taken from linux/kernel/ptrace.c and modified for M680x0.&n; *  linux/kernel/ptrace.c is by Ross Biro 1/23/92, edited by Linus Torvalds&n; *&n; * This file is subject to the terms and conditions of the GNU General&n; * Public License.  See the file COPYING in the main directory of&n; * this archive for more details.&n; */
 macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -8,10 +8,12 @@ DECL|macro|FW_ACCEPT
 mdefine_line|#define FW_ACCEPT&t;1
 DECL|macro|FW_REJECT
 mdefine_line|#define FW_REJECT&t;(-1)
+DECL|macro|FW_REDIRECT
+mdefine_line|#define FW_REDIRECT&t;2
 DECL|macro|FW_MASQUERADE
-mdefine_line|#define FW_MASQUERADE&t;2
+mdefine_line|#define FW_MASQUERADE&t;3
 DECL|macro|FW_SKIP
-mdefine_line|#define FW_SKIP&t;&t;3
+mdefine_line|#define FW_SKIP&t;&t;4
 DECL|struct|firewall_ops
 r_struct
 id|firewall_ops
@@ -45,6 +47,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 suffix:semicolon
 DECL|member|fw_input
@@ -70,6 +76,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 suffix:semicolon
 DECL|member|fw_output
@@ -95,6 +105,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 suffix:semicolon
 multiline_comment|/* Data falling in the second 486 cache line isn&squot;t used directly&n;&t;   during a firewall call and scan, only by insert/delete and other&n;&t;   unusual cases&n;&t; */
@@ -155,6 +169,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 suffix:semicolon
 r_extern
@@ -173,6 +191,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 suffix:semicolon
 r_extern
@@ -191,6 +213,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 suffix:semicolon
 r_extern

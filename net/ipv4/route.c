@@ -2368,7 +2368,7 @@ op_ne
 id|dev
 op_logical_and
 (paren
-id|dev
+id|f-&gt;fib_info-&gt;fib_dev
 op_ne
 op_amp
 id|loopback_dev

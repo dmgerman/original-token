@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * atari_scsi.h -- Header file for the Atari native SCSI driver&n; *&n; * Copyright 1994 Roman Hodek &lt;Roman.Hodek@informatik.uni-erlangen.de&gt;&n; *&n; * (Loosely based on the work of Robert De Vries&squot; team)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; *&n; */
+multiline_comment|/*&n; * atari_scsi.h -- Header file for the Atari native SCSI driver&n; *&n; * Copyright 1994 Roman Hodek &lt;Roman.Hodek@informatik.uni-erlangen.de&gt;&n; *&n; * (Loosely based on the work of Robert De Vries&squot; team)&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 macro_line|#ifndef ATARI_SCSI_H
 DECL|macro|ATARI_SCSI_H
 mdefine_line|#define ATARI_SCSI_H

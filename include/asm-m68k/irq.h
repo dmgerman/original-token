@@ -163,6 +163,10 @@ id|source
 comma
 id|isrfunc
 id|isr
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This routine will insert an isr_node_t into a chain of nodes, using&n; * the priority stored in the node.&n; */
@@ -192,6 +196,10 @@ id|listp
 comma
 id|isrfunc
 id|isr
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This routine may be used to call the isr routines in the passed list.&n; */

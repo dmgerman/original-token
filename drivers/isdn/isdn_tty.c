@@ -165,7 +165,7 @@ id|isdn_tty_revision
 op_assign
 l_string|&quot;$Revision: 1.11 $&quot;
 suffix:semicolon
-multiline_comment|/* isdn_tty_try_read() is called from within isdn_receive_callback()&n; * to stuff incoming data directly into a tty&squot;s flip-buffer. This&n; * is done to speed up tty-receiving if the receive-queue is empty.&n; * This routine MUST be called with interrupts off.&n; * Return:&n; *  1 = Success&n; *  0 = Failure, data has to be bufferd and later processed by&n; *      isdn_tty_readmodem().&n; */
+multiline_comment|/* isdn_tty_try_read() is called from within isdn_receive_callback()&n; * to stuff incoming data directly into a tty&squot;s flip-buffer. This&n; * is done to speed up tty-receiving if the receive-queue is empty.&n; * This routine MUST be called with interrupts off.&n; * Return:&n; *  1 = Success&n; *  0 = Failure, data has to be buffered and later processed by&n; *      isdn_tty_readmodem().&n; */
 DECL|macro|DLE
 mdefine_line|#define DLE 0x10
 DECL|macro|ETX
@@ -761,7 +761,7 @@ id|len
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-multiline_comment|/* For now, ifmt is fixed to 1 (alaw), since this&n;                         * is used with ISDN everywhere in the world, except&n;                         * US, Canadia and Japan.&n;                         * Later, when US-ISDN protocols are implemented,&n;                         * this setting will depend on the D-channel protocol.&n;                         */
+multiline_comment|/* For now, ifmt is fixed to 1 (alaw), since this&n;                         * is used with ISDN everywhere in the world, except&n;                         * US, Canada and Japan.&n;                         * Later, when US-ISDN protocols are implemented,&n;                         * this setting will depend on the D-channel protocol.&n;                         */
 r_int
 id|ifmt
 op_assign
@@ -1009,7 +1009,7 @@ id|skb
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************&n; *&n; * Modem-functions&n; *&n; * mostly &quot;stolen&quot; from original Linux-serial.c and friends.&n; *&n; ************************************************************/
-multiline_comment|/* The nex routine is called once from within timer-interrupt&n; * triggered within isdn_tty_modem_ncarrier(). It calls&n; * isdn_tty_modem_result() to stuff a &quot;NO CARRIER&quot; Message&n; * into the tty&squot;s flip-buffer.&n; */
+multiline_comment|/* The next routine is called once from within timer-interrupt&n; * triggered within isdn_tty_modem_ncarrier(). It calls&n; * isdn_tty_modem_result() to stuff a &quot;NO CARRIER&quot; Message&n; * into the tty&squot;s flip-buffer.&n; */
 DECL|function|isdn_tty_modem_do_ncarrier
 r_static
 r_void
@@ -1089,7 +1089,7 @@ id|info-&gt;nc_timer
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* isdn_tty_dial() performs dialing of a tty an the necessary&n; * setup of the lower levels befor that.&n; */
+multiline_comment|/* isdn_tty_dial() performs dialing of a tty an the necessary&n; * setup of the lower levels before that.&n; */
 DECL|function|isdn_tty_dial
 r_static
 r_void
@@ -2332,7 +2332,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
-multiline_comment|/* This routine is called wrom within isdn_tty_write() to perform&n; * DLE-decoding when sending audio-data.&n; */
+multiline_comment|/* This routine is called from within isdn_tty_write() to perform&n; * DLE-decoding when sending audio-data.&n; */
 DECL|function|isdn_tty_handleDLEdown
 r_static
 r_int
@@ -2653,7 +2653,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif        /* CONFIG_ISDN_AUDIO */
-multiline_comment|/* isdn_tty_write() is the main send-routine. It is called from the upper&n; * levels within the kernel to perform sending data. Depending on the&n; * online-flag it either directs output to the at-command-interpreter or&n; * to the lower level. Additional tasks done here:&n; *  - If online, check for escape-sequence (+++)&n; *  - If sending audio-data, call isdn_tty_DLEdown() to parse DLE-codes.&n; *  - If receiving audio-data, call isdn_tty_end_vrx() to abor if needed.&n; *  - If dialing, abort dial.&n; */
+multiline_comment|/* isdn_tty_write() is the main send-routine. It is called from the upper&n; * levels within the kernel to perform sending data. Depending on the&n; * online-flag it either directs output to the at-command-interpreter or&n; * to the lower level. Additional tasks done here:&n; *  - If online, check for escape-sequence (+++)&n; *  - If sending audio-data, call isdn_tty_DLEdown() to parse DLE-codes.&n; *  - If receiving audio-data, call isdn_tty_end_vrx() to abort if needed.&n; *  - If dialing, abort dial.&n; */
 DECL|function|isdn_tty_write
 r_static
 r_int
@@ -4511,7 +4511,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ttyI%d ioctl TIOSERGETLSR&bslash;n&quot;
+l_string|&quot;ttyI%d ioctl TIOCSERGETLSR&bslash;n&quot;
 comma
 id|info-&gt;line
 )paren

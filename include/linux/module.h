@@ -214,17 +214,6 @@ suffix:semicolon
 multiline_comment|/* cleanup routine */
 )brace
 suffix:semicolon
-multiline_comment|/* insert new symbol table */
-r_extern
-r_int
-id|register_symtab
-c_func
-(paren
-r_struct
-id|symbol_table
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * The first word of the module contains the use count.&n; */
 DECL|macro|GET_USE_COUNT
 mdefine_line|#define GET_USE_COUNT(module)&t;(* (long *) (module)-&gt;addr)
@@ -265,6 +254,27 @@ DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT&t;do { } while (0)
 DECL|macro|MOD_IN_USE
 mdefine_line|#define MOD_IN_USE&t;&t;1
+macro_line|#endif
+multiline_comment|/* insert new symbol table */
+r_extern
+r_int
+id|register_symtab_from
+c_func
+(paren
+r_struct
+id|symbol_table
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|macro|register_symtab
+mdefine_line|#define register_symtab(symtab) register_symtab_from(symtab, &amp;mod_use_count_)
+macro_line|#else
+DECL|macro|register_symtab
+mdefine_line|#define register_symtab(symtab) register_symtab_from(symtab, 0)
 macro_line|#endif
 macro_line|#endif
 eof

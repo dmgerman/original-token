@@ -15,11 +15,7 @@ DECL|macro|START_MD
 mdefine_line|#define START_MD     _IO (MD_MAJOR, 2)
 DECL|macro|STOP_MD
 mdefine_line|#define STOP_MD      _IO (MD_MAJOR, 3)
-DECL|macro|MD_INVALID
-mdefine_line|#define MD_INVALID   _IO (MD_MAJOR, 4)
-DECL|macro|MD_VALID
-mdefine_line|#define MD_VALID     _IO (MD_MAJOR, 5)
-multiline_comment|/*&n;   personalities :&n;   Byte 0 : Chunk size factor&n;   Byte 1 : Fault tolerance count for each physical device&n;            (   0 means no fault tolerance,&n;             0xFF means always tolerate faults)&n;   Byte 2 : Personality&n;   Byte 3 : Reserved.&n; */
+multiline_comment|/*&n;   personalities :&n;   Byte 0 : Chunk size factor&n;   Byte 1 : Fault tolerance count for each physical device&n;            (   0 means no fault tolerance,&n;             0xFF means always tolerate faults), not used by now.&n;   Byte 2 : Personality&n;   Byte 3 : Reserved.&n; */
 DECL|macro|FAULT_SHIFT
 mdefine_line|#define FAULT_SHIFT       8
 DECL|macro|PERSONALITY_SHIFT
@@ -36,8 +32,6 @@ DECL|macro|LINEAR
 mdefine_line|#define LINEAR            (1UL &lt;&lt; PERSONALITY_SHIFT)
 DECL|macro|STRIPED
 mdefine_line|#define STRIPED           (2UL &lt;&lt; PERSONALITY_SHIFT)
-DECL|macro|STRIPPED
-mdefine_line|#define STRIPPED          STRIPED /* Long lasting spelling mistake... */
 DECL|macro|RAID0
 mdefine_line|#define RAID0             STRIPED
 DECL|macro|RAID1
@@ -62,22 +56,6 @@ DECL|macro|PERSONALITY
 mdefine_line|#define PERSONALITY(a)    ((a)-&gt;repartition &amp; PERSONALITY_MASK)
 DECL|macro|FACTOR_SHIFT
 mdefine_line|#define FACTOR_SHIFT(a) (PAGE_SHIFT + (a) - 10)
-multiline_comment|/* Invalidation modes */
-DECL|macro|VALID
-mdefine_line|#define VALID          0
-DECL|macro|INVALID_NEXT
-mdefine_line|#define INVALID_NEXT   1
-DECL|macro|INVALID_ALWAYS
-mdefine_line|#define INVALID_ALWAYS 2
-DECL|macro|INVALID
-mdefine_line|#define INVALID        3&t;/* Only useful to md_valid_device */
-multiline_comment|/* Return values from personalities to md driver */
-DECL|macro|REDIRECTED_BHREQ
-mdefine_line|#define REDIRECTED_BHREQ 0 /* Redirected individual buffers&n;&t;&t;&t;      (shouldn&squot;t be used anymore since 0.31) */
-DECL|macro|REDIRECTED_REQ
-mdefine_line|#define REDIRECTED_REQ   1 /* Redirected whole request */
-DECL|macro|REDIRECT_FAILED
-mdefine_line|#define REDIRECT_FAILED -1 /* For RAID-1 */
 DECL|struct|real_dev
 r_struct
 id|real_dev
@@ -104,16 +82,6 @@ op_star
 id|inode
 suffix:semicolon
 multiline_comment|/* Lock inode */
-DECL|member|fault_count
-r_int
-id|fault_count
-suffix:semicolon
-multiline_comment|/* Fault counter for invalidation */
-DECL|member|invalid
-r_int
-id|invalid
-suffix:semicolon
-multiline_comment|/* Indicate if the device is disabled :&n;&t;&t;&t;&t;   VALID          - valid&n;&t;&t;&t;&t;   INVALID_NEXT   - disabled for next access&n;&t;&t;&t;&t;   INVALID_ALWAYS - permanently disabled&n;&t;&t;&t;&t;   (for redundancy modes only) */
 )brace
 suffix:semicolon
 r_struct
@@ -242,6 +210,14 @@ DECL|struct|md_dev
 r_struct
 id|md_dev
 (brace
+DECL|member|devices
+r_struct
+id|real_dev
+id|devices
+(braket
+id|MAX_REAL
+)braket
+suffix:semicolon
 DECL|member|pers
 r_struct
 id|md_personality
@@ -251,10 +227,6 @@ suffix:semicolon
 DECL|member|repartition
 r_int
 id|repartition
-suffix:semicolon
-DECL|member|invalid_dev_count
-r_int
-id|invalid_dev_count
 suffix:semicolon
 DECL|member|busy
 r_int
@@ -270,17 +242,6 @@ op_star
 r_private
 suffix:semicolon
 )brace
-suffix:semicolon
-r_extern
-r_struct
-id|real_dev
-id|devices
-(braket
-id|MAX_MD_DEV
-)braket
-(braket
-id|MAX_REAL
-)braket
 suffix:semicolon
 r_extern
 r_struct

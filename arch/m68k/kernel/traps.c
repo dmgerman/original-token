@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/m68k/kernel/traps.c&n; *&n; *  Copyright (C) 1993, 1994 by Hamish Macdonald&n; *&n; *  68040 fixes by Michael Rausch&n; *  68040 fixes by Martin Apel&n; *  68060 fixes by Roman Hodek&n; *  68060 fixes by Jesper Skov&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/kernel/traps.c&n; *&n; *  Copyright (C) 1993, 1994 by Hamish Macdonald&n; *&n; *  68040 fixes by Michael Rausch&n; *  68040 fixes by Martin Apel&n; *  68060 fixes by Roman Hodek&n; *  68060 fixes by Jesper Skov&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Sets up all exception vectors&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -1002,7 +1002,7 @@ l_int|1
 suffix:semicolon
 id|tmp.f_namelen
 op_assign
-id|MAXNAMLEN
+id|UFS_MAXNAMLEN
 suffix:semicolon
 multiline_comment|/*        tmp.f_spare[6] */
 id|memcpy_tofs

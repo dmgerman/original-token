@@ -2987,7 +2987,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;isdnl3down unhandled E-DSS1 state %d primitiv %x&bslash;n&quot;
+l_string|&quot;isdnl3down unhandled E-DSS1 state %d primitive %x&bslash;n&quot;
 comma
 id|st-&gt;l3.state
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&t;ICMP type printk, IP_FW_F_APPEND&n; *&t;&t;Bernd Eckenfels 1996-01-31&n; *&t;Split blocking chain into input and output chains, add new &quot;insert&quot; and&n; *&t;&quot;append&quot; commands to replace semi-intelligent &quot;add&quot; command, let &quot;delete&quot;.&n; *&t;only delete the first matching entry, use 0xFFFF (0xFF) as ports (ICMP&n; *&t;types) when counting packets being 2nd and further fragments.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 8/2/1996.&n; *&t;Add support for matching on device names.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 15/2/1996.&n; *&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totally&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&t;Thomas Quinot&t;&t;:&t;Fixed port spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up retransmits in spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up length setting.&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; *&n; *&t;Juan Jose Ciarlante&t;:&t;Masquerading code moved to ip_masq.c&n; *&n; *&t;All the real work was done by .....&n; *&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&t;ICMP type printk, IP_FW_F_APPEND&n; *&t;&t;Bernd Eckenfels 1996-01-31&n; *&t;Split blocking chain into input and output chains, add new &quot;insert&quot; and&n; *&t;&quot;append&quot; commands to replace semi-intelligent &quot;add&quot; command, let &quot;delete&quot;.&n; *&t;only delete the first matching entry, use 0xFFFF (0xFF) as ports (ICMP&n; *&t;types) when counting packets being 2nd and further fragments.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 8/2/1996.&n; *&t;Add support for matching on device names.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 15/2/1996.&n; *&t;Transparent proxying support.&n; *&t;&t;Willy Konynenberg &lt;willy@xos.nl&gt; 10/5/96.&n; *&t;Make separate accounting on incoming and outgoing packets possible.&n; *&t;&t;Jos Vos &lt;jos@xos.nl&gt; 18/5/1996.&n; *&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totally&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&t;Thomas Quinot&t;&t;:&t;Fixed port spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up retransmits in spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up length setting.&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; *&n; *&t;Juan Jose Ciarlante&t;:&t;Masquerading code moved to ip_masq.c&n; *&n; *&t;All the real work was done by .....&n; *&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -246,7 +246,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if defined(CONFIG_IP_ACCT) || defined(CONFIG_IP_FIREWALL)
-multiline_comment|/*&n; *&t;Returns 0 if packet should be dropped, 1 if it should be accepted,&n; *&t;and -1 if an ICMP host unreachable packet should be sent.&n; *&t;Also does accounting so you can feed it the accounting chain.&n; *&t;If opt is set to 1, it means that we do this for accounting&n; *&t;purposes (searches all entries and handles fragments different).&n; *&t;If opt is set to 2, it doesn&squot;t count a matching packet, which&n; *&t;is used when calling this for checking purposes (IP_FW_CHK_*).&n; */
+multiline_comment|/*&n; *&t;Returns one of the generic firewall policies, like FW_ACCEPT.&n; *&t;Also does accounting so you can feed it the accounting chain.&n; *&n; *&t;The modes is either IP_FW_MODE_FW (normal firewall mode),&n; *&t;IP_FW_MODE_ACCT_IN or IP_FW_MODE_ACCT_OUT (accounting mode,&n; *&t;steps through the entire chain and handles fragments&n; *&t;differently), or IP_FW_MODE_CHK (handles user-level check,&n; *&t;counters are not updated).&n; */
 DECL|function|ip_fw_chk
 r_int
 id|ip_fw_chk
@@ -262,6 +262,10 @@ id|device
 op_star
 id|rif
 comma
+id|__u16
+op_star
+id|redirport
+comma
 r_struct
 id|ip_fw
 op_star
@@ -271,7 +275,7 @@ r_int
 id|policy
 comma
 r_int
-id|opt
+id|mode
 )paren
 (brace
 r_struct
@@ -434,10 +438,15 @@ id|offset
 op_ne
 l_int|0
 op_logical_and
+op_logical_neg
 (paren
-id|opt
-op_ne
-l_int|1
+id|mode
+op_amp
+(paren
+id|IP_FW_MODE_ACCT_IN
+op_or
+id|IP_FW_MODE_ACCT_OUT
+)paren
 )paren
 op_logical_and
 (paren
@@ -822,10 +831,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|match
 )paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Look for a VIA address match &n;&t;&t;&t; */
+r_continue
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Look for a VIA address match &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -847,7 +858,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Mismatch */
 )brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Look for a VIA device match &n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Look for a VIA device match &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -867,12 +878,45 @@ suffix:semicolon
 )brace
 multiline_comment|/* Mismatch */
 )brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Drop through - this is a match&n;&t;&t;&t; */
-)brace
-r_else
+multiline_comment|/*&n;&t;&t; *&t;Ok the chain addresses match.&n;&t;&t; */
+macro_line|#ifdef CONFIG_IP_ACCT
+multiline_comment|/*&n;&t;&t; *&t;See if we&squot;re in accounting mode and only want to&n;&t;&t; *&t;count incoming or outgoing packets.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|mode
+op_amp
+(paren
+id|IP_FW_MODE_ACCT_IN
+op_or
+id|IP_FW_MODE_ACCT_OUT
+)paren
+op_logical_and
+(paren
+(paren
+id|mode
+op_eq
+id|IP_FW_MODE_ACCT_IN
+op_logical_and
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_ACCTOUT
+)paren
+op_logical_or
+(paren
+id|mode
+op_eq
+id|IP_FW_MODE_ACCT_OUT
+op_logical_and
+id|f-&gt;fw_flg
+op_amp
+id|IP_FW_F_ACCTIN
+)paren
+)paren
+)paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Ok the chain addresses match.&n;&t;&t; */
+macro_line|#endif
 id|f_prt
 op_assign
 id|f-&gt;fw_flg
@@ -1068,14 +1112,99 @@ op_amp
 id|IP_FW_F_PRN
 )paren
 (brace
+id|__u32
+op_star
+id|opt
+op_assign
+(paren
+id|__u32
+op_star
+)paren
+(paren
+id|ip
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_int
+id|opti
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|opt
-op_ne
-l_int|1
+id|mode
+op_eq
+id|IP_FW_MODE_ACCT_IN
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;IP acct in &quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|mode
+op_eq
+id|IP_FW_MODE_ACCT_OUT
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;IP acct out &quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|chain
+op_eq
+id|ip_fw_fwd_chain
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;IP fw-fwd &quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|chain
+op_eq
+id|ip_fw_in_chain
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;IP fw-in &quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;IP fw-out &quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1089,13 +1218,36 @@ c_cond
 (paren
 id|f-&gt;fw_flg
 op_amp
+id|IP_FW_F_REDIR
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;acc/r%d &quot;
+comma
+id|f-&gt;fw_pts
+(braket
+id|f-&gt;fw_nsp
+op_plus
+id|f-&gt;fw_ndp
+)braket
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|f-&gt;fw_flg
+op_amp
 id|IP_FW_F_MASQ
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;masq &quot;
+l_string|&quot;acc/masq &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1103,7 +1255,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;acc  &quot;
+l_string|&quot;acc &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1119,7 +1271,7 @@ id|IP_FW_F_ICMPRPL
 id|printk
 c_func
 (paren
-l_string|&quot;rej  &quot;
+l_string|&quot;rej &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1131,17 +1283,15 @@ l_string|&quot;deny &quot;
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|rif
-)paren
 id|printk
 c_func
 (paren
-l_string|&quot;%s &quot;
-comma
+id|rif
+ques
+c_cond
 id|rif-&gt;name
+suffix:colon
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -1156,7 +1306,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;TCP &quot;
+l_string|&quot; TCP &quot;
 )paren
 suffix:semicolon
 r_break
@@ -1167,7 +1317,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;UDP &quot;
+l_string|&quot; UDP &quot;
 )paren
 suffix:semicolon
 r_break
@@ -1178,7 +1328,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;ICMP:%d &quot;
+l_string|&quot; ICMP/%d &quot;
 comma
 id|icmp_type
 )paren
@@ -1190,7 +1340,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;p=%d &quot;
+l_string|&quot; PROTO=%d &quot;
 comma
 id|ip-&gt;protocol
 )paren
@@ -1219,7 +1369,7 @@ id|IPPROTO_UDP
 id|printk
 c_func
 (paren
-l_string|&quot;:%d&quot;
+l_string|&quot;:%hu&quot;
 comma
 id|src_port
 )paren
@@ -1252,12 +1402,70 @@ id|IPPROTO_UDP
 id|printk
 c_func
 (paren
-l_string|&quot;:%d&quot;
+l_string|&quot;:%hu&quot;
 comma
 id|dst_port
 )paren
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot; L=%hu S=0x%2.2hX I=%hu F=0x%4.4hX T=%hu&quot;
+comma
+id|ntohs
+c_func
+(paren
+id|ip-&gt;tot_len
+)paren
+comma
+id|ip-&gt;tos
+comma
+id|ntohs
+c_func
+(paren
+id|ip-&gt;id
+)paren
+comma
+id|ip-&gt;frag_off
+comma
+id|ip-&gt;ttl
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|opti
+op_assign
+l_int|0
+suffix:semicolon
+id|opti
+OL
+(paren
+id|ip-&gt;ihl
+op_minus
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+op_div
+l_int|4
+)paren
+suffix:semicolon
+id|opti
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; O=0x%8.8X&quot;
+comma
+op_star
+id|opt
+op_increment
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1269,9 +1477,9 @@ macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
-id|opt
+id|mode
 op_ne
-l_int|2
+id|IP_FW_MODE_CHK
 )paren
 (brace
 id|f-&gt;fw_bcnt
@@ -1289,9 +1497,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|opt
-op_ne
-l_int|1
+op_logical_neg
+(paren
+id|mode
+op_amp
+(paren
+id|IP_FW_MODE_ACCT_IN
+op_or
+id|IP_FW_MODE_ACCT_OUT
+)paren
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -1300,9 +1515,16 @@ multiline_comment|/* Loop */
 r_if
 c_cond
 (paren
-id|opt
-op_ne
-l_int|1
+op_logical_neg
+(paren
+id|mode
+op_amp
+(paren
+id|IP_FW_MODE_ACCT_IN
+op_or
+id|IP_FW_MODE_ACCT_OUT
+)paren
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * We rely on policy defined in the rejecting entry or, if no match&n;&t;&t; * was found, we rely on the general policy variable for this type&n;&t;&t; * of firewall.&n;&t;&t; */
@@ -1375,17 +1597,57 @@ c_func
 id|ip
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+r_if
+c_cond
+(paren
+id|policy
+op_amp
+id|IP_FW_F_REDIR
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|redirport
+)paren
+op_star
+id|redirport
+op_assign
+id|htons
+c_func
+(paren
+id|f-&gt;fw_pts
+(braket
+id|f-&gt;fw_nsp
+op_plus
+id|f-&gt;fw_ndp
+)braket
+)paren
+suffix:semicolon
 id|answer
 op_assign
+id|FW_REDIRECT
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+r_if
+c_cond
 (paren
 id|policy
 op_amp
 id|IP_FW_F_MASQ
 )paren
-ques
-c_cond
+id|answer
+op_assign
 id|FW_MASQUERADE
-suffix:colon
+suffix:semicolon
+r_else
+macro_line|#endif
+id|answer
+op_assign
 id|FW_ACCEPT
 suffix:semicolon
 )brace
@@ -2302,6 +2564,50 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_IP_TRANSPARENT_PROXY
+r_if
+c_cond
+(paren
+id|frwl-&gt;fw_flg
+op_amp
+id|IP_FW_F_REDIR
+)paren
+(brace
+macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+id|printk
+c_func
+(paren
+l_string|&quot;ip_fw_ctl: unsupported flag IP_FW_F_REDIR&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifndef CONFIG_IP_MASQUERADE
+r_if
+c_cond
+(paren
+id|frwl-&gt;fw_flg
+op_amp
+id|IP_FW_F_MASQ
+)paren
+(brace
+macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
+id|printk
+c_func
+(paren
+l_string|&quot;ip_fw_ctl: unsupported flag IP_FW_F_MASQ&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2365,7 +2671,18 @@ id|frwl-&gt;fw_nsp
 op_plus
 id|frwl-&gt;fw_ndp
 OG
+(paren
+id|frwl-&gt;fw_flg
+op_amp
+id|IP_FW_F_REDIR
+ques
+c_cond
 id|IP_FW_MAX_PORTS
+op_minus
+l_int|1
+suffix:colon
+id|IP_FW_MAX_PORTS
+)paren
 )paren
 (brace
 macro_line|#ifdef DEBUG_CONFIG_IP_FIREWALL
@@ -2389,48 +2706,6 @@ id|frwl
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_ACCT
-macro_line|#if 0
-r_void
-id|ip_acct_cnt
-c_func
-(paren
-r_struct
-id|iphdr
-op_star
-id|iph
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|ip_fw
-op_star
-id|f
-)paren
-(brace
-(paren
-r_void
-)paren
-id|ip_fw_chk
-c_func
-(paren
-id|iph
-comma
-id|dev
-comma
-id|f
-comma
-l_int|0
-comma
-l_int|1
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|ip_acct_ctl
 r_int
 id|ip_acct_ctl
@@ -2626,8 +2901,6 @@ id|len
 )paren
 (brace
 r_int
-id|ret
-comma
 id|cmd
 comma
 id|fwtype
@@ -2890,18 +3163,17 @@ r_return
 id|EINVAL
 suffix:semicolon
 )brace
-r_if
+r_switch
 c_cond
 (paren
-(paren
-id|ret
-op_assign
 id|ip_fw_chk
 c_func
 (paren
 id|ip
 comma
 id|viadev
+comma
+l_int|NULL
 comma
 op_star
 id|chains
@@ -2915,42 +3187,41 @@ id|policies
 id|fwtype
 )braket
 comma
-l_int|2
+id|IP_FW_MODE_CHK
 )paren
 )paren
-op_eq
+(brace
+r_case
 id|FW_ACCEPT
-)paren
+suffix:colon
 r_return
 l_int|0
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|ret
-op_eq
+r_case
+id|FW_REDIRECT
+suffix:colon
+r_return
+id|ECONNABORTED
+suffix:semicolon
+r_case
 id|FW_MASQUERADE
-)paren
+suffix:colon
 r_return
 id|ECONNRESET
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|ret
-op_eq
+r_case
 id|FW_REJECT
-)paren
+suffix:colon
 r_return
 id|ECONNREFUSED
 suffix:semicolon
-r_else
-multiline_comment|/* ret == FW_BLOCK */
+r_default
+suffix:colon
+multiline_comment|/* FW_BLOCK */
 r_return
 id|ETIMEDOUT
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -3809,6 +4080,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 (brace
 r_return
@@ -3819,11 +4094,13 @@ id|phdr
 comma
 id|dev
 comma
+id|arg
+comma
 id|ip_fw_in_chain
 comma
 id|ip_fw_in_policy
 comma
-l_int|0
+id|IP_FW_MODE_FW
 )paren
 suffix:semicolon
 )brace
@@ -3848,6 +4125,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 (brace
 r_return
@@ -3858,11 +4139,13 @@ id|phdr
 comma
 id|dev
 comma
+id|arg
+comma
 id|ip_fw_out_chain
 comma
 id|ip_fw_out_policy
 comma
-l_int|0
+id|IP_FW_MODE_FW
 )paren
 suffix:semicolon
 )brace
@@ -3887,6 +4170,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 (brace
 r_return
@@ -3897,11 +4184,13 @@ id|phdr
 comma
 id|dev
 comma
+id|arg
+comma
 id|ip_fw_fwd_chain
 comma
 id|ip_fw_fwd_policy
 comma
-l_int|0
+id|IP_FW_MODE_FW
 )paren
 suffix:semicolon
 )brace

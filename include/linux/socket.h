@@ -167,6 +167,8 @@ mdefine_line|#define MSG_PEEK&t;2
 DECL|macro|MSG_DONTROUTE
 mdefine_line|#define MSG_DONTROUTE&t;4
 multiline_comment|/*#define MSG_CTRUNC&t;8&t;- We need to support this for BSD oddments */
+DECL|macro|MSG_PROXY
+mdefine_line|#define MSG_PROXY&t;16&t;/* Supply or ask second address. */
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_IP
 mdefine_line|#define SOL_IP&t;&t;0

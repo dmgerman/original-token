@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/atari/atakeyb.c&n; *&n; * Atari Keyboard driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/atari/atakeyb.c&n; *&n; * Atari Keyboard driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Atari support by Robert de Vries&n; * enhanced by Bjoern Brauel and Roman Hodek&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

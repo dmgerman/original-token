@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/m68k/amiga/amifb.c -- Low level implementation of the Amiga frame&n; *                                  buffer device&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *&n; * This file is based on the Atari frame buffer device (atafb.c):&n; *&n; *    Copyright (C) 1994 Martin Schaller&n; *                       Roman Hodek&n; *&n; *          with work by Andreas Schwab&n; *                       Guenther Kelleter&n; *&n; * and on the original Amiga console driver (amicon.c):&n; *&n; *    Copyright (C) 1993 Hamish Macdonald&n; *                       Greg Harp&n; *    Copyright (C) 1994 David Carter [carter@compsci.bristol.ac.uk]&n; *&n; *          with work by William Rucklidge (wjr@cs.cornell.edu)&n; *                       Geert Uytterhoeven&n; *                       Jes Sorensen (jds@kom.auc.dk)&n; *&n; *&n; * History:&n; *&n; *   -  2 Dec 95: AGA version by Geert Uytterhoeven&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/arch/m68k/amiga/amifb.c -- Low level implementation of the Amiga frame&n; *                                  buffer device&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *&n; * This file is based on the Atari frame buffer device (atafb.c):&n; *&n; *    Copyright (C) 1994 Martin Schaller&n; *                       Roman Hodek&n; *&n; *          with work by Andreas Schwab&n; *                       Guenther Kelleter&n; *&n; * and on the original Amiga console driver (amicon.c):&n; *&n; *    Copyright (C) 1993 Hamish Macdonald&n; *                       Greg Harp&n; *    Copyright (C) 1994 David Carter [carter@compsci.bristol.ac.uk]&n; *&n; *          with work by William Rucklidge (wjr@cs.cornell.edu)&n; *                       Geert Uytterhoeven&n; *                       Jes Sorensen (jds@kom.auc.dk)&n; *&n; *&n; * History:&n; *&n; *   -  2 Dec 95: AGA version by Geert Uytterhoeven&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -319,17 +319,17 @@ DECL|macro|loww
 mdefine_line|#define loww(x)         ((u_long)(x) &amp; 0xffff)
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
-multiline_comment|/*&n;    *    Chip RAM we reserve for the Frame Buffer&n;    *&n;    *    This defines the Maximum Virtual Screen Size&n;    */
+multiline_comment|/*&n;    *    Chip RAM we reserve for the Frame Buffer (must be a multiple of 4K!)&n;    *&n;    *    This defines the Maximum Virtual Screen Size&n;    */
 DECL|macro|VIDEOMEMSIZE_AGA_2M
-mdefine_line|#define VIDEOMEMSIZE_AGA_2M   (1280*1024)    /* AGA (2MB) : max 1280*1024*256 */
+mdefine_line|#define VIDEOMEMSIZE_AGA_2M   (1310720)   /* AGA (2MB) : max 1280*1024*256 */
 DECL|macro|VIDEOMEMSIZE_AGA_1M
-mdefine_line|#define VIDEOMEMSIZE_AGA_1M   (1024*768)     /* AGA (1MB) : max 1024*768*256 */
+mdefine_line|#define VIDEOMEMSIZE_AGA_1M    (393216)   /* AGA (1MB) : max 1024*768*256 */
 DECL|macro|VIDEOMEMSIZE_ECS_2M
-mdefine_line|#define VIDEOMEMSIZE_ECS_2M   (1280*1024/2)  /* ECS (2MB) : max 1280*1024*16 */
+mdefine_line|#define VIDEOMEMSIZE_ECS_2M    (655360)   /* ECS (2MB) : max 1280*1024*16 */
 DECL|macro|VIDEOMEMSIZE_ECS_1M
-mdefine_line|#define VIDEOMEMSIZE_ECS_1M   (1024*768/2)   /* ECS (1MB) : max 1024*768*16 */
+mdefine_line|#define VIDEOMEMSIZE_ECS_1M    (393216)   /* ECS (1MB) : max 1024*768*16 */
 DECL|macro|VIDEOMEMSIZE_OCS
-mdefine_line|#define VIDEOMEMSIZE_OCS      (800*600/2)    /* OCS      : max 800*600*16 */
+mdefine_line|#define VIDEOMEMSIZE_OCS       (262144)   /* OCS       : max ca. 800*600*16 */
 DECL|variable|videomemory
 r_static
 id|u_long
@@ -733,15 +733,12 @@ r_int
 id|node
 suffix:semicolon
 multiline_comment|/* node of the /dev/fb?current file */
-multiline_comment|/*&n;    *    The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    */
-DECL|variable|amiga_audio_min_period
+multiline_comment|/*&n;    *    The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    *    (Imported from arch/m68k/amiga/amisound.c)&n;    */
+r_extern
 r_volatile
 id|u_short
 id|amiga_audio_min_period
-op_assign
-l_int|124
 suffix:semicolon
-multiline_comment|/* Default for pre-OCS */
 multiline_comment|/*&n;    *    Since we can&squot;t read the palette on OCS/ECS, and since reading one&n;    *    single color palette entry requires 5 expensive custom chip bus&n;    *    accesses on AGA, we keep a copy of the current palette.&n;    */
 macro_line|#ifdef CONFIG_AMIFB_AGA
 DECL|member|red
@@ -3809,7 +3806,7 @@ r_void
 suffix:semicolon
 macro_line|#ifdef USE_MONO_AMIFB_IF_NON_AGA
 multiline_comment|/******************************************************************************&n;*&n;* This is the old monochrome frame buffer device. It&squot;s invoked if we&squot;re running&n;* on a non-AGA machine, until the color support for OCS/ECS is finished.&n;*&n;******************************************************************************/
-multiline_comment|/*&n; * atari/atafb.c -- Low level implementation of Atari frame buffer device&n; * amiga/amifb.c -- Low level implementation of Amiga frame buffer device&n; *&n; *  Copyright (C) 1994 Martin Schaller &amp; Roman Hodek &amp; Geert Uytterhoeven&n; *  &n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; *&n; * History:&n; *   - 03 Jan 95: Original version my Martin Schaller: The TT driver and&n; *                all the device independent stuff&n; *   - 09 Jan 95: Roman: I&squot;ve added the hardware abstraction (hw_switch)&n; *                and wrote the Falcon, ST(E), and External drivers&n; *                based on the original TT driver.&n; *   - 26 Jan 95: Geert: Amiga version&n; *   - 19 Feb 95: Hamish: added Jes Sorensen&squot;s ECS patches to the Amiga&n; *&t;&t;  frame buffer device.  This provides ECS support and the&n; *&t;&t;  following screen-modes: multiscan, multiscan-lace,&n; * &t;&t;  super72, super72-lace, dblntsc, dblpal &amp; euro72.&n; *&t;&t;  He suggests that we remove the old AGA screenmodes,&n; *&t;&t;  as they are non-standard, and some of them doesn&squot;t work&n; *&t;&t;  under ECS.&n; */
+multiline_comment|/*&n; * atari/atafb.c -- Low level implementation of Atari frame buffer device&n; * amiga/amifb.c -- Low level implementation of Amiga frame buffer device&n; *&n; *  Copyright (C) 1994 Martin Schaller &amp; Roman Hodek &amp; Geert Uytterhoeven&n; *  &n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * History:&n; *   - 03 Jan 95: Original version my Martin Schaller: The TT driver and&n; *                all the device independent stuff&n; *   - 09 Jan 95: Roman: I&squot;ve added the hardware abstraction (hw_switch)&n; *                and wrote the Falcon, ST(E), and External drivers&n; *                based on the original TT driver.&n; *   - 26 Jan 95: Geert: Amiga version&n; *   - 19 Feb 95: Hamish: added Jes Sorensen&squot;s ECS patches to the Amiga&n; *&t;&t;  frame buffer device.  This provides ECS support and the&n; *&t;&t;  following screen-modes: multiscan, multiscan-lace,&n; * &t;&t;  super72, super72-lace, dblntsc, dblpal &amp; euro72.&n; *&t;&t;  He suggests that we remove the old AGA screenmodes,&n; *&t;&t;  as they are non-standard, and some of them doesn&squot;t work&n; *&t;&t;  under ECS.&n; */
 DECL|struct|mono_mono_amiga_fb_par
 r_static
 r_struct
@@ -11608,7 +11605,7 @@ id|ddfstop
 comma
 id|hscroll
 suffix:semicolon
-r_float
+id|u_long
 id|hrate
 comma
 id|vrate
@@ -12310,17 +12307,32 @@ suffix:semicolon
 id|hrate
 op_assign
 (paren
-r_float
-)paren
 id|amiga_masterclock
+op_plus
+id|htotal
+op_div
+l_int|2
+)paren
 op_div
 id|htotal
 suffix:semicolon
 id|vrate
 op_assign
-id|hrate
-op_div
+(paren
+id|amiga_masterclock
+op_plus
+id|htotal
+op_star
 id|vtotal
+op_div
+l_int|2
+)paren
+op_div
+(paren
+id|htotal
+op_star
+id|vtotal
+)paren
 suffix:semicolon
 id|par-&gt;bplcon3
 op_or_assign
@@ -14096,6 +14108,24 @@ id|full_vmode_change
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;       *    The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;       */
+r_if
+c_cond
+(paren
+id|boot_info.bi_amiga.chipset
+op_ne
+id|CS_STONEAGE
+)paren
+id|amiga_audio_min_period
+op_assign
+(paren
+id|par-&gt;htotal
+op_rshift
+l_int|1
+)paren
+op_plus
+l_int|1
+suffix:semicolon
 )brace
 id|custom.ddfstrt
 op_assign
@@ -14125,28 +14155,6 @@ id|clist_hdr
 comma
 id|par
 )paren
-suffix:semicolon
-multiline_comment|/*&n;    *    The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    */
-r_if
-c_cond
-(paren
-(paren
-id|boot_info.bi_amiga.chipset
-op_ne
-id|CS_STONEAGE
-)paren
-op_logical_and
-id|full_vmode_change
-)paren
-id|amiga_audio_min_period
-op_assign
-(paren
-id|par-&gt;htotal
-op_rshift
-l_int|1
-)paren
-op_plus
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;    *    (Un)Blank the screen (called by VBlank interrupt)&n;    */
@@ -19985,42 +19993,68 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;    *    Calculate the Pixel Clock Values for this Machine&n;    */
+id|__asm
+c_func
+(paren
+l_string|&quot;movel %3,%%d0;&quot;
+l_string|&quot;movel #0x00000005,%%d1;&quot;
+multiline_comment|/*  25E9: SHRES:  35 ns / 28 MHz */
+l_string|&quot;movel #0xd21dba00,%%d2;&quot;
+l_string|&quot;divul %%d0,%%d1,%%d2;&quot;
+l_string|&quot;movel %%d2,%0;&quot;
+l_string|&quot;movel #0x0000000b,%%d1;&quot;
+multiline_comment|/*  50E9: HIRES:  70 ns / 14 MHz */
+l_string|&quot;movel #0xa43b7400,%%d2;&quot;
+l_string|&quot;divul %%d0,%%d1,%%d2;&quot;
+l_string|&quot;movel %%d2,%1;&quot;
+l_string|&quot;movel #0x00000017,%%d1;&quot;
+multiline_comment|/* 100E9: LORES: 140 ns /  7 MHz */
+l_string|&quot;movel #0x4876e800,%%d2;&quot;
+l_string|&quot;divul %%d0,%%d1,%%d2;&quot;
+l_string|&quot;movel %%d2,%2&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
 id|pixclock
 (braket
 id|TAG_SHRES
 op_minus
 l_int|1
 )braket
-op_assign
-l_float|25E9
-op_div
-id|amiga_eclock
-suffix:semicolon
-multiline_comment|/* SHRES:  35 ns / 28 MHz */
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
 id|pixclock
 (braket
 id|TAG_HIRES
 op_minus
 l_int|1
 )braket
-op_assign
-l_float|50E9
-op_div
-id|amiga_eclock
-suffix:semicolon
-multiline_comment|/* HIRES:  70 ns / 14 MHz */
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
 id|pixclock
 (braket
 id|TAG_LORES
 op_minus
 l_int|1
 )braket
-op_assign
-l_float|100E9
-op_div
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 id|amiga_eclock
+)paren
+suffix:colon
+l_string|&quot;%%d0&quot;
+comma
+l_string|&quot;%%d1&quot;
+comma
+l_string|&quot;%%d2&quot;
+)paren
 suffix:semicolon
-multiline_comment|/* LORES: 140 ns /  7 MHz */
 multiline_comment|/*&n;    *    Replace the Tag Values with the Real Pixel Clock Values&n;    */
 r_for
 c_loop

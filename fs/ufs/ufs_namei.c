@@ -32,7 +32,7 @@ r_const
 id|name
 comma
 r_struct
-id|direct
+id|ufs_direct
 op_star
 id|d
 )paren
@@ -45,9 +45,8 @@ id|d
 op_logical_or
 id|len
 OG
-id|MAXNAMLEN
+id|UFS_MAXNAMLEN
 )paren
-multiline_comment|/* XXX - name space */
 r_return
 l_int|0
 suffix:semicolon
@@ -146,7 +145,7 @@ op_star
 id|bh
 suffix:semicolon
 r_struct
-id|direct
+id|ufs_direct
 op_star
 id|d
 suffix:semicolon
@@ -501,7 +500,7 @@ id|d
 op_assign
 (paren
 r_struct
-id|direct
+id|ufs_direct
 op_star
 )paren
 (paren
@@ -670,7 +669,7 @@ id|d
 op_assign
 (paren
 r_struct
-id|direct
+id|ufs_direct
 op_star
 )paren
 (paren

@@ -25,7 +25,7 @@ mdefine_line|#define USE_NVRAM_DEFAULTS&t;0
 multiline_comment|/*  Set this macro to 1 if you want to create a scsi loadable module. */
 DECL|macro|MODULE
 mdefine_line|#define MODULE&t;&t;&t;0
-multiline_comment|/*  Macros used for debuging */
+multiline_comment|/*  Macros used for debugging */
 DECL|macro|DEBUG_ISP1020
 mdefine_line|#define DEBUG_ISP1020&t;&t;0
 DECL|macro|DEBUG_ISP1020_INT
@@ -1341,7 +1341,7 @@ id|max_queue_depth
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Device Flags:&n; *&n; * Bit  Name&n; * ---------&n; *  7   Disconnect Privilege&n; *  6   Parity Checking&n; *  5   Wide Data Transfers&n; *  4   Syncronous Data Transfers&n; *  3   Tagged Queuing&n; *  2   Automatic Request Sense&n; *  1   Stop Queue on Check Condition&n; *  0   Renegotiate on Error&n; */
+multiline_comment|/*&n; * Device Flags:&n; *&n; * Bit  Name&n; * ---------&n; *  7   Disconnect Privilege&n; *  6   Parity Checking&n; *  5   Wide Data Transfers&n; *  4   Synchronous Data Transfers&n; *  3   Tagged Queuing&n; *  2   Automatic Request Sense&n; *  1   Stop Queue on Check Condition&n; *  0   Renegotiate on Error&n; */
 DECL|struct|dev_param
 r_struct
 id|dev_param
@@ -3034,14 +3034,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* RELOAD_FIRMEARE */
+macro_line|#endif /* RELOAD_FIRMWARE */
 id|DEBUG
 c_func
 (paren
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : verifing checksum&bslash;n&quot;
+l_string|&quot;qlogicisp : verifying checksum&bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
@@ -6257,7 +6257,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : scsi status = 0x%04x, compeltion status = 0x%04x&bslash;n&quot;
+l_string|&quot;qlogicisp : scsi status = 0x%04x, completion status = 0x%04x&bslash;n&quot;
 comma
 id|status-&gt;scsi_status
 comma

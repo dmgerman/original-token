@@ -153,12 +153,10 @@ suffix:semicolon
 macro_line|#endif
 id|dev-&gt;open
 op_assign
-op_amp
 id|dummy_open
 suffix:semicolon
 id|dev-&gt;stop
 op_assign
-op_amp
 id|dummy_close
 suffix:semicolon
 multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values. */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** linux/atarihw.h -- This header defines some macros and pointers for&n;**                    the various Atari custom hardware registers.&n;**&n;** Copyright 1994 by Bj&#xfffd;rn Brauel&n;**&n;** 5/1/94 Roman Hodek:&n;**   Added definitions for TT specific chips.&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;*/
+multiline_comment|/*&n;** linux/atarihw.h -- This header defines some macros and pointers for&n;**                    the various Atari custom hardware registers.&n;**&n;** Copyright 1994 by Bj&#xfffd;rn Brauel&n;**&n;** 5/1/94 Roman Hodek:&n;**   Added definitions for TT specific chips.&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
 macro_line|#ifndef _LINUX_ATARIHW_H_
 DECL|macro|_LINUX_ATARIHW_H_
 mdefine_line|#define _LINUX_ATARIHW_H_

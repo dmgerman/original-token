@@ -136,6 +136,10 @@ id|source
 comma
 id|isrfunc
 id|handler
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
 r_extern

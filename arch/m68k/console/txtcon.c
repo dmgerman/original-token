@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/m68k/console/txtcon.c -- Low level text mode based console driver&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *&n; * This file is currently only a skeleton, since all Amigas and Ataris have&n; * bitmapped graphics.&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/arch/m68k/console/txtcon.c -- Low level text mode based console driver&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *&n; * This file is currently only a skeleton, since all Amigas and Ataris have&n; * bitmapped graphics.&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 multiline_comment|/*&n;    *    Interface used by the world&n;    */

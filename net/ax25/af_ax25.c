@@ -6319,6 +6319,8 @@ comma
 id|skb-&gt;dev
 comma
 id|skb-&gt;h.raw
+comma
+l_int|NULL
 )paren
 op_ne
 id|FW_ACCEPT
@@ -6629,6 +6631,8 @@ comma
 id|skb-&gt;dev
 comma
 id|skb-&gt;data
+comma
+l_int|NULL
 )paren
 op_ne
 id|FW_ACCEPT
@@ -10263,6 +10267,8 @@ comma
 id|skb-&gt;dev
 comma
 id|skb-&gt;data
+comma
+l_int|NULL
 )paren
 op_ne
 id|FW_ACCEPT

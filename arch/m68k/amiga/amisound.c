@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/amiga/amisound.c&n; *&n; * amiga sound driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/amiga/amisound.c&n; *&n; * amiga sound driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -74,12 +74,15 @@ l_int|39
 suffix:semicolon
 DECL|macro|DATA_SIZE
 mdefine_line|#define DATA_SIZE&t;(sizeof(sine_data)/sizeof(sine_data[0]))
-multiline_comment|/* Imported from arch/m68k/amiga/amifb.c */
-r_extern
+multiline_comment|/*&n;     * The minimum period for audio may be modified by the frame buffer&n;     * device since it depends on htotal (for OCS/ECS/AGA)&n;     */
+DECL|variable|amiga_audio_min_period
 r_volatile
 id|u_short
 id|amiga_audio_min_period
+op_assign
+l_int|124
 suffix:semicolon
+multiline_comment|/* Default for pre-OCS */
 DECL|macro|MAX_PERIOD
 mdefine_line|#define MAX_PERIOD&t;(65535)
 multiline_comment|/*&n;     *&t;Current period (set by dmasound.c)&n;     */
@@ -297,7 +300,7 @@ suffix:semicolon
 multiline_comment|/* setup pointer to data, period, length and volume */
 id|custom.aud
 (braket
-l_int|0
+l_int|2
 )braket
 dot
 id|audlc
@@ -306,7 +309,7 @@ id|snd_data
 suffix:semicolon
 id|custom.aud
 (braket
-l_int|0
+l_int|2
 )braket
 dot
 id|audlen
@@ -320,7 +323,7 @@ l_int|2
 suffix:semicolon
 id|custom.aud
 (braket
-l_int|0
+l_int|2
 )braket
 dot
 id|audper
@@ -332,7 +335,7 @@ id|period
 suffix:semicolon
 id|custom.aud
 (braket
-l_int|0
+l_int|2
 )braket
 dot
 id|audvol
@@ -360,12 +363,12 @@ id|sound_timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* turn on DMA for audio channel 0 */
+multiline_comment|/* turn on DMA for audio channel 2 */
 id|custom.dmacon
 op_assign
 id|DMAF_SETCLR
 op_or
-id|DMAF_AUD0
+id|DMAF_AUD2
 suffix:semicolon
 id|restore_flags
 c_func
@@ -405,15 +408,15 @@ r_int
 id|ignored
 )paren
 (brace
-multiline_comment|/* turn off DMA for audio channel 0 */
+multiline_comment|/* turn off DMA for audio channel 2 */
 id|custom.dmacon
 op_assign
-id|DMAF_AUD0
+id|DMAF_AUD2
 suffix:semicolon
 multiline_comment|/* restore period to previous value after beeping */
 id|custom.aud
 (braket
-l_int|0
+l_int|2
 )braket
 dot
 id|audper

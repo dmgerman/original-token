@@ -207,5 +207,17 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Remove udp last socket cache */
+multiline_comment|/* CONFIG_IP_TRANSPARENT_PROXY */
+r_extern
+r_int
+id|udp_chkaddr
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
 macro_line|#endif&t;/* _UDP_H */
 eof

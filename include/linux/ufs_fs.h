@@ -62,11 +62,11 @@ multiline_comment|/* Convert an inode number to a cg number. */
 multiline_comment|/* XXX - this can be optimized if s_ipg is a power of 2. */
 DECL|macro|ufs_ino2cg
 mdefine_line|#define ufs_ino2cg(inode)  ((inode)-&gt;i_ino/(inode)-&gt;i_sb-&gt;u.ufs_sb.s_ipg)
-DECL|macro|MAXNAMLEN
-mdefine_line|#define&t;MAXNAMLEN 255
-DECL|struct|direct
+DECL|macro|UFS_MAXNAMLEN
+mdefine_line|#define&t;UFS_MAXNAMLEN 255
+DECL|struct|ufs_direct
 r_struct
-id|direct
+id|ufs_direct
 (brace
 DECL|member|d_ino
 id|__u32
@@ -87,7 +87,7 @@ DECL|member|d_name
 r_char
 id|d_name
 (braket
-id|MAXNAMLEN
+id|UFS_MAXNAMLEN
 op_plus
 l_int|1
 )braket
@@ -99,9 +99,9 @@ DECL|macro|MAXMNTLEN
 mdefine_line|#define MAXMNTLEN 512
 DECL|macro|MAXCSBUFS
 mdefine_line|#define MAXCSBUFS 32
-DECL|struct|csum
+DECL|struct|ufs_csum
 r_struct
-id|csum
+id|ufs_csum
 (brace
 DECL|member|cs_ndir
 id|__u32
@@ -342,7 +342,7 @@ id|fs_fpg
 suffix:semicolon
 DECL|member|fs_cstotal
 r_struct
-id|csum
+id|ufs_csum
 id|fs_cstotal
 suffix:semicolon
 DECL|member|fs_fmod
@@ -374,7 +374,7 @@ id|fs_cgrotor
 suffix:semicolon
 DECL|member|fs_csp
 r_struct
-id|csum
+id|ufs_csum
 op_star
 id|fs_csp
 (braket

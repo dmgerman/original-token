@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * arch/m68k/console/fonts.c -- `Soft&squot; font definitions&n; *&n; *    Created 1995 by Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * arch/m68k/console/fonts.c -- `Soft&squot; font definitions&n; *&n; *    Created 1995 by Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/font.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
 multiline_comment|/*&n;    *    External Font Definitions&n;    */
 multiline_comment|/* VGA8x8 */
 r_extern
@@ -41,6 +42,25 @@ id|fontdata_8x16
 (braket
 )braket
 suffix:semicolon
+multiline_comment|/* PEARL8x8 */
+r_extern
+r_char
+id|fontname_pearl8x8
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|fontwidth_pearl8x8
+comma
+id|fontheight_pearl8x8
+suffix:semicolon
+r_extern
+id|u_char
+id|fontdata_pearl8x8
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*&n;    *    Font Descriptor Array&n;    */
 DECL|struct|softfontdesc
 r_struct
@@ -68,6 +88,12 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|VGA8x8_IDX
+mdefine_line|#define VGA8x8_IDX&t;0
+DECL|macro|VGA8x16_IDX
+mdefine_line|#define VGA8x16_IDX&t;1
+DECL|macro|PEARL8x8_IDX
+mdefine_line|#define PEARL8x8_IDX&t;2
 DECL|variable|softfonts
 r_static
 r_struct
@@ -100,6 +126,19 @@ id|fontheight_8x16
 comma
 id|fontdata_8x16
 )brace
+comma
+(brace
+id|fontname_pearl8x8
+comma
+op_amp
+id|fontwidth_pearl8x8
+comma
+op_amp
+id|fontheight_pearl8x8
+comma
+id|fontdata_pearl8x8
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|variable|numsoftfonts
@@ -266,6 +305,9 @@ id|data
 )braket
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -273,50 +315,20 @@ id|yres
 OL
 l_int|400
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|name
-)paren
-op_star
-id|name
+id|i
 op_assign
-id|fontname_8x8
-suffix:semicolon
-r_if
+id|MACH_IS_AMIGA
+ques
 c_cond
-(paren
-id|width
-)paren
-op_star
-id|width
-op_assign
-id|fontwidth_8x8
+id|PEARL8x8_IDX
+suffix:colon
+id|VGA8x8_IDX
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|height
-)paren
-op_star
-id|height
-op_assign
-id|fontheight_8x8
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|data
-)paren
-op_star
-id|data
-op_assign
-id|fontdata_8x8
-suffix:semicolon
-)brace
 r_else
-(brace
+id|i
+op_assign
+id|VGA8x16_IDX
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -325,7 +337,12 @@ id|name
 op_star
 id|name
 op_assign
-id|fontname_8x16
+id|softfonts
+(braket
+id|i
+)braket
+dot
+id|name
 suffix:semicolon
 r_if
 c_cond
@@ -335,7 +352,13 @@ id|width
 op_star
 id|width
 op_assign
-id|fontwidth_8x16
+op_star
+id|softfonts
+(braket
+id|i
+)braket
+dot
+id|width
 suffix:semicolon
 r_if
 c_cond
@@ -345,7 +368,13 @@ id|height
 op_star
 id|height
 op_assign
-id|fontheight_8x16
+op_star
+id|softfonts
+(braket
+id|i
+)braket
+dot
+id|height
 suffix:semicolon
 r_if
 c_cond
@@ -355,8 +384,12 @@ id|data
 op_star
 id|data
 op_assign
-id|fontdata_8x16
+id|softfonts
+(braket
+id|i
+)braket
+dot
+id|data
 suffix:semicolon
-)brace
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/atari/config.c&n; *&n; *  Copyright (C) 1994 Bj&#xfffd;rn Brauel&n; *&n; *  5/2/94 Roman Hodek:&n; *    Added setting of time_adj to get a better clock.&n; *&n; *  5/14/94 Roman Hodek:&n; *    gettod() for TT &n; *&n; *  5/15/94 Roman Hodek:&n; *    hard_reset_now() for Atari (and others?)&n; *&n; *  94/12/30 Andreas Schwab:&n; *    atari_sched_init fixed to get precise clock.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; *  linux/atari/config.c&n; *&n; *  Copyright (C) 1994 Bj&#xfffd;rn Brauel&n; *&n; *  5/2/94 Roman Hodek:&n; *    Added setting of time_adj to get a better clock.&n; *&n; *  5/14/94 Roman Hodek:&n; *    gettod() for TT &n; *&n; *  5/15/94 Roman Hodek:&n; *    hard_reset_now() for Atari (and others?)&n; *&n; *  94/12/30 Andreas Schwab:&n; *    atari_sched_init fixed to get precise clock.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Miscellaneous atari stuff&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -82,6 +82,9 @@ r_int
 r_int
 comma
 id|isrfunc
+comma
+r_void
+op_star
 )paren
 suffix:semicolon
 r_extern

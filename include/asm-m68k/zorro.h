@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * asm-m68k/zorro.h -- Amiga AutoConfig (Zorro) Expansion Device Definitions&n; *&n; * Copyright (C) 1995 Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * asm-m68k/zorro.h -- Amiga AutoConfig (Zorro) Expansion Device Definitions&n; *&n; * Copyright (C) 1995 Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef _ASM_M68K_ZORRO_H_
 DECL|macro|_ASM_M68K_ZORRO_H_
 mdefine_line|#define _ASM_M68K_ZORRO_H_
@@ -102,12 +102,14 @@ DECL|macro|PROD_GVPIISCSI_2
 mdefine_line|#define PROD_GVPIISCSI_2       (0x09)&t;/* evidence that the driver works&n;&t;&t;&t;&t;&t;   for this product code also */
 DECL|macro|PROD_GVPIIRAM
 mdefine_line|#define PROD_GVPIIRAM          (0x0A)&t;/* GVP Series II RAM */
+DECL|macro|PROD_GVP
+mdefine_line|#define PROD_GVP               (0x0B)&t;/* This code is used by a wide range of&n;&t;&t;&t;&t;&t;   GVP products - use the epc to&n;&t;&t;&t;&t;&t;   identify it correctly */
+DECL|macro|PROD_GVP_A2000_030
+mdefine_line|#define PROD_GVP_A2000_030     (0x0D)&t;/* GVP A2000 68030 Turbo Board */
 DECL|macro|PROD_GFORCE_040_SCSI
 mdefine_line|#define PROD_GFORCE_040_SCSI   (0x16)&t;/* GForce 040 with SCSI (new) */
 DECL|macro|PROD_GVPIV_24
 mdefine_line|#define PROD_GVPIV_24          (0x20)&t;/* GVP IV-24 Graphics Board */
-DECL|macro|PROD_GVP
-mdefine_line|#define PROD_GVP               (0x0B)&t;/* This code is used by a wide range of&n;&t;&t;&t;&t;&t;   GVP products - use the epc to&n;&t;&t;&t;&t;&t;   identify it correctly */
 multiline_comment|/* #define PROD_GVPIO_EXT      (0xFF)*/
 multiline_comment|/* GVP I/O Extender */
 DECL|macro|MANUF_PPI
@@ -146,6 +148,10 @@ DECL|macro|MANUF_HARDITAL_SYNTHES
 mdefine_line|#define MANUF_HARDITAL_SYNTHES (0x0817)&t;/* Hardital Synthesis */
 DECL|macro|PROD_HARDITAL_SCSI
 mdefine_line|#define PROD_HARDITAL_SCSI     (0x01)&t;/* Hardital Synthesis SCSI Controller */
+DECL|macro|MANUF_HARDITAL2
+mdefine_line|#define MANUF_HARDITAL2        (0x0820)&t;/* Hardital Synthesis */
+DECL|macro|PROD_TQM
+mdefine_line|#define PROD_TQM               (0x14)&t;/* TQM 68030+68882 Turbo Board */
 DECL|macro|MANUF_BSC2
 mdefine_line|#define MANUF_BSC2             (0x082C)&t;/* BSC */
 DECL|macro|PROD_OKTAGON_SCSI
@@ -262,6 +268,8 @@ DECL|macro|PROD_FASTLANE_RAM
 mdefine_line|#define PROD_FASTLANE_RAM      (0x0A)&t;/* FastLane RAM */
 DECL|macro|PROD_FASTLANE_SCSI
 mdefine_line|#define PROD_FASTLANE_SCSI     (0x0B)&t;/* FastLane/Blizzard 1230-II SCSI */
+DECL|macro|PROD_CYBERSTORM_SCSI
+mdefine_line|#define PROD_CYBERSTORM_SCSI   (0x0C)&t;/* CyberStorm Fast SCSI-II Controller */
 DECL|macro|PROD_BLIZZARD_1230_III
 mdefine_line|#define PROD_BLIZZARD_1230_III (0x0D)&t;/* Blizzard 1230-III Turbo Board */
 DECL|macro|PROD_BLIZZARD_1230_IV
@@ -292,6 +300,8 @@ DECL|macro|PROD_MULTI_EVOLUTION
 mdefine_line|#define PROD_MULTI_EVOLUTION   (0x08)&t;/* MultiEvolution */
 DECL|macro|PROD_RETINA_Z3
 mdefine_line|#define PROD_RETINA_Z3         (0x10)&t;/* Retina Z3 Graphics Board */
+DECL|macro|PROD_FALCON_040
+mdefine_line|#define PROD_FALCON_040        (0xFD)&t;/* Falcon &squot;040 Turbo Board */
 multiline_comment|/* Illegal Manufacturer IDs. These do NOT appear in amiga/zorro.c! */
 DECL|macro|MANUF_HACKER_INC
 mdefine_line|#define MANUF_HACKER_INC       (0x07DB)&t;/* Hacker Inc. */

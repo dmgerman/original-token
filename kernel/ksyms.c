@@ -173,7 +173,7 @@ multiline_comment|/* stackable module support */
 id|X
 c_func
 (paren
-id|register_symtab
+id|register_symtab_from
 )paren
 comma
 macro_line|#ifdef CONFIG_KERNELD
@@ -722,6 +722,18 @@ c_func
 id|blkdev_release
 )paren
 comma
+id|X
+c_func
+(paren
+id|gendisk_head
+)paren
+comma
+id|X
+c_func
+(paren
+id|resetup_one_dev
+)paren
+comma
 macro_line|#ifdef CONFIG_SERIAL&t;
 multiline_comment|/* Module creation of serial units */
 id|X
@@ -1215,21 +1227,6 @@ c_func
 id|si_meminfo
 )paren
 comma
-macro_line|#ifndef CONFIG_SCSI
-multiline_comment|/*&n;&t; * With no scsi configured, we still need to export a few&n;&t; * symbols so that scsi can be loaded later via insmod.&n;&t; * Don&squot;t remove this unless you are 100% sure of what you are&n;&t; * doing.  If you want to remove this, you don&squot;t know what&n;&t; * you are doing!&n;&t; */
-id|X
-c_func
-(paren
-id|gendisk_head
-)paren
-comma
-id|X
-c_func
-(paren
-id|resetup_one_dev
-)paren
-comma
-macro_line|#endif
 multiline_comment|/* Added to make file system as module */
 id|X
 c_func

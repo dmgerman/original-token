@@ -75,13 +75,6 @@ op_assign
 id|boot_info.bi_amiga.chip_size
 suffix:semicolon
 multiline_comment|/* initialize start boundary */
-id|custom.color
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0xfff
-suffix:semicolon
 id|dp
 op_assign
 id|DP
@@ -93,13 +86,6 @@ suffix:semicolon
 id|dp-&gt;first
 op_assign
 l_int|1
-suffix:semicolon
-id|custom.color
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0x0f00
 suffix:semicolon
 id|dp-&gt;alloced
 op_assign
@@ -134,13 +120,6 @@ id|dp-&gt;last
 op_assign
 l_int|1
 suffix:semicolon
-id|custom.color
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0x00f0
-suffix:semicolon
 id|dp-&gt;alloced
 op_assign
 l_int|0
@@ -156,13 +135,6 @@ r_sizeof
 op_star
 id|dp
 )paren
-suffix:semicolon
-id|custom.color
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0x000f
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk

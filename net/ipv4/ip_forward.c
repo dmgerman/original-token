@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -283,72 +283,6 @@ suffix:semicolon
 multiline_comment|/* So we can remember if the masquerader did some swaps */
 macro_line|#endif /* CONFIG_IP_MASQUERADE */
 macro_line|#endif /* CONFIG_FIREWALL */
-multiline_comment|/* &n;&t; *&t;See if we are allowed to forward this.&n; &t; *&t;Note: demasqueraded fragments are always &squot;back&squot;warded.&n;&t; */
-macro_line|#ifdef CONFIG_FIREWALL
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|is_frag
-op_amp
-id|IPFWD_MASQUERADED
-)paren
-)paren
-(brace
-id|fw_res
-op_assign
-id|call_fw_firewall
-c_func
-(paren
-id|PF_INET
-comma
-id|dev
-comma
-id|skb-&gt;h.iph
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|fw_res
-)paren
-(brace
-r_case
-id|FW_ACCEPT
-suffix:colon
-r_case
-id|FW_MASQUERADE
-suffix:colon
-r_break
-suffix:semicolon
-r_case
-id|FW_REJECT
-suffix:colon
-id|icmp_send
-c_func
-(paren
-id|skb
-comma
-id|ICMP_DEST_UNREACH
-comma
-id|ICMP_HOST_UNREACH
-comma
-l_int|0
-comma
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* fall thru */
-r_default
-suffix:colon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;According to the RFC, we must first decrease the TTL field. If&n;&t; *&t;that reaches zero, we must reply an ICMP control message telling&n;&t; *&t;that the packet&squot;s lifetime expired.&n;&t; *&n;&t; *&t;Exception:&n;&t; *&t;We may not generate an ICMP for an ICMP. icmp_send does the&n;&t; *&t;enforcement of this so we can forget it here. It is however&n;&t; *&t;sometimes VERY important.&n;&t; */
 id|iph
 op_assign
@@ -600,6 +534,74 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif&t;
+multiline_comment|/* &n;&t; *&t;See if we are allowed to forward this.&n; &t; *&t;Note: demasqueraded fragments are always &squot;back&squot;warded.&n;&t; */
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|is_frag
+op_amp
+id|IPFWD_MASQUERADED
+)paren
+)paren
+(brace
+id|fw_res
+op_assign
+id|call_fw_firewall
+c_func
+(paren
+id|PF_INET
+comma
+id|dev2
+comma
+id|iph
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|fw_res
+)paren
+(brace
+r_case
+id|FW_ACCEPT
+suffix:colon
+r_case
+id|FW_MASQUERADE
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+id|FW_REJECT
+suffix:colon
+id|icmp_send
+c_func
+(paren
+id|skb
+comma
+id|ICMP_DEST_UNREACH
+comma
+id|ICMP_HOST_UNREACH
+comma
+l_int|0
+comma
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* fall thru */
+r_default
+suffix:colon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * We now may allocate a new buffer, and copy the datagram into it.&n;&t; * If the indicated interface is up and running, kick it.&n;&t; */
 r_if
 c_cond
@@ -1089,6 +1091,8 @@ comma
 id|skb2-&gt;dev
 comma
 id|iph
+comma
+l_int|NULL
 )paren
 )paren
 OL
@@ -1436,11 +1440,13 @@ id|iph
 comma
 id|dev2
 comma
+l_int|NULL
+comma
 id|ip_acct_chain
 comma
 id|IP_FW_F_ACCEPT
 comma
-l_int|1
+id|IP_FW_MODE_ACCT_OUT
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;

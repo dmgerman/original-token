@@ -593,6 +593,17 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* CONFIG_IP_TRANSPARENT_PROXY */
+r_extern
+r_int
+id|tcp_chkaddr
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* tcp_timer.c */
 DECL|macro|tcp_reset_msl_timer
 mdefine_line|#define     tcp_reset_msl_timer(x,y,z)&t;reset_timer(x,y,z)

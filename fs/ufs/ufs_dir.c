@@ -89,7 +89,7 @@ op_star
 id|bh
 suffix:semicolon
 r_struct
-id|direct
+id|ufs_direct
 op_star
 id|de
 suffix:semicolon
@@ -284,7 +284,7 @@ id|de
 op_assign
 (paren
 r_struct
-id|direct
+id|ufs_direct
 op_star
 )paren
 (paren
@@ -351,7 +351,7 @@ id|de
 op_assign
 (paren
 r_struct
-id|direct
+id|ufs_direct
 op_star
 )paren
 (paren

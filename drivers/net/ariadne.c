@@ -1,5 +1,6 @@
-multiline_comment|/*&n; *  Amiga Linux/m68k Ariadne Ethernet Driver&n; *&n; *  &#xfffd; Copyright 1995 by Geert Uytterhoeven&n; *&t;&t;       (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n; *&t;&t;&t;Peter De Schrijver&n; *&t;&t;       (Peter.DeSchrijver@linux.cc.kuleuven.ac.be)&n; *&n; *  ----------------------------------------------------------------------------------&n; *&n; *  This program is based on&n; *&n; *&t;lance.c:&t;An AMD LANCE ethernet driver for linux.&n; *&t;&t;&t;Written 1993-94 by Donald Becker.&n; *&n; *&t;Am79C960:&t;PCnet(tm)-ISA Single-Chip Ethernet Controller&n; *&t;&t;&t;Advanced Micro Devices&n; *&t;&t;&t;Publication #16907, Rev. B, Amendment/0, May 1994&n; *&n; *&t;MC68230:&t;Parallel Interface/Timer (PI/T)&n; *&t;&t;&t;Motorola Semiconductors, December, 1983&n; *&n; *  ----------------------------------------------------------------------------------&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file README.legal in the main directory of the Linux/m68k&n; *  distribution for more details.&n; *&n; *  ----------------------------------------------------------------------------------&n; *&n; *  The Ariadne is a Zorro-II board made by Village Tronic. It contains:&n; *&n; *&t;- an Am79C960 PCnet-ISA Single-Chip Ethernet Controller with both&n; *&t;  10BASE-2 (thin coax) and 10BASE-T (UTP) connectors&n; *&n; *&t;- an MC68230 Parallel Interface/Timer configured as 2 parallel ports&n; */
-macro_line|#include &lt;stddef.h&gt;
+multiline_comment|/*&n; *  Amiga Linux/m68k Ariadne Ethernet Driver&n; *&n; *  &#xfffd; Copyright 1995 by Geert Uytterhoeven&n; *&t;&t;       (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n; *&t;&t;&t;Peter De Schrijver&n; *&t;&t;       (Peter.DeSchrijver@linux.cc.kuleuven.ac.be)&n; *&n; *  ----------------------------------------------------------------------------------&n; *&n; *  This program is based on&n; *&n; *&t;lance.c:&t;An AMD LANCE ethernet driver for linux.&n; *&t;&t;&t;Written 1993-94 by Donald Becker.&n; *&n; *&t;Am79C960:&t;PCnet(tm)-ISA Single-Chip Ethernet Controller&n; *&t;&t;&t;Advanced Micro Devices&n; *&t;&t;&t;Publication #16907, Rev. B, Amendment/0, May 1994&n; *&n; *&t;MC68230:&t;Parallel Interface/Timer (PI/T)&n; *&t;&t;&t;Motorola Semiconductors, December, 1983&n; *&n; *  ----------------------------------------------------------------------------------&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of the Linux&n; *  distribution for more details.&n; *&n; *  ----------------------------------------------------------------------------------&n; *&n; *  The Ariadne is a Zorro-II board made by Village Tronic. It contains:&n; *&n; *&t;- an Am79C960 PCnet-ISA Single-Chip Ethernet Controller with both&n; *&t;  10BASE-2 (thin coax) and 10BASE-T (UTP) connectors&n; *&n; *&t;- an MC68230 Parallel Interface/Timer configured as 2 parallel ports&n; */
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -125,6 +126,10 @@ DECL|member|lock
 r_int
 r_int
 id|lock
+suffix:semicolon
+DECL|member|key
+r_int
+id|key
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -352,7 +357,6 @@ suffix:semicolon
 )brace
 DECL|function|ariadne_probe
 r_int
-r_int
 id|ariadne_probe
 c_func
 (paren
@@ -575,6 +579,10 @@ c_func
 id|board
 )paren
 suffix:semicolon
+id|priv-&gt;key
+op_assign
+id|key
+suffix:semicolon
 id|dev-&gt;open
 op_assign
 op_amp
@@ -647,12 +655,6 @@ op_star
 id|board
 op_assign
 id|priv-&gt;board
-suffix:semicolon
-r_static
-r_int
-id|interruptinstalled
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|lancedata
@@ -1112,13 +1114,6 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|interruptinstalled
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
 id|add_isr
 c_func
 (paren
@@ -1137,11 +1132,6 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|interruptinstalled
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 id|board-&gt;Lance.RAP
 op_assign
 id|CSR0
@@ -1152,6 +1142,8 @@ op_assign
 id|INEA
 op_or
 id|STRT
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1634,6 +1626,18 @@ multiline_comment|/* We stop the LANCE here -- it occasionally polls memory if w
 id|board-&gt;Lance.RDP
 op_assign
 id|STOP
+suffix:semicolon
+id|remove_isr
+c_func
+(paren
+id|IRQ_AMIGA_PORTS
+comma
+id|ariadne_interrupt
+comma
+id|dev
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3965,4 +3969,145 @@ id|IDON
 suffix:semicolon
 multiline_comment|/* Resume normal operation. */
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+DECL|variable|ariadne_dev
+r_static
+r_struct
+id|device
+id|ariadne_dev
+op_assign
+(brace
+id|devicename
+comma
+multiline_comment|/* filled in by register_netdev() */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* memory */
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* base, irq */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|ariadne_probe
+comma
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|register_netdev
+c_func
+(paren
+op_amp
+id|ariadne_dev
+)paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|err
+op_eq
+op_minus
+id|EIO
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;No Ariadne board found. Module not loaded.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|ariadne_private
+op_star
+id|priv
+op_assign
+(paren
+r_struct
+id|ariadne_private
+op_star
+)paren
+id|ariadne_dev.priv
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|ariadne_dev
+)paren
+suffix:semicolon
+id|zorro_unconfig_board
+c_func
+(paren
+id|priv-&gt;key
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|priv
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
 eof

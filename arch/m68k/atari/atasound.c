@@ -1,4 +1,4 @@
-multiline_comment|/*&n;linux/arch/m68k/atari/atasound.c&n;&n;++Geert: Moved almost all stuff to linux/drivers/sound/&n;&n;The author of atari_nosound, atari_mksound and atari_microwire_cmd is&n;unknown.&n;(++roman: That&squot;s me... :-)&n;&n;This file is subject to the terms and conditions of the GNU General Public&n;License.  See the file README.legal in the main directory of this archive&n;for more details.&n;&n;*/
+multiline_comment|/*&n;linux/arch/m68k/atari/atasound.c&n;&n;++Geert: Moved almost all stuff to linux/drivers/sound/&n;&n;The author of atari_nosound, atari_mksound and atari_microwire_cmd is&n;unknown.&n;(++roman: That&squot;s me... :-)&n;&n;This file is subject to the terms and conditions of the GNU General Public&n;License.  See the file COPYING in the main directory of this archive&n;for more details.&n;&n;*/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/major.h&gt;

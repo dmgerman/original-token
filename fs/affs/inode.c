@@ -1393,7 +1393,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* This function definately needs to be split up. Some fine day I&squot;ll&n; * hopefully have the guts to do so. Until then: sorry for the mess.&n; */
+multiline_comment|/* This function definitely needs to be split up. Some fine day I&squot;ll&n; * hopefully have the guts to do so. Until then: sorry for the mess.&n; */
 r_struct
 id|super_block
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Jos Vos&t;&t;&t;:&t;Separate input  and output firewall&n; *&t;&t;&t;&t;&t;chains, new &quot;insert&quot; and &quot;append&quot;&n; *&t;&t;&t;&t;&t;commands to replace &quot;add&quot; commands,&n; *&t;&t;&t;&t;&t;add ICMP header to struct ip_fwpkt.&n; *&t;Jos Vos&t;&t;&t;:&t;Add support for matching device names.&n; *&n; *&t;All the real work was done by .....&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Jos Vos&t;&t;&t;:&t;Separate input  and output firewall&n; *&t;&t;&t;&t;&t;chains, new &quot;insert&quot; and &quot;append&quot;&n; *&t;&t;&t;&t;&t;commands to replace &quot;add&quot; commands,&n; *&t;&t;&t;&t;&t;add ICMP header to struct ip_fwpkt.&n; *&t;Jos Vos&t;&t;&t;:&t;Add support for matching device names.&n; *&t;Willy Konynenberg&t;:&t;Add transparent proxying support.&n; *&t;Jos Vos&t;&t;&t;:&t;Add options for input/output accounting.&n; *&n; *&t;All the real work was done by .....&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 multiline_comment|/*&n; * &t;Format of an IP firewall descriptor&n; *&n; * &t;src, dst, src_mask, dst_mask are always stored in network byte order.&n; * &t;flags and num_*_ports are stored in host byte order (of course).&n; * &t;Port numbers are stored in HOST byte order.&n; */
 macro_line|#ifndef _IP_FW_H
@@ -110,35 +110,41 @@ multiline_comment|/* name of interface &quot;via&quot; */
 suffix:semicolon
 multiline_comment|/*&n; *&t;Values for &quot;flags&quot; field .&n; */
 DECL|macro|IP_FW_F_ALL
-mdefine_line|#define IP_FW_F_ALL&t;0x000&t;/* This is a universal packet firewall*/
+mdefine_line|#define IP_FW_F_ALL&t;0x0000&t;/* This is a universal packet firewall*/
 DECL|macro|IP_FW_F_TCP
-mdefine_line|#define IP_FW_F_TCP&t;0x001&t;/* This is a TCP packet firewall      */
+mdefine_line|#define IP_FW_F_TCP&t;0x0001&t;/* This is a TCP packet firewall      */
 DECL|macro|IP_FW_F_UDP
-mdefine_line|#define IP_FW_F_UDP&t;0x002&t;/* This is a UDP packet firewall      */
+mdefine_line|#define IP_FW_F_UDP&t;0x0002&t;/* This is a UDP packet firewall      */
 DECL|macro|IP_FW_F_ICMP
-mdefine_line|#define IP_FW_F_ICMP&t;0x003&t;/* This is a ICMP packet firewall     */
+mdefine_line|#define IP_FW_F_ICMP&t;0x0003&t;/* This is a ICMP packet firewall     */
 DECL|macro|IP_FW_F_KIND
-mdefine_line|#define IP_FW_F_KIND&t;0x003&t;/* Mask to isolate firewall kind      */
+mdefine_line|#define IP_FW_F_KIND&t;0x0003&t;/* Mask to isolate firewall kind      */
 DECL|macro|IP_FW_F_ACCEPT
-mdefine_line|#define IP_FW_F_ACCEPT&t;0x004&t;/* This is an accept firewall (as     *&n;&t;&t;&t;&t; *         opposed to a deny firewall)*&n;&t;&t;&t;&t; *                                    */
+mdefine_line|#define IP_FW_F_ACCEPT&t;0x0004&t;/* This is an accept firewall (as     *&n;&t;&t;&t;&t; *         opposed to a deny firewall)*&n;&t;&t;&t;&t; *                                    */
 DECL|macro|IP_FW_F_SRNG
-mdefine_line|#define IP_FW_F_SRNG&t;0x008&t;/* The first two src ports are a min  *&n;&t;&t;&t;&t; * and max range (stored in host byte *&n;&t;&t;&t;&t; * order).                            *&n;&t;&t;&t;&t; *                                    */
+mdefine_line|#define IP_FW_F_SRNG&t;0x0008&t;/* The first two src ports are a min  *&n;&t;&t;&t;&t; * and max range (stored in host byte *&n;&t;&t;&t;&t; * order).                            *&n;&t;&t;&t;&t; *                                    */
 DECL|macro|IP_FW_F_DRNG
-mdefine_line|#define IP_FW_F_DRNG&t;0x010&t;/* The first two dst ports are a min  *&n;&t;&t;&t;&t; * and max range (stored in host byte *&n;&t;&t;&t;&t; * order).                            *&n;&t;&t;&t;&t; * (ports[0] &lt;= port &lt;= ports[1])     *&n;&t;&t;&t;&t; *                                    */
+mdefine_line|#define IP_FW_F_DRNG&t;0x0010&t;/* The first two dst ports are a min  *&n;&t;&t;&t;&t; * and max range (stored in host byte *&n;&t;&t;&t;&t; * order).                            *&n;&t;&t;&t;&t; * (ports[0] &lt;= port &lt;= ports[1])     *&n;&t;&t;&t;&t; *                                    */
 DECL|macro|IP_FW_F_PRN
-mdefine_line|#define IP_FW_F_PRN&t;0x020&t;/* In verbose mode print this firewall*/
+mdefine_line|#define IP_FW_F_PRN&t;0x0020&t;/* In verbose mode print this firewall*/
 DECL|macro|IP_FW_F_BIDIR
-mdefine_line|#define IP_FW_F_BIDIR&t;0x040&t;/* For bidirectional firewalls        */
+mdefine_line|#define IP_FW_F_BIDIR&t;0x0040&t;/* For bidirectional firewalls        */
 DECL|macro|IP_FW_F_TCPSYN
-mdefine_line|#define IP_FW_F_TCPSYN&t;0x080&t;/* For tcp packets-check SYN only     */
+mdefine_line|#define IP_FW_F_TCPSYN&t;0x0080&t;/* For tcp packets-check SYN only     */
 DECL|macro|IP_FW_F_ICMPRPL
-mdefine_line|#define IP_FW_F_ICMPRPL 0x100&t;/* Send back icmp unreachable packet  */
+mdefine_line|#define IP_FW_F_ICMPRPL 0x0100&t;/* Send back icmp unreachable packet  */
 DECL|macro|IP_FW_F_MASQ
-mdefine_line|#define IP_FW_F_MASQ&t;0x200&t;/* Masquerading&t;&t;&t;      */
+mdefine_line|#define IP_FW_F_MASQ&t;0x0200&t;/* Masquerading&t;&t;&t;      */
 DECL|macro|IP_FW_F_TCPACK
-mdefine_line|#define IP_FW_F_TCPACK&t;0x400&t;/* For tcp-packets match if ACK is set*/
+mdefine_line|#define IP_FW_F_TCPACK&t;0x0400&t;/* For tcp-packets match if ACK is set*/
+DECL|macro|IP_FW_F_REDIR
+mdefine_line|#define IP_FW_F_REDIR&t;0x0800&t;/* Redirect to local port fw_pts[n]   */
+DECL|macro|IP_FW_F_ACCTIN
+mdefine_line|#define IP_FW_F_ACCTIN  0x1000&t;/* Account incoming packets only.     */
+DECL|macro|IP_FW_F_ACCTOUT
+mdefine_line|#define IP_FW_F_ACCTOUT 0x2000&t;/* Account outgoing packets only.     */
 DECL|macro|IP_FW_F_MASK
-mdefine_line|#define IP_FW_F_MASK&t;0x7FF&t;/* All possible flag bits mask        */
+mdefine_line|#define IP_FW_F_MASK&t;0x3FFF&t;/* All possible flag bits mask        */
 multiline_comment|/*    &n; *&t;New IP firewall options for [gs]etsockopt at the RAW IP level.&n; *&t;Unlike BSD Linux inherits IP options so you don&squot;t have to use&n; *&t;a raw socket for this. Instead we check rights in the calls.&n; */
 DECL|macro|IP_FW_BASE_CTL
 mdefine_line|#define IP_FW_BASE_CTL  &t;64&t;/* base for firewall socket options */
@@ -282,6 +288,15 @@ id|ip_fw_masq
 suffix:semicolon
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* Modes used in the ip_fw_chk() routine. */
+DECL|macro|IP_FW_MODE_FW
+mdefine_line|#define IP_FW_MODE_FW&t;&t;0x00&t;/* kernel firewall check */
+DECL|macro|IP_FW_MODE_ACCT_IN
+mdefine_line|#define IP_FW_MODE_ACCT_IN&t;0x01&t;/* accounting (incoming) */
+DECL|macro|IP_FW_MODE_ACCT_OUT
+mdefine_line|#define IP_FW_MODE_ACCT_OUT&t;0x02&t;/* accounting (outgoing) */
+DECL|macro|IP_FW_MODE_CHK
+mdefine_line|#define IP_FW_MODE_CHK&t;&t;0x04&t;/* check requested by user */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_IP_FIREWALL
 r_extern
@@ -336,24 +351,6 @@ op_star
 id|ip_acct_chain
 suffix:semicolon
 r_extern
-r_void
-id|ip_acct_cnt
-c_func
-(paren
-r_struct
-id|iphdr
-op_star
-comma
-r_struct
-id|device
-op_star
-comma
-r_struct
-id|ip_fw
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|ip_acct_ctl
 c_func
@@ -379,7 +376,9 @@ comma
 r_struct
 id|device
 op_star
-id|rif
+comma
+id|__u16
+op_star
 comma
 r_struct
 id|ip_fw

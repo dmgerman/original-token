@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/amiga/amikeyb.c&n; *&n; * Amiga Keyboard driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * linux/amiga/amikeyb.c&n; *&n; * Amiga Keyboard driver for 680x0 Linux&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Amiga support by Hamish Macdonald&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

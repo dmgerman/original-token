@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    linux/arch/m68k/amiga/zorro.c&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *    This file is subject to the terms and conditions of the GNU General Public&n; *    License.  See the file README.legal in the main directory of this archive&n; *    for more details.&n; */
+multiline_comment|/*&n; *    linux/arch/m68k/amiga/zorro.c&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *    This file is subject to the terms and conditions of the GNU General Public&n; *    License.  See the file COPYING in the main directory of this archive&n; *    for more details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -408,6 +408,13 @@ id|GVPIIRAM
 id|PROD
 c_func
 (paren
+l_string|&quot;A2000 68030 Turbo Board&quot;
+comma
+id|GVP_A2000_030
+)paren
+id|PROD
+c_func
+(paren
 l_string|&quot;GFORCE 040 with SCSI Controller&quot;
 comma
 id|GFORCE_040_SCSI
@@ -638,6 +645,19 @@ c_func
 l_string|&quot;SCSI Controller&quot;
 comma
 id|HARDITAL_SCSI
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|HARDITAL2
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;TQM 68030+68882 Turbo Board&quot;
+comma
+id|TQM
 )paren
 id|END
 id|BEGIN_PROD
@@ -1031,6 +1051,13 @@ id|FASTLANE_SCSI
 id|PROD
 c_func
 (paren
+l_string|&quot;CyberStorm Fast SCSI-II Controller&quot;
+comma
+id|CYBERSTORM_SCSI
+)paren
+id|PROD
+c_func
+(paren
 l_string|&quot;Blizzard 1230-III Turbo Board&quot;
 comma
 id|BLIZZARD_1230_III
@@ -1129,6 +1156,13 @@ c_func
 l_string|&quot;Retina Z3 Graphics Board&quot;
 comma
 id|RETINA_Z3
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Falcon &squot;040 Turbo Board&quot;
+comma
+id|FALCON_040
 )paren
 id|END
 id|BEGIN_MANUF
@@ -1264,6 +1298,13 @@ c_func
 l_string|&quot;Hardital Synthesis&quot;
 comma
 id|HARDITAL_SYNTHES
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;Hardital Synthesis&quot;
+comma
+id|HARDITAL2
 )paren
 id|MANUF
 c_func

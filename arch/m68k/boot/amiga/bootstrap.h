@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** bootstrap.h -- This file is a part of the Amiga bootloader.&n;**&n;** Copyright 1993, 1994 by Hamish Macdonald&n;**&n;** Some minor additions by Michael Rausch 1-11-94&n;** Modified 11-May-94 by Geert Uytterhoeven&n;**                      (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**     - inline Supervisor() call&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;*/
+multiline_comment|/*&n;** bootstrap.h -- This file is a part of the Amiga bootloader.&n;**&n;** Copyright 1993, 1994 by Hamish Macdonald&n;**&n;** Some minor additions by Michael Rausch 1-11-94&n;** Modified 11-May-94 by Geert Uytterhoeven&n;**                      (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**     - inline Supervisor() call&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file COPYING in the main directory of this archive&n;** for more details.&n;**&n;*/
 macro_line|#ifndef BOOTSTRAP_H
 DECL|macro|BOOTSTRAP_H
 mdefine_line|#define BOOTSTRAP_H

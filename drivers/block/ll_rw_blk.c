@@ -1963,9 +1963,17 @@ op_rshift
 l_int|9
 )paren
 )paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;Bad md_map in ll_rw_block&bslash;n&quot;
+)paren
+suffix:semicolon
 r_goto
 id|sorry
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 r_if
@@ -2375,7 +2383,7 @@ l_int|9
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;Bad md_map in ll_rw_page_size&bslash;n&quot;
+l_string|&quot;Bad md_map in ll_rw_swap_file&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

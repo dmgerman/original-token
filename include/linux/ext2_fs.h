@@ -802,21 +802,12 @@ mdefine_line|#define EXT2_FEATURE_INCOMPAT_SUPP&t;0
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Function prototypes&n; */
 multiline_comment|/*&n; * Ok, these declarations are also in &lt;linux/kernel.h&gt; but none of the&n; * ext2 source programs needs to include it so they are duplicated here.&n; */
-macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 5)
-DECL|macro|NORET_TYPE
-macro_line|# define NORET_TYPE    __volatile__
-DECL|macro|ATTRIB_NORET
-macro_line|# define ATTRIB_NORET  /**/
-DECL|macro|NORET_AND
-macro_line|# define NORET_AND     /**/
-macro_line|#else
 DECL|macro|NORET_TYPE
 macro_line|# define NORET_TYPE    /**/
 DECL|macro|ATTRIB_NORET
 macro_line|# define ATTRIB_NORET  __attribute__((noreturn))
 DECL|macro|NORET_AND
 macro_line|# define NORET_AND     noreturn,
-macro_line|#endif
 multiline_comment|/* acl.c */
 r_extern
 r_int

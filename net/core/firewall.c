@@ -290,6 +290,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 (brace
 r_struct
@@ -325,6 +329,8 @@ comma
 id|dev
 comma
 id|phdr
+comma
+id|arg
 )paren
 suffix:semicolon
 r_if
@@ -368,6 +374,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 (brace
 r_struct
@@ -403,6 +413,8 @@ comma
 id|dev
 comma
 id|phdr
+comma
+id|arg
 )paren
 suffix:semicolon
 r_if
@@ -445,6 +457,10 @@ comma
 r_void
 op_star
 id|phdr
+comma
+r_void
+op_star
+id|arg
 )paren
 (brace
 r_struct
@@ -480,6 +496,8 @@ comma
 id|dev
 comma
 id|phdr
+comma
+id|arg
 )paren
 suffix:semicolon
 r_if

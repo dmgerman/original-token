@@ -43,8 +43,7 @@ c_func
 l_string|&quot;ldq_u %0,%3&bslash;n&bslash;t&quot;
 l_string|&quot;ldq_u %1,%4&bslash;n&bslash;t&quot;
 l_string|&quot;extql %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;extqh %1,%2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;bis %1,%0,%0&quot;
+l_string|&quot;extqh %1,%2,%1&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -90,6 +89,8 @@ id|r11
 suffix:semicolon
 r_return
 id|r1
+op_or
+id|r2
 suffix:semicolon
 )brace
 DECL|function|__uldl
@@ -119,8 +120,7 @@ c_func
 l_string|&quot;ldq_u %0,%3&bslash;n&bslash;t&quot;
 l_string|&quot;ldq_u %1,%4&bslash;n&bslash;t&quot;
 l_string|&quot;extll %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;extlh %1,%2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;bis %1,%0,%0&quot;
+l_string|&quot;extlh %1,%2,%1&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -166,6 +166,8 @@ id|r11
 suffix:semicolon
 r_return
 id|r1
+op_or
+id|r2
 suffix:semicolon
 )brace
 DECL|function|__uldw
@@ -195,8 +197,7 @@ c_func
 l_string|&quot;ldq_u %0,%3&bslash;n&bslash;t&quot;
 l_string|&quot;ldq_u %1,%4&bslash;n&bslash;t&quot;
 l_string|&quot;extwl %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;extwh %1,%2,%1&bslash;n&bslash;t&quot;
-l_string|&quot;bis %1,%0,%0&quot;
+l_string|&quot;extwh %1,%2,%1&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -242,6 +243,8 @@ id|r11
 suffix:semicolon
 r_return
 id|r1
+op_or
+id|r2
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Elemental unaligned stores &n; */
