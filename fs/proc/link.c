@@ -407,6 +407,23 @@ id|ino
 op_and_assign
 l_int|0x7fff
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p-&gt;files
+)paren
+multiline_comment|/* shouldn&squot;t happen here */
+r_goto
+id|out_unlock
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|p-&gt;files-&gt;file_lock
+)paren
+suffix:semicolon
 id|file
 op_assign
 id|fcheck_task
@@ -432,6 +449,13 @@ suffix:semicolon
 id|result
 op_assign
 id|file-&gt;f_dentry
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|p-&gt;files-&gt;file_lock
+)paren
 suffix:semicolon
 r_goto
 id|out_dget

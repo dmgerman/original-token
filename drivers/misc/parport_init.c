@@ -909,7 +909,7 @@ c_func
 id|parport_parse_dmas
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PARPORT_12843
+macro_line|#ifdef CONFIG_PARPORT_1284
 DECL|variable|parport_open
 id|EXPORT_SYMBOL
 c_func

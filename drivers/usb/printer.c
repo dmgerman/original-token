@@ -650,10 +650,6 @@ r_int
 r_int
 id|thistime
 suffix:semicolon
-id|partial
-op_assign
-l_int|0
-suffix:semicolon
 id|thistime
 op_assign
 id|copy_size
@@ -1363,6 +1359,7 @@ id|pusb_dev
 op_assign
 id|dev
 suffix:semicolon
+multiline_comment|/* The max packet size can&squot;t be more than 64 (&amp; will be 64 for&n;&t; * any decent bulk device); this calculation was silly.  -greg&n;&t; * minor_data[i]-&gt;maxout = interface-&gt;endpoint[0].wMaxPacketSize * 16;&n;&t; */
 id|minor_data
 (braket
 id|i
@@ -1370,14 +1367,7 @@ id|i
 op_member_access_from_pointer
 id|maxout
 op_assign
-id|interface-&gt;endpoint
-(braket
-l_int|0
-)braket
-dot
-id|wMaxPacketSize
-op_star
-l_int|16
+l_int|8192
 suffix:semicolon
 r_if
 c_cond

@@ -207,7 +207,7 @@ DECL|macro|USB_RT_PORT
 mdefine_line|#define USB_RT_PORT&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_OTHER)
 DECL|macro|USB_RT_HIDD
 mdefine_line|#define USB_RT_HIDD&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_INTERFACE)
-multiline_comment|/* &n; * Status codes &n; */
+multiline_comment|/* &n; * Status codes (these follow an OHCI controllers condition codes)&n; */
 DECL|macro|USB_ST_NOERROR
 mdefine_line|#define USB_ST_NOERROR&t;&t;0x0
 DECL|macro|USB_ST_CRC
@@ -215,15 +215,15 @@ mdefine_line|#define USB_ST_CRC&t;&t;0x1
 DECL|macro|USB_ST_BITSTUFF
 mdefine_line|#define USB_ST_BITSTUFF&t;&t;0x2
 DECL|macro|USB_ST_DTMISMATCH
-mdefine_line|#define USB_ST_DTMISMATCH&t;0x3
+mdefine_line|#define USB_ST_DTMISMATCH&t;0x3&t;/* data toggle mismatch */
 DECL|macro|USB_ST_STALL
 mdefine_line|#define USB_ST_STALL&t;&t;0x4
-DECL|macro|USB_ST_TIMEOUT
-mdefine_line|#define USB_ST_TIMEOUT&t;&t;0x5
+DECL|macro|USB_ST_NORESPONSE
+mdefine_line|#define USB_ST_NORESPONSE&t;0x5&t;/* device not responding/handshaking */
 DECL|macro|USB_ST_PIDCHECK
-mdefine_line|#define USB_ST_PIDCHECK&t;&t;0x6
+mdefine_line|#define USB_ST_PIDCHECK&t;&t;0x6&t;/* Check bits on PID failed */
 DECL|macro|USB_ST_PIDUNDEF
-mdefine_line|#define USB_ST_PIDUNDEF&t;&t;0x7
+mdefine_line|#define USB_ST_PIDUNDEF&t;&t;0x7&t;/* PID unexpected/undefined */
 DECL|macro|USB_ST_DATAOVERRUN
 mdefine_line|#define USB_ST_DATAOVERRUN&t;0x8
 DECL|macro|USB_ST_DATAUNDERRUN
@@ -243,6 +243,8 @@ mdefine_line|#define USB_ST_RESERVED4&t;0xF
 multiline_comment|/* internal errors */
 DECL|macro|USB_ST_REMOVED
 mdefine_line|#define USB_ST_REMOVED&t;&t;0x100
+DECL|macro|USB_ST_TIMEOUT
+mdefine_line|#define USB_ST_TIMEOUT&t;&t;0x110
 DECL|macro|USB_ST_INTERNALERROR
 mdefine_line|#define USB_ST_INTERNALERROR&t;-1
 multiline_comment|/*&n; * USB device number allocation bitmap. There&squot;s one bitmap&n; * per USB tree.&n; */

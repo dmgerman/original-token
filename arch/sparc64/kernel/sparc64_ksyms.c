@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.59 1999/06/28 11:28:50 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.60 1999/07/03 22:11:12 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -558,6 +558,35 @@ DECL|macro|EXPORT_SYMBOL_PRIVATE
 mdefine_line|#define EXPORT_SYMBOL_PRIVATE(sym)&t;&t;&t;&t;&bslash;&n;extern int __sparc_priv_ ## sym (int) __asm__(&quot;__&quot; ## #sym);&t;&bslash;&n;const struct module_symbol __export_priv_##sym&t;&t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&t;&bslash;&n;{ (unsigned long) &amp;__sparc_priv_ ## sym, &quot;__&quot; ## #sym }
 multiline_comment|/* used by various drivers */
 macro_line|#ifdef __SMP__
+multiline_comment|/* Out of line rw-locking implementation. */
+DECL|variable|read_lock
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|read_lock
+)paren
+suffix:semicolon
+DECL|variable|read_unlock
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|read_unlock
+)paren
+suffix:semicolon
+DECL|variable|write_lock
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|write_lock
+)paren
+suffix:semicolon
+DECL|variable|write_unlock
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|write_unlock
+)paren
+suffix:semicolon
 multiline_comment|/* Kernel wide locking */
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
@@ -729,6 +758,21 @@ id|local_bh_count
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Atomic counter implementation. */
+DECL|variable|atomic_add
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|atomic_add
+)paren
+suffix:semicolon
+DECL|variable|atomic_sub
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|atomic_sub
+)paren
+suffix:semicolon
 DECL|variable|ivector_table
 id|EXPORT_SYMBOL
 c_func

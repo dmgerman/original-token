@@ -852,23 +852,11 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;        ComplCode 0x%x, %sAccessed, %sActive&bslash;n&quot;
+l_string|&quot;        ComplCode 0x%x, %sAccessed&bslash;n&quot;
 comma
 id|td_cc
 comma
 id|td_cc_accessed
-c_func
-(paren
-op_star
-id|td
-)paren
-ques
-c_cond
-l_string|&quot;&quot;
-suffix:colon
-l_string|&quot;Not &quot;
-comma
-id|td_active
 c_func
 (paren
 op_star
@@ -1147,7 +1135,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;--- End  TD Chain %lx: ---&bslash;n&quot;
+l_string|&quot;--- End  TD Chain %lx. ---&bslash;n&quot;
 comma
 id|virt_to_bus
 c_func

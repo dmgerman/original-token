@@ -105,7 +105,7 @@ c_cond
 id|dir_out
 )paren
 r_return
-id|USB_ST_TIMEOUT
+id|USB_ST_NORESPONSE
 suffix:semicolon
 r_else
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.6 1999/05/12 11:11:48 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.8 1999/07/04 04:35:55 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

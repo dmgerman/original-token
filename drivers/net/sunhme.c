@@ -16904,7 +16904,7 @@ id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
-l_int|128
+l_int|64
 )paren
 suffix:semicolon
 macro_line|#ifdef __sparc_v9__

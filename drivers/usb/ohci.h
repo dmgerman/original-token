@@ -136,8 +136,6 @@ DECL|macro|td_cc_accessed
 mdefine_line|#define td_cc_accessed(td)&t;((le32_to_cpup(&amp;(td).info) &gt;&gt; 29) != 7)
 DECL|macro|td_cc_noerror
 mdefine_line|#define td_cc_noerror(td)&t;(((le32_to_cpup(&amp;(td).info)) &amp; OHCI_TD_CC) == 0)
-DECL|macro|td_active
-mdefine_line|#define td_active(td)&t;(!td_cc_noerror((td)) &amp;&amp; (td_errorcount((td)) &lt; 3))
 DECL|macro|td_done
 mdefine_line|#define td_done(td)&t;(td_cc_noerror((td)) || (td_errorcount((td)) == 3))
 multiline_comment|/*&n; * Macros to use the td-&gt;hcd_flags field.&n; */

@@ -278,10 +278,13 @@ comma
 multiline_comment|/* rename */
 l_int|NULL
 comma
-multiline_comment|/* follow link */
+multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* readlink */
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -290,11 +293,18 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* get_block */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 id|router_proc_perms
+comma
+multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;/proc/net/router/&lt;device&gt; file and inode operations&n; */
@@ -384,20 +394,30 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
+multiline_comment|/* get_block */
+l_int|NULL
+comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* get_block */
+multiline_comment|/* flushpage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */
 id|router_proc_perms
+comma
+multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Proc filesystem derectory entries.&n; */
+multiline_comment|/*&n; * Proc filesystem directory entries.&n; */
 multiline_comment|/*&n; *&t;/proc/net/router &n; */
 DECL|variable|proc_router
 r_static

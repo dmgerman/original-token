@@ -30386,7 +30386,7 @@ id|latency_timer
 (brace
 id|latency_timer
 op_assign
-l_int|128
+l_int|64
 suffix:semicolon
 r_if
 c_cond

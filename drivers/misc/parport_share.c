@@ -14,9 +14,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#ifdef CONFIG_KMOD
-macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#endif
 DECL|macro|PARPORT_PARANOID
 macro_line|#undef PARPORT_PARANOID
 DECL|macro|PARPORT_DEFAULT_TIMESLICE
@@ -265,23 +262,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_KMOD
-r_if
-c_cond
-(paren
-id|portlist
-op_eq
-l_int|NULL
-)paren
-(brace
-id|request_module
-c_func
-(paren
-l_string|&quot;parport_lowlevel&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_KMOD */
 r_return
 id|portlist
 suffix:semicolon

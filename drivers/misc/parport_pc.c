@@ -4967,7 +4967,7 @@ l_int|30
 )paren
 suffix:semicolon
 multiline_comment|/* Wait for possible EPP timeout */
-multiline_comment|/* Enable outputs. */
+multiline_comment|/* We must enable the outputs to be able to read the address&n;       register. */
 id|parport_pc_data_forward
 (paren
 id|pb
@@ -4996,12 +4996,6 @@ l_int|30
 )paren
 suffix:semicolon
 multiline_comment|/* Wait for possible EPP timeout */
-multiline_comment|/* We must enable the outputs to be able to read the address&n;           register. */
-id|parport_pc_data_forward
-(paren
-id|pb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6540,7 +6534,27 @@ id|request_region
 (paren
 id|p-&gt;base
 comma
+l_int|3
+comma
+id|p-&gt;name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|p-&gt;size
+OG
+l_int|3
+)paren
+id|request_region
+(paren
+id|p-&gt;base
+op_plus
+l_int|3
+comma
+id|p-&gt;size
+op_minus
+l_int|3
 comma
 id|p-&gt;name
 )paren
@@ -8073,7 +8087,27 @@ c_func
 (paren
 id|p-&gt;base
 comma
+l_int|3
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|p-&gt;size
+OG
+l_int|3
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|p-&gt;base
+op_plus
+l_int|3
+comma
+id|p-&gt;size
+op_minus
+l_int|3
 )paren
 suffix:semicolon
 r_if

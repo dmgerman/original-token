@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.c,v 1.85 1999/04/02 14:54:28 davem Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: psycho.c,v 1.86 1999/07/01 10:39:43 davem Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3437,6 +3437,7 @@ r_int
 r_int
 id|itmp
 suffix:semicolon
+macro_line|#if 0
 r_for
 c_loop
 (paren
@@ -3470,13 +3471,14 @@ id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
-l_int|128
+l_int|64
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -3641,6 +3643,7 @@ comma
 id|itmp
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* Don&squot;t mess with the retry limit and PIO/DMA latency&n;&t;&t;&t; * timer settings.  But do set primary and secondary&n;&t;&t;&t; * latency timers.&n;&t;&t;&t; */
 id|pci_write_config_byte
 c_func
@@ -3649,7 +3652,7 @@ id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
-l_int|128
+l_int|64
 )paren
 suffix:semicolon
 id|pci_write_config_byte
@@ -3659,9 +3662,10 @@ id|pdev
 comma
 id|PCI_SEC_LATENCY_TIMER
 comma
-l_int|128
+l_int|64
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 )brace

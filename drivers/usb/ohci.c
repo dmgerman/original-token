@@ -354,7 +354,6 @@ suffix:semicolon
 multiline_comment|/* ohci_add_td_chain_to_ed() */
 multiline_comment|/* .......... */
 DECL|function|ohci_start_control
-r_inline
 r_void
 id|ohci_start_control
 c_func
@@ -386,7 +385,6 @@ id|ohci-&gt;regs-&gt;cmdstatus
 suffix:semicolon
 )brace
 DECL|function|ohci_start_bulk
-r_inline
 r_void
 id|ohci_start_bulk
 c_func
@@ -418,7 +416,6 @@ id|ohci-&gt;regs-&gt;cmdstatus
 suffix:semicolon
 )brace
 DECL|function|ohci_start_periodic
-r_inline
 r_void
 id|ohci_start_periodic
 c_func
@@ -441,7 +438,6 @@ id|ohci-&gt;regs-&gt;control
 suffix:semicolon
 )brace
 DECL|function|ohci_start_isoc
-r_inline
 r_void
 id|ohci_start_isoc
 c_func
@@ -2138,7 +2134,6 @@ suffix:semicolon
 multiline_comment|/* ohci_free_ed() */
 multiline_comment|/*&n; *  Initialize a TD&n; *&n; * &t;dir = OHCI_TD_D_IN, OHCI_TD_D_OUT, or OHCI_TD_D_SETUP&n; * &t;toggle = TOGGLE_AUTO, TOGGLE_DATA0, TOGGLE_DATA1&n; */
 DECL|function|ohci_fill_new_td
-r_inline
 r_struct
 id|ohci_td
 op_star
@@ -2902,14 +2897,24 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* if cur_buf is 0, all data has been transferred */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|td-&gt;cur_buf
+)paren
+(brace
+r_return
+id|td-&gt;buf_end
+op_minus
+id|bus_data_start
+op_plus
+l_int|1
+suffix:semicolon
+)brace
 id|bus_data_end
 op_assign
 id|td-&gt;cur_buf
-ques
-c_cond
-id|td-&gt;cur_buf
-suffix:colon
-id|td-&gt;buf_end
 suffix:semicolon
 multiline_comment|/* is it on the same page? */
 r_if
@@ -2935,8 +2940,6 @@ op_assign
 id|bus_data_end
 op_minus
 id|bus_data_start
-op_plus
-l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -2960,8 +2963,6 @@ id|bus_data_end
 op_amp
 l_int|0xfff
 )paren
-op_plus
-l_int|1
 suffix:semicolon
 )brace
 r_return
@@ -4178,17 +4179,6 @@ id|req-&gt;_bytes_done
 op_add_assign
 id|len
 suffix:semicolon
-macro_line|#ifdef OHCI_DEBUG
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;ohci_bulk_td_handler %d bytes done&bslash;n&quot;
-comma
-id|req-&gt;_bytes_done
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* call the real completion handler when done or on an error */
 r_if
 c_cond
@@ -4220,11 +4210,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;usb-ohci: bulk request %p ending after %d bytes&bslash;n&quot;
+l_string|&quot;usb-ohci: bulk request %p ending&bslash;n&quot;
 comma
 id|req
-comma
-id|req-&gt;_bytes_done
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4504,8 +4492,13 @@ id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef OHCI_DEBUG
-multiline_comment|/*&t;if (MegaDebug) { */
-multiline_comment|/* complete transaction debugging output (before) */
+r_if
+c_cond
+(paren
+id|MegaDebug
+)paren
+(brace
+multiline_comment|/* complete request debugging output (before) */
 id|printk
 c_func
 (paren
@@ -4544,7 +4537,7 @@ c_func
 id|head_td
 )paren
 suffix:semicolon
-multiline_comment|/*&t;} */
+)brace
 macro_line|#endif
 multiline_comment|/* Give the ED to the HC */
 id|ohci_add_bulk_ed
@@ -4588,6 +4581,22 @@ op_star
 id|dev_id
 )paren
 (brace
+macro_line|#ifdef OHCI_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;ohci_bulk_msg_completed %x, %p, %d, %p&bslash;n&quot;
+comma
+id|stats
+comma
+id|buffer
+comma
+id|len
+comma
+id|dev_id
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4675,7 +4684,6 @@ id|ohci_ed
 op_star
 id|req_ed
 suffix:semicolon
-multiline_comment|/* ....... */
 macro_line|#ifdef OHCI_DEBUG 
 id|printk
 c_func
@@ -4695,6 +4703,13 @@ id|bytes_transferred_p
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* initialize bytes transferred to nothing */
+op_star
+id|bytes_transferred_p
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Hopefully this is similar to the &quot;URP&quot; (USB Request Packet) code&n;&t; * that michael gee is working on... */
 id|req.usb_dev
 op_assign
 id|usb_dev
@@ -4757,17 +4772,145 @@ op_star
 l_int|5
 )paren
 suffix:semicolon
+multiline_comment|/* it&squot;ll only stay in this state of the request never finished */
+r_if
+c_cond
+(paren
+id|completion_status
+op_eq
+id|USB_ST_INTERNALERROR
+)paren
+(brace
+r_struct
+id|ohci_device
+op_star
+id|dev
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|usb_dev
+)paren
+suffix:semicolon
+r_struct
+id|ohci_regs
+op_star
+id|regs
+op_assign
+id|dev-&gt;ohci-&gt;regs
+suffix:semicolon
 macro_line|#ifdef OHCI_DEBUG
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ohci_bulk_msg request completed or timed out w/ status %x&bslash;n&quot;
-comma
-id|completion_status
+l_string|&quot;ohci_bulk_msg timing out&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* XXX This code should go into a function used to stop&n;&t;&t; * a previously requested bulk transfer. -greg */
+multiline_comment|/* stop the transfer &amp; collect the number of bytes */
+id|ohci_wait_for_ed_safe
+c_func
+(paren
+id|regs
+comma
+id|req_ed
+comma
+id|HCD_ED_BULK
+)paren
+suffix:semicolon
+multiline_comment|/* Get the number of bytes transferred out of the head TD&n;&t;&t; * on the ED if it didn&squot;t finish while we were waiting. */
+r_if
+c_cond
+(paren
+id|ed_head_td
+c_func
+(paren
+id|req_ed
+)paren
+op_logical_and
+(paren
+id|ed_head_td
+c_func
+(paren
+id|req_ed
+)paren
+op_ne
+id|ed_tail_td
+c_func
+(paren
+id|req_ed
+)paren
+)paren
+)paren
+(brace
+r_struct
+id|ohci_td
+op_star
+id|partial_td
+suffix:semicolon
+id|partial_td
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|ed_head_td
+c_func
+(paren
+id|req_ed
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG
+r_if
+c_cond
+(paren
+id|MegaDebug
+)paren
+(brace
+id|show_ohci_td
+c_func
+(paren
+id|partial_td
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* Record the bytes as transferred */
+op_star
+id|bytes_transferred_p
+op_add_assign
+id|ohci_td_bytes_done
+c_func
+(paren
+id|partial_td
+)paren
+suffix:semicolon
+multiline_comment|/* If there was an unreported error, return it.&n;&t;&t;&t; * Otherwise return a timeout */
+id|completion_status
+op_assign
+id|OHCI_TD_CC_GET
+c_func
+(paren
+id|partial_td-&gt;info
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|completion_status
+op_eq
+id|USB_ST_NOERROR
+)paren
+(brace
+id|completion_status
+op_assign
+id|USB_ST_TIMEOUT
+suffix:semicolon
+)brace
+)brace
+)brace
 id|remove_wait_queue
 c_func
 (paren
@@ -4805,7 +4948,12 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ohci_bulk_msg done.&bslash;n&quot;
+l_string|&quot;ohci_bulk_msg done, status %x (bytes_transferred = %ld).&bslash;n&quot;
+comma
+id|completion_status
+comma
+op_star
+id|bytes_transferred_p
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -6062,13 +6210,7 @@ id|td
 suffix:semicolon
 multiline_comment|/* used for walking the list */
 multiline_comment|/* um... isn&squot;t this dangerous to do in an interrupt handler? -greg */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|ohci_edtd_lock
-)paren
-suffix:semicolon
+singleline_comment|//&t;spin_lock(&amp;ohci_edtd_lock);
 multiline_comment|/* create the FIFO ordered donelist */
 id|td
 op_assign
@@ -6365,6 +6507,12 @@ comma
 id|td-&gt;ed
 )paren
 suffix:semicolon
+id|ohci_unhalt_ed
+c_func
+(paren
+id|td-&gt;ed
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -6391,13 +6539,7 @@ op_assign
 id|next_td
 suffix:semicolon
 )brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|ohci_edtd_lock
-)paren
-suffix:semicolon
+singleline_comment|//&t;spin_unlock(&amp;ohci_edtd_lock);
 )brace
 multiline_comment|/* ohci_reap_donelist() */
 multiline_comment|/*&n; * Get annoyed at the controller for bothering us.&n; * This pretty much follows the OHCI v1.0a spec, section 5.3.&n; */

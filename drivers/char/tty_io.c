@@ -7451,7 +7451,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This implements the &quot;Secure Attention Key&quot; ---  the idea is to&n; * prevent trojan horses by killing all processes associated with this&n; * tty when the user hits the &quot;Secure Attention Key&quot;.  Required for&n; * super-paranoid applications --- see the Orange Book for more details.&n; * &n; * This code could be nicer; ideally it should send a HUP, wait a few&n; * seconds, then send a INT, and then a KILL signal.  But you then&n; * have to coordinate with the init process, since all processes associated&n; * with the current tty must be dead before the new getty is allowed&n; * to spawn.&n; */
+multiline_comment|/*&n; * This implements the &quot;Secure Attention Key&quot; ---  the idea is to&n; * prevent trojan horses by killing all processes associated with this&n; * tty when the user hits the &quot;Secure Attention Key&quot;.  Required for&n; * super-paranoid applications --- see the Orange Book for more details.&n; * &n; * This code could be nicer; ideally it should send a HUP, wait a few&n; * seconds, then send a INT, and then a KILL signal.  But you then&n; * have to coordinate with the init process, since all processes associated&n; * with the current tty must be dead before the new getty is allowed&n; * to spawn.&n; *&n; * Now, if it would be correct ;-/ The current code has a nasty hole -&n; * it doesn&squot;t catch files in flight. We may send the descriptor to ourselves&n; * via AF_UNIX socket, close it and later fetch from socket. FIXME.&n; */
 DECL|function|do_SAK
 r_void
 id|do_SAK
@@ -7578,6 +7578,13 @@ c_cond
 id|p-&gt;files
 )paren
 (brace
+id|read_lock
+c_func
+(paren
+op_amp
+id|p-&gt;files-&gt;file_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -7636,6 +7643,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|p-&gt;files-&gt;file_lock
+)paren
+suffix:semicolon
 )brace
 )brace
 id|read_unlock

@@ -132,6 +132,7 @@ DECL|macro|IEEE1284_DEVICEID
 mdefine_line|#define IEEE1284_DEVICEID               (1&lt;&lt;2)  /* This is a flag */
 multiline_comment|/* The rest is for the kernel only */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
