@@ -2389,10 +2389,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef CONFIG_SCSI
 id|memory_start
 op_assign
-id|net_dev_init
+id|scsi_dev_init
 c_func
 (paren
 id|memory_start
@@ -2401,10 +2401,10 @@ id|memory_end
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI
+macro_line|#ifdef CONFIG_INET
 id|memory_start
 op_assign
-id|scsi_dev_init
+id|net_dev_init
 c_func
 (paren
 id|memory_start

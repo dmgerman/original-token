@@ -357,7 +357,7 @@ DECL|macro|FF1
 mdefine_line|#define   FF1&t;0100000
 multiline_comment|/* c_cflag bit meaning */
 DECL|macro|CBAUD
-mdefine_line|#define CBAUD&t;0000017
+mdefine_line|#define CBAUD&t;0010017
 DECL|macro|B0
 mdefine_line|#define  B0&t;0000000&t;&t;/* hang up */
 DECL|macro|B50
@@ -416,8 +416,14 @@ DECL|macro|HUPCL
 mdefine_line|#define HUPCL&t;0002000
 DECL|macro|CLOCAL
 mdefine_line|#define CLOCAL&t;0004000
+DECL|macro|CBAUDEX
+mdefine_line|#define CBAUDEX 0010000
+DECL|macro|B57600
+mdefine_line|#define  B57600  0010001
+DECL|macro|B115200
+mdefine_line|#define  B115200 0010002
 DECL|macro|CIBAUD
-mdefine_line|#define CIBAUD&t;03600000&t;&t;/* input baud rate (not used) */
+mdefine_line|#define CIBAUD&t;  002003600000&t;/* input baud rate (not used) */
 DECL|macro|CRTSCTS
 mdefine_line|#define CRTSCTS&t;  020000000000&t;&t;/* flow control */
 multiline_comment|/* c_lflag bits */
@@ -474,7 +480,7 @@ DECL|macro|TIOCM_CD
 mdefine_line|#define TIOCM_CD&t;TIOCM_CAR
 DECL|macro|TIOCM_RI
 mdefine_line|#define TIOCM_RI&t;TIOCM_RNG
-multiline_comment|/* ioctl (fd, TIOCSERGTLSR, &amp;result) where result may be as below */
+multiline_comment|/* ioctl (fd, TIOCSERGETLSR, &amp;result) where result may be as below */
 DECL|macro|TIOCSER_TEMT
 mdefine_line|#define TIOCSER_TEMT    0x01&t;/* Transmitter physically empty */
 multiline_comment|/* tcflow() and TCXONC use these */

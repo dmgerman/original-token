@@ -1174,7 +1174,7 @@ id|silent
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;UMSDOS Alpha 0.5 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
+l_string|&quot;UMSDOS Alpha 0.5a (compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION
 comma

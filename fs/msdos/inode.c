@@ -3092,7 +3092,7 @@ id|MOD_IN_USE
 id|printk
 c_func
 (paren
-l_string|&quot;ne: device busy, remove delayed&bslash;n&quot;
+l_string|&quot;msdos: device busy, remove delayed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -3103,15 +3103,6 @@ c_func
 op_amp
 id|msdos_fs_type
 )paren
-suffix:semicolon
-multiline_comment|/* This is not clear why the floppy drivers does not initialise */
-multiline_comment|/* the table, but we left it the way we saw it first */
-id|blksize_size
-(braket
-id|FLOPPY_MAJOR
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 )brace

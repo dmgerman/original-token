@@ -766,7 +766,7 @@ l_int|0x3f
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* uft-8 is defined for words of up to 36 bits,&n;       but we need only 16 bits here */
+multiline_comment|/* utf-8 is defined for words of up to 36 bits,&n;       but we need only 16 bits here */
 )brace
 multiline_comment|/*&n; * Translation of escaped scancodes to keycodes.&n; * This is now user-settable.&n; * The keycodes 1-88,96-111,119 are fairly standard, and&n; * should probably not be changed - changing might confuse X.&n; * X also interprets scancode 0x5d (KEY_Begin).&n; *&n; * For 1-88 keycode equals scancode.&n; */
 DECL|macro|E0_KPENTER
@@ -2716,16 +2716,6 @@ c_cond
 (paren
 op_logical_neg
 id|tty
-op_logical_or
-(paren
-id|tty-&gt;termios
-op_logical_and
-id|I_IGNBRK
-c_func
-(paren
-id|tty
-)paren
-)paren
 )paren
 r_return
 suffix:semicolon
@@ -2737,6 +2727,12 @@ comma
 l_int|0
 comma
 id|TTY_BREAK
+)paren
+suffix:semicolon
+id|tty_schedule_flip
+c_func
+(paren
+id|tty
 )paren
 suffix:semicolon
 )brace

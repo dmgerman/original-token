@@ -28,7 +28,7 @@ mdefine_line|#define IOCPARM_SHIFT IOCCMD_SHIFT
 DECL|macro|IOC_SIZE
 mdefine_line|#define IOC_SIZE(cmd)&t;(((cmd) &amp; IOCSIZE_MASK) &gt;&gt; IOCSIZE_SHIFT)
 DECL|macro|IOCBASECMD
-mdefine_line|#define IOCBASECMD(cmd)&t;((cmd) &amp; ~IOOCPARM_MASK
+mdefine_line|#define IOCBASECMD(cmd)&t;((cmd) &amp; ~IOCPARM_MASK)
 DECL|macro|IOCGROUP
 mdefine_line|#define IOCGROUP(cmd)&t;(((cmd) &gt;&gt; 8) &amp; 0xFF)
 multiline_comment|/* _IO(magic, subcode); size field is zero and the &n; * subcode determines the command.&n; */

@@ -337,7 +337,7 @@ l_int|63
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ffz = Find First Zero in word. Undefined if no zero exists,&n; * so code should check agains ~0UL first..&n; *&n; * This uses the cmpbge insn to check which byte contains the zero.&n; * I don&squot;t know if that&squot;s actually a good idea, but it&squot;s fun and the&n; * resulting LBS tests should be natural on the alpha.. Besides, I&squot;m&n; * just teaching myself the asm of the alpha anyway.&n; */
+multiline_comment|/*&n; * ffz = Find First Zero in word. Undefined if no zero exists,&n; * so code should check against ~0UL first..&n; *&n; * This uses the cmpbge insn to check which byte contains the zero.&n; * I don&squot;t know if that&squot;s actually a good idea, but it&squot;s fun and the&n; * resulting LBS tests should be natural on the alpha.. Besides, I&squot;m&n; * just teaching myself the asm of the alpha anyway.&n; */
 DECL|function|ffz
 r_extern
 r_inline

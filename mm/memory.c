@@ -5152,6 +5152,11 @@ l_int|0
 op_assign
 id|PAGE_SHARED
 suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

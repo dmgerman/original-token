@@ -13039,7 +13039,7 @@ id|poll_cont
 op_assign
 initialization_block
 suffix:semicolon
-multiline_comment|/* revalidate the floppy disk, i.e. trigger format autodetection by reading&n; * the bootblock (block 0). &quot;Autodetection&quot; is also needed to check wether&n; * there is a disk in the drive at all... Thus we also do it for fixed&n; * geometry formats */
+multiline_comment|/* revalidate the floppy disk, i.e. trigger format autodetection by reading&n; * the bootblock (block 0). &quot;Autodetection&quot; is also needed to check whether&n; * there is a disk in the drive at all... Thus we also do it for fixed&n; * geometry formats */
 DECL|function|floppy_revalidate
 r_static
 r_int

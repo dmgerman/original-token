@@ -727,7 +727,7 @@ r_return
 id|sp
 suffix:semicolon
 )brace
-multiline_comment|/* This is much more generalized than the library routine read function,&n;   so we keep this separate.  Techincally the library read function&n;   is only provided so that we can read a.out libraries that have&n;   an ELF header */
+multiline_comment|/* This is much more generalized than the library routine read function,&n;   so we keep this separate.  Technically the library read function&n;   is only provided so that we can read a.out libraries that have&n;   an ELF header */
 DECL|function|load_elf_interp
 r_static
 r_int

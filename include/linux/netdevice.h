@@ -20,6 +20,8 @@ DECL|macro|IS_BROADCAST
 mdefine_line|#define IS_BROADCAST&t;3&t;&t;/* address is a valid broadcast&t;*/
 DECL|macro|IS_INVBCAST
 mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us (unused)*/
+DECL|macro|IS_MULTICAST
+mdefine_line|#define IS_MULTICAST&t;5&t;&t;/* Multicast IP address */
 multiline_comment|/*&n; * The DEVICE structure.&n; * Actually, this whole structure is a big mistake.  It mixes I/O&n; * data with strictly &quot;high-level&quot; data, and it has to know about&n; * almost every data structure used in the INET module.  &n; */
 DECL|struct|device
 r_struct

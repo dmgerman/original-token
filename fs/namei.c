@@ -438,7 +438,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * get_write_access() gets write permission for a file.&n; * put_write_access() releases this write permission.&n; * This is used for regular files.&n; * We cannot support write (and maybe mmap read-write shared) accesses and&n; * MAP_DENYWRITE mmapings simultaneously.&n; */
+multiline_comment|/*&n; * get_write_access() gets write permission for a file.&n; * put_write_access() releases this write permission.&n; * This is used for regular files.&n; * We cannot support write (and maybe mmap read-write shared) accesses and&n; * MAP_DENYWRITE mmappings simultaneously.&n; */
 DECL|function|get_write_access
 r_int
 id|get_write_access
@@ -2569,6 +2569,11 @@ comma
 id|namelen
 comma
 id|mode
+op_amp
+l_int|0777
+op_amp
+op_complement
+id|current-&gt;fs-&gt;umask
 )paren
 suffix:semicolon
 id|up

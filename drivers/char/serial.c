@@ -4452,6 +4452,37 @@ r_if
 c_cond
 (paren
 id|i
+op_amp
+id|CBAUDEX
+)paren
+(brace
+id|i
+op_and_assign
+op_complement
+id|CBAUDEX
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+template_param
+l_int|2
+)paren
+id|info-&gt;tty-&gt;termios-&gt;c_cflag
+op_and_assign
+op_complement
+id|CBAUDEX
+suffix:semicolon
+r_else
+id|i
+op_add_assign
+l_int|15
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
 op_eq
 l_int|15
 )paren
@@ -8150,7 +8181,7 @@ op_assign
 op_star
 id|tty-&gt;termios
 suffix:semicolon
-multiline_comment|/*&n;&t; * At this point we stop accepting input.  To do this, we&n;&t; * disable the receive line status interrupts, and tell the&n;&t; * interrut driver to stop checking the data ready bit in the&n;&t; * line status register.&n;&t; */
+multiline_comment|/*&n;&t; * At this point we stop accepting input.  To do this, we&n;&t; * disable the receive line status interrupts, and tell the&n;&t; * interrupt driver to stop checking the data ready bit in the&n;&t; * line status register.&n;&t; */
 id|info-&gt;IER
 op_and_assign
 op_complement

@@ -519,7 +519,7 @@ id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
-multiline_comment|/* Retrive and print the ethernet address. */
+multiline_comment|/* Retrieve and print the ethernet address. */
 r_for
 c_loop
 (paren

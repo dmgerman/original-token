@@ -3,7 +3,7 @@ macro_line|#ifndef _EISA_EATA_H
 DECL|macro|_EISA_EATA_H
 mdefine_line|#define _EISA_EATA_H
 DECL|macro|EATA_VERSION
-mdefine_line|#define EATA_VERSION &quot;1.07.00&quot;
+mdefine_line|#define EATA_VERSION &quot;1.08.00&quot;
 r_int
 id|eata_detect
 c_func

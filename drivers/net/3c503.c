@@ -781,7 +781,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* Retrive and print the ethernet address. */
+multiline_comment|/* Retrieve and print the ethernet address. */
 r_for
 c_loop
 (paren

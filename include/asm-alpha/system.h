@@ -1,6 +1,16 @@
 macro_line|#ifndef __ALPHA_SYSTEM_H
 DECL|macro|__ALPHA_SYSTEM_H
 mdefine_line|#define __ALPHA_SYSTEM_H
+multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */
+multiline_comment|/*&n; * We leave one page for the initial stack page, and one page for&n; * the initial process structure. Also, the console eats 3 MB for&n; * the initial bootloader (one of which we can reclaim later).&n; * So the initial load address is 0xfffffc0000304000UL&n; */
+DECL|macro|INIT_PCB
+mdefine_line|#define INIT_PCB&t;0xfffffc0000300000
+DECL|macro|INIT_STACK
+mdefine_line|#define INIT_STACK&t;0xfffffc0000302000
+DECL|macro|START_ADDR
+mdefine_line|#define START_ADDR&t;0xfffffc0000304000
+DECL|macro|SIZE
+mdefine_line|#define SIZE&t;&t;(32*1024)
 multiline_comment|/*&n; * Common PAL-code&n; */
 DECL|macro|PAL_halt
 mdefine_line|#define PAL_halt&t;  0
@@ -28,6 +38,11 @@ DECL|macro|PAL_gentrap
 mdefine_line|#define PAL_gentrap&t;170
 DECL|macro|PAL_nphalt
 mdefine_line|#define PAL_nphalt&t;190
+multiline_comment|/*&n; * VMS specific PAL-code&n; */
+DECL|macro|PAL_swppal
+mdefine_line|#define PAL_swppal&t;10
+DECL|macro|PAL_mfpr_vptb
+mdefine_line|#define PAL_mfpr_vptb&t;41
 multiline_comment|/*&n; * OSF specific PAL-code&n; */
 DECL|macro|PAL_mtpr_mces
 mdefine_line|#define PAL_mtpr_mces&t;17
@@ -65,6 +80,10 @@ DECL|macro|PAL_rtsys
 mdefine_line|#define PAL_rtsys&t;61
 DECL|macro|PAL_rti
 mdefine_line|#define PAL_rti&t;&t;63
+macro_line|#ifndef mb
+DECL|macro|mb
+mdefine_line|#define mb() __asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
+macro_line|#endif
 DECL|macro|invalidate_all
 mdefine_line|#define invalidate_all() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-2($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
 DECL|macro|invalidate

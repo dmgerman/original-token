@@ -99,7 +99,7 @@ suffix:semicolon
 DECL|macro|PIO_UNIMAP
 mdefine_line|#define PIO_UNIMAP&t;0x4B67&t;/* put unicode-to-font mapping in kernel */
 DECL|macro|PIO_UNIMAPCLR
-mdefine_line|#define PIO_UNIMAPCLR&t;0x4B68&t;/* clear table, possibly advise hashalgorithm */
+mdefine_line|#define PIO_UNIMAPCLR&t;0x4B68&t;/* clear table, possibly advise hash algorithm */
 DECL|struct|unimapinit
 r_struct
 id|unimapinit

@@ -4633,6 +4633,12 @@ r_if
 c_cond
 (paren
 id|iph-&gt;frag_off
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|iph-&gt;frag_off
 op_amp
 l_int|0x0020
 )paren
@@ -4640,7 +4646,7 @@ id|is_frag
 op_or_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Last fragment ?&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Last fragment ?&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4656,6 +4662,7 @@ id|is_frag
 op_or_assign
 l_int|2
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Do any IP forwarding required.  chk_addr() is expensive -- avoid it someday.&n;&t; *&n;&t; *&t;This is inefficient. While finding out if it is for us we could also compute&n;&t; *&t;the routing table entry. This is where the great unified cache theory comes&n;&t; *&t;in as and when someone implements it&n;&t; *&n;&t; *&t;For most hosts over 99% of packets match the first conditional&n;&t; *&t;and don&squot;t go via ip_chk_addr. Note: brd is set to IS_MYADDR at&n;&t; *&t;function entry.&n;&t; */
 r_if
 c_cond
@@ -4684,6 +4691,10 @@ c_cond
 id|skb-&gt;pkt_type
 op_ne
 id|PACKET_HOST
+op_logical_or
+id|brd
+op_eq
+id|IS_BROADCAST
 )paren
 (brace
 id|kfree_skb
@@ -4927,6 +4938,10 @@ c_cond
 id|brd
 op_ne
 id|IS_BROADCAST
+op_logical_and
+id|brd
+op_ne
+id|IS_MULTICAST
 )paren
 id|icmp_send
 c_func
