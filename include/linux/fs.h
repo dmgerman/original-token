@@ -175,6 +175,8 @@ DECL|macro|BLKSECTSET
 mdefine_line|#define BLKSECTSET _IO(0x12,102)/* set max sectors per request (ll_rw_blk.c) */
 DECL|macro|BLKSECTGET
 mdefine_line|#define BLKSECTGET _IO(0x12,103)/* get max sectors per request (ll_rw_blk.c) */
+DECL|macro|BLKSSZGET
+mdefine_line|#define BLKSSZGET  _IO(0x12,104)/* get block device sector size (reserved for) */
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP

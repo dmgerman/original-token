@@ -12,6 +12,9 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
@@ -1838,6 +1841,32 @@ comma
 id|coda_cache_inv_stats_get_info
 )brace
 suffix:semicolon
+DECL|function|coda_proc_modcount
+r_static
+r_void
+id|coda_proc_modcount
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|fill
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fill
+)paren
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_else
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
 macro_line|#endif
 DECL|function|coda_sysctl_init
 r_void
@@ -1890,6 +1919,11 @@ comma
 op_amp
 id|proc_fs_coda
 )paren
+suffix:semicolon
+id|proc_fs_coda.fill_inode
+op_assign
+op_amp
+id|coda_proc_modcount
 suffix:semicolon
 id|proc_register
 c_func

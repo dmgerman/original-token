@@ -105,11 +105,11 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * XDR functions for basic NLM types&n; */
+DECL|function|nlm_decode_cookie
 r_static
 r_inline
 id|u32
 op_star
-DECL|function|nlm_decode_cookie
 id|nlm_decode_cookie
 c_func
 (paren
@@ -117,7 +117,8 @@ id|u32
 op_star
 id|p
 comma
-id|u32
+r_struct
+id|nlm_cookie
 op_star
 id|c
 )paren
@@ -126,10 +127,6 @@ r_int
 r_int
 id|len
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|len
 op_assign
 id|ntohl
@@ -139,37 +136,63 @@ op_star
 id|p
 op_increment
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
 op_eq
+l_int|0
+)paren
+(brace
+id|c-&gt;len
+op_assign
+l_int|4
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|c-&gt;data
+comma
+l_int|0
+comma
 l_int|4
 )paren
-(brace
-op_star
-id|c
-op_assign
-id|ntohl
-c_func
-(paren
-op_star
-id|p
-op_increment
-)paren
 suffix:semicolon
+multiline_comment|/* hockeypux brain damage */
 )brace
 r_else
 r_if
 c_cond
 (paren
 id|len
-op_eq
-l_int|0
+op_le
+l_int|8
 )paren
 (brace
-multiline_comment|/* hockeypux brain damage */
-op_star
-id|c
+id|c-&gt;len
 op_assign
-l_int|0
+id|len
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|c-&gt;data
+comma
+id|p
+comma
+id|len
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+(paren
+id|len
+op_plus
+l_int|3
+)paren
+op_rshift
+l_int|2
 suffix:semicolon
 )brace
 r_else
@@ -178,7 +201,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;lockd: bad cookie size %d (should be 4)&bslash;n&quot;
+l_string|&quot;lockd: bad cookie size %d (only cookies under 8 bytes are supported.)&bslash;n&quot;
 comma
 id|len
 )paren
@@ -203,7 +226,9 @@ id|u32
 op_star
 id|p
 comma
-id|u32
+r_struct
+id|nlm_cookie
+op_star
 id|c
 )paren
 (brace
@@ -214,21 +239,28 @@ op_assign
 id|htonl
 c_func
 (paren
-r_sizeof
-(paren
-id|c
-)paren
+id|c-&gt;len
 )paren
 suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-id|htonl
+id|memcpy
 c_func
 (paren
-id|c
+id|p
+comma
+id|c-&gt;data
+comma
+id|c-&gt;len
 )paren
+suffix:semicolon
+id|p
+op_add_assign
+(paren
+id|c-&gt;len
+op_plus
+l_int|3
+)paren
+op_rshift
+l_int|2
 suffix:semicolon
 r_return
 id|p
@@ -763,6 +795,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|resp-&gt;cookie
 )paren
 )paren
@@ -1570,6 +1603,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|resp-&gt;cookie
 )paren
 )paren
@@ -1632,6 +1666,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|resp-&gt;cookie
 )paren
 )paren
@@ -2023,6 +2058,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|argp-&gt;cookie
 )paren
 )paren
@@ -2309,6 +2345,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|argp-&gt;cookie
 )paren
 )paren
@@ -2438,6 +2475,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|argp-&gt;cookie
 )paren
 )paren
@@ -2546,6 +2584,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|argp-&gt;cookie
 )paren
 )paren
@@ -2621,6 +2660,7 @@ c_func
 (paren
 id|p
 comma
+op_amp
 id|resp-&gt;cookie
 )paren
 )paren
@@ -2764,7 +2804,7 @@ multiline_comment|/*&n; * Buffer requirements for NLM&n; */
 DECL|macro|NLM_void_sz
 mdefine_line|#define NLM_void_sz&t;&t;0
 DECL|macro|NLM_cookie_sz
-mdefine_line|#define NLM_cookie_sz&t;&t;2
+mdefine_line|#define NLM_cookie_sz&t;&t;3&t;/* 1 len , 2 data */
 DECL|macro|NLM_caller_sz
 mdefine_line|#define NLM_caller_sz&t;&t;1+QUADLEN(sizeof(system_utsname.nodename))
 DECL|macro|NLM_netobj_sz

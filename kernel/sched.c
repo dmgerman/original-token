@@ -1877,6 +1877,13 @@ suffix:semicolon
 r_int
 id|this_cpu
 suffix:semicolon
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_scheduler
+)paren
+suffix:semicolon
 id|prev
 op_assign
 id|current
@@ -1926,13 +1933,6 @@ id|bh_mask
 id|do_bottom_half
 c_func
 (paren
-)paren
-suffix:semicolon
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_scheduler
 )paren
 suffix:semicolon
 id|spin_lock

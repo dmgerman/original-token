@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -2008,11 +2009,11 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: connect from unprivileged port: %08lx:%d&quot;
+l_string|&quot;%s: connect from unprivileged port: %s:%d&quot;
 comma
 id|serv-&gt;sv_name
 comma
-id|ntohl
+id|in_ntoa
 c_func
 (paren
 id|sin.sin_addr.s_addr
@@ -2032,11 +2033,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;%s: connect from %08lx:%04x&bslash;n&quot;
+l_string|&quot;%s: connect from %s:%04x&bslash;n&quot;
 comma
 id|serv-&gt;sv_name
 comma
-id|ntohl
+id|in_ntoa
 c_func
 (paren
 id|sin.sin_addr.s_addr

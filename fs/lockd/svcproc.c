@@ -520,6 +520,7 @@ id|argp-&gt;lock
 comma
 id|argp-&gt;block
 comma
+op_amp
 id|argp-&gt;cookie
 )paren
 suffix:semicolon
@@ -1939,12 +1940,6 @@ id|nlm_release_host
 c_func
 (paren
 id|call-&gt;a_host
-)paren
-suffix:semicolon
-id|rpc_release_task
-c_func
-(paren
-id|task
 )paren
 suffix:semicolon
 id|kfree

@@ -132,8 +132,10 @@ DECL|macro|AUX_DISABLE_DEV
 mdefine_line|#define AUX_DISABLE_DEV&t;&t;0xF5&t;/* Disable aux device */
 DECL|macro|AUX_RESET
 mdefine_line|#define AUX_RESET&t;&t;0xFF&t;/* Reset aux device */
+DECL|macro|AUX_ACK
+mdefine_line|#define AUX_ACK&t;&t;&t;0xFA&t;/* Command byte ACK. */
 DECL|macro|AUX_BUF_SIZE
-mdefine_line|#define AUX_BUF_SIZE&t;&t;2048
+mdefine_line|#define AUX_BUF_SIZE&t;&t;2048&t;/* This might be better divisible by&n;&t;&t;&t;&t;&t;   three to make overruns stay in sync&n;&t;&t;&t;&t;&t;   but then the read function would need&n;&t;&t;&t;&t;&t;   a lock etc - ick */
 DECL|struct|aux_queue
 r_struct
 id|aux_queue

@@ -2825,23 +2825,23 @@ comma
 id|de
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* Don&squot;t unregister proc directories which still have&n;&t;&t;   entries... */
+multiline_comment|/* Don&squot;t unregister directories which still have entries.. */
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-(paren
-id|de-&gt;mode
-op_amp
-id|S_IFDIR
-)paren
-op_logical_and
 id|de-&gt;subdir
 )paren
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/* Don&squot;t unregoster proc entries that are still being used.. */
+r_if
+c_cond
+(paren
+id|de-&gt;count
 )paren
-(brace
+r_continue
+suffix:semicolon
 id|proc_unregister
 c_func
 (paren
@@ -2860,7 +2860,6 @@ c_func
 id|de
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|do_rw_proc

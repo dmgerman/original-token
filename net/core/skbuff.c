@@ -980,6 +980,12 @@ id|n-&gt;security
 op_assign
 id|skb-&gt;security
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_FIREWALL
+id|n-&gt;fwmark
+op_assign
+id|skb-&gt;fwmark
+suffix:semicolon
+macro_line|#endif
 r_return
 id|n
 suffix:semicolon
@@ -1172,6 +1178,12 @@ id|n-&gt;security
 op_assign
 id|skb-&gt;security
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_FIREWALL
+id|n-&gt;fwmark
+op_assign
+id|skb-&gt;fwmark
+suffix:semicolon
+macro_line|#endif
 r_return
 id|n
 suffix:semicolon

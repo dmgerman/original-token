@@ -2563,7 +2563,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;sd.c:Bad block number requested&quot;
+l_string|&quot;sd.c:Bad block number/count requested&quot;
 )paren
 suffix:semicolon
 id|SCpnt
@@ -2613,7 +2613,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;sd.c:Bad block number requested&quot;
+l_string|&quot;sd.c:Bad block number/count requested&quot;
 )paren
 suffix:semicolon
 id|SCpnt

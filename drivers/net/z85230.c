@@ -1104,6 +1104,9 @@ id|TxEOM
 )paren
 (brace
 multiline_comment|/*&t;&t;printk(&quot;%s: Tx underrun.&bslash;n&quot;, chan-&gt;dev-&gt;name); */
+id|chan-&gt;stats.tx_fifo_errors
+op_increment
+suffix:semicolon
 id|write_zsctrl
 c_func
 (paren
@@ -1159,6 +1162,19 @@ op_or
 id|RxENABLE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|chan-&gt;netdevice
+)paren
+(brace
+id|sppp_reopen
+c_func
+(paren
+id|chan-&gt;netdevice
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -1498,6 +1514,19 @@ op_or
 id|RxENABLE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|chan-&gt;netdevice
+)paren
+(brace
+id|sppp_reopen
+c_func
+(paren
+id|chan-&gt;netdevice
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -4197,6 +4226,24 @@ c_func
 id|c-&gt;txdma
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Check if we crapped out.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|get_dma_residue
+c_func
+(paren
+id|c-&gt;txdma
+)paren
+)paren
+(brace
+id|c-&gt;stats.tx_dropped
+op_increment
+suffix:semicolon
+id|c-&gt;stats.tx_fifo_errors
+op_increment
+suffix:semicolon
+)brace
 id|release_dma_lock
 c_func
 (paren
@@ -4275,6 +4322,14 @@ id|release_dma_lock
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|write_zsctrl
+c_func
+(paren
+id|c
+comma
+id|RES_EOM_L
 )paren
 suffix:semicolon
 id|write_zsreg
@@ -4465,6 +4520,13 @@ id|z8530_buffer_lock
 comma
 id|flags
 )paren
+suffix:semicolon
+id|c-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+id|c-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 id|dev_kfree_skb
 c_func
@@ -4700,9 +4762,13 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|c-&gt;stats.rx_dropped
+op_increment
+suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Memory squeeze.&bslash;n&quot;
 comma
 id|c-&gt;netdevice-&gt;name
@@ -4728,6 +4794,13 @@ id|rxb
 comma
 id|ct
 )paren
+suffix:semicolon
+id|c-&gt;stats.rx_packets
+op_increment
+suffix:semicolon
+id|c-&gt;stats.rx_bytes
+op_add_assign
+id|ct
 suffix:semicolon
 )brace
 id|c-&gt;dma_ready
@@ -4825,6 +4898,13 @@ id|c-&gt;mtu
 )paren
 suffix:semicolon
 )brace
+id|c-&gt;stats.rx_packets
+op_increment
+suffix:semicolon
+id|c-&gt;stats.rx_bytes
+op_add_assign
+id|ct
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;If we received a frame we must now process it.&n;&t; */
 r_if
@@ -4853,12 +4933,20 @@ id|skb
 suffix:semicolon
 )brace
 r_else
+(brace
+id|c-&gt;stats.rx_dropped
+op_increment
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Lost a frame&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;%s: Lost a frame&bslash;n&quot;
+comma
+id|c-&gt;netdevice-&gt;name
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;Cannot DMA over a 64K boundary on a PC&n; */
 DECL|function|spans_boundary

@@ -567,7 +567,9 @@ op_star
 comma
 r_int
 comma
-id|u32
+r_struct
+id|nlm_cookie
+op_star
 )paren
 suffix:semicolon
 id|u32

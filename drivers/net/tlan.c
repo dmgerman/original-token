@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&n; ********************************************************************/
+multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -4135,6 +4135,32 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_struct
+id|sk_buff
+op_star
+id|new_skb
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;I changed the algorithm here. What we now do&n;&t;&t; *&t;is allocate the new frame. If this fails we&n;&t;&t; *&t;simply recycle the frame.&n;&t;&t; */
+id|new_skb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+id|TLAN_MAX_FRAME_SIZE
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_skb
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* If this ever happened it would be a problem */
+multiline_comment|/* not any more - ac */
 id|skb
 op_assign
 (paren
@@ -4188,42 +4214,14 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|skb
-op_assign
-id|dev_alloc_skb
-c_func
-(paren
-id|TLAN_MAX_FRAME_SIZE
-op_plus
-l_int|7
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:  Couldn&squot;t allocate memory for received data.&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* If this ever happened it would be a problem */
-)brace
-r_else
-(brace
-id|skb-&gt;dev
+id|new_skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
 id|skb_reserve
 c_func
 (paren
-id|skb
+id|new_skb
 comma
 l_int|2
 )paren
@@ -4237,7 +4235,7 @@ op_star
 id|skb_put
 c_func
 (paren
-id|skb
+id|new_skb
 comma
 id|TLAN_MAX_FRAME_SIZE
 )paren
@@ -4265,9 +4263,17 @@ op_assign
 (paren
 id|u32
 )paren
-id|skb
+id|new_skb
 suffix:semicolon
 )brace
+r_else
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;TLAN:  Couldn&squot;t allocate memory for received data.&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 id|head_list-&gt;forward
 op_assign

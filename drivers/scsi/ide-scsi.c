@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/scsi/ide-scsi.c&t;Version 0.6&t;&t;Jan  27, 1998&n; *&n; * Copyright (C) 1996 - 1998 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
-multiline_comment|/*&n; * Emulation of a SCSI host adapter for IDE ATAPI devices.&n; *&n; * With this driver, one can use the Linux SCSI drivers instead of the&n; * native IDE ATAPI drivers.&n; *&n; * Ver 0.1   Dec  3 96   Initial version.&n; * Ver 0.2   Jan 26 97   Fixed bug in cleanup_module() and added emulation&n; *                        of MODE_SENSE_6/MODE_SELECT_6 for cdroms. Thanks&n; *                        to Janos Farkas for pointing this out.&n; *                       Avoid using bitfields in structures for m68k.&n; *                       Added Scatter/Gather and DMA support.&n; * Ver 0.4   Dec  7 97   Add support for ATAPI PD/CD drives.&n; *                       Use variable timeout for each command.&n; * Ver 0.5   Jan  2 98   Fix previous PD/CD support.&n; *                       Allow disabling of SCSI-6 to SCSI-10 transformation.&n; * Ver 0.6   Jan 27 98   Allow disabling of SCSI command translation layer&n; *                        for access through /dev/sg.&n; *                       Fix MODE_SENSE_6/MODE_SELECT_6/INQUIRY translation.&n; * Ver 0.7   Dev 04 98   Ignore commands where lun != 0 to avoid multiple&n; *                        detection of devices with CONFIG_SCSI_MULTI_LUN&n; */
+multiline_comment|/*&n; * Emulation of a SCSI host adapter for IDE ATAPI devices.&n; *&n; * With this driver, one can use the Linux SCSI drivers instead of the&n; * native IDE ATAPI drivers.&n; *&n; * Ver 0.1   Dec  3 96   Initial version.&n; * Ver 0.2   Jan 26 97   Fixed bug in cleanup_module() and added emulation&n; *                        of MODE_SENSE_6/MODE_SELECT_6 for cdroms. Thanks&n; *                        to Janos Farkas for pointing this out.&n; *                       Avoid using bitfields in structures for m68k.&n; *                       Added Scatter/Gather and DMA support.&n; * Ver 0.4   Dec  7 97   Add support for ATAPI PD/CD drives.&n; *                       Use variable timeout for each command.&n; * Ver 0.5   Jan  2 98   Fix previous PD/CD support.&n; *                       Allow disabling of SCSI-6 to SCSI-10 transformation.&n; * Ver 0.6   Jan 27 98   Allow disabling of SCSI command translation layer&n; *                        for access through /dev/sg.&n; *                       Fix MODE_SENSE_6/MODE_SELECT_6/INQUIRY translation.&n; * Ver 0.7   Dec 04 98   Ignore commands where lun != 0 to avoid multiple&n; *                        detection of devices with CONFIG_SCSI_MULTI_LUN&n; * Ver 0.8   Feb 05 99   Optical media need translation too. &n; */
 DECL|macro|IDESCSI_VERSION
 mdefine_line|#define IDESCSI_VERSION &quot;0.6&quot;
 macro_line|#include &lt;linux/module.h&gt;
@@ -500,6 +500,10 @@ c_cond
 id|drive-&gt;media
 op_eq
 id|ide_cdrom
+op_logical_or
+id|drive-&gt;media
+op_eq
+id|ide_optical
 )paren
 (brace
 r_if
@@ -877,6 +881,10 @@ c_cond
 id|drive-&gt;media
 op_eq
 id|ide_cdrom
+op_logical_or
+id|drive-&gt;media
+op_eq
+id|ide_optical
 )paren
 (brace
 r_if
@@ -4125,7 +4133,7 @@ id|resetflags
 )paren
 (brace
 r_return
-id|SCSI_RESET_PUNT
+id|SCSI_RESET_SUCCESS
 suffix:semicolon
 )brace
 DECL|function|idescsi_bios

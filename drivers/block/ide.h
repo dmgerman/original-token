@@ -207,6 +207,8 @@ DECL|macro|ide_scsi
 mdefine_line|#define ide_scsi&t;0x21
 DECL|macro|ide_disk
 mdefine_line|#define ide_disk&t;0x20
+DECL|macro|ide_optical
+mdefine_line|#define ide_optical&t;0x7
 DECL|macro|ide_cdrom
 mdefine_line|#define ide_cdrom&t;0x5
 DECL|macro|ide_tape

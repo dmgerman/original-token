@@ -132,6 +132,10 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|grace_period_expire
+suffix:semicolon
 multiline_comment|/* Lock module and set up kernel thread */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -280,8 +284,10 @@ id|HZ
 suffix:semicolon
 )brace
 macro_line|#endif
+id|grace_period_expire
+op_assign
 id|nlmsvc_grace_period
-op_add_assign
+op_plus
 id|jiffies
 suffix:semicolon
 id|nlmsvc_timeout

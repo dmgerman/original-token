@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.94 1998/11/07 11:50:33 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.95 1999/02/08 11:20:03 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -2833,12 +2833,6 @@ id|sk-&gt;sock_readers
 )paren
 )paren
 (brace
-id|lock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|tcp_sync_mss
 c_func
 (paren
@@ -2848,12 +2842,6 @@ id|dst-&gt;pmtu
 )paren
 suffix:semicolon
 id|tcp_simple_retransmit
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-id|release_sock
 c_func
 (paren
 id|sk
@@ -5364,13 +5352,6 @@ multiline_comment|/*&n;&t; *&t;socket locking is here for SMP purposes as backlo
 id|ipv6_statistics.Ip6InDelivers
 op_increment
 suffix:semicolon
-multiline_comment|/* XXX We need to think more about socket locking&n;&t; * XXX wrt. backlog queues, __release_sock(), etc.  -DaveM&n;&t; */
-id|lock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 multiline_comment|/* &n;&t; * This doesn&squot;t check if the socket has enough room for the packet.&n;&t; * Either process the packet _without_ queueing it and then free it,&n;&t; * or do the check later.&n;&t; */
 id|skb_set_owner_r
 c_func
@@ -5481,18 +5462,31 @@ id|nsk
 r_goto
 id|discard
 suffix:semicolon
-id|lock_sock
+multiline_comment|/*&n;&t;&t; * Queue it on the new socket if the new socket is active,&n;&t;&t; * otherwise we just shortcircuit this and continue with&n;&t;&t; * the new socket..&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|atomic_read
 c_func
 (paren
-id|nsk
+op_amp
+id|nsk-&gt;sock_readers
 )paren
-suffix:semicolon
-id|release_sock
+)paren
+(brace
+id|__skb_queue_tail
 c_func
 (paren
-id|sk
+op_amp
+id|nsk-&gt;back_log
+comma
+id|skb
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|sk
 op_assign
 id|nsk
@@ -5524,12 +5518,6 @@ id|users
 r_goto
 id|ipv6_pktoptions
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5558,12 +5546,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-)paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return
@@ -5702,12 +5684,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-)paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return

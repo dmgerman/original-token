@@ -254,6 +254,15 @@ id|dev
 )paren
 suffix:semicolon
 r_int
+id|sppp_reopen
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_int
 id|sppp_close
 (paren
 r_struct

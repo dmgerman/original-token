@@ -9682,6 +9682,8 @@ op_ne
 l_int|0
 )paren
 (brace
+id|pdev
+op_assign
 id|pci_find_device
 c_func
 (paren
@@ -9702,7 +9704,6 @@ id|pdev
 op_eq
 l_int|NULL
 )paren
-suffix:semicolon
 (brace
 id|h
 op_increment

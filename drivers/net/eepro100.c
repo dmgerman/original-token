@@ -3706,6 +3706,31 @@ op_plus
 id|SCBCmd
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Request the IRQ last, after we have set up all data structures.&n;&t; * It would be bad to get an interrupt before we&squot;re ready.&n;&t; */
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+op_amp
+id|speedo_interrupt
+comma
+id|SA_SHIRQ
+comma
+l_string|&quot;Intel EtherExpress Pro 10/100 Ethernet&quot;
+comma
+id|dev
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
 multiline_comment|/* No need to wait for the command unit to accept here. */
 r_if
 c_cond
@@ -3736,31 +3761,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Request the IRQ last, after we have set up all data structures.&n;&t; * It would be bad to get an interrupt before we&squot;re ready.&n;&t; */
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-op_amp
-id|speedo_interrupt
-comma
-id|SA_SHIRQ
-comma
-l_string|&quot;Intel EtherExpress Pro 10/100 Ethernet&quot;
-comma
-id|dev
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* Set the timer.  The timer serves a dual purpose:&n;&t;   1) to monitor the media interface (e.g. link beat) and perhaps switch&n;&t;   to an alternate media type&n;&t;   2) to monitor Rx activity, and restart the Rx process if the receiver&n;&t;   hangs. */

@@ -44,13 +44,34 @@ id|fl
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;NLM cookies. Technically they can be 1K, Nobody uses over 8 bytes&n; *&t;however.&n; */
+DECL|struct|nlm_cookie
+r_struct
+id|nlm_cookie
+(brace
+DECL|member|data
+r_int
+r_char
+id|data
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Generic lockd arguments for all but sm_notify&n; */
 DECL|struct|nlm_args
 r_struct
 id|nlm_args
 (brace
 DECL|member|cookie
-id|u32
+r_struct
+id|nlm_cookie
 id|cookie
 suffix:semicolon
 DECL|member|lock
@@ -90,7 +111,8 @@ r_struct
 id|nlm_res
 (brace
 DECL|member|cookie
-id|u32
+r_struct
+id|nlm_cookie
 id|cookie
 suffix:semicolon
 DECL|member|status
