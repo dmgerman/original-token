@@ -600,7 +600,7 @@ id|nlh
 suffix:semicolon
 )brace
 DECL|macro|NLMSG_PUT
-mdefine_line|#define NLMSG_PUT(skb, pid, seq, type, len) &bslash;&n;({ if (skb_tailroom(skb) &lt; NLMSG_SPACE(len)) goto nlmsg_failure; &bslash;&n;   __nlmsg_put(skb, pid, seq, type, len); })
+mdefine_line|#define NLMSG_PUT(skb, pid, seq, type, len) &bslash;&n;({ if (skb_tailroom(skb) &lt; (int)NLMSG_SPACE(len)) goto nlmsg_failure; &bslash;&n;   __nlmsg_put(skb, pid, seq, type, len); })
 r_extern
 r_int
 id|netlink_dump_start

@@ -523,6 +523,7 @@ id|valbool
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETDEVICES
 r_case
 id|SO_BINDTODEVICE
 suffix:colon
@@ -624,6 +625,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_FILTER
 r_case
 id|SO_ATTACH_FILTER

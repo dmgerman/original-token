@@ -122,7 +122,7 @@ mdefine_line|#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr((mhdr), (cmsg))
 DECL|macro|CMSG_ALIGN
 mdefine_line|#define CMSG_ALIGN(len) ( ((len)+sizeof(long)-1) &amp; ~(sizeof(long)-1) )
 DECL|macro|CMSG_DATA
-mdefine_line|#define CMSG_DATA(cmsg)&t;((void *)(cmsg) + CMSG_ALIGN(sizeof(struct cmsghdr)))
+mdefine_line|#define CMSG_DATA(cmsg)&t;((void *)((char *)(cmsg) + CMSG_ALIGN(sizeof(struct cmsghdr))))
 DECL|macro|CMSG_SPACE
 mdefine_line|#define CMSG_SPACE(len) (CMSG_ALIGN(sizeof(struct cmsghdr)) + CMSG_ALIGN(len))
 DECL|macro|CMSG_LEN
@@ -135,6 +135,12 @@ multiline_comment|/*&n; *&t;This mess will go away with glibc&n; */
 macro_line|#ifdef __KERNEL__
 DECL|macro|__KINLINE
 mdefine_line|#define __KINLINE extern __inline__
+macro_line|#elif  defined(__GNUC__) 
+DECL|macro|__KINLINE
+mdefine_line|#define __KINLINE static __inline__
+macro_line|#elif defined(__cplusplus)
+DECL|macro|__KINLINE
+mdefine_line|#define __KINLINE static inline
 macro_line|#else
 DECL|macro|__KINLINE
 mdefine_line|#define __KINLINE static
@@ -314,8 +320,8 @@ DECL|macro|AF_NETROM
 mdefine_line|#define AF_NETROM&t;6&t;/* Amateur Radio NET/ROM &t;*/
 DECL|macro|AF_BRIDGE
 mdefine_line|#define AF_BRIDGE&t;7&t;/* Multiprotocol bridge &t;*/
-DECL|macro|AF_AAL5
-mdefine_line|#define AF_AAL5&t;&t;8&t;/* Reserved for Werner&squot;s ATM &t;*/
+DECL|macro|AF_ATMPVC
+mdefine_line|#define AF_ATMPVC&t;8&t;/* ATM PVCs&t;&t;&t;*/
 DECL|macro|AF_X25
 mdefine_line|#define AF_X25&t;&t;9&t;/* Reserved for X.25 project &t;*/
 DECL|macro|AF_INET6
@@ -340,6 +346,8 @@ DECL|macro|AF_ASH
 mdefine_line|#define AF_ASH&t;&t;18&t;/* Ash&t;&t;&t;&t;*/
 DECL|macro|AF_ECONET
 mdefine_line|#define AF_ECONET&t;19&t;/* Acorn Econet&t;&t;&t;*/
+DECL|macro|AF_ATMSVC
+mdefine_line|#define AF_ATMSVC&t;20&t;/* ATM SVCs&t;&t;&t;*/
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -361,8 +369,8 @@ DECL|macro|PF_NETROM
 mdefine_line|#define&t;PF_NETROM&t;AF_NETROM
 DECL|macro|PF_BRIDGE
 mdefine_line|#define PF_BRIDGE&t;AF_BRIDGE
-DECL|macro|PF_AAL5
-mdefine_line|#define PF_AAL5&t;&t;AF_AAL5
+DECL|macro|PF_ATMPVC
+mdefine_line|#define PF_ATMPVC&t;AF_ATMPVC
 DECL|macro|PF_X25
 mdefine_line|#define PF_X25&t;&t;AF_X25
 DECL|macro|PF_INET6
@@ -385,6 +393,8 @@ DECL|macro|PF_PACKET
 mdefine_line|#define PF_PACKET&t;AF_PACKET
 DECL|macro|PF_ASH
 mdefine_line|#define PF_ASH&t;&t;AF_ASH
+DECL|macro|PF_ATMSVC
+mdefine_line|#define PF_ATMSVC&t;AF_ATMSVC
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */
@@ -457,6 +467,10 @@ DECL|macro|SOL_X25
 mdefine_line|#define&t;SOL_X25&t;&t;262
 DECL|macro|SOL_PACKET
 mdefine_line|#define SOL_PACKET&t;263
+DECL|macro|SOL_ATM
+mdefine_line|#define SOL_ATM&t;&t;264&t;/* ATM layer (cell level) */
+DECL|macro|SOL_AAL
+mdefine_line|#define SOL_AAL&t;&t;265&t;/* ATM Adaption Layer (packet level) */
 multiline_comment|/* IPX options */
 DECL|macro|IPX_TYPE
 mdefine_line|#define IPX_TYPE&t;1

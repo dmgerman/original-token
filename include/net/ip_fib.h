@@ -127,6 +127,12 @@ r_int
 id|nh_power
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+DECL|member|nh_tclassid
+id|__u32
+id|nh_tclassid
+suffix:semicolon
+macro_line|#endif
 DECL|member|nh_oif
 r_int
 id|nh_oif
@@ -1153,6 +1159,19 @@ op_star
 id|res
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+r_extern
+id|u32
+id|fib_rules_tclass
+c_func
+(paren
+r_struct
+id|fib_result
+op_star
+id|res
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 id|u32
 id|fib_rules_policy

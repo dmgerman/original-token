@@ -5822,11 +5822,13 @@ op_star
 op_star
 id|dp
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_SCHED
 id|pktsched_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialise the packet receive queue.&n;&t; */
 id|skb_queue_head_init
 c_func

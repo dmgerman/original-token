@@ -13,7 +13,6 @@ multiline_comment|/*&n; * This define affects the number of ports that can be ha
 DECL|macro|MAX_MASQ_APP_PORTS
 mdefine_line|#define MAX_MASQ_APP_PORTS 12
 multiline_comment|/*&n; *&t;Linux ports don&squot;t normally get allocated above 32K.&n; *&t;I used an extra 4K port-space&n; */
-multiline_comment|/*&n; *&t;Linux ports don&squot;t normally get allocated above 32K.&n; *&t;I used an extra 4K port-space&n; */
 DECL|macro|PORT_MASQ_BEGIN
 mdefine_line|#define PORT_MASQ_BEGIN&t;61000
 DECL|macro|PORT_MASQ_END

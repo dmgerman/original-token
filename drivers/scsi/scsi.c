@@ -761,6 +761,17 @@ multiline_comment|/* Locks up if polled for lun != 0 */
 (brace
 l_string|&quot;TEAC&quot;
 comma
+l_string|&quot;CD-R55S&quot;
+comma
+l_string|&quot;1.0H&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
+l_string|&quot;TEAC&quot;
+comma
 l_string|&quot;CD-ROM&quot;
 comma
 l_string|&quot;1.06&quot;

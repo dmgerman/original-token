@@ -1095,7 +1095,8 @@ suffix:semicolon
 multiline_comment|/* Public functions available for device drivers */
 r_extern
 r_int
-id|register_wandev
+id|register_wan_device
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -1104,7 +1105,8 @@ id|wandev
 suffix:semicolon
 r_extern
 r_int
-id|unregister_wandev
+id|unregister_wan_device
+c_func
 (paren
 r_char
 op_star
@@ -1113,7 +1115,8 @@ id|name
 suffix:semicolon
 r_int
 r_int
-id|wan_type_trans
+id|wanrouter_type_trans
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -1127,7 +1130,8 @@ id|dev
 )paren
 suffix:semicolon
 r_int
-id|wan_encapsulate
+id|wanrouter_encapsulate
+c_func
 (paren
 r_struct
 id|sk_buff

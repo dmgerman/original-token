@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.12 1998/03/20 09:12:16 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.13 1998/04/28 06:22:03 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2079,12 +2079,27 @@ c_cond
 id|children
 OG
 l_int|1
-op_logical_or
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fn-&gt;leaf
+op_eq
+l_int|NULL
+)paren
+r_goto
+id|split_repair
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
 (paren
 id|fn-&gt;fn_flags
 op_amp
 id|RTN_RTINFO
-)paren
 )paren
 r_break
 suffix:semicolon
@@ -2204,6 +2219,8 @@ c_func
 id|fn-&gt;leaf
 )paren
 suffix:semicolon
+id|split_repair
+suffix:colon
 id|rt
 op_assign
 id|fib6_find_prefix

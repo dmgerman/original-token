@@ -462,10 +462,15 @@ id|tcp_bind_bucket
 op_star
 id|tb
 suffix:semicolon
-DECL|member|timer
+DECL|member|next_death
 r_struct
-id|timer_list
-id|timer
+id|tcp_tw_bucket
+op_star
+id|next_death
+suffix:semicolon
+DECL|member|death_slot
+r_int
+id|death_slot
 suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
 DECL|member|v6_daddr
@@ -576,8 +581,9 @@ DECL|macro|MAX_RESET_SIZE
 mdefine_line|#define MAX_RESET_SIZE&t;(NETHDR_SIZE + sizeof(struct tcphdr) + MAX_HEADER + 15)
 DECL|macro|MAX_TCPHEADER_SIZE
 mdefine_line|#define MAX_TCPHEADER_SIZE (NETHDR_SIZE + sizeof(struct tcphdr) + 20 + MAX_HEADER + 15)
+multiline_comment|/* &n; * Never offer a window over 32767 without using window scaling. Some&n; * poor stacks do signed 16bit maths! &n; */
 DECL|macro|MAX_WINDOW
-mdefine_line|#define MAX_WINDOW&t;32767&t;&t;/* Never offer a window over 32767 without using&n;&t;&t;&t;&t;&t;   window scaling (not yet supported). Some poor&n;&t;&t;&t;&t;&t;   stacks do signed 16bit maths! */
+mdefine_line|#define MAX_WINDOW&t;32767&t;
 DECL|macro|MIN_WINDOW
 mdefine_line|#define MIN_WINDOW&t;2048
 DECL|macro|MAX_ACK_BACKLOG
@@ -624,11 +630,16 @@ mdefine_line|#define TCP_KEEPALIVE_PROBES&t;9&t;&t;/* Max of 9 keepalive probes&
 DECL|macro|TCP_KEEPALIVE_PERIOD
 mdefine_line|#define TCP_KEEPALIVE_PERIOD ((75*HZ)&gt;&gt;2)&t;/* period of keepalive check&t;*/
 DECL|macro|TCP_SYNACK_PERIOD
-mdefine_line|#define TCP_SYNACK_PERIOD&t;(HZ/2)
+mdefine_line|#define TCP_SYNACK_PERIOD&t;(HZ/2) /* How often to run the synack slow timer */
 DECL|macro|TCP_QUICK_TRIES
-mdefine_line|#define TCP_QUICK_TRIES&t;&t;8  /* How often we try to retransmit, until&n;&t;&t;&t;&t;    * we tell the LL layer that it is something&n;&t;&t;&t;&t;    * wrong (e.g. that it can expire redirects) */
+mdefine_line|#define TCP_QUICK_TRIES&t;&t;8  /* How often we try to retransmit, until&n;&t;&t;&t;&t;    * we tell the link layer that it is something&n;&t;&t;&t;&t;    * wrong (e.g. that it can expire redirects) */
 DECL|macro|TCP_BUCKETGC_PERIOD
 mdefine_line|#define TCP_BUCKETGC_PERIOD&t;(HZ)
+multiline_comment|/* TIME_WAIT reaping mechanism. */
+DECL|macro|TCP_TWKILL_SLOTS
+mdefine_line|#define TCP_TWKILL_SLOTS&t;8&t;/* Please keep this a power of 2. */
+DECL|macro|TCP_TWKILL_PERIOD
+mdefine_line|#define TCP_TWKILL_PERIOD&t;((HZ*60)/TCP_TWKILL_SLOTS)
 multiline_comment|/*&n; *&t;TCP option&n; */
 DECL|macro|TCPOPT_NOP
 mdefine_line|#define TCPOPT_NOP&t;&t;1&t;/* Padding */
@@ -1795,6 +1806,7 @@ op_star
 id|mss
 )paren
 suffix:semicolon
+multiline_comment|/* tcp_output.c */
 r_extern
 r_void
 id|tcp_read_wakeup
@@ -1869,7 +1881,6 @@ id|sock
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* tcp_output.c */
 r_extern
 r_void
 id|tcp_send_probe0
@@ -2128,10 +2139,12 @@ DECL|macro|TCP_SLT_SYNACK
 mdefine_line|#define TCP_SLT_SYNACK&t;&t;0
 DECL|macro|TCP_SLT_KEEPALIVE
 mdefine_line|#define TCP_SLT_KEEPALIVE&t;1
+DECL|macro|TCP_SLT_TWKILL
+mdefine_line|#define TCP_SLT_TWKILL&t;&t;2
 DECL|macro|TCP_SLT_BUCKETGC
-mdefine_line|#define TCP_SLT_BUCKETGC&t;2
+mdefine_line|#define TCP_SLT_BUCKETGC&t;3
 DECL|macro|TCP_SLT_MAX
-mdefine_line|#define TCP_SLT_MAX&t;&t;3
+mdefine_line|#define TCP_SLT_MAX&t;&t;4
 r_extern
 r_struct
 id|tcp_sl_timer
@@ -2140,6 +2153,112 @@ id|tcp_slt_array
 id|TCP_SLT_MAX
 )braket
 suffix:semicolon
+multiline_comment|/* Compute the current effective MSS, taking SACKs and IP options,&n; * and even PMTU discovery events into account.&n; */
+DECL|function|tcp_current_mss
+r_static
+id|__inline__
+r_int
+r_int
+id|tcp_current_mss
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+id|sk-&gt;tp_pinfo.af_tcp
+suffix:semicolon
+r_struct
+id|dst_entry
+op_star
+id|dst
+op_assign
+id|sk-&gt;dst_cache
+suffix:semicolon
+r_int
+r_int
+id|mss_now
+op_assign
+id|sk-&gt;mss
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dst
+op_logical_and
+(paren
+id|sk-&gt;mtu
+OL
+id|dst-&gt;pmtu
+)paren
+)paren
+(brace
+r_int
+r_int
+id|mss_distance
+op_assign
+(paren
+id|sk-&gt;mtu
+op_minus
+id|sk-&gt;mss
+)paren
+suffix:semicolon
+multiline_comment|/* PMTU discovery event has occurred. */
+id|sk-&gt;mtu
+op_assign
+id|dst-&gt;pmtu
+suffix:semicolon
+id|sk-&gt;mss
+op_assign
+id|sk-&gt;mtu
+op_minus
+id|mss_distance
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tp-&gt;sack_ok
+op_logical_and
+id|tp-&gt;num_sacks
+)paren
+(brace
+id|mss_now
+op_sub_assign
+(paren
+id|TCPOLEN_SACK_BASE_ALIGNED
+op_plus
+(paren
+id|tp-&gt;num_sacks
+op_star
+id|TCPOLEN_SACK_PERBLOCK
+)paren
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sk-&gt;opt
+)paren
+(brace
+id|mss_now
+op_sub_assign
+id|sk-&gt;opt-&gt;optlen
+suffix:semicolon
+)brace
+r_return
+id|mss_now
+suffix:semicolon
+)brace
 multiline_comment|/* Compute the actual receive window we are currently advertising. */
 DECL|function|tcp_receive_window
 r_static
@@ -3222,7 +3341,7 @@ c_func
 (paren
 id|space
 comma
-l_int|32767
+id|MAX_WINDOW
 )paren
 suffix:semicolon
 (paren

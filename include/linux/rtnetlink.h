@@ -42,16 +42,16 @@ DECL|macro|RTM_GETRULE
 mdefine_line|#define&t;RTM_GETRULE&t;(RTM_BASE+18)
 DECL|macro|RTM_NEWQDISC
 mdefine_line|#define&t;RTM_NEWQDISC&t;(RTM_BASE+20)
-DECL|macro|RTM_DELQDSIC
-mdefine_line|#define&t;RTM_DELQDSIC&t;(RTM_BASE+21)
+DECL|macro|RTM_DELQDISC
+mdefine_line|#define&t;RTM_DELQDISC&t;(RTM_BASE+21)
 DECL|macro|RTM_GETQDISC
 mdefine_line|#define&t;RTM_GETQDISC&t;(RTM_BASE+22)
-DECL|macro|RTM_NEWTFLOW
-mdefine_line|#define&t;RTM_NEWTFLOW&t;(RTM_BASE+24)
-DECL|macro|RTM_DELTFLOW
-mdefine_line|#define&t;RTM_DELTFLOW&t;(RTM_BASE+25)
-DECL|macro|RTM_GETTFLOW
-mdefine_line|#define&t;RTM_GETTFLOW&t;(RTM_BASE+26)
+DECL|macro|RTM_NEWTCLASS
+mdefine_line|#define&t;RTM_NEWTCLASS&t;(RTM_BASE+24)
+DECL|macro|RTM_DELTCLASS
+mdefine_line|#define&t;RTM_DELTCLASS&t;(RTM_BASE+25)
+DECL|macro|RTM_GETTCLASS
+mdefine_line|#define&t;RTM_GETTCLASS&t;(RTM_BASE+26)
 DECL|macro|RTM_NEWTFILTER
 mdefine_line|#define&t;RTM_NEWTFILTER&t;(RTM_BASE+28)
 DECL|macro|RTM_DELTFILTER
@@ -933,10 +933,14 @@ id|TCA_STATS
 comma
 DECL|enumerator|TCA_XSTATS
 id|TCA_XSTATS
+comma
+DECL|enumerator|TCA_RATE
+id|TCA_RATE
+comma
 )brace
 suffix:semicolon
 DECL|macro|TCA_MAX
-mdefine_line|#define TCA_MAX TCA_XSTATS
+mdefine_line|#define TCA_MAX TCA_RATE
 DECL|macro|TCA_RTA
 mdefine_line|#define TCA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct tcmsg))))
 DECL|macro|TCA_PAYLOAD
@@ -951,6 +955,8 @@ DECL|macro|RTMGRP_NOTIFY
 mdefine_line|#define RTMGRP_NOTIFY&t;&t;2
 DECL|macro|RTMGRP_NEIGH
 mdefine_line|#define RTMGRP_NEIGH&t;&t;4
+DECL|macro|RTMGRP_TC
+mdefine_line|#define RTMGRP_TC&t;&t;8
 DECL|macro|RTMGRP_IPV4_IFADDR
 mdefine_line|#define RTMGRP_IPV4_IFADDR&t;0x10
 DECL|macro|RTMGRP_IPV4_MROUTE
@@ -974,6 +980,78 @@ r_struct
 id|wait_queue
 op_star
 id|rtnl_wait
+suffix:semicolon
+DECL|function|rtattr_strcmp
+r_extern
+id|__inline__
+r_int
+id|rtattr_strcmp
+c_func
+(paren
+r_struct
+id|rtattr
+op_star
+id|rta
+comma
+r_char
+op_star
+id|str
+)paren
+(brace
+r_int
+id|len
+op_assign
+id|strlen
+c_func
+(paren
+id|str
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+r_return
+id|len
+OG
+id|rta-&gt;rta_len
+op_logical_or
+id|memcmp
+c_func
+(paren
+id|RTA_DATA
+c_func
+(paren
+id|rta
+)paren
+comma
+id|str
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_int
+id|rtattr_parse
+c_func
+(paren
+r_struct
+id|rtattr
+op_star
+id|tb
+(braket
+)braket
+comma
+r_int
+id|maxattr
+comma
+r_struct
+id|rtattr
+op_star
+id|rta
+comma
+r_int
+id|len
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_RTNETLINK
 r_extern
@@ -1051,6 +1129,26 @@ id|cb
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|rtnetlink_send
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+id|u32
+id|pid
+comma
+r_int
+id|group
+comma
+r_int
+id|echo
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|__rta_fill
 c_func
@@ -1073,7 +1171,7 @@ id|data
 )paren
 suffix:semicolon
 DECL|macro|RTA_PUT
-mdefine_line|#define RTA_PUT(skb, attrtype, attrlen, data) &bslash;&n;({ if (skb_tailroom(skb) &lt; RTA_SPACE(attrlen)) goto rtattr_failure; &bslash;&n;   __rta_fill(skb, attrtype, attrlen, data); })
+mdefine_line|#define RTA_PUT(skb, attrtype, attrlen, data) &bslash;&n;({ if (skb_tailroom(skb) &lt; (int)RTA_SPACE(attrlen)) goto rtattr_failure; &bslash;&n;   __rta_fill(skb, attrtype, attrlen, data); })
 r_extern
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.4 1998/03/21 07:27:58 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.5 1998/04/28 06:21:57 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -97,6 +97,12 @@ DECL|member|r_ifindex
 r_int
 id|r_ifindex
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+DECL|member|r_tclassid
+id|__u32
+id|r_tclassid
+suffix:semicolon
+macro_line|#endif
 DECL|member|r_ifname
 r_char
 id|r_ifname
@@ -914,6 +920,38 @@ op_assign
 id|dev-&gt;ifindex
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+r_if
+c_cond
+(paren
+id|rta
+(braket
+id|RTA_FLOW
+op_minus
+l_int|1
+)braket
+)paren
+id|memcpy
+c_func
+(paren
+op_amp
+id|new_r-&gt;r_tclassid
+comma
+id|RTA_DATA
+c_func
+(paren
+id|rta
+(braket
+id|RTA_FLOW
+op_minus
+l_int|1
+)braket
+)paren
+comma
+l_int|4
+)paren
+suffix:semicolon
+macro_line|#endif
 id|rp
 op_assign
 op_amp
@@ -1134,6 +1172,31 @@ r_return
 id|saddr
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+DECL|function|fib_rules_tclass
+id|u32
+id|fib_rules_tclass
+c_func
+(paren
+r_struct
+id|fib_result
+op_star
+id|res
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|res-&gt;r
+)paren
+r_return
+id|res-&gt;r-&gt;r_tclassid
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|fib_rules_detach
 r_static
 r_void
@@ -1324,7 +1387,7 @@ op_amp
 id|r-&gt;r_dstmask
 )paren
 op_logical_or
-macro_line|#ifdef CONFIG_IP_TOS_ROUTING
+macro_line|#ifdef CONFIG_IP_ROUTE_TOS
 (paren
 id|r-&gt;r_tos
 op_logical_and
@@ -1768,6 +1831,26 @@ op_amp
 id|r-&gt;r_srcmap
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+r_if
+c_cond
+(paren
+id|r-&gt;r_tclassid
+)paren
+id|RTA_PUT
+c_func
+(paren
+id|skb
+comma
+id|RTA_FLOW
+comma
+l_int|4
+comma
+op_amp
+id|r-&gt;r_tclassid
+)paren
+suffix:semicolon
+macro_line|#endif
 id|nlh-&gt;nlmsg_len
 op_assign
 id|skb-&gt;tail

@@ -4567,10 +4567,6 @@ c_cond
 id|sk-&gt;state
 op_ne
 id|TCP_LISTEN
-op_logical_and
-id|sk-&gt;state
-op_ne
-id|TCP_CLOSE
 )paren
 r_return
 op_minus
@@ -4601,10 +4597,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;state
-op_eq
-id|TCP_CLOSE
-op_logical_or
 id|sk-&gt;protinfo.x25-&gt;neighbour-&gt;extended
 )paren
 (brace

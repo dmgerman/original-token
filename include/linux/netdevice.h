@@ -625,6 +625,12 @@ id|Qdisc
 op_star
 id|qdisc_sleeping
 suffix:semicolon
+DECL|member|qdisc_list
+r_struct
+id|Qdisc
+op_star
+id|qdisc_list
+suffix:semicolon
 DECL|member|tx_queue_len
 r_int
 r_int

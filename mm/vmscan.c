@@ -1440,12 +1440,6 @@ suffix:semicolon
 r_int
 id|stop
 suffix:semicolon
-multiline_comment|/* Let the dcache know we&squot;re looking for memory ... */
-id|shrink_dcache
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Always trim SLAB caches when memory gets low. */
 id|kmem_cache_reap
 c_func
@@ -1511,6 +1505,10 @@ r_do
 r_case
 l_int|0
 suffix:colon
+id|state
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1525,13 +1523,13 @@ id|gfp_mask
 r_return
 l_int|1
 suffix:semicolon
-id|state
-op_assign
-l_int|1
-suffix:semicolon
 r_case
 l_int|1
 suffix:colon
+id|state
+op_assign
+l_int|2
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1552,14 +1550,12 @@ id|gfp_mask
 r_return
 l_int|1
 suffix:semicolon
-id|state
-op_assign
-l_int|2
-suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+id|state
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1573,10 +1569,6 @@ id|gfp_mask
 )paren
 r_return
 l_int|1
-suffix:semicolon
-id|state
-op_assign
-l_int|0
 suffix:semicolon
 id|i
 op_decrement
@@ -1834,13 +1826,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Do the background pageout: be&n;&t;&t; * more aggressive if we&squot;re really&n;&t;&t; * low on free memory.&n;&t;&t; *&n;&t;&t; * Normally this is called 4 times&n;&t;&t; * a second if we need more memory,&n;&t;&t; * so this has a normal rate of&n;&t;&t; * X*4 pages of memory free&squot;d per&n;&t;&t; * second. That rate goes up when&n;&t;&t; *&n;&t;&t; * - we&squot;re really low on memory (we get woken&n;&t;&t; *   up a lot more)&n;&t;&t; * - other processes fail to allocate memory,&n;&t;&t; *   at which time they try to do their own&n;&t;&t; *   freeing.&n;&t;&t; *&n;&t;&t; * A &quot;tries&quot; value of 50 means up to 200 pages&n;&t;&t; * per second (1.6MB/s). This should be a /proc&n;&t;&t; * thing.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Do the background pageout: be&n;&t;&t; * more aggressive if we&squot;re really&n;&t;&t; * low on free memory.&n;&t;&t; *&n;&t;&t; * The number of tries is 512 divided by an&n;&t;&t; * &squot;urgency factor&squot;. In practice this will mean&n;&t;&t; * a value of 512 / 8 = 64 pages at a time,&n;&t;&t; * giving 64 * 4 (times/sec) * 4k (pagesize) =&n;&t;&t; * 1 MB/s in lowest-priority background&n;&t;&t; * paging. This number rises to 8 MB/s when the&n;&t;&t; * priority is highest (but then we&squot;ll be woken&n;&t;&t; * up more often and the rate will be even higher).&n;&t;&t; * -- Should make this sysctl tunable...&n;&t;&t; */
 id|tries
 op_assign
 (paren
-l_int|50
-op_lshift
-l_int|2
+l_int|512
 )paren
 op_rshift
 id|free_memory_available
@@ -2025,6 +2015,8 @@ op_star
 id|page_cache.max_percent
 OL
 id|page_cache_size
+op_star
+l_int|100
 )paren
 )paren
 (brace

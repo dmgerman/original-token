@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: semantics.&n; *&n; * Version:&t;$Id: fib_semantics.c,v 1.7 1998/03/08 05:56:18 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: semantics.&n; *&n; * Version:&t;$Id: fib_semantics.c,v 1.8 1998/04/28 06:21:58 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -285,6 +285,12 @@ macro_line|#ifdef CONFIG_IP_ROUTE_MULTIPATH
 id|nh-&gt;nh_weight
 op_ne
 id|onh-&gt;nh_weight
+op_logical_or
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+id|nh-&gt;nh_tclassid
+op_ne
+id|onh-&gt;nh_tclassid
 op_logical_or
 macro_line|#endif
 (paren
@@ -786,6 +792,7 @@ c_cond
 (paren
 id|attrlen
 )paren
+(brace
 id|nh-&gt;nh_gw
 op_assign
 id|fib_get_attr32
@@ -802,6 +809,25 @@ comma
 id|RTA_GATEWAY
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+id|nh-&gt;nh_tclassid
+op_assign
+id|fib_get_attr32
+c_func
+(paren
+id|RTNH_DATA
+c_func
+(paren
+id|nhp
+)paren
+comma
+id|attrlen
+comma
+id|RTA_FLOW
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 id|nhp
 op_assign
 id|RTNH_NEXT
@@ -1047,6 +1073,36 @@ id|nh-&gt;nh_gw
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+id|gw
+op_assign
+id|fib_get_attr32
+c_func
+(paren
+id|RTNH_DATA
+c_func
+(paren
+id|nhp
+)paren
+comma
+id|attrlen
+comma
+id|RTA_FLOW
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|gw
+op_logical_and
+id|gw
+op_ne
+id|nh-&gt;nh_tclassid
+)paren
+r_return
+l_int|1
+suffix:semicolon
+macro_line|#endif
 )brace
 id|nhp
 op_assign
@@ -1773,6 +1829,27 @@ l_int|4
 r_goto
 id|err_inval
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+r_if
+c_cond
+(paren
+id|rta-&gt;rta_flow
+op_logical_and
+id|memcmp
+c_func
+(paren
+op_amp
+id|fi-&gt;fib_nh-&gt;nh_tclassid
+comma
+id|rta-&gt;rta_flow
+comma
+l_int|4
+)paren
+)paren
+r_goto
+id|err_inval
+suffix:semicolon
+macro_line|#endif
 macro_line|#else
 r_goto
 id|err_inval
@@ -1814,6 +1891,24 @@ comma
 l_int|4
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+r_if
+c_cond
+(paren
+id|rta-&gt;rta_flow
+)paren
+id|memcpy
+c_func
+(paren
+op_amp
+id|nh-&gt;nh_tclassid
+comma
+id|rta-&gt;rta_flow
+comma
+l_int|4
+)paren
+suffix:semicolon
+macro_line|#endif
 id|nh-&gt;nh_flags
 op_assign
 id|r-&gt;rtm_flags
@@ -2666,6 +2761,36 @@ id|fi-&gt;fib_rtt
 )paren
 suffix:semicolon
 macro_line|#else
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+r_if
+c_cond
+(paren
+id|fi-&gt;fib_nh
+(braket
+l_int|0
+)braket
+dot
+id|nh_tclassid
+)paren
+id|RTA_PUT
+c_func
+(paren
+id|skb
+comma
+id|RTA_FLOW
+comma
+l_int|4
+comma
+op_amp
+id|fi-&gt;fib_nh
+(braket
+l_int|0
+)braket
+dot
+id|nh_tclassid
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

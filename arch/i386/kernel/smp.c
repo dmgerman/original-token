@@ -384,6 +384,13 @@ id|mp_current_pci_id
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|mp_lapic_addr
+r_int
+r_int
+id|mp_lapic_addr
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* #define SMP_DEBUG */
 macro_line|#ifdef SMP_DEBUG
 DECL|macro|SMP_PRINTK
@@ -852,31 +859,10 @@ comma
 id|mpc-&gt;mpc_lapic
 )paren
 suffix:semicolon
-multiline_comment|/* check the local APIC address */
-r_if
-c_cond
-(paren
-(paren
-r_char
-op_star
-)paren
-id|phys_to_virt
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
+multiline_comment|/* save the local APIC address, it might be non-default */
+id|mp_lapic_addr
+op_assign
 id|mpc-&gt;mpc_lapic
-)paren
-op_ne
-id|APIC_BASE
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;unexpected APIC address&quot;
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now process the configuration blocks.&n;&t; */
 r_while
@@ -1632,11 +1618,7 @@ l_int|0
 )braket
 op_assign
 (paren
-(paren
-r_int
-r_int
-)paren
-id|APIC_BASE
+id|mp_lapic_addr
 op_or
 l_int|7
 )paren

@@ -2453,10 +2453,7 @@ suffix:semicolon
 id|send_IPI
 c_func
 (paren
-id|smp_processor_id
-c_func
-(paren
-)paren
+id|APIC_DEST_SELF
 comma
 id|IO_APIC_VECTOR
 c_func

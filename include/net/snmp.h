@@ -452,6 +452,11 @@ r_int
 r_int
 id|SyncookiesFailed
 suffix:semicolon
+DECL|member|EmbryonicRsts
+r_int
+r_int
+id|EmbryonicRsts
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

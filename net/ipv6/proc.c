@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  This is very similar to the IPv4 version,&n; *&t;&t;except it reports the sockets in the INET6 address family.&n; *&n; * Version:&t;$Id: proc.c,v 1.7 1998/03/18 07:52:13 davem Exp $&n; *&n; * Authors:&t;David S. Miller (davem@caip.rutgers.edu)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  This is very similar to the IPv4 version,&n; *&t;&t;except it reports the sockets in the INET6 address family.&n; *&n; * Version:&t;$Id: proc.c,v 1.8 1998/04/13 17:06:03 davem Exp $&n; *&n; * Authors:&t;David S. Miller (davem@caip.rutgers.edu)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
@@ -269,6 +269,13 @@ id|TCP_TIME_WAIT
 )paren
 )paren
 (brace
+r_extern
+r_int
+id|tcp_tw_death_row_slot
+suffix:semicolon
+r_int
+id|slot_dist
+suffix:semicolon
 id|timer_active1
 op_assign
 id|timer_active2
@@ -279,9 +286,45 @@ id|timer_active
 op_assign
 l_int|3
 suffix:semicolon
+id|slot_dist
+op_assign
+id|tw-&gt;death_slot
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|slot_dist
+OG
+id|tcp_tw_death_row_slot
+)paren
+(brace
+id|slot_dist
+op_assign
+(paren
+id|TCP_TWKILL_SLOTS
+op_minus
+id|slot_dist
+)paren
+op_plus
+id|tcp_tw_death_row_slot
+suffix:semicolon
+)brace
+r_else
+id|slot_dist
+op_assign
+id|tcp_tw_death_row_slot
+op_minus
+id|slot_dist
+suffix:semicolon
 id|timer_expires
 op_assign
-id|tw-&gt;timer.expires
+id|jiffies
+op_plus
+(paren
+id|slot_dist
+op_star
+id|TCP_TWKILL_PERIOD
+)paren
 suffix:semicolon
 )brace
 r_else

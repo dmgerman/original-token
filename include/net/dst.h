@@ -126,6 +126,12 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_CLS_ROUTE
+DECL|member|tclassid
+id|__u32
+id|tclassid
+suffix:semicolon
+macro_line|#endif
 DECL|member|ops
 r_struct
 id|dst_ops

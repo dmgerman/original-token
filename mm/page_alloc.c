@@ -198,7 +198,7 @@ id|spinlock_t
 id|page_alloc_lock
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * This routine is used by the kernel swap deamon to determine&n; * whether we have &quot;enough&quot; free pages. It is fairly arbitrary,&n; * but this had better return false if any reasonable &quot;get_free_page()&quot;&n; * allocation could currently fail..&n; *&n; * Currently we approve of the following situations:&n; * - the highest memory order has two entries&n; * - the highest memory order has one free entry and:&n; *&t;- the next-highest memory order has two free entries&n; * - the highest memory order has one free entry and:&n; *&t;- the next-highest memory order has one free entry&n; *&t;- the next-next-highest memory order has two free entries&n; *&n; * [previously, there had to be two entries of the highest memory&n; *  order, but this lead to problems on large-memory machines.]&n; *&n; * This will return zero if no list was found, non-zero&n; * if there was memory (the bigger, the better).&n; */
+multiline_comment|/*&n; * This routine is used by the kernel swap deamon to determine&n; * whether we have &quot;enough&quot; free pages. It is fairly arbitrary,&n; * but this had better return false if any reasonable &quot;get_free_page()&quot;&n; * allocation could currently fail..&n; *&n; * This will return zero if no list was found, non-zero&n; * if there was memory (the bigger, the better).&n; */
 DECL|function|free_memory_available
 r_int
 id|free_memory_available
@@ -222,15 +222,28 @@ id|free_area_struct
 op_star
 id|list
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we have more than about 6% of all memory free,&n;&t; * consider it to be good enough for anything.&n;&t; * It may not be, due to fragmentation, but we&n;&t; * don&squot;t want to keep on forever trying to find&n;&t; * free unfragmented memory.&n;&t; */
+multiline_comment|/*&n;&t; * If we have more than about 3% to 5% of all memory free,&n;&t; * consider it to be good enough for anything.&n;&t; * It may not be, due to fragmentation, but we&n;&t; * don&squot;t want to keep on forever trying to find&n;&t; * free unfragmented memory.&n;&t; * Added low/high water marks to avoid thrashing -- Rik.&n;&t; */
 r_if
 c_cond
 (paren
 id|nr_free_pages
 OG
+(paren
 id|num_physpages
 op_rshift
-l_int|4
+l_int|5
+)paren
+op_plus
+(paren
+id|nr
+ques
+c_cond
+l_int|0
+suffix:colon
+id|num_physpages
+op_rshift
+l_int|6
+)paren
 )paren
 r_return
 id|nr

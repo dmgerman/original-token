@@ -2773,6 +2773,11 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+id|brelse
+(paren
+id|bh
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

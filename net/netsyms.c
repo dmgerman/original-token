@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
-macro_line|#ifdef CONFIG_INET
+macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/fddidevice.h&gt;
@@ -25,6 +25,7 @@ macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
+macro_line|#ifdef CONFIG_INET
 r_extern
 r_struct
 id|net_proto_family
@@ -35,6 +36,10 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
+r_extern
+r_int
+id|tcp_tw_death_row_slot
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 macro_line|#include &lt;linux/rtnetlink.h&gt;
@@ -97,16 +102,14 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_IPV6_MODULE
+macro_line|#ifdef CONFIG_ATALK_MODULE
+macro_line|#include &lt;net/sock.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SYSCTL
 r_extern
 r_int
 id|sysctl_max_syn_backlog
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK_MODULE
-macro_line|#include &lt;net/sock.h&gt;
 macro_line|#endif
 DECL|variable|dev_lockct
 id|EXPORT_SYMBOL
@@ -1364,6 +1367,20 @@ c_func
 id|tcp_make_synack
 )paren
 suffix:semicolon
+DECL|variable|tcp_tw_death_row_slot
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_tw_death_row_slot
+)paren
+suffix:semicolon
+DECL|variable|net_statistics
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|net_statistics
+)paren
+suffix:semicolon
 DECL|variable|xrlim_allow
 id|EXPORT_SYMBOL
 c_func
@@ -1470,6 +1487,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_RTNETLINK
+DECL|variable|rtattr_parse
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rtattr_parse
+)paren
+suffix:semicolon
 DECL|variable|rtnetlink_links
 id|EXPORT_SYMBOL
 c_func
@@ -1951,13 +1975,6 @@ c_func
 id|dev_mc_add
 )paren
 suffix:semicolon
-DECL|variable|arp_find
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|arp_find
-)paren
-suffix:semicolon
 DECL|variable|n_tty_ioctl
 id|EXPORT_SYMBOL
 c_func
@@ -1979,6 +1996,14 @@ c_func
 id|kill_fasync
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
+DECL|variable|arp_find
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|arp_find
+)paren
+suffix:semicolon
 DECL|variable|ip_rcv
 id|EXPORT_SYMBOL
 c_func
@@ -1993,6 +2018,7 @@ c_func
 id|arp_rcv
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|dev_mc_delete
 id|EXPORT_SYMBOL
 c_func
@@ -2041,6 +2067,7 @@ id|dlci_ioctl_hook
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Packet scheduler modules want these. */
+macro_line|#ifdef CONFIG_NET_SCHED
 DECL|variable|qdisc_destroy
 id|EXPORT_SYMBOL
 c_func
@@ -2069,6 +2096,27 @@ c_func
 id|qdisc_head
 )paren
 suffix:semicolon
+DECL|variable|qdisc_create_dflt
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|qdisc_create_dflt
+)paren
+suffix:semicolon
+DECL|variable|pfifo_qdisc_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pfifo_qdisc_ops
+)paren
+suffix:semicolon
+DECL|variable|noop_qdisc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|noop_qdisc
+)paren
+suffix:semicolon
 DECL|variable|register_qdisc
 id|EXPORT_SYMBOL
 c_func
@@ -2083,13 +2131,85 @@ c_func
 id|unregister_qdisc
 )paren
 suffix:semicolon
-DECL|variable|noop_qdisc
+DECL|variable|qdisc_get_rtab
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|noop_qdisc
+id|qdisc_get_rtab
 )paren
 suffix:semicolon
+DECL|variable|qdisc_put_rtab
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|qdisc_put_rtab
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_NET_ESTIMATOR
+DECL|variable|qdisc_new_estimator
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|qdisc_new_estimator
+)paren
+suffix:semicolon
+DECL|variable|qdisc_kill_estimator
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|qdisc_kill_estimator
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_POLICE
+DECL|variable|tcf_police
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcf_police
+)paren
+suffix:semicolon
+DECL|variable|tcf_police_locate
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcf_police_locate
+)paren
+suffix:semicolon
+DECL|variable|tcf_police_destroy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcf_police_destroy
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_RTNETLINK
+DECL|variable|tcf_police_dump
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcf_police_dump
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_CLS
+DECL|variable|register_tcf_proto_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_tcf_proto_ops
+)paren
+suffix:semicolon
+DECL|variable|unregister_tcf_proto_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_tcf_proto_ops
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|register_gifconf
 id|EXPORT_SYMBOL
 c_func

@@ -839,6 +839,11 @@ suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
 (brace
+r_extern
+r_int
+r_int
+id|mp_lapic_addr
+suffix:semicolon
 id|pte_t
 id|pte
 suffix:semicolon
@@ -903,7 +908,7 @@ c_cond
 id|smp_found_config
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Map the local APIC to FEE00000.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Map the local APIC to FEE00000. (it&squot;s only the default&n;&t;&t; * value, thanks to Steve Hsieh for finding this out. We&n;&t;&t; * now save the real local-APIC physical address in smp_scan(),&n;&t;&t; * and use it here)&n;&t;&t; */
 id|pg_table
 op_assign
 id|pte_offset
@@ -926,7 +931,7 @@ c_func
 id|__va
 c_func
 (paren
-id|apic_area
+id|mp_lapic_addr
 )paren
 comma
 id|PAGE_KERNEL
