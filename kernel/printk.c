@@ -101,7 +101,7 @@ id|log_wait
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * Commands to sys_syslog:&n; *&n; * &t;0 -- Close the log.  Currently a NOP.&n; * &t;1 -- Open and reset log.&n; * &t;2 -- Read from the log.&n; * &t;3 -- Read up to the last 4k of messages in the ring buffer.&n; * &t;4 -- Read and clear last 4k of messages in the ring buffer&n; * &t;5 -- Clear ring buffer.&n; * &t;6 -- Disable printk&squot;s to console&n; * &t;7 -- Enable printk&squot;s to console&n; */
+multiline_comment|/*&n; * Commands to sys_syslog:&n; *&n; * &t;0 -- Close the log.  Currently a NOP.&n; * &t;1 -- Open the log. Currently a NOP.&n; * &t;2 -- Read from the log.&n; * &t;3 -- Read up to the last 4k of messages in the ring buffer.&n; * &t;4 -- Read and clear last 4k of messages in the ring buffer&n; * &t;5 -- Clear ring buffer.&n; * &t;6 -- Disable printk&squot;s to console&n; * &t;7 -- Enable printk&squot;s to console&n; */
 DECL|function|sys_syslog
 r_int
 id|sys_syslog
@@ -169,15 +169,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-multiline_comment|/* Open and reset log */
-id|log_start
-op_add_assign
-id|log_size
-suffix:semicolon
-id|log_size
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* Open log */
 r_return
 l_int|0
 suffix:semicolon

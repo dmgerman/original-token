@@ -546,6 +546,9 @@ comma
 id|FPU_REG
 op_star
 id|dest
+comma
+r_int
+id|control_w
 )paren
 suffix:semicolon
 r_extern
@@ -564,6 +567,9 @@ comma
 id|FPU_REG
 op_star
 id|dest
+comma
+r_int
+id|control_w
 )paren
 suffix:semicolon
 multiline_comment|/* reg_compare.c */
@@ -816,6 +822,10 @@ comma
 id|FPU_REG
 op_star
 id|dest
+comma
+r_int
+r_int
+id|control_w
 )paren
 suffix:semicolon
 eof

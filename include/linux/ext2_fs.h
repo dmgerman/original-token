@@ -5,6 +5,9 @@ multiline_comment|/*&n; * The second extended filesystem constants/structures&n;
 multiline_comment|/*&n; * Define EXT2FS_DEBUG to produce debug messages&n; */
 DECL|macro|EXT2FS_DEBUG
 macro_line|#undef EXT2FS_DEBUG
+multiline_comment|/*&n; * Define EXT2FS_PRE_02B_COMPAT to convert ext 2 fs prior to 0.2b&n; */
+DECL|macro|EXT2FS_PRE_02B_COMPAT
+macro_line|#undef EXT2FS_PRE_02B_COMPAT
 multiline_comment|/*&n; * Define DONT_USE_DCACHE to inhibit the directory cache&n; */
 DECL|macro|DONT_USE_DCACHE
 macro_line|#undef DONT_USE_DCACHE
@@ -13,7 +16,7 @@ DECL|macro|EXT2FS_DEBUG_CACHE
 macro_line|#undef EXT2FS_DEBUG_CACHE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&quot;0.2d, 93/03/30&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&quot;0.3, 93/04/22&quot;
 multiline_comment|/*&n; * Special inodes numbers&n; */
 DECL|macro|EXT2_BAD_INO
 mdefine_line|#define&t;EXT2_BAD_INO&t;&t; 1&t;/* Bad blocks inode */
@@ -28,6 +31,9 @@ DECL|macro|EXT2_OLD_SUPER_MAGIC
 mdefine_line|#define EXT2_OLD_SUPER_MAGIC&t;0xEF51
 DECL|macro|EXT2_SUPER_MAGIC
 mdefine_line|#define EXT2_SUPER_MAGIC&t;0xEF53
+multiline_comment|/*&n; * Maximal count of links to a file&n; */
+DECL|macro|EXT2_LINK_MAX
+mdefine_line|#define EXT2_LINK_MAX&t;&t;32000
 multiline_comment|/*&n; * Macro-instructions used to manage several block sizes&n; */
 DECL|macro|EXT2_MIN_BLOCK_SIZE
 mdefine_line|#define EXT2_MIN_BLOCK_SIZE&t;&t;1024
@@ -42,6 +48,8 @@ macro_line|#else
 DECL|macro|EXT2_BLOCK_SIZE
 macro_line|# define EXT2_BLOCK_SIZE(s)&t;&t;(EXT2_MIN_BLOCK_SIZE &lt;&lt; (s)-&gt;s_log_block_size)
 macro_line|#endif
+DECL|macro|EXT2_ACLE_PER_BLOCK
+mdefine_line|#define EXT2_ACLE_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (struct ext2_acl_entry))
 DECL|macro|EXT2_ADDR_PER_BLOCK
 mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (unsigned long))
 macro_line|#ifdef KERNEL
@@ -71,6 +79,76 @@ macro_line|# define EXT2_FRAG_SIZE(s)&t;&t;(EXT2_MIN_FRAG_SIZE &lt;&lt; (s)-&gt;
 DECL|macro|EXT2_FRAGS_PER_BLOCK
 macro_line|# define EXT2_FRAGS_PER_BLOCK(s)&t;(EXT2_BLOCK_SIZE(s) / EXT2_FRAG_SIZE(s))
 macro_line|#endif
+multiline_comment|/*&n; * ACL structures&n; */
+DECL|struct|ext2_acl_header
+r_struct
+id|ext2_acl_header
+multiline_comment|/* Header of Access Control Lists */
+(brace
+DECL|member|aclh_file_count
+r_int
+r_int
+id|aclh_file_count
+suffix:semicolon
+DECL|member|aclh_acle_count
+r_int
+r_int
+id|aclh_acle_count
+suffix:semicolon
+DECL|member|aclh_first_acle
+r_int
+r_int
+id|aclh_first_acle
+suffix:semicolon
+DECL|member|aclh_reserved
+r_int
+r_int
+id|aclh_reserved
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ext2_acl_entry
+r_struct
+id|ext2_acl_entry
+multiline_comment|/* Access Control List Entry */
+(brace
+DECL|member|acle_perms
+r_int
+r_int
+id|acle_perms
+suffix:semicolon
+multiline_comment|/* Access permissions */
+DECL|member|acle_type
+r_int
+r_int
+id|acle_type
+suffix:semicolon
+multiline_comment|/* Type of entry */
+DECL|member|acle_tag
+r_int
+r_int
+id|acle_tag
+suffix:semicolon
+multiline_comment|/* User or group identity */
+DECL|member|acle_pad1
+r_int
+r_int
+id|acle_pad1
+suffix:semicolon
+DECL|member|acle_reserved
+r_int
+r_int
+id|acle_reserved
+suffix:semicolon
+DECL|member|acle_next
+r_int
+r_int
+id|acle_next
+suffix:semicolon
+multiline_comment|/* Pointer on next entry for the */
+multiline_comment|/* same inode or on next free entry */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Structure of a blocks group descriptor&n; */
 DECL|struct|ext2_old_group_desc
 r_struct
@@ -482,6 +560,18 @@ mdefine_line|#define EXT2_DIR_ROUND &t;&t;&t;(EXT2_DIR_PAD - 1)
 DECL|macro|EXT2_DIR_REC_LEN
 mdefine_line|#define EXT2_DIR_REC_LEN(name_len)&t;(((name_len) + 8 + EXT2_DIR_ROUND) &amp; &bslash;&n;&t;&t;&t;&t;&t; ~EXT2_DIR_ROUND)
 multiline_comment|/*&n; * Function prototypes&n; */
+multiline_comment|/* acl.c */
+r_extern
+r_int
+id|ext2_permission
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* balloc.c */
 r_extern
 r_int
@@ -713,6 +803,9 @@ comma
 r_int
 comma
 r_int
+comma
+r_int
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -728,14 +821,8 @@ comma
 r_int
 comma
 r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ext2_truncate
-(paren
-r_struct
-id|inode
+comma
+r_int
 op_star
 )paren
 suffix:semicolon
@@ -811,6 +898,26 @@ comma
 r_struct
 id|statfs
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* ioctl.c */
+r_extern
+r_int
+id|ext2_ioctl
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* namei.c */
@@ -1009,6 +1116,16 @@ r_char
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+multiline_comment|/* truncate.c */
+r_extern
+r_void
+id|ext2_truncate
+(paren
+r_struct
+id|inode
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Inodes and files operations&n; */

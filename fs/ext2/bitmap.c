@@ -1,6 +1,8 @@
 multiline_comment|/*&n; *  linux/fs/ext2/bitmap.c&n; *&n; *  Copyright (C) 1992, 1993  Remy Card (card@masi.ibp.fr)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/ext2_fs.h&gt;
+macro_line|#ifdef EXT2FS_DEBUG
 DECL|variable|nibblemap
 r_static
 r_int
@@ -122,4 +124,5 @@ id|sum
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

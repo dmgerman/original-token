@@ -642,7 +642,7 @@ r_int
 r_char
 id|data_cmnd
 (braket
-l_int|10
+l_int|12
 )braket
 suffix:semicolon
 DECL|member|use_sg
@@ -668,6 +668,16 @@ op_star
 id|buffer
 suffix:semicolon
 multiline_comment|/* Data buffer */
+DECL|member|underflow
+r_int
+id|underflow
+suffix:semicolon
+multiline_comment|/* Return error if less than this amount is &n;&t;&t;&t;&t;   transfered */
+DECL|member|transfersize
+r_int
+id|transfersize
+suffix:semicolon
+multiline_comment|/* How much we are guranteed to transfer with&n;&t;&t;&t;&t;   each SCSI transfer (ie, between disconnect /&n;&t;&t;&t;&t;   reconnects.   Probably == sector size */
 DECL|member|request
 r_struct
 id|request

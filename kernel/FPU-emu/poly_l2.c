@@ -1,7 +1,8 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_l2.c                                                                |&n; |                                                                           |&n; | Compute the base 2 log of a FPU_REG, using a polynomial approximation.    |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_l2.c                                                                |&n; |                                                                           |&n; | Compute the base 2 log of a FPU_REG, using a polynomial approximation.    |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
+macro_line|#include &quot;control_w.h&quot;
 DECL|macro|HIPOWER
 mdefine_line|#define&t;HIPOWER&t;9
 DECL|variable|lterms
@@ -189,28 +190,15 @@ multiline_comment|/* needed to prevent errors in div routine */
 id|reg_u_div
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
-(paren
-id|CONST_1.sigl
-)paren
+id|CONST_1
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-(paren
-id|arg-&gt;sigl
-)paren
+id|arg
 comma
 op_amp
 id|num
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -286,26 +274,16 @@ multiline_comment|/* needed to prevent errors in div routine */
 id|reg_u_div
 c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
-id|num.sigl
+id|num
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
-(paren
-id|denom.sigl
-)paren
+id|denom
 comma
 op_amp
 id|Xx
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|zero
@@ -500,6 +478,8 @@ id|arg
 comma
 op_amp
 id|num
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -538,6 +518,8 @@ id|denom
 comma
 op_amp
 id|lXx
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_u_mul
@@ -551,6 +533,8 @@ id|accum
 comma
 op_amp
 id|accum
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|accum.exp
@@ -570,6 +554,8 @@ op_amp
 id|accum
 comma
 id|result
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|normalize
@@ -931,6 +917,8 @@ id|CONST_1
 comma
 op_amp
 id|arg_pl1
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 r_if
@@ -961,6 +949,8 @@ id|arg_pl1
 comma
 op_amp
 id|denom
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_div
@@ -973,6 +963,8 @@ id|denom
 comma
 op_amp
 id|local_arg
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|local_arg.sign
@@ -1153,6 +1145,8 @@ id|accum
 comma
 op_amp
 id|accum
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|accum.exp
@@ -1171,6 +1165,8 @@ op_amp
 id|accum
 comma
 id|result
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 multiline_comment|/* Multiply the result by 2 */

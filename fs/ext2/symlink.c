@@ -242,6 +242,9 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+op_amp
+id|error
 )paren
 )paren
 )paren
@@ -346,6 +349,8 @@ id|link
 suffix:semicolon
 r_int
 id|i
+comma
+id|err
 suffix:semicolon
 r_char
 id|c
@@ -401,6 +406,9 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+op_amp
+id|err
 )paren
 suffix:semicolon
 r_if

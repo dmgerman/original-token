@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|function|ext2_put_inode
@@ -22,6 +23,10 @@ r_if
 c_cond
 (paren
 id|inode-&gt;i_nlink
+op_logical_or
+id|inode-&gt;i_ino
+op_eq
+id|EXT2_ACL_INO
 )paren
 r_return
 suffix:semicolon
@@ -216,6 +221,7 @@ comma
 id|ext2_statfs
 )brace
 suffix:semicolon
+macro_line|#ifdef EXT2FS_PRE_02B_COMPAT
 DECL|function|convert_pre_02b_fs
 r_static
 r_int
@@ -470,6 +476,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|ext2_read_super
 r_struct
 id|super_block
@@ -512,11 +519,13 @@ id|i
 comma
 id|j
 suffix:semicolon
+macro_line|#ifdef EXT2FS_PRE_02B_COMPAT
 r_int
 id|fs_converted
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|lock_super
 (paren
 id|s
@@ -671,6 +680,7 @@ id|s-&gt;u.ext2_sb.s_rename_wait
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef EXT2FS_PRE_02B_COMPAT
 r_if
 c_cond
 (paren
@@ -796,6 +806,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -886,27 +897,19 @@ id|s-&gt;u.ext2_sb.s_blocks_count
 op_minus
 id|s-&gt;u.ext2_sb.s_first_data_block
 op_plus
-(paren
-id|EXT2_BLOCK_SIZE
+id|EXT2_BLOCKS_PER_GROUP
 c_func
 (paren
 id|s
-)paren
-op_star
-l_int|8
 )paren
 op_minus
 l_int|1
 )paren
 op_div
-(paren
-id|EXT2_BLOCK_SIZE
+id|EXT2_BLOCKS_PER_GROUP
 c_func
 (paren
 id|s
-)paren
-op_star
-l_int|8
 )paren
 suffix:semicolon
 r_for
@@ -1198,6 +1201,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef EXT2FS_PRE_02B_COMPAT
 r_if
 c_cond
 (paren
@@ -1232,6 +1236,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 id|printk
 (paren
 l_string|&quot;[EXT II FS %s, bs=%d, fs=%d, gc=%d, bpg=%d, ipg=%d]&bslash;n&quot;
@@ -2039,6 +2044,10 @@ id|create
 comma
 r_int
 id|new_block
+comma
+r_int
+op_star
+id|err
 )paren
 (brace
 r_int
@@ -2138,9 +2147,17 @@ id|inode-&gt;i_sb
 )paren
 )paren
 )paren
+(brace
+op_star
+id|err
+op_assign
+op_minus
+id|EFBIG
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2344,12 +2361,18 @@ id|blocksize
 comma
 r_int
 id|new_block
+comma
+r_int
+op_star
+id|err
 )paren
 (brace
 r_int
 id|tmp
 comma
 id|goal
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -2507,6 +2530,12 @@ id|brelse
 id|bh
 )paren
 suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|EFBIG
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2549,7 +2578,14 @@ op_decrement
 r_if
 c_cond
 (paren
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|bh-&gt;b_data
+)paren
 (braket
 id|tmp
 )braket
@@ -2557,7 +2593,14 @@ id|tmp
 (brace
 id|goal
 op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|bh-&gt;b_data
+)paren
 (braket
 id|tmp
 )braket
@@ -2699,6 +2742,10 @@ id|block
 comma
 r_int
 id|create
+comma
+r_int
+op_star
+id|err
 )paren
 (brace
 r_struct
@@ -2718,6 +2765,12 @@ c_func
 (paren
 id|inode-&gt;i_sb
 )paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_if
 c_cond
@@ -2765,7 +2818,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* If this is a sequential block allocation, set the next_alloc_block&n;&t;   to this block now so that all the indblock and data block allocations&n;&t;   use the same goal zone */
+multiline_comment|/* If this is a sequential block allocation, set the next_alloc_block&n;&t;   to this block now so that all the indblock and data block&n;&t;   allocations use the same goal zone */
 macro_line|#ifdef EXT2FS_DEBUG
 id|printk
 (paren
@@ -2796,6 +2849,12 @@ id|inode-&gt;u.ext2_i.i_next_alloc_goal
 op_increment
 suffix:semicolon
 )brace
+op_star
+id|err
+op_assign
+op_minus
+id|ENOSPC
+suffix:semicolon
 id|b
 op_assign
 id|block
@@ -2817,6 +2876,8 @@ comma
 id|create
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 id|block
@@ -2842,6 +2903,8 @@ comma
 id|create
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 r_return
@@ -2858,6 +2921,8 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 )brace
@@ -2886,6 +2951,8 @@ comma
 id|create
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 id|bh
@@ -2905,6 +2972,8 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 r_return
@@ -2927,6 +2996,8 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 )brace
@@ -2947,6 +3018,8 @@ comma
 id|create
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 id|bh
@@ -2970,6 +3043,8 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 id|bh
@@ -2997,6 +3072,8 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 r_return
@@ -3019,6 +3096,8 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
 id|b
+comma
+id|err
 )paren
 suffix:semicolon
 )brace
@@ -3038,6 +3117,10 @@ id|block
 comma
 r_int
 id|create
+comma
+r_int
+op_star
+id|err
 )paren
 (brace
 r_struct
@@ -3054,6 +3137,8 @@ comma
 id|block
 comma
 id|create
+comma
+id|err
 )paren
 suffix:semicolon
 r_if
@@ -3094,6 +3179,12 @@ id|brelse
 (paren
 id|bh
 )paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|EIO
 suffix:semicolon
 r_return
 l_int|NULL
@@ -3147,6 +3238,10 @@ c_cond
 id|inode-&gt;i_ino
 op_ne
 id|EXT2_ROOT_INO
+op_logical_and
+id|inode-&gt;i_ino
+op_ne
+id|EXT2_ACL_INO
 op_logical_and
 id|inode-&gt;i_ino
 OL
@@ -3351,16 +3446,6 @@ id|inode-&gt;i_mtime
 op_assign
 id|raw_inode-&gt;i_mtime
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISFIFO
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
 id|inode-&gt;u.ext2_i.i_dtime
 op_assign
 id|raw_inode-&gt;i_dtime
@@ -3373,17 +3458,6 @@ id|inode-&gt;i_blocks
 op_assign
 id|raw_inode-&gt;i_blocks
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISFIFO
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-(brace
 id|inode-&gt;u.ext2_i.i_flags
 op_assign
 id|raw_inode-&gt;i_flags
@@ -3471,7 +3545,6 @@ id|raw_inode-&gt;i_block
 id|block
 )braket
 suffix:semicolon
-)brace
 id|brelse
 (paren
 id|bh
@@ -3481,6 +3554,16 @@ id|inode-&gt;i_op
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_ino
+op_eq
+id|EXT2_ACL_INO
+)paren
+multiline_comment|/* Nothing to do */
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -3828,17 +3911,6 @@ id|raw_inode-&gt;i_blocks
 op_assign
 id|inode-&gt;i_blocks
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISFIFO
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-(brace
 id|raw_inode-&gt;i_dtime
 op_assign
 id|inode-&gt;u.ext2_i.i_dtime
@@ -3918,7 +3990,6 @@ id|inode-&gt;u.ext2_i.i_data
 id|block
 )braket
 suffix:semicolon
-)brace
 id|bh-&gt;b_dirt
 op_assign
 l_int|1

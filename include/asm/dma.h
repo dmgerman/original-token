@@ -720,6 +720,9 @@ id|IO_DMA2_BASE
 suffix:semicolon
 multiline_comment|/* using short to get 16-bit wrap around */
 r_int
+r_int
+id|count
+suffix:semicolon
 id|count
 op_assign
 l_int|1
@@ -729,8 +732,9 @@ c_func
 (paren
 id|io_port
 )paren
-op_plus
-(paren
+suffix:semicolon
+id|count
+op_add_assign
 id|inb
 c_func
 (paren
@@ -738,7 +742,6 @@ id|io_port
 )paren
 op_lshift
 l_int|8
-)paren
 suffix:semicolon
 r_return
 (paren

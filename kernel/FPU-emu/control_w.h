@@ -36,14 +36,13 @@ mdefine_line|#define RC_UP&t;&t;_Const_(0x0800)
 DECL|macro|RC_CHOP
 mdefine_line|#define RC_CHOP&t;&t;_Const_(0x0C00)
 multiline_comment|/* p 15-5: Precision control bits affect only the following:&n;   ADD, SUB(R), MUL, DIV(R), and SQRT */
-DECL|macro|PRECISION_ADJUST_CONTROL
-mdefine_line|#define PRECISION_ADJUST_CONTROL (control_word &amp; 0x300)
+DECL|macro|FULL_PRECISION
+mdefine_line|#define FULL_PRECISION  (CW_PC | RC_RND)
 DECL|macro|PR_24_BITS
-mdefine_line|#define PR_24_BITS      0x000
+mdefine_line|#define PR_24_BITS      _Const_(0x000)
 DECL|macro|PR_53_BITS
-mdefine_line|#define PR_53_BITS      0x200
-multiline_comment|/* By doing this as a macro, we allow easy modification */
-DECL|macro|PRECISION_ADJUST
-mdefine_line|#define PRECISION_ADJUST(x) &bslash;&n;&t;      switch (PRECISION_ADJUST_CONTROL) &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;case PR_24_BITS: &bslash;&n;&t;&t;  round_to_24_bits(x); &bslash;&n;&t;&t;  break; &bslash;&n;&t;&t;case PR_53_BITS: &bslash;&n;&t;&t;  round_to_53_bits(x); &bslash;&n;&t;&t;  break; &bslash;&n;&t;&t;}
+mdefine_line|#define PR_53_BITS      _Const_(0x200)
+DECL|macro|PR_64_BITS
+mdefine_line|#define PR_64_BITS      _Const_(0x300)
 macro_line|#endif _CONTROLW_H_
 eof

@@ -956,6 +956,8 @@ op_amp
 id|FPU_loaded_data
 comma
 id|FPU_st0_ptr
+comma
+id|control_word
 )paren
 suffix:semicolon
 r_break
@@ -973,6 +975,8 @@ op_amp
 id|FPU_loaded_data
 comma
 id|FPU_st0_ptr
+comma
+id|control_word
 )paren
 suffix:semicolon
 r_break
@@ -985,9 +989,6 @@ id|compare_st_data
 c_func
 (paren
 )paren
-suffix:semicolon
-r_goto
-id|no_precision_adjust
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1005,9 +1006,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_goto
-id|no_precision_adjust
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1023,6 +1021,8 @@ op_amp
 id|FPU_loaded_data
 comma
 id|FPU_st0_ptr
+comma
+id|control_word
 )paren
 suffix:semicolon
 r_break
@@ -1040,6 +1040,8 @@ comma
 id|FPU_st0_ptr
 comma
 id|FPU_st0_ptr
+comma
+id|control_word
 )paren
 suffix:semicolon
 r_break
@@ -1057,6 +1059,8 @@ op_amp
 id|FPU_loaded_data
 comma
 id|FPU_st0_ptr
+comma
+id|control_word
 )paren
 suffix:semicolon
 r_break
@@ -1074,20 +1078,13 @@ comma
 id|FPU_st0_ptr
 comma
 id|FPU_st0_ptr
+comma
+id|control_word
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|PRECISION_ADJUST
-c_func
-(paren
-id|FPU_st0_ptr
-)paren
-suffix:semicolon
-id|no_precision_adjust
-suffix:colon
-suffix:semicolon
 )brace
 r_else
 id|stack_underflow
@@ -1425,7 +1422,6 @@ r_int
 id|signal
 )paren
 (brace
-id|RE_ENTRANT_CHECK_OFF
 id|FPU_EIP
 op_assign
 id|FPU_ORIG_EIP

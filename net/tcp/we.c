@@ -601,6 +601,11 @@ OL
 l_int|30
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 l_int|1

@@ -660,6 +660,14 @@ id|SCmd.use_sg
 op_assign
 l_int|0
 suffix:semicolon
+id|SCmd.transfersize
+op_assign
+l_int|0
+suffix:semicolon
+id|SCmd.underflow
+op_assign
+l_int|0
+suffix:semicolon
 id|scsi_do_cmd
 (paren
 op_amp
@@ -1894,6 +1902,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Reset the scatter-gather flag */
+id|SCpnt-&gt;transfersize
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|SCpnt
 suffix:semicolon
@@ -2250,6 +2266,16 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Reset the scatter-gather flag */
+id|SCpnt-&gt;transfersize
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* No default transfer size */
+id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Do not flag underflow conditions */
 r_return
 id|SCpnt
 suffix:semicolon
@@ -3540,9 +3566,21 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi: unsupported message byte %d recieved&bslash;n&quot;
+comma
+id|msg_byte
+c_func
+(paren
+id|result
+)paren
+)paren
+suffix:semicolon
 id|panic
 (paren
-l_string|&quot;unsupported message byte recieved.&quot;
+l_string|&quot;&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5370,6 +5408,14 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Mark not busy */
 id|SCpnt-&gt;use_sg
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;transfersize
 op_assign
 l_int|0
 suffix:semicolon

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|MAX_TASKS_PER_USER
@@ -194,6 +195,10 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
+DECL|macro|IS_CLONE
+mdefine_line|#define IS_CLONE (orig_eax == __NR_clone)
+DECL|macro|copy_vm
+mdefine_line|#define copy_vm(p) (IS_CLONE?clone_page_tables:copy_page_tables)(p)&t;
 multiline_comment|/*&n; *  Ok, this is the main fork-routine. It copies the system process&n; * information (task[nr]) and sets up the necessary registers. It&n; * also copies the data segment in it&squot;s entirety.&n; */
 DECL|function|sys_fork
 r_int
@@ -472,6 +477,16 @@ id|p-&gt;tss.esp
 op_assign
 id|esp
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_CLONE
+)paren
+multiline_comment|/* clone() gets the new stack value */
+id|p-&gt;tss.esp
+op_assign
+id|ebx
+suffix:semicolon
 id|p-&gt;tss.ebp
 op_assign
 id|ebp
@@ -594,7 +609,7 @@ c_cond
 op_logical_neg
 id|p-&gt;kernel_stack_page
 op_logical_or
-id|copy_page_tables
+id|copy_vm
 c_func
 (paren
 id|p
@@ -764,6 +779,12 @@ op_amp
 id|p-&gt;ldt
 )paren
 )paren
+suffix:semicolon
+id|p-&gt;counter
+op_assign
+id|current-&gt;counter
+op_rshift
+l_int|1
 suffix:semicolon
 id|p-&gt;state
 op_assign

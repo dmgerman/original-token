@@ -242,6 +242,8 @@ DECL|macro|__NR_fsync
 mdefine_line|#define __NR_fsync&t;&t;118&t;/* not implemented yet */
 DECL|macro|__NR_sigreturn
 mdefine_line|#define __NR_sigreturn&t;&t;119
+DECL|macro|__NR_clone
+mdefine_line|#define __NR_clone&t;&t;120
 r_extern
 r_int
 id|errno

@@ -1,7 +1,8 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
+macro_line|#include &quot;control_w.h&quot;
 DECL|macro|HIPOWERop
 mdefine_line|#define&t;HIPOWERop&t;3&t;/* odd poly, positive terms */
 DECL|variable|oddplterms
@@ -622,6 +623,8 @@ id|arg
 comma
 op_amp
 id|odd_poly
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_u_add
@@ -634,6 +637,8 @@ id|arg
 comma
 op_amp
 id|odd_poly
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 multiline_comment|/* This is just the odd polynomial */
@@ -834,6 +839,8 @@ id|argSq
 comma
 op_amp
 id|even_poly
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_add
@@ -847,6 +854,8 @@ id|argSq
 comma
 op_amp
 id|even_poly
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_sub
@@ -860,6 +869,8 @@ id|even_poly
 comma
 op_amp
 id|even_poly
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 multiline_comment|/* This is just the even polynomial */
@@ -880,6 +891,8 @@ op_amp
 id|odd_poly
 comma
 id|y_reg
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -895,6 +908,8 @@ op_amp
 id|even_poly
 comma
 id|y_reg
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace

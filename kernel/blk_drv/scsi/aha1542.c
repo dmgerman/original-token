@@ -140,13 +140,7 @@ r_void
 id|setup_mailboxes
 c_func
 (paren
-)paren
-suffix:semicolon
-r_extern
 r_void
-id|aha1542_interrupt
-c_func
-(paren
 )paren
 suffix:semicolon
 DECL|macro|aha1542_intr_reset
@@ -2556,6 +2550,7 @@ r_void
 id|setup_mailboxes
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int

@@ -1,4 +1,6 @@
 multiline_comment|/*&n; * Why isn&squot;t this a .c file?  Enquiring minds....&n; */
+DECL|macro|sys_clone
+mdefine_line|#define sys_clone sys_fork
 r_extern
 r_int
 id|sys_setup
@@ -1085,6 +1087,8 @@ comma
 id|sys_fsync
 comma
 id|sys_sigreturn
+comma
+id|sys_clone
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */

@@ -298,6 +298,8 @@ DECL|macro|ERASE_CHAR
 mdefine_line|#define ERASE_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VERASE])
 DECL|macro|KILL_CHAR
 mdefine_line|#define KILL_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VKILL])
+DECL|macro|WERASE_CHAR
+mdefine_line|#define WERASE_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VWERASE])
 DECL|macro|EOF_CHAR
 mdefine_line|#define EOF_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VEOF])
 DECL|macro|START_CHAR

@@ -608,6 +608,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;Warning, pid %d parent link points to self&bslash;n&quot;
+comma
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
 )paren
 suffix:semicolon
 r_if
@@ -629,6 +636,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;Warning, pid %d child link points to self&bslash;n&quot;
+comma
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
 )paren
 suffix:semicolon
 r_if
@@ -650,6 +664,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;Warning, pid %d ys link points to self&bslash;n&quot;
+comma
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
 )paren
 suffix:semicolon
 r_if
@@ -671,6 +692,13 @@ id|printk
 c_func
 (paren
 l_string|&quot;Warning, pid %d os link points to self&bslash;n&quot;
+comma
+id|task
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|pid
 )paren
 suffix:semicolon
 r_if

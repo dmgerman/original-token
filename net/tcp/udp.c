@@ -2111,6 +2111,11 @@ op_complement
 id|current-&gt;blocked
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus

@@ -106,6 +106,7 @@ r_void
 id|wd7000_enable_intr
 c_func
 (paren
+r_void
 )paren
 (brace
 id|controlstat
@@ -128,6 +129,7 @@ r_void
 id|wd7000_enable_dma
 c_func
 (paren
+r_void
 )paren
 (brace
 id|controlstat

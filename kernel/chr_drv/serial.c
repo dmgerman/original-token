@@ -2404,16 +2404,14 @@ op_amp
 id|info-&gt;tty-&gt;flags
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Set up parity check flag&n;&t; */
 r_if
 c_cond
 (paren
+id|info-&gt;tty
+op_logical_and
+id|info-&gt;tty-&gt;termios
+op_logical_and
 id|I_INPCK
 c_func
 (paren
@@ -2434,6 +2432,12 @@ op_assign
 id|UART_LSR_BI
 op_or
 id|UART_LSR_FE
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine shutsdown a serial port; interrupts are disabled, and&n; * DTR is dropped if the hangup on close termio flag is on.&n; */
@@ -4464,10 +4468,6 @@ comma
 id|arg
 ques
 c_cond
-id|HZ
-op_div
-l_int|4
-suffix:colon
 id|arg
 op_star
 (paren
@@ -4475,6 +4475,10 @@ id|HZ
 op_div
 l_int|10
 )paren
+suffix:colon
+id|HZ
+op_div
+l_int|4
 )paren
 suffix:semicolon
 r_return

@@ -6124,7 +6124,7 @@ op_star
 )paren
 id|vc_scrbuf
 (braket
-id|fg_console
+id|currcons
 )braket
 comma
 (paren
@@ -6144,7 +6144,7 @@ r_int
 )paren
 id|vc_scrbuf
 (braket
-id|fg_console
+id|currcons
 )braket
 suffix:semicolon
 id|origin

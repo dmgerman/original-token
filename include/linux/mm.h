@@ -348,6 +348,17 @@ r_new
 suffix:semicolon
 r_extern
 r_int
+id|clone_page_tables
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+r_new
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|unmap_page_range
 c_func
 (paren

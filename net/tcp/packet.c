@@ -379,7 +379,9 @@ l_int|NULL
 (brace
 id|PRINTK
 (paren
+(paren
 l_string|&quot;packet_sendto: write buffer full?&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -876,6 +878,11 @@ op_complement
 id|current-&gt;blocked
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus

@@ -1,6 +1,4 @@
-multiline_comment|/*&n; *  linux/tools/build.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; * This file builds a disk-image from three different files:&n; *&n; * - bootsect: max 510 bytes of 8086 machine code, loads the rest&n; * - setup: max 4 sectors of 8086 machine code, sets up system parm&n; * - system: 80386 code for actual system&n; *&n; * It does some checking that all files are of the correct type, and&n; * just writes the result to stdout, removing headers and padding to&n; * the right amount. It also writes some system data to stderr.&n; */
-multiline_comment|/*&n; * Changes by tytso to allow root device specification&n; */
+multiline_comment|/*&n; *  linux/zBoot/xtract.c&n; *&n; *  Copyright (C) 1993  Hannu Savolainen&n; *&n; *&t;Extracts the system image and writes it to the stdout.&n; *&t;based on tools/build.c by Linus Torvalds&n; */
 macro_line|#include &lt;stdio.h&gt;&t;/* fprintf */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdlib.h&gt;&t;/* contains exit */

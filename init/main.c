@@ -895,6 +895,38 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|line
+comma
+l_string|&quot;no387&quot;
+)paren
+)paren
+(brace
+id|hard_math
+op_assign
+l_int|0
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr0,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;andl $0xFFFFFFF9,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;orl $0x4,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%eax,%%cr0&bslash;n&bslash;t&quot;
+op_scope_resolution
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * Then check if it&squot;s an environment variable or&n;&t;&t; * an option.&n;&t;&t; */
 r_if
 c_cond
@@ -1280,6 +1312,16 @@ macro_line|#endif
 id|memory_start
 op_assign
 id|inode_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
+id|memory_start
+op_assign
+id|file_table_init
 c_func
 (paren
 id|memory_start

@@ -15,7 +15,6 @@ r_static
 r_inline
 r_int
 id|find_first_zero_bit
-c_func
 (paren
 r_int
 op_star
@@ -167,7 +166,6 @@ r_static
 r_inline
 r_int
 id|find_next_zero_bit
-c_func
 (paren
 r_int
 op_star
@@ -238,12 +236,14 @@ op_mod
 l_int|0
 l_int|1
 suffix:colon
-l_string|&quot; : &quot;
-op_assign
-id|r
-l_string|&quot; (set) : &quot;
-id|r
 "&quot;"
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|set
+)paren
+suffix:colon
+l_string|&quot;r&quot;
 (paren
 op_complement
 (paren
@@ -285,7 +285,6 @@ multiline_comment|/* No zero yet, search remaining full bytes for a zero */
 id|res
 op_assign
 id|find_first_zero_bit
-c_func
 (paren
 id|p
 comma
@@ -316,7 +315,6 @@ r_inline
 r_char
 op_star
 id|find_first_zero_byte
-c_func
 (paren
 r_char
 op_star
@@ -362,16 +360,24 @@ op_mod
 id|edi
 l_int|1
 suffix:colon
-l_string|&quot; : &quot;
-op_assign
-id|D
-l_string|&quot; (res) : &quot;
-l_int|0
-l_string|&quot; (addr), &quot;
-id|c
-l_string|&quot; (size) : &quot;
-id|ax
 "&quot;"
+suffix:colon
+l_string|&quot;=D&quot;
+(paren
+id|res
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;c&quot;
+(paren
+id|size
+)paren
+suffix:colon
+l_string|&quot;ax&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1545,7 +1551,6 @@ op_assign
 (paren
 (paren
 (paren
-(paren
 r_int
 r_int
 op_star
@@ -1569,8 +1574,22 @@ op_plus
 l_int|1
 )paren
 )paren
-op_or
+suffix:semicolon
+r_if
+c_cond
 (paren
+id|j
+OL
+id|EXT2_BLOCKS_PER_GROUP
+c_func
+(paren
+id|sb
+)paren
+op_minus
+l_int|32
+)paren
+id|lmap
+op_or_assign
 (paren
 (paren
 (paren
@@ -1600,6 +1619,19 @@ op_amp
 l_int|31
 )paren
 )paren
+suffix:semicolon
+r_else
+id|lmap
+op_or_assign
+l_int|0xffffffff
+op_lshift
+(paren
+l_int|31
+op_minus
+(paren
+id|j
+op_amp
+l_int|31
 )paren
 )paren
 suffix:semicolon

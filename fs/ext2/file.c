@@ -75,7 +75,7 @@ multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
 multiline_comment|/* select - default */
-l_int|NULL
+id|ext2_ioctl
 comma
 multiline_comment|/* ioctl - default */
 l_int|NULL
@@ -140,7 +140,7 @@ multiline_comment|/* bmap */
 id|ext2_truncate
 comma
 multiline_comment|/* truncate */
-l_int|NULL
+id|ext2_permission
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
@@ -220,6 +220,8 @@ suffix:semicolon
 r_int
 r_int
 id|size
+comma
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -451,6 +453,9 @@ id|block
 op_increment
 comma
 l_int|0
+comma
+op_amp
+id|err
 )paren
 suffix:semicolon
 r_if
@@ -824,6 +829,9 @@ id|super_block
 op_star
 id|sb
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -909,6 +917,9 @@ op_div
 id|sb-&gt;s_blocksize
 comma
 l_int|1
+comma
+op_amp
+id|err
 )paren
 suffix:semicolon
 r_if
@@ -933,8 +944,7 @@ id|written
 )paren
 id|written
 op_assign
-op_minus
-id|ENOSPC
+id|err
 suffix:semicolon
 r_break
 suffix:semicolon

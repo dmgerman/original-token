@@ -62,6 +62,8 @@ id|CONST_PI2
 comma
 op_amp
 id|quot
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_move
@@ -129,6 +131,8 @@ op_amp
 id|tmp
 comma
 id|X
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|rv
@@ -363,6 +367,8 @@ comma
 id|FPU_st0_ptr
 comma
 id|FPU_st0_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -381,6 +387,8 @@ id|CONST_1
 comma
 op_amp
 id|tmp
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|poly_2xm1
@@ -404,6 +412,8 @@ id|tmp
 comma
 op_amp
 id|tmp
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_sub
@@ -416,6 +426,8 @@ op_amp
 id|CONST_1
 comma
 id|FPU_st0_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|FPU_st0_ptr-&gt;exp
@@ -561,6 +573,8 @@ comma
 id|FPU_st0_ptr
 comma
 id|FPU_st0_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|poly_tan
@@ -1045,6 +1059,8 @@ id|wm_sqrt
 c_func
 (paren
 id|FPU_st0_ptr
+comma
+id|control_word
 )paren
 suffix:semicolon
 multiline_comment|/* Do the computation */
@@ -1053,10 +1069,6 @@ op_add_assign
 id|expon
 op_rshift
 l_int|1
-suffix:semicolon
-id|FPU_st0_ptr-&gt;tag
-op_assign
-id|TW_Valid
 suffix:semicolon
 id|FPU_st0_ptr-&gt;sign
 op_assign
@@ -1108,12 +1120,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|PRECISION_ADJUST
-c_func
-(paren
-id|FPU_st0_ptr
-)paren
-suffix:semicolon
 )brace
 DECL|function|frndint_
 r_static
@@ -1258,6 +1264,8 @@ comma
 id|FPU_st0_ptr
 comma
 id|FPU_st0_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|poly_sine
@@ -1460,6 +1468,8 @@ comma
 id|arg
 comma
 id|arg
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|poly_sine
@@ -1790,6 +1800,8 @@ id|st1_ptr
 comma
 op_amp
 id|tmp
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|round_to_int
@@ -1836,6 +1848,8 @@ id|tmp
 comma
 op_amp
 id|tmp
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_sub
@@ -1847,6 +1861,8 @@ op_amp
 id|tmp
 comma
 id|FPU_st0_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 r_if
@@ -1904,6 +1920,8 @@ id|st1_ptr
 comma
 op_amp
 id|tmp
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 multiline_comment|/* N is &squot;a number between 32 and 63&squot; (p26-113) */
@@ -1962,6 +1980,8 @@ id|tmp
 comma
 op_amp
 id|tmp
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_sub
@@ -1973,6 +1993,8 @@ op_amp
 id|tmp
 comma
 id|FPU_st0_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|setcc
@@ -2207,6 +2229,8 @@ comma
 id|st1_ptr
 comma
 id|st1_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|pop
@@ -2801,6 +2825,8 @@ id|st1_ptr
 comma
 op_amp
 id|sum
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -2814,6 +2840,8 @@ id|FPU_st0_ptr
 comma
 op_amp
 id|sum
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|poly_atan
@@ -2842,6 +2870,8 @@ id|sum
 comma
 op_amp
 id|sum
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -2864,6 +2894,8 @@ id|sum
 comma
 op_amp
 id|sum
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -3048,6 +3080,8 @@ op_amp
 id|CONST_PI2
 comma
 id|st1_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 )brace
@@ -3314,6 +3348,8 @@ comma
 id|st1_ptr
 comma
 id|st1_ptr
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|pop

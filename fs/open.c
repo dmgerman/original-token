@@ -799,12 +799,6 @@ id|i_mode
 op_amp
 l_int|0777
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -829,6 +823,12 @@ id|inode-&gt;i_gid
 id|res
 op_rshift_assign
 l_int|3
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_if
 c_cond

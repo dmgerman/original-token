@@ -21,6 +21,9 @@ comma
 id|FPU_REG
 op_star
 id|dest
+comma
+r_int
+id|control_w
 )paren
 (brace
 r_int
@@ -58,6 +61,8 @@ comma
 id|b
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;sign
@@ -134,6 +139,8 @@ comma
 id|b
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;sign
@@ -164,7 +171,7 @@ id|dest-&gt;sign
 op_assign
 (paren
 (paren
-id|control_word
+id|control_w
 op_amp
 id|CW_RC
 )paren
@@ -188,6 +195,8 @@ comma
 id|a
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;sign
@@ -274,7 +283,7 @@ id|dest-&gt;sign
 op_assign
 (paren
 (paren
-id|control_word
+id|control_w
 op_amp
 id|CW_RC
 )paren
@@ -431,6 +440,9 @@ comma
 id|FPU_REG
 op_star
 id|dest
+comma
+r_int
+id|control_w
 )paren
 (brace
 r_int
@@ -532,6 +544,8 @@ comma
 id|b
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;sign
@@ -562,7 +576,7 @@ id|dest-&gt;sign
 op_assign
 (paren
 (paren
-id|control_word
+id|control_w
 op_amp
 id|CW_RC
 )paren
@@ -586,6 +600,8 @@ comma
 id|a
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;sign
@@ -611,6 +627,8 @@ comma
 id|b
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;sign
@@ -631,6 +649,8 @@ comma
 id|b
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;sign
@@ -720,7 +740,7 @@ id|dest-&gt;sign
 op_assign
 (paren
 (paren
-id|control_word
+id|control_w
 op_amp
 id|CW_RC
 )paren

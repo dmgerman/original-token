@@ -1825,10 +1825,12 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if 0
 r_int
 r_char
 id|in_byte
 suffix:semicolon
+macro_line|#endif
 macro_line|#if (ULTRASTOR_DEBUG &amp; UD_RESET)
 id|printk
 c_func

@@ -89,6 +89,8 @@ DECL|macro|VC_CRLF
 mdefine_line|#define VC_CRLF&t;&t;8&t;/* 0 - enter sends CR, 1 - enter sends CRLF */
 DECL|macro|VC_META
 mdefine_line|#define VC_META&t;&t;9&t;/* 0 - meta, 1 - meta=prefix with ESC */
+DECL|macro|VC_PAUSE
+mdefine_line|#define VC_PAUSE&t;10&t;/* pause key pressed */
 DECL|macro|LED_MASK
 mdefine_line|#define LED_MASK&t;7
 r_extern

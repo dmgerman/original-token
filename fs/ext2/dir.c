@@ -93,9 +93,9 @@ multiline_comment|/* readdir */
 l_int|NULL
 comma
 multiline_comment|/* select - default */
-l_int|NULL
+id|ext2_ioctl
 comma
-multiline_comment|/* ioctl - default */
+multiline_comment|/* ioctl */
 l_int|NULL
 comma
 multiline_comment|/* mmap */
@@ -159,7 +159,7 @@ multiline_comment|/* bmap */
 id|ext2_truncate
 comma
 multiline_comment|/* truncate */
-l_int|NULL
+id|ext2_permission
 multiline_comment|/* permission */
 )brace
 suffix:semicolon
@@ -339,6 +339,8 @@ r_int
 id|offset
 comma
 id|i
+comma
+id|err
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -411,6 +413,9 @@ id|sb
 )paren
 comma
 l_int|0
+comma
+op_amp
+id|err
 )paren
 suffix:semicolon
 r_if

@@ -5,6 +5,18 @@ mdefine_line|#define SEAGATE_H
 multiline_comment|/*&n;&t;$Header&n;*/
 macro_line|#ifndef ASM
 r_int
+id|seagate_st0x_biosparam
+c_func
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_int
 id|seagate_st0x_detect
 c_func
 (paren
@@ -68,7 +80,7 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|SEAGATE_ST0X
-mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, NULL,&t;&t;&bslash;&n;&t;&t;&t; 1, 7, SG_NONE, 1, 0, 0}
+mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam,&t;&t;&bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0}
 macro_line|#endif
 multiline_comment|/*&n;&t;defining PARITY causes parity data to be checked&n;*/
 DECL|macro|PARITY
@@ -165,11 +177,17 @@ DECL|macro|PHASE_EXIT
 mdefine_line|#define PHASE_EXIT 0x400
 DECL|macro|PHASE_RESELECT
 mdefine_line|#define PHASE_RESELECT 0x800
+DECL|macro|DEBUG_FAST
+mdefine_line|#define DEBUG_FAST 0x1000
+DECL|macro|DEBUG_SG
+mdefine_line|#define DEBUG_SG   0x2000
+DECL|macro|DEBUG_LINKED
+mdefine_line|#define DEBUG_LINKED&t;0x4000
 multiline_comment|/* &n; *&t;Control options - these are timeouts specified in .01 seconds.&n; */
 DECL|macro|ST0X_BUS_FREE_DELAY
 mdefine_line|#define ST0X_BUS_FREE_DELAY 25
 DECL|macro|ST0X_SELECTION_DELAY
-mdefine_line|#define ST0X_SELECTION_DELAY 3
+mdefine_line|#define ST0X_SELECTION_DELAY 15
 DECL|macro|eoi
 mdefine_line|#define eoi() __asm__(&quot;push %%eax&bslash;nmovb $0x20, %%al&bslash;noutb %%al, $0x20&bslash;npop %%eax&quot;::)
 DECL|macro|SEAGATE

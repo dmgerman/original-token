@@ -1,4 +1,4 @@
-multiline_comment|/* unzip.c -- decompress files in gzip or pkzip format.&n; * Copyright (C) 1992-1993 Jean-loup Gailly&n; * This is free software; you can redistribute it and/or modify it under the&n; * terms of the GNU General Public License, see the file COPYING.&n; *&n; * The code in this file is derived from the file funzip.c written&n; * and put in the public domain by Mark Adler.&n; */
+multiline_comment|/* unzip.c -- decompress files in gzip or pkzip format.&n; * Copyright (C) 1992-1993 Jean-loup Gailly&n; *&n; * Adapted for Linux booting by Hannu Savolainen 1993&n; *&n; * This is free software; you can redistribute it and/or modify it under the&n; * terms of the GNU General Public License, see the file COPYING.&n; *&n; * The code in this file is derived from the file funzip.c written&n; * and put in the public domain by Mark Adler.&n; */
 multiline_comment|/*&n;   This version can extract files in gzip or pkzip format.&n;   For the latter, only the first entry is extracted, and it has to be&n;   either deflated or stored.&n; */
 macro_line|#ifndef lint
 DECL|variable|rcsid
@@ -11,7 +11,6 @@ op_assign
 l_string|&quot;$Id: unzip.c,v 0.9 1993/02/10 16:07:22 jloup Exp $&quot;
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* #include &quot;tailor.h&quot; */
 macro_line|#include &quot;gzip.h&quot;
 macro_line|#include &quot;crypt.h&quot;
 macro_line|#include &lt;stdio.h&gt;
@@ -131,7 +130,7 @@ id|LOCSIG
 id|error
 c_func
 (paren
-l_string|&quot;input not a zip file or empty&quot;
+l_string|&quot;input not a zip&quot;
 )paren
 suffix:semicolon
 )brace
@@ -182,7 +181,7 @@ l_int|0
 id|error
 c_func
 (paren
-l_string|&quot;encrypted file, not yet supported.&bslash;n&quot;
+l_string|&quot;encrypted file&bslash;n&quot;
 )paren
 suffix:semicolon
 id|exit_code
@@ -341,7 +340,7 @@ l_int|0
 id|error
 c_func
 (paren
-l_string|&quot;invalid compressed data--format violated&quot;
+l_string|&quot;invalid compressed format&quot;
 )paren
 suffix:semicolon
 )brace
@@ -395,7 +394,7 @@ l_int|0
 id|error
 c_func
 (paren
-l_string|&quot;invalid compressed data--length mismatch&quot;
+l_string|&quot;length mismatch&quot;
 )paren
 suffix:semicolon
 )brace
@@ -589,7 +588,7 @@ l_int|0
 id|error
 c_func
 (paren
-l_string|&quot;invalid compressed data--crc error&quot;
+l_string|&quot;crc error&quot;
 )paren
 suffix:semicolon
 )brace
@@ -604,7 +603,7 @@ id|bytes_out
 id|error
 c_func
 (paren
-l_string|&quot;invalid compressed data--length error&quot;
+l_string|&quot;length error&quot;
 )paren
 suffix:semicolon
 )brace

@@ -3,9 +3,7 @@ mdefine_line|#define DEBG(x)
 DECL|macro|DEBG1
 mdefine_line|#define DEBG1(x)
 multiline_comment|/* inflate.c -- Not copyrighted 1992 by Mark Adler&n;   version c10p1, 10 January 1993 */
-multiline_comment|/* You can do whatever you like with this source file, though I would&n;   prefer that if you modify it and redistribute it that you include&n;   comments to that effect with your name and the date.  Thank you.&n;   [The history has been moved to the file ChangeLog.]&n; */
-multiline_comment|/*&n;   Inflate deflated (PKZIP&squot;s method 8 compressed) data.  The compression&n;   method searches for as much of the current string of bytes (up to a&n;   length of 258) in the previous 32K bytes.  If it doesn&squot;t find any&n;   matches (of at least length 3), it codes the next byte.  Otherwise, it&n;   codes the length of the matched string and its distance backwards from&n;   the current position.  There is a single Huffman code that codes both&n;   single bytes (called &quot;literals&quot;) and match lengths.  A second Huffman&n;   code codes the distance information, which follows a length code.  Each&n;   length or distance code actually represents a base value and a number&n;   of &quot;extra&quot; (sometimes zero) bits to get to add to the base value.  At&n;   the end of each deflated block is a special end-of-block (EOB) literal/&n;   length code.  The decoding process is basically: get a literal/length&n;   code; if EOB then done; if a literal, emit the decoded byte; if a&n;   length then get the distance and emit the referred-to bytes from the&n;   sliding window of previously emitted data.&n;&n;   There are (currently) three kinds of inflate blocks: stored, fixed, and&n;   dynamic.  The compressor deals with some chunk of data at a time, and&n;   decides which method to use on a chunk-by-chunk basis.  A chunk might&n;   typically be 32K or 64K.  If the chunk is uncompressible, then the&n;   &quot;stored&quot; method is used.  In this case, the bytes are simply stored as&n;   is, eight bits per byte, with none of the above coding.  The bytes are&n;   preceded by a count, since there is no longer an EOB code.&n;&n;   If the data is compressible, then either the fixed or dynamic methods&n;   are used.  In the dynamic method, the compressed data is preceded by&n;   an encoding of the literal/length and distance Huffman codes that are&n;   to be used to decode this block.  The representation is itself Huffman&n;   coded, and so is preceded by a description of that code.  These code&n;   descriptions take up a little space, and so for small blocks, there is&n;   a predefined set of codes, called the fixed codes.  The fixed method is&n;   used if the block codes up smaller that way (usually for quite small&n;   chunks), otherwise the dynamic method is used.  In the latter case, the&n;   codes are customized to the probabilities in the current block, and so&n;   can code it much better than the pre-determined fixed codes.&n; &n;   The Huffman codes themselves are decoded using a mutli-level table&n;   lookup, in order to maximize the speed of decoding plus the speed of&n;   building the decoding tables.  See the comments below that precede the&n;   lbits and dbits tuning parameters.&n; */
-multiline_comment|/*&n;   Notes beyond the 1.93a appnote.txt:&n;&n;   1. Distance pointers never point before the beginning of the output&n;      stream.&n;   2. Distance pointers can point back across blocks, up to 32k away.&n;   3. There is an implied maximum of 7 bits for the bit length table and&n;      15 bits for the actual data.&n;   4. If only one code exists, then it is encoded using one bit.  (Zero&n;      would be more efficient, but perhaps a little confusing.)  If two&n;      codes exist, they are coded using one bit each (0 and 1).&n;   5. There is no way of sending zero distance codes--a dummy must be&n;      sent if there are none.  (History: a pre 2.0 version of PKZIP would&n;      store blocks with no distance codes, but this was discovered to be&n;      too harsh a criterion.)  Valid only for 1.93a.  2.04c does allow&n;      zero distance codes, which is sent as one code of zero bits in&n;      length.&n;   6. There are up to 286 literal/length codes.  Code 256 represents the&n;      end-of-block.  Note however that the static length tree defines&n;      288 codes just to fill out the Huffman codes.  Codes 286 and 287&n;      cannot be used though, since there is no length base or extra bits&n;      defined for them.  Similarily, there are up to 30 distance codes.&n;      However, static trees define 32 codes (all 5 bits) to fill out the&n;      Huffman codes, but the last two had better not show up in the data.&n;   7. Unzip can check dynamic Huffman blocks for complete code sets.&n;      The exception is that a single code would not be complete (see #4).&n;   8. The five bits following the block type is really the number of&n;      literal codes sent minus 257.&n;   9. Length codes 8,16,16 are interpreted as 13 length codes of 8 bits&n;      (1+6+6).  Therefore, to output three times the length, you output&n;      three codes (1+1+1), whereas to output four times the same length,&n;      you only need two codes (1+3).  Hmm.&n;  10. In the tree reconstruction algorithm, Code = Code + Increment&n;      only if BitLength(i) is not zero.  (Pretty obvious.)&n;  11. Correction: 4 Bits: # of Bit Length codes - 4     (4 - 19)&n;  12. Note: length code 284 can represent 227-258, but length code 285&n;      really is 258.  The last length deserves its own, short code&n;      since it gets used a lot in very redundant files.  The length&n;      258 is special since 258 - 3 (the min match length) is 255.&n;  13. The literal/length and distance code bit lengths are read as a&n;      single stream of lengths.  It is possible (and advantageous) for&n;      a repeat code (16, 17, or 18) to go across the boundary between&n;      the two sets of lengths.&n; */
+multiline_comment|/* &n; * Adapted for booting Linux by Hannu Savolainen 1993&n; * based on gzip-1.0.3 &n; */
 macro_line|#ifndef lint
 DECL|variable|rcsid
 r_static
@@ -17,7 +15,6 @@ op_assign
 l_string|&quot;$Id: inflate.c,v 0.10 1993/02/04 13:21:06 jloup Exp $&quot;
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* #include &quot;tailor.h&quot; */
 macro_line|#include &quot;gzip.h&quot;
 DECL|macro|slide
 mdefine_line|#define slide window
@@ -25,7 +22,6 @@ macro_line|#if defined(STDC_HEADERS) || defined(HAVE_STDLIB_H)
 macro_line|#  include &lt;sys/types.h&gt;
 macro_line|#  include &lt;stdlib.h&gt;
 macro_line|#endif
-multiline_comment|/* Huffman code lookup table entry--this entry is four bytes for machines&n;   that have 16-bit pointers (e.g. PC&squot;s in the small or medium model).&n;   Valid extra bits are 0..13.  e == 15 is EOB (end of block), e == 16&n;   means that v is a literal, 16 &lt; e &lt; 32 means that v is a pointer to&n;   the next table, which codes e - 16 bits, and lastly e == 99 indicates&n;   an unused code.  If a code with e == 99 is looked up, this implies an&n;   error in the data. */
 DECL|struct|huft
 r_struct
 id|huft
@@ -173,9 +169,6 @@ r_void
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The inflate algorithm uses a sliding 32K byte window on the uncompressed&n;   stream to find repeated byte strings.  This is implemented here as a&n;   circular buffer.  The index is updated simply by incrementing and then&n;   and&squot;ing with 0x7fff (32K-1). */
-multiline_comment|/* It is left to other modules to supply the 32K area.  It is assumed&n;   to be usable as if it were declared &quot;uch slide[32768];&quot; or as just&n;   &quot;uch *slide;&quot; and then malloc&squot;ed in the latter case.  The definition&n;   must be in unzip.h, included above. */
-multiline_comment|/* unsigned wp;             current position in slide */
 DECL|macro|wp
 mdefine_line|#define wp outcnt
 DECL|macro|flush_output
@@ -515,7 +508,6 @@ comma
 l_int|13
 )brace
 suffix:semicolon
-multiline_comment|/* Macros for inflate() bit peeking and grabbing.&n;   The usage is:&n;   &n;        NEEDBITS(j)&n;        x = b &amp; mask_bits[j];&n;        DUMPBITS(j)&n;&n;   where NEEDBITS makes sure that b has at least j bits in it, and&n;   DUMPBITS removes the bits from b.  The macros use the variable k&n;   for the number of bits in b.  Normally, b and k are register&n;   variables for speed, and are initialized at the begining of a&n;   routine that uses these macros from a global bit buffer and count.&n;&n;   If we assume that EOB will be the longest code, then we will never&n;   ask for bits with NEEDBITS that are beyond the end of the stream.&n;   So, NEEDBITS should not read any more bytes than are needed to&n;   meet the request.  Then no bytes need to be &quot;returned&quot; to the buffer&n;   at the end of the last block.&n;&n;   However, this assumption is not true for fixed blocks--the EOB code&n;   is 7 bits, but the other literal/length codes can be 8 or 9 bits.&n;   (The EOB code is shorter than other codes becuase fixed blocks are&n;   generally short.  So, while a block always has an EOB, many other&n;   literal/length codes have a significantly lower probability of&n;   showing up at all.)  However, by making the first table have a&n;   lookup of seven bits, the EOB code will be found in that first&n;   lookup, and so will not require that too many bits be pulled from&n;   the stream.&n; */
 DECL|variable|bb
 id|ulg
 id|bb
@@ -583,7 +575,6 @@ DECL|macro|NEEDBITS
 mdefine_line|#define NEEDBITS(n) {while(k&lt;(n)){b|=((ulg)NEXTBYTE())&lt;&lt;k;k+=8;}}
 DECL|macro|DUMPBITS
 mdefine_line|#define DUMPBITS(n) {b&gt;&gt;=(n);k-=(n);}
-multiline_comment|/*&n;   Huffman code decoding is performed using a multi-level table lookup.&n;   The fastest way to decode is to simply build a lookup table whose&n;   size is determined by the longest code.  However, the time it takes&n;   to build this table can also be a factor if the data being decoded&n;   is not very long.  The most common codes are necessarily the&n;   shortest codes, so those codes dominate the decoding time, and hence&n;   the speed.  The idea is you can have a shorter table that decodes the&n;   shorter, more probable codes, and then point to subsidiary tables for&n;   the longer codes.  The time it costs to decode the longer codes is&n;   then traded against the time it takes to make longer tables.&n;&n;   This results of this trade are in the variables lbits and dbits&n;   below.  lbits is the number of bits the first level table for literal/&n;   length codes can decode in one step, and dbits is the same thing for&n;   the distance codes.  Subsequent tables are also less than or equal to&n;   those sizes.  These values may be adjusted either when all of the&n;   codes are shorter than that, in which case the longest code length in&n;   bits is used, or when the shortest code is *longer* than the requested&n;   table size, in which case the length of the shortest code in bits is&n;   used.&n;&n;   There are two different values for the two tables, since they code a&n;   different number of possibilities each.  The literal/length table&n;   codes 286 possible values, or in a flat code, a little over eight&n;   bits.  The distance table codes 30 possible values, or a little less&n;   than five bits, flat.  The optimum values for speed end up being&n;   about one bit more than those, so lbits is 8+1 and dbits is 5+1.&n;   The optimum values may differ though from machine to machine, and&n;   possibly even between compilers.  Your mileage may vary.&n; */
 DECL|variable|lbits
 r_int
 id|lbits
@@ -797,43 +788,6 @@ id|n
 suffix:semicolon
 r_do
 (brace
-id|Tracecv
-c_func
-(paren
-op_star
-id|p
-comma
-(paren
-id|stderr
-comma
-(paren
-id|n
-op_minus
-id|i
-op_ge
-l_char|&squot; &squot;
-op_logical_and
-id|n
-op_minus
-id|i
-op_le
-l_char|&squot;~&squot;
-ques
-c_cond
-l_string|&quot;%c %d&bslash;n&quot;
-suffix:colon
-l_string|&quot;0x%x %d&bslash;n&quot;
-)paren
-comma
-id|n
-op_minus
-id|i
-comma
-op_star
-id|p
-)paren
-)paren
-suffix:semicolon
 id|c
 (braket
 op_star
@@ -2109,23 +2063,6 @@ id|uch
 )paren
 id|t-&gt;v.n
 suffix:semicolon
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;%c&quot;
-comma
-id|slide
-(braket
-id|w
-op_minus
-l_int|1
-)braket
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2312,22 +2249,6 @@ c_func
 (paren
 id|e
 )paren
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;&bslash;[%d,%d]&quot;
-comma
-id|w
-op_minus
-id|d
-comma
-id|n
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* do the copy */
 r_do
 (brace
@@ -2418,23 +2339,6 @@ id|slide
 id|d
 op_increment
 )braket
-suffix:semicolon
-id|Tracevv
-c_func
-(paren
-(paren
-id|stderr
-comma
-l_string|&quot;%c&quot;
-comma
-id|slide
-(braket
-id|w
-op_minus
-l_int|1
-)braket
-)paren
-)paren
 suffix:semicolon
 )brace
 r_while

@@ -1,9 +1,10 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_mul.c                                                                |&n; |                                                                           |&n; | Multiply one FPU_REG by another, put the result in a destination FPU_REG. |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_mul.c                                                                |&n; |                                                                           |&n; | Multiply one FPU_REG by another, put the result in a destination FPU_REG. |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | The destination may be any FPU_REG, including one of the source FPU_REGs. |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
-multiline_comment|/* This routine must be called with non-empty registers */
+macro_line|#include &quot;fpu_system.h&quot;
+multiline_comment|/* This routine must be called with non-empty source registers */
 DECL|function|reg_mul
 r_void
 id|reg_mul
@@ -20,6 +21,10 @@ comma
 id|FPU_REG
 op_star
 id|dest
+comma
+r_int
+r_int
+id|control_w
 )paren
 (brace
 r_if
@@ -34,6 +39,14 @@ id|b-&gt;tag
 )paren
 (brace
 multiline_comment|/* This should be the most common case */
+id|dest-&gt;sign
+op_assign
+(paren
+id|a-&gt;sign
+op_xor
+id|b-&gt;sign
+)paren
+suffix:semicolon
 id|reg_u_mul
 c_func
 (paren
@@ -42,6 +55,8 @@ comma
 id|b
 comma
 id|dest
+comma
+id|control_w
 )paren
 suffix:semicolon
 id|dest-&gt;exp
@@ -51,18 +66,7 @@ id|EXP_BIAS
 op_plus
 l_int|1
 suffix:semicolon
-id|dest-&gt;sign
-op_assign
-(paren
-id|a-&gt;sign
-op_xor
-id|b-&gt;sign
-)paren
-suffix:semicolon
-id|dest-&gt;tag
-op_assign
-id|TW_Valid
-suffix:semicolon
+multiline_comment|/*      dest-&gt;tag = TW_Valid; ****** */
 r_if
 c_cond
 (paren

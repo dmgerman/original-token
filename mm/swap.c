@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
+macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|MAX_SWAPFILES
 mdefine_line|#define MAX_SWAPFILES 8
 DECL|macro|SWP_USED
@@ -107,29 +108,6 @@ comma
 suffix:semicolon
 DECL|macro|SWAP_BITS
 mdefine_line|#define SWAP_BITS 4096
-DECL|macro|bitop
-mdefine_line|#define bitop(name,op) &bslash;&n;static inline int name(char * addr,unsigned int nr) &bslash;&n;{ &bslash;&n;int __res; &bslash;&n;__asm__ __volatile__(&quot;bt&quot; op &quot; %1,%2; adcl $0,%0&quot; &bslash;&n;:&quot;=g&quot; (__res) &bslash;&n;:&quot;r&quot; (nr),&quot;m&quot; (*(addr)),&quot;0&quot; (0)); &bslash;&n;return __res; &bslash;&n;}
-id|bitop
-c_func
-(paren
-id|bit
-comma
-l_string|&quot;&quot;
-)paren
-id|bitop
-c_func
-(paren
-id|setbit
-comma
-l_string|&quot;s&quot;
-)paren
-id|bitop
-c_func
-(paren
-id|clrbit
-comma
-l_string|&quot;r&quot;
-)paren
 DECL|function|rw_swap_page
 r_void
 id|rw_swap_page
@@ -239,12 +217,12 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|setbit
+id|set_bit
 c_func
 (paren
-id|p-&gt;swap_lockmap
-comma
 id|offset
+comma
+id|p-&gt;swap_lockmap
 )paren
 )paren
 id|sleep_on
@@ -367,13 +345,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|clrbit
+id|clear_bit
 c_func
 (paren
-id|p-&gt;swap_lockmap
-comma
 id|offset
+comma
+id|p-&gt;swap_lockmap
 )paren
 )paren
 id|printk
@@ -736,12 +713,12 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|setbit
+id|set_bit
 c_func
 (paren
-id|p-&gt;swap_lockmap
-comma
 id|offset
+comma
+id|p-&gt;swap_lockmap
 )paren
 )paren
 id|sleep_on
@@ -800,13 +777,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|clrbit
+id|clear_bit
 c_func
 (paren
-id|p-&gt;swap_lockmap
-comma
 id|offset
+comma
+id|p-&gt;swap_lockmap
 )paren
 )paren
 id|printk
@@ -1712,6 +1688,27 @@ c_func
 l_string|&quot;Trying to free free memory (%08x): memory probabably corrupted&bslash;n&quot;
 comma
 id|addr
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;PC = %08x&bslash;n&quot;
+comma
+op_star
+(paren
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|addr
+)paren
+op_minus
+l_int|1
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2906,12 +2903,12 @@ op_increment
 r_if
 c_cond
 (paren
-id|bit
+id|test_bit
 c_func
 (paren
-id|tmp
-comma
 id|i
+comma
+id|tmp
 )paren
 )paren
 (brace
@@ -3008,12 +3005,12 @@ op_decrement
 r_if
 c_cond
 (paren
-id|bit
+id|test_bit
 c_func
 (paren
-id|tmp
-comma
 id|i
+comma
+id|tmp
 )paren
 )paren
 id|tmp

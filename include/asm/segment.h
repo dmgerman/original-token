@@ -1,5 +1,5 @@
 DECL|function|get_fs_byte
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -38,7 +38,7 @@ id|_v
 suffix:semicolon
 )brace
 DECL|function|get_fs_word
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -77,7 +77,7 @@ id|_v
 suffix:semicolon
 )brace
 DECL|function|get_fs_long
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -117,7 +117,7 @@ id|_v
 suffix:semicolon
 )brace
 DECL|function|put_fs_byte
-r_extern
+r_static
 r_inline
 r_void
 id|put_fs_byte
@@ -149,7 +149,7 @@ id|addr
 suffix:semicolon
 )brace
 DECL|function|put_fs_word
-r_extern
+r_static
 r_inline
 r_void
 id|put_fs_word
@@ -181,7 +181,7 @@ id|addr
 suffix:semicolon
 )brace
 DECL|function|put_fs_long
-r_extern
+r_static
 r_inline
 r_void
 id|put_fs_long
@@ -215,7 +215,7 @@ id|addr
 suffix:semicolon
 )brace
 DECL|function|memcpy_tofs
-r_extern
+r_static
 r_inline
 r_void
 id|memcpy_tofs
@@ -282,7 +282,7 @@ l_string|&quot;si&quot;
 suffix:semicolon
 )brace
 DECL|function|memcpy_fromfs
-r_extern
+r_static
 r_inline
 r_void
 id|memcpy_fromfs
@@ -346,7 +346,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the followig.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; * [ nothing wrong here, Linus: I just changed the ax to be any reg ]&n; */
 DECL|function|get_fs
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -377,7 +377,7 @@ id|_v
 suffix:semicolon
 )brace
 DECL|function|get_ds
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -408,7 +408,7 @@ id|_v
 suffix:semicolon
 )brace
 DECL|function|set_fs
-r_extern
+r_static
 r_inline
 r_void
 id|set_fs

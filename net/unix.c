@@ -2765,26 +2765,6 @@ op_minus
 id|ERESTARTSYS
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sock-&gt;state
-op_eq
-id|SS_DISCONNECTING
-)paren
-(brace
-id|PRINTK
-c_func
-(paren
-(paren
-l_string|&quot;unix_proto_read: disconnected&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; * copy from the read buffer into the user&squot;s buffer, watching for&n;&t; * wraparound. then we wake up the writer&n;&t; */
 r_do

@@ -1621,6 +1621,8 @@ c_func
 (paren
 l_string|&quot;lp%d unable to use interrupt %d, error %d&bslash;n&quot;
 comma
+id|minor
+comma
 id|irq
 comma
 id|ret

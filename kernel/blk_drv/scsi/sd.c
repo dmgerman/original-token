@@ -2715,6 +2715,22 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * We shouldn&squot;t disconnect in the middle of a sector, so with a dumb &n; * host adapter, it&squot;s safe to assume that we can at least transfer &n; * this many bytes between each connect / disconnect.  &n; */
+id|SCpnt-&gt;transfersize
+op_assign
+id|rscsi_disks
+(braket
+id|dev
+)braket
+dot
+id|sector_size
+suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+id|this_count
+op_lshift
+l_int|9
+suffix:semicolon
 id|scsi_do_cmd
 (paren
 id|SCpnt

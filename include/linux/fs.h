@@ -11,11 +11,11 @@ multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, 
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
 DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 256
+mdefine_line|#define NR_OPEN 256&t;/* don&squot;t change - fd_set etc depend on this */
 DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 256
+mdefine_line|#define NR_INODE 256&t;/* this should be bigger than NR_FILE */
 DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE 128
+mdefine_line|#define NR_FILE 128&t;/* this can well be larger on a larger system */
 DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 16
 DECL|macro|NR_HASH
@@ -59,6 +59,21 @@ r_extern
 r_int
 r_int
 id|inode_init
+c_func
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|file_table_init
 c_func
 (paren
 r_int

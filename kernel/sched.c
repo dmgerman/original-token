@@ -53,7 +53,7 @@ suffix:semicolon
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 DECL|macro|LATCH
-mdefine_line|#define LATCH (1193180/HZ)
+mdefine_line|#define LATCH ((1193180 + HZ/2)/HZ)
 r_extern
 r_void
 id|mem_use
@@ -2702,12 +2702,12 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-l_int|0x36
+l_int|0x34
 comma
 l_int|0x43
 )paren
 suffix:semicolon
-multiline_comment|/* binary, mode 3, LSB/MSB, ch 0 */
+multiline_comment|/* binary, mode 2, LSB/MSB, ch 0 */
 id|outb_p
 c_func
 (paren

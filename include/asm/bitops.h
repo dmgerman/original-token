@@ -34,6 +34,7 @@ op_star
 id|addr
 )paren
 (brace
+r_int
 r_char
 id|ok
 suffix:semicolon
@@ -78,6 +79,7 @@ op_star
 id|addr
 )paren
 (brace
+r_int
 r_char
 id|ok
 suffix:semicolon
@@ -123,6 +125,7 @@ op_star
 id|addr
 )paren
 (brace
+r_int
 r_char
 id|ok
 suffix:semicolon

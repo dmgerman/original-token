@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/keyboard.c&n; *&n; * Keyboard driver for Linux v0.96 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/keyboard.c&n; *&n; * Keyboard driver for Linux v0.96 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; */
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ 1
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/keyboard.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#ifndef KBD_DEFFLAGS
 macro_line|#ifdef CONFIG_KBD_META
 DECL|macro|KBD_DEFFLAGS
@@ -82,6 +83,23 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|variable|last_console
+r_static
+r_int
+id|last_console
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* last used VC */
+DECL|variable|rep
+r_static
+r_int
+r_char
+id|rep
+op_assign
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* last pressed key */
 DECL|variable|kbd_table
 r_struct
 id|kbd_struct
@@ -254,13 +272,6 @@ r_int
 id|int_pt_regs
 )paren
 (brace
-r_static
-r_int
-r_char
-id|rep
-op_assign
-l_int|0xff
-suffix:semicolon
 r_int
 r_char
 id|scancode
@@ -1094,6 +1105,34 @@ id|sc
 r_if
 c_cond
 (paren
+id|kbd_dead
+c_func
+(paren
+id|KGD_E0
+)paren
+)paren
+id|put_queue
+c_func
+(paren
+id|INTR_CHAR
+c_func
+(paren
+id|tty
+)paren
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|sc
+op_ne
+id|rep
+)paren
+multiline_comment|/* no autorepeat for scroll lock, ChN */
+r_if
+c_cond
+(paren
 id|kbd_flag
 c_func
 (paren
@@ -1154,6 +1193,41 @@ c_func
 )paren
 suffix:semicolon
 r_else
+(brace
+r_if
+c_cond
+(paren
+id|vc_kbd_flag
+c_func
+(paren
+id|kbd
+comma
+id|VC_SCROLLOCK
+)paren
+)paren
+multiline_comment|/* pressing srcoll lock 2nd time sends ^Q, ChN */
+id|put_queue
+c_func
+(paren
+id|START_CHAR
+c_func
+(paren
+id|tty
+)paren
+)paren
+suffix:semicolon
+r_else
+multiline_comment|/* pressing srcoll lock 1st time sends ^S, ChN */
+id|put_queue
+c_func
+(paren
+id|STOP_CHAR
+c_func
+(paren
+id|tty
+)paren
+)paren
+suffix:semicolon
 id|chg_vc_kbd_flag
 c_func
 (paren
@@ -1162,6 +1236,7 @@ comma
 id|VC_SCROLLOCK
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|num
 r_static
@@ -1173,6 +1248,25 @@ r_int
 id|sc
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|kbd_flag
+c_func
+(paren
+id|KG_LCTRL
+)paren
+)paren
+multiline_comment|/* pause key pressed, sends E1 1D 45, ChN */
+id|chg_vc_kbd_flag
+c_func
+(paren
+id|kbd
+comma
+id|VC_PAUSE
+)paren
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -1191,6 +1285,14 @@ l_int|0x50
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|rep
+op_ne
+id|sc
+)paren
+multiline_comment|/* no autorepeat for numlock, ChN */
 id|chg_vc_kbd_flag
 c_func
 (paren
@@ -1237,6 +1339,29 @@ c_func
 (paren
 id|buf
 )paren
+suffix:semicolon
+)brace
+DECL|function|sysreq
+r_static
+r_void
+id|sysreq
+c_func
+(paren
+r_int
+id|sc
+)paren
+(brace
+multiline_comment|/* pressing alt-printscreen switches to the last used console, ChN */
+r_if
+c_cond
+(paren
+id|sc
+op_ne
+id|rep
+)paren
+id|want_console
+op_assign
+id|last_console
 suffix:semicolon
 )brace
 macro_line|#if defined KBD_FINNISH
@@ -12113,6 +12238,23 @@ id|sc
 r_if
 c_cond
 (paren
+id|kbd_dead
+c_func
+(paren
+id|KGD_E0
+)paren
+)paren
+multiline_comment|/* Print screen key sends E0 2A E0 37 and puts&n;&t;&t;   the VT100-ESC sequence ESC [ i into the queue, ChN */
+id|puts_queue
+c_func
+(paren
+l_string|&quot;&bslash;033&bslash;133&bslash;151&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
 id|vc_kbd_flag
 c_func
 (paren
@@ -12455,12 +12597,25 @@ op_ge
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|want_console
+op_ne
+id|fg_console
+)paren
+(brace
+id|last_console
+op_assign
+id|fg_console
+suffix:semicolon
 id|change_console
 c_func
 (paren
 id|want_console
 )paren
 suffix:semicolon
+)brace
 id|want_console
 op_assign
 op_minus
@@ -12820,7 +12975,7 @@ comma
 id|cursor
 comma
 multiline_comment|/* 50-53 dn pgdn ins del */
-id|none
+id|sysreq
 comma
 id|none
 comma

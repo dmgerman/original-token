@@ -1,7 +1,8 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_sin.c                                                               |&n; |                                                                           |&n; |  Computation of an approximation of the sin function by a polynomial      |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_sin.c                                                               |&n; |                                                                           |&n; |  Computation of an approximation of the sin function by a polynomial      |&n; |                                                                           |&n; | Copyright (C) 1992,1993                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
+macro_line|#include &quot;control_w.h&quot;
 DECL|macro|HIPOWER
 mdefine_line|#define&t;HIPOWER&t;5
 DECL|variable|lterms
@@ -601,6 +602,8 @@ comma
 id|arg
 comma
 id|result
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 id|reg_u_add
@@ -611,6 +614,8 @@ comma
 id|arg
 comma
 id|result
+comma
+id|FULL_PRECISION
 )paren
 suffix:semicolon
 multiline_comment|/* A small overflow may be possible... but an illegal result. */
