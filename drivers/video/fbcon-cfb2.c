@@ -30,6 +30,11 @@ id|p
 (brace
 id|p-&gt;next_line
 op_assign
+id|p-&gt;line_length
+ques
+c_cond
+id|p-&gt;line_length
+suffix:colon
 id|p-&gt;var.xres_virtual
 op_rshift
 l_int|2

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.186 1999/04/13 14:17:19 jj Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.187 1999/04/28 17:00:45 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -12258,15 +12258,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-(paren
 id|cpunode
-op_assign
-id|prom_getsibling
-c_func
-(paren
-id|cpunode
-)paren
-)paren
 op_ne
 l_int|0
 )paren
@@ -12314,6 +12306,14 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|cpunode
+op_assign
+id|prom_getsibling
+c_func
+(paren
+id|cpunode
+)paren
+suffix:semicolon
 )brace
 )brace
 r_if

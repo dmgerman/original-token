@@ -175,11 +175,11 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * This is a USB device descriptor.&n; *&n; * USB device information&n; *&n; * Make this MUCH dynamic, right now&n; * it contains enough information for&n; * a USB floppy controller, and nothing&n; * else.&n; *&n; * I&squot;m not proud. I just want this dang&n; * thing to start working.&n; */
 DECL|macro|USB_MAXCONFIG
-mdefine_line|#define USB_MAXCONFIG&t;&t;1
+mdefine_line|#define USB_MAXCONFIG&t;&t;2
 DECL|macro|USB_MAXINTERFACES
-mdefine_line|#define USB_MAXINTERFACES&t;3
+mdefine_line|#define USB_MAXINTERFACES&t;8
 DECL|macro|USB_MAXENDPOINTS
-mdefine_line|#define USB_MAXENDPOINTS&t;3
+mdefine_line|#define USB_MAXENDPOINTS&t;4
 DECL|struct|usb_device_descriptor
 r_struct
 id|usb_device_descriptor
@@ -1133,5 +1133,65 @@ id|usb_device
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Audio parsing helpers&n; */
+macro_line|#ifdef CONFIG_USB_AUDIO
+r_void
+id|usb_audio_interface
+c_func
+(paren
+r_struct
+id|usb_interface_descriptor
+op_star
+comma
+id|u8
+op_star
+)paren
+suffix:semicolon
+r_void
+id|usb_audio_endpoint
+c_func
+(paren
+r_struct
+id|usb_endpoint_descriptor
+op_star
+comma
+id|u8
+op_star
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|function|usb_audio_interface
+r_extern
+r_inline
+r_void
+id|usb_audio_interface
+c_func
+(paren
+r_struct
+id|usb_interface_descriptor
+op_star
+comma
+id|u8
+op_star
+)paren
+(brace
+)brace
+DECL|function|usb_audio_endpoint
+r_extern
+r_inline
+r_void
+id|usb_audio_endpoint
+c_func
+(paren
+r_struct
+id|usb_endpoint_descriptor
+op_star
+comma
+id|u8
+op_star
+)paren
+(brace
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

@@ -1518,7 +1518,9 @@ comma
 id|filldir_t
 )paren
 comma
-r_int
+r_struct
+id|dentry
+op_star
 (paren
 op_star
 id|lookup

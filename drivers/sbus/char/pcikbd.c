@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.25 1999/02/08 07:01:48 ecd Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.26 1999/04/28 11:55:42 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -809,14 +809,6 @@ l_string|&quot;&bslash;r&bslash;000/&quot;
 suffix:semicolon
 multiline_comment|/* 0x60 - 0x6f */
 macro_line|#endif
-DECL|variable|prev_scancode
-r_static
-r_int
-r_int
-id|prev_scancode
-op_assign
-l_int|0
-suffix:semicolon
 DECL|function|pcikbd_setkeycode
 r_int
 id|pcikbd_setkeycode

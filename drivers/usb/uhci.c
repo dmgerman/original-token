@@ -4394,21 +4394,32 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
+macro_line|#ifdef CONFIG_USB_MOUSE
 id|usb_mouse_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_KBD&t;&t;
 id|usb_kbd_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 id|hub_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_USB_AUDIO&t;&t;
+id|usb_audio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
 macro_line|#ifdef CONFIG_APM
 id|apm_register_callback
 c_func

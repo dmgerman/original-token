@@ -10659,8 +10659,6 @@ id|linux_ebus_dma
 )paren
 )paren
 suffix:semicolon
-id|cleanup
-suffix:colon
 id|kfree
 c_func
 (paren

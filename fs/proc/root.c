@@ -509,7 +509,9 @@ id|filldir_t
 suffix:semicolon
 DECL|variable|proc_openprom_deflookup_ptr
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 (paren
 op_star
 id|proc_openprom_deflookup_ptr
@@ -579,7 +581,9 @@ comma
 id|filldir_t
 )paren
 comma
-r_int
+r_struct
+id|dentry
+op_star
 (paren
 op_star
 id|lookup
@@ -860,7 +864,9 @@ suffix:semicolon
 DECL|macro|OPENPROM_DEFREADDIR
 mdefine_line|#define OPENPROM_DEFREADDIR proc_openprom_defreaddir
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 DECL|function|proc_openprom_deflookup
 id|proc_openprom_deflookup
 c_func
@@ -898,8 +904,12 @@ id|dentry
 )paren
 suffix:semicolon
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|ENOENT
+)paren
 suffix:semicolon
 )brace
 DECL|macro|OPENPROM_DEFLOOKUP

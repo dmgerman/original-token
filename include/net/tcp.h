@@ -2424,6 +2424,9 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* TCP timestamps are only 32-bits, this causes a slight&n; * complication on 64-bit systems since we store a snapshot&n; * of jiffies in the buffer control blocks below.  We decidely&n; * only use of the low 32-bits of jiffies and hide the ugly&n; * casts with the following macro.&n; */
+DECL|macro|tcp_time_stamp
+mdefine_line|#define tcp_time_stamp&t;&t;((__u32)(jiffies))
 multiline_comment|/* This is what the send packet queueing engine uses to pass&n; * TCP per-packet control information to the transmission&n; * code.  We also store the host-order sequence numbers in&n; * here too.  This is 36 bytes on 32-bit architectures,&n; * 40 bytes on 64-bit machines, if this grows please adjust&n; * skbuff.h:skbuff-&gt;cb[xxx] size appropriately.&n; */
 DECL|struct|tcp_skb_cb
 r_struct
@@ -2459,8 +2462,7 @@ id|end_seq
 suffix:semicolon
 multiline_comment|/* SEQ + FIN + SYN + datalen&t;*/
 DECL|member|when
-r_int
-r_int
+id|__u32
 id|when
 suffix:semicolon
 multiline_comment|/* used to compute rtt&squot;s&t;*/

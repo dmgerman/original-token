@@ -13,6 +13,13 @@ r_void
 )paren
 suffix:semicolon
 r_int
+id|usb_audio_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|hub_init
 c_func
 (paren

@@ -219,7 +219,7 @@ r_struct
 id|uhci
 suffix:semicolon
 DECL|macro|UHCI_MAXTD
-mdefine_line|#define UHCI_MAXTD 32
+mdefine_line|#define UHCI_MAXTD 64
 DECL|macro|UHCI_MAXQH
 mdefine_line|#define UHCI_MAXQH&t;16
 multiline_comment|/* The usb device part must be first! */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openpromfs.c,v 1.32 1998/11/18 06:15:20 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1998 Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: openpromfs.c,v 1.33 1999/04/28 11:57:33 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1998 Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -197,7 +197,9 @@ id|filldir_t
 )paren
 suffix:semicolon
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|openpromfs_lookup
 c_func
 (paren
@@ -3857,7 +3859,9 @@ suffix:semicolon
 )brace
 DECL|function|openpromfs_lookup
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|openpromfs_lookup
 c_func
 (paren
@@ -4422,8 +4426,12 @@ id|OPFSL_DIR
 suffix:semicolon
 r_else
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|ENOENT
+)paren
 suffix:semicolon
 )brace
 id|inode
@@ -4444,8 +4452,12 @@ op_logical_neg
 id|inode
 )paren
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -4713,7 +4725,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|openpromfs_readdir

@@ -838,6 +838,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* loadable module support */
 macro_line|#ifdef MODULE
+id|MODULE_PARM
+(paren
+id|rd_size
+comma
+l_string|&quot;1i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module

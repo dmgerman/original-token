@@ -288,7 +288,7 @@ id|__volatile__
 (paren
 l_string|&quot;rdpr %%ver, %0; stx %%fsr, [%1]&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|ver
 )paren
