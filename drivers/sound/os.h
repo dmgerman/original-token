@@ -14,7 +14,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;linux/kd.h&gt;
+macro_line|#include &lt;sys/kd.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
@@ -47,7 +47,6 @@ DECL|macro|IOCTL_IN
 mdefine_line|#define IOCTL_IN(arg)&t;&t;&t;get_fs_long((long *)(arg))
 DECL|macro|IOCTL_OUT
 mdefine_line|#define IOCTL_OUT(arg, ret)&t;&t;snd_ioctl_return((int *)arg, ret)
-multiline_comment|/*&n;#define DEFINE_WAIT_QUEUE(name, flag) static struct wait_queue *name = NULL; static int flag = 0&n;#define DEFINE_WAIT_QUEUES(name, flag) static struct wait_queue *name = {NULL}; static int flag = {0}&n;#define PROCESS_ABORTING(wqueue, flags)&t;(current-&gt;signal &amp; ~current-&gt;blocked)&n;#define REQUEST_TIMEOUT(nticks, wqueue)&t;current-&gt;timeout = jiffies + (nticks);&n;#define INTERRUPTIBLE_SLEEP_ON(q, f)&t;&bslash;&n;&t;{f = 1;interruptible_sleep_on(&amp;q);f=0;}&n;*/
 DECL|struct|snd_wait
 r_struct
 id|snd_wait
@@ -77,7 +76,7 @@ mdefine_line|#define TIMED_OUT(q, f) (f.mode &amp; WK_TIMEOUT)
 DECL|macro|DO_SLEEP
 mdefine_line|#define DO_SLEEP(q, f, time_limit)&t;&bslash;&n;&t;{ unsigned long tl;&bslash;&n;&t;  if (time_limit) tl = current-&gt;timeout = jiffies + (time_limit); &bslash;&n;&t;     else tl = 0xffffffff; &bslash;&n;&t;  f.mode = WK_SLEEP;interruptible_sleep_on(&amp;q); &bslash;&n;&t;  if (!(f.mode &amp; WK_WAKEUP)) &bslash;&n;&t;   { &bslash;&n;&t;     if (current-&gt;signal &amp; ~current-&gt;blocked) &bslash;&n;&t;        f.aborting = 1; &bslash;&n;&t;     else &bslash;&n;&t;        if (jiffies &gt;= tl) f.mode |= WK_TIMEOUT; &bslash;&n;&t;   } &bslash;&n;&t;  f.mode &amp;= ~WK_SLEEP; &bslash;&n;&t;}
 DECL|macro|SOMEONE_WAITING
-mdefine_line|#define SOMEONE_WAITING(f) (f.mode &amp; WK_SLEEP)
+mdefine_line|#define SOMEONE_WAITING(q, f) (f.mode &amp; WK_SLEEP)
 DECL|macro|WAKE_UP
 mdefine_line|#define WAKE_UP(q, f)&t;&t;&t;{f.mode = WK_WAKEUP;wake_up(&amp;q);}
 DECL|macro|ALLOC_DMA_CHN
@@ -100,6 +99,9 @@ DECL|macro|KERNEL_MALLOC
 mdefine_line|#define KERNEL_MALLOC(nbytes)&t;kmalloc(nbytes, GFP_KERNEL)
 DECL|macro|KERNEL_FREE
 mdefine_line|#define KERNEL_FREE(addr)&t;kfree(addr)
+multiline_comment|/*&n; * The macro PERMANENT_MALLOC(typecast, mem_ptr, size, linux_ptr)&n; * returns size bytes of&n; * (kernel virtual) memory which will never get freed by the driver.&n; * This macro is called only during boot. The linux_ptr is a linux specific&n; * parameter which should be ignored in other operating systems.&n; * The mem_ptr is a pointer variable where the macro assigns pointer to the&n; * memory area. The type is the type of the mem_ptr.&n; */
+DECL|macro|PERMANENT_MALLOC
+mdefine_line|#define PERMANENT_MALLOC(typecast, mem_ptr, size, linux_ptr) &bslash;&n;  {mem_ptr = (typecast)linux_ptr; &bslash;&n;   linux_ptr += (size);}
 multiline_comment|/*&n; * The macro DEFINE_TIMER defines variables for the ACTIVATE_TIMER if&n; * required. The name is the variable/name to be used and the proc is&n; * the procedure to be called when the timer expires.&n; */
 DECL|macro|DEFINE_TIMER
 mdefine_line|#define DEFINE_TIMER(name, proc) &bslash;&n;  static struct timer_list name = &bslash;&n;  {NULL, 0, 0, proc}

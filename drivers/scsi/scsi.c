@@ -1340,8 +1340,10 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Detected scsi disk sd%d at scsi%d, id %d, lun %d&bslash;n&quot;
+l_string|&quot;Detected scsi disk sd%c at scsi%d, id %d, lun %d&bslash;n&quot;
 comma
+l_char|&squot;a&squot;
+op_plus
 id|MAX_SD
 comma
 id|shpnt-&gt;host_no

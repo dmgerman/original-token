@@ -4,7 +4,7 @@ mdefine_line|#define SBPRO_RECORDING_DEVICES&t;(SOUND_MASK_LINE | SOUND_MASK_MIC
 DECL|macro|SBPRO_MIXER_DEVICES
 mdefine_line|#define SBPRO_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | SOUND_MASK_VOLUME)
 DECL|macro|SB16_RECORDING_DEVICES
-mdefine_line|#define SB16_RECORDING_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
+mdefine_line|#define SB16_RECORDING_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
 DECL|macro|SB16_MIXER_DEVICES
 mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | SOUND_MASK_RECLEV | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE)
 multiline_comment|/*&n; * Mixer registers&n; * &n; * NOTE!&t;RECORD_SRC == IN_FILTER&n; */
@@ -62,13 +62,6 @@ DECL|struct|mixer_def
 r_struct
 id|mixer_def
 (brace
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|20
-)braket
-suffix:semicolon
 DECL|member|regno
 r_int
 r_int
@@ -111,7 +104,7 @@ id|mixer_def
 id|mixer_ent
 suffix:semicolon
 DECL|macro|MIX_ENT
-mdefine_line|#define MIX_ENT(name, reg_l, bit_l, len_l, reg_r, bit_r, len_r)&t;&bslash;&n;&t;{{#name,reg_l, bit_l, len_l}, {&quot; &quot;, reg_r, bit_r, len_r}}
+mdefine_line|#define MIX_ENT(name, reg_l, bit_l, len_l, reg_r, bit_r, len_r)&t;&bslash;&n;&t;{{reg_l, bit_l, len_l}, {reg_r, bit_r, len_r}}
 macro_line|#ifdef __SB_MIXER_C__
 DECL|variable|sbpro_mix
 id|mixer_tab
@@ -567,7 +560,7 @@ id|SOUND_MIXER_NRDEVICES
 )braket
 op_assign
 (brace
-l_int|0x4b4b
+l_int|0x5a5a
 comma
 multiline_comment|/* Master Volume */
 l_int|0x3232
@@ -588,7 +581,7 @@ multiline_comment|/* PC Speaker */
 l_int|0x4b4b
 comma
 multiline_comment|/* Ext Line */
-l_int|0x3232
+l_int|0x0000
 comma
 multiline_comment|/* Mic */
 l_int|0x4b4b
@@ -604,11 +597,11 @@ l_int|0x4b4b
 )brace
 suffix:semicolon
 multiline_comment|/* Recording level */
-DECL|variable|sb16_recmasks
+DECL|variable|sb16_recmasks_L
 r_static
 r_int
 r_char
-id|sb16_recmasks
+id|sb16_recmasks_L
 (braket
 id|SOUND_MIXER_NRDEVICES
 )braket
@@ -623,7 +616,7 @@ multiline_comment|/* SOUND_MIXER_BASS&t;*/
 l_int|0x00
 comma
 multiline_comment|/* SOUND_MIXER_TREBLE&t;*/
-l_int|0x60
+l_int|0x40
 comma
 multiline_comment|/* SOUND_MIXER_SYNTH&t;*/
 l_int|0x00
@@ -632,13 +625,60 @@ multiline_comment|/* SOUND_MIXER_PCM&t;*/
 l_int|0x00
 comma
 multiline_comment|/* SOUND_MIXER_SPEAKER&t;*/
-l_int|0x18
+l_int|0x10
 comma
 multiline_comment|/* SOUND_MIXER_LINE&t;*/
 l_int|0x01
 comma
 multiline_comment|/* SOUND_MIXER_MIC&t;*/
-l_int|0x06
+l_int|0x04
+comma
+multiline_comment|/* SOUND_MIXER_CD&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_IMIX&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_ALTPCM&t;*/
+l_int|0x00
+multiline_comment|/* SOUND_MIXER_RECLEV&t;*/
+)brace
+suffix:semicolon
+DECL|variable|sb16_recmasks_R
+r_static
+r_int
+r_char
+id|sb16_recmasks_R
+(braket
+id|SOUND_MIXER_NRDEVICES
+)braket
+op_assign
+(brace
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_VOLUME&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_BASS&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_TREBLE&t;*/
+l_int|0x20
+comma
+multiline_comment|/* SOUND_MIXER_SYNTH&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_PCM&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_SPEAKER&t;*/
+l_int|0x08
+comma
+multiline_comment|/* SOUND_MIXER_LINE&t;*/
+l_int|0x01
+comma
+multiline_comment|/* SOUND_MIXER_MIC&t;*/
+l_int|0x02
 comma
 multiline_comment|/* SOUND_MIXER_CD&t;*/
 l_int|0x00

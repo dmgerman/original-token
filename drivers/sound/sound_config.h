@@ -52,6 +52,10 @@ macro_line|#ifndef SB16_DMA
 DECL|macro|SB16_DMA
 mdefine_line|#define SB16_DMA&t;6
 macro_line|#endif
+macro_line|#ifndef SB16MIDI_BASE
+DECL|macro|SB16MIDI_BASE
+mdefine_line|#define SB16MIDI_BASE&t;0x300
+macro_line|#endif
 macro_line|#ifndef PAS_BASE
 DECL|macro|PAS_BASE
 mdefine_line|#define PAS_BASE&t;0x388

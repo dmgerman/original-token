@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne.c:v0.99-13s 11/17/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;ne.c:v0.99-14g 12/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -314,6 +314,8 @@ comma
 id|ctron
 comma
 id|dlink
+comma
+id|dfi
 suffix:semicolon
 r_int
 id|reg0
@@ -617,7 +619,7 @@ id|SA_prom
 id|i
 )braket
 op_assign
-id|inb_p
+id|inb
 c_func
 (paren
 id|ioaddr
@@ -632,7 +634,7 @@ op_plus
 l_int|1
 )braket
 op_assign
-id|inb_p
+id|inb
 c_func
 (paren
 id|ioaddr
@@ -869,6 +871,31 @@ op_eq
 l_int|0x01
 )paren
 suffix:semicolon
+id|dfi
+op_assign
+(paren
+id|SA_prom
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;D&squot;
+op_logical_and
+id|SA_prom
+(braket
+l_int|1
+)braket
+op_eq
+l_char|&squot;F&squot;
+op_logical_and
+id|SA_prom
+(braket
+l_int|2
+)braket
+op_eq
+l_char|&squot;I&squot;
+)paren
+suffix:semicolon
 multiline_comment|/* Set up the rest of the parameters. */
 r_if
 c_cond
@@ -876,6 +903,8 @@ c_cond
 id|neX000
 op_logical_or
 id|dlink
+op_logical_or
+id|dfi
 )paren
 (brace
 r_if

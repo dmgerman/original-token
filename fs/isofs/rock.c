@@ -1682,11 +1682,17 @@ id|bufsize
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
 l_string|&quot;unable to read i-node block&quot;
 )paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 suffix:semicolon
 id|pnt
 op_assign
@@ -1786,11 +1792,27 @@ id|bufsize
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|kfree_s
+c_func
+(paren
+id|cpnt
+comma
+l_int|1
+op_lshift
+id|ISOFS_BLOCK_BITS
+)paren
+suffix:semicolon
+id|printk
 c_func
 (paren
 l_string|&quot;unable to read i-node block&quot;
 )paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 suffix:semicolon
 id|memcpy
 c_func

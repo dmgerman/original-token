@@ -20,9 +20,9 @@ macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* Compatibility definitions for earlier kernel versions. */
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size)              0
+mdefine_line|#define check_region(ioaddr, size)&t;&t;0
 DECL|macro|snarf_region
-mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
+mdefine_line|#define snarf_region(ioaddr, size)&t;&t;do ; while (0)
 macro_line|#endif
 r_int
 id|wd_probe

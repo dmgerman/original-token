@@ -560,7 +560,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  init enty @ 0x%08lx, cleanup entry @ 0x%08lx&bslash;n&quot;
+l_string|&quot;  init entry @ 0x%08lx, cleanup entry @ 0x%08lx&bslash;n&quot;
 comma
 (paren
 r_int

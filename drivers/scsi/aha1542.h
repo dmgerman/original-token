@@ -71,6 +71,10 @@ DECL|macro|CMD_RETSETUP
 mdefine_line|#define CMD_RETSETUP&t;0x0d&t;/* Return Setup Data */
 DECL|macro|CMD_ECHO
 mdefine_line|#define CMD_ECHO&t;0x1f&t;/* ECHO Command Data */
+DECL|macro|CMD_EXTBIOS
+mdefine_line|#define CMD_EXTBIOS     0x28    /* Return extend bios information only 1542C */
+DECL|macro|CMD_MBENABLE
+mdefine_line|#define CMD_MBENABLE    0x29    /* Set Mailbox Interface enable only 1542C */
 multiline_comment|/* Mailbox Definition 5.2.1 and 5.2.2 */
 DECL|struct|mailbox
 r_struct

@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v0.04 11/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v0.05 12/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -170,6 +170,8 @@ l_int|0x280
 comma
 l_int|0x300
 comma
+l_int|0x340
+comma
 l_int|0x380
 comma
 l_int|0
@@ -318,20 +320,22 @@ op_star
 id|model_name
 suffix:semicolon
 r_int
-id|num_pages
-suffix:semicolon
-r_int
 r_char
 id|eeprom_irq
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Select the station address register set. */
-id|outb
-c_func
-(paren
-l_int|0x7f
-op_amp
+multiline_comment|/* Values from various config regs. */
+r_int
+r_char
+id|num_pages
+comma
+id|irqreg
+comma
+id|addr
+comma
+id|reg4
+op_assign
 id|inb
 c_func
 (paren
@@ -339,6 +343,14 @@ id|ioaddr
 op_plus
 l_int|4
 )paren
+op_amp
+l_int|0x7f
+suffix:semicolon
+multiline_comment|/* Select the station address register set. */
+id|outb
+c_func
+(paren
+id|reg4
 comma
 id|ioaddr
 op_plus
@@ -430,7 +442,20 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Switch from the station address to the alternate register set. */
+multiline_comment|/* Switch from the station address to the alternate register set and&n;     read the useful registers there. */
+id|outb
+c_func
+(paren
+l_int|0x80
+op_or
+id|reg4
+comma
+id|ioaddr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* Enabled FINE16 mode to avoid BIOS ROM width mismatches during reboot. */
 id|outb
 c_func
 (paren
@@ -441,8 +466,39 @@ c_func
 (paren
 id|ioaddr
 op_plus
-l_int|4
+l_int|0x0c
 )paren
+comma
+id|ioaddr
+op_plus
+l_int|0x0c
+)paren
+suffix:semicolon
+id|irqreg
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|0xd
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|0xb
+)paren
+suffix:semicolon
+multiline_comment|/* Switch back to the station address register set so that the MS-DOS driver&n;     can find the card after a warm boot. */
+id|outb
+c_func
+(paren
+id|reg4
 comma
 id|ioaddr
 op_plus
@@ -484,17 +540,6 @@ l_int|11
 comma
 l_int|15
 )brace
-suffix:semicolon
-r_int
-id|irqreg
-op_assign
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|0xd
-)paren
 suffix:semicolon
 r_int
 id|irq
@@ -570,17 +615,6 @@ op_plus
 id|ULTRA_NIC_OFFSET
 suffix:semicolon
 (brace
-r_int
-id|addr
-op_assign
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|0xb
-)paren
-suffix:semicolon
 r_int
 id|addr_tbl
 (braket
@@ -806,25 +840,6 @@ id|ei_sigaction
 r_return
 op_minus
 id|EAGAIN
-suffix:semicolon
-multiline_comment|/* Enabled FINE16 mode. */
-id|outb
-c_func
-(paren
-l_int|0x80
-op_or
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|0x0c
-)paren
-comma
-id|ioaddr
-op_plus
-l_int|0x0c
-)paren
 suffix:semicolon
 id|outb
 c_func

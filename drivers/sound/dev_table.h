@@ -1013,7 +1013,8 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_AUDIO)
+macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16)
+macro_line|#ifndef EXCLUDE_AUDIO
 (brace
 id|SNDCARD_SB16
 comma
@@ -1034,6 +1035,29 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
+macro_line|#endif
+macro_line|#ifndef EXCLUDE_MIDI
+(brace
+id|SNDCARD_SB16MIDI
+comma
+l_string|&quot;SB16 MPU-401&quot;
+comma
+id|attach_sb16midi
+comma
+id|probe_sb16midi
+comma
+(brace
+id|SB16MIDI_BASE
+comma
+id|SBC_IRQ
+comma
+l_int|0
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_YM3812
 (brace
@@ -1261,6 +1285,23 @@ c_func
 (paren
 r_int
 id|card_type
+)paren
+suffix:semicolon
+r_void
+id|sound_chconf
+c_func
+(paren
+r_int
+id|card_type
+comma
+r_int
+id|ioaddr
+comma
+r_int
+id|irq
+comma
+r_int
+id|dma
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -1,11 +1,11 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/sound/gus_wave.c&n; * &n; * Driver for the Gravis UltraSound wave table synth.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/gus_wave.c&n; * &n; * Driver for the Gravis UltraSound wave table synth.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
 multiline_comment|/* #define GUS_LINEAR_VOLUME&t; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_GUS)
 DECL|macro|MAX_SAMPLE
-mdefine_line|#define MAX_SAMPLE&t;256
+mdefine_line|#define MAX_SAMPLE&t;128
 DECL|macro|MAX_PATCH
 mdefine_line|#define MAX_PATCH&t;256
 DECL|struct|voice_info
@@ -398,12 +398,8 @@ DECL|variable|samples
 r_static
 r_struct
 id|patch_info
+op_star
 id|samples
-(braket
-id|MAX_SAMPLE
-op_plus
-l_int|1
-)braket
 suffix:semicolon
 DECL|variable|sample_ptrs
 r_static
@@ -860,7 +856,7 @@ r_int
 id|reg
 comma
 r_int
-r_char
+r_int
 id|data
 )paren
 (brace
@@ -882,7 +878,15 @@ id|u_Command
 suffix:semicolon
 id|OUTB
 (paren
+(paren
+r_int
+r_char
+)paren
+(paren
 id|data
+op_amp
+l_int|0xff
+)paren
 comma
 id|u_DataHi
 )paren
@@ -1015,14 +1019,25 @@ id|u_Command
 suffix:semicolon
 id|OUTB
 (paren
+(paren
+r_int
+r_char
+)paren
+(paren
 id|data
 op_amp
 l_int|0xff
+)paren
 comma
 id|u_DataLo
 )paren
 suffix:semicolon
 id|OUTB
+(paren
+(paren
+r_int
+r_char
+)paren
 (paren
 (paren
 id|data
@@ -1031,6 +1046,7 @@ l_int|8
 )paren
 op_amp
 l_int|0xff
+)paren
 comma
 id|u_DataHi
 )paren
@@ -1278,7 +1294,7 @@ DECL|function|gus_voice_on
 id|gus_voice_on
 (paren
 r_int
-r_char
+r_int
 id|mode
 )paren
 (brace
@@ -1286,9 +1302,15 @@ id|gus_write8
 (paren
 l_int|0x00
 comma
+(paren
+r_int
+r_char
+)paren
+(paren
 id|mode
 op_amp
 l_int|0xfc
+)paren
 )paren
 suffix:semicolon
 id|gus_delay
@@ -1299,9 +1321,15 @@ id|gus_write8
 (paren
 l_int|0x00
 comma
+(paren
+r_int
+r_char
+)paren
+(paren
 id|mode
 op_amp
 l_int|0xfc
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1332,10 +1360,24 @@ DECL|function|gus_voice_mode
 id|gus_voice_mode
 (paren
 r_int
-r_char
-id|mode
+r_int
+id|m
 )paren
 (brace
+r_int
+r_char
+id|mode
+op_assign
+(paren
+r_int
+r_char
+)paren
+(paren
+id|m
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
 id|gus_write8
 (paren
 l_int|0x00
@@ -1467,9 +1509,15 @@ id|gus_write16
 (paren
 l_int|0x09
 comma
+(paren
+r_int
+r_int
+)paren
+(paren
 id|vol
 op_lshift
 l_int|4
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1479,7 +1527,7 @@ DECL|function|gus_voice_balance
 id|gus_voice_balance
 (paren
 r_int
-r_char
+r_int
 id|balance
 )paren
 (brace
@@ -1487,7 +1535,15 @@ id|gus_write8
 (paren
 l_int|0x0c
 comma
+(paren
+r_int
+r_char
+)paren
+(paren
 id|balance
+op_amp
+l_int|0xff
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1510,6 +1566,11 @@ id|gus_write8
 l_int|0x07
 comma
 (paren
+r_int
+r_char
+)paren
+(paren
+(paren
 id|low
 op_rshift
 l_int|4
@@ -1517,11 +1578,17 @@ l_int|4
 op_amp
 l_int|0xff
 )paren
+)paren
 suffix:semicolon
 id|gus_write8
 (paren
 l_int|0x08
 comma
+(paren
+r_int
+r_char
+)paren
+(paren
 (paren
 id|high
 op_rshift
@@ -1529,6 +1596,7 @@ l_int|4
 )paren
 op_amp
 l_int|0xff
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1538,11 +1606,11 @@ DECL|function|gus_ramp_rate
 id|gus_ramp_rate
 (paren
 r_int
-r_char
+r_int
 id|scale
 comma
 r_int
-r_char
+r_int
 id|rate
 )paren
 (brace
@@ -1550,6 +1618,11 @@ id|gus_write8
 (paren
 l_int|0x06
 comma
+(paren
+r_int
+r_char
+)paren
+(paren
 (paren
 (paren
 id|scale
@@ -1566,6 +1639,7 @@ op_amp
 l_int|0x3f
 )paren
 )paren
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -1574,10 +1648,24 @@ DECL|function|gus_rampon
 id|gus_rampon
 (paren
 r_int
-r_char
-id|mode
+r_int
+id|m
 )paren
 (brace
+r_int
+r_char
+id|mode
+op_assign
+(paren
+r_int
+r_char
+)paren
+(paren
+id|m
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
 id|gus_write8
 (paren
 l_int|0x0d
@@ -1607,10 +1695,24 @@ DECL|function|gus_ramp_mode
 id|gus_ramp_mode
 (paren
 r_int
-r_char
-id|mode
+r_int
+id|m
 )paren
 (brace
+r_int
+r_char
+id|mode
+op_assign
+(paren
+r_int
+r_char
+)paren
+(paren
+id|m
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
 id|gus_write8
 (paren
 l_int|0x0d
@@ -3684,6 +3786,23 @@ id|target
 comma
 id|rate
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|DISABLE_INTR
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * CAUTION! Interrupts disabled. Enable them before returning&n; */
+id|gus_select_voice
+c_func
+(paren
+id|voice
+)paren
+suffix:semicolon
 id|compute_volume
 (paren
 id|voice
@@ -3740,6 +3859,12 @@ id|gus_voice_volume
 id|target
 )paren
 suffix:semicolon
+id|RESTORE_INTR
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3788,6 +3913,12 @@ suffix:semicolon
 id|gus_voice_volume
 (paren
 id|target
+)paren
+suffix:semicolon
+id|RESTORE_INTR
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -3859,6 +3990,12 @@ l_int|0x40
 suffix:semicolon
 multiline_comment|/* Ramp down, once, no irq */
 )brace
+id|RESTORE_INTR
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -5338,7 +5475,7 @@ id|GUS_PATCH
 (brace
 id|printk
 (paren
-l_string|&quot;GUS Error: Invalid patch format (key) 0x%04x&bslash;n&quot;
+l_string|&quot;GUS Error: Invalid patch format (key) 0x%x&bslash;n&quot;
 comma
 id|format
 )paren
@@ -5455,10 +5592,13 @@ id|patch.len
 (brace
 id|printk
 (paren
-l_string|&quot;GUS Warning: Patch record too short (%d&lt;%lu)&bslash;n&quot;
+l_string|&quot;GUS Warning: Patch record too short (%d&lt;%d)&bslash;n&quot;
 comma
 id|count
 comma
+(paren
+r_int
+)paren
 id|patch.len
 )paren
 suffix:semicolon
@@ -5481,8 +5621,11 @@ id|gus_mem_size
 (brace
 id|printk
 (paren
-l_string|&quot;GUS: Invalid sample length %lu&bslash;n&quot;
+l_string|&quot;GUS: Invalid sample length %d&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|patch.len
 )paren
 suffix:semicolon
@@ -5579,8 +5722,11 @@ id|GUS_BANK_SIZE
 (brace
 id|printk
 (paren
-l_string|&quot;GUS: Sample (16 bit) too long %lu&bslash;n&quot;
+l_string|&quot;GUS: Sample (16 bit) too long %d&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|patch.len
 )paren
 suffix:semicolon
@@ -9393,8 +9539,11 @@ id|dma
 (brace
 id|printk
 (paren
-l_string|&quot; &lt;Gravis UltraSound %luk&gt;&quot;
+l_string|&quot; &lt;Gravis UltraSound %dk&gt;&quot;
 comma
+(paren
+r_int
+)paren
 id|gus_mem_size
 op_div
 l_int|1024
@@ -9467,6 +9616,30 @@ op_increment
 op_assign
 op_amp
 id|guswave_operations
+suffix:semicolon
+id|PERMANENT_MALLOC
+c_func
+(paren
+r_struct
+id|patch_info
+op_star
+comma
+id|samples
+comma
+(paren
+id|MAX_SAMPLE
+op_plus
+l_int|1
+)paren
+op_star
+r_sizeof
+(paren
+op_star
+id|samples
+)paren
+comma
+id|mem_start
+)paren
 suffix:semicolon
 id|reset_sample_memory
 (paren
@@ -10083,6 +10256,8 @@ c_cond
 (paren
 id|SOMEONE_WAITING
 (paren
+id|dram_sleeper
+comma
 id|dram_sleep_flag
 )paren
 )paren

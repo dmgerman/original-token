@@ -187,8 +187,10 @@ DECL|macro|MSGMAP
 mdefine_line|#define MSGMAP  MSGMNB            /* number of entries in message map */
 DECL|macro|MSGSSZ
 mdefine_line|#define MSGSSZ  16                /* message segment size */
+DECL|macro|__MSGSEG
+mdefine_line|#define __MSGSEG ((MSGPOOL*1024)/ MSGSSZ) /* max no. of segments */
 DECL|macro|MSGSEG
-mdefine_line|#define MSGSEG ((MSGPOOL*1024)/ MSGSSZ) /* max no. of segments */
+mdefine_line|#define MSGSEG (__MSGSEG &lt;= 0xffff ? __MSGSEG : 0xffff)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* ipcs ctl commands */
 DECL|macro|MSG_STAT

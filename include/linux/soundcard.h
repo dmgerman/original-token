@@ -4,7 +4,9 @@ mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * &n; */
 multiline_comment|/* &n;  * If you make modifications to this file, please contact me before&n;  * distributing the modified version. There is already enough &n;  * divercity in the world.&n;  *&n;  * Regards,&n;  * Hannu Savolainen&n;  * hsavolai@cs.helsinki.fi&n;  */
 DECL|macro|SOUND_VERSION
-mdefine_line|#define SOUND_VERSION&t;200
+mdefine_line|#define SOUND_VERSION&t;203
+DECL|macro|VOXWARE
+mdefine_line|#define VOXWARE
 macro_line|#include &lt;sys/ioctl.h&gt;
 multiline_comment|/*&n; *&t;Supported card ID numbers (Should be somewhere else?)&n; */
 DECL|macro|SNDCARD_ADLIB
@@ -19,6 +21,8 @@ DECL|macro|SNDCARD_MPU401
 mdefine_line|#define SNDCARD_MPU401&t;5
 DECL|macro|SNDCARD_SB16
 mdefine_line|#define SNDCARD_SB16&t;6
+DECL|macro|SNDCARD_SB16MIDI
+mdefine_line|#define SNDCARD_SB16MIDI 7
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _IOWR
 multiline_comment|/*&t;@(#)ioctlp.h */
@@ -27,11 +31,11 @@ multiline_comment|/* #define&t;IOCTYPE&t;&t;(0xff&lt;&lt;8) */
 DECL|macro|IOCPARM_MASK
 mdefine_line|#define&t;IOCPARM_MASK&t;0x7f&t;&t;/* parameters must be &lt; 128 bytes */
 DECL|macro|IOC_VOID
-mdefine_line|#define&t;IOC_VOID&t;0x20000000&t;/* no parameters */
+mdefine_line|#define&t;IOC_VOID&t;0x00000000&t;/* no parameters */
 DECL|macro|IOC_OUT
-mdefine_line|#define&t;IOC_OUT&t;&t;0x40000000&t;/* copy out parameters */
+mdefine_line|#define&t;IOC_OUT&t;&t;0x20000000&t;/* copy out parameters */
 DECL|macro|IOC_IN
-mdefine_line|#define&t;IOC_IN&t;&t;0x80000000&t;/* copy in parameters */
+mdefine_line|#define&t;IOC_IN&t;&t;0x40000000&t;/* copy in parameters */
 DECL|macro|IOC_INOUT
 mdefine_line|#define&t;IOC_INOUT&t;(IOC_IN|IOC_OUT)
 multiline_comment|/* the 0x20000000 is so we can distinguish new ioctl&squot;s from old */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Gerhard Koerting:&t;Pass the right part of the data!&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -324,6 +324,32 @@ suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+multiline_comment|/* Undo IP&squot;s work and go get the IP header back [HACK] */
+id|skb-&gt;h.raw
+op_assign
+(paren
+(paren
+r_char
+op_star
+)paren
+(paren
+id|skb
+op_plus
+l_int|1
+)paren
+)paren
+op_plus
+id|dev-&gt;hard_header_len
+suffix:semicolon
+id|skb-&gt;len
+op_add_assign
+id|skb-&gt;h.iph-&gt;ihl
+op_star
+r_sizeof
+(paren
+r_int
+)paren
 suffix:semicolon
 id|skb-&gt;saddr
 op_assign

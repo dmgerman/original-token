@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/sound/sequencer.c&n; * &n; * The sequencer personality manager.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/sequencer.c&n; * &n; * The sequencer personality manager.&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
@@ -58,30 +58,28 @@ multiline_comment|/* Reference point for the timer */
 macro_line|#include &quot;tuning.h&quot;
 DECL|macro|EV_SZ
 mdefine_line|#define EV_SZ&t;8
+DECL|macro|IEV_SZ
+mdefine_line|#define IEV_SZ&t;4
 DECL|variable|queue
 r_static
 r_int
 r_char
+op_star
 id|queue
-(braket
-id|SEQ_MAX_QUEUE
-)braket
-(braket
-id|EV_SZ
-)braket
+op_assign
+l_int|NULL
 suffix:semicolon
+multiline_comment|/* SEQ_MAX_QUEUE * EV_SZ bytes */
 DECL|variable|iqueue
 r_static
 r_int
 r_char
+op_star
 id|iqueue
-(braket
-id|SEQ_MAX_QUEUE
-)braket
-(braket
-l_int|4
-)braket
+op_assign
+l_int|NULL
 suffix:semicolon
+multiline_comment|/* SEQ_MAX_QUEUE * IEV_SZ bytes */
 DECL|variable|qhead
 DECL|variable|qtail
 DECL|variable|qlen
@@ -290,12 +288,11 @@ op_amp
 id|iqueue
 (braket
 id|iqhead
-)braket
-(braket
-l_int|0
+op_star
+id|IEV_SZ
 )braket
 comma
-l_int|4
+id|IEV_SZ
 )paren
 suffix:semicolon
 id|p
@@ -368,14 +365,17 @@ suffix:semicolon
 multiline_comment|/* Overflow */
 id|memcpy
 (paren
+op_amp
 id|iqueue
 (braket
 id|iqtail
+op_star
+id|IEV_SZ
 )braket
 comma
 id|event
 comma
-l_int|4
+id|IEV_SZ
 )paren
 suffix:semicolon
 id|iqlen
@@ -401,6 +401,8 @@ c_cond
 (paren
 id|SOMEONE_WAITING
 (paren
+id|midi_sleeper
+comma
 id|midi_sleep_flag
 )paren
 )paren
@@ -1020,6 +1022,8 @@ op_logical_and
 op_logical_neg
 id|SOMEONE_WAITING
 (paren
+id|seq_sleeper
+comma
 id|seq_sleep_flag
 )paren
 )paren
@@ -1052,9 +1056,8 @@ op_amp
 id|queue
 (braket
 id|qtail
-)braket
-(braket
-l_int|0
+op_star
+id|EV_SZ
 )braket
 comma
 id|note
@@ -1398,9 +1401,8 @@ op_amp
 id|queue
 (braket
 id|this_one
-)braket
-(braket
-l_int|0
+op_star
+id|EV_SZ
 )braket
 suffix:semicolon
 r_switch
@@ -1599,6 +1601,8 @@ c_cond
 (paren
 id|SOMEONE_WAITING
 (paren
+id|seq_sleeper
+comma
 id|seq_sleep_flag
 )paren
 )paren
@@ -1847,6 +1851,8 @@ c_cond
 (paren
 id|SOMEONE_WAITING
 (paren
+id|seq_sleeper
+comma
 id|seq_sleep_flag
 )paren
 )paren
@@ -2650,6 +2656,8 @@ op_logical_and
 op_logical_neg
 id|SOMEONE_WAITING
 (paren
+id|seq_sleeper
+comma
 id|seq_sleep_flag
 )paren
 )paren
@@ -2847,12 +2855,22 @@ id|midi_outc
 (paren
 id|i
 comma
+(paren
+r_int
+r_char
+)paren
+(paren
 l_int|0xb0
 op_plus
+(paren
 id|chn
+op_amp
+l_int|0xff
+)paren
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/* Channel message */
+multiline_comment|/* Channel msg */
 id|midi_outc
 (paren
 id|i
@@ -2904,6 +2922,8 @@ c_cond
 (paren
 id|SOMEONE_WAITING
 (paren
+id|seq_sleeper
+comma
 id|seq_sleep_flag
 )paren
 )paren
@@ -4553,6 +4573,38 @@ id|mem_start
 id|sequencer_ok
 op_assign
 l_int|1
+suffix:semicolon
+id|PERMANENT_MALLOC
+c_func
+(paren
+r_int
+r_char
+op_star
+comma
+id|queue
+comma
+id|SEQ_MAX_QUEUE
+op_star
+id|EV_SZ
+comma
+id|mem_start
+)paren
+suffix:semicolon
+id|PERMANENT_MALLOC
+c_func
+(paren
+r_int
+r_char
+op_star
+comma
+id|iqueue
+comma
+id|SEQ_MAX_QUEUE
+op_star
+id|IEV_SZ
+comma
+id|mem_start
+)paren
 suffix:semicolon
 r_return
 id|mem_start

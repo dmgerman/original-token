@@ -1423,6 +1423,8 @@ comma
 id|bprm-&gt;argc
 comma
 id|bprm-&gt;envc
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if

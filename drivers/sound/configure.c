@@ -67,6 +67,10 @@ DECL|member|alias
 r_int
 id|alias
 suffix:semicolon
+DECL|member|default_answ
+r_int
+id|default_answ
+suffix:semicolon
 )brace
 DECL|typedef|hw_entry
 id|hw_entry
@@ -90,6 +94,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -100,6 +106,8 @@ comma
 l_string|&quot;SB&quot;
 comma
 l_int|1
+comma
+l_int|0
 comma
 l_int|0
 )brace
@@ -122,6 +130,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 multiline_comment|/* 3 */
@@ -135,6 +145,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -145,6 +157,8 @@ comma
 l_string|&quot;MPU401&quot;
 comma
 l_int|1
+comma
+l_int|0
 comma
 l_int|0
 )brace
@@ -165,6 +179,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|1
 )brace
 comma
 (brace
@@ -188,6 +204,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|1
 )brace
 comma
 (brace
@@ -213,6 +231,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|1
 )brace
 comma
 (brace
@@ -228,6 +248,8 @@ comma
 l_int|0
 comma
 id|OPT_MIDI
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -258,6 +280,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|1
 )brace
 comma
 (brace
@@ -273,6 +297,8 @@ comma
 l_int|0
 comma
 id|OPT_YM3812
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -301,6 +327,8 @@ comma
 l_int|1
 comma
 l_int|0
+comma
+l_int|1
 )brace
 comma
 multiline_comment|/* 10 */
@@ -332,6 +360,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|1
 )brace
 comma
 (brace
@@ -342,6 +372,8 @@ comma
 l_string|&quot;CHIP_MIDI&quot;
 comma
 l_int|1
+comma
+l_int|0
 comma
 l_int|0
 )brace
@@ -363,9 +395,9 @@ l_string|&quot;AdLib support&quot;
 comma
 l_string|&quot;Gravis Ultrasound support&quot;
 comma
-l_string|&quot;MPU-401 support&quot;
+l_string|&quot;MPU-401 support (NOT for SB16)&quot;
 comma
-l_string|&quot;SoundBlaster Pro support (required for SB16 also)&quot;
+l_string|&quot;SoundBlaster Pro support&quot;
 comma
 l_string|&quot;SoundBlaster 16 support&quot;
 comma
@@ -377,7 +409,7 @@ l_string|&quot;MIDI interface support&quot;
 comma
 l_string|&quot;This should not be asked&quot;
 comma
-l_string|&quot;Internal synthesizer (FM/GUS) support&quot;
+l_string|&quot;FM synthesizer (YM3812/OPL-3) support&quot;
 comma
 l_string|&quot;/dev/sequencer support&quot;
 comma
@@ -388,6 +420,12 @@ DECL|variable|selected_options
 r_int
 r_int
 id|selected_options
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|sb_dma
+r_int
+id|sb_dma
 op_assign
 l_int|0
 suffix:semicolon
@@ -550,7 +588,8 @@ r_int
 DECL|function|think_positively
 id|think_positively
 (paren
-r_void
+r_int
+id|def_answ
 )paren
 (brace
 r_char
@@ -623,7 +662,7 @@ l_int|2
 )paren
 multiline_comment|/* There is an additional LF at the end */
 r_return
-l_int|0
+id|def_answ
 suffix:semicolon
 id|answ
 (braket
@@ -843,6 +882,7 @@ c_cond
 (paren
 id|think_positively
 (paren
+l_int|0
 )paren
 )paren
 (brace
@@ -882,6 +922,7 @@ c_cond
 (paren
 id|think_positively
 (paren
+l_int|0
 )paren
 )paren
 (brace
@@ -988,10 +1029,25 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+id|def_answ
+op_assign
+id|hw_table
+(braket
+id|i
+)braket
+dot
+id|default_answ
+suffix:semicolon
 id|fprintf
 (paren
 id|stderr
 comma
+id|def_answ
+ques
+c_cond
+l_string|&quot;  %s (y/n) ? &quot;
+suffix:colon
 l_string|&quot;  %s (n/y) ? &quot;
 comma
 id|questions
@@ -1005,6 +1061,7 @@ c_cond
 (paren
 id|think_positively
 (paren
+id|def_answ
 )paren
 )paren
 r_if
@@ -1040,6 +1097,25 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|selected_options
+op_amp
+id|B
+c_func
+(paren
+id|OPT_SB16
+)paren
+)paren
+id|selected_options
+op_or_assign
+id|B
+c_func
+(paren
+id|OPT_SBPRO
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1156,7 +1232,7 @@ id|printf
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef linux
+macro_line|#if defined(linux)
 r_if
 c_cond
 (paren
@@ -1317,6 +1393,10 @@ comma
 id|num
 )paren
 suffix:semicolon
+id|sb_dma
+op_assign
+id|num
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1351,9 +1431,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|num
 template_param
 l_int|7
+)paren
+op_logical_and
+(paren
+id|num
+op_ne
+id|sb_dma
+)paren
 )paren
 (brace
 id|fprintf
@@ -1380,6 +1468,41 @@ suffix:semicolon
 id|printf
 (paren
 l_string|&quot;#define SB16_DMA %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nI/O base for SB16 Midi?&bslash;n&quot;
+l_string|&quot;Possible values are 300 and 330&bslash;n&quot;
+l_string|&quot;The factory default is 330&bslash;n&quot;
+l_string|&quot;Enter the SB16 Midi I/O base: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%x&quot;
+comma
+l_int|0x330
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;SB16 Midi I/O base set to %03x&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define SB16MIDI_BASE 0x%03x&bslash;n&quot;
 comma
 id|num
 )paren
@@ -1863,7 +1986,7 @@ id|fprintf
 id|stderr
 comma
 l_string|&quot;&bslash;nIRQ number for MPU-401?&bslash;n&quot;
-l_string|&quot;Valid numbers are: 3, 4, 5, 7 and 9.&bslash;n&quot;
+l_string|&quot;Valid numbers are: 3, 4, 5, 7 and 9(=2).&bslash;n&quot;
 l_string|&quot;The default value is 5.&bslash;n&quot;
 l_string|&quot;Enter the value: &quot;
 )paren
@@ -1950,14 +2073,22 @@ id|B
 (paren
 id|OPT_PAS
 )paren
+op_or
+id|B
+c_func
+(paren
+id|OPT_SB16
+)paren
 )paren
 )paren
 id|def_size
 op_assign
 l_int|32768
 suffix:semicolon
+macro_line|#ifndef __386BSD__
 r_if
 c_cond
+(paren
 (paren
 (paren
 id|selected_options
@@ -1965,6 +2096,16 @@ op_amp
 id|B
 (paren
 id|OPT_PAS
+)paren
+)paren
+op_logical_or
+(paren
+id|selected_options
+op_amp
+id|B
+(paren
+id|OPT_SB16
+)paren
 )paren
 )paren
 op_logical_and
@@ -1975,7 +2116,8 @@ id|def_size
 op_assign
 l_int|65536
 suffix:semicolon
-multiline_comment|/* PAS16 alone */
+multiline_comment|/* PAS16 or SB16 */
+macro_line|#endif
 id|fprintf
 (paren
 id|stderr
@@ -2059,6 +2201,16 @@ comma
 l_string|&quot;The sound driver is now configured.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(SCO) || defined(ISC) || defined(SYSV)
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Rember to update the System file&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 m_exit
 (paren
 l_int|0

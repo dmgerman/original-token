@@ -285,6 +285,7 @@ macro_line|#include &lt;linux/msdos_fs_i.h&gt;
 macro_line|#include &lt;linux/iso_fs_i.h&gt;
 macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 macro_line|#include &lt;linux/xia_fs_i.h&gt;
+macro_line|#include &lt;linux/sysv_fs_i.h&gt;
 DECL|struct|inode
 r_struct
 id|inode
@@ -498,6 +499,11 @@ r_struct
 id|xiafs_inode_info
 id|xiafs_i
 suffix:semicolon
+DECL|member|sysv_i
+r_struct
+id|sysv_inode_info
+id|sysv_i
+suffix:semicolon
 DECL|member|u
 )brace
 id|u
@@ -616,6 +622,7 @@ macro_line|#include &lt;linux/msdos_fs_sb.h&gt;
 macro_line|#include &lt;linux/iso_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/xia_fs_sb.h&gt;
+macro_line|#include &lt;linux/sysv_fs_sb.h&gt;
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -729,6 +736,11 @@ DECL|member|xiafs_sb
 r_struct
 id|xiafs_sb_info
 id|xiafs_sb
+suffix:semicolon
+DECL|member|sysv_sb
+r_struct
+id|sysv_sb_info
+id|sysv_sb
 suffix:semicolon
 DECL|member|u
 )brace

@@ -184,6 +184,9 @@ id|argc
 comma
 r_int
 id|envc
+comma
+r_int
+id|ibcs
 )paren
 suffix:semicolon
 r_extern

@@ -71,7 +71,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* the get_*_info() functions are in the net code, and are configured&n;   in via the standard mechanism... */
-macro_line|#ifdef CONFIG_INET
 r_extern
 r_int
 id|unix_get_info
@@ -81,6 +80,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_extern
 r_int
 id|tcp_get_info
@@ -252,7 +252,6 @@ l_int|1
 comma
 l_string|&quot;.&quot;
 )brace
-macro_line|#ifdef CONFIG_INET
 comma
 (brace
 l_int|128
@@ -261,6 +260,7 @@ l_int|4
 comma
 l_string|&quot;unix&quot;
 )brace
+macro_line|#ifdef CONFIG_INET
 comma
 (brace
 l_int|129

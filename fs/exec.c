@@ -1063,6 +1063,9 @@ id|argc
 comma
 r_int
 id|envc
+comma
+r_int
+id|ibcs
 )paren
 (brace
 r_int
@@ -1198,6 +1201,13 @@ id|argv
 op_assign
 id|sp
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ibcs
+)paren
+(brace
 id|put_fs_long
 c_func
 (paren
@@ -1224,6 +1234,7 @@ op_decrement
 id|sp
 )paren
 suffix:semicolon
+)brace
 id|put_fs_long
 c_func
 (paren
@@ -3582,6 +3593,7 @@ r_int
 id|fd
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BINFMT_ELF
 r_extern
 r_int
 id|load_elf_binary
@@ -3606,6 +3618,33 @@ r_int
 id|fd
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BINFMT_COFF
+r_extern
+r_int
+id|load_coff_binary
+c_func
+(paren
+r_struct
+id|linux_binprm
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|load_coff_library
+c_func
+(paren
+r_int
+id|fd
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Here are the actual binaries that will be accepted  */
 DECL|variable|formats
 r_struct
@@ -3626,6 +3665,14 @@ macro_line|#ifdef CONFIG_BINFMT_ELF
 id|load_elf_binary
 comma
 id|load_elf_library
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BINFMT_COFF
+(brace
+id|load_coff_binary
+comma
+id|load_coff_library
 )brace
 comma
 macro_line|#endif
@@ -4224,6 +4271,8 @@ comma
 id|bprm-&gt;argc
 comma
 id|bprm-&gt;envc
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|current-&gt;start_stack

@@ -279,6 +279,8 @@ DECL|macro|PAS_CDPC
 mdefine_line|#define PAS_CDPC&t;2
 DECL|macro|PAS_16
 mdefine_line|#define PAS_16&t;&t;3
+DECL|macro|PAS_16D
+mdefine_line|#define PAS_16D&t;&t;4
 macro_line|#ifdef DEFINE_TRANSLATIONS
 DECL|variable|I_C_2_PCM_DMA_translate
 r_char

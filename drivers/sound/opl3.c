@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/sound/opl3.c&n; * &n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/opl3.c&n; * &n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
 multiline_comment|/* Major improvements to the FM handling 30AUG92 by Rob Hooft, */
 multiline_comment|/* hooft@chem.ruu.nl */
 macro_line|#include &quot;sound_config.h&quot;
@@ -127,18 +127,11 @@ id|voices
 id|MAX_VOICE
 )braket
 suffix:semicolon
-DECL|typedef|instr_array
-r_typedef
-r_struct
-id|sbi_instrument
-id|instr_array
-(braket
-id|SBFM_MAXINSTR
-)braket
-suffix:semicolon
 DECL|variable|instrmap
 r_static
-id|instr_array
+r_struct
+id|sbi_instrument
+op_star
 id|instrmap
 suffix:semicolon
 DECL|variable|active_instrument
@@ -246,14 +239,12 @@ id|opl3_command
 r_int
 id|io_addr
 comma
-r_const
 r_int
-r_char
+r_int
 id|addr
 comma
-r_const
 r_int
-r_char
+r_int
 id|val
 )paren
 suffix:semicolon
@@ -1093,7 +1084,7 @@ id|opl3_enabled
 )paren
 id|printk
 (paren
-l_string|&quot;FM warning: Invalid patch format field (key) 0x%04x&bslash;n&quot;
+l_string|&quot;FM warning: Invalid patch format field (key) 0x%x&bslash;n&quot;
 comma
 id|instr-&gt;key
 )paren
@@ -3018,14 +3009,12 @@ id|opl3_command
 r_int
 id|io_addr
 comma
-r_const
 r_int
-r_char
+r_int
 id|addr
 comma
-r_const
 r_int
-r_char
+r_int
 id|val
 )paren
 (brace
@@ -3035,7 +3024,15 @@ suffix:semicolon
 multiline_comment|/*&n;   * The original 2-OP synth requires a quite long delay after writing to a&n;   * register. The OPL-3 survives with just two INBs&n;   */
 id|OUTB
 (paren
+(paren
+r_int
+r_char
+)paren
+(paren
 id|addr
+op_amp
+l_int|0xff
+)paren
 comma
 id|io_addr
 )paren
@@ -3073,7 +3070,15 @@ id|io_addr
 suffix:semicolon
 id|OUTB
 (paren
+(paren
+r_int
+r_char
+)paren
+(paren
 id|val
+op_amp
+l_int|0xff
+)paren
 comma
 id|io_addr
 op_plus
@@ -4152,6 +4157,26 @@ id|mem_start
 (brace
 r_int
 id|i
+suffix:semicolon
+id|PERMANENT_MALLOC
+c_func
+(paren
+r_struct
+id|sbi_instrument
+op_star
+comma
+id|instrmap
+comma
+id|SBFM_MAXINSTR
+op_star
+r_sizeof
+(paren
+op_star
+id|instrmap
+)paren
+comma
+id|mem_start
+)paren
 suffix:semicolon
 id|synth_devs
 (braket

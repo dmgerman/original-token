@@ -98,11 +98,33 @@ r_int
 id|pgrp
 suffix:semicolon
 multiline_comment|/* pgrp of opening process */
+DECL|member|normal_termios
+r_struct
+id|termios
+id|normal_termios
+suffix:semicolon
+DECL|member|callout_termios
+r_struct
+id|termios
+id|callout_termios
+suffix:semicolon
 DECL|member|open_wait
 r_struct
 id|wait_queue
 op_star
 id|open_wait
+suffix:semicolon
+DECL|member|close_wait
+r_struct
+id|wait_queue
+op_star
+id|close_wait
+suffix:semicolon
+DECL|member|xmit_wait
+r_struct
+id|wait_queue
+op_star
+id|xmit_wait
 suffix:semicolon
 DECL|member|next_port
 r_struct
@@ -174,10 +196,6 @@ DECL|macro|UART_FCR_TRIGGER_8
 mdefine_line|#define UART_FCR_TRIGGER_8&t;0x80 /* Mask for trigger set at 8 */
 DECL|macro|UART_FCR_TRIGGER_14
 mdefine_line|#define UART_FCR_TRIGGER_14&t;0xC0 /* Mask for trigger set at 14 */
-DECL|macro|UART_FCR_CLEAR_CMD
-mdefine_line|#define UART_FCR_CLEAR_CMD&t;(UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT)
-DECL|macro|UART_FCR_SETUP_CMD
-mdefine_line|#define UART_FCR_SETUP_CMD&t;(UART_FCR_ENABLE_FIFO | UART_FCR_TRIGGER_8)
 multiline_comment|/*&n; * These are the definitions for the Line Control Register&n; * &n; * Note: if the word length is 5 bits (UART_LCR_WLEN5), then setting &n; * UART_LCR_STOP will select 1.5 stop bits, not 2 stop bits.&n; */
 DECL|macro|UART_LCR_DLAB
 mdefine_line|#define UART_LCR_DLAB&t;0x80&t;/* Devisor latch access bit */

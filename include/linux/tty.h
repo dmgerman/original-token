@@ -220,8 +220,8 @@ DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ASYNC_SAK
 mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) */
-DECL|macro|ASYNC_TERMIOS_RESTORE
-mdefine_line|#define ASYNC_TERMIOS_RESTORE 0x0008 /* Restore termios when dialin unblocks */
+DECL|macro|ASYNC_SPLIT_TERMIOS
+mdefine_line|#define ASYNC_SPLIT_TERMIOS 0x0008 /* Separate termios for dialin/callout */
 DECL|macro|ASYNC_SPD_MASK
 mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
 DECL|macro|ASYNC_SPD_HI
@@ -253,6 +253,8 @@ DECL|macro|ASYNC_NORMAL_ACTIVE
 mdefine_line|#define ASYNC_NORMAL_ACTIVE&t;0x20000000 /* Normal device is active */
 DECL|macro|ASYNC_BOOT_AUTOCONF
 mdefine_line|#define ASYNC_BOOT_AUTOCONF&t;0x10000000 /* Autoconfigure port on bootup */
+DECL|macro|ASYNC_CLOSING
+mdefine_line|#define ASYNC_CLOSING&t;&t;0x08000000 /* Serial port is closing */
 DECL|macro|IS_A_CONSOLE
 mdefine_line|#define IS_A_CONSOLE(min)&t;(((min) &amp; 0xC0) == 0x00)
 DECL|macro|IS_A_SERIAL
@@ -420,11 +422,16 @@ r_int
 id|session
 suffix:semicolon
 DECL|member|stopped
+DECL|member|hw_stopped
 DECL|member|packet
 DECL|member|lnext
 r_int
 r_char
 id|stopped
+suffix:colon
+l_int|1
+comma
+id|hw_stopped
 suffix:colon
 l_int|1
 comma
@@ -441,7 +448,7 @@ r_int
 r_char
 id|char_error
 suffix:colon
-l_int|2
+l_int|3
 suffix:semicolon
 DECL|member|ctrl_status
 r_int
@@ -600,6 +607,19 @@ r_void
 (paren
 op_star
 id|start
+)paren
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+DECL|member|hangup
+r_void
+(paren
+op_star
+id|hangup
 )paren
 (paren
 r_struct
@@ -837,6 +857,8 @@ DECL|macro|TTY_IO_ERROR
 mdefine_line|#define TTY_IO_ERROR 5
 DECL|macro|TTY_SLAVE_OPENED
 mdefine_line|#define TTY_SLAVE_OPENED 6
+DECL|macro|TTY_EXCLUSIVE
+mdefine_line|#define TTY_EXCLUSIVE 7
 multiline_comment|/*&n; * When a break, frame error, or parity error happens, these codes are&n; * stuffed into the read queue, and the relevant bit in readq_flag bit&n; * array is set.&n; */
 DECL|macro|TTY_BREAK
 mdefine_line|#define TTY_BREAK&t;1
@@ -844,6 +866,8 @@ DECL|macro|TTY_FRAME
 mdefine_line|#define TTY_FRAME&t;2
 DECL|macro|TTY_PARITY
 mdefine_line|#define TTY_PARITY&t;3
+DECL|macro|TTY_OVERRUN
+mdefine_line|#define TTY_OVERRUN&t;4
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 DECL|macro|TTY_READ_FLUSH
@@ -1185,6 +1209,15 @@ r_struct
 id|tty_struct
 op_star
 id|tty
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|disassociate_ctty
+c_func
+(paren
+r_int
+id|priv
 )paren
 suffix:semicolon
 multiline_comment|/* tty write functions */

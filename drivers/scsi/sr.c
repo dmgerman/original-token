@@ -305,7 +305,23 @@ id|device-&gt;changed
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* If the disk changed, the capacity will now be different,&n;&t;     so we force a re-read of this information */
+r_if
+c_cond
+(paren
+id|retval
+)paren
+id|scsi_CDs
+(braket
+id|target
+)braket
+dot
+id|needs_sector_size
+op_assign
+l_int|1
+suffix:semicolon
 )brace
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -3243,6 +3259,16 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark as really busy */
+id|memset
+c_func
+(paren
+id|buffer
+comma
+l_int|0
+comma
+l_int|8
+)paren
+suffix:semicolon
 id|scsi_do_cmd
 (paren
 id|SCpnt
@@ -3537,6 +3563,15 @@ dot
 id|capacity
 op_assign
 l_int|0
+suffix:semicolon
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|needs_sector_size
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon

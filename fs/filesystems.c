@@ -28,6 +28,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_HPFS_FS
 macro_line|#include &lt;linux/hpfs_fs.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SYSV_FS
+macro_line|#include &lt;linux/sysv_fs.h&gt;
+macro_line|#endif
 DECL|variable|file_systems
 r_struct
 id|file_system_type
@@ -111,6 +114,32 @@ macro_line|#ifdef CONFIG_ISO9660_FS
 id|isofs_read_super
 comma
 l_string|&quot;iso9660&quot;
+comma
+l_int|1
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SYSV_FS
+(brace
+id|sysv_read_super
+comma
+l_string|&quot;xenix&quot;
+comma
+l_int|1
+)brace
+comma
+(brace
+id|sysv_read_super
+comma
+l_string|&quot;sysv&quot;
+comma
+l_int|1
+)brace
+comma
+(brace
+id|sysv_read_super
+comma
+l_string|&quot;coherent&quot;
 comma
 l_int|1
 )brace

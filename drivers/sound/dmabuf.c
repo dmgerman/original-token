@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/sound/dmabuf.c&n; * &n; * The DMA buffer manager for digitized voice applications&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
+multiline_comment|/*&n; * sound/dmabuf.c&n; * &n; * The DMA buffer manager for digitized voice applications&n; * &n; * Copyright by Hannu Savolainen 1993&n; * &n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; * &n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &quot;sound_calls.h&quot;
@@ -250,14 +250,12 @@ id|dev
 (brace
 multiline_comment|/*&n;   * This routine breaks the physical device buffers to logical ones.&n;   */
 r_int
-r_int
 id|i
 comma
 id|p
 comma
 id|n
 suffix:semicolon
-r_int
 r_int
 id|sr
 comma
@@ -339,7 +337,7 @@ l_int|1
 (brace
 id|printk
 (paren
-l_string|&quot;SOUND: Invalid PCM parameters[%d] sr=%lu, nc=%lu, sz=%lu&bslash;n&quot;
+l_string|&quot;SOUND: Invalid PCM parameters[%d] sr=%d, nc=%d, sz=%d&bslash;n&quot;
 comma
 id|dev
 comma
@@ -778,6 +776,14 @@ id|ENXIO
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef USE_RUNTIME_DMAMEM
+id|sound_dma_malloc
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1247,6 +1253,14 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef USE_RUNTIME_DMAMEM
+id|sound_dma_free
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dsp_devs
 (braket
 id|dev
@@ -1439,6 +1453,13 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|dev_needs_restart
+(braket
+id|dev
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -2746,6 +2767,7 @@ id|chan
 suffix:semicolon
 macro_line|#else
 macro_line|#if defined(ISC) || defined(SCO)
+macro_line|#ifndef DMAMODE_AUTO
 id|printk
 (paren
 l_string|&quot;sound: Invalid DMA mode for device %d&bslash;n&quot;
@@ -2753,6 +2775,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 id|dma_param
 (paren
 id|chan
@@ -2769,7 +2792,7 @@ id|DMA_Rdmode
 suffix:colon
 id|DMA_Wrmode
 )paren
-macro_line|#ifdef ISC
+macro_line|#ifdef DMAMODE_AUTO
 op_or
 id|DMAMODE_AUTO
 macro_line|#endif
@@ -3125,6 +3148,11 @@ c_cond
 (paren
 id|SOMEONE_WAITING
 (paren
+id|dev_sleeper
+(braket
+id|dev
+)braket
+comma
 id|dev_sleep_flag
 (braket
 id|dev
@@ -3204,6 +3232,12 @@ l_int|1
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;Sound: Recording overrun&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dev_underrun
 (braket
 id|dev
@@ -3314,6 +3348,11 @@ c_cond
 (paren
 id|SOMEONE_WAITING
 (paren
+id|dev_sleeper
+(braket
+id|dev
+)braket
+comma
 id|dev_sleep_flag
 (braket
 id|dev

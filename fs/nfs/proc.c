@@ -526,7 +526,7 @@ id|fattr-&gt;type
 op_assign
 (paren
 r_enum
-id|nfs_stat
+id|nfs_ftype
 )paren
 id|ntohl
 c_func

@@ -81,7 +81,7 @@ mdefine_line|#define SIGPWR&t;&t;30
 multiline_comment|/* Arggh. Bad user source code wants this.. */
 DECL|macro|SIGBUS
 mdefine_line|#define SIGBUS&t;&t;SIGUNUSED
-multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_RESTART is a no-op, as restarting is the default anyway. Use the&n; * SA_INTERRUPT flag to get interrupting signals..&n; */
+multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;1
 DECL|macro|SA_STACK
