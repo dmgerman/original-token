@@ -3148,9 +3148,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_goto
-id|end_wp_page
-suffix:semicolon
 id|end_wp_page
 suffix:colon
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.1 1996/12/26 10:24:24 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.2 1997/05/15 21:14:32 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -601,7 +601,7 @@ id|pte
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -685,7 +685,7 @@ r_goto
 id|finish_up
 suffix:semicolon
 )brace
-id|do_wp_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -702,17 +702,6 @@ id|finish_up
 suffix:colon
 id|stats.success
 op_increment
-suffix:semicolon
-id|update_mmu_cache
-c_func
-(paren
-id|vma
-comma
-id|address
-comma
-op_star
-id|pte
-)paren
 suffix:semicolon
 r_return
 l_int|0

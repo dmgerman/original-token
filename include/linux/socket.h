@@ -112,28 +112,19 @@ r_int
 id|cmsg_type
 suffix:semicolon
 multiline_comment|/* protocol-specific type */
-DECL|member|cmsg_data
-r_int
-r_char
-id|cmsg_data
-(braket
-l_int|0
-)braket
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Ancilliary data object information MACROS&n; *&t;Table 5-14 of POSIX 1003.1g&n; */
-DECL|macro|CMSG_DATA
-mdefine_line|#define CMSG_DATA(cmsg)&t;&t;(cmsg)-&gt;cmsg_data
 DECL|macro|CMSG_NXTHDR
 mdefine_line|#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr(mhdr, cmsg)
 DECL|macro|CMSG_ALIGN
 mdefine_line|#define CMSG_ALIGN(len) ( ((len)+sizeof(long)-1) &amp; ~(sizeof(long)-1) )
-multiline_comment|/* Stevens&squot;s Adv. API specifies CMSG_SPACE &amp; CMSG_LENGTH,&n; * I cannot understand, what the differenece? --ANK&n; */
+DECL|macro|CMSG_DATA
+mdefine_line|#define CMSG_DATA(cmsg)&t;((void *)(cmsg) + CMSG_ALIGN(sizeof(struct cmsghdr)))
 DECL|macro|CMSG_SPACE
-mdefine_line|#define CMSG_SPACE(len) CMSG_ALIGN((len)+sizeof(struct cmsghdr))
-DECL|macro|CMSG_LENGTH
-mdefine_line|#define CMSG_LENGTH(len) CMSG_ALIGN((len)+sizeof(struct cmsghdr))
+mdefine_line|#define CMSG_SPACE(len) (CMSG_ALIGN(sizeof(struct cmsghdr)) + CMSG_ALIGN(len))
+DECL|macro|CMSG_LEN
+mdefine_line|#define CMSG_LEN(len) (CMSG_ALIGN(sizeof(struct cmsghdr)) + (len))
 DECL|macro|CMSG_FIRSTHDR
 mdefine_line|#define&t;CMSG_FIRSTHDR(msg)&t;((msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) ? &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)NULL)
 multiline_comment|/*&n; *&t;This mess will go away with glibc&n; */
@@ -303,6 +294,8 @@ DECL|macro|AF_NETBEUI
 mdefine_line|#define AF_NETBEUI&t;13&t;/* Reserved for 802.2LLC project*/
 DECL|macro|AF_SECURITY
 mdefine_line|#define AF_SECURITY&t;14&t;/* Security callback pseudo AF */
+DECL|macro|pseudo_AF_KEY
+mdefine_line|#define pseudo_AF_KEY   15      /* PF_KEY key management API */
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -338,6 +331,8 @@ DECL|macro|PF_NETBEUI
 mdefine_line|#define PF_NETBEUI&t;AF_NETBEUI
 DECL|macro|PF_SECURITY
 mdefine_line|#define PF_SECURITY&t;AF_SECURITY
+DECL|macro|PF_KEY
+mdefine_line|#define PF_KEY          pseudo_AF_KEY
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */

@@ -142,6 +142,8 @@ id|addr
 suffix:semicolon
 r_int
 id|written
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/** WARNING: this is not safe for writing more than PIPE_BUF bytes! **/
 multiline_comment|/* Save pointer to user space and point back to kernel space */

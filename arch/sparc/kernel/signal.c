@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.73 1997/04/16 05:56:05 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.74 1997/05/15 19:57:09 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -3768,6 +3768,11 @@ op_logical_and
 id|current-&gt;binfmt-&gt;core_dump
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3787,6 +3792,11 @@ op_or_assign
 l_int|0x80
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_SIGNALS
 multiline_comment|/* Very useful to debug dynamic linker problems */

@@ -12,52 +12,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|MAGIC_CONSTANT
 mdefine_line|#define MAGIC_CONSTANT 0x80000000
-r_extern
-r_void
-id|do_wp_page
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-comma
-r_int
-r_int
-id|address
-comma
-r_int
-id|write_access
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|do_no_page
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-comma
-r_int
-r_int
-id|address
-comma
-r_int
-id|write_access
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * This routine gets a long from any process space by following the page&n; * tables. NOTE! You should check that the long isn&squot;t on a page boundary,&n; * and that it is in the task area before calling this: this routine does&n; * no checking.&n; */
 DECL|function|get_long
 r_static
@@ -122,7 +76,7 @@ id|pgdir
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -193,7 +147,7 @@ id|pgmiddle
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -265,7 +219,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -398,7 +352,7 @@ id|pgdir
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -468,7 +422,7 @@ id|pgmiddle
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -539,7 +493,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -576,7 +530,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_wp_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk

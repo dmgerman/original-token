@@ -11,13 +11,123 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
+DECL|macro|kver
+mdefine_line|#define kver(a,b,c) (((a) &lt;&lt; 16) + ((b) &lt;&lt; 8) + (c)) 
+macro_line|#if LINUX_VERSION_CODE &lt; kver(2,1,0)
 multiline_comment|/* Segmentation stuff for pre-2.1 kernels */
 macro_line|#include &lt;asm/segment.h&gt;
-DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user&t;memcpy_tofs
-DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user&t;memcpy_fromfs
+DECL|function|copy_to_user
+r_static
+r_inline
+r_int
+id|copy_to_user
+c_func
+(paren
+r_void
+op_star
+id|dst
+comma
+r_void
+op_star
+id|src
+comma
+r_int
+r_int
+id|len
+)paren
+(brace
+r_int
+id|rv
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|dst
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rv
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|dst
+comma
+id|src
+comma
+id|len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|copy_from_user
+r_static
+r_inline
+r_int
+id|copy_from_user
+c_func
+(paren
+r_void
+op_star
+id|dst
+comma
+r_void
+op_star
+id|src
+comma
+r_int
+r_int
+id|len
+)paren
+(brace
+r_int
+id|rv
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|src
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rv
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+id|dst
+comma
+id|src
+comma
+id|len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#else
 multiline_comment|/* Segmentation stuff for post-2.1 kernels */
 macro_line|#include &lt;asm/uaccess.h&gt;

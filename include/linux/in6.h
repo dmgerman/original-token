@@ -156,8 +156,8 @@ mdefine_line|#define IPPROTO_DSTOPTS&t;&t;60&t;/* IPv6 destination options&t;*/
 multiline_comment|/*&n; *&t;IPV6 socket options&n; */
 DECL|macro|IPV6_ADDRFORM
 mdefine_line|#define IPV6_ADDRFORM&t;&t;1
-DECL|macro|IPV6_RXINFO
-mdefine_line|#define IPV6_RXINFO&t;&t;2
+DECL|macro|IPV6_PKTINFO
+mdefine_line|#define IPV6_PKTINFO&t;&t;2
 DECL|macro|IPV6_RXHOPOPTS
 mdefine_line|#define IPV6_RXHOPOPTS&t;&t;3
 DECL|macro|IPV6_RXDSTOPTS
@@ -171,10 +171,6 @@ mdefine_line|#define IPV6_CHECKSUM&t;&t;7
 DECL|macro|IPV6_HOPLIMIT
 mdefine_line|#define IPV6_HOPLIMIT&t;&t;8
 multiline_comment|/*&n; *&t;Alternative names&n; */
-DECL|macro|IPV6_TXINFO
-mdefine_line|#define IPV6_TXINFO&t;&t;IPV6_RXINFO
-DECL|macro|SCM_SRCINFO
-mdefine_line|#define SCM_SRCINFO&t;&t;IPV6_TXINFO
 DECL|macro|SCM_SRCRT
 mdefine_line|#define SCM_SRCRT&t;&t;IPV6_RXSRCRT
 DECL|macro|IPV6_UNICAST_HOPS

@@ -1,7 +1,12 @@
 multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/init.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;autofs_i.h&quot;
+macro_line|#if LINUX_VERSION_CODE &lt; kver(2,1,36)
+DECL|macro|__initfunc
+mdefine_line|#define __initfunc(X) X
+macro_line|#else
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#endif
 DECL|variable|autofs_fs_type
 r_static
 r_struct

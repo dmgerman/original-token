@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.11 1997/05/03 00:58:25 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.12 1997/05/15 18:55:09 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -85,7 +85,7 @@ id|msg
 comma
 id|SOL_IPV6
 comma
-id|IPV6_RXINFO
+id|IPV6_PKTINFO
 comma
 r_sizeof
 (paren
@@ -258,7 +258,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;cmsg_level %d&bslash;n&quot;
+l_string|&quot;invalid cmsg_level %d&bslash;n&quot;
 comma
 id|cmsg-&gt;cmsg_level
 )paren
@@ -273,20 +273,16 @@ id|cmsg-&gt;cmsg_type
 )paren
 (brace
 r_case
-id|IPV6_TXINFO
+id|IPV6_PKTINFO
 suffix:colon
 r_if
 c_cond
 (paren
 id|cmsg-&gt;cmsg_len
-OL
+op_ne
+id|CMSG_LEN
+c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|cmsghdr
-)paren
-op_plus
 r_sizeof
 (paren
 r_struct
@@ -311,7 +307,11 @@ r_struct
 id|in6_pktinfo
 op_star
 )paren
-id|cmsg-&gt;cmsg_data
+id|CMSG_DATA
+c_func
+(paren
+id|cmsg
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -389,28 +389,19 @@ suffix:semicolon
 r_case
 id|IPV6_RXSRCRT
 suffix:colon
-id|len
-op_assign
-id|cmsg-&gt;cmsg_len
-suffix:semicolon
-id|len
-op_sub_assign
-r_sizeof
-(paren
-r_struct
-id|cmsghdr
-)paren
-suffix:semicolon
-multiline_comment|/* validate option length */
 r_if
 c_cond
 (paren
-id|len
+id|cmsg-&gt;cmsg_len
 OL
+id|CMSG_LEN
+c_func
+(paren
 r_sizeof
 (paren
 r_struct
 id|ipv6_rt_hdr
+)paren
 )paren
 )paren
 (brace
@@ -423,6 +414,16 @@ r_goto
 id|exit_f
 suffix:semicolon
 )brace
+id|len
+op_assign
+id|cmsg-&gt;cmsg_len
+op_minus
+r_sizeof
+(paren
+r_struct
+id|cmsghdr
+)paren
+suffix:semicolon
 id|rthdr
 op_assign
 (paren
@@ -430,7 +431,11 @@ r_struct
 id|ipv6_rt_hdr
 op_star
 )paren
-id|cmsg-&gt;cmsg_data
+id|CMSG_DATA
+c_func
+(paren
+id|cmsg
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;TYPE 0&n;&t;&t;&t; */
 r_if
@@ -516,26 +521,18 @@ suffix:semicolon
 r_case
 id|IPV6_HOPLIMIT
 suffix:colon
-id|len
-op_assign
-id|cmsg-&gt;cmsg_len
-suffix:semicolon
-id|len
-op_sub_assign
-r_sizeof
-(paren
-r_struct
-id|cmsghdr
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|len
-OL
+id|cmsg-&gt;cmsg_len
+op_ne
+id|CMSG_LEN
+c_func
+(paren
 r_sizeof
 (paren
 r_int
+)paren
 )paren
 )paren
 (brace
@@ -553,11 +550,13 @@ id|hlimit
 op_assign
 op_star
 (paren
-(paren
 r_int
 op_star
 )paren
-id|cmsg-&gt;cmsg_data
+id|CMSG_DATA
+c_func
+(paren
+id|cmsg
 )paren
 suffix:semicolon
 r_break
