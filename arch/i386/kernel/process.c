@@ -11,6 +11,8 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -29,6 +31,24 @@ c_func
 l_string|&quot;ret_from_sys_call&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+r_extern
+r_int
+id|apm_do_idle
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|apm_do_busy
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|hlt_counter
 r_static
 r_int
@@ -36,6 +56,8 @@ id|hlt_counter
 op_assign
 l_int|0
 suffix:semicolon
+DECL|macro|HARD_IDLE_TIMEOUT
+mdefine_line|#define HARD_IDLE_TIMEOUT (HZ / 3)
 DECL|function|disable_hlt
 r_void
 id|disable_hlt
@@ -60,6 +82,91 @@ id|hlt_counter
 op_decrement
 suffix:semicolon
 )brace
+DECL|function|hard_idle
+r_static
+r_void
+id|hard_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|need_resched
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|hlt_works_ok
+op_logical_and
+op_logical_neg
+id|hlt_counter
+)paren
+(brace
+macro_line|#ifdef CONFIG_APM
+multiline_comment|/* If the APM BIOS is not enabled, or there&n;&t;&t;&t;&t; is an error calling the idle routine, we&n;&t;&t;&t;&t; should hlt if possible.  We need to check&n;&t;&t;&t;&t; need_resched again because an interrupt&n;&t;&t;&t;&t; may have occured in apm_do_idle(). */
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|apm_do_idle
+c_func
+(paren
+)paren
+op_logical_and
+op_logical_neg
+id|need_resched
+)paren
+id|__asm__
+c_func
+(paren
+l_string|&quot;hlt&quot;
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|__asm__
+c_func
+(paren
+l_string|&quot;hlt&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_if
+c_cond
+(paren
+id|need_resched
+)paren
+r_break
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_APM
+id|apm_do_busy
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; * The idle loop on a i386..&n; */
 DECL|function|sys_idle
 id|asmlinkage
@@ -70,6 +177,14 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef __SMP__
+r_int
+r_int
+id|start_idle
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -212,7 +327,41 @@ op_logical_and
 op_logical_neg
 id|need_resched
 )paren
+id|__asm__
+c_func
+(paren
+l_string|&quot;hlt&quot;
+)paren
+suffix:semicolon
 macro_line|#else&t;
+r_if
+c_cond
+(paren
+op_logical_neg
+id|start_idle
+)paren
+id|start_idle
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|jiffies
+op_minus
+id|start_idle
+OG
+id|HARD_IDLE_TIMEOUT
+)paren
+(brace
+id|hard_idle
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
@@ -224,13 +373,23 @@ op_logical_and
 op_logical_neg
 id|need_resched
 )paren
-macro_line|#endif&t;&t;
 id|__asm__
 c_func
 (paren
 l_string|&quot;hlt&quot;
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|need_resched
+)paren
+id|start_idle
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|schedule
 c_func
 (paren

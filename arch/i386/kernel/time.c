@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0
 multiline_comment|/* Cycle counter value at the previous timer interrupt.. */
@@ -1013,27 +1014,15 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
-DECL|function|time_init
-r_void
-id|time_init
+DECL|function|get_cmos_time
+r_int
+r_int
+id|get_cmos_time
 c_func
 (paren
 r_void
 )paren
 (brace
-r_void
-(paren
-op_star
-id|irq_handler
-)paren
-(paren
-r_int
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 r_int
 r_int
 id|year
@@ -1245,8 +1234,7 @@ id|year
 op_add_assign
 l_int|100
 suffix:semicolon
-id|xtime.tv_sec
-op_assign
+r_return
 id|mktime
 c_func
 (paren
@@ -1263,6 +1251,35 @@ comma
 id|sec
 )paren
 suffix:semicolon
+)brace
+DECL|function|time_init
+r_void
+id|time_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_void
+(paren
+op_star
+id|irq_handler
+)paren
+(paren
+r_int
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+id|xtime.tv_sec
+op_assign
+id|get_cmos_time
+c_func
+(paren
+)paren
+suffix:semicolon
 id|xtime.tv_usec
 op_assign
 l_int|0
@@ -1272,6 +1289,8 @@ id|irq_handler
 op_assign
 id|timer_interrupt
 suffix:semicolon
+macro_line|#ifndef CONFIG_APM
+multiline_comment|/* Don&squot;t use them if a suspend/resume could&n;                                   corrupt the timer value.  This problem&n;                                   needs more debugging. */
 r_if
 c_cond
 (paren
@@ -1328,6 +1347,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

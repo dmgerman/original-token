@@ -2164,9 +2164,6 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-id|ax25_address
-id|callsign
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2201,6 +2198,7 @@ id|ARPHRD_AX25
 r_return
 id|dev
 suffix:semicolon
+macro_line|#ifdef CONFIG_BPQETHER
 r_if
 c_cond
 (paren
@@ -2217,25 +2215,18 @@ id|ARPHRD_ETHER
 r_if
 c_cond
 (paren
-id|arp_query
+id|ax25_bpq_get_addr
 c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|callsign
-comma
-id|dev-&gt;pa_addr
-comma
 id|dev
 )paren
+op_ne
+l_int|NULL
 )paren
 r_return
 id|dev
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|NULL
 suffix:semicolon

@@ -13,6 +13,9 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -2081,7 +2084,7 @@ suffix:semicolon
 r_else
 id|state
 op_assign
-l_string|&quot;RSDZTD&quot;
+l_string|&quot;RSDZTW&quot;
 (braket
 id|tsk-&gt;state
 )braket
@@ -3815,6 +3818,18 @@ c_func
 id|page
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+r_case
+id|PROC_APM
+suffix:colon
+r_return
+id|apm_proc
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 op_minus

@@ -5552,7 +5552,7 @@ suffix:semicolon
 id|u32
 id|ip
 suffix:semicolon
-multiline_comment|/*&n;&t; * Find out about the hardware type.&n;&t; * We have to be compatible with BSD UNIX, so we have to&n;&t; * assume that a &quot;not set&quot; value (i.e. 0) means Ethernet.&n;&t; *&n;&t; * ANK: Hey, who wrote it? Do you really mean that BSD considers &n;&t; *&t;ARPHRD_NETROM as ARPHRD_ETHER, or somthing another?&n;&t; */
+multiline_comment|/*&n;&t; *&t;Find out about the hardware type.&n;&t; */
 id|si
 op_assign
 (paren

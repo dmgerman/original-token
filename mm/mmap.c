@@ -309,7 +309,7 @@ id|MAP_DENYWRITE
 r_if
 c_cond
 (paren
-id|file-&gt;f_inode-&gt;i_wcount
+id|file-&gt;f_inode-&gt;i_writecount
 OG
 l_int|0
 )paren

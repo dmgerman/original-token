@@ -1003,7 +1003,7 @@ id|flags
 suffix:semicolon
 r_return
 op_minus
-id|EWOULDBLOCK
+id|EAGAIN
 suffix:semicolon
 )brace
 id|interruptible_sleep_on
@@ -1404,7 +1404,7 @@ id|O_NONBLOCK
 )paren
 r_return
 op_minus
-id|EWOULDBLOCK
+id|EAGAIN
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
@@ -1631,7 +1631,7 @@ l_int|NULL
 suffix:semicolon
 r_return
 op_minus
-id|EWOULDBLOCK
+id|EAGAIN
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG

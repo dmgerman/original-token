@@ -204,6 +204,11 @@ id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
+DECL|member|context
+r_int
+r_int
+id|context
+suffix:semicolon
 DECL|member|start_code
 DECL|member|end_code
 DECL|member|start_data
@@ -277,7 +282,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
+mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;swapper_pg_dir, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct

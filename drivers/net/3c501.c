@@ -9,7 +9,7 @@ id|version
 op_assign
 l_string|&quot;3c501.c: 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov).&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n;  Braindamage remaining:&n;  The 3c501 board.&n;  */
+multiline_comment|/*&n; *&t;Braindamage remaining:&n; *&t;The 3c501 board.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -45,7 +45,7 @@ l_int|0
 )brace
 suffix:semicolon
 "&f;"
-multiline_comment|/* Index to functions. */
+multiline_comment|/*&n; *&t;Index to functions. &n; */
 r_int
 id|el1_probe
 c_func
@@ -181,7 +181,7 @@ id|el_debug
 op_assign
 id|EL_DEBUG
 suffix:semicolon
-multiline_comment|/* Board-specific info in dev-&gt;priv. */
+multiline_comment|/* &n; *&t;Board-specific info in dev-&gt;priv. &n; */
 DECL|struct|net_local
 r_struct
 id|net_local
@@ -245,7 +245,7 @@ DECL|macro|EL1_SAPROM
 mdefine_line|#define EL1_SAPROM&t;0x0C
 DECL|macro|EL1_DATAPORT
 mdefine_line|#define EL1_DATAPORT &t;0x0f
-multiline_comment|/* Writes to the ax command register. */
+multiline_comment|/*&n; *&t;Writes to the ax command register.&n; */
 DECL|macro|AX_OFF
 mdefine_line|#define AX_OFF&t;0x00&t;&t;&t;/* Irq off, buffer access on */
 DECL|macro|AX_SYS
@@ -258,7 +258,7 @@ DECL|macro|AX_LOOP
 mdefine_line|#define AX_LOOP&t;0x0C&t;&t;&t;/* Loopback mode */
 DECL|macro|AX_RESET
 mdefine_line|#define AX_RESET 0x80
-multiline_comment|/* Normal receive mode written to RX_STATUS.  We must intr on short packets&n;   to avoid bogus rx lockups. */
+multiline_comment|/*&n; *&t;Normal receive mode written to RX_STATUS.  We must intr on short packets&n; *&t;to avoid bogus rx lockups.&n; */
 DECL|macro|RX_NORM
 mdefine_line|#define RX_NORM 0xA8&t;&t;/* 0x68 == all addrs, 0xA8 only to me. */
 DECL|macro|RX_PROM
@@ -266,8 +266,8 @@ mdefine_line|#define RX_PROM 0x68&t;&t;/* Senior Prom, uhmm promiscuous mode. */
 DECL|macro|RX_MULT
 mdefine_line|#define RX_MULT 0xE8&t;&t;/* Accept multicast packets. */
 DECL|macro|TX_NORM
-mdefine_line|#define TX_NORM 0x0A&t;/* Interrupt on everything that might hang the chip */
-multiline_comment|/* TX_STATUS register. */
+mdefine_line|#define TX_NORM 0x0A&t;&t;/* Interrupt on everything that might hang the chip */
+multiline_comment|/*&n; *&t;TX_STATUS register. &n; */
 DECL|macro|TX_COLLISION
 mdefine_line|#define TX_COLLISION 0x02
 DECL|macro|TX_16COLLISIONS
@@ -281,7 +281,7 @@ mdefine_line|#define RX_MISSED 0x01&t;&t;/* Missed a packet due to 3c501 brainda
 DECL|macro|RX_GOOD
 mdefine_line|#define RX_GOOD&t;0x30&t;&t;/* Good packet 0x20, or simple overflow 0x10. */
 "&f;"
-multiline_comment|/* The boilerplate probe code. */
+multiline_comment|/*&n; *&t;The boilerplate probe code.&n; */
 macro_line|#ifdef HAVE_DEVLIST
 DECL|variable|el1_drv
 r_struct
@@ -299,8 +299,8 @@ id|netcard_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-r_int
 DECL|function|el1_probe
+r_int
 id|el1_probe
 c_func
 (paren
@@ -411,10 +411,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* The actual probe. */
+multiline_comment|/*&n; *&t;The actual probe. &n; */
+DECL|function|el1_probe1
 r_static
 r_int
-DECL|function|el1_probe1
 id|el1_probe1
 c_func
 (paren
@@ -449,7 +449,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Read the station address PROM data from the special port.  */
+multiline_comment|/*&n;&t; *&t;Read the station address PROM data from the special port.  &n;&t; */
 r_for
 c_loop
 (paren
@@ -489,7 +489,7 @@ id|EL1_SAPROM
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check the first three octets of the S.A. for 3Com&squot;s prefix, or&n;       for the Sager NP943 prefix. */
+multiline_comment|/*&n;&t; *&t;Check the first three octets of the S.A. for 3Com&squot;s prefix, or&n;&t; *&t;for the Sager NP943 prefix. &n;&t; */
 r_if
 c_cond
 (paren
@@ -555,7 +555,7 @@ r_else
 r_return
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* Grab the region so we can find the another board if autoIRQ fails. */
+multiline_comment|/*&n;&t; *&t;Grab the region so we can find the another board if autoIRQ fails. &n;&t; */
 id|request_region
 c_func
 (paren
@@ -566,7 +566,7 @@ comma
 l_string|&quot;3c501&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* We auto-IRQ by shutting off the interrupt line and letting it float&n;       high. */
+multiline_comment|/*&t;&n;&t; *&t;We auto-IRQ by shutting off the interrupt line and letting it float&n;&t; *&t;high.&n;&t; */
 r_if
 c_cond
 (paren
@@ -732,7 +732,7 @@ comma
 id|version
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize the device structure. */
+multiline_comment|/*&n;&t; *&t;Initialize the device structure. &n;&t; */
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -772,7 +772,7 @@ id|net_local
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The EL1-specific entries in the device structure. */
+multiline_comment|/*&n;&t; *&t;The EL1-specific entries in the device structure. &n;&t; */
 id|dev-&gt;open
 op_assign
 op_amp
@@ -798,7 +798,7 @@ op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-multiline_comment|/* Setup the generic properties */
+multiline_comment|/*&n;&t; *&t;Setup the generic properties &n;&t; */
 id|ether_setup
 c_func
 (paren
@@ -810,10 +810,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Open/initialize the board. */
+multiline_comment|/*&n; *&t;Open/initialize the board. &n; */
+DECL|function|el_open
 r_static
 r_int
-DECL|function|el_open
 id|el_open
 c_func
 (paren
@@ -859,12 +859,10 @@ comma
 l_string|&quot;3c501&quot;
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
 id|irq2dev_map
 (braket
 id|dev-&gt;irq
@@ -897,9 +895,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|el_start_xmit
 r_static
 r_int
-DECL|function|el_start_xmit
 id|el_start_xmit
 c_func
 (paren
@@ -1068,13 +1066,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Avoid incoming interrupts between us flipping tbusy and flipping&n;       mode as the driver assumes tbusy is a faithful indicator of card&n;       state */
+multiline_comment|/*&n;&t; *&t;Avoid incoming interrupts between us flipping tbusy and flipping&n;&t; *&t;mode as the driver assumes tbusy is a faithful indicator of card&n;&t; *&t;state&n;&t; */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Avoid timer-based retransmission conflicts. */
+multiline_comment|/*&n;&t; *&t;Avoid timer-based retransmission conflicts. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1144,7 +1142,7 @@ id|lp-&gt;collisions
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Command mode with status cleared should [in theory]&n;&t; *&t;mean no more interrupts can be pending on the card.&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Command mode with status cleared should [in theory]&n;&t;&t; *&t;mean no more interrupts can be pending on the card.&n;&t;&t; */
 id|outb
 c_func
 (paren
@@ -1169,7 +1167,7 @@ id|lp-&gt;loading
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Turn interrupts back on while we spend a pleasant afternoon&n;&t; *&t;loading bytes into the board &n;&t; */
+multiline_comment|/* &n;&t;&t; *&t;Turn interrupts back on while we spend a pleasant afternoon&n;&t;&t; *&t;loading bytes into the board &n;&t;&t; */
 id|restore_flags
 c_func
 (paren
@@ -1284,10 +1282,10 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/* The typical workload of the driver:&n;   Handle the ether interface interrupts. */
+multiline_comment|/*&n; *&t;The typical workload of the driver:&n; *&t;Handle the ether interface interrupts. &n; */
+DECL|function|el_interrupt
 r_static
 r_void
-DECL|function|el_interrupt
 id|el_interrupt
 c_func
 (paren
@@ -1364,6 +1362,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;What happened ?&n;&t; */
 id|axsr
 op_assign
 id|inb
@@ -1372,6 +1371,7 @@ c_func
 id|AX_STATUS
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Log it&n;&t; */
 r_if
 c_cond
 (paren
@@ -1417,7 +1417,7 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/*&n;    &t; *&t;Board in transmit mode.&n;    &t; */
+multiline_comment|/*&n;    &t;&t; *&t;Board in transmit mode.&n;    &t;&t; */
 r_int
 id|txsr
 op_assign
@@ -1472,7 +1472,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;FIXME: is there a logic to whether to keep on trying or&n;&t; *&t;reset immediately ?&n;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;FIXME: is there a logic to whether to keep on trying or&n;&t;&t;&t; *&t;reset immediately ?&n;&t;&t;&t; */
 id|printk
 c_func
 (paren
@@ -1522,7 +1522,7 @@ op_amp
 id|TX_16COLLISIONS
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Timed out&n;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Timed out&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1557,7 +1557,7 @@ op_amp
 id|TX_COLLISION
 )paren
 (brace
-multiline_comment|/* Retrigger xmit. */
+multiline_comment|/*&n;&t;&t;&t; *&t;Retrigger xmit. &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1571,7 +1571,7 @@ c_func
 l_string|&quot; retransmitting after a collision.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Poor little chip can&squot;t reset its own start pointer&n;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Poor little chip can&squot;t reset its own start pointer&n;&t;&t;&t; */
 id|outb
 c_func
 (paren
@@ -1608,7 +1608,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t; *&t;It worked.. we will now fall through and receive&n;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;It worked.. we will now fall through and receive&n;&t;&t;&t; */
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
@@ -1636,7 +1636,7 @@ suffix:colon
 l_string|&quot;but tx is busy!&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;This is safe the interrupt is atomic WRT itself.&n;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;This is safe the interrupt is atomic WRT itself.&n;&t;&t;&t; */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -1652,7 +1652,7 @@ multiline_comment|/* In case more to transmit */
 )brace
 r_else
 (brace
-multiline_comment|/*&n;    &t; *&t;In receive mode.&n;    &t; */
+multiline_comment|/*&n;    &t;&t; *&t;In receive mode.&n;    &t;&t; */
 r_int
 id|rxsr
 op_assign
@@ -1689,7 +1689,7 @@ id|RX_LOW
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Just reading rx_status fixes most errors. &n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Just reading rx_status fixes most errors. &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1735,7 +1735,7 @@ op_amp
 id|RX_GOOD
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Receive worked.&n;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Receive worked.&n;&t;&t;&t; */
 id|el_receive
 c_func
 (paren
@@ -1745,7 +1745,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Nothing?  Something is broken! */
+multiline_comment|/*&n;&t;&t;&t; *&t;Nothing?  Something is broken!&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1784,7 +1784,7 @@ l_string|&quot;.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *&t;Move into receive mode &n;     */
+multiline_comment|/*&n;&t; *&t;Move into receive mode &n;&t; */
 id|outb
 c_func
 (paren
@@ -1821,10 +1821,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* We have a good packet. Well, not really &quot;good&quot;, just mostly not broken.&n;   We must check everything to see if it is good. */
+multiline_comment|/*&n; *&t;We have a good packet. Well, not really &quot;good&quot;, just mostly not broken.&n; *&t;We must check everything to see if it is good. &n; */
+DECL|function|el_receive
 r_static
 r_void
-DECL|function|el_receive
 id|el_receive
 c_func
 (paren
@@ -1919,7 +1919,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *&t;Command mode so we can empty the buffer&n;     */
+multiline_comment|/*&n;&t; *&t;Command mode so we can empty the buffer&n;&t; */
 id|outb
 c_func
 (paren
@@ -1938,7 +1938,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     *&t;Start of frame&n;     */
+multiline_comment|/*&n;&t; *&t;Start of frame&n;&t; */
 id|outw
 c_func
 (paren
@@ -1984,7 +1984,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The read increments through the bytes. The interrupt&n;&t; *&t;handler will fix the pointer when it returns to &n;&t; *&t;receive mode.&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;The read increments through the bytes. The interrupt&n;&t;&t; *&t;handler will fix the pointer when it returns to &n;&t;&t; *&t;receive mode.&n;&t;&t; */
 id|insb
 c_func
 (paren
@@ -2024,9 +2024,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|el_reset
 r_static
 r_void
-DECL|function|el_reset
 id|el_reset
 c_func
 (paren
@@ -2165,9 +2165,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|el1_close
 r_static
 r_int
-DECL|function|el1_close
 id|el1_close
 c_func
 (paren
@@ -2207,7 +2207,7 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Free and disable the IRQ. */
+multiline_comment|/*&n;&t; *&t;Free and disable the IRQ. &n;&t; */
 id|free_irq
 c_func
 (paren
@@ -2236,11 +2236,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|el1_get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-DECL|function|el1_get_stats
 id|el1_get_stats
 c_func
 (paren
@@ -2415,8 +2415,8 @@ id|irq
 op_assign
 l_int|5
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -2451,15 +2451,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
+multiline_comment|/*&n;&t; *&t;No need to check MOD_IN_USE, as sys_delete_module() checks.&n;&t; */
 id|unregister_netdev
 c_func
 (paren
@@ -2467,7 +2467,7 @@ op_amp
 id|dev_3c501
 )paren
 suffix:semicolon
-multiline_comment|/* Free up the private structure, or leak memory :-)  */
+multiline_comment|/*&n;&t; *&t;Free up the private structure, or leak memory :-) &n;&t; */
 id|kfree
 c_func
 (paren
@@ -2479,7 +2479,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* gets re-allocated by el1_probe1 */
-multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+multiline_comment|/*&n;&t; *&t;If we don&squot;t do this, we can&squot;t re-insmod it later. &n;&t; */
 id|release_region
 c_func
 (paren

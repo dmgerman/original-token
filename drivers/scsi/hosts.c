@@ -104,6 +104,11 @@ id|builtin_scsi_hosts
 )braket
 op_assign
 (brace
+multiline_comment|/* BusLogic must come before aha1542.c */
+macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
+id|BUSLOGIC
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_U14_34F
 id|ULTRASTOR_14_34F
 comma
@@ -114,11 +119,6 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA152X
 id|AHA152X
-comma
-macro_line|#endif
-multiline_comment|/* BusLogic must come before aha1542.c */
-macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
-id|BUSLOGIC
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA1542

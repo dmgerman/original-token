@@ -1,5 +1,76 @@
-multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.01  Nov 16, 1995&n; *&n; *  Copyright (C) 1995  Linus Torvalds &amp; author (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  abramov@cecmow.enet.dec.com (Igor)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; */
+multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.02  Nov 30, 1995&n; *&n; *  Copyright (C) 1995  Linus Torvalds &amp; author (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  abramov@cecmow.enet.dec.com (Igor)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; */
+multiline_comment|/*&n; * CMD640 specific registers definition.&n; */
+DECL|macro|VID
+mdefine_line|#define VID&t;&t;0x00
+DECL|macro|DID
+mdefine_line|#define DID&t;&t;0x02
+DECL|macro|PCMD
+mdefine_line|#define PCMD&t;&t;0x04
+DECL|macro|PSTTS
+mdefine_line|#define PSTTS&t;&t;0x06
+DECL|macro|REVID
+mdefine_line|#define REVID&t;&t;0x08
+DECL|macro|PROGIF
+mdefine_line|#define PROGIF&t;&t;0x09
+DECL|macro|SUBCL
+mdefine_line|#define SUBCL&t;&t;0x0a
+DECL|macro|BASCL
+mdefine_line|#define BASCL&t;&t;0x0b
+DECL|macro|BaseA0
+mdefine_line|#define BaseA0&t;&t;0x10
+DECL|macro|BaseA1
+mdefine_line|#define BaseA1&t;&t;0x14
+DECL|macro|BaseA2
+mdefine_line|#define BaseA2&t;&t;0x18
+DECL|macro|BaseA3
+mdefine_line|#define BaseA3&t;&t;0x1c
+DECL|macro|INTLINE
+mdefine_line|#define INTLINE&t;&t;0x3c
+DECL|macro|INPINE
+mdefine_line|#define INPINE&t;&t;0x3d
+DECL|macro|CFR
+mdefine_line|#define&t;CFR&t;&t;0x50
+DECL|macro|CFR_DEVREV
+mdefine_line|#define   CFR_DEVREV&t;&t;0x03
+DECL|macro|CFR_IDE01INTR
+mdefine_line|#define   CFR_IDE01INTR&t;&t;0x04
+DECL|macro|CFR_DEVID
+mdefine_line|#define&t;  CFR_DEVID&t;&t;0x18
+DECL|macro|CFR_AT_VESA_078h
+mdefine_line|#define&t;  CFR_AT_VESA_078h&t;0x20
+DECL|macro|CFR_DSA1
+mdefine_line|#define&t;  CFR_DSA1&t;&t;0x40
+DECL|macro|CFR_DSA0
+mdefine_line|#define&t;  CFR_DSA0&t;&t;0x80
+DECL|macro|CNTRL
+mdefine_line|#define CNTRL&t;&t;0x51
+DECL|macro|CNTRL_DIS_RA0
+mdefine_line|#define&t;  CNTRL_DIS_RA0&t;&t;0x40
+DECL|macro|CNTRL_DIS_RA1
+mdefine_line|#define   CNTRL_DIS_RA1&t;&t;0x80
+DECL|macro|CNTRL_ENA_2ND
+mdefine_line|#define&t;  CNTRL_ENA_2ND&t;&t;0x08
+DECL|macro|CMDTIM
+mdefine_line|#define&t;CMDTIM&t;&t;0x52
+DECL|macro|ARTTIM0
+mdefine_line|#define&t;ARTTIM0&t;&t;0x53
+DECL|macro|DRWTIM0
+mdefine_line|#define&t;DRWTIM0&t;&t;0x54
+DECL|macro|ARTTIM1
+mdefine_line|#define ARTTIM1 &t;0x55
+DECL|macro|DRWTIM1
+mdefine_line|#define DRWTIM1&t;&t;0x56
+DECL|macro|ARTTIM23
+mdefine_line|#define ARTTIM23&t;0x57
+DECL|macro|DIS_RA2
+mdefine_line|#define   DIS_RA2&t;&t;0x04
+DECL|macro|DIS_RA3
+mdefine_line|#define   DIS_RA3&t;&t;0x08
+DECL|macro|DRWTIM23
+mdefine_line|#define DRWTIM23&t;0x58
+DECL|macro|BRST
+mdefine_line|#define BRST&t;&t;0x59
 multiline_comment|/* Interface to access cmd640x registers */
 DECL|variable|put_cmd640_reg
 r_static
@@ -74,6 +145,12 @@ id|is_cmd640
 id|MAX_HWIFS
 )braket
 suffix:semicolon
+DECL|variable|bus_speed
+r_static
+r_int
+id|bus_speed
+suffix:semicolon
+multiline_comment|/* MHz */
 multiline_comment|/*&n; * For some unknown reasons pcibios functions which read and write registers&n; * do not work with cmd640. We use direct io instead.&n; */
 multiline_comment|/* PCI method 1 access */
 DECL|function|put_cmd640_reg_pci1
@@ -189,7 +266,7 @@ l_int|0xcf8
 suffix:semicolon
 id|b
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 l_int|0xcfc
@@ -317,7 +394,7 @@ l_int|0xcf8
 suffix:semicolon
 id|b
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 id|key
@@ -375,7 +452,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|reg_no
@@ -385,7 +462,7 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|val
@@ -433,7 +510,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|reg_no
@@ -445,7 +522,7 @@ l_int|8
 suffix:semicolon
 id|b
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 id|key
@@ -658,7 +735,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|0x50
+id|CFR
 comma
 l_int|0x178
 )paren
@@ -685,16 +762,16 @@ op_logical_or
 (paren
 id|b
 op_amp
-l_int|0x20
+id|CFR_AT_VESA_078h
 )paren
 )paren
 (brace
 id|outb
 c_func
 (paren
-l_int|0x50
+id|CFR
 comma
-l_int|0xc78
+l_int|0x78
 )paren
 suffix:semicolon
 id|b
@@ -720,7 +797,7 @@ op_logical_neg
 (paren
 id|b
 op_amp
-l_int|0x20
+id|CFR_AT_VESA_078h
 )paren
 )paren
 r_return
@@ -761,6 +838,15 @@ r_void
 (brace
 r_int
 id|i
+suffix:semicolon
+r_int
+id|second_port
+suffix:semicolon
+r_int
+id|read_ahead
+suffix:semicolon
+id|byte
+id|b
 suffix:semicolon
 r_for
 c_loop
@@ -889,10 +975,10 @@ c_func
 (paren
 id|cmd640_key
 comma
-l_int|0x50
+id|CFR
 )paren
 op_amp
-l_int|3
+id|CFR_DEVREV
 suffix:semicolon
 r_if
 c_cond
@@ -911,22 +997,92 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|put_cmd640_reg
-c_func
+multiline_comment|/*&n;&t; * Do not initialize secondary controller for vlbus&n;&t; */
+id|second_port
+op_assign
 (paren
-id|cmd640_key
-comma
-l_int|0x51
-comma
+id|bus_type
+op_ne
+id|vlb
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Set the maximum allowed bus speed (it is safest until we&n;&t; * &t;&t;&t;&t;      find how detect bus speed)&n;&t; * Normally PCI bus runs at 33MHz, but often works overclocked to 40&n;&t; */
+id|bus_speed
+op_assign
+(paren
+id|bus_type
+op_eq
+id|vlb
+)paren
+ques
+c_cond
+l_int|50
+suffix:colon
+l_int|40
+suffix:semicolon
+macro_line|#if 0&t;/* don&squot;t know if this is reliable yet */
+multiline_comment|/*&n;&t; * Enable readahead for versions above &squot;A&squot;&n;&t; */
+id|read_ahead
+op_assign
+(paren
+id|cmd640_chip_version
+OG
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#else
+id|read_ahead
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * Setup Control Register&n;&t; */
+id|b
+op_assign
 id|get_cmd640_reg
 c_func
 (paren
 id|cmd640_key
 comma
-l_int|0x51
+id|CNTRL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|second_port
+)paren
+id|b
+op_or_assign
+id|CNTRL_ENA_2ND
+suffix:semicolon
+r_else
+id|b
+op_and_assign
+op_complement
+id|CNTRL_ENA_2ND
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|read_ahead
+)paren
+id|b
+op_and_assign
+op_complement
+(paren
+id|CNTRL_DIS_RA0
 op_or
-l_int|0xc8
+id|CNTRL_DIS_RA1
+)paren
+suffix:semicolon
+r_else
+id|b
+op_or_assign
+(paren
+id|CNTRL_DIS_RA0
+op_or
+id|CNTRL_DIS_RA1
 )paren
 suffix:semicolon
 id|put_cmd640_reg
@@ -934,29 +1090,53 @@ c_func
 (paren
 id|cmd640_key
 comma
-l_int|0x57
+id|CNTRL
+comma
+id|b
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Initialize 2nd IDE port, if required&n;&t; */
+r_if
+c_cond
+(paren
+id|second_port
+)paren
+(brace
+multiline_comment|/* We reset timings, and setup read-ahead */
+id|b
+op_assign
+id|read_ahead
+ques
+c_cond
+l_int|0
+suffix:colon
+(paren
+id|DIS_RA2
+op_or
+id|DIS_RA3
+)paren
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
+id|cmd640_key
+comma
+id|ARTTIM23
+comma
+id|b
+)paren
+suffix:semicolon
+id|put_cmd640_reg
+c_func
+(paren
+id|cmd640_key
+comma
+id|DRWTIM23
 comma
 l_int|0
 )paren
 suffix:semicolon
-id|put_cmd640_reg
-c_func
-(paren
-id|cmd640_key
-comma
-l_int|0x57
-comma
-id|get_cmd640_reg
-c_func
-(paren
-id|cmd640_key
-comma
-l_int|0x57
-)paren
-op_or
-l_int|0x0c
-)paren
-suffix:semicolon
+)brace
 id|serialized
 op_assign
 l_int|1
@@ -964,7 +1144,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ide: buggy CMD640 interface at &quot;
+l_string|&quot;ide: buggy CMD640%c interface at &quot;
+comma
+l_char|&squot;A&squot;
+op_minus
+l_int|1
+op_plus
+id|cmd640_chip_version
 )paren
 suffix:semicolon
 r_switch
@@ -1031,17 +1217,7 @@ c_func
 (paren
 id|cmd640_key
 comma
-l_int|0x58
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|put_cmd640_reg
-c_func
-(paren
-id|cmd640_key
-comma
-l_int|0x52
+id|CMDTIM
 comma
 l_int|0
 )paren
@@ -1049,7 +1225,21 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n ... serialized, disabled read-ahead, secondary interface enabled&bslash;n&quot;
+l_string|&quot;&bslash;n ... serialized, %s read-ahead, secondary interface %s&bslash;n&quot;
+comma
+id|read_ahead
+ques
+c_cond
+l_string|&quot;enabled&quot;
+suffix:colon
+l_string|&quot;disabled&quot;
+comma
+id|second_port
+ques
+c_cond
+l_string|&quot;enabled&quot;
+suffix:colon
+l_string|&quot;disabled&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1071,7 +1261,7 @@ c_cond
 (paren
 id|a
 op_amp
-l_int|0xf0
+l_int|0xc0
 )paren
 (brace
 r_case
@@ -1135,19 +1325,25 @@ suffix:semicolon
 r_int
 id|r52
 suffix:semicolon
+r_static
+r_int
+id|a
+op_assign
+l_int|0
+suffix:semicolon
 id|b_reg
 op_assign
 id|if_num
 ques
 c_cond
-l_int|0x57
+id|ARTTIM23
 suffix:colon
 id|dr_num
 ques
 c_cond
-l_int|0x55
+id|ARTTIM1
 suffix:colon
-l_int|0x53
+id|ARTTIM0
 suffix:semicolon
 r_if
 c_cond
@@ -1195,31 +1391,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|b
-op_amp
-l_int|1
-)paren
+id|a
 op_eq
 l_int|0
-)paren
-(brace
-id|put_cmd640_reg
-c_func
-(paren
-id|cmd640_key
-comma
-id|b_reg
-comma
-id|r1
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
+op_logical_or
 id|as_clocks
 c_func
 (paren
@@ -1239,10 +1414,38 @@ id|cmd640_key
 comma
 id|b_reg
 comma
+(paren
+id|b
+op_amp
+l_int|0xc0
+)paren
+op_or
 id|r1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|a
+op_eq
+l_int|0
+)paren
+(brace
+id|put_cmd640_reg
+c_func
+(paren
+id|cmd640_key
+comma
+id|b_reg
+op_plus
+l_int|1
+comma
+id|r2
+)paren
+suffix:semicolon
 )brace
+r_else
+(brace
 id|b
 op_assign
 id|get_cmd640_reg
@@ -1255,54 +1458,31 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|b
-op_eq
-l_int|0
-)paren
-(brace
-id|put_cmd640_reg
-c_func
-(paren
-id|cmd640_key
-comma
-id|b_reg
-op_plus
-l_int|1
-comma
-id|r2
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|r52
 op_assign
 (paren
 id|b
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 OL
 (paren
 id|r2
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 ques
 c_cond
 (paren
 id|r2
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 suffix:colon
 (paren
 id|b
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 suffix:semicolon
 id|r52
@@ -1345,6 +1525,10 @@ id|r52
 )paren
 suffix:semicolon
 )brace
+id|a
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 id|b
 op_assign
@@ -1353,7 +1537,7 @@ c_func
 (paren
 id|cmd640_key
 comma
-l_int|0x52
+id|CMDTIM
 )paren
 suffix:semicolon
 r_if
@@ -1369,7 +1553,7 @@ c_func
 (paren
 id|cmd640_key
 comma
-l_int|0x52
+id|CMDTIM
 comma
 id|r2
 )paren
@@ -1382,26 +1566,26 @@ op_assign
 (paren
 id|b
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 OL
 (paren
 id|r2
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 ques
 c_cond
 (paren
 id|r2
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 suffix:colon
 (paren
 id|b
 op_amp
-l_int|0xf
+l_int|0x0f
 )paren
 suffix:semicolon
 id|r52
@@ -1436,21 +1620,13 @@ c_func
 (paren
 id|cmd640_key
 comma
-l_int|0x52
+id|CMDTIM
 comma
 id|r52
 )paren
 suffix:semicolon
 )brace
 )brace
-DECL|variable|bus_speed
-r_static
-r_int
-id|bus_speed
-op_assign
-l_int|33
-suffix:semicolon
-multiline_comment|/* MHz */
 DECL|struct|pio_timing
 r_struct
 id|pio_timing
@@ -1899,7 +2075,7 @@ l_int|0x170
 suffix:colon
 l_int|0x1f0
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|3
@@ -1909,7 +2085,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|mode_num
@@ -1921,7 +2097,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 (paren
@@ -1937,7 +2113,7 @@ op_plus
 l_int|6
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|0xef

@@ -187,6 +187,7 @@ op_amp
 (paren
 (paren
 (paren
+r_const
 r_int
 r_int
 op_star

@@ -175,6 +175,9 @@ DECL|macro|WAIT_WORSTCASE
 mdefine_line|#define WAIT_WORSTCASE&t;(30*HZ)&t;/* 30sec  - worst case when spinning up */
 DECL|macro|WAIT_CMD
 mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+macro_line|#include &quot;ide-tape.h&quot;
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD
 DECL|struct|atapi_request_sense
 r_struct
@@ -426,17 +429,20 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
 multiline_comment|/*&n; * Now for the data we need to maintain per-drive:  ide_drive_t&n; */
-DECL|enumerator|disk
-DECL|enumerator|cdrom
-DECL|typedef|media_t
+DECL|enumerator|ide_disk
+DECL|enumerator|ide_cdrom
+DECL|enumerator|ide_tape
+DECL|typedef|ide_media_t
 r_typedef
 r_enum
 (brace
-id|disk
+id|ide_disk
 comma
-id|cdrom
+id|ide_cdrom
+comma
+id|ide_tape
 )brace
-id|media_t
+id|ide_media_t
 suffix:semicolon
 r_typedef
 r_union
@@ -622,7 +628,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* flag: okay to unmask other irqs */
 DECL|member|media
-id|media_t
+id|ide_media_t
 id|media
 suffix:semicolon
 multiline_comment|/* disk, cdrom, tape */
@@ -746,6 +752,13 @@ id|cdrom_info
 suffix:semicolon
 multiline_comment|/* from ide-cd.c */
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE&t;&t;/* ide-tape specific data */
+multiline_comment|/*&n; *&t;Most of our global data which we need to save even as we leave the&n; *&t;driver due to an interrupt or a timer event is stored here.&n; *&n; *&t;Additional global variables which provide the link between the&n; *&t;character device interface to this structure are defined in&n; *&t;ide-tape.c&n; */
+DECL|member|tape
+id|idetape_tape_t
+id|tape
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 DECL|typedef|ide_drive_t
 )brace
 id|ide_drive_t
@@ -971,18 +984,12 @@ id|request
 id|wrq
 suffix:semicolon
 multiline_comment|/* local copy of current write rq */
-DECL|member|reset_timeout
+DECL|member|poll_timeout
 r_int
 r_int
-id|reset_timeout
+id|poll_timeout
 suffix:semicolon
-multiline_comment|/* timeout value during ide resets */
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
-DECL|member|doing_atapi_reset
-r_int
-id|doing_atapi_reset
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+multiline_comment|/* timeout value during long polls */
 DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
@@ -1005,16 +1012,6 @@ macro_line|#else
 DECL|macro|SET_RECOVERY_TIMER
 mdefine_line|#define SET_RECOVERY_TIMER(drive)
 macro_line|#endif
-multiline_comment|/*&n; * The main (re-)entry point for handling a new request is IDE_DO_REQUEST.&n; * Note that IDE_DO_REQUEST should *only* ever be invoked from an interrupt&n; * handler.  All others, such as a timer expiry handler, should call&n; * do_hwgroup_request() instead (currently local to ide.c).&n; */
-r_void
-id|ide_do_request
-(paren
-id|ide_hwgroup_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|IDE_DO_REQUEST
-mdefine_line|#define IDE_DO_REQUEST { SET_RECOVERY_TIMER(HWIF(drive)); ide_do_request(HWGROUP(drive)); }
 multiline_comment|/*&n; * This is used for (nearly) all data transfers from the IDE interface&n; */
 r_void
 id|ide_input_data
@@ -1060,6 +1057,10 @@ comma
 id|ide_handler_t
 op_star
 id|handler
+comma
+r_int
+r_int
+id|timeout
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Error reporting, in human readable form (luxurious, but a memory hog).&n; */
@@ -1079,8 +1080,8 @@ id|byte
 id|stat
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * ide_error() takes action based on the error returned by the controller.&n; *&n; * Returns 1 if an ide reset operation has been initiated, in which case&n; * the caller MUST simply return from the driver (through however many levels).&n; * Returns 0 otherwise.&n; */
-r_int
+multiline_comment|/*&n; * ide_error() takes action based on the error returned by the controller.&n; * The calling function must return afterwards, to restart the request.&n; */
+r_void
 id|ide_error
 (paren
 id|ide_drive_t
@@ -1096,7 +1097,7 @@ id|byte
 id|stat
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This routine busy-waits for the drive status to be not &quot;busy&quot;.&n; * It then checks the status for all of the &quot;good&quot; bits and none&n; * of the &quot;bad&quot; bits, and if all is okay it returns 0.  All other&n; * cases return 1 after invoking ide_error()&n; *&n; */
+multiline_comment|/*&n; * This routine busy-waits for the drive status to be not &quot;busy&quot;.&n; * It then checks the status for all of the &quot;good&quot; bits and none&n; * of the &quot;bad&quot; bits, and if all is okay it returns 0.  All other&n; * cases return 1 after invoking ide_error() -- caller should return.&n; *&n; */
 r_int
 id|ide_wait_stat
 (paren
@@ -1129,39 +1130,73 @@ r_char
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Start a reset operation for an IDE interface.&n; * Returns 0 if the reset operation is still in progress,&n; *  in which case the drive MUST return, to await completion.&n; * Returns 1 if the reset is complete (success or failure).&n; */
-r_int
+multiline_comment|/*&n; * Start a reset operation for an IDE interface.&n; * The caller should return immediately after invoking this.&n; */
+r_void
 id|ide_do_reset
 (paren
 id|ide_drive_t
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * ide_alloc(): memory allocation for use *only* during driver initialization.&n; * If &quot;within_area&quot; is non-zero, the memory will be allocated such that&n; * it lies entirely within a &quot;within_area&quot; sized area (eg. 4096).  This is&n; * needed for DMA stuff.  &quot;within_area&quot; must be a power of two (not validated).&n; * All allocations are longword aligned.&n; */
+multiline_comment|/*&n; * This function is intended to be used prior to invoking ide_do_drive_cmd().&n; */
 r_void
-op_star
-id|ide_alloc
+id|ide_init_drive_cmd
 (paren
-r_int
-r_int
-id|bytecount
-comma
-r_int
-r_int
-id|within_area
+r_struct
+id|request
+op_star
+id|rq
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This function issues a specific IDE drive command onto the&n; * tail of the request queue, and waits for it to be completed.&n; * If arg is NULL, it goes through all the motions,&n; * but without actually sending a command to the drive.&n; *&n; * The value of arg is passed to the internal handler as rq-&gt;buffer.&n; */
+multiline_comment|/*&n; * &quot;action&quot; parameter type for ide_do_drive_cmd() below.&n; */
+r_typedef
+r_enum
+DECL|enumerator|ide_wait
+(brace
+id|ide_wait
+comma
+multiline_comment|/* insert rq at end of list, and wait for it */
+DECL|enumerator|ide_next
+id|ide_next
+comma
+multiline_comment|/* insert rq immediately after current request */
+DECL|enumerator|ide_preempt
+id|ide_preempt
+)brace
+multiline_comment|/* insert rq in front of current request */
+DECL|typedef|ide_action_t
+id|ide_action_t
+suffix:semicolon
+multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the &n; * ATAPI tape/cdrom driver code.&n; */
 r_int
 id|ide_do_drive_cmd
-c_func
 (paren
-id|kdev_t
-id|rdev
-comma
-r_char
+id|ide_drive_t
 op_star
-id|args
+id|drive
+comma
+r_struct
+id|request
+op_star
+id|rq
+comma
+id|ide_action_t
+id|action
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Clean up after success/failure of an explicit drive cmd.&n; * stat/err are used only when (HWGROUP(drive)-&gt;rq-&gt;cmd == IDE_DRIVE_CMD).&n; */
+r_void
+id|ide_end_drive_cmd
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|byte
+id|stat
+comma
+id|byte
+id|err
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD
@@ -1242,6 +1277,120 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+multiline_comment|/*&n; *&t;Functions in ide-tape.c which are invoked from ide.c:&n; */
+multiline_comment|/*&n; *&t;idetape_identify_device is called during device probing stage to&n; *&t;probe for an ide atapi tape drive and to initialize global variables&n; *&t;in ide-tape.c which provide the link between the character device&n; *&t;and the correspoding block device.&n; *&n; *&t;Returns 1 if an ide tape was detected and is supported.&n; *&t;Returns 0 otherwise.&n; */
+r_int
+id|idetape_identify_device
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_struct
+id|hd_driveid
+op_star
+id|id
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;idetape_setup is called a bit later than idetape_identify_device,&n; *&t;during the search for disk partitions, to initialize various tape&n; *&t;state variables in ide_drive_t *drive.&n; */
+r_void
+id|idetape_setup
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;idetape_do_request is our request function. It is called by ide.c&n; *&t;to process a new request.&n; */
+r_void
+id|idetape_do_request
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_struct
+id|request
+op_star
+id|rq
+comma
+r_int
+r_int
+id|block
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;Block device interface functions.&n; */
+r_int
+id|idetape_blkdev_ioctl
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_int
+id|idetape_blkdev_open
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_void
+id|idetape_blkdev_release
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;idetape_register_chrdev initializes the character device interface to&n; *&t;the ide tape drive.&n; */
+r_void
+id|idetape_register_chrdev
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 macro_line|#ifdef CONFIG_BLK_DEV_TRITON
 r_void
 id|ide_init_triton

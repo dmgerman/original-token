@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;This code implements the IGMP protocol as defined in RFC1122. There has&n; *&t;been a further revision of this protocol since, but since it is not&n; *&t;cleanly specified in any IETF standards we implement the old one properly&n; *&t;rather than play a game of guess the BSD unofficial extensions.&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; *&t;&t;Alan Cox&t;:&t;Dumped the header building experiment.&n; *&t;&t;Alan Cox&t;:&t;Minor tweaks ready for multicast routing&n; *&t;&t;&t;&t;&t;and extended IGMP protocol.&n; *&t;&t;Alan Cox&t;:&t;Removed a load of inline directives. Gcc 2.5.8&n; *&t;&t;&t;&t;&t;writes utterly bogus code otherwise (sigh)&n; *&t;&t;&t;&t;&t;fixed IGMP loopback to behave in the manner&n; *&t;&t;&t;&t;&t;desired by mrouted, fixed the fact it has been&n; *&t;&t;&t;&t;&t;broken since 1.3.6 and cleaned up a few minor&n; *&t;&t;&t;&t;&t;points.&n; *&t;&t;Chih-Jen Chang&t;:&t;Tried to revise IGMP to Version 2&n; *&t;&t;Tsu-Sheng Tsao&t;&t;chihjenc@scf.usc.edu and tsusheng@scf.usc.edu&n; *&t;&t;&t;&t;&t;The enhancements are based on Steve Deering&squot;s ipmulti-3.5 code&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the igmp_get_mrouter_info and&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_set_mrouter_info to keep track of&n; *&t;&t;&t;&t;&t;the mrouted version on that device.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the max_resp_time parameter to&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_heard_query(). Using this parameter&n; *&t;&t;&t;&t;&t;to identify the multicast router verion&n; *&t;&t;&t;&t;&t;and do what the IGMP version 2 specified.&n; */
+multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;This code implements the IGMP protocol as defined in RFC1122. There has&n; *&t;been a further revision of this protocol since, but since it is not&n; *&t;cleanly specified in any IETF standards we implement the old one properly&n; *&t;rather than play a game of guess the BSD unofficial extensions.&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; *&t;&t;Alan Cox&t;:&t;Dumped the header building experiment.&n; *&t;&t;Alan Cox&t;:&t;Minor tweaks ready for multicast routing&n; *&t;&t;&t;&t;&t;and extended IGMP protocol.&n; *&t;&t;Alan Cox&t;:&t;Removed a load of inline directives. Gcc 2.5.8&n; *&t;&t;&t;&t;&t;writes utterly bogus code otherwise (sigh)&n; *&t;&t;&t;&t;&t;fixed IGMP loopback to behave in the manner&n; *&t;&t;&t;&t;&t;desired by mrouted, fixed the fact it has been&n; *&t;&t;&t;&t;&t;broken since 1.3.6 and cleaned up a few minor&n; *&t;&t;&t;&t;&t;points.&n; *&n; *&t;&t;Chih-Jen Chang&t;:&t;Tried to revise IGMP to Version 2&n; *&t;&t;Tsu-Sheng Tsao&t;&t;E-mail: chihjenc@scf.usc.edu and tsusheng@scf.usc.edu&n; *&t;&t;&t;&t;&t;The enhancements are mainly based on Steve Deering&squot;s &n; * &t;&t;&t;&t;&t;ipmulti-3.5 source code.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the igmp_get_mrouter_info and&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_set_mrouter_info to keep track of&n; *&t;&t;&t;&t;&t;the mrouted version on that device.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the max_resp_time parameter to&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_heard_query(). Using this parameter&n; *&t;&t;&t;&t;&t;to identify the multicast router verion&n; *&t;&t;&t;&t;&t;and do what the IGMP version 2 specified.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added a timer to revert to IGMP V2 router&n; *&t;&t;Tsu-Sheng Tsao&t;&t;if the specified time expired.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -20,16 +20,57 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#ifdef CONFIG_IP_MULTICAST
-multiline_comment|/*&n; *&t;Multicast router info manager&n; */
-DECL|variable|router_info_head
+multiline_comment|/*&n; *&t;If time expired, change the router type to IGMP_NEW_ROUTER.&n; */
+DECL|function|ip_router_timer_expire
+r_static
+r_void
+id|ip_router_timer_expire
+c_func
+(paren
+r_int
+r_int
+id|data
+)paren
+(brace
 r_struct
-id|router_info
+id|ip_router_info
 op_star
-id|router_info_head
+id|i
 op_assign
 (paren
 r_struct
-id|router_info
+id|ip_router_info
+op_star
+)paren
+id|data
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|i-&gt;timer
+)paren
+suffix:semicolon
+id|i-&gt;type
+op_assign
+id|IGMP_NEW_ROUTER
+suffix:semicolon
+multiline_comment|/* Revert to new multicast router */
+id|i-&gt;time
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Multicast router info manager&n; */
+DECL|variable|ip_router_info_head
+r_struct
+id|ip_router_info
+op_star
+id|ip_router_info_head
+op_assign
+(paren
+r_struct
+id|ip_router_info
 op_star
 )paren
 l_int|0
@@ -38,7 +79,7 @@ multiline_comment|/*&n; *&t;Get the multicast router info on that device&n; */
 DECL|function|igmp_get_mrouter_info
 r_static
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 id|igmp_get_mrouter_info
 c_func
@@ -51,7 +92,7 @@ id|dev
 (brace
 r_register
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 id|i
 suffix:semicolon
@@ -60,7 +101,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|router_info_head
+id|ip_router_info_head
 suffix:semicolon
 id|i
 op_ne
@@ -89,7 +130,7 @@ id|i
 op_assign
 (paren
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 )paren
 id|kmalloc
@@ -118,11 +159,31 @@ id|IGMP_AGE_THRESHOLD
 suffix:semicolon
 id|i-&gt;next
 op_assign
-id|router_info_head
+id|ip_router_info_head
 suffix:semicolon
-id|router_info_head
+id|ip_router_info_head
 op_assign
 id|i
+suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|i-&gt;timer
+)paren
+suffix:semicolon
+id|i-&gt;timer.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|i
+suffix:semicolon
+id|i-&gt;timer.function
+op_assign
+op_amp
+id|ip_router_timer_expire
 suffix:semicolon
 r_return
 id|i
@@ -132,7 +193,7 @@ multiline_comment|/*&n; *&t;Set the multicast router info on that device&n; */
 DECL|function|igmp_set_mrouter_info
 r_static
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 id|igmp_set_mrouter_info
 c_func
@@ -151,7 +212,7 @@ id|time
 (brace
 r_register
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 id|i
 suffix:semicolon
@@ -160,7 +221,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|router_info_head
+id|ip_router_info_head
 suffix:semicolon
 id|i
 op_ne
@@ -179,6 +240,22 @@ op_eq
 id|dev
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|i-&gt;type
+op_eq
+id|IGMP_OLD_ROUTER
+)paren
+(brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|i-&gt;timer
+)paren
+suffix:semicolon
+)brace
 id|i-&gt;type
 op_assign
 id|type
@@ -187,6 +264,30 @@ id|i-&gt;time
 op_assign
 id|time
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i-&gt;type
+op_eq
+id|IGMP_OLD_ROUTER
+)paren
+(brace
+id|i-&gt;timer.expires
+op_assign
+id|jiffies
+op_plus
+id|i-&gt;time
+op_star
+id|HZ
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|i-&gt;timer
+)paren
+suffix:semicolon
+)brace
 r_return
 id|i
 suffix:semicolon
@@ -197,7 +298,7 @@ id|i
 op_assign
 (paren
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 )paren
 id|kmalloc
@@ -226,12 +327,56 @@ id|time
 suffix:semicolon
 id|i-&gt;next
 op_assign
-id|router_info_head
+id|ip_router_info_head
 suffix:semicolon
-id|router_info_head
+id|ip_router_info_head
 op_assign
 id|i
 suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|i-&gt;timer
+)paren
+suffix:semicolon
+id|i-&gt;timer.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|i
+suffix:semicolon
+id|i-&gt;timer.function
+op_assign
+op_amp
+id|ip_router_timer_expire
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i-&gt;type
+op_eq
+id|IGMP_OLD_ROUTER
+)paren
+(brace
+id|i-&gt;timer.expires
+op_assign
+id|jiffies
+op_plus
+id|i-&gt;time
+op_star
+id|HZ
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|i-&gt;timer
+)paren
+suffix:semicolon
+)brace
 r_return
 id|i
 suffix:semicolon
@@ -546,7 +691,7 @@ op_star
 id|data
 suffix:semicolon
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 id|r
 suffix:semicolon
@@ -1119,7 +1264,7 @@ id|im
 )paren
 (brace
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 id|r
 suffix:semicolon
@@ -1683,22 +1828,6 @@ id|ip_mc_list
 op_star
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Don&squot;t add to non multicast units&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_MULTICAST
-)paren
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;No duplicates&n;&t; */
 r_for
 c_loop
 (paren
@@ -1725,7 +1854,6 @@ id|IGMP_ALL_HOSTS
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Add it&n;&t; */
 id|i
 op_assign
 (paren

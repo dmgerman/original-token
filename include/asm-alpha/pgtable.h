@@ -2,6 +2,13 @@ macro_line|#ifndef _ALPHA_PGTABLE_H
 DECL|macro|_ALPHA_PGTABLE_H
 mdefine_line|#define _ALPHA_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the alpha page table tree.&n; *&n; * This hopefully works with any standard alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
+DECL|macro|invalidate_all
+mdefine_line|#define invalidate_all() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-2($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
+DECL|macro|invalidate
+mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-1($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;(PAGE_SHIFT + (PAGE_SHIFT-3))

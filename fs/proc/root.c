@@ -5,6 +5,9 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Offset of the first process in the /proc root directory..&n; */
 DECL|macro|FIRST_PROCESS_ENTRY
 mdefine_line|#define FIRST_PROCESS_ENTRY 256
@@ -1310,6 +1313,39 @@ comma
 )brace
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+(brace
+id|PROC_APM
+comma
+l_int|3
+comma
+l_string|&quot;apm&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

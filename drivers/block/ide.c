@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 5.18  Nov 16, 1995&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.&n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; *&n; * It is easy to extend ide.c to handle more than four interfaces:&n; *&n; *&t;Change the MAX_HWIFS constant in ide.h.&n; *&n; *&t;Define some new major numbers (in major.h), and insert them into&n; *&t;the ide_hwif_to_major table in ide.c.&n; *&n; *&t;Fill in the extra values for the new interfaces into the two tables&n; *&t;inside ide.c:  default_io_base[]  and  default_irqs[].&n; *&n; *&t;Create the new request handlers by cloning &quot;do_ide3_request()&quot;&n; *&t;for each new interface, and add them to the switch statement&n; *&t;in the ide_init() function in ide.c.&n; *&n; *&t;Recompile, create the new /dev/ entries, and it will probably work.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  Maintained by Mark Lord (mlord@bnr.ca):  ide.c, ide.h, triton.c, hd.c, ..&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *  ...&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  Version 3.8&t;&t;fixed byte-swapping for confused Mitsumi cdrom drives&n; *&t;&t;&t;update of ide-cd.c from Scott, allows blocksize=1024&n; *&t;&t;&t;cdrom probe fixes, inspired by jprang@uni-duisburg.de&n; *  Version 3.9&t;&t;don&squot;t use LBA if lba_capacity looks funny&n; *&t;&t;&t;correct the drive capacity calculations&n; *&t;&t;&t;fix probing for old Seagates without IDE_ALTSTATUS_REG&n; *&t;&t;&t;fix byte-ordering for some NEC cdrom drives&n; *  Version 3.10&t;disable multiple mode by default; was causing trouble&n; *  Version 3.11&t;fix mis-identification of old WD disks as cdroms&n; *  Version 3,12&t;simplify logic for selecting initial mult_count&n; *&t;&t;&t;  (fixes problems with buggy WD drives)&n; *  Version 3.13&t;remove excess &quot;multiple mode disabled&quot; messages&n; *  Version 3.14&t;fix ide_error() handling of BUSY_STAT&n; *&t;&t;&t;fix byte-swapped cdrom strings (again.. arghh!)&n; *&t;&t;&t;ignore INDEX bit when checking the ALTSTATUS reg&n; *  Version 3.15&t;add SINGLE_THREADED flag for use with dual-CMD i/f&n; *&t;&t;&t;ignore WRERR_STAT for non-write operations&n; *&t;&t;&t;added vlb_sync support for DC-2000A &amp; others,&n; *&t;&t;&t; (incl. some Promise chips), courtesy of Frank Gockel&n; *  Version 3.16&t;convert vlb_32bit and vlb_sync into runtime flags&n; *&t;&t;&t;add ioctls to get/set VLB flags (HDIO_[SG]ET_CHIPSET)&n; *&t;&t;&t;rename SINGLE_THREADED to SUPPORT_SERIALIZE,&n; *&t;&t;&t;add boot flag to &quot;serialize&quot; operation for CMD i/f&n; *&t;&t;&t;add optional support for DTC2278 interfaces,&n; *&t;&t;&t; courtesy of andy@cercle.cts.com (Dyan Wile).&n; *&t;&t;&t;add boot flag to enable &quot;dtc2278&quot; probe&n; *&t;&t;&t;add probe to avoid EATA (SCSI) interfaces,&n; *&t;&t;&t; courtesy of neuffer@goofy.zdv.uni-mainz.de.&n; *  Version 4.00&t;tidy up verify_area() calls - heiko@colossus.escape.de&n; *&t;&t;&t;add flag to ignore WRERR_STAT for some drives&n; *&t;&t;&t; courtesy of David.H.West@um.cc.umich.edu&n; *&t;&t;&t;assembly syntax tweak to vlb_sync&n; *&t;&t;&t;removeable drive support from scuba@cs.tu-berlin.de&n; *&t;&t;&t;add transparent support for DiskManager-6.0x &quot;Dynamic&n; *&t;&t;&t; Disk Overlay&quot; (DDO), most of this in in genhd.c&n; *&t;&t;&t;eliminate &quot;multiple mode turned off&quot; message at boot&n; *  Version 4.10&t;fix bug in ioctl for &quot;hdparm -c3&quot;&n; *&t;&t;&t;fix DM6:DDO support -- now works with LILO, fdisk, ...&n; *&t;&t;&t;don&squot;t treat some naughty WD drives as removeable&n; *  Version 4.11&t;updated DM6 support using info provided by OnTrack&n; *  Version 5.00&t;major overhaul, multmode setting fixed, vlb_sync fixed&n; *&t;&t;&t;added support for 3rd/4th/alternative IDE ports&n; *&t;&t;&t;created ide.h; ide-cd.c now compiles separate from ide.c&n; *&t;&t;&t;hopefully fixed infinite &quot;unexpected_intr&quot; from cdroms&n; *&t;&t;&t;zillions of other changes and restructuring&n; *&t;&t;&t;somehow reduced overall memory usage by several kB&n; *&t;&t;&t;probably slowed things down slightly, but worth it&n; *  Version 5.01&t;AT LAST!!  Finally understood why &quot;unexpected_intr&quot;&n; *&t;&t;&t; was happening at various times/places:  whenever the&n; *&t;&t;&t; ide-interface&squot;s ctl_port was used to &quot;mask&quot; the irq,&n; *&t;&t;&t; it also would trigger an edge in the process of masking&n; *&t;&t;&t; which would result in a self-inflicted interrupt!!&n; *&t;&t;&t; (such a stupid way to build a hardware interrupt mask).&n; *&t;&t;&t; This is now fixed (after a year of head-scratching).&n; *  Version 5.02&t;got rid of need for {enable,disable}_irq_list()&n; *  Version 5.03&t;tune-ups, comments, remove &quot;busy wait&quot; from drive resets&n; *&t;&t;&t;removed PROBE_FOR_IRQS option -- no longer needed&n; *&t;&t;&t;OOOPS!  fixed &quot;bad access&quot; bug for 2nd drive on an i/f&n; *  Version 5.04&t;changed &quot;ira %d&quot; to &quot;irq %d&quot; in DEBUG message&n; *&t;&t;&t;added more comments, cleaned up unexpected_intr()&n; *&t;&t;&t;OOOPS!  fixed null pointer problem in ide reset code&n; *&t;&t;&t;added autodetect for Triton chipset -- no effect yet&n; *  Version 5.05&t;OOOPS!  fixed bug in revalidate_disk()&n; *&t;&t;&t;OOOPS!  fixed bug in ide_do_request()&n; *&t;&t;&t;added ATAPI reset sequence for cdroms&n; *  Version 5.10&t;added Bus-Mastered DMA support for Triton Chipset&n; *&t;&t;&t;some (mostly) cosmetic changes&n; *  Version 5.11&t;added ht6560b support by malafoss@snakemail.hut.fi&n; *&t;&t;&t;reworked PCI scanning code&n; *&t;&t;&t;added automatic RZ1000 detection/support&n; *&t;&t;&t;added automatic PCI CMD640 detection/support&n; *&t;&t;&t;added option for VLB CMD640 support&n; *&t;&t;&t;tweaked probe to find cdrom on hdb with disks on hda,hdc&n; *  Version 5.12&t;some performance tuning&n; *&t;&t;&t;added message to alert user to bad /dev/hd[cd] entries&n; *&t;&t;&t;OOOPS!  fixed bug in atapi reset&n; *&t;&t;&t;driver now forces &quot;serialize&quot; again for all cmd640 chips&n; *&t;&t;&t;noticed REALLY_SLOW_IO had no effect, moved it to ide.c&n; *&t;&t;&t;made do_drive_cmd() into public ide_do_drive_cmd()&n; *  Version 5.13&t;fixed typo (&squot;B&squot;), thanks to houston@boyd.geog.mcgill.ca&n; *&t;&t;&t;fixed ht6560b support&n; *  Version 5.13b (sss)&t;fix problem in calling ide_cdrom_setup()&n; *&t;&t;&t;don&squot;t bother invalidating nonexistent partitions&n; *  Version 5.14&t;fixes to cmd640 support.. maybe it works now(?)&n; *&t;&t;&t;added &amp; tested full EZ-DRIVE support -- don&squot;t use LILO!&n; *&t;&t;&t;don&squot;t enable 2nd CMD640 PCI port during init - conflict&n; *  Version 5.15&t;bug fix in init_cmd640_vlb()&n; *&t;&t;&t;bug fix in interrupt sharing code&n; *  Version 5.16&t;ugh.. fix &quot;serialize&quot; support, broken in 5.15&n; *&t;&t;&t;remove &quot;Huh?&quot; from cmd640 code&n; *&t;&t;&t;added qd6580 interface speed select from Colten Edwards&n; *  Version 5.17&t;kludge around bug in BIOS32 on Intel triton motherboards&n; *  Version 5.18&t;new CMD640 code, moved to cmd640.c, #include&squot;d for now&n; *&t;&t;&t;new UMC8672 code, moved to umc8672.c, #include&squot;d for now&n; *&t;&t;&t;disallow turning on DMA when h/w not capable of DMA&n; *&n; *  Driver compile-time options are in ide.h&n; *&n; *  To do, in likely order of completion:&n; *&t;- make cmd640.c and umc8672.c compile separately from ide.c&n; *&t;- add ALI M1443/1445 chipset support from derekn@vw.ece.cmu.edu&n; *&t;- add ioctls to get/set interface timings on various interfaces&n; *&t;- add Promise Caching controller support from peterd@pnd-pc.demon.co.uk&n; *&t;- modify kernel to obtain BIOS geometry for drives on 2nd/3rd/4th i/f&n; *&t;- find someone to work on IDE *tape drive* support&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide.c&t;Version 5.22  Dec 10, 1995&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.&n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; *&n; * It is easy to extend ide.c to handle more than four interfaces:&n; *&n; *&t;Change the MAX_HWIFS constant in ide.h.&n; *&n; *&t;Define some new major numbers (in major.h), and insert them into&n; *&t;the ide_hwif_to_major table in ide.c.&n; *&n; *&t;Fill in the extra values for the new interfaces into the two tables&n; *&t;inside ide.c:  default_io_base[]  and  default_irqs[].&n; *&n; *&t;Create the new request handlers by cloning &quot;do_ide3_request()&quot;&n; *&t;for each new interface, and add them to the switch statement&n; *&t;in the ide_init() function in ide.c.&n; *&n; *&t;Recompile, create the new /dev/ entries, and it will probably work.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@bnr.ca).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@bnr.ca)&t;&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Petri Mattila&t;(ptjmatti@kruuna.helsinki.fi)&t;(EIDE stuff)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  Maintained by Mark Lord (mlord@bnr.ca):  ide.c, ide.h, triton.c, hd.c, ..&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; *  Version 1.0 ALPHA&t;initial code, primary i/f working okay&n; *  Version 1.3 BETA&t;dual i/f on shared irq tested &amp; working!&n; *  Version 1.4 BETA&t;added auto probing for irq(s)&n; *  Version 1.5 BETA&t;added ALPHA (untested) support for IDE cd-roms,&n; *  ...&n; *  Version 3.5&t;&t;correct the bios_cyl field if it&squot;s too small&n; *  (linux 1.1.76)&t; (to help fdisk with brain-dead BIOSs)&n; *  Version 3.6&t;&t;cosmetic corrections to comments and stuff&n; *  (linux 1.1.77)&t;reorganise probing code to make it understandable&n; *&t;&t;&t;added halfway retry to probing for drive identification&n; *&t;&t;&t;added &quot;hdx=noprobe&quot; command line option&n; *&t;&t;&t;allow setting multmode even when identification fails&n; *  Version 3.7&t;&t;move set_geometry=1 from do_identify() to ide_init()&n; *&t;&t;&t;increase DRQ_WAIT to eliminate nuisance messages&n; *&t;&t;&t;wait for DRQ_STAT instead of DATA_READY during probing&n; *&t;&t;&t;  (courtesy of Gary Thomas gary@efland.UU.NET)&n; *  Version 3.8&t;&t;fixed byte-swapping for confused Mitsumi cdrom drives&n; *&t;&t;&t;update of ide-cd.c from Scott, allows blocksize=1024&n; *&t;&t;&t;cdrom probe fixes, inspired by jprang@uni-duisburg.de&n; *  Version 3.9&t;&t;don&squot;t use LBA if lba_capacity looks funny&n; *&t;&t;&t;correct the drive capacity calculations&n; *&t;&t;&t;fix probing for old Seagates without IDE_ALTSTATUS_REG&n; *&t;&t;&t;fix byte-ordering for some NEC cdrom drives&n; *  Version 3.10&t;disable multiple mode by default; was causing trouble&n; *  Version 3.11&t;fix mis-identification of old WD disks as cdroms&n; *  Version 3,12&t;simplify logic for selecting initial mult_count&n; *&t;&t;&t;  (fixes problems with buggy WD drives)&n; *  Version 3.13&t;remove excess &quot;multiple mode disabled&quot; messages&n; *  Version 3.14&t;fix ide_error() handling of BUSY_STAT&n; *&t;&t;&t;fix byte-swapped cdrom strings (again.. arghh!)&n; *&t;&t;&t;ignore INDEX bit when checking the ALTSTATUS reg&n; *  Version 3.15&t;add SINGLE_THREADED flag for use with dual-CMD i/f&n; *&t;&t;&t;ignore WRERR_STAT for non-write operations&n; *&t;&t;&t;added vlb_sync support for DC-2000A &amp; others,&n; *&t;&t;&t; (incl. some Promise chips), courtesy of Frank Gockel&n; *  Version 3.16&t;convert vlb_32bit and vlb_sync into runtime flags&n; *&t;&t;&t;add ioctls to get/set VLB flags (HDIO_[SG]ET_CHIPSET)&n; *&t;&t;&t;rename SINGLE_THREADED to SUPPORT_SERIALIZE,&n; *&t;&t;&t;add boot flag to &quot;serialize&quot; operation for CMD i/f&n; *&t;&t;&t;add optional support for DTC2278 interfaces,&n; *&t;&t;&t; courtesy of andy@cercle.cts.com (Dyan Wile).&n; *&t;&t;&t;add boot flag to enable &quot;dtc2278&quot; probe&n; *&t;&t;&t;add probe to avoid EATA (SCSI) interfaces,&n; *&t;&t;&t; courtesy of neuffer@goofy.zdv.uni-mainz.de.&n; *  Version 4.00&t;tidy up verify_area() calls - heiko@colossus.escape.de&n; *&t;&t;&t;add flag to ignore WRERR_STAT for some drives&n; *&t;&t;&t; courtesy of David.H.West@um.cc.umich.edu&n; *&t;&t;&t;assembly syntax tweak to vlb_sync&n; *&t;&t;&t;removeable drive support from scuba@cs.tu-berlin.de&n; *&t;&t;&t;add transparent support for DiskManager-6.0x &quot;Dynamic&n; *&t;&t;&t; Disk Overlay&quot; (DDO), most of this in in genhd.c&n; *&t;&t;&t;eliminate &quot;multiple mode turned off&quot; message at boot&n; *  Version 4.10&t;fix bug in ioctl for &quot;hdparm -c3&quot;&n; *&t;&t;&t;fix DM6:DDO support -- now works with LILO, fdisk, ...&n; *&t;&t;&t;don&squot;t treat some naughty WD drives as removeable&n; *  Version 4.11&t;updated DM6 support using info provided by OnTrack&n; *  Version 5.00&t;major overhaul, multmode setting fixed, vlb_sync fixed&n; *&t;&t;&t;added support for 3rd/4th/alternative IDE ports&n; *&t;&t;&t;created ide.h; ide-cd.c now compiles separate from ide.c&n; *&t;&t;&t;hopefully fixed infinite &quot;unexpected_intr&quot; from cdroms&n; *&t;&t;&t;zillions of other changes and restructuring&n; *&t;&t;&t;somehow reduced overall memory usage by several kB&n; *&t;&t;&t;probably slowed things down slightly, but worth it&n; *  Version 5.01&t;AT LAST!!  Finally understood why &quot;unexpected_intr&quot;&n; *&t;&t;&t; was happening at various times/places:  whenever the&n; *&t;&t;&t; ide-interface&squot;s ctl_port was used to &quot;mask&quot; the irq,&n; *&t;&t;&t; it also would trigger an edge in the process of masking&n; *&t;&t;&t; which would result in a self-inflicted interrupt!!&n; *&t;&t;&t; (such a stupid way to build a hardware interrupt mask).&n; *&t;&t;&t; This is now fixed (after a year of head-scratching).&n; *  Version 5.02&t;got rid of need for {enable,disable}_irq_list()&n; *  Version 5.03&t;tune-ups, comments, remove &quot;busy wait&quot; from drive resets&n; *&t;&t;&t;removed PROBE_FOR_IRQS option -- no longer needed&n; *&t;&t;&t;OOOPS!  fixed &quot;bad access&quot; bug for 2nd drive on an i/f&n; *  Version 5.04&t;changed &quot;ira %d&quot; to &quot;irq %d&quot; in DEBUG message&n; *&t;&t;&t;added more comments, cleaned up unexpected_intr()&n; *&t;&t;&t;OOOPS!  fixed null pointer problem in ide reset code&n; *&t;&t;&t;added autodetect for Triton chipset -- no effect yet&n; *  Version 5.05&t;OOOPS!  fixed bug in revalidate_disk()&n; *&t;&t;&t;OOOPS!  fixed bug in ide_do_request()&n; *&t;&t;&t;added ATAPI reset sequence for cdroms&n; *  Version 5.10&t;added Bus-Mastered DMA support for Triton Chipset&n; *&t;&t;&t;some (mostly) cosmetic changes&n; *  Version 5.11&t;added ht6560b support by malafoss@snakemail.hut.fi&n; *&t;&t;&t;reworked PCI scanning code&n; *&t;&t;&t;added automatic RZ1000 detection/support&n; *&t;&t;&t;added automatic PCI CMD640 detection/support&n; *&t;&t;&t;added option for VLB CMD640 support&n; *&t;&t;&t;tweaked probe to find cdrom on hdb with disks on hda,hdc&n; *  Version 5.12&t;some performance tuning&n; *&t;&t;&t;added message to alert user to bad /dev/hd[cd] entries&n; *&t;&t;&t;OOOPS!  fixed bug in atapi reset&n; *&t;&t;&t;driver now forces &quot;serialize&quot; again for all cmd640 chips&n; *&t;&t;&t;noticed REALLY_SLOW_IO had no effect, moved it to ide.c&n; *&t;&t;&t;made do_drive_cmd() into public ide_do_drive_cmd()&n; *  Version 5.13&t;fixed typo (&squot;B&squot;), thanks to houston@boyd.geog.mcgill.ca&n; *&t;&t;&t;fixed ht6560b support&n; *  Version 5.13b (sss)&t;fix problem in calling ide_cdrom_setup()&n; *&t;&t;&t;don&squot;t bother invalidating nonexistent partitions&n; *  Version 5.14&t;fixes to cmd640 support.. maybe it works now(?)&n; *&t;&t;&t;added &amp; tested full EZ-DRIVE support -- don&squot;t use LILO!&n; *&t;&t;&t;don&squot;t enable 2nd CMD640 PCI port during init - conflict&n; *  Version 5.15&t;bug fix in init_cmd640_vlb()&n; *&t;&t;&t;bug fix in interrupt sharing code&n; *  Version 5.16&t;ugh.. fix &quot;serialize&quot; support, broken in 5.15&n; *&t;&t;&t;remove &quot;Huh?&quot; from cmd640 code&n; *&t;&t;&t;added qd6580 interface speed select from Colten Edwards&n; *  Version 5.17&t;kludge around bug in BIOS32 on Intel triton motherboards&n; *  Version 5.18&t;new CMD640 code, moved to cmd640.c, #include&squot;d for now&n; *&t;&t;&t;new UMC8672 code, moved to umc8672.c, #include&squot;d for now&n; *&t;&t;&t;disallow turning on DMA when h/w not capable of DMA&n; *  Version 5.19&t;fix potential infinite timeout on resets&n; *&t;&t;&t;extend reset poll into a general purpose polling scheme&n; *&t;&t;&t;add atapi tape drive support from Gadi Oxman&n; *&t;&t;&t;simplify exit from _intr routines -- no IDE_DO_REQUEST&n; *  Version 5.20&t;leave current rq on blkdev request list during I/O&n; *&t;&t;&t;generalized ide_do_drive_cmd() for tape/cdrom driver use&n; *  Version 5.21&t;fix nasty cdrom/tape bug (ide_preempt was messed up)&n; *  Version 5.22&t;fix ide_xlate_1024() to work with/without drive-&gt;id&n; *&n; *  Driver compile-time options are in ide.h&n; *&n; *  To do, in likely order of completion:&n; *&t;- make cmd640.c and umc8672.c compile separately from ide.c&n; *&t;- add ALI M1443/1445 chipset support from derekn@vw.ece.cmu.edu&n; *&t;- add ioctls to get/set interface timings on various interfaces&n; *&t;- add Promise Caching controller support from peterd@pnd-pc.demon.co.uk&n; *&t;- modify kernel to obtain BIOS geometry for drives on 2nd/3rd/4th i/f&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -212,9 +212,10 @@ id|i
 )paren
 suffix:semicolon
 )brace
-DECL|function|ide_set_recovery_timer
+DECL|function|set_recovery_timer
+r_static
 r_void
-id|ide_set_recovery_timer
+id|set_recovery_timer
 (paren
 id|ide_hwif_t
 op_star
@@ -229,6 +230,11 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|macro|SET_RECOVERY_TIMER
+mdefine_line|#define SET_RECOVERY_TIMER(drive) set_recovery_timer (drive)
+macro_line|#else
+DECL|macro|SET_RECOVERY_TIMER
+mdefine_line|#define SET_RECOVERY_TIMER(drive)
 macro_line|#endif /* DISK_RECOVERY_TIME */
 multiline_comment|/*&n; * init_ide_data() sets reasonable default values into all fields&n; * of all instances of the hwifs and drives, but only on the first call.&n; * Subsequent calls have no effect (they don&squot;t wipe out anything).&n; *&n; * This routine is normally called at driver initialization time,&n; * but may also be called MUCH earlier during kernel &quot;command-line&quot;&n; * parameter processing.  As such, we cannot depend on any other parts&n; * of the kernel (such as memory allocation) to be functioning yet.&n; *&n; * This is too bad, as otherwise we could dynamically allocate the&n; * ide_drive_t structs as needed, rather than always consuming memory&n; * for the max possible number (MAX_HWIFS * MAX_DRIVES) of them.&n; */
 DECL|macro|MAGIC_COOKIE
@@ -789,7 +795,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#if SUPPORT_HT6560B
-multiline_comment|/*&n; * This routine handles interface switching for the peculiar hardware design&n; * on the F.G.I./Holtek HT-6560B VLB IDE interface.&n; * The HT-6560B can only enable one IDE port at a time, and requires a&n; * silly sequence (below) whenever we switch between primary and secondary.&n; *&n; * Apparently, systems with multiple CMD640 chips may need something similar..&n; *&n; * This algorithm courtesy of malafoss@snakemail.hut.fi&n; */
+multiline_comment|/*&n; * This routine handles interface switching for the peculiar hardware design&n; * on the F.G.I./Holtek HT-6560B VLB IDE interface.&n; * The HT-6560B can only enable one IDE port at a time, and requires a&n; * silly sequence (below) whenever we switch between primary and secondary.&n; *&n; * Apparently, systems with multiple CMD640 chips may need something similar..&n; *&n; * This algorithm courtesy of malafoss@snakemail.hut.fi&n; *&n; * At least one user has reported that this code can confuse the floppy&n; * controller and/or driver -- perhaps this should be changed to use&n; * a read-modify-write sequence, so as not to disturb other bits in the reg?&n; */
 DECL|function|ide_hwif_select
 r_void
 id|ide_hwif_select
@@ -895,6 +901,10 @@ comma
 id|ide_handler_t
 op_star
 id|handler
+comma
+r_int
+r_int
+id|timeout
 )paren
 (brace
 id|ide_hwgroup_t
@@ -915,14 +925,20 @@ id|hwgroup-&gt;handler
 op_ne
 l_int|NULL
 )paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: ide_set_handler: old handler not null&bslash;n&quot;
+l_string|&quot;%s: ide_set_handler: handler not null; old=%p, new=%p&bslash;n&quot;
 comma
 id|drive-&gt;name
+comma
+id|hwgroup-&gt;handler
+comma
+id|handler
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|hwgroup-&gt;handler
 op_assign
@@ -932,7 +948,7 @@ id|hwgroup-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|WAIT_CMD
+id|timeout
 suffix:semicolon
 id|add_timer
 c_func
@@ -1075,12 +1091,12 @@ c_cond
 (paren
 id|drive-&gt;media
 op_ne
-id|disk
+id|ide_disk
 )paren
 r_return
-l_int|0x1fffff
+l_int|0x7fffffff
 suffix:semicolon
-multiline_comment|/* cdrom */
+multiline_comment|/* cdrom or tape */
 multiline_comment|/* Determine capacity, and use LBA if the drive properly supports it */
 r_if
 c_cond
@@ -1189,7 +1205,7 @@ id|drive-&gt;present
 op_logical_and
 id|drive-&gt;media
 op_eq
-id|cdrom
+id|ide_cdrom
 )paren
 id|ide_cdrom_setup
 c_func
@@ -1198,6 +1214,23 @@ id|drive
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+r_if
+c_cond
+(paren
+id|drive-&gt;present
+op_logical_and
+id|drive-&gt;media
+op_eq
+id|ide_tape
+)paren
+id|idetape_setup
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 id|drive-&gt;part
 (braket
 l_int|0
@@ -1219,7 +1252,7 @@ id|drive-&gt;present
 op_logical_or
 id|drive-&gt;media
 op_ne
-id|disk
+id|ide_disk
 )paren
 (brace
 id|drive-&gt;part
@@ -1485,138 +1518,36 @@ suffix:semicolon
 )brace
 r_static
 r_void
-id|unexpected_intr
+id|do_reset1
 (paren
-r_int
-comma
-id|ide_hwgroup_t
+id|ide_drive_t
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * reset_ihandler() is a dummy interrupt handler which we install during&n; * an ide interface reset operation.  This prevents other devices in the&n; * same hwgroup from being serviced while we play around with shared resources.&n; * If it ever gets invoked, we call unexpected_intr(), which treats the event&n; * the same as a timer_expiry().&n; */
-DECL|function|reset_ihandler
+multiline_comment|/* needed below */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEATAPI
+multiline_comment|/*&n; * atapi_reset_pollfunc() gets invoked to poll the interface for completion every 50ms&n; * during an atapi drive reset operation. If the drive has not yet responded,&n; * and we have not yet hit our maximum waiting time, then the timer is restarted&n; * for another 50ms.&n; */
+DECL|function|atapi_reset_pollfunc
 r_static
 r_void
-id|reset_ihandler
+id|atapi_reset_pollfunc
 (paren
 id|ide_drive_t
 op_star
 id|drive
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|unexpected_intr
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|irq
-comma
+id|ide_hwgroup_t
+op_star
+id|hwgroup
+op_assign
 id|HWGROUP
 c_func
 (paren
 id|drive
 )paren
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * start_reset_timer() sets up a timer event for 50ms in the future,&n; * to poll for completion of an ide reset operation (no interrupt to help us).&n; */
-DECL|function|start_reset_timer
-r_static
-r_void
-id|start_reset_timer
-(paren
-id|ide_hwif_t
-op_star
-id|hwif
-)paren
-(brace
-id|ide_hwgroup_t
-op_star
-id|hwgroup
-op_assign
-id|hwif-&gt;hwgroup
-suffix:semicolon
-id|hwgroup-&gt;reset_timeout
-op_assign
-id|jiffies
-op_plus
-id|WAIT_WORSTCASE
-suffix:semicolon
-multiline_comment|/* max waiting time */
-id|hwgroup-&gt;handler
-op_assign
-op_amp
-id|reset_ihandler
-suffix:semicolon
-multiline_comment|/* dummy irq handler */
-id|hwgroup-&gt;timer.expires
-op_assign
-id|jiffies
-op_plus
-(paren
-id|HZ
-op_div
-l_int|20
-)paren
-suffix:semicolon
-multiline_comment|/* polling interval */
-id|add_timer
-c_func
-(paren
-op_amp
-(paren
-id|hwgroup-&gt;timer
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
-multiline_comment|/*&n; * atapi_reset_handler() gets invoked to poll the interface for completion every 50ms&n; * during an atapi drive reset operation. If the drive has not yet responded,&n; * and we have not yet hit our maximum waiting time, then the timer is restarted&n; * for another 50ms.&n; *&n; * Returns 1 if waiting for another 50ms, returns 0 otherwise.&n; */
-DECL|function|atapi_reset_handler
-r_static
-r_int
-id|atapi_reset_handler
-(paren
-id|ide_hwgroup_t
-op_star
-id|hwgroup
-)paren
-(brace
-id|ide_hwif_t
-op_star
-id|hwif
-op_assign
-id|hwgroup-&gt;hwif
-suffix:semicolon
-id|ide_drive_t
-op_star
-id|drive
-op_assign
-id|hwgroup-&gt;drive
 suffix:semicolon
 id|byte
 id|stat
@@ -1636,7 +1567,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|OK_STAT
 c_func
 (paren
@@ -1653,23 +1583,46 @@ id|BUSY_STAT
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: ATAPI reset complete&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
 id|jiffies
 OL
-id|hwgroup-&gt;reset_timeout
+id|hwgroup-&gt;poll_timeout
 )paren
 (brace
-id|start_reset_timer
+id|ide_set_handler
 (paren
-id|hwif
+id|drive
+comma
+op_amp
+id|atapi_reset_pollfunc
+comma
+id|HZ
+op_div
+l_int|20
 )paren
 suffix:semicolon
 r_return
-l_int|1
 suffix:semicolon
+multiline_comment|/* continue polling */
 )brace
+id|hwgroup-&gt;poll_timeout
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* end of polling */
 id|printk
 c_func
 (paren
@@ -1680,81 +1633,56 @@ comma
 id|stat
 )paren
 suffix:semicolon
-r_return
-id|ide_do_reset
+id|do_reset1
 (paren
 id|drive
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* do it the old fashioned way */
 )brace
-id|hwgroup-&gt;doing_atapi_reset
+id|hwgroup-&gt;poll_timeout
 op_assign
 l_int|0
 suffix:semicolon
-id|hwgroup-&gt;handler
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* allow new requests to be processed */
-id|hwgroup-&gt;reset_timeout
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* signal end of ide reset operation */
-id|printk
-c_func
-(paren
-l_string|&quot;%s: ATAPI reset complete&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
+multiline_comment|/* done polling */
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
-multiline_comment|/*&n; * reset_handler() gets invoked to poll the interface for completion every 50ms&n; * during an ide reset operation. If the drives have not yet responded,&n; * and we have not yet hit our maximum waiting time, then the timer is restarted&n; * for another 50ms.&n; *&n; * Returns 1 if waiting for another 50ms, returns 0 otherwise.&n; */
-DECL|function|reset_handler
+macro_line|#endif /* CONFIG_BLK_DEV_IDEATAPI */
+multiline_comment|/*&n; * reset_pollfunc() gets invoked to poll the interface for completion every 50ms&n; * during an ide reset operation. If the drives have not yet responded,&n; * and we have not yet hit our maximum waiting time, then the timer is restarted&n; * for another 50ms.&n; */
+DECL|function|reset_pollfunc
 r_static
-r_int
-id|reset_handler
+r_void
+id|reset_pollfunc
 (paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
 id|ide_hwgroup_t
 op_star
 id|hwgroup
+op_assign
+id|HWGROUP
+c_func
+(paren
+id|drive
 )paren
-(brace
+suffix:semicolon
 id|ide_hwif_t
 op_star
 id|hwif
 op_assign
-id|hwgroup-&gt;hwif
-suffix:semicolon
-id|ide_drive_t
-op_star
+id|HWIF
+c_func
+(paren
 id|drive
-op_assign
-id|hwgroup-&gt;drive
+)paren
 suffix:semicolon
 id|byte
 id|tmp
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
-r_if
-c_cond
-(paren
-id|hwgroup-&gt;doing_atapi_reset
-)paren
-r_return
-id|atapi_reset_handler
-c_func
-(paren
-id|hwgroup
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
 r_if
 c_cond
 (paren
@@ -1780,17 +1708,24 @@ c_cond
 (paren
 id|jiffies
 OL
-id|hwgroup-&gt;reset_timeout
+id|hwgroup-&gt;poll_timeout
 )paren
 (brace
-id|start_reset_timer
+id|ide_set_handler
 (paren
-id|hwif
+id|drive
+comma
+op_amp
+id|reset_pollfunc
+comma
+id|HZ
+op_div
+l_int|20
 )paren
 suffix:semicolon
 r_return
-l_int|1
 suffix:semicolon
+multiline_comment|/* continue polling */
 )brace
 id|printk
 c_func
@@ -1936,28 +1871,24 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-id|hwgroup-&gt;handler
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* allow new requests to be processed */
-id|hwgroup-&gt;reset_timeout
+id|hwgroup-&gt;poll_timeout
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* signal end of ide reset operation */
-r_return
-l_int|0
-suffix:semicolon
+multiline_comment|/* done polling */
 )brace
-multiline_comment|/*&n; * ide_do_reset() attempts to recover a confused drive by resetting it.&n; * Unfortunately, resetting a disk drive actually resets all devices on&n; * the same interface, so it can really be thought of as resetting the&n; * interface rather than resetting the drive.&n; *&n; * ATAPI devices have their own reset mechanism which allows them to be&n; * individually reset without clobbering other devices on the same interface.&n; *&n; * Unfortunately, the IDE interface does not generate an interrupt to let&n; * us know when the reset operation has finished, so we must poll for this.&n; * Equally poor, though, is the fact that this may a very long time to complete,&n; * (up to 30 seconds worstcase).  So, instead of busy-waiting here for it,&n; * we set a timer to poll at 50ms intervals.&n; */
-DECL|function|ide_do_reset
-r_int
-id|ide_do_reset
+multiline_comment|/*&n; * do_reset1() attempts to recover a confused drive by resetting it.&n; * Unfortunately, resetting a disk drive actually resets all devices on&n; * the same interface, so it can really be thought of as resetting the&n; * interface rather than resetting the drive.&n; *&n; * ATAPI devices have their own reset mechanism which allows them to be&n; * individually reset without clobbering other devices on the same interface.&n; *&n; * Unfortunately, the IDE interface does not generate an interrupt to let&n; * us know when the reset operation has finished, so we must poll for this.&n; * Equally poor, though, is the fact that this may a very long time to complete,&n; * (up to 30 seconds worstcase).  So, instead of busy-waiting here for it,&n; * we set a timer to poll at 50ms intervals.&n; */
+DECL|function|do_reset1
+r_static
+r_void
+id|do_reset1
 (paren
 id|ide_drive_t
 op_star
 id|drive
+comma
+r_int
+id|do_not_try_atapi
 )paren
 (brace
 r_int
@@ -2000,27 +1931,23 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Why ? */
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
+macro_line|#ifdef CONFIG_BLK_DEV_IDEATAPI
 multiline_comment|/* For an ATAPI device, first try an ATAPI SRST. */
 r_if
 c_cond
 (paren
 id|drive-&gt;media
-op_eq
-id|cdrom
+op_ne
+id|ide_disk
 )paren
 (brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|hwgroup-&gt;doing_atapi_reset
+id|do_not_try_atapi
 )paren
 (brace
-id|hwgroup-&gt;doing_atapi_reset
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2050,33 +1977,34 @@ comma
 id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
-id|hwgroup-&gt;reset_timeout
+id|hwgroup-&gt;poll_timeout
 op_assign
 id|jiffies
 op_plus
 id|WAIT_WORSTCASE
 suffix:semicolon
-id|start_reset_timer
+id|ide_set_handler
 (paren
-id|hwif
+id|drive
+comma
+op_amp
+id|atapi_reset_pollfunc
+comma
+id|HZ
+op_div
+l_int|20
 )paren
 suffix:semicolon
-multiline_comment|/* begin periodic polling */
 id|restore_flags
 (paren
 id|flags
 )paren
 suffix:semicolon
 r_return
-l_int|1
 suffix:semicolon
 )brace
 )brace
-id|hwgroup-&gt;doing_atapi_reset
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEATAPI */
 multiline_comment|/*&n;&t; * First, reset any device state data we were maintaining&n;&t; * for any of the drives on this interface.&n;&t; */
 r_for
 c_loop
@@ -2183,34 +2111,53 @@ id|IDE_CONTROL_REG
 )paren
 suffix:semicolon
 multiline_comment|/* clear SRST, leave nIEN */
-id|hwgroup-&gt;reset_timeout
+id|hwgroup-&gt;poll_timeout
 op_assign
 id|jiffies
 op_plus
 id|WAIT_WORSTCASE
 suffix:semicolon
-id|start_reset_timer
+id|ide_set_handler
 (paren
-id|hwif
+id|drive
+comma
+op_amp
+id|reset_pollfunc
+comma
+id|HZ
+op_div
+l_int|20
 )paren
 suffix:semicolon
-multiline_comment|/* begin periodic polling */
 macro_line|#endif&t;/* OK_TO_RESET_CONTROLLER */
 id|restore_flags
 (paren
 id|flags
 )paren
 suffix:semicolon
-r_return
-id|OK_TO_RESET_CONTROLLER
-suffix:semicolon
-multiline_comment|/* 1 = we are waiting, 0 = done */
 )brace
-multiline_comment|/*&n; * Clean up after success/failure of an explicit (ioctl) drive cmd&n; */
-DECL|function|end_drive_cmd
-r_static
+multiline_comment|/*&n; * ide_do_reset() is the entry point to the drive/interface reset code.&n; */
+DECL|function|ide_do_reset
 r_void
-id|end_drive_cmd
+id|ide_do_reset
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|do_reset1
+(paren
+id|drive
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Clean up after success/failure of an explicit drive cmd&n; */
+DECL|function|ide_end_drive_cmd
+r_void
+id|ide_end_drive_cmd
 (paren
 id|ide_drive_t
 op_star
@@ -2240,6 +2187,14 @@ id|drive
 op_member_access_from_pointer
 id|rq
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rq-&gt;cmd
+op_eq
+id|IDE_DRIVE_CMD
+)paren
+(brace
 id|byte
 op_star
 id|args
@@ -2295,6 +2250,7 @@ id|IDE_NSECTOR_REG
 )paren
 suffix:semicolon
 )brace
+)brace
 id|save_flags
 c_func
 (paren
@@ -2306,11 +2262,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|up
+id|blk_dev
+(braket
+id|MAJOR
 c_func
 (paren
-id|rq-&gt;sem
+id|rq-&gt;rq_dev
 )paren
+)braket
+dot
+id|current_request
+op_assign
+id|rq-&gt;next
 suffix:semicolon
 id|HWGROUP
 c_func
@@ -2321,6 +2284,23 @@ op_member_access_from_pointer
 id|rq
 op_assign
 l_int|NULL
+suffix:semicolon
+id|rq-&gt;rq_status
+op_assign
+id|RQ_INACTIVE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rq-&gt;sem
+op_ne
+l_int|NULL
+)paren
+id|up
+c_func
+(paren
+id|rq-&gt;sem
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -2384,7 +2364,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 )paren
 (brace
 id|printk
@@ -2555,7 +2535,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 )paren
 (brace
 id|printk
@@ -2878,9 +2858,9 @@ id|wcount
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * ide_error() takes action based on the error returned by the controller.&n; *&n; * Returns 1 if an ide reset operation has been initiated, in which case&n; * the caller MUST simply return from the driver (through however many levels).&n; * Returns 0 otherwise.&n; */
+multiline_comment|/*&n; * ide_error() takes action based on the error returned by the controller.&n; */
 DECL|function|ide_error
-r_int
+r_void
 id|ide_error
 (paren
 id|ide_drive_t
@@ -2938,18 +2918,25 @@ op_eq
 l_int|NULL
 )paren
 r_return
-l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|rq-&gt;cmd
-op_eq
-id|IDE_DRIVE_CMD
+op_ne
+id|READ
+op_logical_and
+id|rq-&gt;cmd
+op_ne
+id|WRITE
 )paren
 (brace
-multiline_comment|/* never retry an explicit DRIVE_CMD */
-id|end_drive_cmd
+multiline_comment|/* retry only &quot;normal&quot; i/o */
+id|rq-&gt;errors
+op_assign
+l_int|1
+suffix:semicolon
+id|ide_end_drive_cmd
 c_func
 (paren
 id|drive
@@ -2960,7 +2947,6 @@ id|err
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -2984,7 +2970,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 op_logical_and
 (paren
 id|stat
@@ -2993,7 +2979,7 @@ id|ERR_STAT
 )paren
 )paren
 (brace
-multiline_comment|/* err has different meaning on cdrom */
+multiline_comment|/* err has different meaning on cdrom and tape */
 r_if
 c_cond
 (paren
@@ -3087,7 +3073,6 @@ op_decrement
 id|rq-&gt;errors
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
@@ -3127,12 +3112,13 @@ id|ERROR_RESET
 op_increment
 id|rq-&gt;errors
 suffix:semicolon
-r_return
 id|ide_do_reset
 c_func
 (paren
 id|drive
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 r_else
@@ -3155,9 +3141,6 @@ op_increment
 id|rq-&gt;errors
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * read_intr() is the handler for disk read/multread interrupts&n; */
 DECL|function|read_intr
@@ -3207,15 +3190,6 @@ id|BAD_R_STAT
 )paren
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
 id|ide_error
 c_func
 (paren
@@ -3225,8 +3199,6 @@ l_string|&quot;read_intr&quot;
 comma
 id|stat
 )paren
-)paren
-id|IDE_DO_REQUEST
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3391,13 +3363,11 @@ id|drive
 comma
 op_amp
 id|read_intr
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-id|IDE_DO_REQUEST
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * write_intr() is the handler for disk write interrupts&n; */
 DECL|function|write_intr
@@ -3416,18 +3386,22 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_struct
-id|request
+id|ide_hwgroup_t
 op_star
-id|rq
+id|hwgroup
 op_assign
 id|HWGROUP
 c_func
 (paren
 id|drive
 )paren
-op_member_access_from_pointer
+suffix:semicolon
+r_struct
+id|request
+op_star
 id|rq
+op_assign
+id|hwgroup-&gt;rq
 suffix:semicolon
 r_if
 c_cond
@@ -3521,11 +3495,7 @@ c_func
 (paren
 l_int|1
 comma
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
+id|hwgroup
 )paren
 suffix:semicolon
 r_if
@@ -3551,26 +3521,15 @@ id|drive
 comma
 op_amp
 id|write_intr
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
-id|IDE_DO_REQUEST
-suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-)brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
 id|ide_error
 c_func
 (paren
@@ -3580,8 +3539,6 @@ l_string|&quot;write_intr&quot;
 comma
 id|stat
 )paren
-)paren
-id|IDE_DO_REQUEST
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * multwrite() transfers a block of one or more sectors of data to a drive&n; * as part of a disk multwrite operation.&n; */
@@ -3770,19 +3727,23 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|ide_hwgroup_t
+op_star
+id|hwgroup
+op_assign
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
 r_struct
 id|request
 op_star
 id|rq
 op_assign
 op_amp
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|wrq
+id|hwgroup-&gt;wrq
 suffix:semicolon
 r_if
 c_cond
@@ -3829,6 +3790,8 @@ id|drive
 comma
 op_amp
 id|multwrite_intr
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
 r_return
@@ -3847,13 +3810,7 @@ id|rq-&gt;nr_sectors
 multiline_comment|/* all done? */
 id|rq
 op_assign
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|rq
+id|hwgroup-&gt;rq
 suffix:semicolon
 r_for
 c_loop
@@ -3877,30 +3834,15 @@ c_func
 (paren
 l_int|1
 comma
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
+id|hwgroup
 )paren
 suffix:semicolon
 )brace
-id|IDE_DO_REQUEST
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 )brace
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
 id|ide_error
 c_func
 (paren
@@ -3910,8 +3852,6 @@ l_string|&quot;multwrite_intr&quot;
 comma
 id|stat
 )paren
-)paren
-id|IDE_DO_REQUEST
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Issue a simple drive command&n; * The drive must be selected beforehand.&n; */
@@ -3941,6 +3881,8 @@ id|ide_set_handler
 id|drive
 comma
 id|handler
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -4037,8 +3979,6 @@ id|stat
 )paren
 suffix:semicolon
 )brace
-id|IDE_DO_REQUEST
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * set_geometry_intr() is invoked on completion of a WIN_SPECIFY cmd.&n; */
 DECL|function|set_geometry_intr
@@ -4078,9 +4018,6 @@ comma
 id|BAD_STAT
 )paren
 )paren
-r_if
-c_cond
-(paren
 id|ide_error
 c_func
 (paren
@@ -4090,10 +4027,6 @@ l_string|&quot;set_geometry_intr&quot;
 comma
 id|stat
 )paren
-)paren
-r_return
-suffix:semicolon
-id|IDE_DO_REQUEST
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * recal_intr() is invoked on completion of a WIN_RESTORE (recalibrate) cmd.&n; */
@@ -4134,9 +4067,6 @@ comma
 id|BAD_STAT
 )paren
 )paren
-r_if
-c_cond
-(paren
 id|ide_error
 c_func
 (paren
@@ -4146,10 +4076,6 @@ l_string|&quot;recal_intr&quot;
 comma
 id|stat
 )paren
-)paren
-r_return
-suffix:semicolon
-id|IDE_DO_REQUEST
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * drive_cmd_intr() is invoked on completion of a special DRIVE_CMD.&n; */
@@ -4189,7 +4115,7 @@ comma
 id|BAD_STAT
 )paren
 )paren
-id|end_drive_cmd
+id|ide_end_drive_cmd
 (paren
 id|drive
 comma
@@ -4202,9 +4128,6 @@ c_func
 )paren
 suffix:semicolon
 r_else
-r_if
-c_cond
-(paren
 id|ide_error
 c_func
 (paren
@@ -4214,12 +4137,8 @@ l_string|&quot;drive_cmd&quot;
 comma
 id|stat
 )paren
-)paren
-multiline_comment|/* calls end_drive_cmd */
-r_return
 suffix:semicolon
-id|IDE_DO_REQUEST
-suffix:semicolon
+multiline_comment|/* calls ide_end_drive_cmd */
 )brace
 multiline_comment|/*&n; * do_special() is used to issue WIN_SPECIFY, WIN_RESTORE, and WIN_SETMULT&n; * commands to a drive.  It used to do much more, but has been scaled back&n; * in recent updates, and could be completely eliminated with a bit more effort.&n; */
 DECL|function|do_special
@@ -4267,7 +4186,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 )paren
 (brace
 id|OUT_BYTE
@@ -4345,7 +4264,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 )paren
 (brace
 id|ide_cmd
@@ -4379,7 +4298,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 )paren
 (brace
 r_if
@@ -4438,7 +4357,7 @@ id|s-&gt;all
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This routine busy-waits for the drive status to be not &quot;busy&quot;.&n; * It then checks the status for all of the &quot;good&quot; bits and none&n; * of the &quot;bad&quot; bits, and if all is okay it returns 0.  All other&n; * cases return 1 after invoking ide_error()&n; *&n; * This routine should get fixed to not hog the cpu during extra long waits..&n; * That could be done by busy-waiting for the first jiffy or two, and then&n; * setting a timer to wake up at half second intervals thereafter,&n; * until WAIT_WORSTCASE is achieved, before timing out.&n; */
+multiline_comment|/*&n; * This routine busy-waits for the drive status to be not &quot;busy&quot;.&n; * It then checks the status for all of the &quot;good&quot; bits and none&n; * of the &quot;bad&quot; bits, and if all is okay it returns 0.  All other&n; * cases return 1 after invoking ide_error() -- caller should just return.&n; *&n; * This routine should get fixed to not hog the cpu during extra long waits..&n; * That could be done by busy-waiting for the first jiffy or two, and then&n; * setting a timer to wake up at half second intervals thereafter,&n; * until timeout is achieved, before timing out.&n; */
 DECL|function|ide_wait_stat
 r_int
 id|ide_wait_stat
@@ -4509,9 +4428,6 @@ id|BUSY_STAT
 )paren
 )paren
 (brace
-(paren
-r_void
-)paren
 id|ide_error
 c_func
 (paren
@@ -4586,9 +4502,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-(paren
-r_void
-)paren
 id|ide_error
 c_func
 (paren
@@ -4908,6 +4821,8 @@ id|drive
 comma
 op_amp
 id|read_intr
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -5046,6 +4961,8 @@ id|drive
 comma
 op_amp
 id|multwrite_intr
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
 id|multwrite
@@ -5063,6 +4980,8 @@ id|drive
 comma
 op_amp
 id|write_intr
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
 id|ide_output_data
@@ -5170,7 +5089,7 @@ id|drive-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|end_drive_cmd
+id|ide_end_drive_cmd
 c_func
 (paren
 id|drive
@@ -5255,7 +5174,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;%s: ide_do_request: current=0x%08lx&bslash;n&quot;
+l_string|&quot;%s: do_request: current=0x%08lx&bslash;n&quot;
 comma
 id|hwif-&gt;name
 comma
@@ -5539,7 +5458,7 @@ op_logical_neg
 id|drive-&gt;special.all
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
+macro_line|#ifdef CONFIG_BLK_DEV_IDEATAPI
 r_switch
 c_cond
 (paren
@@ -5547,7 +5466,7 @@ id|drive-&gt;media
 )paren
 (brace
 r_case
-id|disk
+id|ide_disk
 suffix:colon
 id|do_rw_disk
 (paren
@@ -5560,8 +5479,9 @@ id|block
 suffix:semicolon
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDECD
 r_case
-id|cdrom
+id|ide_cdrom
 suffix:colon
 id|ide_do_rw_cdrom
 (paren
@@ -5572,6 +5492,23 @@ id|block
 suffix:semicolon
 r_return
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+r_case
+id|ide_tape
+suffix:colon
+id|idetape_do_request
+(paren
+id|drive
+comma
+id|rq
+comma
+id|block
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 r_default
 suffix:colon
 id|printk
@@ -5601,7 +5538,7 @@ suffix:semicolon
 multiline_comment|/* simpler and faster */
 r_return
 suffix:semicolon
-macro_line|#endif;
+macro_line|#endif /* CONFIG_BLK_DEV_IDEATAPI */;
 )brace
 id|do_special
 c_func
@@ -5682,11 +5619,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|hwgroup-&gt;drive
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* paranoia */
 r_do
 (brace
 id|rq
@@ -5728,18 +5660,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 multiline_comment|/* no work left for this hwgroup */
+)brace
 id|got_rq
 suffix:colon
-id|blk_dev
-(braket
-id|hwif-&gt;major
-)braket
-dot
-id|current_request
-op_assign
-id|rq-&gt;next
-suffix:semicolon
-)brace
 id|do_request
 c_func
 (paren
@@ -5971,25 +5894,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hwgroup-&gt;reset_timeout
+id|hwgroup-&gt;poll_timeout
 op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* ide reset in progress? */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|reset_handler
+multiline_comment|/* polling in progress? */
+id|ide_handler_t
+op_star
+id|handler
+op_assign
+id|hwgroup-&gt;handler
+suffix:semicolon
+id|hwgroup-&gt;handler
+op_assign
+l_int|NULL
+suffix:semicolon
+id|handler
 c_func
 (paren
-id|hwgroup
-)paren
-)paren
-id|do_hwgroup_request
-(paren
-id|hwgroup
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -6020,11 +5944,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* drive not responding */
 id|hwgroup-&gt;handler
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* abort the operation */
 r_if
 c_cond
 (paren
@@ -6040,10 +5964,6 @@ comma
 id|drive
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
 id|ide_error
 c_func
 (paren
@@ -6056,13 +5976,20 @@ c_func
 (paren
 )paren
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|hwgroup-&gt;handler
+op_eq
+l_int|NULL
 )paren
 id|do_hwgroup_request
 (paren
 id|hwgroup
 )paren
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -6097,33 +6024,6 @@ id|hwif
 op_assign
 id|hwgroup-&gt;hwif
 suffix:semicolon
-multiline_comment|/*&n;&t; * check for ide reset in progress&n;&t; */
-r_if
-c_cond
-(paren
-id|hwgroup-&gt;reset_timeout
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|reset_handler
-c_func
-(paren
-id|hwgroup
-)paren
-)paren
-id|do_hwgroup_request
-(paren
-id|hwgroup
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * handle the unexpected interrupt&n;&t; */
 r_do
 (brace
@@ -6322,6 +6222,37 @@ c_func
 id|drive
 )paren
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* this is necessary, as next rq may be different irq */
+r_if
+c_cond
+(paren
+id|hwgroup-&gt;handler
+op_eq
+l_int|NULL
+)paren
+(brace
+id|SET_RECOVERY_TIMER
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+)paren
+suffix:semicolon
+id|ide_do_request
+c_func
+(paren
+id|hwgroup
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -6481,18 +6412,91 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function issues a specific IDE drive command onto the&n; * tail of the request queue, and waits for it to be completed.&n; * If arg is NULL, it goes through all the motions,&n; * but without actually sending a command to the drive.&n; */
+multiline_comment|/*&n; * This function is intended to be used prior to invoking ide_do_drive_cmd().&n; */
+DECL|function|ide_init_drive_cmd
+r_void
+id|ide_init_drive_cmd
+(paren
+r_struct
+id|request
+op_star
+id|rq
+)paren
+(brace
+id|rq-&gt;buffer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rq-&gt;cmd
+op_assign
+id|IDE_DRIVE_CMD
+suffix:semicolon
+id|rq-&gt;sector
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;nr_sectors
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;current_nr_sectors
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;sem
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rq-&gt;bh
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rq-&gt;bhtail
+op_assign
+l_int|NULL
+suffix:semicolon
+id|rq-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#if 0&t;/* these are done each time through ide_do_drive_cmd() */
+id|rq-&gt;errors
+op_assign
+l_int|0
+suffix:semicolon
+id|rq-&gt;rq_status
+op_assign
+id|RQ_ACTIVE
+suffix:semicolon
+id|rq-&gt;rq_dev
+op_assign
+ques
+c_cond
+ques
+c_cond
+ques
+c_cond
+ques
+c_cond
+suffix:semicolon
+macro_line|#endif
+)brace
+multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the&n; * ATAPI tape/cdrom driver code.&n; */
 DECL|function|ide_do_drive_cmd
 r_int
 id|ide_do_drive_cmd
-c_func
 (paren
-id|kdev_t
-id|rdev
-comma
-r_char
+id|ide_drive_t
 op_star
-id|args
+id|drive
+comma
+r_struct
+id|request
+op_star
+id|rq
+comma
+id|ide_action_t
+id|action
 )paren
 (brace
 r_int
@@ -6503,16 +6507,16 @@ r_int
 r_int
 id|major
 op_assign
-id|MAJOR
+id|HWIF
 c_func
 (paren
-id|rdev
+id|drive
 )paren
+op_member_access_from_pointer
+id|major
 suffix:semicolon
 r_struct
 id|request
-id|rq
-comma
 op_star
 id|cur_rq
 suffix:semicolon
@@ -6520,6 +6524,12 @@ r_struct
 id|blk_dev_struct
 op_star
 id|bdev
+op_assign
+op_amp
+id|blk_dev
+(braket
+id|major
+)braket
 suffix:semicolon
 r_struct
 id|semaphore
@@ -6527,63 +6537,39 @@ id|sem
 op_assign
 id|MUTEX_LOCKED
 suffix:semicolon
-multiline_comment|/* build up a special request, and add it to the queue */
-id|rq.buffer
-op_assign
-id|args
-suffix:semicolon
-id|rq.cmd
-op_assign
-id|IDE_DRIVE_CMD
-suffix:semicolon
-id|rq.errors
+id|rq-&gt;errors
 op_assign
 l_int|0
 suffix:semicolon
-id|rq.sector
-op_assign
-l_int|0
-suffix:semicolon
-id|rq.nr_sectors
-op_assign
-l_int|0
-suffix:semicolon
-id|rq.current_nr_sectors
-op_assign
-l_int|0
-suffix:semicolon
-id|rq.sem
-op_assign
-op_amp
-id|sem
-suffix:semicolon
-id|rq.bh
-op_assign
-l_int|NULL
-suffix:semicolon
-id|rq.bhtail
-op_assign
-l_int|NULL
-suffix:semicolon
-id|rq.next
-op_assign
-l_int|NULL
-suffix:semicolon
-id|rq.rq_status
+id|rq-&gt;rq_status
 op_assign
 id|RQ_ACTIVE
 suffix:semicolon
-id|rq.rq_dev
+id|rq-&gt;rq_dev
 op_assign
-id|rdev
+id|MKDEV
+c_func
+(paren
+id|major
+comma
+(paren
+id|drive-&gt;select.b.unit
+)paren
+op_lshift
+id|PARTN_BITS
+)paren
 suffix:semicolon
-id|bdev
+r_if
+c_cond
+(paren
+id|action
+op_eq
+id|ide_wait
+)paren
+id|rq-&gt;sem
 op_assign
 op_amp
-id|blk_dev
-(braket
-id|major
-)braket
+id|sem
 suffix:semicolon
 id|save_flags
 c_func
@@ -6606,15 +6592,37 @@ c_cond
 id|cur_rq
 op_eq
 l_int|NULL
+op_logical_or
+id|action
+op_eq
+id|ide_preempt
 )paren
 (brace
-multiline_comment|/* empty request list? */
+id|rq-&gt;next
+op_assign
+id|cur_rq
+suffix:semicolon
 id|bdev-&gt;current_request
 op_assign
-op_amp
 id|rq
 suffix:semicolon
-multiline_comment|/* service ours immediately */
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|action
+op_ne
+id|ide_preempt
+)paren
 id|bdev
 op_member_access_from_pointer
 id|request_fn
@@ -6625,6 +6633,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|action
+op_eq
+id|ide_wait
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -6632,18 +6648,28 @@ id|cur_rq-&gt;next
 op_ne
 l_int|NULL
 )paren
-multiline_comment|/* find end of request list */
+multiline_comment|/* find end of list */
 id|cur_rq
 op_assign
 id|cur_rq-&gt;next
 suffix:semicolon
+)brace
+id|rq-&gt;next
+op_assign
+id|cur_rq-&gt;next
+suffix:semicolon
 id|cur_rq-&gt;next
 op_assign
-op_amp
 id|rq
 suffix:semicolon
-multiline_comment|/* add rq to the end */
 )brace
+r_if
+c_cond
+(paren
+id|action
+op_eq
+id|ide_wait
+)paren
 id|down
 c_func
 (paren
@@ -6659,7 +6685,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|rq.errors
+id|rq-&gt;errors
 ques
 c_cond
 op_minus
@@ -6751,7 +6777,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|cdrom
+id|ide_cdrom
 )paren
 r_return
 id|ide_cdrom_open
@@ -6764,6 +6790,25 @@ id|drive
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+r_if
+c_cond
+(paren
+id|drive-&gt;media
+op_eq
+id|ide_tape
+)paren
+r_return
+id|idetape_blkdev_open
+(paren
+id|inode
+comma
+id|filp
+comma
+id|drive
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDETAPE */
 r_if
 c_cond
 (paren
@@ -6785,18 +6830,36 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_struct
+id|request
+id|rq
+suffix:semicolon
 id|check_disk_change
 c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|ide_init_drive_cmd
+(paren
+op_amp
+id|rq
+)paren
+suffix:semicolon
+id|rq.buffer
+op_assign
+id|door_lock
+suffix:semicolon
+r_return
 id|ide_do_drive_cmd
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|drive
 comma
-id|door_lock
+op_amp
+id|rq
+comma
+id|ide_wait
 )paren
 suffix:semicolon
 )brace
@@ -6857,8 +6920,9 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|cdrom
+id|ide_cdrom
 )paren
+(brace
 id|ide_cdrom_release
 (paren
 id|inode
@@ -6868,8 +6932,32 @@ comma
 id|drive
 )paren
 suffix:semicolon
-r_else
+r_return
+suffix:semicolon
+)brace
 macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+r_if
+c_cond
+(paren
+id|drive-&gt;media
+op_eq
+id|ide_tape
+)paren
+(brace
+id|idetape_blkdev_release
+(paren
+id|inode
+comma
+id|file
+comma
+id|drive
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDETAPE */
 r_if
 c_cond
 (paren
@@ -6891,18 +6979,38 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_struct
+id|request
+id|rq
+suffix:semicolon
 id|invalidate_buffers
 c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|ide_init_drive_cmd
+(paren
+op_amp
+id|rq
+)paren
+suffix:semicolon
+id|rq.buffer
+op_assign
+id|door_unlock
+suffix:semicolon
+(paren
+r_void
+)paren
 id|ide_do_drive_cmd
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|drive
 comma
-id|door_unlock
+op_amp
+id|rq
+comma
+id|ide_wait
 )paren
 suffix:semicolon
 )brace
@@ -7111,7 +7219,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 )paren
 id|resetup_one_dev
 c_func
@@ -7266,6 +7374,16 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_struct
+id|request
+id|rq
+suffix:semicolon
+id|ide_init_drive_cmd
+(paren
+op_amp
+id|rq
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7317,7 +7435,7 @@ id|loc
 op_logical_or
 id|drive-&gt;media
 op_ne
-id|disk
+id|ide_disk
 )paren
 r_return
 op_minus
@@ -7717,7 +7835,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_ne
-id|disk
+id|ide_disk
 )paren
 r_return
 op_minus
@@ -8049,11 +8167,17 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+(paren
+r_void
+)paren
 id|ide_do_drive_cmd
 (paren
-id|inode-&gt;i_rdev
+id|drive
 comma
-l_int|NULL
+op_amp
+id|rq
+comma
+id|ide_wait
 )paren
 suffix:semicolon
 r_return
@@ -8093,9 +8217,12 @@ op_assign
 id|ide_do_drive_cmd
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|drive
 comma
-l_int|NULL
+op_amp
+id|rq
+comma
+id|ide_wait
 )paren
 suffix:semicolon
 r_else
@@ -8164,19 +8291,26 @@ r_int
 )paren
 )paren
 (brace
-id|err
+id|rq.buffer
 op_assign
-id|ide_do_drive_cmd
-c_func
-(paren
-id|inode-&gt;i_rdev
-comma
 (paren
 r_char
 op_star
 )paren
 op_amp
 id|args
+suffix:semicolon
+id|err
+op_assign
+id|ide_do_drive_cmd
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|rq
+comma
+id|ide_wait
 )paren
 suffix:semicolon
 id|put_user
@@ -8216,7 +8350,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|cdrom
+id|ide_cdrom
 )paren
 r_return
 id|ide_cdrom_ioctl
@@ -8234,6 +8368,30 @@ id|arg
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+r_if
+c_cond
+(paren
+id|drive-&gt;media
+op_eq
+id|ide_tape
+)paren
+r_return
+id|idetape_blkdev_ioctl
+c_func
+(paren
+id|drive
+comma
+id|inode
+comma
+id|file
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 r_return
 op_minus
 id|EPERM
@@ -8278,7 +8436,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|cdrom
+id|ide_cdrom
 )paren
 r_return
 id|ide_cdrom_check_media_change
@@ -8693,7 +8851,6 @@ op_eq
 id|WIN_PIDENTIFY
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
 id|byte
 id|type
 op_assign
@@ -8703,47 +8860,40 @@ op_rshift
 l_int|8
 )paren
 op_amp
-l_int|0x0f
+l_int|0x1f
 suffix:semicolon
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s, ATAPI, &quot;
+l_string|&quot;%s: %s, ATAPI &quot;
 comma
 id|drive-&gt;name
 comma
 id|id-&gt;model
 )paren
 suffix:semicolon
-id|drive-&gt;media
-op_assign
-id|cdrom
-suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
-r_if
+r_switch
 c_cond
 (paren
 id|type
-op_eq
-l_int|0
-op_logical_or
-id|type
-op_eq
-l_int|5
 )paren
+(brace
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/* Early cdrom models used zero */
+r_case
+l_int|5
+suffix:colon
+macro_line|#ifdef CONFIG_BLK_DEV_IDECD
 id|printk
-c_func
 (paren
 l_string|&quot;CDROM drive&bslash;n&quot;
 )paren
 suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;UNKNOWN device&bslash;n&quot;
-)paren
+id|drive-&gt;media
+op_assign
+id|ide_cdrom
 suffix:semicolon
 id|drive-&gt;present
 op_assign
@@ -8753,14 +8903,92 @@ id|drive-&gt;removeable
 op_assign
 l_int|1
 suffix:semicolon
+r_return
+suffix:semicolon
 macro_line|#else
+id|printk
+(paren
+l_string|&quot;CDROM &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
+r_case
+l_int|1
+suffix:colon
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+id|printk
+(paren
+l_string|&quot;TAPE drive&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idetape_identify_device
+(paren
+id|drive
+comma
+id|id
+)paren
+)paren
+(brace
+id|drive-&gt;media
+op_assign
+id|ide_tape
+suffix:semicolon
+id|drive-&gt;present
+op_assign
+l_int|1
+suffix:semicolon
+id|drive-&gt;removeable
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|drive-&gt;present
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;ide-tape: The tape is not supported by this version of the driver&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+macro_line|#else
+id|printk
+(paren
+l_string|&quot;TAPE &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;not supported by this kernel&bslash;n&quot;
+l_string|&quot;Type %d - Unknown device&bslash;n&quot;
+comma
+id|type
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;- not supported by this kernel&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -8802,7 +9030,7 @@ suffix:semicolon
 )brace
 id|drive-&gt;media
 op_assign
-id|disk
+id|ide_disk
 suffix:semicolon
 multiline_comment|/* Extract geometry if we did not already have one for the drive */
 r_if
@@ -9485,7 +9713,7 @@ id|cmd
 r_int
 id|rc
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
+macro_line|#ifdef CONFIG_BLK_DEV_IDEATAPI
 r_if
 c_cond
 (paren
@@ -9498,8 +9726,8 @@ c_cond
 (paren
 (paren
 id|drive-&gt;media
-op_eq
-id|cdrom
+op_ne
+id|ide_disk
 )paren
 op_logical_and
 (paren
@@ -9512,23 +9740,18 @@ r_return
 l_int|4
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDEATAPI */
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;probing for %s: present=%d, type=%s, probetype=%s&bslash;n&quot;
+l_string|&quot;probing for %s: present=%d, media=%d, probetype=%s&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
 id|drive-&gt;present
 comma
 id|drive-&gt;media
-ques
-c_cond
-l_string|&quot;cdrom&quot;
-suffix:colon
-l_string|&quot;disk&quot;
 comma
 (paren
 id|cmd
@@ -9769,7 +9992,7 @@ l_int|2
 )paren
 (brace
 multiline_comment|/* if !(success||timed-out) */
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
+macro_line|#ifdef CONFIG_BLK_DEV_IDEATAPI
 (paren
 r_void
 )paren
@@ -9782,7 +10005,7 @@ id|WIN_PIDENTIFY
 )paren
 suffix:semicolon
 multiline_comment|/* look for ATAPI device */
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDEATAPI */
 )brace
 r_if
 c_cond
@@ -9808,7 +10031,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 )paren
 (brace
 id|printk
@@ -9832,7 +10055,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|cdrom
+id|ide_cdrom
 )paren
 (brace
 id|printk
@@ -9863,7 +10086,7 @@ c_cond
 (paren
 id|drive-&gt;media
 op_eq
-id|disk
+id|ide_disk
 op_logical_and
 op_logical_neg
 id|drive-&gt;select.b.lba
@@ -10902,7 +11125,7 @@ l_int|1
 suffix:semicolon
 id|drive-&gt;media
 op_assign
-id|cdrom
+id|ide_cdrom
 suffix:semicolon
 id|hwif-&gt;noprobe
 op_assign
@@ -10935,7 +11158,7 @@ suffix:colon
 multiline_comment|/* cyl,head,sect */
 id|drive-&gt;media
 op_assign
-id|disk
+id|ide_disk
 suffix:semicolon
 id|drive-&gt;cyl
 op_assign
@@ -11452,31 +11675,40 @@ id|i_rdev
 )paren
 op_eq
 l_int|NULL
-op_logical_or
-id|drive-&gt;id
-op_eq
-l_int|NULL
 )paren
 r_return
 l_int|0
 suffix:semicolon
-id|drive-&gt;cyl
-op_assign
+r_if
+c_cond
+(paren
+id|drive-&gt;id
+)paren
+(brace
 id|drive-&gt;bios_cyl
 op_assign
 id|drive-&gt;id-&gt;cyls
 suffix:semicolon
-id|drive-&gt;head
-op_assign
 id|drive-&gt;bios_head
 op_assign
 id|drive-&gt;id-&gt;heads
 suffix:semicolon
-id|drive-&gt;sect
-op_assign
 id|drive-&gt;bios_sect
 op_assign
 id|drive-&gt;id-&gt;sectors
+suffix:semicolon
+)brace
+id|drive-&gt;cyl
+op_assign
+id|drive-&gt;bios_cyl
+suffix:semicolon
+id|drive-&gt;head
+op_assign
+id|drive-&gt;bios_head
+suffix:semicolon
+id|drive-&gt;sect
+op_assign
+id|drive-&gt;bios_sect
 suffix:semicolon
 id|drive-&gt;special.b.set_geometry
 op_assign
@@ -11899,18 +12131,16 @@ l_int|NULL
 suffix:semicolon
 id|hwgroup-&gt;drive
 op_assign
-l_int|NULL
+op_amp
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
 suffix:semicolon
-id|hwgroup-&gt;reset_timeout
+id|hwgroup-&gt;poll_timeout
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
-id|hwgroup-&gt;doing_atapi_reset
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
 id|init_timer
 c_func
 (paren
@@ -12727,6 +12957,14 @@ suffix:semicolon
 multiline_comment|/* success */
 )brace
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
+id|idetape_register_chrdev
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Register character device interface to the ide tape */
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 r_return
 l_int|0
 suffix:semicolon

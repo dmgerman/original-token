@@ -339,6 +339,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|CIRRUS
+comma
+id|CIRRUS_7543
+comma
+l_string|&quot;CL 7543&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|AMD
 comma
 id|AMD_LANCE
@@ -1051,9 +1061,19 @@ comma
 id|DEVICE
 c_func
 (paren
-id|HAL
+id|SPECIALIX
 comma
-id|HAL_RIO
+id|SPECIALIX_XIO
+comma
+l_string|&quot;XIO/SIO host&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SPECIALIX
+comma
+id|SPECIALIX_RIO
 comma
 l_string|&quot;RIO host&quot;
 )paren
@@ -2481,10 +2501,10 @@ r_return
 l_string|&quot;ZeitNet&quot;
 suffix:semicolon
 r_case
-id|PCI_VENDOR_ID_HAL
+id|PCI_VENDOR_ID_SPECIALIX
 suffix:colon
 r_return
-l_string|&quot;HAL&quot;
+l_string|&quot;Specialix&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_CYCLADES
@@ -4044,7 +4064,7 @@ l_int|16
 op_amp
 l_int|0xffff
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Check to see if we now about this device and report&n;&t;&t; * a message at boot time.  This is the only way to&n;&t;&t; * learn about new hardware...&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Check to see if we know about this device and report&n;&t;&t; * a message at boot time.  This is the only way to&n;&t;&t; * learn about new hardware...&n;&t;&t; */
 id|info
 op_assign
 id|pci_lookup_dev

@@ -15,6 +15,9 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
@@ -120,6 +123,13 @@ r_struct
 id|screen_info
 id|screen_info
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+DECL|variable|apm_bios_info
+r_struct
+id|apm_bios_info
+id|apm_bios_info
+suffix:semicolon
+macro_line|#endif
 DECL|variable|aux_device_present
 r_int
 r_char
@@ -153,6 +163,10 @@ DECL|macro|PARAM
 mdefine_line|#define PARAM&t;empty_zero_page
 DECL|macro|EXT_MEM_K
 mdefine_line|#define EXT_MEM_K (*(unsigned short *) (PARAM+2))
+macro_line|#ifdef CONFIG_APM
+DECL|macro|APM_BIOS_INFO
+mdefine_line|#define APM_BIOS_INFO (*(struct apm_bios_info *) (PARAM+64))
+macro_line|#endif
 DECL|macro|DRIVE_INFO
 mdefine_line|#define DRIVE_INFO (*(struct drive_info_struct *) (PARAM+0x80))
 DECL|macro|SCREEN_INFO
@@ -267,6 +281,12 @@ id|screen_info
 op_assign
 id|SCREEN_INFO
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+id|apm_bios_info
+op_assign
+id|APM_BIOS_INFO
+suffix:semicolon
+macro_line|#endif
 id|aux_device_present
 op_assign
 id|AUX_DEVICE_INFO

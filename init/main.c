@@ -21,6 +21,9 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/bugs.h&gt;
 r_extern
 r_char
@@ -661,6 +664,14 @@ l_string|&quot;&quot;
 )brace
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_void
+id|dquot_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|argv_init
 r_static
 r_char
@@ -1970,6 +1981,16 @@ id|line
 op_add_assign
 l_int|8
 suffix:semicolon
+id|ROOT_DEV
+op_assign
+id|MKDEV
+c_func
+(paren
+id|UNNAMED_MAJOR
+comma
+l_int|255
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2737,6 +2758,18 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_APM
+id|apm_bios_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|dquot_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren

@@ -3089,7 +3089,7 @@ multiline_comment|/* better not execute files which are being written to */
 r_if
 c_cond
 (paren
-id|bprm.inode-&gt;i_wcount
+id|bprm.inode-&gt;i_writecount
 OG
 l_int|0
 )paren

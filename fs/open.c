@@ -613,7 +613,7 @@ op_logical_neg
 (paren
 id|file-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 )paren
 r_return
@@ -2425,7 +2425,7 @@ c_cond
 (paren
 id|f-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 (brace
 id|error
@@ -2597,7 +2597,7 @@ c_cond
 (paren
 id|f-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 id|put_write_access
 c_func
@@ -2814,7 +2814,7 @@ c_cond
 (paren
 id|filp-&gt;f_mode
 op_amp
-l_int|2
+id|FMODE_WRITE
 )paren
 id|put_write_access
 c_func

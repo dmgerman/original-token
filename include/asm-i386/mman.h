@@ -37,5 +37,10 @@ DECL|macro|MCL_CURRENT
 mdefine_line|#define MCL_CURRENT&t;1&t;&t;/* lock all current mappings */
 DECL|macro|MCL_FUTURE
 mdefine_line|#define MCL_FUTURE&t;2&t;&t;/* lock all future mappings */
+multiline_comment|/* compatibility flags */
+DECL|macro|MAP_ANON
+mdefine_line|#define MAP_ANON&t;MAP_ANONYMOUS
+DECL|macro|MAP_FILE
+mdefine_line|#define MAP_FILE&t;0
 macro_line|#endif /* __I386_MMAN_H__ */
 eof

@@ -316,7 +316,7 @@ id|comp-&gt;tstate
 comma
 l_int|0
 comma
-id|rslots
+id|tslots
 op_star
 r_sizeof
 (paren

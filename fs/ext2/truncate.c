@@ -225,7 +225,7 @@ r_else
 (brace
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|block_to_free
 comma
@@ -241,7 +241,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&t;&t;ext2_free_blocks (inode-&gt;i_sb, tmp, 1); */
+multiline_comment|/*&t;&t;ext2_free_blocks (inode, tmp, 1); */
 )brace
 r_if
 c_cond
@@ -252,7 +252,7 @@ l_int|0
 )paren
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|block_to_free
 comma
@@ -573,7 +573,7 @@ r_else
 (brace
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|block_to_free
 comma
@@ -589,7 +589,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&t;&t;ext2_free_blocks (inode-&gt;i_sb, tmp, 1); */
+multiline_comment|/*&t;&t;ext2_free_blocks (inode, tmp, 1); */
 id|inode-&gt;i_blocks
 op_sub_assign
 id|blocks
@@ -608,7 +608,7 @@ l_int|0
 )paren
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|block_to_free
 comma
@@ -688,7 +688,7 @@ l_int|1
 suffix:semicolon
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 comma
@@ -1016,7 +1016,7 @@ l_int|1
 suffix:semicolon
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 comma
@@ -1340,7 +1340,7 @@ l_int|1
 suffix:semicolon
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 comma

@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/tty_driver.h&gt;
 DECL|macro|LOG_BUF_LEN
 mdefine_line|#define LOG_BUF_LEN&t;4096
 DECL|variable|buf
@@ -1061,5 +1063,49 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * Write a message to a certain tty, not just the console. This is used for&n; * messages that need to be redirected to a specific tty.&n; * We don&squot;t put it into the syslog queue right now maybe in the future if&n; * really needed.&n; */
+DECL|function|tty_write_message
+r_void
+id|tty_write_message
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_char
+op_star
+id|msg
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tty
+op_logical_and
+id|tty-&gt;driver.write
+)paren
+id|tty-&gt;driver
+dot
+id|write
+c_func
+(paren
+id|tty
+comma
+l_int|0
+comma
+id|msg
+comma
+id|strlen
+c_func
+(paren
+id|msg
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 eof

@@ -186,6 +186,8 @@ DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit&t;&t;145
 DECL|macro|__NR_setsid
 mdefine_line|#define __NR_setsid&t;&t;147
+DECL|macro|__NR_quotactl
+mdefine_line|#define __NR_quotactl&t;&t;148
 DECL|macro|__NR_getsockname
 mdefine_line|#define __NR_getsockname&t;150
 DECL|macro|__NR_sigaction

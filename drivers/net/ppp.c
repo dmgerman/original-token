@@ -6213,12 +6213,12 @@ id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;ppp_tty_read: no data &quot;
-l_string|&quot;(EWOULDBLOCK)&bslash;n&quot;
+l_string|&quot;(EAGAIN)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 op_minus
-id|EWOULDBLOCK
+id|EAGAIN
 suffix:semicolon
 )brace
 id|current-&gt;timeout
@@ -11765,6 +11765,7 @@ l_int|0
 (brace
 id|printk
 (paren
+id|KERN_INFO
 l_string|&quot;registered device %s&bslash;n&quot;
 comma
 id|dev-&gt;name

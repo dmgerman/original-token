@@ -75,6 +75,9 @@ comma
 DECL|enumerator|PROC_IOPORTS
 id|PROC_IOPORTS
 comma
+DECL|enumerator|PROC_APM
+id|PROC_APM
+comma
 DECL|enumerator|PROC_PROFILE
 id|PROC_PROFILE
 multiline_comment|/* whether enabled or not */
@@ -229,6 +232,9 @@ comma
 DECL|enumerator|PROC_NET_RTCACHE
 id|PROC_NET_RTCACHE
 comma
+DECL|enumerator|PROC_NET_AX25_BPQETHER
+id|PROC_NET_AX25_BPQETHER
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace
@@ -298,6 +304,9 @@ id|PROC_SCSI_7000FASST
 comma
 DECL|enumerator|PROC_SCSI_EATA2X
 id|PROC_SCSI_EATA2X
+comma
+DECL|enumerator|PROC_SCSI_SSC
+id|PROC_SCSI_SSC
 comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG

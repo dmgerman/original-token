@@ -34,6 +34,10 @@ DECL|macro|MAY_WRITE
 mdefine_line|#define MAY_WRITE 2
 DECL|macro|MAY_READ
 mdefine_line|#define MAY_READ 4
+DECL|macro|FMODE_READ
+mdefine_line|#define FMODE_READ 1
+DECL|macro|FMODE_WRITE
+mdefine_line|#define FMODE_WRITE 2
 DECL|macro|READ
 mdefine_line|#define READ 0
 DECL|macro|WRITE
@@ -56,29 +60,31 @@ DECL|macro|SEL_EX
 mdefine_line|#define SEL_EX&t;&t;4
 multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
 DECL|macro|MS_RDONLY
-mdefine_line|#define MS_RDONLY&t; 1 /* mount read-only */
+mdefine_line|#define MS_RDONLY&t; 1&t;/* Mount read-only */
 DECL|macro|MS_NOSUID
-mdefine_line|#define MS_NOSUID&t; 2 /* ignore suid and sgid bits */
+mdefine_line|#define MS_NOSUID&t; 2&t;/* Ignore suid and sgid bits */
 DECL|macro|MS_NODEV
-mdefine_line|#define MS_NODEV&t; 4 /* disallow access to device special files */
+mdefine_line|#define MS_NODEV&t; 4&t;/* Disallow access to device special files */
 DECL|macro|MS_NOEXEC
-mdefine_line|#define MS_NOEXEC&t; 8 /* disallow program execution */
+mdefine_line|#define MS_NOEXEC&t; 8&t;/* Disallow program execution */
 DECL|macro|MS_SYNCHRONOUS
-mdefine_line|#define MS_SYNCHRONOUS&t;16 /* writes are synced at once */
+mdefine_line|#define MS_SYNCHRONOUS&t;16&t;/* Writes are synced at once */
 DECL|macro|MS_REMOUNT
-mdefine_line|#define MS_REMOUNT&t;32 /* alter flags of a mounted FS */
+mdefine_line|#define MS_REMOUNT&t;32&t;/* Alter flags of a mounted FS */
+DECL|macro|S_WRITE
+mdefine_line|#define S_WRITE&t;&t;128&t;/* Write on file/directory/symlink */
 DECL|macro|S_APPEND
-mdefine_line|#define S_APPEND    256 /* append-only file */
+mdefine_line|#define S_APPEND&t;256&t;/* Append-only file */
 DECL|macro|S_IMMUTABLE
-mdefine_line|#define S_IMMUTABLE 512 /* immutable file */
+mdefine_line|#define S_IMMUTABLE&t;512&t;/* Immutable file */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK (MS_RDONLY)
 multiline_comment|/*&n; * Magic mount flag number. Has to be or-ed to the flag values.&n; */
 DECL|macro|MS_MGC_VAL
-mdefine_line|#define MS_MGC_VAL 0xC0ED0000 /* magic flag number to indicate &quot;new&quot; flags */
+mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */
 DECL|macro|MS_MGC_MSK
-mdefine_line|#define MS_MGC_MSK 0xffff0000 /* magic flag number mask */
+mdefine_line|#define MS_MGC_MSK 0xffff0000&t;/* magic flag number mask */
 multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; */
 DECL|macro|IS_RDONLY
 mdefine_line|#define IS_RDONLY(inode) (((inode)-&gt;i_sb) &amp;&amp; ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY))
@@ -90,6 +96,8 @@ DECL|macro|IS_NOEXEC
 mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
 DECL|macro|IS_SYNC
 mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNCHRONOUS)
+DECL|macro|IS_WRITABLE
+mdefine_line|#define IS_WRITABLE(inode) ((inode)-&gt;i_flags &amp; S_WRITE)
 DECL|macro|IS_APPEND
 mdefine_line|#define IS_APPEND(inode) ((inode)-&gt;i_flags &amp; S_APPEND)
 DECL|macro|IS_IMMUTABLE
@@ -509,6 +517,7 @@ id|ia_ctime
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#include &lt;linux/quota.h&gt;
 DECL|struct|inode
 r_struct
 id|inode
@@ -608,6 +617,15 @@ id|vm_area_struct
 op_star
 id|i_mmap
 suffix:semicolon
+DECL|member|i_dquot
+r_struct
+id|dquot
+op_star
+id|i_dquot
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
 DECL|member|i_next
 DECL|member|i_prev
 r_struct
@@ -649,11 +667,6 @@ r_int
 r_int
 id|i_count
 suffix:semicolon
-DECL|member|i_wcount
-r_int
-r_int
-id|i_wcount
-suffix:semicolon
 DECL|member|i_flags
 r_int
 r_int
@@ -688,6 +701,11 @@ DECL|member|i_update
 r_int
 r_char
 id|i_update
+suffix:semicolon
+DECL|member|i_writecount
+r_int
+r_int
+id|i_writecount
 suffix:semicolon
 r_union
 (brace
@@ -994,6 +1012,12 @@ r_struct
 id|super_operations
 op_star
 id|s_op
+suffix:semicolon
+DECL|member|dq_op
+r_struct
+id|dquot_operations
+op_star
+id|dq_op
 suffix:semicolon
 DECL|member|s_flags
 r_int
@@ -1770,6 +1794,120 @@ op_star
 comma
 r_char
 op_star
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dquot_operations
+r_struct
+id|dquot_operations
+(brace
+DECL|member|initialize
+r_void
+(paren
+op_star
+id|initialize
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|drop
+r_void
+(paren
+op_star
+id|drop
+)paren
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+DECL|member|alloc_block
+r_int
+(paren
+op_star
+id|alloc_block
+)paren
+(paren
+r_const
+r_struct
+id|inode
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|alloc_inode
+r_int
+(paren
+op_star
+id|alloc_inode
+)paren
+(paren
+r_const
+r_struct
+id|inode
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|free_block
+r_void
+(paren
+op_star
+id|free_block
+)paren
+(paren
+r_const
+r_struct
+id|inode
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|free_inode
+r_void
+(paren
+op_star
+id|free_inode
+)paren
+(paren
+r_const
+r_struct
+id|inode
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|transfer
+r_int
+(paren
+op_star
+id|transfer
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|iattr
+op_star
+comma
+r_char
 )paren
 suffix:semicolon
 )brace

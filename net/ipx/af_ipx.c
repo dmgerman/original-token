@@ -930,9 +930,9 @@ r_return
 id|NOTIFY_DONE
 suffix:semicolon
 )brace
+DECL|function|ipxitf_def_skb_handler
 r_static
 r_int
-DECL|function|ipxitf_def_skb_handler
 id|ipxitf_def_skb_handler
 c_func
 (paren
@@ -982,9 +982,10 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;On input if skb-&gt;sk is set the buffer is a socket sending. We need to ensure the&n; *&t;accounting is kept right in these cases. At the moment the socket write queue is&n; *&t;charged for the memory.&n; */
+DECL|function|ipxitf_demux_socket
 r_static
 r_int
-DECL|function|ipxitf_demux_socket
 id|ipxitf_demux_socket
 c_func
 (paren
@@ -1078,7 +1079,7 @@ suffix:colon
 r_case
 l_int|0x456
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; *&t;The appropriate thing to do here is to&n;&t;&t;&t; * &t;dup the packet and route to the primary net&n;&t;&t;&t; *&t;interface via ipxitf_send; however, we&squot;ll cheat&n;&t;&t;&t; *&t;and just demux it here.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;The appropriate thing to do here is to&n;&t;&t;&t;&t; * &t;dup the packet and route to the primary net&n;&t;&t;&t;&t; *&t;interface via ipxitf_send; however, we&squot;ll cheat&n;&t;&t;&t;&t; *&t;and just demux it here.&n;&t;&t;&t;&t; */
 id|sock2
 op_assign
 id|ipxitf_find_socket
@@ -1097,21 +1098,17 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* if there is nothing to do, return */
+multiline_comment|/* &n;&t; *&t;if there is nothing to do, return. The kfree will&n;&t; *&t;cancel any charging.&n;&t; */
 r_if
 c_cond
-(paren
 (paren
 id|sock1
 op_eq
 l_int|NULL
-)paren
 op_logical_and
-(paren
 id|sock2
 op_eq
 l_int|NULL
-)paren
 )paren
 (brace
 r_if
@@ -1132,11 +1129,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; *&n;&t; * Firstly stop charging the sender for the space. We will&n;&t; * charge the recipient or discard. If we are called from ipx_rcv&n;&t; * this is ok as no socket owns an input buffer.&n;&t; */
+multiline_comment|/*&n;&t; * This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; *&n;&t; * Firstly stop charging the sender for the space. We will&n;&t; * charge the recipient or discard. If we are called from ipx_rcv&n;&t; * this is ok as no socket owns an input buffer.&n;&t; */
 r_if
 c_cond
 (paren
 id|skb-&gt;sk
+op_logical_and
+op_logical_neg
+id|copy
 )paren
 (brace
 id|skb-&gt;sk-&gt;wmem_alloc
@@ -1173,14 +1173,12 @@ id|skb1
 op_ne
 l_int|NULL
 )paren
-(brace
 id|skb1-&gt;arp
 op_assign
 id|skb1-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -1200,7 +1198,7 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-multiline_comment|/* Do we need 2 SKBs? */
+multiline_comment|/*&n;&t; *&t;Do we need 2 SKBs? &n;&t; */
 r_if
 c_cond
 (paren
@@ -1226,7 +1224,6 @@ id|skb2
 op_ne
 l_int|NULL
 )paren
-(brace
 id|skb2-&gt;arp
 op_assign
 id|skb2-&gt;free
@@ -1234,20 +1231,16 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-)brace
 r_else
-(brace
 id|skb2
 op_assign
 id|skb1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|sock1
 )paren
-(brace
 (paren
 r_void
 )paren
@@ -1259,7 +1252,6 @@ comma
 id|skb1
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1276,7 +1268,6 @@ c_cond
 (paren
 id|sock2
 )paren
-(brace
 (paren
 r_void
 )paren
@@ -1288,7 +1279,6 @@ comma
 id|skb2
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1328,12 +1318,6 @@ id|out_offset
 op_assign
 id|intrfc-&gt;if_ipx_offset
 suffix:semicolon
-macro_line|#if 0
-r_char
-op_star
-id|oldraw
-suffix:semicolon
-macro_line|#endif&t;
 r_int
 id|len
 suffix:semicolon
@@ -1346,7 +1330,6 @@ op_ge
 id|out_offset
 )paren
 (brace
-multiline_comment|/*&t;&t;skb_push(skb,out_offset);*/
 id|skb-&gt;arp
 op_assign
 id|skb-&gt;free
@@ -1357,55 +1340,6 @@ r_return
 id|skb
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* Existing SKB will work, just need to move things around a little */
-r_if
-c_cond
-(paren
-id|in_offset
-OG
-id|out_offset
-)paren
-(brace
-id|oldraw
-op_assign
-id|skb-&gt;h.raw
-suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-op_amp
-(paren
-id|skb-&gt;data
-(braket
-id|out_offset
-)braket
-)paren
-suffix:semicolon
-id|memmove
-c_func
-(paren
-id|skb-&gt;h.raw
-comma
-id|oldraw
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
-id|skb-&gt;len
-op_add_assign
-id|out_offset
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-r_return
-id|skb
-suffix:semicolon
-)brace
-macro_line|#endif&t;
 multiline_comment|/* Need new SKB */
 id|len
 op_assign
@@ -1480,9 +1414,9 @@ r_return
 id|skb2
 suffix:semicolon
 )brace
+DECL|function|ipxitf_send
 r_static
 r_int
-DECL|function|ipxitf_send
 id|ipxitf_send
 c_func
 (paren
@@ -1540,7 +1474,7 @@ suffix:semicolon
 r_int
 id|addr_len
 suffix:semicolon
-multiline_comment|/* We need to know how many skbuffs it will take to send out this&n;&t; * packet to avoid unnecessary copies.&n;&t; */
+multiline_comment|/* &n;&t; *&t;We need to know how many skbuffs it will take to send out this&n;&t; *&t;packet to avoid unnecessary copies.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1566,7 +1500,7 @@ id|send_to_wire
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* See if this should be demuxed to sockets on this interface */
+multiline_comment|/*&n;&t; *&t;See if this should be demuxed to sockets on this interface &n;&t; *&n;&t; *&t;We want to ensure the original was eaten or that we only use&n;&t; *&t;up clones.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1575,6 +1509,7 @@ op_eq
 id|intrfc-&gt;if_netnum
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;To our own node, loop and free the original.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1601,6 +1536,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Broadcast, loop and possibly keep to send on.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1638,7 +1574,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* if the originating net is not equal to our net; this is routed */
+multiline_comment|/*&n;&t; *&t;if the originating net is not equal to our net; this is routed &n;&t; */
 r_if
 c_cond
 (paren
@@ -1682,7 +1618,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* determine the appropriate hardware address */
+multiline_comment|/*&n;&t; *&t;Determine the appropriate hardware address &n;&t; */
 id|addr_len
 op_assign
 id|dev-&gt;addr_len
@@ -1702,7 +1638,6 @@ id|IPX_NODE_LEN
 op_eq
 l_int|0
 )paren
-(brace
 id|memcpy
 c_func
 (paren
@@ -1713,9 +1648,7 @@ comma
 id|addr_len
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|memcpy
 c_func
 (paren
@@ -1734,8 +1667,7 @@ comma
 id|addr_len
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* make any compensation for differing physical/data link size */
+multiline_comment|/*&n;&t; *&t;Make any compensation for differing physical/data link size &n;&t; */
 id|skb
 op_assign
 id|ipxitf_adjust_skbuff
@@ -1773,24 +1705,8 @@ comma
 id|dest_node
 )paren
 suffix:semicolon
-macro_line|#ifdef ALREADY_DONE_GUV
-r_if
-c_cond
-(paren
-id|skb-&gt;sk
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* This is an outbound packet from this host.  We need to &n;&t;&t; * increment the write count.&n;&t;&t; */
-id|skb-&gt;sk-&gt;wmem_alloc
-op_add_assign
-id|skb-&gt;truesize
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#if 0
-multiline_comment|/* Now log the packet just before transmission */
+multiline_comment|/* &n;&t; *&t;Now log the packet just before transmission &n;&t; */
 id|dump_pkt
 c_func
 (paren
@@ -1816,7 +1732,7 @@ id|skb-&gt;data
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Send it out */
+multiline_comment|/*&n;&t; *&t;Send it out &n;&t; */
 id|dev_queue_xmit
 c_func
 (paren
@@ -1847,9 +1763,9 @@ r_char
 op_star
 )paren
 suffix:semicolon
+DECL|function|ipxitf_add_local_route
 r_static
 r_int
-DECL|function|ipxitf_add_local_route
 id|ipxitf_add_local_route
 c_func
 (paren

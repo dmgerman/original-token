@@ -5,6 +5,29 @@ multiline_comment|/*&n; * Define USE_PENTIUM_MM if you want the 4MB page table o
 DECL|macro|USE_PENTIUM_MM
 mdefine_line|#define USE_PENTIUM_MM 1
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
+multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities.&n; */
+macro_line|#ifndef __SMP__
+DECL|macro|invalidate
+mdefine_line|#define invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+macro_line|#else
+macro_line|#include &lt;asm/smp.h&gt;
+DECL|macro|local_invalidate
+mdefine_line|#define local_invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+DECL|macro|invalidate
+mdefine_line|#define invalidate() &bslash;&n;&t;smp_invalidate();
+macro_line|#endif
+multiline_comment|/*&n; * We aren&squot;t very clever about this yet. On a 486+ we could actually do&n; * page-granularity invalidates for better performance in some cases.&n; * And SMP could certainly avoid some global invalidates..&n; */
+DECL|macro|invalidate_all
+mdefine_line|#define invalidate_all() invalidate()
+DECL|macro|invalidate_mm
+mdefine_line|#define invalidate_mm(mm_struct) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
+DECL|macro|invalidate_page
+mdefine_line|#define invalidate_page(mm_struct,addr) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
+DECL|macro|invalidate_range
+mdefine_line|#define invalidate_range(mm_struct,start,end) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22

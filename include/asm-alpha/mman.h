@@ -45,5 +45,10 @@ DECL|macro|MCL_CURRENT
 mdefine_line|#define MCL_CURRENT&t; 8192&t;&t;/* lock all currently mapped pages */
 DECL|macro|MCL_FUTURE
 mdefine_line|#define MCL_FUTURE&t;16384&t;&t;/* lock all additions to address space */
+multiline_comment|/* compatibility flags */
+DECL|macro|MAP_ANON
+mdefine_line|#define MAP_ANON&t;MAP_ANONYMOUS
+DECL|macro|MAP_FILE
+mdefine_line|#define MAP_FILE&t;0
 macro_line|#endif /* __ALPHA_MMAN_H__ */
 eof

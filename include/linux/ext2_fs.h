@@ -788,8 +788,9 @@ r_extern
 r_int
 id|ext2_new_block
 (paren
+r_const
 r_struct
-id|super_block
+id|inode
 op_star
 comma
 r_int
@@ -799,6 +800,9 @@ id|__u32
 op_star
 comma
 id|__u32
+op_star
+comma
+r_int
 op_star
 )paren
 suffix:semicolon
@@ -806,8 +810,9 @@ r_extern
 r_void
 id|ext2_free_blocks
 (paren
+r_const
 r_struct
-id|super_block
+id|inode
 op_star
 comma
 r_int
@@ -938,6 +943,9 @@ id|inode
 op_star
 comma
 r_int
+comma
+r_int
+op_star
 )paren
 suffix:semicolon
 r_extern

@@ -26,12 +26,5 @@ DECL|macro|_sys_ssetmask
 mdefine_line|#define _sys_ssetmask&t;_sys_old_syscall&t;/* _sys_sigprocmask */
 macro_line|#endif
 multiline_comment|/*&n; * These are system calls that haven&squot;t been implemented yet&n; * but have an entry in the table for future expansion..&n; */
-macro_line|#ifdef __ELF__
-DECL|macro|sys_quotactl
-mdefine_line|#define sys_quotactl&t;sys_ni_syscall
-macro_line|#else
-DECL|macro|_sys_quotactl
-mdefine_line|#define _sys_quotactl&t;_sys_ni_syscall
-macro_line|#endif
 macro_line|#endif
 eof

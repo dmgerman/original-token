@@ -100,6 +100,8 @@ DECL|macro|IDE3_MAJOR
 mdefine_line|#define IDE3_MAJOR&t;34
 DECL|macro|NETLINK_MAJOR
 mdefine_line|#define NETLINK_MAJOR&t;36
+DECL|macro|IDETAPE_MAJOR
+mdefine_line|#define IDETAPE_MAJOR&t;37
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_MAJOR
 mdefine_line|#define SCSI_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_TAPE_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR&t;&bslash;&n;   || (M) == SCSI_GENERIC_MAJOR)

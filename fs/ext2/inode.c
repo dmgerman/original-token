@@ -121,14 +121,17 @@ id|inode
 )paren
 (brace
 macro_line|#ifdef EXT2_PREALLOCATE
+r_int
+r_int
+id|total
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|inode-&gt;u.ext2_i.i_prealloc_count
 )paren
 (brace
-r_int
-id|i
+id|total
 op_assign
 id|inode-&gt;u.ext2_i.i_prealloc_count
 suffix:semicolon
@@ -138,11 +141,11 @@ l_int|0
 suffix:semicolon
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|inode-&gt;u.ext2_i.i_prealloc_block
 comma
-id|i
+id|total
 )paren
 suffix:semicolon
 )brace
@@ -161,6 +164,10 @@ comma
 r_int
 r_int
 id|goal
+comma
+r_int
+op_star
+id|err
 )paren
 (brace
 macro_line|#ifdef EXT2FS_DEBUG
@@ -324,7 +331,7 @@ id|result
 op_assign
 id|ext2_new_block
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|goal
 comma
@@ -333,6 +340,8 @@ id|inode-&gt;u.ext2_i.i_prealloc_count
 comma
 op_amp
 id|inode-&gt;u.ext2_i.i_prealloc_block
+comma
+id|err
 )paren
 suffix:semicolon
 r_else
@@ -340,13 +349,15 @@ id|result
 op_assign
 id|ext2_new_block
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|goal
 comma
 l_int|0
 comma
 l_int|0
+comma
+id|err
 )paren
 suffix:semicolon
 )brace
@@ -355,13 +366,15 @@ id|result
 op_assign
 id|ext2_new_block
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|goal
 comma
 l_int|0
 comma
 l_int|0
+comma
+id|err
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -967,6 +980,8 @@ id|ext2_alloc_block
 id|inode
 comma
 id|goal
+comma
+id|err
 )paren
 suffix:semicolon
 r_if
@@ -998,7 +1013,7 @@ id|p
 (brace
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 comma
@@ -1358,6 +1373,8 @@ id|ext2_alloc_block
 id|inode
 comma
 id|goal
+comma
+id|err
 )paren
 suffix:semicolon
 r_if
@@ -1396,7 +1413,7 @@ id|p
 (brace
 id|ext2_free_blocks
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 comma

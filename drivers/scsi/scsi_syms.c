@@ -194,6 +194,12 @@ c_func
 id|request_queueable
 )paren
 comma
+id|X
+c_func
+(paren
+id|in_scan_scsis
+)paren
+comma
 macro_line|#if defined(CONFIG_PROC_FS)
 id|X
 c_func

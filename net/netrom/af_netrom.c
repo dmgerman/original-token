@@ -5870,7 +5870,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;G4KLX NET/ROM for Linux. Version 0.3 ALPHA for AX25.030 Linux 1.3.35&bslash;n&quot;
+l_string|&quot;G4KLX NET/ROM for Linux. Version 0.4 ALPHA for AX25.030 Linux 1.3.45&bslash;n&quot;
 )paren
 suffix:semicolon
 id|nr_default.quality

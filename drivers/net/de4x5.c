@@ -912,13 +912,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_char
-op_star
-id|addrs
 )paren
 suffix:semicolon
 r_static
@@ -3295,10 +3288,6 @@ id|SetMulticastFilter
 c_func
 (paren
 id|dev
-comma
-l_int|0
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -5704,10 +5693,37 @@ l_int|NULL
 r_if
 c_cond
 (paren
-id|num_addrs
-op_ge
-l_int|0
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
+(brace
+multiline_comment|/* set promiscuous mode */
+id|u32
+id|omr
+suffix:semicolon
+id|omr
+op_assign
+id|inl
+c_func
+(paren
+id|DE4X5_OMR
+)paren
+suffix:semicolon
+id|omr
+op_or_assign
+id|OMR_PR
+suffix:semicolon
+id|outl
+c_func
+(paren
+id|omr
+comma
+id|DE4X5_OMR
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 id|SetMulticastFilter
 c_func
@@ -5784,33 +5800,6 @@ multiline_comment|/* Start the TX */
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* set promiscuous mode */
-id|u32
-id|omr
-suffix:semicolon
-id|omr
-op_assign
-id|inl
-c_func
-(paren
-id|DE4X5_OMR
-)paren
-suffix:semicolon
-id|omr
-op_or_assign
-id|OMR_PR
-suffix:semicolon
-id|outl
-c_func
-(paren
-id|omr
-comma
-id|DE4X5_OMR
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -5892,6 +5881,11 @@ c_func
 id|DE4X5_OMR
 )paren
 suffix:semicolon
+id|omr
+op_and_assign
+op_complement
+id|OMR_PR
+suffix:semicolon
 id|pa
 op_assign
 id|build_setup_frame
@@ -5906,38 +5900,34 @@ multiline_comment|/* Build the basic frame */
 r_if
 c_cond
 (paren
-id|lp-&gt;setup_f
-op_eq
-id|HASH_PERF
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|num_addrs
-op_ge
-id|HASH_TABLE_LEN
-op_logical_or
 (paren
 id|dev-&gt;flags
 op_amp
 id|IFF_ALLMULTI
 )paren
+op_logical_or
+(paren
+id|dev-&gt;mc_count
+OG
+l_int|14
+)paren
 )paren
 (brace
-multiline_comment|/* Pass all multicasts */
 id|omr
 op_or_assign
 id|OMR_PM
 suffix:semicolon
+multiline_comment|/* Pass all multicasts */
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|lp-&gt;setup_f
+op_eq
+id|HASH_PERF
+)paren
 (brace
-id|omr
-op_and_assign
-op_complement
-id|OMR_PM
-suffix:semicolon
 multiline_comment|/* Now update the MCA table */
 r_for
 c_loop
@@ -5948,7 +5938,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|num_addrs
+id|dev-&gt;mc_count
 suffix:semicolon
 id|i
 op_increment
@@ -6102,24 +6092,11 @@ op_or_assign
 id|bit
 suffix:semicolon
 )brace
-r_else
-(brace
-multiline_comment|/* skip this address */
-id|addrs
-op_add_assign
-id|ETH_ALEN
-suffix:semicolon
-)brace
 )brace
 )brace
 r_else
 (brace
 multiline_comment|/* Perfect filtering */
-id|omr
-op_and_assign
-op_complement
-id|OMR_PM
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -6187,18 +6164,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|dev-&gt;mc_count
-op_eq
-l_int|0
-)paren
-id|omr
-op_and_assign
-op_complement
-id|OMR_PR
-suffix:semicolon
 id|outl
 c_func
 (paren
@@ -6211,6 +6176,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard. Upto 15 EISA devices are supported.&n;*/
+DECL|function|eisa_probe
 r_static
 r_void
 id|eisa_probe
@@ -6536,6 +6502,7 @@ DECL|macro|PCI_DEVICE
 mdefine_line|#define PCI_DEVICE    (dev_num &lt;&lt; 3)
 DECL|macro|PCI_LAST_DEV
 mdefine_line|#define PCI_LAST_DEV  32
+DECL|function|pci_probe
 r_static
 r_void
 id|pci_probe
@@ -6982,6 +6949,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Allocate the device by pointing to the next available space in the&n;** device structure. Should one not be available, it is created.&n;*/
+DECL|function|alloc_device
 r_static
 r_struct
 id|device
@@ -7435,6 +7403,7 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Auto configure the media here rather than setting the port at compile&n;** time. This routine is called by de4x5_init() when a loss of media is&n;** detected (excessive collisions, loss of carrier, no carrier or link fail&n;** [TP]) to check whether the user has been sneaky and changed the port on us.&n;*/
+DECL|function|autoconf_media
 r_static
 r_int
 id|autoconf_media
@@ -7756,6 +7725,7 @@ id|lp-&gt;media
 )paren
 suffix:semicolon
 )brace
+DECL|function|dc21040_autoconf
 r_static
 r_void
 id|dc21040_autoconf
@@ -8056,6 +8026,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Autoconfigure the media when using the DC21041. AUI needs to be tested&n;** before BNC, because the BNC port will indicate activity if it&squot;s not&n;** terminated correctly. The only way to test for that is to place a loopback&n;** packet onto the network and watch for errors.&n;*/
+DECL|function|dc21041_autoconf
 r_static
 r_void
 id|dc21041_autoconf
@@ -8565,6 +8536,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Reduced feature version (temporary I hope)&n;*/
+DECL|function|dc21140_autoconf
 r_static
 r_void
 id|dc21140_autoconf
@@ -8734,6 +8706,7 @@ suffix:semicolon
 )brace
 r_static
 r_int
+DECL|function|test_media
 id|test_media
 c_func
 (paren
@@ -8893,6 +8866,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;static int test_sym_link(struct device *dev, u32 msec)&n;{&n;  struct de4x5_private *lp = (struct de4x5_private *)dev-&gt;priv;&n;  u_long iobase = dev-&gt;base_addr;&n;  u32 gep, time;&n;&n;  / * Set link_fail_inhibit_timer * /&n;  load_ms_timer(dev, msec);&n;&n;  / * Poll for timeout or SYM_LINK=0 * /&n;  do {&n;    time = inl(DE4X5_GPT) &amp; GPT_VAL;&n;    gep = inl(DE4X5_GEP) &amp; (GEP_SLNK | GEP_LNP);&n;  } while ((time &gt; 0) &amp;&amp; (gep &amp; GEP_SLNK));&n;&n;  return gep;&n;}&n;*/
 multiline_comment|/*&n;** Send a packet onto the media and watch for send errors that indicate the&n;** media is bad or unconnected.&n;*/
+DECL|function|ping_media
 r_static
 r_int
 id|ping_media
@@ -9106,6 +9080,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Check the Auto Negotiation State. Return OK when a link pass interrupt&n;** is received and the auto-negotiation status is NWAY OK.&n;*/
+DECL|function|test_ans
 r_static
 r_int
 id|test_ans
@@ -9249,6 +9224,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;**&n;*/
+DECL|function|reset_init_sia
 r_static
 r_void
 id|reset_init_sia
@@ -9316,6 +9292,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Load the timer on the DC21041 and 21140. Max time is 13.42 secs.&n;*/
+DECL|function|load_ms_timer
 r_static
 r_void
 id|load_ms_timer
@@ -9438,6 +9415,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Create an Ethernet packet with an invalid CRC&n;*/
+DECL|function|create_packet
 r_static
 r_void
 id|create_packet
@@ -9534,6 +9512,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Known delay in microseconds&n;*/
+DECL|function|dce_us_delay
 r_static
 r_void
 id|dce_us_delay
@@ -9553,6 +9532,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Known delay in milliseconds, in millisecond steps.&n;*/
+DECL|function|dce_ms_delay
 r_static
 r_void
 id|dce_ms_delay
@@ -9591,6 +9571,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Look for a particular board name in the EISA configuration space&n;*/
+DECL|function|EISA_signature
 r_static
 r_int
 id|EISA_signature
@@ -9845,6 +9826,7 @@ suffix:semicolon
 multiline_comment|/* return the device name string */
 )brace
 multiline_comment|/*&n;** Look for a special sequence in the Ethernet station address PROM that&n;** is common across all DIGITAL network adapter products.&n;** &n;** Search the Ethernet address ROM for the signature. Since the ROM address&n;** counter can start at an arbitrary point, the search must include the entire&n;** probe sequence length plus the (length_of_the_signature - 1).&n;** Stop the search IMMEDIATELY after the signature is found so that the&n;** PROM address counter is correctly positioned at the start of the&n;** ethernet address for later read out.&n;*/
+DECL|function|DevicePresent
 r_static
 r_int
 id|DevicePresent
@@ -10120,6 +10102,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
+DECL|function|get_hw_addr
 r_static
 r_int
 id|get_hw_addr
@@ -10531,6 +10514,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** SROM Read&n;*/
+DECL|function|srom_rd
 r_static
 r_int
 id|srom_rd
@@ -10607,6 +10591,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+DECL|function|srom_latch
 r_static
 r_void
 id|srom_latch
@@ -10648,6 +10633,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|srom_command
 r_static
 r_void
 id|srom_command
@@ -10693,6 +10679,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|srom_address
 r_static
 r_void
 id|srom_address
@@ -10805,6 +10792,7 @@ multiline_comment|/*    printk(&quot;.&quot;);*/
 r_return
 suffix:semicolon
 )brace
+DECL|function|srom_data
 r_static
 r_int
 id|srom_data
@@ -10903,6 +10891,7 @@ id|word
 suffix:semicolon
 )brace
 multiline_comment|/*&n;static void srom_busy(u_int command, u_long addr)&n;{&n;  sendto_srom((command &amp; 0x0000ff00) | DT_CS, addr);&n;&n;  while (!((getfrom_srom(addr) &gt;&gt; 3) &amp; 0x01)) {&n;    dce_ms_delay(1);&n;  }&n;&n;  sendto_srom(command &amp; 0x0000ff00, addr);&n;&n;  return;&n;}&n;*/
+DECL|function|sendto_srom
 r_static
 r_void
 id|sendto_srom
@@ -10932,6 +10921,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|getfrom_srom
 r_static
 r_int
 id|getfrom_srom
@@ -10962,6 +10952,7 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+DECL|function|build_setup_frame
 r_static
 r_char
 op_star
@@ -11185,6 +11176,7 @@ id|pa
 suffix:semicolon
 multiline_comment|/* Points to the next entry */
 )brace
+DECL|function|enable_ast
 r_static
 r_void
 id|enable_ast
@@ -11239,6 +11231,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|disable_ast
 r_static
 r_void
 id|disable_ast
@@ -11291,6 +11284,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|kick_tx
 r_static
 r_void
 id|kick_tx
@@ -11352,6 +11346,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Perform IOCTL call functions here. Some are privileged operations and the&n;** effective uid is checked in those cases.&n;*/
+DECL|function|de4x5_ioctl
 r_static
 r_int
 id|de4x5_ioctl
@@ -11921,10 +11916,6 @@ id|set_multicast_list
 c_func
 (paren
 id|dev
-comma
-id|ioc-&gt;len
-comma
-id|tmp.addr
 )paren
 suffix:semicolon
 )brace
@@ -11935,10 +11926,6 @@ id|set_multicast_list
 c_func
 (paren
 id|dev
-comma
-id|ioc-&gt;len
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -11970,10 +11957,6 @@ id|set_multicast_list
 c_func
 (paren
 id|dev
-comma
-l_int|0
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -13061,6 +13044,7 @@ id|status
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|variable|devicename
 r_static
 r_char
 id|devicename
@@ -13073,6 +13057,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+DECL|variable|thisDE4X5
 r_static
 r_struct
 id|device
@@ -13106,6 +13091,7 @@ comma
 id|de4x5_probe
 )brace
 suffix:semicolon
+DECL|variable|io
 r_static
 r_int
 id|io
@@ -13113,6 +13099,7 @@ op_assign
 l_int|0x000b
 suffix:semicolon
 multiline_comment|/* EDIT THESE LINES FOR YOUR CONFIGURATION */
+DECL|variable|irq
 r_static
 r_int
 id|irq
@@ -13121,6 +13108,7 @@ l_int|10
 suffix:semicolon
 multiline_comment|/* or use the insmod io= irq= options &t;&t;*/
 r_int
+DECL|function|init_module
 id|init_module
 c_func
 (paren

@@ -31,6 +31,10 @@ r_const
 r_char
 op_star
 comma
+r_const
+r_char
+op_star
+comma
 r_char
 op_star
 comma
@@ -1467,6 +1471,8 @@ c_func
 (paren
 id|inode-&gt;i_rdev
 comma
+id|tmp.devname
+comma
 id|dirname
 comma
 l_string|&quot;ext2&quot;
@@ -1594,6 +1600,8 @@ c_func
 (paren
 id|inode-&gt;i_rdev
 comma
+id|tmp.devname
+comma
 id|dirname
 comma
 l_string|&quot;iso9660&quot;
@@ -1714,6 +1722,8 @@ id|do_mount
 c_func
 (paren
 id|dev
+comma
+l_string|&quot;&quot;
 comma
 id|dirname
 comma

@@ -22,6 +22,9 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -9774,6 +9777,18 @@ id|nopowersave
 r_int
 id|currcons
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+r_if
+c_cond
+(paren
+id|apm_display_blank
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9933,6 +9948,18 @@ suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
+macro_line|#ifdef CONFIG_APM
+r_if
+c_cond
+(paren
+id|apm_display_unblank
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

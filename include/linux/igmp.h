@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;Extended to talk the BSD extended IGMP protocol of mrouted 3.6&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;Extended to talk the BSD extended IGMP protocol of mrouted 3.6&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_IGMP_H
 DECL|macro|_LINUX_IGMP_H
 mdefine_line|#define _LINUX_IGMP_H
@@ -68,8 +68,8 @@ mdefine_line|#define IGMP_TIMER_SCALE&t;&t;10&t;/* denotes that the igmphdr-&gt;
 multiline_comment|/* specifies time in 10th of seconds&t; */
 DECL|macro|IGMP_AGE_THRESHOLD
 mdefine_line|#define IGMP_AGE_THRESHOLD&t;&t;540&t;/* If this host don&squot;t hear any IGMP V1&t;*/
-multiline_comment|/* message in this period of time, revert */
-multiline_comment|/* to IGMP v2 router */
+multiline_comment|/* message in this period of time,&t;*/
+multiline_comment|/* revert to IGMP v2 router.&t;&t;*/
 DECL|macro|IGMP_ALL_HOSTS
 mdefine_line|#define IGMP_ALL_HOSTS&t;&t;htonl(0xE0000001L)
 DECL|macro|IGMP_ALL_ROUTER
@@ -140,9 +140,9 @@ id|users
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|router_info
+DECL|struct|ip_router_info
 r_struct
-id|router_info
+id|ip_router_info
 (brace
 DECL|member|dev
 r_struct
@@ -160,9 +160,14 @@ r_int
 id|time
 suffix:semicolon
 multiline_comment|/* # of slow timeouts since last old query */
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
 DECL|member|next
 r_struct
-id|router_info
+id|ip_router_info
 op_star
 id|next
 suffix:semicolon

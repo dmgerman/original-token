@@ -48,5 +48,7 @@ DECL|macro|SO_NO_CHECK
 mdefine_line|#define SO_NO_CHECK&t;11
 DECL|macro|SO_PRIORITY
 mdefine_line|#define SO_PRIORITY&t;12
+DECL|macro|SO_BSDCOMPAT
+mdefine_line|#define SO_BSDCOMPAT&t;14
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

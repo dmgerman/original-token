@@ -53,6 +53,8 @@ DECL|macro|LPRESET
 mdefine_line|#define LPRESET     0x060c  /* reset printer */
 DECL|macro|LPGETSTATS
 mdefine_line|#define LPGETSTATS  0x060d  /* get statistics (struct lp_stats) */
+DECL|macro|LPGETFLAGS
+mdefine_line|#define LPGETFLAGS  0x060e  /* get status flags */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
 DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)

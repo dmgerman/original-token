@@ -1265,6 +1265,12 @@ comma
 id|X
 c_func
 (paren
+id|do_gettimeofday
+)paren
+comma
+id|X
+c_func
+(paren
 id|loops_per_sec
 )paren
 comma

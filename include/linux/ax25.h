@@ -84,6 +84,23 @@ id|AX25_MAX_DIGIS
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|ax25_bpqaddr_struct
+r_struct
+id|ax25_bpqaddr_struct
+(brace
+DECL|member|dev
+r_char
+id|dev
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|addr
+id|ax25_address
+id|addr
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|AX25_WINDOW
 mdefine_line|#define AX25_WINDOW&t;1
 DECL|macro|AX25_T1
@@ -108,6 +125,8 @@ DECL|macro|SIOCAX25DELUID
 mdefine_line|#define SIOCAX25DELUID&t;&t;(SIOCPROTOPRIVATE+2)
 DECL|macro|SIOCAX25NOUID
 mdefine_line|#define SIOCAX25NOUID&t;&t;(SIOCPROTOPRIVATE+3)
+DECL|macro|SIOCAX25BPQADDR
+mdefine_line|#define&t;SIOCAX25BPQADDR&t;&t;(SIOCPROTOPRIVATE+4)
 DECL|macro|SIOCAX25GETPARMS
 mdefine_line|#define&t;SIOCAX25GETPARMS&t;(SIOCPROTOPRIVATE+5)
 DECL|macro|SIOCAX25SETPARMS

@@ -283,7 +283,7 @@ c_func
 suffix:semicolon
 r_return
 op_minus
-id|EWOULDBLOCK
+id|EAGAIN
 suffix:semicolon
 )brace
 id|interruptible_sleep_on
@@ -775,7 +775,7 @@ id|MAX_QBYTES
 id|ret
 op_assign
 op_minus
-id|EWOULDBLOCK
+id|EAGAIN
 suffix:semicolon
 )brace
 r_else

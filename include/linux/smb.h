@@ -76,6 +76,8 @@ DECL|macro|LANMAN1
 mdefine_line|#define LANMAN1
 DECL|macro|LANMAN2
 mdefine_line|#define LANMAN2
+DECL|macro|NT1
+mdefine_line|#define NT1
 DECL|enum|smb_protocol
 r_enum
 id|smb_protocol

@@ -136,14 +136,6 @@ id|IFNAMSIZ
 )braket
 suffix:semicolon
 multiline_comment|/* if name, e.g. &quot;en0&quot; */
-DECL|member|ifrn_hwaddr
-r_char
-id|ifrn_hwaddr
-(braket
-id|IFHWADDRLEN
-)braket
-suffix:semicolon
-multiline_comment|/* Obsolete */
 DECL|member|ifr_ifrn
 )brace
 id|ifr_ifrn
@@ -212,8 +204,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ifr_name
 mdefine_line|#define ifr_name&t;ifr_ifrn.ifrn_name&t;/* interface name &t;*/
-DECL|macro|old_ifr_hwaddr
-mdefine_line|#define old_ifr_hwaddr&t;ifr_ifrn.ifrn_hwaddr&t;/* interface hardware   */
 DECL|macro|ifr_hwaddr
 mdefine_line|#define ifr_hwaddr&t;ifr_ifru.ifru_hwaddr&t;/* MAC address &t;&t;*/
 DECL|macro|ifr_addr

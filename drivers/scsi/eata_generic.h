@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993,94,95 Michael Neuffer&t;&t;&t;*&n;*********************************************************&n;* last change: 95/06/20&t;&t;&t;&t;&t;*&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993,94,95 Michael Neuffer&t;&t;&t;*&n;*********************************************************&n;* last change: 95/11/07&t;&t;&t;&t;&t;*&n;********************************************************/
 macro_line|#ifndef _EATA_GENERIC_H
 DECL|macro|_EATA_GENERIC_H
 mdefine_line|#define _EATA_GENERIC_H
@@ -68,7 +68,7 @@ mdefine_line|#define MAX_PCI_BUS&t;16&t;       /* Maximum # Of Busses Allowed&t;
 DECL|macro|SG_SIZE
 mdefine_line|#define SG_SIZE&t;&t;64 
 DECL|macro|SG_SIZE_BIG
-mdefine_line|#define SG_SIZE_BIG&t;509&t;       /* max. 509 */
+mdefine_line|#define SG_SIZE_BIG&t;509&t;       /* max. 509 elements, one 4k page */
 DECL|macro|C_P_L_DIV
 mdefine_line|#define C_P_L_DIV&t;2 /* 1 &lt;= C_P_L_DIV &lt;= 8&t;    &n;&t;&t;&t;   * You can use this parameter to fine-tune&n;&t;&t;&t;   * the driver. Depending on the number of &n;&t;&t;&t;   * devices and their speed and ability to queue &n;&t;&t;&t;   * commands, you will get the best results with a&n;&t;&t;&t;   * value&n;&t;&t;&t;   * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;&t;&t;   * The reason for this is that the disk driver &n;&t;&t;&t;   * tends to flood the queue, so that other &n;&t;&t;&t;   * drivers have problems to queue commands &n;&t;&t;&t;   * themselves. This can for example result in &n;&t;&t;&t;   * the effect that the tape stops during disk &n;&t;&t;&t;   * accesses. &n;&t;&t;&t;   */
 DECL|macro|FREE
