@@ -2873,6 +2873,19 @@ id|tty-&gt;read_cnt
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we are doing input canonicalization, let as many&n;&t; * characters through as possible, so that the excess&n;&t; * characters can be &quot;beeped&quot;.&n;&t; */
+r_if
+c_cond
+(paren
+id|L_ICANON
+c_func
+(paren
+id|tty
+)paren
+)paren
+r_return
+id|N_TTY_BUF_SIZE
+suffix:semicolon
 r_if
 c_cond
 (paren

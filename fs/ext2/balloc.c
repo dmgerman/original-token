@@ -59,7 +59,7 @@ id|sb
 comma
 l_string|&quot;get_group_desc&quot;
 comma
-l_string|&quot;block_group &gt;= groups_count&bslash;n&quot;
+l_string|&quot;block_group &gt;= groups_count - &quot;
 l_string|&quot;block_group = %d, groups_count = %lu&quot;
 comma
 id|block_group
@@ -102,7 +102,7 @@ id|sb
 comma
 l_string|&quot;get_group_desc&quot;
 comma
-l_string|&quot;Group descriptor not loaded&bslash;n&quot;
+l_string|&quot;Group descriptor not loaded - &quot;
 l_string|&quot;block_group = %d, group_desc = %lu, desc = %lu&quot;
 comma
 id|block_group
@@ -208,7 +208,7 @@ id|sb
 comma
 l_string|&quot;read_block_bitmap&quot;
 comma
-l_string|&quot;Cannot read block bitmap&bslash;n&quot;
+l_string|&quot;Cannot read block bitmap - &quot;
 l_string|&quot;block_group = %d, block_bitmap = %lu&quot;
 comma
 id|block_group
@@ -274,7 +274,7 @@ id|sb
 comma
 l_string|&quot;load_block_bitmap&quot;
 comma
-l_string|&quot;block_group &gt;= groups_count&bslash;n&quot;
+l_string|&quot;block_group &gt;= groups_count - &quot;
 l_string|&quot;block_group = %d, groups_count = %lu&quot;
 comma
 id|block_group
@@ -679,7 +679,7 @@ id|sb
 comma
 l_string|&quot;ext2_free_blocks&quot;
 comma
-l_string|&quot;Freeing blocks not in datazone&bslash;n&quot;
+l_string|&quot;Freeing blocks not in datazone - &quot;
 l_string|&quot;block = %lu, count = %lu&quot;
 comma
 id|block
@@ -749,7 +749,7 @@ id|sb
 comma
 l_string|&quot;ext2_free_blocks&quot;
 comma
-l_string|&quot;Freeing blocks across group boundary&bslash;n&quot;
+l_string|&quot;Freeing blocks across group boundary - &quot;
 l_string|&quot;Block = %lu, count = %lu&quot;
 comma
 id|block
@@ -843,7 +843,7 @@ id|sb
 comma
 l_string|&quot;ext2_free_blocks&quot;
 comma
-l_string|&quot;Freeing blocks in system zones&bslash;n&quot;
+l_string|&quot;Freeing blocks in system zones - &quot;
 l_string|&quot;Block = %lu, count = %lu&quot;
 comma
 id|block
@@ -1765,7 +1765,7 @@ id|sb
 comma
 l_string|&quot;ext2_new_block&quot;
 comma
-l_string|&quot;Allocating block in system zone&bslash;n&quot;
+l_string|&quot;Allocating block in system zone - &quot;
 l_string|&quot;block = %u&quot;
 comma
 id|tmp
@@ -1942,7 +1942,7 @@ id|sb
 comma
 l_string|&quot;ext2_new_block&quot;
 comma
-l_string|&quot;block &gt;= blocks count&bslash;n&quot;
+l_string|&quot;block &gt;= blocks count - &quot;
 l_string|&quot;block_group = %d, block=%d&quot;
 comma
 id|i

@@ -57,7 +57,7 @@ id|compare
 (braket
 l_int|0
 )braket
-op_assign
+op_eq
 l_int|0
 )paren
 (brace

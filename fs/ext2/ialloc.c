@@ -57,7 +57,7 @@ id|sb
 comma
 l_string|&quot;get_group_desc&quot;
 comma
-l_string|&quot;block_group &gt;= groups_count&bslash;n&quot;
+l_string|&quot;block_group &gt;= groups_count - &quot;
 l_string|&quot;block_group = %d, groups_count = %lu&quot;
 comma
 id|block_group
@@ -100,7 +100,7 @@ id|sb
 comma
 l_string|&quot;get_group_desc&quot;
 comma
-l_string|&quot;Group descriptor not loaded&bslash;n&quot;
+l_string|&quot;Group descriptor not loaded - &quot;
 l_string|&quot;block_group = %d, group_desc = %lu, desc = %lu&quot;
 comma
 id|block_group
@@ -206,7 +206,7 @@ id|sb
 comma
 l_string|&quot;read_inode_bitmap&quot;
 comma
-l_string|&quot;Cannot read inode bitmap&bslash;n&quot;
+l_string|&quot;Cannot read inode bitmap - &quot;
 l_string|&quot;block_group = %lu, inode_bitmap = %lu&quot;
 comma
 id|block_group
@@ -272,7 +272,7 @@ id|sb
 comma
 l_string|&quot;load_inode_bitmap&quot;
 comma
-l_string|&quot;block_group &gt;= groups_count&bslash;n&quot;
+l_string|&quot;block_group &gt;= groups_count - &quot;
 l_string|&quot;block_group = %d, groups_count = %lu&quot;
 comma
 id|block_group
@@ -619,7 +619,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;set_inode_dtime&quot;
 comma
-l_string|&quot;Cannot load inode table block&bslash;n&quot;
+l_string|&quot;Cannot load inode table block - &quot;
 l_string|&quot;inode=%lu, inode_block=%lu&quot;
 comma
 id|inode-&gt;i_ino
@@ -1125,7 +1125,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;inc_inode_version&quot;
 comma
-l_string|&quot;Cannot load inode table block&quot;
+l_string|&quot;Cannot load inode table block - &quot;
 l_string|&quot;inode=%lu, inode_block=%lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
@@ -1742,7 +1742,7 @@ id|sb
 comma
 l_string|&quot;ext2_new_inode&quot;
 comma
-l_string|&quot;reserved inode or inode &gt; inodes count&bslash;n&quot;
+l_string|&quot;reserved inode or inode &gt; inodes count - &quot;
 l_string|&quot;block_group = %d,inode=%d&quot;
 comma
 id|i
@@ -1899,6 +1899,24 @@ suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
 op_assign
 id|dir-&gt;u.ext2_i.i_flags
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|S_ISLNK
+c_func
+(paren
+id|mode
+)paren
+)paren
+id|inode-&gt;u.ext2_i.i_flags
+op_and_assign
+op_complement
+(paren
+id|EXT2_IMMUTABLE_FL
+op_or
+id|EXT2_APPEND_FL
+)paren
 suffix:semicolon
 id|inode-&gt;u.ext2_i.i_faddr
 op_assign

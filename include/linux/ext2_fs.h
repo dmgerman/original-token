@@ -20,7 +20,7 @@ DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/08/24&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/10/23&quot;
 DECL|macro|EXT2FS_VERSION
 mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5a&quot;
 multiline_comment|/*&n; * Debug code&n; */

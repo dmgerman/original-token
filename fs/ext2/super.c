@@ -1477,6 +1477,25 @@ id|es
 r_if
 c_cond
 (paren
+id|es-&gt;s_rev_level
+OG
+id|EXT2_CURRENT_REV
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;EXT2-fs warning: revision level too high, &quot;
+l_string|&quot;forcing read/only mode&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|sb-&gt;s_flags

@@ -7801,6 +7801,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+r_int
+id|timeout
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7978,6 +7982,12 @@ l_int|3000
 suffix:semicolon
 multiline_comment|/* 30 seconds timeout */
 multiline_comment|/*&n;&t;&t; * Before we drop DTR, make sure the UART transmitter&n;&t;&t; * has completely drained; this is especially&n;&t;&t; * important if there is a transmit FIFO!&n;&t;&t; */
+id|timeout
+op_assign
+id|jiffies
+op_plus
+id|HZ
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -8009,6 +8019,15 @@ id|schedule
 c_func
 (paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|jiffies
+OG
+id|timeout
+)paren
+r_break
 suffix:semicolon
 )brace
 )brace

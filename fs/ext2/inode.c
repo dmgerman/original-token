@@ -2661,7 +2661,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;ext2_read_inode&quot;
 comma
-l_string|&quot;unable to read i-node block&bslash;n&quot;
+l_string|&quot;unable to read i-node block - &quot;
 l_string|&quot;inode=%lu, block=%lu&quot;
 comma
 id|inode-&gt;i_ino
@@ -3205,7 +3205,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;ext2_write_inode&quot;
 comma
-l_string|&quot;unable to read i-node block&bslash;n&quot;
+l_string|&quot;unable to read i-node block - &quot;
 l_string|&quot;inode=%lu, block=%lu&quot;
 comma
 id|inode-&gt;i_ino
