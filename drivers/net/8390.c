@@ -1,15 +1,15 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;  Written 1992,1993 by Donald Becker.&n;  &n;  Copyright 1993 United States Government as represented by the&n;  Director, National Security Agency.&t; This software may be used and&n;  distributed according to the terms of the GNU Public License,&n;  incorporated herein by reference.&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;  &n;  The Author may be reached as becker@super.org or&n;  C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;  */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;8390.c:v0.99-15e 2/16/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should be cleaned up post-1.00, but it has been&n;  extensively beta tested in the current form.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  The NE* programming info came from the Crynwr packet driver, and figuring&n;  out that the those boards are similar to the NatSemi evaluation board&n;  described in AN-729.&t;Thanks NS, no thanks to Novell/Eagle.&n;  */
+multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1123,6 +1123,24 @@ op_logical_and
 id|ei_debug
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|boguscount
+op_eq
+l_int|9
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Too much work at interrupt, status %#2.2x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|interrupts
+)paren
+suffix:semicolon
+r_else
 id|printk
 c_func
 (paren

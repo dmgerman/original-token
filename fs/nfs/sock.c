@@ -810,6 +810,24 @@ c_cond
 (paren
 id|result
 OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: notice message: result=%d&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|result
+OL
 id|addrlen
 )paren
 (brace

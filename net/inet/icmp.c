@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&t;&t;Alan Cox&t;:&t;Changes for newer routing code&n; *&t;&t;Alan Cox&t;:&t;Removed old debugging junk&n; *&t;&t;Alan Cox&t;:&t;Fixed the ICMP error status of net/host unreachable&n; *&t;Gerhard Koerting&t;:&t;Fixed broadcast ping properly&n; *&n; * &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&t;&t;Alan Cox&t;:&t;Changes for newer routing code&n; *&t;&t;Alan Cox&t;:&t;Removed old debugging junk&n; *&t;&t;Alan Cox&t;:&t;Fixed the ICMP error status of net/host unreachable&n; *&t;Gerhard Koerting&t;:&t;Fixed broadcast ping properly&n; *&t;&t;Ulrich Kunitz&t;:&t;Fixed ICMP timestamp reply&n; *&n; * &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1325,13 +1325,43 @@ id|ndev
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_ne
+l_int|20
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ICMP: Size (%d) of ICMP_TIMESTAMP request should be 20!&bslash;n&quot;
+comma
+id|len
+)paren
+suffix:semicolon
+id|icmp_statistics.IcmpInErrors
+op_increment
+suffix:semicolon
+macro_line|#if 1
+multiline_comment|/* correct answers are possible for everything &gt;= 12 */
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|12
+)paren
+macro_line|#endif
+r_return
+suffix:semicolon
+)brace
 id|size
 op_assign
 id|dev-&gt;hard_header_len
 op_plus
-l_int|64
-op_plus
-id|len
+l_int|84
 suffix:semicolon
 r_if
 c_cond
@@ -1439,7 +1469,7 @@ id|skb2-&gt;len
 op_assign
 id|offset
 op_plus
-id|len
+l_int|20
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Build ICMP_TIMESTAMP Response message. &n;&t; */
 id|icmphr
@@ -1478,7 +1508,7 @@ op_star
 )paren
 id|icmph
 comma
-id|len
+l_int|12
 )paren
 suffix:semicolon
 id|icmphr-&gt;type
@@ -1548,7 +1578,7 @@ op_star
 )paren
 id|icmphr
 comma
-id|len
+l_int|20
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Ship it out - free it when done &n;&t; */

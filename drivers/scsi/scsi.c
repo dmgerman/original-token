@@ -6681,6 +6681,8 @@ c_cond
 id|host-&gt;unchecked_isa_dma
 op_logical_and
 id|memory_end
+op_minus
+l_int|1
 OG
 id|ISA_DMA_THRESHOLD
 op_logical_and

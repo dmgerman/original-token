@@ -25,9 +25,9 @@ mdefine_line|#define VEFLAGS&t;(current-&gt;v86flags)
 DECL|macro|set_flags
 mdefine_line|#define set_flags(X,new,mask) &bslash;&n;((X) = ((X) &amp; ~(mask)) | ((new) &amp; (mask)))
 DECL|macro|SAFE_MASK
-mdefine_line|#define SAFE_MASK&t;(0xDD5)
+mdefine_line|#define SAFE_MASK&t;(0x40DD5)
 DECL|macro|RETURN_MASK
-mdefine_line|#define RETURN_MASK&t;(0xDFF)
+mdefine_line|#define RETURN_MASK&t;(0x40DFF)
 DECL|function|save_v86_state
 id|asmlinkage
 r_struct

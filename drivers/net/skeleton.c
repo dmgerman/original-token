@@ -1,12 +1,12 @@
-multiline_comment|/* skeleton.c: A sample network driver core for linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;This file is an outline for writing a network device driver for the&n;&t;the Linux operating system.&n;&n;&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n;&t;get a feel of what is going on, and then use the code below as a skeleton&n;&t;for the new driver.&n;&n;*/
+multiline_comment|/* skeleton.c: A network driver outline for linux. */
+multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file is an outline for writing a network device driver for the&n;&t;the Linux operating system.&n;&n;&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n;&t;get a feel of what is going on, and then use the code below as a skeleton&n;&t;for the new driver.&n;&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;skeleton.c:v0.05 11/16/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;skeleton.c:v1.51 9/24/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
 macro_line|#include &lt;linux/config.h&gt;
@@ -29,43 +29,55 @@ macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifndef HAVE_AUTOIRQ
-multiline_comment|/* From auto_irq.c, in ioport.h for later versions. */
-r_extern
-r_void
-id|autoirq_setup
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|autoirq_report
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-multiline_comment|/* The map from IRQ number (as passed to the interrupt handler) to&n;   &squot;struct device&squot;. */
 r_extern
 r_struct
 id|device
 op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
+id|init_etherdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|sizeof_private
+comma
+r_int
+r_int
+op_star
+id|mem_startp
+)paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size) &t;&t;0
-DECL|macro|snarf_region
-mdefine_line|#define&t;snarf_region(ioaddr, size);&t;&t;do ; while (0)
-macro_line|#endif
+multiline_comment|/* First, a few definitions that the brave might change. */
+multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
+DECL|variable|netcard_portlist
+r_static
+r_int
+r_int
+id|netcard_portlist
+(braket
+)braket
+op_assign
+(brace
+l_int|0x200
+comma
+l_int|0x240
+comma
+l_int|0x280
+comma
+l_int|0x2C0
+comma
+l_int|0x300
+comma
+l_int|0x320
+comma
+l_int|0x340
+comma
+l_int|0
+)brace
+suffix:semicolon
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -79,6 +91,9 @@ id|net_debug
 op_assign
 id|NET_DEBUG
 suffix:semicolon
+multiline_comment|/* The number of low I/O ports used by the ethercard. */
+DECL|macro|NETCARD_IO_EXTENT
+mdefine_line|#define NETCARD_IO_EXTENT&t;32
 multiline_comment|/* Information that need to be kept for each board. */
 DECL|struct|net_local
 r_struct
@@ -96,9 +111,6 @@ suffix:semicolon
 multiline_comment|/* Useless example local info. */
 )brace
 suffix:semicolon
-multiline_comment|/* The number of low I/O ports used by the ethercard. */
-DECL|macro|ETHERCARD_TOTAL_SIZE
-mdefine_line|#define ETHERCARD_TOTAL_SIZE&t;16
 multiline_comment|/* The station (ethernet) address prefix, used for IDing the board. */
 DECL|macro|SA_ADDR0
 mdefine_line|#define SA_ADDR0 0x00
@@ -256,6 +268,24 @@ id|startp
 suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
+macro_line|#ifdef HAVE_DEVLIST
+multiline_comment|/* Support for a alternate probe manager, which will eliminate the&n;   boilerplate below. */
+DECL|variable|netcard_drv
+r_struct
+id|netdev_entry
+id|netcard_drv
+op_assign
+(brace
+l_string|&quot;netcard&quot;
+comma
+id|netcard_probe1
+comma
+id|NETCARD_IO_EXTENT
+comma
+id|netcard_portlist
+)brace
+suffix:semicolon
+macro_line|#else
 r_int
 DECL|function|netcard_probe
 id|netcard_probe
@@ -268,25 +298,17 @@ id|dev
 )paren
 (brace
 r_int
-op_star
-id|port
-comma
-id|ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x300
-comma
-l_int|0x280
-comma
-l_int|0
-)brace
+id|i
 suffix:semicolon
 r_int
 id|base_addr
 op_assign
+id|dev
+ques
+c_cond
 id|dev-&gt;base_addr
+suffix:colon
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -310,7 +332,7 @@ r_if
 c_cond
 (paren
 id|base_addr
-OG
+op_ne
 l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
@@ -320,26 +342,26 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|port
+id|i
 op_assign
-op_amp
-id|ports
-(braket
 l_int|0
+suffix:semicolon
+id|netcard_portlist
+(braket
+id|i
 )braket
 suffix:semicolon
-op_star
-id|port
-suffix:semicolon
-id|port
+id|i
 op_increment
 )paren
 (brace
 r_int
 id|ioaddr
 op_assign
-op_star
-id|port
+id|netcard_portlist
+(braket
+id|i
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -349,27 +371,10 @@ c_func
 (paren
 id|ioaddr
 comma
-id|ETHERCARD_TOTAL_SIZE
+id|NETCARD_IO_EXTENT
 )paren
 )paren
 r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inb
-c_func
-(paren
-id|ioaddr
-)paren
-op_ne
-l_int|0x57
-)paren
-r_continue
-suffix:semicolon
-id|dev-&gt;base_addr
-op_assign
-id|ioaddr
 suffix:semicolon
 r_if
 c_cond
@@ -388,15 +393,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|dev-&gt;base_addr
-op_assign
-id|base_addr
-suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#endif
+multiline_comment|/* This is the real probe routine.  Linux has a history of friendly device&n;   probes on the ISA bus.  A good device probes avoids doing writes, and&n;   verifies that the correct device exists and functions.  */
 DECL|function|netcard_probe1
+r_static
 r_int
 id|netcard_probe1
 c_func
@@ -410,17 +414,112 @@ r_int
 id|ioaddr
 )paren
 (brace
+r_static
 r_int
-r_char
-id|station_addr
-(braket
-l_int|6
-)braket
+id|version_printed
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Read the station address PROM.  */
+multiline_comment|/* For ethernet adaptors the first three octets of the station address contains&n;&t;   the manufacturer&squot;s unique code.  That might be a good probe method.&n;&t;   Ideally you would add additional checks.  */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|0
+)paren
+op_ne
+id|SA_ADDR0
+op_logical_or
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|1
+)paren
+op_ne
+id|SA_ADDR1
+op_logical_or
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|2
+)paren
+op_ne
+id|SA_ADDR2
+)paren
+(brace
+r_return
+id|ENODEV
+suffix:semicolon
+)brace
+multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|net_local
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|net_debug
+op_logical_and
+id|version_printed
+op_increment
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|version
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: %s found at %#3x, &quot;
+comma
+id|dev-&gt;name
+comma
+l_string|&quot;network card&quot;
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* Fill in the &squot;dev&squot; fields. */
+id|dev-&gt;base_addr
+op_assign
+id|ioaddr
+suffix:semicolon
+multiline_comment|/* Retrive and print the ethernet address. */
 r_for
 c_loop
 (paren
@@ -435,8 +534,12 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
-id|station_addr
+id|printk
+c_func
+(paren
+l_string|&quot; %2.2x&quot;
+comma
+id|dev-&gt;dev_addr
 (braket
 id|i
 )braket
@@ -448,54 +551,10 @@ id|ioaddr
 op_plus
 id|i
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/* Check the first three octets of the S.A. for the manufacturer&squot;s code. */
-r_if
-c_cond
-(paren
-id|station_addr
-(braket
-l_int|0
-)braket
-op_ne
-id|SA_ADDR0
-op_logical_or
-id|station_addr
-(braket
-l_int|1
-)braket
-op_ne
-id|SA_ADDR1
-op_logical_or
-id|station_addr
-(braket
-l_int|2
-)braket
-op_ne
-id|SA_ADDR2
-)paren
-(brace
-r_return
-id|ENODEV
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: %s found at %#3x, IRQ %d.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-l_string|&quot;network card&quot;
-comma
-id|dev-&gt;base_addr
-comma
-id|dev-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#ifdef jumpered_interrupts
-multiline_comment|/* If this board has jumpered interrupts, snarf the interrupt vector&n;&t;   now.&t; There is no point in waiting since no other device can use&n;&t;   the interrupt, and this marks the irq as busy. */
+multiline_comment|/* If this board has jumpered interrupts, snarf the interrupt vector&n;&t;   now.&t; There is no point in waiting since no other device can use&n;&t;   the interrupt, and this marks the irq as busy.&n;&t;   Jumpered interrupts are typically not reported by the boards, and&n;&t;   we must used autoIRQ to find them. */
 r_if
 c_cond
 (paren
@@ -600,27 +659,227 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif&t;/* jumpered interrupt */
+macro_line|#ifdef jumpered_dma
+multiline_comment|/* If we use a jumpered DMA channel, that should be probed for and&n;&t;   allocated here as well.  See lance.c for an example. */
+r_if
+c_cond
+(paren
+id|dev-&gt;dma
+op_eq
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|dev-&gt;dma
+comma
+l_string|&quot;netcard&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;DMA %d allocation failed.&bslash;n&quot;
+comma
+id|dev-&gt;dma
+)paren
+suffix:semicolon
+r_return
+id|EAGAIN
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;, assigned DMA %d.&bslash;n&quot;
+comma
+id|dev-&gt;dma
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_int
+id|dma_status
+comma
+id|new_dma_status
+suffix:semicolon
+multiline_comment|/* Read the DMA channel status registers. */
+id|dma_status
+op_assign
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|DMA1_STAT_REG
+)paren
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x0f
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+id|DMA2_STAT_REG
+)paren
+op_amp
+l_int|0xf0
+)paren
+suffix:semicolon
+multiline_comment|/* Trigger a DMA request, perhaps pause a bit. */
+id|outw
+c_func
+(paren
+l_int|0x1234
+comma
+id|ioaddr
+op_plus
+l_int|8
+)paren
+suffix:semicolon
+multiline_comment|/* Re-read the DMA status registers. */
+id|new_dma_status
+op_assign
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|DMA1_STAT_REG
+)paren
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x0f
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+id|DMA2_STAT_REG
+)paren
+op_amp
+l_int|0xf0
+)paren
+suffix:semicolon
+multiline_comment|/* Eliminate the old and floating requests and DMA4, the cascade. */
+id|new_dma_status
+op_xor_assign
+id|dma_status
+suffix:semicolon
+id|new_dma_status
+op_and_assign
+op_complement
+l_int|0x10
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|7
+suffix:semicolon
+id|i
+OG
+l_int|0
+suffix:semicolon
+id|i
+op_decrement
+)paren
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|new_dma
+comma
+op_amp
+id|new_dma_status
+)paren
+)paren
+(brace
+id|dev-&gt;dma
+op_assign
+id|i
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_le
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;DMA probe failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|EAGAIN
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|dev-&gt;dma
+comma
+l_string|&quot;netcard&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;probed DMA %d allocation failed.&bslash;n&quot;
+comma
+id|dev-&gt;dma
+)paren
+suffix:semicolon
+r_return
+id|EAGAIN
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif&t;/* jumpered DMA */
 multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
 id|snarf_region
 c_func
 (paren
 id|ioaddr
 comma
-id|ETHERCARD_TOTAL_SIZE
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|net_debug
-)paren
-id|printk
-c_func
-(paren
-id|version
+id|NETCARD_IO_EXTENT
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the device structure. */
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -670,7 +929,7 @@ op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values. */
+multiline_comment|/* Fill in the fields of the device structure with ethernet values. */
 id|ether_setup
 c_func
 (paren
@@ -735,7 +994,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* Always snarf a DMA channel after the IRQ. */
+multiline_comment|/* Always snarf the DMA channel after the IRQ, and clean up on failure. */
 r_if
 c_cond
 (paren
@@ -766,7 +1025,7 @@ id|dev-&gt;irq
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* Reset the hardware here. */
+multiline_comment|/* Reset the hardware here.  Don&squot;t forget to set the station address. */
 multiline_comment|/*chipset_init(dev, 1);*/
 id|outb
 c_func
@@ -1167,6 +1426,10 @@ id|boguscount
 OL
 l_int|20
 )paren
+suffix:semicolon
+id|dev-&gt;interrupt
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon

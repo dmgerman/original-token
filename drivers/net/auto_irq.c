@@ -1,5 +1,5 @@
 multiline_comment|/* auto_irq.c: Auto-configure IRQ lines for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;    This code is a general-purpose IRQ line detector for devices with&n;    jumpered IRQ lines.  If you can make the device raise an IRQ (and&n;    that IRQ line isn&squot;t already being used), these routines will tell&n;    you what IRQ line it&squot;s using -- perfect for those oh-so-cool boot-time&n;    device probes!&n;&n;    To use this, first call autoirq_setup(timeout). TIMEOUT is how many&n;    &squot;jiffies&squot; (1/18 sec.) to detect other devices that have active IRQ lines,&n;    and can usually be zero at boot.  &squot;autoirq_setup()&squot; returns the bit&n;    vector of nominally-available IRQ lines (lines may be physically in-use,&n;    but not yet registered to a device).&n;    Next, set up your device to trigger an interrupt.&n;    Finally call autoirq_report(TIMEOUT) to find out which IRQ line was&n;    most recently active.  The TIMEOUT should usually be zero, but may&n;    be set to the number of jiffies to wait for a slow device to raise an IRQ.&n;&n;    The idea of using the setup timeout to filter out bogus IRQs came from&n;    the serial driver.&n;*/
+multiline_comment|/*&n;    Written 1994 by Donald Becker.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;      Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This code is a general-purpose IRQ line detector for devices with&n;    jumpered IRQ lines.  If you can make the device raise an IRQ (and&n;    that IRQ line isn&squot;t already being used), these routines will tell&n;    you what IRQ line it&squot;s using -- perfect for those oh-so-cool boot-time&n;    device probes!&n;&n;    To use this, first call autoirq_setup(timeout). TIMEOUT is how many&n;    &squot;jiffies&squot; (1/100 sec.) to detect other devices that have active IRQ lines,&n;    and can usually be zero at boot.  &squot;autoirq_setup()&squot; returns the bit&n;    vector of nominally-available IRQ lines (lines may be physically in-use,&n;    but not yet registered to a device).&n;    Next, set up your device to trigger an interrupt.&n;    Finally call autoirq_report(TIMEOUT) to find out which IRQ line was&n;    most recently active.  The TIMEOUT should usually be zero, but may&n;    be set to the number of jiffies to wait for a slow device to raise an IRQ.&n;&n;    The idea of using the setup timeout to filter out bogus IRQs came from&n;    the serial driver.&n;*/
 macro_line|#ifdef version
 DECL|variable|version
 r_static
@@ -7,14 +7,16 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;auto_irq.c:v0.02 1993 Donald Becker (becker@super.org)&quot;
+l_string|&quot;auto_irq.c:v1.11 Donald Becker (becker@cesdis.gsfc.nasa.gov)&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*#include &lt;linux/config.h&gt;*/
 multiline_comment|/*#include &lt;linux/kernel.h&gt;*/
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 multiline_comment|/*#include &lt;asm/system.h&gt;*/
 DECL|variable|irq2dev_map
@@ -38,28 +40,28 @@ DECL|variable|irqs_busy
 r_int
 id|irqs_busy
 op_assign
-l_int|0x01
+l_int|0x2147
 suffix:semicolon
-multiline_comment|/* The set of fixed IRQs always enabled */
+multiline_comment|/* The set of fixed IRQs (keyboard, timer, etc) */
 DECL|variable|irqs_used
 r_int
 id|irqs_used
 op_assign
-l_int|0x01
+l_int|0x0001
 suffix:semicolon
 multiline_comment|/* The set of fixed IRQs sometimes enabled. */
 DECL|variable|irqs_reserved
 r_int
 id|irqs_reserved
 op_assign
-l_int|0x00
+l_int|0x0000
 suffix:semicolon
 multiline_comment|/* An advisory &quot;reserved&quot; table. */
 DECL|variable|irqs_shared
 r_int
 id|irqs_shared
 op_assign
-l_int|0x00
+l_int|0x0000
 suffix:semicolon
 multiline_comment|/* IRQ lines &quot;shared&quot; among conforming cards.*/
 DECL|variable|irq_number
@@ -110,6 +112,12 @@ id|irq_bitmap
 )paren
 suffix:semicolon
 multiline_comment|/* irq_bitmap |= 1 &lt;&lt; irq; */
+id|disable_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -134,6 +142,17 @@ id|jiffies
 op_plus
 id|waittime
 suffix:semicolon
+r_int
+id|boguscount
+op_assign
+(paren
+id|waittime
+op_star
+id|loops_per_sec
+)paren
+op_div
+l_int|100
+suffix:semicolon
 id|irq_handled
 op_assign
 l_int|0
@@ -156,7 +175,17 @@ op_increment
 r_if
 c_cond
 (paren
-op_logical_neg
+id|test_bit
+c_func
+(paren
+id|i
+comma
+op_amp
+id|irqs_busy
+)paren
+op_eq
+l_int|0
+op_logical_and
 id|request_irq
 c_func
 (paren
@@ -168,6 +197,8 @@ id|SA_INTERRUPT
 comma
 l_string|&quot;irq probe&quot;
 )paren
+op_eq
+l_int|0
 )paren
 id|set_bit
 c_func
@@ -205,6 +236,11 @@ c_loop
 id|timeout
 OG
 id|jiffies
+op_logical_and
+op_decrement
+id|boguscount
+OG
+l_int|0
 )paren
 suffix:semicolon
 r_for
@@ -286,6 +322,17 @@ id|jiffies
 op_plus
 id|waittime
 suffix:semicolon
+r_int
+id|boguscount
+op_assign
+(paren
+id|waittime
+op_star
+id|loops_per_sec
+)paren
+op_div
+l_int|100
+suffix:semicolon
 multiline_comment|/* Hang out at least &lt;waittime&gt; jiffies waiting for the IRQ. */
 r_while
 c_loop
@@ -293,6 +340,11 @@ c_loop
 id|timeout
 OG
 id|jiffies
+op_logical_and
+op_decrement
+id|boguscount
+OG
+l_int|0
 )paren
 r_if
 c_cond
@@ -345,5 +397,5 @@ id|irq_number
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DKERNEL -Wall -O6 -fomit-frame-pointer -I/usr/src/linux/net/tcp -c auto_irq.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DKERNEL -Wall -O6 -fomit-frame-pointer -I/usr/src/linux/net/tcp -c auto_irq.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

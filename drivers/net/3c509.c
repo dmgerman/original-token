@@ -1,12 +1,12 @@
 multiline_comment|/* 3c509.c: A 3c509 EtherLink3 ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993,1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker. &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&t;&n;&t;This driver is for the 3Com EtherLinkIII series.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Known limitations:&n;&t;Because of the way 3c509 ISA detection works it&squot;s difficult to predict&n;&t;a priori which of several ISA-mode cards will be detected first.&n;&n;&t;This driver does not use predictive interrupt mode, resulting in higher&n;&t;packet latency but lower overhead.  If interrupts are disabled for an&n;&t;unusually long time it could also result in missed packets, but in&n;&t;practice this rarely happens.&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994 by Donald Becker.&n;&n;&t;Copyright 1994 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This driver is for the 3Com EtherLinkIII series.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;Known limitations:&n;&t;Because of the way 3c509 ISA detection works it&squot;s difficult to predict&n;&t;a priori which of several ISA-mode cards will be detected first.&n;&n;&t;This driver does not use predictive interrupt mode, resulting in higher&n;&t;packet latency but lower overhead.  If interrupts are disabled for an&n;&t;unusually long time it could also result in missed packets, but in&n;&t;practice this rarely happens.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c509.c:1.01 7/5/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;3c509.c:1.03 10/8/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -55,7 +55,187 @@ mdefine_line|#define ID_PORT 0x100
 DECL|macro|EEPROM_READ
 mdefine_line|#define&t; EEPROM_READ 0x80
 DECL|macro|EL3WINDOW
-mdefine_line|#define EL3WINDOW(win_num) outw(0x0800+(win_num), ioaddr + EL3_CMD)
+mdefine_line|#define EL3WINDOW(win_num) outw(SelectWindow + (win_num), ioaddr + EL3_CMD)
+multiline_comment|/* The top five bits written to EL3_CMD are a command, the lower&n;   11 bits are the parameter, if applicable. */
+DECL|enum|c509cmd
+r_enum
+id|c509cmd
+(brace
+DECL|enumerator|TotalReset
+DECL|enumerator|SelectWindow
+DECL|enumerator|StartCoax
+id|TotalReset
+op_assign
+l_int|0
+op_lshift
+l_int|11
+comma
+id|SelectWindow
+op_assign
+l_int|1
+op_lshift
+l_int|11
+comma
+id|StartCoax
+op_assign
+l_int|2
+op_lshift
+l_int|11
+comma
+DECL|enumerator|RxDisable
+DECL|enumerator|RxEnable
+DECL|enumerator|RxReset
+DECL|enumerator|RxDiscard
+id|RxDisable
+op_assign
+l_int|3
+op_lshift
+l_int|11
+comma
+id|RxEnable
+op_assign
+l_int|4
+op_lshift
+l_int|11
+comma
+id|RxReset
+op_assign
+l_int|5
+op_lshift
+l_int|11
+comma
+id|RxDiscard
+op_assign
+l_int|8
+op_lshift
+l_int|11
+comma
+DECL|enumerator|TxEnable
+DECL|enumerator|TxDisable
+DECL|enumerator|TxReset
+id|TxEnable
+op_assign
+l_int|9
+op_lshift
+l_int|11
+comma
+id|TxDisable
+op_assign
+l_int|10
+op_lshift
+l_int|11
+comma
+id|TxReset
+op_assign
+l_int|11
+op_lshift
+l_int|11
+comma
+DECL|enumerator|FakeIntr
+DECL|enumerator|AckIntr
+DECL|enumerator|SetIntrMask
+id|FakeIntr
+op_assign
+l_int|12
+op_lshift
+l_int|11
+comma
+id|AckIntr
+op_assign
+l_int|13
+op_lshift
+l_int|11
+comma
+id|SetIntrMask
+op_assign
+l_int|14
+op_lshift
+l_int|11
+comma
+DECL|enumerator|SetReadZero
+DECL|enumerator|SetRxFilter
+DECL|enumerator|SetRxThreshold
+id|SetReadZero
+op_assign
+l_int|15
+op_lshift
+l_int|11
+comma
+id|SetRxFilter
+op_assign
+l_int|16
+op_lshift
+l_int|11
+comma
+id|SetRxThreshold
+op_assign
+l_int|17
+op_lshift
+l_int|11
+comma
+DECL|enumerator|SetTxThreshold
+DECL|enumerator|SetTxStart
+DECL|enumerator|StatsEnable
+id|SetTxThreshold
+op_assign
+l_int|18
+op_lshift
+l_int|11
+comma
+id|SetTxStart
+op_assign
+l_int|19
+op_lshift
+l_int|11
+comma
+id|StatsEnable
+op_assign
+l_int|21
+op_lshift
+l_int|11
+comma
+DECL|enumerator|StatsDisable
+DECL|enumerator|StopCoax
+id|StatsDisable
+op_assign
+l_int|22
+op_lshift
+l_int|11
+comma
+id|StopCoax
+op_assign
+l_int|23
+op_lshift
+l_int|11
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* The SetRxFilter command accepts the following classes: */
+DECL|enum|RxFilter
+r_enum
+id|RxFilter
+(brace
+DECL|enumerator|RxStation
+DECL|enumerator|RxMulticast
+DECL|enumerator|RxBroadcast
+DECL|enumerator|RxProm
+id|RxStation
+op_assign
+l_int|1
+comma
+id|RxMulticast
+op_assign
+l_int|2
+comma
+id|RxBroadcast
+op_assign
+l_int|4
+comma
+id|RxProm
+op_assign
+l_int|8
+)brace
+suffix:semicolon
 multiline_comment|/* Register window 1 offsets, the window used in normal operation. */
 DECL|macro|TX_FIFO
 mdefine_line|#define TX_FIFO&t;&t;0x00
@@ -67,8 +247,10 @@ DECL|macro|TX_STATUS
 mdefine_line|#define TX_STATUS &t;0x0B
 DECL|macro|TX_FREE
 mdefine_line|#define TX_FREE&t;&t;0x0C&t;&t;/* Remaining free bytes in Tx buffer. */
+DECL|macro|WN0_IRQ
+mdefine_line|#define WN0_IRQ&t;&t;0x08&t;&t;/* Window 0: Set IRQ line in bits 12-15. */
 DECL|macro|WN4_MEDIA
-mdefine_line|#define WN4_MEDIA&t;0x0A&t;&t;/* Window 4: Various transceiver/media bits. */
+mdefine_line|#define WN4_MEDIA&t;0x0A&t;&t;/* Window 4: Various transcvr/media bits. */
 DECL|macro|MEDIA_TP
 mdefine_line|#define  MEDIA_TP&t;0x00C0&t;&t;/* Enable link beat and jabber for 10baseT. */
 DECL|struct|el3_private
@@ -299,7 +481,9 @@ multiline_comment|/* Change the register set to the configuration window 0. */
 id|outw
 c_func
 (paren
-l_int|0x0800
+id|SelectWindow
+op_or
+l_int|0
 comma
 id|ioaddr
 op_plus
@@ -315,7 +499,7 @@ c_func
 (paren
 id|ioaddr
 op_plus
-l_int|8
+id|WN0_IRQ
 )paren
 op_rshift
 l_int|12
@@ -436,7 +620,7 @@ c_func
 (paren
 id|ioaddr
 op_plus
-l_int|8
+id|WN0_IRQ
 )paren
 op_rshift
 l_int|12
@@ -501,7 +685,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;  
+macro_line|#endif
 multiline_comment|/* Next check for all ISA bus boards by sending the ID sequence to the&n;&t;   ID_PORT.  We find cards past the first by setting the &squot;current_tag&squot;&n;&t;   on cards as they are found.  Cards with their tag set will not&n;&t;   respond to subsequent ID sequences. */
 id|outb
 c_func
@@ -739,6 +923,17 @@ l_int|0x6d50
 r_return
 op_minus
 id|ENODEV
+suffix:semicolon
+multiline_comment|/* Free the interrupt so that some other card can use it. */
+id|outw
+c_func
+(paren
+l_int|0x0f00
+comma
+id|ioaddr
+op_plus
+id|WN0_IRQ
+)paren
 suffix:semicolon
 id|found
 suffix:colon
@@ -1098,6 +1293,38 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|outw
+c_func
+(paren
+id|TxReset
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|RxReset
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|SetReadZero
+op_or
+l_int|0x00
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1187,7 +1414,7 @@ l_int|0x0f00
 comma
 id|ioaddr
 op_plus
-l_int|8
+id|WN0_IRQ
 )paren
 suffix:semicolon
 multiline_comment|/* Set the station address in window 2 each time opened. */
@@ -1235,7 +1462,7 @@ multiline_comment|/* Start the thinnet transceiver. We should really wait 50ms..
 id|outw
 c_func
 (paren
-l_int|0x1000
+id|StartCoax
 comma
 id|ioaddr
 op_plus
@@ -1277,6 +1504,61 @@ id|WN4_MEDIA
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Switch to the stats window, and clear all stats by reading. */
+id|outw
+c_func
+(paren
+id|StatsDisable
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+id|EL3WINDOW
+c_func
+(paren
+l_int|6
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|9
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|i
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|10
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|12
+)paren
+suffix:semicolon
 multiline_comment|/* Switch to register set 1 for normal use. */
 id|EL3WINDOW
 c_func
@@ -1284,21 +1566,25 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* Accept b-case and phys addr only. */
 id|outw
 c_func
 (paren
-l_int|0x8005
+id|SetRxFilter
+op_or
+id|RxStation
+op_or
+id|RxBroadcast
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Accept b-case and phys addr only. */
 id|outw
 c_func
 (paren
-l_int|0xA800
+id|StatsEnable
 comma
 id|ioaddr
 op_plus
@@ -1306,39 +1592,6 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Turn on statistics. */
-id|outw
-c_func
-(paren
-l_int|0x2000
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Enable the receiver. */
-id|outw
-c_func
-(paren
-l_int|0x4800
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Enable transmitter. */
-id|outw
-c_func
-(paren
-l_int|0x78ff
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Allow all status bits to be seen. */
 id|dev-&gt;interrupt
 op_assign
 l_int|0
@@ -1354,7 +1607,57 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x7098
+id|RxEnable
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Enable the receiver. */
+id|outw
+c_func
+(paren
+id|TxEnable
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Enable transmitter. */
+multiline_comment|/* Allow status bits to be seen. */
+id|outw
+c_func
+(paren
+id|SetReadZero
+op_or
+l_int|0xff
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|AckIntr
+op_or
+l_int|0x69
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Ack IRQ */
+id|outw
+c_func
+(paren
+id|SetIntrMask
+op_or
+l_int|0x98
 comma
 id|ioaddr
 op_plus
@@ -1486,25 +1789,23 @@ multiline_comment|/* Issue TX_RESET and TX_START commands. */
 id|outw
 c_func
 (paren
-l_int|0x5800
+id|TxReset
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* TX_RESET */
 id|outw
 c_func
 (paren
-l_int|0x4800
+id|TxEnable
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* TX_START */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -1567,7 +1868,7 @@ suffix:semicolon
 )brace
 macro_line|#ifndef final_version
 (brace
-multiline_comment|/* Error-checking code, delete for 1.00. */
+multiline_comment|/* Error-checking code, delete for 1.30. */
 id|ushort
 id|status
 op_assign
@@ -1634,21 +1935,25 @@ id|RX_STATUS
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Fake interrupt trigger by masking, acknowledge interrupts. */
 id|outw
 c_func
 (paren
-l_int|0x7800
+id|SetReadZero
+op_or
+l_int|0x00
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Fake interrupt trigger. */
 id|outw
 c_func
 (paren
-l_int|0x6899
+id|AckIntr
+op_or
+l_int|0x69
 comma
 id|ioaddr
 op_plus
@@ -1659,14 +1964,15 @@ multiline_comment|/* Ack IRQ */
 id|outw
 c_func
 (paren
-l_int|0x78ff
+id|SetReadZero
+op_or
+l_int|0xff
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Set all status bits visible. */
 )brace
 )brace
 macro_line|#endif
@@ -1767,7 +2073,7 @@ multiline_comment|/* Interrupt us when the FIFO has room for max-sized packet. *
 id|outw
 c_func
 (paren
-l_int|0x9000
+id|SetTxThreshold
 op_plus
 l_int|1536
 comma
@@ -1820,21 +2126,6 @@ l_int|0
 r_if
 c_cond
 (paren
-id|el3_debug
-OG
-l_int|5
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&t;&t;Tx status %4.4x.&bslash;n&quot;
-comma
-id|tx_status
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|tx_status
 op_amp
 l_int|0x38
@@ -1852,7 +2143,7 @@ l_int|0x30
 id|outw
 c_func
 (paren
-l_int|0x5800
+id|TxReset
 comma
 id|ioaddr
 op_plus
@@ -1869,7 +2160,7 @@ l_int|0x3C
 id|outw
 c_func
 (paren
-l_int|0x4800
+id|TxEnable
 comma
 id|ioaddr
 op_plus
@@ -2031,7 +2322,7 @@ id|EL3_STATUS
 )paren
 )paren
 op_amp
-l_int|0x01
+l_int|0x91
 )paren
 (brace
 r_if
@@ -2072,14 +2363,15 @@ multiline_comment|/* There&squot;s room in the FIFO for a full-sized packet. */
 id|outw
 c_func
 (paren
-l_int|0x6808
+id|AckIntr
+op_or
+l_int|0x08
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Ack IRQ */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2126,11 +2418,13 @@ comma
 id|status
 )paren
 suffix:semicolon
-multiline_comment|/* Clear all interrupts we have handled */
+multiline_comment|/* Clear all interrupts. */
 id|outw
 c_func
 (paren
-l_int|0x68FF
+id|AckIntr
+op_or
+l_int|0xFF
 comma
 id|ioaddr
 op_plus
@@ -2144,7 +2438,9 @@ multiline_comment|/* Acknowledge the IRQ. */
 id|outw
 c_func
 (paren
-l_int|0x6891
+id|AckIntr
+op_or
+l_int|0x41
 comma
 id|ioaddr
 op_plus
@@ -2211,7 +2507,17 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|sti
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
 c_func
 (paren
 )paren
@@ -2224,9 +2530,10 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|cli
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -2279,7 +2586,7 @@ multiline_comment|/* Turn off statistics updates while reading. */
 id|outw
 c_func
 (paren
-l_int|0xB000
+id|StatsDisable
 comma
 id|ioaddr
 op_plus
@@ -2362,8 +2669,7 @@ op_plus
 l_int|6
 )paren
 suffix:semicolon
-id|lp-&gt;stats.rx_packets
-op_add_assign
+multiline_comment|/* Rx packets&t;*/
 id|inb
 c_func
 (paren
@@ -2408,7 +2714,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0xA800
+id|StatsEnable
 comma
 id|ioaddr
 op_plus
@@ -2460,7 +2766,7 @@ l_int|5
 id|printk
 c_func
 (paren
-l_string|&quot;&t;   In rx_packet(), status %4.4x, rx_status %4.4x.&bslash;n&quot;
+l_string|&quot;   In rx_packet(), status %4.4x, rx_status %4.4x.&bslash;n&quot;
 comma
 id|inw
 c_func
@@ -2572,27 +2878,8 @@ r_break
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-(paren
-op_logical_neg
-(paren
-id|rx_status
-op_amp
-l_int|0x4000
-)paren
-)paren
-op_logical_or
-op_logical_neg
-(paren
-id|rx_status
-op_amp
-l_int|0x1000
-)paren
-)paren
+r_else
 (brace
-multiline_comment|/* Dribble bits are OK. */
 r_int
 id|pkt_len
 op_assign
@@ -2669,7 +2956,6 @@ op_rshift
 l_int|2
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_NETIF_RX
 id|netif_rx
 c_func
 (paren
@@ -2679,147 +2965,19 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x4000
+id|RxDiscard
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Rx discard */
-r_continue
-suffix:semicolon
-macro_line|#else
-id|skb-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_rint
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|skb
-comma
-id|pkt_len
-comma
-id|IN_SKBUFF
-comma
-id|dev
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|el3_debug
-OG
-l_int|6
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&t; dev_rint() happy, status %4.4x.&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x4000
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Rx discard */
-r_while
-c_loop
-(paren
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-op_amp
-l_int|0x1000
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&t;Waiting for 3c509 to discard packet, status %x.&bslash;n&quot;
-comma
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|el3_debug
-OG
-l_int|6
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&t; discarded packet, status %4.4x.&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-)paren
+multiline_comment|/* Pop top Rx packet. */
+id|lp-&gt;stats.rx_packets
+op_increment
 suffix:semicolon
 r_continue
 suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: receive buffers full.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|kfree_s
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_else
 r_if
@@ -2844,14 +3002,13 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x4000
+id|RxDiscard
 comma
 id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Rx discard */
 r_while
 c_loop
 (paren
@@ -2880,35 +3037,6 @@ id|EL3_STATUS
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|el3_debug
-OG
-l_int|5
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&t;   Exiting rx_packet(), status %4.4x, rx_status %4.4x.&bslash;n&quot;
-comma
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-comma
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|8
-)paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2942,6 +3070,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|el3_debug
+OG
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Setting Rx mode to %d addresses.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|num_addrs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|num_addrs
 OG
 l_int|0
@@ -2950,7 +3095,13 @@ l_int|0
 id|outw
 c_func
 (paren
-l_int|0x8007
+id|SetRxFilter
+op_or
+id|RxStation
+op_or
+id|RxMulticast
+op_or
+id|RxBroadcast
 comma
 id|ioaddr
 op_plus
@@ -2970,7 +3121,15 @@ l_int|0
 id|outw
 c_func
 (paren
-l_int|0x8008
+id|SetRxFilter
+op_or
+id|RxStation
+op_or
+id|RxMulticast
+op_or
+id|RxBroadcast
+op_or
+id|RxProm
 comma
 id|ioaddr
 op_plus
@@ -2982,7 +3141,11 @@ r_else
 id|outw
 c_func
 (paren
-l_int|0x8005
+id|SetRxFilter
+op_or
+id|RxStation
+op_or
+id|RxBroadcast
 comma
 id|ioaddr
 op_plus
@@ -3031,11 +3194,11 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Turn off statistics.&t; We update lp-&gt;stats below. */
+multiline_comment|/* Turn off statistics ASAP.  We update lp-&gt;stats below. */
 id|outw
 c_func
 (paren
-l_int|0xB000
+id|StatsDisable
 comma
 id|ioaddr
 op_plus
@@ -3046,7 +3209,7 @@ multiline_comment|/* Disable the receiver and transmitter. */
 id|outw
 c_func
 (paren
-l_int|0x1800
+id|RxDisable
 comma
 id|ioaddr
 op_plus
@@ -3056,7 +3219,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x5000
+id|TxDisable
 comma
 id|ioaddr
 op_plus
@@ -3070,11 +3233,11 @@ id|dev-&gt;if_port
 op_eq
 l_int|3
 )paren
-multiline_comment|/* Turn off thinnet power. */
+multiline_comment|/* Turn off thinnet power.  Green! */
 id|outw
 c_func
 (paren
-l_int|0xb800
+id|StopCoax
 comma
 id|ioaddr
 op_plus
@@ -3138,7 +3301,7 @@ l_int|0x0f00
 comma
 id|ioaddr
 op_plus
-l_int|8
+id|WN0_IRQ
 )paren
 suffix:semicolon
 id|irq2dev_map
@@ -3164,8 +3327,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c 3c509.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 macro_line|#ifdef MODULE
 DECL|variable|kernel_version
 r_char
@@ -3283,4 +3444,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* MODULE */
+"&f;"
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c 3c509.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

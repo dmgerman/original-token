@@ -1,12 +1,12 @@
 multiline_comment|/* smc-ultra.c: A SMC Ultra ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.  If released, this code will be&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    &n;    This is a driver for the SMC Ultra ethercard.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;*/
+multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for the SMC Ultra ethercard.&n;&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v0.07 3/1/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,20 +17,58 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
-multiline_comment|/* Compatibility definitions for earlier kernel versions. */
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size)              0
-DECL|macro|snarf_region
-mdefine_line|#define snarf_region(ioaddr, size);             do ; while (0)
-macro_line|#endif
-r_int
-id|ultraprobe
+r_extern
+r_struct
+id|device
+op_star
+id|init_etherdev
 c_func
 (paren
-r_int
-id|ioaddr
+r_struct
+id|device
+op_star
+id|dev
 comma
+r_int
+id|sizeof_private
+comma
+r_int
+r_int
+op_star
+id|mem_startp
+)paren
+suffix:semicolon
+multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
+DECL|variable|ultra_portlist
+r_static
+r_int
+r_int
+id|ultra_portlist
+(braket
+)braket
+op_assign
+(brace
+l_int|0x200
+comma
+l_int|0x220
+comma
+l_int|0x240
+comma
+l_int|0x280
+comma
+l_int|0x300
+comma
+l_int|0x340
+comma
+l_int|0x380
+comma
+l_int|0
+)brace
+suffix:semicolon
+r_int
+id|ultra_probe
+c_func
+(paren
 r_struct
 id|device
 op_star
@@ -38,16 +76,16 @@ id|dev
 )paren
 suffix:semicolon
 r_int
-id|ultraprobe1
+id|ultra_probe1
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|ioaddr
 )paren
 suffix:semicolon
 r_static
@@ -129,17 +167,36 @@ id|dev
 suffix:semicolon
 "&f;"
 DECL|macro|START_PG
-mdefine_line|#define START_PG&t;0x00&t;/* First page of TX buffer */
+mdefine_line|#define START_PG&t;&t;0x00&t;/* First page of TX buffer */
 DECL|macro|ULTRA_CMDREG
-mdefine_line|#define ULTRA_CMDREG&t;0&t;/* Offset to ASIC command register. */
+mdefine_line|#define ULTRA_CMDREG&t;0&t;&t;/* Offset to ASIC command register. */
 DECL|macro|ULTRA_RESET
-mdefine_line|#define  ULTRA_RESET&t;0x80&t;/* Board reset, in ULTRA_CMDREG. */
+mdefine_line|#define&t; ULTRA_RESET&t;0x80&t;/* Board reset, in ULTRA_CMDREG. */
 DECL|macro|ULTRA_MEMENB
-mdefine_line|#define  ULTRA_MEMENB&t;0x40&t;/* Enable the shared memory. */
+mdefine_line|#define&t; ULTRA_MEMENB&t;0x40&t;/* Enable the shared memory. */
 DECL|macro|ULTRA_NIC_OFFSET
 mdefine_line|#define ULTRA_NIC_OFFSET  16&t;/* NIC register offset from the base_addr. */
+DECL|macro|ULTRA_IO_EXTENT
+mdefine_line|#define ULTRA_IO_EXTENT 32
 "&f;"
-multiline_comment|/*  Probe for the Ultra.  This looks like a 8013 with the station&n;    address PROM at I/O ports &lt;base&gt;+8 to &lt;base&gt;+13, with a checksum&n;    following.&n;*/
+multiline_comment|/*&t;Probe for the Ultra.  This looks like a 8013 with the station&n;&t;address PROM at I/O ports &lt;base&gt;+8 to &lt;base&gt;+13, with a checksum&n;&t;following.&n;*/
+macro_line|#ifdef HAVE_DEVLIST
+DECL|variable|ultra_drv
+r_struct
+id|netdev_entry
+id|ultra_drv
+op_assign
+(brace
+l_string|&quot;ultra&quot;
+comma
+id|ultra_probe1
+comma
+id|NETCARD_IO_EXTENT
+comma
+id|netcard_portlist
+)brace
+suffix:semicolon
+macro_line|#else
 DECL|function|ultra_probe
 r_int
 id|ultra_probe
@@ -152,93 +209,80 @@ id|dev
 )paren
 (brace
 r_int
-op_star
-id|port
-comma
-id|ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x200
-comma
-l_int|0x220
-comma
-l_int|0x240
-comma
-l_int|0x280
-comma
-l_int|0x300
-comma
-l_int|0x340
-comma
-l_int|0x380
-comma
-l_int|0
-)brace
+id|i
 suffix:semicolon
 r_int
-r_int
-id|ioaddr
+id|base_addr
 op_assign
+id|dev
+ques
+c_cond
 id|dev-&gt;base_addr
+suffix:colon
+l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ioaddr
+id|base_addr
 OG
 l_int|0x1ff
 )paren
+multiline_comment|/* Check a single specified location. */
 r_return
-id|ultraprobe1
+id|ultra_probe1
 c_func
 (paren
-id|ioaddr
-comma
 id|dev
+comma
+id|base_addr
 )paren
 suffix:semicolon
 r_else
 r_if
 c_cond
 (paren
-id|ioaddr
-OG
+id|base_addr
+op_ne
 l_int|0
 )paren
+multiline_comment|/* Don&squot;t probe at all. */
 r_return
 id|ENXIO
 suffix:semicolon
-multiline_comment|/* Don&squot;t probe at all. */
 r_for
 c_loop
 (paren
-id|port
+id|i
 op_assign
-op_amp
-id|ports
-(braket
 l_int|0
+suffix:semicolon
+id|ultra_portlist
+(braket
+id|i
 )braket
 suffix:semicolon
-op_star
-id|port
-suffix:semicolon
-id|port
+id|i
 op_increment
 )paren
 (brace
+r_int
+id|ioaddr
+op_assign
+id|ultra_portlist
+(braket
+id|i
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|check_region
 c_func
 (paren
-op_star
-id|port
+id|ioaddr
 comma
-l_int|32
+id|ULTRA_IO_EXTENT
 )paren
 )paren
 r_continue
@@ -246,29 +290,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|inb
+id|ultra_probe1
 c_func
 (paren
-op_star
-id|port
-op_plus
-l_int|7
-)paren
-op_amp
-l_int|0xF0
-)paren
-op_eq
-l_int|0x20
-multiline_comment|/* Check chip ID nibble. */
-op_logical_and
-id|ultraprobe1
-c_func
-(paren
-op_star
-id|port
-comma
 id|dev
+comma
+id|ioaddr
 )paren
 op_eq
 l_int|0
@@ -277,37 +304,27 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|dev-&gt;base_addr
-op_assign
-id|ioaddr
-suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|ultraprobe1
+macro_line|#endif
+DECL|function|ultra_probe1
 r_int
-id|ultraprobe1
+id|ultra_probe1
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|ioaddr
 )paren
 (brace
 r_int
 id|i
-suffix:semicolon
-r_int
-r_char
-op_star
-id|station_addr
-op_assign
-id|dev-&gt;dev_addr
 suffix:semicolon
 r_int
 id|checksum
@@ -344,6 +361,27 @@ l_int|4
 )paren
 op_amp
 l_int|0x7f
+suffix:semicolon
+multiline_comment|/* Check the ID nibble. */
+r_if
+c_cond
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|7
+)paren
+op_amp
+l_int|0xF0
+)paren
+op_ne
+l_int|0x20
+)paren
+r_return
+id|ENODEV
 suffix:semicolon
 multiline_comment|/* Select the station address register set. */
 id|outb
@@ -396,6 +434,29 @@ l_int|0xFF
 r_return
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|ei_device
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -425,7 +486,7 @@ c_func
 (paren
 l_string|&quot; %2.2X&quot;
 comma
-id|station_addr
+id|dev-&gt;dev_addr
 (braket
 id|i
 )braket
@@ -441,7 +502,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Switch from the station address to the alternate register set and&n;     read the useful registers there. */
+multiline_comment|/* Switch from the station address to the alternate register set and&n;&t;   read the useful registers there. */
 id|outb
 c_func
 (paren
@@ -454,7 +515,7 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/* Enabled FINE16 mode to avoid BIOS ROM width mismatches during reboot. */
+multiline_comment|/* Enabled FINE16 mode to avoid BIOS ROM width mismatches @ reboot. */
 id|outb
 c_func
 (paren
@@ -493,7 +554,7 @@ op_plus
 l_int|0xb
 )paren
 suffix:semicolon
-multiline_comment|/* Switch back to the station address register set so that the MS-DOS driver&n;     can find the card after a warm boot. */
+multiline_comment|/* Switch back to the station address register set so that the MS-DOS driver&n;&t;   can find the card after a warm boot. */
 id|outb
 c_func
 (paren
@@ -1205,11 +1266,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* We should someday disable shared memory and change to 8-bit mode&n;       &quot;just in case&quot;... */
+multiline_comment|/* We should someday disable shared memory and change to 8-bit mode&n;&t;   &quot;just in case&quot;... */
 r_return
 l_int|0
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c smc-ultra.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c smc-ultra.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

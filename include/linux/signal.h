@@ -26,8 +26,8 @@ DECL|macro|SIGABRT
 mdefine_line|#define SIGABRT&t;&t; 6
 DECL|macro|SIGIOT
 mdefine_line|#define SIGIOT&t;&t; 6
-DECL|macro|SIGUNUSED
-mdefine_line|#define SIGUNUSED&t; 7
+DECL|macro|SIGBUS
+mdefine_line|#define SIGBUS&t;&t; 7
 DECL|macro|SIGFPE
 mdefine_line|#define SIGFPE&t;&t; 8
 DECL|macro|SIGKILL
@@ -58,7 +58,6 @@ DECL|macro|SIGTTIN
 mdefine_line|#define SIGTTIN&t;&t;21
 DECL|macro|SIGTTOU
 mdefine_line|#define SIGTTOU&t;&t;22
-multiline_comment|/*&n; * Most of these aren&squot;t used yet (and perhaps never will),&n; * so they are commented out.&n; */
 DECL|macro|SIGIO
 mdefine_line|#define SIGIO&t;&t;23
 DECL|macro|SIGPOLL
@@ -78,9 +77,8 @@ mdefine_line|#define SIGWINCH&t;28
 multiline_comment|/*&n;#define SIGLOST&t;&t;29&n;*/
 DECL|macro|SIGPWR
 mdefine_line|#define SIGPWR&t;&t;30
-multiline_comment|/* Arggh. Bad user source code wants this.. */
-DECL|macro|SIGBUS
-mdefine_line|#define SIGBUS&t;&t;SIGUNUSED
+DECL|macro|SIGUNUSED
+mdefine_line|#define&t;SIGUNUSED&t;31
 multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;1

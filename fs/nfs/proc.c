@@ -101,7 +101,7 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#else 
 multiline_comment|/* If kmalloc fails, then we will give an EIO to user level.&n;&t;   (Please correct me, I am wron here... ??) This is not&n;&t;   desirable, but it is also not desirable to execute the&n;&t;   following code: Just loop until we get memory, call schedule(),&n;&t;   so that other processes are run inbetween (and hopefully give&n;&t;   some memory back).&t;&t;Florian&n;&t;*/
 r_int
 id|i

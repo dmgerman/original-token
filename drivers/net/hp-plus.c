@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;hp-plus.c:v0.04 6/16/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;hp-plus.c:v1.10 9/24/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;&t;&t;/* Important -- this inlines word moves. */
@@ -23,11 +23,54 @@ macro_line|#else
 macro_line|#include &quot;dev.h&quot;
 macro_line|#endif
 macro_line|#include &quot;8390.h&quot;
+r_extern
+r_struct
+id|device
+op_star
+id|init_etherdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|sizeof_private
+comma
+r_int
+r_int
+op_star
+id|mem_startp
+)paren
+suffix:semicolon
+multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
+DECL|variable|hpplus_portlist
+r_static
+r_int
+r_int
+id|hpplus_portlist
+(braket
+)braket
+op_assign
+(brace
+l_int|0x200
+comma
+l_int|0x240
+comma
+l_int|0x280
+comma
+l_int|0x2C0
+comma
+l_int|0x300
+comma
+l_int|0x320
+comma
+l_int|0x340
+comma
+l_int|0
+)brace
 multiline_comment|/*&n;   The HP EtherTwist chip implementation is a fairly routine DP8390&n;   implementation.  It allows both shared memory and programmed-I/O buffer&n;   access, using a custom interface for both.  The programmed-I/O mode is&n;   entirely implemented in the HP EtherTwist chip, bypassing the problem&n;   ridden built-in 8390 facilities used on NE2000 designs.  The shared&n;   memory mode is likewise special, with an offset register used to make&n;   packets appear at the shared memory base.  Both modes use a base and bounds&n;   page register to hide the Rx ring buffer wrap -- a packet that spans the&n;   end of physical buffer memory appears continuous to the driver. (c.f. the&n;   3c503 and Cabletron E2100)&n;&n;   A special note: the internal buffer of the board is only 8 bits wide.&n;   This lays several nasty traps for the unaware:&n;   - the 8390 must be programmed for byte-wide operations&n;   - all I/O and memory operations must work on whole words (the access&n;     latches are serially preloaded and have no byte-swapping ability).&n;&n;   This board is laid out in I/O space much like the earlier HP boards:&n;   the first 16 locations are for the board registers, and the second 16 are&n;   for the 8390.  The board is easy to identify, with both a dedicated 16 bit&n;   ID register and a constant 0x530* value in the upper bits of the paging&n;   register.&n;*/
-DECL|macro|HPP_PROBE_LIST
-mdefine_line|#define HPP_PROBE_LIST {0x200, 0x240, 0x280, 0x2C0, 0x300, 0x320, 0x340, 0}
-DECL|macro|HP_IO_EXTENT
-mdefine_line|#define HP_IO_EXTENT&t;32
 DECL|macro|HP_ID
 mdefine_line|#define HP_ID&t;&t;&t;0x00&t;/* ID register, always 0x4850. */
 DECL|macro|HP_PAGING
@@ -42,40 +85,36 @@ DECL|macro|HP_DATAPORT
 mdefine_line|#define HP_DATAPORT&t;&t;0x0c&t;/* I/O data transfer in Perf_Page.&t;&t;*/
 DECL|macro|NIC_OFFSET
 mdefine_line|#define NIC_OFFSET&t;&t;0x10&t;/* Offset to the 8390 registers.&t;&t;*/
+DECL|macro|HP_IO_EXTENT
+mdefine_line|#define HP_IO_EXTENT&t;32
 DECL|macro|HP_START_PG
 mdefine_line|#define HP_START_PG&t;&t;0x00&t;/* First page of TX buffer */
 DECL|macro|HP_STOP_PG
 mdefine_line|#define HP_STOP_PG&t;&t;0x80&t;/* Last page +1 of RX ring */
 multiline_comment|/* The register set selected in HP_PAGING. */
-DECL|enum|PageName
 r_enum
 id|PageName
 (brace
-DECL|enumerator|Perf_Page
 id|Perf_Page
 op_assign
 l_int|0
 comma
 multiline_comment|/* Normal operation. */
-DECL|enumerator|MAC_Page
 id|MAC_Page
 op_assign
 l_int|1
 comma
 multiline_comment|/* The ethernet address (+checksum). */
-DECL|enumerator|HW_Page
 id|HW_Page
 op_assign
 l_int|2
 comma
 multiline_comment|/* EEPROM-loaded hardware parameters. */
-DECL|enumerator|LAN_Page
 id|LAN_Page
 op_assign
 l_int|4
 comma
 multiline_comment|/* Transceiver selection, testing, etc. */
-DECL|enumerator|ID_Page
 id|ID_Page
 op_assign
 l_int|6
@@ -280,6 +319,24 @@ id|start_page
 suffix:semicolon
 "&f;"
 multiline_comment|/*&t;Probe a list of addresses for an HP LAN+ adaptor.&n;&t;This routine is almost boilerplate. */
+macro_line|#ifdef HAVE_DEVLIST
+multiline_comment|/* Support for a alternate probe manager, which will eliminate the&n;   boilerplate below. */
+DECL|variable|hpplus_drv
+r_struct
+id|netdev_entry
+id|hpplus_drv
+op_assign
+(brace
+l_string|&quot;hpplus&quot;
+comma
+id|hpp_probe1
+comma
+id|HP_IO_EXTENT
+comma
+id|hpplus_portlist
+)brace
+suffix:semicolon
+macro_line|#else
 DECL|function|hp_plus_probe
 r_int
 id|hp_plus_probe
@@ -292,24 +349,22 @@ id|dev
 )paren
 (brace
 r_int
-op_star
-id|port
-comma
-id|ports
-(braket
-)braket
-op_assign
-id|HPP_PROBE_LIST
+id|i
 suffix:semicolon
 r_int
-id|ioaddr
+id|base_addr
 op_assign
+id|dev
+ques
+c_cond
 id|dev-&gt;base_addr
+suffix:colon
+l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ioaddr
+id|base_addr
 OG
 l_int|0x1ff
 )paren
@@ -320,15 +375,15 @@ c_func
 (paren
 id|dev
 comma
-id|ioaddr
+id|base_addr
 )paren
 suffix:semicolon
 r_else
 r_if
 c_cond
 (paren
-id|ioaddr
-OG
+id|base_addr
+op_ne
 l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
@@ -338,29 +393,34 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|port
+id|i
 op_assign
-op_amp
-id|ports
-(braket
 l_int|0
+suffix:semicolon
+id|hpplus_portlist
+(braket
+id|i
 )braket
 suffix:semicolon
-op_star
-id|port
-suffix:semicolon
-id|port
+id|i
 op_increment
 )paren
 (brace
+r_int
+id|ioaddr
+op_assign
+id|hpplus_portlist
+(braket
+id|i
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|check_region
 c_func
 (paren
-op_star
-id|port
+id|ioaddr
 comma
 id|HP_IO_EXTENT
 )paren
@@ -375,22 +435,20 @@ c_func
 (paren
 id|dev
 comma
-op_star
-id|port
+id|ioaddr
 )paren
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 r_return
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Do the interesting part of the probe at a single address. */
 DECL|function|hpp_probe1
 r_int
@@ -420,13 +478,6 @@ op_star
 id|name
 op_assign
 l_string|&quot;HP-PC-LAN+&quot;
-suffix:semicolon
-r_int
-r_char
-op_star
-id|station_addr
-op_assign
-id|dev-&gt;dev_addr
 suffix:semicolon
 r_int
 id|mem_start
@@ -462,7 +513,29 @@ l_int|0x5300
 r_return
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* OK, we think that we have it.  Get and checksum the physical address. */
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|ei_device
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -515,7 +588,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-id|station_addr
+id|dev-&gt;dev_addr
 (braket
 id|i
 )braket

@@ -1,12 +1,12 @@
 multiline_comment|/* hp.c: A HP LAN ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This is a driver for the HP LAN adaptors.&n;&n;&t;The Author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for the HP PC-LAN adaptors.&n;&n;&t;Sources:&n;&t;  The Crynwr packet driver.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;hp.c:v0.99.15k 3/3/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;hp.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,12 +17,54 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size)&t;&t;&t;&t;0
-DECL|macro|snarf_region
-mdefine_line|#define snarf_region(ioaddr, size);&t;&t;&t;&t;do ; while (0)
-macro_line|#endif
+r_extern
+r_struct
+id|device
+op_star
+id|init_etherdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|sizeof_private
+comma
+r_int
+r_int
+op_star
+id|mem_startp
+)paren
+suffix:semicolon
+multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
+DECL|variable|hppclan_portlist
+r_static
+r_int
+r_int
+id|hppclan_portlist
+(braket
+)braket
+op_assign
+(brace
+l_int|0x300
+comma
+l_int|0x320
+comma
+l_int|0x340
+comma
+l_int|0x280
+comma
+l_int|0x2C0
+comma
+l_int|0x200
+comma
+l_int|0x240
+comma
+l_int|0
+)brace
+suffix:semicolon
 DECL|macro|HP_IO_EXTENT
 mdefine_line|#define HP_IO_EXTENT&t;32
 DECL|macro|HP_DATAPORT
@@ -56,7 +98,7 @@ id|dev
 )paren
 suffix:semicolon
 r_int
-id|hpprobe1
+id|hp_probe1
 c_func
 (paren
 r_struct
@@ -180,6 +222,23 @@ l_int|0
 suffix:semicolon
 "&f;"
 multiline_comment|/*&t;Probe for an HP LAN adaptor.&n;&t;Also initialize the card and fill in STATION_ADDR with the station&n;&t;address. */
+macro_line|#ifdef HAVE_DEVLIST
+DECL|variable|netcard_drv
+r_struct
+id|netdev_entry
+id|netcard_drv
+op_assign
+(brace
+l_string|&quot;hp&quot;
+comma
+id|hp_probe1
+comma
+id|HP_IO_EXTENT
+comma
+id|hppclan_portlist
+)brace
+suffix:semicolon
+macro_line|#else
 DECL|function|hp_probe
 r_int
 id|hp_probe
@@ -192,59 +251,41 @@ id|dev
 )paren
 (brace
 r_int
-op_star
-id|port
-comma
-id|ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x300
-comma
-l_int|0x320
-comma
-l_int|0x340
-comma
-l_int|0x280
-comma
-l_int|0x2C0
-comma
-l_int|0x200
-comma
-l_int|0x240
-comma
-l_int|0
-)brace
+id|i
 suffix:semicolon
 r_int
-id|ioaddr
+id|base_addr
 op_assign
+id|dev
+ques
+c_cond
 id|dev-&gt;base_addr
+suffix:colon
+l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ioaddr
+id|base_addr
 OG
 l_int|0x1ff
 )paren
 multiline_comment|/* Check a single specified location. */
 r_return
-id|hpprobe1
+id|hp_probe1
 c_func
 (paren
 id|dev
 comma
-id|ioaddr
+id|base_addr
 )paren
 suffix:semicolon
 r_else
 r_if
 c_cond
 (paren
-id|ioaddr
-OG
+id|base_addr
+op_ne
 l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
@@ -254,29 +295,34 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|port
+id|i
 op_assign
-op_amp
-id|ports
-(braket
 l_int|0
+suffix:semicolon
+id|hppclan_portlist
+(braket
+id|i
 )braket
 suffix:semicolon
-op_star
-id|port
-suffix:semicolon
-id|port
+id|i
 op_increment
 )paren
 (brace
+r_int
+id|ioaddr
+op_assign
+id|hppclan_portlist
+(braket
+id|i
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|check_region
 c_func
 (paren
-op_star
-id|port
+id|ioaddr
 comma
 id|HP_IO_EXTENT
 )paren
@@ -286,30 +332,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hpprobe1
+id|hp_probe1
 c_func
 (paren
 id|dev
 comma
-op_star
-id|port
+id|ioaddr
 )paren
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|hpprobe1
+macro_line|#endif
+DECL|function|hp_probe1
 r_int
-id|hpprobe1
+id|hp_probe1
 c_func
 (paren
 r_struct
@@ -331,13 +375,6 @@ suffix:semicolon
 r_char
 op_star
 id|name
-suffix:semicolon
-r_int
-r_char
-op_star
-id|station_addr
-op_assign
-id|dev-&gt;dev_addr
 suffix:semicolon
 multiline_comment|/* Check for the HP physical address, 08 00 09 xx xx xx. */
 multiline_comment|/* This really isn&squot;t good enough: we may pick up HP LANCE boards&n;&t;   also!  Avoid the lance 0x5757 signature. */
@@ -385,7 +422,7 @@ l_int|0x57
 r_return
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* Set up the parameters based on the board ID.&n;&t;   If you have additional mappings, please mail them to becker@super.org. */
+multiline_comment|/* Set up the parameters based on the board ID.&n;&t;   If you have additional mappings, please mail them to me -djb. */
 r_if
 c_cond
 (paren
@@ -424,6 +461,29 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|ei_device
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/* Grab the region so we can find another board if something fails. */
 id|snarf_region
 c_func
@@ -467,7 +527,7 @@ c_func
 (paren
 l_string|&quot; %2.2x&quot;
 comma
-id|station_addr
+id|dev-&gt;dev_addr
 (braket
 id|i
 )braket

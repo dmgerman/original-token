@@ -121,7 +121,7 @@ macro_line|#endif
 DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS&t;6
 DECL|macro|RLIM_INFINITY
-mdefine_line|#define RLIM_INFINITY&t;0x7FFFFFFF
+mdefine_line|#define RLIM_INFINITY&t;((long)(~0UL&gt;&gt;1))
 DECL|struct|rlimit
 r_struct
 id|rlimit

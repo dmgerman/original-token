@@ -1,14 +1,13 @@
-multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;   Written 1993 by Donald Becker.  This is a alpha test limited release.&n;   This version may only be used and distributed according to the terms of the&n;   GNU Public License, incorporated herein by reference.&n;&n;   The author may be reached as becker@super.org or&n;   C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;   This is a device driver for the Allied Telesis AT1700, which is a&n;   straightforward Fujitsu MB86965 implementation.&n;*/
+multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a device driver for the Allied Telesis AT1700, which is a&n;&t;straight-forward Fujitsu MB86965 implementation.&n;&n;  Sources:&n;    The Fujitsu MB86695 datasheet.&n;&n;&t;After the initial version of this driver was written Gerry Sockins of&n;&t;ATI provided their EEPROM configurationcode header file.&n;    Thanks to NIIBE Yutaka &lt;gniibe@mri.co.jp&gt; for bug fixes.&n;&n;  Bugs:&n;&t;The MB86695 has a design flaw that makes all probes unreliable.  Not&n;&t;only is it difficult to detect, it also moves around in I/O space in&n;&t;response to inb()s from other device probes!&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;at1700.c:v0.06 3/3/94  Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;at1700.c:v1.10 9/24/94  Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;  Sources:&n;    The Fujitsu MB86695 datasheet.&n;&n;&t;After this driver was written, ATI provided their EEPROM configuration&n;&t;code header file.  Thanks to Gerry Sockins of ATI.&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -27,41 +26,59 @@ macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifndef HAVE_AUTOIRQ
-multiline_comment|/* From auto_irq.c, in ioport.h for later versions. */
-r_extern
-r_void
-id|autoirq_setup
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|autoirq_report
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-multiline_comment|/* The map from IRQ number (as passed to the interrupt handler) to&n;   &squot;struct device&squot;. */
 r_extern
 r_struct
 id|device
 op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
+id|init_etherdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|sizeof_private
+comma
+r_int
+r_int
+op_star
+id|mem_startp
+)paren
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/* This unusual address order is used to verify the CONFIG register. */
+DECL|variable|at1700_probe_list
+r_static
+r_int
+id|at1700_probe_list
+(braket
+)braket
+op_assign
+(brace
+l_int|0x260
+comma
+l_int|0x280
+comma
+l_int|0x2a0
+comma
+l_int|0x240
+comma
+l_int|0x340
+comma
+l_int|0x320
+comma
+l_int|0x380
+comma
+l_int|0x300
+comma
+l_int|0
+)brace
+suffix:semicolon
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
-mdefine_line|#define NET_DEBUG 2
+mdefine_line|#define NET_DEBUG 1
 macro_line|#endif
 DECL|variable|net_debug
 r_static
@@ -141,6 +158,12 @@ DECL|macro|EEPROM_Ctrl
 mdefine_line|#define EEPROM_Ctrl &t;16
 DECL|macro|EEPROM_Data
 mdefine_line|#define EEPROM_Data &t;17
+DECL|macro|IOCONFIG
+mdefine_line|#define IOCONFIG&t;&t;19
+DECL|macro|RESET
+mdefine_line|#define RESET&t;&t;&t;31&t;&t;/* Write to reset some parts of the chip. */
+DECL|macro|AT1700_IO_EXTENT
+mdefine_line|#define AT1700_IO_EXTENT&t;32
 multiline_comment|/*  EEPROM_Ctrl bits. */
 DECL|macro|EE_SHIFT_CLK
 mdefine_line|#define EE_SHIFT_CLK&t;0x40&t;/* EEPROM shift clock, in reg. 16. */
@@ -289,6 +312,24 @@ id|addrs
 suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
+macro_line|#ifdef HAVE_DEVLIST
+multiline_comment|/* Support for a alternate probe manager, which will eliminate the&n;   boilerplate below. */
+DECL|variable|at1700_drv
+r_struct
+id|netdev_entry
+id|at1700_drv
+op_assign
+(brace
+l_string|&quot;at1700&quot;
+comma
+id|at1700_probe1
+comma
+id|AT1700_IO_EXTENT
+comma
+id|at1700_probe_list
+)brace
+suffix:semicolon
+macro_line|#else
 r_int
 DECL|function|at1700_probe
 id|at1700_probe
@@ -301,37 +342,17 @@ id|dev
 )paren
 (brace
 r_int
-id|ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x300
-comma
-l_int|0x280
-comma
-l_int|0x380
-comma
-l_int|0x320
-comma
-l_int|0x340
-comma
-l_int|0x260
-comma
-l_int|0x2a0
-comma
-l_int|0x240
-comma
-l_int|0
-)brace
+id|i
 suffix:semicolon
 r_int
-op_star
-id|port
-comma
 id|base_addr
 op_assign
+id|dev
+ques
+c_cond
 id|dev-&gt;base_addr
+suffix:colon
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -355,7 +376,7 @@ r_if
 c_cond
 (paren
 id|base_addr
-OG
+op_ne
 l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
@@ -365,26 +386,26 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|port
+id|i
 op_assign
-op_amp
-id|ports
-(braket
 l_int|0
+suffix:semicolon
+id|at1700_probe_list
+(braket
+id|i
 )braket
 suffix:semicolon
-op_star
-id|port
-suffix:semicolon
-id|port
+id|i
 op_increment
 )paren
 (brace
 r_int
 id|ioaddr
 op_assign
-op_star
-id|port
+id|at1700_probe_list
+(braket
+id|i
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -394,7 +415,7 @@ c_func
 (paren
 id|ioaddr
 comma
-l_int|32
+id|AT1700_IO_EXTENT
 )paren
 )paren
 r_continue
@@ -420,6 +441,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* The Fujitsu datasheet suggests that the NIC be probed for by checking its&n;   &quot;signature&quot;, the default bit pattern after a reset.  This *doesn&squot;t* work --&n;   there is no way to reset the bus interface without a complete power-cycle!&n;&n;   It turns out that ATI came to the same conclusion I did: the only thing&n;   that can be done is checking a few bits and then diving right into an&n;   EEPROM read. */
 DECL|function|at1700_probe1
 r_int
@@ -435,40 +457,6 @@ r_int
 id|ioaddr
 )paren
 (brace
-r_int
-r_int
-id|signature
-(braket
-l_int|4
-)braket
-op_assign
-(brace
-l_int|0xffff
-comma
-l_int|0xffff
-comma
-l_int|0x7ff7
-comma
-l_int|0xff5f
-)brace
-suffix:semicolon
-r_int
-r_int
-id|signature_invalid
-(braket
-l_int|4
-)braket
-op_assign
-(brace
-l_int|0xffff
-comma
-l_int|0xffff
-comma
-l_int|0x7ff7
-comma
-l_int|0xdf0f
-)brace
-suffix:semicolon
 r_char
 id|irqmap
 (braket
@@ -495,101 +483,71 @@ l_int|15
 suffix:semicolon
 r_int
 r_int
-op_star
-id|station_address
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|dev-&gt;dev_addr
-suffix:semicolon
-r_int
-r_int
 id|i
 comma
 id|irq
 suffix:semicolon
 multiline_comment|/* Resetting the chip doesn&squot;t reset the ISA interface, so don&squot;t bother.&n;&t;   That means we have to be careful with the register values we probe for.&n;&t;   */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|2
-op_star
-id|i
-)paren
-op_or
-id|signature_invalid
-(braket
-id|i
-)braket
-)paren
-op_ne
-id|signature
-(braket
-id|i
-)braket
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|net_debug
-OG
-l_int|2
-)paren
+macro_line|#ifdef notdef
 id|printk
 c_func
 (paren
-l_string|&quot;AT1700 signature match failed at %d (%04x vs. %04x)&bslash;n&quot;
+l_string|&quot;at1700 probe at %#x, eeprom is %4.4x %4.4x %4.4x ctrl %4.4x.&bslash;n&quot;
 comma
-id|i
+id|ioaddr
+comma
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|4
+)paren
+comma
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|5
+)paren
+comma
+id|read_eeprom
+c_func
+(paren
+id|ioaddr
+comma
+l_int|6
+)paren
 comma
 id|inw
 c_func
 (paren
 id|ioaddr
 op_plus
-l_int|2
-op_star
-id|i
+id|EEPROM_Ctrl
 )paren
-comma
-id|signature
-(braket
-id|i
-)braket
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
+id|at1700_probe_list
+(braket
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|IOCONFIG
+)paren
+op_amp
+l_int|0x07
+)braket
+op_ne
+id|ioaddr
+op_logical_or
 id|read_eeprom
 c_func
 (paren
@@ -608,21 +566,23 @@ comma
 l_int|5
 )paren
 op_amp
-l_int|0x00ff
+l_int|0xff00
 op_ne
-l_int|0x00F4
+l_int|0xF400
 )paren
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* Grab the region so that we can find another board if the IRQ request&n;&t;   fails. */
-id|snarf_region
+multiline_comment|/* Reset the internal state machines. */
+id|outb
 c_func
 (paren
-id|ioaddr
+l_int|0
 comma
-l_int|32
+id|ioaddr
+op_plus
+id|RESET
 )paren
 suffix:semicolon
 id|irq
@@ -686,6 +646,39 @@ r_return
 id|EAGAIN
 suffix:semicolon
 )brace
+multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|net_local
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Grab the region so that we can find another board if the IRQ request&n;&t;   fails. */
+id|snarf_region
+c_func
+(paren
+id|ioaddr
+comma
+id|AT1700_IO_EXTENT
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -750,7 +743,14 @@ comma
 id|eeprom_val
 )paren
 suffix:semicolon
-id|station_address
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|dev-&gt;dev_addr
+)paren
 (braket
 id|i
 )braket
@@ -800,7 +800,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; %s interface (%04x).&bslash;n&quot;
+l_string|&quot; %s interface.&bslash;n&quot;
 comma
 id|porttype
 (braket
@@ -812,8 +812,6 @@ l_int|3
 op_amp
 l_int|3
 )braket
-comma
-id|setup_value
 )paren
 suffix:semicolon
 )brace
@@ -947,6 +945,13 @@ id|version
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the device structure. */
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -996,7 +1001,7 @@ op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values. */
+multiline_comment|/* Fill in the fields of &squot;dev&squot; with ethernet-generic values. */
 id|ether_setup
 c_func
 (paren
@@ -1802,6 +1807,10 @@ id|lp-&gt;tx_started
 op_assign
 l_int|1
 suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -1813,7 +1822,7 @@ l_int|4096
 op_minus
 l_int|1502
 )paren
-multiline_comment|/* Room for one more packet? */
+multiline_comment|/* Yes, there is room for one more packet. */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2083,9 +2092,20 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+multiline_comment|/* Inform upper layers. */
 )brace
 )brace
 )brace
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2317,6 +2337,8 @@ id|alloc_skb
 c_func
 (paren
 id|pkt_len
+op_plus
+l_int|1
 comma
 id|GFP_ATOMIC
 )paren
@@ -2494,6 +2516,15 @@ l_int|0x40
 )paren
 r_break
 suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
+multiline_comment|/* dummy status read */
 id|outb
 c_func
 (paren
@@ -2677,7 +2708,7 @@ c_cond
 id|num_addrs
 )paren
 (brace
-id|outw
+id|outb
 c_func
 (paren
 l_int|3
@@ -2690,7 +2721,7 @@ suffix:semicolon
 multiline_comment|/* Enable promiscuous mode */
 )brace
 r_else
-id|outw
+id|outb
 c_func
 (paren
 l_int|2
@@ -2703,5 +2734,5 @@ suffix:semicolon
 multiline_comment|/* Disable promiscuous, use normal mode */
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c at1700.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c at1700.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; *  c-indent-level: 4&n; * End:&n; */
 eof

@@ -970,13 +970,13 @@ suffix:semicolon
 id|regs-&gt;eflags
 op_and_assign
 op_complement
-l_int|0xCD5
+l_int|0x40DD5
 suffix:semicolon
 id|regs-&gt;eflags
 op_or_assign
 id|context.eflags
 op_amp
-l_int|0xCD5
+l_int|0x40DD5
 suffix:semicolon
 id|regs-&gt;orig_eax
 op_assign

@@ -1,5 +1,5 @@
 multiline_comment|/* netdrv_init.c: Initialization for network devices. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994 by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -170,11 +170,19 @@ id|device
 op_plus
 r_sizeof
 (paren
-l_string|&quot;eth%d   &quot;
+l_string|&quot;eth%d  &quot;
 )paren
 op_plus
 id|sizeof_private
+op_plus
+l_int|3
 suffix:semicolon
+id|alloc_size
+op_and_assign
+op_complement
+l_int|3
+suffix:semicolon
+multiline_comment|/* Round to dword boundary. */
 r_if
 c_cond
 (paren

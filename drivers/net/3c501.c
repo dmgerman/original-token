@@ -1,12 +1,12 @@
 multiline_comment|/* 3c501.c: A 3Com 3c501 ethernet driver for linux. */
-multiline_comment|/*&n;    Copyright (C) 1992,1993  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;    I&squot;ll only accept bug fixes, not reports, for the 3c501 driver.&n;*/
+multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.  &n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c501.c: 3/3/94 Donald Becker (becker@super.org).&bslash;n&quot;
+l_string|&quot;3c501.c: 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov).&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Braindamage remaining:&n;  The 3c501 board.&n;  */
 macro_line|#include &lt;linux/config.h&gt;
@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -28,36 +29,44 @@ macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;../../tools/version.h&quot;
 macro_line|#endif
-macro_line|#ifndef HAVE_AUTOIRQ
-multiline_comment|/* From auto_irq.c, should be in a *.h file. */
-r_extern
-r_void
-id|autoirq_setup
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|autoirq_report
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
 r_extern
 r_struct
 id|device
 op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
+id|init_etherdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|sizeof_private
+comma
+r_int
+r_int
+op_star
+id|mem_startp
+)paren
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/* A zero-terminated list of I/O addresses to be probed.&n;   The 3c501 can be at many locations, but here are the popular ones. */
+DECL|variable|netcard_portlist
+r_static
+r_int
+r_int
+id|netcard_portlist
+(braket
+)braket
+op_assign
+(brace
+l_int|0x280
+comma
+l_int|0x300
+comma
+l_int|0
+)brace
+suffix:semicolon
 "&f;"
 multiline_comment|/* Index to functions. */
 r_int
@@ -68,6 +77,20 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_static
+r_int
+id|el1_probe1
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|ioaddr
 )paren
 suffix:semicolon
 r_static
@@ -170,8 +193,8 @@ op_star
 id|addrs
 )paren
 suffix:semicolon
-DECL|macro|EL_NAME
-mdefine_line|#define EL_NAME &quot;EtherLink 3c501&quot;
+DECL|macro|EL1_IO_EXTENT
+mdefine_line|#define EL1_IO_EXTENT&t;16
 macro_line|#ifndef EL_DEBUG
 DECL|macro|EL_DEBUG
 mdefine_line|#define EL_DEBUG  2&t;/* use 0 for production, 1 for devel., &gt;2 for debug */
@@ -183,22 +206,10 @@ id|el_debug
 op_assign
 id|EL_DEBUG
 suffix:semicolon
-DECL|variable|el_base
-r_static
-r_int
-id|el_base
-suffix:semicolon
-DECL|variable|eldev
-r_static
+multiline_comment|/* Board-specific info in dev-&gt;priv. */
+DECL|struct|net_local
 r_struct
-id|device
-op_star
-id|eldev
-suffix:semicolon
-multiline_comment|/* Only for consistency checking.  */
-multiline_comment|/* We could easily have this struct kmalloc()ed per-board, but&n;   who would want more than one 3c501?. */
-r_static
-r_struct
+id|net_local
 (brace
 DECL|member|stats
 r_struct
@@ -215,38 +226,35 @@ r_int
 id|collisions
 suffix:semicolon
 multiline_comment|/* Tx collisions this packet */
-DECL|variable|el_status
 )brace
-id|el_status
 suffix:semicolon
-multiline_comment|/* This should be stored per-board */
 "&f;"
 DECL|macro|RX_STATUS
-mdefine_line|#define RX_STATUS (el_base + 0x06)
+mdefine_line|#define RX_STATUS (ioaddr + 0x06)
 DECL|macro|RX_CMD
 mdefine_line|#define RX_CMD&t;  RX_STATUS
 DECL|macro|TX_STATUS
-mdefine_line|#define TX_STATUS (el_base + 0x07)
+mdefine_line|#define TX_STATUS (ioaddr + 0x07)
 DECL|macro|TX_CMD
 mdefine_line|#define TX_CMD&t;  TX_STATUS
 DECL|macro|GP_LOW
-mdefine_line|#define GP_LOW &t;  (el_base + 0x08)
+mdefine_line|#define GP_LOW &t;  (ioaddr + 0x08)
 DECL|macro|GP_HIGH
-mdefine_line|#define GP_HIGH   (el_base + 0x09)
+mdefine_line|#define GP_HIGH   (ioaddr + 0x09)
 DECL|macro|RX_BUF_CLR
-mdefine_line|#define RX_BUF_CLR (el_base + 0x0A)
+mdefine_line|#define RX_BUF_CLR (ioaddr + 0x0A)
 DECL|macro|RX_LOW
-mdefine_line|#define RX_LOW&t;  (el_base + 0x0A)
+mdefine_line|#define RX_LOW&t;  (ioaddr + 0x0A)
 DECL|macro|RX_HIGH
-mdefine_line|#define RX_HIGH   (el_base + 0x0B)
+mdefine_line|#define RX_HIGH   (ioaddr + 0x0B)
 DECL|macro|SAPROM
-mdefine_line|#define SAPROM&t;  (el_base + 0x0C)
+mdefine_line|#define SAPROM&t;  (ioaddr + 0x0C)
 DECL|macro|AX_STATUS
-mdefine_line|#define AX_STATUS (el_base + 0x0E)
+mdefine_line|#define AX_STATUS (ioaddr + 0x0E)
 DECL|macro|AX_CMD
 mdefine_line|#define AX_CMD&t;  AX_STATUS
 DECL|macro|DATAPORT
-mdefine_line|#define DATAPORT  (el_base + 0x0F)
+mdefine_line|#define DATAPORT  (ioaddr + 0x0F)
 DECL|macro|TX_RDY
 mdefine_line|#define TX_RDY 0x08&t;&t;/* In TX_STATUS */
 DECL|macro|EL1_DATAPTR
@@ -293,6 +301,24 @@ mdefine_line|#define RX_MISSED 0x01&t;&t;/* Missed a packet due to 3c501 brainda
 DECL|macro|RX_GOOD
 mdefine_line|#define RX_GOOD&t;0x30&t;&t;/* Good packet 0x20, or simple overflow 0x10. */
 "&f;"
+multiline_comment|/* The boilerplate probe code. */
+macro_line|#ifdef HAVE_DEVLIST
+DECL|variable|el1_drv
+r_struct
+id|netdev_entry
+id|el1_drv
+op_assign
+(brace
+l_string|&quot;3c501&quot;
+comma
+id|el1_probe1
+comma
+id|EL1_IO_EXTENT
+comma
+id|netcard_portlist
+)brace
+suffix:semicolon
+macro_line|#else
 r_int
 DECL|function|el1_probe
 id|el1_probe
@@ -308,8 +334,124 @@ r_int
 id|i
 suffix:semicolon
 r_int
-id|ioaddr
+id|base_addr
+op_assign
+id|dev
+ques
+c_cond
+id|dev-&gt;base_addr
+suffix:colon
+l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|base_addr
+OG
+l_int|0x1ff
+)paren
+multiline_comment|/* Check a single specified location. */
+r_return
+id|el1_probe1
+c_func
+(paren
+id|dev
+comma
+id|base_addr
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|base_addr
+op_ne
+l_int|0
+)paren
+multiline_comment|/* Don&squot;t probe at all. */
+r_return
+id|ENXIO
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|netcard_portlist
+(braket
+id|i
+)braket
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_int
+id|ioaddr
+op_assign
+id|netcard_portlist
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|ioaddr
+comma
+id|EL1_IO_EXTENT
+)paren
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|el1_probe1
+c_func
+(paren
+id|dev
+comma
+id|ioaddr
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+id|ENODEV
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* The actual probe. */
+r_static
+r_int
+DECL|function|el1_probe1
+id|el1_probe1
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|ioaddr
+)paren
+(brace
+r_char
+op_star
+id|mname
+suffix:semicolon
+multiline_comment|/* Vendor name */
 r_int
 r_char
 id|station_addr
@@ -322,30 +464,8 @@ id|autoirq
 op_assign
 l_int|0
 suffix:semicolon
-id|eldev
-op_assign
-id|dev
-suffix:semicolon
-multiline_comment|/* Store for debugging. */
-id|el_base
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|el_base
-OL
-l_int|0x40
-)paren
-multiline_comment|/* Invalid?  Probe for it. */
-id|el_base
-op_assign
-l_int|0x280
-suffix:semicolon
-id|ioaddr
-op_assign
-id|el_base
+r_int
+id|i
 suffix:semicolon
 multiline_comment|/* Read the station address PROM data from the special port.  */
 r_for
@@ -387,7 +507,7 @@ id|EL1_SAPROM
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check the first three octets of the S.A. for 3Com&squot;s code. */
+multiline_comment|/* Check the first three octets of the S.A. for 3Com&squot;s prefix, or&n;       for the Sager NP943 prefix. */
 r_if
 c_cond
 (paren
@@ -395,39 +515,96 @@ id|station_addr
 (braket
 l_int|0
 )braket
-op_ne
+op_eq
 l_int|0x02
-op_logical_or
+op_logical_and
 id|station_addr
 (braket
 l_int|1
 )braket
-op_ne
+op_eq
 l_int|0x60
-op_logical_or
+op_logical_and
 id|station_addr
 (braket
 l_int|2
 )braket
-op_ne
+op_eq
 l_int|0x8c
 )paren
 (brace
+id|mname
+op_assign
+l_string|&quot;3c501&quot;
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|station_addr
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0x00
+op_logical_and
+id|station_addr
+(braket
+l_int|1
+)braket
+op_eq
+l_int|0x80
+op_logical_and
+id|station_addr
+(braket
+l_int|2
+)braket
+op_eq
+l_int|0xC8
+)paren
+(brace
+id|mname
+op_assign
+l_string|&quot;NP943&quot;
+suffix:semicolon
+)brace
+r_else
 r_return
 id|ENODEV
 suffix:semicolon
-)brace
-macro_line|#ifdef HAVE_PORTRESERVE
 multiline_comment|/* Grab the region so we can find the another board if autoIRQ fails. */
 id|snarf_region
 c_func
 (paren
 id|ioaddr
 comma
-l_int|16
+id|EL1_IO_EXTENT
 )paren
 suffix:semicolon
-macro_line|#endif
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|net_local
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/* We auto-IRQ by shutting off the interrupt line and letting it float&n;       high. */
 r_if
 c_cond
@@ -493,19 +670,17 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 3c501 probe failed to detect IRQ line.&bslash;n&quot;
+l_string|&quot;%s probe at %#x failed to detect IRQ line.&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|mname
+comma
+id|ioaddr
 )paren
 suffix:semicolon
 r_return
 id|EAGAIN
 suffix:semicolon
 )brace
-id|dev-&gt;irq
-op_assign
-id|autoirq
-suffix:semicolon
 )brace
 id|outb
 c_func
@@ -520,7 +695,7 @@ suffix:semicolon
 multiline_comment|/* Loopback mode. */
 id|dev-&gt;base_addr
 op_assign
-id|el_base
+id|ioaddr
 suffix:semicolon
 id|memcpy
 c_func
@@ -545,12 +720,23 @@ id|dev-&gt;mem_start
 op_amp
 l_int|0x7
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|autoirq
+)paren
+id|dev-&gt;irq
+op_assign
+id|autoirq
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 3c501 EtherLink at %#x, using %sIRQ %d, melting ethernet.&bslash;n&quot;
+l_string|&quot;%s: %s EtherLink at %#x, using %sIRQ %d, melting ethernet.&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|mname
 comma
 id|dev-&gt;base_addr
 comma
@@ -575,6 +761,42 @@ c_func
 l_string|&quot;%s&quot;
 comma
 id|version
+)paren
+suffix:semicolon
+multiline_comment|/* Initialize the device structure. */
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+id|dev-&gt;priv
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|net_local
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|dev-&gt;priv
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|net_local
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* The EL1-specific entries in the device structure. */
@@ -627,6 +849,11 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -659,19 +886,6 @@ l_string|&quot;3c501&quot;
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|el_debug
-OG
-l_int|2
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;interrupt busy, exiting el_open().&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -703,27 +917,12 @@ id|AX_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Aux control, irq and receive enabled */
-r_if
-c_cond
-(paren
-id|el_debug
-OG
-l_int|2
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;finished el_open().&bslash;n&quot;
-)paren
-suffix:semicolon
 macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif       
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -743,15 +942,22 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
 (paren
-id|flags
+r_struct
+id|net_local
+op_star
 )paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
 suffix:semicolon
 r_if
 c_cond
@@ -816,21 +1022,8 @@ id|RX_STATUS
 )paren
 )paren
 suffix:semicolon
-id|el_status.stats.tx_errors
+id|lp-&gt;stats.tx_errors
 op_increment
-suffix:semicolon
-macro_line|#ifdef oldway
-id|el_reset
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#else
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -857,7 +1050,6 @@ id|AX_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Just trigger a false interrupt. */
-macro_line|#endif
 id|outb
 c_func
 (paren
@@ -870,12 +1062,6 @@ multiline_comment|/* Aux control, irq and receive enabled */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
@@ -900,22 +1086,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
 multiline_comment|/* Avoid timer-based retransmission conflicts. */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -934,7 +1105,6 @@ id|dev-&gt;tbusy
 op_ne
 l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -943,13 +1113,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
 r_else
 (brace
 r_int
@@ -975,11 +1138,11 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-id|el_status.tx_pkt_start
+id|lp-&gt;tx_pkt_start
 op_assign
 id|gp_start
 suffix:semicolon
-id|el_status.collisions
+id|lp-&gt;collisions
 op_assign
 l_int|0
 suffix:semicolon
@@ -1003,7 +1166,7 @@ c_func
 id|TX_STATUS
 )paren
 suffix:semicolon
-id|outb
+id|outw
 c_func
 (paren
 l_int|0x00
@@ -1018,12 +1181,6 @@ c_func
 id|gp_start
 comma
 id|GP_LOW
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 id|outsb
@@ -1113,33 +1270,50 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*struct device *dev = (struct device *)(irq2dev_map[irq]);*/
 r_struct
 id|device
 op_star
 id|dev
 op_assign
-id|eldev
+(paren
+r_struct
+id|device
+op_star
+)paren
+(paren
+id|irq2dev_map
+(braket
+id|irq
+)braket
+)paren
+suffix:semicolon
+r_struct
+id|net_local
+op_star
+id|lp
+suffix:semicolon
+r_int
+id|ioaddr
 suffix:semicolon
 r_int
 id|axsr
 suffix:semicolon
 multiline_comment|/* Aux. status reg. */
-r_int
-id|ioaddr
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|eldev-&gt;irq
+id|dev
+op_eq
+l_int|NULL
+op_logical_or
+id|dev-&gt;irq
 op_ne
 id|irq
 )paren
 (brace
 id|printk
 (paren
-id|EL_NAME
-l_string|&quot;: irq %d for unknown device&bslash;n&quot;
+l_string|&quot;3c501 driver: irq %d for unknown device.&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -1150,6 +1324,15 @@ suffix:semicolon
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
+suffix:semicolon
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
 suffix:semicolon
 id|axsr
 op_assign
@@ -1323,7 +1506,7 @@ comma
 id|AX_CMD
 )paren
 suffix:semicolon
-id|el_status.stats.tx_aborted_errors
+id|lp-&gt;stats.tx_aborted_errors
 op_increment
 suffix:semicolon
 )brace
@@ -1361,7 +1544,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-id|el_status.tx_pkt_start
+id|lp-&gt;tx_pkt_start
 comma
 id|GP_LOW
 )paren
@@ -1374,7 +1557,7 @@ comma
 id|AX_CMD
 )paren
 suffix:semicolon
-id|el_status.stats.collisions
+id|lp-&gt;stats.collisions
 op_increment
 suffix:semicolon
 id|dev-&gt;interrupt
@@ -1386,7 +1569,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|el_status.stats.tx_packets
+id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 r_if
@@ -1471,7 +1654,7 @@ id|rxsr
 op_amp
 id|RX_MISSED
 )paren
-id|el_status.stats.rx_missed_errors
+id|lp-&gt;stats.rx_missed_errors
 op_increment
 suffix:semicolon
 r_if
@@ -1483,7 +1666,7 @@ id|RX_RUNT
 )paren
 (brace
 multiline_comment|/* Handled to avoid board lock-up. */
-id|el_status.stats.rx_length_errors
+id|lp-&gt;stats.rx_length_errors
 op_increment
 suffix:semicolon
 r_if
@@ -1512,7 +1695,7 @@ id|RX_GOOD
 id|el_receive
 c_func
 (paren
-id|eldev
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -1539,7 +1722,7 @@ suffix:semicolon
 id|el_reset
 c_func
 (paren
-id|eldev
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -1565,7 +1748,7 @@ comma
 id|AX_CMD
 )paren
 suffix:semicolon
-id|outb
+id|outw
 c_func
 (paren
 l_int|0x00
@@ -1606,6 +1789,23 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
 r_int
 id|pkt_len
 suffix:semicolon
@@ -1668,7 +1868,7 @@ comma
 id|pkt_len
 )paren
 suffix:semicolon
-id|el_status.stats.rx_over_errors
+id|lp-&gt;stats.rx_over_errors
 op_increment
 suffix:semicolon
 r_return
@@ -1716,7 +1916,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|el_status.stats.rx_dropped
+id|lp-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
 r_return
@@ -1748,7 +1948,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|el_status.stats.rx_packets
+id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
 )brace
@@ -1767,6 +1967,11 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1825,13 +2030,13 @@ id|dev-&gt;dev_addr
 id|i
 )braket
 comma
-id|el_base
+id|ioaddr
 op_plus
 id|i
 )paren
 suffix:semicolon
 )brace
-id|outb
+id|outw
 c_func
 (paren
 l_int|0
@@ -1978,9 +2183,21 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_return
 op_amp
-id|el_status.stats
+id|lp-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
@@ -2003,6 +2220,11 @@ op_star
 id|addrs
 )paren
 (brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2069,8 +2291,6 @@ id|RX_STATUS
 suffix:semicolon
 )brace
 )brace
-"&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer  -m486 -c -o 3c501.o 3c501.c&quot;&n; *  kept-new-versions: 5&n; * End:&n; */
 macro_line|#ifdef MODULE
 DECL|variable|kernel_version
 r_char
@@ -2172,4 +2392,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* MODULE */
+"&f;"
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer  -m486 -c -o 3c501.o 3c501.c&quot;&n; *  kept-new-versions: 5&n; * End:&n; */
 eof
