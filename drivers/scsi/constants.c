@@ -397,6 +397,7 @@ c_cond
 (paren
 (paren
 r_int
+r_int
 )paren
 id|table
 )paren

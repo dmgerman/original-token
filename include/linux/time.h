@@ -35,6 +35,20 @@ multiline_comment|/* type of dst correction */
 suffix:semicolon
 DECL|macro|NFDBITS
 mdefine_line|#define NFDBITS&t;&t;&t;__NFDBITS
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+DECL|macro|FD_SETSIZE
+mdefine_line|#define FD_SETSIZE&t;&t;__FD_SETSIZE
+DECL|macro|FD_SET
+mdefine_line|#define FD_SET(fd,fdsetp)&t;set_bit(fd,fdsetp)
+DECL|macro|FD_CLR
+mdefine_line|#define FD_CLR(fd,fdsetp)&t;clear_bit(fd,fdsetp)
+DECL|macro|FD_ISSET
+mdefine_line|#define FD_ISSET(fd,fdsetp)&t;(0 != test_bit(fd,fdsetp))
+DECL|macro|FD_ZERO
+mdefine_line|#define FD_ZERO(fdsetp)&t;&t;memset(fdsetp, 0, sizeof(struct fd_set))
+macro_line|#else
 DECL|macro|FD_SETSIZE
 mdefine_line|#define FD_SETSIZE&t;&t;__FD_SETSIZE
 DECL|macro|FD_SET
@@ -45,6 +59,7 @@ DECL|macro|FD_ISSET
 mdefine_line|#define FD_ISSET(fd,fdsetp)&t;__FD_ISSET(fd,fdsetp)
 DECL|macro|FD_ZERO
 mdefine_line|#define FD_ZERO(fdsetp)&t;&t;__FD_ZERO(fdsetp)
+macro_line|#endif
 multiline_comment|/*&n; * Names of the interval timers, and structure&n; * defining a timer setting.&n; */
 DECL|macro|ITIMER_REAL
 mdefine_line|#define&t;ITIMER_REAL&t;0

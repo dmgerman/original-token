@@ -261,7 +261,9 @@ DECL|macro|KDGETKEYCODE
 mdefine_line|#define KDGETKEYCODE&t;0x4B4C&t;/* read kernel keycode table entry */
 DECL|macro|KDSETKEYCODE
 mdefine_line|#define KDSETKEYCODE&t;0x4B4D&t;/* write kernel keycode table entry */
-multiline_comment|/* note: 0x4B00-0x4B4D all have had a value at some time;&n;   don&squot;t reuse for the time being */
+DECL|macro|KDSIGACCEPT
+mdefine_line|#define KDSIGACCEPT&t;0x4B4E&t;/* accept kbd generated signals */
+multiline_comment|/* note: 0x4B00-0x4B4E all have had a value at some time;&n;   don&squot;t reuse for the time being */
 multiline_comment|/* note: 0x4B60-0x4B68 used above */
 macro_line|#endif /* _LINUX_KD_H */
 eof

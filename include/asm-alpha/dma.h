@@ -773,7 +773,7 @@ id|dmanr
 comma
 r_char
 op_star
-id|deviceID
+id|device_id
 )paren
 suffix:semicolon
 multiline_comment|/* reserve a DMA channel */

@@ -2165,6 +2165,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|flag
 op_assign
 l_int|0
@@ -2177,6 +2181,12 @@ op_eq
 l_int|1
 )paren
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2195,9 +2205,10 @@ op_minus
 l_int|1
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -2245,9 +2256,10 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;   try and find a queueable request (i.e. device not busy, and host able to&n;   accept another command.  If we find one, then we queue it. This can&n;   make a big difference on systems with more than one disk drive.  We want&n;   to have the interrupts off when monkeying with the request list, because&n;   otherwise the kernel might try and slip in a request in between somewhere. */
@@ -2270,6 +2282,12 @@ suffix:semicolon
 id|req1
 op_assign
 l_int|NULL
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -2357,9 +2375,10 @@ id|req-&gt;next
 suffix:semicolon
 )brace
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace

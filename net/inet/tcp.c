@@ -8690,7 +8690,7 @@ id|sk
 suffix:semicolon
 id|buff-&gt;free
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|buff-&gt;len
 op_assign
@@ -12556,7 +12556,7 @@ id|sk
 suffix:semicolon
 id|buff-&gt;free
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|buff-&gt;localroute
 op_assign

@@ -798,13 +798,10 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;RAMDISK: %d bytes, starting at 0x%x&bslash;n&quot;
+l_string|&quot;RAMDISK: %d bytes, starting at 0x%p&bslash;n&quot;
 comma
 id|rd_length
 comma
-(paren
-r_int
-)paren
 id|rd_start
 )paren
 suffix:semicolon

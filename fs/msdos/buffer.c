@@ -97,8 +97,8 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* #Specification: msdos / strategy / special device / dummy blocks&n;&t;&t;&t;&t;&t;Many special device (Scsi optical disk for one) use&n;&t;&t;&t;&t;&t;larger hardware sector size. This allows for higher&n;&t;&t;&t;&t;&t;capacity.&n;&n;&t;&t;&t;&t;&t;Most of the time, the MsDOS file system that sit&n;&t;&t;&t;&t;&t;on this device is totally unaligned. It use logically&n;&t;&t;&t;&t;&t;512 bytes sector size, with logical sector starting&n;&t;&t;&t;&t;&t;in the middle of a hardware block. The bad news is&n;&t;&t;&t;&t;&t;that a hardware sector may hold data own by two&n;&t;&t;&t;&t;&t;different files. This means that the hardware sector&n;&t;&t;&t;&t;&t;must be read, patch and written allmost all the time.&n;&n;&t;&t;&t;&t;&t;Needless to say that it kills write performance&n;&t;&t;&t;&t;&t;on all OS.&n;&n;&t;&t;&t;&t;&t;Internally the linux msdos fs is using 512 bytes&n;&t;&t;&t;&t;&t;logical sector. When accessing such a device, we&n;&t;&t;&t;&t;&t;allocate dummy buffer cache blocks, that we stuff&n;&t;&t;&t;&t;&t;with the information of a real one (1k large).&n;&n;&t;&t;&t;&t;&t;This strategy is used to hide this difference to&n;&t;&t;&t;&t;&t;the core of the msdos fs. The slowdown is not&n;&t;&t;&t;&t;&t;hidden though!&n;&t;&t;&t;&t;*/
-multiline_comment|/*&n;&t;&t;&t;&t;&t;THe memset is there only to catch errors. The msdos&n;&t;&t;&t;&t;&t;fs is only unsing b_data&n;&t;&t;&t;&t;*/
+multiline_comment|/* #Specification: msdos / strategy / special device / dummy blocks&n;&t;&t;&t;&t;&t;Many special device (Scsi optical disk for one) use&n;&t;&t;&t;&t;&t;larger hardware sector size. This allows for higher&n;&t;&t;&t;&t;&t;capacity.&n;&n;&t;&t;&t;&t;&t;Most of the time, the MsDOS file system that sit&n;&t;&t;&t;&t;&t;on this device is totally unaligned. It use logically&n;&t;&t;&t;&t;&t;512 bytes sector size, with logical sector starting&n;&t;&t;&t;&t;&t;in the middle of a hardware block. The bad news is&n;&t;&t;&t;&t;&t;that a hardware sector may hold data own by two&n;&t;&t;&t;&t;&t;different files. This means that the hardware sector&n;&t;&t;&t;&t;&t;must be read, patch and written almost all the time.&n;&n;&t;&t;&t;&t;&t;Needless to say that it kills write performance&n;&t;&t;&t;&t;&t;on all OS.&n;&n;&t;&t;&t;&t;&t;Internally the linux msdos fs is using 512 bytes&n;&t;&t;&t;&t;&t;logical sector. When accessing such a device, we&n;&t;&t;&t;&t;&t;allocate dummy buffer cache blocks, that we stuff&n;&t;&t;&t;&t;&t;with the information of a real one (1k large).&n;&n;&t;&t;&t;&t;&t;This strategy is used to hide this difference to&n;&t;&t;&t;&t;&t;the core of the msdos fs. The slowdown is not&n;&t;&t;&t;&t;&t;hidden though!&n;&t;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;&t;The memset is there only to catch errors. The msdos&n;&t;&t;&t;&t;&t;fs is only using b_data&n;&t;&t;&t;&t;*/
 id|memset
 (paren
 id|ret
@@ -190,7 +190,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* #Specification: msdos / special device / writing&n;&t;&t;&t;A write is always preceded by a read of the complete block&n;&t;&t;&t;(large hardware sector size). This defeat write performance.&n;&t;&t;&t;There is a possibility to optimize this when writing large&n;&t;&t;&t;chunk by making sure we are filling large block. Volunter ?&n;&t;&t;*/
+multiline_comment|/* #Specification: msdos / special device / writing&n;&t;&t;&t;A write is always preceded by a read of the complete block&n;&t;&t;&t;(large hardware sector size). This defeat write performance.&n;&t;&t;&t;There is a possibility to optimize this when writing large&n;&t;&t;&t;chunk by making sure we are filling large block. Volunteer ?&n;&t;&t;*/
 id|ret
 op_assign
 id|msdos_bread

@@ -66,8 +66,10 @@ DECL|macro|WIN_DIAGNOSE
 mdefine_line|#define WIN_DIAGNOSE&t;&t;0x90
 DECL|macro|WIN_SPECIFY
 mdefine_line|#define WIN_SPECIFY&t;&t;0x91
-DECL|macro|WIN_SETIDLE
-mdefine_line|#define WIN_SETIDLE&t;&t;0x97
+DECL|macro|WIN_SETIDLE1
+mdefine_line|#define WIN_SETIDLE1&t;&t;0xE3
+DECL|macro|WIN_SETIDLE2
+mdefine_line|#define WIN_SETIDLE2&t;&t;0x97
 DECL|macro|WIN_PIDENTIFY
 mdefine_line|#define WIN_PIDENTIFY&t;&t;0xA1&t;/* identify ATA-PI device&t;*/
 DECL|macro|WIN_MULTREAD
@@ -126,14 +128,14 @@ DECL|macro|HDIO_REQ
 mdefine_line|#define HDIO_REQ&t;&t;HDIO_GETGEO&t;/* obsolete, use HDIO_GETGEO */
 DECL|macro|HDIO_GET_UNMASKINTR
 mdefine_line|#define HDIO_GET_UNMASKINTR&t;0x302&t;/* get current unmask setting */
-DECL|macro|HDIO_SETUNMASKINTR
-mdefine_line|#define HDIO_SETUNMASKINTR&t;0x303&t;/* obsolete */
 DECL|macro|HDIO_GET_MULTCOUNT
 mdefine_line|#define HDIO_GET_MULTCOUNT&t;0x304&t;/* get current IDE blockmode setting */
-DECL|macro|HDIO_SETMULTCOUNT
-mdefine_line|#define HDIO_SETMULTCOUNT&t;0x305&t;/* obsolete */
 DECL|macro|HDIO_GET_IDENTITY
 mdefine_line|#define HDIO_GET_IDENTITY &t;0x307&t;/* get IDE identification info */
+DECL|macro|HDIO_GET_KEEPSETTINGS
+mdefine_line|#define HDIO_GET_KEEPSETTINGS &t;0x308&t;/* get keep-settings-on-reset flag */
+DECL|macro|HDIO_DRIVE_CMD
+mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x31f&t;/* execute a special drive command */
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x32n/0x33n */
 DECL|macro|HDIO_SET_MULTCOUNT
 mdefine_line|#define HDIO_SET_MULTCOUNT&t;0x321&t;/* set IDE blockmode */
@@ -141,8 +143,6 @@ DECL|macro|HDIO_SET_UNMASKINTR
 mdefine_line|#define HDIO_SET_UNMASKINTR&t;0x322&t;/* permit other irqs during I/O */
 DECL|macro|HDIO_SET_KEEPSETTINGS
 mdefine_line|#define HDIO_SET_KEEPSETTINGS&t;0x323&t;/* keep ioctl settings on reset */
-DECL|macro|HDIO_SET_XFERMODE
-mdefine_line|#define HDIO_SET_XFERMODE&t;0x324&t;/* set IDE transfer mode */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct
@@ -428,5 +428,76 @@ multiline_comment|/* unsigned short reservedyy[96];*/
 multiline_comment|/* reserved (words 160-255) */
 )brace
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n; * These routines are used for kernel command line parameters from main.c:&n; */
+macro_line|#ifdef CONFIG_BLK_DEV_HD
+r_void
+id|hd_setup
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_BLK_DEV_HD */
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+r_void
+id|ide_setup
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_void
+id|hda_setup
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_void
+id|hdb_setup
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_void
+id|hdc_setup
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_void
+id|hdd_setup
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
+macro_line|#endif&t;/* _LINUX_HDREG_H */
 eof

@@ -393,6 +393,12 @@ r_int
 id|len
 )paren
 (brace
+r_int
+r_int
+id|flags
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -418,6 +424,12 @@ id|base
 )paren
 comma
 id|CPRBSY
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -457,24 +469,32 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
 id|FALSE
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
 )brace
 r_else
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -514,9 +534,10 @@ id|base
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -525,9 +546,10 @@ id|FALSE
 suffix:semicolon
 id|fail
 suffix:colon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|buslogic_printk
@@ -570,6 +592,16 @@ r_int
 id|len
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -609,9 +641,10 @@ id|base
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -619,9 +652,10 @@ id|FALSE
 suffix:semicolon
 id|fail
 suffix:colon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if (BUSLOGIC_DEBUG &amp; BD_IO)
@@ -1056,6 +1090,10 @@ op_star
 id|sctmp
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|irqno
 comma
 id|base
@@ -1345,6 +1383,12 @@ c_func
 id|base
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1484,9 +1528,10 @@ op_assign
 id|mbi
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -1925,6 +1970,10 @@ suffix:semicolon
 r_int
 id|mbo
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|mailbox
 op_star
@@ -2157,6 +2206,12 @@ op_member_access_from_pointer
 id|ccbs
 suffix:semicolon
 multiline_comment|/* Use the outgoing mailboxes in a round-robin fashion, because this&n;       is how the host adapter will scan for them. */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2268,9 +2323,10 @@ id|mbo
 )paren
 (brace
 multiline_comment|/* ??? Instead of failing, should we enable OMBR interrupts and sleep&n;&t;   until we get one? */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|buslogic_printk
@@ -2307,9 +2363,10 @@ id|last_mbo_used
 op_assign
 id|mbo
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
@@ -4479,6 +4536,10 @@ r_int
 r_char
 id|bios_translation
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_const
 r_int
 r_char
@@ -5023,6 +5084,12 @@ id|irq
 )paren
 suffix:semicolon
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -5051,9 +5118,10 @@ l_string|&quot;unable to allocate IRQ for &quot;
 l_string|&quot;BusLogic controller.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -5091,9 +5159,10 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -5259,9 +5328,10 @@ op_member_access_from_pointer
 id|sc
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -5688,6 +5758,10 @@ id|mbo
 suffix:semicolon
 r_int
 r_int
+id|flags
+suffix:semicolon
+r_int
+r_int
 id|i
 suffix:semicolon
 id|buslogic_printk
@@ -5714,6 +5788,12 @@ c_func
 id|scpnt-&gt;host-&gt;io_port
 )paren
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -5803,9 +5883,10 @@ op_member_access_from_pointer
 id|last_mbi_used
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -5976,6 +6057,12 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if 1
 multiline_comment|/* This section of code should be used carefully - some devices cannot&n;       abort a command, and this merely makes it worse. */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -6035,9 +6122,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#endif

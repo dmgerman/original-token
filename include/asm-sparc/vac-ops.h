@@ -12,20 +12,32 @@ c_func
 r_int
 id|success
 suffix:semicolon
+op_amp
+id|success
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;lduba [0x40000000] 0x2, %0&bslash;n&bslash;t&quot;
+l_string|&quot;lduba [%1] 2, %0&bslash;n&bslash;t&quot;
 l_string|&quot;or    %0, 0x10, %0&bslash;n&bslash;t&quot;
-l_string|&quot;stba  %0, [0x40000000] 0x2&bslash;n&bslash;t&quot;
-l_string|&quot;or    %g0, %g0, %0&quot;
+l_string|&quot;stba  %0, [%1] 2&bslash;n&bslash;t&quot;
+l_string|&quot;or    %%g0, %%g0, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|success
 )paren
 suffix:colon
+l_string|&quot;r&quot;
+(paren
+(paren
+r_int
+r_int
+)paren
+l_int|0x40000000
+)paren
+comma
 l_string|&quot;0&quot;
 (paren
 id|success
@@ -53,16 +65,21 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;lduba [0x40000000] 0x2, %0&bslash;n&bslash;t&quot;
+l_string|&quot;lduba [%1] 0x2, %0&bslash;n&bslash;t&quot;
 l_string|&quot;xor   %0, 0x10, %0&bslash;n&bslash;t&quot;
-l_string|&quot;stba  %0, [0x40000000] 0x2&bslash;n&bslash;t&quot;
-l_string|&quot;or    %g0, %g0, %0&quot;
+l_string|&quot;stba  %0, [%1] 0x2&bslash;n&bslash;t&quot;
+l_string|&quot;or    %%g0, %%g0, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|success
 )paren
 suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0x40000000
+)paren
+comma
 l_string|&quot;0&quot;
 (paren
 id|success
@@ -90,7 +107,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;sta 0, [%0] 0x7&quot;
+l_string|&quot;sta %%g0, [%0] 0x7&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -116,7 +133,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;sta 0, [%0] 0xe&quot;
+l_string|&quot;sta %%g0, [%0] 0xe&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -142,7 +159,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;sta 0, [%0] 0x5&quot;
+l_string|&quot;sta %%g0, [%0] 0x5&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -168,7 +185,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;sta 0, [%0], 0xc&quot;
+l_string|&quot;sta %%g0, [%0] 0xc&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -194,7 +211,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;sta 0, [%0] 0x6&quot;
+l_string|&quot;sta %%g0, [%0] 0x6&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -220,7 +237,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;sta 0, [%0] 0xd&quot;
+l_string|&quot;sta %%g0, [%0] 0xd&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;

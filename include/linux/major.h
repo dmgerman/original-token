@@ -14,8 +14,10 @@ DECL|macro|MEM_MAJOR
 mdefine_line|#define MEM_MAJOR&t;1
 DECL|macro|FLOPPY_MAJOR
 mdefine_line|#define FLOPPY_MAJOR&t;2
+DECL|macro|IDE0_MAJOR
+mdefine_line|#define IDE0_MAJOR&t;3
 DECL|macro|HD_MAJOR
-mdefine_line|#define HD_MAJOR&t;3
+mdefine_line|#define HD_MAJOR&t;IDE0_MAJOR
 DECL|macro|TTY_MAJOR
 mdefine_line|#define TTY_MAJOR&t;4
 DECL|macro|TTYAUX_MAJOR
@@ -48,7 +50,8 @@ mdefine_line|#define AF_INET_MAJOR&t;18
 multiline_comment|/* unused: 19, 20 */
 DECL|macro|SCSI_GENERIC_MAJOR
 mdefine_line|#define SCSI_GENERIC_MAJOR 21
-multiline_comment|/* unused: 22 */
+DECL|macro|IDE1_MAJOR
+mdefine_line|#define IDE1_MAJOR&t;22
 DECL|macro|MITSUMI_CDROM_MAJOR
 mdefine_line|#define MITSUMI_CDROM_MAJOR 23
 DECL|macro|CDU535_CDROM_MAJOR

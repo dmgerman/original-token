@@ -80,6 +80,28 @@ DECL|macro|PAL_rtsys
 mdefine_line|#define PAL_rtsys&t;61
 DECL|macro|PAL_rti
 mdefine_line|#define PAL_rti&t;&t;63
+macro_line|#ifndef __ASSEMBLY__
+r_extern
+r_void
+id|wrent
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wrkgp
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|halt
 mdefine_line|#define halt() __asm__ __volatile__(&quot;.long 0&quot;);
 DECL|macro|move_to_user_mode
@@ -279,5 +301,6 @@ id|val
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif
 eof

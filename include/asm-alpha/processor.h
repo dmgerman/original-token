@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * include/asm-i386/processor.h&n; *&n; * Copyright (C) 1994 Linus Torvalds&n; */
-macro_line|#ifndef __ASM_I386_PROCESSOR_H
-DECL|macro|__ASM_I386_PROCESSOR_H
-mdefine_line|#define __ASM_I386_PROCESSOR_H
+multiline_comment|/*&n; * include/asm-alpha/processor.h&n; *&n; * Copyright (C) 1994 Linus Torvalds&n; */
+macro_line|#ifndef __ASM_ALPHA_PROCESSOR_H
+DECL|macro|__ASM_ALPHA_PROCESSOR_H
+mdefine_line|#define __ASM_ALPHA_PROCESSOR_H
 multiline_comment|/*&n; * Bus types&n; */
 r_extern
 r_int
@@ -60,5 +60,5 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;}
-macro_line|#endif /* __ASM_I386_PROCESSOR_H */
+macro_line|#endif /* __ASM_ALPHA_PROCESSOR_H */
 eof

@@ -14,14 +14,10 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifdef start_bh_atomic&t;&t;&t;/* This checks for kernels &gt;= 1.1.0. */
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#else
-macro_line|#include &quot;dev.h&quot;
-macro_line|#endif
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;8390.h&quot;
 r_extern
 r_struct

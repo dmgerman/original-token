@@ -1795,6 +1795,10 @@ op_assign
 id|SCpnt-&gt;request_buffer
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|bufflen
 op_assign
 id|SCpnt-&gt;request_bufflen
@@ -2266,6 +2270,12 @@ id|INDATA
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Set up the FIFO&n;     */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2407,9 +2417,10 @@ id|INDATA
 )paren
 suffix:semicolon
 multiline_comment|/* Select w/ATN &amp; Transfer */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* let the intrpt rip */

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -566,9 +567,17 @@ l_int|0x408
 op_eq
 l_int|0xff
 )paren
+(brace
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
+)brace
 multiline_comment|/* We verify that it&squot;s a 3C503 board by checking the first three octets&n;       of its ethernet address. */
 id|iobase_reg
 op_assign

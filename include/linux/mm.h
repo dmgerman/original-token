@@ -5,6 +5,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
@@ -544,33 +545,18 @@ c_cond
 (paren
 id|page
 )paren
-id|__asm__
-id|__volatile__
+id|memset
 c_func
 (paren
-l_string|&quot;rep ; stosl&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-"&bslash;"
-suffix:colon
-l_string|&quot;a&quot;
 (paren
-l_int|0
+r_void
+op_star
 )paren
-comma
-l_string|&quot;c&quot;
-(paren
-l_int|1024
-)paren
-comma
-l_string|&quot;D&quot;
-(paren
 id|page
-)paren
-suffix:colon
-l_string|&quot;di&quot;
 comma
-l_string|&quot;cx&quot;
+l_int|0
+comma
+id|PAGE_SIZE
 )paren
 suffix:semicolon
 r_return

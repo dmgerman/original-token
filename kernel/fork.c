@@ -848,6 +848,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* process leadership doesn&squot;t inherit */
+id|p-&gt;tty_old_pgrp
+op_assign
+l_int|0
+suffix:semicolon
 id|p-&gt;utime
 op_assign
 id|p-&gt;stime

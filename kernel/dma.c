@@ -1,36 +1,82 @@
-multiline_comment|/* $Id: dma.c,v 1.5 1992/11/18 02:49:05 root Exp root $&n; * linux/kernel/dma.c: A DMA channel allocator. Inspired by linux/kernel/irq.c.&n; * Written by Hennus Bergman, 1992. &n; */
+multiline_comment|/* $Id: dma.c,v 1.7 1994/12/28 03:35:33 root Exp root $&n; * linux/kernel/dma.c: A DMA channel allocator. Inspired by linux/kernel/irq.c.&n; *&n; * Written by Hennus Bergman, 1992.&n; *&n; * 1994/12/26: Changes by Alex Nash to fix a minor bug in /proc/dma.&n; *   In the previous version the reported device could end up being wrong,&n; *   if a device requested a DMA channel that was already in use.&n; *   [It also happened to remove the sizeof(char *) == sizeof(int)&n; *   assumption introduced because of those /proc/dma patches. -- Hennus]&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-multiline_comment|/* A note on resource allocation:&n; *&n; * All drivers needing DMA channels, should allocate and release them&n; * through the public routines `request_dma()&squot; and `free_dma()&squot;.&n; *&n; * In order to avoid problems, all processes should allocate resources in&n; * the same sequence and release them in the reverse order.&n; * &n; * So, when allocating DMAs and IRQs, first allocate the IRQ, then the DMA.&n; * When releasing them, first release the DMA, then release the IRQ.&n; * If you don&squot;t, you may cause allocation requests to fail unnecessarily.&n; * This doesn&squot;t really matter now, but it will once we get real semaphores&n; * in the kernel.&n; */
+multiline_comment|/* A note on resource allocation:&n; *&n; * All drivers needing DMA channels, should allocate and release them&n; * through the public routines `request_dma()&squot; and `free_dma()&squot;.&n; *&n; * In order to avoid problems, all processes should allocate resources in&n; * the same sequence and release them in the reverse order.&n; *&n; * So, when allocating DMAs and IRQs, first allocate the IRQ, then the DMA.&n; * When releasing them, first release the DMA, then release the IRQ.&n; * If you don&squot;t, you may cause allocation requests to fail unnecessarily.&n; * This doesn&squot;t really matter now, but it will once we get real semaphores&n; * in the kernel.&n; */
 multiline_comment|/* Channel n is busy iff dma_chan_busy[n] != 0.&n; * DMA0 used to be reserved for DRAM refresh, but apparently not any more...&n; * DMA4 is reserved for cascading.&n; */
-multiline_comment|/*&n;static volatile unsigned int dma_chan_busy[MAX_DMA_CHANNELS] = {&n;&t;0, 0, 0, 0, 1, 0, 0, 0&n;};&n;*/
+DECL|struct|dma_chan
+r_struct
+id|dma_chan
+(brace
+DECL|member|lock
+r_int
+id|lock
+suffix:semicolon
+DECL|member|device_id
+r_char
+op_star
+id|device_id
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|variable|dma_chan_busy
 r_static
 r_volatile
-r_char
-op_star
+r_struct
+id|dma_chan
 id|dma_chan_busy
 (braket
 id|MAX_DMA_CHANNELS
 )braket
 op_assign
 (brace
+(brace
 l_int|0
 comma
 l_int|0
+)brace
 comma
+(brace
 l_int|0
 comma
 l_int|0
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|1
 comma
 l_string|&quot;cascade&quot;
+)brace
 comma
+(brace
 l_int|0
 comma
 l_int|0
+)brace
+comma
+(brace
+l_int|0
 comma
 l_int|0
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 )brace
 suffix:semicolon
 multiline_comment|/* Atomically swap memory location [32 bits] with `newval&squot;.&n; * This avoid the cli()/sti() junk and related problems.&n; * [And it&squot;s faster too :-)]&n; * Maybe this should be in include/asm/mutex.h and be used for&n; * implementing kernel-semaphores as well.&n; */
@@ -129,6 +175,8 @@ id|dma_chan_busy
 (braket
 id|i
 )braket
+dot
+id|lock
 )paren
 (brace
 id|len
@@ -148,6 +196,8 @@ id|dma_chan_busy
 (braket
 id|i
 )braket
+dot
+id|device_id
 )paren
 suffix:semicolon
 )brace
@@ -156,6 +206,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+multiline_comment|/* get_dma_list */
 DECL|function|request_dma
 r_int
 id|request_dma
@@ -167,7 +218,7 @@ id|dmanr
 comma
 r_char
 op_star
-id|deviceID
+id|device_id
 )paren
 (brace
 r_if
@@ -197,12 +248,10 @@ id|dma_chan_busy
 (braket
 id|dmanr
 )braket
+dot
+id|lock
 comma
-(paren
-r_int
-r_int
-)paren
-id|deviceID
+l_int|1
 )paren
 op_ne
 l_int|0
@@ -210,6 +259,15 @@ l_int|0
 r_return
 op_minus
 id|EBUSY
+suffix:semicolon
+id|dma_chan_busy
+(braket
+id|dmanr
+)braket
+dot
+id|device_id
+op_assign
+id|device_id
 suffix:semicolon
 multiline_comment|/* old flag was 0, now contains 1 to indicate busy */
 r_return
@@ -262,6 +320,8 @@ id|dma_chan_busy
 (braket
 id|dmanr
 )braket
+dot
+id|lock
 comma
 l_int|0
 )paren

@@ -58,69 +58,160 @@ comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* no_dev */
+multiline_comment|/* 0 no_dev */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev mem */
+multiline_comment|/* 1 dev mem */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev fd */
+multiline_comment|/* 2 dev fd */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev hd */
+multiline_comment|/* 3 dev ide0 or hd */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev ttyx */
+multiline_comment|/* 4 dev ttyx */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev tty */
+multiline_comment|/* 5 dev tty */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev lp */
+multiline_comment|/* 6 dev lp */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev pipes */
+multiline_comment|/* 7 dev pipes */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
 comma
-multiline_comment|/* dev sd */
+multiline_comment|/* 8 dev sd */
 (brace
 l_int|NULL
 comma
 l_int|NULL
 )brace
-multiline_comment|/* dev st */
+comma
+multiline_comment|/* 9 dev st */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 10 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 11 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 12 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 13 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 14 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 15 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 16 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 17 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 18 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 19 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 20 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 21 */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+multiline_comment|/* 22 dev ide1 */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * blk_size contains the size of all block-devices in units of 1024 byte&n; * sectors:&n; *&n; * blk_size[MAJOR][MINOR]&n; *&n; * if (!blk_size[MAJOR]) then no minor size checking is done.&n; */
@@ -612,18 +703,11 @@ c_func
 id|req-&gt;dev
 )paren
 op_amp
-l_int|0x00C0
+l_int|0x0040
 )paren
 op_rshift
 l_int|6
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|disk_index
-OL
-l_int|4
-)paren
 id|kstat.dk_drive
 (braket
 id|disk_index
@@ -631,6 +715,33 @@ id|disk_index
 op_increment
 suffix:semicolon
 r_break
+suffix:semicolon
+r_case
+id|IDE1_MAJOR
+suffix:colon
+id|disk_index
+op_assign
+(paren
+(paren
+id|MINOR
+c_func
+(paren
+id|req-&gt;dev
+)paren
+op_amp
+l_int|0x0040
+)paren
+op_rshift
+l_int|6
+)paren
+op_plus
+l_int|2
+suffix:semicolon
+id|kstat.dk_drive
+(braket
+id|disk_index
+)braket
+op_increment
 suffix:semicolon
 r_default
 suffix:colon
@@ -995,14 +1106,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* The scsi disk drivers completely remove the request from the queue when&n; * they start processing an entry.  For this reason it is safe to continue&n; * to add links to the top entry for scsi devices.&n; */
+multiline_comment|/* The scsi disk drivers and the IDE driver completely remove the request&n; * from the queue when they start processing an entry.  For this reason&n; * it is safe to continue to add links to the top entry for those devices.&n; */
 r_if
 c_cond
 (paren
 (paren
 id|major
 op_eq
-id|HD_MAJOR
+id|IDE0_MAJOR
+multiline_comment|/* same as HD_MAJOR */
+op_logical_or
+id|major
+op_eq
+id|IDE1_MAJOR
 op_logical_or
 id|major
 op_eq
@@ -1029,6 +1145,7 @@ id|current_request
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_if
 c_cond
 (paren
@@ -1040,6 +1157,15 @@ id|major
 op_eq
 id|FLOPPY_MAJOR
 )paren
+macro_line|#else
+r_if
+c_cond
+(paren
+id|major
+op_eq
+id|FLOPPY_MAJOR
+)paren
+macro_line|#endif CONFIG_BLK_DEV_HD
 id|req
 op_assign
 id|req-&gt;next
@@ -2231,6 +2357,18 @@ macro_line|#ifdef CONFIG_BLK_DEV_HD
 id|mem_start
 op_assign
 id|hd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|mem_start
+op_assign
+id|ide_init
 c_func
 (paren
 id|mem_start

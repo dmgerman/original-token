@@ -695,6 +695,10 @@ id|ST_buffer
 op_star
 id|STbuffer
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|STp
 op_assign
 op_amp
@@ -708,6 +712,12 @@ suffix:semicolon
 id|STbuffer
 op_assign
 id|STp-&gt;buffer
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -746,9 +756,10 @@ id|STbuffer-&gt;writing
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if

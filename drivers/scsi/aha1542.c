@@ -259,6 +259,12 @@ r_int
 id|len
 )paren
 (brace
+r_int
+r_int
+id|flags
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -291,6 +297,12 @@ comma
 id|CDF
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -312,9 +324,10 @@ op_amp
 id|CDF
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_continue
@@ -333,9 +346,10 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -345,6 +359,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -388,9 +408,10 @@ id|base
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -399,9 +420,10 @@ l_int|0
 suffix:semicolon
 id|fail
 suffix:colon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|printk
@@ -442,6 +464,16 @@ r_int
 id|len
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -485,9 +517,10 @@ id|base
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -495,9 +528,10 @@ l_int|0
 suffix:semicolon
 id|fail
 suffix:colon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|printk
@@ -538,6 +572,16 @@ r_int
 id|len
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -583,9 +627,10 @@ id|base
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -593,9 +638,10 @@ l_int|0
 suffix:semicolon
 id|fail
 suffix:colon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1072,6 +1118,10 @@ suffix:semicolon
 r_int
 id|number_serviced
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -1360,6 +1410,12 @@ c_func
 id|shost-&gt;io_port
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1452,9 +1508,10 @@ op_eq
 l_int|0
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Hmm, no mail.  Must have read it the last time around */
@@ -1552,9 +1609,10 @@ id|aha1542_last_mbi_used
 op_assign
 id|mbi
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -1990,6 +2048,10 @@ id|lun
 op_assign
 id|SCpnt-&gt;lun
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_void
 op_star
 id|buff
@@ -2267,6 +2329,12 @@ suffix:semicolon
 multiline_comment|/* we are still testing, so *don&squot;t* write */
 macro_line|#endif
 multiline_comment|/* Use the outgoing mailboxes in a round-robin fashion, because this&n;   is how the host adapter will scan for them */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2408,9 +2476,10 @@ id|aha1542_last_mbo_used
 op_assign
 id|mbo
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -4438,6 +4507,10 @@ id|irq_level
 suffix:semicolon
 r_int
 r_int
+id|flags
+suffix:semicolon
+r_int
+r_int
 id|base_io
 suffix:semicolon
 r_int
@@ -4892,6 +4965,12 @@ id|irq_level
 )paren
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -5099,9 +5178,10 @@ id|SCint
 )paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -5520,6 +5600,10 @@ id|ahacmd
 op_assign
 id|CMD_START_SCSI
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|mailbox
 op_star
@@ -5556,6 +5640,12 @@ c_func
 id|SCpnt-&gt;host-&gt;io_port
 )paren
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -5647,9 +5737,10 @@ op_member_access_from_pointer
 id|aha1542_last_mbi_used
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -5809,6 +5900,12 @@ l_string|&quot;aha1542_abort&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if 0
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -5867,9 +5964,10 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* start scsi command */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_break

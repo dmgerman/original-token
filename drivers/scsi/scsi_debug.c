@@ -685,6 +685,10 @@ op_assign
 id|SCpnt-&gt;request_bufflen
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 id|sgcount
@@ -2013,6 +2017,12 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2183,9 +2193,10 @@ id|SCpnt-&gt;result
 op_assign
 id|scsi_debug_errsts
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -2320,6 +2331,10 @@ op_star
 )paren
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|to
 suffix:semicolon
 macro_line|#ifndef IMMEDIATE
@@ -2344,6 +2359,12 @@ suffix:semicolon
 macro_line|#endif
 id|repeat
 suffix:colon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2470,9 +2491,10 @@ op_le
 id|jiffies
 )paren
 (brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -2552,9 +2574,10 @@ id|SCSI_DEBUG_TIMER
 suffix:semicolon
 )brace
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2623,9 +2646,10 @@ id|i
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -2755,6 +2779,10 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DEB
 c_func
 (paren
@@ -2810,6 +2838,12 @@ c_func
 id|SCpnt
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2836,9 +2870,10 @@ id|j
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -2934,6 +2969,10 @@ id|SCpnt
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_void
 (paren
 op_star
@@ -3008,6 +3047,12 @@ id|i
 )braket
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -3034,9 +3079,10 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace

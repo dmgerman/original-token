@@ -17,6 +17,10 @@ DECL|macro|LP_ERR
 mdefine_line|#define LP_ERR   0x0020
 DECL|macro|LP_ABORT
 mdefine_line|#define LP_ABORT 0x0040
+DECL|macro|LP_CAREFUL
+mdefine_line|#define LP_CAREFUL 0x0080
+DECL|macro|LP_ABORTOPEN
+mdefine_line|#define LP_ABORTOPEN 0x0100
 multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command as well.&n; */
 DECL|macro|LP_INIT_CHAR
 mdefine_line|#define LP_INIT_CHAR 1000
@@ -39,6 +43,12 @@ DECL|macro|LPGETIRQ
 mdefine_line|#define LPGETIRQ 0x0006  /* get the current IRQ number */
 DECL|macro|LPWAIT
 mdefine_line|#define LPWAIT   0x0008  /* corresponds to LP_INIT_WAIT */
+DECL|macro|LPCAREFUL
+mdefine_line|#define LPCAREFUL   0x0009  /* call with TRUE arg to require out-of-paper, off-&n;&t;&t;&t;    line, and error indicators good on all writes,&n;&t;&t;&t;    FALSE to ignore them.  Default is ignore. */
+DECL|macro|LPABORTOPEN
+mdefine_line|#define LPABORTOPEN 0x000a  /* call with TRUE arg to abort open() on error,&n;&t;&t;&t;    FALSE to ignore error.  Default is ignore.  */
+DECL|macro|LPGETSTATUS
+mdefine_line|#define LPGETSTATUS 0x000b  /* return LP_S(minor) */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
 DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)

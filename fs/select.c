@@ -161,11 +161,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|S_ISREG
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
+id|flag
+op_ne
+id|SEL_EX
 )paren
 r_return
 l_int|1

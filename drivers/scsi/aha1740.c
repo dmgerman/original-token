@@ -1013,6 +1013,10 @@ id|target
 op_assign
 id|SCpnt-&gt;target
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_void
 op_star
 id|buff
@@ -1185,6 +1189,12 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* locate an available ecb */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1280,9 +1290,10 @@ id|aha1740_last_ecb_used
 op_assign
 id|ecbno
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -1778,6 +1789,12 @@ id|ecbno
 )paren
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1972,9 +1989,10 @@ id|ATTN
 )paren
 suffix:semicolon
 multiline_comment|/* Start it up */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|DEB

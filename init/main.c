@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
 r_extern
 r_int
@@ -380,6 +381,78 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+r_extern
+r_void
+id|ide_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hda_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hdb_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hdc_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hdd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#else
 r_extern
 r_void
 id|hd_setup
@@ -394,6 +467,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDE */
 r_extern
 r_void
 id|bmouse_setup
@@ -1086,7 +1160,38 @@ id|scsi_luns_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_HD
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+(brace
+l_string|&quot;hda=&quot;
+comma
+id|hda_setup
+)brace
+comma
+(brace
+l_string|&quot;hdb=&quot;
+comma
+id|hdb_setup
+)brace
+comma
+(brace
+l_string|&quot;hdc=&quot;
+comma
+id|hdc_setup
+)brace
+comma
+(brace
+l_string|&quot;hdd=&quot;
+comma
+id|hdd_setup
+)brace
+comma
+(brace
+l_string|&quot;hd=&quot;
+comma
+id|ide_setup
+)brace
+comma
+macro_line|#elif defined(CONFIG_BLK_DEV_HD)
 (brace
 l_string|&quot;hd=&quot;
 comma
@@ -1487,7 +1592,7 @@ l_string|&quot;failed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is a simple kernel command line parsing function: it parses&n; * the command line, and fills in the arguments/environment to init&n; * as appropriate. Any cmd-line option is taken to be an environment&n; * variable if it contains the character &squot;=&squot;.&n; *&n; *&n; * This routine also checks for options meant for the kernel - currently&n; * only the &quot;root=XXXX&quot; option is recognized. These options are not given&n; * to init - they are for internal kernel use only.&n; */
+multiline_comment|/*&n; * This is a simple kernel command line parsing function: it parses&n; * the command line, and fills in the arguments/environment to init&n; * as appropriate. Any cmd-line option is taken to be an environment&n; * variable if it contains the character &squot;=&squot;.&n; *&n; *&n; * This routine also checks for options meant for the kernel.&n; * These options are not given to init - they are for internal kernel use only.&n; */
 DECL|function|parse_options
 r_static
 r_void
@@ -1513,6 +1618,10 @@ op_assign
 l_string|&quot;hda&quot;
 comma
 l_string|&quot;hdb&quot;
+comma
+l_string|&quot;hdc&quot;
+comma
+l_string|&quot;hdd&quot;
 comma
 l_string|&quot;sda&quot;
 comma
@@ -1542,6 +1651,10 @@ op_assign
 l_int|0x300
 comma
 l_int|0x340
+comma
+l_int|0x1600
+comma
+l_int|0x1640
 comma
 l_int|0x800
 comma

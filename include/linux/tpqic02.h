@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tpqic02.h,v 0.25 1994/07/21 02:16:30 root Exp root $&n; *&n; * Include file for QIC-02 driver for Linux.&n; *&n; * Copyright (c) 1992, 1993, 1994 by H. H. Bergman. All rights reserved.&n; *&n; * ******* USER CONFIG SECTION BELOW (Near line 70) *******&n; */
+multiline_comment|/* $Id: tpqic02.h,v 0.25 1994/07/21 02:16:30 root Exp root $&n; *&n; * Include file for QIC-02 driver for Linux.&n; *&n; * Copyright (c) 1992--1995 by H. H. Bergman. All rights reserved.&n; *&n; * ******* USER CONFIG SECTION BELOW (Near line 70) *******&n; */
 macro_line|#ifndef _LINUX_TPQIC02_H
 DECL|macro|_LINUX_TPQIC02_H
 mdefine_line|#define _LINUX_TPQIC02_H
@@ -566,7 +566,7 @@ mdefine_line|#define TPQD_DIAGS&t;0x1000
 DECL|macro|TPQD_ALWAYS
 mdefine_line|#define TPQD_ALWAYS&t;0x8000
 DECL|macro|TPQD_DEFAULT_FLAGS
-mdefine_line|#define TPQD_DEFAULT_FLAGS&t;0x01fc
+mdefine_line|#define TPQD_DEFAULT_FLAGS&t;0x00fc
 DECL|macro|TPQDBG
 mdefine_line|#define TPQDBG(f)&t;((QIC02_TAPE_DEBUG) &amp; (TPQD_##f))
 multiline_comment|/* Minor device codes for tapes:&n; * |7|6|5|4|3|2|1|0|&n; *  | &bslash; | / &bslash; | / |_____ 1=rewind on close, 0=no rewind on close&n; *  |  &bslash;|/    |_________ Density: 000=none, 001=QIC-11, 010=24, 011=120,&n; *  |   |                100=QIC-150, 101..111 reserved.&n; *  |   |_______________ Reserved for unit numbers.&n; *  |___________________ Reserved for diagnostics during debugging.&n; */

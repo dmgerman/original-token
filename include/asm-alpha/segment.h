@@ -184,6 +184,11 @@ DECL|macro|memcpy_fromfs
 mdefine_line|#define memcpy_fromfs(to, from, n) memcpy((to),(from),(n))
 DECL|macro|memcpy_tofs
 mdefine_line|#define memcpy_tofs(to, from, n) memcpy((to),(from),(n))
+multiline_comment|/*&n; * For segmented arhictectures, these are used to specify which segment&n; * to use for the above functions.&n; *&n; * The alpha is not segmented, so these are just dummies.&n; */
+DECL|macro|KERNEL_DS
+mdefine_line|#define KERNEL_DS 0
+DECL|macro|USER_DS
+mdefine_line|#define USER_DS 1
 DECL|function|get_fs
 r_static
 r_inline

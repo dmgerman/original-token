@@ -10,25 +10,15 @@ multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; *
 DECL|macro|IN_ORDER
 mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd &lt; (s2)-&gt;cmd || ((s1)-&gt;cmd == (s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || (((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
 multiline_comment|/*&n; * These will have to be changed to be aware of different buffer&n; * sizes etc.. It actually needs a major cleanup.&n; */
+macro_line|#ifdef IDE_DRIVER
+DECL|macro|SECTOR_MASK
+mdefine_line|#define SECTOR_MASK ((BLOCK_SIZE &gt;&gt; 9) - 1)
+macro_line|#else
 DECL|macro|SECTOR_MASK
 mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;&n;&t;blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] ? &bslash;&n;&t;((blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;dev)] &gt;&gt; 9) - 1) :  &bslash;&n;&t;((BLOCK_SIZE &gt;&gt; 9)  -  1))
+macro_line|#endif /* IDE_DRIVER */
 DECL|macro|SUBSECTOR
 mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
-r_extern
-r_int
-r_int
-id|hd_init
-c_func
-(paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-suffix:semicolon
 r_extern
 r_int
 r_int
@@ -59,6 +49,40 @@ r_int
 id|mem_end
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_HD
+r_extern
+r_int
+r_int
+id|hd_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+r_extern
+r_int
+r_int
+id|ide_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SBPCD
 r_extern
 r_int
@@ -147,9 +171,16 @@ id|mem_end
 suffix:semicolon
 DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EACCES; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: { int __err = verify_area(VERIFY_WRITE, (void *) (where), sizeof(long)); &bslash;&n;&t;&t;   if (!__err) put_fs_long(0!=is_read_only(dev),(long *) (where)); return __err; }
-macro_line|#ifdef MAJOR_NR
-multiline_comment|/*&n; * Add entries as needed. Currently the only block devices&n; * supported are hard-disks and floppies.&n; */
-macro_line|#if (MAJOR_NR == MEM_MAJOR)
+macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)
+multiline_comment|/*&n; * Add entries as needed.&n; */
+macro_line|#ifdef IDE_DRIVER
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device)&t;(MINOR(device) &gt;&gt; PARTN_BITS)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)&t;/* nothing */
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)&t;/* nothing */
+macro_line|#elif (MAJOR_NR == MEM_MAJOR)
 multiline_comment|/* ram disk */
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;ramdisk&quot;
@@ -319,8 +350,8 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#endif
-macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
+macro_line|#endif /* MAJOR_NR == whatever */
+macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
@@ -351,7 +382,7 @@ mdefine_line|#define SET_INTR(x) &bslash;&n;if ((DEVICE_INTR = (x)) != NULL) &bs
 macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
-macro_line|#endif
+macro_line|#endif /* DEVICE_TIMEOUT */
 r_static
 r_void
 (paren
@@ -361,9 +392,43 @@ id|DEVICE_REQUEST
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef DEVICE_INTR
+DECL|macro|CLEAR_INTR
+mdefine_line|#define CLEAR_INTR SET_INTR(NULL)
+macro_line|#else
+DECL|macro|CLEAR_INTR
+mdefine_line|#define CLEAR_INTR
+macro_line|#endif
+DECL|macro|INIT_REQUEST
+mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
+macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER) */
 multiline_comment|/* end_request() - SCSI devices have their own version */
 macro_line|#if ! SCSI_MAJOR(MAJOR_NR)
+macro_line|#ifdef IDE_DRIVER
 DECL|function|end_request
+r_static
+r_void
+id|end_request
+c_func
+(paren
+id|byte
+id|uptodate
+comma
+id|byte
+id|hwif
+)paren
+(brace
+r_struct
+id|request
+op_star
+id|req
+op_assign
+id|ide_cur_rq
+(braket
+id|HWIF
+)braket
+suffix:semicolon
+macro_line|#else
 r_static
 r_void
 id|end_request
@@ -377,15 +442,14 @@ r_struct
 id|request
 op_star
 id|req
+op_assign
+id|CURRENT
 suffix:semicolon
+macro_line|#endif /* IDE_DRIVER */
 r_struct
 id|buffer_head
 op_star
 id|bh
-suffix:semicolon
-id|req
-op_assign
-id|CURRENT
 suffix:semicolon
 id|req-&gt;errors
 op_assign
@@ -401,14 +465,7 @@ id|uptodate
 id|printk
 c_func
 (paren
-id|DEVICE_NAME
-l_string|&quot; I/O error&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;dev %04lX, sector %lu&bslash;n&quot;
+l_string|&quot;end_request: I/O error, dev %04lX, sector %lu&bslash;n&quot;
 comma
 (paren
 r_int
@@ -527,6 +584,15 @@ r_return
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef IDE_DRIVER
+id|ide_cur_rq
+(braket
+id|HWIF
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#else
 id|DEVICE_OFF
 c_func
 (paren
@@ -537,6 +603,7 @@ id|CURRENT
 op_assign
 id|req-&gt;next
 suffix:semicolon
+macro_line|#endif /* IDE_DRIVER */
 r_if
 c_cond
 (paren
@@ -563,17 +630,7 @@ id|wait_for_request
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#ifdef DEVICE_INTR
-DECL|macro|CLEAR_INTR
-mdefine_line|#define CLEAR_INTR SET_INTR(NULL)
-macro_line|#else
-DECL|macro|CLEAR_INTR
-mdefine_line|#define CLEAR_INTR
-macro_line|#endif
-DECL|macro|INIT_REQUEST
-mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* ! SCSI_MAJOR(MAJOR_NR) */
+macro_line|#endif /* defined(MAJOR_NR) || defined(IDE_DRIVER) */
+macro_line|#endif /* _BLK_H */
 eof
