@@ -5037,7 +5037,7 @@ macro_line|#ifndef CONFIG_PCI
 id|printk
 c_func
 (paren
-l_string|&quot;Kernel PCI support not enabled. Skipping scan for PCI HBAs.&bslash;n&quot;
+l_string|&quot;eata_pio: kernel PCI support not enabled. Skipping scan for PCI HBAs.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -5498,9 +5498,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;No BIOS32 extensions present. This eata_pio release &quot;
+l_string|&quot;eata_pio: No BIOS32 extensions present. This driver release &quot;
 l_string|&quot;still depends on it.&bslash;n&quot;
-l_string|&quot;Skipping scan for PCI HBAs. Sorry.&bslash;n&quot;
+l_string|&quot;          Skipping scan for PCI HBAs.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* #ifndef CONFIG_PCI */
@@ -5547,14 +5547,6 @@ l_string|&quot;Using lots of delays to let you read the debugging output&bslash;
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifndef DBG_EISA
-id|printk
-c_func
-(paren
-l_string|&quot;DBG_EISA not defined !!!&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|find_pio_PCI
 c_func
 (paren

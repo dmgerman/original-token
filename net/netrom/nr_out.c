@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;linux/errno.h&gt;
@@ -101,7 +101,7 @@ id|dptr
 op_assign
 id|skb-&gt;data
 op_plus
-l_int|34
+l_int|17
 suffix:semicolon
 op_star
 id|dptr
@@ -455,11 +455,16 @@ r_char
 op_star
 id|dptr
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Add the protocol byte&n;&t; */
 id|dptr
 op_assign
-id|skb-&gt;data
-op_plus
-l_int|16
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+l_int|1
+)paren
 suffix:semicolon
 op_star
 id|dptr

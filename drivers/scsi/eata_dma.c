@@ -6100,7 +6100,7 @@ macro_line|#ifndef CONFIG_PCI
 id|printk
 c_func
 (paren
-l_string|&quot;Kernel PCI support not enabled. Skipping scan for PCI HBAs.&bslash;n&quot;
+l_string|&quot;eata_dma: kernel PCI support not enabled. Skipping scan for PCI HBAs.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -6584,8 +6584,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;No BIOS32 extensions present. This eata_dma release &quot;
-l_string|&quot;still depends on it.&bslash;nSkipping scan for PCI HBAs. Sorry.&bslash;n&quot;
+l_string|&quot;eata_dma: No BIOS32 extensions present. This driver release &quot;
+l_string|&quot;still depends on it.&bslash;n&quot;
+l_string|&quot;          Skipping scan for PCI HBAs. &bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* #ifndef CONFIG_PCI */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/scsi.c  &n; *  (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; *&n; *  The original version was derived from linux/fs/proc/net.c,&n; *  which is Copyright (C) 1991, 1992 Linus Torvalds. &n; *  Much has been rewritten, but some of the code still remains.&n; *&n; *  /proc/scsi directory handling functions&n; *&n; *  last change: 95/06/13    &n; *&n; *  Initial version: March &squot;95&n; *  95/15/05 Added subdirectories for each driver and show every&n; *           registered HBA as a single file. &n; *  95/30/05 Added rudimentary write support for parameter passing&n; *&n; *  TODO: Improve support to write to the driver files&n; *        Optimize directory handling &n; *        Add some more comments&n; */
+multiline_comment|/*&n; *  linux/fs/proc/scsi.c  &n; *  (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; *&n; *  The original version was derived from linux/fs/proc/net.c,&n; *  which is Copyright (C) 1991, 1992 Linus Torvalds. &n; *  Much has been rewritten, but some of the code still remains.&n; *&n; *  /proc/scsi directory handling functions&n; *&n; *  last change: 95/06/13    &n; *&n; *  Initial version: March &squot;95&n; *  95/15/05 Added subdirectories for each driver and show every&n; *&t;     registered HBA as a single file. &n; *  95/30/05 Added rudimentary write support for parameter passing&n; *&n; *  TODO: Improve support to write to the driver files&n; *&t;  Optimize directory handling &n; *&t;  Add some more comments&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -165,7 +165,7 @@ comma
 multiline_comment|/* lseek   */
 id|proc_readscsi
 comma
-multiline_comment|/* read    */
+multiline_comment|/* read&t;   */
 id|proc_writescsi
 comma
 multiline_comment|/* write   */
@@ -180,10 +180,10 @@ comma
 multiline_comment|/* ioctl   */
 l_int|NULL
 comma
-multiline_comment|/* mmap    */
+multiline_comment|/* mmap&t;   */
 l_int|NULL
 comma
-multiline_comment|/* no special open code    */
+multiline_comment|/* no special open code&t;   */
 l_int|NULL
 comma
 multiline_comment|/* no special release code */
@@ -204,43 +204,43 @@ comma
 multiline_comment|/* default scsi directory file-ops */
 l_int|NULL
 comma
-multiline_comment|/* create      */
+multiline_comment|/* create&t;   */
 id|proc_lookupscsi
 comma
-multiline_comment|/* lookup      */
+multiline_comment|/* lookup&t;   */
 l_int|NULL
 comma
-multiline_comment|/* link        */
+multiline_comment|/* link&t;   */
 l_int|NULL
 comma
-multiline_comment|/* unlink      */
+multiline_comment|/* unlink&t;   */
 l_int|NULL
 comma
-multiline_comment|/* symlink     */
+multiline_comment|/* symlink&t;   */
 l_int|NULL
 comma
-multiline_comment|/* mkdir       */
+multiline_comment|/* mkdir&t;   */
 l_int|NULL
 comma
-multiline_comment|/* rmdir       */
+multiline_comment|/* rmdir&t;   */
 l_int|NULL
 comma
-multiline_comment|/* mknod       */
+multiline_comment|/* mknod&t;   */
 l_int|NULL
 comma
-multiline_comment|/* rename      */
+multiline_comment|/* rename&t;   */
 l_int|NULL
 comma
-multiline_comment|/* readlink    */
+multiline_comment|/* readlink&t;   */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap        */
+multiline_comment|/* bmap&t;   */
 l_int|NULL
 comma
-multiline_comment|/* truncate    */
+multiline_comment|/* truncate&t;   */
 l_int|NULL
 multiline_comment|/* permission  */
 )brace
@@ -797,7 +797,7 @@ id|len
 suffix:semicolon
 )brace
 DECL|macro|PROC_BLOCK_SIZE
-mdefine_line|#define PROC_BLOCK_SIZE (3*1024)     /* 4K page size, but our output routines &n;                                      * use some slack for overruns &n;                                      */
+mdefine_line|#define PROC_BLOCK_SIZE (3*1024)     /* 4K page size, but our output routines &n;&t;&t;&t;&t;      * use some slack for overruns &n;&t;&t;&t;&t;      */
 DECL|function|proc_readscsi
 r_static
 r_int
@@ -862,7 +862,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* but it saves some redundant code.&n;                                   * Now it is possible to seek to the &n;                                   * end of the file */
+multiline_comment|/* but it saves some redundant code.&n;&t;&t;&t;&t;   * Now it is possible to seek to the &n;&t;&t;&t;&t;   * end of the file */
 r_if
 c_cond
 (paren
@@ -987,7 +987,7 @@ r_return
 id|length
 suffix:semicolon
 )brace
-multiline_comment|/*&n;         *  We have been given a non page aligned block of&n;         *  the data we asked for + a bit. We have been given&n;         *  the start pointer and we know the length.. &n;         */
+multiline_comment|/*&n;&t; *  We have been given a non page aligned block of&n;&t; *  the data we asked for + a bit. We have been given&n;&t; *  the start pointer and we know the length.. &n;&t; */
 r_if
 c_cond
 (paren
@@ -997,7 +997,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;         *  Copy the bytes, if we&squot;re not doing a seek to &n;         *      the end of the file &n;         */
+multiline_comment|/*&n;&t; *  Copy the bytes, if we&squot;re not doing a seek to &n;&t; *&t;the end of the file &n;&t; */
 r_if
 c_cond
 (paren
@@ -1288,5 +1288,5 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

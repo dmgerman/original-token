@@ -1974,12 +1974,10 @@ r_else
 multiline_comment|/* Good packet? */
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|size
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -2019,10 +2017,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Yep! Go get it! */
-id|skb-&gt;len
-op_assign
-id|size
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -2034,7 +2028,13 @@ suffix:semicolon
 multiline_comment|/* skb-&gt;data points to the start of sk_buff data area */
 id|buffer
 op_assign
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|size
+)paren
 suffix:semicolon
 multiline_comment|/* copy the packet into the buffer */
 id|de620_read_block

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   PPP for Linux&n;*/
+multiline_comment|/* PPP for Linux&n;*/
 multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   NET02D&t;      -&t;Define if using Net-2-Debugged in kernels earlier&n;   &t;&t;&t;than v1.1.4.&n;&n;   NEW_TTY_DRIVERS    -&t;Define if using new Ted Ts&squot;o&squot;s alpha TTY drivers&n;   &t;&t;&t;from tsx-11.mit.edu. From Ted Ts&squot;o.&n;&n;   OPTIMIZE_FLAG_TIME -&t;Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If not defined then the leading&n;&t;&t;&t;flag is always sent.  &n;*/
 multiline_comment|/* #define NET02D&t;&t;&t;&t;-* */
 DECL|macro|NEW_TTY_DRIVERS
@@ -262,21 +262,6 @@ id|device
 op_star
 )paren
 suffix:semicolon
-r_static
-r_int
-r_int
-id|ppp_type_trans
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-comma
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
 macro_line|#ifdef NET02D
 r_static
 r_int
@@ -350,8 +335,8 @@ r_int
 id|ppp_header
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
 comma
 r_struct
@@ -368,10 +353,6 @@ r_void
 op_star
 comma
 r_int
-comma
-r_struct
-id|sk_buff
-op_star
 )paren
 suffix:semicolon
 r_static
@@ -2731,7 +2712,7 @@ id|error
 op_assign
 id|verify_area
 (paren
-id|VERIFY_READ
+id|VERIFY_WRITE
 comma
 id|ifr-&gt;ifr_ifru.ifru_data
 comma
@@ -4787,12 +4768,10 @@ id|count
 multiline_comment|/* receive the frame through the network software */
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|count
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -4804,7 +4783,13 @@ id|skb
 id|memcpy
 c_func
 (paren
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|count
+)paren
 comma
 id|c
 comma
@@ -8226,10 +8211,10 @@ DECL|function|ppp_header
 id|ppp_header
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
-id|buff
+id|skb
 comma
 r_struct
 id|device
@@ -8250,11 +8235,6 @@ id|saddr
 comma
 r_int
 id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 (brace
 r_return

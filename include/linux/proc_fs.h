@@ -225,6 +225,9 @@ comma
 DECL|enumerator|PROC_NET_AX25
 id|PROC_NET_AX25
 comma
+DECL|enumerator|PROC_NET_AX25_CALLS
+id|PROC_NET_AX25_CALLS
+comma
 macro_line|#ifdef CONFIG_NETROM
 DECL|enumerator|PROC_NET_NR_NODES
 id|PROC_NET_NR_NODES

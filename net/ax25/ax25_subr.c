@@ -21,6 +21,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+multiline_comment|/* #define&t;NO_BACKOFF&t;*/
 multiline_comment|/*&n; * This routine purges the input queue of frames.&n; */
 DECL|function|ax25_clear_tx_queue
 r_void
@@ -412,13 +413,13 @@ r_char
 op_star
 id|dptr
 suffix:semicolon
-r_int
-id|len
-suffix:semicolon
 r_struct
 id|device
 op_star
 id|dev
+suffix:semicolon
+r_int
+id|asize
 suffix:semicolon
 r_if
 c_cond
@@ -434,6 +435,16 @@ l_int|NULL
 r_return
 suffix:semicolon
 multiline_comment|/* Route died */
+id|asize
+op_assign
+l_int|1
+op_plus
+id|size_ax25_addr
+c_func
+(paren
+id|ax25-&gt;digipeat
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -445,13 +456,7 @@ c_func
 (paren
 l_int|16
 op_plus
-l_int|1
-op_plus
-id|size_ax25_addr
-c_func
-(paren
-id|ax25-&gt;digipeat
-)paren
+id|asize
 comma
 id|GFP_ATOMIC
 )paren
@@ -460,6 +465,14 @@ op_eq
 l_int|NULL
 )paren
 r_return
+suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|asize
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -475,30 +488,20 @@ id|ax25-&gt;sk
 suffix:semicolon
 id|ax25-&gt;sk-&gt;wmem_alloc
 op_add_assign
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 suffix:semicolon
 )brace
+multiline_comment|/* Assume a response - address structure for DTE */
 id|dptr
 op_assign
-id|skb-&gt;data
-suffix:semicolon
-id|dptr
-op_add_assign
-l_int|1
-op_plus
-id|size_ax25_addr
+id|skb_put
 c_func
 (paren
-id|ax25-&gt;digipeat
+id|skb
+comma
+l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* KISS byte &amp; 2 calls */
-multiline_comment|/* Assume a response - address structure for DTE */
-id|len
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Normal size */
 r_if
 c_cond
 (paren
@@ -528,17 +531,13 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-id|skb-&gt;len
-op_assign
-id|len
-op_plus
-id|size_ax25_addr
+id|skb_push
 c_func
 (paren
-id|ax25-&gt;digipeat
+id|skb
+comma
+id|asize
 )paren
-op_plus
-l_int|1
 suffix:semicolon
 id|ax25_transmit_buffer
 c_func
@@ -618,9 +617,15 @@ l_int|NULL
 r_return
 suffix:semicolon
 multiline_comment|/* Next SABM will get DM&squot;d */
-id|skb-&gt;len
-op_assign
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
 id|len
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|ax25_digi_invert
 c_func
@@ -633,14 +638,12 @@ id|retdigi
 suffix:semicolon
 id|dptr
 op_assign
-id|skb-&gt;data
-op_plus
-l_int|1
-op_plus
-id|size_ax25_addr
+id|skb_put
 c_func
 (paren
-id|digi
+id|skb
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -651,6 +654,8 @@ op_star
 id|dptr
 op_assign
 id|DM
+op_or
+id|PF
 suffix:semicolon
 r_if
 c_cond
@@ -661,9 +666,18 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Do the address ourselves.&n;&t; */
 id|dptr
 op_assign
-id|skb-&gt;data
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|len
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 op_star
 id|dptr
@@ -719,18 +733,22 @@ op_star
 id|ax25
 )paren
 (brace
+macro_line|#ifndef NO_BACKOFF
 r_int
-id|t
-comma
 id|n
-suffix:semicolon
-r_for
-c_loop
-(paren
+comma
 id|t
 op_assign
 l_int|2
-comma
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25-&gt;backoff
+)paren
+r_for
+c_loop
+(paren
 id|n
 op_assign
 l_int|0
@@ -751,6 +769,13 @@ id|t
 op_star
 id|ax25-&gt;rtt
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|2
+op_star
+id|ax25-&gt;rtt
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Calculate the r Round Trip Time&n; */
 DECL|function|ax25_calculate_rtt
@@ -766,6 +791,10 @@ id|ax25
 r_if
 c_cond
 (paren
+id|ax25-&gt;t1timer
+OG
+l_int|0
+op_logical_and
 id|ax25-&gt;n2count
 op_eq
 l_int|0

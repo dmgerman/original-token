@@ -743,10 +743,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-r_int
-id|size
 )paren
 suffix:semicolon
 DECL|member|rfree
@@ -765,10 +761,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-r_int
-id|size
 )paren
 suffix:semicolon
 DECL|member|rspace
@@ -1493,10 +1485,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-r_int
-id|size
 )paren
 suffix:semicolon
 r_extern
@@ -1513,10 +1501,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-r_int
-id|size
 )paren
 suffix:semicolon
 r_extern
@@ -1644,7 +1628,7 @@ c_cond
 (paren
 id|sk-&gt;rmem_alloc
 op_plus
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 op_ge
 id|sk-&gt;rcvbuf
 )paren
@@ -1667,7 +1651,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;rmem_alloc
 op_add_assign
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 suffix:semicolon
 id|skb-&gt;sk
 op_assign

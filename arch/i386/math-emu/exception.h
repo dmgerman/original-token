@@ -2,7 +2,7 @@ multiline_comment|/*------------------------------------------------------------
 macro_line|#ifndef _EXCEPTION_H_
 DECL|macro|_EXCEPTION_H_
 mdefine_line|#define _EXCEPTION_H_
-macro_line|#ifdef __ASSEMBLER__
+macro_line|#ifdef __ASSEMBLY__
 DECL|macro|Const_
 mdefine_line|#define&t;Const_(x)&t;$##x
 macro_line|#else
@@ -40,7 +40,7 @@ DECL|macro|PRECISION_LOST_UP
 mdefine_line|#define PRECISION_LOST_UP    Const_((EX_Precision | SW_C1))
 DECL|macro|PRECISION_LOST_DOWN
 mdefine_line|#define PRECISION_LOST_DOWN  Const_(EX_Precision)
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifdef DEBUG
 DECL|macro|EXCEPTION
 mdefine_line|#define&t;EXCEPTION(x)&t;{ printk(&quot;exception in %s at line %d&bslash;n&quot;, &bslash;&n;&t;__FILE__, __LINE__); exception(x); }
@@ -48,6 +48,6 @@ macro_line|#else
 DECL|macro|EXCEPTION
 mdefine_line|#define&t;EXCEPTION(x)&t;exception(x)
 macro_line|#endif
-macro_line|#endif __ASSEMBLER__
+macro_line|#endif __ASSEMBLY__
 macro_line|#endif _EXCEPTION_H_
 eof

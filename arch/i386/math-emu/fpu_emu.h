@@ -8,7 +8,7 @@ mdefine_line|#define DENORM_OPERAND
 multiline_comment|/*&n; * Define PECULIAR_486 to get a closer approximation to 80486 behaviour,&n; * rather than behaviour which appears to be cleaner.&n; * This is a matter of opinion: for all I know, the 80486 may simply&n; * be complying with the IEEE spec. Maybe one day I&squot;ll get to see the&n; * spec...&n; */
 DECL|macro|PECULIAR_486
 mdefine_line|#define PECULIAR_486
-macro_line|#ifdef __ASSEMBLER__
+macro_line|#ifdef __ASSEMBLY__
 macro_line|#include &quot;fpu_asm.h&quot;
 DECL|macro|Const
 mdefine_line|#define&t;Const(x)&t;$##x
@@ -44,7 +44,7 @@ DECL|macro|TW_NaN
 mdefine_line|#define&t;TW_NaN&t;&t;Const(6)&t;/* Not a Number */
 DECL|macro|TW_Empty
 mdefine_line|#define TW_Empty&t;Const(7)&t;/* empty */
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n;#define RE_ENTRANT_CHECKING&n; */
@@ -457,6 +457,6 @@ suffix:semicolon
 macro_line|#ifndef MAKING_PROTO
 macro_line|#include &quot;fpu_proto.h&quot;
 macro_line|#endif
-macro_line|#endif __ASSEMBLER__
+macro_line|#endif __ASSEMBLY__
 macro_line|#endif _FPU_EMU_H_
 eof

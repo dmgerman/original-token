@@ -9789,7 +9789,7 @@ l_int|0x3cf
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* normalise the palette registers, to point the                                 * 16 screen colours to the first 16 DAC entries */
+multiline_comment|/* normalise the palette registers, to point the&n;&t;&t;&t;&t; * 16 screen colours to the first 16 DAC entries */
 r_for
 c_loop
 (paren
@@ -11109,17 +11109,21 @@ id|colourmap
 suffix:semicolon
 id|beg
 op_assign
+l_int|0x0e
+suffix:semicolon
+macro_line|#ifdef VGA_CAN_DO_64KB
+r_if
+c_cond
 (paren
 id|video_type
 op_eq
 id|VIDEO_TYPE_VGAC
-ques
-c_cond
-l_int|0x06
-suffix:colon
-l_int|0x0e
 )paren
+id|beg
+op_assign
+l_int|0x06
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 r_if

@@ -1867,12 +1867,10 @@ l_int|1
 suffix:semicolon
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|rlen
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * make sure the data register is going the right way&n;&t; */
@@ -1978,10 +1976,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|skb-&gt;len
-op_assign
-id|rlen
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1994,8 +1988,12 @@ r_int
 r_int
 op_star
 )paren
+id|skb_put
+c_func
 (paren
-id|skb-&gt;data
+id|skb
+comma
+id|len
 )paren
 suffix:semicolon
 r_for

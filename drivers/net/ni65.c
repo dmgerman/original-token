@@ -1108,17 +1108,10 @@ id|p-&gt;recv_skb
 id|i
 )braket
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|R_BUF_SIZE
-comma
-id|GFP_ATOMIC
 )paren
 )paren
 op_eq
@@ -2335,12 +2328,10 @@ suffix:semicolon
 multiline_comment|/* -4: ignore FCS */
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|R_BUF_SIZE
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -2370,7 +2361,13 @@ l_int|0xff000000
 id|memcpy
 c_func
 (paren
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|len
+)paren
 comma
 id|p-&gt;recv_skb
 (braket
@@ -2409,8 +2406,12 @@ op_assign
 r_int
 r_int
 )paren
+id|skb_put
+c_func
 (paren
-id|skb-&gt;data
+id|skb1
+comma
+id|len
 )paren
 suffix:semicolon
 )brace
@@ -2423,10 +2424,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* not necc ???? */
-id|skb1-&gt;len
-op_assign
-id|len
-suffix:semicolon
 id|skb1-&gt;dev
 op_assign
 id|dev

@@ -194,9 +194,12 @@ comma
 id|va
 suffix:semicolon
 DECL|member|condition
+DECL|member|backoff
 r_int
 r_char
 id|condition
+comma
+id|backoff
 suffix:semicolon
 DECL|member|n2
 DECL|member|n2count
@@ -353,8 +356,8 @@ r_int
 id|ax25_encapsulate
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
 comma
 r_struct
@@ -372,10 +375,6 @@ op_star
 comma
 r_int
 r_int
-comma
-r_struct
-id|sk_buff
-op_star
 )paren
 suffix:semicolon
 r_extern

@@ -68,6 +68,8 @@ DECL|macro|AX25_T3
 mdefine_line|#define AX25_T3&t;&t;4
 DECL|macro|AX25_T2
 mdefine_line|#define AX25_T2&t;&t;5
+DECL|macro|AX25_BACKOFF
+mdefine_line|#define&t;AX25_BACKOFF&t;6
 DECL|macro|SIOCAX25GETUID
 mdefine_line|#define SIOCAX25GETUID&t;&t;(SIOCPROTOPRIVATE)
 DECL|macro|SIOCAX25ADDUID

@@ -186,7 +186,7 @@ c_func
 suffix:semicolon
 id|skb-&gt;sk-&gt;wmem_alloc
 op_sub_assign
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 suffix:semicolon
 id|skb-&gt;sk
 op_member_access_from_pointer

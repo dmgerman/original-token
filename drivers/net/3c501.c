@@ -1939,12 +1939,10 @@ id|AX_CMD
 suffix:semicolon
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *&t;Start of frame&n;     */
@@ -1980,10 +1978,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|skb-&gt;len
-op_assign
-id|pkt_len
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1994,7 +1988,13 @@ c_func
 (paren
 id|DATAPORT
 comma
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|pkt_len
+)paren
 comma
 id|pkt_len
 )paren

@@ -2237,7 +2237,11 @@ id|VERIFY_WRITE
 comma
 id|stat_addr
 comma
-l_int|4
+r_sizeof
+(paren
+op_star
+id|stat_addr
+)paren
 )paren
 suffix:semicolon
 r_if

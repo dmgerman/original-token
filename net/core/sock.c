@@ -823,7 +823,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;wmem_alloc
 op_add_assign
-id|c-&gt;mem_len
+id|c-&gt;truesize
 suffix:semicolon
 id|restore_flags
 c_func
@@ -928,7 +928,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;rmem_alloc
 op_add_assign
-id|c-&gt;mem_len
+id|c-&gt;truesize
 suffix:semicolon
 id|restore_flags
 c_func
@@ -1093,12 +1093,13 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-r_int
-id|size
 )paren
 (brace
+r_int
+id|s
+op_assign
+id|skb-&gt;truesize
+suffix:semicolon
 macro_line|#ifdef CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
@@ -1111,8 +1112,6 @@ id|kfree_skbmem
 c_func
 (paren
 id|skb
-comma
-id|size
 )paren
 suffix:semicolon
 r_if
@@ -1138,7 +1137,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;wmem_alloc
 op_sub_assign
-id|size
+id|s
 suffix:semicolon
 id|restore_flags
 c_func
@@ -1173,12 +1172,13 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-r_int
-id|size
 )paren
 (brace
+r_int
+id|s
+op_assign
+id|skb-&gt;truesize
+suffix:semicolon
 macro_line|#ifdef CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
@@ -1191,8 +1191,6 @@ id|kfree_skbmem
 c_func
 (paren
 id|skb
-comma
-id|size
 )paren
 suffix:semicolon
 r_if
@@ -1218,7 +1216,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;rmem_alloc
 op_sub_assign
-id|size
+id|s
 suffix:semicolon
 id|restore_flags
 c_func

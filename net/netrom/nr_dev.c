@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.3.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from loopback.c&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.3.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from loopback.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -103,10 +103,10 @@ r_int
 id|nr_header
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
-id|buff
+id|skb
 comma
 r_struct
 id|device
@@ -127,13 +127,21 @@ id|saddr
 comma
 r_int
 id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 (brace
+r_int
+r_char
+op_star
+id|buff
+op_assign
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+l_int|37
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

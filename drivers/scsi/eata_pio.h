@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_pio.c Linux EATA-PIO SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/06/21                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_pio.c Linux EATA-PIO SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer&t;&t;&t;*&n;*********************************************************&n;* last change: 95/06/21&t;&t;&t;&t;&t;*&n;********************************************************/
 macro_line|#ifndef _EATA_PIO_H
 DECL|macro|_EATA_PIO_H
 mdefine_line|#define _EATA_PIO_H
@@ -13,45 +13,45 @@ mdefine_line|#define VER_MAJOR 0
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 0
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;1a&quot;
-multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of                      *&n; ************************************************************************/
+mdefine_line|#define VER_SUB&t;  &quot;1a&quot;
+multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of&t;&t;&t;*&n; ************************************************************************/
 DECL|macro|VERBOSE_SETUP
-mdefine_line|#define VERBOSE_SETUP                   /* show startup screen of 2001 */
+mdefine_line|#define VERBOSE_SETUP&t;&t;&t;/* show startup screen of 2001 */
 DECL|macro|ALLOW_DMA_BOARDS
-mdefine_line|#define ALLOW_DMA_BOARDS 1
-multiline_comment|/************************************************************************&n; * Debug options.                                                       * &n; * Enable DEBUG and whichever options you require.                      *&n; ************************************************************************/
+mdefine_line|#define ALLOW_DMA_BOARDS 0
+multiline_comment|/************************************************************************&n; * Debug options.&t;&t;&t;&t;&t;&t;&t;* &n; * Enable DEBUG and whichever options you require.&t;&t;&t;*&n; ************************************************************************/
 DECL|macro|DEBUG_EATA
-mdefine_line|#define DEBUG_EATA      1   /* Enable debug code.                       */
+mdefine_line|#define DEBUG_EATA&t;1   /* Enable debug code.&t;&t;&t;*/
 DECL|macro|DPT_DEBUG
-mdefine_line|#define DPT_DEBUG       0   /* Bobs special                             */
+mdefine_line|#define DPT_DEBUG&t;0   /* Bobs special&t;&t;&t;&t;*/
 DECL|macro|DBG_DELAY
-mdefine_line|#define DBG_DELAY       0   /* Build in delays so debug messages can be&n;&t;&t;&t;     * be read before they vanish of the top of&n;&t;&t;&t;     * the screen!&n;&t;&t;&t;     */
+mdefine_line|#define DBG_DELAY&t;0   /* Build in delays so debug messages can be&n;                             * be read before they vanish of the top of&n;                             * the screen!&n;                             */
 DECL|macro|DBG_PROBE
-mdefine_line|#define DBG_PROBE       0   /* Debug probe routines.                    */
+mdefine_line|#define DBG_PROBE&t;0   /* Debug probe routines.&t;&t;&t;*/
 DECL|macro|DBG_ISA
-mdefine_line|#define DBG_ISA         0   /* Trace ISA routines                       */ 
+mdefine_line|#define DBG_ISA&t;&t;0   /* Trace ISA routines&t;&t;&t;*/ 
 DECL|macro|DBG_EISA
-mdefine_line|#define DBG_EISA        0   /* Trace EISA routines                      */ 
+mdefine_line|#define DBG_EISA&t;0   /* Trace EISA routines&t;&t;&t;*/ 
 DECL|macro|DBG_PCI
-mdefine_line|#define DBG_PCI         0   /* Trace PCI routines                       */ 
+mdefine_line|#define DBG_PCI&t;&t;0   /* Trace PCI routines&t;&t;&t;*/ 
 DECL|macro|DBG_PIO
-mdefine_line|#define DBG_PIO         0   /* Trace get_config_PIO                     */
+mdefine_line|#define DBG_PIO&t;&t;0   /* Trace get_config_PIO&t;&t;&t;*/
 DECL|macro|DBG_COM
-mdefine_line|#define DBG_COM         0   /* Trace command call                       */
+mdefine_line|#define DBG_COM&t;&t;0   /* Trace command call&t;&t;&t;*/
 DECL|macro|DBG_QUEUE
-mdefine_line|#define DBG_QUEUE       0   /* Trace command queueing.                  */
+mdefine_line|#define DBG_QUEUE&t;0   /* Trace command queueing.&t;&t;&t;*/
 DECL|macro|DBG_INTR
-mdefine_line|#define DBG_INTR        0   /* Trace interrupt service routine.         */
+mdefine_line|#define DBG_INTR&t;0   /* Trace interrupt service routine.&t;&t;*/
 DECL|macro|DBG_INTR2
-mdefine_line|#define DBG_INTR2       0   /* Trace interrupt service routine.         */
+mdefine_line|#define DBG_INTR2&t;0   /* Trace interrupt service routine.&t;&t;*/
 DECL|macro|DBG_PROC
-mdefine_line|#define DBG_PROC        0   /* Debug proc-fs related statistics         */
+mdefine_line|#define DBG_PROC&t;0   /* Debug proc-fs related statistics&t;&t;*/
 DECL|macro|DBG_PROC_WRITE
-mdefine_line|#define DBG_PROC_WRITE  0
+mdefine_line|#define DBG_PROC_WRITE&t;0
 DECL|macro|DBG_REGISTER
-mdefine_line|#define DBG_REGISTER    0   /* */
+mdefine_line|#define DBG_REGISTER&t;0   /* */
 DECL|macro|DBG_ABNORM
-mdefine_line|#define DBG_ABNORM      1   /* Debug abnormal actions (reset, abort)    */
+mdefine_line|#define DBG_ABNORM&t;1   /* Debug abnormal actions (reset, abort)&t;*/
 macro_line|#if DEBUG_EATA 
 DECL|macro|DBG
 mdefine_line|#define DBG(x, y)   if ((x)) {y;} 
@@ -177,7 +177,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|EATA_PIO
-mdefine_line|#define EATA_PIO {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;&t;eata_pio_proc_info,/* procinfo       */  &bslash;&n;&t;&quot;eata_pio&quot;,        /* proc dir entry */  &bslash;&n;&t;PROC_SCSI_EATA_PIO,/* proc dir inode */  &bslash;&n;&t; &quot;EATA (Extended Attachment) PIO driver&quot;,&bslash;&n;&t;eata_pio_detect,             &bslash;&n;&t;eata_pio_release,            &bslash;&n;&t;NULL, NULL,                  &bslash;&n;&t;eata_pio_queue,              &bslash;&n;&t;eata_pio_abort,              &bslash;&n;&t;eata_pio_reset,              &bslash;&n;&t;NULL,   /* Slave attach */   &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;&t;0,      /* Canqueue     */   &bslash;&n;&t;0,      /* this_id      */   &bslash;&n;&t;0,      /* sg_tablesize */   &bslash;&n;&t;0,      /* cmd_per_lun  */   &bslash;&n;&t;0,      /* present      */   &bslash;&n;&t;1,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
+mdefine_line|#define EATA_PIO {&t;&t;     &bslash;&n;    NULL, NULL,&t;&t;&t; &bslash;&n;    eata_pio_proc_info,/* procinfo&t; */  &bslash;&n;    &quot;eata_pio&quot;,&t;       /* proc dir entry */  &bslash;&n;    PROC_SCSI_EATA_PIO,/* proc dir inode */  &bslash;&n;     &quot;EATA (Extended Attachment) PIO driver&quot;,&bslash;&n;    eata_pio_detect,&t;&t; &bslash;&n;    eata_pio_release,&t;&t; &bslash;&n;    NULL, NULL,&t;&t;&t; &bslash;&n;    eata_pio_queue,&t;&t; &bslash;&n;    eata_pio_abort,&t;&t; &bslash;&n;    eata_pio_reset,&t;&t; &bslash;&n;    NULL,   /* Slave attach */&t; &bslash;&n;    scsicam_bios_param,&t;&t; &bslash;&n;    0,&t;    /* Canqueue&t;    */&t; &bslash;&n;    0,&t;    /* this_id&t;    */&t; &bslash;&n;    0,&t;    /* sg_tablesize */&t; &bslash;&n;    0,&t;    /* cmd_per_lun  */&t; &bslash;&n;    0,&t;    /* present&t;    */&t; &bslash;&n;    1,&t;    /* True if ISA  */&t; &bslash;&n;    ENABLE_CLUSTERING }
 macro_line|#endif /* _EATA_PIO_H */
-multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

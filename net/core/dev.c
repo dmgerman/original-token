@@ -895,10 +895,11 @@ l_int|NULL
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; *&t;The protocol knows this has (for other paths) been taken off&n;&t;&t;&t;&t; *&t;and adds it back.&n;&t;&t;&t;&t; */
-id|skb2-&gt;len
-op_sub_assign
-id|skb-&gt;dev-&gt;hard_header_len
+id|skb2-&gt;h.raw
+op_assign
+id|skb2-&gt;data
+op_plus
+id|dev-&gt;hard_header_len
 suffix:semicolon
 id|ptype
 op_member_access_from_pointer
@@ -1257,7 +1258,13 @@ suffix:semicolon
 multiline_comment|/* &n;&t;&t; *&t;First we copy the packet into a buffer, and save it for later. We&n;&t;&t; *&t;in effect handle the incoming data as if it were from a circular buffer&n;&t;&t; */
 id|to
 op_assign
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|len
+)paren
 suffix:semicolon
 id|left
 op_assign
@@ -1344,10 +1351,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Tag the frame and kick it to the proper receive routine&n;&t; */
-id|skb-&gt;len
-op_assign
-id|len
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1535,15 +1538,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;*&t;Bump the pointer to the next structure.&n;&t;&t;*&t;This assumes that the basic &squot;skb&squot; pointer points to&n;&t;&t;*&t;the MAC header, if any (as indicated by its &quot;length&quot;&n;&t;&t;*&t;field).  Take care now!&n;&t;&t;*/
+multiline_comment|/*&n;&t;&t;*&t;Bump the pointer to the next structure.&n;&t;&t;*&n;&t;&t;*&t;On entry to the protocol layer. skb-&gt;data and&n;&t;&t;*&t;skb-&gt;h.raw point to the MAC and encapsulated data&n;&t;&t;*/
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
 op_plus
-id|skb-&gt;dev-&gt;hard_header_len
-suffix:semicolon
-id|skb-&gt;len
-op_sub_assign
 id|skb-&gt;dev-&gt;hard_header_len
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;* &t;Fetch the packet protocol ID. &n;&t;&t;*/
@@ -2085,6 +2084,20 @@ id|ifr.ifr_addr.sin_addr.s_addr
 op_assign
 id|dev-&gt;pa_addr
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Have we run out of space here ?&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|len
+OL
+r_sizeof
+(paren
+r_struct
+id|ifreq
+)paren
+)paren
+r_break
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Write this block to the caller&squot;s space. &n;&t;&t; */
 id|memcpy_tofs
 c_func
@@ -2116,20 +2129,6 @@ r_sizeof
 r_struct
 id|ifreq
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Have we run out of space here ?&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|len
-OL
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
-)paren
-r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;All done.  Write the updated control block back to the caller. &n;&t; */
@@ -2864,27 +2863,6 @@ suffix:semicolon
 r_goto
 id|rarok
 suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|arg
-comma
-op_amp
-id|ifr
-comma
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SIOCSIFBRDADDR
 suffix:colon
@@ -2939,26 +2917,8 @@ id|ifr.ifr_dstaddr.sin_port
 op_assign
 l_int|0
 suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|arg
-comma
-op_amp
-id|ifr
-comma
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-r_break
+r_goto
+id|rarok
 suffix:semicolon
 r_case
 id|SIOCSIFDSTADDR
@@ -3257,26 +3217,8 @@ id|ifr.ifr_map.port
 op_assign
 id|dev-&gt;if_port
 suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|arg
-comma
-op_amp
-id|ifr
-comma
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-r_break
+r_goto
+id|rarok
 suffix:semicolon
 r_case
 id|SIOCSIFMAP

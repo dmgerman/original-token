@@ -84,9 +84,12 @@ comma
 id|your_id
 suffix:semicolon
 DECL|member|state
+DECL|member|bpqext
 r_int
 r_char
 id|state
+comma
+id|bpqext
 suffix:semicolon
 DECL|member|vs
 DECL|member|vr

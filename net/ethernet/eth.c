@@ -151,10 +151,10 @@ r_int
 id|eth_header
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
-id|buff
+id|skb
 comma
 r_struct
 id|device
@@ -175,11 +175,6 @@ id|saddr
 comma
 r_int
 id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 (brace
 r_struct
@@ -192,7 +187,13 @@ r_struct
 id|ethhdr
 op_star
 )paren
-id|buff
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+l_int|14
+)paren
 suffix:semicolon
 multiline_comment|/* &n;&t; *&t;Set the protocol type. For a packet of type ETH_P_802_3 we put the length&n;&t; *&t;in here instead. It is up to the 802.2 layer to carry protocol information.&n;&t; */
 r_if

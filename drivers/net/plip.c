@@ -2055,12 +2055,10 @@ suffix:semicolon
 multiline_comment|/* Malloc up new buffer. */
 id|rcv-&gt;skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|rcv-&gt;length.h
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -2083,9 +2081,13 @@ r_return
 id|ERROR
 suffix:semicolon
 )brace
-id|rcv-&gt;skb-&gt;len
-op_assign
+id|skb_put
+c_func
+(paren
+id|rcv-&gt;skb
+comma
 id|rcv-&gt;length.h
+)paren
 suffix:semicolon
 id|rcv-&gt;skb-&gt;dev
 op_assign

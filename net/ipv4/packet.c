@@ -87,14 +87,10 @@ op_star
 )paren
 id|pt-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The SOCK_PACKET socket receives _all_ frames, and as such &n;&t; *&t;therefore needs to put the header back onto the buffer.&n;&t; *&t;(it was removed by inet_bh()).&n;&t; */
+multiline_comment|/*&n;&t; *&t;The SOCK_PACKET socket receives _all_ frames.&n;&t; */
 id|skb-&gt;dev
 op_assign
 id|dev
-suffix:semicolon
-id|skb-&gt;len
-op_add_assign
-id|dev-&gt;hard_header_len
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Charge the memory to the socket. This is done specifically&n;&t; *&t;to prevent sockets using all the memory up.&n;&t; */
 r_if
@@ -123,12 +119,12 @@ c_cond
 (paren
 id|sk-&gt;rmem_alloc
 op_plus
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 op_ge
 id|sk-&gt;rcvbuf
 )paren
 (brace
-multiline_comment|/*&t;        printk(&quot;packet_rcv: drop, %d+%d&gt;%d&bslash;n&quot;, sk-&gt;rmem_alloc, skb-&gt;mem_len, sk-&gt;rcvbuf); */
+multiline_comment|/*&t;        printk(&quot;packet_rcv: drop, %d+%d&gt;%d&bslash;n&quot;, sk-&gt;rmem_alloc, skb-&gt;truesize, sk-&gt;rcvbuf); */
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -162,7 +158,7 @@ id|sk
 suffix:semicolon
 id|sk-&gt;rmem_alloc
 op_add_assign
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Queue the packet up, and wake anyone waiting for it.&n;&t; */
 id|skb_queue_tail
@@ -386,16 +382,18 @@ suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|len
+)paren
 comma
 id|from
 comma
 id|len
 )paren
-suffix:semicolon
-id|skb-&gt;len
-op_assign
-id|len
 suffix:semicolon
 id|skb-&gt;arp
 op_assign
@@ -683,9 +681,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-r_int
-id|truesize
-suffix:semicolon
 id|saddr
 op_assign
 (paren
@@ -750,10 +745,6 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;You lose any data beyond the buffer you gave. If it worries a&n;&t; *&t;user program they can ask the device for its MTU anyway.&n;&t; */
-id|truesize
-op_assign
-id|skb-&gt;len
-suffix:semicolon
 id|copied
 op_assign
 id|min
@@ -761,7 +752,7 @@ c_func
 (paren
 id|len
 comma
-id|truesize
+id|skb-&gt;len
 )paren
 suffix:semicolon
 id|memcpy_tofs
@@ -816,7 +807,7 @@ id|sk
 )paren
 suffix:semicolon
 r_return
-id|truesize
+id|copied
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;A packet read can succeed and is just the same as a recvfrom but without the&n; *&t;addresses being recorded.&n; */

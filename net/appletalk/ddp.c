@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; *&t;&t;Testing.&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -5123,6 +5123,18 @@ r_struct
 id|sockaddr_at
 id|tosat
 suffix:semicolon
+r_int
+id|origlen
+suffix:semicolon
+multiline_comment|/* First strip the MAC header */
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
 multiline_comment|/* Size check */
 r_if
 c_cond
@@ -5172,14 +5184,22 @@ id|ddp
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Trim buffer in case of stray trailing data&n;&t; */
-id|skb-&gt;len
+id|origlen
 op_assign
+id|skb-&gt;len
+suffix:semicolon
+id|skb_trim
+c_func
+(paren
+id|skb
+comma
 id|min
 c_func
 (paren
 id|skb-&gt;len
 comma
 id|ddp-&gt;deh_len
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Size check to see if ddp-&gt;deh_len was crap&n;&t; *&t;(Otherwise we&squot;ll detonate most spectacularly&n;&t; *&t; in the middle of recvfrom()).&n;&t; */
@@ -5287,6 +5307,31 @@ r_struct
 id|at_addr
 id|ta
 suffix:semicolon
+multiline_comment|/* Don&squot;t route multicast, etc., packets, or packets&n;&t;&t;   sent to &quot;this network&quot; */
+r_if
+c_cond
+(paren
+id|skb-&gt;pkt_type
+op_ne
+id|PACKET_HOST
+op_logical_or
+id|ddp-&gt;deh_dnet
+op_eq
+l_int|0
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|ta.s_net
 op_assign
 id|ddp-&gt;deh_dnet
@@ -5332,6 +5377,25 @@ suffix:semicolon
 id|ddp-&gt;deh_hops
 op_increment
 suffix:semicolon
+multiline_comment|/* Fix up skb-&gt;len field */
+id|skb_trim
+c_func
+(paren
+id|skb
+comma
+id|min
+c_func
+(paren
+id|origlen
+comma
+id|rt-&gt;dev-&gt;hard_header_len
+op_plus
+id|ddp_dl-&gt;header_length
+op_plus
+id|ddp-&gt;deh_len
+)paren
+)paren
+suffix:semicolon
 op_star
 (paren
 (paren
@@ -5362,7 +5426,7 @@ c_cond
 id|aarp_send_ddp
 c_func
 (paren
-id|dev
+id|rt-&gt;dev
 comma
 id|skb
 comma
@@ -5874,9 +5938,29 @@ id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
-id|skb-&gt;len
-op_assign
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|ddp_dl-&gt;header_length
+)paren
+suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
+id|skb_put
+c_func
+(paren
+id|skb
+comma
 id|size
+)paren
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
@@ -5900,10 +5984,6 @@ suffix:semicolon
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
-op_plus
-id|ddp_dl-&gt;header_length
-op_plus
-id|dev-&gt;hard_header_len
 suffix:semicolon
 id|ddp
 op_assign
@@ -6176,7 +6256,7 @@ suffix:semicolon
 multiline_comment|/* loop back */
 id|sk-&gt;wmem_alloc
 op_sub_assign
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 suffix:semicolon
 id|ddp_dl
 op_member_access_from_pointer
@@ -6202,13 +6282,21 @@ id|ddp_dl-&gt;header_length
 op_plus
 id|dev-&gt;hard_header_len
 suffix:semicolon
-id|skb-&gt;len
-op_sub_assign
-id|ddp_dl-&gt;header_length
-suffix:semicolon
-id|skb-&gt;len
-op_sub_assign
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
 id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|ddp_dl-&gt;header_length
+)paren
 suffix:semicolon
 id|atalk_rcv
 c_func
@@ -7326,7 +7414,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Appletalk ALPHA 0.08 for Linux NET3.029&bslash;n&quot;
+l_string|&quot;Appletalk BETA 0.11 for Linux NET3.030&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

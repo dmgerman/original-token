@@ -225,7 +225,10 @@ id|VERIFY_WRITE
 comma
 id|set
 comma
-l_int|4
+r_sizeof
+(paren
+id|sigset_t
+)paren
 )paren
 suffix:semicolon
 r_if

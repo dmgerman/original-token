@@ -5622,7 +5622,7 @@ op_logical_neg
 (paren
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|ntohs
@@ -5638,8 +5638,6 @@ r_sizeof
 r_struct
 id|trh_hdr
 )paren
-comma
-id|GFP_ATOMIC
 )paren
 )paren
 )paren
@@ -5678,8 +5676,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|skb-&gt;len
-op_assign
+id|skb_put
+c_func
+(paren
+id|skb
+comma
 id|ntohs
 c_func
 (paren
@@ -5692,6 +5693,7 @@ r_sizeof
 (paren
 r_struct
 id|trh_hdr
+)paren
 )paren
 suffix:semicolon
 id|skb-&gt;dev

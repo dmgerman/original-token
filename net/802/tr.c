@@ -165,7 +165,13 @@ r_struct
 id|trh_hdr
 op_star
 )paren
-id|buff
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
 suffix:semicolon
 r_struct
 id|trllc

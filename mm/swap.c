@@ -5728,6 +5728,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|macro|LONG_ALIGN
+mdefine_line|#define LONG_ALIGN(x) (((x)+(sizeof(long))-1)&amp;~((sizeof(long))-1))
 multiline_comment|/*&n; * set up the free-area data structures:&n; *   - mark all pages MAP_PAGE_RESERVED&n; *   - mark all memory queues empty&n; *   - clear the memory bitmaps&n; */
 DECL|function|free_area_init
 r_int
@@ -5817,11 +5819,15 @@ id|end_mem
 suffix:semicolon
 id|start_mem
 op_assign
+id|LONG_ALIGN
+c_func
+(paren
 (paren
 r_int
 r_int
 )paren
 id|p
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -5916,27 +5922,10 @@ l_int|3
 suffix:semicolon
 id|bitmap_size
 op_assign
+id|LONG_ALIGN
+c_func
 (paren
 id|bitmap_size
-op_plus
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
-)paren
-op_amp
-op_complement
-(paren
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 id|free_area_map

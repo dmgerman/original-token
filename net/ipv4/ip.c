@@ -151,6 +151,14 @@ id|dev-&gt;hard_header
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Build a hardware header. Source address is our mac, destination unknown&n;&t;&t; *  &t;(rebuild header will sort this out)&n;&t;&t; */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
 id|mac
 op_assign
 id|dev
@@ -158,7 +166,7 @@ op_member_access_from_pointer
 id|hard_header
 c_func
 (paren
-id|skb-&gt;data
+id|skb
 comma
 id|dev
 comma
@@ -169,8 +177,6 @@ comma
 l_int|NULL
 comma
 id|len
-comma
-id|skb
 )paren
 suffix:semicolon
 r_if
@@ -256,11 +262,6 @@ op_star
 id|rt
 suffix:semicolon
 r_int
-r_char
-op_star
-id|buff
-suffix:semicolon
-r_int
 r_int
 id|raddr
 suffix:semicolon
@@ -275,10 +276,6 @@ r_struct
 id|iphdr
 op_star
 id|iph
-suffix:semicolon
-id|buff
-op_assign
-id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See if we need to look up the device.&n;&t; */
 macro_line|#ifdef CONFIG_INET_MULTICAST&t;
@@ -519,14 +516,6 @@ comma
 id|saddr
 )paren
 suffix:semicolon
-id|buff
-op_add_assign
-id|tmp
-suffix:semicolon
-id|len
-op_sub_assign
-id|tmp
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Book keeping&n;&t; */
 id|skb-&gt;dev
 op_assign
@@ -570,7 +559,17 @@ r_struct
 id|iphdr
 op_star
 )paren
-id|buff
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+)paren
 suffix:semicolon
 id|iph-&gt;version
 op_assign
@@ -1000,15 +999,6 @@ op_assign
 id|xp
 suffix:semicolon
 )brace
-multiline_comment|/* Release the MAC header. */
-id|kfree_s
-c_func
-(paren
-id|qp-&gt;mac
-comma
-id|qp-&gt;maclen
-)paren
-suffix:semicolon
 multiline_comment|/* Release the IP header. */
 id|kfree_s
 c_func
@@ -1135,9 +1125,6 @@ op_star
 id|qp
 suffix:semicolon
 r_int
-id|maclen
-suffix:semicolon
-r_int
 id|ihlen
 suffix:semicolon
 id|qp
@@ -1199,74 +1186,6 @@ id|ipq
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Allocate memory for the MAC header.&n;&t; *&n;&t; *&t;FIXME: We have a maximum MAC address size limit and define&n;&t; *&t;elsewhere. We should use it here and avoid the 3 kmalloc() calls&n;&t; */
-id|maclen
-op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
-id|iph
-)paren
-op_minus
-(paren
-(paren
-r_int
-r_int
-)paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
-id|qp-&gt;mac
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-id|maclen
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|qp-&gt;mac
-op_eq
-l_int|NULL
-)paren
-(brace
-id|NETDEBUG
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;IP: create: no memory left !&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|kfree_s
-c_func
-(paren
-id|qp
-comma
-r_sizeof
-(paren
-r_struct
-id|ipq
-)paren
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Allocate memory for the IP header (plus 8 octets for ICMP).&n;&t; */
 id|ihlen
 op_assign
@@ -1318,14 +1237,6 @@ suffix:semicolon
 id|kfree_s
 c_func
 (paren
-id|qp-&gt;mac
-comma
-id|maclen
-)paren
-suffix:semicolon
-id|kfree_s
-c_func
-(paren
 id|qp
 comma
 r_sizeof
@@ -1339,17 +1250,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* Fill in the structure. */
-id|memcpy
-c_func
-(paren
-id|qp-&gt;mac
-comma
-id|skb-&gt;data
-comma
-id|maclen
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1369,10 +1269,6 @@ suffix:semicolon
 id|qp-&gt;ihlen
 op_assign
 id|ihlen
-suffix:semicolon
-id|qp-&gt;maclen
-op_assign
-id|maclen
 suffix:semicolon
 id|qp-&gt;fragments
 op_assign
@@ -1521,7 +1417,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Build a new IP datagram from all its fragments.&n; *&n; *&t;FIXME: We copy here because we lack an effective way of handling lists&n; *&t;of bits on input. Until the new skb data handling is in I&squot;m not going&n; *&t;to touch this with a bargepole. This also causes a 4Kish limit on&n; *&t;packet sizes.&n; */
+multiline_comment|/*&n; *&t;Build a new IP datagram from all its fragments.&n; *&n; *&t;FIXME: We copy here because we lack an effective way of handling lists&n; *&t;of bits on input. Until the new skb data handling is in I&squot;m not going&n; *&t;to touch this with a bargepole. &n; */
 DECL|function|ip_glue
 r_static
 r_struct
@@ -1564,8 +1460,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Allocate a new buffer for the datagram.&n;&t; */
 id|len
 op_assign
-id|qp-&gt;maclen
-op_plus
 id|qp-&gt;ihlen
 op_plus
 id|qp-&gt;len
@@ -1576,12 +1470,10 @@ c_cond
 (paren
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|len
-comma
-id|GFP_ATOMIC
 )paren
 )paren
 op_eq
@@ -1614,12 +1506,12 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Fill in the basic details. */
-id|skb-&gt;len
-op_assign
+id|skb_put
+c_func
 (paren
+id|skb
+comma
 id|len
-op_minus
-id|qp-&gt;maclen
 )paren
 suffix:semicolon
 id|skb-&gt;h.raw
@@ -1630,7 +1522,7 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Copy the original MAC and IP headers into the new buffer. */
+multiline_comment|/* Copy the original IP headers into the new buffer. */
 id|ptr
 op_assign
 (paren
@@ -1639,27 +1531,6 @@ r_char
 op_star
 )paren
 id|skb-&gt;h.raw
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|ptr
-comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|qp-&gt;mac
-)paren
-comma
-id|qp-&gt;maclen
-)paren
-suffix:semicolon
-id|ptr
-op_add_assign
-id|qp-&gt;maclen
 suffix:semicolon
 id|memcpy
 c_func
@@ -1681,10 +1552,6 @@ suffix:semicolon
 id|ptr
 op_add_assign
 id|qp-&gt;ihlen
-suffix:semicolon
-id|skb-&gt;h.raw
-op_add_assign
-id|qp-&gt;maclen
 suffix:semicolon
 id|count
 op_assign
@@ -2070,8 +1937,6 @@ multiline_comment|/*&n;&t; *&t;Point into the IP datagram &squot;data&squot; par
 id|ptr
 op_assign
 id|skb-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
 op_plus
 id|ihl
 suffix:semicolon
@@ -2704,11 +2569,15 @@ id|skb2-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-id|skb2-&gt;len
-op_assign
+id|skb_put
+c_func
+(paren
+id|skb2
+comma
 id|len
 op_plus
 id|hlen
+)paren
 suffix:semicolon
 id|skb2-&gt;h.raw
 op_assign
@@ -2738,7 +2607,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;wmem_alloc
 op_add_assign
-id|skb2-&gt;mem_len
+id|skb2-&gt;truesize
 suffix:semicolon
 id|skb2-&gt;sk
 op_assign
@@ -3316,37 +3185,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|ptr
-op_assign
-id|skb2-&gt;data
-suffix:semicolon
-id|skb2-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-id|skb2-&gt;len
-op_assign
-id|skb-&gt;len
-op_plus
-id|dev2-&gt;hard_header_len
-suffix:semicolon
-id|skb2-&gt;h.raw
-op_assign
-id|ptr
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Copy the packet data into the new buffer.&n;&t;&t; */
-id|memcpy
-c_func
-(paren
-id|ptr
-op_plus
-id|dev2-&gt;hard_header_len
-comma
-id|skb-&gt;h.raw
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
 multiline_comment|/* Now build the MAC header. */
 (paren
 r_void
@@ -3363,6 +3201,35 @@ comma
 id|dev2
 comma
 id|dev2-&gt;pa_addr
+)paren
+suffix:semicolon
+id|ptr
+op_assign
+id|skb_put
+c_func
+(paren
+id|skb2
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+id|skb2-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
+id|skb2-&gt;h.raw
+op_assign
+id|ptr
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Copy the packet data into the new buffer.&n;&t;&t; */
+id|memcpy
+c_func
+(paren
+id|ptr
+comma
+id|skb-&gt;h.raw
+comma
+id|skb-&gt;len
 )paren
 suffix:semicolon
 id|ip_statistics.IpForwDatagrams
@@ -3474,7 +3341,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; *&t;This function receives all incoming IP datagrams.&n; */
+multiline_comment|/*&n; *&t;This function receives all incoming IP datagrams.&n; *&n; *&t;On entry skb-&gt;data points to the start of the IP header and&n; *&t;the MAC header has been removed.&n; */
 DECL|function|ip_rcv
 r_int
 id|ip_rcv
@@ -3549,6 +3416,15 @@ r_int
 id|err
 suffix:semicolon
 macro_line|#endif&t;
+multiline_comment|/*&n;&t; *&t;IP is layered, throw away the&n;&t; *&t;MAC addresses.&n;&t; */
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
 id|ip_statistics.IpInReceives
 op_increment
 suffix:semicolon
@@ -3617,12 +3493,16 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Our transport medium may have padded the buffer out. Now we know it&n;&t; *&t;is IP we can trim to the true length of the frame.&n;&t; */
-id|skb-&gt;len
-op_assign
+id|skb_trim
+c_func
+(paren
+id|skb
+comma
 id|ntohs
 c_func
 (paren
 id|iph-&gt;tot_len
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See if the firewall wants to dispose of the packet. &n;&t; */
@@ -4805,14 +4685,12 @@ id|sk_buff
 op_star
 id|newskb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|len
 op_plus
 id|dev-&gt;hard_header_len
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -4866,22 +4744,7 @@ id|newskb-&gt;pkt_type
 op_assign
 id|skb-&gt;pkt_type
 suffix:semicolon
-id|newskb-&gt;len
-op_assign
-id|len
-op_plus
-id|dev-&gt;hard_header_len
-suffix:semicolon
-id|newskb-&gt;ip_hdr
-op_assign
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-(paren
-id|newskb-&gt;data
-op_plus
+multiline_comment|/*&n;&t; *&t;Put a MAC header on the packet&n;&t; */
 id|ip_send
 c_func
 (paren
@@ -4895,8 +4758,24 @@ id|dev
 comma
 id|skb-&gt;ip_hdr-&gt;saddr
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Add the rest of the data space.&t;&n;&t; */
+id|newskb-&gt;ip_hdr
+op_assign
+(paren
+r_struct
+id|iphdr
+op_star
+)paren
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|len
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Copy the data&n;&t; */
 id|memcpy
 c_func
 (paren
@@ -7457,9 +7336,25 @@ id|rt-&gt;rt_gateway
 suffix:colon
 id|daddr
 suffix:semicolon
-id|skb-&gt;len
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
+id|data
 op_assign
+id|skb_put
+c_func
+(paren
+id|skb
+comma
 id|fraglen
+op_minus
+id|dev-&gt;hard_header_len
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Save us ARP and stuff. In the optimal case we do no route lookup (route cache ok)&n;&t;&t; *&t;no ARP lookup (arp cache ok) and output. The cache checks are still too slow but&n;&t;&t; *&t;this can be fixed later. For gateway routes we ought to have a rt-&gt;.. header cache&n;&t;&t; *&t;pointer to speed header cache builds for identical targets.&n;&t;&t; */
 r_if
@@ -7500,7 +7395,7 @@ op_member_access_from_pointer
 id|hard_header
 c_func
 (paren
-id|skb-&gt;data
+id|skb
 comma
 id|dev
 comma
@@ -7511,8 +7406,6 @@ comma
 l_int|NULL
 comma
 l_int|0
-comma
-l_int|NULL
 )paren
 OG
 l_int|0
@@ -7525,16 +7418,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Find where to start putting bytes.&n;&t;&t; */
-id|data
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|skb-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
-suffix:semicolon
 id|iph
 op_assign
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&n; *&t;TODO:&t;use sock_alloc_send_skb to allocate sending buffers. Check with Caldera first&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&t;&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&n; *&t;TODO:&t;use sock_alloc_send_skb to allocate sending buffers. Check with Caldera first&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&t;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1027,9 +1027,6 @@ id|skb2
 op_assign
 l_int|NULL
 suffix:semicolon
-r_int
-id|ipx_offset
-suffix:semicolon
 id|sock1
 op_assign
 id|ipxitf_find_socket
@@ -1126,24 +1123,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|ipx_offset
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|skb-&gt;h.raw
-)paren
-op_minus
-(paren
-r_char
-op_star
-)paren
-(paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
 multiline_comment|/* This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; */
 r_if
 c_cond
@@ -1169,21 +1148,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb1-&gt;h.raw
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-(paren
-id|skb1-&gt;data
-(braket
-id|ipx_offset
-)braket
-)paren
-suffix:semicolon
 id|skb1-&gt;arp
 op_assign
 id|skb1-&gt;free
@@ -1237,21 +1201,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb2-&gt;h.raw
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-op_amp
-(paren
-id|skb2-&gt;data
-(braket
-id|ipx_offset
-)braket
-)paren
-suffix:semicolon
 id|skb2-&gt;arp
 op_assign
 id|skb2-&gt;free
@@ -1353,10 +1302,12 @@ id|out_offset
 op_assign
 id|intrfc-&gt;if_ipx_offset
 suffix:semicolon
+macro_line|#if 0
 r_char
 op_star
 id|oldraw
 suffix:semicolon
+macro_line|#endif&t;
 r_int
 id|len
 suffix:semicolon
@@ -1365,14 +1316,11 @@ r_if
 c_cond
 (paren
 id|in_offset
-op_eq
+op_ge
 id|out_offset
 )paren
 (brace
-id|skb-&gt;len
-op_add_assign
-id|out_offset
-suffix:semicolon
+multiline_comment|/*&t;&t;skb_push(skb,out_offset);*/
 id|skb-&gt;arp
 op_assign
 id|skb-&gt;free
@@ -1383,6 +1331,7 @@ r_return
 id|skb
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/* Existing SKB will work, just need to move things around a little */
 r_if
 c_cond
@@ -1430,6 +1379,7 @@ r_return
 id|skb
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 multiline_comment|/* Need new SKB */
 id|len
 op_assign
@@ -1455,19 +1405,23 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb2-&gt;h.raw
-op_assign
-op_amp
+id|skb_reserve
+c_func
 (paren
-id|skb2-&gt;data
-(braket
+id|skb2
+comma
 id|out_offset
-)braket
 )paren
 suffix:semicolon
-id|skb2-&gt;len
+id|skb2-&gt;h.raw
 op_assign
-id|len
+id|skb_put
+c_func
+(paren
+id|skb2
+comma
+id|skb-&gt;len
+)paren
 suffix:semicolon
 id|skb2-&gt;free
 op_assign
@@ -1804,7 +1758,7 @@ l_int|NULL
 multiline_comment|/* This is an outbound packet from this host.  We need to &n;&t;&t; * increment the write count.&n;&t;&t; */
 id|skb-&gt;sk-&gt;wmem_alloc
 op_add_assign
-id|skb-&gt;mem_len
+id|skb-&gt;truesize
 suffix:semicolon
 )brace
 multiline_comment|/* Send it out */
@@ -4102,9 +4056,13 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|skb-&gt;len
-op_assign
-id|size
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|ipx_offset
+)paren
 suffix:semicolon
 id|skb-&gt;free
 op_assign
@@ -4121,12 +4079,15 @@ op_assign
 id|ipx_packet
 op_star
 )paren
-op_amp
+id|skb_put
+c_func
 (paren
-id|skb-&gt;data
-(braket
-id|ipx_offset
-)braket
+id|skb
+comma
+r_sizeof
+(paren
+id|ipx_packet
+)paren
 )paren
 suffix:semicolon
 id|ipx-&gt;ipx_checksum
@@ -4202,14 +4163,12 @@ suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren
+id|skb_put
+c_func
 (paren
-r_char
-op_star
-)paren
-(paren
-id|ipx
-op_plus
-l_int|1
+id|skb
+comma
+id|len
 )paren
 comma
 id|ubuf
@@ -7320,6 +7279,15 @@ id|ipx_packet
 op_star
 id|ipx
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Throw away the MAC layer&n;&t; */
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
 id|ipx
 op_assign
 (paren
@@ -8892,7 +8860,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society IPX 0.30 for NET3.029&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society IPX 0.31 for NET3.030&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

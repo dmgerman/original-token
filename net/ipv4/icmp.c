@@ -204,11 +204,7 @@ r_struct
 id|iphdr
 op_star
 )paren
-(paren
 id|skb_in-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;No replies to MAC multicast&n;&t; */
 r_if
@@ -573,10 +569,11 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* &n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
-id|skb-&gt;len
-op_assign
-id|offset
-op_plus
+id|skb_put
+c_func
+(paren
+id|skb
+comma
 r_sizeof
 (paren
 r_struct
@@ -590,6 +587,7 @@ id|iphdr
 )paren
 op_plus
 l_int|8
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Fill in the frame&n;&t; */
 id|icmph
@@ -954,11 +952,13 @@ r_int
 id|source
 )paren
 (brace
+macro_line|#ifndef CONFIG_IP_FORWARD
 r_struct
 id|rtable
 op_star
 id|rt
 suffix:semicolon
+macro_line|#endif
 r_struct
 id|iphdr
 op_star
@@ -1034,6 +1034,8 @@ comma
 id|icmph-&gt;un.gateway
 comma
 id|dev
+comma
+l_int|0
 comma
 l_int|0
 comma
@@ -1124,6 +1126,8 @@ comma
 id|icmph-&gt;un.gateway
 comma
 id|dev
+comma
+l_int|0
 comma
 l_int|0
 comma
@@ -1338,11 +1342,13 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
-id|skb2-&gt;len
-op_assign
-id|offset
-op_plus
+id|skb_put
+c_func
+(paren
+id|skb2
+comma
 id|len
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Build ICMP_ECHO Response message. &n;&t; */
 id|icmphr
@@ -1503,8 +1509,8 @@ r_if
 c_cond
 (paren
 id|len
-op_ne
-l_int|20
+OL
+l_int|12
 )paren
 (brace
 id|printk
@@ -1519,15 +1525,6 @@ id|icmp_statistics.IcmpInErrors
 op_increment
 suffix:semicolon
 multiline_comment|/* correct answers are possible for everything &gt;= 12 */
-r_if
-c_cond
-(paren
-id|len
-OL
-l_int|12
-)paren
-r_return
-suffix:semicolon
 )brace
 id|size
 op_assign
@@ -1637,11 +1634,13 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
-id|skb2-&gt;len
-op_assign
-id|offset
-op_plus
+id|skb_put
+c_func
+(paren
+id|skb2
+comma
 l_int|20
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Build ICMP_TIMESTAMP Response message. &n;&t; */
 id|icmphr
@@ -2006,11 +2005,13 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
-id|skb2-&gt;len
-op_assign
-id|offset
-op_plus
+id|skb_put
+c_func
+(paren
+id|skb2
+comma
 id|len
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Build ICMP ADDRESS MASK Response message. &n;&t; */
 id|icmphr

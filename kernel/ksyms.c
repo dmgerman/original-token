@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;net/eth.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -1206,6 +1207,12 @@ id|X
 c_func
 (paren
 id|kfree_skb
+)paren
+comma
+id|X
+c_func
+(paren
+id|dev_alloc_skb
 )paren
 comma
 id|X

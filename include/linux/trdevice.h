@@ -9,10 +9,10 @@ r_int
 id|tr_header
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
-id|buff
+id|skb
 comma
 r_struct
 id|device
@@ -33,11 +33,6 @@ id|saddr
 comma
 r_int
 id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 suffix:semicolon
 r_extern

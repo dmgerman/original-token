@@ -2,7 +2,7 @@ multiline_comment|/*------------------------------------------------------------
 macro_line|#ifndef _CONTROLW_H_
 DECL|macro|_CONTROLW_H_
 mdefine_line|#define _CONTROLW_H_
-macro_line|#ifdef __ASSEMBLER__
+macro_line|#ifdef __ASSEMBLY__
 DECL|macro|_Const_
 mdefine_line|#define&t;_Const_(x)&t;$##x
 macro_line|#else

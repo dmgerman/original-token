@@ -49,7 +49,7 @@ op_member_access_from_pointer
 id|hard_header
 c_func
 (paren
-id|skb-&gt;data
+id|skb
 comma
 id|dev
 comma
@@ -62,8 +62,6 @@ comma
 id|len
 op_minus
 id|hard_len
-comma
-id|skb
 )paren
 suffix:semicolon
 id|skb-&gt;h.raw

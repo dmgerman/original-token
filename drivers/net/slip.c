@@ -1016,12 +1016,10 @@ suffix:semicolon
 macro_line|#endif  /* SL_INCLUDE_CSLIP */
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|count
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -1046,10 +1044,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|skb-&gt;len
-op_assign
-id|count
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|sl-&gt;dev
@@ -1057,7 +1051,13 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|count
+)paren
 comma
 id|sl-&gt;rbuff
 comma
@@ -1737,10 +1737,10 @@ DECL|function|sl_header
 id|sl_header
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
-id|buff
+id|skb
 comma
 r_struct
 id|device
@@ -1761,11 +1761,6 @@ id|saddr
 comma
 r_int
 id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
 )paren
 (brace
 macro_line|#ifdef CONFIG_AX25
@@ -1811,7 +1806,7 @@ r_return
 id|ax25_encapsulate
 c_func
 (paren
-id|buff
+id|skb
 comma
 id|dev
 comma
@@ -1822,8 +1817,6 @@ comma
 id|saddr
 comma
 id|len
-comma
-id|skb
 )paren
 suffix:semicolon
 )brace
@@ -3579,7 +3572,13 @@ id|VERIFY_WRITE
 comma
 id|arg
 comma
-l_int|16
+id|strlen
+c_func
+(paren
+id|sl-&gt;dev-&gt;name
+)paren
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_if

@@ -3,7 +3,7 @@ macro_line|#ifndef _STATUS_H_
 DECL|macro|_STATUS_H_
 mdefine_line|#define _STATUS_H_
 macro_line|#include &quot;fpu_emu.h&quot;    /* for definition of PECULIAR_486 */
-macro_line|#ifdef __ASSEMBLER__
+macro_line|#ifdef __ASSEMBLY__
 DECL|macro|Const__
 mdefine_line|#define&t;Const__(x)&t;$##x
 macro_line|#else
@@ -42,7 +42,7 @@ DECL|macro|SW_Invalid
 mdefine_line|#define SW_Invalid     &t;Const__(0x0001)&t;/* invalid operation */
 DECL|macro|SW_Exc_Mask
 mdefine_line|#define SW_Exc_Mask     Const__(0x27f)  /* Status word exception bit mask */
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|COMP_A_gt_B
 mdefine_line|#define COMP_A_gt_B&t;1
 DECL|macro|COMP_A_eq_B
@@ -70,6 +70,6 @@ macro_line|# else
 DECL|macro|clear_C1
 macro_line|#  define clear_C1()
 macro_line|#endif PECULIAR_486
-macro_line|#endif __ASSEMBLER__
+macro_line|#endif __ASSEMBLY__
 macro_line|#endif _STATUS_H_
 eof

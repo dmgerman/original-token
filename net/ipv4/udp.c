@@ -1443,6 +1443,12 @@ suffix:semicolon
 id|truesize
 op_assign
 id|skb-&gt;len
+op_minus
+r_sizeof
+(paren
+r_struct
+id|udphdr
+)paren
 suffix:semicolon
 id|copied
 op_assign
@@ -1508,7 +1514,7 @@ id|sk
 )paren
 suffix:semicolon
 r_return
-id|truesize
+id|copied
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Read has the same semantics as recv in SOCK_DGRAM&n; */
@@ -2337,9 +2343,13 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|skb-&gt;len
-op_assign
+id|skb_trim
+c_func
+(paren
+id|skb
+comma
 id|len
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;These are supposed to be switched. &n;&t; */
 id|skb-&gt;daddr
@@ -2351,16 +2361,6 @@ op_assign
 id|daddr
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Charge it to the socket, dropping if the queue is full.&n;&t; */
-id|skb-&gt;len
-op_assign
-id|len
-op_minus
-r_sizeof
-(paren
-op_star
-id|uh
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

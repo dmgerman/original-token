@@ -493,7 +493,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-9s %-3s %5d %9ld&quot;
+l_string|&quot;%-9s %-3s %5d %9d&quot;
 comma
 id|ax2asc
 c_func

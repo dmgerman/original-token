@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_in.c&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_in.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;linux/errno.h&gt;
@@ -322,14 +322,14 @@ id|nr
 op_assign
 id|skb-&gt;data
 (braket
-l_int|35
+l_int|18
 )braket
 suffix:semicolon
 id|ns
 op_assign
 id|skb-&gt;data
 (braket
-l_int|34
+l_int|17
 )braket
 suffix:semicolon
 r_switch
@@ -808,7 +808,7 @@ id|ns
 op_assign
 id|skbn-&gt;data
 (braket
-l_int|34
+l_int|17
 )braket
 suffix:semicolon
 r_if
@@ -1018,6 +1018,34 @@ l_int|0
 comma
 id|frametype
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;nr-&gt;state
+op_ne
+id|NR_STATE_1
+op_logical_and
+id|sk-&gt;nr-&gt;state
+op_ne
+id|NR_STATE_2
+op_logical_and
+id|sk-&gt;nr-&gt;state
+op_ne
+id|NR_STATE_3
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nr_process_rx_frame: frame received - state: %d&bslash;n&quot;
+comma
+id|sk-&gt;nr-&gt;state
+)paren
+suffix:semicolon
+r_return
+id|queued
+suffix:semicolon
+)brace
 id|del_timer
 c_func
 (paren
@@ -1029,7 +1057,7 @@ id|frametype
 op_assign
 id|skb-&gt;data
 (braket
-l_int|36
+l_int|19
 )braket
 suffix:semicolon
 r_switch
@@ -1085,18 +1113,6 @@ comma
 id|skb
 comma
 id|frametype
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;nr_process_rx_frame: frame received - state: %d&bslash;n&quot;
-comma
-id|sk-&gt;nr-&gt;state
 )paren
 suffix:semicolon
 r_break

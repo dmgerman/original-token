@@ -1582,12 +1582,10 @@ suffix:semicolon
 )brace
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|size
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|sti
@@ -1617,14 +1615,20 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* else */
-id|skb-&gt;lock
+id|skb-&gt;dev
 op_assign
-l_int|0
+id|dev
 suffix:semicolon
 multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|buffer
 op_assign
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|size
+)paren
 suffix:semicolon
 multiline_comment|/* copy the packet into the buffer */
 id|de600_setup_address
@@ -1688,35 +1692,13 @@ comma
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_rint
+id|netif_rx
 c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
 id|skb
-comma
-id|size
-comma
-id|IN_SKBUFF
-comma
-id|dev
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: receive buffers full.&bslash;n&quot;
-comma
-id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If any worth-while packets have been received, dev_rint()&n;&t; * has done a mark_bh(INET_BH) for us and will work on them&n;&t; * when we get to the bottom-half routine.&n;&t; */
+multiline_comment|/*&n;&t; * If any worth-while packets have been received, netif_rx()&n;&t; * has done a mark_bh(INET_BH) for us and will work on them&n;&t; * when we get to the bottom-half routine.&n;&t; */
 )brace
 r_int
 DECL|function|de600_probe

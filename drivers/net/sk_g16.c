@@ -3520,12 +3520,10 @@ id|skb
 suffix:semicolon
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|len
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/* allocate socket buffer */
@@ -3560,10 +3558,6 @@ suffix:semicolon
 multiline_comment|/* Jump out */
 )brace
 multiline_comment|/* Prepare sk_buff to queue for upper layers */
-id|skb-&gt;len
-op_assign
-id|len
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -3572,7 +3566,13 @@ multiline_comment|/* &n;             * Copy data out of our receive descriptor i
 id|memcpy
 c_func
 (paren
-id|skb-&gt;data
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|len
+)paren
 comma
 (paren
 r_int

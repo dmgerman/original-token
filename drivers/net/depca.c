@@ -3639,10 +3639,6 @@ suffix:semicolon
 id|s32
 id|status
 suffix:semicolon
-r_char
-op_star
-id|buf
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3791,12 +3787,10 @@ id|skb
 suffix:semicolon
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|pkt_len
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -3807,9 +3801,18 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;len
+r_int
+r_char
+op_star
+id|buf
 op_assign
+id|skb_put
+c_func
+(paren
+id|skb
+comma
 id|pkt_len
+)paren
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
@@ -3839,7 +3842,7 @@ suffix:semicolon
 id|memcpy_fromio
 c_func
 (paren
-id|skb-&gt;data
+id|buf
 comma
 id|lp-&gt;rx_memcpy
 (braket
@@ -3852,7 +3855,7 @@ suffix:semicolon
 id|memcpy_fromio
 c_func
 (paren
-id|skb-&gt;data
+id|buf
 op_plus
 id|len
 comma
@@ -3873,7 +3876,7 @@ multiline_comment|/* Linear buffer */
 id|memcpy_fromio
 c_func
 (paren
-id|skb-&gt;data
+id|buf
 comma
 id|lp-&gt;rx_memcpy
 (braket
@@ -3946,11 +3949,6 @@ id|DEPCA_PKT_STAT_SZ
 suffix:semicolon
 )brace
 )brace
-id|buf
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-multiline_comment|/* Look at the dest addr */
 r_if
 c_cond
 (paren
