@@ -125,7 +125,7 @@ mdefine_line|#define SNDCTL_SEQ_GETINCOUNT&t;&t;_SIOR (&squot;Q&squot;, 5, int)
 DECL|macro|SNDCTL_SEQ_PERCMODE
 mdefine_line|#define SNDCTL_SEQ_PERCMODE&t;&t;_SIOW (&squot;Q&squot;, 6, int)
 DECL|macro|SNDCTL_FM_LOAD_INSTR
-mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_SIOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Valid for FM only */
+mdefine_line|#define SNDCTL_FM_LOAD_INSTR&t;&t;_SIOW (&squot;Q&squot;, 7, struct sbi_instrument)&t;/* Obsolete */
 DECL|macro|SNDCTL_SEQ_TESTMIDI
 mdefine_line|#define SNDCTL_SEQ_TESTMIDI&t;&t;_SIOW (&squot;Q&squot;, 8, int)
 DECL|macro|SNDCTL_SEQ_RESETSAMPLES
@@ -138,14 +138,10 @@ DECL|macro|SNDCTL_MIDI_INFO
 mdefine_line|#define SNDCTL_MIDI_INFO&t;&t;_SIOWR(&squot;Q&squot;,12, struct midi_info)
 DECL|macro|SNDCTL_SEQ_THRESHOLD
 mdefine_line|#define SNDCTL_SEQ_THRESHOLD&t;&t;_SIOW (&squot;Q&squot;,13, int)
-DECL|macro|SNDCTL_SEQ_TRESHOLD
-mdefine_line|#define SNDCTL_SEQ_TRESHOLD&t;&t;SNDCTL_SEQ_THRESHOLD&t;/* there was once a typo */
 DECL|macro|SNDCTL_SYNTH_MEMAVL
 mdefine_line|#define SNDCTL_SYNTH_MEMAVL&t;&t;_SIOWR(&squot;Q&squot;,14, int)&t;/* in=dev#, out=memsize */
 DECL|macro|SNDCTL_FM_4OP_ENABLE
 mdefine_line|#define SNDCTL_FM_4OP_ENABLE&t;&t;_SIOW (&squot;Q&squot;,15, int)&t;/* in=dev# */
-DECL|macro|SNDCTL_PMGR_ACCESS
-mdefine_line|#define SNDCTL_PMGR_ACCESS&t;&t;_SIOWR(&squot;Q&squot;,16, struct patmgr_info)
 DECL|macro|SNDCTL_SEQ_PANIC
 mdefine_line|#define SNDCTL_SEQ_PANIC&t;&t;_SIO  (&squot;Q&squot;,17)
 DECL|macro|SNDCTL_SEQ_OUTOFBAND
@@ -262,6 +258,11 @@ DECL|macro|WAVE_SCALE
 mdefine_line|#define WAVE_SCALE&t;0x00040000&t;/* The scaling info is valid */
 DECL|macro|WAVE_FRACTIONS
 mdefine_line|#define WAVE_FRACTIONS&t;0x00080000&t;/* Fraction information is valid */
+multiline_comment|/* Reserved bits */
+DECL|macro|WAVE_ROM
+mdefine_line|#define WAVE_ROM&t;0x40000000&t;/* For future use */
+DECL|macro|WAVE_MULAW
+mdefine_line|#define WAVE_MULAW&t;0x20000000&t;/* For future use */
 multiline_comment|/* Other bits must be zeroed */
 DECL|member|len
 r_int
@@ -375,11 +376,15 @@ DECL|member|fractions
 r_int
 id|fractions
 suffix:semicolon
+DECL|member|reserved1
+r_int
+id|reserved1
+suffix:semicolon
 DECL|member|spare
 r_int
 id|spare
 (braket
-l_int|3
+l_int|2
 )braket
 suffix:semicolon
 DECL|member|data
@@ -426,129 +431,6 @@ suffix:semicolon
 multiline_comment|/* Sysex data starts here */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Patch management interface (/dev/sequencer, /dev/patmgr#)&n; * Don&squot;t use these calls if you want to maintain compatibility with&n; * the future versions of the driver.&n; */
-DECL|macro|PS_NO_PATCHES
-mdefine_line|#define &t;PS_NO_PATCHES&t;&t;0&t;/* No patch support on device */
-DECL|macro|PS_MGR_NOT_OK
-mdefine_line|#define&t;&t;PS_MGR_NOT_OK&t;&t;1&t;/* Plain patch support (no mgr) */
-DECL|macro|PS_MGR_OK
-mdefine_line|#define&t;&t;PS_MGR_OK&t;&t;2&t;/* Patch manager supported */
-DECL|macro|PS_MANAGED
-mdefine_line|#define&t;&t;PS_MANAGED&t;&t;3&t;/* Patch manager running */
-DECL|macro|SNDCTL_PMGR_IFACE
-mdefine_line|#define SNDCTL_PMGR_IFACE&t;&t;_SIOWR(&squot;P&squot;, 1, struct patmgr_info)
-multiline_comment|/*&n; * The patmgr_info is a fixed size structure which is used for two&n; * different purposes. The intended use is for communication between&n; * the application using /dev/sequencer and the patch manager daemon&n; * associated with a synthesizer device (ioctl(SNDCTL_PMGR_ACCESS)).&n; *&n; * This structure is also used with ioctl(SNDCTL_PGMR_IFACE) which allows&n; * a patch manager daemon to read and write device parameters. This&n; * ioctl available through /dev/sequencer also. Avoid using it since it&squot;s&n; * extremely hardware dependent. In addition access trough /dev/sequencer &n; * may confuse the patch manager daemon.&n; */
-DECL|struct|patmgr_info
-r_struct
-id|patmgr_info
-(brace
-DECL|member|key
-r_int
-r_int
-id|key
-suffix:semicolon
-multiline_comment|/* Don&squot;t worry. Reserved for communication&n;&t;  &t;&t;&t;   between the patch manager and the driver. */
-DECL|macro|PM_K_EVENT
-mdefine_line|#define PM_K_EVENT&t;&t;1 /* Event from the /dev/sequencer driver */
-DECL|macro|PM_K_COMMAND
-mdefine_line|#define PM_K_COMMAND&t;&t;2 /* Request from an application */
-DECL|macro|PM_K_RESPONSE
-mdefine_line|#define PM_K_RESPONSE&t;&t;3 /* From patmgr to application */
-DECL|macro|PM_ERROR
-mdefine_line|#define PM_ERROR&t;&t;4 /* Error returned by the patmgr */
-DECL|member|device
-r_int
-id|device
-suffix:semicolon
-DECL|member|command
-r_int
-id|command
-suffix:semicolon
-multiline_comment|/* &n; * Commands 0x000 to 0xfff reserved for patch manager programs &n; */
-DECL|macro|PM_GET_DEVTYPE
-mdefine_line|#define PM_GET_DEVTYPE&t;1&t;/* Returns type of the patch mgr interface of dev */
-DECL|macro|PMTYPE_FM2
-mdefine_line|#define&t;&t;PMTYPE_FM2&t;1&t;/* 2 OP fm */
-DECL|macro|PMTYPE_FM4
-mdefine_line|#define&t;&t;PMTYPE_FM4&t;2&t;/* Mixed 4 or 2 op FM (OPL-3) */
-DECL|macro|PMTYPE_WAVE
-mdefine_line|#define&t;&t;PMTYPE_WAVE&t;3&t;/* Wave table synthesizer (GUS) */
-DECL|macro|PM_GET_NRPGM
-mdefine_line|#define PM_GET_NRPGM&t;2&t;/* Returns max # of midi programs in parm1 */
-DECL|macro|PM_GET_PGMMAP
-mdefine_line|#define PM_GET_PGMMAP&t;3&t;/* Returns map of loaded midi programs in data8 */
-DECL|macro|PM_GET_PGM_PATCHES
-mdefine_line|#define PM_GET_PGM_PATCHES 4&t;/* Return list of patches of a program (parm1) */
-DECL|macro|PM_GET_PATCH
-mdefine_line|#define PM_GET_PATCH&t;5&t;/* Return patch header of patch parm1 */
-DECL|macro|PM_SET_PATCH
-mdefine_line|#define PM_SET_PATCH&t;6&t;/* Set patch header of patch parm1 */
-DECL|macro|PM_READ_PATCH
-mdefine_line|#define PM_READ_PATCH&t;7&t;/* Read patch (wave) data */
-DECL|macro|PM_WRITE_PATCH
-mdefine_line|#define PM_WRITE_PATCH&t;8&t;/* Write patch (wave) data */
-multiline_comment|/*&n; * Commands 0x1000 to 0xffff are for communication between the patch manager&n; * and the client&n; */
-DECL|macro|_PM_LOAD_PATCH
-mdefine_line|#define _PM_LOAD_PATCH&t;0x100
-multiline_comment|/* &n; * Commands above 0xffff reserved for device specific use&n; */
-DECL|member|parm1
-r_int
-id|parm1
-suffix:semicolon
-DECL|member|parm2
-r_int
-id|parm2
-suffix:semicolon
-DECL|member|parm3
-r_int
-id|parm3
-suffix:semicolon
-r_union
-(brace
-DECL|member|data8
-r_int
-r_char
-id|data8
-(braket
-l_int|4000
-)braket
-suffix:semicolon
-DECL|member|data16
-r_int
-r_int
-id|data16
-(braket
-l_int|2000
-)braket
-suffix:semicolon
-DECL|member|data32
-r_int
-r_int
-id|data32
-(braket
-l_int|1000
-)braket
-suffix:semicolon
-DECL|member|patch
-r_struct
-id|patch_info
-id|patch
-suffix:semicolon
-DECL|member|data
-)brace
-id|data
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * When a patch manager daemon is present, it will be informed by the&n; * driver when something important happens. For example when the&n; * /dev/sequencer is opened or closed. A record with key == PM_K_EVENT is&n; * returned. The command field contains the event type:&n; */
-DECL|macro|PM_E_OPENED
-mdefine_line|#define PM_E_OPENED&t;&t;1&t;/* /dev/sequencer opened */
-DECL|macro|PM_E_CLOSED
-mdefine_line|#define PM_E_CLOSED&t;&t;2&t;/* /dev/sequencer closed */
-DECL|macro|PM_E_PATCH_RESET
-mdefine_line|#define PM_E_PATCH_RESET&t;3&t;/* SNDCTL_RESETSAMPLES called */
-DECL|macro|PM_E_PATCH_LOADED
-mdefine_line|#define PM_E_PATCH_LOADED&t;4&t;/* A patch has been loaded by appl */
 multiline_comment|/*&n; * /dev/sequencer input events.&n; *&n; * The data written to the /dev/sequencer is a stream of events. Events&n; * are records of 4 or 8 bytes. The first byte defines the size. &n; * Any number of events can be written with a write call. There&n; * is a set of macros for sending these events. Use these macros if you&n; * want to maximize portability of your program.&n; *&n; * Events SEQ_WAIT, SEQ_MIDIPUTC and SEQ_ECHO. Are also input events.&n; * (All input events are currently 4 bytes long. Be prepared to support&n; * 8 byte events also. If you receive any event having first byte &gt;= 128,&n; * it&squot;s a 8 byte event.&n; *&n; * The events are documented at the end of this file.&n; *&n; * Normal events (4 bytes)&n; * There is also a 8 byte version of most of the 4 byte events. The&n; * 8 byte one is recommended.&n; */
 DECL|macro|SEQ_NOTEOFF
 mdefine_line|#define SEQ_NOTEOFF&t;&t;0
@@ -1648,8 +1530,6 @@ DECL|macro|SEQ_USE_EXTBUF
 mdefine_line|#define SEQ_USE_EXTBUF()&t;&t;extern unsigned char _seqbuf[]; extern int _seqbuflen;extern int _seqbufptr
 DECL|macro|SEQ_DECLAREBUF
 mdefine_line|#define SEQ_DECLAREBUF()&t;&t;SEQ_USE_EXTBUF()
-DECL|macro|SEQ_PM_DEFINES
-mdefine_line|#define SEQ_PM_DEFINES&t;&t;&t;struct patmgr_info _pm_info
 DECL|macro|_SEQ_NEEDBUF
 mdefine_line|#define _SEQ_NEEDBUF(len)&t;&t;if ((_seqbufptr+(len)) &gt; _seqbuflen) seqbuf_dump()
 DECL|macro|_SEQ_ADVBUF
@@ -1661,10 +1541,6 @@ multiline_comment|/*&n; * This variation of the sequencer macros is used just to
 DECL|macro|_SEQ_NEEDBUF
 mdefine_line|#define _SEQ_NEEDBUF(len)&t;/* empty */
 macro_line|#endif
-DECL|macro|PM_LOAD_PATCH
-mdefine_line|#define PM_LOAD_PATCH(dev, bank, pgm)&t;(SEQ_DUMPBUF(), _pm_info.command = _PM_LOAD_PATCH, &bslash;&n;&t;&t;&t;&t;&t;_pm_info.device=dev, _pm_info.data.data8[0]=pgm, &bslash;&n;&t;&t;&t;&t;&t;_pm_info.parm1 = bank, _pm_info.parm2 = 1, &bslash;&n;&t;&t;&t;&t;&t;ioctl(seqfd, SNDCTL_PMGR_ACCESS, &amp;_pm_info))
-DECL|macro|PM_LOAD_PATCHES
-mdefine_line|#define PM_LOAD_PATCHES(dev, bank, pgm) (SEQ_DUMPBUF(), _pm_info.command = _PM_LOAD_PATCH, &bslash;&n;&t;&t;&t;&t;&t;_pm_info.device=dev, memcpy(_pm_info.data.data8, pgm, 128), &bslash;&n;&t;&t;&t;&t;&t;_pm_info.parm1 = bank, _pm_info.parm2 = 128, &bslash;&n;&t;&t;&t;&t;&t;ioctl(seqfd, SNDCTL_PMGR_ACCESS, &amp;_pm_info))
 DECL|macro|SEQ_VOLUME_MODE
 mdefine_line|#define SEQ_VOLUME_MODE(dev, mode)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_VOLMODE;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (mode);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+4] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+6] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 multiline_comment|/*&n; * Midi voice messages&n; */

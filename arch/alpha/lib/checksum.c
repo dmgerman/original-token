@@ -153,6 +153,7 @@ r_int
 id|do_csum
 c_func
 (paren
+r_const
 r_int
 r_char
 op_star
@@ -523,6 +524,7 @@ r_int
 id|csum_partial
 c_func
 (paren
+r_const
 r_int
 r_char
 op_star

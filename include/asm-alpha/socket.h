@@ -31,6 +31,14 @@ DECL|macro|SO_SNDBUF
 mdefine_line|#define SO_SNDBUF&t;0x1001
 DECL|macro|SO_RCVBUF
 mdefine_line|#define SO_RCVBUF&t;0x1002
+DECL|macro|SO_RCVLOWAT
+mdefine_line|#define&t;SO_RCVLOWAT&t;0x1010
+DECL|macro|SO_SNDLOWAT
+mdefine_line|#define&t;SO_SNDLOWAT&t;0x1011
+DECL|macro|SO_RCVTIMEO
+mdefine_line|#define&t;SO_RCVTIMEO&t;0x1012
+DECL|macro|SO_SNDTIMEO
+mdefine_line|#define&t;SO_SNDTIMEO&t;0x1013
 multiline_comment|/* linux-specific, might as well be the same as on i386 */
 DECL|macro|SO_NO_CHECK
 mdefine_line|#define SO_NO_CHECK&t;11

@@ -236,7 +236,7 @@ id|skb-&gt;len
 id|printk
 c_func
 (paren
-l_string|&quot;tcp_send_skb: bad skb (skb = %p, data = %p, th = %p, len = %lu)&bslash;n&quot;
+l_string|&quot;tcp_send_skb: bad skb (skb = %p, data = %p, th = %p, len = %u)&bslash;n&quot;
 comma
 id|skb
 comma

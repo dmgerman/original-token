@@ -87,6 +87,7 @@ r_int
 id|len
 comma
 r_int
+r_int
 id|sum
 )paren
 suffix:semicolon

@@ -159,18 +159,6 @@ r_int
 id|value
 )paren
 suffix:semicolon
-r_int
-id|midi_synth_patchmgr
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|patmgr_info
-op_star
-id|rec
-)paren
-suffix:semicolon
 r_void
 id|midi_synth_bender
 (paren
@@ -281,8 +269,6 @@ comma
 id|midi_synth_panning
 comma
 l_int|NULL
-comma
-id|midi_synth_patchmgr
 comma
 id|midi_synth_bender
 comma

@@ -1491,4 +1491,13 @@ DECL|macro|LEFT_CHN
 mdefine_line|#define LEFT_CHN&t;0
 DECL|macro|RIGHT_CHN
 mdefine_line|#define RIGHT_CHN&t;1
+multiline_comment|/*&n; * Channel enable bits for ioctl(SOUND_MIXER_PRIVATE1)&n; */
+macro_line|#ifndef AUDIO_SPEAKER
+DECL|macro|AUDIO_SPEAKER
+mdefine_line|#define&t;AUDIO_SPEAKER&t;&t;0x01&t;/* Enable mono output */
+DECL|macro|AUDIO_HEADPHONE
+mdefine_line|#define&t;AUDIO_HEADPHONE&t;&t;0x02&t;/* Sparc only */
+DECL|macro|AUDIO_LINE_OUT
+mdefine_line|#define&t;AUDIO_LINE_OUT&t;&t;0x04&t;/* Sparc only */
+macro_line|#endif
 eof

@@ -381,6 +381,7 @@ id|dma
 (brace
 r_static
 r_int
+r_int
 id|clock
 op_assign
 l_int|0

@@ -7,7 +7,7 @@ multiline_comment|/* Since MINOR(dev) is used as index in static arrays,&n;   th
 DECL|macro|MINORBITS
 mdefine_line|#define MINORBITS&t;8
 DECL|macro|MINORMASK
-mdefine_line|#define MINORMASK&t;((1&lt;&lt;MINORBITS) - 1)
+mdefine_line|#define MINORMASK&t;((1U &lt;&lt; MINORBITS) - 1)
 DECL|typedef|kdev_t
 r_typedef
 r_int
@@ -15,11 +15,11 @@ r_int
 id|kdev_t
 suffix:semicolon
 DECL|macro|MAJOR
-mdefine_line|#define MAJOR(dev)&t;((dev) &gt;&gt; MINORBITS)
+mdefine_line|#define MAJOR(dev)&t;((unsigned int) ((dev) &gt;&gt; MINORBITS))
 DECL|macro|MINOR
-mdefine_line|#define MINOR(dev)&t;((dev) &amp; MINORMASK)
+mdefine_line|#define MINOR(dev)&t;((unsigned int) ((dev) &amp; MINORMASK))
 DECL|macro|HASHDEV
-mdefine_line|#define HASHDEV(dev)&t;(dev)
+mdefine_line|#define HASHDEV(dev)&t;((unsigned int) (dev))
 DECL|macro|NODEV
 mdefine_line|#define NODEV&t;&t;0
 DECL|macro|MKDEV

@@ -957,20 +957,6 @@ id|mode
 )paren
 suffix:semicolon
 r_static
-r_int
-id|awe_patchmgr
-c_func
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|patmgr_info
-op_star
-id|rec
-)paren
-suffix:semicolon
-r_static
 r_void
 id|awe_bender
 c_func
@@ -1438,8 +1424,6 @@ comma
 id|awe_panning
 comma
 id|awe_volume_method
-comma
-id|awe_patchmgr
 comma
 id|awe_bender
 comma
@@ -12479,36 +12463,6 @@ comma
 id|mode
 )paren
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/* patch manager */
-r_static
-r_int
-DECL|function|awe_patchmgr
-id|awe_patchmgr
-c_func
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|patmgr_info
-op_star
-id|rec
-)paren
-(brace
-id|FATALERR
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;AWE32 Warning: patch manager control not supported&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* pitch wheel change: 0-16384 */

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/ucdrom.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -2736,10 +2737,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-)paren
 id|sgpnt
 (braket
 id|count
@@ -3106,10 +3106,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|virt_to_phys
+c_func
 (paren
-(paren
-r_int
-)paren
 id|buffer
 )paren
 op_plus

@@ -1,9 +1,5 @@
 multiline_comment|/*&n; *  linux/lib/ctype.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;linux/ctype.h&gt;
-DECL|variable|_ctmp
-r_char
-id|_ctmp
-suffix:semicolon
 DECL|variable|_ctype
 r_int
 r_char
@@ -12,9 +8,6 @@ id|_ctype
 )braket
 op_assign
 (brace
-l_int|0x00
-comma
-multiline_comment|/* EOF */
 id|_C
 comma
 id|_C

@@ -688,6 +688,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 suffix:semicolon
@@ -704,6 +705,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 suffix:semicolon
@@ -719,6 +721,7 @@ id|sk_buff
 op_star
 id|skb
 comma
+r_int
 r_int
 id|len
 )paren
@@ -756,6 +759,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 suffix:semicolon
@@ -769,6 +773,7 @@ id|sk_buff
 op_star
 id|skb
 comma
+r_int
 r_int
 id|len
 )paren
@@ -1643,6 +1648,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 (brace
@@ -1710,6 +1716,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 (brace
@@ -1770,6 +1777,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 (brace
@@ -1780,11 +1788,9 @@ id|len
 OG
 id|skb-&gt;len
 )paren
-(brace
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 id|skb-&gt;data
 op_add_assign
 id|len
@@ -1848,6 +1854,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 (brace
@@ -1872,6 +1879,7 @@ id|sk_buff
 op_star
 id|skb
 comma
+r_int
 r_int
 id|len
 )paren

@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|variable|nr_swapfiles
 r_int
+r_int
 id|nr_swapfiles
 op_assign
 l_int|0
@@ -69,6 +70,7 @@ op_star
 id|si
 )paren
 (brace
+r_int
 r_int
 id|offset
 suffix:semicolon

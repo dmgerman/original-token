@@ -591,6 +591,14 @@ id|devc
 r_int
 id|loopc
 suffix:semicolon
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Entered sb_dsp_reset()&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -682,10 +690,20 @@ id|DSP_READ
 op_ne
 l_int|0xAA
 )paren
+(brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;sb: No response to RESET&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Sorry */
+)brace
 r_if
 c_cond
 (paren
@@ -701,6 +719,14 @@ l_int|0xc6
 )paren
 suffix:semicolon
 multiline_comment|/* Enable extended mode */
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;sb_dsp_reset() OK&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -721,6 +747,14 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Entered dsp_get_vers()&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 id|save_flags
 (paren
@@ -797,6 +831,18 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;DSP version %d.%d&bslash;n&quot;
+comma
+id|devc-&gt;major
+comma
+id|devc-&gt;minor
+)paren
+)paren
+suffix:semicolon
 id|restore_flags
 (paren
 id|flags
@@ -3308,6 +3354,11 @@ op_assign
 id|inb
 (paren
 id|MIXER_DATA
+)paren
+suffix:semicolon
+id|tenmicrosec
+(paren
+id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec

@@ -50,17 +50,21 @@ id|swap_lockmap
 suffix:semicolon
 DECL|member|lowest_bit
 r_int
+r_int
 id|lowest_bit
 suffix:semicolon
 DECL|member|highest_bit
+r_int
 r_int
 id|highest_bit
 suffix:semicolon
 DECL|member|cluster_next
 r_int
+r_int
 id|cluster_next
 suffix:semicolon
 DECL|member|cluster_nr
+r_int
 r_int
 id|cluster_nr
 suffix:semicolon
@@ -240,6 +244,7 @@ r_int
 suffix:semicolon
 multiline_comment|/* linux/mm/swapfile.c */
 r_extern
+r_int
 r_int
 id|nr_swapfiles
 suffix:semicolon

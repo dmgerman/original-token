@@ -60,6 +60,10 @@ id|tmp_queue
 l_int|256
 )braket
 suffix:semicolon
+r_extern
+r_int
+id|gus_pnp_flag
+suffix:semicolon
 DECL|variable|qlen
 r_static
 r_volatile
@@ -187,6 +191,12 @@ op_logical_or
 id|mode
 op_eq
 id|OPEN_READWRITE
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+id|gus_pnp_flag
 )paren
 (brace
 id|gus_midi_control

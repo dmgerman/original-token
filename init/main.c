@@ -2205,9 +2205,9 @@ r_void
 )paren
 (brace
 r_int
-id|ticks
-suffix:semicolon
 r_int
+id|ticks
+comma
 id|loopbit
 suffix:semicolon
 r_int

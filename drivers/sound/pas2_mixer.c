@@ -1,6 +1,7 @@
 DECL|macro|_PAS2_MIXER_C_
 mdefine_line|#define _PAS2_MIXER_C_
 multiline_comment|/*&n; * sound/pas2_mixer.c&n; *&n; * Mixer routines for the Pro Audio Spectrum cards.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_PAS)
@@ -1217,6 +1218,20 @@ op_eq
 l_char|&squot;M&squot;
 )paren
 (brace
+r_int
+id|v
+suffix:semicolon
+id|get_user
+(paren
+id|v
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1238,10 +1253,7 @@ id|cmd
 op_amp
 l_int|0xff
 comma
-id|ioctl_in
-(paren
-id|arg
-)paren
+id|v
 )paren
 )paren
 suffix:semicolon

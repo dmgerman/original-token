@@ -51,7 +51,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|KB
 mdefine_line|#define KB&t;&t;1024
 DECL|macro|MB
@@ -4155,13 +4155,22 @@ id|len
 r_case
 l_int|1
 suffix:colon
-id|ubyte
+id|err
 op_assign
 id|get_user
 c_func
 (paren
+id|ubyte
+comma
 id|buf
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_break
 suffix:semicolon
 id|err
 op_assign
@@ -4196,11 +4205,13 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-id|ushort
+id|err
 op_assign
 id|get_user
 c_func
 (paren
+id|ushort
+comma
 (paren
 r_int
 r_int
@@ -4208,6 +4219,13 @@ op_star
 )paren
 id|buf
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_break
 suffix:semicolon
 id|err
 op_assign
@@ -4242,11 +4260,13 @@ suffix:semicolon
 r_case
 l_int|4
 suffix:colon
-id|uint
+id|err
 op_assign
 id|get_user
 c_func
 (paren
+id|uint
+comma
 (paren
 r_int
 r_int
@@ -4254,6 +4274,13 @@ op_star
 )paren
 id|buf
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_break
 suffix:semicolon
 id|err
 op_assign

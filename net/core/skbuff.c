@@ -1724,6 +1724,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 (brace
@@ -1794,6 +1795,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 (brace
@@ -1856,6 +1858,7 @@ id|sk_buff
 op_star
 id|skb
 comma
+r_int
 r_int
 id|len
 )paren
@@ -1947,6 +1950,7 @@ op_star
 id|skb
 comma
 r_int
+r_int
 id|len
 )paren
 (brace
@@ -2011,6 +2015,7 @@ id|sk_buff
 op_star
 id|skb
 comma
+r_int
 r_int
 id|len
 )paren
