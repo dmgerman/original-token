@@ -2234,17 +2234,6 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* Get the keyboard controller registers (incomplete decode) */
-id|request_region
-c_func
-(paren
-l_int|0x60
-comma
-l_int|16
-comma
-l_string|&quot;keyboard&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Flush any pending input. */
 id|kbd_clear_input
 c_func

@@ -517,6 +517,73 @@ suffix:semicolon
 )brace
 multiline_comment|/* mca_configure_adapter_status */
 multiline_comment|/*--------------------------------------------------------------------*/
+DECL|variable|mca_standard_resources
+r_struct
+id|resource
+id|mca_standard_resources
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;system control port B (MCA)&quot;
+comma
+l_int|0x60
+comma
+l_int|0x60
+)brace
+comma
+(brace
+l_string|&quot;arbitration (MCA)&quot;
+comma
+l_int|0x90
+comma
+l_int|0x90
+)brace
+comma
+(brace
+l_string|&quot;card Select Feedback (MCA)&quot;
+comma
+l_int|0x91
+comma
+l_int|0x91
+)brace
+comma
+(brace
+l_string|&quot;system Control port A (MCA)&quot;
+comma
+l_int|0x92
+comma
+l_int|0x92
+)brace
+comma
+(brace
+l_string|&quot;system board setup (MCA)&quot;
+comma
+l_int|0x94
+comma
+l_int|0x94
+)brace
+comma
+(brace
+l_string|&quot;POS (MCA)&quot;
+comma
+l_int|0x96
+comma
+l_int|0x97
+)brace
+comma
+(brace
+l_string|&quot;POS (MCA)&quot;
+comma
+l_int|0x100
+comma
+l_int|0x107
+)brace
+)brace
+suffix:semicolon
+DECL|macro|MCA_STANDARD_RESOURCES
+mdefine_line|#define MCA_STANDARD_RESOURCES&t;(sizeof(mca_standard_resources)/sizeof(struct resource))
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -943,74 +1010,29 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|request_region
-c_func
+r_for
+c_loop
 (paren
-l_int|0x60
-comma
-l_int|0x01
-comma
-l_string|&quot;system control port B (MCA)&quot;
-)paren
+id|i
+op_assign
+l_int|0
 suffix:semicolon
-id|request_region
-c_func
-(paren
-l_int|0x90
-comma
-l_int|0x01
-comma
-l_string|&quot;arbitration (MCA)&quot;
-)paren
+id|i
+OL
+id|MCA_STANDARD_RESOURCES
 suffix:semicolon
-id|request_region
-c_func
-(paren
-l_int|0x91
-comma
-l_int|0x01
-comma
-l_string|&quot;card Select Feedback (MCA)&quot;
+id|i
+op_increment
 )paren
-suffix:semicolon
-id|request_region
+id|request_resource
 c_func
 (paren
-l_int|0x92
+op_amp
+id|pci_io_resource
 comma
-l_int|0x01
-comma
-l_string|&quot;system Control port A (MCA)&quot;
-)paren
-suffix:semicolon
-id|request_region
-c_func
-(paren
-l_int|0x94
-comma
-l_int|0x01
-comma
-l_string|&quot;system board setup (MCA)&quot;
-)paren
-suffix:semicolon
-id|request_region
-c_func
-(paren
-l_int|0x96
-comma
-l_int|0x02
-comma
-l_string|&quot;POS (MCA)&quot;
-)paren
-suffix:semicolon
-id|request_region
-c_func
-(paren
-l_int|0x100
-comma
-l_int|0x08
-comma
-l_string|&quot;POS (MCA)&quot;
+id|mca_standard_resources
+op_plus
+id|i
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS

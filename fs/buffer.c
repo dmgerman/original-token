@@ -5200,6 +5200,15 @@ op_amp
 id|bh-&gt;b_state
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|BH_Req
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
 id|bh-&gt;b_blocknr
 op_assign
 l_int|0

@@ -1564,13 +1564,6 @@ id|enable_hlt
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* resource handling */
-DECL|variable|check_resource
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|check_resource
-)paren
-suffix:semicolon
 DECL|variable|request_resource
 id|EXPORT_SYMBOL
 c_func
@@ -1585,18 +1578,25 @@ c_func
 id|release_resource
 )paren
 suffix:semicolon
-DECL|variable|occupy_resource
+DECL|variable|__request_region
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|occupy_resource
+id|__request_region
 )paren
 suffix:semicolon
-DECL|variable|vacate_resource
+DECL|variable|__check_region
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|vacate_resource
+id|__check_region
+)paren
+suffix:semicolon
+DECL|variable|__release_region
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__release_region
 )paren
 suffix:semicolon
 multiline_comment|/* process management */

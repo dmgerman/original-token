@@ -3259,7 +3259,10 @@ id|nr_good_pages
 op_assign
 id|swap_header-&gt;info.last_page
 op_minus
-id|i
+id|swap_header-&gt;info.nr_badpages
+op_minus
+l_int|1
+multiline_comment|/* header page */
 suffix:semicolon
 id|lock_map_size
 op_assign

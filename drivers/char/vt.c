@@ -2861,6 +2861,13 @@ c_cond
 (paren
 op_logical_neg
 id|perm
+op_logical_or
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_KILL
+)paren
 )paren
 r_return
 op_minus

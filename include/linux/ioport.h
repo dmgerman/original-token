@@ -1,11 +1,57 @@
-multiline_comment|/*&n; * ioport.h&t;Definitions of routines for detecting, reserving and&n; *&t;&t;allocating system resources.&n; *&n; * Authors:&t;Donald Becker (becker@cesdis.gsfc.nasa.gov)&n; *&t;&t;David Hinds (dhinds@zen.stanford.edu)&n; */
+multiline_comment|/*&n; * ioport.h&t;Definitions of routines for detecting, reserving and&n; *&t;&t;allocating system resources.&n; *&n; * Authors:&t;Linus Torvalds&n; */
 macro_line|#ifndef _LINUX_IOPORT_H
 DECL|macro|_LINUX_IOPORT_H
 mdefine_line|#define _LINUX_IOPORT_H
-DECL|macro|RES_IO
-mdefine_line|#define RES_IO&t;&t;0
-DECL|macro|RES_MEM
-mdefine_line|#define RES_MEM&t;&t;1
+multiline_comment|/*&n; * Resources are tree-like, allowing&n; * nesting etc..&n; */
+DECL|struct|resource
+r_struct
+id|resource
+(brace
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|start
+DECL|member|end
+r_int
+r_int
+id|start
+comma
+id|end
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+DECL|member|parent
+DECL|member|sibling
+DECL|member|child
+r_struct
+id|resource
+op_star
+id|parent
+comma
+op_star
+id|sibling
+comma
+op_star
+id|child
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|resource
+id|pci_io_resource
+suffix:semicolon
+r_extern
+r_struct
+id|resource
+id|pci_mem_resource
+suffix:semicolon
 r_extern
 r_void
 id|reserve_setup
@@ -21,107 +67,70 @@ id|ints
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|resource_entry
-op_star
-id|iolist
-comma
-op_star
-id|memlist
-suffix:semicolon
-r_extern
 r_int
 id|get_resource_list
 c_func
 (paren
-r_int
-r_class
+r_struct
+id|resource
+op_star
 comma
 r_char
 op_star
 id|buf
+comma
+r_int
+id|size
 )paren
 suffix:semicolon
 r_extern
 r_int
-id|check_resource
-c_func
-(paren
-r_int
-r_class
-comma
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|extent
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|request_resource
 c_func
 (paren
-r_int
-r_class
-comma
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|extent
-comma
-r_const
-r_char
+r_struct
+id|resource
 op_star
-id|name
+id|root
+comma
+r_struct
+id|resource
+op_star
+r_new
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|release_resource
 c_func
 (paren
-r_int
-r_class
-comma
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|extent
+r_struct
+id|resource
+op_star
+r_new
 )paren
 suffix:semicolon
+multiline_comment|/* Convenience shorthand with allocation */
+DECL|macro|request_region
+mdefine_line|#define request_region(start,n,name)&t;__request_region(&amp;pci_io_resource, (start), (n), (name))
 r_extern
-r_int
-r_int
-id|occupy_resource
+r_struct
+id|resource
+op_star
+id|__request_region
 c_func
 (paren
-r_int
-r_class
+r_struct
+id|resource
+op_star
 comma
 r_int
 r_int
-id|base
+id|start
 comma
 r_int
 r_int
-id|end
-comma
-r_int
-r_int
-id|num
-comma
-r_int
-r_int
-id|align
+id|n
 comma
 r_const
 r_char
@@ -129,52 +138,47 @@ op_star
 id|name
 )paren
 suffix:semicolon
+multiline_comment|/* Compatibility cruft */
+DECL|macro|check_region
+mdefine_line|#define check_region(start,n)&t;__check_region(&amp;pci_io_resource, (start), (n))
+DECL|macro|release_region
+mdefine_line|#define release_region(start,n)&t;__release_region(&amp;pci_io_resource, (start), (n))
 r_extern
-r_void
-id|vacate_resource
+r_int
+id|__check_region
 c_func
 (paren
-r_int
-r_class
+r_struct
+id|resource
+op_star
 comma
 r_int
 r_int
-id|from
 comma
 r_int
 r_int
-id|extent
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__release_region
+c_func
+(paren
+r_struct
+id|resource
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|macro|get_ioport_list
-mdefine_line|#define get_ioport_list(buf)&t;get_resource_list(RES_IO, buf)
+mdefine_line|#define get_ioport_list(buf)&t;get_resource_list(&amp;pci_io_resource, buf, PAGE_SIZE)
 DECL|macro|get_mem_list
-mdefine_line|#define get_mem_list(buf)&t;get_resource_list(RES_MEM, buf)
-DECL|macro|HAVE_PORTRESERVE
-mdefine_line|#define HAVE_PORTRESERVE
-multiline_comment|/*&n; * Call check_region() before probing for your hardware.&n; * Once you have found you hardware, register it with request_region().&n; * If you unload the driver, use release_region to free ports.&n; */
-DECL|macro|check_region
-mdefine_line|#define check_region(f,e)&t;&t;check_resource(RES_IO,f,e)
-DECL|macro|request_region
-mdefine_line|#define request_region(f,e,n)&t;&t;request_resource(RES_IO,f,e,n)
-DECL|macro|release_region
-mdefine_line|#define release_region(f,e)&t;&t;release_resource(RES_IO,f,e)
-DECL|macro|occupy_region
-mdefine_line|#define occupy_region(b,e,n,a,s)&t;occupy_resource(RES_IO,b,e,n,a,s)
-DECL|macro|vacate_region
-mdefine_line|#define vacate_region(f,e)&t;&t;vacate_resource(RES_IO,f,e)
-DECL|macro|HAVE_MEMRESERVE
-mdefine_line|#define HAVE_MEMRESERVE
-DECL|macro|check_mem_region
-mdefine_line|#define check_mem_region(f,e)&t;&t;check_resource(RES_MEM,f,e)
-DECL|macro|request_mem_region
-mdefine_line|#define request_mem_region(f,e,n)&t;request_resource(RES_MEM,f,e,n)
-DECL|macro|release_mem_region
-mdefine_line|#define release_mem_region(f,e)&t;&t;release_resource(RES_MEM,f,e)
-DECL|macro|occupy_mem_region
-mdefine_line|#define occupy_mem_region(b,e,n,a,s)&t;occupy_resource(RES_MEM,b,e,n,a,s)
-DECL|macro|vacate_mem_region
-mdefine_line|#define vacate_mem_region(f,e)&t;&t;vacate_resource(RES_MEM,f,e)
+mdefine_line|#define get_mem_list(buf)&t;get_resource_list(&amp;pci_mem_resource, buf, PAGE_SIZE)
 DECL|macro|HAVE_AUTOIRQ
 mdefine_line|#define HAVE_AUTOIRQ
 r_extern
