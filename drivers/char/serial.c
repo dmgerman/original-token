@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; *  1/97:  Extended dumb serial ports are a config option now.  &n; *         Saves 4k.   Michael A. Griffith &lt;grif@acm.org&gt;&n; * &n; *  8/97: Fix bug in rs_set_termios with RTS&n; *        Stanislav V. Voronyi &lt;stas@uanet.kharkov.ua&gt;&n; *&n; *  3/98: Change the IRQ detection, use of probe_irq_o*(),&n; *&t;  supress TIOCSERGWILD and TIOCSERSWILD&n; *&t;  Etienne Lorrain &lt;etienne.lorrain@ibm.net&gt;&n; *&n; *  4/98: Added changes to support the ARM architecture proposed by&n; * &t;  Russell King&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; */
 multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_HUB6&n; *&t;&t;Enables support for the venerable Bell Technologies&n; *&t;&t;HUB6 card.&n; *&n; * CONFIG_SERIAL_MANY_PORTS&n; * &t;&t;Enables support for ports beyond the standard, stupid&n; * &t;&t;COM 1/2/3/4.&n; *&n; * CONFIG_SERIAL_MULTIPORT&n; * &t;&t;Enables support for special multiport board support.&n; *&n; * CONFIG_SERIAL_SHARE_IRQ&n; * &t;&t;Enables support for multiple serial ports on one IRQ&n; *&n; * CONFIG_SERIAL_DETECT_IRQ&n; *&t;&t;Enable the autodetection of IRQ on standart ports&n; *&n; * SERIAL_PARANOIA_CHECK&n; * &t;&t;Check the magic number for the async_structure where&n; * &t;&t;ever possible.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
-mdefine_line|#define SERIAL_PARANOIA_CHECK
+macro_line|#undef SERIAL_PARANOIA_CHECK
 DECL|macro|CONFIG_SERIAL_NOPAUSE_IO
 mdefine_line|#define CONFIG_SERIAL_NOPAUSE_IO
 DECL|macro|SERIAL_DO_RESTART
@@ -6652,12 +6652,6 @@ id|new_serial.type
 OG
 id|PORT_MAX
 )paren
-op_logical_or
-(paren
-id|new_serial.xmit_fifo_size
-op_eq
-l_int|0
-)paren
 )paren
 (brace
 r_return
@@ -6665,6 +6659,30 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|new_serial.type
+op_ne
+id|state-&gt;type
+)paren
+op_logical_or
+(paren
+id|new_serial.xmit_fifo_size
+op_le
+l_int|0
+)paren
+)paren
+id|new_serial.xmit_fifo_size
+op_assign
+id|uart_config
+(braket
+id|state-&gt;type
+)braket
+dot
+id|dfl_xmit_fifo_size
+suffix:semicolon
 multiline_comment|/* Make sure address is not already in use */
 r_if
 c_cond
@@ -6893,24 +6911,6 @@ id|state-&gt;type
 )paren
 r_return
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|state-&gt;type
-op_ne
-id|old_state.type
-)paren
-id|info-&gt;xmit_fifo_size
-op_assign
-id|state-&gt;xmit_fifo_size
-op_assign
-id|uart_config
-(braket
-id|state-&gt;type
-)braket
-dot
-id|dfl_xmit_fifo_size
 suffix:semicolon
 r_if
 c_cond
@@ -10761,6 +10761,8 @@ r_int
 r_int
 id|page
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|line
 op_assign
 id|MINOR
@@ -10809,6 +10811,14 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
+id|tty-&gt;driver_data
+op_assign
+id|info
+suffix:semicolon
+id|info-&gt;tty
+op_assign
+id|tty
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10840,14 +10850,6 @@ id|info-&gt;state-&gt;count
 )paren
 suffix:semicolon
 macro_line|#endif
-id|tty-&gt;driver_data
-op_assign
-id|info
-suffix:semicolon
-id|info-&gt;tty
-op_assign
-id|tty
-suffix:semicolon
 id|info-&gt;tty-&gt;low_latency
 op_assign
 (paren
@@ -10979,8 +10981,6 @@ id|retval
 )paren
 r_return
 id|retval
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|retval
 op_assign

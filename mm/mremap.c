@@ -14,6 +14,15 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+r_extern
+r_int
+id|vm_enough_memory
+c_func
+(paren
+r_int
+id|pages
+)paren
+suffix:semicolon
 DECL|function|get_one_pte
 r_static
 r_inline
@@ -811,7 +820,7 @@ r_if
 c_cond
 (paren
 id|old_len
-OG
+op_ge
 id|new_len
 )paren
 (brace
@@ -942,6 +951,45 @@ id|RLIMIT_AS
 )braket
 dot
 id|rlim_cur
+)paren
+r_goto
+id|out
+suffix:semicolon
+multiline_comment|/* Private writable mapping? Check memory availability.. */
+r_if
+c_cond
+(paren
+(paren
+id|vma-&gt;vm_flags
+op_amp
+(paren
+id|VM_SHARED
+op_or
+id|VM_WRITE
+)paren
+)paren
+op_eq
+id|VM_WRITE
+op_logical_and
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|MAP_NORESERVE
+)paren
+op_logical_and
+op_logical_neg
+id|vm_enough_memory
+c_func
+(paren
+(paren
+id|new_len
+op_minus
+id|old_len
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
 )paren
 r_goto
 id|out

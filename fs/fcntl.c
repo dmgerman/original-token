@@ -804,8 +804,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
 id|euid
+op_ne
+l_int|0
+)paren
 op_logical_and
 (paren
 id|euid

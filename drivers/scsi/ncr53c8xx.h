@@ -2,34 +2,28 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef NCR53C8XX_H
 DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
+macro_line|#if 0
+mdefine_line|#define CONFIG_SCSI_NCR53C8XX_PROFILE
+macro_line|#endif
+macro_line|#ifndef CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
+DECL|macro|CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
+mdefine_line|#define CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
+macro_line|#endif
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 2.5f&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 3.0e&quot;
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;**&t;During make dep of linux-1.2.13, LINUX_VERSION_CODE is undefined&n;**&t;Under linux-1.3.X, all seems to be OK.&n;**&t;So, we have only to define it under 1.2.13&n;*/
 DECL|macro|LinuxVersionCode
 mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
-macro_line|#if !defined(LINUX_VERSION_CODE)
-DECL|macro|LINUX_VERSION_CODE
-mdefine_line|#define LINUX_VERSION_CODE LinuxVersionCode(1,2,13)
-macro_line|#endif
-multiline_comment|/*&n;**&t;Normal IO or memory mapped IO.&n;**&n;**&t;Memory mapped IO only works with linux-1.3.X&n;**&t;If your motherboard does not work with memory mapped IO,&n;**&t;define SCSI_NCR_IOMAPPED for PATCHLEVEL 3 too.&n;*/
-macro_line|#if&t;LINUX_VERSION_CODE &lt; LinuxVersionCode(1,3,0)
-DECL|macro|SCSI_NCR_IOMAPPED
-macro_line|#&t;define&t;SCSI_NCR_IOMAPPED
-macro_line|#endif
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
+multiline_comment|/*&n;**&t;These options are&squot;nt tunable from &squot;make config&squot;&n;*/
 DECL|macro|SCSI_NCR_PROC_INFO_SUPPORT
-macro_line|#&t;define&t;SCSI_NCR_PROC_INFO_SUPPORT
-macro_line|#endif
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,72)
+mdefine_line|#define&t;SCSI_NCR_PROC_INFO_SUPPORT
 DECL|macro|SCSI_NCR_SHARE_IRQ
-macro_line|#&t;define SCSI_NCR_SHARE_IRQ
-macro_line|#endif
+mdefine_line|#define SCSI_NCR_SHARE_IRQ
 multiline_comment|/*&n;**&t;If you want a driver as small as possible, donnot define the &n;**&t;following options.&n;*/
 DECL|macro|SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT
 mdefine_line|#define SCSI_NCR_BOOT_COMMAND_LINE_SUPPORT
@@ -38,13 +32,14 @@ mdefine_line|#define SCSI_NCR_DEBUG_INFO_SUPPORT
 DECL|macro|SCSI_NCR_PCI_FIX_UP_SUPPORT
 mdefine_line|#define SCSI_NCR_PCI_FIX_UP_SUPPORT
 macro_line|#ifdef&t;SCSI_NCR_PROC_INFO_SUPPORT
+macro_line|#&t;ifdef&t;CONFIG_SCSI_NCR53C8XX_PROFILE
 DECL|macro|SCSI_NCR_PROFILE_SUPPORT
-macro_line|#&t;define&t;SCSI_NCR_PROFILE_SUPPORT
+macro_line|#&t;&t;define&t;SCSI_NCR_PROFILE_SUPPORT
+macro_line|#&t;endif
 DECL|macro|SCSI_NCR_USER_COMMAND_SUPPORT
 macro_line|#&t;define&t;SCSI_NCR_USER_COMMAND_SUPPORT
 DECL|macro|SCSI_NCR_USER_INFO_SUPPORT
 macro_line|#&t;define&t;SCSI_NCR_USER_INFO_SUPPORT
-multiline_comment|/* #&t;define&t;SCSI_NCR_DEBUG_ERROR_RECOVERY_SUPPORT */
 macro_line|#endif
 multiline_comment|/*==========================================================&n;**&n;** nvram settings - #define SCSI_NCR_NVRAM_SUPPORT to enable&n;**&n;**==========================================================&n;*/
 macro_line|#ifdef CONFIG_SCSI_NCR53C8XX_NVRAM_DETECT
@@ -60,24 +55,27 @@ DECL|macro|SCSI_NCR_SETUP_ULTRA_SCSI
 mdefine_line|#define SCSI_NCR_SETUP_ULTRA_SCSI&t;&t;(2)
 DECL|macro|SCSI_NCR_MAX_SYNC
 mdefine_line|#define SCSI_NCR_MAX_SYNC&t;&t;&t;(40)
-multiline_comment|/*&n; * Allow tags from 2 to 12, default 4&n; */
+multiline_comment|/*&n; * Allow tags from 2 to 64, default 8&n; */
 macro_line|#ifdef&t;CONFIG_SCSI_NCR53C8XX_MAX_TAGS
 macro_line|#if&t;CONFIG_SCSI_NCR53C8XX_MAX_TAGS &lt; 2
 DECL|macro|SCSI_NCR_MAX_TAGS
 mdefine_line|#define SCSI_NCR_MAX_TAGS&t;(2)
-macro_line|#elif&t;CONFIG_SCSI_NCR53C8XX_MAX_TAGS &gt; 12
+macro_line|#elif&t;CONFIG_SCSI_NCR53C8XX_MAX_TAGS &gt; 64
 DECL|macro|SCSI_NCR_MAX_TAGS
-mdefine_line|#define SCSI_NCR_MAX_TAGS&t;(12)
+mdefine_line|#define SCSI_NCR_MAX_TAGS&t;(64)
 macro_line|#else
 DECL|macro|SCSI_NCR_MAX_TAGS
 mdefine_line|#define&t;SCSI_NCR_MAX_TAGS&t;CONFIG_SCSI_NCR53C8XX_MAX_TAGS
 macro_line|#endif
 macro_line|#else
 DECL|macro|SCSI_NCR_MAX_TAGS
-mdefine_line|#define SCSI_NCR_MAX_TAGS&t;(4)
+mdefine_line|#define SCSI_NCR_MAX_TAGS&t;(8)
 macro_line|#endif
 multiline_comment|/*&n; * Allow tagged command queuing support if configured with default number &n; * of tags set to max (see above).&n; */
-macro_line|#ifdef&t;CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE
+macro_line|#ifdef&t;CONFIG_SCSI_NCR53C8XX_DEFAULT_TAGS
+DECL|macro|SCSI_NCR_SETUP_DEFAULT_TAGS
+mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_TAGS&t;CONFIG_SCSI_NCR53C8XX_DEFAULT_TAGS
+macro_line|#elif&t;defined CONFIG_SCSI_NCR53C8XX_TAGGED_QUEUE
 DECL|macro|SCSI_NCR_SETUP_DEFAULT_TAGS
 mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_TAGS&t;SCSI_NCR_MAX_TAGS
 macro_line|#else
@@ -95,13 +93,15 @@ macro_line|#elif defined(__sparc__)
 DECL|macro|SCSI_NCR_IOMAPPED
 macro_line|#undef SCSI_NCR_IOMAPPED
 macro_line|#endif
-multiline_comment|/*&n; * Sync transfer frequency at startup.&n; * Allow from 5Mhz to 40Mhz default 10 Mhz.&n; */
+multiline_comment|/*&n; * Sync transfer frequency at startup.&n; * Allow from 5Mhz to 40Mhz default 20 Mhz.&n; */
 macro_line|#ifndef&t;CONFIG_SCSI_NCR53C8XX_SYNC
 DECL|macro|CONFIG_SCSI_NCR53C8XX_SYNC
-mdefine_line|#define&t;CONFIG_SCSI_NCR53C8XX_SYNC&t;(5)
+mdefine_line|#define&t;CONFIG_SCSI_NCR53C8XX_SYNC&t;(20)
 macro_line|#elif&t;CONFIG_SCSI_NCR53C8XX_SYNC &gt; SCSI_NCR_MAX_SYNC
-DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
-mdefine_line|#define&t;SCSI_NCR_SETUP_DEFAULT_SYNC&t;SCSI_NCR_MAX_SYNC
+DECL|macro|CONFIG_SCSI_NCR53C8XX_SYNC
+macro_line|#undef&t;CONFIG_SCSI_NCR53C8XX_SYNC
+DECL|macro|CONFIG_SCSI_NCR53C8XX_SYNC
+mdefine_line|#define&t;CONFIG_SCSI_NCR53C8XX_SYNC&t;SCSI_NCR_MAX_SYNC
 macro_line|#endif
 macro_line|#if&t;CONFIG_SCSI_NCR53C8XX_SYNC == 0
 DECL|macro|SCSI_NCR_SETUP_DEFAULT_SYNC
@@ -173,18 +173,20 @@ DECL|macro|SCSI_NCR_MAX_SCATTER
 mdefine_line|#define SCSI_NCR_MAX_SCATTER&t;(127)
 DECL|macro|SCSI_NCR_MAX_TARGET
 mdefine_line|#define SCSI_NCR_MAX_TARGET&t;(16)
-DECL|macro|SCSI_NCR_MAX_HOST
-mdefine_line|#define SCSI_NCR_MAX_HOST&t;(2)
-DECL|macro|SCSI_NCR_TIMEOUT_ALERT
-mdefine_line|#define SCSI_NCR_TIMEOUT_ALERT&t;(3*HZ)
+multiline_comment|/* No need to use a too large adapter queue */
+macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
 DECL|macro|SCSI_NCR_CAN_QUEUE
 mdefine_line|#define SCSI_NCR_CAN_QUEUE&t;(7*SCSI_NCR_MAX_TAGS)
+macro_line|#else
+DECL|macro|SCSI_NCR_CAN_QUEUE
+mdefine_line|#define SCSI_NCR_CAN_QUEUE&t;(250)
+macro_line|#endif
 DECL|macro|SCSI_NCR_CMD_PER_LUN
 mdefine_line|#define SCSI_NCR_CMD_PER_LUN&t;(SCSI_NCR_MAX_TAGS)
 DECL|macro|SCSI_NCR_SG_TABLESIZE
 mdefine_line|#define SCSI_NCR_SG_TABLESIZE&t;(SCSI_NCR_MAX_SCATTER)
 DECL|macro|SCSI_NCR_TIMER_INTERVAL
-mdefine_line|#define SCSI_NCR_TIMER_INTERVAL&t;((HZ+5-1)/5)
+mdefine_line|#define SCSI_NCR_TIMER_INTERVAL&t;(HZ)
 macro_line|#if 1 /* defined CONFIG_SCSI_MULTI_LUN */
 DECL|macro|SCSI_NCR_MAX_LUN
 mdefine_line|#define SCSI_NCR_MAX_LUN&t;(8)
@@ -194,11 +196,7 @@ mdefine_line|#define SCSI_NCR_MAX_LUN&t;(1)
 macro_line|#endif
 multiline_comment|/*&n;**&t;Define Scsi_Host_Template parameters&n;**&n;**&t;Used by hosts.c and ncr53c8xx.c with module configuration.&n;*/
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,98)
 macro_line|#include &lt;scsi/scsicam.h&gt;
-macro_line|#else
-macro_line|#include &lt;linux/scsicam.h&gt;
-macro_line|#endif
 r_int
 id|ncr53c8xx_abort
 c_func
@@ -234,7 +232,6 @@ op_star
 )paren
 )paren
 suffix:semicolon
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,98)
 r_int
 id|ncr53c8xx_reset
 c_func
@@ -246,16 +243,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#else
-r_int
-id|ncr53c8xx_reset
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef MODULE
 r_int
 id|ncr53c8xx_release
@@ -273,12 +260,9 @@ macro_line|#endif
 macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,75)
 DECL|macro|NCR53C8XX
 mdefine_line|#define NCR53C8XX {     name:           SCSI_NCR_DRIVER_NAME,&t;&bslash;&n;&t;&t;&t;detect:         ncr53c8xx_detect,&t;&bslash;&n;&t;&t;&t;release:        ncr53c8xx_release,&t;&bslash;&n;&t;&t;&t;queuecommand:   ncr53c8xx_queue_command,&bslash;&n;&t;&t;&t;abort:          ncr53c8xx_abort,&t;&bslash;&n;&t;&t;&t;reset:          ncr53c8xx_reset,&t;&bslash;&n;&t;&t;&t;bios_param:     scsicam_bios_param,&t;&bslash;&n;&t;&t;&t;can_queue:      SCSI_NCR_CAN_QUEUE,&t;&bslash;&n;&t;&t;&t;this_id:        7,&t;&t;&t;&bslash;&n;&t;&t;&t;sg_tablesize:   SCSI_NCR_SG_TABLESIZE,&t;&bslash;&n;&t;&t;&t;cmd_per_lun:    SCSI_NCR_CMD_PER_LUN,&t;&bslash;&n;&t;&t;&t;use_clustering: DISABLE_CLUSTERING} 
-macro_line|#elif&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
-DECL|macro|NCR53C8XX
-mdefine_line|#define NCR53C8XX {&t;NULL, NULL, NULL, NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;&t;SCSI_NCR_DRIVER_NAME,&t;ncr53c8xx_detect,&t;&bslash;&n;    &t;&t;&t;ncr53c8xx_release,&t;NULL,&t;NULL,&t;&t;&bslash;&n;&t;&t;&t;ncr53c8xx_queue_command,ncr53c8xx_abort,&t;&bslash;&n;&t;&t;&t;ncr53c8xx_reset, NULL,&t;scsicam_bios_param,&t;&bslash;&n;&t;&t;&t;SCSI_NCR_CAN_QUEUE,&t;7,&t;&t;&t;&bslash;&n;&t;&t;&t;SCSI_NCR_SG_TABLESIZE,&t;SCSI_NCR_CMD_PER_LUN,&t;&bslash;&n;&t;&t;&t;0,&t;0,&t;DISABLE_CLUSTERING} 
 macro_line|#else
 DECL|macro|NCR53C8XX
-mdefine_line|#define NCR53C8XX {&t;NULL, NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;SCSI_NCR_DRIVER_NAME,&t;ncr53c8xx_detect,&t;&bslash;&n;&t;&t;&t;ncr53c8xx_release,&t;NULL, &t;NULL, &t;&t;&bslash;&n;&t;&t;&t;ncr53c8xx_queue_command,ncr53c8xx_abort,&t;&bslash;&n;&t;&t;&t;ncr53c8xx_reset, NULL,&t;scsicam_bios_param,&t;&bslash;&n;&t;&t;&t;SCSI_NCR_CAN_QUEUE,&t;7,&t;&t;&t;&bslash;&n;&t;&t;&t;SCSI_NCR_SG_TABLESIZE,&t;SCSI_NCR_CMD_PER_LUN,&t;&bslash;&n;&t;&t;&t;0,&t;0,&t;DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53C8XX {&t;NULL, NULL, NULL, NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;&t;SCSI_NCR_DRIVER_NAME,&t;ncr53c8xx_detect,&t;&bslash;&n;&t;&t;&t;ncr53c8xx_release,&t;NULL,&t;NULL,&t;&t;&bslash;&n;&t;&t;&t;ncr53c8xx_queue_command,ncr53c8xx_abort,&t;&bslash;&n;&t;&t;&t;ncr53c8xx_reset, NULL,&t;scsicam_bios_param,&t;&bslash;&n;&t;&t;&t;SCSI_NCR_CAN_QUEUE,&t;7,&t;&t;&t;&bslash;&n;&t;&t;&t;SCSI_NCR_SG_TABLESIZE,&t;SCSI_NCR_CMD_PER_LUN,&t;&bslash;&n;&t;&t;&t;0,&t;0,&t;DISABLE_CLUSTERING} 
 macro_line|#endif /* LINUX_VERSION_CODE */
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
@@ -470,44 +454,6 @@ mdefine_line|#define SCSI_NCR_DRIVER_SETUP&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t
 multiline_comment|/*&n;**&t;Boot fail safe setup.&n;**&t;Override initial setup from boot command line:&n;**&t;ncr53c8xx=safe:y&n;*/
 DECL|macro|SCSI_NCR_DRIVER_SAFE_SETUP
 mdefine_line|#define SCSI_NCR_DRIVER_SAFE_SETUP&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;2,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0x00,&t;&t;&t;&t;&t;&bslash;&n;&t;255,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;10,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;1,&t;&t;&t;&t;&t;&bslash;&n;&t;1&t;&t;&t;&t;&t;&bslash;&n;}
-multiline_comment|/*&n;**&t;Define the table of target capabilities by host and target&n;**&n;**&t;If you have problems with a scsi device, note the host unit and the&n;**&t;corresponding target number.&n;**&n;**&t;Edit the corresponding entry of the table below and try successively:&n;**&t;&t;NQ7_Questionnable&n;**&t;&t;NQ7_IdeLike&n;**&n;**&t;This bitmap is anded with the byte 7 of inquiry data on completion of&n;**&t;INQUIRY command.&n;**&t;The driver never see the zeroed bits and will ignore the corresponding&n;**&t;capabilities of the target.&n;*/
-DECL|macro|INQ7_SftRe
-mdefine_line|#define INQ7_SftRe&t;1
-DECL|macro|INQ7_CmdQueue
-mdefine_line|#define INQ7_CmdQueue&t;(1&lt;&lt;1)&t;&t;/* Tagged Command */
-DECL|macro|INQ7_Reserved
-mdefine_line|#define INQ7_Reserved&t;(1&lt;&lt;2)
-DECL|macro|INQ7_Linked
-mdefine_line|#define INQ7_Linked&t;(1&lt;&lt;3)
-DECL|macro|INQ7_Sync
-mdefine_line|#define INQ7_Sync&t;(1&lt;&lt;4)&t;&t;/* Synchronous Negotiation */
-DECL|macro|INQ7_WBus16
-mdefine_line|#define INQ7_WBus16&t;(1&lt;&lt;5)
-DECL|macro|INQ7_WBus32
-mdefine_line|#define INQ7_WBus32&t;(1&lt;&lt;6)
-DECL|macro|INQ7_RelAdr
-mdefine_line|#define INQ7_RelAdr&t;(1&lt;&lt;7)
-DECL|macro|INQ7_IdeLike
-mdefine_line|#define INQ7_IdeLike&t;&t;0
-DECL|macro|INQ7_Scsi1Like
-mdefine_line|#define INQ7_Scsi1Like&t;&t;INQ7_IdeLike
-DECL|macro|INQ7_Perfect
-mdefine_line|#define INQ7_Perfect&t;&t;0xff
-DECL|macro|INQ7_Questionnable
-mdefine_line|#define INQ7_Questionnable&t;~(INQ7_CmdQueue|INQ7_Sync)
-DECL|macro|INQ7_VeryQuestionnable
-mdefine_line|#define INQ7_VeryQuestionnable&t;&bslash;&n;&t;&t;&t;~(INQ7_CmdQueue|INQ7_Sync|INQ7_WBus16|INQ7_WBus32)
-DECL|macro|INQ7_Default
-mdefine_line|#define INQ7_Default&t;&t;INQ7_Perfect
-DECL|macro|NCR53C8XX_TARGET_CAPABILITIES
-mdefine_line|#define NCR53C8XX_TARGET_CAPABILITIES&t;&t;&t;&t;&t;&bslash;&n;/* Host 0 */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* Target  0 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  1 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  2 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  3 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  4 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  5 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  6 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  7 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  8 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  9 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 10 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 11 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 12 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 13 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 14 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 15 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;},&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* Host 1 */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* Target  0 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  1 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  2 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  3 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  4 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  5 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  6 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  7 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  8 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target  9 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 10 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 11 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 12 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 13 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 14 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;/* Target 15 */&t;&t;INQ7_Default,&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
-multiline_comment|/*&n;**&t;Replace the proc_dir_entry of the standard ncr driver.&n;*/
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
-macro_line|#if&t;defined(CONFIG_SCSI_NCR53C7xx) || !defined(CONFIG_SCSI_NCR53C8XX)
-DECL|macro|PROC_SCSI_NCR53C8XX
-mdefine_line|#define PROC_SCSI_NCR53C8XX&t;PROC_SCSI_NCR53C7xx
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/**************** ORIGINAL CONTENT of ncrreg.h from FreeBSD ******************/
 multiline_comment|/*-----------------------------------------------------------------&n;**&n;**&t;The ncr 53c810 register structure.&n;**&n;**-----------------------------------------------------------------&n;*/
 DECL|struct|ncr_reg
@@ -812,10 +758,25 @@ suffix:semicolon
 multiline_comment|/* --&gt; Script pointer save/opcode#2 */
 DECL|member|nc_scratcha
 multiline_comment|/*34*/
-id|u_int32
+id|u_char
 id|nc_scratcha
 suffix:semicolon
-multiline_comment|/* ??? Temporary register a         */
+multiline_comment|/* Temporary register a            */
+DECL|member|nc_scratcha1
+multiline_comment|/*35*/
+id|u_char
+id|nc_scratcha1
+suffix:semicolon
+DECL|member|nc_scratcha2
+multiline_comment|/*36*/
+id|u_char
+id|nc_scratcha2
+suffix:semicolon
+DECL|member|nc_scratcha3
+multiline_comment|/*37*/
+id|u_char
+id|nc_scratcha3
+suffix:semicolon
 DECL|member|nc_dmode
 multiline_comment|/*38*/
 id|u_char
@@ -1188,7 +1149,7 @@ DECL|macro|SCR_ADD
 mdefine_line|#define      SCR_ADD    0x06000000
 DECL|macro|SCR_ADDC
 mdefine_line|#define      SCR_ADDC   0x07000000
-multiline_comment|/*-----------------------------------------------------------&n;**&n;**&t;FROM_REG (reg)&t;&t;  reg  = SFBR&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**&t;TO_REG&t; (reg)&t;&t;  SFBR = reg&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**&t;LOAD_REG (reg, data)&t;  reg  = &lt;data&gt;&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**&t;LOAD_SFBR(data) &t;  SFBR = &lt;data&gt;&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**-----------------------------------------------------------&n;*/
+multiline_comment|/*-----------------------------------------------------------&n;**&n;**&t;FROM_REG (reg)&t;&t;  SFBR = reg&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**&t;TO_REG&t; (reg)&t;&t;  reg  = SFBR&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**&t;LOAD_REG (reg, data)&t;  reg  = &lt;data&gt;&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**&t;LOAD_SFBR(data) &t;  SFBR = &lt;data&gt;&n;**&t;&lt;&lt; 0 &gt;&gt;&n;**&n;**-----------------------------------------------------------&n;*/
 DECL|macro|SCR_FROM_REG
 mdefine_line|#define&t;SCR_FROM_REG(reg) &bslash;&n;&t;SCR_REG_SFBR(reg,SCR_OR,0)
 DECL|macro|SCR_TO_REG
@@ -1197,9 +1158,34 @@ DECL|macro|SCR_LOAD_REG
 mdefine_line|#define&t;SCR_LOAD_REG(reg,data) &bslash;&n;&t;SCR_REG_REG(reg,SCR_LOAD,data)
 DECL|macro|SCR_LOAD_SFBR
 mdefine_line|#define SCR_LOAD_SFBR(data) &bslash;&n;        (SCR_REG_SFBR (gpreg, SCR_LOAD, data))
+multiline_comment|/*-----------------------------------------------------------&n;**&n;**&t;LOAD  from memory   to register.&n;**&t;STORE from register to memory.&n;**&n;**-----------------------------------------------------------&n;**&n;**&t;LOAD_ABS (LEN)&n;**&t;&lt;&lt;start address&gt;&gt;&n;**&n;**&t;LOAD_REL (LEN)        (DSA relative)&n;**&t;&lt;&lt;dsa_offset&gt;&gt;&n;**&n;**-----------------------------------------------------------&n;*/
+DECL|macro|SCR_NO_FLUSH2
+mdefine_line|#define SCR_NO_FLUSH2&t;0x02000000
+DECL|macro|SCR_DSA_REL2
+mdefine_line|#define SCR_DSA_REL2&t;0x10000000
+DECL|macro|SCR_LOAD_R
+mdefine_line|#define SCR_LOAD_R(reg, how, n) &bslash;&n;        (0xe1000000 | how | (SCR_REG_OFS(REG(reg))) | (n))
+DECL|macro|SCR_STORE_R
+mdefine_line|#define SCR_STORE_R(reg, how, n) &bslash;&n;        (0xe0000000 | how | (SCR_REG_OFS(REG(reg))) | (n))
+DECL|macro|SCR_LOAD_ABS
+mdefine_line|#define SCR_LOAD_ABS(reg, n)&t;SCR_LOAD_R(reg, SCR_NO_FLUSH2, n)
+DECL|macro|SCR_LOAD_REL
+mdefine_line|#define SCR_LOAD_REL(reg, n)&t;SCR_LOAD_R(reg, SCR_NO_FLUSH2|SCR_DSA_REL2, n)
+DECL|macro|SCR_LOAD_ABS_F
+mdefine_line|#define SCR_LOAD_ABS_F(reg, n)&t;SCR_LOAD_R(reg, 0, n)
+DECL|macro|SCR_LOAD_REL_F
+mdefine_line|#define SCR_LOAD_REL_F(reg, n)&t;SCR_LOAD_R(reg, SCR_DSA_REL2, n)
+DECL|macro|SCR_STORE_ABS
+mdefine_line|#define SCR_STORE_ABS(reg, n)&t;SCR_STORE_R(reg, SCR_NO_FLUSH2, n)
+DECL|macro|SCR_STORE_REL
+mdefine_line|#define SCR_STORE_REL(reg, n)&t;SCR_STORE_R(reg, SCR_NO_FLUSH2|SCR_DSA_REL2,n)
+DECL|macro|SCR_STORE_ABS_F
+mdefine_line|#define SCR_STORE_ABS_F(reg, n)&t;SCR_STORE_R(reg, 0, n)
+DECL|macro|SCR_STORE_REL_F
+mdefine_line|#define SCR_STORE_REL_F(reg, n)&t;SCR_STORE_R(reg, SCR_DSA_REL2, n)
 multiline_comment|/*-----------------------------------------------------------&n;**&n;**&t;Waiting for Disconnect or Reselect&n;**&n;**-----------------------------------------------------------&n;**&n;**&t;JUMP            [ | IFTRUE/IFFALSE ( ... ) ]&n;**&t;&lt;&lt;address&gt;&gt;&n;**&n;**&t;JUMPR           [ | IFTRUE/IFFALSE ( ... ) ]&n;**&t;&lt;&lt;distance&gt;&gt;&n;**&n;**&t;CALL            [ | IFTRUE/IFFALSE ( ... ) ]&n;**&t;&lt;&lt;address&gt;&gt;&n;**&n;**&t;CALLR           [ | IFTRUE/IFFALSE ( ... ) ]&n;**&t;&lt;&lt;distance&gt;&gt;&n;**&n;**&t;RETURN          [ | IFTRUE/IFFALSE ( ... ) ]&n;**&t;&lt;&lt;dummy&gt;&gt;&n;**&n;**&t;INT             [ | IFTRUE/IFFALSE ( ... ) ]&n;**&t;&lt;&lt;ident&gt;&gt;&n;**&n;**&t;INT_FLY         [ | IFTRUE/IFFALSE ( ... ) ]&n;**&t;&lt;&lt;ident&gt;&gt;&n;**&n;**&t;Conditions:&n;**&t;     WHEN (phase)&n;**&t;     IF   (phase)&n;**&t;     CARRY&n;**&t;     DATA (data, mask)&n;**&n;**-----------------------------------------------------------&n;*/
 DECL|macro|SCR_NO_OP
-mdefine_line|#define SCR_NO_OP        0x80000000
+mdefine_line|#define SCR_NO_OP       0x80000000
 DECL|macro|SCR_JUMP
 mdefine_line|#define SCR_JUMP        0x80080000
 DECL|macro|SCR_JUMPR

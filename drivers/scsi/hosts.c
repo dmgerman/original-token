@@ -528,9 +528,6 @@ c_cond
 id|max_scsi_hosts
 op_eq
 id|next_scsi_host
-op_logical_and
-op_logical_neg
-id|scsi_loadable_module_flag
 )paren
 id|max_scsi_hosts
 op_decrement

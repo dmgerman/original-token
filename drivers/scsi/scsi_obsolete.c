@@ -301,10 +301,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|IN_RESET2
+suffix:colon
+r_case
 (paren
 id|IN_ABORT
-op_or
-id|IN_RESET
 op_or
 id|IN_RESET2
 )paren

@@ -1626,11 +1626,11 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;CPU&bslash;t&bslash;t&bslash;t: Alpha&bslash;n&quot;
-l_string|&quot;CPU model&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;CPU variation&bslash;t&bslash;t: %ld&bslash;n&quot;
-l_string|&quot;CPU revision&bslash;t&bslash;t: %ld&bslash;n&quot;
-l_string|&quot;CPU serial number&bslash;t: %s&bslash;n&quot;
+l_string|&quot;cpu&bslash;t&bslash;t&bslash;t: Alpha&bslash;n&quot;
+l_string|&quot;cpu model&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;cpu variation&bslash;t&bslash;t: %ld&bslash;n&quot;
+l_string|&quot;cpu revision&bslash;t&bslash;t: %ld&bslash;n&quot;
+l_string|&quot;cpu serial number&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system type&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system variation&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system revision&bslash;t&bslash;t: %ld&bslash;n&quot;
