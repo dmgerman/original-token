@@ -100,9 +100,59 @@ DECL|macro|HID0_BTCD
 mdefine_line|#define HID0_BTCD&t;(1&lt;&lt;1)&t;&t;/* Branch target cache disable */
 multiline_comment|/* fpscr settings */
 DECL|macro|FPSCR_FX
-mdefine_line|#define FPSCR_FX        (1&lt;&lt;31)
+mdefine_line|#define FPSCR_FX&t;0x80000000&t;/* FPU exception summary */
 DECL|macro|FPSCR_FEX
-mdefine_line|#define FPSCR_FEX       (1&lt;&lt;30)
+mdefine_line|#define FPSCR_FEX&t;0x40000000&t;/* FPU enabled exception summary */
+DECL|macro|FPSCR_VX
+mdefine_line|#define FPSCR_VX&t;0x20000000&t;/* Invalid operation summary */
+DECL|macro|FPSCR_OX
+mdefine_line|#define FPSCR_OX&t;0x10000000&t;/* Overflow exception summary */
+DECL|macro|FPSCR_UX
+mdefine_line|#define FPSCR_UX&t;0x08000000&t;/* Underflow exception summary */
+DECL|macro|FPSCR_ZX
+mdefine_line|#define FPSCR_ZX&t;0x04000000&t;/* Zero-devide exception summary */
+DECL|macro|FPSCR_XX
+mdefine_line|#define FPSCR_XX&t;0x02000000&t;/* Inexact exception summary */
+DECL|macro|FPSCR_VXSNAN
+mdefine_line|#define FPSCR_VXSNAN&t;0x01000000&t;/* Invalid op for SNaN */
+DECL|macro|FPSCR_VXISI
+mdefine_line|#define FPSCR_VXISI&t;0x00800000&t;/* Invalid op for Inv - Inv */
+DECL|macro|FPSCR_VXIDI
+mdefine_line|#define FPSCR_VXIDI&t;0x00400000&t;/* Invalid op for Inv / Inv */
+DECL|macro|FPSCR_VXZDZ
+mdefine_line|#define FPSCR_VXZDZ&t;0x00200000&t;/* Invalid op for Zero / Zero */
+DECL|macro|FPSCR_VXIMZ
+mdefine_line|#define FPSCR_VXIMZ&t;0x00100000&t;/* Invalid op for Inv * Zero */
+DECL|macro|FPSCR_VXVC
+mdefine_line|#define FPSCR_VXVC&t;0x00080000&t;/* Invalid op for Compare */
+DECL|macro|FPSCR_FR
+mdefine_line|#define FPSCR_FR&t;0x00040000&t;/* Fraction rounded */
+DECL|macro|FPSCR_FI
+mdefine_line|#define FPSCR_FI&t;0x00020000&t;/* Fraction inexact */
+DECL|macro|FPSCR_FPRF
+mdefine_line|#define FPSCR_FPRF&t;0x0001f000&t;/* FPU Result Flags */
+DECL|macro|FPSCR_FPCC
+mdefine_line|#define FPSCR_FPCC&t;0x0000f000&t;/* FPU Condition Codes */
+DECL|macro|FPSCR_VXSOFT
+mdefine_line|#define FPSCR_VXSOFT&t;0x00000400&t;/* Invalid op for software request */
+DECL|macro|FPSCR_VXSQRT
+mdefine_line|#define FPSCR_VXSQRT&t;0x00000200&t;/* Invalid op for square root */
+DECL|macro|FPSCR_VXCVI
+mdefine_line|#define FPSCR_VXCVI&t;0x00000100&t;/* Invalid op for integer convert */
+DECL|macro|FPSCR_VE
+mdefine_line|#define FPSCR_VE&t;0x00000080&t;/* Invalid op exception enable */
+DECL|macro|FPSCR_OE
+mdefine_line|#define FPSCR_OE&t;0x00000040&t;/* IEEE overflow exception enable */
+DECL|macro|FPSCR_UE
+mdefine_line|#define FPSCR_UE&t;0x00000020&t;/* IEEE underflow exception enable */
+DECL|macro|FPSCR_ZE
+mdefine_line|#define FPSCR_ZE&t;0x00000010&t;/* IEEE zero divide exception enable */
+DECL|macro|FPSCR_XE
+mdefine_line|#define FPSCR_XE&t;0x00000008&t;/* FP inexact exception enable */
+DECL|macro|FPSCR_NI
+mdefine_line|#define FPSCR_NI&t;0x00000004&t;/* FPU non IEEE-Mode */
+DECL|macro|FPSCR_RN
+mdefine_line|#define FPSCR_RN&t;0x00000003&t;/* FPU rounding control */
 DECL|macro|_MACH_prep
 mdefine_line|#define _MACH_prep     1
 DECL|macro|_MACH_Pmac
@@ -121,6 +171,8 @@ DECL|macro|_MACH_bseip
 mdefine_line|#define _MACH_bseip   128 /* Bright Star Engineering ip-Engine */
 DECL|macro|_MACH_yk
 mdefine_line|#define _MACH_yk      256 /* Motorola Yellowknife */
+DECL|macro|_MACH_gemini
+mdefine_line|#define _MACH_gemini  512 /* Synergy Microsystems gemini board */
 multiline_comment|/* see residual.h for these */
 DECL|macro|_PREP_Motorola
 mdefine_line|#define _PREP_Motorola 0x01  /* motorola prep */
@@ -252,6 +304,8 @@ DECL|macro|EAR
 mdefine_line|#define EAR&t;282&t;/* External Address Register */
 DECL|macro|L2CR
 mdefine_line|#define L2CR&t;1017    /* PPC 750 L2 control register */
+DECL|macro|IMMR
+mdefine_line|#define IMMR&t;638&t;/* PPC 860/821 Internal Memory Map Register */
 DECL|macro|THRM1
 mdefine_line|#define THRM1&t;1020
 DECL|macro|THRM2
@@ -449,13 +503,6 @@ r_int
 id|ksp
 suffix:semicolon
 multiline_comment|/* Kernel stack pointer */
-DECL|member|pg_tables
-r_int
-r_int
-op_star
-id|pg_tables
-suffix:semicolon
-multiline_comment|/* Base of page-table tree */
 DECL|member|wchan
 r_int
 r_int
@@ -474,6 +521,12 @@ id|mm_segment_t
 id|fs
 suffix:semicolon
 multiline_comment|/* for get_fs() validation */
+DECL|member|pgdir
+r_void
+op_star
+id|pgdir
+suffix:semicolon
+multiline_comment|/* root of page-table tree */
 DECL|member|last_syscall
 r_int
 r_int
@@ -503,8 +556,8 @@ multiline_comment|/* Floating point status */
 suffix:semicolon
 DECL|macro|INIT_SP
 mdefine_line|#define INIT_SP&t;&t;(sizeof(init_stack) + (unsigned long) &amp;init_stack)
-DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;INIT_SP, /* ksp */ &bslash;&n;&t;(unsigned long *) swapper_pg_dir, /* pg_tables */ &bslash;&n;&t;0, /* wchan */ &bslash;&n;&t;(struct pt_regs *)INIT_SP - 1, /* regs */ &bslash;&n;&t;KERNEL_DS, /*fs*/ &bslash;&n;&t;0, /* last_syscall */ &bslash;&n;&t;{0}, 0, 0 &bslash;&n;}
+DECL|macro|INIT_THREAD
+mdefine_line|#define INIT_THREAD  { &bslash;&n;&t;INIT_SP, /* ksp */ &bslash;&n;&t;0, /* wchan */ &bslash;&n;&t;(struct pt_regs *)INIT_SP - 1, /* regs */ &bslash;&n;&t;KERNEL_DS, /*fs*/ &bslash;&n;&t;swapper_pg_dir, /* pgdir */ &bslash;&n;&t;0, /* last_syscall */ &bslash;&n;&t;{0}, 0, 0 &bslash;&n;}
 multiline_comment|/*&n; * Note: the vm_start and vm_end fields here should *not*&n; * be in kernel space.  (Could vm_end == vm_start perhaps?)&n; */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x1000, NULL, &bslash;&n;&t;&t;    PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, &bslash;&n;&t;&t;    1, NULL, NULL }
@@ -535,12 +588,14 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|macro|copy_segments
-mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+mdefine_line|#define copy_segments(tsk, mm)&t;&t;do { } while (0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|forget_segments
 mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
+DECL|macro|THREAD_SIZE
+mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))
 DECL|macro|free_task_struct

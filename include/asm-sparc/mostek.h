@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mostek.h,v 1.10 1998/08/18 15:03:11 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; * Added intersil code 05/25/98 Chris Davis (cdavis@cois.on.ca)&n; */
+multiline_comment|/* $Id: mostek.h,v 1.11 1999/08/30 10:14:32 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; * Added intersil code 05/25/98 Chris Davis (cdavis@cois.on.ca)&n; */
 macro_line|#ifndef _SPARC_MOSTEK_H
 DECL|macro|_SPARC_MOSTEK_H
 mdefine_line|#define _SPARC_MOSTEK_H
@@ -6,6 +6,30 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 multiline_comment|/*       M48T02 Register Map (adapted from Sun NVRAM/Hostid FAQ)&n; *&n; *                             Data&n; * Address                                                 Function&n; *        Bit 7 Bit 6 Bit 5 Bit 4Bit 3 Bit 2 Bit 1 Bit 0&n; *   7ff  -     -     -     -    -     -     -     -       Year 00-99&n; *   7fe  0     0     0     -    -     -     -     -      Month 01-12&n; *   7fd  0     0     -     -    -     -     -     -       Date 01-31&n; *   7fc  0     FT    0     0    0     -     -     -        Day 01-07&n; *   7fb  KS    0     -     -    -     -     -     -      Hours 00-23&n; *   7fa  0     -     -     -    -     -     -     -    Minutes 00-59&n; *   7f9  ST    -     -     -    -     -     -     -    Seconds 00-59&n; *   7f8  W     R     S     -    -     -     -     -    Control&n; *&n; *   * ST is STOP BIT&n; *   * W is WRITE BIT&n; *   * R is READ BIT&n; *   * S is SIGN BIT&n; *   * FT is FREQ TEST BIT&n; *   * KS is KICK START BIT&n; */
 multiline_comment|/* The Mostek 48t02 real time clock and NVRAM chip. The registers&n; * other than the control register are in binary coded decimal. Some&n; * control bits also live outside the control register.&n; */
+DECL|macro|mostek_read
+mdefine_line|#define mostek_read(_addr)&t;&t;(*((volatile u8 *)(_addr)))
+DECL|macro|mostek_write
+mdefine_line|#define mostek_write(_addr,_val)&t;((*((volatile u8 *)(_addr))) = (_val))
+DECL|macro|MOSTEK_EEPROM
+mdefine_line|#define MOSTEK_EEPROM&t;&t;0x0000UL
+DECL|macro|MOSTEK_IDPROM
+mdefine_line|#define MOSTEK_IDPROM&t;&t;0x07d8UL
+DECL|macro|MOSTEK_CREG
+mdefine_line|#define MOSTEK_CREG&t;&t;0x07f8UL
+DECL|macro|MOSTEK_SEC
+mdefine_line|#define MOSTEK_SEC&t;&t;0x07f9UL
+DECL|macro|MOSTEK_MIN
+mdefine_line|#define MOSTEK_MIN&t;&t;0x07faUL
+DECL|macro|MOSTEK_HOUR
+mdefine_line|#define MOSTEK_HOUR&t;&t;0x07fbUL
+DECL|macro|MOSTEK_DOW
+mdefine_line|#define MOSTEK_DOW&t;&t;0x07fcUL
+DECL|macro|MOSTEK_DOM
+mdefine_line|#define MOSTEK_DOM&t;&t;0x07fdUL
+DECL|macro|MOSTEK_MONTH
+mdefine_line|#define MOSTEK_MONTH&t;&t;0x07feUL
+DECL|macro|MOSTEK_YEAR
+mdefine_line|#define MOSTEK_YEAR&t;&t;0x07ffUL
 DECL|struct|mostek48t02
 r_struct
 id|mostek48t02
@@ -84,9 +108,8 @@ multiline_comment|/* Year (0-99) */
 )brace
 suffix:semicolon
 r_extern
-r_struct
-id|mostek48t02
-op_star
+r_int
+r_int
 id|mstk48t02_regs
 suffix:semicolon
 multiline_comment|/* Control register values. */

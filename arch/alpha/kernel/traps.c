@@ -11,7 +11,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/sysinfo.h&gt;
 macro_line|#include &quot;proto.h&quot;
-r_static
 r_void
 DECL|function|dik_show_regs
 id|dik_show_regs

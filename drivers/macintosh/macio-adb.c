@@ -228,7 +228,6 @@ comma
 id|macio_adb_poll
 )brace
 suffix:semicolon
-id|__openfirmware
 DECL|function|macio_adb_init
 r_void
 id|macio_adb_init

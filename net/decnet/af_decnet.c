@@ -2165,14 +2165,6 @@ op_ne
 id|DNPROTO_NSP
 )paren
 op_logical_and
-macro_line|#ifdef CONFIG_DECNET_MOP
-(paren
-id|protocol
-op_ne
-id|DNPROTO_MOP
-)paren
-op_logical_and
-macro_line|#endif /* CONFIG_DECNET_MOP */
 (paren
 id|protocol
 op_ne
@@ -8550,7 +8542,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;NET4: DECnet for Linux: V.2.3.13s (C) 1995-1999 Linux DECnet Project Team&bslash;n&quot;
+l_string|&quot;NET4: DECnet for Linux: V.2.3.15s (C) 1995-1999 Linux DECnet Project Team&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

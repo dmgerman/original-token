@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.108 1999/07/30 09:35:03 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.110 1999/08/31 06:54:23 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1810,6 +1810,10 @@ id|KERNBASE
 suffix:semicolon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+r_break
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -2152,7 +2156,7 @@ r_int
 )paren
 id|NO_CONTEXT
 suffix:semicolon
-id|init_task.tss.kregs
+id|init_task.thread.kregs
 op_assign
 op_amp
 id|fake_swapper_regs

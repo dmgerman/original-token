@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: process.c,v 1.87 1999/07/03 08:57:07 davem Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * $Id: process.c,v 1.95 1999/08/31 06:54:07 davem Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -93,9 +93,20 @@ c_func
 id|init_mm
 )paren
 suffix:semicolon
-DECL|variable|init_task_union
+multiline_comment|/* this is 16-byte aligned because it has a stack in it */
 r_union
 id|task_union
+id|__attribute
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|16
+)paren
+)paren
+)paren
 id|init_task_union
 op_assign
 (brace
@@ -216,7 +227,7 @@ c_func
 id|fpregs
 comma
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 l_int|0
 )braket
@@ -244,10 +255,10 @@ macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren
-id|current-&gt;tss.regs
+id|current-&gt;thread.regs
 op_logical_and
 (paren
-id|current-&gt;tss.regs-&gt;msr
+id|current-&gt;thread.regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
@@ -313,13 +324,13 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#if 0&t;
-multiline_comment|/* check tss magic */
+multiline_comment|/* check thread magic */
 r_if
 c_cond
 (paren
-id|tsk-&gt;tss.magic
+id|tsk-&gt;thread.magic
 op_ne
-id|TSS_MAGIC
+id|THREAD_MAGIC
 )paren
 (brace
 id|ret
@@ -329,9 +340,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;tss.magic bad: %08x&bslash;n&quot;
+l_string|&quot;thread.magic bad: %08x&bslash;n&quot;
 comma
-id|tsk-&gt;tss.magic
+id|tsk-&gt;thread.magic
 )paren
 suffix:semicolon
 )brace
@@ -355,13 +366,13 @@ r_if
 c_cond
 (paren
 (paren
-id|tsk-&gt;tss.ksp
+id|tsk-&gt;thread.ksp
 OG
 id|stack_top
 )paren
 op_logical_or
 (paren
-id|tsk-&gt;tss.ksp
+id|tsk-&gt;thread.ksp
 OL
 id|tsk_top
 )paren
@@ -379,7 +390,7 @@ id|tsk-&gt;pid
 comma
 id|tsk_top
 comma
-id|tsk-&gt;tss.ksp
+id|tsk-&gt;thread.ksp
 comma
 id|stack_top
 )paren
@@ -580,15 +591,21 @@ id|last
 r_struct
 id|thread_struct
 op_star
-id|new_tss
+id|new_thread
 comma
 op_star
-id|old_tss
+id|old_thread
 suffix:semicolon
 r_int
 id|s
-op_assign
-id|_disable_interrupts
+suffix:semicolon
+id|__save_flags
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+id|__cli
 c_func
 (paren
 )paren
@@ -627,7 +644,7 @@ id|pid
 comma
 r_new
 op_member_access_from_pointer
-id|tss.regs-&gt;nip
+id|thread.regs-&gt;nip
 comma
 r_new
 op_member_access_from_pointer
@@ -646,10 +663,10 @@ multiline_comment|/* avoid complexity of lazy save/restore of fpu&n;&t; * by jus
 r_if
 c_cond
 (paren
-id|prev-&gt;tss.regs
+id|prev-&gt;thread.regs
 op_logical_and
 (paren
-id|prev-&gt;tss.regs-&gt;msr
+id|prev-&gt;thread.regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
@@ -675,17 +692,17 @@ op_assign
 r_new
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
-id|new_tss
+id|new_thread
 op_assign
 op_amp
 r_new
 op_member_access_from_pointer
-id|tss
+id|thread
 suffix:semicolon
-id|old_tss
+id|old_thread
 op_assign
 op_amp
-id|current-&gt;tss
+id|current-&gt;thread
 suffix:semicolon
 op_star
 id|last
@@ -693,16 +710,12 @@ op_assign
 id|_switch
 c_func
 (paren
-id|old_tss
+id|old_thread
 comma
-id|new_tss
-comma
-r_new
-op_member_access_from_pointer
-id|mm-&gt;context
+id|new_thread
 )paren
 suffix:semicolon
-id|_enable_interrupts
+id|__restore_flags
 c_func
 (paren
 id|s
@@ -804,15 +817,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;TASK = %p[%d] &squot;%s&squot; mm-&gt;pgd %p &quot;
+l_string|&quot;TASK = %p[%d] &squot;%s&squot; &quot;
 comma
 id|current
 comma
 id|current-&gt;pid
 comma
 id|current-&gt;comm
-comma
-id|current-&gt;mm-&gt;pgd
 )paren
 suffix:semicolon
 id|printk
@@ -820,7 +831,7 @@ c_func
 (paren
 l_string|&quot;Last syscall: %ld &quot;
 comma
-id|current-&gt;tss.last_syscall
+id|current-&gt;thread.last_syscall
 )paren
 suffix:semicolon
 id|printk
@@ -1111,11 +1122,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Result from fork() */
-id|p-&gt;tss.regs
+id|p-&gt;thread.regs
 op_assign
 id|childregs
 suffix:semicolon
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 op_assign
 (paren
 r_int
@@ -1125,7 +1136,7 @@ id|childregs
 op_minus
 id|STACK_FRAME_OVERHEAD
 suffix:semicolon
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 op_sub_assign
 r_sizeof
 (paren
@@ -1143,7 +1154,7 @@ id|pt_regs
 op_star
 )paren
 (paren
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 op_plus
 id|STACK_FRAME_OVERHEAD
 )paren
@@ -1235,7 +1246,7 @@ op_assign
 id|usp
 suffix:semicolon
 )brace
-id|p-&gt;tss.last_syscall
+id|p-&gt;thread.last_syscall
 op_assign
 op_minus
 l_int|1
@@ -1258,29 +1269,25 @@ id|memcpy
 c_func
 (paren
 op_amp
-id|p-&gt;tss.fpr
+id|p-&gt;thread.fpr
 comma
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 comma
 r_sizeof
 (paren
-id|p-&gt;tss.fpr
+id|p-&gt;thread.fpr
 )paren
 )paren
 suffix:semicolon
-id|p-&gt;tss.fpscr
+id|p-&gt;thread.fpscr
 op_assign
-id|current-&gt;tss.fpscr
+id|current-&gt;thread.fpscr
 suffix:semicolon
 id|childregs-&gt;msr
 op_and_assign
 op_complement
 id|MSR_FP
-suffix:semicolon
-id|p-&gt;processor
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef __SMP__
 id|p-&gt;last_processor
@@ -1577,7 +1584,7 @@ id|last_task_used_math
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;tss.fpscr
+id|current-&gt;thread.fpscr
 op_assign
 l_int|0
 suffix:semicolon

@@ -17,7 +17,7 @@ macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -4107,9 +4107,13 @@ c_func
 r_int
 id|ie
 suffix:semicolon
+id|__save_flags
+c_func
+(paren
 id|ie
-op_assign
-id|_disable_interrupts
+)paren
+suffix:semicolon
+id|__cli
 c_func
 (paren
 )paren
@@ -4138,7 +4142,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|_enable_interrupts
+id|__restore_flags
 c_func
 (paren
 id|ie
@@ -5506,7 +5510,7 @@ r_struct
 id|adb_request
 id|req
 suffix:semicolon
-id|_disable_interrupts
+id|__cli
 c_func
 (paren
 )paren
@@ -5594,7 +5598,7 @@ r_struct
 id|adb_request
 id|req
 suffix:semicolon
-id|_disable_interrupts
+id|__cli
 c_func
 (paren
 )paren
@@ -5998,10 +6002,12 @@ id|j
 op_star
 l_int|4
 comma
-id|pd-&gt;base_address
+id|pd-&gt;resource
 (braket
 id|j
 )braket
+dot
+id|start
 )paren
 suffix:semicolon
 id|pci_write_config_dword
@@ -6011,7 +6017,12 @@ id|pd
 comma
 id|PCI_ROM_ADDRESS
 comma
-id|pd-&gt;rom_address
+id|pd-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 )paren
 suffix:semicolon
 id|pci_write_config_word

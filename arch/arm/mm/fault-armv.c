@@ -824,6 +824,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SYSCTL
 multiline_comment|/*&n; * This needs to be done after sysctl_init, otherwise sys/&n; * will be overwritten.&n; */
 DECL|function|alignment_init
 r_void
@@ -863,6 +864,14 @@ op_assign
 id|proc_alignment_read
 suffix:semicolon
 )brace
+DECL|variable|alignment_init
+id|__initcall
+c_func
+(paren
+id|alignment_init
+)paren
+suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 DECL|function|do_alignment_exception
@@ -1869,10 +1878,53 @@ c_func
 id|regs
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|addr
+op_eq
+id|regs-&gt;ARM_pc
+)paren
+(brace
+r_static
+r_int
+id|first
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|first
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * I want statistical information on this problem!&n;&t;&t;&t;&t; */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Buggy processor (%08X), &quot;
+l_string|&quot;trying to continue.&bslash;n&quot;
+l_string|&quot;Please send contents of /proc/cpuinfo &quot;
+l_string|&quot;and this message to linux@arm.linux.org.uk&quot;
+comma
+id|fsr
+)paren
+suffix:semicolon
+id|first
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+)brace
 id|error_code
 op_or_assign
 id|FAULT_CODE_USER
 suffix:semicolon
+)brace
 DECL|macro|DIE
 mdefine_line|#define DIE(signr,nam)&bslash;&n;&t;&t;force_sig(signr, current);&bslash;&n;&t;&t;die(nam, regs, fsr);&bslash;&n;&t;&t;do_exit(signr);&bslash;&n;&t;&t;break
 r_switch

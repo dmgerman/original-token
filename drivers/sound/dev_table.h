@@ -27,7 +27,7 @@ mdefine_line|#define SNDCARD_OPL3SA2                 42
 DECL|macro|SNDCARD_OPL3SA2_MPU
 mdefine_line|#define SNDCARD_OPL3SA2_MPU             43
 DECL|macro|SNDCARD_WAVEARTIST
-mdefine_line|#define SNDCARD_WAVEARTIST&t;&t;44
+mdefine_line|#define SNDCARD_WAVEARTIST              44&t;/* Rebel Waveartist */
 DECL|macro|SNDCARD_OPL3SA2_MSS
 mdefine_line|#define SNDCARD_OPL3SA2_MSS             45&t;/* Originally missed */
 DECL|macro|SNDCARD_AD1816

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.38 1999/08/02 08:39:50 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.39 1999/08/30 10:07:09 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1467,6 +1467,60 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#if 0
+r_extern
+r_void
+id|__show_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SHIT(%s:%d:cpu(%d)): PC[%016lx] ADDR[%016lx]&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|regs-&gt;tpc
+comma
+id|address
+)paren
+suffix:semicolon
+id|__show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|current-&gt;thread.sig_address
 op_assign
 id|address

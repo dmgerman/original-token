@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgfourteenfb.c,v 1.4 1999/01/26 10:55:03 jj Exp $&n; * cgfourteenfb.c: CGfourteen frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: cgfourteenfb.c,v 1.5 1999/08/10 15:56:02 davem Exp $&n; * cgfourteenfb.c: CGfourteen frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

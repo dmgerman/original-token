@@ -1,10 +1,11 @@
-multiline_comment|/*&n; * $Id: prom.c,v 1.62 1999/07/02 19:59:31 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.70 1999/08/25 21:26:08 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -1038,6 +1039,22 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|variable|__initdata
+r_int
+r_int
+id|smp_ibm_chrp_hack
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|__initdata
+r_int
+r_int
+id|smp_chrp_cpu_nr
+id|__initdata
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n; * We enter here early on, when the Open Firmware prom is still&n; * handling exceptions and the MMU hash table for us.&n; */
 id|__init
 r_void
@@ -1057,10 +1074,6 @@ id|pp
 (brace
 macro_line|#ifdef CONFIG_SMP&t;
 r_int
-id|cpu
-op_assign
-l_int|0
-comma
 id|i
 suffix:semicolon
 id|phandle
@@ -2618,12 +2631,20 @@ multiline_comment|/* XXX: hack - don&squot;t start cpu 0, this cpu -- Cort */
 r_if
 c_cond
 (paren
-id|cpu
+id|smp_chrp_cpu_nr
 op_increment
 op_eq
 l_int|0
 )paren
 r_continue
+suffix:semicolon
+id|RELOC
+c_func
+(paren
+id|smp_ibm_chrp_hack
+)paren
+op_assign
+l_int|1
 suffix:semicolon
 id|prom_print
 c_func
@@ -2686,7 +2707,7 @@ l_int|8
 op_lshift
 l_int|20
 comma
-id|cpu
+id|smp_chrp_cpu_nr
 op_minus
 l_int|1
 )paren
@@ -2739,7 +2760,7 @@ op_eq
 (paren
 id|ulong
 )paren
-id|cpu
+id|smp_chrp_cpu_nr
 op_minus
 l_int|1
 )paren
@@ -7291,12 +7312,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-DECL|variable|rtas_lock
-id|spinlock_t
-id|rtas_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 multiline_comment|/* this can be called after setup -- Cort */
 id|__openfirmware
 r_int
@@ -7480,18 +7495,15 @@ c_func
 id|list
 )paren
 suffix:semicolon
-id|s
-op_assign
-id|_disable_interrupts
+id|save_flags
 c_func
 (paren
+id|s
 )paren
 suffix:semicolon
-id|spin_lock
+id|cli
 c_func
 (paren
-op_amp
-id|rtas_lock
 )paren
 suffix:semicolon
 id|enter_rtas
@@ -7509,14 +7521,7 @@ id|u
 )paren
 )paren
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|rtas_lock
-)paren
-suffix:semicolon
-id|_enable_interrupts
+id|restore_flags
 c_func
 (paren
 id|s

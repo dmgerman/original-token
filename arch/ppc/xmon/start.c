@@ -46,7 +46,7 @@ r_static
 r_int
 id|console
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 DECL|function|buf_access
 r_void

@@ -380,11 +380,13 @@ id|MainSocket
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
 op_or
 id|TASK_EXCLUSIVE
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -5,6 +5,10 @@ mdefine_line|#define _LINUX_SERIALP_H
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
 DECL|struct|async_icount
 r_struct
@@ -84,6 +88,11 @@ DECL|member|line
 r_int
 id|line
 suffix:semicolon
+DECL|member|revision
+r_int
+id|revision
+suffix:semicolon
+multiline_comment|/* Chip revision (950) */
 DECL|member|xmit_fifo_size
 r_int
 id|xmit_fifo_size
@@ -95,6 +104,15 @@ suffix:semicolon
 DECL|member|count
 r_int
 id|count
+suffix:semicolon
+DECL|member|iomem_base
+id|u8
+op_star
+id|iomem_base
+suffix:semicolon
+DECL|member|iomem_reg_shift
+id|u16
+id|iomem_reg_shift
 suffix:semicolon
 DECL|member|close_delay
 r_int
@@ -211,6 +229,16 @@ r_int
 id|MCR
 suffix:semicolon
 multiline_comment|/* Modem control register */
+DECL|member|LCR
+r_int
+id|LCR
+suffix:semicolon
+multiline_comment|/* Line control register */
+DECL|member|ACR
+r_int
+id|ACR
+suffix:semicolon
+multiline_comment|/* 16950 Additional Control Reg. */
 DECL|member|event
 r_int
 r_int
@@ -258,11 +286,21 @@ DECL|member|xmit_cnt
 r_int
 id|xmit_cnt
 suffix:semicolon
+DECL|member|iomem_base
+id|u8
+op_star
+id|iomem_base
+suffix:semicolon
+DECL|member|iomem_reg_shift
+id|u16
+id|iomem_reg_shift
+suffix:semicolon
 DECL|member|tqueue
 r_struct
 id|tq_struct
 id|tqueue
 suffix:semicolon
+macro_line|#ifdef DECLARE_WAITQUEUE
 DECL|member|open_wait
 id|wait_queue_head_t
 id|open_wait
@@ -275,6 +313,26 @@ DECL|member|delta_msr_wait
 id|wait_queue_head_t
 id|delta_msr_wait
 suffix:semicolon
+macro_line|#else&t;
+DECL|member|open_wait
+r_struct
+id|wait_queue
+op_star
+id|open_wait
+suffix:semicolon
+DECL|member|close_wait
+r_struct
+id|wait_queue
+op_star
+id|close_wait
+suffix:semicolon
+DECL|member|delta_msr_wait
+r_struct
+id|wait_queue
+op_star
+id|delta_msr_wait
+suffix:semicolon
+macro_line|#endif&t;
 DECL|member|next_port
 r_struct
 id|async_struct
@@ -290,6 +348,8 @@ id|prev_port
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|CONFIGURED_SERIAL_PORT
+mdefine_line|#define CONFIGURED_SERIAL_PORT(info) ((info)-&gt;port || ((info)-&gt;iomem_base))
 DECL|macro|SERIAL_MAGIC
 mdefine_line|#define SERIAL_MAGIC 0x5301
 DECL|macro|SSTATE_MAGIC
@@ -359,5 +419,119 @@ id|port_monitor
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#if defined(__alpha__) &amp;&amp; !defined(CONFIG_PCI)
+multiline_comment|/*&n; * Digital did something really horribly wrong with the OUT1 and OUT2&n; * lines on at least some ALPHA&squot;s.  The failure mode is that if either&n; * is cleared, the machine locks up with endless interrupts.&n; */
+DECL|macro|ALPHA_KLUDGE_MCR
+mdefine_line|#define ALPHA_KLUDGE_MCR  (UART_MCR_OUT2 | UART_MCR_OUT1)
+macro_line|#else
+DECL|macro|ALPHA_KLUDGE_MCR
+mdefine_line|#define ALPHA_KLUDGE_MCR 0
+macro_line|#endif
+multiline_comment|/*&n; * Structures and definitions for PCI support&n; */
+DECL|struct|pci_board
+r_struct
+id|pci_board
+(brace
+DECL|member|vendor
+r_int
+r_int
+id|vendor
+suffix:semicolon
+DECL|member|device
+r_int
+r_int
+id|device
+suffix:semicolon
+DECL|member|subvendor
+r_int
+r_int
+id|subvendor
+suffix:semicolon
+DECL|member|subdevice
+r_int
+r_int
+id|subdevice
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|member|num_ports
+r_int
+id|num_ports
+suffix:semicolon
+DECL|member|base_baud
+r_int
+id|base_baud
+suffix:semicolon
+DECL|member|uart_offset
+r_int
+id|uart_offset
+suffix:semicolon
+DECL|member|reg_shift
+r_int
+id|reg_shift
+suffix:semicolon
+DECL|member|init_fn
+r_void
+(paren
+op_star
+id|init_fn
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_struct
+id|pci_board
+op_star
+id|board
+comma
+r_int
+id|enable
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|pci_board_inst
+r_struct
+id|pci_board_inst
+(brace
+DECL|member|board
+r_struct
+id|pci_board
+op_star
+id|board
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|pci_dev
+op_star
+id|dev
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#ifndef PCI_ANY_ID
+DECL|macro|PCI_ANY_ID
+mdefine_line|#define PCI_ANY_ID (~0)
+macro_line|#endif
+DECL|macro|SPCI_FL_BASE_MASK
+mdefine_line|#define SPCI_FL_BASE_MASK&t;0x0007
+DECL|macro|SPCI_FL_BASE0
+mdefine_line|#define SPCI_FL_BASE0&t;0x0000
+DECL|macro|SPCI_FL_BASE1
+mdefine_line|#define SPCI_FL_BASE1&t;0x0001
+DECL|macro|SPCI_FL_BASE2
+mdefine_line|#define SPCI_FL_BASE2&t;0x0002
+DECL|macro|SPCI_FL_BASE3
+mdefine_line|#define SPCI_FL_BASE3&t;0x0003
+DECL|macro|SPCI_FL_BASE4
+mdefine_line|#define SPCI_FL_BASE4&t;0x0004
+DECL|macro|SPCI_FL_IOMEM
+mdefine_line|#define SPCI_FL_IOMEM&t;&t;0x0008 /* Use I/O mapped memory */
+DECL|macro|SPCI_FL_BASE_TABLE
+mdefine_line|#define SPCI_FL_BASE_TABLE&t;0x0010 /* Use base address table for UART */
 macro_line|#endif /* _LINUX_SERIAL_H */
 eof

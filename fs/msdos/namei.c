@@ -1934,16 +1934,6 @@ id|msdos_name
 id|MSDOS_NAME
 )braket
 suffix:semicolon
-r_struct
-id|buffer_head
-op_star
-id|bh1
-suffix:semicolon
-r_struct
-id|msdos_dir_entry
-op_star
-id|de1
-suffix:semicolon
 r_int
 id|ino
 suffix:semicolon

@@ -1,0 +1,349 @@
+macro_line|#ifndef __ASM_SH_SYSTEM_H
+DECL|macro|__ASM_SH_SYSTEM_H
+mdefine_line|#define __ASM_SH_SYSTEM_H
+multiline_comment|/*&n; * Copyright (C) 1999  Niibe Yutaka&n; */
+multiline_comment|/*&n; *&t;switch_to() should switch tasks to task nr n, first&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|seg
+r_int
+r_int
+id|seg
+suffix:semicolon
+DECL|typedef|mm_segment_t
+)brace
+id|mm_segment_t
+suffix:semicolon
+macro_line|#ifdef __SMP__
+macro_line|#error no SMP SuperH
+macro_line|#else
+DECL|macro|prepare_to_switch
+mdefine_line|#define prepare_to_switch()&t;do { } while(0)
+DECL|macro|switch_to
+mdefine_line|#define switch_to(prev,next,last) do { &bslash;&n; register struct task_struct *__last; &bslash;&n; register unsigned long *__ts1 __asm__ (&quot;r1&quot;) = &amp;prev-&gt;thread.sp; &bslash;&n; register unsigned long *__ts2 __asm__ (&quot;r2&quot;) = &amp;prev-&gt;thread.pc; &bslash;&n; register unsigned long *__ts4 __asm__ (&quot;r4&quot;) = (unsigned long *)prev; &bslash;&n; register unsigned long *__ts5 __asm__ (&quot;r5&quot;) = (unsigned long *)next; &bslash;&n; register unsigned long *__ts6 __asm__ (&quot;r6&quot;) = &amp;next-&gt;thread.sp; &bslash;&n; register unsigned long __ts7 __asm__ (&quot;r7&quot;) = next-&gt;thread.pc; &bslash;&n; __asm__ __volatile__ (&quot;.balign 4&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;sts.l&t;pr,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r8,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r9,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r10,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r11,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r12,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r13,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r14,@-r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;r15,@r1&t;&t;! save SP&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r6,r15&t;&t;! change to new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;%0,@-r15&t;! push R0 onto new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mova&t;1f,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;%0,@r2&t;&t;! save PC&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;2f,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;jmp&t;@%0&t;&t;! call __switch_to&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot; lds&t;r7,pr&t;&t;!  with return to new PC&bslash;n&quot; &bslash;&n;&t;&t;       &quot;2:&bslash;n&quot; &bslash;&n;&t;&t;       &quot;.long&t;&quot; &quot;_&quot; &quot;__switch_to&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;.balign&t;4&bslash;n&quot;&t;&bslash;&n;&t;&t;       &quot;1:&bslash;n&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,%0&t;! pop R0 from new stack&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,r14&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,r13&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,r12&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,r11&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,r10&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,r9&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;mov.l&t;@r15+,r8&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       &quot;lds.l&t;@r15+,pr&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;       :&quot;=&amp;z&quot; (__last) &bslash;&n;&t;&t;       :&quot;0&quot; (prev), &bslash;&n;&t;&t;&t;&quot;r&quot; (__ts1), &quot;r&quot; (__ts2), &bslash;&n;&t;&t;&t;&quot;r&quot; (__ts4), &quot;r&quot; (__ts5), &quot;r&quot; (__ts6), &quot;r&quot; (__ts7) &bslash;&n;&t;&t;       :&quot;r3&quot;); &bslash;&n;  last = __last; &bslash;&n;} while (0)
+macro_line|#endif
+DECL|macro|nop
+mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;)
+DECL|macro|xchg
+mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
+DECL|function|tas
+r_static
+id|__inline__
+r_int
+r_int
+id|tas
+c_func
+(paren
+r_volatile
+r_int
+op_star
+id|m
+)paren
+(brace
+multiline_comment|/* #define tas(ptr) (xchg((ptr),1)) */
+r_int
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;tas.b&t;@%1&bslash;n&bslash;t&quot;
+l_string|&quot;movt&t;%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|m
+)paren
+suffix:colon
+l_string|&quot;t&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+r_extern
+r_void
+id|__xchg_called_with_bad_pointer
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|mb
+mdefine_line|#define mb()&t;__asm__ __volatile__ (&quot;&quot;: : :&quot;memory&quot;)
+DECL|macro|rmb
+mdefine_line|#define rmb()&t;mb()
+DECL|macro|wmb
+mdefine_line|#define wmb()&t;__asm__ __volatile__ (&quot;&quot;: : :&quot;memory&quot;)
+multiline_comment|/* Interrupt Control */
+DECL|function|__sti
+r_extern
+id|__inline__
+r_void
+id|__sti
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|__dummy
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
+l_string|&quot;and&t;%1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;ldc&t;%0,sr&quot;
+suffix:colon
+l_string|&quot;=&amp;z&quot;
+(paren
+id|__dummy
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0xefffffff
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|__cli
+r_extern
+id|__inline__
+r_void
+id|__cli
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|__dummy
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;%1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;ldc&t;%0,sr&quot;
+suffix:colon
+l_string|&quot;=&amp;z&quot;
+(paren
+id|__dummy
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0x10000000
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|macro|__save_flags
+mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;stc&t;sr,%0&bslash;n&bslash;tnop&bslash;n&bslash;tnop&bslash;n&bslash;tnop&bslash;n&bslash;tnop&bslash;n&bslash;tnop&quot;:&quot;=r&quot; (x): /* no inputs */ :&quot;memory&quot;)
+DECL|macro|__save_and_cli
+mdefine_line|#define __save_and_cli(x)               &bslash;&n;({&t;unsigned long __dummy;&t;&t;&bslash;&n;__asm__ __volatile__(                   &bslash;&n;&t;&quot;stc&t;sr,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;%0,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;or&t;%2,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ldc&t;%1,sr&quot;     &bslash;&n;&t;: &quot;=&amp;r&quot; (x), &quot;=&amp;z&quot; (__dummy) &bslash;&n;&t;: &quot;r&quot; (0x10000000) &bslash;&n;&t;: &quot;memory&quot;); })
+DECL|macro|__restore_flags
+mdefine_line|#define __restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;ldc&t;%0,sr&quot;: /* no output */: &quot;r&quot; (x):&quot;memory&quot;)
+multiline_comment|/* For spinlocks etc */
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(x)&t;__save_and_cli(x)
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(x)&t;__restore_flags(x)
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;__cli()
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;__sti()
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|__global_cli
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_sti
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__global_save_flags
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_restore_flags
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|cli
+mdefine_line|#define cli() __global_cli()
+DECL|macro|sti
+mdefine_line|#define sti() __global_sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x) ((x)=__global_save_flags())
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x) __global_restore_flags(x)
+macro_line|#else
+DECL|macro|cli
+mdefine_line|#define cli() __cli()
+DECL|macro|sti
+mdefine_line|#define sti() __sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x) __save_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(x) __save_and_cli(x)
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x) __restore_flags(x)
+macro_line|#endif
+DECL|function|xchg_u32
+r_extern
+id|__inline__
+r_int
+r_int
+id|xchg_u32
+c_func
+(paren
+r_volatile
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|flags
+comma
+id|retval
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|retval
+op_assign
+op_star
+id|m
+suffix:semicolon
+op_star
+id|m
+op_assign
+id|val
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|function|__xchg
+r_static
+id|__inline__
+r_int
+r_int
+id|__xchg
+c_func
+(paren
+r_int
+r_int
+id|x
+comma
+r_void
+op_star
+id|ptr
+comma
+r_int
+id|size
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_case
+l_int|4
+suffix:colon
+r_return
+id|xchg_u32
+c_func
+(paren
+id|ptr
+comma
+id|x
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|__xchg_called_with_bad_pointer
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|x
+suffix:semicolon
+)brace
+multiline_comment|/* XXX&n; * disable hlt during certain critical i/o operations&n; */
+DECL|macro|HAVE_DISABLE_HLT
+mdefine_line|#define HAVE_DISABLE_HLT
+r_void
+id|disable_hlt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|enable_hlt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+eof

@@ -32,7 +32,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;bios32.h&quot;
+macro_line|#include &quot;pci_impl.h&quot;
 multiline_comment|/*&n; * Initial task structure. Make this a per-architecture thing,&n; * because different architectures tend to have different&n; * alignment requirements and potentially different initial&n; * setup.&n; */
 DECL|variable|init_user_stack
 r_int
@@ -211,8 +211,8 @@ suffix:semicolon
 )brace
 )brace
 r_void
-DECL|function|generic_kill_arch
-id|generic_kill_arch
+DECL|function|common_kill_arch
+id|common_kill_arch
 (paren
 r_int
 id|mode
@@ -336,11 +336,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|reset_for_srm
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* reset_for_srm(); */
 id|set_hae
 c_func
 (paren

@@ -14,7 +14,7 @@ macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
 r_extern
 id|rwlock_t
 id|xtime_lock
@@ -35,37 +35,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTC
-DECL|variable|timer_resource
-r_struct
-id|resource
-id|timer_resource
-op_assign
-(brace
-l_string|&quot;pit&quot;
-comma
-l_int|0x40
-comma
-l_int|0x40
-op_plus
-l_int|0x20
-)brace
-suffix:semicolon
-macro_line|#else
-DECL|variable|timer_resource
-r_struct
-id|resource
-id|timer_resource
-op_assign
-(brace
-l_string|&quot;rtc&quot;
-comma
-l_int|0
-comma
-l_int|0
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Shift amount by which scaled_ticks_per_cycle is scaled.  Shifting&n; * by 48 gives us 16 bits for HZ while keeping the accuracy good even&n; * for large CPU clock rates.&n; */
 DECL|macro|FIX_SHIFT
 mdefine_line|#define FIX_SHIFT&t;48
@@ -512,16 +481,6 @@ c_func
 id|RTC_INTR_FLAGS
 )paren
 suffix:semicolon
-id|request_resource
-c_func
-(paren
-op_amp
-id|ioport_resource
-comma
-op_amp
-id|timer_resource
-)paren
-suffix:semicolon
 multiline_comment|/* Setup interval timer.  */
 id|outb
 c_func
@@ -582,8 +541,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 r_void
-DECL|function|generic_init_pit
-id|generic_init_pit
+DECL|function|common_init_pit
+id|common_init_pit
 (paren
 r_void
 )paren
@@ -691,34 +650,6 @@ id|CMOS_READ
 c_func
 (paren
 id|RTC_INTR_FLAGS
-)paren
-suffix:semicolon
-id|timer_resource.start
-op_assign
-id|RTC_PORT
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-id|timer_resource.end
-op_assign
-id|RTC_PORT
-c_func
-(paren
-l_int|0
-)paren
-op_plus
-l_int|0x10
-suffix:semicolon
-id|request_resource
-c_func
-(paren
-op_amp
-id|ioport_resource
-comma
-op_amp
-id|timer_resource
 )paren
 suffix:semicolon
 id|outb
@@ -1202,7 +1133,7 @@ id|irq_handler
 comma
 l_int|0
 comma
-id|timer_resource.name
+l_string|&quot;timer&quot;
 comma
 l_int|NULL
 )paren

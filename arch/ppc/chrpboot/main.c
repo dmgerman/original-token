@@ -323,14 +323,10 @@ id|len
 suffix:semicolon
 id|sa
 op_assign
-op_star
 (paren
 r_int
 r_int
-op_star
 )paren
-id|PROG_START
-op_plus
 id|PROG_START
 suffix:semicolon
 id|printf

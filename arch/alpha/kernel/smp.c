@@ -24,7 +24,7 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
 DECL|macro|DEBUG_SMP
 mdefine_line|#define DEBUG_SMP 0
 macro_line|#if DEBUG_SMP

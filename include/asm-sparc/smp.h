@@ -2,7 +2,7 @@ multiline_comment|/* smp.h: Sparc specific SMP stuff.&n; *&n; * Copyright (C) 19
 macro_line|#ifndef _SPARC_SMP_H
 DECL|macro|_SPARC_SMP_H
 mdefine_line|#define _SPARC_SMP_H
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/btfixup.h&gt;
 macro_line|#ifndef __ASSEMBLY__

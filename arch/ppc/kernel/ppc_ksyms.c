@@ -1,5 +1,6 @@
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -35,14 +36,6 @@ mdefine_line|#define EXPORT_SYMTAB_STROPS
 r_extern
 r_void
 id|transfer_to_handler
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|int_return
 c_func
 (paren
 r_void
@@ -185,13 +178,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|transfer_to_handler
-)paren
-suffix:semicolon
-DECL|variable|int_return
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|int_return
 )paren
 suffix:semicolon
 DECL|variable|do_IRQ
@@ -734,35 +720,8 @@ c_func
 id|kernel_thread
 )paren
 suffix:semicolon
-DECL|variable|__cli
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__cli
-)paren
-suffix:semicolon
-DECL|variable|__sti
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__sti
-)paren
-suffix:semicolon
 multiline_comment|/*EXPORT_SYMBOL(__restore_flags);*/
-DECL|variable|_disable_interrupts
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|_disable_interrupts
-)paren
-suffix:semicolon
-DECL|variable|_enable_interrupts
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|_enable_interrupts
-)paren
-suffix:semicolon
+multiline_comment|/*EXPORT_SYMBOL(_disable_interrupts);&n;  EXPORT_SYMBOL(_enable_interrupts);*/
 DECL|variable|flush_instruction_cache
 id|EXPORT_SYMBOL
 c_func
@@ -946,6 +905,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sleep_notifier_list
+)paren
+suffix:semicolon
+DECL|variable|pmu_enable_irled
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmu_enable_irled
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_PMAC_PBOOK

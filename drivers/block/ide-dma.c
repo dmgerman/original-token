@@ -1626,7 +1626,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This can be called for a dynamically installed interface. Don&squot;t initfunc it&n; */
+multiline_comment|/*&n; *&t;This can be called for a dynamically installed interface. Don&squot;t __init it&n; */
 DECL|function|ide_setup_dma
 r_void
 id|ide_setup_dma

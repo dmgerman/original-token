@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.20 1999/05/14 07:23:18 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.21 1999/08/30 10:14:44 davem Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -214,7 +214,7 @@ id|addr
 comma
 l_string|&quot;i&quot;
 (paren
-id|ASI_PL
+id|ASI_PHYS_BYPASS_EC_E_L
 )paren
 )paren
 suffix:semicolon
@@ -257,7 +257,7 @@ id|addr
 comma
 l_string|&quot;i&quot;
 (paren
-id|ASI_PL
+id|ASI_PHYS_BYPASS_EC_E_L
 )paren
 )paren
 suffix:semicolon
@@ -300,7 +300,7 @@ id|addr
 comma
 l_string|&quot;i&quot;
 (paren
-id|ASI_PL
+id|ASI_PHYS_BYPASS_EC_E_L
 )paren
 )paren
 suffix:semicolon
@@ -344,7 +344,7 @@ id|addr
 comma
 l_string|&quot;i&quot;
 (paren
-id|ASI_PL
+id|ASI_PHYS_BYPASS_EC_E_L
 )paren
 )paren
 suffix:semicolon
@@ -385,7 +385,7 @@ id|addr
 comma
 l_string|&quot;i&quot;
 (paren
-id|ASI_PL
+id|ASI_PHYS_BYPASS_EC_E_L
 )paren
 )paren
 suffix:semicolon
@@ -426,7 +426,7 @@ id|addr
 comma
 l_string|&quot;i&quot;
 (paren
-id|ASI_PL
+id|ASI_PHYS_BYPASS_EC_E_L
 )paren
 )paren
 suffix:semicolon
@@ -772,45 +772,11 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * On the sparc we have the whole physical IO address space mapped at all&n; * times, so ioremap() and iounmap() do not need to do anything.&n; */
-DECL|function|ioremap
-r_extern
-id|__inline__
-r_void
-op_star
-id|ioremap
-c_func
-(paren
-r_int
-r_int
-id|offset
-comma
-r_int
-r_int
-id|size
-)paren
-(brace
-r_return
-id|__va
-c_func
-(paren
-id|offset
-)paren
-suffix:semicolon
-)brace
-DECL|function|iounmap
-r_extern
-id|__inline__
-r_void
-id|iounmap
-c_func
-(paren
-r_void
-op_star
-id|addr
-)paren
-(brace
-)brace
+multiline_comment|/* On sparc64 we have the whole physical IO address space accessible&n; * using physically addressed loads and stores, so this does nothing.&n; */
+DECL|macro|ioremap
+mdefine_line|#define ioremap(__offset, __size)&t;((void *)(__offset))
+DECL|macro|iounmap
+mdefine_line|#define iounmap(__addr)&t;&t;&t;do { } while(0)
 r_extern
 r_void
 id|sparc_ultra_mapioaddr

@@ -1,82 +1,203 @@
-multiline_comment|/* $Id: pbm.h,v 1.16 1999/03/14 18:13:03 davem Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.17 1999/08/30 10:14:54 davem Exp $&n; * pbm.h: UltraSparc PCI controller software state.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;asm/psycho.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+multiline_comment|/* The abstraction used here is that there are PCI controllers,&n; * each with one (Sabre) or two (PSYCHO/SCHIZO) PCI bus modules&n; * underneath.  Each PCI controller has a single IOMMU shared&n; * by the PCI bus modules underneath, and if a streaming buffer&n; * is present, each PCI bus module has it&squot;s own. (ie. the IOMMU&n; * is shared between PBMs, the STC is not)  Furthermore, each&n; * PCI bus module controls it&squot;s own autonomous PCI bus.&n; */
 r_struct
-id|linux_pbm_info
+id|pci_controller_info
 suffix:semicolon
-multiline_comment|/* This is what we use to determine what the PROM has assigned so&n; * far, so that we can perform assignments for addresses which&n; * were not taken care of by OBP.  See psycho.c for details.&n; * Per-PBM these are ordered by start address.&n; */
-DECL|struct|pci_vma
+multiline_comment|/* This contains the software state necessary to drive a PCI&n; * controller&squot;s IOMMU.&n; */
+DECL|struct|pci_iommu
 r_struct
-id|pci_vma
+id|pci_iommu
 (brace
-DECL|member|next
-r_struct
-id|pci_vma
+multiline_comment|/* This protects the controller&squot;s IOMMU and all&n;&t; * streaming buffers underneath.&n;&t; */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* Context allocator. */
+DECL|member|iommu_cur_ctx
+r_int
+r_int
+id|iommu_cur_ctx
+suffix:semicolon
+multiline_comment|/* IOMMU page table, a linear array of ioptes. */
+DECL|member|page_table
+id|iopte_t
 op_star
-id|next
+id|page_table
 suffix:semicolon
-DECL|member|pbm
-r_struct
-id|linux_pbm_info
-op_star
-id|pbm
+multiline_comment|/* The page table itself. */
+DECL|member|page_table_sz
+r_int
+id|page_table_sz
 suffix:semicolon
-DECL|member|start
-r_int
-r_int
-id|start
+multiline_comment|/* How many pages does it map? */
+multiline_comment|/* Base PCI memory space address where IOMMU mappings&n;&t; * begin.&n;&t; */
+DECL|member|page_table_map_base
+id|u32
+id|page_table_map_base
 suffix:semicolon
-DECL|member|end
+multiline_comment|/* IOMMU Controller Registers */
+DECL|member|iommu_has_ctx_flush
 r_int
-r_int
-id|end
+id|iommu_has_ctx_flush
 suffix:semicolon
-DECL|member|offset
+multiline_comment|/* Feature test. */
+DECL|member|iommu_control
 r_int
 r_int
-id|offset
+id|iommu_control
 suffix:semicolon
-DECL|member|_pad
+multiline_comment|/* IOMMU control register */
+DECL|member|iommu_tsbbase
 r_int
 r_int
-id|_pad
+id|iommu_tsbbase
+suffix:semicolon
+multiline_comment|/* IOMMU page table base register */
+DECL|member|iommu_flush
+r_int
+r_int
+id|iommu_flush
+suffix:semicolon
+multiline_comment|/* IOMMU page flush register */
+DECL|member|iommu_ctxflush
+r_int
+r_int
+id|iommu_ctxflush
+suffix:semicolon
+multiline_comment|/* IOMMU context flush register */
+multiline_comment|/* This is a register in the PCI controller, which if&n;&t; * read will have no side-effects but will guarentee&n;&t; * completion of all previous writes into IOMMU/STC.&n;&t; */
+DECL|member|write_complete_reg
+r_int
+r_int
+id|write_complete_reg
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* This describes a PCI bus module&squot;s streaming buffer. */
+DECL|struct|pci_strbuf
 r_struct
-id|linux_psycho
+id|pci_strbuf
+(brace
+DECL|member|strbuf_enabled
+r_int
+id|strbuf_enabled
 suffix:semicolon
+multiline_comment|/* Present and using it? */
+DECL|member|strbuf_has_ctx_flush
+r_int
+id|strbuf_has_ctx_flush
+suffix:semicolon
+multiline_comment|/* Supports context flushing? */
+multiline_comment|/* Streaming Buffer Control Registers */
+DECL|member|strbuf_control
+r_int
+r_int
+id|strbuf_control
+suffix:semicolon
+multiline_comment|/* STC control register */
+DECL|member|strbuf_pflush
+r_int
+r_int
+id|strbuf_pflush
+suffix:semicolon
+multiline_comment|/* STC page flush register */
+DECL|member|strbuf_fsync
+r_int
+r_int
+id|strbuf_fsync
+suffix:semicolon
+multiline_comment|/* STC flush synchronization reg */
+DECL|member|strbuf_ctxflush
+r_int
+r_int
+id|strbuf_ctxflush
+suffix:semicolon
+multiline_comment|/* STC context flush register */
+DECL|member|strbuf_ctxmatch_base
+r_int
+r_int
+id|strbuf_ctxmatch_base
+suffix:semicolon
+multiline_comment|/* STC context flush match reg */
+DECL|member|strbuf_flushflag_pa
+r_int
+r_int
+id|strbuf_flushflag_pa
+suffix:semicolon
+multiline_comment|/* Physical address of flush flag */
+DECL|member|strbuf_flushflag
+r_volatile
+r_int
+r_int
+op_star
+id|strbuf_flushflag
+suffix:semicolon
+multiline_comment|/* The flush flag itself */
+multiline_comment|/* And this is the actual flush flag area.&n;&t; * We allocate extra because the chips require&n;&t; * a 64-byte aligned area.&n;&t; */
+DECL|member|__flushflag_buf
+r_volatile
+r_int
+r_int
+id|__flushflag_buf
+(braket
+(paren
+l_int|64
+op_plus
+(paren
+l_int|64
+op_minus
+l_int|1
+)paren
+)paren
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|PCI_STC_FLUSHFLAG_INIT
+mdefine_line|#define PCI_STC_FLUSHFLAG_INIT(STC) &bslash;&n;&t;(*((STC)-&gt;strbuf_flushflag) = 0UL)
+DECL|macro|PCI_STC_FLUSHFLAG_SET
+mdefine_line|#define PCI_STC_FLUSHFLAG_SET(STC) &bslash;&n;&t;(*((STC)-&gt;strbuf_flushflag) != 0UL)
 multiline_comment|/* There can be quite a few ranges and interrupt maps on a PCI&n; * segment.  Thus...&n; */
 DECL|macro|PROM_PCIRNG_MAX
 mdefine_line|#define PROM_PCIRNG_MAX&t;&t;64
 DECL|macro|PROM_PCIIMAP_MAX
 mdefine_line|#define PROM_PCIIMAP_MAX&t;64
-DECL|struct|linux_pbm_info
+DECL|struct|pci_pbm_info
 r_struct
-id|linux_pbm_info
+id|pci_pbm_info
 (brace
+multiline_comment|/* PCI controller we sit under. */
 DECL|member|parent
 r_struct
-id|linux_psycho
+id|pci_controller_info
 op_star
 id|parent
 suffix:semicolon
-DECL|member|IO_assignments
-r_struct
-id|pci_vma
-op_star
-id|IO_assignments
+multiline_comment|/* Name used for top-level resources. */
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|64
+)braket
 suffix:semicolon
-DECL|member|MEM_assignments
-r_struct
-id|pci_vma
-op_star
-id|MEM_assignments
-suffix:semicolon
+multiline_comment|/* OBP specific information. */
 DECL|member|prom_node
 r_int
 id|prom_node
@@ -117,6 +238,23 @@ r_struct
 id|linux_prom_pci_intmask
 id|pbm_intmask
 suffix:semicolon
+multiline_comment|/* PBM I/O and Memory space resources. */
+DECL|member|io_space
+r_struct
+id|resource
+id|io_space
+suffix:semicolon
+DECL|member|mem_space
+r_struct
+id|resource
+id|mem_space
+suffix:semicolon
+multiline_comment|/* This PBM&squot;s streaming buffer. */
+DECL|member|stc
+r_struct
+id|pci_strbuf
+id|stc
+suffix:semicolon
 multiline_comment|/* Now things for the actual PCI bus probes. */
 DECL|member|pci_first_busno
 r_int
@@ -131,63 +269,128 @@ suffix:semicolon
 DECL|member|pci_bus
 r_struct
 id|pci_bus
+op_star
 id|pci_bus
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|linux_psycho
+DECL|struct|pci_controller_info
 r_struct
-id|linux_psycho
+id|pci_controller_info
 (brace
+multiline_comment|/* List of all PCI controllers. */
 DECL|member|next
 r_struct
-id|linux_psycho
+id|pci_controller_info
 op_star
 id|next
 suffix:semicolon
-DECL|member|psycho_regs
-r_struct
-id|psycho_regs
-op_star
-id|psycho_regs
+multiline_comment|/* Physical address base of controller registers&n;&t; * and PCI config space.&n;&t; */
+DECL|member|controller_regs
+r_int
+r_int
+id|controller_regs
 suffix:semicolon
-DECL|member|pci_config_space
+DECL|member|config_space
 r_int
 r_int
-op_star
-id|pci_config_space
+id|config_space
 suffix:semicolon
-DECL|member|pci_IO_space
-r_int
-r_int
-op_star
-id|pci_IO_space
-suffix:semicolon
-DECL|member|pci_mem_space
-r_int
-r_int
-op_star
-id|pci_mem_space
-suffix:semicolon
-DECL|member|upa_portid
+multiline_comment|/* Opaque 32-bit system bus Port ID. */
+DECL|member|portid
 id|u32
-id|upa_portid
+id|portid
 suffix:semicolon
+multiline_comment|/* Each controller gets a unique index, used mostly for&n;&t; * error logging purposes.&n;&t; */
 DECL|member|index
 r_int
 id|index
 suffix:semicolon
+multiline_comment|/* The PCI bus modules controlled by us. */
 DECL|member|pbm_A
 r_struct
-id|linux_pbm_info
+id|pci_pbm_info
 id|pbm_A
 suffix:semicolon
 DECL|member|pbm_B
 r_struct
-id|linux_pbm_info
+id|pci_pbm_info
 id|pbm_B
 suffix:semicolon
+multiline_comment|/* Operations which are controller specific. */
+DECL|member|scan_bus
+r_void
+(paren
+op_star
+id|scan_bus
+)paren
+(paren
+r_struct
+id|pci_controller_info
+op_star
+)paren
+suffix:semicolon
+DECL|member|irq_build
+r_int
+r_int
+(paren
+op_star
+id|irq_build
+)paren
+(paren
+r_struct
+id|pci_controller_info
+op_star
+comma
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|base_address_update
+r_void
+(paren
+op_star
+id|base_address_update
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|resource_adjust
+r_void
+(paren
+op_star
+id|resource_adjust
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_struct
+id|resource
+op_star
+comma
+r_struct
+id|resource
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Now things for the actual PCI bus probes. */
+DECL|member|pci_ops
+r_struct
+id|pci_ops
+op_star
+id|pci_ops
+suffix:semicolon
 DECL|member|pci_first_busno
 r_int
 r_int
@@ -198,11 +401,11 @@ r_int
 r_int
 id|pci_last_busno
 suffix:semicolon
-DECL|member|pci_bus
+multiline_comment|/* IOMMU state shared by both PBM segments. */
+DECL|member|iommu
 r_struct
-id|pci_bus
-op_star
-id|pci_bus
+id|pci_iommu
+id|iommu
 suffix:semicolon
 DECL|member|starfire_cookie
 r_void
@@ -218,41 +421,51 @@ id|pcidev_cookie
 (brace
 DECL|member|pbm
 r_struct
-id|linux_pbm_info
+id|pci_pbm_info
 op_star
 id|pbm
+suffix:semicolon
+DECL|member|prom_name
+r_char
+id|prom_name
+(braket
+l_int|64
+)braket
 suffix:semicolon
 DECL|member|prom_node
 r_int
 id|prom_node
 suffix:semicolon
+DECL|member|prom_regs
+r_struct
+id|linux_prom_pci_registers
+id|prom_regs
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
+DECL|member|num_prom_regs
+r_int
+id|num_prom_regs
+suffix:semicolon
+DECL|member|prom_assignments
+r_struct
+id|linux_prom_pci_registers
+id|prom_assignments
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
+DECL|member|num_prom_assignments
+r_int
+id|num_prom_assignments
+suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Currently these are the same across all PCI controllers&n; * we support.  Someday they may not be...&n; */
 DECL|macro|PCI_IRQ_IGN
-mdefine_line|#define PCI_IRQ_IGN&t;0x000007c0&t;/* PSYCHO &quot;Int Group Number&quot;. */
+mdefine_line|#define PCI_IRQ_IGN&t;0x000007c0&t;/* Interrupt Group Number */
 DECL|macro|PCI_IRQ_INO
-mdefine_line|#define PCI_IRQ_INO&t;0x0000003f&t;/* PSYCHO INO.                */
-multiline_comment|/* Used by EBus */
-r_extern
-r_int
-r_int
-id|psycho_irq_build
-c_func
-(paren
-r_struct
-id|linux_pbm_info
-op_star
-id|pbm
-comma
-r_struct
-id|pci_dev
-op_star
-id|pdev
-comma
-r_int
-r_int
-id|full_ino
-)paren
-suffix:semicolon
+mdefine_line|#define PCI_IRQ_INO&t;0x0000003f&t;/* Interrupt Number */
 macro_line|#endif /* !(__SPARC64_PBM_H) */
 eof

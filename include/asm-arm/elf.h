@@ -54,8 +54,13 @@ multiline_comment|/* When the program starts, a1 contains a pointer to a functio
 DECL|macro|ELF_PLAT_INIT
 mdefine_line|#define ELF_PLAT_INIT(_r)&t;(_r)-&gt;ARM_r0 = 0
 multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports. */
+r_extern
+r_int
+r_int
+id|elf_hwcap
+suffix:semicolon
 DECL|macro|ELF_HWCAP
-mdefine_line|#define ELF_HWCAP&t;(armidlist[armidindex].hwcap)
+mdefine_line|#define ELF_HWCAP&t;(elf_hwcap)
 multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo. */
 multiline_comment|/* For now we just provide a fairly general string that describes the&n;   processor family.  This could be made more specific later if someone&n;   implemented optimisations that require it.  26-bit CPUs give you&n;   &quot;v1l&quot; for ARM2 (no SWP) and &quot;v2l&quot; for anything else (ARM1 isn&squot;t&n;   supported).  32-bit CPUs give you &quot;v3[lb]&quot; for anything based on an&n;   ARM6 or ARM7 core and &quot;armv4[lb]&quot; for anything based on a StrongARM-1&n;   core.  */
 DECL|macro|ELF_PLATFORM_SIZE

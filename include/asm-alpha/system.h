@@ -247,6 +247,12 @@ DECL|macro|rmb
 mdefine_line|#define rmb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 DECL|macro|wmb
 mdefine_line|#define wmb() &bslash;&n;__asm__ __volatile__(&quot;wmb&quot;: : :&quot;memory&quot;)
+DECL|macro|set_mb
+mdefine_line|#define set_mb(var, value) &bslash;&n;do { var = value; mb(); } while (0)
+DECL|macro|set_rmb
+mdefine_line|#define set_rmb(var, value) &bslash;&n;do { var = value; rmb(); } while (0)
+DECL|macro|set_wmb
+mdefine_line|#define set_wmb(var, value) &bslash;&n;do { var = value; wmb(); } while (0)
 DECL|macro|imb
 mdefine_line|#define imb() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0 #imb&quot; : : &quot;i&quot; (PAL_imb) : &quot;memory&quot;)
 DECL|macro|draina

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.18 1999/03/30 06:38:38 jj Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.19 1999/08/14 03:52:11 anton Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -21,9 +21,9 @@ mdefine_line|#define VERIFY_WRITE&t;1
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
 DECL|macro|get_fs
-mdefine_line|#define get_fs()&t;(current-&gt;tss.current_ds)
+mdefine_line|#define get_fs()&t;(current-&gt;thread.current_ds)
 DECL|macro|set_fs
-mdefine_line|#define set_fs(val)&t;((current-&gt;tss.current_ds) = (val))
+mdefine_line|#define set_fs(val)&t;((current-&gt;thread.current_ds) = (val))
 DECL|macro|segment_eq
 mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
 multiline_comment|/* We have there a nice not-mapped page at page_offset - PAGE_SIZE, so that this test&n; * can be fairly lightweight.&n; * No one can read/write anything from userland in the kernel space by setting&n; * large size and address near to page_offset - a fault will break his intentions.&n; */

@@ -1922,12 +1922,10 @@ suffix:semicolon
 )brace
 DECL|macro|PTI_RESET_LIMIT
 mdefine_line|#define PTI_RESET_LIMIT 400
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|qlogicpti_load_firmware
 r_static
 r_int
+id|__init
 id|qlogicpti_load_firmware
 c_func
 (paren
@@ -1935,7 +1933,6 @@ r_struct
 id|qlogicpti
 op_star
 id|qpti
-)paren
 )paren
 (brace
 r_struct
@@ -3135,18 +3132,15 @@ id|regs
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Detect all PTI Qlogic ISP&squot;s in the machine. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|qlogicpti_detect
 r_int
+id|__init
 id|qlogicpti_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: nosun4c.c,v 1.1 1998/03/09 14:04:16 jj Exp $&n; * nosun4c.c: This file is a bunch of dummies for SMP compiles, &n; *         so that it does not need sun4c and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: nosun4c.c,v 1.2 1999/08/31 06:54:36 davem Exp $&n; * nosun4c.c: This file is a bunch of dummies for SMP compiles, &n; *         so that it does not need sun4c and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

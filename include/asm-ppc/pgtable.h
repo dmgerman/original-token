@@ -68,29 +68,6 @@ DECL|macro|flush_tlb_page
 mdefine_line|#define flush_tlb_page local_flush_tlb_page
 DECL|macro|flush_tlb_range
 mdefine_line|#define flush_tlb_range local_flush_tlb_range
-DECL|function|flush_tlb_pgtables
-r_extern
-id|__inline__
-r_void
-id|flush_tlb_pgtables
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-(brace
-multiline_comment|/* PPC has hw page tables. */
-)brace
 multiline_comment|/*&n; * No cache flushing is required when address mappings are&n; * changed, because the caches on PowerPCs are physically&n; * addressed.&n; * Also, when SMP we use the coherency (M) bit of the&n; * BATs and PTEs.  -- Cort&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;do { } while (0)
@@ -156,7 +133,8 @@ comma
 id|ioremap_base
 suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
-multiline_comment|/*&n; * The PowerPC MMU uses a hash table containing PTEs, together with&n; * a set of 16 segment registers (on 32-bit implementations), to define&n; * the virtual to physical address mapping.&n; *&n; * We use the hash table as an extended TLB, i.e. a cache of currently&n; * active mappings.  We maintain a two-level page table tree, much like&n; * that used by the i386, for the sake of the Linux memory management code.&n; * Low-level assembler code in head.S (procedure hash_page) is responsible&n; * for extracting ptes from the tree and putting them into the hash table&n; * when necessary, and updating the accessed and modified bits in the&n; * page table tree.&n; *&n; * The PowerPC MPC8xx uses a TLB with hardware assisted, software tablewalk.&n; * We also use the two level tables, but we can put the real bits in them&n; * needed for the TLB and tablewalk.  These definitions require Mx_CTR.PPM = 0,&n; * Mx_CTR.PPCS = 0, and MD_CTR.TWAM = 1.  The level 2 descriptor has&n; * additional page protection (when Mx_CTR.PPCS = 1) that allows TLB hit&n; * based upon user/super access.  The TLB does not have accessed nor write&n; * protect.  We assume that if the TLB get loaded with an entry it is&n; * accessed, and overload the changed bit for write protect.  We use&n; * two bits in the software pte that are supposed to be set to zero in&n; * the TLB entry (24 and 25) for these indicators.  Although the level 1&n; * descriptor contains the guarded and writethrough/copyback bits, we can&n; * set these at the page level since they get copied from the Mx_TWC&n; * register when the TLB entry is loaded.  We will use bit 27 for guard, since&n; * that is where it exists in the MD_TWC, and bit 26 for writethrough.&n; * These will get masked from the level 2 descriptor at TLB load time, and&n; * copied to the MD_TWC before it gets loaded.&n; */
+multiline_comment|/*&n; * The PowerPC MMU uses a hash table containing PTEs, together with&n; * a set of 16 segment registers (on 32-bit implementations), to define&n; * the virtual to physical address mapping.&n; *&n; * We use the hash table as an extended TLB, i.e. a cache of currently&n; * active mappings.  We maintain a two-level page table tree, much like&n; * that used by the i386, for the sake of the Linux memory management code.&n; * Low-level assembler code in head.S (procedure hash_page) is responsible&n; * for extracting ptes from the tree and putting them into the hash table&n; * when necessary, and updating the accessed and modified bits in the&n; * page table tree.&n; */
+multiline_comment|/*&n; * The PowerPC MPC8xx uses a TLB with hardware assisted, software tablewalk.&n; * We also use the two level tables, but we can put the real bits in them&n; * needed for the TLB and tablewalk.  These definitions require Mx_CTR.PPM = 0,&n; * Mx_CTR.PPCS = 0, and MD_CTR.TWAM = 1.  The level 2 descriptor has&n; * additional page protection (when Mx_CTR.PPCS = 1) that allows TLB hit&n; * based upon user/super access.  The TLB does not have accessed nor write&n; * protect.  We assume that if the TLB get loaded with an entry it is&n; * accessed, and overload the changed bit for write protect.  We use&n; * two bits in the software pte that are supposed to be set to zero in&n; * the TLB entry (24 and 25) for these indicators.  Although the level 1&n; * descriptor contains the guarded and writethrough/copyback bits, we can&n; * set these at the page level since they get copied from the Mx_TWC&n; * register when the TLB entry is loaded.  We will use bit 27 for guard, since&n; * that is where it exists in the MD_TWC, and bit 26 for writethrough.&n; * These will get masked from the level 2 descriptor at TLB load time, and&n; * copied to the MD_TWC before it gets loaded.&n; */
 multiline_comment|/* PMD_SHIFT determines the size of the area mapped by the second-level page tables */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22
@@ -180,7 +158,7 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;1024
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE / PGDIR_SIZE)
-multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 64MB value just means that there will be a 64MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; *&n; * We no longer map larger than phys RAM with the BATs so we don&squot;t have&n; * to worry about the VMALLOC_OFFSET causing problems.  We do have to worry&n; * about clashes between our early calls to ioremap() that start growing down&n; * from ioremap_base being run into the VM area allocations (growing upwards&n; * from VMALLOC_START).  For this reason we have ioremap_bot to check when&n; * we actually run into our mappings setup in the early boot with the VM&n; * system.  This really does become a problem for machines with good amounts&n; * of RAM.  -- Cort&n; */
+multiline_comment|/*&n; * Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 64MB value just means that there will be a 64MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; *&n; * We no longer map larger than phys RAM with the BATs so we don&squot;t have&n; * to worry about the VMALLOC_OFFSET causing problems.  We do have to worry&n; * about clashes between our early calls to ioremap() that start growing down&n; * from ioremap_base being run into the VM area allocations (growing upwards&n; * from VMALLOC_START).  For this reason we have ioremap_bot to check when&n; * we actually run into our mappings setup in the early boot with the VM&n; * system.  This really does become a problem for machines with good amounts&n; * of RAM.  -- Cort&n; */
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET (0x4000000) /* 64M */
 DECL|macro|VMALLOC_START
@@ -191,6 +169,7 @@ DECL|macro|VMALLOC_END
 mdefine_line|#define VMALLOC_END&t;ioremap_bot
 multiline_comment|/*&n; * Bits in a linux-style PTE.  These match the bits in the&n; * (hardware-defined) PowerPC PTE as closely as possible.&n; */
 macro_line|#ifndef CONFIG_8xx
+multiline_comment|/* Definitions for 60x, 740/750, etc. */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001&t;/* software: pte contains a translation */
 DECL|macro|_PAGE_USER
@@ -214,6 +193,7 @@ mdefine_line|#define _PAGE_HWWRITE&t;0x200&t;/* software: _PAGE_RW &amp; _PAGE_D
 DECL|macro|_PAGE_SHARED
 mdefine_line|#define _PAGE_SHARED&t;0
 macro_line|#else
+multiline_comment|/* Definitions for 8xx embedded chips. */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x0001&t;/* Page is valid */
 DECL|macro|_PAGE_NO_CACHE
@@ -337,15 +317,6 @@ multiline_comment|/* sizeof(void*) == 1&lt;&lt;SIZEOF_PTR_LOG2 */
 multiline_comment|/* 64-bit machines, beware!  SRB. */
 DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2&t;2
-multiline_comment|/* to set the page-dir */
-multiline_comment|/* tsk is a task_struct and pgdir is a pte_t */
-macro_line|#ifndef CONFIG_8xx
-DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)  &bslash;&n;&t;((tsk)-&gt;tss.pg_tables = (unsigned long *)(pgdir))
-macro_line|#else /* CONFIG_8xx */     
-DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)  &bslash;&n; do { &bslash;&n;&t;unsigned long __pgdir = (unsigned long)pgdir; &bslash;&n;&t;((tsk)-&gt;tss.pg_tables = (unsigned long *)(__pgdir)); &bslash;&n;&t;asm(&quot;mtspr %0,%1 &bslash;n&bslash;t&quot; : : &quot;i&quot;(M_TWB), &quot;r&quot;(__pa(__pgdir))); &bslash;&n; } while (0)
-macro_line|#endif /* CONFIG_8xx */
 macro_line|#ifndef __ASSEMBLY__
 DECL|function|pte_none
 r_extern
@@ -2560,6 +2531,111 @@ DECL|macro|kern_addr_valid
 mdefine_line|#define kern_addr_valid(addr)&t;(1)
 DECL|macro|io_remap_page_range
 mdefine_line|#define io_remap_page_range remap_page_range 
+macro_line|#ifdef CONFIG_8xx
+DECL|macro|__tlbia
+mdefine_line|#define __tlbia()&t;asm volatile (&quot;tlbia&quot; : : )
+DECL|function|local_flush_tlb_all
+r_extern
+r_inline
+r_void
+id|local_flush_tlb_all
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__tlbia
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|local_flush_tlb_mm
+r_extern
+r_inline
+r_void
+id|local_flush_tlb_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|__tlbia
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|local_flush_tlb_page
+r_extern
+r_inline
+r_void
+id|local_flush_tlb_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|vmaddr
+)paren
+(brace
+id|__tlbia
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|local_flush_tlb_range
+r_extern
+r_inline
+r_void
+id|local_flush_tlb_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+id|__tlbia
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|flush_hash_page
+r_extern
+r_inline
+r_void
+id|flush_hash_page
+c_func
+(paren
+r_int
+id|context
+comma
+r_int
+r_int
+id|va
+)paren
+(brace
+)brace
+macro_line|#endif
 macro_line|#endif __ASSEMBLY__
 macro_line|#endif /* _PPC_PGTABLE_H */
 eof

@@ -412,18 +412,15 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_isa_cmos_time
 r_static
 r_int
 r_int
+id|__init
 id|get_isa_cmos_time
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -966,16 +963,7 @@ id|CSR_TIMER1_CLR
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Do the LEDs things on non-CATS hardware.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|machine_is_cats
-c_func
-(paren
-)paren
-)paren
+multiline_comment|/* Do the LEDs things */
 id|do_leds
 c_func
 (paren

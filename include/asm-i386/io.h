@@ -125,6 +125,7 @@ c_func
 id|l
 )paren
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|__io_virt

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.66 1999/08/20 11:06:10 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_timer.c,v 1.67 1999/08/30 12:14:43 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 DECL|variable|sysctl_tcp_syn_retries
 r_int
@@ -2140,6 +2140,7 @@ id|next
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* __tcp_inc_slow_timer is called when an slow timer is started&n; * first time (slt-&gt;count was 0). There is race condition between&n; * timer creation and deletion and if we do not force adding timer here,&n; * we might lose timer. We could avoid it with global spinlock, but&n; * it is apparently overkill, so that we restart timer ALWAYS when&n; * this function is entered, it guarantees that timer will not lost.&n; */
 DECL|function|__tcp_inc_slow_timer
 r_void
 id|__tcp_inc_slow_timer
@@ -2175,11 +2176,7 @@ r_if
 c_cond
 (paren
 id|tcp_slow_timer.prev
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 (paren
 r_int
 )paren
@@ -2188,9 +2185,13 @@ id|tcp_slow_timer.expires
 op_minus
 id|when
 )paren
-op_ge
+OL
 l_int|0
 )paren
+id|when
+op_assign
+id|tcp_slow_timer.expires
+suffix:semicolon
 id|mod_timer
 c_func
 (paren
@@ -2200,21 +2201,6 @@ comma
 id|when
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|tcp_slow_timer.expires
-op_assign
-id|when
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|tcp_slow_timer
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|tcp_delete_keepalive_timer
 r_void

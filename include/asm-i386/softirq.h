@@ -27,6 +27,10 @@ DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
 DECL|macro|clear_active_bhs
 mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((x),&amp;bh_active)
+r_extern
+id|spinlock_t
+id|i386_bh_lock
+suffix:semicolon
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * The locking mechanism for base handlers, to prevent re-entrancy,&n; * is entirely private to an implementation, it should not be&n; * referenced at all outside of this file.&n; */
 r_extern
@@ -36,10 +40,6 @@ suffix:semicolon
 r_extern
 id|atomic_t
 id|global_bh_count
-suffix:semicolon
-r_extern
-id|spinlock_t
-id|i386_bh_lock
 suffix:semicolon
 r_extern
 r_void

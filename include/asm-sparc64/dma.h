@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.13 1998/12/16 04:33:55 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.14 1999/08/30 10:14:36 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
@@ -355,5 +355,15 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* From PCI */
+macro_line|#ifdef CONFIG_PCI
+r_extern
+r_int
+id|isa_dma_bridge_buggy
+suffix:semicolon
+macro_line|#else
+DECL|macro|isa_dma_bridge_buggy
+mdefine_line|#define isa_dma_bridge_buggy &t;(0)
+macro_line|#endif
 macro_line|#endif /* !(_ASM_SPARC64_DMA_H) */
 eof

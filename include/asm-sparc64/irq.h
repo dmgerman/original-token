@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.14 1998/12/19 11:05:41 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.h,v 1.15 1999/08/30 10:14:48 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
@@ -64,6 +64,7 @@ suffix:semicolon
 multiline_comment|/* Sun5 Interrupt Clear Register. */
 DECL|member|iclr
 multiline_comment|/*0x10*/
+r_volatile
 r_int
 r_int
 op_star
@@ -72,6 +73,7 @@ suffix:semicolon
 multiline_comment|/* Sun5 Interrupt Mapping Register. */
 DECL|member|imap
 multiline_comment|/*0x18*/
+r_volatile
 r_int
 r_int
 op_star
@@ -79,6 +81,15 @@ id|imap
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Only 8-bits are available, be careful.  -DaveM */
+DECL|macro|IBF_DMA_SYNC
+mdefine_line|#define IBF_DMA_SYNC&t;0x01&t;/* DMA synchronization behind PCI bridge needed. */
+DECL|macro|IBF_PCI
+mdefine_line|#define IBF_PCI&t;&t;0x02&t;/* Indicates PSYCHO/SABRE/SCHIZO PCI interrupt.&t; */
+DECL|macro|IBF_ACTIVE
+mdefine_line|#define IBF_ACTIVE&t;0x04&t;/* This interrupt is active and has a handler.&t; */
+DECL|macro|IBF_MULTI
+mdefine_line|#define IBF_MULTI&t;0x08&t;/* On PCI, indicates shared bucket.&t;&t; */
 DECL|macro|NUM_IVECS
 mdefine_line|#define NUM_IVECS&t;8192
 r_extern
@@ -93,6 +104,10 @@ DECL|macro|__irq_ino
 mdefine_line|#define __irq_ino(irq) &bslash;&n;        (((struct ino_bucket *)(unsigned long)(irq)) - &amp;ivector_table[0])
 DECL|macro|__irq_pil
 mdefine_line|#define __irq_pil(irq) ((struct ino_bucket *)(unsigned long)(irq))-&gt;pil
+DECL|macro|__bucket
+mdefine_line|#define __bucket(irq) ((struct ino_bucket *)(unsigned long)(irq))
+DECL|macro|__irq
+mdefine_line|#define __irq(bucket) ((unsigned int)(unsigned long)(bucket))
 DECL|function|__irq_itoa
 r_static
 id|__inline__
@@ -199,11 +214,13 @@ comma
 r_int
 id|inofixup
 comma
+r_volatile
 r_int
 r_int
 op_star
 id|iclr
 comma
+r_volatile
 r_int
 r_int
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: starfire.c,v 1.2 1998/12/09 18:53:11 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@dm.cobaltmicro.com)&n; */
+multiline_comment|/* $Id: starfire.c,v 1.3 1999/08/30 10:01:13 davem Exp $&n; * starfire.c: Starfire/E10000 support.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@dm.cobaltmicro.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -129,6 +129,7 @@ r_return
 op_star
 (paren
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -147,6 +148,7 @@ r_struct
 id|starfire_irqinfo
 (brace
 DECL|member|imap_slots
+r_volatile
 r_int
 r_int
 op_star
@@ -156,6 +158,7 @@ l_int|32
 )braket
 suffix:semicolon
 DECL|member|tregs
+r_volatile
 r_int
 r_int
 op_star
@@ -320,6 +323,12 @@ id|p-&gt;tregs
 id|i
 )braket
 op_assign
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
 id|__va
 c_func
 (paren
@@ -359,6 +368,7 @@ r_int
 id|starfire_translate
 c_func
 (paren
+r_volatile
 r_int
 r_int
 op_star

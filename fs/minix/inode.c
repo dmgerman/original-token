@@ -2417,7 +2417,7 @@ op_assign
 id|minix_new_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 )paren
 suffix:semicolon
 r_if
@@ -2465,7 +2465,7 @@ id|p
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren
@@ -2525,7 +2525,7 @@ suffix:semicolon
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren
@@ -2815,7 +2815,7 @@ op_assign
 id|minix_new_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 )paren
 suffix:semicolon
 r_if
@@ -2855,7 +2855,7 @@ id|p
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren
@@ -2920,7 +2920,7 @@ id|p
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren
@@ -3461,7 +3461,7 @@ op_assign
 id|minix_new_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 )paren
 suffix:semicolon
 r_if
@@ -3509,7 +3509,7 @@ id|p
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren
@@ -3569,7 +3569,7 @@ suffix:semicolon
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren
@@ -3859,7 +3859,7 @@ op_assign
 id|minix_new_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 )paren
 suffix:semicolon
 r_if
@@ -3899,7 +3899,7 @@ id|p
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren
@@ -3964,7 +3964,7 @@ id|p
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_sb
+id|inode
 comma
 id|tmp
 )paren

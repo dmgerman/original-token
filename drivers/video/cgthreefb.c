@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthreefb.c,v 1.4 1999/01/26 10:55:01 jj Exp $&n; * cgthreefb.c: CGthree frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgthreefb.c,v 1.5 1999/08/10 15:56:04 davem Exp $&n; * cgthreefb.c: CGthree frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

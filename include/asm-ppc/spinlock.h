@@ -31,7 +31,7 @@ macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
-mdefine_line|#define spin_lock(lock)&t;&t;do { } while(0)
+mdefine_line|#define spin_lock(lock)&t;&t;(void)(lock)&t;/* Avoid warnings about unused variable */
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock)&t;(1)
 DECL|macro|spin_unlock_wait
@@ -77,11 +77,11 @@ DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 macro_line|#endif
 DECL|macro|read_lock
-mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
+mdefine_line|#define read_lock(lock)&t;&t;(void)(lock)&t;/* Avoid warnings about unused variable */
 DECL|macro|read_unlock
 mdefine_line|#define read_unlock(lock)&t;do { } while(0)
 DECL|macro|write_lock
-mdefine_line|#define write_lock(lock)&t;do { } while(0)
+mdefine_line|#define write_lock(lock)&t;(void)(lock)&t;/* Likewise */
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(lock)&t;do { } while(0)
 DECL|macro|read_lock_irq

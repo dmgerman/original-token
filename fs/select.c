@@ -607,9 +607,11 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1507,9 +1509,11 @@ id|pollfd
 op_star
 id|fdpnt
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_for
 c_loop

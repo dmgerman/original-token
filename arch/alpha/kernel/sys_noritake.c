@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_noritake.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&n; * Code supporting the NORITAKE (AlphaServer 1000A), &n; * CORELLE (AlphaServer 800), and ALCOR Primo (AlphaStation 600A).&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_noritake.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the NORITAKE (AlphaServer 1000A), &n; * CORELLE (AlphaServer 800), and ALCOR Primo (AlphaStation 600A).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,9 +17,9 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_apecs.h&gt;
 macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;bios32.h&quot;
-macro_line|#include &quot;machvec.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &quot;pci_impl.h&quot;
+macro_line|#include &quot;machvec_impl.h&quot;
 r_static
 r_void
 DECL|function|noritake_update_irq_hw
@@ -375,10 +375,10 @@ id|pci_dev
 op_star
 id|dev
 comma
-r_int
+id|u8
 id|slot
 comma
-r_int
+id|u8
 id|pin
 )paren
 (brace
@@ -738,7 +738,7 @@ id|COMMON_TABLE_LOOKUP
 suffix:semicolon
 )brace
 r_static
-r_int
+id|u8
 id|__init
 DECL|function|noritake_swizzle
 id|noritake_swizzle
@@ -749,7 +749,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-r_int
+id|u8
 op_star
 id|pinp
 )paren
@@ -762,7 +762,25 @@ op_assign
 op_star
 id|pinp
 suffix:semicolon
-multiline_comment|/* Check first for the built-in bridge */
+r_if
+c_cond
+(paren
+id|dev-&gt;bus-&gt;number
+op_eq
+l_int|0
+)paren
+(brace
+id|slot
+op_assign
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Check for the built-in bridge */
+r_else
 r_if
 c_cond
 (paren
@@ -862,60 +880,6 @@ r_return
 id|slot
 suffix:semicolon
 )brace
-r_static
-r_void
-id|__init
-DECL|function|noritake_pci_fixup
-id|noritake_pci_fixup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|layout_all_busses
-c_func
-(paren
-id|EISA_DEFAULT_IO_BASE
-comma
-id|APECS_AND_LCA_DEFAULT_MEM_BASE
-)paren
-suffix:semicolon
-id|common_pci_fixup
-c_func
-(paren
-id|noritake_map_irq
-comma
-id|noritake_swizzle
-)paren
-suffix:semicolon
-)brace
-r_static
-r_void
-id|__init
-DECL|function|noritake_primo_pci_fixup
-id|noritake_primo_pci_fixup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|layout_all_busses
-c_func
-(paren
-id|EISA_DEFAULT_IO_BASE
-comma
-id|DEFAULT_MEM_BASE
-)paren
-suffix:semicolon
-id|common_pci_fixup
-c_func
-(paren
-id|noritake_map_irq
-comma
-id|noritake_swizzle
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * The System Vectors&n; */
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) || !defined(CONFIG_ALPHA_PRIMO)
 DECL|variable|__initmv
@@ -945,6 +909,14 @@ id|max_dma_address
 suffix:colon
 id|ALPHA_MAX_DMA_ADDRESS
 comma
+id|min_io_address
+suffix:colon
+id|EISA_DEFAULT_IO_BASE
+comma
+id|min_mem_address
+suffix:colon
+id|APECS_AND_LCA_DEFAULT_MEM_BASE
+comma
 id|nr_irqs
 suffix:colon
 l_int|48
@@ -963,7 +935,7 @@ id|noritake_update_irq_hw
 comma
 id|ack_irq
 suffix:colon
-id|generic_ack_irq
+id|common_ack_irq
 comma
 id|device_interrupt
 suffix:colon
@@ -979,15 +951,23 @@ id|noritake_init_irq
 comma
 id|init_pit
 suffix:colon
-id|generic_init_pit
+id|common_init_pit
 comma
-id|pci_fixup
+id|init_pci
 suffix:colon
-id|noritake_pci_fixup
+id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
-id|generic_kill_arch
+id|common_kill_arch
+comma
+id|pci_map_irq
+suffix:colon
+id|noritake_map_irq
+comma
+id|pci_swizzle
+suffix:colon
+id|noritake_swizzle
 comma
 )brace
 suffix:semicolon
@@ -1024,6 +1004,14 @@ id|max_dma_address
 suffix:colon
 id|ALPHA_MAX_DMA_ADDRESS
 comma
+id|min_io_address
+suffix:colon
+id|EISA_DEFAULT_IO_BASE
+comma
+id|min_mem_address
+suffix:colon
+id|CIA_DEFAULT_MEM_BASE
+comma
 id|nr_irqs
 suffix:colon
 l_int|48
@@ -1042,7 +1030,7 @@ id|noritake_update_irq_hw
 comma
 id|ack_irq
 suffix:colon
-id|generic_ack_irq
+id|common_ack_irq
 comma
 id|device_interrupt
 suffix:colon
@@ -1058,15 +1046,23 @@ id|noritake_init_irq
 comma
 id|init_pit
 suffix:colon
-id|generic_init_pit
+id|common_init_pit
 comma
-id|pci_fixup
+id|init_pci
 suffix:colon
-id|noritake_primo_pci_fixup
+id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
-id|generic_kill_arch
+id|common_kill_arch
+comma
+id|pci_map_irq
+suffix:colon
+id|noritake_map_irq
+comma
+id|pci_swizzle
+suffix:colon
+id|noritake_swizzle
 comma
 )brace
 suffix:semicolon

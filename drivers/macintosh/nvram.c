@@ -12,10 +12,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|NVRAM_SIZE
 mdefine_line|#define NVRAM_SIZE&t;8192
-multiline_comment|/* when building as a module, __openfirmware is both unavailable&n; * and unnecessary. */
-macro_line|#ifndef MODULE
-id|__openfirmware
-macro_line|#endif
 DECL|function|nvram_llseek
 r_static
 r_int

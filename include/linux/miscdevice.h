@@ -19,8 +19,8 @@ DECL|macro|APOLLO_MOUSE_MINOR
 mdefine_line|#define APOLLO_MOUSE_MINOR 7
 DECL|macro|PC110PAD_MINOR
 mdefine_line|#define PC110PAD_MINOR 9
-DECL|macro|MAC_MOUSE_MINOR
-mdefine_line|#define MAC_MOUSE_MINOR 10
+DECL|macro|ADB_MOUSE_MINOR
+mdefine_line|#define ADB_MOUSE_MINOR 10
 DECL|macro|WATCHDOG_MINOR
 mdefine_line|#define WATCHDOG_MINOR&t;&t;130&t;/* Watchdog timer     */
 DECL|macro|TEMP_MINOR

@@ -593,15 +593,12 @@ DECL|macro|iounmap
 mdefine_line|#define iounmap vfree
 macro_line|#endif
 macro_line|#ifdef __sparc__
-DECL|macro|remap_pci_mem
-mdefine_line|#define remap_pci_mem(base, size)&t;((u_long) __va(base))
-DECL|macro|unmap_pci_mem
-mdefine_line|#define unmap_pci_mem(vaddr, size)
 DECL|macro|pcivtobus
 mdefine_line|#define pcivtobus(p)&t;&t;&t;((p) &amp; pci_dvma_mask)
 macro_line|#else&t;/* __sparc__ */
 DECL|macro|pcivtobus
 mdefine_line|#define pcivtobus(p)&t;&t;&t;(p)
+macro_line|#endif
 macro_line|#if !defined(NCR_IOMAPPED) || defined(__i386__)
 DECL|function|remap_pci_mem
 r_static
@@ -705,7 +702,6 @@ id|PAGE_MASK
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* !NCR_IOMAPPED || __i386__ */
-macro_line|#endif&t;/* __sparc__ */
 multiline_comment|/*&n;**&t;Insert a delay in micro-seconds and milli-seconds.&n;**&t;-------------------------------------------------&n;**&t;Under Linux, udelay() is restricted to delay &lt; 1 milli-second.&n;**&t;In fact, it generally works for up to 1 second delay.&n;**&t;Since 2.1.105, the mdelay() function is provided for delays &n;**&t;in milli-seconds.&n;**&t;Under 2.0 kernels, udelay() is an inline function that is very &n;**&t;inaccurate on Pentium processors.&n;*/
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,105)
 DECL|macro|UDELAY
@@ -31161,22 +31157,6 @@ macro_line|#endif&t;/* __powerpc__ */
 macro_line|#ifdef __sparc__
 multiline_comment|/*&n;&t;**    Fix-ups for sparc.&n;&t;**&n;&t;**    I wrote:&t;   Should not be performed by the driver,&n;&t;**    Guy wrote:   but how can OBP know each and every PCI card,&n;&t;** &t;&t;   if they don&squot;t use Fcode?&n;&t;**    I replied:   no need to know each and every PCI card, just &n;&t;**&t;           be skilled enough to understand the PCI specs.&n;&t;*/
 multiline_comment|/*&n;&t;**    PCI configuration is based on configuration registers being&n;&t;**    coherent with hardware and software resource identifications.&n;&t;**    This is fairly simple, but seems still too complex for Sparc.&n;&t;*/
-id|base
-op_assign
-id|__pa
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-id|base_2
-op_assign
-id|__pa
-c_func
-(paren
-id|base_2
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

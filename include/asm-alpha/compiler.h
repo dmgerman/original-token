@@ -6,11 +6,14 @@ multiline_comment|/*&n; * EGCS (of varying versions) does a good job of using in
 macro_line|#if 0 &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91)
 mdefine_line|#define __kernel_insbl(val, shift) &bslash;&n;  (((unsigned long)(val) &amp; 0xfful) &lt;&lt; ((shift) * 8))
 mdefine_line|#define __kernel_inswl(val, shift) &bslash;&n;  (((unsigned long)(val) &amp; 0xfffful) &lt;&lt; ((shift) * 8))
+mdefine_line|#define __kernel_insql(val, shift) &bslash;&n;  ((unsigned long)(val) &lt;&lt; ((shift) * 8))
 macro_line|#else
 DECL|macro|__kernel_insbl
 mdefine_line|#define __kernel_insbl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;insbl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;rI&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
 DECL|macro|__kernel_inswl
 mdefine_line|#define __kernel_inswl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;inswl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;rI&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
+DECL|macro|__kernel_insql
+mdefine_line|#define __kernel_insql(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;insql %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;rI&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
 macro_line|#endif
 macro_line|#if 0 &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 92)
 mdefine_line|#define __kernel_extbl(val, shift)  (((val) &gt;&gt; (((shift) &amp; 7) * 8)) &amp; 0xfful)
@@ -21,8 +24,8 @@ mdefine_line|#define __kernel_extbl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ un
 DECL|macro|__kernel_extwl
 mdefine_line|#define __kernel_extwl(val, shift)&t;&t;&t;&t;&t;&bslash;&n;  ({ unsigned long __kir;&t;&t;&t;&t;&t;&t;&bslash;&n;     __asm__(&quot;extwl %2,%1,%0&quot; : &quot;=r&quot;(__kir) : &quot;rI&quot;(shift), &quot;r&quot;(val));&t;&bslash;&n;     __kir; })
 macro_line|#endif
-multiline_comment|/* &n; * Beginning with EGCS 1.1, GCC defines __alpha_bwx__ when the BWX &n; * extension is enabled.  Previous versions did not define anything&n; * we could test during compilation, so allow users to tell us when&n; * the compiler will DTRT.&n; */
-macro_line|#if defined(HAVE_BWX) || defined(__alpha_bwx__)
+multiline_comment|/* &n; * Beginning with EGCS 1.1, GCC defines __alpha_bwx__ when the BWX &n; * extension is enabled.  Previous versions did not define anything&n; * we could test during compilation -- too bad, so sad.&n; */
+macro_line|#if defined(__alpha_bwx__)
 DECL|macro|__kernel_ldbu
 mdefine_line|#define __kernel_ldbu(mem)&t;(mem)
 DECL|macro|__kernel_ldwu

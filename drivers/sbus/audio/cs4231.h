@@ -515,9 +515,9 @@ mdefine_line|#define APC_XINT_CAPT   0x20000  /* Capture ext intr */
 DECL|macro|APC_XINT_GENL
 mdefine_line|#define APC_XINT_GENL   0x10000  /* Error ext intr */
 DECL|macro|APC_XINT_EMPT
-mdefine_line|#define APC_XINT_EMPT   0x8000   /* Pipe empty interrupt */
+mdefine_line|#define APC_XINT_EMPT   0x8000   /* Pipe empty interrupt (0 write to pva) */
 DECL|macro|APC_XINT_PEMP
-mdefine_line|#define APC_XINT_PEMP   0x4000   /* Play pipe empty */
+mdefine_line|#define APC_XINT_PEMP   0x4000   /* Play pipe empty (pva and pnva not set) */
 DECL|macro|APC_XINT_PNVA
 mdefine_line|#define APC_XINT_PNVA   0x2000   /* Playback NVA dirty */
 DECL|macro|APC_XINT_PENA
@@ -527,7 +527,7 @@ mdefine_line|#define APC_XINT_COVF   0x800    /* Cap data dropped on floor */
 DECL|macro|APC_XINT_CNVA
 mdefine_line|#define APC_XINT_CNVA   0x400    /* Capture NVA dirty */
 DECL|macro|APC_XINT_CEMP
-mdefine_line|#define APC_XINT_CEMP   0x200    /* Capture pipe empty interrupt */
+mdefine_line|#define APC_XINT_CEMP   0x200    /* Capture pipe empty (cva and cnva not set) */
 DECL|macro|APC_XINT_CENA
 mdefine_line|#define APC_XINT_CENA   0x100    /* Cap. pipe empty int enable */
 DECL|macro|APC_PPAUSE
@@ -537,9 +537,9 @@ mdefine_line|#define APC_CPAUSE      0x40     /* Pause the capture DMA */
 DECL|macro|APC_CDC_RESET
 mdefine_line|#define APC_CDC_RESET   0x20     /* CODEC RESET */
 DECL|macro|APC_PDMA_READY
-mdefine_line|#define APC_PDMA_READY     0x08     /* Play DMA Go */
+mdefine_line|#define APC_PDMA_READY  0x08     /* Play DMA Go */
 DECL|macro|APC_CDMA_READY
-mdefine_line|#define APC_CDMA_READY     0x04     /* Capture DMA Go */
+mdefine_line|#define APC_CDMA_READY  0x04     /* Capture DMA Go */
 DECL|macro|APC_CHIP_RESET
 mdefine_line|#define APC_CHIP_RESET  0x01     /* Reset the chip */
 DECL|macro|APC_INIT_SETUP

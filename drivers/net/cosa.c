@@ -7325,10 +7325,6 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 )brace
 id|printk
 c_func
@@ -7425,10 +7421,6 @@ c_func
 (paren
 l_int|1
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
 suffix:semicolon
 macro_line|#endif
 )brace

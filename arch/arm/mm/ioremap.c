@@ -543,9 +543,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|function|iounmap
+DECL|function|__iounmap
 r_void
-id|iounmap
+id|__iounmap
 c_func
 (paren
 r_void

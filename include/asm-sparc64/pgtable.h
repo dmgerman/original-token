@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.109 1999/08/02 08:57:46 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.110 1999/08/30 10:14:57 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -1762,6 +1762,10 @@ suffix:semicolon
 DECL|member|dvma_addr
 id|__u32
 id|dvma_addr
+suffix:semicolon
+DECL|member|dvma_len
+id|__u32
+id|dvma_len
 suffix:semicolon
 )brace
 suffix:semicolon

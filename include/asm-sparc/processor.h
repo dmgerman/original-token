@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.71 1999/05/27 04:52:43 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.72 1999/08/14 03:52:04 anton Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -258,8 +258,8 @@ DECL|macro|SPARC_FLAG_UNALIGNED
 mdefine_line|#define SPARC_FLAG_UNALIGNED    0x2    /* is allowed to do unaligned accesses */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, (0), (0), &bslash;&n;&t;&t;    NULL, __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
-DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, KERNEL_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
+DECL|macro|INIT_THREAD
+mdefine_line|#define INIT_THREAD  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, KERNEL_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc
 r_extern
@@ -439,12 +439,14 @@ id|flags
 )paren
 suffix:semicolon
 DECL|macro|copy_segments
-mdefine_line|#define copy_segments(__nr, __tsk, __mm)&t;&bslash;&n;&t;if((__tsk) == current &amp;&amp;&t;&t;&bslash;&n;&t;   (__mm) != NULL)&t;&t;&t;&bslash;&n;&t;&t;flush_user_windows()
+mdefine_line|#define copy_segments(__tsk, __mm)&t;&t;&bslash;&n;&t;if((__tsk) == current &amp;&amp;&t;&t;&bslash;&n;&t;   (__mm) != NULL)&t;&t;&t;&bslash;&n;&t;&t;flush_user_windows()
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|forget_segments
 mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 macro_line|#ifdef __KERNEL__
+DECL|macro|THREAD_SIZE
+mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)
 r_extern
 r_struct
 id|task_struct

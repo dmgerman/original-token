@@ -918,31 +918,6 @@ comma
 id|envp
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Create a new kernel thread&n; */
-r_extern
-id|pid_t
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#endif /* __ASM_ARM_UNISTD_H */
 eof

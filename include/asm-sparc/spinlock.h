@@ -2,7 +2,7 @@ multiline_comment|/* spinlock.h: 32-bit Sparc spinlock support.&n; *&n; * Copyri
 macro_line|#ifndef __SPARC_SPINLOCK_H
 DECL|macro|__SPARC_SPINLOCK_H
 mdefine_line|#define __SPARC_SPINLOCK_H
-macro_line|#include &lt;linux/tasks.h&gt;&t;/* For NR_CPUS */
+macro_line|#include &lt;linux/threads.h&gt;&t;/* For NR_CPUS */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifndef __SMP__
 DECL|typedef|spinlock_t

@@ -205,7 +205,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot; PCI device %04x:%04x (%s)&quot;
+l_string|&quot;PCI device %04x:%04x (%s)&quot;
 comma
 id|dev-&gt;vendor
 comma
@@ -231,7 +231,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot; %s %s&quot;
+l_string|&quot;%s %s&quot;
 comma
 id|vendor_p-&gt;name
 comma

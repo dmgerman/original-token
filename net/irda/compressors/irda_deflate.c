@@ -2241,16 +2241,13 @@ comma
 multiline_comment|/* decomp_stat */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|irda_deflate_init
 r_int
+id|__init
 id|irda_deflate_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

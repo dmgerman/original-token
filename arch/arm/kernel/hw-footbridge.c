@@ -2358,7 +2358,7 @@ DECL|macro|dprintk
 mdefine_line|#define dprintk printk
 macro_line|#endif
 DECL|macro|WRITE_RWA
-mdefine_line|#define WRITE_RWA(r,v) do { outb((r), 0x279); outb((v), 0xa79); } while (0)
+mdefine_line|#define WRITE_RWA(r,v) do { outb((r), 0x279); udelay(10); outb((v), 0xa79); } while (0)
 DECL|function|rwa010_unlock
 r_static
 r_inline
@@ -2403,6 +2403,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|outb
 c_func
 (paren
@@ -2414,6 +2415,13 @@ comma
 l_int|0x279
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|rwa010_read_ident
 r_static
@@ -2464,7 +2472,7 @@ suffix:semicolon
 id|mdelay
 c_func
 (paren
-l_int|10
+l_int|1
 )paren
 suffix:semicolon
 id|dprintk
@@ -2513,10 +2521,10 @@ op_increment
 r_int
 id|bit
 suffix:semicolon
-id|mdelay
+id|udelay
 c_func
 (paren
-l_int|1
+l_int|250
 )paren
 suffix:semicolon
 id|inb
@@ -2525,10 +2533,10 @@ c_func
 l_int|0x203
 )paren
 suffix:semicolon
-id|mdelay
+id|udelay
 c_func
 (paren
-l_int|1
+l_int|250
 )paren
 suffix:semicolon
 id|bit
@@ -2547,6 +2555,19 @@ comma
 id|bit
 )paren
 suffix:semicolon
+id|bit
+op_assign
+(paren
+id|bit
+op_eq
+l_int|0xaa
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
 id|si
 (braket
 id|i
@@ -2557,16 +2578,10 @@ op_lshift
 id|j
 suffix:semicolon
 )brace
-id|mdelay
-c_func
-(paren
-l_int|10
-)paren
-suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;%02X &quot;
+l_string|&quot;(%02X) &quot;
 comma
 id|si
 (braket
@@ -3698,6 +3713,7 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_CATS
 r_if
 c_cond
 (paren
@@ -3711,6 +3727,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|leds_event
 c_func
 (paren

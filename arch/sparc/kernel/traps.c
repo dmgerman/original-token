@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.59 1999/03/06 12:07:31 anton Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.c,v 1.60 1999/08/14 03:51:31 anton Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -534,7 +534,7 @@ c_func
 (paren
 l_string|&quot;Whee... Hello Mr. Penguin&quot;
 comma
-id|current-&gt;tss.kregs
+id|current-&gt;thread.kregs
 )paren
 suffix:semicolon
 )brace
@@ -572,11 +572,11 @@ c_func
 (paren
 l_string|&quot;Kernel bad trap&quot;
 comma
-id|current-&gt;tss.kregs
+id|current-&gt;thread.kregs
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_BADTRAP
 c_func
@@ -586,7 +586,7 @@ op_minus
 l_int|0x80
 )paren
 suffix:semicolon
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
@@ -709,11 +709,11 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_ILLINST
 suffix:semicolon
@@ -780,11 +780,11 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
@@ -866,11 +866,11 @@ id|regs
 suffix:semicolon
 multiline_comment|/* die_if_kernel(&quot;Kernel MNA access&quot;, regs); */
 )brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
@@ -1170,22 +1170,22 @@ id|fpsave
 c_func
 (paren
 op_amp
-id|fptask-&gt;tss.float_regs
+id|fptask-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|fptask-&gt;tss.fsr
+id|fptask-&gt;thread.fsr
 comma
 op_amp
-id|fptask-&gt;tss.fpqueue
+id|fptask-&gt;thread.fpqueue
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|fptask-&gt;tss.fpqdepth
+id|fptask-&gt;thread.fpqdepth
 )paren
 suffix:semicolon
 )brace
@@ -1203,13 +1203,13 @@ id|fpload
 c_func
 (paren
 op_amp
-id|current-&gt;tss.float_regs
+id|current-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fsr
+id|current-&gt;thread.fsr
 )paren
 suffix:semicolon
 )brace
@@ -1266,13 +1266,13 @@ id|fpload
 c_func
 (paren
 op_amp
-id|current-&gt;tss.float_regs
+id|current-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fsr
+id|current-&gt;thread.fsr
 )paren
 suffix:semicolon
 )brace
@@ -1477,22 +1477,22 @@ id|fpsave
 c_func
 (paren
 op_amp
-id|fpt-&gt;tss.float_regs
+id|fpt-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|fpt-&gt;tss.fsr
+id|fpt-&gt;thread.fsr
 comma
 op_amp
-id|fpt-&gt;tss.fpqueue
+id|fpt-&gt;thread.fpqueue
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|fpt-&gt;tss.fpqdepth
+id|fpt-&gt;thread.fpqdepth
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_FPU
@@ -1501,7 +1501,7 @@ c_func
 (paren
 l_string|&quot;Hmm, FP exception, fsr was %016lx&bslash;n&quot;
 comma
-id|fpt-&gt;tss.fsr
+id|fpt-&gt;thread.fsr
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1509,7 +1509,7 @@ r_switch
 c_cond
 (paren
 (paren
-id|fpt-&gt;tss.fsr
+id|fpt-&gt;thread.fsr
 op_amp
 l_int|0x1c000
 )paren
@@ -1620,24 +1620,24 @@ id|fpload
 c_func
 (paren
 op_amp
-id|current-&gt;tss.float_regs
+id|current-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fsr
+id|current-&gt;thread.fsr
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 multiline_comment|/* nope, better SIGFPE the offending process... */
-id|fpt-&gt;tss.sig_address
+id|fpt-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|fpt-&gt;tss.sig_desc
+id|fpt-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_FPERROR
 suffix:semicolon
@@ -1785,11 +1785,11 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_TAG
 suffix:semicolon
@@ -2113,5 +2113,19 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Attach to the address space of init_task. */
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|init_mm.mm_count
+)paren
+suffix:semicolon
+id|current-&gt;active_mm
+op_assign
+op_amp
+id|init_mm
+suffix:semicolon
+multiline_comment|/* NOTE: Other cpus have this done as they are started&n;&t; *       up on SMP.&n;&t; */
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.138 1999/07/11 16:32:21 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.146 1999/08/31 06:54:08 davem Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
@@ -134,6 +135,32 @@ suffix:semicolon
 r_extern
 r_void
 id|apus_init
+c_func
+(paren
+r_int
+r_int
+id|r3
+comma
+r_int
+r_int
+id|r4
+comma
+r_int
+r_int
+id|r5
+comma
+r_int
+r_int
+id|r6
+comma
+r_int
+r_int
+id|r7
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|gemini_init
 c_func
 (paren
 r_int
@@ -922,6 +949,49 @@ id|cpu_node
 )paren
 r_break
 suffix:semicolon
+(brace
+r_int
+id|s
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|s
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|s
+OL
+id|i
+)paren
+op_logical_and
+id|cpu_node-&gt;next
+suffix:semicolon
+id|s
+op_increment
+comma
+id|cpu_node
+op_assign
+id|cpu_node-&gt;next
+)paren
+multiline_comment|/* nothing */
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+op_ne
+id|i
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;get_cpuinfo(): ran out of &quot;
+l_string|&quot;cpu nodes.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|fp
 op_assign
 (paren
@@ -1449,6 +1519,11 @@ id|_machine
 op_assign
 id|_MACH_apus
 suffix:semicolon
+macro_line|#elif defined(CONFIG_GEMINI)
+id|_machine
+op_assign
+id|_MACH_gemini
+suffix:semicolon
 macro_line|#else
 macro_line|#error &quot;Machine not defined correctly&quot;
 macro_line|#endif /* CONFIG_APUS */
@@ -1804,6 +1879,25 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+r_case
+id|_MACH_gemini
+suffix:colon
+id|gemini_init
+c_func
+(paren
+id|r3
+comma
+id|r4
+comma
+id|r5
+comma
+id|r6
+comma
+id|r7
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -1921,15 +2015,31 @@ id|val
 suffix:semicolon
 )brace
 )brace
+DECL|function|ppc_init
 r_void
 id|__init
-DECL|function|ppc_init
 id|ppc_init
 c_func
 (paren
 r_void
 )paren
 (brace
+multiline_comment|/* clear the progress line */
+r_if
+c_cond
+(paren
+id|ppc_md.progress
+)paren
+id|ppc_md
+dot
+id|progress
+c_func
+(paren
+l_string|&quot; &quot;
+comma
+l_int|0xffff
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2120,9 +2230,9 @@ dot
 id|progress
 c_func
 (paren
-l_string|&quot; &quot;
+l_string|&quot;arch: exit&quot;
 comma
-l_int|0xffff
+l_int|0x3eab
 )paren
 suffix:semicolon
 )brace

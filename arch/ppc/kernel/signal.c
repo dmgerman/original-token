@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  $Id: signal.c,v 1.25 1999/06/17 05:40:20 paulus Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/signal.c&quot;&n; *    Copyright (C) 1991, 1992 Linus Torvalds&n; *    1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  $Id: signal.c,v 1.27 1999/08/03 19:16:38 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/signal.c&quot;&n; *    Copyright (C) 1991, 1992 Linus Torvalds&n; *    1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -864,7 +864,7 @@ c_cond
 id|copy_from_user
 c_func
 (paren
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 comma
 op_amp
 id|sr-&gt;fp_regs
@@ -1100,7 +1100,7 @@ c_func
 op_amp
 id|frame-&gt;fp_regs
 comma
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 comma
 id|ELF_NFPREG
 op_star

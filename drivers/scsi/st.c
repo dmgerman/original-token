@@ -18461,7 +18461,7 @@ id|st_registered
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Driver initialization (not __initfunc because may be called later) */
+multiline_comment|/* Driver initialization (not __init because may be called later) */
 DECL|function|st_init
 r_static
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.65 1999/05/17 19:11:13 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
+multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.67 1999/08/10 22:53:57 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
@@ -1475,14 +1475,6 @@ id|s
 )paren
 suffix:semicolon
 )brace
-DECL|variable|sanity
-r_int
-r_char
-id|sanity
-(braket
-l_int|0x2000
-)braket
-suffix:semicolon
 r_int
 r_int
 DECL|function|decompress_kernel

@@ -30651,6 +30651,45 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
+macro_line|#ifndef MODULE
+multiline_comment|/* it cannot be static const struct due to __initdata&n;&t;&t;marker */
+DECL|variable|__initdata
+r_static
+r_struct
+id|fb_videomode
+id|defaultmode
+id|__initdata
+op_assign
+(brace
+multiline_comment|/* 640x480 @ 60Hz, 31.5 kHz */
+l_int|NULL
+comma
+l_int|60
+comma
+l_int|640
+comma
+l_int|480
+comma
+l_int|39721
+comma
+l_int|40
+comma
+l_int|24
+comma
+l_int|32
+comma
+l_int|11
+comma
+l_int|96
+comma
+l_int|2
+comma
+l_int|0
+comma
+id|FB_VMODE_NONINTERLACED
+)brace
+suffix:semicolon
+macro_line|#endif /* !MODULE */
 DECL|function|initMatrox2
 r_static
 r_int
@@ -32283,42 +32322,6 @@ suffix:semicolon
 macro_line|#ifndef MODULE
 multiline_comment|/* mode database is marked __init ... */
 (brace
-multiline_comment|/* it cannot be static const struct due to __initdata&n;&t;&t;marker */
-r_static
-r_struct
-id|fb_videomode
-id|defaultmode
-id|__initdata
-op_assign
-(brace
-multiline_comment|/* 640x480 @ 60Hz, 31.5 kHz */
-l_int|NULL
-comma
-l_int|60
-comma
-l_int|640
-comma
-l_int|480
-comma
-l_int|39721
-comma
-l_int|40
-comma
-l_int|24
-comma
-l_int|32
-comma
-l_int|11
-comma
-l_int|96
-comma
-l_int|2
-comma
-l_int|0
-comma
-id|FB_VMODE_NONINTERLACED
-)brace
-suffix:semicolon
 id|fb_find_mode
 c_func
 (paren

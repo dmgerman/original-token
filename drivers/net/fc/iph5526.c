@@ -1353,11 +1353,9 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|iph5526_probe
 r_int
+id|__init
 id|iph5526_probe
 c_func
 (paren
@@ -1365,7 +1363,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI
@@ -1397,12 +1394,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PCI
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|iph5526_probe_pci
 r_static
 r_int
+id|__init
 id|iph5526_probe_pci
 c_func
 (paren
@@ -1410,7 +1405,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 macro_line|#ifndef MODULE
@@ -1608,12 +1602,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif  /* CONFIG_PCI */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fcdev_init
 r_static
 r_int
+id|__init
 id|fcdev_init
 c_func
 (paren
@@ -1621,7 +1613,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 id|dev-&gt;open

@@ -110,12 +110,6 @@ id|irq_offset
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|mask_irq
-mdefine_line|#define mask_irq(irq) ({if (irq_desc[irq].ctl &amp;&amp; irq_desc[irq].ctl-&gt;disable) irq_desc[irq].ctl-&gt;disable(irq);})
-DECL|macro|unmask_irq
-mdefine_line|#define unmask_irq(irq) ({if (irq_desc[irq].ctl &amp;&amp; irq_desc[irq].ctl-&gt;enable) irq_desc[irq].ctl-&gt;enable(irq);})
-DECL|macro|mask_and_ack_irq
-mdefine_line|#define mask_and_ack_irq(irq) ({if (irq_desc[irq].ctl &amp;&amp; irq_desc[irq].ctl-&gt;mask_and_ack) irq_desc[irq].ctl-&gt;mask_and_ack(irq);})
 DECL|struct|irqdesc
 r_struct
 id|irqdesc

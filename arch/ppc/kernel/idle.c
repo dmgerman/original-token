@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.63 1999/06/10 22:55:35 geert Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.65 1999/08/03 19:16:19 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -187,7 +187,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * SMP entry into the idle task - calls the same thing as the&n; * non-smp versions. -- Cort&n; */
 DECL|function|cpu_idle
 r_int
@@ -208,41 +207,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
-macro_line|#endif /* __SMP__ */
-multiline_comment|/*&n; * Syscall entry into the idle task. -- Cort&n; */
-DECL|function|sys_idle
-id|asmlinkage
-r_int
-id|sys_idle
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|current-&gt;pid
-op_ne
-l_int|0
-)paren
-(brace
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
-)brace
-id|idled
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* should never execute this but it makes gcc happy -- Cort */
 )brace
 multiline_comment|/*&n; * Mark &squot;zombie&squot; pte&squot;s in the hash table as invalid.&n; * This improves performance for the hash table reload code&n; * a bit since we don&squot;t consider unused pages as valid.&n; *  -- Cort&n; */
 DECL|variable|reclaim_ptr

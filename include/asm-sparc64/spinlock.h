@@ -270,6 +270,7 @@ c_func
 (paren
 l_string|&quot;membar&t;#StoreStore | #LoadStore&bslash;n&bslash;t&quot;
 l_string|&quot;stb&t;%%g0, [%0]&bslash;n&bslash;t&quot;
+l_string|&quot;membar&t;#StoreStore | #StoreLoad&quot;
 suffix:colon
 multiline_comment|/* No outputs */
 suffix:colon
@@ -399,29 +400,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-"&quot;"
-id|membar
-macro_line|#StoreStore | #LoadStore
-id|stb
-op_mod
-op_mod
-id|g0
-comma
-(braket
-op_mod
-l_int|0
-)braket
-id|wrpr
-op_mod
-op_mod
-id|g0
-comma
-l_int|0x0
-comma
-op_mod
-op_mod
-id|pil
-"&quot;"
+l_string|&quot;membar&t;#StoreStore | #LoadStore&bslash;n&bslash;t&quot;
+l_string|&quot;stb&t;%%g0, [%0]&bslash;n&bslash;t&quot;
+l_string|&quot;membar&t;#StoreStore | #StoreLoad&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%%g0, 0x0, %%pil&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -460,28 +442,10 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-"&quot;"
-id|membar
-macro_line|#StoreStore | #LoadStore
-id|stb
-op_mod
-op_mod
-id|g0
-comma
-(braket
-op_mod
-l_int|0
-)braket
-id|wrpr
-op_mod
-l_int|1
-comma
-l_int|0x0
-comma
-op_mod
-op_mod
-id|pil
-"&quot;"
+l_string|&quot;membar&t;#StoreStore | #LoadStore&bslash;n&bslash;t&quot;
+l_string|&quot;stb&t;%%g0, [%0]&bslash;n&bslash;t&quot;
+l_string|&quot;membar&t;#StoreStore | #StoreLoad&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%1, 0x0, %%pil&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/processor.h&n; *&n; * Copyright (c) 1996-1999 Russell King.&n; *&n; * Changelog:&n; *  20-09-1996&t;RMK&t;Created&n; *  26-09-1996&t;RMK&t;Added &squot;EXTRA_THREAD_STRUCT*&squot;&n; *  28-09-1996&t;RMK&t;Moved start_thread into the processor dependencies&n; *  09-09-1998&t;PJB&t;Delete redundant `wp_works_ok&squot;&n; *  31-07-1999&t;RMK&t;Added &squot;domain&squot; stuff&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/processor.h&n; *&n; * Copyright (c) 1996-1999 Russell King.&n; *&n; * Changelog:&n; *  20-09-1996&t;RMK&t;Created&n; *  26-09-1996&t;RMK&t;Added &squot;EXTRA_THREAD_STRUCT*&squot;&n; *  28-09-1996&t;RMK&t;Moved start_thread into the processor dependencies&n; *  09-09-1998&t;PJB&t;Delete redundant `wp_works_ok&squot;&n; *  30-05-1999&t;PJB&t;Save sl across context switches&n; *  31-07-1999&t;RMK&t;Added &squot;domain&squot; stuff&n; */
 macro_line|#ifndef __ASM_PROC_PROCESSOR_H
 DECL|macro|__ASM_PROC_PROCESSOR_H
 mdefine_line|#define __ASM_PROC_PROCESSOR_H
@@ -44,6 +44,11 @@ r_int
 r_int
 id|r9
 suffix:semicolon
+DECL|member|sl
+r_int
+r_int
+id|sl
+suffix:semicolon
 DECL|member|fp
 r_int
 r_int
@@ -57,7 +62,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_CSS
-mdefine_line|#define INIT_CSS (struct context_save_struct){ SVC_MODE, 0, 0, 0, 0, 0, 0, 0, 0 }
+mdefine_line|#define INIT_CSS (struct context_save_struct){ SVC_MODE, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 DECL|macro|EXTRA_THREAD_STRUCT
 mdefine_line|#define EXTRA_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int&t;domain;
 DECL|macro|EXTRA_THREAD_STRUCT_INIT

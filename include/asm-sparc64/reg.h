@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: reg.h,v 1.4 1997/09/14 08:40:29 davem Exp $&n; * linux/asm-sparc64/reg.h&n; * Layout of the registers as expected by gdb on the Sparc&n; * we should replace the user.h definitions with those in&n; * this file, we don&squot;t even use the other &n; * -miguel&n; *&n; * The names of the structures, constants and aliases in this file&n; * have the same names as the sunos ones, some programs rely on these&n; * names (gdb for example).&n; *&n; */
+multiline_comment|/* $Id: reg.h,v 1.5 1999/08/17 17:52:32 jj Exp $&n; * linux/asm-sparc64/reg.h&n; * Layout of the registers as expected by gdb on the Sparc&n; * we should replace the user.h definitions with those in&n; * this file, we don&squot;t even use the other &n; * -miguel&n; *&n; * The names of the structures, constants and aliases in this file&n; * have the same names as the sunos ones, some programs rely on these&n; * names (gdb for example).&n; *&n; */
 macro_line|#ifndef __SPARC64_REG_H
 DECL|macro|__SPARC64_REG_H
 mdefine_line|#define __SPARC64_REG_H
@@ -113,6 +113,10 @@ id|r_fprs
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|FPU_REGS_TYPE
+mdefine_line|#define FPU_REGS_TYPE unsigned int
+DECL|macro|FPU_FSR_TYPE
+mdefine_line|#define FPU_FSR_TYPE unsigned long
 DECL|struct|fp_status
 r_struct
 id|fp_status

@@ -126,7 +126,6 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * this holds the informations about a i2c bus available in the system.&n; * &n; * a chip with a i2c bus interface (like bt848) registers the bus within&n; * the i2c module. This struct provides functions to access the i2c bus.&n; * &n; * One must hold the spinlock to access the i2c bus (XXX: is the irqsave&n; * required? Maybe better use a semaphore?). &n; * [-AC-] having a spinlock_irqsave is only needed if we have drivers wishing&n; *&t;  to bang their i2c bus from an interrupt.&n; * &n; * attach/detach_inform is a callback to inform the bus driver about&n; * attached chip drivers.&n; *&n; */
 multiline_comment|/* needed: unsigned long flags */
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|# if 0
 macro_line|#  define LOCK_FLAGS unsigned long flags;

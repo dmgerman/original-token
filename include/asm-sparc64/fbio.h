@@ -55,6 +55,10 @@ mdefine_line|#define FBTYPE_LASTPLUSONE      21&t;/* This is not last + 1 in fac
 multiline_comment|/* Does not seem to be listed in the Sun file either */
 DECL|macro|FBTYPE_CREATOR
 mdefine_line|#define FBTYPE_CREATOR          22
+DECL|macro|FBTYPE_PCI_IGA1682
+mdefine_line|#define FBTYPE_PCI_IGA1682&t;23
+DECL|macro|FBTYPE_P9100COLOR
+mdefine_line|#define FBTYPE_P9100COLOR&t;24
 DECL|macro|FBTYPE_PCI_GENERIC
 mdefine_line|#define FBTYPE_PCI_GENERIC&t;1000
 DECL|macro|FBTYPE_PCI_MACH64

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysio.h,v 1.8 1998/11/29 15:49:54 davem Exp $&n; * sysio.h: UltraSparc sun5 specific SBUS definitions.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sysio.h,v 1.9 1999/08/30 10:15:03 davem Exp $&n; * sysio.h: UltraSparc sun5 specific SBUS definitions.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_SYSIO_H
 DECL|macro|__SPARC64_SYSIO_H
 mdefine_line|#define __SPARC64_SYSIO_H
@@ -10,65 +10,76 @@ id|sysio_regs
 (brace
 DECL|member|upa_id
 multiline_comment|/*0x0000*/
+r_volatile
 id|u64
 id|upa_id
 suffix:semicolon
-multiline_comment|/* SYSIO UPA Port ID Register&t;&t;*/
+multiline_comment|/* SYSIO UPA Port ID Register&t;*/
 DECL|member|upa_cfg
 multiline_comment|/*0x0008*/
+r_volatile
 id|u64
 id|upa_cfg
 suffix:semicolon
-multiline_comment|/* SYSIO UPA Config Register&t;&t;*/
+multiline_comment|/* SYSIO UPA Config Register&t;*/
 DECL|member|control
 multiline_comment|/*0x0010*/
+r_volatile
 id|u64
 id|control
 suffix:semicolon
-multiline_comment|/* SYSIO Control Register&t;&t;*/
+multiline_comment|/* SYSIO Control Register&t;*/
 DECL|member|_unused1
 multiline_comment|/*0x0018*/
+r_volatile
 id|u64
 id|_unused1
 suffix:semicolon
 DECL|member|ecc_control
 multiline_comment|/*0x0020*/
+r_volatile
 id|u64
 id|ecc_control
 suffix:semicolon
-multiline_comment|/* ECC Control Register&t;&t;&t;*/
+multiline_comment|/* ECC Control Register&t;&t;*/
 DECL|member|_unused2
 multiline_comment|/*0x0028*/
+r_volatile
 id|u64
 id|_unused2
 suffix:semicolon
 multiline_comment|/* Uncorrectable Error Fault Registers */
 DECL|member|ue_afsr
 multiline_comment|/*0x0030*/
+r_volatile
 id|u64
 id|ue_afsr
 suffix:semicolon
-multiline_comment|/* UE Async Fault Status&t;&t;*/
+multiline_comment|/* UE Async Fault Status&t;*/
 DECL|member|ue_afar
 multiline_comment|/*0x0038*/
+r_volatile
 id|u64
 id|ue_afar
 suffix:semicolon
-multiline_comment|/* UE Async Fault Address&t;&t;*/
+multiline_comment|/* UE Async Fault Address&t;*/
 multiline_comment|/* Correctable Error Fault Registers */
 DECL|member|ce_afsr
 multiline_comment|/*0x0040*/
+r_volatile
 id|u64
 id|ce_afsr
 suffix:semicolon
-multiline_comment|/* CE Async Fault Status&t;&t;*/
+multiline_comment|/* CE Async Fault Status&t;*/
 DECL|member|ce_afar
 multiline_comment|/*0x0048*/
+r_volatile
 id|u64
 id|ce_afar
 suffix:semicolon
-multiline_comment|/* CE Async Fault Address&t;&t;*/
+multiline_comment|/* CE Async Fault Address&t;*/
 DECL|member|__pad0
+r_volatile
 id|u64
 id|__pad0
 (braket
@@ -78,15 +89,18 @@ suffix:semicolon
 multiline_comment|/* Performance Monitoring Registers */
 DECL|member|pmon_control
 multiline_comment|/*0x0100*/
+r_volatile
 id|u64
 id|pmon_control
 suffix:semicolon
 DECL|member|pmon_counter
 multiline_comment|/*0x0108*/
+r_volatile
 id|u64
 id|pmon_counter
 suffix:semicolon
 DECL|member|__pad1
+r_volatile
 id|u64
 id|__pad1
 (braket
@@ -96,71 +110,83 @@ suffix:semicolon
 multiline_comment|/* SBUS Module Registers */
 DECL|member|sbus_control
 multiline_comment|/*0x2000*/
+r_volatile
 id|u64
 id|sbus_control
 suffix:semicolon
-multiline_comment|/* SBUS Control Register&t;&t;*/
+multiline_comment|/* SBUS Control Register&t;*/
 DECL|member|_unused3
 multiline_comment|/*0x2008*/
+r_volatile
 id|u64
 id|_unused3
 suffix:semicolon
 DECL|member|sbus_afsr
 multiline_comment|/*0x2010*/
+r_volatile
 id|u64
 id|sbus_afsr
 suffix:semicolon
-multiline_comment|/* SBUS Async Fault Status&t;&t;*/
+multiline_comment|/* SBUS Async Fault Status&t;*/
 DECL|member|sbus_afar
 multiline_comment|/*0x2018*/
+r_volatile
 id|u64
 id|sbus_afar
 suffix:semicolon
-multiline_comment|/* SBUS Async Fault Address&t;&t;*/
+multiline_comment|/* SBUS Async Fault Address&t;*/
 multiline_comment|/* SBUS Slot Configuration Registers.&n;&t;&t; * On Fusion/Electron/Pulsar desktops/servers slots 4--&gt;6&n;&t;&t; * are for on-board devices, in particular for Electron/Pulsar&n;&t;&t; * they are:&n;&t;&t; *&n;&t;&t; *&t;slot 4) Audio&n;&t;&t; *&t;slot 5) MACIO&n;&t;&t; *&t;slot 6) SLAVIO&n;&t;&t; *&n;&t;&t; * On Sunfire/Starfire/Wildfire enterprise boxen these upper slots&n;&t;&t; * are unused.&n;&t;&t; */
 DECL|member|sbus_s0cfg
 multiline_comment|/*0x2020*/
+r_volatile
 id|u64
 id|sbus_s0cfg
 suffix:semicolon
-multiline_comment|/* SBUS Slot 0 Config&t;&t;&t;*/
+multiline_comment|/* SBUS Slot 0 Config&t;&t;*/
 DECL|member|sbus_s1cfg
 multiline_comment|/*0x2028*/
+r_volatile
 id|u64
 id|sbus_s1cfg
 suffix:semicolon
-multiline_comment|/* SBUS Slot 1 Config&t;&t;&t;*/
+multiline_comment|/* SBUS Slot 1 Config&t;&t;*/
 DECL|member|sbus_s2cfg
 multiline_comment|/*0x2030*/
+r_volatile
 id|u64
 id|sbus_s2cfg
 suffix:semicolon
-multiline_comment|/* SBUS Slot 2 Config&t;&t;&t;*/
+multiline_comment|/* SBUS Slot 2 Config&t;&t;*/
 DECL|member|sbus_s3cfg
 multiline_comment|/*0x2038*/
+r_volatile
 id|u64
 id|sbus_s3cfg
 suffix:semicolon
-multiline_comment|/* SBUS Slot 3 Config&t;&t;&t;*/
+multiline_comment|/* SBUS Slot 3 Config&t;&t;*/
 DECL|member|sbus_s4cfg
 multiline_comment|/*0x2040*/
+r_volatile
 id|u64
 id|sbus_s4cfg
 suffix:semicolon
-multiline_comment|/* SBUS Slot 4 Config&t;&t;&t;*/
+multiline_comment|/* SBUS Slot 4 Config&t;&t;*/
 DECL|member|sbus_s5cfg
 multiline_comment|/*0x2048*/
+r_volatile
 id|u64
 id|sbus_s5cfg
 suffix:semicolon
-multiline_comment|/* SBUS Slot 5 Config&t;&t;&t;*/
+multiline_comment|/* SBUS Slot 5 Config&t;&t;*/
 DECL|member|sbus_s6cfg
 multiline_comment|/*0x2050*/
+r_volatile
 id|u64
 id|sbus_s6cfg
 suffix:semicolon
-multiline_comment|/* SBUS Slot 6 Config&t;&t;&t;*/
+multiline_comment|/* SBUS Slot 6 Config&t;&t;*/
 DECL|member|__pad2
+r_volatile
 id|u64
 id|__pad2
 (braket
@@ -170,23 +196,27 @@ suffix:semicolon
 multiline_comment|/* SBUS IOMMU lives here */
 DECL|member|iommu_control
 multiline_comment|/*0x2400*/
+r_volatile
 id|u64
 id|iommu_control
 suffix:semicolon
-multiline_comment|/* IOMMU Control&t;&t;&t;*/
+multiline_comment|/* IOMMU Control&t;&t;*/
 DECL|member|iommu_tsbbase
 multiline_comment|/*0x2408*/
+r_volatile
 id|u64
 id|iommu_tsbbase
 suffix:semicolon
-multiline_comment|/* IOMMU TSB Base&t;&t;&t;*/
+multiline_comment|/* IOMMU TSB Base&t;&t;*/
 DECL|member|iommu_flush
 multiline_comment|/*0x2410*/
+r_volatile
 id|u64
 id|iommu_flush
 suffix:semicolon
-multiline_comment|/* IOMMU Flush Register&t;&t;&t;*/
+multiline_comment|/* IOMMU Flush Register&t;&t;*/
 DECL|member|__pad3
+r_volatile
 id|u64
 id|__pad3
 (braket
@@ -196,23 +226,27 @@ suffix:semicolon
 multiline_comment|/* SBUS/IOMMU Streaming Buffer Registers */
 DECL|member|sbuf_control
 multiline_comment|/*0x2800*/
+r_volatile
 id|u64
 id|sbuf_control
 suffix:semicolon
-multiline_comment|/* StrBuffer Control&t;&t;&t;*/
+multiline_comment|/* StrBuffer Control&t;&t;*/
 DECL|member|sbuf_pflush
 multiline_comment|/*0x2808*/
+r_volatile
 id|u64
 id|sbuf_pflush
 suffix:semicolon
-multiline_comment|/* StrBuffer Page Flush&t;&t;&t;*/
+multiline_comment|/* StrBuffer Page Flush&t;&t;*/
 DECL|member|sbuf_fsync
 multiline_comment|/*0x2810*/
+r_volatile
 id|u64
 id|sbuf_fsync
 suffix:semicolon
-multiline_comment|/* StrBuffer Flush Synchronization Reg&t;*/
+multiline_comment|/* StrBuffer Flush Synchronization Reg */
 DECL|member|__pad4
+r_volatile
 id|u64
 id|__pad4
 (braket
@@ -223,49 +257,55 @@ multiline_comment|/* Interrupt mapping/control registers */
 DECL|member|_uim0
 DECL|member|imap_slot0
 multiline_comment|/*0x2c00*/
+r_volatile
 id|u32
 id|_uim0
 comma
 id|imap_slot0
 suffix:semicolon
-multiline_comment|/* SBUS Slot 0 Int Mapping&t;*/
+multiline_comment|/* SBUS Slot 0 Int Mapping */
 DECL|member|_uim1
 DECL|member|imap_slot1
 multiline_comment|/*0x2c08*/
+r_volatile
 id|u32
 id|_uim1
 comma
 id|imap_slot1
 suffix:semicolon
-multiline_comment|/* SBUS Slot 1 Int Mapping&t;*/
+multiline_comment|/* SBUS Slot 1 Int Mapping */
 DECL|member|_uim2
 DECL|member|imap_slot2
 multiline_comment|/*0x2c10*/
+r_volatile
 id|u32
 id|_uim2
 comma
 id|imap_slot2
 suffix:semicolon
-multiline_comment|/* SBUS Slot 2 Int Mapping&t;*/
+multiline_comment|/* SBUS Slot 2 Int Mapping */
 DECL|member|_uim3
 DECL|member|imap_slot3
 multiline_comment|/*0x2c18*/
+r_volatile
 id|u32
 id|_uim3
 comma
 id|imap_slot3
 suffix:semicolon
-multiline_comment|/* SBUS Slot 3 Int Mapping&t;*/
+multiline_comment|/* SBUS Slot 3 Int Mapping */
 multiline_comment|/* Interrupt Retry Timer. */
 DECL|member|_irpad
 DECL|member|irq_retry
 multiline_comment|/*0x2c20*/
+r_volatile
 id|u32
 id|_irpad
 comma
 id|irq_retry
 suffix:semicolon
 DECL|member|__pad5
+r_volatile
 id|u64
 id|__pad5
 (braket
@@ -276,180 +316,201 @@ multiline_comment|/* The following are only used on Fusion/Electron/Pulsar&n;&t;
 DECL|member|_uis
 DECL|member|imap_scsi
 multiline_comment|/*0x3000*/
+r_volatile
 id|u32
 id|_uis
 comma
 id|imap_scsi
 suffix:semicolon
-multiline_comment|/* SCSI Int Mapping&t;&t;*/
+multiline_comment|/* SCSI Int Mapping&t;*/
 DECL|member|_uie
 DECL|member|imap_eth
 multiline_comment|/*0x3008*/
+r_volatile
 id|u32
 id|_uie
 comma
 id|imap_eth
 suffix:semicolon
-multiline_comment|/* Ethernet Int Mapping&t;&t;*/
+multiline_comment|/* Ethernet Int Mapping&t;*/
 DECL|member|_uip
 DECL|member|imap_bpp
 multiline_comment|/*0x3010*/
+r_volatile
 id|u32
 id|_uip
 comma
 id|imap_bpp
 suffix:semicolon
-multiline_comment|/* Parallel Port Int Mapping&t;*/
+multiline_comment|/* Parallel Port Int Mapping */
 DECL|member|_uia
 DECL|member|imap_audio
 multiline_comment|/*0x3018*/
+r_volatile
 id|u32
 id|_uia
 comma
 id|imap_audio
 suffix:semicolon
-multiline_comment|/* Audio Int Mapping&t;&t;*/
+multiline_comment|/* Audio Int Mapping&t;*/
 DECL|member|_uipf
 DECL|member|imap_pfail
 multiline_comment|/*0x3020*/
+r_volatile
 id|u32
 id|_uipf
 comma
 id|imap_pfail
 suffix:semicolon
-multiline_comment|/* Power Fail Int Mapping&t;*/
+multiline_comment|/* Power Fail Int Mapping */
 DECL|member|_uik
 DECL|member|imap_kms
 multiline_comment|/*0x3028*/
+r_volatile
 id|u32
 id|_uik
 comma
 id|imap_kms
 suffix:semicolon
-multiline_comment|/* Kbd/Mouse/Serial Int Mapping&t;*/
+multiline_comment|/* Kbd/Ms/Serial Int Mapping */
 DECL|member|_uif
 DECL|member|imap_flpy
 multiline_comment|/*0x3030*/
+r_volatile
 id|u32
 id|_uif
 comma
 id|imap_flpy
 suffix:semicolon
-multiline_comment|/* Floppy Int Mapping&t;&t;*/
+multiline_comment|/* Floppy Int Mapping&t;*/
 DECL|member|_uishw
 DECL|member|imap_shw
 multiline_comment|/*0x3038*/
+r_volatile
 id|u32
 id|_uishw
 comma
 id|imap_shw
 suffix:semicolon
-multiline_comment|/* Spare HW Int Mapping&t;&t;*/
+multiline_comment|/* Spare HW Int Mapping&t;*/
 DECL|member|_uikbd
 DECL|member|imap_kbd
 multiline_comment|/*0x3040*/
+r_volatile
 id|u32
 id|_uikbd
 comma
 id|imap_kbd
 suffix:semicolon
-multiline_comment|/* Kbd Only Int Mapping&t;&t;*/
+multiline_comment|/* Kbd Only Int Mapping&t;*/
 DECL|member|_uims
 DECL|member|imap_ms
 multiline_comment|/*0x3048*/
+r_volatile
 id|u32
 id|_uims
 comma
 id|imap_ms
 suffix:semicolon
-multiline_comment|/* Mouse Only Int Mapping&t;*/
+multiline_comment|/* Mouse Only Int Mapping */
 DECL|member|_uiser
 DECL|member|imap_ser
 multiline_comment|/*0x3050*/
+r_volatile
 id|u32
 id|_uiser
 comma
 id|imap_ser
 suffix:semicolon
-multiline_comment|/* Serial Only Int Mapping&t;*/
+multiline_comment|/* Serial Only Int Mapping */
 DECL|member|_imap_unused
 multiline_comment|/*0x3058*/
+r_volatile
 id|u64
 id|_imap_unused
 suffix:semicolon
 DECL|member|_uit0
 DECL|member|imap_tim0
 multiline_comment|/*0x3060*/
+r_volatile
 id|u32
 id|_uit0
 comma
 id|imap_tim0
 suffix:semicolon
-multiline_comment|/* Timer 0 Int Mapping&t;&t;*/
+multiline_comment|/* Timer 0 Int Mapping&t;*/
 DECL|member|_uit1
 DECL|member|imap_tim1
 multiline_comment|/*0x3068*/
+r_volatile
 id|u32
 id|_uit1
 comma
 id|imap_tim1
 suffix:semicolon
-multiline_comment|/* Timer 1 Int Mapping&t;&t;*/
+multiline_comment|/* Timer 1 Int Mapping&t;*/
 DECL|member|_uiue
 DECL|member|imap_ue
 multiline_comment|/*0x3070*/
+r_volatile
 id|u32
 id|_uiue
 comma
 id|imap_ue
 suffix:semicolon
-multiline_comment|/* UE Int Mapping&t;&t;*/
+multiline_comment|/* UE Int Mapping&t;*/
 DECL|member|_uice
 DECL|member|imap_ce
 multiline_comment|/*0x3078*/
+r_volatile
 id|u32
 id|_uice
 comma
 id|imap_ce
 suffix:semicolon
-multiline_comment|/* CE Int Mapping&t;&t;*/
+multiline_comment|/* CE Int Mapping&t;*/
 DECL|member|_uisbe
 DECL|member|imap_sberr
 multiline_comment|/*0x3080*/
+r_volatile
 id|u32
 id|_uisbe
 comma
 id|imap_sberr
 suffix:semicolon
-multiline_comment|/* SBUS Err Int Mapping&t;&t;*/
+multiline_comment|/* SBUS Err Int Mapping&t;*/
 DECL|member|_uipm
 DECL|member|imap_pmgmt
 multiline_comment|/*0x3088*/
+r_volatile
 id|u32
 id|_uipm
 comma
 id|imap_pmgmt
 suffix:semicolon
-multiline_comment|/* Power Mgmt Int Mapping&t;*/
+multiline_comment|/* Power Mgmt Int Mapping */
 DECL|member|_uigfx
 DECL|member|imap_gfx
 multiline_comment|/*0x3090*/
+r_volatile
 id|u32
 id|_uigfx
 comma
 id|imap_gfx
 suffix:semicolon
-multiline_comment|/* OB Graphics Int Mapping&t;*/
+multiline_comment|/* OB Graphics Int Mapping */
 DECL|member|_uieupa
 DECL|member|imap_eupa
 multiline_comment|/*0x3098*/
+r_volatile
 id|u32
 id|_uieupa
 comma
 id|imap_eupa
 suffix:semicolon
-multiline_comment|/* UPA Expansion Int Mapping&t;*/
+multiline_comment|/* UPA Expansion Int Mapping */
 DECL|member|__pad6
+r_volatile
 id|u64
 id|__pad6
 (braket
@@ -460,6 +521,7 @@ multiline_comment|/* Interrupt Clear Registers */
 DECL|member|__ucu0
 DECL|member|iclr_unused0
 multiline_comment|/*0x3400*/
+r_volatile
 id|u32
 id|__ucu0
 comma
@@ -468,12 +530,14 @@ suffix:semicolon
 DECL|member|_ucs0
 DECL|member|iclr_slot0
 multiline_comment|/*0x3408*/
+r_volatile
 id|u32
 id|_ucs0
 comma
 id|iclr_slot0
 suffix:semicolon
 DECL|member|__pad7
+r_volatile
 id|u64
 id|__pad7
 (braket
@@ -483,12 +547,14 @@ suffix:semicolon
 DECL|member|_ucs1
 DECL|member|iclr_slot1
 multiline_comment|/*0x3448*/
+r_volatile
 id|u32
 id|_ucs1
 comma
 id|iclr_slot1
 suffix:semicolon
 DECL|member|__pad8
+r_volatile
 id|u64
 id|__pad8
 (braket
@@ -498,12 +564,14 @@ suffix:semicolon
 DECL|member|_ucs2
 DECL|member|iclr_slot2
 multiline_comment|/*0x3488*/
+r_volatile
 id|u32
 id|_ucs2
 comma
 id|iclr_slot2
 suffix:semicolon
 DECL|member|__pad9
+r_volatile
 id|u64
 id|__pad9
 (braket
@@ -513,12 +581,14 @@ suffix:semicolon
 DECL|member|_ucs3
 DECL|member|iclr_slot3
 multiline_comment|/*0x34c8*/
+r_volatile
 id|u32
 id|_ucs3
 comma
 id|iclr_slot3
 suffix:semicolon
 DECL|member|__pad10
+r_volatile
 id|u64
 id|__pad10
 (braket
@@ -528,6 +598,7 @@ suffix:semicolon
 DECL|member|_ucscsi
 DECL|member|iclr_scsi
 multiline_comment|/*0x3800*/
+r_volatile
 id|u32
 id|_ucscsi
 comma
@@ -536,6 +607,7 @@ suffix:semicolon
 DECL|member|_uceth
 DECL|member|iclr_eth
 multiline_comment|/*0x3808*/
+r_volatile
 id|u32
 id|_uceth
 comma
@@ -544,6 +616,7 @@ suffix:semicolon
 DECL|member|_ucbpp
 DECL|member|iclr_bpp
 multiline_comment|/*0x3810*/
+r_volatile
 id|u32
 id|_ucbpp
 comma
@@ -552,6 +625,7 @@ suffix:semicolon
 DECL|member|_ucaudio
 DECL|member|iclr_audio
 multiline_comment|/*0x3818*/
+r_volatile
 id|u32
 id|_ucaudio
 comma
@@ -560,6 +634,7 @@ suffix:semicolon
 DECL|member|_ucpfail
 DECL|member|iclr_pfail
 multiline_comment|/*0x3820*/
+r_volatile
 id|u32
 id|_ucpfail
 comma
@@ -568,6 +643,7 @@ suffix:semicolon
 DECL|member|_uckms
 DECL|member|iclr_kms
 multiline_comment|/*0x3828*/
+r_volatile
 id|u32
 id|_uckms
 comma
@@ -576,6 +652,7 @@ suffix:semicolon
 DECL|member|_ucflpy
 DECL|member|iclr_flpt
 multiline_comment|/*0x3830*/
+r_volatile
 id|u32
 id|_ucflpy
 comma
@@ -584,6 +661,7 @@ suffix:semicolon
 DECL|member|_ucshw
 DECL|member|iclr_shw
 multiline_comment|/*0x3838*/
+r_volatile
 id|u32
 id|_ucshw
 comma
@@ -592,6 +670,7 @@ suffix:semicolon
 DECL|member|_uckbd
 DECL|member|iclr_kbd
 multiline_comment|/*0x3840*/
+r_volatile
 id|u32
 id|_uckbd
 comma
@@ -600,6 +679,7 @@ suffix:semicolon
 DECL|member|_ucms
 DECL|member|iclr_ms
 multiline_comment|/*0x3848*/
+r_volatile
 id|u32
 id|_ucms
 comma
@@ -608,6 +688,7 @@ suffix:semicolon
 DECL|member|_ucser
 DECL|member|iclr_ser
 multiline_comment|/*0x3850*/
+r_volatile
 id|u32
 id|_ucser
 comma
@@ -615,12 +696,14 @@ id|iclr_ser
 suffix:semicolon
 DECL|member|iclr_unused1
 multiline_comment|/*0x3858*/
+r_volatile
 id|u64
 id|iclr_unused1
 suffix:semicolon
 DECL|member|_uctim0
 DECL|member|iclr_tim0
 multiline_comment|/*0x3860*/
+r_volatile
 id|u32
 id|_uctim0
 comma
@@ -629,6 +712,7 @@ suffix:semicolon
 DECL|member|_uctim1
 DECL|member|iclr_tim1
 multiline_comment|/*0x3868*/
+r_volatile
 id|u32
 id|_uctim1
 comma
@@ -637,6 +721,7 @@ suffix:semicolon
 DECL|member|_ucue
 DECL|member|iclr_ue
 multiline_comment|/*0x3870*/
+r_volatile
 id|u32
 id|_ucue
 comma
@@ -645,6 +730,7 @@ suffix:semicolon
 DECL|member|_ucce
 DECL|member|iclr_ce
 multiline_comment|/*0x3878*/
+r_volatile
 id|u32
 id|_ucce
 comma
@@ -653,6 +739,7 @@ suffix:semicolon
 DECL|member|_ucserr
 DECL|member|iclr_serr
 multiline_comment|/*0x3880*/
+r_volatile
 id|u32
 id|_ucserr
 comma
@@ -661,12 +748,14 @@ suffix:semicolon
 DECL|member|_ucpmgmt
 DECL|member|iclr_pmgmt
 multiline_comment|/*0x3888*/
+r_volatile
 id|u32
 id|_ucpmgmt
 comma
 id|iclr_pmgmt
 suffix:semicolon
 DECL|member|__pad11
+r_volatile
 id|u64
 id|__pad11
 (braket
@@ -676,25 +765,30 @@ suffix:semicolon
 multiline_comment|/* Counters/Timers */
 DECL|member|tim0_cnt
 multiline_comment|/*0x3c00*/
+r_volatile
 id|u64
 id|tim0_cnt
 suffix:semicolon
 DECL|member|tim0_lim
 multiline_comment|/*0x3c08*/
+r_volatile
 id|u64
 id|tim0_lim
 suffix:semicolon
 DECL|member|tim1_cnt
 multiline_comment|/*0x3c10*/
+r_volatile
 id|u64
 id|tim1_cnt
 suffix:semicolon
 DECL|member|tim1_lim
 multiline_comment|/*0x3c18*/
+r_volatile
 id|u64
 id|tim1_lim
 suffix:semicolon
 DECL|member|__pad12
+r_volatile
 id|u64
 id|__pad12
 (braket
@@ -704,17 +798,20 @@ suffix:semicolon
 multiline_comment|/* DMA Scoreboard Diagnostic Registers */
 DECL|member|dscore_reg0
 multiline_comment|/*0x4000*/
+r_volatile
 id|u64
 id|dscore_reg0
 suffix:semicolon
-multiline_comment|/* DMA Scoreboard Diag Reg 0&t;&t;*/
+multiline_comment|/* DMA Scoreboard Diag Reg 0&t;*/
 DECL|member|dscore_reg1
 multiline_comment|/*0x4008*/
+r_volatile
 id|u64
 id|dscore_reg1
 suffix:semicolon
-multiline_comment|/* DMA Scoreboard Diag Reg 1&t;&t;*/
+multiline_comment|/* DMA Scoreboard Diag Reg 1&t;*/
 DECL|member|__pad13
+r_volatile
 id|u64
 id|__pad13
 (braket
@@ -724,17 +821,20 @@ suffix:semicolon
 multiline_comment|/* SBUS IOMMU Diagnostic Registers */
 DECL|member|sbus_vdiag
 multiline_comment|/*0x4400*/
+r_volatile
 id|u64
 id|sbus_vdiag
 suffix:semicolon
-multiline_comment|/* SBUS VADDR Diagnostic Register&t;*/
+multiline_comment|/* SBUS VADDR Diagnostic Register */
 DECL|member|sbus_tcompare
 multiline_comment|/*0x4408*/
+r_volatile
 id|u64
 id|sbus_tcompare
 suffix:semicolon
-multiline_comment|/* SBUS IOMMU TLB Tag Compare&t;&t;*/
+multiline_comment|/* SBUS IOMMU TLB Tag Compare&t;  */
 DECL|member|__pad14
+r_volatile
 id|u64
 id|__pad14
 (braket
@@ -744,32 +844,36 @@ suffix:semicolon
 multiline_comment|/* More IOMMU diagnostic things */
 DECL|member|iommu_lru
 multiline_comment|/*0x4500*/
+r_volatile
 id|u64
 id|iommu_lru
 (braket
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* IOMMU LRU Queue Diagnostic Access&t;*/
+multiline_comment|/* IOMMU LRU Queue Diagnostic Access */
 DECL|member|iommu_tag
 multiline_comment|/*0x4580*/
+r_volatile
 id|u64
 id|iommu_tag
 (braket
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* IOMMU TLB Tag Diagnostic Access&t;*/
+multiline_comment|/* IOMMU TLB Tag Diagnostic Access   */
 DECL|member|iommu_data
 multiline_comment|/*0x4600*/
+r_volatile
 id|u64
 id|iommu_data
 (braket
 l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* IOMMU TLB Data RAM Diagnostic Access&t;*/
+multiline_comment|/* IOMMU TLB Data RAM Diag Access    */
 DECL|member|__pad15
+r_volatile
 id|u64
 id|__pad15
 (braket
@@ -779,15 +883,18 @@ suffix:semicolon
 multiline_comment|/* Interrupt State Diagnostics */
 DECL|member|sbus_istate
 multiline_comment|/*0x4800*/
+r_volatile
 id|u64
 id|sbus_istate
 suffix:semicolon
 DECL|member|obio_istate
 multiline_comment|/*0x4808*/
+r_volatile
 id|u64
 id|obio_istate
 suffix:semicolon
 DECL|member|__pad16
+r_volatile
 id|u64
 id|__pad16
 (braket
@@ -797,33 +904,37 @@ suffix:semicolon
 multiline_comment|/* Streaming Buffer Diagnostic Area */
 DECL|member|sbuf_data
 multiline_comment|/*0x5000*/
+r_volatile
 id|u64
 id|sbuf_data
 (braket
 l_int|128
 )braket
 suffix:semicolon
-multiline_comment|/* StrBuffer Data Ram Diagnostic&t;*/
+multiline_comment|/* StrBuffer Data Ram Diagnostic */
 DECL|member|sbuf_errs
 multiline_comment|/*0x5400*/
+r_volatile
 id|u64
 id|sbuf_errs
 (braket
 l_int|128
 )braket
 suffix:semicolon
-multiline_comment|/* StrBuffer Error Status Diagnostics&t;*/
+multiline_comment|/* StrBuffer Error Status Diagnostics */
 DECL|member|sbuf_ptag
 multiline_comment|/*0x5800*/
+r_volatile
 id|u64
 id|sbuf_ptag
 (braket
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* StrBuffer Page Tag Diagnostics&t;*/
+multiline_comment|/* StrBuffer Page Tag Diagnostics */
 DECL|member|_unusedXXX
 multiline_comment|/*0x5880*/
+r_volatile
 id|u64
 id|_unusedXXX
 (braket
@@ -832,13 +943,14 @@ l_int|16
 suffix:semicolon
 DECL|member|sbuf_ltag
 multiline_comment|/*0x5900*/
+r_volatile
 id|u64
 id|sbuf_ltag
 (braket
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* StrBuffer Line Tag Diagnostics&t;*/
+multiline_comment|/* StrBuffer Line Tag Diagnostics */
 )brace
 suffix:semicolon
 multiline_comment|/* SYSIO UPA Port ID */

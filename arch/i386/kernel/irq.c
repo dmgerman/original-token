@@ -371,6 +371,12 @@ id|buf
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Global interrupt locks for SMP. Allow interrupts to come in on any&n; * CPU, yet make cli/sti act globally to protect critical regions..&n; */
+DECL|variable|i386_bh_lock
+id|spinlock_t
+id|i386_bh_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|variable|global_irq_holder
 r_int
@@ -396,12 +402,6 @@ suffix:semicolon
 DECL|variable|global_bh_lock
 id|atomic_t
 id|global_bh_lock
-suffix:semicolon
-DECL|variable|i386_bh_lock
-id|spinlock_t
-id|i386_bh_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * &quot;global_cli()&quot; is a special case, in that it can hold the&n; * interrupts disabled for a longish time, and also because&n; * we may be doing TLB invalidates when holding the global&n; * IRQ lock for historical reasons. Thus we may need to check&n; * SMP invalidate events specially by hand here (but not in&n; * any normal spinlocks)&n; */
 DECL|function|check_smp_invalidate

@@ -14,9 +14,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;bios32.h&quot;
-macro_line|#include &quot;machvec.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &quot;pci_impl.h&quot;
+macro_line|#include &quot;machvec_impl.h&quot;
 r_static
 r_void
 DECL|function|takara_update_irq_hw
@@ -401,10 +401,10 @@ id|pci_dev
 op_star
 id|dev
 comma
-r_int
+id|u8
 id|slot
 comma
-r_int
+id|u8
 id|pin
 )paren
 (brace
@@ -741,7 +741,7 @@ id|COMMON_TABLE_LOOKUP
 suffix:semicolon
 )brace
 r_static
-r_int
+id|u8
 id|__init
 DECL|function|takara_swizzle
 id|takara_swizzle
@@ -752,7 +752,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-r_int
+id|u8
 op_star
 id|pinp
 )paren
@@ -792,10 +792,14 @@ c_func
 id|dev-&gt;bus-&gt;self-&gt;devfn
 )paren
 suffix:semicolon
-multiline_comment|/* Check first for built-in bridges.  */
+multiline_comment|/* Check for built-in bridges.  */
 r_if
 c_cond
 (paren
+id|dev-&gt;bus-&gt;number
+op_ne
+l_int|0
+op_logical_and
 id|busslot
 OG
 l_int|16
@@ -855,30 +859,19 @@ suffix:semicolon
 r_static
 r_void
 id|__init
-DECL|function|takara_pci_fixup
-id|takara_pci_fixup
+DECL|function|takara_init_pci
+id|takara_init_pci
 c_func
 (paren
 r_void
 )paren
 (brace
-id|layout_all_busses
+id|common_init_pci
 c_func
 (paren
-id|DEFAULT_IO_BASE
-comma
-id|DEFAULT_MEM_BASE
 )paren
 suffix:semicolon
-id|common_pci_fixup
-c_func
-(paren
-id|takara_map_irq
-comma
-id|takara_swizzle
-)paren
-suffix:semicolon
-multiline_comment|/* enable_ide(0x26e); */
+multiline_comment|/* ns87312_enable_ide(0x26e); */
 )brace
 multiline_comment|/*&n; * The System Vector&n; */
 DECL|variable|__initmv
@@ -908,6 +901,14 @@ id|max_dma_address
 suffix:colon
 id|ALPHA_MAX_DMA_ADDRESS
 comma
+id|min_io_address
+suffix:colon
+id|DEFAULT_IO_BASE
+comma
+id|min_mem_address
+suffix:colon
+id|CIA_DEFAULT_MEM_BASE
+comma
 id|nr_irqs
 suffix:colon
 l_int|20
@@ -926,7 +927,7 @@ id|takara_update_irq_hw
 comma
 id|ack_irq
 suffix:colon
-id|generic_ack_irq
+id|common_ack_irq
 comma
 id|device_interrupt
 suffix:colon
@@ -942,15 +943,23 @@ id|takara_init_irq
 comma
 id|init_pit
 suffix:colon
-id|generic_init_pit
+id|common_init_pit
 comma
-id|pci_fixup
+id|init_pci
 suffix:colon
-id|takara_pci_fixup
+id|takara_init_pci
 comma
 id|kill_arch
 suffix:colon
-id|generic_kill_arch
+id|common_kill_arch
+comma
+id|pci_map_irq
+suffix:colon
+id|takara_map_irq
+comma
+id|pci_swizzle
+suffix:colon
+id|takara_swizzle
 comma
 )brace
 suffix:semicolon

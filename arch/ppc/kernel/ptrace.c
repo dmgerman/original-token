@@ -57,7 +57,7 @@ r_int
 r_int
 op_star
 )paren
-id|task-&gt;tss.regs
+id|task-&gt;thread.regs
 )paren
 (braket
 id|regno
@@ -114,7 +114,7 @@ id|MSR_DEBUGCHANGE
 )paren
 op_or
 (paren
-id|task-&gt;tss.regs-&gt;msr
+id|task-&gt;thread.regs-&gt;msr
 op_amp
 op_complement
 id|MSR_DEBUGCHANGE
@@ -126,7 +126,7 @@ r_int
 r_int
 op_star
 )paren
-id|task-&gt;tss.regs
+id|task-&gt;thread.regs
 )paren
 (braket
 id|regno
@@ -161,7 +161,7 @@ id|pt_regs
 op_star
 id|regs
 op_assign
-id|task-&gt;tss.regs
+id|task-&gt;thread.regs
 suffix:semicolon
 id|regs-&gt;msr
 op_or_assign
@@ -186,7 +186,7 @@ id|pt_regs
 op_star
 id|regs
 op_assign
-id|task-&gt;tss.regs
+id|task-&gt;thread.regs
 suffix:semicolon
 id|regs-&gt;msr
 op_and_assign
@@ -1881,7 +1881,7 @@ id|PT_FPSCR
 r_if
 c_cond
 (paren
-id|child-&gt;tss.regs-&gt;msr
+id|child-&gt;thread.regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
@@ -1898,7 +1898,7 @@ op_assign
 r_int
 op_star
 )paren
-id|child-&gt;tss.fpr
+id|child-&gt;thread.fpr
 )paren
 (braket
 id|addr
@@ -2088,7 +2088,7 @@ l_int|64
 r_if
 c_cond
 (paren
-id|child-&gt;tss.regs-&gt;msr
+id|child-&gt;thread.regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
@@ -2103,7 +2103,7 @@ suffix:semicolon
 r_int
 op_star
 )paren
-id|child-&gt;tss.fpr
+id|child-&gt;thread.fpr
 )paren
 (braket
 id|addr

@@ -269,7 +269,6 @@ comma
 id|cuda_poll
 )brace
 suffix:semicolon
-id|__openfirmware
 r_void
 DECL|function|find_via_cuda
 id|find_via_cuda
@@ -1382,9 +1381,13 @@ c_func
 r_int
 id|ie
 suffix:semicolon
+id|__save_flags
+c_func
+(paren
 id|ie
-op_assign
-id|_disable_interrupts
+)paren
+suffix:semicolon
+id|__cli
 c_func
 (paren
 )paren
@@ -1409,7 +1412,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|_enable_interrupts
+id|__restore_flags
 c_func
 (paren
 id|ie

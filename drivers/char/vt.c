@@ -4874,9 +4874,11 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|retval
 op_assign

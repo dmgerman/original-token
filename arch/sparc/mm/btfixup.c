@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: btfixup.c,v 1.7 1998/03/09 14:03:56 jj Exp $&n; * btfixup.c: Boot time code fixup and relocator, so that&n; * we can get rid of most indirect calls to achieve single&n; * image sun4c and srmmu kernel.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: btfixup.c,v 1.8 1999/08/31 06:54:31 davem Exp $&n; * btfixup.c: Boot time code fixup and relocator, so that&n; * we can get rid of most indirect calls to achieve single&n; * image sun4c and srmmu kernel.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.43 1999/07/17 06:03:58 zaitcev Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.44 1999/08/31 06:58:32 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7172,9 +7172,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7694,7 +7696,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.43 $&quot;
+l_string|&quot;$Revision: 1.44 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -7745,20 +7747,17 @@ suffix:semicolon
 )brace
 multiline_comment|/* Probe the PROM for the request zs chip number.&n; *&n; * Note: The Sun Voyager shows two addresses and two intr for it&squot;s&n; *       Zilogs, what the second does, I don&squot;t know. It does work&n; *       with using only the first number of each property.  Also&n; *       we have a special version for sun4u.&n; */
 macro_line|#ifdef __sparc_v9__
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_zs
 r_static
 r_struct
 id|sun_zslayout
 op_star
+id|__init
 id|get_zs
 c_func
 (paren
 r_int
 id|chip
-)paren
 )paren
 (brace
 r_int
@@ -8405,20 +8404,17 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#else /* !(__sparc_v9__) */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_zs
 r_static
 r_struct
 id|sun_zslayout
 op_star
+id|__init
 id|get_zs
 c_func
 (paren
 r_int
 id|chip
-)paren
 )paren
 (brace
 r_struct
@@ -9246,18 +9242,15 @@ l_int|0xff
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_probe
 r_int
+id|__init
 id|zs_probe
 (paren
 r_int
 r_int
 op_star
 id|memory_start
-)paren
 )paren
 (brace
 r_char
@@ -10175,16 +10168,13 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_init
 r_int
+id|__init
 id|zs_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -11945,18 +11935,15 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* This is called at boot time to prime the kgdb serial debugging&n; * serial line.  The &squot;tty_num&squot; argument is 0 for /dev/ttya and 1&n; * for /dev/ttyb which is determined in setup_arch() from the&n; * boot command line flags.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_kgdb_hook
 r_static
 r_void
+id|__init
 id|zs_kgdb_hook
 c_func
 (paren
 r_int
 id|tty_num
-)paren
 )paren
 (brace
 r_int
@@ -12488,12 +12475,10 @@ id|con-&gt;index
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_console_setup
 r_static
 r_int
+id|__init
 id|zs_console_setup
 c_func
 (paren
@@ -12505,7 +12490,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_struct
@@ -12861,17 +12845,14 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_console_init
 r_static
 r_int
+id|__init
 id|zs_console_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern

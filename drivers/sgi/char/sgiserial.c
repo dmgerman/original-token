@@ -6736,9 +6736,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8871,12 +8873,10 @@ id|con-&gt;index
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|zs_console_setup
 r_static
 r_int
+id|__init
 id|zs_console_setup
 c_func
 (paren
@@ -8888,7 +8888,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_struct
@@ -9481,10 +9480,9 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|serial_console_init
 r_int
+id|__init
 id|serial_console_init
 c_func
 (paren
@@ -9493,7 +9491,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 id|register_console

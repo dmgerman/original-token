@@ -17,9 +17,9 @@ mdefine_line|#define USER_DS&t;&t;((mm_segment_t) { 1 })
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
 DECL|macro|get_fs
-mdefine_line|#define get_fs()&t;(current-&gt;tss.fs)
+mdefine_line|#define get_fs()&t;(current-&gt;thread.fs)
 DECL|macro|set_fs
-mdefine_line|#define set_fs(val)&t;(current-&gt;tss.fs = (val))
+mdefine_line|#define set_fs(val)&t;(current-&gt;thread.fs = (val))
 DECL|macro|segment_eq
 mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
 DECL|macro|__kernel_ok

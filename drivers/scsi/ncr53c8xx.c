@@ -29996,22 +29996,6 @@ macro_line|#endif
 macro_line|#endif&t;/* __powerpc__ */
 macro_line|#ifdef __sparc__
 multiline_comment|/*&n;&t; *&t;Severall fix-ups for sparc.&n;&t; *&n;&t; *&t;Should not be performed by the driver, but how can OBP know&n;&t; *&t;each and every PCI card, if they don&squot;t use Fcode?&n;&t; */
-id|base
-op_assign
-id|__pa
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-id|base_2
-op_assign
-id|__pa
-c_func
-(paren
-id|base_2
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

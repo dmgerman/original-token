@@ -571,14 +571,11 @@ id|len
 suffix:semicolon
 id|sa
 op_assign
-op_star
 (paren
 r_int
-op_star
+r_int
 )paren
 id|dst
-op_plus
-id|PROG_START
 suffix:semicolon
 id|printf
 c_func
@@ -907,6 +904,12 @@ m_exit
 )paren
 suffix:semicolon
 )brace
+id|printf
+c_func
+(paren
+l_string|&quot;done 1&bslash;n&quot;
+)paren
+suffix:semicolon
 id|s.zalloc
 op_assign
 id|zalloc
@@ -969,6 +972,12 @@ id|s.avail_out
 op_assign
 id|dstlen
 suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;doing inflate&bslash;n&quot;
+)paren
+suffix:semicolon
 id|r
 op_assign
 id|inflate
@@ -978,6 +987,12 @@ op_amp
 id|s
 comma
 id|Z_FINISH
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;done inflate&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1016,6 +1031,12 @@ r_char
 op_star
 )paren
 id|dst
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;doing end&bslash;n&quot;
+)paren
 suffix:semicolon
 id|inflateEnd
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_jensen.c&n; *&n; *&t;Copyright (C) 1995 Linus Torvalds&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&n; * Code supporting the Jensen.&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_jensen.c&n; *&n; *&t;Copyright (C) 1995 Linus Torvalds&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the Jensen.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -18,8 +18,8 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;machvec.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &quot;machvec_impl.h&quot;
 r_static
 r_void
 DECL|function|jensen_update_irq_hw
@@ -325,8 +325,6 @@ c_func
 id|JENSEN
 comma
 id|jensen
-comma
-id|jensen
 )paren
 comma
 id|BUS
@@ -365,7 +363,7 @@ id|jensen_update_irq_hw
 comma
 id|ack_irq
 suffix:colon
-id|generic_ack_irq
+id|common_ack_irq
 comma
 id|device_interrupt
 suffix:colon
@@ -381,11 +379,15 @@ id|jensen_init_irq
 comma
 id|init_pit
 suffix:colon
-id|generic_init_pit
+id|common_init_pit
+comma
+id|init_pci
+suffix:colon
+l_int|NULL
 comma
 id|kill_arch
 suffix:colon
-id|generic_kill_arch
+id|common_kill_arch
 comma
 )brace
 suffix:semicolon

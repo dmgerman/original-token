@@ -2034,6 +2034,12 @@ op_plus
 id|jd-&gt;num_buttons
 )paren
 (brace
+id|__set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -2043,10 +2049,6 @@ comma
 op_amp
 id|wait
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 r_while
 c_loop

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt&n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *&t; provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; */
+multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt&n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.cuivre.fdn.fr to&n; *&t; provide auto-eject.&n; *&n; *          Modified by Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; to support the&n; *          generic cdrom interface&n; *&n; *&t; Modified by Jens Axboe &lt;axboe@image.dk&gt; - Uniform sr_packet()&n; *&t; interface, capabilities probe additions, ioctl cleanups, etc.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4296,6 +4296,34 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|cdrom_get_last_written
+c_func
+(paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|i
+)paren
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|capacity
+)paren
+)paren
+(brace
 id|scsi_CDs
 (braket
 id|i
@@ -4339,6 +4367,7 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
+)brace
 id|scsi_CDs
 (braket
 id|i

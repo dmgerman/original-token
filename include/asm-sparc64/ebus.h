@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: ebus.h,v 1.8 1998/05/07 21:00:27 ecd Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.h,v 1.9 1999/08/30 10:14:37 davem Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __SPARC64_EBUS_H
 DECL|macro|__SPARC64_EBUS_H
 mdefine_line|#define __SPARC64_EBUS_H
+macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|struct|linux_ebus_child
 r_struct
@@ -36,10 +37,10 @@ id|prom_name
 l_int|64
 )braket
 suffix:semicolon
-DECL|member|base_address
-r_int
-r_int
-id|base_address
+DECL|member|resource
+r_struct
+id|resource
+id|resource
 (braket
 id|PROMREG_MAX
 )braket
@@ -95,10 +96,10 @@ id|prom_name
 l_int|64
 )braket
 suffix:semicolon
-DECL|member|base_address
-r_int
-r_int
-id|base_address
+DECL|member|resource
+r_struct
+id|resource
+id|resource
 (braket
 id|PROMREG_MAX
 )braket
@@ -139,7 +140,7 @@ id|devices
 suffix:semicolon
 DECL|member|parent
 r_struct
-id|linux_pbm_info
+id|pci_pbm_info
 op_star
 id|parent
 suffix:semicolon
@@ -148,6 +149,10 @@ r_struct
 id|pci_dev
 op_star
 id|self
+suffix:semicolon
+DECL|member|index
+r_int
+id|index
 suffix:semicolon
 DECL|member|prom_node
 r_int

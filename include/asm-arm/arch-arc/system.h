@@ -28,9 +28,7 @@ id|card
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do any cleanups that the processor may require&n;&t; */
-id|processor
-dot
-id|_proc_fin
+id|cpu_proc_fin
 c_func
 (paren
 )paren

@@ -46,6 +46,7 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef _IPS_H_
 DECL|macro|_IPS_H_
 mdefine_line|#define _IPS_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* Prototypes */

@@ -1232,7 +1232,7 @@ id|LD
 op_plus
 id|F
 suffix:colon
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 id|reg
 )braket
@@ -1248,7 +1248,7 @@ id|F
 suffix:colon
 id|data.d
 op_assign
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 id|reg
 )braket
@@ -1276,16 +1276,16 @@ op_amp
 id|data.f
 comma
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 id|reg
 )braket
 comma
 op_amp
-id|current-&gt;tss.fpscr
+id|current-&gt;thread.fpscr
 )paren
 suffix:semicolon
-multiline_comment|/* current-&gt;tss.fpr[reg] = data.f; */
+multiline_comment|/* current-&gt;thread.fpr[reg] = data.f; */
 r_break
 suffix:semicolon
 r_case
@@ -1304,7 +1304,7 @@ id|cvt_df
 c_func
 (paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 id|reg
 )braket
@@ -1313,10 +1313,10 @@ op_amp
 id|data.f
 comma
 op_amp
-id|current-&gt;tss.fpscr
+id|current-&gt;thread.fpscr
 )paren
 suffix:semicolon
-multiline_comment|/* data.f = current-&gt;tss.fpr[reg]; */
+multiline_comment|/* data.f = current-&gt;thread.fpr[reg]; */
 r_break
 suffix:semicolon
 r_default

@@ -16,6 +16,8 @@ comma
 l_int|0x0000
 comma
 l_int|0xFFFF
+comma
+id|IORESOURCE_IO
 )brace
 suffix:semicolon
 DECL|variable|iomem_resource
@@ -29,6 +31,8 @@ comma
 l_int|0x00000000
 comma
 l_int|0xFFFFFFFF
+comma
+id|IORESOURCE_MEM
 )brace
 suffix:semicolon
 DECL|variable|resource_lock

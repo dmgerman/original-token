@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
@@ -2002,7 +2003,7 @@ id|i
 op_assign
 l_int|10000
 suffix:semicolon
-id|_disable_interrupts
+id|__cli
 c_func
 (paren
 )paren
@@ -2086,7 +2087,7 @@ op_assign
 id|MSR_IP
 suffix:semicolon
 multiline_comment|/*&n;&t; * This will ALWAYS work regardless of port 92&n;&t; * functionality&n;&t; */
-id|_disable_interrupts
+id|__cli
 c_func
 (paren
 )paren
@@ -2139,7 +2140,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|_disable_interrupts
+id|__cli
 c_func
 (paren
 )paren

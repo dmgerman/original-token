@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.68 1998/12/09 18:53:51 davem Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.69 1999/08/31 06:58:29 davem Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -14,16 +14,13 @@ DECL|variable|serial_console
 r_int
 id|serial_console
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|con_is_present
 r_int
+id|__init
 id|con_is_present
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return
@@ -35,18 +32,15 @@ suffix:colon
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nop_rs_kgdb_hook
 r_static
 r_void
+id|__init
 id|nop_rs_kgdb_hook
 c_func
 (paren
 r_int
 id|channel
-)paren
 )paren
 (brace
 id|printk
@@ -181,17 +175,14 @@ r_return
 id|err
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rs_kgdb_hook
 r_void
+id|__init
 id|rs_kgdb_hook
 c_func
 (paren
 r_int
 id|channel
-)paren
 )paren
 (brace
 id|rs_ops
@@ -203,11 +194,9 @@ id|channel
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|serial_console_init
 r_int
+id|__init
 id|serial_console_init
 c_func
 (paren
@@ -216,7 +205,6 @@ id|kmem_start
 comma
 r_int
 id|kmem_end
-)paren
 )paren
 (brace
 r_return
@@ -1657,19 +1645,16 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun_serial_setup
 r_int
 r_int
+id|__init
 id|sun_serial_setup
 c_func
 (paren
 r_int
 r_int
 id|memory_start
-)paren
 )paren
 (brace
 r_int

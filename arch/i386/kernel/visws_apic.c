@@ -197,7 +197,7 @@ comma
 id|disable_cobalt_irq
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Not an initfunc, needed by the reboot code&n; */
+multiline_comment|/*&n; * Not an __init, needed by the reboot code&n; */
 DECL|function|init_pic_mode
 r_void
 id|init_pic_mode

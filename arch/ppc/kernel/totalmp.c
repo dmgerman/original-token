@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: totalmp.c,v 1.5 1998/08/26 13:58:50 cort Exp $&n; *&n; * Support for Total Impact&squot;s TotalMP PowerPC accelerator board.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: totalmp.c,v 1.6 1999/08/31 06:54:10 davem Exp $&n; *&n; * Support for Total Impact&squot;s TotalMP PowerPC accelerator board.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;

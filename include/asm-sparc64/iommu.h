@@ -44,8 +44,10 @@ DECL|macro|IOPTE_STBUF
 mdefine_line|#define IOPTE_STBUF         0x1000000000000000 /* DVMA can use streaming buffer    */
 DECL|macro|IOPTE_INTRA
 mdefine_line|#define IOPTE_INTRA         0x0800000000000000 /* SBUS slot--&gt;slot direct transfer */
+DECL|macro|IOPTE_CONTEXT
+mdefine_line|#define IOPTE_CONTEXT&t;    0x07ff800000000000 /* Context number&t;&t;   */
 DECL|macro|IOPTE_PAGE
-mdefine_line|#define IOPTE_PAGE          0x000001ffffffe000 /* Physical page number (PA[40:13]) */
+mdefine_line|#define IOPTE_PAGE          0x00007fffffffe000 /* Physical page number (PA[40:13]) */
 DECL|macro|IOPTE_CACHE
 mdefine_line|#define IOPTE_CACHE         0x0000000000000010 /* Cached (in UPA E-cache)          */
 DECL|macro|IOPTE_WRITE

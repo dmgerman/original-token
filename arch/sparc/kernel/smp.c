@@ -304,8 +304,6 @@ id|cpu_idle
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 suffix:semicolon
 multiline_comment|/* Activate a secondary processor. */
@@ -329,7 +327,6 @@ r_return
 id|cpu_idle
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 )brace

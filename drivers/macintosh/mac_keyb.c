@@ -2466,7 +2466,6 @@ id|adb_mouse_kinds
 l_int|16
 )braket
 suffix:semicolon
-id|__openfirmware
 DECL|function|mackbd_setkeycode
 r_int
 id|mackbd_setkeycode

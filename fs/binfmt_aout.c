@@ -1372,7 +1372,7 @@ id|memcpy
 c_func
 (paren
 op_amp
-id|current-&gt;tss.core_exec
+id|current-&gt;thread.core_exec
 comma
 op_amp
 id|ex

@@ -25,6 +25,8 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;mesh.h&quot;
 multiline_comment|/*&n; * To do:&n; * - handle aborts correctly&n; * - retry arbitration if lost (unless higher levels do this for us)&n; */
+DECL|macro|MESH_NEW_STYLE_EH
+mdefine_line|#define MESH_NEW_STYLE_EH
 macro_line|#if 1
 DECL|macro|KERN_DEBUG
 macro_line|#undef KERN_DEBUG
@@ -416,6 +418,15 @@ DECL|member|clk_freq
 r_int
 id|clk_freq
 suffix:semicolon
+DECL|member|tgts
+r_struct
+id|mesh_target
+id|tgts
+(braket
+l_int|8
+)braket
+suffix:semicolon
+macro_line|#ifndef MESH_NEW_STYLE_EH
 DECL|member|completed_q
 id|Scsi_Cmnd
 op_star
@@ -426,19 +437,12 @@ id|Scsi_Cmnd
 op_star
 id|completed_qtail
 suffix:semicolon
-DECL|member|tgts
-r_struct
-id|mesh_target
-id|tgts
-(braket
-l_int|8
-)braket
-suffix:semicolon
 DECL|member|tqueue
 r_struct
 id|tq_struct
 id|tqueue
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef MESH_DBG
 DECL|member|log_ix
 r_int
@@ -625,6 +629,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifndef MESH_NEW_STYLE_EH
 r_static
 r_void
 id|finish_cmds
@@ -634,6 +639,7 @@ r_void
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|add_sdtr_msg
@@ -1056,6 +1062,7 @@ id|mesh_host-&gt;unique_id
 op_assign
 id|nmeshes
 suffix:semicolon
+macro_line|#ifndef MODULE
 id|note_scsi_host
 c_func
 (paren
@@ -1064,6 +1071,7 @@ comma
 id|mesh_host
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ms
 op_assign
 (paren
@@ -1278,6 +1286,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef MESH_NEW_STYLE_EH
 id|ms-&gt;tqueue.routine
 op_assign
 id|finish_cmds
@@ -1286,6 +1295,7 @@ id|ms-&gt;tqueue.data
 op_assign
 id|ms
 suffix:semicolon
+macro_line|#endif
 op_star
 id|prev_statep
 op_assign
@@ -2052,12 +2062,14 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifndef MESH_NEW_STYLE_EH
 id|finish_cmds
 c_func
 (paren
 id|ms
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ret
 op_or_assign
 id|SCSI_RESET_SUCCESS
@@ -3294,6 +3306,7 @@ multiline_comment|/*&n;&t;&t;&t; * If this is a target reselecting us, and the&n
 macro_line|#endif
 )brace
 )brace
+macro_line|#ifndef MESH_NEW_STYLE_EH
 r_static
 r_void
 DECL|function|finish_cmds
@@ -3327,15 +3340,13 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|cmd
@@ -3350,9 +3361,12 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -3367,12 +3381,6 @@ op_star
 )paren
 id|cmd-&gt;host_scribble
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 (paren
 op_star
 id|cmd-&gt;scsi_done
@@ -3381,8 +3389,18 @@ id|cmd-&gt;scsi_done
 id|cmd
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* MESH_NEW_STYLE_EH */
 r_static
 r_inline
 r_void
@@ -3741,12 +3759,12 @@ c_func
 (paren
 id|ms
 comma
-l_string|&quot;start_phase err/exc/fc/seq = %.8x&quot;
+l_string|&quot;start_phase nmo/exc/fc/seq = %.8x&quot;
 comma
 id|MKWORD
 c_func
 (paren
-id|mr-&gt;error
+id|ms-&gt;n_msgout
 comma
 id|mr-&gt;exception
 comma
@@ -5290,6 +5308,16 @@ OL
 l_int|0
 )paren
 (brace
+id|dlog
+c_func
+(paren
+id|ms
+comma
+l_string|&quot;impatient for req&quot;
+comma
+id|ms-&gt;n_msgout
+)paren
+suffix:semicolon
 id|ms-&gt;msgphase
 op_assign
 id|msg_none
@@ -8233,7 +8261,16 @@ op_star
 id|cmd
 )paren
 (brace
-macro_line|#if 0
+macro_line|#ifdef MESH_NEW_STYLE_EH
+(paren
+op_star
+id|cmd-&gt;scsi_done
+)paren
+(paren
+id|cmd
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -8278,16 +8315,7 @@ c_func
 id|IMMEDIATE_BH
 )paren
 suffix:semicolon
-macro_line|#else
-(paren
-op_star
-id|cmd-&gt;scsi_done
-)paren
-(paren
-id|cmd
-)paren
-suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* MESH_NEW_STYLE_EH */
 )brace
 multiline_comment|/*&n; * Set up DMA commands for transferring data.&n; */
 r_static

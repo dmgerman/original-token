@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_rawhide.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&n; * Code supporting the RAWHIDE.&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_rawhide.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the RAWHIDE.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -14,10 +14,11 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_mcpcia.h&gt;
+macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;bios32.h&quot;
-macro_line|#include &quot;machvec.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &quot;pci_impl.h&quot;
+macro_line|#include &quot;machvec_impl.h&quot;
 r_static
 r_void
 DECL|function|rawhide_update_irq_hw
@@ -52,7 +53,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|1
+l_int|5
 )paren
 op_assign
 (paren
@@ -83,7 +84,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|1
+l_int|5
 )paren
 suffix:semicolon
 )brace
@@ -104,7 +105,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|0
+l_int|4
 )paren
 op_assign
 (paren
@@ -135,7 +136,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|0
+l_int|4
 )paren
 suffix:semicolon
 )brace
@@ -202,6 +203,7 @@ l_int|0x800
 op_rshift
 l_int|4
 suffix:semicolon
+multiline_comment|/* ??? A 4 bus RAWHIDE has 67 interrupts.  Oops.  We need&n;&t;   something wider than one word for our own internal&n;&t;   manipulations.  */
 multiline_comment|/*&n;         * The RAWHIDE SRM console reports PCI interrupts with a vector&n;&t; * 0x80 *higher* than one might expect, as PCI IRQ 0 (ie bit 0)&n;&t; * shows up as IRQ 24, etc, etc. We adjust it down by 8 to have&n;&t; * it line up with the actual bit numbers from the REQ registers,&n;&t; * which is how we manage the interrupts/mask. Sigh...&n;&t; *&n;&t; * also, PCI #1 interrupts are offset some more... :-(&n;         */
 r_if
 c_cond
@@ -275,7 +277,7 @@ r_void
 (brace
 id|STANDARD_INIT_IRQ_PROLOG
 suffix:semicolon
-multiline_comment|/* HACK ALERT! only PCI busses 0 and 1 are used currently,&n;&t;   and routing is only to CPU #1*/
+multiline_comment|/* HACK ALERT! only PCI busses 0 and 1 are used currently,&n;&t;   (MIDs 4 and 5 respectively) and routing is only to CPU #1*/
 op_star
 (paren
 id|vuip
@@ -283,7 +285,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|0
+l_int|4
 )paren
 op_assign
 (paren
@@ -314,7 +316,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|0
+l_int|4
 )paren
 suffix:semicolon
 op_star
@@ -324,7 +326,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|1
+l_int|5
 )paren
 op_assign
 (paren
@@ -355,7 +357,7 @@ id|vuip
 id|MCPCIA_INT_MASK0
 c_func
 (paren
-l_int|1
+l_int|5
 )paren
 suffix:semicolon
 id|enable_irq
@@ -378,10 +380,10 @@ id|pci_dev
 op_star
 id|dev
 comma
-r_int
+id|u8
 id|slot
 comma
-r_int
+id|u8
 id|pin
 )paren
 (brace
@@ -528,6 +530,13 @@ id|irqs_per_slot
 op_assign
 l_int|5
 suffix:semicolon
+r_struct
+id|pci_controler
+op_star
+id|hose
+op_assign
+id|dev-&gt;sysdata
+suffix:semicolon
 r_int
 id|irq
 op_assign
@@ -544,42 +553,10 @@ id|irq
 op_add_assign
 l_int|24
 op_star
-id|bus2hose
-(braket
-id|dev-&gt;bus-&gt;number
-)braket
-op_member_access_from_pointer
-id|pci_hose_index
+id|hose-&gt;index
 suffix:semicolon
 r_return
 id|irq
-suffix:semicolon
-)brace
-r_static
-r_void
-id|__init
-DECL|function|rawhide_pci_fixup
-id|rawhide_pci_fixup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|layout_all_busses
-c_func
-(paren
-id|DEFAULT_IO_BASE
-comma
-id|RAWHIDE_DEFAULT_MEM_BASE
-)paren
-suffix:semicolon
-id|common_pci_fixup
-c_func
-(paren
-id|rawhide_map_irq
-comma
-id|common_swizzle
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The System Vector&n; */
@@ -610,6 +587,14 @@ id|max_dma_address
 suffix:colon
 id|ALPHA_MAX_DMA_ADDRESS
 comma
+id|min_io_address
+suffix:colon
+id|DEFAULT_IO_BASE
+comma
+id|min_mem_address
+suffix:colon
+id|MCPCIA_DEFAULT_MEM_BASE
+comma
 id|nr_irqs
 suffix:colon
 l_int|64
@@ -628,7 +613,7 @@ id|rawhide_update_irq_hw
 comma
 id|ack_irq
 suffix:colon
-id|generic_ack_irq
+id|common_ack_irq
 comma
 id|device_interrupt
 suffix:colon
@@ -644,15 +629,23 @@ id|rawhide_init_irq
 comma
 id|init_pit
 suffix:colon
-id|generic_init_pit
+id|common_init_pit
 comma
-id|pci_fixup
+id|init_pci
 suffix:colon
-id|rawhide_pci_fixup
+id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
-id|generic_kill_arch
+id|common_kill_arch
+comma
+id|pci_map_irq
+suffix:colon
+id|rawhide_map_irq
+comma
+id|pci_swizzle
+suffix:colon
+id|common_swizzle
 comma
 )brace
 suffix:semicolon

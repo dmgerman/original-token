@@ -57,6 +57,8 @@ DECL|macro|FBTYPE_CREATOR
 mdefine_line|#define FBTYPE_CREATOR          22
 DECL|macro|FBTYPE_PCI_IGA1682
 mdefine_line|#define FBTYPE_PCI_IGA1682&t;23
+DECL|macro|FBTYPE_P9100COLOR
+mdefine_line|#define FBTYPE_P9100COLOR&t;24
 multiline_comment|/* fbio ioctls */
 multiline_comment|/* Returned by FBIOGTYPE */
 DECL|struct|fbtype

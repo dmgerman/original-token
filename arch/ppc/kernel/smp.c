@@ -1,7 +1,6 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.55 1999/07/03 08:57:09 davem Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.61 1999/08/24 22:06:26 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -20,8 +19,10 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &quot;time.h&quot;
 DECL|variable|first_cpu_booted
 r_int
@@ -828,6 +829,11 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|smp_chrp_cpu_nr
+suffix:semicolon
+r_extern
 r_void
 id|__secondary_start_psurge
 c_func
@@ -974,6 +980,8 @@ suffix:semicolon
 r_case
 id|_MACH_chrp
 suffix:colon
+multiline_comment|/* openpic doesn&squot;t report # of cpus, just # possible -- Cort */
+macro_line|#if 0&t;&t;
 id|cpu_nr
 op_assign
 (paren
@@ -992,6 +1000,11 @@ id|OPENPIC_FEATURE_LAST_PROCESSOR_SHIFT
 )paren
 op_plus
 l_int|1
+suffix:semicolon
+macro_line|#endif
+id|cpu_nr
+op_assign
+id|smp_chrp_cpu_nr
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1028,7 +1041,7 @@ id|CLONE_PID
 suffix:semicolon
 id|p
 op_assign
-id|task
+id|init_tasks
 (braket
 id|i
 )braket

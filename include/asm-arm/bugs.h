@@ -4,6 +4,6 @@ DECL|macro|__ASM_BUGS_H
 mdefine_line|#define __ASM_BUGS_H
 macro_line|#include &lt;asm/proc-fns.h&gt;
 DECL|macro|check_bugs
-mdefine_line|#define check_bugs() processor._check_bugs()
+mdefine_line|#define check_bugs() cpu_check_bugs()
 macro_line|#endif
 eof

@@ -78,7 +78,7 @@ r_if
 c_cond
 (paren
 id|ptr
-OL
+op_ge
 id|skb-&gt;head
 op_logical_and
 id|ptr
@@ -911,6 +911,9 @@ r_continue
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 r_case
 id|BPF_LD
 op_or

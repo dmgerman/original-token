@@ -1,8 +1,6 @@
 macro_line|#ifndef __ALPHA_IO_H
 DECL|macro|__ALPHA_IO_H
 mdefine_line|#define __ALPHA_IO_H
-DECL|macro|__DEBUG_IOREMAP
-mdefine_line|#define __DEBUG_IOREMAP 1
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

@@ -66,11 +66,22 @@ r_int
 id|closing_wait2
 suffix:semicolon
 multiline_comment|/* no longer used... */
+DECL|member|iomem_base
+r_int
+r_char
+op_star
+id|iomem_base
+suffix:semicolon
+DECL|member|iomem_reg_shift
+r_int
+r_int
+id|iomem_reg_shift
+suffix:semicolon
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|4
+l_int|2
 )braket
 suffix:semicolon
 )brace
@@ -101,8 +112,14 @@ DECL|macro|PORT_16750
 mdefine_line|#define PORT_16750&t;8
 DECL|macro|PORT_STARTECH
 mdefine_line|#define PORT_STARTECH&t;9&t;/* usurped by cyclades.c */
+DECL|macro|PORT_16C950
+mdefine_line|#define PORT_16C950&t;10&t;/* Oxford Semiconductor */
+DECL|macro|PORT_16654
+mdefine_line|#define PORT_16654&t;11
+DECL|macro|PORT_16850
+mdefine_line|#define PORT_16850&t;12
 DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;9
+mdefine_line|#define PORT_MAX&t;12
 DECL|struct|serial_uart_config
 r_struct
 id|serial_uart_config

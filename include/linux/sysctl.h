@@ -294,7 +294,13 @@ DECL|enumerator|KERN_MAX_THREADS
 id|KERN_MAX_THREADS
 op_assign
 l_int|39
+comma
 multiline_comment|/* int: Maximum nr of threads in the system */
+DECL|enumerator|KERN_RANDOM
+id|KERN_RANDOM
+op_assign
+l_int|40
+multiline_comment|/* Random driver */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */
@@ -448,6 +454,40 @@ DECL|enumerator|NET_KHTTPD
 id|NET_KHTTPD
 op_assign
 l_int|17
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/kernel/random */
+r_enum
+(brace
+DECL|enumerator|RANDOM_POOLSIZE
+id|RANDOM_POOLSIZE
+op_assign
+l_int|1
+comma
+DECL|enumerator|RANDOM_ENTROPY_COUNT
+id|RANDOM_ENTROPY_COUNT
+op_assign
+l_int|2
+comma
+DECL|enumerator|RANDOM_READ_THRESH
+id|RANDOM_READ_THRESH
+op_assign
+l_int|3
+comma
+DECL|enumerator|RANDOM_WRITE_THRESH
+id|RANDOM_WRITE_THRESH
+op_assign
+l_int|4
+comma
+DECL|enumerator|RANDOM_BOOT_ID
+id|RANDOM_BOOT_ID
+op_assign
+l_int|5
+comma
+DECL|enumerator|RANDOM_UUID
+id|RANDOM_UUID
+op_assign
+l_int|6
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/bus/isa */

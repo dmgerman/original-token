@@ -104,6 +104,10 @@ DECL|macro|TIOCM_CD
 mdefine_line|#define TIOCM_CD&t;TIOCM_CAR
 DECL|macro|TIOCM_RI
 mdefine_line|#define TIOCM_RI&t;TIOCM_RNG
+DECL|macro|TIOCM_OUT1
+mdefine_line|#define TIOCM_OUT1&t;0x2000
+DECL|macro|TIOCM_OUT2
+mdefine_line|#define TIOCM_OUT2&t;0x4000
 multiline_comment|/* ioctl (fd, TIOCSERGETLSR, &amp;result) where result may be as below */
 multiline_comment|/* line disciplines */
 DECL|macro|N_TTY
@@ -132,6 +136,8 @@ DECL|macro|N_IRDA
 mdefine_line|#define N_IRDA&t;&t;11&t;/* Linux IrDa - http://www.cs.uit.no/~dagb/irda/irda.html */
 DECL|macro|N_SMSBLOCK
 mdefine_line|#define N_SMSBLOCK&t;12&t;/* SMS block mode - for talking to GSM data cards about SMS messages */
+DECL|macro|N_HDLC
+mdefine_line|#define N_HDLC&t;&t;13&t;/* synchronous HDLC */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */

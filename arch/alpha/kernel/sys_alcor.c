@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_alcor.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&n; * Code supporting the ALCOR and XLT (XL-300/366/433).&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_alcor.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the ALCOR and XLT (XL-300/366/433).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -16,9 +16,9 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;bios32.h&quot;
-macro_line|#include &quot;machvec.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &quot;pci_impl.h&quot;
+macro_line|#include &quot;machvec_impl.h&quot;
 r_static
 r_void
 DECL|function|alcor_update_irq_hw
@@ -395,10 +395,10 @@ id|pci_dev
 op_star
 id|dev
 comma
-r_int
+id|u8
 id|slot
 comma
-r_int
+id|u8
 id|pin
 )paren
 (brace
@@ -594,35 +594,9 @@ suffix:semicolon
 )brace
 r_static
 r_void
-id|__init
-DECL|function|alcor_pci_fixup
-id|alcor_pci_fixup
-c_func
-(paren
-r_void
-)paren
-(brace
-id|layout_all_busses
-c_func
-(paren
-id|EISA_DEFAULT_IO_BASE
-comma
-id|DEFAULT_MEM_BASE
-)paren
-suffix:semicolon
-id|common_pci_fixup
-c_func
-(paren
-id|alcor_map_irq
-comma
-id|common_swizzle
-)paren
-suffix:semicolon
-)brace
-r_static
-r_void
 DECL|function|alcor_kill_arch
 id|alcor_kill_arch
+c_func
 (paren
 r_int
 id|mode
@@ -653,7 +627,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|generic_kill_arch
+id|common_kill_arch
 c_func
 (paren
 id|mode
@@ -691,6 +665,14 @@ id|max_dma_address
 suffix:colon
 id|ALPHA_MAX_DMA_ADDRESS
 comma
+id|min_io_address
+suffix:colon
+id|EISA_DEFAULT_IO_BASE
+comma
+id|min_mem_address
+suffix:colon
+id|CIA_DEFAULT_MEM_BASE
+comma
 id|nr_irqs
 suffix:colon
 l_int|48
@@ -721,15 +703,23 @@ id|alcor_init_irq
 comma
 id|init_pit
 suffix:colon
-id|generic_init_pit
+id|common_init_pit
 comma
-id|pci_fixup
+id|init_pci
 suffix:colon
-id|alcor_pci_fixup
+id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
 id|alcor_kill_arch
+comma
+id|pci_map_irq
+suffix:colon
+id|alcor_map_irq
+comma
+id|pci_swizzle
+suffix:colon
+id|common_swizzle
 comma
 id|sys
 suffix:colon
@@ -777,6 +767,14 @@ id|max_dma_address
 suffix:colon
 id|ALPHA_MAX_DMA_ADDRESS
 comma
+id|min_io_address
+suffix:colon
+id|EISA_DEFAULT_IO_BASE
+comma
+id|min_mem_address
+suffix:colon
+id|CIA_DEFAULT_MEM_BASE
+comma
 id|nr_irqs
 suffix:colon
 l_int|48
@@ -807,15 +805,23 @@ id|alcor_init_irq
 comma
 id|init_pit
 suffix:colon
-id|generic_init_pit
+id|common_init_pit
 comma
-id|pci_fixup
+id|init_pci
 suffix:colon
-id|alcor_pci_fixup
+id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
 id|alcor_kill_arch
+comma
+id|pci_map_irq
+suffix:colon
+id|alcor_map_irq
+comma
+id|pci_swizzle
+suffix:colon
+id|common_swizzle
 comma
 id|sys
 suffix:colon

@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: debuglocks.c,v 1.8 1999/08/05 09:49:59 anton Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* $Id: debuglocks.c,v 1.9 1999/08/14 03:51:39 anton Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;&t;/* For NR_CPUS */
+macro_line|#include &lt;linux/threads.h&gt;&t;/* For NR_CPUS */
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;

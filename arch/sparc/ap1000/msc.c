@@ -3205,7 +3205,7 @@ id|task
 id|tsk
 )braket
 op_member_access_from_pointer
-id|tss.sig_address
+id|thread.sig_address
 op_assign
 id|vaddr
 suffix:semicolon
@@ -3214,7 +3214,7 @@ id|task
 id|tsk
 )braket
 op_member_access_from_pointer
-id|tss.sig_desc
+id|thread.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon
@@ -3377,7 +3377,7 @@ id|task
 id|tsk
 )braket
 op_member_access_from_pointer
-id|tss.sig_address
+id|thread.sig_address
 op_assign
 id|vaddr
 suffix:semicolon
@@ -3386,7 +3386,7 @@ id|task
 id|tsk
 )braket
 op_member_access_from_pointer
-id|tss.sig_desc
+id|thread.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon

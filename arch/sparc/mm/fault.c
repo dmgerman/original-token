@@ -1,10 +1,10 @@
-multiline_comment|/* $Id: fault.c,v 1.106 1999/07/30 09:35:07 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.107 1999/08/14 03:51:46 anton Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1173,11 +1173,11 @@ id|regs-&gt;pc
 )paren
 suffix:semicolon
 macro_line|#endif
-id|tsk-&gt;tss.sig_address
+id|tsk-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.sig_desc
+id|tsk-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon
@@ -1212,11 +1212,11 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|tsk-&gt;tss.sig_address
+id|tsk-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.sig_desc
+id|tsk-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_MISCERROR
 suffix:semicolon
@@ -1813,11 +1813,11 @@ id|address
 )paren
 suffix:semicolon
 macro_line|#endif
-id|tsk-&gt;tss.sig_address
+id|tsk-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.sig_desc
+id|tsk-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon
@@ -1842,11 +1842,11 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|tsk-&gt;tss.sig_address
+id|tsk-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.sig_desc
+id|tsk-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_MISCERROR
 suffix:semicolon
@@ -1878,7 +1878,7 @@ c_func
 suffix:semicolon
 id|sp
 op_assign
-id|current-&gt;tss.rwbuf_stkptrs
+id|current-&gt;thread.rwbuf_stkptrs
 (braket
 l_int|0
 )braket

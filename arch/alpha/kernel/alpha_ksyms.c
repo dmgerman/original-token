@@ -58,6 +58,14 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|___delay
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* these are C runtime functions with special calling conventions: */
 r_extern
 r_void
@@ -700,6 +708,14 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__up_wakeup
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * This is called specially from __delay.&n; */
+DECL|variable|___delay
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|___delay
 )paren
 suffix:semicolon
 multiline_comment|/* &n; * SMP-specific symbols.&n; */

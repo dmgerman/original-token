@@ -3357,7 +3357,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#if !defined (__mc68000__) &amp;&amp; !defined(CONFIG_PMAC) &amp;&amp; !defined(__sparc__)&bslash;&n;    &amp;&amp; !defined(CONFIG_APUS)
+macro_line|#if !defined (__mc68000__) &amp;&amp; !defined(CONFIG_PMAC) &amp;&amp; !defined(__sparc__)&bslash;&n;    &amp;&amp; !defined(CONFIG_APUS) &amp;&amp; !defined(__sh__)
 id|outb_p
 c_func
 (paren

@@ -37,7 +37,7 @@ r_int
 id|addr
 )paren
 )paren
-id|writew
+id|__raw_writew
 c_func
 (paren
 id|val
@@ -83,7 +83,7 @@ id|addr
 )paren
 )paren
 r_return
-id|readw
+id|__raw_readw
 c_func
 (paren
 (paren
@@ -217,10 +217,11 @@ id|count
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* ??? These are currently only used for downloading character sets.  As&n;   such, they don&squot;t need memory barriers.  Is this all they are intended&n;   to be used for?  */
 DECL|macro|vga_readb
-mdefine_line|#define vga_readb readb
+mdefine_line|#define vga_readb&t;readb
 DECL|macro|vga_writeb
-mdefine_line|#define vga_writeb writeb
+mdefine_line|#define vga_writeb&t;writeb
 DECL|macro|VGA_MAP_MEM
 mdefine_line|#define VGA_MAP_MEM(x)&t;((unsigned long) ioremap((x), 0))
 macro_line|#endif

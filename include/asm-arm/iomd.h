@@ -13,6 +13,10 @@ DECL|macro|IOMD_KARTRX
 mdefine_line|#define IOMD_KARTRX&t;__IOMD(0x004)
 DECL|macro|IOMD_KCTRL
 mdefine_line|#define IOMD_KCTRL&t;__IOMD(0x008)
+macro_line|#ifdef CONFIG_ARCH_CL7500
+DECL|macro|IOMD_IOLINES
+mdefine_line|#define IOMD_IOLINES&t;__IOMD(0x00C)
+macro_line|#endif
 DECL|macro|IOMD_IRQSTATA
 mdefine_line|#define IOMD_IRQSTATA&t;__IOMD(0x010)
 DECL|macro|IOMD_IRQREQA
@@ -57,12 +61,30 @@ DECL|macro|IOMD_T1GO
 mdefine_line|#define IOMD_T1GO&t;__IOMD(0x058)
 DECL|macro|IOMD_T1LATCH
 mdefine_line|#define IOMD_T1LATCH&t;__IOMD(0x05c)
+macro_line|#ifdef CONFIG_ARCH_CL7500
+DECL|macro|IOMD_IRQSTATC
+mdefine_line|#define IOMD_IRQSTATC&t;__IOMD(0x060)
+DECL|macro|IOMD_IRQREQC
+mdefine_line|#define IOMD_IRQREQC&t;__IOMD(0x064)
+DECL|macro|IOMD_IRQMASKC
+mdefine_line|#define IOMD_IRQMASKC&t;__IOMD(0x068)
+DECL|macro|IOMD_VIDMUX
+mdefine_line|#define IOMD_VIDMUX&t;__IOMD(0x06c)
+DECL|macro|IOMD_IRQSTATD
+mdefine_line|#define IOMD_IRQSTATD&t;__IOMD(0x070)
+DECL|macro|IOMD_IRQREQD
+mdefine_line|#define IOMD_IRQREQD&t;__IOMD(0x074)
+DECL|macro|IOMD_IRQMASKD
+mdefine_line|#define IOMD_IRQMASKD&t;__IOMD(0x078)
+macro_line|#endif
 DECL|macro|IOMD_ROMCR0
 mdefine_line|#define IOMD_ROMCR0&t;__IOMD(0x080)
 DECL|macro|IOMD_ROMCR1
 mdefine_line|#define IOMD_ROMCR1&t;__IOMD(0x084)
+macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|IOMD_DRAMCR
 mdefine_line|#define IOMD_DRAMCR&t;__IOMD(0x088)
+macro_line|#endif
 DECL|macro|IOMD_VREFCR
 mdefine_line|#define IOMD_VREFCR&t;__IOMD(0x08C)
 DECL|macro|IOMD_FSIZE
@@ -73,18 +95,53 @@ DECL|macro|IOMD_ID1
 mdefine_line|#define IOMD_ID1&t;__IOMD(0x098)
 DECL|macro|IOMD_VERSION
 mdefine_line|#define IOMD_VERSION&t;__IOMD(0x09C)
+macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|IOMD_MOUSEX
 mdefine_line|#define IOMD_MOUSEX&t;__IOMD(0x0A0)
 DECL|macro|IOMD_MOUSEY
 mdefine_line|#define IOMD_MOUSEY&t;__IOMD(0x0A4)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_CL7500
+DECL|macro|IOMD_MSEDAT
+mdefine_line|#define IOMD_MSEDAT&t;__IOMD(0x0A8)
+DECL|macro|IOMD_MSECTL
+mdefine_line|#define IOMD_MSECTL&t;__IOMD(0x0Ac)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|IOMD_DMATCR
 mdefine_line|#define IOMD_DMATCR&t;__IOMD(0x0C0)
+macro_line|#endif
 DECL|macro|IOMD_IOTCR
 mdefine_line|#define IOMD_IOTCR&t;__IOMD(0x0C4)
 DECL|macro|IOMD_ECTCR
 mdefine_line|#define IOMD_ECTCR&t;__IOMD(0x0C8)
+macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|IOMD_DMAEXT
 mdefine_line|#define IOMD_DMAEXT&t;__IOMD(0x0CC)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_CL7500
+DECL|macro|IOMD_ASTCR
+mdefine_line|#define IOMD_ASTCR&t;__IOMD(0x0CC)
+DECL|macro|IOMD_DRAMCR
+mdefine_line|#define IOMD_DRAMCR&t;__IOMD(0x0D0)
+DECL|macro|IOMD_SELFREF
+mdefine_line|#define IOMD_SELFREF&t;__IOMD(0x0D4)
+DECL|macro|IOMD_ATODICR
+mdefine_line|#define IOMD_ATODICR&t;__IOMD(0x0E0)
+DECL|macro|IOMD_ATODSR
+mdefine_line|#define IOMD_ATODSR&t;__IOMD(0x0E4)
+DECL|macro|IOMD_ATODCC
+mdefine_line|#define IOMD_ATODCC&t;__IOMD(0x0E8)
+DECL|macro|IOMD_ATODCNT1
+mdefine_line|#define IOMD_ATODCNT1&t;__IOMD(0x0EC)
+DECL|macro|IOMD_ATODCNT2
+mdefine_line|#define IOMD_ATODCNT2&t;__IOMD(0x0F0)
+DECL|macro|IOMD_ATODCNT3
+mdefine_line|#define IOMD_ATODCNT3&t;__IOMD(0x0F4)
+DECL|macro|IOMD_ATODCNT4
+mdefine_line|#define IOMD_ATODCNT4&t;__IOMD(0x0F8)
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|DMA_EXT_IO0
 mdefine_line|#define DMA_EXT_IO0&t;1
 DECL|macro|DMA_EXT_IO1
@@ -141,6 +198,7 @@ DECL|macro|IOMD_IO3CR
 mdefine_line|#define IOMD_IO3CR&t;__IOMD(0x170)
 DECL|macro|IOMD_IO3ST
 mdefine_line|#define IOMD_IO3ST&t;__IOMD(0x174)
+macro_line|#endif
 DECL|macro|IOMD_SD0CURA
 mdefine_line|#define IOMD_SD0CURA&t;__IOMD(0x180)
 DECL|macro|IOMD_SD0ENDA
@@ -153,6 +211,7 @@ DECL|macro|IOMD_SD0CR
 mdefine_line|#define IOMD_SD0CR&t;__IOMD(0x190)
 DECL|macro|IOMD_SD0ST
 mdefine_line|#define IOMD_SD0ST&t;__IOMD(0x194)
+macro_line|#ifdef CONFIG_ARCH_RPC
 DECL|macro|IOMD_SD1CURA
 mdefine_line|#define IOMD_SD1CURA&t;__IOMD(0x1A0)
 DECL|macro|IOMD_SD1ENDA
@@ -165,6 +224,7 @@ DECL|macro|IOMD_SD1CR
 mdefine_line|#define IOMD_SD1CR&t;__IOMD(0x1B0)
 DECL|macro|IOMD_SD1ST
 mdefine_line|#define IOMD_SD1ST&t;__IOMD(0x1B4)
+macro_line|#endif
 DECL|macro|IOMD_CURSCUR
 mdefine_line|#define IOMD_CURSCUR&t;__IOMD(0x1C0)
 DECL|macro|IOMD_CURSINIT

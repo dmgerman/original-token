@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: creatorfb.c,v 1.27 1999/03/28 12:37:12 jj Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: creatorfb.c,v 1.29 1999/08/10 15:56:07 davem Exp $&n; * creatorfb.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997,1998,1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3906,6 +3906,34 @@ id|fbc
 )paren
 suffix:semicolon
 )brace
+DECL|function|ffb_rasterimg
+r_static
+r_int
+id|__init
+id|ffb_rasterimg
+(paren
+r_struct
+id|fb_info
+op_star
+id|info
+comma
+r_int
+id|start
+)paren
+(brace
+id|ffb_switch_from_graph
+(paren
+id|sbusfbinfo
+c_func
+(paren
+id|info
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|variable|__initdata
 r_static
 r_char
@@ -3990,6 +4018,11 @@ id|name
 l_int|64
 )braket
 suffix:semicolon
+r_struct
+id|fb_ops
+op_star
+id|fbops
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4059,6 +4092,43 @@ r_sizeof
 id|u32
 )paren
 )paren
+suffix:semicolon
+id|fbops
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+op_star
+id|fbops
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fbops
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+op_star
+id|fbops
+op_assign
+op_star
+id|fb-&gt;info.fbops
+suffix:semicolon
+id|fbops-&gt;fb_rasterimg
+op_assign
+id|ffb_rasterimg
+suffix:semicolon
+id|fb-&gt;info.fbops
+op_assign
+id|fbops
 suffix:semicolon
 id|prom_getstring
 c_func

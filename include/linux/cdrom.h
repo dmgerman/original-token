@@ -2,6 +2,7 @@ multiline_comment|/*&n; * -- &lt;linux/cdrom.h&gt;&n; * General header file for 
 macro_line|#ifndef&t;_LINUX_CDROM_H
 DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/*******************************************************&n; * As of Linux 2.1.x, all Linux CD-ROM application programs will use this &n; * (and only this) include file.  It is my hope to provide Linux with&n; * a uniform interface between software accessing CD-ROMs and the various &n; * device drivers that actually talk to the drives.  There may still be&n; * 23 different kinds of strange CD-ROM drives, but at least there will &n; * now be one, and only one, Linux CD-ROM interface.&n; *&n; * Additionally, as of Linux 2.1.x, all Linux application programs &n; * should use the O_NONBLOCK option when opening a CD-ROM device &n; * for subsequent ioctl commands.  This allows for neat system errors &n; * like &quot;No medium found&quot; or &quot;Wrong medium type&quot; upon attempting to &n; * mount or play an empty slot, mount an audio disc, or play a data disc.&n; * Generally, changing an application program to support O_NONBLOCK&n; * is as easy as the following:&n; *       -    drive = open(&quot;/dev/cdrom&quot;, O_RDONLY);&n; *       +    drive = open(&quot;/dev/cdrom&quot;, O_RDONLY | O_NONBLOCK);&n; * It is worth the small change.&n; *&n; *  Patches for many common CD programs (provided by David A. van Leeuwen)&n; *  can be found at:  ftp://ftp.gwdg.de/pub/linux/cdrom/drivers/cm206/&n; * &n; *******************************************************/
 multiline_comment|/* When a driver supports a certain function, but the cdrom drive we are &n; * using doesn&squot;t, we will return the error EDRIVE_CANT_DO_THIS.  We will &n; * borrow the &quot;Operation not supported&quot; error from the network folks to &n; * accomplish this.  Maybe someday we will get a more targeted error code, &n; * but this will do for now... */
 DECL|macro|EDRIVE_CANT_DO_THIS
@@ -57,12 +58,17 @@ mdefine_line|#define CDROMSEEK&t;&t;0x5316  /* seek msf address */
 multiline_comment|/*&n; * This ioctl is only used by the scsi-cd driver.  &n;   It is for playing audio in logical block addressing mode.&n; */
 DECL|macro|CDROMPLAYBLK
 mdefine_line|#define CDROMPLAYBLK&t;&t;0x5317&t;/* (struct cdrom_blk) */
-multiline_comment|/* &n; * These ioctls are used only used in optcd.c&n; */
+multiline_comment|/* &n; * These ioctls are only used in optcd.c&n; */
 DECL|macro|CDROMREADALL
 mdefine_line|#define CDROMREADALL&t;&t;0x5318&t;/* read all 2646 bytes */
+multiline_comment|/* &n; * These ioctls are (now) only in ide-cd.c for controlling &n; * drive spindown time.  They should be implemented in the&n; * Uniform driver, via generic packet commands, GPCMD_MODE_SELECT_10,&n; * GPCMD_MODE_SENSE_10 and the GPMODE_POWER_PAGE...&n; *  -Erik&n; */
+DECL|macro|CDROMGETSPINDOWN
+mdefine_line|#define CDROMGETSPINDOWN        0x531d
+DECL|macro|CDROMSETSPINDOWN
+mdefine_line|#define CDROMSETSPINDOWN        0x531e
+multiline_comment|/* &n; * These ioctls are implemented through the uniform CD-ROM driver&n; * They _will_ be adopted by all CD-ROM drivers, when all the CD-ROM&n; * drivers are eventually ported to the uniform CD-ROM driver interface.&n; */
 DECL|macro|CDROMCLOSETRAY
 mdefine_line|#define CDROMCLOSETRAY&t;&t;0x5319&t;/* pendant of CDROMEJECT */
-multiline_comment|/* &n; * These ioctls are implemented through the uniform CD-ROM driver&n; * They _will_ be adopted by all CD-ROM drivers, when all the CD-ROM&n; * drivers are eventually ported to the uniform CD-ROM driver interface.&n; */
 DECL|macro|CDROM_SET_OPTIONS
 mdefine_line|#define CDROM_SET_OPTIONS&t;0x5320  /* Set behavior options */
 DECL|macro|CDROM_CLEAR_OPTIONS
@@ -97,8 +103,10 @@ DECL|macro|DVD_AUTH
 mdefine_line|#define DVD_AUTH&t;&t;0x5392  /* Authentication */
 DECL|macro|CDROM_SEND_PACKET
 mdefine_line|#define CDROM_SEND_PACKET&t;0x5393&t;/* send a packet to the drive */
-DECL|macro|CDROM_BLANK
-mdefine_line|#define CDROM_BLANK&t;&t;0x5394&t;/* blank */
+DECL|macro|CDROM_NEXT_WRITABLE
+mdefine_line|#define CDROM_NEXT_WRITABLE&t;0x5394&t;/* get next writable block */
+DECL|macro|CDROM_LAST_WRITTEN
+mdefine_line|#define CDROM_LAST_WRITTEN&t;0x5395&t;/* get last block written on disc */
 multiline_comment|/*******************************************************&n; * CDROM IOCTL structures&n; *******************************************************/
 multiline_comment|/* Address in MSF format */
 DECL|struct|cdrom_msf0
@@ -523,19 +531,6 @@ DECL|macro|CDROM_AUDIO_ERROR
 mdefine_line|#define&t;CDROM_AUDIO_ERROR&t;0x14&t;/* audio play stopped due to error */
 DECL|macro|CDROM_AUDIO_NO_STATUS
 mdefine_line|#define&t;CDROM_AUDIO_NO_STATUS&t;0x15&t;/* no current audio status to return */
-multiline_comment|/* CD-ROM-specific SCSI command opcodes */
-DECL|macro|SCMD_READ_TOC
-mdefine_line|#define SCMD_READ_TOC&t;&t;0x43&t;/* read table of contents */
-DECL|macro|SCMD_PLAYAUDIO_MSF
-mdefine_line|#define SCMD_PLAYAUDIO_MSF&t;0x47&t;/* play data at time offset */
-DECL|macro|SCMD_PLAYAUDIO_TI
-mdefine_line|#define SCMD_PLAYAUDIO_TI&t;0x48&t;/* play data at track/index */
-DECL|macro|SCMD_PAUSE_RESUME
-mdefine_line|#define SCMD_PAUSE_RESUME&t;0x4B&t;/* pause/resume audio */
-DECL|macro|SCMD_READ_SUBCHANNEL
-mdefine_line|#define SCMD_READ_SUBCHANNEL&t;0x42&t;/* read SC info on playing disc */
-DECL|macro|SCMD_PLAYAUDIO10
-mdefine_line|#define SCMD_PLAYAUDIO10&t;0x45&t;/* play data at logical block */
 multiline_comment|/* capability flags used with the uniform CD-ROM driver */
 DECL|macro|CDC_CLOSE_TRAY
 mdefine_line|#define CDC_CLOSE_TRAY&t;&t;0x1     /* caddy systems _can&squot;t_ close */
@@ -614,13 +609,135 @@ DECL|macro|CDSL_NONE
 mdefine_line|#define CDSL_NONE       &t;((int) (~0U&gt;&gt;1)-1)
 DECL|macro|CDSL_CURRENT
 mdefine_line|#define CDSL_CURRENT    &t;((int) (~0U&gt;&gt;1))
-multiline_comment|/*********************************************************************&n; * MMC commands and such&n; *********************************************************************/
-DECL|macro|DVD_SEND_KEY
-mdefine_line|#define DVD_SEND_KEY&t;&t;0xa3
-DECL|macro|DVD_REPORT_KEY
-mdefine_line|#define DVD_REPORT_KEY&t;&t;0xa4
-DECL|macro|DVD_READ_STRUCTURE
-mdefine_line|#define DVD_READ_STRUCTURE&t;0xad
+multiline_comment|/*********************************************************************&n; * Generic Packet commands, MMC commands, and such&n; *********************************************************************/
+multiline_comment|/* The generic packet command opcodes for CD/DVD Logical Units,&n; * From Table 57 of the SFF8090 Ver. 3 (Mt. Fuji) draft standard. */
+DECL|macro|GPCMD_BLANK
+mdefine_line|#define GPCMD_BLANK&t;&t;&t;    0xa1
+DECL|macro|GPCMD_CLOSE_TRACK
+mdefine_line|#define GPCMD_CLOSE_TRACK&t;&t;    0x5b
+DECL|macro|GPCMD_FLUSH_CACHE
+mdefine_line|#define GPCMD_FLUSH_CACHE&t;&t;    0x35
+DECL|macro|GPCMD_FORMAT_UNIT
+mdefine_line|#define GPCMD_FORMAT_UNIT&t;&t;    0x04
+DECL|macro|GPCMD_GET_CONFIGURATION
+mdefine_line|#define GPCMD_GET_CONFIGURATION&t;&t;    0x46
+DECL|macro|GPCMD_GET_EVENT_STATUS_NOTIFICATION
+mdefine_line|#define GPCMD_GET_EVENT_STATUS_NOTIFICATION 0x4a
+DECL|macro|GPCMD_GET_PERFORMANCE
+mdefine_line|#define GPCMD_GET_PERFORMANCE&t;&t;    0xac
+DECL|macro|GPCMD_INQUIRY
+mdefine_line|#define GPCMD_INQUIRY&t;&t;&t;    0x12
+DECL|macro|GPCMD_LOAD_UNLOAD
+mdefine_line|#define GPCMD_LOAD_UNLOAD&t;&t;    0xa6
+DECL|macro|GPCMD_MECHANISM_STATUS
+mdefine_line|#define GPCMD_MECHANISM_STATUS&t;&t;    0xbd
+DECL|macro|GPCMD_MODE_SELECT_10
+mdefine_line|#define GPCMD_MODE_SELECT_10&t;&t;    0x55
+DECL|macro|GPCMD_MODE_SENSE_10
+mdefine_line|#define GPCMD_MODE_SENSE_10&t;&t;    0x5a
+DECL|macro|GPCMD_PAUSE_RESUME
+mdefine_line|#define GPCMD_PAUSE_RESUME&t;&t;    0x4b
+DECL|macro|GPCMD_PLAY_AUDIO_10
+mdefine_line|#define GPCMD_PLAY_AUDIO_10&t;&t;    0x45
+DECL|macro|GPCMD_PLAY_AUDIO_MSF
+mdefine_line|#define GPCMD_PLAY_AUDIO_MSF&t;&t;    0x47
+DECL|macro|GPCMD_PLAY_CD
+mdefine_line|#define GPCMD_PLAY_CD&t;&t;&t;    0xbc
+DECL|macro|GPCMD_PREVENT_ALLOW_MEDIUM_REMOVAL
+mdefine_line|#define GPCMD_PREVENT_ALLOW_MEDIUM_REMOVAL  0x1e
+DECL|macro|GPCMD_READ_10
+mdefine_line|#define GPCMD_READ_10&t;&t;&t;    0x28
+DECL|macro|GPCMD_READ_12
+mdefine_line|#define GPCMD_READ_12&t;&t;&t;    0xa8
+DECL|macro|GPCMD_READ_CDVD_CAPACITY
+mdefine_line|#define GPCMD_READ_CDVD_CAPACITY&t;    0x25
+DECL|macro|GPCMD_READ_CD
+mdefine_line|#define GPCMD_READ_CD&t;&t;&t;    0xbe
+DECL|macro|GPCMD_READ_CD_MSF
+mdefine_line|#define GPCMD_READ_CD_MSF&t;&t;    0xb9
+DECL|macro|GPCMD_READ_DISC_INFO
+mdefine_line|#define GPCMD_READ_DISC_INFO&t;&t;    0x51
+DECL|macro|GPCMD_READ_DVD_STRUCTURE
+mdefine_line|#define GPCMD_READ_DVD_STRUCTURE&t;    0xad
+DECL|macro|GPCMD_READ_FORMAT_CAPACITIES
+mdefine_line|#define GPCMD_READ_FORMAT_CAPACITIES&t;    0x23
+DECL|macro|GPCMD_READ_HEADER
+mdefine_line|#define GPCMD_READ_HEADER&t;&t;    0x44
+DECL|macro|GPCMD_READ_TRACK_RZONE_INFO
+mdefine_line|#define GPCMD_READ_TRACK_RZONE_INFO&t;    0x52
+DECL|macro|GPCMD_READ_SUBCHANNEL
+mdefine_line|#define GPCMD_READ_SUBCHANNEL&t;&t;    0x42
+DECL|macro|GPCMD_READ_TOC_PMA_ATIP
+mdefine_line|#define GPCMD_READ_TOC_PMA_ATIP&t;&t;    0x43
+DECL|macro|GPCMD_REPAIR_RZONE_TRACK
+mdefine_line|#define GPCMD_REPAIR_RZONE_TRACK&t;    0x58
+DECL|macro|GPCMD_REPORT_KEY
+mdefine_line|#define GPCMD_REPORT_KEY&t;&t;    0xa4
+DECL|macro|GPCMD_REQUEST_SENSE
+mdefine_line|#define GPCMD_REQUEST_SENSE&t;&t;    0x03
+DECL|macro|GPCMD_RESERVE_RZONE_TRACK
+mdefine_line|#define GPCMD_RESERVE_RZONE_TRACK&t;    0x53
+DECL|macro|GPCMD_SCAN
+mdefine_line|#define GPCMD_SCAN&t;&t;&t;    0xba
+DECL|macro|GPCMD_SEEK
+mdefine_line|#define GPCMD_SEEK&t;&t;&t;    0x2b
+DECL|macro|GPCMD_SEND_DVD_STRUCTURE
+mdefine_line|#define GPCMD_SEND_DVD_STRUCTURE&t;    0xad
+DECL|macro|GPCMD_SEND_EVENT
+mdefine_line|#define GPCMD_SEND_EVENT&t;&t;    0xa2
+DECL|macro|GPCMD_SEND_KEY
+mdefine_line|#define GPCMD_SEND_KEY&t;&t;&t;    0xa3
+DECL|macro|GPCMD_SEND_OPC
+mdefine_line|#define GPCMD_SEND_OPC&t;&t;&t;    0x54
+DECL|macro|GPCMD_SET_READ_AHEAD
+mdefine_line|#define GPCMD_SET_READ_AHEAD&t;&t;    0xa7
+DECL|macro|GPCMD_SET_STREAMING
+mdefine_line|#define GPCMD_SET_STREAMING&t;&t;    0xb6
+DECL|macro|GPCMD_START_STOP_UNIT
+mdefine_line|#define GPCMD_START_STOP_UNIT&t;&t;    0x1b
+DECL|macro|GPCMD_STOP_PLAY_SCAN
+mdefine_line|#define GPCMD_STOP_PLAY_SCAN&t;&t;    0x4e
+DECL|macro|GPCMD_TEST_UNIT_READY
+mdefine_line|#define GPCMD_TEST_UNIT_READY&t;&t;    0x00
+DECL|macro|GPCMD_VERIFY_10
+mdefine_line|#define GPCMD_VERIFY_10&t;&t;&t;    0x2f
+DECL|macro|GPCMD_WRITE_10
+mdefine_line|#define GPCMD_WRITE_10&t;&t;&t;    0x2a
+DECL|macro|GPCMD_WRITE_AND_VERIFY_10
+mdefine_line|#define GPCMD_WRITE_AND_VERIFY_10&t;    0x2e
+multiline_comment|/* This is listed as optional in ATAPI 2.6, but is (curiously) &n; * missing from Mt. Fuji, Table 57.  It _is_ mentioned in Mt. Fuji&n; * Table 377 as an MMC command for SCSi devices though...  Most ATAPI&n; * drives support it. */
+DECL|macro|GPCMD_SET_SPEED
+mdefine_line|#define GPCMD_SET_SPEED&t;&t;&t;    0xbb
+multiline_comment|/* This seems to be a SCSI specific CD-ROM opcode &n; * to play data at track/index */
+DECL|macro|GPCMD_PLAYAUDIO_TI
+mdefine_line|#define GPCMD_PLAYAUDIO_TI&t;&t;    0x48
+multiline_comment|/* Is this really used by anything?  I couldn&squot;t find these...*/
+macro_line|#if 0
+multiline_comment|/* MMC2/MTFuji Opcodes */
+mdefine_line|#define ERASE&t;&t;&t;0x2c
+mdefine_line|#define READ_BUFFER&t;&t;0x3c
+macro_line|#endif
+multiline_comment|/* Mode page codes for mode sense/set */
+DECL|macro|GPMODE_R_W_ERROR_PAGE
+mdefine_line|#define GPMODE_R_W_ERROR_PAGE&t;    0x1
+DECL|macro|GPMODE_WRITE_PARMS_PAGE
+mdefine_line|#define GPMODE_WRITE_PARMS_PAGE&t;    0x5
+DECL|macro|GPMODE_AUDIO_CTL_PAGE
+mdefine_line|#define GPMODE_AUDIO_CTL_PAGE&t;    0xe
+DECL|macro|GPMODE_POWER_PAGE
+mdefine_line|#define GPMODE_POWER_PAGE&t;    0x1a
+DECL|macro|GPMODE_FAULT_FAIL_PAGE
+mdefine_line|#define GPMODE_FAULT_FAIL_PAGE&t;    0x1c
+DECL|macro|GPMODE_TO_PROTECT_PAGE
+mdefine_line|#define GPMODE_TO_PROTECT_PAGE&t;    0x1d
+DECL|macro|GPMODE_CAPABILITIES_PAGE
+mdefine_line|#define GPMODE_CAPABILITIES_PAGE    0x2a
+DECL|macro|GPMODE_ALL_PAGES
+mdefine_line|#define GPMODE_ALL_PAGES&t;    0x3f
+multiline_comment|/* Not in Mt. Fuji, but in ATAPI 2.6 -- depricated now in favor&n; * of MODE_SENSE_POWER_PAGE */
+DECL|macro|GPMODE_CDROM_PAGE
+mdefine_line|#define GPMODE_CDROM_PAGE              0x0d
+multiline_comment|/* DVD struct types */
 DECL|macro|DVD_STRUCT_PHYSICAL
 mdefine_line|#define DVD_STRUCT_PHYSICAL&t;0x00
 DECL|macro|DVD_STRUCT_COPYRIGHT
@@ -1476,6 +1593,404 @@ id|tracktype
 op_star
 id|tracks
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|cdrom_get_next_writable
+c_func
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+op_star
+id|next_writable
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|cdrom_get_last_written
+c_func
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+op_star
+id|last_written
+)paren
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|disc_information_length
+id|__u16
+id|disc_information_length
+suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved1
+id|__u8
+id|reserved1
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|erasable
+id|__u8
+id|erasable
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|border_status
+id|__u8
+id|border_status
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|disc_border
+id|__u8
+id|disc_border
+suffix:colon
+l_int|2
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|disc_border
+id|__u8
+id|disc_border
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|border_status
+id|__u8
+id|border_status
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|erasable
+id|__u8
+id|erasable
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved1
+id|__u8
+id|reserved1
+suffix:colon
+l_int|3
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+DECL|member|n_first_track
+id|__u8
+id|n_first_track
+suffix:semicolon
+DECL|member|n_sessions_lsb
+id|__u8
+id|n_sessions_lsb
+suffix:semicolon
+DECL|member|first_track_lsb
+id|__u8
+id|first_track_lsb
+suffix:semicolon
+DECL|member|last_track_lsb
+id|__u8
+id|last_track_lsb
+suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|did_v
+id|__u8
+id|did_v
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|dbc_v
+id|__u8
+id|dbc_v
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|uru
+id|__u8
+id|uru
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved2
+id|__u8
+id|reserved2
+suffix:colon
+l_int|5
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|reserved2
+id|__u8
+id|reserved2
+suffix:colon
+l_int|5
+suffix:semicolon
+DECL|member|uru
+id|__u8
+id|uru
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|dbc_v
+id|__u8
+id|dbc_v
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|did_v
+id|__u8
+id|did_v
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+DECL|member|disc_type
+id|__u8
+id|disc_type
+suffix:semicolon
+DECL|member|n_sessions_msb
+id|__u8
+id|n_sessions_msb
+suffix:semicolon
+DECL|member|first_track_msb
+id|__u8
+id|first_track_msb
+suffix:semicolon
+DECL|member|last_track_msb
+id|__u8
+id|last_track_msb
+suffix:semicolon
+DECL|member|disc_id
+id|__u32
+id|disc_id
+suffix:semicolon
+DECL|member|lead_in
+id|__u32
+id|lead_in
+suffix:semicolon
+DECL|member|lead_out
+id|__u32
+id|lead_out
+suffix:semicolon
+DECL|member|disc_bar_code
+id|__u8
+id|disc_bar_code
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|reserved3
+id|__u8
+id|reserved3
+suffix:semicolon
+DECL|member|n_opc
+id|__u8
+id|n_opc
+suffix:semicolon
+DECL|typedef|disc_information
+)brace
+id|disc_information
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|track_information_length
+id|__u16
+id|track_information_length
+suffix:semicolon
+DECL|member|track_lsb
+id|__u8
+id|track_lsb
+suffix:semicolon
+DECL|member|session_lsb
+id|__u8
+id|session_lsb
+suffix:semicolon
+DECL|member|reserved1
+id|__u8
+id|reserved1
+suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved2
+id|__u8
+id|reserved2
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|damage
+id|__u8
+id|damage
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|copy
+id|__u8
+id|copy
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|track_mode
+id|__u8
+id|track_mode
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|rt
+id|__u8
+id|rt
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|blank
+id|__u8
+id|blank
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|packet
+id|__u8
+id|packet
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|fp
+id|__u8
+id|fp
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|data_mode
+id|__u8
+id|data_mode
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|reserved3
+id|__u8
+id|reserved3
+suffix:colon
+l_int|6
+suffix:semicolon
+DECL|member|lra_v
+id|__u8
+id|lra_v
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|nwa_v
+id|__u8
+id|nwa_v
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|track_mode
+id|__u8
+id|track_mode
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|copy
+id|__u8
+id|copy
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|damage
+id|__u8
+id|damage
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved2
+id|__u8
+id|reserved2
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|data_mode
+id|__u8
+id|data_mode
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|fp
+id|__u8
+id|fp
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|packet
+id|__u8
+id|packet
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|blank
+id|__u8
+id|blank
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|rt
+id|__u8
+id|rt
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|nwa_v
+id|__u8
+id|nwa_v
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|lra_v
+id|__u8
+id|lra_v
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved3
+id|__u8
+id|reserved3
+suffix:colon
+l_int|6
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+DECL|member|track_start
+id|__u32
+id|track_start
+suffix:semicolon
+DECL|member|next_writable
+id|__u32
+id|next_writable
+suffix:semicolon
+DECL|member|free_blocks
+id|__u32
+id|free_blocks
+suffix:semicolon
+DECL|member|fixed_packet_size
+id|__u32
+id|fixed_packet_size
+suffix:semicolon
+DECL|member|track_size
+id|__u32
+id|track_size
+suffix:semicolon
+DECL|member|last_rec_address
+id|__u32
+id|last_rec_address
+suffix:semicolon
+DECL|typedef|track_information
+)brace
+id|track_information
 suffix:semicolon
 macro_line|#endif  /* End of kernel only stuff */ 
 macro_line|#endif  /* _LINUX_CDROM_H */

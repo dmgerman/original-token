@@ -41,7 +41,7 @@ DECL|macro|__addr_ok
 mdefine_line|#define __addr_ok(addr) ((unsigned long)(addr) &lt; (current-&gt;addr_limit.seg))
 multiline_comment|/*&n; * Uhhuh, this needs 33-bit arithmetic. We have a carry..&n; */
 DECL|macro|__range_ok
-mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag,sum; &bslash;&n;&t;asm(&quot;addl %3,%1 ; sbbl %0,%0; cmpl %1,%4; sbbl $0,%0&quot; &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &bslash;&n;&t;&t;:&quot;1&quot; (addr),&quot;g&quot; (size),&quot;g&quot; (current-&gt;addr_limit.seg)); &bslash;&n;&t;flag; })
+mdefine_line|#define __range_ok(addr,size) ({ &bslash;&n;&t;unsigned long flag,sum; &bslash;&n;&t;asm(&quot;addl %3,%1 ; sbbl %0,%0; cmpl %1,%4; sbbl $0,%0&quot; &bslash;&n;&t;&t;:&quot;=&amp;r&quot; (flag), &quot;=r&quot; (sum) &bslash;&n;&t;&t;:&quot;1&quot; (addr),&quot;g&quot; ((int)(size)),&quot;g&quot; (current-&gt;addr_limit.seg)); &bslash;&n;&t;flag; })
 macro_line|#ifdef CONFIG_X86_WP_WORKS_OK
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size) (__range_ok(addr,size) == 0)

@@ -20,7 +20,7 @@ DECL|macro|BUG
 mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;xmon(0); &bslash;&n;} while (0)
 macro_line|#else
 DECL|macro|BUG
-mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;__asm__ __volatile__(&quot;.long 0x0&quot;); &bslash;&n;}
+mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;__asm__ __volatile__(&quot;.long 0x0&quot;); &bslash;&n;} while (0)
 macro_line|#endif
 DECL|macro|PAGE_BUG
 mdefine_line|#define PAGE_BUG(page) do { BUG(); } while (0)
@@ -154,19 +154,123 @@ suffix:semicolon
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
 multiline_comment|/* map phys-&gt;virtual and virtual-&gt;phys for RAM pages */
-macro_line|#ifdef CONFIG_APUS
-macro_line|#include &lt;asm/amigappc.h&gt;
-multiline_comment|/* Word at CYBERBASEp has the value (-KERNELBASE+CYBERBASE). */
+DECL|function|___pa
+r_static
+r_inline
+r_int
+r_int
+id|___pa
+c_func
+(paren
+r_int
+r_int
+id|v
+)paren
+(brace
+r_int
+r_int
+id|p
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;1: addis %0, %1, %2;&quot;
+l_string|&quot;.section &bslash;&quot;.vtop_fixup&bslash;&quot;,&bslash;&quot;aw&bslash;&quot;;&quot;
+l_string|&quot;.align  1;&quot;
+l_string|&quot;.long   1b;&quot;
+l_string|&quot;.previous;&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|p
+)paren
+suffix:colon
+l_string|&quot;b&quot;
+(paren
+id|v
+)paren
+comma
+l_string|&quot;K&quot;
+(paren
+(paren
+(paren
+op_minus
+id|PAGE_OFFSET
+)paren
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xffff
+)paren
+)paren
+suffix:semicolon
+r_return
+id|p
+suffix:semicolon
+)brace
+DECL|function|___va
+r_static
+r_inline
+r_void
+op_star
+id|___va
+c_func
+(paren
+r_int
+r_int
+id|p
+)paren
+(brace
+r_int
+r_int
+id|v
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;1: addis %0, %1, %2;&quot;
+l_string|&quot;.section &bslash;&quot;.ptov_fixup&bslash;&quot;,&bslash;&quot;aw&bslash;&quot;;&quot;
+l_string|&quot;.align  1;&quot;
+l_string|&quot;.long   1b;&quot;
+l_string|&quot;.previous;&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|v
+)paren
+suffix:colon
+l_string|&quot;b&quot;
+(paren
+id|p
+)paren
+comma
+l_string|&quot;K&quot;
+(paren
+(paren
+(paren
+id|PAGE_OFFSET
+)paren
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xffff
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+r_void
+op_star
+)paren
+id|v
+suffix:semicolon
+)brace
 DECL|macro|__pa
-mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)+(*(unsigned long*)CYBERBASEp))
+mdefine_line|#define __pa(x) ___pa ((unsigned long)(x))
 DECL|macro|__va
-mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)-(*(unsigned long*)CYBERBASEp)))
-macro_line|#else
-DECL|macro|__pa
-mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
-DECL|macro|__va
-mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)+PAGE_OFFSET))
-macro_line|#endif
+mdefine_line|#define __va(x) ___va ((unsigned long)(x))
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)addr-PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 DECL|macro|MAP_PAGE_RESERVED

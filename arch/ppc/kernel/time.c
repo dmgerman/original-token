@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: time.c,v 1.50 1999/06/05 00:23:20 cort Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; * MPC8xx/MBX changes by Dan Malek (dmalek@jlc.net).&n; *&n; * Since the MPC8xx has a programmable interrupt timer, I decided to&n; * use that rather than the decrementer.  Two reasons: 1.) the clock&n; * frequency is low, causing 2.) a long wait in the timer interrupt&n; *&t;&t;while ((d = get_dec()) == dval)&n; * loop.  The MPC8xx can be driven from a variety of input clocks,&n; * so a number of assumptions have been made here because the kernel&n; * parameter HZ is a constant.  We assume (correctly, today :-) that&n; * the MPC8xx on the MBX board is driven from a 32.768 kHz crystal.&n; * This is then divided by 4, providing a 8192 Hz clock into the PIT.&n; * Since it is not possible to get a nice 100 Hz clock out of this, without&n; * creating a software PLL, I have set HZ to 128.  -- Dan&n; *&n; * 1997-09-10  Updated NTP code according to technical memorandum Jan &squot;96&n; *             &quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+multiline_comment|/*&n; * $Id: time.c,v 1.55 1999/08/31 06:54:09 davem Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; * MPC8xx/MBX changes by Dan Malek (dmalek@jlc.net).&n; *&n; * Since the MPC8xx has a programmable interrupt timer, I decided to&n; * use that rather than the decrementer.  Two reasons: 1.) the clock&n; * frequency is low, causing 2.) a long wait in the timer interrupt&n; *&t;&t;while ((d = get_dec()) == dval)&n; * loop.  The MPC8xx can be driven from a variety of input clocks,&n; * so a number of assumptions have been made here because the kernel&n; * parameter HZ is a constant.  We assume (correctly, today :-) that&n; * the MPC8xx on the MBX board is driven from a 32.768 kHz crystal.&n; * This is then divided by 4, providing a 8192 Hz clock into the PIT.&n; * Since it is not possible to get a nice 100 Hz clock out of this, without&n; * creating a software PLL, I have set HZ to 128.  -- Dan&n; *&n; * 1997-09-10  Updated NTP code according to technical memorandum Jan &squot;96&n; *             &quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -34,8 +34,7 @@ op_star
 suffix:semicolon
 multiline_comment|/* keep track of when we need to update the rtc */
 DECL|variable|last_rtc_update
-r_int
-r_int
+id|time_t
 id|last_rtc_update
 op_assign
 l_int|0
@@ -231,11 +230,27 @@ multiline_comment|/*&n;&t;&t;&t; * update the rtc when needed&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|time_status
+op_amp
+id|STA_UNSYNC
+)paren
+op_logical_and
+(paren
+(paren
 id|xtime.tv_sec
 OG
 id|last_rtc_update
 op_plus
-l_int|660
+l_int|60
+)paren
+op_logical_or
+(paren
+id|xtime.tv_sec
+OL
+id|last_rtc_update
+)paren
+)paren
 )paren
 (brace
 r_if
@@ -251,22 +266,16 @@ id|xtime.tv_sec
 op_eq
 l_int|0
 )paren
-(brace
 id|last_rtc_update
 op_assign
 id|xtime.tv_sec
 suffix:semicolon
-)brace
 r_else
-(brace
 multiline_comment|/* do it again in 60 s */
 id|last_rtc_update
 op_assign
 id|xtime.tv_sec
-op_minus
-l_int|60
 suffix:semicolon
-)brace
 )brace
 )brace
 )brace
@@ -559,10 +568,10 @@ c_func
 id|decrementer_count
 )paren
 suffix:semicolon
-multiline_comment|/* mark the rtc/on-chip timer as in sync&n;&t; * so we don&squot;t update right away&n;&t; */
+multiline_comment|/* allow setting the time right away */
 id|last_rtc_update
 op_assign
-id|xtime.tv_sec
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */

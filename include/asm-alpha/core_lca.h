@@ -7,21 +7,10 @@ macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * Low Cost Alpha (LCA) definitions (these apply to 21066 and 21068,&n; * for example).&n; *&n; * This file is based on:&n; *&n; *&t;DECchip 21066 and DECchip 21068 Alpha AXP Microprocessors&n; *&t;Hardware Reference Manual; Digital Equipment Corp.; May 1994;&n; *&t;Maynard, MA; Order Number: EC-N2681-71.&n; */
 multiline_comment|/*&n; * NOTE: The LCA uses a Host Address Extension (HAE) register to access&n; *&t; PCI addresses that are beyond the first 27 bits of address&n; *&t; space.  Updating the HAE requires an external cycle (and&n; *&t; a memory barrier), which tends to be slow.  Instead of updating&n; *&t; it on each sparse memory access, we keep the current HAE value&n; *&t; cached in variable cache_hae.  Only if the cached HAE differs&n; *&t; from the desired HAE value do we actually updated HAE register.&n; *&t; The HAE register is preserved by the interrupt handler entry/exit&n; *&t; code, so this scheme works even in the presence of interrupts.&n; *&n; * Dense memory space doesn&squot;t require the HAE, but is restricted to&n; * aligned 32 and 64 bit accesses.  Special Cycle and Interrupt&n; * Acknowledge cycles may also require the use of the HAE.  The LCA&n; * limits I/O address space to the bottom 24 bits of address space,&n; * but this easily covers the 16 bit ISA I/O address space.&n; */
 multiline_comment|/*&n; * NOTE 2! The memory operations do not set any memory barriers, as&n; * it&squot;s not needed for cases like a frame buffer that is essentially&n; * memory-like.  You need to do them by hand if the operations depend&n; * on ordering.&n; *&n; * Similarly, the port I/O operations do a &quot;mb&quot; only after a write&n; * operation: if an mb is needed before (as in the case of doing&n; * memory mapped I/O first, and then a port I/O operation to the same&n; * device), it needs to be done by hand.&n; *&n; * After the above has bitten me 100 times, I&squot;ll give up and just do&n; * the mb all the time, but right now I&squot;m hoping this will work out.&n; * Avoiding mb&squot;s may potentially be a noticeable speed improvement,&n; * but I can&squot;t honestly say I&squot;ve tested it.&n; *&n; * Handling interrupts that need to do mb&squot;s to synchronize to&n; * non-interrupts is another fun race area.  Don&squot;t do it (because if&n; * you do, I&squot;ll have to do *everything* with interrupts disabled,&n; * ugh).&n; */
-DECL|macro|LCA_DMA_WIN_BASE_DEFAULT
-mdefine_line|#define LCA_DMA_WIN_BASE_DEFAULT&t;(1024*1024*1024)
-DECL|macro|LCA_DMA_WIN_SIZE_DEFAULT
-mdefine_line|#define LCA_DMA_WIN_SIZE_DEFAULT&t;(1024*1024*1024)
-macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
 DECL|macro|LCA_DMA_WIN_BASE
-mdefine_line|#define LCA_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base
+mdefine_line|#define LCA_DMA_WIN_BASE&t;(1UL*1024*1024*1024)
 DECL|macro|LCA_DMA_WIN_SIZE
-mdefine_line|#define LCA_DMA_WIN_SIZE&t;&t;alpha_mv.dma_win_size
-macro_line|#else
-DECL|macro|LCA_DMA_WIN_BASE
-mdefine_line|#define LCA_DMA_WIN_BASE&t;&t;LCA_DMA_WIN_BASE_DEFAULT
-DECL|macro|LCA_DMA_WIN_SIZE
-mdefine_line|#define LCA_DMA_WIN_SIZE&t;&t;LCA_DMA_WIN_SIZE_DEFAULT
-macro_line|#endif
+mdefine_line|#define LCA_DMA_WIN_SIZE&t;(1UL*1024*1024*1024)
 multiline_comment|/*&n; * Memory Controller registers:&n; */
 DECL|macro|LCA_MEM_BCR0
 mdefine_line|#define LCA_MEM_BCR0&t;&t;(IDENT_ADDR + 0x120000000UL)
@@ -717,36 +706,6 @@ id|result
 comma
 id|msb
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 id|addr
 op_sub_assign
 id|LCA_DENSE_MEM
@@ -828,36 +787,6 @@ id|result
 comma
 id|msb
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 id|addr
 op_sub_assign
 id|LCA_DENSE_MEM
@@ -933,36 +862,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -983,36 +882,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -1044,36 +913,6 @@ r_int
 r_int
 id|w
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 id|addr
 op_sub_assign
 id|LCA_DENSE_MEM
@@ -1161,36 +1000,6 @@ r_int
 r_int
 id|w
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 id|addr
 op_sub_assign
 id|LCA_DENSE_MEM
@@ -1270,36 +1079,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vuip
@@ -1324,36 +1103,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;lca: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|LCA_DENSE_MEM
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vulp
@@ -1376,9 +1125,9 @@ id|addr
 )paren
 (brace
 r_return
-id|LCA_DENSE_MEM
-op_plus
 id|addr
+op_plus
+id|LCA_DENSE_MEM
 suffix:semicolon
 )brace
 DECL|function|lca_is_ioaddr
@@ -1397,7 +1146,7 @@ id|addr
 op_ge
 id|IDENT_ADDR
 op_plus
-l_int|0x100000000UL
+l_int|0x120000000UL
 suffix:semicolon
 )brace
 DECL|macro|vip
@@ -1444,10 +1193,9 @@ mdefine_line|#define __ioremap&t;lca_ioremap
 DECL|macro|__is_ioaddr
 mdefine_line|#define __is_ioaddr&t;lca_is_ioaddr
 DECL|macro|inb
-mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
+mdefine_line|#define inb(port) &bslash;&n;  (__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
-mdefine_line|#define outb(x, port) &bslash;&n;(__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
-macro_line|#if !__DEBUG_IOREMAP
+mdefine_line|#define outb(x, port) &bslash;&n;  (__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
 DECL|macro|__raw_readl
 mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
 DECL|macro|__raw_readq
@@ -1456,7 +1204,6 @@ DECL|macro|__raw_writel
 mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
 DECL|macro|__raw_writeq
 mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
-macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

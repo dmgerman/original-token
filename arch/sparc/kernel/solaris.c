@@ -7,21 +7,6 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/solerrno.h&gt;
-r_extern
-id|asmlinkage
-r_int
-id|sys_open
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|function|solaris_open
 id|asmlinkage
 r_int

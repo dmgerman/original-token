@@ -1,7 +1,6 @@
 macro_line|#ifndef _PPC_KERNEL_OPEN_PIC_H
 DECL|macro|_PPC_KERNEL_OPEN_PIC_H
 mdefine_line|#define _PPC_KERNEL_OPEN_PIC_H
-macro_line|#include &quot;local_irq.h&quot;
 r_extern
 r_struct
 id|hw_interrupt_type

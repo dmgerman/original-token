@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.43 1999/03/15 22:13:31 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
+multiline_comment|/* $Id: time.c,v 1.46 1999/08/31 13:11:26 anton Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * Chris Davis (cdavis@cois.on.ca) 03/27/1998&n; * Added support for the intersil on the sun4/4200&n; *&n; * Gleb Raiko (rajko@mech.math.msu.su) 08/18/1998&n; * Support for MicroSPARC-IIep, PCI CPU.&n; *&n; * This file handles the Sparc specific time handling details.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -31,14 +31,14 @@ id|sparc_clock_type
 id|sp_clock_typ
 suffix:semicolon
 DECL|variable|mstk48t02_regs
-r_struct
-id|mostek48t02
-op_star
+r_int
+r_int
 id|mstk48t02_regs
 op_assign
-l_int|0
+l_int|0UL
 suffix:semicolon
 DECL|variable|mstk48t08_regs
+r_static
 r_struct
 id|mostek48t08
 op_star
@@ -390,12 +390,16 @@ c_func
 r_void
 )paren
 (brace
-r_register
 r_struct
 id|mostek48t02
 op_star
 id|regs
 op_assign
+(paren
+r_struct
+id|mostek48t02
+op_star
+)paren
 id|mstk48t02_regs
 suffix:semicolon
 r_int
@@ -621,12 +625,16 @@ c_func
 r_void
 )paren
 (brace
-r_register
 r_struct
 id|mostek48t02
 op_star
 id|regs
 op_assign
+(paren
+r_struct
+id|mostek48t02
+op_star
+)paren
 id|mstk48t02_regs
 suffix:semicolon
 r_int
@@ -711,9 +719,8 @@ suffix:semicolon
 id|mstk48t02_regs
 op_assign
 (paren
-r_struct
-id|mostek48t02
-op_star
+r_int
+r_int
 )paren
 id|sparc_alloc_io
 c_func
@@ -724,8 +731,8 @@ l_int|0
 comma
 r_sizeof
 (paren
-op_star
-id|mstk48t02_regs
+r_struct
+id|mostek48t02
 )paren
 comma
 l_string|&quot;clock&quot;
@@ -749,7 +756,13 @@ multiline_comment|/* Kick start the clock if it is completely stopped. */
 r_if
 c_cond
 (paren
-id|mstk48t02_regs-&gt;sec
+id|mostek_read
+c_func
+(paren
+id|mstk48t02_regs
+op_plus
+id|MOSTEK_SEC
+)paren
 op_amp
 id|MSTK_STOP
 )paren
@@ -1166,9 +1179,8 @@ multiline_comment|/* Map the clock register io area read-only */
 id|mstk48t02_regs
 op_assign
 (paren
-r_struct
-id|mostek48t02
-op_star
+r_int
+r_int
 )paren
 id|sparc_alloc_io
 c_func
@@ -1188,8 +1200,8 @@ l_int|0
 comma
 r_sizeof
 (paren
-op_star
-id|mstk48t02_regs
+r_struct
+id|mostek48t02
 )paren
 comma
 l_string|&quot;clock&quot;
@@ -1338,6 +1350,10 @@ l_int|0x0
 suffix:semicolon
 id|mstk48t02_regs
 op_assign
+(paren
+r_int
+r_int
+)paren
 op_amp
 id|mstk48t08_regs-&gt;regs
 suffix:semicolon
@@ -1378,7 +1394,13 @@ multiline_comment|/* Kick start the clock if it is completely stopped. */
 r_if
 c_cond
 (paren
-id|mstk48t02_regs-&gt;sec
+id|mostek_read
+c_func
+(paren
+id|mstk48t02_regs
+op_plus
+id|MOSTEK_SEC
+)paren
 op_amp
 id|MSTK_STOP
 )paren
@@ -1500,6 +1522,11 @@ id|SM_4_330
 macro_line|#endif
 id|mregs
 op_assign
+(paren
+r_struct
+id|mostek48t02
+op_star
+)paren
 id|mstk48t02_regs
 suffix:semicolon
 r_if
@@ -2310,6 +2337,11 @@ id|mostek48t02
 op_star
 id|regs
 op_assign
+(paren
+r_struct
+id|mostek48t02
+op_star
+)paren
 id|mstk48t02_regs
 suffix:semicolon
 macro_line|#ifdef CONFIG_SUN4

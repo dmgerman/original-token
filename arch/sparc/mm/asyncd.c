@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.16 1999/08/04 03:19:16 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.17 1999/08/14 03:51:44 anton Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -722,11 +722,11 @@ suffix:colon
 id|stats.failure
 op_increment
 suffix:semicolon
-id|tsk-&gt;tss.sig_address
+id|tsk-&gt;thread.sig_address
 op_assign
 id|address
 suffix:semicolon
-id|tsk-&gt;tss.sig_desc
+id|tsk-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon

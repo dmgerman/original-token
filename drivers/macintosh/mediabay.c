@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|macro|MB_USE_INTERRUPTS
 macro_line|#undef MB_USE_INTERRUPTS
 DECL|struct|media_bay_hw
@@ -130,7 +130,7 @@ mdefine_line|#define MB_CONTENTS(i)&t;((in_8(&amp;media_bays[i].addr-&gt;content
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 multiline_comment|/* check the busy bit in the media-bay ide interface&n;   (assumes the media-bay contains an ide device) */
 DECL|macro|MB_IDE_READY
-mdefine_line|#define MB_IDE_READY(i)&t;((in_8((volatile unsigned char *) &bslash;&n;&t;&t;&t;       (media_bays[i].cd_base + 0x70)) &amp; 0x80) == 0)
+mdefine_line|#define MB_IDE_READY(i)&t;((inb(media_bays[i].cd_base + 0x70) &amp; 0x80) == 0)
 macro_line|#endif
 multiline_comment|/*&n; * Consider the media-bay ID value stable if it is the same for&n; * this many consecutive samples (at intervals of 1/HZ seconds).&n; */
 DECL|macro|MB_STABLE_COUNT

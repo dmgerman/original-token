@@ -402,7 +402,7 @@ l_string|&quot;adbmouse&quot;
 comma
 id|open_mouse
 comma
-id|close_mouse
+id|release_mouse
 comma
 l_int|7
 )brace

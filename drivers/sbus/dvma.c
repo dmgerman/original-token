@@ -62,11 +62,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_one_dvma
 r_void
+id|__init
 id|init_one_dvma
 c_func
 (paren
@@ -77,7 +75,6 @@ id|dma
 comma
 r_int
 id|num_dma
-)paren
 )paren
 (brace
 id|printk
@@ -239,11 +236,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* Probe this SBus DMA module(s) */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dvma_init
 r_void
+id|__init
 id|dvma_init
 c_func
 (paren
@@ -251,7 +246,6 @@ r_struct
 id|linux_sbus
 op_star
 id|sbus
-)paren
 )paren
 (brace
 r_struct
@@ -478,16 +472,13 @@ multiline_comment|/* while(this_dev) */
 )brace
 macro_line|#ifdef CONFIG_SUN4
 macro_line|#include &lt;asm/sun4paddr.h&gt;
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun4_dvma_init
 r_void
+id|__init
 id|sun4_dvma_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

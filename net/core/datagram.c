@@ -72,6 +72,12 @@ comma
 id|current
 )paren
 suffix:semicolon
+id|__set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -79,15 +85,6 @@ id|sk-&gt;sleep
 comma
 op_amp
 id|wait
-)paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|barrier
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Socket errors? */

@@ -5086,16 +5086,13 @@ r_int
 id|ticks
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun_kbd_init
 r_int
+id|__init
 id|sun_kbd_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -6539,11 +6536,9 @@ comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|keyboard_zsinit
 r_void
+id|__init
 id|keyboard_zsinit
 c_func
 (paren
@@ -6555,7 +6550,6 @@ id|put_char
 (paren
 r_int
 r_char
-)paren
 )paren
 )paren
 (brace

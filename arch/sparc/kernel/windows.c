@@ -138,7 +138,7 @@ op_star
 l_int|0
 )paren
 op_member_access_from_pointer
-id|tss.uwinmask
+id|thread.uwinmask
 )paren
 )paren
 )paren
@@ -249,7 +249,7 @@ suffix:semicolon
 id|tp
 op_assign
 op_amp
-id|current-&gt;tss
+id|current-&gt;thread
 suffix:semicolon
 r_if
 c_cond
@@ -432,7 +432,7 @@ suffix:semicolon
 id|tp
 op_assign
 op_amp
-id|current-&gt;tss
+id|current-&gt;thread
 suffix:semicolon
 r_for
 c_loop

@@ -3992,19 +3992,16 @@ id|msp-&gt;bus
 )paren
 suffix:semicolon
 multiline_comment|/* wait 1 sec */
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|HZ
-suffix:semicolon
-id|schedule
+id|__set_current_state
 c_func
 (paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|HZ
 )paren
 suffix:semicolon
 r_if

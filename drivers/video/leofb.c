@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: leofb.c,v 1.6 1999/04/01 13:03:25 jj Exp $&n; * leofb.c: Leo (ZX) 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996-1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leofb.c,v 1.7 1999/08/09 11:06:52 jj Exp $&n; * leofb.c: Leo (ZX) 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996-1999 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -3392,19 +3392,30 @@ suffix:semicolon
 )brace
 DECL|function|leo_rasterimg
 r_static
-r_void
+r_int
 id|__init
 id|leo_rasterimg
 (paren
 r_struct
-id|fb_info_sbusfb
+id|fb_info
 op_star
-id|fb
+id|info
 comma
 r_int
 id|start
 )paren
 (brace
+r_struct
+id|fb_info_sbusfb
+op_star
+id|fb
+op_assign
+id|sbusfbinfo
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
 r_register
 r_struct
 id|leo_lc_ss0_usr
@@ -3463,6 +3474,9 @@ op_assign
 l_int|4
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|__initdata
 r_static

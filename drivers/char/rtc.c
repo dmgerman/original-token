@@ -1986,10 +1986,12 @@ id|found
 suffix:colon
 id|rtc_port
 op_assign
-id|edev-&gt;base_address
+id|edev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 id|rtc_irq
 op_assign

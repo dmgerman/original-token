@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Written by Cort Dougan to replace the version written by&n; * Paul Mackerras that had copyright conflicts with Linux.&n; *&n; * This file makes liberal use of the standard linux utility&n; * routines to reduce the size of the binary.  We assume we can&n; * trust some parts of Linux inside the debugger.&n; *   -- Cort (cort@cs.nmt.edu)&n; *&n; * Copyright (C) 1999 Cort Dougan.&n; */
+multiline_comment|/*&n; * Written by Cort Dougan to replace the version originally used&n; * by Paul Mackerras, which came from NetBSD and thus had copyright&n; * conflicts with Linux.&n; *&n; * This file makes liberal use of the standard linux utility&n; * routines to reduce the size of the binary.  We assume we can&n; * trust some parts of Linux inside the debugger.&n; *   -- Cort (cort@cs.nmt.edu)&n; *&n; * Copyright (C) 1999 Cort Dougan.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
@@ -35,16 +35,22 @@ id|va_list
 id|ap
 )paren
 (brace
+r_static
 r_char
-id|buf
+id|xmon_buf
 (braket
 l_int|2048
 )braket
 suffix:semicolon
+r_int
+id|n
+suffix:semicolon
+id|n
+op_assign
 id|vsprintf
 c_func
 (paren
-id|buf
+id|xmon_buf
 comma
 id|fmt
 comma
@@ -56,13 +62,9 @@ c_func
 (paren
 id|f
 comma
-id|buf
+id|xmon_buf
 comma
-id|strlen
-c_func
-(paren
-id|buf
-)paren
+id|n
 )paren
 suffix:semicolon
 )brace

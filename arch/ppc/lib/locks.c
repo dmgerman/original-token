@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: locks.c,v 1.23 1999/02/12 07:06:32 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; * $Id: locks.c,v 1.24 1999/08/03 19:16:47 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -407,7 +407,7 @@ id|current-&gt;comm
 comma
 id|current-&gt;pid
 comma
-id|current-&gt;tss.regs-&gt;nip
+id|current-&gt;thread.regs-&gt;nip
 comma
 id|rw-&gt;lock
 )paren
@@ -670,7 +670,7 @@ id|current-&gt;comm
 comma
 id|current-&gt;pid
 comma
-id|current-&gt;tss.regs-&gt;nip
+id|current-&gt;thread.regs-&gt;nip
 comma
 id|rw-&gt;lock
 )paren
@@ -741,7 +741,7 @@ id|task-&gt;comm
 comma
 id|task-&gt;pid
 comma
-id|task-&gt;tss.regs-&gt;nip
+id|task-&gt;thread.regs-&gt;nip
 comma
 id|task-&gt;lock_depth
 )paren
@@ -858,7 +858,7 @@ id|task-&gt;comm
 comma
 id|task-&gt;pid
 comma
-id|task-&gt;tss.regs-&gt;nip
+id|task-&gt;thread.regs-&gt;nip
 comma
 id|task-&gt;lock_depth
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: idprom.c,v 1.23 1998/07/28 16:52:44 jj Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: idprom.c,v 1.24 1999/08/31 06:54:20 davem Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

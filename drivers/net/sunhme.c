@@ -16490,7 +16490,7 @@ l_int|0
 dot
 id|flags
 op_amp
-id|IORESOURCE_IOPORT
+id|IORESOURCE_IO
 )paren
 op_ne
 l_int|0

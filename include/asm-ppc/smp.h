@@ -3,7 +3,6 @@ macro_line|#ifndef _PPC_SMP_H
 DECL|macro|_PPC_SMP_H
 mdefine_line|#define _PPC_SMP_H
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#ifdef __SMP__
 macro_line|#ifndef __ASSEMBLY__
 DECL|struct|cpuinfo_PPC

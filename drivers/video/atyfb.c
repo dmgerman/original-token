@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: atyfb.c,v 1.109 1999/08/08 01:38:05 davem Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*  $Id: atyfb.c,v 1.120 1999/08/30 10:12:18 davem Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/******************************************************************************&n;&n;  TODO:&n;&n;    - cursor support on all cards and all ramdacs.&n;    - cursor parameters controlable via ioctl()s.&n;    - guess PLL and MCLK based on the original PLL register values initialized&n;      by the BIOS or Open Firmware (if they are initialized).&n;&n;&t;&t;&t;&t;&t;&t;(Anyone to help with this?)&n;&n;******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -758,6 +758,20 @@ id|vma
 )paren
 suffix:semicolon
 macro_line|#endif
+r_static
+r_int
+id|atyfb_rasterimg
+c_func
+(paren
+r_struct
+id|fb_info
+op_star
+id|info
+comma
+r_int
+id|start
+)paren
+suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
 r_static
 r_int
@@ -1783,9 +1797,12 @@ id|atyfb_ioctl
 comma
 macro_line|#ifdef __sparc__
 id|atyfb_mmap
+comma
 macro_line|#else
 l_int|NULL
+comma
 macro_line|#endif
+id|atyfb_rasterimg
 )brace
 suffix:semicolon
 DECL|variable|atyfb_name
@@ -2270,25 +2287,12 @@ id|info-&gt;ati_regbase
 op_plus
 id|regindex
 suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;lduwa [%1] %2, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
 id|val
-)paren
-suffix:colon
-l_string|&quot;r&quot;
+op_assign
+id|readl
+c_func
 (paren
 id|temp
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_PL
-)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2382,28 +2386,12 @@ id|info-&gt;ati_regbase
 op_plus
 id|regindex
 suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;stwa %0, [%1] %2&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
+id|writel
+c_func
 (paren
 id|val
-)paren
 comma
-l_string|&quot;r&quot;
-(paren
 id|temp
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_PL
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2451,6 +2439,17 @@ op_star
 id|info
 )paren
 (brace
+macro_line|#ifdef __sparc_v9__
+r_return
+id|readb
+c_func
+(paren
+id|info-&gt;ati_regbase
+op_plus
+id|regindex
+)paren
+suffix:semicolon
+macro_line|#else
 r_return
 op_star
 (paren
@@ -2464,6 +2463,7 @@ op_plus
 id|regindex
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|aty_st_8
 r_static
@@ -2486,6 +2486,18 @@ op_star
 id|info
 )paren
 (brace
+macro_line|#ifdef __sparc_v9__
+id|writeb
+c_func
+(paren
+id|val
+comma
+id|info-&gt;ati_regbase
+op_plus
+id|regindex
+)paren
+suffix:semicolon
+macro_line|#else
 op_star
 (paren
 r_volatile
@@ -2500,6 +2512,7 @@ id|regindex
 op_assign
 id|val
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n;     *  Generic Mach64 routines&n;     */
 multiline_comment|/*&n;     *  All writes to draw engine registers are automatically routed through a&n;     *  32-bit-wide, 16-entry-deep command FIFO ...&n;     *  Register writes to registers with DWORD offsets less than 40h are not&n;     *  FIFOed.&n;     *  (from Chapter 5 of the Mach64 Programmer&squot;s Guide)&n;     */
@@ -11412,6 +11425,18 @@ op_star
 id|info2
 )paren
 (brace
+r_struct
+id|fb_info_aty
+op_star
+id|info
+op_assign
+(paren
+r_struct
+id|fb_info_aty
+op_star
+)paren
+id|info2
+suffix:semicolon
 macro_line|#ifdef __sparc__
 r_struct
 id|fbtype
@@ -11795,6 +11820,48 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|atyfb_rasterimg
+r_static
+r_int
+id|atyfb_rasterimg
+c_func
+(paren
+r_struct
+id|fb_info
+op_star
+id|info
+comma
+r_int
+id|start
+)paren
+(brace
+r_struct
+id|fb_info_aty
+op_star
+id|fb
+op_assign
+(paren
+r_struct
+id|fb_info_aty
+op_star
+)paren
+id|info
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fb-&gt;blitter_may_be_busy
+)paren
+id|wait_for_idle
+c_func
+(paren
+id|fb
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -12995,6 +13062,16 @@ op_plus
 l_int|0xc0
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
+id|info-&gt;aty_cmap_regs
+op_assign
+id|__va
+c_func
+(paren
+id|info-&gt;aty_cmap_regs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|chip_id
 op_assign
 id|aty_ld_le32
@@ -14381,6 +14458,20 @@ op_assign
 id|default_var
 suffix:semicolon
 macro_line|#else /* !MODULE */
+id|memset
+c_func
+(paren
+op_amp
+id|var
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|var
+)paren
+)paren
+suffix:semicolon
 macro_line|#if defined(CONFIG_PPC)
 r_if
 c_cond
@@ -14546,6 +14637,13 @@ id|default_var
 suffix:semicolon
 )brace
 macro_line|#else /* !CONFIG_PPC */
+macro_line|#ifdef __sparc__
+r_if
+c_cond
+(paren
+id|mode_option
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -14574,6 +14672,42 @@ id|var
 op_assign
 id|default_var
 suffix:semicolon
+)brace
+r_else
+id|var
+op_assign
+id|default_var
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fb_find_mode
+c_func
+(paren
+op_amp
+id|var
+comma
+op_amp
+id|info-&gt;fb_info
+comma
+id|mode_option
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+l_int|8
+)paren
+)paren
+id|var
+op_assign
+id|default_var
+suffix:semicolon
+macro_line|#endif /* !__sparc__ */
 macro_line|#endif /* !CONFIG_PPC */
 macro_line|#endif /* !MODULE */
 r_if
@@ -15045,17 +15179,13 @@ id|info-&gt;ati_regbase
 op_assign
 id|addr
 op_plus
-l_int|0x7ffc00
+l_int|0x7ffc00UL
 suffix:semicolon
 id|info-&gt;ati_regbase_phys
 op_assign
-id|__pa
-c_func
-(paren
 id|addr
 op_plus
-l_int|0x7ffc00
-)paren
+l_int|0x7ffc00UL
 suffix:semicolon
 multiline_comment|/*&n;&t;     * Map in big-endian aperture.&n;&t;     */
 id|info-&gt;frame_buffer
@@ -15064,21 +15194,19 @@ op_assign
 r_int
 r_int
 )paren
-(paren
-id|addr
-op_plus
-l_int|0x800000
-)paren
-suffix:semicolon
-id|info-&gt;frame_buffer_phys
-op_assign
-id|__pa
+id|__va
 c_func
 (paren
 id|addr
 op_plus
-l_int|0x800000
+l_int|0x800000UL
 )paren
+suffix:semicolon
+id|info-&gt;frame_buffer_phys
+op_assign
+id|addr
+op_plus
+l_int|0x800000UL
 suffix:semicolon
 multiline_comment|/*&n;&t;     * Figure mmap addresses from PCI config space.&n;&t;     * Split Framebuffer in big- and little-endian halfs.&n;&t;     */
 r_for
@@ -15297,13 +15425,9 @@ id|j
 dot
 id|poff
 op_assign
-id|__pa
-c_func
-(paren
 id|base
 op_amp
 id|PAGE_MASK
-)paren
 suffix:semicolon
 id|info-&gt;mmap_map
 (braket
@@ -15374,9 +15498,6 @@ id|j
 dot
 id|poff
 op_assign
-id|__pa
-c_func
-(paren
 (paren
 id|base
 op_plus
@@ -15384,7 +15505,6 @@ l_int|0x800000
 )paren
 op_amp
 id|PAGE_MASK
-)paren
 suffix:semicolon
 id|info-&gt;mmap_map
 (braket
@@ -15441,13 +15561,9 @@ id|j
 dot
 id|poff
 op_assign
-id|__pa
-c_func
-(paren
 id|base
 op_amp
 id|PAGE_MASK
-)paren
 suffix:semicolon
 id|info-&gt;mmap_map
 (braket
@@ -16265,13 +16381,9 @@ l_int|1
 dot
 id|poff
 op_assign
-id|__pa
-c_func
-(paren
 id|info-&gt;ati_regbase
 op_amp
 id|PAGE_MASK
-)paren
 suffix:semicolon
 id|info-&gt;mmap_map
 (braket

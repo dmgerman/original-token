@@ -738,6 +738,8 @@ DECL|macro|PCI_DEVICE_ID_CIRRUS_5446
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5446&t;0x00b8
 DECL|macro|PCI_DEVICE_ID_CIRRUS_5480
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5480&t;0x00bc
+DECL|macro|PCI_DEVICE_ID_CIRRUS_5462
+mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5462&t;0x00d0
 DECL|macro|PCI_DEVICE_ID_CIRRUS_5464
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5464&t;0x00d4
 DECL|macro|PCI_DEVICE_ID_CIRRUS_5465
@@ -790,8 +792,18 @@ DECL|macro|PCI_DEVICE_ID_AMD_SCSI
 mdefine_line|#define PCI_DEVICE_ID_AMD_SCSI&t;&t;0x2020
 DECL|macro|PCI_VENDOR_ID_TRIDENT
 mdefine_line|#define PCI_VENDOR_ID_TRIDENT&t;&t;0x1023
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9320
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9320&t;0x9320
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9388
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9388&t;0x9388
 DECL|macro|PCI_DEVICE_ID_TRIDENT_9397
 mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9397&t;0x9397
+DECL|macro|PCI_DEVICE_ID_TRIDENT_939A
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_939A&t;0x939A
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9520
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9520&t;0x9520
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9525
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9525&t;0x9525
 DECL|macro|PCI_DEVICE_ID_TRIDENT_9420
 mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9420&t;0x9420
 DECL|macro|PCI_DEVICE_ID_TRIDENT_9440
@@ -800,6 +812,16 @@ DECL|macro|PCI_DEVICE_ID_TRIDENT_9660
 mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9660&t;0x9660
 DECL|macro|PCI_DEVICE_ID_TRIDENT_9750
 mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9750&t;0x9750
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9850
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9850&t;0x9850
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9880
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9880&t;0x9880
+DECL|macro|PCI_DEVICE_ID_TRIDENT_8400
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_8400&t;0x8400
+DECL|macro|PCI_DEVICE_ID_TRIDENT_8420
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_8420&t;0x8420
+DECL|macro|PCI_DEVICE_ID_TRIDENT_8500
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_8500&t;0x8500
 DECL|macro|PCI_VENDOR_ID_AI
 mdefine_line|#define PCI_VENDOR_ID_AI&t;&t;0x1025
 DECL|macro|PCI_DEVICE_ID_AI_M1435
@@ -816,16 +838,20 @@ DECL|macro|PCI_DEVICE_ID_MATROX_MIL_2
 mdefine_line|#define PCI_DEVICE_ID_MATROX_MIL_2&t;0x051b
 DECL|macro|PCI_DEVICE_ID_MATROX_MIL_2_AGP
 mdefine_line|#define PCI_DEVICE_ID_MATROX_MIL_2_AGP&t;0x051f
-DECL|macro|PCI_DEVICE_ID_MATROX_G200_PCI
-mdefine_line|#define PCI_DEVICE_ID_MATROX_G200_PCI   0x0520
-DECL|macro|PCI_DEVICE_ID_MATROX_G200_AGP
-mdefine_line|#define PCI_DEVICE_ID_MATROX_G200_AGP   0x0521
 DECL|macro|PCI_DEVICE_ID_MATROX_MGA_IMP
 mdefine_line|#define PCI_DEVICE_ID_MATROX_MGA_IMP&t;0x0d10
 DECL|macro|PCI_DEVICE_ID_MATROX_G100_MM
 mdefine_line|#define PCI_DEVICE_ID_MATROX_G100_MM    0x1000
 DECL|macro|PCI_DEVICE_ID_MATROX_G100_AGP
 mdefine_line|#define PCI_DEVICE_ID_MATROX_G100_AGP   0x1001
+DECL|macro|PCI_DEVICE_ID_MATROX_G200_PCI
+mdefine_line|#define PCI_DEVICE_ID_MATROX_G200_PCI   0x0520
+DECL|macro|PCI_DEVICE_ID_MATROX_G200_AGP
+mdefine_line|#define PCI_DEVICE_ID_MATROX_G200_AGP   0x0521
+DECL|macro|PCI_DEVICE_ID_MATROX_G400
+mdefine_line|#define&t;PCI_DEVICE_ID_MATROX_G400&t;0x0525
+DECL|macro|PCI_DEVICE_ID_MATROX_VIA
+mdefine_line|#define PCI_DEVICE_ID_MATROX_VIA&t;0x4536
 DECL|macro|PCI_VENDOR_ID_CT
 mdefine_line|#define PCI_VENDOR_ID_CT&t;&t;0x102c
 DECL|macro|PCI_DEVICE_ID_CT_65545
@@ -977,6 +1003,8 @@ DECL|macro|PCI_VENDOR_ID_WINBOND2
 mdefine_line|#define PCI_VENDOR_ID_WINBOND2&t;&t;0x1050
 DECL|macro|PCI_DEVICE_ID_WINBOND2_89C940
 mdefine_line|#define PCI_DEVICE_ID_WINBOND2_89C940&t;0x0940
+DECL|macro|PCI_DEVICE_ID_WINBOND2_89C940F
+mdefine_line|#define PCI_DEVICE_ID_WINBOND2_89C940F&t;0x5a5a
 DECL|macro|PCI_VENDOR_ID_MOTOROLA
 mdefine_line|#define PCI_VENDOR_ID_MOTOROLA&t;&t;0x1057
 DECL|macro|PCI_VENDOR_ID_MOTOROLA_OOPS
@@ -1191,6 +1219,8 @@ DECL|macro|PCI_DEVICE_ID_DATABOOK_87144
 mdefine_line|#define PCI_DEVICE_ID_DATABOOK_87144&t;0xb106
 DECL|macro|PCI_VENDOR_ID_PLX
 mdefine_line|#define PCI_VENDOR_ID_PLX&t;&t;0x10b5
+DECL|macro|PCI_DEVICE_ID_PLX_SPCOM200
+mdefine_line|#define PCI_DEVICE_ID_PLX_SPCOM200&t;0x1103
 DECL|macro|PCI_DEVICE_ID_PLX_9050
 mdefine_line|#define PCI_DEVICE_ID_PLX_9050&t;&t;0x9050
 DECL|macro|PCI_DEVICE_ID_PLX_9060
@@ -1201,6 +1231,8 @@ DECL|macro|PCI_DEVICE_ID_PLX_9060SD
 mdefine_line|#define PCI_DEVICE_ID_PLX_9060SD&t;0x906D
 DECL|macro|PCI_DEVICE_ID_PLX_9080
 mdefine_line|#define PCI_DEVICE_ID_PLX_9080&t;&t;0x9080
+DECL|macro|PCI_DEVICE_ID_PLX_GTEK_SERIAL2
+mdefine_line|#define PCI_DEVICE_ID_PLX_GTEK_SERIAL2&t;0xa001
 DECL|macro|PCI_VENDOR_ID_MADGE
 mdefine_line|#define PCI_VENDOR_ID_MADGE&t;&t;0x10b6
 DECL|macro|PCI_DEVICE_ID_MADGE_MK2
@@ -1323,6 +1355,18 @@ DECL|macro|PCI_DEVICE_ID_CERN_HIPPI_SRC
 mdefine_line|#define PCI_DEVICE_ID_CERN_HIPPI_SRC&t;0x0022
 DECL|macro|PCI_VENDOR_ID_NVIDIA
 mdefine_line|#define PCI_VENDOR_ID_NVIDIA&t;&t;0x10de
+DECL|macro|PCI_DEVICE_ID_NVIDIA_TNT
+mdefine_line|#define PCI_DEVICE_ID_NVIDIA_TNT&t;0x0020
+DECL|macro|PCI_DEVICE_ID_NVIDIA_TNT2
+mdefine_line|#define PCI_DEVICE_ID_NVIDIA_TNT2&t;0x0028
+DECL|macro|PCI_DEVICE_ID_NVIDIA_UTNT2
+mdefine_line|#define PCI_DEVICE_ID_NVIDIA_UTNT2&t;0x0029
+DECL|macro|PCI_DEVICE_ID_NVIDIA_VTNT2
+mdefine_line|#define PCI_DEVICE_ID_NVIDIA_VTNT2&t;0x002C
+DECL|macro|PCI_DEVICE_ID_NVIDIA_UVTNT2
+mdefine_line|#define PCI_DEVICE_ID_NVIDIA_UVTNT2&t;0x002D
+DECL|macro|PCI_DEVICE_ID_NVIDIA_ITNT2
+mdefine_line|#define PCI_DEVICE_ID_NVIDIA_ITNT2&t;0x00A0
 DECL|macro|PCI_VENDOR_ID_IMS
 mdefine_line|#define PCI_VENDOR_ID_IMS&t;&t;0x10e0
 DECL|macro|PCI_DEVICE_ID_IMS_8849
@@ -1351,6 +1395,8 @@ DECL|macro|PCI_DEVICE_ID_INTERG_1680
 mdefine_line|#define PCI_DEVICE_ID_INTERG_1680&t;0x1680
 DECL|macro|PCI_DEVICE_ID_INTERG_1682
 mdefine_line|#define PCI_DEVICE_ID_INTERG_1682&t;0x1682
+DECL|macro|PCI_DEVICE_ID_INTERG_2000
+mdefine_line|#define PCI_DEVICE_ID_INTERG_2000&t;0x2000
 DECL|macro|PCI_VENDOR_ID_REALTEK
 mdefine_line|#define PCI_VENDOR_ID_REALTEK&t;&t;0x10ec
 DECL|macro|PCI_DEVICE_ID_REALTEK_8029
@@ -1607,10 +1653,10 @@ DECL|macro|PCI_VENDOR_ID_OMEGA
 mdefine_line|#define PCI_VENDOR_ID_OMEGA&t;&t;0x119b
 DECL|macro|PCI_DEVICE_ID_OMEGA_82C092G
 mdefine_line|#define PCI_DEVICE_ID_OMEGA_82C092G&t;0x1221
-DECL|macro|PCI_VENDOR_ID_GALILEO
-mdefine_line|#define PCI_VENDOR_ID_GALILEO&t;&t;0x11ab
-DECL|macro|PCI_DEVICE_ID_GALILEO_GT64011
-mdefine_line|#define PCI_DEVICE_ID_GALILEO_GT64011&t;0x4146
+DECL|macro|PCI_SUBVENDOR_ID_KEYSPAN
+mdefine_line|#define PCI_SUBVENDOR_ID_KEYSPAN&t;0x11a9
+DECL|macro|PCI_SUBDEVICE_ID_KEYSPAN_SX2
+mdefine_line|#define PCI_SUBDEVICE_ID_KEYSPAN_SX2&t;0x5334
 DECL|macro|PCI_VENDOR_ID_GALILEO
 mdefine_line|#define PCI_VENDOR_ID_GALILEO&t;&t;0x11ab
 DECL|macro|PCI_DEVICE_ID_GALILEO_GT64011
@@ -1619,6 +1665,16 @@ DECL|macro|PCI_VENDOR_ID_LITEON
 mdefine_line|#define PCI_VENDOR_ID_LITEON&t;&t;0x11ad
 DECL|macro|PCI_DEVICE_ID_LITEON_LNE100TX
 mdefine_line|#define PCI_DEVICE_ID_LITEON_LNE100TX&t;0x0002
+DECL|macro|PCI_VENDOR_ID_V3
+mdefine_line|#define PCI_VENDOR_ID_V3&t;&t;0x11b0
+DECL|macro|PCI_DEVICE_ID_V3_V960
+mdefine_line|#define PCI_DEVICE_ID_V3_V960&t;&t;0x0001
+DECL|macro|PCI_DEVICE_ID_V3_V350
+mdefine_line|#define PCI_DEVICE_ID_V3_V350&t;&t;0x0001
+DECL|macro|PCI_DEVICE_ID_V3_V960V2
+mdefine_line|#define PCI_DEVICE_ID_V3_V960V2&t;&t;0x0002
+DECL|macro|PCI_DEVICE_ID_V3_V350V2
+mdefine_line|#define PCI_DEVICE_ID_V3_V350V2&t;&t;0x0002
 DECL|macro|PCI_VENDOR_ID_NP
 mdefine_line|#define PCI_VENDOR_ID_NP&t;&t;0x11bc
 DECL|macro|PCI_DEVICE_ID_NP_PCI_FDDI
@@ -1779,6 +1835,24 @@ DECL|macro|PCI_VENDOR_ID_ALTEON
 mdefine_line|#define PCI_VENDOR_ID_ALTEON&t;&t;0x12ae
 DECL|macro|PCI_DEVICE_ID_ALTEON_ACENIC
 mdefine_line|#define PCI_DEVICE_ID_ALTEON_ACENIC&t;0x0001
+DECL|macro|PCI_SUBVENDOR_ID_CONNECT_TECH
+mdefine_line|#define PCI_SUBVENDOR_ID_CONNECT_TECH&t;&t;&t;0x12c4
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_232
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_232&t;&t;0x0001
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH4_232
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH4_232&t;&t;0x0002
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH2_232
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH2_232&t;&t;0x0003
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_485
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_485&t;&t;0x0004
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_485_4_4
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH8_485_4_4&t;0x0005
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH4_485
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH4_485&t;&t;0x0006
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH4_485_2_2
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH4_485_2_2&t;0x0007
+DECL|macro|PCI_SUBDEVICE_ID_CONNECT_TECH_BH2_485
+mdefine_line|#define PCI_SUBDEVICE_ID_CONNECT_TECH_BH2_485&t;&t;0x0008
 DECL|macro|PCI_VENDOR_ID_PICTUREL
 mdefine_line|#define PCI_VENDOR_ID_PICTUREL&t;&t;0x12c5
 DECL|macro|PCI_DEVICE_ID_PICTUREL_PCIVST
@@ -1831,6 +1905,20 @@ DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_20x_650
 mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_20x_650&t;0x2061
 DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_20x_850
 mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_20x_850&t;0x2062
+DECL|macro|PCI_VENDOR_ID_SEALEVEL
+mdefine_line|#define PCI_VENDOR_ID_SEALEVEL&t;&t;0x135e
+DECL|macro|PCI_DEVICE_ID_SEALEVEL_U530
+mdefine_line|#define PCI_DEVICE_ID_SEALEVEL_U530&t;0x7101
+DECL|macro|PCI_DEVICE_ID_SEALEVEL_UCOMM2
+mdefine_line|#define PCI_DEVICE_ID_SEALEVEL_UCOMM2&t;0x7201
+DECL|macro|PCI_DEVICE_ID_SEALEVEL_UCOMM422
+mdefine_line|#define PCI_DEVICE_ID_SEALEVEL_UCOMM422&t;0x7402
+DECL|macro|PCI_DEVICE_ID_SEALEVEL_UCOMM232
+mdefine_line|#define PCI_DEVICE_ID_SEALEVEL_UCOMM232&t;0x7202
+DECL|macro|PCI_DEVICE_ID_SEALEVEL_COMM4
+mdefine_line|#define PCI_DEVICE_ID_SEALEVEL_COMM4&t;0x7401
+DECL|macro|PCI_DEVICE_ID_SEALEVEL_COMM8
+mdefine_line|#define PCI_DEVICE_ID_SEALEVEL_COMM8&t;0x7801
 DECL|macro|PCI_VENDOR_ID_NETGEAR
 mdefine_line|#define PCI_VENDOR_ID_NETGEAR&t;&t;0x1385
 DECL|macro|PCI_DEVICE_ID_NETGEAR_GA620
@@ -1843,6 +1931,12 @@ DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_A
 mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_A&t;0x8001 /* The Lava Dual Parallel is */
 DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_B
 mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_B&t;0x8002 /* two PCI devices on a card */
+DECL|macro|PCI_VENDOR_ID_PANACOM
+mdefine_line|#define PCI_VENDOR_ID_PANACOM&t;&t;0x14d4
+DECL|macro|PCI_DEVICE_ID_PANACOM_QUADMODEM
+mdefine_line|#define PCI_DEVICE_ID_PANACOM_QUADMODEM&t;0x0400
+DECL|macro|PCI_DEVICE_ID_PANACOM_DUALMODEM
+mdefine_line|#define PCI_DEVICE_ID_PANACOM_DUALMODEM&t;0x0402
 DECL|macro|PCI_VENDOR_ID_SYMPHONY
 mdefine_line|#define PCI_VENDOR_ID_SYMPHONY&t;&t;0x1c1c
 DECL|macro|PCI_DEVICE_ID_SYMPHONY_101
@@ -2237,14 +2331,6 @@ r_int
 id|hdr_type
 suffix:semicolon
 multiline_comment|/* PCI header type */
-DECL|member|master
-r_int
-r_int
-id|master
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* set if device is master capable */
 DECL|member|regs
 r_int
 r_int
@@ -2347,16 +2433,13 @@ id|dev
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *  For PCI devices, the region numbers are assigned this way:&n; *&n; *&t;0-5&t;standard PCI regions&n; *&t;6&t;expansion ROM&n; *&t;7-10&t;bridges: address space assigned to buses behind the bridge&n; */
 DECL|macro|PCI_ROM_RESOURCE
 mdefine_line|#define PCI_ROM_RESOURCE 6
+DECL|macro|PCI_BRIDGE_RESOURCES
+mdefine_line|#define PCI_BRIDGE_RESOURCES 7
 DECL|macro|PCI_NUM_RESOURCES
-mdefine_line|#define PCI_NUM_RESOURCES 7
-DECL|macro|PCI_REGION_EXISTS
-mdefine_line|#define PCI_REGION_EXISTS(dev, r) (dev)-&gt;resource[r].start
-DECL|macro|PCI_REGION_IS_IO
-mdefine_line|#define PCI_REGION_IS_IO(dev, r) (PCI_REGION_EXISTS(dev,r) &amp;&amp; ((dev)-&gt;resource[r].flags &amp; PCI_BASE_ADDRESS_SPACE_IO))
-DECL|macro|PCI_REGION_IS_MEM
-mdefine_line|#define PCI_REGION_IS_MEM(dev, r) (PCI_REGION_EXISTS(dev,r) &amp;&amp; !((dev)-&gt;resource[r].flags &amp; PCI_BASE_ADDRESS_SPACE_IO))
+mdefine_line|#define PCI_NUM_RESOURCES 11
 DECL|macro|PCI_REGION_FLAG_MASK
 mdefine_line|#define PCI_REGION_FLAG_MASK 0x0f&t;/* These bits of resource flags tell us the PCI region flags */
 DECL|struct|pci_bus
@@ -2405,6 +2488,16 @@ op_star
 id|devices
 suffix:semicolon
 multiline_comment|/* devices behind this bridge */
+DECL|member|resource
+r_struct
+id|resource
+op_star
+id|resource
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* address space routed to this bus */
 DECL|member|sysdata
 r_void
 op_star
@@ -2662,6 +2755,18 @@ op_star
 id|str
 )paren
 suffix:semicolon
+r_int
+id|pcibios_assign_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+id|i
+)paren
+suffix:semicolon
 multiline_comment|/* Backward compatibility, don&squot;t use in new code! */
 r_int
 id|pcibios_present
@@ -2910,6 +3015,23 @@ id|dev
 )paren
 suffix:semicolon
 r_struct
+id|resource
+op_star
+id|pci_find_parent_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_struct
+id|resource
+op_star
+id|res
+)paren
+suffix:semicolon
+r_struct
 id|pci_dev
 op_star
 id|pci_find_device
@@ -2982,6 +3104,18 @@ comma
 r_int
 r_int
 id|devfn
+)paren
+suffix:semicolon
+r_int
+id|pci_find_capability
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_int
+id|cap
 )paren
 suffix:semicolon
 DECL|macro|PCI_ANY_ID

@@ -18531,17 +18531,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef __sparc__
-id|btv-&gt;bt848_mem
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|btv-&gt;bt848_adr
-suffix:semicolon
-macro_line|#else
 id|btv-&gt;bt848_mem
 op_assign
 id|ioremap
@@ -18552,7 +18541,6 @@ comma
 l_int|0x1000
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* clear interrupt mask */
 id|btwrite
 c_func

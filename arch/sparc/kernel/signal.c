@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.94 1999/07/30 09:35:04 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.95 1999/08/14 03:51:22 anton Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -690,7 +690,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|current-&gt;tss.float_regs
+id|current-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
@@ -717,7 +717,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|current-&gt;tss.fsr
+id|current-&gt;thread.fsr
 comma
 op_amp
 id|fpu-&gt;si_fsr
@@ -728,7 +728,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|current-&gt;tss.fpqdepth
+id|current-&gt;thread.fpqdepth
 comma
 op_amp
 id|fpu-&gt;si_fpqdepth
@@ -737,7 +737,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.fpqdepth
+id|current-&gt;thread.fpqdepth
 op_ne
 l_int|0
 )paren
@@ -747,7 +747,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|current-&gt;tss.fpqueue
+id|current-&gt;thread.fpqueue
 (braket
 l_int|0
 )braket
@@ -1108,7 +1108,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.new_signal
+id|current-&gt;thread.new_signal
 )paren
 r_return
 id|do_new_sigreturn
@@ -2142,7 +2142,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 comma
 op_amp
 id|sc-&gt;sigc_oswins
@@ -2151,7 +2151,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 )paren
 r_for
 c_loop
@@ -2162,7 +2162,7 @@ l_int|0
 suffix:semicolon
 id|window
 OL
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 suffix:semicolon
 id|window
 op_increment
@@ -2177,7 +2177,7 @@ op_assign
 r_char
 op_star
 )paren
-id|current-&gt;tss.rwbuf_stkptrs
+id|current-&gt;thread.rwbuf_stkptrs
 (braket
 id|window
 )braket
@@ -2194,7 +2194,7 @@ id|window
 )braket
 comma
 op_amp
-id|current-&gt;tss.reg_window
+id|current-&gt;thread.reg_window
 (braket
 id|window
 )braket
@@ -2231,7 +2231,7 @@ id|reg_window
 )paren
 )paren
 suffix:semicolon
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 op_assign
 l_int|0
 suffix:semicolon
@@ -2276,7 +2276,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 comma
 op_amp
 id|sframep-&gt;sig_code
@@ -2287,7 +2287,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 comma
 op_amp
 id|sframep-&gt;sig_address
@@ -2430,22 +2430,22 @@ id|fpsave
 c_func
 (paren
 op_amp
-id|current-&gt;tss.float_regs
+id|current-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fsr
+id|current-&gt;thread.fsr
 comma
 op_amp
-id|current-&gt;tss.fpqueue
+id|current-&gt;thread.fpqueue
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fpqdepth
+id|current-&gt;thread.fpqdepth
 )paren
 suffix:semicolon
 id|regs-&gt;psr
@@ -2487,22 +2487,22 @@ id|fpsave
 c_func
 (paren
 op_amp
-id|current-&gt;tss.float_regs
+id|current-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fsr
+id|current-&gt;thread.fsr
 comma
 op_amp
-id|current-&gt;tss.fpqueue
+id|current-&gt;thread.fpqueue
 (braket
 l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fpqdepth
+id|current-&gt;thread.fpqdepth
 )paren
 suffix:semicolon
 id|last_task_used_math
@@ -2530,7 +2530,7 @@ l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.float_regs
+id|current-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
@@ -2551,7 +2551,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.fsr
+id|current-&gt;thread.fsr
 comma
 op_amp
 id|fpu-&gt;si_fsr
@@ -2562,7 +2562,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.fpqdepth
+id|current-&gt;thread.fpqdepth
 comma
 op_amp
 id|fpu-&gt;si_fpqdepth
@@ -2571,7 +2571,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.fpqdepth
+id|current-&gt;thread.fpqdepth
 op_ne
 l_int|0
 )paren
@@ -2587,7 +2587,7 @@ l_int|0
 )braket
 comma
 op_amp
-id|current-&gt;tss.fpqueue
+id|current-&gt;thread.fpqueue
 (braket
 l_int|0
 )braket
@@ -2714,7 +2714,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 op_ne
 l_int|0
 )paren
@@ -3149,7 +3149,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 op_ne
 l_int|0
 )paren
@@ -4002,7 +4002,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 comma
 op_amp
 id|gw-&gt;count
@@ -4018,7 +4018,7 @@ l_int|0
 suffix:semicolon
 id|window
 OL
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 suffix:semicolon
 id|window
 op_increment
@@ -4060,7 +4060,7 @@ id|window
 )braket
 comma
 op_amp
-id|current-&gt;tss.reg_window
+id|current-&gt;thread.reg_window
 (braket
 id|window
 )braket
@@ -4086,12 +4086,12 @@ id|window
 suffix:semicolon
 )brace
 multiline_comment|/* 4. We just pay attention to the gw-&gt;count field on setcontext */
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* So process is allowed to execute. */
-multiline_comment|/* Setup the signal information.  Solaris expects a bunch of&n;&t; * information to be passed to the signal handler, we don&squot;t provide&n;&t; * that much currently, should use those that David already&n;&t; * is providing with tss.sig_desc&n;&t; */
+multiline_comment|/* Setup the signal information.  Solaris expects a bunch of&n;&t; * information to be passed to the signal handler, we don&squot;t provide&n;&t; * that much currently, should use those that David already&n;&t; * is providing with thread.sig_desc&n;&t; */
 id|err
 op_or_assign
 id|__put_user
@@ -4342,7 +4342,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;tss.w_saved
+id|current-&gt;thread.w_saved
 )paren
 r_goto
 id|sigsegv_and_return
@@ -4666,7 +4666,7 @@ op_star
 id|tp
 op_assign
 op_amp
-id|current-&gt;tss
+id|current-&gt;thread
 suffix:semicolon
 id|svr4_gregset_t
 op_star
@@ -5188,7 +5188,7 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;tss.new_signal
+id|current-&gt;thread.new_signal
 )paren
 id|new_setup_frame
 (paren

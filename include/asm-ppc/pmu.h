@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Definitions for talking to the PMU.  The PMU is a microcontroller&n; * which controls battery charging and system power on PowerBook 3400&n; * and 2400 models as well as the RTC and various other things.&n; *&n; * Copyright (C) 1998 Paul Mackerras.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * PMU commands&n; */
 DECL|macro|PMU_POWER_CTRL
 mdefine_line|#define PMU_POWER_CTRL&t;&t;0x11&t;/* control power of some devices */

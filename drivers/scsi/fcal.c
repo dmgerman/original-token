@@ -890,18 +890,15 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Detect all FC Arbitrated Loops attached to the machine.&n;   fc4 module has done all the work for us... */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fcal_detect
 r_int
+id|__init
 id|fcal_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_int

@@ -11,7 +11,7 @@ mdefine_line|#define _FP_WS_TYPE&t;&t;signed long
 DECL|macro|_FP_I_TYPE
 mdefine_line|#define _FP_I_TYPE&t;&t;long
 DECL|macro|_FP_MUL_MEAT_S
-mdefine_line|#define _FP_MUL_MEAT_S(R,X,Y)&t;&t;&t;&t;&t;&bslash;&n;  _FP_MUL_MEAT_1_wide(_FP_WFRACBITS_S,R,X,Y)
+mdefine_line|#define _FP_MUL_MEAT_S(R,X,Y)&t;&t;&t;&t;&t;&bslash;&n;  _FP_MUL_MEAT_1_wide(_FP_WFRACBITS_S,R,X,Y,umul_ppmm)
 DECL|macro|_FP_MUL_MEAT_D
 mdefine_line|#define _FP_MUL_MEAT_D(R,X,Y)&t;&t;&t;&t;&t;&bslash;&n;  _FP_MUL_MEAT_2_wide(_FP_WFRACBITS_D,R,X,Y,umul_ppmm)
 DECL|macro|_FP_MUL_MEAT_Q
@@ -423,10 +423,10 @@ multiline_comment|/* Obtain the current rounding mode. */
 macro_line|#ifndef FP_ROUNDMODE
 macro_line|#ifdef __SMP__
 DECL|macro|FP_ROUNDMODE
-mdefine_line|#define FP_ROUNDMODE&t;((current-&gt;tss.fsr &gt;&gt; 30) &amp; 0x3)
+mdefine_line|#define FP_ROUNDMODE&t;((current-&gt;thread.fsr &gt;&gt; 30) &amp; 0x3)
 macro_line|#else
 DECL|macro|FP_ROUNDMODE
-mdefine_line|#define FP_ROUNDMODE&t;((last_task_used_math-&gt;tss.fsr &gt;&gt; 30) &amp; 0x3)
+mdefine_line|#define FP_ROUNDMODE&t;((last_task_used_math-&gt;thread.fsr &gt;&gt; 30) &amp; 0x3)
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Exception flags. */
@@ -444,10 +444,10 @@ DECL|macro|FP_HANDLE_EXCEPTIONS
 mdefine_line|#define FP_HANDLE_EXCEPTIONS return _fex
 macro_line|#ifdef __SMP__
 DECL|macro|FP_INHIBIT_RESULTS
-mdefine_line|#define FP_INHIBIT_RESULTS ((current-&gt;tss.fsr &gt;&gt; 23) &amp; _fex)
+mdefine_line|#define FP_INHIBIT_RESULTS ((current-&gt;thread.fsr &gt;&gt; 23) &amp; _fex)
 macro_line|#else
 DECL|macro|FP_INHIBIT_RESULTS
-mdefine_line|#define FP_INHIBIT_RESULTS ((last_task_used_math-&gt;tss.fsr &gt;&gt; 23) &amp; _fex)
+mdefine_line|#define FP_INHIBIT_RESULTS ((last_task_used_math-&gt;thread.fsr &gt;&gt; 23) &amp; _fex)
 macro_line|#endif
 macro_line|#endif
 eof

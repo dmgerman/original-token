@@ -121,6 +121,8 @@ DECL|macro|EM_SPARC32PLUS
 mdefine_line|#define EM_SPARC32PLUS 18&t;/* Sun&squot;s &quot;v8plus&quot; */
 DECL|macro|EM_PPC
 mdefine_line|#define EM_PPC&t;       20&t;/* PowerPC */
+DECL|macro|EM_SH
+mdefine_line|#define EM_SH&t;       42&t;/* SuperH */
 DECL|macro|EM_SPARCV9
 mdefine_line|#define EM_SPARCV9     43&t;/* SPARC v9 64-bit */
 DECL|macro|EM_IA_64

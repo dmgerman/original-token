@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -1893,7 +1894,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* can&squot;t be initfunc - can be called whenever a disk is first accessed */
+multiline_comment|/* can&squot;t be __init - can be called whenever a disk is first accessed */
 id|__pmac
 DECL|function|note_bootable_part
 r_void

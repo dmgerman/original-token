@@ -1,7 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/arm/kernel/process.c&n; *&n; *  Copyright (C) 1996 Russell King - Converted to ARM.&n; *  Origional Copyright (C) 1995  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
-DECL|macro|__KERNEL_SYSCALLS__
-mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -76,27 +74,29 @@ op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The idle loop on an ARM...&n; */
-DECL|function|sys_idle
-id|asmlinkage
-r_int
-id|sys_idle
+DECL|function|cpu_idle
+r_void
+id|cpu_idle
 c_func
 (paren
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|current-&gt;pid
-op_ne
-l_int|0
-)paren
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;priority
+op_assign
+l_int|0
+suffix:semicolon
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -116,10 +116,6 @@ id|proc_idle
 c_func
 (paren
 )paren
-suffix:semicolon
-id|current-&gt;policy
-op_assign
-id|SCHED_YIELD
 suffix:semicolon
 id|schedule
 c_func
@@ -1003,21 +999,6 @@ r_int
 id|flags
 )paren
 (brace
-r_extern
-r_int
-id|sys_exit
-c_func
-(paren
-r_int
-)paren
-id|__attribute__
-c_func
-(paren
-(paren
-id|noreturn
-)paren
-)paren
-suffix:semicolon
 id|pid_t
 id|__ret
 suffix:semicolon

@@ -627,9 +627,12 @@ op_assign
 op_amp
 id|entry
 suffix:semicolon
-id|current-&gt;state
-op_assign
+multiline_comment|/* mb() is not necessary because -&gt;poll() will serialize&n;&t;&t;   instructions adding the wait_table waitqueues in the&n;&t;&t;   waitqueue-head before going to calculate the mask-retval. */
+id|__set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_if
 c_cond

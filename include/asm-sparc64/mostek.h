@@ -1,91 +1,114 @@
-multiline_comment|/* $Id: mostek.h,v 1.2 1997/03/25 03:58:30 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: mostek.h,v 1.3 1999/08/30 10:14:50 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_MOSTEK_H
 DECL|macro|_SPARC64_MOSTEK_H
 mdefine_line|#define _SPARC64_MOSTEK_H
 macro_line|#include &lt;asm/idprom.h&gt;
 multiline_comment|/*       M48T02 Register Map (adapted from Sun NVRAM/Hostid FAQ)&n; *&n; *                             Data&n; * Address                                                 Function&n; *        Bit 7 Bit 6 Bit 5 Bit 4Bit 3 Bit 2 Bit 1 Bit 0&n; *   7ff  -     -     -     -    -     -     -     -       Year 00-99&n; *   7fe  0     0     0     -    -     -     -     -      Month 01-12&n; *   7fd  0     0     -     -    -     -     -     -       Date 01-31&n; *   7fc  0     FT    0     0    0     -     -     -        Day 01-07&n; *   7fb  KS    0     -     -    -     -     -     -      Hours 00-23&n; *   7fa  0     -     -     -    -     -     -     -    Minutes 00-59&n; *   7f9  ST    -     -     -    -     -     -     -    Seconds 00-59&n; *   7f8  W     R     S     -    -     -     -     -    Control&n; *&n; *   * ST is STOP BIT&n; *   * W is WRITE BIT&n; *   * R is READ BIT&n; *   * S is SIGN BIT&n; *   * FT is FREQ TEST BIT&n; *   * KS is KICK START BIT&n; */
-multiline_comment|/* The Mostek 48t02 real time clock and NVRAM chip. The registers&n; * other than the control register are in binary coded decimal. Some&n; * control bits also live outside the control register.&n; */
-DECL|struct|mostek48t02
-r_struct
-id|mostek48t02
+multiline_comment|/* The Mostek 48t02 real time clock and NVRAM chip. The registers&n; * other than the control register are in binary coded decimal. Some&n; * control bits also live outside the control register.&n; *&n; * We now deal with physical addresses for I/O to the chip. -DaveM&n; */
+DECL|function|mostek_read
+r_static
+id|__inline__
+id|u8
+id|mostek_read
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
 (brace
-DECL|member|eeprom
-r_volatile
-r_char
-id|eeprom
-(braket
-l_int|2008
-)braket
+id|u8
+id|ret
 suffix:semicolon
-multiline_comment|/* This is the eeprom, don&squot;t touch! */
-DECL|member|idprom
-r_struct
-id|idprom
-id|idprom
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lduba&t;[%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/* The idprom lives here. */
-DECL|member|creg
-r_volatile
-r_int
-r_char
-id|creg
+r_return
+id|ret
 suffix:semicolon
-multiline_comment|/* Control register */
-DECL|member|sec
-r_volatile
-r_int
-r_char
-id|sec
-suffix:semicolon
-multiline_comment|/* Seconds (0-59) */
-DECL|member|min
-r_volatile
-r_int
-r_char
-id|min
-suffix:semicolon
-multiline_comment|/* Minutes (0-59) */
-DECL|member|hour
-r_volatile
-r_int
-r_char
-id|hour
-suffix:semicolon
-multiline_comment|/* Hour (0-23) */
-DECL|member|dow
-r_volatile
-r_int
-r_char
-id|dow
-suffix:semicolon
-multiline_comment|/* Day of the week (1-7) */
-DECL|member|dom
-r_volatile
-r_int
-r_char
-id|dom
-suffix:semicolon
-multiline_comment|/* Day of the month (1-31) */
-DECL|member|month
-r_volatile
-r_int
-r_char
-id|month
-suffix:semicolon
-multiline_comment|/* Month of year (1-12) */
-DECL|member|year
-r_volatile
-r_int
-r_char
-id|year
-suffix:semicolon
-multiline_comment|/* Year (0-99) */
 )brace
+DECL|function|mostek_write
+r_static
+id|__inline__
+r_void
+id|mostek_write
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+id|u8
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stba&t;%0, [%1] %2&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_BYPASS_EC_E
+)paren
+)paren
 suffix:semicolon
+)brace
+DECL|macro|MOSTEK_EEPROM
+mdefine_line|#define MOSTEK_EEPROM&t;&t;0x0000UL
+DECL|macro|MOSTEK_IDPROM
+mdefine_line|#define MOSTEK_IDPROM&t;&t;0x07d8UL
+DECL|macro|MOSTEK_CREG
+mdefine_line|#define MOSTEK_CREG&t;&t;0x07f8UL
+DECL|macro|MOSTEK_SEC
+mdefine_line|#define MOSTEK_SEC&t;&t;0x07f9UL
+DECL|macro|MOSTEK_MIN
+mdefine_line|#define MOSTEK_MIN&t;&t;0x07faUL
+DECL|macro|MOSTEK_HOUR
+mdefine_line|#define MOSTEK_HOUR&t;&t;0x07fbUL
+DECL|macro|MOSTEK_DOW
+mdefine_line|#define MOSTEK_DOW&t;&t;0x07fcUL
+DECL|macro|MOSTEK_DOM
+mdefine_line|#define MOSTEK_DOM&t;&t;0x07fdUL
+DECL|macro|MOSTEK_MONTH
+mdefine_line|#define MOSTEK_MONTH&t;&t;0x07feUL
+DECL|macro|MOSTEK_YEAR
+mdefine_line|#define MOSTEK_YEAR&t;&t;0x07ffUL
 r_extern
-r_struct
-id|mostek48t02
-op_star
+r_int
+r_int
 id|mstk48t02_regs
 suffix:semicolon
 multiline_comment|/* Control register values. */
@@ -128,94 +151,58 @@ DECL|macro|MSTK_DECIMAL_TO_REGVAL
 mdefine_line|#define MSTK_DECIMAL_TO_REGVAL(x)  ((((x) / 0x0A) &lt;&lt; 0x04) + ((x) % 0x0A))
 multiline_comment|/* Generic register set and get macros for internal use. */
 DECL|macro|MSTK_GET
-mdefine_line|#define MSTK_GET(regs,var,mask) (MSTK_REGVAL_TO_DECIMAL(regs-&gt;var &amp; MSTK_ ## mask ## _MASK))
+mdefine_line|#define MSTK_GET(regs,name)&t;&bslash;&n;&t;(MSTK_REGVAL_TO_DECIMAL(mostek_read(regs + MOSTEK_ ## name) &amp; MSTK_ ## name ## _MASK))
 DECL|macro|MSTK_SET
-mdefine_line|#define MSTK_SET(regs,var,value,mask) do { regs-&gt;var &amp;= ~(MSTK_ ## mask ## _MASK); regs-&gt;var |= MSTK_DECIMAL_TO_REGVAL(value) &amp; (MSTK_ ## mask ## _MASK); } while (0)
+mdefine_line|#define MSTK_SET(regs,name,value) &bslash;&n;do {&t;u8 __val = mostek_read(regs + MOSTEK_ ## name); &bslash;&n;&t;__val &amp;= ~(MSTK_ ## name ## _MASK); &bslash;&n;&t;__val |= (MSTK_DECIMAL_TO_REGVAL(value) &amp; &bslash;&n;&t;&t;  (MSTK_ ## name ## _MASK)); &bslash;&n;&t;mostek_write(regs + MOSTEK_ ## name, __val); &bslash;&n;} while(0)
 multiline_comment|/* Macros to make register access easier on our fingers. These give you&n; * the decimal value of the register requested if applicable. You pass&n; * the a pointer to a &squot;struct mostek48t02&squot;.&n; */
 DECL|macro|MSTK_REG_CREG
-mdefine_line|#define&t;MSTK_REG_CREG(regs)&t;(regs-&gt;creg)
+mdefine_line|#define&t;MSTK_REG_CREG(regs)&t;(mostek_read((regs) + MOSTEK_CREG))
 DECL|macro|MSTK_REG_SEC
-mdefine_line|#define&t;MSTK_REG_SEC(regs)&t;MSTK_GET(regs,sec,SEC)
+mdefine_line|#define&t;MSTK_REG_SEC(regs)&t;MSTK_GET(regs,SEC)
 DECL|macro|MSTK_REG_MIN
-mdefine_line|#define&t;MSTK_REG_MIN(regs)&t;MSTK_GET(regs,min,MIN)
+mdefine_line|#define&t;MSTK_REG_MIN(regs)&t;MSTK_GET(regs,MIN)
 DECL|macro|MSTK_REG_HOUR
-mdefine_line|#define&t;MSTK_REG_HOUR(regs)&t;MSTK_GET(regs,hour,HOUR)
+mdefine_line|#define&t;MSTK_REG_HOUR(regs)&t;MSTK_GET(regs,HOUR)
 DECL|macro|MSTK_REG_DOW
-mdefine_line|#define&t;MSTK_REG_DOW(regs)&t;MSTK_GET(regs,dow,DOW)
+mdefine_line|#define&t;MSTK_REG_DOW(regs)&t;MSTK_GET(regs,DOW)
 DECL|macro|MSTK_REG_DOM
-mdefine_line|#define&t;MSTK_REG_DOM(regs)&t;MSTK_GET(regs,dom,DOM)
+mdefine_line|#define&t;MSTK_REG_DOM(regs)&t;MSTK_GET(regs,DOM)
 DECL|macro|MSTK_REG_MONTH
-mdefine_line|#define&t;MSTK_REG_MONTH(regs)&t;MSTK_GET(regs,month,MONTH)
+mdefine_line|#define&t;MSTK_REG_MONTH(regs)&t;MSTK_GET(regs,MONTH)
 DECL|macro|MSTK_REG_YEAR
-mdefine_line|#define&t;MSTK_REG_YEAR(regs)&t;MSTK_GET(regs,year,YEAR)
+mdefine_line|#define&t;MSTK_REG_YEAR(regs)&t;MSTK_GET(regs,YEAR)
 DECL|macro|MSTK_SET_REG_SEC
-mdefine_line|#define&t;MSTK_SET_REG_SEC(regs,value)&t;MSTK_SET(regs,sec,value,SEC)
+mdefine_line|#define&t;MSTK_SET_REG_SEC(regs,value)&t;MSTK_SET(regs,SEC,value)
 DECL|macro|MSTK_SET_REG_MIN
-mdefine_line|#define&t;MSTK_SET_REG_MIN(regs,value)&t;MSTK_SET(regs,min,value,MIN)
+mdefine_line|#define&t;MSTK_SET_REG_MIN(regs,value)&t;MSTK_SET(regs,MIN,value)
 DECL|macro|MSTK_SET_REG_HOUR
-mdefine_line|#define&t;MSTK_SET_REG_HOUR(regs,value)&t;MSTK_SET(regs,hour,value,HOUR)
+mdefine_line|#define&t;MSTK_SET_REG_HOUR(regs,value)&t;MSTK_SET(regs,HOUR,value)
 DECL|macro|MSTK_SET_REG_DOW
-mdefine_line|#define&t;MSTK_SET_REG_DOW(regs,value)&t;MSTK_SET(regs,dow,value,DOW)
+mdefine_line|#define&t;MSTK_SET_REG_DOW(regs,value)&t;MSTK_SET(regs,DOW,value)
 DECL|macro|MSTK_SET_REG_DOM
-mdefine_line|#define&t;MSTK_SET_REG_DOM(regs,value)&t;MSTK_SET(regs,dom,value,DOM)
+mdefine_line|#define&t;MSTK_SET_REG_DOM(regs,value)&t;MSTK_SET(regs,DOM,value)
 DECL|macro|MSTK_SET_REG_MONTH
-mdefine_line|#define&t;MSTK_SET_REG_MONTH(regs,value)&t;MSTK_SET(regs,month,value,MONTH)
+mdefine_line|#define&t;MSTK_SET_REG_MONTH(regs,value)&t;MSTK_SET(regs,MONTH,value)
 DECL|macro|MSTK_SET_REG_YEAR
-mdefine_line|#define&t;MSTK_SET_REG_YEAR(regs,value)&t;MSTK_SET(regs,year,value,YEAR)
+mdefine_line|#define&t;MSTK_SET_REG_YEAR(regs,value)&t;MSTK_SET(regs,YEAR,value)
 multiline_comment|/* The Mostek 48t08 clock chip. Found on Sun4m&squot;s I think. It has the&n; * same (basically) layout of the 48t02 chip except for the extra&n; * NVRAM on board (8 KB against the 48t02&squot;s 2 KB).&n; */
-DECL|struct|mostek48t08
-r_struct
-id|mostek48t08
-(brace
-DECL|member|offset
-r_char
-id|offset
-(braket
-l_int|6
-op_star
-l_int|1024
-)braket
-suffix:semicolon
-multiline_comment|/* Magic things may be here, who knows? */
-DECL|member|regs
-r_struct
-id|mostek48t02
-id|regs
-suffix:semicolon
-multiline_comment|/* Here is what we are interested in.   */
-)brace
-suffix:semicolon
+DECL|macro|MOSTEK_48T08_OFFSET
+mdefine_line|#define MOSTEK_48T08_OFFSET&t;0x0000UL&t;/* Lower NVRAM portions */
+DECL|macro|MOSTEK_48T08_48T02
+mdefine_line|#define MOSTEK_48T08_48T02&t;0x1800UL&t;/* Offset to 48T02 chip */
 r_extern
-r_struct
-id|mostek48t08
-op_star
+r_int
+r_int
 id|mstk48t08_regs
 suffix:semicolon
 multiline_comment|/* SUN5 systems usually have 48t59 model clock chipsets.  But we keep the older&n; * clock chip definitions around just in case.&n; */
-DECL|struct|mostek48t59
-r_struct
-id|mostek48t59
-(brace
-DECL|member|offset
-r_char
-id|offset
-(braket
-l_int|6
-op_star
-l_int|1024
-)braket
-suffix:semicolon
-DECL|member|regs
-r_struct
-id|mostek48t02
-id|regs
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|MOSTEK_48T59_OFFSET
+mdefine_line|#define MOSTEK_48T59_OFFSET&t;0x0000UL&t;/* Lower NVRAM portions */
+DECL|macro|MOSTEK_48T59_48T02
+mdefine_line|#define MOSTEK_48T59_48T02&t;0x1800UL&t;/* Offset to 48T02 chip */
 r_extern
-r_struct
-id|mostek48t59
-op_star
+r_int
+r_int
 id|mstk48t59_regs
 suffix:semicolon
 macro_line|#endif /* !(_SPARC64_MOSTEK_H) */

@@ -1,9 +1,11 @@
+multiline_comment|/*&n; * $Id: system.h,v 1.47 1999/08/22 12:31:08 paulus Exp $&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; */
 macro_line|#ifndef __PPC_SYSTEM_H
 DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/irq_control.h&gt;
 multiline_comment|/*&n; * Memory barrier.&n; * The sync instruction guarantees that all memory accesses initiated&n; * by this processor have been performed (with respect to all other&n; * mechanisms that access memory).  The eieio instruction is a barrier&n; * providing an ordering (separately) for (a) cacheable stores and (b)&n; * loads and stores to non-cacheable memory (e.g. I/O devices).&n; *&n; * mb() prevents loads and stores being reordered across this point.&n; * rmb() prevents loads being reordered across this point.&n; * wmb() prevents stores being reordered across this point.&n; *&n; * We can use the eieio instruction for wmb, but since it doesn&squot;t&n; * give any ordering guarantees about loads, we have to use the&n; * stronger but slower sync instruction for mb and rmb.&n; */
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
@@ -37,10 +39,6 @@ op_star
 id|excp
 )paren
 suffix:semicolon
-DECL|macro|__save_flags
-mdefine_line|#define __save_flags(flags)&t;({&bslash;&n;&t;__asm__ __volatile__ (&quot;mfmsr %0&quot; : &quot;=r&quot; ((flags)) : : &quot;memory&quot;); })
-DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(flags)&t;({__save_flags(flags);__cli();})
 multiline_comment|/* Data cache block flush - write out the cache line containing the&n;   specified address and then invalidate it in the cache. */
 DECL|function|dcbf
 r_extern
@@ -72,107 +70,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__restore_flags
-r_extern
-id|__inline__
-r_void
-id|__restore_flags
-c_func
-(paren
-r_int
-r_int
-id|flags
-)paren
-(brace
-r_extern
-id|atomic_t
-id|ppc_n_lost_interrupts
-suffix:semicolon
-r_extern
-r_void
-id|do_lost_interrupts
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|flags
-op_amp
-id|MSR_EE
-)paren
-op_logical_and
-id|atomic_read
-c_func
-(paren
-op_amp
-id|ppc_n_lost_interrupts
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|do_lost_interrupts
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;sync; mtmsr %0; isync&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|flags
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-r_extern
-r_void
-id|__sti
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|__cli
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|_disable_interrupts
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_enable_interrupts
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|print_backtrace
@@ -414,10 +311,6 @@ r_struct
 id|thread_struct
 op_star
 id|next
-comma
-r_int
-r_int
-id|context
 )paren
 suffix:semicolon
 r_extern

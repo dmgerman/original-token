@@ -111,23 +111,15 @@ mdefine_line|#define io_to_phys(iomem)&t; ((iomem) + DC21285_PCI_MEM)
 multiline_comment|/*&n; * Fudge up IO addresses by this much.  Once we&squot;re confident that nobody&n; * is using read*() and so on with addresses they didn&squot;t get from ioremap&n; * this can go away.&n; */
 DECL|macro|IO_FUDGE_FACTOR
 mdefine_line|#define IO_FUDGE_FACTOR&t;&t;PCIMEM_BASE
+DECL|macro|__pci_mem_addr
+mdefine_line|#define __pci_mem_addr(x)&t;((void *)(IO_FUDGE_FACTOR + (unsigned long)(x)))
 multiline_comment|/*&n; * ioremap takes a PCI memory address, as specified in&n; * linux/Documentation/IO-mapping.txt&n; */
 DECL|macro|ioremap
 mdefine_line|#define ioremap(iomem_addr,size)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long _addr = (iomem_addr), _size = (size);&t;&t;&bslash;&n;&t;void *_ret = NULL;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (valid_ioaddr(_addr, _size)) {&t;&t;&t;&t;&bslash;&n;&t;&t;_addr = io_to_phys(_addr);&t;&t;&t;&t;&bslash;&n;&t;&t;_ret = __ioremap(_addr, _size, 0) - IO_FUDGE_FACTOR;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_ret; })
 DECL|macro|ioremap_nocache
 mdefine_line|#define ioremap_nocache(iomem_addr,size) ioremap((iomem_addr),(size))
-r_extern
-r_void
-id|iounmap
-c_func
-(paren
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-DECL|macro|__pci_mem_addr
-mdefine_line|#define __pci_mem_addr(x)&t;((void *)(IO_FUDGE_FACTOR + (unsigned long)(x)))
+DECL|macro|iounmap
+mdefine_line|#define iounmap(_addr)&t;do { __iounmap(__pci_mem_addr((_addr))); } while (0)
 DECL|macro|readb
 mdefine_line|#define readb(addr)&t;(*(volatile unsigned char *)__pci_mem_addr(addr))
 DECL|macro|readw

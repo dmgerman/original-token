@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * arch/arm/kernel/dma-isa.c: ISA DMA primitives&n; *&n; * Copyright (C) Russell King&n; *&n; * Taken from various sources, including:&n; *  linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; *    Written by Hennus Bergman, 1992.&n; *    High DMA channel support &amp; info by Hannu Savolainen and John Boyd, Nov. 1992.&n; *  arch/arm/kernel/dma-ebsa285.c&n; *  Copyright (C) 1998 Phil Blundell&n; */
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -649,6 +650,8 @@ id|dmac_found
 (brace
 r_int
 id|channel
+comma
+id|i
 suffix:semicolon
 r_for
 c_loop
@@ -823,6 +826,42 @@ c_func
 id|DMA_ISA_CASCADE
 comma
 l_string|&quot;cascade&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|dma_resources
+)paren
+op_div
+r_sizeof
+(paren
+id|dma_resources
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|request_resource
+c_func
+(paren
+op_amp
+id|ioport_resource
+comma
+id|dma_resources
+op_plus
+id|i
 )paren
 suffix:semicolon
 )brace

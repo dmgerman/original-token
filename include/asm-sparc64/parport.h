@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport.h,v 1.4 1999/08/08 01:38:18 davem Exp $&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: parport.h,v 1.5 1999/08/30 10:14:52 davem Exp $&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _ASM_SPARC64_PARPORT_H
 DECL|macro|_ASM_SPARC64_PARPORT_H
 mdefine_line|#define _ASM_SPARC64_PARPORT_H 1
@@ -609,19 +609,23 @@ r_int
 r_int
 id|base
 op_assign
-id|edev-&gt;base_address
+id|edev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 r_int
 r_int
 id|config
 op_assign
-id|edev-&gt;base_address
+id|edev-&gt;resource
 (braket
 l_int|1
 )braket
+dot
+id|start
 suffix:semicolon
 r_int
 r_char
@@ -637,10 +641,12 @@ r_struct
 id|linux_ebus_dma
 op_star
 )paren
-id|edev-&gt;base_address
+id|edev-&gt;resource
 (braket
 l_int|2
 )braket
+dot
+id|start
 suffix:semicolon
 id|reset_dma
 c_func

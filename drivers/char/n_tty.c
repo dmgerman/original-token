@@ -4673,9 +4673,11 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* This statement must be first before checking for input&n;&t;&t;   so that any interrupt will set the state back to&n;&t;&t;   TASK_RUNNING. */
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -5254,9 +5256,11 @@ c_loop
 l_int|1
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_if
 c_cond

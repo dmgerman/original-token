@@ -26,6 +26,16 @@ r_int
 id|flags
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|__iounmap
+c_func
+(paren
+r_void
+op_star
+id|addr
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;

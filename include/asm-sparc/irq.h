@@ -1,9 +1,9 @@
-multiline_comment|/* $Id: irq.h,v 1.26 1999/04/20 13:22:44 anton Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.27 1999/08/14 03:52:02 anton Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;     /* For NR_CPUS */
+macro_line|#include &lt;linux/threads.h&gt;     /* For NR_CPUS */
 macro_line|#include &lt;asm/system.h&gt;     /* For SUN4M_NCPUS */
 macro_line|#include &lt;asm/btfixup.h&gt;
 DECL|macro|__irq_ino

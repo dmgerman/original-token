@@ -1140,15 +1140,12 @@ id|sgi_graphics_fops
 )brace
 suffix:semicolon
 multiline_comment|/* This is called later from the misc-init routine */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|gfx_register
 r_void
+id|__init
 id|gfx_register
 (paren
 r_void
-)paren
 )paren
 (brace
 id|misc_register
@@ -1164,11 +1161,9 @@ id|dev_opengl
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|gfx_init
 r_void
+id|__init
 id|gfx_init
 (paren
 r_const
@@ -1176,7 +1171,6 @@ r_char
 op_star
 op_star
 id|name
-)paren
 )paren
 (brace
 macro_line|#if 0

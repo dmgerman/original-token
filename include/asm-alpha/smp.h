@@ -120,10 +120,10 @@ r_int
 r_char
 id|mcheck_taken
 suffix:semicolon
-DECL|member|mcheck_hose
+DECL|member|mcheck_extra
 r_int
 r_char
-id|mcheck_hose
+id|mcheck_extra
 suffix:semicolon
 )brace
 id|__attribute__

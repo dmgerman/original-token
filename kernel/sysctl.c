@@ -261,6 +261,12 @@ id|dev_table
 (braket
 )braket
 suffix:semicolon
+r_extern
+id|ctl_table
+id|random_table
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/* /proc declarations: */
 macro_line|#ifdef CONFIG_PROC_FS
 r_static
@@ -1076,6 +1082,20 @@ l_int|NULL
 comma
 op_amp
 id|proc_dointvec
+)brace
+comma
+(brace
+id|KERN_RANDOM
+comma
+l_string|&quot;random&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0555
+comma
+id|random_table
 )brace
 comma
 (brace

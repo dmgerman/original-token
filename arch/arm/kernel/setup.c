@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/arm/kernel/setup.c&n; *&n; *  Copyright (C) 1995-1998 Russell King&n; */
+multiline_comment|/*&n; *  linux/arch/arm/kernel/setup.c&n; *&n; *  Copyright (C) 1995-1999 Russell King&n; */
 multiline_comment|/*&n; * This file obtains various parameters about the system that the kernel&n; * is running on.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -27,30 +27,6 @@ macro_line|#include &lt;asm/procinfo.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/* Work out which CPUs to support */
-macro_line|#ifdef CONFIG_ARCH_ACORN
-DECL|macro|SUPPORT_CPU_ARM6
-mdefine_line|#define SUPPORT_CPU_ARM6
-DECL|macro|SUPPORT_CPU_ARM7
-mdefine_line|#define SUPPORT_CPU_ARM7
-DECL|macro|SUPPORT_CPU_SA110
-mdefine_line|#define SUPPORT_CPU_SA110
-macro_line|#else
-DECL|macro|SUPPORT_CPU_SA110
-mdefine_line|#define SUPPORT_CPU_SA110
-macro_line|#endif
-macro_line|#ifdef CONFIG_CPU_ARM6
-DECL|macro|SUPPORT_CPU_ARM6
-mdefine_line|#define SUPPORT_CPU_ARM6
-macro_line|#endif
-macro_line|#ifdef CONFIG_CPU_ARM7
-DECL|macro|SUPPORT_CPU_ARM7
-mdefine_line|#define SUPPORT_CPU_ARM7
-macro_line|#endif
-macro_line|#ifdef CONFIG_CPU_SA110
-DECL|macro|SUPPORT_CPU_SA110
-mdefine_line|#define SUPPORT_CPU_SA110
-macro_line|#endif
 DECL|macro|MEM_SIZE
 mdefine_line|#define MEM_SIZE&t;(16*1024*1024)
 DECL|macro|COMMAND_LINE_SIZE
@@ -58,6 +34,10 @@ mdefine_line|#define COMMAND_LINE_SIZE 256
 macro_line|#ifndef CONFIG_CMDLINE
 DECL|macro|CONFIG_CMDLINE
 mdefine_line|#define CONFIG_CMDLINE &quot;&quot;
+macro_line|#endif
+macro_line|#ifndef PARAMS_BASE
+DECL|macro|PARAMS_BASE
+mdefine_line|#define PARAMS_BASE NULL
 macro_line|#endif
 r_extern
 r_void
@@ -135,296 +115,6 @@ suffix:colon
 l_int|8
 )brace
 suffix:semicolon
-DECL|variable|processor
-r_struct
-id|processor
-id|processor
-suffix:semicolon
-DECL|variable|aux_device_present
-r_int
-r_char
-id|aux_device_present
-suffix:semicolon
-r_extern
-r_const
-r_struct
-id|processor
-id|arm2_processor_functions
-suffix:semicolon
-r_extern
-r_const
-r_struct
-id|processor
-id|arm250_processor_functions
-suffix:semicolon
-r_extern
-r_const
-r_struct
-id|processor
-id|arm3_processor_functions
-suffix:semicolon
-r_extern
-r_const
-r_struct
-id|processor
-id|arm6_processor_functions
-suffix:semicolon
-r_extern
-r_const
-r_struct
-id|processor
-id|arm7_processor_functions
-suffix:semicolon
-r_extern
-r_const
-r_struct
-id|processor
-id|sa110_processor_functions
-suffix:semicolon
-DECL|variable|elf_platform
-r_char
-id|elf_platform
-(braket
-id|ELF_PLATFORM_SIZE
-)braket
-suffix:semicolon
-DECL|variable|armidlist
-r_const
-r_struct
-id|armversions
-id|armidlist
-(braket
-)braket
-op_assign
-(brace
-multiline_comment|/*-- Match -- --- Mask -- -- Manu --  Processor  uname -m   --- ELF STUFF ---&n;&t;--- processor asm funcs --- */
-macro_line|#if defined(CONFIG_CPU_26)
-multiline_comment|/* ARM2 fake ident */
-(brace
-l_int|0x41560200
-comma
-l_int|0xfffffff0
-comma
-l_string|&quot;ARM/VLSI&quot;
-comma
-l_string|&quot;arm2&quot;
-comma
-l_string|&quot;armv1&quot;
-comma
-l_string|&quot;v1&quot;
-comma
-l_int|0
-comma
-op_amp
-id|arm2_processor_functions
-)brace
-comma
-multiline_comment|/* ARM250 fake ident */
-(brace
-l_int|0x41560250
-comma
-l_int|0xfffffff0
-comma
-l_string|&quot;ARM/VLSI&quot;
-comma
-l_string|&quot;arm250&quot;
-comma
-l_string|&quot;armv2&quot;
-comma
-l_string|&quot;v2&quot;
-comma
-id|HWCAP_SWP
-comma
-op_amp
-id|arm250_processor_functions
-)brace
-comma
-multiline_comment|/* ARM3 processors */
-(brace
-l_int|0x41560300
-comma
-l_int|0xfffffff0
-comma
-l_string|&quot;ARM/VLSI&quot;
-comma
-l_string|&quot;arm3&quot;
-comma
-l_string|&quot;armv2&quot;
-comma
-l_string|&quot;v2&quot;
-comma
-id|HWCAP_SWP
-comma
-op_amp
-id|arm3_processor_functions
-)brace
-comma
-macro_line|#elif defined(CONFIG_CPU_32)
-macro_line|#ifdef SUPPORT_CPU_ARM6
-multiline_comment|/* ARM6 */
-(brace
-l_int|0x41560600
-comma
-l_int|0xfffffff0
-comma
-l_string|&quot;ARM/VLSI&quot;
-comma
-l_string|&quot;arm6&quot;
-comma
-l_string|&quot;armv3&quot;
-comma
-l_string|&quot;v3&quot;
-comma
-id|HWCAP_SWP
-comma
-op_amp
-id|arm6_processor_functions
-)brace
-comma
-multiline_comment|/* ARM610 */
-(brace
-l_int|0x41560610
-comma
-l_int|0xfffffff0
-comma
-l_string|&quot;ARM/VLSI&quot;
-comma
-l_string|&quot;arm610&quot;
-comma
-l_string|&quot;armv3&quot;
-comma
-l_string|&quot;v3&quot;
-comma
-id|HWCAP_SWP
-comma
-op_amp
-id|arm6_processor_functions
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef SUPPORT_CPU_ARM7
-multiline_comment|/* ARM7&squot;s have a strange numbering */
-(brace
-l_int|0x41007000
-comma
-l_int|0xffffff00
-comma
-l_string|&quot;ARM/VLSI&quot;
-comma
-l_string|&quot;arm7&quot;
-comma
-l_string|&quot;armv3&quot;
-comma
-l_string|&quot;v3&quot;
-comma
-id|HWCAP_SWP
-comma
-op_amp
-id|arm7_processor_functions
-)brace
-comma
-multiline_comment|/* ARM710 IDs are non-standard */
-(brace
-l_int|0x41007100
-comma
-l_int|0xfff8ff00
-comma
-l_string|&quot;ARM/VLSI&quot;
-comma
-l_string|&quot;arm710&quot;
-comma
-l_string|&quot;armv3&quot;
-comma
-l_string|&quot;v3&quot;
-comma
-id|HWCAP_SWP
-comma
-op_amp
-id|arm7_processor_functions
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef SUPPORT_CPU_SA110
-macro_line|#ifdef CONFIG_ARCH_RPC
-multiline_comment|/* Acorn RiscPC&squot;s can&squot;t handle ARMv4 half-word instructions */
-(brace
-l_int|0x4401a100
-comma
-l_int|0xfffffff0
-comma
-l_string|&quot;Intel&quot;
-comma
-l_string|&quot;sa110&quot;
-comma
-l_string|&quot;armv4&quot;
-comma
-l_string|&quot;v4&quot;
-comma
-id|HWCAP_SWP
-comma
-op_amp
-id|sa110_processor_functions
-)brace
-comma
-macro_line|#else
-(brace
-l_int|0x4401a100
-comma
-l_int|0xfffffff0
-comma
-l_string|&quot;Intel&quot;
-comma
-l_string|&quot;sa110&quot;
-comma
-l_string|&quot;armv4&quot;
-comma
-l_string|&quot;v4&quot;
-comma
-id|HWCAP_SWP
-op_or
-id|HWCAP_HALF
-comma
-op_amp
-id|sa110_processor_functions
-)brace
-comma
-macro_line|#endif
-macro_line|#endif
-macro_line|#endif
-(brace
-l_int|0x00000000
-comma
-l_int|0x00000000
-comma
-l_string|&quot;***&quot;
-comma
-l_string|&quot;unknown&quot;
-comma
-l_string|&quot;unknown&quot;
-comma
-l_string|&quot;**&quot;
-comma
-l_int|0
-comma
-l_int|NULL
-)brace
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * From head-armv.S&n; */
-DECL|variable|processor_id
-r_int
-r_int
-id|processor_id
-suffix:semicolon
-DECL|variable|__machine_arch_type
-r_int
-r_int
-id|__machine_arch_type
-suffix:semicolon
-DECL|variable|armidindex
-r_int
-id|armidindex
-suffix:semicolon
 r_extern
 r_int
 id|root_mountflags
@@ -437,6 +127,96 @@ id|_edata
 comma
 id|_end
 suffix:semicolon
+DECL|variable|aux_device_present
+r_int
+r_char
+id|aux_device_present
+suffix:semicolon
+DECL|variable|elf_platform
+r_char
+id|elf_platform
+(braket
+id|ELF_PLATFORM_SIZE
+)braket
+suffix:semicolon
+DECL|variable|elf_hwcap
+r_int
+r_int
+id|elf_hwcap
+suffix:semicolon
+multiline_comment|/*&n; * From head-armv.S&n; */
+DECL|variable|processor_id
+r_int
+r_int
+id|processor_id
+suffix:semicolon
+DECL|variable|__machine_arch_type
+r_int
+r_int
+id|__machine_arch_type
+suffix:semicolon
+macro_line|#ifdef MULTI_CPU
+DECL|variable|processor
+r_struct
+id|processor
+id|processor
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_ACORN
+DECL|variable|memc_ctrl_reg
+r_int
+id|memc_ctrl_reg
+suffix:semicolon
+DECL|variable|number_mfm_drives
+r_int
+id|number_mfm_drives
+suffix:semicolon
+DECL|variable|vram_size
+r_int
+r_int
+id|vram_size
+suffix:semicolon
+macro_line|#endif
+DECL|variable|proc_info
+r_static
+r_struct
+id|proc_info_item
+id|proc_info
+suffix:semicolon
+DECL|member|c
+DECL|member|l
+DECL|variable|__initdata
+r_static
+r_union
+(brace
+r_char
+id|c
+(braket
+l_int|4
+)braket
+suffix:semicolon
+r_int
+r_int
+id|l
+suffix:semicolon
+)brace
+id|endian_test
+id|__initdata
+op_assign
+(brace
+(brace
+l_char|&squot;l&squot;
+comma
+l_char|&squot;?&squot;
+comma
+l_char|&squot;?&squot;
+comma
+l_char|&squot;b&squot;
+)brace
+)brace
+suffix:semicolon
+DECL|macro|ENDIANNESS
+mdefine_line|#define ENDIANNESS ((char)endian_test.l)
 multiline_comment|/*-------------------------------------------------------------------------&n; * Early initialisation routines for various configurable items in the&n; * kernel.  Each one either supplies a setup_ function, or defines this&n; * symbol to be empty if not configured.&n; */
 multiline_comment|/*&n; * initial ram disk&n; */
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
@@ -1100,6 +880,17 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|MACH_TYPE_RISCPC
+suffix:colon
+multiline_comment|/* RiscPC can&squot;t handle half-word loads and stores */
+id|elf_hwcap
+op_and_assign
+op_complement
+id|HWCAP_HALF
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|MACH_TYPE_EBSA285
 suffix:colon
 r_if
@@ -1415,7 +1206,11 @@ r_else
 (brace
 id|ROOT_DEV
 op_assign
+id|to_kdev_t
+c_func
+(paren
 l_int|0x00ff
+)paren
 suffix:semicolon
 id|setup_ram
 c_func
@@ -1507,40 +1302,6 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|system_utsname.machine
-comma
-l_string|&quot;%s%c&quot;
-comma
-id|armidlist
-(braket
-id|armidindex
-)braket
-dot
-id|arch_vsn
-comma
-id|ENDIANNESS
-)paren
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|elf_platform
-comma
-l_string|&quot;%s%c&quot;
-comma
-id|armidlist
-(braket
-id|armidindex
-)braket
-dot
-id|elf_vsn
-comma
-id|ENDIANNESS
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_VT
 macro_line|#if defined(CONFIG_VGA_CONSOLE)
 id|conswitchp
@@ -1587,7 +1348,7 @@ l_string|&quot;Nexus-FTV/PCI&quot;
 comma
 l_string|&quot;EBSA285&quot;
 comma
-l_string|&quot;Corel-NetWinder&quot;
+l_string|&quot;Rebel-NetWinder&quot;
 comma
 l_string|&quot;Chalice-CATS&quot;
 comma
@@ -1622,23 +1383,13 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Processor&bslash;t: %s %s rev %d&bslash;n&quot;
+l_string|&quot;Processor&bslash;t: %s %s rev %d (%s)&bslash;n&quot;
 l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
 l_string|&quot;Hardware&bslash;t: %s&bslash;n&quot;
 comma
-id|armidlist
-(braket
-id|armidindex
-)braket
-dot
-id|manu
+id|proc_info.manufacturer
 comma
-id|armidlist
-(braket
-id|armidindex
-)braket
-dot
-id|name
+id|proc_info.cpu_name
 comma
 (paren
 r_int
@@ -1646,6 +1397,8 @@ r_int
 id|processor_id
 op_amp
 l_int|15
+comma
+id|elf_platform
 comma
 (paren
 id|loops_per_sec

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: mbx_setup.c,v 1.11 1999/06/28 17:59:43 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
+multiline_comment|/*&n; * $Id: mbx_setup.c,v 1.12 1999/08/31 06:53:56 davem Exp $&n; *&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
 multiline_comment|/*&n; * bootup setup stuff..&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -595,10 +595,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|initfunc
-(paren
+DECL|function|mbx_get_rtc_time
 r_int
 r_int
+id|__init
 id|mbx_get_rtc_time
 c_func
 (paren
@@ -716,6 +716,7 @@ id|im_sit.sit_rtc
 suffix:semicolon
 )brace
 r_void
+DECL|function|mbx_restart
 id|mbx_restart
 c_func
 (paren
@@ -739,6 +740,7 @@ c_func
 suffix:semicolon
 )brace
 r_void
+DECL|function|mbx_power_off
 id|mbx_power_off
 c_func
 (paren
@@ -753,6 +755,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_void
+DECL|function|mbx_halt
 id|mbx_halt
 c_func
 (paren
@@ -765,6 +768,7 @@ c_func
 l_int|NULL
 )paren
 )brace
+DECL|function|mbx_setup_residual
 r_int
 id|mbx_setup_residual
 c_func
@@ -820,6 +824,7 @@ id|len
 suffix:semicolon
 )brace
 r_void
+DECL|function|mbx_do_IRQ
 id|mbx_do_IRQ
 c_func
 (paren
@@ -908,6 +913,7 @@ id|irq
 suffix:semicolon
 )brace
 )brace
+DECL|function|mbx_i8259_action
 r_static
 r_void
 id|mbx_i8259_action
@@ -1036,6 +1042,7 @@ suffix:semicolon
 multiline_comment|/* On MBX8xx, the interrupt control (SIEL) was set by EPPC-bug.  External&n; * interrupts can be either edge or level triggered, but there is no&n; * reason for us to change the EPPC-bug values (it would not work if we did).&n; */
 r_void
 id|__init
+DECL|function|mbx_init_IRQ
 id|mbx_init_IRQ
 c_func
 (paren
@@ -1132,6 +1139,7 @@ suffix:semicolon
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 multiline_comment|/*&n; * IDE stuff.&n; */
 r_void
+DECL|function|mbx_ide_insw
 id|mbx_ide_insw
 c_func
 (paren
@@ -1161,6 +1169,7 @@ id|ns
 suffix:semicolon
 )brace
 r_void
+DECL|function|mbx_ide_outsw
 id|mbx_ide_outsw
 c_func
 (paren
@@ -1189,6 +1198,7 @@ id|ns
 suffix:semicolon
 )brace
 r_int
+DECL|function|mbx_ide_default_irq
 id|mbx_ide_default_irq
 c_func
 (paren
@@ -1201,6 +1211,7 @@ l_int|14
 suffix:semicolon
 )brace
 id|ide_ioreg_t
+DECL|function|mbx_ide_default_io_base
 id|mbx_ide_default_io_base
 c_func
 (paren
@@ -1213,6 +1224,7 @@ id|index
 suffix:semicolon
 )brace
 r_int
+DECL|function|mbx_ide_check_region
 id|mbx_ide_check_region
 c_func
 (paren
@@ -1228,6 +1240,7 @@ r_return
 l_int|0
 )brace
 r_void
+DECL|function|mbx_ide_request_region
 id|mbx_ide_request_region
 c_func
 (paren
@@ -1246,6 +1259,7 @@ id|name
 (brace
 )brace
 r_void
+DECL|function|mbx_ide_release_region
 id|mbx_ide_release_region
 c_func
 (paren
@@ -1259,6 +1273,7 @@ id|extent
 (brace
 )brace
 r_void
+DECL|function|mbx_ide_fix_driveid
 id|mbx_ide_fix_driveid
 c_func
 (paren
@@ -1276,6 +1291,7 @@ id|id
 suffix:semicolon
 )brace
 r_void
+DECL|function|mbx_ide_init_hwif_ports
 id|mbx_ide_init_hwif_ports
 c_func
 (paren
@@ -1397,6 +1413,7 @@ macro_line|#endif
 macro_line|#endif
 r_void
 id|__init
+DECL|function|mbx_init
 id|mbx_init
 c_func
 (paren

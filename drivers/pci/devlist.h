@@ -784,9 +784,18 @@ c_func
 (paren
 id|CIRRUS
 comma
+id|CIRRUS_5462
+comma
+l_string|&quot;Laguna&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|CIRRUS
+comma
 id|CIRRUS_5464
 comma
-l_string|&quot;GD 5464&quot;
+l_string|&quot;Laguna 3D&quot;
 )paren
 id|DEVICE
 c_func
@@ -795,7 +804,7 @@ id|CIRRUS
 comma
 id|CIRRUS_5465
 comma
-l_string|&quot;GD 5465&quot;
+l_string|&quot;Laguna 3DA&quot;
 )paren
 id|DEVICE
 c_func
@@ -1017,6 +1026,24 @@ c_func
 (paren
 id|TRIDENT
 comma
+id|TRIDENT_9320
+comma
+l_string|&quot;Cyber9320&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_9388
+comma
+l_string|&quot;Cyber9388&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
 id|TRIDENT_9397
 comma
 l_string|&quot;Cyber9397&quot;
@@ -1026,9 +1053,36 @@ c_func
 (paren
 id|TRIDENT
 comma
+id|TRIDENT_939A
+comma
+l_string|&quot;Cyber939a&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_9520
+comma
+l_string|&quot;Cyber9520&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_9525
+comma
+l_string|&quot;Cyber9525&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
 id|TRIDENT_9420
 comma
-l_string|&quot;TG 9420&quot;
+l_string|&quot;TGUI 9420&quot;
 )paren
 id|DEVICE
 c_func
@@ -1037,7 +1091,7 @@ id|TRIDENT
 comma
 id|TRIDENT_9440
 comma
-l_string|&quot;TG 9440&quot;
+l_string|&quot;TGUI 9440&quot;
 )paren
 id|DEVICE
 c_func
@@ -1046,7 +1100,7 @@ id|TRIDENT
 comma
 id|TRIDENT_9660
 comma
-l_string|&quot;TG 9660 / Cyber9385&quot;
+l_string|&quot;TGUI 9660 / Cyber9385&quot;
 )paren
 id|DEVICE
 c_func
@@ -1055,7 +1109,52 @@ id|TRIDENT
 comma
 id|TRIDENT_9750
 comma
-l_string|&quot;Image 975&quot;
+l_string|&quot;3DImage 975&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_9850
+comma
+l_string|&quot;3DImage 985&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_9880
+comma
+l_string|&quot;Blade 3D&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_8400
+comma
+l_string|&quot;CyberBlade/i7&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_8420
+comma
+l_string|&quot;CyberBlade/i7d&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TRIDENT
+comma
+id|TRIDENT_8500
+comma
+l_string|&quot;CyberBlade/i1&quot;
 )paren
 id|ENDVENDOR
 c_func
@@ -1138,24 +1237,6 @@ c_func
 (paren
 id|MATROX
 comma
-id|MATROX_G200_PCI
-comma
-l_string|&quot;G200 PCI&quot;
-)paren
-id|DEVICE
-c_func
-(paren
-id|MATROX
-comma
-id|MATROX_G200_AGP
-comma
-l_string|&quot;G200 AGP&quot;
-)paren
-id|DEVICE
-c_func
-(paren
-id|MATROX
-comma
 id|MATROX_MGA_IMP
 comma
 l_string|&quot;MGA Impression&quot;
@@ -1177,6 +1258,42 @@ comma
 id|MATROX_G100_AGP
 comma
 l_string|&quot;G100 AGP&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
+id|MATROX_G200_PCI
+comma
+l_string|&quot;G200 PCI&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
+id|MATROX_G200_AGP
+comma
+l_string|&quot;G200 AGP&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
+id|MATROX_G400
+comma
+l_string|&quot;G400&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
+id|MATROX_VIA
+comma
+l_string|&quot;Corona / Meteor-II&quot;
 )paren
 id|ENDVENDOR
 c_func
@@ -1853,6 +1970,15 @@ comma
 id|WINBOND2_89C940
 comma
 l_string|&quot;NE2000-PCI&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|WINBOND2
+comma
+id|WINBOND2_89C940F
+comma
+l_string|&quot;W89C940F&quot;
 )paren
 id|ENDVENDOR
 c_func
@@ -3331,6 +3457,60 @@ id|NVIDIA
 comma
 l_string|&quot;NVidia&quot;
 )paren
+id|DEVICE
+c_func
+(paren
+id|NVIDIA
+comma
+id|NVIDIA_TNT
+comma
+l_string|&quot;Riva TNT&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|NVIDIA
+comma
+id|NVIDIA_TNT2
+comma
+l_string|&quot;Riva TNT2&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|NVIDIA
+comma
+id|NVIDIA_UTNT2
+comma
+l_string|&quot;Riva TNT2 (Ultra)&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|NVIDIA
+comma
+id|NVIDIA_VTNT2
+comma
+l_string|&quot;Riva TNT2 (Vanta)&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|NVIDIA
+comma
+id|NVIDIA_UVTNT2
+comma
+l_string|&quot;Riva TNT2 (Ultra Vanta)&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|NVIDIA
+comma
+id|NVIDIA_ITNT2
+comma
+l_string|&quot;Riva TNT2 (Integrated)&quot;
+)paren
 id|ENDVENDOR
 c_func
 (paren
@@ -3466,6 +3646,15 @@ comma
 id|INTERG_1682
 comma
 l_string|&quot;IGA-1682&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|INTERG
+comma
+id|INTERG_2000
+comma
+l_string|&quot;CyberPro 2000&quot;
 )paren
 id|ENDVENDOR
 c_func

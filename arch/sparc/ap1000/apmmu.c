@@ -2841,7 +2841,7 @@ c_func
 (paren
 l_string|&quot;APMMU bolixed...&quot;
 comma
-id|current-&gt;tss.kregs
+id|current-&gt;thread.kregs
 )paren
 suffix:semicolon
 )brace

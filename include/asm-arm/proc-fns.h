@@ -1,407 +1,64 @@
-multiline_comment|/*&n; * linux/include/asm-arm/proc-fns.h&n; *&n; * Copyright (C) 1997 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/proc-fns.h&n; *&n; * Copyright (C) 1997-1999 Russell King&n; */
 macro_line|#ifndef __ASM_PROCFNS_H
 DECL|macro|__ASM_PROCFNS_H
 mdefine_line|#define __ASM_PROCFNS_H
-macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* forward-declare task_struct */
-r_struct
-id|task_struct
-suffix:semicolon
-multiline_comment|/*&n; * Don&squot;t change this structure&n; */
-DECL|struct|processor
-r_extern
-r_struct
-id|processor
-(brace
-DECL|member|name
-r_const
-r_char
-op_star
-id|name
-suffix:semicolon
-multiline_comment|/* MISC&n;&t; * get data abort address/flags&n;&t; */
-DECL|member|_data_abort
-r_void
-(paren
-op_star
-id|_data_abort
-)paren
-(paren
-r_int
-r_int
-id|pc
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * check for any bugs&n;&t; */
-DECL|member|_check_bugs
-r_void
-(paren
-op_star
-id|_check_bugs
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set up any processor specifics&n;&t; */
-DECL|member|_proc_init
-r_void
-(paren
-op_star
-id|_proc_init
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Disable any processor specifics&n;&t; */
-DECL|member|_proc_fin
-r_void
-(paren
-op_star
-id|_proc_fin
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Processor architecture specific&n;&t; */
-r_union
-(brace
-r_struct
-(brace
-multiline_comment|/* CACHE&n;&t;&t;&t; *&n;&t;&t;&t; * flush all caches&n;&t;&t;&t; */
-DECL|member|_flush_cache_all
-r_void
-(paren
-op_star
-id|_flush_cache_all
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * flush a specific page or pages&n;&t;&t;&t; */
-DECL|member|_flush_cache_area
-r_void
-(paren
-op_star
-id|_flush_cache_area
-)paren
-(paren
-r_int
-r_int
-id|address
-comma
-r_int
-r_int
-id|end
-comma
-r_int
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * flush cache entry for an address&n;&t;&t;&t; */
-DECL|member|_flush_cache_entry
-r_void
-(paren
-op_star
-id|_flush_cache_entry
-)paren
-(paren
-r_int
-r_int
-id|address
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * clean a virtual address range from the&n;&t;&t;&t; * D-cache without flushing the cache.&n;&t;&t;&t; */
-DECL|member|_clean_cache_area
-r_void
-(paren
-op_star
-id|_clean_cache_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * flush a page to RAM&n;&t;&t;&t; */
-DECL|member|_flush_ram_page
-r_void
-(paren
-op_star
-id|_flush_ram_page
-)paren
-(paren
-r_int
-r_int
-id|page
-)paren
-suffix:semicolon
-multiline_comment|/* TLB&n;&t;&t;&t; *&n;&t;&t;&t; * flush all TLBs&n;&t;&t;&t; */
-DECL|member|_flush_tlb_all
-r_void
-(paren
-op_star
-id|_flush_tlb_all
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * flush a specific TLB&n;&t;&t;&t; */
-DECL|member|_flush_tlb_area
-r_void
-(paren
-op_star
-id|_flush_tlb_area
-)paren
-(paren
-r_int
-r_int
-id|address
-comma
-r_int
-r_int
-id|end
-comma
-r_int
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Set the page table&n;&t;&t;&t; */
-DECL|member|_set_pgd
-r_void
-(paren
-op_star
-id|_set_pgd
-)paren
-(paren
-r_int
-r_int
-id|pgd_phys
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Set a PMD (handling IMP bit 4)&n;&t;&t;&t; */
-DECL|member|_set_pmd
-r_void
-(paren
-op_star
-id|_set_pmd
-)paren
-(paren
-id|pmd_t
-op_star
-id|pmdp
-comma
-id|pmd_t
-id|pmd
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Set a PTE&n;&t;&t;&t; */
-DECL|member|_set_pte
-r_void
-(paren
-op_star
-id|_set_pte
-)paren
-(paren
-id|pte_t
-op_star
-id|ptep
-comma
-id|pte_t
-id|pte
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Special stuff for a reset&n;&t;&t;&t; */
-DECL|member|reset
-r_int
-r_int
-(paren
-op_star
-id|reset
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * flush an icached page&n;&t;&t;&t; */
-DECL|member|_flush_icache_area
-r_void
-(paren
-op_star
-id|_flush_icache_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * write back dirty cached data&n;&t;&t;&t; */
-DECL|member|_cache_wback_area
-r_void
-(paren
-op_star
-id|_cache_wback_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * purge cached data without (necessarily) writing it back&n;&t;&t;&t; */
-DECL|member|_cache_purge_area
-r_void
-(paren
-op_star
-id|_cache_purge_area
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-suffix:semicolon
-DECL|member|armv3v4
-)brace
-id|armv3v4
-suffix:semicolon
-r_struct
-(brace
-multiline_comment|/* MEMC&n;&t;&t;&t; *&n;&t;&t;&t; * remap memc tables&n;&t;&t;&t; */
-DECL|member|_remap_memc
-r_void
-(paren
-op_star
-id|_remap_memc
-)paren
-(paren
-r_void
-op_star
-id|tsk
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * update task&squot;s idea of mmap&n;&t;&t;&t; */
-DECL|member|_update_map
-r_void
-(paren
-op_star
-id|_update_map
-)paren
-(paren
-r_void
-op_star
-id|tsk
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * update task&squot;s idea after abort&n;&t;&t;&t; */
-DECL|member|_update_mmu_cache
-r_void
-(paren
-op_star
-id|_update_mmu_cache
-)paren
-(paren
-r_void
-op_star
-id|vma
-comma
-r_int
-r_int
-id|addr
-comma
-id|pte_t
-id|pte
-)paren
-suffix:semicolon
-multiline_comment|/* XCHG&n;&t;&t;&t; */
-DECL|member|_xchg_1
-r_int
-r_int
-(paren
-op_star
-id|_xchg_1
-)paren
-(paren
-r_int
-r_int
-id|x
-comma
-r_volatile
-r_void
-op_star
-id|ptr
-)paren
-suffix:semicolon
-DECL|member|_xchg_2
-r_int
-r_int
-(paren
-op_star
-id|_xchg_2
-)paren
-(paren
-r_int
-r_int
-id|x
-comma
-r_volatile
-r_void
-op_star
-id|ptr
-)paren
-suffix:semicolon
-DECL|member|_xchg_4
-r_int
-r_int
-(paren
-op_star
-id|_xchg_4
-)paren
-(paren
-r_int
-r_int
-id|x
-comma
-r_volatile
-r_void
-op_star
-id|ptr
-)paren
-suffix:semicolon
-DECL|member|armv2
-)brace
-id|armv2
-suffix:semicolon
-DECL|member|u
-)brace
-id|u
-suffix:semicolon
-)brace
-id|processor
-suffix:semicolon
-macro_line|#endif&t;
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * Work out if we need multiple CPU support&n; */
+DECL|macro|MULTI_CPU
+macro_line|#undef MULTI_CPU
+DECL|macro|CPU_NAME
+macro_line|#undef CPU_NAME
+macro_line|#ifdef CONFIG_CPU_26
+DECL|macro|CPU_INCLUDE_NAME
+macro_line|# define CPU_INCLUDE_NAME &quot;asm/cpu-multi26.h&quot;
+DECL|macro|MULTI_CPU
+macro_line|# define MULTI_CPU
 macro_line|#endif
+macro_line|#ifdef CONFIG_CPU_32
+DECL|macro|CPU_INCLUDE_NAME
+macro_line|# define CPU_INCLUDE_NAME &quot;asm/cpu-multi32.h&quot;
+macro_line|# ifdef CONFIG_CPU_ARM6
+macro_line|#  ifdef CPU_NAME
+DECL|macro|MULTI_CPU
+macro_line|#   undef  MULTI_CPU
+DECL|macro|MULTI_CPU
+macro_line|#   define MULTI_CPU
+macro_line|#  else
+DECL|macro|CPU_NAME
+macro_line|#   define CPU_NAME arm6
+macro_line|#  endif
+macro_line|# endif
+macro_line|# ifdef CONFIG_CPU_ARM7
+macro_line|#  ifdef CPU_NAME
+DECL|macro|MULTI_CPU
+macro_line|#   undef  MULTI_CPU
+DECL|macro|MULTI_CPU
+macro_line|#   define MULTI_CPU
+macro_line|#  else
+DECL|macro|CPU_NAME
+macro_line|#   define CPU_NAME arm7
+macro_line|#  endif
+macro_line|# endif
+macro_line|# ifdef CONFIG_CPU_SA110
+macro_line|#  ifdef CPU_NAME
+DECL|macro|MULTI_CPU
+macro_line|#   undef  MULTI_CPU
+DECL|macro|MULTI_CPU
+macro_line|#   define MULTI_CPU
+macro_line|#  else
+DECL|macro|CPU_NAME
+macro_line|#   define CPU_NAME sa110
+macro_line|#  endif
+macro_line|# endif
+macro_line|#endif
+macro_line|#ifndef MULTI_CPU
+DECL|macro|CPU_INCLUDE_NAME
+macro_line|#undef CPU_INCLUDE_NAME
+DECL|macro|CPU_INCLUDE_NAME
+mdefine_line|#define CPU_INCLUDE_NAME &quot;asm/cpu-single.h&quot;
+macro_line|#endif
+macro_line|#include CPU_INCLUDE_NAME
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* __ASM_PROCFNS_H */
 eof

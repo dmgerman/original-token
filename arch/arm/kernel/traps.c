@@ -1320,9 +1320,7 @@ suffix:colon
 multiline_comment|/* sys_cacheflush */
 macro_line|#ifdef CONFIG_CPU_32
 multiline_comment|/* r0 = start, r1 = length, r2 = flags */
-id|processor.u.armv3v4
-dot
-id|_flush_cache_area
+id|cpu_flush_cache_area
 c_func
 (paren
 id|regs-&gt;ARM_r0

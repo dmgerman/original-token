@@ -1,6 +1,9 @@
 macro_line|#ifndef __ALPHA_MCPCIA__H__
 DECL|macro|__ALPHA_MCPCIA__H__
 mdefine_line|#define __ALPHA_MCPCIA__H__
+multiline_comment|/* Define to experiment with fitting everything into one 128MB HAE window.&n;   One window per bus, that is.  */
+DECL|macro|MCPCIA_ONE_HAE_WINDOW
+mdefine_line|#define MCPCIA_ONE_HAE_WINDOW 1
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -10,123 +13,137 @@ multiline_comment|/*------------------------------------------------------------
 multiline_comment|/* MCPCIA ADDRESS BIT DEFINITIONS&n; *&n; *  3333 3333 3322 2222 2222 1111 1111 11&n; *  9876 5432 1098 7654 3210 9876 5432 1098 7654 3210&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  1                                             000&n; *  ---- ---- ---- ---- ---- ---- ---- ---- ---- ----&n; *  |                                             |&bslash;|&n; *  |                               Byte Enable --+ |&n; *  |                             Transfer Length --+&n; *  +-- IO space, not cached&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
 DECL|macro|MCPCIA_MEM_MASK
 mdefine_line|#define MCPCIA_MEM_MASK 0x07ffffff /* SPARSE Mem region mask is 27 bits */
-DECL|macro|MCPCIA_DMA_WIN_BASE_DEFAULT
-mdefine_line|#define MCPCIA_DMA_WIN_BASE_DEFAULT    (2*1024*1024*1024U)
-DECL|macro|MCPCIA_DMA_WIN_SIZE_DEFAULT
-mdefine_line|#define MCPCIA_DMA_WIN_SIZE_DEFAULT    (2*1024*1024*1024U)
-macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
 DECL|macro|MCPCIA_DMA_WIN_BASE
-mdefine_line|#define MCPCIA_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base
+mdefine_line|#define MCPCIA_DMA_WIN_BASE&t;&t;(2UL*1024*1024*1024)
 DECL|macro|MCPCIA_DMA_WIN_SIZE
-mdefine_line|#define MCPCIA_DMA_WIN_SIZE&t;&t;alpha_mv.dma_win_size
-macro_line|#else
-DECL|macro|MCPCIA_DMA_WIN_BASE
-mdefine_line|#define MCPCIA_DMA_WIN_BASE&t;&t;MCPCIA_DMA_WIN_BASE_DEFAULT
-DECL|macro|MCPCIA_DMA_WIN_SIZE
-mdefine_line|#define MCPCIA_DMA_WIN_SIZE&t;&t;MCPCIA_DMA_WIN_SIZE_DEFAULT
-macro_line|#endif
-DECL|macro|HOSE
-mdefine_line|#define HOSE(h) (((unsigned long)(h)) &lt;&lt; 33)
+mdefine_line|#define MCPCIA_DMA_WIN_SIZE&t;&t;(2UL*1024*1024*1024)
+DECL|macro|MCPCIA_MID
+mdefine_line|#define MCPCIA_MID(m)&t;&t;((unsigned long)(m) &lt;&lt; 33)
+multiline_comment|/*&n; * Memory spaces:&n; */
+DECL|macro|MCPCIA_SPARSE
+mdefine_line|#define MCPCIA_SPARSE(m)&t;(IDENT_ADDR + 0xf000000000UL + MCPCIA_MID(m))
+DECL|macro|MCPCIA_DENSE
+mdefine_line|#define MCPCIA_DENSE(m)&t;&t;(IDENT_ADDR + 0xf100000000UL + MCPCIA_MID(m))
+DECL|macro|MCPCIA_IO
+mdefine_line|#define MCPCIA_IO(m)&t;&t;(IDENT_ADDR + 0xf180000000UL + MCPCIA_MID(m))
+DECL|macro|MCPCIA_CONF
+mdefine_line|#define MCPCIA_CONF(m)&t;&t;(IDENT_ADDR + 0xf1c0000000UL + MCPCIA_MID(m))
+DECL|macro|MCPCIA_CSR
+mdefine_line|#define MCPCIA_CSR(m)&t;&t;(IDENT_ADDR + 0xf1e0000000UL + MCPCIA_MID(m))
+DECL|macro|MCPCIA_IO_IACK
+mdefine_line|#define MCPCIA_IO_IACK(m)&t;(IDENT_ADDR + 0xf1f0000000UL + MCPCIA_MID(m))
+DECL|macro|MCPCIA_DENSE_IO
+mdefine_line|#define MCPCIA_DENSE_IO(m)&t;(IDENT_ADDR + 0xe1fc000000UL + MCPCIA_MID(m))
+DECL|macro|MCPCIA_DENSE_CONF
+mdefine_line|#define MCPCIA_DENSE_CONF(m)&t;(IDENT_ADDR + 0xe1fe000000UL + MCPCIA_MID(m))
 multiline_comment|/*&n; *  General Registers&n; */
 DECL|macro|MCPCIA_REV
-mdefine_line|#define MCPCIA_REV(h)&t;&t;(IDENT_ADDR + 0xf9e0000000UL + HOSE(h))
+mdefine_line|#define MCPCIA_REV(m)&t;&t;(MCPCIA_CSR(m) + 0x000)
 DECL|macro|MCPCIA_WHOAMI
-mdefine_line|#define MCPCIA_WHOAMI(h)&t;(IDENT_ADDR + 0xf9e0000040UL + HOSE(h))
+mdefine_line|#define MCPCIA_WHOAMI(m)&t;(MCPCIA_CSR(m) + 0x040)
 DECL|macro|MCPCIA_PCI_LAT
-mdefine_line|#define MCPCIA_PCI_LAT(h)&t;(IDENT_ADDR + 0xf9e0000080UL + HOSE(h))
+mdefine_line|#define MCPCIA_PCI_LAT(m)&t;(MCPCIA_CSR(m) + 0x080)
 DECL|macro|MCPCIA_CAP_CTRL
-mdefine_line|#define MCPCIA_CAP_CTRL(h)&t;(IDENT_ADDR + 0xf9e0000100UL + HOSE(h))
+mdefine_line|#define MCPCIA_CAP_CTRL(m)&t;(MCPCIA_CSR(m) + 0x100)
 DECL|macro|MCPCIA_HAE_MEM
-mdefine_line|#define MCPCIA_HAE_MEM(h)&t;(IDENT_ADDR + 0xf9e0000400UL + HOSE(h))
+mdefine_line|#define MCPCIA_HAE_MEM(m)&t;(MCPCIA_CSR(m) + 0x400)
 DECL|macro|MCPCIA_HAE_IO
-mdefine_line|#define MCPCIA_HAE_IO(h)&t;(IDENT_ADDR + 0xf9e0000440UL + HOSE(h))
-macro_line|#if 0
-mdefine_line|#define MCPCIA_IACK_SC(h)&t;(IDENT_ADDR + 0xf9e0000480UL + HOSE(h))
-macro_line|#endif
+mdefine_line|#define MCPCIA_HAE_IO(m)&t;(MCPCIA_CSR(m) + 0x440)
+DECL|macro|_MCPCIA_IACK_SC
+mdefine_line|#define _MCPCIA_IACK_SC(m)&t;(MCPCIA_CSR(m) + 0x480)
 DECL|macro|MCPCIA_HAE_DENSE
-mdefine_line|#define MCPCIA_HAE_DENSE(h)&t;(IDENT_ADDR + 0xf9e00004c0UL + HOSE(h))
+mdefine_line|#define MCPCIA_HAE_DENSE(m)&t;(MCPCIA_CSR(m) + 0x4C0)
 multiline_comment|/*&n; * Interrupt Control registers&n; */
 DECL|macro|MCPCIA_INT_CTL
-mdefine_line|#define MCPCIA_INT_CTL(h)&t;(IDENT_ADDR + 0xf9e0000500UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_CTL(m)&t;(MCPCIA_CSR(m) + 0x500)
 DECL|macro|MCPCIA_INT_REQ
-mdefine_line|#define MCPCIA_INT_REQ(h)&t;(IDENT_ADDR + 0xf9e0000540UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_REQ(m)&t;(MCPCIA_CSR(m) + 0x540)
 DECL|macro|MCPCIA_INT_TARG
-mdefine_line|#define MCPCIA_INT_TARG(h)&t;(IDENT_ADDR + 0xf9e0000580UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_TARG(m)&t;(MCPCIA_CSR(m) + 0x580)
 DECL|macro|MCPCIA_INT_ADR
-mdefine_line|#define MCPCIA_INT_ADR(h)&t;(IDENT_ADDR + 0xf9e00005c0UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_ADR(m)&t;(MCPCIA_CSR(m) + 0x5C0)
 DECL|macro|MCPCIA_INT_ADR_EXT
-mdefine_line|#define MCPCIA_INT_ADR_EXT(h)&t;(IDENT_ADDR + 0xf9e0000600UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_ADR_EXT(m)&t;(MCPCIA_CSR(m) + 0x600)
 DECL|macro|MCPCIA_INT_MASK0
-mdefine_line|#define MCPCIA_INT_MASK0(h)&t;(IDENT_ADDR + 0xf9e0000640UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_MASK0(m)&t;(MCPCIA_CSR(m) + 0x640)
 DECL|macro|MCPCIA_INT_MASK1
-mdefine_line|#define MCPCIA_INT_MASK1(h)&t;(IDENT_ADDR + 0xf9e0000680UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_MASK1(m)&t;(MCPCIA_CSR(m) + 0x680)
 DECL|macro|MCPCIA_INT_ACK0
-mdefine_line|#define MCPCIA_INT_ACK0(h)&t;(IDENT_ADDR + 0xf9f0003f00UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_ACK0(m)&t;(MCPCIA_CSR(m) + 0x10003f00)
 DECL|macro|MCPCIA_INT_ACK1
-mdefine_line|#define MCPCIA_INT_ACK1(h)&t;(IDENT_ADDR + 0xf9e0003f40UL + HOSE(h))
+mdefine_line|#define MCPCIA_INT_ACK1(m)&t;(MCPCIA_CSR(m) + 0x10003f40)
 multiline_comment|/*&n; * Performance Monitor registers&n; */
-DECL|macro|MCPCIA_PERF_MONITOR
-mdefine_line|#define MCPCIA_PERF_MONITOR(h)&t;(IDENT_ADDR + 0xf9e0000300UL + HOSE(h))
-DECL|macro|MCPCIA_PERF_CONTROL
-mdefine_line|#define MCPCIA_PERF_CONTROL(h)&t;(IDENT_ADDR + 0xf9e0000340UL + HOSE(h))
+DECL|macro|MCPCIA_PERF_MON
+mdefine_line|#define MCPCIA_PERF_MON(m)&t;(MCPCIA_CSR(m) + 0x300)
+DECL|macro|MCPCIA_PERF_CONT
+mdefine_line|#define MCPCIA_PERF_CONT(m)&t;(MCPCIA_CSR(m) + 0x340)
 multiline_comment|/*&n; * Diagnostic Registers&n; */
 DECL|macro|MCPCIA_CAP_DIAG
-mdefine_line|#define MCPCIA_CAP_DIAG(h)&t;(IDENT_ADDR + 0xf9e0000700UL + HOSE(h))
+mdefine_line|#define MCPCIA_CAP_DIAG(m)&t;(MCPCIA_CSR(m) + 0x700)
 DECL|macro|MCPCIA_TOP_OF_MEM
-mdefine_line|#define MCPCIA_TOP_OF_MEM(h)&t;(IDENT_ADDR + 0xf9e00007c0UL + HOSE(h))
+mdefine_line|#define MCPCIA_TOP_OF_MEM(m)&t;(MCPCIA_CSR(m) + 0x7C0)
 multiline_comment|/*&n; * Error registers&n; */
 DECL|macro|MCPCIA_MC_ERR0
-mdefine_line|#define MCPCIA_MC_ERR0(h)&t;(IDENT_ADDR + 0xf9e0000800UL + HOSE(h))
+mdefine_line|#define MCPCIA_MC_ERR0(m)&t;(MCPCIA_CSR(m) + 0x800)
 DECL|macro|MCPCIA_MC_ERR1
-mdefine_line|#define MCPCIA_MC_ERR1(h)&t;(IDENT_ADDR + 0xf9e0000840UL + HOSE(h))
+mdefine_line|#define MCPCIA_MC_ERR1(m)&t;(MCPCIA_CSR(m) + 0x840)
 DECL|macro|MCPCIA_CAP_ERR
-mdefine_line|#define MCPCIA_CAP_ERR(h)&t;(IDENT_ADDR + 0xf9e0000880UL + HOSE(h))
+mdefine_line|#define MCPCIA_CAP_ERR(m)&t;(MCPCIA_CSR(m) + 0x880)
 DECL|macro|MCPCIA_PCI_ERR1
-mdefine_line|#define MCPCIA_PCI_ERR1(h)&t;(IDENT_ADDR + 0xf9e0001040UL + HOSE(h))
+mdefine_line|#define MCPCIA_PCI_ERR1(m)&t;(MCPCIA_CSR(m) + 0x1040)
+DECL|macro|MCPCIA_MDPA_STAT
+mdefine_line|#define MCPCIA_MDPA_STAT(m)&t;(MCPCIA_CSR(m) + 0x4000)
+DECL|macro|MCPCIA_MDPA_SYN
+mdefine_line|#define MCPCIA_MDPA_SYN(m)&t;(MCPCIA_CSR(m) + 0x4040)
+DECL|macro|MCPCIA_MDPA_DIAG
+mdefine_line|#define MCPCIA_MDPA_DIAG(m)&t;(MCPCIA_CSR(m) + 0x4080)
+DECL|macro|MCPCIA_MDPB_STAT
+mdefine_line|#define MCPCIA_MDPB_STAT(m)&t;(MCPCIA_CSR(m) + 0x8000)
+DECL|macro|MCPCIA_MDPB_SYN
+mdefine_line|#define MCPCIA_MDPB_SYN(m)&t;(MCPCIA_CSR(m) + 0x8040)
+DECL|macro|MCPCIA_MDPB_DIAG
+mdefine_line|#define MCPCIA_MDPB_DIAG(m)&t;(MCPCIA_CSR(m) + 0x8080)
 multiline_comment|/*&n; * PCI Address Translation Registers.&n; */
 DECL|macro|MCPCIA_SG_TBIA
-mdefine_line|#define MCPCIA_SG_TBIA(h)&t;(IDENT_ADDR + 0xf9e0001300UL + HOSE(h))
+mdefine_line|#define MCPCIA_SG_TBIA(m)&t;(MCPCIA_CSR(m) + 0x1300)
 DECL|macro|MCPCIA_HBASE
-mdefine_line|#define MCPCIA_HBASE(h)&t;&t;(IDENT_ADDR + 0xf9e0001340UL + HOSE(h))
+mdefine_line|#define MCPCIA_HBASE(m)&t;&t;(MCPCIA_CSR(m) + 0x1340)
 DECL|macro|MCPCIA_W0_BASE
-mdefine_line|#define MCPCIA_W0_BASE(h)&t;(IDENT_ADDR + 0xf9e0001400UL + HOSE(h))
+mdefine_line|#define MCPCIA_W0_BASE(m)&t;(MCPCIA_CSR(m) + 0x1400)
 DECL|macro|MCPCIA_W0_MASK
-mdefine_line|#define MCPCIA_W0_MASK(h)&t;(IDENT_ADDR + 0xf9e0001440UL + HOSE(h))
+mdefine_line|#define MCPCIA_W0_MASK(m)&t;(MCPCIA_CSR(m) + 0x1440)
 DECL|macro|MCPCIA_T0_BASE
-mdefine_line|#define MCPCIA_T0_BASE(h)&t;(IDENT_ADDR + 0xf9e0001480UL + HOSE(h))
+mdefine_line|#define MCPCIA_T0_BASE(m)&t;(MCPCIA_CSR(m) + 0x1480)
 DECL|macro|MCPCIA_W1_BASE
-mdefine_line|#define MCPCIA_W1_BASE(h)&t;(IDENT_ADDR + 0xf9e0001500UL + HOSE(h))
+mdefine_line|#define MCPCIA_W1_BASE(m)&t;(MCPCIA_CSR(m) + 0x1500)
 DECL|macro|MCPCIA_W1_MASK
-mdefine_line|#define MCPCIA_W1_MASK(h)&t;(IDENT_ADDR + 0xf9e0001540UL + HOSE(h))
+mdefine_line|#define MCPCIA_W1_MASK(m)&t;(MCPCIA_CSR(m) + 0x1540)
 DECL|macro|MCPCIA_T1_BASE
-mdefine_line|#define MCPCIA_T1_BASE(h)&t;(IDENT_ADDR + 0xf9e0001580UL + HOSE(h))
+mdefine_line|#define MCPCIA_T1_BASE(m)&t;(MCPCIA_CSR(m) + 0x1580)
 DECL|macro|MCPCIA_W2_BASE
-mdefine_line|#define MCPCIA_W2_BASE(h)&t;(IDENT_ADDR + 0xf9e0001600UL + HOSE(h))
+mdefine_line|#define MCPCIA_W2_BASE(m)&t;(MCPCIA_CSR(m) + 0x1600)
 DECL|macro|MCPCIA_W2_MASK
-mdefine_line|#define MCPCIA_W2_MASK(h)&t;(IDENT_ADDR + 0xf9e0001640UL + HOSE(h))
+mdefine_line|#define MCPCIA_W2_MASK(m)&t;(MCPCIA_CSR(m) + 0x1640)
 DECL|macro|MCPCIA_T2_BASE
-mdefine_line|#define MCPCIA_T2_BASE(h)&t;(IDENT_ADDR + 0xf9e0001680UL + HOSE(h))
+mdefine_line|#define MCPCIA_T2_BASE(m)&t;(MCPCIA_CSR(m) + 0x1680)
 DECL|macro|MCPCIA_W3_BASE
-mdefine_line|#define MCPCIA_W3_BASE(h)&t;(IDENT_ADDR + 0xf9e0001700UL + HOSE(h))
+mdefine_line|#define MCPCIA_W3_BASE(m)&t;(MCPCIA_CSR(m) + 0x1700)
 DECL|macro|MCPCIA_W3_MASK
-mdefine_line|#define MCPCIA_W3_MASK(h)&t;(IDENT_ADDR + 0xf9e0001740UL + HOSE(h))
+mdefine_line|#define MCPCIA_W3_MASK(m)&t;(MCPCIA_CSR(m) + 0x1740)
 DECL|macro|MCPCIA_T3_BASE
-mdefine_line|#define MCPCIA_T3_BASE(h)&t;(IDENT_ADDR + 0xf9e0001780UL + HOSE(h))
-multiline_comment|/*&n; * Memory spaces:&n; */
-DECL|macro|MCPCIA_CONF
-mdefine_line|#define MCPCIA_CONF(h)&t;&t;(IDENT_ADDR + 0xf9c0000000UL + HOSE(h))
-DECL|macro|MCPCIA_IO
-mdefine_line|#define MCPCIA_IO(h)&t;&t;(IDENT_ADDR + 0xf980000000UL + HOSE(h))
-DECL|macro|MCPCIA_SPARSE
-mdefine_line|#define MCPCIA_SPARSE(h)&t;(IDENT_ADDR + 0xf800000000UL + HOSE(h))
-DECL|macro|MCPCIA_DENSE
-mdefine_line|#define MCPCIA_DENSE(h)&t;&t;(IDENT_ADDR + 0xf900000000UL + HOSE(h))
-DECL|macro|_MCPCIA_IACK_SC
-mdefine_line|#define _MCPCIA_IACK_SC(h)&t;(IDENT_ADDR + 0xf9f0003f00UL + HOSE(h))
+mdefine_line|#define MCPCIA_T3_BASE(m)&t;(MCPCIA_CSR(m) + 0x1780)
+multiline_comment|/* Hack!  Only words for bus 0.  */
+macro_line|#if !MCPCIA_ONE_HAE_WINDOW
 DECL|macro|MCPCIA_HAE_ADDRESS
-mdefine_line|#define MCPCIA_HAE_ADDRESS&t;MCPCIA_HAE_MEM(0)
+mdefine_line|#define MCPCIA_HAE_ADDRESS&t;MCPCIA_HAE_MEM(4)
+macro_line|#endif
 DECL|macro|MCPCIA_IACK_SC
-mdefine_line|#define MCPCIA_IACK_SC&t;&t;_MCPCIA_IACK_SC(0)
+mdefine_line|#define MCPCIA_IACK_SC&t;&t;_MCPCIA_IACK_SC(4)
+multiline_comment|/* &n; * The canonical non-remaped I/O and MEM addresses have these values&n; * subtracted out.  This is arranged so that folks manipulating ISA&n; * devices can use their familiar numbers and have them map to bus 0.&n; */
+DECL|macro|MCPCIA_IO_BIAS
+mdefine_line|#define MCPCIA_IO_BIAS&t;&t;MCPCIA_IO(4)
+DECL|macro|MCPCIA_MEM_BIAS
+mdefine_line|#define MCPCIA_MEM_BIAS&t;&t;MCPCIA_DENSE(4)
 multiline_comment|/*&n; * Data structure for handling MCPCIA machine checks:&n; */
 DECL|struct|el_MCPCIA_uncorrected_frame_mcheck
 r_struct
@@ -222,24 +239,29 @@ id|in_addr
 r_int
 r_int
 id|addr
+comma
+id|hose
+comma
+id|result
+suffix:semicolon
+id|addr
 op_assign
 id|in_addr
 op_amp
-l_int|0xffffffffUL
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffUL
 suffix:semicolon
-r_int
+multiline_comment|/* ??? I wish I could get rid of this.  But there&squot;s no ioremap&n;&t;   equivalent for I/O space.  PCI I/O can be forced into the&n;&t;   correct hose&squot;s I/O region, but that doesn&squot;t take care of&n;&t;   legacy ISA crap.  */
+id|hose
+op_add_assign
+id|MCPCIA_IO_BIAS
+suffix:semicolon
 id|result
 op_assign
 op_star
@@ -253,11 +275,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_IO
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x00
 )paren
@@ -292,26 +310,27 @@ id|in_addr
 r_int
 r_int
 id|addr
+comma
+id|hose
+comma
+id|w
+suffix:semicolon
+id|addr
 op_assign
 id|in_addr
 op_amp
-l_int|0xffffffffUL
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
-id|w
+id|hose
+op_add_assign
+id|MCPCIA_IO_BIAS
 suffix:semicolon
 id|w
 op_assign
@@ -336,11 +355,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_IO
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x00
 )paren
@@ -368,24 +383,28 @@ id|in_addr
 r_int
 r_int
 id|addr
+comma
+id|hose
+comma
+id|result
+suffix:semicolon
+id|addr
 op_assign
 id|in_addr
 op_amp
-l_int|0xffffffffUL
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffUL
 suffix:semicolon
-r_int
+id|hose
+op_add_assign
+id|MCPCIA_IO_BIAS
+suffix:semicolon
 id|result
 op_assign
 op_star
@@ -399,11 +418,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_IO
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x08
 )paren
@@ -438,26 +453,27 @@ id|in_addr
 r_int
 r_int
 id|addr
+comma
+id|hose
+comma
+id|w
+suffix:semicolon
+id|addr
 op_assign
 id|in_addr
 op_amp
-l_int|0xffffffffUL
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
-id|w
+id|hose
+op_add_assign
+id|MCPCIA_IO_BIAS
 suffix:semicolon
 id|w
 op_assign
@@ -482,11 +498,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_IO
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x08
 )paren
@@ -514,22 +526,25 @@ id|in_addr
 r_int
 r_int
 id|addr
+comma
+id|hose
+suffix:semicolon
+id|addr
 op_assign
 id|in_addr
 op_amp
-l_int|0xffffffffUL
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffUL
+suffix:semicolon
+id|hose
+op_add_assign
+id|MCPCIA_IO_BIAS
 suffix:semicolon
 r_return
 op_star
@@ -543,11 +558,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_IO
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x18
 )paren
@@ -571,22 +582,25 @@ id|in_addr
 r_int
 r_int
 id|addr
+comma
+id|hose
+suffix:semicolon
+id|addr
 op_assign
 id|in_addr
 op_amp
-l_int|0xffffffffUL
+l_int|0xffffUL
 suffix:semicolon
-r_int
-r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffUL
+suffix:semicolon
+id|hose
+op_add_assign
+id|MCPCIA_IO_BIAS
 suffix:semicolon
 op_star
 (paren
@@ -599,11 +613,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_IO
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x18
 )paren
@@ -626,37 +636,13 @@ c_func
 (paren
 r_int
 r_int
-id|in_addr
+id|addr
 )paren
 (brace
-r_int
-r_int
-id|addr
-op_assign
-id|in_addr
-op_amp
-l_int|0xffffffffUL
-suffix:semicolon
-r_int
-r_int
-id|hose
-op_assign
-(paren
-id|in_addr
-op_rshift
-l_int|32
-)paren
-op_amp
-l_int|3
-suffix:semicolon
 r_return
 id|addr
 op_plus
-id|MCPCIA_DENSE
-c_func
-(paren
-id|hose
-)paren
+id|MCPCIA_MEM_BIAS
 suffix:semicolon
 )brace
 DECL|function|mcpcia_is_ioaddr
@@ -673,369 +659,12 @@ id|addr
 r_return
 id|addr
 op_ge
-id|IDENT_ADDR
-op_plus
-l_int|0x8000000000UL
-suffix:semicolon
-)brace
-DECL|function|mcpcia_srm_base
-id|__EXTERN_INLINE
-r_int
-r_int
-id|mcpcia_srm_base
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|mask
-comma
-id|base
-suffix:semicolon
-r_int
-r_int
-id|hose
-op_assign
-(paren
-id|addr
-op_rshift
-l_int|32
-)paren
-op_amp
-l_int|3
-suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-id|addr
-op_and_assign
-l_int|0xfffffffful
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|addr
-op_ge
-id|alpha_mv.sm_base_r1
-op_logical_and
-id|addr
-op_le
-id|alpha_mv.sm_base_r1
-op_plus
-id|MCPCIA_MEM_MASK
-)paren
-(brace
-id|mask
-op_assign
-id|MCPCIA_MEM_MASK
-suffix:semicolon
-id|base
-op_assign
 id|MCPCIA_SPARSE
 c_func
 (paren
-id|hose
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;mcpcia: address 0x%lx not covered by HAE&bslash;n&quot;
-comma
-id|addr
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_return
-(paren
-(paren
-id|addr
-op_amp
-id|mask
-)paren
-op_lshift
-l_int|5
-)paren
-op_plus
-id|base
-suffix:semicolon
-)brace
-DECL|function|mcpcia_srm_readb
-id|__EXTERN_INLINE
-r_int
-r_int
-id|mcpcia_srm_readb
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|result
-comma
-id|work
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|work
-op_assign
-id|mcpcia_srm_base
-c_func
-(paren
-id|addr
-)paren
-)paren
-op_eq
 l_int|0
 )paren
-r_return
-l_int|0xff
 suffix:semicolon
-id|work
-op_add_assign
-l_int|0x00
-suffix:semicolon
-multiline_comment|/* add transfer length */
-id|result
-op_assign
-op_star
-(paren
-id|vip
-)paren
-id|work
-suffix:semicolon
-r_return
-id|__kernel_extbl
-c_func
-(paren
-id|result
-comma
-id|addr
-op_amp
-l_int|3
-)paren
-suffix:semicolon
-)brace
-DECL|function|mcpcia_srm_readw
-id|__EXTERN_INLINE
-r_int
-r_int
-id|mcpcia_srm_readw
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|result
-comma
-id|work
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|work
-op_assign
-id|mcpcia_srm_base
-c_func
-(paren
-id|addr
-)paren
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0xffff
-suffix:semicolon
-id|work
-op_add_assign
-l_int|0x08
-suffix:semicolon
-multiline_comment|/* add transfer length */
-id|result
-op_assign
-op_star
-(paren
-id|vip
-)paren
-id|work
-suffix:semicolon
-r_return
-id|__kernel_extwl
-c_func
-(paren
-id|result
-comma
-id|addr
-op_amp
-l_int|3
-)paren
-suffix:semicolon
-)brace
-DECL|function|mcpcia_srm_writeb
-id|__EXTERN_INLINE
-r_void
-id|mcpcia_srm_writeb
-c_func
-(paren
-r_int
-r_char
-id|b
-comma
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|w
-comma
-id|work
-op_assign
-id|mcpcia_srm_base
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|work
-)paren
-(brace
-id|work
-op_add_assign
-l_int|0x00
-suffix:semicolon
-multiline_comment|/* add transfer length */
-id|w
-op_assign
-id|__kernel_insbl
-c_func
-(paren
-id|b
-comma
-id|addr
-op_amp
-l_int|3
-)paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|work
-op_assign
-id|w
-suffix:semicolon
-)brace
-)brace
-DECL|function|mcpcia_srm_writew
-id|__EXTERN_INLINE
-r_void
-id|mcpcia_srm_writew
-c_func
-(paren
-r_int
-r_int
-id|b
-comma
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|w
-comma
-id|work
-op_assign
-id|mcpcia_srm_base
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|work
-)paren
-(brace
-id|work
-op_add_assign
-l_int|0x08
-suffix:semicolon
-multiline_comment|/* add transfer length */
-id|w
-op_assign
-id|__kernel_inswl
-c_func
-(paren
-id|b
-comma
-id|addr
-op_amp
-l_int|3
-)paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|work
-op_assign
-id|w
-suffix:semicolon
-)brace
 )brace
 DECL|function|mcpcia_readb
 id|__EXTERN_INLINE
@@ -1049,7 +678,6 @@ r_int
 id|in_addr
 )paren
 (brace
-multiline_comment|/* Note that MCPCIA_DENSE(hose) has no bits not masked here, and&n;&t;   that the hose calculation is still correct.  */
 r_int
 r_int
 id|addr
@@ -1062,61 +690,27 @@ r_int
 r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffffffUL
 suffix:semicolon
 r_int
 r_int
 id|result
 comma
-id|msb
-comma
 id|work
-comma
-id|temp
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|in_addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
+macro_line|#if !MCPCIA_ONE_HAE_WINDOW
+r_int
+r_int
+id|msb
 suffix:semicolon
-)brace
-macro_line|#endif
 id|msb
 op_assign
 id|addr
 op_amp
 op_complement
-id|MCPCIA_MEM_MASK
-suffix:semicolon
-id|temp
-op_assign
-id|addr
-op_amp
 id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|set_hae
@@ -1125,20 +719,39 @@ c_func
 id|msb
 )paren
 suffix:semicolon
-id|work
+macro_line|#endif
+id|addr
 op_assign
+id|addr
+op_amp
+id|MCPCIA_MEM_MASK
+suffix:semicolon
+id|hose
+op_assign
+id|hose
+op_minus
+id|MCPCIA_DENSE
+c_func
 (paren
-(paren
-id|temp
-op_lshift
-l_int|5
+l_int|4
 )paren
 op_plus
 id|MCPCIA_SPARSE
 c_func
 (paren
-id|hose
+l_int|4
 )paren
+suffix:semicolon
+id|work
+op_assign
+(paren
+(paren
+id|addr
+op_lshift
+l_int|5
+)paren
+op_plus
+id|hose
 op_plus
 l_int|0x00
 )paren
@@ -1175,7 +788,6 @@ r_int
 id|in_addr
 )paren
 (brace
-multiline_comment|/* Note that MCPCIA_DENSE(hose) has no bits not masked here, and&n;&t;   that the hose calculation is still correct.  */
 r_int
 r_int
 id|addr
@@ -1188,61 +800,27 @@ r_int
 r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffffffUL
 suffix:semicolon
 r_int
 r_int
 id|result
 comma
-id|msb
-comma
 id|work
-comma
-id|temp
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|in_addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
+macro_line|#if !MCPCIA_ONE_HAE_WINDOW
+r_int
+r_int
+id|msb
 suffix:semicolon
-)brace
-macro_line|#endif
 id|msb
 op_assign
 id|addr
 op_amp
 op_complement
-id|MCPCIA_MEM_MASK
-suffix:semicolon
-id|temp
-op_assign
-id|addr
-op_amp
 id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|set_hae
@@ -1251,20 +829,39 @@ c_func
 id|msb
 )paren
 suffix:semicolon
-id|work
+macro_line|#endif
+id|addr
 op_assign
+id|addr
+op_amp
+id|MCPCIA_MEM_MASK
+suffix:semicolon
+id|hose
+op_assign
+id|hose
+op_minus
+id|MCPCIA_DENSE
+c_func
 (paren
-(paren
-id|temp
-op_lshift
-l_int|5
+l_int|4
 )paren
 op_plus
 id|MCPCIA_SPARSE
 c_func
 (paren
-id|hose
+l_int|4
 )paren
+suffix:semicolon
+id|work
+op_assign
+(paren
+(paren
+id|addr
+op_lshift
+l_int|5
+)paren
+op_plus
+id|hose
 op_plus
 l_int|0x08
 )paren
@@ -1304,7 +901,6 @@ r_int
 id|in_addr
 )paren
 (brace
-multiline_comment|/* Note that MCPCIA_DENSE(hose) has no bits not masked here, and&n;&t;   that the hose calculation is still correct.  */
 r_int
 r_int
 id|addr
@@ -1317,46 +913,20 @@ r_int
 r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffffffUL
 suffix:semicolon
+r_int
+r_int
+id|w
+suffix:semicolon
+macro_line|#if !MCPCIA_ONE_HAE_WINDOW
 r_int
 r_int
 id|msb
-comma
-id|w
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|in_addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|msb
 op_assign
 id|addr
@@ -1364,15 +934,18 @@ op_amp
 op_complement
 id|MCPCIA_MEM_MASK
 suffix:semicolon
-id|addr
-op_and_assign
-id|MCPCIA_MEM_MASK
-suffix:semicolon
 id|set_hae
 c_func
 (paren
 id|msb
 )paren
+suffix:semicolon
+macro_line|#endif
+id|addr
+op_assign
+id|addr
+op_amp
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|w
 op_assign
@@ -1386,6 +959,22 @@ op_amp
 l_int|3
 )paren
 suffix:semicolon
+id|hose
+op_assign
+id|hose
+op_minus
+id|MCPCIA_DENSE
+c_func
+(paren
+l_int|4
+)paren
+op_plus
+id|MCPCIA_SPARSE
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
@@ -1397,11 +986,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_SPARSE
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x00
 )paren
@@ -1424,7 +1009,6 @@ r_int
 id|in_addr
 )paren
 (brace
-multiline_comment|/* Note that MCPCIA_DENSE(hose) has no bits not masked here, and&n;&t;   that the hose calculation is still correct.  */
 r_int
 r_int
 id|addr
@@ -1437,46 +1021,20 @@ r_int
 r_int
 id|hose
 op_assign
-(paren
 id|in_addr
-op_rshift
-l_int|32
-)paren
 op_amp
-l_int|3
+op_complement
+l_int|0xffffffffUL
 suffix:semicolon
+r_int
+r_int
+id|w
+suffix:semicolon
+macro_line|#if !MCPCIA_ONE_HAE_WINDOW
 r_int
 r_int
 id|msb
-comma
-id|w
 suffix:semicolon
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|in_addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|msb
 op_assign
 id|addr
@@ -1484,15 +1042,18 @@ op_amp
 op_complement
 id|MCPCIA_MEM_MASK
 suffix:semicolon
-id|addr
-op_and_assign
-id|MCPCIA_MEM_MASK
-suffix:semicolon
 id|set_hae
 c_func
 (paren
 id|msb
 )paren
+suffix:semicolon
+macro_line|#endif
+id|addr
+op_assign
+id|addr
+op_amp
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|w
 op_assign
@@ -1506,6 +1067,22 @@ op_amp
 l_int|3
 )paren
 suffix:semicolon
+id|hose
+op_assign
+id|hose
+op_minus
+id|MCPCIA_DENSE
+c_func
+(paren
+l_int|4
+)paren
+op_plus
+id|MCPCIA_SPARSE
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
 op_star
 (paren
 id|vuip
@@ -1517,11 +1094,7 @@ op_lshift
 l_int|5
 )paren
 op_plus
-id|MCPCIA_SPARSE
-c_func
-(paren
 id|hose
-)paren
 op_plus
 l_int|0x08
 )paren
@@ -1541,40 +1114,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|mcpcia_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -1595,40 +1134,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|mcpcia_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -1652,40 +1157,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|mcpcia_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vuip
@@ -1710,40 +1181,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;mcpcia: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|mcpcia_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vulp
@@ -1780,25 +1217,14 @@ DECL|macro|__outw
 mdefine_line|#define __outw&t;&t;mcpcia_outw
 DECL|macro|__outl
 mdefine_line|#define __outl&t;&t;mcpcia_outl
-macro_line|#ifdef CONFIG_ALPHA_SRM_SETUP
 DECL|macro|__readb
-macro_line|# define __readb&t;mcpcia_srm_readb
+mdefine_line|#define __readb&t;&t;mcpcia_readb
 DECL|macro|__readw
-macro_line|# define __readw&t;mcpcia_srm_readw
+mdefine_line|#define __readw&t;&t;mcpcia_readw
 DECL|macro|__writeb
-macro_line|# define __writeb&t;mcpcia_srm_writeb
+mdefine_line|#define __writeb&t;mcpcia_writeb
 DECL|macro|__writew
-macro_line|# define __writew&t;mcpcia_srm_writew
-macro_line|#else
-DECL|macro|__readb
-macro_line|# define __readb&t;mcpcia_readb
-DECL|macro|__readw
-macro_line|# define __readw&t;mcpcia_readw
-DECL|macro|__writeb
-macro_line|# define __writeb&t;mcpcia_writeb
-DECL|macro|__writew
-macro_line|# define __writew&t;mcpcia_writew
-macro_line|#endif
+mdefine_line|#define __writew&t;mcpcia_writew
 DECL|macro|__readl
 mdefine_line|#define __readl&t;&t;mcpcia_readl
 DECL|macro|__readq
@@ -1815,7 +1241,6 @@ DECL|macro|inb
 macro_line|# define inb(port) &bslash;&n;  (__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
 macro_line|# define outb(x, port) &bslash;&n;  (__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
-macro_line|#if !__DEBUG_IOREMAP
 DECL|macro|__raw_readl
 mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
 DECL|macro|__raw_readq
@@ -1824,7 +1249,6 @@ DECL|macro|__raw_writel
 mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
 DECL|macro|__raw_writeq
 mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
-macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

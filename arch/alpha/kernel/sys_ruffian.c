@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_ruffian.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&n; * Code supporting the RUFFIAN.&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_ruffian.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the RUFFIAN.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -15,9 +15,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_pyxis.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
-macro_line|#include &quot;bios32.h&quot;
-macro_line|#include &quot;machvec.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
+macro_line|#include &quot;pci_impl.h&quot;
+macro_line|#include &quot;machvec_impl.h&quot;
 r_static
 r_void
 DECL|function|ruffian_update_irq_hw
@@ -593,19 +593,6 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* enable 2nd PIC cascade */
 )brace
-multiline_comment|/*&n; * For RUFFIAN, we do not want to make any modifications to the PCI&n; * setup.  But we may need to do some kind of init.&n; */
-r_static
-r_void
-id|__init
-DECL|function|ruffian_pci_fixup
-id|ruffian_pci_fixup
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* layout_all_busses(DEFAULT_IO_BASE, DEFAULT_MEM_BASE); */
-)brace
 macro_line|#ifdef BUILDING_FOR_MILO
 multiline_comment|/*&n; * The DeskStation Ruffian motherboard firmware does not place&n; * the memory size in the PALimpure area.  Therefore, we use&n; * the Bank Configuration Registers in PYXIS to obtain the size.&n; */
 r_static
@@ -738,92 +725,12 @@ suffix:semicolon
 macro_line|#endif /* BUILDING_FOR_MILO */
 r_static
 r_void
-id|__init
-DECL|function|ruffian_init_arch
-id|ruffian_init_arch
-c_func
-(paren
-r_int
-r_int
-op_star
-id|mem_start
-comma
-r_int
-r_int
-op_star
-id|mem_end
-)paren
-(brace
-multiline_comment|/* FIXME: What do we do with ruffian_get_bank_size above?  */
-macro_line|#if 1
-id|pyxis_init_arch
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#else
-id|pyxis_enable_errors
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pyxis_srm_window_setup
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ruffian_init_arch: Skipping window register rewrites.&quot;
-l_string|&quot;&bslash;n... Trust DeskStation firmware!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|pyxis_finish_init_arch
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_static
-r_void
 DECL|function|ruffian_init_pit
 id|ruffian_init_pit
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/* Ruffian depends on the system timer established in MILO! */
-id|timer_resource.start
-op_assign
-l_int|0x70
-suffix:semicolon
-id|timer_resource.end
-op_assign
-l_int|0x70
-op_plus
-l_int|0x10
-suffix:semicolon
-id|request_resource
-c_func
-(paren
-op_amp
-id|ioport_resource
-comma
-op_amp
-id|timer_resource
-)paren
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -880,13 +787,37 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|generic_kill_arch
+id|common_kill_arch
 c_func
 (paren
 id|mode
 comma
 id|reboot_cmd
 )paren
+suffix:semicolon
+)brace
+r_static
+r_int
+id|__init
+DECL|function|ruffian_map_irq
+id|ruffian_map_irq
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+id|u8
+id|slot
+comma
+id|u8
+id|pin
+)paren
+(brace
+multiline_comment|/* We don&squot;t know anything about the PCI routing, so leave&n;&t;   the IRQ unchanged.  */
+r_return
+id|dev-&gt;irq
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The System Vector&n; */
@@ -905,16 +836,7 @@ id|DO_EV5_MMU
 comma
 id|DO_DEFAULT_RTC
 comma
-multiline_comment|/* For the moment, do not use BWIO on RUFFIAN.  */
-id|IO
-c_func
-(paren
-id|PYXIS
-comma
-id|pyxis
-comma
-id|pyxis
-)paren
+id|DO_PYXIS_IO
 comma
 id|DO_PYXIS_BUS
 comma
@@ -925,6 +847,14 @@ comma
 id|max_dma_address
 suffix:colon
 id|ALPHA_RUFFIAN_MAX_DMA_ADDRESS
+comma
+id|min_io_address
+suffix:colon
+id|DEFAULT_IO_BASE
+comma
+id|min_mem_address
+suffix:colon
+id|DEFAULT_MEM_BASE
 comma
 id|nr_irqs
 suffix:colon
@@ -948,7 +878,7 @@ id|ruffian_device_interrupt
 comma
 id|init_arch
 suffix:colon
-id|ruffian_init_arch
+id|pyxis_init_arch
 comma
 id|init_irq
 suffix:colon
@@ -958,13 +888,21 @@ id|init_pit
 suffix:colon
 id|ruffian_init_pit
 comma
-id|pci_fixup
+id|init_pci
 suffix:colon
-id|ruffian_pci_fixup
+id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
 id|ruffian_kill_arch
+comma
+id|pci_map_irq
+suffix:colon
+id|ruffian_map_irq
+comma
+id|pci_swizzle
+suffix:colon
+id|common_swizzle
 comma
 )brace
 suffix:semicolon

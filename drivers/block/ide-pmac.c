@@ -120,7 +120,7 @@ id|idepmac_notify
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
-multiline_comment|/*&n; * N.B. this can&squot;t be an initfunc, because the media-bay task can&n; * call ide_[un]register at any time.&n; */
+multiline_comment|/*&n; * N.B. this can&squot;t be an __init, because the media-bay task can&n; * call ide_[un]register at any time.&n; */
 DECL|function|pmac_ide_init_hwif_ports
 r_void
 id|pmac_ide_init_hwif_ports

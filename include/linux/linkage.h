@@ -15,6 +15,23 @@ macro_line|#else
 DECL|macro|asmlinkage
 mdefine_line|#define asmlinkage CPP_ASMLINKAGE
 macro_line|#endif
+macro_line|#ifdef __sh__
+DECL|macro|STRINGIFY
+mdefine_line|#define STRINGIFY(X) #X
+DECL|macro|SYMBOL_NAME_STR
+mdefine_line|#define SYMBOL_NAME_STR(X) STRINGIFY(SYMBOL_NAME(X))
+macro_line|#ifdef __STDC__
+DECL|macro|SYMBOL_NAME
+mdefine_line|#define SYMBOL_NAME(X) _##X
+DECL|macro|SYMBOL_NAME_LABEL
+mdefine_line|#define SYMBOL_NAME_LABEL(X) _##X##:
+macro_line|#else
+DECL|macro|SYMBOL_NAME
+mdefine_line|#define SYMBOL_NAME(X) _/**/X
+DECL|macro|SYMBOL_NAME_LABEL
+mdefine_line|#define SYMBOL_NAME_LABEL(X) _/**/X/**/:
+macro_line|#endif
+macro_line|#else
 DECL|macro|SYMBOL_NAME_STR
 mdefine_line|#define SYMBOL_NAME_STR(X) #X
 DECL|macro|SYMBOL_NAME
@@ -25,6 +42,7 @@ mdefine_line|#define SYMBOL_NAME_LABEL(X) X##:
 macro_line|#else
 DECL|macro|SYMBOL_NAME_LABEL
 mdefine_line|#define SYMBOL_NAME_LABEL(X) X/**/:
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef __arm__
 DECL|macro|__ALIGN
@@ -38,6 +56,12 @@ mdefine_line|#define __ALIGN .align 4
 DECL|macro|__ALIGN_STR
 mdefine_line|#define __ALIGN_STR &quot;.align 4&quot;
 macro_line|#else
+macro_line|#ifdef __sh__
+DECL|macro|__ALIGN
+mdefine_line|#define __ALIGN .balign 4
+DECL|macro|__ALIGN_STR
+mdefine_line|#define __ALIGN_STR &quot;.balign 4&quot;
+macro_line|#else
 macro_line|#if !defined(__i486__) &amp;&amp; !defined(__i586__)
 DECL|macro|__ALIGN
 mdefine_line|#define __ALIGN .align 4,0x90
@@ -49,6 +73,7 @@ mdefine_line|#define __ALIGN .align 16,0x90
 DECL|macro|__ALIGN_STR
 mdefine_line|#define __ALIGN_STR &quot;.align 16,0x90&quot;
 macro_line|#endif /* __i486__/__i586__ */
+macro_line|#endif /* __sh__ */
 macro_line|#endif /* __mc68000__ */
 macro_line|#endif /* __arm__ */
 macro_line|#ifdef __ASSEMBLY__

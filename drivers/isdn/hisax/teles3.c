@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teles3.c,v 2.12 1999/07/12 21:05:32 keil Exp $&n;&n; * teles3.c     low level stuff for Teles 16.3 &amp; PNP isdn cards&n; *&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * $Log: teles3.c,v $&n; * Revision 2.12  1999/07/12 21:05:32  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.11  1999/07/01 08:12:14  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.10  1999/02/15 14:37:15  cpetig&n; * oops, missed something in last commit&n; *&n; * Revision 2.9  1999/02/15 14:11:02  cpetig&n; * fixed a bug with Teles PCMCIA, it doesn&squot;t have a config register&n; *&n; * Revision 2.8  1998/04/15 16:44:30  keil&n; * new init code&n; *&n; * Revision 2.7  1998/02/02 13:29:48  keil&n; * fast io&n; *&n; * Revision 2.6  1997/11/13 16:22:44  keil&n; * COMPAQ_ISA reset&n; *&n; * Revision 2.5  1997/11/12 15:01:25  keil&n; * COMPAQ_ISA changes&n; *&n; * Revision 2.4  1997/11/08 21:35:56  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:09:33  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:59  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:12  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:46  keil&n; * New Layer and card interface&n; *&n; * Revision 1.11  1997/04/13 19:54:05  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.10  1997/04/06 22:54:05  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.9  1997/03/22 02:01:07  fritz&n; * -Reworked toplevel Makefile. From now on, no different Makefiles&n; *  for standalone- and in-kernel-compilation are needed any more.&n; * -Added local Rules.make for above reason.&n; * -Experimental changes in teles3.c for enhanced IRQ-checking with&n; *  2.1.X and SMP kernels.&n; * -Removed diffstd-script, same functionality is in stddiff -r.&n; * -Enhanced scripts std2kern and stddiff.&n; *&n; * Revision 1.8  1997/02/23 18:43:55  fritz&n; * Added support for Teles-Vision.&n; *&n; * Revision 1.7  1997/01/28 22:48:33  keil&n; * fixes for Teles PCMCIA (Christof Petig)&n; *&n; * Revision 1.6  1997/01/27 15:52:55  keil&n; * SMP proof,cosmetics, PCMCIA added&n; *&n; * removed old log info /KKe&n; *&n; */
+multiline_comment|/* $Id: teles3.c,v 2.13 1999/08/30 12:01:28 keil Exp $&n;&n; * teles3.c     low level stuff for Teles 16.3 &amp; PNP isdn cards&n; *&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * $Log: teles3.c,v $&n; * Revision 2.13  1999/08/30 12:01:28  keil&n; * HW version v1.3 support&n; *&n; * Revision 2.12  1999/07/12 21:05:32  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.11  1999/07/01 08:12:14  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.10  1999/02/15 14:37:15  cpetig&n; * oops, missed something in last commit&n; *&n; * Revision 2.9  1999/02/15 14:11:02  cpetig&n; * fixed a bug with Teles PCMCIA, it doesn&squot;t have a config register&n; *&n; * Revision 2.8  1998/04/15 16:44:30  keil&n; * new init code&n; *&n; * Revision 2.7  1998/02/02 13:29:48  keil&n; * fast io&n; *&n; * Revision 2.6  1997/11/13 16:22:44  keil&n; * COMPAQ_ISA reset&n; *&n; * Revision 2.5  1997/11/12 15:01:25  keil&n; * COMPAQ_ISA changes&n; *&n; * Revision 2.4  1997/11/08 21:35:56  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:09:33  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:59  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:12  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:46  keil&n; * New Layer and card interface&n; *&n; * Revision 1.11  1997/04/13 19:54:05  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.10  1997/04/06 22:54:05  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.9  1997/03/22 02:01:07  fritz&n; * -Reworked toplevel Makefile. From now on, no different Makefiles&n; *  for standalone- and in-kernel-compilation are needed any more.&n; * -Added local Rules.make for above reason.&n; * -Experimental changes in teles3.c for enhanced IRQ-checking with&n; *  2.1.X and SMP kernels.&n; * -Removed diffstd-script, same functionality is in stddiff -r.&n; * -Enhanced scripts std2kern and stddiff.&n; *&n; * Revision 1.8  1997/02/23 18:43:55  fritz&n; * Added support for Teles-Vision.&n; *&n; * Revision 1.7  1997/01/28 22:48:33  keil&n; * fixes for Teles PCMCIA (Christof Petig)&n; *&n; * Revision 1.6  1997/01/27 15:52:55  keil&n; * SMP proof,cosmetics, PCMCIA added&n; *&n; * removed old log info /KKe&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|teles3_revision
 op_assign
-l_string|&quot;$Revision: 2.12 $&quot;
+l_string|&quot;$Revision: 2.13 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -2051,7 +2051,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* 0x1e=without AB&n;&t;&t;&t;&t;&t;&t;&t; * 0x1f=with AB&n;&t;&t;&t;&t;&t;&t;&t; * 0x1c 16.3 ???&n;&t;&t;&t;&t;&t;&t;&t; * 0x39 16.3 1.1&n;&t;&t;&t;&t;&t;&t;&t; * 0x46 16.3 with AB + Video (Teles-Vision)&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* 0x1e=without AB&n;&t;&t;&t;&t;&t;&t;&t; * 0x1f=with AB&n;&t;&t;&t;&t;&t;&t;&t; * 0x1c 16.3 ???&n;&t;&t;&t;&t;&t;&t;&t; * 0x39 16.3 1.1&n;&t;&t;&t;&t;&t;&t;&t; * 0x38 16.3 1.3&n;&t;&t;&t;&t;&t;&t;&t; * 0x46 16.3 with AB + Video (Teles-Vision)&n;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2062,6 +2062,10 @@ op_logical_and
 id|val
 op_ne
 l_int|0x39
+op_logical_and
+id|val
+op_ne
+l_int|0x38
 op_logical_and
 id|val
 op_ne

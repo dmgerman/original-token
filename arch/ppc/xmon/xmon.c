@@ -561,12 +561,6 @@ id|msr
 comma
 id|cmd
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Entering xmon kernel debugger.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -581,7 +575,7 @@ r_volatile
 l_string|&quot;stw&t;0,0(%0)&bslash;n&bslash;&n;&t;&t;&t;lwz&t;0,0(1)&bslash;n&bslash;&n;&t;&t;&t;stw&t;0,4(%0)&bslash;n&bslash;&n;&t;&t;&t;stmw&t;2,8(%0)&quot;
 suffix:colon
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;b&quot;
 (paren
 op_amp
 id|regs
@@ -2151,11 +2145,11 @@ id|regs
 suffix:semicolon
 r_extern
 r_char
-id|int_return
+id|ret_from_int
 comma
-id|syscall_ret_1
+id|ret_from_syscall_1
 comma
-id|syscall_ret_2
+id|ret_from_syscall_2
 suffix:semicolon
 r_extern
 r_char
@@ -2164,6 +2158,10 @@ comma
 id|do_bottom_half_ret
 comma
 id|do_signal_ret
+suffix:semicolon
+r_extern
+r_char
+id|ret_from_except
 suffix:semicolon
 r_if
 c_cond
@@ -2261,7 +2259,7 @@ op_eq
 r_int
 )paren
 op_amp
-id|int_return
+id|ret_from_int
 op_logical_or
 id|stack
 (braket
@@ -2272,7 +2270,7 @@ op_eq
 r_int
 )paren
 op_amp
-id|syscall_ret_1
+id|ret_from_except
 op_logical_or
 id|stack
 (braket
@@ -2283,7 +2281,18 @@ op_eq
 r_int
 )paren
 op_amp
-id|syscall_ret_2
+id|ret_from_syscall_1
+op_logical_or
+id|stack
+(braket
+l_int|1
+)braket
+op_eq
+(paren
+r_int
+)paren
+op_amp
+id|ret_from_syscall_2
 op_logical_or
 id|stack
 (braket

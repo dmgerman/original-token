@@ -43,6 +43,9 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#if 0
+mdefine_line|#define decl_config_access_method(name) &t;&bslash;&n;struct pci_ops name##_pci_ops = { &t;&t;&bslash;&n;&t;name##_pcibios_read_config_byte,&t;&bslash;&n;&t;name##_pcibios_read_config_word,&t;&bslash;&n;&t;name##_pcibios_read_config_dword,&t;&bslash;&n;&t;name##_pcibios_write_config_byte,&t;&bslash;&n;&t;name##_pcibios_write_config_word,&t;&bslash;&n;&t;name##_pcibios_write_config_dword&t;&bslash;&n;}
+macro_line|#endif
 DECL|macro|decl_config_access_method
 mdefine_line|#define decl_config_access_method(name) &bslash;&n;extern int name##_pcibios_read_config_byte(unsigned char bus, &bslash;&n;&t;unsigned char dev_fn, unsigned char offset, unsigned char *val); &bslash;&n;extern int name##_pcibios_read_config_word(unsigned char bus, &bslash;&n;&t;unsigned char dev_fn, unsigned char offset, unsigned short *val); &bslash;&n;extern int name##_pcibios_read_config_dword(unsigned char bus, &bslash;&n;&t;unsigned char dev_fn, unsigned char offset, unsigned int *val); &bslash;&n;extern int name##_pcibios_write_config_byte(unsigned char bus, &bslash;&n;&t;unsigned char dev_fn, unsigned char offset, unsigned char val); &bslash;&n;extern int name##_pcibios_write_config_word(unsigned char bus, &bslash;&n;&t;unsigned char dev_fn, unsigned char offset, unsigned short val); &bslash;&n;extern int name##_pcibios_write_config_dword(unsigned char bus, &bslash;&n;&t;unsigned char dev_fn, unsigned char offset, unsigned int val)
 DECL|macro|set_config_access_method

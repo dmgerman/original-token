@@ -1,0 +1,55 @@
+macro_line|#ifndef __ASM_SH_SIGCONTEXT_H
+DECL|macro|__ASM_SH_SIGCONTEXT_H
+mdefine_line|#define __ASM_SH_SIGCONTEXT_H
+DECL|struct|sigcontext
+r_struct
+id|sigcontext
+(brace
+DECL|member|oldmask
+r_int
+r_int
+id|oldmask
+suffix:semicolon
+multiline_comment|/* CPU registers */
+DECL|member|u_regs
+r_int
+r_int
+id|u_regs
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|gbr
+r_int
+r_int
+id|gbr
+suffix:semicolon
+DECL|member|mach
+r_int
+r_int
+id|mach
+suffix:semicolon
+DECL|member|macl
+r_int
+r_int
+id|macl
+suffix:semicolon
+DECL|member|pr
+r_int
+r_int
+id|pr
+suffix:semicolon
+DECL|member|sr
+r_int
+r_int
+id|sr
+suffix:semicolon
+DECL|member|pc
+r_int
+r_int
+id|pc
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif /* __ASM_SH_SIGCONTEXT_H */
+eof

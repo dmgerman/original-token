@@ -32,21 +32,10 @@ mdefine_line|#define POLARIS_W_CMD&t;&t;(POLARIS_DENSE_CONFIG_BASE+4)
 DECL|macro|POLARIS_W_STATUS
 mdefine_line|#define POLARIS_W_STATUS&t;(POLARIS_DENSE_CONFIG_BASE+6)
 multiline_comment|/* No HAE address.  Polaris has no concept of an HAE, since it&n; * supports transfers of all sizes in dense space.&n; */
-DECL|macro|POLARIS_DMA_WIN_BASE_DEFAULT
-mdefine_line|#define POLARIS_DMA_WIN_BASE_DEFAULT&t;0x80000000&t;/* fixed, 2G @ 2G */
-DECL|macro|POLARIS_DMA_WIN_SIZE_DEFAULT
-mdefine_line|#define POLARIS_DMA_WIN_SIZE_DEFAULT&t;0x80000000&t;/* fixed, 2G @ 2G */
-macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
 DECL|macro|POLARIS_DMA_WIN_BASE
-mdefine_line|#define POLARIS_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base
+mdefine_line|#define POLARIS_DMA_WIN_BASE&t;0x80000000UL&t;/* fixed, 2G @ 2G */
 DECL|macro|POLARIS_DMA_WIN_SIZE
-mdefine_line|#define POLARIS_DMA_WIN_SIZE&t;&t;alpha_mv.dma_win_size
-macro_line|#else
-DECL|macro|POLARIS_DMA_WIN_BASE
-mdefine_line|#define POLARIS_DMA_WIN_BASE&t;&t;POLARIS_DMA_WIN_BASE_DEFAULT
-DECL|macro|POLARIS_DMA_WIN_SIZE
-mdefine_line|#define POLARIS_DMA_WIN_SIZE&t;&t;POLARIS_DMA_WIN_SIZE_DEFAULT
-macro_line|#endif
+mdefine_line|#define POLARIS_DMA_WIN_SIZE&t;0x80000000UL&t;/* fixed, 2G @ 2G */
 multiline_comment|/*&n; * Data structure for handling POLARIS machine checks:&n; */
 DECL|struct|el_POLARIS_sysdata_mcheck
 r_struct
@@ -142,6 +131,7 @@ r_int
 id|addr
 )paren
 (brace
+multiline_comment|/* ??? I wish I could get rid of this.  But there&squot;s no ioremap&n;&t;   equivalent for I/O space.  PCI I/O can be forced into the&n;&t;   POLARIS I/O region, but that doesn&squot;t take care of legacy&n;&t;   ISA crap.  */
 r_return
 id|__kernel_ldbu
 c_func
@@ -330,36 +320,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 id|__kernel_ldbu
 c_func
@@ -384,36 +344,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 id|__kernel_ldwu
 c_func
@@ -438,36 +368,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -488,36 +388,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -541,36 +411,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 id|__kernel_stb
 c_func
 (paren
@@ -599,36 +439,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 id|__kernel_stw
 c_func
 (paren
@@ -657,36 +467,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vuip
@@ -711,36 +491,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x100000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;polaris: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_add_assign
-id|POLARIS_DENSE_MEM_BASE
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vulp
@@ -763,9 +513,9 @@ id|addr
 )paren
 (brace
 r_return
-id|POLARIS_DENSE_MEM_BASE
-op_plus
 id|addr
+op_plus
+id|POLARIS_DENSE_MEM_BASE
 suffix:semicolon
 )brace
 DECL|function|polaris_is_ioaddr
@@ -782,9 +532,7 @@ id|addr
 r_return
 id|addr
 op_ge
-id|IDENT_ADDR
-op_plus
-l_int|0x8000000000UL
+id|POLARIS_SPARSE_MEM_BASE
 suffix:semicolon
 )brace
 DECL|macro|vucp
@@ -833,18 +581,17 @@ mdefine_line|#define __ioremap       polaris_ioremap
 DECL|macro|__is_ioaddr
 mdefine_line|#define __is_ioaddr&t;polaris_is_ioaddr
 DECL|macro|inb
-mdefine_line|#define inb(port) __inb((port))
+mdefine_line|#define inb(port)&t;__inb((port))
 DECL|macro|inw
-mdefine_line|#define inw(port) __inw((port))
+mdefine_line|#define inw(port)&t;__inw((port))
 DECL|macro|inl
-mdefine_line|#define inl(port) __inl((port))
+mdefine_line|#define inl(port)&t;__inl((port))
 DECL|macro|outb
-mdefine_line|#define outb(v, port) __outb((v),(port))
+mdefine_line|#define outb(v, port)&t;__outb((v),(port))
 DECL|macro|outw
-mdefine_line|#define outw(v, port) __outw((v),(port))
+mdefine_line|#define outw(v, port)&t;__outw((v),(port))
 DECL|macro|outl
-mdefine_line|#define outl(v, port) __outl((v),(port))
-macro_line|#if !__DEBUG_IOREMAP
+mdefine_line|#define outl(v, port)&t;__outl((v),(port))
 DECL|macro|__raw_readb
 mdefine_line|#define __raw_readb(a)&t;&t;__readb((unsigned long)(a))
 DECL|macro|__raw_readw
@@ -855,13 +602,12 @@ DECL|macro|__raw_readq
 mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
 DECL|macro|__raw_writeb
 mdefine_line|#define __raw_writeb(v,a)&t;__writeb((v),(unsigned long)(a))
-DECL|macro|__raw_writeb
-mdefine_line|#define __raw_writeb(v,a)&t;__writew((v),(unsigned long)(a))
+DECL|macro|__raw_writew
+mdefine_line|#define __raw_writew(v,a)&t;__writew((v),(unsigned long)(a))
 DECL|macro|__raw_writel
 mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
 DECL|macro|__raw_writeq
 mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
-macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

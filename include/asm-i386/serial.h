@@ -24,6 +24,11 @@ DECL|macro|BOCA_FLAGS
 mdefine_line|#define BOCA_FLAGS 0
 DECL|macro|HUB6_FLAGS
 mdefine_line|#define HUB6_FLAGS 0
+DECL|macro|RS_TABLE_SIZE
+mdefine_line|#define RS_TABLE_SIZE&t;64
+macro_line|#else
+DECL|macro|RS_TABLE_SIZE
+mdefine_line|#define RS_TABLE_SIZE
 macro_line|#endif
 multiline_comment|/*&n; * The following define the access methods for the HUB6 card. All&n; * access is through two ports for all 24 possible chips. The card is&n; * selected through the high 2 bits, the port on that card with the&n; * &quot;middle&quot; 3 bits, and the register on that port with the bottom&n; * 3 bits.&n; *&n; * While the access port and interrupt is configurable, the default&n; * port locations are 0x302 for the port control register, and 0x303&n; * for the data read/write register. Normally, the interrupt is at irq3&n; * but can be anything from 3 to 7 inclusive. Note that using 3 will&n; * require disabling com2.&n; */
 DECL|macro|C_P

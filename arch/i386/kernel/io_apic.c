@@ -1136,7 +1136,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Find a specific PCI IRQ entry.&n; * Not an initfunc, possibly needed by modules&n; */
+multiline_comment|/*&n; * Find a specific PCI IRQ entry.&n; * Not an __init, possibly needed by modules&n; */
 r_static
 r_int
 id|__init
@@ -3420,7 +3420,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Not an initfunc, needed by the reboot code&n; */
+multiline_comment|/*&n; * Not an __init, needed by the reboot code&n; */
 DECL|function|init_pic_mode
 r_void
 id|init_pic_mode

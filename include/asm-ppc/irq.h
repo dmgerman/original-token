@@ -48,16 +48,12 @@ mdefine_line|#define NR_IRQS&t;&t;&t;128
 macro_line|#endif /* CONFIG_APUS */
 DECL|macro|NUM_8259_INTERRUPTS
 mdefine_line|#define NUM_8259_INTERRUPTS&t;16
-DECL|macro|NUM_OPENPIC_INTERRUPTS
-mdefine_line|#define NUM_OPENPIC_INTERRUPTS&t;20
-DECL|macro|is_8259_irq
-mdefine_line|#define is_8259_irq(n)&t;&t;((n) &lt; NUM_8259_INTERRUPTS)
+DECL|macro|IRQ_8259_CASCADE
+mdefine_line|#define IRQ_8259_CASCADE&t;16
 DECL|macro|openpic_to_irq
 mdefine_line|#define openpic_to_irq(n)&t;((n)+NUM_8259_INTERRUPTS)
 DECL|macro|irq_to_openpic
 mdefine_line|#define irq_to_openpic(n)&t;((n)-NUM_8259_INTERRUPTS)
-DECL|macro|IRQ_8259_CASCADE
-mdefine_line|#define IRQ_8259_CASCADE&t;NUM_8259_INTERRUPTS
 macro_line|#ifndef CONFIG_APUS
 multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
 DECL|function|irq_cannonicalize

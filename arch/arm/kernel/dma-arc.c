@@ -6,6 +6,8 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &quot;dma.h&quot;
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
 DECL|function|arch_request_dma
 r_int
 id|arch_request_dma
@@ -24,6 +26,18 @@ op_star
 id|dev_id
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;arch_request_dma channel=%d F0=%d F1=%d&bslash;n&quot;
+comma
+id|channel
+comma
+id|DMA_VIRTUAL_FLOPPY0
+comma
+id|DMA_VIRTUAL_FLOPPY1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -71,13 +85,25 @@ op_star
 id|dma
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;arch_enable_dma channel=%d F0=%d F1=%d&bslash;n&quot;
+comma
+id|channel
+comma
+id|DMA_VIRTUAL_FLOPPY0
+comma
+id|DMA_VIRTUAL_FLOPPY1
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
 id|channel
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_FD
+macro_line|#ifdef CONFIG_BLK_DEV_FD1772
 r_case
 id|DMA_VIRTUAL_FLOPPY0
 suffix:colon

@@ -6,10 +6,10 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * TSUNAMI/TYPHOON are the internal names for the core logic chipset which&n; * provides memory controller and PCI access for the 21264 based systems.&n; *&n; * This file is based on:&n; *&n; * Tsunami System Programmers Manual&n; * Preliminary, Chapters 2-5&n; *&n; */
 multiline_comment|/*&n; * We must actually use 2 windows to direct-map the 2GB space, because&n; * of an &quot;idiot-syncracy&quot; of the CYPRESS chip used on DS20 and others.&n; * It may respond to a PCI bus address in the last 1MB of the 4GB&n; * address range, and that is where real memory may appear.&n; *&n; * Sigh...&n; */
-DECL|macro|TSUNAMI_DMA_WIN_BASE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN_BASE_DEFAULT&t;(1UL*1024*1024*1024)
-DECL|macro|TSUNAMI_DMA_WIN_SIZE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN_SIZE_DEFAULT&t;(2UL*1024*1024*1024)
+DECL|macro|TSUNAMI_DMA_WIN_BASE
+mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;(1UL*1024*1024*1024)
+DECL|macro|TSUNAMI_DMA_WIN_SIZE
+mdefine_line|#define TSUNAMI_DMA_WIN_SIZE&t;&t;(2UL*1024*1024*1024)
 DECL|macro|TSUNAMI_DMA_WIN0_BASE_DEFAULT
 mdefine_line|#define TSUNAMI_DMA_WIN0_BASE_DEFAULT&t;(1UL*1024*1024*1024)
 DECL|macro|TSUNAMI_DMA_WIN0_SIZE_DEFAULT
@@ -22,17 +22,6 @@ DECL|macro|TSUNAMI_DMA_WIN1_SIZE_DEFAULT
 mdefine_line|#define TSUNAMI_DMA_WIN1_SIZE_DEFAULT&t;(1UL*1024*1024*1024)
 DECL|macro|TSUNAMI_DMA_WIN1_TRAN_DEFAULT
 mdefine_line|#define TSUNAMI_DMA_WIN1_TRAN_DEFAULT&t;(1UL*1024*1024*1024)
-macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
-DECL|macro|TSUNAMI_DMA_WIN_BASE
-mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base
-DECL|macro|TSUNAMI_DMA_WIN_SIZE
-mdefine_line|#define TSUNAMI_DMA_WIN_SIZE&t;&t;alpha_mv.dma_win_size
-macro_line|#else
-DECL|macro|TSUNAMI_DMA_WIN_BASE
-mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;TSUNAMI_DMA_WIN_BASE_DEFAULT
-DECL|macro|TSUNAMI_DMA_WIN_SIZE
-mdefine_line|#define TSUNAMI_DMA_WIN_SIZE&t;&t;TSUNAMI_DMA_WIN_SIZE_DEFAULT
-macro_line|#endif
 multiline_comment|/* XXX: Do we need to conditionalize on this?  */
 macro_line|#ifdef USE_48_BIT_KSEG
 DECL|macro|TS_BIAS
@@ -861,18 +850,25 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Memory spaces:&n; */
-DECL|macro|HOSE
-mdefine_line|#define HOSE(h) (((unsigned long)(h)) &lt;&lt; 33)
+DECL|macro|TSUNAMI_HOSE
+mdefine_line|#define TSUNAMI_HOSE(h)&t;&t;(((unsigned long)(h)) &lt;&lt; 33)
+DECL|macro|TSUNAMI_BASE
+mdefine_line|#define TSUNAMI_BASE&t;&t;(IDENT_ADDR + TS_BIAS)
 DECL|macro|TSUNAMI_MEM
-mdefine_line|#define TSUNAMI_MEM(h)&t;     (IDENT_ADDR + TS_BIAS + 0x000000000UL + HOSE(h))
+mdefine_line|#define TSUNAMI_MEM(h)&t;&t;(TSUNAMI_BASE+TSUNAMI_HOSE(h) + 0x000000000UL)
 DECL|macro|_TSUNAMI_IACK_SC
-mdefine_line|#define _TSUNAMI_IACK_SC(h)  (IDENT_ADDR + TS_BIAS + 0x1F8000000UL + HOSE(h))
+mdefine_line|#define _TSUNAMI_IACK_SC(h)&t;(TSUNAMI_BASE+TSUNAMI_HOSE(h) + 0x1F8000000UL)
 DECL|macro|TSUNAMI_IO
-mdefine_line|#define TSUNAMI_IO(h)&t;     (IDENT_ADDR + TS_BIAS + 0x1FC000000UL + HOSE(h))
+mdefine_line|#define TSUNAMI_IO(h)&t;&t;(TSUNAMI_BASE+TSUNAMI_HOSE(h) + 0x1FC000000UL)
 DECL|macro|TSUNAMI_CONF
-mdefine_line|#define TSUNAMI_CONF(h)&t;     (IDENT_ADDR + TS_BIAS + 0x1FE000000UL + HOSE(h))
+mdefine_line|#define TSUNAMI_CONF(h)&t;&t;(TSUNAMI_BASE+TSUNAMI_HOSE(h) + 0x1FE000000UL)
 DECL|macro|TSUNAMI_IACK_SC
-mdefine_line|#define TSUNAMI_IACK_SC&t;     _TSUNAMI_IACK_SC(0) /* hack! */
+mdefine_line|#define TSUNAMI_IACK_SC&t;&t;_TSUNAMI_IACK_SC(0) /* hack! */
+multiline_comment|/* &n; * The canonical non-remaped I/O and MEM addresses have these values&n; * subtracted out.  This is arranged so that folks manipulating ISA&n; * devices can use their familiar numbers and have them map to bus 0.&n; */
+DECL|macro|TSUNAMI_IO_BIAS
+mdefine_line|#define TSUNAMI_IO_BIAS          TSUNAMI_IO(0)
+DECL|macro|TSUNAMI_MEM_BIAS
+mdefine_line|#define TSUNAMI_MEM_BIAS         TSUNAMI_MEM(0)
 multiline_comment|/*&n; * Data structure for handling TSUNAMI machine checks:&n; */
 DECL|struct|el_TSUNAMI_sysdata_mcheck
 r_struct
@@ -941,10 +937,6 @@ DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
-DECL|macro|XADDR
-mdefine_line|#define XADDR&t;((addr) &amp; 0xffffffffUL)
-DECL|macro|XHOSE
-mdefine_line|#define XHOSE&t;(((addr) &gt;&gt; 32) &amp; 3UL)
 DECL|function|tsunami_inb
 id|__EXTERN_INLINE
 r_int
@@ -957,6 +949,11 @@ r_int
 id|addr
 )paren
 (brace
+multiline_comment|/* ??? I wish I could get rid of this.  But there&squot;s no ioremap&n;&t;   equivalent for I/O space.  PCI I/O can be forced into the&n;&t;   correct hose&squot;s I/O region, but that doesn&squot;t take care of&n;&t;   legacy ISA crap.  */
+id|addr
+op_add_assign
+id|TSUNAMI_IO_BIAS
+suffix:semicolon
 r_return
 id|__kernel_ldbu
 c_func
@@ -965,15 +962,7 @@ op_star
 (paren
 id|vucp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_IO
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 )paren
 suffix:semicolon
 )brace
@@ -992,6 +981,10 @@ r_int
 id|addr
 )paren
 (brace
+id|addr
+op_add_assign
+id|TSUNAMI_IO_BIAS
+suffix:semicolon
 id|__kernel_stb
 c_func
 (paren
@@ -1001,15 +994,7 @@ op_star
 (paren
 id|vucp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_IO
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 )paren
 suffix:semicolon
 id|mb
@@ -1030,6 +1015,10 @@ r_int
 id|addr
 )paren
 (brace
+id|addr
+op_add_assign
+id|TSUNAMI_IO_BIAS
+suffix:semicolon
 r_return
 id|__kernel_ldwu
 c_func
@@ -1038,15 +1027,7 @@ op_star
 (paren
 id|vusp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_IO
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 )paren
 suffix:semicolon
 )brace
@@ -1065,6 +1046,10 @@ r_int
 id|addr
 )paren
 (brace
+id|addr
+op_add_assign
+id|TSUNAMI_IO_BIAS
+suffix:semicolon
 id|__kernel_stw
 c_func
 (paren
@@ -1074,15 +1059,7 @@ op_star
 (paren
 id|vusp
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_IO
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 )paren
 suffix:semicolon
 id|mb
@@ -1103,20 +1080,16 @@ r_int
 id|addr
 )paren
 (brace
+id|addr
+op_add_assign
+id|TSUNAMI_IO_BIAS
+suffix:semicolon
 r_return
 op_star
 (paren
 id|vuip
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_IO
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 suffix:semicolon
 )brace
 DECL|function|tsunami_outl
@@ -1134,19 +1107,15 @@ r_int
 id|addr
 )paren
 (brace
+id|addr
+op_add_assign
+id|TSUNAMI_IO_BIAS
+suffix:semicolon
 op_star
 (paren
 id|vuip
 )paren
-(paren
-id|XADDR
-op_plus
-id|TSUNAMI_IO
-c_func
-(paren
-id|XHOSE
-)paren
-)paren
+id|addr
 op_assign
 id|b
 suffix:semicolon
@@ -1170,13 +1139,9 @@ id|addr
 )paren
 (brace
 r_return
-id|XADDR
+id|addr
 op_plus
-id|TSUNAMI_MEM
-c_func
-(paren
-id|XHOSE
-)paren
+id|TSUNAMI_MEM_BIAS
 suffix:semicolon
 )brace
 DECL|function|tsunami_is_ioaddr
@@ -1193,9 +1158,7 @@ id|addr
 r_return
 id|addr
 op_ge
-id|IDENT_ADDR
-op_plus
-id|TS_BIAS
+id|TSUNAMI_BASE
 suffix:semicolon
 )brace
 DECL|function|tsunami_readb
@@ -1210,40 +1173,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 id|__kernel_ldbu
 c_func
@@ -1268,40 +1197,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 id|__kernel_ldwu
 c_func
@@ -1326,40 +1221,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -1380,40 +1241,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 op_star
 (paren
@@ -1437,40 +1264,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|__kernel_stb
 c_func
 (paren
@@ -1499,40 +1292,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|__kernel_stw
 c_func
 (paren
@@ -1561,40 +1320,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vuip
@@ -1619,40 +1344,6 @@ r_int
 id|addr
 )paren
 (brace
-macro_line|#if __DEBUG_IOREMAP
-r_if
-c_cond
-(paren
-id|addr
-op_le
-l_int|0x1000000000
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;tsunami: 0x%lx not ioremapped (%p)&bslash;n&quot;
-comma
-id|addr
-comma
-id|__builtin_return_address
-c_func
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|addr
-op_assign
-id|tsunami_ioremap
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 op_star
 (paren
 id|vulp
@@ -1670,10 +1361,6 @@ DECL|macro|vuip
 macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
-DECL|macro|XADDR
-macro_line|#undef XADDR
-DECL|macro|XHOSE
-macro_line|#undef XHOSE
 macro_line|#ifdef __WANT_IO_DEF
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus&t;tsunami_virt_to_bus
@@ -1712,18 +1399,17 @@ mdefine_line|#define __ioremap&t;tsunami_ioremap
 DECL|macro|__is_ioaddr
 mdefine_line|#define __is_ioaddr&t;tsunami_is_ioaddr
 DECL|macro|inb
-mdefine_line|#define inb(port) __inb((port))
+mdefine_line|#define inb(port)&t;__inb((port))
 DECL|macro|inw
-mdefine_line|#define inw(port) __inw((port))
+mdefine_line|#define inw(port)&t;__inw((port))
 DECL|macro|inl
-mdefine_line|#define inl(port) __inl((port))
+mdefine_line|#define inl(port)&t;__inl((port))
 DECL|macro|outb
-mdefine_line|#define outb(v, port) __outb((v),(port))
+mdefine_line|#define outb(v, port)&t;__outb((v),(port))
 DECL|macro|outw
-mdefine_line|#define outw(v, port) __outw((v),(port))
+mdefine_line|#define outw(v, port)&t;__outw((v),(port))
 DECL|macro|outl
-mdefine_line|#define outl(v, port) __outl((v),(port))
-macro_line|#if !__DEBUG_IOREMAP
+mdefine_line|#define outl(v, port)&t;__outl((v),(port))
 DECL|macro|__raw_readb
 mdefine_line|#define __raw_readb(a)&t;&t;__readb((unsigned long)(a))
 DECL|macro|__raw_readw
@@ -1734,13 +1420,12 @@ DECL|macro|__raw_readq
 mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
 DECL|macro|__raw_writeb
 mdefine_line|#define __raw_writeb(v,a)&t;__writeb((v),(unsigned long)(a))
-DECL|macro|__raw_writeb
-mdefine_line|#define __raw_writeb(v,a)&t;__writew((v),(unsigned long)(a))
+DECL|macro|__raw_writew
+mdefine_line|#define __raw_writew(v,a)&t;__writew((v),(unsigned long)(a))
 DECL|macro|__raw_writel
 mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
 DECL|macro|__raw_writeq
 mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
-macro_line|#endif
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

@@ -200,9 +200,11 @@ id|wait
 suffix:semicolon
 id|repeat
 suffix:colon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_UNINTERRUPTIBLE
+)paren
 suffix:semicolon
 r_if
 c_cond

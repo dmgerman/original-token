@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Network Services Protocol (Input)&n; *&n; * Author:      Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *&n; *    Steve Whitehouse:  Split into dn_nsp_in.c and dn_nsp_out.c from&n; *                       original dn_nsp.c.&n; *    Steve Whitehouse:  Updated to work with my new routing architecture.&n; *    Steve Whitehouse:  Add changes from Eduardo Serrat&squot;s patches.&n; *    Steve Whitehouse:  Put all ack handling code in a common routine.&n; *    Steve Whitehouse:  Put other common bits into dn_nsp_rx()&n; *    Steve Whitehouse:  More checks on skb-&gt;len to catch bogus packets&n; *                       Fixed various race conditions and possible nasties.&n; *    Steve Whitehouse:  Now handles returned conninit frames.&n; *     David S. Miller:  New socket locking&n; */
+multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Network Services Protocol (Input)&n; *&n; * Author:      Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *&n; *    Steve Whitehouse:  Split into dn_nsp_in.c and dn_nsp_out.c from&n; *                       original dn_nsp.c.&n; *    Steve Whitehouse:  Updated to work with my new routing architecture.&n; *    Steve Whitehouse:  Add changes from Eduardo Serrat&squot;s patches.&n; *    Steve Whitehouse:  Put all ack handling code in a common routine.&n; *    Steve Whitehouse:  Put other common bits into dn_nsp_rx()&n; *    Steve Whitehouse:  More checks on skb-&gt;len to catch bogus packets&n; *                       Fixed various race conditions and possible nasties.&n; *    Steve Whitehouse:  Now handles returned conninit frames.&n; *     David S. Miller:  New socket locking&n; *    Steve Whitehouse:  Fixed lockup when socket filtering was enabled.&n; */
 multiline_comment|/******************************************************************************&n;    (c) 1995-1998 E.M. Serrat&t;&t;emserrat@geocities.com&n;    &n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;*******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1442,12 +1442,12 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Copy of sock_queue_rcv_skb (from sock.h) to&n; * queue other data segments. Also we send SIGURG here instead&n; * of the normal SIGIO, &squot;cos its out of band data.&n; */
-DECL|function|dn_queue_other_skb
+multiline_comment|/*&n; * Copy of sock_queue_rcv_skb (from sock.h) with out&n; * bh_lock_sock() (its already held when this is called) which&n; * also allows data and other data to be queued to a socket.&n; */
+DECL|function|dn_queue_skb
 r_static
 id|__inline__
 r_int
-id|dn_queue_other_skb
+id|dn_queue_skb
 c_func
 (paren
 r_struct
@@ -1459,6 +1459,14 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+comma
+r_int
+id|sig
+comma
+r_struct
+id|sk_buff_head
+op_star
+id|queue
 )paren
 (brace
 macro_line|#ifdef CONFIG_FILTER
@@ -1468,14 +1476,6 @@ op_star
 id|filter
 suffix:semicolon
 macro_line|#endif
-r_struct
-id|dn_scp
-op_star
-id|scp
-op_assign
-op_amp
-id|sk-&gt;protinfo.dn
-suffix:semicolon
 r_int
 r_int
 id|flags
@@ -1514,12 +1514,6 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-id|bh_lock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1545,12 +1539,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 multiline_comment|/* Toss packet */
-id|bh_unlock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1572,8 +1560,7 @@ suffix:semicolon
 id|skb_queue_tail
 c_func
 (paren
-op_amp
-id|scp-&gt;other_receive_queue
+id|queue
 comma
 id|skb
 )paren
@@ -1624,7 +1611,7 @@ c_func
 (paren
 id|sock-&gt;fasync_list
 comma
-id|SIGURG
+id|sig
 )paren
 suffix:semicolon
 )brace
@@ -1743,12 +1730,17 @@ l_int|0x0fff
 r_if
 c_cond
 (paren
-id|dn_queue_other_skb
+id|dn_queue_skb
 c_func
 (paren
 id|sk
 comma
 id|skb
+comma
+id|SIGURG
+comma
+op_amp
+id|scp-&gt;other_receive_queue
 )paren
 op_eq
 l_int|0
@@ -1890,12 +1882,17 @@ l_int|0x0FFF
 r_if
 c_cond
 (paren
-id|sock_queue_rcv_skb
+id|dn_queue_skb
 c_func
 (paren
 id|sk
 comma
 id|skb
+comma
+id|SIGIO
+comma
+op_amp
+id|sk-&gt;receive_queue
 )paren
 op_eq
 l_int|0

@@ -281,6 +281,31 @@ DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack
 mdefine_line|#define init_stack&t;(init_task_union.stack)
+multiline_comment|/*&n; * Create a new kernel thread&n; */
+r_extern
+r_int
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif /* __ASM_ARM_PROCESSOR_H */
 eof

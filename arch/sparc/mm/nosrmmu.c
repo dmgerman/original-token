@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: nosrmmu.c,v 1.2 1999/03/30 10:17:39 jj Exp $&n; * nosrmmu.c: This file is a bunch of dummies for sun4 compiles, &n; *         so that it does not need srmmu and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: nosrmmu.c,v 1.3 1999/08/31 06:54:35 davem Exp $&n; * nosrmmu.c: This file is a bunch of dummies for sun4 compiles, &n; *         so that it does not need srmmu and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

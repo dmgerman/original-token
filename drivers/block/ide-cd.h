@@ -1,7 +1,7 @@
 macro_line|#ifndef _IDE_CD_H
 DECL|macro|_IDE_CD_H
 mdefine_line|#define _IDE_CD_H
-multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Erik Andersen&n; *  Copyright (C) 1998, 1999 Jens Axboe&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide_cd.h&n; *&n; *  Copyright (C) 1996, 1997, 1998  Erik Andersen&n; *  Copyright (C) 1998, 1999 Jens Axboe&n; */
 macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
@@ -39,103 +39,6 @@ DECL|macro|REQUEST_SENSE_COMMAND
 mdefine_line|#define REQUEST_SENSE_COMMAND 4316
 DECL|macro|RESET_DRIVE_COMMAND
 mdefine_line|#define RESET_DRIVE_COMMAND   4317
-multiline_comment|/*&n; * For controlling drive spindown time.&n; */
-DECL|macro|CDROMGETSPINDOWN
-mdefine_line|#define CDROMGETSPINDOWN        0x531d
-DECL|macro|CDROMSETSPINDOWN
-mdefine_line|#define CDROMSETSPINDOWN        0x531e
-multiline_comment|/* Some ATAPI command opcodes (just like SCSI).&n;   (Some other cdrom-specific codes are in cdrom.h.) */
-DECL|macro|TEST_UNIT_READY
-mdefine_line|#define TEST_UNIT_READY         0x00
-DECL|macro|REQUEST_SENSE
-mdefine_line|#define REQUEST_SENSE           0x03
-DECL|macro|INQUIRY
-mdefine_line|#define INQUIRY                 0x12
-DECL|macro|START_STOP
-mdefine_line|#define START_STOP              0x1b
-DECL|macro|ALLOW_MEDIUM_REMOVAL
-mdefine_line|#define ALLOW_MEDIUM_REMOVAL    0x1e
-DECL|macro|READ_CAPACITY
-mdefine_line|#define READ_CAPACITY           0x25
-DECL|macro|READ_10
-mdefine_line|#define READ_10                 0x28
-DECL|macro|SEEK
-mdefine_line|#define SEEK&t;&t;&t;0x2b
-DECL|macro|READ_HEADER
-mdefine_line|#define READ_HEADER             0x44
-DECL|macro|STOP_PLAY_SCAN
-mdefine_line|#define STOP_PLAY_SCAN&t;&t;0x4e
-DECL|macro|MODE_SELECT_10
-mdefine_line|#define MODE_SELECT_10          0x55
-DECL|macro|MODE_SENSE_10
-mdefine_line|#define MODE_SENSE_10           0x5a
-DECL|macro|LOAD_UNLOAD
-mdefine_line|#define LOAD_UNLOAD             0xa6
-DECL|macro|READ_12
-mdefine_line|#define READ_12                 0xa8
-DECL|macro|READ_CD_MSF
-mdefine_line|#define READ_CD_MSF             0xb9
-DECL|macro|SCAN
-mdefine_line|#define SCAN&t;&t;&t;0xba
-DECL|macro|SET_CD_SPEED
-mdefine_line|#define SET_CD_SPEED            0xbb
-DECL|macro|PLAY_CD
-mdefine_line|#define PLAY_CD                 0xbc
-DECL|macro|MECHANISM_STATUS
-mdefine_line|#define MECHANISM_STATUS        0xbd
-DECL|macro|READ_CD
-mdefine_line|#define READ_CD                 0xbe
-multiline_comment|/* MMC2/MTFuji Opcodes */
-DECL|macro|BLANK
-mdefine_line|#define BLANK&t;&t;&t;0xa1
-DECL|macro|CLOSE_TRACK
-mdefine_line|#define CLOSE_TRACK&t;&t;0x5b
-DECL|macro|ERASE
-mdefine_line|#define ERASE&t;&t;&t;0x2c
-DECL|macro|FORMAT_UNIT
-mdefine_line|#define FORMAT_UNIT&t;&t;0x04
-DECL|macro|GET_CONFIGURATION
-mdefine_line|#define GET_CONFIGURATION&t;0x46
-DECL|macro|GET_EVENT
-mdefine_line|#define GET_EVENT&t;&t;0xa4
-DECL|macro|GET_PERFORMANCE
-mdefine_line|#define GET_PERFORMANCE&t;&t;0xac
-DECL|macro|READ_BUFFER
-mdefine_line|#define READ_BUFFER&t;&t;0x3c
-DECL|macro|READ_DISC_INFO
-mdefine_line|#define READ_DISC_INFO&t;&t;0x51
-multiline_comment|/* Page codes for mode sense/set */
-DECL|macro|PAGE_READERR
-mdefine_line|#define PAGE_READERR            0x01
-DECL|macro|PAGE_CDROM
-mdefine_line|#define PAGE_CDROM              0x0d
-DECL|macro|PAGE_AUDIO
-mdefine_line|#define PAGE_AUDIO              0x0e
-DECL|macro|PAGE_CAPABILITIES
-mdefine_line|#define PAGE_CAPABILITIES       0x2a
-DECL|macro|PAGE_ALL
-mdefine_line|#define PAGE_ALL                0x3f
-multiline_comment|/* ATAPI sense keys (from table 140 of ATAPI 2.6) */
-DECL|macro|NO_SENSE
-mdefine_line|#define NO_SENSE                0x00
-DECL|macro|RECOVERED_ERROR
-mdefine_line|#define RECOVERED_ERROR         0x01
-DECL|macro|NOT_READY
-mdefine_line|#define NOT_READY               0x02
-DECL|macro|MEDIUM_ERROR
-mdefine_line|#define MEDIUM_ERROR            0x03
-DECL|macro|HARDWARE_ERROR
-mdefine_line|#define HARDWARE_ERROR          0x04
-DECL|macro|ILLEGAL_REQUEST
-mdefine_line|#define ILLEGAL_REQUEST         0x05
-DECL|macro|UNIT_ATTENTION
-mdefine_line|#define UNIT_ATTENTION          0x06
-DECL|macro|DATA_PROTECT
-mdefine_line|#define DATA_PROTECT            0x07
-DECL|macro|ABORTED_COMMAND
-mdefine_line|#define ABORTED_COMMAND         0x0b
-DECL|macro|MISCOMPARE
-mdefine_line|#define MISCOMPARE              0x0e
 multiline_comment|/* Configuration flags.  These describe the capabilities of the drive.&n;   They generally do not change after initialization, unless we learn&n;   more about the drive from stuff failing. */
 DECL|struct|ide_cd_config_flags
 r_struct
@@ -778,6 +681,7 @@ DECL|typedef|mechtype_t
 )brace
 id|mechtype_t
 suffix:semicolon
+multiline_comment|/* This should probably go into cdrom.h along with the other&n; * generic stuff now in the Mt. Fuji spec.&n; */
 DECL|struct|atapi_capabilities_page
 r_struct
 id|atapi_capabilities_page
@@ -1714,8 +1618,350 @@ mdefine_line|#define SECTOR_BUFFER_SIZE CD_FRAMESIZE
 multiline_comment|/****************************************************************************&n; * Descriptions of ATAPI error codes.&n; */
 DECL|macro|ARY_LEN
 mdefine_line|#define ARY_LEN(a) ((sizeof(a) / sizeof(a[0])))
+multiline_comment|/* This stuff should be in cdrom.h, since it is now generic... */
+multiline_comment|/* ATAPI sense keys (from table 140 of ATAPI 2.6) */
+DECL|macro|NO_SENSE
+mdefine_line|#define NO_SENSE                0x00
+DECL|macro|RECOVERED_ERROR
+mdefine_line|#define RECOVERED_ERROR         0x01
+DECL|macro|NOT_READY
+mdefine_line|#define NOT_READY               0x02
+DECL|macro|MEDIUM_ERROR
+mdefine_line|#define MEDIUM_ERROR            0x03
+DECL|macro|HARDWARE_ERROR
+mdefine_line|#define HARDWARE_ERROR          0x04
+DECL|macro|ILLEGAL_REQUEST
+mdefine_line|#define ILLEGAL_REQUEST         0x05
+DECL|macro|UNIT_ATTENTION
+mdefine_line|#define UNIT_ATTENTION          0x06
+DECL|macro|DATA_PROTECT
+mdefine_line|#define DATA_PROTECT            0x07
+DECL|macro|ABORTED_COMMAND
+mdefine_line|#define ABORTED_COMMAND         0x0b
+DECL|macro|MISCOMPARE
+mdefine_line|#define MISCOMPARE              0x0e
+multiline_comment|/* This stuff should be in cdrom.h, since it is now generic... */
 macro_line|#if VERBOSE_IDE_CD_ERRORS
-multiline_comment|/* From Table 124 of the ATAPI 1.2 spec.&n;   Unchanged in Table 140 of the ATAPI 2.6 draft standard. */
+multiline_comment|/* The generic packet command opcodes for CD/DVD Logical Units,&n; * From Table 57 of the SFF8090 Ver. 3 (Mt. Fuji) draft standard. */
+r_const
+r_struct
+(brace
+DECL|member|packet_command
+r_int
+r_int
+id|packet_command
+suffix:semicolon
+DECL|member|text
+r_const
+r_char
+op_star
+r_const
+id|text
+suffix:semicolon
+DECL|variable|packet_command_texts
+)brace
+id|packet_command_texts
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|GPCMD_TEST_UNIT_READY
+comma
+l_string|&quot;Test Unit Ready&quot;
+)brace
+comma
+(brace
+id|GPCMD_REQUEST_SENSE
+comma
+l_string|&quot;Request Sense&quot;
+)brace
+comma
+(brace
+id|GPCMD_FORMAT_UNIT
+comma
+l_string|&quot;Format Unit&quot;
+)brace
+comma
+(brace
+id|GPCMD_INQUIRY
+comma
+l_string|&quot;Inquiry&quot;
+)brace
+comma
+(brace
+id|GPCMD_START_STOP_UNIT
+comma
+l_string|&quot;Start/Stop Unit&quot;
+)brace
+comma
+(brace
+id|GPCMD_PREVENT_ALLOW_MEDIUM_REMOVAL
+comma
+l_string|&quot;Prevent/Allow Medium Removal&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_FORMAT_CAPACITIES
+comma
+l_string|&quot;Read Format Capacities&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_CDVD_CAPACITY
+comma
+l_string|&quot;Read Cd/Dvd Capacity&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_10
+comma
+l_string|&quot;Read 10&quot;
+)brace
+comma
+(brace
+id|GPCMD_WRITE_10
+comma
+l_string|&quot;Write 10&quot;
+)brace
+comma
+(brace
+id|GPCMD_SEEK
+comma
+l_string|&quot;Seek&quot;
+)brace
+comma
+(brace
+id|GPCMD_WRITE_AND_VERIFY_10
+comma
+l_string|&quot;Write and Verify 10&quot;
+)brace
+comma
+(brace
+id|GPCMD_VERIFY_10
+comma
+l_string|&quot;Verify 10&quot;
+)brace
+comma
+(brace
+id|GPCMD_FLUSH_CACHE
+comma
+l_string|&quot;Flush Cache&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_SUBCHANNEL
+comma
+l_string|&quot;Read Subchannel&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_TOC_PMA_ATIP
+comma
+l_string|&quot;Read Table of Contents&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_HEADER
+comma
+l_string|&quot;Read Header&quot;
+)brace
+comma
+(brace
+id|GPCMD_PLAY_AUDIO_10
+comma
+l_string|&quot;Play Audio 10&quot;
+)brace
+comma
+(brace
+id|GPCMD_GET_CONFIGURATION
+comma
+l_string|&quot;Get Configuration&quot;
+)brace
+comma
+(brace
+id|GPCMD_PLAY_AUDIO_MSF
+comma
+l_string|&quot;Play Audio MSF&quot;
+)brace
+comma
+(brace
+id|GPCMD_PLAYAUDIO_TI
+comma
+l_string|&quot;Play Audio TrackIndex&quot;
+)brace
+comma
+(brace
+id|GPCMD_GET_EVENT_STATUS_NOTIFICATION
+comma
+l_string|&quot;Get Event Status Notification&quot;
+)brace
+comma
+(brace
+id|GPCMD_PAUSE_RESUME
+comma
+l_string|&quot;Pause/Resume&quot;
+)brace
+comma
+(brace
+id|GPCMD_STOP_PLAY_SCAN
+comma
+l_string|&quot;Stop Play/Scan&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_DISC_INFO
+comma
+l_string|&quot;Read Disc Info&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_TRACK_RZONE_INFO
+comma
+l_string|&quot;Read Track Rzone Info&quot;
+)brace
+comma
+(brace
+id|GPCMD_RESERVE_RZONE_TRACK
+comma
+l_string|&quot;Reserve Rzone Track&quot;
+)brace
+comma
+(brace
+id|GPCMD_SEND_OPC
+comma
+l_string|&quot;Send OPC&quot;
+)brace
+comma
+(brace
+id|GPCMD_MODE_SELECT_10
+comma
+l_string|&quot;Mode Select 10&quot;
+)brace
+comma
+(brace
+id|GPCMD_REPAIR_RZONE_TRACK
+comma
+l_string|&quot;Repair Rzone Track&quot;
+)brace
+comma
+(brace
+id|GPCMD_MODE_SENSE_10
+comma
+l_string|&quot;Mode Sense 10&quot;
+)brace
+comma
+(brace
+id|GPCMD_CLOSE_TRACK
+comma
+l_string|&quot;Close Track&quot;
+)brace
+comma
+(brace
+id|GPCMD_BLANK
+comma
+l_string|&quot;Blank&quot;
+)brace
+comma
+(brace
+id|GPCMD_SEND_EVENT
+comma
+l_string|&quot;Send Event&quot;
+)brace
+comma
+(brace
+id|GPCMD_SEND_KEY
+comma
+l_string|&quot;Send Key&quot;
+)brace
+comma
+(brace
+id|GPCMD_REPORT_KEY
+comma
+l_string|&quot;Report Key&quot;
+)brace
+comma
+(brace
+id|GPCMD_LOAD_UNLOAD
+comma
+l_string|&quot;Load/Unload&quot;
+)brace
+comma
+(brace
+id|GPCMD_SET_READ_AHEAD
+comma
+l_string|&quot;Set Read-ahead&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_12
+comma
+l_string|&quot;Read 12&quot;
+)brace
+comma
+(brace
+id|GPCMD_GET_PERFORMANCE
+comma
+l_string|&quot;Get Performance&quot;
+)brace
+comma
+(brace
+id|GPCMD_SEND_DVD_STRUCTURE
+comma
+l_string|&quot;Send DVD Structure&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_DVD_STRUCTURE
+comma
+l_string|&quot;Read DVD Structure&quot;
+)brace
+comma
+(brace
+id|GPCMD_SET_STREAMING
+comma
+l_string|&quot;Set Streaming&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_CD_MSF
+comma
+l_string|&quot;Read CD MSF&quot;
+)brace
+comma
+(brace
+id|GPCMD_SCAN
+comma
+l_string|&quot;Scan&quot;
+)brace
+comma
+(brace
+id|GPCMD_SET_SPEED
+comma
+l_string|&quot;Set Speed&quot;
+)brace
+comma
+(brace
+id|GPCMD_PLAY_CD
+comma
+l_string|&quot;Play CD&quot;
+)brace
+comma
+(brace
+id|GPCMD_MECHANISM_STATUS
+comma
+l_string|&quot;Mechanism Status&quot;
+)brace
+comma
+(brace
+id|GPCMD_READ_CD
+comma
+l_string|&quot;Read CD&quot;
+)brace
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* From Table 303 of the SFF8090 Ver. 3 (Mt. Fuji) draft standard. */
 DECL|variable|sense_key_texts
 r_const
 r_char
@@ -1761,188 +2007,7 @@ l_string|&quot;(reserved)&quot;
 comma
 )brace
 suffix:semicolon
-multiline_comment|/* From Table 37 of the ATAPI 2.6 draft standard. */
-r_const
-r_struct
-(brace
-DECL|member|packet_command
-r_int
-r_int
-id|packet_command
-suffix:semicolon
-DECL|member|text
-r_const
-r_char
-op_star
-r_const
-id|text
-suffix:semicolon
-DECL|variable|packet_command_texts
-)brace
-id|packet_command_texts
-(braket
-)braket
-op_assign
-(brace
-(brace
-id|TEST_UNIT_READY
-comma
-l_string|&quot;Test Unit Ready&quot;
-)brace
-comma
-(brace
-id|REQUEST_SENSE
-comma
-l_string|&quot;Request Sense&quot;
-)brace
-comma
-(brace
-id|INQUIRY
-comma
-l_string|&quot;Inquiry&quot;
-)brace
-comma
-(brace
-id|START_STOP
-comma
-l_string|&quot;Start Stop Unit&quot;
-)brace
-comma
-(brace
-id|ALLOW_MEDIUM_REMOVAL
-comma
-l_string|&quot;Prevent/Allow Medium Removal&quot;
-)brace
-comma
-(brace
-id|READ_CAPACITY
-comma
-l_string|&quot;Read CD-ROM Capacity&quot;
-)brace
-comma
-(brace
-id|READ_10
-comma
-l_string|&quot;Read(10)&quot;
-)brace
-comma
-(brace
-id|SEEK
-comma
-l_string|&quot;Seek&quot;
-)brace
-comma
-(brace
-id|SCMD_READ_TOC
-comma
-l_string|&quot;Read TOC&quot;
-)brace
-comma
-(brace
-id|SCMD_READ_SUBCHANNEL
-comma
-l_string|&quot;Read Sub-Channel&quot;
-)brace
-comma
-(brace
-id|READ_HEADER
-comma
-l_string|&quot;Read Header&quot;
-)brace
-comma
-(brace
-id|STOP_PLAY_SCAN
-comma
-l_string|&quot;Stop Play/Scan&quot;
-)brace
-comma
-(brace
-id|SCMD_PLAYAUDIO10
-comma
-l_string|&quot;Play Audio&quot;
-)brace
-comma
-(brace
-id|SCMD_PLAYAUDIO_MSF
-comma
-l_string|&quot;Play Audio MSF&quot;
-)brace
-comma
-(brace
-id|SCMD_PAUSE_RESUME
-comma
-l_string|&quot;Pause/Resume&quot;
-)brace
-comma
-(brace
-id|MODE_SELECT_10
-comma
-l_string|&quot;Mode Select&quot;
-)brace
-comma
-(brace
-id|MODE_SENSE_10
-comma
-l_string|&quot;Mode Sense&quot;
-)brace
-comma
-(brace
-id|LOAD_UNLOAD
-comma
-l_string|&quot;Load/Unload CD&quot;
-)brace
-comma
-(brace
-id|READ_12
-comma
-l_string|&quot;Read(12)&quot;
-)brace
-comma
-(brace
-id|GET_PERFORMANCE
-comma
-l_string|&quot;Get Performance&quot;
-)brace
-comma
-(brace
-id|READ_CD_MSF
-comma
-l_string|&quot;Read CD MSF&quot;
-)brace
-comma
-(brace
-id|SCAN
-comma
-l_string|&quot;Scan&quot;
-)brace
-comma
-(brace
-id|SET_CD_SPEED
-comma
-l_string|&quot;Set CD Speed&quot;
-)brace
-comma
-(brace
-id|PLAY_CD
-comma
-l_string|&quot;Play CD&quot;
-)brace
-comma
-(brace
-id|MECHANISM_STATUS
-comma
-l_string|&quot;Mechanism Status&quot;
-)brace
-comma
-(brace
-id|READ_CD
-comma
-l_string|&quot;Read CD&quot;
-)brace
-comma
-)brace
-suffix:semicolon
-multiline_comment|/* From Table 125 of the ATAPI 1.2 spec.,&n;   with additions from Tables 141 and 142 of the ATAPI 2.6 draft standard. */
+multiline_comment|/* From Table 304 of the SFF8090 Ver. 3 (Mt. Fuji) draft standard. */
 r_const
 r_struct
 (brace
@@ -1966,441 +2031,533 @@ id|sense_data_texts
 op_assign
 (brace
 (brace
-l_int|0x0000
+l_int|0x000000
 comma
 l_string|&quot;No additional sense information&quot;
 )brace
 comma
 (brace
-l_int|0x0011
+l_int|0x000011
 comma
-l_string|&quot;Audio play operation in progress&quot;
+l_string|&quot;Play operation in progress&quot;
 )brace
 comma
 (brace
-l_int|0x0012
+l_int|0x000012
 comma
-l_string|&quot;Audio play operation paused&quot;
+l_string|&quot;Play operation paused&quot;
 )brace
 comma
 (brace
-l_int|0x0013
+l_int|0x000013
 comma
-l_string|&quot;Audio play operation successfully completed&quot;
+l_string|&quot;Play operation successfully completed&quot;
 )brace
 comma
 (brace
-l_int|0x0014
+l_int|0x000014
 comma
-l_string|&quot;Audio play operation stopped due to error&quot;
+l_string|&quot;Play operation stopped due to error&quot;
 )brace
 comma
 (brace
-l_int|0x0015
+l_int|0x000015
 comma
 l_string|&quot;No current audio status to return&quot;
 )brace
 comma
 (brace
-l_int|0x0100
-comma
-l_string|&quot;Mechanical positioning or changer error&quot;
-)brace
-comma
-(brace
-l_int|0x0200
-comma
-l_string|&quot;No seek complete&quot;
-)brace
-comma
-(brace
-l_int|0x0400
-comma
-l_string|&quot;Logical unit not ready - cause not reportable&quot;
-)brace
-comma
-(brace
-l_int|0x0401
-comma
-l_string|&quot;Logical unit not ready - in progress (sic) of becoming ready&quot;
-)brace
-comma
-(brace
-l_int|0x0402
-comma
-l_string|&quot;Logical unit not ready - initializing command required&quot;
-)brace
-comma
-(brace
-l_int|0x0403
-comma
-l_string|&quot;Logical unit not ready - manual intervention required&quot;
-)brace
-comma
-(brace
-l_int|0x0501
-comma
-l_string|&quot;Media load - eject failed&quot;
-)brace
-comma
-(brace
-l_int|0x0600
-comma
-l_string|&quot;No reference position found&quot;
-)brace
-comma
-(brace
-l_int|0x0900
-comma
-l_string|&quot;Track following error&quot;
-)brace
-comma
-(brace
-l_int|0x0901
-comma
-l_string|&quot;Tracking servo failure&quot;
-)brace
-comma
-(brace
-l_int|0x0902
-comma
-l_string|&quot;Focus servo failure&quot;
-)brace
-comma
-(brace
-l_int|0x0903
-comma
-l_string|&quot;Spindle servo failure&quot;
-)brace
-comma
-(brace
-l_int|0x1100
-comma
-l_string|&quot;Unrecovered read error&quot;
-)brace
-comma
-(brace
-l_int|0x1106
-comma
-l_string|&quot;CIRC unrecovered error&quot;
-)brace
-comma
-(brace
-l_int|0x1500
-comma
-l_string|&quot;Random positioning error&quot;
-)brace
-comma
-(brace
-l_int|0x1501
-comma
-l_string|&quot;Mechanical positioning or changer error&quot;
-)brace
-comma
-(brace
-l_int|0x1502
-comma
-l_string|&quot;Positioning error detected by read of medium&quot;
-)brace
-comma
-(brace
-l_int|0x1700
+l_int|0x011700
 comma
 l_string|&quot;Recovered data with no error correction applied&quot;
 )brace
 comma
 (brace
-l_int|0x1701
+l_int|0x011701
 comma
 l_string|&quot;Recovered data with retries&quot;
 )brace
 comma
 (brace
-l_int|0x1702
+l_int|0x011702
 comma
 l_string|&quot;Recovered data with positive head offset&quot;
 )brace
 comma
 (brace
-l_int|0x1703
+l_int|0x011703
 comma
 l_string|&quot;Recovered data with negative head offset&quot;
 )brace
 comma
 (brace
-l_int|0x1704
+l_int|0x011704
 comma
 l_string|&quot;Recovered data with retries and/or CIRC applied&quot;
 )brace
 comma
 (brace
-l_int|0x1705
+l_int|0x011705
 comma
 l_string|&quot;Recovered data using previous sector ID&quot;
 )brace
 comma
 (brace
-l_int|0x1800
+l_int|0x011800
 comma
 l_string|&quot;Recovered data with error correction applied&quot;
 )brace
 comma
 (brace
-l_int|0x1801
+l_int|0x011801
 comma
 l_string|&quot;Recovered data with error correction and retries applied&quot;
 )brace
 comma
 (brace
-l_int|0x1802
+l_int|0x011802
 comma
 l_string|&quot;Recovered data - the data was auto-reallocated&quot;
 )brace
 comma
 (brace
-l_int|0x1803
+l_int|0x011803
 comma
 l_string|&quot;Recovered data with CIRC&quot;
 )brace
 comma
 (brace
-l_int|0x1804
+l_int|0x011804
 comma
 l_string|&quot;Recovered data with L-EC&quot;
 )brace
 comma
-multiline_comment|/* Following two not in 2.6. */
 (brace
-l_int|0x1805
+l_int|0x015d00
 comma
-l_string|&quot;Recovered data - recommend reassignment&quot;
+l_string|&quot;Failure prediction threshold exceeded - Predicted logical unit failure&quot;
 )brace
 comma
 (brace
-l_int|0x1806
+l_int|0x015d01
 comma
-l_string|&quot;Recovered data - recommend rewrite&quot;
+l_string|&quot;Failure prediction threshold exceeded - Predicted media failure&quot;
 )brace
 comma
 (brace
-l_int|0x1a00
+l_int|0x015dff
 comma
-l_string|&quot;Parameter list length error&quot;
+l_string|&quot;Failure prediction threshold exceeded - False&quot;
 )brace
 comma
 (brace
-l_int|0x2000
+l_int|0x020400
 comma
-l_string|&quot;Invalid command operation code&quot;
+l_string|&quot;Logical unit not ready - cause not reportable&quot;
+)brace
+comma
+multiline_comment|/* Following is misspelled in ATAPI 2.6, _and_ in Mt. Fuji */
+(brace
+l_int|0x020401
+comma
+l_string|&quot;Logical unit not ready - in progress [sic] of becoming ready&quot;
 )brace
 comma
 (brace
-l_int|0x2100
+l_int|0x020402
 comma
-l_string|&quot;Logical block address out of range&quot;
+l_string|&quot;Logical unit not ready - initializing command required&quot;
 )brace
 comma
 (brace
-l_int|0x2400
+l_int|0x020403
 comma
-l_string|&quot;Invalid field in command packet&quot;
+l_string|&quot;Logical unit not ready - manual intervention required&quot;
 )brace
 comma
 (brace
-l_int|0x2600
+l_int|0x020404
 comma
-l_string|&quot;Invalid field in parameter list&quot;
+l_string|&quot;In process of becoming ready - writing&quot;
 )brace
 comma
 (brace
-l_int|0x2601
+l_int|0x020600
 comma
-l_string|&quot;Parameter not supported&quot;
+l_string|&quot;No reference position found (media may be upside down)&quot;
 )brace
 comma
 (brace
-l_int|0x2602
-comma
-l_string|&quot;Parameter value invalid&quot;
-)brace
-comma
-multiline_comment|/* Following code not in 2.6. */
-(brace
-l_int|0x2603
-comma
-l_string|&quot;Threshold parameters not supported&quot;
-)brace
-comma
-(brace
-l_int|0x2800
-comma
-l_string|&quot;Not ready to ready transition, medium may have changed&quot;
-)brace
-comma
-(brace
-l_int|0x2900
-comma
-l_string|&quot;Power on, reset or bus device reset occurred&quot;
-)brace
-comma
-(brace
-l_int|0x2a00
-comma
-l_string|&quot;Parameters changed&quot;
-)brace
-comma
-(brace
-l_int|0x2a01
-comma
-l_string|&quot;Mode parameters changed&quot;
-)brace
-comma
-(brace
-l_int|0x3000
+l_int|0x023000
 comma
 l_string|&quot;Incompatible medium installed&quot;
 )brace
 comma
 (brace
-l_int|0x3001
-comma
-l_string|&quot;Cannot read medium - unknown format&quot;
-)brace
-comma
-(brace
-l_int|0x3002
-comma
-l_string|&quot;Cannot read medium - incompatible format&quot;
-)brace
-comma
-multiline_comment|/* Following code not in 2.6. */
-(brace
-l_int|0x3700
-comma
-l_string|&quot;Rounded parameter&quot;
-)brace
-comma
-(brace
-l_int|0x3900
-comma
-l_string|&quot;Saving parameters not supported&quot;
-)brace
-comma
-(brace
-l_int|0x3a00
+l_int|0x023a00
 comma
 l_string|&quot;Medium not present&quot;
 )brace
 comma
 (brace
-l_int|0x3f00
-comma
-l_string|&quot;ATAPI CD-ROM drive operating conditions have changed&quot;
-)brace
-comma
-(brace
-l_int|0x3f01
-comma
-l_string|&quot;Microcode has been changed&quot;
-)brace
-comma
-multiline_comment|/* Following two not in 2.6. */
-(brace
-l_int|0x3f02
-comma
-l_string|&quot;Changed operating definition&quot;
-)brace
-comma
-(brace
-l_int|0x3f03
-comma
-l_string|&quot;Inquiry data has changed&quot;
-)brace
-comma
-(brace
-l_int|0x4000
-comma
-l_string|&quot;Diagnostic failure on component (ASCQ)&quot;
-)brace
-comma
-(brace
-l_int|0x4400
-comma
-l_string|&quot;Internal ATAPI CD-ROM drive failure&quot;
-)brace
-comma
-(brace
-l_int|0x4e00
-comma
-l_string|&quot;Overlapped commands attempted&quot;
-)brace
-comma
-(brace
-l_int|0x5300
+l_int|0x025300
 comma
 l_string|&quot;Media load or eject failed&quot;
 )brace
 comma
 (brace
-l_int|0x5302
-comma
-l_string|&quot;Medium removal prevented&quot;
-)brace
-comma
-(brace
-l_int|0x5700
+l_int|0x025700
 comma
 l_string|&quot;Unable to recover table of contents&quot;
 )brace
 comma
 (brace
-l_int|0x5a00
+l_int|0x031100
 comma
-l_string|&quot;Operator request or state change input (unspecified)&quot;
+l_string|&quot;Unrecovered read error&quot;
 )brace
 comma
 (brace
-l_int|0x5a01
+l_int|0x031106
 comma
-l_string|&quot;Operator medium removal request&quot;
-)brace
-comma
-multiline_comment|/* Following two not in 2.6. */
-(brace
-l_int|0x5b00
-comma
-l_string|&quot;Threshold condition met&quot;
+l_string|&quot;CIRC unrecovered error&quot;
 )brace
 comma
 (brace
-l_int|0x5c00
+l_int|0x033101
 comma
-l_string|&quot;Status change&quot;
+l_string|&quot;Format command failed&quot;
 )brace
 comma
 (brace
-l_int|0x6300
+l_int|0x040200
+comma
+l_string|&quot;No seek complete&quot;
+)brace
+comma
+(brace
+l_int|0x040300
+comma
+l_string|&quot;Write fault&quot;
+)brace
+comma
+(brace
+l_int|0x040900
+comma
+l_string|&quot;Track following error&quot;
+)brace
+comma
+(brace
+l_int|0x040901
+comma
+l_string|&quot;Tracking servo failure&quot;
+)brace
+comma
+(brace
+l_int|0x040902
+comma
+l_string|&quot;Focus servo failure&quot;
+)brace
+comma
+(brace
+l_int|0x040903
+comma
+l_string|&quot;Spindle servo failure&quot;
+)brace
+comma
+(brace
+l_int|0x041500
+comma
+l_string|&quot;Random positioning error&quot;
+)brace
+comma
+(brace
+l_int|0x041501
+comma
+l_string|&quot;Mechanical positioning or changer error&quot;
+)brace
+comma
+(brace
+l_int|0x041502
+comma
+l_string|&quot;Positioning error detected by read of medium&quot;
+)brace
+comma
+(brace
+l_int|0x043c00
+comma
+l_string|&quot;Mechanical positioning or changer error&quot;
+)brace
+comma
+(brace
+l_int|0x044000
+comma
+l_string|&quot;Diagnostic failure on component (ASCQ)&quot;
+)brace
+comma
+(brace
+l_int|0x044400
+comma
+l_string|&quot;Internal CD/DVD logical unit failure&quot;
+)brace
+comma
+(brace
+l_int|0x04b600
+comma
+l_string|&quot;Media load mechanism failed&quot;
+)brace
+comma
+(brace
+l_int|0x051a00
+comma
+l_string|&quot;Parameter list length error&quot;
+)brace
+comma
+(brace
+l_int|0x052000
+comma
+l_string|&quot;Invalid command operation code&quot;
+)brace
+comma
+(brace
+l_int|0x052c00
+comma
+l_string|&quot;Command sequence error&quot;
+)brace
+comma
+(brace
+l_int|0x052100
+comma
+l_string|&quot;Logical block address out of range&quot;
+)brace
+comma
+(brace
+l_int|0x052400
+comma
+l_string|&quot;Invalid field in command packet&quot;
+)brace
+comma
+(brace
+l_int|0x052600
+comma
+l_string|&quot;Invalid field in parameter list&quot;
+)brace
+comma
+(brace
+l_int|0x052601
+comma
+l_string|&quot;Parameter not supported&quot;
+)brace
+comma
+(brace
+l_int|0x052602
+comma
+l_string|&quot;Parameter value invalid&quot;
+)brace
+comma
+(brace
+l_int|0x052700
+comma
+l_string|&quot;Write protected media&quot;
+)brace
+comma
+(brace
+l_int|0x053001
+comma
+l_string|&quot;Cannot read medium - unknown format&quot;
+)brace
+comma
+(brace
+l_int|0x053002
+comma
+l_string|&quot;Cannot read medium - incompatible format&quot;
+)brace
+comma
+(brace
+l_int|0x053900
+comma
+l_string|&quot;Saving parameters not supported&quot;
+)brace
+comma
+(brace
+l_int|0x054e00
+comma
+l_string|&quot;Overlapped commands attempted&quot;
+)brace
+comma
+(brace
+l_int|0x055302
+comma
+l_string|&quot;Medium removal prevented&quot;
+)brace
+comma
+(brace
+l_int|0x055500
+comma
+l_string|&quot;System resource failure&quot;
+)brace
+comma
+(brace
+l_int|0x056300
 comma
 l_string|&quot;End of user area encountered on this track&quot;
 )brace
 comma
 (brace
-l_int|0x6400
+l_int|0x056400
 comma
 l_string|&quot;Illegal mode for this track or incompatible medium&quot;
 )brace
 comma
-multiline_comment|/* Following error is misspelled in ATAPI 2.6 */
 (brace
-l_int|0xb900
+l_int|0x056f00
 comma
-l_string|&quot;Play operation oborted [sic]&quot;
+l_string|&quot;Copy protection key exchange failure - Authentication failure&quot;
 )brace
 comma
 (brace
-l_int|0xbf00
+l_int|0x056f01
+comma
+l_string|&quot;Copy protection key exchange failure - Key not present&quot;
+)brace
+comma
+(brace
+l_int|0x056f02
+comma
+l_string|&quot;Copy protection key exchange failure - Key not established&quot;
+)brace
+comma
+(brace
+l_int|0x05bf00
 comma
 l_string|&quot;Loss of streaming&quot;
+)brace
+comma
+(brace
+l_int|0x062800
+comma
+l_string|&quot;Not ready to ready transition, medium may have changed&quot;
+)brace
+comma
+(brace
+l_int|0x062900
+comma
+l_string|&quot;Power on, reset or hardware reset occurred&quot;
+)brace
+comma
+(brace
+l_int|0x062a00
+comma
+l_string|&quot;Parameters changed&quot;
+)brace
+comma
+(brace
+l_int|0x062a01
+comma
+l_string|&quot;Mode parameters changed&quot;
+)brace
+comma
+(brace
+l_int|0x062e00
+comma
+l_string|&quot;Insufficient time for operation&quot;
+)brace
+comma
+(brace
+l_int|0x063f00
+comma
+l_string|&quot;Logical unit operating conditions have changed&quot;
+)brace
+comma
+(brace
+l_int|0x063f01
+comma
+l_string|&quot;Microcode has been changed&quot;
+)brace
+comma
+(brace
+l_int|0x065a00
+comma
+l_string|&quot;Operator request or state change input (unspecified)&quot;
+)brace
+comma
+(brace
+l_int|0x065a01
+comma
+l_string|&quot;Operator medium removal request&quot;
+)brace
+comma
+(brace
+l_int|0x0bb900
+comma
+l_string|&quot;Play operation aborted&quot;
+)brace
+comma
+multiline_comment|/* Here we use 0xff for the key (not a valid key) to signify&n;&t; * that these can have _any_ key value associated with them... */
+(brace
+l_int|0xff0401
+comma
+l_string|&quot;Logical unit is in process of becoming ready&quot;
+)brace
+comma
+(brace
+l_int|0xff0400
+comma
+l_string|&quot;Logical unit not ready, cause not reportable&quot;
+)brace
+comma
+(brace
+l_int|0xff0402
+comma
+l_string|&quot;Logical unit not ready, initializing command required&quot;
+)brace
+comma
+(brace
+l_int|0xff0403
+comma
+l_string|&quot;Logical unit not ready, manual intervention required&quot;
+)brace
+comma
+(brace
+l_int|0xff0500
+comma
+l_string|&quot;Logical unit does not respond to selection&quot;
+)brace
+comma
+(brace
+l_int|0xff0800
+comma
+l_string|&quot;Logical unit communication failure&quot;
+)brace
+comma
+(brace
+l_int|0xff0802
+comma
+l_string|&quot;Logical unit communication parity error&quot;
+)brace
+comma
+(brace
+l_int|0xff0801
+comma
+l_string|&quot;Logical unit communication time-out&quot;
+)brace
+comma
+(brace
+l_int|0xff2500
+comma
+l_string|&quot;Logical unit not supported&quot;
+)brace
+comma
+(brace
+l_int|0xff4c00
+comma
+l_string|&quot;Logical unit failed self-configuration&quot;
+)brace
+comma
+(brace
+l_int|0xff3e00
+comma
+l_string|&quot;Logical unit has not self-configured yet&quot;
 )brace
 comma
 )brace

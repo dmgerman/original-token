@@ -3818,9 +3818,11 @@ c_func
 l_string|&quot;loop&quot;
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 multiline_comment|/* ! ( l&lt;0 || ( l&gt;=0 &amp;&amp; ( ! pfirst || (flags == HIPRI &amp;&amp; pri != HIPRI) ) ) ) */
 multiline_comment|/* ( ! l&lt;0 &amp;&amp; ! ( l&gt;=0 &amp;&amp; ( ! pfirst || (flags == HIPRI &amp;&amp; pri != HIPRI) ) ) ) */

@@ -358,7 +358,9 @@ DECL|macro|MAX_PARA
 mdefine_line|#define MAX_PARA&t;(MAX_PCBIT_CARDS * 2)
 macro_line|#include &lt;linux/init.h&gt;
 DECL|function|pcbit_setup
+r_static
 r_int
+id|__init
 id|pcbit_setup
 c_func
 (paren

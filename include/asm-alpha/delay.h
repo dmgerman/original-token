@@ -15,25 +15,59 @@ r_int
 id|loops
 )paren
 (brace
+r_register
+r_int
+r_int
+id|r0
+id|__asm__
+c_func
+(paren
+l_string|&quot;$0&quot;
+)paren
+op_assign
+id|loops
+suffix:semicolon
+macro_line|#ifdef MODULE
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;.align 3&bslash;n&quot;
-l_string|&quot;1:&bslash;tsubq %0,1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;bge %0,1b&quot;
+l_string|&quot;lda $28,___delay; jsr $28,($28),0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
-id|loops
+id|r0
 )paren
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;r&quot;
 (paren
-id|loops
+id|r0
 )paren
+suffix:colon
+l_string|&quot;$28&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;bsr $28,___delay&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|r0
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|r0
+)paren
+suffix:colon
+l_string|&quot;$28&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * division by multiplication: you don&squot;t have to worry about&n; * loss of precision.&n; *&n; * Use only for very small delays ( &lt; 1 msec).  Should probably use a&n; * lookup table, really, as the multiplications take much too long with&n; * short delays.  This is a &quot;reasonable&quot; implementation, though (and the&n; * first constant multiplications gets optimized away if the delay is&n; * a constant).&n; *&n; * Optimize small constants further by exposing the second multiplication&n; * to the compiler.  In addition, mulq is 2 cycles faster than umulh.&n; */
 r_extern

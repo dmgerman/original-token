@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.29 1998/11/29 15:49:44 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.30 1999/08/08 14:03:37 shadow Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
@@ -265,6 +265,8 @@ DECL|macro|DMA_RST_SCSI
 mdefine_line|#define DMA_RST_SCSI     0x00000080        /* Reset the SCSI controller */
 DECL|macro|DMA_RST_ENET
 mdefine_line|#define DMA_RST_ENET     DMA_RST_SCSI      /* Reset the ENET controller */
+DECL|macro|DMA_RST_BPP
+mdefine_line|#define DMA_RST_BPP      DMA_RST_SCSI      /* Reset the BPP controller */
 DECL|macro|DMA_ST_WRITE
 mdefine_line|#define DMA_ST_WRITE     0x00000100        /* write from device to memory */
 DECL|macro|DMA_ENABLE
@@ -298,9 +300,9 @@ mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SCSI: SBUS r/w burst 
 DECL|macro|DMA_BRST64
 mdefine_line|#define DMA_BRST64       0x00080000        /* SCSI: 64byte bursts (HME on UltraSparc only) */
 DECL|macro|DMA_BRST32
-mdefine_line|#define DMA_BRST32       0x00040000        /* SCSI: 32byte bursts */
+mdefine_line|#define DMA_BRST32       0x00040000        /* SCSI/BPP: 32byte bursts */
 DECL|macro|DMA_BRST16
-mdefine_line|#define DMA_BRST16       0x00000000        /* SCSI: 16byte bursts */
+mdefine_line|#define DMA_BRST16       0x00000000        /* SCSI/BPP: 16byte bursts */
 DECL|macro|DMA_BRST0
 mdefine_line|#define DMA_BRST0        0x00080000        /* SCSI: no bursts (non-HME gate arrays) */
 DECL|macro|DMA_ADDR_DISAB
@@ -317,6 +319,8 @@ DECL|macro|DMA_AUTO_NADDR
 mdefine_line|#define DMA_AUTO_NADDR   0x01000000        /* Use &quot;auto nxt addr&quot; feature */
 DECL|macro|DMA_SCSI_ON
 mdefine_line|#define DMA_SCSI_ON      0x02000000        /* Enable SCSI dma */
+DECL|macro|DMA_BPP_ON
+mdefine_line|#define DMA_BPP_ON       DMA_SCSI_ON       /* Enable BPP dma */
 DECL|macro|DMA_PARITY_OFF
 mdefine_line|#define DMA_PARITY_OFF   0x02000000        /* HME: disable parity checking */
 DECL|macro|DMA_LOADED_ADDR

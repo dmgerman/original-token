@@ -7,19 +7,19 @@ DECL|macro|LIBRARY_TEXT_START
 mdefine_line|#define LIBRARY_TEXT_START 0x0c000000
 multiline_comment|/*&n; * Cache flushing...&n; */
 DECL|macro|flush_cache_all
-mdefine_line|#define flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;processor.u.armv3v4._flush_cache_all()
+mdefine_line|#define flush_cache_all()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_cache_all()
 DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(_mm)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;processor.u.armv3v4._flush_cache_all();&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define flush_cache_mm(_mm)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_cache_all();&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(_mm,_start,_end)&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;processor.u.armv3v4._flush_cache_area&t;&t;&bslash;&n;&t;&t;&t;&t;((_start), (_end), 1);&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define flush_cache_range(_mm,_start,_end)&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_cache_area((_start), (_end), 1);&t;&bslash;&n;&t;} while (0)
 DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(_vma,_vmaddr)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_vma)-&gt;vm_mm == current-&gt;mm)&t;&t;&t;&bslash;&n;&t;&t;&t;processor.u.armv3v4._flush_cache_area&t;&t;&bslash;&n;&t;&t;&t;&t;((_vmaddr), (_vmaddr) + PAGE_SIZE,&t;&bslash;&n;&t;&t;&t;&t; ((_vma)-&gt;vm_flags &amp; VM_EXEC) ? 1 : 0);&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define flush_cache_page(_vma,_vmaddr)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_vma)-&gt;vm_mm == current-&gt;mm)&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_cache_area((_vmaddr),&t;&t;&t;&bslash;&n;&t;&t;&t;&t;(_vmaddr) + PAGE_SIZE,&t;&t;&t;&bslash;&n;&t;&t;&t;&t;((_vma)-&gt;vm_flags &amp; VM_EXEC) ? 1 : 0);&t;&bslash;&n;&t;} while (0)
 DECL|macro|clean_cache_range
-mdefine_line|#define clean_cache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _s, _sz;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_s = (unsigned long)_start;&t;&t;&t;&t;&bslash;&n;&t;&t;_sz = (unsigned long)_end - _s;&t;&t;&t;&t;&bslash;&n;&t;&t;processor.u.armv3v4._clean_cache_area(_s, _sz);&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define clean_cache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _s, _sz;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_s = (unsigned long)_start;&t;&t;&t;&t;&bslash;&n;&t;&t;_sz = (unsigned long)_end - _s;&t;&t;&t;&t;&bslash;&n;&t;&t;cpu_clean_cache_area(_s, _sz);&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|clean_cache_area
-mdefine_line|#define clean_cache_area(_start,_size)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _s;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_s = (unsigned long)_start;&t;&t;&t;&t;&bslash;&n;&t;&t;processor.u.armv3v4._clean_cache_area(_s, _size);&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define clean_cache_area(_start,_size)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long _s;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_s = (unsigned long)_start;&t;&t;&t;&t;&bslash;&n;&t;&t;cpu_clean_cache_area(_s, _size);&t;&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;processor.u.armv3v4._flush_icache_area((_start), (_end) - (_start))
+mdefine_line|#define flush_icache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_icache_area((_start), (_end) - (_start))
 multiline_comment|/*&n; * We don&squot;t have a MEMC chip...&n; */
 DECL|macro|update_memc_all
 mdefine_line|#define update_memc_all()&t;&t;do { } while (0)
@@ -31,18 +31,18 @@ DECL|macro|update_memc_addr
 mdefine_line|#define update_memc_addr(mm,addr,pte)&t;do { } while (0)
 multiline_comment|/*&n; * This flushes back any buffered write data.  We have to clean and flush the entries&n; * in the cache for this page.  Is it necessary to invalidate the I-cache?&n; */
 DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(_page)&t;&t;&t;&t;&t;&bslash;&n;&t;processor.u.armv3v4._flush_ram_page ((_page) &amp; PAGE_MASK);
+mdefine_line|#define flush_page_to_ram(_page)&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_ram_page((_page) &amp; PAGE_MASK);
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * GCC uses conditional instructions, and expects the assembler code to do so as well.&n; *&n; * We drain the write buffer in here to ensure that the page tables in ram&n; * are really up to date.  It is more efficient to do this here...&n; */
 DECL|macro|flush_tlb
 mdefine_line|#define flush_tlb() flush_tlb_all()
 DECL|macro|flush_tlb_all
-mdefine_line|#define flush_tlb_all()&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;processor.u.armv3v4._flush_tlb_all()
+mdefine_line|#define flush_tlb_all()&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_tlb_all()
 DECL|macro|flush_tlb_mm
-mdefine_line|#define flush_tlb_mm(_mm)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;processor.u.armv3v4._flush_tlb_all();&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define flush_tlb_mm(_mm)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_tlb_all();&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|flush_tlb_range
-mdefine_line|#define flush_tlb_range(_mm,_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;processor.u.armv3v4._flush_tlb_area&t;&t;&t;&bslash;&n;&t;&t;&t;&t;((_start), (_end), 1);&t;&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define flush_tlb_range(_mm,_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_mm) == current-&gt;mm)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_tlb_area((_start), (_end), 1);&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|flush_tlb_page
-mdefine_line|#define flush_tlb_page(_vma,_vmaddr)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_vma)-&gt;vm_mm == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;processor.u.armv3v4._flush_tlb_area&t;&t;&t;&bslash;&n;&t;&t;&t;&t;((_vmaddr), (_vmaddr) + PAGE_SIZE,&t;&t;&bslash;&n;&t;&t;&t;&t; ((_vma)-&gt;vm_flags &amp; VM_EXEC) ? 1 : 0);&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define flush_tlb_page(_vma,_vmaddr)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_vma)-&gt;vm_mm == current-&gt;mm)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_tlb_area((_vmaddr), (_vmaddr) + PAGE_SIZE,&t;&bslash;&n;&t;&t;&t;&t; ((_vma)-&gt;vm_flags &amp; VM_EXEC) ? 1 : 0);&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * PMD_SHIFT determines the size of the area a second-level page table can map&n; */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT       20
@@ -250,7 +250,7 @@ mdefine_line|#define mk_user_pmd(ptep)&t;__mk_pmd(ptep, _PAGE_USER_TABLE)
 DECL|macro|mk_kernel_pmd
 mdefine_line|#define mk_kernel_pmd(ptep)&t;__mk_pmd(ptep, _PAGE_KERNEL_TABLE)
 DECL|macro|set_pmd
-mdefine_line|#define set_pmd(pmdp,pmd)&t;processor.u.armv3v4._set_pmd(pmdp,pmd)
+mdefine_line|#define set_pmd(pmdp,pmd)&t;cpu_set_pmd(pmdp,pmd)
 multiline_comment|/* Find an entry in the second-level page table.. */
 DECL|macro|pmd_offset
 mdefine_line|#define pmd_offset(dir, address) ((pmd_t *)(dir))
@@ -592,7 +592,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|macro|set_pte
-mdefine_line|#define set_pte(ptep, pte)&t;processor.u.armv3v4._set_pte(ptep,pte)
+mdefine_line|#define set_pte(ptep, pte)&t;cpu_set_pte(ptep,pte)
 DECL|function|pte_page
 r_extern
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.131 1999/07/30 09:35:45 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.134 1999/08/31 06:54:58 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -2890,10 +2890,12 @@ id|slot
 op_assign
 id|sdev-&gt;slot
 suffix:semicolon
+r_volatile
 id|u64
 op_star
 id|cfg
-comma
+suffix:semicolon
+id|u64
 id|tmp
 suffix:semicolon
 r_switch
@@ -6883,6 +6885,19 @@ r_void
 op_star
 )paren
 id|end_mem
+suffix:semicolon
+id|start_mem
+op_assign
+(paren
+(paren
+id|start_mem
+op_plus
+l_int|7UL
+)paren
+op_amp
+op_complement
+l_int|7UL
+)paren
 suffix:semicolon
 id|sparc64_valid_addr_bitmap
 op_assign

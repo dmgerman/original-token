@@ -37,6 +37,18 @@ DECL|macro|CSR_PCISDRAMBASE
 mdefine_line|#define CSR_PCISDRAMBASE&t;DC21285_IO(0x0018)
 DECL|macro|CSR_PCIROMBASE
 mdefine_line|#define CSR_PCIROMBASE&t;&t;DC21285_IO(0x0030)
+DECL|macro|CSR_MBOX0
+mdefine_line|#define CSR_MBOX0&t;&t;DC21285_IO(0x0050)
+DECL|macro|CSR_MBOX1
+mdefine_line|#define CSR_MBOX1&t;&t;DC21285_IO(0x0054)
+DECL|macro|CSR_MBOX2
+mdefine_line|#define CSR_MBOX2&t;&t;DC21285_IO(0x0058)
+DECL|macro|CSR_MBOX3
+mdefine_line|#define CSR_MBOX3&t;&t;DC21285_IO(0x005c)
+DECL|macro|CSR_DOORBELL
+mdefine_line|#define CSR_DOORBELL&t;&t;DC21285_IO(0x0060)
+DECL|macro|CSR_DOORBELL_SETUP
+mdefine_line|#define CSR_DOORBELL_SETUP&t;DC21285_IO(0x0064)
 DECL|macro|CSR_ROMWRITEREG
 mdefine_line|#define CSR_ROMWRITEREG&t;&t;DC21285_IO(0x0068)
 DECL|macro|CSR_CSRBASEMASK

@@ -3167,14 +3167,18 @@ id|coda_hard
 op_eq
 l_int|0
 )paren
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_else
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_UNINTERRUPTIBLE
+)paren
 suffix:semicolon
 multiline_comment|/* got a reply */
 r_if

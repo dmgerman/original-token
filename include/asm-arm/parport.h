@@ -2,35 +2,25 @@ multiline_comment|/*&n; * parport.h: ia32-specific parport initialisation&n; *&n
 macro_line|#ifndef _ASM_I386_PARPORT_H
 DECL|macro|_ASM_I386_PARPORT_H
 mdefine_line|#define _ASM_I386_PARPORT_H 1
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
 DECL|macro|PARPORT_PC_MAX_PORTS
 mdefine_line|#define PARPORT_PC_MAX_PORTS  8
+multiline_comment|/* If parport_cs (PCMCIA) is managing ports for us, we&squot;ll need the&n; * probing routines forever; otherwise we can lose them at boot time. */
+macro_line|#ifdef CONFIG_PARPORT_PC_PCMCIA
+DECL|macro|__maybe_initdata
+mdefine_line|#define __maybe_initdata
+DECL|macro|__maybe_init
+mdefine_line|#define __maybe_init
+macro_line|#else
+DECL|macro|__maybe_initdata
+mdefine_line|#define __maybe_initdata __initdata
+DECL|macro|__maybe_init
+mdefine_line|#define __maybe_init __init
+macro_line|#endif
 r_static
 r_int
-id|__init
-id|probe_one_port
-c_func
-(paren
-r_int
-r_int
-r_int
-id|base
-comma
-r_int
-r_int
-r_int
-id|base_hi
-comma
-r_int
-id|irq
-comma
-r_int
-id|dma
-)paren
-suffix:semicolon
-r_static
-r_int
-id|__init
+id|__maybe_init
 id|parport_pc_init_pci
 c_func
 (paren
@@ -41,11 +31,11 @@ r_int
 id|dma
 )paren
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|__maybe_initdata
 r_static
 r_int
 id|user_specified
-id|__initdata
+id|__maybe_initdata
 op_assign
 l_int|0
 suffix:semicolon
@@ -112,9 +102,10 @@ op_plus
 op_star
 id|io
 suffix:semicolon
-id|count
-op_add_assign
-id|probe_one_port
+r_if
+c_cond
+(paren
+id|parport_pc_probe_port
 c_func
 (paren
 op_star
@@ -141,6 +132,9 @@ id|dma
 op_increment
 )paren
 )paren
+)paren
+id|count
+op_increment
 suffix:semicolon
 )brace
 r_while
@@ -161,9 +155,10 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Probe all the likely ports. */
-id|count
-op_add_assign
-id|probe_one_port
+r_if
+c_cond
+(paren
+id|parport_pc_probe_port
 c_func
 (paren
 l_int|0x3bc
@@ -180,10 +175,14 @@ id|dma
 l_int|0
 )braket
 )paren
-suffix:semicolon
+)paren
 id|count
-op_add_assign
-id|probe_one_port
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|parport_pc_probe_port
 c_func
 (paren
 l_int|0x378
@@ -200,10 +199,14 @@ id|dma
 l_int|0
 )braket
 )paren
-suffix:semicolon
+)paren
 id|count
-op_add_assign
-id|probe_one_port
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|parport_pc_probe_port
 c_func
 (paren
 l_int|0x278
@@ -220,6 +223,9 @@ id|dma
 l_int|0
 )braket
 )paren
+)paren
+id|count
+op_increment
 suffix:semicolon
 id|count
 op_add_assign

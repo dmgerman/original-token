@@ -17,7 +17,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &quot;irq_impl.h&quot;
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
 DECL|macro|vuip
@@ -57,8 +57,8 @@ l_int|0UL
 suffix:semicolon
 multiline_comment|/*&n; * The ack_irq routine used by 80% of the systems.&n; */
 r_void
-DECL|function|generic_ack_irq
-id|generic_ack_irq
+DECL|function|common_ack_irq
+id|common_ack_irq
 c_func
 (paren
 r_int
@@ -3644,6 +3644,14 @@ c_cond
 l_string|&quot; (retryable)&quot;
 suffix:colon
 l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|dik_show_regs
+c_func
+(paren
+id|regs
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#if DEBUG_MCHECK &gt; 1

@@ -1,9 +1,10 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.35 1999/05/10 23:31:03 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.39 1999/08/31 15:42:39 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -3542,10 +3543,12 @@ op_increment
 r_if
 c_cond
 (paren
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 OG
 l_int|0x10000000
 )paren
@@ -3555,16 +3558,20 @@ c_func
 (paren
 l_string|&quot;Relocating PCI address %lx -&gt; %lx&bslash;n&quot;
 comma
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 comma
 (paren
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 op_amp
 l_int|0x00FFFFFF
 )paren
@@ -3572,16 +3579,20 @@ op_or
 l_int|0x01000000
 )paren
 suffix:semicolon
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 op_assign
 (paren
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 op_amp
 l_int|0x00FFFFFF
 )paren
@@ -3601,10 +3612,12 @@ op_star
 l_int|0x4
 )paren
 comma
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 )paren
 suffix:semicolon
 )brace

@@ -135,7 +135,7 @@ id|uint
 op_star
 )paren
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 id|flreg
 )braket
@@ -374,7 +374,7 @@ c_func
 id|ip
 comma
 op_amp
-id|current-&gt;tss.fpr
+id|current-&gt;thread.fpr
 (braket
 (paren
 id|instword

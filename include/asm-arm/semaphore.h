@@ -4,6 +4,7 @@ DECL|macro|__ASM_ARM_SEMAPHORE_H
 mdefine_line|#define __ASM_ARM_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|semaphore
 r_struct
@@ -13,9 +14,9 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|waking
+DECL|member|sleepers
 r_int
-id|waking
+id|sleepers
 suffix:semicolon
 DECL|member|wait
 id|wait_queue_head_t
@@ -34,7 +35,7 @@ mdefine_line|#define DECLARE_MUTEX(name)&t;&t;__DECLARE_SEMAPHORE_GENERIC(name,1
 DECL|macro|DECLARE_MUTEX_LOCKED
 mdefine_line|#define DECLARE_MUTEX_LOCKED(name)&t;__DECLARE_SEMAPHORE_GENERIC(name,0)
 DECL|macro|sema_init
-mdefine_line|#define sema_init(sem, val)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;atomic_set(&amp;((sem)-&gt;count), (val));&t;&bslash;&n;&t;(sem)-&gt;waking = 0;&t;&t;&t;&bslash;&n;&t;init_waitqueue_head(&amp;(sem)-&gt;wait);&t;&bslash;&n;} while (0)
+mdefine_line|#define sema_init(sem, val)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;atomic_set(&amp;((sem)-&gt;count), (val));&t;&bslash;&n;&t;(sem)-&gt;sleepers = 0;&t;&t;&t;&bslash;&n;&t;init_waitqueue_head(&amp;(sem)-&gt;wait);&t;&bslash;&n;} while (0)
 DECL|function|init_MUTEX
 r_static
 r_inline
@@ -97,7 +98,7 @@ multiline_comment|/* special register calling convention */
 suffix:semicolon
 id|asmlinkage
 r_int
-id|__down_failed_trylock
+id|__down_trylock_failed
 c_func
 (paren
 r_void

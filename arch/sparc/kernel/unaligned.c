@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unaligned.c,v 1.18 1999/04/03 11:36:17 anton Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: unaligned.c,v 1.19 1999/08/14 03:51:33 anton Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -199,7 +199,7 @@ c_func
 (paren
 l_string|&quot;Byte sized unaligned access?!?!&quot;
 comma
-id|current-&gt;tss.kregs
+id|current-&gt;thread.kregs
 )paren
 suffix:semicolon
 r_return
@@ -1365,11 +1365,11 @@ r_int
 id|insn
 )paren
 (brace
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon
@@ -1414,7 +1414,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_amp
 id|SPARC_FLAG_UNALIGNED
 )paren
@@ -1697,11 +1697,11 @@ suffix:semicolon
 )brace
 id|kill_user
 suffix:colon
-id|current-&gt;tss.sig_address
+id|current-&gt;thread.sig_address
 op_assign
 id|regs-&gt;pc
 suffix:semicolon
-id|current-&gt;tss.sig_desc
+id|current-&gt;thread.sig_desc
 op_assign
 id|SUBSIG_PRIVINST
 suffix:semicolon

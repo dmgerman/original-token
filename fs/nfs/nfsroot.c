@@ -1283,8 +1283,8 @@ suffix:semicolon
 multiline_comment|/*&n; *  Use portmapper to find mountd and nfsd port numbers if not overriden&n; *  by the user. Use defaults if portmapper is not available.&n; *  XXX: Is there any nfs server with no portmapper?&n; */
 DECL|function|root_nfs_ports
 r_static
-id|__init
 r_int
+id|__init
 id|root_nfs_ports
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: eicon_mod.c,v 1.9 1999/08/18 20:17:02 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon.Diehl active cards.&n; * &n; * Copyright 1997    by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de) &n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; * &n; * Thanks to    Eicon Technology Diehl GmbH &amp; Co. oHG for&n; *              documents, informations and hardware.&n; *&n; *              Deutsche Telekom AG for S2M support.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_mod.c,v $&n; * Revision 1.9  1999/08/18 20:17:02  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.8  1999/07/25 15:12:08  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.7  1999/07/11 17:16:27  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.6  1999/06/09 19:31:26  armin&n; * Wrong PLX size for request_region() corrected.&n; * Added first MCA code from Erik Weber.&n; *&n; * Revision 1.5  1999/04/01 12:48:35  armin&n; * Changed some log outputs.&n; *&n; * Revision 1.4  1999/03/29 11:19:47  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.3  1999/03/02 12:37:47  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.2  1999/01/24 20:14:21  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.1  1999/01/01 18:09:44  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
+multiline_comment|/* $Id: eicon_mod.c,v 1.11 1999/08/29 17:23:45 armin Exp $&n; *&n; * ISDN lowlevel-module for Eicon.Diehl active cards.&n; * &n; * Copyright 1997    by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1998,99 by Armin Schindler (mac@melware.de) &n; * Copyright 1999    Cytronics &amp; Melware (info@melware.de)&n; * &n; * Thanks to    Eicon Technology Diehl GmbH &amp; Co. oHG for&n; *              documents, informations and hardware.&n; *&n; *              Deutsche Telekom AG for S2M support.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: eicon_mod.c,v $&n; * Revision 1.11  1999/08/29 17:23:45  armin&n; * New setup compat.&n; * Bugfix if compile as not module.&n; *&n; * Revision 1.10  1999/08/28 21:32:53  armin&n; * Prepared for fax related functions.&n; * Now compilable without errors/warnings.&n; *&n; * Revision 1.9  1999/08/18 20:17:02  armin&n; * Added XLOG function for all cards.&n; * Bugfix of alloc_skb NULL pointer.&n; *&n; * Revision 1.8  1999/07/25 15:12:08  armin&n; * fix of some debug logs.&n; * enabled ISA-cards option.&n; *&n; * Revision 1.7  1999/07/11 17:16:27  armin&n; * Bugfixes in queue handling.&n; * Added DSP-DTMF decoder functions.&n; * Reorganized ack_handler.&n; *&n; * Revision 1.6  1999/06/09 19:31:26  armin&n; * Wrong PLX size for request_region() corrected.&n; * Added first MCA code from Erik Weber.&n; *&n; * Revision 1.5  1999/04/01 12:48:35  armin&n; * Changed some log outputs.&n; *&n; * Revision 1.4  1999/03/29 11:19:47  armin&n; * I/O stuff now in seperate file (eicon_io.c)&n; * Old ISA type cards (S,SX,SCOM,Quadro,S2M) implemented.&n; *&n; * Revision 1.3  1999/03/02 12:37:47  armin&n; * Added some important checks.&n; * Analog Modem with DSP.&n; * Channels will be added to Link-Level after loading firmware.&n; *&n; * Revision 1.2  1999/01/24 20:14:21  armin&n; * Changed and added debug stuff.&n; * Better data sending. (still problems with tty&squot;s flip buffer)&n; *&n; * Revision 1.1  1999/01/01 18:09:44  armin&n; * First checkin of new eicon driver.&n; * DIVA-Server BRI/PCI and PRI/PCI are supported.&n; * Old diehl code is obsolete.&n; *&n; *&n; */
 DECL|macro|DRIVERPATCH
 mdefine_line|#define DRIVERPATCH &quot;&quot;
 macro_line|#include &lt;linux/config.h&gt;
@@ -29,7 +29,7 @@ r_char
 op_star
 id|eicon_revision
 op_assign
-l_string|&quot;$Revision: 1.9 $&quot;
+l_string|&quot;$Revision: 1.11 $&quot;
 suffix:semicolon
 r_extern
 r_char
@@ -4305,8 +4305,7 @@ id|ISDN_FEATURE_L2_V11038
 op_or
 id|ISDN_FEATURE_L2_MODEM
 op_or
-id|ISDN_FEATURE_L2_FAX
-op_or
+multiline_comment|/* ISDN_FEATURE_L2_FAX | */
 id|ISDN_FEATURE_L3_TRANSDSP
 op_or
 id|ISDN_FEATURE_L3_FAX
@@ -4390,8 +4389,7 @@ id|ISDN_FEATURE_L2_V11038
 op_or
 id|ISDN_FEATURE_L2_MODEM
 op_or
-id|ISDN_FEATURE_L2_FAX
-op_or
+multiline_comment|/* ISDN_FEATURE_L2_FAX | */
 id|ISDN_FEATURE_L3_TRANSDSP
 op_or
 id|ISDN_FEATURE_L3_FAX
@@ -5656,7 +5654,7 @@ l_string|&quot;Eicon: No PCI-cards found, driver not loaded !&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* MODULE */
 r_return
 op_minus
 id|ENODEV
@@ -5787,7 +5785,47 @@ id|DRIVERNAME
 suffix:semicolon
 )brace
 macro_line|#else /* no module */
-DECL|function|__initfunc
+macro_line|#ifdef COMPAT_HAS_NEW_SETUP
+r_static
+r_int
+id|__init
+DECL|function|eicon_setup
+id|eicon_setup
+c_func
+(paren
+r_char
+op_star
+id|line
+)paren
+(brace
+r_int
+id|i
+comma
+id|argc
+suffix:semicolon
+r_int
+id|ints
+(braket
+l_int|5
+)braket
+suffix:semicolon
+r_char
+op_star
+id|str
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|line
+comma
+l_int|4
+comma
+id|ints
+)paren
+suffix:semicolon
+macro_line|#else
 id|__initfunc
 c_func
 (paren
@@ -5810,6 +5848,7 @@ id|i
 comma
 id|argc
 suffix:semicolon
+macro_line|#endif
 id|argc
 op_assign
 id|ints
@@ -5821,6 +5860,7 @@ id|i
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
 r_if
 c_cond
 (paren
@@ -5904,22 +5944,45 @@ l_string|&quot;eicon&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* eicon_addcard(0, membase, irq, id); */
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;eicon: membase=0x%x irq=%d id=%s&bslash;n&quot;
+l_string|&quot;Eicon ISDN active driver setup (id=%s membase=0x%x irq=%d)&bslash;n&quot;
+comma
+id|id
 comma
 id|membase
 comma
 id|irq
-comma
-id|id
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Eicon ISDN active driver setup&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef COMPAT_HAS_NEW_SETUP
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;eicon=&quot;
+comma
+id|eicon_setup
+)paren
+suffix:semicolon
+macro_line|#else
+)brace
+macro_line|#endif
 macro_line|#endif /* MODULE */
 macro_line|#ifdef CONFIG_ISDN_DRV_EICON_ISA
 macro_line|#ifdef CONFIG_MCA

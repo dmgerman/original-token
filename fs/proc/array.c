@@ -2586,7 +2586,7 @@ l_int|0
 suffix:semicolon
 id|sp
 op_assign
-id|p-&gt;tss.ksp
+id|p-&gt;thread.ksp
 suffix:semicolon
 r_do
 (brace
@@ -2922,9 +2922,9 @@ DECL|macro|KSTK_ESP
 mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;thread.usp)
 macro_line|#elif defined(__powerpc__)
 DECL|macro|KSTK_EIP
-mdefine_line|#define KSTK_EIP(tsk)&t;((tsk)-&gt;tss.regs-&gt;nip)
+mdefine_line|#define KSTK_EIP(tsk)&t;((tsk)-&gt;thread.regs-&gt;nip)
 DECL|macro|KSTK_ESP
-mdefine_line|#define KSTK_ESP(tsk)&t;((tsk)-&gt;tss.regs-&gt;gpr[1])
+mdefine_line|#define KSTK_ESP(tsk)&t;((tsk)-&gt;thread.regs-&gt;gpr[1])
 macro_line|#elif defined (__sparc_v9__)
 DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;thread.kregs-&gt;tpc)
@@ -2944,6 +2944,11 @@ DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)&t;(*(unsigned long *)(KSTK_TOS(tsk) + PT_REG(cp0_epc)))
 DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)&t;(*(unsigned long *)(KSTK_TOS(tsk) + PT_REG(regs[29])))
+macro_line|#elif defined(__sh__)
+DECL|macro|KSTK_EIP
+macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;thread.pc)
+DECL|macro|KSTK_ESP
+macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;thread.sp)
 macro_line|#endif
 multiline_comment|/* Gcc optimizes away &quot;strlen(x)&quot; for constant x */
 DECL|macro|ADDBUF
@@ -6093,7 +6098,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI_OLD_PROC
+macro_line|#ifdef CONFIG_PCI
 r_case
 id|PROC_PCI
 suffix:colon

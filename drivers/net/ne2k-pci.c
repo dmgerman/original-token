@@ -181,7 +181,7 @@ l_int|0x1050
 comma
 l_int|0x5a5a
 comma
-l_string|&quot;Winbond&quot;
+l_string|&quot;Winbond W89C940F&quot;
 comma
 l_int|0
 )brace

@@ -372,16 +372,13 @@ id|irlan_watchdog_timer_expired
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_init (void)&n; *&n; *    Initialize IrLAN layer&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|irlan_init
 r_int
+id|__init
 id|irlan_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.76 1999/04/02 14:54:30 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.78 1999/08/31 06:54:54 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -22,10 +22,6 @@ macro_line|#include &lt;asm/timer.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
-macro_line|#ifdef CONFIG_PCI
-macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;asm/pbm.h&gt;
-macro_line|#endif
 multiline_comment|/* Internal flag, should not be visible elsewhere at all. */
 DECL|macro|SA_IMAP_MASKED
 mdefine_line|#define SA_IMAP_MASKED&t;&t;0x100
@@ -148,19 +144,6 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/* Only 8-bits are available, be careful.  -DaveM */
-DECL|macro|IBF_DMA_SYNC
-mdefine_line|#define IBF_DMA_SYNC&t;0x01&t;/* DMA synchronization behind PCI bridge needed. */
-DECL|macro|IBF_PCI
-mdefine_line|#define IBF_PCI&t;&t;0x02&t;/* Indicates PSYCHO/SCHIZO PCI interrupt.&t; */
-DECL|macro|IBF_ACTIVE
-mdefine_line|#define IBF_ACTIVE&t;0x04&t;/* This interrupt is active and has a handler.&t; */
-DECL|macro|IBF_MULTI
-mdefine_line|#define IBF_MULTI&t;0x08&t;/* On PCI, indicates shared bucket.&t;&t; */
-DECL|macro|__bucket
-mdefine_line|#define __bucket(irq) ((struct ino_bucket *)(unsigned long)(irq))
-DECL|macro|__irq
-mdefine_line|#define __irq(bucket) ((unsigned int)(unsigned long)(bucket))
 DECL|function|get_irq_list
 r_int
 id|get_irq_list
@@ -866,12 +849,14 @@ mdefine_line|#define NUM_SYSIO_OFFSETS (sizeof(sysio_irq_offsets) / sizeof(sysio
 multiline_comment|/* Convert Interrupt Mapping register pointer to assosciated&n; * Interrupt Clear register pointer, SYSIO specific version.&n; */
 DECL|function|sysio_imap_to_iclr
 r_static
+r_volatile
 r_int
 r_int
 op_star
 id|sysio_imap_to_iclr
 c_func
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -898,6 +883,7 @@ id|imap_slot0
 suffix:semicolon
 r_return
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -917,155 +903,6 @@ suffix:semicolon
 )brace
 DECL|macro|offset
 macro_line|#undef offset
-macro_line|#ifdef CONFIG_PCI
-multiline_comment|/* PCI PSYCHO INO number to Sparc PIL level. */
-DECL|variable|psycho_ino_to_pil
-r_int
-r_char
-id|psycho_ino_to_pil
-(braket
-)braket
-op_assign
-(brace
-l_int|7
-comma
-l_int|5
-comma
-l_int|4
-comma
-l_int|2
-comma
-multiline_comment|/* PCI A slot 0  Int A, B, C, D */
-l_int|7
-comma
-l_int|5
-comma
-l_int|4
-comma
-l_int|2
-comma
-multiline_comment|/* PCI A slot 1  Int A, B, C, D */
-l_int|7
-comma
-l_int|5
-comma
-l_int|4
-comma
-l_int|2
-comma
-multiline_comment|/* PCI A slot 2  Int A, B, C, D */
-l_int|7
-comma
-l_int|5
-comma
-l_int|4
-comma
-l_int|2
-comma
-multiline_comment|/* PCI A slot 3  Int A, B, C, D */
-l_int|6
-comma
-l_int|4
-comma
-l_int|3
-comma
-l_int|1
-comma
-multiline_comment|/* PCI B slot 0  Int A, B, C, D */
-l_int|6
-comma
-l_int|4
-comma
-l_int|3
-comma
-l_int|1
-comma
-multiline_comment|/* PCI B slot 1  Int A, B, C, D */
-l_int|6
-comma
-l_int|4
-comma
-l_int|3
-comma
-l_int|1
-comma
-multiline_comment|/* PCI B slot 2  Int A, B, C, D */
-l_int|6
-comma
-l_int|4
-comma
-l_int|3
-comma
-l_int|1
-comma
-multiline_comment|/* PCI B slot 3  Int A, B, C, D */
-l_int|3
-comma
-multiline_comment|/* SCSI */
-l_int|5
-comma
-multiline_comment|/* Ethernet */
-l_int|8
-comma
-multiline_comment|/* Parallel Port */
-l_int|13
-comma
-multiline_comment|/* Audio Record */
-l_int|14
-comma
-multiline_comment|/* Audio Playback */
-l_int|15
-comma
-multiline_comment|/* PowerFail */
-l_int|3
-comma
-multiline_comment|/* second SCSI */
-l_int|11
-comma
-multiline_comment|/* Floppy */
-l_int|2
-comma
-multiline_comment|/* Spare Hardware */
-l_int|9
-comma
-multiline_comment|/* Keyboard */
-l_int|4
-comma
-multiline_comment|/* Mouse */
-l_int|12
-comma
-multiline_comment|/* Serial */
-l_int|10
-comma
-multiline_comment|/* Timer 0 */
-l_int|11
-comma
-multiline_comment|/* Timer 1 */
-l_int|15
-comma
-multiline_comment|/* Uncorrectable ECC */
-l_int|15
-comma
-multiline_comment|/* Correctable ECC */
-l_int|15
-comma
-multiline_comment|/* PCI Bus A Error */
-l_int|15
-comma
-multiline_comment|/* PCI Bus B Error */
-l_int|1
-comma
-multiline_comment|/* Power Management */
-)brace
-suffix:semicolon
-multiline_comment|/* INO number to IMAP register offset for PSYCHO external IRQ&squot;s. */
-DECL|macro|psycho_offset
-mdefine_line|#define psycho_offset(x) ((unsigned long)(&amp;(((struct psycho_regs *)0)-&gt;x)))
-DECL|macro|psycho_imap_offset
-mdefine_line|#define psycho_imap_offset(ino)&t;&t;&t;&t;&t;&t;      &bslash;&n;&t;((ino &amp; 0x20) ? (psycho_offset(imap_scsi) + (((ino) &amp; 0x1f) &lt;&lt; 3)) :  &bslash;&n;&t;&t;&t;(psycho_offset(imap_a_slot0) + (((ino) &amp; 0x3c) &lt;&lt; 1)))
-DECL|macro|psycho_iclr_offset
-mdefine_line|#define psycho_iclr_offset(ino)&t;&t;&t;&t;&t;&t;      &bslash;&n;&t;((ino &amp; 0x20) ? (psycho_offset(iclr_scsi) + (((ino) &amp; 0x1f) &lt;&lt; 3)) :  &bslash;&n;&t;&t;&t;(psycho_offset(iclr_a_slot0[0]) + (((ino) &amp; 0x1f)&lt;&lt;3)))
-macro_line|#endif
 multiline_comment|/* Now these are always passed a true fully specified sun4u INO. */
 DECL|function|enable_irq
 r_void
@@ -1092,6 +929,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -1160,6 +998,7 @@ r_int
 id|starfire_translate
 c_func
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -1220,6 +1059,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -1294,11 +1134,13 @@ comma
 r_int
 id|inofixup
 comma
+r_volatile
 r_int
 r_int
 op_star
 id|iclr
 comma
+r_volatile
 r_int
 r_int
 op_star
@@ -1577,6 +1419,7 @@ suffix:semicolon
 r_int
 id|pil
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -1672,6 +1515,7 @@ id|imap
 op_assign
 (paren
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -1793,6 +1637,7 @@ suffix:semicolon
 id|iclr
 op_assign
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -1814,397 +1659,6 @@ id|imap
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
-DECL|function|psycho_build_irq
-r_int
-r_int
-id|psycho_build_irq
-c_func
-(paren
-r_void
-op_star
-id|buscookie
-comma
-r_int
-id|imap_off
-comma
-r_int
-id|ino
-comma
-r_int
-id|need_dma_sync
-)paren
-(brace
-r_struct
-id|linux_psycho
-op_star
-id|psycho
-op_assign
-(paren
-r_struct
-id|linux_psycho
-op_star
-)paren
-id|buscookie
-suffix:semicolon
-r_struct
-id|psycho_regs
-op_star
-id|pregs
-op_assign
-id|psycho-&gt;psycho_regs
-suffix:semicolon
-r_int
-r_int
-id|addr
-suffix:semicolon
-r_struct
-id|ino_bucket
-op_star
-id|bucket
-suffix:semicolon
-r_int
-id|pil
-suffix:semicolon
-r_int
-r_int
-op_star
-id|imap
-comma
-op_star
-id|iclr
-suffix:semicolon
-r_int
-id|inofixup
-op_assign
-l_int|0
-suffix:semicolon
-id|pil
-op_assign
-id|psycho_ino_to_pil
-(braket
-id|ino
-op_amp
-id|PCI_IRQ_INO
-)braket
-suffix:semicolon
-id|addr
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|pregs-&gt;imap_a_slot0
-suffix:semicolon
-id|addr
-op_assign
-id|addr
-op_plus
-id|imap_off
-suffix:semicolon
-id|imap
-op_assign
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|addr
-)paren
-op_plus
-l_int|1
-suffix:semicolon
-id|addr
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|pregs
-suffix:semicolon
-id|addr
-op_add_assign
-id|psycho_iclr_offset
-c_func
-(paren
-id|ino
-op_amp
-(paren
-id|PCI_IRQ_INO
-)paren
-)paren
-suffix:semicolon
-id|iclr
-op_assign
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|addr
-)paren
-op_plus
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|ino
-op_amp
-l_int|0x20
-)paren
-)paren
-(brace
-id|inofixup
-op_assign
-id|ino
-op_amp
-l_int|0x03
-suffix:semicolon
-)brace
-multiline_comment|/* First check for sharing. */
-id|ino
-op_assign
-(paren
-op_star
-id|imap
-op_amp
-(paren
-id|SYSIO_IMAP_IGN
-op_or
-id|SYSIO_IMAP_INO
-)paren
-)paren
-op_plus
-id|inofixup
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ino
-OG
-id|NUM_IVECS
-)paren
-(brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;PSYCHO: Invalid INO %04x (%d:%d:%016lx:%016lx)&bslash;n&quot;
-comma
-id|ino
-comma
-id|pil
-comma
-id|inofixup
-comma
-id|iclr
-comma
-id|imap
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-id|bucket
-op_assign
-op_amp
-id|ivector_table
-(braket
-id|ino
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bucket-&gt;flags
-op_amp
-id|IBF_ACTIVE
-)paren
-(brace
-r_void
-op_star
-id|old_handler
-op_assign
-id|bucket-&gt;irq_info
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|old_handler
-op_eq
-l_int|NULL
-)paren
-(brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;PSYCHO: Active bucket, but no handler.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|bucket-&gt;flags
-op_amp
-id|IBF_MULTI
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_void
-op_star
-op_star
-id|vector
-suffix:semicolon
-id|vector
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_void
-op_star
-)paren
-op_star
-l_int|4
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-multiline_comment|/* We might have slept. */
-r_if
-c_cond
-(paren
-(paren
-id|bucket-&gt;flags
-op_amp
-id|IBF_MULTI
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|vector
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|vector
-(braket
-l_int|0
-)braket
-op_assign
-id|old_handler
-suffix:semicolon
-id|vector
-(braket
-l_int|1
-)braket
-op_assign
-id|vector
-(braket
-l_int|2
-)braket
-op_assign
-id|vector
-(braket
-l_int|3
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-id|bucket-&gt;irq_info
-op_assign
-id|vector
-suffix:semicolon
-id|bucket-&gt;flags
-op_or_assign
-id|IBF_MULTI
-suffix:semicolon
-)brace
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Just init the bucket */
-id|bucket
-op_assign
-id|__bucket
-c_func
-(paren
-id|build_irq
-c_func
-(paren
-id|pil
-comma
-id|inofixup
-comma
-id|iclr
-comma
-id|imap
-)paren
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|need_dma_sync
-)paren
-id|bucket-&gt;flags
-op_or_assign
-id|IBF_DMA_SYNC
-suffix:semicolon
-id|bucket-&gt;flags
-op_or_assign
-id|IBF_PCI
-suffix:semicolon
-r_return
-id|__irq
-c_func
-(paren
-id|bucket
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|atomic_bucket_insert
 r_static
 r_void
@@ -3390,6 +2844,7 @@ op_amp
 id|SA_IMAP_MASKED
 )paren
 (brace
+r_volatile
 r_int
 r_int
 op_star
@@ -5913,6 +5368,7 @@ c_func
 id|p-&gt;mask
 )paren
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -5961,6 +5417,7 @@ r_int
 id|starfire_translate
 c_func
 (paren
+r_volatile
 r_int
 r_int
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.22 1999/07/03 08:57:43 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.25 1999/08/31 06:58:20 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -8146,9 +8146,11 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9247,25 +9249,22 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * ---------------------------------------------------------------------&n; * su_XXX_init() and friends&n; *&n; * su_XXX_init() is called at boot-time to initialize the serial driver.&n; * ---------------------------------------------------------------------&n; */
 multiline_comment|/*&n; * This routine prints out the appropriate serial driver version&n; * number, and identifies which options were configured into this&n; * driver.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|show_su_version
 r_static
 id|__inline__
 r_void
+id|__init
 id|show_su_version
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.22 $&quot;
+l_string|&quot;$Revision: 1.25 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9401,26 +9400,13 @@ id|info-&gt;port_node
 (brace
 id|info-&gt;port
 op_assign
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|info-&gt;port
-comma
-l_int|8
-)paren
-)paren
-r_return
-suffix:semicolon
-macro_line|#endif
 id|info-&gt;irq
 op_assign
 id|dev-&gt;irqs
@@ -10129,18 +10115,6 @@ id|info-&gt;port_type
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-id|request_region
-c_func
-(paren
-id|info-&gt;port
-comma
-l_int|8
-comma
-id|info-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Reset the UART.&n;&t; */
 id|serial_outp
 c_func
@@ -10195,16 +10169,13 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|su_serial_init
 r_int
+id|__init
 id|su_serial_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -10617,16 +10588,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|su_kbd_ms_init
 r_int
+id|__init
 id|su_kbd_ms_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -10744,7 +10712,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s at %16lx (irq = %s) is a %s&bslash;n&quot;
+l_string|&quot;%s at 0x%lx (irq = %s) is a %s&bslash;n&quot;
 comma
 id|info-&gt;name
 comma
@@ -10795,11 +10763,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We got several platforms which present &squot;su&squot; in different parts&n; * of device tree. &squot;su&squot; may be found under obio, ebus, isa and pci.&n; * We walk over the tree and find them wherever PROM hides them.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|su_probe_any
 r_void
+id|__init
 id|su_probe_any
 c_func
 (paren
@@ -10810,7 +10776,6 @@ id|t
 comma
 r_int
 id|sunode
-)paren
 )paren
 (brace
 r_struct
@@ -10994,18 +10959,15 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|su_probe
 r_int
+id|__init
 id|su_probe
 (paren
 r_int
 r_int
 op_star
 id|memory_start
-)paren
 )paren
 (brace
 r_int
@@ -11668,12 +11630,10 @@ id|c-&gt;index
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Setup initial baud/bits/parity. We do two things here:&n; *&t;- construct a cflag setting for the first su_open()&n; *&t;- initialize the serial port&n; *&t;Return non-zero if we didn&squot;t find a serial port.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|serial_console_setup
 r_static
 r_int
+id|__init
 id|serial_console_setup
 c_func
 (paren
@@ -11685,7 +11645,6 @@ comma
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_struct
@@ -12129,16 +12088,13 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|su_serial_console_init
 r_int
+id|__init
 id|su_serial_console_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern

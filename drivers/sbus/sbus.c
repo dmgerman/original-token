@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.78 1999/07/23 02:00:27 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.79 1999/08/31 06:57:40 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -55,12 +55,10 @@ suffix:semicolon
 multiline_comment|/* Perhaps when I figure out more about the iommu we&squot;ll put a&n; * device registration routine here that probe_sbus() calls to&n; * setup the iommu for each Sbus.&n; */
 multiline_comment|/* We call this for each SBus device, and fill the structure based&n; * upon the prom device tree.  We return the start of memory after&n; * the things we have allocated.&n; */
 multiline_comment|/* #define DEBUG_FILL */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fill_sbus_device
 r_static
 r_void
+id|__init
 id|fill_sbus_device
 c_func
 (paren
@@ -71,7 +69,6 @@ r_struct
 id|linux_sbus_device
 op_star
 id|sbus_dev
-)paren
 )paren
 (brace
 r_int
@@ -1106,12 +1103,10 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbus_do_child_siblings
 r_static
 r_void
+id|__init
 id|sbus_do_child_siblings
 c_func
 (paren
@@ -1127,7 +1122,6 @@ r_struct
 id|linux_sbus
 op_star
 id|sbus
-)paren
 )paren
 (brace
 r_struct
@@ -1261,16 +1255,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sbus_init
 r_void
+id|__init
 id|sbus_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_register

@@ -132,7 +132,7 @@ mdefine_line|#define inw_p(port)&t;&t;in_le16((unsigned short *)((port)+_IO_BASE
 DECL|macro|outw_p
 mdefine_line|#define outw_p(val, port)&t;out_le16((unsigned short *)((port)+_IO_BASE), (val))
 DECL|macro|inl_p
-mdefine_line|#define inl_p(port)&t;&t;in_le32(((unsigned *)(port)+_IO_BASE))
+mdefine_line|#define inl_p(port)&t;&t;in_le32((unsigned *)((port)+_IO_BASE))
 DECL|macro|outl_p
 mdefine_line|#define outl_p(val, port)&t;out_le32((unsigned *)((port)+_IO_BASE), (val))
 r_extern

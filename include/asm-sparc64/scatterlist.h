@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: scatterlist.h,v 1.6 1998/12/16 04:33:57 davem Exp $ */
+multiline_comment|/* $Id: scatterlist.h,v 1.7 1999/08/30 10:15:01 davem Exp $ */
 macro_line|#ifndef _SPARC64_SCATTERLIST_H
 DECL|macro|_SPARC64_SCATTERLIST_H
 mdefine_line|#define _SPARC64_SCATTERLIST_H
@@ -29,6 +29,10 @@ id|__u32
 id|dvma_address
 suffix:semicolon
 multiline_comment|/* A place to hang host-specific addresses at. */
+DECL|member|dvma_length
+id|__u32
+id|dvma_length
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern

@@ -227,7 +227,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|tsk-&gt;tss.kregs
+id|tsk-&gt;thread.kregs
 suffix:semicolon
 r_struct
 id|thread_struct
@@ -235,7 +235,7 @@ op_star
 id|t
 op_assign
 op_amp
-id|tsk-&gt;tss
+id|tsk-&gt;thread
 suffix:semicolon
 r_int
 id|v
@@ -526,7 +526,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|tsk-&gt;tss.flags
+id|tsk-&gt;thread.flags
 op_amp
 id|MAGIC_CONSTANT
 )paren
@@ -679,7 +679,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|tsk-&gt;tss.kregs
+id|tsk-&gt;thread.kregs
 suffix:semicolon
 r_struct
 id|thread_struct
@@ -687,7 +687,7 @@ op_star
 id|t
 op_assign
 op_amp
-id|tsk-&gt;tss
+id|tsk-&gt;thread
 suffix:semicolon
 r_int
 r_int
@@ -1811,7 +1811,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|child-&gt;tss.kregs
+id|child-&gt;thread.kregs
 suffix:semicolon
 r_int
 id|rval
@@ -1979,7 +1979,7 @@ id|pt_regs
 op_star
 id|cregs
 op_assign
-id|child-&gt;tss.kregs
+id|child-&gt;thread.kregs
 suffix:semicolon
 r_int
 r_int
@@ -2277,7 +2277,7 @@ op_increment
 id|__put_user
 c_func
 (paren
-id|child-&gt;tss.float_regs
+id|child-&gt;thread.float_regs
 (braket
 id|i
 )braket
@@ -2295,7 +2295,7 @@ suffix:semicolon
 id|__put_user
 c_func
 (paren
-id|child-&gt;tss.fsr
+id|child-&gt;thread.fsr
 comma
 (paren
 op_amp
@@ -2306,7 +2306,7 @@ suffix:semicolon
 id|__put_user
 c_func
 (paren
-id|child-&gt;tss.fpqdepth
+id|child-&gt;thread.fpqdepth
 comma
 (paren
 op_amp
@@ -2354,7 +2354,7 @@ op_increment
 id|__put_user
 c_func
 (paren
-id|child-&gt;tss.fpqueue
+id|child-&gt;thread.fpqueue
 (braket
 id|i
 )braket
@@ -2375,7 +2375,7 @@ suffix:semicolon
 id|__put_user
 c_func
 (paren
-id|child-&gt;tss.fpqueue
+id|child-&gt;thread.fpqueue
 (braket
 id|i
 )braket
@@ -2507,7 +2507,7 @@ id|copy_from_user
 c_func
 (paren
 op_amp
-id|child-&gt;tss.float_regs
+id|child-&gt;thread.float_regs
 (braket
 l_int|0
 )braket
@@ -2532,7 +2532,7 @@ suffix:semicolon
 id|__get_user
 c_func
 (paren
-id|child-&gt;tss.fsr
+id|child-&gt;thread.fsr
 comma
 (paren
 op_amp
@@ -2543,7 +2543,7 @@ suffix:semicolon
 id|__get_user
 c_func
 (paren
-id|child-&gt;tss.fpqdepth
+id|child-&gt;thread.fpqdepth
 comma
 (paren
 op_amp
@@ -2569,7 +2569,7 @@ op_increment
 id|__get_user
 c_func
 (paren
-id|child-&gt;tss.fpqueue
+id|child-&gt;thread.fpqueue
 (braket
 id|i
 )braket
@@ -2590,7 +2590,7 @@ suffix:semicolon
 id|__get_user
 c_func
 (paren
-id|child-&gt;tss.fpqueue
+id|child-&gt;thread.fpqueue
 (braket
 id|i
 )braket
@@ -2835,9 +2835,9 @@ id|printk
 (paren
 l_string|&quot;Original: %08lx %08lx&bslash;n&quot;
 comma
-id|child-&gt;tss.kregs-&gt;pc
+id|child-&gt;thread.kregs-&gt;pc
 comma
-id|child-&gt;tss.kregs-&gt;npc
+id|child-&gt;thread.kregs-&gt;npc
 )paren
 suffix:semicolon
 id|printk
@@ -2852,11 +2852,11 @@ l_int|4
 )paren
 suffix:semicolon
 macro_line|#endif
-id|child-&gt;tss.kregs-&gt;pc
+id|child-&gt;thread.kregs-&gt;pc
 op_assign
 id|addr
 suffix:semicolon
-id|child-&gt;tss.kregs-&gt;npc
+id|child-&gt;thread.kregs-&gt;npc
 op_assign
 id|addr
 op_plus
@@ -2896,9 +2896,9 @@ id|child-&gt;pid
 comma
 id|child-&gt;exit_code
 comma
-id|child-&gt;tss.kregs-&gt;pc
+id|child-&gt;thread.kregs-&gt;pc
 comma
-id|child-&gt;tss.kregs-&gt;npc
+id|child-&gt;thread.kregs-&gt;npc
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3139,7 +3139,7 @@ id|current-&gt;state
 op_assign
 id|TASK_STOPPED
 suffix:semicolon
-id|current-&gt;tss.flags
+id|current-&gt;thread.flags
 op_xor_assign
 id|MAGIC_CONSTANT
 suffix:semicolon

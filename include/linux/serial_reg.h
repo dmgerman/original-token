@@ -8,10 +8,14 @@ DECL|macro|UART_TX
 mdefine_line|#define UART_TX&t;&t;0&t;/* Out: Transmit buffer (DLAB=0) */
 DECL|macro|UART_DLL
 mdefine_line|#define UART_DLL&t;0&t;/* Out: Divisor Latch Low (DLAB=1) */
+DECL|macro|UART_TRG
+mdefine_line|#define UART_TRG&t;0&t;/* (LCR=BF) FCTR bit 7 selects Rx or Tx&n;&t;&t;&t;&t; * In: Fifo count&n;&t;&t;&t;&t; * Out: Fifo custom trigger levels&n;&t;&t;&t;&t; * XR16C85x only */
 DECL|macro|UART_DLM
 mdefine_line|#define UART_DLM&t;1&t;/* Out: Divisor Latch High (DLAB=1) */
 DECL|macro|UART_IER
 mdefine_line|#define UART_IER&t;1&t;/* Out: Interrupt Enable Register */
+DECL|macro|UART_FCTR
+mdefine_line|#define UART_FCTR&t;1&t;/* (LCR=BF) Feature Control Register&n;&t;&t;&t;&t; * XR16C85x only */
 DECL|macro|UART_IIR
 mdefine_line|#define UART_IIR&t;2&t;/* In:  Interrupt ID Register */
 DECL|macro|UART_FCR
@@ -29,6 +33,8 @@ DECL|macro|UART_MSR
 mdefine_line|#define UART_MSR&t;6&t;/* In:  Modem Status Register */
 DECL|macro|UART_SCR
 mdefine_line|#define UART_SCR&t;7&t;/* I/O: Scratch Register */
+DECL|macro|UART_EMSR
+mdefine_line|#define UART_EMSR&t;7&t;/* (LCR=BF) Extended Mode Select Register &n;&t;&t;&t;&t; * FCTR bit 6 selects SCR or EMSR&n;&t;&t;&t;&t; * XR16c85x only */
 multiline_comment|/*&n; * These are the definitions for the FIFO Control Register&n; * (16650 only)&n; */
 DECL|macro|UART_FCR_ENABLE_FIFO
 mdefine_line|#define UART_FCR_ENABLE_FIFO&t;0x01 /* Enable the FIFO */
@@ -169,5 +175,109 @@ mdefine_line|#define UART_EFR_SCD&t;0x20&t;/* Special character detect */
 DECL|macro|UART_EFR_ECB
 mdefine_line|#define UART_EFR_ECB&t;0x10&t;/* Enhanced control bit */
 multiline_comment|/*&n; * the low four bits control software flow control&n; */
+multiline_comment|/*&n; * These register definitions are for the 16C950&n; */
+DECL|macro|UART_ASR
+mdefine_line|#define UART_ASR&t;0x01&t;/* Additional Status Register */
+DECL|macro|UART_RFL
+mdefine_line|#define UART_RFL&t;0x03&t;/* Transmitter FIFO level */
+DECL|macro|UART_TFL
+mdefine_line|#define UART_TFL &t;0x04&t;/* Receiver FIFO level */
+DECL|macro|UART_ICR
+mdefine_line|#define UART_ICR&t;0x05&t;/* Index Control Register */
+multiline_comment|/* The 16950 ICR registers */
+DECL|macro|UART_ACR
+mdefine_line|#define UART_ACR&t;0x00&t;/* Additional Control Register */
+DECL|macro|UART_CPR
+mdefine_line|#define UART_CPR&t;0x01&t;/* Clock Prescalar Register */
+DECL|macro|UART_TCR
+mdefine_line|#define UART_TCR&t;0x02&t;/* Times Clock Register */
+DECL|macro|UART_CKS
+mdefine_line|#define UART_CKS&t;0x03&t;/* Clock Select Register */
+DECL|macro|UART_TTL
+mdefine_line|#define UART_TTL&t;0x04&t;/* Transmitter Interrupt Trigger Level */
+DECL|macro|UART_RTL
+mdefine_line|#define UART_RTL&t;0x05&t;/* Receiver Interrupt Trigger Level */
+DECL|macro|UART_FCL
+mdefine_line|#define UART_FCL&t;0x06&t;/* Flow Control Level Lower */
+DECL|macro|UART_FCH
+mdefine_line|#define UART_FCH&t;0x07&t;/* Flow Control Level Higher */
+DECL|macro|UART_ID1
+mdefine_line|#define UART_ID1&t;0x08&t;/* ID #1 */
+DECL|macro|UART_ID2
+mdefine_line|#define UART_ID2&t;0x09&t;/* ID #2 */
+DECL|macro|UART_ID3
+mdefine_line|#define UART_ID3&t;0x0A&t;/* ID #3 */
+DECL|macro|UART_REV
+mdefine_line|#define UART_REV&t;0x0B&t;/* Revision */
+DECL|macro|UART_CSR
+mdefine_line|#define UART_CSR&t;0x0C&t;/* Channel Software Reset */
+DECL|macro|UART_NMR
+mdefine_line|#define UART_NMR&t;0x0D&t;/* Nine-bit Mode Register */
+DECL|macro|UART_CTR
+mdefine_line|#define UART_CTR&t;0xFF
+multiline_comment|/*&n; * The 16C950 Additional Control Reigster&n; */
+DECL|macro|UART_ACR_RXDIS
+mdefine_line|#define UART_ACR_RXDIS&t;0x01&t;/* Receiver disable */
+DECL|macro|UART_ACR_TXDIS
+mdefine_line|#define UART_ACR_TXDIS&t;0x02&t;/* Receiver disable */
+DECL|macro|UART_ACR_DSRFC
+mdefine_line|#define UART_ACR_DSRFC&t;0x04&t;/* DSR Flow Control */
+DECL|macro|UART_ACR_TLENB
+mdefine_line|#define UART_ACR_TLENB&t;0x20&t;/* 950 trigger levels enable */
+DECL|macro|UART_ACR_ICRRD
+mdefine_line|#define UART_ACR_ICRRD&t;0x40&t;/* ICR Read enable */
+DECL|macro|UART_ACR_ASREN
+mdefine_line|#define UART_ACR_ASREN&t;0x80&t;/* Additional status enable */
+multiline_comment|/*&n; * These are the definitions for the Feature Control Register&n; * (XR16C85x only, when LCR=bf; doubles with the Interrupt Enable&n; * Register, UART register #1)&n; */
+DECL|macro|UART_FCTR_RTS_NODELAY
+mdefine_line|#define UART_FCTR_RTS_NODELAY&t;0x00  /* RTS flow control delay */
+DECL|macro|UART_FCTR_RTS_4DELAY
+mdefine_line|#define UART_FCTR_RTS_4DELAY&t;0x01
+DECL|macro|UART_FCTR_RTS_6DELAY
+mdefine_line|#define UART_FCTR_RTS_6DELAY&t;0x02
+DECL|macro|UART_FCTR_RTS_8DELAY
+mdefine_line|#define UART_FCTR_RTS_8DELAY&t;0x03
+DECL|macro|UART_FCTR_IRDA
+mdefine_line|#define UART_FCTR_IRDA&t;0x04  /* IrDa data encode select */
+DECL|macro|UART_FCTR_TX_INT
+mdefine_line|#define UART_FCTR_TX_INT&t;0x08  /* Tx interrupt type select */
+DECL|macro|UART_FCTR_TRGA
+mdefine_line|#define UART_FCTR_TRGA&t;0x00  /* Tx/Rx 550 trigger table select */
+DECL|macro|UART_FCTR_TRGB
+mdefine_line|#define UART_FCTR_TRGB&t;0x10  /* Tx/Rx 650 trigger table select */
+DECL|macro|UART_FCTR_TRGC
+mdefine_line|#define UART_FCTR_TRGC&t;0x20  /* Tx/Rx 654 trigger table select */
+DECL|macro|UART_FCTR_TRGD
+mdefine_line|#define UART_FCTR_TRGD&t;0x30  /* Tx/Rx 850 programmable trigger select */
+DECL|macro|UART_FCTR_SCR_SWAP
+mdefine_line|#define UART_FCTR_SCR_SWAP&t;0x40  /* Scratch pad register swap */
+DECL|macro|UART_FCTR_RX
+mdefine_line|#define UART_FCTR_RX&t;0x00  /* Programmable trigger mode select */
+DECL|macro|UART_FCTR_TX
+mdefine_line|#define UART_FCTR_TX&t;0x80  /* Programmable trigger mode select */
+multiline_comment|/*&n; * These are the definitions for the Enhanced Mode Select Register&n; * (XR16C85x only, when LCR=bf and FCTR bit 6=1; doubles with the&n; * Scratch register, UART register #7)&n; */
+DECL|macro|UART_EMSR_FIFO_COUNT
+mdefine_line|#define UART_EMSR_FIFO_COUNT&t;0x01  /* Rx/Tx select */
+DECL|macro|UART_EMSR_ALT_COUNT
+mdefine_line|#define UART_EMSR_ALT_COUNT&t;0x02  /* Alternating count select */
+multiline_comment|/*&n; * These are the definitions for the Programmable Trigger&n; * Register (XR16C85x only, when LCR=bf; doubles with the UART RX/TX&n; * register, UART register #0)&n; */
+DECL|macro|UART_TRG_1
+mdefine_line|#define UART_TRG_1&t;0x01
+DECL|macro|UART_TRG_4
+mdefine_line|#define UART_TRG_4&t;0x04
+DECL|macro|UART_TRG_8
+mdefine_line|#define UART_TRG_8&t;0x08
+DECL|macro|UART_TRG_16
+mdefine_line|#define UART_TRG_16&t;0x10
+DECL|macro|UART_TRG_32
+mdefine_line|#define UART_TRG_32&t;0x20
+DECL|macro|UART_TRG_64
+mdefine_line|#define UART_TRG_64&t;0x40
+DECL|macro|UART_TRG_96
+mdefine_line|#define UART_TRG_96&t;0x60
+DECL|macro|UART_TRG_120
+mdefine_line|#define UART_TRG_120&t;0x78
+DECL|macro|UART_TRG_128
+mdefine_line|#define UART_TRG_128&t;0x80
 macro_line|#endif /* _LINUX_SERIAL_REG_H */
 eof
