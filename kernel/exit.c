@@ -2051,6 +2051,13 @@ id|task
 (braket
 l_int|1
 )braket
+op_logical_and
+id|task
+(braket
+l_int|1
+)braket
+op_ne
+id|current
 )paren
 id|p-&gt;p_pptr
 op_assign

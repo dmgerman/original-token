@@ -18,6 +18,8 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
+DECL|macro|CONSOLE_DEV
+mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
 DECL|macro|MAX_TTYS
 mdefine_line|#define MAX_TTYS 256
 DECL|variable|tty_table
@@ -946,9 +948,13 @@ r_return
 suffix:semicolon
 id|dev
 op_assign
-l_int|0x0400
-op_plus
+id|MKDEV
+c_func
+(paren
+id|TTY_MAJOR
+comma
 id|tty-&gt;line
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -997,7 +1003,7 @@ id|filp-&gt;f_inode
 op_logical_and
 id|filp-&gt;f_inode-&gt;i_rdev
 op_eq
-l_int|0x0400
+id|CONSOLE_DEV
 )paren
 r_continue
 suffix:semicolon
@@ -4931,7 +4937,7 @@ c_cond
 (paren
 id|inode-&gt;i_rdev
 op_ne
-l_int|0x0400
+id|CONSOLE_DEV
 )paren
 op_logical_and
 multiline_comment|/* don&squot;t stop on /dev/console */
@@ -5088,7 +5094,7 @@ op_assign
 (paren
 id|inode-&gt;i_rdev
 op_eq
-l_int|0x0400
+id|CONSOLE_DEV
 )paren
 suffix:semicolon
 r_if
@@ -6855,9 +6861,13 @@ suffix:semicolon
 )brace
 id|filp-&gt;f_rdev
 op_assign
-l_int|0x0400
-op_or
+id|MKDEV
+c_func
+(paren
+id|TTY_MAJOR
+comma
 id|minor
+)paren
 suffix:semicolon
 multiline_comment|/* Set it to something normal */
 r_return

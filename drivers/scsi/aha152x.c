@@ -501,11 +501,6 @@ multiline_comment|/* on-board controller */
 suffix:semicolon
 DECL|macro|SIGNATURE_COUNT
 mdefine_line|#define SIGNATURE_COUNT (sizeof( signatures ) / sizeof( struct signature ))
-multiline_comment|/* These defines are copied from kernel/blk_drv/hd.c */
-DECL|macro|insw
-mdefine_line|#define insw( buf, count, port ) &bslash;&n;  __asm__ volatile &bslash;&n;  (&quot;cld;rep;insw&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (count):&quot;cx&quot;,&quot;di&quot; )
-DECL|macro|outsw
-mdefine_line|#define outsw( buf, count, port ) &bslash;&n;  __asm__ volatile &bslash;&n;  (&quot;cld;rep;outsw&quot;: :&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (count):&quot;cx&quot;,&quot;si&quot;)
 DECL|function|do_pause
 r_static
 r_void
@@ -4828,6 +4823,8 @@ macro_line|#endif
 id|outsw
 c_func
 (paren
+id|DATAPORT
+comma
 op_amp
 id|current_SC-&gt;cmnd
 comma
@@ -4841,8 +4838,6 @@ l_int|0
 )paren
 op_rshift
 l_int|1
-comma
-id|DATAPORT
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_CMD)
@@ -5911,11 +5906,11 @@ multiline_comment|/* Number of words */
 id|insw
 c_func
 (paren
+id|DATAPORT
+comma
 id|current_SC-&gt;SCp.ptr
 comma
 id|data_count
-comma
-id|DATAPORT
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_DATAI)
@@ -6391,11 +6386,11 @@ multiline_comment|/* Number of words */
 id|outsw
 c_func
 (paren
+id|DATAPORT
+comma
 id|current_SC-&gt;SCp.ptr
 comma
 id|data_count
-comma
-id|DATAPORT
 )paren
 suffix:semicolon
 id|current_SC-&gt;SCp.ptr

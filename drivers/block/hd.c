@@ -308,10 +308,6 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|macro|port_read
-mdefine_line|#define port_read(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insw&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
-DECL|macro|port_write
-mdefine_line|#define port_write(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsw&quot;: :&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
 macro_line|#if (HD_DELAY &gt; 0)
 DECL|function|read_timer
 r_int
@@ -1618,7 +1614,7 @@ r_return
 suffix:semicolon
 id|ok_to_read
 suffix:colon
-id|port_read
+id|insw
 c_func
 (paren
 id|HD_DATA
@@ -1934,7 +1930,7 @@ op_amp
 id|write_intr
 )paren
 suffix:semicolon
-id|port_write
+id|outsw
 c_func
 (paren
 id|HD_DATA
@@ -2440,7 +2436,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-id|port_write
+id|outsw
 c_func
 (paren
 id|HD_DATA

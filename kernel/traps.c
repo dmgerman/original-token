@@ -10,6 +10,25 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+DECL|function|console_verbose
+r_static
+r_inline
+r_void
+id|console_verbose
+c_func
+(paren
+r_void
+)paren
+(brace
+r_extern
+r_int
+id|console_loglevel
+suffix:semicolon
+id|console_loglevel
+op_assign
+l_int|15
+suffix:semicolon
+)brace
 DECL|macro|DO_ERROR
 mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;tss.error_code = error_code; &bslash;&n;&t;tsk-&gt;tss.trap_no = trapnr; &bslash;&n;&t;if (signr == SIGTRAP &amp;&amp; current-&gt;flags &amp; PF_PTRACED) &bslash;&n;&t;&t;current-&gt;blocked &amp;= ~(1 &lt;&lt; (SIGTRAP-1)); &bslash;&n;&t;send_sig(signr, tsk, 1); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;}
 DECL|macro|get_seg_byte
@@ -209,6 +228,11 @@ op_eq
 l_int|3
 )paren
 r_return
+suffix:semicolon
+id|console_verbose
+c_func
+(paren
+)paren
 suffix:semicolon
 id|printk
 c_func

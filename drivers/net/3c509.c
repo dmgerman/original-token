@@ -24,14 +24,6 @@ macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;arp.h&quot;
-macro_line|#ifndef port_read
-macro_line|#include &quot;iow.h&quot;
-macro_line|#endif
-multiline_comment|/* These should be in &lt;asm/io.h&gt;. */
-DECL|macro|port_read_l
-mdefine_line|#define port_read_l(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insl&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
-DECL|macro|port_write_l
-mdefine_line|#define port_write_l(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;outsl&quot;: :&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;si&quot;)
 macro_line|#ifndef HAVE_ALLOC_SKB
 DECL|macro|alloc_skb
 mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
@@ -1857,7 +1849,7 @@ id|TX_FIFO
 )paren
 suffix:semicolon
 multiline_comment|/* ... and the packet rounded to a doubleword. */
-id|port_write_l
+id|outsl
 c_func
 (paren
 id|ioaddr
@@ -2808,7 +2800,7 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
-id|port_read_l
+id|insl
 c_func
 (paren
 id|ioaddr

@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne.c:v0.99-14g 12/21/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;ne.c:v0.99-14a 12/3/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,9 +15,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifndef port_read
-macro_line|#include &quot;iow.h&quot;
-macro_line|#endif
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;8390.h&quot;
 DECL|macro|NE_BASE
@@ -1486,7 +1483,7 @@ c_cond
 id|ei_status.word16
 )paren
 (brace
-id|port_read
+id|insw
 c_func
 (paren
 id|NE_BASE
@@ -1528,7 +1525,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|port_read_b
+id|insb
 c_func
 (paren
 id|NE_BASE
@@ -1879,7 +1876,7 @@ c_cond
 id|ei_status.word16
 )paren
 (brace
-id|port_write
+id|outsw
 c_func
 (paren
 id|NE_BASE
@@ -1896,7 +1893,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|port_write_b
+id|outsb
 c_func
 (paren
 id|NE_BASE

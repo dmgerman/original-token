@@ -3259,7 +3259,20 @@ c_func
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
-multiline_comment|/* this prints bogus values for the current process */
+r_if
+c_cond
+(paren
+id|p
+op_eq
+id|current
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; current  &quot;
+)paren
+suffix:semicolon
+r_else
 id|printk
 c_func
 (paren
@@ -3274,7 +3287,7 @@ op_star
 id|p-&gt;tss.esp
 )paren
 (braket
-l_int|2
+l_int|3
 )braket
 )paren
 suffix:semicolon

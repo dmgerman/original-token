@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v0.13s 11/15/93 becker@super.org&bslash;n&quot;
+l_string|&quot;lance.c:v0.14g 12/21/93 becker@super.org&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -21,7 +21,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;iow.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;arp.h&quot;
@@ -80,7 +79,7 @@ multiline_comment|/*&n;  &t;&t;Theory of Operation&n;&n;I. Board Compatibility&n
 multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n;   That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4). */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
-mdefine_line|#define LANCE_LOG_TX_BUFFERS 2
+mdefine_line|#define LANCE_LOG_TX_BUFFERS 4
 DECL|macro|LANCE_LOG_RX_BUFFERS
 mdefine_line|#define LANCE_LOG_RX_BUFFERS 4
 macro_line|#endif
@@ -428,16 +427,6 @@ l_int|0x360
 comma
 l_int|0
 )brace
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;lance_init(%#x, %#x).&bslash;n&quot;
-comma
-id|mem_start
-comma
-id|mem_end
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -2588,30 +2577,6 @@ id|dirty_tx
 op_assign
 id|lp-&gt;dirty_tx
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dirty_tx
-op_eq
-id|lp-&gt;cur_tx
-op_minus
-id|TX_RING_SIZE
-op_logical_and
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/* The ring is full, clear tbusy. */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|INET_BH
-)paren
-suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -2751,7 +2716,7 @@ r_else
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-multiline_comment|/* We don&squot;t free the skb if it&squot;s a data-only copy in the bounce&n;&t;       buffer.  The address checks here are sorted -- the first test&n;&t;       should always works.  */
+multiline_comment|/* We don&squot;t free the skb if it&squot;s a data-only copy in the bounce&n;&t;       buffer.  The address checks here are sorted -- the first test&n;&t;       should always work.  */
 r_if
 c_cond
 (paren
@@ -2814,10 +2779,6 @@ id|dirty_tx
 op_increment
 suffix:semicolon
 )brace
-id|lp-&gt;dirty_tx
-op_assign
-id|dirty_tx
-suffix:semicolon
 macro_line|#ifndef final_version
 r_if
 c_cond
@@ -2839,12 +2800,42 @@ comma
 id|lp-&gt;cur_tx
 )paren
 suffix:semicolon
-id|lp-&gt;dirty_tx
+id|dirty_tx
 op_add_assign
 id|TX_RING_SIZE
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|dev-&gt;tbusy
+op_logical_and
+id|dirty_tx
+OG
+id|lp-&gt;cur_tx
+op_minus
+id|TX_RING_SIZE
+op_plus
+l_int|2
+)paren
+(brace
+multiline_comment|/* The ring is no longer full, clear tbusy. */
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|INET_BH
+)paren
+suffix:semicolon
+)brace
+id|lp-&gt;dirty_tx
+op_assign
+id|dirty_tx
+suffix:semicolon
 )brace
 r_if
 c_cond

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -6922,7 +6923,7 @@ c_func
 id|filp-&gt;f_rdev
 )paren
 op_eq
-l_int|5
+id|TTYAUX_MAJOR
 )paren
 (brace
 r_if
@@ -7396,7 +7397,7 @@ c_func
 id|filp-&gt;f_rdev
 )paren
 op_eq
-l_int|4
+id|TTY_MAJOR
 )paren
 op_star
 id|tty-&gt;termios

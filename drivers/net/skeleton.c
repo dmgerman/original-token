@@ -27,7 +27,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;iow.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;arp.h&quot;
@@ -1538,7 +1537,7 @@ id|pkt_len
 )paren
 suffix:semicolon
 multiline_comment|/* or */
-id|port_read
+id|insw
 c_func
 (paren
 id|ioaddr

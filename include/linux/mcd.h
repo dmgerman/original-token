@@ -59,7 +59,7 @@ DECL|macro|MCMD_GET_VERSION
 mdefine_line|#define MCMD_GET_VERSION  &t;0xDC
 multiline_comment|/* borrowed from hd.c */
 DECL|macro|READ_DATA
-mdefine_line|#define READ_DATA(port, buf, nr) &bslash;&n;__asm__(&quot;cld;rep;insb&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
+mdefine_line|#define READ_DATA(port, buf, nr) &bslash;&n;insb(port, buf, nr)
 DECL|macro|SET_TIMER
 mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;&t;((timer_table[MCD_TIMER].expires = jiffies + jifs), &bslash;&n;&t;(timer_table[MCD_TIMER].fn = func), &bslash;&n;&t;(timer_active |= 1&lt;&lt;MCD_TIMER))
 DECL|macro|CLEAR_TIMER

@@ -1,12 +1,12 @@
 multiline_comment|/* hp.c: A HP LAN ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a driver for the HP LAN adaptors.&n;&n;    The Author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&t; This software may be used and&n;&t;distributed according to the terms of the GNU Public License,&n;&t;incorporated herein by reference.&n;&n;&t;This is a driver for the HP LAN adaptors.&n;&n;&t;The Author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;hp.c:v0.99.13f 10/16/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;hp.c:v0.99.14a 12/2/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,31 +15,36 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifndef port_read
-macro_line|#include &quot;iow.h&quot;
-macro_line|#endif
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;8390.h&quot;
+macro_line|#ifndef HAVE_PORTRESERVE
+DECL|macro|check_region
+mdefine_line|#define check_region(ioaddr, size)&t;&t;&t;&t;0
+DECL|macro|snarf_region
+mdefine_line|#define snarf_region(ioaddr, size);&t;&t;&t;&t;do ; while (0)
+macro_line|#endif
+DECL|macro|HP_IO_EXTENT
+mdefine_line|#define HP_IO_EXTENT&t;32
 DECL|macro|HP_DATAPORT
-mdefine_line|#define HP_DATAPORT&t;0x0c&t;/* &quot;Remote DMA&quot; data port. */
+mdefine_line|#define HP_DATAPORT&t;&t;0x0c&t;/* &quot;Remote DMA&quot; data port. */
 DECL|macro|HP_ID
-mdefine_line|#define HP_ID&t;&t;0x07
+mdefine_line|#define HP_ID&t;&t;&t;0x07
 DECL|macro|HP_CONFIGURE
 mdefine_line|#define HP_CONFIGURE&t;0x08&t;/* Configuration register. */
 DECL|macro|HP_RUN
-mdefine_line|#define  HP_RUN&t;&t;0x01&t;/* 1 == Run, 0 == reset. */
+mdefine_line|#define&t; HP_RUN&t;&t;&t;0x01&t;/* 1 == Run, 0 == reset. */
 DECL|macro|HP_IRQ
-mdefine_line|#define  HP_IRQ&t;&t;0x0E&t;/* Mask for software-configured IRQ line. */
+mdefine_line|#define&t; HP_IRQ&t;&t;&t;0x0E&t;/* Mask for software-configured IRQ line. */
 DECL|macro|HP_DATAON
-mdefine_line|#define  HP_DATAON&t;0x10&t;/* Turn on dataport */
+mdefine_line|#define&t; HP_DATAON&t;&t;0x10&t;/* Turn on dataport */
 DECL|macro|NIC_OFFSET
-mdefine_line|#define NIC_OFFSET&t;0x10&t;/* Offset the 8390 registers. */
+mdefine_line|#define NIC_OFFSET&t;&t;0x10&t;/* Offset the 8390 registers. */
 DECL|macro|HP_START_PG
-mdefine_line|#define HP_START_PG&t;0x00&t;/* First page of TX buffer */
+mdefine_line|#define HP_START_PG&t;&t;0x00&t;/* First page of TX buffer */
 DECL|macro|HP_8BSTOP_PG
 mdefine_line|#define HP_8BSTOP_PG&t;0x80&t;/* Last page +1 of RX ring */
 DECL|macro|HP_16BSTOP_PG
-mdefine_line|#define HP_16BSTOP_PG&t;0xFF&t;/* Last page +1 of RX ring */
+mdefine_line|#define HP_16BSTOP_PG&t;0xFF&t;/* Same, for 16 bit cards. */
 r_int
 id|hp_probe
 c_func
@@ -54,13 +59,13 @@ r_int
 id|hpprobe1
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|ioaddr
 )paren
 suffix:semicolon
 r_static
@@ -130,7 +135,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* The map from IRQ number to HP_CONFIGURE register setting. */
-multiline_comment|/* My default is IRQ5      0  1  2  3  4  5  6  7  8  9 10 11 */
+multiline_comment|/* My default is IRQ5&t;   0  1&t; 2&t;3  4  5&t; 6&t;7  8  9 10 11 */
 DECL|variable|irqmap
 r_static
 r_char
@@ -174,7 +179,7 @@ l_int|0
 )brace
 suffix:semicolon
 "&f;"
-multiline_comment|/*  Probe for an HP LAN adaptor.&n;    Also initialize the card and fill in STATION_ADDR with the station&n;   address. */
+multiline_comment|/*&t;Probe for an HP LAN adaptor.&n;&t;Also initialize the card and fill in STATION_ADDR with the station&n;&t;address. */
 DECL|function|hp_probe
 r_int
 id|hp_probe
@@ -226,13 +231,12 @@ l_int|0x1ff
 )paren
 multiline_comment|/* Check a single specified location. */
 r_return
-op_logical_neg
 id|hpprobe1
 c_func
 (paren
-id|ioaddr
-comma
 id|dev
+comma
+id|ioaddr
 )paren
 suffix:semicolon
 r_else
@@ -265,7 +269,6 @@ id|port
 op_increment
 )paren
 (brace
-macro_line|#ifdef HAVE_PORTRESERVE
 r_if
 c_cond
 (paren
@@ -275,32 +278,24 @@ c_func
 op_star
 id|port
 comma
-l_int|32
+id|HP_IO_EXTENT
 )paren
 )paren
 r_continue
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
-id|inb_p
-c_func
-(paren
-op_star
-id|port
-)paren
-op_ne
-l_int|0xff
-op_logical_and
 id|hpprobe1
 c_func
 (paren
+id|dev
+comma
 op_star
 id|port
-comma
-id|dev
 )paren
+op_eq
+l_int|0
 )paren
 (brace
 r_return
@@ -308,10 +303,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|dev-&gt;base_addr
-op_assign
-id|ioaddr
-suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
@@ -321,17 +312,27 @@ r_int
 id|hpprobe1
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|ioaddr
 )paren
 (brace
 r_int
+id|status
+comma
 id|i
+comma
+id|board_id
+comma
+id|wordmode
+suffix:semicolon
+r_char
+op_star
+id|name
 suffix:semicolon
 r_int
 r_char
@@ -339,9 +340,6 @@ op_star
 id|station_addr
 op_assign
 id|dev-&gt;dev_addr
-suffix:semicolon
-r_int
-id|tmp
 suffix:semicolon
 multiline_comment|/* Check for the HP physical address, 08 00 09 xx xx xx. */
 r_if
@@ -376,31 +374,50 @@ op_ne
 l_int|0x09
 )paren
 r_return
-l_int|0
+id|ENODEV
 suffix:semicolon
 multiline_comment|/* This really isn&squot;t good enough, we may pick up HP LANCE boards also! */
-id|ethdev_init
+multiline_comment|/* Verify that there is a 8390 at the expected location. */
+id|outb
 c_func
 (paren
-id|dev
+id|E8390_NODMA
+op_plus
+id|E8390_STOP
+comma
+id|ioaddr
 )paren
 suffix:semicolon
-id|ei_status.tx_start_page
-op_assign
-id|HP_START_PG
+id|SLOW_DOWN_IO
 suffix:semicolon
-id|ei_status.rx_start_page
+id|status
 op_assign
-id|HP_START_PG
-op_plus
-id|TX_PAGES
+id|inb
+c_func
+(paren
+id|ioaddr
+)paren
 suffix:semicolon
-multiline_comment|/* Set up the rest of the parameters. */
+r_if
+c_cond
+(paren
+id|status
+op_ne
+l_int|0x21
+op_logical_and
+id|status
+op_ne
+l_int|0x23
+)paren
+r_return
+id|ENODEV
+suffix:semicolon
+multiline_comment|/* Set up the parameters based on the board ID.&n;&t;   If you have additional mappings, please mail them to becker@super.org. */
 r_if
 c_cond
 (paren
 (paren
-id|tmp
+id|board_id
 op_assign
 id|inb
 c_func
@@ -414,43 +431,45 @@ op_amp
 l_int|0x80
 )paren
 (brace
-id|ei_status.name
+id|name
 op_assign
 l_string|&quot;HP27247&quot;
 suffix:semicolon
-id|ei_status.word16
+id|wordmode
 op_assign
 l_int|1
 suffix:semicolon
-id|ei_status.stop_page
-op_assign
-id|HP_16BSTOP_PG
-suffix:semicolon
-multiline_comment|/* Safe (if small) value */
 )brace
 r_else
 (brace
-id|ei_status.name
+id|name
 op_assign
 l_string|&quot;HP27250&quot;
 suffix:semicolon
-id|ei_status.word16
+id|wordmode
 op_assign
 l_int|0
 suffix:semicolon
-id|ei_status.stop_page
-op_assign
-id|HP_8BSTOP_PG
-suffix:semicolon
 )brace
+multiline_comment|/* Grab the region so we can find another board if something fails. */
+id|snarf_region
+c_func
+(paren
+id|ioaddr
+comma
+id|HP_IO_EXTENT
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s at %#3x,&quot;
+l_string|&quot;%s: %s (ID %02x) at %#3x,&quot;
 comma
 id|dev-&gt;name
 comma
-id|ei_status.name
+id|name
+comma
+id|board_id
 comma
 id|ioaddr
 )paren
@@ -490,13 +509,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set the base address to point to the NIC, not the &quot;real&quot; base! */
-id|dev-&gt;base_addr
-op_assign
-id|ioaddr
-op_plus
-id|NIC_OFFSET
-suffix:semicolon
 multiline_comment|/* Snarf the interrupt now.  Someday this could be moved to open(). */
 r_if
 c_cond
@@ -552,7 +564,7 @@ r_int
 op_star
 id|irqp
 op_assign
-id|ei_status.word16
+id|wordmode
 ques
 c_cond
 id|irq_16list
@@ -561,15 +573,18 @@ id|irq_8list
 suffix:semicolon
 r_do
 (brace
+r_int
+id|irq
+op_assign
+op_star
+id|irqp
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|request_irq
 (paren
-id|dev-&gt;irq
-op_assign
-op_star
-id|irqp
+id|irq
 comma
 l_int|NULL
 )paren
@@ -590,7 +605,7 @@ c_func
 (paren
 id|irqmap
 (braket
-id|dev-&gt;irq
+id|irq
 )braket
 op_or
 id|HP_RUN
@@ -615,7 +630,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;irq
+id|irq
 op_eq
 id|autoirq_report
 c_func
@@ -626,7 +641,7 @@ multiline_comment|/* It&squot;s a good IRQ line! */
 op_logical_and
 id|request_irq
 (paren
-id|dev-&gt;irq
+id|irq
 comma
 op_amp
 id|ei_interrupt
@@ -640,8 +655,13 @@ c_func
 (paren
 l_string|&quot; selecting IRQ %d.&bslash;n&quot;
 comma
-id|dev-&gt;irq
+id|irq
 )paren
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+op_star
+id|irqp
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -672,7 +692,7 @@ l_string|&quot; no free IRQ lines.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|EBUSY
 suffix:semicolon
 )brace
 )brace
@@ -710,20 +730,10 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|EBUSY
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef HAVE_PORTRESERVE
-id|snarf_region
-c_func
-(paren
-id|ioaddr
-comma
-l_int|32
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -736,6 +746,46 @@ c_func
 (paren
 id|version
 )paren
+suffix:semicolon
+multiline_comment|/* Set the base address to point to the NIC, not the &quot;real&quot; base! */
+id|dev-&gt;base_addr
+op_assign
+id|ioaddr
+op_plus
+id|NIC_OFFSET
+suffix:semicolon
+id|ethdev_init
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|ei_status.name
+op_assign
+id|name
+suffix:semicolon
+id|ei_status.word16
+op_assign
+id|wordmode
+suffix:semicolon
+id|ei_status.tx_start_page
+op_assign
+id|HP_START_PG
+suffix:semicolon
+id|ei_status.rx_start_page
+op_assign
+id|HP_START_PG
+op_plus
+id|TX_PAGES
+suffix:semicolon
+id|ei_status.stop_page
+op_assign
+id|wordmode
+ques
+c_cond
+id|HP_16BSTOP_PG
+suffix:colon
+id|HP_8BSTOP_PG
 suffix:semicolon
 id|ei_status.reset_8390
 op_assign
@@ -759,7 +809,7 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-id|dev-&gt;base_addr
+l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -831,7 +881,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* We shouldn&squot;t use the boguscount for timing, but this hasn&squot;t been&n;       checked yet, and you could hang your machine if jiffies break... */
+multiline_comment|/* We shouldn&squot;t use the boguscount for timing, but this hasn&squot;t been&n;&t;   checked yet, and you could hang your machine if jiffies break... */
 (brace
 r_int
 id|boguscount
@@ -934,7 +984,7 @@ id|jiffies
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Block input and output, similar to the Crynwr packet driver.  If you&n;   porting to a new ethercard look at the packet driver source for hints.&n;   The HP LAN doesn&squot;t use shared memory -- we put the packet&n;   out through the &quot;remote DMA&quot; dataport. */
+multiline_comment|/* Block input and output, similar to the Crynwr packet driver.&t; If you&n;   porting to a new ethercard look at the packet driver source for hints.&n;   The HP LAN doesn&squot;t use shared memory -- we put the packet&n;   out through the &quot;remote DMA&quot; dataport. */
 r_static
 r_int
 DECL|function|hp_block_input
@@ -1070,7 +1120,7 @@ c_cond
 id|ei_status.word16
 )paren
 (brace
-id|port_read
+id|insw
 c_func
 (paren
 id|nic_base
@@ -1116,7 +1166,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|port_read_b
+id|insb
 c_func
 (paren
 id|nic_base
@@ -1288,7 +1338,7 @@ op_plus
 id|HP_CONFIGURE
 )paren
 suffix:semicolon
-multiline_comment|/* Round the count up for word writes.  Do we need to do this?&n;       What effect will an odd byte count have on the 8390?&n;       I should check someday. */
+multiline_comment|/* Round the count up for word writes.&t;Do we need to do this?&n;&t;   What effect will an odd byte count have on the 8390?&n;&t;   I should check someday. */
 r_if
 c_cond
 (paren
@@ -1317,7 +1367,7 @@ id|nic_base
 )paren
 suffix:semicolon
 macro_line|#ifdef ei8390_bug
-multiline_comment|/* Handle the read-before-write bug the same way as the&n;       Crynwr packet driver -- the NatSemi method doesn&squot;t work. */
+multiline_comment|/* Handle the read-before-write bug the same way as the&n;&t;   Crynwr packet driver -- the NatSemi method doesn&squot;t work. */
 id|outb_p
 c_func
 (paren
@@ -1443,7 +1493,7 @@ id|ei_status.word16
 )paren
 (brace
 multiline_comment|/* Use the &squot;rep&squot; sequence for 16 bit boards. */
-id|port_write
+id|outsw
 c_func
 (paren
 id|nic_base
@@ -1462,7 +1512,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|port_write_b
+id|outsb
 c_func
 (paren
 id|nic_base
@@ -1622,5 +1672,5 @@ r_return
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c hp.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *&t;compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c hp.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

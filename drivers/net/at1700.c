@@ -25,7 +25,6 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;memory.h&gt;
 macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;iow.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;arp.h&quot;
@@ -1878,7 +1877,7 @@ op_plus
 id|DATAPORT
 )paren
 suffix:semicolon
-id|port_write
+id|outsw
 c_func
 (paren
 id|ioaddr
@@ -2528,7 +2527,7 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
-id|port_read
+id|insw
 c_func
 (paren
 id|ioaddr

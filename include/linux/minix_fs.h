@@ -18,6 +18,10 @@ DECL|macro|MINIX_SUPER_MAGIC2
 mdefine_line|#define MINIX_SUPER_MAGIC2&t;0x138F&t;&t;/* minix fs, 30 char names */
 DECL|macro|NEW_MINIX_SUPER_MAGIC
 mdefine_line|#define NEW_MINIX_SUPER_MAGIC&t;0x2468&t;&t;/* minix V2 - not implemented */
+DECL|macro|MINIX_VALID_FS
+mdefine_line|#define MINIX_VALID_FS&t;&t;0x0001&t;&t;/* Clean fs. */
+DECL|macro|MINIX_ERROR_FS
+mdefine_line|#define MINIX_ERROR_FS&t;&t;0x0002&t;&t;/* fs has errors. */
 DECL|macro|MINIX_INODES_PER_BLOCK
 mdefine_line|#define MINIX_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix_inode)))
 DECL|struct|minix_inode
@@ -163,6 +167,11 @@ DECL|member|s_magic
 r_int
 r_int
 id|s_magic
+suffix:semicolon
+DECL|member|s_state
+r_int
+r_int
+id|s_state
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -555,6 +564,34 @@ r_void
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|minix_write_super
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|minix_remount
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_int
+op_star
+id|flags
+comma
+r_char
+op_star
+id|data
 )paren
 suffix:semicolon
 r_extern

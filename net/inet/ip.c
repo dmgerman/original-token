@@ -1845,19 +1845,24 @@ c_cond
 (paren
 id|wlen
 )paren
+(brace
+r_int
+r_int
+id|bogus
+suffix:semicolon
 id|__asm__
 c_func
 (paren
 l_string|&quot;clc&bslash;n&quot;
 l_string|&quot;1:&bslash;t&quot;
 l_string|&quot;lodsl&bslash;n&bslash;t&quot;
-l_string|&quot;adcl %%eax, %0&bslash;n&bslash;t&quot;
+l_string|&quot;adcl %3, %0&bslash;n&bslash;t&quot;
 l_string|&quot;decl %2&bslash;n&bslash;t&quot;
 l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
 l_string|&quot;adcl $0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;movl %0, %%eax&bslash;n&bslash;t&quot;
-l_string|&quot;shrl $16, %%eax&bslash;n&bslash;t&quot;
-l_string|&quot;addw %%ax, %w0&bslash;n&bslash;t&quot;
+l_string|&quot;movl %0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $16, %3&bslash;n&bslash;t&quot;
+l_string|&quot;addw %w3, %w0&bslash;n&bslash;t&quot;
 l_string|&quot;adcw $0, %w0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -1874,6 +1879,11 @@ l_string|&quot;=r&quot;
 (paren
 id|wlen
 )paren
+comma
+l_string|&quot;=a&quot;
+(paren
+id|bogus
+)paren
 suffix:colon
 l_string|&quot;0&quot;
 (paren
@@ -1889,10 +1899,9 @@ l_string|&quot;2&quot;
 (paren
 id|wlen
 )paren
-suffix:colon
-l_string|&quot;ax&quot;
 )paren
 suffix:semicolon
+)brace
 r_return
 (paren
 op_complement
@@ -5326,12 +5335,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Point into the IP datagram, just past the header. */
-id|skb-&gt;h.raw
-op_add_assign
-id|iph-&gt;ihl
-op_star
-l_int|4
-suffix:semicolon
 id|hash
 op_assign
 id|iph-&gt;protocol
@@ -5506,18 +5509,10 @@ l_int|0
 comma
 id|iph-&gt;daddr
 comma
-(paren
 id|ntohs
 c_func
 (paren
 id|iph-&gt;tot_len
-)paren
-op_minus
-(paren
-id|iph-&gt;ihl
-op_star
-l_int|4
-)paren
 )paren
 comma
 id|iph-&gt;saddr

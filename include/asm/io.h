@@ -29,6 +29,10 @@ DECL|macro|__IN2
 mdefine_line|#define __IN2(s,s1,s2) &bslash;&n;__asm__ __volatile__ (&quot;in&quot; #s &quot; %&quot; s2 &quot;1,%&quot; s1 &quot;0&quot;
 DECL|macro|__IN
 mdefine_line|#define __IN(s,s1,i...) &bslash;&n;__IN1(s) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;d&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##c) __IN2(s,s1,&quot;&quot;) : &quot;=a&quot; (_v) : &quot;i&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##_p) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;d&quot; (port) ,##i ); SLOW_DOWN_IO; return _v; } &bslash;&n;__IN1(s##c_p) __IN2(s,s1,&quot;&quot;) : &quot;=a&quot; (_v) : &quot;i&quot; (port) ,##i ); SLOW_DOWN_IO; return _v; }
+DECL|macro|__INS
+mdefine_line|#define __INS(s) &bslash;&n;extern inline void ins##s(unsigned short port, void * addr, unsigned long count) &bslash;&n;{ __asm__ __volatile__ (&quot;cld ; rep ; ins&quot; #s &bslash;&n;: &quot;=D&quot; (addr), &quot;=c&quot; (count) : &quot;d&quot; (port),&quot;0&quot; (addr),&quot;1&quot; (count)); }
+DECL|macro|__OUTS
+mdefine_line|#define __OUTS(s) &bslash;&n;extern inline void outs##s(unsigned short port, void * addr, unsigned long count) &bslash;&n;{ __asm__ __volatile__ (&quot;cld ; rep ; outs&quot; #s &bslash;&n;: &quot;=S&quot; (addr), &quot;=c&quot; (count) : &quot;d&quot; (port),&quot;0&quot; (addr),&quot;1&quot; (count)); }
 id|__IN
 c_func
 (paren
@@ -85,6 +89,36 @@ id|l
 comma
 comma
 r_int
+)paren
+id|__INS
+c_func
+(paren
+id|b
+)paren
+id|__INS
+c_func
+(paren
+id|w
+)paren
+id|__INS
+c_func
+(paren
+id|l
+)paren
+id|__OUTS
+c_func
+(paren
+id|b
+)paren
+id|__OUTS
+c_func
+(paren
+id|w
+)paren
+id|__OUTS
+c_func
+(paren
+id|l
 )paren
 multiline_comment|/*&n; * Note that due to the way __builtin_constant_p() works, you&n; *  - can&squot;t use it inside a inline function (it will never be true)&n; *  - you don&squot;t have to worry about side effects within the __builtin..&n; */
 DECL|macro|outb

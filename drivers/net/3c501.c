@@ -22,7 +22,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;iow.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;arp.h&quot;
@@ -1152,7 +1151,7 @@ comma
 id|GP_LOW
 )paren
 suffix:semicolon
-id|port_write_b
+id|outsb
 c_func
 (paren
 id|DATAPORT
@@ -1883,7 +1882,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|port_read_b
+id|insb
 c_func
 (paren
 id|DATAPORT

@@ -2272,6 +2272,19 @@ id|udphdr
 op_star
 id|uh
 suffix:semicolon
+multiline_comment|/* Skip IP-Header */
+id|len
+op_sub_assign
+id|skb-&gt;h.iph-&gt;ihl
+op_lshift
+l_int|2
+suffix:semicolon
+id|skb-&gt;h.raw
+op_add_assign
+id|skb-&gt;h.iph-&gt;ihl
+op_lshift
+l_int|2
+suffix:semicolon
 id|uh
 op_assign
 (paren

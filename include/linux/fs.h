@@ -86,6 +86,8 @@ DECL|macro|MAJOR
 mdefine_line|#define MAJOR(a) (int)((unsigned short)(a) &gt;&gt; 8)
 DECL|macro|MINOR
 mdefine_line|#define MINOR(a) (int)((unsigned short)(a) &amp; 0xFF)
+DECL|macro|MKDEV
+mdefine_line|#define MKDEV(a,b) ((int)((((a) &amp; 0xff) &lt;&lt; 8) | ((b) &amp; 0xff)))
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)

@@ -806,7 +806,6 @@ id|IOCTL_OUT
 id|arg
 comma
 id|dsp_set_stereo
-c_func
 (paren
 id|IOCTL_IN
 (paren
@@ -815,9 +814,9 @@ id|arg
 op_minus
 l_int|1
 )paren
-)paren
 op_plus
 l_int|1
+)paren
 suffix:semicolon
 r_case
 id|SOUND_PCM_READ_CHANNELS
