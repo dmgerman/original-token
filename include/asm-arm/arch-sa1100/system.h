@@ -1,8 +1,7 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/system.h&n; *&n; * Copyright (c) 1999 Nicolas Pitre &lt;nico@cam.org&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|function|arch_idle
-r_extern
-id|__inline__
+r_static
 r_void
 id|arch_idle
 c_func
@@ -41,39 +40,9 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef CONFIG_SA1100_VICTOR
-DECL|function|arch_power_off
-r_extern
-r_inline
-r_void
-id|arch_power_off
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* switch off power supply */
-id|mdelay
-c_func
-(paren
-l_int|2000
-)paren
-suffix:semicolon
-id|GPCR
-op_assign
-id|GPIO_GPIO23
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/* power off unconditionally */
 DECL|macro|arch_reset
-mdefine_line|#define arch_reset(x) arch_power_off()
+mdefine_line|#define arch_reset(x) machine_power_off()
 macro_line|#else
 DECL|function|arch_reset
 r_extern

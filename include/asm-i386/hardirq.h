@@ -18,7 +18,8 @@ r_int
 id|__local_bh_count
 suffix:semicolon
 DECL|member|__nmi_counter
-id|atomic_t
+r_int
+r_int
 id|__nmi_counter
 suffix:semicolon
 DECL|member|__pad

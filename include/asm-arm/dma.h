@@ -48,13 +48,6 @@ DECL|typedef|dmasg_t
 id|dmasg_t
 suffix:semicolon
 r_extern
-r_const
-r_char
-id|dma_str
-(braket
-)braket
-suffix:semicolon
-r_extern
 id|spinlock_t
 id|dma_spin_lock
 suffix:semicolon
@@ -108,13 +101,11 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; *&n; * NOTE: This is an architecture specific function, and should&n; *       be hidden from the drivers.&n; */
+multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; */
 DECL|macro|clear_dma_ff
 mdefine_line|#define clear_dma_ff(channel)
 multiline_comment|/* Set only the page register bits of the transfer address.&n; *&n; * NOTE: This is an architecture specific function, and should&n; *       be hidden from the drivers&n; */
-DECL|function|set_dma_page
 r_extern
-id|__inline__
 r_void
 id|set_dma_page
 c_func
@@ -125,18 +116,7 @@ comma
 r_char
 id|pagenr
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|dma_str
-comma
-l_string|&quot;set_dma_page&quot;
-comma
-id|channel
-)paren
 suffix:semicolon
-)brace
 multiline_comment|/* Request a DMA channel&n; *&n; * Some architectures may need to do allocate an interrupt&n; */
 r_extern
 r_int

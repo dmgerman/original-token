@@ -1169,11 +1169,13 @@ id|common_swizzle
 comma
 )brace
 suffix:semicolon
+macro_line|#ifndef CONFIG_ALPHA_EB64P
 id|ALIAS_MV
 c_func
 (paren
 id|cabriolet
 )paren
+macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_EB164)
 r_struct

@@ -1,15 +1,20 @@
 multiline_comment|/* Support for the latches on the old Archimedes which control the floppy,&n; * hard disc and printer&n; *&n; * (c) David Alan Gilbert 1995/1996&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
-macro_line|#ifdef LATCHAADDR
-multiline_comment|/*&n; * They are static so that everyone who accesses them has to go through here&n; */
-DECL|variable|LatchACopy
+DECL|variable|latch_a_copy
 r_static
 r_int
 r_char
-id|LatchACopy
+id|latch_a_copy
+suffix:semicolon
+DECL|variable|latch_b_copy
+r_static
+r_int
+r_char
+id|latch_b_copy
 suffix:semicolon
 multiline_comment|/* newval=(oldval &amp; ~mask)|newdata */
 DECL|function|oldlatch_aupdate
@@ -26,10 +31,19 @@ r_char
 id|newdata
 )paren
 (brace
-id|LatchACopy
+r_if
+c_cond
+(paren
+id|machine_is_arc
+c_func
+(paren
+)paren
+)paren
+(brace
+id|latch_a_copy
 op_assign
 (paren
-id|LatchACopy
+id|latch_a_copy
 op_amp
 op_complement
 id|mask
@@ -37,33 +51,30 @@ id|mask
 op_or
 id|newdata
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Latch: A = 0x%02x&bslash;n&quot;
+comma
+id|latch_a_copy
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
-id|LatchACopy
+id|latch_a_copy
 comma
 id|LATCHAADDR
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+)brace
+r_else
+id|BUG
 c_func
 (paren
-l_string|&quot;oldlatch_A:0x%2x&bslash;n&quot;
-comma
-id|LatchACopy
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#endif
-macro_line|#ifdef LATCHBADDR
-DECL|variable|LatchBCopy
-r_static
-r_int
-r_char
-id|LatchBCopy
-suffix:semicolon
 multiline_comment|/* newval=(oldval &amp; ~mask)|newdata */
 DECL|function|oldlatch_bupdate
 r_void
@@ -79,10 +90,19 @@ r_char
 id|newdata
 )paren
 (brace
-id|LatchBCopy
+r_if
+c_cond
+(paren
+id|machine_is_arc
+c_func
+(paren
+)paren
+)paren
+(brace
+id|latch_b_copy
 op_assign
 (paren
-id|LatchBCopy
+id|latch_b_copy
 op_amp
 op_complement
 id|mask
@@ -90,27 +110,32 @@ id|mask
 op_or
 id|newdata
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Latch: B = 0x%02x&bslash;n&quot;
+comma
+id|latch_b_copy
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
-id|LatchBCopy
+id|latch_b_copy
 comma
 id|LATCHBADDR
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+)brace
+r_else
+id|BUG
 c_func
 (paren
-l_string|&quot;oldlatch_B:0x%2x&bslash;n&quot;
-comma
-id|LatchBCopy
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#endif
 DECL|function|oldlatch_init
+r_static
 r_void
 id|__init
 id|oldlatch_init
@@ -119,13 +144,15 @@ c_func
 r_void
 )paren
 (brace
-id|printk
+r_if
+c_cond
+(paren
+id|machine_is_arc
 c_func
 (paren
-l_string|&quot;oldlatch: init&bslash;n&quot;
 )paren
-suffix:semicolon
-macro_line|#ifdef LATCHAADDR
+)paren
+(brace
 id|oldlatch_aupdate
 c_func
 (paren
@@ -134,19 +161,36 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef LATCHBADDR
+multiline_comment|/* Thats no FDC reset...*/
 id|oldlatch_bupdate
 c_func
 (paren
 l_int|0xff
 comma
-l_int|0x8
+id|LATCHB_FDCRESET
 )paren
 suffix:semicolon
-multiline_comment|/* Thats no FDC reset...*/
-macro_line|#endif
-r_return
-suffix:semicolon
 )brace
+)brace
+DECL|variable|oldlatch_init
+id|initcall
+c_func
+(paren
+id|oldlatch_init
+)paren
+suffix:semicolon
+DECL|variable|oldlatch_aupdate
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|oldlatch_aupdate
+)paren
+suffix:semicolon
+DECL|variable|oldlatch_bupdate
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|oldlatch_bupdate
+)paren
+suffix:semicolon
 eof

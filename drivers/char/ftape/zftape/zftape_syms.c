@@ -9,10 +9,10 @@ macro_line|#include &quot;../zftape/zftape-buffers.h&quot;
 macro_line|#include &quot;../zftape/zftape-ctl.h&quot;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,18)
 DECL|macro|FT_KSYM
-macro_line|# define FT_KSYM(sym) EXPORT_SYMBOL(##sym);
+macro_line|# define FT_KSYM(sym) EXPORT_SYMBOL(sym);
 macro_line|#else
 DECL|macro|FT_KSYM
-macro_line|# define FT_KSYM(sym) X(##sym),
+macro_line|# define FT_KSYM(sym) X(sym),
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
 DECL|variable|zft_symbol_table

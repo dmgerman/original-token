@@ -649,16 +649,10 @@ id|irq_action
 op_assign
 id|action-&gt;next
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|action
-comma
-r_sizeof
-(paren
-r_struct
-id|irqaction
-)paren
 )paren
 suffix:semicolon
 r_if

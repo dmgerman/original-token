@@ -1914,12 +1914,12 @@ id|TIMER_SHIFT
 l_string|&quot;,%1&bslash;n&bslash;t&quot;
 l_string|&quot;divl %%ebx&bslash;n&bslash;t&quot;
 suffix:colon
-l_string|&quot;=eax&quot;
+l_string|&quot;=a&quot;
 (paren
 id|zatm_dev-&gt;factor
 )paren
 suffix:colon
-l_string|&quot;eax&quot;
+l_string|&quot;0&quot;
 (paren
 id|interval
 op_minus

@@ -4277,12 +4277,67 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_if
+multiline_comment|/*&n;&t; *  Blank the screen if blank_mode != 0, else unblank. If&n;&t; *  blank == NULL then the caller blanks by setting the CLUT&n;&t; *  (Color Look Up Table) to all black. Return 0 if blanking&n;&t; *  succeeded, != 0 if un-/blanking failed due to e.g. a&n;&t; *  video mode which doesn&squot;t support it. Implements VESA&n;&t; *  suspend and powerdown modes on hardware that supports&n;&t; *  disabling hsync/vsync:&n;&t; *    blank_mode == 2: suspend vsync&n;&t; *    blank_mode == 3: suspend hsync&n;&t; *    blank_mode == 4: powerdown&n;&t; *&n;&t; *  wms...Enable VESA DMPS compatible powerdown mode&n;&t; *  run &quot;setterm -powersave powerdown&quot; to take advantage&n;&t; */
+r_switch
 c_cond
 (paren
 id|blank
 )paren
 (brace
+r_case
+l_int|4
+suffix:colon
+multiline_comment|/* powerdown - both sync lines down */
+id|cyber2000_grphw
+c_func
+(paren
+l_int|0x16
+comma
+l_int|0x05
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+multiline_comment|/* hsync off */
+id|cyber2000_grphw
+c_func
+(paren
+l_int|0x16
+comma
+l_int|0x01
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* vsync off */
+id|cyber2000_grphw
+c_func
+(paren
+l_int|0x16
+comma
+l_int|0x04
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* just software blanking of screen */
+id|cyber2000_grphw
+c_func
+(paren
+l_int|0x16
+comma
+l_int|0x00
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4292,7 +4347,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NR_PALETTE
+l_int|256
 suffix:semicolon
 id|i
 op_increment
@@ -4331,9 +4386,19 @@ l_int|0x3c9
 )paren
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+multiline_comment|/* case 0, or anything else: unblank */
+id|cyber2000_grphw
+c_func
+(paren
+l_int|0x16
+comma
+l_int|0x00
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4343,7 +4408,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NR_PALETTE
+l_int|256
 suffix:semicolon
 id|i
 op_increment
@@ -4397,6 +4462,8 @@ l_int|0x3c9
 )paren
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Get the currently displayed virtual consoles colormap.&n; */
@@ -4838,6 +4905,10 @@ comma
 l_int|0x00
 comma
 l_int|0x13
+comma
+l_int|0x00
+comma
+l_int|0x16
 comma
 l_int|0x00
 comma

@@ -1,14 +1,12 @@
-multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  Please add a note about your changes to smbfs in the ChangeLog file.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
-DECL|macro|SMBFS_PARANOIA
-mdefine_line|#define SMBFS_PARANOIA 1
-multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
-multiline_comment|/* #define pr_debug printk */
+macro_line|#include &quot;smb_debug.h&quot;
 DECL|macro|SMBFS_MAX_AGE
 mdefine_line|#define SMBFS_MAX_AGE 5*HZ
 r_static
@@ -243,15 +241,16 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_readdir: reading %s/%s, f_pos=%d&bslash;n&quot;
+l_string|&quot;reading %s/%s, f_pos=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 (paren
 r_int
@@ -259,7 +258,79 @@ r_int
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
-macro_line|#endif
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+r_switch
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|filp-&gt;f_pos
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+r_if
+c_cond
+(paren
+id|filldir
+c_func
+(paren
+id|dirent
+comma
+l_string|&quot;.&quot;
+comma
+l_int|1
+comma
+l_int|0
+comma
+id|dir-&gt;i_ino
+)paren
+OL
+l_int|0
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|filp-&gt;f_pos
+op_assign
+l_int|1
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+r_if
+c_cond
+(paren
+id|filldir
+c_func
+(paren
+id|dirent
+comma
+l_string|&quot;..&quot;
+comma
+l_int|2
+comma
+l_int|1
+comma
+id|dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
+)paren
+OL
+l_int|0
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|filp-&gt;f_pos
+op_assign
+l_int|2
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Make sure our inode is up-to-date.&n;&t; */
 id|result
 op_assign
@@ -300,12 +371,16 @@ id|cachep
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/*&n;&t; * Make sure the cache is up-to-date.&n;&t; */
+multiline_comment|/*&n;&t; * Make sure the cache is up-to-date.&n;&t; *&n;&t; * To detect changes on the server we refill on each &quot;new&quot; access.&n;&t; *&n;&t; * Directory mtime would be nice to use for finding changes,&n;&t; * unfortunately some servers (NT4) doesn&squot;t update on local changes.&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|cachep-&gt;valid
+op_logical_or
+id|filp-&gt;f_pos
+op_eq
+l_int|2
 )paren
 (brace
 id|result
@@ -331,75 +406,6 @@ id|result
 op_assign
 l_int|0
 suffix:semicolon
-r_switch
-c_cond
-(paren
-(paren
-r_int
-r_int
-)paren
-id|filp-&gt;f_pos
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-r_if
-c_cond
-(paren
-id|filldir
-c_func
-(paren
-id|dirent
-comma
-l_string|&quot;.&quot;
-comma
-l_int|1
-comma
-l_int|0
-comma
-id|dir-&gt;i_ino
-)paren
-OL
-l_int|0
-)paren
-r_goto
-id|out_free
-suffix:semicolon
-id|filp-&gt;f_pos
-op_assign
-l_int|1
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-r_if
-c_cond
-(paren
-id|filldir
-c_func
-(paren
-id|dirent
-comma
-l_string|&quot;..&quot;
-comma
-l_int|2
-comma
-l_int|1
-comma
-id|dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
-)paren
-OL
-l_int|0
-)paren
-r_goto
-id|out_free
-suffix:semicolon
-id|filp-&gt;f_pos
-op_assign
-l_int|2
-suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -555,18 +561,16 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_dir_open: (%s/%s)&bslash;n&quot;
+l_string|&quot;(%s/%s)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|file-&gt;f_dentry-&gt;d_name.name
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Directory timestamps in the core protocol aren&squot;t updated&n;&t; * when a file is added, so we give them a very short TTL.&n;&t; */
 id|lock_kernel
 c_func
@@ -765,14 +769,16 @@ c_cond
 op_logical_neg
 id|valid
 )paren
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_lookup_validate: %s/%s not valid, age=%lu&bslash;n&quot;
+l_string|&quot;%s/%s not valid, age=%lu&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|age
 )paren
@@ -799,18 +805,18 @@ id|inode
 )paren
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_lookup_validate: %s/%s has dud inode&bslash;n&quot;
+l_string|&quot;%s/%s has dud inode&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|valid
 op_assign
 l_int|0
@@ -843,15 +849,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t; * What should we do for negative dentries?&n;&t; */
+multiline_comment|/*&n;&t;&t; * What should we do for negative dentries?&n;&t;&t; */
 )brace
 r_return
 id|valid
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * XXX: It would be better to use the tolower from linux/ctype.h,&n; * but _ctype is needed and it is not exported.&n; */
-DECL|macro|tolower
-mdefine_line|#define tolower(c) (((c) &gt;= &squot;A&squot; &amp;&amp; (c) &lt;= &squot;Z&squot;) ? (c)-(&squot;A&squot;-&squot;a&squot;) : (c))
 r_static
 r_int
 DECL|function|smb_hash_dentry
@@ -1044,18 +1047,18 @@ id|dentry-&gt;d_inode
 )paren
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_delete_dentry: bad inode, unhashing %s/%s&bslash;n&quot;
+l_string|&quot;bad inode, unhashing %s/%s&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -1177,14 +1180,16 @@ op_ne
 op_minus
 id|ENOENT
 )paren
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_lookup: find %s/%s failed, error=%d&bslash;n&quot;
+l_string|&quot;find %s/%s failed, error=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|error
 )paren
@@ -1321,20 +1326,20 @@ r_struct
 id|smb_fattr
 id|fattr
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_instantiate: file %s/%s, fileid=%u&bslash;n&quot;
+l_string|&quot;file %s/%s, fileid=%u&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|fileid
 )paren
 suffix:semicolon
-macro_line|#endif
 id|error
 op_assign
 id|smb_proc_getattr
@@ -1435,22 +1440,22 @@ c_cond
 id|have_id
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_instantiate: %s/%s failed, error=%d, closing %u&bslash;n&quot;
+l_string|&quot;%s/%s failed, error=%d, closing %u&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|error
 comma
 id|fileid
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_close_fileid
 c_func
 (paren
@@ -1491,20 +1496,20 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_create: creating %s/%s, mode=%d&bslash;n&quot;
+l_string|&quot;creating %s/%s, mode=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|mode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_invalid_dir_cache
 c_func
 (paren
@@ -1548,20 +1553,20 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_create: %s/%s failed, error=%d&bslash;n&quot;
+l_string|&quot;%s/%s failed, error=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|error
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 id|error
@@ -1682,12 +1687,6 @@ id|dentry
 r_goto
 id|out
 suffix:semicolon
-id|smb_invalid_dir_cache
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|smb_proc_rmdir
@@ -1727,12 +1726,6 @@ id|smb_close
 c_func
 (paren
 id|dentry-&gt;d_inode
-)paren
-suffix:semicolon
-id|smb_invalid_dir_cache
-c_func
-(paren
-id|dir
 )paren
 suffix:semicolon
 id|error
@@ -1827,20 +1820,20 @@ c_cond
 id|error
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_rename: unlink %s/%s, error=%d&bslash;n&quot;
+l_string|&quot;unlink %s/%s, error=%d&bslash;n&quot;
 comma
-id|new_dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|new_dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|new_dentry
+)paren
 comma
 id|error
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon

@@ -4819,16 +4819,10 @@ c_cond
 (paren
 id|devSMC9194.priv
 )paren
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|devSMC9194.priv
-comma
-r_sizeof
-(paren
-r_struct
-id|smc_local
-)paren
 )paren
 suffix:semicolon
 )brace

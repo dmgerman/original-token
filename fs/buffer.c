@@ -6771,7 +6771,7 @@ op_star
 id|page_address
 c_func
 (paren
-id|page
+id|new_page
 )paren
 suffix:semicolon
 id|memset
@@ -6797,7 +6797,7 @@ id|new_page
 comma
 id|zerofrom
 comma
-id|to
+id|PAGE_CACHE_SIZE
 )paren
 suffix:semicolon
 id|kunmap

@@ -2,8 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/oldlatches.h&n; *&n; * 
 macro_line|#ifndef _ASM_ARCH_OLDLATCH_H
 DECL|macro|_ASM_ARCH_OLDLATCH_H
 mdefine_line|#define _ASM_ARCH_OLDLATCH_H
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_ARCH_ARC)
 DECL|macro|LATCHA_FDSEL0
 mdefine_line|#define LATCHA_FDSEL0    (1&lt;&lt;0)
 DECL|macro|LATCHA_FDSEL1
@@ -56,17 +54,5 @@ r_char
 id|newdata
 )paren
 suffix:semicolon
-r_void
-id|oldlatch_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#elif defined(CONFIG_ARCH_A5K)
-macro_line|#ifdef __need_oldlatches
-macro_line|#error &quot;Old latches not present in this (a5k) machine&quot;
-macro_line|#endif
-macro_line|#endif
 macro_line|#endif
 eof

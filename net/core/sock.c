@@ -2174,12 +2174,10 @@ r_int
 id|size
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|mem
-comma
-id|size
 )paren
 suffix:semicolon
 id|atomic_sub

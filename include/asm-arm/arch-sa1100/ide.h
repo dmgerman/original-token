@@ -32,6 +32,24 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|ioshift
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* The Empeg board has the first two address lines unused */
+r_if
+c_cond
+(paren
+id|machine_is_empeg
+c_func
+(paren
+)paren
+)paren
+id|ioshift
+op_assign
+l_int|2
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -46,13 +64,6 @@ id|hw
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SA1100_EMPEG
-multiline_comment|/* The Empeg board has the first two address lines unused */
-DECL|macro|IO_SHIFT
-mdefine_line|#define IO_SHIFT 2
-macro_line|#else
-mdefine_line|#define IO_SHIFT 0
-macro_line|#endif
 id|reg
 op_assign
 (paren
@@ -61,7 +72,7 @@ id|ide_ioreg_t
 (paren
 id|data_port
 op_lshift
-id|IO_SHIFT
+id|ioshift
 )paren
 suffix:semicolon
 r_for
@@ -91,7 +102,7 @@ op_add_assign
 (paren
 l_int|1
 op_lshift
-id|IO_SHIFT
+id|ioshift
 )paren
 suffix:semicolon
 )brace
@@ -106,7 +117,7 @@ id|ide_ioreg_t
 (paren
 id|ctrl_port
 op_lshift
-id|IO_SHIFT
+id|ioshift
 )paren
 suffix:semicolon
 r_if
@@ -120,6 +131,110 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Special case for the empeg board which has the first two &n; * address lines unused &n; */
+r_static
+id|__inline__
+r_void
+DECL|function|empeg_ide_init_hwif_ports
+id|empeg_ide_init_hwif_ports
+c_func
+(paren
+id|hw_regs_t
+op_star
+id|hw
+comma
+r_int
+id|data_port
+comma
+r_int
+id|ctrl_port
+)paren
+(brace
+id|ide_ioreg_t
+id|reg
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|hw
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|hw
+)paren
+)paren
+suffix:semicolon
+id|reg
+op_assign
+(paren
+id|ide_ioreg_t
+)paren
+(paren
+l_int|0xe0000000
+op_plus
+(paren
+id|data_port
+op_lshift
+l_int|2
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|IDE_DATA_OFFSET
+suffix:semicolon
+id|i
+op_le
+id|IDE_STATUS_OFFSET
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|hw-&gt;io_ports
+(braket
+id|i
+)braket
+op_assign
+id|reg
+suffix:semicolon
+id|reg
+op_add_assign
+(paren
+l_int|1
+op_lshift
+l_int|2
+)paren
+suffix:semicolon
+)brace
+id|hw-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
+op_assign
+(paren
+id|ide_ioreg_t
+)paren
+(paren
+l_int|0xe0000000
+op_plus
+(paren
+id|ctrl_port
+op_lshift
+l_int|2
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
 r_static
 id|__inline__
@@ -131,10 +246,19 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|machine_is_empeg
+c_func
+(paren
+)paren
+)paren
+(brace
+macro_line|#ifdef CONFIG_SA1100_EMPEG
 id|hw_regs_t
 id|hw
 suffix:semicolon
-macro_line|#if defined( CONFIG_SA1100_EMPEG )
 multiline_comment|/* First, do the SA1100 setup */
 multiline_comment|/* PCMCIA IO space */
 id|MECR
@@ -152,21 +276,16 @@ id|EMPEG_IDE2IRQ
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupts on rising edge: lines are inverted before they get to&n;           the SA */
-id|GRER
-op_and_assign
-op_complement
+id|set_GPIO_IRQ_edge
+c_func
+(paren
 (paren
 id|EMPEG_IDE1IRQ
 op_or
 id|EMPEG_IDE2IRQ
 )paren
-suffix:semicolon
-id|GFER
-op_or_assign
-(paren
-id|EMPEG_IDE1IRQ
-op_or
-id|EMPEG_IDE2IRQ
+comma
+id|GPIO_FALLING_EDGE
 )paren
 suffix:semicolon
 multiline_comment|/* Take hard drives out of reset */
@@ -176,14 +295,9 @@ op_assign
 id|EMPEG_IDERESET
 )paren
 suffix:semicolon
-multiline_comment|/* Clear GEDR */
-id|GEDR
-op_assign
-l_int|0xffffffff
-suffix:semicolon
 multiline_comment|/* Sonja and her successors have two IDE ports. */
 multiline_comment|/* MAC 23/4/1999, swap these round so that the left hand&n;&t;   hard disk is hda when viewed from the front. This&n;&t;   doesn&squot;t match the silkscreen however. */
-id|ide_init_hwif_ports
+id|empeg_ide_init_hwif_ports
 c_func
 (paren
 op_amp
@@ -192,8 +306,6 @@ comma
 l_int|0x10
 comma
 l_int|0x1e
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|hw.irq
@@ -209,7 +321,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|ide_init_hwif_ports
+id|empeg_ide_init_hwif_ports
 c_func
 (paren
 op_amp
@@ -218,12 +330,11 @@ comma
 l_int|0x00
 comma
 l_int|0x0e
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|hw.irq
 op_assign
+comma
 id|EMPEG_IRQ_IDE1
 suffix:semicolon
 id|ide_register_hw
@@ -235,25 +346,35 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#elif defined( CONFIG_SA1100_VICTOR )
+macro_line|#endif
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_victor
+c_func
+(paren
+)paren
+)paren
+(brace
+macro_line|#ifdef CONFIG_SA1100_VICTOR
+id|hw_regs_t
+id|hw
+suffix:semicolon
 multiline_comment|/* Enable appropriate GPIOs as interrupt lines */
 id|GPDR
 op_and_assign
 op_complement
 id|GPIO_GPIO7
 suffix:semicolon
-id|GRER
-op_or_assign
+id|set_GPIO_IRQ_edge
+c_func
+(paren
 id|GPIO_GPIO7
-suffix:semicolon
-id|GFER
-op_and_assign
-op_complement
-id|GPIO_GPIO7
-suffix:semicolon
-id|GEDR
-op_assign
-id|GPIO_GPIO7
+comma
+id|GPIO_RISING_EDGE
+)paren
 suffix:semicolon
 multiline_comment|/* set the pcmcia interface timing */
 id|MECR
@@ -266,9 +387,9 @@ c_func
 op_amp
 id|hw
 comma
-l_int|0x1f0
+l_int|0xe00001f0
 comma
-l_int|0x3f6
+l_int|0xe00003f6
 comma
 l_int|NULL
 )paren
@@ -286,9 +407,8 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-macro_line|#error Missing IDE interface definition in include/asm/arch/ide.h
 macro_line|#endif
+)brace
 )brace
 macro_line|#endif
 eof

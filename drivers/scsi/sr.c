@@ -326,45 +326,56 @@ id|cdrom_device_ops
 id|sr_dops
 op_assign
 (brace
+id|open
+suffix:colon
 id|sr_open
 comma
-multiline_comment|/* open */
+id|release
+suffix:colon
 id|sr_release
 comma
-multiline_comment|/* release */
+id|drive_status
+suffix:colon
 id|sr_drive_status
 comma
-multiline_comment|/* drive status */
+id|media_changed
+suffix:colon
 id|sr_media_change
 comma
-multiline_comment|/* media changed */
+id|tray_move
+suffix:colon
 id|sr_tray_move
 comma
-multiline_comment|/* tray move */
+id|lock_door
+suffix:colon
 id|sr_lock_door
 comma
-multiline_comment|/* lock door */
+id|select_speed
+suffix:colon
 id|sr_select_speed
 comma
-multiline_comment|/* select speed */
-l_int|NULL
-comma
-multiline_comment|/* select disc */
+id|get_last_session
+suffix:colon
 id|sr_get_last_session
 comma
-multiline_comment|/* get last session */
+id|get_mcn
+suffix:colon
 id|sr_get_mcn
 comma
-multiline_comment|/* get universal product code */
+id|reset
+suffix:colon
 id|sr_reset
 comma
-multiline_comment|/* hard reset */
+id|audio_ioctl
+suffix:colon
 id|sr_audio_ioctl
 comma
-multiline_comment|/* audio ioctl */
+id|dev_ioctl
+suffix:colon
 id|sr_dev_ioctl
 comma
-multiline_comment|/* device-specific ioctl */
+id|capability
+suffix:colon
 id|CDC_CLOSE_TRAY
 op_or
 id|CDC_OPEN_TRAY
@@ -401,9 +412,10 @@ id|CDC_DVD_RAM
 op_or
 id|CDC_GENERIC_PACKET
 comma
-l_int|0
-comma
+id|generic_packet
+suffix:colon
 id|sr_packet
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This function checks to see if the media has been changed in the&n; * CDROM drive.  It is possible that we have already sensed a change,&n; * or the drive may have sensed one and not yet reported it.  We must&n; * be ready for either case. This function always reports the current&n; * value of the changed bit.  If flag is 0, then the changed bit is reset.&n; * This function could be done as an ioctl, but we would need to have&n; * an inode for that to work, and we do not always have one.&n; */

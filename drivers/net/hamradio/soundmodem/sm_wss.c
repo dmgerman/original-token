@@ -2715,12 +2715,10 @@ id|sm-&gt;hwdrv-&gt;hw_name
 )paren
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|sm-&gt;dma.obuf
-comma
-id|dmasz
 )paren
 suffix:semicolon
 r_return
@@ -2752,12 +2750,10 @@ c_func
 id|dev-&gt;dma
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|sm-&gt;dma.obuf
-comma
-id|dmasz
 )paren
 suffix:semicolon
 r_return

@@ -66,12 +66,11 @@ DECL|macro|MACH_TYPE_BRUTUS
 mdefine_line|#define MACH_TYPE_BRUTUS&t;&t;16
 DECL|macro|MACH_TYPE_PERSONAL_SERVER
 mdefine_line|#define MACH_TYPE_PERSONAL_SERVER&t;17
-DECL|macro|MACH_TYPE_SA1100
-mdefine_line|#define MACH_TYPE_SA1100&t;&t;18&t;/* unused/too general */
+DECL|macro|MACH_TYPE_ITSY
+mdefine_line|#define MACH_TYPE_ITSY&t;&t;&t;18
 DECL|macro|MACH_TYPE_L7200
 mdefine_line|#define MACH_TYPE_L7200&t;&t;&t;19
-DECL|macro|MACH_TYPE_SA1110
-mdefine_line|#define MACH_TYPE_SA1110&t;&t;20&t;/* unused/too general */
+multiline_comment|/* 20 is free - contact rmk@arm.linux.org.uk directly if you wish to use this number */
 DECL|macro|MACH_TYPE_INTEGRATOR
 mdefine_line|#define MACH_TYPE_INTEGRATOR&t;&t;21
 DECL|macro|MACH_TYPE_BITSY
@@ -285,6 +284,22 @@ macro_line|#else
 DECL|macro|machine_is_personal_server
 macro_line|# define machine_is_personal_server()&t;(0)
 macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_ITSY
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_ITSY
+macro_line|# endif
+DECL|macro|machine_is_itsy
+macro_line|# define machine_is_itsy()&t;(machine_arch_type == MACH_TYPE_ITSY)
+macro_line|#else
+DECL|macro|machine_is_itsy
+macro_line|# define machine_is_itsy()&t;(0)
+macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_L7200
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
@@ -414,22 +429,6 @@ DECL|macro|machine_is_xp860
 macro_line|# define machine_is_xp860()&t;(0)
 macro_line|#endif
 multiline_comment|/*&n; * The following are currently unregistered&n; */
-macro_line|#ifdef CONFIG_SA1100_ITSY
-macro_line|# ifdef machine_arch_type
-DECL|macro|machine_arch_type
-macro_line|#  undef machine_arch_type
-DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;__machine_arch_type
-macro_line|# else
-DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;MACH_TYPE_ITSY
-macro_line|# endif
-DECL|macro|machine_is_itsy
-macro_line|# define machine_is_itsy()&t;(machine_arch_type == MACH_TYPE_ITSY)
-macro_line|#else
-DECL|macro|machine_is_itsy
-macro_line|# define machine_is_itsy()&t;(0)
-macro_line|#endif
 macro_line|#ifdef CONFIG_SA1100_EMPEG
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type

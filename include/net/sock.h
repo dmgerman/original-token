@@ -2890,12 +2890,10 @@ op_amp
 id|fp-&gt;refcnt
 )paren
 )paren
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|fp
-comma
-id|size
 )paren
 suffix:semicolon
 )brace

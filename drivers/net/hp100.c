@@ -12331,19 +12331,13 @@ l_int|0
 (brace
 multiline_comment|/* DeAllocate everything */
 multiline_comment|/* Note: if dev-&gt;priv is mallocated, there is no way to fail */
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|hp100_devlist
 (braket
 id|i
 )braket
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
 )paren
 suffix:semicolon
 id|hp100_devlist
@@ -12464,7 +12458,7 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* busmaster */
-id|kfree_s
+id|kfree
 c_func
 (paren
 (paren
@@ -12482,10 +12476,6 @@ id|priv
 )paren
 op_member_access_from_pointer
 id|page_vaddr
-comma
-id|MAX_RINGSIZE
-op_plus
-l_int|0x0f
 )paren
 suffix:semicolon
 )brace
@@ -12528,7 +12518,7 @@ op_member_access_from_pointer
 id|mem_ptr_virt
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|hp100_devlist
@@ -12537,12 +12527,6 @@ id|i
 )braket
 op_member_access_from_pointer
 id|priv
-comma
-r_sizeof
-(paren
-r_struct
-id|hp100_private
-)paren
 )paren
 suffix:semicolon
 id|hp100_devlist
@@ -12554,19 +12538,13 @@ id|priv
 op_assign
 l_int|NULL
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|hp100_devlist
 (braket
 id|i
 )braket
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
 )paren
 suffix:semicolon
 id|hp100_devlist

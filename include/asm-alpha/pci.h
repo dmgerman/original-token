@@ -322,5 +322,9 @@ DECL|macro|IOBASE_SPARSE_IO
 mdefine_line|#define IOBASE_SPARSE_IO&t;3
 DECL|macro|IOBASE_DENSE_IO
 mdefine_line|#define IOBASE_DENSE_IO&t;&t;4
+DECL|macro|IOBASE_ROOT_BUS
+mdefine_line|#define IOBASE_ROOT_BUS&t;&t;5
+DECL|macro|IOBASE_FROM_HOSE
+mdefine_line|#define IOBASE_FROM_HOSE&t;0x10000
 macro_line|#endif /* __ALPHA_PCI_H */
 eof

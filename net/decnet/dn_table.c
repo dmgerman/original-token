@@ -4510,16 +4510,10 @@ c_cond
 id|t
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|t
-comma
-r_sizeof
-(paren
-r_struct
-id|dn_fib_table
-)paren
 )paren
 suffix:semicolon
 )brace

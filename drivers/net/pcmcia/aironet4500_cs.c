@@ -1141,42 +1141,24 @@ id|link-&gt;priv
 (brace
 singleline_comment|//struct net_device *dev = link-&gt;priv;
 singleline_comment|// dam dam damn mif (dev-&gt;priv)
-singleline_comment|//&t;kfree_s(dev-&gt;priv, sizeof(struct awc_private));
-id|kfree_s
+singleline_comment|//&t;kfree(dev-&gt;priv);
+id|kfree
 c_func
 (paren
 id|link-&gt;priv
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
 )paren
 suffix:semicolon
 )brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|link-&gt;dev
-comma
-r_sizeof
-(paren
-r_struct
-id|dev_node_t
-)paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|link
-comma
-r_sizeof
-(paren
-r_struct
-id|dev_link_t
-)paren
 )paren
 suffix:semicolon
 )brace

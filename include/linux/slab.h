@@ -198,8 +198,6 @@ r_void
 op_star
 )paren
 suffix:semicolon
-DECL|macro|kfree_s
-mdefine_line|#define kfree_s(objp,s)&t;&t;kfree(objp)
 r_extern
 r_void
 id|kmem_cache_reap

@@ -4751,15 +4751,10 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev-&gt;priv
-comma
-r_sizeof
-(paren
-id|ibmlana_priv
-)paren
 )paren
 suffix:semicolon
 id|dev-&gt;priv

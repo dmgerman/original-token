@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  file.c&n; *&n; *  Copyright (C) 1995, 1996, 1997 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  file.c&n; *&n; *  Copyright (C) 1995, 1996, 1997 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  Please add a note about your changes to smbfs in the ChangeLog file.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,10 +12,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
-DECL|macro|SMBFS_PARANOIA
-mdefine_line|#define SMBFS_PARANOIA 1
-multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
-multiline_comment|/* #define pr_debug printk */
+macro_line|#include &quot;smb_debug.h&quot;
 r_static
 r_int
 DECL|function|smb_fsync
@@ -36,18 +33,18 @@ r_int
 id|datasync
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_fsync: sync file %s/%s&bslash;n&quot;
+l_string|&quot;sync file %s/%s&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -113,17 +110,16 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-multiline_comment|/* We can&squot;t replace this with ClearPageError. why? is it a problem? &n;&t;   fs/buffer.c:brw_page does the same. */
-multiline_comment|/* ClearPageError(page); */
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_readpage_sync: file %s/%s, count=%d@%ld, rsize=%d&bslash;n&quot;
+l_string|&quot;file %s/%s, count=%d@%ld, rsize=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|count
 comma
@@ -132,7 +128,6 @@ comma
 id|rsize
 )paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 id|smb_open
@@ -151,20 +146,20 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_readpage_sync: %s/%s open failed, error=%d&bslash;n&quot;
+l_string|&quot;%s/%s open failed, error=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|io_error
 suffix:semicolon
@@ -270,6 +265,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * We are called with the page locked and the caller unlocks.&n; */
 r_static
 r_int
 DECL|function|smb_readpage
@@ -297,10 +293,10 @@ id|dentry
 op_assign
 id|file-&gt;f_dentry
 suffix:semicolon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;SMB: smb_readpage %08lx&bslash;n&quot;
+l_string|&quot;readpage %08lx&bslash;n&quot;
 comma
 id|page_address
 c_func
@@ -309,24 +305,6 @@ id|page
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef SMBFS_PARANOIA
-r_if
-c_cond
-(paren
-op_logical_neg
-id|PageLocked
-c_func
-(paren
-id|page
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;smb_readpage: page not already locked!&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|get_page
 c_func
 (paren
@@ -428,15 +406,16 @@ id|page-&gt;index
 op_lshift
 id|PAGE_CACHE_SHIFT
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_writepage_sync: file %s/%s, count=%d@%ld, wsize=%d&bslash;n&quot;
+l_string|&quot;file %s/%s, count=%d@%ld, wsize=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|count
 comma
@@ -445,7 +424,6 @@ comma
 id|wsize
 )paren
 suffix:semicolon
-macro_line|#endif
 r_do
 (brace
 r_if
@@ -491,10 +469,10 @@ id|result
 OL
 id|wsize
 )paren
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_writepage_sync: short write, wsize=%d, result=%d&bslash;n&quot;
+l_string|&quot;short write, wsize=%d, result=%d&bslash;n&quot;
 comma
 id|wsize
 comma
@@ -713,14 +691,16 @@ id|dentry
 op_assign
 id|file-&gt;f_dentry
 suffix:semicolon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;SMBFS: smb_updatepage(%s/%s %d@%ld)&bslash;n&quot;
+l_string|&quot;(%s/%s %d@%ld)&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|count
 comma
@@ -780,15 +760,16 @@ suffix:semicolon
 id|ssize_t
 id|status
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_file_read: file %s/%s, count=%lu@%lu&bslash;n&quot;
+l_string|&quot;file %s/%s, count=%lu@%lu&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 (paren
 r_int
@@ -804,7 +785,6 @@ op_star
 id|ppos
 )paren
 suffix:semicolon
-macro_line|#endif
 id|status
 op_assign
 id|smb_revalidate_inode
@@ -819,40 +799,39 @@ c_cond
 id|status
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_file_read: %s/%s validation failed, error=%Zd&bslash;n&quot;
+l_string|&quot;%s/%s validation failed, error=%Zd&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|status
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
 )brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_file_read: before read, size=%ld, pages=%ld, flags=%x, atime=%ld&bslash;n&quot;
+l_string|&quot;before read, size=%ld, flags=%x, atime=%ld&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|dentry-&gt;d_inode-&gt;i_size
-comma
-id|dentry-&gt;d_inode-&gt;i_nrpages
 comma
 id|dentry-&gt;d_inode-&gt;i_flags
 comma
 id|dentry-&gt;d_inode-&gt;i_atime
 )paren
 suffix:semicolon
-macro_line|#endif
 id|status
 op_assign
 id|generic_file_read
@@ -900,22 +879,22 @@ suffix:semicolon
 r_int
 id|status
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_file_mmap: file %s/%s, address %lu - %lu&bslash;n&quot;
+l_string|&quot;file %s/%s, address %lu - %lu&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
 )paren
 suffix:semicolon
-macro_line|#endif
 id|status
 op_assign
 id|smb_revalidate_inode
@@ -930,20 +909,20 @@ c_cond
 id|status
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_file_mmap: %s/%s validation failed, error=%d&bslash;n&quot;
+l_string|&quot;%s/%s validation failed, error=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|status
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -1123,15 +1102,16 @@ suffix:semicolon
 id|ssize_t
 id|result
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_file_write: file %s/%s, count=%lu@%lu, pages=%ld&bslash;n&quot;
+l_string|&quot;file %s/%s, count=%lu@%lu&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 (paren
 r_int
@@ -1145,11 +1125,8 @@ r_int
 )paren
 op_star
 id|ppos
-comma
-id|dentry-&gt;d_inode-&gt;i_nrpages
 )paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 id|smb_revalidate_inode
@@ -1164,20 +1141,20 @@ c_cond
 id|result
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_file_write: %s/%s validation failed, error=%Zd&bslash;n&quot;
+l_string|&quot;%s/%s validation failed, error=%Zd&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -1222,17 +1199,19 @@ comma
 id|ppos
 )paren
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_file_write: pos=%ld, size=%ld, mtime=%ld, atime=%ld&bslash;n&quot;
+l_string|&quot;pos=%ld, size=%ld, mtime=%ld, atime=%ld&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|file-&gt;f_pos
 comma
+(paren
+r_int
+)paren
 id|dentry-&gt;d_inode-&gt;i_size
 comma
 id|dentry-&gt;d_inode-&gt;i_mtime
@@ -1240,7 +1219,6 @@ comma
 id|dentry-&gt;d_inode-&gt;i_atime
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|out
 suffix:colon
@@ -1352,18 +1330,16 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_file_permission: mode=%x, mask=%x&bslash;n&quot;
+l_string|&quot;mode=%x, mask=%x&bslash;n&quot;
 comma
 id|mode
 comma
 id|mask
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Look at user permissions */
 id|mode
 op_rshift_assign

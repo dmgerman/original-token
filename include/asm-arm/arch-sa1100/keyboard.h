@@ -95,13 +95,13 @@ mdefine_line|#define kbd_translate(x...)&t;(0)
 DECL|macro|kbd_unexpected_up
 mdefine_line|#define kbd_unexpected_up(x...)&t;(1)
 DECL|macro|kbd_leds
-mdefine_line|#define kbd_leds(x...)&t;&t;(0)
+mdefine_line|#define kbd_leds(x...)&t;&t;do { } while (0)
 DECL|macro|kbd_init_hw
-mdefine_line|#define kbd_init_hw(x...)&t;(0)
+mdefine_line|#define kbd_init_hw(x...)&t;do { } while (0)
 DECL|macro|kbd_enable_irq
-mdefine_line|#define kbd_enable_irq(x...)&t;(0)
+mdefine_line|#define kbd_enable_irq(x...)&t;do { } while (0)
 DECL|macro|kbd_disable_irq
-mdefine_line|#define kbd_disable_irq(x...)&t;(0)
+mdefine_line|#define kbd_disable_irq(x...)&t;do { } while (0)
 macro_line|#endif
 macro_line|#endif  /* _SA1100_KEYBOARD_H */
 eof

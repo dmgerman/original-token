@@ -17,10 +17,10 @@ macro_line|#include &quot;../lowlevel/ftape-buffer.h&quot;
 macro_line|#include &quot;../lowlevel/ftape-format.h&quot;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,18)
 DECL|macro|FT_KSYM
-macro_line|# define FT_KSYM(sym) EXPORT_SYMBOL(##sym);
+macro_line|# define FT_KSYM(sym) EXPORT_SYMBOL(sym);
 macro_line|#else
 DECL|macro|FT_KSYM
-macro_line|# define FT_KSYM(sym) X(##sym),
+macro_line|# define FT_KSYM(sym) X(sym),
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
 DECL|variable|ftape_symbol_table

@@ -7576,16 +7576,10 @@ comma
 l_int|16
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev_sb1000.priv
-comma
-r_sizeof
-(paren
-r_struct
-id|sb1000_private
-)paren
 )paren
 suffix:semicolon
 id|dev_sb1000.priv

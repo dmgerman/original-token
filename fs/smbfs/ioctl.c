@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  Please add a note about your changes to smbfs in the ChangeLog file.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
@@ -42,6 +42,10 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+r_struct
+id|smb_conn_opt
+id|opt
 suffix:semicolon
 r_int
 id|result
@@ -100,17 +104,15 @@ suffix:semicolon
 r_case
 id|SMB_IOC_NEWCONN
 suffix:colon
-(brace
-r_struct
-id|smb_conn_opt
-id|opt
-suffix:semicolon
+multiline_comment|/* require an argument == the mount data, else it is EINVAL */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|arg
 )paren
-(brace
+r_break
+suffix:semicolon
 id|result
 op_assign
 op_minus
@@ -149,27 +151,8 @@ op_amp
 id|opt
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-macro_line|#if 0
-multiline_comment|/* obsolete option ... print a warning */
-id|printk
-c_func
-(paren
-l_string|&quot;SMBFS: ioctl deprecated, please upgrade &quot;
-l_string|&quot;smbfs package&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|result
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
-)brace
 r_default
 suffix:colon
 (brace

@@ -640,7 +640,7 @@ l_int|0x205
 suffix:colon
 id|reason
 op_assign
-l_string|&quot;parity error detected by CIA&quot;
+l_string|&quot;parity error detected by core logic&quot;
 suffix:semicolon
 r_break
 suffix:semicolon

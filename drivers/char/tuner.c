@@ -937,7 +937,8 @@ c_cond
 id|t-&gt;type
 op_eq
 id|TUNER_PHILIPS_SECAM
-multiline_comment|/*&amp;&amp; t-&gt;std == V4L2_STANDARD_DDD*/
+op_logical_and
+id|t-&gt;mode
 )paren
 id|config
 op_or_assign

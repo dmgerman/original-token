@@ -1585,16 +1585,10 @@ op_star
 id|ifa
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ifa
-comma
-r_sizeof
-(paren
-op_star
-id|ifa
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -36,10 +36,9 @@ id|rwlock_t
 id|xtime_lock
 suffix:semicolon
 r_extern
-r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 multiline_comment|/* change this if you have some constant time drift */
 DECL|macro|USECS_PER_JIFFY
@@ -517,7 +516,9 @@ r_int
 r_int
 id|lost
 op_assign
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 r_if
 c_cond
@@ -602,7 +603,11 @@ c_func
 suffix:semicolon
 id|tv-&gt;tv_usec
 op_sub_assign
-id|lost_ticks
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
 op_star
 id|USECS_PER_JIFFY
 suffix:semicolon

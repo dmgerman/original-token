@@ -613,16 +613,10 @@ id|d-&gt;flags
 )paren
 suffix:semicolon
 )brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|d
-comma
-r_sizeof
-(paren
-r_struct
-id|ic_device
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -142,12 +142,10 @@ r_int
 id|size
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ptr
-comma
-id|size
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_ALL) || defined(DEBUG_MEM)

@@ -1,11 +1,10 @@
-multiline_comment|/*&n; * arch/arm/kernel/dma-isa.c: ISA DMA primitives&n; *&n; * Copyright (C) Russell King&n; *&n; * Taken from various sources, including:&n; *  linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; *    Written by Hennus Bergman, 1992.&n; *    High DMA channel support &amp; info by Hannu Savolainen and John Boyd, Nov. 1992.&n; *  arch/arm/kernel/dma-ebsa285.c&n; *  Copyright (C) 1998 Phil Blundell&n; */
+multiline_comment|/*&n; * arch/arm/kernel/dma-isa.c: ISA DMA primitives&n; *&n; * Copyright (C) 1999-2000 Russell King&n; *&n; * Taken from various sources, including:&n; *  linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; *    Written by Hennus Bergman, 1992.&n; *    High DMA channel support &amp; info by Hannu Savolainen and John Boyd,&n; *    Nov. 1992.&n; *  arch/arm/kernel/dma-ebsa285.c&n; *  Copyright (C) 1998 Phil Blundell&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;dma.h&quot;
-macro_line|#include &quot;dma-isa.h&quot;
 DECL|macro|ISA_DMA_MODE_READ
 mdefine_line|#define ISA_DMA_MODE_READ&t;0x44
 DECL|macro|ISA_DMA_MODE_WRITE
@@ -171,49 +170,13 @@ l_int|0xce
 )brace
 )brace
 suffix:semicolon
-DECL|function|isa_request_dma
-r_int
-id|isa_request_dma
-c_func
-(paren
-r_int
-id|channel
-comma
-id|dma_t
-op_star
-id|dma
-comma
-r_const
-r_char
-op_star
-id|dev_name
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|isa_free_dma
-r_void
-id|isa_free_dma
-c_func
-(paren
-r_int
-id|channel
-comma
-id|dma_t
-op_star
-id|dma
-)paren
-(brace
-multiline_comment|/* nothing to do */
-)brace
 DECL|function|isa_get_dma_residue
+r_static
 r_int
 id|isa_get_dma_residue
 c_func
 (paren
-r_int
+id|dmach_t
 id|channel
 comma
 id|dma_t
@@ -272,11 +235,12 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|isa_enable_dma
+r_static
 r_void
 id|isa_enable_dma
 c_func
 (paren
-r_int
+id|dmach_t
 id|channel
 comma
 id|dma_t
@@ -551,11 +515,12 @@ id|ISA_DMA_MASK
 suffix:semicolon
 )brace
 DECL|function|isa_disable_dma
+r_static
 r_void
 id|isa_disable_dma
 c_func
 (paren
-r_int
+id|dmach_t
 id|channel
 comma
 id|dma_t
@@ -580,6 +545,31 @@ id|ISA_DMA_MASK
 )paren
 suffix:semicolon
 )brace
+DECL|variable|isa_dma_ops
+r_static
+r_struct
+id|dma_ops
+id|isa_dma_ops
+op_assign
+(brace
+id|type
+suffix:colon
+l_string|&quot;ISA&quot;
+comma
+id|enable
+suffix:colon
+id|isa_enable_dma
+comma
+id|disable
+suffix:colon
+id|isa_disable_dma
+comma
+id|residue
+suffix:colon
+id|isa_get_dma_residue
+comma
+)brace
+suffix:semicolon
 DECL|variable|dma_resources
 r_static
 r_struct
@@ -623,12 +613,14 @@ l_int|0x048f
 )brace
 suffix:semicolon
 DECL|function|isa_init_dma
-r_int
+r_void
 id|__init
 id|isa_init_dma
 c_func
 (paren
-r_void
+id|dma_t
+op_star
+id|dma
 )paren
 (brace
 r_int
@@ -709,6 +701,17 @@ suffix:semicolon
 id|channel
 op_increment
 )paren
+(brace
+id|dma
+(braket
+id|channel
+)braket
+dot
+id|d_ops
+op_assign
+op_amp
+id|isa_dma_ops
+suffix:semicolon
 id|isa_disable_dma
 c_func
 (paren
@@ -717,6 +720,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 id|outb
 c_func
 (paren
@@ -805,7 +809,7 @@ comma
 l_int|0xd0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Is this correct?  According to&n;&t;&t; * my documentation, it doesn&squot;t&n;&t;&t; * appear to be.  It should be&n;&t;&t; * outb(0x3f, 0x40b); outb(0x3f, 0x4d6);&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Is this correct?  According to my documentation, it&n;&t;&t; * doesn&squot;t appear to be.  It should be:&n;&t;&t; *  outb(0x3f, 0x40b); outb(0x3f, 0x4d6);&n;&t;&t; */
 id|outb
 c_func
 (paren
@@ -907,8 +911,5 @@ id|i
 )paren
 suffix:semicolon
 )brace
-r_return
-id|dmac_found
-suffix:semicolon
 )brace
 eof

@@ -201,6 +201,19 @@ id|ok
 suffix:semicolon
 r_extern
 r_void
+id|md_sync_acct
+c_func
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+r_int
+id|nr_sectors
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|md_recover_arrays
 (paren
 r_void
@@ -255,7 +268,6 @@ id|kdev_t
 id|rdev
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_BLK_DEV_MD
 r_extern
 r_void
 id|raid_setup
@@ -264,14 +276,9 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 id|md__init
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_void
 id|md_print_devices

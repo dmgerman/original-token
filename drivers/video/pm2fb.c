@@ -7305,7 +7305,7 @@ c_func
 (paren
 id|pci-&gt;dev
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -8319,8 +8319,16 @@ id|fbcon_cfb8_setup
 comma
 id|pm2fb_pp_bmove
 comma
+macro_line|#ifdef __alpha__
+multiline_comment|/* Not sure why, but this works and the other does not. */
+multiline_comment|/* Also, perhaps we need a separate routine to wait for the&n;&t;   blitter to stop before doing this? */
+multiline_comment|/* In addition, maybe we need to do this for 16 and 32 bit depths? */
+id|fbcon_cfb8_clear
+comma
+macro_line|#else
 id|pm2fb_clear8
 comma
+macro_line|#endif
 id|fbcon_cfb8_putc
 comma
 id|fbcon_cfb8_putcs

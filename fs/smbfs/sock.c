@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sock.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  sock.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  Please add a note about your changes to smbfs in the ChangeLog file.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -15,9 +15,7 @@ macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/smb.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|SMBFS_PARANOIA
-mdefine_line|#define SMBFS_PARANOIA 1
-multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
+macro_line|#include &quot;smb_debug.h&quot;
 r_static
 r_int
 DECL|function|_recvfrom
@@ -417,14 +415,12 @@ c_cond
 id|job-&gt;sk-&gt;dead
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_data_callback: sock dead!&bslash;n&quot;
+l_string|&quot;sock dead!&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -489,10 +485,10 @@ comma
 id|MSG_DONTWAIT
 )paren
 suffix:semicolon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_data_callback: got SESSION KEEPALIVE&bslash;n&quot;
+l_string|&quot;got SESSION KEEPALIVE&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -583,7 +579,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;smb_data_ready(): lost SESSION KEEPALIVE due to OOM.&bslash;n&quot;
+l_string|&quot;smb_data_ready: lost SESSION KEEPALIVE due to OOM.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|found_data
@@ -695,10 +691,10 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode
 )paren
 )paren
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_server_sock: bad socket!&bslash;n&quot;
+l_string|&quot;bad socket!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -762,6 +758,7 @@ id|socket
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;smb_catch_keepalive: did not get valid server!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -785,10 +782,10 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_catch_keepalive: sk == NULL&quot;
+l_string|&quot;sk == NULL&quot;
 )paren
 suffix:semicolon
 id|server-&gt;data_ready
@@ -799,10 +796,10 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_catch_keepalive.: sk-&gt;d_r = %x, server-&gt;d_r = %x&bslash;n&quot;
+l_string|&quot;sk-&gt;d_r = %x, server-&gt;d_r = %x&bslash;n&quot;
 comma
 (paren
 r_int
@@ -915,6 +912,7 @@ id|socket
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;smb_dont_catch_keepalive: did not get valid server!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -934,10 +932,10 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_dont_catch_keepalive: sk == NULL&quot;
+l_string|&quot;sk == NULL&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -956,6 +954,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;smb_dont_catch_keepalive: &quot;
 l_string|&quot;server-&gt;data_ready == NULL&bslash;n&quot;
 )paren
@@ -964,7 +963,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
 l_string|&quot;smb_dont_catch_keepalive: sk-&gt;d_r = %x, server-&gt;d_r = %x&bslash;n&quot;
@@ -1013,6 +1012,7 @@ id|smb_data_ready
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_dont_catch_keepalive: &quot;
 l_string|&quot;sk-&gt;data_ready != smb_data_ready&bslash;n&quot;
 )paren
@@ -1053,11 +1053,10 @@ c_cond
 id|file
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_close_socket: closing socket %p&bslash;n&quot;
+l_string|&quot;closing socket %p&bslash;n&quot;
 comma
 id|server_sock
 c_func
@@ -1066,7 +1065,6 @@ id|server
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef SMBFS_PARANOIA
 r_if
 c_cond
@@ -1081,10 +1079,10 @@ id|sk-&gt;data_ready
 op_eq
 id|smb_data_ready
 )paren
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_close_socket: still catching keepalives!&bslash;n&quot;
+l_string|&quot;still catching keepalives!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1179,7 +1177,7 @@ OL
 l_int|0
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
 l_string|&quot;smb_send_raw: sendto error = %d&bslash;n&quot;
@@ -1282,10 +1280,10 @@ OL
 l_int|0
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_receive_raw: recvfrom error = %d&bslash;n&quot;
+l_string|&quot;recvfrom error = %d&bslash;n&quot;
 comma
 op_minus
 id|result
@@ -1378,17 +1376,15 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_get_length: recv error = %d&bslash;n&quot;
+l_string|&quot;recv error = %d&bslash;n&quot;
 comma
 op_minus
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|result
 suffix:semicolon
@@ -1413,10 +1409,10 @@ suffix:semicolon
 r_case
 l_int|0x85
 suffix:colon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_get_length: Got SESSION KEEP ALIVE&bslash;n&quot;
+l_string|&quot;Got SESSION KEEP ALIVE&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1424,11 +1420,10 @@ id|re_recv
 suffix:semicolon
 r_default
 suffix:colon
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_get_length: Invalid NBT packet, code=%x&bslash;n&quot;
+l_string|&quot;Invalid NBT packet, code=%x&bslash;n&quot;
 comma
 id|peek_buf
 (braket
@@ -1436,7 +1431,6 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|EIO
@@ -1656,16 +1650,14 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_receive: receive error: %d&bslash;n&quot;
+l_string|&quot;receive error: %d&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -1697,10 +1689,10 @@ id|server-&gt;rcls
 op_ne
 l_int|0
 )paren
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_receive: rcls=%d, err=%d&bslash;n&quot;
+l_string|&quot;rcls=%d, err=%d&bslash;n&quot;
 comma
 id|server-&gt;rcls
 comma
@@ -1979,11 +1971,10 @@ op_eq
 id|data_tot
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_receive_trans2: fast track, parm=%u %u %u, data=%u %u %u&bslash;n&quot;
+l_string|&quot;fast track, parm=%u %u %u, data=%u %u %u&bslash;n&quot;
 comma
 id|parm_disp
 comma
@@ -1998,7 +1989,6 @@ comma
 id|data_count
 )paren
 suffix:semicolon
-macro_line|#endif
 op_star
 id|parm
 op_assign
@@ -2164,11 +2154,10 @@ comma
 id|data_count
 )paren
 suffix:semicolon
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_receive_trans2: copied, parm=%u of %u, data=%u of %u&bslash;n&quot;
+l_string|&quot;copied, parm=%u of %u, data=%u of %u&bslash;n&quot;
 comma
 id|parm_len
 comma
@@ -2179,7 +2168,6 @@ comma
 id|data_tot
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Check whether we&squot;ve received all of the data. Note that&n;&t;&t; * we use the packet totals -- total lengths might shrink!&n;&t;&t; */
 r_if
 c_cond
@@ -2223,18 +2211,16 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_receive_trans2: copying data, old size=%d, new size=%u&bslash;n&quot;
+l_string|&quot;copying data, old size=%d, new size=%u&bslash;n&quot;
 comma
 id|server-&gt;packet_size
 comma
 id|buf_len
 )paren
 suffix:semicolon
-macro_line|#endif
 id|memcpy
 c_func
 (paren
@@ -2278,14 +2264,12 @@ id|result
 suffix:semicolon
 id|out_no_mem
 suffix:colon
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_receive_trans2: couldn&squot;t allocate data area&bslash;n&quot;
+l_string|&quot;couldn&squot;t allocate data area&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 op_minus
@@ -2299,6 +2283,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_receive_trans2: data/param too long, data=%d, parm=%d&bslash;n&quot;
 comma
 id|data_tot
@@ -2314,6 +2299,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_receive_trans2: data/params grew!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2325,6 +2311,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_receive_trans2: invalid parms, disp=%d, cnt=%d, tot=%d&bslash;n&quot;
 comma
 id|parm_disp
@@ -2342,6 +2329,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_receive_trans2: invalid data, disp=%d, cnt=%d, tot=%d&bslash;n&quot;
 comma
 id|data_disp
@@ -2457,10 +2445,10 @@ id|buffer
 op_plus
 l_int|4
 suffix:semicolon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_request: len = %d cmd = 0x%X&bslash;n&quot;
+l_string|&quot;len = %d cmd = 0x%X&bslash;n&quot;
 comma
 id|len
 comma
@@ -2664,6 +2652,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_request: catch keepalive failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2710,6 +2699,7 @@ id|EBADSLT
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_request: tree ID invalid&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2724,10 +2714,10 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_request: result = %d&bslash;n&quot;
+l_string|&quot;result = %d&bslash;n&quot;
 comma
 id|result
 )paren
@@ -2737,16 +2727,14 @@ id|result
 suffix:semicolon
 id|bad_conn
 suffix:colon
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_request: result %d, setting invalid&bslash;n&quot;
+l_string|&quot;result %d, setting invalid&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 id|server-&gt;state
 op_assign
 id|CONN_INVALID
@@ -2765,6 +2753,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_request: no packet!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2776,6 +2765,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_request: connection %d not valid!&bslash;n&quot;
 comma
 id|server-&gt;state
@@ -3363,10 +3353,10 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_trans2_request: com=%d, ld=%d, lp=%d&bslash;n&quot;
+l_string|&quot;com=%d, ld=%d, lp=%d&bslash;n&quot;
 comma
 id|trans2_command
 comma
@@ -3657,6 +3647,7 @@ id|EBADSLT
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_request: tree ID invalid&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3676,16 +3667,14 @@ id|result
 suffix:semicolon
 id|bad_conn
 suffix:colon
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_trans2_request: result=%d, setting invalid&bslash;n&quot;
+l_string|&quot;result=%d, setting invalid&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 id|server-&gt;state
 op_assign
 id|CONN_INVALID

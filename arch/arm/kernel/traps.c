@@ -100,16 +100,6 @@ comma
 l_string|&quot;SYS_32&quot;
 )brace
 suffix:semicolon
-multiline_comment|/* proc/system.h */
-DECL|variable|xchg_str
-r_const
-r_char
-id|xchg_str
-(braket
-)braket
-op_assign
-l_string|&quot;xchg&quot;
-suffix:semicolon
 DECL|variable|handler
 r_static
 r_const

@@ -2,9 +2,7 @@ multiline_comment|/*&n;&t;usa28msg.h&n;&n;&t;Copyright (c) 1998-2000 InnoSys Inc
 macro_line|#ifndef&t;__USA28MSG__
 DECL|macro|__USA28MSG__
 mdefine_line|#define&t;__USA28MSG__
-macro_line|#ifndef STUBS
-macro_line|#include &quot;datadefs.h&quot;
-macro_line|#endif
+multiline_comment|/*#ifndef STUBS&n;#include &quot;datadefs.h&quot;&n;#endif*/
 DECL|struct|txAckMessage
 r_typedef
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  proc.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  28/06/96 - Fixed long file name support (smb_proc_readdir_long) by Yuri Per&n; *  28/09/97 - Fixed smb_d_path [now smb_build_path()] to be non-recursive&n; *             by Riccardo Facchetti&n; */
+multiline_comment|/*&n; *  proc.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  Please add a note about your changes to smbfs in the ChangeLog file.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -12,11 +12,10 @@ macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &lt;linux/smb_mount.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
-DECL|macro|SMBFS_PARANOIA
-mdefine_line|#define SMBFS_PARANOIA 1
-multiline_comment|/* #define SMBFS_DEBUG_TIMESTAMP 1 */
-multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
-multiline_comment|/* #define pr_debug printk */
+macro_line|#include &quot;smb_debug.h&quot;
+multiline_comment|/* Features. Undefine if they cause problems, this should perhaps be a&n;   config option. */
+DECL|macro|SMBFS_POSIX_UNLINK
+mdefine_line|#define SMBFS_POSIX_UNLINK 1
 DECL|macro|SMB_VWV
 mdefine_line|#define SMB_VWV(packet)  ((packet) + SMB_HEADER_LEN)
 DECL|macro|SMB_CMD
@@ -31,9 +30,6 @@ DECL|macro|SMB_DIRINFO_SIZE
 mdefine_line|#define SMB_DIRINFO_SIZE 43
 DECL|macro|SMB_STATUS_SIZE
 mdefine_line|#define SMB_STATUS_SIZE  21
-multiline_comment|/* yes, this deliberately has two parts */
-DECL|macro|DENTRY_PATH
-mdefine_line|#define DENTRY_PATH(dentry) (dentry)-&gt;d_parent-&gt;d_name.name,(dentry)-&gt;d_name.name
 r_static
 r_int
 id|smb_proc_setattr_ext
@@ -53,30 +49,45 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_inline
 r_int
-DECL|function|min
-id|min
+id|smb_proc_setattr_core
 c_func
 (paren
-r_int
-id|a
+r_struct
+id|smb_sb_info
+op_star
+id|server
 comma
-r_int
-id|b
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+id|__u16
+id|attr
 )paren
-(brace
-r_return
-id|a
-OL
-id|b
-ques
-c_cond
-id|a
-suffix:colon
-id|b
 suffix:semicolon
-)brace
+r_static
+r_int
+id|smb_proc_do_getattr
+c_func
+(paren
+r_struct
+id|smb_sb_info
+op_star
+id|server
+comma
+r_struct
+id|dentry
+op_star
+id|dir
+comma
+r_struct
+id|smb_fattr
+op_star
+id|fattr
+)paren
+suffix:semicolon
 r_static
 r_void
 DECL|function|str_upper
@@ -173,6 +184,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* reverse a string inline. This is used by the dircache walking routines */
 DECL|function|reverse_string
 r_static
 r_void
@@ -1259,6 +1271,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_verify: command=%x, SMB_CMD=%x??&bslash;n&quot;
 comma
 id|command
@@ -1278,6 +1291,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_verify: command=%x, wct=%d, SMB_WCT=%d??&bslash;n&quot;
 comma
 id|command
@@ -1299,6 +1313,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_verify: command=%x, bcc=%d, SMB_BCC=%d??&bslash;n&quot;
 comma
 id|command
@@ -1399,11 +1414,10 @@ comma
 id|overhead
 )paren
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_get_rsize: packet=%d, xmit=%d, size=%d&bslash;n&quot;
+l_string|&quot;packet=%d, xmit=%d, size=%d&bslash;n&quot;
 comma
 id|server-&gt;packet_size
 comma
@@ -1412,7 +1426,6 @@ comma
 id|size
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|size
 suffix:semicolon
@@ -1458,11 +1471,10 @@ comma
 id|overhead
 )paren
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_get_wsize: packet=%d, xmit=%d, size=%d&bslash;n&quot;
+l_string|&quot;packet=%d, xmit=%d, size=%d&bslash;n&quot;
 comma
 id|server-&gt;packet_size
 comma
@@ -1471,7 +1483,6 @@ comma
 id|size
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|size
 suffix:semicolon
@@ -1503,11 +1514,10 @@ r_class
 op_assign
 l_string|&quot;Unknown&quot;
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_errno: errcls %d  code %d  from command 0x%x&bslash;n&quot;
+l_string|&quot;errcls %d  code %d  from command 0x%x&bslash;n&quot;
 comma
 id|errcls
 comma
@@ -1520,7 +1530,6 @@ id|server-&gt;packet
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1830,6 +1839,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_errno: class %s, code %d from command 0x%x&bslash;n&quot;
 comma
 r_class
@@ -1893,7 +1903,7 @@ id|server-&gt;sem
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * smb_retry: This function should be called when smb_request_ok has&n;   indicated an error. If the error was indicated because the&n;   connection was killed, we try to reconnect. If smb_retry returns 0,&n;   the error was indicated for another reason, so a retry would not be&n;   of any use.&n; * N.B. The server must be locked for this call.&n; */
+multiline_comment|/*&n; * smb_retry: This function should be called when smb_request_ok has&n; * indicated an error. If the error was indicated because the&n; * connection was killed, we try to reconnect. If smb_retry returns 0,&n; * the error was indicated for another reason, so a retry would not be&n; * of any use.&n; * N.B. The server must be locked for this call.&n; */
 r_static
 r_int
 DECL|function|smb_retry
@@ -1945,6 +1955,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_retry: no connection process&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1983,6 +1994,7 @@ id|error
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_retry: signal failed, error=%d&bslash;n&quot;
 comma
 id|error
@@ -1992,16 +2004,14 @@ r_goto
 id|out_restore
 suffix:semicolon
 )brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_retry: signalled pid %d, waiting for new connection&bslash;n&quot;
+l_string|&quot;signalled pid %d, waiting for new connection&bslash;n&quot;
 comma
 id|server-&gt;conn_pid
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Wait for the new connection.&n;&t; */
 id|interruptible_sleep_on_timeout
 c_func
@@ -2026,6 +2036,7 @@ id|current
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;smb_retry: caught signal&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2038,18 +2049,17 @@ op_eq
 id|CONN_VALID
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+multiline_comment|/* This should be changed to VERBOSE, except many smbfs&n;&t;&t;   problems is with the userspace daemon not reconnecting. */
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_retry: new pid=%d, generation=%d&bslash;n&quot;
+l_string|&quot;sucessful, new pid=%d, generation=%d&bslash;n&quot;
 comma
 id|server-&gt;conn_pid
 comma
 id|server-&gt;generation
 )paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 l_int|1
@@ -2145,7 +2155,7 @@ OL
 l_int|0
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
 l_string|&quot;smb_request failed&bslash;n&quot;
@@ -2167,14 +2177,12 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_request_ok: invalid packet!&bslash;n&quot;
+l_string|&quot;invalid packet!&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -2206,6 +2214,7 @@ id|result
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;smb_request_ok: rcls=%d, err=%d mapped to 0&bslash;n&quot;
 comma
 id|s-&gt;rcls
@@ -2263,18 +2272,16 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_newconn: fd=%d, pid=%d&bslash;n&quot;
+l_string|&quot;fd=%d, pid=%d&bslash;n&quot;
 comma
 id|opt-&gt;fd
 comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Make sure we don&squot;t already have a pid ...&n;&t; */
 id|error
 op_assign
@@ -2428,16 +2435,16 @@ macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;smb_newconn: detected WIN95 server&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_newconn: protocol=%d, max_xmit=%d, pid=%d capabilities=0x%x&bslash;n&quot;
+l_string|&quot;protocol=%d, max_xmit=%d, pid=%d capabilities=0x%x&bslash;n&quot;
 comma
 id|server-&gt;opt.protocol
 comma
@@ -2448,7 +2455,6 @@ comma
 id|server-&gt;opt.capabilities
 )paren
 suffix:semicolon
-macro_line|#endif
 id|out
 suffix:colon
 id|wake_up_interruptible
@@ -2533,7 +2539,9 @@ id|server-&gt;packet_size
 id|printk
 c_func
 (paren
-l_string|&quot;smb_setup_header: Aieee, xmit len &gt; packet! len=%d, size=%d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;smb_setup_header: &quot;
+l_string|&quot;Aieee, xmit len &gt; packet! len=%d, size=%d&bslash;n&quot;
 comma
 id|xmit_len
 comma
@@ -2995,11 +3003,10 @@ id|EROFS
 )paren
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_open: %s/%s R/W failed, error=%d, retrying R/O&bslash;n&quot;
+l_string|&quot;%s/%s R/W failed, error=%d, retrying R/O&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -3010,7 +3017,6 @@ comma
 id|error
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mode
 op_assign
 id|read_only
@@ -3110,6 +3116,7 @@ id|inode
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_open: no inode for dentry %s/%s&bslash;n&quot;
 comma
 id|DENTRY_PATH
@@ -3189,11 +3196,10 @@ c_cond
 id|result
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_open: %s/%s open failed, result=%d&bslash;n&quot;
+l_string|&quot;%s/%s open failed, result=%d&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -3204,7 +3210,6 @@ comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -3234,11 +3239,10 @@ op_ne
 id|SMB_O_RDWR
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_open: %s/%s access denied, access=%x, wish=%x&bslash;n&quot;
+l_string|&quot;%s/%s access denied, access=%x, wish=%x&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -3251,7 +3255,6 @@ comma
 id|wish
 )paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 op_minus
@@ -3801,11 +3804,10 @@ id|data_len
 suffix:semicolon
 id|out
 suffix:colon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_read: file %s/%s, count=%d, result=%d&bslash;n&quot;
+l_string|&quot;file %s/%s, count=%d, result=%d&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -3818,7 +3820,6 @@ comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_unlock_server
 c_func
 (paren
@@ -3869,11 +3870,10 @@ id|__u8
 op_star
 id|p
 suffix:semicolon
-macro_line|#if SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_write: file %s/%s, count=%d@%ld, packet_size=%d&bslash;n&quot;
+l_string|&quot;file %s/%s, count=%d@%ld, packet_size=%d&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -3888,7 +3888,6 @@ comma
 id|server-&gt;packet_size
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_lock_server
 c_func
 (paren
@@ -4266,6 +4265,8 @@ comma
 id|aSYSTEM
 op_or
 id|aHIDDEN
+op_or
+id|aDIR
 )paren
 suffix:semicolon
 op_star
@@ -4550,6 +4551,89 @@ id|SMBrmdir
 )paren
 suffix:semicolon
 )brace
+macro_line|#if SMBFS_POSIX_UNLINK
+multiline_comment|/*&n; * Removes readonly attribute from a file. Used by unlink to give posix&n; * semantics.&n; * Note: called with the server locked.&n; */
+r_static
+r_int
+DECL|function|smb_set_rw
+id|smb_set_rw
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_struct
+id|smb_sb_info
+op_star
+id|server
+)paren
+(brace
+r_int
+id|result
+suffix:semicolon
+r_struct
+id|smb_fattr
+id|fattr
+suffix:semicolon
+multiline_comment|/* first get current attribute */
+id|result
+op_assign
+id|smb_proc_do_getattr
+c_func
+(paren
+id|server
+comma
+id|dentry
+comma
+op_amp
+id|fattr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+OL
+l_int|0
+)paren
+r_return
+id|result
+suffix:semicolon
+multiline_comment|/* if RONLY attribute is set, remove it */
+r_if
+c_cond
+(paren
+id|fattr.attr
+op_amp
+id|aRONLY
+)paren
+(brace
+multiline_comment|/* read only attribute is set */
+id|fattr.attr
+op_and_assign
+op_complement
+id|aRONLY
+suffix:semicolon
+id|result
+op_assign
+id|smb_proc_setattr_core
+c_func
+(paren
+id|server
+comma
+id|dentry
+comma
+id|fattr.attr
+)paren
+suffix:semicolon
+)brace
+r_return
+id|result
+suffix:semicolon
+)brace
+macro_line|#endif
 r_int
 DECL|function|smb_proc_unlink
 id|smb_proc_unlink
@@ -4571,6 +4655,11 @@ c_func
 (paren
 id|dentry
 )paren
+suffix:semicolon
+r_int
+id|flag
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 op_star
@@ -4663,6 +4752,49 @@ OL
 l_int|0
 )paren
 (brace
+macro_line|#if SMBFS_POSIX_UNLINK
+r_if
+c_cond
+(paren
+id|result
+op_eq
+op_minus
+id|EACCES
+op_logical_and
+op_logical_neg
+id|flag
+)paren
+(brace
+multiline_comment|/* Posix semantics is for the read-only state&n;&t;&t;&t;   of a file to be ignored in unlink(). In the&n;&t;&t;&t;   SMB world a unlink() is refused on a&n;&t;&t;&t;   read-only file. To make things easier for&n;&t;&t;&t;   unix users we try to override the files&n;&t;&t;&t;   permission if the unlink fails with the&n;&t;&t;&t;   right error.&n;&t;&t;&t;   This introduces a race condition that could&n;&t;&t;&t;   lead to a file being written by someone who&n;&t;&t;&t;   shouldn&squot;t have access, but as far as I can&n;&t;&t;&t;   tell that is unavoidable */
+multiline_comment|/* remove RONLY attribute and try again */
+id|result
+op_assign
+id|smb_set_rw
+c_func
+(paren
+id|dentry
+comma
+id|server
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+op_eq
+l_int|0
+)paren
+(brace
+id|flag
+op_assign
+l_int|1
+suffix:semicolon
+r_goto
+id|retry
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5166,10 +5298,10 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_decode_dirent: len=%d, name=%s&bslash;n&quot;
+l_string|&quot;len=%d, name=%s&bslash;n&quot;
 comma
 id|len
 comma
@@ -5259,11 +5391,10 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_short: %s/%s, pos=%d&bslash;n&quot;
+l_string|&quot;%s/%s, pos=%d&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -5274,7 +5405,6 @@ comma
 id|fpos
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_lock_server
 c_func
 (paren
@@ -5676,10 +5806,10 @@ op_ge
 id|fpos
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_proc_readdir: fpos=%u&bslash;n&quot;
+l_string|&quot;fpos=%u&bslash;n&quot;
 comma
 id|entries_seen
 )paren
@@ -5700,11 +5830,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_readdir: skipped, seen=%d, i=%d, fpos=%d&bslash;n&quot;
+l_string|&quot;skipped, seen=%d, i=%d, fpos=%d&bslash;n&quot;
 comma
 id|entries_seen
 comma
@@ -5713,7 +5842,6 @@ comma
 id|fpos
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|entries_seen
 op_increment
@@ -5736,7 +5864,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Interpret a long filename structure using the specified info level:&n; *   level 1   -- Win NT, Win 95, OS/2&n; *   level 259 -- File name and length only, Win NT, Win 95&n; *&n; * We return a reference to the name string to avoid copying, and perform&n; * any needed upper/lower casing in place.  Note!! Level 259 entries may&n; * not have any space beyond the name, so don&squot;t try to write a null byte!&n; *&n; * Bugs Noted:&n; * (1) Win NT 4.0 appends a null byte to names and counts it in the length!&n; */
+multiline_comment|/*&n; * Interpret a long filename structure using the specified info level:&n; *   level 1 for anything below NT1 protocol&n; *   level 260 for NT1 protocol&n; *&n; * We return a reference to the name string to avoid copying, and perform&n; * any needed upper/lower casing in place.&n; *&n; * Bugs Noted:&n; * (1) Win NT 4.0 appends a null byte to names and counts it in the length!&n; */
 r_static
 r_char
 op_star
@@ -5797,7 +5925,7 @@ op_star
 )paren
 id|p
 op_plus
-l_int|26
+l_int|22
 )paren
 suffix:semicolon
 id|entry-&gt;len
@@ -5808,27 +5936,40 @@ id|entry-&gt;name
 op_assign
 id|p
 op_plus
-l_int|27
+l_int|23
 suffix:semicolon
 id|result
 op_assign
 id|p
 op_plus
-l_int|28
+l_int|24
 op_plus
 id|len
+suffix:semicolon
+id|VERBOSE
+c_func
+(paren
+l_string|&quot;info 1 at %p, len=%d, name=%.*s&bslash;n&quot;
+comma
+id|p
+comma
+id|entry-&gt;len
+comma
+id|entry-&gt;len
+comma
+id|entry-&gt;name
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|259
+l_int|260
 suffix:colon
-multiline_comment|/* SMB_FIND_FILE_NAMES_INFO = 0x103 */
 id|result
 op_assign
 id|p
 op_plus
-id|DVAL
+id|WVAL
 c_func
 (paren
 id|p
@@ -5836,7 +5977,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* DVAL(p, 4) should be resume key? Seems to be 0 .. */
 id|len
 op_assign
 id|DVAL
@@ -5844,7 +5984,7 @@ c_func
 (paren
 id|p
 comma
-l_int|8
+l_int|60
 )paren
 suffix:semicolon
 r_if
@@ -5858,13 +5998,13 @@ id|len
 op_assign
 l_int|255
 suffix:semicolon
+multiline_comment|/* NT4 null terminates */
 id|entry-&gt;name
 op_assign
 id|p
 op_plus
-l_int|12
+l_int|94
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Kludge alert: Win NT 4.0 adds a trailing null byte and&n;&t;&t; * counts it in the name length, but Win 95 doesn&squot;t.  Hence&n;&t;&t; * we test for a trailing null and decrement the length ...&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5886,28 +6026,28 @@ id|entry-&gt;len
 op_assign
 id|len
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_decode_long_dirent: info 259 at %p, len=%d, name=%s&bslash;n&quot;
+l_string|&quot;info 260 at %p, len=%d, name=%.*s&bslash;n&quot;
 comma
 id|p
 comma
-id|len
+id|entry-&gt;len
+comma
+id|entry-&gt;len
 comma
 id|entry-&gt;name
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_decode_long_dirent: Unknown level %d&bslash;n&quot;
+l_string|&quot;Unknown info level %d&bslash;n&quot;
 comma
 id|level
 )paren
@@ -5966,7 +6106,16 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Bugs Noted:&n; * (1) When using Info Level 1 Win NT 4.0 truncates directory listings &n; * for certain patterns of names and/or lengths. The breakage pattern&n; * is completely reproducible and can be toggled by the creation of a&n; * single file. (E.g. echo hi &gt;foo breaks, rm -f foo works.)&n; */
+multiline_comment|/* findfirst/findnext flags */
+DECL|macro|SMB_CLOSE_AFTER_FIRST
+mdefine_line|#define SMB_CLOSE_AFTER_FIRST (1&lt;&lt;0)
+DECL|macro|SMB_CLOSE_IF_END
+mdefine_line|#define SMB_CLOSE_IF_END (1&lt;&lt;1)
+DECL|macro|SMB_REQUIRE_RESUME_KEY
+mdefine_line|#define SMB_REQUIRE_RESUME_KEY (1&lt;&lt;2)
+DECL|macro|SMB_CONTINUE_BIT
+mdefine_line|#define SMB_CONTINUE_BIT (1&lt;&lt;3)
+multiline_comment|/*&n; * Note: samba-2.0.7 (at least) has a very similar routine, cli_list, in&n; * source/libsmb/clilist.c. When looking for smb bugs in the readdir code,&n; * go there for advise.&n; *&n; * Bugs Noted:&n; * (1) When using Info Level 1 Win NT 4.0 truncates directory listings &n; * for certain patterns of names and/or lengths. The breakage pattern&n; * is completely reproducible and can be toggled by the creation of a&n; * single file. (E.g. echo hi &gt;foo breaks, rm -f foo works.)&n; */
 r_static
 r_int
 DECL|function|smb_proc_readdir_long
@@ -6020,7 +6169,7 @@ multiline_comment|/* Both NT and OS/2 accept info level 1 (but see note below). 
 r_int
 id|info_level
 op_assign
-l_int|1
+l_int|260
 suffix:semicolon
 r_const
 r_int
@@ -6052,12 +6201,6 @@ id|resp_param_len
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|ff_resume_key
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* this isn&squot;t being used */
 r_int
 id|ff_searchcount
 op_assign
@@ -6103,24 +6246,17 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether to change the info level.  There appears to be&n;&t; * a bug in Win NT 4.0&squot;s handling of info level 1, whereby it&n;&t; * truncates the directory scan for certain patterns of files.&n;&t; * Hence we use level 259 for NT.&n;&t; */
+multiline_comment|/*&n;&t; * use info level 1 for older servers that don&squot;t do 260&n;&t; */
 r_if
 c_cond
 (paren
 id|server-&gt;opt.protocol
-op_ge
+OL
 id|SMB_PROTOCOL_NT1
-op_logical_and
-op_logical_neg
-(paren
-id|server-&gt;mnt-&gt;version
-op_amp
-id|SMB_FIX_WIN95
-)paren
 )paren
 id|info_level
 op_assign
-l_int|259
+l_int|1
 suffix:semicolon
 id|smb_lock_server
 c_func
@@ -6158,18 +6294,16 @@ id|first
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_long: starting fpos=%d, mask=%s&bslash;n&quot;
+l_string|&quot;starting fpos=%d, mask=%s&bslash;n&quot;
 comma
 id|fpos
 comma
 id|mask
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * We must reinitialize the dircache when retrying.&n;&t; */
 id|smb_init_dircache
 c_func
@@ -6206,7 +6340,7 @@ c_cond
 (paren
 id|loop_count
 OG
-l_int|200
+l_int|10
 )paren
 (brace
 id|printk
@@ -6269,14 +6403,9 @@ id|param
 comma
 l_int|4
 comma
-l_int|8
-op_plus
-l_int|4
-op_plus
-l_int|2
+id|SMB_CLOSE_IF_END
 )paren
 suffix:semicolon
-multiline_comment|/* resume required +&n;&t;&t;&t;&t;&t;&t;&t;   close on end +&n;&t;&t;&t;&t;&t;&t;&t;   continue */
 id|WSET
 c_func
 (paren
@@ -6304,22 +6433,18 @@ id|command
 op_assign
 id|TRANSACT2_FINDNEXT
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_long: handle=0x%X, resume=%d, lastname=%d, mask=%s&bslash;n&quot;
+l_string|&quot;handle=0x%X, lastname=%d, mask=%s&bslash;n&quot;
 comma
 id|ff_dir_handle
-comma
-id|ff_resume_key
 comma
 id|ff_lastname
 comma
 id|mask
 )paren
 suffix:semicolon
-macro_line|#endif
 id|WSET
 c_func
 (paren
@@ -6359,10 +6484,9 @@ id|param
 comma
 l_int|6
 comma
-id|ff_resume_key
+l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* ff_resume_key */
 id|WSET
 c_func
 (paren
@@ -6370,36 +6494,11 @@ id|param
 comma
 l_int|10
 comma
-l_int|8
-op_plus
-l_int|4
-op_plus
-l_int|2
+id|SMB_CONTINUE_BIT
+op_or
+id|SMB_CLOSE_IF_END
 )paren
 suffix:semicolon
-multiline_comment|/* resume required +&n;&t;&t;&t;&t;&t;&t;&t;   close on end +&n;&t;&t;&t;&t;&t;&t;&t;   continue */
-r_if
-c_cond
-(paren
-id|server-&gt;mnt-&gt;version
-op_amp
-id|SMB_FIX_WIN95
-)paren
-(brace
-multiline_comment|/* Windows 95 is not able to deliver answers&n;&t;&t;&t;&t; * to FIND_NEXT fast enough, so sleep 0.2 sec&n;&t;&t;&t;&t; */
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|schedule_timeout
-c_func
-(paren
-id|HZ
-op_div
-l_int|5
-)paren
-suffix:semicolon
-)brace
 )brace
 id|result
 op_assign
@@ -6453,30 +6552,26 @@ id|server
 )paren
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_long: error=%d, retrying&bslash;n&quot;
+l_string|&quot;error=%d, retrying&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|retry
 suffix:semicolon
 )brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_long: error=%d, breaking&bslash;n&quot;
+l_string|&quot;error=%d, breaking&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 id|entries
 op_assign
 id|result
@@ -6488,15 +6583,42 @@ r_if
 c_cond
 (paren
 id|server-&gt;rcls
+op_eq
+id|ERRSRV
+op_logical_and
+id|server-&gt;err
+op_eq
+id|ERRerror
+)paren
+(brace
+multiline_comment|/* a damn Win95 bug - sometimes it clags if you &n;&t;&t;&t;   ask it too fast */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|HZ
+op_div
+l_int|5
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|server-&gt;rcls
 op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_long: name=%s, entries=%d, rcls=%d, err=%d&bslash;n&quot;
+l_string|&quot;name=%s, entries=%d, rcls=%d, err=%d&bslash;n&quot;
 comma
 id|mask
 comma
@@ -6507,7 +6629,6 @@ comma
 id|server-&gt;err
 )paren
 suffix:semicolon
-macro_line|#endif
 id|entries
 op_assign
 op_minus
@@ -6610,10 +6731,8 @@ id|ff_searchcount
 op_eq
 l_int|0
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 multiline_comment|/* we might need the lastname for continuations */
 id|mask_len
 op_assign
@@ -6640,7 +6759,7 @@ id|info_level
 )paren
 (brace
 r_case
-l_int|259
+l_int|260
 suffix:colon
 r_if
 c_cond
@@ -6711,10 +6830,6 @@ comma
 id|mask_len
 )paren
 suffix:semicolon
-id|ff_resume_key
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 id|mask
 (braket
@@ -6723,11 +6838,10 @@ id|mask_len
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_long: new mask, len=%d@%d, mask=%s&bslash;n&quot;
+l_string|&quot;new mask, len=%d@%d, mask=%s&bslash;n&quot;
 comma
 id|mask_len
 comma
@@ -6736,7 +6850,6 @@ comma
 id|mask
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Now we are ready to parse smb directory entries. */
 multiline_comment|/* point to the data bytes */
 id|p
@@ -6780,14 +6893,6 @@ comma
 id|entry
 comma
 id|info_level
-)paren
-suffix:semicolon
-id|pr_debug
-c_func
-(paren
-l_string|&quot;smb_readdir_long: got %s&bslash;n&quot;
-comma
-id|entry-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* ignore . and .. from the server */
@@ -6859,21 +6964,21 @@ id|entries_seen
 op_increment
 suffix:semicolon
 )brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_readdir_long: received %d entries, eos=%d, resume=%d&bslash;n&quot;
+l_string|&quot;received %d entries, eos=%d&bslash;n&quot;
 comma
 id|ff_searchcount
 comma
 id|ff_eos
-comma
-id|ff_resume_key
 )paren
 suffix:semicolon
-macro_line|#endif
 id|first
+op_assign
+l_int|0
+suffix:semicolon
+id|loop_count
 op_assign
 l_int|0
 suffix:semicolon
@@ -7042,18 +7147,16 @@ l_int|NULL
 op_minus
 id|mask
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_getattr_ff: name=%s, len=%d&bslash;n&quot;
+l_string|&quot;name=%s, len=%d&bslash;n&quot;
 comma
 id|mask
 comma
 id|mask_len
 )paren
 suffix:semicolon
-macro_line|#endif
 id|WSET
 c_func
 (paren
@@ -7195,10 +7298,10 @@ op_ne
 op_minus
 id|ENOENT
 )paren
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_proc_getattr_ff: error for %s, rcls=%d, err=%d&bslash;n&quot;
+l_string|&quot;error for %s, rcls=%d, err=%d&bslash;n&quot;
 comma
 id|mask
 comma
@@ -7236,11 +7339,10 @@ op_ne
 l_int|1
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_proc_getattr_ff: bad result for %s, len=%d, count=%d&bslash;n&quot;
+l_string|&quot;bad result for %s, len=%d, count=%d&bslash;n&quot;
 comma
 id|mask
 comma
@@ -7255,7 +7357,6 @@ l_int|2
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -7357,11 +7458,10 @@ comma
 id|time
 )paren
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_getattr_ff: name=%s, date=%x, time=%x, mtime=%ld&bslash;n&quot;
+l_string|&quot;name=%s, date=%x, time=%x, mtime=%ld&bslash;n&quot;
 comma
 id|mask
 comma
@@ -7372,7 +7472,6 @@ comma
 id|fattr-&gt;f_mtime
 )paren
 suffix:semicolon
-macro_line|#endif
 id|fattr-&gt;f_size
 op_assign
 id|DVAL
@@ -7762,11 +7861,10 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_getattr_trans2: for %s: result=%d, rcls=%d, err=%d&bslash;n&quot;
+l_string|&quot;for %s: result=%d, rcls=%d, err=%d&bslash;n&quot;
 comma
 op_amp
 id|param
@@ -7781,7 +7879,6 @@ comma
 id|server-&gt;err
 )paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 op_minus
@@ -7808,11 +7905,10 @@ OL
 l_int|22
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_proc_getattr_trans2: not enough data for %s, len=%d&bslash;n&quot;
+l_string|&quot;not enough data for %s, len=%d&bslash;n&quot;
 comma
 op_amp
 id|param
@@ -7823,7 +7919,6 @@ comma
 id|resp_data_len
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -7954,6 +8049,7 @@ macro_line|#ifdef SMBFS_DEBUG_TIMESTAMP
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;getattr_trans2: %s/%s, date=%x, time=%x, mtime=%ld&bslash;n&quot;
 comma
 id|DENTRY_PATH
@@ -8000,11 +8096,18 @@ r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Note: called with the server locked&n; */
+r_static
 r_int
-DECL|function|smb_proc_getattr
-id|smb_proc_getattr
+DECL|function|smb_proc_do_getattr
+id|smb_proc_do_getattr
 c_func
 (paren
+r_struct
+id|smb_sb_info
+op_star
+id|server
+comma
 r_struct
 id|dentry
 op_star
@@ -8016,25 +8119,8 @@ op_star
 id|fattr
 )paren
 (brace
-r_struct
-id|smb_sb_info
-op_star
-id|server
-op_assign
-id|server_from_dentry
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
 r_int
 id|result
-suffix:semicolon
-id|smb_lock_server
-c_func
-(paren
-id|server
-)paren
 suffix:semicolon
 id|smb_init_dirent
 c_func
@@ -8053,7 +8139,7 @@ op_ge
 id|SMB_PROTOCOL_LANMAN2
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Win 95 appears to break with the trans2 getattr.&n; &t; &t; */
+multiline_comment|/*&n;&t;&t; * Win 95 appears to break with the trans2 getattr.&n;&t;&t; * Note: mnt-&gt;version options are set at mount time (inode.c)&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -8122,6 +8208,58 @@ id|smb_finish_dirent
 c_func
 (paren
 id|server
+comma
+id|fattr
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
+r_int
+DECL|function|smb_proc_getattr
+id|smb_proc_getattr
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dir
+comma
+r_struct
+id|smb_fattr
+op_star
+id|fattr
+)paren
+(brace
+r_struct
+id|smb_sb_info
+op_star
+id|server
+op_assign
+id|server_from_dentry
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
+r_int
+id|result
+suffix:semicolon
+id|smb_lock_server
+c_func
+(paren
+id|server
+)paren
+suffix:semicolon
+id|result
+op_assign
+id|smb_proc_do_getattr
+c_func
+(paren
+id|server
+comma
+id|dir
 comma
 id|fattr
 )paren
@@ -8371,11 +8509,10 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_setattr: setting %s/%s, open=%d&bslash;n&quot;
+l_string|&quot;setting %s/%s, open=%d&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -8390,7 +8527,6 @@ id|dir-&gt;d_inode
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_lock_server
 c_func
 (paren
@@ -8567,6 +8703,7 @@ macro_line|#ifdef SMBFS_DEBUG_TIMESTAMP
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;smb_proc_setattr_ext: date=%d, time=%d, mtime=%ld&bslash;n&quot;
 comma
 id|date
@@ -8827,6 +8964,7 @@ macro_line|#ifdef SMBFS_DEBUG_TIMESTAMP
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;setattr_trans2: %s/%s, date=%x, time=%x, mtime=%ld&bslash;n&quot;
 comma
 id|DENTRY_PATH
@@ -9007,11 +9145,10 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_proc_settime: setting %s/%s, open=%d&bslash;n&quot;
+l_string|&quot;setting %s/%s, open=%d&bslash;n&quot;
 comma
 id|DENTRY_PATH
 c_func
@@ -9026,7 +9163,6 @@ id|inode
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_lock_server
 c_func
 (paren

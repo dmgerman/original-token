@@ -2182,16 +2182,10 @@ c_cond
 id|dev-&gt;priv
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev-&gt;priv
-comma
-r_sizeof
-(paren
-r_struct
-id|depca_private
-)paren
 )paren
 suffix:semicolon
 id|dev-&gt;priv

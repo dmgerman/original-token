@@ -260,16 +260,10 @@ op_amp
 id|dev_mc_lock
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dmi
-comma
-r_sizeof
-(paren
-op_star
-id|dmi
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;We have altered the list, so the card&n;&t;&t;&t; *&t;loaded filter is now wrong. Fix it&n;&t;&t;&t; */
@@ -586,16 +580,10 @@ comma
 id|tmp-&gt;dmi_users
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|tmp
-comma
-r_sizeof
-(paren
-op_star
-id|tmp
-)paren
 )paren
 suffix:semicolon
 )brace

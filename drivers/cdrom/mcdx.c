@@ -1056,45 +1056,32 @@ id|cdrom_device_ops
 id|mcdx_dops
 op_assign
 (brace
+id|open
+suffix:colon
 id|mcdx_open
 comma
-multiline_comment|/* open */
+id|release
+suffix:colon
 id|mcdx_close
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* drive status */
+id|media_changed
+suffix:colon
 id|mcdx_media_changed
 comma
-multiline_comment|/* media changed */
+id|tray_move
+suffix:colon
 id|mcdx_tray_move
 comma
-multiline_comment|/* tray move */
+id|lock_door
+suffix:colon
 id|mcdx_lockdoor
 comma
-multiline_comment|/* lock door */
-l_int|NULL
-comma
-multiline_comment|/* select speed */
-l_int|NULL
-comma
-multiline_comment|/* select disc */
-l_int|NULL
-comma
-multiline_comment|/* get last session */
-l_int|NULL
-comma
-multiline_comment|/* get universal product code */
-l_int|NULL
-comma
-multiline_comment|/* hard reset */
+id|audio_ioctl
+suffix:colon
 id|mcdx_audio_ioctl
 comma
-multiline_comment|/* audio ioctl */
-l_int|NULL
-comma
-multiline_comment|/* device-specific ioctl */
+id|capability
+suffix:colon
 id|CDC_OPEN_TRAY
 op_or
 id|CDC_LOCK
@@ -1105,10 +1092,6 @@ id|CDC_PLAY_AUDIO
 op_or
 id|CDC_DRIVE_STATUS
 comma
-multiline_comment|/* capability */
-l_int|0
-comma
-multiline_comment|/* number of minor devices */
 )brace
 suffix:semicolon
 DECL|variable|mcdx_info
@@ -1118,43 +1101,23 @@ id|cdrom_device_info
 id|mcdx_info
 op_assign
 (brace
+id|ops
+suffix:colon
 op_amp
 id|mcdx_dops
 comma
-multiline_comment|/* device operations */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* handle */
-l_int|0
-comma
-multiline_comment|/* de, devfs */
-l_int|0
-comma
-multiline_comment|/* dev */
-l_int|0
-comma
-multiline_comment|/* mask */
+id|speed
+suffix:colon
 l_int|2
 comma
-multiline_comment|/* maximum speed */
+id|capacity
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* number of discs */
-l_int|0
-comma
-multiline_comment|/* options, not owned */
-l_int|0
-comma
-multiline_comment|/* mc_flags, not owned */
-l_int|0
-comma
-multiline_comment|/* use count, not owned */
+id|name
+suffix:colon
 l_string|&quot;mcdx&quot;
 comma
-multiline_comment|/* name of the device type */
 )brace
 suffix:semicolon
 multiline_comment|/* KERNEL INTERFACE FUNCTIONS **************************************/

@@ -16,16 +16,12 @@ r_int
 r_int
 id|__local_bh_count
 suffix:semicolon
-DECL|member|__nmi_counter
-id|atomic_t
-id|__nmi_counter
-suffix:semicolon
 DECL|member|__pad
 r_int
 r_int
 id|__pad
 (braket
-l_int|5
+l_int|6
 )braket
 suffix:semicolon
 DECL|typedef|irq_cpustat_t
@@ -45,8 +41,6 @@ DECL|macro|local_irq_count
 mdefine_line|#define local_irq_count(cpu) (irq_stat[(cpu)].__local_irq_count)
 DECL|macro|local_bh_count
 mdefine_line|#define local_bh_count(cpu) (irq_stat[(cpu)].__local_bh_count)
-DECL|macro|nmi_counter
-mdefine_line|#define nmi_counter(cpu) (irq_stat[(cpu)].__nmi_counter)
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count(__cpu) + local_bh_count(__cpu) != 0); })

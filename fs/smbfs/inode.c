@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  Please add a note about your changes to smbfs in the ChangeLog file.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,9 +17,7 @@ macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &lt;linux/smb_mount.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|SMBFS_PARANOIA
-mdefine_line|#define SMBFS_PARANOIA 1
-multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
+macro_line|#include &quot;smb_debug.h&quot;
 r_static
 r_void
 id|smb_delete_inode
@@ -162,7 +160,7 @@ id|inode
 op_star
 id|result
 suffix:semicolon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
 l_string|&quot;smb_iget: %p&bslash;n&quot;
@@ -478,14 +476,12 @@ op_star
 id|server
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_invalidate_inodes&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|shrink_dcache_sb
 c_func
 (paren
@@ -586,22 +582,22 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t;&t; * Big trouble! The inode has become a new object,&n;&t;&t;&t; * so any operations attempted on it are invalid.&n;&t;&t;&t; *&n;&t;&t;&t; * To limit damage, mark the inode as bad so that&n;&t;&t;&t; * subsequent lookup validations will fail.&n;&t;&t;&t; */
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_refresh_inode: %s/%s changed mode, %07o to %07o&bslash;n&quot;
+l_string|&quot;%s/%s changed mode, %07o to %07o&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|inode-&gt;i_mode
 comma
 id|fattr.f_mode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|fattr.f_mode
 op_assign
 id|inode-&gt;i_mode
@@ -680,7 +676,7 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
 l_string|&quot;smb_revalidate_inode&bslash;n&quot;
@@ -736,18 +732,16 @@ l_int|10
 )paren
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_revalidate_inode: up-to-date, jiffies=%lu, oldtime=%lu&bslash;n&quot;
+l_string|&quot;up-to-date, jiffies=%lu, oldtime=%lu&bslash;n&quot;
 comma
 id|jiffies
 comma
 id|inode-&gt;u.smbfs_i.oldmtime
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -775,15 +769,16 @@ op_ne
 id|last_time
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_revalidate: %s/%s changed, old=%ld, new=%ld&bslash;n&quot;
+l_string|&quot;%s/%s changed, old=%ld, new=%ld&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 (paren
 r_int
@@ -796,7 +791,6 @@ r_int
 id|inode-&gt;i_mtime
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -845,10 +839,10 @@ op_star
 id|ino
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smb_delete_inode&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lock_kernel
@@ -865,10 +859,10 @@ c_func
 id|ino
 )paren
 )paren
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_delete_inode: could not close inode %ld&bslash;n&quot;
+l_string|&quot;could not close inode %ld&bslash;n&quot;
 comma
 id|ino-&gt;i_ino
 )paren
@@ -1170,7 +1164,7 @@ op_star
 id|raw_data
 )paren
 suffix:semicolon
-multiline_comment|/* ** temp ** pass config flags in file mode */
+multiline_comment|/* FIXME: passes config flags in high bits of file mode. Should be a&n;&t;   separate flags field. (but smbmount includes kernel headers ...) */
 id|mnt-&gt;version
 op_assign
 (paren
@@ -1211,7 +1205,7 @@ id|sb-&gt;u.smbfs_sb.mnt
 op_assign
 id|mnt
 suffix:semicolon
-multiline_comment|/*&n;&t; * Display the enabled options&n;&t; */
+multiline_comment|/*&n;&t; * Display the enabled options&n;&t; * Note: smb_proc_getattr uses these in 2.4 (but was changed in 2.2)&n;&t; */
 r_if
 c_cond
 (paren
@@ -1353,6 +1347,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;smb_read_super: missing data argument&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1570,15 +1565,16 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_notify_change: changing %s/%s, old size=%ld, new size=%ld&bslash;n&quot;
+l_string|&quot;changing %s/%s, old size=%ld, new size=%ld&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 (paren
 r_int
@@ -1591,7 +1587,6 @@ r_int
 id|attr-&gt;ia_size
 )paren
 suffix:semicolon
-macro_line|#endif
 id|error
 op_assign
 id|smb_open
@@ -1750,22 +1745,22 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_notify_change: %s/%s mode change, old=%x, new=%lx&bslash;n&quot;
+l_string|&quot;%s/%s mode change, old=%x, new=%x&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|fattr.f_mode
 comma
 id|attr-&gt;ia_mode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|changed
 op_assign
 l_int|0
@@ -1909,10 +1904,10 @@ c_func
 r_void
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smbfs: init_module called&bslash;n&quot;
+l_string|&quot;registering ...&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_SMB_MALLOC
@@ -1948,10 +1943,10 @@ c_func
 r_void
 )paren
 (brace
-id|pr_debug
+id|DEBUG1
 c_func
 (paren
-l_string|&quot;smbfs: cleanup_module called&bslash;n&quot;
+l_string|&quot;unregistering ...&bslash;n&quot;
 )paren
 suffix:semicolon
 id|unregister_filesystem

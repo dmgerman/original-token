@@ -72,16 +72,10 @@ c_func
 id|im-&gt;interface
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|im
-comma
-r_sizeof
-(paren
-op_star
-id|im
-)paren
 )paren
 suffix:semicolon
 )brace

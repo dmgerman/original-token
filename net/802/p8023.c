@@ -134,16 +134,10 @@ c_cond
 (paren
 id|dl
 )paren
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dl
-comma
-r_sizeof
-(paren
-r_struct
-id|datalink_proto
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -109,8 +109,14 @@ DECL|member|fat32
 id|fat32
 suffix:colon
 l_int|1
-suffix:semicolon
+comma
 multiline_comment|/* Is this a FAT32 partition? */
+DECL|member|nocase
+id|nocase
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Does this need case conversion? 0=need case conversion*/
 )brace
 suffix:semicolon
 DECL|struct|vfat_unicode

@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * linux/arch/arm/kernel/arch.c&n; *&n; * Architecture specific fixups.  This is where any&n; * parameters in the params struct are fixed up, or&n; * any additional architecture specific information&n; * is pulled from the params struct.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
@@ -449,11 +451,19 @@ c_cond
 (paren
 id|params-&gt;u1.s.nr_pages
 op_ne
-l_int|0x2000
+l_int|0x02000
 op_logical_and
 id|params-&gt;u1.s.nr_pages
 op_ne
-l_int|0x4000
+l_int|0x04000
+op_logical_and
+id|params-&gt;u1.s.nr_pages
+op_ne
+l_int|0x08000
+op_logical_and
+id|params-&gt;u1.s.nr_pages
+op_ne
+l_int|0x10000
 )paren
 (brace
 id|printk
@@ -719,6 +729,33 @@ id|fixup_coebsa285
 id|MACHINE_END
 macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_SA1100
+DECL|function|victor_power_off
+r_static
+r_void
+id|victor_power_off
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* switch off power supply */
+id|mdelay
+c_func
+(paren
+l_int|2000
+)paren
+suffix:semicolon
+id|GPCR
+op_assign
+id|GPIO_GPIO23
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_void
 id|select_sa1100_io_desc
@@ -771,6 +808,33 @@ c_func
 )paren
 )paren
 (brace
+multiline_comment|/* &n;&t;&t; * On Assabet, we must probe for the Neponset board *before*&n;&t;&t; * paging_init() has occured to actually determine the amount&n;&t;&t; * of RAM available.&n;&t;&t; */
+r_extern
+r_void
+id|map_sa1100_gpio_regs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|get_assabet_scr
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|map_sa1100_gpio_regs
+c_func
+(paren
+)paren
+suffix:semicolon
+id|get_assabet_scr
+c_func
+(paren
+)paren
+suffix:semicolon
 id|SET_BANK
 c_func
 (paren
@@ -789,6 +853,25 @@ id|mi-&gt;nr_banks
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|machine_has_neponset
+c_func
+(paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Neponset expansion board detected&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t; * Note that Neponset RAM is slower...&n;&t;&t;&t; * and still untested. &n;&t;&t;&t; * This would be a candidate for&n;&t;&t;&t; * _real_ NUMA support. &n;&t;&t;&t; */
+singleline_comment|//SET_BANK( 1, 0xd0000000, 32*1024*1024 );
+singleline_comment|//mi-&gt;nr_banks = 2;
+)brace
 id|ROOT_DEV
 op_assign
 id|MKDEV
@@ -1351,6 +1434,10 @@ id|cmdline
 comma
 l_string|&quot; panic=1&quot;
 )paren
+suffix:semicolon
+id|pm_power_off
+op_assign
+id|victor_power_off
 suffix:semicolon
 )brace
 )brace

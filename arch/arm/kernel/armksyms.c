@@ -8,12 +8,13 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -83,22 +84,6 @@ comma
 r_int
 id|len
 )paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
 suffix:semicolon
 r_extern
 r_void
@@ -510,6 +495,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|disable_irq
+)paren
+suffix:semicolon
+DECL|variable|pm_idle
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pm_idle
+)paren
+suffix:semicolon
+DECL|variable|pm_power_off
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pm_power_off
 )paren
 suffix:semicolon
 multiline_comment|/* processor dependencies */

@@ -3250,8 +3250,56 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;CIA PCI machine check: err0=%08x &quot;
-l_string|&quot;err1=%08x err2=%08x&bslash;n&quot;
+l_string|&quot;CIA PCI machine check: code=%x&bslash;n&quot;
+l_string|&quot;  cpu_err0=%08x cpu_err1=%08x cia_err=%08x&bslash;n&quot;
+l_string|&quot;  cia_stat=%08x err_mask=%08x cia_syn=%08x&bslash;n&quot;
+l_string|&quot;  mem_err0=%08x mem_err1=%08x&bslash;n&quot;
+l_string|&quot;  pci_err0=%08x pci_err1=%08x pci_err2=%08x&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|com-&gt;code
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;cpu_err0
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;cpu_err1
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;cia_err
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;cia_stat
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;err_mask
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;cia_syn
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;mem_err0
+comma
+(paren
+r_int
+)paren
+id|cia-&gt;mem_err1
 comma
 (paren
 r_int

@@ -11507,7 +11507,7 @@ l_int|3
 op_logical_and
 (paren
 id|count
-op_assign
+op_eq
 l_int|1
 )paren
 )paren

@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * linux/include/asm-arm/arch-l7200/dma.h&n; */
 macro_line|#ifndef __ASM_ARCH_DMA_H
 DECL|macro|__ASM_ARCH_DMA_H
 mdefine_line|#define __ASM_ARCH_DMA_H

@@ -104,6 +104,9 @@ suffix:semicolon
 multiline_comment|/* number of times ra entry was found that deep&n;&t;&t;&t;&t;&t; * in the cache (10percentiles). [10] = not found */
 )brace
 suffix:semicolon
+multiline_comment|/* thread usage wraps very million seconds (approx one fortnight) */
+DECL|macro|NFSD_USAGE_WRAP
+mdefine_line|#define&t;NFSD_USAGE_WRAP&t;(HZ*1000000)
 macro_line|#ifdef __KERNEL__
 r_extern
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  cache.c&n; *&n; * Copyright (C) 1997 by Bill Hawes&n; *&n; * Routines to support directory cacheing using the page cache.&n; * Right now this only works for smbfs, but will be generalized&n; * for use with other filesystems.&n; */
+multiline_comment|/*&n; *  cache.c&n; *&n; * Copyright (C) 1997 by Bill Hawes&n; *&n; * Routines to support directory cacheing using the page cache.&n; * Right now this only works for smbfs, but will be generalized&n; * for use with other filesystems.&n; *&n; * Please add a note about your changes to smbfs in the ChangeLog file.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,70 +7,7 @@ macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-DECL|macro|SMBFS_PARANOIA
-mdefine_line|#define SMBFS_PARANOIA 1
-multiline_comment|/* #define SMBFS_DEBUG_VERBOSE 1 */
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-multiline_comment|/*&n; * Print a cache_dirent-&gt;name, max 80 chars&n; * You can&squot;t just printk non-null terminated strings ...&n; */
-DECL|function|printk_name
-id|printk_name
-c_func
-(paren
-r_const
-r_char
-op_star
-id|name
-comma
-r_int
-id|len
-)paren
-(brace
-r_char
-id|buf
-(braket
-l_int|81
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OG
-l_int|80
-)paren
-(brace
-id|len
-op_assign
-l_int|80
-suffix:semicolon
-)brace
-id|strncpy
-c_func
-(paren
-id|buf
-comma
-id|name
-comma
-id|len
-)paren
-suffix:semicolon
-id|buf
-(braket
-id|len
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s&quot;
-comma
-id|buf
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
+macro_line|#include &quot;smb_debug.h&quot;
 r_static
 r_inline
 r_struct
@@ -339,16 +276,14 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_free_cache_blocks: freeing %d blocks&bslash;n&quot;
+l_string|&quot;freeing %d blocks&bslash;n&quot;
 comma
 id|cachep-&gt;pages
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -428,14 +363,12 @@ id|page
 op_star
 id|page
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_free_dircache: freeing cache&bslash;n&quot;
+l_string|&quot;freeing cache&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_free_cache_blocks
 c_func
 (paren
@@ -485,16 +418,14 @@ op_star
 id|cachep
 )paren
 (brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_init_dircache: initializing cache, %d blocks&bslash;n&quot;
+l_string|&quot;initializing cache, %d blocks&bslash;n&quot;
 comma
 id|cachep-&gt;pages
 )paren
 suffix:semicolon
-macro_line|#endif
 id|smb_free_cache_blocks
 c_func
 (paren
@@ -588,34 +519,22 @@ r_struct
 id|cache_entry
 )paren
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_add_to_cache: cache %p, status %d, adding &quot;
+l_string|&quot;cache %p, status %d, adding %.*s at %ld&bslash;n&quot;
 comma
 id|mapping
 comma
 id|cachep-&gt;status
-)paren
-suffix:semicolon
-id|printk_name
-c_func
-(paren
-id|entry-&gt;name
 comma
 id|entry-&gt;len
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; at %ld&bslash;n&quot;
+comma
+id|entry-&gt;name
 comma
 id|fpos
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Don&squot;t do anything if we&squot;ve had an error ...&n;&t; */
 r_if
 c_cond
@@ -724,25 +643,14 @@ suffix:semicolon
 id|cachep-&gt;entries
 op_increment
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_add_to_cache: added entry &quot;
-)paren
-suffix:semicolon
-id|printk_name
-c_func
-(paren
-id|entry-&gt;name
+l_string|&quot;added entry %.*s, len=%d, pos=%ld, entries=%d&bslash;n&quot;
 comma
 id|entry-&gt;len
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;, len=%d, pos=%ld, entries=%d&bslash;n&quot;
+comma
+id|entry-&gt;name
 comma
 id|len
 comma
@@ -751,7 +659,6 @@ comma
 id|cachep-&gt;entries
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -891,8 +798,7 @@ id|next_pos
 op_assign
 l_int|2
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
 l_string|&quot;smb_find_in_cache: cache %p, looking for pos=%ld&bslash;n&quot;
@@ -902,7 +808,6 @@ comma
 id|pos
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -989,32 +894,20 @@ id|block-&gt;cb_data.names
 id|offset
 )braket
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_find_in_cache: found &quot;
-)paren
-suffix:semicolon
-id|printk_name
-c_func
-(paren
-id|entry-&gt;name
+l_string|&quot;found %.*s, len=%d, pos=%ld&bslash;n&quot;
 comma
 id|entry-&gt;len
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;, len=%d, pos=%ld&bslash;n&quot;
+comma
+id|entry-&gt;name
 comma
 id|entry-&gt;len
 comma
 id|pos
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -1048,20 +941,20 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
 l_string|&quot;smb_refill_dircache: cache %s/%s, blocks=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|cachep-&gt;pages
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Fill the cache, starting at position 2.&n;&t; */
 id|retry
 suffix:colon
@@ -1089,16 +982,14 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_refill_dircache: readdir failed, result=%d&bslash;n&quot;
+l_string|&quot;readdir failed, result=%d&bslash;n&quot;
 comma
 id|result
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -1115,14 +1006,12 @@ id|SMB_F_CACHEVALID
 )paren
 )paren
 (brace
-macro_line|#ifdef SMBFS_PARANOIA
-id|printk
+id|PARANOIA
 c_func
 (paren
-l_string|&quot;smb_refill_dircache: cache invalidated, retrying&bslash;n&quot;
+l_string|&quot;cache invalidated, retrying&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|retry
 suffix:semicolon
@@ -1143,22 +1032,22 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef SMBFS_DEBUG_VERBOSE
-id|printk
+id|VERBOSE
 c_func
 (paren
-l_string|&quot;smb_refill_cache: cache %s/%s status=%d, entries=%d&bslash;n&quot;
+l_string|&quot;cache %s/%s status=%d, entries=%d&bslash;n&quot;
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
+id|DENTRY_PATH
+c_func
+(paren
+id|dentry
+)paren
 comma
 id|cachep-&gt;status
 comma
 id|cachep-&gt;entries
 )paren
 suffix:semicolon
-macro_line|#endif
 id|out
 suffix:colon
 r_return

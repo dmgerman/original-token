@@ -7144,16 +7144,10 @@ c_func
 id|d
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|d-&gt;priv
-comma
-r_sizeof
-(paren
-r_struct
-id|eepro_local
-)paren
 )paren
 suffix:semicolon
 id|d-&gt;priv

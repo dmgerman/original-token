@@ -37,13 +37,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
-r_volatile
-r_struct
-id|timer_list
-op_star
-id|running_timer
-suffix:semicolon
-r_extern
 r_void
 id|add_timer
 c_func
@@ -65,7 +58,33 @@ op_star
 id|timer
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * mod_timer is a more efficient way to update the expire field of an&n; * active timer (if the timer is inactive it will be activated)&n; * mod_timer(a,b) is equivalent to del_timer(a); a-&gt;expires = b; add_timer(a)&n; */
+macro_line|#ifdef CONFIG_SMP
+r_extern
+r_int
+id|del_timer_sync
+c_func
+(paren
+r_struct
+id|timer_list
+op_star
+id|timer
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sync_timers
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|del_timer_sync
+mdefine_line|#define del_timer_sync(t)&t;del_timer(t)
+DECL|macro|sync_timers
+mdefine_line|#define sync_timers()&t;&t;do { } while (0)
+macro_line|#endif
+multiline_comment|/*&n; * mod_timer is a more efficient way to update the expire field of an&n; * active timer (if the timer is inactive it will be activated)&n; * mod_timer(a,b) is equivalent to del_timer(a); a-&gt;expires = b; add_timer(a).&n; * If the timer is known to be not pending (ie, in the handler), mod_timer&n; * is less efficient than a-&gt;expires = b; add_timer(a).&n; */
 r_int
 id|mod_timer
 c_func
@@ -128,38 +147,6 @@ op_ne
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SMP
-DECL|macro|timer_enter
-mdefine_line|#define timer_enter(t) do { running_timer = t; mb(); } while (0)
-DECL|macro|timer_exit
-mdefine_line|#define timer_exit() do { running_timer = NULL; } while (0)
-DECL|macro|timer_is_running
-mdefine_line|#define timer_is_running(t) (running_timer == t)
-DECL|macro|timer_synchronize
-mdefine_line|#define timer_synchronize(t) while (timer_is_running(t)) barrier()
-r_extern
-r_int
-id|del_timer_sync
-c_func
-(paren
-r_struct
-id|timer_list
-op_star
-id|timer
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|timer_enter
-mdefine_line|#define timer_enter(t)&t;&t;do { } while (0)
-DECL|macro|timer_exit
-mdefine_line|#define timer_exit()&t;&t;do { } while (0)
-DECL|macro|timer_is_running
-mdefine_line|#define timer_is_running(t)&t;(0)
-DECL|macro|timer_synchronize
-mdefine_line|#define timer_synchronize(t)&t;do { (void)(t); barrier(); } while(0)
-DECL|macro|del_timer_sync
-mdefine_line|#define del_timer_sync(t)&t;del_timer(t)
-macro_line|#endif
 multiline_comment|/*&n; *&t;These inlines deal with timer wrapping correctly. You are &n; *&t;strongly encouraged to use them&n; *&t;1. Because people otherwise forget&n; *&t;2. Because if the timer wrap changes in future you wont have to&n; *&t;   alter your driver code.&n; *&n; * Do this with &quot;&lt;0&quot; and &quot;&gt;=0&quot; to only test the sign of the result. A&n; * good compiler would generate better code (and a really good compiler&n; * wouldn&squot;t care). Gcc is currently neither.&n; */
 DECL|macro|time_after
 mdefine_line|#define time_after(a,b)&t;&t;((long)(b) - (long)(a) &lt; 0)

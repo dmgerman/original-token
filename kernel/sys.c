@@ -725,9 +725,9 @@ r_continue
 suffix:semicolon
 id|niceval
 op_assign
-id|p-&gt;nice
-op_plus
 l_int|20
+op_minus
+id|p-&gt;nice
 suffix:semicolon
 r_if
 c_cond

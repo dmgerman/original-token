@@ -16829,16 +16829,10 @@ l_int|0
 (brace
 multiline_comment|/* Deallocate everything. */
 multiline_comment|/* Note: if dev-&gt;priv is mallocated, there is no way to fail. */
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -16967,28 +16961,16 @@ op_assign
 id|wavelan_list-&gt;next
 suffix:semicolon
 multiline_comment|/* Free pieces. */
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev-&gt;priv
-comma
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -83,16 +83,16 @@ mdefine_line|#define MTS_VERSION&t;&quot;0.2.2&quot;
 DECL|macro|MTS_NAME
 mdefine_line|#define MTS_NAME&t;&quot;microtek usb (rev &quot; MTS_VERSION &quot;): &quot;
 DECL|macro|MTS_WARNING
-mdefine_line|#define MTS_WARNING(x...) &bslash;&n;&t;printk( KERN_WARNING MTS_NAME ## x )
+mdefine_line|#define MTS_WARNING(x...) &bslash;&n;&t;printk( KERN_WARNING MTS_NAME x )
 DECL|macro|MTS_ERROR
-mdefine_line|#define MTS_ERROR(x...) &bslash;&n;&t;printk( KERN_ERR MTS_NAME ## x )
+mdefine_line|#define MTS_ERROR(x...) &bslash;&n;&t;printk( KERN_ERR MTS_NAME x )
 DECL|macro|MTS_INT_ERROR
-mdefine_line|#define MTS_INT_ERROR(x...) &bslash;&n;&t;MTS_ERROR( ## x )
+mdefine_line|#define MTS_INT_ERROR(x...) &bslash;&n;&t;MTS_ERROR(x)
 DECL|macro|MTS_MESSAGE
-mdefine_line|#define MTS_MESSAGE(x...) &bslash;&n;&t;printk( KERN_INFO MTS_NAME ## x )
+mdefine_line|#define MTS_MESSAGE(x...) &bslash;&n;&t;printk( KERN_INFO MTS_NAME x )
 macro_line|#if defined MTS_DO_DEBUG
 DECL|macro|MTS_DEBUG
-mdefine_line|#define MTS_DEBUG(x...) &bslash;&n;&t;printk( KERN_DEBUG MTS_NAME ## x )
+mdefine_line|#define MTS_DEBUG(x...) &bslash;&n;&t;printk( KERN_DEBUG MTS_NAME x )
 DECL|macro|MTS_DEBUG_GOT_HERE
 mdefine_line|#define MTS_DEBUG_GOT_HERE() &bslash;&n;&t;MTS_DEBUG(&quot;got to %s:%d (%s)&bslash;n&quot;, __FILE__, (int)__LINE__, __PRETTY_FUNCTION__ )
 DECL|macro|MTS_DEBUG_INT

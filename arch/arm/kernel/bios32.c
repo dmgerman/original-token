@@ -1234,13 +1234,13 @@ id|irqmap_ebsa285
 id|__initdata
 op_assign
 (brace
+id|IRQ_IN3
+comma
 id|IRQ_IN1
 comma
 id|IRQ_IN0
 comma
 id|IRQ_PCI
-comma
-id|IRQ_IN3
 )brace
 suffix:semicolon
 DECL|function|ebsa285_swizzle

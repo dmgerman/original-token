@@ -7815,16 +7815,10 @@ c_cond
 id|sstate-&gt;info
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|info
-comma
-r_sizeof
-(paren
-r_struct
-id|async_struct
-)paren
 )paren
 suffix:semicolon
 op_star

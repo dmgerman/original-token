@@ -5,8 +5,7 @@ DECL|macro|cliIF
 mdefine_line|#define cliIF()&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&bslash;n&quot;&t;&t;&bslash;&n;&quot;&t;orr %0, %0, #0x0c000000&bslash;n&quot;&t;&bslash;&n;&quot;&t;teqp&t;%0, #0&bslash;n&quot;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&bslash;&n;    : );&t;&bslash;&n;  } while(0)
 macro_line|#endif
 DECL|function|arch_idle
-r_extern
-id|__inline__
+r_static
 r_void
 id|arch_idle
 c_func
@@ -25,8 +24,6 @@ id|hlt_counter
 )paren
 suffix:semicolon
 )brace
-DECL|macro|arch_power_off
-mdefine_line|#define arch_power_off()&t;do { } while (0)
 DECL|function|arch_reset
 r_extern
 id|__inline__

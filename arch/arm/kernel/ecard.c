@@ -20,12 +20,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-macro_line|#ifdef CONFIG_ARCH_ARC
-macro_line|#include &lt;asm/arch/oldlatches.h&gt;
-macro_line|#else
-DECL|macro|oldlatch_init
-mdefine_line|#define oldlatch_init()
-macro_line|#endif
 macro_line|#ifndef CONFIG_ARCH_RPC
 DECL|macro|HAVE_EXPMASK
 mdefine_line|#define HAVE_EXPMASK
@@ -1234,7 +1228,11 @@ id|ecard_task
 comma
 l_int|NULL
 comma
-l_int|0
+id|CLONE_FS
+op_or
+id|CLONE_FILES
+op_or
+id|CLONE_SIGHAND
 )paren
 suffix:semicolon
 id|ecard_req
@@ -4005,11 +4003,6 @@ r_void
 (brace
 r_int
 id|slot
-suffix:semicolon
-id|oldlatch_init
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_CPU_32
 id|init_waitqueue_head

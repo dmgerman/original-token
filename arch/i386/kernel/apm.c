@@ -4194,16 +4194,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|as
-comma
-r_sizeof
-(paren
-op_star
-id|as
-)paren
 )paren
 suffix:semicolon
 r_return

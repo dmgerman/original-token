@@ -2500,6 +2500,31 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_static
+r_void
+id|__init
+DECL|function|webbrick_init_arch
+id|webbrick_init_arch
+c_func
+(paren
+r_void
+)paren
+(brace
+id|tsunami_init_arch
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Tsunami caches 4 PTEs at a time; DS10 has only 1 hose. */
+id|hose_head-&gt;sg_isa-&gt;align_entry
+op_assign
+l_int|4
+suffix:semicolon
+id|hose_head-&gt;sg_pci-&gt;align_entry
+op_assign
+l_int|4
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The System Vectors&n; */
 DECL|variable|__initmv
 r_struct
@@ -2696,7 +2721,7 @@ id|dp264_device_interrupt
 comma
 id|init_arch
 suffix:colon
-id|tsunami_init_arch
+id|webbrick_init_arch
 comma
 id|init_irq
 suffix:colon

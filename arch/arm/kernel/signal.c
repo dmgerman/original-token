@@ -2795,11 +2795,6 @@ suffix:semicolon
 multiline_comment|/* FALLTHRU */
 r_default
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sigaddset
 c_func
 (paren

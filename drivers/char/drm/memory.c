@@ -860,12 +860,10 @@ l_string|&quot;Attempt to free NULL pointer&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|pt
-comma
-id|size
 )paren
 suffix:semicolon
 id|spin_lock

@@ -1936,16 +1936,10 @@ op_star
 id|sb
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|sb-&gt;u.qnx4_sb.BitMap
-comma
-r_sizeof
-(paren
-r_struct
-id|qnx4_inode_entry
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -1,6 +1,24 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-brutus/uncompress.h&n; *&n; * (C) 1999 Nicolas Pitre &lt;nico@cam.org&gt;&n; *&n; * Reorganised to use machine_is_*() macros.&n; */
 macro_line|#include &quot;hardware.h&quot;
 macro_line|#include &quot;serial_reg.h&quot;
+multiline_comment|/* Assabet&squot;s Status Control &quot;Register&quot; */
+DECL|variable|SCR_value
+r_int
+r_int
+id|SCR_value
+suffix:semicolon
+multiline_comment|/* sa1100_setup() will perform any special initialization for UART, etc. */
+r_extern
+r_void
+id|sa1100_setup
+c_func
+(paren
+r_int
+id|arch_id
+)paren
+suffix:semicolon
+DECL|macro|arch_decomp_setup
+mdefine_line|#define arch_decomp_setup()&t;sa1100_setup(arch_id)
 multiline_comment|/*&n; * The following code assumes the serial port has already been&n; * initialized by the bootloader or such...&n; */
 DECL|function|puts
 r_static
@@ -32,9 +50,12 @@ c_func
 r_if
 c_cond
 (paren
-l_int|0
-multiline_comment|/*SA1111 connected*/
+id|machine_has_neponset
+c_func
+(paren
 )paren
+)paren
+(brace
 id|serial_port
 op_assign
 (paren
@@ -44,6 +65,7 @@ op_star
 )paren
 id|_Ser3UTCR0
 suffix:semicolon
+)brace
 r_else
 id|serial_port
 op_assign
@@ -179,8 +201,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Nothing to do for these&n; */
-DECL|macro|arch_decomp_setup
-mdefine_line|#define arch_decomp_setup()
 DECL|macro|arch_decomp_wdog
 mdefine_line|#define arch_decomp_wdog()
 eof

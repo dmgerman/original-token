@@ -463,10 +463,6 @@ id|p
 comma
 l_string|&quot;%10u &quot;
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|nmi_counter
 c_func
 (paren
@@ -474,7 +470,6 @@ id|cpu_logical_map
 c_func
 (paren
 id|j
-)paren
 )paren
 )paren
 )paren

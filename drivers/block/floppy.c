@@ -9646,6 +9646,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|R_HEAD
+op_ge
+l_int|2
+)paren
+(brace
+multiline_comment|/* some Toshiba floppy controllers occasionnally seem to&n;&t;     * return bogus interrupts after read/write operations, which&n;&t;     * can be recognized by a bad head number (&gt;= 2) */
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|DRS-&gt;first_read_date
 )paren

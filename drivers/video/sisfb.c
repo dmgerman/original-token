@@ -304,20 +304,24 @@ id|rom_vbase
 suffix:semicolon
 multiline_comment|/* mode */
 DECL|variable|video_type
+r_static
 r_int
 id|video_type
 op_assign
 id|FB_TYPE_PACKED_PIXELS
 suffix:semicolon
 DECL|variable|video_linelength
+r_static
 r_int
 id|video_linelength
 suffix:semicolon
 DECL|variable|video_cmap_len
+r_static
 r_int
 id|video_cmap_len
 suffix:semicolon
 DECL|variable|sisfb_off
+r_static
 r_int
 id|sisfb_off
 op_assign

@@ -3,8 +3,7 @@ macro_line|#include &lt;asm/arch/hardware.h&gt;
 macro_line|#include &lt;asm/iomd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|function|arch_idle
-r_extern
-id|__inline__
+r_static
 r_void
 id|arch_idle
 c_func
@@ -87,8 +86,6 @@ suffix:semicolon
 id|slow_out
 suffix:colon
 )brace
-DECL|macro|arch_power_off
-mdefine_line|#define arch_power_off()&t;do { } while (0)
 DECL|function|arch_reset
 r_extern
 id|__inline__

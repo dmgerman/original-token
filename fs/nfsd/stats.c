@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/nfsd/stats.c&n; *&n; * procfs-based user access to knfsd statistics&n; *&n; * /proc/net/rpc/nfsd&n; *&n; * Format:&n; *&t;rc &lt;hits&gt; &lt;misses&gt; &lt;nocache&gt;&n; *&t;&t;&t;Statistsics for the reply cache&n; *&t;fh &lt;stale&gt; &lt;total-lookups&gt; &lt;anonlookups&gt; &lt;dir-not-in-dcache&gt; &lt;nondir-not-in-dcache&gt;&n; *&t;&t;&t;statistics for filehandle lookup&n; *&t;io &lt;bytes-read&gt; &lt;bytes-writtten&gt;&n; *&t;&t;&t;statistics for IO throughput&n; *&t;th &lt;threads&gt; &lt;fullcnt&gt; &lt;10%-20%&gt; &lt;20%-30%&gt; ... &lt;90%-100%&gt; &lt;100%&gt; &n; *&t;&t;&t;time (milliseconds) when nfsd thread usage above thresholds&n; *&t;&t;&t;and number of times that all threads were in use&n; *&t;ra cache-size  &lt;10%  &lt;20%  &lt;30% ... &lt;100% not-found&n; *&t;&t;&t;number of times that read-ahead entry was found that deep in&n; *&t;&t;&t;the cache.&n; *&t;plus generic RPC stats (see net/sunrpc/stats.c)&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/fs/nfsd/stats.c&n; *&n; * procfs-based user access to knfsd statistics&n; *&n; * /proc/net/rpc/nfsd&n; *&n; * Format:&n; *&t;rc &lt;hits&gt; &lt;misses&gt; &lt;nocache&gt;&n; *&t;&t;&t;Statistsics for the reply cache&n; *&t;fh &lt;stale&gt; &lt;total-lookups&gt; &lt;anonlookups&gt; &lt;dir-not-in-dcache&gt; &lt;nondir-not-in-dcache&gt;&n; *&t;&t;&t;statistics for filehandle lookup&n; *&t;io &lt;bytes-read&gt; &lt;bytes-writtten&gt;&n; *&t;&t;&t;statistics for IO throughput&n; *&t;th &lt;threads&gt; &lt;fullcnt&gt; &lt;10%-20%&gt; &lt;20%-30%&gt; ... &lt;90%-100%&gt; &lt;100%&gt; &n; *&t;&t;&t;time (seconds) when nfsd thread usage above thresholds&n; *&t;&t;&t;and number of times that all threads were in use&n; *&t;ra cache-size  &lt;10%  &lt;20%  &lt;30% ... &lt;100% not-found&n; *&t;&t;&t;number of times that read-ahead entry was found that deep in&n; *&t;&t;&t;the cache.&n; *&t;plus generic RPC stats (see net/sunrpc/stats.c)&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -123,6 +123,36 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_int
+r_int
+id|jifs
+op_assign
+id|nfsdstats.th_usage
+(braket
+id|i
+)braket
+suffix:semicolon
+r_int
+r_int
+id|sec
+op_assign
+id|jifs
+op_div
+id|HZ
+comma
+id|msec
+op_assign
+(paren
+id|jifs
+op_mod
+id|HZ
+)paren
+op_star
+l_int|1000
+op_div
+id|HZ
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -132,14 +162,14 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot; %u&quot;
+l_string|&quot; %u.%03u&quot;
 comma
-id|nfsdstats.th_usage
-(braket
-id|i
-)braket
+id|sec
+comma
+id|msec
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* newline and ra-cache */
 id|len
 op_add_assign

@@ -4749,7 +4749,7 @@ c_cond
 (paren
 id|n
 template_param
-id|KFDS_NR
+id|current-&gt;files-&gt;max_fdset
 )paren
 r_goto
 id|out_nofds

@@ -31270,45 +31270,56 @@ id|cdrom_device_ops
 id|sbpcd_dops
 op_assign
 (brace
+id|open
+suffix:colon
 id|sbpcd_open
 comma
-multiline_comment|/* open */
+id|release
+suffix:colon
 id|sbpcd_release
 comma
-multiline_comment|/* release */
+id|drive_status
+suffix:colon
 id|sbpcd_drive_status
 comma
-multiline_comment|/* drive status */
+id|media_changed
+suffix:colon
 id|sbpcd_media_changed
 comma
-multiline_comment|/* media changed */
+id|tray_move
+suffix:colon
 id|sbpcd_tray_move
 comma
-multiline_comment|/* tray move */
+id|lock_door
+suffix:colon
 id|sbpcd_lock_door
 comma
-multiline_comment|/* lock door */
+id|select_speed
+suffix:colon
 id|sbpcd_select_speed
 comma
-multiline_comment|/* select speed */
-l_int|NULL
-comma
-multiline_comment|/* select disc */
+id|get_last_session
+suffix:colon
 id|sbpcd_get_last_session
 comma
-multiline_comment|/* get last session */
+id|get_mcn
+suffix:colon
 id|sbpcd_get_mcn
 comma
-multiline_comment|/* get universal product code */
+id|reset
+suffix:colon
 id|sbpcd_reset
 comma
-multiline_comment|/* hard reset */
+id|audio_ioctl
+suffix:colon
 id|sbpcd_audio_ioctl
 comma
-multiline_comment|/* audio ioctl */
+id|dev_ioctl
+suffix:colon
 id|sbpcd_dev_ioctl
 comma
-multiline_comment|/* device-specific ioctl */
+id|capability
+suffix:colon
 id|CDC_CLOSE_TRAY
 op_or
 id|CDC_OPEN_TRAY
@@ -31325,10 +31336,10 @@ id|CDC_PLAY_AUDIO
 op_or
 id|CDC_IOCTLS
 comma
-multiline_comment|/* capability */
+id|n_minors
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* number of minor devices */
 )brace
 suffix:semicolon
 DECL|variable|sbpcd_info
@@ -31338,36 +31349,23 @@ id|cdrom_device_info
 id|sbpcd_info
 op_assign
 (brace
+id|ops
+suffix:colon
 op_amp
 id|sbpcd_dops
 comma
-multiline_comment|/* device operations */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* handle */
-l_int|0
-comma
-multiline_comment|/* dev */
-l_int|0
-comma
-multiline_comment|/* mask */
+id|speed
+suffix:colon
 l_int|2
 comma
-multiline_comment|/* maximum speed */
+id|capacity
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* number of discs */
-l_int|0
+id|name
+suffix:colon
+l_string|&quot;sbpcd&quot;
 comma
-multiline_comment|/* options, not owned */
-l_int|0
-comma
-multiline_comment|/* mc_flags, not owned */
-l_int|0
-multiline_comment|/* use count, not owned */
 )brace
 suffix:semicolon
 multiline_comment|/*==========================================================================*/

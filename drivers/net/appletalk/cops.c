@@ -3839,16 +3839,10 @@ c_cond
 id|cops0_dev.priv
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|cops0_dev.priv
-comma
-r_sizeof
-(paren
-r_struct
-id|cops_local
-)paren
 )paren
 suffix:semicolon
 )brace

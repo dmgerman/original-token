@@ -1457,12 +1457,12 @@ multiline_comment|/* this should never happen, don&squot;t release something tha
 r_if
 c_cond
 (paren
+op_logical_neg
+id|iface
+op_logical_or
 id|iface-&gt;driver
 op_ne
 id|driver
-op_logical_or
-op_logical_neg
-id|iface
 )paren
 r_return
 suffix:semicolon

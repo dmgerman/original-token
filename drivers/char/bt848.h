@@ -516,7 +516,7 @@ DECL|macro|BT848_RISC_SKIP123
 mdefine_line|#define BT848_RISC_SKIP123     (0x0a&lt;&lt;28)
 DECL|macro|BT848_RISC_WRITE1S23
 mdefine_line|#define BT848_RISC_WRITE1S23   (0x0b&lt;&lt;28)
-multiline_comment|/* Bt848A and Bt849 only !! */
+multiline_comment|/* Bt848A and higher only !! */
 DECL|macro|BT848_TGLB
 mdefine_line|#define BT848_TGLB             0x080
 DECL|macro|BT848_TGCTRL

@@ -480,7 +480,7 @@ id|ncp_current_malloced
 op_sub_assign
 l_int|1
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|obj
@@ -493,7 +493,7 @@ macro_line|#else&t;&t;&t;&t;/* DEBUG_NCP_MALLOC */
 DECL|macro|ncp_kmalloc
 mdefine_line|#define ncp_kmalloc(s,p) kmalloc(s,p)
 DECL|macro|ncp_kfree_s
-mdefine_line|#define ncp_kfree_s(o,s) kfree_s(o,s)
+mdefine_line|#define ncp_kfree_s(o,s) kfree(o)
 macro_line|#endif&t;&t;&t;&t;/* DEBUG_NCP_MALLOC */
 multiline_comment|/* linux/fs/ncpfs/inode.c */
 r_int

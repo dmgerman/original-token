@@ -35,6 +35,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &lt;asm/nvram.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/smplock.h&gt;
 macro_line|#endif /* CONFIG_SMP */
@@ -324,21 +325,21 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_SMP */
 macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
 DECL|variable|isa_io_base
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|isa_io_base
 )paren
 suffix:semicolon
 DECL|variable|isa_mem_base
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|isa_mem_base
 )paren
 suffix:semicolon
 DECL|variable|pci_dram_offset
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|pci_dram_offset
@@ -968,6 +969,13 @@ id|pmu_enable_irled
 suffix:semicolon
 macro_line|#endif CONFIG_PMAC_PBOOK
 macro_line|#if defined(CONFIG_ALL_PPC)
+DECL|variable|sys_ctrler
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|sys_ctrler
+)paren
+suffix:semicolon
 DECL|variable|find_devices
 id|EXPORT_SYMBOL
 c_func
@@ -1460,6 +1468,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|do_softirq
+)paren
+suffix:semicolon
+DECL|variable|next_mmu_context
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|next_mmu_context
+)paren
+suffix:semicolon
+DECL|variable|set_context
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_context
+)paren
+suffix:semicolon
+DECL|variable|mmu_context_overflow
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mmu_context_overflow
 )paren
 suffix:semicolon
 eof

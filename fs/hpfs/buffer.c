@@ -1352,12 +1352,10 @@ l_int|0
 suffix:semicolon
 id|bail0
 suffix:colon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|data
-comma
-l_int|2048
 )paren
 suffix:semicolon
 id|printk
@@ -1696,12 +1694,10 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|qbh-&gt;data
-comma
-l_int|2048
 )paren
 suffix:semicolon
 )brace

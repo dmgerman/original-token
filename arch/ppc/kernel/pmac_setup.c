@@ -386,6 +386,12 @@ id|hex
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|sys_ctrler
+id|sys_ctrler_t
+id|sys_ctrler
+op_assign
+id|SYS_CTRLER_UNKNOWN
+suffix:semicolon
 id|__pmac
 r_int
 DECL|function|pmac_get_cpuinfo

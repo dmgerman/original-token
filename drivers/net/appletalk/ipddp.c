@@ -881,16 +881,10 @@ id|r
 op_assign
 id|tmp-&gt;next
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|tmp
-comma
-r_sizeof
-(paren
-r_struct
-id|ipddp_route
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -677,10 +677,30 @@ r_volatile
 r_struct
 id|timer_list
 op_star
+r_volatile
 id|running_timer
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|timer_enter
+mdefine_line|#define timer_enter(t) do { running_timer = t; mb(); } while (0)
+DECL|macro|timer_exit
+mdefine_line|#define timer_exit() do { running_timer = NULL; } while (0)
+DECL|macro|timer_is_running
+mdefine_line|#define timer_is_running(t) (running_timer == t)
+DECL|macro|timer_synchronize
+mdefine_line|#define timer_synchronize(t) while (timer_is_running(t)) barrier()
+macro_line|#else
+DECL|macro|timer_enter
+mdefine_line|#define timer_enter(t)&t;&t;do { } while (0)
+DECL|macro|timer_exit
+mdefine_line|#define timer_exit()&t;&t;do { } while (0)
+DECL|macro|timer_is_running
+mdefine_line|#define timer_is_running(t)&t;(0)
+DECL|macro|timer_synchronize
+mdefine_line|#define timer_synchronize(t)&t;do { (void)(t); barrier(); } while(0)
+macro_line|#endif
 DECL|function|add_timer
 r_void
 id|add_timer
@@ -903,6 +923,22 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SMP
+DECL|function|sync_timers
+r_void
+id|sync_timers
+c_func
+(paren
+r_void
+)paren
+(brace
+id|spin_unlock_wait
+c_func
+(paren
+op_amp
+id|global_bh_lock
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * SMP specific function to delete periodic timer.&n; * Caller must disable by some means restarting the timer&n; * for new. Upon exit the timer is not queued and handler is not running&n; * on any CPU. It returns number of times, which timer was deleted&n; * (for reference counting).&n; */
 DECL|function|del_timer_sync
 r_int

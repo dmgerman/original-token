@@ -589,9 +589,15 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * Power macintoshes have either a CUDA or a PMU controlling&n; * system reset, power, NVRAM, RTC.&n; */
 DECL|enum|sys_ctrler_kind
+r_typedef
 r_enum
 id|sys_ctrler_kind
 (brace
+DECL|enumerator|SYS_CTRLER_UNKNOWN
+id|SYS_CTRLER_UNKNOWN
+op_assign
+l_int|0
+comma
 DECL|enumerator|SYS_CTRLER_CUDA
 id|SYS_CTRLER_CUDA
 op_assign
@@ -602,8 +608,12 @@ id|SYS_CTRLER_PMU
 op_assign
 l_int|2
 comma
-DECL|variable|sys_ctrler
+DECL|typedef|sys_ctrler_t
 )brace
+id|sys_ctrler_t
+suffix:semicolon
+r_extern
+id|sys_ctrler_t
 id|sys_ctrler
 suffix:semicolon
 macro_line|#endif /* _PPC_MACHDEP_H */

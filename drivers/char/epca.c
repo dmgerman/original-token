@@ -5029,12 +5029,10 @@ c_func
 id|ch-&gt;tty
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ch-&gt;tmp_buf
-comma
-id|ch-&gt;txbufsize
 )paren
 suffix:semicolon
 )brace

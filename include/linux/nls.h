@@ -1,19 +1,8 @@
 macro_line|#include &lt;linux/init.h&gt;
-DECL|struct|nls_unicode
-r_struct
-id|nls_unicode
-(brace
-DECL|member|uni1
-r_int
-r_char
-id|uni1
-suffix:semicolon
-DECL|member|uni2
-r_int
-r_char
-id|uni2
-suffix:semicolon
-)brace
+multiline_comment|/* unicode character */
+r_typedef
+id|__u16
+m_wchar_t
 suffix:semicolon
 DECL|struct|nls_table
 r_struct
@@ -24,18 +13,45 @@ r_char
 op_star
 id|charset
 suffix:semicolon
-DECL|member|page_uni2charset
+DECL|member|uni2char
+r_int
+(paren
+op_star
+id|uni2char
+)paren
+(paren
+m_wchar_t
+id|uni
+comma
 r_int
 r_char
 op_star
-op_star
-id|page_uni2charset
+id|out
+comma
+r_int
+id|boundlen
+)paren
 suffix:semicolon
-DECL|member|charset2uni
-r_struct
-id|nls_unicode
+DECL|member|char2uni
+r_int
+(paren
 op_star
-id|charset2uni
+id|char2uni
+)paren
+(paren
+r_const
+r_int
+r_char
+op_star
+id|rawstring
+comma
+r_int
+id|boundlen
+comma
+m_wchar_t
+op_star
+id|uni
+)paren
 suffix:semicolon
 DECL|member|charset2lower
 r_int
@@ -63,6 +79,9 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* this value hold the maximum octet of charset */
+DECL|macro|NLS_MAX_CHARSET_SIZE
+mdefine_line|#define NLS_MAX_CHARSET_SIZE 3
 multiline_comment|/* nls.c */
 r_extern
 r_int
@@ -120,7 +139,7 @@ r_int
 id|utf8_mbtowc
 c_func
 (paren
-id|__u16
+m_wchar_t
 op_star
 comma
 r_const
@@ -135,7 +154,7 @@ r_int
 id|utf8_mbstowcs
 c_func
 (paren
-id|__u16
+m_wchar_t
 op_star
 comma
 r_const
@@ -153,7 +172,7 @@ c_func
 id|__u8
 op_star
 comma
-id|__u16
+m_wchar_t
 comma
 r_int
 )paren
@@ -167,7 +186,7 @@ id|__u8
 op_star
 comma
 r_const
-id|__u16
+m_wchar_t
 op_star
 comma
 r_int

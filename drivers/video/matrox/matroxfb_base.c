@@ -600,7 +600,7 @@ l_int|16384
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_FB_MATROX_MULTIHEAD
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|ACCESS_FBINFO
@@ -608,24 +608,12 @@ c_func
 (paren
 id|fbcon.disp
 )paren
-comma
-r_sizeof
-(paren
-r_struct
-id|display
-)paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|minfo
-comma
-r_sizeof
-(paren
-r_struct
-id|matrox_fb_info
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif

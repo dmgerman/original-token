@@ -512,7 +512,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|sa1100fb_init
 c_func
 (paren
@@ -520,7 +520,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|sa1100fb_setup
 c_func
 (paren

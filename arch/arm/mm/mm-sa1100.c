@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
+macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &quot;map.h&quot;
@@ -131,6 +132,25 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Flash bank 0 */
+(brace
+l_int|0xdc000000
+comma
+l_int|0x49000000
+comma
+l_int|0x02000000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* EGPIO 0 */
 id|SA1100_STD_IO_MAPPING
 macro_line|#endif
 )brace
@@ -751,4 +771,77 @@ l_int|3
 )brace
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; * On Assabet, we must probe for the Neponset board *before* paging_init() &n; * has occured to actually determine the amount of RAM available.  To do so, &n; * we map the appropriate IO section in the page table here in order to &n; * access GPIO registers.&n; */
+DECL|function|map_sa1100_gpio_regs
+r_void
+id|__init
+id|map_sa1100_gpio_regs
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|phys
+op_assign
+id|_GPLR
+op_amp
+id|PMD_MASK
+suffix:semicolon
+r_int
+r_int
+id|virt
+op_assign
+id|io_p2v
+c_func
+(paren
+id|phys
+)paren
+suffix:semicolon
+r_int
+id|prot
+op_assign
+id|PMD_TYPE_SECT
+op_or
+id|PMD_SECT_AP_WRITE
+op_or
+id|PMD_DOMAIN
+c_func
+(paren
+id|DOMAIN_IO
+)paren
+suffix:semicolon
+id|pmd_t
+id|pmd
+suffix:semicolon
+id|pmd_val
+c_func
+(paren
+id|pmd
+)paren
+op_assign
+id|phys
+op_or
+id|prot
+suffix:semicolon
+id|set_pmd
+c_func
+(paren
+id|pmd_offset
+c_func
+(paren
+id|pgd_offset_k
+c_func
+(paren
+id|virt
+)paren
+comma
+id|virt
+)paren
+comma
+id|pmd
+)paren
+suffix:semicolon
+)brace
 eof

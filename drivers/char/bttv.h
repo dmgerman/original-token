@@ -3,7 +3,7 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,31)
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,37)
 macro_line|#ifndef PCI_GET_DRIVER_DATA
 DECL|macro|PCI_GET_DRIVER_DATA
 macro_line|# define PCI_GET_DRIVER_DATA(pdev)         ((pdev)-&gt;driver_data)
@@ -17,6 +17,285 @@ macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &quot;audiochip.h&quot;
 macro_line|#include &quot;bt848.h&quot;
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* fwd decl */
+r_struct
+id|bttv
+suffix:semicolon
+multiline_comment|/* ---------------------------------------------------------- */
+multiline_comment|/* exported by bttv-cards.c                                   */
+DECL|macro|BTTV_UNKNOWN
+mdefine_line|#define BTTV_UNKNOWN       0x00
+DECL|macro|BTTV_MIRO
+mdefine_line|#define BTTV_MIRO          0x01
+DECL|macro|BTTV_HAUPPAUGE
+mdefine_line|#define BTTV_HAUPPAUGE     0x02
+DECL|macro|BTTV_STB
+mdefine_line|#define BTTV_STB           0x03
+DECL|macro|BTTV_INTEL
+mdefine_line|#define BTTV_INTEL         0x04
+DECL|macro|BTTV_DIAMOND
+mdefine_line|#define BTTV_DIAMOND       0x05 
+DECL|macro|BTTV_AVERMEDIA
+mdefine_line|#define BTTV_AVERMEDIA     0x06 
+DECL|macro|BTTV_MATRIX_VISION
+mdefine_line|#define BTTV_MATRIX_VISION 0x07 
+DECL|macro|BTTV_FLYVIDEO
+mdefine_line|#define BTTV_FLYVIDEO      0x08
+DECL|macro|BTTV_TURBOTV
+mdefine_line|#define BTTV_TURBOTV       0x09
+DECL|macro|BTTV_HAUPPAUGE878
+mdefine_line|#define BTTV_HAUPPAUGE878  0x0a
+DECL|macro|BTTV_MIROPRO
+mdefine_line|#define BTTV_MIROPRO       0x0b
+DECL|macro|BTTV_ADSTECH_TV
+mdefine_line|#define BTTV_ADSTECH_TV    0x0c
+DECL|macro|BTTV_AVERMEDIA98
+mdefine_line|#define BTTV_AVERMEDIA98   0x0d
+DECL|macro|BTTV_VHX
+mdefine_line|#define BTTV_VHX           0x0e
+DECL|macro|BTTV_ZOLTRIX
+mdefine_line|#define BTTV_ZOLTRIX       0x0f
+DECL|macro|BTTV_PIXVIEWPLAYTV
+mdefine_line|#define BTTV_PIXVIEWPLAYTV 0x10
+DECL|macro|BTTV_WINVIEW_601
+mdefine_line|#define BTTV_WINVIEW_601   0x11
+DECL|macro|BTTV_AVEC_INTERCAP
+mdefine_line|#define BTTV_AVEC_INTERCAP 0x12
+DECL|macro|BTTV_LIFE_FLYKIT
+mdefine_line|#define BTTV_LIFE_FLYKIT   0x13
+DECL|macro|BTTV_CEI_RAFFLES
+mdefine_line|#define BTTV_CEI_RAFFLES   0x14
+DECL|macro|BTTV_CONFERENCETV
+mdefine_line|#define BTTV_CONFERENCETV  0x15
+DECL|macro|BTTV_PHOEBE_TVMAS
+mdefine_line|#define BTTV_PHOEBE_TVMAS  0x16
+DECL|macro|BTTV_MODTEC_205
+mdefine_line|#define BTTV_MODTEC_205    0x17
+DECL|macro|BTTV_MAGICTVIEW061
+mdefine_line|#define BTTV_MAGICTVIEW061 0x18
+DECL|macro|BTTV_VOBIS_BOOSTAR
+mdefine_line|#define BTTV_VOBIS_BOOSTAR 0x19
+DECL|macro|BTTV_HAUPPAUG_WCAM
+mdefine_line|#define BTTV_HAUPPAUG_WCAM 0x1a
+DECL|macro|BTTV_MAXI
+mdefine_line|#define BTTV_MAXI          0x1b
+DECL|macro|BTTV_TERRATV
+mdefine_line|#define BTTV_TERRATV       0x1c
+DECL|macro|BTTV_PXC200
+mdefine_line|#define BTTV_PXC200        0x1d
+DECL|macro|BTTV_FLYVIDEO_98
+mdefine_line|#define BTTV_FLYVIDEO_98   0x1e
+DECL|macro|BTTV_IPROTV
+mdefine_line|#define BTTV_IPROTV        0x1f
+DECL|macro|BTTV_INTEL_C_S_PCI
+mdefine_line|#define BTTV_INTEL_C_S_PCI 0x20
+DECL|macro|BTTV_TERRATVALUE
+mdefine_line|#define BTTV_TERRATVALUE   0x21
+DECL|macro|BTTV_WINFAST2000
+mdefine_line|#define BTTV_WINFAST2000   0x22
+DECL|macro|BTTV_CHRONOS_VS2
+mdefine_line|#define BTTV_CHRONOS_VS2   0x23
+DECL|macro|BTTV_TYPHOON_TVIEW
+mdefine_line|#define BTTV_TYPHOON_TVIEW 0x24
+DECL|macro|BTTV_PXELVWPLTVPRO
+mdefine_line|#define BTTV_PXELVWPLTVPRO 0x25
+DECL|macro|BTTV_MAGICTVIEW063
+mdefine_line|#define BTTV_MAGICTVIEW063 0x26
+DECL|macro|BTTV_PINNACLERAVE
+mdefine_line|#define BTTV_PINNACLERAVE  0x27
+DECL|macro|BTTV_STB2
+mdefine_line|#define BTTV_STB2          0x28
+DECL|macro|BTTV_AVPHONE98
+mdefine_line|#define BTTV_AVPHONE98     0x29
+DECL|macro|BTTV_PV951
+mdefine_line|#define BTTV_PV951         0x2a
+DECL|macro|BTTV_ONAIR_TV
+mdefine_line|#define BTTV_ONAIR_TV      0x2b
+DECL|macro|BTTV_SIGMA_TVII_FM
+mdefine_line|#define BTTV_SIGMA_TVII_FM 0x2c
+DECL|macro|BTTV_MATRIX_VISION2
+mdefine_line|#define BTTV_MATRIX_VISION2 0x2d
+DECL|macro|BTTV_ZOLTRIX_GENIE
+mdefine_line|#define BTTV_ZOLTRIX_GENIE 0x2e
+DECL|macro|BTTV_TERRATVRADIO
+mdefine_line|#define BTTV_TERRATVRADIO  0x2f
+DECL|macro|BTTV_DYNALINK
+mdefine_line|#define BTTV_DYNALINK      0x30
+DECL|struct|tvcard
+r_struct
+id|tvcard
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|video_inputs
+r_int
+id|video_inputs
+suffix:semicolon
+DECL|member|audio_inputs
+r_int
+id|audio_inputs
+suffix:semicolon
+DECL|member|tuner
+r_int
+id|tuner
+suffix:semicolon
+DECL|member|svhs
+r_int
+id|svhs
+suffix:semicolon
+DECL|member|gpiomask
+id|u32
+id|gpiomask
+suffix:semicolon
+DECL|member|muxsel
+id|u32
+id|muxsel
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|audiomux
+id|u32
+id|audiomux
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* Tuner, Radio, external, internal, mute, stereo */
+DECL|member|gpiomask2
+id|u32
+id|gpiomask2
+suffix:semicolon
+multiline_comment|/* GPIO MUX mask */
+multiline_comment|/* look for these i2c audio chips */
+DECL|member|msp34xx
+r_int
+id|msp34xx
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|tda8425
+r_int
+id|tda8425
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|tda9840
+r_int
+id|tda9840
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|tda985x
+r_int
+id|tda985x
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|tea63xx
+r_int
+id|tea63xx
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|tea64xx
+r_int
+id|tea64xx
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|tda7432
+r_int
+id|tda7432
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|tda9875
+r_int
+id|tda9875
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* other settings */
+DECL|member|pll
+r_int
+id|pll
+suffix:semicolon
+DECL|macro|PLL_NONE
+mdefine_line|#define PLL_NONE 0
+DECL|macro|PLL_28
+mdefine_line|#define PLL_28   1
+DECL|macro|PLL_35
+mdefine_line|#define PLL_35   2
+DECL|member|tuner_type
+r_int
+id|tuner_type
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|tvcard
+id|bttv_tvcards
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_const
+r_int
+id|bttv_num_tvcards
+suffix:semicolon
+multiline_comment|/* identification / initialization of the card */
+r_extern
+r_void
+id|bttv_idcard
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+)paren
+suffix:semicolon
+multiline_comment|/* card-specific funtions */
+r_extern
+r_void
+id|tea5757_set_freq
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+comma
+r_int
+r_int
+id|freq
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|winview_setvol
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+comma
+r_struct
+id|video_audio
+op_star
+id|v
+)paren
+suffix:semicolon
+multiline_comment|/* ---------------------------------------------------------- */
+multiline_comment|/* exported by bttv-if.c                                      */
+multiline_comment|/* interface for gpio access by other modules                 */
 multiline_comment|/* returns card type + card ID (for bt878-based ones)&n;   for possible values see lines below beginning with #define BTTV_UNKNOWN&n;   returns negative value if error ocurred &n;*/
 r_extern
 r_int
@@ -113,6 +392,154 @@ r_int
 id|card
 )paren
 suffix:semicolon
+multiline_comment|/* i2c */
+DECL|variable|bttv_i2c_algo_template
+r_struct
+id|i2c_algo_bit_data
+id|bttv_i2c_algo_template
+suffix:semicolon
+DECL|variable|bttv_i2c_adap_template
+r_struct
+id|i2c_adapter
+id|bttv_i2c_adap_template
+suffix:semicolon
+DECL|variable|bttv_i2c_client_template
+r_struct
+id|i2c_client
+id|bttv_i2c_client_template
+suffix:semicolon
+r_void
+id|bttv_bit_setscl
+c_func
+(paren
+r_void
+op_star
+id|data
+comma
+r_int
+id|state
+)paren
+suffix:semicolon
+r_void
+id|bttv_bit_setsda
+c_func
+(paren
+r_void
+op_star
+id|data
+comma
+r_int
+id|state
+)paren
+suffix:semicolon
+r_void
+id|bttv_call_i2c_clients
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+comma
+r_int
+r_int
+id|cmd
+comma
+r_void
+op_star
+id|arg
+)paren
+suffix:semicolon
+r_int
+id|bttv_I2CRead
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+comma
+r_int
+r_char
+id|addr
+comma
+r_char
+op_star
+id|probe_for
+)paren
+suffix:semicolon
+r_int
+id|bttv_I2CWrite
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+comma
+r_int
+r_char
+id|addr
+comma
+r_int
+r_char
+id|b1
+comma
+r_int
+r_char
+id|b2
+comma
+r_int
+id|both
+)paren
+suffix:semicolon
+r_void
+id|bttv_readee
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+comma
+r_int
+r_char
+op_star
+id|eedata
+comma
+r_int
+id|addr
+)paren
+suffix:semicolon
+multiline_comment|/* ---------------------------------------------------------- */
+multiline_comment|/* bttv-driver.c                                              */
+multiline_comment|/* insmod options */
+r_extern
+r_int
+r_int
+id|bttv_verbose
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|bttv_debug
+suffix:semicolon
+multiline_comment|/* Anybody who uses more than four? */
+DECL|macro|BTTV_MAX
+mdefine_line|#define BTTV_MAX 4
+r_extern
+r_int
+id|bttv_num
+suffix:semicolon
+multiline_comment|/* number of Bt848s in use */
+r_extern
+r_struct
+id|bttv
+id|bttvs
+(braket
+id|BTTV_MAX
+)braket
+suffix:semicolon
 macro_line|#ifndef O_NONCAP  
 DECL|macro|O_NONCAP
 mdefine_line|#define O_NONCAP&t;O_TRUNC
@@ -129,7 +556,6 @@ DECL|macro|BTTV_MAX_FBUF
 mdefine_line|#define BTTV_MAX_FBUF&t;0x208000
 DECL|macro|I2C_CLIENTS_MAX
 mdefine_line|#define I2C_CLIENTS_MAX 8
-macro_line|#ifdef __KERNEL__
 DECL|struct|bttv_window
 r_struct
 id|bttv_window
@@ -677,102 +1103,6 @@ DECL|macro|BTTV_PICNR
 mdefine_line|#define BTTV_PICNR&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+7, int)
 DECL|macro|BTTV_VBISIZE
 mdefine_line|#define BTTV_VBISIZE            _IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+8, int)
-DECL|macro|BTTV_UNKNOWN
-mdefine_line|#define BTTV_UNKNOWN       0x00
-DECL|macro|BTTV_MIRO
-mdefine_line|#define BTTV_MIRO          0x01
-DECL|macro|BTTV_HAUPPAUGE
-mdefine_line|#define BTTV_HAUPPAUGE     0x02
-DECL|macro|BTTV_STB
-mdefine_line|#define BTTV_STB           0x03
-DECL|macro|BTTV_INTEL
-mdefine_line|#define BTTV_INTEL         0x04
-DECL|macro|BTTV_DIAMOND
-mdefine_line|#define BTTV_DIAMOND       0x05 
-DECL|macro|BTTV_AVERMEDIA
-mdefine_line|#define BTTV_AVERMEDIA     0x06 
-DECL|macro|BTTV_MATRIX_VISION
-mdefine_line|#define BTTV_MATRIX_VISION 0x07 
-DECL|macro|BTTV_FLYVIDEO
-mdefine_line|#define BTTV_FLYVIDEO      0x08
-DECL|macro|BTTV_TURBOTV
-mdefine_line|#define BTTV_TURBOTV       0x09
-DECL|macro|BTTV_HAUPPAUGE878
-mdefine_line|#define BTTV_HAUPPAUGE878  0x0a
-DECL|macro|BTTV_MIROPRO
-mdefine_line|#define BTTV_MIROPRO       0x0b
-DECL|macro|BTTV_ADSTECH_TV
-mdefine_line|#define BTTV_ADSTECH_TV    0x0c
-DECL|macro|BTTV_AVERMEDIA98
-mdefine_line|#define BTTV_AVERMEDIA98   0x0d
-DECL|macro|BTTV_VHX
-mdefine_line|#define BTTV_VHX           0x0e
-DECL|macro|BTTV_ZOLTRIX
-mdefine_line|#define BTTV_ZOLTRIX       0x0f
-DECL|macro|BTTV_PIXVIEWPLAYTV
-mdefine_line|#define BTTV_PIXVIEWPLAYTV 0x10
-DECL|macro|BTTV_WINVIEW_601
-mdefine_line|#define BTTV_WINVIEW_601   0x11
-DECL|macro|BTTV_AVEC_INTERCAP
-mdefine_line|#define BTTV_AVEC_INTERCAP 0x12
-DECL|macro|BTTV_LIFE_FLYKIT
-mdefine_line|#define BTTV_LIFE_FLYKIT   0x13
-DECL|macro|BTTV_CEI_RAFFLES
-mdefine_line|#define BTTV_CEI_RAFFLES   0x14
-DECL|macro|BTTV_CONFERENCETV
-mdefine_line|#define BTTV_CONFERENCETV  0x15
-DECL|macro|BTTV_PHOEBE_TVMAS
-mdefine_line|#define BTTV_PHOEBE_TVMAS  0x16
-DECL|macro|BTTV_MODTEC_205
-mdefine_line|#define BTTV_MODTEC_205    0x17
-DECL|macro|BTTV_MAGICTVIEW061
-mdefine_line|#define BTTV_MAGICTVIEW061 0x18
-DECL|macro|BTTV_VOBIS_BOOSTAR
-mdefine_line|#define BTTV_VOBIS_BOOSTAR 0x19
-DECL|macro|BTTV_HAUPPAUG_WCAM
-mdefine_line|#define BTTV_HAUPPAUG_WCAM 0x1a
-DECL|macro|BTTV_MAXI
-mdefine_line|#define BTTV_MAXI          0x1b
-DECL|macro|BTTV_TERRATV
-mdefine_line|#define BTTV_TERRATV       0x1c
-DECL|macro|BTTV_PXC200
-mdefine_line|#define BTTV_PXC200        0x1d
-DECL|macro|BTTV_FLYVIDEO_98
-mdefine_line|#define BTTV_FLYVIDEO_98   0x1e
-DECL|macro|BTTV_IPROTV
-mdefine_line|#define BTTV_IPROTV        0x1f
-DECL|macro|BTTV_INTEL_C_S_PCI
-mdefine_line|#define BTTV_INTEL_C_S_PCI 0x20
-DECL|macro|BTTV_TERRATVALUE
-mdefine_line|#define BTTV_TERRATVALUE   0x21
-DECL|macro|BTTV_WINFAST2000
-mdefine_line|#define BTTV_WINFAST2000   0x22
-DECL|macro|BTTV_CHRONOS_VS2
-mdefine_line|#define BTTV_CHRONOS_VS2   0x23
-DECL|macro|BTTV_TYPHOON_TVIEW
-mdefine_line|#define BTTV_TYPHOON_TVIEW 0x24
-DECL|macro|BTTV_PXELVWPLTVPRO
-mdefine_line|#define BTTV_PXELVWPLTVPRO 0x25
-DECL|macro|BTTV_MAGICTVIEW063
-mdefine_line|#define BTTV_MAGICTVIEW063 0x26
-DECL|macro|BTTV_PINNACLERAVE
-mdefine_line|#define BTTV_PINNACLERAVE  0x27
-DECL|macro|BTTV_STB2
-mdefine_line|#define BTTV_STB2          0x28
-DECL|macro|BTTV_AVPHONE98
-mdefine_line|#define BTTV_AVPHONE98     0x29
-DECL|macro|BTTV_PV951
-mdefine_line|#define BTTV_PV951         0x2a
-DECL|macro|BTTV_ONAIR_TV
-mdefine_line|#define BTTV_ONAIR_TV      0x2b
-DECL|macro|BTTV_SIGMA_TVII_FM
-mdefine_line|#define BTTV_SIGMA_TVII_FM 0x2c
-DECL|macro|PLL_NONE
-mdefine_line|#define PLL_NONE 0
-DECL|macro|PLL_28
-mdefine_line|#define PLL_28   1
-DECL|macro|PLL_35
-mdefine_line|#define PLL_35   2
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -806,7 +1136,7 @@ mdefine_line|#define I2C_TDA8425        0x82
 DECL|macro|I2C_TDA9840
 mdefine_line|#define I2C_TDA9840        0x84
 DECL|macro|I2C_TDA9850
-mdefine_line|#define I2C_TDA9850        0xb6
+mdefine_line|#define I2C_TDA9850        0xb6 /* also used by 9855,9873 */
 DECL|macro|I2C_TDA9875
 mdefine_line|#define I2C_TDA9875        0xb0
 DECL|macro|I2C_HAUPEE
@@ -821,6 +1151,7 @@ DECL|macro|I2C_TEA6300
 mdefine_line|#define I2C_TEA6300        0x80
 DECL|macro|I2C_DPL3518
 mdefine_line|#define I2C_DPL3518&t;   0x84
+macro_line|#ifndef HAVE_TVAUDIO
 DECL|macro|TDA9840_SW
 mdefine_line|#define TDA9840_SW         0x00
 DECL|macro|TDA9840_LVADJ
@@ -829,6 +1160,7 @@ DECL|macro|TDA9840_STADJ
 mdefine_line|#define TDA9840_STADJ      0x03
 DECL|macro|TDA9840_TEST
 mdefine_line|#define TDA9840_TEST       0x04
+macro_line|#endif
 DECL|macro|PT2254_L_CHANEL
 mdefine_line|#define PT2254_L_CHANEL 0x10
 DECL|macro|PT2254_R_CHANEL
@@ -843,6 +1175,36 @@ DECL|macro|WINVIEW_PT2254_DATA
 mdefine_line|#define WINVIEW_PT2254_DATA 0x20
 DECL|macro|WINVIEW_PT2254_STROBE
 mdefine_line|#define WINVIEW_PT2254_STROBE 0x80
+DECL|struct|bttv_just_hacking
+r_struct
+id|bttv_just_hacking
+(brace
+DECL|member|height
+DECL|member|width
+r_int
+id|height
+comma
+id|width
+suffix:semicolon
+multiline_comment|/* size */
+DECL|member|format
+r_int
+r_int
+id|format
+suffix:semicolon
+multiline_comment|/* should be VIDEO_PALETTE_* */
+DECL|member|buf
+r_int
+id|buf
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|BTTV_JUST_HACKING
+mdefine_line|#define BTTV_JUST_HACKING       _IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+31,struct bttv_just_hacking)
 macro_line|#endif
 multiline_comment|/*&n; * Local variables:&n; * c-basic-offset: 8&n; * End:&n; */
 eof

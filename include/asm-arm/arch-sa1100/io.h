@@ -4,8 +4,13 @@ DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
 DECL|macro|IO_SPACE_LIMIT
 mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
+multiline_comment|/*&n; * We don&squot;t actually have real ISA nor PCI buses, but there is so many &n; * drivers out there that might just work if we fake them...&n; */
 DECL|macro|__io_pci
 mdefine_line|#define __io_pci(a)&t;&t;(PCIO_BASE + (a))
+DECL|macro|__mem_pci
+mdefine_line|#define __mem_pci(a)&t;&t;((unsigned long)(a))
+DECL|macro|__mem_isa
+mdefine_line|#define __mem_isa(a)&t;&t;((unsigned long)(a))
 DECL|macro|__ioaddr
 mdefine_line|#define __ioaddr(p)&t;&t;__io_pci(p)
 multiline_comment|/*&n; * Generic virtual read/write&n; */
@@ -102,5 +107,7 @@ DECL|macro|outw
 mdefine_line|#define outw(v,p)&t;&t;__arch_putw(v,__io_pci(p))
 DECL|macro|outl
 mdefine_line|#define outl(v,p)&t;&t;__arch_putl(v,__io_pci(p))
+DECL|macro|__arch_ioremap
+mdefine_line|#define __arch_ioremap&t;&t;__ioremap
 macro_line|#endif
 eof

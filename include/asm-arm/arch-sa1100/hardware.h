@@ -58,6 +58,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SA1100_EMPEG
 macro_line|#include &quot;empeg.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_BITSY
+macro_line|#include &quot;bitsy.h&quot;
+macro_line|#endif
 macro_line|#if defined(CONFIG_SA1100_GRAPHICSCLIENT) || defined(CONFIG_SA1100_THINCLIENT)
 macro_line|#include &quot;thinclient.h&quot;
 macro_line|#endif

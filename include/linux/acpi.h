@@ -154,6 +154,11 @@ DECL|macro|ACPI_TMR_VAL_EXT
 mdefine_line|#define ACPI_TMR_VAL_EXT  0x00000100
 DECL|macro|ACPI_DCK_CAP
 mdefine_line|#define ACPI_DCK_CAP&t;  0x00000200
+multiline_comment|/* FACP BOOT_ARCH flags */
+DECL|macro|FACP_BOOT_ARCH_LEGACY_DEVICES
+mdefine_line|#define FACP_BOOT_ARCH_LEGACY_DEVICES&t;0x0001
+DECL|macro|FACP_BOOT_ARCH_KBD_CONTROLLER
+mdefine_line|#define FACP_BOOT_ARCH_KBD_CONTROLLER&t;0x0002
 multiline_comment|/* FACS flags */
 DECL|macro|ACPI_S4BIOS
 mdefine_line|#define ACPI_S4BIOS&t;  0x00000001
@@ -412,13 +417,9 @@ DECL|member|century
 id|__u8
 id|century
 suffix:semicolon
-DECL|member|reserved4
-id|__u8
-id|reserved4
-suffix:semicolon
-DECL|member|reserved5
-id|__u8
-id|reserved5
+DECL|member|boot_arch
+id|__u16
+id|boot_arch
 suffix:semicolon
 DECL|member|reserved6
 id|__u8
@@ -517,6 +518,15 @@ id|ACPI_P_LVL2_LAT
 comma
 DECL|enumerator|ACPI_P_LVL3_LAT
 id|ACPI_P_LVL3_LAT
+comma
+DECL|enumerator|ACPI_C1_TIME
+id|ACPI_C1_TIME
+comma
+DECL|enumerator|ACPI_C2_TIME
+id|ACPI_C2_TIME
+comma
+DECL|enumerator|ACPI_C3_TIME
+id|ACPI_C3_TIME
 comma
 DECL|enumerator|ACPI_S0_SLP_TYP
 id|ACPI_S0_SLP_TYP

@@ -2832,15 +2832,10 @@ op_star
 id|file
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|file-&gt;private_data
-comma
-r_sizeof
-(paren
-id|DATA
-)paren
 )paren
 suffix:semicolon
 r_return

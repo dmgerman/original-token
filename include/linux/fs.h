@@ -93,8 +93,6 @@ DECL|macro|SPECIAL
 mdefine_line|#define SPECIAL 4&t;/* For non-blockdevice requests in request queue */
 DECL|macro|WRITERAW
 mdefine_line|#define WRITERAW 5&t;/* raw write - don&squot;t play with buffer lists */
-DECL|macro|NIL_FILP
-mdefine_line|#define NIL_FILP&t;((struct file *)0)
 DECL|macro|SEL_IN
 mdefine_line|#define SEL_IN&t;&t;1
 DECL|macro|SEL_OUT

@@ -25,7 +25,7 @@ c_func
 (paren
 )paren
 DECL|macro|BI
-mdefine_line|#define BI(x,y) &bslash;&n;&t;BUILD_IRQ(##x##y)
+mdefine_line|#define BI(x,y) &bslash;&n;&t;BUILD_IRQ(x##y)
 DECL|macro|BUILD_16_IRQS
 mdefine_line|#define BUILD_16_IRQS(x) &bslash;&n;&t;BI(x,0) BI(x,1) BI(x,2) BI(x,3) &bslash;&n;&t;BI(x,4) BI(x,5) BI(x,6) BI(x,7) &bslash;&n;&t;BI(x,8) BI(x,9) BI(x,a) BI(x,b) &bslash;&n;&t;BI(x,c) BI(x,d) BI(x,e) BI(x,f)
 multiline_comment|/*&n; * ISA PIC or low IO-APIC triggered (INTA-cycle or APIC) interrupts:&n; * (these are usually mapped to vectors 0x20-0x2f)&n; */

@@ -1894,16 +1894,10 @@ id|pentry
 op_assign
 id|entry-&gt;next
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|entry
-comma
-r_sizeof
-(paren
-r_struct
-id|rif_cache_s
-)paren
 )paren
 suffix:semicolon
 )brace

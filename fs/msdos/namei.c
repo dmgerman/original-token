@@ -345,6 +345,9 @@ op_star
 id|walk
 op_assign
 (paren
+op_logical_neg
+id|opts-&gt;nocase
+op_logical_and
 id|c
 op_ge
 l_char|&squot;a&squot;
@@ -580,6 +583,10 @@ op_star
 id|walk
 op_increment
 op_assign
+(paren
+op_logical_neg
+id|opts-&gt;nocase
+op_logical_and
 id|c
 op_ge
 l_char|&squot;a&squot;
@@ -587,6 +594,7 @@ op_logical_and
 id|c
 op_le
 l_char|&squot;z&squot;
+)paren
 ques
 c_cond
 id|c

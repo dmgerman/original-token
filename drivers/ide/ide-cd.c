@@ -162,6 +162,32 @@ multiline_comment|/*&n;&t;&t; * Suppress the following errors:&n;&t;&t; * &quot;
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If a read toc is executed for a CD-R or CD-RW medium where&n;&t; * the first toc has not been recorded yet, it will fail with&n;&t; * 05/24/00 (which is a confusing error)&n;&t; */
+r_if
+c_cond
+(paren
+id|failed_command
+op_logical_and
+id|failed_command-&gt;c
+(braket
+l_int|0
+)braket
+op_eq
+id|GPCMD_READ_TOC_PMA_ATIP
+)paren
+r_if
+c_cond
+(paren
+id|sense-&gt;sense_key
+op_eq
+l_int|0x05
+op_logical_and
+id|sense-&gt;asc
+op_eq
+l_int|0x24
+)paren
+r_return
+suffix:semicolon
 macro_line|#if VERBOSE_IDE_CD_ERRORS
 (brace
 r_int
@@ -7633,52 +7659,63 @@ id|cdi
 (brace
 )brace
 multiline_comment|/****************************************************************************&n; * Device initialization.&n; */
-r_static
 DECL|variable|ide_cdrom_dops
+r_static
 r_struct
 id|cdrom_device_ops
 id|ide_cdrom_dops
 op_assign
 (brace
+id|open
+suffix:colon
 id|ide_cdrom_open_real
 comma
-multiline_comment|/* open */
+id|release
+suffix:colon
 id|ide_cdrom_release_real
 comma
-multiline_comment|/* release */
+id|drive_status
+suffix:colon
 id|ide_cdrom_drive_status
 comma
-multiline_comment|/* drive_status */
+id|media_changed
+suffix:colon
 id|ide_cdrom_check_media_change_real
 comma
-multiline_comment|/* media_changed */
+id|tray_move
+suffix:colon
 id|ide_cdrom_tray_move
 comma
-multiline_comment|/* tray_move */
+id|lock_door
+suffix:colon
 id|ide_cdrom_lock_door
 comma
-multiline_comment|/* lock_door */
+id|select_speed
+suffix:colon
 id|ide_cdrom_select_speed
 comma
-multiline_comment|/* select_speed */
-l_int|NULL
-comma
-multiline_comment|/* select_disc */
+id|get_last_session
+suffix:colon
 id|ide_cdrom_get_last_session
 comma
-multiline_comment|/* get_last_session */
+id|get_mcn
+suffix:colon
 id|ide_cdrom_get_mcn
 comma
-multiline_comment|/* get_mcn */
+id|reset
+suffix:colon
 id|ide_cdrom_reset
 comma
-multiline_comment|/* reset */
+id|audio_ioctl
+suffix:colon
 id|ide_cdrom_audio_ioctl
 comma
-multiline_comment|/* audio_ioctl */
+id|dev_ioctl
+suffix:colon
 id|ide_cdrom_dev_ioctl
 comma
-multiline_comment|/* dev_ioctl */
+id|capability
+suffix:colon
 id|CDC_CLOSE_TRAY
 op_or
 id|CDC_OPEN_TRAY
@@ -7715,11 +7752,10 @@ id|CDC_DVD_RAM
 op_or
 id|CDC_GENERIC_PACKET
 comma
-multiline_comment|/* capability */
-l_int|0
-comma
-multiline_comment|/* n_minors */
+id|generic_packet
+suffix:colon
 id|ide_cdrom_packet
+comma
 )brace
 suffix:semicolon
 DECL|function|ide_cdrom_register
@@ -8321,7 +8357,7 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|dvd_r
+id|dvd_ram
 op_assign
 l_int|1
 suffix:semicolon
@@ -8335,7 +8371,7 @@ id|CDROM_CONFIG_FLAGS
 id|drive
 )paren
 op_member_access_from_pointer
-id|dvd_ram
+id|dvd_r
 op_assign
 l_int|1
 suffix:semicolon
@@ -9784,19 +9820,22 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|rc
 op_assign
-id|cdrom_fops.open
+id|cdrom_fops
+dot
+id|open
+c_func
 (paren
 id|ip
 comma
 id|fp
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rc
+)paren
 )paren
 (brace
 id|drive-&gt;usage
@@ -9994,7 +10033,9 @@ id|drive
 r_int
 id|capacity
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
 id|cdrom_read_capacity
 c_func
 (paren
@@ -10005,10 +10046,11 @@ id|capacity
 comma
 l_int|NULL
 )paren
-ques
-c_cond
+)paren
+r_return
 l_int|0
-suffix:colon
+suffix:semicolon
+r_return
 id|capacity
 op_star
 id|SECTORS_PER_FRAME
@@ -10129,59 +10171,58 @@ id|ide_driver_t
 id|ide_cdrom_driver
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;ide-cdrom&quot;
 comma
-multiline_comment|/* name */
+id|version
+suffix:colon
 id|IDECD_VERSION
 comma
-multiline_comment|/* version */
+id|media
+suffix:colon
 id|ide_cdrom
 comma
-multiline_comment|/* media */
-l_int|0
-comma
-multiline_comment|/* busy */
+id|supports_dma
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* supports_dma */
+id|supports_dsc_overlap
+suffix:colon
 l_int|1
 comma
-multiline_comment|/* supports_dsc_overlap */
+id|cleanup
+suffix:colon
 id|ide_cdrom_cleanup
 comma
-multiline_comment|/* cleanup */
+id|do_request
+suffix:colon
 id|ide_do_rw_cdrom
 comma
-multiline_comment|/* do_request */
-l_int|NULL
-comma
-multiline_comment|/* ??? or perhaps cdrom_end_request? */
+id|ioctl
+suffix:colon
 id|ide_cdrom_ioctl
 comma
-multiline_comment|/* ioctl */
+id|open
+suffix:colon
 id|ide_cdrom_open
 comma
-multiline_comment|/* open */
+id|release
+suffix:colon
 id|ide_cdrom_release
 comma
-multiline_comment|/* release */
+id|media_change
+suffix:colon
 id|ide_cdrom_check_media_change
 comma
-multiline_comment|/* media_change */
+id|revalidate
+suffix:colon
 id|ide_cdrom_revalidate
 comma
-multiline_comment|/* revalidate */
-l_int|NULL
-comma
-multiline_comment|/* pre_reset */
+id|capacity
+suffix:colon
 id|ide_cdrom_capacity
 comma
-multiline_comment|/* capacity */
-l_int|NULL
-comma
-multiline_comment|/* special */
-l_int|NULL
-multiline_comment|/* proc */
 )brace
 suffix:semicolon
 r_int

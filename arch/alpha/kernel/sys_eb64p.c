@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_apecs.h&gt;
 macro_line|#include &lt;asm/core_lca.h&gt;
+macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
@@ -335,7 +336,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_GENERIC
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_CABRIOLET)
 multiline_comment|/*&n;&t; * CABRIO SRM may not set variation correctly, so here we test&n;&t; * the high word of the interrupt summary register for the RAZ&n;&t; * bits, and hope that a true EB64+ would read all ones...&n;&t; */
 r_if
 c_cond
@@ -353,6 +354,24 @@ r_extern
 r_struct
 id|alpha_machine_vector
 id|cabriolet_mv
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Detected Cabriolet: correcting HWRPB.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|hwrpb-&gt;sys_variation
+op_or_assign
+l_int|2L
+op_lshift
+l_int|10
+suffix:semicolon
+id|hwrpb_update_checksum
+c_func
+(paren
+id|hwrpb
+)paren
 suffix:semicolon
 id|alpha_mv
 op_assign

@@ -3037,7 +3037,8 @@ comma
 op_amp
 id|cabriolet_mv
 comma
-l_int|NULL
+op_amp
+id|cabriolet_mv
 multiline_comment|/* AlphaPCI64 */
 )brace
 suffix:semicolon

@@ -1380,7 +1380,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|lp_table
@@ -1389,8 +1389,6 @@ id|minor
 )braket
 dot
 id|lp_buffer
-comma
-id|LP_BUFFER_SIZE
 )paren
 suffix:semicolon
 id|lp_table

@@ -91,18 +91,6 @@ id|videodev_proc_list
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS &amp;&amp; CONFIG_VIDEO_PROC_FS */
-macro_line|#ifdef CONFIG_VIDEO_BT848
-r_extern
-r_int
-id|i2c_tuner_init
-c_func
-(paren
-r_struct
-id|video_init
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_BWQCAM
 r_extern
 r_int

@@ -1,8 +1,6 @@
 multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the&n; *&t;/proc/driver/rtc pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; *&t;1.07&t;Paul Gortmaker.&n; *&t;1.08&t;Miquel van Smoorenburg: disallow certain things on the&n; *&t;&t;DEC Alpha as the CMOS clock is also used for other things.&n; *&t;1.09&t;Nikita Schmidt: epoch support and some Alpha cleanup.&n; *&t;1.09a&t;Pete Zaitcev: Sun SPARC&n; *&t;1.09b&t;Jeff Garzik: Modularize, init cleanup&n; *&t;1.09c&t;Jeff Garzik: SMP cleanup&n; *&t;1.10    Paul Barton-Davis: add support for async I/O&n; *&t;1.10a&t;Andrea Arcangeli: Alpha updates&n; *&t;1.10b&t;Andrew Morton: SMP lock fix&n; *&t;1.10c&t;Cesar Barros: SMP locking fixes and cleanup&n; */
 DECL|macro|RTC_VERSION
 mdefine_line|#define RTC_VERSION&t;&t;&quot;1.10c&quot;
-DECL|macro|RTC_IRQ
-mdefine_line|#define RTC_IRQ &t;8&t;/* Can&squot;t see this changing soon.&t;*/
 DECL|macro|RTC_IO_EXTENT
 mdefine_line|#define RTC_IO_EXTENT&t;0x10&t;/* Only really two ports, but...&t;*/
 multiline_comment|/*&n; *&t;Note that *all* calls to CMOS_READ and CMOS_WRITE are done with&n; *&t;interrupts disabled. Due to the index-port/data-port (0x70/0x71)&n; *&t;design of the RTC, we don&squot;t want two different things trying to&n; *&t;get to it at once. (e.g. the periodic 11 min sync from time.c vs.&n; *&t;this driver.)&n; */
@@ -122,7 +120,7 @@ r_int
 id|arg
 )paren
 suffix:semicolon
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 r_static
 r_int
 r_int
@@ -160,7 +158,7 @@ op_star
 id|alm_tm
 )paren
 suffix:semicolon
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 r_static
 r_void
 id|rtc_dropped_irq
@@ -311,7 +309,7 @@ comma
 l_int|31
 )brace
 suffix:semicolon
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 multiline_comment|/*&n; *&t;A very tiny interrupt handler. It runs with SA_INTERRUPT set,&n; *&t;but there is possibility of conflicting with the set_rtc_mmss()&n; *&t;call (the rtc irq and the timer irq can easily run at the same&n; *&t;time in two different CPUs). So we need to serializes&n; *&t;accesses to the chip with the rtc_lock spinlock that each&n; *&t;architecture should implement in the timer code.&n; *&t;(See ./arch/XXXX/kernel/time.c for the set_rtc_mmss() function.)&n; */
 DECL|function|rtc_interrupt
 r_static
@@ -459,7 +457,7 @@ op_star
 id|ppos
 )paren
 (brace
-macro_line|#ifdef __alpha__
+macro_line|#if !RTC_IRQ
 r_return
 op_minus
 id|EIO
@@ -674,7 +672,7 @@ c_cond
 id|cmd
 )paren
 (brace
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 r_case
 id|RTC_AIE_OFF
 suffix:colon
@@ -1503,7 +1501,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 r_case
 id|RTC_IRQP_READ
 suffix:colon
@@ -1659,7 +1657,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else
+macro_line|#elif !defined(CONFIG_DECSTATION)
 r_case
 id|RTC_EPOCH_READ
 suffix:colon
@@ -1865,7 +1863,7 @@ op_star
 id|file
 )paren
 (brace
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 multiline_comment|/*&n;&t; * Turn off all interrupts once the device is no longer&n;&t; * in use, and clear the data.&n;&t; */
 r_int
 r_char
@@ -1989,7 +1987,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 multiline_comment|/* Called without the kernel lock - fine */
 DECL|function|rtc_poll
 r_static
@@ -2076,7 +2074,7 @@ id|read
 suffix:colon
 id|rtc_read
 comma
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 id|poll
 suffix:colon
 id|rtc_poll
@@ -2125,7 +2123,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __alpha__
+macro_line|#if defined(__alpha__) || defined(__mips__)
 r_int
 r_int
 id|year
@@ -2288,7 +2286,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 r_if
 c_cond
 (paren
@@ -2358,7 +2356,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#ifdef __alpha__
+macro_line|#if defined(__alpha__) || defined(__mips__)
 id|rtc_freq
 op_assign
 id|HZ
@@ -2449,7 +2447,7 @@ r_if
 c_cond
 (paren
 id|year
-op_ge
+OG
 l_int|20
 op_logical_and
 id|year
@@ -2476,7 +2474,7 @@ l_int|48
 op_logical_and
 id|year
 OL
-l_int|100
+l_int|70
 )paren
 (brace
 id|epoch
@@ -2486,6 +2484,28 @@ suffix:semicolon
 id|guess
 op_assign
 l_string|&quot;Digital UNIX&quot;
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|year
+op_ge
+l_int|70
+op_logical_and
+id|year
+OL
+l_int|100
+)paren
+(brace
+id|epoch
+op_assign
+l_int|1928
+suffix:semicolon
+id|guess
+op_assign
+l_string|&quot;Digital DECstation&quot;
 suffix:semicolon
 )brace
 r_if
@@ -2504,7 +2524,7 @@ id|epoch
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 id|init_timer
 c_func
 (paren
@@ -2654,7 +2674,7 @@ comma
 id|RTC_IO_EXTENT
 )paren
 suffix:semicolon
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 id|free_irq
 (paren
 id|RTC_IRQ
@@ -2681,7 +2701,7 @@ id|rtc_exit
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 multiline_comment|/*&n; * &t;At IRQ rates &gt;= 4096Hz, an interrupt may get lost altogether.&n; *&t;(usually during an IDE disk interrupt, with IRQ unmasking off)&n; *&t;Since the interrupt handler doesn&squot;t get called, the IRQ status&n; *&t;byte doesn&squot;t get read, and the RTC stops generating interrupts.&n; *&t;A timer is set, and will call this function if/when that happens.&n; *&t;To get it out of this stalled state, we just read the status.&n; *&t;At least a jiffy of interrupts (rtc_freq/HZ) will have been lost.&n; *&t;(You *really* shouldn&squot;t be trying to use a non-realtime system &n; *&t;for something that requires a steady &gt; 1KHz signal anyways.)&n; */
 DECL|function|rtc_dropped_irq
 r_static
@@ -3527,7 +3547,7 @@ id|alm_tm-&gt;tm_hour
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if RTC_IRQ
 multiline_comment|/*&n; * Used to disable/enable interrupts for any one of UIE, AIE, PIE.&n; * Rumour has it that if you frob the interrupt enable/disable&n; * bits in RTC_CONTROL, you should read RTC_INTR_FLAGS, to&n; * ensure you actually start getting interrupts. Probably for&n; * compatibility with older/broken chipset RTC implementations.&n; * We also clear out any old irq data after an ioctl() that&n; * meddles with the interrupt enable/disable bits.&n; */
 DECL|function|mask_rtc_irq_bit
 r_static

@@ -153,17 +153,6 @@ macro_line|#else
 DECL|macro|footbridge_cfn_mode
 mdefine_line|#define footbridge_cfn_mode() (0)
 macro_line|#endif
-multiline_comment|/*&n; * footbridge_cfn_mode() is used when we want&n; * to check whether we are the central function&n; */
-macro_line|#if defined(CONFIG_FOOTBRIDGE_HOST) &amp;&amp; defined(CONFIG_FOOTBRIDGE_ADDIN)
-DECL|macro|footbridge_cfn_mode
-mdefine_line|#define footbridge_cfn_mode() (*CSR_SA110_CNTL &amp; SA110_CNTL_PCICFN)
-macro_line|#elif defined(CONFIG_FOOTBRIDGE_HOST)
-DECL|macro|footbridge_cfn_mode
-mdefine_line|#define footbridge_cfn_mode() (1)
-macro_line|#else
-DECL|macro|footbridge_cfn_mode
-mdefine_line|#define footbridge_cfn_mode() (0)
-macro_line|#endif
 DECL|macro|CSR_PCIADDR_EXTN
 mdefine_line|#define CSR_PCIADDR_EXTN&t;DC21285_IO(0x0140)
 DECL|macro|CSR_PREFETCHMEMRANGE

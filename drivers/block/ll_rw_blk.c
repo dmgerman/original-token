@@ -268,10 +268,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|__block_cleanup_queue
+DECL|function|__blk_cleanup_queue
 r_static
 r_int
-id|__block_cleanup_queue
+id|__blk_cleanup_queue
 c_func
 (paren
 r_struct
@@ -364,7 +364,7 @@ r_return
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Hopefully the low level driver has finished any out standing requests&n; * first...&n; */
+multiline_comment|/*&n; * Hopefully the low level driver has finished any outstanding requests&n; * first...&n; */
 DECL|function|blk_cleanup_queue
 r_void
 id|blk_cleanup_queue
@@ -382,7 +382,7 @@ id|QUEUE_NR_REQUESTS
 suffix:semicolon
 id|count
 op_sub_assign
-id|__block_cleanup_queue
+id|__blk_cleanup_queue
 c_func
 (paren
 op_amp
@@ -394,7 +394,7 @@ id|READ
 suffix:semicolon
 id|count
 op_sub_assign
-id|__block_cleanup_queue
+id|__blk_cleanup_queue
 c_func
 (paren
 op_amp
@@ -1709,12 +1709,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|elevator_account_request
-c_func
-(paren
-id|req
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * let selected elevator insert the request&n;&t; */
 id|q-&gt;elevator
 dot
@@ -1924,14 +1918,6 @@ id|max_segments
 r_return
 suffix:semicolon
 )brace
-id|elevator_merge_requests
-c_func
-(paren
-id|req
-comma
-id|next
-)paren
-suffix:semicolon
 id|req-&gt;bhtail-&gt;b_reqnext
 op_assign
 id|next-&gt;bh
@@ -2118,6 +2104,9 @@ r_struct
 id|list_head
 op_star
 id|head
+op_assign
+op_amp
+id|q-&gt;queue_head
 suffix:semicolon
 r_int
 id|latency
@@ -2295,20 +2284,7 @@ op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
-id|elevator_default_debug
-c_func
-(paren
-id|q
-comma
-id|bh-&gt;b_rdev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * skip first entry, for devices with active queue head&n;&t; */
-id|head
-op_assign
-op_amp
-id|q-&gt;queue_head
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2602,6 +2578,12 @@ op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|q-&gt;head_active
+)paren
+(brace
 id|head
 op_assign
 op_amp
@@ -2610,8 +2592,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|q-&gt;head_active
-op_logical_and
 op_logical_neg
 id|q-&gt;plugged
 )paren
@@ -2619,6 +2599,7 @@ id|head
 op_assign
 id|head-&gt;next
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* fill up the request-info, and add it to the queue */
 id|req-&gt;cmd

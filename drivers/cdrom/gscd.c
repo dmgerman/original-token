@@ -3049,12 +3049,7 @@ c_func
 r_void
 )paren
 (brace
-id|del_timer_async
-c_func
-(paren
-op_amp
-id|gscd_timer
-)paren
+id|CLEAR_TIMER
 suffix:semicolon
 id|devfs_unregister
 c_func

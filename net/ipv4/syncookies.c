@@ -564,12 +564,10 @@ id|skb
 )paren
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|req-&gt;af.v4_req.opt
-comma
-id|opt_size
 )paren
 suffix:semicolon
 id|req-&gt;af.v4_req.opt

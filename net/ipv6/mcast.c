@@ -749,16 +749,10 @@ c_func
 id|mc-&gt;idev
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|mc
-comma
-r_sizeof
-(paren
-op_star
-id|mc
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -79,10 +79,6 @@ op_star
 id|dev_id
 )paren
 suffix:semicolon
-DECL|variable|nmi_counter
-id|atomic_t
-id|nmi_counter
-suffix:semicolon
 macro_line|#if 0
 multiline_comment|/*&n; * The following vectors are part of the Linux architecture, there&n; * is no hardware IRQ pin equivalent for them, they are triggered&n; * through the ICC by us (IPIs), via smp_message_pass():&n; */
 id|BUILD_SMP_INTERRUPT
@@ -366,12 +362,7 @@ id|p
 comma
 l_string|&quot;NMI: %10u&bslash;n&quot;
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|nmi_counter
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP

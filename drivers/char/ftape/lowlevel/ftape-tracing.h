@@ -151,7 +151,7 @@ suffix:semicolon
 macro_line|#endif /* !defined(CONFIG_FT_NO_TRACE_AT_ALL) */
 multiline_comment|/*&n; *   Abort with a message.&n; */
 DECL|macro|TRACE_ABORT
-mdefine_line|#define TRACE_ABORT(res, i...)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n; &t;TRACE(##i);&t;&t;&t;&t;&bslash;&n;&t;TRACE_EXIT res;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define TRACE_ABORT(res, i...)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&bslash;&n; &t;TRACE(i);&t;&t;&t;&t;&bslash;&n;&t;TRACE_EXIT res;&t;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*   The following transforms the common &quot;if(result &lt; 0) ... &quot; into a&n; *   one-liner.&n; */
 DECL|macro|_TRACE_CATCH
 mdefine_line|#define _TRACE_CATCH(level, fun, action)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int _res = (fun);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (_res &lt; 0) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;do { action /* */ ; } while(0);&t;&t;&t;&t;&bslash;&n;&t;&t;TRACE_ABORT(_res, level, &quot;%s failed: %d&quot;, #fun,&t;_res);&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}

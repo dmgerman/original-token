@@ -3,8 +3,7 @@ macro_line|#ifndef __ASM_ARCH_SYSTEM_H
 DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
 DECL|function|arch_idle
-r_extern
-id|__inline__
+r_static
 r_void
 id|arch_idle
 c_func
@@ -30,7 +29,5 @@ suffix:semicolon
 )brace
 DECL|macro|arch_reset
 mdefine_line|#define arch_reset(mode)&t;do { } while (0)
-DECL|macro|arch_power_off
-mdefine_line|#define arch_power_off()&t;do { } while (0)
 macro_line|#endif
 eof

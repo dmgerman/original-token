@@ -70,6 +70,10 @@ DECL|enumerator|PM_ISA_DEV
 id|PM_ISA_DEV
 comma
 multiline_comment|/* ISA device */
+DECL|enumerator|PM_MTD_DEV
+id|PM_MTD_DEV
+comma
+multiline_comment|/* Memory Technology Device */
 )brace
 suffix:semicolon
 DECL|typedef|pm_dev_t

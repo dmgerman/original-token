@@ -3566,15 +3566,10 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|raw
-comma
-r_sizeof
-(paren
-id|raw3215_info
-)paren
 )paren
 suffix:semicolon
 r_return

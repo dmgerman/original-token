@@ -40,12 +40,10 @@ mdefine_line|#define IOEB_PSCLR&t;&t;0x800d4016
 DECL|macro|IOEB_MONTYPE
 mdefine_line|#define IOEB_MONTYPE&t;&t;0x800d401c
 macro_line|#endif
-macro_line|#ifdef CONFIG_ARCH_ARC
 DECL|macro|LATCHAADDR
 mdefine_line|#define LATCHAADDR&t;&t;0x80094010
 DECL|macro|LATCHBADDR
 mdefine_line|#define LATCHBADDR&t;&t;0x80094006
-macro_line|#endif
 DECL|macro|IOC_BASE
 mdefine_line|#define IOC_BASE&t;&t;0x80080000
 DECL|macro|IO_EC_IOC4_BASE

@@ -1515,7 +1515,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check if there recently has been memory pressure (zone_wake_kswapd)&n; */
+multiline_comment|/*&n; * Check if all zones have recently had memory_pressure (zone_wake_kswapd)&n; */
 DECL|function|keep_kswapd_awake
 r_static
 r_inline
@@ -1565,10 +1565,11 @@ c_cond
 (paren
 id|zone-&gt;size
 op_logical_and
+op_logical_neg
 id|zone-&gt;zone_wake_kswapd
 )paren
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 id|pgdat
@@ -1583,7 +1584,7 @@ id|pgdat
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We need to make the locks finer granularity, but right&n; * now we need this so that we can do page allocations&n; * without holding the kernel lock etc.&n; *&n; * We want to try to free &quot;count&quot; pages, and we want to &n; * cluster them so that we get good swap-out behaviour.&n; *&n; * Don&squot;t try _too_ hard, though. We don&squot;t want to have bad&n; * latency.&n; */
@@ -1674,7 +1675,7 @@ r_goto
 id|done
 suffix:semicolon
 )brace
-multiline_comment|/* not (been) low on memory - it is&n;&t;&t; * pointless to try to swap out.&n;&t;&t; */
+multiline_comment|/* check if mission completed */
 r_if
 c_cond
 (paren
@@ -1904,14 +1905,11 @@ c_func
 )paren
 )paren
 (brace
-multiline_comment|/* wake up regulary to do an early attempt too free&n;&t;&t;&t; * pages - pages will not actually be freed.&n;&t;&t;&t; */
-id|interruptible_sleep_on_timeout
+id|interruptible_sleep_on
 c_func
 (paren
 op_amp
 id|kswapd_wait
-comma
-id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -1969,9 +1967,7 @@ op_complement
 id|PF_MEMALLOC
 suffix:semicolon
 )brace
-r_else
-(brace
-multiline_comment|/* make sure kswapd runs */
+multiline_comment|/* someone needed memory that kswapd had not provided&n;&t; * make sure kswapd runs, should not happen often */
 r_if
 c_cond
 (paren
@@ -1989,7 +1985,6 @@ op_amp
 id|kswapd_wait
 )paren
 suffix:semicolon
-)brace
 r_return
 id|retval
 suffix:semicolon
@@ -2007,7 +2002,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Starting kswapd v1.6&bslash;n&quot;
+l_string|&quot;Starting kswapd v1.7&bslash;n&quot;
 )paren
 suffix:semicolon
 id|swap_setup

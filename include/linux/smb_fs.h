@@ -90,7 +90,7 @@ macro_line|#else /* DEBUG_SMB_MALLOC */
 DECL|macro|smb_kmalloc
 mdefine_line|#define smb_kmalloc(s,p) kmalloc(s,p)
 DECL|macro|smb_kfree_s
-mdefine_line|#define smb_kfree_s(o,s) kfree_s(o,s)
+mdefine_line|#define smb_kfree_s(o,s) kfree(o)
 DECL|macro|smb_vmalloc
 mdefine_line|#define smb_vmalloc(s)   vmalloc(s)
 DECL|macro|smb_vfree

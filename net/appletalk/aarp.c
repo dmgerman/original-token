@@ -210,16 +210,10 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|a
-comma
-r_sizeof
-(paren
-op_star
-id|a
-)paren
 )paren
 suffix:semicolon
 )brace

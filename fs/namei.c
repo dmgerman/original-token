@@ -887,7 +887,7 @@ c_cond
 (paren
 id|current-&gt;link_count
 op_ge
-l_int|32
+l_int|8
 )paren
 r_goto
 id|loop

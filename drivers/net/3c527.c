@@ -4708,16 +4708,10 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|this_device.priv
-comma
-r_sizeof
-(paren
-r_struct
-id|mc32_local
-)paren
 )paren
 suffix:semicolon
 )brace

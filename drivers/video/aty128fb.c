@@ -736,16 +736,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
-DECL|variable|bios_seg
-r_static
-r_void
-op_star
-id|bios_seg
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PPC
 macro_line|#ifdef CONFIG_NVRAM_NOT_DEFINED
 DECL|variable|__initdata
@@ -984,11 +974,6 @@ id|u32
 id|frame_buffer
 suffix:semicolon
 multiline_comment|/* remaped framebuffer */
-DECL|member|io_base
-id|u32
-id|io_base
-suffix:semicolon
-multiline_comment|/* unmapped io         */
 DECL|member|vram_size
 id|u32
 id|vram_size
@@ -1538,6 +1523,7 @@ suffix:semicolon
 macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
 r_static
 r_void
+id|__init
 id|aty128_get_pllinfo
 c_func
 (paren
@@ -1545,10 +1531,16 @@ r_struct
 id|fb_info_aty128
 op_star
 id|info
+comma
+r_char
+op_star
+id|bios_seg
 )paren
 suffix:semicolon
 r_static
-r_int
+r_char
+id|__init
+op_star
 id|aty128find_ROM
 c_func
 (paren
@@ -8307,14 +8299,46 @@ id|u32
 id|fb_addr
 comma
 id|reg_addr
-comma
-id|io_addr
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
+r_char
+op_star
+id|bios_seg
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Enable device in PCI config */
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;aty128fb: Cannot enable PCI device: %d&bslash;n&quot;
+comma
+id|err
+)paren
+suffix:semicolon
+r_goto
+id|err_out
+suffix:semicolon
+)brace
 id|fb_addr
 op_assign
 id|pci_resource_start
@@ -8350,7 +8374,8 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;aty128fb: cannot reserve frame buffer memory&bslash;n&quot;
+l_string|&quot;aty128fb: cannot reserve frame &quot;
+l_string|&quot;buffer memory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -8400,6 +8425,11 @@ id|err_free_mmio
 suffix:semicolon
 )brace
 multiline_comment|/* We have the resources. Now virtualize them */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
 id|info
 op_assign
 id|kmalloc
@@ -8413,12 +8443,7 @@ id|fb_info_aty128
 comma
 id|GFP_ATOMIC
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info
+)paren
 )paren
 (brace
 id|printk
@@ -8480,11 +8505,6 @@ id|info-&gt;regbase
 r_goto
 id|err_free_info
 suffix:semicolon
-multiline_comment|/* Store io_base */
-id|info-&gt;io_base
-op_assign
-id|io_addr
-suffix:semicolon
 multiline_comment|/* Grab memory size from the card */
 id|info-&gt;vram_size
 op_assign
@@ -8535,34 +8555,6 @@ r_goto
 id|err_free_info
 suffix:semicolon
 )brace
-multiline_comment|/* Enable device in PCI config */
-id|err
-op_assign
-id|pci_enable_device
-c_func
-(paren
-id|pdev
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;aty128fb: Cannot enable PCI device: %d&bslash;n&quot;
-comma
-id|err
-)paren
-suffix:semicolon
-r_goto
-id|err_out
-suffix:semicolon
-)brace
 multiline_comment|/* If we can&squot;t test scratch registers, something is seriously wrong */
 r_if
 c_cond
@@ -8591,26 +8583,49 @@ r_if
 c_cond
 (paren
 op_logical_neg
+(paren
+id|bios_seg
+op_assign
 id|aty128find_ROM
 c_func
 (paren
 id|info
 )paren
 )paren
+)paren
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;aty128fb: Rage128 BIOS not located. Guessing...&bslash;n&quot;
+l_string|&quot;aty128fb: Rage128 BIOS not located. &quot;
+l_string|&quot;Guessing...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;aty128fb: Rage128 BIOS located at &quot;
+l_string|&quot;segment %4.4X&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|bios_seg
+)paren
+suffix:semicolon
 id|aty128_get_pllinfo
 c_func
 (paren
 id|info
+comma
+id|bios_seg
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|aty128_timings
 c_func
@@ -8776,9 +8791,10 @@ macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/* PPC and Sparc cannot read video ROM */
 macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
 r_static
-r_int
+r_char
 id|__init
 DECL|function|aty128find_ROM
+op_star
 id|aty128find_ROM
 c_func
 (paren
@@ -8788,11 +8804,6 @@ op_star
 id|info
 )paren
 (brace
-r_int
-id|flag
-op_assign
-l_int|0
-suffix:semicolon
 id|u32
 id|segstart
 suffix:semicolon
@@ -8952,7 +8963,6 @@ op_eq
 op_star
 id|rom
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -8972,13 +8982,10 @@ id|aty_rom_sig
 op_eq
 l_int|0
 )paren
-(brace
 id|stage
 op_assign
 l_int|3
 suffix:semicolon
-)brace
-)brace
 id|rom
 op_increment
 suffix:semicolon
@@ -9039,7 +9046,6 @@ op_eq
 op_star
 id|rom
 )paren
-(brace
 r_if
 c_cond
 (paren
@@ -9059,13 +9065,10 @@ id|R128_sig
 op_eq
 l_int|0
 )paren
-(brace
 id|stage
 op_assign
 l_int|4
 suffix:semicolon
-)brace
-)brace
 id|rom
 op_increment
 suffix:semicolon
@@ -9087,34 +9090,12 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|bios_seg
-op_assign
+r_return
 id|rom_base
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;aty128fb: Rage128 BIOS located at segment %4.4X&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|rom_base
-)paren
-suffix:semicolon
-id|flag
-op_assign
-l_int|1
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 r_return
-(paren
-id|flag
-)paren
+l_int|NULL
 suffix:semicolon
 )brace
 r_static
@@ -9128,6 +9109,10 @@ r_struct
 id|fb_info_aty128
 op_star
 id|info
+comma
+r_char
+op_star
+id|bios_seg
 )paren
 (brace
 r_void
@@ -9232,23 +9217,10 @@ id|u32
 )paren
 id|pll.PCLK_ref_freq
 suffix:semicolon
-multiline_comment|/* free up to be un-used resources. bios_seg is mapped by&n;     * aty128find_ROM() and used by aty128_get_pllinfo()&n;     *&n;     * TODO: make more elegant. doesn&squot;t need to be global */
-r_if
-c_cond
-(paren
-id|bios_seg
-)paren
-id|iounmap
-c_func
-(paren
-id|bios_seg
-)paren
-suffix:semicolon
 id|DBG
 c_func
 (paren
-l_string|&quot;ppll_max %d ppll_min %d xclk %d &quot;
-l_string|&quot;ref_divider %d dotclock %d&bslash;n&quot;
+l_string|&quot;ppll_max %d ppll_min %d xclk %d ref_divider %d dotclock %d&bslash;n&quot;
 comma
 id|info-&gt;constants.ppll_max
 comma
@@ -9260,8 +9232,6 @@ id|info-&gt;constants.ref_divider
 comma
 id|info-&gt;constants.dotclock
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* !CONFIG_PPC */

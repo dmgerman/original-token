@@ -4,8 +4,7 @@ DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
 multiline_comment|/*&n; * This machine must never stop it MCLK.  However, if we are&n; * idle for a long time, slow the processor clock to MCLK.&n; */
 DECL|function|arch_idle
-r_extern
-id|__inline__
+r_static
 r_void
 id|arch_idle
 c_func
@@ -77,8 +76,6 @@ suffix:semicolon
 id|slow_out
 suffix:colon
 )brace
-DECL|macro|arch_power_off
-mdefine_line|#define arch_power_off()&t;do { } while (0)
 DECL|macro|arch_reset
 mdefine_line|#define arch_reset(mode)&t;cpu_reset(0x80000000)
 macro_line|#endif
