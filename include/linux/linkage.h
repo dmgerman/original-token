@@ -47,8 +47,8 @@ macro_line|#endif /* __arm__ */
 macro_line|#ifdef __ASSEMBLY__
 DECL|macro|ALIGN
 mdefine_line|#define ALIGN __ALIGN
-DECL|macro|ALIGN_STRING
-mdefine_line|#define ALIGN_STRING __ALIGN_STRING
+DECL|macro|ALIGN_STR
+mdefine_line|#define ALIGN_STR __ALIGN_STR
 DECL|macro|ENTRY
 mdefine_line|#define ENTRY(name) &bslash;&n;  .globl SYMBOL_NAME(name); &bslash;&n;  ALIGN; &bslash;&n;  SYMBOL_NAME_LABEL(name)
 macro_line|#endif

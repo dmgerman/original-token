@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;6522 Versatile Interface Adapter (VIA)&n; *&n; *&t;There are two of these on the Mac II. Some IRQ&squot;s are vectored&n; *&t;via them as are assorted bits and bobs - eg rtc, adb.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

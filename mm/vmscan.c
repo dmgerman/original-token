@@ -1766,7 +1766,7 @@ id|current-&gt;pgrp
 op_assign
 l_int|1
 suffix:semicolon
-id|sprintf
+id|strcpy
 c_func
 (paren
 id|current-&gt;comm

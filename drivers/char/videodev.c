@@ -1004,7 +1004,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Linux video capture interface: v0.01 ALPHA&bslash;n&quot;
+l_string|&quot;Linux video capture interface: v1.00&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

@@ -1461,7 +1461,7 @@ op_minus
 id|ETIMEDOUT
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
 l_string|&quot;RPC: task timed out&bslash;n&quot;

@@ -4727,6 +4727,11 @@ c_func
 id|ppp
 )paren
 suffix:semicolon
+multiline_comment|/* ppp_dev_close may be called with tbusy==1 so we must set it to 0 */
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

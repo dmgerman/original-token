@@ -491,6 +491,25 @@ id|largest-&gt;end_sector
 op_amp
 l_int|0x3f
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|end_head
+op_plus
+l_int|1
+op_eq
+l_int|0
+op_logical_or
+id|end_sector
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG
 id|printk
 (paren

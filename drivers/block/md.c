@@ -2982,13 +2982,6 @@ id|arg
 suffix:semicolon
 r_default
 suffix:colon
-id|printk
-(paren
-l_string|&quot;Unknown md_ioctl %d&bslash;n&quot;
-comma
-id|cmd
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL

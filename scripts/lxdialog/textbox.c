@@ -443,6 +443,22 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+id|wattrset
+(paren
+id|text
+comma
+id|dialog_attr
+)paren
+suffix:semicolon
+id|wbkgdset
+(paren
+id|text
+comma
+id|dialog_attr
+op_amp
+id|A_COLOR
+)paren
+suffix:semicolon
 id|keypad
 (paren
 id|text
@@ -516,6 +532,15 @@ id|wattrset
 id|dialog
 comma
 id|dialog_attr
+)paren
+suffix:semicolon
+id|wbkgdset
+(paren
+id|dialog
+comma
+id|dialog_attr
+op_amp
+id|A_COLOR
 )paren
 suffix:semicolon
 id|waddch
@@ -2347,6 +2372,7 @@ id|x
 )paren
 suffix:semicolon
 multiline_comment|/* Clear &squot;residue&squot; of previous line */
+macro_line|#if OLD_NCURSES
 r_for
 c_loop
 (paren
@@ -2370,6 +2396,14 @@ comma
 l_char|&squot; &squot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|wclrtoeol
+c_func
+(paren
+id|win
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Return current line of text. Called by dialog_textbox() and print_line().&n; * &squot;page&squot; should point to start of current line before calling, and will be&n; * updated to point to start of next line.&n; */
 r_static
@@ -2671,6 +2705,15 @@ id|wattrset
 id|win
 comma
 id|position_indicator_attr
+)paren
+suffix:semicolon
+id|wbkgdset
+(paren
+id|win
+comma
+id|position_indicator_attr
+op_amp
+id|A_COLOR
 )paren
 suffix:semicolon
 id|percent

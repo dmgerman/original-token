@@ -262,6 +262,16 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef TRACE
+id|trace
+c_func
+(paren
+id|TRACE_CALLS
+op_or
+id|TRACE_UPDATE
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -26,7 +26,7 @@ r_static
 r_int
 id|verbose
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 DECL|variable|i2c_debug
 r_static

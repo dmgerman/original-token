@@ -33,6 +33,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_DIO
 macro_line|#include &lt;linux/dio.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_ZORRO
+macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#  include &lt;asm/mtrr.h&gt;
 macro_line|#endif
@@ -4963,13 +4966,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_DIO
-id|dio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Ok, at this point all CPU&squot;s should be initialized, so&n;&t; * we can start looking into devices..&n;&t; */
 macro_line|#ifdef CONFIG_PCI
 id|pci_init
@@ -5001,6 +4997,20 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_ACORN
 id|ecard_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ZORRO
+id|zorro_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DIO
+id|dio_init
 c_func
 (paren
 )paren

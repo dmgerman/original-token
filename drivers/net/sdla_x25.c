@@ -3235,7 +3235,7 @@ l_int|NULL
 )paren
 (brace
 r_return
-id|chan
+l_int|NULL
 suffix:semicolon
 )brace
 r_return

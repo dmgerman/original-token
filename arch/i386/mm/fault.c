@@ -340,11 +340,16 @@ id|in_interrupt
 c_func
 (paren
 )paren
+op_logical_or
+id|mm
+op_eq
+op_amp
+id|init_mm
 )paren
 id|die
 c_func
 (paren
-l_string|&quot;page fault from irq handler&quot;
+l_string|&quot;page fault without a user context&quot;
 comma
 id|regs
 comma

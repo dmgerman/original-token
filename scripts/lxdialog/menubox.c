@@ -91,6 +91,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if OLD_NCURSES
 r_for
 c_loop
 (paren
@@ -112,6 +113,14 @@ comma
 l_char|&squot; &squot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|wclrtoeol
+c_func
+(paren
+id|win
+)paren
+suffix:semicolon
+macro_line|#endif
 id|wattrset
 (paren
 id|win
@@ -720,6 +729,15 @@ id|wattrset
 id|dialog
 comma
 id|dialog_attr
+)paren
+suffix:semicolon
+id|wbkgdset
+(paren
+id|dialog
+comma
+id|dialog_attr
+op_amp
+id|A_COLOR
 )paren
 suffix:semicolon
 id|waddch

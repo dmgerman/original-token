@@ -30,6 +30,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/linux_logo.h&gt;
 macro_line|#include &quot;console_macros.h&quot;
 DECL|variable|conswitchp
@@ -9741,6 +9742,7 @@ id|c
 suffix:semicolon
 r_static
 r_int
+r_int
 id|printing
 op_assign
 l_int|0
@@ -9760,20 +9762,23 @@ id|myx
 op_assign
 id|x
 suffix:semicolon
+multiline_comment|/* console busy or not yet initialized */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|printable
 op_logical_or
+id|test_and_set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|printing
 )paren
+)paren
 r_return
-suffix:semicolon
-multiline_comment|/* console not yet initialized */
-id|printing
-op_assign
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -9827,7 +9832,8 @@ id|vcmode
 op_ne
 id|KD_TEXT
 )paren
-r_return
+r_goto
+id|quit
 suffix:semicolon
 multiline_comment|/* undraw cursor first */
 r_if
@@ -9863,23 +9869,11 @@ id|count
 op_decrement
 )paren
 (brace
-id|enable_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
-suffix:semicolon
 id|c
 op_assign
 op_star
 id|b
 op_increment
-suffix:semicolon
-id|disable_bh
-c_func
-(paren
-id|CONSOLE_BH
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -10146,9 +10140,14 @@ c_func
 suffix:semicolon
 id|quit
 suffix:colon
-id|printing
-op_assign
+id|clear_bit
+c_func
+(paren
 l_int|0
+comma
+op_amp
+id|printing
+)paren
 suffix:semicolon
 )brace
 DECL|function|vt_console_device

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
@@ -490,7 +491,7 @@ op_assign
 id|ulong
 op_star
 )paren
-id|kmalloc
+id|vmalloc
 (paren
 id|numpages
 op_star
@@ -498,8 +499,6 @@ r_sizeof
 (paren
 id|ulong
 )paren
-comma
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -1099,7 +1098,7 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
-id|kfree
+id|vfree
 c_func
 (paren
 id|shp-&gt;shm_pages

@@ -25,7 +25,7 @@ r_int
 r_int
 id|curfreq
 suffix:semicolon
-multiline_comment|/* RSF16_PREC * freq in MHz */
+multiline_comment|/* freq in kHz */
 DECL|member|flags
 id|__u32
 id|flags
