@@ -59,17 +59,12 @@ r_int
 r_int
 id|lock
 suffix:semicolon
-DECL|member|previous
-r_int
-r_int
-id|previous
-suffix:semicolon
 DECL|typedef|rwlock_t
 )brace
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0, 0 }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 multiline_comment|/*&n; * On x86, we implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;write&quot; bit.&n; *&n; * The inline assembly is non-obvious. Think about it.&n; */
 DECL|macro|read_lock
 mdefine_line|#define read_lock(rw)&t;&bslash;&n;&t;asm volatile(&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&t;     &quot;lock ; incl %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 2f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&t;     &quot;2:&bslash;tlock ; decl %0&bslash;n&quot; &bslash;&n;&t;&t;     &quot;3:&bslash;tcmpl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.previous&quot; &bslash;&n;&t;&t;     :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
