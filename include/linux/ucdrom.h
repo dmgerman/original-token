@@ -348,11 +348,10 @@ mdefine_line|#define CDO_LOCK&t;0x8             /* lock tray on open files */
 DECL|macro|CDO_CHECK_TYPE
 mdefine_line|#define CDO_CHECK_TYPE&t;0x10            /* check type on open for data */
 multiline_comment|/* Special codes for specifying changer slots. */
-macro_line|#include &lt;limits.h&gt;
 DECL|macro|CDSL_NONE
-mdefine_line|#define CDSL_NONE       INT_MAX-1
+mdefine_line|#define CDSL_NONE       ((int) (~0U&gt;&gt;1)-1)
 DECL|macro|CDSL_CURRENT
-mdefine_line|#define CDSL_CURRENT    INT_MAX
+mdefine_line|#define CDSL_CURRENT    ((int) (~0U&gt;&gt;1))
 multiline_comment|/* Some more ioctls to control these options */
 DECL|macro|CDROM_SET_OPTIONS
 mdefine_line|#define CDROM_SET_OPTIONS&t;0x5320

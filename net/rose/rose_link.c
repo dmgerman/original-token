@@ -173,7 +173,7 @@ id|neigh-&gt;timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Rose link TIMER &n; *&n; *&t;This routine is called every 500ms. Decrement timer by this&n; *&t;amount - if expired then process the event.&n; */
+multiline_comment|/*&n; *&t;Rose Link Timer&n; *&n; *&t;This routine is called every 100ms. Decrement timer by this&n; *&t;amount - if expired then process the event.&n; */
 DECL|function|rose_link_timer
 r_static
 r_void

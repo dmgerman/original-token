@@ -1,14 +1,15 @@
-multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
-macro_line|#include &lt;asm/uaccess.h&gt;
+multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 r_int
 DECL|function|smb_ioctl
 id|smb_ioctl
+c_func
 (paren
 r_struct
 id|inode
@@ -29,9 +30,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|result
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -41,37 +39,7 @@ id|cmd
 r_case
 id|SMB_IOC_GETMOUNTUID
 suffix:colon
-r_if
-c_cond
-(paren
-(paren
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-id|uid_t
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-id|uid_t
-)paren
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
 r_return
-id|result
-suffix:semicolon
-)brace
 id|put_user
 c_func
 (paren
@@ -89,9 +57,6 @@ op_star
 )paren
 id|arg
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 r_default
 suffix:colon

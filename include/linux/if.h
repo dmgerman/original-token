@@ -171,9 +171,9 @@ DECL|member|ifru_flags
 r_int
 id|ifru_flags
 suffix:semicolon
-DECL|member|ifru_metric
+DECL|member|ifru_ivalue
 r_int
-id|ifru_metric
+id|ifru_ivalue
 suffix:semicolon
 DECL|member|ifru_mtu
 r_int
@@ -217,7 +217,7 @@ mdefine_line|#define&t;ifr_netmask&t;ifr_ifru.ifru_netmask&t;/* interface net ma
 DECL|macro|ifr_flags
 mdefine_line|#define&t;ifr_flags&t;ifr_ifru.ifru_flags&t;/* flags&t;&t;*/
 DECL|macro|ifr_metric
-mdefine_line|#define&t;ifr_metric&t;ifr_ifru.ifru_metric&t;/* metric&t;&t;*/
+mdefine_line|#define&t;ifr_metric&t;ifr_ifru.ifru_ivalue&t;/* metric&t;&t;*/
 DECL|macro|ifr_mtu
 mdefine_line|#define&t;ifr_mtu&t;&t;ifr_ifru.ifru_mtu&t;/* mtu&t;&t;&t;*/
 DECL|macro|ifr_map
@@ -226,6 +226,8 @@ DECL|macro|ifr_slave
 mdefine_line|#define ifr_slave&t;ifr_ifru.ifru_slave&t;/* slave device&t;&t;*/
 DECL|macro|ifr_data
 mdefine_line|#define&t;ifr_data&t;ifr_ifru.ifru_data&t;/* for use by interface&t;*/
+DECL|macro|ifr_ifindex
+mdefine_line|#define ifr_ifindex&t;ifr_ifru.ifru_ivalue&t;/* interface index&t;*/
 multiline_comment|/*&n; * Structure used in SIOCGIFCONF request.&n; * Used to retrieve interface configuration&n; * for machine (useful for programs which&n; * must know all networks accessible).&n; */
 DECL|struct|ifconf
 r_struct

@@ -1,11 +1,11 @@
-multiline_comment|/*&n; *  smb_mount.h&n; *&n; *  Copyright (C) 1995 by Paal-Kr. Engstad and Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  smb_mount.h&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *&n; */
 macro_line|#ifndef _LINUX_SMB_MOUNT_H
 DECL|macro|_LINUX_SMB_MOUNT_H
 mdefine_line|#define _LINUX_SMB_MOUNT_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 DECL|macro|SMB_MOUNT_VERSION
-mdefine_line|#define SMB_MOUNT_VERSION 4
+mdefine_line|#define SMB_MOUNT_VERSION 5
 DECL|struct|smb_mount_data
 r_struct
 id|smb_mount_data
@@ -67,6 +67,13 @@ suffix:semicolon
 DECL|member|password
 r_char
 id|password
+(braket
+l_int|64
+)braket
+suffix:semicolon
+DECL|member|domain
+r_char
+id|domain
 (braket
 l_int|64
 )braket

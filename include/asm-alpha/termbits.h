@@ -208,7 +208,7 @@ DECL|macro|XTABS
 mdefine_line|#define XTABS&t;01000000 /* Hmm.. Linux/i386 considers this part of TABDLY.. */
 multiline_comment|/* c_cflag bit meaning */
 DECL|macro|CBAUD
-mdefine_line|#define CBAUD&t;0000017
+mdefine_line|#define CBAUD&t;0000037
 DECL|macro|B0
 mdefine_line|#define  B0&t;0000000&t;&t;/* hang up */
 DECL|macro|B50
@@ -246,7 +246,7 @@ mdefine_line|#define EXTA B19200
 DECL|macro|EXTB
 mdefine_line|#define EXTB B38400
 DECL|macro|CBAUDEX
-mdefine_line|#define CBAUDEX 0000020
+mdefine_line|#define CBAUDEX 0000000
 DECL|macro|B57600
 mdefine_line|#define  B57600   00020
 DECL|macro|B115200

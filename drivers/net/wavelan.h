@@ -6,6 +6,8 @@ DECL|macro|SA_ADDR1
 mdefine_line|#define SA_ADDR1&t;&t;0x00&t;/* Second octet of WaveLAN MAC addresses */
 DECL|macro|SA_ADDR2
 mdefine_line|#define SA_ADDR2&t;&t;0x0E&t;/* Third octet of WaveLAN MAC addresses */
+DECL|macro|SA_ALT_ADDR2
+mdefine_line|#define SA_ALT_ADDR2&t;&t;0x6A&t;/* Alternate third octet of WaveLAN MAC addresses */
 DECL|macro|WAVELAN_MTU
 mdefine_line|#define WAVELAN_MTU&t;&t;1500&t;/* Maximum size of WaveLAN packet */
 multiline_comment|/*&n; * Parameter Storage Area (PSA).&n; */

@@ -422,7 +422,7 @@ id|type
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#include &lt;sys/cdefs.h&gt;
+macro_line|# /* nodep */ include &lt;sys/cdefs.h&gt;
 id|__BEGIN_DECLS
 r_int
 id|quotactl

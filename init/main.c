@@ -1,9 +1,6 @@
 multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  GK 2/5/95  -  Changed to support mounting root fs via NFS&n; *  Added initrd &amp; change_root: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *  Moan early if gcc is old, avoiding bogus kernels - Paul Gortmaker, May &squot;96&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
-macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -26,7 +23,10 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
+macro_line|#include &lt;stdarg.h&gt;
 multiline_comment|/*&n; * Versions of gcc older than that listed below may actually compile&n; * and link okay, but the end product can have subtle run time bugs.&n; * To avoid associated bogus bug reports, we flatly refuse to compile&n; * with a gcc that is known to be too old from the very beginning.&n; */
 macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 6)
 macro_line|#error sorry, your GCC is too old. It builds incorrect kernels.
@@ -454,6 +454,34 @@ suffix:semicolon
 r_extern
 r_void
 id|BusLogic_Setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|eata2x_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|u14_34f_setup
 c_func
 (paren
 r_char
@@ -1601,6 +1629,22 @@ macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 l_string|&quot;BusLogic=&quot;
 comma
 id|BusLogic_Setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA
+(brace
+l_string|&quot;eata=&quot;
+comma
+id|eata2x_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_U14_34F
+(brace
+l_string|&quot;u14-34f=&quot;
+comma
+id|u14_34f_setup
 )brace
 comma
 macro_line|#endif

@@ -1827,7 +1827,7 @@ id|unload_mpu401
 )brace
 comma
 macro_line|#endif
-macro_line|#if (defined(CONFIG_UART401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 l_string|&quot;UART401&quot;
 comma

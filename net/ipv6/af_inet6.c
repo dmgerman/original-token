@@ -1732,6 +1732,21 @@ op_minus
 id|EINVAL
 suffix:semicolon
 r_case
+id|SIOGIFINDEX
+suffix:colon
+multiline_comment|/*&n;&t;&t; *&t;This one will be moved to the generic device&n;&t;&t; *&t;layer in the near future&n;&t;&t; */
+r_return
+id|addrconf_get_ifindex
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_case
 id|SIOCSIFADDR
 suffix:colon
 r_return

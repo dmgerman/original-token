@@ -56,12 +56,9 @@ DECL|member|rtmsg_flags
 id|__u32
 id|rtmsg_flags
 suffix:semicolon
-DECL|member|rtmsg_device
-r_char
-id|rtmsg_device
-(braket
-l_int|16
-)braket
+DECL|member|rtmsg_ifindex
+r_int
+id|rtmsg_ifindex
 suffix:semicolon
 )brace
 suffix:semicolon

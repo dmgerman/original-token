@@ -162,5 +162,7 @@ DECL|macro|RTMSG_NEWDEVICE
 mdefine_line|#define RTMSG_NEWDEVICE&t;&t;0x11
 DECL|macro|RTMSG_DELDEVICE
 mdefine_line|#define RTMSG_DELDEVICE&t;&t;0x12
+DECL|macro|RTMSG_AR_FAILED
+mdefine_line|#define RTMSG_AR_FAILED&t;&t;0x21&t;/* Address Resolution failed&t;*/
 macro_line|#endif&t;/* _LINUX_ROUTE_H */
 eof

@@ -41,7 +41,7 @@ op_star
 id|wait
 suffix:semicolon
 DECL|member|max_xmit
-id|word
+id|__u32
 id|max_xmit
 suffix:semicolon
 DECL|member|hostname
@@ -84,6 +84,10 @@ r_int
 r_int
 id|err
 suffix:semicolon
+DECL|member|packet_size
+id|__u32
+id|packet_size
+suffix:semicolon
 DECL|member|packet
 r_int
 r_char
@@ -105,10 +109,6 @@ multiline_comment|/* The following are LANMAN 1.0 options transferred to us in&n
 DECL|member|secmode
 id|word
 id|secmode
-suffix:semicolon
-DECL|member|maxxmt
-id|word
-id|maxxmt
 suffix:semicolon
 DECL|member|maxmux
 id|word

@@ -231,10 +231,8 @@ mdefine_line|#define ICMPV6_UNK_NEXTHDR&t;&t;1
 DECL|macro|ICMPV6_UNK_OPTION
 mdefine_line|#define ICMPV6_UNK_OPTION&t;&t;2
 multiline_comment|/*&n; *&t;constants for (set|get)sockopt&n; */
-DECL|macro|RAW_CHECKSUM
-mdefine_line|#define RAW_CHECKSUM&t;&t;&t;1
 DECL|macro|ICMPV6_FILTER
-mdefine_line|#define ICMPV6_FILTER&t;&t;&t;256
+mdefine_line|#define ICMPV6_FILTER&t;&t;&t;1
 multiline_comment|/*&n; *&t;ICMPV6 filter&n; */
 DECL|macro|ICMPV6_FILTER_BLOCK
 mdefine_line|#define ICMPV6_FILTER_BLOCK&t;&t;1

@@ -384,6 +384,10 @@ id|__u16
 id|inclone
 suffix:semicolon
 multiline_comment|/* Inline clone&t;*/
+DECL|macro|SKB_CLONE_ORIG
+mdefine_line|#define SKB_CLONE_ORIG&t;&t;1
+DECL|macro|SKB_CLONE_INLINE
+mdefine_line|#define SKB_CLONE_INLINE&t;2
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_SKB_LARGE

@@ -11,6 +11,15 @@ op_star
 )paren
 suffix:semicolon
 r_int
+id|u14_34f_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+suffix:semicolon
+r_int
 id|u14_34f_queuecommand
 c_func
 (paren
@@ -61,8 +70,8 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|U14_34F_VERSION
-mdefine_line|#define U14_34F_VERSION &quot;2.20.00&quot;
+mdefine_line|#define U14_34F_VERSION &quot;2.30.00&quot;
 DECL|macro|ULTRASTOR_14_34F
-mdefine_line|#define ULTRASTOR_14_34F {                                            &bslash;&n;&t;&t;NULL, /* Ptr for modules */                           &bslash;&n;&t;&t;NULL, /* usage count for modules */&t;&t;      &bslash;&n;&t;&t;NULL,&t;&t;                                      &bslash;&n;&t;&t;NULL,&t;&t;                                      &bslash;&n;&t;&t;&quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; &quot;,        &bslash;&n;&t;&t;u14_34f_detect,                                       &bslash;&n;&t;&t;NULL, /* Release */                                   &bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;      &bslash;&n;&t;&t;NULL,                                                 &bslash;&n;&t;&t;u14_34f_queuecommand,                                 &bslash;&n;&t;&t;u14_34f_abort,                                        &bslash;&n;&t;&t;u14_34f_reset,                                        &bslash;&n;&t;&t;NULL,                                                 &bslash;&n;&t;&t;u14_34f_biosparam,                                    &bslash;&n;&t;&t;0,   /* can_queue, reset by detect */                 &bslash;&n;&t;&t;7,   /* this_id, reset by detect */                   &bslash;&n;&t;&t;0,   /* sg_tablesize, reset by detect */              &bslash;&n;&t;&t;0,   /* cmd_per_lun, reset by detect */               &bslash;&n;&t;&t;0,   /* number of boards present */                   &bslash;&n;&t;&t;1,   /* unchecked isa dma, reset by detect */         &bslash;&n;&t;&t;ENABLE_CLUSTERING                                     &bslash;&n;&t;&t;}
+mdefine_line|#define ULTRASTOR_14_34F {                                            &bslash;&n;&t;&t;NULL, /* Ptr for modules */                           &bslash;&n;&t;&t;NULL, /* usage count for modules */&t;&t;      &bslash;&n;&t;&t;NULL,&t;&t;                                      &bslash;&n;&t;&t;NULL,&t;&t;                                      &bslash;&n;&t;&t;&quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; &quot;,        &bslash;&n;&t;&t;u14_34f_detect,                                       &bslash;&n;&t;&t;u14_34f_release,                                      &bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;      &bslash;&n;&t;&t;NULL,                                                 &bslash;&n;&t;&t;u14_34f_queuecommand,                                 &bslash;&n;&t;&t;u14_34f_abort,                                        &bslash;&n;&t;&t;u14_34f_reset,                                        &bslash;&n;&t;&t;NULL,                                                 &bslash;&n;&t;&t;u14_34f_biosparam,                                    &bslash;&n;&t;&t;0,   /* can_queue, reset by detect */                 &bslash;&n;&t;&t;7,   /* this_id, reset by detect */                   &bslash;&n;&t;&t;0,   /* sg_tablesize, reset by detect */              &bslash;&n;&t;&t;0,   /* cmd_per_lun, reset by detect */               &bslash;&n;&t;&t;0,   /* number of boards present */                   &bslash;&n;&t;&t;1,   /* unchecked isa dma, reset by detect */         &bslash;&n;&t;&t;ENABLE_CLUSTERING                                     &bslash;&n;&t;&t;}
 macro_line|#endif
 eof

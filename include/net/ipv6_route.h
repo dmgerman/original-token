@@ -428,12 +428,13 @@ comma
 id|__u16
 id|plen
 comma
+r_struct
+id|device
+op_star
+id|dev
+comma
 id|__u16
 id|metric
-comma
-r_char
-op_star
-id|devname
 comma
 id|__u16
 id|flags

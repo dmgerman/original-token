@@ -826,7 +826,6 @@ l_int|0x1a00
 suffix:colon
 l_int|0x1c00
 )paren
-)paren
 suffix:semicolon
 id|st0x_dr
 op_assign

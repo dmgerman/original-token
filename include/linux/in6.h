@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Types and definitions for AF_INET6 &n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Source:&n; *&t;IPv6 Program Interfaces for BSD Systems&n; *      &lt;draft-ietf-ipngwg-bsd-api-05.txt&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Types and definitions for AF_INET6 &n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Sources:&n; *&t;IPv6 Program Interfaces for BSD Systems&n; *      &lt;draft-ietf-ipngwg-bsd-api-05.txt&gt;&n; *&n; *&t;Advanced Sockets API for IPv6&n; *&t;&lt;draft-stevens-advanced-api-00.txt&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_IN6_H
 DECL|macro|_LINUX_IN6_H
 mdefine_line|#define _LINUX_IN6_H
@@ -132,14 +132,25 @@ DECL|macro|IPV6_ADDRFORM
 mdefine_line|#define IPV6_ADDRFORM&t;&t;1
 DECL|macro|IPV6_RXINFO
 mdefine_line|#define IPV6_RXINFO&t;&t;2
+DECL|macro|IPV6_RXHOPOPTS
+mdefine_line|#define IPV6_RXHOPOPTS&t;&t;3
+DECL|macro|IPV6_RXDSTOPTS
+mdefine_line|#define IPV6_RXDSTOPTS&t;&t;4
+DECL|macro|IPV6_RXSRCRT
+mdefine_line|#define IPV6_RXSRCRT&t;&t;5
+DECL|macro|IPV6_PKTOPTIONS
+mdefine_line|#define IPV6_PKTOPTIONS&t;&t;6
+DECL|macro|IPV6_CHECKSUM
+mdefine_line|#define IPV6_CHECKSUM&t;&t;7
+multiline_comment|/*&n; *&t;Alternative names&n; */
 DECL|macro|IPV6_TXINFO
 mdefine_line|#define IPV6_TXINFO&t;&t;IPV6_RXINFO
 DECL|macro|SCM_SRCINFO
 mdefine_line|#define SCM_SRCINFO&t;&t;IPV6_TXINFO
 DECL|macro|SCM_SRCRT
-mdefine_line|#define SCM_SRCRT&t;&t;4
+mdefine_line|#define SCM_SRCRT&t;&t;IPV6_RXSRCRT
 DECL|macro|IPV6_UNICAST_HOPS
-mdefine_line|#define IPV6_UNICAST_HOPS&t;5
+mdefine_line|#define IPV6_UNICAST_HOPS&t;16
 DECL|macro|IPV6_MULTICAST_IF
 mdefine_line|#define IPV6_MULTICAST_IF&t;17
 DECL|macro|IPV6_MULTICAST_HOPS

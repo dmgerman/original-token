@@ -171,7 +171,7 @@ id|sk-&gt;timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;NET/ROM TIMER &n; *&n; *&t;This routine is called every 500ms. Decrement timer by this&n; *&t;amount - if expired then process the event.&n; */
+multiline_comment|/*&n; *&t;NET/ROM TIMER &n; *&n; *&t;This routine is called every 100ms. Decrement timer by this&n; *&t;amount - if expired then process the event.&n; */
 DECL|function|nr_timer
 r_static
 r_void

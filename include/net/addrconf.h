@@ -165,6 +165,16 @@ id|arg
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|addrconf_get_ifindex
+c_func
+(paren
+r_void
+op_star
+id|arg
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|inet6_ifaddr
 op_star

@@ -169,7 +169,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;wavelan.c:v8 96/8/18&bslash;n&quot;
+l_string|&quot;wavelan.c:v9 96/11/17&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n; * Entry point forward declarations.&n; */
 r_static
@@ -3704,12 +3704,21 @@ l_int|1
 op_ne
 id|SA_ADDR1
 op_logical_or
+(paren
 id|psa.psa_univ_mac_addr
 (braket
 l_int|2
 )braket
 op_ne
 id|SA_ADDR2
+op_logical_and
+id|psa.psa_univ_mac_addr
+(braket
+l_int|2
+)braket
+op_ne
+id|SA_ALT_ADDR2
+)paren
 )paren
 (brace
 r_if

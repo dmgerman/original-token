@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c:&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;v2.56 (96/10/18)&n;&t;  - Turned arc0e/arc0s startup messages back on by default, as most&n;&t;    people will probably not notice the additional devices&n;&t;    otherwise, and experience more protocol confusion than&n;&t;    necessary.&n;&t;  - Fixed a tiny but noticeable bug in the packet debugging routines&n;&t;    (thanks Tomasz)&n;&n;&t;v2.55 (96/08/05)&n;&t;  - A couple more messages moved to D_EXTRA.&n;&t;  - SLOW_XMIT_COPY off by default.&n;&t;  - Some tiny changes.&n;&t;&n;&t;v2.54 (96/07/05)&n;&t;  - Under some situations, Stage 5 autoprobe was a little bit too&n;&t;    picky about the TXACK flag.&n;&t;  - D_EXTRA removed from default debugging flags.  Hey, it&squot;s stable,&n;&t;    right?&n;&t;  - Removed redundant &quot;unknown protocol ID&quot; messages and made remaining&n;&t;    ones D_EXTRA.&n;&t;&n;&t;v2.53 (96/06/06)&n;&t;  - arc0e and arc0s wouldn&squot;t initialize in newer kernels, which&n;&t;    don&squot;t like dev-&gt;open==NULL or dev-&gt;stop==NULL.&n;&t;&n;&t;v2.52 (96/04/20)&n;&t;  - Replaced more decimal node ID&squot;s with hex, for consistency.&n;&t;  - Changed a couple of printk debug levels.&n;&n;&t;v2.51 (96/02/29)&n;&t;  - Inserted a rather important missing &quot;volatile&quot; in autoprobe.&n;&t;  - arc0e and arc0s are now options in drivers/net/Config.in.&n;&t;&n;&t;v2.50 (96/02/24)&n;&t;  - Increased IRQ autoprobe delay.  Thanks to Andrew J. Kroll for&n;&t;    noticing the problem, which seems to only affect certain cards.&n;&t;  - Errors reserving ports and IRQ&squot;s now clean up after themselves.&n;&t;  - We now replace the TESTvalue byte from unused shmem addresses.&n;&t;  - You can now use &quot;irq=&quot; as well as &quot;irqnum=&quot; to set the IRQ&n;&t;    during module autoprobe.  This doesn&squot;t seem to crash insmod&n;&t;    anymore. (?)&n;&t;  - You can now define the name of the ARCnet device more easily&n;&t;    when loading the module: insmod arcnet.o device=test1&n;&t;    A new option, CONFIG_ARCNET_ETHNAME, allows the kernel to&n;&t;    choose one of the standard eth?-style device names&n;&t;    automatically.  This currently only works as a module.&n;&t;  - printk&squot;s now try to make some use of the KERN_xxx priority level&n;&t;    macros (though they may not be perfect yet).&n;&t;  - Packet and skb dump loops are now separate functions.&n;&t;  - Removed D_INIT from default debug level, because I am (finally)&n;&t;    pretty confident that autoprobe shouldn&squot;t toast anyone&squot;s&n;&t;    computer.&n;&t;  - This version is no longer ALPHA.&n;&n;&t;v2.41 ALPHA (96/02/10)&n;&t;  - Incorporated changes someone made to arcnet_setup in 1.3.60.&n;&t;  - Increased reset timeout to 3/10 of a second because some cards&n;&t;    are too slow.&n;&t;  - Removed a useless delay from autoprobe stage 4; I wonder&n;&t;    how that got there!  (oops)&n;&t;  - If FAST_IFCONFIG is defined, don&squot;t reset the card during&n;&t;    arcnet_open; rather, do it in arcnet_close but don&squot;t delay. &n;&t;    This speeds up calls to ifconfig up/down.  (Thanks to Vojtech&n;&t;    for the idea to speed this up.)&n;&t;  - If FAST_PROBE is defined, don&squot;t bother to reset the card in&n;&t;    autoprobe Stage 5 when there is only one io port and one shmem&n;&t;    left in the list.  They &quot;obviously&quot; correspond to each other. &n;&t;    Another good idea from Vojtech.&n;&n;&t;v2.40 ALPHA (96/02/03)&n;&t;  - Checked the RECON flag last in the interrupt handler (when&n;&t;    enabled) so the flag will show up in &quot;status&quot; when reporting&n;&t;    other errors.  (I had a cabling problem that was hard to notice&n;&t;    until I saw the huge RECON count in /proc/net/dev.)&n;&t;  - Moved &quot;IRQ for unknown device&quot; message to D_DURING.&n;&t;  - &quot;transmit timed out&quot; and &quot;not acknowledged&quot; messages are&n;&t;    now D_EXTRA, because they very commonly happen when things&n;&t;    are working fine.  &quot;transmit timed out&quot; due to missed IRQ&squot;s&n;&t;    is still D_NORMAL, because it&squot;s probably a bug.&n;&t;  - &quot;Transmit timed out&quot; messages now include destination station id.&n;&t;  - The virtual arc0e and arc0s devices can now be disabled. &n;&t;    Massive (but simple) code rearrangement to support this with&n;&t;    fewer ifdef&squot;s.&n;&t;  - SLOW_XMIT_COPY option so fast computers don&squot;t hog the bus.  It&squot;s&n;&t;    weird, but it works.&n;&t;  - Finally redesigned autoprobe after some discussion with Vojtech&n;&t;    Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;.  It should be much safer&n;&t;    and more reliable now, I think.  We now probe several more io&n;&t;    ports and many more shmem addresses.&n;&t;  - Rearranged D_* debugging flags slightly.  Watch out!  There is&n;&t;    now a new flag, disabled by default, that will tell you the&n;&t;    reason a particular port or shmem is discarded from the list.&n;&n;&t;v2.30 ALPHA (96/01/10)&n;&t;  - Abandoned support for Linux 1.2 to simplify coding and allow me&n;&t;    to take advantage of new features in 1.3.&n;&t;  - Updated cabling/jumpers documentation with MUCH information that&n;&t;    people have recently (and in some cases, not so recently) sent&n;&t;    me.  I don&squot;t mind writing documentation, but the jumpers&n;&t;    database is REALLY starting to get dull.&n;&t;  - Autoprobing works as a module now - but ONLY with my fix to&n;&t;    register_netdev and unregister_netdev.  It&squot;s also much faster,&n;&t;    and uses the &quot;new-style&quot; IRQ autoprobe routines.  Autoprobe is&n;&t;    still a horrible mess and will be cleaned up further as time&n;&t;    passes.&n;&t;    &n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package.&n;&t;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO: (semi-prioritized)&n;&t;&n;         - Support &quot;arpless&quot; mode like NetBSD does, and as recommended&n;           by the (obsoleted) RFC1051.&n;         - Smarter recovery from RECON-during-transmit conditions. (ie.&n;           retransmit immediately)&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;         - Some cards have shared memory with 4k mirrors instead of just 2k,&n;           so we (uneventfully) find the &quot;wrong&quot; shmem when probing.&n;         - Probe for multiple devices in one shot (trying to decide whether&n;           to do it the &quot;ugly&quot; way or not).&n;         - Add support for the new 1.3.x IP header cache, and other features.&n;         - Debug level should be changed with a system call, not a hack to&n;           the &quot;metric&quot; flag.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - Try to implement promiscuous (receive-all-packets) mode available&n;           on some newer cards with COM20020 and similar chips.  I don&squot;t have&n;           one, but SMC sent me the specs.&n;         - ATA protocol support?? &n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
+multiline_comment|/* arcnet.c:&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;v2.60 ALPHA (96/11/23)&n;&t;  - Added patch from Vojtech Pavlik &lt;vojtech@atrey.karlin.mff.cuni.cz&gt;&n;&t;    and Martin Mares &lt;mj@k332.feld.cvut.cz&gt; to make the driver work&n;&t;    with the new Linux 2.1.x memory management.  I modified their&n;&t;    patch quite a bit though; bugs are my fault.  More changes should&n;&t;    be made to get eliminate any remaining phys_to_virt calls.&n;&t;  - Quietly ignore protocol id&squot;s 0, 1, 8, and 243.  Thanks to Jake&n;&t;    Messinger &lt;jake@ams.com&gt; for reporting these codes and their&n;&t;    meanings.&n;&t;  - Smarter shmem probe for cards with 4k mirrors. (does it work?)&n;&t;  - Initial support for RIM I type cards which use no I/O ports at&n;&t;    all.  To use this option, you need to compile with RIM_I_MODE&n;&t;    enabled.  Thanks to Kolja Waschk &lt;kawk@yo.com&gt; for explaining&n;&t;    RIM I programming to me.  Now, does my RIM I code actually&n;&t;    work?&n;&n;&t;v2.56 (96/10/18)&n;&t;  - Turned arc0e/arc0s startup messages back on by default, as most&n;&t;    people will probably not notice the additional devices&n;&t;    otherwise.  This causes undue confusion.&n;&t;  - Fixed a tiny but noticeable bug in the packet debugging routines&n;&t;    (thanks Tomasz)&n;&n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package at&n;&t;&t;http://www.foxnet.net/~apenwarr/arcnet&n;&t;&t;&n;&t;v2.50 (96/02/24)&n;&t;  - Massively improved autoprobe routines; they now work even as a&n;&t;    module.  Thanks to Vojtech Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;&n;&t;    for his ideas and help in this area.&n;&t;  - Changed printk&squot;s around quite a lot.&n;&t;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;&t;&n;&t;TO DO: (semi-prioritized)&n;&t;&n;         - Use cleaner &quot;architecture-independent&quot; shared memory access.&n;           This is half-done in ARCnet 2.60, but still uses some&n;           undocumented i386 stuff.  (We shouldn&squot;t call phys_to_virt,&n;           for example.)&n;         - Support &quot;arpless&quot; mode like NetBSD does, and as recommended&n;           by the (obsoleted) RFC1051.&n;         - Some way to make RIM_I_MODE runtime switchable?  Yuck...&n;         - Smarter recovery from RECON-during-transmit conditions. (ie.&n;           retransmit immediately)&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;         - Probe for multiple devices in one shot (trying to decide whether&n;           to do it the &quot;ugly&quot; way or not).&n;         - Add support for the new 1.3.x IP header cache, and other features.&n;         - Debug level should be changed with a system call, not a hack to&n;           the &quot;metric&quot; flag.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - Try to implement promiscuous (receive-all-packets) mode available&n;           on some newer cards with COM20020 and similar chips.  I don&squot;t have&n;           one, but SMC sent me the specs.&n;         - ATA protocol support?? &n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c: v2.56 96/10/18 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
+l_string|&quot;arcnet.c: v2.60 96/11/23 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -34,6 +34,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 multiline_comment|/**************************************************************************/
+multiline_comment|/* Define this if you have a really ancient &quot;RIM I&quot; ARCnet card with no I/O&n; * port at all and _only_ shared memory; this option MAY work for you.  It&squot;s&n; * untested, though, so good luck and write to me with any results!&n; */
+DECL|macro|RIM_I_MODE
+macro_line|#undef RIM_I_MODE
 multiline_comment|/* Normally, the ARCnet device needs to be assigned a name (default arc0). &n; * Ethernet devices have a function to automatically try eth0, eth1, etc&n; * until a free name is found.  To name the ARCnet device using an &quot;eth?&quot;&n; * device name, define this option.&n; */
 DECL|macro|CONFIG_ARCNET_ETHNAME
 macro_line|#undef CONFIG_ARCNET_ETHNAME
@@ -88,7 +91,7 @@ multiline_comment|/* enable NO messages (bad idea) */
 macro_line|#endif
 macro_line|#ifndef ARCNET_DEBUG
 DECL|macro|ARCNET_DEBUG
-mdefine_line|#define ARCNET_DEBUG (D_NORMAL)
+mdefine_line|#define ARCNET_DEBUG (D_NORMAL|D_EXTRA)
 macro_line|#endif
 DECL|variable|arcnet_debug
 r_int
@@ -135,16 +138,44 @@ DECL|macro|ARCNET_TOTAL_SIZE
 mdefine_line|#define ARCNET_TOTAL_SIZE&t;16
 multiline_comment|/* Handy defines for ARCnet specific stuff */
 multiline_comment|/* COM 9026 controller chip --&gt; ARCnet register addresses */
-DECL|macro|INTMASK
-mdefine_line|#define INTMASK&t;(ioaddr+0)&t;&t;/* writable */
-DECL|macro|STATUS
-mdefine_line|#define STATUS&t;(ioaddr+0)&t;&t;/* readable */
-DECL|macro|COMMAND
-mdefine_line|#define COMMAND (ioaddr+1)&t;/* writable, returns random vals on read (?) */
-DECL|macro|RESET
-mdefine_line|#define RESET  (ioaddr+8)&t;&t;/* software reset writable */
+DECL|macro|_INTMASK
+mdefine_line|#define _INTMASK (ioaddr+0)&t;/* writable */
+DECL|macro|_STATUS
+mdefine_line|#define _STATUS  (ioaddr+0)&t;/* readable */
+DECL|macro|_COMMAND
+mdefine_line|#define _COMMAND (ioaddr+1)&t;/* writable, returns random vals on read (?) */
+DECL|macro|_RESET
+mdefine_line|#define _RESET  (ioaddr+8)&t;/* software reset (on read) */
+multiline_comment|/* RIM I (command/status is memory mapped) versus RIM III (standard I/O&n; * mapped) macros.  These make things a bit cleaner.&n; */
+macro_line|#ifdef RIM_I_MODE
+DECL|macro|IOADDR
+mdefine_line|#define IOADDR&t;(dev-&gt;mem_start+0x800)
+DECL|macro|ARCSTATUS
+mdefine_line|#define ARCSTATUS&t;readb(_STATUS)
+DECL|macro|ACOMMAND
+mdefine_line|#define ACOMMAND(cmd) writeb((cmd),_COMMAND)
+DECL|macro|ARCRESET
+mdefine_line|#define ARCRESET&t;writeb(TESTvalue,ioaddr-0x800)&t;/* fake reset */
+DECL|macro|AINTMASK
+mdefine_line|#define AINTMASK(msk)&t;writeb((msk),_INTMASK)
+DECL|macro|RELEASE_REGION
+mdefine_line|#define RELEASE_REGION(x,y)&t;/* nothing */
+macro_line|#else
+DECL|macro|IOADDR
+mdefine_line|#define IOADDR&t;(dev-&gt;base_addr)
+DECL|macro|ARCSTATUS
+mdefine_line|#define ARCSTATUS&t;inb(_STATUS)
+DECL|macro|ACOMMAND
+mdefine_line|#define ACOMMAND(cmd) outb((cmd),_COMMAND)
+DECL|macro|AINTMASK
+mdefine_line|#define AINTMASK(msk)&t;outb((msk),_INTMASK)
+DECL|macro|ARCRESET
+mdefine_line|#define ARCRESET&t;inb(_RESET)
+DECL|macro|RELEASE_REGION
+mdefine_line|#define RELEASE_REGION(x,y)&t;release_region((x),(y))
+macro_line|#endif
 DECL|macro|SETMASK
-mdefine_line|#define SETMASK outb(lp-&gt;intmask,INTMASK);
+mdefine_line|#define SETMASK AINTMASK(lp-&gt;intmask)
 multiline_comment|/* Time needed to reset the card - in jiffies.  This works on my SMC&n;&t; * PC100.  I can&squot;t find a reference that tells me just how long I&n;&t; * should wait.&n;&t; */
 DECL|macro|RESETtime
 mdefine_line|#define RESETtime (HZ * 3 / 10)&t;&t;/* reset */
@@ -208,7 +239,7 @@ DECL|macro|EXTconf
 mdefine_line|#define EXTconf         0x08            /* 250-504 byte packets */
 multiline_comment|/* Starts receiving packets into recbuf.&n;&t; */
 DECL|macro|EnableReceiver
-mdefine_line|#define EnableReceiver()&t;outb(RXcmd|(recbuf&lt;&lt;3)|RXbcasts,COMMAND)
+mdefine_line|#define EnableReceiver()&t;ACOMMAND(RXcmd|(recbuf&lt;&lt;3)|RXbcasts)
 multiline_comment|/* RFC1201 Protocol ID&squot;s */
 DECL|macro|ARC_P_IP
 mdefine_line|#define ARC_P_IP&t;212&t;&t;/* 0xD4 */
@@ -229,6 +260,14 @@ multiline_comment|/* MS LanMan/WfWg protocol */
 DECL|macro|ARC_P_ETHER
 mdefine_line|#define ARC_P_ETHER&t;0xE8
 multiline_comment|/* Unsupported/indirectly supported protocols */
+DECL|macro|ARC_P_DATAPOINT_BOOT
+mdefine_line|#define ARC_P_DATAPOINT_BOOT&t;0&t;/* very old Datapoint equipment */
+DECL|macro|ARC_P_DATAPOINT_MOUNT
+mdefine_line|#define ARC_P_DATAPOINT_MOUNT&t;1
+DECL|macro|ARC_P_POWERLAN_BEACON
+mdefine_line|#define ARC_P_POWERLAN_BEACON&t;8&t;/* Probably ATA-Netbios related */
+DECL|macro|ARC_P_POWERLAN_BEACON2
+mdefine_line|#define ARC_P_POWERLAN_BEACON2&t;243
 DECL|macro|ARC_P_LANSOFT
 mdefine_line|#define ARC_P_LANSOFT&t;251&t;&t;/* 0xFB - what is this? */
 DECL|macro|ARC_P_ATALK
@@ -1367,6 +1406,119 @@ suffix:semicolon
 )brace
 macro_line|#endif 
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
+macro_line|#ifdef RIM_I_MODE
+multiline_comment|/* We cannot probe for a RIM I card; one reason is I don&squot;t know how to reset&n; * them.  In fact, we can&squot;t even get their node ID automatically.  So, we&n; * need to be passed a specific shmem address, IRQ, and node ID (stored in&n; * dev-&gt;base_addr)&n; */
+DECL|function|arcnet_probe
+r_int
+id|arcnet_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+id|BUGLVL
+c_func
+(paren
+id|D_NORMAL
+)paren
+id|printk
+c_func
+(paren
+id|version
+)paren
+suffix:semicolon
+id|BUGMSG
+c_func
+(paren
+id|D_NORMAL
+comma
+l_string|&quot;Compiled for ARCnet RIM I (autoprobe disabled)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|BUGMSG
+c_func
+(paren
+id|D_NORMAL
+comma
+l_string|&quot;Given: node %02lXh, shmem %lXh, irq %d&bslash;n&quot;
+comma
+id|dev-&gt;base_addr
+comma
+id|dev-&gt;mem_start
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;mem_start
+op_le
+l_int|0
+op_logical_or
+id|dev-&gt;irq
+op_le
+l_int|0
+)paren
+(brace
+id|BUGMSG
+c_func
+(paren
+id|D_NORMAL
+comma
+l_string|&quot;No autoprobe for RIM I; you &quot;
+l_string|&quot;must specify the shmem and irq!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dev-&gt;base_addr
+op_le
+l_int|0
+op_logical_or
+id|dev-&gt;base_addr
+OG
+l_int|255
+)paren
+(brace
+id|BUGMSG
+c_func
+(paren
+id|D_NORMAL
+comma
+l_string|&quot;You need to specify your card&squot;s station &quot;
+l_string|&quot;ID!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_return
+id|arcnet_found
+c_func
+(paren
+id|dev
+comma
+id|dev-&gt;base_addr
+comma
+id|dev-&gt;irq
+comma
+id|dev-&gt;mem_start
+)paren
+suffix:semicolon
+)brace
+macro_line|#else /* not RIM_I_MODE, so use a real autoprobe */
 multiline_comment|/* Check for an ARCnet network adaptor, and return &squot;0&squot; if one exists.&n; *  If dev-&gt;base_addr == 0, probe all likely locations.&n; *  If dev-&gt;base_addr == 1, always return failure.&n; *  If dev-&gt;base_addr == 2, allocate space for the device and return success&n; *  &t;&t;&t;    (detachable devices only).&n; *&n; * NOTE: the list of possible ports/shmems is static, so it is retained&n; * across calls to arcnet_probe.  So, if more than one ARCnet probe is made,&n; * values that were discarded once will not even be tried again.&n; *&n; * FIXME: grab all devices in one shot and eliminate the big static array.&n; */
 DECL|function|arcnet_probe
 r_int
@@ -1588,7 +1740,7 @@ id|shmems
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if 1
 id|BUGLVL
 c_func
 (paren
@@ -1616,7 +1768,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: * This is an ALPHA version!  (Last stable release: v2.22)  E-mail me if&bslash;n&quot;
+l_string|&quot;arcnet: * This is an ALPHA version!  (Last stable release: v2.56)  E-mail me if&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -1841,11 +1993,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 op_eq
 l_int|0xFF
 )paren
@@ -1894,11 +2042,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|inb
-c_func
-(paren
-id|RESET
-)paren
+id|ARCRESET
 suffix:semicolon
 multiline_comment|/* begin resetting card */
 id|BUGMSG2
@@ -2081,10 +2225,8 @@ id|shmem
 op_increment
 )paren
 (brace
-r_volatile
-id|u_char
-op_star
-id|cptr
+id|u_long
+id|ptr
 suffix:semicolon
 id|numprint
 op_increment
@@ -2129,11 +2271,10 @@ op_star
 id|shmem
 )paren
 suffix:semicolon
-id|cptr
+id|ptr
 op_assign
 (paren
-id|u_char
-op_star
+id|u_long
 )paren
 (paren
 op_star
@@ -2143,8 +2284,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|cptr
+id|readb
+c_func
+(paren
+id|ptr
+)paren
 op_ne
 id|TESTvalue
 )paren
@@ -2156,8 +2300,11 @@ id|D_INIT_REASONS
 comma
 l_string|&quot;(mem=%02Xh, not %02Xh)&bslash;n&quot;
 comma
-op_star
-id|cptr
+id|readb
+c_func
+(paren
+id|ptr
+)paren
 comma
 id|TESTvalue
 )paren
@@ -2199,16 +2346,22 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* By writing 0x42 to the TESTvalue location, we also make&n;&t;&t; * sure no &quot;mirror&quot; shmem areas show up - if they occur&n;&t;&t; * in another pass through this loop, they will be discarded&n;&t;&t; * because *cptr != TESTvalue.&n;&t;&t; */
-op_star
-id|cptr
-op_assign
+id|writeb
+c_func
+(paren
 l_int|0x42
+comma
+id|ptr
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|cptr
+id|readb
+c_func
+(paren
+id|ptr
+)paren
 op_ne
 l_int|0x42
 )paren
@@ -2472,11 +2625,7 @@ id|port
 suffix:semicolon
 id|status
 op_assign
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 suffix:semicolon
 r_if
 c_cond
@@ -2544,7 +2693,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|CFLAGScmd
@@ -2552,17 +2701,11 @@ op_or
 id|RESETclear
 op_or
 id|CONFIGclear
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 id|status
 op_assign
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 suffix:semicolon
 r_if
 c_cond
@@ -2634,12 +2777,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb
+id|AINTMASK
 c_func
 (paren
 id|NORXflag
-comma
-id|INTMASK
 )paren
 suffix:semicolon
 id|udelay
@@ -2648,12 +2789,10 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-id|outb
+id|AINTMASK
 c_func
 (paren
 l_int|0
-comma
-id|INTMASK
 )paren
 suffix:semicolon
 id|airq
@@ -2754,11 +2893,7 @@ OG
 l_int|1
 )paren
 (brace
-id|inb
-c_func
-(paren
-id|RESET
-)paren
+id|ARCRESET
 suffix:semicolon
 id|JIFFER
 c_func
@@ -2770,27 +2905,20 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* just one shmem and port, assume they match */
-op_star
+id|writeb
+c_func
 (paren
-id|u_char
-op_star
-)paren
-(paren
+id|TESTvalue
+comma
 id|shmems
 (braket
 l_int|0
 )braket
 )paren
-op_assign
-id|TESTvalue
 suffix:semicolon
 )brace
 macro_line|#else
-id|inb
-c_func
-(paren
-id|RESET
-)paren
+id|ARCRESET
 suffix:semicolon
 id|JIFFER
 c_func
@@ -2820,15 +2948,13 @@ id|shmem
 op_increment
 )paren
 (brace
-id|u_char
-op_star
-id|cptr
+id|u_long
+id|ptr
 suffix:semicolon
-id|cptr
+id|ptr
 op_assign
 (paren
-id|u_char
-op_star
+id|u_long
 )paren
 (paren
 op_star
@@ -2838,8 +2964,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|cptr
+id|readb
+c_func
+(paren
+id|ptr
+)paren
 op_eq
 id|TESTvalue
 )paren
@@ -2912,8 +3041,11 @@ id|D_INIT_REASONS
 comma
 l_string|&quot;%Xh-&quot;
 comma
-op_star
-id|cptr
+id|readb
+c_func
+(paren
+id|ptr
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -3004,17 +3136,14 @@ suffix:semicolon
 id|shmem
 op_increment
 )paren
-op_star
+id|writeb
+c_func
 (paren
-id|u_char
-op_star
-)paren
-(paren
+id|TESTvalue
+comma
 op_star
 id|shmem
 )paren
-op_assign
-id|TESTvalue
 suffix:semicolon
 r_if
 c_cond
@@ -3033,6 +3162,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#endif /* !RIM_I_MODE */
 multiline_comment|/* Set up the struct device associated with this card.  Called after&n; * probing succeeds.&n; */
 DECL|function|arcnet_found
 r_int
@@ -3054,11 +3184,9 @@ id|u_long
 id|shmem
 )paren
 (brace
-id|u_char
-op_star
+id|u_long
 id|first_mirror
 comma
-op_star
 id|last_mirror
 suffix:semicolon
 r_struct
@@ -3066,20 +3194,8 @@ id|arcnet_local
 op_star
 id|lp
 suffix:semicolon
-multiline_comment|/* reserve the I/O region */
-id|request_region
-c_func
-(paren
-id|port
-comma
-id|ARCNET_TOTAL_SIZE
-comma
-l_string|&quot;arcnet&quot;
-)paren
-suffix:semicolon
-id|dev-&gt;base_addr
-op_assign
-id|port
+r_int
+id|mirror_size
 suffix:semicolon
 multiline_comment|/* reserve the irq */
 r_if
@@ -3111,14 +3227,6 @@ comma
 id|airq
 )paren
 suffix:semicolon
-id|release_region
-c_func
-(paren
-id|port
-comma
-id|ARCNET_TOTAL_SIZE
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENODEV
@@ -3135,65 +3243,144 @@ id|dev-&gt;irq
 op_assign
 id|airq
 suffix:semicolon
+macro_line|#ifdef RIM_I_MODE
+id|dev-&gt;base_addr
+op_assign
+l_int|0
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|TESTvalue
+comma
+id|shmem
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+id|port
+comma
+id|shmem
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* actually the node ID */
+macro_line|#else
+multiline_comment|/* reserve the I/O region - guaranteed to work by check_region */
+id|request_region
+c_func
+(paren
+id|port
+comma
+id|ARCNET_TOTAL_SIZE
+comma
+l_string|&quot;arcnet&quot;
+)paren
+suffix:semicolon
+id|dev-&gt;base_addr
+op_assign
+id|port
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* find the real shared memory start/end points, including mirrors */
 DECL|macro|BUFFER_SIZE
 mdefine_line|#define BUFFER_SIZE (512)
 DECL|macro|MIRROR_SIZE
 mdefine_line|#define MIRROR_SIZE (BUFFER_SIZE*4)
+multiline_comment|/* guess the actual size of one &quot;memory mirror&quot; - the number of&n;&t; * bytes between copies of the shared memory.  On most cards, it&squot;s&n;&t; * 2k (or there are no mirrors at all) but on some, it&squot;s 4k.&n;&t; */
+id|mirror_size
+op_assign
+id|MIRROR_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|readb
+c_func
+(paren
+id|shmem
+)paren
+op_eq
+id|TESTvalue
+op_logical_and
+id|readb
+c_func
+(paren
+id|shmem
+op_minus
+id|mirror_size
+)paren
+op_ne
+id|TESTvalue
+op_logical_and
+id|readb
+c_func
+(paren
+id|shmem
+op_minus
+l_int|2
+op_star
+id|mirror_size
+)paren
+op_eq
+id|TESTvalue
+)paren
+id|mirror_size
+op_mul_assign
+l_int|2
+suffix:semicolon
 id|first_mirror
 op_assign
 id|last_mirror
 op_assign
-(paren
-id|u_char
-op_star
-)paren
 id|shmem
 suffix:semicolon
 r_while
 c_loop
 (paren
-op_star
+id|readb
+c_func
+(paren
 id|first_mirror
+)paren
 op_eq
 id|TESTvalue
 )paren
 id|first_mirror
 op_sub_assign
-id|MIRROR_SIZE
+id|mirror_size
 suffix:semicolon
 id|first_mirror
 op_add_assign
-id|MIRROR_SIZE
+id|mirror_size
 suffix:semicolon
 r_while
 c_loop
 (paren
-op_star
+id|readb
+c_func
+(paren
 id|last_mirror
+)paren
 op_eq
 id|TESTvalue
 )paren
 id|last_mirror
 op_add_assign
-id|MIRROR_SIZE
+id|mirror_size
 suffix:semicolon
 id|last_mirror
 op_sub_assign
-id|MIRROR_SIZE
+id|mirror_size
 suffix:semicolon
 id|dev-&gt;mem_start
 op_assign
-(paren
-id|u_long
-)paren
 id|first_mirror
 suffix:semicolon
 id|dev-&gt;mem_end
 op_assign
-(paren
-id|u_long
-)paren
 id|last_mirror
 op_plus
 id|MIRROR_SIZE
@@ -3256,7 +3443,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|release_region
+id|RELEASE_REGION
 c_func
 (paren
 id|port
@@ -3379,10 +3566,13 @@ suffix:semicolon
 multiline_comment|/* get and check the station ID from offset 1 in shmem */
 id|lp-&gt;stationid
 op_assign
+id|readb
+c_func
+(paren
 id|first_mirror
-(braket
+op_plus
 l_int|1
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3430,7 +3620,7 @@ c_func
 id|D_NORMAL
 comma
 l_string|&quot;ARCnet station %02Xh found at %03lXh, IRQ %d, &quot;
-l_string|&quot;ShMem %lXh (%ld bytes).&bslash;n&quot;
+l_string|&quot;ShMem %lXh (%ld*%d bytes).&bslash;n&quot;
 comma
 id|lp-&gt;stationid
 comma
@@ -3440,11 +3630,17 @@ id|dev-&gt;irq
 comma
 id|dev-&gt;mem_start
 comma
+(paren
 id|dev-&gt;mem_end
 op_minus
 id|dev-&gt;mem_start
 op_plus
 l_int|1
+)paren
+op_div
+id|mirror_size
+comma
+id|mirror_size
 )paren
 suffix:semicolon
 r_return
@@ -3481,7 +3677,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 suffix:semicolon
 r_int
 id|delayval
@@ -3489,10 +3685,6 @@ comma
 id|recbuf
 op_assign
 id|lp-&gt;recbuf
-suffix:semicolon
-id|u_char
-op_star
-id|cardmem
 suffix:semicolon
 multiline_comment|/* no IRQ&squot;s, please! */
 id|lp-&gt;intmask
@@ -3510,11 +3702,7 @@ l_string|&quot;Resetting %s (status=%Xh)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 )paren
 suffix:semicolon
 r_if
@@ -3524,11 +3712,7 @@ id|reset_delay
 )paren
 (brace
 multiline_comment|/* reset the card */
-id|inb
-c_func
-(paren
-id|RESET
-)paren
+id|ARCRESET
 suffix:semicolon
 id|JIFFER
 c_func
@@ -3537,43 +3721,32 @@ id|RESETtime
 )paren
 suffix:semicolon
 )brace
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|CFLAGScmd
 op_or
 id|RESETclear
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* clear flags &amp; end reset */
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|CFLAGScmd
 op_or
 id|CONFIGclear
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* verify that the ARCnet signature byte is present */
-id|cardmem
-op_assign
-(paren
-id|u_char
-op_star
-)paren
-id|dev-&gt;mem_start
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|cardmem
-(braket
-l_int|0
-)braket
+id|readb
+c_func
+(paren
+id|dev-&gt;mem_start
+)paren
 op_ne
 id|TESTvalue
 )paren
@@ -3602,14 +3775,12 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* enable extended (512-byte) packets */
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|CONFIGcmd
 op_or
 id|EXTconf
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 macro_line|#ifndef SLOW_XMIT_COPY
@@ -3619,13 +3790,9 @@ c_func
 (paren
 id|D_DURING
 )paren
-id|memset
+id|memset_io
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|dev-&gt;mem_start
 comma
 l_int|0x42
@@ -3773,7 +3940,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 suffix:semicolon
 r_if
 c_cond
@@ -4091,12 +4258,10 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* make sure we&squot;re ready to receive IRQ&squot;s.&n;&t; * arcnet_reset sets this for us, but if we receive one before&n;&t; * START is set to 1, it could be ignored.  So, we turn IRQ&squot;s&n;&t; * off, then on again to clean out the IRQ controller.&n;&t; */
-id|outb
+id|AINTMASK
 c_func
 (paren
 l_int|0
-comma
-id|INTMASK
 )paren
 suffix:semicolon
 id|udelay
@@ -4130,7 +4295,7 @@ id|dev
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 suffix:semicolon
 r_struct
 id|arcnet_local
@@ -4154,11 +4319,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Shut down the card */
 macro_line|#ifdef FAST_IFCONFIG
-id|inb
-c_func
-(paren
-id|RESET
-)paren
+id|ARCRESET
 suffix:semicolon
 multiline_comment|/* reset IRQ won&squot;t run if START=0 */
 macro_line|#else
@@ -4169,21 +4330,17 @@ suffix:semicolon
 id|SETMASK
 suffix:semicolon
 multiline_comment|/* no IRQ&squot;s (except RESET, of course) */
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|NOTXcmd
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* stop transmit */
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|NORXcmd
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* disable receive */
@@ -4309,7 +4466,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 suffix:semicolon
 id|BUGMSG
 c_func
@@ -4318,11 +4475,7 @@ id|D_DURING
 comma
 l_string|&quot;transmit requested (status=%Xh, inTX=%d)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|lp-&gt;intx
 )paren
@@ -4389,11 +4542,7 @@ multiline_comment|/*int recbuf=lp-&gt;recbuf;*/
 r_int
 id|status
 op_assign
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 suffix:semicolon
 r_if
 c_cond
@@ -4485,12 +4634,10 @@ suffix:semicolon
 id|lp-&gt;stats.tx_aborted_errors
 op_increment
 suffix:semicolon
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|NOTXcmd
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 )brace
@@ -4548,11 +4695,7 @@ id|D_NORMAL
 comma
 l_string|&quot;tx passed null skb (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|lp-&gt;intx
 comma
@@ -4588,11 +4731,7 @@ id|D_NORMAL
 comma
 l_string|&quot;trying to start new packet while busy! (status=%Xh)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 )paren
 suffix:semicolon
 id|lp-&gt;intmask
@@ -4602,12 +4741,10 @@ id|TXFREEflag
 suffix:semicolon
 id|SETMASK
 suffix:semicolon
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|NOTXcmd
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* abort current send */
@@ -4660,11 +4797,7 @@ id|D_NORMAL
 comma
 l_string|&quot;transmitter called with busy bit set! (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|lp-&gt;intx
 comma
@@ -4721,7 +4854,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 comma
 id|bad
 suffix:semicolon
@@ -5136,7 +5269,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 comma
 id|maxsegsize
 op_assign
@@ -5161,11 +5294,7 @@ id|D_DURING
 comma
 l_string|&quot;continue_tx called (status=%Xh, intx=%d, intxh=%d, intmask=%Xh&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|lp-&gt;intx
 comma
@@ -5381,6 +5510,8 @@ r_union
 id|ArcPacket
 op_star
 )paren
+id|phys_to_virt
+c_func
 (paren
 id|dev-&gt;mem_start
 op_plus
@@ -5440,13 +5571,9 @@ c_func
 (paren
 id|D_DURING
 )paren
-id|memset
+id|memset_io
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|dev-&gt;mem_start
 op_plus
 id|lp-&gt;txbuf
@@ -5821,7 +5948,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 suffix:semicolon
 id|BUGMSG
 c_func
@@ -5830,11 +5957,7 @@ id|D_DURING
 comma
 l_string|&quot;go_tx: status=%Xh, intmask=%Xh, txready=%d, sending=%d&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|lp-&gt;intmask
 comma
@@ -5872,7 +5995,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* start sending */
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|TXcmd
@@ -5882,8 +6005,6 @@ id|lp-&gt;txready
 op_lshift
 l_int|3
 )paren
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_packets
@@ -5996,8 +6117,9 @@ suffix:semicolon
 multiline_comment|/* RESET flag was enabled - if !dev-&gt;start, we must clear it right&n;&t; * away (but nothing else) since inthandler() is never called.&n;&t; */
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 suffix:semicolon
+multiline_comment|/* can&squot;t do this before checking dev!=NULL */
 r_if
 c_cond
 (paren
@@ -6008,22 +6130,16 @@ id|dev-&gt;start
 r_if
 c_cond
 (paren
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 op_amp
 id|RESETflag
 )paren
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|CFLAGScmd
 op_or
 id|RESETclear
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 r_return
@@ -6065,7 +6181,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 comma
 id|status
 comma
@@ -6093,12 +6209,10 @@ r_return
 suffix:semicolon
 multiline_comment|/* don&squot;t even try. */
 )brace
-id|outb
+id|AINTMASK
 c_func
 (paren
 l_int|0
-comma
-id|INTMASK
 )paren
 suffix:semicolon
 id|INTERRUPT
@@ -6112,11 +6226,7 @@ id|D_DURING
 comma
 l_string|&quot;in arcnet_inthandler (status=%Xh, intmask=%Xh)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|lp-&gt;intmask
 )paren
@@ -6125,11 +6235,7 @@ r_do
 (brace
 id|status
 op_assign
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 suffix:semicolon
 id|didsomething
 op_assign
@@ -6355,11 +6461,7 @@ id|D_DURING
 comma
 l_string|&quot;TXDONE while intx! (status=%Xh, intx=%d)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|lp-&gt;intx
 )paren
@@ -6541,14 +6643,12 @@ op_amp
 id|RECONflag
 )paren
 (brace
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|CFLAGScmd
 op_or
 id|CONFIGclear
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_carrier_errors
@@ -6783,11 +6883,7 @@ id|D_DURING
 comma
 l_string|&quot;net_interrupt complete (status=%Xh, count=%d)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 comma
 id|boguscount
 )paren
@@ -6840,7 +6936,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 suffix:semicolon
 r_union
 id|ArcPacket
@@ -6852,6 +6948,8 @@ r_union
 id|ArcPacket
 op_star
 )paren
+id|phys_to_virt
+c_func
 (paren
 id|dev-&gt;mem_start
 op_plus
@@ -6901,11 +6999,7 @@ id|D_NORMAL
 comma
 l_string|&quot;discarding old packet. (status=%Xh)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|ARCSTATUS
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_errors
@@ -7066,6 +7160,22 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+r_case
+id|ARC_P_DATAPOINT_BOOT
+suffix:colon
+r_case
+id|ARC_P_DATAPOINT_MOUNT
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+id|ARC_P_POWERLAN_BEACON
+suffix:colon
+r_case
+id|ARC_P_POWERLAN_BEACON2
+suffix:colon
+r_break
+suffix:semicolon
 r_case
 id|ARC_P_LANSOFT
 suffix:colon
@@ -8163,7 +8273,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if 0&t;/* standard ARCnet cards have no promiscuous mode */
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n; * num_addrs == -1&t;Promiscuous mode, receive all packets&n; * num_addrs == 0&t;Normal mode, clear multicast list&n; * num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n; *&t;&t;&t;best-effort filtering.&n; */
 r_static
 r_void
@@ -8176,53 +8286,16 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#if 0&t;  /* no promiscuous mode at all on most ARCnet models */
-r_struct
-id|arcnet_local
-op_star
-id|lp
-op_assign
-(paren
-r_struct
-id|arcnet_local
-op_star
-)paren
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-r_int
-id|ioaddr
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|num_addrs
 )paren
 (brace
-id|outw
-c_func
-(paren
-l_int|69
-comma
-id|ioaddr
-)paren
-suffix:semicolon
 multiline_comment|/* Enable promiscuous mode */
 )brace
 r_else
-id|outw
-c_func
-(paren
-l_int|99
-comma
-id|ioaddr
-)paren
-suffix:semicolon
 multiline_comment|/* Disable promiscuous mode, use normal mode */
-macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/* Create the ARCnet ClientData header for an arbitrary protocol layer&n; *&n; * saddr=NULL&t;means use device source address (always will anyway)&n; * daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
@@ -8947,7 +9020,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 comma
 id|bad
 suffix:semicolon
@@ -8961,6 +9034,8 @@ r_union
 id|ArcPacket
 op_star
 )paren
+id|phys_to_virt
+c_func
 (paren
 id|dev-&gt;mem_start
 op_plus
@@ -9081,13 +9156,9 @@ c_func
 (paren
 id|D_DURING
 )paren
-id|memset
+id|memset_io
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|dev-&gt;mem_start
 op_plus
 id|lp-&gt;txbuf
@@ -9629,7 +9700,7 @@ suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|dev-&gt;base_addr
+id|IOADDR
 comma
 id|bad
 comma
@@ -10614,14 +10685,32 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* use eg. device=&quot;arc1&quot; to change name */
+macro_line|#ifdef RIM_I_MODE
+DECL|variable|node
+r_static
 r_int
+id|node
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* you must specify the node ID for RIM I cards */
+macro_line|#endif
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
 r_void
 )paren
 (brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+op_amp
+id|thiscard
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10630,7 +10719,7 @@ id|device
 id|strcpy
 c_func
 (paren
-id|thiscard.name
+id|dev-&gt;name
 comma
 id|device
 )paren
@@ -10641,7 +10730,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|thiscard.name
+id|dev-&gt;name
 (braket
 l_int|0
 )braket
@@ -10649,13 +10738,24 @@ l_int|0
 id|strcpy
 c_func
 (paren
-id|thiscard.name
+id|dev-&gt;name
 comma
 l_string|&quot;arc0&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|thiscard.base_addr
+macro_line|#ifdef RIM_I_MODE
+r_if
+c_cond
+(paren
+id|node
+)paren
+id|io
+op_assign
+id|node
+suffix:semicolon
+macro_line|#endif
+id|dev-&gt;base_addr
 op_assign
 id|io
 suffix:semicolon
@@ -10668,18 +10768,18 @@ id|irqnum
 op_assign
 id|irq
 suffix:semicolon
-id|thiscard.irq
+id|dev-&gt;irq
 op_assign
 id|irqnum
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|thiscard.irq
+id|dev-&gt;irq
 op_eq
 l_int|2
 )paren
-id|thiscard.irq
+id|dev-&gt;irq
 op_assign
 l_int|9
 suffix:semicolon
@@ -10689,11 +10789,11 @@ c_cond
 id|shmem
 )paren
 (brace
-id|thiscard.mem_start
+id|dev-&gt;mem_start
 op_assign
 id|shmem
 suffix:semicolon
-id|thiscard.mem_end
+id|dev-&gt;mem_end
 op_assign
 id|thiscard.mem_start
 op_plus
@@ -10703,7 +10803,7 @@ l_int|4
 op_minus
 l_int|1
 suffix:semicolon
-id|thiscard.rmem_start
+id|dev-&gt;rmem_start
 op_assign
 id|thiscard.mem_start
 op_plus
@@ -10711,7 +10811,7 @@ l_int|512
 op_star
 l_int|0
 suffix:semicolon
-id|thiscard.rmem_end
+id|dev-&gt;rmem_end
 op_assign
 id|thiscard.mem_start
 op_plus
@@ -10728,8 +10828,7 @@ c_cond
 id|register_netdev
 c_func
 (paren
-op_amp
-id|thiscard
+id|dev
 )paren
 op_ne
 l_int|0
@@ -10742,29 +10841,36 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
 r_void
 )paren
 (brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+op_amp
+id|thiscard
+suffix:semicolon
 r_int
 id|ioaddr
 op_assign
-id|thiscard.base_addr
+id|IOADDR
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|thiscard.start
+id|dev-&gt;start
 )paren
 id|arcnet_close
 c_func
 (paren
-op_amp
-id|thiscard
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Flush TX and disable RX */
@@ -10774,30 +10880,24 @@ c_cond
 id|ioaddr
 )paren
 (brace
-id|outb
+id|AINTMASK
 c_func
 (paren
 l_int|0
-comma
-id|INTMASK
 )paren
 suffix:semicolon
 multiline_comment|/* disable IRQ&squot;s */
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|NOTXcmd
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* stop transmit */
-id|outb
+id|ACOMMAND
 c_func
 (paren
 id|NORXcmd
-comma
-id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* disable receive */
@@ -10805,12 +10905,12 @@ multiline_comment|/* disable receive */
 r_if
 c_cond
 (paren
-id|thiscard.irq
+id|dev-&gt;irq
 )paren
 (brace
 id|irq2dev_map
 (braket
-id|thiscard.irq
+id|dev-&gt;irq
 )braket
 op_assign
 l_int|NULL
@@ -10818,7 +10918,7 @@ suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|thiscard.irq
+id|dev-&gt;irq
 comma
 l_int|NULL
 )paren
@@ -10827,12 +10927,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|thiscard.base_addr
+id|dev-&gt;base_addr
 )paren
-id|release_region
+id|RELEASE_REGION
 c_func
 (paren
-id|thiscard.base_addr
+id|dev-&gt;base_addr
 comma
 id|ARCNET_TOTAL_SIZE
 )paren
@@ -10840,17 +10940,16 @@ suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
-op_amp
-id|thiscard
+id|dev
 )paren
 suffix:semicolon
 id|kfree
 c_func
 (paren
-id|thiscard.priv
+id|dev-&gt;priv
 )paren
 suffix:semicolon
-id|thiscard.priv
+id|dev-&gt;priv
 op_assign
 l_int|NULL
 suffix:semicolon
