@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/keyboard.c&n; *&n; * Keyboard driver for Linux v0.96 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/keyboard.c&n; *&n; * Keyboard driver for Linux v0.96 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; */
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ 1
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11,6 +11,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &quot;diacr.h&quot;
+DECL|macro|SIZE
+mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
 macro_line|#ifndef KBD_DEFFLAGS
 macro_line|#ifdef CONFIG_KBD_META
 DECL|macro|KBD_META
@@ -88,20 +91,7 @@ op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* modified by psaux.c */
-DECL|variable|kbd_dead_keys
-r_int
-r_int
-id|kbd_dead_keys
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|kbd_prev_dead_keys
-r_int
-r_int
-id|kbd_prev_dead_keys
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&n; * global state includes the following, and various static variables&n; * in this module: prev_scancode, shift_state, diacr, npadch,&n; *   dead_key_next, last_console&n; */
 multiline_comment|/* shift state counters.. */
 DECL|variable|k_down
 r_static
@@ -148,6 +138,37 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* last used VC */
+DECL|variable|dead_key_next
+r_static
+r_int
+id|dead_key_next
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|shift_state
+r_static
+r_int
+id|shift_state
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|npadch
+r_static
+r_int
+id|npadch
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* -1 or number assembled on pad */
+DECL|variable|diacr
+r_static
+r_int
+r_char
+id|diacr
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|rep
 r_static
 r_char
@@ -405,9 +426,9 @@ id|NR_FUNC
 op_minus
 l_int|1
 comma
-l_int|13
+l_int|14
 comma
-l_int|16
+l_int|17
 comma
 l_int|4
 comma
@@ -429,41 +450,11 @@ r_const
 r_int
 id|NR_TYPES
 op_assign
-(paren
-r_sizeof
+id|SIZE
+c_func
 (paren
 id|max_vals
 )paren
-op_div
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-DECL|macro|E0_BASE
-mdefine_line|#define E0_BASE 96
-DECL|variable|shift_state
-r_static
-r_int
-id|shift_state
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|diacr
-r_static
-r_int
-id|diacr
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-DECL|variable|npadch
-r_static
-r_int
-id|npadch
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_void
@@ -475,31 +466,21 @@ r_int
 suffix:semicolon
 r_static
 r_int
-r_int
+r_char
 id|handle_diacr
 c_func
 (paren
 r_int
-r_int
+r_char
 )paren
 suffix:semicolon
+multiline_comment|/* pt_regs - set by keyboard_interrupt(), used by show_ptregs() */
 DECL|variable|pt_regs
 r_static
 r_struct
 id|pt_regs
 op_star
 id|pt_regs
-suffix:semicolon
-r_static
-r_inline
-r_void
-id|translate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-)paren
 suffix:semicolon
 DECL|function|kb_wait
 r_static
@@ -572,6 +553,342 @@ l_int|0x64
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Translation of escaped scancodes to keysyms.&n; * This should be user-settable.&n; */
+DECL|macro|E0_BASE
+mdefine_line|#define E0_BASE 96
+DECL|macro|E0_KPENTER
+mdefine_line|#define E0_KPENTER (E0_BASE+0)
+DECL|macro|E0_RCTRL
+mdefine_line|#define E0_RCTRL   (E0_BASE+1)
+DECL|macro|E0_KPSLASH
+mdefine_line|#define E0_KPSLASH (E0_BASE+2)
+DECL|macro|E0_PRSCR
+mdefine_line|#define E0_PRSCR   (E0_BASE+3)
+DECL|macro|E0_RALT
+mdefine_line|#define E0_RALT    (E0_BASE+4)
+DECL|macro|E0_BREAK
+mdefine_line|#define E0_BREAK   (E0_BASE+5)  /* (control-pause) */
+DECL|macro|E0_HOME
+mdefine_line|#define E0_HOME    (E0_BASE+6)
+DECL|macro|E0_UP
+mdefine_line|#define E0_UP      (E0_BASE+7)
+DECL|macro|E0_PGUP
+mdefine_line|#define E0_PGUP    (E0_BASE+8)
+DECL|macro|E0_LEFT
+mdefine_line|#define E0_LEFT    (E0_BASE+9)
+DECL|macro|E0_RIGHT
+mdefine_line|#define E0_RIGHT   (E0_BASE+10)
+DECL|macro|E0_END
+mdefine_line|#define E0_END     (E0_BASE+11)
+DECL|macro|E0_DOWN
+mdefine_line|#define E0_DOWN    (E0_BASE+12)
+DECL|macro|E0_PGDN
+mdefine_line|#define E0_PGDN    (E0_BASE+13)
+DECL|macro|E0_INS
+mdefine_line|#define E0_INS     (E0_BASE+14)
+DECL|macro|E0_DEL
+mdefine_line|#define E0_DEL     (E0_BASE+15)
+multiline_comment|/* BTC */
+DECL|macro|E0_MACRO
+mdefine_line|#define E0_MACRO   (E0_BASE+16)
+multiline_comment|/* LK450 */
+DECL|macro|E0_F13
+mdefine_line|#define E0_F13     (E0_BASE+17)
+DECL|macro|E0_F14
+mdefine_line|#define E0_F14     (E0_BASE+18)
+DECL|macro|E0_HELP
+mdefine_line|#define E0_HELP    (E0_BASE+19)
+DECL|macro|E0_DO
+mdefine_line|#define E0_DO      (E0_BASE+20)
+DECL|macro|E0_F17
+mdefine_line|#define E0_F17     (E0_BASE+21)
+DECL|macro|E0_KPMINPLUS
+mdefine_line|#define E0_KPMINPLUS (E0_BASE+22)
+DECL|macro|E1_PAUSE
+mdefine_line|#define E1_PAUSE   (E0_BASE+23)
+DECL|variable|e0_keys
+r_static
+r_int
+r_char
+id|e0_keys
+(braket
+l_int|128
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x00-0x07 */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x08-0x0f */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x10-0x17 */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|E0_KPENTER
+comma
+id|E0_RCTRL
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x18-0x1f */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x20-0x27 */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x28-0x2f */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|E0_KPSLASH
+comma
+l_int|0
+comma
+id|E0_PRSCR
+comma
+multiline_comment|/* 0x30-0x37 */
+id|E0_RALT
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|E0_F13
+comma
+id|E0_F14
+comma
+id|E0_HELP
+comma
+multiline_comment|/* 0x38-0x3f */
+id|E0_DO
+comma
+id|E0_F17
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|E0_BREAK
+comma
+id|E0_HOME
+comma
+multiline_comment|/* 0x40-0x47 */
+id|E0_UP
+comma
+id|E0_PGUP
+comma
+l_int|0
+comma
+id|E0_LEFT
+comma
+l_int|0
+comma
+id|E0_RIGHT
+comma
+id|E0_KPMINPLUS
+comma
+id|E0_END
+comma
+multiline_comment|/* 0x48-0x4f */
+id|E0_DOWN
+comma
+id|E0_PGDN
+comma
+id|E0_INS
+comma
+id|E0_DEL
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x50-0x57 */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x58-0x5f */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x60-0x67 */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|E0_MACRO
+comma
+multiline_comment|/* 0x68-0x6f */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x70-0x77 */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+multiline_comment|/* 0x78-0x7f */
+)brace
+suffix:semicolon
 DECL|function|keyboard_interrupt
 r_static
 r_void
@@ -586,6 +903,21 @@ r_int
 r_char
 id|scancode
 suffix:semicolon
+r_static
+r_int
+r_int
+id|prev_scancode
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* remember E0, E1 */
+r_char
+id|up_flag
+suffix:semicolon
+multiline_comment|/* 0 or 0200 */
+r_char
+id|raw_mode
+suffix:semicolon
 id|pt_regs
 op_assign
 (paren
@@ -594,24 +926,6 @@ id|pt_regs
 op_star
 )paren
 id|int_pt_regs
-suffix:semicolon
-id|kbd_prev_dead_keys
-op_or_assign
-id|kbd_dead_keys
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kbd_dead_keys
-)paren
-id|kbd_prev_dead_keys
-op_assign
-l_int|0
-suffix:semicolon
-id|kbd_dead_keys
-op_assign
-l_int|0
 suffix:semicolon
 id|send_cmd
 c_func
@@ -707,6 +1021,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|raw_mode
+op_assign
 id|vc_kbd_flag
 c_func
 (paren
@@ -715,232 +1032,44 @@ comma
 id|VC_RAW
 )paren
 )paren
+)paren
 (brace
-id|memset
-c_func
-(paren
-id|k_down
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|k_down
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|key_down
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|key_down
-)paren
-)paren
-suffix:semicolon
-id|shift_state
-op_assign
-l_int|0
-suffix:semicolon
 id|put_queue
 c_func
 (paren
 id|scancode
 )paren
 suffix:semicolon
-r_goto
-id|end_kbd_intr
-suffix:semicolon
+multiline_comment|/* we do not return yet, because we want to maintain&n;&t;&t;   the key_down array, so that we have the correct&n;&t;&t;   values when finishing RAW mode or when changing VT&squot;s */
 )brace
-r_else
-id|translate
-c_func
-(paren
-id|scancode
-)paren
-suffix:semicolon
-id|end_kbd_intr
-suffix:colon
-id|send_cmd
-c_func
-(paren
-l_int|0xAE
-)paren
-suffix:semicolon
-multiline_comment|/* enable keyboard */
-r_return
-suffix:semicolon
-)brace
-DECL|function|translate
-r_static
-r_inline
-r_void
-id|translate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-)paren
-(brace
-r_char
-id|break_flag
-suffix:semicolon
-r_static
-r_int
-r_char
-id|e0_keys
-(braket
-)braket
-op_assign
-(brace
-l_int|0x1c
-comma
-multiline_comment|/* keypad enter */
-l_int|0x1d
-comma
-multiline_comment|/* right control */
-l_int|0x35
-comma
-multiline_comment|/* keypad slash */
-l_int|0x37
-comma
-multiline_comment|/* print screen */
-l_int|0x38
-comma
-multiline_comment|/* right alt */
-l_int|0x46
-comma
-multiline_comment|/* break (control-pause) */
-l_int|0x47
-comma
-multiline_comment|/* editpad home */
-l_int|0x48
-comma
-multiline_comment|/* editpad up */
-l_int|0x49
-comma
-multiline_comment|/* editpad pgup */
-l_int|0x4b
-comma
-multiline_comment|/* editpad left */
-l_int|0x4d
-comma
-multiline_comment|/* editpad right */
-l_int|0x4f
-comma
-multiline_comment|/* editpad end */
-l_int|0x50
-comma
-multiline_comment|/* editpad dn */
-l_int|0x51
-comma
-multiline_comment|/* editpad pgdn */
-l_int|0x52
-comma
-multiline_comment|/* editpad ins */
-l_int|0x53
-comma
-multiline_comment|/* editpad del */
-macro_line|#ifdef LK450
-l_int|0x3d
-comma
-multiline_comment|/* f13 */
-l_int|0x3e
-comma
-multiline_comment|/* f14 */
-l_int|0x3f
-comma
-multiline_comment|/* help */
-l_int|0x40
-comma
-multiline_comment|/* do */
-l_int|0x41
-comma
-multiline_comment|/* f17 */
-l_int|0x4e
-multiline_comment|/* keypad minus/plus */
-macro_line|#endif
-macro_line|#ifdef BTC
-l_int|0x6f
-multiline_comment|/* macro */
-macro_line|#endif
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|scancode
 op_eq
 l_int|0xe0
-)paren
-(brace
-id|set_kbd_dead
-c_func
-(paren
-id|KGD_E0
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+op_logical_or
 id|scancode
 op_eq
 l_int|0xe1
 )paren
 (brace
-id|set_kbd_dead
-c_func
-(paren
-id|KGD_E1
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *  The keyboard maintains its own internal caps lock and num lock&n;&t; *  statuses. In caps lock mode E0 AA precedes make code and E0 2A&n;&t; *  follows break code. In num lock mode, E0 2A precedes make&n;&t; *  code and E0 AA follows break code. We do our own book-keeping,&n;&t; *  so we will just ignore these.&n;&t; */
-r_if
-c_cond
-(paren
-id|kbd_dead
-c_func
-(paren
-id|KGD_E0
-)paren
-op_logical_and
-(paren
-id|scancode
-op_eq
-l_int|0x2a
-op_logical_or
-id|scancode
-op_eq
-l_int|0xaa
-op_logical_or
-id|scancode
-op_eq
-l_int|0x36
-op_logical_or
-id|scancode
-op_eq
-l_int|0xb6
-)paren
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* map two byte scancodes into one byte id&squot;s */
-id|break_flag
+id|prev_scancode
 op_assign
 id|scancode
-OG
-l_int|0x7f
+suffix:semicolon
+r_goto
+id|end_kbd_intr
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *  Convert scancode to keysym, using prev_scancode.&n; &t; */
+id|up_flag
+op_assign
+(paren
+id|scancode
+op_amp
+l_int|0200
+)paren
 suffix:semicolon
 id|scancode
 op_and_assign
@@ -949,68 +1078,122 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|kbd_dead
-c_func
-(paren
-id|KGD_E0
-)paren
+id|prev_scancode
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
+multiline_comment|/*&n;&t;   * usually it will be 0xe0, but a Pause key generates&n;&t;   * e1 1d 45 e1 9d c5 when pressed, and nothing when released&n;&t;   */
+r_if
+c_cond
 (paren
-id|i
+id|prev_scancode
+op_ne
+l_int|0xe0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|prev_scancode
+op_eq
+l_int|0xe1
+op_logical_and
+id|scancode
+op_eq
+l_int|0x1d
+)paren
+(brace
+id|prev_scancode
+op_assign
+l_int|0x100
+suffix:semicolon
+r_goto
+id|end_kbd_intr
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|prev_scancode
+op_eq
+l_int|0x100
+op_logical_and
+id|scancode
+op_eq
+l_int|0x45
+)paren
+(brace
+id|scancode
+op_assign
+id|E1_PAUSE
+suffix:semicolon
+id|prev_scancode
 op_assign
 l_int|0
 suffix:semicolon
-id|i
-OL
-r_sizeof
+)brace
+r_else
+(brace
+id|printk
+c_func
 (paren
-id|e0_keys
+l_string|&quot;keyboard: unknown e1 escape sequence&bslash;n&quot;
 )paren
 suffix:semicolon
-id|i
-op_increment
-)paren
+id|prev_scancode
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|end_kbd_intr
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|prev_scancode
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t;       *  The keyboard maintains its own internal caps lock and&n;&t;       *  num lock statuses. In caps lock mode E0 AA precedes make&n;&t;       *  code and E0 2A follows break code. In num lock mode,&n;&t;       *  E0 2A precedes make code and E0 AA follows break code.&n;&t;       *  We do our own book-keeping, so we will just ignore these.&n;&t;       */
+multiline_comment|/*&n;&t;       *  For my keyboard there is no caps lock mode, but there are&n;&t;       *  both Shift-L and Shift-R modes. The former mode generates&n;&t;       *  E0 2A / E0 AA pairs, the latter E0 B6 / E0 36 pairs.&n;&t;       *  So, we should also ignore the latter. - aeb@cwi.nl&n;&t;       */
 r_if
 c_cond
 (paren
 id|scancode
 op_eq
-id|e0_keys
-(braket
-id|i
-)braket
-)paren
-(brace
+l_int|0x2a
+op_logical_or
 id|scancode
-op_assign
-id|E0_BASE
-op_plus
-id|i
+op_eq
+l_int|0x36
+)paren
+r_goto
+id|end_kbd_intr
 suffix:semicolon
-id|i
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|i
-op_ne
-op_minus
-l_int|1
+id|e0_keys
+(braket
+id|scancode
+)braket
+)paren
+id|scancode
+op_assign
+id|e0_keys
+(braket
+id|scancode
+)braket
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|raw_mode
 )paren
 (brace
-macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -1019,9 +1202,10 @@ comma
 id|scancode
 )paren
 suffix:semicolon
-macro_line|#endif
-r_return
+r_goto
+id|end_kbd_intr
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -1031,9 +1215,11 @@ c_cond
 id|scancode
 op_ge
 id|E0_BASE
+op_logical_and
+op_logical_neg
+id|raw_mode
 )paren
 (brace
-macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -1046,19 +1232,17 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#endif
-r_return
+r_goto
+id|end_kbd_intr
 suffix:semicolon
 )brace
-id|rep
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&n;&t; * At this point the variable `scancode&squot; contains the keysym.&n;&t; * We keep track of the up/down status of the key, and&n;&t; * return the keysym if in MEDIUMRAW mode.&n;&t; * (Note: earlier kernels had a bug and did not pass the up/down&n;&t; * bit to applications.)&n;&t; */
 r_if
 c_cond
 (paren
-id|break_flag
+id|up_flag
 )paren
+(brace
 id|clear_bit
 c_func
 (paren
@@ -1067,6 +1251,11 @@ comma
 id|key_down
 )paren
 suffix:semicolon
+id|rep
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_else
 id|rep
 op_assign
@@ -1077,6 +1266,14 @@ id|scancode
 comma
 id|key_down
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|raw_mode
+)paren
+r_goto
+id|end_kbd_intr
 suffix:semicolon
 r_if
 c_cond
@@ -1094,12 +1291,16 @@ id|put_queue
 c_func
 (paren
 id|scancode
+op_plus
+id|up_flag
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|end_kbd_intr
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Repeat a key only if the input buffers are empty or the&n;&t; *  characters get echoed locally. This makes key repeat usable&n;&t; *  with slow applications and under heavy loads.&n;&t; */
+multiline_comment|/*&n;&t; * Small change in philosophy: earlier we defined repetition by&n;&t; *&t; rep = scancode == prev_keysym;&n;&t; *&t; prev_keysym = scancode;&n;&t; * but now by the fact that the depressed key was down already.&n;&t; * Does this ever make a difference?&n;&t; */
+multiline_comment|/*&n; &t; *  Repeat a key only if the input buffers are empty or the&n; &t; *  characters get echoed locally. This makes key repeat usable&n; &t; *  with slow applications and under heavy loads.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1170,10 +1371,19 @@ id|key_code
 op_amp
 l_int|0xff
 comma
-id|break_flag
+id|up_flag
 )paren
 suffix:semicolon
 )brace
+id|end_kbd_intr
+suffix:colon
+id|send_cmd
+c_func
+(paren
+l_int|0xAE
+)paren
+suffix:semicolon
+multiline_comment|/* enable keyboard */
 )brace
 DECL|function|put_queue
 r_static
@@ -1624,7 +1834,7 @@ id|tty
 )paren
 suffix:semicolon
 r_else
-multiline_comment|/* pressing srcoll lock 1st time sends ^S, ChN */
+multiline_comment|/* pressing scroll lock 1st time sends ^S, ChN */
 id|put_queue
 c_func
 (paren
@@ -1802,6 +2012,20 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|compose
+r_static
+r_void
+id|compose
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dead_key_next
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 DECL|function|do_spec
 r_static
 r_void
@@ -1859,29 +2083,27 @@ comma
 id|boot_it
 comma
 id|caps_on
+comma
+id|compose
 )brace
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|value
-op_ge
-r_sizeof
-(paren
-id|fn_table
-)paren
-op_div
-r_sizeof
-(paren
-id|fnp
-)paren
+id|up_flag
 )paren
 r_return
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|up_flag
+id|value
+op_ge
+id|SIZE
+c_func
+(paren
+id|fn_table
+)paren
 )paren
 r_return
 suffix:semicolon
@@ -1926,6 +2148,11 @@ id|up_flag
 r_return
 suffix:semicolon
 multiline_comment|/* no action, if this is a key release */
+r_if
+c_cond
+(paren
+id|diacr
+)paren
 id|value
 op_assign
 id|handle_diacr
@@ -1934,6 +2161,23 @@ c_func
 id|value
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dead_key_next
+)paren
+(brace
+id|dead_key_next
+op_assign
+l_int|0
+suffix:semicolon
+id|diacr
+op_assign
+id|value
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* kludge... but works for ISO 8859-1 */
 r_if
 c_cond
@@ -1982,6 +2226,16 @@ id|value
 )paren
 suffix:semicolon
 )brace
+DECL|macro|A_GRAVE
+mdefine_line|#define A_GRAVE  &squot;`&squot;
+DECL|macro|A_ACUTE
+mdefine_line|#define A_ACUTE  &squot;&bslash;&squot;&squot;
+DECL|macro|A_CFLEX
+mdefine_line|#define A_CFLEX  &squot;^&squot;
+DECL|macro|A_TILDE
+mdefine_line|#define A_TILDE  &squot;~&squot;
+DECL|macro|A_DIAER
+mdefine_line|#define A_DIAER  &squot;&quot;&squot;
 DECL|variable|ret_diacr
 r_static
 r_int
@@ -1991,18 +2245,17 @@ id|ret_diacr
 )braket
 op_assign
 (brace
-l_char|&squot;`&squot;
+id|A_GRAVE
 comma
-l_char|&squot;&bslash;&squot;&squot;
+id|A_ACUTE
 comma
-l_char|&squot;^&squot;
+id|A_CFLEX
 comma
-l_char|&squot;~&squot;
+id|A_TILDE
 comma
-l_char|&squot;&quot;&squot;
+id|A_DIAER
 )brace
 suffix:semicolon
-multiline_comment|/* Must not end with 0 */
 multiline_comment|/* If a dead key pressed twice, output a character corresponding to it,&t;*/
 multiline_comment|/* otherwise just remember the dead key.&t;&t;&t;&t;*/
 DECL|function|do_dead
@@ -2026,6 +2279,13 @@ id|up_flag
 )paren
 r_return
 suffix:semicolon
+id|value
+op_assign
+id|ret_diacr
+(braket
+id|value
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2037,16 +2297,12 @@ id|value
 multiline_comment|/* pressed twice */
 id|diacr
 op_assign
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 id|put_queue
 c_func
 (paren
-id|ret_diacr
-(braket
 id|value
-)braket
 )paren
 suffix:semicolon
 r_return
@@ -2057,75 +2313,30 @@ op_assign
 id|value
 suffix:semicolon
 )brace
-multiline_comment|/* If no pending dead key, return the character unchanged. Otherwise,&t;*/
-multiline_comment|/* if space if pressed, return a character corresponding the pending&t;*/
+multiline_comment|/* If space is pressed, return the character corresponding the pending&t;*/
 multiline_comment|/* dead key, otherwise try to combine the two.&t;&t;&t;&t;*/
 DECL|function|handle_diacr
 r_int
-r_int
+r_char
 id|handle_diacr
 c_func
 (paren
 r_int
-r_int
+r_char
 id|ch
 )paren
 (brace
-r_static
-r_int
-r_char
-id|accent_table
-(braket
-l_int|5
-)braket
-(braket
-l_int|64
-)braket
-op_assign
-(brace
-l_string|&quot; &bslash;300BCD&bslash;310FGH&bslash;314JKLMN&bslash;322PQRST&bslash;331VWXYZ[&bslash;&bslash;]^_&quot;
-l_string|&quot;`&bslash;340bcd&bslash;350fgh&bslash;354jklmn&bslash;362pqrst&bslash;371vwxyz{|}~&quot;
-comma
-multiline_comment|/* accent grave */
-l_string|&quot; &bslash;301BCD&bslash;311FGH&bslash;315JKLMN&bslash;323PQRST&bslash;332VWX&bslash;335Z[&bslash;&bslash;]^_&quot;
-l_string|&quot;`&bslash;341bcd&bslash;351fgh&bslash;355jklmn&bslash;363pqrst&bslash;372vwx&bslash;375z{|}~&quot;
-comma
-multiline_comment|/* accent acute */
-l_string|&quot; &bslash;302BCD&bslash;312FGH&bslash;316JKLMN&bslash;324PQRST&bslash;333VWXYZ[&bslash;&bslash;]^_&quot;
-l_string|&quot;`&bslash;342bcd&bslash;352fgh&bslash;356jklmn&bslash;364pqrst&bslash;373vwxyz{|}~&quot;
-comma
-multiline_comment|/* circumflex */
-l_string|&quot; &bslash;303BCDEFGHIJKLM&bslash;321&bslash;325PQRSTUVWXYZ[&bslash;&bslash;]^_&quot;
-l_string|&quot;`&bslash;343bcdefghijklm&bslash;361&bslash;365pqrstuvwxyz{|}~&quot;
-comma
-multiline_comment|/* tilde */
-l_string|&quot; &bslash;304BCD&bslash;313FGH&bslash;317JKLMN&bslash;326PQRST&bslash;334VWXYZ[&bslash;&bslash;]^_&quot;
-l_string|&quot;`&bslash;344bcd&bslash;353fgh&bslash;357jklmn&bslash;366pqrst&bslash;374vwx&bslash;377z{|}~&quot;
-multiline_comment|/* dieresis */
-)brace
-suffix:semicolon
 r_int
 id|d
 op_assign
 id|diacr
-comma
-id|e
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|diacr
-op_eq
-op_minus
-l_int|1
-)paren
-r_return
-id|ch
+r_int
+id|i
 suffix:semicolon
 id|diacr
 op_assign
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2135,53 +2346,57 @@ op_eq
 l_char|&squot; &squot;
 )paren
 r_return
-id|ret_diacr
-(braket
 id|d
-)braket
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|accent_table_size
+suffix:semicolon
+id|i
+op_increment
+)paren
 r_if
 c_cond
 (paren
-id|ch
-op_ge
-l_int|64
-op_logical_and
-id|ch
-op_le
-l_int|122
-)paren
-(brace
-id|e
-op_assign
 id|accent_table
 (braket
+id|i
+)braket
+dot
+id|diacr
+op_eq
 id|d
-)braket
+op_logical_and
+id|accent_table
 (braket
-id|ch
-op_minus
-l_int|64
+id|i
 )braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|e
-op_ne
+dot
+id|base
+op_eq
 id|ch
 )paren
+(brace
 r_return
-id|e
+id|accent_table
+(braket
+id|i
+)braket
+dot
+id|result
 suffix:semicolon
 )brace
 id|put_queue
 c_func
 (paren
-id|ret_diacr
-(braket
 id|d
-)braket
 )paren
 suffix:semicolon
 r_return
@@ -2235,6 +2450,17 @@ id|up_flag
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|value
+OL
+id|SIZE
+c_func
+(paren
+id|func_table
+)paren
+)paren
 id|puts_queue
 c_func
 (paren
@@ -2242,6 +2468,15 @@ id|func_table
 (braket
 id|value
 )braket
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;do_fn called with value=%d&bslash;n&quot;
+comma
+id|value
 )paren
 suffix:semicolon
 )brace
@@ -2264,14 +2499,14 @@ r_char
 op_star
 id|pad_chars
 op_assign
-l_string|&quot;0123456789+-*/&bslash;015,.&quot;
+l_string|&quot;0123456789+-*/&bslash;015,.?&quot;
 suffix:semicolon
 r_static
 r_char
 op_star
 id|app_map
 op_assign
-l_string|&quot;pqrstuvwxylSRQMnn&quot;
+l_string|&quot;pqrstuvwxylSRQMnn?&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -2716,6 +2951,7 @@ c_cond
 id|up_flag
 )paren
 (brace
+multiline_comment|/* handle the case that two shift or control&n;&t;&t;   keys are depressed simultaneously */
 r_if
 c_cond
 (paren
@@ -2776,7 +3012,8 @@ id|old_state
 op_logical_and
 id|npadch
 op_ne
-l_int|0
+op_minus
+l_int|1
 )paren
 (brace
 id|put_queue
@@ -2787,8 +3024,173 @@ id|npadch
 suffix:semicolon
 id|npadch
 op_assign
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* called after returning from RAW mode or when changing consoles -&n;   recompute k_down[] and shift_state from key_down[] */
+DECL|function|compute_shiftstate
+r_void
+id|compute_shiftstate
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+comma
+id|j
+comma
+id|k
+comma
+id|sym
+comma
+id|val
+suffix:semicolon
+id|shift_state
+op_assign
 l_int|0
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|SIZE
+c_func
+(paren
+id|k_down
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|k_down
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|SIZE
+c_func
+(paren
+id|key_down
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|key_down
+(braket
+id|i
+)braket
+)paren
+(brace
+multiline_comment|/* skip this word if not a single bit on */
+id|k
+op_assign
+(paren
+id|i
+op_lshift
+l_int|5
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+l_int|32
+suffix:semicolon
+id|j
+op_increment
+comma
+id|k
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|k
+comma
+id|key_down
+)paren
+)paren
+(brace
+id|sym
+op_assign
+id|key_map
+(braket
+l_int|0
+)braket
+(braket
+id|k
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|KTYP
+c_func
+(paren
+id|sym
+)paren
+op_eq
+id|KT_SHIFT
+)paren
+(brace
+id|val
+op_assign
+id|KVAL
+c_func
+(paren
+id|sym
+)paren
+suffix:semicolon
+id|k_down
+(braket
+id|val
+)braket
+op_increment
+suffix:semicolon
+id|shift_state
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|val
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 )brace
 DECL|function|do_meta
@@ -2868,6 +3270,19 @@ id|up_flag
 )paren
 r_return
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|npadch
+op_eq
+op_minus
+l_int|1
+)paren
+id|npadch
+op_assign
+id|value
+suffix:semicolon
+r_else
 id|npadch
 op_assign
 (paren

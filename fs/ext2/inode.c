@@ -1295,8 +1295,6 @@ id|goal
 id|goal
 op_assign
 id|bh-&gt;b_blocknr
-op_plus
-l_int|1
 suffix:semicolon
 )brace
 id|tmp

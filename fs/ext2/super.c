@@ -1238,6 +1238,14 @@ id|this_char
 comma
 l_string|&quot;grpid&quot;
 )paren
+op_logical_or
+op_logical_neg
+id|strcmp
+(paren
+id|this_char
+comma
+l_string|&quot;bsdgroups&quot;
+)paren
 )paren
 id|set_opt
 (paren
@@ -1287,6 +1295,14 @@ id|strcmp
 id|this_char
 comma
 l_string|&quot;nogrpid&quot;
+)paren
+op_logical_or
+op_logical_neg
+id|strcmp
+(paren
+id|this_char
+comma
+l_string|&quot;sysvgroups&quot;
 )paren
 )paren
 id|clear_opt
@@ -1433,6 +1449,10 @@ r_else
 r_if
 c_cond
 (paren
+id|es-&gt;s_max_mnt_count
+op_ge
+l_int|0
+op_logical_and
 id|es-&gt;s_mnt_count
 op_ge
 id|es-&gt;s_max_mnt_count
@@ -1954,9 +1974,19 @@ id|silent
 )paren
 id|printk
 (paren
-l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev 0x%04x.&bslash;n&quot;
+l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev %d/%d.&bslash;n&quot;
 comma
+id|MAJOR
+c_func
+(paren
 id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2342,9 +2372,19 @@ id|silent
 )paren
 id|printk
 (paren
-l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev 0x%04x.&bslash;n&quot;
+l_string|&quot;VFS: Can&squot;t find an ext2 filesystem on dev %d/%d.&bslash;n&quot;
 comma
+id|MAJOR
+c_func
+(paren
 id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2589,7 +2629,7 @@ id|brelse
 (paren
 id|sb-&gt;u.ext2_sb.s_group_desc
 (braket
-id|i
+id|j
 )braket
 )paren
 suffix:semicolon
@@ -2645,7 +2685,7 @@ id|brelse
 (paren
 id|sb-&gt;u.ext2_sb.s_group_desc
 (braket
-id|i
+id|j
 )braket
 )paren
 suffix:semicolon

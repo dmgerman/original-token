@@ -23,7 +23,7 @@ DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;93/12/30&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/01/05&quot;
 DECL|macro|EXT2FS_VERSION
 mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.4b&quot;
 multiline_comment|/*&n; * Debug code&n; */
@@ -574,7 +574,6 @@ id|s_mnt_count
 suffix:semicolon
 multiline_comment|/* Mount count */
 DECL|member|s_max_mnt_count
-r_int
 r_int
 id|s_max_mnt_count
 suffix:semicolon

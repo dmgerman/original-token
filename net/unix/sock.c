@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&n; * BUGS&n; *&t;Page faults on read while another process reads could lose data.&n; *&t;Page faults on write happen to interleave data (probably not allowed)&n; *&t;with any other simultaneous writers on the socket but dont cause harm.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
+multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.28&t;25/12/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&t;&t;Alan Cox&t;:&t;Tidy up ready for release&n; *&n; * BUGS&n; *&t;Page faults on read while another process reads could lose data.&n; *&t;Page faults on write happen to interleave data (probably not allowed)&n; *&t;with any other simultaneous writers on the socket but dont cause harm.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -449,9 +449,9 @@ op_star
 id|optlen
 )paren
 suffix:semicolon
+DECL|function|dprintf
 r_static
 r_void
-DECL|function|dprintf
 id|dprintf
 c_func
 (paren
@@ -561,10 +561,10 @@ id|buff
 suffix:semicolon
 )brace
 )brace
+DECL|function|min
 r_static
 r_inline
 r_int
-DECL|function|min
 id|min
 c_func
 (paren
@@ -589,8 +589,8 @@ r_return
 id|b
 suffix:semicolon
 )brace
-r_void
 DECL|function|sockaddr_un_printk
+r_void
 id|sockaddr_un_printk
 c_func
 (paren
@@ -698,10 +698,10 @@ id|UN_PATH_OFFSET
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* don&squot;t have to do anything. */
+multiline_comment|/*&n; *&t;Don&squot;t have to do anything. &n; */
+DECL|function|unix_proto_listen
 r_static
 r_int
-DECL|function|unix_proto_listen
 id|unix_proto_listen
 c_func
 (paren
@@ -718,9 +718,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|unix_proto_setsockopt
 r_static
 r_int
-DECL|function|unix_proto_setsockopt
 id|unix_proto_setsockopt
 c_func
 (paren
@@ -748,9 +748,9 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+DECL|function|unix_proto_getsockopt
 r_static
 r_int
-DECL|function|unix_proto_getsockopt
 id|unix_proto_getsockopt
 c_func
 (paren
@@ -779,9 +779,9 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+DECL|function|unix_proto_sendto
 r_static
 r_int
-DECL|function|unix_proto_sendto
 id|unix_proto_sendto
 c_func
 (paren
@@ -817,9 +817,9 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+DECL|function|unix_proto_recvfrom
 r_static
 r_int
-DECL|function|unix_proto_recvfrom
 id|unix_proto_recvfrom
 c_func
 (paren
@@ -856,9 +856,9 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+DECL|function|unix_proto_shutdown
 r_static
 r_int
-DECL|function|unix_proto_shutdown
 id|unix_proto_shutdown
 c_func
 (paren
@@ -876,10 +876,10 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-multiline_comment|/* This error needs to be checked. */
+multiline_comment|/*&n; *&t;This error needs to be checked. &n; */
+DECL|function|unix_proto_send
 r_static
 r_int
-DECL|function|unix_proto_send
 id|unix_proto_send
 c_func
 (paren
@@ -931,10 +931,10 @@ id|nonblock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This error needs to be checked. */
+multiline_comment|/*&n; *&t;This error needs to be checked. &n; */
+DECL|function|unix_proto_recv
 r_static
 r_int
-DECL|function|unix_proto_recv
 id|unix_proto_recv
 c_func
 (paren
@@ -986,11 +986,11 @@ id|nonblock
 )paren
 suffix:semicolon
 )brace
+DECL|function|unix_data_lookup
 r_static
 r_struct
 id|unix_proto_data
 op_star
-DECL|function|unix_data_lookup
 id|unix_data_lookup
 c_func
 (paren
@@ -1047,19 +1047,21 @@ id|upd-&gt;inode
 op_eq
 id|inode
 )paren
+(brace
 r_return
 id|upd
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|unix_data_alloc
 r_static
 r_struct
 id|unix_proto_data
 op_star
-DECL|function|unix_data_alloc
 id|unix_data_alloc
 c_func
 (paren
@@ -1151,10 +1153,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|unix_data_ref
 r_static
 r_inline
 r_void
-DECL|function|unix_data_ref
 id|unix_data_ref
 c_func
 (paren
@@ -1198,9 +1200,9 @@ id|upd-&gt;refcnt
 )paren
 suffix:semicolon
 )brace
+DECL|function|unix_data_deref
 r_static
 r_void
-DECL|function|unix_data_deref
 id|unix_data_deref
 c_func
 (paren
@@ -1278,10 +1280,10 @@ op_decrement
 id|upd-&gt;refcnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Upon a create, we allocate an empty protocol data,&n; * and grab a page to buffer writes.&n; */
+multiline_comment|/*&n; * &t;Upon a create, we allocate an empty protocol data,&n; * &t;and grab a page to buffer writes.&n; */
+DECL|function|unix_proto_create
 r_static
 r_int
-DECL|function|unix_proto_create
 id|unix_proto_create
 c_func
 (paren
@@ -1423,9 +1425,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|unix_proto_dup
 r_static
 r_int
-DECL|function|unix_proto_dup
 id|unix_proto_dup
 c_func
 (paren
@@ -1461,9 +1463,9 @@ id|upd-&gt;protocol
 )paren
 suffix:semicolon
 )brace
+DECL|function|unix_proto_release
 r_static
 r_int
-DECL|function|unix_proto_release
 id|unix_proto_release
 c_func
 (paren
@@ -1590,9 +1592,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Bind a name to a socket.&n; * This is where much of the work is done: we allocate a fresh page for&n; * the buffer, grab the appropriate inode and set things up.&n; *&n; * FIXME: what should we do if an address is already bound?&n; *&t;  Here we return EINVAL, but it may be necessary to re-bind.&n; *&t;  I think thats what BSD does in the case of datagram sockets...&n; */
+DECL|function|unix_proto_bind
 r_static
 r_int
-DECL|function|unix_proto_bind
 id|unix_proto_bind
 c_func
 (paren
@@ -1918,9 +1920,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Perform a connection. we can only connect to unix sockets&n; * (I can&squot;t for the life of me find an application where that&n; * wouldn&squot;t be the case!)&n; */
+DECL|function|unix_proto_connect
 r_static
 r_int
-DECL|function|unix_proto_connect
 id|unix_proto_connect
 c_func
 (paren
@@ -2117,7 +2119,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Try to open the name in the filesystem - this is how we&n;   * identify ourselves and our server. Note that we don&squot;t&n;   * hold onto the inode that long, just enough to find our&n;   * server. When we&squot;re connected, we mooch off the server.&n;   */
+multiline_comment|/*&n;&t; * Try to open the name in the filesystem - this is how we&n;&t; * identify ourselves and our server. Note that we don&squot;t&n;  &t; * hold onto the inode that long, just enough to find our&n;  &t; * server. When we&squot;re connected, we mooch off the server.&n;   &t; */
 id|memcpy
 c_func
 (paren
@@ -2310,9 +2312,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * To do a socketpair, we just connect the two datas, easy!&n; * Since we always wait on the socket inode, they&squot;re no contention&n; * for a wait area, and deadlock prevention in the case of a process&n; * writing to itself is, ignored, in true unix fashion!&n; */
+DECL|function|unix_proto_socketpair
 r_static
 r_int
-DECL|function|unix_proto_socketpair
 id|unix_proto_socketpair
 c_func
 (paren
@@ -2372,9 +2374,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* On accept, we ref the peer&squot;s data for safe writes. */
+DECL|function|unix_proto_accept
 r_static
 r_int
-DECL|function|unix_proto_accept
 id|unix_proto_accept
 c_func
 (paren
@@ -2409,7 +2411,7 @@ comma
 id|newsock
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * If there aren&squot;t any sockets awaiting connection,&n;   * then wait for one, unless nonblocking.&n;   */
+multiline_comment|/*&n;  &t; * If there aren&squot;t any sockets awaiting connection,&n;  &t; * then wait for one, unless nonblocking.&n;  &t; */
 r_while
 c_loop
 (paren
@@ -2461,7 +2463,7 @@ id|ERESTARTSYS
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * Great. Finish the connection relative to server and client,&n;   * wake up the client and return the new fd to the server.&n;   */
+multiline_comment|/*&n;  &t; * Great. Finish the connection relative to server and client,&n;  &t; * wake up the client and return the new fd to the server.&n;  &t; */
 id|sock-&gt;iconn
 op_assign
 id|clientsock-&gt;next
@@ -2552,10 +2554,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Gets the current name or the name of the connected socket. */
+multiline_comment|/*&n; *&t;Gets the current name or the name of the connected socket. &n; */
+DECL|function|unix_proto_getname
 r_static
 r_int
-DECL|function|unix_proto_getname
 id|unix_proto_getname
 c_func
 (paren
@@ -2759,9 +2761,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* We read from our own buf. */
+DECL|function|unix_proto_read
 r_static
 r_int
-DECL|function|unix_proto_read
 id|unix_proto_read
 c_func
 (paren
@@ -2907,7 +2909,7 @@ id|ERESTARTSYS
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * Copy from the read buffer into the user&squot;s buffer,&n;   * watching for wraparound. Then we wake up the writer.&n;   */
+multiline_comment|/*&n;  &t; * Copy from the read buffer into the user&squot;s buffer,&n;  &t; * watching for wraparound. Then we wake up the writer.&n;  &t; */
 r_do
 (brace
 r_int
@@ -3087,9 +3089,9 @@ id|todo
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We write to our peer&squot;s buf. When we connected we ref&squot;d this&n; * peer so we are safe that the buffer remains, even after the&n; * peer has disconnected, which we check other ways.&n; */
+DECL|function|unix_proto_write
 r_static
 r_int
-DECL|function|unix_proto_write
 id|unix_proto_write
 c_func
 (paren
@@ -3283,7 +3285,7 @@ id|EPIPE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * Copy from the user&squot;s buffer to the write buffer,&n;   * watching for wraparound. Then we wake up the reader.&n;   */
+multiline_comment|/*&n;  &t; * Copy from the user&squot;s buffer to the write buffer,&n;  &t; * watching for wraparound. Then we wake up the reader.&n;  &t; */
 r_do
 (brace
 r_int
@@ -3320,7 +3322,7 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We may become disconnected inside this loop, so watch&n;&t; * for it (peerupd is safe until we close).&n;&t; */
+multiline_comment|/*&n;&t;&t; * We may become disconnected inside this loop, so watch&n;&t;&t; * for it (peerupd is safe until we close).&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3484,9 +3486,9 @@ op_minus
 id|todo
 suffix:semicolon
 )brace
+DECL|function|unix_proto_select
 r_static
 r_int
-DECL|function|unix_proto_select
 id|unix_proto_select
 c_func
 (paren
@@ -3763,9 +3765,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|unix_proto_ioctl
 r_static
 r_int
-DECL|function|unix_proto_ioctl
 id|unix_proto_ioctl
 c_func
 (paren
@@ -4006,9 +4008,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|unix_open
 r_static
 r_int
-DECL|function|unix_open
 id|unix_open
 c_func
 (paren
@@ -4057,9 +4059,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|unix_close
 r_static
 r_void
-DECL|function|unix_close
 id|unix_close
 c_func
 (paren
@@ -4083,9 +4085,9 @@ l_string|&quot;UNIX: close&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|function|unix_ioctl
 r_static
 r_int
-DECL|function|unix_ioctl
 id|unix_ioctl
 c_func
 (paren
@@ -4334,8 +4336,8 @@ l_int|NULL
 multiline_comment|/* unix_proto_fcntl&t;*/
 )brace
 suffix:semicolon
-r_void
 DECL|function|unix_proto_init
+r_void
 id|unix_proto_init
 c_func
 (paren

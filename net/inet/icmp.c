@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.28&t;20/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Tegge&t;&t;:&t;Subnet problems&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -6,14 +6,14 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &quot;devinet.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
+macro_line|#include &quot;sockinet.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -121,6 +121,7 @@ l_int|0
 multiline_comment|/*&t;ICMP_HOST_UNR_TOS&t;*/
 )brace
 suffix:semicolon
+macro_line|#ifdef ICMP_DEBUG
 multiline_comment|/* Display the contents of an ICMP header. */
 r_static
 r_void
@@ -168,9 +169,10 @@ id|icmph-&gt;un.gateway
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Send an ICMP message. */
-r_void
+macro_line|#endif
+multiline_comment|/* &n; *&t;Send an ICMP message. &n; *&n; *&t;ICMP is the control message protocol for error reporting in IP.&n; *&t;A good document to start with for this stuff is RFC 791.&n; */
 DECL|function|icmp_send
+r_void
 id|icmp_send
 c_func
 (paren
@@ -277,6 +279,7 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+multiline_comment|/* We just forget about failed ICMP messages. ICMP is unreliable anyway and&n; &t;   things will sort out in time */
 r_if
 c_cond
 (paren
@@ -289,14 +292,6 @@ suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
-id|skb-&gt;mem_len
-op_assign
-id|len
 suffix:semicolon
 id|len
 op_sub_assign
@@ -358,6 +353,10 @@ comma
 l_int|NULL
 comma
 id|len
+comma
+l_int|25
+comma
+id|IPTOS_RELIABILITY
 )paren
 suffix:semicolon
 r_if
@@ -485,6 +484,7 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
+macro_line|#ifdef ICMP_DEBUG
 id|DPRINTF
 c_func
 (paren
@@ -501,6 +501,7 @@ c_func
 id|icmph
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Send it and free it. */
 id|ip_queue_xmit
 c_func
@@ -515,10 +516,10 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP_UNREACH and ICMP_QUENCH. */
+multiline_comment|/*&n; *&t;Handle ICMP_UNREACH and ICMP_QUENCH. &n; */
+DECL|function|icmp_unreach
 r_static
 r_void
-DECL|function|icmp_unreach
 id|icmp_unreach
 c_func
 (paren
@@ -833,10 +834,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP_REDIRECT. */
+multiline_comment|/* &n; *&t;Handle ICMP_REDIRECT.&n; */
+DECL|function|icmp_redirect
 r_static
 r_void
-DECL|function|icmp_redirect
 id|icmp_redirect
 c_func
 (paren
@@ -991,9 +992,9 @@ id|FREE_READ
 suffix:semicolon
 )brace
 multiline_comment|/* Handle ICMP_ECHO (&quot;ping&quot;) requests. */
+DECL|function|icmp_echo
 r_static
 r_void
-DECL|function|icmp_echo
 id|icmp_echo
 c_func
 (paren
@@ -1095,14 +1096,6 @@ id|skb2-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|skb2-&gt;mem_addr
-op_assign
-id|skb2
-suffix:semicolon
-id|skb2-&gt;mem_len
-op_assign
-id|size
-suffix:semicolon
 id|skb2-&gt;free
 op_assign
 l_int|1
@@ -1127,6 +1120,10 @@ comma
 id|opt
 comma
 id|len
+comma
+l_int|255
+comma
+id|IPTOS_RELIABILITY
 )paren
 suffix:semicolon
 r_if
@@ -1271,10 +1268,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle the ICMP INFORMATION REQUEST. */
+multiline_comment|/* &n; *&t;Handle the ICMP INFORMATION REQUEST. &n; */
+DECL|function|icmp_info
 r_static
 r_void
-DECL|function|icmp_info
 id|icmp_info
 c_func
 (paren
@@ -1324,10 +1321,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP_ADRESS_MASK requests. */
+multiline_comment|/* &n; *&t;Handle ICMP_ADRESS_MASK requests. &n; */
+DECL|function|icmp_address
 r_static
 r_void
-DECL|function|icmp_address
 id|icmp_address
 c_func
 (paren
@@ -1429,14 +1426,6 @@ id|skb2-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|skb2-&gt;mem_addr
-op_assign
-id|skb2
-suffix:semicolon
-id|skb2-&gt;mem_len
-op_assign
-id|size
-suffix:semicolon
 id|skb2-&gt;free
 op_assign
 l_int|1
@@ -1461,6 +1450,10 @@ comma
 id|opt
 comma
 id|len
+comma
+l_int|255
+comma
+id|IPTOS_RELIABILITY
 )paren
 suffix:semicolon
 r_if
@@ -1621,9 +1614,9 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Deal with incoming ICMP packets. */
-r_int
+multiline_comment|/*&n; *&t;Deal with incoming ICMP packets. &n; */
 DECL|function|icmp_rcv
+r_int
 id|icmp_rcv
 c_func
 (paren
@@ -1778,12 +1771,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef ICMP_DEBUG
 id|print_icmp
 c_func
 (paren
 id|icmph
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Parse the ICMP message */
 r_switch
 c_cond
@@ -2007,9 +2002,9 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Perform any ICMP-related I/O control requests. */
-r_int
+multiline_comment|/* &n; *&t;Perform any ICMP-related I/O control requests. &n; *&n; *&t;In the case of ICMP all the user can do is play with the debygging&n; */
 DECL|function|icmp_ioctl
+r_int
 id|icmp_ioctl
 c_func
 (paren

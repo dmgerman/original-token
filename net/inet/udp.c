@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The User Datagram Protocol (UDP).&n; *&n; * Version:&t;@(#)udp.c&t;1.0.13&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() calls&n; *&t;&t;Alan Cox&t;: &t;stopped close while in use off icmp&n; *&t;&t;&t;&t;&t;messages. Not a fix but a botch that&n; *&t;&t;&t;&t;&t;for udp at least is &squot;valid&squot;.&n; *&t;&t;Alan Cox&t;:&t;Fixed icmp handling properly&n; *&t;&t;Alan Cox&t;: &t;Correct error for oversized datagrams&n; *&t;&t;Alan Cox&t;:&t;Tidied select() semantics. &n; *&t;&t;Alan Cox&t;:&t;udp_err() fixed properly, also now &n; *&t;&t;&t;&t;&t;select and read wake correctly on errors&n; *&t;&t;Alan Cox&t;:&t;udp_send verify_area moved to avoid mem leak&n; *&t;&t;Alan Cox&t;:&t;UDP can count its memory&n; *&t;&t;Alan Cox&t;:&t;send to an uknown connection causes&n; *&t;&t;&t;&t;&t;an ECONNREFUSED off the icmp, but&n; *&t;&t;&t;&t;&t;does NOT close.&n; *&t;&t;Alan Cox&t;:&t;Switched to new sk_buff handlers. No more backlog!&n; *&t;&t;Alan Cox&t;:&t;Using generic datagram code. Even smaller and the PEEK&n; *&t;&t;&t;&t;&t;bug no longer crashes it.&n; *&t;&t;Fred Van Kempen&t;: &t;Net2e support for sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram&n; *&n; * To Do:&n; *&t;&t;Verify all the error codes from UDP operations match the&n; *&t;&t;BSD behaviour, since thats effectively the formal spec.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The User Datagram Protocol (UDP).&n; *&n; * Version:&t;@(#)udp.c&t;1.28&t;22/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() calls&n; *&t;&t;Alan Cox&t;: &t;stopped close while in use off icmp&n; *&t;&t;&t;&t;&t;messages. Not a fix but a botch that&n; *&t;&t;&t;&t;&t;for udp at least is &squot;valid&squot;.&n; *&t;&t;Alan Cox&t;:&t;Fixed icmp handling properly&n; *&t;&t;Alan Cox&t;: &t;Correct error for oversized datagrams&n; *&t;&t;Alan Cox&t;:&t;Tidied select() semantics. &n; *&t;&t;Alan Cox&t;:&t;udp_err() fixed properly, also now &n; *&t;&t;&t;&t;&t;select and read wake correctly on errors&n; *&t;&t;Alan Cox&t;:&t;udp_send verify_area moved to avoid mem leak&n; *&t;&t;Alan Cox&t;:&t;UDP can count its memory&n; *&t;&t;Alan Cox&t;:&t;send to an uknown connection causes&n; *&t;&t;&t;&t;&t;an ECONNREFUSED off the icmp, but&n; *&t;&t;&t;&t;&t;does NOT close.&n; *&t;&t;Alan Cox&t;:&t;Switched to new sk_buff handlers. No more backlog!&n; *&t;&t;Alan Cox&t;:&t;Using generic datagram code. Even smaller and the PEEK&n; *&t;&t;&t;&t;&t;bug no longer crashes it.&n; *&t;&t;Fred Van Kempen&t;: &t;Net2e support for sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram&n; *&t;&t;Alan Cox&t;:&t;Tidy up ready for the &squot;real&squot; thing.&n; *&t;&t;Alan Cox&t;:&t;Added get/set sockopt support.&n; *&t;&t;Alan Cox&t;:&t;Broadcasting without option set returns EACCES.&n; *&t;&t;Alan Cox&t;:&t;No wakeup calls. Instead we now use the callbacks.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -12,19 +12,19 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &quot;devinet.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
+macro_line|#include &quot;sockinet.h&quot;
 macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
+DECL|function|print_udp
 r_static
 r_void
-DECL|function|print_udp
 id|print_udp
 c_func
 (paren
@@ -98,8 +98,8 @@ id|uh-&gt;check
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine is called by the ICMP module when it gets some&n; * sort of error condition.  If err &lt; 0 then the socket should&n; * be closed and the error returned to the user.  If err &gt; 0&n; * it&squot;s just the icmp type &lt;&lt; 8 | icmp code.  &n; * Header points to the ip header of the error packet. We move&n; * on past this. Then (as it used to claim before adjustment)&n; * header points to the first 8 bytes of the udp header.  We need&n; * to find the appropriate port.&n; */
-r_void
 DECL|function|udp_err
+r_void
 id|udp_err
 c_func
 (paren
@@ -168,7 +168,7 @@ c_func
 (paren
 id|DBG_UDP
 comma
-l_string|&quot;UDP: err(err=%d, header=%X, daddr=%X, saddr=%X, protocl=%X)&bslash;n&bslash;&n;sport=%d,dport=%d&quot;
+l_string|&quot;UDP: err(err=%d, header=%X, daddr=%X, saddr=%X, protocl=%X)&bslash;n&bslash;&n;&t;sport=%d,dport=%d&quot;
 comma
 id|err
 comma
@@ -233,10 +233,12 @@ op_assign
 op_minus
 id|err
 suffix:semicolon
-id|wake_up
+id|sk
+op_member_access_from_pointer
+id|error_report
 c_func
 (paren
-id|sk-&gt;sleep
+id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* User process wakes to see error */
@@ -308,17 +310,19 @@ op_assign
 id|ECONNREFUSED
 suffix:semicolon
 )brace
-id|wake_up
+id|sk
+op_member_access_from_pointer
+id|error_report
 c_func
 (paren
-id|sk-&gt;sleep
+id|sk
 )paren
 suffix:semicolon
 )brace
+DECL|function|udp_check
 r_static
 r_int
 r_int
-DECL|function|udp_check
 id|udp_check
 c_func
 (paren
@@ -594,9 +598,10 @@ op_amp
 l_int|0xffff
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Calculate the UDP checksum. Note 0 becomes FFFF because 0 means&n; *&t;&squot;no checksum&squot;.&n; */
+DECL|function|udp_send_check
 r_static
 r_void
-DECL|function|udp_send_check
 id|udp_send_check
 c_func
 (paren
@@ -661,9 +666,9 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 )brace
+DECL|function|udp_send
 r_static
 r_int
-DECL|function|udp_send
 id|udp_send
 c_func
 (paren
@@ -811,14 +816,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
-id|skb-&gt;mem_len
-op_assign
-id|size
-suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -895,6 +892,10 @@ comma
 id|sk-&gt;opt
 comma
 id|skb-&gt;mem_len
+comma
+id|sk-&gt;ip_ttl
+comma
+id|sk-&gt;ip_tos
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -963,17 +964,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#ifdef OLD
-multiline_comment|/*&n;   * This code used to hack in some form of fragmentation.&n;   * I removed that, since it didn&squot;t work anyway, and it made the&n;   * code a bad thing to read and understand. -FvK&n;   */
-r_if
-c_cond
-(paren
-id|len
-OG
-id|dev-&gt;mtu
-)paren
-(brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -982,7 +972,6 @@ OG
 l_int|4095
 )paren
 (brace
-macro_line|#endif    
 id|printk
 c_func
 (paren
@@ -990,7 +979,7 @@ l_string|&quot;UDP: send: length %d &gt; mtu %d (ignored)&bslash;n&quot;
 comma
 id|len
 comma
-id|dev-&gt;mtu
+l_int|4095
 )paren
 suffix:semicolon
 id|sk-&gt;prot
@@ -1102,9 +1091,9 @@ r_return
 id|len
 suffix:semicolon
 )brace
+DECL|function|udp_sendto
 r_static
 r_int
-DECL|function|udp_sendto
 id|udp_sendto
 c_func
 (paren
@@ -1319,7 +1308,7 @@ id|IS_BROADCAST
 (brace
 r_return
 op_minus
-id|ENETUNREACH
+id|EACCES
 suffix:semicolon
 )brace
 multiline_comment|/* Must turn broadcast on first */
@@ -1354,9 +1343,9 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+DECL|function|udp_write
 r_static
 r_int
-DECL|function|udp_write
 id|udp_write
 c_func
 (paren
@@ -1400,8 +1389,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|udp_ioctl
+r_int
 id|udp_ioctl
 c_func
 (paren
@@ -1550,7 +1539,6 @@ c_func
 (paren
 id|sk
 )paren
-multiline_comment|/*/2*/
 suffix:semicolon
 id|err
 op_assign
@@ -1703,9 +1691,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This should be easy, if there is something there we&bslash;&n; * return it, otherwise we block.&n; */
-r_int
+multiline_comment|/*&n; * This should be easy, if there is something there we&n; * return it, otherwise we block.&n; */
 DECL|function|udp_recvfrom
+r_int
 id|udp_recvfrom
 c_func
 (paren
@@ -1751,7 +1739,7 @@ suffix:semicolon
 r_int
 id|er
 suffix:semicolon
-multiline_comment|/*&n;   * This will pick up errors that occured while the program&n;   * was doing something else.&n;   */
+multiline_comment|/*&n;  &t; * This will pick up errors that occured while the program&n;  &t; * was doing something else.&n;  &t; */
 r_if
 c_cond
 (paren
@@ -2004,8 +1992,8 @@ r_return
 id|copied
 suffix:semicolon
 )brace
-r_int
 DECL|function|udp_read
+r_int
 id|udp_read
 c_func
 (paren
@@ -2049,8 +2037,8 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|udp_connect
+r_int
 id|udp_connect
 c_func
 (paren
@@ -2158,7 +2146,7 @@ id|IS_BROADCAST
 (brace
 r_return
 op_minus
-id|ENETUNREACH
+id|EACCES
 suffix:semicolon
 )brace
 multiline_comment|/* Must turn broadcast on first */
@@ -2178,9 +2166,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|udp_close
 r_static
 r_void
-DECL|function|udp_close
 id|udp_close
 c_func
 (paren
@@ -2220,9 +2208,9 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* All we need to do is get the socket, and then do a checksum. */
-r_int
+multiline_comment|/*&n; *&t;All we need to do is get the socket, and then do a checksum. &n; */
 DECL|function|udp_rcv
+r_int
 id|udp_rcv
 c_func
 (paren
@@ -2331,7 +2319,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Hmm.  We got an UDP broadcast to a port to which we&n;&t; * don&squot;t wanna listen.  The only thing we can do now is&n;&t; * to ignore the packet... -FvK&n;&t; */
+multiline_comment|/*&n;&t;&t; * Hmm.  We got an UDP broadcast to a port to which we&n;&t;&t; * don&squot;t wanna listen.  The only thing we can do now is&n;&t;&t; * to ignore the packet... -FvK&n;&t;&t; */
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -2487,22 +2475,26 @@ op_star
 id|uh
 )paren
 suffix:semicolon
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|sk-&gt;dead
 )paren
-id|wake_up
-c_func
-(paren
-id|sk-&gt;sleep
-)paren
-suffix:semicolon
-id|release_sock
+id|sk
+op_member_access_from_pointer
+id|data_ready
 c_func
 (paren
 id|sk
+comma
+id|skb-&gt;len
 )paren
 suffix:semicolon
 r_return
@@ -2560,6 +2552,10 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+id|ip_setsockopt
+comma
+id|ip_getsockopt
 comma
 l_int|128
 comma

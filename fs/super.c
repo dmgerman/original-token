@@ -2270,6 +2270,10 @@ id|retval
 suffix:semicolon
 )brace
 )brace
+id|page
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

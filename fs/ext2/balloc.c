@@ -2012,7 +2012,7 @@ id|sb
 comma
 l_string|&quot;ext2_new_block&quot;
 comma
-l_string|&quot;Unable to locate free bit in block group %d&quot;
+l_string|&quot;Free blocks count corrupted for block group %d&quot;
 comma
 id|i
 )paren
@@ -2117,7 +2117,8 @@ id|sb
 comma
 l_string|&quot;ext2_new_block&quot;
 comma
-l_string|&quot;Allocating block in system zone&bslash;nblock = %u&quot;
+l_string|&quot;Allocating block in system zone&bslash;n&quot;
+l_string|&quot;block = %u&quot;
 comma
 id|tmp
 )paren

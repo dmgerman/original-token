@@ -1852,6 +1852,14 @@ suffix:semicolon
 multiline_comment|/* Now mask and substitute our own volume and reuse the rest */
 id|buffer
 (braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Clear reserved field */
+id|buffer
+(braket
 l_int|21
 )braket
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers.&n; *&n; * Version:&t;@(#)timer.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesnt write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if inet_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;TIMER - implementation of software timers.&n; *&n; * Version:&t;@(#)timer.c&t;1.28&t;22/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;To avoid destroying a wait queue as we use it&n; *&t;&t;&t;&t;&t;we defer destruction until the destroy timer goes&n; *&t;&t;&t;&t;&t;off.&n; *&t;&t;Alan Cox&t;:&t;Destroy socket doesnt write a status value to the&n; *&t;&t;&t;&t;&t;socket buffer _AFTER_ freeing it! Also sock ensures&n; *&t;&t;&t;&t;&t;the socket will get removed BEFORE this is called&n; *&t;&t;&t;&t;&t;otherwise if the timer TIME_DESTROY occurs inside&n; *&t;&t;&t;&t;&t;of inet_bh() with this socket being handled it goes&n; *&t;&t;&t;&t;&t;BOOM! Have to stop timer going off if inet_bh is&n; *&t;&t;&t;&t;&t;active or the destroy causes crashes.&n; *&t;&t;Alan Cox&t;:&t;Clean up for final release&n; *&t;&t;Alan Cox&t;:&t;Oops - timeouts destroyed permanent arp entries!&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -9,15 +9,15 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &quot;devinet.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
+macro_line|#include &quot;sockinet.h&quot;
 macro_line|#include &quot;arp.h&quot;
-r_void
 DECL|function|delete_timer
+r_void
 id|delete_timer
 (paren
 r_struct
@@ -56,8 +56,8 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|reset_timer
+r_void
 id|reset_timer
 (paren
 r_struct
@@ -120,9 +120,9 @@ id|t-&gt;timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Now we will only be called whenever we need to do&n; * something, but we must be sure to process all of the&n; * sockets that need it.&n; */
-r_void
+multiline_comment|/*&n; * &t;Now we will only be called whenever we need to do&n; * &t;something, but we must be sure to process all of the&n; * &t;sockets that need it.&n; */
 DECL|function|net_timer
+r_void
 id|net_timer
 (paren
 r_int
@@ -272,7 +272,7 @@ suffix:semicolon
 r_case
 id|TIME_DESTROY
 suffix:colon
-multiline_comment|/* We&squot;ve waited for a while for all the memory associated with&n;&t; * the socket to be freed.  We need to print an error message.&n;&t; */
+multiline_comment|/* We&squot;ve waited for a while for all the memory associated with&n;&t; &t;&t; * the socket to be freed.  We need to print an error message.&n;&t; &t;&t; */
 r_if
 c_cond
 (paren
@@ -351,7 +351,7 @@ id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* Kill the ARP entry in case the hardware has changed. */
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren
@@ -391,7 +391,7 @@ r_case
 id|TIME_WRITE
 suffix:colon
 multiline_comment|/* try to retransmit. */
-multiline_comment|/* It could be we got here because we needed to send an ack.&n;&t; * So we need to check for that.&n;&t; */
+multiline_comment|/* It could be we got here because we needed to send an ack.&n;&t;&t;&t; * So we need to check for that.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -455,7 +455,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* printk(&quot;timer: seq %d retrans %d out %d cong %d&bslash;n&quot;, sk-&gt;send_head-&gt;h.seq,&n;&t;     sk-&gt;retransmits, sk-&gt;packets_out, sk-&gt;cong_window); */
+multiline_comment|/* printk(&quot;timer: seq %d retrans %d out %d cong %d&bslash;n&quot;, sk-&gt;send_head-&gt;h.seq,&n;&t;  &t;&t;&t;&t;sk-&gt;retransmits, sk-&gt;packets_out, sk-&gt;cong_window); */
 id|DPRINTF
 (paren
 (paren
@@ -510,7 +510,7 @@ l_string|&quot;timer.c TIME_WRITE time-out 1&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren
@@ -672,7 +672,7 @@ l_string|&quot;timer.c TIME_KEEPOPEN time-out 1&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren
@@ -711,7 +711,7 @@ l_string|&quot;timer.c TIME_KEEPOPEN time-out 2&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy
+id|arp_destroy_maybe
 (paren
 id|sk-&gt;daddr
 )paren

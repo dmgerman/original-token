@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; */
+multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -17,9 +17,9 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &quot;devinet.h&quot;
 macro_line|#ifdef CONFIG_AX25
-macro_line|#include &quot;ax25.h&quot;
+macro_line|#include &quot;ax25/ax25.h&quot;
 macro_line|#endif
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;ip.h&quot;
@@ -449,10 +449,19 @@ id|sl-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef SL_ADAPTIVE
+id|sl-&gt;mode
+op_assign
+id|SL_MODE_ADAPTIVE
+suffix:semicolon
+multiline_comment|/* automatic CSLIP recognition */
+macro_line|#else
 macro_line|#ifdef SL_COMPRESSED
 id|sl-&gt;mode
 op_assign
 id|SL_MODE_CSLIP
+op_or
+id|SL_MODE_ADAPTIVE
 suffix:semicolon
 multiline_comment|/* Default */
 macro_line|#else
@@ -461,6 +470,7 @@ op_assign
 id|SL_MODE_SLIP
 suffix:semicolon
 multiline_comment|/* Default for non compressors */
+macro_line|#endif
 macro_line|#endif  
 id|sl-&gt;line
 op_assign
@@ -1357,7 +1367,11 @@ c_cond
 (paren
 id|sl-&gt;mode
 op_amp
+(paren
+id|SL_MODE_ADAPTIVE
+op_or
 id|SL_MODE_CSLIP
+)paren
 )paren
 (brace
 r_if
@@ -1375,6 +1389,29 @@ op_amp
 id|SL_TYPE_COMPRESSED_TCP
 )paren
 (brace
+macro_line|#if 1
+multiline_comment|/* ignore compressed packets when CSLIP is off */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sl-&gt;mode
+op_amp
+id|SL_MODE_CSLIP
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;SLIP: compressed packet ignored&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* make sure we&squot;ve reserved enough space for uncompress to use */
 id|save_flags
 c_func
@@ -1473,6 +1510,29 @@ op_ge
 id|SL_TYPE_UNCOMPRESSED_TCP
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sl-&gt;mode
+op_amp
+id|SL_MODE_CSLIP
+)paren
+)paren
+(brace
+multiline_comment|/* turn on header compression */
+id|sl-&gt;mode
+op_or_assign
+id|SL_MODE_CSLIP
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SLIP: header compression turned on&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|sl-&gt;rbuff
 (braket
 l_int|0
@@ -1982,6 +2042,7 @@ id|sl
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*static void sl_hex_dump(unsigned char *x,int l)&n;{&n;&t;int n=0;&n;&t;printk(&quot;sl_xmit: (%d bytes)&bslash;n&quot;,l);&n;&t;while(l)&n;&t;{&n;&t;&t;printk(&quot;%2X &quot;,(int)*x++);&n;&t;&t;l--;&n;&t;&t;n++;&n;&t;&t;if(n%32==0)&n;&t;&t;&t;printk(&quot;&bslash;n&quot;);&n;&t;}&n;&t;if(n%32)&n;&t;&t;printk(&quot;&bslash;n&quot;);&n;}*/
 multiline_comment|/* Encapsulate an IP datagram and kick it into a TTY queue. */
 r_static
 r_int
@@ -2126,6 +2187,7 @@ c_func
 id|sl
 )paren
 suffix:semicolon
+multiline_comment|/*&t;sl_hex_dump((unsigned char *)(skb+1),skb-&gt;len);*/
 id|sl_encaps
 c_func
 (paren

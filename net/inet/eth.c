@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.28&t;20/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems.&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here).&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons.&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&t;&t;Tegge&t;&t;: Arp bug fixes.&n; *&t;&t;Alan Cox&t;: Tidy up ready for the big day.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -9,16 +9,17 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &quot;devinet.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
+macro_line|#include &quot;sockinet.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &quot;arp.h&quot;
+macro_line|#ifdef ETH_DEBUG
 multiline_comment|/* Display an Ethernet address in readable format. */
 DECL|function|eth_print
 r_char
@@ -115,138 +116,11 @@ r_return
 id|buff
 suffix:semicolon
 )brace
-DECL|function|eth_setup
-r_void
-id|eth_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|d
-op_assign
-id|dev_base
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|str
-op_logical_or
-op_logical_neg
-op_star
-id|str
-)paren
-r_return
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|d
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
-c_func
-(paren
-id|str
-comma
-id|d-&gt;name
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|0
-)paren
-id|d-&gt;irq
-op_assign
-id|ints
-(braket
-l_int|1
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|1
-)paren
-id|d-&gt;base_addr
-op_assign
-id|ints
-(braket
-l_int|2
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|2
-)paren
-id|d-&gt;mem_start
-op_assign
-id|ints
-(braket
-l_int|3
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-OG
-l_int|3
-)paren
-id|d-&gt;mem_end
-op_assign
-id|ints
-(braket
-l_int|4
-)braket
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|d
-op_assign
-id|d-&gt;next
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* Display the contents of the Ethernet MAC header. */
-r_void
+macro_line|#endif
+macro_line|#ifdef ETH_DEBUG
+multiline_comment|/*&n; *&t;Display the contents of the Ethernet MAC header. &n; */
 DECL|function|eth_dump
+r_void
 id|eth_dump
 c_func
 (paren
@@ -302,9 +176,10 @@ id|eth-&gt;h_proto
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Create the Ethernet MAC header. */
-r_int
+macro_line|#endif
+multiline_comment|/*&n; * &t;Create the Ethernet MAC header. &n; *&n; *&t;ARP might prevent this from working all in one go. See also&n; *&t;the rebuild header function.&n; */
 DECL|function|eth_header
+r_int
 id|eth_header
 c_func
 (paren
@@ -481,6 +356,7 @@ r_return
 id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
+multiline_comment|/*&n;  &t; *&t;We disable interrupts here to avoid a race if the ARP&n;  &t; *&t;reply is too quick.&n;  &t; */
 id|cli
 c_func
 (paren
@@ -510,7 +386,8 @@ id|daddr
 comma
 id|dev
 comma
-id|saddr
+id|dev-&gt;pa_addr
+multiline_comment|/* saddr */
 )paren
 )paren
 (brace
@@ -553,7 +430,7 @@ comma
 id|dev-&gt;addr_len
 )paren
 suffix:semicolon
-multiline_comment|/* This was missing causing chaos if the&n;  &t;&t;&t;&t;&t;&t;&t;&t;   header built correctly! */
+multiline_comment|/* This was missing causing chaos if the&n;  &t;&t;&t;&t;&t;&t;&t;&t;&t;   header built correctly! */
 id|sti
 c_func
 (paren
@@ -564,9 +441,9 @@ id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Rebuild the Ethernet MAC header. */
-r_int
+multiline_comment|/*&n; *&t;Rebuild the Ethernet MAC header.&n; *&n; *&t;We&squot;ve got a &squot;stuck&squot; packet that failed to go out before. See if&n; *&t;the arp is resolved and we can finally shift it.&n; */
 DECL|function|eth_rebuild_header
+r_int
 id|eth_rebuild_header
 c_func
 (paren
@@ -686,9 +563,11 @@ id|dst
 comma
 id|dev
 comma
-id|src
+id|dev-&gt;pa_addr
+multiline_comment|/* src */
 )paren
 )paren
+multiline_comment|/* Still not known */
 r_return
 l_int|1
 suffix:semicolon
@@ -706,9 +585,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Add an ARP entry for a host on this interface. */
-r_void
+multiline_comment|/* &n; *&t;Add an ARP entry for a host on this interface.&n; */
 DECL|function|eth_add_arp
+r_void
 id|eth_add_arp
 c_func
 (paren
@@ -756,10 +635,10 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Determine the packet&squot;s protocol ID. */
-r_int
-r_int
+multiline_comment|/*&n; * &t;Determine the packet&squot;s protocol ID. &n; *&n; * Ethernet comes in two &squot;species&squot; DIX (Digitial Intel Xerox) and IEE802.3&n; * needless to say they are different. Fortunately there is a way of telling&n; * them apart. All &squot;normal&squot; modern DIX service ID&squot;s are &gt;1536.&n; * All IEE802.3 frames have a length at this position and that cannot be &n; * &gt;=1536. Note IEE802.3 frames have a second 802.2 header normally. We don&squot;t&n; * deal with this bit in the current kernel, but a user using SOCK_PACKET&n; * for 802.3 frames can do so.&n; */
 DECL|function|eth_type_trans
+r_int
+r_int
 id|eth_type_trans
 c_func
 (paren

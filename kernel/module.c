@@ -786,6 +786,8 @@ id|to
 op_assign
 id|table
 suffix:semicolon
+id|i
+op_assign
 id|verify_area
 c_func
 (paren
@@ -799,6 +801,14 @@ r_sizeof
 op_star
 id|table
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
 suffix:semicolon
 r_for
 c_loop

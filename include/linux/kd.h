@@ -401,5 +401,46 @@ DECL|macro|KDGKBSENT
 mdefine_line|#define KDGKBSENT&t;0x4B48&t;/* gets one function key string entry */
 DECL|macro|KDSKBSENT
 mdefine_line|#define KDSKBSENT&t;0x4B49&t;/* sets one function key string entry */
+DECL|struct|kbdiacr
+r_struct
+id|kbdiacr
+(brace
+DECL|member|diacr
+DECL|member|base
+DECL|member|result
+id|u_char
+id|diacr
+comma
+id|base
+comma
+id|result
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|kbdiacrs
+r_struct
+id|kbdiacrs
+(brace
+DECL|member|kb_cnt
+r_int
+r_int
+id|kb_cnt
+suffix:semicolon
+multiline_comment|/* number of entries in following array */
+DECL|member|kbdiacr
+r_struct
+id|kbdiacr
+id|kbdiacr
+(braket
+l_int|256
+)braket
+suffix:semicolon
+multiline_comment|/* MAX_DIACR from keyboard.h */
+)brace
+suffix:semicolon
+DECL|macro|KDGKBDIACR
+mdefine_line|#define KDGKBDIACR      0x4B4A  /* read kernel accent table */
+DECL|macro|KDSKBDIACR
+mdefine_line|#define KDSKBDIACR      0x4B4B  /* write kernel accent table */
 macro_line|#endif /* _LINUX_KD_H */
 eof

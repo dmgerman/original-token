@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_open(struct tty_queue * queue, struct )&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett.&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; * &t;&squot;void update_screen(int new_console)&squot;&n; * &t;&squot;void blank_screen(void)&squot;&n; * &t;&squot;void unblank_screen(void)&squot;&n; * &n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett.&n; */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 multiline_comment|/*&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
@@ -106,6 +106,14 @@ op_star
 )paren
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|compute_shiftstate
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|video_num_columns
 r_int
 r_int
@@ -117,7 +125,7 @@ r_int
 r_int
 id|video_num_lines
 suffix:semicolon
-multiline_comment|/* Number of test lines&t;&t;*/
+multiline_comment|/* Number of text lines&t;&t;*/
 DECL|variable|video_type
 r_static
 r_int
@@ -660,18 +668,18 @@ r_char
 op_star
 )paren
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
-l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;376&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot; !&bslash;&quot;#$%&amp;&squot;()*+,-./0123456789:;&lt;=&gt;?&quot;
 l_string|&quot;@ABCDEFGHIJKLMNOPQRSTUVWXYZ[&bslash;&bslash;]^_&quot;
 l_string|&quot;`abcdefghijklmnopqrstuvwxyz{|}~&bslash;0&quot;
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
-l_string|&quot;&bslash;040&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
+l_string|&quot;&bslash;377&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
 l_string|&quot;&bslash;370&bslash;361&bslash;375&bslash;376&bslash;376&bslash;346&bslash;024&bslash;371&bslash;376&bslash;376&bslash;247&bslash;257&bslash;254&bslash;253&bslash;376&bslash;250&quot;
 l_string|&quot;&bslash;376&bslash;376&bslash;376&bslash;376&bslash;216&bslash;217&bslash;222&bslash;200&bslash;376&bslash;220&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&quot;
-l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;235&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
+l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;350&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
 l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
-l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;233&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
+l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;355&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
 comma
 multiline_comment|/* vt100 graphics */
 (paren
@@ -680,14 +688,14 @@ r_char
 op_star
 )paren
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
-l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;376&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot; !&bslash;&quot;#$%&amp;&squot;()*+,-./0123456789:;&lt;=&gt;?&quot;
 l_string|&quot;@ABCDEFGHIJKLMNOPQRSTUVWXYZ[&bslash;&bslash;]^ &quot;
 l_string|&quot;&bslash;004&bslash;261&bslash;007&bslash;007&bslash;007&bslash;007&bslash;370&bslash;361&bslash;007&bslash;007&bslash;331&bslash;277&bslash;332&bslash;300&bslash;305&bslash;304&quot;
 l_string|&quot;&bslash;304&bslash;304&bslash;137&bslash;137&bslash;303&bslash;264&bslash;301&bslash;302&bslash;263&bslash;363&bslash;362&bslash;343&bslash;330&bslash;234&bslash;007&bslash;0&quot;
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
-l_string|&quot;&bslash;040&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
+l_string|&quot;&bslash;377&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
 l_string|&quot;&bslash;370&bslash;361&bslash;375&bslash;376&bslash;376&bslash;346&bslash;024&bslash;371&bslash;376&bslash;376&bslash;247&bslash;257&bslash;254&bslash;253&bslash;376&bslash;250&quot;
 l_string|&quot;&bslash;376&bslash;376&bslash;376&bslash;376&bslash;216&bslash;217&bslash;222&bslash;200&bslash;376&bslash;220&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&quot;
 l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
@@ -1839,12 +1847,21 @@ r_int
 id|currcons
 )paren
 (brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
 id|x
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|need_wrap
+)paren
+(brace
+multiline_comment|/* this is not the right condition */
 id|pos
 op_sub_assign
 l_int|2
@@ -1852,6 +1869,7 @@ suffix:semicolon
 id|x
 op_decrement
 suffix:semicolon
+)brace
 op_star
 (paren
 r_int
@@ -1867,6 +1885,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|csi_J
 r_static
@@ -7059,6 +7078,11 @@ id|new_console
 )paren
 suffix:semicolon
 id|set_leds
+c_func
+(paren
+)paren
+suffix:semicolon
+id|compute_shiftstate
 c_func
 (paren
 )paren
