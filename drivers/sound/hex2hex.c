@@ -388,7 +388,7 @@ op_assign
 id|argv
 (braket
 l_int|1
-"&#x1d;"
+)braket
 suffix:semicolon
 id|l
 op_assign

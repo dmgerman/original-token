@@ -1683,6 +1683,18 @@ r_struct
 id|thread_struct
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * This tried to copy the FPU state, but I wonder whether we really&n; * want this at all. It is probably nicer to just have a newly started&n; * process start with a clean slate wrt the fpu.  - Linus&n; */
+macro_line|#if 1
+id|current-&gt;used_math
+op_assign
+l_int|0
+suffix:semicolon
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_USEDFPU
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1701,6 +1713,7 @@ id|p-&gt;tss.i387
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

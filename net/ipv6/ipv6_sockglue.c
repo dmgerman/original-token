@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.20 1998/05/03 14:31:07 alan Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
+multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.21 1998/05/07 15:43:13 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -664,7 +664,7 @@ id|__initfunc
 c_func
 (paren
 r_void
-id|ipv6_init
+id|ipv6_packet_init
 c_func
 (paren
 r_void
@@ -678,13 +678,19 @@ op_amp
 id|ipv6_packet_type
 )paren
 suffix:semicolon
-macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_SYSCTL)
-id|ipv6_sysctl_register
+)brace
+DECL|function|__initfunc
+id|__initfunc
 c_func
 (paren
+r_void
+id|ipv6_netdev_notif_init
+c_func
+(paren
+r_void
 )paren
-suffix:semicolon
-macro_line|#endif
+)paren
+(brace
 id|register_netdevice_notifier
 c_func
 (paren
@@ -692,16 +698,27 @@ op_amp
 id|ipv6_dev_notf
 )paren
 suffix:semicolon
-id|ip6_route_init
+)brace
+macro_line|#ifdef MODULE
+DECL|function|ipv6_packet_cleanup
+r_void
+id|ipv6_packet_cleanup
 c_func
 (paren
+r_void
+)paren
+(brace
+id|dev_remove_pack
+c_func
+(paren
+op_amp
+id|ipv6_packet_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|ipv6_cleanup
+DECL|function|ipv6_netdev_notif_cleanup
 r_void
-id|ipv6_cleanup
+id|ipv6_netdev_notif_cleanup
 c_func
 (paren
 r_void
@@ -712,35 +729,6 @@ c_func
 (paren
 op_amp
 id|ipv6_dev_notf
-)paren
-suffix:semicolon
-id|dev_remove_pack
-c_func
-(paren
-op_amp
-id|ipv6_packet_type
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_SYSCTL
-id|ipv6_sysctl_unregister
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|ip6_route_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-id|icmpv6_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-id|addrconf_cleanup
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

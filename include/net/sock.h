@@ -195,13 +195,6 @@ r_int
 r_int
 id|type
 suffix:semicolon
-multiline_comment|/* &n; * To handle asynchronous messages from the NetWare server, we have to&n; * know the connection this socket belongs to. &n; */
-DECL|member|ncp_server
-r_struct
-id|ncp_server
-op_star
-id|ncp_server
-suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

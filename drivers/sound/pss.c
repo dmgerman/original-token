@@ -4,7 +4,8 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if (defined(CONFIG_PSS) &amp;&amp; defined(CONFIG_AUDIO))||defined(MODULE)
+macro_line|#ifdef CONFIG_PSS
+macro_line|#ifdef CONFIG_AUDIO
 multiline_comment|/*&n; * PSS registers.&n; */
 DECL|macro|REG
 mdefine_line|#define REG(x)&t;(devc-&gt;base+x)
@@ -57,9 +58,16 @@ mdefine_line|#define WSS_AUTOCALIBRATION 0x20
 DECL|macro|NO_WSS_MIXER
 mdefine_line|#define NO_WSS_MIXER&t;-1
 macro_line|#include &quot;coproc.h&quot;
-macro_line|#ifdef CONFIG_PSS_HAVE_BOOT
+macro_line|#ifdef PSS_HAVE_LD
 macro_line|#include &quot;pss_boot.h&quot;
 macro_line|#else
+DECL|variable|pss_synthLen
+r_static
+r_int
+id|pss_synthLen
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|pss_synth
 r_static
 r_int
@@ -68,13 +76,6 @@ op_star
 id|pss_synth
 op_assign
 l_int|NULL
-suffix:semicolon
-DECL|variable|pss_synthLen
-r_static
-r_int
-id|pss_synthLen
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|variable|pss_mixer
@@ -5471,6 +5472,7 @@ suffix:semicolon
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

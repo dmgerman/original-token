@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.32 1998/03/08 05:56:26 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.35 1998/05/08 21:06:28 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -19,6 +19,8 @@ macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|MAX
+mdefine_line|#define MAX(a,b) ((a)&gt;(b)?(a):(b))
 DECL|macro|IP_CMSG_PKTINFO
 mdefine_line|#define IP_CMSG_PKTINFO&t;&t;1
 DECL|macro|IP_CMSG_TTL
@@ -924,10 +926,26 @@ l_int|0
 comma
 id|err
 suffix:semicolon
-macro_line|#if defined(CONFIG_IP_FIREWALL) || defined(CONFIG_IP_ACCT)
-r_struct
-id|ip_fw
+macro_line|#if defined(CONFIG_IP_FIREWALL)
+r_char
 id|tmp_fw
+(braket
+id|MAX
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|ip_fwtest
+)paren
+comma
+r_sizeof
+(paren
+r_struct
+id|ip_fwnew
+)paren
+)paren
+)braket
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_IP_MASQUERADE
@@ -1706,7 +1724,6 @@ id|mreq.imr_ifindex
 r_if
 c_cond
 (paren
-op_logical_neg
 id|mreq.imr_address.s_addr
 op_eq
 id|INADDR_ANY
@@ -1928,70 +1945,40 @@ l_int|NULL
 suffix:semicolon
 macro_line|#ifdef CONFIG_IP_FIREWALL
 r_case
-id|IP_FW_INSERT_IN
-suffix:colon
-r_case
-id|IP_FW_INSERT_OUT
-suffix:colon
-r_case
-id|IP_FW_INSERT_FWD
-suffix:colon
-r_case
-id|IP_FW_APPEND_IN
-suffix:colon
-r_case
-id|IP_FW_APPEND_OUT
-suffix:colon
-r_case
-id|IP_FW_APPEND_FWD
-suffix:colon
-r_case
-id|IP_FW_DELETE_IN
-suffix:colon
-r_case
-id|IP_FW_DELETE_OUT
-suffix:colon
-r_case
-id|IP_FW_DELETE_FWD
-suffix:colon
-r_case
-id|IP_FW_CHECK_IN
-suffix:colon
-r_case
-id|IP_FW_CHECK_OUT
-suffix:colon
-r_case
-id|IP_FW_CHECK_FWD
-suffix:colon
-r_case
-id|IP_FW_FLUSH_IN
-suffix:colon
-r_case
-id|IP_FW_FLUSH_OUT
-suffix:colon
-r_case
-id|IP_FW_FLUSH_FWD
-suffix:colon
-r_case
-id|IP_FW_ZERO_IN
-suffix:colon
-r_case
-id|IP_FW_ZERO_OUT
-suffix:colon
-r_case
-id|IP_FW_ZERO_FWD
-suffix:colon
-r_case
-id|IP_FW_POLICY_IN
-suffix:colon
-r_case
-id|IP_FW_POLICY_OUT
-suffix:colon
-r_case
-id|IP_FW_POLICY_FWD
-suffix:colon
-r_case
 id|IP_FW_MASQ_TIMEOUTS
+suffix:colon
+r_case
+id|IP_FW_APPEND
+suffix:colon
+r_case
+id|IP_FW_REPLACE
+suffix:colon
+r_case
+id|IP_FW_DELETE
+suffix:colon
+r_case
+id|IP_FW_DELETE_NUM
+suffix:colon
+r_case
+id|IP_FW_INSERT
+suffix:colon
+r_case
+id|IP_FW_FLUSH
+suffix:colon
+r_case
+id|IP_FW_ZERO
+suffix:colon
+r_case
+id|IP_FW_CHECK
+suffix:colon
+r_case
+id|IP_FW_CREATECHAIN
+suffix:colon
+r_case
+id|IP_FW_DELETECHAIN
+suffix:colon
+r_case
+id|IP_FW_POLICY
 suffix:colon
 r_if
 c_cond
@@ -2067,7 +2054,7 @@ op_minus
 id|err
 suffix:semicolon
 multiline_comment|/* -0 is 0 after all */
-macro_line|#endif
+macro_line|#endif /* CONFIG_IP_FIREWALL */
 macro_line|#ifdef CONFIG_IP_MASQUERADE
 r_case
 id|IP_FW_MASQ_ADD
@@ -2141,97 +2128,6 @@ c_func
 id|optname
 comma
 id|masq_ctl
-comma
-id|optlen
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|err
-suffix:semicolon
-multiline_comment|/* -0 is 0 after all */
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_ACCT
-r_case
-id|IP_ACCT_INSERT
-suffix:colon
-r_case
-id|IP_ACCT_APPEND
-suffix:colon
-r_case
-id|IP_ACCT_DELETE
-suffix:colon
-r_case
-id|IP_ACCT_FLUSH
-suffix:colon
-r_case
-id|IP_ACCT_ZERO
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|capable
-c_func
-(paren
-id|CAP_NET_ADMIN
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EACCES
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|optlen
-OG
-r_sizeof
-(paren
-id|tmp_fw
-)paren
-op_logical_or
-id|optlen
-OL
-l_int|1
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|copy_from_user
-c_func
-(paren
-op_amp
-id|tmp_fw
-comma
-id|optval
-comma
-id|optlen
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-)brace
-id|err
-op_assign
-id|ip_acct_ctl
-c_func
-(paren
-id|optname
-comma
-op_amp
-id|tmp_fw
 comma
 id|optlen
 )paren

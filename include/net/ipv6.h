@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.10 1998/04/30 16:24:14 freitag Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.11 1998/05/07 15:42:46 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
@@ -852,7 +852,7 @@ id|optlen
 suffix:semicolon
 r_extern
 r_void
-id|ipv6_init
+id|ipv6_packet_init
 c_func
 (paren
 r_void
@@ -860,12 +860,28 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|ipv6_cleanup
+id|ipv6_netdev_notif_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
+r_extern
+r_void
+id|ipv6_packet_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ipv6_netdev_notif_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _NET_IPV6_H */
 eof

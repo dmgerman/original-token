@@ -2,7 +2,8 @@ multiline_comment|/*&n; * sound/pas2_midi.c&n; *&n; * The low level driver for t
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if ( defined(MODULE) || defined(CONFIG_PAS) ) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_PAS
+macro_line|#ifdef CONFIG_MIDI
 DECL|variable|midi_busy
 DECL|variable|input_opened
 r_static
@@ -832,5 +833,6 @@ l_int|0x1B88
 suffix:semicolon
 multiline_comment|/* Acknowledge interrupts */
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

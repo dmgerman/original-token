@@ -4,7 +4,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if (defined(CONFIG_UART401)||defined(CONFIG_MIDI)) || defined(MODULE)
+macro_line|#ifdef CONFIG_UART401
+macro_line|#ifdef CONFIG_MIDI
 DECL|struct|uart401_devc
 r_typedef
 r_struct
@@ -1896,8 +1897,6 @@ multiline_comment|/*  FREE SYMTAB */
 id|SOUND_LOCK_END
 suffix:semicolon
 )brace
-macro_line|#else
-macro_line|#endif
 macro_line|#endif
 DECL|variable|attach_uart401
 id|EXPORT_SYMBOL
@@ -1927,4 +1926,6 @@ c_func
 id|uart401intr
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 eof

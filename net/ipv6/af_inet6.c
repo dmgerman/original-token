@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.31 1998/05/03 14:31:06 alan Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.33 1998/05/08 21:06:32 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1646,8 +1646,11 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* We keep internally 3 raw sockets */
 r_return
-l_int|0
+id|__this_module.usecount
+op_minus
+l_int|3
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -1679,6 +1682,9 @@ r_struct
 id|sk_buff
 op_star
 id|dummy_skb
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 macro_line|#ifdef MODULE
 r_if
@@ -1743,27 +1749,78 @@ r_return
 suffix:semicolon
 macro_line|#endif
 )brace
-(paren
-r_void
-)paren
-id|sock_register
-c_func
-(paren
-op_amp
-id|inet6_family_ops
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;ipngwg API draft makes clear that the correct semantics&n;&t; *&t;for TCP and UDP is to consider one TCP and UDP instance&n;&t; *&t;in a host availiable by both INET and INET6 APIs and&n;&t; *&t;able to communicate via both network protocols.&n;&t; */
-id|ipv6_init
+macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_SYSCTL)
+id|ipv6_sysctl_register
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
+id|err
+op_assign
 id|icmpv6_init
 c_func
 (paren
 op_amp
 id|inet6_family_ops
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|icmp_fail
+suffix:semicolon
+id|err
+op_assign
+id|ndisc_init
+c_func
+(paren
+op_amp
+id|inet6_family_ops
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|ndisc_fail
+suffix:semicolon
+id|err
+op_assign
+id|igmp6_init
+c_func
+(paren
+op_amp
+id|inet6_family_ops
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|igmp_fail
+suffix:semicolon
+id|ipv6_netdev_notif_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ipv6_packet_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ip6_route_init
+c_func
+(paren
 )paren
 suffix:semicolon
 id|addrconf_init
@@ -1776,13 +1833,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* init v6 transport protocols */
+multiline_comment|/* Init v6 transport protocols. */
 id|udpv6_init
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* add /proc entries here */
 id|tcpv6_init
 c_func
 (paren
@@ -1819,9 +1875,54 @@ id|proc_net_sockstat6
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Now the userspace is allowed to create INET6 sockets. */
+(paren
+r_void
+)paren
+id|sock_register
+c_func
+(paren
+op_amp
+id|inet6_family_ops
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 r_return
 l_int|0
+suffix:semicolon
+macro_line|#else
+r_return
+suffix:semicolon
+macro_line|#endif
+id|igmp_fail
+suffix:colon
+id|ndisc_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ndisc_fail
+suffix:colon
+id|icmpv6_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|icmp_fail
+suffix:colon
+macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_SYSCTL)
+id|ipv6_sysctl_unregister
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MODULE
+r_return
+id|err
+suffix:semicolon
+macro_line|#else
+r_return
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -1834,20 +1935,11 @@ c_func
 r_void
 )paren
 (brace
-id|sit_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ipv6_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* First of all disallow new sockets creation. */
 id|sock_unregister
 c_func
 (paren
-id|PF_INET6
+id|AF_INET6
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
@@ -1873,6 +1965,54 @@ id|proc_net_unregister
 c_func
 (paren
 id|proc_net_sockstat6.low_ino
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Cleanup code parts. */
+id|sit_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ipv6_netdev_notif_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|addrconf_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ip6_route_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ipv6_packet_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|igmp6_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ndisc_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|icmpv6_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
+id|ipv6_sysctl_unregister
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#endif

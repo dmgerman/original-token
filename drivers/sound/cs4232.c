@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if defined(CONFIG_CS4232) || defined (MODULE)
+macro_line|#ifdef CONFIG_CS4232
 DECL|macro|KEY_PORT
 mdefine_line|#define KEY_PORT&t;0x279&t;/* Same as LPT1 status port */
 DECL|macro|CSN_NUM
@@ -598,11 +598,6 @@ id|dma2
 op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
-r_int
-id|old_num_mixers
-op_assign
-id|num_mixers
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -643,9 +638,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_mixers
-OG
-id|old_num_mixers
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_ne
+op_minus
+l_int|1
+op_logical_and
+id|audio_devs
+(braket
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+)braket
+op_member_access_from_pointer
+id|mixer_dev
+op_ne
+op_minus
+l_int|1
 )paren
 (brace
 multiline_comment|/* Assume the mixer map is as suggested in the CS4232 databook */

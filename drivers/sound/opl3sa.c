@@ -1,8 +1,10 @@
-multiline_comment|/*&n; * sound/Xopl3sa.c&n; *&n; * Low level driver for Yamaha YMF701B aka OPL3-SA chip&n; * &n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; *&t;Alan Cox&t;&t;Modularisation&n; *&n; * FIXME:&n; * &t;Check for install of mpu etc is wrong, should check result of the mss stuff&n; */
+multiline_comment|/*&n; * sound/opl3sa.c&n; *&n; * Low level driver for Yamaha YMF701B aka OPL3-SA chip&n; * &n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; *&t;Alan Cox&t;&t;Modularisation&n; *&n; * FIXME:&n; * &t;Check for install of mpu etc is wrong, should check result of the mss stuff&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|SB_OK
 macro_line|#undef  SB_OK
 macro_line|#include &quot;sound_config.h&quot;
+macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#ifdef SB_OK
 macro_line|#include &quot;sb.h&quot;
 DECL|variable|sb_initialized
@@ -1070,6 +1072,11 @@ r_struct
 id|address_info
 id|mpu_cfg
 suffix:semicolon
+DECL|variable|found_mpu
+r_static
+r_int
+id|found_mpu
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -1151,7 +1158,7 @@ id|ENODEV
 suffix:semicolon
 id|found_mpu
 op_assign
-id|probe_opl3_mpu
+id|probe_opl3sa_mpu
 c_func
 (paren
 op_amp
@@ -1207,7 +1214,7 @@ id|mpu_cfg
 )paren
 suffix:semicolon
 )brace
-id|unload_opl3sa
+id|unload_opl3sa_wss
 c_func
 (paren
 op_amp

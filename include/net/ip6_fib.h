@@ -344,6 +344,14 @@ r_int
 id|dummy
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|fib6_gc_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 eof

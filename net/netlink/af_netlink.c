@@ -3210,7 +3210,11 @@ c_func
 (paren
 l_int|4
 op_plus
+id|NLMSG_ALIGN
+c_func
+(paren
 id|nlh-&gt;nlmsg_len
+)paren
 )paren
 suffix:semicolon
 id|skb

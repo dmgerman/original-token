@@ -263,22 +263,6 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_ACCT
-r_extern
-r_int
-id|ip_acct_output
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-macro_line|#else
-DECL|macro|ip_acct_output
-mdefine_line|#define ip_acct_output&t;dev_queue_xmit
-macro_line|#endif
 r_extern
 r_void
 id|ip_fragment

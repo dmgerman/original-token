@@ -2109,10 +2109,37 @@ l_int|9
 )paren
 suffix:semicolon
 multiline_comment|/* Enable focus processor (bit==0) */
+id|value
+op_or_assign
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* Set spurious IRQ vector to 0xff */
 id|apic_write
 c_func
 (paren
 id|APIC_SPIV
+comma
+id|value
+)paren
+suffix:semicolon
+id|value
+op_assign
+id|apic_read
+c_func
+(paren
+id|APIC_TASKPRI
+)paren
+suffix:semicolon
+id|value
+op_and_assign
+op_complement
+id|APIC_TPRI_MASK
+suffix:semicolon
+multiline_comment|/* Set Task Priority to &squot;accept all&squot; */
+id|apic_write
+c_func
+(paren
+id|APIC_TASKPRI
 comma
 id|value
 )paren
@@ -2124,6 +2151,17 @@ l_int|100
 )paren
 suffix:semicolon
 multiline_comment|/* B safe */
+id|ack_APIC_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -3979,36 +4017,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|funny
-r_void
-id|funny
-(paren
-r_void
-)paren
-(brace
-id|send_IPI
-c_func
-(paren
-id|APIC_DEST_ALLBUT
-comma
-l_int|0x30
-multiline_comment|/*IO_APIC_VECTOR(11)*/
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n; * A non wait message cannot pass data or cpu source info. This current setup&n; * is only safe because the kernel lock owner is the only person who can send&n; * a message.&n; *&n; * Wrapping this whole block in a spinlock is not the safe answer either. A&n; * processor may get stuck with irq&squot;s off waiting to send a message and thus&n; * not replying to the person spinning for a reply....&n; *&n; * In the end flush tlb ought to be the NMI and a very very short function&n; * (to avoid the old IDE disk problems), and other messages sent with IRQ&squot;s&n; * enabled in a civilised fashion. That will also boost performance.&n; */
 DECL|function|smp_message_pass
 r_void
@@ -4733,7 +4741,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Reschedule call back&n; */
+multiline_comment|/*&n; * Reschedule call back (not used currently)&n; */
 DECL|function|smp_reschedule_interrupt
 id|asmlinkage
 r_void
@@ -4756,24 +4764,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * This looks silly, but we actually do need to wait&n;&t; * for the global interrupt lock.&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;huh, this is used, where???&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irq_enter
 c_func
 (paren
@@ -4910,6 +4901,27 @@ op_star
 id|mtrr_hook
 )paren
 (paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * This interrupt should _never_ happen with our APIC/SMP architecture&n; */
+DECL|function|smp_spurious_interrupt
+id|asmlinkage
+r_void
+id|smp_spurious_interrupt
+c_func
+(paren
+r_void
+)paren
+(brace
+id|ack_APIC_irq
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;spurious APIC interrupt, ayiee, should never happen.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -3,7 +3,8 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(MODULE) || ( defined(CONFIG_PAS) &amp;&amp; defined(CONFIG_AUDIO) )
+macro_line|#ifdef CONFIG_PAS
+macro_line|#ifdef CONFIG_AUDIO
 macro_line|#ifndef DEB
 DECL|macro|DEB
 mdefine_line|#define DEB(WHAT)
@@ -1838,5 +1839,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

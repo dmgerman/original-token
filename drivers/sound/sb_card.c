@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if defined(CONFIG_SBDSP) || defined (MODULE)
+macro_line|#ifdef CONFIG_SBDSP
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 DECL|function|attach_sb_card
@@ -511,7 +511,6 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-macro_line|#endif
 DECL|variable|sb_dsp_init
 id|EXPORT_SYMBOL
 c_func
@@ -568,4 +567,5 @@ c_func
 id|sb_be_quiet
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

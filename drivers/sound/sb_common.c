@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#if defined(CONFIG_SBDSP) || defined(MODULE)
+macro_line|#ifdef CONFIG_SBDSP
 macro_line|#ifndef CONFIG_AUDIO
 macro_line|#error You will need to configure the sound driver with CONFIG_AUDIO option.
 macro_line|#endif
@@ -135,6 +135,14 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+DECL|variable|last_sb
+id|sb_devc
+op_star
+id|last_sb
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Last sb loaded */
 DECL|function|sb_dsp_command
 r_int
 id|sb_dsp_command
@@ -432,7 +440,7 @@ id|IRQ_STAT
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupt source register */
-macro_line|#if defined(CONFIG_MIDI)&amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
+macro_line|#if defined(CONFIG_MIDI)&amp;&amp; defined(CONFIG_UART401)
 r_if
 c_cond
 (paren
@@ -445,7 +453,7 @@ c_func
 (paren
 id|devc-&gt;irq
 comma
-l_int|NULL
+id|devc-&gt;midi_irq_cookie
 comma
 l_int|NULL
 )paren
@@ -510,7 +518,7 @@ suffix:semicolon
 r_case
 id|IMODE_MIDI
 suffix:colon
-macro_line|#if  defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 id|sb_midi_interrupt
 c_func
 (paren
@@ -3138,6 +3146,10 @@ comma
 l_string|&quot;soundblaster&quot;
 )paren
 suffix:semicolon
+id|last_sb
+op_assign
+id|devc
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3391,7 +3403,7 @@ c_func
 id|devc
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 r_if
 c_cond
 (paren
@@ -3770,12 +3782,8 @@ c_func
 id|devc-&gt;my_mixerdev
 )paren
 suffix:semicolon
-id|sound_unload_mididev
-c_func
-(paren
-id|devc-&gt;my_mididev
-)paren
-suffix:semicolon
+multiline_comment|/* We don&squot;t have to do this bit any more the UART401 is its own&n;&t;&t;&t;&t;master  -- Krzystof Halasa */
+multiline_comment|/* sound_unload_mididev(devc-&gt;my_mididev); */
 id|sound_unload_audiodev
 c_func
 (paren
@@ -3984,7 +3992,7 @@ r_return
 id|val
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 multiline_comment|/*&n; *&t;MPU401 MIDI initialization.&n; */
 DECL|function|smw_putmem
 r_static
@@ -5079,12 +5087,22 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
 id|attach_uart401
 c_func
 (paren
 id|hw_config
 )paren
+suffix:semicolon
+id|last_sb-&gt;midi_irq_cookie
+op_assign
+id|midi_devs
+(braket
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+)braket
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -5099,7 +5117,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
 id|sb_devc
 op_star
 id|devc
@@ -5324,7 +5342,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
 id|unload_uart401
 c_func
 (paren

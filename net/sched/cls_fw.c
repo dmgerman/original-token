@@ -45,7 +45,6 @@ op_star
 id|res
 )paren
 (brace
-macro_line|#if 0 /* XXX skb-&gt;fwmark, where is it? -DaveM */
 id|u32
 id|clid
 op_assign
@@ -92,7 +91,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 op_minus
 l_int|1
@@ -221,10 +219,10 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|fw_cls_ops
+DECL|variable|cls_fw_ops
 r_struct
 id|tcf_proto_ops
-id|fw_cls_ops
+id|cls_fw_ops
 op_assign
 (brace
 l_int|NULL

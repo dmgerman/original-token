@@ -32,7 +32,7 @@ op_amp
 id|qdisc_head
 )brace
 suffix:semicolon
-multiline_comment|/* Kick device.&n;   Note, that this procedure can be called by watchdog timer, so that&n;   we do not check dev-&gt;tbusy flag here.&n;&n;   Returns:  0  - queue is empty.&n;            &gt;0  - queue is not empty, but throttled.&n;&t;    &lt;0  - queue is not empty. Device is throttled, if dev-&gt;tbusy != 0.&n;&n;   NOTE: Called only from NET BH&n;*/
+multiline_comment|/* Kick device.&n;   Note, that this procedure can be called by a watchdog timer, so that&n;   we do not check dev-&gt;tbusy flag here.&n;&n;   Returns:  0  - queue is empty.&n;            &gt;0  - queue is not empty, but throttled.&n;&t;    &lt;0  - queue is not empty. Device is throttled, if dev-&gt;tbusy != 0.&n;&n;   NOTE: Called only from NET BH&n;*/
 DECL|function|qdisc_restart
 r_int
 id|qdisc_restart
@@ -112,7 +112,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Device kicked us out :(&n;&t;&t;   It is possible in three cases:&n;&n;&t;&t;   1. fastroute is enabled&n;&t;&t;   2. device cannot determine busy state&n;&t;&t;      before start of transmission (f.e. dialout)&n;&t;&t;   3. device is buggy (ppp)&n;&t;&t; */
+multiline_comment|/* Device kicked us out :(&n;&t;&t;   This is possible in three cases:&n;&n;&t;&t;   1. fastroute is enabled&n;&t;&t;   2. device cannot determine busy state&n;&t;&t;      before start of transmission (f.e. dialout)&n;&t;&t;   3. device is buggy (ppp)&n;&t;&t; */
 id|q-&gt;ops
 op_member_access_from_pointer
 id|requeue
@@ -132,7 +132,7 @@ r_return
 id|q-&gt;q.qlen
 suffix:semicolon
 )brace
-multiline_comment|/* Scan transmission queue and kick devices.&n;&n;   Deficiency: slow devices (ppp) and fast ones (100Mb ethernet)&n;   share one queue. It means, that if we have a lot of loaded ppp channels,&n;   we will scan a long list on every 100Mb EOI.&n;   I have no idea how to solve it using only &quot;anonymous&quot; Linux mark_bh().&n;&n;   To change queue from device interrupt? Ough... only not this...&n; */
+multiline_comment|/* Scan transmission queue and kick devices.&n;&n;   Deficiency: slow devices (ppp) and fast ones (100Mb ethernet)&n;   share one queue. This means that if we have a lot of loaded ppp channels,&n;   we will scan a long list on every 100Mb EOI.&n;   I have no idea how to solve it using only &quot;anonymous&quot; Linux mark_bh().&n;&n;   To change queue from device interrupt? Ough... only not this...&n; */
 DECL|function|qdisc_run_queues
 r_void
 id|qdisc_run_queues
@@ -214,7 +214,7 @@ l_int|0
 )paren
 multiline_comment|/* NOTHING */
 suffix:semicolon
-multiline_comment|/* The explanation is necessary here.&n;&t;&t;   qdisc_restart called dev-&gt;hard_start_xmit,&n;&t;&t;   if device is virtual, it could trigger one more&n;&t;&t;   dev_queue_xmit and new device could appear&n;&t;&t;   in active chain. In this case we cannot unlink&n;&t;&t;   empty queue, because we lost back pointer.&n;&t;&t;   No problem, we will unlink it during the next round.&n;&t;&t; */
+multiline_comment|/* An explanation is necessary here.&n;&t;&t;   qdisc_restart called dev-&gt;hard_start_xmit,&n;&t;&t;   if device is virtual, it could trigger one more&n;&t;&t;   dev_queue_xmit and a new device could appear&n;&t;&t;   in the active chain. In this case we cannot unlink&n;&t;&t;   the empty queue, because we lost the back pointer.&n;&t;&t;   No problem, we will unlink it during the next round.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -247,7 +247,7 @@ id|h-&gt;forw
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Periodic watchdoc timer to recover of hard/soft device bugs. */
+multiline_comment|/* Periodic watchdoc timer to recover from hard/soft device bugs. */
 r_static
 r_void
 id|dev_do_watchdog
@@ -363,7 +363,7 @@ id|dev_watchdog
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &quot;NOOP&quot; scheduler: the best scheduler, recommended for all interfaces&n;   in all curcumstances. It is difficult to invent anything more&n;   fast or cheap.&n; */
+multiline_comment|/* &quot;NOOP&quot; scheduler: the best scheduler, recommended for all interfaces&n;   under all circumstances. It is difficult to invent anything faster or&n;   cheaper.&n; */
 r_static
 r_int
 DECL|function|noop_enqueue

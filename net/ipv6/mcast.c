@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.15 1998/04/30 16:24:28 freitag Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Multicast support for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: mcast.c,v 1.16 1998/05/07 15:43:10 davem Exp $&n; *&n; *&t;Based on linux/ipv4/igmp.c and linux/ipv4/ip_sockglue.c &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -34,21 +34,12 @@ macro_line|#else
 DECL|macro|MDBG
 mdefine_line|#define MDBG(x)
 macro_line|#endif
-DECL|variable|igmp6_inode
-r_static
-r_struct
-id|inode
-id|igmp6_inode
-suffix:semicolon
 DECL|variable|igmp6_socket
 r_static
 r_struct
 id|socket
 op_star
 id|igmp6_socket
-op_assign
-op_amp
-id|igmp6_inode.u.socket_i
 suffix:semicolon
 r_static
 r_void
@@ -2568,7 +2559,7 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_void
+r_int
 id|igmp6_init
 c_func
 (paren
@@ -2594,30 +2585,40 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|igmp6_inode.i_mode
+id|igmp6_socket
 op_assign
-id|S_IFSOCK
+id|sock_alloc
+c_func
+(paren
+)paren
 suffix:semicolon
-id|igmp6_inode.i_sock
-op_assign
+r_if
+c_cond
+(paren
+id|igmp6_socket
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Failed to create the IGMP6 control socket.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
 l_int|1
 suffix:semicolon
-id|igmp6_inode.i_uid
+)brace
+id|igmp6_socket-&gt;inode-&gt;i_uid
 op_assign
 l_int|0
 suffix:semicolon
-id|igmp6_inode.i_gid
+id|igmp6_socket-&gt;inode-&gt;i_gid
 op_assign
 l_int|0
-suffix:semicolon
-id|igmp6_socket-&gt;inode
-op_assign
-op_amp
-id|igmp6_inode
-suffix:semicolon
-id|igmp6_socket-&gt;state
-op_assign
-id|SS_UNCONNECTED
 suffix:semicolon
 id|igmp6_socket-&gt;type
 op_assign
@@ -2647,8 +2648,24 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Failed to create the IGMP6 control socket.&bslash;n&quot;
+l_string|&quot;Failed to initialize the IGMP6 control socket (err %d).&bslash;n&quot;
+comma
+id|err
 )paren
+suffix:semicolon
+id|sock_release
+c_func
+(paren
+id|igmp6_socket
+)paren
+suffix:semicolon
+id|igmp6_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* For safety. */
+r_return
+id|err
 suffix:semicolon
 )brace
 id|sk
@@ -2686,7 +2703,11 @@ op_assign
 id|igmp6_read_proc
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|igmp6_cleanup
 r_void
 id|igmp6_cleanup
@@ -2695,6 +2716,17 @@ c_func
 r_void
 )paren
 (brace
+id|sock_release
+c_func
+(paren
+id|igmp6_socket
+)paren
+suffix:semicolon
+id|igmp6_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* for safety */
 macro_line|#ifdef CONFIG_PROC_FS
 id|remove_proc_entry
 c_func
@@ -2706,4 +2738,5 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif
 eof

@@ -1,8 +1,8 @@
 multiline_comment|/*&n; * lowlevel/init.c - Calls initialization code for configured drivers.&n; */
 macro_line|#include &quot;lowlevel.h&quot;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;../soundvers.h&quot;
-macro_line|#ifdef CONFIG_LOWLEVEL_SOUND
 macro_line|#ifdef LOWLEVEL_MODULE
 DECL|variable|lowlevel_version
 r_char
@@ -130,5 +130,18 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif
+DECL|variable|sound_init_lowlevel_drivers
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sound_init_lowlevel_drivers
+)paren
+suffix:semicolon
+DECL|variable|sound_unload_lowlevel_drivers
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sound_unload_lowlevel_drivers
+)paren
+suffix:semicolon
 eof

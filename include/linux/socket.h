@@ -348,6 +348,8 @@ DECL|macro|AF_ECONET
 mdefine_line|#define AF_ECONET&t;19&t;/* Acorn Econet&t;&t;&t;*/
 DECL|macro|AF_ATMSVC
 mdefine_line|#define AF_ATMSVC&t;20&t;/* ATM SVCs&t;&t;&t;*/
+DECL|macro|AF_SNA
+mdefine_line|#define AF_SNA&t;&t;22&t;/* Linux SNA Project (nutters!) */
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -395,6 +397,8 @@ DECL|macro|PF_ASH
 mdefine_line|#define PF_ASH&t;&t;AF_ASH
 DECL|macro|PF_ATMSVC
 mdefine_line|#define PF_ATMSVC&t;AF_ATMSVC
+DECL|macro|PF_SNA
+mdefine_line|#define PF_SNA&t;&t;AF_SNA
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */

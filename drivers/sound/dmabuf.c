@@ -5857,6 +5857,17 @@ id|dev
 )braket
 suffix:semicolon
 multiline_comment|/*&n;&t; * NOTE! This routine could be called several times.&n;&t; */
+multiline_comment|/* drag in audio_syms.o */
+(brace
+r_extern
+r_char
+id|audio_syms_symbol
+suffix:semicolon
+id|audio_syms_symbol
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -467,6 +467,12 @@ id|skb-&gt;dst
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_FIREWALL_CHAINS
+id|skb-&gt;fwmark
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|memset
 c_func
 (paren

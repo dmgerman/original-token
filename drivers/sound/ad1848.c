@@ -276,7 +276,7 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS) || defined(MODULE)
 DECL|variable|timer_installed
 r_static
 r_int
@@ -520,7 +520,7 @@ r_int
 id|bits
 )paren
 suffix:semicolon
-macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
 r_static
 r_int
 id|ad1848_tmr_install
@@ -4804,7 +4804,7 @@ id|devc-&gt;xfer_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
 r_if
 c_cond
 (paren
@@ -8124,6 +8124,16 @@ id|portc
 op_assign
 id|portc
 suffix:semicolon
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|mixer_dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -8367,7 +8377,7 @@ id|devc-&gt;dev_no
 op_assign
 id|my_dev
 suffix:semicolon
-macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
 r_if
 c_cond
 (paren
@@ -9271,7 +9281,7 @@ multiline_comment|/* Timer interrupt */
 id|devc-&gt;timer_ticks
 op_increment
 suffix:semicolon
-macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
 r_if
 c_cond
 (paren
@@ -11030,7 +11040,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
 multiline_comment|/*&n; * Timer stuff (for /dev/music).&n; */
 DECL|variable|current_interval
 r_static

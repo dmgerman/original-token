@@ -1803,6 +1803,17 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* drag in midi_syms.o */
+(brace
+r_extern
+r_char
+id|midi_syms_symbol
+suffix:semicolon
+id|midi_syms_symbol
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 DECL|function|MIDIbuf_avail
 r_int

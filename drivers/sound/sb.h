@@ -1,4 +1,5 @@
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &quot;legacy.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
 DECL|macro|DSP_RESET
 mdefine_line|#define DSP_RESET&t;(devc-&gt;base + 0x6)
@@ -310,6 +311,12 @@ r_char
 id|data
 )paren
 suffix:semicolon
+DECL|member|midi_irq_cookie
+r_void
+op_star
+id|midi_irq_cookie
+suffix:semicolon
+multiline_comment|/* IRQ cookie for the midi */
 DECL|typedef|sb_devc
 )brace
 id|sb_devc
@@ -479,6 +486,11 @@ suffix:semicolon
 r_extern
 r_int
 id|acer
+suffix:semicolon
+r_extern
+id|sb_devc
+op_star
+id|last_sb
 suffix:semicolon
 macro_line|#endif
 eof

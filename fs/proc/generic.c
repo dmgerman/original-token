@@ -557,6 +557,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* This is a hack to allow mangling of file pos independent&n; &t;&t; * of actual bytes read.  Simply place the data at page,&n; &t;&t; * return the bytes, and set `start&squot; to the desired offset&n; &t;&t; * as an unsigned int. - Paul.Russell@rustcorp.com.au&n;&t;&t; */
 id|n
 op_sub_assign
 id|copy_to_user
@@ -565,11 +566,17 @@ c_func
 id|buf
 comma
 id|start
+OL
+id|page
+ques
+c_cond
+id|page
+suffix:colon
+id|start
 comma
 id|n
 )paren
 suffix:semicolon
-multiline_comment|/* BUG ??? */
 r_if
 c_cond
 (paren
@@ -596,6 +603,16 @@ suffix:semicolon
 op_star
 id|ppos
 op_add_assign
+id|start
+OL
+id|page
+ques
+c_cond
+(paren
+r_int
+)paren
+id|start
+suffix:colon
 id|n
 suffix:semicolon
 multiline_comment|/* Move down the file */

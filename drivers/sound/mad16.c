@@ -20,7 +20,7 @@ r_int
 id|mad16_cdsel
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_MAD16) || defined(MODULE)
+macro_line|#ifdef CONFIG_MAD16
 macro_line|#include &quot;sb.h&quot;
 DECL|variable|already_initialized
 r_static
@@ -1271,7 +1271,7 @@ c_func
 (paren
 id|MC4_PORT
 comma
-l_int|0x66
+l_int|0x62
 )paren
 suffix:semicolon
 )brace
@@ -1282,7 +1282,7 @@ c_func
 (paren
 id|MC4_PORT
 comma
-l_int|0x56
+l_int|0x52
 )paren
 suffix:semicolon
 multiline_comment|/* opl3 */
@@ -1292,7 +1292,7 @@ c_func
 (paren
 id|MC4_PORT
 comma
-l_int|0x56
+l_int|0x52
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -14,7 +14,7 @@ DECL|macro|NO_SAMPLE
 mdefine_line|#define NO_SAMPLE&t;&t;0xffff
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if defined(CONFIG_SOFTOSS) || defined(MODULE)
+macro_line|#ifdef CONFIG_SOFTOSS
 macro_line|#include &quot;softoss.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 DECL|variable|softsynth_disabled

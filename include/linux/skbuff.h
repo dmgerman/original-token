@@ -314,6 +314,13 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Destruct function&t;&t;*/
+macro_line|#ifdef CONFIG_IP_FIREWALL
+DECL|member|fwmark
+id|__u32
+id|fwmark
+suffix:semicolon
+multiline_comment|/* Label made by fwchains, used by pktsched&t;*/
+macro_line|#endif
 macro_line|#if defined(CONFIG_SHAPER) || defined(CONFIG_SHAPER_MODULE)
 DECL|member|shapelatency
 id|__u32

@@ -8,9 +8,9 @@ DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI) || defined(MODULE)
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 macro_line|#include &quot;coproc.h&quot;
-macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
+macro_line|#ifdef CONFIG_SEQUENCER
 DECL|variable|timer_mode
 DECL|variable|timer_caps
 r_static
@@ -451,7 +451,7 @@ l_int|0
 multiline_comment|/* Fx */
 )brace
 suffix:semicolon
-macro_line|#if !defined(CONFIG_SEQUENCER) &amp;&amp; !defined(MODULE)
+macro_line|#ifndef CONFIG_SEQUENCER
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd)
 macro_line|#else
@@ -4679,7 +4679,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*****************************************************&n; *      Timer stuff&n; ****************************************************/
-macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
+macro_line|#if defined(CONFIG_SEQUENCER)
 DECL|variable|timer_initialized
 DECL|variable|timer_open
 DECL|variable|tmr_running

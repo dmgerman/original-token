@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_AUDIO) || defined(MODULE)
+macro_line|#ifdef CONFIG_AUDIO
 macro_line|#include &quot;ulaw.h&quot;
 macro_line|#include &quot;coproc.h&quot;
 DECL|macro|NEUTRAL8

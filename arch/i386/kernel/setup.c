@@ -927,6 +927,12 @@ id|buf
 op_assign
 id|c-&gt;x86_model_id
 suffix:semicolon
+multiline_comment|/* Cyrix claims they have a TSC, but it is broken */
+id|c-&gt;x86_capability
+op_and_assign
+op_complement
+l_int|16
+suffix:semicolon
 multiline_comment|/* Note that some of the possibilities this decoding allows&n;&t; * have never actually been manufactured - but those that&n;&t; * do actually exist are correctly decoded.&n;&t; */
 r_if
 c_cond

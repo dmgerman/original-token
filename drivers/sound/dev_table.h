@@ -1901,7 +1901,7 @@ id|sound_drivers
 )braket
 op_assign
 (brace
-macro_line|#if defined(CONFIG_PSS) &amp;&amp; !defined(CONFIG_PSS_MODULE)
+macro_line|#ifdef CONFIG_SOUND_PSS
 (brace
 l_string|&quot;PSS&quot;
 comma
@@ -1951,7 +1951,7 @@ id|unload_pss_mss
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_GUS) &amp;&amp; !defined(CONFIG_GUS_MODULE)
+macro_line|#ifdef CONFIG_SOUND_GUS
 macro_line|#ifdef CONFIG_GUS16
 (brace
 l_string|&quot;GUS16&quot;
@@ -2005,7 +2005,7 @@ id|unload_gus
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#if defined(CONFIG_MSS) &amp;&amp; !defined(CONFIG_MSS_MODULE)
+macro_line|#ifdef CONFIG_SOUND_MSS
 (brace
 l_string|&quot;MSS&quot;
 comma
@@ -2040,7 +2040,7 @@ id|unload_ms_sound
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAD16
+macro_line|#ifdef CONFIG_SOUND_MAD16
 (brace
 l_string|&quot;MAD16&quot;
 comma
@@ -2074,7 +2074,7 @@ id|unload_mad16_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_CS4232
+macro_line|#ifdef CONFIG_SOUND_CS4232
 (brace
 l_string|&quot;CS4232&quot;
 comma
@@ -2108,7 +2108,25 @@ id|unload_cs4232_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_YM3812) &amp;&amp; !defined(CONFIG_YM3812_MODULE)
+macro_line|#ifdef CONFIG_SGALAXY
+(brace
+l_string|&quot;SGALAXY&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_SGALAXY
+comma
+l_string|&quot;Sound Galaxy WSS&quot;
+comma
+id|attach_sgalaxy
+comma
+id|probe_sgalaxy
+comma
+id|unload_sgalaxy
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_YM3812
 (brace
 l_string|&quot;OPL3&quot;
 comma
@@ -2126,7 +2144,7 @@ id|unload_adlib
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_PAS) &amp;&amp; !defined(CONFIG_PAS_MODULE)
+macro_line|#ifdef CONFIG_SOUND_PAS
 (brace
 l_string|&quot;PAS16&quot;
 comma
@@ -2144,7 +2162,7 @@ id|unload_pas
 )brace
 comma
 macro_line|#endif
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_MPU401_MODULE)
+macro_line|#if (defined(CONFIG_SOUND_MPU401) || defined(CONFIG_SOUND_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 l_string|&quot;MPU401&quot;
 comma
@@ -2162,7 +2180,7 @@ id|unload_mpu401
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_UART401_MODULE)
+macro_line|#if defined(CONFIG_SOUND_UART401) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 l_string|&quot;UART401&quot;
 comma
@@ -2180,7 +2198,7 @@ id|unload_uart401
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_MAUI) &amp;&amp; !defined(CONFIG_MAUI_MODULE)
+macro_line|#if defined(CONFIG_SOUND_MAUI)
 (brace
 l_string|&quot;MAUI&quot;
 comma
@@ -2198,7 +2216,7 @@ id|unload_maui
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_UART6850_MODULE)
+macro_line|#if defined(CONFIG_SOUND_UART6850) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 l_string|&quot;MIDI6850&quot;
 comma
@@ -2216,7 +2234,7 @@ id|unload_uart6850
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SBDSP) &amp;&amp; !defined(CONFIG_SBDSP_MODULE)
+macro_line|#ifdef CONFIG_SOUND_SBDSP
 (brace
 l_string|&quot;SBLAST&quot;
 comma
@@ -2268,7 +2286,7 @@ id|unload_sbmpu
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_SSCAPE
+macro_line|#ifdef CONFIG_SOUND_SSCAPE
 (brace
 l_string|&quot;SSCAPE&quot;
 comma
@@ -2302,7 +2320,7 @@ id|unload_ss_ms_sound
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_OPL3SA1
+macro_line|#ifdef CONFIG_SOUND_OPL3SA1
 (brace
 l_string|&quot;OPL3SA&quot;
 comma
@@ -2337,7 +2355,7 @@ id|unload_opl3sa_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined (CONFIG_TRIX) &amp;&amp; !defined(CONFIG_TRIX_MODULE)
+macro_line|#ifdef CONFIG_SOUND_TRIX
 (brace
 l_string|&quot;TRXPRO&quot;
 comma
@@ -2387,7 +2405,7 @@ id|unload_trix_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOFTOSS) &amp;&amp; !defined(CONFIG_SOFTOSS_MODULE)
+macro_line|#ifdef CONFIG_SOUND_SOFTOSS
 (brace
 l_string|&quot;SOFTSYN&quot;
 comma
@@ -2405,7 +2423,7 @@ id|unload_softsyn
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_VMIDI) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_VMIDI_MODULE)
+macro_line|#if defined(CONFIG_SOUND_VMIDI) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 l_string|&quot;VMIDI&quot;
 comma
@@ -2483,7 +2501,7 @@ id|snd_installed_cards
 )braket
 op_assign
 (brace
-macro_line|#ifdef CONFIG_PSS
+macro_line|#ifdef CONFIG_SOUND_PSS
 (brace
 id|SNDCARD_PSS
 comma
@@ -2541,7 +2559,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_TRIX
+macro_line|#ifdef CONFIG_SOUND_TRIX
 macro_line|#ifndef CONFIG_TRIX_DMA2
 DECL|macro|CONFIG_TRIX_DMA2
 mdefine_line|#define CONFIG_TRIX_DMA2 CONFIG_TRIX_DMA
@@ -2601,7 +2619,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_OPL3SA1
+macro_line|#ifdef CONFIG_SOUND_OPL3SA1
 (brace
 id|SNDCARD_OPL3SA1
 comma
@@ -2638,7 +2656,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_SOFTOSS
+macro_line|#ifdef CONFIG_SOUND_SOFTOSS
 (brace
 id|SNDCARD_SOFTOSS
 comma
@@ -2658,7 +2676,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SSCAPE
+macro_line|#ifdef CONFIG_SOUND_SSCAPE
 (brace
 id|SNDCARD_SSCAPE
 comma
@@ -2694,7 +2712,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAD16
+macro_line|#ifdef CONFIG_SOUND_MAD16
 macro_line|#ifndef CONFIG_MAD16_DMA2
 DECL|macro|CONFIG_MAD16_DMA2
 mdefine_line|#define CONFIG_MAD16_DMA2 CONFIG_MAD16_DMA
@@ -2735,7 +2753,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_CS4232
+macro_line|#ifdef CONFIG_SOUND_CS4232
 macro_line|#ifndef CONFIG_CS4232_DMA2
 DECL|macro|CONFIG_CS4232_DMA2
 mdefine_line|#define CONFIG_CS4232_DMA2 CONFIG_CS4232_DMA
@@ -2776,7 +2794,35 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_MSS
+macro_line|#ifdef CONFIG_SGALAXY
+macro_line|#ifndef CONFIG_SGALAXY_DMA2
+DECL|macro|CONFIG_SGALAXY_DMA2
+mdefine_line|#define CONFIG_SGALAXY_DMA2 CONFIG_SGALAXY_DMA
+macro_line|#endif
+(brace
+id|SNDCARD_SGALAXY
+comma
+(brace
+id|CONFIG_SGALAXY_BASE
+comma
+id|CONFIG_SGALAXY_IRQ
+comma
+id|CONFIG_SGALAXY_DMA
+comma
+id|CONFIG_SGALAXY_DMA2
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|CONFIG_SGALAXY_SGBASE
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_MSS
 macro_line|#ifndef CONFIG_MSS_DMA2
 DECL|macro|CONFIG_MSS_DMA2
 mdefine_line|#define CONFIG_MSS_DMA2 -1
@@ -2835,7 +2881,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_PAS
+macro_line|#ifdef CONFIG_SOUND_PAS
 (brace
 id|SNDCARD_PAS
 comma
@@ -2854,7 +2900,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SB
+macro_line|#ifdef CONFIG_SOUND_SB
 macro_line|#ifndef CONFIG_SB_DMA
 DECL|macro|CONFIG_SB_DMA
 mdefine_line|#define CONFIG_SB_DMA&t;&t;1
@@ -2898,7 +2944,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#if defined(CONFIG_MAUI) 
+macro_line|#ifdef CONFIG_SOUND_MAUI
 (brace
 id|SNDCARD_MAUI
 comma
@@ -2917,7 +2963,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_SOUND_MPU401) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 id|SNDCARD_MPU401
 comma
@@ -2974,7 +3020,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_SOUND_UART6850) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 id|SNDCARD_UART6850
 comma
@@ -2993,7 +3039,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_SB) 
+macro_line|#ifdef CONFIG_SOUND_SB
 macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_SB_MPU_BASE)
 (brace
 id|SNDCARD_SB16MIDI
@@ -3014,7 +3060,7 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_GUS
+macro_line|#ifdef CONFIG_SOUND_GUS
 macro_line|#ifndef CONFIG_GUS_DMA2
 DECL|macro|CONFIG_GUS_DMA2
 mdefine_line|#define CONFIG_GUS_DMA2 CONFIG_GUS_DMA
@@ -3055,7 +3101,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_YM3812) 
+macro_line|#ifdef CONFIG_SOUND_YM3812
 (brace
 id|SNDCARD_ADLIB
 comma
@@ -3074,7 +3120,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_VMIDI) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_SOUND_VMIDI) &amp;&amp; defined(CONFIG_MIDI)
 (brace
 id|SNDCARD_VMIDI
 comma

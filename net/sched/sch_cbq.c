@@ -25,7 +25,7 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
-multiline_comment|/*&t;Class-Based Queueing (CBQ) algorithm.&n;&t;=======================================&n;&n;&t;Sources: [1] Sally Floyd and Van Jacobson, &quot;Link-sharing and Resource&n;&t;         Management Models for Packet Networks&quot;,&n;&t;&t; IEEE/ACM Transactions on Networking, Vol.3, No.4, 1995&n;&n;&t;         [2] Sally Floyd, &quot;Notes on CBQ and Guaranted Service&quot;, 1995&n;&n;&t;         [3] Sally Floyd, &quot;Notes on Class-Based Queueing: Setting&n;&t;&t; Parameters&quot;, 1996&n;&n;&t;&t; [4] Sally Floyd and Michael Speer, &quot;Experimental Results&n;&t;&t; for Class-Based Queueing&quot;, 1998, not published.&n;&n;&t;-----------------------------------------------------------------------&n;&n;&t;Algorithm skeleton is taken from from NS simulator cbq.cc.&n;&t;If someone wants to check this text against LBL version,&n;&t;he should take into account that ONLY skeleton is borrowed,&n;&t;implementation is different. Particularly:&n;&n;&t;--- WRR algorithm is different. Our version looks&n;&t;more reasonable (I hope) and works when quanta are allowed&n;&t;to be less than MTU, which always is the case, when real time&n;&t;classes have small rates. Note, that the statement of [3] is incomplete,&n;&t;Actually delay may be estimated even if class per-round allotment&n;&t;less than MTU. Namely, if per-round allotment is W*r_i,&n;&t;and r_1+...+r_k = r &lt; 1&n;&n;&t;delay_i &lt;= ([MTU/(W*r_i)]*W*r + W*r + k*MTU)/B&n;&n;&t;In the worst case we have IntServ estimate with D = W*r+k*MTU&n;&t;and C = MTU*r. The proof (if correct at all) is trivial.&n;&n;&n;&t;--- Seems, cbq-2.0 is not very accurate. At least, I cannot&n;&t;interpret some places, which look like wrong translation&n;&t;from NS. Anyone is advertised to found these differences&n;&t;and explain me, why I am wrong 8).&n;&n;&t;--- Linux has no EOI event, so that we cannot estimate true class&n;&t;idle time. Workaround is to consider the next dequeue event&n;&t;as sign that previous packet is finished. It is wrong because of&n;&t;internal device queueing, but on permanently loaded link it is true.&n;&t;Moreover, combined with clock integrator, this scheme looks&n;&t;very close to ideal solution.&n;*/
+multiline_comment|/*&t;Class-Based Queueing (CBQ) algorithm.&n;&t;=======================================&n;&n;&t;Sources: [1] Sally Floyd and Van Jacobson, &quot;Link-sharing and Resource&n;&t;         Management Models for Packet Networks&quot;,&n;&t;&t; IEEE/ACM Transactions on Networking, Vol.3, No.4, 1995&n;&n;&t;         [2] Sally Floyd, &quot;Notes on CBQ and Guaranted Service&quot;, 1995&n;&n;&t;         [3] Sally Floyd, &quot;Notes on Class-Based Queueing: Setting&n;&t;&t; Parameters&quot;, 1996&n;&n;&t;&t; [4] Sally Floyd and Michael Speer, &quot;Experimental Results&n;&t;&t; for Class-Based Queueing&quot;, 1998, not published.&n;&n;&t;-----------------------------------------------------------------------&n;&n;&t;Algorithm skeleton was taken from from NS simulator cbq.cc.&n;&t;If someone wants to check this code against the LBL version,&n;&t;he should take into account that ONLY the skeleton was borrowed,&n;&t;the implementation is different. Particularly:&n;&n;&t;--- The WRR algorithm is different. Our version looks more&n;        reasonable (I hope) and works when quanta are allowed to be&n;        less than MTU, which is always the case when real time classes&n;        have small rates. Note, that the statement of [3] is&n;        incomplete, delay may actually be estimated even if class&n;        per-round allotment is less than MTU. Namely, if per-round&n;        allotment is W*r_i, and r_1+...+r_k = r &lt; 1&n;&n;&t;delay_i &lt;= ([MTU/(W*r_i)]*W*r + W*r + k*MTU)/B&n;&n;&t;In the worst case we have IntServ estimate with D = W*r+k*MTU&n;&t;and C = MTU*r. The proof (if correct at all) is trivial.&n;&n;&n;&t;--- It seems that cbq-2.0 is not very accurate. At least, I cannot&n;&t;interpret some places, which look like wrong translations&n;&t;from NS. Anyone is advised to find these differences&n;&t;and explain to me, why I am wrong 8).&n;&n;&t;--- Linux has no EOI event, so that we cannot estimate true class&n;&t;idle time. Workaround is to consider the next dequeue event&n;&t;as sign that previous packet is finished. This is wrong because of&n;&t;internal device queueing, but on a permanently loaded link it is true.&n;&t;Moreover, combined with clock integrator, this scheme looks&n;&t;very close to an ideal solution.  */
 r_struct
 id|cbq_sched_data
 suffix:semicolon
@@ -365,7 +365,7 @@ r_struct
 id|timer_list
 id|wd_timer
 suffix:semicolon
-multiline_comment|/* Wathchdog timer, that&n;&t;&t;&t;&t;&t;&t;   started when CBQ has&n;&t;&t;&t;&t;&t;&t;   backlog, but cannot&n;&t;&t;&t;&t;&t;&t;   transmit just now */
+multiline_comment|/* Watchdog timer,&n;&t;&t;&t;&t;&t;&t;   started when CBQ has&n;&t;&t;&t;&t;&t;&t;   backlog, but cannot&n;&t;&t;&t;&t;&t;&t;   transmit just now */
 DECL|member|wd_expires
 r_int
 id|wd_expires
@@ -537,7 +537,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* Classify packet. The procedure is pretty complicated, but&n;   it allows us to combine link sharing and priority scheduling&n;   transparently.&n;&n;   Namely, you can put link sharing rules (f.e. route based) at root of CBQ,&n;   so that it resolves to split nodes. Then packeta are classified&n;   by logical priority, or more specific classifier may be attached&n;   to split node.&n; */
+multiline_comment|/* Classify packet. The procedure is pretty complicated, but&n;   it allows us to combine link sharing and priority scheduling&n;   transparently.&n;&n;   Namely, you can put link sharing rules (f.e. route based) at root of CBQ,&n;   so that it resolves to split nodes. Then packets are classified&n;   by logical priority, or a more specific classifier may be attached&n;   to the split node.&n; */
 r_static
 r_struct
 id|cbq_class
@@ -773,7 +773,7 @@ r_return
 id|cl
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Step 3+n. If classifier selected link sharing class,&n;&t;&t; *&t;   apply agency specific classifier.&n;&t;&t; *&t;   Repeat this procdure until we hit leaf node.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Step 3+n. If classifier selected a link sharing class,&n;&t;&t; *&t;   apply agency specific classifier.&n;&t;&t; *&t;   Repeat this procdure until we hit a leaf node.&n;&t;&t; */
 id|head
 op_assign
 id|cl
@@ -917,7 +917,7 @@ id|cl-&gt;quantum
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   Unlink class from active chain.&n;   Note, that the same procedure is made directly in cbq_dequeue*&n;   during round-robin procedure.&n; */
+multiline_comment|/*&n;   Unlink class from active chain.&n;   Note that this same procedure is done directly in cbq_dequeue*&n;   during round-robin procedure.&n; */
 DECL|function|cbq_deactivate_class
 r_static
 r_void
@@ -2558,7 +2558,7 @@ op_rshift
 id|cl-&gt;ewma_log
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;   That is not all.&n;&t;&t;&t;   To maintain rate allocated to class,&n;&t;&t;&t;   we add to undertime virtual clock,&n;&t;&t;&t;   necassry to complete transmitted packet.&n;&t;&t;&t;   (len/phys_bandwidth has been already passed&n;&t;&t;&t;   to the moment of cbq_update)&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;   That is not all.&n;&t;&t;&t;   To maintain the rate allocated to the class,&n;&t;&t;&t;   we add to undertime virtual clock,&n;&t;&t;&t;   necesary to complete transmitted packet.&n;&t;&t;&t;   (len/phys_bandwidth has been already passed&n;&t;&t;&t;   to the moment of cbq_update)&n;&t;&t;&t; */
 id|idle
 op_sub_assign
 id|L2T
@@ -3322,7 +3322,7 @@ r_return
 id|skb
 suffix:semicolon
 )brace
-multiline_comment|/* All the classes are overlimit.&n;&n;&t;&t;   It is possible, if:&n;&n;&t;&t;   1. Scheduler is empty.&n;&t;&t;   2. Toplevel cutoff inhibited borrowing.&n;&t;&t;   3. Root class is overlimit.&n;&n;&t;&t;   Reset 2d and 3d conditions and retry.&n;&n;&t;&t;   Note, that NS and cbq-2.0 are buggy, peeking&n;&t;&t;   an arbitrary class is appropriate for ancestor-only&n;&t;&t;   sharing, but not for toplevel algorithm.&n;&n;&t;&t;   Our version is better, but slower, because requires&n;&t;&t;   two passes, but it is inavoidable with top-level sharing.&n;&t;&t;*/
+multiline_comment|/* All the classes are overlimit.&n;&n;&t;&t;   It is possible, if:&n;&n;&t;&t;   1. Scheduler is empty.&n;&t;&t;   2. Toplevel cutoff inhibited borrowing.&n;&t;&t;   3. Root class is overlimit.&n;&n;&t;&t;   Reset 2d and 3d conditions and retry.&n;&n;&t;&t;   Note, that NS and cbq-2.0 are buggy, peeking&n;&t;&t;   an arbitrary class is appropriate for ancestor-only&n;&t;&t;   sharing, but not for toplevel algorithm.&n;&n;&t;&t;   Our version is better, but slower, because it requires&n;&t;&t;   two passes, but it is unavoidable with top-level sharing.&n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -3619,7 +3619,8 @@ id|cl-&gt;qdisc-&gt;dev-&gt;mtu
 id|printk
 c_func
 (paren
-l_string|&quot;Damn! %08x cl-&gt;quantum==%ld&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;CBQ: class %08x has bad quantum==%ld, repaired.&bslash;n&quot;
 comma
 id|cl-&gt;classid
 comma
@@ -3628,6 +3629,10 @@ id|cl-&gt;quantum
 suffix:semicolon
 id|cl-&gt;quantum
 op_assign
+id|cl-&gt;qdisc-&gt;dev-&gt;mtu
+op_div
+l_int|2
+op_plus
 l_int|1
 suffix:semicolon
 )brace

@@ -10,7 +10,7 @@ mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#if defined(CONFIG_MAUI) || defined(MODULE)
+macro_line|#ifdef CONFIG_MAUI
 DECL|variable|maui_base
 r_static
 r_int
@@ -81,7 +81,7 @@ id|pmgr_flag
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef CONFIG_MAUI_HAVE_BOOT
+macro_line|#ifdef HAVE_MAUI_BOOT
 macro_line|#include &quot;maui_boot.h&quot;
 macro_line|#else
 DECL|variable|maui_os

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.17 1998/05/01 10:31:41 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.18 1998/05/07 15:42:59 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; *&t;Andi Kleen&t;&t;&t;add rate limits. never reply to a icmp.&n; *&t;&t;&t;&t;&t;add more length checks and other fixes.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -30,19 +30,11 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *&t;ICMP socket for flow control.&n; */
-DECL|variable|icmpv6_inode
-r_struct
-id|inode
-id|icmpv6_inode
-suffix:semicolon
 DECL|variable|icmpv6_socket
 r_struct
 id|socket
 op_star
 id|icmpv6_socket
-op_assign
-op_amp
-id|icmpv6_inode.u.socket_i
 suffix:semicolon
 r_int
 id|icmpv6_rcv
@@ -2050,30 +2042,40 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|icmpv6_inode.i_mode
+id|icmpv6_socket
 op_assign
-id|S_IFSOCK
+id|sock_alloc
+c_func
+(paren
+)paren
 suffix:semicolon
-id|icmpv6_inode.i_sock
-op_assign
+r_if
+c_cond
+(paren
+id|icmpv6_socket
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Failed to create the ICMP6 control socket.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
 l_int|1
 suffix:semicolon
-id|icmpv6_inode.i_uid
+)brace
+id|icmpv6_socket-&gt;inode-&gt;i_uid
 op_assign
 l_int|0
 suffix:semicolon
-id|icmpv6_inode.i_gid
+id|icmpv6_socket-&gt;inode-&gt;i_gid
 op_assign
 l_int|0
-suffix:semicolon
-id|icmpv6_socket-&gt;inode
-op_assign
-op_amp
-id|icmpv6_inode
-suffix:semicolon
-id|icmpv6_socket-&gt;state
-op_assign
-id|SS_UNCONNECTED
 suffix:semicolon
 id|icmpv6_socket-&gt;type
 op_assign
@@ -2102,12 +2104,25 @@ l_int|0
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;Failed to create the ICMP6 control socket.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Failed to initialize the ICMP6 control socket (err %d).&bslash;n&quot;
+comma
+id|err
 )paren
 suffix:semicolon
+id|sock_release
+c_func
+(paren
+id|icmpv6_socket
+)paren
+suffix:semicolon
+id|icmpv6_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* for safety */
 r_return
-l_int|1
+id|err
 suffix:semicolon
 )brace
 id|sk
@@ -2130,18 +2145,6 @@ op_amp
 id|icmpv6_protocol
 )paren
 suffix:semicolon
-id|ndisc_init
-c_func
-(paren
-id|ops
-)paren
-suffix:semicolon
-id|igmp6_init
-c_func
-(paren
-id|ops
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2154,23 +2157,22 @@ c_func
 r_void
 )paren
 (brace
+id|sock_release
+c_func
+(paren
+id|icmpv6_socket
+)paren
+suffix:semicolon
+id|icmpv6_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* For safety. */
 id|inet6_del_protocol
 c_func
 (paren
 op_amp
 id|icmpv6_protocol
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|ndisc_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|igmp6_cleanup
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

@@ -101,7 +101,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|ndisc_init
 c_func
 (paren
@@ -277,7 +277,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; *&t;IGMP&n; */
 r_extern
-r_void
+r_int
 id|igmp6_init
 c_func
 (paren
@@ -285,6 +285,14 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|igmp6_cleanup
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern

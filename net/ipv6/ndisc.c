@@ -53,21 +53,12 @@ macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-DECL|variable|ndisc_inode
-r_static
-r_struct
-id|inode
-id|ndisc_inode
-suffix:semicolon
 DECL|variable|ndisc_socket
 r_static
 r_struct
 id|socket
 op_star
 id|ndisc_socket
-op_assign
-op_amp
-id|ndisc_inode.u.socket_i
 suffix:semicolon
 r_static
 r_int
@@ -4990,7 +4981,7 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_void
+r_int
 id|ndisc_init
 c_func
 (paren
@@ -5009,30 +5000,40 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|ndisc_inode.i_mode
+id|ndisc_socket
 op_assign
-id|S_IFSOCK
+id|sock_alloc
+c_func
+(paren
+)paren
 suffix:semicolon
-id|ndisc_inode.i_sock
-op_assign
+r_if
+c_cond
+(paren
+id|ndisc_socket
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Failed to create the NDISC control socket.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
 l_int|1
 suffix:semicolon
-id|ndisc_inode.i_uid
+)brace
+id|ndisc_socket-&gt;inode-&gt;i_uid
 op_assign
 l_int|0
 suffix:semicolon
-id|ndisc_inode.i_gid
+id|ndisc_socket-&gt;inode-&gt;i_gid
 op_assign
 l_int|0
-suffix:semicolon
-id|ndisc_socket-&gt;inode
-op_assign
-op_amp
-id|ndisc_inode
-suffix:semicolon
-id|ndisc_socket-&gt;state
-op_assign
-id|SS_UNCONNECTED
 suffix:semicolon
 id|ndisc_socket-&gt;type
 op_assign
@@ -5062,8 +5063,24 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Failed to create the NDISC control socket.&bslash;n&quot;
+l_string|&quot;Failed to initializee the NDISC control socket (err %d).&bslash;n&quot;
+comma
+id|err
 )paren
+suffix:semicolon
+id|sock_release
+c_func
+(paren
+id|ndisc_socket
+)paren
+suffix:semicolon
+id|ndisc_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* For safety. */
+r_return
+id|err
 suffix:semicolon
 )brace
 id|sk
@@ -5127,8 +5144,10 @@ l_string|&quot;ipv6&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|ndisc_cleanup
 r_void
 id|ndisc_cleanup
@@ -5154,6 +5173,16 @@ op_amp
 id|nd_tbl
 )paren
 suffix:semicolon
+id|sock_release
+c_func
+(paren
+id|ndisc_socket
+)paren
+suffix:semicolon
+id|ndisc_socket
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* For safety. */
 )brace
-macro_line|#endif
 eof

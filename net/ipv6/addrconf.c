@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.39 1998/05/03 14:31:04 alan Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.41 1998/05/08 21:06:31 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; *&t;Andi Kleen&t;&t;&t;:&t;kill doube kfree on module&n; *&t;&t;&t;&t;&t;&t;unload.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -28,6 +28,7 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;linux/if_tunnel.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 multiline_comment|/* Set to 3 to get tracing... */
 DECL|macro|ACONF_DEBUG
 mdefine_line|#define ACONF_DEBUG 2
@@ -4754,27 +4755,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Discard multicast list */
-r_if
-c_cond
-(paren
-id|how
-op_eq
-l_int|1
-)paren
-id|ipv6_mc_destroy_dev
-c_func
-(paren
-id|idev
-)paren
-suffix:semicolon
-r_else
-id|ipv6_mc_down
-c_func
-(paren
-id|idev
-)paren
-suffix:semicolon
 multiline_comment|/* Discard address list */
 id|idev-&gt;addr_list
 op_assign
@@ -4861,6 +4841,27 @@ id|ifa-&gt;lst_next
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Discard multicast list */
+r_if
+c_cond
+(paren
+id|how
+op_eq
+l_int|1
+)paren
+id|ipv6_mc_destroy_dev
+c_func
+(paren
+id|idev
+)paren
+suffix:semicolon
+r_else
+id|ipv6_mc_down
+c_func
+(paren
+id|idev
+)paren
+suffix:semicolon
 multiline_comment|/* Delete device from device hash table (if unregistered) */
 r_if
 c_cond

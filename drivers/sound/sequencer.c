@@ -8,7 +8,7 @@ macro_line|#endif
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
+macro_line|#ifdef CONFIG_SEQUENCER
 macro_line|#include &quot;softoss.h&quot;
 DECL|variable|softsynthp
 r_int
@@ -7953,6 +7953,17 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* drag in sequencer_syms.o */
+(brace
+r_extern
+r_char
+id|sequencer_syms_symbol
+suffix:semicolon
+id|sequencer_syms_symbol
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

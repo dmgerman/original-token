@@ -47,7 +47,7 @@ macro_line|#endif
 macro_line|#endif
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
-macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)
+macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)&t;||&t;defined(CONFIG_ULTRA32)&t;&t;|| &bslash;&n;&t;defined(CONFIG_LNE390)
 macro_line|#include &quot;../drivers/net/8390.h&quot;
 macro_line|#endif
 r_extern
@@ -1626,7 +1626,7 @@ c_func
 id|sock_rmalloc
 )paren
 suffix:semicolon
-macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)
+macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)&t;||&t;defined(CONFIG_ULTRA32)&t;&t;|| &bslash;&n;&t;defined(CONFIG_LNE390)
 multiline_comment|/* If 8390 NIC support is built in, we will need these. */
 DECL|variable|ei_open
 id|EXPORT_SYMBOL
@@ -1954,15 +1954,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|netdev_fc_xoff
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_IP_ACCT
-DECL|variable|ip_acct_output
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ip_acct_output
 )paren
 suffix:semicolon
 macro_line|#endif

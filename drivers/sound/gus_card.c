@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if defined(CONFIG_GUS) || defined(MODULE)
+macro_line|#ifdef CONFIG_GUS
 macro_line|#include &quot;gus_hw.h&quot;
 r_void
 id|gusintr
@@ -196,7 +196,7 @@ comma
 id|hw_config-&gt;dma2
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 id|gus_midi_init
 c_func
 (paren
@@ -631,7 +631,7 @@ id|MIDI_RX_IRQ
 )paren
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 id|gus_midi_interrupt
 c_func
 (paren
@@ -652,7 +652,7 @@ id|GF1_TIMER2_IRQ
 )paren
 )paren
 (brace
-macro_line|#if defined(CONFIG_SEQUENCER) || defined(CONFIG_SEQUENCER_MODULE)
+macro_line|#ifdef CONFIG_SEQUENCER
 r_if
 c_cond
 (paren
@@ -748,7 +748,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_GUS) || defined(MODULE)
+macro_line|#ifdef CONFIG_GUS
 id|gus_pcm_volume
 op_assign
 l_int|100

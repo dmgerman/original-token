@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
-macro_line|#if defined(CONFIG_PAS) || defined(MODULE)
+macro_line|#ifdef CONFIG_PAS
 DECL|variable|dma_bits
 r_static
 r_int
@@ -341,7 +341,7 @@ op_amp
 l_int|0x10
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 id|pas_midi_interrupt
 c_func
 (paren
@@ -858,7 +858,7 @@ comma
 l_int|0x078B
 )paren
 suffix:semicolon
-macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; (defined(CONFIG_SB) || defined(CONFIG_SB_MODULE))
+macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
 (brace
 r_struct
 id|address_info
@@ -1241,7 +1241,7 @@ id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; (defined(CONFIG_SB) || defined(CONFIG_SB_MODULE))
+macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
 id|sb_dsp_disable_midi
 c_func
 (paren
@@ -1250,7 +1250,7 @@ id|pas_sb_base
 suffix:semicolon
 multiline_comment|/* No MIDI capability */
 macro_line|#endif
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 id|pas_midi_init
 c_func
 (paren

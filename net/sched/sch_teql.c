@@ -24,7 +24,7 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
-multiline_comment|/*&n;   How to setup it.&n;   ----------------&n;&n;   After loading this module you will find new device teqlN&n;   and new qdisc with the same name. To join a slave to equalizer&n;   you should just set this qdisc on a device f.e.&n;&n;   # tc qdisc add dev eth0 root teql0&n;   # tc qdisc add dev eth1 root teql0&n;&n;   That&squot;s all. Full PnP 8)&n;&n;   Applicability.&n;   --------------&n;&n;   1. Slave devices MUST be active devices i.e. must raise tbusy&n;      signal and generate EOI event. If you want to equalize virtual devices&n;      sort of tunnels, use normal eql device.&n;   2. This device puts no limitations on physical slave characteristics&n;      f.e. it will equalize 9600baud line and 100Mb ethernet perfectly :-)&n;      Certainly, large difference in link speeds will make resulting eqalized&n;      link unusable, because of huge packet reordering. I estimated upper&n;      useful difference as ~10 times.&n;   3. If slave requires address resolution, only protocols using&n;      neighbour cache (IPv4/IPv6) will work over equalized link.&n;      Another protocols still are allowed to use slave device directly,&n;      which will not break load balancing, though native slave&n;      traffic will have the highest priority.&n; */
+multiline_comment|/*&n;   How to setup it.&n;   ----------------&n;&n;   After loading this module you will find a new device teqlN&n;   and new qdisc with the same name. To join a slave to the equalizer&n;   you should just set this qdisc on a device f.e.&n;&n;   # tc qdisc add dev eth0 root teql0&n;   # tc qdisc add dev eth1 root teql0&n;&n;   That&squot;s all. Full PnP 8)&n;&n;   Applicability.&n;   --------------&n;&n;   1. Slave devices MUST be active devices, i.e., they must raise the tbusy&n;      signal and generate EOI events. If you want to equalize virtual devices&n;      like tunnels, use a normal eql device.&n;   2. This device puts no limitations on physical slave characteristics&n;      f.e. it will equalize 9600baud line and 100Mb ethernet perfectly :-)&n;      Certainly, large difference in link speeds will make the resulting&n;      eqalized link unusable, because of huge packet reordering.&n;      I estimate an upper useful difference as ~10 times.&n;   3. If the slave requires address resolution, only protocols using&n;      neighbour cache (IPv4/IPv6) will work over the equalized link.&n;      Other protocols are still allowed to use the slave device directly,&n;      which will not break load balancing, though native slave&n;      traffic will have the highest priority.  */
 DECL|struct|teql_master
 r_struct
 id|teql_master
@@ -486,10 +486,18 @@ id|q
 op_eq
 id|master-&gt;slaves
 )paren
+(brace
 id|master-&gt;slaves
 op_assign
 l_int|NULL
 suffix:semicolon
+id|qdisc_reset
+c_func
+(paren
+id|master-&gt;dev.qdisc
+)paren
+suffix:semicolon
+)brace
 )brace
 id|skb_queue_purge
 c_func
@@ -1074,6 +1082,11 @@ suffix:semicolon
 r_int
 id|nores
 suffix:semicolon
+r_int
+id|len
+op_assign
+id|skb-&gt;len
+suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -1200,6 +1213,13 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
+id|master-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+id|master-&gt;stats.tx_bytes
+op_add_assign
+id|len
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1208,14 +1228,6 @@ r_break
 suffix:semicolon
 r_case
 l_int|1
-suffix:colon
-id|nores
-op_assign
-l_int|1
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
 suffix:colon
 id|master-&gt;slaves
 op_assign
@@ -1231,6 +1243,14 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+r_default
+suffix:colon
+id|nores
+op_assign
+l_int|1
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 id|__skb_pull
@@ -1291,8 +1311,14 @@ id|busy
 r_return
 l_int|1
 suffix:semicolon
+id|master-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
 id|drop
 suffix:colon
+id|master-&gt;stats.tx_dropped
+op_increment
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -1481,6 +1507,10 @@ id|FMASK
 )paren
 op_or
 id|flags
+suffix:semicolon
+id|m-&gt;dev.tbusy
+op_assign
+l_int|0
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon

@@ -1538,8 +1538,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* If we have the CPU hardware time counters, use them */
-macro_line|#ifndef CONFIG_APM
-multiline_comment|/* Don&squot;t use them if a suspend/resume could&n;                                   corrupt the timer value.  This problem&n;                                   needs more debugging. */
 r_if
 c_cond
 (paren
@@ -1616,7 +1614,6 @@ op_assign
 id|pentium_timer_interrupt
 suffix:semicolon
 )brace
-macro_line|#endif
 id|setup_x86_irq
 c_func
 (paren

@@ -20,9 +20,27 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-DECL|macro|SOUND_CORE
-mdefine_line|#define SOUND_CORE
 macro_line|#include &quot;soundmodule.h&quot;
+DECL|variable|sound_locker
+r_struct
+id|notifier_block
+op_star
+id|sound_locker
+op_assign
+(paren
+r_struct
+id|notifier_block
+op_star
+)paren
+l_int|0
+suffix:semicolon
+DECL|variable|lock_depth
+r_static
+r_int
+id|lock_depth
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#ifdef MODULE
 DECL|macro|modular
@@ -2413,8 +2431,20 @@ suffix:semicolon
 id|in_use
 op_increment
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|SOUND_INC_USE_COUNT
+macro_line|#ifdef CONFIG_MODULES
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|sound_locker
+comma
+l_int|1
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|lock_depth
+op_increment
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -2544,8 +2574,20 @@ suffix:semicolon
 id|in_use
 op_decrement
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|SOUND_DEC_USE_COUNT
+macro_line|#ifdef CONFIG_MODULES
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|sound_locker
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|lock_depth
+op_decrement
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -3391,7 +3433,7 @@ op_amp
 l_int|0x0f
 )paren
 (brace
-macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
+macro_line|#ifdef CONFIG_SEQUENCER
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -3410,7 +3452,7 @@ id|wait
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_MIDI)
+macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
@@ -3426,7 +3468,7 @@ id|wait
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_AUDIO) || defined(MODULE)
+macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -3739,6 +3781,17 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* drag in sound_syms.o */
+(brace
+r_extern
+r_char
+id|sound_syms_symbol
+suffix:semicolon
+id|sound_syms_symbol
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifndef MODULE
 id|register_chrdev
 c_func
@@ -3781,7 +3834,7 @@ r_return
 suffix:semicolon
 multiline_comment|/* No cards detected */
 macro_line|#endif
-macro_line|#if defined(CONFIG_AUDIO)
+macro_line|#ifdef CONFIG_AUDIO
 r_if
 c_cond
 (paren
@@ -3811,6 +3864,7 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module
@@ -3958,7 +4012,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -4011,7 +4064,7 @@ comma
 l_string|&quot;sound&quot;
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
+macro_line|#ifdef CONFIG_SEQUENCER
 id|sound_stop_timer
 c_func
 (paren
@@ -4370,7 +4423,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
+macro_line|#ifdef CONFIG_SEQUENCER
 DECL|function|do_sequencer_timer
 r_static
 r_void
@@ -4713,30 +4766,6 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Module and lock management&n; */
-DECL|variable|sound_locker
-r_struct
-id|notifier_block
-op_star
-id|sound_locker
-op_assign
-(paren
-r_struct
-id|notifier_block
-op_star
-)paren
-l_int|0
-suffix:semicolon
-DECL|variable|lock_depth
-r_static
-r_int
-id|lock_depth
-op_assign
-l_int|0
-suffix:semicolon
-DECL|macro|SOUND_INC_USE_COUNT
-mdefine_line|#define SOUND_INC_USE_COUNT&t;do { notifier_call_chain(&amp;sound_locker, 1, 0); lock_depth++; } while(0);
-DECL|macro|SOUND_DEC_USE_COUNT
-mdefine_line|#define SOUND_DEC_USE_COUNT&t;do { notifier_call_chain(&amp;sound_locker, 0, 0); lock_depth--; } while(0);
 multiline_comment|/*&n; *&t;When a sound module is registered we need to bring it to the current&n; *&t;lock level...&n; */
 DECL|function|sound_notifier_chain_register
 r_void

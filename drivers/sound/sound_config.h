@@ -1,8 +1,11 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &quot;local.h.master&quot;
+macro_line|#ifndef  _SOUND_CONFIG_H_
+DECL|macro|_SOUND_CONFIG_H_
+mdefine_line|#define  _SOUND_CONFIG_H_
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &quot;legacy.h&quot;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
 macro_line|#ifndef SND_DEFAULT_ENABLE
@@ -324,4 +327,5 @@ DECL|macro|TIMER_ARMED
 mdefine_line|#define TIMER_ARMED&t;121234
 DECL|macro|TIMER_NOT_ARMED
 mdefine_line|#define TIMER_NOT_ARMED&t;1
+macro_line|#endif
 eof

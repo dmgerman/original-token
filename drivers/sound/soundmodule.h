@@ -18,17 +18,7 @@ id|notifier_block
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|lock_depth
-suffix:semicolon
 macro_line|#ifdef MODULE
-macro_line|#ifdef SOUND_CORE
-DECL|macro|SOUND_INC_USE_COUNT
-mdefine_line|#define SOUND_INC_USE_COUNT&t;do { notifier_call_chain(&amp;sound_locker, 1, 0); lock_depth++; } while(0);
-DECL|macro|SOUND_DEC_USE_COUNT
-mdefine_line|#define SOUND_DEC_USE_COUNT&t;do { notifier_call_chain(&amp;sound_locker, 0, 0); lock_depth--; } while(0);
-macro_line|#else
 DECL|macro|SOUND_LOCK
 mdefine_line|#define SOUND_LOCK&t;&t;sound_notifier_chain_register(&amp;sound_notifier); 
 DECL|macro|SOUND_LOCK_END
@@ -87,7 +77,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

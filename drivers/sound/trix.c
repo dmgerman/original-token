@@ -5,14 +5,8 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#if defined(CONFIG_TRIX) || defined (MODULE)
-macro_line|#if defined(CONFIG_UART401) || defined(CONFIG_UART401_MODULE)
-macro_line|#if defined(CONFIG_MIDI)
-DECL|macro|DO_MIDI
-mdefine_line|#define DO_MIDI
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_TRIX_HAVE_BOOT
+macro_line|#ifdef CONFIG_TRIX
+macro_line|#ifdef INCLUDE_TRIX_BOOT
 macro_line|#include &quot;trix_boot.h&quot;
 macro_line|#else
 DECL|variable|trix_boot
@@ -1405,7 +1399,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef DO_MIDI
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_int
 r_char
 id|conf
@@ -1751,7 +1745,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef DO_MIDI
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_uart401
 c_func
 (paren

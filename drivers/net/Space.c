@@ -329,6 +329,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|lne390_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|e2100_probe
 c_func
 (paren
@@ -826,6 +836,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ES3210
 op_logical_and
 id|es_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_LNE390
+op_logical_and
+id|lne390_probe
 c_func
 (paren
 id|dev
