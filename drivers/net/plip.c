@@ -737,6 +737,10 @@ id|dev-&gt;do_ioctl
 op_assign
 id|plip_ioctl
 suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|10
+suffix:semicolon
 id|dev-&gt;flags
 op_assign
 id|IFF_POINTOPOINT

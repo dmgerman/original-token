@@ -2,9 +2,6 @@ macro_line|#ifndef&t;AFFS_HARDBLOCKS_H
 DECL|macro|AFFS_HARDBLOCKS_H
 mdefine_line|#define&t;AFFS_HARDBLOCKS_H
 multiline_comment|/* Just the needed definitions for the RDB of an Amiga HD. */
-macro_line|#ifndef AMIGAFFS_H
-macro_line|#include &lt;linux/amigaffs.h&gt;
-macro_line|#endif
 DECL|struct|RigidDiskBlock
 r_struct
 id|RigidDiskBlock

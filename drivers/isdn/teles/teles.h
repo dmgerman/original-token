@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teles.h,v 1.1 1996/04/13 10:29:00 fritz Exp $&n; *&n; * $Log: teles.h,v $&n; * Revision 1.1  1996/04/13 10:29:00  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: teles.h,v 1.2 1996/04/30 21:52:04 isdn4dev Exp $&n; *&n; * $Log: teles.h,v $&n; * Revision 1.2  1996/04/30 21:52:04  isdn4dev&n; * SPV for 1TR6 - Karsten&n; *&n; * Revision 1.1  1996/04/13 10:29:00  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -988,6 +988,11 @@ r_int
 id|chargeinfo
 suffix:semicolon
 multiline_comment|/* Charge Info - only for 1tr6 in&n;&t;&t;&t;&t;      * the moment &n;&t;&t;&t;&t;      */
+DECL|member|spv
+r_int
+id|spv
+suffix:semicolon
+multiline_comment|/* SPV Flag */
 )brace
 suffix:semicolon
 DECL|struct|PStack

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3_1TR6.h,v 1.1 1996/04/13 10:25:42 fritz Exp $&n; *&n; * $Log: l3_1TR6.h,v $&n; * Revision 1.1  1996/04/13 10:25:42  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: l3_1TR6.h,v 1.3 1996/04/30 21:53:48 isdn4dev Exp $&n; *&n; * $Log: l3_1TR6.h,v $&n; * Revision 1.3  1996/04/30 21:53:48  isdn4dev&n; * Bugs, SPV, Logging in q931.c  Karsten Keil&n; *&n; * Revision 1.1  1996/04/13 10:25:42  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#ifndef l3_1TR6
 DECL|macro|l3_1TR6
 mdefine_line|#define l3_1TR6
@@ -8,25 +8,25 @@ DECL|macro|PROTO_DIS_N1
 mdefine_line|#define PROTO_DIS_N1 0x41
 multiline_comment|/*&n; * MsgType N0&n; */
 DECL|macro|MT_N0_REG_IND
-mdefine_line|#define MT_N0_REG_IND 61
+mdefine_line|#define MT_N0_REG_IND 0x61
 DECL|macro|MT_N0_CANC_IND
-mdefine_line|#define MT_N0_CANC_IND 62
+mdefine_line|#define MT_N0_CANC_IND 0x62
 DECL|macro|MT_N0_FAC_STA
-mdefine_line|#define MT_N0_FAC_STA 63
+mdefine_line|#define MT_N0_FAC_STA 0x63
 DECL|macro|MT_N0_STA_ACK
-mdefine_line|#define MT_N0_STA_ACK 64
+mdefine_line|#define MT_N0_STA_ACK 0x64
 DECL|macro|MT_N0_STA_REJ
-mdefine_line|#define MT_N0_STA_REJ 65
+mdefine_line|#define MT_N0_STA_REJ 0x65
 DECL|macro|MT_N0_FAC_INF
-mdefine_line|#define MT_N0_FAC_INF 66
+mdefine_line|#define MT_N0_FAC_INF 0x66
 DECL|macro|MT_N0_INF_ACK
-mdefine_line|#define MT_N0_INF_ACK 67
+mdefine_line|#define MT_N0_INF_ACK 0x67
 DECL|macro|MT_N0_INF_REJ
-mdefine_line|#define MT_N0_INF_REJ 68
+mdefine_line|#define MT_N0_INF_REJ 0x68
 DECL|macro|MT_N0_CLOSE
-mdefine_line|#define MT_N0_CLOSE 75
+mdefine_line|#define MT_N0_CLOSE   0x75
 DECL|macro|MT_N0_CLO_ACK
-mdefine_line|#define MT_N0_CLO_ACK 77
+mdefine_line|#define MT_N0_CLO_ACK 0x77
 multiline_comment|/*&n; * MsgType N1&n; */
 DECL|macro|MT_N1_ESC
 mdefine_line|#define MT_N1_ESC 0x00
@@ -88,281 +88,6 @@ DECL|macro|MT_N1_REG_REJ
 mdefine_line|#define MT_N1_REG_REJ 0x6F
 DECL|macro|MT_N1_STAT
 mdefine_line|#define MT_N1_STAT 0x63
-DECL|struct|MTypeDesc
-r_struct
-id|MTypeDesc
-(brace
-DECL|member|mt
-id|byte
-id|mt
-suffix:semicolon
-DECL|member|descr
-r_char
-op_star
-id|descr
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|variable|mtdesc_n0
-r_static
-r_struct
-id|MTypeDesc
-id|mtdesc_n0
-(braket
-)braket
-op_assign
-(brace
-(brace
-id|MT_N0_REG_IND
-comma
-l_string|&quot;MT_N0_REG_IND&quot;
-)brace
-comma
-(brace
-id|MT_N0_CANC_IND
-comma
-l_string|&quot;MT_N0_CANC_IND&quot;
-)brace
-comma
-(brace
-id|MT_N0_FAC_STA
-comma
-l_string|&quot;MT_N0_FAC_STA&quot;
-)brace
-comma
-(brace
-id|MT_N0_STA_ACK
-comma
-l_string|&quot;MT_N0_STA_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N0_STA_REJ
-comma
-l_string|&quot;MT_N0_STA_REJ&quot;
-)brace
-comma
-(brace
-id|MT_N0_FAC_INF
-comma
-l_string|&quot;MT_N0_FAC_INF&quot;
-)brace
-comma
-(brace
-id|MT_N0_INF_ACK
-comma
-l_string|&quot;MT_N0_INF_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N0_INF_REJ
-comma
-l_string|&quot;MT_N0_INF_REJ&quot;
-)brace
-comma
-(brace
-id|MT_N0_CLOSE
-comma
-l_string|&quot;MT_N0_CLOSE&quot;
-)brace
-comma
-(brace
-id|MT_N0_CLO_ACK
-comma
-l_string|&quot;MT_N0_CLO_ACK&quot;
-)brace
-)brace
-suffix:semicolon
-DECL|variable|mtdesc_n1
-r_static
-r_struct
-id|MTypeDesc
-id|mtdesc_n1
-(braket
-)braket
-op_assign
-(brace
-(brace
-id|MT_N1_ESC
-comma
-l_string|&quot;MT_N1_ESC&quot;
-)brace
-comma
-(brace
-id|MT_N1_ALERT
-comma
-l_string|&quot;MT_N1_ALERT&quot;
-)brace
-comma
-(brace
-id|MT_N1_CALL_SENT
-comma
-l_string|&quot;MT_N1_CALL_SENT&quot;
-)brace
-comma
-(brace
-id|MT_N1_CONN
-comma
-l_string|&quot;MT_N1_CONN&quot;
-)brace
-comma
-(brace
-id|MT_N1_CONN_ACK
-comma
-l_string|&quot;MT_N1_CONN_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_SETUP
-comma
-l_string|&quot;MT_N1_SETUP&quot;
-)brace
-comma
-(brace
-id|MT_N1_SETUP_ACK
-comma
-l_string|&quot;MT_N1_SETUP_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_RES
-comma
-l_string|&quot;MT_N1_RES&quot;
-)brace
-comma
-(brace
-id|MT_N1_RES_ACK
-comma
-l_string|&quot;MT_N1_RES_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_RES_REJ
-comma
-l_string|&quot;MT_N1_RES_REJ&quot;
-)brace
-comma
-(brace
-id|MT_N1_SUSP
-comma
-l_string|&quot;MT_N1_SUSP&quot;
-)brace
-comma
-(brace
-id|MT_N1_SUSP_ACK
-comma
-l_string|&quot;MT_N1_SUSP_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_SUSP_REJ
-comma
-l_string|&quot;MT_N1_SUSP_REJ&quot;
-)brace
-comma
-(brace
-id|MT_N1_USER_INFO
-comma
-l_string|&quot;MT_N1_USER_INFO&quot;
-)brace
-comma
-(brace
-id|MT_N1_DET
-comma
-l_string|&quot;MT_N1_DET&quot;
-)brace
-comma
-(brace
-id|MT_N1_DISC
-comma
-l_string|&quot;MT_N1_DISC&quot;
-)brace
-comma
-(brace
-id|MT_N1_REL
-comma
-l_string|&quot;MT_N1_REL&quot;
-)brace
-comma
-(brace
-id|MT_N1_REL_ACK
-comma
-l_string|&quot;MT_N1_REL_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_CANC_ACK
-comma
-l_string|&quot;MT_N1_CANC_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_CANC_REJ
-comma
-l_string|&quot;MT_N1_CANC_REJ&quot;
-)brace
-comma
-(brace
-id|MT_N1_CON_CON
-comma
-l_string|&quot;MT_N1_CON_CON&quot;
-)brace
-comma
-(brace
-id|MT_N1_FAC
-comma
-l_string|&quot;MT_N1_FAC&quot;
-)brace
-comma
-(brace
-id|MT_N1_FAC_ACK
-comma
-l_string|&quot;MT_N1_FAC_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_FAC_CAN
-comma
-l_string|&quot;MT_N1_FAC_CAN&quot;
-)brace
-comma
-(brace
-id|MT_N1_FAC_REG
-comma
-l_string|&quot;MT_N1_FAC_REG&quot;
-)brace
-comma
-(brace
-id|MT_N1_FAC_REJ
-comma
-l_string|&quot;MT_N1_FAC_REJ&quot;
-)brace
-comma
-(brace
-id|MT_N1_INFO
-comma
-l_string|&quot;MT_N1_INFO&quot;
-)brace
-comma
-(brace
-id|MT_N1_REG_ACK
-comma
-l_string|&quot;MT_N1_REG_ACK&quot;
-)brace
-comma
-(brace
-id|MT_N1_REG_REJ
-comma
-l_string|&quot;MT_N1_REG_REJ&quot;
-)brace
-comma
-(brace
-id|MT_N1_STAT
-comma
-l_string|&quot;MT_N1_STAT&quot;
-)brace
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * W Elemente&n; */
 DECL|macro|WE_Shift_F0
 mdefine_line|#define WE_Shift_F0 0x90
@@ -451,8 +176,8 @@ DECL|macro|FAC_Deactivate
 mdefine_line|#define FAC_Deactivate 0x1E
 DECL|macro|FAC_Activate
 mdefine_line|#define FAC_Activate 0x1D
-DECL|macro|FAC_SVC
-mdefine_line|#define FAC_SVC 0x1F
+DECL|macro|FAC_SPV
+mdefine_line|#define FAC_SPV 0x1F
 DECL|macro|FAC_Rueckwechsel
 mdefine_line|#define FAC_Rueckwechsel 0x23
 DECL|macro|FAC_Umleitung
@@ -474,8 +199,8 @@ DECL|macro|CAUSE_FacNotSubscr
 mdefine_line|#define CAUSE_FacNotSubscr 0x11
 DECL|macro|CAUSE_OutgoingBarred
 mdefine_line|#define CAUSE_OutgoingBarred 0x20
-DECL|macro|CAUSE_UserAssessBusy
-mdefine_line|#define CAUSE_UserAssessBusy 0x21
+DECL|macro|CAUSE_UserAccessBusy
+mdefine_line|#define CAUSE_UserAccessBusy 0x21
 DECL|macro|CAUSE_NegativeGBG
 mdefine_line|#define CAUSE_NegativeGBG 0x22
 DECL|macro|CAUSE_UnknownGBG

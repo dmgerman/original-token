@@ -1446,7 +1446,7 @@ c_func
 (paren
 id|line
 comma
-l_string|&quot;uknown status: %02X&quot;
+l_string|&quot;unknown status: %02X&quot;
 comma
 id|pstatus-&gt;flags
 )paren

@@ -256,7 +256,7 @@ DECL|typedef|Scsi_Host_Template
 )brace
 id|Scsi_Host_Template
 suffix:semicolon
-multiline_comment|/*&n; * The scsi_hosts array is the array containing the data for all &n; * possible &lt;supported&gt; scsi hosts.   This is similar to the&n; * Scsi_Host_Template, except that we have one entry for each&n; * actual physical host adapter on the system, stored as a linked&n; * list.  Note that if there are 2 aha1542 boards, then there will&n; * be two Scsi_Host entries, but only 1 Scsi_Host_Template entries.&n; */
+multiline_comment|/*&n; * The scsi_hosts array is the array containing the data for all &n; * possible &lt;supported&gt; scsi hosts.   This is similar to the&n; * Scsi_Host_Template, except that we have one entry for each&n; * actual physical host adapter on the system, stored as a linked&n; * list.  Note that if there are 2 aha1542 boards, then there will&n; * be two Scsi_Host entries, but only 1 Scsi_Host_Template entry.&n; */
 DECL|struct|Scsi_Host
 r_struct
 id|Scsi_Host

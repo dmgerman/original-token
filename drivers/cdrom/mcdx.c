@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.3&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; * &n; * 2.1  1996/04/29 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Far too many bugfixes/changes to mention them all separately.&n; * 2.2  1996/05/06 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Mostly fixes to some silly bugs in the previous release :-).&n; *      (Hi Michael Thimm! Thank&squot;s for lending me Your&squot;s double speed drive.)&n; * 2.3  1996/05/15 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *&t;Fixed stereo support. &n; * NOTE:&n; *&t;There will be propably a 3.0 adhering to the new generic non ATAPI&n; *&t;cdrom interface in the unforseen future.&n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 2.3&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hangups)&n; *  ... somebody forgotten?&n; * &n; * 2.1  1996/04/29 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Far too many bugfixes/changes to mention them all separately.&n; * 2.2  1996/05/06 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *      Mostly fixes to some silly bugs in the previous release :-).&n; *      (Hi Michael Thimm! Thank&squot;s for lending me Your&squot;s double speed drive.)&n; * 2.3  1996/05/15 Marcin Dalecki &lt;dalecki@namu03.gwdg.de&gt;&n; *&t;Fixed stereo support. &n; * NOTE:&n; *&t;There will be probably a 3.0 adhering to the new generic non ATAPI&n; *&t;cdrom interface in the unforeseen future.&n; */
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;2.3&quot;
 macro_line|#include &lt;linux/version.h&gt;
@@ -674,7 +674,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Low level hardware related functions.&n; */
-multiline_comment|/*&n; * Return drives status in case of success, -1 otherwise.&n; *&n; * First we try to get the status information quickly.&n; * Then we sleep repeatedly for about 10 usecs, befor we finally reach the &n; * timeout. For this reason this command must be called with the drive beeing &n; * locked!&n; */
+multiline_comment|/*&n; * Return drives status in case of success, -1 otherwise.&n; *&n; * First we try to get the status information quickly.&n; * Then we sleep repeatedly for about 10 usecs, before we finally reach the &n; * timeout. For this reason this command must be called with the drive being &n; * locked!&n; */
 DECL|function|get_status
 r_static
 r_int
@@ -1678,7 +1678,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/* now read actually the index tarcks */
+multiline_comment|/* now read actually the index tracks */
 r_for
 c_loop
 (paren
@@ -2177,7 +2177,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;&t; * Update disk information, when necessary.&n;&t; * This part will only work, when the new disk is of the same type as &n;&t; * the one which was previousley there, esp. also for audio diks.&n;&t; * This doesn&squot;t hurt us, since otherwise the mouting/unmounting scheme &n;&t; * will ensure correct operation.&n;&t; */
+multiline_comment|/*&n;&t; * Update disk information, when necessary.&n;&t; * This part will only work, when the new disk is of the same type as &n;&t; * the one which was previously there, esp. also for audio disks.&n;&t; * This doesn&squot;t hurt us, since otherwise the mounting/unmounting scheme &n;&t; * will ensure correct operation.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3516,7 +3516,7 @@ id|volctrl
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Adjust for the wiredness of workman. */
+multiline_comment|/* Adjust for the weirdness of workman. */
 id|volctrl.channel2
 op_assign
 id|volctrl.channel1
@@ -3574,7 +3574,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*   &n; * This does actually the transfer from the drive.&n; * Return:      -1 on timeout or other error&n; * else status byte (as in stuff-&gt;st) &n; * FIXME: the excessive jumping throught wait queues degrades the&n; * performance significantly.&n; */
+multiline_comment|/*   &n; * This does actually the transfer from the drive.&n; * Return:      -1 on timeout or other error&n; * else status byte (as in stuff-&gt;st) &n; * FIXME: the excessive jumping through wait queues degrades the&n; * performance significantly.&n; */
 DECL|function|transfer_data
 r_static
 r_int
@@ -5049,7 +5049,7 @@ l_string|&quot;mcdx_media_change()&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME: propably this is unneded or should be simplified!&n;&t; */
+multiline_comment|/*&n;&t; * FIXME: probably this is unneeded or should be simplified!&n;&t; */
 id|issue_command
 c_func
 (paren
@@ -5119,7 +5119,7 @@ id|irq
 (brace
 r_return
 suffix:semicolon
-multiline_comment|/* hugh? */
+multiline_comment|/* huh? */
 )brace
 multiline_comment|/* NOTE: We only should get interrupts if data were requested.&n;&t; * But the drive seems to generate ``asynchronous&squot;&squot; interrupts&n;&t; * on several error conditions too.  (Despite the err int enable&n;&t; * setting during initialisation) &n;&t; */
 multiline_comment|/* get the interrupt status */
@@ -5207,7 +5207,7 @@ id|stuffp-&gt;busyq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * FIXME!&n; * This seems to hang badly, when the driver is loaded with inappriopriate&n; * port/irq settings!&n; */
+multiline_comment|/*&n; * FIXME!&n; * This seems to hang badly, when the driver is loaded with inappropriate&n; * port/irq settings!&n; */
 DECL|function|mcdx_init
 r_int
 id|mcdx_init

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_tty.h,v 1.1 1996/01/10 21:39:22 fritz Exp fritz $&n; *&n; * header for Linux ISDN subsystem, tty related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_tty.h,v $&n; * Revision 1.1  1996/01/10 21:39:22  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_tty.h,v 1.5 1996/05/17 03:52:31 fritz Exp $&n; *&n; * header for Linux ISDN subsystem, tty related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_tty.h,v $&n; * Revision 1.5  1996/05/17 03:52:31  fritz&n; * Changed DLE handling for audio receive.&n; *&n; * Revision 1.4  1996/05/11 21:52:34  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.3  1996/05/07 09:16:34  fritz&n; * Changed isdn_try_read parameter.&n; *&n; * Revision 1.2  1996/04/30 21:05:27  fritz&n; * Test commit&n; *&n; * Revision 1.1  1996/01/10 21:39:22  fritz&n; * Initial revision&n; *&n; */
 r_extern
 r_void
 id|isdn_tty_modem_result
@@ -64,12 +64,12 @@ r_int
 id|isdn_tty_try_read
 c_func
 (paren
-r_int
-comma
-id|u_char
+id|modem_info
 op_star
 comma
-r_int
+r_struct
+id|sk_buff
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -85,7 +85,18 @@ r_char
 op_star
 )paren
 suffix:semicolon
-macro_line|#if FUTURE
+r_extern
+r_int
+id|isdn_tty_countDLE
+c_func
+(paren
+r_int
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|isdn_tty_bsent
@@ -96,5 +107,13 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif
+r_extern
+r_void
+id|isdn_tty_cleanup_xmit
+c_func
+(paren
+id|modem_info
+op_star
+)paren
+suffix:semicolon
 eof

@@ -2346,7 +2346,7 @@ suffix:semicolon
 id|ei_local-&gt;stat.rx_over_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* &n;     * Wait a full Tx time (1.2ms) + some guard time, NS says 1.6ms total.&n;     * Early datasheets said to poll the reset bit, but now they say that&n;     * it &quot;is not a reliable indicator and subequently should be ignored.&quot;&n;     * We wait at least 10ms.&n;     */
+multiline_comment|/* &n;     * Wait a full Tx time (1.2ms) + some guard time, NS says 1.6ms total.&n;     * Early datasheets said to poll the reset bit, but now they say that&n;     * it &quot;is not a reliable indicator and subsequently should be ignored.&quot;&n;     * We wait at least 10ms.&n;     */
 id|wait_start_time
 op_assign
 id|jiffies

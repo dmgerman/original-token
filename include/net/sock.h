@@ -403,12 +403,14 @@ DECL|member|send_head
 r_struct
 id|sk_buff
 op_star
+r_volatile
 id|send_head
 suffix:semicolon
 DECL|member|send_tail
 r_struct
 id|sk_buff
 op_star
+r_volatile
 id|send_tail
 suffix:semicolon
 DECL|member|back_log
@@ -487,12 +489,14 @@ id|high_seq
 suffix:semicolon
 multiline_comment|/* sequence number when we did current fast retransmit */
 DECL|member|ato
+r_volatile
 r_int
 r_int
 id|ato
 suffix:semicolon
 multiline_comment|/* ack timeout */
 DECL|member|lrcvtime
+r_volatile
 r_int
 r_int
 id|lrcvtime
@@ -511,18 +515,21 @@ id|mtu
 suffix:semicolon
 multiline_comment|/* mss negotiated in the syn&squot;s */
 DECL|member|mss
+r_volatile
 r_int
 r_int
 id|mss
 suffix:semicolon
 multiline_comment|/* current eff. mss - can change */
 DECL|member|user_mss
+r_volatile
 r_int
 r_int
 id|user_mss
 suffix:semicolon
 multiline_comment|/* mss requested by user in ioctl */
 DECL|member|max_window
+r_volatile
 r_int
 r_int
 id|max_window
@@ -543,42 +550,50 @@ r_int
 id|num
 suffix:semicolon
 DECL|member|cong_window
+r_volatile
 r_int
 r_int
 id|cong_window
 suffix:semicolon
 DECL|member|cong_count
+r_volatile
 r_int
 r_int
 id|cong_count
 suffix:semicolon
 DECL|member|packets_out
+r_volatile
 r_int
 r_int
 id|packets_out
 suffix:semicolon
 DECL|member|shutdown
+r_volatile
 r_int
 r_int
 id|shutdown
 suffix:semicolon
 DECL|member|rtt
+r_volatile
 r_int
 r_int
 id|rtt
 suffix:semicolon
 DECL|member|mdev
+r_volatile
 r_int
 r_int
 id|mdev
 suffix:semicolon
 DECL|member|rto
+r_volatile
 r_int
 r_int
 id|rto
 suffix:semicolon
 multiline_comment|/*&n; *&t;currently backoff isn&squot;t used, but I&squot;m maintaining it in case&n; *&t;we want to go back to a backoff formula that needs it&n; */
 DECL|member|backoff
+r_volatile
 r_int
 r_int
 id|backoff

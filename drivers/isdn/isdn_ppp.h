@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_ppp.h,v 1.2 1996/04/20 16:35:11 fritz Exp $&n; *&n; * header for Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_ppp.h,v $&n; * Revision 1.2  1996/04/20 16:35:11  fritz&n; * Changed isdn_ppp_receive to use sk_buff as parameter.&n; * Added definition of isdn_ppp_dial_slave and ippp_table.&n; *&n; * Revision 1.1  1996/01/10 21:39:10  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_ppp.h,v 1.4 1996/05/06 11:34:56 hipp Exp $&n; *&n; * header for Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_ppp.h,v $&n; * Revision 1.4  1996/05/06 11:34:56  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.3  1996/04/30 09:33:10  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.2  1996/04/20 16:35:11  fritz&n; * Changed isdn_ppp_receive to use sk_buff as parameter.&n; * Added definition of isdn_ppp_dial_slave and ippp_table.&n; *&n; * Revision 1.1  1996/01/10 21:39:10  fritz&n; * Initial revision&n; *&n; */
 r_extern
 r_void
 id|isdn_ppp_timer_timeout
@@ -137,6 +137,15 @@ suffix:semicolon
 r_extern
 r_void
 id|isdn_ppp_free_mpqueue
+c_func
+(paren
+id|isdn_net_dev
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|isdn_ppp_free_sqqueue
 c_func
 (paren
 id|isdn_net_dev

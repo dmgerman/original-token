@@ -293,12 +293,10 @@ id|target
 dot
 id|ready
 )paren
-(brace
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Similarly, if the device has the write protect tab set,&n;&t; * have the open fail if the user expects to be able to write&n;&t; * to the thing.&n;&t; */
 r_if
 c_cond
@@ -318,12 +316,42 @@ op_amp
 l_int|2
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EROFS
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * See if we are requesting a non-existent partition.  Do this&n;     * after checking for disk change.&n;     */
+r_if
+c_cond
+(paren
+id|sd_sizes
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|rscsi_disks
+(braket
+id|target
+)braket
+dot
+id|device-&gt;removable
+)paren
 r_if
 c_cond
 (paren
@@ -347,28 +375,6 @@ id|SCSI_IOCTL_DOORLOCK
 comma
 l_int|0
 )paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;     * See if we are requesting a non-existent partition.  Do this&n;     * after checking for disk change.&n;     */
-r_if
-c_cond
-(paren
-id|sd_sizes
-(braket
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-)braket
-op_eq
-l_int|0
-)paren
-(brace
-r_return
-op_minus
-id|ENXIO
 suffix:semicolon
 )brace
 id|rscsi_disks
@@ -695,7 +701,7 @@ id|sd_template.dev_max
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * rw_intr is the interrupt routine for the device driver.  It will&n; * be notified on the end of a SCSI read / write, and&n; * will take on of several actions based on success or failure.&n; */
+multiline_comment|/*&n; * rw_intr is the interrupt routine for the device driver.&n; * It will be notified on the end of a SCSI read / write, and&n; * will take one of several actions based on success or failure.&n; */
 DECL|function|rw_intr
 r_static
 r_void

@@ -4033,35 +4033,50 @@ op_assign
 (brace
 l_string|&quot;None&quot;
 comma
+multiline_comment|/* There is no sense information */
 l_string|&quot;Recovered Error&quot;
 comma
+multiline_comment|/* The last command completed successfully&n;                                   but used error correction */
 l_string|&quot;Not Ready&quot;
 comma
+multiline_comment|/* The addressed target is not ready */
 l_string|&quot;Medium Error&quot;
 comma
+multiline_comment|/* Data error detected on the medium */
 l_string|&quot;Hardware Error&quot;
 comma
+multiline_comment|/* Controller or device failure */
 l_string|&quot;Illegal Request&quot;
 comma
 l_string|&quot;Unit Attention&quot;
 comma
+multiline_comment|/* Removable medium was changed, or&n;                                   the target has been reset */
 l_string|&quot;Data Protect&quot;
 comma
+multiline_comment|/* Access to the data is blocked */
 l_string|&quot;Blank Check&quot;
 comma
+multiline_comment|/* Reached unexpected written or unwritten&n;                                   region of the medium */
 l_string|&quot;Key=9&quot;
 comma
+multiline_comment|/* Vendor specific */
 l_string|&quot;Copy Aborted&quot;
 comma
+multiline_comment|/* COPY or COMPARE was aborted */
 l_string|&quot;Aborted Command&quot;
 comma
-l_string|&quot;End-Of-Medium&quot;
+multiline_comment|/* The target aborted the command */
+l_string|&quot;Equal&quot;
 comma
+multiline_comment|/* A SEARCH DATA command found data equal */
 l_string|&quot;Volume Overflow&quot;
 comma
+multiline_comment|/* Medium full with still data to be written */
 l_string|&quot;Miscompare&quot;
 comma
+multiline_comment|/* Source data and data on the medium&n;                                   do not agree */
 l_string|&quot;Key=15&quot;
+multiline_comment|/* Reserved */
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -4146,6 +4161,7 @@ op_eq
 l_int|7
 )paren
 (brace
+multiline_comment|/* extended sense data */
 id|s
 op_assign
 id|sense_buffer
@@ -4202,6 +4218,7 @@ c_func
 l_string|&quot;FMK &quot;
 )paren
 suffix:semicolon
+multiline_comment|/* current command has read a filemark */
 r_if
 c_cond
 (paren
@@ -4218,6 +4235,7 @@ c_func
 l_string|&quot;EOM &quot;
 )paren
 suffix:semicolon
+multiline_comment|/* end-of-medium condition exists */
 r_if
 c_cond
 (paren
@@ -4234,6 +4252,7 @@ c_func
 l_string|&quot;ILI &quot;
 )paren
 suffix:semicolon
+multiline_comment|/* incorrect block length requested */
 r_switch
 c_cond
 (paren
@@ -4247,6 +4266,7 @@ id|error
 op_assign
 l_string|&quot;Current&quot;
 suffix:semicolon
+multiline_comment|/* error concerns current command */
 r_break
 suffix:semicolon
 r_case
@@ -4256,6 +4276,8 @@ id|error
 op_assign
 l_string|&quot;Deferred&quot;
 suffix:semicolon
+multiline_comment|/* error concerns some earlier command */
+multiline_comment|/* e.g., an earlier write to disk cache succeeded, but&n;                   now the disk discovers that it cannot write the data */
 r_break
 suffix:semicolon
 r_default
@@ -4526,6 +4548,8 @@ macro_line|#endif
 )brace
 r_else
 (brace
+multiline_comment|/* non-extended sense data */
+multiline_comment|/*&n;          * Standard says:&n;          *    sense_buffer[0] &amp; 0200 : address valid&n;          *    sense_buffer[0] &amp; 0177 : vendor-specific error code&n;          *    sense_buffer[1] &amp; 0340 : vendor-specific&n;          *    sense_buffer[1..3] : 21-bit logical block address&n;          */
 macro_line|#if (CONSTANTS &amp; CONST_SENSE)
 r_if
 c_cond

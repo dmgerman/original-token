@@ -1,6 +1,18 @@
+macro_line|#ifndef _LINUX_ISDN_PPP_H
+DECL|macro|_LINUX_ISDN_PPP_H
+mdefine_line|#define _LINUX_ISDN_PPP_H
 r_extern
 r_int
 id|isdn_ppp_dial_slave
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|isdn_ppp_hangup_slave
 c_func
 (paren
 r_char
@@ -66,4 +78,5 @@ DECL|macro|MP_END_FRAG
 mdefine_line|#define MP_END_FRAG    0x40
 DECL|macro|MP_BEGIN_FRAG
 mdefine_line|#define MP_BEGIN_FRAG  0x80
+macro_line|#endif
 eof

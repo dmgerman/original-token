@@ -1495,7 +1495,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;    * If this component record isnt continued, then append a &squot;/&squot;.&n;&t;    */
+multiline_comment|/*&n;&t;    * If this component record isn&squot;t continued, then append a &squot;/&squot;.&n;&t;    */
 r_if
 c_cond
 (paren
@@ -2363,7 +2363,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;  * If this component record isnt continued, then append a &squot;/&squot;.&n;&t;  */
+multiline_comment|/*&n;&t;  * If this component record isn&squot;t continued, then append a &squot;/&squot;.&n;&t;  */
 r_if
 c_cond
 (paren

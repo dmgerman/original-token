@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn.h,v 1.3 1996/04/20 16:54:58 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn.h,v 1.10 1996/05/18 01:37:18 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.10  1996/05/18 01:37:18  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.9  1996/05/17 03:58:20  fritz&n; * Added flags for DLE handling.&n; *&n; * Revision 1.8  1996/05/11 21:49:55  fritz&n; * Removed queue mamagement variables.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.7  1996/05/07 09:10:06  fritz&n; * Reorganized tty-related structs.&n; *&n; * Revision 1.6  1996/05/06 11:38:27  hipp&n; * minor change in ippp struct&n; *&n; * Revision 1.5  1996/04/30 11:03:16  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.4  1996/04/29 23:00:02  fritz&n; * Added variables for voice-support.&n; *&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdn_h
 DECL|macro|isdn_h
 mdefine_line|#define isdn_h
@@ -112,7 +112,7 @@ mdefine_line|#define ISDN_USAGE_EXCLUSIVE 64 /* This bit is set, if channel is e
 DECL|macro|ISDN_USAGE_OUTGOING
 mdefine_line|#define ISDN_USAGE_OUTGOING 128 /* This bit is set, if channel is outgoing  */
 DECL|macro|ISDN_MODEM_ANZREG
-mdefine_line|#define ISDN_MODEM_ANZREG    20        /* Number of Modem-Registers        */
+mdefine_line|#define ISDN_MODEM_ANZREG    21        /* Number of Modem-Registers        */
 DECL|macro|ISDN_MSNLEN
 mdefine_line|#define ISDN_MSNLEN          20
 r_typedef
@@ -300,6 +300,11 @@ r_int
 id|cbhup
 suffix:semicolon
 multiline_comment|/* Flag: Reject Call before Callback     */
+DECL|member|pppbind
+r_int
+id|pppbind
+suffix:semicolon
+multiline_comment|/* ippp device for bindings              */
 DECL|typedef|isdn_net_ioctl_cfg
 )brace
 id|isdn_net_ioctl_cfg
@@ -372,15 +377,19 @@ DECL|macro|ISDN_SERVICE_BTEL
 mdefine_line|#define ISDN_SERVICE_BTEL  1&lt;&lt;12
 multiline_comment|/* Macros checking plain usage */
 DECL|macro|USG_NONE
-mdefine_line|#define USG_NONE(x)     ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_NONE)
+mdefine_line|#define USG_NONE(x)         ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_NONE)
 DECL|macro|USG_RAW
-mdefine_line|#define USG_RAW(x)      ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_RAW)
+mdefine_line|#define USG_RAW(x)          ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_RAW)
 DECL|macro|USG_MODEM
-mdefine_line|#define USG_MODEM(x)    ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_MODEM)
+mdefine_line|#define USG_MODEM(x)        ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_MODEM)
+DECL|macro|USG_VOICE
+mdefine_line|#define USG_VOICE(x)        ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_VOICE)
 DECL|macro|USG_NET
-mdefine_line|#define USG_NET(x)      ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_NET)
+mdefine_line|#define USG_NET(x)          ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_NET)
 DECL|macro|USG_OUTGOING
-mdefine_line|#define USG_OUTGOING(x) ((x &amp; ISDN_USAGE_OUTGOING)==ISDN_USAGE_OUTGOING)
+mdefine_line|#define USG_OUTGOING(x)     ((x &amp; ISDN_USAGE_OUTGOING)==ISDN_USAGE_OUTGOING)
+DECL|macro|USG_MODEMORVOICE
+mdefine_line|#define USG_MODEMORVOICE(x) (((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_MODEM) || &bslash;&n;                             ((x &amp; ISDN_USAGE_MASK)==ISDN_USAGE_VOICE)     )
 multiline_comment|/* Timer-delays and scheduling-flags */
 DECL|macro|ISDN_TIMER_RES
 mdefine_line|#define ISDN_TIMER_RES       3                     /* Main Timer-Resolution  */
@@ -763,6 +772,11 @@ r_char
 op_star
 )paren
 suffix:semicolon
+DECL|member|pppbind
+r_int
+id|pppbind
+suffix:semicolon
+multiline_comment|/* ippp device for bindings         */
 DECL|typedef|isdn_net_local
 )brace
 id|isdn_net_local
@@ -887,17 +901,95 @@ DECL|macro|ISDN_ASYNC_CALLOUT_NOHUP
 mdefine_line|#define ISDN_ASYNC_CALLOUT_NOHUP      0x0400 /* No hangup for cui            */
 DECL|macro|ISDN_ASYNC_SPLIT_TERMIOS
 mdefine_line|#define ISDN_ASYNC_SPLIT_TERMIOS      0x0008 /* Sep. termios for dialin/out  */
-DECL|macro|ISDN_PORT_16550A
-mdefine_line|#define ISDN_PORT_16550A                   4 /* Type of faked Hardware       */
 DECL|macro|ISDN_SERIAL_XMIT_SIZE
 mdefine_line|#define ISDN_SERIAL_XMIT_SIZE           4000 /* Maximum bufsize for write    */
 DECL|macro|ISDN_SERIAL_TYPE_NORMAL
-mdefine_line|#define ISDN_SERIAL_TYPE_NORMAL&t;           1 /* tty-type                     */
+mdefine_line|#define ISDN_SERIAL_TYPE_NORMAL            1
 DECL|macro|ISDN_SERIAL_TYPE_CALLOUT
-mdefine_line|#define ISDN_SERIAL_TYPE_CALLOUT           2 /* cua-type                     */
-multiline_comment|/* Private data (similar to async_struct in &lt;linux/serial.h&gt;) */
+mdefine_line|#define ISDN_SERIAL_TYPE_CALLOUT           2
+multiline_comment|/* Private data of AT-command-interpreter */
+DECL|struct|atemu
 r_typedef
 r_struct
+id|atemu
+(brace
+DECL|member|profile
+id|u_char
+id|profile
+(braket
+id|ISDN_MODEM_ANZREG
+)braket
+suffix:semicolon
+multiline_comment|/* Modem-Regs. Profile 0 */
+DECL|member|mdmreg
+id|u_char
+id|mdmreg
+(braket
+id|ISDN_MODEM_ANZREG
+)braket
+suffix:semicolon
+multiline_comment|/* Modem-Registers       */
+DECL|member|pmsn
+r_char
+id|pmsn
+(braket
+id|ISDN_MSNLEN
+)braket
+suffix:semicolon
+multiline_comment|/* EAZ/MSNs Profile 0             */
+DECL|member|msn
+r_char
+id|msn
+(braket
+id|ISDN_MSNLEN
+)braket
+suffix:semicolon
+multiline_comment|/* EAZ/MSN                          */
+DECL|member|vpar
+id|u_char
+id|vpar
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* Voice-parameters                 */
+DECL|member|mdmcmdl
+r_int
+id|mdmcmdl
+suffix:semicolon
+multiline_comment|/* Length of Modem-Commandbuffer    */
+DECL|member|pluscount
+r_int
+id|pluscount
+suffix:semicolon
+multiline_comment|/* Counter for +++ sequence         */
+DECL|member|lastplus
+r_int
+id|lastplus
+suffix:semicolon
+multiline_comment|/* Timestamp of last +              */
+DECL|member|lastDLE
+r_int
+id|lastDLE
+suffix:semicolon
+multiline_comment|/* Flag for voice-coding: DLE seen  */
+DECL|member|mdmcmd
+r_char
+id|mdmcmd
+(braket
+l_int|255
+)braket
+suffix:semicolon
+multiline_comment|/* Modem-Commandbuffer              */
+DECL|typedef|atemu
+)brace
+id|atemu
+suffix:semicolon
+multiline_comment|/* Private data (similar to async_struct in &lt;linux/serial.h&gt;) */
+DECL|struct|modem_info
+r_typedef
+r_struct
+id|modem_info
 (brace
 DECL|member|magic
 r_int
@@ -908,31 +1000,26 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* defined in tty.h               */
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* UART type                      */
-DECL|member|tty
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
 DECL|member|x_char
 r_int
 id|x_char
 suffix:semicolon
 multiline_comment|/* xon/xoff character             */
-DECL|member|close_delay
+DECL|member|mcr
 r_int
-id|close_delay
-suffix:semicolon
-DECL|member|MCR
-r_int
-id|MCR
+id|mcr
 suffix:semicolon
 multiline_comment|/* Modem control register         */
+DECL|member|msr
+r_int
+id|msr
+suffix:semicolon
+multiline_comment|/* Modem status register          */
+DECL|member|lsr
+r_int
+id|lsr
+suffix:semicolon
+multiline_comment|/* Line status register           */
 DECL|member|line
 r_int
 id|line
@@ -957,6 +1044,26 @@ r_int
 id|pgrp
 suffix:semicolon
 multiline_comment|/* pgrp of opening process        */
+DECL|member|online
+r_int
+id|online
+suffix:semicolon
+multiline_comment|/* B-Channel is up                */
+DECL|member|vonline
+r_int
+id|vonline
+suffix:semicolon
+multiline_comment|/* Voice-channel status           */
+DECL|member|dialing
+r_int
+id|dialing
+suffix:semicolon
+multiline_comment|/* Dial in progress               */
+DECL|member|rcvsched
+r_int
+id|rcvsched
+suffix:semicolon
+multiline_comment|/* Receive needs schedule         */
 DECL|member|isdn_driver
 r_int
 id|isdn_driver
@@ -972,6 +1079,19 @@ r_int
 id|drv_index
 suffix:semicolon
 multiline_comment|/* Index to dev-&gt;usage            */
+DECL|member|ncarrier
+r_int
+id|ncarrier
+suffix:semicolon
+multiline_comment|/* Flag: schedule NO CARRIER      */
+DECL|member|nc_timer
+r_struct
+id|timer_list
+id|nc_timer
+suffix:semicolon
+multiline_comment|/* Timer for delayed NO CARRIER   */
+DECL|macro|FUTURE
+mdefine_line|#define FUTURE 1
 macro_line|#if FUTURE
 DECL|member|send_outstanding
 r_int
@@ -989,17 +1109,36 @@ r_int
 id|xmit_count
 suffix:semicolon
 multiline_comment|/* # of chars in xmit_buf         */
-DECL|member|xmit_buf
-id|u_char
+DECL|member|tty
+r_struct
+id|tty_struct
 op_star
-id|xmit_buf
+id|tty
 suffix:semicolon
-multiline_comment|/* transmit-buffer                */
+multiline_comment|/* Pointer to corresponding tty   */
+DECL|member|emu
+id|atemu
+id|emu
+suffix:semicolon
+multiline_comment|/* AT-emulator data               */
+DECL|member|adpcms
+r_void
+op_star
+id|adpcms
+suffix:semicolon
+multiline_comment|/* state for adpcm decompression  */
+DECL|member|adpcmr
+r_void
+op_star
+id|adpcmr
+suffix:semicolon
+multiline_comment|/* state for adpcm compression    */
 DECL|member|normal_termios
 r_struct
 id|termios
 id|normal_termios
 suffix:semicolon
+multiline_comment|/* For saving termios structs     */
 DECL|member|callout_termios
 r_struct
 id|termios
@@ -1017,132 +1156,28 @@ id|wait_queue
 op_star
 id|close_wait
 suffix:semicolon
+DECL|member|xmit_buf
+r_struct
+id|sk_buff_head
+op_star
+id|xmit_buf
+suffix:semicolon
+multiline_comment|/* transmit-buffer queue          */
 DECL|typedef|modem_info
 )brace
 id|modem_info
 suffix:semicolon
 DECL|macro|ISDN_MODEM_WINSIZE
 mdefine_line|#define ISDN_MODEM_WINSIZE 8
-multiline_comment|/* Private data of AT-command-interpreter */
-r_typedef
-r_struct
-(brace
-DECL|member|profile
-id|u_char
-id|profile
-(braket
-id|ISDN_MODEM_ANZREG
-)braket
-suffix:semicolon
-multiline_comment|/* Modem-Regs. Profile 0  */
-DECL|member|mdmreg
-id|u_char
-id|mdmreg
-(braket
-id|ISDN_MODEM_ANZREG
-)braket
-suffix:semicolon
-multiline_comment|/* Modem-Registers        */
-DECL|member|pmsn
-r_char
-id|pmsn
-(braket
-id|ISDN_MSNLEN
-)braket
-suffix:semicolon
-multiline_comment|/* EAZ/MSNs Profile 0             */
-DECL|member|msn
-r_char
-id|msn
-(braket
-id|ISDN_MSNLEN
-)braket
-suffix:semicolon
-multiline_comment|/* EAZ/MSN                          */
-DECL|member|mdmcmdl
-r_int
-id|mdmcmdl
-suffix:semicolon
-multiline_comment|/* Length of Modem-Commandbuffer    */
-DECL|member|pluscount
-r_int
-id|pluscount
-suffix:semicolon
-multiline_comment|/* Counter for +++ sequence         */
-DECL|member|lastplus
-r_int
-id|lastplus
-suffix:semicolon
-multiline_comment|/* Timestamp of last +              */
-DECL|member|mdmcmd
-r_char
-id|mdmcmd
-(braket
-l_int|255
-)braket
-suffix:semicolon
-multiline_comment|/* Modem-Commandbuffer              */
-DECL|typedef|atemu
-)brace
-id|atemu
-suffix:semicolon
 multiline_comment|/* Description of one ISDN-tty */
 r_typedef
 r_struct
 (brace
-DECL|member|msr
-r_int
-id|msr
-(braket
-id|ISDN_MAX_CHANNELS
-)braket
-suffix:semicolon
-multiline_comment|/* Modem-statusregister   */
-DECL|member|mlr
-r_int
-id|mlr
-(braket
-id|ISDN_MAX_CHANNELS
-)braket
-suffix:semicolon
-multiline_comment|/* Line-statusregister    */
 DECL|member|refcount
 r_int
 id|refcount
 suffix:semicolon
 multiline_comment|/* Number of opens        */
-DECL|member|online
-r_int
-id|online
-(braket
-id|ISDN_MAX_CHANNELS
-)braket
-suffix:semicolon
-multiline_comment|/* B-Channel is up        */
-DECL|member|dialing
-r_int
-id|dialing
-(braket
-id|ISDN_MAX_CHANNELS
-)braket
-suffix:semicolon
-multiline_comment|/* Dial in progress       */
-DECL|member|rcvsched
-r_int
-id|rcvsched
-(braket
-id|ISDN_MAX_CHANNELS
-)braket
-suffix:semicolon
-multiline_comment|/* Receive needs schedule */
-DECL|member|ncarrier
-r_int
-id|ncarrier
-(braket
-id|ISDN_MAX_CHANNELS
-)braket
-suffix:semicolon
-multiline_comment|/* Output NO CARRIER      */
 DECL|member|tty_modem
 r_struct
 id|tty_driver
@@ -1168,7 +1203,6 @@ multiline_comment|/* ?? copied from Orig */
 DECL|member|modem_termios
 r_struct
 id|termios
-op_star
 id|modem_termios
 (braket
 id|ISDN_MAX_CHANNELS
@@ -1177,20 +1211,11 @@ suffix:semicolon
 DECL|member|modem_termios_locked
 r_struct
 id|termios
-op_star
 id|modem_termios_locked
 (braket
 id|ISDN_MAX_CHANNELS
 )braket
 suffix:semicolon
-DECL|member|atmodem
-id|atemu
-id|atmodem
-(braket
-id|ISDN_MAX_CHANNELS
-)braket
-suffix:semicolon
-multiline_comment|/* AT-Command-parser      */
 DECL|member|info
 id|modem_info
 id|info
@@ -1433,51 +1458,16 @@ op_star
 id|slcomp
 suffix:semicolon
 macro_line|#endif
+DECL|member|debug
+r_int
+r_int
+id|debug
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*======================== End of sync-ppp stuff ===========================*/
 multiline_comment|/*======================= Start of general stuff ===========================*/
-multiline_comment|/* Packet-queue-element */
-DECL|struct|pqueue
-r_typedef
-r_struct
-id|pqueue
-(brace
-DECL|member|next
-r_char
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* Pointer to next packet           */
-DECL|member|length
-r_int
-id|length
-suffix:semicolon
-multiline_comment|/* Packetlength                     */
-DECL|member|size
-r_int
-id|size
-suffix:semicolon
-multiline_comment|/* Allocated size                   */
-DECL|member|rptr
-id|u_char
-op_star
-id|rptr
-suffix:semicolon
-multiline_comment|/* Read-pointer for stream-reading  */
-DECL|member|buffer
-id|u_char
-id|buffer
-(braket
-l_int|1
-)braket
-suffix:semicolon
-multiline_comment|/* The data (will be alloc&squot;d)       */
-DECL|typedef|pqueue
-)brace
-id|pqueue
-suffix:semicolon
 r_typedef
 r_struct
 (brace
@@ -1565,9 +1555,15 @@ op_star
 id|rcvcount
 suffix:semicolon
 multiline_comment|/* Byte-counters for B-Ch.-receive  */
+DECL|member|DLEflag
+r_int
+r_int
+id|DLEflag
+suffix:semicolon
+multiline_comment|/* Flags: Insert DLE at next read   */
 DECL|member|rpqueue
-id|pqueue
-op_star
+r_struct
+id|sk_buff_head
 op_star
 id|rpqueue
 suffix:semicolon

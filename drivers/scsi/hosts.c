@@ -71,8 +71,11 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16
 macro_line|#include &quot;pas16.h&quot;
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_QLOGIC
-macro_line|#include &quot;qlogic.h&quot;
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_FAS
+macro_line|#include &quot;qlogicfas.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_ISP
+macro_line|#include &quot;qlogicisp.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SEAGATE
 macro_line|#include &quot;seagate.h&quot;
@@ -200,8 +203,12 @@ macro_line|#ifdef CONFIG_SCSI_NCR53C406A&t;/* 53C406A should come before QLOGIC 
 id|NCR53c406a
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_QLOGIC
-id|QLOGIC
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_FAS
+id|QLOGICFAS
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_ISP
+id|QLOGICISP
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16

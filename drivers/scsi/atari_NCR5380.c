@@ -1523,7 +1523,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else /* !NDEBUG */
-multiline_comment|/* dummys... */
+multiline_comment|/* dummies... */
 DECL|function|NCR5380_print
 id|__inline__
 r_void

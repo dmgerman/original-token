@@ -1084,6 +1084,25 @@ id|sector
 op_assign
 id|bh-&gt;b_rsector
 suffix:semicolon
+multiline_comment|/* Uhhuh.. Nasty dead-lock possible here.. */
+r_if
+c_cond
+(paren
+id|buffer_locked
+c_func
+(paren
+id|bh
+)paren
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* Maybe the above fixes it, and maybe it doesn&squot;t boot. Life is interesting */
+id|lock_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1117,8 +1136,18 @@ l_int|1
 )paren
 (brace
 id|bh-&gt;b_state
-op_assign
-l_int|0
+op_and_assign
+(paren
+l_int|1
+op_lshift
+id|BH_Lock
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|BH_FreeOnIO
+)paren
 suffix:semicolon
 multiline_comment|/* This may well happen - the kernel calls bread()&n;                           without checking the size of the device, e.g.,&n;                           when mounting a device. */
 id|printk
@@ -1163,28 +1192,15 @@ id|bh-&gt;b_rdev
 )braket
 )paren
 suffix:semicolon
+id|unlock_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Uhhuh.. Nasty dead-lock possible here.. */
-r_if
-c_cond
-(paren
-id|buffer_locked
-c_func
-(paren
-id|bh
-)paren
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* Maybe the above fixes it, and maybe it doesn&squot;t boot. Life is interesting */
-id|lock_buffer
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
 id|rw_ahead
 op_assign
 l_int|0

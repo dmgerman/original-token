@@ -2660,7 +2660,7 @@ id|tcp_statistics.TcpOutSegs
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Set up the timers for sending a delayed ack..&n; *&n; *      rules for delaying an ack:&n; *      - delay time &lt;= 0.5 HZ&n; *      - must send at least every 2 full sized packets&n; *      - we don&squot;t have a window update to send&n; *&n; * &t;additional thoughts:&n; *&t;- we should not delay sending an ACK if we have ato &gt; 0.5 HZ.&n; *&t;  My thinking about this is that in this case we will just be&n; *&t;  systematically skewing the RTT calculation. (The rule about&n; *&t;  sending every two full sized packets will never need to be&n; *&t;  invoked, the delayed ack will be sent before the ATO timeout&n; *&t;  every time. Of course, the relies on our having a good estimate&n; *&t;  for packet interarrival times.&n; */
+multiline_comment|/*&n; *&t;Set up the timers for sending a delayed ack..&n; *&n; *      rules for delaying an ack:&n; *      - delay time &lt;= 0.5 HZ&n; *      - must send at least every 2 full sized packets&n; *      - we don&squot;t have a window update to send&n; *&n; * &t;additional thoughts:&n; *&t;- we should not delay sending an ACK if we have ato &gt; 0.5 HZ.&n; *&t;  My thinking about this is that in this case we will just be&n; *&t;  systematically skewing the RTT calculation. (The rule about&n; *&t;  sending every two full sized packets will never need to be&n; *&t;  invoked, the delayed ack will be sent before the ATO timeout&n; *&t;  every time. Of course, the relies on our having a good estimate&n; *&t;  for packet interarrival times.)&n; */
 DECL|function|tcp_send_delayed_ack
 r_void
 id|tcp_send_delayed_ack

@@ -2,13 +2,14 @@ macro_line|#ifndef _AFFS_FS_SB
 DECL|macro|_AFFS_FS_SB
 mdefine_line|#define _AFFS_FS_SB
 multiline_comment|/*&n; * super-block data in memory&n; *&n; * Block numbers are adjusted for their actual size&n; *&n; */
-macro_line|#include &lt;linux/amigaffs.h&gt;
 DECL|macro|MAX_ZONES
 mdefine_line|#define MAX_ZONES&t;&t;8
 DECL|macro|AFFS_DATA_MIN_FREE
-mdefine_line|#define AFFS_DATA_MIN_FREE&t;30&t;/* Percentage of free blocks needed for a data zone */
+mdefine_line|#define AFFS_DATA_MIN_FREE&t;512&t;/* Number of free blocks in zone for data blocks */
 DECL|macro|AFFS_HDR_MIN_FREE
-mdefine_line|#define AFFS_HDR_MIN_FREE&t;10&t;/* Same for header blocks */
+mdefine_line|#define AFFS_HDR_MIN_FREE&t;128&t;/* Same for header blocks */
+DECL|macro|AFFS_ZONE_SIZE
+mdefine_line|#define AFFS_ZONE_SIZE&t;&t;1024&t;/* Blocks per alloc zone, must be multiple of 32 */
 DECL|struct|affs_bm_info
 r_struct
 id|affs_bm_info
@@ -19,22 +20,43 @@ id|buffer_head
 op_star
 id|bm_bh
 suffix:semicolon
-multiline_comment|/* Buffer for bitmap. */
-DECL|member|bm_free
-r_int
-id|bm_free
-suffix:semicolon
-multiline_comment|/* Free blocks. */
-DECL|member|bm_size
-r_int
-id|bm_size
-suffix:semicolon
-multiline_comment|/* Size in bits, rounded to multiple of 32. */
+multiline_comment|/* Buffer head if loaded (bm_count &gt; 0) */
 DECL|member|bm_firstblk
 r_int
 id|bm_firstblk
 suffix:semicolon
 multiline_comment|/* Block number of first bit in this map */
+DECL|member|bm_key
+r_int
+id|bm_key
+suffix:semicolon
+multiline_comment|/* Disk block number */
+DECL|member|bm_count
+r_int
+id|bm_count
+suffix:semicolon
+multiline_comment|/* Usage counter */
+)brace
+suffix:semicolon
+DECL|struct|affs_alloc_zone
+r_struct
+id|affs_alloc_zone
+(brace
+DECL|member|az_size
+r_int
+id|az_size
+suffix:semicolon
+multiline_comment|/* Size of this allocation zone in double words */
+DECL|member|az_count
+r_int
+id|az_count
+suffix:semicolon
+multiline_comment|/* Number of users */
+DECL|member|az_free
+r_int
+id|az_free
+suffix:semicolon
+multiline_comment|/* Free blocks in here (no. of bits) */
 )brace
 suffix:semicolon
 DECL|struct|affs_zone
@@ -59,9 +81,14 @@ r_int
 id|z_start
 suffix:semicolon
 multiline_comment|/* Index of first word in bitmap */
-DECL|member|z_zone_no
+DECL|member|z_end
 r_int
-id|z_zone_no
+id|z_end
+suffix:semicolon
+multiline_comment|/* Index of last word in zone + 1 */
+DECL|member|z_az_no
+r_int
+id|z_az_no
 suffix:semicolon
 multiline_comment|/* Zone number */
 DECL|member|z_lru_time
@@ -141,30 +168,37 @@ r_int
 id|s_nextzone
 suffix:semicolon
 multiline_comment|/* Next zone to look for free blocks. */
-DECL|member|s_num_zones
+DECL|member|s_num_az
 r_int
-id|s_num_zones
+id|s_num_az
 suffix:semicolon
-multiline_comment|/* Total number of zones. */
+multiline_comment|/* Total number of alloc zones. */
 DECL|member|s_zones
 r_struct
 id|affs_zone
 op_star
 id|s_zones
 suffix:semicolon
-multiline_comment|/* The zones themselves. */
+multiline_comment|/* The zones themselfes. */
+DECL|member|s_alloc
+r_struct
+id|affs_alloc_zone
+op_star
+id|s_alloc
+suffix:semicolon
+multiline_comment|/* The allocation zones. */
 DECL|member|s_zonemap
 r_char
 op_star
 id|s_zonemap
 suffix:semicolon
-multiline_comment|/* Bitmap for zones. */
+multiline_comment|/* Bitmap for allocation zones. */
 DECL|member|s_prefix
 r_char
 op_star
 id|s_prefix
 suffix:semicolon
-multiline_comment|/* Prefix for volumes and assigns. */
+multiline_comment|/* Prefix for volumes and assignes. */
 DECL|member|s_prefix_len
 r_int
 id|s_prefix_len

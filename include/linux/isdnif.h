@@ -1,10 +1,7 @@
-multiline_comment|/* $Id: isdnif.h,v 1.2 1996/04/20 17:02:40 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.8 1996/05/18 01:45:37 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
-macro_line|#ifdef STANDALONE
-macro_line|#include &lt;linux/k_compat.h&gt;
-macro_line|#endif
 multiline_comment|/*&n; * Values for general protocol-selection&n; */
 DECL|macro|ISDN_PTYPE_UNKNOWN
 mdefine_line|#define ISDN_PTYPE_UNKNOWN   0   /* Protocol undefined   */
@@ -21,6 +18,8 @@ DECL|macro|ISDN_PROTO_L2_X75BUI
 mdefine_line|#define ISDN_PROTO_L2_X75BUI 2   /* X75/LAPB with UI-Frames     */
 DECL|macro|ISDN_PROTO_L2_HDLC
 mdefine_line|#define ISDN_PROTO_L2_HDLC   3   /* HDLC                        */
+DECL|macro|ISDN_PROTO_L2_TRANS
+mdefine_line|#define ISDN_PROTO_L2_TRANS  4   /* Transparent (Voice)         */
 multiline_comment|/*&n; * Values for Layer-3-protocol-selection&n; */
 DECL|macro|ISDN_PROTO_L3_TRANS
 mdefine_line|#define ISDN_PROTO_L3_TRANS  0   /* Transparent                 */
@@ -100,6 +99,8 @@ DECL|macro|ISDN_FEATURE_L2_X75BUI
 mdefine_line|#define ISDN_FEATURE_L2_X75BUI  (0x0001 &lt;&lt; ISDN_PROTO_L2_X75BUI)
 DECL|macro|ISDN_FEATURE_L2_HDLC
 mdefine_line|#define ISDN_FEATURE_L2_HDLC    (0x0001 &lt;&lt; ISDN_PROTO_L2_HDLC)
+DECL|macro|ISDN_FEATURE_L2_TRANS
+mdefine_line|#define ISDN_FEATURE_L2_TRANS   (0x0001 &lt;&lt; ISDN_PROTO_L2_TRANS)
 multiline_comment|/* Layer 3 */
 DECL|macro|ISDN_FEATURE_L3_TRANS
 mdefine_line|#define ISDN_FEATURE_L3_TRANS   (0x0100 &lt;&lt; ISDN_PROTO_L3_TRANS)
@@ -167,7 +168,7 @@ r_int
 r_int
 id|hl_hdrlen
 suffix:semicolon
-multiline_comment|/* Receive-Callback&n;   * Parameters:&n;   *             int    Driver-ID&n;   *             int    local channel-number (0 ...)&n;   *             u_char pointer to received data (in Kernel-Space, volatile)&n;   *             int    length of data&n;   */
+multiline_comment|/* Receive-Callback&n;   * Parameters:&n;   *             int    Driver-ID&n;   *             int    local channel-number (0 ...)&n;   *             u_char pointer to received data (in Kernel-Space, volatile)&n;   *             int    length of data&n;   *&n;   * NOTE: This callback is obsolete, and will be removed when all&n;   *       current LL-drivers support rcvcall_skb. Do NOT use for new&n;   *       drivers.&n;   */
 DECL|member|rcvcallb
 r_void
 (paren
@@ -226,7 +227,7 @@ id|isdn_ctrl
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Send Data&n;   * Parameters:&n;   *             int    driverId&n;   *             int    local channel-number (0 ...)&n;   *             u_char pointer to data&n;   *             int    length of data&n;   *             int    Flag: 0 = Call form Kernel-Space (use memcpy,&n;   *                              no schedule allowed) &n;   *                          1 = Data is in User-Space (use memcpy_fromfs,&n;   *                              may schedule)&n;   */
+multiline_comment|/* Send Data&n;   * Parameters:&n;   *             int    driverId&n;   *             int    local channel-number (0 ...)&n;   *             u_char pointer to data&n;   *             int    length of data&n;   *             int    Flag: 0 = Call form Kernel-Space (use memcpy,&n;   *                              no schedule allowed) &n;   *                          1 = Data is in User-Space (use memcpy_fromfs,&n;   *                              may schedule)&n;   *&n;   * NOTE: This call is obsolete, and will be removed when all&n;   *       current LL-drivers support writebuf_skb. Do NOT use for new&n;   *       drivers.&n;   */
 DECL|member|writebuf
 r_int
 (paren
@@ -264,7 +265,7 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Send raw D-Channel-Commands&n;   * Parameters:&n;   *             u_char pointer data&n;   *             int    length of data&n;   *             int    Flag: 0 = Call form Kernel-Space (use memcpy,&n;   *                              no schedule allowed) &n;   *                          1 = Data is in User-Space (use memcpy_fromfs,&n;   *                              may schedule)&n;   */
+multiline_comment|/* Send raw D-Channel-Commands&n;   * Parameters:&n;   *             u_char pointer data&n;   *             int    length of data&n;   *             int    Flag: 0 = Call form Kernel-Space (use memcpy,&n;   *                              no schedule allowed) &n;   *                          1 = Data is in User-Space (use memcpy_fromfs,&n;   *                              may schedule)&n;   *             int    driverId&n;   *             int    local channel-number (0 ...)&n;   */
 DECL|member|writecmd
 r_int
 (paren
@@ -279,9 +280,13 @@ comma
 r_int
 comma
 r_int
+comma
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Read raw Status replies&n;   *             u_char pointer data (volatile)&n;   *             int    length of buffer&n;   *             int    Flag: 0 = Call form Kernel-Space (use memcpy,&n;   *                              no schedule allowed) &n;   *                          1 = Data is in User-Space (use memcpy_fromfs,&n;   *                              may schedule)&n;   */
+multiline_comment|/* Read raw Status replies&n;   *             u_char pointer data (volatile)&n;   *             int    length of buffer&n;   *             int    Flag: 0 = Call form Kernel-Space (use memcpy,&n;   *                              no schedule allowed) &n;   *                          1 = Data is in User-Space (use memcpy_fromfs,&n;   *                              may schedule)&n;   *             int    driverId&n;   *             int    local channel-number (0 ...)&n;   */
 DECL|member|readstat
 r_int
 (paren
@@ -291,6 +296,10 @@ id|readstat
 (paren
 id|u_char
 op_star
+comma
+r_int
+comma
+r_int
 comma
 r_int
 comma
@@ -308,7 +317,7 @@ DECL|typedef|isdn_if
 )brace
 id|isdn_if
 suffix:semicolon
-multiline_comment|/*&n; * Function which must be called by lowlevel-driver at loadtime with&n; * the following fields of above struct set:&n; *&n; * channels     Number of channels that will be supported.&n; * hl_hdrlen    Space to preserve in sk_buff&squot;s when sending. Drivers, not&n; *              supporting sk_buff&squot;s should set this to 0.&n; * command      Address of Command-Handler.&n; * features     Bitwise coded Features of this driver. (use ISDN_FEATURE_...)&n; * writebuf     Address of Send-Command-Handler.&n; * writebuf_skb Address of Skbuff-Send-Handler. (NULL if not supported)&n; * writecmd        &quot;    &quot;  D-Channel  &quot; which accepts raw D-Ch-Commands.&n; * readstat        &quot;    &quot;  D-Channel  &quot; which delivers raw Status-Data.&n; *&n; * The linklevel-driver fills the following fields:&n; *&n; * channels      Driver-ID assigned to this driver. (Must be used on all&n; *               subsequent callbacks.&n; * rcvcallb      Address of handler for received data.&n; * rcvcallb_skb  Address of handler for received Skbuff&squot;s. (NULL if not supp.)&n; * statcallb        &quot;    &quot;     &quot;    for status-changes.&n; *&n; */
+multiline_comment|/*&n; * Function which must be called by lowlevel-driver at loadtime with&n; * the following fields of above struct set:&n; *&n; * channels     Number of channels that will be supported.&n; * hl_hdrlen    Space to preserve in sk_buff&squot;s when sending. Drivers, not&n; *              supporting sk_buff&squot;s should set this to 0.&n; * command      Address of Command-Handler.&n; * features     Bitwise coded Features of this driver. (use ISDN_FEATURE_...)&n; * writebuf     Address of Send-Command-Handler. OBSOLETE do NOT use anymore.&n; * writebuf_skb Address of Skbuff-Send-Handler. (NULL if not supported)&n; * writecmd        &quot;    &quot;  D-Channel  &quot; which accepts raw D-Ch-Commands.&n; * readstat        &quot;    &quot;  D-Channel  &quot; which delivers raw Status-Data.&n; *&n; * The linklevel-driver fills the following fields:&n; *&n; * channels      Driver-ID assigned to this driver. (Must be used on all&n; *               subsequent callbacks.&n; * rcvcallb      Address of handler for received data. OBSOLETE, do NOT use anymore.&n; * rcvcallb_skb  Address of handler for received Skbuff&squot;s. (NULL if not supp.)&n; * statcallb        &quot;    &quot;     &quot;    for status-changes.&n; *&n; */
 r_extern
 r_int
 id|register_isdn

@@ -1,12 +1,12 @@
-multiline_comment|/*&n; *  linux/fs/affs/namei.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/affs/namei.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
-macro_line|#include &lt;linux/amigaffs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/amigaffs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 multiline_comment|/* Simple toupper() for DOS&bslash;1 */
@@ -418,7 +418,7 @@ suffix:semicolon
 r_int
 id|intl
 suffix:semicolon
-id|ULONG
+r_int
 id|key
 suffix:semicolon
 id|pr_debug
@@ -658,14 +658,6 @@ id|hash_chain
 )paren
 suffix:semicolon
 )brace
-id|pr_debug
-c_func
-(paren
-l_string|&quot;%lu&bslash;n&quot;
-comma
-id|key
-)paren
-suffix:semicolon
 op_star
 id|ino
 op_assign
@@ -1957,20 +1949,6 @@ comma
 id|symname
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;AFFS: symlink(%lu,&bslash;&quot;%.*s&bslash;&quot; -&gt; &bslash;&quot;%s&bslash;&quot;)&bslash;n&quot;
-comma
-id|dir-&gt;i_ino
-comma
-id|len
-comma
-id|name
-comma
-id|symname
-)paren
-suffix:semicolon
 id|maxlen
 op_assign
 l_int|4
@@ -3215,7 +3193,7 @@ r_goto
 id|end_rename
 suffix:semicolon
 )brace
-multiline_comment|/* Unlink destination if existant */
+multiline_comment|/* Unlink destination if existent */
 r_if
 c_cond
 (paren
@@ -3490,12 +3468,12 @@ op_star
 id|inode
 )paren
 (brace
-id|ULONG
+r_int
 id|key
 comma
 id|link_key
 suffix:semicolon
-id|LONG
+r_int
 id|type
 suffix:semicolon
 r_struct

@@ -2,7 +2,7 @@ macro_line|#ifndef _AFFS_FS_I
 DECL|macro|_AFFS_FS_I
 mdefine_line|#define _AFFS_FS_I
 DECL|macro|EXT_CACHE_SIZE
-mdefine_line|#define EXT_CACHE_SIZE&t;16
+mdefine_line|#define EXT_CACHE_SIZE&t;12
 DECL|macro|MAX_PREALLOC
 mdefine_line|#define MAX_PREALLOC&t;8&t;/* MUST be a power of 2 */
 multiline_comment|/*&n; * affs fs inode data in memory&n; */
@@ -11,22 +11,22 @@ r_struct
 id|affs_inode_info
 (brace
 DECL|member|i_protect
-r_int
+id|__u32
 id|i_protect
 suffix:semicolon
 multiline_comment|/* unused attribute bits */
 DECL|member|i_parent
-r_int
+id|__s32
 id|i_parent
 suffix:semicolon
 multiline_comment|/* parent ino */
 DECL|member|i_original
-r_int
+id|__s32
 id|i_original
 suffix:semicolon
 multiline_comment|/* if != 0, this is the key of the original */
 DECL|member|i_ext
-id|__u32
+id|__s32
 id|i_ext
 (braket
 id|EXT_CACHE_SIZE
@@ -34,13 +34,18 @@ id|EXT_CACHE_SIZE
 suffix:semicolon
 multiline_comment|/* extension block numbers */
 DECL|member|i_data
-id|__u32
+id|__s32
 id|i_data
 (braket
 id|MAX_PREALLOC
 )braket
 suffix:semicolon
 multiline_comment|/* preallocated blocks */
+DECL|member|i_lastblock
+r_int
+id|i_lastblock
+suffix:semicolon
+multiline_comment|/* last allocated block */
 DECL|member|i_max_ext
 r_int
 id|i_max_ext

@@ -9,19 +9,12 @@ macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef __alpha__
-multiline_comment|/*&n; * On the Alpha, we get unaligned access exceptions on&n; *  p-&gt;nr_sects and p-&gt;start_sect, when the partition table&n; *  is not on a 4-byte boundary, which is frequently the case.&n; * This code uses unaligned load instructions to prevent&n; *  such exceptions.&n; */
+multiline_comment|/*&n; * Many architectures don&squot;t like unaligned accesses, which is&n; * frequently the case with the nr_sects and start_sect partition&n; * table entries.&n; */
 macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|NR_SECTS
-mdefine_line|#define NR_SECTS(p)&t;ldl_u(&amp;p-&gt;nr_sects)
+mdefine_line|#define NR_SECTS(p)&t;get_unaligned(&amp;p-&gt;nr_sects)
 DECL|macro|START_SECT
-mdefine_line|#define START_SECT(p)&t;ldl_u(&amp;p-&gt;start_sect)
-macro_line|#else /* __alpha__ */
-DECL|macro|NR_SECTS
-mdefine_line|#define NR_SECTS(p)&t;p-&gt;nr_sects
-DECL|macro|START_SECT
-mdefine_line|#define START_SECT(p)&t;p-&gt;start_sect
-macro_line|#endif /* __alpha__ */
+mdefine_line|#define START_SECT(p)&t;get_unaligned(&amp;p-&gt;start_sect)
 DECL|variable|gendisk_head
 r_struct
 id|gendisk

@@ -1,5 +1,5 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.43 4/6/95 - kernel 1.2.0+, pcmcia 2.5.4+&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.44 5/7/96 - kernel 1.2.0+, pcmcia 2.5.4+&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
 multiline_comment|/* Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
@@ -75,19 +75,19 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;qlogic.h&quot;
+macro_line|#include &quot;qlogicfas.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_qlogic
+DECL|variable|proc_scsi_qlogicfas
 r_struct
 id|proc_dir_entry
-id|proc_scsi_qlogic
+id|proc_scsi_qlogicfas
 op_assign
 (brace
-id|PROC_SCSI_QLOGIC
+id|PROC_SCSI_QLOGICFAS
 comma
 l_int|6
 comma
-l_string|&quot;qlogic&quot;
+l_string|&quot;qlogicfas&quot;
 comma
 id|S_IFDIR
 op_or
@@ -2150,9 +2150,9 @@ suffix:semicolon
 multiline_comment|/* null function */
 macro_line|#endif
 multiline_comment|/* command process */
-DECL|function|qlogic_command
+DECL|function|qlogicfas_command
 r_int
-id|qlogic_command
+id|qlogicfas_command
 c_func
 (paren
 id|Scsi_Cmnd
@@ -2172,7 +2172,7 @@ op_ge
 l_int|0
 )paren
 (brace
-id|qlogic_queuecommand
+id|qlogicfas_queuecommand
 c_func
 (paren
 id|cmd
@@ -2244,9 +2244,9 @@ suffix:semicolon
 macro_line|#if QL_USE_IRQ
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* queued command */
-DECL|function|qlogic_queuecommand
+DECL|function|qlogicfas_queuecommand
 r_int
-id|qlogic_queuecommand
+id|qlogicfas_queuecommand
 c_func
 (paren
 id|Scsi_Cmnd
@@ -2316,9 +2316,9 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|qlogic_queuecommand
+DECL|function|qlogicfas_queuecommand
 r_int
-id|qlogic_queuecommand
+id|qlogicfas_queuecommand
 c_func
 (paren
 id|Scsi_Cmnd
@@ -2345,9 +2345,9 @@ macro_line|#ifdef PCMCIA
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* allow PCMCIA code to preset the port */
 multiline_comment|/* port should be 0 and irq to -1 respectively for autoprobing */
-DECL|function|qlogic_preset
+DECL|function|qlogicfas_preset
 r_void
-id|qlogic_preset
+id|qlogicfas_preset
 c_func
 (paren
 r_int
@@ -2369,9 +2369,9 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* look for qlogic card and init if found */
-DECL|function|qlogic_detect
+DECL|function|qlogicfas_detect
 r_int
-id|qlogic_detect
+id|qlogicfas_detect
 c_func
 (paren
 id|Scsi_Host_Template
@@ -2402,7 +2402,7 @@ suffix:semicolon
 id|host-&gt;proc_dir
 op_assign
 op_amp
-id|proc_scsi_qlogic
+id|proc_scsi_qlogicfas
 suffix:semicolon
 multiline_comment|/* Qlogic Cards only exist at 0x230 or 0x330 (the chip itself decodes the&n;   address - I check 230 first since MIDI cards are typically at 330&n;&n;   Theoretically, two Qlogic cards can coexist in the same system.  This&n;   should work by simply using this as a loadable module for the second&n;   card, but I haven&squot;t tested this.&n;*/
 r_if
@@ -2831,7 +2831,7 @@ id|ql_ihandl
 comma
 l_int|0
 comma
-l_string|&quot;qlogic&quot;
+l_string|&quot;qlogicfas&quot;
 comma
 l_int|NULL
 )paren
@@ -2894,7 +2894,7 @@ c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogic Driver version 0.43, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
+l_string|&quot;Qlogicfas Driver version 0.44, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
 comma
 id|qltyp
 comma
@@ -2915,9 +2915,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* return bios parameters */
-DECL|function|qlogic_biosparam
+DECL|function|qlogicfas_biosparam
 r_int
-id|qlogic_biosparam
+id|qlogicfas_biosparam
 c_func
 (paren
 id|Disk
@@ -3035,9 +3035,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* abort command in progress */
-DECL|function|qlogic_abort
+DECL|function|qlogicfas_abort
 r_int
-id|qlogic_abort
+id|qlogicfas_abort
 c_func
 (paren
 id|Scsi_Cmnd
@@ -3060,9 +3060,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* reset SCSI bus */
-DECL|function|qlogic_reset
+DECL|function|qlogicfas_reset
 r_int
-id|qlogic_reset
+id|qlogicfas_reset
 c_func
 (paren
 id|Scsi_Cmnd
@@ -3085,11 +3085,11 @@ suffix:semicolon
 )brace
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* return info string */
-DECL|function|qlogic_info
+DECL|function|qlogicfas_info
 r_const
 r_char
 op_star
-id|qlogic_info
+id|qlogicfas_info
 c_func
 (paren
 r_struct
@@ -3108,7 +3108,7 @@ DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template
 op_assign
-id|QLOGIC
+id|QLOGICFAS
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif

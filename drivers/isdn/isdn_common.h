@@ -17,8 +17,6 @@ DECL|macro|ISDN_DEBUG_NET_DUMP
 macro_line|#undef  ISDN_DEBUG_NET_DUMP
 DECL|macro|ISDN_DEBUG_NET_DIAL
 macro_line|#undef  ISDN_DEBUG_NET_DIAL
-DECL|macro|ISDN_DEBUG_NET_BUILDHDR
-macro_line|#undef  ISDN_DEBUG_NET_BUILDHDR
 DECL|macro|ISDN_DEBUG_NET_ICALL
 macro_line|#undef  ISDN_DEBUG_NET_ICALL
 multiline_comment|/* Prototypes */

@@ -3,7 +3,6 @@ DECL|macro|_AFFS_FS_H
 mdefine_line|#define _AFFS_FS_H
 multiline_comment|/*&n; * The affs filesystem constants/structures&n; */
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/amigaffs.h&gt;
 DECL|macro|AFFS_SUPER_MAGIC
 mdefine_line|#define AFFS_SUPER_MAGIC 0xadff
 multiline_comment|/* Get the filesystem block size given an inode. */
@@ -18,6 +17,24 @@ mdefine_line|#define AFFS_I2BITS(inode) ((inode)-&gt;i_sb-&gt;s_blocksize_bits)
 multiline_comment|/* Get the fs type given an inode */
 DECL|macro|AFFS_I2FSTYPE
 mdefine_line|#define AFFS_I2FSTYPE(inode) ((inode)-&gt;i_sb-&gt;u.affs_sb.s_flags &amp; SF_INTL)
+DECL|struct|DateStamp
+r_struct
+id|DateStamp
+(brace
+DECL|member|ds_Days
+id|__u32
+id|ds_Days
+suffix:semicolon
+DECL|member|ds_Minute
+id|__u32
+id|ds_Minute
+suffix:semicolon
+DECL|member|ds_Tick
+id|__u32
+id|ds_Tick
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* --- Prototypes -----------------------------------------------------------------------------&t;*/
 multiline_comment|/* amigaffs.c */
 r_extern
@@ -48,7 +65,7 @@ r_void
 op_star
 id|dir_data
 comma
-id|__u32
+r_int
 op_star
 id|hash_pos
 )paren
@@ -72,7 +89,8 @@ id|name
 )paren
 suffix:semicolon
 r_extern
-id|__u32
+r_int
+r_int
 id|affs_checksum_block
 c_func
 (paren
@@ -83,11 +101,11 @@ r_void
 op_star
 id|data
 comma
-id|__s32
+r_int
 op_star
 id|ptype
 comma
-id|__s32
+r_int
 op_star
 id|stype
 )paren
@@ -127,12 +145,14 @@ r_int
 id|prot_to_mode
 c_func
 (paren
-id|__u32
+r_int
+r_int
 id|prot
 )paren
 suffix:semicolon
 r_extern
-id|__u32
+r_int
+r_int
 id|mode_to_prot
 c_func
 (paren
@@ -153,10 +173,10 @@ comma
 r_int
 id|startoffset
 comma
-id|__s32
+r_int
 id|key
 comma
-id|__s32
+r_int
 id|newkey
 )paren
 suffix:semicolon
@@ -170,10 +190,10 @@ id|inode
 op_star
 id|startino
 comma
-id|__s32
+r_int
 id|key
 comma
-id|__s32
+r_int
 id|newkey
 )paren
 suffix:semicolon
@@ -198,7 +218,7 @@ r_int
 id|blocksize
 comma
 r_const
-id|__u8
+r_char
 op_star
 id|data
 )paren
@@ -213,12 +233,12 @@ id|super_block
 op_star
 id|sb
 comma
-id|__s32
+r_int
 id|block
 )paren
 suffix:semicolon
 r_extern
-id|__s32
+r_int
 id|affs_new_header
 c_func
 (paren
@@ -229,7 +249,7 @@ id|inode
 )paren
 suffix:semicolon
 r_extern
-id|__s32
+r_int
 id|affs_new_data
 c_func
 (paren
@@ -652,7 +672,7 @@ comma
 r_int
 id|len
 comma
-id|__s32
+r_int
 id|type
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/amigaffs.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - rewritten&n; *&n; *  (C) 1993  Ray Burr - Amiga FFS filesystem.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/affs/amigaffs.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Amiga FFS filesystem.&n; *&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
@@ -25,7 +25,7 @@ r_void
 op_star
 id|dir_data
 comma
-id|ULONG
+r_int
 op_star
 id|hash_pos
 )paren
@@ -37,7 +37,7 @@ id|dir_front
 op_assign
 id|dir_data
 suffix:semicolon
-id|ULONG
+r_int
 id|i
 suffix:semicolon
 r_for
@@ -206,10 +206,10 @@ comma
 r_int
 id|startoffset
 comma
-id|LONG
+r_int
 id|key
 comma
-id|LONG
+r_int
 id|newkey
 )paren
 (brace
@@ -220,10 +220,10 @@ id|bh
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ULONG
+r_int
 id|nextkey
 suffix:semicolon
-id|LONG
+r_int
 id|ptype
 comma
 id|stype
@@ -373,7 +373,7 @@ c_func
 (paren
 (paren
 (paren
-id|ULONG
+id|__u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -393,7 +393,7 @@ id|key
 (brace
 (paren
 (paren
-id|ULONG
+id|__u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -479,10 +479,10 @@ id|inode
 op_star
 id|startino
 comma
-id|LONG
+r_int
 id|key
 comma
-id|LONG
+r_int
 id|newkey
 )paren
 (brace
@@ -493,18 +493,18 @@ id|bh
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ULONG
+r_int
 id|nextkey
 suffix:semicolon
-id|ULONG
+r_int
 id|offset
 suffix:semicolon
-id|LONG
+r_int
 id|etype
 op_assign
 l_int|0
 suffix:semicolon
-id|LONG
+r_int
 id|ptype
 comma
 id|stype
@@ -696,7 +696,7 @@ c_func
 (paren
 (paren
 (paren
-id|ULONG
+id|__u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -779,7 +779,7 @@ id|retval
 suffix:semicolon
 )brace
 multiline_comment|/* Checksum a block, do various consistency checks and optionally return&n;   the blocks type number.  DATA points to the block.  If their pointers&n;   are non-null, *PTYPE and *STYPE are set to the primary and secondary&n;   block types respectively, *HASHSIZE is set to the size of the hashtable&n;   (which lets us calculate the block size).&n;   Returns non-zero if the block is not consistent. */
-id|ULONG
+id|__u32
 DECL|function|affs_checksum_block
 id|affs_checksum_block
 c_func
@@ -791,19 +791,19 @@ r_void
 op_star
 id|data
 comma
-id|LONG
+r_int
 op_star
 id|ptype
 comma
-id|LONG
+r_int
 op_star
 id|stype
 )paren
 (brace
-id|ULONG
+id|__u32
 id|sum
 suffix:semicolon
-id|ULONG
+id|__u32
 op_star
 id|p
 suffix:semicolon
@@ -824,7 +824,7 @@ c_func
 (paren
 (paren
 (paren
-id|LONG
+id|__s32
 op_star
 )paren
 id|data
@@ -847,7 +847,7 @@ c_func
 (paren
 (paren
 (paren
-id|LONG
+id|__s32
 op_star
 )paren
 id|data
@@ -903,10 +903,10 @@ r_int
 id|cspos
 )paren
 (brace
-id|ULONG
+id|__u32
 id|ocs
 suffix:semicolon
-id|ULONG
+id|__u32
 id|cs
 suffix:semicolon
 id|cs
@@ -929,7 +929,7 @@ id|htonl
 (paren
 (paren
 (paren
-id|ULONG
+id|__u32
 op_star
 )paren
 id|data
@@ -945,7 +945,7 @@ id|cs
 suffix:semicolon
 (paren
 (paren
-id|ULONG
+id|__u32
 op_star
 )paren
 id|data
@@ -975,10 +975,10 @@ op_star
 id|ds
 )paren
 (brace
-id|ULONG
+id|__u32
 id|days
 suffix:semicolon
-id|ULONG
+id|__u32
 id|minute
 suffix:semicolon
 id|secs
@@ -1070,7 +1070,7 @@ DECL|function|prot_to_mode
 id|prot_to_mode
 c_func
 (paren
-id|ULONG
+id|__u32
 id|prot
 )paren
 (brace
@@ -1200,7 +1200,8 @@ r_return
 id|mode
 suffix:semicolon
 )brace
-id|ULONG
+r_int
+r_int
 DECL|function|mode_to_prot
 id|mode_to_prot
 c_func
@@ -1209,7 +1210,8 @@ r_int
 id|mode
 )paren
 (brace
-id|ULONG
+r_int
+r_int
 id|prot
 op_assign
 l_int|0

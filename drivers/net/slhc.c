@@ -27,9 +27,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;net/slhc_vj.h&gt;
-macro_line|#ifdef __alpha__
-macro_line|# include &lt;asm/unaligned.h&gt;
-macro_line|#endif
+macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|variable|last_retran
 r_int
 id|last_retran
@@ -2390,8 +2388,7 @@ op_star
 l_int|4
 suffix:semicolon
 )brace
-macro_line|#ifdef __alpha__
-id|stw_u
+id|put_unaligned
 c_func
 (paren
 id|ip_fast_csum
@@ -2415,36 +2412,6 @@ op_member_access_from_pointer
 id|check
 )paren
 suffix:semicolon
-macro_line|#else
-(paren
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-id|icp
-)paren
-op_member_access_from_pointer
-id|check
-op_assign
-id|ip_fast_csum
-c_func
-(paren
-id|icp
-comma
-(paren
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-id|icp
-)paren
-op_member_access_from_pointer
-id|ihl
-)paren
-suffix:semicolon
-macro_line|#endif
 id|memcpy
 c_func
 (paren

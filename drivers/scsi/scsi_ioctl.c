@@ -1118,7 +1118,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * the scsi_ioctl() function differs from most ioctls in that it does&n; * not take a major/minor number as the dev filed.  Rather, it takes&n; * a pointer to a scsi_devices[] element, a structure. &n; */
+multiline_comment|/*&n; * the scsi_ioctl() function differs from most ioctls in that it does&n; * not take a major/minor number as the dev field.  Rather, it takes&n; * a pointer to a scsi_devices[] element, a structure. &n; */
 DECL|function|scsi_ioctl
 r_int
 id|scsi_ioctl

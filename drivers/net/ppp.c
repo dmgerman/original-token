@@ -1677,6 +1677,10 @@ id|dev-&gt;addr_len
 op_assign
 l_int|0
 suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|10
+suffix:semicolon
 id|dev-&gt;type
 op_assign
 id|ARPHRD_PPP

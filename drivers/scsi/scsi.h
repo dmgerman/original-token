@@ -1193,7 +1193,6 @@ r_return
 id|SCpnt
 suffix:semicolon
 )brace
-suffix:semicolon
 id|DEVICE_OFF
 c_func
 (paren

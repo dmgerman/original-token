@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/dir.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  affs directory handling functions&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/affs/dir.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  affs directory handling functions&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -141,7 +141,7 @@ multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* bmap */
-id|affs_dir_truncate
+l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
@@ -206,13 +206,13 @@ id|j
 comma
 id|namelen
 suffix:semicolon
-id|LONG
+r_int
 id|i
 suffix:semicolon
-id|ULONG
+r_int
 id|hash_pos
 suffix:semicolon
-id|ULONG
+r_int
 id|chain_pos
 suffix:semicolon
 r_int
@@ -594,7 +594,7 @@ id|dir-&gt;i_version
 id|i
 op_assign
 (paren
-id|ULONG
+r_int
 )paren
 id|filp-&gt;private_data
 suffix:semicolon
@@ -605,7 +605,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: readdir() left off=%lu&bslash;n&quot;
+l_string|&quot;AFFS: readdir() left off=%d&bslash;n&quot;
 comma
 id|i
 )paren
@@ -867,24 +867,6 @@ id|stored
 suffix:semicolon
 r_return
 id|stored
-suffix:semicolon
-)brace
-r_void
-DECL|function|affs_dir_truncate
-id|affs_dir_truncate
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;AFFS: dir_truncate()&bslash;n&quot;
-)paren
 suffix:semicolon
 )brace
 eof

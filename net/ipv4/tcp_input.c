@@ -62,13 +62,16 @@ id|m
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Yikes. This used to test if m was larger than rtt/8.&n;&t;&t; * Maybe on a long delay high speed link this would be&n;&t;         * good initial guess, but over a slow link where the&n;&t;         * delay is dominated by transmission time this will&n;&t;         * be very bad, since ato will almost always be something&n;&t;&t; * more like rtt/2. Better to discard data points that&n;&t;&t; * are larger than the rtt estimate.&n;&t;         */
 r_if
 c_cond
 (paren
 id|m
 OG
+(paren
 id|sk-&gt;rtt
+op_rshift
+l_int|3
+)paren
 )paren
 (brace
 id|sk-&gt;ato
@@ -2125,7 +2128,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Remember the highest ack received and update the&n;&t; *&t;right hand window edge of the host.&n;&t; *&t;We do a bit of work here to track number of times we&squot;ve&n;&t; *&t;seen this ack without a change in the right edge of the&n;&t; *&t;window and no data in the packet.&n;&t; *&t;This will allow us to do fast retransmits.&n;&t; */
-multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * (5) [From Floyds paper on fast retransmit wars]&n;&t; *     The packet acked data after high_seq;&n;&t; * I&squot;ve tried to order these in occurrence of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
+multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * (5) [From Floyd&squot;s paper on fast retransmit wars]&n;&t; *     The packet acked data after high_seq;&n;&t; * I&squot;ve tried to order these in occurrence of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
 r_if
 c_cond
 (paren

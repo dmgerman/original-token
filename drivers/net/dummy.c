@@ -52,7 +52,6 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 DECL|function|dummy_open
 r_static
 r_int
@@ -89,7 +88,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|dummy_init
 r_int
 id|dummy_init
@@ -153,7 +151,6 @@ op_assign
 id|dummy_get_stats
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 id|dev-&gt;open
 op_assign
 op_amp
@@ -164,7 +161,6 @@ op_assign
 op_amp
 id|dummy_close
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values. */
 id|ether_setup
 c_func

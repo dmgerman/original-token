@@ -1329,14 +1329,10 @@ id|mp
 )paren
 op_amp
 op_complement
-(paren
-id|MOD_AUTOCLEAN
-op_or
 id|MOD_VISITED
 )paren
-)paren
 op_eq
-l_int|0
+id|MOD_AUTOCLEAN
 )paren
 )paren
 (brace

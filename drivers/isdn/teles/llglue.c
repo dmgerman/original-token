@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: llglue.c,v 1.1 1996/04/13 10:26:29 fritz Exp $&n; *&n; * $Log: llglue.c,v $&n; * Revision 1.1  1996/04/13 10:26:29  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: llglue.c,v 1.3 1996/05/01 14:19:57 fritz Exp $&n; *&n; * $Log: llglue.c,v $&n; * Revision 1.3  1996/05/01 14:19:57  fritz&n; * Added ISDN_FEADTURE_L2_TRANS&n; *&n; * Revision 1.2  1996/04/29 23:01:46  fritz&n; * Added driverId and channel to readstatus().&n; *&n; * Revision 1.1  1996/04/13 10:26:29  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
@@ -73,6 +73,12 @@ id|len
 comma
 r_int
 id|user
+comma
+r_int
+id|id
+comma
+r_int
+id|channel
 )paren
 (brace
 r_int
@@ -358,6 +364,8 @@ op_assign
 id|ISDN_FEATURE_L2_X75I
 op_or
 id|ISDN_FEATURE_L2_HDLC
+op_or
+id|ISDN_FEATURE_L2_TRANS
 op_or
 id|ISDN_FEATURE_L3_TRANS
 op_or

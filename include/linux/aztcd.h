@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aztcd.h,v 2.30 1996/04/26 05:33:56 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
+multiline_comment|/* $Id: aztcd.h,v 2.50 1996/05/17 16:15:43 root Exp root $&n; *&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
 multiline_comment|/* *** change this to set the I/O port address of your CD-ROM drive*/
 DECL|macro|AZT_BASE_ADDR
 mdefine_line|#define AZT_BASE_ADDR&t;&t;0x320
@@ -6,7 +6,7 @@ multiline_comment|/* Uncomment this, if your CDROM is connected to a Soundwave32
 multiline_comment|/*#define AZT_SW32 1&n;*/
 macro_line|#ifdef AZT_SW32 
 DECL|macro|AZT_SW32_BASE_ADDR
-mdefine_line|#define AZT_SW32_BASE_ADDR       0x220  /*I/O port base address of your soundcard*/
+mdefine_line|#define AZT_SW32_BASE_ADDR      0x220  /*I/O port base address of your soundcard*/
 macro_line|#endif
 multiline_comment|/* Set this to 1, if you want your tray to be locked, set to 0 to prevent tray &n;   from locking */
 DECL|macro|AZT_ALLOW_TRAY_LOCK
@@ -43,11 +43,11 @@ DECL|macro|MODE_PORT
 mdefine_line|#define MODE_PORT&t;&t;azt_port+2
 macro_line|#ifdef  AZT_SW32                
 DECL|macro|AZT_SW32_INIT
-mdefine_line|#define AZT_SW32_INIT           (unsigned int) (0xFF00 &amp; (AZT_BASE_ADDR*16))
+mdefine_line|#define AZT_SW32_INIT          (unsigned int) (0xFF00 &amp; (AZT_BASE_ADDR*16))
 DECL|macro|AZT_SW32_CONFIG_REG
-mdefine_line|#define AZT_SW32_CONFIG_REG     AZT_SW32_BASE_ADDR+0x16  /*Soundwave32 Config. Register*/
+mdefine_line|#define AZT_SW32_CONFIG_REG    AZT_SW32_BASE_ADDR+0x16  /*Soundwave32 Config. Register*/
 DECL|macro|AZT_SW32_ID_REG
-mdefine_line|#define AZT_SW32_ID_REG         AZT_SW32_BASE_ADDR+0x04  /*Soundwave32 ID Version Register*/
+mdefine_line|#define AZT_SW32_ID_REG        AZT_SW32_BASE_ADDR+0x04  /*Soundwave32 ID Version Register*/
 macro_line|#endif
 multiline_comment|/* status bits */
 DECL|macro|AST_CMD_CHECK
