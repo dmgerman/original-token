@@ -695,6 +695,18 @@ op_amp
 id|sig-&gt;head
 suffix:semicolon
 )brace
+r_extern
+r_int
+id|do_sigpending
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SIGNAL_H */
 eof

@@ -3182,7 +3182,7 @@ c_func
 (paren
 op_amp
 (paren
-id|current-&gt;signal
+id|current-&gt;pending.signal
 )paren
 comma
 id|SIGKILL
@@ -3193,7 +3193,7 @@ c_func
 (paren
 op_amp
 (paren
-id|current-&gt;signal
+id|current-&gt;pending.signal
 )paren
 comma
 id|SIGINT

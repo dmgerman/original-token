@@ -5138,7 +5138,7 @@ id|signr
 suffix:semicolon
 id|prstatus.pr_sigpend
 op_assign
-id|current-&gt;signal.sig
+id|current-&gt;pending.signal.sig
 (braket
 l_int|0
 )braket

@@ -5361,7 +5361,7 @@ id|sigaddset
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|signr
 )paren

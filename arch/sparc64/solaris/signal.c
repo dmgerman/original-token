@@ -2039,7 +2039,7 @@ op_amp
 id|current-&gt;blocked
 comma
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 )paren
 suffix:semicolon
 id|recalc_sigpending

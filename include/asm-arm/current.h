@@ -1,35 +1,6 @@
 macro_line|#ifndef _ASMARM_CURRENT_H
 DECL|macro|_ASMARM_CURRENT_H
 mdefine_line|#define _ASMARM_CURRENT_H
-DECL|function|get_sp
-r_static
-r_inline
-r_int
-r_int
-id|get_sp
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|sp
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;mov&t;%0,sp&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|sp
-)paren
-)paren
-suffix:semicolon
-r_return
-id|sp
-suffix:semicolon
-)brace
 multiline_comment|/* Old compilers seem to generate bad code if we allow `current&squot; to be&n;   non volatile.  */
 macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt; 90)
 r_static
@@ -49,11 +20,6 @@ id|__const__
 )paren
 )paren
 suffix:semicolon
-DECL|macro|__VOLATILE_CURRENT
-mdefine_line|#define __VOLATILE_CURRENT
-macro_line|#else
-DECL|macro|__VOLATILE_CURRENT
-mdefine_line|#define __VOLATILE_CURRENT volatile
 macro_line|#endif
 DECL|function|get_current
 r_static
@@ -67,39 +33,27 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|task_struct
-op_star
-id|ts
-suffix:semicolon
-id|__asm__
-id|__VOLATILE_CURRENT
-(paren
-"&quot;"
-id|bic
-op_mod
-l_int|0
-comma
+r_register
+r_int
+r_int
 id|sp
-comma
-macro_line|#0x1f00&t;&t;@ get_current
-id|bic
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x00ff&quot; 
-suffix:colon
-l_string|&quot;=r&quot;
+id|asm
 (paren
-id|ts
-)paren
+l_string|&quot;sp&quot;
 )paren
 suffix:semicolon
 r_return
-id|ts
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+(paren
+id|sp
+op_amp
+op_complement
+l_int|0x1fff
+)paren
 suffix:semicolon
 )brace
 DECL|macro|current

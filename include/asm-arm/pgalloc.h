@@ -6,28 +6,9 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * Get the cache handling stuff now.&n; */
 macro_line|#include &lt;asm/proc/cache.h&gt;
-DECL|function|flush_tlb_pgtables
-r_extern
-id|__inline__
-r_void
-id|flush_tlb_pgtables
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
-)paren
-(brace
-)brace
+multiline_comment|/*&n; * ARM processors do not cache TLB tables in RAM.&n; */
+DECL|macro|flush_tlb_pgtables
+mdefine_line|#define flush_tlb_pgtables(mm,start,end)&t;do { } while (0)
 multiline_comment|/*&n; * Page table cache stuff&n; */
 macro_line|#ifndef CONFIG_NO_PGT_CACHE
 macro_line|#ifdef CONFIG_SMP

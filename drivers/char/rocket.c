@@ -551,13 +551,11 @@ r_return
 (paren
 id|p-&gt;signal
 op_amp
-(paren
 op_complement
 id|p-&gt;blocked
+)paren
 op_ne
 l_int|0
-)paren
-)paren
 suffix:semicolon
 )brace
 macro_line|#else

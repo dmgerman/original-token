@@ -939,6 +939,13 @@ c_func
 id|generic_commit_write
 )paren
 suffix:semicolon
+DECL|variable|block_zero_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|block_zero_page
+)paren
+suffix:semicolon
 DECL|variable|generic_block_bmap
 id|EXPORT_SYMBOL
 c_func

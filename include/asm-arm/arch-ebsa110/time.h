@@ -83,6 +83,12 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+id|do_profile
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set up timer interrupt.&n; */
 DECL|function|setup_timer

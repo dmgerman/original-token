@@ -6153,7 +6153,8 @@ r_struct
 id|timeval
 )paren
 )paren
-suffix:colon
+ques
+c_cond
 op_minus
 id|EFAULT
 suffix:colon

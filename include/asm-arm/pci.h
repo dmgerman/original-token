@@ -204,6 +204,7 @@ comma
 id|sg
 op_increment
 )paren
+(brace
 id|consistent_sync
 c_func
 (paren
@@ -214,6 +215,15 @@ comma
 id|direction
 )paren
 suffix:semicolon
+id|sg-&gt;dma_address
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|sg-&gt;address
+)paren
+suffix:semicolon
+)brace
 r_return
 id|nents
 suffix:semicolon
@@ -335,7 +345,7 @@ id|sg-&gt;address
 comma
 id|sg-&gt;length
 comma
-l_int|3
+id|direction
 )paren
 suffix:semicolon
 )brace
@@ -360,11 +370,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* These macros should be used after a pci_map_sg call has been done&n; * to get bus addresses of each of the SG entries and their lengths.&n; * You should only work with the number of sg entries pci_map_sg&n; * returns, or alternatively stop on the first sg_dma_len(sg) which&n; * is 0.&n; */
-DECL|macro|sg_dma_address
-mdefine_line|#define sg_dma_address(sg)      (virt_to_bus((sg)-&gt;address))
-DECL|macro|sg_dma_len
-mdefine_line|#define sg_dma_len(sg)          ((sg)-&gt;length)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

@@ -1665,7 +1665,7 @@ id|sigtestsetmask
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|_NEVER_BLOCK
 )paren
@@ -2613,7 +2613,7 @@ id|sigtestsetmask
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|_DONT_BLOCK
 )paren
@@ -3093,7 +3093,7 @@ id|sigtestsetmask
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|_DONT_BLOCK
 )paren
@@ -4056,7 +4056,7 @@ id|sigtestsetmask
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|_DONT_BLOCK
 )paren

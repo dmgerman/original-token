@@ -1062,7 +1062,7 @@ id|sigemptyset
 c_func
 (paren
 op_amp
-id|tsk-&gt;signal
+id|tsk-&gt;pending.signal
 )paren
 suffix:semicolon
 id|recalc_sigpending
@@ -1122,7 +1122,7 @@ id|sigemptyset
 c_func
 (paren
 op_amp
-id|tsk-&gt;signal
+id|tsk-&gt;pending.signal
 )paren
 suffix:semicolon
 id|interruptible_sleep_on

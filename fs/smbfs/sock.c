@@ -2505,7 +2505,7 @@ id|sigismember
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|SIGPIPE
 )paren
@@ -2626,7 +2626,7 @@ id|sigdelset
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|SIGPIPE
 )paren
@@ -3454,7 +3454,7 @@ id|sigismember
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|SIGPIPE
 )paren
@@ -3581,7 +3581,7 @@ id|sigdelset
 c_func
 (paren
 op_amp
-id|current-&gt;signal
+id|current-&gt;pending.signal
 comma
 id|SIGPIPE
 )paren

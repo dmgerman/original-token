@@ -63,4 +63,21 @@ comma
 id|oldcpsr
 dot
 id|endm
+multiline_comment|/*&n; * These two are used to save LR/restore PC over a user-based access.&n; * The old 26-bit architecture requires that we do.  On 32-bit&n; * architecture, we can safely ignore this requirement.&n; */
+dot
+id|macro
+id|save_lr
+dot
+id|endm
+dot
+id|macro
+id|restore_pc
+id|mov
+id|pc
+comma
+id|lr
+dot
+id|endm
+DECL|macro|USER
+mdefine_line|#define USER(x...)&t;&t;&t;&t;&bslash;&n;9999:&t;x;&t;&t;&t;&t;&t;&bslash;&n;&t;.section __ex_table,&quot;a&quot;;&t;&t;&bslash;&n;&t;.align&t;3;&t;&t;&t;&t;&bslash;&n;&t;.long&t;9999b,9001f;&t;&t;&t;&bslash;&n;&t;.previous
 eof

@@ -58,6 +58,21 @@ c_loop
 op_star
 id|s
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|s
+op_eq
+l_char|&squot;&bslash;n&squot;
+)paren
+id|_ll_write_char
+c_func
+(paren
+l_char|&squot;&bslash;r&squot;
+)paren
+suffix:semicolon
 id|_ll_write_char
 c_func
 (paren
@@ -68,6 +83,7 @@ op_increment
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Set up for decompression&n; */
 DECL|function|arch_decomp_setup

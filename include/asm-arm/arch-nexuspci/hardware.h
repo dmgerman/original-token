@@ -68,5 +68,7 @@ DECL|macro|INTCONT_LED
 mdefine_line|#define INTCONT_LED&t;&t;0x1a
 DECL|macro|INTCONT_PCI_RESET
 mdefine_line|#define INTCONT_PCI_RESET&t;0x1c
+DECL|macro|UNCACHEABLE_ADDR
+mdefine_line|#define UNCACHEABLE_ADDR&t;STATUS_BASE
 macro_line|#endif
 eof

@@ -735,6 +735,15 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|irq_mask
+(braket
+id|IRQ_KEYBOARDTX
+)braket
+dot
+id|noautoenable
+op_assign
+l_int|1
+suffix:semicolon
 id|init_FIQ
 c_func
 (paren

@@ -10,6 +10,7 @@ DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(tsk,mm)&t;0
+multiline_comment|/*&n; * This is called when &quot;tsk&quot; is about to enter lazy TLB mode.&n; *&n; * mm:  describes the currently active mm context&n; * tsk: task which is entering lazy tlb&n; * cpu: cpu number which is entering lazy tlb&n; *&n; * tsk-&gt;mm will be NULL&n; */
 DECL|function|enter_lazy_tlb
 r_static
 r_inline

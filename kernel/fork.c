@@ -2095,13 +2095,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|init_sigpending
-c_func
-(paren
-op_amp
-id|sig-&gt;pending
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
