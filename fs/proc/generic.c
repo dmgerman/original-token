@@ -1241,16 +1241,6 @@ c_cond
 id|de
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;remove_proc_entry: parent nlink=%d, file nlink=%d&bslash;n&quot;
-comma
-id|parent-&gt;nlink
-comma
-id|de-&gt;nlink
-)paren
-suffix:semicolon
 id|proc_unregister
 c_func
 (paren
