@@ -32,6 +32,8 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, vmaddr)           do { } while (0)
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)                 do { } while (0)
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)          do { } while (0)
 DECL|macro|flush_icache_page
@@ -751,7 +753,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|macro|page_address
-mdefine_line|#define page_address(page) &bslash;&n;({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
+mdefine_line|#define page_address(page)  ((page)-&gt;virtual)
 DECL|macro|pte_page
 mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
 DECL|macro|pmd_page

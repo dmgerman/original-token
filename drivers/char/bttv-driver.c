@@ -327,6 +327,9 @@ id|pte
 id|ret
 op_assign
 (paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -336,7 +339,9 @@ c_func
 id|pte
 )paren
 )paren
-op_or
+suffix:semicolon
+id|ret
+op_or_assign
 (paren
 id|adr
 op_amp
@@ -344,7 +349,6 @@ op_amp
 id|PAGE_SIZE
 op_minus
 l_int|1
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -6508,10 +6512,6 @@ op_assign
 id|virt_to_bus
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -6696,10 +6696,6 @@ op_assign
 id|virt_to_bus
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -6758,10 +6754,6 @@ op_assign
 id|virt_to_bus
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -11818,10 +11810,6 @@ comma
 id|virt_to_bus
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -16462,6 +16450,8 @@ multiline_comment|/* unregister i2c_bus */
 r_if
 c_cond
 (paren
+l_int|0
+op_eq
 id|btv-&gt;i2c_ok
 )paren
 id|i2c_bit_del_bus

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: w6692.c,v 1.4 2000/03/16 23:24:11 werner Exp $&n;&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; * $Log: w6692.c,v $&n; * Revision 1.4  2000/03/16 23:24:11  werner&n; *&n; * Fixed an additional location&n; *&n; * Revision 1.3  2000/03/16 22:41:36  werner&n; *&n; * Tried to fix second B-channel problem (still not tested)&n; *&n; * Revision 1.2  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.1  1999/09/04 06:28:58  keil&n; * first revision&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: w6692.c,v 1.7 2000/06/26 08:59:15 keil Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__

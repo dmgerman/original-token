@@ -2,7 +2,6 @@ multiline_comment|/* softirq.h: 32-bit Sparc soft IRQ support.&n; *&n; * Copyrig
 macro_line|#ifndef __SPARC_SOFTIRQ_H
 DECL|macro|__SPARC_SOFTIRQ_H
 mdefine_line|#define __SPARC_SOFTIRQ_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;&t;/* For NR_CPUS */
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;

@@ -76,6 +76,8 @@ id|page
 suffix:semicolon
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;do { } while(0)
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;do { } while (0)
 macro_line|#ifndef CONFIG_CPU_R10000
 DECL|macro|flush_cache_mm
 mdefine_line|#define flush_cache_mm(mm)&t;&t;_flush_cache_mm(mm)
@@ -88,7 +90,7 @@ mdefine_line|#define flush_page_to_ram(page)&t;&t;_flush_page_to_ram(page)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;_flush_cache_l1()
 DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = page_address(page);&t;&t;&t;&t;&t;&bslash;&n;&t;_flush_cache_page(vma, addr);&t;&t;&t;&t;&t;&bslash;&n;} while (0)                                                              
+mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = (unsigned long) page_address(page);&t;&t;&t;&bslash;&n;&t;_flush_cache_page(vma, addr);&t;&t;&t;&t;&t;&bslash;&n;} while (0)                                                              
 macro_line|#else /* !CONFIG_CPU_R10000 */
 multiline_comment|/*&n; * Since the r10k handles VCEs in hardware, most of the flush cache&n; * routines are not needed. Only the icache on a processor is not&n; * coherent with the dcache of the _same_ processor, so we must flush&n; * the icache so that it does not contain stale contents of physical&n; * memory. No flushes are needed for dma coherency, since the o200s &n; * are io coherent. The only place where we might be overoptimizing &n; * out icache flushes are from mprotect (when PROT_EXEC is added).&n; */
 r_extern

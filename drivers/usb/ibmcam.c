@@ -750,8 +750,13 @@ c_func
 id|pte
 )paren
 )paren
+(brace
 id|ret
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -761,7 +766,9 @@ c_func
 id|pte
 )paren
 )paren
-op_or
+suffix:semicolon
+id|ret
+op_or_assign
 (paren
 id|adr
 op_amp
@@ -772,6 +779,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 id|MDEBUG

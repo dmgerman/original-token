@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: avm_a1p.c,v 2.5 1999/09/01 08:26:34 calle Exp $&n; *&n; * avm_a1p.c    low level stuff for the following AVM cards:&n; *              A1 PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA 2.0&n; *&n; * Author       Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: avm_a1p.c,v $&n; * Revision 2.5  1999/09/01 08:26:34  calle&n; * Patch from Daniel Beichl &lt;dani@ecomag.net&gt; to make A1 PCMCIA work again.&n; *&n; * Revision 2.4  1999/07/12 21:04:55  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.3  1998/11/15 23:54:22  keil&n; * changes from 2.0&n; *&n; * Revision 2.2  1998/08/13 23:36:13  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.1  1998/07/15 15:01:23  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 1.1.2.1  1998/07/15 14:43:26  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; *&n; */
+multiline_comment|/* $Id: avm_a1p.c,v 2.6 2000/06/26 08:59:12 keil Exp $&n; *&n; * avm_a1p.c    low level stuff for the following AVM cards:&n; *              A1 PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA&n; *&t;&t;FRITZ!Card PCMCIA 2.0&n; *&n; * Author       Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; *  This file is (c) under GNU PUBLIC LICENSE&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -69,7 +69,7 @@ r_char
 op_star
 id|avm_revision
 op_assign
-l_string|&quot;$Revision: 2.5 $&quot;
+l_string|&quot;$Revision: 2.6 $&quot;
 suffix:semicolon
 r_static
 r_inline

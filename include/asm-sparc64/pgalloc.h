@@ -21,6 +21,18 @@ DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 r_extern
 r_void
+id|__flush_dcache_page
+c_func
+(paren
+r_void
+op_star
+id|addr
+)paren
+suffix:semicolon
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;__flush_dcache_page((page)-&gt;virtual)
+r_extern
+r_void
 id|__flush_dcache_range
 c_func
 (paren

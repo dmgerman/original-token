@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: rawhdlc.h,v 1.2 1998/02/09 10:53:53 keil Exp $&n;&n; * rawhdlc.h     support routines for cards that don&squot;t support HDLC&n; *&n; * Author     Brent Baccala &lt;baccala@FreeSoft.org&gt;&n; *&n; */
+multiline_comment|/* $Id: rawhdlc.h,v 1.3 2000/06/26 08:59:14 keil Exp $&n; *&n; * rawhdlc.h     support routines for cards that don&squot;t support HDLC&n; *&n; * Author     Brent Baccala &lt;baccala@FreeSoft.org&gt;&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#ifndef RAWHDLC_H
 DECL|struct|hdlc_state
 r_struct

@@ -308,7 +308,9 @@ id|page_va
 )paren
 suffix:semicolon
 DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page)&t;__flush_page_to_ram(page_address(page))
+mdefine_line|#define flush_page_to_ram(page)&t;__flush_page_to_ram((unsigned long) page_address(page))
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 r_extern
 r_int
 r_int
@@ -578,7 +580,7 @@ DECL|macro|pmd_clear
 mdefine_line|#define&t;pmd_clear(pmdp)&t;&t;do { pmd_val(*(pmdp)) = 0; } while (0)
 multiline_comment|/*&n; * Permanent address of a page.&n; */
 DECL|macro|page_address
-mdefine_line|#define page_address(page)  ({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
+mdefine_line|#define page_address(page)  ((page)-&gt;virtual)
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x)&t;&t;((x) &gt;&gt; (20-PAGE_SHIFT))
 DECL|macro|pte_page

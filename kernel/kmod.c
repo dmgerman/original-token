@@ -334,7 +334,14 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|current-&gt;user-&gt;__count
+id|INIT_USER-&gt;__count
+)paren
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|INIT_USER-&gt;processes
 )paren
 suffix:semicolon
 id|atomic_dec

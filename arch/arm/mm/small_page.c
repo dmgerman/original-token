@@ -325,6 +325,10 @@ id|flags
 )paren
 suffix:semicolon
 r_return
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren

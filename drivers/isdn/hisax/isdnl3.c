@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl3.c,v 2.11 2000/04/12 16:41:01 kai Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; * $Log: isdnl3.c,v $&n; * Revision 2.11  2000/04/12 16:41:01  kai&n; * fix max iframe size&n; * fix bug in multicasting DL_RELEASE_IND&n; *&n; * Revision 2.10  1999/07/21 14:46:19  keil&n; * changes from EICON certification&n; *&n; * Revision 2.9  1999/07/01 08:11:53  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.8  1998/11/15 23:55:04  keil&n; * changes from 2.0&n; *&n; * Revision 2.7  1998/05/25 14:10:15  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.6  1998/05/25 12:58:11  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.5  1998/02/12 23:07:52  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 2.4  1997/11/06 17:09:25  keil&n; * New 2.1 init code&n; *&n; * Revision 2.3  1997/10/29 19:07:53  keil&n; * changes for 2.1&n; *&n; * Revision 2.2  1997/10/01 09:21:41  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 2.1  1997/08/03 14:36:32  keil&n; * Implement RESTART procedure&n; *&n; * Revision 2.0  1997/07/27 21:15:42  keil&n; * New Callref based layer3&n; *&n; * Revision 1.11  1997/06/26 11:11:44  keil&n; * SET_SKBFREE now on creation of a SKB&n; *&n; * Revision 1.10  1997/04/06 22:54:16  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.9  1997/03/25 23:11:25  keil&n; * US NI-1 protocol&n; *&n; * Revision 1.8  1997/03/21 18:53:44  keil&n; * Report no protocol error to syslog too&n; *&n; * Remove old logs /KKe&n; *&n; */
+multiline_comment|/* $Id: isdnl3.c,v 2.14 2000/06/26 08:59:13 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -10,7 +10,7 @@ r_char
 op_star
 id|l3_revision
 op_assign
-l_string|&quot;$Revision: 2.11 $&quot;
+l_string|&quot;$Revision: 2.14 $&quot;
 suffix:semicolon
 r_static
 DECL|variable|l3fsm

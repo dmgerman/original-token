@@ -138,6 +138,12 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|SetPageUptodate
 c_func
 (paren
@@ -382,10 +388,6 @@ r_char
 op_star
 id|kaddr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl1.h,v 2.8 1998/11/15 23:54:59 keil Exp $&n;&n; * $Log: isdnl1.h,v $&n; * Revision 2.8  1998/11/15 23:54:59  keil&n; * changes from 2.0&n; *&n; * Revision 2.7  1998/09/30 22:21:55  keil&n; * cosmetics&n; *&n; * Revision 2.6  1998/05/25 12:58:06  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.5  1998/02/02 13:36:58  keil&n; * more debug&n; *&n; * Revision 2.4  1997/11/08 21:35:49  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/10/29 19:07:53  keil&n; * changes for 2.1&n; *&n; * Revision 2.2  1997/07/30 17:11:09  keil&n; * L1deactivated exported&n; *&n; * Revision 2.1  1997/07/27 21:43:58  keil&n; * new l1 interface&n; *&n; * Revision 2.0  1997/06/26 11:02:55  keil&n; * New Layer and card interface&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl1.h,v 2.9 2000/06/26 08:59:13 keil Exp $&n; *&n; * Layer 1 defines&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|D_RCVBUFREADY
 mdefine_line|#define D_RCVBUFREADY&t;0
 DECL|macro|D_XMTBUFREADY

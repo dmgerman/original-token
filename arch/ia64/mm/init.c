@@ -1010,7 +1010,7 @@ id|page
 id|printk
 c_func
 (paren
-l_string|&quot;put_gate_page: gate page at 0x%lx not in reserved memory&bslash;n&quot;
+l_string|&quot;put_gate_page: gate page at 0x%p not in reserved memory&bslash;n&quot;
 comma
 id|page_address
 c_func

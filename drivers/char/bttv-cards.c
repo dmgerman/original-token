@@ -251,16 +251,6 @@ comma
 l_string|&quot;Hauppauge WinTV&quot;
 )brace
 comma
-macro_line|#if 0 /* probably wrong */
-(brace
-l_int|0x14610002
-comma
-id|BTTV_AVERMEDIA98
-comma
-l_string|&quot;Avermedia TVCapture 98&quot;
-)brace
-comma
-macro_line|#endif
 (brace
 l_int|0x18501851
 comma
@@ -275,6 +265,14 @@ comma
 id|BTTV_TYPHOON_TVIEW
 comma
 l_string|&quot;Typhoon TView TV/FM Tuner&quot;
+)brace
+comma
+(brace
+l_int|0x217d6606
+comma
+id|BTTV_WINFAST2000
+comma
+l_string|&quot;Leadtek WinFast TV 2000&quot;
 )brace
 comma
 (brace
@@ -334,6 +332,15 @@ comma
 l_string|&quot;I-O Data Co. GV-BCV3/PCI&quot;
 )brace
 comma
+macro_line|#if 0 /* probably wrong */
+(brace
+l_int|0x14610002
+comma
+id|BTTV_AVERMEDIA98
+comma
+l_string|&quot;Avermedia TVCapture 98&quot;
+)brace
+comma
 (brace
 l_int|0x6606217d
 comma
@@ -342,6 +349,7 @@ comma
 l_string|&quot;Leadtek WinFast TV 2000&quot;
 )brace
 comma
+macro_line|#endif
 (brace
 l_int|0
 comma
@@ -771,7 +779,7 @@ l_int|0
 comma
 l_int|1
 comma
-id|PLL_NONE
+id|PLL_28
 comma
 op_minus
 l_int|1
@@ -2398,7 +2406,7 @@ comma
 (brace
 l_int|0x621000
 comma
-l_int|0x620100
+l_int|0x6ddf07
 comma
 l_int|0x621100
 comma
@@ -3171,7 +3179,7 @@ comma
 (brace
 l_int|0xe2ffff
 comma
-l_int|0
+l_int|0xebffff
 comma
 l_int|0
 comma

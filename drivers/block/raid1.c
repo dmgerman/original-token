@@ -1106,10 +1106,6 @@ id|page
 suffix:semicolon
 id|r1_bh-&gt;bh_req.b_data
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -5386,10 +5382,6 @@ c_cond
 (paren
 id|bh-&gt;b_data
 op_ne
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren

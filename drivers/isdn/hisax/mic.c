@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mic.c,v 1.8 1999/07/12 21:05:20 keil Exp $&n;&n; * mic.c  low level stuff for mic cards&n; *&n; * Copyright (C) 1997 &n; *&n; * Author  Stephan von Krawczynski &lt;skraw@ithnet.com&gt;&n; *&n; *&n; * $Log: mic.c,v $&n; * Revision 1.8  1999/07/12 21:05:20  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.7  1998/04/15 16:44:32  keil&n; * new init code&n; *&n; * Revision 1.6  1998/02/17 15:39:57  keil&n; * fix reset problem&n; *&n; * Revision 1.5  1998/02/02 13:29:43  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:51  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:11  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:51:17  keil&n; * New files&n; *&n; * Revision 1.1.2.1  1997/10/17 22:10:54  keil&n; * new files on 2.0&n; *&n; *&n; */
+multiline_comment|/* $Id: mic.c,v 1.9 2000/06/26 08:59:14 keil Exp $&n; *&n; * mic.c  low level stuff for mic cards&n; *&n; * Copyright (C) 1997 &n; *&n; * Author  Stephan von Krawczynski &lt;skraw@ithnet.com&gt;&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|mic_revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)

@@ -1000,7 +1000,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Push the page at kernel virtual address and clear the icache */
 DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page) __flush_page_to_ram(page_address(page))
+mdefine_line|#define flush_page_to_ram(page) __flush_page_to_ram((unsigned long) page_address(page))
 DECL|function|__flush_page_to_ram
 r_extern
 r_inline
@@ -1072,6 +1072,8 @@ id|FLUSH_I
 suffix:semicolon
 )brace
 )brace
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 multiline_comment|/* Push n pages at kernel virtual address and clear the icache */
 DECL|function|flush_icache_range
 r_extern

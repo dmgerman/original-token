@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isurf.c,v 1.8 1999/12/19 13:09:42 keil Exp $&n;&n; * isurf.c  low level stuff for Siemens I-Surf/I-Talk cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * $Log: isurf.c,v $&n; * Revision 1.8  1999/12/19 13:09:42  keil&n; * changed TASK_INTERRUPTIBLE into TASK_UNINTERRUPTIBLE for&n; * signal proof delays&n; *&n; * Revision 1.7  1999/11/14 23:37:03  keil&n; * new ISA memory mapped IO&n; *&n; * Revision 1.6  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.5  1999/08/25 17:00:02  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/22 20:27:09  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/07/12 21:05:18  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:56  keil&n; * Initial version&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: isurf.c,v 1.9 2000/06/26 08:59:13 keil Exp $&n; *&n; * isurf.c  low level stuff for Siemens I-Surf/I-Talk cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -20,7 +20,7 @@ r_char
 op_star
 id|ISurf_revision
 op_assign
-l_string|&quot;$Revision: 1.8 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)

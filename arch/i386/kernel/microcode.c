@@ -1,17 +1,16 @@
-multiline_comment|/*&n; *&t;CPU Microcode Update interface for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, Pentium III etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;For more information, go to http://www.urbanmyth.org/microcode&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; *&t;1.03&t;29 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Made to use devfs (/dev/cpu/microcode) + cleanups.&n; *&t;1.04&t;06 June 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Added misc device support (now uses both devfs and misc).&n; *&t;&t;Added MICROCODE_IOCFREE ioctl to clear memory.&n; *&t;1.05&t;09 June 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Messages for error cases (non intel &amp; no suitable microcode).&n; */
+multiline_comment|/*&n; *&t;Intel CPU Microcode Update driver for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, &n; *&t;Pentium III, Xeon etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or free download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;For more information, go to http://www.urbanmyth.org/microcode&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; *&t;1.03&t;29 Feb 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Made to use devfs (/dev/cpu/microcode) + cleanups.&n; *&t;1.04&t;06 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Added misc device support (now uses both devfs and misc).&n; *&t;&t;Added MICROCODE_IOCFREE ioctl to clear memory.&n; *&t;1.05&t;09 Jun 2000, Simon Trimmer &lt;simon@veritas.com&gt;&n; *&t;&t;Messages for error cases (non intel &amp; no suitable microcode).&n; *&t;1.06&t;03 Aug 2000, Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;&t;Removed -&gt;release(). Removed exclusive open and status bitmap.&n; *&t;&t;Added microcode_rwsem to serialize read()/write()/ioctl().&n; *&t;&t;Removed global kernel lock usage.&n; */
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|MICROCODE_VERSION
-mdefine_line|#define MICROCODE_VERSION &t;&quot;1.05&quot;
+mdefine_line|#define MICROCODE_VERSION &t;&quot;1.06&quot;
 id|MODULE_DESCRIPTION
 c_func
 (paren
@@ -30,20 +29,6 @@ multiline_comment|/* VFS interface */
 r_static
 r_int
 id|microcode_open
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
-r_static
-r_int
-id|microcode_release
 c_func
 (paren
 r_struct
@@ -112,7 +97,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* internal helpers to do the work */
 r_static
 r_int
 id|do_microcode_update
@@ -130,16 +114,14 @@ r_void
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *  Bits in microcode_status. (31 bits of room for future expansion)&n; */
-DECL|macro|MICROCODE_IS_OPEN
-mdefine_line|#define MICROCODE_IS_OPEN&t;0&t;/* set if device is in use */
-DECL|variable|microcode_status
-r_static
-r_int
-r_int
-id|microcode_status
+multiline_comment|/* read()/write()/ioctl() are serialized on this */
+DECL|variable|microcode_rwsem
+id|DECLARE_RWSEM
+c_func
+(paren
+id|microcode_rwsem
+)paren
 suffix:semicolon
-multiline_comment|/* the actual array of microcode blocks, each 2048 bytes */
 DECL|variable|microcode
 r_static
 r_struct
@@ -147,25 +129,28 @@ id|microcode
 op_star
 id|microcode
 suffix:semicolon
+multiline_comment|/* array of 2048byte microcode blocks */
 DECL|variable|microcode_num
 r_static
 r_int
 r_int
 id|microcode_num
 suffix:semicolon
+multiline_comment|/* number of chunks in microcode */
 DECL|variable|mc_applied
 r_static
 r_char
 op_star
 id|mc_applied
 suffix:semicolon
-multiline_comment|/* holds an array of applied microcode blocks */
+multiline_comment|/* array of applied microcode blocks */
 DECL|variable|mc_fsize
 r_static
 r_int
 r_int
 id|mc_fsize
 suffix:semicolon
+multiline_comment|/* file size of /dev/cpu/microcode */
 DECL|variable|microcode_fops
 r_static
 r_struct
@@ -192,10 +177,6 @@ comma
 id|open
 suffix:colon
 id|microcode_open
-comma
-id|release
-suffix:colon
-id|microcode_release
 comma
 )brace
 suffix:semicolon
@@ -321,7 +302,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;P6 Microcode Update Driver v%s registered&bslash;n&quot;
+l_string|&quot;P6 Microcode Update Driver v%s&bslash;n&quot;
 comma
 id|MICROCODE_VERSION
 )paren
@@ -388,7 +369,6 @@ c_func
 id|microcode_exit
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * We enforce only one user at a time here with open/close.&n; */
 DECL|function|microcode_open
 r_static
 r_int
@@ -398,81 +378,29 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
+id|unused1
 comma
 r_struct
 id|file
 op_star
-id|file
+id|unused2
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
+r_return
 id|capable
 c_func
 (paren
 id|CAP_SYS_RAWIO
 )paren
-)paren
-r_return
+ques
+c_cond
+l_int|0
+suffix:colon
 op_minus
 id|EPERM
 suffix:semicolon
-multiline_comment|/* one at a time, please */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-id|MICROCODE_IS_OPEN
-comma
-op_amp
-id|microcode_status
-)paren
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
-multiline_comment|/* our specific f_op-&gt;release() method needs no locking */
-DECL|function|microcode_release
-r_static
-r_int
-id|microcode_release
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-)paren
-(brace
-id|clear_bit
-c_func
-(paren
-id|MICROCODE_IS_OPEN
-comma
-op_amp
-id|microcode_status
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* a pointer to &squot;struct update_req&squot; is passed to the IPI handler = do_update_one()&n; * update_req[cpu].err is set to 1 if update failed on &squot;cpu&squot;, 0 otherwise&n; * if err==0, microcode[update_req[cpu].slot] points to applied block of microcode&n; */
+multiline_comment|/*&n; * update_req[cpu].err is set to 1 if update failed on &squot;cpu&squot;, 0 otherwise&n; * if err==0, microcode[update_req[cpu].slot] points to applied block of microcode&n; */
 DECL|struct|update_req
 r_struct
 id|update_req
@@ -523,11 +451,7 @@ c_func
 (paren
 id|do_update_one
 comma
-(paren
-r_void
-op_star
-)paren
-id|update_req
+l_int|NULL
 comma
 l_int|1
 comma
@@ -536,20 +460,23 @@ l_int|1
 op_ne
 l_int|0
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;do_microcode_update(): timed out waiting for other CPUs&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;microcode: IPI timeout, giving up&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|do_update_one
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
-id|update_req
+l_int|NULL
 )paren
 suffix:semicolon
 r_for
@@ -635,7 +562,7 @@ c_func
 (paren
 r_void
 op_star
-id|arg
+id|unused
 )paren
 (brace
 r_int
@@ -660,12 +587,7 @@ id|update_req
 op_star
 id|req
 op_assign
-(paren
-r_struct
 id|update_req
-op_star
-)paren
-id|arg
 op_plus
 id|cpu_num
 suffix:semicolon
@@ -695,7 +617,7 @@ id|req-&gt;err
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* be pessimistic */
+multiline_comment|/* assume the worst */
 r_if
 c_cond
 (paren
@@ -1046,7 +968,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;microcode: found no data for CPU%d (sig=%x, pflags=%d)&bslash;n&quot;
+l_string|&quot;microcode: CPU%d no microcode found! (sig=%x, pflags=%d)&bslash;n&quot;
 comma
 id|cpu_num
 comma
@@ -1091,6 +1013,13 @@ id|mc_fsize
 r_return
 l_int|0
 suffix:semicolon
+id|down_read
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1124,14 +1053,30 @@ comma
 id|len
 )paren
 )paren
+(brace
+id|up_read
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+)brace
 op_star
 id|ppos
 op_add_assign
 id|len
+suffix:semicolon
+id|up_read
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
 suffix:semicolon
 r_return
 id|len
@@ -1196,6 +1141,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|down_write
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1233,27 +1185,19 @@ id|KERN_ERR
 l_string|&quot;microcode: out of memory for saved microcode&bslash;n&quot;
 )paren
 suffix:semicolon
+id|up_write
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-id|memset
-c_func
-(paren
-id|mc_applied
-comma
-l_int|0
-comma
-id|mc_fsize
-)paren
-suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|microcode_num
 op_assign
 id|len
@@ -1367,9 +1311,11 @@ id|microcode
 suffix:semicolon
 id|out_unlock
 suffix:colon
-id|unlock_kernel
+id|up_write
 c_func
 (paren
+op_amp
+id|microcode_rwsem
 )paren
 suffix:semicolon
 r_return
@@ -1410,6 +1356,13 @@ id|cmd
 r_case
 id|MICROCODE_IOCFREE
 suffix:colon
+id|down_write
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1422,16 +1375,6 @@ c_func
 id|devfs_handle
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|mc_applied
-comma
-l_int|0
-comma
-id|mc_fsize
 )paren
 suffix:semicolon
 id|kfree
@@ -1447,7 +1390,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_INFO
 l_string|&quot;microcode: freed %d bytes&bslash;n&quot;
 comma
 id|mc_fsize
@@ -1457,10 +1400,24 @@ id|mc_fsize
 op_assign
 l_int|0
 suffix:semicolon
+id|up_write
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|up_write
+c_func
+(paren
+op_amp
+id|microcode_rwsem
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENODATA
@@ -1481,7 +1438,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* NOT REACHED */
 r_return
 op_minus
 id|EINVAL

@@ -505,10 +505,6 @@ r_int
 id|part
 op_assign
 (paren
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -965,10 +961,6 @@ id|umsdos_dirent
 op_star
 )paren
 (paren
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -1145,10 +1137,6 @@ comma
 id|entry-&gt;name
 comma
 (paren
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -1164,10 +1152,6 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren

@@ -6192,26 +6192,20 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* default mode */
+multiline_comment|/* msp-&gt;simple = (((rev2&gt;&gt;8)&amp;0xff) == 0) ? 0 : 1; */
 id|msp-&gt;simple
 op_assign
 (paren
 (paren
-(paren
-id|rev2
-op_rshift
-l_int|8
-)paren
+id|rev1
 op_amp
 l_int|0xff
 )paren
-op_eq
-l_int|0
+op_plus
+l_char|&squot;@&squot;
+OG
+l_char|&squot;C&squot;
 )paren
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|1
 suffix:semicolon
 )brace
 r_else

@@ -29,6 +29,8 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 multiline_comment|/* Note that the following two definitions are _highly_ dependent&n;   on the contexts in which they are used in the kernel.  I personally&n;   think it is criminal how loosely defined these macros are.  */
 multiline_comment|/* We need to flush the kernel&squot;s icache after loading modules.  The&n;   only other use of this macro is in load_aout_interp which is not&n;   used on Alpha. &n;&n;   Note that this definition should *not* be used for userspace&n;   icache flushing.  While functional, it is _way_ overkill.  The&n;   icache is tagged with ASNs and it suffices to allocate a new ASN&n;   for the process.  */
 macro_line|#ifndef CONFIG_SMP

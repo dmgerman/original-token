@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cert.c,v 2.2 1999/08/07 17:35:05 keil Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * $Log: cert.c,v $&n; * Revision 2.2  1999/08/07 17:35:05  keil&n; * approval for Eicon Technology Diva 2.01 PCI&n; *&n; * Revision 2.1  1998/11/15 23:51:15  keil&n; * certification stuff&n; *&n; * Revision 1.2.2.1  1998/11/03 21:46:37  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: cert.c,v 2.3 2000/06/26 08:59:12 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 r_int
 DECL|function|certification_check

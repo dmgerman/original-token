@@ -137,10 +137,6 @@ id|page
 id|memset
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -150,6 +146,12 @@ comma
 l_int|0
 comma
 id|PAGE_CACHE_SIZE
+)paren
+suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|SetPageUptodate
@@ -255,6 +257,12 @@ comma
 l_int|0
 comma
 id|PAGE_CACHE_SIZE
+)paren
+suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|SetPageUptodate

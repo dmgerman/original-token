@@ -9681,10 +9681,6 @@ id|unlock
 suffix:semicolon
 id|kaddr
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -9703,6 +9699,12 @@ comma
 id|buf
 comma
 id|bytes
+)paren
+suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 r_if

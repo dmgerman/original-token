@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;linux/kernel/softirq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * Fixed a disable_bh()/enable_bh() race (was causing a console lockup)&n; * due bh_mask_count not atomic handling. Copyright (C) 1998  Andrea Arcangeli&n; *&n; * Rewritten. Old one was good in 2.2, but in 2.3 it was immoral. --ANK (990903)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

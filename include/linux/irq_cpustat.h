@@ -2,6 +2,7 @@ macro_line|#ifndef __irq_cpustat_h
 DECL|macro|__irq_cpustat_h
 mdefine_line|#define __irq_cpustat_h
 multiline_comment|/*&n; * Contains default mappings for irq_cpustat_t, used by almost every&n; * architecture.  Some arch (like s390) have per cpu hardware pages and&n; * they define their own mappings for irq_stat.&n; *&n; * Keith Owens &lt;kaos@ocs.com.au&gt; July 2000.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Simple wrappers reducing source bloat.  Define all irq_stat fields&n; * here, even ones that are arch dependent.  That way we get common&n; * definitions instead of differing sets for each arch.&n; */
 r_extern
 id|irq_cpustat_t

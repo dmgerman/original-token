@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: lmgr.c,v 1.6 1999/07/01 08:12:04 keil Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; *  Layermanagement module&n; *&n; * $Log: lmgr.c,v $&n; * Revision 1.6  1999/07/01 08:12:04  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.5  1998/11/15 23:55:12  keil&n; * changes from 2.0&n; *&n; * Revision 1.4  1998/05/25 12:58:19  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.3  1998/03/07 22:57:06  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 1.2  1997/10/29 19:09:34  keil&n; * new L1&n; *&n; * Revision 1.1  1997/06/26 11:17:25  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: lmgr.c,v 1.7 2000/06/26 08:59:14 keil Exp $&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *  Layermanagement module&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;

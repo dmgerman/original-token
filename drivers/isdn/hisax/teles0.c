@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teles0.c,v 2.11 1999/12/23 15:09:32 keil Exp $&n;&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * $Log: teles0.c,v $&n; * Revision 2.11  1999/12/23 15:09:32  keil&n; * change email&n; *&n; * Revision 2.10  1999/11/14 23:37:03  keil&n; * new ISA memory mapped IO&n; *&n; * Revision 2.9  1999/07/12 21:05:31  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.8  1998/04/15 16:44:28  keil&n; * new init code&n; *&n; * Revision 2.7  1998/03/07 22:57:08  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 2.6  1998/02/03 23:27:47  keil&n; * IRQ 9&n; *&n; * Revision 2.5  1998/02/02 13:29:47  keil&n; * fast io&n; *&n; * Revision 2.4  1997/11/08 21:35:54  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:09:31  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:57  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:10  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:43  keil&n; * New Layer and card interface&n; *&n; * Revision 1.8  1997/04/13 19:54:04  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.7  1997/04/06 22:54:04  keil&n; * Using SKB&squot;s&n; *&n; * removed old log info /KKe&n; *&n; */
+multiline_comment|/* $Id: teles0.c,v 2.12 2000/06/26 08:59:14 keil Exp $&n; *&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|teles0_revision
 op_assign
-l_string|&quot;$Revision: 2.11 $&quot;
+l_string|&quot;$Revision: 2.12 $&quot;
 suffix:semicolon
 DECL|macro|TELES_IOMEM_SIZE
 mdefine_line|#define TELES_IOMEM_SIZE&t;0x400

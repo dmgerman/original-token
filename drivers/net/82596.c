@@ -2753,9 +2753,20 @@ comma
 l_string|&quot;timed out waiting to issue RX_START&quot;
 )paren
 )paren
+(brace
+id|spin_unlock_irqrestore
+(paren
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_goto
 id|failed
 suffix:semicolon
+)brace
 id|DEB
 c_func
 (paren

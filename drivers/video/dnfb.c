@@ -132,19 +132,6 @@ macro_line|#if 0
 mdefine_line|#define outb(a,d) *(char *)(a)=(d)
 mdefine_line|#define outw(a,d) *(unsigned short *)a=d
 macro_line|#endif
-r_void
-id|dn_video_setup
-c_func
-(paren
-r_char
-op_star
-id|options
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
 multiline_comment|/* frame buffer operations */
 r_static
 r_int
@@ -1282,23 +1269,6 @@ id|AP_CONTROL_3A
 )paren
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
-)brace
-DECL|function|dn_video_setup
-r_void
-id|dn_video_setup
-c_func
-(paren
-r_char
-op_star
-id|options
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
 r_return
 suffix:semicolon
 )brace

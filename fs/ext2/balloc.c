@@ -2091,10 +2091,15 @@ id|j
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do block preallocation now if required.&n;&t; */
 macro_line|#ifdef EXT2_PREALLOCATE
+multiline_comment|/* Writer: -&gt;i_prealloc* */
 r_if
 c_cond
 (paren
-id|prealloc_block
+id|prealloc_count
+op_logical_and
+op_logical_neg
+op_star
+id|prealloc_count
 )paren
 (brace
 r_int
@@ -2116,24 +2121,6 @@ c_cond
 id|es-&gt;s_prealloc_blocks
 suffix:colon
 id|EXT2_DEFAULT_PREALLOC_BLOCKS
-suffix:semicolon
-multiline_comment|/* Writer: -&gt;i_prealloc* */
-multiline_comment|/*&n;&t;&t; * Can&squot;t happen right now, will need handling if we go for&n;&t;&t; * per-group spinlocks. Handling == skipping preallocation if&n;&t;&t; * condition below will be true. For now there is no legitimate&n;&t;&t; * way it could happen, thus the BUG().&n;&t;&t; */
-r_if
-c_cond
-(paren
-op_star
-id|prealloc_count
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
-op_star
-id|prealloc_count
-op_assign
-l_int|0
 suffix:semicolon
 op_star
 id|prealloc_block

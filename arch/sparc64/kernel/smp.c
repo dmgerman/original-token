@@ -3466,6 +3466,10 @@ id|size
 suffix:semicolon
 id|base
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -3513,6 +3517,10 @@ id|size
 suffix:semicolon
 id|base
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren

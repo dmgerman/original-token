@@ -187,7 +187,7 @@ mdefine_line|#define pte_ERROR(e)&t;printk(&quot;%s:%d: bad pte %016lx.&bslash;n
 multiline_comment|/*&n; * Some definitions to translate between mem_map, PTEs, and page&n; * addresses:&n; */
 multiline_comment|/*&n; * Given a pointer to an mem_map[] entry, return the kernel virtual&n; * address corresponding to that page.&n; */
 DECL|macro|page_address
-mdefine_line|#define page_address(page)&t;(PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
+mdefine_line|#define page_address(page)&t;((void *) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT)))
 multiline_comment|/*&n; * Given a PTE, return the index of the mem_map[] entry corresponding&n; * to the page frame the PTE.&n; */
 DECL|macro|pte_pagenr
 mdefine_line|#define pte_pagenr(x)&t;&t;((unsigned long) ((pte_val(x) &amp; _PFN_MASK) &gt;&gt; PAGE_SHIFT))
@@ -203,6 +203,8 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 r_extern
@@ -215,7 +217,7 @@ id|addr
 )paren
 suffix:semicolon
 DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(vma,pg)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((vma)-&gt;vm_flags &amp; PROT_EXEC)&t;&t;&t;&bslash;&n;&t;&t;ia64_flush_icache_page(page_address(pg));&t;&bslash;&n;} while (0)
+mdefine_line|#define flush_icache_page(vma,pg)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((vma)-&gt;vm_flags &amp; PROT_EXEC)&t;&t;&t;&bslash;&n;&t;&t;ia64_flush_icache_page((unsigned long) page_address(pg));&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * Now come the defines and routines to manage and access the three-level&n; * page table.&n; */
 multiline_comment|/*&n; * On some architectures, special things need to be done when setting&n; * the PTE in a page table.  Nothing special needs to be on ia-64.&n; */
 DECL|macro|set_pte

@@ -1,4 +1,4 @@
-multiline_comment|/* isdnl2.h */
+multiline_comment|/* $Id: isdnl2.h,v 1.3 2000/06/26 08:59:13 keil Exp $&n; *&n; * Layer 2 defines&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|RR
 mdefine_line|#define RR     0x01
 DECL|macro|RNR

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: gazel.c,v 2.6 1999/08/22 20:27:03 calle Exp $&n;&n; * gazel.c     low level stuff for Gazel isdn cards&n; *&n; * Author       BeWan Systems&n; *              based on source code from Karsten Keil&n; *&n; * $Log: gazel.c,v $&n; * Revision 2.6  1999/08/22 20:27:03  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 2.5  1999/08/11 21:01:26  keil&n; * new PCI codefix&n; *&n; * Revision 2.4  1999/08/10 16:01:54  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 2.3  1999/07/12 21:05:09  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.1  1999/07/08 21:26:17  keil&n; * new card&n; *&n; * Revision 1.0  1999/28/06&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: gazel.c,v 2.8 2000/06/26 08:59:12 keil Exp $&n; *&n; * gazel.c     low level stuff for Gazel isdn cards&n; *&n; * Author       BeWan Systems&n; *              based on source code from Karsten Keil&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -22,7 +22,7 @@ r_char
 op_star
 id|gazel_revision
 op_assign
-l_string|&quot;$Revision: 2.6 $&quot;
+l_string|&quot;$Revision: 2.8 $&quot;
 suffix:semicolon
 DECL|macro|R647
 mdefine_line|#define R647      1

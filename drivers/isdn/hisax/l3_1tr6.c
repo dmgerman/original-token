@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3_1tr6.c,v 2.10 2000/01/20 19:42:01 keil Exp $&n;&n; *  German 1TR6 D-channel protocol&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; *&n; * $Log: l3_1tr6.c,v $&n; * Revision 2.10  2000/01/20 19:42:01  keil&n; * Fixed uninitialiesed location&n; *&n; * Revision 2.9  1999/07/01 08:11:55  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.8  1998/11/15 23:55:08  keil&n; * changes from 2.0&n; *&n; * Revision 2.7  1998/08/13 23:36:45  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.6  1998/05/25 14:10:18  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.5  1998/05/25 12:58:14  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.4  1998/02/12 23:07:57  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 2.3  1997/11/06 17:12:24  keil&n; * KERN_NOTICE --&gt; KERN_INFO&n; *&n; * Revision 2.2  1997/10/29 19:03:00  keil&n; * changes for 2.1&n; *&n; * Revision 2.1  1997/08/03 15:28:09  keil&n; * release L3 empty processes&n; *&n; * Revision 2.0  1997/07/27 21:15:45  keil&n; * New Callref based layer3&n; *&n; * Revision 1.12  1997/06/26 11:11:45  keil&n; * SET_SKBFREE now on creation of a SKB&n; *&n; * Revision 1.11  1997/04/06 22:54:18  keil&n; * Using SKB&squot;s&n; *&n; * Old Log removed /KKe&n; *&n; */
+multiline_comment|/* $Id: l3_1tr6.c,v 2.11 2000/06/26 08:59:14 keil Exp $&n; *&n; *  German 1TR6 D-channel protocol&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -23,7 +23,7 @@ r_char
 op_star
 id|l3_1tr6_revision
 op_assign
-l_string|&quot;$Revision: 2.10 $&quot;
+l_string|&quot;$Revision: 2.11 $&quot;
 suffix:semicolon
 DECL|macro|MsgHead
 mdefine_line|#define MsgHead(ptr, cref, mty, dis) &bslash;&n;&t;*ptr++ = dis; &bslash;&n;&t;*ptr++ = 0x1; &bslash;&n;&t;*ptr++ = cref ^ 0x80; &bslash;&n;&t;*ptr++ = mty

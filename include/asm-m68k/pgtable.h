@@ -226,7 +226,7 @@ DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;2
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|macro|__mk_pte
-mdefine_line|#define __mk_pte(page, pgprot) &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t __pte;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_val(__pte) = __pa((void *)page) + pgprot_val(pgprot);&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define __mk_pte(page, pgprot) &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t __pte;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_val(__pte) = __pa((page) + pgprot_val(pgprot);&t;&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|mk_pte
 mdefine_line|#define mk_pte(page, pgprot) __mk_pte(page_address(page), (pgprot))
 DECL|macro|mk_pte_phys
@@ -409,7 +409,7 @@ DECL|macro|pgd_clear
 mdefine_line|#define pgd_clear(pgdp)&t;&t;({ pgd_val(*pgdp) = 0; })
 multiline_comment|/* Permanent address of a page. */
 DECL|macro|page_address
-mdefine_line|#define page_address(page)&t;({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
+mdefine_line|#define page_address(page)&t;((page)-&gt;virtual)
 DECL|macro|__page_address
 mdefine_line|#define __page_address(page)&t;(PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
 DECL|macro|pte_page

@@ -459,6 +459,12 @@ comma
 id|count
 )paren
 suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|SetPageUptodate
 c_func
 (paren
@@ -1972,6 +1978,12 @@ suffix:semicolon
 )brace
 r_else
 id|SetPageError
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|flush_dcache_page
 c_func
 (paren
 id|page

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: s0box.c,v 2.2 1999/07/12 21:05:25 keil Exp $&n;&n; * s0box.c      low level stuff for Creatix S0BOX&n; *&n; * Author       S0BOX specific stuff: Enrik Berkhan (enrik@starfleet.inka.de)&n; *&n; *&n; */
+multiline_comment|/* $Id: s0box.c,v 2.3 2000/06/26 08:59:14 keil Exp $&n; *&n; * s0box.c      low level stuff for Creatix S0BOX&n; *&n; * Author       S0BOX specific stuff: Enrik Berkhan (enrik@starfleet.inka.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|s0box_revision
 op_assign
-l_string|&quot;$Revision: 2.2 $&quot;
+l_string|&quot;$Revision: 2.3 $&quot;
 suffix:semicolon
 r_static
 r_inline

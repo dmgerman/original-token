@@ -128,19 +128,6 @@ DECL|macro|DEST_ONE
 mdefine_line|#define DEST_ONE                0xF
 DECL|macro|SWAP
 mdefine_line|#define SWAP(A) ((A&gt;&gt;8) | ((A&amp;0xff) &lt;&lt;8))
-r_void
-id|dn_video_setup
-c_func
-(paren
-r_char
-op_star
-id|options
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
 multiline_comment|/* frame buffer operations */
 r_static
 r_int
@@ -1298,23 +1285,6 @@ id|AP_CONTROL_3A
 )paren
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
-)brace
-DECL|function|dn_video_setup
-r_void
-id|dn_video_setup
-c_func
-(paren
-r_char
-op_star
-id|options
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
 r_return
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hscx.h,v 1.5 1999/12/23 15:09:32 keil Exp $&n;&n; * hscx.h   HSCX specific defines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: hscx.h,v $&n; * Revision 1.5  1999/12/23 15:09:32  keil&n; * change email&n; *&n; * Revision 1.4  1998/04/15 16:45:34  keil&n; * new init code&n; *&n; * Revision 1.3  1997/07/27 21:38:35  keil&n; * new B-channel interface&n; *&n; * Revision 1.2  1997/06/26 11:16:18  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: hscx.h,v 1.6 2000/06/26 08:59:13 keil Exp $&n; *&n; * hscx.h   HSCX specific defines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 multiline_comment|/* All Registers original Siemens Spec  */
 DECL|macro|HSCX_ISTA
 mdefine_line|#define HSCX_ISTA 0x20

@@ -95,6 +95,8 @@ op_star
 id|page
 )paren
 suffix:semicolon
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;_flush_cache_all()
 DECL|macro|flush_cache_mm
@@ -110,7 +112,7 @@ mdefine_line|#define flush_page_to_ram(page)&t;&t;_flush_page_to_ram(page)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;flush_cache_all()
 DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = page_address(page);&t;&t;&t;&t;&t;&bslash;&n;&t;_flush_cache_page(vma, addr);&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = (unsigned long) page_address(page);&t;&t;&t;&bslash;&n;&t;_flush_cache_page(vma, addr);&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * - add_wired_entry() add a fixed TLB entry, and move wired register&n; */
 r_extern
 r_void

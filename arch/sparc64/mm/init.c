@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.152 2000/05/09 17:40:14 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.153 2000/07/27 01:05:15 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -3543,6 +3543,10 @@ l_int|1
 suffix:semicolon
 id|paddr
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren

@@ -71,10 +71,6 @@ r_char
 op_star
 id|buffer
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -243,6 +239,12 @@ comma
 id|count
 )paren
 suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|SetPageUptodate
 c_func
 (paren
@@ -296,7 +298,7 @@ suffix:semicolon
 id|DEBUG1
 c_func
 (paren
-l_string|&quot;readpage %08lx&bslash;n&quot;
+l_string|&quot;readpage %p&bslash;n&quot;
 comma
 id|page_address
 c_func
@@ -368,10 +370,6 @@ id|u8
 op_star
 id|buffer
 op_assign
-(paren
-id|u8
-op_star
-)paren
 id|page_address
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: jade.c,v 1.3 2000/02/26 00:35:13 keil Exp $&n; *&n; * jade.c   JADE stuff (derived from original hscx.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: jade.c,v $&n; * Revision 1.3  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.2  1999/07/01 08:07:57  keil&n; * Initial version&n; *&n; *&n; */
+multiline_comment|/* $Id: jade.c,v 1.4 2000/06/26 08:59:14 keil Exp $&n; *&n; * jade.c   JADE stuff (derived from original hscx.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;

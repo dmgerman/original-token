@@ -424,11 +424,11 @@ op_star
 id|buffers
 suffix:semicolon
 DECL|member|virtual
-r_int
-r_int
+r_void
+op_star
 r_virtual
 suffix:semicolon
-multiline_comment|/* nonzero if kmapped */
+multiline_comment|/* non-NULL if kmapped */
 DECL|member|zone
 r_struct
 id|zone_struct

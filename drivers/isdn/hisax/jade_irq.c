@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: jade_irq.c,v 1.3 2000/02/26 00:35:13 keil Exp $&n; *&n; * jade_irq.c   Low level JADE IRQ stuff (derived from original hscx_irq.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: jade_irq.c,v $&n; * Revision 1.3  2000/02/26 00:35:13  keil&n; * Fix skb freeing in interrupt context&n; *&n; * Revision 1.2  1999/07/01 08:07:59  keil&n; * Initial version&n; *&n; *&n; */
+multiline_comment|/* $Id: jade_irq.c,v 1.4 2000/06/26 08:59:14 keil Exp $&n; *&n; * jade_irq.c   Low level JADE IRQ stuff (derived from original hscx_irq.c)&n; *&n; * Author   Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 r_static
 r_inline
 r_void

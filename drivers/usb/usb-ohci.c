@@ -4317,11 +4317,17 @@ id|ED_URB_DEL
 )paren
 )paren
 (brace
+multiline_comment|/* pending delete request */
+id|spin_unlock
+(paren
+op_amp
+id|usb_ed_lock
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* pending delete request */
 r_if
 c_cond
 (paren
@@ -4357,11 +4363,17 @@ op_logical_neg
 id|td
 )paren
 (brace
+multiline_comment|/* out of memory */
+id|spin_unlock
+(paren
+op_amp
+id|usb_ed_lock
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* out of memory */
 id|ed-&gt;hwTailP
 op_assign
 id|cpu_to_le32

@@ -120,14 +120,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_int
-id|hitfb_setup
-c_func
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
 r_static
 r_void
 id|hitfb_set_par
@@ -1224,21 +1216,6 @@ c_func
 (paren
 id|info
 )paren
-suffix:semicolon
-)brace
-DECL|function|hitfb_setup
-r_int
-id|__init
-id|hitfb_setup
-c_func
-(paren
-r_char
-op_star
-id|options
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

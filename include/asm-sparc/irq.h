@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.30 2000/06/30 10:18:39 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.31 2000/08/05 10:48:41 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H

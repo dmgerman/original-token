@@ -271,7 +271,7 @@ mdefine_line|#define MDEBUG(x)&t;do { } while(0)&t;&t;/* Debug memory management
 multiline_comment|/* [DaveM] I&squot;ve recoded most of this so that:&n; * 1) It&squot;s easier to tell what is happening&n; * 2) It&squot;s more portable, especially for translating things&n; *    out of vmalloc mapped areas in the kernel.&n; * 3) Less unnecessary translations happen.&n; *&n; * The code used to assume that the kernel vmalloc mappings&n; * existed in the page tables of every process, this is simply&n; * not guarenteed.  We now use pgd_offset_k which is the&n; * defined way to get at the kernel page tables.&n; */
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
 DECL|macro|page_address
-mdefine_line|#define page_address(x)&t;(x)
+mdefine_line|#define page_address(x)&t;((void *) (x))
 macro_line|#endif
 multiline_comment|/* Given PGD from the address space&squot;s page table, return the kernel&n; * virtual mapping of the physical memory mapped at ADR.&n; */
 DECL|function|uvirt_to_kva
@@ -369,6 +369,9 @@ id|pte
 id|ret
 op_assign
 (paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -378,7 +381,9 @@ c_func
 id|pte
 )paren
 )paren
-op_or
+suffix:semicolon
+id|ret
+op_or_assign
 (paren
 id|adr
 op_amp
@@ -386,7 +391,6 @@ op_amp
 id|PAGE_SIZE
 op_minus
 l_int|1
-)paren
 )paren
 )paren
 suffix:semicolon

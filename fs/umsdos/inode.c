@@ -825,10 +825,6 @@ id|umsdos_dirent
 op_star
 )paren
 (paren
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren

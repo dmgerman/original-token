@@ -9403,6 +9403,7 @@ id|PARPORT_IRQ_NONE
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: irq %d detected&bslash;n&quot;
 comma
 id|p-&gt;name

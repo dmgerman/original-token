@@ -2,7 +2,6 @@ multiline_comment|/* softirq.h: 64-bit Sparc soft IRQ support.&n; *&n; * Copyrig
 macro_line|#ifndef __SPARC64_SOFTIRQ_H
 DECL|macro|__SPARC64_SOFTIRQ_H
 mdefine_line|#define __SPARC64_SOFTIRQ_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;&t;&t;/* for membar() */

@@ -15,7 +15,7 @@ mdefine_line|#define clean_cache_area(_start,_size)&t;&t;&t;&t;&t;&bslash;&n;&t;
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_icache_area((_start), (_end) - (_start))
 DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(vma,pg)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((vma)-&gt;vm_flags &amp; PROT_EXEC)&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_icache_page(page_address(pg));&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define flush_icache_page(vma,pg)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((vma)-&gt;vm_flags &amp; PROT_EXEC)&t;&t;&t;&bslash;&n;&t;&t;&t;cpu_flush_icache_page((unsigned long) page_address(pg));&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * We don&squot;t have a MEMC chip...&n; */
 DECL|macro|memc_update_all
 mdefine_line|#define memc_update_all()&t;&t;do { } while (0)
@@ -42,6 +42,10 @@ id|page
 id|cpu_flush_ram_page
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -50,6 +54,9 @@ id|page
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* You guys might need to do something here. -DaveM */
+DECL|macro|flush_dcache_page
+mdefine_line|#define flush_dcache_page(page)&t;&t;&t;do { } while (0)
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * We drain the write buffer in here to ensure that the page tables in ram&n; * are really up to date.  It is more efficient to do this here...&n; */
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all()&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_tlb_all()

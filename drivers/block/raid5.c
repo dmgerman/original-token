@@ -1089,10 +1089,6 @@ id|priority
 suffix:semicolon
 id|bh-&gt;b_data
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren
@@ -9410,10 +9406,6 @@ id|GFP_KERNEL
 suffix:semicolon
 id|tmp-&gt;b_data
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|page_address
 c_func
 (paren

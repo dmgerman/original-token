@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal32.c,v 1.65 2000/07/07 04:25:17 davem Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997,1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal32.c,v 1.66 2000/07/27 01:05:15 davem Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997,1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -4513,6 +4513,10 @@ r_int
 r_int
 id|page
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -7170,6 +7174,10 @@ r_int
 r_int
 id|page
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Timekeeping variables&n; */
 DECL|variable|tick
@@ -2371,6 +2372,22 @@ id|cpu
 )braket
 op_add_assign
 id|system
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|slab_cache_drain_mask
+op_amp
+(paren
+l_int|1UL
+op_lshift
+id|cpu
+)paren
+)paren
+id|slab_drain_local_cache
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Nr of active tasks - counted in fixed-point numbers&n; */

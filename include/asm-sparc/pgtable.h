@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.97 2000/07/07 07:33:11 anton Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.99 2000/08/05 13:30:34 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -1097,7 +1097,7 @@ DECL|macro|page_pte
 mdefine_line|#define page_pte(page)&t;&t;&t;page_pte_prot(page, __pgprot(0))
 multiline_comment|/* Permanent address of a page. */
 DECL|macro|page_address
-mdefine_line|#define page_address(page) ({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
+mdefine_line|#define page_address(page)  ((page)-&gt;virtual)
 DECL|macro|pte_page
 mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */

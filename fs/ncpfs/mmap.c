@@ -332,6 +332,12 @@ op_minus
 id|already_read
 )paren
 suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|kunmap
 c_func
 (paren

@@ -3,7 +3,7 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,37)
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,38)
 macro_line|#ifndef PCI_GET_DRIVER_DATA
 DECL|macro|PCI_GET_DRIVER_DATA
 macro_line|# define PCI_GET_DRIVER_DATA(pdev)         ((pdev)-&gt;driver_data)

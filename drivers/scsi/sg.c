@@ -8137,6 +8137,10 @@ id|schp-&gt;kiobp
 suffix:semicolon
 id|prev_addr
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -8171,6 +8175,10 @@ id|addr
 (brace
 id|addr
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|page_address
 c_func
 (paren
@@ -8213,11 +8221,6 @@ l_int|0
 suffix:semicolon
 id|schp-&gt;buffer
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
 id|page_address
 c_func
 (paren
@@ -8228,7 +8231,6 @@ l_int|0
 )paren
 op_plus
 id|kp-&gt;offset
-)paren
 suffix:semicolon
 id|schp-&gt;bufflen
 op_assign
@@ -8376,11 +8378,6 @@ id|rem_sz
 suffix:semicolon
 id|sclp-&gt;address
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
 id|page_address
 c_func
 (paren
@@ -8391,7 +8388,6 @@ id|k
 )paren
 op_plus
 id|offset
-)paren
 suffix:semicolon
 id|sclp-&gt;length
 op_assign
