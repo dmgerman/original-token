@@ -1,6 +1,6 @@
-macro_line|#ifndef __ASMaxp_ELF_H
-DECL|macro|__ASMaxp_ELF_H
-mdefine_line|#define __ASMaxp_ELF_H
+macro_line|#ifndef __ASM_ALPHA_ELF_H
+DECL|macro|__ASM_ALPHA_ELF_H
+mdefine_line|#define __ASM_ALPHA_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
 multiline_comment|/*&n; * The OSF/1 version of &lt;sys/procfs.h&gt; makes gregset_t 46 entries long.&n; * I have no idea why that is so.  For now, we just leave it at 33&n; * (32 general regs + processor status word). &n; */
 DECL|macro|ELF_NGREG
@@ -50,7 +50,7 @@ DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;8192
 multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
 DECL|macro|ELF_ET_DYN_BASE
-mdefine_line|#define ELF_ET_DYN_BASE&t;&t;(2 * TASK_SIZE / 3)
+mdefine_line|#define ELF_ET_DYN_BASE&t;&t;(TASK_UNMAPPED_BASE + 0x1000000)
 multiline_comment|/* $0 is set by ld.so to a pointer to a function which might be &n;   registered using atexit.  This provides a mean for the dynamic&n;   linker to call DT_FINI functions for shared libraries that have&n;   been loaded before the code runs.&n;&n;   So that we can use the same startup file with static executables,&n;   we start programs with a value of 0 to indicate that there is no&n;   such function.  */
 DECL|macro|ELF_PLAT_INIT
 mdefine_line|#define ELF_PLAT_INIT(_r)       _r-&gt;r0 = 0
@@ -65,7 +65,7 @@ DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* Or &quot;implver v0&quot; ... */&t;&t;&bslash;&n;&t;register long _v0 __asm(&quot;$0&quot;);&t;&t;&bslash;&n;&t;__asm(&quot;.long 0x47e03d80&quot; : &quot;=r&quot;(_v0));&t;&bslash;&n;&t;_v0 == 0 ? &quot;ev4&quot; : &quot;ev5&quot;;&t;&t;&bslash;&n;})
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ibcs2) &bslash;&n;&t;current-&gt;personality = (ibcs2 ? PER_SVR4 : PER_LINUX)
+mdefine_line|#define SET_PERSONALITY(EX, IBCS2)&t;&t;&t;&t;&bslash;&n;&t;current-&gt;personality =&t;&t;&t;&t;&t;&bslash;&n;&t;  ((EX).e_flags &amp; EF_ALPHA_32BIT&t;&t;&t;&bslash;&n;&t;   ? PER_LINUX_32BIT : (IBCS2) ? PER_SVR4 : PER_LINUX)
 macro_line|#endif
 macro_line|#endif
 eof

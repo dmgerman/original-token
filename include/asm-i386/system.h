@@ -2,9 +2,9 @@ macro_line|#ifndef __ASM_SYSTEM_H
 DECL|macro|__ASM_SYSTEM_H
 mdefine_line|#define __ASM_SYSTEM_H
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - null&n; *   1 - not used&n; *   2 - kernel code segment&n; *   3 - kernel data segment&n; *   4 - user code segment&n; *   5 - user data segment&n; * ...&n; *   8 - TSS #0&n; *   9 - LDT #0&n; *  10 - TSS #1&n; *  11 - LDT #1&n; */
+multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - null&n; *   1 - not used&n; *   2 - kernel code segment&n; *   3 - kernel data segment&n; *   4 - user code segment&n; *   5 - user data segment&n; *   6 - not used&n; *   7 - not used&n; *   8 - APM BIOS support&n; *   9 - APM BIOS support&n; *  10 - APM BIOS support&n; *  11 - APM BIOS support&n; *  12 - TSS #0&n; *  13 - LDT #0&n; *  14 - TSS #1&n; *  15 - LDT #1&n; */
 DECL|macro|FIRST_TSS_ENTRY
-mdefine_line|#define FIRST_TSS_ENTRY 8
+mdefine_line|#define FIRST_TSS_ENTRY 12
 DECL|macro|FIRST_LDT_ENTRY
 mdefine_line|#define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
 DECL|macro|_TSS

@@ -579,13 +579,7 @@ multiline_comment|/* link */
 l_int|NULL
 comma
 multiline_comment|/* handle */
-id|MKDEV
-c_func
-(paren
-id|MAJOR_NR
-comma
 l_int|0
-)paren
 comma
 multiline_comment|/* dev */
 l_int|0
@@ -700,24 +694,16 @@ id|disc_nr
 (brace
 r_int
 id|retval
-comma
-id|target
 suffix:semicolon
 macro_line|#if 1&t; /* the below is not reliable */
 r_return
 l_int|0
 suffix:semicolon
 macro_line|#endif  
-id|target
-op_assign
-id|cdi-&gt;dev
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|target
-OG
-l_int|0
+id|cdi-&gt;dev
 )paren
 (brace
 id|printk
@@ -4660,7 +4646,8 @@ c_func
 (paren
 id|msg
 comma
-l_string|&quot; mcd: Mitsumi Double Speed CD-ROM at port=0x%x, irq=%d&bslash;n&quot;
+l_string|&quot; mcd: Mitsumi Double Speed CD-ROM at port=0x%x,&quot;
+l_string|&quot; irq=%d&bslash;n&quot;
 comma
 id|mcd_port
 comma
@@ -4675,11 +4662,11 @@ id|mcd_info.speed
 op_assign
 l_int|2
 suffix:semicolon
+multiline_comment|/* Added flag to drop to 1x speed if too many errors */
 id|mcdDouble
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Added flag to drop to 1x speed if too many errors */
 )brace
 r_else
 (brace
@@ -4688,7 +4675,8 @@ c_func
 (paren
 id|msg
 comma
-l_string|&quot; mcd: Mitsumi Single Speed CD-ROM at port=0x%x, irq=%d&bslash;n&quot;
+l_string|&quot; mcd: Mitsumi Single Speed CD-ROM at port=0x%x,&quot;
+l_string|&quot; irq=%d&bslash;n&quot;
 comma
 id|mcd_port
 comma
@@ -4802,6 +4790,16 @@ suffix:semicolon
 id|mcdPresent
 op_assign
 l_int|1
+suffix:semicolon
+id|mcd_info.dev
+op_assign
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_int|0
+)paren
 suffix:semicolon
 r_if
 c_cond

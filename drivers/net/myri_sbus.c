@@ -862,8 +862,6 @@ id|mp-&gt;rx_skbs
 (braket
 id|i
 )braket
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|mp-&gt;rx_skbs
@@ -916,8 +914,6 @@ id|mp-&gt;tx_skbs
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|mp-&gt;tx_skbs
@@ -1450,8 +1446,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|mp-&gt;tx_skbs

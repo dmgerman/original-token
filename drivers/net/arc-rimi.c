@@ -1527,8 +1527,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|out-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace

@@ -142,18 +142,6 @@ DECL|macro|IS_NOATIME
 mdefine_line|#define IS_NOATIME(inode) ((inode)-&gt;i_flags &amp; MS_NOATIME)
 DECL|macro|IS_NODIRATIME
 mdefine_line|#define IS_NODIRATIME(inode) ((inode)-&gt;i_flags &amp; MS_NODIRATIME)
-r_extern
-r_void
-id|update_atime
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
-DECL|macro|UPDATE_ATIME
-mdefine_line|#define UPDATE_ATIME(inode) update_atime (inode)
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET   _IO(0x12,93)&t;/* set device read-only (0 = read-write) */
@@ -187,6 +175,18 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+r_extern
+r_void
+id|update_atime
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+DECL|macro|UPDATE_ATIME
+mdefine_line|#define UPDATE_ATIME(inode) update_atime (inode)
 r_extern
 r_void
 id|buffer_init
@@ -2472,6 +2472,18 @@ r_int
 op_star
 comma
 r_char
+op_star
+)paren
+suffix:semicolon
+DECL|member|clear_inode
+r_void
+(paren
+op_star
+id|clear_inode
+)paren
+(paren
+r_struct
+id|inode
 op_star
 )paren
 suffix:semicolon

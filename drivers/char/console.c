@@ -6665,6 +6665,19 @@ c_func
 l_int|0xfffd
 )paren
 suffix:semicolon
+multiline_comment|/* One reason for the -4 can be that we just&n;&t;&t;&t;&t;   did a clear_unimap();&n;&t;&t;&t;&t;   try at least to show something. */
+r_if
+c_cond
+(paren
+id|tc
+op_eq
+op_minus
+l_int|4
+)paren
+id|tc
+op_assign
+id|c
+suffix:semicolon
 )brace
 r_else
 r_if

@@ -10310,8 +10310,6 @@ id|ppp-&gt;inuse
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -10345,8 +10343,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -10396,8 +10392,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -10538,8 +10532,6 @@ multiline_comment|/* All others have no support at this time. */
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -10559,8 +10551,6 @@ multiline_comment|/* packet queued OK */
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -10582,8 +10572,6 @@ multiline_comment|/* packet should be dropped */
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|answer

@@ -909,8 +909,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 multiline_comment|/* Signal all services, linklevel takes care of Service-Indicator */
@@ -1084,8 +1082,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|L3AddTimer
@@ -1209,8 +1205,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|L3AddTimer
@@ -1281,8 +1275,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|L3DelTimer
@@ -1508,8 +1500,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1549,8 +1539,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1606,8 +1594,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|st-&gt;pa-&gt;chargeinfo
@@ -1750,8 +1736,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|StopAllL3Timer
@@ -1827,8 +1811,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|StopAllL3Timer
@@ -2163,8 +2145,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|newl3state
@@ -2224,8 +2204,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|newl3state
@@ -3998,8 +3976,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -4038,8 +4014,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -4158,8 +4132,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if

@@ -1256,8 +1256,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* You might need to clean up and record Tx statistics here. */

@@ -342,9 +342,13 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;(%x/%ld)&bslash;n&quot;
+l_string|&quot;(%s/%ld)&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|inode-&gt;i_dev
+)paren
 comma
 id|inode-&gt;i_ino
 )paren

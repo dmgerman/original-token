@@ -3238,8 +3238,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|ti-&gt;current_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|ti-&gt;current_skb
@@ -3316,8 +3314,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|ti-&gt;current_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|ti-&gt;current_skb
@@ -6202,8 +6198,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|ti-&gt;current_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|ti-&gt;current_skb

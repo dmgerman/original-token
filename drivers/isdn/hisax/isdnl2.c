@@ -323,8 +323,6 @@ id|l2-&gt;windowar
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|l2-&gt;windowar
@@ -433,8 +431,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -847,8 +843,6 @@ id|l2-&gt;windowar
 (braket
 id|l2-&gt;sow
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|l2-&gt;windowar
@@ -1529,8 +1523,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -1787,8 +1779,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|FsmChangeState
@@ -1946,8 +1936,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -2056,8 +2044,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -2213,8 +2199,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -2672,8 +2656,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -3335,8 +3317,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -4118,8 +4098,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -4613,8 +4591,6 @@ id|l2-&gt;windowar
 (braket
 id|p1
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -5092,8 +5068,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -5531,8 +5505,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -6588,8 +6560,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -6682,8 +6652,6 @@ id|sk_buff
 op_star
 )paren
 id|arg
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -6731,8 +6699,6 @@ id|sk_buff
 op_star
 )paren
 id|arg
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace

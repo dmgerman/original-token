@@ -25,9 +25,9 @@ DECL|macro|COMDPORT
 mdefine_line|#define&t;COMDPORT   (uart6850_base+1)
 DECL|macro|STATPORT
 mdefine_line|#define&t;STATPORT   (uart6850_base+1)
+DECL|function|uart6850_status
 r_static
 r_int
-DECL|function|uart6850_status
 id|uart6850_status
 c_func
 (paren
@@ -46,9 +46,9 @@ DECL|macro|input_avail
 mdefine_line|#define input_avail()&t;&t;(uart6850_status()&amp;INPUT_AVAIL)
 DECL|macro|output_ready
 mdefine_line|#define output_ready()&t;&t;(uart6850_status()&amp;OUTPUT_READY)
+DECL|function|uart6850_cmd
 r_static
 r_void
-DECL|function|uart6850_cmd
 id|uart6850_cmd
 c_func
 (paren
@@ -60,17 +60,15 @@ id|cmd
 id|outb
 c_func
 (paren
-(paren
 id|cmd
-)paren
 comma
 id|COMDPORT
 )paren
 suffix:semicolon
 )brace
+DECL|function|uart6850_read
 r_static
 r_int
-DECL|function|uart6850_read
 id|uart6850_read
 c_func
 (paren
@@ -85,9 +83,9 @@ id|DATAPORT
 )paren
 suffix:semicolon
 )brace
+DECL|function|uart6850_write
 r_static
 r_void
-DECL|function|uart6850_write
 id|uart6850_write
 c_func
 (paren
@@ -99,9 +97,7 @@ id|byte
 id|outb
 c_func
 (paren
-(paren
 id|byte
-)paren
 comma
 id|DATAPORT
 )paren
@@ -191,9 +187,9 @@ comma
 id|poll_uart6850
 )brace
 suffix:semicolon
+DECL|function|uart6850_input_loop
 r_static
 r_void
-DECL|function|uart6850_input_loop
 id|uart6850_input_loop
 c_func
 (paren
@@ -201,8 +197,6 @@ r_void
 )paren
 (brace
 r_int
-id|count
-suffix:semicolon
 id|count
 op_assign
 l_int|10
@@ -212,7 +206,8 @@ c_loop
 (paren
 id|count
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Not timed out&n;&t;&t;&t;&t; */
+(brace
+multiline_comment|/*&n;&t;&t; * Not timed out&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -252,6 +247,7 @@ id|c
 suffix:semicolon
 )brace
 r_else
+(brace
 r_while
 c_loop
 (paren
@@ -267,8 +263,10 @@ id|count
 op_decrement
 suffix:semicolon
 )brace
-r_void
+)brace
+)brace
 DECL|function|m6850intr
+r_void
 id|m6850intr
 c_func
 (paren
@@ -299,10 +297,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * It looks like there is no input interrupts in the UART mode. Let&squot;s try&n; * polling.&n; */
+multiline_comment|/*&n; *&t;It looks like there is no input interrupts in the UART mode. Let&squot;s try&n; *&t;polling.&n; */
+DECL|function|poll_uart6850
 r_static
 r_void
-DECL|function|poll_uart6850
 id|poll_uart6850
 c_func
 (paren
@@ -352,12 +350,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-(brace
 id|uart6850_timer.expires
 op_assign
-(paren
 l_int|1
-)paren
 op_plus
 id|jiffies
 suffix:semicolon
@@ -368,9 +363,7 @@ op_amp
 id|uart6850_timer
 )paren
 suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Come back later&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t; *&t;Come back later&n;&t; */
 id|restore_flags
 c_func
 (paren
@@ -378,9 +371,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|uart6850_open
 r_static
 r_int
-DECL|function|uart6850_open
 id|uart6850_open
 c_func
 (paren
@@ -421,12 +414,7 @@ c_cond
 id|uart6850_opened
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Midi6850: Midi busy&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(&quot;Midi6850: Midi busy&bslash;n&quot;);*/
 r_return
 op_minus
 id|EBUSY
@@ -465,9 +453,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|uart6850_close
 r_static
 r_void
-DECL|function|uart6850_close
 id|uart6850_close
 c_func
 (paren
@@ -488,7 +476,6 @@ op_amp
 id|uart6850_timer
 )paren
 suffix:semicolon
-suffix:semicolon
 id|uart6850_opened
 op_assign
 l_int|0
@@ -496,9 +483,9 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
+DECL|function|uart6850_out
 r_static
 r_int
-DECL|function|uart6850_out
 id|uart6850_out
 c_func
 (paren
@@ -584,6 +571,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Midi6850: Timeout&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -601,9 +589,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|uart6850_command
 r_static
 r_int
-DECL|function|uart6850_command
 id|uart6850_command
 c_func
 (paren
@@ -620,9 +608,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|uart6850_start_read
 r_static
 r_int
-DECL|function|uart6850_start_read
 id|uart6850_start_read
 c_func
 (paren
@@ -634,9 +622,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|uart6850_end_read
 r_static
 r_int
-DECL|function|uart6850_end_read
 id|uart6850_end_read
 c_func
 (paren
@@ -648,9 +636,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|uart6850_kick
 r_static
 r_void
-DECL|function|uart6850_kick
 id|uart6850_kick
 c_func
 (paren
@@ -659,9 +647,9 @@ id|dev
 )paren
 (brace
 )brace
+DECL|function|uart6850_buffer_status
 r_static
 r_int
-DECL|function|uart6850_buffer_status
 id|uart6850_buffer_status
 c_func
 (paren
@@ -723,8 +711,8 @@ comma
 id|uart6850_buffer_status
 )brace
 suffix:semicolon
-r_void
 DECL|function|attach_uart6850
+r_void
 id|attach_uart6850
 c_func
 (paren
@@ -879,9 +867,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|reset_uart6850
 r_static
 r_int
-DECL|function|reset_uart6850
 id|reset_uart6850
 c_func
 (paren
@@ -898,8 +886,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t; */
 )brace
-r_int
 DECL|function|probe_uart6850
+r_int
 id|probe_uart6850
 c_func
 (paren
@@ -961,8 +949,8 @@ r_return
 id|ok
 suffix:semicolon
 )brace
-r_void
 DECL|function|unload_uart6850
+r_void
 id|unload_uart6850
 c_func
 (paren
@@ -1003,13 +991,29 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|cfg
 r_struct
 id|address_info
 id|cfg
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -1033,6 +1037,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;uart6850: irq and io must be set.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1069,8 +1074,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

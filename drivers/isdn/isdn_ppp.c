@@ -3447,8 +3447,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;sav_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|printk
@@ -3902,9 +3900,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -4588,9 +4583,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -5015,9 +5007,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -5127,9 +5116,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb_old
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -5184,9 +5170,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb_old
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_if
@@ -5207,9 +5190,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
@@ -5256,9 +5236,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -5291,9 +5268,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 r_return
@@ -5588,8 +5562,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|printk
@@ -5795,8 +5767,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|skb
@@ -5810,9 +5780,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|new_skb
-comma
-l_int|0
-multiline_comment|/* FREE_WRITE */
 )paren
 suffix:semicolon
 )brace
@@ -6253,8 +6220,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -6320,9 +6285,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 )brace
@@ -6383,9 +6345,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree
@@ -7184,9 +7143,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree
@@ -7262,9 +7218,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree
@@ -7483,9 +7436,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|q-&gt;skb
-comma
-l_int|0
-multiline_comment|/* FREE_READ */
 )paren
 suffix:semicolon
 id|kfree

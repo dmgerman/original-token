@@ -42,11 +42,6 @@ r_int
 r_char
 id|s_mapping
 suffix:semicolon
-DECL|member|s_conversion
-r_int
-r_char
-id|s_conversion
-suffix:semicolon
 DECL|member|s_rock
 r_int
 r_char

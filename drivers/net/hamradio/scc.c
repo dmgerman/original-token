@@ -967,8 +967,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|scc-&gt;tx_buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|scc-&gt;tx_buff
@@ -995,8 +993,6 @@ c_func
 op_amp
 id|scc-&gt;tx_queue
 )paren
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1149,8 +1145,6 @@ id|kfree_skb
 c_func
 (paren
 id|scc-&gt;rx_buff
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|scc-&gt;rx_buff
@@ -1253,8 +1247,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|scc-&gt;tx_buff
@@ -1372,8 +1364,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|scc-&gt;tx_buff
@@ -1686,8 +1676,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|scc-&gt;tx_buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|scc-&gt;tx_buff
@@ -1880,8 +1868,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|scc-&gt;rx_buff
@@ -2006,8 +1992,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|scc-&gt;rx_buff
@@ -2086,8 +2070,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|scc-&gt;rx_buff
@@ -6277,8 +6259,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -6367,8 +6347,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -6395,8 +6373,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -6445,8 +6421,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -6497,8 +6471,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb_del
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace

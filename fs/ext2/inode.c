@@ -3467,18 +3467,6 @@ op_star
 id|inode
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;ext2_write(%04x:%06d)...&quot;
-comma
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-macro_line|#endif
 id|ext2_update_inode
 (paren
 id|inode
@@ -3497,18 +3485,6 @@ op_star
 id|inode
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;ext2_sync(%04x:%06d)...&quot;
-comma
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|ext2_update_inode
 (paren

@@ -36,10 +36,6 @@ mdefine_line|#define ELF_CLASS&t;&t;ELFCLASS64
 DECL|macro|ELF_DATA
 mdefine_line|#define ELF_DATA&t;&t;ELFDATA2MSB
 macro_line|#endif
-macro_line|#ifndef ELF_FLAGS_INIT
-DECL|macro|ELF_FLAGS_INIT
-mdefine_line|#define ELF_FLAGS_INIT current-&gt;tss.flags &amp;= ~SPARC_FLAG_32BIT
-macro_line|#endif
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 macro_line|#ifndef elf_check_arch
 DECL|macro|elf_check_arch
@@ -63,7 +59,7 @@ DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;(NULL)
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ibcs2)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ibcs2)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_SVR4;&t;&t;&bslash;&n;&t;else if (current-&gt;personality != PER_LINUX32)&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_LINUX;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define SET_PERSONALITY(ex, ibcs2)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((ex).e_ident[EI_CLASS] == ELFCLASS32)&t;&t;&bslash;&n;&t;&t;current-&gt;tss.flags |= SPARC_FLAG_32BIT;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.flags &amp;= ~SPARC_FLAG_32BIT;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ibcs2)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_SVR4;&t;&t;&bslash;&n;&t;else if (current-&gt;personality != PER_LINUX32)&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_LINUX;&t;&t;&bslash;&n;} while (0)
 macro_line|#endif
 macro_line|#endif /* !(__ASM_SPARC64_ELF_H) */
 eof

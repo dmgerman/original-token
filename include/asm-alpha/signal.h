@@ -241,9 +241,32 @@ DECL|struct|sigaction
 r_struct
 id|sigaction
 (brace
-DECL|member|sa_handler
+r_union
+(brace
+DECL|member|_sa_handler
 id|__sighandler_t
-id|sa_handler
+id|_sa_handler
+suffix:semicolon
+DECL|member|_sa_sigaction
+r_void
+(paren
+op_star
+id|_sa_sigaction
+)paren
+(paren
+r_int
+comma
+r_struct
+id|siginfo
+op_star
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|_u
+)brace
+id|_u
 suffix:semicolon
 DECL|member|sa_mask
 id|sigset_t
@@ -255,6 +278,10 @@ id|sa_flags
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|sa_handler
+mdefine_line|#define sa_handler&t;_u._sa_handler
+DECL|macro|sa_sigaction
+mdefine_line|#define sa_sigaction&t;_u._sa_sigaction
 macro_line|#endif /* __KERNEL__ */
 DECL|struct|sigaltstack
 r_typedef

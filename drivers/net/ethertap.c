@@ -405,8 +405,6 @@ id|kfree_skb
 c_func
 (paren
 id|tmp
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -421,8 +419,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -490,8 +486,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return

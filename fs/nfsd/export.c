@@ -2398,6 +2398,11 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2410,9 +2415,8 @@ comma
 id|NFSCLNT_IDMAX
 )paren
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Lock the hashtable */
 r_if
@@ -2429,8 +2433,13 @@ c_func
 OL
 l_int|0
 )paren
-r_return
+r_goto
+id|out
+suffix:semicolon
 id|err
+op_assign
+op_minus
+id|EINVAL
 suffix:semicolon
 r_for
 c_loop
@@ -2471,20 +2480,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|clp
 )paren
 (brace
-id|exp_unlock
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 op_star
 id|clpp
 op_assign
@@ -2496,13 +2494,20 @@ c_func
 id|clp
 )paren
 suffix:semicolon
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|exp_unlock
 c_func
 (paren
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free a client. The caller has already removed it from the client list.&n; */
@@ -2946,6 +2951,11 @@ id|h_client
 )paren
 suffix:semicolon
 )brace
+id|clients
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* we may be restarted before the module unloads */
 id|exp_unlock
 c_func
 (paren

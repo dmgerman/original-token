@@ -1866,8 +1866,6 @@ id|mp-&gt;rx_bufs
 (braket
 id|i
 )braket
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|mp-&gt;rx_bufs
@@ -1899,8 +1897,6 @@ id|mp-&gt;tx_bufs
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -3235,8 +3231,6 @@ id|mp-&gt;tx_bufs
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 op_decrement
@@ -3713,8 +3707,6 @@ id|mp-&gt;tx_bufs
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if

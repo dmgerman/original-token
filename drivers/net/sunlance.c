@@ -3237,8 +3237,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if

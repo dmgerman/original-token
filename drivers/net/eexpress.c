@@ -1970,8 +1970,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|buf
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|outb

@@ -991,7 +991,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s-&gt;s_tag
+id|s-&gt;s_size
 op_eq
 l_int|0
 )paren

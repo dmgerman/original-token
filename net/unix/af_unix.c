@@ -829,8 +829,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Now surplus - free the skb first before the socket */
@@ -852,8 +850,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -2632,8 +2628,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -3158,8 +3152,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_continue
@@ -3255,8 +3247,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* The buffer is just used as a tag */
@@ -3878,8 +3868,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -3924,8 +3912,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -3955,8 +3941,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -4371,8 +4355,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -5127,8 +5109,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if

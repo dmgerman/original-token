@@ -9856,8 +9856,6 @@ id|lp-&gt;tx_skbuff
 (braket
 id|entry
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;tx_skbuff
@@ -11689,8 +11687,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -11725,8 +11721,6 @@ id|tp-&gt;tx_skbuff
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|tp-&gt;tx_skbuff

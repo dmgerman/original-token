@@ -5503,13 +5503,7 @@ multiline_comment|/* link */
 l_int|NULL
 comma
 multiline_comment|/* handle (not used by cm206) */
-id|MKDEV
-c_func
-(paren
-id|MAJOR_NR
-comma
 l_int|0
-)paren
 comma
 multiline_comment|/* dev */
 l_int|0
@@ -6234,6 +6228,16 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|cm206_info.dev
+op_assign
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

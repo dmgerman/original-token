@@ -3485,8 +3485,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|el-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|kfree_s
@@ -4736,8 +4734,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|msp-&gt;cur_macq-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|kfree_s

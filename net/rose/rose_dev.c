@@ -280,8 +280,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -311,8 +309,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -338,8 +334,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -359,8 +353,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbn
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|stats-&gt;tx_errors
@@ -614,8 +606,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|stats-&gt;tx_errors

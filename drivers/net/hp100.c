@@ -6147,8 +6147,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;txrhead-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;txrhead-&gt;skb
@@ -6847,8 +6845,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 macro_line|#ifdef HP100_DEBUG_TX
@@ -7720,8 +7716,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|ptr-&gt;skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_errors

@@ -199,7 +199,7 @@ DECL|macro|N_TXTOFF
 mdefine_line|#define N_TXTOFF(x) &bslash;&n;  ((long) N_MAGIC(x) == ZMAGIC ? 0 : &bslash;&n;   (sizeof(struct exec) + (x).fh.f_nscns*SCNHSZ + SCNROUND - 1) &amp; ~(SCNROUND - 1))
 macro_line|#ifdef __KERNEL__
 DECL|macro|STACK_TOP
-mdefine_line|#define STACK_TOP (0x00120000000UL)
+mdefine_line|#define STACK_TOP &bslash;&n;  ((current-&gt;personality==PER_LINUX_32BIT) ? (0x80000000) : (0x00120000000UL))
 macro_line|#endif
 macro_line|#endif /* __A_OUT_GNU_H__ */
 eof

@@ -274,8 +274,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -316,8 +314,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -703,8 +699,6 @@ id|kfree_skb
 c_func
 (paren
 id|buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -953,8 +947,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -2008,8 +2000,6 @@ id|kfree_skb
 c_func
 (paren
 id|buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|tp-&gt;packets_out
@@ -2611,8 +2601,6 @@ id|kfree_skb
 c_func
 (paren
 id|buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|sk-&gt;write_seq
@@ -2941,8 +2929,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -3378,8 +3364,6 @@ id|kfree_skb
 c_func
 (paren
 id|buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -3801,8 +3785,6 @@ id|kfree_skb
 c_func
 (paren
 id|buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return

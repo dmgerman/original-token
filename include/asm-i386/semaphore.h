@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; *&n; * Modified 1996-12-23 by Dave Grothe &lt;dave@gcom.com&gt; to fix bugs in&n; *                     the original code and to make semaphore waits&n; *                     interruptible so that processes waiting on&n; *                     semaphores can be killed.&n; *&n; * If you would like to see an analysis of this implementation, please&n; * ftp to gcom.com and download the file&n; * /pub/linux/src/semaphore/semaphore-2.0.24.tar.gz.&n; *&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -78,6 +79,10 @@ op_star
 id|sem
 )paren
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|semaphore_wake_lock
+suffix:semicolon
 DECL|macro|sema_init
 mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), (val))
 multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * but on the x86 we need an external synchronizer.&n; * Currently this is just the global interrupt lock,&n; * bah. Go for a smaller spinlock some day.&n; *&n; * (On the other hand this shouldn&squot;t be in any critical&n; * path, so..)&n; */
@@ -98,23 +103,24 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|semaphore_wake_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|sem-&gt;waking
 op_increment
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|semaphore_wake_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -141,15 +147,13 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|semaphore_wake_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -168,9 +172,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|semaphore_wake_lock
+comma
 id|flags
 )paren
 suffix:semicolon

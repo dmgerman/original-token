@@ -961,8 +961,6 @@ id|p-&gt;tmd_skb
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|p-&gt;tmd_skb
@@ -2408,8 +2406,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -2773,8 +2769,6 @@ id|p-&gt;tmd_skb
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -2812,8 +2806,6 @@ id|p-&gt;recv_skb
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -3429,8 +3421,6 @@ id|p-&gt;tmd_skb
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|p-&gt;tmd_skb
@@ -4583,8 +4573,6 @@ id|p-&gt;tmd_skb
 (braket
 id|p-&gt;tmdlast
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|p-&gt;tmd_skb
@@ -5422,8 +5410,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|save_flags

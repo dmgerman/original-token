@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_CTYPE_H
 DECL|macro|_LINUX_CTYPE_H
 mdefine_line|#define _LINUX_CTYPE_H
-multiline_comment|/*&n; * NOTE! This ctype does not handle EOF like the standarc C&n; * library is required to.&n; */
+multiline_comment|/*&n; * NOTE! This ctype does not handle EOF like the standard C&n; * library is required to.&n; */
 DECL|macro|_U
 mdefine_line|#define _U&t;0x01&t;/* upper */
 DECL|macro|_L

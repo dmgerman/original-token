@@ -44,6 +44,7 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;advansys.h&quot;
+macro_line|#include &lt;linux/bios32.h&gt;
 multiline_comment|/*&n; * If Linux eventually defines a DID_UNDERRUN, the constant here can be&n; * removed. The current value of zero for DID_UNDERRUN results in underrun&n; * conditions being ignored.&n; */
 DECL|macro|DID_UNDERRUN
 mdefine_line|#define DID_UNDERRUN 0
@@ -20892,249 +20893,20 @@ id|pciData
 id|uchar
 id|tmp
 suffix:semicolon
-id|ulong
-id|address
-suffix:semicolon
-id|ulong
-id|lbus
-op_assign
+id|pcibios_read_config_byte
+c_func
+(paren
 id|pciData-&gt;bus
 comma
-id|lslot
-op_assign
 id|pciData-&gt;slot
-comma
-id|lfunc
-op_assign
-id|pciData-&gt;func
-suffix:semicolon
-id|uchar
-id|t2CFA
-comma
-id|t2CF8
-suffix:semicolon
-id|ulong
-id|t1CF8
-comma
-id|t1CFC
-suffix:semicolon
-id|ASC_DBG1
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;asc_get_cfg_byte: type: %d&bslash;n&quot;
-comma
-id|pciData-&gt;type
-)paren
-suffix:semicolon
-multiline_comment|/*&n;     * Check type of configuration mechanism.&n;     */
-r_if
-c_cond
-(paren
-id|pciData-&gt;type
-op_eq
-l_int|2
-)paren
-(brace
-multiline_comment|/*&n;         * Save registers to be restored later.&n;         */
-id|t2CFA
-op_assign
-id|inp
-c_func
-(paren
-l_int|0xCFA
-)paren
-suffix:semicolon
-multiline_comment|/* save PCI bus register */
-id|t2CF8
-op_assign
-id|inp
-c_func
-(paren
-l_int|0xCF8
-)paren
-suffix:semicolon
-multiline_comment|/* save config space enable register */
-multiline_comment|/*&n;         * Write the bus and enable registers.&n;         */
-multiline_comment|/* set for type 1 cycle, if needed */
-id|outp
-c_func
-(paren
-l_int|0xCFA
-comma
-id|pciData-&gt;bus
-)paren
-suffix:semicolon
-multiline_comment|/* set the function number */
-id|outp
-c_func
-(paren
-l_int|0xCF8
-comma
-l_int|0x10
-op_or
-(paren
-id|pciData-&gt;func
-op_lshift
-l_int|1
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;         * Read configuration space type 2 locations.&n;         */
-id|tmp
-op_assign
-id|inp
-c_func
-(paren
-l_int|0xC000
-op_or
-(paren
-(paren
-id|pciData-&gt;slot
-op_lshift
-l_int|8
-)paren
-op_plus
-id|pciData-&gt;offset
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;         * Restore registers.&n;         */
-id|outp
-c_func
-(paren
-l_int|0xCF8
-comma
-id|t2CF8
-)paren
-suffix:semicolon
-multiline_comment|/* restore the enable register */
-id|outp
-c_func
-(paren
-l_int|0xCFA
-comma
-id|t2CFA
-)paren
-suffix:semicolon
-multiline_comment|/* restore PCI bus register */
-)brace
-r_else
-(brace
-multiline_comment|/*&n;         * Type 1 or 3 configuration mechanism.&n;         *&n;         * Save CONFIG_ADDRESS and CONFIG_DATA register values.&n;         */
-id|t1CF8
-op_assign
-id|inpl
-c_func
-(paren
-l_int|0xCF8
-)paren
-suffix:semicolon
-id|t1CFC
-op_assign
-id|inpl
-c_func
-(paren
-l_int|0xCFC
-)paren
-suffix:semicolon
-multiline_comment|/*&n;         * enable &lt;31&gt;, bus = &lt;23:16&gt;, slot = &lt;15:11&gt;, func = &lt;10:8&gt;,&n;         * reg = &lt;7:2&gt;&n;         */
-id|address
-op_assign
-(paren
-id|ulong
-)paren
-(paren
-(paren
-id|lbus
-op_lshift
-l_int|16
-)paren
-op_or
-(paren
-id|lslot
-op_lshift
-l_int|11
-)paren
-op_or
-(paren
-id|lfunc
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-id|pciData-&gt;offset
-op_amp
-l_int|0xFC
-)paren
-op_or
-l_int|0x80000000L
-)paren
-suffix:semicolon
-multiline_comment|/*&n;         * Write out address to CONFIG_ADDRESS.&n;         */
-id|outpl
-c_func
-(paren
-l_int|0xCF8
-comma
-id|address
-)paren
-suffix:semicolon
-multiline_comment|/*&n;         * Read in word from CONFIG_DATA.&n;         */
-id|tmp
-op_assign
-(paren
-id|uchar
-)paren
-(paren
-(paren
-id|inpl
-c_func
-(paren
-l_int|0xCFC
-)paren
-op_rshift
-(paren
-(paren
-id|pciData-&gt;offset
-op_amp
-l_int|3
-)paren
 op_star
 l_int|8
-)paren
-)paren
+op_plus
+id|pciData-&gt;func
+comma
+id|pciData-&gt;offset
+comma
 op_amp
-l_int|0xFF
-)paren
-suffix:semicolon
-multiline_comment|/*&n;         * Restore registers.&n;         */
-id|outpl
-c_func
-(paren
-l_int|0xCF8
-comma
-id|t1CF8
-)paren
-suffix:semicolon
-id|outpl
-c_func
-(paren
-l_int|0xCFC
-comma
-id|t1CFC
-)paren
-suffix:semicolon
-)brace
-id|ASC_DBG1
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;asc_get_cfg_byte: config data: %x&bslash;n&quot;
-comma
 id|tmp
 )paren
 suffix:semicolon

@@ -2326,8 +2326,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -3321,8 +3319,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_continue
@@ -3494,8 +3490,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -3625,8 +3619,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb1
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_break
@@ -4349,8 +4341,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -4434,8 +4424,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -4621,8 +4609,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|tcp_data_snd_check
@@ -4974,8 +4960,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -6366,8 +6350,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace

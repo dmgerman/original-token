@@ -1634,8 +1634,6 @@ id|kfree_skb
 c_func
 (paren
 id|lp-&gt;sndbuf
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sndbuf
@@ -3080,8 +3078,6 @@ id|kfree_skb
 c_func
 (paren
 id|lp-&gt;sndbuf
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sndbuf
@@ -3306,8 +3302,6 @@ id|kfree_skb
 c_func
 (paren
 id|lp-&gt;sndbuf
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sndbuf
@@ -7119,8 +7113,6 @@ id|kfree_skb
 c_func
 (paren
 id|ptr
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|restore_flags

@@ -5711,8 +5711,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -5861,6 +5859,7 @@ op_star
 id|skb
 )paren
 (brace
+macro_line|#ifdef CONFIG_INET
 id|STRIP_Header
 op_star
 id|header
@@ -5871,8 +5870,6 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*printk(KERN_INFO &quot;%s: strip_rebuild_header&bslash;n&quot;, skb-&gt;dev-&gt;name);*/
-macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Arp find returns zero if if knows the address, */
 multiline_comment|/* or if it doesn&squot;t know the address it sends an ARP packet and returns non-zero */
 r_return

@@ -1639,8 +1639,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1800,8 +1798,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -2884,8 +2880,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -3217,8 +3211,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -3247,8 +3239,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -3268,8 +3258,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|hs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|hs-&gt;tx_skb
@@ -3366,8 +3354,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -3396,8 +3382,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -3417,8 +3401,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|csta-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|csta-&gt;tx_skb
@@ -5115,8 +5097,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace

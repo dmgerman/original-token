@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;istallion.c  -- stallion intelligent multiport serial driver.&n; *&n; *&t;Copyright (C) 1996-1997  Stallion Technologies (support@stallion.oz.au).&n; *&t;Copyright (C) 1994-1996  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This code is loosely based on the Linux serial driver, written by&n; *&t;Linus Torvalds, Theodore T&squot;so and others.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; *&t;istallion.c  -- stallion intelligent multiport serial driver.&n; *&n; *&t;Copyright (C) 1996-1998  Stallion Technologies (support@stallion.oz.au).&n; *&t;Copyright (C) 1994-1996  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This code is loosely based on the Linux serial driver, written by&n; *&t;Linus Torvalds, Theodore T&squot;so and others.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -185,7 +185,7 @@ r_char
 op_star
 id|stli_drvversion
 op_assign
-l_string|&quot;5.4.1&quot;
+l_string|&quot;5.4.3&quot;
 suffix:semicolon
 DECL|variable|stli_serialname
 r_static
@@ -791,10 +791,10 @@ DECL|macro|STL_CLOSEDELAY
 mdefine_line|#define&t;STL_CLOSEDELAY&t;(5 * HZ / 10)
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Define macros to extract a brd or port number from a minor number.&n; */
-DECL|macro|MKDEV2BRD
-mdefine_line|#define&t;MKDEV2BRD(min)&t;&t;(((min) &amp; 0xc0) &gt;&gt; 6)
-DECL|macro|MKDEV2PORT
-mdefine_line|#define&t;MKDEV2PORT(min)&t;&t;((min) &amp; 0x3f)
+DECL|macro|MINOR2BRD
+mdefine_line|#define&t;MINOR2BRD(min)&t;&t;(((min) &amp; 0xc0) &gt;&gt; 6)
+DECL|macro|MINOR2PORT
+mdefine_line|#define&t;MINOR2PORT(min)&t;&t;((min) &amp; 0x3f)
 multiline_comment|/*&n; *&t;Define a baud rate table that converts termios baud rate selector&n; *&t;into the actual baud rate value. All baud rate calculations are based&n; *&t;on the actual baud rate required.&n; */
 DECL|variable|stli_baudrates
 r_static
@@ -2501,39 +2501,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|brdp-&gt;brdtype
-op_eq
-id|BRD_ECP
-)paren
-op_logical_or
-(paren
-id|brdp-&gt;brdtype
-op_eq
-id|BRD_ECPE
-)paren
-op_logical_or
-(paren
-id|brdp-&gt;brdtype
-op_eq
-id|BRD_ECPMC
-)paren
+id|brdp-&gt;iosize
+OG
+l_int|0
 )paren
 id|release_region
 c_func
 (paren
 id|brdp-&gt;iobase
 comma
-id|ECP_IOSIZE
-)paren
-suffix:semicolon
-r_else
-id|release_region
-c_func
-(paren
-id|brdp-&gt;iobase
-comma
-id|ONB_IOSIZE
+id|brdp-&gt;iosize
 )paren
 suffix:semicolon
 id|kfree_s
@@ -2661,7 +2638,7 @@ id|tty-&gt;device
 suffix:semicolon
 id|brdnr
 op_assign
-id|MKDEV2BRD
+id|MINOR2BRD
 c_func
 (paren
 id|minordev
@@ -2717,7 +2694,7 @@ id|ENODEV
 suffix:semicolon
 id|portnr
 op_assign
-id|MKDEV2PORT
+id|MINOR2PORT
 c_func
 (paren
 id|minordev
@@ -16253,6 +16230,10 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|brdp-&gt;iosize
+op_assign
+id|ECP_IOSIZE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -16261,7 +16242,7 @@ c_func
 (paren
 id|brdp-&gt;iobase
 comma
-id|ECP_IOSIZE
+id|brdp-&gt;iosize
 )paren
 )paren
 id|printk
@@ -16719,7 +16700,7 @@ c_func
 (paren
 id|brdp-&gt;iobase
 comma
-id|ECP_IOSIZE
+id|brdp-&gt;iosize
 comma
 id|name
 )paren
@@ -16793,6 +16774,10 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|brdp-&gt;iosize
+op_assign
+id|ONB_IOSIZE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -16801,7 +16786,7 @@ c_func
 (paren
 id|brdp-&gt;iobase
 comma
-id|ONB_IOSIZE
+id|brdp-&gt;iosize
 )paren
 )paren
 id|printk
@@ -17277,7 +17262,7 @@ c_func
 (paren
 id|brdp-&gt;iobase
 comma
-id|ONB_IOSIZE
+id|brdp-&gt;iosize
 comma
 id|name
 )paren

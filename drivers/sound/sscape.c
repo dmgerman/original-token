@@ -9,76 +9,76 @@ macro_line|#if defined(CONFIG_SSCAPEHW) || defined(MODULE)
 macro_line|#include &quot;coproc.h&quot;
 multiline_comment|/*&n; *    I/O ports&n; */
 DECL|macro|MIDI_DATA
-mdefine_line|#define MIDI_DATA        0
+mdefine_line|#define MIDI_DATA       0
 DECL|macro|MIDI_CTRL
-mdefine_line|#define MIDI_CTRL        1
+mdefine_line|#define MIDI_CTRL       1
 DECL|macro|HOST_CTRL
-mdefine_line|#define HOST_CTRL        2
+mdefine_line|#define HOST_CTRL       2
 DECL|macro|TX_READY
-mdefine_line|#define TX_READY&t;&t;0x02
+mdefine_line|#define TX_READY&t;0x02
 DECL|macro|RX_READY
-mdefine_line|#define RX_READY&t;&t;0x01
+mdefine_line|#define RX_READY&t;0x01
 DECL|macro|HOST_DATA
-mdefine_line|#define HOST_DATA        3
+mdefine_line|#define HOST_DATA       3
 DECL|macro|ODIE_ADDR
-mdefine_line|#define ODIE_ADDR        4
+mdefine_line|#define ODIE_ADDR       4
 DECL|macro|ODIE_DATA
-mdefine_line|#define ODIE_DATA        5
+mdefine_line|#define ODIE_DATA       5
 multiline_comment|/*&n; *    Indirect registers&n; */
 DECL|macro|GA_INTSTAT_REG
-mdefine_line|#define GA_INTSTAT_REG   0
+mdefine_line|#define GA_INTSTAT_REG&t;0
 DECL|macro|GA_INTENA_REG
-mdefine_line|#define GA_INTENA_REG    1
+mdefine_line|#define GA_INTENA_REG&t;1
 DECL|macro|GA_DMAA_REG
-mdefine_line|#define GA_DMAA_REG      2
+mdefine_line|#define GA_DMAA_REG&t;2
 DECL|macro|GA_DMAB_REG
-mdefine_line|#define GA_DMAB_REG      3
+mdefine_line|#define GA_DMAB_REG&t;3
 DECL|macro|GA_INTCFG_REG
-mdefine_line|#define GA_INTCFG_REG    4
+mdefine_line|#define GA_INTCFG_REG&t;4
 DECL|macro|GA_DMACFG_REG
-mdefine_line|#define GA_DMACFG_REG    5
+mdefine_line|#define GA_DMACFG_REG&t;5
 DECL|macro|GA_CDCFG_REG
-mdefine_line|#define GA_CDCFG_REG     6
+mdefine_line|#define GA_CDCFG_REG&t;6
 DECL|macro|GA_SMCFGA_REG
-mdefine_line|#define GA_SMCFGA_REG    7
+mdefine_line|#define GA_SMCFGA_REG&t;7
 DECL|macro|GA_SMCFGB_REG
-mdefine_line|#define GA_SMCFGB_REG    8
+mdefine_line|#define GA_SMCFGB_REG&t;8
 DECL|macro|GA_HMCTL_REG
-mdefine_line|#define GA_HMCTL_REG     9
+mdefine_line|#define GA_HMCTL_REG&t;9
 multiline_comment|/*&n; * DMA channel identifiers (A and B)&n; */
 DECL|macro|SSCAPE_DMA_A
-mdefine_line|#define SSCAPE_DMA_A &t;&t;0
+mdefine_line|#define SSCAPE_DMA_A&t;0
 DECL|macro|SSCAPE_DMA_B
-mdefine_line|#define SSCAPE_DMA_B&t;&t;1
+mdefine_line|#define SSCAPE_DMA_B&t;1
 DECL|macro|PORT
 mdefine_line|#define PORT(name)&t;(devc-&gt;base+name)
 multiline_comment|/*&n; * Host commands recognized by the OBP microcode&n; */
 DECL|macro|CMD_GEN_HOST_ACK
-mdefine_line|#define CMD_GEN_HOST_ACK        0x80
+mdefine_line|#define CMD_GEN_HOST_ACK&t;0x80
 DECL|macro|CMD_GEN_MPU_ACK
-mdefine_line|#define CMD_GEN_MPU_ACK         0x81
+mdefine_line|#define CMD_GEN_MPU_ACK&t;&t;0x81
 DECL|macro|CMD_GET_BOARD_TYPE
-mdefine_line|#define CMD_GET_BOARD_TYPE      0x82
+mdefine_line|#define CMD_GET_BOARD_TYPE&t;0x82
 DECL|macro|CMD_SET_CONTROL
-mdefine_line|#define CMD_SET_CONTROL         0x88&t;/* Old firmware only */
+mdefine_line|#define CMD_SET_CONTROL&t;&t;0x88&t;/* Old firmware only */
 DECL|macro|CMD_GET_CONTROL
-mdefine_line|#define CMD_GET_CONTROL         0x89&t;/* Old firmware only */
+mdefine_line|#define CMD_GET_CONTROL&t;&t;0x89&t;/* Old firmware only */
 DECL|macro|CTL_MASTER_VOL
-mdefine_line|#define &t;CTL_MASTER_VOL          0
+mdefine_line|#define &t;CTL_MASTER_VOL&t;&t;0
 DECL|macro|CTL_MIC_MODE
-mdefine_line|#define &t;CTL_MIC_MODE            2
+mdefine_line|#define &t;CTL_MIC_MODE&t;&t;2
 DECL|macro|CTL_SYNTH_VOL
-mdefine_line|#define &t;CTL_SYNTH_VOL           4
+mdefine_line|#define &t;CTL_SYNTH_VOL&t;&t;4
 DECL|macro|CTL_WAVE_VOL
-mdefine_line|#define &t;CTL_WAVE_VOL            7
+mdefine_line|#define &t;CTL_WAVE_VOL&t;&t;7
 DECL|macro|CMD_SET_EXTMIDI
 mdefine_line|#define CMD_SET_EXTMIDI&t;&t;0x8a
 DECL|macro|CMD_GET_EXTMIDI
 mdefine_line|#define CMD_GET_EXTMIDI&t;&t;0x8b
 DECL|macro|CMD_SET_MT32
-mdefine_line|#define CMD_SET_MT32            0x8c
+mdefine_line|#define CMD_SET_MT32&t;&t;0x8c
 DECL|macro|CMD_GET_MT32
-mdefine_line|#define CMD_GET_MT32            0x8d
+mdefine_line|#define CMD_GET_MT32&t;&t;0x8d
 DECL|macro|CMD_ACK
 mdefine_line|#define CMD_ACK&t;&t;&t;0x80
 DECL|struct|sscape_info
@@ -221,6 +221,7 @@ id|valid_interrupts
 op_assign
 id|valid_interrupts_new
 suffix:semicolon
+multiline_comment|/*&n; *&t;See the bottom of the driver. This can be set by spea =0/1.&n; */
 macro_line|#ifdef REVEAL_SPEA
 DECL|variable|old_hardware
 r_static
@@ -276,9 +277,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|reg
-)paren
 comma
 id|PORT
 c_func
@@ -309,9 +308,9 @@ r_return
 id|val
 suffix:semicolon
 )brace
+DECL|function|sscape_write
 r_static
 r_void
-DECL|function|sscape_write
 id|sscape_write
 c_func
 (paren
@@ -345,9 +344,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|reg
-)paren
 comma
 id|PORT
 c_func
@@ -359,9 +356,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|data
-)paren
 comma
 id|PORT
 c_func
@@ -377,9 +372,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|host_open
 r_static
 r_void
-DECL|function|host_open
 id|host_open
 c_func
 (paren
@@ -405,9 +400,9 @@ id|HOST_CTRL
 suffix:semicolon
 multiline_comment|/* Put the board to the host mode */
 )brace
+DECL|function|host_close
 r_static
 r_void
-DECL|function|host_close
 id|host_close
 c_func
 (paren
@@ -433,9 +428,9 @@ id|HOST_CTRL
 suffix:semicolon
 multiline_comment|/* Put the board to the MIDI mode */
 )brace
+DECL|function|host_write
 r_static
 r_int
-DECL|function|host_write
 id|host_write
 c_func
 (paren
@@ -473,7 +468,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Send the command and data bytes&n;&t; */
+multiline_comment|/*&n;&t; * Send the command and data bytes&n;&t; */
 r_for
 c_loop
 (paren
@@ -541,12 +536,10 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|data
 (braket
 id|i
 )braket
-)paren
 comma
 id|PORT
 c_func
@@ -566,9 +559,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|host_read
 r_static
 r_int
-DECL|function|host_read
 id|host_read
 c_func
 (paren
@@ -600,7 +593,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Read a byte&n;&t; */
+multiline_comment|/*&n;&t; * Read a byte&n;&t; */
 r_for
 c_loop
 (paren
@@ -673,9 +666,9 @@ r_return
 id|data
 suffix:semicolon
 )brace
+DECL|function|host_command2
 r_static
 r_int
-DECL|function|host_command2
 id|host_command2
 c_func
 (paren
@@ -740,9 +733,9 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+DECL|function|host_command3
 r_static
 r_int
-DECL|function|host_command3
 id|host_command3
 c_func
 (paren
@@ -825,9 +818,9 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_mt32
 r_static
 r_void
-DECL|function|set_mt32
 id|set_mt32
 c_func
 (paren
@@ -882,9 +875,9 @@ id|devc
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_control
 r_static
 r_void
-DECL|function|set_control
 id|set_control
 c_func
 (paren
@@ -939,9 +932,9 @@ id|devc
 )paren
 suffix:semicolon
 )brace
+DECL|function|do_dma
 r_static
 r_void
-DECL|function|do_dma
 id|do_dma
 c_func
 (paren
@@ -979,7 +972,8 @@ id|SSCAPE_DMA_A
 id|printk
 c_func
 (paren
-l_string|&quot;SSCAPE: Tried to use DMA channel  != A. Why?&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;soundscape: Tried to use DMA channel  != A. Why?&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1066,9 +1060,9 @@ id|temp
 )paren
 suffix:semicolon
 )brace
+DECL|function|verify_mpu
 r_static
 r_int
-DECL|function|verify_mpu
 id|verify_mpu
 c_func
 (paren
@@ -1078,7 +1072,7 @@ op_star
 id|devc
 )paren
 (brace
-multiline_comment|/*&n;&t;   * The SoundScape board could be in three modes (MPU, 8250 and host).&n;&t;   * If the card is not in the MPU mode, enabling the MPU driver will&n;&t;   * cause infinite loop (the driver believes that there is always some&n;&t;   * received data in the buffer.&n;&t;   *&n;&t;   * Detect this by looking if there are more than 10 received MIDI bytes&n;&t;   * (0x00) in the buffer.&n;&t; */
+multiline_comment|/*&n;&t; * The SoundScape board could be in three modes (MPU, 8250 and host).&n;&t; * If the card is not in the MPU mode, enabling the MPU driver will&n;&t; * cause infinite loop (the driver believes that there is always some&n;&t; * received data in the buffer.&n;&t; *&n;&t; * Detect this by looking if there are more than 10 received MIDI bytes&n;&t; * (0x00) in the buffer.&n;&t; */
 r_int
 id|i
 suffix:semicolon
@@ -1131,6 +1125,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;SoundScape: The device is not in the MPU-401 mode&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1138,9 +1133,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sscape_coproc_open
 r_static
 r_int
-DECL|function|sscape_coproc_open
 id|sscape_coproc_open
 c_func
 (paren
@@ -1191,9 +1186,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sscape_coproc_close
 r_static
 r_void
-DECL|function|sscape_coproc_close
 id|sscape_coproc_close
 c_func
 (paren
@@ -1262,9 +1257,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|sscape_coproc_reset
 r_static
 r_void
-DECL|function|sscape_coproc_reset
 id|sscape_coproc_reset
 c_func
 (paren
@@ -1274,9 +1269,9 @@ id|dev_info
 )paren
 (brace
 )brace
+DECL|function|sscape_download_boot
 r_static
 r_int
-DECL|function|sscape_download_boot
 id|sscape_download_boot
 c_func
 (paren
@@ -1326,7 +1321,7 @@ op_amp
 id|CPF_FIRST
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;     * First block. Have to allocate DMA and to reset the board&n;&t;&t;     * before continuing.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * First block. Have to allocate DMA and to reset the board&n;&t;&t; * before continuing.&n;&t;&t; */
 id|save_flags
 c_func
 (paren
@@ -1355,12 +1350,10 @@ id|devc-&gt;dma_allocated
 op_eq
 l_int|0
 )paren
-(brace
 id|devc-&gt;dma_allocated
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -1454,7 +1447,8 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;SSCAPE: Error: DMA buffer not available&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;soundscape: DMA buffer not available&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1535,18 +1529,10 @@ l_int|0
 r_int
 id|resid
 suffix:semicolon
-(brace
 r_int
 r_int
 id|tlimit
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|HZ
-op_div
-l_int|50
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
@@ -1558,16 +1544,6 @@ id|HZ
 op_div
 l_int|50
 )paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 id|sscape_sleep_flag.opts
 op_assign
@@ -1607,8 +1583,6 @@ id|sscape_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
-suffix:semicolon
-)brace
 suffix:semicolon
 id|clear_dma_ff
 c_func
@@ -1661,7 +1635,7 @@ op_amp
 id|CPF_LAST
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;     * Take the board out of reset&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Take the board out of reset&n;&t;&t; */
 id|outb
 c_func
 (paren
@@ -1715,7 +1689,7 @@ id|temp
 )paren
 suffix:semicolon
 multiline_comment|/* Kickstart the board */
-multiline_comment|/*&n;&t;&t;     * Wait until the ODB wakes up&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Wait until the ODB wakes up&n;&t;&t; */
 id|save_flags
 c_func
 (paren
@@ -1753,34 +1727,16 @@ r_int
 r_char
 id|x
 suffix:semicolon
-(brace
 r_int
 r_int
 id|tlimit
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|1
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
 op_assign
 id|jiffies
 op_plus
-(paren
-l_int|1
-)paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
 l_int|1
 suffix:semicolon
 id|sscape_sleep_flag.opts
@@ -1821,8 +1777,6 @@ id|sscape_sleep_flag.opts
 op_and_assign
 op_complement
 id|WK_SLEEP
-suffix:semicolon
-)brace
 suffix:semicolon
 id|x
 op_assign
@@ -1893,7 +1847,8 @@ id|done
 id|printk
 c_func
 (paren
-l_string|&quot;SoundScape: The OBP didn&squot;t respond after code download&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundscape: The OBP didn&squot;t respond after code download&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1933,16 +1888,10 @@ OG
 l_int|0
 )paren
 (brace
-(brace
 r_int
 r_int
 id|tlimit
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|1
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
@@ -1952,16 +1901,6 @@ op_plus
 (paren
 l_int|1
 )paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 id|sscape_sleep_flag.opts
 op_assign
@@ -2002,8 +1941,6 @@ op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2041,7 +1978,8 @@ id|done
 id|printk
 c_func
 (paren
-l_string|&quot;SoundScape: OBP Initialization failed.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundscape: OBP Initialization failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2051,6 +1989,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;SoundScape board initialized OK&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2075,7 +2014,7 @@ l_int|100
 )paren
 suffix:semicolon
 macro_line|#ifdef SSCAPE_DEBUG3
-multiline_comment|/*&n;&t;&t;     * Temporary debugging aid. Print contents of the registers after&n;&t;&t;     * downloading the code.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Temporary debugging aid. Print contents of the registers after&n;&t;&t; * downloading the code.&n;&t;&t; */
 (brace
 r_int
 id|i
@@ -2117,9 +2056,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|download_boot_block
 r_static
 r_int
-DECL|function|download_boot_block
 id|download_boot_block
 c_func
 (paren
@@ -2170,7 +2109,8 @@ id|buf-&gt;flags
 id|printk
 c_func
 (paren
-l_string|&quot;SSCAPE: Unable to load microcode block to the OBP.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundscape: Unable to load microcode block to the OBP.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2260,7 +2200,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_from_user
+id|copy_from_user
 c_func
 (paren
 id|buf
@@ -2339,8 +2279,8 @@ id|sscape_detected
 op_assign
 l_int|0
 suffix:semicolon
-r_void
 DECL|function|attach_sscape
+r_void
 id|attach_sscape
 c_func
 (paren
@@ -2351,7 +2291,7 @@ id|hw_config
 )paren
 (brace
 macro_line|#ifndef SSCAPE_REGS
-multiline_comment|/*&n;&t;   * Config register values for Spea/V7 Media FX and Ensoniq S-2000.&n;&t;   * These values are card&n;&t;   * dependent. If you have another SoundScape based card, you have to&n;&t;   * find the correct values. Do the following:&n;&t;   *  - Compile this driver with SSCAPE_DEBUG1 defined.&n;&t;   *  - Shut down and power off your machine.&n;&t;   *  - Boot with DOS so that the SSINIT.EXE program is run.&n;&t;   *  - Warm boot to {Linux|SYSV|BSD} and write down the lines displayed&n;&t;   *    when detecting the SoundScape.&n;&t;   *  - Modify the following list to use the values printed during boot.&n;&t;   *    Undefine the SSCAPE_DEBUG1&n;&t; */
+multiline_comment|/*&n;&t; * Config register values for Spea/V7 Media FX and Ensoniq S-2000.&n;&t; * These values are card&n;&t; * dependent. If you have another SoundScape based card, you have to&n;&t; * find the correct values. Do the following:&n;&t; *  - Compile this driver with SSCAPE_DEBUG1 defined.&n;&t; *  - Shut down and power off your machine.&n;&t; *  - Boot with DOS so that the SSINIT.EXE program is run.&n;&t; *  - Warm boot to {Linux|SYSV|BSD} and write down the lines displayed&n;&t; *    when detecting the SoundScape.&n;&t; *  - Modify the following list to use the values printed during boot.&n;&t; *    Undefine the SSCAPE_DEBUG1&n;&t; */
 DECL|macro|SSCAPE_REGS
 mdefine_line|#define SSCAPE_REGS { &bslash;&n;/* I0 */&t;0x00, &bslash;&n;&t;&t;0xf0, /* Note! Ignored. Set always to 0xf0 */ &bslash;&n;&t;&t;0x20, /* Note! Ignored. Set always to 0x20 */ &bslash;&n;&t;&t;0x20, /* Note! Ignored. Set always to 0x20 */ &bslash;&n;&t;&t;0xf5, /* Ignored */ &bslash;&n;&t;&t;0x10, &bslash;&n;&t;&t;0x00, &bslash;&n;&t;&t;0x2e, /* I7 MEM config A. Likely to vary between models */ &bslash;&n;&t;&t;0x00, /* I8 MEM config B. Likely to vary between models */ &bslash;&n;/* I9 */&t;0x40 /* Ignored */ &bslash;&n;&t;}
 macro_line|#endif
@@ -2442,6 +2382,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2459,6 +2400,7 @@ id|i
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2482,6 +2424,7 @@ l_int|0xff
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Invalid IRQ%d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
@@ -2515,6 +2458,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_switch
 c_cond
 (paren
@@ -2681,6 +2625,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
+)brace
 id|restore_flags
 c_func
 (paren
@@ -2688,7 +2633,7 @@ id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef SSCAPE_DEBUG2
-multiline_comment|/*&n;&t;   * Temporary debugging aid. Print contents of the registers after&n;&t;   * changing them.&n;&t; */
+multiline_comment|/*&n;&t; * Temporary debugging aid. Print contents of the registers after&n;&t; * changing them.&n;&t; */
 (brace
 r_int
 id|i
@@ -2739,7 +2684,6 @@ id|hw_config-&gt;always_detect
 op_assign
 l_int|1
 suffix:semicolon
-(brace
 id|hw_config-&gt;name
 op_assign
 l_string|&quot;SoundScape&quot;
@@ -2796,7 +2740,6 @@ op_amp
 id|sscape_coproc_operations
 suffix:semicolon
 )brace
-)brace
 macro_line|#endif
 id|sscape_write
 c_func
@@ -2818,9 +2761,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|detect_ga
 r_static
 r_int
-DECL|function|detect_ga
 id|detect_ga
 c_func
 (paren
@@ -2859,7 +2802,7 @@ l_int|8
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;   * First check that the address register of &quot;ODIE&quot; is&n;&t;   * there and that it has exactly 4 writable bits.&n;&t;   * First 4 bits&n;&t; */
+multiline_comment|/*&n;&t; * First check that the address register of &quot;ODIE&quot; is&n;&t; * there and that it has exactly 4 writable bits.&n;&t; * First 4 bits&n;&t; */
 r_if
 c_cond
 (paren
@@ -2996,7 +2939,7 @@ id|ODIE_ADDR
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Now verify that some indirect registers return zero on some bits.&n;&t;   * This may break the driver with some future revisions of &quot;ODIE&quot; but...&n;&t; */
+multiline_comment|/*&n;&t; * Now verify that some indirect registers return zero on some bits.&n;&t; * This may break the driver with some future revisions of &quot;ODIE&quot; but...&n;&t; */
 r_if
 c_cond
 (paren
@@ -3093,8 +3036,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_int
 DECL|function|probe_sscape
+r_int
 id|probe_sscape
 c_func
 (paren
@@ -3135,7 +3078,7 @@ op_assign
 id|hw_config-&gt;osp
 suffix:semicolon
 macro_line|#ifdef SSCAPE_DEBUG1
-multiline_comment|/*&n;&t;   * Temporary debugging aid. Print contents of the registers before&n;&t;   * changing them.&n;&t; */
+multiline_comment|/*&n;&t; * Temporary debugging aid. Print contents of the registers before&n;&t; * changing them.&n;&t; */
 (brace
 r_int
 id|i
@@ -3268,8 +3211,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_int
 DECL|function|probe_ss_ms_sound
+r_int
 id|probe_ss_ms_sound
 c_func
 (paren
@@ -3300,7 +3243,8 @@ id|devc-&gt;failed
 id|printk
 c_func
 (paren
-l_string|&quot;Soundscape: Card not detected&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundscape: Card not detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3318,7 +3262,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;SoundScape: Invalid initialization order.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundscape: Invalid initialization order.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3342,6 +3287,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3360,6 +3306,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+)brace
 r_if
 c_cond
 (paren
@@ -3375,7 +3322,8 @@ l_int|0xff
 id|printk
 c_func
 (paren
-l_string|&quot;SoundScape: Invalid MSS IRQ%d&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;soundscape: Invalid MSS IRQ%d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
@@ -3407,8 +3355,8 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_ss_ms_sound
+r_void
 id|attach_ss_ms_sound
 c_func
 (paren
@@ -3418,7 +3366,7 @@ op_star
 id|hw_config
 )paren
 (brace
-multiline_comment|/*&n;&t;   * This routine configures the SoundScape card for use with the&n;&t;   * Win Sound System driver. The AD1848 codec interface uses the CD-ROM&n;&t;   * config registers of the &quot;ODIE&quot;.&n;&t; */
+multiline_comment|/*&n;&t; * This routine configures the SoundScape card for use with the&n;&t; * Win Sound System driver. The AD1848 codec interface uses the CD-ROM&n;&t; * config registers of the &quot;ODIE&quot;.&n;&t; */
 r_int
 id|i
 comma
@@ -3442,7 +3390,7 @@ comma
 l_int|0x50
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Take the gate-array off of the DMA channel.&n;&t; */
+multiline_comment|/*&n;&t; * Take the gate-array off of the DMA channel.&n;&t; */
 id|sscape_write
 c_func
 (paren
@@ -3453,7 +3401,7 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Init the AD1848 (CD-ROM) config reg.&n;&t; */
+multiline_comment|/*&n;&t; * Init the AD1848 (CD-ROM) config reg.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3471,6 +3419,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3488,6 +3437,7 @@ id|i
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 id|sscape_write
 c_func
@@ -3521,7 +3471,8 @@ id|devc-&gt;irq
 id|printk
 c_func
 (paren
-l_string|&quot;SoundScape: Warning! The WSS mode can&squot;t share IRQ with MIDI&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;soundscape: Warning! The WSS mode can&squot;t share IRQ with MIDI&bslash;n&quot;
 )paren
 suffix:semicolon
 id|hw_config-&gt;slots
@@ -3598,7 +3549,7 @@ id|SOUND_MIXER_LINE
 suffix:semicolon
 )brace
 macro_line|#ifdef SSCAPE_DEBUG5
-multiline_comment|/*&n;&t;   * Temporary debugging aid. Print contents of the registers&n;&t;   * after the AD1848 device has been initialized.&n;&t; */
+multiline_comment|/*&n;&t; * Temporary debugging aid. Print contents of the registers&n;&t; * after the AD1848 device has been initialized.&n;&t; */
 (brace
 r_int
 id|i
@@ -3636,8 +3587,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_sscape
+r_void
 id|unload_sscape
 c_func
 (paren
@@ -3666,8 +3617,8 @@ id|hw_config
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_ss_ms_sound
+r_void
 id|unload_ss_ms_sound
 c_func
 (paren
@@ -3737,6 +3688,13 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|variable|spea
+r_int
+id|spea
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 DECL|variable|mss
 r_static
 r_int
@@ -3771,6 +3729,15 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
+id|spea
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* spea=0/1 set the old_hardware */
+id|MODULE_PARM
+c_func
+(paren
 id|mpu_irq
 comma
 l_string|&quot;i&quot;
@@ -3802,8 +3769,8 @@ r_struct
 id|address_info
 id|mpu_config
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -3813,6 +3780,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Soundscape driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3838,6 +3806,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;DMA, IRQ, and IO port must be specified.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3863,6 +3832,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;MPU_IRQ must be specified if MPU_IO is set.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3891,6 +3861,34 @@ id|mpu_config.io_base
 op_assign
 id|mpu_io
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|spea
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|old_hardware
+op_assign
+id|spea
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Forcing %s hardware support.&bslash;n&quot;
+comma
+id|spea
+ques
+c_cond
+l_string|&quot;new&quot;
+suffix:colon
+l_string|&quot;old&quot;
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3941,8 +3939,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

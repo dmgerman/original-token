@@ -257,6 +257,8 @@ DECL|macro|MOD_VISITED
 mdefine_line|#define MOD_VISITED  &t;&t;8
 DECL|macro|MOD_USED_ONCE
 mdefine_line|#define MOD_USED_ONCE&t;&t;16
+DECL|macro|MOD_JUST_FREED
+mdefine_line|#define MOD_JUST_FREED&t;&t;32
 multiline_comment|/* Values for query_module&squot;s which.  */
 DECL|macro|QM_MODULES
 mdefine_line|#define QM_MODULES&t;1

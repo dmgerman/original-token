@@ -450,6 +450,66 @@ DECL|macro|R_68K_JMP_SLOT
 mdefine_line|#define R_68K_JMP_SLOT&t;21
 DECL|macro|R_68K_RELATIVE
 mdefine_line|#define R_68K_RELATIVE&t;22
+multiline_comment|/*&n; * Alpha ELF relocation types&n; */
+DECL|macro|R_ALPHA_NONE
+mdefine_line|#define R_ALPHA_NONE            0       /* No reloc */
+DECL|macro|R_ALPHA_REFLONG
+mdefine_line|#define R_ALPHA_REFLONG         1       /* Direct 32 bit */
+DECL|macro|R_ALPHA_REFQUAD
+mdefine_line|#define R_ALPHA_REFQUAD         2       /* Direct 64 bit */
+DECL|macro|R_ALPHA_GPREL32
+mdefine_line|#define R_ALPHA_GPREL32         3       /* GP relative 32 bit */
+DECL|macro|R_ALPHA_LITERAL
+mdefine_line|#define R_ALPHA_LITERAL         4       /* GP relative 16 bit w/optimization */
+DECL|macro|R_ALPHA_LITUSE
+mdefine_line|#define R_ALPHA_LITUSE          5       /* Optimization hint for LITERAL */
+DECL|macro|R_ALPHA_GPDISP
+mdefine_line|#define R_ALPHA_GPDISP          6       /* Add displacement to GP */
+DECL|macro|R_ALPHA_BRADDR
+mdefine_line|#define R_ALPHA_BRADDR          7       /* PC+4 relative 23 bit shifted */
+DECL|macro|R_ALPHA_HINT
+mdefine_line|#define R_ALPHA_HINT            8       /* PC+4 relative 16 bit shifted */
+DECL|macro|R_ALPHA_SREL16
+mdefine_line|#define R_ALPHA_SREL16          9       /* PC relative 16 bit */
+DECL|macro|R_ALPHA_SREL32
+mdefine_line|#define R_ALPHA_SREL32          10      /* PC relative 32 bit */
+DECL|macro|R_ALPHA_SREL64
+mdefine_line|#define R_ALPHA_SREL64          11      /* PC relative 64 bit */
+DECL|macro|R_ALPHA_OP_PUSH
+mdefine_line|#define R_ALPHA_OP_PUSH         12      /* OP stack push */
+DECL|macro|R_ALPHA_OP_STORE
+mdefine_line|#define R_ALPHA_OP_STORE        13      /* OP stack pop and store */
+DECL|macro|R_ALPHA_OP_PSUB
+mdefine_line|#define R_ALPHA_OP_PSUB         14      /* OP stack subtract */
+DECL|macro|R_ALPHA_OP_PRSHIFT
+mdefine_line|#define R_ALPHA_OP_PRSHIFT      15      /* OP stack right shift */
+DECL|macro|R_ALPHA_GPVALUE
+mdefine_line|#define R_ALPHA_GPVALUE         16
+DECL|macro|R_ALPHA_GPRELHIGH
+mdefine_line|#define R_ALPHA_GPRELHIGH       17
+DECL|macro|R_ALPHA_GPRELLOW
+mdefine_line|#define R_ALPHA_GPRELLOW        18
+DECL|macro|R_ALPHA_IMMED_GP_16
+mdefine_line|#define R_ALPHA_IMMED_GP_16     19
+DECL|macro|R_ALPHA_IMMED_GP_HI32
+mdefine_line|#define R_ALPHA_IMMED_GP_HI32   20
+DECL|macro|R_ALPHA_IMMED_SCN_HI32
+mdefine_line|#define R_ALPHA_IMMED_SCN_HI32  21
+DECL|macro|R_ALPHA_IMMED_BR_HI32
+mdefine_line|#define R_ALPHA_IMMED_BR_HI32   22
+DECL|macro|R_ALPHA_IMMED_LO32
+mdefine_line|#define R_ALPHA_IMMED_LO32      23
+DECL|macro|R_ALPHA_COPY
+mdefine_line|#define R_ALPHA_COPY            24      /* Copy symbol at runtime */
+DECL|macro|R_ALPHA_GLOB_DAT
+mdefine_line|#define R_ALPHA_GLOB_DAT        25      /* Create GOT entry */
+DECL|macro|R_ALPHA_JMP_SLOT
+mdefine_line|#define R_ALPHA_JMP_SLOT        26      /* Create PLT entry */
+DECL|macro|R_ALPHA_RELATIVE
+mdefine_line|#define R_ALPHA_RELATIVE        27      /* Adjust by program base */
+multiline_comment|/* Legal values for e_flags field of Elf64_Ehdr.  */
+DECL|macro|EF_ALPHA_32BIT
+mdefine_line|#define EF_ALPHA_32BIT&t;&t;1&t;/* All addresses are below 2GB */
 DECL|struct|elf32_rel
 r_typedef
 r_struct

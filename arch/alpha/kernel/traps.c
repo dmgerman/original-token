@@ -3438,18 +3438,7 @@ id|pt_regs
 id|regs
 )paren
 (brace
-multiline_comment|/* Only report OSF system calls.  */
-r_if
-c_cond
-(paren
-id|regs.r0
-op_ne
-l_int|112
-op_logical_and
-id|regs.r0
-OL
-l_int|300
-)paren
+multiline_comment|/* We only get here for OSF system calls, minus #112;&n;&t;   the rest go to sys_ni_syscall.  */
 id|printk
 c_func
 (paren

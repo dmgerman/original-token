@@ -7,7 +7,7 @@ DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE (0x40000000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
+mdefine_line|#define TASK_UNMAPPED_BASE &bslash;&n;  ((current-&gt;personality &amp; ADDR_LIMIT_32BIT) ? 0x40000000 : TASK_SIZE / 2)
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 1

@@ -2844,10 +2844,7 @@ r_int
 )paren
 id|skb
 comma
-(paren
-r_int
-)paren
-id|FREE_WRITE
+l_int|0
 )paren
 suffix:semicolon
 id|tnet_send
@@ -2886,10 +2883,7 @@ r_int
 )paren
 id|skb
 comma
-(paren
-r_int
-)paren
-id|FREE_WRITE
+l_int|0
 )paren
 suffix:semicolon
 id|tnet_send

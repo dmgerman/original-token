@@ -3421,7 +3421,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(x)&t;(x % 128)
+mdefine_line|#define DEVICE_NR(dev)&t;(MINOR(dev) % 128)
 DECL|function|pt_open
 r_static
 r_int
@@ -3545,7 +3545,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|MINOR
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 op_amp
 l_int|128
 )paren
@@ -3629,15 +3633,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 op_logical_neg
 id|inode
-)paren
 op_logical_or
-(paren
 op_logical_neg
 id|inode-&gt;i_rdev
-)paren
 )paren
 r_return
 op_minus

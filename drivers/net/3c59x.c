@@ -6482,8 +6482,6 @@ id|vp-&gt;tx_skbuff
 (braket
 id|entry
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|vp-&gt;tx_skbuff
@@ -6759,8 +6757,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -6824,8 +6820,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -7829,8 +7823,6 @@ id|lp-&gt;tx_skbuff
 (braket
 id|entry
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;tx_skbuff
@@ -7921,8 +7913,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|lp-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Release the transfered buffer */
@@ -9762,8 +9752,6 @@ id|vp-&gt;rx_skbuff
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|vp-&gt;rx_skbuff
@@ -9822,8 +9810,6 @@ id|vp-&gt;tx_skbuff
 (braket
 id|i
 )braket
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|vp-&gt;tx_skbuff

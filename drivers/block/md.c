@@ -33,8 +33,8 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#ifdef CONFIG_MD_BOOT
 r_extern
-id|dev_t
-id|name_to_dev_t
+id|kdev_t
+id|name_to_kdev_t
 c_func
 (paren
 r_char
@@ -5537,7 +5537,7 @@ id|factor
 comma
 id|fault
 suffix:semicolon
-id|dev_t
+id|kdev_t
 id|dev
 suffix:semicolon
 r_int
@@ -5720,7 +5720,7 @@ op_logical_and
 (paren
 id|dev
 op_assign
-id|name_to_dev_t
+id|name_to_kdev_t
 c_func
 (paren
 id|str
@@ -5738,6 +5738,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|str
 op_assign
 id|strchr
@@ -5746,6 +5747,9 @@ id|str
 comma
 l_char|&squot;,&squot;
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 id|str

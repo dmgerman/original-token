@@ -1143,13 +1143,7 @@ multiline_comment|/* link */
 l_int|NULL
 comma
 multiline_comment|/* handle */
-id|MKDEV
-c_func
-(paren
-id|MAJOR_NR
-comma
 l_int|0
-)paren
 comma
 multiline_comment|/* dev */
 l_int|0
@@ -4369,81 +4363,12 @@ id|__initfunc
 c_func
 (paren
 r_int
-id|mcdx_init
+id|mcdx_init_drive
 c_func
 (paren
-r_void
-)paren
-)paren
-(brace
 r_int
 id|drive
-suffix:semicolon
-r_char
-id|msg
-(braket
-l_int|80
-)braket
-suffix:semicolon
-macro_line|#ifdef MODULE
-id|xwarn
-c_func
-(paren
-l_string|&quot;Version 2.14(hs) for &quot;
-id|UTS_RELEASE
-l_string|&quot;&bslash;n&quot;
 )paren
-suffix:semicolon
-macro_line|#else
-id|xwarn
-c_func
-(paren
-l_string|&quot;Version 2.14(hs) &bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|xwarn
-c_func
-(paren
-l_string|&quot;$Id: mcdx.c,v 1.21 1997/01/26 07:12:59 davem Exp $&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* zero the pointer array */
-r_for
-c_loop
-(paren
-id|drive
-op_assign
-l_int|0
-suffix:semicolon
-id|drive
-OL
-id|MCDX_NDRIVES
-suffix:semicolon
-id|drive
-op_increment
-)paren
-id|mcdx_stuffp
-(braket
-id|drive
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* do the initialisation */
-r_for
-c_loop
-(paren
-id|drive
-op_assign
-l_int|0
-suffix:semicolon
-id|drive
-OL
-id|MCDX_NDRIVES
-suffix:semicolon
-id|drive
-op_increment
 )paren
 (brace
 r_struct
@@ -4457,6 +4382,18 @@ id|stuffp
 suffix:semicolon
 r_int
 id|size
+op_assign
+r_sizeof
+(paren
+op_star
+id|stuffp
+)paren
+suffix:semicolon
+r_char
+id|msg
+(braket
+l_int|80
+)braket
 suffix:semicolon
 id|mcdx_blocksizes
 (braket
@@ -4464,14 +4401,6 @@ id|drive
 )braket
 op_assign
 l_int|0
-suffix:semicolon
-id|size
-op_assign
-r_sizeof
-(paren
-op_star
-id|stuffp
-)paren
 suffix:semicolon
 id|xtrace
 c_func
@@ -4524,7 +4453,8 @@ c_func
 l_string|&quot;init() malloc failed&bslash;n&quot;
 )paren
 suffix:semicolon
-r_break
+r_return
+l_int|1
 suffix:semicolon
 )brace
 id|xtrace
@@ -4617,8 +4547,6 @@ multiline_comment|/* check if i/o addresses are available */
 r_if
 c_cond
 (paren
-l_int|0
-op_ne
 id|check_region
 c_func
 (paren
@@ -4635,8 +4563,8 @@ id|MCDX_IO_SIZE
 id|xwarn
 c_func
 (paren
-l_string|&quot;0x%3p,%d: &quot;
-l_string|&quot;Init failed. I/O ports (0x%3p..0x%3p) already in use.&bslash;n&quot;
+l_string|&quot;0x%3p,%d: Init failed. &quot;
+l_string|&quot;I/O ports (0x%3p..0x%3p) already in use.&bslash;n&quot;
 comma
 id|stuffp-&gt;wreg_data
 comma
@@ -4675,7 +4603,8 @@ comma
 l_string|&quot;init() continue at next drive&bslash;n&quot;
 )paren
 suffix:semicolon
-r_continue
+r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* next drive */
 )brace
@@ -4770,7 +4699,8 @@ comma
 l_string|&quot;init() continue at next drive&bslash;n&quot;
 )paren
 suffix:semicolon
-r_continue
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_switch
@@ -4864,7 +4794,8 @@ c_func
 id|stuffp
 )paren
 suffix:semicolon
-r_continue
+r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* next drive */
 )brace
@@ -4913,9 +4844,9 @@ c_func
 id|stuffp
 )paren
 suffix:semicolon
-r_continue
+r_return
+l_int|1
 suffix:semicolon
-multiline_comment|/* next drive */
 )brace
 id|blk_dev
 (braket
@@ -4997,7 +4928,8 @@ c_func
 id|stuffp
 )paren
 suffix:semicolon
-r_continue
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|request_region
@@ -5063,6 +4995,7 @@ id|stuffp-&gt;rreg_status
 suffix:semicolon
 )brace
 macro_line|#if WE_KNOW_WHY
+multiline_comment|/* irq 11 -&gt; channel register */
 id|outb
 c_func
 (paren
@@ -5075,7 +5008,6 @@ r_int
 id|stuffp-&gt;wreg_chn
 )paren
 suffix:semicolon
-multiline_comment|/* irq 11 -&gt; channel register */
 macro_line|#endif
 id|xtrace
 c_func
@@ -5131,6 +5063,16 @@ comma
 id|drive
 comma
 id|stuffp
+)paren
+suffix:semicolon
+id|mcdx_info.dev
+op_assign
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -5198,8 +5140,7 @@ l_string|&quot;cleanup() unregister_blkdev() failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EIO
+l_int|2
 suffix:semicolon
 )brace
 id|printk
@@ -5208,6 +5149,109 @@ c_func
 id|msg
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|mcdx_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+id|drive
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|xwarn
+c_func
+(paren
+l_string|&quot;Version 2.14(hs) for &quot;
+id|UTS_RELEASE
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|xwarn
+c_func
+(paren
+l_string|&quot;Version 2.14(hs) &bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|xwarn
+c_func
+(paren
+l_string|&quot;$Id: mcdx.c,v 1.21 1997/01/26 07:12:59 davem Exp $&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* zero the pointer array */
+r_for
+c_loop
+(paren
+id|drive
+op_assign
+l_int|0
+suffix:semicolon
+id|drive
+OL
+id|MCDX_NDRIVES
+suffix:semicolon
+id|drive
+op_increment
+)paren
+id|mcdx_stuffp
+(braket
+id|drive
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* do the initialisation */
+r_for
+c_loop
+(paren
+id|drive
+op_assign
+l_int|0
+suffix:semicolon
+id|drive
+OL
+id|MCDX_NDRIVES
+suffix:semicolon
+id|drive
+op_increment
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|mcdx_init_drive
+c_func
+(paren
+id|drive
+)paren
+)paren
+(brace
+r_case
+l_int|2
+suffix:colon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+r_break
+suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0

@@ -11989,13 +11989,7 @@ multiline_comment|/* link */
 l_int|NULL
 comma
 multiline_comment|/* handle */
-id|MKDEV
-c_func
-(paren
-id|MAJOR_NR
-comma
 l_int|0
-)paren
 comma
 multiline_comment|/* dev */
 l_int|0
@@ -12966,6 +12960,16 @@ suffix:semicolon
 id|cdu31a_abort_timer.function
 op_assign
 id|handle_abort_timeout
+suffix:semicolon
+id|scd_info.dev
+op_assign
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_int|0
+)paren
 suffix:semicolon
 id|scd_info.mask
 op_assign

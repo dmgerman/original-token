@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *    1.2a:Simple change to stop mysterious bug reports with SMP also added&n; *&t;   levels to the printk calls. APM is not defined for SMP machines.&n; *         The new replacment for it is, but Linux doesn&squot;t yet support this.&n; *         Alan Cox Linux 2.1.55&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; * Feb 1998, Version 1.3&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *    1.2a:Simple change to stop mysterious bug reports with SMP also added&n; *&t;   levels to the printk calls. APM is not defined for SMP machines.&n; *         The new replacment for it is, but Linux doesn&squot;t yet support this.&n; *         Alan Cox Linux 2.1.55&n; *    1.3: Set up a valid data descriptor 0x40 for buggy BIOS&squot;s&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -54,7 +54,7 @@ mdefine_line|#define ALWAYS_CALL_BUSY
 multiline_comment|/*&n; * Define to disable interrupts in APM BIOS calls (the CPU Idle BIOS call&n; * should turn interrupts on before it does a &squot;hlt&squot;).&n; */
 DECL|macro|APM_NOINTS
 mdefine_line|#define APM_NOINTS
-multiline_comment|/*&n; * Define to make the APM BIOS calls zero all data segment registers (do&n; * that if an incorrect BIOS implementation will cause a kernel panic if it&n; * tries to write to arbitrary memory).&n; */
+multiline_comment|/*&n; * Define to make the APM BIOS calls zero all data segment registers (so&n; * that an incorrect BIOS implementation will cause a kernel panic if it&n; * tries to write to arbitrary memory).&n; */
 DECL|macro|APM_ZERO_SEGS
 mdefine_line|#define APM_ZERO_SEGS
 multiline_comment|/*&n; * Define to make all set_limit calls use 64k limits.  The APM 1.1 BIOS is&n; * supposed to provide limit information that it recognizes.  Many machines&n; * do this correctly, but many others do not restrict themselves to their&n; * claimed limit.  When this happens, they will cause a segmentation&n; * violation in the kernel at boot time.  Most BIOS&squot;s, however, will&n; * respect a 64k limit, so we use that.  If you want to be pedantic and&n; * hold your BIOS to its claims, then undefine this.&n; */
@@ -371,7 +371,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;1.2&quot;
+l_string|&quot;1.3&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 macro_line|#ifdef APM_DEBUG
@@ -3483,6 +3483,49 @@ id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Set up a segment that references the real mode segment 0x40&n;&t; * that extends up to the end of page zero (that we have reserved).&n;&t; * This is for buggy BIOS&squot;s that refer to (real mode) segment 0x40&n;&t; * even though they are called in protected mode.&n;&t; */
+id|set_base
+c_func
+(paren
+id|gdt
+(braket
+id|APM_40
+op_rshift
+l_int|3
+)braket
+comma
+l_int|0xc0000000
+op_plus
+(paren
+(paren
+r_int
+r_int
+)paren
+l_int|0x40
+op_lshift
+l_int|4
+)paren
+)paren
+suffix:semicolon
+id|set_limit
+c_func
+(paren
+id|gdt
+(braket
+id|APM_40
+op_rshift
+l_int|3
+)braket
+comma
+l_int|4096
+op_minus
+(paren
+l_int|0x40
+op_lshift
+l_int|4
+)paren
 )paren
 suffix:semicolon
 id|apm_bios_entry.offset

@@ -6938,8 +6938,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -6983,8 +6981,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* free sk_buff now */
@@ -7195,8 +7191,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|p_xmt_drv_descr-&gt;p_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Increment transmit counters */
@@ -7258,8 +7252,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|p_xmt_drv_descr-&gt;p_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Increment transmit error counter */

@@ -8,11 +8,15 @@ DECL|macro|STICKY_TIMEOUTS
 mdefine_line|#define STICKY_TIMEOUTS&t;&t;0x4000000
 DECL|macro|WHOLE_SECONDS
 mdefine_line|#define WHOLE_SECONDS&t;&t;0x2000000
+DECL|macro|ADDR_LIMIT_32BIT
+mdefine_line|#define ADDR_LIMIT_32BIT&t;0x0800000
 multiline_comment|/* Personality types. These go in the low byte. Avoid using the top bit,&n; * it will conflict with error returns.&n; */
 DECL|macro|PER_MASK
 mdefine_line|#define PER_MASK&t;&t;(0x00ff)
 DECL|macro|PER_LINUX
 mdefine_line|#define PER_LINUX&t;&t;(0x0000)
+DECL|macro|PER_LINUX_32BIT
+mdefine_line|#define PER_LINUX_32BIT&t;&t;(0x0000 | ADDR_LIMIT_32BIT)
 DECL|macro|PER_SVR4
 mdefine_line|#define PER_SVR4&t;&t;(0x0001 | STICKY_TIMEOUTS)
 DECL|macro|PER_SVR3

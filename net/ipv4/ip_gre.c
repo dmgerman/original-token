@@ -1649,8 +1649,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb2
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1712,8 +1710,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb2
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1754,8 +1750,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb2
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1787,8 +1781,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb2
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1860,8 +1852,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb2
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2296,8 +2286,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -3057,8 +3045,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|tunnel-&gt;recursion
@@ -3072,8 +3058,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|skb
@@ -3488,8 +3472,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|tunnel-&gt;recursion

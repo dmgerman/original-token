@@ -79,6 +79,14 @@ r_int
 id|fn
 )paren
 suffix:semicolon
+r_void
+id|make_8259A_irq
+(paren
+r_int
+r_int
+id|irq
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP__
 r_extern
 r_int
@@ -113,6 +121,13 @@ suffix:semicolon
 r_extern
 r_int
 id|mp_bus_id_to_type
+(braket
+id|MAX_MP_BUSSES
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|mp_bus_id_to_pci_bus
 (braket
 id|MAX_MP_BUSSES
 )braket

@@ -1353,8 +1353,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|hsp-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|hsp-&gt;count
@@ -2245,8 +2243,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|sp-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|sp-&gt;tx_cnt

@@ -18,19 +18,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/irq-no.h&gt;
 macro_line|#include &lt;asm/arch/irq.h&gt;
-macro_line|#ifdef __SMP_PROF__
-r_extern
-r_volatile
-r_int
-r_int
-id|smp_local_timer_ticks
-(braket
-l_int|1
-op_plus
-id|NR_CPUS
-)braket
-suffix:semicolon
-macro_line|#endif
 DECL|variable|local_irq_count
 r_int
 r_int

@@ -1161,8 +1161,6 @@ multiline_comment|/* freeing the packet is a good thing here... but should&n;&t;
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;saved_skb
@@ -1698,8 +1696,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|dev-&gt;trans_start
@@ -3343,8 +3339,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace

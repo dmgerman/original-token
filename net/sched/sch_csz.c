@@ -885,8 +885,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1873,8 +1871,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_for
@@ -1921,8 +1917,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|this-&gt;snext

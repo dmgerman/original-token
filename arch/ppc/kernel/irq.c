@@ -853,22 +853,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP_PROF__
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;IPI: %8lu received&bslash;n&quot;
-comma
-id|ipi_count
-)paren
-suffix:semicolon
-macro_line|#endif
 id|len
 op_add_assign
 id|sprintf

@@ -165,8 +165,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbo
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -227,8 +225,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbo
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -253,8 +249,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbn
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -296,8 +290,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbo
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|ax25-&gt;fragno
@@ -434,8 +426,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|skb
@@ -820,8 +810,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -853,8 +841,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -895,8 +881,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1072,8 +1056,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1216,8 +1198,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1249,8 +1229,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1261,8 +1239,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1274,8 +1250,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 multiline_comment|/* Will scan SOCK_AX25 RAW sockets */
@@ -1302,8 +1276,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1369,8 +1341,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1438,8 +1408,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1540,8 +1508,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1590,8 +1556,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1632,8 +1596,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -1691,8 +1653,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|ax25_destroy_socket
@@ -1873,8 +1833,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1926,8 +1884,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 multiline_comment|/* Not a KISS data frame */

@@ -161,8 +161,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbo
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_while
@@ -217,8 +215,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbo
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace

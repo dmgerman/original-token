@@ -1073,8 +1073,6 @@ id|kfree_skb
 c_func
 (paren
 id|pp
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|ack_count

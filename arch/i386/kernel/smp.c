@@ -21,6 +21,12 @@ DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &quot;irq.h&quot;
+DECL|variable|semaphore_wake_lock
+id|spinlock_t
+id|semaphore_wake_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 r_extern
 r_int
 r_int
@@ -391,6 +397,25 @@ id|mp_irqs
 (braket
 id|MAX_IRQ_SOURCES
 )braket
+suffix:semicolon
+DECL|variable|mp_bus_id_to_pci_bus
+r_int
+id|mp_bus_id_to_pci_bus
+(braket
+id|MAX_MP_BUSSES
+)braket
+op_assign
+(brace
+op_minus
+l_int|1
+comma
+)brace
+suffix:semicolon
+DECL|variable|mp_current_pci_id
+r_int
+id|mp_current_pci_id
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* #define SMP_DEBUG */
 macro_line|#ifdef SMP_DEBUG
@@ -1207,6 +1232,7 @@ l_int|3
 op_eq
 l_int|0
 )paren
+(brace
 id|mp_bus_id_to_type
 (braket
 id|m-&gt;mpc_busid
@@ -1214,6 +1240,17 @@ id|m-&gt;mpc_busid
 op_assign
 id|MP_BUS_PCI
 suffix:semicolon
+id|mp_bus_id_to_pci_bus
+(braket
+id|m-&gt;mpc_busid
+)braket
+op_assign
+id|mp_current_pci_id
+suffix:semicolon
+id|mp_current_pci_id
+op_increment
+suffix:semicolon
+)brace
 id|mpt
 op_add_assign
 r_sizeof

@@ -608,7 +608,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%sing device %04x ... &quot;
+l_string|&quot;%sing device %s ... &quot;
 comma
 id|remount_flag
 ques
@@ -617,7 +617,11 @@ l_string|&quot;Remount&quot;
 suffix:colon
 l_string|&quot;Sync&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 )paren
 suffix:semicolon
 r_if

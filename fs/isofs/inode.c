@@ -160,11 +160,6 @@ r_int
 r_char
 id|check
 suffix:semicolon
-DECL|member|conversion
-r_int
-r_char
-id|conversion
-suffix:semicolon
 DECL|member|blocksize
 r_int
 r_int
@@ -242,11 +237,6 @@ op_assign
 l_char|&squot;s&squot;
 suffix:semicolon
 multiline_comment|/* default: strict */
-id|popt-&gt;conversion
-op_assign
-l_char|&squot;b&squot;
-suffix:semicolon
-multiline_comment|/* default: no conversion */
 id|popt-&gt;blocksize
 op_assign
 l_int|1024
@@ -722,6 +712,7 @@ op_logical_and
 id|value
 )paren
 (brace
+multiline_comment|/* no conversion is done anymore;&n;&t;&t;&t;   we still accept the same mount options,&n;&t;&t;&t;   but ignore them */
 r_if
 c_cond
 (paren
@@ -745,10 +736,6 @@ op_star
 id|value
 )paren
 )paren
-id|popt-&gt;conversion
-op_assign
-op_star
-id|value
 suffix:semicolon
 r_else
 r_if
@@ -763,9 +750,6 @@ comma
 l_string|&quot;binary&quot;
 )paren
 )paren
-id|popt-&gt;conversion
-op_assign
-l_char|&squot;b&squot;
 suffix:semicolon
 r_else
 r_if
@@ -780,9 +764,6 @@ comma
 l_string|&quot;text&quot;
 )paren
 )paren
-id|popt-&gt;conversion
-op_assign
-l_char|&squot;t&squot;
 suffix:semicolon
 r_else
 r_if
@@ -797,9 +778,6 @@ comma
 l_string|&quot;mtext&quot;
 )paren
 )paren
-id|popt-&gt;conversion
-op_assign
-l_char|&squot;m&squot;
 suffix:semicolon
 r_else
 r_if
@@ -814,9 +792,6 @@ comma
 l_string|&quot;auto&quot;
 )paren
 )paren
-id|popt-&gt;conversion
-op_assign
-l_char|&squot;a&squot;
 suffix:semicolon
 r_else
 r_return
@@ -1130,7 +1105,7 @@ id|ms_info.addr.lba
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif 0
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1145,7 +1120,7 @@ c_cond
 id|ms_info.xa_flag
 )paren
 multiline_comment|/* necessary for a valid ms_info.addr */
-macro_line|#endif WE_OBEY_THE_WRITTEN_STANDARDS
+macro_line|#endif
 id|vol_desc_start
 op_assign
 id|ms_info.addr.lba
@@ -1335,14 +1310,6 @@ c_func
 l_string|&quot;unhide = %c&bslash;n&quot;
 comma
 id|opt.unhide
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;conversion = %c&bslash;n&quot;
-comma
-id|opt.conversion
 )paren
 suffix:semicolon
 id|printk
@@ -2379,10 +2346,6 @@ id|s-&gt;u.isofs_sb.s_name_check
 op_assign
 id|opt.check
 suffix:semicolon
-id|s-&gt;u.isofs_sb.s_conversion
-op_assign
-id|opt.conversion
-suffix:semicolon
 id|s-&gt;u.isofs_sb.s_cruft
 op_assign
 id|opt.cruft
@@ -3293,53 +3256,6 @@ id|i_sb
 op_member_access_from_pointer
 id|u.isofs_sb.s_log_zone_size
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|inode-&gt;i_sb-&gt;u.isofs_sb.s_conversion
-)paren
-(brace
-r_case
-l_char|&squot;a&squot;
-suffix:colon
-id|inode-&gt;u.isofs_i.i_file_format
-op_assign
-id|ISOFS_FILE_UNKNOWN
-suffix:semicolon
-multiline_comment|/* File type */
-r_break
-suffix:semicolon
-r_case
-l_char|&squot;b&squot;
-suffix:colon
-id|inode-&gt;u.isofs_i.i_file_format
-op_assign
-id|ISOFS_FILE_BINARY
-suffix:semicolon
-multiline_comment|/* File type */
-r_break
-suffix:semicolon
-r_case
-l_char|&squot;t&squot;
-suffix:colon
-id|inode-&gt;u.isofs_i.i_file_format
-op_assign
-id|ISOFS_FILE_TEXT
-suffix:semicolon
-multiline_comment|/* File type */
-r_break
-suffix:semicolon
-r_case
-l_char|&squot;m&squot;
-suffix:colon
-id|inode-&gt;u.isofs_i.i_file_format
-op_assign
-id|ISOFS_FILE_TEXT_M
-suffix:semicolon
-multiline_comment|/* File type */
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* Now test for possible Rock Ridge extensions which will override some of&n;   these numbers in the inode structure. */
 r_if
 c_cond

@@ -1525,18 +1525,11 @@ id|release_region
 )paren
 suffix:semicolon
 multiline_comment|/* process management */
-DECL|variable|wake_up
+DECL|variable|__wake_up
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|wake_up
-)paren
-suffix:semicolon
-DECL|variable|wake_up_interruptible
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|wake_up_interruptible
+id|__wake_up
 )paren
 suffix:semicolon
 DECL|variable|sleep_on

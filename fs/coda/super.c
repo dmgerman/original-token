@@ -491,11 +491,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;coda_read_super: rootinode is %ld dev %d&bslash;n&quot;
+l_string|&quot;coda_read_super: rootinode is %ld dev %s&bslash;n&quot;
 comma
 id|root-&gt;i_ino
 comma
+id|kdevname
+c_func
+(paren
 id|root-&gt;i_dev
+)paren
 )paren
 suffix:semicolon
 id|sbi-&gt;sbi_root
@@ -1422,7 +1426,11 @@ c_func
 (paren
 l_string|&quot;minor %d not an allocated Coda PSDEV&bslash;n&quot;
 comma
+id|MINOR
+c_func
+(paren
 id|psdev-&gt;i_rdev
+)paren
 )paren
 suffix:semicolon
 r_return

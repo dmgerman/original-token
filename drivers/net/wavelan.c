@@ -11134,8 +11134,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_TX_TRACE

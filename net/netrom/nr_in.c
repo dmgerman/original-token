@@ -178,8 +178,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbo
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -916,8 +914,6 @@ id|kfree_skb
 c_func
 (paren
 id|skbn
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace

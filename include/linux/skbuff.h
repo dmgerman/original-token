@@ -10,10 +10,6 @@ DECL|macro|HAVE_ALLOC_SKB
 mdefine_line|#define HAVE_ALLOC_SKB&t;&t;/* For the drivers to know */
 DECL|macro|HAVE_ALIGNABLE_SKB
 mdefine_line|#define HAVE_ALIGNABLE_SKB&t;/* Ditto 8)&t;&t;   */
-DECL|macro|FREE_READ
-mdefine_line|#define FREE_READ&t;1
-DECL|macro|FREE_WRITE
-mdefine_line|#define FREE_WRITE&t;0
 DECL|macro|CHECKSUM_NONE
 mdefine_line|#define CHECKSUM_NONE 0
 DECL|macro|CHECKSUM_HW
@@ -406,18 +402,6 @@ macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; *&t;Handling routines are only of interest to the kernel&n; */
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#if 0
-r_extern
-r_void
-id|print_skb
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 r_extern
 r_void
 id|__kfree_skb
@@ -639,7 +623,7 @@ id|newheadroom
 )paren
 suffix:semicolon
 DECL|macro|dev_kfree_skb
-mdefine_line|#define dev_kfree_skb(a, b)&t;kfree_skb((a), (b))
+mdefine_line|#define dev_kfree_skb(a)&t;kfree_skb(a)
 r_extern
 r_int
 r_char
@@ -780,9 +764,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-id|rw
 )paren
 (brace
 r_if
@@ -871,9 +852,6 @@ id|skb
 comma
 r_int
 id|pri
-comma
-r_int
-id|dir
 )paren
 (brace
 r_struct
@@ -910,8 +888,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|dir
 )paren
 suffix:semicolon
 multiline_comment|/* Free our shared copy */
@@ -2207,8 +2183,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-l_int|0
 )paren
 suffix:semicolon
 )brace

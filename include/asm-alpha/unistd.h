@@ -15,8 +15,8 @@ DECL|macro|__NR_osf_old_open
 mdefine_line|#define __NR_osf_old_open&t;  5&t;/* not implemented */
 DECL|macro|__NR_close
 mdefine_line|#define __NR_close&t;&t;  6
-DECL|macro|__NR_wait4
-mdefine_line|#define __NR_wait4&t;&t;  7
+DECL|macro|__NR_osf_wait4
+mdefine_line|#define __NR_osf_wait4&t;&t;  7
 DECL|macro|__NR_osf_old_creat
 mdefine_line|#define __NR_osf_old_creat&t;  8&t;/* not implemented */
 DECL|macro|__NR_link
@@ -165,14 +165,14 @@ DECL|macro|__NR_osf_old_getpgrp
 mdefine_line|#define __NR_osf_old_getpgrp&t; 81&t;/* not implemented */
 DECL|macro|__NR_setpgrp
 mdefine_line|#define __NR_setpgrp&t;&t; 82&t;/* BSD alias for setpgid */
-DECL|macro|__NR_setitimer
-mdefine_line|#define __NR_setitimer&t;&t; 83
+DECL|macro|__NR_osf_setitimer
+mdefine_line|#define __NR_osf_setitimer&t; 83
 DECL|macro|__NR_osf_old_wait
 mdefine_line|#define __NR_osf_old_wait&t; 84&t;/* not implemented */
 DECL|macro|__NR_osf_table
 mdefine_line|#define __NR_osf_table&t;&t; 85&t;/* not implemented */
-DECL|macro|__NR_getitimer
-mdefine_line|#define __NR_getitimer&t;&t; 86
+DECL|macro|__NR_osf_getitimer
+mdefine_line|#define __NR_osf_getitimer&t; 86
 DECL|macro|__NR_gethostname
 mdefine_line|#define __NR_gethostname&t; 87
 DECL|macro|__NR_sethostname
@@ -185,8 +185,8 @@ DECL|macro|__NR_fstat
 mdefine_line|#define __NR_fstat&t;&t; 91
 DECL|macro|__NR_fcntl
 mdefine_line|#define __NR_fcntl&t;&t; 92
-DECL|macro|__NR_select
-mdefine_line|#define __NR_select&t;&t; 93
+DECL|macro|__NR_osf_select
+mdefine_line|#define __NR_osf_select&t;&t; 93
 DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll&t;&t; 94
 DECL|macro|__NR_fsync
@@ -231,18 +231,18 @@ DECL|macro|__NR_sendmsg
 mdefine_line|#define __NR_sendmsg&t;&t;114
 DECL|macro|__NR_osf_old_vtrace
 mdefine_line|#define __NR_osf_old_vtrace&t;115&t;/* not implemented */
-DECL|macro|__NR_gettimeofday
-mdefine_line|#define __NR_gettimeofday&t;116
-DECL|macro|__NR_getrusage
-mdefine_line|#define __NR_getrusage&t;&t;117
+DECL|macro|__NR_osf_gettimeofday
+mdefine_line|#define __NR_osf_gettimeofday&t;116
+DECL|macro|__NR_osf_getrusage
+mdefine_line|#define __NR_osf_getrusage&t;117
 DECL|macro|__NR_getsockopt
 mdefine_line|#define __NR_getsockopt&t;&t;118
 DECL|macro|__NR_readv
 mdefine_line|#define __NR_readv&t;&t;120
 DECL|macro|__NR_writev
 mdefine_line|#define __NR_writev&t;&t;121
-DECL|macro|__NR_settimeofday
-mdefine_line|#define __NR_settimeofday&t;122
+DECL|macro|__NR_osf_settimeofday
+mdefine_line|#define __NR_osf_settimeofday&t;122
 DECL|macro|__NR_fchown
 mdefine_line|#define __NR_fchown&t;&t;123
 DECL|macro|__NR_fchmod
@@ -273,8 +273,8 @@ DECL|macro|__NR_mkdir
 mdefine_line|#define __NR_mkdir&t;&t;136
 DECL|macro|__NR_rmdir
 mdefine_line|#define __NR_rmdir&t;&t;137
-DECL|macro|__NR_utimes
-mdefine_line|#define __NR_utimes&t;&t;138
+DECL|macro|__NR_osf_utimes
+mdefine_line|#define __NR_osf_utimes&t;&t;138
 DECL|macro|__NR_osf_old_sigreturn
 mdefine_line|#define __NR_osf_old_sigreturn&t;139&t;/* not implemented */
 DECL|macro|__NR_osf_adjtime
@@ -554,6 +554,22 @@ DECL|macro|__NR_rt_sigqueueinfo
 mdefine_line|#define __NR_rt_sigqueueinfo&t;&t;356
 DECL|macro|__NR_rt_sigsuspend
 mdefine_line|#define __NR_rt_sigsuspend&t;&t;357
+DECL|macro|__NR_select
+mdefine_line|#define __NR_select&t;&t;&t;358
+DECL|macro|__NR_gettimeofday
+mdefine_line|#define __NR_gettimeofday&t;&t;359
+DECL|macro|__NR_settimeofday
+mdefine_line|#define __NR_settimeofday&t;&t;360
+DECL|macro|__NR_getitimer
+mdefine_line|#define __NR_getitimer&t;&t;&t;361
+DECL|macro|__NR_setitimer
+mdefine_line|#define __NR_setitimer&t;&t;&t;362
+DECL|macro|__NR_utimes
+mdefine_line|#define __NR_utimes&t;&t;&t;363
+DECL|macro|__NR_getrusage
+mdefine_line|#define __NR_getrusage&t;&t;&t;364
+DECL|macro|__NR_wait4
+mdefine_line|#define __NR_wait4&t;&t;&t;365
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

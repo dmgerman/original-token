@@ -1355,8 +1355,6 @@ id|kfree_skb
 c_func
 (paren
 id|rcv-&gt;skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|rcv-&gt;skb
@@ -1378,8 +1376,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|snd-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|snd-&gt;skb
@@ -2987,8 +2983,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|snd-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|nl-&gt;enet_stats.tx_packets
@@ -4154,8 +4148,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|snd-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|snd-&gt;skb
@@ -4177,8 +4169,6 @@ id|kfree_skb
 c_func
 (paren
 id|rcv-&gt;skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|rcv-&gt;skb

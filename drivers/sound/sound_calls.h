@@ -514,6 +514,12 @@ r_void
 )paren
 suffix:semicolon
 r_void
+id|sequencer_unload
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
 id|sequencer_timer
 c_func
 (paren

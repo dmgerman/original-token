@@ -1199,7 +1199,7 @@ l_int|1
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;n};&quot;
+l_string|&quot;&bslash;n};&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else

@@ -435,8 +435,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1102,13 +1100,10 @@ OL
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * skb-&gt;sk is NULL here, so FREE_WRITE does not hurt&n;&t;&t; * the sending socket.&n;&t; &t; */
 id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -1288,13 +1283,11 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* skb was solely for us, and we did not make a copy,&n;&t;&t; * so free it. FREE_WRITE does not hurt, because&n;&t;&t; * skb-&gt;sk is NULL here.&n;&t;&t; */
+multiline_comment|/* skb was solely for us, and we did not make a copy,&n;&t;&t; * so free it.&n;&t;&t; */
 id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -1437,8 +1430,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1665,8 +1656,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1888,13 +1877,10 @@ op_logical_neg
 id|send_to_wire
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;We do a FREE_WRITE here because this indicates how&n;&t;&t; *&t;to treat the socket with which the packet is&n;&t; &t; *&t;associated.  If this packet is associated with a&n;&t;&t; *&t;socket at all, it must be the originator of the&n;&t;&t; *&t;packet.   Routed packets will have no socket associated&n;&t;&t; *&t;with them.&n;&t;&t; */
 id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -2153,8 +2139,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -2537,8 +2521,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -2562,8 +2544,6 @@ c_func
 id|skb
 comma
 id|GFP_ATOMIC
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_if
@@ -2589,8 +2569,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -2647,8 +2625,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -4997,8 +4973,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -5064,8 +5038,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -5142,8 +5114,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -8186,8 +8156,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -8224,8 +8192,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -8290,8 +8256,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return

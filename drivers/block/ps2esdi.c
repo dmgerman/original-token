@@ -275,7 +275,7 @@ r_int
 id|ps2esdi_reread_partitions
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 )paren
 suffix:semicolon
@@ -5049,7 +5049,7 @@ id|ps2esdi_drives
 id|sync_dev
 c_func
 (paren
-id|dev
+id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
 id|access_count
@@ -5438,7 +5438,7 @@ r_int
 id|ps2esdi_reread_partitions
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 )paren
 (brace

@@ -1426,14 +1426,6 @@ DECL|macro|ISOFS_ZONE_BITS
 mdefine_line|#define ISOFS_ZONE_BITS(INODE)   ((INODE)-&gt;i_sb-&gt;u.isofs_sb.s_log_zone_size)
 DECL|macro|ISOFS_SUPER_MAGIC
 mdefine_line|#define ISOFS_SUPER_MAGIC 0x9660
-DECL|macro|ISOFS_FILE_UNKNOWN
-mdefine_line|#define ISOFS_FILE_UNKNOWN 0
-DECL|macro|ISOFS_FILE_TEXT
-mdefine_line|#define ISOFS_FILE_TEXT 1
-DECL|macro|ISOFS_FILE_BINARY
-mdefine_line|#define ISOFS_FILE_BINARY 2
-DECL|macro|ISOFS_FILE_TEXT_M
-mdefine_line|#define ISOFS_FILE_TEXT_M 3
 macro_line|#ifdef __KERNEL__
 r_extern
 r_int

@@ -86,11 +86,11 @@ mdefine_line|#define TASK_INTERRUPTIBLE&t;1
 DECL|macro|TASK_UNINTERRUPTIBLE
 mdefine_line|#define TASK_UNINTERRUPTIBLE&t;2
 DECL|macro|TASK_ZOMBIE
-mdefine_line|#define TASK_ZOMBIE&t;&t;3
+mdefine_line|#define TASK_ZOMBIE&t;&t;4
 DECL|macro|TASK_STOPPED
-mdefine_line|#define TASK_STOPPED&t;&t;4
+mdefine_line|#define TASK_STOPPED&t;&t;8
 DECL|macro|TASK_SWAPPING
-mdefine_line|#define TASK_SWAPPING&t;&t;5
+mdefine_line|#define TASK_SWAPPING&t;&t;16
 multiline_comment|/*&n; * Scheduling policies&n; */
 DECL|macro|SCHED_OTHER
 mdefine_line|#define SCHED_OTHER&t;&t;0
@@ -1309,6 +1309,26 @@ r_void
 id|FASTCALL
 c_func
 (paren
+id|__wake_up
+c_func
+(paren
+r_struct
+id|wait_queue
+op_star
+op_star
+id|p
+comma
+r_int
+r_int
+id|mode
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|FASTCALL
+c_func
+(paren
 id|sleep_on
 c_func
 (paren
@@ -1341,38 +1361,6 @@ r_void
 id|FASTCALL
 c_func
 (paren
-id|wake_up
-c_func
-(paren
-r_struct
-id|wait_queue
-op_star
-op_star
-id|p
-)paren
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|FASTCALL
-c_func
-(paren
-id|wake_up_interruptible
-c_func
-(paren
-r_struct
-id|wait_queue
-op_star
-op_star
-id|p
-)paren
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|FASTCALL
-c_func
-(paren
 id|wake_up_process
 c_func
 (paren
@@ -1383,6 +1371,10 @@ id|tsk
 )paren
 )paren
 suffix:semicolon
+DECL|macro|wake_up
+mdefine_line|#define wake_up(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE)
+DECL|macro|wake_up_interruptible
+mdefine_line|#define wake_up_interruptible(x)&t;__wake_up((x),TASK_INTERRUPTIBLE)
 r_extern
 r_int
 id|in_group_p

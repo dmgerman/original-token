@@ -1958,6 +1958,19 @@ id|NUD_VALID
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|rt-&gt;u.dst.neighbour
+)paren
+id|neigh_event_send
+c_func
+(paren
+id|rt-&gt;u.dst.neighbour
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|ip_rt_put
 c_func
 (paren
@@ -2301,8 +2314,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -2367,8 +2378,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -2797,8 +2806,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -5990,8 +5997,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -6422,8 +6427,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return

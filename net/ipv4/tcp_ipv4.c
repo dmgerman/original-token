@@ -2488,8 +2488,6 @@ id|kfree_skb
 c_func
 (paren
 id|buff
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|release_sock
@@ -4174,8 +4172,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -6197,8 +6193,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 multiline_comment|/* Be careful here. If this function gets more complicated and&n;&t; * gcc suffers from register pressure on the x86, sk (in %ebx) &n;&t; * might be destroyed here. This current version compiles correctly,&n;&t; * but you have been warned.&n;&t; */
@@ -6528,8 +6522,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -7249,8 +7241,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -7276,8 +7266,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace

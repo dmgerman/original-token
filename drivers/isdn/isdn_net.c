@@ -423,8 +423,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;first_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;first_skb
@@ -442,8 +440,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;sav_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sav_skb
@@ -1086,8 +1082,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;first_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;first_skb
@@ -1105,8 +1099,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;sav_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;sav_skb
@@ -3154,8 +3146,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_errors
@@ -3678,8 +3668,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|ndev-&gt;tbusy
@@ -3748,8 +3736,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|isdn_net_unbind_channel
@@ -3805,8 +3791,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;first_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;first_skb
@@ -3854,8 +3838,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|ndev-&gt;tbusy
@@ -4511,8 +4493,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -10186,8 +10166,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace

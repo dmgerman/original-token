@@ -2091,6 +2091,8 @@ suffix:semicolon
 r_char
 op_star
 id|menulabel
+op_assign
+l_string|&quot;tkgen error&quot;
 suffix:semicolon
 multiline_comment|/*&n;   * Start by assigning menu numbers, and submenu numbers.&n;   */
 r_for

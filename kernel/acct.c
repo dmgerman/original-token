@@ -1037,7 +1037,8 @@ op_assign
 id|encode_comp_t
 c_func
 (paren
-id|current-&gt;io_usage
+l_int|0
+multiline_comment|/* current-&gt;io_usage */
 )paren
 suffix:semicolon
 multiline_comment|/* %% */

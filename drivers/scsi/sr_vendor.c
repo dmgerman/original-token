@@ -1,4 +1,4 @@
-multiline_comment|/* -*-linux-c-*-&n; *&n; * vendor-specific code for SCSI CD-ROM&squot;s goes here.&n; *&n; * This is needed becauce most of the new features (multisession and&n; * the like) are to new to be included into the SCSI-II standard (to&n; * be exact: there is&squot;nt anything in my draft copy).&n; *&n; * Aug 1997: Ha! Got a SCSI-3 cdrom spec across my fingers. SCSI-3 does&n; *           multisession using the READ TOC command (like SONY).&n; *&n; *           Rearranged stuff here: SCSI-3 is included allways, support&n; *           for NEC/TOSHIBA/HP commands is optional.&n; *&n; *   Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; &n; *&n; * --------------------------------------------------------------------------&n; *&n; * support for XA/multisession-CD&squot;s&n; * &n; *   - NEC:     Detection and support of multisession CD&squot;s.&n; *     &n; *   - TOSHIBA: Detection and support of multisession CD&squot;s.&n; *              Some XA-Sector tweaking, required for older drives.&n; *&n; *   - SONY:&t;Detection and support of multisession CD&squot;s.&n; *              added by Thomas Quinot &lt;thomas@cuivre.freenix.fr&gt;&n; *&n; *   - PIONEER, HITACHI, PLEXTOR, MATSHITA, TEAC, PHILIPS: known to&n; *              work with SONY (SCSI3 now)  code.&n; *&n; *   - HP:&t;Much like SONY, but a little different... (Thomas)&n; *              HP-Writers only ??? Maybe other CD-Writers work with this too ?&n; *&t;&t;HP 6020 writers now supported.&n; */
+multiline_comment|/* -*-linux-c-*-&n; *&n; * vendor-specific code for SCSI CD-ROM&squot;s goes here.&n; *&n; * This is needed becauce most of the new features (multisession and&n; * the like) are too new to be included into the SCSI-II standard (to&n; * be exact: there is&squot;nt anything in my draft copy).&n; *&n; * Aug 1997: Ha! Got a SCSI-3 cdrom spec across my fingers. SCSI-3 does&n; *           multisession using the READ TOC command (like SONY).&n; *&n; *           Rearranged stuff here: SCSI-3 is included allways, support&n; *           for NEC/TOSHIBA/HP commands is optional.&n; *&n; *   Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; &n; *&n; * --------------------------------------------------------------------------&n; *&n; * support for XA/multisession-CD&squot;s&n; * &n; *   - NEC:     Detection and support of multisession CD&squot;s.&n; *     &n; *   - TOSHIBA: Detection and support of multisession CD&squot;s.&n; *              Some XA-Sector tweaking, required for older drives.&n; *&n; *   - SONY:&t;Detection and support of multisession CD&squot;s.&n; *              added by Thomas Quinot &lt;thomas@cuivre.freenix.fr&gt;&n; *&n; *   - PIONEER, HITACHI, PLEXTOR, MATSHITA, TEAC, PHILIPS: known to&n; *              work with SONY (SCSI3 now)  code.&n; *&n; *   - HP:&t;Much like SONY, but a little different... (Thomas)&n; *              HP-Writers only ??? Maybe other CD-Writers work with this too ?&n; *&t;&t;HP 6020 writers now supported.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -156,6 +156,19 @@ l_string|&quot;CD-ROM DRIVE:84 &quot;
 comma
 l_int|16
 )paren
+macro_line|#if 0
+multiline_comment|/* my NEC 3x returns the read-raw data if a read-raw&n;&t;&t;           is followed by a read for the same sector - aeb */
+op_logical_or
+op_logical_neg
+id|strncmp
+(paren
+id|model
+comma
+l_string|&quot;CD-ROM DRIVE:500&quot;
+comma
+l_int|16
+)paren
+macro_line|#endif
 )paren
 multiline_comment|/* these can&squot;t handle multisession, may hang */
 id|scsi_CDs
@@ -459,12 +472,6 @@ id|cdi
 r_int
 r_int
 id|sector
-comma
-id|min
-comma
-id|sec
-comma
-id|frame
 suffix:semicolon
 r_int
 r_char
@@ -482,8 +489,6 @@ suffix:semicolon
 multiline_comment|/* the scsi-command */
 r_int
 id|rc
-comma
-id|is_xa
 comma
 id|no_multi
 comma
@@ -542,11 +547,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* the multisession sector offset goes here  */
-id|is_xa
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* flag: the CD uses XA-Sectors              */
 id|no_multi
 op_assign
 l_int|0
@@ -731,6 +731,15 @@ macro_line|#ifdef CONFIG_BLK_DEV_SR_VENDOR
 r_case
 id|VENDOR_NEC
 suffix:colon
+(brace
+r_int
+r_int
+id|min
+comma
+id|sec
+comma
+id|frame
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -882,9 +891,19 @@ id|frame
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 r_case
 id|VENDOR_TOSHIBA
 suffix:colon
+(brace
+r_int
+r_int
+id|min
+comma
+id|sec
+comma
+id|frame
+suffix:semicolon
 multiline_comment|/* we request some disc information (is it a XA-CD ?,&n;&t;&t; * where starts the last session ?) */
 id|memset
 c_func
@@ -1030,6 +1049,7 @@ id|CD_MSF_OFFSET
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 r_case
 id|VENDOR_WRITER
 suffix:colon

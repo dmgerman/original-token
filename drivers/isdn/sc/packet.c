@@ -525,8 +525,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|data
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|indicate_status

@@ -1862,10 +1862,6 @@ id|end_code
 comma
 id|end_data
 suffix:semicolon
-r_int
-r_int
-id|elf_stack
-suffix:semicolon
 r_char
 id|passed_fileno
 (braket
@@ -2084,11 +2080,6 @@ id|current-&gt;files-&gt;fd
 (braket
 id|elf_exec_fileno
 )braket
-suffix:semicolon
-id|elf_stack
-op_assign
-op_complement
-l_int|0UL
 suffix:semicolon
 id|elf_interpreter
 op_assign
@@ -2692,15 +2683,20 @@ r_int
 )paren
 id|elf_ex.e_entry
 suffix:semicolon
+multiline_comment|/* Do this immediately, since STACK_TOP as used in setup_arg_pages&n;&t;   may depend on the personality.  */
+id|SET_PERSONALITY
+c_func
+(paren
+id|elf_ex
+comma
+id|ibcs2_interpreter
+)paren
+suffix:semicolon
 multiline_comment|/* Do this so that we can load the interpreter, if need be.  We will&n;&t;   change some of these later */
 id|current-&gt;mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef ELF_FLAGS_INIT
-id|ELF_FLAGS_INIT
-suffix:semicolon
-macro_line|#endif
 id|bprm-&gt;p
 op_assign
 id|setup_arg_pages
@@ -2889,21 +2885,6 @@ id|elf_ppnt-&gt;p_vaddr
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef LOW_ELF_STACK
-r_if
-c_cond
-(paren
-id|error
-OL
-id|elf_stack
-)paren
-id|elf_stack
-op_assign
-id|error
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3163,12 +3144,6 @@ c_func
 id|elf_exec_fileno
 )paren
 suffix:semicolon
-id|SET_PERSONALITY
-c_func
-(paren
-id|ibcs2_interpreter
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3242,14 +3217,6 @@ c_func
 (paren
 id|bprm-&gt;dentry
 )paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef LOW_ELF_STACK
-id|current-&gt;start_stack
-op_assign
-id|bprm-&gt;p
-op_assign
-id|elf_stack
 suffix:semicolon
 macro_line|#endif
 id|current-&gt;suid

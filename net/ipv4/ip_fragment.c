@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.30 1997/12/29 19:52:32 kuznet Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.30 1997/12/29 19:52:32 kuznet Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -189,9 +189,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-id|type
 )paren
 (brace
 id|atomic_sub
@@ -207,8 +204,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|type
 )paren
 suffix:semicolon
 )brace
@@ -611,8 +606,6 @@ id|frag_kfree_skb
 c_func
 (paren
 id|fp-&gt;skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|frag_kfree_s
@@ -681,6 +674,30 @@ op_star
 )paren
 id|arg
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|qp-&gt;fragments
+)paren
+(brace
+macro_line|#ifdef IP_EXPIRE_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;warning: possible ip-expire attack&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ip_free
+c_func
+(paren
+id|qp
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Send an ICMP &quot;Fragment Reassembly Timeout&quot; message. */
 id|ip_statistics.IpReasmTimeout
 op_increment
@@ -1329,8 +1346,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|ip_statistics.IpReasmFails
@@ -1691,8 +1706,6 @@ id|kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|ip_statistics.IpReasmFails
@@ -1746,8 +1759,6 @@ id|frag_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|ip_statistics.IpReasmFails
@@ -1956,8 +1967,6 @@ id|frag_kfree_skb
 c_func
 (paren
 id|tmp-&gt;skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 id|frag_kfree_s
@@ -2005,8 +2014,6 @@ id|frag_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return

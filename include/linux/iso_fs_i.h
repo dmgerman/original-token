@@ -11,11 +11,6 @@ r_int
 r_int
 id|i_first_extent
 suffix:semicolon
-DECL|member|i_file_format
-r_int
-r_char
-id|i_file_format
-suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -1763,8 +1763,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|lp-&gt;outgoing.skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_dropped
@@ -2194,8 +2192,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|out-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|out-&gt;skb
@@ -2365,8 +2361,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|out-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -3352,8 +3346,6 @@ id|kfree_skb
 c_func
 (paren
 id|in-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_errors
@@ -3678,8 +3670,6 @@ id|kfree_skb
 c_func
 (paren
 id|in-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|in-&gt;skb
@@ -3749,8 +3739,6 @@ id|kfree_skb
 c_func
 (paren
 id|in-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -4025,8 +4013,6 @@ id|kfree_skb
 c_func
 (paren
 id|in-&gt;skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|in-&gt;skb
@@ -4543,9 +4529,11 @@ op_star
 id|dev-&gt;priv
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_int
 id|status
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;   * Only ARP and IP are currently supported&n;   *&n;   * FIXME: Anyone want to spec IPv6 over ARCnet ?&n;   */
 r_if
 c_cond
@@ -5033,8 +5021,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;intx
@@ -5174,8 +5160,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -5632,8 +5616,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_if
@@ -5676,8 +5658,6 @@ id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_dropped

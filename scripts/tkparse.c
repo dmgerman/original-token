@@ -2495,7 +2495,10 @@ suffix:semicolon
 r_char
 op_star
 id|old_file
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* superfluous, just for gcc */
 r_char
 op_star
 id|pnt

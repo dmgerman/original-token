@@ -31276,13 +31276,7 @@ multiline_comment|/* link */
 l_int|NULL
 comma
 multiline_comment|/* handle */
-id|MKDEV
-c_func
-(paren
-id|MAJOR_NR
-comma
 l_int|0
-)paren
 comma
 multiline_comment|/* dev */
 l_int|0

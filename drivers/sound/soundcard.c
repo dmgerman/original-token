@@ -4388,6 +4388,11 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* If something was left allocated by accident */
+id|sequencer_unload
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -5017,8 +5022,8 @@ id|dma_buffsize
 op_assign
 id|DSP_BUFFSIZE
 suffix:semicolon
-r_int
 DECL|function|sound_alloc_dmap
+r_int
 id|sound_alloc_dmap
 c_func
 (paren
