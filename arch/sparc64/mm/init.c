@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.150 2000/04/12 08:10:22 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.151 2000/04/26 17:09:32 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4070,6 +4070,7 @@ id|num_bytes
 op_eq
 l_int|0
 )paren
+(brace
 id|sp_banks
 (braket
 id|i
@@ -4079,6 +4080,32 @@ id|base_addr
 op_assign
 l_int|0xdeadbeef
 suffix:semicolon
+)brace
+r_else
+(brace
+id|sp_banks
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+dot
+id|num_bytes
+op_assign
+l_int|0
+suffix:semicolon
+id|sp_banks
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+dot
+id|base_addr
+op_assign
+l_int|0xdeadbeef
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace

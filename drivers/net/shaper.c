@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;&t;Simple traffic shaper for Linux NET3.&n; *&n; *&t;(c) Copyright 1996 Alan Cox &lt;alan@redhat.com&gt;, All Rights Reserved.&n; *&t;&t;&t;&t;http://www.redhat.com&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; *&t;Neither Alan Cox nor CymruNet Ltd. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&n; *&n; *&t;&n; *&t;Algorithm:&n; *&n; *&t;Queue Frame:&n; *&t;&t;Compute time length of frame at regulated speed&n; *&t;&t;Add frame to queue at appropriate point&n; *&t;&t;Adjust time length computation for followup frames&n; *&t;&t;Any frame that falls outside of its boundaries is freed&n; *&n; *&t;We work to the following constants&n; *&n; *&t;&t;SHAPER_QLEN&t;Maximum queued frames&n; *&t;&t;SHAPER_LATENCY&t;Bounding latency on a frame. Leaving this latency&n; *&t;&t;&t;&t;window drops the frame. This stops us queueing &n; *&t;&t;&t;&t;frames for a long time and confusing a remote&n; *&t;&t;&t;&t;host.&n; *&t;&t;SHAPER_MAXSLIP&t;Maximum time a priority frame may jump forward.&n; *&t;&t;&t;&t;That bounds the penalty we will inflict on low&n; *&t;&t;&t;&t;priority traffic.&n; *&t;&t;SHAPER_BURST&t;Time range we call &quot;now&quot; in order to reduce&n; *&t;&t;&t;&t;system load. The more we make this the burstier&n; *&t;&t;&t;&t;the behaviour, the better local performance you&n; *&t;&t;&t;&t;get through packet clustering on routers and the&n; *&t;&t;&t;&t;worse the remote end gets to judge rtts.&n; *&n; *&t;This is designed to handle lower speed links ( &lt; 200K/second or so). We&n; *&t;run off a 100-150Hz base clock typically. This gives us a resolution at&n; *&t;200Kbit/second of about 2Kbit or 256 bytes. Above that our timer&n; *&t;resolution may start to cause much more burstiness in the traffic. We&n; *&t;could avoid a lot of that by calling kick_shaper() at the end of the &n; *&t;tied device transmissions. If you run above about 100K second you &n; *&t;may need to tune the supposed speed rate for the right values.&n; *&n; *&t;BUGS:&n; *&t;&t;Downing the interface under the shaper before the shaper&n; *&t;&t;will render your machine defunct. Don&squot;t for now shape over&n; *&t;&t;PPP or SLIP therefore!&n; *&t;&t;This will be fixed in BETA4&n; *&n; * Update History :&n; *&n; *              bh_atomic() SMP races fixes and rewritten the locking code to&n; *              be SMP safe and irq-mask friendly.&n; *              NOTE: we can&squot;t use start_bh_atomic() in kick_shaper()&n; *              because it&squot;s going to be recalled from an irq handler,&n; *              and synchronize_bh() is a nono if called from irq context.&n; *&t;&t;&t;&t;&t;&t;1999  Andrea Arcangeli&n; *&n; *              Device statistics (tx_pakets, tx_bytes,&n; *              tx_drops: queue_over_time and collisions: max_queue_exceded)&n; *                               1999/06/18 Jordi Murgo &lt;savage@apostols.org&gt;&n; */
+multiline_comment|/*&n; *&t;&t;&t;Simple traffic shaper for Linux NET3.&n; *&n; *&t;(c) Copyright 1996 Alan Cox &lt;alan@redhat.com&gt;, All Rights Reserved.&n; *&t;&t;&t;&t;http://www.redhat.com&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; *&t;Neither Alan Cox nor CymruNet Ltd. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&n; *&n; *&t;&n; *&t;Algorithm:&n; *&n; *&t;Queue Frame:&n; *&t;&t;Compute time length of frame at regulated speed&n; *&t;&t;Add frame to queue at appropriate point&n; *&t;&t;Adjust time length computation for followup frames&n; *&t;&t;Any frame that falls outside of its boundaries is freed&n; *&n; *&t;We work to the following constants&n; *&n; *&t;&t;SHAPER_QLEN&t;Maximum queued frames&n; *&t;&t;SHAPER_LATENCY&t;Bounding latency on a frame. Leaving this latency&n; *&t;&t;&t;&t;window drops the frame. This stops us queueing &n; *&t;&t;&t;&t;frames for a long time and confusing a remote&n; *&t;&t;&t;&t;host.&n; *&t;&t;SHAPER_MAXSLIP&t;Maximum time a priority frame may jump forward.&n; *&t;&t;&t;&t;That bounds the penalty we will inflict on low&n; *&t;&t;&t;&t;priority traffic.&n; *&t;&t;SHAPER_BURST&t;Time range we call &quot;now&quot; in order to reduce&n; *&t;&t;&t;&t;system load. The more we make this the burstier&n; *&t;&t;&t;&t;the behaviour, the better local performance you&n; *&t;&t;&t;&t;get through packet clustering on routers and the&n; *&t;&t;&t;&t;worse the remote end gets to judge rtts.&n; *&n; *&t;This is designed to handle lower speed links ( &lt; 200K/second or so). We&n; *&t;run off a 100-150Hz base clock typically. This gives us a resolution at&n; *&t;200Kbit/second of about 2Kbit or 256 bytes. Above that our timer&n; *&t;resolution may start to cause much more burstiness in the traffic. We&n; *&t;could avoid a lot of that by calling kick_shaper() at the end of the &n; *&t;tied device transmissions. If you run above about 100K second you &n; *&t;may need to tune the supposed speed rate for the right values.&n; *&n; *&t;BUGS:&n; *&t;&t;Downing the interface under the shaper before the shaper&n; *&t;&t;will render your machine defunct. Don&squot;t for now shape over&n; *&t;&t;PPP or SLIP therefore!&n; *&t;&t;This will be fixed in BETA4&n; *&n; * Update History :&n; *&n; *              bh_atomic() SMP races fixes and rewritten the locking code to&n; *              be SMP safe and irq-mask friendly.&n; *              NOTE: we can&squot;t use start_bh_atomic() in kick_shaper()&n; *              because it&squot;s going to be recalled from an irq handler,&n; *              and synchronize_bh() is a nono if called from irq context.&n; *&t;&t;&t;&t;&t;&t;1999  Andrea Arcangeli&n; *&n; *              Device statistics (tx_pakets, tx_bytes,&n; *              tx_drops: queue_over_time and collisions: max_queue_exceded)&n; *                               1999/06/18 Jordi Murgo &lt;savage@apostols.org&gt;&n; *&n; *&t;&t;Use skb-&gt;cb for private data.&n; *&t;&t;&t;&t; 2000/03 Andi Kleen&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,6 +17,39 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/if_shaper.h&gt;
+DECL|struct|shaper_cb
+r_struct
+id|shaper_cb
+(brace
+DECL|member|shapelatency
+id|__u32
+id|shapelatency
+suffix:semicolon
+multiline_comment|/* Latency on frame */
+DECL|member|shapeclock
+id|__u32
+id|shapeclock
+suffix:semicolon
+multiline_comment|/* Time it should go out */
+DECL|member|shapelen
+id|__u32
+id|shapelen
+suffix:semicolon
+multiline_comment|/* Frame length in clocks */
+DECL|member|shapestamp
+id|__u32
+id|shapestamp
+suffix:semicolon
+multiline_comment|/* Stamp for shaper    */
+DECL|member|shapepend
+id|__u16
+id|shapepend
+suffix:semicolon
+multiline_comment|/* Pending */
+)brace
+suffix:semicolon
+DECL|macro|SHAPERCB
+mdefine_line|#define SHAPERCB(skb) ((struct shaper_cb *) ((skb)-&gt;cb))
 DECL|variable|sh_debug
 r_int
 id|sh_debug
@@ -238,11 +271,23 @@ op_assign
 id|shaper-&gt;sendq.prev
 suffix:semicolon
 multiline_comment|/*&n; &t; *&t;Set up our packet details&n; &t; */
-id|skb-&gt;shapelatency
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapelatency
 op_assign
 l_int|0
 suffix:semicolon
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_assign
 id|shaper-&gt;recovery
 suffix:semicolon
@@ -252,13 +297,25 @@ c_cond
 id|time_before
 c_func
 (paren
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 comma
 id|jiffies
 )paren
 )paren
 (brace
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_assign
 id|jiffies
 suffix:semicolon
@@ -268,12 +325,24 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* short term bug fix */
-id|skb-&gt;shapestamp
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapestamp
 op_assign
 id|jiffies
 suffix:semicolon
 multiline_comment|/*&n; &t; *&t;Time slots for this packet.&n; &t; */
-id|skb-&gt;shapelen
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapelen
 op_assign
 id|shaper_clocks
 c_func
@@ -309,7 +378,13 @@ id|skb-&gt;pri
 op_logical_and
 id|jiffies
 op_minus
-id|ptr-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|ptr
+)paren
+op_member_access_from_pointer
+id|shapeclock
 OL
 id|SHAPER_MAXSLIP
 )paren
@@ -322,19 +397,49 @@ op_assign
 id|ptr-&gt;prev
 suffix:semicolon
 multiline_comment|/*&n; &t;&t;&t; *&t;It goes before us therefore we slip the length&n; &t;&t;&t; *&t;of the new frame.&n; &t;&t;&t; */
-id|ptr-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|ptr
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_add_assign
-id|skb-&gt;shapelen
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapelen
 suffix:semicolon
-id|ptr-&gt;shapelatency
+id|SHAPERCB
+c_func
+(paren
+id|ptr
+)paren
+op_member_access_from_pointer
+id|shapelatency
 op_add_assign
-id|skb-&gt;shapelen
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapelen
 suffix:semicolon
 multiline_comment|/*&n; &t;&t;&t; *&t;The packet may have slipped so far back it&n; &t;&t;&t; *&t;fell off.&n; &t;&t;&t; */
 r_if
 c_cond
 (paren
-id|ptr-&gt;shapelatency
+id|SHAPERCB
+c_func
+(paren
+id|ptr
+)paren
+op_member_access_from_pointer
+id|shapelatency
 OG
 id|SHAPER_LATENCY
 )paren
@@ -422,7 +527,13 @@ op_assign
 id|tmp-&gt;next
 )paren
 (brace
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_add_assign
 id|tmp-&gt;shapelen
 suffix:semicolon
@@ -475,16 +586,34 @@ op_assign
 id|tmp-&gt;next
 )paren
 (brace
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_add_assign
-id|tmp-&gt;shapelen
+id|SHAPERCB
+c_func
+(paren
+id|tmp
+)paren
+op_member_access_from_pointer
+id|shapelen
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Queue over time. Spill packet.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_minus
 id|jiffies
 OG
@@ -804,7 +933,13 @@ c_func
 (paren
 l_string|&quot;Clock = %d, jiffies = %ld&bslash;n&quot;
 comma
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 comma
 id|jiffies
 )paren
@@ -816,7 +951,13 @@ c_cond
 id|time_before_eq
 c_func
 (paren
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_minus
 id|jiffies
 comma
@@ -836,18 +977,48 @@ c_cond
 (paren
 id|shaper-&gt;recovery
 OL
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_plus
-id|skb-&gt;shapelen
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapelen
 )paren
 id|shaper-&gt;recovery
 op_assign
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 op_plus
-id|skb-&gt;shapelen
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapelen
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Pass on to the physical target device via&n;&t;&t;&t; *&t;our low level packet thrower.&n;&t;&t;&t; */
-id|skb-&gt;shapepend
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapepend
 op_assign
 l_int|0
 suffix:semicolon
@@ -880,7 +1051,13 @@ c_func
 op_amp
 id|shaper-&gt;timer
 comma
-id|skb-&gt;shapeclock
+id|SHAPERCB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|shapeclock
 )paren
 suffix:semicolon
 )brace

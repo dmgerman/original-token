@@ -366,7 +366,7 @@ id|VM_SWAPOUT
 op_assign
 l_int|2
 comma
-multiline_comment|/* int: Background pageout interval */
+multiline_comment|/* int: Linear or sqrt() swapout for hogs */
 DECL|enumerator|VM_FREEPG
 id|VM_FREEPG
 op_assign

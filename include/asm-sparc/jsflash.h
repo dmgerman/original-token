@@ -55,5 +55,5 @@ id|size
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif /* _SPARC_IDE_H */
+macro_line|#endif /* _SPARC_JSFLASH_H */
 eof

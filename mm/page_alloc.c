@@ -23,6 +23,8 @@ suffix:semicolon
 DECL|variable|nr_lru_pages
 r_int
 id|nr_lru_pages
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|pgdat_list
 id|pg_data_t
@@ -1087,6 +1089,15 @@ id|zone
 op_assign
 id|zonelist-&gt;zones
 suffix:semicolon
+r_int
+id|gfp_mask
+op_assign
+id|zonelist-&gt;gfp_mask
+suffix:semicolon
+r_static
+r_int
+id|low_on_memory
+suffix:semicolon
 multiline_comment|/*&n;&t; * If this is a recursive call, we&squot;d better&n;&t; * do our best to just allocate things without&n;&t; * further thought.&n;&t; */
 r_if
 c_cond
@@ -1097,6 +1108,28 @@ id|PF_MEMALLOC
 )paren
 r_goto
 id|allocate_ok
+suffix:semicolon
+multiline_comment|/* If we&squot;re a memory hog, unmap some pages */
+r_if
+c_cond
+(paren
+id|current-&gt;hog
+op_logical_and
+id|low_on_memory
+op_logical_and
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_WAIT
+)paren
+)paren
+id|swap_out
+c_func
+(paren
+l_int|4
+comma
+id|gfp_mask
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * (If anyone calls gfp from interrupts nonatomically then it&n;&t; * will sooner or later tripped up by a schedule().)&n;&t; *&n;&t; * We are falling back to lower-level zones if allocation&n;&t; * in a higher zone fails.&n;&t; */
 r_for
@@ -1160,6 +1193,10 @@ comma
 id|order
 )paren
 suffix:semicolon
+id|low_on_memory
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1170,6 +1207,10 @@ id|page
 suffix:semicolon
 )brace
 )brace
+id|low_on_memory
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, no obvious zones were available, start&n;&t; * balancing things a bit..&n;&t; */
 r_if
 c_cond
@@ -2112,6 +2153,13 @@ id|i
 op_star
 l_int|3
 suffix:semicolon
+id|memlist_init
+c_func
+(paren
+op_amp
+id|lru_cache
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Some architectures (with lots of mem and discontinous memory&n;&t; * maps) have to search for a good mem_map area:&n;&t; * For discontigmem, the conceptual mem map array starts from &n;&t; * PAGE_OFFSET, we need to align the actual array onto a mem map &n;&t; * boundary, so that MAP_NR works.&n;&t; */
 id|map_size
 op_assign
@@ -2526,13 +2574,6 @@ id|i
 )braket
 dot
 id|free_list
-)paren
-suffix:semicolon
-id|memlist_init
-c_func
-(paren
-op_amp
-id|zone-&gt;lru_cache
 )paren
 suffix:semicolon
 id|mask

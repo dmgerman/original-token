@@ -1189,6 +1189,9 @@ r_struct
 id|list_head
 op_star
 id|p
+comma
+op_star
+id|next
 suffix:semicolon
 r_for
 c_loop
@@ -1204,7 +1207,7 @@ id|vfsmntlist
 suffix:semicolon
 id|p
 op_assign
-id|p-&gt;next
+id|next
 )paren
 (brace
 r_struct
@@ -1222,6 +1225,10 @@ id|vfsmount
 comma
 id|mnt_list
 )paren
+suffix:semicolon
+id|next
+op_assign
+id|p-&gt;next
 suffix:semicolon
 r_if
 c_cond
@@ -1251,16 +1258,10 @@ c_func
 id|mnt-&gt;mnt_dirname
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|mnt
-comma
-r_sizeof
-(paren
-r_struct
-id|vfsmount
-)paren
 )paren
 suffix:semicolon
 )brace

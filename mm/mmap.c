@@ -292,6 +292,8 @@ op_logical_neg
 id|do_munmap
 c_func
 (paren
+id|mm
+comma
 id|newbrk
 comma
 id|oldbrk
@@ -996,6 +998,8 @@ c_cond
 id|do_munmap
 c_func
 (paren
+id|mm
+comma
 id|addr
 comma
 id|len
@@ -1171,6 +1175,7 @@ id|MAP_SHARED
 id|error
 op_assign
 id|map_zero_setup
+c_func
 (paren
 id|vma
 )paren
@@ -1934,6 +1939,11 @@ id|unmap_fixup
 c_func
 (paren
 r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
 id|vm_area_struct
 op_star
 id|area
@@ -2050,7 +2060,7 @@ suffix:semicolon
 id|vmlist_modify_lock
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 )paren
 suffix:semicolon
 )brace
@@ -2080,7 +2090,7 @@ suffix:semicolon
 id|vmlist_modify_lock
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 )paren
 suffix:semicolon
 )brace
@@ -2180,13 +2190,13 @@ multiline_comment|/* Truncate area */
 id|vmlist_modify_lock
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 )paren
 suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|mpnt
 )paren
@@ -2195,7 +2205,7 @@ suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|area
 )paren
@@ -2203,7 +2213,7 @@ suffix:semicolon
 id|vmlist_modify_unlock
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 )paren
 suffix:semicolon
 r_return
@@ -2430,6 +2440,11 @@ r_int
 id|do_munmap
 c_func
 (paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
 r_int
 r_int
 id|addr
@@ -2438,11 +2453,6 @@ r_int
 id|len
 )paren
 (brace
-r_struct
-id|mm_struct
-op_star
-id|mm
-suffix:semicolon
 r_struct
 id|vm_area_struct
 op_star
@@ -2505,10 +2515,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* Check if this memory area is ok - put it on the temporary&n;&t; * list if so..  The checks here are pretty simple --&n;&t; * every area affected in some way (by any overlap) is put&n;&t; * on the list.  If nothing is put on, nothing is affected.&n;&t; */
-id|mm
-op_assign
-id|current-&gt;mm
-suffix:semicolon
 id|mpnt
 op_assign
 id|find_vma_prev
@@ -2788,6 +2794,8 @@ op_assign
 id|unmap_fixup
 c_func
 (paren
+id|mm
+comma
 id|mpnt
 comma
 id|st
@@ -2847,11 +2855,18 @@ id|len
 r_int
 id|ret
 suffix:semicolon
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
 id|down
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 id|ret
@@ -2859,6 +2874,8 @@ op_assign
 id|do_munmap
 c_func
 (paren
+id|mm
+comma
 id|addr
 comma
 id|len
@@ -2868,7 +2885,7 @@ id|up
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
@@ -2970,6 +2987,8 @@ op_assign
 id|do_munmap
 c_func
 (paren
+id|mm
+comma
 id|addr
 comma
 id|len

@@ -2268,6 +2268,11 @@ comma
 id|req-&gt;wb_cred
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2283,6 +2288,11 @@ id|dput
 c_func
 (paren
 id|req-&gt;wb_dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|page_cache_release

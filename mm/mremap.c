@@ -712,6 +712,8 @@ suffix:semicolon
 id|do_munmap
 c_func
 (paren
+id|current-&gt;mm
+comma
 id|addr
 comma
 id|old_len
@@ -939,6 +941,8 @@ suffix:semicolon
 id|do_munmap
 c_func
 (paren
+id|current-&gt;mm
+comma
 id|new_addr
 comma
 id|new_len
@@ -961,6 +965,8 @@ id|new_len
 id|do_munmap
 c_func
 (paren
+id|current-&gt;mm
+comma
 id|addr
 op_plus
 id|new_len

@@ -498,6 +498,8 @@ suffix:semicolon
 id|do_munmap
 c_func
 (paren
+id|current-&gt;mm
+comma
 id|newbrk
 comma
 id|oldbrk

@@ -1153,6 +1153,8 @@ op_assign
 id|do_munmap
 c_func
 (paren
+id|current-&gt;mm
+comma
 id|addr
 comma
 id|len

@@ -6184,6 +6184,13 @@ id|shmaddr
 )paren
 (brace
 r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
+r_struct
 id|vm_area_struct
 op_star
 id|shmd
@@ -6195,7 +6202,7 @@ id|down
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_for
@@ -6203,7 +6210,7 @@ c_loop
 (paren
 id|shmd
 op_assign
-id|current-&gt;mm-&gt;mmap
+id|mm-&gt;mmap
 suffix:semicolon
 id|shmd
 suffix:semicolon
@@ -6240,6 +6247,8 @@ id|shmaddr
 id|do_munmap
 c_func
 (paren
+id|mm
+comma
 id|shmd-&gt;vm_start
 comma
 id|shmd-&gt;vm_end
@@ -6252,7 +6261,7 @@ id|up
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return

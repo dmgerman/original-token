@@ -27,6 +27,11 @@ r_extern
 r_int
 id|page_cluster
 suffix:semicolon
+r_extern
+r_struct
+id|list_head
+id|lru_cache
+suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
@@ -1419,6 +1424,10 @@ r_int
 id|do_munmap
 c_func
 (paren
+r_struct
+id|mm_struct
+op_star
+comma
 r_int
 r_int
 comma

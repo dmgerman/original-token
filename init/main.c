@@ -958,6 +958,14 @@ op_lshift
 l_int|8
 )brace
 comma
+(brace
+l_string|&quot;jsfd&quot;
+comma
+id|JSFD_MAJOR
+op_lshift
+l_int|8
+)brace
+comma
 macro_line|#ifdef CONFIG_MDISK
 (brace
 l_string|&quot;mnda&quot;

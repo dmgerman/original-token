@@ -2140,7 +2140,7 @@ c_cond
 (paren
 id|brk
 OL
-id|current-&gt;mm-&gt;end_code
+id|mm-&gt;end_code
 )paren
 (brace
 id|ret
@@ -2194,7 +2194,7 @@ c_cond
 (paren
 id|brk
 op_le
-id|current-&gt;mm-&gt;brk
+id|mm-&gt;brk
 )paren
 (brace
 id|mm-&gt;brk
@@ -2204,6 +2204,8 @@ suffix:semicolon
 id|do_munmap
 c_func
 (paren
+id|mm
+comma
 id|newbrk
 comma
 id|oldbrk

@@ -7615,6 +7615,9 @@ comma
 (paren
 r_int
 )paren
+(paren
+r_int
+)paren
 id|ohci-&gt;regs
 comma
 l_string|&quot;OHCI&quot;

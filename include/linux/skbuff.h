@@ -254,6 +254,7 @@ id|dst_entry
 op_star
 id|dst
 suffix:semicolon
+multiline_comment|/* &n;&t; * This is the control buffer. It is free to use for every&n;&t; * layer. Please put your private variables there. If you&n;&t; * want to keep them across layers you have to do a skb_clone()&n;&t; * first. This is owned by whoever has the skb queued ATM.&n;&t; */
 DECL|member|cb
 r_char
 id|cb
@@ -393,33 +394,6 @@ id|nf_debug
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif /*CONFIG_NETFILTER*/
-macro_line|#if defined(CONFIG_SHAPER) || defined(CONFIG_SHAPER_MODULE)
-DECL|member|shapelatency
-id|__u32
-id|shapelatency
-suffix:semicolon
-multiline_comment|/* Latency on frame */
-DECL|member|shapeclock
-id|__u32
-id|shapeclock
-suffix:semicolon
-multiline_comment|/* Time it should go out */
-DECL|member|shapelen
-id|__u32
-id|shapelen
-suffix:semicolon
-multiline_comment|/* Frame length in clocks */
-DECL|member|shapestamp
-id|__u32
-id|shapestamp
-suffix:semicolon
-multiline_comment|/* Stamp for shaper    */
-DECL|member|shapepend
-id|__u16
-id|shapepend
-suffix:semicolon
-multiline_comment|/* Pending */
-macro_line|#endif
 macro_line|#if defined(CONFIG_HIPPI)
 (def_block
 r_union

@@ -592,8 +592,7 @@ suffix:semicolon
 )brace
 DECL|function|usbdev_lseek
 r_static
-r_int
-r_int
+id|loff_t
 id|usbdev_lseek
 c_func
 (paren
@@ -602,8 +601,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int

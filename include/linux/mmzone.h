@@ -71,11 +71,6 @@ id|pages_low
 comma
 id|pages_high
 suffix:semicolon
-DECL|member|lru_cache
-r_struct
-id|list_head
-id|lru_cache
-suffix:semicolon
 multiline_comment|/*&n;&t; * free areas of different sizes&n;&t; */
 DECL|member|free_area
 id|free_area_t
