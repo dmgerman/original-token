@@ -73,7 +73,7 @@ macro_line|# endif /* !KERNEL */
 multiline_comment|/*&n; * Memory fence w/accept.  This should never be used in code that is&n; * not IA-64 specific.&n; */
 DECL|macro|__ia64_mf_a
 mdefine_line|#define __ia64_mf_a()&t;__asm__ __volatile__ (&quot;mf.a&quot; ::: &quot;memory&quot;)
-r_extern
+r_static
 r_inline
 r_const
 r_int
@@ -84,27 +84,16 @@ id|__ia64_get_io_port_base
 r_void
 )paren
 (brace
+r_extern
 r_int
 r_int
-id|addr
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;mov %0=ar.k0;;&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|addr
-)paren
-)paren
+id|ia64_iobase
 suffix:semicolon
 r_return
-id|__IA64_UNCACHED_OFFSET
-op_or
-id|addr
+id|ia64_iobase
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -159,7 +148,7 @@ id|addr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * For the in/out instructions, we need to do:&n; *&n; *&t;o &quot;mf&quot; _before_ doing the I/O access to ensure that all prior&n; *&t;  accesses to memory occur before the I/O access&n; *&t;o &quot;mf.a&quot; _after_ doing the I/O access to ensure that the access&n; *&t;  has completed before we&squot;re doing any other I/O accesses&n; *&n; * The former is necessary because we might be doing normal (cached) memory&n; * accesses, e.g., to set up a DMA descriptor table and then do an &quot;outX()&quot;&n; * to tell the DMA controller to start the DMA operation.  The &quot;mf&quot; ahead&n; * of the I/O operation ensures that the DMA table is correct when the I/O&n; * access occurs.&n; *&n; * The mf.a is necessary to ensure that all I/O access occur in program&n; * order. --davidm 99/12/07 &n; */
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -201,7 +190,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -243,7 +232,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -285,7 +274,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__insb
@@ -351,7 +340,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__insw
@@ -417,7 +406,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__insl
@@ -483,7 +472,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__outb
@@ -521,7 +510,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__outw
@@ -559,7 +548,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__outl
@@ -597,7 +586,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__outsb
@@ -660,7 +649,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__outsw
@@ -723,7 +712,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__outsl
@@ -810,7 +799,7 @@ mdefine_line|#define outsw&t;&t;__outsw
 DECL|macro|outsl
 mdefine_line|#define outsl&t;&t;__outsl
 multiline_comment|/*&n; * The address passed to these functions are ioremap()ped already.&n; */
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -833,7 +822,7 @@ op_star
 id|addr
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -856,7 +845,7 @@ op_star
 id|addr
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -879,7 +868,7 @@ op_star
 id|addr
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -902,7 +891,7 @@ op_star
 id|addr
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__writeb
@@ -929,7 +918,7 @@ op_assign
 id|val
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__writew
@@ -956,7 +945,7 @@ op_assign
 id|val
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__writel
@@ -983,7 +972,7 @@ op_assign
 id|val
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__writeq

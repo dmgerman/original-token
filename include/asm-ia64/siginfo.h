@@ -455,12 +455,11 @@ DECL|macro|sigev_notify_attributes
 mdefine_line|#define sigev_notify_attributes&t;_sigev_un._sigev_thread._attribute
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/string.h&gt;
-DECL|function|copy_siginfo
-r_extern
+r_static
 r_inline
 r_void
+DECL|function|copy_siginfo
 id|copy_siginfo
-c_func
 (paren
 id|siginfo_t
 op_star

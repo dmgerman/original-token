@@ -148,6 +148,20 @@ r_int
 id|new_psr
 )paren
 (brace
+r_int
+id|tmp
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;movl %0=1f&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tmp
+)paren
+)paren
+suffix:semicolon
 id|asm
 r_volatile
 (paren
@@ -166,8 +180,7 @@ l_string|&quot;mov cr.iip=%0&quot;
 op_scope_resolution
 l_string|&quot;r&quot;
 (paren
-op_logical_and
-id|target
+id|tmp
 )paren
 )paren
 suffix:semicolon
@@ -183,9 +196,12 @@ r_volatile
 l_string|&quot;rfi;;&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* must be last insn in an insn group */
-id|target
-suffix:colon
+id|asm
+r_volatile
+(paren
+l_string|&quot;1:&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|macro|MAX_ARGS
 mdefine_line|#define MAX_ARGS 32
@@ -287,7 +303,7 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;movl gp=__gp&quot;
+l_string|&quot;movl gp=__gp;;&quot;
 op_scope_resolution
 suffix:colon
 l_string|&quot;memory&quot;

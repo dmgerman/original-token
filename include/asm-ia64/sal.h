@@ -3,6 +3,7 @@ DECL|macro|_ASM_IA64_SAL_H
 mdefine_line|#define _ASM_IA64_SAL_H
 multiline_comment|/*&n; * System Abstraction Layer definitions.&n; *&n; * This is based on version 2.5 of the manual &quot;IA-64 System&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/09/29 davidm&t;Updated for SAL 2.6.&n; * 00/03/29 cfleck      Updated SAL Error Logging info for processor (SAL 2.6) &n; *                      (plus examples of platform error info structures from smariset @ Intel)&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/pal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
@@ -388,6 +389,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|ia64_sal_desc_ptc
+r_typedef
 r_struct
 id|ia64_sal_desc_ptc
 (brace
@@ -409,11 +411,54 @@ id|num_domains
 suffix:semicolon
 multiline_comment|/* # of coherence domains */
 DECL|member|domain_info
-r_int
+id|s64
 id|domain_info
 suffix:semicolon
 multiline_comment|/* physical address of domain info table */
+DECL|typedef|ia64_sal_desc_ptc_t
 )brace
+id|ia64_sal_desc_ptc_t
+suffix:semicolon
+DECL|struct|ia64_sal_ptc_domain_info
+r_typedef
+r_struct
+id|ia64_sal_ptc_domain_info
+(brace
+DECL|member|proc_count
+r_int
+r_int
+id|proc_count
+suffix:semicolon
+multiline_comment|/* number of processors in domain */
+DECL|member|proc_list
+r_int
+id|proc_list
+suffix:semicolon
+multiline_comment|/* physical address of LID array */
+DECL|typedef|ia64_sal_ptc_domain_info_t
+)brace
+id|ia64_sal_ptc_domain_info_t
+suffix:semicolon
+DECL|struct|ia64_sal_ptc_domain_proc_entry
+r_typedef
+r_struct
+id|ia64_sal_ptc_domain_proc_entry
+(brace
+DECL|member|id
+r_int
+r_char
+id|id
+suffix:semicolon
+multiline_comment|/* id of processor */
+DECL|member|eid
+r_int
+r_char
+id|eid
+suffix:semicolon
+multiline_comment|/* eid of processor */
+DECL|typedef|ia64_sal_ptc_domain_proc_entry_t
+)brace
+id|ia64_sal_ptc_domain_proc_entry_t
 suffix:semicolon
 DECL|macro|IA64_SAL_AP_EXTERNAL_INT
 mdefine_line|#define IA64_SAL_AP_EXTERNAL_INT 0
@@ -447,6 +492,12 @@ suffix:semicolon
 r_extern
 id|ia64_sal_handler
 id|ia64_sal
+suffix:semicolon
+r_extern
+r_struct
+id|ia64_sal_desc_ptc
+op_star
+id|ia64_ptc_domain_info
 suffix:semicolon
 r_extern
 r_const
@@ -1194,7 +1245,7 @@ DECL|typedef|ia64_psilog_t
 id|ia64_psilog_t
 suffix:semicolon
 multiline_comment|/*&n; * Now define a couple of inline functions for improved type checking&n; * and convenience.&n; */
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|ia64_sal_freq_base
@@ -1244,7 +1295,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Flush all the processor and platform level instruction and/or data caches */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_cache_flush
@@ -1273,7 +1324,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize all the processor and platform level instruction and data caches */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_cache_init
@@ -1299,7 +1350,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Clear the processor and platform information logged by SAL with respect to the &n; * machine state at the time of MCA&squot;s, INITs or CMCs &n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_clear_state_info
@@ -1333,7 +1384,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Get the processor and platform information logged by SAL with respect to the machine&n; * state at the time of the MCAs, INITs or CMCs.&n; */
-r_extern
+r_static
 r_inline
 id|u64
 DECL|function|ia64_sal_get_state_info
@@ -1381,7 +1432,7 @@ id|isrv.v0
 suffix:semicolon
 )brace
 multiline_comment|/* Get the maximum size of the information logged by SAL with respect to the machine &n; * state at the time of MCAs, INITs or CMCs&n; */
-r_extern
+r_static
 r_inline
 id|u64
 DECL|function|ia64_sal_get_state_info_size
@@ -1423,7 +1474,7 @@ id|isrv.v0
 suffix:semicolon
 )brace
 multiline_comment|/* Causes the processor to go into a spin loop within SAL where SAL awaits a wakeup&n; * from the monarch processor.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_mc_rendez
@@ -1449,7 +1500,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Allow the OS to specify the interrupt number to be used by SAL to interrupt OS during&n; * the machine check rendezvous sequence as well as the mechanism to wake up the &n; * non-monarch processor at the end of machine check processing.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_mc_set_params
@@ -1493,7 +1544,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Read from PCI configuration space */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_pci_config_read
@@ -1572,7 +1623,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Write to PCI configuration space */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_pci_config_write
@@ -1642,7 +1693,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Register physical addresses of locations needed by SAL when SAL&n; * procedures are invoked in virtual mode.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_register_physical_addr
@@ -1676,7 +1727,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Register software dependent code locations within SAL. These locations are handlers&n; * or entry points where SAL will pass control for the specified event. These event&n; * handlers are for the bott rendezvous, MCAs and INIT scenarios.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_set_vectors
@@ -1735,7 +1786,7 @@ id|isrv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Update the contents of PAL block in the non-volatile storage device */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_sal_update_pal

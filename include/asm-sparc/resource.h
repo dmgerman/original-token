@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: resource.h,v 1.11 1999/12/15 17:51:59 jj Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: resource.h,v 1.12 2000/09/23 02:09:21 davem Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_RESOURCE_H
 DECL|macro|_SPARC_RESOURCE_H
 mdefine_line|#define _SPARC_RESOURCE_H

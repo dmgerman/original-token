@@ -170,7 +170,15 @@ op_assign
 (brace
 l_int|0x414B4D00
 comma
-l_string|&quot;Asahi Kasei AK4540&quot;
+l_string|&quot;Asahi Kasei AK4540 rev 0&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|0x414B4D01
+comma
+l_string|&quot;Asahi Kasei AK4540 rev 1&quot;
 comma
 l_int|NULL
 )brace
@@ -3359,8 +3367,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ac97_codec: AC97 %s codec, vendor id1: 0x%04x, &quot;
-l_string|&quot;id2: 0x%04x (%s)&bslash;n&quot;
+l_string|&quot;ac97_codec: AC97 %s codec, id: 0x%04x:&quot;
+l_string|&quot;0x%04x (%s)&bslash;n&quot;
 comma
 id|audio
 ques

@@ -164,8 +164,10 @@ DECL|macro|LSAPIC_PERFORMANCE_RESTRICTED
 mdefine_line|#define LSAPIC_PERFORMANCE_RESTRICTED (1&lt;&lt;1)
 DECL|macro|LSAPIC_PRESENT
 mdefine_line|#define LSAPIC_PRESENT                (1&lt;&lt;2)
+DECL|struct|acpi_entry_lsapic
 r_typedef
 r_struct
+id|acpi_entry_lsapic
 (brace
 DECL|member|type
 id|u8

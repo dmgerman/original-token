@@ -15,6 +15,9 @@ macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef&t;CONFIG_ACPI_KERNEL_CONFIG
+macro_line|# include &lt;asm/acpikcfg.h&gt;
+macro_line|#endif
 DECL|macro|DEBUG_IRQ_ROUTING
 macro_line|#undef DEBUG_IRQ_ROUTING
 DECL|variable|iosapic_lock
@@ -776,6 +779,8 @@ r_int
 id|i
 comma
 id|irq
+comma
+id|num_pci_vectors
 suffix:semicolon
 r_if
 c_cond
@@ -877,6 +882,18 @@ macro_line|#endif
 )brace
 macro_line|#ifndef CONFIG_IA64_SOFTSDV_HACKS
 multiline_comment|/* &n;&t; * Map the PCI Interrupt data into the ACPI IOSAPIC data using&n;&t; * the info that the bootstrap loader passed to us.&n;&t; */
+macro_line|# ifdef CONFIG_ACPI_KERNEL_CONFIG
+id|acpi_cf_get_pci_vectors
+c_func
+(paren
+op_amp
+id|vectors
+comma
+op_amp
+id|num_pci_vectors
+)paren
+suffix:semicolon
+macro_line|# else
 id|ia64_boot_param.pci_vectors
 op_assign
 (paren
@@ -897,6 +914,11 @@ op_star
 )paren
 id|ia64_boot_param.pci_vectors
 suffix:semicolon
+id|num_pci_vectors
+op_assign
+id|ia64_boot_param.num_pci_vectors
+suffix:semicolon
+macro_line|# endif
 r_for
 c_loop
 (paren
@@ -906,7 +928,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|ia64_boot_param.num_pci_vectors
+id|num_pci_vectors
 suffix:semicolon
 id|i
 op_increment
@@ -1034,7 +1056,7 @@ id|irq
 op_assign
 id|IO_SAPIC_POL_LOW
 suffix:semicolon
-macro_line|#ifdef DEBUG_IRQ_ROUTING
+macro_line|# ifdef DEBUG_IRQ_ROUTING
 id|printk
 c_func
 (paren
@@ -1079,7 +1101,7 @@ id|irq
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|# endif
 )brace
 macro_line|#endif /* CONFIG_IA64_SOFTSDV_HACKS */
 r_for
@@ -1512,7 +1534,17 @@ op_assign
 id|iosapic_version
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
 id|iosapic-&gt;address
+comma
+l_int|0
+)paren
 )paren
 suffix:semicolon
 id|max_pin

@@ -1341,6 +1341,7 @@ c_func
 id|impl_va_msb
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_DISABLE_VHPT
 multiline_comment|/*&n;&t; * Set the (virtually mapped linear) page table address.  Bit&n;&t; * 8 selects between the short and long format, bits 2-7 the&n;&t; * size of the table, and bit 0 whether the VHPT walker is&n;&t; * enabled.&n;&t; */
 id|ia64_set_pta
 c_func
@@ -1372,6 +1373,38 @@ op_or
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#else
+id|ia64_set_pta
+c_func
+(paren
+id|pta
+op_or
+(paren
+l_int|0
+op_lshift
+l_int|8
+)paren
+op_or
+(paren
+(paren
+l_int|3
+op_star
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|3
+)paren
+op_plus
+l_int|3
+)paren
+op_lshift
+l_int|2
+)paren
+op_or
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Set up the page tables.&n; */
 r_void
@@ -1771,14 +1804,6 @@ comma
 id|GATE_ADDR
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_IA64_SOFTSDV_HACKS
-multiline_comment|/*&n;&t; * (Some) SoftSDVs seem to have a problem with this call.&n;&t; * Since it&squot;s mostly a performance optimization, just don&squot;t do&n;&t; * it for now...  --davidm 99/12/6&n;&t; */
-id|efi_enter_virtual_mode
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_IA32_SUPPORT
 id|ia32_gdt_init
 c_func

@@ -701,8 +701,7 @@ id|buffer
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 r_default
 suffix:colon

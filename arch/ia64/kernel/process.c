@@ -1160,7 +1160,7 @@ l_int|16
 suffix:semicolon
 multiline_comment|/*&n;&t; * NOTE: The calling convention considers all floating point&n;&t; * registers in the high partition (fph) to be scratch.  Since&n;&t; * the only way to get to this point is through a system call,&n;&t; * we know that the values in fph are all dead.  Hence, there&n;&t; * is no need to inherit the fph state from the parent to the&n;&t; * child and all we have to do is to make sure that&n;&t; * IA64_THREAD_FPH_VALID is cleared in the child.&n;&t; *&n;&t; * XXX We could push this optimization a bit further by&n;&t; * clearing IA64_THREAD_FPH_VALID on ANY system call.&n;&t; * However, it&squot;s not clear this is worth doing.  Also, it&n;&t; * would be a slight deviation from the normal Linux system&n;&t; * call behavior where scratch registers are preserved across&n;&t; * system calls (unless used by the system call itself).&n;&t; */
 DECL|macro|THREAD_FLAGS_TO_CLEAR
-macro_line|#&t;define THREAD_FLAGS_TO_CLEAR&t;(IA64_THREAD_FPH_VALID | IA64_THREAD_DBG_VALID)
+macro_line|#&t;define THREAD_FLAGS_TO_CLEAR&t;(IA64_THREAD_FPH_VALID | IA64_THREAD_DBG_VALID &bslash;&n;&t;&t;&t;&t;&t; | IA64_THREAD_PM_VALID)
 DECL|macro|THREAD_FLAGS_TO_SET
 macro_line|#&t;define THREAD_FLAGS_TO_SET&t;0
 id|p-&gt;thread.flags
@@ -1384,6 +1384,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * coredump format:&n;&t; *&t;r0-r31&n;&t; *&t;NaT bits (for r0-r31; bit N == 1 iff rN is a NaT)&n;&t; *&t;predicate registers (p0-p63)&n;&t; *&t;b0-b7&n;&t; *&t;ip cfm user-mask&n;&t; *&t;ar.rsc ar.bsp ar.bspstore ar.rnat&n;&t; *&t;ar.ccv ar.unat ar.fpsr ar.pfs ar.lc ar.ec&n;&t; */
 multiline_comment|/* r0 is zero */
 r_for
 c_loop
@@ -1666,16 +1667,6 @@ op_star
 id|arg
 )paren
 (brace
-r_struct
-id|task_struct
-op_star
-id|fpu_owner
-op_assign
-id|ia64_get_fpu_owner
-c_func
-(paren
-)paren
-suffix:semicolon
 id|elf_fpreg_t
 op_star
 id|dst
@@ -1739,28 +1730,23 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|fpu_owner
-op_eq
-id|current
-)paren
-op_logical_or
-(paren
-id|current-&gt;thread.flags
-op_amp
-id|IA64_THREAD_FPH_VALID
-)paren
-)paren
-(brace
-id|ia64_sync_fph
+id|ia64_flush_fph
 c_func
 (paren
 id|current
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|current-&gt;thread.flags
+op_amp
+id|IA64_THREAD_FPH_VALID
+)paren
+op_ne
+l_int|0
+)paren
 id|memcpy
 c_func
 (paren
@@ -1775,7 +1761,6 @@ op_star
 l_int|16
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* CONFIG_IA64_NEW_UNWIND */
 r_void
@@ -2354,16 +2339,6 @@ id|pt
 op_minus
 l_int|1
 suffix:semicolon
-r_struct
-id|task_struct
-op_star
-id|fpu_owner
-op_assign
-id|ia64_get_fpu_owner
-c_func
-(paren
-)paren
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -2452,37 +2427,23 @@ l_int|16
 )paren
 suffix:semicolon
 multiline_comment|/* f10-f31 are contiguous */
+id|ia64_flush_fph
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|fpu_owner
-op_eq
-id|current
-)paren
-op_logical_or
 (paren
 id|current-&gt;thread.flags
 op_amp
 id|IA64_THREAD_FPH_VALID
 )paren
+op_ne
+l_int|0
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|fpu_owner
-op_eq
-id|current
-)paren
-(brace
-id|__ia64_save_fpu
-c_func
-(paren
-id|current-&gt;thread.fph
-)paren
-suffix:semicolon
-)brace
 id|memcpy
 c_func
 (paren
@@ -2497,7 +2458,6 @@ op_star
 l_int|16
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_return
 l_int|1
@@ -2618,7 +2578,11 @@ id|current
 suffix:semicolon
 r_int
 id|result
+comma
+id|tid
 suffix:semicolon
+id|tid
+op_assign
 id|clone
 c_func
 (paren
@@ -2655,9 +2619,8 @@ id|result
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|tid
 suffix:semicolon
-multiline_comment|/* parent: just return */
 )brace
 multiline_comment|/*&n; * Flush thread state.  This is called when a thread does an execve().&n; */
 r_void
@@ -2677,6 +2640,7 @@ op_or
 id|IA64_THREAD_DBG_VALID
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -2687,14 +2651,13 @@ c_func
 op_eq
 id|current
 )paren
-(brace
 id|ia64_set_fpu_owner
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
-)brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Clean up state associated with current thread.  This is called when&n; * the thread calls exit().&n; */
 r_void
@@ -2704,6 +2667,7 @@ id|exit_thread
 r_void
 )paren
 (brace
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -2714,14 +2678,43 @@ c_func
 op_eq
 id|current
 )paren
-(brace
 id|ia64_set_fpu_owner
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PERFMON
+multiline_comment|/* stop monitoring */
+r_if
+c_cond
+(paren
+(paren
+id|current-&gt;thread.flags
+op_amp
+id|IA64_THREAD_PM_VALID
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * we cannot rely on switch_to() to save the PMU&n;&t;&t; * context for the last time. There is a possible race&n;&t;&t; * condition in SMP mode between the child and the&n;&t;&t; * parent.  by explicitly saving the PMU context here&n;&t;&t; * we garantee no race.  this call we also stop&n;&t;&t; * monitoring&n;&t;&t; */
+id|ia64_save_pm_regs
+c_func
+(paren
+op_amp
+id|current-&gt;thread
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * make sure that switch_to() will not save context again&n;&t;&t; */
+id|current-&gt;thread.flags
+op_and_assign
+op_complement
+id|IA64_THREAD_PM_VALID
+suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_int
 r_int

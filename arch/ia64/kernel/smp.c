@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SMP Support&n; *&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * &n; * Lots of stuff stolen from arch/alpha/kernel/smp.c&n; *&n; *  00/03/31 Rohit Seth &lt;rohit.seth@intel.com&gt;&t;Fixes for Bootstrap Processor &amp; cpu_online_map&n; *&t;&t;&t;now gets done here (instead of setup.c)&n; *  99/10/05 davidm&t;Update to bring it in sync with new command-line processing scheme.&n; */
+multiline_comment|/*&n; * SMP Support&n; *&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * &n; * Lots of stuff stolen from arch/alpha/kernel/smp.c&n; *&n; *  00/09/11 David Mosberger &lt;davidm@hpl.hp.com&gt; Do loops_per_sec calibration on each CPU.&n; *  00/08/23 Asit Mallick &lt;asit.k.mallick@intel.com&gt; fixed logical processor id&n; *  00/03/31 Rohit Seth &lt;rohit.seth@intel.com&gt;&t;Fixes for Bootstrap Processor &amp; cpu_online_map&n; *&t;&t;&t;now gets done here (instead of setup.c)&n; *  99/10/05 davidm&t;Update to bring it in sync with new command-line processing scheme.&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/current.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -24,6 +25,15 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/unistd.h&gt;
+r_extern
+r_void
+id|__init
+id|calibrate_delay
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|cpu_idle
@@ -36,7 +46,7 @@ id|unused
 suffix:semicolon
 r_extern
 r_void
-id|_start
+id|machine_halt
 c_func
 (paren
 r_void
@@ -44,7 +54,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|machine_halt
+id|start_ap
 c_func
 (paren
 r_void
@@ -71,29 +81,22 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* Duh... */
+DECL|variable|__initdata
+r_struct
+id|smp_boot_data
+id|smp_boot_data
+id|__initdata
+suffix:semicolon
 DECL|variable|kernel_flag
 id|spinlock_t
 id|kernel_flag
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-DECL|variable|__initdata
-r_struct
-id|smp_boot_data
-id|smp
-id|__initdata
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|no_int_routing
 r_char
-id|no_int_routing
 id|__initdata
-op_assign
-l_int|0
+id|no_int_routing
 suffix:semicolon
 DECL|variable|smp_int_redirect
 r_int
@@ -101,10 +104,10 @@ r_char
 id|smp_int_redirect
 suffix:semicolon
 multiline_comment|/* are INT and IPI redirectable by the chipset? */
-DECL|variable|__cpu_number_map
+DECL|variable|__cpu_physical_id
 r_volatile
 r_int
-id|__cpu_number_map
+id|__cpu_physical_id
 (braket
 id|NR_CPUS
 )braket
@@ -115,48 +118,22 @@ l_int|1
 comma
 )brace
 suffix:semicolon
-multiline_comment|/* SAPIC ID -&gt; Logical ID */
-DECL|variable|__cpu_logical_map
-r_volatile
-r_int
-id|__cpu_logical_map
-(braket
-id|NR_CPUS
-)braket
-op_assign
-(brace
-op_minus
-l_int|1
-comma
-)brace
-suffix:semicolon
-multiline_comment|/* logical ID -&gt; SAPIC ID */
+multiline_comment|/* Logical ID -&gt; SAPIC ID */
 DECL|variable|smp_num_cpus
 r_int
 id|smp_num_cpus
 op_assign
 l_int|1
 suffix:semicolon
-DECL|variable|bootstrap_processor
-r_int
-id|bootstrap_processor
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* SAPIC ID of BSP */
 DECL|variable|smp_threads_ready
+r_volatile
 r_int
 id|smp_threads_ready
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Set when the idlers are all forked */
 DECL|variable|cacheflush_time
 id|cycles_t
 id|cacheflush_time
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ap_wakeup_vector
 r_int
@@ -167,6 +144,19 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* External Int to use to wakeup AP&squot;s */
+DECL|variable|cpu_callin_map
+r_static
+r_volatile
+r_int
+r_int
+id|cpu_callin_map
+suffix:semicolon
+DECL|variable|smp_commenced
+r_static
+r_volatile
+r_int
+id|smp_commenced
+suffix:semicolon
 DECL|variable|max_cpus
 r_static
 r_int
@@ -393,6 +383,13 @@ r_int
 id|retry
 )paren
 (brace
+r_volatile
+r_int
+op_star
+id|ptr
+op_assign
+id|lock
+suffix:semicolon
 id|again
 suffix:colon
 r_if
@@ -432,12 +429,7 @@ r_while
 c_loop
 (paren
 op_star
-(paren
-r_void
-op_star
-op_star
-)paren
-id|lock
+id|ptr
 )paren
 suffix:semicolon
 r_goto
@@ -916,11 +908,6 @@ id|op
 r_int
 id|i
 suffix:semicolon
-r_int
-id|cpu_id
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -936,17 +923,10 @@ id|i
 op_increment
 )paren
 (brace
-id|cpu_id
-op_assign
-id|__cpu_logical_map
-(braket
-id|i
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|cpu_id
+id|i
 op_ne
 id|smp_processor_id
 c_func
@@ -956,7 +936,7 @@ c_func
 id|send_IPI_single
 c_func
 (paren
-id|cpu_id
+id|i
 comma
 id|op
 )paren
@@ -994,10 +974,7 @@ op_increment
 id|send_IPI_single
 c_func
 (paren
-id|__cpu_logical_map
-(braket
 id|i
-)braket
 comma
 id|op
 )paren
@@ -1110,6 +1087,7 @@ r_struct
 id|smp_call_struct
 id|data
 suffix:semicolon
+r_int
 r_int
 id|timeout
 suffix:semicolon
@@ -1317,6 +1295,7 @@ r_struct
 id|smp_call_struct
 id|data
 suffix:semicolon
+r_int
 r_int
 id|timeout
 suffix:semicolon
@@ -1601,246 +1580,19 @@ id|data-&gt;prof_counter
 op_assign
 id|data-&gt;prof_multiplier
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * update_process_times() expects us to have done irq_enter().&n;&t;&t; * Besides, if we don&squot;t timer interrupts ignore the global&n;&t;&t; * interrupt lock, which is the WrongThing (tm) to do.&n;&t;&t; */
-id|irq_enter
-c_func
-(paren
-id|cpu
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|update_process_times
 c_func
 (paren
 id|user
 )paren
 suffix:semicolon
-id|irq_exit
-c_func
-(paren
-id|cpu
-comma
-l_int|0
-)paren
-suffix:semicolon
 )brace
-)brace
-r_static
-r_inline
-r_void
-id|__init
-DECL|function|smp_calibrate_delay
-id|smp_calibrate_delay
-c_func
-(paren
-r_int
-id|cpuid
-)paren
-(brace
-r_struct
-id|cpuinfo_ia64
-op_star
-id|c
-op_assign
-op_amp
-id|cpu_data
-(braket
-id|cpuid
-)braket
-suffix:semicolon
-macro_line|#if 0
-r_int
-r_int
-id|old
-op_assign
-id|loops_per_sec
-suffix:semicolon
-r_extern
-r_void
-id|calibrate_delay
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|loops_per_sec
-op_assign
-l_int|0
-suffix:semicolon
-id|calibrate_delay
-c_func
-(paren
-)paren
-suffix:semicolon
-id|c-&gt;loops_per_sec
-op_assign
-id|loops_per_sec
-suffix:semicolon
-id|loops_per_sec
-op_assign
-id|old
-suffix:semicolon
-macro_line|#else
-id|c-&gt;loops_per_sec
-op_assign
-id|loops_per_sec
-suffix:semicolon
-macro_line|#endif
-)brace
-multiline_comment|/* &n; * SAL shoves the AP&squot;s here when we start them.  Physical mode, no kernel TR, &n; * no RRs set, better than even chance that psr is bogus.  Fix all that and &n; * call _start.  In effect, pretend to be lilo.&n; *&n; * Stolen from lilo_start.c.  Thanks David! &n; */
-r_void
-DECL|function|start_ap
-id|start_ap
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/*&n;&t; * Install a translation register that identity maps the&n;&t; * kernel&squot;s 256MB page(s).&n;&t; */
-id|ia64_clear_ic
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|ia64_set_rr
-c_func
-(paren
-l_int|0
-comma
-(paren
-l_int|0x1000
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-id|_PAGE_SIZE_1M
-op_lshift
-l_int|2
-)paren
-)paren
-suffix:semicolon
-id|ia64_set_rr
-c_func
-(paren
-id|PAGE_OFFSET
-comma
-(paren
-id|ia64_rid
-c_func
-(paren
-l_int|0
-comma
-id|PAGE_OFFSET
-)paren
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-id|_PAGE_SIZE_256M
-op_lshift
-l_int|2
-)paren
-)paren
-suffix:semicolon
-id|ia64_srlz_d
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ia64_itr
-c_func
-(paren
-l_int|0x3
-comma
-l_int|1
-comma
-id|PAGE_OFFSET
-comma
-id|pte_val
-c_func
-(paren
-id|mk_pte_phys
-c_func
-(paren
-l_int|0
-comma
-id|__pgprot
-c_func
-(paren
-id|__DIRTY_BITS
-op_or
-id|_PAGE_PL_0
-op_or
-id|_PAGE_AR_RWX
-)paren
-)paren
-)paren
-comma
-id|_PAGE_SIZE_256M
-)paren
-suffix:semicolon
-id|ia64_srlz_i
-c_func
-(paren
-)paren
-suffix:semicolon
-id|flags
-op_assign
-(paren
-id|IA64_PSR_IT
-op_or
-id|IA64_PSR_IC
-op_or
-id|IA64_PSR_DT
-op_or
-id|IA64_PSR_RT
-op_or
-id|IA64_PSR_DFH
-op_or
-id|IA64_PSR_BN
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;movl r8 = 1f&bslash;n&quot;
-l_string|&quot;;;&bslash;n&quot;
-l_string|&quot;mov cr.ipsr=%0&bslash;n&quot;
-l_string|&quot;mov cr.iip=r8&bslash;n&quot;
-l_string|&quot;mov cr.ifs=r0&bslash;n&quot;
-l_string|&quot;;;&bslash;n&quot;
-l_string|&quot;rfi;;&quot;
-l_string|&quot;1:&bslash;n&quot;
-l_string|&quot;movl r1 = __gp&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|flags
-)paren
-suffix:colon
-l_string|&quot;r8&quot;
-)paren
-suffix:semicolon
-id|_start
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * AP&squot;s start using C here.&n; */
 r_void
 id|__init
 DECL|function|smp_callin
 id|smp_callin
-c_func
 (paren
 r_void
 )paren
@@ -1879,6 +1631,41 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|test_and_set_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|cpu_online_map
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CPU#%d already initialized!&bslash;n&quot;
+comma
+id|cpu
+)paren
+suffix:semicolon
+id|machine_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|efi_map_pal_code
 c_func
 (paren
@@ -1892,10 +1679,7 @@ suffix:semicolon
 id|smp_setup_percpu_timer
 c_func
 (paren
-id|smp_processor_id
-c_func
-(paren
-)paren
+id|cpu
 )paren
 suffix:semicolon
 multiline_comment|/* setup the CPU local timer tick */
@@ -1928,74 +1712,37 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-op_amp
-id|cpu_online_map
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;CPU#%d already initialized!&bslash;n&quot;
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-id|machine_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_logical_neg
-id|smp_threads_ready
-)paren
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
 id|local_irq_enable
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupts have been off until now */
-id|smp_calibrate_delay
+id|calibrate_delay
 c_func
 (paren
-id|smp_processor_id
-c_func
-(paren
-)paren
 )paren
 suffix:semicolon
-id|printk
+id|my_cpu_data.loops_per_sec
+op_assign
+id|loops_per_sec
+suffix:semicolon
+multiline_comment|/* allow the master to continue */
+id|set_bit
 c_func
 (paren
-l_string|&quot;SMP: CPU %d starting idle loop&bslash;n&quot;
+id|cpu
 comma
-id|smp_processor_id
-c_func
-(paren
+op_amp
+id|cpu_callin_map
 )paren
+suffix:semicolon
+multiline_comment|/* finally, wait for the BP to finish initialization: */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|smp_commenced
 )paren
 suffix:semicolon
 id|cpu_idle
@@ -2033,7 +1780,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Bring one cpu online.&n; *&n; * NB: cpuid is the CPU BUS-LOCAL ID, not the entire SAPIC ID.  See asm/smp.h.&n; */
+multiline_comment|/*&n; * Bring one cpu online.  Return 0 if this fails for any reason.&n; */
 r_static
 r_int
 id|__init
@@ -2042,16 +1789,22 @@ id|smp_boot_one_cpu
 c_func
 (paren
 r_int
-id|cpuid
-comma
-r_int
-id|cpunum
+id|cpu
 )paren
 (brace
 r_struct
 id|task_struct
 op_star
 id|idle
+suffix:semicolon
+r_int
+id|cpu_phys_id
+op_assign
+id|cpu_physical_id
+c_func
+(paren
+id|cpu
+)paren
 suffix:semicolon
 r_int
 id|timeout
@@ -2070,9 +1823,9 @@ l_int|0
 id|panic
 c_func
 (paren
-l_string|&quot;failed fork for CPU %d&quot;
+l_string|&quot;failed fork for CPU 0x%x&quot;
 comma
-id|cpuid
+id|cpu_phys_id
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We remove it from the pidhash and the runqueue&n;&t; * once we got the process:&n;&t; */
@@ -2089,14 +1842,14 @@ id|idle
 id|panic
 c_func
 (paren
-l_string|&quot;No idle process for CPU %d&quot;
+l_string|&quot;No idle process for CPU 0x%x&quot;
 comma
-id|cpuid
+id|cpu_phys_id
 )paren
 suffix:semicolon
 id|init_tasks
 (braket
-id|cpunum
+id|cpu
 )braket
 op_assign
 id|idle
@@ -2116,7 +1869,7 @@ suffix:semicolon
 multiline_comment|/* Schedule the first task manually.  */
 id|idle-&gt;processor
 op_assign
-id|cpuid
+id|cpu
 suffix:semicolon
 id|idle-&gt;has_cpu
 op_assign
@@ -2125,13 +1878,13 @@ suffix:semicolon
 multiline_comment|/* Let _start know what logical CPU we&squot;re booting (offset into init_tasks[] */
 id|cpu_now_booting
 op_assign
-id|cpunum
+id|cpu
 suffix:semicolon
 multiline_comment|/* Kick the AP in the butt */
 id|ipi_send
 c_func
 (paren
-id|cpuid
+id|cpu
 comma
 id|ap_wakeup_vector
 comma
@@ -2140,17 +1893,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|ia64_srlz_i
-c_func
-(paren
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* &n;&t; * OK, wait a bit for that CPU to finish staggering about.  smp_callin() will&n;&t; * call cpu_init() which will set a bit for this AP.  When that bit flips, the AP&n;&t; * is waiting for smp_threads_ready to be 1 and we can move on.&n;&t; */
+multiline_comment|/* wait up to 10s for the AP to start  */
 r_for
 c_loop
 (paren
@@ -2172,14 +1915,14 @@ c_cond
 id|test_bit
 c_func
 (paren
-id|cpuid
+id|cpu
 comma
 op_amp
-id|cpu_online_map
+id|cpu_callin_map
 )paren
 )paren
-r_goto
-id|alive
+r_return
+l_int|1
 suffix:semicolon
 id|udelay
 c_func
@@ -2187,43 +1930,18 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;SMP: Processor %d is stuck.&bslash;n&quot;
+l_string|&quot;SMP: Processor 0x%x is stuck.&bslash;n&quot;
 comma
-id|cpuid
+id|cpu_phys_id
 )paren
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-id|alive
-suffix:colon
-multiline_comment|/* Remember the AP data */
-id|__cpu_number_map
-(braket
-id|cpuid
-)braket
-op_assign
-id|cpunum
-suffix:semicolon
-id|__cpu_logical_map
-(braket
-id|cpunum
-)braket
-op_assign
-id|cpuid
-suffix:semicolon
-r_return
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called by smp_init bring all the secondaries online and hold them.  &n; * XXX: this is ACPI specific; it uses &quot;magic&quot; variables exported from acpi.c &n; *      to &squot;discover&squot; the AP&squot;s.  Blech.&n; */
@@ -2252,29 +1970,14 @@ id|memset
 c_func
 (paren
 op_amp
-id|__cpu_number_map
+id|__cpu_physical_id
 comma
 op_minus
 l_int|1
 comma
 r_sizeof
 (paren
-id|__cpu_number_map
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|__cpu_logical_map
-comma
-op_minus
-l_int|1
-comma
-r_sizeof
-(paren
-id|__cpu_logical_map
+id|__cpu_physical_id
 )paren
 )paren
 suffix:semicolon
@@ -2292,29 +1995,21 @@ id|ipi_op
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Setup BSP mappings */
-id|__cpu_number_map
-(braket
-id|bootstrap_processor
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|__cpu_logical_map
+multiline_comment|/* Setup BP mappings */
+id|__cpu_physical_id
 (braket
 l_int|0
 )braket
 op_assign
-id|bootstrap_processor
+id|hard_smp_processor_id
+c_func
+(paren
+)paren
 suffix:semicolon
-id|smp_calibrate_delay
-c_func
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
+multiline_comment|/* on the BP, the kernel already called calibrate_delay_loop() in init/main.c */
+id|my_cpu_data.loops_per_sec
+op_assign
+id|loops_per_sec
 suffix:semicolon
 macro_line|#if 0
 id|smp_tune_scheduling
@@ -2326,7 +2021,7 @@ macro_line|#endif
 id|smp_setup_percpu_timer
 c_func
 (paren
-id|bootstrap_processor
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -2335,7 +2030,7 @@ c_cond
 id|test_and_set_bit
 c_func
 (paren
-id|bootstrap_processor
+l_int|0
 comma
 op_amp
 id|cpu_online_map
@@ -2402,7 +2097,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|smp.cpu_count
+id|smp_boot_data.cpu_count
 OG
 l_int|1
 )paren
@@ -2423,16 +2118,17 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NR_CPUS
+id|smp_boot_data.cpu_count
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* skip performance restricted and bootstrap cpu: */
 r_if
 c_cond
 (paren
-id|smp.cpu_map
+id|smp_boot_data.cpu_phys_id
 (braket
 id|i
 )braket
@@ -2440,33 +2136,42 @@ op_eq
 op_minus
 l_int|1
 op_logical_or
-id|smp.cpu_map
+id|smp_boot_data.cpu_phys_id
 (braket
 id|i
 )braket
 op_eq
-id|bootstrap_processor
+id|hard_smp_processor_id
+c_func
+(paren
+)paren
 )paren
 r_continue
+suffix:semicolon
+id|cpu_physical_id
+c_func
+(paren
+id|cpu_count
+)paren
+op_assign
+id|smp_boot_data.cpu_phys_id
+(braket
+id|i
+)braket
 suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|smp_boot_one_cpu
 c_func
 (paren
-id|smp.cpu_map
-(braket
-id|i
-)braket
-comma
 id|cpu_count
 )paren
-op_eq
-l_int|0
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* failed */
 id|cpu_count
 op_increment
 suffix:semicolon
@@ -2574,7 +2279,7 @@ op_assign
 id|cpu_count
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Called from main.c by each AP.&n; */
+multiline_comment|/* &n; * Called when the BP is just about to fire off init.&n; */
 r_void
 id|__init
 DECL|function|smp_commence
@@ -2584,22 +2289,10 @@ c_func
 r_void
 )paren
 (brace
-id|mb
-c_func
-(paren
-)paren
+id|smp_commenced
+op_assign
+l_int|1
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * Not used; part of the i386 bringup&n; */
-r_void
-id|__init
-DECL|function|initialize_secondary
-id|initialize_secondary
-c_func
-(paren
-r_void
-)paren
-(brace
 )brace
 r_int
 id|__init
@@ -2617,7 +2310,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Assume that CPU&squot;s have been discovered by some platform-dependant&n; * interface.  For SoftSDV/Lion, that would be ACPI.&n; *&n; * Setup of the IPI irq handler is done in irq.c:init_IRQ_SMP().&n; *&n; * So this just gets the BSP SAPIC ID and print&squot;s it out.  Dull, huh?&n; *&n; * Not anymore.  This also registers the AP OS_MC_REDVEZ address with SAL.&n; */
+multiline_comment|/*&n; * Assume that CPU&squot;s have been discovered by some platform-dependant&n; * interface.  For SoftSDV/Lion, that would be ACPI.&n; *&n; * Setup of the IPI irq handler is done in irq.c:init_IRQ_SMP().&n; *&n; * This also registers the AP OS_MC_REDVEZ address with SAL.&n; */
 r_void
 id|__init
 DECL|function|init_smp_config
@@ -2644,14 +2337,6 @@ id|ap_startup
 suffix:semicolon
 r_int
 id|sal_ret
-suffix:semicolon
-multiline_comment|/* Grab the BSP ID */
-id|bootstrap_processor
-op_assign
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* Tell SAL where to drop the AP&squot;s.  */
 id|ap_startup

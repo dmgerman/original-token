@@ -13,29 +13,21 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/iosapic.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#ifdef CONFIG_ACPI_KERNEL_CONFIG
+macro_line|# include &lt;asm/acpikcfg.h&gt;
+macro_line|#endif
 DECL|macro|ACPI_DEBUG
 macro_line|#undef ACPI_DEBUG&t;&t;/* Guess what this does? */
-macro_line|#ifdef CONFIG_SMP
-r_extern
-r_struct
-id|smp_boot_data
-id|smp
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* These are ugly but will be reclaimed by the kernel */
 DECL|variable|available_cpus
 r_int
 id|__initdata
 id|available_cpus
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|total_cpus
 r_int
 id|__initdata
 id|total_cpus
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|pm_idle
 r_void
@@ -143,6 +135,16 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SMP
+id|smp_boot_data.cpu_phys_id
+(braket
+id|total_cpus
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -159,8 +161,7 @@ id|available_cpus
 op_increment
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
-macro_line|# if LARGE_CPU_ID_OK
-id|smp.cpu_map
+id|smp_boot_data.cpu_phys_id
 (braket
 id|total_cpus
 )braket
@@ -173,16 +174,7 @@ l_int|8
 op_or
 id|lsapic-&gt;eid
 suffix:semicolon
-macro_line|# else
-id|smp.cpu_map
-(braket
-id|total_cpus
-)braket
-op_assign
-id|lsapic-&gt;id
-suffix:semicolon
-macro_line|# endif
-macro_line|#endif
+macro_line|#endif /* CONFIG_SMP */
 )brace
 id|total_cpus
 op_increment
@@ -433,7 +425,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#if 1/*def ACPI_DEBUG*/
+macro_line|# ifdef ACPI_DEBUG
 id|printk
 c_func
 (paren
@@ -484,7 +476,7 @@ l_string|&quot;Edge&quot;
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* ACPI_DEBUG */
+macro_line|# endif /* ACPI_DEBUG */
 macro_line|#endif /* CONFIG_IA64_IRQ_ACPI */
 )brace
 multiline_comment|/*&n; * Info on platform interrupt sources: NMI. PMI, INIT, etc.&n; */
@@ -560,23 +552,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
-id|memset
-c_func
-(paren
-op_amp
-id|smp
-comma
-op_minus
-l_int|1
-comma
-r_sizeof
-(paren
-id|smp
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|p
 op_assign
 (paren
@@ -830,6 +805,14 @@ op_amp
 l_int|0xffff
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ACPI_KERNEL_CONFIG
+id|acpi_cf_init
+c_func
+(paren
+id|rsdp
+)paren
+suffix:semicolon
+macro_line|#endif
 id|tables
 op_assign
 (paren
@@ -902,6 +885,13 @@ id|hdrp
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ACPI_KERNEL_CONFIG
+id|acpi_cf_terminate
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
@@ -923,7 +913,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* We&squot;ve got at least one of these, no? */
 )brace
-id|smp.cpu_count
+id|smp_boot_data.cpu_count
 op_assign
 id|available_cpus
 suffix:semicolon
@@ -951,7 +941,7 @@ macro_line|# if defined (CONFIG_IA64_HP_SIM)
 r_return
 l_string|&quot;hpsim&quot;
 suffix:semicolon
-macro_line|# elif defined (CONFIG_IA64_SGI_SN1_SIM)
+macro_line|# elif defined (CONFIG_IA64_SGI_SN1)
 r_return
 l_string|&quot;sn1&quot;
 suffix:semicolon

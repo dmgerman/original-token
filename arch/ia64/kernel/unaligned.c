@@ -2034,6 +2034,10 @@ c_func
 (paren
 l_string|&quot;kbs=%p nlocals=%ld&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|kbs
 comma
 id|nlocals
@@ -2046,6 +2050,10 @@ c_func
 (paren
 l_string|&quot;bspstore next rnat slot %p&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|ia64_rse_rnat_addr
 c_func
 (paren
@@ -2127,10 +2135,22 @@ c_func
 (paren
 l_string|&quot;ubs_end=%p bsp=%p addr=%p slot=0x%lx&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|ubs_end
 comma
+(paren
+r_void
+op_star
+)paren
 id|bsp
 comma
+(paren
+r_void
+op_star
+)paren
 id|addr
 comma
 id|ia64_rse_slot_num
@@ -2189,6 +2209,10 @@ c_func
 (paren
 l_string|&quot;rnat @%p = 0x%lx nat=%d rnatval=%lx&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|addr
 comma
 id|rnats
@@ -2268,6 +2292,10 @@ c_func
 (paren
 l_string|&quot;rnat changed to @%p = 0x%lx&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|addr
 comma
 id|rnats
@@ -2434,10 +2462,22 @@ c_func
 (paren
 l_string|&quot;ubs_end=%p bsp=%p addr=%p slot=0x%lx&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|ubs_end
 comma
+(paren
+r_void
+op_star
+)paren
 id|bsp
 comma
+(paren
+r_void
+op_star
+)paren
 id|addr
 comma
 id|ia64_rse_slot_num
@@ -2496,6 +2536,10 @@ c_func
 (paren
 l_string|&quot;rnat @%p = 0x%lx&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|addr
 comma
 id|rnats
@@ -2711,6 +2755,10 @@ id|val
 comma
 id|nat
 comma
+(paren
+r_void
+op_star
+)paren
 id|unat
 comma
 op_star
@@ -2751,6 +2799,10 @@ id|val
 comma
 id|nat
 comma
+(paren
+r_void
+op_star
+)paren
 id|unat
 comma
 op_star
@@ -2800,7 +2852,7 @@ r_int
 r_int
 id|addr
 suffix:semicolon
-multiline_comment|/*&n;&t; * From EAS-2.5: FPDisableFault has higher priority than &n;&t; * Unaligned Fault. Thus, when we get here, we know the partition is &n;&t; * enabled.&n;&t; *&n;&t; * The registers [32-127] are ususally saved in the tss. When get here,&n;&t; * they are NECESSARILY live because they are only saved explicitely.&n;&t; * We have 3 ways of updating the values: force a save of the range&n;&t; * in tss, use a gigantic switch/case statement or generate code on the&n;&t; * fly to store to the right register.&n;&t; * For now, we are using the (slow) save/restore way.&n;&t; */
+multiline_comment|/*&n;&t; * From EAS-2.5: FPDisableFault has higher priority than Unaligned&n;&t; * Fault. Thus, when we get here, we know the partition is enabled.&n;&t; * To update f32-f127, there are three choices:&n;&t; *&n;&t; *&t;(1) save f32-f127 to thread.fph and update the values there&n;&t; *&t;(2) use a gigantic switch statement to directly access the registers&n;&t; *&t;(3) generate code on the fly to update the desired register&n;&t; *&n;&t; * For now, we are using approach (1).&n;&t; */
 r_if
 c_cond
 (paren
@@ -2997,7 +3049,7 @@ r_int
 r_int
 id|addr
 suffix:semicolon
-multiline_comment|/*&n;&t; * From EAS-2.5: FPDisableFault has higher priority than &n;&t; * Unaligned Fault. Thus, when we get here, we know the partition is &n;&t; * enabled.&n;&t; *&n;&t; * When regnum &gt; 31, the register is still live and&n;&t; * we need to force a save to the tss to get access to it.&n;&t; * See discussion in setfpreg() for reasons and other ways of doing this.&n;&t; */
+multiline_comment|/*&n;&t; * From EAS-2.5: FPDisableFault has higher priority than &n;&t; * Unaligned Fault. Thus, when we get here, we know the partition is &n;&t; * enabled.&n;&t; *&n;&t; * When regnum &gt; 31, the register is still live and we need to force a save&n;&t; * to current-&gt;thread.fph to get access to it.  See discussion in setfpreg()&n;&t; * for reasons and other ways of doing this.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3006,7 +3058,7 @@ op_ge
 id|IA64_FIRST_ROTATING_FR
 )paren
 (brace
-id|ia64_sync_fph
+id|ia64_flush_fph
 c_func
 (paren
 id|current
@@ -4777,7 +4829,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t;&t; * XXX fixme&n;&t;&t; *&n;&t;&t; * A possible optimization would be to drop fpr_final&n;&t;&t; * and directly use the storage from the saved context i.e.,&n;&t;&t; * the actual final destination (pt_regs, switch_stack or tss).&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * XXX fixme&n;&t;&t; *&n;&t;&t; * A possible optimization would be to drop fpr_final and directly&n;&t;&t; * use the storage from the saved context i.e., the actual final&n;&t;&t; * destination (pt_regs, switch_stack or thread structure).&n;&t;&t; */
 id|setfpreg
 c_func
 (paren
@@ -5209,7 +5261,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t;&t; * XXX fixme&n;&t;&t; *&n;&t;&t; * A possible optimization would be to drop fpr_final&n;&t;&t; * and directly use the storage from the saved context i.e.,&n;&t;&t; * the actual final destination (pt_regs, switch_stack or tss).&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * XXX fixme&n;&t;&t; *&n;&t;&t; * A possible optimization would be to drop fpr_final and directly&n;&t;&t; * use the storage from the saved context i.e., the actual final&n;&t;&t; * destination (pt_regs, switch_stack or thread structure).&n;&t;&t; */
 id|setfpreg
 c_func
 (paren

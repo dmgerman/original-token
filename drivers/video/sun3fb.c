@@ -1729,18 +1729,15 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Setup: parse used options&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun3fb_setup
 r_void
+id|__init
 id|sun3fb_setup
 c_func
 (paren
 r_char
 op_star
 id|options
-)paren
 )paren
 (brace
 r_char
@@ -2844,12 +2841,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;     *  Initialisation&n;     */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun3fb_init_fb
 r_static
 r_void
+id|__init
 id|sun3fb_init_fb
 c_func
 (paren
@@ -2859,7 +2854,6 @@ comma
 r_int
 r_int
 id|addr
-)paren
 )paren
 (brace
 r_static
@@ -3425,16 +3419,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sun3fb_init
 r_int
+id|__init
 id|sun3fb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern

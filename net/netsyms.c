@@ -23,6 +23,9 @@ macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#ifdef CONFIG_NET_DIVERT
+macro_line|#include &lt;net/divert.h&gt;
+macro_line|#endif /* CONFIG_NET_DIVERT */
 macro_line|#ifdef CONFIG_NET
 r_extern
 id|__u32
@@ -779,6 +782,29 @@ id|br_ioctl_hook
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_DIVERT
+DECL|variable|alloc_divert_blk
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alloc_divert_blk
+)paren
+suffix:semicolon
+DECL|variable|free_divert_blk
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|free_divert_blk
+)paren
+suffix:semicolon
+DECL|variable|divert_ioctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|divert_ioctl
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Internet layer registration */
 DECL|variable|inetdev_lock
@@ -1149,46 +1175,11 @@ id|inet_sock_release
 )paren
 suffix:semicolon
 multiline_comment|/* Socket demultiplexing. */
-DECL|variable|tcp_ehash
+DECL|variable|tcp_hashinfo
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|tcp_ehash
-)paren
-suffix:semicolon
-DECL|variable|tcp_ehash_size
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_ehash_size
-)paren
-suffix:semicolon
-DECL|variable|tcp_listening_hash
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_listening_hash
-)paren
-suffix:semicolon
-DECL|variable|tcp_lhash_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_lhash_lock
-)paren
-suffix:semicolon
-DECL|variable|tcp_lhash_users
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_lhash_users
-)paren
-suffix:semicolon
-DECL|variable|tcp_lhash_wait
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_lhash_wait
+id|tcp_hashinfo
 )paren
 suffix:semicolon
 DECL|variable|tcp_listen_wlock
@@ -1196,27 +1187,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|tcp_listen_wlock
-)paren
-suffix:semicolon
-DECL|variable|tcp_bhash
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_bhash
-)paren
-suffix:semicolon
-DECL|variable|tcp_bhash_size
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_bhash_size
-)paren
-suffix:semicolon
-DECL|variable|tcp_portalloc_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_portalloc_lock
 )paren
 suffix:semicolon
 DECL|variable|udp_hash
@@ -2329,6 +2299,13 @@ id|dev_queue_xmit
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_HW_FLOWCONTROL
+DECL|variable|netdev_dropping
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|netdev_dropping
+)paren
+suffix:semicolon
 DECL|variable|netdev_register_fc
 id|EXPORT_SYMBOL
 c_func

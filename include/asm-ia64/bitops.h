@@ -4,7 +4,7 @@ mdefine_line|#define _ASM_IA64_BITOPS_H
 multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; *&n; * 02/04/00 D. Mosberger  Require 64-bit alignment for bitops, per suggestion from davem&n; */
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * These operations need to be atomic.  The address must be (at least)&n; * 32-bit aligned.  Note that there are driver (e.g., eepro100) which&n; * use these operations to operate on hw-defined data-structures, so&n; * we can&squot;t easily change these operations to force a bigger&n; * alignment.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|set_bit
@@ -94,7 +94,12 @@ id|old
 )paren
 suffix:semicolon
 )brace
-r_extern
+multiline_comment|/*&n; * clear_bit() doesn&squot;t provide any barrier for the compiler.&n; */
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;smp_mb()
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;smp_mb()
+r_static
 id|__inline__
 r_void
 DECL|function|clear_bit
@@ -187,7 +192,7 @@ id|old
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|change_bit
@@ -279,7 +284,7 @@ id|old
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_int
 DECL|function|test_and_set_bit
@@ -378,7 +383,7 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_int
 DECL|function|test_and_clear_bit
@@ -481,7 +486,7 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_int
 DECL|function|test_and_change_bit
@@ -582,7 +587,7 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_int
 DECL|function|test_bit
@@ -625,7 +630,7 @@ l_int|31
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * ffz = Find First Zero in word. Undefined if no zero exists,&n; * so code should check against ~0UL first..&n; */
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -714,7 +719,7 @@ multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way 
 DECL|macro|ffs
 mdefine_line|#define ffs(x)&t;__builtin_ffs(x)
 multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -757,7 +762,7 @@ DECL|macro|hweight8
 mdefine_line|#define hweight8(x)  hweight64 ((x) &amp; 0xfful)
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Find next zero bit in a bitmap reasonably efficiently..&n; */
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|find_next_zero_bit

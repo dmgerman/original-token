@@ -177,7 +177,7 @@ macro_line|#ifdef CONFIG_IA64_GENERIC
 macro_line|# include &lt;asm/machvec.h&gt;
 DECL|macro|virt_to_page
 macro_line|# define virt_to_page(kaddr)   (mem_map + platform_map_nr(kaddr))
-macro_line|#elif defined (CONFIG_IA64_SN_SN1_SIM)
+macro_line|#elif defined (CONFIG_IA64_SN_SN1)
 DECL|macro|virt_to_page
 macro_line|# define virt_to_page(kaddr)   (mem_map + MAP_NR_SN1(kaddr))
 macro_line|#else
@@ -186,7 +186,6 @@ macro_line|# define virt_to_page(kaddr)   (mem_map + MAP_NR_DENSE(kaddr))
 macro_line|#endif
 DECL|macro|VALID_PAGE
 mdefine_line|#define VALID_PAGE(page)       ((page - mem_map) &lt; max_mapnr)
-macro_line|# endif /* __KERNEL__ */
 DECL|union|ia64_va
 r_typedef
 r_union
@@ -245,7 +244,7 @@ DECL|macro|BUG
 mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
 DECL|macro|PAGE_BUG
 mdefine_line|#define PAGE_BUG(page) do { BUG(); } while (0)
-r_extern
+r_static
 id|__inline__
 r_int
 DECL|function|get_order
@@ -306,6 +305,7 @@ r_return
 id|order
 suffix:semicolon
 )brace
+macro_line|# endif /* __KERNEL__ */
 macro_line|#endif /* !ASSEMBLY */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0xe000000000000000

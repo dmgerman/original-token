@@ -18,6 +18,7 @@ mdefine_line|#define SMP_IPI_REDIRECTION     (1 &lt;&lt; 1)
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id()&t;(current-&gt;processor)
 DECL|struct|smp_boot_data
+r_extern
 r_struct
 id|smp_boot_data
 (brace
@@ -25,14 +26,16 @@ DECL|member|cpu_count
 r_int
 id|cpu_count
 suffix:semicolon
-DECL|member|cpu_map
+DECL|member|cpu_phys_id
 r_int
-id|cpu_map
+id|cpu_phys_id
 (braket
 id|NR_CPUS
 )braket
 suffix:semicolon
 )brace
+id|smp_boot_data
+id|__initdata
 suffix:semicolon
 r_extern
 r_int
@@ -56,15 +59,7 @@ suffix:semicolon
 r_extern
 r_volatile
 r_int
-id|__cpu_number_map
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-r_extern
-r_volatile
-r_int
-id|__cpu_logical_map
+id|__cpu_physical_id
 (braket
 id|NR_CPUS
 )braket
@@ -78,18 +73,71 @@ r_extern
 r_char
 id|no_int_routing
 suffix:semicolon
+r_extern
+r_int
+id|smp_num_cpus
+suffix:semicolon
+DECL|macro|cpu_physical_id
+mdefine_line|#define cpu_physical_id(i)&t;__cpu_physical_id[i]
 DECL|macro|cpu_number_map
-mdefine_line|#define cpu_number_map(i)&t;__cpu_number_map[i]
+mdefine_line|#define cpu_number_map(i)&t;(i)
 DECL|macro|cpu_logical_map
-mdefine_line|#define cpu_logical_map(i)&t;__cpu_logical_map[i]
+mdefine_line|#define cpu_logical_map(i)&t;(i)
 r_extern
 r_int
 r_int
 id|ap_wakeup_vector
 suffix:semicolon
+multiline_comment|/*&n; * Function to map hard smp processor id to logical id.  Slow, so&n; * don&squot;t use this in performance-critical code.&n; */
+r_static
+r_inline
+r_int
+DECL|function|cpu_logical_id
+id|cpu_logical_id
+(paren
+r_int
+id|cpuid
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cpu_physical_id
+c_func
+(paren
+id|i
+)paren
+op_eq
+id|cpuid
+)paren
+r_break
+suffix:semicolon
+)brace
+r_return
+id|i
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * XTP control functions:&n; *    min_xtp   :  route all interrupts to this CPU&n; *    normal_xtp:  nominal XTP value&n; *    max_xtp   :  never deliver interrupts to this CPU.&n; */
-r_extern
-id|__inline
+r_static
+r_inline
 r_void
 DECL|function|min_xtp
 id|min_xtp
@@ -117,8 +165,8 @@ id|XTP_OFFSET
 suffix:semicolon
 multiline_comment|/* XTP to min */
 )brace
-r_extern
-id|__inline
+r_static
+r_inline
 r_void
 DECL|function|normal_xtp
 id|normal_xtp
@@ -146,8 +194,8 @@ id|XTP_OFFSET
 suffix:semicolon
 multiline_comment|/* XTP normal */
 )brace
-r_extern
-id|__inline
+r_static
+r_inline
 r_void
 DECL|function|max_xtp
 id|max_xtp
@@ -175,8 +223,8 @@ id|XTP_OFFSET
 suffix:semicolon
 multiline_comment|/* Set XTP to max */
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 DECL|function|hard_smp_processor_id
@@ -225,48 +273,13 @@ id|lid
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef LARGE_CPU_ID_OK
-r_return
-id|lid.eid
-op_lshift
-l_int|8
-op_or
-id|lid.id
-suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|lid.id
-op_lshift
-l_int|8
-)paren
-op_or
-id|lid.eid
-)paren
-OG
-id|NR_CPUS
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;WARNING: SMP ID %d &gt; NR_CPUS&bslash;n&quot;
-comma
-(paren
-id|lid.id
-op_lshift
-l_int|8
-)paren
-op_or
-id|lid.eid
-)paren
-suffix:semicolon
 r_return
 id|lid.id
+op_lshift
+l_int|8
+op_or
+id|lid.eid
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;&t;(-1)

@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/sal.h&gt;
 DECL|macro|MB
 mdefine_line|#define MB&t;(1024*1024UL)
 DECL|macro|NUM_MEM_DESCS
-mdefine_line|#define NUM_MEM_DESCS&t;3
+mdefine_line|#define NUM_MEM_DESCS&t;2
 DECL|variable|fw_mem
 r_static
 r_char
@@ -2008,6 +2008,8 @@ id|md-&gt;attribute
 op_assign
 id|EFI_MEMORY_WB
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n;&t; * XXX bootmem is broken for now... (remember to NUM_MEM_DESCS&n;&t; * if you re-enable this!)&n;&t; */
 multiline_comment|/* descriptor for high memory (&gt;4GB): */
 id|md
 op_assign
@@ -2050,6 +2052,7 @@ id|md-&gt;attribute
 op_assign
 id|EFI_MEMORY_WB
 suffix:semicolon
+macro_line|#endif
 id|bp
 op_assign
 id|id

@@ -24,16 +24,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SPARCAUDIO
-r_extern
-r_int
-id|sparcaudio_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN
 r_int
 id|isdn_init

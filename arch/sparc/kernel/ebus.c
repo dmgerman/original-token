@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.10 2000/06/20 01:10:00 anton Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
+multiline_comment|/* $Id: ebus.c,v 1.11 2000/10/10 01:07:38 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -24,16 +24,6 @@ macro_line|#ifdef CONFIG_SUN_OPENPROMIO
 r_extern
 r_int
 id|openprom_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SPARCAUDIO
-r_extern
-r_int
-id|sparcaudio_init
 c_func
 (paren
 r_void
@@ -1766,13 +1756,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SUN_OPENPROMIO
 id|openprom_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SPARCAUDIO
-id|sparcaudio_init
 c_func
 (paren
 )paren

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/mca.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|# include &lt;linux/blk.h&gt;
 macro_line|#endif
@@ -25,7 +26,7 @@ r_extern
 r_char
 id|_end
 suffix:semicolon
-multiline_comment|/* cpu_data[bootstrap_processor] is data for the bootstrap processor: */
+multiline_comment|/* cpu_data[0] is data for the bootstrap processor: */
 DECL|variable|cpu_data
 r_struct
 id|cpuinfo_ia64
@@ -64,6 +65,12 @@ r_int
 id|cpu_online_map
 suffix:semicolon
 macro_line|#endif
+DECL|variable|ia64_iobase
+r_int
+r_int
+id|ia64_iobase
+suffix:semicolon
+multiline_comment|/* virtual address for I/O accesses */
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE&t;512
 DECL|variable|saved_command_line
@@ -279,6 +286,11 @@ op_star
 id|cmdline_p
 )paren
 (brace
+r_extern
+r_int
+r_int
+id|ia64_iobase
+suffix:semicolon
 r_int
 r_int
 id|max_pfn
@@ -453,7 +465,6 @@ l_string|&quot;Warning: boot loader passed virtual address &quot;
 l_string|&quot;for initrd, please upgrade the loader&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_else
 macro_line|#endif
 multiline_comment|/* &n;&t;&t;&t; * The loader ONLY passes physical addresses&n;&t;&t;&t; */
@@ -642,18 +653,44 @@ id|efi.sal_systab
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
-id|bootstrap_processor
+id|current-&gt;processor
+op_assign
+l_int|0
+suffix:semicolon
+id|cpu_physical_id
+c_func
+(paren
+l_int|0
+)paren
 op_assign
 id|hard_smp_processor_id
 c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;processor
-op_assign
-id|bootstrap_processor
-suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; *  Set `iobase&squot; to the appropriate address in region 6&n;&t; *    (uncached access range)&n;&t; */
+id|__asm__
+(paren
+l_string|&quot;mov %0=ar.k0;;&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ia64_iobase
+)paren
+)paren
+suffix:semicolon
+id|ia64_iobase
+op_assign
+id|__IA64_UNCACHED_OFFSET
+op_or
+(paren
+id|ia64_iobase
+op_amp
+op_complement
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
 id|cpu_init
 c_func
 (paren
@@ -746,6 +783,12 @@ op_star
 id|buffer
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|lps
+macro_line|#&t;define lps&t;c-&gt;loops_per_sec
+macro_line|#else
+macro_line|#&t;define lps&t;loops_per_sec
+macro_line|#endif
 r_char
 id|family
 (braket
@@ -1003,18 +1046,12 @@ id|c-&gt;itc_freq
 op_mod
 l_int|1000000
 comma
-id|loops_per_sec
-c_func
-(paren
-)paren
+id|lps
 op_div
 l_int|500000
 comma
 (paren
-id|loops_per_sec
-c_func
-(paren
-)paren
+id|lps
 op_div
 l_int|5000
 )paren
@@ -1243,7 +1280,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;processor implements %lu virtual and %lu physical address bits&bslash;n&quot;
+l_string|&quot;CPU %d: %lu virtual and %lu physical address bits&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 comma
 id|impl_va_msb
 op_plus
@@ -1372,7 +1414,7 @@ id|pt_regs
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Initialize default control register to defer speculative&n;&t; * faults.  On a speculative load, we want to defer access&n;&t; * right, key miss, and key permission faults.  We currently&n;&t; * do NOT defer TLB misses, page-not-present, access bit, or&n;&t; * debug faults but kernel code should not rely on any&n;&t; * particular setting of these bits.&n;&t; */
+multiline_comment|/*&n;&t; * Initialize default control register to defer speculative&n;&t; * faults.  On a speculative load, we want to defer access&n;&t; * right, key miss, and key permission faults.  We currently&n;&t; * do NOT defer TLB misses, page-not-present, access bit, or&n;&t; * debug faults but kernel code should not rely on any&n;&t; * particular setting of these bits.&n;&t;ia64_set_dcr(IA64_DCR_DR | IA64_DCR_DK | IA64_DCR_DX | IA64_DCR_PP);&n;&t; */
 id|ia64_set_dcr
 c_func
 (paren
@@ -1381,10 +1423,9 @@ op_or
 id|IA64_DCR_DK
 op_or
 id|IA64_DCR_DX
-op_or
-id|IA64_DCR_PP
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
 id|ia64_set_fpu_owner
 c_func
 (paren
@@ -1392,6 +1433,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* initialize ar.k5 */
+macro_line|#endif
 id|atomic_inc
 c_func
 (paren

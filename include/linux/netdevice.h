@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_NETDEVICE_H
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/if_packet.h&gt;
+macro_line|#include &lt;net/divert.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/cache.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -23,6 +24,17 @@ DECL|macro|NET_XMIT_POLICED
 mdefine_line|#define NET_XMIT_POLICED&t;3&t;/* skb is shot by police&t;*/
 DECL|macro|NET_XMIT_BYPASS
 mdefine_line|#define NET_XMIT_BYPASS&t;&t;4&t;/* packet does not leave via dequeue;&n;&t;&t;&t;&t;&t;   (TC use only - dev_queue_xmit&n;&t;&t;&t;&t;&t;   returns this as NET_XMIT_SUCCESS) */
+multiline_comment|/* Backlog congestion levels */
+DECL|macro|NET_RX_SUCCESS
+mdefine_line|#define NET_RX_SUCCESS&t;&t;0   /* keep &squot;em coming, baby */
+DECL|macro|NET_RX_CN_LOW
+mdefine_line|#define NET_RX_CN_LOW&t;&t;1   /* storm alert, just in case */
+DECL|macro|NET_RX_CN_MOD
+mdefine_line|#define NET_RX_CN_MOD&t;&t;2   /* Storm on its way! */
+DECL|macro|NET_RX_CN_HIGH
+mdefine_line|#define NET_RX_CN_HIGH&t;&t;5   /* The storm is here */
+DECL|macro|NET_RX_DROP
+mdefine_line|#define NET_RX_DROP&t;&t;-1  /* packet dropped */
 DECL|macro|net_xmit_errno
 mdefine_line|#define net_xmit_errno(e)&t;((e) != NET_XMIT_CN ? -ENOBUFS : 0)
 macro_line|#endif
@@ -1125,6 +1137,15 @@ l_int|1
 )braket
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_DIVERT
+multiline_comment|/* this will get initialized at each interface type init routine */
+DECL|member|divert
+r_struct
+id|divert_blk
+op_star
+id|divert
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 )brace
 suffix:semicolon
 DECL|struct|packet_type
@@ -1513,6 +1534,14 @@ id|softnet_data
 DECL|member|throttle
 r_int
 id|throttle
+suffix:semicolon
+DECL|member|cng_level
+r_int
+id|cng_level
+suffix:semicolon
+DECL|member|avg_blog
+r_int
+id|avg_blog
 suffix:semicolon
 DECL|member|input_pkt_queue
 r_struct
@@ -1923,7 +1952,7 @@ suffix:semicolon
 DECL|macro|HAVE_NETIF_RX
 mdefine_line|#define HAVE_NETIF_RX 1
 r_extern
-r_void
+r_int
 id|netif_rx
 c_func
 (paren
@@ -2559,6 +2588,10 @@ r_extern
 r_int
 r_int
 id|netdev_fc_xoff
+suffix:semicolon
+r_extern
+id|atomic_t
+id|netdev_dropping
 suffix:semicolon
 r_extern
 r_int

@@ -1803,6 +1803,10 @@ c_func
 (paren
 l_string|&quot;enable_irq() unbalanced from %p&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|__builtin_return_address
 c_func
 (paren

@@ -58,7 +58,7 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -90,7 +90,7 @@ r_return
 id|ptr-&gt;x
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -122,7 +122,7 @@ r_return
 id|ptr-&gt;x
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -154,7 +154,7 @@ r_return
 id|ptr-&gt;x
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__ustq
@@ -187,7 +187,7 @@ op_assign
 id|r5
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__ustl
@@ -220,7 +220,7 @@ op_assign
 id|r5
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__ustw

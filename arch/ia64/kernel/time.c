@@ -566,7 +566,7 @@ c_func
 (paren
 )paren
 op_eq
-id|bootstrap_processor
+l_int|0
 )paren
 id|do_timer
 c_func
@@ -1018,7 +1018,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;timer: CPU %d base freq=%lu.%03luMHz, ITC ratio=%lu/%lu, ITC freq=%lu.%03luMHz&bslash;n&quot;
+l_string|&quot;CPU %d: base freq=%lu.%03luMHz, ITC ratio=%lu/%lu, ITC freq=%lu.%03luMHz&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func

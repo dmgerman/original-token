@@ -78,7 +78,7 @@ id|cpu
 )paren
 (brace
 )brace
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -112,7 +112,7 @@ l_int|61
 suffix:semicolon
 macro_line|# endif
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|get_new_mmu_context
@@ -159,7 +159,7 @@ id|ia64_ctx.lock
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|get_mmu_context
@@ -186,7 +186,7 @@ id|mm
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|init_new_context
@@ -211,7 +211,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|destroy_context
@@ -225,7 +225,7 @@ id|mm
 (brace
 multiline_comment|/* Nothing to do.  */
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|reload_context

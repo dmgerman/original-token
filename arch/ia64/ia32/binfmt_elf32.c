@@ -128,6 +128,10 @@ c_func
 (paren
 l_string|&quot;mem_map disagrees with %p at %08lx&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|page
 comma
 id|address
@@ -524,6 +528,28 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;mov ar.fdr = r0&quot;
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;mov %0=ar.k0 ;;&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|current-&gt;thread.old_iob
+)paren
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;mov ar.k0=%0 ;;&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|IA32_IOBASE
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* TSS */

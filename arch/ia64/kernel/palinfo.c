@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * palinfo.c&n; *&n; * Prints processor specific information reported by PAL.&n; * This code is based on specification of PAL as of the&n; * Intel IA-64 Architecture Software Developer&squot;s Manual v1.0.&n; *&n; * &n; * Copyright (C) 2000 Hewlett-Packard Co&n; * Copyright (C) 2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * &n; * 05/26/2000&t;S.Eranian&t;initial release&n; *&n; * ISSUES:&n; *&t;- because of some PAL bugs, some calls return invalid results or&n; *&t;  are empty for now.&n; *&t;- remove hack to avoid problem with &lt;= 256M RAM for itr.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * palinfo.c&n; *&n; * Prints processor specific information reported by PAL.&n; * This code is based on specification of PAL as of the&n; * Intel IA-64 Architecture Software Developer&squot;s Manual v1.0.&n; *&n; * &n; * Copyright (C) 2000 Hewlett-Packard Co&n; * Copyright (C) 2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * &n; * 05/26/2000&t;S.Eranian&t;initial release&n; * 08/21/2000&t;S.Eranian&t;updated to July 2000 PAL specs&n; *&n; * ISSUES:&n; *&t;- as of 2.2.9/2.2.12, the following values are still wrong&n; *&t;&t;PAL_VM_SUMMARY: key &amp; rid sizes&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -146,7 +145,7 @@ initialization_block
 suffix:semicolon
 DECL|macro|RSE_HINTS_COUNT
 mdefine_line|#define RSE_HINTS_COUNT (sizeof(rse_hints)/sizeof(const char *))
-multiline_comment|/*&n; * The current revision of the Volume 2 of &n; * IA-64 Architecture Software Developer&squot;s Manual is wrong.&n; * Table 4-10 has invalid information concerning the ma field:&n; * Correct table is:&n; *      bit 0 - 001 - UC&n; *      bit 4 - 100 - UC&n; *      bit 5 - 101 - UCE&n; *      bit 6 - 110 - WC&n; *      bit 7 - 111 - NatPage &n; */
+multiline_comment|/*&n; * The current revision of the Volume 2 (July 2000) of &n; * IA-64 Architecture Software Developer&squot;s Manual is wrong.&n; * Table 4-10 has invalid information concerning the ma field:&n; * Correct table is:&n; *      bit 0 - 001 - UC&n; *      bit 4 - 100 - UC&n; *      bit 5 - 101 - UCE&n; *      bit 6 - 110 - WC&n; *      bit 7 - 111 - NatPage &n; */
 DECL|variable|mem_attrib
 r_static
 r_const
@@ -158,75 +157,6 @@ id|mem_attrib
 op_assign
 initialization_block
 suffix:semicolon
-multiline_comment|/*&n; * Allocate a buffer suitable for calling PAL code in Virtual mode&n; *&n; * The documentation (PAL2.6) allows DTLB misses on the buffer. So &n; * using the TC is enough, no need to pin the entry.&n; *&n; * We allocate a kernel-sized page (at least 4KB). This is enough to&n; * hold any possible reply.&n; */
-r_static
-r_inline
-r_void
-op_star
-DECL|function|get_palcall_buffer
-id|get_palcall_buffer
-c_func
-(paren
-r_void
-)paren
-(brace
-r_void
-op_star
-id|tmp
-suffix:semicolon
-id|tmp
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|__get_free_page
-c_func
-(paren
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tmp
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-id|__FUNCTION__
-l_string|&quot; : can&squot;t get a buffer page&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_return
-id|tmp
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Free a palcall buffer allocated with the previous call&n; */
-r_static
-r_inline
-r_void
-DECL|function|free_palcall_buffer
-id|free_palcall_buffer
-c_func
-(paren
-r_void
-op_star
-id|addr
-)paren
-(brace
-id|__free_page
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Take a 64bit vector and produces a string such that&n; * if bit n is set then 2^n in clear text is generated. The adjustment&n; * to the right unit is also done.&n; *&n; * Input:&n; *&t;- a pointer to a buffer to hold the string&n; * &t;- a 64-bit vector&n; * Ouput:&n; *&t;- a pointer to the end of the buffer&n; *&n; */
 r_static
 r_char
@@ -568,29 +498,24 @@ id|p
 op_assign
 id|page
 suffix:semicolon
+id|u64
+id|halt_info_buffer
+(braket
+l_int|8
+)braket
+suffix:semicolon
 id|pal_power_mgmt_info_u_t
 op_star
 id|halt_info
+op_assign
+(paren
+id|pal_power_mgmt_info_u_t
+op_star
+)paren
+id|halt_info_buffer
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-id|halt_info
-op_assign
-id|get_palcall_buffer
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|halt_info
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
 suffix:semicolon
 id|status
 op_assign
@@ -607,17 +532,9 @@ id|status
 op_ne
 l_int|0
 )paren
-(brace
-id|free_palcall_buffer
-c_func
-(paren
-id|halt_info
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -716,12 +633,6 @@ id|i
 suffix:semicolon
 )brace
 )brace
-id|free_palcall_buffer
-c_func
-(paren
-id|halt_info
-)paren
-suffix:semicolon
 r_return
 id|p
 op_minus
@@ -1808,7 +1719,7 @@ id|rse_hints
 id|hints.ph_data
 )braket
 suffix:colon
-l_string|&quot;(??)&quot;
+l_string|&quot;(&bslash;?&bslash;?)&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2433,32 +2344,13 @@ op_assign
 id|page
 suffix:semicolon
 id|u64
-op_star
 id|pm_buffer
+(braket
+l_int|16
+)braket
 suffix:semicolon
 id|pal_perf_mon_info_u_t
 id|pm_info
-suffix:semicolon
-id|pm_buffer
-op_assign
-(paren
-id|u64
-op_star
-)paren
-id|get_palcall_buffer
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pm_buffer
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2474,17 +2366,9 @@ id|pm_info
 op_ne
 l_int|0
 )paren
-(brace
-id|free_palcall_buffer
-c_func
-(paren
-id|pm_buffer
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 macro_line|#ifdef IA64_PAL_PERF_MON_INFO_BUG
 multiline_comment|/*&n;&t; * This bug has been fixed in PAL 2.2.9 and higher&n;&t; */
 id|pm_buffer
@@ -2621,12 +2505,6 @@ c_func
 id|p
 comma
 l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|free_palcall_buffer
-c_func
-(paren
-id|pm_buffer
 )paren
 suffix:semicolon
 r_return

@@ -94,6 +94,10 @@ DECL|macro|SIOCGIFTXQLEN
 mdefine_line|#define SIOCGIFTXQLEN&t;0x8942&t;&t;/* Get the tx queue length&t;*/
 DECL|macro|SIOCSIFTXQLEN
 mdefine_line|#define SIOCSIFTXQLEN&t;0x8943&t;&t;/* Set the tx queue length &t;*/
+DECL|macro|SIOCGIFDIVERT
+mdefine_line|#define SIOCGIFDIVERT&t;0x8944&t;&t;/* Frame diversion support */
+DECL|macro|SIOCSIFDIVERT
+mdefine_line|#define SIOCSIFDIVERT&t;0x8945&t;&t;/* Set frame diversion options */
 multiline_comment|/* ARP cache control calls. */
 multiline_comment|/*  0x8950 - 0x8952  * obsolete calls, don&squot;t re-use */
 DECL|macro|SIOCDARP

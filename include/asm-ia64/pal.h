@@ -79,6 +79,8 @@ DECL|macro|PAL_REGISTER_INFO
 mdefine_line|#define PAL_REGISTER_INFO&t;39&t;/* return AR and CR register information*/
 DECL|macro|PAL_SHUTDOWN
 mdefine_line|#define PAL_SHUTDOWN&t;&t;40&t;/* enter processor shutdown state */
+DECL|macro|PAL_PREFETCH_VISIBILITY
+mdefine_line|#define PAL_PREFETCH_VISIBILITY&t;41
 DECL|macro|PAL_COPY_PAL
 mdefine_line|#define PAL_COPY_PAL&t;&t;256&t;/* relocate PAL procedures and PAL PMI */
 DECL|macro|PAL_HALT_INFO
@@ -1425,6 +1427,8 @@ comma
 id|u64
 comma
 id|u64
+comma
+id|u64
 )paren
 suffix:semicolon
 r_extern
@@ -1470,13 +1474,15 @@ id|u64
 )paren
 suffix:semicolon
 DECL|macro|PAL_CALL
-mdefine_line|#define PAL_CALL(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_static(a0, a1, a2, a3)
+mdefine_line|#define PAL_CALL(iprv,a0,a1,a2,a3)&t;&t;iprv = ia64_pal_call_static(a0, a1, a2, a3, 0)
+DECL|macro|PAL_CALL_IC_OFF
+mdefine_line|#define PAL_CALL_IC_OFF(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_static(a0, a1, a2, a3, 1)
 DECL|macro|PAL_CALL_STK
-mdefine_line|#define PAL_CALL_STK(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_stacked(a0, a1, a2, a3)
+mdefine_line|#define PAL_CALL_STK(iprv,a0,a1,a2,a3)&t;&t;iprv = ia64_pal_call_stacked(a0, a1, a2, a3)
 DECL|macro|PAL_CALL_PHYS
-mdefine_line|#define PAL_CALL_PHYS(iprv,a0,a1,a2,a3) iprv = ia64_pal_call_phys_static(a0, a1, a2, a3)
+mdefine_line|#define PAL_CALL_PHYS(iprv,a0,a1,a2,a3)&t;&t;iprv = ia64_pal_call_phys_static(a0, a1, a2, a3)
 DECL|macro|PAL_CALL_PHYS_STK
-mdefine_line|#define PAL_CALL_PHYS_STK(iprv,a0,a1,a2,a3) iprv = ia64_pal_call_phys_stacked(a0, a1, a2, a3)
+mdefine_line|#define PAL_CALL_PHYS_STK(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_phys_stacked(a0, a1, a2, a3)
 DECL|typedef|ia64_pal_handler
 r_typedef
 r_int
@@ -1686,7 +1692,7 @@ id|u64
 )paren
 suffix:semicolon
 multiline_comment|/* Provide information about configurable processor bus features */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_bus_get_features
@@ -1755,7 +1761,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Enables/disables specific processor bus features */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_bus_set_features
@@ -1788,7 +1794,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Get detailed cache information */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_config_info
@@ -1853,7 +1859,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Get detailed cche protection information */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_prot_info
@@ -1972,7 +1978,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Flush the processor instruction or data caches.  *PROGRESS must be&n; * initialized to zero before calling this for the first time..&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_flush
@@ -1993,7 +1999,7 @@ r_struct
 id|ia64_pal_retval
 id|iprv
 suffix:semicolon
-id|PAL_CALL
+id|PAL_CALL_IC_OFF
 c_func
 (paren
 id|iprv
@@ -2018,7 +2024,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the processor controlled caches */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_init
@@ -2057,7 +2063,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the tags and data of a data or unified cache line of &n; * processor controlled cache to known values without the availability &n; * of backing memory.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_line_init
@@ -2093,7 +2099,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Read the data and tag of a processor controlled cache line for diags */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_read
@@ -2129,7 +2135,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return summary information about the heirarchy of caches controlled by the processor */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_summary
@@ -2187,7 +2193,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Write the data and tag of a processor-controlled cache line for diags */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_cache_write
@@ -2226,7 +2232,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return the parameters needed to copy relocatable PAL procedures from ROM to memory */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_copy_info
@@ -2293,7 +2299,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Copy relocatable PAL procedures from ROM to memory */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_copy_pal
@@ -2346,7 +2352,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return the number of instruction and data debug register pairs */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_debug_info
@@ -2405,7 +2411,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef TBD
 multiline_comment|/* Switch from IA64-system environment to IA-32 system environment */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_enter_ia32_env
@@ -2442,7 +2448,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Get unique geographical address of this processor on its bus */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_fixed_addr
@@ -2486,7 +2492,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Get base frequency of the platform if generated by the processor */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_freq_base
@@ -2530,7 +2536,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get the ratios for processor frequency, bus frequency and interval timer to&n; * to base frequency of the platform &n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_freq_ratios
@@ -2617,7 +2623,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Make the processor enter HALT or one of the implementation dependent low &n; * power states where prefetching and execution are suspended and cache and&n; * TLB coherency is not maintained.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_halt
@@ -2700,7 +2706,7 @@ DECL|typedef|pal_power_mgmt_info_u_t
 id|pal_power_mgmt_info_u_t
 suffix:semicolon
 multiline_comment|/* Return information about processor&squot;s optional power management capabilities. */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_halt_info
@@ -2738,7 +2744,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Cause the processor to enter LIGHT HALT state, where prefetching and execution are&n; * suspended, but cache and TLB coherency is maintained.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_halt_light
@@ -2770,7 +2776,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Clear all the processor error logging   registers and reset the indicator that allows&n; * the error logging registers to be written. This procedure also checks the pending&n; * machine check bit and pending INIT bit and reports their states.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mc_clear_log
@@ -2814,7 +2820,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Ensure that all outstanding transactions in a processor are completed or that any &n; * MCA due to thes outstanding transaction is taken.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mc_drain
@@ -2846,7 +2852,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return the machine check dynamic processor state */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mc_dynamic_state
@@ -2907,7 +2913,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return processor machine check information */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mc_error_info
@@ -2971,7 +2977,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Inform PALE_CHECK whether a machine check is expected so that PALE_CHECK willnot&n; * attempt to correct any expected machine checks.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mc_expected
@@ -3018,7 +3024,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Register a platform dependent location with PAL to which it can save&n; * minimal processor state in the event of a machine check or initialization&n; * event.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mc_register_mem
@@ -3051,7 +3057,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Restore minimal architectural processor state, set CMC interrupt if necessary&n; * and resume execution&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mc_resume
@@ -3087,7 +3093,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return the memory attributes implemented by the processor */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mem_attrib
@@ -3133,7 +3139,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return the amount of memory needed for second phase of processor&n; * self-test and the required alignment of memory.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_mem_for_test
@@ -3236,7 +3242,7 @@ DECL|typedef|pal_perf_mon_info_u_t
 id|pal_perf_mon_info_u_t
 suffix:semicolon
 multiline_comment|/* Return the performance monitor information about what can be counted&n; * and how to configure the monitors to count the desired events.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_perf_mon_info
@@ -3287,7 +3293,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Specifies the physical address of the processor interrupt block&n; * and I/O port space.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_platform_addr
@@ -3323,7 +3329,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Set the SAL PMI entrypoint in memory */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_pmi_entrypoint
@@ -3359,7 +3365,7 @@ r_struct
 id|pal_features_s
 suffix:semicolon
 multiline_comment|/* Provide information about configurable processor features */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_proc_get_features
@@ -3425,7 +3431,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Enable/disable processor dependent features */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_proc_set_features
@@ -3486,7 +3492,7 @@ DECL|typedef|ia64_ptce_info_t
 id|ia64_ptce_info_t
 suffix:semicolon
 multiline_comment|/* Return the information required for the architected loop used to purge&n; * (initialize) the entire TC&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_get_ptce
@@ -3579,7 +3585,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Return info about implemented application and control registers. */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_register_info
@@ -3675,7 +3681,7 @@ DECL|typedef|pal_hints_u_t
 id|pal_hints_u_t
 suffix:semicolon
 multiline_comment|/* Return information about the register stack and RSE for this processor &n; * implementation.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_rse_info
@@ -3732,7 +3738,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Cause the processor to enter&t;SHUTDOWN state, where prefetching and execution are &n; * suspended, but cause cache and TLB coherency to be maintained.&n; * This is usually called in IA-32 mode.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_shutdown
@@ -3764,7 +3770,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Perform the second phase of processor self-test. */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_test_proc
@@ -3878,7 +3884,7 @@ DECL|typedef|pal_version_u_t
 id|pal_version_u_t
 suffix:semicolon
 multiline_comment|/* Return PAL version information */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_version
@@ -4001,7 +4007,7 @@ mdefine_line|#define tc_associativity&t;pal_tc_info_s.associativity
 DECL|macro|tc_num_sets
 mdefine_line|#define tc_num_sets&t;&t;pal_tc_info_s.num_sets
 multiline_comment|/* Return information about the virtual memory characteristics of the processor &n; * implementation.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_vm_info
@@ -4064,7 +4070,7 @@ id|iprv.status
 suffix:semicolon
 )brace
 multiline_comment|/* Get page size information about the virtual memory characteristics of the processor &n; * implementation.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_vm_page_size
@@ -4222,7 +4228,7 @@ DECL|typedef|pal_vm_info_2_u_t
 id|pal_vm_info_2_u_t
 suffix:semicolon
 multiline_comment|/* Get summary information about the virtual memory characteristics of the processor &n; * implementation.&n; */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_vm_summary
@@ -4323,7 +4329,7 @@ DECL|typedef|pal_tr_valid_u_t
 id|pal_tr_valid_u_t
 suffix:semicolon
 multiline_comment|/* Read a translation register */
-r_extern
+r_static
 r_inline
 id|s64
 DECL|function|ia64_pal_tr_read
@@ -4377,6 +4383,37 @@ id|tr_valid
 id|tr_valid-&gt;piv_val
 op_assign
 id|iprv.v0
+suffix:semicolon
+r_return
+id|iprv.status
+suffix:semicolon
+)brace
+r_static
+r_inline
+id|s64
+DECL|function|ia64_pal_prefetch_visibility
+id|ia64_pal_prefetch_visibility
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|ia64_pal_retval
+id|iprv
+suffix:semicolon
+id|PAL_CALL
+c_func
+(paren
+id|iprv
+comma
+id|PAL_PREFETCH_VISIBILITY
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)paren
 suffix:semicolon
 r_return
 id|iprv.status

@@ -1418,14 +1418,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|sparcaudio_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|amd7930_init
 c_func
 (paren

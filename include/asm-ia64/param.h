@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_IA64_HP_SIM) || defined(CONFIG_IA64_SOFTSDV_HACKS)
 multiline_comment|/*&n; * Yeah, simulating stuff is slow, so let us catch some breath between&n; * timer interrupts...&n; */
 DECL|macro|HZ
-macro_line|# define HZ 20
+macro_line|# define HZ&t;  32
 macro_line|#else
 DECL|macro|HZ
 macro_line|# define HZ&t;1024

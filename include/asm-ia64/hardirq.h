@@ -57,9 +57,9 @@ macro_line|# define hardirq_trylock(cpu)&t;&t;(local_irq_count(cpu) == 0)
 DECL|macro|hardirq_endlock
 macro_line|# define hardirq_endlock(cpu)&t;&t;do { } while (0)
 DECL|macro|irq_enter
-macro_line|# define irq_enter(cpu, irq)&t;&t;(++local_irq_count(cpu))
+macro_line|# define irq_enter(cpu, irq)&t;&t;(local_irq_count(cpu)++)
 DECL|macro|irq_exit
-macro_line|# define irq_exit(cpu, irq)&t;&t;(--local_irq_count(cpu))
+macro_line|# define irq_exit(cpu, irq)&t;&t;(local_irq_count(cpu)--)
 DECL|macro|synchronize_irq
 macro_line|# define synchronize_irq()&t;&t;barrier()
 macro_line|#else
@@ -167,12 +167,12 @@ r_int
 id|irq
 )paren
 (brace
-op_increment
 id|local_irq_count
 c_func
 (paren
 id|cpu
 )paren
+op_increment
 suffix:semicolon
 r_while
 c_loop
@@ -205,12 +205,12 @@ r_int
 id|irq
 )paren
 (brace
-op_decrement
 id|local_irq_count
 c_func
 (paren
 id|cpu
 )paren
+op_decrement
 suffix:semicolon
 )brace
 DECL|function|hardirq_trylock

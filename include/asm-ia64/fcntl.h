@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_FCNTL_H
 DECL|macro|_ASM_IA64_FCNTL_H
 mdefine_line|#define _ASM_IA64_FCNTL_H
-multiline_comment|/*&n; * This is mostly compatible with Linux/x86.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This is mostly compatible with Linux/x86.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 multiline_comment|/*&n; * open/fcntl - O_SYNC is only implemented on blocks devices and on&n; * files located on an ext2 file system&n; */
 DECL|macro|O_ACCMODE
 mdefine_line|#define O_ACCMODE&t;   0003
@@ -122,6 +122,10 @@ id|l_pid
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|flock64
+macro_line|# define flock64&t;flock
+macro_line|#endif
 DECL|macro|F_LINUX_SPECIFIC_BASE
 mdefine_line|#define F_LINUX_SPECIFIC_BASE&t;1024
 macro_line|#endif /* _ASM_IA64_FCNTL_H */

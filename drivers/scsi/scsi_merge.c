@@ -1896,13 +1896,7 @@ id|sgpnt
 comma
 l_int|0
 comma
-id|SCpnt-&gt;use_sg
-op_star
-r_sizeof
-(paren
-r_struct
-id|scatterlist
-)paren
+id|SCpnt-&gt;sglist_len
 )paren
 suffix:semicolon
 id|SCpnt-&gt;request_buffer

@@ -44,17 +44,4 @@ DECL|macro|SAVE_MIN_WITH_COVER_R19
 mdefine_line|#define SAVE_MIN_WITH_COVER_R19&t;DO_SAVE_MIN(cover;; mov rCRIFS=cr.ifs, mov r15=r19) STOPS
 DECL|macro|SAVE_MIN
 mdefine_line|#define SAVE_MIN&t;&t;DO_SAVE_MIN(mov rCRIFS=r0,) STOPS
-macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
-DECL|macro|STOPS
-macro_line|# define STOPS&t;nop.i 0x0;; nop.i 0x0;; nop.i 0x0;;
-macro_line|#else
-DECL|macro|STOPS
-macro_line|# define STOPS
-macro_line|#endif
-DECL|macro|SAVE_MIN_WITH_COVER
-mdefine_line|#define SAVE_MIN_WITH_COVER&t;DO_SAVE_MIN(cover;; mov rCRIFS=cr.ifs,) STOPS
-DECL|macro|SAVE_MIN_WITH_COVER_R19
-mdefine_line|#define SAVE_MIN_WITH_COVER_R19&t;DO_SAVE_MIN(cover;; mov rCRIFS=cr.ifs, mov r15=r19) STOPS
-DECL|macro|SAVE_MIN
-mdefine_line|#define SAVE_MIN&t;&t;DO_SAVE_MIN(mov rCRIFS=r0,) STOPS
 eof

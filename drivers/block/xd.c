@@ -2716,7 +2716,8 @@ c_cond
 (paren
 (paren
 (paren
-id|u_int
+r_int
+r_int
 )paren
 id|buffer
 op_amp
@@ -2726,7 +2727,8 @@ op_ne
 (paren
 (paren
 (paren
-id|u_int
+r_int
+r_int
 )paren
 id|buffer
 op_plus
@@ -2784,7 +2786,8 @@ c_func
 id|xd_dma
 comma
 (paren
-id|u_int
+r_int
+r_int
 )paren
 id|buffer
 )paren

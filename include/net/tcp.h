@@ -45,41 +45,9 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|tcp_ehash_size
-suffix:semicolon
-r_extern
-r_struct
-id|tcp_ehash_bucket
-op_star
-id|tcp_ehash
-suffix:semicolon
 multiline_comment|/* This is for listening sockets, thus all sockets which possess wildcards. */
 DECL|macro|TCP_LHTABLE_SIZE
 mdefine_line|#define TCP_LHTABLE_SIZE&t;32&t;/* Yes, really, this is all you need. */
-multiline_comment|/* tcp_ipv4.c: These need to be shared by v4 and v6 because the lookup&n; *             and hashing code needs to work with different AF&squot;s yet&n; *             the port space is shared.&n; */
-r_extern
-r_struct
-id|sock
-op_star
-id|tcp_listening_hash
-(braket
-id|TCP_LHTABLE_SIZE
-)braket
-suffix:semicolon
-r_extern
-id|rwlock_t
-id|tcp_lhash_lock
-suffix:semicolon
-r_extern
-id|atomic_t
-id|tcp_lhash_users
-suffix:semicolon
-r_extern
-id|wait_queue_head_t
-id|tcp_lhash_wait
-suffix:semicolon
 multiline_comment|/* There are a few simple rules, which allow for local port reuse by&n; * an application.  In essence:&n; *&n; *&t;1) Sockets bound to different interfaces may share a local port.&n; *&t;   Failing that, goto test 2.&n; *&t;2) If all sockets have sk-&gt;reuse set, and none of them are in&n; *&t;   TCP_LISTEN state, the port may be shared.&n; *&t;   Failing that, goto test 3.&n; *&t;3) If all sockets are bound to a specific sk-&gt;rcv_saddr local&n; *&t;   address, and none of them are the same, the port may be&n; *&t;   shared.&n; *&t;   Failing this, the port cannot be shared.&n; *&n; * The interesting point, is test #2.  This is what an FTP server does&n; * all day.  To optimize this case we use a specific flag bit defined&n; * below.  As we add sockets to a bind bucket list, we perform a&n; * check of: (newsk-&gt;reuse &amp;&amp; (newsk-&gt;state != TCP_LISTEN))&n; * As long as all sockets added to a bind bucket pass this test,&n; * the flag bit will be set.&n; * The resulting situation is that tcp_v[46]_verify_bind() can just check&n; * for this flag bit, if it is set and the socket trying to bind has&n; * sk-&gt;reuse set, we don&squot;t even have to walk the owners list at all,&n; * we return that it is ok to bind this socket to the requested local port.&n; *&n; * Sounds like a lot of work, but it is worth it.  In a more naive&n; * implementation (ie. current FreeBSD etc.) the entire list of ports&n; * must be walked for each data port opened by an ftp server.  Needless&n; * to say, this does not scale at all.  With a couple thousand FTP&n; * users logged onto your box, isn&squot;t it nice to know that new data&n; * ports are created in O(1) time?  I thought so. ;-)&t;-DaveM&n; */
 DECL|struct|tcp_bind_bucket
 r_struct
@@ -132,20 +100,92 @@ id|chain
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|tcp_hashinfo
 r_extern
+r_struct
+id|tcp_hashinfo
+(brace
+multiline_comment|/* This is for sockets with full identity only.  Sockets here will&n;&t; * always be without wildcards and will have the following invariant:&n;&t; *&n;&t; *          TCP_ESTABLISHED &lt;= sk-&gt;state &lt; TCP_CLOSE&n;&t; *&n;&t; * First half of the table is for sockets not in TIME_WAIT, second half&n;&t; * is for TIME_WAIT sockets only.&n;&t; */
+DECL|member|__tcp_ehash
+r_struct
+id|tcp_ehash_bucket
+op_star
+id|__tcp_ehash
+suffix:semicolon
+multiline_comment|/* Ok, let&squot;s try this, I give up, we do need a local binding&n;&t; * TCP hash as well as the others for fast bind/connect.&n;&t; */
+DECL|member|__tcp_bhash
 r_struct
 id|tcp_bind_hashbucket
 op_star
-id|tcp_bhash
+id|__tcp_bhash
 suffix:semicolon
-r_extern
+DECL|member|__tcp_bhash_size
 r_int
-id|tcp_bhash_size
+id|__tcp_bhash_size
 suffix:semicolon
-r_extern
+DECL|member|__tcp_ehash_size
+r_int
+id|__tcp_ehash_size
+suffix:semicolon
+multiline_comment|/* All sockets in TCP_LISTEN state will be in here.  This is the only&n;&t; * table where wildcard&squot;d TCP sockets can exist.  Hash function here&n;&t; * is just local port number.&n;&t; */
+DECL|member|__tcp_listening_hash
+r_struct
+id|sock
+op_star
+id|__tcp_listening_hash
+(braket
+id|TCP_LHTABLE_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/* All the above members are written once at bootup and&n;&t; * never written again _or_ are predominantly read-access.&n;&t; *&n;&t; * Now align to a new cache line as all the following members&n;&t; * are often dirty.&n;&t; */
+DECL|member|__tcp_lhash_lock
+id|rwlock_t
+id|__tcp_lhash_lock
+id|__attribute__
+c_func
+(paren
+(paren
+id|__aligned__
+c_func
+(paren
+id|SMP_CACHE_BYTES
+)paren
+)paren
+)paren
+suffix:semicolon
+DECL|member|__tcp_lhash_users
+id|atomic_t
+id|__tcp_lhash_users
+suffix:semicolon
+DECL|member|__tcp_lhash_wait
+id|wait_queue_head_t
+id|__tcp_lhash_wait
+suffix:semicolon
+DECL|member|__tcp_portalloc_lock
 id|spinlock_t
-id|tcp_portalloc_lock
+id|__tcp_portalloc_lock
 suffix:semicolon
+)brace
+id|tcp_hashinfo
+suffix:semicolon
+DECL|macro|tcp_ehash
+mdefine_line|#define tcp_ehash&t;(tcp_hashinfo.__tcp_ehash)
+DECL|macro|tcp_bhash
+mdefine_line|#define tcp_bhash&t;(tcp_hashinfo.__tcp_bhash)
+DECL|macro|tcp_ehash_size
+mdefine_line|#define tcp_ehash_size&t;(tcp_hashinfo.__tcp_ehash_size)
+DECL|macro|tcp_bhash_size
+mdefine_line|#define tcp_bhash_size&t;(tcp_hashinfo.__tcp_bhash_size)
+DECL|macro|tcp_listening_hash
+mdefine_line|#define tcp_listening_hash (tcp_hashinfo.__tcp_listening_hash)
+DECL|macro|tcp_lhash_lock
+mdefine_line|#define tcp_lhash_lock&t;(tcp_hashinfo.__tcp_lhash_lock)
+DECL|macro|tcp_lhash_users
+mdefine_line|#define tcp_lhash_users&t;(tcp_hashinfo.__tcp_lhash_users)
+DECL|macro|tcp_lhash_wait
+mdefine_line|#define tcp_lhash_wait&t;(tcp_hashinfo.__tcp_lhash_wait)
+DECL|macro|tcp_portalloc_lock
+mdefine_line|#define tcp_portalloc_lock (tcp_hashinfo.__tcp_portalloc_lock)
 r_extern
 id|kmem_cache_t
 op_star

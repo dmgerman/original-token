@@ -579,11 +579,11 @@ suffix:semicolon
 DECL|macro|my_cpu_data
 mdefine_line|#define my_cpu_data&t;&t;cpu_data[smp_processor_id()]
 macro_line|#ifdef CONFIG_SMP
-DECL|macro|loops_per_sec
-macro_line|# define loops_per_sec()&t;my_cpu_data.loops_per_sec
+DECL|macro|ia64_loops_per_sec
+macro_line|# define ia64_loops_per_sec()&t;my_cpu_data.loops_per_sec
 macro_line|#else
-DECL|macro|loops_per_sec
-macro_line|# define loops_per_sec()&t;loops_per_sec
+DECL|macro|ia64_loops_per_sec
+macro_line|# define ia64_loops_per_sec()&t;loops_per_sec
 macro_line|#endif
 r_extern
 r_struct
@@ -742,6 +742,11 @@ id|__u64
 id|tssd
 suffix:semicolon
 multiline_comment|/* IA32 TSS descriptor */
+DECL|member|old_iob
+id|__u64
+id|old_iob
+suffix:semicolon
+multiline_comment|/* old IOBase value */
 r_union
 (brace
 DECL|member|sigmask
@@ -754,7 +759,7 @@ DECL|member|un
 id|un
 suffix:semicolon
 DECL|macro|INIT_THREAD_IA32
-macro_line|# define INIT_THREAD_IA32&t;, 0, 0, 0x17800000037fULL, 0, 0, 0, 0, 0, {0}
+macro_line|# define INIT_THREAD_IA32&t;, 0, 0, 0x17800000037fULL, 0, 0, 0, 0, 0, 0, {0}
 macro_line|#else
 DECL|macro|INIT_THREAD_IA32
 macro_line|# define INIT_THREAD_IA32
@@ -773,7 +778,7 @@ mdefine_line|#define INIT_MMAP {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&amp;init_
 DECL|macro|INIT_THREAD
 mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;INIT_THREAD_PM&t;&t;&t;&t;&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32,&t;&t;&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;/* siginfo */&t;&bslash;&n;}
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;is = 0;&t;&t;/* IA-64 instruction set */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;dfh = 1;&t;/* disable fph */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;mfh = 0;&t;/* clear mfh */&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;is = 0;&t;&t;/* IA-64 instruction set */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declarations, a strange C thing... */
 r_struct
 id|mm_struct
@@ -833,6 +838,7 @@ mdefine_line|#define KSTK_EIP(tsk)&t;&t;&t;&t;&t;&bslash;&n;  ({&t;&t;&t;&t;&t;&
 multiline_comment|/* Return stack pointer of blocked task TSK.  */
 DECL|macro|KSTK_ESP
 mdefine_line|#define KSTK_ESP(tsk)  ((tsk)-&gt;thread.ksp)
+macro_line|#ifndef CONFIG_SMP
 r_static
 r_inline
 r_struct
@@ -887,6 +893,7 @@ id|t
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* !CONFIG_SMP */
 r_extern
 r_void
 id|__ia64_init_fpu
@@ -1068,7 +1075,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_fc
@@ -1093,7 +1100,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_sync_i
@@ -1112,7 +1119,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_srlz_i
@@ -1131,7 +1138,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_srlz_d
@@ -1150,7 +1157,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 id|__u64
 DECL|function|ia64_get_rr
@@ -1185,7 +1192,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_set_rr
@@ -1217,7 +1224,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 id|__u64
 DECL|function|ia64_get_dcr
@@ -1243,7 +1250,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_set_dcr
@@ -1272,7 +1279,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 id|__u64
 DECL|function|ia64_get_lid
@@ -1298,7 +1305,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_invala
@@ -1321,7 +1328,7 @@ multiline_comment|/*&n; * Save the processor status flags in FLAGS and then clea
 DECL|macro|ia64_clear_ic
 mdefine_line|#define ia64_clear_ic(flags)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;mov %0=psr;; rsm psr.i | psr.ic;; srlz.i;;&quot;&t;&bslash;&n;&t;&t;&t;      : &quot;=r&quot;(flags) :: &quot;memory&quot;);
 multiline_comment|/*&n; * Insert a translation into an instruction and/or data translation&n; * register.&n; */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_itr
@@ -1423,7 +1430,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Insert a translation into the instruction and/or data translation&n; * cache.&n; */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_itc
@@ -1513,7 +1520,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Purge a range of addresses from instruction and/or data translation&n; * register(s).&n; */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_ptr
@@ -1581,7 +1588,7 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/* Set the interrupt vector address.  The address must be suitably aligned (32KB).  */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_set_iva
@@ -1607,7 +1614,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 multiline_comment|/* Set the page table address and control bits.  */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_set_pta
@@ -1632,7 +1639,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 id|__u64
 DECL|function|ia64_get_cpuid
@@ -1664,7 +1671,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_eoi
@@ -1682,8 +1689,8 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_lrr0
 id|ia64_set_lrr0
@@ -1726,8 +1733,8 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_lrr1
 id|ia64_set_lrr1
@@ -1770,8 +1777,8 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_pmv
 id|ia64_set_pmv
@@ -1794,8 +1801,8 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_pmc
 id|ia64_get_pmc
@@ -1827,8 +1834,8 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_pmc
 id|ia64_set_pmc
@@ -1857,8 +1864,8 @@ id|value
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_pmd
 id|ia64_get_pmd
@@ -1890,8 +1897,8 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_pmd
 id|ia64_set_pmd
@@ -1921,7 +1928,7 @@ id|value
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Given the address to which a spill occurred, return the unat bit&n; * number that corresponds to this address.&n; */
-r_extern
+r_static
 r_inline
 id|__u64
 DECL|function|ia64_unat_pos
@@ -1946,7 +1953,7 @@ l_int|0x3f
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set the NaT bit of an integer register which was spilled at address&n; * SPILL_ADDR.  UNAT is the mask to be updated.&n; */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_set_unat
@@ -2000,7 +2007,7 @@ id|bit
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; * Note that the only way T can block is through a call to schedule() -&gt; switch_to().&n; */
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -2096,8 +2103,8 @@ mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack
 mdefine_line|#define init_stack&t;(init_task_union.stack)
 multiline_comment|/*&n; * Set the correctable machine check vector register&n; */
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_cmcv
 id|ia64_set_cmcv
@@ -2121,8 +2128,8 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read the correctable machine check vector register&n; */
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_cmcv
 id|ia64_get_cmcv
@@ -2149,7 +2156,7 @@ r_return
 id|val
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 id|__u64
 DECL|function|ia64_get_ivr
@@ -2176,7 +2183,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|ia64_set_tpr
@@ -2198,7 +2205,7 @@ id|val
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 id|__u64
 DECL|function|ia64_get_tpr
@@ -2224,8 +2231,8 @@ r_return
 id|r
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_irr0
 id|ia64_set_irr0
@@ -2254,8 +2261,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_irr0
 id|ia64_get_irr0
@@ -2266,7 +2273,10 @@ r_void
 id|__u64
 id|val
 suffix:semicolon
+multiline_comment|/* this is volatile because irr may change unbeknownst to gcc... */
 id|__asm__
+id|__volatile__
+c_func
 (paren
 l_string|&quot;mov %0=cr.irr0&quot;
 suffix:colon
@@ -2280,8 +2290,8 @@ r_return
 id|val
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_irr1
 id|ia64_set_irr1
@@ -2310,8 +2320,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_irr1
 id|ia64_get_irr1
@@ -2322,7 +2332,10 @@ r_void
 id|__u64
 id|val
 suffix:semicolon
+multiline_comment|/* this is volatile because irr may change unbeknownst to gcc... */
 id|__asm__
+id|__volatile__
+c_func
 (paren
 l_string|&quot;mov %0=cr.irr1&quot;
 suffix:colon
@@ -2336,8 +2349,8 @@ r_return
 id|val
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_irr2
 id|ia64_set_irr2
@@ -2366,8 +2379,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_irr2
 id|ia64_get_irr2
@@ -2378,7 +2391,10 @@ r_void
 id|__u64
 id|val
 suffix:semicolon
+multiline_comment|/* this is volatile because irr may change unbeknownst to gcc... */
 id|__asm__
+id|__volatile__
+c_func
 (paren
 l_string|&quot;mov %0=cr.irr2&quot;
 suffix:colon
@@ -2392,8 +2408,8 @@ r_return
 id|val
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 DECL|function|ia64_set_irr3
 id|ia64_set_irr3
@@ -2422,8 +2438,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_irr3
 id|ia64_get_irr3
@@ -2434,7 +2450,10 @@ r_void
 id|__u64
 id|val
 suffix:semicolon
+multiline_comment|/* this is volatile because irr may change unbeknownst to gcc... */
 id|__asm__
+id|__volatile__
+c_func
 (paren
 l_string|&quot;mov %0=cr.irr3&quot;
 suffix:colon
@@ -2448,8 +2467,8 @@ r_return
 id|val
 suffix:semicolon
 )brace
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_get_gp
 id|ia64_get_gp
@@ -2485,8 +2504,8 @@ macro_line|# define ia64_rotr(w,n)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  ({&t;&t;&t;&
 macro_line|#endif
 DECL|macro|ia64_rotl
 mdefine_line|#define ia64_rotl(w,n)&t;ia64_rotr((w),(64)-(n))
-r_extern
-id|__inline__
+r_static
+r_inline
 id|__u64
 DECL|function|ia64_thash
 id|ia64_thash

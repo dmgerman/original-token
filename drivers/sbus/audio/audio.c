@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: audio.c,v 1.54 2000/07/13 08:06:40 davem Exp $&n; * drivers/sbus/audio/audio.c&n; *&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright 1997,1998,1999 Derrick J. Brashear (shadow@dementia.org)&n; * Copyright 1997 Brent Baccala (baccala@freesoft.org)&n; * &n; * Mixer code adapted from code contributed by and&n; * Copyright 1998 Michael Mraka (michael@fi.muni.cz)&n; * and with fixes from Michael Shuey (shuey@ecn.purdue.edu)&n; * The mixer code cheats; Sparc hardware doesn&squot;t generally allow independent&n; * line control, and this fakes it badly.&n; *&n; * SNDCTL_DSP_SETFMT based on code contributed by&n; * Ion Badulescu (ionut@moisil.cs.columbia.edu)&n; *&n; * This is the audio midlayer that sits between the VFS character&n; * devices and the low-level audio hardware device drivers.&n; */
+multiline_comment|/* $Id: audio.c,v 1.55 2000/10/10 01:07:39 davem Exp $&n; * drivers/sbus/audio/audio.c&n; *&n; * Copyright 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright 1997,1998,1999 Derrick J. Brashear (shadow@dementia.org)&n; * Copyright 1997 Brent Baccala (baccala@freesoft.org)&n; * &n; * Mixer code adapted from code contributed by and&n; * Copyright 1998 Michael Mraka (michael@fi.muni.cz)&n; * and with fixes from Michael Shuey (shuey@ecn.purdue.edu)&n; * The mixer code cheats; Sparc hardware doesn&squot;t generally allow independent&n; * line control, and this fakes it badly.&n; *&n; * SNDCTL_DSP_SETFMT based on code contributed by&n; * Ion Badulescu (ionut@moisil.cs.columbia.edu)&n; *&n; * This is the audio midlayer that sits between the VFS character&n; * devices and the low-level audio hardware device drivers.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -10069,43 +10069,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x20100
-DECL|variable|sparcaudio_syms
-r_static
-r_struct
-id|symbol_table
-id|sparcaudio_syms
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
-c_func
-(paren
-id|register_sparcaudio_driver
-)paren
-comma
-id|X
-c_func
-(paren
-id|unregister_sparcaudio_driver
-)paren
-comma
-id|X
-c_func
-(paren
-id|sparcaudio_output_done
-)paren
-comma
-id|X
-c_func
-(paren
-id|sparcaudio_input_done
-)paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|variable|register_sparcaudio_driver
 id|EXPORT_SYMBOL
 c_func
@@ -10134,16 +10097,8 @@ c_func
 id|sparcaudio_input_done
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|function|sparcaudio_init
+r_static
 r_int
 id|__init
 id|sparcaudio_init
@@ -10151,18 +10106,7 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x20100
-multiline_comment|/* Export symbols for use by the low-level drivers. */
-id|register_symtab
-c_func
-(paren
-op_amp
-id|sparcaudio_syms
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Register our character device driver with the VFS. */
 r_if
 c_cond
@@ -10225,10 +10169,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|sparcaudio_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|sparcaudio_exit
 c_func
 (paren
 r_void
@@ -10248,7 +10193,16 @@ id|devfs_handle
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+id|module_init
+c_func
+(paren
+id|sparcaudio_init
+)paren
+id|module_exit
+c_func
+(paren
+id|sparcaudio_exit
+)paren
 multiline_comment|/*&n; * Code from Linux Streams, Copyright 1995 by&n; * Graham Wheeler, Francisco J. Ballesteros, Denis Froschauer&n; * and available under GPL &n; */
 r_static
 r_int

@@ -1,18 +1,24 @@
 multiline_comment|/*&n; * This file contains the code to configure and read/write the ia64 performance&n; * monitoring stuff.&n; *&n; * Originaly Written by Ganesh Venkitachalam, IBM Corp.&n; * Modifications by David Mosberger-Tang, Hewlett-Packard Co.&n; * Copyright (C) 1999 Ganesh Venkitachalam &lt;venkitac@us.ibm.com&gt;&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/pal.h&gt;
 multiline_comment|/* Long blurb on how this works: &n; * We set dcr.pp, psr.pp, and the appropriate pmc control values with&n; * this.  Notice that we go about modifying _each_ task&squot;s pt_regs to&n; * set cr_ipsr.pp.  This will start counting when &quot;current&quot; does an&n; * _rfi_. Also, since each task&squot;s cr_ipsr.pp, and cr_ipsr is inherited&n; * across forks, we do _not_ need additional code on context&n; * switches. On stopping of the counters we dont need to go about&n; * changing every task&squot;s cr_ipsr back to where it wuz, because we can&n; * just set pmc[0]=1. But we do it anyways becuase we will probably&n; * add thread specific accounting later.&n; *&n; * The obvious problem with this is that on SMP systems, it is a bit&n; * of work (when someone wants to do it:-)) - it would be easier if we&n; * just added code to the context-switch path, but if we wanted to support&n; * per-thread accounting, the context-switch path might be long unless &n; * we introduce a flag in the task_struct. Right now, the following code &n; * will NOT work correctly on MP (for more than one reason:-)).&n; *&n; * The short answer is that to make this work on SMP,  we would need &n; * to lock the run queue to ensure no context switches, send &n; * an IPI to each processor, and in that IPI handler, set processor regs,&n; * and just modify the psr bit of only the _current_ thread, since we have &n; * modified the psr bit correctly in the kernel stack for every process &n; * which is not running. Also, we need pmd arrays per-processor, and &n; * the READ_PMD command will need to get values off of other processors. &n; * IPIs are the answer, irrespective of what the question is. Might &n; * crash on SMP systems without the lock_kernel().&n; */
 macro_line|#ifdef CONFIG_PERFMON
 DECL|macro|MAX_PERF_COUNTER
 mdefine_line|#define MAX_PERF_COUNTER&t;4&t;/* true for Itanium, at least */
+DECL|macro|PMU_FIRST_COUNTER
+mdefine_line|#define PMU_FIRST_COUNTER&t;4&t;/* first generic counter */
 DECL|macro|WRITE_PMCS_AND_START
 mdefine_line|#define WRITE_PMCS_AND_START&t;0xa0
 DECL|macro|WRITE_PMCS
@@ -21,31 +27,71 @@ DECL|macro|READ_PMDS
 mdefine_line|#define READ_PMDS&t;&t;0xa2
 DECL|macro|STOP_PMCS
 mdefine_line|#define STOP_PMCS&t;&t;0xa3
-DECL|macro|IA64_COUNTER_MASK
-mdefine_line|#define IA64_COUNTER_MASK&t;0xffffffffffffff6fL
-DECL|macro|PERF_OVFL_VAL
-mdefine_line|#define PERF_OVFL_VAL&t;&t;0xffffffffL
-DECL|variable|used_by_system
-r_volatile
-r_int
-id|used_by_system
-suffix:semicolon
-DECL|struct|perfmon_counter
+multiline_comment|/*&n; * this structure needs to be enhanced&n; */
+r_typedef
 r_struct
-id|perfmon_counter
 (brace
-DECL|member|data
+DECL|member|pmu_reg_data
 r_int
 r_int
-id|data
+id|pmu_reg_data
 suffix:semicolon
-DECL|member|counter_num
+multiline_comment|/* generic PMD register */
+DECL|member|pmu_reg_num
 r_int
 r_int
-id|counter_num
+id|pmu_reg_num
 suffix:semicolon
+multiline_comment|/* which register number */
+DECL|typedef|perfmon_reg_t
 )brace
+id|perfmon_reg_t
 suffix:semicolon
+multiline_comment|/*&n; * This structure is initialize at boot time and contains&n; * a description of the PMU main characteristic as indicated&n; * by PAL&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|perf_ovfl_val
+r_int
+r_int
+id|perf_ovfl_val
+suffix:semicolon
+multiline_comment|/* overflow value for generic counters */
+DECL|member|max_pmc
+r_int
+r_int
+id|max_pmc
+suffix:semicolon
+multiline_comment|/* highest PMC */
+DECL|member|max_pmd
+r_int
+r_int
+id|max_pmd
+suffix:semicolon
+multiline_comment|/* highest PMD */
+DECL|member|max_counters
+r_int
+r_int
+id|max_counters
+suffix:semicolon
+multiline_comment|/* number of generic counter pairs (PMC/PMD) */
+DECL|typedef|pmu_config_t
+)brace
+id|pmu_config_t
+suffix:semicolon
+multiline_comment|/* XXX will go static when ptrace() is cleaned */
+DECL|variable|perf_ovfl_val
+r_int
+r_int
+id|perf_ovfl_val
+suffix:semicolon
+multiline_comment|/* overflow value for generic counters */
+DECL|variable|pmu_conf
+r_static
+id|pmu_config_t
+id|pmu_conf
+suffix:semicolon
+multiline_comment|/*&n; * could optimize to avoid cache conflicts in SMP&n; */
 DECL|variable|pmds
 r_int
 r_int
@@ -64,18 +110,48 @@ DECL|function|sys_perfmonctl
 id|sys_perfmonctl
 (paren
 r_int
-id|cmd1
+id|cmd
 comma
 r_int
-id|cmd2
+id|count
 comma
 r_void
 op_star
 id|ptr
+comma
+r_int
+id|arg4
+comma
+r_int
+id|arg5
+comma
+r_int
+id|arg6
+comma
+r_int
+id|arg7
+comma
+r_int
+id|arg8
+comma
+r_int
+id|stack
 )paren
 (brace
 r_struct
-id|perfmon_counter
+id|pt_regs
+op_star
+id|regs
+op_assign
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+op_amp
+id|stack
+suffix:semicolon
+id|perfmon_reg_t
 id|tmp
 comma
 op_star
@@ -86,13 +162,6 @@ suffix:semicolon
 r_int
 r_int
 id|cnum
-comma
-id|dcr
-comma
-id|flags
-suffix:semicolon
-r_struct
-id|perf_counter
 suffix:semicolon
 r_int
 id|i
@@ -100,7 +169,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|cmd1
+id|cmd
 )paren
 (brace
 r_case
@@ -111,23 +180,6 @@ r_case
 id|WRITE_PMCS_AND_START
 suffix:colon
 multiline_comment|/* Also starts counting */
-r_if
-c_cond
-(paren
-id|cmd2
-op_le
-l_int|0
-op_logical_or
-id|cmd2
-OG
-id|MAX_PERF_COUNTER
-op_minus
-id|used_by_system
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -142,19 +194,15 @@ comma
 r_sizeof
 (paren
 r_struct
-id|perf_counter
+id|perfmon_reg_t
 )paren
 op_star
-id|cmd2
+id|count
 )paren
 )paren
 r_return
 op_minus
 id|EFAULT
-suffix:semicolon
-id|current-&gt;thread.flags
-op_or_assign
-id|IA64_THREAD_PM_VALID
 suffix:semicolon
 r_for
 c_loop
@@ -165,7 +213,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|cmd2
+id|count
 suffix:semicolon
 id|i
 op_increment
@@ -188,21 +236,17 @@ id|tmp
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* XXX need to check validity of counter_num and perhaps data!! */
+multiline_comment|/* XXX need to check validity of pmu_reg_num and perhaps data!! */
 r_if
 c_cond
 (paren
-id|tmp.counter_num
-OL
-l_int|4
+id|tmp.pmu_reg_num
+OG
+id|pmu_conf.max_pmc
 op_logical_or
-id|tmp.counter_num
-op_ge
-l_int|4
-op_plus
-id|MAX_PERF_COUNTER
-op_minus
-id|used_by_system
+id|tmp.pmu_reg_num
+op_eq
+l_int|0
 )paren
 r_return
 op_minus
@@ -211,15 +255,30 @@ suffix:semicolon
 id|ia64_set_pmc
 c_func
 (paren
-id|tmp.counter_num
+id|tmp.pmu_reg_num
 comma
-id|tmp.data
+id|tmp.pmu_reg_data
 )paren
 suffix:semicolon
+multiline_comment|/* to go away */
+r_if
+c_cond
+(paren
+id|tmp.pmu_reg_num
+op_ge
+id|PMU_FIRST_COUNTER
+op_logical_and
+id|tmp.pmu_reg_num
+OL
+id|PMU_FIRST_COUNTER
+op_plus
+id|pmu_conf.max_counters
+)paren
+(brace
 id|ia64_set_pmd
 c_func
 (paren
-id|tmp.counter_num
+id|tmp.pmu_reg_num
 comma
 l_int|0
 )paren
@@ -232,22 +291,62 @@ c_func
 )paren
 )braket
 (braket
-id|tmp.counter_num
+id|tmp.pmu_reg_num
 op_minus
-l_int|4
+id|PMU_FIRST_COUNTER
 )braket
 op_assign
 l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; setting PMC/PMD[%ld] es=0x%lx pmd[%ld]=%lx&bslash;n&quot;
+comma
+id|tmp.pmu_reg_num
+comma
+(paren
+id|tmp.pmu_reg_data
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0x7f
+comma
+id|tmp.pmu_reg_num
+comma
+id|ia64_get_pmd
+c_func
+(paren
+id|tmp.pmu_reg_num
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; setting PMC[%ld]=0x%lx&bslash;n&quot;
+comma
+id|tmp.pmu_reg_num
+comma
+id|tmp.pmu_reg_data
+)paren
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|cmd1
+id|cmd
 op_eq
 id|WRITE_PMCS_AND_START
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/* irrelevant with user monitors */
 id|local_irq_save
 c_func
 (paren
@@ -277,6 +376,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ia64_set_pmc
 c_func
 (paren
@@ -285,7 +385,23 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* will start monitoring right after rfi */
+id|ia64_psr
+c_func
+(paren
+id|regs
+)paren
+op_member_access_from_pointer
+id|up
+op_assign
+l_int|1
+suffix:semicolon
 )brace
+multiline_comment|/* &n;&t;&t; * mark the state as valid.&n;&t;&t; * this will trigger save/restore at context switch&n;&t;&t; */
+id|current-&gt;thread.flags
+op_or_assign
+id|IA64_THREAD_PM_VALID
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -294,15 +410,13 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|cmd2
+id|count
 op_le
 l_int|0
 op_logical_or
-id|cmd2
+id|count
 OG
 id|MAX_PERF_COUNTER
-op_minus
-id|used_by_system
 )paren
 r_return
 op_minus
@@ -322,10 +436,10 @@ comma
 r_sizeof
 (paren
 r_struct
-id|perf_counter
+id|perfmon_reg_t
 )paren
 op_star
-id|cmd2
+id|count
 )paren
 )paren
 r_return
@@ -333,6 +447,8 @@ op_minus
 id|EFAULT
 suffix:semicolon
 multiline_comment|/* This looks shady, but IMHO this will work fine. This is  &n;&t;&t; * the sequence that I could come up with to avoid races&n;&t;&t; * with the interrupt handler. See explanation in the &n;&t;&t; * following comment.&n;&t;&t; */
+macro_line|#if 0
+multiline_comment|/* irrelevant with user monitors */
 id|local_irq_save
 c_func
 (paren
@@ -370,7 +486,9 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * We cannot write to pmc[0] to stop counting here, as&n;&t;&t; * that particular instruction might cause an overflow&n;&t;&t; * and the mask in pmc[0] might get lost. I&squot;m _not_ &n;&t;&t; * sure of the hardware behavior here. So we stop&n;&t;&t; * counting by psr.pp = 0. And we reset dcr.pp to&n;&t;&t; * prevent an interrupt from mucking up psr.pp in the&n;&t;&t; * meanwhile. Perfmon interrupts are pended, hence the&n;&t;&t; * above code should be ok if one of the above instructions &n;&t;&t; * caused overflows, i.e the interrupt should get serviced&n;&t;&t; * when we re-enabled interrupts. When I muck with dcr, &n;&t;&t; * is the irq_save/restore needed?&n;&t;&t; */
+multiline_comment|/* XXX: This needs to change to read more than just the counters */
 r_for
 c_loop
 (paren
@@ -380,11 +498,11 @@ l_int|0
 comma
 id|cnum
 op_assign
-l_int|4
+id|PMU_FIRST_COUNTER
 suffix:semicolon
 id|i
 OL
-id|cmd2
+id|count
 suffix:semicolon
 id|i
 op_increment
@@ -396,7 +514,7 @@ id|cptr
 op_increment
 )paren
 (brace
-id|tmp.data
+id|tmp.pmu_reg_data
 op_assign
 (paren
 id|pmds
@@ -417,11 +535,11 @@ c_func
 id|cnum
 )paren
 op_amp
-id|PERF_OVFL_VAL
+id|pmu_conf.perf_ovfl_val
 )paren
 )paren
 suffix:semicolon
-id|tmp.counter_num
+id|tmp.pmu_reg_num
 op_assign
 id|cnum
 suffix:semicolon
@@ -446,8 +564,9 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-singleline_comment|//put_user(pmd, &amp;cptr-&gt;data);
 )brace
+macro_line|#if 0
+multiline_comment|/* irrelevant with user monitors */
 id|local_irq_save
 c_func
 (paren
@@ -484,6 +603,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -512,8 +632,6 @@ suffix:semicolon
 id|i
 OL
 id|MAX_PERF_COUNTER
-op_minus
-id|used_by_system
 suffix:semicolon
 op_increment
 id|i
@@ -528,13 +646,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|used_by_system
-)paren
-(brace
+macro_line|#if 0
+multiline_comment|/* irrelevant with user monitors */
 id|local_irq_save
 c_func
 (paren
@@ -565,7 +678,17 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-)brace
+id|ia64_psr
+c_func
+(paren
+id|regs
+)paren
+op_member_access_from_pointer
+id|up
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|current-&gt;thread.flags
 op_and_assign
 op_complement
@@ -626,13 +749,11 @@ l_int|0
 comma
 id|cnum
 op_assign
-l_int|4
+id|PMU_FIRST_COUNTER
 suffix:semicolon
 id|i
 OL
-id|MAX_PERF_COUNTER
-op_minus
-id|used_by_system
+id|pmu_conf.max_counters
 suffix:semicolon
 id|cnum
 op_increment
@@ -647,6 +768,15 @@ l_int|1
 (brace
 id|val
 op_assign
+id|mask
+op_amp
+l_int|0x1
+ques
+c_cond
+id|pmu_conf.perf_ovfl_val
+op_plus
+l_int|1
+suffix:colon
 l_int|0
 suffix:semicolon
 r_if
@@ -656,11 +786,31 @@ id|mask
 op_amp
 l_int|0x1
 )paren
-id|val
-op_add_assign
-id|PERF_OVFL_VAL
-op_plus
-l_int|1
+id|printk
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; PMD%ld overflowed pmd=%lx pmod=%lx&bslash;n&quot;
+comma
+id|cnum
+comma
+id|ia64_get_pmd
+c_func
+(paren
+id|cnum
+)paren
+comma
+id|pmds
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+(braket
+id|i
+)braket
+)paren
 suffix:semicolon
 multiline_comment|/* since we got an interrupt, might as well clear every pmd. */
 id|val
@@ -671,7 +821,29 @@ c_func
 id|cnum
 )paren
 op_amp
-id|PERF_OVFL_VAL
+id|pmu_conf.perf_ovfl_val
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; adding val=%lx to pmod[%ld]=%lx &bslash;n&quot;
+comma
+id|val
+comma
+id|i
+comma
+id|pmds
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+(braket
+id|i
+)braket
+)paren
 suffix:semicolon
 id|pmds
 (braket
@@ -753,13 +925,167 @@ suffix:colon
 l_string|&quot;perfmon&quot;
 )brace
 suffix:semicolon
+r_static
+r_int
+DECL|function|perfmon_proc_info
+id|perfmon_proc_info
+c_func
+(paren
+r_char
+op_star
+id|page
+)paren
+(brace
+r_char
+op_star
+id|p
+op_assign
+id|page
+suffix:semicolon
+id|u64
+id|pmc0
+op_assign
+id|ia64_get_pmc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;PMC[0]=%lx&bslash;n&quot;
+comma
+id|pmc0
+)paren
+suffix:semicolon
+r_return
+id|p
+op_minus
+id|page
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|perfmon_read_entry
+id|perfmon_read_entry
+c_func
+(paren
+r_char
+op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
 r_void
+op_star
+id|data
+)paren
+(brace
+r_int
+id|len
+op_assign
+id|perfmon_proc_info
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_le
+id|off
+op_plus
+id|count
+)paren
+op_star
+id|eof
+op_assign
+l_int|1
+suffix:semicolon
+op_star
+id|start
+op_assign
+id|page
+op_plus
+id|off
+suffix:semicolon
+id|len
+op_sub_assign
+id|off
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|count
+)paren
+id|len
+op_assign
+id|count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
+)brace
+DECL|variable|perfmon_dir
+r_static
+r_struct
+id|proc_dir_entry
+op_star
+id|perfmon_dir
+suffix:semicolon
+r_void
+id|__init
 DECL|function|perfmon_init
 id|perfmon_init
 (paren
 r_void
 )paren
 (brace
+id|pal_perf_mon_info_u_t
+id|pm_info
+suffix:semicolon
+id|u64
+id|pm_buffer
+(braket
+l_int|16
+)braket
+suffix:semicolon
+id|s64
+id|status
+suffix:semicolon
 id|irq_desc
 (braket
 id|PERFMON_IRQ
@@ -802,9 +1128,97 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Initialized perfmon vector to %u&bslash;n&quot;
+l_string|&quot;perfmon: Initialized vector to %u&bslash;n&quot;
 comma
 id|PERFMON_IRQ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_assign
+id|ia64_pal_perf_mon_info
+c_func
+(paren
+id|pm_buffer
+comma
+op_amp
+id|pm_info
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; pal call failed (%ld)&bslash;n&quot;
+comma
+id|status
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|pmu_conf.perf_ovfl_val
+op_assign
+id|perf_ovfl_val
+op_assign
+(paren
+l_int|1L
+op_lshift
+id|pm_info.pal_perf_mon_info_s.width
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* XXX need to use PAL instead */
+id|pmu_conf.max_pmc
+op_assign
+l_int|13
+suffix:semicolon
+id|pmu_conf.max_pmd
+op_assign
+l_int|17
+suffix:semicolon
+id|pmu_conf.max_counters
+op_assign
+id|pm_info.pal_perf_mon_info_s.generic
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;perfmon: Counters are %d bits&bslash;n&quot;
+comma
+id|pm_info.pal_perf_mon_info_s.width
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;perfmon: Maximum counter value 0x%lx&bslash;n&quot;
+comma
+id|pmu_conf.perf_ovfl_val
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * for now here for debug purposes&n;&t; */
+id|perfmon_dir
+op_assign
+id|create_proc_read_entry
+(paren
+l_string|&quot;perfmon&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|perfmon_read_entry
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -853,6 +1267,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * XXX: this will need to be extended beyong just counters&n;&t; */
 r_for
 c_loop
 (paren
@@ -863,8 +1278,6 @@ suffix:semicolon
 id|i
 OL
 id|IA64_NUM_PM_REGS
-op_minus
-id|used_by_system
 suffix:semicolon
 id|i
 op_increment
@@ -927,6 +1340,7 @@ id|t
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/*&n;&t; * XXX: this will need to be extended beyong just counters &n;&t; */
 r_for
 c_loop
 (paren
@@ -937,8 +1351,6 @@ suffix:semicolon
 id|i
 OL
 id|IA64_NUM_PM_REGS
-op_minus
-id|used_by_system
 suffix:semicolon
 id|i
 op_increment
@@ -1009,10 +1421,10 @@ DECL|function|sys_perfmonctl
 id|sys_perfmonctl
 (paren
 r_int
-id|cmd1
+id|cmd
 comma
 r_int
-id|cmd2
+id|count
 comma
 r_void
 op_star

@@ -644,6 +644,16 @@ id|val
 suffix:semicolon
 r_extern
 r_void
+id|ia64_flush_fph
+(paren
+r_struct
+id|task_struct
+op_star
+id|t
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|ia64_sync_fph
 (paren
 r_struct

@@ -146,6 +146,16 @@ id|thread-&gt;tssd
 op_assign
 id|tssd
 suffix:semicolon
+id|asm
+(paren
+l_string|&quot;mov ar.k0=%0 ;;&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|thread-&gt;old_iob
+)paren
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|ia32_load_state
@@ -257,6 +267,26 @@ comma
 l_string|&quot;r&quot;
 (paren
 id|tssd
+)paren
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;mov %0=ar.k0 ;;&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|thread-&gt;old_iob
+)paren
+)paren
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;mov ar.k0=%0 ;;&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|IA32_IOBASE
 )paren
 )paren
 suffix:semicolon

@@ -405,15 +405,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|set_pgdir
-c_func
-(paren
-id|address
-comma
-op_star
-id|dir
-)paren
-suffix:semicolon
 id|address
 op_assign
 (paren

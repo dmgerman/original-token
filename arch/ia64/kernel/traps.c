@@ -789,7 +789,7 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * disabled_fp_fault() is called when a user-level process attempts to&n; * access one of the registers f32..f127 while it doesn&squot;t own the&n; * fp-high register partition.  When this happens, we save the current&n; * fph partition in the task_struct of the fpu-owner (if necessary)&n; * and then load the fp-high partition of the current task (if&n; * necessary).&n; */
+multiline_comment|/*&n; * disabled_fph_fault() is called when a user-level process attempts&n; * to access one of the registers f32..f127 when it doesn&squot;t own the&n; * fp-high register partition.  When this happens, we save the current&n; * fph partition in the task_struct of the fpu-owner (if necessary)&n; * and then load the fp-high partition of the current task (if&n; * necessary).  Note that the kernel has access to fph by the time we&n; * get here, as the IVT&squot;s &quot;Diabled FP-Register&quot; handler takes care of&n; * clearing psr.dfh.&n; */
 r_static
 r_inline
 r_void
@@ -803,6 +803,24 @@ id|regs
 )paren
 (brace
 r_struct
+id|ia64_psr
+op_star
+id|psr
+op_assign
+id|ia64_psr
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+multiline_comment|/* first, grant user-level access to fph partition: */
+id|psr-&gt;dfh
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
+(brace
+r_struct
 id|task_struct
 op_star
 id|fpu_owner
@@ -812,73 +830,34 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* first, clear psr.dfh and psr.mfh: */
-id|regs-&gt;cr_ipsr
-op_and_assign
-op_complement
+r_if
+c_cond
 (paren
-id|IA64_PSR_DFH
-op_or
-id|IA64_PSR_MFH
+id|fpu_owner
+op_eq
+id|current
 )paren
+r_return
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|fpu_owner
-op_ne
-id|current
 )paren
-(brace
+id|ia64_flush_fph
+c_func
+(paren
+id|fpu_owner
+)paren
+suffix:semicolon
 id|ia64_set_fpu_owner
 c_func
 (paren
 id|current
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fpu_owner
-op_logical_and
-id|ia64_psr
-c_func
-(paren
-id|ia64_task_regs
-c_func
-(paren
-id|fpu_owner
-)paren
-)paren
-op_member_access_from_pointer
-id|mfh
-)paren
-(brace
-id|ia64_psr
-c_func
-(paren
-id|ia64_task_regs
-c_func
-(paren
-id|fpu_owner
-)paren
-)paren
-op_member_access_from_pointer
-id|mfh
-op_assign
-l_int|0
-suffix:semicolon
-id|fpu_owner-&gt;thread.flags
-op_or_assign
-id|IA64_THREAD_FPH_VALID
-suffix:semicolon
-id|__ia64_save_fpu
-c_func
-(paren
-id|fpu_owner-&gt;thread.fph
-)paren
-suffix:semicolon
 )brace
+macro_line|#endif /* !CONFIG_SMP */
 r_if
 c_cond
 (paren
@@ -897,6 +876,10 @@ c_func
 id|current-&gt;thread.fph
 )paren
 suffix:semicolon
+id|psr-&gt;mfh
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -905,18 +888,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Set mfh because the state in thread.fph does not match&n;&t;&t;&t; * the state in the fph partition.&n;&t;&t;&t; */
-id|ia64_psr
-c_func
-(paren
-id|regs
-)paren
-op_member_access_from_pointer
-id|mfh
+multiline_comment|/*&n;&t;&t; * Set mfh because the state in thread.fph does not match the state in&n;&t;&t; * the fph partition.&n;&t;&t; */
+id|psr-&gt;mfh
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 )brace
 )brace
 r_static
@@ -998,18 +974,27 @@ id|fp_state_t
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * compute fp_state.  only FP registers f6 - f11 are used by the &n;&t; * kernel, so set those bits in the mask and set the low volatile&n;&t; * pointer to point to these registers.&n;&t; */
+macro_line|#ifndef FPSWA_BUG
+id|fp_state.bitmask_low64
+op_assign
+l_int|0x3c0
+suffix:semicolon
+multiline_comment|/* bit 6..9 */
+id|fp_state.fp_state_low_volatile
+op_assign
+(paren
+id|fp_state_low_volatile_t
+op_star
+)paren
+op_amp
+id|regs-&gt;f6
+suffix:semicolon
+macro_line|#else
 id|fp_state.bitmask_low64
 op_assign
 l_int|0xffc0
 suffix:semicolon
 multiline_comment|/* bit6..bit15 */
-macro_line|#ifndef FPSWA_BUG
-id|fp_state.fp_state_low_volatile
-op_assign
-op_amp
-id|regs-&gt;f6
-suffix:semicolon
-macro_line|#else
 id|f6_15
 (braket
 l_int|0
@@ -1040,7 +1025,7 @@ id|regs-&gt;f9
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;stf.spill %0=f10&quot;
+l_string|&quot;stf.spill %0=f10%P0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -1053,7 +1038,7 @@ l_int|4
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;stf.spill %0=f11&quot;
+l_string|&quot;stf.spill %0=f11%P0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -1066,7 +1051,7 @@ l_int|5
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;stf.spill %0=f12&quot;
+l_string|&quot;stf.spill %0=f12%P0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -1079,7 +1064,7 @@ l_int|6
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;stf.spill %0=f13&quot;
+l_string|&quot;stf.spill %0=f13%P0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -1092,7 +1077,7 @@ l_int|7
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;stf.spill %0=f14&quot;
+l_string|&quot;stf.spill %0=f14%P0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -1105,7 +1090,7 @@ l_int|8
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;stf.spill %0=f15&quot;
+l_string|&quot;stf.spill %0=f15%P0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -1183,7 +1168,7 @@ suffix:semicolon
 macro_line|#ifdef FPSWA_BUG
 id|__asm__
 (paren
-l_string|&quot;ldf.fill f10=%0&quot;
+l_string|&quot;ldf.fill f10=%0%P0&quot;
 op_scope_resolution
 l_string|&quot;m&quot;
 (paren
@@ -1196,7 +1181,7 @@ l_int|4
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;ldf.fill f11=%0&quot;
+l_string|&quot;ldf.fill f11=%0%P0&quot;
 op_scope_resolution
 l_string|&quot;m&quot;
 (paren
@@ -1209,7 +1194,7 @@ l_int|5
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;ldf.fill f12=%0&quot;
+l_string|&quot;ldf.fill f12=%0%P0&quot;
 op_scope_resolution
 l_string|&quot;m&quot;
 (paren
@@ -1222,7 +1207,7 @@ l_int|6
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;ldf.fill f13=%0&quot;
+l_string|&quot;ldf.fill f13=%0%P0&quot;
 op_scope_resolution
 l_string|&quot;m&quot;
 (paren
@@ -1235,7 +1220,7 @@ l_int|7
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;ldf.fill f14=%0&quot;
+l_string|&quot;ldf.fill f14=%0%P0&quot;
 op_scope_resolution
 l_string|&quot;m&quot;
 (paren
@@ -1248,7 +1233,7 @@ l_int|8
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;ldf.fill f15=%0&quot;
+l_string|&quot;ldf.fill f15=%0%P0&quot;
 op_scope_resolution
 l_string|&quot;m&quot;
 (paren

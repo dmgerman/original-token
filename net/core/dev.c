@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&t;&t;Adam Sulmicki &lt;adam@cfar.umd.edu&gt;&n; *              Pekka Riikonen &lt;priikone@poesidon.pspt.fi&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;    Michael Chastain&t;:&t;Fix signed/unsigned for SIOCGIFCONF&n; *&t;&t;Cyrus Durgin&t;:&t;Cleaned for KMOD&n; *&t;&t;Adam Sulmicki   :&t;Bug Fix : Network Device Unload&n; *&t;&t;&t;&t;&t;A network device unload needs to purge&n; *&t;&t;&t;&t;&t;the backlog queue.&n; *&t;Paul Rusty Russell&t;:&t;SIOCSIFNAME&n; *              Pekka Riikonen  :&t;Netdev boot-time settings code&n; *              Andrew Morton   :       Make unregister_netdevice wait indefinitely on dev-&gt;refcnt&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&t;&t;Adam Sulmicki &lt;adam@cfar.umd.edu&gt;&n; *              Pekka Riikonen &lt;priikone@poesidon.pspt.fi&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;    Michael Chastain&t;:&t;Fix signed/unsigned for SIOCGIFCONF&n; *&t;&t;Cyrus Durgin&t;:&t;Cleaned for KMOD&n; *&t;&t;Adam Sulmicki   :&t;Bug Fix : Network Device Unload&n; *&t;&t;&t;&t;&t;A network device unload needs to purge&n; *&t;&t;&t;&t;&t;the backlog queue.&n; *&t;Paul Rusty Russell&t;:&t;SIOCSIFNAME&n; *              Pekka Riikonen  :&t;Netdev boot-time settings code&n; *              Andrew Morton   :       Make unregister_netdevice wait indefinitely on dev-&gt;refcnt&n; * &t;&t;J Hadi Salim&t;:&t;- Backlog queue sampling&n; *&t;&t;&t;&t;        - netif_rx() feedback&t;&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/if_bridge.h&gt;
+macro_line|#include &lt;net/divert.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
@@ -41,6 +42,12 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* This define, if set, will randomly drop a packet when congestion&n; * is more than moderate.  It helps fairness in the multi-interface&n; * case when one of them is a hog, but it kills performance for the&n; * single interface case so it is off now by default.&n; */
+DECL|macro|RAND_LIE
+macro_line|#undef RAND_LIE
+multiline_comment|/* Setting this will sample the queue lengths and thus congestion&n; * via a timer instead of as each packet is received.&n; */
+DECL|macro|OFFLINE_SAMPLE
+macro_line|#undef OFFLINE_SAMPLE
 id|NET_PROFILE_DEFINE
 c_func
 (paren
@@ -96,6 +103,30 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Taps */
+macro_line|#ifdef OFFLINE_SAMPLE
+r_static
+r_void
+id|sample_queue
+c_func
+(paren
+r_int
+r_int
+id|dummy
+)paren
+suffix:semicolon
+DECL|variable|samp_timer
+r_static
+r_struct
+id|timer_list
+id|samp_timer
+op_assign
+(brace
+id|function
+suffix:colon
+id|sample_queue
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;Our notifier list&n; */
 DECL|variable|netdev_chain
 r_static
@@ -2325,6 +2356,31 @@ id|netdev_max_backlog
 op_assign
 l_int|300
 suffix:semicolon
+multiline_comment|/* These numbers are selected based on intuition and some&n; * experimentatiom, if you have more scientific way of doing this&n; * please go ahead and fix things.&n; */
+DECL|variable|no_cong_thresh
+r_int
+id|no_cong_thresh
+op_assign
+l_int|10
+suffix:semicolon
+DECL|variable|no_cong
+r_int
+id|no_cong
+op_assign
+l_int|20
+suffix:semicolon
+DECL|variable|lo_cong
+r_int
+id|lo_cong
+op_assign
+l_int|100
+suffix:semicolon
+DECL|variable|mod_cong
+r_int
+id|mod_cong
+op_assign
+l_int|290
+suffix:semicolon
 DECL|variable|netdev_rx_stat
 r_struct
 id|netif_rx_stats
@@ -2335,7 +2391,6 @@ id|NR_CPUS
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_HW_FLOWCONTROL
 DECL|variable|netdev_dropping
-r_static
 id|atomic_t
 id|netdev_dropping
 op_assign
@@ -2658,9 +2713,249 @@ id|netdev_fc_lock
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/**&n; *&t;netif_rx&t;-&t;post buffer to the network code&n; *&t;@skb: buffer to post&n; *&n; *&t;This function receives a packet from a device driver and queues it for&n; *&t;the upper (protocol) levels to process.  It always succeeds. The buffer&n; *&t;may be dropped during processing for congestion control or by the &n; *&t;protocol layers.&n; */
-DECL|function|netif_rx
+DECL|function|get_sample_stats
+r_static
 r_void
+id|get_sample_stats
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+macro_line|#ifdef RAND_LIE
+r_int
+r_int
+id|rd
+suffix:semicolon
+r_int
+id|rq
+suffix:semicolon
+macro_line|#endif
+r_int
+id|blog
+op_assign
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|input_pkt_queue.qlen
+suffix:semicolon
+r_int
+id|avg_blog
+op_assign
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|avg_blog
+suffix:semicolon
+id|avg_blog
+op_assign
+(paren
+id|avg_blog
+op_rshift
+l_int|1
+)paren
+op_plus
+(paren
+id|blog
+op_rshift
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|avg_blog
+OG
+id|mod_cong
+)paren
+(brace
+multiline_comment|/* Above moderate congestion levels. */
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|cng_level
+op_assign
+id|NET_RX_CN_HIGH
+suffix:semicolon
+macro_line|#ifdef RAND_LIE
+id|rd
+op_assign
+id|net_random
+c_func
+(paren
+)paren
+suffix:semicolon
+id|rq
+op_assign
+id|rd
+op_mod
+id|netdev_max_backlog
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rq
+OL
+id|avg_blog
+)paren
+multiline_comment|/* unlucky bastard */
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|cng_level
+op_assign
+id|NET_RX_DROP
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|avg_blog
+OG
+id|lo_cong
+)paren
+(brace
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|cng_level
+op_assign
+id|NET_RX_CN_MOD
+suffix:semicolon
+macro_line|#ifdef RAND_LIE
+id|rd
+op_assign
+id|net_random
+c_func
+(paren
+)paren
+suffix:semicolon
+id|rq
+op_assign
+id|rd
+op_mod
+id|netdev_max_backlog
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rq
+OL
+id|avg_blog
+)paren
+multiline_comment|/* unlucky bastard */
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|cng_level
+op_assign
+id|NET_RX_CN_HIGH
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|avg_blog
+OG
+id|no_cong
+)paren
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|cng_level
+op_assign
+id|NET_RX_CN_LOW
+suffix:semicolon
+r_else
+multiline_comment|/* no congestion */
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|cng_level
+op_assign
+id|NET_RX_SUCCESS
+suffix:semicolon
+id|softnet_data
+(braket
+id|cpu
+)braket
+dot
+id|avg_blog
+op_assign
+id|avg_blog
+suffix:semicolon
+)brace
+macro_line|#ifdef OFFLINE_SAMPLE
+DECL|function|sample_queue
+r_static
+r_void
+id|sample_queue
+c_func
+(paren
+r_int
+r_int
+id|dummy
+)paren
+(brace
+multiline_comment|/* 10 ms 0r 1ms -- i dont care -- JHS */
+r_int
+id|next_tick
+op_assign
+l_int|1
+suffix:semicolon
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|get_sample_stats
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+id|next_tick
+op_add_assign
+id|jiffies
+suffix:semicolon
+id|mod_timer
+c_func
+(paren
+op_amp
+id|samp_timer
+comma
+id|next_tick
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/**&n; *&t;netif_rx&t;-&t;post buffer to the network code&n; *&t;@skb: buffer to post&n; *&n; *&t;This function receives a packet from a device driver and queues it for&n; *&t;the upper (protocol) levels to process.  It always succeeds. The buffer&n; *&t;may be dropped during processing for congestion control or by the &n; *&t;protocol layers.&n; *      &n; *&t;return values:&n; *&t;NET_RX_SUCCESS&t;(no congestion)           &n; *&t;NET_RX_CN_LOW     (low congestion) &n; *&t;NET_RX_CN_MOD     (moderate congestion)&n; *&t;NET_RX_CN_HIGH    (high congestion) &n; *&t;NET_RX_DROP    (packet was dropped)&n; *      &n; *      &n; */
+DECL|function|netif_rx
+r_int
 id|netif_rx
 c_func
 (paren
@@ -2792,7 +3087,21 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifndef OFFLINE_SAMPLE
+id|get_sample_stats
+c_func
+(paren
+id|this_cpu
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
+id|softnet_data
+(braket
+id|this_cpu
+)braket
+dot
+id|cng_level
 suffix:semicolon
 )brace
 r_if
@@ -2878,6 +3187,9 @@ c_func
 (paren
 id|skb
 )paren
+suffix:semicolon
+r_return
+id|NET_RX_DROP
 suffix:semicolon
 )brace
 multiline_comment|/* Deliver skb to an old protocol, which is not threaded well&n;   or which do not understand shared skbs.&n; */
@@ -3366,6 +3678,36 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NET_DIVERT
+DECL|function|handle_diverter
+r_static
+r_inline
+r_void
+id|handle_diverter
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+multiline_comment|/* if diversion is supported on device, then divert */
+r_if
+c_cond
+(paren
+id|skb-&gt;dev-&gt;divert
+op_logical_and
+id|skb-&gt;dev-&gt;divert-&gt;divert
+)paren
+id|divert_frame
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif   /* CONFIG_NET_DIVERT */
 DECL|function|net_rx_action
 r_static
 r_void
@@ -3590,6 +3932,21 @@ id|ptype
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_NET_DIVERT
+r_if
+c_cond
+(paren
+id|skb-&gt;dev-&gt;divert
+op_logical_and
+id|skb-&gt;dev-&gt;divert-&gt;divert
+)paren
+id|handle_diverter
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
 r_if
 c_cond
@@ -3761,6 +4118,43 @@ l_int|1
 r_goto
 id|softnet_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_HW_FLOWCONTROL
+r_if
+c_cond
+(paren
+id|queue-&gt;throttle
+op_logical_and
+id|queue-&gt;input_pkt_queue.qlen
+OL
+id|no_cong_thresh
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|netdev_dropping
+)paren
+)paren
+(brace
+id|queue-&gt;throttle
+op_assign
+l_int|0
+suffix:semicolon
+id|netdev_wakeup
+c_func
+(paren
+)paren
+suffix:semicolon
+r_goto
+id|softnet_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 )brace
 id|br_read_unlock
 c_func
@@ -6934,6 +7328,11 @@ op_star
 op_star
 id|dp
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_DIVERT
+r_int
+id|ret
+suffix:semicolon
+macro_line|#endif
 id|spin_lock_init
 c_func
 (paren
@@ -7052,6 +7451,24 @@ op_amp
 id|dev_base_lock
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_DIVERT
+id|ret
+op_assign
+id|alloc_divert_blk
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+id|ret
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 multiline_comment|/*&n;&t;&t; *&t;Default initial state at registry is that the&n;&t;&t; *&t;device is present.&n;&t;&t; */
 id|set_bit
 c_func
@@ -7219,6 +7636,24 @@ op_amp
 id|dev_base_lock
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_DIVERT
+id|ret
+op_assign
+id|alloc_divert_blk
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+id|ret
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 multiline_comment|/* Notify protocols, that a new device appeared. */
 id|notifier_call_chain
 c_func
@@ -7536,6 +7971,14 @@ op_eq
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_DIVERT
+id|free_divert_blk
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7752,6 +8195,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_DIVERT
+r_extern
+r_void
+id|dv_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 DECL|function|net_dev_init
 r_int
 id|__init
@@ -7780,6 +8233,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_DIVERT
+id|dv_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 multiline_comment|/*&n;&t; *&t;Initialise the packet receive queues.&n;&t; */
 r_for
 c_loop
@@ -7820,6 +8280,15 @@ id|queue-&gt;throttle
 op_assign
 l_int|0
 suffix:semicolon
+id|queue-&gt;cng_level
+op_assign
+l_int|0
+suffix:semicolon
+id|queue-&gt;avg_blog
+op_assign
+l_int|10
+suffix:semicolon
+multiline_comment|/* arbitrary non-zero */
 id|queue-&gt;completion_queue
 op_assign
 l_int|NULL
@@ -7841,6 +8310,25 @@ id|NET_PROFILE_REGISTER
 c_func
 (paren
 id|softnet_process
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef OFFLINE_SAMPLE
+id|samp_timer.expires
+op_assign
+id|jiffies
+op_plus
+(paren
+l_int|10
+op_star
+id|HZ
+)paren
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|samp_timer
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -28,14 +28,18 @@ id|spinlock_t
 id|ivr_read_lock
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* default base addr of IPI table */
 DECL|variable|ipi_base_addr
 r_int
 r_int
 id|ipi_base_addr
 op_assign
+(paren
+id|__IA64_UNCACHED_OFFSET
+op_or
 id|IPI_DEFAULT_BASE_ADDR
+)paren
 suffix:semicolon
-multiline_comment|/* default base addr of IPI table */
 multiline_comment|/*&n; * Legacy IRQ to IA-64 vector translation table.  Any vector not in&n; * this table maps to itself (ie: irq 0x30 =&gt; IA64 vector 0x30)&n; */
 DECL|variable|isa_irq_to_vector_map
 id|__u8
@@ -619,14 +623,41 @@ r_int
 r_int
 id|ipi_data
 suffix:semicolon
+r_int
+r_int
+id|phys_cpu_id
+suffix:semicolon
 macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 r_int
 r_int
 id|flags
 suffix:semicolon
 macro_line|#endif
-DECL|macro|EID
-macro_line|#&t;define EID&t;0
+macro_line|#ifdef CONFIG_SMP
+id|phys_cpu_id
+op_assign
+id|cpu_physical_id
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+macro_line|#else
+id|phys_cpu_id
+op_assign
+(paren
+id|ia64_get_lid
+c_func
+(paren
+)paren
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xffff
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * cpu number is in 8bit ID and 8bit EID&n;&t; */
 id|ipi_data
 op_assign
 (paren
@@ -646,13 +677,7 @@ op_assign
 id|ipi_base_addr
 op_or
 (paren
-(paren
-id|cpu
-op_lshift
-l_int|8
-op_or
-id|EID
-)paren
+id|phys_cpu_id
 op_lshift
 l_int|4
 )paren

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|ia64_set_itm
@@ -32,7 +32,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -64,7 +64,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|ia64_set_itv
@@ -111,7 +111,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|ia64_set_itc
@@ -137,7 +137,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -169,7 +169,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|__delay
@@ -239,7 +239,7 @@ id|saved_ar_lc
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|udelay

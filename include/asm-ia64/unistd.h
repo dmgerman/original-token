@@ -167,8 +167,7 @@ DECL|macro|__NR_statfs
 mdefine_line|#define __NR_statfs&t;&t;&t;1103
 DECL|macro|__NR_fstatfs
 mdefine_line|#define __NR_fstatfs&t;&t;&t;1104
-DECL|macro|__NR_ioperm
-mdefine_line|#define __NR_ioperm&t;&t;&t;1105
+multiline_comment|/* unused; used to be __NR_ioperm */
 DECL|macro|__NR_semget
 mdefine_line|#define __NR_semget&t;&t;&t;1106
 DECL|macro|__NR_semop

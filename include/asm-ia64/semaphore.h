@@ -46,7 +46,7 @@ DECL|macro|DECLARE_MUTEX
 mdefine_line|#define DECLARE_MUTEX(name)&t;&t;__DECLARE_SEMAPHORE_GENERIC(name, 1)
 DECL|macro|DECLARE_MUTEX_LOCKED
 mdefine_line|#define DECLARE_MUTEX_LOCKED(name)&t;__DECLARE_SEMAPHORE_GENERIC(name, 0)
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|sema_init
@@ -165,7 +165,7 @@ id|spinlock_t
 id|semaphore_wake_lock
 suffix:semicolon
 multiline_comment|/*&n; * Atomically decrement the semaphore&squot;s count.  If it goes negative,&n; * block the calling thread in the TASK_UNINTERRUPTIBLE state.&n; */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|down
@@ -205,7 +205,7 @@ id|sem
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Atomically decrement the semaphore&squot;s count.  If it goes negative,&n; * block the calling thread in the TASK_INTERRUPTIBLE state.&n; */
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|down_interruptible
@@ -254,7 +254,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|down_trylock
@@ -303,7 +303,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|up
@@ -452,7 +452,7 @@ r_int
 id|count
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|init_rwsem
@@ -519,7 +519,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|down_read
@@ -604,7 +604,7 @@ id|sem-&gt;readers
 suffix:semicolon
 macro_line|#endif
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|down_write
@@ -735,7 +735,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * When a reader does a release, the only significant&n; * case is when there was a writer waiting, and we&squot;ve&n; * bumped the count to 0: we must wake the writer up.&n; */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__up_read
@@ -779,7 +779,7 @@ id|count
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Releasing the writer is easy -- just release it and&n; * wake up any sleepers.&n; */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|__up_write
@@ -848,7 +848,7 @@ id|new_count
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|up_read
@@ -901,7 +901,7 @@ id|sem
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|up_write

@@ -26,7 +26,7 @@ DECL|macro|__access_ok
 mdefine_line|#define __access_ok(addr,size,segment)&t;(((unsigned long) (addr)) &lt;= (segment).seg)
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size)&t;__access_ok((addr),(size),get_fs())
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|verify_area
@@ -101,7 +101,7 @@ suffix:semicolon
 DECL|macro|__m
 mdefine_line|#define __m(x) (*(struct __large_struct *)(x))
 DECL|macro|__get_user_64
-mdefine_line|#define __get_user_64(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld8 %0=%2&bslash;t
+mdefine_line|#define __get_user_64(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld8 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"
@@ -141,7 +141,7 @@ id|__gu_err
 )paren
 suffix:semicolon
 DECL|macro|__get_user_32
-mdefine_line|#define __get_user_32(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld4 %0=%2&bslash;t
+mdefine_line|#define __get_user_32(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld4 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"
@@ -181,7 +181,7 @@ id|__gu_err
 )paren
 suffix:semicolon
 DECL|macro|__get_user_16
-mdefine_line|#define __get_user_16(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld2 %0=%2&bslash;t
+mdefine_line|#define __get_user_16(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld2 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"
@@ -221,7 +221,7 @@ id|__gu_err
 )paren
 suffix:semicolon
 DECL|macro|__get_user_8
-mdefine_line|#define __get_user_8(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld1 %0=%2&bslash;t
+mdefine_line|#define __get_user_8(addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;&bslash;n1:&bslash;tld1 %0=%2%P2&bslash;t
 singleline_comment|// %0 and %1 get overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"
@@ -273,7 +273,7 @@ DECL|macro|__put_user_check
 mdefine_line|#define __put_user_check(x,ptr,size,segment)&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register long __pu_err __asm__ (&quot;r8&quot;) = -EFAULT;&t;&bslash;&n;&t;__typeof__(*(ptr)) *__pu_addr = (ptr);&t;&t;&t;&bslash;&n;&t;if (__access_ok((long)__pu_addr,size,segment)) {&t;&bslash;&n;&t;&t;__pu_err = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;switch (size) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;  case 1: __put_user_8(x,__pu_addr); break;&t;&bslash;&n;&t;&t;  case 2: __put_user_16(x,__pu_addr); break;&t;&bslash;&n;&t;&t;  case 4: __put_user_32(x,__pu_addr); break;&t;&bslash;&n;&t;&t;  case 8: __put_user_64(x,__pu_addr); break;&t;&bslash;&n;&t;&t;  default: __put_user_unknown(); break;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__pu_err;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/*&n; * The &quot;__put_user_xx()&quot; macros tell gcc they read from memory&n; * instead of writing: this is because they do not write to&n; * any memory gcc knows about, so there are no aliasing issues&n; */
 DECL|macro|__put_user_64
-mdefine_line|#define __put_user_64(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst8 %1=%r2&bslash;t
+mdefine_line|#define __put_user_64(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst8 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"
@@ -312,7 +312,7 @@ id|__pu_err
 )paren
 )paren
 DECL|macro|__put_user_32
-mdefine_line|#define __put_user_32(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst4 %1=%r2&bslash;t
+mdefine_line|#define __put_user_32(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst4 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"
@@ -351,7 +351,7 @@ id|__pu_err
 )paren
 )paren
 DECL|macro|__put_user_16
-mdefine_line|#define __put_user_16(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst2 %1=%r2&bslash;t
+mdefine_line|#define __put_user_16(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst2 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"
@@ -390,7 +390,7 @@ id|__pu_err
 )paren
 )paren
 DECL|macro|__put_user_8
-mdefine_line|#define __put_user_8(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst1 %1=%r2&bslash;t
+mdefine_line|#define __put_user_8(x,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t; &quot;&bslash;n1:&bslash;tst1 %1=%r2%P1&bslash;t
 singleline_comment|// %0 gets overwritten by exception handler&bslash;n&quot;&t;&bslash;
 l_string|&quot;2:&bslash;n&quot;
 "&bslash;"

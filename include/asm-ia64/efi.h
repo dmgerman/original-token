@@ -661,7 +661,7 @@ suffix:semicolon
 )brace
 id|efi
 suffix:semicolon
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|efi_guidcmp

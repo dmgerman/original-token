@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: atomic.h,v 1.20 2000/03/16 16:44:44 davem Exp $&n; * atomic.h: Thankfully the V9 is at least reasonable for this&n; *           stuff.&n; *&n; * Copyright (C) 1996, 1997, 2000 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: atomic.h,v 1.21 2000/10/03 07:28:56 anton Exp $&n; * atomic.h: Thankfully the V9 is at least reasonable for this&n; *           stuff.&n; *&n; * Copyright (C) 1996, 1997, 2000 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef __ARCH_SPARC64_ATOMIC__
 DECL|macro|__ARCH_SPARC64_ATOMIC__
 mdefine_line|#define __ARCH_SPARC64_ATOMIC__

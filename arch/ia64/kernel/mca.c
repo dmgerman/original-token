@@ -89,15 +89,6 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(SAL_MPINIT_WORKAROUND) &amp;&amp; !defined(CONFIG_SMP)
-DECL|variable|bootstrap_processor
-r_int
-id|bootstrap_processor
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|ia64_mca_cmc_vector_setup
@@ -671,16 +662,6 @@ c_func
 l_string|&quot;ia64_mca_init : begin&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if defined(SAL_MPINIT_WORKAROUND) &amp;&amp; !defined(CONFIG_SMP)
-multiline_comment|/* XXX -- workaround for SAL bug for running on MP system, but UP kernel */
-id|bootstrap_processor
-op_assign
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Clear the Rendez checkin flag for all cpus */
 r_for
 c_loop
@@ -772,19 +753,10 @@ c_func
 id|ia64_os_mca_dispatch
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * XXX - disable SAL checksum by setting size to 0; should be&n;&t; *&t;__pa(ia64_os_mca_dispatch_end) - __pa(ia64_os_mca_dispatch);&n;&t; */
 id|ia64_mc_info.imi_mca_handler_size
 op_assign
-id|__pa
-c_func
-(paren
-id|ia64_os_mca_dispatch_end
-)paren
-op_minus
-id|__pa
-c_func
-(paren
-id|ia64_os_mca_dispatch
-)paren
+l_int|0
 suffix:semicolon
 multiline_comment|/* Register the os mca handler with SAL */
 r_if
@@ -823,6 +795,7 @@ c_func
 l_string|&quot;ia64_mca_init : registered os mca handler with SAL&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * XXX - disable SAL checksum by setting size to 0, should be&n;&t; * IA64_INIT_HANDLER_SIZE &n;&t; */
 id|ia64_mc_info.imi_monarch_init_handler
 op_assign
 id|__pa
@@ -833,7 +806,7 @@ id|mon_init_ptr-&gt;fp
 suffix:semicolon
 id|ia64_mc_info.imi_monarch_init_handler_size
 op_assign
-id|IA64_INIT_HANDLER_SIZE
+l_int|0
 suffix:semicolon
 id|ia64_mc_info.imi_slave_init_handler
 op_assign
@@ -845,7 +818,7 @@ id|slave_init_ptr-&gt;fp
 suffix:semicolon
 id|ia64_mc_info.imi_slave_init_handler_size
 op_assign
-id|IA64_INIT_HANDLER_SIZE
+l_int|0
 suffix:semicolon
 id|IA64_MCA_DEBUG
 c_func
@@ -1131,7 +1104,7 @@ l_int|0
 suffix:semicolon
 id|cpu
 OL
-id|IA64_MAXCPUS
+id|smp_num_cpus
 suffix:semicolon
 id|cpu
 op_increment
@@ -1174,6 +1147,10 @@ id|ptregs
 (brace
 r_int
 id|flags
+comma
+id|cpu
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Mask all interrupts */
 id|save_and_cli
@@ -1182,13 +1159,22 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|ia64_mc_info.imi_rendez_checkin
-(braket
-id|ia64_get_cpuid
+macro_line|#ifdef CONFIG_SMP
+id|cpu
+op_assign
+id|cpu_logical_id
 c_func
 (paren
-l_int|0
+id|hard_smp_processor_id
+c_func
+(paren
 )paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ia64_mc_info.imi_rendez_checkin
+(braket
+id|cpu
 )braket
 op_assign
 id|IA64_MCA_RENDEZ_CHECKIN_DONE

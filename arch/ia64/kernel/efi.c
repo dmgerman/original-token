@@ -943,6 +943,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * We must use the same page size as the one used&n;&t;&t; * for the kernel region when we map the PAL code.&n;&t;&t; * This way, we avoid overlapping TRs if code is &n;&t;&t; * executed nearby. The Alt I-TLB installs 256MB&n;&t;&t; * page sizes as defined for region 7.&n;&t;&t; *&n;&t;&t; * XXX Fixme: should be dynamic here (for page size)&n;&t;&t; */
 id|mask
 op_assign
 op_complement
@@ -950,24 +951,54 @@ op_complement
 (paren
 l_int|1
 op_lshift
-id|_PAGE_SIZE_4M
+id|_PAGE_SIZE_256M
 )paren
 op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* XXX should be dynamic? */
 id|vaddr
 op_assign
 id|PAGE_OFFSET
 op_plus
 id|md-&gt;phys_addr
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * We must check that the PAL mapping won&squot;t overlap&n;&t;&t; * with the kernel mapping on ITR1. &n;&t;&t; *&n;&t;&t; * PAL code is guaranteed to be aligned on a power of 2&n;&t;&t; * between 4k and 256KB.&n;&t;&t; * Also from the documentation, it seems like there is an&n;&t;&t; * implicit guarantee that you will need only ONE ITR to&n;&t;&t; * map it. This implies that the PAL code is always aligned&n;&t;&t; * on its size, i.e., the closest matching page size supported&n;&t;&t; * by the TLB. Therefore PAL code is guaranteed never to cross&n;&t;&t; * a 256MB unless it is bigger than 256MB (very unlikely!).&n;&t;&t; * So for now the following test is enough to determine whether&n;&t;&t; * or not we need a dedicated ITR for the PAL code.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|vaddr
+op_amp
+id|mask
+)paren
+op_eq
+(paren
+id|PAGE_OFFSET
+op_amp
+id|mask
+)paren
+)paren
+(brace
 id|printk
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;: mapping PAL code [0x%lx-0x%lx) into [0x%lx-0x%lx)&bslash;n&quot;
+l_string|&quot; : no need to install ITR for PAL Code&bslash;n&quot;
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;CPU %d: mapping PAL code [0x%lx-0x%lx) into [0x%lx-0x%lx)&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 comma
 id|md-&gt;phys_addr
 comma
@@ -989,7 +1020,7 @@ op_amp
 id|mask
 )paren
 op_plus
-l_int|4
+l_int|256
 op_star
 l_int|1024
 op_star
@@ -1003,7 +1034,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * ITR0/DTR0: used for kernel code/data&n;&t;&t; * ITR1/DTR1: used by HP simulator&n;&t;&t; * ITR2/DTR2: map PAL code&n;&t;&t; * ITR3/DTR3: used to map PAL calls buffer&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * ITR0/DTR0: used for kernel code/data&n;&t;&t; * ITR1/DTR1: used by HP simulator&n;&t;&t; * ITR2/DTR2: map PAL code&n;&t;&t; */
 id|ia64_itr
 c_func
 (paren
@@ -1035,7 +1066,7 @@ id|_PAGE_AR_RX
 )paren
 )paren
 comma
-id|_PAGE_SIZE_4M
+id|_PAGE_SIZE_256M
 )paren
 suffix:semicolon
 id|local_irq_restore
@@ -1700,6 +1731,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_IA64_SOFTSDV_HACKS
+multiline_comment|/*&n;&t; * (Some) SoftSDVs seem to have a problem with this call.&n;&t; * Since it&squot;s mostly a performance optimization, just don&squot;t do&n;&t; * it for now...  --davidm 99/12/6&n;&t; */
+id|efi_enter_virtual_mode
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|efi_enter_virtual_mode

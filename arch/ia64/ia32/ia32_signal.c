@@ -1222,7 +1222,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|_NSIG_WORDS
+id|_IA32_NSIG_WORDS
 OG
 l_int|1
 )paren
@@ -1414,6 +1414,10 @@ id|current-&gt;pid
 comma
 id|sig
 comma
+(paren
+r_void
+op_star
+)paren
 id|frame
 comma
 id|regs-&gt;cr_iip
@@ -1831,6 +1835,10 @@ id|current-&gt;comm
 comma
 id|current-&gt;pid
 comma
+(paren
+r_void
+op_star
+)paren
 id|frame
 comma
 id|regs-&gt;cr_iip

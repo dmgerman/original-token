@@ -1,6 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PCI_H
 DECL|macro|_ASM_IA64_PCI_H
 mdefine_line|#define _ASM_IA64_PCI_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -18,7 +19,7 @@ r_struct
 id|pci_dev
 suffix:semicolon
 DECL|function|pcibios_set_master
-r_extern
+r_static
 r_inline
 r_void
 id|pcibios_set_master
@@ -33,7 +34,7 @@ id|dev
 multiline_comment|/* No special bus mastering setup handling */
 )brace
 DECL|function|pcibios_penalize_isa_irq
-r_extern
+r_static
 r_inline
 r_void
 id|pcibios_penalize_isa_irq
@@ -218,7 +219,7 @@ id|direction
 )paren
 suffix:semicolon
 multiline_comment|/* Return whether the given PCI device DMA address mask can&n; * be supported properly.  For example, if your device can&n; * only drive the low 24-bits during PCI bus mastering, then&n; * you would pass 0x00ffffff as the mask to this function.&n; */
-r_extern
+r_static
 r_inline
 r_int
 DECL|function|pci_dma_supported

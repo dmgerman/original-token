@@ -622,6 +622,26 @@ DECL|enumerator|NET_CORE_DIVERT_VERSION
 id|NET_CORE_DIVERT_VERSION
 op_assign
 l_int|12
+comma
+DECL|enumerator|NET_CORE_NO_CONG_THRESH
+id|NET_CORE_NO_CONG_THRESH
+op_assign
+l_int|13
+comma
+DECL|enumerator|NET_CORE_NO_CONG
+id|NET_CORE_NO_CONG
+op_assign
+l_int|14
+comma
+DECL|enumerator|NET_CORE_LO_CONG
+id|NET_CORE_LO_CONG
+op_assign
+l_int|15
+comma
+DECL|enumerator|NET_CORE_MOD_CONG
+id|NET_CORE_MOD_CONG
+op_assign
+l_int|16
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ethernet */

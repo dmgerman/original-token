@@ -1,4 +1,4 @@
-multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over X/Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:&t;0.5.0&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over X/Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:&t;0.5.1&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; *&n; * 051000 :&t;Initialization cleanup&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -431,26 +431,14 @@ id|pppoe_init
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|pppox_init
 r_int
-id|init_module
+id|__init
+id|pppox_init
 c_func
 (paren
 r_void
 )paren
-macro_line|#else
-r_int
-id|__init
-id|pppox_proto_init
-c_func
-(paren
-r_struct
-id|net_proto
-op_star
-id|pro
-)paren
-macro_line|#endif
 (brace
 r_int
 id|err
@@ -491,18 +479,10 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|debug
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|pppox_exit
 r_void
-id|cleanup_module
+id|__exit
+id|pppox_exit
 c_func
 (paren
 r_void
@@ -515,5 +495,18 @@ id|PF_PPPOX
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|pppox_init
+id|module_init
+c_func
+(paren
+id|pppox_init
+)paren
+suffix:semicolon
+DECL|variable|pppox_exit
+id|module_exit
+c_func
+(paren
+id|pppox_exit
+)paren
+suffix:semicolon
 eof

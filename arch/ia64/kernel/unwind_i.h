@@ -447,16 +447,12 @@ DECL|enumerator|UNW_NAT_VAL
 id|UNW_NAT_VAL
 comma
 multiline_comment|/* NaT represented by NaT value (fp reg) */
-DECL|enumerator|UNW_NAT_PRI_UNAT
-id|UNW_NAT_PRI_UNAT
+DECL|enumerator|UNW_NAT_MEMSTK
+id|UNW_NAT_MEMSTK
 comma
 multiline_comment|/* NaT value is in unat word at offset OFF  */
-DECL|enumerator|UNW_NAT_SCRATCH
-id|UNW_NAT_SCRATCH
-comma
-multiline_comment|/* NaT value is in scratch.pri_unat */
-DECL|enumerator|UNW_NAT_STACKED
-id|UNW_NAT_STACKED
+DECL|enumerator|UNW_NAT_REGSTK
+id|UNW_NAT_REGSTK
 multiline_comment|/* NaT is in rnat */
 )brace
 suffix:semicolon
@@ -468,6 +464,14 @@ DECL|enumerator|UNW_INSN_ADD
 id|UNW_INSN_ADD
 comma
 multiline_comment|/* s[dst] += val */
+DECL|enumerator|UNW_INSN_ADD_PSP
+id|UNW_INSN_ADD_PSP
+comma
+multiline_comment|/* s[dst] = (s.psp + val) */
+DECL|enumerator|UNW_INSN_ADD_SP
+id|UNW_INSN_ADD_SP
+comma
+multiline_comment|/* s[dst] = (s.sp + val) */
 DECL|enumerator|UNW_INSN_MOVE
 id|UNW_INSN_MOVE
 comma
@@ -480,21 +484,17 @@ DECL|enumerator|UNW_INSN_MOVE_STACKED
 id|UNW_INSN_MOVE_STACKED
 comma
 multiline_comment|/* s[dst] = ia64_rse_skip(*s.bsp, val) */
-DECL|enumerator|UNW_INSN_LOAD_PSPREL
-id|UNW_INSN_LOAD_PSPREL
+DECL|enumerator|UNW_INSN_SETNAT_MEMSTK
+id|UNW_INSN_SETNAT_MEMSTK
 comma
-multiline_comment|/* s[dst] = *(*s.psp + 8*val) */
-DECL|enumerator|UNW_INSN_LOAD_SPREL
-id|UNW_INSN_LOAD_SPREL
-comma
-multiline_comment|/* s[dst] = *(*s.sp + 8*val) */
-DECL|enumerator|UNW_INSN_SETNAT_PRI_UNAT
-id|UNW_INSN_SETNAT_PRI_UNAT
-comma
-multiline_comment|/* s[dst+1].nat.type = PRI_UNAT;&n;&t;&t;&t;&t;&t;   s[dst+1].nat.off = *s.pri_unat - s[dst] */
+multiline_comment|/* s[dst+1].nat.type = MEMSTK;&n;&t;&t;&t;&t;&t;   s[dst+1].nat.off = *s.pri_unat - s[dst] */
 DECL|enumerator|UNW_INSN_SETNAT_TYPE
 id|UNW_INSN_SETNAT_TYPE
+comma
 multiline_comment|/* s[dst+1].nat.type = val */
+DECL|enumerator|UNW_INSN_LOAD
+id|UNW_INSN_LOAD
+multiline_comment|/* s[dst] = *s[val] */
 )brace
 suffix:semicolon
 DECL|struct|unw_insn

@@ -215,8 +215,16 @@ c_func
 (paren
 l_string|&quot;Placing software IO TLB between 0x%p - 0x%p&bslash;n&quot;
 comma
+(paren
+r_void
+op_star
+)paren
 id|io_tlb_start
 comma
+(paren
+r_void
+op_star
+)paren
 id|io_tlb_end
 )paren
 suffix:semicolon
@@ -1256,8 +1264,6 @@ suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/*&n; * Map a single buffer of the indicated size for DMA in streaming mode.&n; * The 32-bit bus address to use is returned.&n; *&n; * Once the device is given the dma address, the device owns this memory&n; * until either pci_unmap_single or pci_dma_sync_single is performed.&n; */
-r_extern
-r_inline
 id|dma_addr_t
 DECL|function|pci_map_single
 id|pci_map_single
@@ -1299,8 +1305,6 @@ id|ptr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unmap a single streaming mode DMA translation.  The dma_addr and size&n; * must match what was provided for in a previous pci_map_single call.  All&n; * other usages are undefined.&n; *&n; * After this call, reads by the cpu to the buffer are guarenteed to see&n; * whatever the device wrote there.&n; */
-r_extern
-r_inline
 r_void
 DECL|function|pci_unmap_single
 id|pci_unmap_single
@@ -1335,8 +1339,6 @@ suffix:semicolon
 multiline_comment|/* Nothing to do */
 )brace
 multiline_comment|/*&n; * Map a set of buffers described by scatterlist in streaming&n; * mode for DMA.  This is the scather-gather version of the&n; * above pci_map_single interface.  Here the scatter gather list&n; * elements are each tagged with the appropriate dma address&n; * and length.  They are obtained via sg_dma_{address,length}(SG).&n; *&n; * NOTE: An implementation may be able to use a smaller number of&n; *       DMA address/length pairs than there are SG table elements.&n; *       (for example via virtual mapping capabilities)&n; *       The routine returns the number of addr/length pairs actually&n; *       used, at most nents.&n; *&n; * Device ownership issues as mentioned above for pci_map_single are&n; * the same here.&n; */
-r_extern
-r_inline
 r_int
 DECL|function|pci_map_sg
 id|pci_map_sg
@@ -1375,8 +1377,6 @@ id|nents
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unmap a set of streaming mode DMA translations.&n; * Again, cpu read rules concerning calls here are the same as for&n; * pci_unmap_single() above.&n; */
-r_extern
-r_inline
 r_void
 DECL|function|pci_unmap_sg
 id|pci_unmap_sg
@@ -1413,8 +1413,6 @@ suffix:semicolon
 multiline_comment|/* Nothing to do */
 )brace
 multiline_comment|/*&n; * Make physical memory consistent for a single&n; * streaming mode DMA translation after a transfer.&n; *&n; * If you perform a pci_map_single() but wish to interrogate the&n; * buffer using the cpu, yet do not wish to teardown the PCI dma&n; * mapping, you must call this function before doing so.  At the&n; * next point you give the PCI dma address back to the card, the&n; * device again owns the buffer.&n; */
-r_extern
-r_inline
 r_void
 DECL|function|pci_dma_sync_single
 id|pci_dma_sync_single
@@ -1449,8 +1447,6 @@ suffix:semicolon
 multiline_comment|/* Nothing to do */
 )brace
 multiline_comment|/*&n; * Make physical memory consistent for a set of streaming mode DMA&n; * translations after a transfer.&n; *&n; * The same as pci_dma_sync_single but for a scatter-gather list,&n; * same rules and usage.&n; */
-r_extern
-r_inline
 r_void
 DECL|function|pci_dma_sync_sg
 id|pci_dma_sync_sg

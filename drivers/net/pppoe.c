@@ -1,4 +1,4 @@
-multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:    0.6.2&n; *&n; * 030700 :     Fixed connect logic to allow for disconnect.&n; * 270700 :&t;Fixed potential SMP problems; we must protect against &n; *&t;&t;simultaneous invocation of ppp_input &n; *&t;&t;and ppp_unregister_channel.&n; * 040800 :&t;Respect reference count mechanisms on net-devices.&n; * 200800 :     fix kfree(skb) in pppoe_rcv (acme)&n; *&n; *&t;&t;Module reference count is decremented in the right spot now,&n; *&t;&t;guards against sock_put not actually freeing the sk &n; *&t;&t;in pppoe_release.&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; * Contributors:&n; * &t;&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:    0.6.3&n; *&n; * 030700 :     Fixed connect logic to allow for disconnect.&n; * 270700 :&t;Fixed potential SMP problems; we must protect against &n; *&t;&t;simultaneous invocation of ppp_input &n; *&t;&t;and ppp_unregister_channel.&n; * 040800 :&t;Respect reference count mechanisms on net-devices.&n; * 200800 :     fix kfree(skb) in pppoe_rcv (acme)&n; *&n; *&t;&t;Module reference count is decremented in the right spot now,&n; *&t;&t;guards against sock_put not actually freeing the sk &n; *&t;&t;in pppoe_release.&n; *&n; * 051000 :&t;Initialization cleanup&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; * Contributors:&n; * &t;&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -3801,7 +3801,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Registered PPPoE v0.5&bslash;n&quot;
+l_string|&quot;Registered PPPoE v0.6.3&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dev_add_pack
@@ -3833,33 +3833,10 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|debug
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|pppoe_exit
 r_void
-)paren
-(brace
-r_return
-id|pppoe_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|pppoe_exit
 c_func
 (paren
 r_void
@@ -3892,24 +3869,18 @@ l_string|&quot;pppoe&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|function|pppoe_proto_init
-r_int
-id|pppoe_proto_init
+DECL|variable|pppoe_init
+id|module_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|np
-)paren
-(brace
-r_return
 id|pppoe_init
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+DECL|variable|pppoe_exit
+id|module_exit
+c_func
+(paren
+id|pppoe_exit
+)paren
+suffix:semicolon
 eof

@@ -1,19 +1,13 @@
 macro_line|#ifndef _ASM_IA64_PGTABLE_H
 DECL|macro|_ASM_IA64_PGTABLE_H
 mdefine_line|#define _ASM_IA64_PGTABLE_H
-multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the ia-64 page table tree.&n; *&n; * This hopefully works with any (fixed) ia-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the IA-64 page table tree.&n; *&n; * This hopefully works with any (fixed) IA-64 page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 DECL|macro|IA64_MAX_PHYS_BITS
 mdefine_line|#define IA64_MAX_PHYS_BITS&t;50&t;/* max. number of physical address bits (architected) */
-multiline_comment|/* Is ADDR a valid kernel address? */
-DECL|macro|kern_addr_valid
-mdefine_line|#define kern_addr_valid(addr)&t;((addr) &gt;= TASK_SIZE)
-multiline_comment|/* Is ADDR a valid physical address? */
-DECL|macro|phys_addr_valid
-mdefine_line|#define phys_addr_valid(addr)&t;(((addr) &amp; my_cpu_data.unimpl_pa_mask) == 0)
 multiline_comment|/*&n; * First, define the various bits in a PTE.  Note that the PTE format&n; * matches the VHPT short format, the firt doubleword of the VHPD long&n; * format, and the first doubleword of the TLB insertion format.&n; */
 DECL|macro|_PAGE_P
 mdefine_line|#define _PAGE_P&t;&t;&t;(1 &lt;&lt;  0)&t;/* page present bit */
@@ -130,6 +124,7 @@ mdefine_line|#define PTRS_PER_PAGE&t;(__IA64_UL(1) &lt;&lt; (PAGE_SHIFT-3))
 macro_line|# ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * All the normal masks have the &quot;page accessed&quot; bits on, as any time&n; * they are used, the page is accessed. They are cleared only by the&n; * page-out routines&n; */
 DECL|macro|PAGE_NONE
@@ -187,7 +182,7 @@ mdefine_line|#define pte_ERROR(e)&t;printk(&quot;%s:%d: bad pte %016lx.&bslash;n
 multiline_comment|/*&n; * Some definitions to translate between mem_map, PTEs, and page&n; * addresses:&n; */
 multiline_comment|/*&n; * Given a pointer to an mem_map[] entry, return the kernel virtual&n; * address corresponding to that page.&n; */
 DECL|macro|page_address
-mdefine_line|#define page_address(page)&t;((void *) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT)))
+mdefine_line|#define page_address(page)&t;((page)-&gt;virtual)
 multiline_comment|/*&n; * Now for some cache flushing routines.  This is the kind of stuff&n; * that can be very expensive, so try to avoid them whenever possible.&n; */
 multiline_comment|/* Caches aren&squot;t brain-dead on the ia-64. */
 DECL|macro|flush_cache_all
@@ -215,6 +210,33 @@ id|addr
 suffix:semicolon
 DECL|macro|flush_icache_page
 mdefine_line|#define flush_icache_page(vma,pg)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((vma)-&gt;vm_flags &amp; PROT_EXEC)&t;&t;&t;&bslash;&n;&t;&t;ia64_flush_icache_page((unsigned long) page_address(pg));&t;&bslash;&n;} while (0)
+multiline_comment|/* Quick test to see if ADDR is a (potentially) valid physical address. */
+r_static
+id|__inline__
+r_int
+DECL|function|ia64_phys_addr_valid
+id|ia64_phys_addr_valid
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+(paren
+id|addr
+op_amp
+(paren
+id|my_cpu_data.unimpl_pa_mask
+)paren
+)paren
+op_eq
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * kern_addr_valid(ADDR) tests if ADDR is pointing to valid kernel&n; * memory.  For the return value to be meaningful, ADDR must be &gt;=&n; * PAGE_OFFSET.  This operation can be relatively expensive (e.g.,&n; * require a hash-, or multi-level tree-lookup or something of that&n; * sort) but it guarantees to return TRUE only if accessing the page&n; * at that address does not cause an error.  Note that there may be&n; * addresses for which kern_addr_valid() returns FALSE even though an&n; * access would not cause an error (e.g., this is typically true for&n; * memory mapped I/O regions.&n; *&n; * XXX Need to implement this for IA-64.&n; */
+DECL|macro|kern_addr_valid
+mdefine_line|#define kern_addr_valid(addr)&t;(1)
 multiline_comment|/*&n; * Now come the defines and routines to manage and access the three-level&n; * page table.&n; */
 multiline_comment|/*&n; * On some architectures, special things need to be done when setting&n; * the PTE in a page table.  Nothing special needs to be on ia-64.&n; */
 DECL|macro|set_pte
@@ -271,7 +293,7 @@ mdefine_line|#define pmd_set(pmdp, ptep) &t;&t;(pmd_val(*(pmdp)) = __pa(ptep))
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(pmd)&t;&t;&t;(!pmd_val(pmd))
 DECL|macro|pmd_bad
-mdefine_line|#define pmd_bad(pmd)&t;&t;&t;(!phys_addr_valid(pmd_val(pmd)))
+mdefine_line|#define pmd_bad(pmd)&t;&t;&t;(!ia64_phys_addr_valid(pmd_val(pmd)))
 DECL|macro|pmd_present
 mdefine_line|#define pmd_present(pmd)&t;&t;(pmd_val(pmd) != 0UL)
 DECL|macro|pmd_clear
@@ -283,7 +305,7 @@ mdefine_line|#define pgd_set(pgdp, pmdp)&t;&t;(pgd_val(*(pgdp)) = __pa(pmdp))
 DECL|macro|pgd_none
 mdefine_line|#define pgd_none(pgd)&t;&t;&t;(!pgd_val(pgd))
 DECL|macro|pgd_bad
-mdefine_line|#define pgd_bad(pgd)&t;&t;&t;(!phys_addr_valid(pgd_val(pgd)))
+mdefine_line|#define pgd_bad(pgd)&t;&t;&t;(!ia64_phys_addr_valid(pgd_val(pgd)))
 DECL|macro|pgd_present
 mdefine_line|#define pgd_present(pgd)&t;&t;(pgd_val(pgd) != 0UL)
 DECL|macro|pgd_clear
@@ -319,7 +341,7 @@ multiline_comment|/*&n; * Macro to make mark a page protection value as &quot;wr
 DECL|macro|pgprot_writecombine
 mdefine_line|#define pgprot_writecombine(prot)&t;__pgprot((pgprot_val(prot) &amp; ~_PAGE_MA_MASK) | _PAGE_MA_WC)
 multiline_comment|/*&n; * Return the region index for virtual address ADDRESS.&n; */
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -343,7 +365,7 @@ id|a.f.reg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the region offset for virtual address ADDRESS.&n; */
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -370,7 +392,7 @@ DECL|macro|RGN_SIZE
 mdefine_line|#define RGN_SIZE&t;(1UL &lt;&lt; 61)
 DECL|macro|RGN_KERNEL
 mdefine_line|#define RGN_KERNEL&t;7
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -425,7 +447,7 @@ id|l1index
 suffix:semicolon
 )brace
 multiline_comment|/* The offset in the 1-level directory is given by the 3 region bits&n;   (61..63) and the seven level-1 bits (33-39).  */
-r_extern
+r_static
 id|__inline__
 id|pgd_t
 op_star
@@ -493,10 +515,6 @@ DECL|macro|pte_to_swp_entry
 mdefine_line|#define pte_to_swp_entry(pte)&t;&t;((swp_entry_t) { pte_val(pte) })
 DECL|macro|swp_entry_to_pte
 mdefine_line|#define swp_entry_to_pte(x)&t;&t;((pte_t) { (x).val })
-DECL|macro|module_map
-mdefine_line|#define module_map&t;vmalloc
-DECL|macro|module_unmap
-mdefine_line|#define module_unmap&t;vfree
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(0)
@@ -508,7 +526,13 @@ r_int
 r_int
 id|empty_zero_page
 (braket
-l_int|1024
+id|PAGE_SIZE
+op_div
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 )braket
 suffix:semicolon
 DECL|macro|ZERO_PAGE

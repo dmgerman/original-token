@@ -15,7 +15,7 @@ DECL|macro|pte_quicklist
 mdefine_line|#define pte_quicklist&t;&t;(my_cpu_data.pte_quick)
 DECL|macro|pgtable_cache_size
 mdefine_line|#define pgtable_cache_size&t;(my_cpu_data.pgtable_cache_sz)
-r_extern
+r_static
 id|__inline__
 id|pgd_t
 op_star
@@ -54,7 +54,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 id|pgd_t
 op_star
@@ -110,7 +110,7 @@ op_star
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 id|pgd_t
 op_star
@@ -148,7 +148,7 @@ r_return
 id|pgd
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|free_pgd_fast
@@ -186,7 +186,7 @@ op_increment
 id|pgtable_cache_size
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 id|pmd_t
 op_star
@@ -225,7 +225,7 @@ r_return
 id|pmd
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 id|pmd_t
 op_star
@@ -286,7 +286,7 @@ op_star
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|free_pmd_fast
@@ -324,7 +324,7 @@ op_increment
 id|pgtable_cache_size
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|free_pmd_slow
@@ -360,7 +360,7 @@ r_int
 id|address_preadjusted
 )paren
 suffix:semicolon
-r_extern
+r_static
 id|__inline__
 id|pte_t
 op_star
@@ -421,7 +421,7 @@ op_star
 id|ret
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|free_pte_fast
@@ -487,7 +487,7 @@ op_star
 id|pmd
 )paren
 suffix:semicolon
-r_extern
+r_static
 id|__inline__
 id|pte_t
 op_star
@@ -606,7 +606,7 @@ op_plus
 id|offset
 suffix:semicolon
 )brace
-r_extern
+r_static
 id|__inline__
 id|pmd_t
 op_star
@@ -798,7 +798,7 @@ id|spinlock_t
 id|ptcg_lock
 suffix:semicolon
 multiline_comment|/*&n; * Flush a specified user mapping&n; */
-r_extern
+r_static
 id|__inline__
 r_void
 DECL|function|flush_tlb_mm

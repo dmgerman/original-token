@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.153 2000/09/06 00:45:01 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.154 2000/10/05 06:12:57 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -888,6 +888,11 @@ c_func
 id|smpfunc_t
 )paren
 id|show_backtrace
+)paren
+suffix:semicolon
+id|show_backtrace
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

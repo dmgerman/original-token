@@ -3804,6 +3804,10 @@ l_string|&quot;usbin_completed: panic: unknown URB&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|urb-&gt;dev
+op_assign
+id|as-&gt;state-&gt;usbdev
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -4169,6 +4173,10 @@ l_string|&quot;usbin_sync_completed: panic: unknown URB&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|urb-&gt;dev
+op_assign
+id|as-&gt;state-&gt;usbdev
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -6057,6 +6065,10 @@ l_string|&quot;usbout_completed: panic: unknown URB&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|urb-&gt;dev
+op_assign
+id|as-&gt;state-&gt;usbdev
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -6501,6 +6513,10 @@ l_string|&quot;usbout_sync_completed: panic: unknown URB&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|urb-&gt;dev
+op_assign
+id|as-&gt;state-&gt;usbdev
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
+macro_line|#include &lt;net/divert.h&gt;
 DECL|macro|NEXT_DEV
 mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
@@ -762,6 +763,11 @@ id|base_addr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_DIVERT
+r_int
+id|ret
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 r_while
 c_loop
 (paren
@@ -785,10 +791,30 @@ id|dev
 op_eq
 l_int|0
 )paren
+(brace
 multiline_comment|/* probe given addr */
+macro_line|#ifdef CONFIG_NET_DIVERT
+id|ret
+op_assign
+id|alloc_divert_blk
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+id|ret
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -817,9 +843,29 @@ id|p-&gt;status
 op_eq
 l_int|0
 )paren
+(brace
+macro_line|#ifdef CONFIG_NET_DIVERT
+id|ret
+op_assign
+id|alloc_divert_blk
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+id|ret
+suffix:semicolon
+macro_line|#endif /* CONFIG_NET_DIVERT */
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 id|p
 op_increment

@@ -1456,10 +1456,6 @@ op_div
 l_int|1000
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 )brace
 DECL|function|dtlk_readable
 r_static

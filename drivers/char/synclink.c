@@ -11949,12 +11949,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|set_current_state
-c_func
-(paren
-id|TASK_RUNNING
-)paren
-suffix:semicolon
 m_exit
 suffix:colon
 r_if

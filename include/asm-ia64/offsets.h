@@ -7,7 +7,7 @@ mdefine_line|#define PT_PTRACED_BIT&t;&t;&t;0
 DECL|macro|PT_TRACESYS_BIT
 mdefine_line|#define PT_TRACESYS_BIT&t;&t;&t;1
 DECL|macro|IA64_TASK_SIZE
-mdefine_line|#define IA64_TASK_SIZE&t;&t;&t;2864&t;/* 0xb30 */
+mdefine_line|#define IA64_TASK_SIZE&t;&t;&t;3328&t;/* 0xd00 */
 DECL|macro|IA64_PT_REGS_SIZE
 mdefine_line|#define IA64_PT_REGS_SIZE&t;&t;400&t;/* 0x190 */
 DECL|macro|IA64_SWITCH_STACK_SIZE
@@ -25,11 +25,11 @@ mdefine_line|#define IA64_TASK_NEED_RESCHED_OFFSET&t;40&t;/* 0x28 */
 DECL|macro|IA64_TASK_PROCESSOR_OFFSET
 mdefine_line|#define IA64_TASK_PROCESSOR_OFFSET&t;100&t;/* 0x64 */
 DECL|macro|IA64_TASK_THREAD_OFFSET
-mdefine_line|#define IA64_TASK_THREAD_OFFSET&t;&t;896&t;/* 0x380 */
+mdefine_line|#define IA64_TASK_THREAD_OFFSET&t;&t;1424&t;/* 0x590 */
 DECL|macro|IA64_TASK_THREAD_KSP_OFFSET
-mdefine_line|#define IA64_TASK_THREAD_KSP_OFFSET&t;896&t;/* 0x380 */
+mdefine_line|#define IA64_TASK_THREAD_KSP_OFFSET&t;1424&t;/* 0x590 */
 DECL|macro|IA64_TASK_THREAD_SIGMASK_OFFSET
-mdefine_line|#define IA64_TASK_THREAD_SIGMASK_OFFSET&t;2744&t;/* 0xab8 */
+mdefine_line|#define IA64_TASK_THREAD_SIGMASK_OFFSET&t;3184&t;/* 0xc70 */
 DECL|macro|IA64_TASK_PID_OFFSET
 mdefine_line|#define IA64_TASK_PID_OFFSET&t;&t;188&t;/* 0xbc */
 DECL|macro|IA64_TASK_MM_OFFSET
