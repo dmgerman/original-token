@@ -18,10 +18,17 @@ r_int
 r_int
 id|highmem_mapnr
 suffix:semicolon
-r_extern
+id|FASTCALL
+c_func
+(paren
 r_int
 r_int
 id|nr_free_highpages
+c_func
+(paren
+r_void
+)paren
+)paren
 suffix:semicolon
 r_extern
 r_struct
@@ -48,6 +55,21 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#else /* CONFIG_HIGHMEM */
+DECL|function|nr_free_highpages
+r_extern
+r_inline
+r_int
+r_int
+id|nr_free_highpages
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|macro|prepare_highmem_swapout
 mdefine_line|#define prepare_highmem_swapout(page) page
 DECL|macro|replace_with_highmem
@@ -56,8 +78,6 @@ DECL|macro|kmap
 mdefine_line|#define kmap(page, type) page_address(page)
 DECL|macro|kunmap
 mdefine_line|#define kunmap(vaddr, type) do { } while (0)
-DECL|macro|nr_free_highpages
-mdefine_line|#define nr_free_highpages 0UL
 macro_line|#endif /* CONFIG_HIGHMEM */
 multiline_comment|/* when CONFIG_HIGHMEM is not set these will be plain clear/copy_page */
 DECL|function|clear_highpage

@@ -4,7 +4,6 @@ macro_line|# include &quot;X.h&quot;
 macro_line|# include &quot;xf86.h&quot;
 macro_line|# include &quot;xf86drm.h&quot;
 macro_line|# include &quot;xf86_OSlib.h&quot;
-macro_line|# include &quot;xf86drm.h&quot;
 macro_line|#else
 macro_line|# include &lt;unistd.h&gt;
 macro_line|# include &lt;signal.h&gt;

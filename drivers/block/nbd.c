@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
@@ -269,6 +270,10 @@ id|flags
 suffix:semicolon
 r_do
 (brace
+id|sock-&gt;sk-&gt;allocation
+op_assign
+id|GFP_ATOMIC
+suffix:semicolon
 id|iov.iov_base
 op_assign
 id|buf

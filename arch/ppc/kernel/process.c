@@ -2561,9 +2561,9 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|first_sched
-mdefine_line|#define first_sched&t;((unsigned long) scheduling_functions_start_here)
+mdefine_line|#define first_sched    ((unsigned long) scheduling_functions_start_here)
 DECL|macro|last_sched
-mdefine_line|#define last_sched&t;((unsigned long) scheduling_functions_end_here)
+mdefine_line|#define last_sched     ((unsigned long) scheduling_functions_end_here)
 DECL|function|get_wchan
 r_int
 r_int

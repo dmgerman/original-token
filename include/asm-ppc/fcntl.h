@@ -29,9 +29,13 @@ mdefine_line|#define O_SYNC&t;&t;010000
 DECL|macro|FASYNC
 mdefine_line|#define FASYNC&t;&t;020000&t;/* fcntl, for BSD compatibility */
 DECL|macro|O_DIRECTORY
-mdefine_line|#define O_DIRECTORY&t;040000&t;/* must be a directory */
+mdefine_line|#define O_DIRECTORY     040000&t;/* must be a directory */
 DECL|macro|O_NOFOLLOW
-mdefine_line|#define O_NOFOLLOW&t;0100000&t;/* don&squot;t follow links */
+mdefine_line|#define O_NOFOLLOW      100000&t;/* don&squot;t follow links */
+DECL|macro|O_LARGEFILE
+mdefine_line|#define O_LARGEFILE     200000
+DECL|macro|O_DIRECT
+mdefine_line|#define O_DIRECT&t;400000&t;/* direct disk access hint - currently ignored */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

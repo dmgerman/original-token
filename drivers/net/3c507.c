@@ -2909,7 +2909,7 @@ id|length
 )paren
 suffix:semicolon
 multiline_comment|/* Set the old command link pointing to this send packet. */
-id|isa_isa_writew
+id|isa_writew
 c_func
 (paren
 id|tx_block

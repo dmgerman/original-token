@@ -526,21 +526,6 @@ op_star
 id|mem_map
 suffix:semicolon
 multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
-r_extern
-r_struct
-id|page
-op_star
-id|__get_pages
-c_func
-(paren
-r_int
-id|gfp_mask
-comma
-r_int
-r_int
-id|order
-)paren
-suffix:semicolon
 DECL|macro|__get_free_page
 mdefine_line|#define __get_free_page(gfp_mask) __get_free_pages((gfp_mask),0)
 DECL|macro|__get_dma_pages
@@ -929,6 +914,8 @@ c_func
 (paren
 r_int
 r_int
+op_star
+id|zones_size
 )paren
 suffix:semicolon
 r_extern

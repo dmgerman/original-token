@@ -2321,9 +2321,15 @@ suffix:semicolon
 )brace
 id|msg
 op_assign
+(paren
+id|u32
+op_star
+)paren
+(paren
 id|c-&gt;mem_offset
 op_plus
 id|m
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Put together a scsi execscb message&n;&t; */
 id|len

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Find I2O capable controllers on the PCI bus, and register/install&n; *&t;them with the I2O layer&n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&t;Modified by Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO:&n; *&t;&t;Support polled I2O PCI controllers. &n; */
+multiline_comment|/*&n; *&t;Find I2O capable controllers on the PCI bus, and register/install&n; *&t;them with the I2O layer&n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; * &t;Modified by Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO:&n; *&t;&t;Support polled I2O PCI controllers. &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -314,7 +314,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;i2o_pci: insufficient memory to add controller.&bslash;n&quot;
+l_string|&quot;i2o: Insufficient memory to add controller.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -393,7 +393,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;i2o_pci: I2O controller has no memory regions defined.&bslash;n&quot;
+l_string|&quot;i2o: I2O controller has no memory regions defined.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -430,7 +430,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;PCI I2O controller at 0x%08X size=%d&bslash;n&quot;
+l_string|&quot;i2o: PCI I2O controller at 0x%08X size=%d&bslash;n&quot;
 comma
 id|memptr
 comma
@@ -459,7 +459,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;i2o_pci: Unable to map controller.&bslash;n&quot;
+l_string|&quot;i2o: Unable to map controller.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -610,7 +610,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;i2o: unable to install controller.&bslash;n&quot;
+l_string|&quot;i2o: Unable to install controller.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -717,9 +717,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Installed iop%d at IRQ%d&bslash;n&quot;
+l_string|&quot;%s: Installed at IRQ%d&bslash;n&quot;
 comma
-id|c-&gt;unit
+id|c-&gt;name
 comma
 id|dev-&gt;irq
 )paren
@@ -763,7 +763,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Checking for PCI I2O controllers...&bslash;n&quot;
+l_string|&quot;i2o: Checking for PCI I2O controllers...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -817,7 +817,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O controller found but does not support I2O 1.5 (skipping).&bslash;n&quot;
+l_string|&quot;i2o: I2O Controller found but does not support I2O 1.5 (skipping).&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -827,7 +827,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O controller on bus %d at %d.&bslash;n&quot;
+l_string|&quot;i2o: I2O controller on bus %d at %d.&bslash;n&quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma
@@ -867,7 +867,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%d I2O controller%s found and installed.&bslash;n&quot;
+l_string|&quot;i2o: %d I2O controller%s found and installed.&bslash;n&quot;
 comma
 id|count
 comma
@@ -958,9 +958,9 @@ macro_line|#endif /* MODULE */
 id|printk
 c_func
 (paren
-l_string|&quot;I2O: Failed to initialize iop%d&bslash;n&quot;
+l_string|&quot;%s: Failed to initialize.&bslash;n&quot;
 comma
-id|c-&gt;unit
+id|c-&gt;name
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE

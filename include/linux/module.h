@@ -472,10 +472,6 @@ DECL|macro|EXPORT_NO_SYMBOLS
 mdefine_line|#define EXPORT_NO_SYMBOLS
 macro_line|#endif /* MODULE */
 r_extern
-id|rwlock_t
-id|modlist_lock
-suffix:semicolon
-r_extern
 r_int
 r_int
 id|get_kcore_size

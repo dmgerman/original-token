@@ -3044,19 +3044,10 @@ l_int|2
 op_star
 id|dev-&gt;width
 suffix:semicolon
-r_char
-op_star
+id|u32
 id|src
 op_assign
-(paren
-r_char
-op_star
-)paren
-id|bus_to_virt
-c_func
-(paren
 id|mem_base
-)paren
 suffix:semicolon
 r_char
 id|tmp
@@ -3119,13 +3110,17 @@ id|y
 op_increment
 )paren
 (brace
-op_star
-id|src
-op_assign
+id|isa_writeb
+c_func
+(paren
 l_int|0
+comma
+id|src
+)paren
 suffix:semicolon
 multiline_comment|/* synchronisiert neue Zeile */
-id|memcpy
+multiline_comment|/*&n;&t;&t; *&t;This is in truth a fifo, be very careful as if you&n;&t;&t; *&t;forgot this odd things will occur 8)&n;&t;&t; */
+id|isa_memcpy_fromio
 c_func
 (paren
 id|tmp

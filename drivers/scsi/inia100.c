@@ -9,19 +9,13 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt;= CVT_LINUX_VERSION(2,1,92)
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,23)
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#endif
@@ -29,30 +23,25 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#endif
-macro_line|#include &quot;sd.h&quot;
-macro_line|#include &quot;scsi.h&quot;
-macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;inia100.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#else
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &quot;../block/blk.h&quot;
+macro_line|#endif
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &quot;inia100.h&quot;
-macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|variable|driver_template
 id|Scsi_Host_Template

@@ -16958,7 +16958,6 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* caller must hold modlist_lock at least in read mode */
 DECL|function|find_module
 r_static
 id|__inline__
@@ -18132,11 +18131,9 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|read_lock
+id|lock_kernel
 c_func
 (paren
-op_amp
-id|modlist_lock
 )paren
 suffix:semicolon
 r_if
@@ -18430,11 +18427,9 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|read_unlock
+id|unlock_kernel
 c_func
 (paren
-op_amp
-id|modlist_lock
 )paren
 suffix:semicolon
 r_return

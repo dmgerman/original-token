@@ -6,7 +6,7 @@ multiline_comment|/* Tunable parameters first */
 DECL|macro|I2O_BUCKET_COUNT
 mdefine_line|#define I2O_BUCKET_COUNT &t;256
 DECL|macro|I2O_BUCKET_THRESH
-mdefine_line|#define I2O_BUCKET_THRESH&t;16
+mdefine_line|#define I2O_BUCKET_THRESH&t;8
 multiline_comment|/* LAN types */
 DECL|macro|I2O_LAN_ETHERNET
 mdefine_line|#define I2O_LAN_ETHERNET&t;0x0030
@@ -179,5 +179,12 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Event Indicator Mask Flags for LAN OSM */
+DECL|macro|I2O_LAN_EVT_LINK_DOWN
+mdefine_line|#define I2O_LAN_EVT_LINK_DOWN&t;&t;0x01
+DECL|macro|I2O_LAN_EVT_LINK_UP
+mdefine_line|#define I2O_LAN_EVT_LINK_UP&t;&t;0x02
+DECL|macro|I2O_LAN_EVT_MEDIA_CHANGE
+mdefine_line|#define I2O_LAN_EVT_MEDIA_CHANGE &t;0x04
 macro_line|#endif /* _I2O_LAN_H */
 eof

@@ -1507,7 +1507,6 @@ c_cond
 id|have_of
 )paren
 (brace
-macro_line|#ifdef CONFIG_MACH_SPECIFIC
 multiline_comment|/* prom_init has already been called from __start */
 r_if
 c_cond
@@ -1524,7 +1523,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_MACH_SPECIFIC&t;*/
 multiline_comment|/*&n;&t;&t; * If we were booted via quik, r3 points to the physical&n;&t;&t; * address of the command-line parameters.&n;&t;&t; * If we were booted from an xcoff image (i.e. netbooted or&n;&t;&t; * booted from floppy), we get the command line from the&n;&t;&t; * bootargs property of the /chosen node.&n;&t;&t; * If an initial ramdisk is present, r3 and r4&n;&t;&t; * are used for initrd_start and initrd_size,&n;&t;&t; * otherwise they contain 0xdeadbeef.  &n;&t;&t; */
 id|cmd_line
 (braket

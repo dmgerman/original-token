@@ -246,13 +246,6 @@ c_func
 id|__get_free_pages
 )paren
 suffix:semicolon
-DECL|variable|__get_pages
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__get_pages
-)paren
-suffix:semicolon
 DECL|variable|free_pages
 id|EXPORT_SYMBOL
 c_func

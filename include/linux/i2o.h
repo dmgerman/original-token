@@ -276,12 +276,8 @@ id|u16
 id|PciDeviceID
 suffix:semicolon
 DECL|typedef|i2o_pci_bus
-DECL|typedef|pi2o_pci_bus
 )brace
 id|i2o_pci_bus
-comma
-op_star
-id|pi2o_pci_bus
 suffix:semicolon
 DECL|struct|_i2o_local_bus
 r_typedef
@@ -301,12 +297,8 @@ id|u32
 id|LbBaseMemoryAddress
 suffix:semicolon
 DECL|typedef|i2o_local_bus
-DECL|typedef|pi2o_local_bus
 )brace
 id|i2o_local_bus
-comma
-op_star
-id|pi2o_local_bus
 suffix:semicolon
 DECL|struct|_i2o_isa_bus
 r_typedef
@@ -330,12 +322,8 @@ id|u32
 id|IsaBaseMemoryAddress
 suffix:semicolon
 DECL|typedef|i2o_isa_bus
-DECL|typedef|pi2o_isa_bus
 )brace
 id|i2o_isa_bus
-comma
-op_star
-id|pi2o_isa_bus
 suffix:semicolon
 DECL|struct|_i2o_eisa_bus_info
 r_typedef
@@ -359,12 +347,8 @@ id|u32
 id|EisaBaseMemoryAddress
 suffix:semicolon
 DECL|typedef|i2o_eisa_bus
-DECL|typedef|pi2o_eisa_bus
 )brace
 id|i2o_eisa_bus
-comma
-op_star
-id|pi2o_eisa_bus
 suffix:semicolon
 DECL|struct|_i2o_mca_bus
 r_typedef
@@ -388,12 +372,8 @@ id|u32
 id|McaBaseMemoryAddress
 suffix:semicolon
 DECL|typedef|i2o_mca_bus
-DECL|typedef|pi2o_mca_bus
 )brace
 id|i2o_mca_bus
-comma
-op_star
-id|pi2o_mca_bus
 suffix:semicolon
 DECL|struct|_i2o_other_bus
 r_typedef
@@ -413,12 +393,8 @@ id|u32
 id|BaseMemoryAddress
 suffix:semicolon
 DECL|typedef|i2o_other_bus
-DECL|typedef|pi2o_other_bus
 )brace
 id|i2o_other_bus
-comma
-op_star
-id|pi2o_other_bus
 suffix:semicolon
 DECL|struct|_i2o_hrt_entry
 r_typedef
@@ -484,12 +460,8 @@ DECL|member|bus
 id|bus
 suffix:semicolon
 DECL|typedef|i2o_hrt_entry
-DECL|typedef|pi2o_hrt_entry
 )brace
 id|i2o_hrt_entry
-comma
-op_star
-id|pi2o_hrt_entry
 suffix:semicolon
 DECL|struct|_i2o_hrt
 r_typedef
@@ -520,12 +492,8 @@ l_int|1
 )braket
 suffix:semicolon
 DECL|typedef|i2o_hrt
-DECL|typedef|pi2o_hrt
 )brace
 id|i2o_hrt
-comma
-op_star
-id|pi2o_hrt
 suffix:semicolon
 DECL|struct|_i2o_lct_entry
 r_typedef
@@ -610,12 +578,8 @@ id|u32
 id|event_capabilities
 suffix:semicolon
 DECL|typedef|i2o_lct_entry
-DECL|typedef|pi2o_lct_entry
 )brace
 id|i2o_lct_entry
-comma
-op_star
-id|pi2o_lct_entry
 suffix:semicolon
 DECL|struct|_i2o_lct
 r_typedef
@@ -656,12 +620,8 @@ l_int|1
 )braket
 suffix:semicolon
 DECL|typedef|i2o_lct
-DECL|typedef|pi2o_lct
 )brace
 id|i2o_lct
-comma
-op_star
-id|pi2o_lct
 suffix:semicolon
 DECL|struct|_i2o_status_block
 r_typedef
@@ -728,6 +688,10 @@ DECL|member|max_inbound_frames
 id|u32
 id|max_inbound_frames
 suffix:semicolon
+DECL|member|cur_inbound_frames
+id|u32
+id|cur_inbound_frames
+suffix:semicolon
 DECL|member|max_outbound_frames
 id|u32
 id|max_outbound_frames
@@ -784,13 +748,59 @@ suffix:colon
 l_int|8
 suffix:semicolon
 DECL|typedef|i2o_status_block
-DECL|typedef|pi2o_status_block
 )brace
 id|i2o_status_block
-comma
-op_star
-id|pi2o_status_block
 suffix:semicolon
+multiline_comment|/* Event indicator mask flags */
+DECL|macro|I2O_EVT_IND_STATE_CHANGE
+mdefine_line|#define I2O_EVT_IND_STATE_CHANGE&t;&t;0x80000000
+DECL|macro|I2O_EVT_IND_GENERAL_WARNING
+mdefine_line|#define I2O_EVT_IND_GENERAL_WARNING&t;&t;0x40000000
+DECL|macro|I2O_EVT_IND_CONFIGURATION_FLAG
+mdefine_line|#define I2O_EVT_IND_CONFIGURATION_FLAG&t;&t;0x20000000
+DECL|macro|I2O_EVT_IND_LOCK_RELEASE
+mdefine_line|#define I2O_EVT_IND_LOCK_RELEASE&t;&t;0x10000000
+DECL|macro|I2O_EVT_IND_CAPABILITY_CHANGE
+mdefine_line|#define I2O_EVT_IND_CAPABILITY_CHANGE&t;&t;0x08000000
+DECL|macro|I2O_EVT_IND_DEVICE_RESET
+mdefine_line|#define I2O_EVT_IND_DEVICE_RESET&t;&t;0x04000000
+DECL|macro|I2O_EVT_IND_EVT_MASK_MODIFIED
+mdefine_line|#define I2O_EVT_IND_EVT_MASK_MODIFIED&t;&t;0x02000000
+DECL|macro|I2O_EVT_IND_FIELD_MODIFIED
+mdefine_line|#define I2O_EVT_IND_FIELD_MODIFIED&t;&t;0x01000000
+DECL|macro|I2O_EVT_IND_VENDOR_EVT
+mdefine_line|#define I2O_EVT_IND_VENDOR_EVT&t;&t;&t;0x00800000
+DECL|macro|I2O_EVT_IND_DEVICE_STATE
+mdefine_line|#define I2O_EVT_IND_DEVICE_STATE&t;&t;0x00400000
+multiline_comment|/* Event data for generic events */
+DECL|macro|I2O_EVT_STATE_CHANGE_NORMAL
+mdefine_line|#define I2O_EVT_STATE_CHANGE_NORMAL&t;&t;0x00
+DECL|macro|I2O_EVT_STATE_CHANGE_SUSPENDED
+mdefine_line|#define I2O_EVT_STATE_CHANGE_SUSPENDED&t;&t;0x01
+DECL|macro|I2O_EVT_STATE_CHANGE_RESTART
+mdefine_line|#define I2O_EVT_STATE_CHANGE_RESTART&t;&t;0x02
+DECL|macro|I2O_EVT_STATE_CHANGE_NA_RECOVER
+mdefine_line|#define I2O_EVT_STATE_CHANGE_NA_RECOVER&t;&t;0x03
+DECL|macro|I2O_EVT_STATE_CHANGE_NA_NO_RECOVER
+mdefine_line|#define I2O_EVT_STATE_CHANGE_NA_NO_RECOVER&t;0x04
+DECL|macro|I2O_EVT_STATE_CHANGE_QUIESCE_REQUEST
+mdefine_line|#define I2O_EVT_STATE_CHANGE_QUIESCE_REQUEST&t;0x05
+DECL|macro|I2O_EVT_STATE_CHANGE_FAILED
+mdefine_line|#define I2O_EVT_STATE_CHANGE_FAILED&t;&t;0x10
+DECL|macro|I2O_EVT_STATE_CHANGE_FAULTED
+mdefine_line|#define I2O_EVT_STATE_CHANGE_FAULTED&t;&t;0x11
+DECL|macro|I2O_EVT_GEN_WARNING_NORMAL
+mdefine_line|#define I2O_EVT_GEN_WARNING_NORMAL&t;&t;0x00
+DECL|macro|I2O_EVT_GEN_WARNING_ERROR_THRESHOLD
+mdefine_line|#define I2O_EVT_GEN_WARNING_ERROR_THRESHOLD&t;0x01
+DECL|macro|I2O_EVT_GEN_WARNING_MEDIA_FAULT
+mdefine_line|#define I2O_EVT_GEN_WARNING_MEDIA_FAULT&t;&t;0x02
+DECL|macro|I2O_EVT_CAPABILITY_OTHER
+mdefine_line|#define I2O_EVT_CAPABILITY_OTHER&t;&t;0x01
+DECL|macro|I2O_EVT_CAPABILITY_CHANGED
+mdefine_line|#define I2O_EVT_CAPABILITY_CHANGED&t;&t;0x02
+DECL|macro|I2O_EVT_SENSOR_STATE_CHANGED
+mdefine_line|#define I2O_EVT_SENSOR_STATE_CHANGED&t;&t;0x01
 macro_line|#ifdef __KERNEL__   /* ioctl stuff only thing exported to users */
 DECL|macro|I2O_MAX_MANAGERS
 mdefine_line|#define I2O_MAX_MANAGERS&t;4
@@ -824,7 +834,8 @@ r_struct
 id|i2o_device
 (brace
 DECL|member|lct_data
-id|pi2o_lct_entry
+id|i2o_lct_entry
+op_star
 id|lct_data
 suffix:semicolon
 multiline_comment|/* Device LCT information */
@@ -930,7 +941,6 @@ DECL|member|enabled
 r_int
 id|enabled
 suffix:semicolon
-multiline_comment|/* Bus level enable */
 DECL|macro|I2O_TYPE_PCI
 mdefine_line|#define I2O_TYPE_PCI&t;&t;0x01&t;&t;/* PCI I2O controller */&t;
 DECL|member|event_notifer
@@ -979,16 +989,19 @@ id|irq_mask
 suffix:semicolon
 multiline_comment|/* Interrupt port */
 DECL|member|status_block
-id|pi2o_status_block
+id|i2o_status_block
+op_star
 id|status_block
 suffix:semicolon
 multiline_comment|/* IOP status block */
 DECL|member|lct
-id|pi2o_lct
+id|i2o_lct
+op_star
 id|lct
 suffix:semicolon
 DECL|member|hrt
-id|pi2o_hrt
+id|i2o_hrt
+op_star
 id|hrt
 suffix:semicolon
 DECL|member|mem_offset
@@ -1737,27 +1750,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|i2o_issue_claim
-c_func
-(paren
-r_struct
-id|i2o_controller
-op_star
-comma
-r_int
-comma
-r_int
-comma
-r_int
-comma
-r_int
-op_star
-comma
-id|u32
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|i2o_issue_params
 c_func
 (paren
@@ -1899,6 +1891,43 @@ comma
 r_int
 comma
 r_int
+comma
+r_void
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|i2o_event_register
+c_func
+(paren
+r_struct
+id|i2o_controller
+op_star
+comma
+r_int
+comma
+r_int
+comma
+id|u32
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|i2o_event_ack
+c_func
+(paren
+r_struct
+id|i2o_controller
+op_star
+comma
+r_int
+comma
+r_int
+comma
+id|u32
 comma
 r_void
 op_star
@@ -2125,8 +2154,8 @@ DECL|macro|I2O_CMD_UTIL_PARAMS_SET
 mdefine_line|#define I2O_CMD_UTIL_PARAMS_SET&t;&t;0x05
 DECL|macro|I2O_CMD_UTIL_EVT_REGISTER
 mdefine_line|#define I2O_CMD_UTIL_EVT_REGISTER&t;0x13
-DECL|macro|I2O_CMD_UTIL_ACK
-mdefine_line|#define I2O_CMD_UTIL_ACK&t;&t;0x14
+DECL|macro|I2O_CMD_UTIL_EVT_ACK
+mdefine_line|#define I2O_CMD_UTIL_EVT_ACK&t;&t;0x14
 DECL|macro|I2O_CMD_UTIL_CONFIG_DIALOG
 mdefine_line|#define I2O_CMD_UTIL_CONFIG_DIALOG&t;0x10
 DECL|macro|I2O_CMD_UTIL_DEVICE_RESERVE

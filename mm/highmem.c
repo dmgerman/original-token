@@ -2,17 +2,11 @@ multiline_comment|/*&n; * High memory handling common code and variables.&n; *&n
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/highmem.h&gt;
+macro_line|#include &lt;linux/swap.h&gt;
 DECL|variable|highmem_mapnr
 r_int
 r_int
 id|highmem_mapnr
-suffix:semicolon
-DECL|variable|nr_free_highpages
-r_int
-r_int
-id|nr_free_highpages
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|prepare_highmem_swapout
 r_struct
@@ -150,6 +144,9 @@ id|page
 op_logical_or
 op_logical_neg
 id|nr_free_highpages
+c_func
+(paren
+)paren
 )paren
 r_return
 id|page

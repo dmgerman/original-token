@@ -107,6 +107,9 @@ suffix:semicolon
 id|free
 op_add_assign
 id|nr_free_pages
+c_func
+(paren
+)paren
 suffix:semicolon
 id|free
 op_add_assign

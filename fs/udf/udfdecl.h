@@ -5,7 +5,6 @@ DECL|macro|UDF_VERSION_NOTICE
 mdefine_line|#define UDF_VERSION_NOTICE &quot;v0.8.9.3&quot;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef LINUX_VERSION_CODE
@@ -14,17 +13,15 @@ macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,7)
 macro_line|#error &quot;The UDF Module Current Requires Kernel Version 2.3.7 or greater&quot;
 macro_line|#endif
+macro_line|#include &lt;linux/fs.h&gt;
 multiline_comment|/* if we&squot;re not defined, we must be compiling outside of the kernel tree */
 macro_line|#if !defined(CONFIG_UDF_FS) &amp;&amp; !defined(CONFIG_UDF_FS_MODULE)
 multiline_comment|/* ... so override config */
 DECL|macro|CONFIG_UDF_FS_MODULE
 mdefine_line|#define CONFIG_UDF_FS_MODULE
-macro_line|#include &lt;linux/fs.h&gt;
 multiline_comment|/* explicitly include udf_fs_sb.h and udf_fs_i.h */
 macro_line|#include &lt;linux/udf_fs_sb.h&gt;
 macro_line|#include &lt;linux/udf_fs_i.h&gt;
-macro_line|#else
-macro_line|#include &lt;linux/fs.h&gt; /* also gets udf_fs_i.h and udf_fs_sb.h */
 macro_line|#endif
 r_struct
 id|dentry
@@ -1013,8 +1010,8 @@ op_star
 suffix:semicolon
 macro_line|#else
 macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#endif /* __KERNEL__ */
+macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#include &quot;udfend.h&quot;
 multiline_comment|/* structures */
 DECL|struct|udf_directory_record

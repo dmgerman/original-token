@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;i2o_lan.h&quot;
@@ -3712,7 +3713,8 @@ id|str
 l_int|22
 )braket
 suffix:semicolon
-id|pi2o_lct
+id|i2o_lct
+op_star
 id|lct
 op_assign
 id|c-&gt;lct
@@ -4760,6 +4762,13 @@ id|time
 op_assign
 id|jiffies
 suffix:semicolon
+multiline_comment|/* DPT driver claims they need this */
+id|mdelay
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
 macro_line|#ifdef DRIVERDEBUG
 id|printk
 c_func
@@ -4844,7 +4853,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* &n;&t;&t; * Once the reset is sent, the IOP goes into the INIT state &n;&t;&t; * which is inditerminate.  We need to wait until the IOP &n;&t;&t; * has rebooted before we can let the system talk to &n;&t;&t; * it. We read the inbound Free_List until a message is &n;&t;&t; * available.  If we can&squot;t read one in the given ammount of &n;&t;&t; * time, we assume the IOP could not reboot properly.  &n;&t;&t; */
+multiline_comment|/* &n;&t;&t; * Once the reset is sent, the IOP goes into the INIT state &n;&t;&t; * which is indeterminate.  We need to wait until the IOP &n;&t;&t; * has rebooted before we can let the system talk to &n;&t;&t; * it. We read the inbound Free_List until a message is &n;&t;&t; * available.  If we can&squot;t read one in the given ammount of &n;&t;&t; * time, we assume the IOP could not reboot properly.  &n;&t;&t; */
 macro_line|#ifdef DRIVERDEBUG 
 id|printk
 c_func
@@ -4960,6 +4969,9 @@ id|u8
 op_star
 id|status_block
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 macro_line|#ifdef DRIVERDEBUG
 id|printk
 c_func
@@ -4987,7 +4999,8 @@ suffix:semicolon
 id|c-&gt;status_block
 op_assign
 (paren
-id|pi2o_status_block
+id|i2o_status_block
+op_star
 )paren
 id|kmalloc
 c_func
@@ -5030,6 +5043,21 @@ op_star
 )paren
 id|c-&gt;status_block
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|5
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|m
 op_assign
 id|i2o_wait_message
@@ -5053,6 +5081,19 @@ op_minus
 id|ETIMEDOUT
 suffix:semicolon
 )brace
+id|memset
+c_func
+(paren
+id|status_block
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|i2o_status_block
+)paren
+)paren
+suffix:semicolon
 id|msg
 op_assign
 (paren
@@ -5065,20 +5106,23 @@ op_plus
 id|m
 )paren
 suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+id|NINE_WORD_MSG_SIZE
+op_or
+id|SGL_OFFSET_0
+comma
+op_amp
 id|msg
 (braket
 l_int|0
 )braket
-op_assign
-id|NINE_WORD_MSG_SIZE
-op_or
-id|SGL_OFFSET_0
+)paren
 suffix:semicolon
-id|msg
-(braket
-l_int|1
-)braket
-op_assign
+id|__raw_writel
+c_func
+(paren
 id|I2O_CMD_STATUS_GET
 op_lshift
 l_int|24
@@ -5088,60 +5132,116 @@ op_lshift
 l_int|12
 op_or
 id|ADAPTER_TID
+comma
+op_amp
+id|msg
+(braket
+l_int|1
+)braket
+)paren
 suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|msg
 (braket
 l_int|2
 )braket
-op_assign
-id|core_context
+)paren
 suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|msg
 (braket
 l_int|3
 )braket
-op_assign
-l_int|0
+)paren
 suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|msg
 (braket
 l_int|4
 )braket
-op_assign
-l_int|0
+)paren
 suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|msg
 (braket
 l_int|5
 )braket
-op_assign
-l_int|0
+)paren
 suffix:semicolon
-id|msg
-(braket
-l_int|6
-)braket
-op_assign
-id|virt_to_phys
+id|__raw_writel
+c_func
+(paren
+id|virt_to_bus
 c_func
 (paren
 id|c-&gt;status_block
 )paren
+comma
+op_amp
+id|msg
+(braket
+l_int|6
+)braket
+)paren
 suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|msg
 (braket
 l_int|7
 )braket
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/* 64bit host FIXME */
+id|__raw_writel
+c_func
+(paren
+r_sizeof
+(paren
+id|i2o_status_block
+)paren
+comma
+op_amp
 id|msg
 (braket
 l_int|8
 )braket
-op_assign
-l_int|88
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SB is %d bytes.&bslash;n&quot;
+comma
+r_sizeof
+(paren
+id|i2o_status_block
+)paren
+)paren
 suffix:semicolon
 id|i2o_post_message
 c_func
@@ -5149,6 +5249,13 @@ c_func
 id|c
 comma
 id|m
+)paren
+suffix:semicolon
+multiline_comment|/* DPT work around */
+id|mdelay
+c_func
+(paren
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Wait for a reply */
@@ -5159,53 +5266,26 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|status_block
-(braket
-l_int|87
-)braket
-op_ne
-l_int|0xFF
-)paren
-(brace
-r_if
-c_cond
-(paren
 (paren
 id|jiffies
 op_minus
 id|time
 )paren
-op_ge
-l_int|5
-op_star
+op_le
 id|HZ
 )paren
 (brace
-macro_line|#ifdef DRIVERDEBUG
-id|printk
-c_func
+r_if
+c_cond
 (paren
-id|KERN_ERR
-l_string|&quot;IOP get status timeout.&bslash;n&quot;
+id|status_block
+(braket
+l_int|87
+)braket
+op_ne
+l_int|0
 )paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|ETIMEDOUT
-suffix:semicolon
-)brace
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
+(brace
 multiline_comment|/* Ok the reply has arrived. Fill in the important stuff */
 id|c-&gt;inbound_size
 op_assign
@@ -5230,6 +5310,32 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef DRIVERDEBUG
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IOP get status timeout.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_return
+l_int|0
+suffix:semicolon
+singleline_comment|//-ETIMEDOUT;
 )brace
 DECL|function|i2o_hrt_get
 r_int
@@ -5591,6 +5697,9 @@ r_struct
 id|i2o_controller
 op_star
 id|iop
+comma
+op_star
+id|niop
 suffix:semicolon
 r_int
 id|ret
@@ -5624,9 +5733,13 @@ id|iop
 suffix:semicolon
 id|iop
 op_assign
-id|iop-&gt;next
+id|niop
 )paren
 (brace
+id|niop
+op_assign
+id|iop-&gt;next
+suffix:semicolon
 macro_line|#ifdef DRIVERDEBUG
 id|printk
 c_func
@@ -5638,12 +5751,58 @@ id|iop-&gt;unit
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
 id|i2o_status_get
 c_func
 (paren
 id|iop
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to obtain status of IOP, attempting a reset.&bslash;n&quot;
+)paren
 suffix:semicolon
+id|i2o_reset_controller
+c_func
+(paren
+id|iop
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i2o_status_get
+c_func
+(paren
+id|iop
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;IOP not responding.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|i2o_delete_controller
+c_func
+(paren
+id|iop
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -5666,6 +5825,8 @@ c_func
 (paren
 id|iop
 )paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
 r_if
@@ -5699,7 +5860,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;iop%d already running...trying to reboot&quot;
+l_string|&quot;iop%d already running...trying to reboot&bslash;n&quot;
 comma
 id|iop-&gt;unit
 )paren
@@ -5764,6 +5925,8 @@ c_func
 id|iop
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -5779,11 +5942,15 @@ id|iop
 suffix:semicolon
 id|iop
 op_assign
-id|iop-&gt;next
+id|niop
 )paren
 (brace
 r_int
 id|i
+suffix:semicolon
+id|niop
+op_assign
+id|iop-&gt;next
 suffix:semicolon
 r_if
 c_cond
@@ -5813,6 +5980,8 @@ c_func
 (paren
 id|iop
 )paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
 id|iop-&gt;page_frame
@@ -5910,9 +6079,13 @@ id|iop
 suffix:semicolon
 id|iop
 op_assign
-id|iop-&gt;next
+id|niop
 )paren
 (brace
+id|niop
+op_assign
+id|iop-&gt;next
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5938,7 +6111,7 @@ c_func
 id|iop
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
 r_if
@@ -5965,6 +6138,8 @@ c_func
 (paren
 id|iop
 )paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
 )brace
@@ -6004,10 +6179,14 @@ id|iop
 suffix:semicolon
 id|iop
 op_assign
-id|iop-&gt;next
+id|niop
 )paren
 macro_line|#ifdef DRIVERDEBUG
 (brace
+id|niop
+op_assign
+id|iop-&gt;next
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -6043,6 +6222,8 @@ c_func
 id|iop
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
 macro_line|#ifdef DRIVERDEBUG
 )brace
@@ -6059,9 +6240,13 @@ id|iop
 suffix:semicolon
 id|iop
 op_assign
-id|iop-&gt;next
+id|niop
 )paren
 (brace
+id|niop
+op_assign
+id|iop-&gt;next
+suffix:semicolon
 macro_line|#ifdef DRIVERDEBUG
 id|printk
 c_func
@@ -6098,6 +6283,8 @@ c_func
 id|iop
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * OK..one last thing and we&squot;re ready to go!&n;&t; */
@@ -6112,9 +6299,13 @@ id|iop
 suffix:semicolon
 id|iop
 op_assign
-id|iop-&gt;next
+id|niop
 )paren
 (brace
+id|niop
+op_assign
+id|iop-&gt;next
+suffix:semicolon
 macro_line|#ifdef DRIVERDEBUG
 id|printk
 c_func
@@ -6150,6 +6341,8 @@ c_func
 (paren
 id|iop
 )paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
 r_else
@@ -6703,7 +6896,7 @@ id|msg
 l_int|7
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|workspace
@@ -6770,12 +6963,6 @@ id|KERN_ERR
 l_string|&quot;i2o/iop%d: IOP outbound initialise failed.&bslash;n&quot;
 comma
 id|c-&gt;unit
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|workspace
 )paren
 suffix:semicolon
 r_return
@@ -9817,7 +10004,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|I2O_CMD_UTIL_ACK
+id|I2O_CMD_UTIL_EVT_ACK
 suffix:colon
 id|printk
 c_func

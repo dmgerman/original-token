@@ -67,14 +67,11 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_SCSI
 macro_line|#include &quot;atari_scsi.h&quot;
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAC_SCSI_OLD
+macro_line|#if defined(CONFIG_MAC_SCSI) || defined(CONFIG_MAC_SCSI_OLD)
 macro_line|#include &quot;mac_scsi.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SUN3_SCSI
 macro_line|#include &quot;sun3_scsi.h&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_MAC_SCSI
-macro_line|#include &quot;mac_scsi.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_MAC_ESP
 macro_line|#include &quot;mac_esp.h&quot;

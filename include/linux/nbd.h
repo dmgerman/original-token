@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * 1999 Copyright (C) Pavel Machek, pavel@ucw.cz. This code is GPL.&n; * 1999/11/04 Copyright (C) 1999 VMware, Inc. (Regis &quot;HPReg&quot; Duchesne)&n; *            Made nbd_end_request() use the io_request_lock&n; */
 macro_line|#ifndef LINUX_NBD_H
 DECL|macro|LINUX_NBD_H
 mdefine_line|#define LINUX_NBD_H
@@ -45,11 +46,24 @@ op_star
 id|req
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef PARANOIA
 id|requests_out
 op_increment
 suffix:semicolon
 macro_line|#endif
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -64,13 +78,27 @@ comma
 l_string|&quot;nbd&quot;
 )paren
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|end_that_request_last
 c_func
 (paren
 id|req
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 DECL|macro|MAX_NBD

@@ -24,7 +24,6 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/adb.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
@@ -2319,7 +2318,7 @@ op_assign
 id|chrp_calibrate_decr
 suffix:semicolon
 macro_line|#ifdef CONFIG_VT
-macro_line|#ifdef CONFIG_MAC_KEYBOAD
+macro_line|#ifdef CONFIG_MAC_KEYBOARD
 r_if
 c_cond
 (paren
@@ -2328,6 +2327,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
+macro_line|#endif /* CONFIG_MAC_KEYBOAD */
 id|ppc_md.kbd_setkeycode
 op_assign
 id|pckbd_setkeycode
@@ -2361,7 +2361,8 @@ id|SYSRQ_KEY
 op_assign
 l_int|0x54
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
+macro_line|#ifdef CONFIG_MAC_KEYBOARD
 )brace
 r_else
 (brace
@@ -2398,43 +2399,10 @@ id|SYSRQ_KEY
 op_assign
 l_int|0x69
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
 )brace
-macro_line|#else
-id|ppc_md.kbd_setkeycode
-op_assign
-id|pckbd_setkeycode
-suffix:semicolon
-id|ppc_md.kbd_getkeycode
-op_assign
-id|pckbd_getkeycode
-suffix:semicolon
-id|ppc_md.kbd_translate
-op_assign
-id|pckbd_translate
-suffix:semicolon
-id|ppc_md.kbd_unexpected_up
-op_assign
-id|pckbd_unexpected_up
-suffix:semicolon
-id|ppc_md.kbd_leds
-op_assign
-id|pckbd_leds
-suffix:semicolon
-id|ppc_md.kbd_init_hw
-op_assign
-id|pckbd_init_hw
-suffix:semicolon
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|ppc_md.ppc_kbd_sysrq_xlate
-op_assign
-id|pckbd_sysrq_xlate
-suffix:semicolon
-id|SYSRQ_KEY
-op_assign
-l_int|0x54
-suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_MAC_KEYBOARD */
+macro_line|#endif /* CONFIG_VT */
 r_if
 c_cond
 (paren
@@ -2444,8 +2412,6 @@ id|ppc_md.progress
 op_assign
 id|chrp_progress
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 id|ppc_ide_md.insw
 op_assign

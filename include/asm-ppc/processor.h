@@ -630,9 +630,9 @@ id|p
 )paren
 suffix:semicolon
 DECL|macro|KSTK_EIP
-mdefine_line|#define KSTK_EIP(tsk)&t;((tsk)-&gt;thread.regs-&gt;nip)
+mdefine_line|#define KSTK_EIP(tsk)  ((tsk)-&gt;thread.regs-&gt;nip)
 DECL|macro|KSTK_ESP
-mdefine_line|#define KSTK_ESP(tsk)&t;((tsk)-&gt;thread.regs-&gt;gpr[1])
+mdefine_line|#define KSTK_ESP(tsk)  ((tsk)-&gt;thread.regs-&gt;gpr[1])
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 DECL|macro|THREAD_SIZE
 mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)

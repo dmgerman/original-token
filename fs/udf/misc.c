@@ -1,13 +1,12 @@
 multiline_comment|/*&n; * misc.c&n; *&n; * PURPOSE&n; *&t;Miscellaneous routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998 Dave Boynton&n; *  (C) 1998-1999 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  04/19/99 blf  partial support for reading/writing specific EA&squot;s&n; */
-macro_line|#if defined(__linux__) &amp;&amp; defined(__KERNEL__)
 macro_line|#include &quot;udfdecl.h&quot;
+macro_line|#if defined(__linux__) &amp;&amp; defined(__KERNEL__)
 macro_line|#include &quot;udf_sb.h&quot;
 macro_line|#include &quot;udf_i.h&quot;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#else
-macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;

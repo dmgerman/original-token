@@ -13988,6 +13988,7 @@ l_string|&quot;ray_cs&quot;
 comma
 l_int|0
 comma
+op_amp
 id|proc_root
 comma
 id|ray_cs_proc_read
@@ -14121,6 +14122,7 @@ c_func
 (paren
 l_string|&quot;ray_cs&quot;
 comma
+op_amp
 id|proc_root
 )paren
 suffix:semicolon

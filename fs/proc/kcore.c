@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_KCORE_AOUT
 DECL|function|read_kcore
@@ -854,11 +854,9 @@ id|module
 op_star
 id|m
 suffix:semicolon
-id|read_lock
+id|lock_kernel
 c_func
 (paren
-op_amp
-id|modlist_lock
 )paren
 suffix:semicolon
 r_for
@@ -956,11 +954,9 @@ id|elf-&gt;e_phnum
 op_increment
 suffix:semicolon
 )brace
-id|read_unlock
+id|lock_kernel
 c_func
 (paren
-op_amp
-id|modlist_lock
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/drivers/i2o/i2o_lan.c&n; *&n; * &t;I2O LAN CLASS OSM &t;Prototyping, September 17th 1999&n; *&n; *&t;(C) Copyright 1999 &t;University of Helsinki,&n; *&t;&t;&t;&t;Department of Computer Science&n; *&n; * &t;This code is still under development / test.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.    &n; *&n; *&t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Ethernet environment (using Intel 82558 DDM proto)&n; *&n; *&t;TODO:&t;&t;batch mode networking&n; *&t;&t;&t;- we&squot;ve not been able to test batch replies and &n; *&t;&t;&t;  batch receives&n; *&t;&t;&t;error checking / timeouts&n; *&t;&t;&t;code / test for other LAN classes&n; */
+multiline_comment|/*&n; *&t;linux/drivers/i2o/i2o_lan.c&n; *&n; * &t;I2O LAN CLASS OSM &t;Prototyping, November 8th 1999&n; *&n; *&t;(C) Copyright 1999 &t;University of Helsinki,&n; *&t;&t;&t;&t;Department of Computer Science&n; *&n; * &t;This code is still under development / test.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Ethernet environment (using Intel 82558 DDM proto)&n; *&n; *&t;TODO:&t;&t;batch mode sends&n; *&t;&t;&t;error checking / timeouts&n; *&t;&t;&t;code / test for other LAN classes&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -10,11 +10,13 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/i2o.h&gt;
 macro_line|#include &quot;i2o_lan.h&quot;
-singleline_comment|//#define DRIVERDEBUG
+DECL|macro|DRIVERDEBUG
+mdefine_line|#define DRIVERDEBUG
 macro_line|#ifdef DRIVERDEBUG
 DECL|macro|dprintk
 mdefine_line|#define dprintk(s, args...) printk(s, ## args)
@@ -22,8 +24,30 @@ macro_line|#else
 DECL|macro|dprintk
 mdefine_line|#define dprintk(s, args...)
 macro_line|#endif
+multiline_comment|/* Module params */
+DECL|variable|bucketpost
+r_static
+id|u32
+id|bucketpost
+op_assign
+id|I2O_BUCKET_COUNT
+suffix:semicolon
+DECL|variable|bucketthresh
+r_static
+id|u32
+id|bucketthresh
+op_assign
+id|I2O_BUCKET_THRESH
+suffix:semicolon
+DECL|variable|rx_copybreak
+r_static
+id|u32
+id|rx_copybreak
+op_assign
+l_int|200
+suffix:semicolon
 DECL|macro|MAX_LAN_CARDS
-mdefine_line|#define MAX_LAN_CARDS 4
+mdefine_line|#define MAX_LAN_CARDS 16
 DECL|variable|i2o_landevs
 r_static
 r_struct
@@ -59,11 +83,6 @@ id|i2o_device
 op_star
 id|i2o_dev
 suffix:semicolon
-DECL|member|reply_flag
-r_int
-id|reply_flag
-suffix:semicolon
-multiline_comment|/* needed by scalar/table queries */
 DECL|member|stats
 r_struct
 id|fddi_statistics
@@ -87,31 +106,63 @@ id|net_device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * Due to way that interrupts can pile up, we need to keep track&n; &t; * of buckets ourselves.  Otherwise we&squot;ll end up flooding&n;&t; * the DDM with buckets.&n;&t; */
 DECL|member|bucket_count
 id|u32
 id|bucket_count
 suffix:semicolon
-multiline_comment|/*&n;    * Keep track of no. of outstanding TXes&n;    */
+multiline_comment|/* nbr of buckets sent to DDM */
 DECL|member|tx_count
 id|u32
 id|tx_count
 suffix:semicolon
+multiline_comment|/* nbr of outstanding TXes */
 DECL|member|max_tx
 id|u32
 id|max_tx
 suffix:semicolon
-DECL|member|tx_full
-id|u32
-id|tx_full
-suffix:semicolon
+multiline_comment|/* DDM&squot;s Tx queue len */
 DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* function prototypes */
+r_static
+r_void
+id|i2o_lan_reply
+c_func
+(paren
+r_struct
+id|i2o_handler
+op_star
+id|h
+comma
+r_struct
+id|i2o_controller
+op_star
+id|iop
+comma
+r_struct
+id|i2o_message
+op_star
+id|m
+)paren
+suffix:semicolon
+r_static
+r_void
+id|i2o_lan_event_reply
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+id|u32
+op_star
+id|msg
+)paren
+suffix:semicolon
 r_static
 r_int
 id|i2o_lan_receive_post
@@ -156,27 +207,27 @@ op_star
 id|msg
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Module params&n; */
-DECL|variable|bucketpost
+DECL|variable|i2o_lan_handler
 r_static
-id|u32
-id|bucketpost
+r_struct
+id|i2o_handler
+id|i2o_lan_handler
 op_assign
-id|I2O_BUCKET_COUNT
+(brace
+id|i2o_lan_reply
+comma
+l_string|&quot;I2O Lan OSM&quot;
+comma
+l_int|0
+comma
+singleline_comment|// context
+id|I2O_CLASS_LAN
+)brace
 suffix:semicolon
-DECL|variable|bucketthresh
+DECL|variable|lan_context
 r_static
-id|u32
-id|bucketthresh
-op_assign
-id|I2O_BUCKET_THRESH
-suffix:semicolon
-DECL|variable|rx_copybreak
-r_static
-id|u32
-id|rx_copybreak
-op_assign
-l_int|200
+r_int
+id|lan_context
 suffix:semicolon
 DECL|function|i2o_lan_reply
 r_static
@@ -250,13 +301,15 @@ op_lshift
 l_int|13
 )paren
 )paren
-singleline_comment|// Fail bit is set
 (brace
+singleline_comment|// Fail bit is set
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IOP failed to process the msg:&bslash;n&quot;
+l_string|&quot;%s: IOP failed to process the msg:&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|printk
@@ -437,7 +490,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;i2olan: Device %s rejected bucket post&bslash;n&quot;
+l_string|&quot;i2olan: Device %s rejected bucket post.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -484,7 +537,11 @@ l_int|3
 op_amp
 l_int|0x000000FF
 suffix:semicolon
-r_do
+r_while
+c_loop
+(paren
+id|trl_count
+)paren
 (brace
 singleline_comment|// The HDM has handled the outgoing packet
 id|dev_kfree_skb
@@ -503,7 +560,7 @@ id|trl_count
 )braket
 )paren
 suffix:semicolon
-id|dprintk
+id|printk
 c_func
 (paren
 id|KERN_INFO
@@ -517,14 +574,10 @@ suffix:semicolon
 id|priv-&gt;tx_count
 op_decrement
 suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_decrement
 id|trl_count
-)paren
+op_decrement
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -555,69 +608,427 @@ multiline_comment|/* inform upper layers */
 r_break
 suffix:semicolon
 )brace
+r_case
+id|LAN_RESET
+suffix:colon
+r_case
+id|LAN_SUSPEND
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+id|I2O_CMD_UTIL_EVT_REGISTER
+suffix:colon
+r_case
+id|I2O_CMD_UTIL_EVT_ACK
+suffix:colon
+id|i2o_lan_event_reply
+c_func
+(paren
+id|dev
+comma
+id|msg
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
-r_if
-c_cond
+id|printk
+c_func
 (paren
-id|msg
-(braket
-l_int|2
-)braket
-op_amp
-l_int|0x80000000
+id|KERN_ERR
+l_string|&quot;%s: Sorry, no handler for the reply.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
-singleline_comment|// reply to a UtilParamsGet/Set
-(brace
-r_int
-op_star
-id|flag
-op_assign
-(paren
-r_int
-op_star
-)paren
-id|msg
-(braket
-l_int|3
-)braket
 suffix:semicolon
-singleline_comment|// flag for i2o_post_wait
-r_if
-c_cond
+id|i2o_report_status
+c_func
 (paren
+id|KERN_INFO
+comma
+id|dev-&gt;name
+comma
 id|msg
-(braket
-l_int|4
-)braket
-op_rshift
-l_int|24
 )paren
-singleline_comment|// ReqStatus != SUCCESS
+suffix:semicolon
+)brace
+)brace
+DECL|function|i2o_lan_event_reply
+r_static
+r_void
+id|i2o_lan_event_reply
+c_func
+(paren
+r_struct
+id|net_device
 op_star
-id|flag
+id|dev
+comma
+id|u32
+op_star
+id|msg
+)paren
+(brace
+r_struct
+id|i2o_lan_local
+op_star
+id|priv
 op_assign
+(paren
+r_struct
+id|i2o_lan_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_struct
+id|i2o_device
+op_star
+id|i2o_dev
+op_assign
+id|priv-&gt;i2o_dev
+suffix:semicolon
+r_struct
+id|i2o_controller
+op_star
+id|iop
+op_assign
+id|i2o_dev-&gt;controller
+suffix:semicolon
+r_struct
+id|i2o_reply
+(brace
+id|u8
+id|version_offset
+suffix:semicolon
+id|u8
+id|msg_flags
+suffix:semicolon
+id|u16
+id|msg_size
+suffix:semicolon
+id|u32
+id|tid
+suffix:colon
+l_int|12
+suffix:semicolon
+id|u32
+id|initiator
+suffix:colon
+l_int|12
+suffix:semicolon
+id|u32
+id|function
+suffix:colon
+l_int|8
+suffix:semicolon
+id|u32
+id|initiator_context
+suffix:semicolon
+id|u32
+id|transaction_context
+suffix:semicolon
+id|u32
+id|evt_indicator
+suffix:semicolon
+id|u32
+id|evt_data
+(braket
+(paren
+id|iop-&gt;inbound_size
 op_minus
-(paren
-id|msg
-(braket
+l_int|20
+)paren
+op_div
 l_int|4
 )braket
-op_amp
-l_int|0xFFFF
+suffix:semicolon
+multiline_comment|/* max */
+)brace
+op_star
+id|evt
+op_assign
+(paren
+r_struct
+id|i2o_reply
+op_star
+)paren
+id|msg
+suffix:semicolon
+r_int
+id|evt_data_len
+op_assign
+(paren
+id|evt-&gt;msg_size
+op_minus
+l_int|5
+)paren
+op_star
+l_int|4
+suffix:semicolon
+multiline_comment|/* real */
+r_if
+c_cond
+(paren
+id|evt-&gt;function
+op_eq
+id|I2O_CMD_UTIL_EVT_REGISTER
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: I2O event - &quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
-singleline_comment|// DetailedStatus
-r_else
+r_switch
+c_cond
+(paren
+id|evt-&gt;evt_indicator
+)paren
+(brace
+r_case
+id|I2O_EVT_IND_STATE_CHANGE
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;State chance 0x%08X.&bslash;n&quot;
+comma
+id|evt-&gt;evt_data
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_EVT_IND_GENERAL_WARNING
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;General warning 0x%02X.&bslash;n&quot;
+comma
+id|evt-&gt;evt_data
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_EVT_IND_CONFIGURATION_FLAG
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Configuration requested.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_EVT_IND_LOCK_RELEASE
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Lock released.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_EVT_IND_CAPABILITY_CHANGE
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Capability change 0x%02X.&bslash;n&quot;
+comma
+id|evt-&gt;evt_data
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_EVT_IND_DEVICE_RESET
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Device reset.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_EVT_IND_EVT_MASK_MODIFIED
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Event mask modified, 0x%08X.&bslash;n&quot;
+comma
+id|evt-&gt;evt_data
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_EVT_IND_FIELD_MODIFIED
+suffix:colon
+(brace
+id|u16
 op_star
-id|flag
+id|work16
 op_assign
-id|I2O_POST_WAIT_OK
+(paren
+id|u16
+op_star
+)paren
+id|evt-&gt;evt_data
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Group 0x%04X, field %d changed.&bslash;n&quot;
+comma
+id|work16
+(braket
+l_int|0
+)braket
+comma
+id|work16
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
+r_case
+id|I2O_EVT_IND_VENDOR_EVT
+suffix:colon
+(brace
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Vendor event:&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|evt_data_len
+op_div
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;   0x%08X&bslash;n&quot;
+comma
+id|evt-&gt;evt_data
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
+r_case
+id|I2O_EVT_IND_DEVICE_STATE
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Device state changed 0x%08X.&bslash;n&quot;
+comma
+id|evt-&gt;evt_data
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_LAN_EVT_LINK_DOWN
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Link to the physical device is lost.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_LAN_EVT_LINK_UP
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Link to the physical device is (re)established.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|I2O_LAN_EVT_MEDIA_CHANGE
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Media change.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Event Indicator = 0x%08X.&bslash;n&quot;
+comma
+id|evt-&gt;evt_indicator
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;                 * EventAck necessary only for events that cause the device&n;                 * to syncronize with the user&n;                 *&n;                 *if (i2o_event_ack(iop, i2o_dev-&gt;lct_data-&gt;tid,&n;                 *               priv-&gt;unit &lt;&lt; 16 | lan_context,&n;                 *               evt-&gt;evt_indicator,&n;                 *               evt-&gt;evt_data, evt_data_len) &lt; 0)&n;                 *       printk(&quot;%s: Event Acknowledge timeout.&bslash;n&quot;, dev-&gt;name);&n;                 */
+)brace
+multiline_comment|/* else evt-&gt;function == I2O_CMD_UTIL_EVT_ACK) */
+multiline_comment|/* Do we need to do something here too? */
 )brace
 DECL|function|i2o_lan_release_buckets
 r_void
@@ -680,7 +1091,7 @@ id|trl_count
 id|dprintk
 c_func
 (paren
-l_string|&quot;%s: Releasing unused sk_buff %p&bslash;n&quot;
+l_string|&quot;%s: Releasing unused sk_buff %p.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -720,28 +1131,6 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
-DECL|variable|i2o_lan_handler
-r_static
-r_struct
-id|i2o_handler
-id|i2o_lan_handler
-op_assign
-(brace
-id|i2o_lan_reply
-comma
-l_string|&quot;I2O Lan OSM&quot;
-comma
-l_int|0
-comma
-singleline_comment|// context
-id|I2O_CLASS_LAN
-)brace
-suffix:semicolon
-DECL|variable|lan_context
-r_static
-r_int
-id|lan_context
-suffix:semicolon
 DECL|function|i2o_lan_receive_post_reply
 r_static
 r_int
@@ -808,15 +1197,6 @@ id|skb
 comma
 op_star
 id|newskb
-suffix:semicolon
-r_static
-r_int
-id|n_calls
-op_assign
-l_int|0
-suffix:semicolon
-id|n_calls
-op_increment
 suffix:semicolon
 macro_line|#if 0
 id|dprintk
@@ -886,6 +1266,7 @@ suffix:semicolon
 id|priv-&gt;bucket_count
 op_decrement
 suffix:semicolon
+macro_line|#if 0
 id|dprintk
 c_func
 (paren
@@ -902,13 +1283,10 @@ comma
 id|trl_count
 )paren
 suffix:semicolon
-macro_line|#if 0
 id|dprintk
 c_func
 (paren
-id|KERN
-)paren
-id|INFO
+id|KERN_INFO
 l_string|&quot;flags = 0x%02X, offset = 0x%06X, status = 0x%02X, length = %d&bslash;n&quot;
 comma
 id|packet-&gt;flags
@@ -1002,14 +1380,14 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-singleline_comment|// FIXME: reuse this skb? 
+singleline_comment|// FIXME: reuse this skb?
 )brace
 r_else
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;I2OLAN-%s: Can&squot;t allocate skb.&bslash;n&quot;
+l_string|&quot;%s: Can&squot;t allocate skb.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -1073,8 +1451,36 @@ singleline_comment|// to next Packet Descriptor Block
 r_if
 c_cond
 (paren
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_amp
+l_int|0x000000FF
+)paren
+op_eq
+id|I2O_LAN_DSC_BUCKET_OVERRUN
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: DDM out of buckets (count = %d)!&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|msg
+(braket
+l_int|5
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|priv-&gt;bucket_count
-OL
+op_le
 id|bucketpost
 op_minus
 id|bucketthresh
@@ -1089,48 +1495,11 @@ op_minus
 id|priv-&gt;bucket_count
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|msg
-(braket
-l_int|4
-)braket
-op_amp
-l_int|0x000000FF
-)paren
-op_eq
-id|I2O_LAN_DSC_BUCKET_OVERRUN
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: DDM out of buckets (count = %d)! &quot;
-l_string|&quot;Number of posts = %d&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|msg
-(braket
-l_int|5
-)braket
-comma
-id|n_calls
-)paren
-suffix:semicolon
-id|n_calls
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * i2o_lan_receive_post(): Post buckets to receive packets.&n; */
+multiline_comment|/*&n; * i2o_lan_receive_post(): Post buckets to receive packets.&n; */
 DECL|function|i2o_lan_receive_post
 r_static
 r_int
@@ -1245,8 +1614,10 @@ id|ETIMEDOUT
 suffix:semicolon
 id|msg
 op_assign
-id|bus_to_virt
-c_func
+(paren
+id|u32
+op_star
+)paren
 (paren
 id|iop-&gt;mem_offset
 op_plus
@@ -1456,7 +1827,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * i2o_lan_reset(): Reset the LAN adapter into the operational state and &n; * &t;restore it to full operation.&n; */
+multiline_comment|/*&n; * i2o_lan_reset(): Reset the LAN adapter into the operational state and&n; * &t;restore it to full operation.&n; */
 DECL|function|i2o_lan_reset
 r_static
 r_int
@@ -1581,7 +1952,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * i2o_lan_suspend(): Put LAN adapter into a safe, non-active state.&n; * &t;Reply to any LAN class message with status error_no_data_transfer &n; *&t;/ suspended.&n; */
+multiline_comment|/*&n; * i2o_lan_suspend(): Put LAN adapter into a safe, non-active state.&n; * &t;Reply to any LAN class message with status error_no_data_transfer&n; *&t;/ suspended.&n; */
 DECL|function|i2o_lan_suspend
 r_static
 r_int
@@ -1629,7 +2000,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;%s: LAN SUSPEND MESSAGE&bslash;n&quot;
+l_string|&quot;%s: LAN SUSPEND MESSAGE.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -1727,7 +2098,7 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/* &n; * NOTE: we have not been able to test batch mode&n; * &t; since HDMs we have, don&squot;t implement it &n; */
+multiline_comment|/*&n; * NOTE: we have not been able to test batch mode&n; * &t; since HDMs we have, don&squot;t implement it&n; */
 r_struct
 id|i2o_lan_local
 op_star
@@ -1781,7 +2152,10 @@ comma
 op_amp
 id|val
 comma
-l_int|4
+r_sizeof
+(paren
+id|val
+)paren
 )paren
 OL
 l_int|0
@@ -1790,7 +2164,9 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Unable to enter I2O LAN batch mode.&bslash;n&quot;
+l_string|&quot;%s: Unable to enter I2O LAN batch mode.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_else
@@ -1830,14 +2206,21 @@ comma
 op_amp
 id|val
 comma
-l_int|4
+r_sizeof
+(paren
+id|val
 )paren
+)paren
+OL
+l_int|0
 )paren
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;i2o_lan: Unable to set PacketOrphanLimit.&bslash;n&quot;
+l_string|&quot;%s: Unable to set PacketOrphanLimit.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_else
@@ -1845,7 +2228,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: PacketOrphanLimit set to %d&bslash;n&quot;
+l_string|&quot;%s: PacketOrphanLimit set to %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1855,7 +2238,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * i2o_lan_open(): Open the device to send/receive packets via &n; * the network device.&t;&n; */
+multiline_comment|/*&n; * i2o_lan_open(): Open the device to send/receive packets via&n; * the network device.&t;&n; */
 DECL|function|i2o_lan_open
 r_static
 r_int
@@ -1887,6 +2270,19 @@ id|i2o_dev
 op_assign
 id|priv-&gt;i2o_dev
 suffix:semicolon
+r_struct
+id|i2o_controller
+op_star
+id|iop
+op_assign
+id|i2o_dev-&gt;controller
+suffix:semicolon
+id|u32
+id|evt_mask
+op_assign
+l_int|0xFFC00007
+suffix:semicolon
+singleline_comment|// All generic events, all lan evenst
 r_if
 c_cond
 (paren
@@ -1927,6 +2323,38 @@ comma
 id|i2o_dev-&gt;lct_data-&gt;tid
 )paren
 suffix:semicolon
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|i2o_event_register
+c_func
+(paren
+id|iop
+comma
+id|i2o_dev-&gt;lct_data-&gt;tid
+comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
+id|lan_context
+comma
+id|evt_mask
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Unable to set the event mask.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
 id|i2o_lan_reset
 c_func
 (paren
@@ -1993,6 +2421,45 @@ id|i2o_dev
 op_assign
 id|priv-&gt;i2o_dev
 suffix:semicolon
+singleline_comment|//#if 0
+r_struct
+id|i2o_controller
+op_star
+id|iop
+op_assign
+id|i2o_dev-&gt;controller
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i2o_event_register
+c_func
+(paren
+id|iop
+comma
+id|i2o_dev-&gt;lct_data-&gt;tid
+comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
+id|lan_context
+comma
+l_int|0
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Unable to clear the event mask.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+singleline_comment|//#endif
 id|dev-&gt;tbusy
 op_assign
 l_int|1
@@ -2021,20 +2488,18 @@ comma
 id|I2O_CLAIM_PRIMARY
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;%s: Unable to unclaim I2O LAN device &quot;
-l_string|&quot;(tid=%d)&bslash;n&quot;
+l_string|&quot;(tid=%d).&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|i2o_dev-&gt;lct_data-&gt;tid
 )paren
 suffix:semicolon
-)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -2042,7 +2507,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if 0
-multiline_comment|/* &n; * i2o_lan_sdu_send(): Send a packet, MAC header added by the HDM.&n; * Must be supported by Fibre Channel, optional for Ethernet/802.3, &n; * Token Ring, FDDI&n; */
+multiline_comment|/*&n; * i2o_lan_sdu_send(): Send a packet, MAC header added by the HDM.&n; * Must be supported by Fibre Channel, optional for Ethernet/802.3,&n; * Token Ring, FDDI&n; */
 r_static
 r_int
 id|i2o_lan_sdu_send
@@ -2065,7 +2530,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* &n; * i2o_lan_packet_send(): Send a packet as is, including the MAC header.&n; * &n; * Must be supported by Ethernet/802.3, Token Ring, FDDI, optional for &n; * Fibre Channel&n; */
+multiline_comment|/*&n; * i2o_lan_packet_send(): Send a packet as is, including the MAC header.&n; *&n; * Must be supported by Ethernet/802.3, Token Ring, FDDI, optional for&n; * Fibre Channel&n; */
 DECL|function|i2o_lan_packet_send
 r_static
 r_int
@@ -2120,7 +2585,7 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; * Keep interrupt from changing dev-&gt;tbusy from underneath us&n;&t; * (Do we really need to do this?)&n;&t; */
+multiline_comment|/*&n;&t; * Keep interrupt from changing dev-&gt;tbusy from underneath us&n;&t; * (Do we really need to do this?)&n;&t; */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -2200,14 +2665,135 @@ suffix:semicolon
 )brace
 id|msg
 op_assign
-id|bus_to_virt
-c_func
+(paren
+id|u32
+op_star
+)paren
 (paren
 id|iop-&gt;mem_offset
 op_plus
 id|m
 )paren
 suffix:semicolon
+macro_line|#if 0
+id|__raw_writel
+c_func
+(paren
+id|SEVEN_WORD_MSG_SIZE
+op_or
+l_int|1
+op_lshift
+l_int|12
+op_or
+id|SGL_OFFSET_4
+comma
+op_amp
+id|msg
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+id|LAN_PACKET_SEND
+op_lshift
+l_int|24
+op_or
+id|HOST_TID
+op_lshift
+l_int|12
+op_or
+id|i2o_dev-&gt;lct_data-&gt;tid
+comma
+op_amp
+id|msg
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+id|__raw_writel
+c_func
+(paren
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
+id|lan_context
+comma
+op_amp
+id|msg
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+singleline_comment|// InitiatorContext
+id|__raw_writel
+c_func
+(paren
+l_int|1
+op_lshift
+l_int|4
+comma
+op_amp
+id|msg
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+singleline_comment|// TransmitControlWord
+id|__raw_writel
+c_func
+(paren
+l_int|0xD5000000
+op_or
+id|skb-&gt;len
+comma
+op_amp
+id|msg
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
+singleline_comment|// MAC hdr included
+id|__raw_writel
+c_func
+(paren
+(paren
+id|u32
+)paren
+id|skb
+comma
+op_amp
+id|msg
+(braket
+l_int|5
+)braket
+)paren
+suffix:semicolon
+singleline_comment|// TransactionContext
+id|__raw_writel
+c_func
+(paren
+id|virt_to_bus
+c_func
+(paren
+id|skb-&gt;data
+)paren
+comma
+op_amp
+id|msg
+(braket
+l_int|6
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 id|msg
 (braket
 l_int|0
@@ -2713,7 +3299,10 @@ comma
 op_amp
 id|supported_stats
 comma
-l_int|8
+r_sizeof
+(paren
+id|supported_stats
+)paren
 )paren
 OL
 l_int|0
@@ -2721,7 +3310,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Unable to query LAN_SUPPORTED_802_3_HISTORICAL_STATS&bslash;n&quot;
+l_string|&quot;%s: Unable to query LAN_SUPPORTED_802_3_HISTORICAL_STATS.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -2759,14 +3348,8 @@ id|val64
 OL
 l_int|0
 )paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Unable to query LAN_OPTIONAL_802_3_HISTORICAL_STATS.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
 suffix:semicolon
+singleline_comment|//        &t;&t;&t;printk(&quot;%s: Unable to query LAN_OPTIONAL_802_3_HISTORICAL_STATS.&bslash;n&quot;,dev-&gt;name);
 r_else
 (brace
 id|dprintk
@@ -3105,11 +3688,11 @@ op_amp
 id|priv-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * i2o_lan_set_multicast_list(): Enable a network device to receive packets&n; *&t;not send to the protocol address.&n; */
-DECL|function|i2o_lan_set_multicast_list
+multiline_comment|/*&n; * i2o_lan_set_mc_list(): Enable a network device to receive packets&n; *      not send to the protocol address.&n; */
+DECL|function|i2o_lan_set_mc_list
 r_static
 r_void
-id|i2o_lan_set_multicast_list
+id|i2o_lan_set_mc_list
 c_func
 (paren
 r_struct
@@ -3148,23 +3731,14 @@ id|u32
 id|filter_mask
 suffix:semicolon
 id|u32
-id|work32
+id|max_size_mc_table
+suffix:semicolon
+id|u32
+id|mc_addr_group
 (braket
 l_int|64
 )braket
 suffix:semicolon
-id|dprintk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Entered i2o_lan_set_multicast_list().&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-multiline_comment|/* FIXME: Why does the next call kill the interrupt handler?&n; * The same piece of code works fine in function lan_open(), and in i2o_proc.c&n; *&n; * *because its trying to sleep in an irq - this must be async - Alan&n; */
 r_if
 c_cond
 (paren
@@ -3181,11 +3755,11 @@ op_minus
 l_int|1
 comma
 op_amp
-id|work32
+id|mc_addr_group
 comma
 r_sizeof
 (paren
-id|work32
+id|mc_addr_group
 )paren
 )paren
 OL
@@ -3196,35 +3770,19 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;i2o_lan: Unable to query &quot;
-l_string|&quot; LAN_MAC_ADDRESS table.&bslash;n&quot;
+l_string|&quot;%s: Unable to query LAN_MAC_ADDRESS group.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;capab mask = 0x%08X, filter mask = 0x%08X&bslash;n&quot;
-comma
-id|work32
-(braket
-l_int|7
-)braket
-comma
-id|work32
-(braket
-l_int|6
-)braket
-)paren
-suffix:semicolon
-id|filter_mask
+id|max_size_mc_table
 op_assign
-id|work32
+id|mc_addr_group
 (braket
-l_int|6
+l_int|8
 )braket
 suffix:semicolon
 r_if
@@ -3236,14 +3794,16 @@ id|IFF_PROMISC
 )paren
 (brace
 id|filter_mask
-op_or_assign
+op_assign
 l_int|0x00000002
 suffix:semicolon
 id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;i2o_lan: Enabling promiscuous mode...&bslash;n&quot;
+l_string|&quot;%s: Enabling promiscuous mode...&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
@@ -3259,21 +3819,20 @@ id|IFF_ALLMULTI
 op_logical_or
 id|dev-&gt;mc_count
 OG
-id|work32
-(braket
-l_int|5
-)braket
+id|max_size_mc_table
 )paren
 (brace
 id|filter_mask
-op_or_assign
-l_int|0x00000000
+op_assign
+l_int|0x00000004
 suffix:semicolon
 id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;i2o_lan: Enabling all multicast mode...&bslash;n&quot;
+l_string|&quot;%s: Enabling all multicast mode...&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
@@ -3287,71 +3846,98 @@ id|dev-&gt;mc_count
 r_struct
 id|dev_mc_list
 op_star
-id|mclist
-suffix:semicolon
-r_int
-id|i
+id|mc
 suffix:semicolon
 id|u8
+id|mc_table
+(braket
+l_int|2
+op_plus
+l_int|8
 op_star
-id|work8
+id|dev-&gt;mc_count
+)braket
+suffix:semicolon
+singleline_comment|// RowCount, Addresses
+id|u64
+op_star
+id|work64
 op_assign
 (paren
-id|u8
+id|u64
 op_star
 )paren
-id|work32
+(paren
+id|mc_table
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+id|filter_mask
+op_assign
+l_int|0x00000000
 suffix:semicolon
 id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;i2o_lan: Enabling multicast mode...&bslash;n&quot;
+l_string|&quot;%s: Enabling multicast mode...&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
-id|filter_mask
-op_assign
-l_int|0x00000004
+multiline_comment|/* Fill multicast addr table */
+id|memset
+c_func
+(paren
+id|mc_table
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|mc_table
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/* Fill the multicast addresses */
-id|mclist
-op_assign
-id|dev-&gt;mc_list
+id|memcpy
+c_func
+(paren
+id|mc_table
+comma
+op_amp
+id|dev-&gt;mc_count
+comma
+l_int|2
+)paren
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|i
+id|mc
 op_assign
-l_int|0
+id|dev-&gt;mc_list
 suffix:semicolon
-id|i
-OL
-id|dev-&gt;mc_count
+id|mc
 suffix:semicolon
-id|i
+id|mc
+op_assign
+id|mc-&gt;next
+comma
+id|work64
 op_increment
 )paren
-(brace
 id|memcpy
 c_func
 (paren
-id|work8
+id|work64
 comma
-id|mclist-&gt;dmi_addr
+id|mc-&gt;dmi_addr
 comma
-id|mclist-&gt;dmi_addrlen
+id|mc-&gt;dmi_addrlen
 )paren
 suffix:semicolon
-id|work8
-op_add_assign
-l_int|8
-suffix:semicolon
-id|mclist
-op_assign
-id|mclist-&gt;next
-suffix:semicolon
-)brace
+multiline_comment|/* Clear old mc table, copy new table to &lt;iop,tid&gt; */
 r_if
 c_cond
 (paren
@@ -3367,7 +3953,7 @@ l_int|0x0002
 OL
 l_int|0
 )paren
-id|dprintk
+id|printk
 c_func
 (paren
 l_string|&quot;%s: Unable to clear LAN_MULTICAST_MAC_ADDRESS table.&bslash;n&quot;
@@ -3377,6 +3963,7 @@ id|dev-&gt;name
 suffix:semicolon
 r_if
 c_cond
+(paren
 (paren
 id|i2o_row_add_table
 c_func
@@ -3390,16 +3977,18 @@ comma
 op_minus
 l_int|1
 comma
-id|work32
+id|mc_table
 comma
-id|dev-&gt;mc_count
-op_star
-l_int|8
+r_sizeof
+(paren
+id|mc_table
+)paren
+)paren
 )paren
 OL
 l_int|0
 )paren
-id|dprintk
+id|printk
 c_func
 (paren
 l_string|&quot;%s: Unable to set LAN_MULTICAST_MAC_ADDRESS table.&bslash;n&quot;
@@ -3411,18 +4000,21 @@ suffix:semicolon
 r_else
 (brace
 id|filter_mask
-op_or_assign
+op_assign
 l_int|0x00000300
 suffix:semicolon
 singleline_comment|// Broadcast, Multicast disabled
-id|dprintk
+id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;i2o_lan: Enabling unicast mode...&bslash;n&quot;
+l_string|&quot;%s: Enabling unicast mode...&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Finally copy new FilterMask to &lt;iop,tid&gt; */
 r_if
 c_cond
 (paren
@@ -3440,7 +4032,10 @@ comma
 op_amp
 id|filter_mask
 comma
-l_int|4
+r_sizeof
+(paren
+id|filter_mask
+)paren
 )paren
 OL
 l_int|0
@@ -3449,10 +4044,92 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;i2o_lan: Unable to set MAC FilterMask.&bslash;n&quot;
+l_string|&quot;%s: Unable to set MAC FilterMask.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * i2o_lan_set_multicast_list():&n; *       Queue routine i2o_lan_set_mc_list() to be called later.&n; *       Needs to be async.&n; */
+DECL|function|i2o_lan_set_multicast_list
+r_static
+r_void
+id|i2o_lan_set_multicast_list
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|tq_struct
+op_star
+id|task
+suffix:semicolon
+id|task
+op_assign
+(paren
+r_struct
+id|tq_struct
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|tq_struct
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|task
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
+id|task-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|task-&gt;sync
+op_assign
+l_int|0
+suffix:semicolon
+id|task-&gt;routine
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|i2o_lan_set_mc_list
+suffix:semicolon
+id|task-&gt;data
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|dev
+suffix:semicolon
+id|queue_task
+c_func
+(paren
+id|task
+comma
+op_amp
+id|tq_scheduler
+)paren
 suffix:semicolon
 )brace
 DECL|function|i2o_lan_register_device
@@ -3572,7 +4249,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;i2o_lan: 100base VG not yet supported&bslash;n&quot;
+l_string|&quot;i2o_lan: 100base VG not yet supported.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3768,7 +4445,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;i2o_lan: Fibre Channel not yet supported&bslash;n&quot;
+l_string|&quot;i2o_lan: Fibre Channel not yet supported.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3783,7 +4460,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;i2o_lan: LAN type 0x%08X not supported&bslash;n&quot;
+l_string|&quot;i2o_lan: LAN type 0x%08X not supported.&bslash;n&quot;
 comma
 id|i2o_dev-&gt;lct_data-&gt;sub_class
 )paren
@@ -3844,7 +4521,10 @@ comma
 op_amp
 id|hw_addr
 comma
-l_int|8
+r_sizeof
+(paren
+id|hw_addr
+)paren
 )paren
 OL
 l_int|0
@@ -3947,7 +4627,10 @@ comma
 op_amp
 id|max_tx
 comma
-l_int|4
+r_sizeof
+(paren
+id|max_tx
+)paren
 )paren
 OL
 l_int|0
@@ -3981,11 +4664,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|printk
+id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Max TX Outstanding = %d&bslash;n&quot;
+l_string|&quot;%s: Max TX Outstanding = %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4049,6 +4732,13 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Linux I2O LAN OSM (c) 1999 University of Helsinki.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4066,7 +4756,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Unable to register I2O LAN OSM.&bslash;n&quot;
+l_string|&quot;i2o_lan: Unable to register I2O LAN OSM.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4166,6 +4856,7 @@ id|I2O_CLASS_LAN
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* Make sure device not already claimed by an ISM */
 r_if
 c_cond
 (paren
@@ -4173,10 +4864,8 @@ id|i2o_dev-&gt;lct_data-&gt;user_tid
 op_ne
 l_int|0xFFF
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4195,7 +4884,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Too many I2O LAN devices.&bslash;n&quot;
+l_string|&quot;i2o_lan: Too many I2O LAN devices.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4223,7 +4912,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Unable to register I2O LAN device&bslash;n&quot;
+l_string|&quot;i2o_lan: Unable to register I2O LAN device.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -4465,5 +5154,5 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif    
+macro_line|#endif
 eof

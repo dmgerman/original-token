@@ -3420,11 +3420,10 @@ id|PAGE_SHIFT
 suffix:semicolon
 id|tot
 op_assign
-id|nr_lru_pages
-op_plus
-id|nr_free_pages
-op_minus
-id|nr_free_highpages
+id|nr_free_buffer_pages
+c_func
+(paren
+)paren
 suffix:semicolon
 id|hard_dirty_limit
 op_assign
