@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans (dje@spiff.uucp), August 07, 1992&n; *&n; *  Deadlock detection added.&n; *  FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *  Kelly Carmichael (kelly@[142.24.8.65]), September 17, 1994.&n; *&n; *  Miscellaneous edits, and a total rewrite of posix_lock_file() code.&n; *  Kai Petzke (wpp@marie.physik.tu-berlin.de), 1994&n; *  &n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open.&n; *  Chad Page (pageone@netcom.com), November 27, 1994&n; * &n; *  Removed dependency on file descriptors. dup()&squot;ed file descriptors now&n; *  get the same locks as the original file descriptors, and a close() on&n; *  any file descriptor removes ALL the locks on the file for the current&n; *  process. Since locks still depend on the process id, locks are inherited&n; *  after an exec() but not after a fork(). This agrees with POSIX, and both&n; *  BSD and SVR4 practice.&n; *  Andy Walker (andy@keo.kvaerner.no), February 14, 1995&n; *&n; *  Scrapped free list which is redundant now that we allocate locks&n; *  dynamically with kmalloc()/kfree().&n; *  Andy Walker (andy@keo.kvaerner.no), February 21, 1995&n; *&n; *  Implemented two lock personalities - F_FLOCK and F_POSIX.&n; *&n; *  F_POSIX locks are created with calls to fcntl() and lockf() through the&n; *  fcntl() system call. They have the semantics described above.&n; *&n; *  F_FLOCK locks are created with calls to flock(), through the flock()&n; *  system call, which is new. Old C libraries implement flock() via fcntl()&n; *  and will continue to use the old, broken implementation.&n; *&n; *  F_FLOCK locks follow the 4.4 BSD flock() semantics. They are associated&n; *  with a file pointer (filp). As a result they can be shared by a parent&n; *  process and its children after a fork(). They are removed when the last&n; *  file descriptor referring to the file pointer is closed (unless explicitly&n; *  unlocked). &n; *&n; *  F_FLOCK locks never deadlock, an existing lock is always removed before&n; *  upgrading from shared to exclusive (or vice versa). When this happens&n; *  any processes blocked by the current lock are woken up and allowed to&n; *  run before the new lock is applied.&n; *&n; *  NOTE:&n; *  I do not intend to implement mandatory locks unless demand is *HUGE*.&n; *  They are not in BSD, and POSIX.1 does not require them. I have never&n; *  seen any public code that relied on them. As Kelly Carmichael suggests&n; *  above, mandatory locks requires lots of changes elsewhere and I am&n; *  reluctant to start something so drastic for so little gain.&n; *  Andy Walker (andy@keo.kvaerner.no), June 09, 1995&n; * &n; *  Removed some race conditions in flock_lock_file(), marked other possible&n; *  races. Just grep for FIXME to see them. &n; *  Dmitry Gorodchanin (begemot@bgm.rosprint.net), Feb 09, 1996.&n; */
+multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans (dje@spiff.uucp), August 07, 1992&n; *&n; *  Deadlock detection added.&n; *  FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *  Kelly Carmichael (kelly@[142.24.8.65]), September 17, 1994.&n; *&n; *  Miscellaneous edits, and a total rewrite of posix_lock_file() code.&n; *  Kai Petzke (wpp@marie.physik.tu-berlin.de), 1994&n; *  &n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open.&n; *  Chad Page (pageone@netcom.com), November 27, 1994&n; * &n; *  Removed dependency on file descriptors. dup()&squot;ed file descriptors now&n; *  get the same locks as the original file descriptors, and a close() on&n; *  any file descriptor removes ALL the locks on the file for the current&n; *  process. Since locks still depend on the process id, locks are inherited&n; *  after an exec() but not after a fork(). This agrees with POSIX, and both&n; *  BSD and SVR4 practice.&n; *  Andy Walker (andy@lysaker.kvaerner.no), February 14, 1995&n; *&n; *  Scrapped free list which is redundant now that we allocate locks&n; *  dynamically with kmalloc()/kfree().&n; *  Andy Walker (andy@lysaker.kvaerner.no), February 21, 1995&n; *&n; *  Implemented two lock personalities - F_FLOCK and F_POSIX.&n; *&n; *  F_POSIX locks are created with calls to fcntl() and lockf() through the&n; *  fcntl() system call. They have the semantics described above.&n; *&n; *  F_FLOCK locks are created with calls to flock(), through the flock()&n; *  system call, which is new. Old C libraries implement flock() via fcntl()&n; *  and will continue to use the old, broken implementation.&n; *&n; *  F_FLOCK locks follow the 4.4 BSD flock() semantics. They are associated&n; *  with a file pointer (filp). As a result they can be shared by a parent&n; *  process and its children after a fork(). They are removed when the last&n; *  file descriptor referring to the file pointer is closed (unless explicitly&n; *  unlocked). &n; *&n; *  F_FLOCK locks never deadlock, an existing lock is always removed before&n; *  upgrading from shared to exclusive (or vice versa). When this happens&n; *  any processes blocked by the current lock are woken up and allowed to&n; *  run before the new lock is applied.&n; *  Andy Walker (andy@lysaker.kvaerner.no), June 09, 1995&n; *&n; *  Removed some race conditions in flock_lock_file(), marked other possible&n; *  races. Just grep for FIXME to see them. &n; *  Dmitry Gorodchanin (begemot@bgm.rosprint.net), Feb 09, 1996.&n; *&n; *  Addressed Dmitry&squot;s concerns. Deadlock checking no longer recursive.&n; *  Lock allocation changed to GFP_ATOMIC as we can&squot;t afford to sleep&n; *  once we&squot;ve checked for blocking and deadlocking.&n; *  Andy Walker (andy@lysaker.kvaerner.no), Apr 03, 1996.&n; *&n; *  NOTE:&n; *  Starting to look at mandatory locks - using SunOS as a model.&n; *  Probably a configuration option because mandatory locking can cause&n; *  all sorts  of chaos with runaway processes.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -373,7 +373,7 @@ id|bfl-&gt;fl_block
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* flock() system call entry point. Apply a FLOCK style locks to&n; * an open file descriptor.&n; */
+multiline_comment|/* flock() system call entry point. Apply a FLOCK style lock to&n; * an open file descriptor.&n; */
 DECL|function|sys_flock
 id|asmlinkage
 r_int
@@ -495,7 +495,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Report the first existing locks that would conflict with l. This implements&n; * the F_GETLK command of fcntl().&n; */
+multiline_comment|/* Report the first existing lock that would conflict with l.&n; * This implements the F_GETLK command of fcntl().&n; */
 DECL|function|fcntl_getlk
 r_int
 id|fcntl_getlk
@@ -750,7 +750,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Apply the lock described by l to an open file descriptor. This implements&n; * both the F_SETLK and F_SETLKW commands of fcntl(). It also emulates flock()&n; * in a pretty broken way for older C libraries.&n; */
+multiline_comment|/* Apply the lock described by l to an open file descriptor.&n; * This implements both the F_SETLK and F_SETLKW commands of fcntl().&n; * It also emulates flock() in a pretty broken way for older C&n; * libraries.&n; */
 DECL|function|fcntl_setlk
 r_int
 id|fcntl_setlk
@@ -1273,7 +1273,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Verify a call to flock() and fill in a file_lock structure with an appropriate&n; * FLOCK lock.&n; */
+multiline_comment|/* Verify a call to flock() and fill in a file_lock structure with&n; * an appropriate FLOCK lock.&n; */
 DECL|function|flock_make_lock
 r_static
 r_int
@@ -1382,7 +1382,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Determine if lock sys_fl blocks lock caller_fl. POSIX specific checking&n; * before calling the locks_conflict().&n; */
+multiline_comment|/* Determine if lock sys_fl blocks lock caller_fl. POSIX specific&n; * checking before calling the locks_conflict().&n; */
 DECL|function|posix_locks_conflict
 r_static
 r_int
@@ -1433,7 +1433,7 @@ id|sys_fl
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Determine if lock sys_fl blocks lock caller_fl. FLOCK specific checking&n; * before calling the locks_conflict().&n; */
+multiline_comment|/* Determine if lock sys_fl blocks lock caller_fl. FLOCK specific&n; * checking before calling the locks_conflict().&n; */
 DECL|function|flock_locks_conflict
 r_static
 r_int
@@ -1597,7 +1597,7 @@ id|fl1-&gt;fl_start
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This function tests for deadlock condition before putting a process to sleep.&n; * The detection scheme is recursive... we may need a test to make it exit if the&n; * function gets stuck due to bad lock data. 4.4 BSD uses a maximum depth of 50&n; * for this.&n; * &n; * FIXME: &n; * IMHO this function is dangerous, deep recursion may result in kernel stack&n; * corruption. Perhaps we need to limit depth here. &n; *&t;&t;Dmitry Gorodchanin 09/02/96&n; */
+multiline_comment|/* This function tests for deadlock condition before putting a process to&n; * sleep. The detection scheme is no longer recursive. Recursive was neat,&n; * but dangerous - we risked stack corruption if the lock data was bad, or&n; * if the recursion was too deep for any other reason.&n; *&n; * We rely on the fact that a task can only be on one lock&squot;s wait queue&n; * at a time. When we find blocked_task on a wait queue we can re-search&n; * with blocked_task equal to that queue&squot;s owner, until either blocked_task&n; * isn&squot;t found, or blocked_task is found on a queue owned by my_task.&n; */
 DECL|function|posix_locks_deadlock
 r_static
 r_int
@@ -1625,6 +1625,8 @@ id|file_lock
 op_star
 id|fl
 suffix:semicolon
+id|next_task
+suffix:colon
 r_for
 c_loop
 (paren
@@ -1647,29 +1649,13 @@ c_cond
 id|fl-&gt;fl_owner
 op_eq
 l_int|NULL
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/* Should never happen! */
-r_if
-c_cond
-(paren
-id|fl-&gt;fl_owner
-op_ne
-id|my_task
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 id|fl-&gt;fl_wait
 op_eq
 l_int|NULL
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* no queues */
 id|dlock_wait
 op_assign
 id|fl-&gt;fl_wait
@@ -1680,39 +1666,29 @@ r_if
 c_cond
 (paren
 id|dlock_wait-&gt;task
-op_ne
-l_int|NULL
+op_eq
+id|blocked_task
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|dlock_wait-&gt;task
+id|fl-&gt;fl_owner
 op_eq
-id|blocked_task
+id|my_task
 )paren
+(brace
 r_return
-(paren
 op_minus
 id|EDEADLOCK
-)paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|posix_locks_deadlock
-c_func
-(paren
-id|dlock_wait-&gt;task
-comma
+)brace
 id|blocked_task
-)paren
-)paren
-r_return
-(paren
-op_minus
-id|EDEADLOCK
-)paren
+op_assign
+id|fl-&gt;fl_owner
+suffix:semicolon
+r_goto
+id|next_task
 suffix:semicolon
 )brace
 id|dlock_wait
@@ -1735,7 +1711,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Try to create a FLOCK lock on filp. We rely on FLOCK locks being sorting&n; * first in an inode&squot;s lock list, and always insert new locks at the head&n; * of the list.&n; */
+multiline_comment|/* Try to create a FLOCK lock on filp. We rely on FLOCK locks being sorted&n; * first in an inode&squot;s lock list, and always insert new locks at the head&n; * of the list.&n; */
 DECL|function|flock_lock_file
 r_static
 r_int
@@ -2355,11 +2331,10 @@ id|added
 op_assign
 l_int|1
 suffix:semicolon
-r_goto
-id|next_lock
-suffix:semicolon
 )brace
-multiline_comment|/* Processing for different lock types is a bit more complex.&n;&t;&t; */
+r_else
+(brace
+multiline_comment|/* Processing for different lock types is a bit&n;&t;&t;&t; * more complex.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2401,7 +2376,7 @@ id|left
 op_assign
 id|fl
 suffix:semicolon
-multiline_comment|/* If the next lock in the list has a higher end address than&n;&t;&t; * the new one, insert the new one here.&n;&t;&t; */
+multiline_comment|/* If the next lock in the list has a higher end&n;&t;&t;&t; * address than the new one, insert the new one here.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2425,7 +2400,7 @@ op_ge
 id|caller-&gt;fl_start
 )paren
 (brace
-multiline_comment|/* The new lock completely replaces an old one (This may&n;&t;&t;&t; * happen several times).&n;&t;&t;&t; */
+multiline_comment|/* The new lock completely replaces an old&n;&t;&t;&t;&t; * one (This may happen several times).&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2443,7 +2418,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Replace the old lock with the new one. Wake up&n;&t;&t;&t; * anybody waiting for the old one, as the change in&n;&t;&t;&t; * lock type might satisfy his needs.&n;&t;&t;&t; */
+multiline_comment|/* Replace the old lock with the new one.&n;&t;&t;&t;&t; * Wake up anybody waiting for the old one,&n;&t;&t;&t;&t; * as the change in lock type might satisfy&n;&t;&t;&t;&t; * their needs.&n;&t;&t;&t;&t; */
 id|wake_up
 c_func
 (paren
@@ -2472,6 +2447,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+)brace
 multiline_comment|/* Go on to next lock.&n;&t;&t; */
 id|next_lock
 suffix:colon
@@ -2486,7 +2462,6 @@ op_member_access_from_pointer
 id|fl_next
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME:&n;&t; * Note: We may sleep in locks_alloc_lock(), so&n;&t; * the &squot;before&squot; pointer may be not valid any more.&n;&t; * This can cause random kernel memory corruption.&n;&t; * It seems the right way is to alloc two locks&n;&t; * at the begining of this func, and then free them&n;&t; * if they were not needed.&n;&t; * Another way is to change GFP_KERNEL to GFP_ATOMIC&n;&t; * in locks_alloc_lock() for this case.&n;&t; * &n;&t; * Dmitry Gorodchanin 09/02/96.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2662,7 +2637,7 @@ r_struct
 id|file_lock
 )paren
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 )paren
 op_eq
@@ -2779,7 +2754,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Delete a lock and free it.&n; * First remove our lock from the lock lists. Then remove all the blocked locks&n; * from our blocked list, waking up the processes that own them. If told to wait,&n; * then sleep on each of these lock&squot;s wait queues. Each blocked process will wake&n; * up and immediately wake up its own wait queue allowing us to be scheduled again.&n; * Lastly, wake up our own wait queue before freeing the file_lock structure.&n; */
+multiline_comment|/* Delete a lock and free it.&n; * First remove our lock from the lock lists. Then remove all the blocked&n; * locks from our blocked list, waking up the processes that own them. If&n; * told to wait, then sleep on each of these lock&squot;s wait queues. Each&n; * blocked process will wake up and immediately wake up its own wait queue&n; * allowing us to be scheduled again. Lastly, wake up our own wait queue&n; * before freeing the file_lock structure.&n; */
 DECL|function|locks_delete_lock
 r_static
 r_void

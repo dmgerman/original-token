@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|CONFIG_SKB_CHECK
 mdefine_line|#define CONFIG_SKB_CHECK 0
 DECL|macro|HAVE_ALLOC_SKB
@@ -302,7 +303,7 @@ id|truesize
 suffix:semicolon
 multiline_comment|/* Buffer size &t;&t;&t;&t;&t;*/
 DECL|member|count
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
 multiline_comment|/* reference count&t;&t;&t;&t;*/
@@ -1267,7 +1268,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Insert a packet before another one in a list.&n; */
+multiline_comment|/*&n; *&t;Insert a packet on a list.&n; */
 DECL|function|__skb_insert
 r_extern
 id|__inline__
@@ -1278,12 +1279,17 @@ c_func
 r_struct
 id|sk_buff
 op_star
-id|next
+id|newsk
 comma
 r_struct
 id|sk_buff
 op_star
-id|newsk
+id|prev
+comma
+r_struct
+id|sk_buff
+op_star
+id|next
 comma
 r_struct
 id|sk_buff_head
@@ -1291,13 +1297,6 @@ op_star
 id|list
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
-id|prev
-op_assign
-id|next-&gt;prev
-suffix:semicolon
 id|newsk-&gt;next
 op_assign
 id|next
@@ -1322,6 +1321,7 @@ id|list-&gt;qlen
 op_increment
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Place a packet before a given packet in a list&n; */
 DECL|function|skb_insert
 r_extern
 id|__inline__
@@ -1358,9 +1358,11 @@ suffix:semicolon
 id|__skb_insert
 c_func
 (paren
-id|old
-comma
 id|newsk
+comma
+id|old-&gt;prev
+comma
+id|old
 comma
 id|old-&gt;list
 )paren
@@ -1373,60 +1375,6 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Place a packet after a given packet in a list.&n; */
-DECL|function|__skb_append
-r_extern
-id|__inline__
-r_void
-id|__skb_append
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|prev
-comma
-r_struct
-id|sk_buff
-op_star
-id|newsk
-comma
-r_struct
-id|sk_buff_head
-op_star
-id|list
-)paren
-(brace
-r_struct
-id|sk_buff
-op_star
-id|next
-op_assign
-id|prev-&gt;next
-suffix:semicolon
-id|newsk-&gt;next
-op_assign
-id|next
-suffix:semicolon
-id|newsk-&gt;prev
-op_assign
-id|prev
-suffix:semicolon
-id|next-&gt;prev
-op_assign
-id|newsk
-suffix:semicolon
-id|prev-&gt;next
-op_assign
-id|newsk
-suffix:semicolon
-id|newsk-&gt;list
-op_assign
-id|list
-suffix:semicolon
-id|list-&gt;qlen
-op_increment
-suffix:semicolon
-)brace
 DECL|function|skb_append
 r_extern
 id|__inline__
@@ -1460,12 +1408,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|__skb_append
+id|__skb_insert
 c_func
 (paren
+id|newsk
+comma
 id|old
 comma
-id|newsk
+id|old-&gt;next
 comma
 id|old-&gt;list
 )paren

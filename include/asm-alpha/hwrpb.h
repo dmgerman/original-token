@@ -14,6 +14,10 @@ DECL|macro|EV5_CPU
 mdefine_line|#define EV5_CPU                 5       /* EV5 (21164)          */
 DECL|macro|EV45_CPU
 mdefine_line|#define EV45_CPU                6       /* EV4.5 (21064/xxx)    */
+DECL|macro|EV56_CPU
+mdefine_line|#define EV56_CPU&t;&t;7&t;/* EV5.6 (21164)&t;*/
+DECL|macro|EV6_CPU
+mdefine_line|#define EV6_CPU&t;&t;&t;8&t;/* EV6 (21164)&t;&t;*/
 multiline_comment|/*&n; * DEC system types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
 DECL|macro|ST_ADU
 mdefine_line|#define ST_ADU&t;&t;&t;  1&t;/* Alpha ADU systype&t;*/

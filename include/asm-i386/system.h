@@ -337,9 +337,9 @@ mdefine_line|#define sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memor
 DECL|macro|cli
 mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;: : :&quot;memory&quot;)
 DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=r&quot; (x): /* no input */ :&quot;memory&quot;)
+mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;r&quot; (x):&quot;memory&quot;)
+mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
 DECL|macro|iret
 mdefine_line|#define iret() __asm__ __volatile__ (&quot;iret&quot;: : :&quot;memory&quot;)
 DECL|macro|_set_gate

@@ -711,6 +711,7 @@ id|prev
 op_assign
 id|p-&gt;prev_run
 suffix:semicolon
+multiline_comment|/* remove from list */
 id|next-&gt;prev_run
 op_assign
 id|prev
@@ -719,22 +720,25 @@ id|prev-&gt;next_run
 op_assign
 id|next
 suffix:semicolon
-(paren
-id|p-&gt;prev_run
-op_assign
-id|init_task.prev_run
-)paren
-op_member_access_from_pointer
-id|next_run
-op_assign
-id|p
-suffix:semicolon
+multiline_comment|/* add back to list */
 id|p-&gt;next_run
 op_assign
 op_amp
 id|init_task
 suffix:semicolon
+id|prev
+op_assign
 id|init_task.prev_run
+suffix:semicolon
+id|init_task.prev_run
+op_assign
+id|p
+suffix:semicolon
+id|p-&gt;prev_run
+op_assign
+id|prev
+suffix:semicolon
+id|prev-&gt;next_run
 op_assign
 id|p
 suffix:semicolon

@@ -3787,12 +3787,16 @@ op_assign
 id|pte_mkwrite
 c_func
 (paren
+id|pte_mkdirty
+c_func
+(paren
 id|mk_pte
 c_func
 (paren
 id|page
 comma
 id|vma-&gt;vm_page_prot
+)paren
 )paren
 )paren
 suffix:semicolon

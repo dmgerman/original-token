@@ -130,9 +130,85 @@ id|v
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Same as above, but return true if we counted down to zero&n; */
+DECL|function|atomic_sub_and_test
+r_extern
+id|__inline__
+r_int
+id|atomic_sub_and_test
+c_func
+(paren
+id|atomic_t
+id|i
+comma
+id|atomic_t
+op_star
+id|v
+)paren
+(brace
+r_int
+r_int
+id|temp
+comma
+id|result
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n1:&bslash;t&quot;
+l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;subl %0,%3,%0&bslash;n&bslash;t&quot;
+l_string|&quot;bis %0,%0,%2&bslash;n&bslash;t&quot;
+l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;beq %0,1b&bslash;n&quot;
+l_string|&quot;2:&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|__atomic_fool_gcc
+c_func
+(paren
+id|v
+)paren
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+id|i
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+id|__atomic_fool_gcc
+c_func
+(paren
+id|v
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+id|result
+op_eq
+l_int|0
+suffix:semicolon
+)brace
 DECL|macro|atomic_inc
 mdefine_line|#define atomic_inc(v) atomic_add(1,(v))
 DECL|macro|atomic_dec
 mdefine_line|#define atomic_dec(v) atomic_sub(1,(v))
+DECL|macro|atomic_dec_and_test
+mdefine_line|#define atomic_dec_and_test(v) atomic_sub_and_test(1,(v))
 macro_line|#endif
 eof

@@ -44,7 +44,7 @@ op_star
 id|hwrpb
 suffix:semicolon
 macro_line|#if PCI_MODIFY
-DECL|variable|io_base
+macro_line|#if 0
 r_static
 r_int
 r_int
@@ -55,6 +55,16 @@ op_star
 id|KB
 suffix:semicolon
 multiline_comment|/* &lt;64KB are (E)ISA ports */
+macro_line|#else
+DECL|variable|io_base
+r_static
+r_int
+r_int
+id|io_base
+op_assign
+l_int|0xb000
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_ALPHA_XL)
 multiline_comment|/*&n;   an AVANTI *might* be an XL, and an XL has only 27 bits of ISA address&n;   that get passed through the PCI&lt;-&gt;ISA bridge chip. Because this causes&n;   us to set the PCI-&gt;Mem window bases lower than normal, we&squot;ve gotta allocate&n;   PCI bus devices&squot; memory addresses *above* the PCI&lt;-&gt;memory mapping windows,&n;   so that CPU memory DMA addresses issued by a bus device don&squot;t conflict&n;   with bus memory addresses, like frame buffer memory for graphics cards.&n;*/
 DECL|variable|mem_base
@@ -896,7 +906,7 @@ id|bridge
 op_assign
 id|bus-&gt;self
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Set up the top and bottom of the I/O memory segment&n;&t;&t; * for this bus.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Set up the top and bottom of the PCI I/O segment&n;&t;&t; * for this bus.&n;&t;&t; */
 id|pcibios_read_config_dword
 c_func
 (paren
@@ -912,7 +922,11 @@ id|l
 suffix:semicolon
 id|l
 op_assign
+(paren
 id|l
+op_amp
+l_int|0xffff0000
+)paren
 op_or
 (paren
 id|bio
@@ -942,6 +956,7 @@ comma
 id|l
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set up the top and bottom of the  PCI Memory segment&n;&t;&t; * for this bus.&n;&t;&t; */
 id|l
 op_assign
 (paren
@@ -1324,6 +1339,43 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* turn on IDE, really! */
 )brace
+multiline_comment|/* &n; * A small note about bridges and interrupts.    The DECchip 21050 (and later chips)&n; * adheres to the PCI-PCI bridge specification.   This says that the interrupts on&n; * the other side of a bridge are swizzled in the following manner:&n; *&n; * Dev    Interrupt   Interupt &n; *        Pin on      Pin on &n; *        Device      Connector&n; *&n; *   4    A           A&n; *        B           B&n; *        C           C&n; *        D           D&n; * &n; *   5    A           B&n; *        B           C&n; *        C           D&n; *        D           A&n; *&n; *   6    A           C&n; *        B           D&n; *        C           A&n; *        D           B&n; *&n; *   7    A           D&n; *        B           A&n; *        C           B&n; *        D           C&n; *&n; *   Where A = pin 1, B = pin 2 and so on and pin=0 = default = A.&n; *   Thus, each swizzle is ((pin-1) + (device#-4)) % 4&n; *&n; *   The following code is somewhat simplistic as it assumes only one bridge.&n; *   I will fix it later (david.rusling@reo.mts.dec.com).&n; */
+DECL|function|bridge_swizzle
+r_static
+r_inline
+r_int
+r_char
+id|bridge_swizzle
+c_func
+(paren
+r_int
+r_char
+id|pin
+comma
+r_int
+r_int
+id|slot
+)paren
+(brace
+multiline_comment|/* swizzle */
+r_return
+(paren
+(paren
+(paren
+id|pin
+op_minus
+l_int|1
+)paren
+op_plus
+id|slot
+)paren
+op_mod
+l_int|4
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Most evaluation boards share most of the fixup code, which is isolated here.&n; * This function is declared &quot;inline&quot; as only one platform will ever be selected&n; * in any given kernel.  If that platform doesn&squot;t need this code, we don&squot;t want&n; * it around as dead code.&n; */
 DECL|function|common_fixup
 r_static
@@ -1367,6 +1419,10 @@ r_int
 r_char
 id|pin
 suffix:semicolon
+r_int
+r_char
+id|slot
+suffix:semicolon
 multiline_comment|/*&n;&t; * Go through all devices, fixing up irqs as we see fit:&n;&t; */
 r_for
 c_loop
@@ -1382,11 +1438,23 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|16
+op_ne
+id|PCI_BASE_CLASS_BRIDGE
+)paren
+(brace
 id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Ignore things not on the primary bus - I&squot;ll figure&n;&t;&t; * this out one day - Dave Rusling&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * This device is not on the primary bus, we need to figure out which&n;&t;&t;&t; * interrupt pin it will come in on.   We know which slot it will come&n;&t;&t;&t; * in on &squot;cos that slot is where the bridge is.   Each time the interrupt&n;&t;&t;&t; * line passes through a PCI-PCI bridge we must apply the swizzle function&n;&t;&t;&t; * (see the inline static routine above).&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1394,7 +1462,90 @@ id|dev-&gt;bus-&gt;number
 op_ne
 l_int|0
 )paren
-r_continue
+(brace
+r_struct
+id|pci_dev
+op_star
+id|curr
+op_assign
+id|dev
+suffix:semicolon
+multiline_comment|/* read the pin and do the PCI-PCI bridge interrupt pin swizzle */
+id|pcibios_read_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|PCI_INTERRUPT_PIN
+comma
+op_amp
+id|pin
+)paren
+suffix:semicolon
+multiline_comment|/* cope with 0 */
+r_if
+c_cond
+(paren
+id|pin
+op_eq
+l_int|0
+)paren
+id|pin
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* follow the chain of bridges, swizzling as we go */
+r_do
+(brace
+multiline_comment|/* swizzle */
+id|pin
+op_assign
+id|bridge_swizzle
+c_func
+(paren
+id|pin
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|curr-&gt;devfn
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* move up the chain of bridges */
+id|curr
+op_assign
+id|curr-&gt;bus-&gt;self
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|curr-&gt;bus-&gt;self
+)paren
+suffix:semicolon
+multiline_comment|/* The slot is the slot of the last bridge. */
+id|slot
+op_assign
+id|PCI_SLOT
+c_func
+(paren
+id|curr-&gt;devfn
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* work out the slot */
+id|slot
+op_assign
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
 suffix:semicolon
 multiline_comment|/* read the pin */
 id|pcibios_read_config_byte
@@ -1410,16 +1561,13 @@ op_amp
 id|pin
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|irq_tab
 (braket
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
+id|slot
 op_minus
 id|min_idsel
 )braket
@@ -1434,11 +1582,7 @@ id|dev-&gt;irq
 op_assign
 id|irq_tab
 (braket
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
+id|slot
 op_minus
 id|min_idsel
 )braket
@@ -1461,7 +1605,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;&t; * if its a VGA, enable its BIOS ROM at C0000&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * if its a VGA, enable its BIOS ROM at C0000&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1504,6 +1648,7 @@ c_func
 id|ide_base
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; * The EB66+ is very similar to the EB66 except that it does not have&n; * the on-board NCR and Tulip chips.  In the code below, I have used&n; * slot number to refer to the id select line and *not* the slot&n; * number used in the EB66+ documentation.  However, in the table,&n; * I&squot;ve given the slot number, the id select line and the Jxx number&n; * that&squot;s printed on the board.  The interrupt pins from the PCI slots&n; * are wired into 3 interrupt summary registers at 0x804, 0x805 and&n; * 0x806 ISA.&n; *&n; * In the table, -1 means don&squot;t assign an IRQ number.  This is usually&n; * because it is the Saturn IO (SIO) PCI/ISA Bridge Chip.&n; */
