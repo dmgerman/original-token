@@ -1193,7 +1193,7 @@ DECL|macro|HASH_O_F
 mdefine_line|#define HASH_O_F   (TD_FT1 | TD_F0)
 multiline_comment|/*&n;** Media / mode state machine definitions&n;** User selectable:&n;*/
 DECL|macro|TP
-mdefine_line|#define TP              0x0001     /* 10Base-T                             */
+mdefine_line|#define TP              0x0040     /* 10Base-T (now equiv to _10Mb)        */
 DECL|macro|TP_NW
 mdefine_line|#define TP_NW           0x0002     /* 10Base-T with Nway                   */
 DECL|macro|BNC

@@ -22,21 +22,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 r_extern
 r_void
-id|die_if_kernel
-c_func
-(paren
-r_char
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|show_net_buffers
 c_func
 (paren

@@ -186,13 +186,6 @@ r_int
 r_int
 id|BIOS_revision
 suffix:semicolon
-multiline_comment|/* Lazy FPU handling on uni-processor */
-r_extern
-r_struct
-id|task_struct
-op_star
-id|last_task_used_math
-suffix:semicolon
 multiline_comment|/*&n; * User space process size: 3GB (default).&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(PAGE_OFFSET)
@@ -581,9 +574,9 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, &bslash;&n;&t;__KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;__USER_DS,0,__USER_DS,0,__USER_DS,0, &bslash;&n;&t;__USER_DS,0,__USER_DS,0,__USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0, 0, (mm_segment_t) { 0 } /* obsolete */ , &bslash;&n;&t;{ { 0, }, },  /* 387 state */ &bslash;&n;&t;NULL, 0, 0, 0, 0, 0 /* vm86_info */, &bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,0, /* back_link, __blh */&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* esp0 */&t;&bslash;&n;&t;__KERNEL_DS, 0, /* ss0 */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* stack1, stack2 */&t;&t;&t;&bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, /* cr3 */&t;&t;&bslash;&n;&t;0,0, /* eip,eflags */&t;&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* eax,ecx,edx,ebx */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* esp,ebp,esi,edi */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* es,cs,ss */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* ds,fs,gs */&t;&t;&t;&t;&bslash;&n;&t;_LDT(0),0, /* ldt */&t;&t;&t;&t;&t;&bslash;&n;&t;0, 0x8000, /* tace, bitmap */&t;&t;&t;&t;&bslash;&n;&t;{~0, }, /* ioperm */&t;&t;&t;&t;&t;&bslash;&n;&t;_TSS(0), 0, 0, 0, (mm_segment_t) { 0 }, /* obsolete */&t;&bslash;&n;&t;{ { 0, }, },  /* 387 state */&t;&t;&t;&t;&bslash;&n;&t;NULL, 0, 0, 0, 0, 0, /* vm86_info */&t;&t;&t;&bslash;&n;}
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&bslash;&n;&t;unsigned long seg = __USER_DS; &bslash;&n;&t;__asm__(&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;:&quot;=r&quot; (seg) :&quot;0&quot; (seg)); &bslash;&n;&t;set_fs(USER_DS); &bslash;&n;&t;regs-&gt;xds = seg; &bslash;&n;&t;regs-&gt;xes = seg; &bslash;&n;&t;regs-&gt;xss = seg; &bslash;&n;&t;regs-&gt;xcs = __USER_CS; &bslash;&n;&t;regs-&gt;eip = new_eip; &bslash;&n;&t;regs-&gt;esp = new_esp; &bslash;&n;} while (0)
+mdefine_line|#define start_thread(regs, new_eip, new_esp) do {&t;&t;&bslash;&n;&t;__asm__(&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;: :&quot;r&quot; (0));&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xds = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xes = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xss = __USER_DS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;xcs = __USER_CS;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;eip = new_eip;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;esp = new_esp;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declaration, a strange C thing */
 r_struct
 id|mm_struct

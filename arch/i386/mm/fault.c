@@ -17,7 +17,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 r_extern
 r_void
-id|die_if_kernel
+id|die
 c_func
 (paren
 r_const
@@ -330,7 +330,7 @@ c_func
 )paren
 )braket
 )paren
-id|die_if_kernel
+id|die
 c_func
 (paren
 l_string|&quot;page fault from irq handler&quot;
@@ -876,7 +876,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|die_if_kernel
+id|die
 c_func
 (paren
 l_string|&quot;Oops&quot;

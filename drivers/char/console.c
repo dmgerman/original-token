@@ -10959,18 +10959,6 @@ id|currcons
 op_assign
 l_int|0
 suffix:semicolon
-r_char
-id|q
-(braket
-l_int|2
-)braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|1
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11385,6 +11373,19 @@ id|fg_console
 suffix:semicolon
 macro_line|#if 0
 multiline_comment|/* The logo is too ugly to live */
+(brace
+r_char
+id|q
+(braket
+l_int|2
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|1
+)brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11442,6 +11443,7 @@ comma
 id|q
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|sw
 op_member_access_from_pointer

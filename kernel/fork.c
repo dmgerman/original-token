@@ -1258,6 +1258,17 @@ c_func
 id|current-&gt;mm
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Set up the LDT descriptor for the clone task.&n;&t;&t; */
+id|copy_segments
+c_func
+(paren
+id|nr
+comma
+id|tsk
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|SET_PAGE_DIR
 c_func
 (paren

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/printk.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; * Modified to make sys_syslog() more flexible: added commands to&n; * return the last 4k of kernel messages, regardless of whether&n; * they&squot;ve been read or not.  Added option to suppress kernel printk&squot;s&n; * to the console.  Added hook for sending the console messages&n; * elsewhere, in preparation for a serial line console (someday).&n; * Ted Ts&squot;o, 2/11/93.&n; * Modified for sysctl support, 1/8/97, Chris Horn.&n; */
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,6 +10,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|LOG_BUF_LEN
 mdefine_line|#define LOG_BUF_LEN&t;8192

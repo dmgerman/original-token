@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASM_SYSTEM_H
 DECL|macro|__ASM_SYSTEM_H
 mdefine_line|#define __ASM_SYSTEM_H
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - null&n; *   1 - not used&n; *   2 - kernel code segment&n; *   3 - kernel data segment&n; *   4 - user code segment&n; *   5 - user data segment&n; *   6 - not used&n; *   7 - not used&n; *   8 - APM BIOS support&n; *   9 - APM BIOS support&n; *  10 - APM BIOS support&n; *  11 - APM BIOS support&n; *  12 - TSS #0&n; *  13 - LDT #0&n; *  14 - TSS #1&n; *  15 - LDT #1&n; */
 DECL|macro|FIRST_TSS_ENTRY
@@ -17,18 +18,33 @@ DECL|macro|load_ldt
 mdefine_line|#define load_ldt(n) __asm__ __volatile__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
 DECL|macro|store_TR
 mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
-multiline_comment|/* This special macro can be used to load a debugging register */
-DECL|macro|loaddebug
-mdefine_line|#define loaddebug(tsk,register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%db&quot; #register  &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;r&quot; (tsk-&gt;debugreg[register]))
-multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * the math co-processor latest.&n; *&n; * It also reloads the debug regs if necessary..&n; */
-macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t; *&t;Keep the lock depth straight. If we switch on an interrupt from&n;&t; *&t;kernel-&gt;user task we need to lose a depth, and if we switch the&n;&t; *&t;other way we need to gain a depth. Same layer switches come out&n;&t; *&t;the same.&n;&t; *&n;&t; *&t;We spot a switch in user mode because the kernel counter is the&n;&t; *&t;same as the interrupt counter depth. (We never switch during the&n;&t; *&t;message/invalidate IPI).&n;&t; *&n;&t; *&t;We fsave/fwait so that an exception goes off at the right time&n;&t; *&t;(as a call from the fsave or fwait in effect) rather than to&n;&t; *&t;the wrong process.&n;&t; */
+r_struct
+id|task_struct
+suffix:semicolon
+multiline_comment|/* one of the stranger aspects of C forward declarations.. */
+r_extern
+r_void
+id|FASTCALL
+c_func
+(paren
+id|__switch_to
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|prev
+comma
+r_struct
+id|task_struct
+op_star
+id|next
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * We do most of the task switching in C, but we need&n; * to do the EIP/ESP switch in assembly..&n; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;if(prev-&gt;flags&amp;PF_USEDFPU) &bslash;&n;&t;{ &bslash;&n;&t;&t;__asm__ __volatile__(&quot;fnsave %0&quot;:&quot;=m&quot; (prev-&gt;tss.i387.hard)); &bslash;&n;&t;&t;__asm__ __volatile__(&quot;fwait&quot;); &bslash;&n;&t;&t;prev-&gt;flags&amp;=~PF_USEDFPU;&t; &bslash;&n;&t;} &bslash;&n;__asm__(&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;next-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;c&quot; (next)); &bslash;&n;&t;/* Now maybe reload the debug registers */ &bslash;&n;&t;if(prev-&gt;debugreg[7]){ &bslash;&n;&t;&t;loaddebug(prev,0); &bslash;&n;&t;&t;loaddebug(prev,1); &bslash;&n;&t;&t;loaddebug(prev,2); &bslash;&n;&t;&t;loaddebug(prev,3); &bslash;&n;&t;&t;loaddebug(prev,6); &bslash;&n;&t;&t;loaddebug(prev,7); &bslash;&n;&t;} &bslash;&n;} while (0)
-macro_line|#else
-DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) do { &bslash;&n;__asm__(&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %1,&quot;SYMBOL_NAME_STR(last_task_used_math)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;next-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;r&quot; (prev), &quot;r&quot; (next)); &bslash;&n;&t;/* Now maybe reload the debug registers */ &bslash;&n;&t;if(prev-&gt;debugreg[7]){ &bslash;&n;&t;&t;loaddebug(prev,0); &bslash;&n;&t;&t;loaddebug(prev,1); &bslash;&n;&t;&t;loaddebug(prev,2); &bslash;&n;&t;&t;loaddebug(prev,3); &bslash;&n;&t;&t;loaddebug(prev,6); &bslash;&n;&t;&t;loaddebug(prev,7); &bslash;&n;&t;} &bslash;&n;} while (0)
-macro_line|#endif
+mdefine_line|#define switch_to(prev,next) do {&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long eax, edx, ecx;&t;&t;&t;&t;&t;&bslash;&n;&t;asm volatile(&quot;pushl %%edi&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;pushl %%esi&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;pushl %%ebp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;pushl %%ebx&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;movl %%esp,%0&bslash;n&bslash;t&quot;&t;/* save ESP */&t;&t;&bslash;&n;&t;&t;     &quot;movl %5,%%esp&bslash;n&bslash;t&quot;&t;/* restore ESP */&t;&bslash;&n;&t;&t;     &quot;movl $1f,%1&bslash;n&bslash;t&quot;&t;&t;/* save EIP */&t;&t;&bslash;&n;&t;&t;     &quot;pushl %6&bslash;n&bslash;t&quot;&t;&t;/* restore EIP */&t;&bslash;&n;&t;&t;     &quot;jmp __switch_to&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;1:&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;popl %%ebx&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;popl %%ebp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;popl %%esi&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;popl %%edi&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;     :&quot;=m&quot; (prev-&gt;tss.esp),&quot;=m&quot; (prev-&gt;tss.eip),&t;&bslash;&n;&t;&t;      &quot;=a&quot; (eax), &quot;=d&quot; (edx), &quot;=c&quot; (ecx)&t;&t;&bslash;&n;&t;&t;     :&quot;m&quot; (next-&gt;tss.esp),&quot;m&quot; (next-&gt;tss.eip),&t;&t;&bslash;&n;&t;&t;      &quot;a&quot; (prev), &quot;d&quot; (next));&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|_set_base
 mdefine_line|#define _set_base(addr,base) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dh,%2&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*((addr)+2)), &bslash;&n;&t; &quot;m&quot; (*((addr)+4)), &bslash;&n;&t; &quot;m&quot; (*((addr)+7)), &bslash;&n;&t; &quot;d&quot; (base) &bslash;&n;&t;:&quot;dx&quot;)
 DECL|macro|_set_limit
