@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.115 2000/02/26 04:24:31 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.116 2000/03/15 23:26:22 anton Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -948,14 +948,6 @@ r_int
 r_int
 id|ram_flags
 suffix:semicolon
-r_extern
-r_int
-id|sparc_ramdisk_image
-suffix:semicolon
-r_extern
-r_int
-id|sparc_ramdisk_size
-suffix:semicolon
 DECL|macro|RAMDISK_IMAGE_START_MASK
 mdefine_line|#define RAMDISK_IMAGE_START_MASK&t;0x07FF
 DECL|macro|RAMDISK_PROMPT_FLAG
@@ -1564,151 +1556,12 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-singleline_comment|// FIXME needs to do the new bootmem alloc stuff
-r_if
-c_cond
-(paren
-id|sparc_ramdisk_image
-)paren
-(brace
-id|initrd_start
-op_assign
-id|sparc_ramdisk_image
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|initrd_start
-OL
-id|KERNBASE
-)paren
-id|initrd_start
-op_add_assign
-id|KERNBASE
-suffix:semicolon
-id|initrd_end
-op_assign
-id|initrd_start
-op_plus
-id|sparc_ramdisk_size
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|initrd_end
-OG
-op_star
-id|memory_end_p
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;initrd extends beyond end of memory &quot;
-l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
-comma
-id|initrd_end
-comma
-op_star
-id|memory_end_p
-)paren
-suffix:semicolon
-id|initrd_start
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|initrd_start
-op_ge
-op_star
-id|memory_start_p
-op_logical_and
-id|initrd_start
-OL
-op_star
-id|memory_start_p
-op_plus
-l_int|2
-op_star
-id|PAGE_SIZE
-)paren
-(brace
-id|initrd_below_start_ok
-op_assign
-l_int|1
-suffix:semicolon
-op_star
-id|memory_start_p
-op_assign
-id|PAGE_ALIGN
-(paren
-id|initrd_end
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|initrd_start
-op_logical_and
-id|sparc_ramdisk_image
-OL
-id|KERNBASE
-)paren
-(brace
-r_switch
-c_cond
-(paren
-id|sparc_cpu_model
-)paren
-(brace
-r_case
-id|sun4m
-suffix:colon
-r_case
-id|sun4d
-suffix:colon
-id|initrd_start
-op_sub_assign
-id|KERNBASE
-suffix:semicolon
-id|initrd_end
-op_sub_assign
-id|KERNBASE
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-r_break
-suffix:semicolon
-)brace
-)brace
-)brace
-macro_line|#endif&t;
 id|prom_setsync
 c_func
 (paren
 id|prom_sync_me
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SUN_SERIAL
-macro_line|#if 0
-multiline_comment|/* XXX We can&squot;t do this until the bootmem allocator is working. */
-id|sun_serial_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* set this up ASAP */
-macro_line|#endif
-macro_line|#endif
 (brace
 macro_line|#if !CONFIG_SUN_SERIAL
 id|serial_console

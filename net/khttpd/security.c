@@ -146,9 +146,11 @@ c_func
 (paren
 id|Filename
 comma
-l_int|00
+l_int|0
 comma
 id|O_RDONLY
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

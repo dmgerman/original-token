@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_sx164.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the SX164 (PCA56+PYXIS).&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_sx164.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999, 2000 Richard Henderson&n; *&n; * Code supporting the SX164 (PCA56+PYXIS).&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/core_pyxis.h&gt;
+macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
@@ -269,6 +269,7 @@ r_return
 id|COMMON_TABLE_LOOKUP
 suffix:semicolon
 )brace
+r_static
 r_void
 id|__init
 DECL|function|sx164_init_pci
@@ -278,7 +279,7 @@ c_func
 r_void
 )paren
 (brace
-id|common_init_pci
+id|cia_init_pci
 c_func
 (paren
 )paren
@@ -308,11 +309,11 @@ id|DO_DEFAULT_RTC
 comma
 id|DO_PYXIS_IO
 comma
-id|DO_PYXIS_BUS
+id|DO_CIA_BUS
 comma
 id|machine_check
 suffix:colon
-id|pyxis_machine_check
+id|cia_machine_check
 comma
 id|max_dma_address
 suffix:colon

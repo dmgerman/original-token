@@ -80,6 +80,36 @@ mdefine_line|#define AC97_SURROUND_MASTER      0x0038       /* Surround (Rear) M
 DECL|macro|AC97_RESERVED_3A
 mdefine_line|#define AC97_RESERVED_3A          0x003A       /* Reserved */
 multiline_comment|/* range 0x3c-0x58 - MODEM */
+DECL|macro|AC97_EXTENDED_MODEM_ID
+mdefine_line|#define AC97_EXTENDED_MODEM_ID    0x003C
+DECL|macro|AC97_EXTEND_MODEM_STAT
+mdefine_line|#define AC97_EXTEND_MODEM_STAT    0x003E
+DECL|macro|AC97_LINE1_RATE
+mdefine_line|#define AC97_LINE1_RATE           0x0040
+DECL|macro|AC97_LINE2_RATE
+mdefine_line|#define AC97_LINE2_RATE           0x0042
+DECL|macro|AC97_HANDSET_RATE
+mdefine_line|#define AC97_HANDSET_RATE         0x0044
+DECL|macro|AC97_LINE1_LEVEL
+mdefine_line|#define AC97_LINE1_LEVEL          0x0046
+DECL|macro|AC97_LINE2_LEVEL
+mdefine_line|#define AC97_LINE2_LEVEL          0x0048
+DECL|macro|AC97_HANDSET_LEVEL
+mdefine_line|#define AC97_HANDSET_LEVEL        0x004A
+DECL|macro|AC97_GPIO_CONFIG
+mdefine_line|#define AC97_GPIO_CONFIG          0x004C
+DECL|macro|AC97_GPIO_POLARITY
+mdefine_line|#define AC97_GPIO_POLARITY        0x004E
+DECL|macro|AC97_GPIO_STICKY
+mdefine_line|#define AC97_GPIO_STICKY          0x0050
+DECL|macro|AC97_GPIO_WAKE_UP
+mdefine_line|#define AC97_GPIO_WAKE_UP         0x0052
+DECL|macro|AC97_GPIO_STATUS
+mdefine_line|#define AC97_GPIO_STATUS          0x0054
+DECL|macro|AC97_MISC_MODEM_STAT
+mdefine_line|#define AC97_MISC_MODEM_STAT      0x0056
+DECL|macro|AC97_RESERVED_58
+mdefine_line|#define AC97_RESERVED_58          0x0058
 multiline_comment|/* registers 0x005a - 0x007a are vendor reserved */
 DECL|macro|AC97_VENDOR_ID1
 mdefine_line|#define AC97_VENDOR_ID1           0x007c
@@ -361,6 +391,28 @@ id|mixer_state
 (braket
 id|SOUND_MIXER_NRDEVICES
 )braket
+suffix:semicolon
+multiline_comment|/* Software Modem interface */
+DECL|member|modem_ioctl
+r_int
+(paren
+op_star
+id|modem_ioctl
+)paren
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon

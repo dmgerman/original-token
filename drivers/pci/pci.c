@@ -1672,9 +1672,6 @@ id|dev
 id|u16
 id|cmd
 suffix:semicolon
-id|u8
-id|lat
-suffix:semicolon
 id|pci_read_config_word
 c_func
 (paren
@@ -1697,7 +1694,7 @@ id|PCI_COMMAND_MASTER
 )paren
 )paren
 (brace
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;PCI: Enabling bus mastering for device %s&bslash;n&quot;
@@ -1720,44 +1717,12 @@ id|cmd
 )paren
 suffix:semicolon
 )brace
-id|pci_read_config_byte
+id|pcibios_set_master
 c_func
 (paren
 id|dev
-comma
-id|PCI_LATENCY_TIMER
-comma
-op_amp
-id|lat
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|lat
-OL
-l_int|16
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;PCI: Increasing latency timer of device %s to 64&bslash;n&quot;
-comma
-id|dev-&gt;slot_name
-)paren
-suffix:semicolon
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|64
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Translate the low bits of the PCI base&n; * to the resource type&n; */
 DECL|function|pci_calc_resource_flags

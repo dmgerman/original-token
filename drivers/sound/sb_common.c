@@ -3595,6 +3595,10 @@ id|SB_NO_MIDI
 )paren
 )paren
 (brace
+r_extern
+r_int
+id|sbmixnum
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3615,6 +3619,9 @@ c_func
 (paren
 id|devc-&gt;my_mixerdev
 )paren
+suffix:semicolon
+id|sbmixnum
+op_decrement
 suffix:semicolon
 multiline_comment|/* We don&squot;t have to do this bit any more the UART401 is its own&n;&t;&t;&t;&t;master  -- Krzysztof Halasa */
 multiline_comment|/* But we have to do it, if UART401 is not detected */

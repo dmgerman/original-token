@@ -1,6 +1,7 @@
 macro_line|#ifndef __SPARC_PCI_H
 DECL|macro|__SPARC_PCI_H
 mdefine_line|#define __SPARC_PCI_H
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* Can be used to override the logic in pci_scan_bus for skipping&n; * already-configured bus numbers - to be used for buggy BIOSes&n; * or architectures with incomplete PCI setup by the loader.&n; */
 DECL|macro|pcibios_assign_all_busses
 mdefine_line|#define pcibios_assign_all_busses()&t;0
@@ -8,7 +9,21 @@ DECL|macro|PCIBIOS_MIN_IO
 mdefine_line|#define PCIBIOS_MIN_IO&t;&t;0UL
 DECL|macro|PCIBIOS_MIN_MEM
 mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;0UL
-macro_line|#ifdef __KERNEL__
+DECL|function|pcibios_set_master
+r_extern
+r_inline
+r_void
+id|pcibios_set_master
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+multiline_comment|/* No special bus mastering setup handling */
+)brace
 multiline_comment|/* Dynamic DMA mapping stuff.&n; */
 macro_line|#include &lt;asm/scatterlist.h&gt;
 r_struct

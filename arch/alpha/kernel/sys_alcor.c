@@ -852,7 +852,7 @@ id|common_init_rtc
 comma
 id|init_pci
 suffix:colon
-id|common_init_pci
+id|cia_init_pci
 comma
 id|kill_arch
 suffix:colon
@@ -942,7 +942,7 @@ id|common_init_rtc
 comma
 id|init_pci
 suffix:colon
-id|common_init_pci
+id|cia_init_pci
 comma
 id|kill_arch
 suffix:colon

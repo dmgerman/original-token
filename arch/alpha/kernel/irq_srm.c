@@ -2,8 +2,6 @@ multiline_comment|/*&n; * Handle interrupts from the SRM, assuming no additional
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
-macro_line|#include &lt;asm/machvec.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 multiline_comment|/*&n; * Is the palcode SMP safe? In other words: can we call cserve_ena/dis&n; * at the same time in multiple CPUs? To be safe I added a spinlock&n; * but it can be removed trivially if the palcode is robust against smp.&n; */

@@ -346,8 +346,6 @@ macro_line|#elif defined(CONFIG_ALPHA_MCPCIA)
 macro_line|# include &lt;asm/core_mcpcia.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_POLARIS)
 macro_line|# include &lt;asm/core_polaris.h&gt;
-macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
-macro_line|# include &lt;asm/core_pyxis.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_T2)
 macro_line|# include &lt;asm/core_t2.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)

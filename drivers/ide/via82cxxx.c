@@ -82,6 +82,13 @@ comma
 )brace
 comma
 (brace
+l_string|&quot;VT 82C598 Apollo MVP3&quot;
+comma
+id|PCI_DEVICE_ID_VIA_82C598_0
+comma
+)brace
+comma
+(brace
 l_string|&quot;VT 82C680 Apollo P6&quot;
 comma
 id|PCI_DEVICE_ID_VIA_82C680
@@ -210,7 +217,7 @@ id|PCI_DEVICE_ID_VIA_82C691
 comma
 id|PCI_DEVICE_ID_VIA_82C596
 comma
-l_int|0
+id|VIA_FLAG_ATA_66
 )brace
 comma
 (brace

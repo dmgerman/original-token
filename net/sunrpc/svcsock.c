@@ -2366,8 +2366,7 @@ comma
 id|ready
 )paren
 suffix:semicolon
-id|len
-op_assign
+r_return
 op_minus
 id|EAGAIN
 suffix:semicolon

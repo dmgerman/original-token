@@ -440,7 +440,6 @@ DECL|macro|PCI_DMA_FROMDEVICE
 mdefine_line|#define PCI_DMA_FROMDEVICE&t;2
 DECL|macro|PCI_DMA_NONE
 mdefine_line|#define PCI_DMA_NONE&t;&t;3
-macro_line|#include &lt;asm/pci.h&gt;
 DECL|macro|DEVICE_COUNT_COMPATIBLE
 mdefine_line|#define DEVICE_COUNT_COMPATIBLE&t;4
 DECL|macro|DEVICE_COUNT_IRQ
@@ -1898,6 +1897,8 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* Include architecture-dependent settings and functions */
+macro_line|#include &lt;asm/pci.h&gt;
 multiline_comment|/*&n; *  If the system does not have PCI, clearly these return errors.  Define&n; *  these as simple inline functions to avoid hair in drivers.&n; */
 macro_line|#ifndef CONFIG_PCI
 DECL|function|pcibios_present
@@ -2142,6 +2143,22 @@ op_star
 id|drv
 )paren
 (brace
+)brace
+DECL|function|scsi_to_pci_dma_dir
+r_extern
+r_inline
+r_int
+id|scsi_to_pci_dma_dir
+c_func
+(paren
+r_int
+r_char
+id|scsi_dir
+)paren
+(brace
+r_return
+id|scsi_dir
+suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/*&n; * a helper function which helps ensure correct pci_driver&n; * setup and cleanup for commonly-encountered hotplug/modular cases&n; *&n; * This MUST stay in a header, as it checks for -DMODULE&n; */

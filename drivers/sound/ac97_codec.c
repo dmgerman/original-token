@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * History&n; * v0.3 Feb 22 2000 Ollie Lho&n; *&t;bug fix for record mask setting&n; * v0.2 Feb 10 2000 Ollie Lho&n; *&t;add ac97_read_proc for /proc/driver/vnedor/ac97&n; * v0.1 Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isolated from trident.c to support multiple ac97 codec&n; */
+multiline_comment|/*&n; * ac97_codec.c: Generic AC97 mixer/modem module&n; *&n; * Derived from ac97 mixer in maestro and trident driver.&n; *&n; * Copyright 2000 Silicon Integrated System Corporation&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * History&n; * v0.4 Mar 15 2000 Ollie Lho&n; *&t;dual codec support verified with 4 channel output&n; * v0.3 Feb 22 2000 Ollie Lho&n; *&t;bug fix for record mask setting&n; * v0.2 Feb 10 2000 Ollie Lho&n; *&t;add ac97_read_proc for /proc/driver/vnedor/ac97&n; * v0.1 Jan 14 2000 Ollie Lho &lt;ollie@sis.com.tw&gt; &n; *&t;Isolated from trident.c to support multiple ac97 codec&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -95,6 +95,17 @@ comma
 r_int
 r_int
 id|arg
+)paren
+suffix:semicolon
+r_static
+r_int
+id|ac97_init_mixer
+c_func
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
 )paren
 suffix:semicolon
 r_static
@@ -203,6 +214,22 @@ comma
 l_int|0x4e534331
 comma
 l_string|&quot;National Semiconductor LM4549&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|0x53494c22
+comma
+l_string|&quot;Silicon Laboratory Si3036&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|0x53494c23
+comma
+l_string|&quot;Silicon Laboratory Si3038&quot;
 comma
 l_int|NULL
 )brace
@@ -2823,8 +2850,11 @@ id|u16
 id|id1
 comma
 id|id2
+suffix:semicolon
+id|u16
+id|audio
 comma
-id|cap
+id|modem
 suffix:semicolon
 r_int
 id|i
@@ -2846,7 +2876,7 @@ r_if
 c_cond
 (paren
 (paren
-id|cap
+id|audio
 op_assign
 id|codec
 op_member_access_from_pointer
@@ -2861,8 +2891,49 @@ id|AC97_RESET
 op_amp
 l_int|0x8000
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ac97_codec: %s ac97 codec not present&bslash;n&quot;
+comma
+id|codec-&gt;id
+ques
+c_cond
+l_string|&quot;Secondary&quot;
+suffix:colon
+l_string|&quot;Primary&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* probe for Modem Codec */
+id|codec
+op_member_access_from_pointer
+id|codec_write
+c_func
+(paren
+id|codec
+comma
+id|AC97_EXTENDED_MODEM_ID
+comma
+l_int|0L
+)paren
+suffix:semicolon
+id|modem
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_EXTENDED_MODEM_ID
+)paren
 suffix:semicolon
 id|codec-&gt;name
 op_assign
@@ -2973,13 +3044,66 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ac97_codec: ac97 vendor id1: 0x%04x, id2: 0x%04x (%s)&bslash;n&quot;
+l_string|&quot;ac97_codec: AC97 %s codec, vendor id1: 0x%04x, &quot;
+l_string|&quot;id2: 0x%04x (%s)&bslash;n&quot;
+comma
+id|audio
+ques
+c_cond
+l_string|&quot;Audio&quot;
+suffix:colon
+(paren
+id|modem
+ques
+c_cond
+l_string|&quot;Modem&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
 comma
 id|id1
 comma
 id|id2
 comma
 id|codec-&gt;name
+)paren
+suffix:semicolon
+r_return
+id|ac97_init_mixer
+c_func
+(paren
+id|codec
+)paren
+suffix:semicolon
+)brace
+DECL|function|ac97_init_mixer
+r_static
+r_int
+id|ac97_init_mixer
+c_func
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
+)paren
+(brace
+id|u16
+id|cap
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|cap
+op_assign
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_RESET
 )paren
 suffix:semicolon
 multiline_comment|/* mixer masks */
@@ -3071,7 +3195,7 @@ comma
 l_int|0L
 )paren
 suffix:semicolon
-multiline_comment|/* codec specific initialization for 4-6 channel output */
+multiline_comment|/* codec specific initialization for 4-6 channel output or secondary codec stuff */
 r_if
 c_cond
 (paren
@@ -3159,6 +3283,22 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|ac97_init_modem
+r_static
+r_int
+id|ac97_init_modem
+c_func
+(paren
+r_struct
+id|ac97_codec
+op_star
+id|codec
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|sigmatel_init
 r_static
 r_int
@@ -3183,7 +3323,7 @@ comma
 l_int|0L
 )paren
 suffix:semicolon
-multiline_comment|/* initialize SigmaTel STAC9721/23 */
+multiline_comment|/* initialize SigmaTel STAC9721/23 as secondary codec, decoding AC link&n;&t;   sloc 3,4 = 0x01, slot 7,8 = 0x00, */
 id|codec
 op_member_access_from_pointer
 id|codec_write
@@ -3193,7 +3333,43 @@ id|codec
 comma
 l_int|0x74
 comma
-l_int|0x01
+l_int|0x00
+)paren
+suffix:semicolon
+multiline_comment|/* we don&squot;t have the crystal when we are on an AMR card, so use&n;&t;   BIT_CLK as our clock source. Write the magic word ABBA and read&n;&t;   back to enable register 0x78 */
+id|codec
+op_member_access_from_pointer
+id|codec_write
+c_func
+(paren
+id|codec
+comma
+l_int|0x76
+comma
+l_int|0xabba
+)paren
+suffix:semicolon
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+l_int|0x76
+)paren
+suffix:semicolon
+multiline_comment|/* sync all the clocks*/
+id|codec
+op_member_access_from_pointer
+id|codec_write
+c_func
+(paren
+id|codec
+comma
+l_int|0x78
+comma
+l_int|0x3802
 )paren
 suffix:semicolon
 r_return

@@ -1,13 +1,28 @@
 macro_line|#ifndef ASMARM_PCI_H
 DECL|macro|ASMARM_PCI_H
 mdefine_line|#define ASMARM_PCI_H
+macro_line|#ifdef __KERNEL__
 DECL|macro|pcibios_assign_all_busses
 mdefine_line|#define pcibios_assign_all_busses()&t;0
 DECL|macro|PCIBIOS_MIN_IO
 mdefine_line|#define PCIBIOS_MIN_IO&t;&t;0x8000
 DECL|macro|PCIBIOS_MIN_MEM
 mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;0x40000000
-macro_line|#ifdef __KERNEL__
+DECL|function|pcibios_set_master
+r_extern
+r_inline
+r_void
+id|pcibios_set_master
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+multiline_comment|/* No special bus mastering setup handling */
+)brace
 macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_struct

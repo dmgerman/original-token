@@ -35,10 +35,9 @@ mdefine_line|#define DO_EV5_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;
 DECL|macro|DO_EV6_MMU
 mdefine_line|#define DO_EV6_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV6_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mv_switch_mm:&t;&t;&t;ev5_switch_mm,&t;&t;&t;&bslash;&n;&t;mv_activate_mm:&t;&t;&t;ev5_activate_mm,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev5_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev5_flush_tlb_current_page
 DECL|macro|IO_LITE
-mdefine_line|#define IO_LITE(UP,low)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;hae_register:&t;&t;(unsigned long *) CAT(UP,_HAE_ADDRESS),&t;&bslash;&n;&t;iack_sc:&t;&t;CAT(UP,_IACK_SC),&t;&t;&t;&bslash;&n;&t;mv_inb:&t;&t;&t;CAT(low,_inb),&t;&t;&t;&t;&bslash;&n;&t;mv_inw:&t;&t;&t;CAT(low,_inw),&t;&t;&t;&t;&bslash;&n;&t;mv_inl:&t;&t;&t;CAT(low,_inl),&t;&t;&t;&t;&bslash;&n;&t;mv_outb:&t;&t;CAT(low,_outb),&t;&t;&t;&t;&bslash;&n;&t;mv_outw:&t;&t;CAT(low,_outw),&t;&t;&t;&t;&bslash;&n;&t;mv_outl:&t;&t;CAT(low,_outl),&t;&t;&t;&t;&bslash;&n;&t;mv_readb:&t;&t;CAT(low,_readb),&t;&t;&t;&bslash;&n;&t;mv_readw:&t;&t;CAT(low,_readw),&t;&t;&t;&bslash;&n;&t;mv_readl:&t;&t;CAT(low,_readl),&t;&t;&t;&bslash;&n;&t;mv_readq:&t;&t;CAT(low,_readq),&t;&t;&t;&bslash;&n;&t;mv_writeb:&t;&t;CAT(low,_writeb),&t;&t;&t;&bslash;&n;&t;mv_writew:&t;&t;CAT(low,_writew),&t;&t;&t;&bslash;&n;&t;mv_writel:&t;&t;CAT(low,_writel),&t;&t;&t;&bslash;&n;&t;mv_writeq:&t;&t;CAT(low,_writeq),&t;&t;&t;&bslash;&n;&t;mv_ioremap:&t;&t;CAT(low,_ioremap),&t;&t;&t;&bslash;&n;&t;mv_is_ioaddr:&t;&t;CAT(low,_is_ioaddr)
+mdefine_line|#define IO_LITE(UP,low)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;hae_register:&t;&t;(unsigned long *) CAT(UP,_HAE_ADDRESS),&t;&bslash;&n;&t;iack_sc:&t;&t;CAT(UP,_IACK_SC),&t;&t;&t;&bslash;&n;&t;mv_inb:&t;&t;&t;CAT(low,_inb),&t;&t;&t;&t;&bslash;&n;&t;mv_inw:&t;&t;&t;CAT(low,_inw),&t;&t;&t;&t;&bslash;&n;&t;mv_inl:&t;&t;&t;CAT(low,_inl),&t;&t;&t;&t;&bslash;&n;&t;mv_outb:&t;&t;CAT(low,_outb),&t;&t;&t;&t;&bslash;&n;&t;mv_outw:&t;&t;CAT(low,_outw),&t;&t;&t;&t;&bslash;&n;&t;mv_outl:&t;&t;CAT(low,_outl),&t;&t;&t;&t;&bslash;&n;&t;mv_readb:&t;&t;CAT(low,_readb),&t;&t;&t;&bslash;&n;&t;mv_readw:&t;&t;CAT(low,_readw),&t;&t;&t;&bslash;&n;&t;mv_readl:&t;&t;CAT(low,_readl),&t;&t;&t;&bslash;&n;&t;mv_readq:&t;&t;CAT(low,_readq),&t;&t;&t;&bslash;&n;&t;mv_writeb:&t;&t;CAT(low,_writeb),&t;&t;&t;&bslash;&n;&t;mv_writew:&t;&t;CAT(low,_writew),&t;&t;&t;&bslash;&n;&t;mv_writel:&t;&t;CAT(low,_writel),&t;&t;&t;&bslash;&n;&t;mv_writeq:&t;&t;CAT(low,_writeq),&t;&t;&t;&bslash;&n;&t;mv_ioremap:&t;&t;CAT(low,_ioremap)&t;&t;&t;&bslash;&n;
 DECL|macro|IO
 mdefine_line|#define IO(UP,low)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;IO_LITE(UP,low),&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pci_ops:&t;&t;&amp;CAT(low,_pci_ops)
-multiline_comment|/* Any assembler that can generate a GENERIC kernel can generate BWX&n;   instructions.  So always use them for PYXIS I/O.  */
 DECL|macro|DO_APECS_IO
 mdefine_line|#define DO_APECS_IO&t;IO(APECS,apecs)
 DECL|macro|DO_CIA_IO
@@ -51,14 +50,14 @@ DECL|macro|DO_MCPCIA_IO
 mdefine_line|#define DO_MCPCIA_IO&t;IO(MCPCIA,mcpcia)
 DECL|macro|DO_POLARIS_IO
 mdefine_line|#define DO_POLARIS_IO&t;IO(POLARIS,polaris)
-DECL|macro|DO_PYXIS_IO
-mdefine_line|#define DO_PYXIS_IO&t;IO(PYXIS,pyxis)
 DECL|macro|DO_T2_IO
 mdefine_line|#define DO_T2_IO&t;IO(T2,t2)
 DECL|macro|DO_TSUNAMI_IO
 mdefine_line|#define DO_TSUNAMI_IO&t;IO(TSUNAMI,tsunami)
+DECL|macro|DO_PYXIS_IO
+mdefine_line|#define DO_PYXIS_IO&t;IO_LITE(CIA,cia_bwx), &bslash;&n;&t;&t;&t;pci_ops: &amp;CAT(cia,_pci_ops)
 DECL|macro|BUS
-mdefine_line|#define BUS(which)&t;&t;&t;&t;&t;&bslash;&n;&t;mv_pci_tbi:&t;CAT(which,_pci_tbi)
+mdefine_line|#define BUS(which)&t;&t;&t;&t;&t;&bslash;&n;&t;mv_is_ioaddr:&t;CAT(which,_is_ioaddr),&t;&t;&bslash;&n;&t;mv_pci_tbi:&t;CAT(which,_pci_tbi)
 DECL|macro|DO_APECS_BUS
 mdefine_line|#define DO_APECS_BUS&t;BUS(apecs)
 DECL|macro|DO_CIA_BUS
@@ -69,8 +68,6 @@ DECL|macro|DO_LCA_BUS
 mdefine_line|#define DO_LCA_BUS&t;BUS(lca)
 DECL|macro|DO_MCPCIA_BUS
 mdefine_line|#define DO_MCPCIA_BUS&t;BUS(mcpcia)
-DECL|macro|DO_PYXIS_BUS
-mdefine_line|#define DO_PYXIS_BUS&t;BUS(pyxis)
 DECL|macro|DO_POLARIS_BUS
 mdefine_line|#define DO_POLARIS_BUS&t;BUS(polaris)
 DECL|macro|DO_T2_BUS

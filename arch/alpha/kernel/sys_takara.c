@@ -1460,7 +1460,7 @@ id|alpha_mv.pci_map_irq
 op_assign
 id|takara_map_irq_srm
 suffix:semicolon
-id|common_init_pci
+id|cia_init_pci
 c_func
 (paren
 )paren

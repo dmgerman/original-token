@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_cabriolet.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the Cabriolet (AlphaPC64), EB66+, and EB164,&n; * PC164 and LX164.&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_cabriolet.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999, 2000 Richard Henderson&n; *&n; * Code supporting the Cabriolet (AlphaPC64), EB66+, and EB164,&n; * PC164 and LX164.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,7 +17,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_apecs.h&gt;
 macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &lt;asm/core_lca.h&gt;
-macro_line|#include &lt;asm/core_pyxis.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
@@ -841,6 +840,29 @@ l_int|0x398
 )paren
 suffix:semicolon
 )brace
+r_static
+r_inline
+r_void
+id|__init
+DECL|function|cia_cab_init_pci
+id|cia_cab_init_pci
+c_func
+(paren
+r_void
+)paren
+(brace
+id|cia_init_pci
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ns87312_enable_ide
+c_func
+(paren
+l_int|0x398
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The PC164 and LX164 have 19 PCI interrupts, four from each of the four&n; * PCI slots, the SIO, PCI/IDE, and USB.&n; * &n; * Each of the interrupts can be individually masked. This is&n; * accomplished by setting the appropriate bit in the mask register.&n; * A bit is set by writing a &quot;1&quot; to the desired position in the mask&n; * register and cleared by writing a &quot;0&quot;. There are 3 mask registers&n; * located at ISA address 804h, 805h and 806h.&n; * &n; * An I/O read at ISA address 804h, 805h, 806h will return the&n; * state of the 11 PCI interrupts and not the state of the MASKED&n; * interrupts.&n; * &n; * Note: A write to I/O 804h, 805h, and 806h the mask register will be&n; * updated.&n; * &n; * &n; * &t;&t;&t;&t;ISA DATA&lt;7:0&gt;&n; * ISA     +--------------------------------------------------------------+&n; * ADDRESS |   7   |   6   |   5   |   4   |   3   |   2  |   1   |   0   |&n; *         +==============================================================+&n; * 0x804   | INTB0 |  USB  |  IDE  |  SIO  | INTA3 |INTA2 | INTA1 | INTA0 |&n; *         +--------------------------------------------------------------+&n; * 0x805   | INTD0 | INTC3 | INTC2 | INTC1 | INTC0 |INTB3 | INTB2 | INTB1 |&n; *         +--------------------------------------------------------------+&n; * 0x806   | Rsrv  | Rsrv  | Rsrv  | Rsrv  | Rsrv  |INTD3 | INTD2 | INTD1 |&n; *         +--------------------------------------------------------------+&n; *         * Rsrv = reserved bits&n; *         Note: The mask register is write-only.&n; * &n; * IdSel&t;&n; *   5&t; 32 bit PCI option slot 2&n; *   6&t; 64 bit PCI option slot 0&n; *   7&t; 64 bit PCI option slot 1&n; *   8&t; Saturn I/O&n; *   9&t; 32 bit PCI option slot 3&n; *  10&t; USB&n; *  11&t; IDE&n; * &n; */
 r_static
 r_inline
@@ -1061,7 +1083,7 @@ c_func
 r_void
 )paren
 (brace
-id|common_init_pci
+id|cia_init_pci
 c_func
 (paren
 )paren
@@ -1210,7 +1232,7 @@ id|common_init_rtc
 comma
 id|init_pci
 suffix:colon
-id|cabriolet_init_pci
+id|cia_cab_init_pci
 comma
 id|pci_map_irq
 suffix:colon
@@ -1320,11 +1342,11 @@ id|DO_DEFAULT_RTC
 comma
 id|DO_PYXIS_IO
 comma
-id|DO_PYXIS_BUS
+id|DO_CIA_BUS
 comma
 id|machine_check
 suffix:colon
-id|pyxis_machine_check
+id|cia_machine_check
 comma
 id|max_dma_address
 suffix:colon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.84 2000/03/15 01:51:16 davem Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.86 2000/03/16 09:23:57 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1375,6 +1375,14 @@ id|sdev
 suffix:semicolon
 )brace
 )brace
+r_extern
+r_void
+id|register_proc_sparc_ioport
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|sbus_init
 r_void
 id|__init
@@ -1415,6 +1423,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* How many did we find? */
+macro_line|#ifndef __sparc_v9__
+id|register_proc_sparc_ioport
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUN4
 r_return
 id|sun4_dvma_init

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport.h,v 1.8 2000/03/14 04:37:53 davem Exp $&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: parport.h,v 1.9 2000/03/16 07:47:27 davem Exp $&n; * parport.h: sparc64 specific parport initialization and dma.&n; *&n; * Copyright (C) 1999  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _ASM_SPARC64_PARPORT_H
 DECL|macro|_ASM_SPARC64_PARPORT_H
 mdefine_line|#define _ASM_SPARC64_PARPORT_H 1

@@ -262,14 +262,50 @@ id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED&t;0
+r_extern
+r_void
+id|__read_lock
+c_func
+(paren
+id|rwlock_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__read_unlock
+c_func
+(paren
+id|rwlock_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__write_lock
+c_func
+(paren
+id|rwlock_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__write_unlock
+c_func
+(paren
+id|rwlock_t
+op_star
+)paren
+suffix:semicolon
 DECL|macro|read_lock
-mdefine_line|#define read_lock(__rw_lck) &bslash;&n;do {&t;register rwlock_t *__X asm(&quot;g1&quot;); &bslash;&n;&t;__asm__ __volatile__(&quot;sethi&t;%%hi(__read_lock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;jmpl&t;%%g3 + %%lo(__read_lock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot; nop&bslash;n1:&quot; &bslash;&n;&t;: : &quot;r&quot; (__X = (__rw_lck)) &bslash;&n;&t;  : &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;cc&quot;, &quot;memory&quot;); &bslash;&n;} while(0)
+mdefine_line|#define read_lock(p)&t;__read_lock(p)
 DECL|macro|read_unlock
-mdefine_line|#define read_unlock(__rw_lck) &bslash;&n;do {&t;register rwlock_t *__X asm(&quot;g1&quot;); &bslash;&n;&t;__asm__ __volatile__(&quot;sethi&t;%%hi(__read_unlock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;jmpl&t;%%g3 + %%lo(__read_unlock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot; nop&bslash;n1:&quot; &bslash;&n;&t;: : &quot;r&quot; (__X = (__rw_lck)) &bslash;&n;&t;  : &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;cc&quot;, &quot;memory&quot;); &bslash;&n;} while(0)
+mdefine_line|#define read_unlock(p)&t;__read_unlock(p)
 DECL|macro|write_lock
-mdefine_line|#define write_lock(__rw_lck) &bslash;&n;do {&t;register rwlock_t *__X asm(&quot;g1&quot;); &bslash;&n;&t;__asm__ __volatile__(&quot;sethi&t;%%hi(__write_lock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;jmpl&t;%%g3 + %%lo(__write_lock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot; nop&bslash;n1:&quot; &bslash;&n;&t;: : &quot;r&quot; (__X = (__rw_lck)) &bslash;&n;&t;  : &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;cc&quot;, &quot;memory&quot;); &bslash;&n;} while(0)
+mdefine_line|#define write_lock(p)&t;__write_lock(p)
 DECL|macro|write_unlock
-mdefine_line|#define write_unlock(__rw_lck) &bslash;&n;do {&t;register rwlock_t *__X asm(&quot;g1&quot;); &bslash;&n;&t;__asm__ __volatile__(&quot;sethi&t;%%hi(__write_unlock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot;jmpl&t;%%g3 + %%lo(__write_unlock), %%g3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;     &quot; nop&bslash;n1:&quot; &bslash;&n;&t;: : &quot;r&quot; (__X = (__rw_lck)) &bslash;&n;&t;  : &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;, &quot;cc&quot;, &quot;memory&quot;); &bslash;&n;} while(0)
+mdefine_line|#define write_unlock(p)&t;__write_unlock(p)
 macro_line|#else /* !(SPIN_LOCK_DEBUG) */
 r_typedef
 r_struct

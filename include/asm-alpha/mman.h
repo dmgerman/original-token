@@ -47,6 +47,18 @@ DECL|macro|MCL_CURRENT
 mdefine_line|#define MCL_CURRENT&t; 8192&t;&t;/* lock all currently mapped pages */
 DECL|macro|MCL_FUTURE
 mdefine_line|#define MCL_FUTURE&t;16384&t;&t;/* lock all additions to address space */
+DECL|macro|MADV_NORMAL
+mdefine_line|#define MADV_NORMAL&t;0&t;&t;/* no further special treatment */
+DECL|macro|MADV_RANDOM
+mdefine_line|#define MADV_RANDOM&t;1&t;&t;/* expect random page references */
+DECL|macro|MADV_SEQUENTIAL
+mdefine_line|#define MADV_SEQUENTIAL&t;2&t;&t;/* expect sequential page references */
+DECL|macro|MADV_WILLNEED
+mdefine_line|#define MADV_WILLNEED&t;3&t;&t;/* will need these pages */
+DECL|macro|MADV_SPACEAVAIL
+mdefine_line|#define&t;MADV_SPACEAVAIL&t;5&t;&t;/* ensure resources are available */
+DECL|macro|MADV_DONTNEED
+mdefine_line|#define MADV_DONTNEED&t;6&t;&t;/* dont need these pages */
 multiline_comment|/* compatibility flags */
 DECL|macro|MAP_ANON
 mdefine_line|#define MAP_ANON&t;MAP_ANONYMOUS

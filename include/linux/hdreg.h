@@ -328,6 +328,8 @@ DECL|macro|HDIO_SET_NICE
 mdefine_line|#define HDIO_SET_NICE&t;&t;0x0329&t;/* set nice flags */
 DECL|macro|HDIO_UNREGISTER_HWIF
 mdefine_line|#define HDIO_UNREGISTER_HWIF&t;0x032a  /* unregister interface */
+DECL|macro|__NEW_HD_DRIVE_ID
+mdefine_line|#define __NEW_HD_DRIVE_ID
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct
@@ -716,7 +718,7 @@ r_int
 r_int
 id|words94_125
 (braket
-l_int|33
+l_int|31
 )braket
 suffix:semicolon
 multiline_comment|/* reserved words 94-125 */

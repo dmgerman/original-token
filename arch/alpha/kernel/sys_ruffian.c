@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_ruffian.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999 Richard Henderson&n; *&n; * Code supporting the RUFFIAN.&n; */
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_ruffian.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1996 Jay A Estabrook&n; *&t;Copyright (C) 1998, 1999, 2000 Richard Henderson&n; *&n; * Code supporting the RUFFIAN.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/core_pyxis.h&gt;
+macro_line|#include &lt;asm/core_cia.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
@@ -448,11 +448,11 @@ id|DO_DEFAULT_RTC
 comma
 id|DO_PYXIS_IO
 comma
-id|DO_PYXIS_BUS
+id|DO_CIA_BUS
 comma
 id|machine_check
 suffix:colon
-id|pyxis_machine_check
+id|cia_machine_check
 comma
 id|max_dma_address
 suffix:colon
@@ -488,7 +488,7 @@ id|ruffian_init_rtc
 comma
 id|init_pci
 suffix:colon
-id|common_init_pci
+id|cia_init_pci
 comma
 id|kill_arch
 suffix:colon

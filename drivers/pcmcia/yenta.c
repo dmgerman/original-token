@@ -3184,6 +3184,16 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|exca_writeb
+c_func
+(paren
+id|socket
+comma
+id|I365_CSCINT
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|mask
 op_assign
 id|probe_irq_mask

@@ -20,7 +20,6 @@ macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
 macro_line|#include &quot;machvec_impl.h&quot;
-multiline_comment|/*&n; * HACK ALERT! only the boot cpu is used for interrupts.&n; */
 multiline_comment|/* Note that this interrupt code is identical to TAKARA.  */
 multiline_comment|/* Note mask bit is true for DISABLED irqs.  */
 DECL|variable|cached_irq_mask

@@ -87,6 +87,21 @@ DECL|macro|PCIBIOS_MIN_IO
 mdefine_line|#define PCIBIOS_MIN_IO&t;&t;alpha_mv.min_io_address
 DECL|macro|PCIBIOS_MIN_MEM
 mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;alpha_mv.min_mem_address
+DECL|function|pcibios_set_master
+r_extern
+r_inline
+r_void
+id|pcibios_set_master
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+multiline_comment|/* No special bus mastering setup handling */
+)brace
 multiline_comment|/* IOMMU controls.  */
 multiline_comment|/* Allocate and map kernel buffer using consistant mode DMA for PCI&n;   device.  Returns non-NULL cpu-view pointer to the buffer if&n;   successful and sets *DMA_ADDRP to the pci side dma address as well,&n;   else DMA_ADDRP is undefined.  */
 r_extern

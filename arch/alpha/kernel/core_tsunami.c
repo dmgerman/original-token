@@ -1522,7 +1522,7 @@ l_int|3
 dot
 id|csr
 op_assign
-l_int|0
+l_int|0x40000000
 suffix:semicolon
 id|tsunami_pci_tbi
 c_func

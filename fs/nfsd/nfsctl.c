@@ -110,6 +110,7 @@ id|__u8
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef notyet
 r_static
 r_int
 id|nfsctl_getfs
@@ -124,7 +125,18 @@ id|knfsd_fh
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* static int&t;nfsctl_ugidupdate(struct nfsctl_ugidmap *data); */
+r_static
+r_int
+id|nfsctl_ugidupdate
+c_func
+(paren
+r_struct
+id|nfsctl_ugidmap
+op_star
+id|data
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|initialized
 r_static
 r_int

@@ -8,6 +8,21 @@ DECL|macro|PCIBIOS_MIN_IO
 mdefine_line|#define PCIBIOS_MIN_IO&t;&t;0x1000
 DECL|macro|PCIBIOS_MIN_MEM
 mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;0x10000000
+DECL|function|pcibios_set_master
+r_extern
+r_inline
+r_void
+id|pcibios_set_master
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+multiline_comment|/* No special bus mastering setup handling */
+)brace
 multiline_comment|/*&n; * Dynamic DMA mapping API.&n; * IA-64 has everything mapped statically.&n; */
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

@@ -60,8 +60,7 @@ id|timer_list
 id|rtc_irq_timer
 suffix:semicolon
 r_static
-r_int
-r_int
+id|loff_t
 id|rtc_llseek
 c_func
 (paren
@@ -426,8 +425,7 @@ macro_line|#endif
 multiline_comment|/*&n; *&t;Now all the various file operations that we export.&n; */
 DECL|function|rtc_llseek
 r_static
-r_int
-r_int
+id|loff_t
 id|rtc_llseek
 c_func
 (paren

@@ -1011,6 +1011,9 @@ op_lshift
 l_int|4
 )paren
 suffix:semicolon
+id|num_mixers
+op_decrement
+suffix:semicolon
 )brace
 )brace
 DECL|function|sound_unload_mididev

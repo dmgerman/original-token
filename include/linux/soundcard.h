@@ -923,6 +923,8 @@ DECL|macro|AFMT_U16_BE
 macro_line|#&t;define AFMT_U16_BE&t;&t;0x00000100&t;/* Big endian U16 */
 DECL|macro|AFMT_MPEG
 macro_line|#&t;define AFMT_MPEG&t;&t;0x00000200&t;/* MPEG (2) audio */
+DECL|macro|AFMT_AC3
+macro_line|#&t;define AFMT_AC3&t;&t;0x00000400&t;/* Dolby Digital AC3 */
 multiline_comment|/*&n; * Buffer status queries.&n; */
 DECL|struct|audio_buf_info
 r_typedef
@@ -981,6 +983,10 @@ DECL|macro|DSP_CAP_TRIGGER
 macro_line|#&t;define DSP_CAP_TRIGGER&t;&t;0x00001000&t;/* Supports SETTRIGGER */
 DECL|macro|DSP_CAP_MMAP
 macro_line|#&t;define DSP_CAP_MMAP&t;&t;0x00002000&t;/* Supports mmap() */
+DECL|macro|DSP_CAP_MULTI
+macro_line|#&t;define DSP_CAP_MULTI&t;&t;0x00004000&t;/* support multiple open */
+DECL|macro|DSP_CAP_BIND
+macro_line|#&t;define DSP_CAP_BIND&t;&t;0x00008000&t;/* channel binding to front/rear/cneter/lfe */
 DECL|macro|SNDCTL_DSP_GETTRIGGER
 mdefine_line|#define SNDCTL_DSP_GETTRIGGER&t;&t;_SIOR (&squot;P&squot;,16, int)
 DECL|macro|SNDCTL_DSP_SETTRIGGER
@@ -988,7 +994,7 @@ mdefine_line|#define SNDCTL_DSP_SETTRIGGER&t;&t;_SIOW (&squot;P&squot;,16, int)
 DECL|macro|PCM_ENABLE_INPUT
 macro_line|#&t;define PCM_ENABLE_INPUT&t;&t;0x00000001
 DECL|macro|PCM_ENABLE_OUTPUT
-macro_line|#&t;define PCM_ENABLE_OUTPUT&t;0x00000002
+macro_line|#&t;define PCM_ENABLE_OUTPUT&t;&t;0x00000002
 DECL|struct|count_info
 r_typedef
 r_struct
@@ -1045,6 +1051,30 @@ DECL|macro|SNDCTL_DSP_SETDUPLEX
 mdefine_line|#define SNDCTL_DSP_SETDUPLEX&t;&t;_SIO  (&squot;P&squot;, 22)
 DECL|macro|SNDCTL_DSP_GETODELAY
 mdefine_line|#define SNDCTL_DSP_GETODELAY&t;&t;_SIOR (&squot;P&squot;, 23, int)
+DECL|macro|SNDCTL_DSP_GETCHANNELMASK
+mdefine_line|#define SNDCTL_DSP_GETCHANNELMASK&t;&t;_SIOWR(&squot;P&squot;, 64, int)
+DECL|macro|SNDCTL_DSP_BIND_CHANNEL
+mdefine_line|#define SNDCTL_DSP_BIND_CHANNEL&t;&t;_SIOWR(&squot;P&squot;, 65, int)
+DECL|macro|DSP_BIND_QUERY
+macro_line|#&t;define DSP_BIND_QUERY&t;&t;0x00000000
+DECL|macro|DSP_BIND_FRONT
+macro_line|#&t;define DSP_BIND_FRONT&t;&t;0x00000001
+DECL|macro|DSP_BIND_SURR
+macro_line|#&t;define DSP_BIND_SURR&t;&t;0x00000002
+DECL|macro|DSP_BIND_CENTER_LFE
+macro_line|#&t;define DSP_BIND_CENTER_LFE&t;0x00000004
+DECL|macro|DSP_BIND_HANDSET
+macro_line|#&t;define DSP_BIND_HANDSET&t;&t;0x00000008
+DECL|macro|DSP_BIND_MIC
+macro_line|#&t;define DSP_BIND_MIC&t;&t;0x00000010
+DECL|macro|DSP_BIND_MODEM1
+macro_line|#&t;define DSP_BIND_MODEM1&t;&t;0x00000020
+DECL|macro|DSP_BIND_MODEM2
+macro_line|#&t;define DSP_BIND_MODEM2&t;&t;0x00000040
+DECL|macro|DSP_BIND_I2S
+macro_line|#&t;define DSP_BIND_I2S&t;&t;0x00000080
+DECL|macro|DSP_BIND_SPDIF
+macro_line|#&t;define DSP_BIND_SPDIF&t;&t;0x00000100
 multiline_comment|/*&n; * Application&squot;s profile defines the way how playback underrun situations should be handled.&n; * &n; *&t;APF_NORMAL (the default) and APF_NETWORK make the driver to cleanup the&n; *&t;playback buffer whenever an underrun occurs. This consumes some time&n; *&t;prevents looping the existing buffer.&n; *&t;APF_CPUINTENS is intended to be set by CPU intensive applications which&n; *&t;are likely to run out of time occasionally. In this mode the buffer cleanup is&n; *&t;disabled which saves CPU time but also let&squot;s the previous buffer content to&n; *&t;be played during the &quot;pause&quot; after the underrun.&n; */
 DECL|macro|SNDCTL_DSP_PROFILE
 mdefine_line|#define SNDCTL_DSP_PROFILE&t;&t;_SIOW (&squot;P&squot;, 23, int)

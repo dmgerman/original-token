@@ -1094,8 +1094,6 @@ id|sbi
 suffix:semicolon
 id|fail_unlock
 suffix:colon
-id|fail_dec
-suffix:colon
 r_return
 l_int|NULL
 suffix:semicolon

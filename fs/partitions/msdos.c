@@ -1465,7 +1465,7 @@ id|dev
 op_div
 l_int|512
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 r_int
 id|tested_for_xlate
 op_assign
@@ -1473,7 +1473,7 @@ l_int|0
 suffix:semicolon
 id|read_mbr
 suffix:colon
-macro_line|#endif /* CONFIG_BLK_DEV_IDE */
+macro_line|#endif /* (CONFIG_BLK_DEV_IDE) || (CONFIG_BLK_DEV_IDE_MODULE) */
 r_if
 c_cond
 (paren
@@ -1517,10 +1517,10 @@ id|data
 op_assign
 id|bh-&gt;b_data
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 id|check_table
 suffix:colon
-macro_line|#endif /* CONFIG_BLK_DEV_IDE */
+macro_line|#endif /* (CONFIG_BLK_DEV_IDE) || (CONFIG_BLK_DEV_IDE_MODULE) */
 multiline_comment|/* Use bforget(), because we may have changed the disk geometry */
 r_if
 c_cond
@@ -1567,7 +1567,7 @@ op_plus
 id|data
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 r_if
 c_cond
 (paren
@@ -1859,7 +1859,7 @@ l_string|&quot; [PTBL]&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
+macro_line|#endif /* (CONFIG_BLK_DEV_IDE) || (CONFIG_BLK_DEV_IDE_MODULE) */
 multiline_comment|/* Look for partitions in two passes:&n;&t;   First find the primary partitions, and the DOS-type extended partitions.&n;&t;   On the second pass look inside *BSD and Unixware and Solaris partitions. */
 id|current_minor
 op_add_assign

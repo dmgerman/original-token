@@ -101,6 +101,11 @@ r_int
 r_int
 id|next_entry
 suffix:semicolon
+DECL|member|align_entry
+r_int
+r_int
+id|align_entry
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* The hose list.  */
