@@ -8381,12 +8381,6 @@ comma
 id|err
 )paren
 suffix:semicolon
-id|usb_destroy_configuration
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -8400,6 +8394,12 @@ id|dev-&gt;devnum
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+id|usb_free_dev
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|1

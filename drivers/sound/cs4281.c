@@ -621,6 +621,7 @@ mdefine_line|#define SNDCTL_DSP_CS_GETDBGMASK &t;_SIOWR(&squot;P&squot;, 52, int
 DECL|macro|SNDCTL_DSP_CS_SETDBGMASK
 mdefine_line|#define SNDCTL_DSP_CS_SETDBGMASK &t;_SIOWR(&squot;P&squot;, 53, int)
 DECL|function|printioctl
+r_static
 r_void
 id|printioctl
 c_func

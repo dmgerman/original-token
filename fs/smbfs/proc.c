@@ -4156,9 +4156,9 @@ id|smb_proc_read
 c_func
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
-id|dentry
+id|inode
 comma
 id|off_t
 id|offset
@@ -4176,10 +4176,10 @@ id|smb_sb_info
 op_star
 id|server
 op_assign
-id|server_from_dentry
+id|server_from_inode
 c_func
 (paren
-id|dentry
+id|inode
 )paren
 suffix:semicolon
 id|__u16
@@ -4224,7 +4224,7 @@ id|buf
 comma
 id|smb_vwv0
 comma
-id|dentry-&gt;d_inode-&gt;u.smbfs_i.fileid
+id|inode-&gt;u.smbfs_i.fileid
 )paren
 suffix:semicolon
 id|WSET
@@ -4402,13 +4402,11 @@ suffix:colon
 id|VERBOSE
 c_func
 (paren
-l_string|&quot;file %s/%s, count=%d, result=%d&bslash;n&quot;
+l_string|&quot;ino=%ld, fileid=%d, count=%d, result=%d&bslash;n&quot;
 comma
-id|DENTRY_PATH
-c_func
-(paren
-id|dentry
-)paren
+id|inode-&gt;ino
+comma
+id|inode-&gt;u.smbfs_i.fileid
 comma
 id|count
 comma
@@ -4431,9 +4429,9 @@ id|smb_proc_write
 c_func
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
-id|dentry
+id|inode
 comma
 id|off_t
 id|offset
@@ -4452,10 +4450,10 @@ id|smb_sb_info
 op_star
 id|server
 op_assign
-id|server_from_dentry
+id|server_from_inode
 c_func
 (paren
-id|dentry
+id|inode
 )paren
 suffix:semicolon
 r_int
@@ -4468,13 +4466,11 @@ suffix:semicolon
 id|VERBOSE
 c_func
 (paren
-l_string|&quot;file %s/%s, count=%d@%ld, packet_size=%d&bslash;n&quot;
+l_string|&quot;ino=%ld, fileid=%d, count=%d@%ld, packet_size=%d&bslash;n&quot;
 comma
-id|DENTRY_PATH
-c_func
-(paren
-id|dentry
-)paren
+id|inode-&gt;ino
+comma
+id|inode-&gt;u.smbfs_i.fileid
 comma
 id|count
 comma
@@ -4512,7 +4508,7 @@ id|server-&gt;packet
 comma
 id|smb_vwv0
 comma
-id|dentry-&gt;d_inode-&gt;u.smbfs_i.fileid
+id|inode-&gt;u.smbfs_i.fileid
 )paren
 suffix:semicolon
 id|WSET

@@ -1,8 +1,8 @@
 multiline_comment|/*&n;&n;  Linux Driver for Mylex DAC960/AcceleRAID/eXtremeRAID PCI RAID Controllers&n;&n;  Copyright 1998-2000 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;*/
 DECL|macro|DAC960_DriverVersion
-mdefine_line|#define DAC960_DriverVersion&t;&t;&t;&quot;2.4.8&quot;
+mdefine_line|#define DAC960_DriverVersion&t;&t;&t;&quot;2.4.9&quot;
 DECL|macro|DAC960_DriverDate
-mdefine_line|#define DAC960_DriverDate&t;&t;&t;&quot;19 August 2000&quot;
+mdefine_line|#define DAC960_DriverDate&t;&t;&t;&quot;7 September 2000&quot;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -791,52 +791,19 @@ op_star
 id|Controller
 )paren
 (brace
-id|DECLARE_WAITQUEUE
-c_func
-(paren
-id|WaitQueueEntry
-comma
-id|current
-)paren
-suffix:semicolon
-id|add_wait_queue
-c_func
-(paren
-op_amp
-id|Controller-&gt;CommandWaitQueue
-comma
-op_amp
-id|WaitQueueEntry
-)paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_UNINTERRUPTIBLE
-suffix:semicolon
-id|spin_unlock
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
-id|schedule
+id|__wait_event
 c_func
 (paren
-)paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
-id|remove_wait_queue
-c_func
-(paren
-op_amp
 id|Controller-&gt;CommandWaitQueue
 comma
-op_amp
-id|WaitQueueEntry
+id|Controller-&gt;FreeCommands
 )paren
 suffix:semicolon
 id|spin_lock_irq
@@ -18699,6 +18666,7 @@ dot
 id|start_sect
 suffix:semicolon
 r_return
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -18711,6 +18679,13 @@ r_sizeof
 (paren
 id|DiskGeometry_T
 )paren
+)paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 r_case
@@ -19288,6 +19263,7 @@ id|Controller-&gt;FirmwareVersion
 )paren
 suffix:semicolon
 r_return
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -19300,6 +19276,13 @@ r_sizeof
 (paren
 id|DAC960_ControllerInfo_T
 )paren
+)paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -25446,6 +25429,9 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -25455,6 +25441,10 @@ id|Buffer
 comma
 id|Count
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|CommandBuffer
 (braket

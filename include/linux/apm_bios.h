@@ -85,6 +85,27 @@ DECL|macro|APM_BIOS_DISABLED
 mdefine_line|#define APM_BIOS_DISABLED      &t;0x0008
 DECL|macro|APM_BIOS_DISENGAGED
 mdefine_line|#define APM_BIOS_DISENGAGED     0x0010
+multiline_comment|/*&n; * Data for APM that is persistant across module unload/load&n; */
+DECL|struct|apm_info
+r_struct
+id|apm_info
+(brace
+DECL|member|bios
+r_struct
+id|apm_bios_info
+id|bios
+suffix:semicolon
+DECL|member|connection_version
+r_int
+r_int
+id|connection_version
+suffix:semicolon
+DECL|member|get_power_status_broken
+r_int
+id|get_power_status_broken
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * The APM function codes&n; */
 DECL|macro|APM_FUNC_INST_CHECK
 mdefine_line|#define&t;APM_FUNC_INST_CHECK&t;0x5300
@@ -147,41 +168,11 @@ DECL|macro|APM_FUNC_TIMER_ENABLE
 mdefine_line|#define&t;APM_FUNC_TIMER_ENABLE&t;1
 DECL|macro|APM_FUNC_TIMER_GET
 mdefine_line|#define&t;APM_FUNC_TIMER_GET&t;2
-multiline_comment|/*&n; * in init/main.c&n; */
+multiline_comment|/*&n; * in arch/i386/kernel/setup.c&n; */
 r_extern
 r_struct
-id|apm_bios_info
-id|apm_bios_info
-suffix:semicolon
-r_extern
-r_int
-id|apm_register_callback
-c_func
-(paren
-r_int
-(paren
-op_star
-id|callback
-)paren
-(paren
-id|apm_event_t
-)paren
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|apm_unregister_callback
-c_func
-(paren
-r_int
-(paren
-op_star
-id|callback
-)paren
-(paren
-id|apm_event_t
-)paren
-)paren
+id|apm_info
+id|apm_info
 suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */
 multiline_comment|/*&n; * Power states&n; */
@@ -299,7 +290,7 @@ mdefine_line|#define APM_DEVICE_MASK&t;&t;0xff00
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is the &quot;All Devices&quot; ID communicated to the BIOS&n; */
 DECL|macro|APM_DEVICE_BALL
-mdefine_line|#define APM_DEVICE_BALL&t;&t;((apm_bios_info.version &gt; 0x0100) ? &bslash;&n;&t;&t;&t;&t; APM_DEVICE_ALL : APM_DEVICE_OLD_ALL)
+mdefine_line|#define APM_DEVICE_BALL&t;&t;((apm_info.connection_version &gt; 0x0100) ? &bslash;&n;&t;&t;&t;&t; APM_DEVICE_ALL : APM_DEVICE_OLD_ALL)
 macro_line|#endif
 multiline_comment|/*&n; * Battery status&n; */
 DECL|macro|APM_MAX_BATTERIES

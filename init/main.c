@@ -2788,14 +2788,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_HOTPLUG) &amp;&amp; defined(CONFIG_NET)
-multiline_comment|/* do this after other &squot;do this last&squot; stuff, because we want&n;&t; * to minimize spurious executions of /sbin/hotplug&n;&t; * during boot-up&n;&t; */
-id|net_notifier_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|mount_devfs_fs
 (paren
 )paren

@@ -408,7 +408,7 @@ id|smb_proc_read
 c_func
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 id|off_t
@@ -424,7 +424,7 @@ id|smb_proc_write
 c_func
 (paren
 r_struct
-id|dentry
+id|inode
 op_star
 comma
 id|off_t

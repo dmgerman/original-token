@@ -258,7 +258,7 @@ id|task
 suffix:semicolon
 r_extern
 r_void
-id|run_schedule_tasks
+id|flush_scheduled_tasks
 c_func
 (paren
 r_void
@@ -267,6 +267,14 @@ suffix:semicolon
 r_extern
 r_int
 id|start_context_thread
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|current_is_keventd
 c_func
 (paren
 r_void

@@ -5058,7 +5058,7 @@ op_amp
 id|tq_timer
 )paren
 suffix:semicolon
-id|run_schedule_tasks
+id|flush_scheduled_tasks
 c_func
 (paren
 )paren

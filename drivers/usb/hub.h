@@ -190,11 +190,19 @@ DECL|member|buffer
 r_char
 id|buffer
 (braket
+(paren
 id|USB_MAXCHILDREN
+op_plus
+l_int|1
+op_plus
+l_int|7
+)paren
 op_div
 l_int|8
 )braket
 suffix:semicolon
+multiline_comment|/* add 1 bit for hub status change */
+multiline_comment|/* and add 7 bits to round up to byte boundary */
 DECL|member|error
 r_int
 id|error

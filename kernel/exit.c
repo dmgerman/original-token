@@ -1108,6 +1108,11 @@ id|mm
 op_assign
 id|tsk-&gt;mm
 suffix:semicolon
+id|mm_release
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1119,11 +1124,6 @@ c_func
 (paren
 op_amp
 id|mm-&gt;mm_count
-)paren
-suffix:semicolon
-id|mm_release
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if

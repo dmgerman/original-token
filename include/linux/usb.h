@@ -1455,7 +1455,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_MAXCHILDREN
-mdefine_line|#define USB_MAXCHILDREN (8)&t;/* This is arbitrary */
+mdefine_line|#define USB_MAXCHILDREN&t;&t;(16)&t;/* This is arbitrary */
 DECL|struct|usb_device
 r_struct
 id|usb_device

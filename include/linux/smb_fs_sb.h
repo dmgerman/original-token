@@ -5,9 +5,11 @@ mdefine_line|#define _SMB_FS_SB
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smb.h&gt;
-multiline_comment|/* Get the server for the specified dentry */
+multiline_comment|/* structure access macros */
+DECL|macro|server_from_inode
+mdefine_line|#define server_from_inode(inode) (&amp;(inode)-&gt;i_sb-&gt;u.smbfs_sb)
 DECL|macro|server_from_dentry
-mdefine_line|#define server_from_dentry(dentry) &amp;dentry-&gt;d_sb-&gt;u.smbfs_sb
+mdefine_line|#define server_from_dentry(dentry) (&amp;(dentry)-&gt;d_sb-&gt;u.smbfs_sb)
 DECL|macro|SB_of
 mdefine_line|#define SB_of(server) ((struct super_block *) ((char *)(server) - &bslash;&n;&t;(unsigned long)(&amp;((struct super_block *)0)-&gt;u.smbfs_sb)))
 DECL|struct|smb_sb_info

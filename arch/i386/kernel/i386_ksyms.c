@@ -246,11 +246,11 @@ c_func
 id|get_cmos_time
 )paren
 suffix:semicolon
-DECL|variable|apm_bios_info
+DECL|variable|apm_info
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|apm_bios_info
+id|apm_info
 )paren
 suffix:semicolon
 DECL|variable|gdt

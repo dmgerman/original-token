@@ -538,7 +538,7 @@ comma
 (brace
 id|SOUND_MIXER_MIC
 comma
-l_int|0x4343
+l_int|0x0000
 )brace
 comma
 (brace

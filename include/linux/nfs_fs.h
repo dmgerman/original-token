@@ -83,6 +83,8 @@ DECL|macro|NFS_FLAGS
 mdefine_line|#define NFS_FLAGS(inode)&t;&t;((inode)-&gt;u.nfs_i.flags)
 DECL|macro|NFS_REVALIDATING
 mdefine_line|#define NFS_REVALIDATING(inode)&t;&t;(NFS_FLAGS(inode) &amp; NFS_INO_REVALIDATING)
+DECL|macro|NFS_STALE
+mdefine_line|#define NFS_STALE(inode)&t;&t;(NFS_FLAGS(inode) &amp; NFS_INO_STALE)
 DECL|macro|NFS_FILEID
 mdefine_line|#define NFS_FILEID(inode)&t;&t;((inode)-&gt;u.nfs_i.fileid)
 DECL|macro|NFS_FSID
@@ -185,6 +187,24 @@ c_func
 (paren
 r_struct
 id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_inode_is_stale
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|nfs_fh
+op_star
+comma
+r_struct
+id|nfs_fattr
 op_star
 )paren
 suffix:semicolon

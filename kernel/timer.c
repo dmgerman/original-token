@@ -2666,7 +2666,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|TQ_ACTIVE
+c_func
+(paren
 id|tq_timer
+)paren
 )paren
 id|mark_bh
 c_func

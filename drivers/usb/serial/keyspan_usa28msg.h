@@ -2,24 +2,10 @@ multiline_comment|/*&n;&t;usa28msg.h&n;&n;&t;Copyright (c) 1998-2000 InnoSys Inc
 macro_line|#ifndef&t;__USA28MSG__
 DECL|macro|__USA28MSG__
 mdefine_line|#define&t;__USA28MSG__
-multiline_comment|/*#ifndef STUBS&n;#include &quot;datadefs.h&quot;&n;#endif*/
-DECL|struct|txAckMessage
+DECL|struct|keyspan_usa28_portControlMessage
 r_typedef
 r_struct
-id|txAckMessage
-(brace
-DECL|member|dummy
-id|u8
-id|dummy
-suffix:semicolon
-DECL|typedef|txAckMessage
-)brace
-id|txAckMessage
-suffix:semicolon
-DECL|struct|portControlMessage
-r_typedef
-r_struct
-id|portControlMessage
+id|keyspan_usa28_portControlMessage
 (brace
 multiline_comment|/*&n;&t;&t;there are four types of &quot;commands&quot; sent in the control message:&n;&n;&t;&t;1.&t;configuration changes which must be requested by setting&n;&t;&t;&t;the corresponding &quot;set&quot; flag (and should only be requested&n;&t;&t;&t;when necessary, to reduce overhead on the USA28):&n;&t;*/
 DECL|member|setBaudRate
@@ -125,14 +111,14 @@ DECL|member|resetDataToggle
 id|resetDataToggle
 suffix:semicolon
 singleline_comment|// reset data toggle state to DATA0
-DECL|typedef|portControlMessage
+DECL|typedef|keyspan_usa28_portControlMessage
 )brace
-id|portControlMessage
+id|keyspan_usa28_portControlMessage
 suffix:semicolon
-DECL|struct|portStatusMessage
+DECL|struct|keyspan_usa28_portStatusMessage
 r_typedef
 r_struct
-id|portStatusMessage
+id|keyspan_usa28_portStatusMessage
 (brace
 DECL|member|port
 id|u8
@@ -181,9 +167,9 @@ DECL|member|controlResponse
 id|controlResponse
 suffix:semicolon
 singleline_comment|// 1=a control messages has been processed
-DECL|typedef|portStatusMessage
+DECL|typedef|keyspan_usa28_portStatusMessage
 )brace
-id|portStatusMessage
+id|keyspan_usa28_portStatusMessage
 suffix:semicolon
 singleline_comment|// bit defines in txState
 DECL|macro|TX_OFF
@@ -192,10 +178,10 @@ singleline_comment|// requested by host txOff command
 DECL|macro|TX_XOFF
 mdefine_line|#define&t;TX_XOFF&t;&t;&t;0x02&t;
 singleline_comment|// either real, or simulated by host
-DECL|struct|globalControlMessage
+DECL|struct|keyspan_usa28_globalControlMessage
 r_typedef
 r_struct
-id|globalControlMessage
+id|keyspan_usa28_globalControlMessage
 (brace
 DECL|member|sendGlobalStatus
 id|u8
@@ -210,14 +196,14 @@ DECL|member|resetStatusCount
 id|resetStatusCount
 suffix:semicolon
 singleline_comment|// a cycling value
-DECL|typedef|globalControlMessage
+DECL|typedef|keyspan_usa28_globalControlMessage
 )brace
-id|globalControlMessage
+id|keyspan_usa28_globalControlMessage
 suffix:semicolon
-DECL|struct|globalStatusMessage
+DECL|struct|keyspan_usa28_globalStatusMessage
 r_typedef
 r_struct
-id|globalStatusMessage
+id|keyspan_usa28_globalStatusMessage
 (brace
 DECL|member|port
 id|u8
@@ -232,14 +218,14 @@ DECL|member|resetStatusCount
 id|resetStatusCount
 suffix:semicolon
 singleline_comment|// as in request
-DECL|typedef|globalStatusMessage
+DECL|typedef|keyspan_usa28_globalStatusMessage
 )brace
-id|globalStatusMessage
+id|keyspan_usa28_globalStatusMessage
 suffix:semicolon
-DECL|struct|globalDebugMessage
+DECL|struct|keyspan_usa28_globalDebugMessage
 r_typedef
 r_struct
-id|globalDebugMessage
+id|keyspan_usa28_globalDebugMessage
 (brace
 DECL|member|port
 id|u8
@@ -254,9 +240,9 @@ DECL|member|b
 id|b
 suffix:semicolon
 singleline_comment|// typically a data byte
-DECL|typedef|globalDebugMessage
+DECL|typedef|keyspan_usa28_globalDebugMessage
 )brace
-id|globalDebugMessage
+id|keyspan_usa28_globalDebugMessage
 suffix:semicolon
 singleline_comment|// ie: the maximum length of an EZUSB endpoint buffer
 DECL|macro|MAX_DATA_LEN

@@ -125,10 +125,10 @@ r_struct
 id|screen_info
 id|screen_info
 suffix:semicolon
-DECL|variable|apm_bios_info
+DECL|variable|apm_info
 r_struct
-id|apm_bios_info
-id|apm_bios_info
+id|apm_info
+id|apm_info
 suffix:semicolon
 DECL|struct|sys_desc_table_struct
 r_struct
@@ -1964,7 +1964,7 @@ id|screen_info
 op_assign
 id|SCREEN_INFO
 suffix:semicolon
-id|apm_bios_info
+id|apm_info.bios
 op_assign
 id|APM_BIOS_INFO
 suffix:semicolon

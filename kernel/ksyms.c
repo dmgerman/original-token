@@ -859,13 +859,6 @@ c_func
 id|bread
 )paren
 suffix:semicolon
-DECL|variable|breada
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|breada
-)paren
-suffix:semicolon
 DECL|variable|__brelse
 id|EXPORT_SYMBOL
 c_func

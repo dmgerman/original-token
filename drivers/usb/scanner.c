@@ -65,6 +65,17 @@ l_int|0x06bd
 comma
 id|idProduct
 suffix:colon
+l_int|0x0002
+)brace
+comma
+multiline_comment|/* SnapScan 1236U */
+(brace
+id|idVendor
+suffix:colon
+l_int|0x06bd
+comma
+id|idProduct
+suffix:colon
 l_int|0x2061
 )brace
 comma
@@ -503,6 +514,17 @@ l_int|0x04b8
 comma
 id|idProduct
 suffix:colon
+l_int|0x0106
+)brace
+comma
+multiline_comment|/* Stylus Scan 2500 */
+(brace
+id|idVendor
+suffix:colon
+l_int|0x04b8
+comma
+id|idProduct
+suffix:colon
 l_int|0x0107
 )brace
 comma
@@ -519,17 +541,6 @@ l_int|0x0010
 )brace
 comma
 multiline_comment|/* Astra 1220U */
-(brace
-id|idVendor
-suffix:colon
-l_int|0x1606
-comma
-id|idProduct
-suffix:colon
-l_int|0x0002
-)brace
-comma
-multiline_comment|/* Astra 1236U */
 (brace
 id|idVendor
 suffix:colon
