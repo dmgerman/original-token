@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cosa.c,v 1.26 1999/07/09 15:02:37 kas Exp $ */
+multiline_comment|/* $Id: cosa.c,v 1.28 1999/10/11 21:06:58 kas Exp $ */
 multiline_comment|/*&n; *  Copyright (C) 1995-1997  Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*&n; * The driver for the SRP and COSA synchronous serial cards.&n; *&n; * HARDWARE INFO&n; *&n; * Both cards are developed at the Institute of Computer Science,&n; * Masaryk University (http://www.ics.muni.cz/). The hardware is&n; * developed by Jiri Novotny &lt;novotny@ics.muni.cz&gt;. More information&n; * and the photo of both cards is available at&n; * http://www.pavoucek.cz/cosa.html. The card documentation, firmwares&n; * and other goods can be downloaded from ftp://ftp.ics.muni.cz/pub/cosa/.&n; * For Linux-specific utilities, see below in the &quot;Software info&quot; section.&n; * If you want to order the card, contact Jiri Novotny.&n; *&n; * The SRP (serial port?, the Czech word &quot;srp&quot; means &quot;sickle&quot;) card&n; * is a 2-port intelligent (with its own 8-bit CPU) synchronous serial card&n; * with V.24 interfaces up to 80kb/s each.&n; *&n; * The COSA (communication serial adapter?, the Czech word &quot;kosa&quot; means&n; * &quot;scythe&quot;) is a next-generation sync/async board with two interfaces&n; * - currently any of V.24, X.21, V.35 and V.36 can be selected.&n; * It has a 16-bit SAB80166 CPU and can do up to 10 Mb/s per channel.&n; * The 8-channels version is in development.&n; *&n; * Both types have downloadable firmware and communicate via ISA DMA.&n; * COSA can be also a bus-mastering device.&n; *&n; * SOFTWARE INFO&n; *&n; * The homepage of the Linux driver is at http://www.fi.muni.cz/~kas/cosa/.&n; * The CVS tree of Linux driver can be viewed there, as well as the&n; * firmware binaries and user-space utilities for downloading the firmware&n; * into the card and setting up the card.&n; *&n; * The Linux driver (unlike the present *BSD drivers :-) can work even&n; * for the COSA and SRP in one computer and allows each channel to work&n; * in one of the three modes (character device, Cisco HDLC, Sync PPP).&n; *&n; * AUTHOR&n; *&n; * The Linux driver was written by Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;.&n; *&n; * You can mail me bugfixes and even success reports. I am especially&n; * interested in the SMP and/or muliti-channel success/failure reports&n; * (I wonder if I did the locking properly :-).&n; *&n; * THE AUTHOR USED THE FOLLOWING SOURCES WHEN PROGRAMMING THE DRIVER&n; *&n; * The COSA/SRP NetBSD driver by Zdenek Salvet and Ivos Cernohlavek&n; * The skeleton.c by Donald Becker&n; * The SDL Riscom/N2 driver by Mike Natale&n; * The Comtrol Hostess SV11 driver by Alan Cox&n; * The Sync PPP/Cisco HDLC layer (syncppp.c) ported to Linux by Alan Cox&n; */
 multiline_comment|/*&n; *     5/25/1999 : Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt;&n; *             fixed a deadlock in cosa_sppp_open&n; */
@@ -153,11 +153,10 @@ r_int
 id|rxsize
 suffix:semicolon
 DECL|member|txwaitq
-id|wait_queue_head_t
-id|txwaitq
-suffix:semicolon
 DECL|member|rxwaitq
 id|wait_queue_head_t
+id|txwaitq
+comma
 id|rxwaitq
 suffix:semicolon
 DECL|member|tx_status
@@ -190,6 +189,13 @@ id|stats
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* cosa-&gt;firmware_status bits */
+DECL|macro|COSA_FW_RESET
+mdefine_line|#define COSA_FW_RESET&t;&t;(1&lt;&lt;0)&t;/* Is the ROM monitor active? */
+DECL|macro|COSA_FW_DOWNLOAD
+mdefine_line|#define COSA_FW_DOWNLOAD&t;(1&lt;&lt;1)&t;/* Is the microcode downloaded? */
+DECL|macro|COSA_FW_START
+mdefine_line|#define COSA_FW_START&t;&t;(1&lt;&lt;2)&t;/* Is the microcode running? */
 DECL|struct|cosa_data
 r_struct
 id|cosa_data
@@ -2587,6 +2593,33 @@ id|err
 comma
 id|flags
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|chan-&gt;cosa-&gt;firmware_status
+op_amp
+id|COSA_FW_START
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;%s: start the firmware first (status %d)&bslash;n&quot;
+comma
+id|chan-&gt;cosa-&gt;name
+comma
+id|chan-&gt;cosa-&gt;firmware_status
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -3349,6 +3382,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|cosa-&gt;firmware_status
+op_amp
+id|COSA_FW_START
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;%s: start the firmware first (status %d)&bslash;n&quot;
+comma
+id|cosa-&gt;name
+comma
+id|cosa-&gt;firmware_status
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|down_interruptible
 c_func
 (paren
@@ -3688,6 +3748,14 @@ op_star
 id|ppos
 )paren
 (brace
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
 r_struct
 id|channel_data
 op_star
@@ -3699,14 +3767,6 @@ id|channel_data
 op_star
 )paren
 id|file-&gt;private_data
-suffix:semicolon
-id|DECLARE_WAITQUEUE
-c_func
-(paren
-id|wait
-comma
-id|current
-)paren
 suffix:semicolon
 r_struct
 id|cosa_data
@@ -3723,6 +3783,33 @@ r_char
 op_star
 id|kbuf
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|cosa-&gt;firmware_status
+op_amp
+id|COSA_FW_START
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;%s: start the firmware first (status %d)&bslash;n&quot;
+comma
+id|cosa-&gt;name
+comma
+id|cosa-&gt;firmware_status
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4415,6 +4502,15 @@ comma
 id|cosa-&gt;usage
 )paren
 suffix:semicolon
+id|cosa-&gt;firmware_status
+op_and_assign
+op_complement
+(paren
+id|COSA_FW_RESET
+op_or
+id|COSA_FW_START
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4453,6 +4549,10 @@ id|cosa-&gt;num
 comma
 id|idstring
 )paren
+suffix:semicolon
+id|cosa-&gt;firmware_status
+op_or_assign
+id|COSA_FW_RESET
 suffix:semicolon
 r_return
 l_int|0
@@ -4500,35 +4600,33 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cosa%d: WARNING: download of microcode requested with cosa-&gt;usage &gt; 1 (%d). Odd things may happen.&bslash;n&quot;
+l_string|&quot;%s: WARNING: download of microcode requested with cosa-&gt;usage &gt; 1 (%d). Odd things may happen.&bslash;n&quot;
 comma
-id|cosa-&gt;num
+id|cosa-&gt;name
 comma
 id|cosa-&gt;usage
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
-id|cosa-&gt;status
-op_ne
-id|CARD_STATUS_RESETED
-op_logical_and
-id|cosa-&gt;status
-op_ne
-id|CARD_STATUS_DOWNLOADED
+op_logical_neg
+(paren
+id|cosa-&gt;firmware_status
+op_amp
+id|COSA_FW_RESET
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;cosa%d: reset the card first (status %d).&bslash;n&quot;
+l_string|&quot;%s: reset the card first (status %d).&bslash;n&quot;
 comma
-id|cosa-&gt;num
+id|cosa-&gt;name
 comma
-id|cosa-&gt;status
+id|cosa-&gt;firmware_status
 )paren
 suffix:semicolon
 r_return
@@ -4536,7 +4634,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#endif
 id|get_user_ret
 c_func
 (paren
@@ -4600,6 +4697,16 @@ id|COSA_MAX_FIRMWARE_SIZE
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+multiline_comment|/* If something fails, force the user to reset the card */
+id|cosa-&gt;firmware_status
+op_and_assign
+op_complement
+(paren
+id|COSA_FW_RESET
+op_or
+id|COSA_FW_DOWNLOAD
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4651,6 +4758,12 @@ id|len
 comma
 id|addr
 )paren
+suffix:semicolon
+id|cosa-&gt;firmware_status
+op_or_assign
+id|COSA_FW_RESET
+op_or
+id|COSA_FW_DOWNLOAD
 suffix:semicolon
 r_return
 l_int|0
@@ -4706,28 +4819,26 @@ comma
 id|cosa-&gt;usage
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
-id|cosa-&gt;status
-op_ne
-id|CARD_STATUS_RESETED
-op_logical_and
-id|cosa-&gt;status
-op_ne
-id|CARD_STATUS_DOWNLOADED
+op_logical_neg
+(paren
+id|cosa-&gt;firmware_status
+op_amp
+id|COSA_FW_RESET
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;cosa%d: reset the card first (status %d).&bslash;n&quot;
+l_string|&quot;%s: reset the card first (status %d).&bslash;n&quot;
 comma
-id|cosa-&gt;num
+id|cosa-&gt;name
 comma
-id|cosa-&gt;status
+id|cosa-&gt;firmware_status
 )paren
 suffix:semicolon
 r_return
@@ -4735,7 +4846,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#endif
 id|get_user_ret
 c_func
 (paren
@@ -4777,6 +4887,12 @@ comma
 op_minus
 id|EFAULT
 )paren
+suffix:semicolon
+multiline_comment|/* If something fails, force the user to reset the card */
+id|cosa-&gt;firmware_status
+op_and_assign
+op_complement
+id|COSA_FW_RESET
 suffix:semicolon
 r_if
 c_cond
@@ -4829,6 +4945,10 @@ comma
 id|addr
 )paren
 suffix:semicolon
+id|cosa-&gt;firmware_status
+op_or_assign
+id|COSA_FW_RESET
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4871,24 +4991,35 @@ comma
 id|cosa-&gt;usage
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
-id|cosa-&gt;status
+(paren
+id|cosa-&gt;firmware_status
+op_amp
+(paren
+id|COSA_FW_RESET
+op_or
+id|COSA_FW_DOWNLOAD
+)paren
+)paren
 op_ne
-id|CARD_STATUS_DOWNLOADED
+(paren
+id|COSA_FW_RESET
+op_or
+id|COSA_FW_DOWNLOAD
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;cosa%d: download the microcode first (status %d).&bslash;n&quot;
+l_string|&quot;%s: download the microcode and/or reset the card first (status %d).&bslash;n&quot;
 comma
-id|cosa-&gt;num
+id|cosa-&gt;name
 comma
-id|cosa-&gt;status
+id|cosa-&gt;firmware_status
 )paren
 suffix:semicolon
 r_return
@@ -4896,7 +5027,11 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#endif
+id|cosa-&gt;firmware_status
+op_and_assign
+op_complement
+id|COSA_FW_RESET
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4947,6 +5082,10 @@ suffix:semicolon
 id|cosa-&gt;startaddr
 op_assign
 id|address
+suffix:semicolon
+id|cosa-&gt;firmware_status
+op_or_assign
+id|COSA_FW_START
 suffix:semicolon
 r_return
 l_int|0
@@ -7761,6 +7900,7 @@ id|cosa-&gt;nchannels
 )paren
 (brace
 multiline_comment|/* Can be safely ignored */
+macro_line|#ifdef DEBUG_IRQS
 id|printk
 c_func
 (paren
@@ -7773,6 +7913,7 @@ comma
 id|cosa-&gt;txchan
 )paren
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace

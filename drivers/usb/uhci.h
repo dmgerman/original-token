@@ -317,6 +317,16 @@ r_int
 id|isoc_td_number
 suffix:semicolon
 multiline_comment|/* 0-relative number within a usb_isoc_desc. */
+DECL|member|pipetype
+r_int
+id|pipetype
+suffix:semicolon
+multiline_comment|/* Control, Bulk, Interrupt, or Isoc */
+DECL|member|bandwidth_alloc
+r_int
+id|bandwidth_alloc
+suffix:semicolon
+multiline_comment|/* in microsecs; used only for Interrupt&n;&t;&t;&t;&t;&t; * transfers, to return its bandwidth */
 )brace
 id|__attribute__
 c_func

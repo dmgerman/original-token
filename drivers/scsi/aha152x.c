@@ -22,6 +22,8 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;aha152x.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;scsi/scsicam.h&gt;
@@ -1322,8 +1324,8 @@ id|phase
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0
 multiline_comment|/* called from init/main.c */
-DECL|function|aha152x_setup
 r_void
 id|aha152x_setup
 c_func
@@ -1603,6 +1605,136 @@ id|setup_count
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
+DECL|function|do_aha152x_setup
+r_static
+r_int
+id|__init
+id|do_aha152x_setup
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|setup_count
+OG
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+"&quot;"
+id|aha152x
+suffix:colon
+id|you
+id|can
+id|only
+id|configure
+id|up
+id|to
+id|two
+id|controllers
+"&bslash;"
+id|n
+"&quot;"
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|setup
+(braket
+id|setup_count
+)braket
+dot
+id|conf
+op_assign
+id|str
+suffix:semicolon
+id|get_option
+c_func
+(paren
+op_amp
+id|str
+comma
+op_amp
+id|setup
+(braket
+id|setup_count
+)braket
+dot
+id|io_port
+)paren
+suffix:semicolon
+id|get_option
+c_func
+(paren
+op_amp
+id|str
+comma
+op_amp
+id|setup
+(braket
+id|setup_count
+)braket
+dot
+id|irq
+)paren
+suffix:semicolon
+id|get_option
+c_func
+(paren
+op_amp
+id|str
+comma
+op_amp
+id|setup
+(braket
+id|setup_count
+)braket
+dot
+id|scsiid
+)paren
+suffix:semicolon
+id|get_option
+c_func
+(paren
+op_amp
+id|str
+comma
+op_amp
+id|setup
+(braket
+id|setup_count
+)braket
+dot
+id|reconnect
+)paren
+suffix:semicolon
+id|setup_count
+op_increment
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#ifndef MODULE
+id|__setup
+c_func
+(paren
+l_string|&quot;aha152x=&quot;
+comma
+id|do_aha152x_setup
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Test, if port_base is valid.&n; */
 DECL|function|aha152x_porttest
 r_static

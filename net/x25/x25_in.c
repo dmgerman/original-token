@@ -1115,7 +1115,7 @@ suffix:semicolon
 id|sock_wake_async
 c_func
 (paren
-id|sk
+id|sk-&gt;socket
 comma
 l_int|3
 comma

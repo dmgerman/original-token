@@ -10,6 +10,15 @@ c_func
 (paren
 id|COMPAQ
 comma
+id|COMPAQ_TOKENRING
+comma
+l_string|&quot;Token Ring 4/16&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|COMPAQ
+comma
 id|COMPAQ_1280
 comma
 l_string|&quot;QVision 1280/p&quot;
@@ -3398,6 +3407,26 @@ comma
 id|MACRONIX_MX987x5
 comma
 l_string|&quot;MX98715 / MX98725&quot;
+)paren
+id|ENDVENDOR
+c_func
+(paren
+)paren
+id|VENDOR
+c_func
+(paren
+id|TCONRAD
+comma
+l_string|&quot;Thomas-Conrad&quot;
+)paren
+id|DEVICE
+c_func
+(paren
+id|TCONRAD
+comma
+id|TCONRAD_TOKENRING
+comma
+l_string|&quot;Token Ring 4/16&quot;
 )paren
 id|ENDVENDOR
 c_func

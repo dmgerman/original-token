@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; *&n; *  Cleaned up cache-detection code&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, October 1999&n; *&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1560,9 +1560,9 @@ id|memory_end_p
 (brace
 r_int
 r_int
-id|memory_start
+id|high_pfn
 comma
-id|memory_end
+id|max_pfn
 suffix:semicolon
 r_char
 id|c
@@ -1709,15 +1709,6 @@ id|root_mountflags
 op_and_assign
 op_complement
 id|MS_RDONLY
-suffix:semicolon
-id|memory_start
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|_end
 suffix:semicolon
 id|init_mm.start_code
 op_assign
@@ -2030,11 +2021,8 @@ id|cmdline_p
 op_assign
 id|command_line
 suffix:semicolon
-DECL|macro|VMALLOC_RESERVE
-mdefine_line|#define VMALLOC_RESERVE&t;(128 &lt;&lt; 20)&t;/* 128MB for vmalloc and initrd */
-DECL|macro|MAXMEM
-mdefine_line|#define MAXMEM&t;((unsigned long)(-PAGE_OFFSET-VMALLOC_RESERVE))
-id|memory_end
+multiline_comment|/* Find the highest page frame number we have available */
+id|max_pfn
 op_assign
 l_int|0
 suffix:semicolon
@@ -2069,8 +2057,9 @@ id|E820_RAM
 (brace
 r_int
 r_int
-id|end
+id|end_pfn
 op_assign
+(paren
 id|e820.map
 (braket
 id|i
@@ -2084,77 +2073,81 @@ id|i
 )braket
 dot
 id|size
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|end
+id|end_pfn
 OG
-id|memory_end
+id|max_pfn
 )paren
-id|memory_end
+id|max_pfn
 op_assign
-id|end
+id|end_pfn
 suffix:semicolon
 )brace
 )brace
-id|memory_end
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
-id|ram_resources
-(braket
-l_int|1
-)braket
-dot
-id|end
+multiline_comment|/*&n; * We can only allocate a limited amount of direct-mapped memory&n; */
+DECL|macro|VMALLOC_RESERVE
+mdefine_line|#define VMALLOC_RESERVE&t;(128 &lt;&lt; 20)&t;/* 128MB for vmalloc and initrd */
+DECL|macro|MAXMEM
+mdefine_line|#define MAXMEM&t;&t;((unsigned long)(-PAGE_OFFSET-VMALLOC_RESERVE))
+DECL|macro|MAXMEM_PFN
+mdefine_line|#define MAXMEM_PFN&t;(MAXMEM &gt;&gt; PAGE_SHIFT)
+id|high_pfn
 op_assign
-id|memory_end
-op_minus
-l_int|1
+id|MAXMEM_PFN
 suffix:semicolon
-macro_line|#ifdef CONFIG_BIGMEM
-id|bigmem_start
-op_assign
-id|bigmem_end
-op_assign
-id|memory_end
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
-id|memory_end
-OG
-id|MAXMEM
+id|max_pfn
+OL
+id|high_pfn
 )paren
-(brace
+id|high_pfn
+op_assign
+id|max_pfn
+suffix:semicolon
+multiline_comment|/*&n; * But the bigmem stuff may be able to use more of it&n; * (but currently only up to about 4GB)&n; */
 macro_line|#ifdef CONFIG_BIGMEM
 DECL|macro|MAXBIGMEM
-mdefine_line|#define MAXBIGMEM ((unsigned long)(~(VMALLOC_RESERVE-1)))
+mdefine_line|#define MAXBIGMEM&t;((unsigned long)(~(VMALLOC_RESERVE-1)))
+DECL|macro|MAXBIGMEM_PFN
+mdefine_line|#define MAXBIGMEM_PFN&t;(MAXBIGMEM &gt;&gt; PAGE_SHIFT)
+r_if
+c_cond
+(paren
+id|max_pfn
+OG
+id|MAX_PFN
+)paren
+id|max_pfn
+op_assign
+id|MAX_PFN
+suffix:semicolon
+multiline_comment|/* When debugging, make half of &quot;normal&quot; memory be BIGMEM memory instead */
+macro_line|#ifdef BIGMEM_DEBUG
+id|high_pfn
+op_rshift_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|bigmem_start
 op_assign
-id|MAXMEM
+id|high_pfn
+op_lshift
+id|PAGE_SHIFT
 suffix:semicolon
 id|bigmem_end
 op_assign
-(paren
-id|memory_end
-OL
-id|MAXBIGMEM
-)paren
-ques
-c_cond
-id|memory_end
-suffix:colon
-id|MAXBIGMEM
+id|max_pfn
+op_lshift
+id|PAGE_SHIFT
 suffix:semicolon
-macro_line|#endif
-id|memory_end
-op_assign
-id|MAXMEM
-suffix:semicolon
-macro_line|#ifdef CONFIG_BIGMEM
 id|printk
 c_func
 (paren
@@ -2170,48 +2163,42 @@ op_rshift
 l_int|20
 )paren
 suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;Warning only %ldMB will be used.&bslash;n&quot;
-comma
-id|MAXMEM
-op_rshift
-l_int|20
-)paren
-suffix:semicolon
 macro_line|#endif
-)brace
-macro_line|#if defined(CONFIG_BIGMEM) &amp;&amp; defined(BIGMEM_DEBUG)
-r_else
-(brace
-id|memory_end
-op_sub_assign
-id|memory_end
-op_div
-l_int|4
-suffix:semicolon
-id|bigmem_start
+id|ram_resources
+(braket
+l_int|1
+)braket
+dot
+id|end
 op_assign
-id|memory_end
-suffix:semicolon
-)brace
-macro_line|#endif
-id|memory_end
-op_add_assign
-id|PAGE_OFFSET
+(paren
+id|high_pfn
+op_lshift
+id|PAGE_SHIFT
+)paren
+op_minus
+l_int|1
 suffix:semicolon
 op_star
 id|memory_start_p
 op_assign
-id|memory_start
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_end
 suffix:semicolon
 op_star
 id|memory_end_p
 op_assign
-id|memory_end
+id|PAGE_OFFSET
+op_plus
+(paren
+id|high_pfn
+op_lshift
+id|PAGE_SHIFT
+)paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; *&t;Save possible boot-time SMP configuration:&n;&t; */
@@ -4898,30 +4885,6 @@ l_string|&quot;Pentium-III serial number disabled.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-r_sizeof
-(paren
-id|cpu_models
-)paren
-op_div
-r_sizeof
-(paren
-r_struct
-id|cpu_model_info
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -4933,8 +4896,6 @@ l_int|1
 multiline_comment|/* supports eax=2  call */
 r_int
 id|edx
-comma
-id|cache_size
 comma
 id|dummy
 suffix:semicolon
@@ -4970,7 +4931,7 @@ id|edx
 r_case
 l_int|0x40
 suffix:colon
-id|cache_size
+id|c-&gt;x86_cache_size
 op_assign
 l_int|0
 suffix:semicolon
@@ -4979,7 +4940,7 @@ suffix:semicolon
 r_case
 l_int|0x41
 suffix:colon
-id|cache_size
+id|c-&gt;x86_cache_size
 op_assign
 l_int|128
 suffix:semicolon
@@ -4988,7 +4949,7 @@ suffix:semicolon
 r_case
 l_int|0x42
 suffix:colon
-id|cache_size
+id|c-&gt;x86_cache_size
 op_assign
 l_int|256
 suffix:semicolon
@@ -4997,7 +4958,7 @@ suffix:semicolon
 r_case
 l_int|0x43
 suffix:colon
-id|cache_size
+id|c-&gt;x86_cache_size
 op_assign
 l_int|512
 suffix:semicolon
@@ -5006,7 +4967,7 @@ suffix:semicolon
 r_case
 l_int|0x44
 suffix:colon
-id|cache_size
+id|c-&gt;x86_cache_size
 op_assign
 l_int|1024
 suffix:semicolon
@@ -5015,7 +4976,7 @@ suffix:semicolon
 r_case
 l_int|0x45
 suffix:colon
-id|cache_size
+id|c-&gt;x86_cache_size
 op_assign
 l_int|2048
 suffix:semicolon
@@ -5023,18 +4984,38 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|cache_size
+id|c-&gt;x86_cache_size
 op_assign
 l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|c-&gt;x86_cache_size
-op_assign
-id|cache_size
-suffix:semicolon
 )brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|cpu_models
+)paren
+op_div
+r_sizeof
+(paren
+r_struct
+id|cpu_model_info
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 r_if
 c_cond
 (paren

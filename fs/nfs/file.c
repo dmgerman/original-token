@@ -803,6 +803,8 @@ id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_int
 id|status
+op_assign
+l_int|0
 suffix:semicolon
 id|dprintk
 c_func
@@ -866,9 +868,22 @@ id|flags
 op_amp
 id|NFS_MOUNT_NONLM
 )paren
-r_return
-l_int|0
+(brace
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|F_GETLK
+)paren
+id|status
+op_assign
+id|LOCK_USE_CLNT
 suffix:semicolon
+r_goto
+id|out_ok
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * No BSD flocks over NFS allowed.&n;&t; * Note: we could try to fake a POSIX lock request here by&n;&t; * using ((u32) filp | 0x80000000) or some such as the pid.&n;&t; * Not sure whether that would be unique, though, or whether&n;&t; * that would break in other places.&n;&t; */
 r_if
 c_cond
@@ -933,7 +948,14 @@ l_int|0
 r_return
 id|status
 suffix:semicolon
+r_else
+id|status
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Make sure we re-validate anything we&squot;ve got cached.&n;&t; * This makes locking act as a cache coherency point.&n;&t; */
+id|out_ok
+suffix:colon
 id|NFS_CACHEINV
 c_func
 (paren
@@ -941,7 +963,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|status
 suffix:semicolon
 )brace
 eof

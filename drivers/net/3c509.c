@@ -4399,6 +4399,14 @@ comma
 l_string|&quot;1-8i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|max_interrupt_work
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 r_int
 DECL|function|init_module
 id|init_module

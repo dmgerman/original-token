@@ -3264,6 +3264,23 @@ op_complement
 id|MSG_DONTWAIT
 op_or
 id|MSG_OOB
+op_or
+id|MSG_EOR
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* we currently don&squot;t support segments at the user interface */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|msg-&gt;msg_flags
+op_amp
+id|MSG_EOR
 )paren
 )paren
 r_return

@@ -3893,6 +3893,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|pid
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|pid
 op_amp
 l_int|0xffff0000

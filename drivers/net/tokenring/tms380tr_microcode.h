@@ -1,11 +1,11 @@
 multiline_comment|/*&n; * The firmware this driver downloads into the tokenring card is a&n; * separate program and is not GPL&squot;d source code, even though the Linux&n; * side driver and the routine that loads this data into the card are.&n; *&n; * This firmware is licensed to you strictly for use in conjunction&n; * with the use of SysKonnect TokenRing adapters. There is no&n; * waranty expressed or implied about its fitness for any purpose.&n; */
-multiline_comment|/* sktr_firmware.h: SysKonnect TokenRing driver firmware dump for Linux.&n; *&n; * Notes:&n; *  - Loaded from sktr_reset_adapter upon adapter reset.&n; *&n; * Authors:&n; * - Christoph Goos &lt;cgoos@syskonnect.de&gt;&n; */
+multiline_comment|/* tms380tr_microcode.h: TI TMS380 Token Ring driver COMMprocessor microcode&n; *&n; * Notes:&n; *  - Loaded from tms380tr_reset_adapter upon adapter reset.&n; *&n; * This microcode is loaded into the TMS380 COMMprocessor during adapter&n; * initialization.  It is copyright Texas Instruments and contains&n; * intellectual property of both TI and their contractors.  &n; *&n; * TMS380 COMMprocessor Microcode Version 3.11 for Token Ring.&n; *&n; * Available from TI in COFF format (EAGLECAF.OUT).&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_SKTR) || defined(CONFIG_SKTR_MODULE)
-DECL|variable|sktr_code
+macro_line|#if defined(CONFIG_TMS380TR) || defined(CONFIG_TMS380TR_MODULE)
+DECL|variable|tms380tr_code
 r_int
 r_char
-id|sktr_code
+id|tms380tr_code
 (braket
 )braket
 op_assign
@@ -57451,5 +57451,5 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_SKTR */
+macro_line|#endif /* CONFIG_TMS380TR */
 eof

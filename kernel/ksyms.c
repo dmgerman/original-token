@@ -1918,6 +1918,13 @@ c_func
 id|cap_bset
 )paren
 suffix:semicolon
+DECL|variable|daemonize
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|daemonize
+)paren
+suffix:semicolon
 multiline_comment|/* Program loader interfaces */
 DECL|variable|setup_arg_pages
 id|EXPORT_SYMBOL

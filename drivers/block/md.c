@@ -2313,6 +2313,16 @@ id|get_empty_inode
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|realdev-&gt;inode
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|realdev-&gt;inode-&gt;i_dev
 op_assign
 id|dev

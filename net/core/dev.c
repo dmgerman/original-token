@@ -4082,7 +4082,7 @@ id|stats-&gt;qual.noise
 comma
 id|stats-&gt;qual.updated
 op_amp
-l_int|3
+l_int|4
 ques
 c_cond
 l_char|&squot;.&squot;

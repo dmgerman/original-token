@@ -591,6 +591,14 @@ DECL|macro|BTTV_WINVIEW_601
 mdefine_line|#define BTTV_WINVIEW_601   0x11
 DECL|macro|BTTV_AVEC_INTERCAP
 mdefine_line|#define BTTV_AVEC_INTERCAP 0x12
+DECL|macro|BTTV_LIFE_FLYKIT
+mdefine_line|#define BTTV_LIFE_FLYKIT   0x13
+DECL|macro|BTTV_CEI_RAFFLES
+mdefine_line|#define BTTV_CEI_RAFFLES   0x14
+DECL|macro|BTTV_CONFERENCETV
+mdefine_line|#define BTTV_CONFERENCETV  0x15
+DECL|macro|BTTV_PHOEBE_TVMAS
+mdefine_line|#define BTTV_PHOEBE_TVMAS  0x16
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -633,6 +641,8 @@ DECL|macro|I2C_VHX
 mdefine_line|#define I2C_VHX &t;   0xc0
 DECL|macro|I2C_TEA6300
 mdefine_line|#define I2C_TEA6300        0x80 /* same as TEA6320 */
+DECL|macro|I2C_TEA6320
+mdefine_line|#define I2C_TEA6320        0x80
 DECL|macro|TDA9840_SW
 mdefine_line|#define TDA9840_SW&t;   0x00
 DECL|macro|TDA9840_LVADJ

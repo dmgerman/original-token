@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sktr.c: A network driver for the SysKonnect Token Ring ISA/PCI Adapters.&n; *&n; *  Written 1997 by Christoph Goos&n; *&n; *  A fine result of the Linux Systems Network Architecture Project.&n; *  http://samba.anu.edu.au/linux-sna/&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; *  This device driver works with the following SysKonnect adapters:&n; *&t;- SysKonnect TR4/16(+) ISA&t;(SK-4190)&n; *&t;- SysKonnect TR4/16(+) PCI&t;(SK-4590)&n; *&t;- SysKonnect TR4/16 PCI&t;&t;(SK-4591)&n; *&n; *  Sources:&n; *  &t;- The hardware related parts of this driver are take from&n; *  &t;  the SysKonnect Token Ring driver for Windows NT.&n; *  &t;- I used the IBM Token Ring driver &squot;ibmtr.c&squot; as a base for this&n; *  &t;  driver, as well as the &squot;skeleton.c&squot; driver by Donald Becker.&n; *  &t;- Also various other drivers in the linux source tree were taken&n; *  &t;  as samples for some tasks.&n; *&n; *  Maintainer(s):&n; *    JS        Jay Schulist            jschlst@samba.anu.edu.au&n; *    CG&t;Christoph Goos          cgoos@syskonnect.de&n; *    AF&t;Adam Fritzler&t;&t;mid@auk.cx&n; *&n; *  Modification History:&n; *&t;29-Aug-97&t;CG&t;Created&n; *&t;04-Apr-98&t;CG&t;Fixed problems caused by tok_timer_check&n; *&t;10-Apr-98&t;CG&t;Fixed lockups at cable disconnection&n; *&t;27-May-98&t;JS&t;Formated to Linux Kernel Format&n; *&t;31-May-98&t;JS&t;Hacked in PCI support&n; *&t;16-Jun-98&t;JS&t;Modulized for multiple cards with one driver&n; *&t;21-Sep-99&t;CG&t;Fixed source routing issues for 2.2 kernels&n; *&t;21-Sep-99&t;AF&t;Added multicast changes recommended by &n; *&t;&t;&t;&t;  Jochen Friedrich &lt;jochen@nwe.de&gt; (untested)&n; *&t;&t;&t;&t;Added detection of compatible Compaq PCI card  &n; *&n; *  To do:&n; *    1. Selectable 16 Mbps or 4Mbps&n; *    2. Multi/Broadcast packet handling (might be done)&n; *&n; */
+multiline_comment|/*&n; *  tms380tr.c: A network driver for Texas Instruments TMS380-based&n; *              Token Ring Adapters.&n; *&n; *  Originally sktr.c: Written 1997 by Christoph Goos&n; *&n; *  A fine result of the Linux Systems Network Architecture Project.&n; *  http://www.linux-sna.org&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; *  This device driver works with the following TMS380 adapters:&n; *&t;- SysKonnect TR4/16(+) ISA&t;(SK-4190)&n; *&t;- SysKonnect TR4/16(+) PCI&t;(SK-4590)&n; *&t;- SysKonnect TR4/16 PCI&t;&t;(SK-4591)&n; *      - Compaq TR 4/16 PCI&n; *      - Thomas-Conrad TC4048 4/16 PCI&n; *      - Any ISA or PCI adapter using only the TMS380 chipset&n; *&n; *  Sources:&n; *  &t;- The hardware related parts of this driver are take from&n; *  &t;  the SysKonnect Token Ring driver for Windows NT.&n; *  &t;- I used the IBM Token Ring driver &squot;ibmtr.c&squot; as a base for this&n; *  &t;  driver, as well as the &squot;skeleton.c&squot; driver by Donald Becker.&n; *  &t;- Also various other drivers in the linux source tree were taken&n; *  &t;  as samples for some tasks.&n; *      - TI TMS380 Second-Generation Token Ring User&squot;s Guide&n; *      - TI datasheets for respective chips&n; *&t;- David Hein at Texas Instruments &n; *&n; *  Maintainer(s):&n; *    JS        Jay Schulist            jschlst@samba.anu.edu.au&n; *    CG&t;Christoph Goos&t;&t;cgoos@syskonnect.de&n; *    AF        Adam Fritzler           mid@auk.cx&n; *&n; *  Modification History:&n; *&t;29-Aug-97&t;CG&t;Created&n; *&t;04-Apr-98&t;CG&t;Fixed problems caused by tok_timer_check&n; *&t;10-Apr-98&t;CG&t;Fixed lockups at cable disconnection&n; *&t;27-May-98&t;JS&t;Formated to Linux Kernel Format&n; *&t;31-May-98&t;JS&t;Hacked in PCI support&n; *&t;16-Jun-98&t;JS&t;Modulized for multiple cards with one driver&n; *         Sep-99       AF      Renamed to tms380tr (supports more than SK&squot;s)&n; *      23-Sep-99       AF      Added Compaq and Thomas-Conrad PCI support&n; *                              Fixed a bug causing double copies on PCI&n; *                              Fixed for new multicast stuff (2.2/2.3)&n; *&t;25-Sep-99&t;AF&t;Uped TPL_NUM from 3 to 9&n; *&t;&t;&t;&t;Removed extraneous &squot;No free TPL&squot;&n; *&n; *  To do:&n; *    1. Selectable 16 Mbps or 4Mbps&n; *    2. Multi/Broadcast packet handling (this may have fixed itself)&n; *&n; */
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;sktr.c: v1.01 08/29/97 by Christoph Goos&bslash;n&quot;
+l_string|&quot;tms380tr.c: v1.03 29/09/1999 by Christoph Goos, Adam Fritzler&bslash;n&quot;
 suffix:semicolon
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
@@ -35,14 +35,14 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
-macro_line|#include &quot;sktr.h&quot;&t;&t;/* Our Stuff */
-macro_line|#include &quot;sktr_firmware.h&quot;&t;/* SysKonnect adapter firmware */
+macro_line|#include &quot;tms380tr.h&quot;&t;&t;/* Our Stuff */
+macro_line|#include &quot;tms380tr_microcode.h&quot;&t;/* TI microcode for COMMprocessor */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
 DECL|variable|__initdata
 r_static
 r_int
 r_int
-id|sktr_portlist
+id|tms380tr_portlist
 (braket
 )braket
 id|__initdata
@@ -67,12 +67,12 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* A zero-terminated list of IRQs to be probed. &n; * Used again after initial probe for sktr_chipset_init, called from sktr_open.&n; */
-DECL|variable|sktr_irqlist
+multiline_comment|/* A zero-terminated list of IRQs to be probed. &n; * Used again after initial probe for tms380tr_chipset_init, called from tms380tr_open.&n; */
+DECL|variable|tms380tr_irqlist
 r_static
 r_int
 r_int
-id|sktr_irqlist
+id|tms380tr_irqlist
 (braket
 )braket
 op_assign
@@ -98,7 +98,7 @@ multiline_comment|/* A zero-terminated list of DMAs to be probed. */
 DECL|variable|__initdata
 r_static
 r_int
-id|sktr_dmalist
+id|tms380tr_dmalist
 (braket
 )braket
 id|__initdata
@@ -113,50 +113,97 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* Card names */
-DECL|variable|pci_cardname
-r_static
-r_char
-op_star
-id|pci_cardname
+multiline_comment|/* &n; * Table used for card detection and type determination.&n; */
+DECL|variable|cardinfo
+r_struct
+id|cardinfo_table
+id|cardinfo
+(braket
+)braket
 op_assign
-l_string|&quot;SK NET TR 4/16 PCI&bslash;0&quot;
-suffix:semicolon
-DECL|variable|isa_cardname
-r_static
-r_char
-op_star
-id|isa_cardname
-op_assign
-l_string|&quot;SK NET TR 4/16 ISA&bslash;0&quot;
-suffix:semicolon
-DECL|variable|AdapterName
-r_static
-r_char
-op_star
-id|AdapterName
+(brace
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;Unknown TMS380 Token Ring Adapter&quot;
+)brace
+comma
+(brace
+id|TMS_ISA
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;SK NET TR 4/16 ISA&quot;
+)brace
+comma
+(brace
+id|TMS_PCI
+comma
+id|PCI_VENDOR_ID_COMPAQ
+comma
+id|PCI_DEVICE_ID_COMPAQ_TOKENRING
+comma
+l_string|&quot;Compaq 4/16 TR PCI&quot;
+)brace
+comma
+(brace
+id|TMS_PCI
+comma
+id|PCI_VENDOR_ID_SK
+comma
+id|PCI_DEVICE_ID_SK_TR
+comma
+l_string|&quot;SK NET TR 4/16 PCI&quot;
+)brace
+comma
+(brace
+id|TMS_PCI
+comma
+id|PCI_VENDOR_ID_TCONRAD
+comma
+id|PCI_DEVICE_ID_TCONRAD_TOKENRING
+comma
+l_string|&quot;Thomas-Conrad TC4048 PCI 4/16&quot;
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+)brace
+)brace
 suffix:semicolon
 multiline_comment|/* Use 0 for production, 1 for verification, 2 for debug, and&n; * 3 for very verbose debug.&n; */
-macro_line|#ifndef SKTR_DEBUG
-DECL|macro|SKTR_DEBUG
-mdefine_line|#define SKTR_DEBUG 1
+macro_line|#ifndef TMS380TR_DEBUG
+DECL|macro|TMS380TR_DEBUG
+mdefine_line|#define TMS380TR_DEBUG 0
 macro_line|#endif
-DECL|variable|sktr_debug
+DECL|variable|tms380tr_debug
 r_static
 r_int
 r_int
-id|sktr_debug
+id|tms380tr_debug
 op_assign
-id|SKTR_DEBUG
+id|TMS380TR_DEBUG
 suffix:semicolon
 multiline_comment|/* The number of low I/O ports used by the tokencard. */
-DECL|macro|SKTR_IO_EXTENT
-mdefine_line|#define SKTR_IO_EXTENT 32
+DECL|macro|TMS380TR_IO_EXTENT
+mdefine_line|#define TMS380TR_IO_EXTENT 32
 multiline_comment|/* Index to functions, as function prototypes.&n; * Alphabetical by function name.&n; */
 multiline_comment|/* &quot;B&quot; */
 r_static
 r_int
-id|sktr_bringup_diags
+id|tms380tr_bringup_diags
 c_func
 (paren
 r_struct
@@ -168,7 +215,7 @@ suffix:semicolon
 multiline_comment|/* &quot;C&quot; */
 r_static
 r_void
-id|sktr_cancel_tx_queue
+id|tms380tr_cancel_tx_queue
 c_func
 (paren
 r_struct
@@ -179,7 +226,7 @@ id|tp
 suffix:semicolon
 r_static
 r_int
-id|sktr_chipset_init
+id|tms380tr_chipset_init
 c_func
 (paren
 r_struct
@@ -190,7 +237,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_chk_irq
+id|tms380tr_chk_irq
 c_func
 (paren
 r_struct
@@ -202,7 +249,7 @@ suffix:semicolon
 r_static
 r_int
 r_char
-id|sktr_chk_frame
+id|tms380tr_chk_frame
 c_func
 (paren
 r_struct
@@ -218,7 +265,7 @@ id|Addr
 suffix:semicolon
 r_static
 r_void
-id|sktr_chk_outstanding_cmds
+id|tms380tr_chk_outstanding_cmds
 c_func
 (paren
 r_struct
@@ -229,7 +276,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_chk_src_addr
+id|tms380tr_chk_src_addr
 c_func
 (paren
 r_int
@@ -246,7 +293,7 @@ suffix:semicolon
 r_static
 r_int
 r_char
-id|sktr_chk_ssb
+id|tms380tr_chk_ssb
 c_func
 (paren
 r_struct
@@ -261,7 +308,7 @@ id|IrqType
 suffix:semicolon
 r_static
 r_int
-id|sktr_close
+id|tms380tr_close
 c_func
 (paren
 r_struct
@@ -272,7 +319,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_cmd_status_irq
+id|tms380tr_cmd_status_irq
 c_func
 (paren
 r_struct
@@ -284,7 +331,7 @@ suffix:semicolon
 multiline_comment|/* &quot;D&quot; */
 r_static
 r_void
-id|sktr_disable_interrupts
+id|tms380tr_disable_interrupts
 c_func
 (paren
 r_struct
@@ -293,9 +340,10 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#if TMS380TR_DEBUG &gt; 0
 r_static
 r_void
-id|sktr_dump
+id|tms380tr_dump
 c_func
 (paren
 r_int
@@ -307,10 +355,11 @@ r_int
 id|length
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* &quot;E&quot; */
 r_static
 r_void
-id|sktr_enable_interrupts
+id|tms380tr_enable_interrupts
 c_func
 (paren
 r_struct
@@ -321,7 +370,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 r_struct
@@ -336,7 +385,7 @@ id|Command
 suffix:semicolon
 r_static
 r_void
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 r_struct
@@ -355,7 +404,7 @@ r_static
 r_struct
 id|enet_statistics
 op_star
-id|sktr_get_stats
+id|tms380tr_get_stats
 c_func
 (paren
 r_struct
@@ -367,7 +416,7 @@ suffix:semicolon
 multiline_comment|/* &quot;H&quot; */
 r_static
 r_void
-id|sktr_hardware_send_packet
+id|tms380tr_hardware_send_packet
 c_func
 (paren
 r_struct
@@ -384,7 +433,7 @@ suffix:semicolon
 multiline_comment|/* &quot;I&quot; */
 r_static
 r_int
-id|sktr_init_adapter
+id|tms380tr_init_adapter
 c_func
 (paren
 r_struct
@@ -395,7 +444,7 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|sktr_init_card
+id|tms380tr_init_card
 c_func
 (paren
 r_struct
@@ -406,7 +455,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_init_ipb
+id|tms380tr_init_ipb
 c_func
 (paren
 r_struct
@@ -417,7 +466,7 @@ id|tp
 suffix:semicolon
 r_static
 r_void
-id|sktr_init_net_local
+id|tms380tr_init_net_local
 c_func
 (paren
 r_struct
@@ -428,7 +477,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_init_opb
+id|tms380tr_init_opb
 c_func
 (paren
 r_struct
@@ -439,7 +488,7 @@ id|tp
 suffix:semicolon
 r_static
 r_void
-id|sktr_interrupt
+id|tms380tr_interrupt
 c_func
 (paren
 r_int
@@ -457,7 +506,7 @@ id|regs
 suffix:semicolon
 r_static
 r_int
-id|sktr_isa_chk_card
+id|tms380tr_isa_chk_card
 c_func
 (paren
 r_struct
@@ -467,11 +516,17 @@ id|dev
 comma
 r_int
 id|ioaddr
+comma
+r_struct
+id|cardinfo_table
+op_star
+op_star
+id|outcard
 )paren
 suffix:semicolon
 r_static
 r_int
-id|sktr_isa_chk_ioaddr
+id|tms380tr_isa_chk_ioaddr
 c_func
 (paren
 r_int
@@ -481,7 +536,7 @@ suffix:semicolon
 multiline_comment|/* &quot;O&quot; */
 r_static
 r_int
-id|sktr_open
+id|tms380tr_open
 c_func
 (paren
 r_struct
@@ -492,7 +547,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_open_adapter
+id|tms380tr_open_adapter
 c_func
 (paren
 r_struct
@@ -504,17 +559,23 @@ suffix:semicolon
 multiline_comment|/* &quot;P&quot; */
 r_static
 r_int
-id|sktr_pci_chk_card
+id|tms380tr_pci_chk_card
 c_func
 (paren
 r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|cardinfo_table
+op_star
+op_star
+id|outcard
 )paren
 suffix:semicolon
 r_int
-id|sktr_probe
+id|tms380tr_probe
 c_func
 (paren
 r_struct
@@ -525,7 +586,7 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|sktr_probe1
+id|tms380tr_probe1
 c_func
 (paren
 r_struct
@@ -540,7 +601,7 @@ suffix:semicolon
 multiline_comment|/* &quot;R&quot; */
 r_static
 r_void
-id|sktr_rcv_status_irq
+id|tms380tr_rcv_status_irq
 c_func
 (paren
 r_struct
@@ -551,7 +612,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_read_addr
+id|tms380tr_read_addr
 c_func
 (paren
 r_struct
@@ -566,8 +627,8 @@ id|Address
 )paren
 suffix:semicolon
 r_static
-r_void
-id|sktr_read_ptr
+r_int
+id|tms380tr_read_ptr
 c_func
 (paren
 r_struct
@@ -578,7 +639,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_read_ram
+id|tms380tr_read_ram
 c_func
 (paren
 r_struct
@@ -601,7 +662,7 @@ id|Length
 suffix:semicolon
 r_static
 r_int
-id|sktr_reset_adapter
+id|tms380tr_reset_adapter
 c_func
 (paren
 r_struct
@@ -612,7 +673,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_reset_interrupt
+id|tms380tr_reset_interrupt
 c_func
 (paren
 r_struct
@@ -623,7 +684,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_ring_status_irq
+id|tms380tr_ring_status_irq
 c_func
 (paren
 r_struct
@@ -635,7 +696,7 @@ suffix:semicolon
 multiline_comment|/* &quot;S&quot; */
 r_static
 r_int
-id|sktr_send_packet
+id|tms380tr_send_packet
 c_func
 (paren
 r_struct
@@ -651,7 +712,7 @@ id|dev
 suffix:semicolon
 r_static
 r_void
-id|sktr_set_multicast_list
+id|tms380tr_set_multicast_list
 c_func
 (paren
 r_struct
@@ -663,7 +724,7 @@ suffix:semicolon
 multiline_comment|/* &quot;T&quot; */
 r_static
 r_void
-id|sktr_timer_chk
+id|tms380tr_timer_chk
 c_func
 (paren
 r_int
@@ -673,7 +734,7 @@ id|data
 suffix:semicolon
 r_static
 r_void
-id|sktr_timer_end_wait
+id|tms380tr_timer_end_wait
 c_func
 (paren
 r_int
@@ -683,7 +744,7 @@ id|data
 suffix:semicolon
 r_static
 r_void
-id|sktr_tx_status_irq
+id|tms380tr_tx_status_irq
 c_func
 (paren
 r_struct
@@ -695,7 +756,7 @@ suffix:semicolon
 multiline_comment|/* &quot;U&quot; */
 r_static
 r_void
-id|sktr_update_rcv_stats
+id|tms380tr_update_rcv_stats
 c_func
 (paren
 r_struct
@@ -717,7 +778,7 @@ suffix:semicolon
 multiline_comment|/* &quot;W&quot; */
 r_static
 r_void
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 r_int
@@ -727,7 +788,7 @@ id|time
 suffix:semicolon
 r_static
 r_void
-id|sktr_write_rpl_status
+id|tms380tr_write_rpl_status
 c_func
 (paren
 id|RPL
@@ -741,7 +802,7 @@ id|Status
 suffix:semicolon
 r_static
 r_void
-id|sktr_write_tpl_status
+id|tms380tr_write_tpl_status
 c_func
 (paren
 id|TPL
@@ -754,10 +815,10 @@ id|Status
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Check for a network adapter of this type, and return &squot;0&squot; if one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; */
-DECL|function|sktr_probe
+DECL|function|tms380tr_probe
 r_int
 id|__init
-id|sktr_probe
+id|tms380tr_probe
 c_func
 (paren
 r_struct
@@ -790,7 +851,7 @@ l_int|0x1ff
 multiline_comment|/* Check a single specified location. */
 r_return
 (paren
-id|sktr_probe1
+id|tms380tr_probe1
 c_func
 (paren
 id|dev
@@ -824,7 +885,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|sktr_portlist
+id|tms380tr_portlist
 (braket
 id|i
 )braket
@@ -836,7 +897,7 @@ op_increment
 r_int
 id|ioaddr
 op_assign
-id|sktr_portlist
+id|tms380tr_portlist
 (braket
 id|i
 )braket
@@ -849,7 +910,7 @@ c_func
 (paren
 id|ioaddr
 comma
-id|SKTR_IO_EXTENT
+id|TMS380TR_IO_EXTENT
 )paren
 )paren
 (brace
@@ -859,7 +920,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_probe1
+id|tms380tr_probe1
 c_func
 (paren
 id|dev
@@ -891,18 +952,116 @@ id|ENODEV
 )paren
 suffix:semicolon
 )brace
+DECL|function|tms380tr_pci_getcardinfo
+r_struct
+id|cardinfo_table
+op_star
+id|__init
+id|tms380tr_pci_getcardinfo
+c_func
+(paren
+r_int
+r_int
+id|vendor
+comma
+r_int
+r_int
+id|device
+)paren
+(brace
+r_int
+id|cur
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|cur
+op_assign
+l_int|1
+suffix:semicolon
+id|cardinfo
+(braket
+id|cur
+)braket
+dot
+id|name
+op_ne
+l_int|NULL
+suffix:semicolon
+id|cur
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cardinfo
+(braket
+id|cur
+)braket
+dot
+id|type
+op_eq
+l_int|2
+)paren
+multiline_comment|/* PCI */
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|cardinfo
+(braket
+id|cur
+)braket
+dot
+id|vendor_id
+op_eq
+id|vendor
+)paren
+op_logical_and
+(paren
+id|cardinfo
+(braket
+id|cur
+)braket
+dot
+id|device_id
+op_eq
+id|device
+)paren
+)paren
+r_return
+op_amp
+id|cardinfo
+(braket
+id|cur
+)braket
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Detect and setup the PCI SysKonnect TR cards in slot order.&n; */
-DECL|function|sktr_pci_chk_card
+DECL|function|tms380tr_pci_chk_card
 r_static
 r_int
 id|__init
-id|sktr_pci_chk_card
+id|tms380tr_pci_chk_card
 c_func
 (paren
 r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|cardinfo_table
+op_star
+op_star
+id|outcard
 )paren
 (brace
 r_static
@@ -916,6 +1075,14 @@ r_char
 id|pci_bus
 comma
 id|pci_device_fn
+suffix:semicolon
+r_struct
+id|cardinfo_table
+op_star
+id|card
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 r_if
 c_cond
@@ -1066,61 +1233,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|card
+op_assign
+id|tms380tr_pci_getcardinfo
+c_func
 (paren
 id|vendor
-op_ne
-id|PCI_VENDOR_ID_SK
-)paren
-op_logical_and
-(paren
-id|vendor
-op_ne
-id|PCI_VENDOR_ID_COMPAQ
-)paren
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|vendor
-op_eq
-id|PCI_VENDOR_ID_SK
-)paren
-op_logical_and
-(paren
+comma
 id|device
-op_ne
-id|PCI_DEVICE_ID_SK_TR
 )paren
 )paren
-(brace
-r_continue
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|vendor
-op_eq
-id|PCI_VENDOR_ID_COMPAQ
-)paren
-op_logical_and
-(paren
-id|device
-op_ne
-id|PCI_DEVICE_ID_COMPAQ_TOKENRING
-)paren
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1129,7 +1258,7 @@ c_func
 (paren
 id|pci_ioaddr
 comma
-id|SKTR_IO_EXTENT
+id|TMS380TR_IO_EXTENT
 )paren
 )paren
 (brace
@@ -1141,9 +1270,9 @@ c_func
 (paren
 id|pci_ioaddr
 comma
-id|SKTR_IO_EXTENT
+id|TMS380TR_IO_EXTENT
 comma
-id|pci_cardname
+id|card-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -1154,11 +1283,11 @@ c_func
 (paren
 id|pdev-&gt;irq
 comma
-id|sktr_interrupt
+id|tms380tr_interrupt
 comma
 id|SA_SHIRQ
 comma
-id|pci_cardname
+id|card-&gt;name
 comma
 id|dev
 )paren
@@ -1172,10 +1301,6 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* continue; ?? */
-id|AdapterName
-op_assign
-id|pci_cardname
-suffix:semicolon
 id|new_command
 op_assign
 (paren
@@ -1231,19 +1356,88 @@ id|dev-&gt;dma
 op_assign
 l_int|0
 suffix:semicolon
+id|dev-&gt;addr_len
+op_assign
+l_int|6
+suffix:semicolon
+id|tms380tr_read_addr
+c_func
+(paren
+id|dev
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
+id|dev-&gt;dev_addr
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s found at %#4x, using IRQ %d.&bslash;n&quot;
+l_string|&quot;%s: %s found at %#4x, IRQ %d, ring station &quot;
 comma
 id|dev-&gt;name
 comma
-id|AdapterName
+id|card-&gt;name
 comma
 id|pci_ioaddr
 comma
 id|dev-&gt;irq
 )paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%2.2x&quot;
+comma
+id|dev-&gt;dev_addr
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;:%2.2x&quot;
+comma
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|outcard
+)paren
+op_star
+id|outcard
+op_assign
+id|card
 suffix:semicolon
 r_return
 (paren
@@ -1259,11 +1453,11 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Detect and setup the ISA SysKonnect TR cards.&n; */
-DECL|function|sktr_isa_chk_card
+DECL|function|tms380tr_isa_chk_card
 r_static
 r_int
 id|__init
-id|sktr_isa_chk_card
+id|tms380tr_isa_chk_card
 c_func
 (paren
 r_struct
@@ -1273,6 +1467,12 @@ id|dev
 comma
 r_int
 id|ioaddr
+comma
+r_struct
+id|cardinfo_table
+op_star
+op_star
+id|outcard
 )paren
 (brace
 r_int
@@ -1284,9 +1484,16 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_struct
+id|cardinfo_table
+op_star
+id|card
+op_assign
+l_int|NULL
+suffix:semicolon
 id|err
 op_assign
-id|sktr_isa_chk_ioaddr
+id|tms380tr_isa_chk_ioaddr
 c_func
 (paren
 id|ioaddr
@@ -1356,9 +1563,14 @@ id|EAGAIN
 )paren
 suffix:semicolon
 )brace
-id|AdapterName
+multiline_comment|/* FIXME */
+id|card
 op_assign
-id|isa_cardname
+op_amp
+id|cardinfo
+(braket
+l_int|1
+)braket
 suffix:semicolon
 multiline_comment|/* Grab the region so that no one else tries to probe our ioports. */
 id|request_region
@@ -1366,9 +1578,9 @@ c_func
 (paren
 id|ioaddr
 comma
-id|SKTR_IO_EXTENT
+id|TMS380TR_IO_EXTENT
 comma
-id|AdapterName
+id|card-&gt;name
 )paren
 suffix:semicolon
 id|dev-&gt;base_addr
@@ -1391,7 +1603,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|sktr_irqlist
+id|tms380tr_irqlist
 (braket
 id|i
 )braket
@@ -1404,7 +1616,7 @@ op_increment
 (brace
 id|dev-&gt;irq
 op_assign
-id|sktr_irqlist
+id|tms380tr_irqlist
 (braket
 id|i
 )braket
@@ -1417,11 +1629,11 @@ c_func
 id|dev-&gt;irq
 comma
 op_amp
-id|sktr_interrupt
+id|tms380tr_interrupt
 comma
 l_int|0
 comma
-id|AdapterName
+id|card-&gt;name
 comma
 id|dev
 )paren
@@ -1440,7 +1652,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_irqlist
+id|tms380tr_irqlist
 (braket
 id|i
 )braket
@@ -1474,11 +1686,11 @@ c_func
 id|dev-&gt;irq
 comma
 op_amp
-id|sktr_interrupt
+id|tms380tr_interrupt
 comma
 l_int|0
 comma
-id|AdapterName
+id|card-&gt;name
 comma
 id|dev
 )paren
@@ -1521,7 +1733,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|sktr_dmalist
+id|tms380tr_dmalist
 (braket
 id|i
 )braket
@@ -1534,7 +1746,7 @@ op_increment
 (brace
 id|dev-&gt;dma
 op_assign
-id|sktr_dmalist
+id|tms380tr_dmalist
 (braket
 id|i
 )braket
@@ -1546,7 +1758,7 @@ c_func
 (paren
 id|dev-&gt;dma
 comma
-id|AdapterName
+id|card-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -1601,7 +1813,7 @@ c_func
 (paren
 id|dev-&gt;dma
 comma
-id|AdapterName
+id|card-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -1674,7 +1886,7 @@ l_string|&quot;%s: %s found at %#4x, using IRQ %d and DMA %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|AdapterName
+id|card-&gt;name
 comma
 id|ioaddr
 comma
@@ -1683,17 +1895,27 @@ comma
 id|dev-&gt;dma
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|outcard
+)paren
+op_star
+id|outcard
+op_assign
+id|card
+suffix:semicolon
 r_return
 (paren
 l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|sktr_probe1
+DECL|function|tms380tr_probe1
 r_static
 r_int
 id|__init
-id|sktr_probe1
+id|tms380tr_probe1
 c_func
 (paren
 r_struct
@@ -1717,17 +1939,19 @@ op_star
 id|tp
 suffix:semicolon
 r_int
-id|DeviceType
-op_assign
-id|SK_PCI
-suffix:semicolon
-r_int
 id|err
+suffix:semicolon
+r_struct
+id|cardinfo_table
+op_star
+id|card
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 op_logical_and
 id|version_printed
 op_increment
@@ -1738,6 +1962,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s&quot;
 comma
 id|version
@@ -1773,10 +1998,13 @@ suffix:semicolon
 macro_line|#endif
 id|err
 op_assign
-id|sktr_pci_chk_card
+id|tms380tr_pci_chk_card
 c_func
 (paren
 id|dev
+comma
+op_amp
+id|card
 )paren
 suffix:semicolon
 r_if
@@ -1789,12 +2017,15 @@ l_int|0
 (brace
 id|err
 op_assign
-id|sktr_isa_chk_card
+id|tms380tr_isa_chk_card
 c_func
 (paren
 id|dev
 comma
 id|ioaddr
+comma
+op_amp
+id|card
 )paren
 suffix:semicolon
 r_if
@@ -1812,10 +2043,6 @@ id|ENODEV
 )paren
 suffix:semicolon
 )brace
-id|DeviceType
-op_assign
-id|SK_ISA
-suffix:semicolon
 )brace
 multiline_comment|/* Setup this devices private information structure */
 id|tp
@@ -1868,10 +2095,6 @@ id|net_local
 )paren
 )paren
 suffix:semicolon
-id|tp-&gt;DeviceType
-op_assign
-id|DeviceType
-suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
@@ -1879,34 +2102,38 @@ op_amp
 id|tp-&gt;wait_for_tok_int
 )paren
 suffix:semicolon
+id|tp-&gt;CardType
+op_assign
+id|card
+suffix:semicolon
 id|dev-&gt;priv
 op_assign
 id|tp
 suffix:semicolon
 id|dev-&gt;init
 op_assign
-id|sktr_init_card
+id|tms380tr_init_card
 suffix:semicolon
 id|dev-&gt;open
 op_assign
-id|sktr_open
+id|tms380tr_open
 suffix:semicolon
 id|dev-&gt;stop
 op_assign
-id|sktr_close
+id|tms380tr_close
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
-id|sktr_send_packet
+id|tms380tr_send_packet
 suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
-id|sktr_get_stats
+id|tms380tr_get_stats
 suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
-id|sktr_set_multicast_list
+id|tms380tr_set_multicast_list
 suffix:semicolon
 r_return
 (paren
@@ -1915,11 +2142,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Dummy function */
-DECL|function|sktr_init_card
+DECL|function|tms380tr_init_card
 r_static
 r_int
 id|__init
-id|sktr_init_card
+id|tms380tr_init_card
 c_func
 (paren
 r_struct
@@ -1931,7 +2158,7 @@ id|dev
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 OG
 l_int|3
 )paren
@@ -1939,7 +2166,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;%s: sktr_init_card&bslash;n&quot;
+l_string|&quot;%s: tms380tr_init_card&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -1952,11 +2179,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function tests if an adapter is really installed at the&n; * given I/O address. Return negative if no adapter at IO addr.&n; */
-DECL|function|sktr_isa_chk_ioaddr
+DECL|function|tms380tr_isa_chk_ioaddr
 r_static
 r_int
 id|__init
-id|sktr_isa_chk_ioaddr
+id|tms380tr_isa_chk_ioaddr
 c_func
 (paren
 r_int
@@ -2090,10 +2317,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Open/initialize the board. This is called sometime after&n; * booting when the &squot;ifconfig&squot; program is run.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &quot;should&quot; only need to be set once at boot, so that&n; * there is non-reboot way to recover if something goes wrong.&n; */
-DECL|function|sktr_open
+DECL|function|tms380tr_open
 r_static
 r_int
-id|sktr_open
+id|tms380tr_open
 c_func
 (paren
 r_struct
@@ -2120,7 +2347,7 @@ suffix:semicolon
 multiline_comment|/* Reset the hardware here. Don&squot;t forget to set the station address. */
 id|err
 op_assign
-id|sktr_chipset_init
+id|tms380tr_chipset_init
 c_func
 (paren
 id|dev
@@ -2148,23 +2375,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;addr_len
-op_assign
-l_int|6
-suffix:semicolon
-id|sktr_read_addr
-c_func
-(paren
-id|dev
-comma
-(paren
-r_int
-r_char
-op_star
-)paren
-id|dev-&gt;dev_addr
-)paren
-suffix:semicolon
 id|init_timer
 c_func
 (paren
@@ -2182,7 +2392,7 @@ id|HZ
 suffix:semicolon
 id|tp-&gt;timer.function
 op_assign
-id|sktr_timer_end_wait
+id|tms380tr_timer_end_wait
 suffix:semicolon
 id|tp-&gt;timer.data
 op_assign
@@ -2207,19 +2417,28 @@ op_amp
 id|tp-&gt;timer
 )paren
 suffix:semicolon
-id|sktr_read_ptr
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Adapter RAM size: %dK&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|tms380tr_read_ptr
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
+id|tms380tr_enable_interrupts
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|sktr_enable_interrupts
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|sktr_open_adapter
+id|tms380tr_open_adapter
 c_func
 (paren
 id|dev
@@ -2265,7 +2484,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|sktr_disable_interrupts
+id|tms380tr_disable_interrupts
 c_func
 (paren
 id|dev
@@ -2297,7 +2516,7 @@ id|HZ
 suffix:semicolon
 id|tp-&gt;timer.function
 op_assign
-id|sktr_timer_chk
+id|tms380tr_timer_chk
 suffix:semicolon
 id|tp-&gt;timer.data
 op_assign
@@ -2325,10 +2544,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Timeout function while waiting for event&n; */
-DECL|function|sktr_timer_end_wait
+DECL|function|tms380tr_timer_end_wait
 r_static
 r_void
-id|sktr_timer_end_wait
+id|tms380tr_timer_end_wait
 c_func
 (paren
 r_int
@@ -2382,10 +2601,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize the chipset&n; */
-DECL|function|sktr_chipset_init
+DECL|function|tms380tr_chipset_init
 r_static
 r_int
-id|sktr_chipset_init
+id|tms380tr_chipset_init
 c_func
 (paren
 r_struct
@@ -2417,19 +2636,19 @@ id|i
 comma
 id|err
 suffix:semicolon
-id|sktr_init_ipb
+id|tms380tr_init_ipb
 c_func
 (paren
 id|tp
 )paren
 suffix:semicolon
-id|sktr_init_opb
+id|tms380tr_init_opb
 c_func
 (paren
 id|tp
 )paren
 suffix:semicolon
-id|sktr_init_net_local
+id|tms380tr_init_net_local
 c_func
 (paren
 id|dev
@@ -2455,7 +2674,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|sktr_irqlist
+id|tms380tr_irqlist
 (braket
 id|i
 )braket
@@ -2469,7 +2688,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|sktr_irqlist
+id|tms380tr_irqlist
 (braket
 id|i
 )braket
@@ -2574,7 +2793,7 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|sktr_reset_adapter
+id|tms380tr_reset_adapter
 c_func
 (paren
 id|dev
@@ -2597,7 +2816,7 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|sktr_bringup_diags
+id|tms380tr_bringup_diags
 c_func
 (paren
 id|dev
@@ -2620,7 +2839,7 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|sktr_init_adapter
+id|tms380tr_init_adapter
 c_func
 (paren
 id|dev
@@ -2648,10 +2867,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initializes the net_local structure.&n; */
-DECL|function|sktr_init_net_local
+DECL|function|tms380tr_init_net_local
 r_static
 r_void
-id|sktr_init_net_local
+id|tms380tr_init_net_local
 c_func
 (paren
 r_struct
@@ -3118,9 +3337,9 @@ multiline_comment|/* data unreachable for DMA ? then use local buffer */
 r_if
 c_cond
 (paren
-id|tp-&gt;DeviceType
+id|tp-&gt;CardType-&gt;type
 op_eq
-id|SK_ISA
+id|TMS_ISA
 op_logical_and
 id|virt_to_bus
 c_func
@@ -3301,10 +3520,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initializes the initialisation parameter block.&n; */
-DECL|function|sktr_init_ipb
+DECL|function|tms380tr_init_ipb
 r_static
 r_void
-id|sktr_init_ipb
+id|tms380tr_init_ipb
 c_func
 (paren
 r_struct
@@ -3365,10 +3584,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initializes the open parameter block.&n; */
-DECL|function|sktr_init_opb
+DECL|function|tms380tr_init_opb
 r_static
 r_void
-id|sktr_init_opb
+id|tms380tr_init_opb
 c_func
 (paren
 r_struct
@@ -3407,7 +3626,6 @@ id|tp-&gt;ocpl.OPENOptions
 op_or_assign
 id|ENABLE_FULL_DUPLEX_SELECTION
 suffix:semicolon
-multiline_comment|/*&t;tp-&gt;ocpl.OPENOptions &t;|= PAD_ROUTING_FIELD; no more needed */
 id|tp-&gt;ocpl.FullDuplex
 op_assign
 l_int|0
@@ -3499,10 +3717,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send OPEN command to adapter&n; */
-DECL|function|sktr_open_adapter
+DECL|function|tms380tr_open_adapter
 r_static
 r_void
-id|sktr_open_adapter
+id|tms380tr_open_adapter
 c_func
 (paren
 r_struct
@@ -3536,7 +3754,7 @@ id|tp-&gt;OpenCommandIssued
 op_assign
 l_int|1
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -3548,10 +3766,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Clear the adapter&squot;s interrupt flag. Clear system interrupt enable&n; * (SINTEN): disable adapter to system interrupts.&n; */
-DECL|function|sktr_disable_interrupts
+DECL|function|tms380tr_disable_interrupts
 r_static
 r_void
-id|sktr_disable_interrupts
+id|tms380tr_disable_interrupts
 c_func
 (paren
 r_struct
@@ -3574,10 +3792,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set the adapter&squot;s interrupt flag. Set system interrupt enable&n; * (SINTEN): enable adapter to system interrupts.&n; */
-DECL|function|sktr_enable_interrupts
+DECL|function|tms380tr_enable_interrupts
 r_static
 r_void
-id|sktr_enable_interrupts
+id|tms380tr_enable_interrupts
 c_func
 (paren
 r_struct
@@ -3600,10 +3818,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Put command in command queue, try to execute it.&n; */
-DECL|function|sktr_exec_cmd
+DECL|function|tms380tr_exec_cmd
 r_static
 r_void
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 r_struct
@@ -3632,7 +3850,7 @@ id|tp-&gt;CMDqueue
 op_or_assign
 id|Command
 suffix:semicolon
-id|sktr_chk_outstanding_cmds
+id|tms380tr_chk_outstanding_cmds
 c_func
 (paren
 id|dev
@@ -3642,10 +3860,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Gets skb from system, queues it and checks if it can be sent&n; */
-DECL|function|sktr_send_packet
+DECL|function|tms380tr_send_packet
 r_static
 r_int
-id|sktr_send_packet
+id|tms380tr_send_packet
 c_func
 (paren
 r_struct
@@ -3677,7 +3895,7 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead.&n;&t;&t; *&n;&t;&t; * Resetting the token ring adapter takes a long time so just&n;&t;&t; * fake transmission time and go on trying. Our own timeout&n;&t;&t; * routine is in sktr_timer_chk()&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead.&n;&t;&t; *&n;&t;&t; * Resetting the token ring adapter takes a long time so just&n;&t;&t; * fake transmission time and go on trying. Our own timeout&n;&t;&t; * routine is in tms380tr_timer_chk()&n;&t;&t; */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -3768,7 +3986,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|sktr_hardware_send_packet
+id|tms380tr_hardware_send_packet
 c_func
 (paren
 id|dev
@@ -3796,10 +4014,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Move frames from internal skb queue into adapter tx queue&n; */
-DECL|function|sktr_hardware_send_packet
+DECL|function|tms380tr_hardware_send_packet
 r_static
 r_void
-id|sktr_hardware_send_packet
+id|tms380tr_hardware_send_packet
 c_func
 (paren
 r_struct
@@ -3851,6 +4069,13 @@ id|tp-&gt;TplFree-&gt;NextTPLPtr-&gt;BusyFlag
 )paren
 multiline_comment|/* No free TPL */
 (brace
+r_if
+c_cond
+(paren
+id|tms380tr_debug
+OG
+l_int|0
+)paren
 id|printk
 c_func
 (paren
@@ -3891,9 +4116,9 @@ multiline_comment|/* Is buffer reachable for Busmaster-DMA? */
 r_if
 c_cond
 (paren
-id|tp-&gt;DeviceType
+id|tp-&gt;CardType-&gt;type
 op_eq
-id|SK_ISA
+id|TMS_ISA
 op_logical_and
 id|virt_to_bus
 c_func
@@ -3961,7 +4186,7 @@ id|skb-&gt;data
 suffix:semicolon
 )brace
 multiline_comment|/* Source address in packet? */
-id|sktr_chk_src_addr
+id|tms380tr_chk_src_addr
 c_func
 (paren
 id|newbuf
@@ -4044,7 +4269,7 @@ op_assign
 id|newbuf
 suffix:semicolon
 multiline_comment|/* Transmit the frame and set the status values. */
-id|sktr_write_tpl_status
+id|tms380tr_write_tpl_status
 c_func
 (paren
 id|tpl
@@ -4061,7 +4286,7 @@ id|TX_FRAME_IRQ
 )paren
 suffix:semicolon
 multiline_comment|/* Let adapter send the frame. */
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -4074,10 +4299,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write the given value to the &squot;Status&squot; field of the specified TPL.&n; * NOTE: This function should be used whenever the status of any TPL must be&n; * modified by the driver, because the compiler may otherwise change the&n; * order of instructions such that writing the TPL status may be executed at&n; * an undesireable time. When this function is used, the status is always&n; * written when the function is called.&n; */
-DECL|function|sktr_write_tpl_status
+DECL|function|tms380tr_write_tpl_status
 r_static
 r_void
-id|sktr_write_tpl_status
+id|tms380tr_write_tpl_status
 c_func
 (paren
 id|TPL
@@ -4094,10 +4319,10 @@ op_assign
 id|Status
 suffix:semicolon
 )brace
-DECL|function|sktr_chk_src_addr
+DECL|function|tms380tr_chk_src_addr
 r_static
 r_void
-id|sktr_chk_src_addr
+id|tms380tr_chk_src_addr
 c_func
 (paren
 r_int
@@ -4194,10 +4419,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The timer routine: Check if adapter still open and working, reopen if not. &n; */
-DECL|function|sktr_timer_chk
+DECL|function|tms380tr_timer_chk
 r_static
 r_void
-id|sktr_timer_chk
+id|tms380tr_timer_chk
 c_func
 (paren
 r_int
@@ -4238,7 +4463,7 @@ id|tp-&gt;HaltInProgress
 r_return
 suffix:semicolon
 )brace
-id|sktr_chk_outstanding_cmds
+id|tms380tr_chk_outstanding_cmds
 c_func
 (paren
 id|dev
@@ -4273,7 +4498,7 @@ id|tp-&gt;LastSendTime
 op_assign
 id|jiffies
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -4313,7 +4538,7 @@ id|tp-&gt;ReOpenInProgress
 op_assign
 l_int|1
 suffix:semicolon
-id|sktr_open_adapter
+id|tms380tr_open_adapter
 c_func
 (paren
 id|dev
@@ -4323,10 +4548,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The typical workload of the driver: Handle the network interface interrupts.&n; */
-DECL|function|sktr_interrupt
+DECL|function|tms380tr_interrupt
 r_static
 r_void
-id|sktr_interrupt
+id|tms380tr_interrupt
 c_func
 (paren
 r_int
@@ -4425,7 +4650,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sktr_chk_ssb
+id|tms380tr_chk_ssb
 c_func
 (paren
 id|tp
@@ -4455,13 +4680,13 @@ id|irq_type
 r_case
 id|STS_IRQ_RECEIVE_STATUS
 suffix:colon
-id|sktr_reset_interrupt
+id|tms380tr_reset_interrupt
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|sktr_rcv_status_irq
+id|tms380tr_rcv_status_irq
 c_func
 (paren
 id|dev
@@ -4493,7 +4718,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Issue a new transmit command. */
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -4502,13 +4727,13 @@ id|OC_TRANSMIT
 )paren
 suffix:semicolon
 )brace
-id|sktr_reset_interrupt
+id|tms380tr_reset_interrupt
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|sktr_tx_status_irq
+id|tms380tr_tx_status_irq
 c_func
 (paren
 id|dev
@@ -4520,7 +4745,7 @@ r_case
 id|STS_IRQ_COMMAND_STATUS
 suffix:colon
 multiline_comment|/* The SSB contains status of last command&n;&t;&t;&t;&t; * other than receive/transmit.&n;&t;&t;&t;&t; */
-id|sktr_cmd_status_irq
+id|tms380tr_cmd_status_irq
 c_func
 (paren
 id|dev
@@ -4536,7 +4761,7 @@ id|tp-&gt;ScbInUse
 op_assign
 l_int|0
 suffix:semicolon
-id|sktr_chk_outstanding_cmds
+id|tms380tr_chk_outstanding_cmds
 c_func
 (paren
 id|dev
@@ -4547,7 +4772,7 @@ suffix:semicolon
 r_case
 id|STS_IRQ_RING_STATUS
 suffix:colon
-id|sktr_ring_status_irq
+id|tms380tr_ring_status_irq
 c_func
 (paren
 id|dev
@@ -4558,7 +4783,7 @@ suffix:semicolon
 r_case
 id|STS_IRQ_ADAPTER_CHECK
 suffix:colon
-id|sktr_chk_irq
+id|tms380tr_chk_irq
 c_func
 (paren
 id|dev
@@ -4591,7 +4816,7 @@ op_ne
 id|STS_IRQ_RECEIVE_STATUS
 )paren
 (brace
-id|sktr_reset_interrupt
+id|tms380tr_reset_interrupt
 c_func
 (paren
 id|dev
@@ -4617,10 +4842,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Reset the INTERRUPT SYSTEM bit and issue SSB CLEAR command.&n; */
-DECL|function|sktr_reset_interrupt
+DECL|function|tms380tr_reset_interrupt
 r_static
 r_void
-id|sktr_reset_interrupt
+id|tms380tr_reset_interrupt
 c_func
 (paren
 r_struct
@@ -4695,7 +4920,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Free SSB by issuing SSB_CLEAR command after reading IRQ code&n;&t; * and clear STS_SYSTEM_IRQ bit: enable adapter for further interrupts.&n;&t; */
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -4709,11 +4934,11 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check if the SSB has actually been written by the adapter.&n; */
-DECL|function|sktr_chk_ssb
+DECL|function|tms380tr_chk_ssb
 r_static
 r_int
 r_char
-id|sktr_chk_ssb
+id|tms380tr_chk_ssb
 c_func
 (paren
 r_struct
@@ -4892,10 +5117,10 @@ suffix:semicolon
 multiline_comment|/* All SSB fields have been written by the adapter. */
 )brace
 multiline_comment|/*&n; * Evaluates the command results status in the SSB status field.&n; */
-DECL|function|sktr_cmd_status_irq
+DECL|function|tms380tr_cmd_status_irq
 r_static
 r_void
-id|sktr_cmd_status_irq
+id|tms380tr_cmd_status_irq
 c_func
 (paren
 r_struct
@@ -5021,7 +5246,7 @@ id|tp-&gt;TransmitCommandActive
 op_assign
 l_int|0
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -5029,7 +5254,7 @@ comma
 id|OC_TRANSMIT
 )paren
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -5199,7 +5424,7 @@ id|tp-&gt;AdapterVirtOpenFlag
 op_assign
 l_int|1
 suffix:semicolon
-id|sktr_open_adapter
+id|tms380tr_open_adapter
 c_func
 (paren
 id|dev
@@ -5595,11 +5820,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The inverse routine to sktr_open().&n; */
-DECL|function|sktr_close
+multiline_comment|/*&n; * The inverse routine to tms380tr_open().&n; */
+DECL|function|tms380tr_close
 r_static
 r_int
-id|sktr_close
+id|tms380tr_close
 c_func
 (paren
 r_struct
@@ -5640,7 +5865,7 @@ id|tp-&gt;HaltInProgress
 op_assign
 l_int|1
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -5658,7 +5883,7 @@ id|HZ
 suffix:semicolon
 id|tp-&gt;timer.function
 op_assign
-id|sktr_timer_end_wait
+id|tms380tr_timer_end_wait
 suffix:semicolon
 id|tp-&gt;timer.data
 op_assign
@@ -5675,7 +5900,7 @@ op_amp
 id|tp-&gt;timer
 )paren
 suffix:semicolon
-id|sktr_enable_interrupts
+id|tms380tr_enable_interrupts
 c_func
 (paren
 id|dev
@@ -5703,7 +5928,7 @@ op_amp
 id|tp-&gt;timer
 )paren
 suffix:semicolon
-id|sktr_disable_interrupts
+id|tms380tr_disable_interrupts
 c_func
 (paren
 id|dev
@@ -5772,7 +5997,7 @@ macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
-id|sktr_cancel_tx_queue
+id|tms380tr_cancel_tx_queue
 c_func
 (paren
 id|tp
@@ -5785,12 +6010,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get the current statistics. This may be called with the card open&n; * or closed.&n; */
-DECL|function|sktr_get_stats
+DECL|function|tms380tr_get_stats
 r_static
 r_struct
 id|enet_statistics
 op_star
-id|sktr_get_stats
+id|tms380tr_get_stats
 c_func
 (paren
 r_struct
@@ -5824,10 +6049,10 @@ id|tp-&gt;MacStat
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set or clear the multicast filter for this adapter.&n; */
-DECL|function|sktr_set_multicast_list
+DECL|function|tms380tr_set_multicast_list
 r_static
 r_void
-id|sktr_set_multicast_list
+id|tms380tr_set_multicast_list
 c_func
 (paren
 r_struct
@@ -6014,7 +6239,7 @@ id|mclist-&gt;next
 suffix:semicolon
 )brace
 )brace
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -6027,7 +6252,7 @@ id|tp-&gt;ocpl.OPENOptions
 op_assign
 id|OpenOptions
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -6038,11 +6263,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Wait for some time (microseconds)&n; *&n; * udelay() is a bit harsh, but using a looser timer causes&n; * the bring-up-diags to stall indefinitly.  &n; *&n; */
-DECL|function|sktr_wait
+multiline_comment|/*&n; * Wait for some time (microseconds)&n; */
+DECL|function|tms380tr_wait
 r_static
 r_void
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 r_int
@@ -6050,20 +6275,67 @@ r_int
 id|time
 )paren
 (brace
+macro_line|#if 0
+r_int
+id|tmp
+suffix:semicolon
+id|tmp
+op_assign
+id|jiffies
+op_plus
+id|time
+op_div
+(paren
+l_int|1000000
+op_div
+id|HZ
+)paren
+suffix:semicolon
+r_do
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|tmp
+op_assign
+id|schedule_timeout
+c_func
+(paren
+id|tmp
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|time_after
+c_func
+(paren
+id|tmp
+comma
+id|jiffies
+)paren
+)paren
+(brace
+suffix:semicolon
+)brace
+macro_line|#else
 id|udelay
 c_func
 (paren
 id|time
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write a command value to the SIFCMD register&n; */
-DECL|function|sktr_exec_sifcmd
+DECL|function|tms380tr_exec_sifcmd
 r_static
 r_void
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 r_struct
@@ -6163,10 +6435,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Processes adapter hardware reset, halts adapter and downloads firmware,&n; * clears the halt bit.&n; */
-DECL|function|sktr_reset_adapter
+DECL|function|tms380tr_reset_adapter
 r_static
 r_int
-id|sktr_reset_adapter
+id|tms380tr_reset_adapter
 c_func
 (paren
 r_struct
@@ -6198,7 +6470,7 @@ r_int
 op_star
 )paren
 op_amp
-id|sktr_code
+id|tms380tr_code
 suffix:semicolon
 r_int
 r_int
@@ -6222,7 +6494,7 @@ op_plus
 id|SIFACL
 )paren
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 l_int|40
@@ -6238,7 +6510,7 @@ op_plus
 id|SIFACL
 )paren
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 l_int|20
@@ -6316,7 +6588,7 @@ op_plus
 id|SIFACL
 )paren
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 l_int|40
@@ -6459,10 +6731,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Starts bring up diagnostics of token ring adapter and evaluates&n; * diagnostic results.&n; */
-DECL|function|sktr_bringup_diags
+DECL|function|tms380tr_bringup_diags
 r_static
 r_int
-id|sktr_bringup_diags
+id|tms380tr_bringup_diags
 c_func
 (paren
 r_struct
@@ -6485,13 +6757,13 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 id|HALF_SECOND
 )paren
 suffix:semicolon
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -6499,7 +6771,7 @@ comma
 id|EXEC_SOFT_RESET
 )paren
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 id|HALF_SECOND
@@ -6518,7 +6790,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 OG
 l_int|3
 )paren
@@ -6527,7 +6799,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;BUD-Status: &bslash;n&quot;
+l_string|&quot;BUD-Status: &quot;
 )paren
 suffix:semicolon
 )brace
@@ -6542,7 +6814,7 @@ multiline_comment|/* Inspect BUD results */
 id|loop_cnt
 op_decrement
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 id|HALF_SECOND
@@ -6565,7 +6837,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 OG
 l_int|3
 )paren
@@ -6645,7 +6917,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -6653,7 +6925,7 @@ comma
 id|EXEC_SOFT_RESET
 )paren
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 id|HALF_SECOND
@@ -6705,10 +6977,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Copy initialisation data to adapter memory, beginning at address&n; * 1:0A00; Starting DMA test and evaluating result bits.&n; */
-DECL|function|sktr_init_adapter
+DECL|function|tms380tr_init_adapter
 r_static
 r_int
-id|sktr_init_adapter
+id|tms380tr_init_adapter
 c_func
 (paren
 r_struct
@@ -6932,7 +7204,7 @@ id|SIFINC
 suffix:semicolon
 )brace
 multiline_comment|/* Execute SCB adapter command */
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -6955,7 +7227,7 @@ suffix:semicolon
 id|loop_cnt
 op_decrement
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 id|HALF_SECOND
@@ -7178,7 +7450,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Reset adapter and try init again */
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -7186,7 +7458,7 @@ comma
 id|EXEC_SOFT_RESET
 )paren
 suffix:semicolon
-id|sktr_wait
+id|tms380tr_wait
 c_func
 (paren
 id|HALF_SECOND
@@ -7214,10 +7486,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check for outstanding commands in command queue and tries to execute&n; * command immediately. Corresponding command flag in command queue is cleared.&n; */
-DECL|function|sktr_chk_outstanding_cmds
+DECL|function|tms380tr_chk_outstanding_cmds
 r_static
 r_void
-id|sktr_chk_outstanding_cmds
+id|tms380tr_chk_outstanding_cmds
 c_func
 (paren
 r_struct
@@ -7301,7 +7573,7 @@ r_while
 c_loop
 (paren
 (paren
-id|AdapterName
+id|tp-&gt;CardType-&gt;name
 (braket
 id|i
 )braket
@@ -7321,7 +7593,7 @@ id|tp-&gt;ProductID
 id|i
 )braket
 op_assign
-id|AdapterName
+id|tp-&gt;CardType-&gt;name
 (braket
 id|i
 )braket
@@ -7551,7 +7823,7 @@ id|tp-&gt;TransmitHaltScheduled
 op_assign
 l_int|1
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -7571,7 +7843,7 @@ id|tp-&gt;CMDqueue
 op_xor_assign
 id|OC_TRANSMIT
 suffix:semicolon
-id|sktr_cancel_tx_queue
+id|tms380tr_cancel_tx_queue
 c_func
 (paren
 id|tp
@@ -7828,7 +8100,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Set semaphore: SCB in use. */
 multiline_comment|/* Execute SCB and generate IRQ when done. */
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -7841,11 +8113,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * IRQ conditions: signal loss on the ring, transmit or receive of beacon&n; * frames (disabled if bit 1 of OPEN option is set); report error MAC&n; * frame transmit (disabled if bit 2 of OPEN option is set); open or short&n; * cirquit fault on the lobe is detected; remove MAC frame received;&n; * error counter overflow (255); opened adapter is the only station in ring.&n; * After some of the IRQs the adapter is closed!&n; */
-DECL|function|sktr_ring_status_irq
+multiline_comment|/*&n; * IRQ conditions: signal loss on the ring, transmit or receive of beacon&n; * frames (disabled if bit 1 of OPEN option is set); report error MAC&n; * frame transmit (disabled if bit 2 of OPEN option is set); open or short&n; * circuit fault on the lobe is detected; remove MAC frame received;&n; * error counter overflow (255); opened adapter is the only station in ring.&n; * After some of the IRQs the adapter is closed!&n; */
+DECL|function|tms380tr_ring_status_irq
 r_static
 r_void
-id|sktr_ring_status_irq
+id|tms380tr_ring_status_irq
 c_func
 (paren
 r_struct
@@ -7969,7 +8241,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|sktr_exec_cmd
+id|tms380tr_exec_cmd
 c_func
 (paren
 id|dev
@@ -8136,7 +8408,7 @@ id|tp-&gt;AdapterOpenFlag
 op_assign
 l_int|0
 suffix:semicolon
-id|sktr_open_adapter
+id|tms380tr_open_adapter
 c_func
 (paren
 id|dev
@@ -8147,10 +8419,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Issued if adapter has encountered an unrecoverable hardware&n; * or software error.&n; */
-DECL|function|sktr_chk_irq
+DECL|function|tms380tr_chk_irq
 r_static
 r_void
-id|sktr_chk_irq
+id|tms380tr_chk_irq
 c_func
 (paren
 r_struct
@@ -8247,7 +8519,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 OG
 l_int|3
 )paren
@@ -8686,7 +8958,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_chipset_init
+id|tms380tr_chipset_init
 c_func
 (paren
 id|dev
@@ -8705,10 +8977,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Internal adapter pointer to RAM data are copied from adapter into&n; * host system.&n; */
-DECL|function|sktr_read_ptr
+DECL|function|tms380tr_read_ptr
 r_static
-r_void
-id|sktr_read_ptr
+r_int
+id|tms380tr_read_ptr
 c_func
 (paren
 r_struct
@@ -8733,7 +9005,7 @@ r_int
 r_int
 id|adapterram
 suffix:semicolon
-id|sktr_read_ram
+id|tms380tr_read_ram
 c_func
 (paren
 id|dev
@@ -8751,7 +9023,7 @@ comma
 l_int|16
 )paren
 suffix:semicolon
-id|sktr_read_ram
+id|tms380tr_read_ram
 c_func
 (paren
 id|dev
@@ -8777,29 +9049,19 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Adapter RAM size: %d K&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
+r_return
 id|SWAPB
 c_func
 (paren
 id|adapterram
 )paren
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Reads a number of bytes from adapter to system memory.&n; */
-DECL|function|sktr_read_ram
+DECL|function|tms380tr_read_ram
 r_static
 r_void
-id|sktr_read_ram
+id|tms380tr_read_ram
 c_func
 (paren
 r_struct
@@ -8980,10 +9242,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Reads MAC address from adapter ROM.&n; */
-DECL|function|sktr_read_addr
+DECL|function|tms380tr_read_addr
 r_static
 r_void
-id|sktr_read_addr
+id|tms380tr_read_addr
 c_func
 (paren
 r_struct
@@ -9077,10 +9339,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Cancel all queued packets in the transmission queue.&n; */
-DECL|function|sktr_cancel_tx_queue
+DECL|function|tms380tr_cancel_tx_queue
 r_static
 r_void
-id|sktr_cancel_tx_queue
+id|tms380tr_cancel_tx_queue
 c_func
 (paren
 r_struct
@@ -9134,7 +9396,7 @@ id|tp-&gt;TplBusy
 op_assign
 id|tpl-&gt;NextTPLPtr
 suffix:semicolon
-id|sktr_write_tpl_status
+id|tms380tr_write_tpl_status
 c_func
 (paren
 id|tpl
@@ -9209,10 +9471,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function is called whenever a transmit interrupt is generated by the&n; * adapter. For a command complete interrupt, it is checked if we have to&n; * issue a new transmit command or not.&n; */
-DECL|function|sktr_tx_status_irq
+DECL|function|tms380tr_tx_status_irq
 r_static
 r_void
-id|sktr_tx_status_irq
+id|tms380tr_tx_status_irq
 c_func
 (paren
 r_struct
@@ -9284,27 +9546,6 @@ id|tp-&gt;TplBusy
 op_assign
 id|tpl-&gt;NextTPLPtr
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sktr_debug
-OG
-l_int|3
-)paren
-(brace
-id|sktr_dump
-c_func
-(paren
-id|tpl-&gt;MData
-comma
-id|SWAPB
-c_func
-(paren
-id|tpl-&gt;FrameSize
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Check the transmit status field only for directed frames*/
 r_if
 c_cond
@@ -9393,7 +9634,7 @@ r_else
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 OG
 l_int|3
 )paren
@@ -9425,7 +9666,7 @@ id|tpl
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 OG
 l_int|3
 )paren
@@ -9468,7 +9709,7 @@ OL
 id|MAX_TX_QUEUE
 )paren
 (brace
-id|sktr_hardware_send_packet
+id|tms380tr_hardware_send_packet
 c_func
 (paren
 id|dev
@@ -9481,10 +9722,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called if a frame receive interrupt is generated by the adapter.&n; * Check if the frame is valid and indicate it to system.&n; */
-DECL|function|sktr_rcv_status_irq
+DECL|function|tms380tr_rcv_status_irq
 r_static
 r_void
-id|sktr_rcv_status_irq
+id|tms380tr_rcv_status_irq
 c_func
 (paren
 r_struct
@@ -9623,13 +9864,13 @@ id|SaveHead
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* Return to sktr_interrupt */
+multiline_comment|/* Return to tms380tr_interrupt */
 )brace
 multiline_comment|/* Drop frames sent by myself */
 r_if
 c_cond
 (paren
-id|sktr_chk_frame
+id|tms380tr_chk_frame
 c_func
 (paren
 id|dev
@@ -9638,6 +9879,15 @@ id|rpl-&gt;MData
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Received my own frame&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9656,7 +9906,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|sktr_update_rcv_stats
+id|tms380tr_update_rcv_stats
 c_func
 (paren
 id|tp
@@ -9669,7 +9919,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sktr_debug
+id|tms380tr_debug
 OG
 l_int|3
 )paren
@@ -9687,7 +9937,7 @@ id|Length
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Indicate the received frame to system.&n;&t;&t;&t;&t; * The source routing padding is no more&n;&t;&t;&t;&t; * necessary with 2.2.x kernel.&n;&t;&t;&t;&t; * See: OpenOptions in sktr_init_opb()&n;&t;&t;&t;&t; */
+multiline_comment|/* Indicate the received frame to system the&n;&t;&t;&t;&t; * adapter does the Source-Routing padding for &n;&t;&t;&t;&t; * us. See: OpenOptions in tms380tr_init_opb()&n;&t;&t;&t;&t; */
 id|skb
 op_assign
 id|rpl-&gt;Skb
@@ -9786,10 +10036,6 @@ id|skb
 comma
 id|Length
 )paren
-suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|dev
 suffix:semicolon
 id|skb-&gt;protocol
 op_assign
@@ -9912,9 +10158,9 @@ multiline_comment|/* Data unreachable for DMA ? then use local buffer */
 r_if
 c_cond
 (paren
-id|tp-&gt;DeviceType
+id|tp-&gt;CardType-&gt;type
 op_eq
-id|SK_ISA
+id|TMS_ISA
 op_logical_and
 id|virt_to_bus
 c_func
@@ -10012,7 +10258,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Reset the CSTAT field in the list. */
-id|sktr_write_rpl_status
+id|tms380tr_write_rpl_status
 c_func
 (paren
 id|tp-&gt;RplTail
@@ -10028,7 +10274,7 @@ op_assign
 id|tp-&gt;RplTail-&gt;NextRPLPtr
 suffix:semicolon
 multiline_comment|/* Inform adapter about RPL valid. */
-id|sktr_exec_sifcmd
+id|tms380tr_exec_sifcmd
 c_func
 (paren
 id|dev
@@ -10041,10 +10287,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function should be used whenever the status of any RPL must be&n; * modified by the driver, because the compiler may otherwise change the&n; * order of instructions such that writing the RPL status may be executed&n; * at an undesireable time. When this function is used, the status is&n; * always written when the function is called.&n; */
-DECL|function|sktr_write_rpl_status
+DECL|function|tms380tr_write_rpl_status
 r_static
 r_void
-id|sktr_write_rpl_status
+id|tms380tr_write_rpl_status
 c_func
 (paren
 id|RPL
@@ -10064,10 +10310,10 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The function updates the statistic counters in mac-&gt;MacStat.&n; * It differtiates between directed and broadcast/multicast ( ==functional)&n; * frames.&n; */
-DECL|function|sktr_update_rcv_stats
+DECL|function|tms380tr_update_rcv_stats
 r_static
 r_void
-id|sktr_update_rcv_stats
+id|tms380tr_update_rcv_stats
 c_func
 (paren
 r_struct
@@ -10089,6 +10335,10 @@ id|Length
 id|tp-&gt;MacStat.rx_packets
 op_increment
 suffix:semicolon
+id|tp-&gt;MacStat.rx_bytes
+op_add_assign
+id|Length
+suffix:semicolon
 multiline_comment|/* Test functional bit */
 r_if
 c_cond
@@ -10109,11 +10359,11 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check if it is a frame of myself. Compare source address with my current&n; * address in reverse direction, and mask out the TR_RII.&n; */
-DECL|function|sktr_chk_frame
+DECL|function|tms380tr_chk_frame
 r_static
 r_int
 r_char
-id|sktr_chk_frame
+id|tms380tr_chk_frame
 c_func
 (paren
 r_struct
@@ -10207,11 +10457,12 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* It is my frame. */
 )brace
+macro_line|#if TMS380TR_DEBUG &gt; 0
 multiline_comment|/*&n; * Dump Packet (data)&n; */
-DECL|function|sktr_dump
+DECL|function|tms380tr_dump
 r_static
 r_void
-id|sktr_dump
+id|tms380tr_dump
 c_func
 (paren
 r_int
@@ -10320,15 +10571,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef MODULE
-DECL|variable|dev_sktr
+DECL|variable|dev_tms380tr
 r_static
 r_struct
 id|net_device
 op_star
-id|dev_sktr
+id|dev_tms380tr
 (braket
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 )braket
 suffix:semicolon
 DECL|variable|io
@@ -10336,7 +10588,7 @@ r_static
 r_int
 id|io
 (braket
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 )braket
 op_assign
 (brace
@@ -10350,7 +10602,7 @@ r_static
 r_int
 id|irq
 (braket
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 )braket
 op_assign
 (brace
@@ -10364,7 +10616,7 @@ r_static
 r_int
 id|mem
 (braket
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 )braket
 op_assign
 (brace
@@ -10382,7 +10634,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 )paren
 l_string|&quot;i&quot;
 )paren
@@ -10396,7 +10648,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 )paren
 l_string|&quot;i&quot;
 )paren
@@ -10410,7 +10662,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 )paren
 l_string|&quot;i&quot;
 )paren
@@ -10435,7 +10687,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 suffix:semicolon
 id|i
 op_increment
@@ -10455,14 +10707,14 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
 op_assign
 l_int|NULL
 suffix:semicolon
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10470,7 +10722,7 @@ op_assign
 id|init_trdev
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10481,7 +10733,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10496,7 +10748,7 @@ id|ENOMEM
 )paren
 suffix:semicolon
 )brace
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10508,7 +10760,7 @@ id|io
 id|i
 )braket
 suffix:semicolon
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10520,7 +10772,7 @@ id|irq
 id|i
 )braket
 suffix:semicolon
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10532,7 +10784,7 @@ id|mem
 id|i
 )braket
 suffix:semicolon
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10540,7 +10792,7 @@ op_member_access_from_pointer
 id|init
 op_assign
 op_amp
-id|sktr_probe
+id|tms380tr_probe
 suffix:semicolon
 r_if
 c_cond
@@ -10548,7 +10800,7 @@ c_cond
 id|register_trdev
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10560,7 +10812,7 @@ l_int|0
 id|kfree_s
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10572,7 +10824,7 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10590,7 +10842,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sktr: register_trdev() returned non-zero.&bslash;n&quot;
+l_string|&quot;tms380tr: register_trdev() returned non-zero.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -10634,7 +10886,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|SKTR_MAX_ADAPTERS
+id|TMS380TR_MAX_ADAPTERS
 suffix:semicolon
 id|i
 op_increment
@@ -10643,7 +10895,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10652,7 +10904,7 @@ id|i
 id|unregister_trdev
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10661,20 +10913,20 @@ suffix:semicolon
 id|release_region
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
 op_member_access_from_pointer
 id|base_addr
 comma
-id|SKTR_IO_EXTENT
+id|TMS380TR_IO_EXTENT
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10685,14 +10937,14 @@ id|irq
 id|free_irq
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
 op_member_access_from_pointer
 id|irq
 comma
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10702,7 +10954,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10715,7 +10967,7 @@ l_int|0
 id|free_dma
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10727,7 +10979,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10738,7 +10990,7 @@ id|priv
 id|kfree_s
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10756,7 +11008,7 @@ suffix:semicolon
 id|kfree_s
 c_func
 (paren
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket
@@ -10768,7 +11020,7 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
-id|dev_sktr
+id|dev_tms380tr
 (braket
 id|i
 )braket

@@ -4892,6 +4892,8 @@ comma
 id|dev_id
 comma
 id|handle
+comma
+id|bustime
 )paren
 suffix:semicolon
 multiline_comment|/* Claim the USB bandwidth if no error. */
@@ -5002,6 +5004,40 @@ id|first
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * usb_release_bandwidth():&n; *&n; * called to release an interrupt pipe&squot;s bandwidth (in microseconds)&n; */
+DECL|function|usb_release_bandwidth
+r_void
+id|usb_release_bandwidth
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|bw_alloc
+)paren
+(brace
+id|dev-&gt;bus-&gt;bandwidth_allocated
+op_sub_assign
+id|bw_alloc
+suffix:semicolon
+id|dev-&gt;bus-&gt;bandwidth_int_reqs
+op_decrement
+suffix:semicolon
+id|PRINTD
+(paren
+l_string|&quot;bw_alloc reduced to %d for %d requesters&quot;
+comma
+id|dev-&gt;bus-&gt;bandwidth_allocated
+comma
+id|dev-&gt;bus-&gt;bandwidth_int_reqs
+op_plus
+id|dev-&gt;bus-&gt;bandwidth_isoc_reqs
+)paren
+suffix:semicolon
+)brace
 DECL|function|usb_release_irq
 r_int
 id|usb_release_irq
@@ -5088,22 +5124,13 @@ c_func
 id|bustime
 )paren
 suffix:semicolon
-id|dev-&gt;bus-&gt;bandwidth_allocated
-op_sub_assign
-id|bustime
-suffix:semicolon
-id|dev-&gt;bus-&gt;bandwidth_int_reqs
-op_decrement
-suffix:semicolon
-id|PRINTD
+multiline_comment|/* work in microseconds */
+id|usb_release_bandwidth
+c_func
 (paren
-l_string|&quot;bw_alloc reduced to %d for %d requesters&quot;
+id|dev
 comma
-id|dev-&gt;bus-&gt;bandwidth_allocated
-comma
-id|dev-&gt;bus-&gt;bandwidth_int_reqs
-op_plus
-id|dev-&gt;bus-&gt;bandwidth_isoc_reqs
+id|bustime
 )paren
 suffix:semicolon
 )brace
@@ -5658,6 +5685,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|usb_disconnect
+)paren
+suffix:semicolon
+DECL|variable|usb_release_bandwidth
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|usb_release_bandwidth
 )paren
 suffix:semicolon
 DECL|variable|usb_set_address

@@ -2207,7 +2207,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Request a interrupt handler..&n; *&n; * Returns 0 (success) or negative (failure).&n; * Also returns/sets a &quot;handle pointer&quot; that release_irq can use to stop this&n; * interrupt.  (It&squot;s really a pointer to the TD).&n; */
+multiline_comment|/*&n; * Request a interrupt handler..&n; *&n; * Returns 0 (success) or negative (failure).&n; * Also returns/sets a &quot;handle pointer&quot; that release_irq can use to stop this&n; * interrupt.  (It&squot;s really a pointer to the TD.)&n; */
 DECL|function|uhci_request_irq
 r_static
 r_int
@@ -2237,6 +2237,9 @@ r_void
 op_star
 op_star
 id|handle
+comma
+r_int
+id|bustime
 )paren
 (brace
 r_struct
@@ -2419,6 +2422,14 @@ suffix:semicolon
 id|td-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+id|td-&gt;pipetype
+op_assign
+id|PIPE_INTERRUPT
+suffix:semicolon
+id|td-&gt;bandwidth_alloc
+op_assign
+id|bustime
 suffix:semicolon
 multiline_comment|/* if period 0, set _REMOVE flag */
 r_if
@@ -3475,6 +3486,10 @@ id|td-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|td-&gt;pipetype
+op_assign
+id|PIPE_ISOCHRONOUS
+suffix:semicolon
 id|td-&gt;isoc_td_number
 op_assign
 id|ix
@@ -4170,6 +4185,10 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
+id|td-&gt;pipetype
+op_assign
+id|PIPE_CONTROL
+suffix:semicolon
 multiline_comment|/*&n;&t; * If direction is &quot;send&quot;, change the frame from SETUP (0x2D)&n;&t; * to OUT (0xE1). Else change it from SETUP to IN (0x69).&n;&t; */
 id|destination
 op_xor_assign
@@ -4296,6 +4315,10 @@ op_assign
 op_amp
 id|prevtd-&gt;link
 suffix:semicolon
+id|td-&gt;pipetype
+op_assign
+id|PIPE_CONTROL
+suffix:semicolon
 id|data
 op_add_assign
 id|pktsze
@@ -4408,6 +4431,10 @@ op_assign
 id|UHCI_PTR_TERM
 suffix:semicolon
 multiline_comment|/* Terminate */
+id|td-&gt;pipetype
+op_assign
+id|PIPE_CONTROL
+suffix:semicolon
 multiline_comment|/* Start it up.. */
 id|ret
 op_assign
@@ -5036,6 +5063,10 @@ op_assign
 op_amp
 id|prevtd-&gt;link
 suffix:semicolon
+id|td-&gt;pipetype
+op_assign
+id|PIPE_BULK
+suffix:semicolon
 id|data
 op_add_assign
 id|maxsze
@@ -5435,6 +5466,10 @@ suffix:semicolon
 id|td-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+id|td-&gt;pipetype
+op_assign
+id|PIPE_BULK
 suffix:semicolon
 id|data
 op_add_assign
@@ -6503,7 +6538,7 @@ op_or
 id|TD_CTRL_IOC
 suffix:semicolon
 multiline_comment|/* The HC only removes it when it completed */
-multiline_comment|/* successfully, so force remove and readd it */
+multiline_comment|/* successfully, so force remove and re-add it */
 id|uhci_remove_td
 c_func
 (paren
@@ -6577,6 +6612,21 @@ id|uhci_td_free
 c_func
 (paren
 id|td
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|td-&gt;pipetype
+op_eq
+id|PIPE_INTERRUPT
+)paren
+id|usb_release_bandwidth
+c_func
+(paren
+id|usb_dev
+comma
+id|td-&gt;bandwidth_alloc
 )paren
 suffix:semicolon
 )brace
@@ -6859,6 +6909,11 @@ suffix:semicolon
 id|td-&gt;qh
 op_assign
 l_int|NULL
+suffix:semicolon
+id|td-&gt;pipetype
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|uhci-&gt;fl-&gt;frame
 (braket

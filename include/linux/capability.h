@@ -164,7 +164,6 @@ DECL|macro|CAP_SYS_PACCT
 mdefine_line|#define CAP_SYS_PACCT        20
 multiline_comment|/* Allow configuration of the secure attention key */
 multiline_comment|/* Allow administration of the random device */
-multiline_comment|/* Allow device administration (mknod)*/
 multiline_comment|/* Allow examination and configuration of disk quotas */
 multiline_comment|/* Allow configuring the kernel&squot;s syslog (printk behaviour) */
 multiline_comment|/* Allow setting the domainname */
@@ -224,6 +223,9 @@ multiline_comment|/* Allow configuration of tty devices */
 multiline_comment|/* Allow vhangup() of tty */
 DECL|macro|CAP_SYS_TTY_CONFIG
 mdefine_line|#define CAP_SYS_TTY_CONFIG   26
+multiline_comment|/* Allow the privileged aspects of mknod() */
+DECL|macro|CAP_MKNOD
+mdefine_line|#define CAP_MKNOD            27
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* &n; * Bounding set&n; */
 r_extern

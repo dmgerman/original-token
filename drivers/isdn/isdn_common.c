@@ -10369,7 +10369,7 @@ c_func
 op_amp
 id|d-&gt;rcv_waitq
 (braket
-id|m
+id|j
 )braket
 )paren
 suffix:semicolon
@@ -10379,7 +10379,7 @@ c_func
 op_amp
 id|d-&gt;snd_waitq
 (braket
-id|m
+id|j
 )braket
 )paren
 suffix:semicolon

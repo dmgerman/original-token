@@ -1221,6 +1221,8 @@ comma
 r_void
 op_star
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|release_irq
@@ -1698,6 +1700,18 @@ suffix:semicolon
 DECL|macro|usb_dec_dev_use
 mdefine_line|#define usb_dec_dev_use usb_free_dev
 r_extern
+r_void
+id|usb_release_bandwidth
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|usb_control_msg
 c_func
@@ -1926,6 +1940,14 @@ id|isocdesc
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Calling this entity a &quot;pipe&quot; is glorifying it. A USB pipe&n; * is something embarrassingly simple: it basically consists&n; * of the following information:&n; *  - device number (7 bits)&n; *  - endpoint number (4 bits)&n; *  - current Data0/1 state (1 bit)&n; *  - direction (1 bit)&n; *  - speed (1 bit)&n; *  - max packet size (2 bits: 8, 16, 32 or 64)&n; *  - pipe type (2 bits: control, interrupt, bulk, isochronous)&n; *&n; * That&squot;s 18 bits. Really. Nothing more. And the USB people have&n; * documented these eighteen bits as some kind of glorious&n; * virtual data structure.&n; *&n; * Let&squot;s not fall in that trap. We&squot;ll just encode it as a simple&n; * unsigned int. The encoding is:&n; *&n; *  - max size:&t;&t;bits 0-1&t;(00 = 8, 01 = 16, 10 = 32, 11 = 64)&n; *  - direction:&t;bit 7&t;&t;(0 = Host-to-Device [Out], 1 = Device-to-Host [In])&n; *  - device:&t;&t;bits 8-14&n; *  - endpoint:&t;&t;bits 15-18&n; *  - Data0/1:&t;&t;bit 19&n; *  - speed:&t;&t;bit 26&t;&t;(0 = Full, 1 = Low Speed)&n; *  - pipe type:&t;bits 30-31&t;(00 = isochronous, 01 = interrupt, 10 = control, 11 = bulk)&n; *&n; * Why? Because it&squot;s arbitrary, and whatever encoding we select is really&n; * up to us. This one happens to share a lot of bit positions with the UHCI&n; * specification, so that much of the uhci driver can just mask the bits&n; * appropriately.&n; */
+DECL|macro|PIPE_ISOCHRONOUS
+mdefine_line|#define PIPE_ISOCHRONOUS&t;&t;0
+DECL|macro|PIPE_INTERRUPT
+mdefine_line|#define PIPE_INTERRUPT&t;&t;&t;1
+DECL|macro|PIPE_CONTROL
+mdefine_line|#define PIPE_CONTROL&t;&t;&t;2
+DECL|macro|PIPE_BULK
+mdefine_line|#define PIPE_BULK&t;&t;&t;3
 DECL|macro|usb_maxpacket
 mdefine_line|#define usb_maxpacket(dev, pipe, out)&t;(out &bslash;&n;&t;&t;&t;&t;? (dev)-&gt;epmaxpacketout[usb_pipeendpoint(pipe)] &bslash;&n;&t;&t;&t;&t;: (dev)-&gt;epmaxpacketin [usb_pipeendpoint(pipe)] )
 DECL|macro|usb_packetid
@@ -1947,13 +1969,13 @@ mdefine_line|#define usb_pipeslow(pipe)&t;(((pipe) &gt;&gt; 26) &amp; 1)
 DECL|macro|usb_pipetype
 mdefine_line|#define usb_pipetype(pipe)&t;(((pipe) &gt;&gt; 30) &amp; 3)
 DECL|macro|usb_pipeisoc
-mdefine_line|#define usb_pipeisoc(pipe)&t;(usb_pipetype((pipe)) == 0)
+mdefine_line|#define usb_pipeisoc(pipe)&t;(usb_pipetype((pipe)) == PIPE_ISOCHRONOUS)
 DECL|macro|usb_pipeint
-mdefine_line|#define usb_pipeint(pipe)&t;(usb_pipetype((pipe)) == 1)
+mdefine_line|#define usb_pipeint(pipe)&t;(usb_pipetype((pipe)) == PIPE_INTERRUPT)
 DECL|macro|usb_pipecontrol
-mdefine_line|#define usb_pipecontrol(pipe)&t;(usb_pipetype((pipe)) == 2)
+mdefine_line|#define usb_pipecontrol(pipe)&t;(usb_pipetype((pipe)) == PIPE_CONTROL)
 DECL|macro|usb_pipebulk
-mdefine_line|#define usb_pipebulk(pipe)&t;(usb_pipetype((pipe)) == 3)
+mdefine_line|#define usb_pipebulk(pipe)&t;(usb_pipetype((pipe)) == PIPE_BULK)
 DECL|macro|PIPE_DEVEP_MASK
 mdefine_line|#define PIPE_DEVEP_MASK&t;&t;0x0007ff00
 multiline_comment|/* The D0/D1 toggle bits */
@@ -2036,21 +2058,21 @@ suffix:semicolon
 )brace
 multiline_comment|/* Create various pipes... */
 DECL|macro|usb_sndctrlpipe
-mdefine_line|#define usb_sndctrlpipe(dev,endpoint)&t;((2 &lt;&lt; 30) | __create_pipe(dev,endpoint))
+mdefine_line|#define usb_sndctrlpipe(dev,endpoint)&t;((PIPE_CONTROL &lt;&lt; 30) | __create_pipe(dev,endpoint))
 DECL|macro|usb_rcvctrlpipe
-mdefine_line|#define usb_rcvctrlpipe(dev,endpoint)&t;((2 &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
+mdefine_line|#define usb_rcvctrlpipe(dev,endpoint)&t;((PIPE_CONTROL &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
 DECL|macro|usb_sndisocpipe
-mdefine_line|#define usb_sndisocpipe(dev,endpoint)&t;((0 &lt;&lt; 30) | __create_pipe(dev,endpoint))
+mdefine_line|#define usb_sndisocpipe(dev,endpoint)&t;((PIPE_ISOCHRONOUS &lt;&lt; 30) | __create_pipe(dev,endpoint))
 DECL|macro|usb_rcvisocpipe
-mdefine_line|#define usb_rcvisocpipe(dev,endpoint)&t;((0 &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
+mdefine_line|#define usb_rcvisocpipe(dev,endpoint)&t;((PIPE_ISOCHRONOUS &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
 DECL|macro|usb_sndbulkpipe
-mdefine_line|#define usb_sndbulkpipe(dev,endpoint)&t;((3 &lt;&lt; 30) | __create_pipe(dev,endpoint))
+mdefine_line|#define usb_sndbulkpipe(dev,endpoint)&t;((PIPE_BULK &lt;&lt; 30) | __create_pipe(dev,endpoint))
 DECL|macro|usb_rcvbulkpipe
-mdefine_line|#define usb_rcvbulkpipe(dev,endpoint)&t;((3 &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
+mdefine_line|#define usb_rcvbulkpipe(dev,endpoint)&t;((PIPE_BULK &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
 DECL|macro|usb_snddefctrl
-mdefine_line|#define usb_snddefctrl(dev)&t;&t;((2 &lt;&lt; 30) | __default_pipe(dev))
+mdefine_line|#define usb_snddefctrl(dev)&t;&t;((PIPE_CONTROL &lt;&lt; 30) | __default_pipe(dev))
 DECL|macro|usb_rcvdefctrl
-mdefine_line|#define usb_rcvdefctrl(dev)&t;&t;((2 &lt;&lt; 30) | __default_pipe(dev) | USB_DIR_IN)
+mdefine_line|#define usb_rcvdefctrl(dev)&t;&t;((PIPE_CONTROL &lt;&lt; 30) | __default_pipe(dev) | USB_DIR_IN)
 multiline_comment|/*&n; * Send and receive control messages..&n; */
 r_int
 id|usb_new_device

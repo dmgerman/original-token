@@ -481,7 +481,7 @@ mdefine_line|#define IOADDR(devfn, where)&t;((0xC000 | ((devfn &amp; 0x78) &lt;&
 DECL|macro|FUNC
 mdefine_line|#define FUNC(devfn)&t;&t;(((devfn &amp; 7) &lt;&lt; 1) | 0xf0)
 DECL|macro|SET
-mdefine_line|#define SET(dev)&t;&t;if (dev-&gt;devfn) return PCIBIOS_DEVICE_NOT_FOUND;&t;&t;&bslash;&n;&t;&t;&t;&t;outb(FUNC(dev-&gt;devfn), 0xCF8);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;outb(dev-&gt;bus-&gt;number, 0xCFA);
+mdefine_line|#define SET(dev)&t;&t;if (dev-&gt;devfn &amp; 0x80) return PCIBIOS_DEVICE_NOT_FOUND;&t;&t;&bslash;&n;&t;&t;&t;&t;outb(FUNC(dev-&gt;devfn), 0xCF8);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;outb(dev-&gt;bus-&gt;number, 0xCFA);
 DECL|function|pci_conf2_read_config_byte
 r_static
 r_int

@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/sunrpc/sched.h&gt;
 multiline_comment|/*&n; * Maximum number of iov&squot;s we use.&n; */
 DECL|macro|MAX_IOVEC
-mdefine_line|#define MAX_IOVEC&t;8
+mdefine_line|#define MAX_IOVEC&t;10
 multiline_comment|/*&n; * The transport code maintains an estimate on the maximum number of out-&n; * standing RPC requests, using a smoothed version of the congestion&n; * avoidance implemented in 44BSD. This is basically the Van Jacobson&n; * slow start algorithm: If a retransmit occurs, the congestion window is&n; * halved; otherwise, it is incremented by 1/cwnd when&n; *&n; *&t;-&t;a reply is received and&n; *&t;-&t;a full number of requests are outstanding and&n; *&t;-&t;the congestion window hasn&squot;t been updated recently.&n; *&n; * Upper procedures may check whether a request would block waiting for&n; * a free RPC slot by using the RPC_CONGESTED() macro.&n; *&n; * Note: on machines with low memory we should probably use a smaller&n; * MAXREQS value: At 32 outstanding reqs with 8 megs of RAM, fragment&n; * reassembly will frequently run out of memory.&n; * Come Linux 2.3, we&squot;ll handle fragments directly.&n; */
 DECL|macro|RPC_MAXCONG
 mdefine_line|#define RPC_MAXCONG&t;&t;16
@@ -21,7 +21,7 @@ mdefine_line|#define RPC_MAXCWND&t;&t;(RPC_MAXCONG * RPC_CWNDSCALE)
 DECL|macro|RPC_INITCWND
 mdefine_line|#define RPC_INITCWND&t;&t;RPC_CWNDSCALE
 DECL|macro|RPCXPRT_CONGESTED
-mdefine_line|#define RPCXPRT_CONGESTED(xprt) &bslash;&n;&t;((xprt)-&gt;cong &gt;= ((xprt)-&gt;nocong? RPC_MAXCWND : (xprt)-&gt;cwnd))
+mdefine_line|#define RPCXPRT_CONGESTED(xprt) &bslash;&n;&t;((xprt)-&gt;cong &gt;= (xprt)-&gt;cwnd)
 multiline_comment|/* Default timeout values */
 DECL|macro|RPC_MAX_UDP_TIMEOUT
 mdefine_line|#define RPC_MAX_UDP_TIMEOUT&t;(6*HZ)
@@ -213,23 +213,11 @@ op_star
 id|rx_pending
 suffix:semicolon
 multiline_comment|/* receive pending list */
-DECL|member|tx_pending
-r_struct
-id|rpc_xprt
-op_star
-id|tx_pending
-suffix:semicolon
-multiline_comment|/* transmit pending list */
 DECL|member|rx_pending_flag
 r_int
 id|rx_pending_flag
 suffix:semicolon
 multiline_comment|/* are we on the rcv pending list ? */
-DECL|member|tx_pending_flag
-r_int
-id|tx_pending_flag
-suffix:semicolon
-multiline_comment|/* are we on the xmit pending list ? */
 DECL|member|file
 r_struct
 id|file
@@ -425,13 +413,7 @@ id|u32
 id|tcp_copied
 suffix:semicolon
 multiline_comment|/* copied to request */
-multiline_comment|/*&n;&t; * TCP send stuff&n;&t; */
-DECL|member|snd_buf
-r_struct
-id|rpc_iov
-id|snd_buf
-suffix:semicolon
-multiline_comment|/* send buffer */
+multiline_comment|/*&n;&t; * Send stuff&n;&t; */
 DECL|member|snd_task
 r_struct
 id|rpc_task
@@ -439,11 +421,6 @@ op_star
 id|snd_task
 suffix:semicolon
 multiline_comment|/* Task blocked in send */
-DECL|member|snd_sent
-id|u32
-id|snd_sent
-suffix:semicolon
-multiline_comment|/* Bytes we have sent */
 DECL|member|old_data_ready
 r_void
 (paren
@@ -481,6 +458,10 @@ r_struct
 id|sock
 op_star
 )paren
+suffix:semicolon
+DECL|member|cong_wait
+id|wait_queue_head_t
+id|cong_wait
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -618,6 +599,22 @@ c_func
 r_struct
 id|rpc_task
 op_star
+)paren
+suffix:semicolon
+r_int
+id|xprt_clear_backlog
+c_func
+(paren
+r_struct
+id|rpc_xprt
+op_star
+)paren
+suffix:semicolon
+r_int
+id|xprt_tcp_pending
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__*/

@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB scsi like devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; * This driver is scitzoid  - it makes a USB device appear as both a SCSI device&n; * and a character device. The latter is only available if the device has an&n; * interrupt endpoint, and is used specifically to receive interrupt events.&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug in&n; * device specific filter modules, which can do their own thing when required.&n; *&n; * Further reference.&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the transformation of SCSI command blocks to the&n; *&t;equivalent USB control and data transfer required.&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on SCSI commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WIERD!!&n; *&n; */
+multiline_comment|/* Driver for USB scsi like devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; * This driver is schizoid  - it makes a USB device appear as both a SCSI device&n; * and a character device. The latter is only available if the device has an&n; * interrupt endpoint, and is used specifically to receive interrupt events.&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug in&n; * device specific filter modules, which can do their own thing when required.&n; *&n; * Further reference.&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the transformation of SCSI command blocks to the&n; *&t;equivalent USB control and data transfer required.&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on SCSI commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -397,7 +397,7 @@ id|this_xfer
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/*US_DEBUGP(&quot;Bulk xfer %x(%d)&bslash;n&quot;, (unsigned int)buf, this_xfer);*/
+multiline_comment|/* US_DEBUGP(&quot;Bulk xfer %x(%d)&bslash;n&quot;, (unsigned int)buf, this_xfer); */
 id|result
 op_assign
 id|us-&gt;pusb_dev-&gt;bus-&gt;op
@@ -455,7 +455,7 @@ id|USB_ST_STALL
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;clearing endpoing halt for pipe %x&bslash;n&quot;
+l_string|&quot;clearing endpoint halt for pipe %x&bslash;n&quot;
 comma
 id|pipe
 )paren
@@ -474,7 +474,7 @@ op_or
 (paren
 id|pipe
 op_amp
-l_int|0x80
+id|USB_DIR_IN
 )paren
 )paren
 suffix:semicolon
@@ -935,7 +935,7 @@ id|us-&gt;ip_waitq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* we dont want another interrupt */
+multiline_comment|/* we don&squot;t want another interrupt */
 r_return
 l_int|0
 suffix:semicolon
@@ -959,36 +959,14 @@ id|cmd
 l_int|12
 )braket
 suffix:semicolon
-id|devrequest
-id|dr
+r_int
+id|result
 suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
 l_string|&quot;pop_CB_reset&bslash;n&quot;
 )paren
-suffix:semicolon
-id|dr.requesttype
-op_assign
-id|USB_TYPE_CLASS
-op_or
-id|USB_RT_INTERFACE
-suffix:semicolon
-id|dr.request
-op_assign
-id|US_CBI_ADSC
-suffix:semicolon
-id|dr.value
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.index
-op_assign
-id|us-&gt;pusb_dev-&gt;ifnum
-suffix:semicolon
-id|dr.length
-op_assign
-l_int|12
 suffix:semicolon
 id|memset
 c_func
@@ -1018,9 +996,9 @@ l_int|1
 op_assign
 l_int|4
 suffix:semicolon
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|result
+op_assign
+id|usb_control_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1033,14 +1011,26 @@ comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+id|US_CBI_ADSC
+comma
+id|USB_TYPE_CLASS
+op_or
+id|USB_RT_INTERFACE
+comma
+l_int|0
+comma
+id|us-&gt;pusb_dev-&gt;ifnum
 comma
 id|cmd
 comma
-l_int|12
+r_sizeof
+(paren
+id|cmd
+)paren
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* long wait for reset */
@@ -1049,7 +1039,7 @@ c_func
 (paren
 id|HZ
 op_star
-l_int|5
+l_int|6
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -1065,7 +1055,7 @@ id|us-&gt;pusb_dev
 comma
 id|us-&gt;ep_in
 op_or
-l_int|0x80
+id|USB_DIR_IN
 )paren
 suffix:semicolon
 id|usb_clear_halt
@@ -1074,6 +1064,8 @@ c_func
 id|us-&gt;pusb_dev
 comma
 id|us-&gt;ep_out
+op_or
+id|USB_DIR_OUT
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -1109,9 +1101,6 @@ op_star
 )paren
 id|srb-&gt;host_scribble
 suffix:semicolon
-id|devrequest
-id|dr
-suffix:semicolon
 r_int
 r_char
 id|cmd
@@ -1139,28 +1128,6 @@ id|retry
 op_decrement
 )paren
 (brace
-id|dr.requesttype
-op_assign
-id|USB_TYPE_CLASS
-op_or
-id|USB_RT_INTERFACE
-suffix:semicolon
-id|dr.request
-op_assign
-id|US_CBI_ADSC
-suffix:semicolon
-id|dr.value
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.index
-op_assign
-id|us-&gt;pusb_dev-&gt;ifnum
-suffix:semicolon
-id|dr.length
-op_assign
-id|srb-&gt;cmd_len
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1169,10 +1136,6 @@ op_amp
 id|US_FL_FIXED_COMMAND
 )paren
 (brace
-id|dr.length
-op_assign
-id|us-&gt;fixedlength
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -1341,9 +1304,7 @@ suffix:semicolon
 )brace
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1356,14 +1317,23 @@ comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+id|US_CBI_ADSC
+comma
+id|USB_TYPE_CLASS
+op_or
+id|USB_RT_INTERFACE
+comma
+l_int|0
+comma
+id|us-&gt;pusb_dev-&gt;ifnum
 comma
 id|cmd
 comma
 id|us-&gt;fixedlength
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -1423,9 +1393,7 @@ suffix:semicolon
 multiline_comment|/* start */
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1438,14 +1406,23 @@ comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+id|US_CBI_ADSC
+comma
+id|USB_TYPE_CLASS
+op_or
+id|USB_RT_INTERFACE
+comma
+l_int|0
+comma
+id|us-&gt;pusb_dev-&gt;ifnum
 comma
 id|cmd
 comma
 id|us-&gt;fixedlength
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 id|wait_ms
@@ -1462,11 +1439,10 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1479,16 +1455,26 @@ comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+id|US_CBI_ADSC
+comma
+id|USB_TYPE_CLASS
+op_or
+id|USB_RT_INTERFACE
+comma
+l_int|0
+comma
+id|us-&gt;pusb_dev-&gt;ifnum
 comma
 id|srb-&gt;cmnd
 comma
 id|srb-&gt;cmd_len
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1538,9 +1524,6 @@ id|status
 l_int|2
 )braket
 suffix:semicolon
-id|devrequest
-id|dr
-suffix:semicolon
 r_int
 id|retry
 op_assign
@@ -1571,35 +1554,9 @@ id|retry
 op_decrement
 )paren
 (brace
-id|dr.requesttype
-op_assign
-id|USB_DIR_IN
-op_or
-id|USB_TYPE_STANDARD
-op_or
-id|USB_RT_DEVICE
-suffix:semicolon
-id|dr.request
-op_assign
-id|USB_REQ_GET_STATUS
-suffix:semicolon
-id|dr.index
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.value
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.length
-op_assign
-l_int|2
-suffix:semicolon
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1612,8 +1569,17 @@ comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+id|USB_REQ_GET_STATUS
+comma
+id|USB_DIR_IN
+op_or
+id|USB_TYPE_STANDARD
+op_or
+id|USB_RT_DEVICE
+comma
+l_int|0
+comma
+l_int|0
 comma
 id|status
 comma
@@ -1623,6 +1589,8 @@ id|status
 )paren
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -1743,9 +1711,7 @@ id|us-&gt;ep_int
 suffix:semicolon
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|request_irq
+id|usb_request_irq
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1775,7 +1741,7 @@ id|result
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;usb_scsi: usb_request_irq failed (0x%x), No interrupt for CBI&bslash;n&quot;
+l_string|&quot;usb_request_irq failed (0x%x), No interrupt for CBI&bslash;n&quot;
 comma
 id|result
 )paren
@@ -2037,7 +2003,7 @@ id|USB_ST_STALL
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;CBI  transfer %x&bslash;n&quot;
+l_string|&quot;CBI transfer %x&bslash;n&quot;
 comma
 id|result
 )paren
@@ -2103,39 +2069,12 @@ op_star
 id|us
 )paren
 (brace
-id|devrequest
-id|dr
-suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-id|dr.requesttype
-op_assign
-id|USB_TYPE_CLASS
-op_or
-id|USB_RT_INTERFACE
-suffix:semicolon
-id|dr.request
-op_assign
-id|US_BULK_RESET
-suffix:semicolon
-id|dr.value
-op_assign
-id|US_BULK_RESET_HARD
-suffix:semicolon
-id|dr.index
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.length
-op_assign
-l_int|0
-suffix:semicolon
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -2148,14 +2087,23 @@ comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+id|US_BULK_RESET
+comma
+id|USB_TYPE_CLASS
+op_or
+id|USB_RT_INTERFACE
+comma
+id|US_BULK_RESET_HARD
+comma
+l_int|0
 comma
 l_int|NULL
 comma
 l_int|0
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -2178,7 +2126,7 @@ id|us-&gt;pusb_dev
 comma
 id|us-&gt;ep_in
 op_or
-l_int|0x80
+id|USB_DIR_IN
 )paren
 suffix:semicolon
 id|usb_clear_halt
@@ -2187,6 +2135,8 @@ c_func
 id|us-&gt;pusb_dev
 comma
 id|us-&gt;ep_out
+op_or
+id|USB_DIR_OUT
 )paren
 suffix:semicolon
 multiline_comment|/* long wait for reset */
@@ -2195,7 +2145,7 @@ c_func
 (paren
 id|HZ
 op_star
-l_int|5
+l_int|6
 )paren
 suffix:semicolon
 r_return
@@ -2895,12 +2845,10 @@ id|prev-&gt;next
 op_ne
 id|us
 )paren
-(brace
 id|prev
 op_assign
 id|prev-&gt;next
 suffix:semicolon
-)brace
 id|prev-&gt;next
 op_assign
 id|us-&gt;next
@@ -3908,6 +3856,7 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* end switch on cmnd[0] */
 id|us-&gt;srb-&gt;result
 op_assign
 id|us
@@ -4175,6 +4124,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* end switch on cmnd[0] */
 id|US_DEBUGP
 c_func
 (paren
@@ -4351,6 +4301,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* end switch on cmnd[0] */
 )brace
 multiline_comment|/* force attention on first command */
 r_if
@@ -4517,6 +4468,7 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* end switch on action */
 r_if
 c_cond
 (paren
@@ -4562,22 +4514,26 @@ op_eq
 id|SIGUSR2
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;USBSCSI debug toggle&bslash;n&quot;
-)paren
-suffix:semicolon
 id|usbscsi_debug
 op_assign
 op_logical_neg
 id|usbscsi_debug
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|USB_SCSI
+l_string|&quot;debug toggle = %d&bslash;n&quot;
+comma
+id|usbscsi_debug
+)paren
 suffix:semicolon
 )brace
 r_else
 (brace
 r_break
 suffix:semicolon
+multiline_comment|/* exit the loop on any other signal */
 )brace
 )brace
 )brace
@@ -4834,7 +4790,7 @@ l_int|0
 dot
 id|bInterfaceClass
 op_ne
-l_int|8
+id|USB_CLASS_MASS_STORAGE
 op_logical_or
 id|dev-&gt;config
 (braket
@@ -5186,14 +5142,18 @@ op_increment
 r_if
 c_cond
 (paren
+(paren
 id|interface-&gt;endpoint
 (braket
 id|i
 )braket
 dot
 id|bmAttributes
+op_amp
+id|USB_ENDPOINT_XFERTYPE_MASK
+)paren
 op_eq
-l_int|0x02
+id|USB_ENDPOINT_XFER_BULK
 )paren
 (brace
 r_if
@@ -5217,7 +5177,7 @@ id|i
 dot
 id|bEndpointAddress
 op_amp
-l_int|0x0f
+id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
 r_else
 id|ss-&gt;ep_out
@@ -5229,12 +5189,13 @@ id|i
 dot
 id|bEndpointAddress
 op_amp
-l_int|0x0f
+id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
 )brace
 r_else
 r_if
 c_cond
+(paren
 (paren
 id|interface-&gt;endpoint
 (braket
@@ -5242,8 +5203,11 @@ id|i
 )braket
 dot
 id|bmAttributes
+op_amp
+id|USB_ENDPOINT_XFERTYPE_MASK
+)paren
 op_eq
-l_int|0x03
+id|USB_ENDPOINT_XFER_INT
 )paren
 (brace
 id|ss-&gt;ep_int
@@ -5255,7 +5219,7 @@ id|i
 dot
 id|bEndpointAddress
 op_amp
-l_int|0x0f
+id|USB_ENDPOINT_NUMBER_MASK
 suffix:semicolon
 )brace
 )brace
@@ -5681,9 +5645,6 @@ op_eq
 l_int|0x0001
 )paren
 (brace
-id|devrequest
-id|dr
-suffix:semicolon
 id|__u8
 id|qstat
 (braket
@@ -5694,29 +5655,9 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* shuttle E-USB */
-id|dr.requesttype
+id|result
 op_assign
-l_int|0xC0
-suffix:semicolon
-id|dr.request
-op_assign
-l_int|1
-suffix:semicolon
-id|dr.index
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.value
-op_assign
-l_int|0
-suffix:semicolon
-id|dr.length
-op_assign
-l_int|0
-suffix:semicolon
-id|ss-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|control_msg
+id|usb_control_msg
 c_func
 (paren
 id|ss-&gt;pusb_dev
@@ -5729,14 +5670,21 @@ comma
 l_int|0
 )paren
 comma
-op_amp
-id|dr
+l_int|1
+comma
+l_int|0xC0
+comma
+l_int|0
+comma
+l_int|0
 comma
 id|qstat
 comma
 l_int|2
 comma
 id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -5774,9 +5722,7 @@ id|ss-&gt;ep_int
 suffix:semicolon
 id|result
 op_assign
-id|ss-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|request_irq
+id|usb_request_irq
 c_func
 (paren
 id|ss-&gt;pusb_dev
@@ -5814,7 +5760,7 @@ id|ss-&gt;ip_waitq
 comma
 id|HZ
 op_star
-l_int|5
+l_int|6
 )paren
 suffix:semicolon
 )brace

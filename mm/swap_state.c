@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* &n; * Keep a reserved false inode which we will use to mark pages in the&n; * page cache are acting as swap cache instead of file cache. &n; *&n; * We only need a unique pointer to satisfy the page cache, but we&squot;ll&n; * reserve an entire zeroed inode structure for the purpose just to&n; * ensure that any mistaken dereferences of this structure cause a&n; * kernel oops.&n; */
 DECL|variable|swapper_inode_operations
@@ -817,9 +818,19 @@ id|remove_from_swap_cache
 id|page
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|swap_free
 (paren
 id|entry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

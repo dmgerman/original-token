@@ -1,20 +1,16 @@
-multiline_comment|/* sktr.h: SysKonnect TokenRing driver for Linux&n; *&n; * Authors:&n; * - Christoph Goos &lt;cgoos@syskonnect.de&gt;&n; */
-macro_line|#ifndef __LINUX_SKTR_H
-DECL|macro|__LINUX_SKTR_H
-mdefine_line|#define __LINUX_SKTR_H
+multiline_comment|/* tms380tr.h: TI TMS380 Token Ring driver for Linux&n; *&n; * Authors:&n; * - Christoph Goos &lt;cgoos@syskonnect.de&gt;&n; */
+macro_line|#ifndef __LINUX_TMS380TR_H
+DECL|macro|__LINUX_TMS380TR_H
+mdefine_line|#define __LINUX_TMS380TR_H
 macro_line|#ifdef __KERNEL__
-DECL|macro|SKTR_MAX_ADAPTERS
-mdefine_line|#define SKTR_MAX_ADAPTERS 7
+DECL|macro|TMS380TR_MAX_ADAPTERS
+mdefine_line|#define TMS380TR_MAX_ADAPTERS 7
 DECL|macro|SEND_TIMEOUT
 mdefine_line|#define SEND_TIMEOUT 10*HZ
 DECL|macro|TR_RCF_LONGEST_FRAME_MASK
 mdefine_line|#define TR_RCF_LONGEST_FRAME_MASK 0x0070
 DECL|macro|TR_RCF_FRAME4K
 mdefine_line|#define TR_RCF_FRAME4K 0x0030
-DECL|macro|SK_ISA
-mdefine_line|#define SK_ISA 0
-DECL|macro|SK_PCI
-mdefine_line|#define SK_PCI 1
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*  Bit order for adapter communication with DMA&t;&t;    */
 multiline_comment|/*  --------------------------------------------------------------  */
@@ -767,7 +763,7 @@ DECL|macro|TX_STRIP_FS
 mdefine_line|#define TX_STRIP_FS&t;&t;0xFF00  /* R: reserved.&n;&t;&t;&t;&t;&t; * C: if no Transmission Error,&n;&t;&t;&t;&t;&t; * field contains copy of FS byte after&n;&t;&t;&t;&t;&t; * stripping of frame.&n;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n; * Structure of Transmit Parameter Lists (TPLs) (only one frame every TPL,&n; * but possibly multiple TPLs for one frame) the length of the TPLs has to be&n; * initialized in the OPL. (OPEN parameter list)&n; */
 DECL|macro|TPL_NUM
-mdefine_line|#define TPL_NUM&t;&t;9&t;/* Number of Transmit Parameter Lists.&n;&t;&t;&t;&t; * !! MUST BE &gt;= 3 !!&n;&t;&t;&t;&t; */
+mdefine_line|#define TPL_NUM&t;&t;3&t;/* Number of Transmit Parameter Lists.&n;&t;&t;&t;&t; * !! MUST BE &gt;= 3 !!&n;&t;&t;&t;&t; */
 macro_line|#pragma pack(1)
 DECL|typedef|TPL
 r_typedef
@@ -1134,6 +1130,34 @@ id|RPLIndex
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|TMS_ISA
+mdefine_line|#define TMS_ISA 1
+DECL|macro|TMS_PCI
+mdefine_line|#define TMS_PCI 2
+DECL|struct|cardinfo_table
+r_struct
+id|cardinfo_table
+(brace
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* 1 = ISA, 2 = PCI */
+DECL|member|vendor_id
+r_int
+id|vendor_id
+suffix:semicolon
+DECL|member|device_id
+r_int
+id|device_id
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Information that need to be kept for each board. */
 DECL|struct|net_local
 r_typedef
@@ -1248,11 +1272,6 @@ r_int
 r_int
 id|CMDqueue
 suffix:semicolon
-DECL|member|DeviceType
-r_int
-r_int
-id|DeviceType
-suffix:semicolon
 DECL|member|AdapterOpenFlag
 r_int
 r_int
@@ -1357,6 +1376,12 @@ id|tr_statistics
 id|MacStat
 suffix:semicolon
 multiline_comment|/* MAC statistics structure */
+DECL|member|CardType
+r_struct
+id|cardinfo_table
+op_star
+id|CardType
+suffix:semicolon
 DECL|member|timer
 r_struct
 id|timer_list
@@ -1376,5 +1401,5 @@ DECL|typedef|NET_LOCAL
 id|NET_LOCAL
 suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */
-macro_line|#endif&t;/* __LINUX_SKTR_H */
+macro_line|#endif&t;/* __LINUX_TMS380TR_H */
 eof

@@ -208,6 +208,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|result
+)paren
+r_return
+id|result
+suffix:semicolon
 id|result-&gt;i_sb
 op_assign
 id|sb

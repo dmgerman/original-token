@@ -175,4 +175,11 @@ c_func
 id|isa_dma_bridge_buggy
 )paren
 suffix:semicolon
+DECL|variable|pci_pci_problems
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_pci_problems
+)paren
+suffix:semicolon
 eof

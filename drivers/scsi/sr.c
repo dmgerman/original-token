@@ -4031,10 +4031,6 @@ id|Scsi_Cmnd
 op_star
 id|SCpnt
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|buffer
 op_assign
 (paren
@@ -5108,10 +5104,6 @@ id|cdi-&gt;dev
 )braket
 dot
 id|device
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_int
 id|stat

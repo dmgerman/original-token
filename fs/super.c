@@ -5178,6 +5178,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|d_inode
+)paren
+id|panic
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;: unable to allocate root inode&quot;
+)paren
+suffix:semicolon
 id|d_inode-&gt;i_rdev
 op_assign
 id|ROOT_DEV

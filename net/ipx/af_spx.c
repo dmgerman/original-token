@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;This module implements the (SPP-derived) Sequenced Packet eXchange&n; *&t;(SPX) protocol for Linux 2.1.X as specified in&n; *&t;&t;NetWare SPX Services Specification, Semantics and API&n; *&t;&t; Revision:       1.00&n; *&t;&t; Revision Date:  February 9, 1993&n; *&n; *&t;Developers:&n; *      Jay Schulist    &lt;Jay.Schulist@spacs.k12.wi.us&gt;&n; *&t;Jim Freeman&t;&lt;jfree@caldera.com&gt;&n; *&n; *&t;Changes:&n; *&t;Alan Cox&t;:&t;Fixed an skb_unshare check for NULL&n; *&t;&t;&t;&t;that crashed it under load. Renamed and&n; *&t;&t;&t;&t;made static the ipx ops. Removed the hack&n; *&t;&t;&t;&t;ipx methods interface. Dropped AF_SPX - its&n; *&t;&t;&t;&t;the wrong abstraction.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;None of the authors or maintainers or their employers admit&n; *&t;liability nor provide warranty for any of this software.&n; *&t;This material is provided &quot;as is&quot; and at no charge.&n; */
+multiline_comment|/*&n; *&t;This module implements the (SPP-derived) Sequenced Packet eXchange&n; *&t;(SPX) protocol for Linux 2.1.X as specified in&n; *&t;&t;NetWare SPX Services Specification, Semantics and API&n; *&t;&t; Revision:       1.00&n; *&t;&t; Revision Date:  February 9, 1993&n; *&n; *&t;Developers:&n; *      Jay Schulist    &lt;Jay.Schulist@spacs.k12.wi.us&gt;&n; *&t;Jim Freeman&t;&lt;jfree@caldera.com&gt;&n; *&n; *&t;Changes:&n; *&t;Alan Cox&t;:&t;Fixed an skb_unshare check for NULL&n; *&t;&t;&t;&t;that crashed it under load. Renamed and&n; *&t;&t;&t;&t;made static the ipx ops. Removed the hack&n; *&t;&t;&t;&t;ipx methods interface. Dropped AF_SPX - its&n; *&t;&t;&t;&t;the wrong abstraction.&n; *&t;Eduardo Trapani&t;:&t;Added a check for the return value of&n; *&t;&t;&t;&t;ipx_if_offset that crashed sock_alloc_send_skb.&n; *&t;&t;&t;&t;Added spx_datagram_poll() so that select()&n; *&t;&t;&t;&t;works now on SPX sockets.  Added updating&n; *&t;&t;&t;&t;of the alloc count to follow rmt_seq.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;None of the authors or maintainers or their employers admit&n; *&t;liability nor provide warranty for any of this software.&n; *&t;This material is provided &quot;as is&quot; and at no charge.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SPX) || defined(CONFIG_SPX_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 DECL|variable|ipx_operations
 r_static
 r_struct
@@ -94,6 +95,159 @@ op_star
 id|sk
 )paren
 suffix:semicolon
+multiline_comment|/* Datagram poll:&t;the same code as datagram_poll() in net/core&n;&t;&t;&t;but the right spx buffers are looked at and&n;&t;&t;&t;there is no question on the type of the socket&n;&t;&t;&t;*/
+DECL|function|spx_datagram_poll
+r_static
+r_int
+r_int
+id|spx_datagram_poll
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|socket
+op_star
+id|sock
+comma
+id|poll_table
+op_star
+id|wait
+)paren
+(brace
+r_struct
+id|sock
+op_star
+id|sk
+op_assign
+id|sock-&gt;sk
+suffix:semicolon
+r_struct
+id|spx_opt
+op_star
+id|pdata
+op_assign
+op_amp
+id|sk-&gt;tp_pinfo.af_spx
+suffix:semicolon
+r_int
+r_int
+id|mask
+suffix:semicolon
+id|poll_wait
+c_func
+(paren
+id|file
+comma
+id|sk-&gt;sleep
+comma
+id|wait
+)paren
+suffix:semicolon
+id|mask
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* exceptional events? */
+r_if
+c_cond
+(paren
+id|sk-&gt;err
+op_logical_or
+op_logical_neg
+id|skb_queue_empty
+c_func
+(paren
+op_amp
+id|sk-&gt;error_queue
+)paren
+)paren
+id|mask
+op_or_assign
+id|POLLERR
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;shutdown
+op_amp
+id|RCV_SHUTDOWN
+)paren
+id|mask
+op_or_assign
+id|POLLHUP
+suffix:semicolon
+multiline_comment|/* readable? */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb_queue_empty
+c_func
+(paren
+op_amp
+id|pdata-&gt;rcv_queue
+)paren
+)paren
+id|mask
+op_or_assign
+id|POLLIN
+op_or
+id|POLLRDNORM
+suffix:semicolon
+multiline_comment|/* Need to check for termination and startup */
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_CLOSE
+)paren
+id|mask
+op_or_assign
+id|POLLHUP
+suffix:semicolon
+multiline_comment|/* connection hasn&squot;t started yet? */
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_SYN_SENT
+)paren
+r_return
+id|mask
+suffix:semicolon
+multiline_comment|/* writable? */
+r_if
+c_cond
+(paren
+id|sock_writeable
+c_func
+(paren
+id|sk
+)paren
+)paren
+id|mask
+op_or_assign
+id|POLLOUT
+op_or
+id|POLLWRNORM
+op_or
+id|POLLWRBAND
+suffix:semicolon
+r_else
+id|sk-&gt;socket-&gt;flags
+op_or_assign
+id|SO_NOSPACE
+suffix:semicolon
+r_return
+id|mask
+suffix:semicolon
+)brace
 multiline_comment|/* Create the SPX specific data */
 DECL|function|spx_sock_init
 r_static
@@ -1638,6 +1792,18 @@ r_struct
 id|ipxspxhdr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+OL
+l_int|0
+)paren
+multiline_comment|/* ENETUNREACH */
+r_return
+op_minus
+id|ENETUNREACH
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -2868,6 +3034,12 @@ c_func
 id|ipxh-&gt;spx.ackseq
 )paren
 suffix:semicolon
+id|pdata-&gt;alloc
+op_assign
+id|pdata-&gt;rmt_seq
+op_plus
+l_int|3
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3862,9 +4034,8 @@ id|spx_accept
 comma
 id|spx_getname
 comma
-id|datagram_poll
+id|spx_datagram_poll
 comma
-multiline_comment|/* this does seqpacket too */
 id|spx_ioctl
 comma
 id|spx_listen

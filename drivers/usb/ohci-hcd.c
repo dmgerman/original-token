@@ -946,6 +946,9 @@ r_void
 op_star
 op_star
 id|handle
+comma
+r_int
+id|bustime
 )paren
 (brace
 r_struct
