@@ -393,20 +393,24 @@ DECL|macro|HSCB_ADDR
 mdefine_line|#define&t;HSCB_ADDR       &t;&t;0x54
 DECL|macro|CUR_SCBID
 mdefine_line|#define&t;CUR_SCBID       &t;&t;0x58
+DECL|macro|CMDOUTCNT
+mdefine_line|#define&t;CMDOUTCNT       &t;&t;0x59
+DECL|macro|SCSICONF
+mdefine_line|#define&t;SCSICONF        &t;&t;0x5a
+DECL|macro|RESET_SCSI
+mdefine_line|#define&t;&t;RESET_SCSI      &t;0x40
+DECL|macro|FIFODEPTH
+mdefine_line|#define&t;FIFODEPTH       &t;&t;0x5a
 DECL|macro|ARG_1
-mdefine_line|#define&t;ARG_1           &t;&t;0x59
+mdefine_line|#define&t;ARG_1           &t;&t;0x5b
 DECL|macro|RETURN_1
-mdefine_line|#define&t;RETURN_1        &t;&t;0x59
+mdefine_line|#define&t;RETURN_1        &t;&t;0x5b
 DECL|macro|SEND_MSG
 mdefine_line|#define&t;&t;SEND_MSG        &t;0x80
 DECL|macro|SEND_SENSE
 mdefine_line|#define&t;&t;SEND_SENSE      &t;0x40
 DECL|macro|SEND_REJ
 mdefine_line|#define&t;&t;SEND_REJ        &t;0x20
-DECL|macro|SCSICONF
-mdefine_line|#define&t;SCSICONF        &t;&t;0x5a
-DECL|macro|RESET_SCSI
-mdefine_line|#define&t;&t;RESET_SCSI      &t;0x40
 DECL|macro|HOSTCONF
 mdefine_line|#define&t;HOSTCONF        &t;&t;0x5d
 DECL|macro|HA_274_BIOSCTRL

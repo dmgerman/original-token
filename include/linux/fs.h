@@ -3026,8 +3026,10 @@ r_int
 id|invalidate_inodes
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|super_block
+op_star
+id|sb
 )paren
 suffix:semicolon
 r_extern

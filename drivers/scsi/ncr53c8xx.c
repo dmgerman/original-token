@@ -27805,7 +27805,7 @@ l_string|&quot;ncr53c8xx&quot;
 suffix:semicolon
 id|device-&gt;slot.port
 op_assign
-id|ioport
+id|io_port
 suffix:semicolon
 macro_line|#else
 id|device-&gt;slot.reg

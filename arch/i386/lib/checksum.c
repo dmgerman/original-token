@@ -479,9 +479,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Copy from ds while checksumming, otherwise like csum_partial&n; *&n; * The macros SRC and DST specify the type of access for the instruction.&n; * thus we can call a custom exception handler for all access types.&n; *&n; * FIXME: could someone double check wether i havent mixed up some SRC and&n; *&t;  DST definitions? It&squot;s damn hard to trigger all cases, i hope i got&n; *&t;  them all but theres no guarantee ...&n; */
 DECL|macro|SRC
-mdefine_line|#define SRC(y...)&t;&t;&t;&bslash;&n;&quot;&t;9999: &quot;#y&quot;;&t;&t;&t;&bslash;n &bslash;&n;&t;.section __ex_table, &bslash;&quot;a&bslash;&quot;;&t;&bslash;n &bslash;&n;&t;.long 9999b, src_access_fault&t;&bslash;n &bslash;&n;&t;.previous&quot;
+mdefine_line|#define SRC(y...)&t;&t;&t;&bslash;&n;&quot;&t;9999: &quot;#y&quot;;&t;&t;&t;&bslash;n &bslash;&n;&t;.section __ex_table, &bslash;&quot;a&bslash;&quot;;&t;&bslash;n &bslash;&n;&t;.long 9999b, 6001f&t;&t;&bslash;n &bslash;&n;&t;.previous&quot;
 DECL|macro|DST
-mdefine_line|#define DST(y...)&t;&t;&t;&bslash;&n;&quot;&t;9999: &quot;#y&quot;;&t;&t;&t;&bslash;n &bslash;&n;&t;.section __ex_table, &bslash;&quot;a&bslash;&quot;;&t;&bslash;n &bslash;&n;&t;.long 9999b, dst_access_fault&t;&bslash;n &bslash;&n;&t;.previous&quot;
+mdefine_line|#define DST(y...)&t;&t;&t;&bslash;&n;&quot;&t;9999: &quot;#y&quot;;&t;&t;&t;&bslash;n &bslash;&n;&t;.section __ex_table, &bslash;&quot;a&bslash;&quot;;&t;&bslash;n &bslash;&n;&t;.long 9999b, 6002f&t;&t;&bslash;n &bslash;&n;&t;.previous&quot;
 DECL|function|csum_partial_copy_generic
 r_int
 r_int
@@ -808,7 +808,7 @@ op_mod
 id|eax
 l_int|7
 suffix:colon
-id|end_of_body
+l_int|5000
 suffix:colon
 macro_line|# Exception handler:
 macro_line|################################################
@@ -823,7 +823,7 @@ id|a
 "&bslash;&quot;"
 macro_line|#
 macro_line|#
-id|common_fixup
+l_int|6000
 suffix:colon
 macro_line|#
 macro_line|#
@@ -841,10 +841,11 @@ macro_line|#
 macro_line|# FIXME: do zeroing of rest of the buffer here. #
 macro_line|#
 id|jmp
-id|end_of_body
+l_int|5000
+id|b
 macro_line|#
 macro_line|#
-id|src_access_fault
+l_int|6001
 suffix:colon
 macro_line|#
 id|movl
@@ -856,10 +857,11 @@ op_mod
 id|ebx
 macro_line|#
 id|jmp
-id|common_fixup
+l_int|6000
+id|b
 macro_line|#
 macro_line|#
-id|dst_access_fault
+l_int|6002
 suffix:colon
 macro_line|#
 id|movl
@@ -871,7 +873,8 @@ op_mod
 id|ebx
 macro_line|#
 id|jmp
-id|common_fixup
+l_int|6000
+id|b
 macro_line|#
 macro_line|#
 dot

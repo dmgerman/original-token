@@ -382,7 +382,6 @@ comma
 l_int|5
 )brace
 suffix:semicolon
-r_static
 r_void
 id|wakeup_bdflush
 c_func
@@ -6695,7 +6694,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|wakeup_bdflush
-r_static
 r_void
 id|wakeup_bdflush
 c_func

@@ -1185,6 +1185,10 @@ id|mm-&gt;def_flags
 op_assign
 l_int|0
 suffix:semicolon
+id|mm-&gt;mmap_sem
+op_assign
+id|MUTEX
+suffix:semicolon
 multiline_comment|/* It has not run yet, so cannot be present in anyone&squot;s&n;&t;&t; * cache or tlb.&n;&t;&t; */
 id|mm-&gt;cpu_vm_mask
 op_assign

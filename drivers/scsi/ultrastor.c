@@ -4281,12 +4281,16 @@ op_amp
 l_int|1
 )paren
 )paren
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_MULTI_CMD)
 id|printk
 c_func
 (paren
 l_string|&quot;Ux4F: multiple commands completed&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+suffix:semicolon
+macro_line|#endif
 macro_line|#if (ULTRASTOR_DEBUG &amp; UD_INTERRUPT)
 id|printk
 c_func

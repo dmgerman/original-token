@@ -8375,7 +8375,6 @@ c_func
 (paren
 id|new_dir
 comma
-op_amp
 id|new_dentry
 )paren
 suffix:semicolon

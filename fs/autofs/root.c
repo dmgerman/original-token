@@ -731,6 +731,23 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|variable|autofs_dentry_operations
+r_static
+r_struct
+id|dentry_operations
+id|autofs_dentry_operations
+op_assign
+(brace
+id|autofs_revalidate
+comma
+l_int|NULL
+comma
+multiline_comment|/* d_hash */
+l_int|NULL
+comma
+multiline_comment|/* d_compare */
+)brace
+suffix:semicolon
 DECL|function|autofs_root_lookup
 r_static
 r_int
@@ -829,9 +846,10 @@ id|oz_mode
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Mark the dentry incomplete, but add it. This is needed so&n;&t; * that the VFS layer knows about the dentry, and we can count&n;&t; * on catching any lookups through the revalidate.&n;&t; *&n;&t; * Let all the hard work be done by the revalidate function that&n;&t; * needs to be able to do this anyway..&n;&t; *&n;&t; * We need to do this before we release the directory semaphore.&n;&t; */
-id|dentry-&gt;d_revalidate
+id|dentry-&gt;d_op
 op_assign
-id|autofs_revalidate
+op_amp
+id|autofs_dentry_operations
 suffix:semicolon
 id|dentry-&gt;d_flags
 op_or_assign
@@ -865,6 +883,28 @@ op_amp
 id|dir-&gt;i_sem
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we are still pending, check if we had to handle&n;&t; * a signal. If so we can force a restart..&n;&t; */
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_flags
+op_amp
+id|DCACHE_AUTOFS_PENDING
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
+r_return
+op_minus
+id|ERESTARTNOINTR
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

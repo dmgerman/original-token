@@ -2422,7 +2422,11 @@ op_assign
 id|ticks
 ques
 c_cond
+(paren
 id|arg
+op_amp
+l_int|0xffff
+)paren
 suffix:colon
 l_int|0
 suffix:semicolon

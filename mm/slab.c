@@ -5644,6 +5644,18 @@ comma
 id|save_flags
 )paren
 suffix:semicolon
+macro_line|#if 1
+multiline_comment|/* FORCE A KERNEL DUMP WHEN THIS HAPPENS. SPEAK IN ALL CAPS. GET THE CALL CHAIN. */
+op_star
+(paren
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 id|null_addr
@@ -5817,7 +5829,7 @@ op_ge
 id|max_mapnr
 )paren
 r_goto
-id|null_ptr
+id|bad_ptr
 suffix:semicolon
 multiline_comment|/* Assume we own the page structure - hence no locking.&n;&t; * If someone is misbehaving (eg. someone calling us with a bad&n;&t; * address), then access to the page structure can race with the&n;&t; * kmem_slab_destory() code.  Need to add a spin_lock to each page&n;&t; * structure, which would be useful in threading the gfp() functions....&n;&t; */
 id|page
@@ -5875,7 +5887,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-id|null_ptr
+id|bad_ptr
 suffix:colon
 id|printk
 c_func
@@ -5886,6 +5898,20 @@ comma
 id|objp
 )paren
 suffix:semicolon
+macro_line|#if 1
+multiline_comment|/* FORCE A KERNEL DUMP WHEN THIS HAPPENS. SPEAK IN ALL CAPS. GET THE CALL CHAIN. */
+op_star
+(paren
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+id|null_ptr
+suffix:colon
 r_return
 suffix:semicolon
 )brace

@@ -195,6 +195,18 @@ r_int
 id|d_time
 suffix:semicolon
 multiline_comment|/* used by d_revalidate */
+DECL|member|d_op
+r_struct
+id|dentry_operations
+op_star
+id|d_op
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dentry_operations
+r_struct
+id|dentry_operations
+(brace
 DECL|member|d_revalidate
 r_int
 (paren
@@ -207,8 +219,45 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+DECL|member|d_hash
+r_int
+(paren
+op_star
+id|d_hash
+)paren
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|qstr
+op_star
+)paren
+suffix:semicolon
+DECL|member|d_compare
+r_int
+(paren
+op_star
+id|d_compare
+)paren
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|qstr
+op_star
+comma
+r_struct
+id|qstr
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* the dentry parameter passed to d_hash and d_compare is the parent&n; * directory of the entries to be compared. It is used in case these&n; * functions need any directory specific information for determining&n; * equivalency classes.  Using the dentry itself might not work, as it&n; * might be a negative dentry which has no information associated with&n; * it */
 multiline_comment|/* d_flags entries */
 DECL|macro|DCACHE_AUTOFS_PENDING
 mdefine_line|#define DCACHE_AUTOFS_PENDING 0x0001    /* autofs: &quot;under construction&quot; */

@@ -2759,14 +2759,26 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unicode -&gt; current font conversion &n; *&n; * A font has at most 512 chars, usually 256.&n; * But one font position may represent several Unicode chars.&n; * A hashtable is somewhat of a pain to deal with, so use a&n; * &quot;paged table&quot; instead.  Simulation has shown the memory cost of&n; * this 3-level paged table scheme to be comparable to a hash table.&n; */
-macro_line|#include &quot;uni_hash.tbl&quot;&t;&t;/* Include hash tables &amp; parameters */
+r_extern
+id|u8
+id|dfont_unicount
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* Defined in console_defmap.c */
+r_extern
+id|u16
+id|dfont_unitable
+(braket
+)braket
+suffix:semicolon
 DECL|variable|hashtable_contents_valid
 r_int
 id|hashtable_contents_valid
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Use ASCII-only mode for bootup*/
+multiline_comment|/* Use ASCII-only mode for bootup */
 DECL|variable|uni_pagedir
 r_static
 id|u16

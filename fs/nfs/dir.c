@@ -1448,6 +1448,23 @@ OL
 id|max
 suffix:semicolon
 )brace
+DECL|variable|nfs_dentry_operations
+r_static
+r_struct
+id|dentry_operations
+id|nfs_dentry_operations
+op_assign
+(brace
+id|nfs_lookup_revalidate
+comma
+l_int|0
+comma
+multiline_comment|/* d_hash */
+l_int|0
+comma
+multiline_comment|/* d_compare */
+)brace
+suffix:semicolon
 DECL|function|nfs_lookup
 r_static
 r_int
@@ -1621,9 +1638,10 @@ id|dentry-&gt;d_time
 op_assign
 id|jiffies
 suffix:semicolon
-id|dentry-&gt;d_revalidate
+id|dentry-&gt;d_op
 op_assign
-id|nfs_lookup_revalidate
+op_amp
+id|nfs_dentry_operations
 suffix:semicolon
 id|d_add
 c_func
