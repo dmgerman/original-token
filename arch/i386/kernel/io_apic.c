@@ -1026,12 +1026,10 @@ r_continue
 suffix:semicolon
 id|entry.vector
 op_assign
-id|IO_APIC_GATE_OFFSET
-op_plus
+id|IO_APIC_VECTOR
+c_func
 (paren
 id|irq
-op_lshift
-l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Determine IRQ line polarity (high active or low active):&n;&t;&t; */
@@ -1368,12 +1366,10 @@ suffix:semicolon
 multiline_comment|/* all CPUs */
 id|entry.vector
 op_assign
-id|IO_APIC_GATE_OFFSET
-op_plus
+id|IO_APIC_VECTOR
+c_func
 (paren
 id|irq
-op_lshift
-l_int|3
 )paren
 suffix:semicolon
 id|entry.polarity

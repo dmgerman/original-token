@@ -640,10 +640,10 @@ l_int|0
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Map whole memory from 0xC0000000 */
+multiline_comment|/* Map whole memory from PAGE_OFFSET */
 id|pg_dir
 op_add_assign
-l_int|768
+id|USER_PGD_PTRS
 suffix:semicolon
 r_while
 c_loop

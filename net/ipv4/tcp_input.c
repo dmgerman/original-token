@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.74 1998/03/10 05:11:15 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.76 1998/03/11 07:12:46 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -146,11 +146,13 @@ id|tp-&gt;lrcvtime
 op_assign
 id|jiffies
 suffix:semicolon
-id|tp-&gt;ato
-op_assign
-l_int|2
+multiline_comment|/* Help sender leave slow start quickly,&n;&t;&t; * this sets our initial ato value.&n;&t;&t; */
+id|tcp_enter_quickack_mode
+c_func
+(paren
+id|tp
+)paren
 suffix:semicolon
-multiline_comment|/* Help sender leave slow start quickly */
 )brace
 r_else
 (brace
@@ -202,6 +204,32 @@ l_int|1
 op_plus
 id|m
 suffix:semicolon
+multiline_comment|/* We are not in &quot;quick ack&quot; mode. */
+r_if
+c_cond
+(paren
+id|tp-&gt;ato
+op_le
+(paren
+id|HZ
+op_div
+l_int|100
+)paren
+)paren
+(brace
+id|tp-&gt;ato
+op_assign
+(paren
+(paren
+id|HZ
+op_div
+l_int|100
+)paren
+op_star
+l_int|2
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* Called to compute a smoothed rtt estimate. The data fed to this&n; * routine either comes from timestamps, or from segments that were&n; * known _not_ to have been retransmitted [see Karn/Partridge&n; * Proceedings SIGCOMM 87]. The algorithm is from the SIGCOMM 88&n; * piece by Van Jacobson.&n; * NOTE: the next three routines used to be one big routine.&n; * To save cycles in the RFC 1323 implementation it was better to break&n; * it up into three procedures. -- erics&n; */
@@ -3342,8 +3370,13 @@ id|skb-&gt;seq
 )paren
 suffix:semicolon
 id|tp-&gt;delayed_acks
-op_assign
-id|MAX_DELAY_ACK
+op_increment
+suffix:semicolon
+id|tcp_enter_quickack_mode
+c_func
+(paren
+id|tp
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -3387,8 +3420,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* Ok. This is an out_of_order segment, force an ack. */
 id|tp-&gt;delayed_acks
-op_assign
-id|MAX_DELAY_ACK
+op_increment
+suffix:semicolon
+id|tcp_enter_quickack_mode
+c_func
+(paren
+id|tp
+)paren
 suffix:semicolon
 multiline_comment|/* Disable header predition. */
 id|tp-&gt;pred_flags
@@ -3737,8 +3775,7 @@ OL
 id|tp-&gt;snd_cwnd
 )paren
 (brace
-multiline_comment|/* Add more data to the send queue. */
-multiline_comment|/* FIXME: the congestion window is checked&n;&t;&t;&t; * again in tcp_write_xmit anyway?! -- erics&n;&t;&t;&t; *&n;&t;&t;&t; * I think it must, it bumps tp-&gt;packets_out for&n;&t;&t;&t; * each packet it fires onto the wire. -DaveM&n;&t;&t;&t; */
+multiline_comment|/* Put more data onto the wire. */
 id|tcp_write_xmit
 c_func
 (paren
@@ -3758,8 +3795,7 @@ op_logical_neg
 id|tp-&gt;pending
 )paren
 (brace
-multiline_comment|/* Data to queue but no room. */
-multiline_comment|/* FIXME: Is it right to do a zero window probe into&n;&t;&t;&t; * a congestion window limited window??? -- erics&n;&t;&t;&t; */
+multiline_comment|/* Start probing the receivers window. */
 id|tcp_reset_xmit_timer
 c_func
 (paren
@@ -3797,7 +3833,7 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
-multiline_comment|/* This also takes care of updating the window.&n;&t; * This if statement needs to be simplified.&n;&t; *&n;&t; * Rules for delaying an ack:&n;&t; *      - delay time &lt;= 0.5 HZ&n;&t; *      - we don&squot;t have a window update to send&n;&t; *      - must send at least every 2 full sized packets&n;&t; */
+multiline_comment|/* This also takes care of updating the window.&n;&t; * This if statement needs to be simplified.&n;&t; *&n;&t; * Rules for delaying an ack:&n;&t; *      - delay time &lt;= 0.5 HZ&n;&t; *      - we don&squot;t have a window update to send&n;&t; *      - must send at least every 2 full sized packets&n;&t; *&n;&t; * With an extra heuristic to handle loss of packet&n;&t; * situations and also helping the sender leave slow&n;&t; * start in an expediant manner.&n;&t; */
 multiline_comment|/* Two full frames received or... */
 r_if
 c_cond
@@ -3816,11 +3852,18 @@ l_int|1
 )paren
 )paren
 op_logical_or
-multiline_comment|/* We will update the window &quot;significantly&quot; */
+multiline_comment|/* We will update the window &quot;significantly&quot; or... */
 id|tcp_raise_window
 c_func
 (paren
 id|sk
+)paren
+op_logical_or
+multiline_comment|/* We entered &quot;quick ACK&quot; mode */
+id|tcp_in_quickack_mode
+c_func
+(paren
+id|tp
 )paren
 )paren
 (brace

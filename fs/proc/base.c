@@ -139,6 +139,13 @@ id|inode-&gt;i_ino
 op_amp
 l_int|0xffff
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -177,6 +184,13 @@ id|p-&gt;gid
 suffix:semicolon
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is really a pseudo-entry, and only links&n; * backwards to the parent with no link from the&n; * root directory to this. This way we can have just&n; * one entry for every /proc/&lt;pid&gt;/ directory.&n; */
 DECL|variable|proc_pid

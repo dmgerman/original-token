@@ -3,7 +3,6 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_AUDIO) || defined(MODULE)
 macro_line|#include &quot;ulaw.h&quot;

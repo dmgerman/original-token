@@ -286,6 +286,13 @@ id|scount
 comma
 id|i
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 id|tsk
 op_assign
 id|get_task
@@ -296,6 +303,14 @@ op_rshift
 l_int|16
 )paren
 suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: This should really be done only afetr not using tsk any more!!! */
 r_if
 c_cond
 (paren

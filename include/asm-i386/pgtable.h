@@ -3,6 +3,7 @@ DECL|macro|_I386_PGTABLE_H
 mdefine_line|#define _I386_PGTABLE_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Caches aren&squot;t brain-dead on the intel. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
@@ -349,6 +350,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#endif
+macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
 mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
@@ -373,6 +375,16 @@ DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD&t;1
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;1024
+multiline_comment|/*&n; * pgd entries used up by user/kernel:&n; */
+DECL|macro|USER_PGD_PTRS
+mdefine_line|#define USER_PGD_PTRS (PAGE_OFFSET &gt;&gt; PGDIR_SHIFT)
+DECL|macro|KERNEL_PGD_PTRS
+mdefine_line|#define KERNEL_PGD_PTRS (PTRS_PER_PGD-USER_PGD_PTRS)
+DECL|macro|__USER_PGD_PTRS
+mdefine_line|#define __USER_PGD_PTRS ((__PAGE_OFFSET &gt;&gt; PGDIR_SHIFT) &amp; 0x3ff)
+DECL|macro|__KERNEL_PGD_PTRS
+mdefine_line|#define __KERNEL_PGD_PTRS (PTRS_PER_PGD-__USER_PGD_PTRS)
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET&t;(8*1024*1024)
@@ -1632,5 +1644,6 @@ DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap
 mdefine_line|#define module_unmap    vfree
+macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* _I386_PAGE_H */
 eof

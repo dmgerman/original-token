@@ -3732,8 +3732,8 @@ op_rshift
 l_int|3
 )braket
 comma
-l_int|0xc0000000
-op_plus
+id|__va
+c_func
 (paren
 (paren
 r_int
@@ -3782,8 +3782,8 @@ op_rshift
 l_int|3
 )braket
 comma
-l_int|0xc0000000
-op_plus
+id|__va
+c_func
 (paren
 (paren
 r_int
@@ -3805,8 +3805,8 @@ op_rshift
 l_int|3
 )braket
 comma
-l_int|0xc0000000
-op_plus
+id|__va
+c_func
 (paren
 (paren
 r_int
@@ -3828,8 +3828,8 @@ op_rshift
 l_int|3
 )braket
 comma
-l_int|0xc0000000
-op_plus
+id|__va
+c_func
 (paren
 (paren
 r_int

@@ -42,6 +42,17 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
+id|ultra32_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|ultramca_probe
 c_func
 (paren
@@ -702,7 +713,8 @@ c_func
 (paren
 id|dev
 )paren
-macro_line|#if defined(CONFIG_MCA)
+macro_line|#endif
+macro_line|#if defined(CONFIG_ULTRAMCA)
 op_logical_and
 id|ultramca_probe
 c_func
@@ -717,7 +729,6 @@ c_func
 (paren
 id|dev
 )paren
-macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_SMC9194)
 op_logical_and

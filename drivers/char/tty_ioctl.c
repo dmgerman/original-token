@@ -56,6 +56,12 @@ l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#ifdef TTY_DEBUG_WAIT_UNTIL_SENT
+r_char
+id|buf
+(braket
+l_int|64
+)braket
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -65,6 +71,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -124,6 +132,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 comma
 id|tty-&gt;driver

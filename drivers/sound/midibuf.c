@@ -3,7 +3,6 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &lt;linux/kerneld.h&gt;
 DECL|macro|MIDIBUF_C
 mdefine_line|#define MIDIBUF_C
 macro_line|#include &quot;sound_config.h&quot;

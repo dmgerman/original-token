@@ -932,14 +932,14 @@ comma
 l_int|0x71
 )paren
 suffix:semicolon
-multiline_comment|/* Remap the kernel at virtual address zero, as well as offset zero&n;&t;   from the kernel segment.  This assumes the kernel segment starts at&n;&t;   virtual address 0xc0000000. */
+multiline_comment|/* Remap the kernel at virtual address zero, as well as offset zero&n;&t;   from the kernel segment.  This assumes the kernel segment starts at&n;&t;   virtual address PAGE_OFFSET. */
 id|memcpy
 (paren
 id|swapper_pg_dir
 comma
 id|swapper_pg_dir
 op_plus
-l_int|768
+id|USER_PGD_PTRS
 comma
 r_sizeof
 (paren
@@ -949,7 +949,7 @@ l_int|0
 )braket
 )paren
 op_star
-l_int|256
+id|KERNEL_PGD_PTRS
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure the first page is mapped to the start of physical memory.&n;&t;   It is normally not mapped, to trap kernel NULL pointer dereferences. */

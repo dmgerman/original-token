@@ -289,7 +289,7 @@ op_plus
 (paren
 id|kmod_unload_delay
 op_star
-l_int|100
+id|HZ
 )paren
 suffix:semicolon
 id|add_timer
@@ -336,9 +336,11 @@ op_assign
 id|jiffies
 op_plus
 (paren
-l_int|300
+l_int|5
 op_star
-l_int|100
+l_int|60
+op_star
+id|HZ
 )paren
 suffix:semicolon
 id|kmod_unload_timer.data

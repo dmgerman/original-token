@@ -210,11 +210,11 @@ macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
-multiline_comment|/*&n; * These two routines return the name of tty.  tty_name() should NOT&n; * be used in interrupt drivers, since it&squot;s not re-entrant.  Use&n; * _tty_name() instead.&n; */
-DECL|function|_tty_name
+multiline_comment|/*&n; * This routine returns the name of tty.&n; */
+DECL|function|tty_name
 r_char
 op_star
-id|_tty_name
+id|tty_name
 c_func
 (paren
 r_struct
@@ -263,35 +263,6 @@ l_string|&quot;NULL tty&quot;
 suffix:semicolon
 r_return
 id|buf
-suffix:semicolon
-)brace
-DECL|function|tty_name
-r_char
-op_star
-id|tty_name
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-(brace
-r_static
-r_char
-id|buf
-(braket
-l_int|64
-)braket
-suffix:semicolon
-r_return
-id|_tty_name
-c_func
-(paren
-id|tty
-comma
-id|buf
-)paren
 suffix:semicolon
 )brace
 DECL|function|tty_paranoia_check
@@ -605,6 +576,12 @@ r_struct
 id|tty_ldisc
 id|o_ldisc
 suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|64
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -826,6 +803,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 comma
 id|r
@@ -1697,6 +1676,12 @@ id|tty
 )paren
 (brace
 macro_line|#ifdef TTY_DEBUG_HANGUP
+r_char
+id|buf
+(braket
+l_int|64
+)braket
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1706,6 +1691,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -1733,6 +1720,12 @@ id|tty
 )paren
 (brace
 macro_line|#ifdef TTY_DEBUG_HANGUP
+r_char
+id|buf
+(braket
+l_int|64
+)braket
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1742,6 +1735,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -3837,6 +3832,12 @@ suffix:semicolon
 r_int
 id|idx
 suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|64
+)braket
+suffix:semicolon
 id|tty
 op_assign
 (paren
@@ -4028,6 +4029,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 comma
 id|tty-&gt;count
@@ -4300,6 +4303,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -4351,6 +4356,8 @@ id|tty_name
 c_func
 (paren
 id|o_tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -4380,6 +4387,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -4625,6 +4634,12 @@ suffix:semicolon
 r_int
 r_int
 id|saved_flags
+suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|64
+)braket
 suffix:semicolon
 id|saved_flags
 op_assign
@@ -4950,6 +4965,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -5025,6 +5042,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 )paren
 suffix:semicolon
@@ -5104,6 +5123,38 @@ suffix:semicolon
 id|tty-&gt;pgrp
 op_assign
 id|current-&gt;pgrp
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|tty-&gt;driver.type
+op_eq
+id|TTY_DRIVER_TYPE_SERIAL
+)paren
+op_logical_and
+(paren
+id|tty-&gt;driver.subtype
+op_eq
+id|SERIAL_TYPE_CALLOUT
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Warning, %s opened, is a deprecated tty &quot;
+l_string|&quot;callout device&bslash;n&quot;
+comma
+id|tty_name
+c_func
+(paren
+id|tty
+comma
+id|buf
+)paren
+)paren
 suffix:semicolon
 )brace
 r_return

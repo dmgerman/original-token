@@ -5,6 +5,7 @@ mdefine_line|#define __ASM_I386_PROCESSOR_H
 macro_line|#include &lt;asm/vm86.h&gt;
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; *  CPU type and hardware bug flags. Kept separately for each CPU.&n; *  Members of this structure are referenced in head.S, so think twice&n; *  before touching them. [mj]&n; */
 DECL|struct|cpuinfo_x86
 r_struct
@@ -168,9 +169,9 @@ r_int
 r_int
 id|BIOS_revision
 suffix:semicolon
-multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
+multiline_comment|/*&n; * User space process size: 3GB (default).&n; */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;(0xC0000000UL)
+mdefine_line|#define TASK_SIZE&t;(PAGE_OFFSET)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)

@@ -3,6 +3,7 @@ DECL|macro|__i386_UACCESS_H
 mdefine_line|#define __i386_UACCESS_H
 multiline_comment|/*&n; * User space memory access functions&n; */
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
@@ -13,7 +14,7 @@ mdefine_line|#define MAKE_MM_SEG(s)&t;((mm_segment_t) { (s) })
 DECL|macro|KERNEL_DS
 mdefine_line|#define KERNEL_DS&t;MAKE_MM_SEG(0xFFFFFFFF)
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS&t;&t;MAKE_MM_SEG(0xC0000000)
+mdefine_line|#define USER_DS&t;&t;MAKE_MM_SEG(PAGE_OFFSET)
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
 DECL|macro|get_fs

@@ -13,10 +13,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-DECL|macro|ATOMIC_ON
-mdefine_line|#define ATOMIC_ON()&t;do { } while (0)
-DECL|macro|ATOMIC_OFF
-mdefine_line|#define ATOMIC_OFF()&t;do { } while (0)
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|all_requests
 r_static
@@ -1610,11 +1606,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|ATOMIC_ON
-c_func
-(paren
-)paren
-suffix:semicolon
 id|req
 op_assign
 op_star
@@ -1832,11 +1823,6 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-id|ATOMIC_OFF
-c_func
-(paren
-)paren
-suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -1871,11 +1857,6 @@ c_func
 id|max_req
 comma
 id|bh-&gt;b_rdev
-)paren
-suffix:semicolon
-id|ATOMIC_OFF
-c_func
-(paren
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -2845,11 +2826,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|ATOMIC_ON
-c_func
-(paren
-)paren
-suffix:semicolon
 id|req
 (braket
 id|j
@@ -2861,11 +2837,6 @@ c_func
 id|max_req
 comma
 id|rdev
-)paren
-suffix:semicolon
-id|ATOMIC_OFF
-c_func
-(paren
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore

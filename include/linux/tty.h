@@ -846,7 +846,7 @@ suffix:semicolon
 r_extern
 r_char
 op_star
-id|_tty_name
+id|tty_name
 c_func
 (paren
 r_struct
@@ -857,18 +857,6 @@ comma
 r_char
 op_star
 id|buf
-)paren
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|tty_name
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
 )paren
 suffix:semicolon
 r_extern

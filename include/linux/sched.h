@@ -1014,10 +1014,6 @@ id|pidhash
 id|PIDHASH_SZ
 )braket
 suffix:semicolon
-r_extern
-id|spinlock_t
-id|pidhash_lock
-suffix:semicolon
 DECL|macro|pid_hashfn
 mdefine_line|#define pid_hashfn(x)&t;((((x) &gt;&gt; 8) ^ (x)) &amp; (PIDHASH_SZ - 1))
 DECL|function|hash_pid
@@ -1048,19 +1044,6 @@ c_func
 id|p-&gt;pid
 )paren
 )braket
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|pidhash_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1095,15 +1078,6 @@ id|p-&gt;pidhash_pprev
 op_assign
 id|htable
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|pidhash_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|unhash_pid
 r_extern
@@ -1118,19 +1092,6 @@ op_star
 id|p
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|pidhash_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1146,15 +1107,6 @@ op_star
 id|p-&gt;pidhash_pprev
 op_assign
 id|p-&gt;pidhash_next
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|pidhash_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 )brace
 DECL|function|find_task_by_pid
@@ -1189,19 +1141,6 @@ id|pid
 )paren
 )braket
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|pidhash_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1223,15 +1162,6 @@ id|p-&gt;pidhash_next
 (brace
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|pidhash_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_return
 id|p
 suffix:semicolon
@@ -2286,9 +2216,9 @@ id|flags
 suffix:semicolon
 )brace
 DECL|macro|REMOVE_LINKS
-mdefine_line|#define REMOVE_LINKS(p) do { unsigned long flags; &bslash;&n;&t;write_lock_irqsave(&amp;tasklist_lock, flags); &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;write_unlock_irqrestore(&amp;tasklist_lock, flags); &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr; &bslash;&n;&t;} while (0)
+mdefine_line|#define REMOVE_LINKS(p) do { &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr; &bslash;&n;&t;} while (0)
 DECL|macro|SET_LINKS
-mdefine_line|#define SET_LINKS(p) do { unsigned long flags; &bslash;&n;&t;write_lock_irqsave(&amp;tasklist_lock, flags); &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;write_unlock_irqrestore(&amp;tasklist_lock, flags); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
+mdefine_line|#define SET_LINKS(p) do { &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
 DECL|macro|for_each_task
 mdefine_line|#define for_each_task(p) &bslash;&n;&t;for (p = &amp;init_task ; (p = p-&gt;next_task) != &amp;init_task ; )
 macro_line|#endif /* __KERNEL__ */

@@ -2252,6 +2252,13 @@ r_char
 id|sector_t
 suffix:semicolon
 multiline_comment|/* sector in track */
+DECL|variable|in_sector_offset
+r_static
+r_int
+r_char
+id|in_sector_offset
+suffix:semicolon
+multiline_comment|/* offset within physical sector,&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;* expressed in units of 512 bytes */
 macro_line|#ifndef fd_eject
 DECL|macro|fd_eject
 mdefine_line|#define fd_eject(x) -EINVAL
@@ -9450,6 +9457,8 @@ comma
 id|ssize
 comma
 id|eoc
+comma
+id|heads
 suffix:semicolon
 r_if
 c_cond
@@ -9485,8 +9494,27 @@ id|eoc
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|COMMAND
+op_amp
+l_int|0x80
+)paren
+(brace
+id|heads
+op_assign
+l_int|2
+suffix:semicolon
+)brace
+r_else
+id|heads
+op_assign
+l_int|1
+suffix:semicolon
 id|nr_sectors
 op_assign
+(paren
 (paren
 (paren
 id|R_TRACK
@@ -9494,17 +9522,15 @@ op_minus
 id|TRACK
 )paren
 op_star
-id|_floppy-&gt;head
+id|heads
 op_plus
 id|R_HEAD
 op_minus
 id|HEAD
 )paren
 op_star
-id|_floppy-&gt;sect
+id|SECT_PER_TRACK
 op_plus
-(paren
-(paren
 id|R_SECTOR
 op_minus
 id|SECTOR
@@ -9515,36 +9541,25 @@ op_lshift
 id|SIZECODE
 op_rshift
 l_int|2
-)paren
-op_minus
-(paren
-id|sector_t
-op_mod
-id|_floppy-&gt;sect
-)paren
-op_mod
-id|ssize
 suffix:semicolon
 macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
 id|nr_sectors
+op_div
+id|ssize
 OG
+(paren
+id|in_sector_offset
+op_plus
 id|current_count_sectors
 op_plus
 id|ssize
 op_minus
-(paren
-id|current_count_sectors
-op_plus
-id|sector_t
+l_int|1
 )paren
-op_mod
-id|ssize
-op_plus
-id|sector_t
-op_mod
+op_div
 id|ssize
 )paren
 (brace
@@ -9591,6 +9606,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+l_string|&quot;heads=%d eoc=%d&bslash;n&quot;
+comma
+id|heads
+comma
+id|eoc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
 l_string|&quot;spt=%d st=%d ss=%d&bslash;n&quot;
 comma
 id|SECT_PER_TRACK
@@ -9600,8 +9625,20 @@ comma
 id|ssize
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;in_sector_offset=%d&bslash;n&quot;
+comma
+id|in_sector_offset
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
+id|nr_sectors
+op_sub_assign
+id|in_sector_offset
+suffix:semicolon
 id|INFBOUND
 c_func
 (paren
@@ -10470,10 +10507,11 @@ macro_line|#endif
 multiline_comment|/* work around a bug in pseudo DMA&n; * (on some FDCs) pseudo DMA does not stop when the CPU stops&n; * sending data.  Hence we need a different way to signal the&n; * transfer length:  We use SECT_PER_TRACK.  Unfortunately, this&n; * does not work with MT, hence we can only transfer one head at&n; * a time&n; */
 DECL|function|virtualdmabug_workaround
 r_static
-r_int
+r_void
 id|virtualdmabug_workaround
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -10537,7 +10575,6 @@ id|SECT_PER_TRACK
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -11032,10 +11069,8 @@ op_assign
 id|_floppy-&gt;sect
 suffix:semicolon
 )brace
-id|aligned_sector_t
+id|in_sector_offset
 op_assign
-id|sector_t
-op_minus
 (paren
 id|sector_t
 op_mod
@@ -11043,6 +11078,12 @@ id|_floppy-&gt;sect
 )paren
 op_mod
 id|ssize
+suffix:semicolon
+id|aligned_sector_t
+op_assign
+id|sector_t
+op_minus
+id|in_sector_offset
 suffix:semicolon
 id|max_size
 op_assign
@@ -11108,9 +11149,7 @@ r_else
 r_if
 c_cond
 (paren
-id|aligned_sector_t
-op_ne
-id|sector_t
+id|in_sector_offset
 op_logical_or
 id|CURRENT-&gt;nr_sectors
 OL
@@ -11451,9 +11490,8 @@ op_eq
 id|FD_READ
 op_logical_or
 (paren
-id|aligned_sector_t
-op_eq
-id|sector_t
+op_logical_neg
+id|in_sector_offset
 op_logical_and
 id|CURRENT-&gt;nr_sectors
 op_ge
@@ -11529,9 +11567,7 @@ macro_line|#ifdef FLOPPY_SANITY_CHECK
 r_if
 c_cond
 (paren
-id|sector_t
-op_ne
-id|aligned_sector_t
+id|in_sector_offset
 op_logical_and
 id|buffer_track
 op_eq
@@ -11588,11 +11624,9 @@ suffix:semicolon
 multiline_comment|/* round up current_count_sectors to get dma xfer size */
 id|raw_cmd-&gt;length
 op_assign
-id|sector_t
+id|in_sector_offset
 op_plus
 id|current_count_sectors
-op_minus
-id|aligned_sector_t
 suffix:semicolon
 id|raw_cmd-&gt;length
 op_assign

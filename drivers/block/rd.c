@@ -1895,7 +1895,8 @@ c_func
 l_string|&quot;Error opening disk.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|done
 suffix:semicolon
 )brace
 id|infile.f_pos

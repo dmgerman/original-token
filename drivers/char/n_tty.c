@@ -1859,7 +1859,7 @@ c_func
 (paren
 l_string|&quot;%s: %d input overrun(s)&bslash;n&quot;
 comma
-id|_tty_name
+id|tty_name
 c_func
 (paren
 id|tty
@@ -3105,6 +3105,12 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|64
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3335,6 +3341,8 @@ id|tty_name
 c_func
 (paren
 id|tty
+comma
+id|buf
 )paren
 comma
 id|flags

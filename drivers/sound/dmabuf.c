@@ -599,6 +599,10 @@ id|dmap-&gt;raw_buf
 op_assign
 l_int|NULL
 suffix:semicolon
+id|dmap-&gt;fragment_size
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/* Intel version !!!!!!!!! */
 DECL|function|sound_start_dma

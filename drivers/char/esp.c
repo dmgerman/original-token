@@ -5988,7 +5988,7 @@ c_func
 (paren
 l_string|&quot;throttle %s: %d....&bslash;n&quot;
 comma
-id|_tty_name
+id|tty_name
 c_func
 (paren
 id|tty
@@ -6113,7 +6113,7 @@ c_func
 (paren
 l_string|&quot;unthrottle %s: %d....&bslash;n&quot;
 comma
-id|_tty_name
+id|tty_name
 c_func
 (paren
 id|tty

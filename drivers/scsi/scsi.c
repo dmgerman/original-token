@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@andante.jic.com or ericy@gnu.ai.mit.edu to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *  (changed to kmod)&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
+multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@andante.jic.com or ericy@gnu.ai.mit.edu to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Added request_module(&quot;scsi_hostadapter&quot;) for kerneld:&n; *  (Put an &quot;alias scsi_hostadapter your_hostadapter&quot; in /etc/conf.modules)&n; *  Bjorn Ekwall  &lt;bj0rn@blox.se&gt;&n; *  (changed to kmod)&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; *&n; *  Converted cli() code to spinlocks, Ingo Molnar&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1263,15 +1263,13 @@ op_star
 id|shpnt
 suffix:semicolon
 multiline_comment|/*&n;     * Create a circular linked list from the scsi hosts which have&n;     * the &quot;wish_block&quot; field in the Scsi_Host structure set.&n;     * The blocked list should include all the scsi hosts using ISA DMA.&n;     * In some systems, using two dma channels simultaneously causes&n;     * unpredictable results.&n;     * Among the scsi hosts in the blocked list, only one host at a time&n;     * is allowed to have active commands queued. The transition from&n;     * one active host to the next one is allowed only when host_busy == 0&n;     * for the active host (which implies host_busy == 0 for all the hosts&n;     * in the list). Moreover for block devices the transition to a new&n;     * active host is allowed only when a request is completed, since a&n;     * block device request can be divided into multiple scsi commands&n;     * (when there are few sg lists or clustering is disabled).&n;     *&n;     * (DB, 4 Feb 1995)&n;     */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|host_active
@@ -1416,9 +1414,12 @@ id|host_no
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -4388,13 +4389,13 @@ op_assign
 id|found
 suffix:semicolon
 )brace
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -4416,7 +4417,7 @@ id|dev
 )paren
 )paren
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -4457,7 +4458,7 @@ op_amp
 id|device-&gt;device_wait
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -4466,7 +4467,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -4703,7 +4704,7 @@ op_amp
 id|SCpnt-&gt;host-&gt;host_active
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -4976,15 +4977,13 @@ id|host
 op_assign
 id|SCpnt-&gt;host
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Assign a unique nonzero serial_number. */
@@ -5011,6 +5010,13 @@ id|host-&gt;last_reset
 op_plus
 id|MIN_RESET_DELAY
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5027,7 +5033,7 @@ op_minus
 id|jiffies
 suffix:semicolon
 multiline_comment|/*&n;&t; * NOTE: This may be executed from within an interrupt&n;&t; * handler!  This is bad, but for now, it&squot;ll do.  The irq&n;&t; * level of the interrupt handler has been masked out by the&n;&t; * platform dependent interrupt handling code already, so the&n;&t; * sti() here will not cause another call to the SCSI host&squot;s&n;&t; * interrupt handler (assuming there is one irq-level per&n;&t; * host).&n;&t; */
-id|sti
+id|__sti
 c_func
 (paren
 )paren
@@ -5055,12 +5061,13 @@ op_minus
 id|MIN_RESET_DELAY
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* this possibly puts us back into __cli() */
 r_if
 c_cond
 (paren
@@ -5484,15 +5491,13 @@ l_string|&quot;Invalid or not present host.&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * We must prevent reentrancy to the lowlevel host driver.  This prevents&n;     * it - we enter a loop until the host we want to talk to is not busy.&n;     * Race conditions are prevented, as interrupts are disabled in between the&n;     * time we check for the host being not busy, and the time we mark it busy&n;     * ourselves.&n;     */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|SCpnt-&gt;pid
@@ -5516,9 +5521,12 @@ id|host
 )paren
 )paren
 (brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -5541,9 +5549,13 @@ id|host
 )paren
 )paren
 suffix:semicolon
-id|cli
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5562,9 +5574,12 @@ suffix:semicolon
 id|device-&gt;device_busy
 op_increment
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -6500,15 +6515,13 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|nbits
@@ -6590,9 +6603,12 @@ op_lshift
 id|j
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -6670,9 +6686,12 @@ l_int|9
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -6869,15 +6888,13 @@ id|panic
 l_string|&quot;scsi_free:Bad memory alignment&quot;
 )paren
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -6903,6 +6920,15 @@ id|sector
 )paren
 )paren
 (brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -6923,6 +6949,15 @@ c_func
 l_string|&quot;scsi_free:Trying to free unused memory&quot;
 )paren
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 id|scsi_dma_free_sectors
 op_add_assign
@@ -6940,9 +6975,12 @@ op_lshift
 id|sector
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -9816,15 +9854,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* When we dick with the actual DMA list, we need to&n;     * protect things&n;     */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -9934,9 +9970,12 @@ id|scsi_need_isa_buffer
 op_assign
 id|new_need_isa_buffer
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -10701,15 +10740,13 @@ id|SDpnt-&gt;online
 op_assign
 id|FALSE
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -10720,9 +10757,12 @@ op_ne
 id|RQ_INACTIVE
 )paren
 (brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -10800,9 +10840,12 @@ op_assign
 id|RQ_SCSI_DISCONNECTING
 suffix:semicolon
 multiline_comment|/* Mark as busy */
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|io_request_lock
+comma
 id|flags
 )paren
 suffix:semicolon

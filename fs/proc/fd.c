@@ -301,6 +301,13 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 id|p
 op_assign
 id|find_task_by_pid
@@ -309,6 +316,14 @@ c_func
 id|pid
 )paren
 suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME!! This should be done only after not using &squot;p&squot; any more */
 r_if
 c_cond
 (paren
@@ -563,6 +578,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 id|p
 op_assign
 id|find_task_by_pid
@@ -571,6 +593,14 @@ c_func
 id|pid
 )paren
 suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME!! This should be done only after not using &squot;p&squot; any more */
 r_if
 c_cond
 (paren

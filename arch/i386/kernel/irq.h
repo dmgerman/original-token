@@ -1,9 +1,8 @@
 macro_line|#ifndef __irq_h
 DECL|macro|__irq_h
 mdefine_line|#define __irq_h
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Various low-level irq details needed by irq.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
-DECL|macro|IO_APIC_GATE_OFFSET
-mdefine_line|#define IO_APIC_GATE_OFFSET 0x51
 r_void
 id|mask_irq
 c_func
@@ -87,11 +86,43 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_void
+id|send_IPI
+(paren
+r_int
+id|dest
+comma
+r_int
+id|vector
+)paren
+suffix:semicolon
 r_extern
 r_int
 r_int
 id|io_apic_irqs
 suffix:semicolon
+DECL|function|IO_APIC_VECTOR
+r_extern
+r_inline
+r_int
+id|IO_APIC_VECTOR
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_return
+(paren
+l_int|0x51
+op_plus
+(paren
+id|irq
+op_lshift
+l_int|3
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|macro|MAX_IRQ_SOURCES
 mdefine_line|#define MAX_IRQ_SOURCES 128
 DECL|macro|MAX_MP_BUSSES

@@ -4522,6 +4522,7 @@ id|sh-&gt;bh_new
 id|dd_idx
 )braket
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -4532,6 +4533,21 @@ comma
 id|sh-&gt;sector
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;forcing oops.&bslash;n&quot;
+)paren
+suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|set_bit
 c_func
 (paren

@@ -11,8 +11,10 @@ macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ide.h&quot;
-DECL|macro|DEVID_PIIX
-mdefine_line|#define DEVID_PIIX&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371FB_1})
+DECL|macro|DEVID_PIIXa
+mdefine_line|#define DEVID_PIIXa&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371FB_0})
+DECL|macro|DEVID_PIIXb
+mdefine_line|#define DEVID_PIIXb&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371FB_1})
 DECL|macro|DEVID_PIIX3
 mdefine_line|#define DEVID_PIIX3&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371SB_1})
 DECL|macro|DEVID_PIIX4
@@ -185,7 +187,33 @@ id|__initdata
 op_assign
 (brace
 (brace
-id|DEVID_PIIX
+id|DEVID_PIIXa
+comma
+l_string|&quot;PIIX&quot;
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x41
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+comma
+(brace
+l_int|0x43
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+)brace
+)brace
+comma
+(brace
+id|DEVID_PIIXb
 comma
 l_string|&quot;PIIX&quot;
 comma
@@ -2086,6 +2114,25 @@ id|ccode
 )paren
 )paren
 r_return
+suffix:semicolon
+multiline_comment|/* &n;&t;&t; * workaround Intel Advanced/ZP with bios &lt;= 1.04;&n;&t;&t; * these appear in some Dell Dimension XPS&squot;s &n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hedt
+op_logical_and
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|devid
+comma
+id|DEVID_PIIXa
+)paren
+)paren
+id|hedt
+op_assign
+l_int|0x80
 suffix:semicolon
 r_for
 c_loop

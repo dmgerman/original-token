@@ -9,6 +9,7 @@ mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
 DECL|macro|clear_page
@@ -124,12 +125,15 @@ mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif
+macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 multiline_comment|/* This handles the memory map.. */
+DECL|macro|__PAGE_OFFSET
+mdefine_line|#define __PAGE_OFFSET&t;&t;((0x1000-CONFIG_MAX_MEMSIZE)&lt;&lt;20)
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;0xC0000000
+mdefine_line|#define PAGE_OFFSET&t;&t;((unsigned long)__PAGE_OFFSET)
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
 DECL|macro|__va
