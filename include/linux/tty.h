@@ -480,6 +480,13 @@ id|icanon
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|closing
+r_int
+r_char
+id|closing
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|minimum_to_wake
 r_int
 r_int

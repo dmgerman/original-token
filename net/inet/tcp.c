@@ -8378,13 +8378,6 @@ op_amp
 id|newsk-&gt;timer
 )paren
 suffix:semicolon
-id|init_timer
-c_func
-(paren
-op_amp
-id|newsk-&gt;retransmit_timer
-)paren
-suffix:semicolon
 id|newsk-&gt;timer.data
 op_assign
 (paren
@@ -8397,6 +8390,13 @@ id|newsk-&gt;timer.function
 op_assign
 op_amp
 id|net_timer
+suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|newsk-&gt;retransmit_timer
+)paren
 suffix:semicolon
 id|newsk-&gt;retransmit_timer.data
 op_assign
@@ -13135,6 +13135,7 @@ id|sk-&gt;rto
 op_assign
 id|TCP_TIMEOUT_INIT
 suffix:semicolon
+macro_line|#if 0 /* we already did this */
 id|init_timer
 c_func
 (paren
@@ -13142,6 +13143,7 @@ op_amp
 id|sk-&gt;retransmit_timer
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sk-&gt;retransmit_timer.function
 op_assign
 op_amp

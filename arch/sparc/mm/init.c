@@ -509,6 +509,7 @@ op_assign
 r_int
 r_int
 )paren
+op_amp
 id|etext
 suffix:semicolon
 id|mask
@@ -552,6 +553,7 @@ c_func
 r_int
 r_int
 )paren
+op_amp
 id|trapbase
 )paren
 suffix:semicolon

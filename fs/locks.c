@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans, 92Aug07, dje@sspiff.uucp.&n; *&n; *  Deadlock Detection added by Kelly Carmichael, kelly@[142.24.8.65]&n; *  September 17, 1994.&n; *&n; * FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *&n; *  Edited by Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open - Chad Page&n; *  (pageone@netcom.com), November 27, 1994 &n; * &n; *  Removed dependency on file descriptors. dup()&squot;ed file descriptors now&n; *  get the same locks as the original file descriptors, and a close() on&n; *  any file descriptor removes ALL the locks on the file for the current&n; *  process. Since locks still depend on the process id, locks are inherited&n; *  after an exec() but not after a fork(). This agrees with POSIX, and both&n; *  BSD and SVR4 practice.&n; *  Andy Walker (andy@keo.kvaerner.no), February 14, 1994&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans, 92Aug07, dje@sspiff.uucp.&n; *&n; *  Deadlock Detection added by Kelly Carmichael, kelly@[142.24.8.65]&n; *  September 17, 1994.&n; *&n; *  FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *&n; *  Edited by Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open - Chad Page&n; *  (pageone@netcom.com), November 27, 1994 &n; * &n; *  Removed dependency on file descriptors. dup()&squot;ed file descriptors now&n; *  get the same locks as the original file descriptors, and a close() on&n; *  any file descriptor removes ALL the locks on the file for the current&n; *  process. Since locks still depend on the process id, locks are inherited&n; *  after an exec() but not after a fork(). This agrees with POSIX, and both&n; *  BSD and SVR4 practice.&n; *  Andy Walker (andy@keo.kvaerner.no), February 14, 1995&n; *&n; *  Scrapped free list which is redundant now that we allocate locks&n; *  dynamically with kmalloc()/kfree().&n; *  Andy Walker (andy@keo.kvaerner.no), February 21, 1995&n; *&n; */
 DECL|macro|DEADLOCK_DETECTION
 mdefine_line|#define DEADLOCK_DETECTION
 macro_line|#include &lt;asm/segment.h&gt;
@@ -110,14 +110,6 @@ op_star
 id|fl
 )paren
 suffix:semicolon
-r_static
-r_void
-id|free_list_garbage_collect
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#ifdef DEADLOCK_DETECTION
 r_int
 id|locks_deadlocked
@@ -131,8 +123,6 @@ id|blocked_pid
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|macro|FREE_LIST_GARBAGE_COLLECT
-mdefine_line|#define FREE_LIST_GARBAGE_COLLECT 20
 DECL|variable|file_lock_table
 r_static
 r_struct
@@ -141,22 +131,6 @@ op_star
 id|file_lock_table
 op_assign
 l_int|NULL
-suffix:semicolon
-DECL|variable|file_lock_free_list
-r_static
-r_struct
-id|file_lock
-op_star
-id|file_lock_free_list
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|variable|free_list_cnt
-r_static
-r_int
-id|free_list_cnt
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|fcntl_getlk
 r_int
@@ -1628,7 +1602,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * File_lock() inserts a lock at the position pos of the linked list.&n; *&n; *  Modified to create a new node if no free entries available - Chad Page&n; *&n; */
+multiline_comment|/*&n; * File_lock() inserts a lock at the position pos of the linked list.&n; */
 DECL|function|alloc_lock
 r_static
 r_struct
@@ -1654,18 +1628,6 @@ id|file_lock
 op_star
 id|tmp
 suffix:semicolon
-id|tmp
-op_assign
-id|file_lock_free_list
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tmp
-op_eq
-l_int|NULL
-)paren
-(brace
 multiline_comment|/* Okay, let&squot;s make a new file_lock structure... */
 id|tmp
 op_assign
@@ -1686,52 +1648,37 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-id|tmp
-op_member_access_from_pointer
-id|fl_owner
-op_assign
-l_int|NULL
-suffix:semicolon
-id|tmp
-op_member_access_from_pointer
-id|fl_next
-op_assign
-id|file_lock_free_list
-suffix:semicolon
-id|tmp
-op_member_access_from_pointer
-id|fl_nextlink
-op_assign
-id|file_lock_table
-suffix:semicolon
-id|file_lock_table
-op_assign
-id|tmp
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* remove from free list */
-id|file_lock_free_list
-op_assign
-id|tmp-&gt;fl_next
-suffix:semicolon
-id|free_list_cnt
-op_decrement
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|tmp-&gt;fl_owner
+op_logical_neg
+id|tmp
+)paren
+r_return
+id|tmp
+suffix:semicolon
+id|tmp-&gt;fl_nextlink
+op_assign
+id|file_lock_table
+suffix:semicolon
+id|tmp-&gt;fl_prevlink
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|file_lock_table
 op_ne
 l_int|NULL
 )paren
-id|panic
-c_func
-(paren
-l_string|&quot;alloc_lock: broken free list&bslash;n&quot;
-)paren
+id|file_lock_table-&gt;fl_prevlink
+op_assign
+id|tmp
+suffix:semicolon
+id|file_lock_table
+op_assign
+id|tmp
 suffix:semicolon
 id|tmp-&gt;fl_next
 op_assign
@@ -1748,7 +1695,6 @@ id|tmp-&gt;fl_owner
 op_assign
 id|current
 suffix:semicolon
-multiline_comment|/* FIXME: needed? */
 id|tmp-&gt;fl_wait
 op_assign
 l_int|NULL
@@ -1773,7 +1719,7 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Add a lock to the free list ...&n; */
+multiline_comment|/*&n; * Free up a lock...&n; */
 DECL|function|free_lock
 r_static
 r_void
@@ -1797,20 +1743,6 @@ op_assign
 op_star
 id|fl_p
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fl-&gt;fl_owner
-op_eq
-l_int|NULL
-)paren
-multiline_comment|/* sanity check */
-id|panic
-c_func
-(paren
-l_string|&quot;free_lock: broken lock list&bslash;n&quot;
-)paren
-suffix:semicolon
 op_star
 id|fl_p
 op_assign
@@ -1821,34 +1753,32 @@ id|fl_p
 op_member_access_from_pointer
 id|fl_next
 suffix:semicolon
-id|fl-&gt;fl_next
-op_assign
-id|file_lock_free_list
-suffix:semicolon
-multiline_comment|/* add to free list */
-id|file_lock_free_list
-op_assign
-id|fl
-suffix:semicolon
-id|fl-&gt;fl_owner
-op_assign
+r_if
+c_cond
+(paren
+id|fl-&gt;fl_nextlink
+op_ne
 l_int|NULL
-suffix:semicolon
-multiline_comment|/* for sanity checks */
-id|free_list_cnt
-op_increment
+)paren
+id|fl-&gt;fl_nextlink-&gt;fl_prevlink
+op_assign
+id|fl-&gt;fl_prevlink
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|free_list_cnt
-op_eq
-id|FREE_LIST_GARBAGE_COLLECT
+id|fl-&gt;fl_prevlink
+op_ne
+l_int|NULL
 )paren
-id|free_list_garbage_collect
-c_func
-(paren
-)paren
+id|fl-&gt;fl_prevlink-&gt;fl_nextlink
+op_assign
+id|fl-&gt;fl_nextlink
+suffix:semicolon
+r_else
+id|file_lock_table
+op_assign
+id|fl-&gt;fl_nextlink
 suffix:semicolon
 id|wake_up
 c_func
@@ -1857,17 +1787,12 @@ op_amp
 id|fl-&gt;fl_wait
 )paren
 suffix:semicolon
-)brace
-DECL|function|free_list_garbage_collect
-r_static
-r_void
-id|free_list_garbage_collect
+id|kfree
 c_func
 (paren
-r_void
+id|fl
 )paren
-(brace
-multiline_comment|/* Do nothing for now */
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

@@ -1,6 +1,7 @@
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */
 multiline_comment|/*&n; * I wish the boot time image was as beautiful as the Alpha&squot;s&n; * but no such luck. The icky PROM loads us at 0x0, and jumps&n; * to magic address 0x4000 to start thing going. This means that&n; * I can stick the pcb and user/kernel stacks in the area from&n; * 0x0-0x4000 and be reasonably sure that this is sane.&n; *&n; * Sorry, I can&squot;t impress people with cool looking 64-bit values&n; * yet. ;-)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;

@@ -101,6 +101,10 @@ DECL|macro|TIOCSERGSTRUCT
 mdefine_line|#define TIOCSERGSTRUCT&t;0x5458 /* For debugging only */
 DECL|macro|TIOCSERGETLSR
 mdefine_line|#define TIOCSERGETLSR   0x5459 /* Get line status register */
+DECL|macro|TIOCSERGETMULTI
+mdefine_line|#define TIOCSERGETMULTI 0x545A /* Get multiport config  */
+DECL|macro|TIOCSERSETMULTI
+mdefine_line|#define TIOCSERSETMULTI 0x545B /* Set multiport config */
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_DATA
 mdefine_line|#define TIOCPKT_DATA&t;&t; 0
@@ -424,6 +428,8 @@ DECL|macro|B57600
 mdefine_line|#define  B57600  0010001
 DECL|macro|B115200
 mdefine_line|#define  B115200 0010002
+DECL|macro|B230400
+mdefine_line|#define  B230400 0010003
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  002003600000&t;/* input baud rate (not used) */
 DECL|macro|CRTSCTS

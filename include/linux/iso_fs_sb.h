@@ -58,6 +58,11 @@ r_char
 id|s_cruft
 suffix:semicolon
 multiline_comment|/* Broken disks with high&n;&t;&t;&t;&t;&t;&t;  byte of length containing&n;&t;&t;&t;&t;&t;&t;  junk */
+DECL|member|s_unhide
+r_int
+r_char
+id|s_unhide
+suffix:semicolon
 DECL|member|s_nosuid
 r_int
 r_char

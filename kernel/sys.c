@@ -1902,6 +1902,10 @@ id|current-&gt;tty
 op_assign
 l_int|NULL
 suffix:semicolon
+id|current-&gt;tty_old_pgrp
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|current-&gt;pgrp
 suffix:semicolon

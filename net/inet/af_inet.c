@@ -2966,6 +2966,7 @@ id|snum
 )paren
 r_continue
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -2982,6 +2983,7 @@ r_goto
 id|outside_loop
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

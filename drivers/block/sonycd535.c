@@ -1,10 +1,20 @@
-multiline_comment|/*&n; * Sony CDU-535 interface device driver&n; *&n; * This is a modified version of the CDU-31A device driver (see below).&n; * Changes were made using documentation for the CDU-531 (which Sony&n; * assures me is very similar to the 535) and partial disassembly of the&n; * DOS driver.  I used Minyard&squot;s driver and replaced the the CDU-31A &n; * commands with the CDU-531 commands.  This was complicated by a different&n; * interface protocol with the drive.  The driver is still polled.&n; *&n; * Data transfer rate is about 110 Kb/sec, theoretical maximum is 150 Kb/sec.&n; * I tried polling without the sony_sleep during the data transfers but&n; * it did not speed things up any.&n; *&n; *  5/23/93 (rgj) changed the major number to 21 to get rid of conflict&n; * with CDU-31A driver.  This is the also the number from the Linux&n; * Device Driver Registry for the Sony Drive.  Hope nobody else is using it.&n; *&n; *  8/29/93 (rgj) remove the configuring of the interface board address&n; * from the top level configuration, you have to modify it in this file.&n; *&n; * 1/26/95 Made module-capable (Joel Katz &lt;Stimpson@Panix.COM&gt;)&n; *&n; * Things to do:&n; *  - handle errors and status better, put everything into a single word&n; *  - use interrupts, DMA&n; *&n; *  Known Bugs:&n; *  -&n; *&n; *   Ron Jeppesen (ronj.an@site007.saic.com)&n; *&n; *&n; *------------------------------------------------------------------------&n; * Sony CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com) (CDU-535 complaints to ronj above)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/*&n; * Sony CDU-535 interface device driver&n; *&n; * This is a modified version of the CDU-31A device driver (see below).&n; * Changes were made using documentation for the CDU-531 (which Sony&n; * assures me is very similar to the 535) and partial disassembly of the&n; * DOS driver.  I used Minyard&squot;s driver and replaced the the CDU-31A&n; * commands with the CDU-531 commands.  This was complicated by a different&n; * interface protocol with the drive.  The driver is still polled.&n; *&n; * Data transfer rate is about 110 Kb/sec, theoretical maximum is 150 Kb/sec.&n; * I tried polling without the sony_sleep during the data transfers but&n; * it did not speed things up any.&n; *&n; *  5/23/93 (rgj) changed the major number to 21 to get rid of conflict&n; * with CDU-31A driver.  This is the also the number from the Linux&n; * Device Driver Registry for the Sony Drive.  Hope nobody else is using it.&n; *&n; *  8/29/93 (rgj) remove the configuring of the interface board address&n; * from the top level configuration, you have to modify it in this file.&n; *&n; * 1/26/95 Made module-capable (Joel Katz &lt;Stimpson@Panix.COM&gt;)&n; *&n; * Things to do:&n; *  - handle errors and status better, put everything into a single word&n; *  - use interrupts (code mostly there, but a big hole still missing)&n; *  - handle multi-session CDs?&n; *  - use DMA?&n; *&n; *  Known Bugs:&n; *  -&n; *&n; *   Ken Pizzini (ken@halcyon.com)&n; *&n; * Original by:&n; *   Ron Jeppesen (ronj.an@site007.saic.com)&n; *&n; *&n; *------------------------------------------------------------------------&n; * Sony CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com) (CDU-535 complaints to Ken above)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_CDU535) || defined(MODULE)
 macro_line|#ifdef MODULE
 macro_line|# include &lt;linux/module.h&gt;
 macro_line|# include &lt;linux/malloc.h&gt;
 macro_line|# include &lt;linux/version.h&gt;
+macro_line|# ifndef CONFIG_MODVERSIONS
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+macro_line|# endif
 macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -37,7 +47,11 @@ macro_line|#endif
 multiline_comment|/*&n; * this is the base address of the interface card for the Sony CDU-535&n; * CDROM drive.  If your jumpers are set for an address other than&n; * this one (the default), change the following line to the&n; * proper address.&n; */
 macro_line|#ifndef CDU535_ADDRESS
 DECL|macro|CDU535_ADDRESS
-macro_line|# define CDU535_ADDRESS&t;(0x340)
+macro_line|# define CDU535_ADDRESS&t;&t;&t;0x340
+macro_line|#endif
+macro_line|#ifndef CDU535_INTERRUPT
+DECL|macro|CDU535_INTERRUPT
+macro_line|# define CDU535_INTERRUPT&t;&t;0
 macro_line|#endif
 macro_line|#ifndef CDU535_HANDLE
 DECL|macro|CDU535_HANDLE
@@ -55,8 +69,10 @@ multiline_comment|/*&n; *  SONY535_BUFFER_SIZE determines the size of internal b
 DECL|macro|SONY535_BUFFER_SIZE
 mdefine_line|#define SONY535_BUFFER_SIZE&t;(64*1024)
 multiline_comment|/*&n; *  if LOCK_DOORS is defined then the eject button is disabled while&n; * the device is open.&n; */
+macro_line|#ifndef NO_LOCK_DOORS
 DECL|macro|LOCK_DOORS
-mdefine_line|#define LOCK_DOORS
+macro_line|# define LOCK_DOORS
+macro_line|#endif
 r_static
 r_int
 id|read_subcode
@@ -135,18 +151,20 @@ op_star
 id|response
 comma
 r_int
-id|nResponse
+id|n_response
 comma
 r_int
 id|ignoreStatusBit7
 )paren
 suffix:semicolon
 multiline_comment|/* The base I/O address of the Sony Interface.  This is a variable (not a&n;   #define) so it can be easily changed via some future ioctl() */
-DECL|variable|sony_cd_base_io
+macro_line|#ifndef MODULE
 r_static
+macro_line|#endif
+DECL|variable|sony535_cd_base_io
 r_int
 r_int
-id|sony_cd_base_io
+id|sony535_cd_base_io
 op_assign
 id|CDU535_ADDRESS
 suffix:semicolon
@@ -265,8 +283,7 @@ multiline_comment|/* Points to the last&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t
 macro_line|#ifndef MODULE
 DECL|variable|sony_buffer
 r_static
-r_int
-r_char
+id|Byte
 op_star
 id|sony_buffer
 suffix:semicolon
@@ -274,13 +291,12 @@ multiline_comment|/* Points to the read-ahead buffer */
 macro_line|#else
 DECL|variable|sony_buffer
 r_static
-r_int
-r_char
+id|Byte
 op_star
 op_star
 id|sony_buffer
 suffix:semicolon
-multiline_comment|/* Points to the pointers&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   to the sector buffers */
+multiline_comment|/* Points to the pointers&n;&t;&t;&t;&t;&t;&t;&t;&t;   to the sector buffers */
 macro_line|#endif
 DECL|variable|sony_inuse
 r_static
@@ -301,8 +317,7 @@ suffix:semicolon
 multiline_comment|/*&n; * The following are a hack for pausing and resuming audio play.  The drive&n; * does not work as I would expect it, if you stop it then start it again,&n; * the drive seeks back to the beginning and starts over.  This holds the&n; * position during a pause so a resume can restart it.  It uses the&n; * audio status variable above to tell if it is paused.&n; *   I just kept the CDU-31A driver behavior rather than using the PAUSE&n; * command on the CDU-535.&n; */
 DECL|variable|cur_pos_msf
 r_static
-r_int
-r_char
+id|Byte
 id|cur_pos_msf
 (braket
 l_int|3
@@ -318,8 +333,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|final_pos_msf
 r_static
-r_int
-r_char
+id|Byte
 id|final_pos_msf
 (braket
 l_int|3
@@ -332,6 +346,26 @@ l_int|0
 comma
 l_int|0
 )brace
+suffix:semicolon
+multiline_comment|/* What IRQ is the drive using?  0 if none. */
+macro_line|#ifndef MODULE
+r_static
+macro_line|#endif
+DECL|variable|sony535_irq_used
+r_int
+id|sony535_irq_used
+op_assign
+id|CDU535_INTERRUPT
+suffix:semicolon
+multiline_comment|/* The interrupt handler will wake this queue up when it gets an interrupt. */
+DECL|variable|cdu535_irq_wait
+r_static
+r_struct
+id|wait_queue
+op_star
+id|cdu535_irq_wait
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * This routine returns 1 if the disk has been changed since the last&n; * check or 0 if it hasn&squot;t.  Setting flag to 0 resets the changed flag.&n; */
 r_static
@@ -362,7 +396,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CD-ROM request error: invalid device.&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; request error: invalid device.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -387,7 +422,115 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Wait a little while (used for polling the drive).  If in initialization,&n; * setting a timeout doesn&squot;t work, so just loop for a while  (we trust&n; * that the sony_sleep() call is protected by a test for proper jiffies count).&n; */
+r_static
+r_inline
+r_void
+DECL|function|enable_interrupts
+id|enable_interrupts
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef USE_IRQ
+multiline_comment|/* this code snarfed from cdu31a.c; it will not&n;&t; * directly work for the cdu535 as written...&n;&t; */
+id|curr_control_reg
+op_or_assign
+(paren
+id|SONY_ATTN_INT_EN_BIT
+op_or
+id|SONY_RES_RDY_INT_EN_BIT
+op_or
+id|SONY_DATA_RDY_INT_EN_BIT
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|curr_control_reg
+comma
+id|sony_cd_control_reg
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_static
+r_inline
+r_void
+DECL|function|disable_interrupts
+id|disable_interrupts
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef USE_IRQ
+multiline_comment|/* this code snarfed from cdu31a.c; it will not&n;&t; * directly work for the cdu535 as written...&n;&t; */
+id|curr_control_reg
+op_and_assign
+op_complement
+(paren
+id|SONY_ATTN_INT_EN_BIT
+op_or
+id|SONY_RES_RDY_INT_EN_BIT
+op_or
+id|SONY_DATA_RDY_INT_EN_BIT
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|curr_control_reg
+comma
+id|sony_cd_control_reg
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_static
+r_void
+DECL|function|cdu535_interrupt
+id|cdu535_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|disable_interrupts
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cdu535_irq_wait
+op_ne
+l_int|NULL
+)paren
+id|wake_up
+c_func
+(paren
+op_amp
+id|cdu535_irq_wait
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: Got an interrupt but nothing was waiting&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Wait a little while (used for polling the drive).  If in initialization,&n; * setting a timeout doesn&squot;t work, so just loop for a while.  (We trust&n; * that the sony_sleep() call is protected by a test for proper jiffies count.)&n; */
 r_static
 r_inline
 r_void
@@ -398,6 +541,15 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sony535_irq_used
+op_le
+l_int|0
+)paren
+(brace
+multiline_comment|/* poll */
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
@@ -411,6 +563,33 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Interrupt driven */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|enable_interrupts
+c_func
+(paren
+)paren
+suffix:semicolon
+id|interruptible_sleep_on
+c_func
+(paren
+op_amp
+id|cdu535_irq_wait
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*------------------start of SONY CDU535 very specific ---------------------*/
 multiline_comment|/****************************************************************************&n; * void select_unit( int unit_no )&n; *&n; *  Select the specified unit (0-3) so that subsequent commands reference it&n; ****************************************************************************/
@@ -444,15 +623,14 @@ id|select_unit_reg
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/***************************************************************************&n; * int read_result_reg( unsigned char *data_ptr )&n; *&n; *  Read a result byte from the Sony CDU controller, store in location pointed&n; * to by data_ptr.  Return zero on success, TIME_OUT if we did not receive&n; * data.&n; ***************************************************************************/
+multiline_comment|/***************************************************************************&n; * int read_result_reg( Byte *data_ptr )&n; *&n; *  Read a result byte from the Sony CDU controller, store in location pointed&n; * to by data_ptr.  Return zero on success, TIME_OUT if we did not receive&n; * data.&n; ***************************************************************************/
 r_static
 r_int
 DECL|function|read_result_reg
 id|read_result_reg
 c_func
 (paren
-r_int
-r_char
+id|Byte
 op_star
 id|data_ptr
 )paren
@@ -501,7 +679,8 @@ macro_line|#if DEBUG &gt; 1
 id|printk
 c_func
 (paren
-l_string|&quot;read_result_reg(): readStatReg = 0x%x&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: read_result_reg(): readStatReg = 0x%x&bslash;n&quot;
 comma
 id|read_status
 )paren
@@ -532,14 +711,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; Sony CDROM read_result_reg: TIME OUT!&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; read_result_reg: TIME OUT!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 id|TIME_OUT
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************************&n; * int read_exec_status( Byte status[2] )&n; *&n; *  Read the execution status of the last command and put into status. &n; * Handles reading second status word if available.  Returns 0 on success,&n; * TIME_OUT on failure.&n; ****************************************************************************/
+multiline_comment|/****************************************************************************&n; * int read_exec_status( Byte status[2] )&n; *&n; *  Read the execution status of the last command and put into status.&n; * Handles reading second status word if available.  Returns 0 on success,&n; * TIME_OUT on failure.&n; ****************************************************************************/
 r_static
 r_int
 DECL|function|read_exec_status
@@ -621,39 +801,18 @@ macro_line|#if DEBUG &gt; 1
 id|printk
 c_func
 (paren
-l_string|&quot;read_exec_status: read 0x%x&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: read_exec_status: read 0x%x 0x%x&bslash;n&quot;
 comma
 id|status
 (braket
 l_int|0
 )braket
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-(braket
-l_int|0
-)braket
-op_amp
-l_int|0x80
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; and 0x%x&bslash;n&quot;
 comma
 id|status
 (braket
 l_int|1
 )braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -684,8 +843,7 @@ id|CDD
 comma
 id|ATN
 suffix:semicolon
-r_int
-r_char
+id|Byte
 id|cmd
 suffix:semicolon
 id|select_unit
@@ -802,7 +960,8 @@ macro_line|#if DEBUG &gt; 1
 id|printk
 c_func
 (paren
-l_string|&quot;--check_drive_status() got 0x%x&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: check_drive_status() got 0x%x&bslash;n&quot;
 comma
 id|status
 )paren
@@ -857,7 +1016,8 @@ id|initialized
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error, drive busy&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error: drive busy&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -869,7 +1029,8 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error, eject in progress&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error: eject in progress&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sony_audio_status
@@ -892,7 +1053,8 @@ macro_line|#if DEBUG &gt; 0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM, reset occurred or disc changed&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; notice: reset occurred or disc changed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -959,7 +1121,8 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error, drive busy (ATN=0x%x)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error: drive busy (ATN=0x%x)&bslash;n&quot;
 comma
 id|ATN
 )paren
@@ -994,7 +1157,8 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;check_drive_status(): CDD = 0xc! Not properly handled!&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: check_drive_status(): CDD = 0xc! Not properly handled!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1012,7 +1176,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* check_drive_status() */
-multiline_comment|/*****************************************************************************&n; * int do_sony_cmd( Byte *cmd, int n_cmd, Byte status[2], &n; *                Byte *response, int n_response, int ignore_status_bit7 )&n; *&n; *  Generic routine for executing commands.  The command and its parameters&n; *  should be placed in the cmd[] array, number of bytes in the command is&n; *  stored in nCmd.  The response from the command will be stored in the&n; *  response array.  The number of bytes you expect back (excluding status)&n; *  should be passed in nResponse.  Finally, some&n; *  commands set bit 7 of the return status even when there is no second&n; *  status byte, on these commands set ignoreStatusBit7 TRUE.&n; *    If the command was sent and data received back, then we return 0,&n; *  else we return TIME_OUT.  You still have to check the status yourself.&n; *    You should call check_drive_status() before calling this routine&n; *  so that you do not lose notifications of disk changes, etc.&n; ****************************************************************************/
+multiline_comment|/*****************************************************************************&n; * int do_sony_cmd( Byte *cmd, int n_cmd, Byte status[2],&n; *                Byte *response, int n_response, int ignore_status_bit7 )&n; *&n; *  Generic routine for executing commands.  The command and its parameters&n; *  should be placed in the cmd[] array, number of bytes in the command is&n; *  stored in nCmd.  The response from the command will be stored in the&n; *  response array.  The number of bytes you expect back (excluding status)&n; *  should be passed in n_response.  Finally, some&n; *  commands set bit 7 of the return status even when there is no second&n; *  status byte, on these commands set ignoreStatusBit7 TRUE.&n; *    If the command was sent and data received back, then we return 0,&n; *  else we return TIME_OUT.  You still have to check the status yourself.&n; *    You should call check_drive_status() before calling this routine&n; *  so that you do not lose notifications of disk changes, etc.&n; ****************************************************************************/
 r_static
 r_int
 DECL|function|do_sony_cmd
@@ -1139,7 +1303,8 @@ macro_line|#if DEBUG &gt; 2
 id|printk
 c_func
 (paren
-l_string|&quot;do_sony_cmd %x: %x %x&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: do_sony_cmd %x: %x %x&bslash;n&quot;
 comma
 op_star
 id|cmd
@@ -1246,7 +1411,8 @@ id|cmd_buff
 (braket
 l_int|2
 )braket
-comma
+suffix:semicolon
+id|Byte
 id|ret_buff
 (braket
 l_int|1
@@ -1284,7 +1450,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/***************************************************************************&n; * int seek_and_read_N_blocks( Byte params[], int n_blocks, Byte status[2], &n; *                             Byte *data_buff, int buff_size )&n; *&n; *  Read n_blocks of data from the CDROM starting at position params[0:2],&n; *  number of blocks in stored in params[3:5] -- both these are already&n; *  int bcd format.&n; *  Transfer the data into the buffer pointed at by data_buff.  buff_size&n; *  gives the number of bytes available in the buffer.&n; *    The routine returns number of bytes read in if successful, otherwise&n; *  it returns one of the standard error returns.&n; ***************************************************************************/
+multiline_comment|/***************************************************************************&n; * int seek_and_read_N_blocks( Byte params[], int n_blocks, Byte status[2],&n; *                             Byte *data_buff, int buff_size )&n; *&n; *  Read n_blocks of data from the CDROM starting at position params[0:2],&n; *  number of blocks in stored in params[3:5] -- both these are already&n; *  int bcd format.&n; *  Transfer the data into the buffer pointed at by data_buff.  buff_size&n; *  gives the number of bytes available in the buffer.&n; *    The routine returns number of bytes read in if successful, otherwise&n; *  it returns one of the standard error returns.&n; ***************************************************************************/
 r_static
 r_int
 macro_line|#ifndef MODULE
@@ -1331,8 +1497,7 @@ id|status
 l_int|2
 )braket
 comma
-r_int
-r_char
+id|Byte
 op_star
 op_star
 id|buff
@@ -1342,9 +1507,6 @@ id|buf_size
 )paren
 macro_line|#endif
 (brace
-r_int
-id|i
-suffix:semicolon
 r_const
 r_int
 id|block_size
@@ -1358,12 +1520,22 @@ l_int|7
 )braket
 suffix:semicolon
 r_int
+id|i
+suffix:semicolon
+r_int
 id|read_status
 suffix:semicolon
 r_int
 id|retry_count
 suffix:semicolon
-macro_line|#ifdef MODULE
+macro_line|#ifndef MODULE
+id|Byte
+op_star
+id|start_pos
+op_assign
+id|data_buff
+suffix:semicolon
+macro_line|#else
 id|Byte
 op_star
 id|data_buff
@@ -1372,13 +1544,6 @@ r_int
 id|sector_count
 op_assign
 l_int|0
-suffix:semicolon
-macro_line|#else
-id|Byte
-op_star
-id|start_pos
-op_assign
-id|data_buff
 suffix:semicolon
 macro_line|#endif
 r_if
@@ -1656,6 +1821,11 @@ id|n_tracks
 comma
 id|track_no
 suffix:semicolon
+r_int
+id|first_track_num
+comma
+id|last_track_num
+suffix:semicolon
 id|Byte
 id|cmd_no
 op_assign
@@ -1666,11 +1836,6 @@ id|track_address_buffer
 (braket
 l_int|5
 )braket
-suffix:semicolon
-r_int
-id|first_track_num
-comma
-id|last_track_num
 suffix:semicolon
 multiline_comment|/* read the fixed portion of the table of contents */
 r_if
@@ -1833,16 +1998,10 @@ l_int|2
 )paren
 (brace
 id|Byte
-id|cmd_buff
-(braket
-l_int|1
-)braket
+id|cmd
 suffix:semicolon
 multiline_comment|/* first see if the drive is already spinning */
-id|cmd_buff
-(braket
-l_int|0
-)braket
+id|cmd
 op_assign
 id|SONY535_REQUEST_DRIVE_STATUS_1
 suffix:semicolon
@@ -1852,7 +2011,8 @@ c_cond
 id|do_sony_cmd
 c_func
 (paren
-id|cmd_buff
+op_amp
+id|cmd
 comma
 l_int|1
 comma
@@ -1888,11 +2048,8 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* its already spinning */
-multiline_comment|/* else, give the spin-up command */
-id|cmd_buff
-(braket
-l_int|0
-)braket
+multiline_comment|/* otherwise, give the spin-up command */
+id|cmd
 op_assign
 id|SONY535_SPIN_UP
 suffix:semicolon
@@ -1900,7 +2057,8 @@ r_return
 id|do_sony_cmd
 c_func
 (paren
-id|cmd_buff
+op_amp
+id|cmd
 comma
 l_int|1
 comma
@@ -1914,7 +2072,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* spin_up_drive() */
 multiline_comment|/*--------------------end of SONY CDU535 very specific ---------------------*/
 multiline_comment|/* Convert from an integer 0-99 to BCD */
 r_static
@@ -2001,8 +2158,7 @@ r_int
 r_int
 id|log
 comma
-r_int
-r_char
+id|Byte
 op_star
 id|msf
 )paren
@@ -2067,8 +2223,7 @@ DECL|function|msf_to_log
 id|msf_to_log
 c_func
 (paren
-r_int
-r_char
+id|Byte
 op_star
 id|msf
 )paren
@@ -2135,8 +2290,7 @@ r_int
 r_int
 id|size
 comma
-r_int
-r_char
+id|Byte
 op_star
 id|buf
 )paren
@@ -2186,21 +2340,18 @@ r_void
 )paren
 (brace
 r_int
-id|block
-suffix:semicolon
-r_int
 r_int
 id|dev
 suffix:semicolon
 r_int
-id|nsect
+r_int
+id|read_size
 suffix:semicolon
 r_int
-r_char
-id|params
-(braket
-l_int|10
-)braket
+id|block
+suffix:semicolon
+r_int
+id|nsect
 suffix:semicolon
 r_int
 id|copyoff
@@ -2208,17 +2359,19 @@ suffix:semicolon
 r_int
 id|spin_up_retry
 suffix:semicolon
-r_int
-r_int
-id|read_size
+id|Byte
+id|params
+(braket
+l_int|10
+)braket
 suffix:semicolon
-r_int
-r_char
+id|Byte
 id|status
 (braket
 l_int|2
 )braket
-comma
+suffix:semicolon
+id|Byte
 id|cmd
 (braket
 l_int|2
@@ -2468,13 +2621,18 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Read the data.  If the drive was not spinning, spin it up and try&n;&t;&t;&t;&t;&t; * once more.  I know, the goto is ugly, but I am too lazy to fix it.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Read the data.  If the drive was not spinning,&n;&t;&t;&t;&t;&t; * spin it up and try once more.&n;&t;&t;&t;&t;&t; */
 id|spin_up_retry
 op_assign
 l_int|0
 suffix:semicolon
-id|try_read_again
-suffix:colon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
 macro_line|#if DEBUG &gt; 1
 r_if
 c_cond
@@ -2511,6 +2669,8 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+l_int|0
+op_le
 id|seek_and_read_N_blocks
 c_func
 (paren
@@ -2528,13 +2688,13 @@ op_star
 l_int|2048
 )paren
 )paren
-OL
-l_int|0
 )paren
-(brace
+r_break
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
 id|status
 (braket
@@ -2543,17 +2703,46 @@ l_int|0
 op_amp
 id|SONY535_STATUS1_NOT_SPINNING
 )paren
-op_logical_and
-(paren
-op_logical_neg
+op_logical_or
 id|spin_up_retry
-)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot; Sony535 Debug -- calling spin up when reading data!&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; Read error: 0x%.2x&bslash;n&quot;
+comma
+id|status
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|sony_first_block
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|sony_last_block
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|end_request
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+id|CDU535_MESSAGE_NAME
+l_string|&quot; debug: calling spin up when reading data!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|cmd
@@ -2582,39 +2771,6 @@ suffix:semicolon
 id|spin_up_retry
 op_assign
 l_int|1
-suffix:semicolon
-r_goto
-id|try_read_again
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;Sony CDROM Read error: 0x%.2x&bslash;n&quot;
-comma
-id|status
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-id|sony_first_block
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|sony_last_block
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|end_request
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 )brace
@@ -2726,8 +2882,7 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_char
+id|Byte
 id|status
 (braket
 l_int|2
@@ -2855,7 +3010,8 @@ id|Byte
 id|cmd
 op_assign
 id|SONY535_REQUEST_SUB_Q_DATA
-comma
+suffix:semicolon
+id|Byte
 id|status
 (braket
 l_int|2
@@ -2916,7 +3072,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x, %d (read_subcode)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x, %d (read_subcode)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -2995,9 +3152,7 @@ op_star
 id|arg
 comma
 r_sizeof
-(paren
 id|schi
-)paren
 )paren
 suffix:semicolon
 id|memcpy_fromfs
@@ -3013,9 +3168,7 @@ op_star
 id|arg
 comma
 r_sizeof
-(paren
 id|schi
-)paren
 )paren
 suffix:semicolon
 r_switch
@@ -3073,9 +3226,7 @@ op_amp
 id|schi
 comma
 r_sizeof
-(paren
 id|schi
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3238,9 +3389,7 @@ op_amp
 id|schi
 comma
 r_sizeof
-(paren
 id|schi
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3277,15 +3426,13 @@ r_int
 r_int
 id|dev
 suffix:semicolon
-r_int
-r_char
+id|Byte
 id|status
 (braket
 l_int|2
 )braket
 suffix:semicolon
-r_int
-r_char
+id|Byte
 id|cmd_buff
 (braket
 l_int|10
@@ -3375,7 +3522,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMSTART)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMSTART)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -3487,7 +3635,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMSTOP)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMSTOP)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -3542,7 +3691,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMPAUSE)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMPAUSE)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -3782,7 +3932,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMRESUME)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMRESUME)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -3982,7 +4133,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMPLAYMSF)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMPLAYMSF)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -4081,10 +4233,8 @@ comma
 id|hdr
 comma
 r_sizeof
-(paren
 op_star
 id|hdr
-)paren
 )paren
 suffix:semicolon
 id|loc_hdr.cdth_trk0
@@ -4112,10 +4262,8 @@ op_amp
 id|loc_hdr
 comma
 r_sizeof
-(paren
 op_star
 id|hdr
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -4141,8 +4289,7 @@ suffix:semicolon
 r_int
 id|track_idx
 suffix:semicolon
-r_int
-r_char
+id|Byte
 op_star
 id|msf_val
 op_assign
@@ -4183,10 +4330,8 @@ comma
 id|entry
 comma
 r_sizeof
-(paren
 op_star
 id|entry
-)paren
 )paren
 suffix:semicolon
 id|memcpy_fromfs
@@ -4198,9 +4343,7 @@ comma
 id|entry
 comma
 r_sizeof
-(paren
 id|loc_entry
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Lead out is handled separately since it is special. */
@@ -4347,10 +4490,8 @@ op_amp
 id|loc_entry
 comma
 r_sizeof
-(paren
 op_star
 id|entry
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -4398,9 +4539,7 @@ op_star
 id|arg
 comma
 r_sizeof
-(paren
 id|ti
-)paren
 )paren
 suffix:semicolon
 id|memcpy_fromfs
@@ -4416,9 +4555,7 @@ op_star
 id|arg
 comma
 r_sizeof
-(paren
 id|ti
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -4764,7 +4901,19 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Params: %x %x %x %x %x %x %x&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMPLAYTRKIND)&bslash;n&quot;
+comma
+id|status
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;... Params: %x %x %x %x %x %x %x&bslash;n&quot;
 comma
 id|params
 (braket
@@ -4799,17 +4948,6 @@ comma
 id|params
 (braket
 l_int|6
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMPLAYTRKIND)&bslash;n&quot;
-comma
-id|status
-(braket
-l_int|0
 )braket
 )paren
 suffix:semicolon
@@ -4889,9 +5027,7 @@ op_star
 id|arg
 comma
 r_sizeof
-(paren
 id|volctrl
-)paren
 )paren
 suffix:semicolon
 id|memcpy_fromfs
@@ -4907,9 +5043,7 @@ op_star
 id|arg
 comma
 r_sizeof
-(paren
 id|volctrl
-)paren
 )paren
 suffix:semicolon
 id|cmd_buff
@@ -4958,7 +5092,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMVOLCTRL)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMVOLCTRL)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -5061,7 +5196,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (CDROMEJECT)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (CDROMEJECT)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -5105,8 +5241,7 @@ op_star
 id|filp
 )paren
 (brace
-r_int
-r_char
+id|Byte
 id|status
 (braket
 l_int|2
@@ -5161,7 +5296,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDROM error 0x%.2x (cdu_open, spin up)&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; error 0x%.2x (cdu_open, spin up)&bslash;n&quot;
 comma
 id|status
 (braket
@@ -5290,8 +5426,7 @@ op_star
 id|filp
 )paren
 (brace
-r_int
-r_char
+id|Byte
 id|status
 (braket
 l_int|2
@@ -5468,20 +5603,19 @@ r_struct
 id|s535_sony_drive_config
 id|drive_config
 suffix:semicolon
-r_int
-r_char
+id|Byte
 id|cmd_buff
 (braket
 l_int|3
 )braket
-comma
+suffix:semicolon
+id|Byte
 id|ret_buff
 (braket
 l_int|2
 )braket
 suffix:semicolon
-r_int
-r_char
+id|Byte
 id|status
 (braket
 l_int|2
@@ -5490,53 +5624,86 @@ suffix:semicolon
 r_int
 id|retry_count
 suffix:semicolon
+r_int
+id|tmp_irq
+suffix:semicolon
 macro_line|#ifdef MODULE
 r_int
 id|i
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Setting the base I/O address to 0xffff will disable it. */
+r_if
+c_cond
+(paren
+id|sony535_cd_base_io
+op_eq
+l_int|0xffff
+)paren
+r_goto
+id|bail
+suffix:semicolon
 multiline_comment|/* Set up all the register locations */
 id|result_reg
 op_assign
-id|sony_cd_base_io
+id|sony535_cd_base_io
 suffix:semicolon
 id|command_reg
 op_assign
-id|sony_cd_base_io
+id|sony535_cd_base_io
 suffix:semicolon
 id|data_reg
 op_assign
-id|sony_cd_base_io
+id|sony535_cd_base_io
 op_plus
 l_int|1
 suffix:semicolon
 id|read_status_reg
 op_assign
-id|sony_cd_base_io
+id|sony535_cd_base_io
 op_plus
 l_int|2
 suffix:semicolon
 id|select_unit_reg
 op_assign
-id|sony_cd_base_io
+id|sony535_cd_base_io
 op_plus
 l_int|3
 suffix:semicolon
+macro_line|#ifndef USE_IRQ
+id|sony535_irq_used
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* polling only until this is ready... */
+macro_line|#endif
+multiline_comment|/* we need to poll until things get initialized */
+id|tmp_irq
+op_assign
+id|sony535_irq_used
+suffix:semicolon
+id|sony535_irq_used
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if DEBUG &gt; 0
 id|printk
 c_func
 (paren
-l_string|&quot;sonycd535: probing base address %03X&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: probing base address %03X&bslash;n&quot;
 comma
-id|sony_cd_base_io
+id|sony535_cd_base_io
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|check_region
 c_func
 (paren
-id|sony_cd_base_io
+id|sony535_cd_base_io
 comma
 l_int|4
 )paren
@@ -5545,7 +5712,8 @@ l_int|4
 id|printk
 c_func
 (paren
-l_string|&quot;sonycd535: my base address is not free!&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: my base address is not free!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifndef MODULE
@@ -5640,7 +5808,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* about 1-2 ms on my machine */
 )brace
 r_if
 c_cond
@@ -5696,7 +5863,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* was able to get the configuration, set drive mode as rest of init */
+multiline_comment|/* was able to get the configuration,&n;&t;&t;&t; * set drive mode as rest of init&n;&t;&t;&t; */
 macro_line|#if DEBUG &gt; 0
 multiline_comment|/* 0x50 == CADDY_NOT_INSERTED | NOT_SPINNING */
 r_if
@@ -5727,6 +5894,7 @@ l_int|0x50
 id|printk
 c_func
 (paren
+id|CDU535_MESSAGE_NAME
 l_string|&quot;Inquiry command returned status = 0x%x&bslash;n&quot;
 comma
 id|status
@@ -5736,6 +5904,97 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* now ready to use interrupts, if available */
+id|sony535_irq_used
+op_assign
+id|tmp_irq
+suffix:semicolon
+macro_line|#ifndef MODULE
+multiline_comment|/* This code is not in MODULEs by default, since the autoirq stuff might&n; * not be in the module-accessable symbol table.&n; */
+multiline_comment|/* A negative sony535_irq_used will attempt an autoirq. */
+r_if
+c_cond
+(paren
+id|sony535_irq_used
+OL
+l_int|0
+)paren
+(brace
+id|autoirq_setup
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|enable_interrupts
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|read_status_reg
+)paren
+suffix:semicolon
+multiline_comment|/* does a reset? */
+id|sony535_irq_used
+op_assign
+id|autoirq_report
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
+id|disable_interrupts
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|sony535_irq_used
+OG
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|sony535_irq_used
+comma
+id|cdu535_interrupt
+comma
+id|SA_INTERRUPT
+comma
+id|CDU535_HANDLE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to grab IRQ%d for the &quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; driver; polling instead.&bslash;n&quot;
+comma
+id|sony535_irq_used
+)paren
+suffix:semicolon
+id|sony535_irq_used
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 id|cmd_buff
 (braket
 l_int|0
@@ -5787,7 +6046,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Sony I/F CDROM : %8.8s %16.16s %4.4s&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; I/F CDROM : %8.8s %16.16s %4.4s&quot;
 comma
 id|drive_config.vendor_id
 comma
@@ -5799,7 +6059,30 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  using %d byte buffer&bslash;n&quot;
+l_string|&quot;  base address %03X, &quot;
+comma
+id|sony535_cd_base_io
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp_irq
+OG
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;IRQ%d, &quot;
+comma
+id|tmp_irq
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;using %d byte buffer&bslash;n&quot;
 comma
 id|sony_buffer_size
 )paren
@@ -5870,10 +6153,8 @@ suffix:semicolon
 id|mem_start
 op_add_assign
 r_sizeof
-(paren
 op_star
 id|sony_toc
-)paren
 suffix:semicolon
 id|last_sony_subcode
 op_assign
@@ -5887,16 +6168,13 @@ suffix:semicolon
 id|mem_start
 op_add_assign
 r_sizeof
-(paren
 op_star
 id|last_sony_subcode
-)paren
 suffix:semicolon
 id|sony_buffer
 op_assign
 (paren
-r_int
-r_char
+id|Byte
 op_star
 )paren
 id|mem_start
@@ -5917,10 +6195,8 @@ id|kmalloc
 c_func
 (paren
 r_sizeof
-(paren
 op_star
 id|sony_toc
-)paren
 comma
 id|GFP_KERNEL
 )paren
@@ -5936,10 +6212,8 @@ id|kmalloc
 c_func
 (paren
 r_sizeof
-(paren
 op_star
 id|last_sony_subcode
-)paren
 comma
 id|GFP_KERNEL
 )paren
@@ -5947,8 +6221,7 @@ suffix:semicolon
 id|sony_buffer
 op_assign
 (paren
-r_int
-r_char
+id|Byte
 op_star
 op_star
 )paren
@@ -5982,8 +6255,7 @@ id|i
 )braket
 op_assign
 (paren
-r_int
-r_char
+id|Byte
 op_star
 )paren
 id|kmalloc
@@ -6029,7 +6301,7 @@ r_else
 id|request_region
 c_func
 (paren
-id|sony_cd_base_io
+id|sony535_cd_base_io
 comma
 l_int|4
 comma
@@ -6037,6 +6309,8 @@ id|CDU535_HANDLE
 )paren
 suffix:semicolon
 )brace
+id|bail
+suffix:colon
 macro_line|#ifndef MODULE
 r_return
 id|mem_start
@@ -6048,7 +6322,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#ifndef MODULE
-multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters &n; * (added by emoenke@gwdg.de)&n; *&n; * use: tell LILO:&n; *                 sonycd535=0x320&n; *&n; * the address value has to be the existing CDROM port address.&n; */
+multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters&n; * (added by emoenke@gwdg.de)&n; *&n; * use: tell LILO:&n; *                 sonycd535=0x320&n; *&n; * the address value has to be the existing CDROM port address.&n; */
 r_void
 DECL|function|sonycd535_setup
 id|sonycd535_setup
@@ -6063,6 +6337,7 @@ op_star
 id|ints
 )paren
 (brace
+multiline_comment|/* if IRQ change and default io base desired,&n;&t; * then call with io base of 0&n;&t; */
 r_if
 c_cond
 (paren
@@ -6073,14 +6348,23 @@ l_int|0
 OG
 l_int|0
 )paren
-id|sony_cd_base_io
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|0
+)braket
+op_ne
+l_int|0
+)paren
+id|sony535_cd_base_io
 op_assign
 id|ints
 (braket
 l_int|1
 )braket
 suffix:semicolon
-macro_line|#if 0&t;/* placeholder for future use */
 r_if
 c_cond
 (paren
@@ -6091,14 +6375,13 @@ l_int|0
 OG
 l_int|1
 )paren
-id|irq_used
+id|sony535_irq_used
 op_assign
 id|ints
 (braket
 l_int|2
 )braket
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6118,11 +6401,10 @@ l_char|&squot;&bslash;0&squot;
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Warning: Unknown interface type: %s&bslash;n&quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot;: Warning: Unknown interface type: %s&bslash;n&quot;
 comma
 id|strings
-comma
-id|CDU535_MESSAGE_NAME
 )paren
 suffix:semicolon
 )brace
@@ -6147,7 +6429,8 @@ id|MOD_IN_USE
 id|printk
 c_func
 (paren
-l_string|&quot;Sony 535 module in use, cannot remove&bslash;n&quot;
+id|CDU535_HANDLE
+l_string|&quot; module in use, cannot remove&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6156,33 +6439,9 @@ suffix:semicolon
 id|release_region
 c_func
 (paren
-id|sony_cd_base_io
+id|sony535_cd_base_io
 comma
 l_int|4
-)paren
-suffix:semicolon
-id|kfree_s
-c_func
-(paren
-id|sony_toc
-comma
-r_sizeof
-(paren
-op_star
-id|sony_toc
-)paren
-)paren
-suffix:semicolon
-id|kfree_s
-c_func
-(paren
-id|last_sony_subcode
-comma
-r_sizeof
-(paren
-op_star
-id|last_sony_subcode
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -6218,6 +6477,26 @@ comma
 l_int|4
 op_star
 id|sony_buffer_sectors
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|last_sony_subcode
+comma
+r_sizeof
+op_star
+id|last_sony_subcode
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|sony_toc
+comma
+r_sizeof
+op_star
+id|sony_toc
 )paren
 suffix:semicolon
 r_if

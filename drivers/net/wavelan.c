@@ -14,6 +14,7 @@ macro_line|#include&t;&lt;linux/ptrace.h&gt;
 macro_line|#include&t;&lt;linux/ioport.h&gt;
 macro_line|#include&t;&lt;linux/in.h&gt;
 macro_line|#include&t;&lt;linux/string.h&gt;
+macro_line|#include&t;&lt;linux/delay.h&gt;
 macro_line|#include&t;&lt;asm/system.h&gt;
 macro_line|#include&t;&lt;asm/bitops.h&gt;
 macro_line|#include&t;&lt;asm/io.h&gt;
@@ -163,7 +164,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;wavelan.c:v5 31/1/95&bslash;n&quot;
+l_string|&quot;wavelan.c:v6 22/2/95&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n; * Entry point forward declarations.&n; */
 r_static
@@ -376,26 +377,6 @@ op_star
 l_int|0
 suffix:semicolon
 r_static
-r_void
-DECL|function|busy_loop
-id|busy_loop
-c_func
-(paren
-r_int
-id|i
-)paren
-(brace
-r_while
-c_loop
-(paren
-id|i
-op_decrement
-OG
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_static
 r_int
 r_int
 DECL|function|wavelan_splhi
@@ -516,7 +497,7 @@ id|hacr
 )paren
 suffix:semicolon
 multiline_comment|/* delay might only be needed sometimes */
-id|busy_loop
+id|udelay
 c_func
 (paren
 l_int|1000
@@ -1627,7 +1608,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1000000
+l_int|1000
 suffix:semicolon
 id|i
 OG
@@ -1672,6 +1653,12 @@ op_eq
 l_int|0
 )paren
 r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -1782,7 +1769,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|64000
+l_int|64
 suffix:semicolon
 id|i
 OG
@@ -1821,6 +1808,12 @@ op_amp
 id|AC_SFLD_C
 )paren
 r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -2182,7 +2175,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1000000
+l_int|1000
 suffix:semicolon
 id|i
 OG
@@ -2226,6 +2219,12 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2247,7 +2246,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|15000
+l_int|15
 suffix:semicolon
 id|i
 OG
@@ -2290,6 +2289,12 @@ id|SCB_ST_CNA
 )paren
 )paren
 r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -4047,7 +4052,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1000000
+l_int|1000
 suffix:semicolon
 id|i
 OG
@@ -4092,6 +4097,12 @@ op_eq
 l_int|0
 )paren
 r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -4442,7 +4453,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1000000
+l_int|1000
 suffix:semicolon
 id|i
 OG
@@ -4487,6 +4498,12 @@ op_eq
 l_int|0
 )paren
 r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -7674,6 +7691,10 @@ id|net_local
 op_star
 id|lp
 suffix:semicolon
+r_int
+r_int
+id|x
+suffix:semicolon
 id|lp
 op_assign
 (paren
@@ -7697,6 +7718,13 @@ id|lp-&gt;promiscuous
 op_assign
 l_int|1
 suffix:semicolon
+id|x
+op_assign
+id|wavelan_splhi
+c_func
+(paren
+)paren
+suffix:semicolon
 (paren
 r_void
 )paren
@@ -7704,6 +7732,12 @@ id|wavelan_hardware_reset
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|wavelan_splx
+c_func
+(paren
+id|x
 )paren
 suffix:semicolon
 r_break
@@ -7716,6 +7750,13 @@ id|lp-&gt;promiscuous
 op_assign
 l_int|0
 suffix:semicolon
+id|x
+op_assign
+id|wavelan_splhi
+c_func
+(paren
+)paren
+suffix:semicolon
 (paren
 r_void
 )paren
@@ -7723,6 +7764,12 @@ id|wavelan_hardware_reset
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|wavelan_splx
+c_func
+(paren
+id|x
 )paren
 suffix:semicolon
 r_break
@@ -9881,6 +9928,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This software may only be used and distributed&n; * according to the terms of the GNU Public License.&n; *&n; * This software was developed as a component of the&n; * Linux operating system.&n; * It is based on other device drivers and information&n; * either written or supplied by:&n; *&t;Ajay Bakre (bakre@paul.rutgers.edu),&n; *&t;Donald Becker (becker@cesdis.gsfc.nasa.gov),&n; *&t;Loeke Brederveld (Loeke.Brederveld@Utrecht.NCR.com),&n; *&t;Anders Klemets (klemets@it.kth.se),&n; *&t;Vladimir V. Kolpakov (w@stier.koenig.ru),&n; *&t;Marc Meertens (Marc.Meertens@Utrecht.NCR.com),&n; *&t;Pauline Middelink (middelin@polyware.iaf.nl),&n; *&t;Robert Morris (rtm@das.harvard.edu),&n; *&t;Girish Welling (welling@paul.rutgers.edu),&n; *&n; * Thanks go also to:&n; *&t;James Ashton (jaa101@syseng.anu.edu.au),&n; *&t;Alan Cox (iialan@iiit.swan.ac.uk),&n; *&t;Allan Creighton (allanc@cs.usyd.edu.au),&n; *&t;Matthew Geier (matthew@cs.usyd.edu.au),&n; *&t;Remo di Giovanni (remo@cs.usyd.edu.au),&n; *&t;Mark Hagan (mhagan@wtcpost.daytonoh.NCR.COM),&n; *&t;Tim Nicholson (tim@cs.usyd.edu.au),&n; *&t;Jeff Noxon (jeff@oylpatch.sccsi.com),&n; *&t;Ian Parkin (ian@cs.usyd.edu.au),&n; *&t;John Rosenberg (johnr@cs.usyd.edu.au),&n; *&t;George Rossi (george@phm.gov.au),&n; *&t;Arthur Scott (arthur@cs.usyd.edu.au),&n; *&t;Peter Storey,&n; * for their assistance and advice.&n; *&n; * Please send bug reports, updates, comments to:&n; *&n; * Bruce Janson                                    Email:  bruce@cs.usyd.edu.au&n; * Basser Department of Computer Science           Phone:  +61-2-351-3423&n; * University of Sydney, N.S.W., 2006, AUSTRALIA   Fax:    +61-2-351-3838&n; */
+multiline_comment|/*&n; * This software may only be used and distributed&n; * according to the terms of the GNU Public License.&n; *&n; * This software was developed as a component of the&n; * Linux operating system.&n; * It is based on other device drivers and information&n; * either written or supplied by:&n; *&t;Ajay Bakre (bakre@paul.rutgers.edu),&n; *&t;Donald Becker (becker@cesdis.gsfc.nasa.gov),&n; *&t;Loeke Brederveld (Loeke.Brederveld@Utrecht.NCR.com),&n; *&t;Anders Klemets (klemets@it.kth.se),&n; *&t;Vladimir V. Kolpakov (w@stier.koenig.ru),&n; *&t;Marc Meertens (Marc.Meertens@Utrecht.NCR.com),&n; *&t;Pauline Middelink (middelin@polyware.iaf.nl),&n; *&t;Robert Morris (rtm@das.harvard.edu),&n; *&t;Girish Welling (welling@paul.rutgers.edu),&n; *&n; * Thanks go also to:&n; *&t;James Ashton (jaa101@syseng.anu.edu.au),&n; *&t;Alan Cox (iialan@iiit.swan.ac.uk),&n; *&t;Allan Creighton (allanc@cs.usyd.edu.au),&n; *&t;Matthew Geier (matthew@cs.usyd.edu.au),&n; *&t;Remo di Giovanni (remo@cs.usyd.edu.au),&n; *&t;Eckhard Grah (grah@wrcs1.urz.uni-wuppertal.de),&n; *&t;Mark Hagan (mhagan@wtcpost.daytonoh.NCR.COM),&n; *&t;Tim Nicholson (tim@cs.usyd.edu.au),&n; *&t;Ian Parkin (ian@cs.usyd.edu.au),&n; *&t;John Rosenberg (johnr@cs.usyd.edu.au),&n; *&t;George Rossi (george@phm.gov.au),&n; *&t;Arthur Scott (arthur@cs.usyd.edu.au),&n; *&t;Peter Storey,&n; * for their assistance and advice.&n; *&n; * Please send bug reports, updates, comments to:&n; *&n; * Bruce Janson                                    Email:  bruce@cs.usyd.edu.au&n; * Basser Department of Computer Science           Phone:  +61-2-351-3423&n; * University of Sydney, N.S.W., 2006, AUSTRALIA   Fax:    +61-2-351-3838&n; */
 macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 eof

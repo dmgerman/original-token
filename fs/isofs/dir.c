@@ -796,6 +796,14 @@ suffix:semicolon
 multiline_comment|/* Handle everything else.  Do name translation if there&n;&t;&t;   is no Rock Ridge NM field. */
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_unhide
+op_eq
+l_char|&squot;n&squot;
+)paren
+(brace
 multiline_comment|/* Do not report hidden or associated files */
 id|high_sierra
 op_assign
@@ -833,6 +841,7 @@ suffix:semicolon
 suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 )brace
 id|dlen
 op_assign

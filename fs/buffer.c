@@ -6564,6 +6564,8 @@ suffix:semicolon
 )brace
 id|i
 op_assign
+l_int|2
+op_star
 id|nr_buffers_type
 (braket
 id|nlist

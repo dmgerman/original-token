@@ -18,6 +18,7 @@ c_func
 (paren
 r_const
 r_int
+r_int
 id|arg
 comma
 r_struct
@@ -43,6 +44,7 @@ id|sel_loadlut
 c_func
 (paren
 r_const
+r_int
 r_int
 id|arg
 )paren
@@ -194,6 +196,7 @@ id|p
 suffix:semicolon
 multiline_comment|/* how to access screen memory */
 macro_line|#ifdef __alpha__
+macro_line|#include &lt;asm/io.h&gt; 
 DECL|function|scr_writew
 r_static
 r_inline

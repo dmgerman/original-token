@@ -718,13 +718,21 @@ id|file_lock
 op_star
 id|fl_next
 suffix:semicolon
-multiline_comment|/* singly linked list */
+multiline_comment|/* singly linked list for this inode (or the free list) */
 DECL|member|fl_nextlink
 r_struct
 id|file_lock
 op_star
 id|fl_nextlink
 suffix:semicolon
+multiline_comment|/* doubly linked list of all locks */
+DECL|member|fl_prevlink
+r_struct
+id|file_lock
+op_star
+id|fl_prevlink
+suffix:semicolon
+multiline_comment|/* used to simplify garbage collecting */
 DECL|member|fl_owner
 r_struct
 id|task_struct

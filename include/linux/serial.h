@@ -54,15 +54,32 @@ DECL|member|hub6
 r_int
 id|hub6
 suffix:semicolon
+DECL|member|closing_wait
+r_int
+r_int
+id|closing_wait
+suffix:semicolon
+multiline_comment|/* time to wait before closing */
+DECL|member|closing_wait2
+r_int
+r_int
+id|closing_wait2
+suffix:semicolon
+multiline_comment|/* no longer used... */
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|5
+l_int|4
 )braket
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * For the close wait times, 0 means wait forever for serial port to&n; * flush its output.  65535 means don&squot;t wait at all.&n; */
+DECL|macro|ASYNC_CLOSING_WAIT_INF
+mdefine_line|#define ASYNC_CLOSING_WAIT_INF&t;0
+DECL|macro|ASYNC_CLOSING_WAIT_NONE
+mdefine_line|#define ASYNC_CLOSING_WAIT_NONE&t;65535
 multiline_comment|/*&n; * These are the supported serial types.&n; */
 DECL|macro|PORT_UNKNOWN
 mdefine_line|#define PORT_UNKNOWN&t;0
@@ -76,8 +93,10 @@ DECL|macro|PORT_16550A
 mdefine_line|#define PORT_16550A&t;4
 DECL|macro|PORT_CIRRUS
 mdefine_line|#define PORT_CIRRUS     5
+DECL|macro|PORT_16650
+mdefine_line|#define PORT_16650&t;6
 DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;5
+mdefine_line|#define PORT_MAX&t;6
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
 DECL|macro|ASYNC_HUP_NOTIFY
 mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */
@@ -124,6 +143,76 @@ DECL|macro|ASYNC_CTS_FLOW
 mdefine_line|#define ASYNC_CTS_FLOW&t;&t;0x04000000 /* Do CTS flow control */
 DECL|macro|ASYNC_CHECK_CD
 mdefine_line|#define ASYNC_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
+multiline_comment|/*&n; * Multiport serial configuration structure --- external structure&n; */
+DECL|struct|serial_multiport_struct
+r_struct
+id|serial_multiport_struct
+(brace
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+DECL|member|port1
+r_int
+id|port1
+suffix:semicolon
+DECL|member|mask1
+DECL|member|match1
+r_int
+r_char
+id|mask1
+comma
+id|match1
+suffix:semicolon
+DECL|member|port2
+r_int
+id|port2
+suffix:semicolon
+DECL|member|mask2
+DECL|member|match2
+r_int
+r_char
+id|mask2
+comma
+id|match2
+suffix:semicolon
+DECL|member|port3
+r_int
+id|port3
+suffix:semicolon
+DECL|member|mask3
+DECL|member|match3
+r_int
+r_char
+id|mask3
+comma
+id|match3
+suffix:semicolon
+DECL|member|port4
+r_int
+id|port4
+suffix:semicolon
+DECL|member|mask4
+DECL|member|match4
+r_int
+r_char
+id|mask4
+comma
+id|match4
+suffix:semicolon
+DECL|member|port_monitor
+r_int
+id|port_monitor
+suffix:semicolon
+DECL|member|reserved
+r_int
+id|reserved
+(braket
+l_int|32
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 DECL|struct|async_struct
@@ -195,6 +284,16 @@ multiline_comment|/* xon/xoff character */
 DECL|member|close_delay
 r_int
 id|close_delay
+suffix:semicolon
+DECL|member|closing_wait
+r_int
+r_int
+id|closing_wait
+suffix:semicolon
+DECL|member|closing_wait2
+r_int
+r_int
+id|closing_wait2
 suffix:semicolon
 DECL|member|IER
 r_int
@@ -314,6 +413,65 @@ DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
 DECL|macro|RS_EVENT_HANGUP
 mdefine_line|#define RS_EVENT_HANGUP&t;&t;1
+multiline_comment|/*&n; * Multiport serial configuration structure --- internal structure&n; */
+DECL|struct|rs_multiport_struct
+r_struct
+id|rs_multiport_struct
+(brace
+DECL|member|port1
+r_int
+id|port1
+suffix:semicolon
+DECL|member|mask1
+DECL|member|match1
+r_int
+r_char
+id|mask1
+comma
+id|match1
+suffix:semicolon
+DECL|member|port2
+r_int
+id|port2
+suffix:semicolon
+DECL|member|mask2
+DECL|member|match2
+r_int
+r_char
+id|mask2
+comma
+id|match2
+suffix:semicolon
+DECL|member|port3
+r_int
+id|port3
+suffix:semicolon
+DECL|member|mask3
+DECL|member|match3
+r_int
+r_char
+id|mask3
+comma
+id|match3
+suffix:semicolon
+DECL|member|port4
+r_int
+id|port4
+suffix:semicolon
+DECL|member|mask4
+DECL|member|match4
+r_int
+r_char
+id|mask4
+comma
+id|match4
+suffix:semicolon
+DECL|member|port_monitor
+r_int
+id|port_monitor
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Export to allow PCMCIA to use this - Dave Hinds */
 r_extern
 r_int

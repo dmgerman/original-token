@@ -1816,6 +1816,10 @@ id|priv
 )paren
 suffix:semicolon
 )brace
+id|current-&gt;tty_old_pgrp
+op_assign
+l_int|0
+suffix:semicolon
 id|tty-&gt;session
 op_assign
 l_int|0
@@ -4956,6 +4960,10 @@ id|current-&gt;tty
 op_assign
 id|tty
 suffix:semicolon
+id|current-&gt;tty_old_pgrp
+op_assign
+l_int|0
+suffix:semicolon
 id|tty-&gt;session
 op_assign
 id|current-&gt;session
@@ -6143,6 +6151,10 @@ suffix:semicolon
 id|current-&gt;tty
 op_assign
 id|tty
+suffix:semicolon
+id|current-&gt;tty_old_pgrp
+op_assign
+l_int|0
 suffix:semicolon
 id|tty-&gt;session
 op_assign
