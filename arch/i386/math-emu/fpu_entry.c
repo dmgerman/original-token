@@ -2735,7 +2735,7 @@ mdefine_line|#define S387 ((struct i387_soft_struct *)s387)
 DECL|macro|sstatus_word
 mdefine_line|#define sstatus_word() &bslash;&n;  ((S387-&gt;swd &amp; ~SW_Top &amp; 0xffff) | ((S387-&gt;ftop &lt;&lt; SW_Top_Shift) &amp; SW_Top))
 DECL|function|restore_i387_soft
-r_void
+r_int
 id|restore_i387_soft
 c_func
 (paren
@@ -2792,6 +2792,9 @@ op_star
 l_int|10
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|__copy_from_user
 c_func
 (paren
@@ -2804,6 +2807,10 @@ l_int|7
 op_star
 l_int|4
 )paren
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
@@ -2842,6 +2849,9 @@ suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 multiline_comment|/* Copy all registers in stack order. */
+r_if
+c_cond
+(paren
 id|__copy_from_user
 c_func
 (paren
@@ -2860,12 +2870,19 @@ id|d
 comma
 id|other
 )paren
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|offset
 )paren
+r_if
+c_cond
+(paren
 id|__copy_from_user
 c_func
 (paren
@@ -2882,6 +2899,10 @@ id|other
 comma
 id|offset
 )paren
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
@@ -2999,11 +3020,12 @@ id|S387-&gt;twd
 op_assign
 id|tags
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|save_i387_soft
-r_struct
-id|_fpstate
-op_star
+r_int
 id|save_i387_soft
 c_func
 (paren
@@ -3120,6 +3142,9 @@ suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 multiline_comment|/* Copy all registers in stack order. */
+r_if
+c_cond
+(paren
 id|__copy_to_user
 c_func
 (paren
@@ -3138,12 +3163,19 @@ id|offset
 comma
 id|other
 )paren
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|offset
 )paren
+r_if
+c_cond
+(paren
 id|__copy_to_user
 c_func
 (paren
@@ -3160,11 +3192,14 @@ id|S387-&gt;st_space
 comma
 id|offset
 )paren
-suffix:semicolon
+)paren
+r_return
+op_minus
+l_int|1
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 r_return
-id|buf
+l_int|1
 suffix:semicolon
 )brace
 eof

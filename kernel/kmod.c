@@ -260,6 +260,28 @@ suffix:semicolon
 r_int
 id|waitpid_result
 suffix:semicolon
+multiline_comment|/* Don&squot;t allow request_mode() before the root fs is mounted!  */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|current-&gt;fs-&gt;root
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;request_module[%s]: Root fs not mounted&bslash;n&quot;
+comma
+id|module_name
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 id|pid
 op_assign
 id|kernel_thread

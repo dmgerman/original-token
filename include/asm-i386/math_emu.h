@@ -2,7 +2,7 @@ macro_line|#ifndef _I386_MATH_EMU_H
 DECL|macro|_I386_MATH_EMU_H
 mdefine_line|#define _I386_MATH_EMU_H
 macro_line|#include &lt;asm/sigcontext.h&gt;
-r_void
+r_int
 id|restore_i387_soft
 c_func
 (paren
@@ -16,9 +16,7 @@ op_star
 id|buf
 )paren
 suffix:semicolon
-r_struct
-id|_fpstate
-op_star
+r_int
 id|save_i387_soft
 c_func
 (paren

@@ -340,11 +340,6 @@ comma
 id|error_code
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|tsk
 op_assign
 id|current
@@ -539,13 +534,6 @@ comma
 id|write
 )paren
 suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|mm-&gt;mmap_sem
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Did it hit the DOS screen memory VA from vm86 mode?&n;&t; */
 r_if
 c_cond
@@ -581,8 +569,14 @@ op_lshift
 id|bit
 suffix:semicolon
 )brace
-r_goto
-id|out
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 multiline_comment|/*&n; * Something tried to access memory that isn&squot;t in our memory map..&n; * Fix it, but check if it&squot;s kernel or user first..&n; */
 id|bad_area
@@ -623,8 +617,7 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Pentium F0 0F C7 C8 bug workaround.&n;&t; */
@@ -660,11 +653,6 @@ op_eq
 l_int|6
 )paren
 (brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_invalid_op
 c_func
 (paren
@@ -698,8 +686,7 @@ id|regs-&gt;eip
 op_assign
 id|fixup
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n; * terminate things with extreme prejudice.&n; *&n; * First we check if it was the bootup rw-test, though..&n; */
@@ -754,8 +741,7 @@ c_func
 l_string|&quot;Ok&quot;
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 r_if
@@ -885,6 +871,11 @@ id|page
 )paren
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|die_if_kernel
 c_func
 (paren
@@ -901,8 +892,6 @@ c_func
 id|SIGKILL
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 id|unlock_kernel
 c_func
 (paren

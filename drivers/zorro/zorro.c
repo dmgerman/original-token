@@ -2546,6 +2546,21 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
+id|ZEUS
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Spider&quot;
+comma
+id|VIDEO
+comma
+id|ZEUS_SPIDER
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
 id|NEWTEK
 )paren
 id|PROD
@@ -3154,6 +3169,15 @@ id|TURBO_SCSI
 comma
 id|PHASE5_CYBERSTORM_MK_III
 )paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Blizzard 603e+&quot;
+comma
+id|TURBO_SCSI
+comma
+id|PHASE5_BLIZZARD_603E_PLUS
+)paren
 id|END
 id|BEGIN_PROD
 c_func
@@ -3255,6 +3279,21 @@ comma
 id|MISC
 comma
 id|UWE_GERLACH_RAM_ROM
+)paren
+id|END
+id|BEGIN_PROD
+c_func
+(paren
+id|ACT
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Prelude&quot;
+comma
+id|AUDIO
+comma
+id|ACT_PRELUDE
 )paren
 id|END
 id|BEGIN_PROD
@@ -4001,6 +4040,13 @@ id|ARMAX
 id|MANUF
 c_func
 (paren
+l_string|&quot;ZEUS Electronic Development&quot;
+comma
+id|ZEUS
+)paren
+id|MANUF
+c_func
+(paren
 l_string|&quot;NewTek&quot;
 comma
 id|NEWTEK
@@ -4179,6 +4225,13 @@ c_func
 l_string|&quot;Uwe Gerlach&quot;
 comma
 id|UWE_GERLACH
+)paren
+id|MANUF
+c_func
+(paren
+l_string|&quot;ACT&quot;
+comma
+id|ACT
 )paren
 id|MANUF
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/floppy.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1993, 1994  Alain Knaff&n; */
+multiline_comment|/*&n; *  linux/kernel/floppy.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1993, 1994  Alain Knaff&n; *  Copyright (C) 1998 Alan Cox&n; */
 multiline_comment|/*&n; * 02.12.91 - Changed to static variables to indicate need for reset&n; * and recalibrate. This makes some things easier (output_byte reset&n; * checking etc), and means less interrupt jumping in case of errors,&n; * so the code is hopefully easier to understand.&n; */
 multiline_comment|/*&n; * This file is certainly a mess. I&squot;ve tried my best to get it working,&n; * but I don&squot;t like programming floppies, and I have only one anyway.&n; * Urgel. I should check for more errors, and do more graceful error&n; * recovery. Seems there are problems with several drives. I&squot;ve tried to&n; * correct them. No promises.&n; */
 multiline_comment|/*&n; * As with hd.c, all routines within this file can (and will) be called&n; * by interrupts, so extreme caution is needed. A hardware interrupt&n; * handler may not sleep, or a kernel panic will happen. Thus I cannot&n; * call &quot;floppy-on&quot; directly, but have to set a special timer interrupt&n; * etc.&n; */
@@ -14,6 +14,7 @@ multiline_comment|/* 1994/9/17 -- Koen Holtman -- added logging of physical flop
 multiline_comment|/* 1995/4/24 -- Dan Fandrich -- added support for Commodore 1581 3.5&quot; disks&n; * by defining bit 1 of the &quot;stretch&quot; parameter to mean put sectors on the&n; * opposite side of the disk, leaving the sector IDs alone (i.e. Commodore&squot;s&n; * drives are &quot;upside-down&quot;).&n; */
 multiline_comment|/*&n; * 1995/8/26 -- Andreas Busse -- added Mips support.&n; */
 multiline_comment|/*&n; * 1995/10/18 -- Ralf Baechle -- Portability cleanup; move machine dependent&n; * features to asm/floppy.h.&n; */
+multiline_comment|/*&n; * 1998/06/07 -- Alan Cox -- Merged the 2.0.34 fixes for resource allocation&n; * failures.&n; */
 DECL|macro|FLOPPY_SANITY_CHECK
 mdefine_line|#define FLOPPY_SANITY_CHECK
 DECL|macro|FLOPPY_SILENT_DCL_CLEAR
@@ -54,6 +55,13 @@ r_int
 id|allowed_drive_mask
 op_assign
 l_int|0x33
+suffix:semicolon
+DECL|variable|irqdma_allocated
+r_static
+r_int
+id|irqdma_allocated
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -3127,6 +3135,7 @@ id|jiffies
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;We should propogate failures to grab the resources back&n;&t; *&t;nicely from here. Actually we ought to rewrite the fd&n;&t; *&t;driver some day too.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3414,7 +3423,8 @@ id|usage_count
 id|printk
 c_func
 (paren
-l_string|&quot;trying to lock fdc while usage count=0&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Trying to lock fdc while usage count=0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3422,11 +3432,23 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|floppy_grab_irq_and_dma
 c_func
 (paren
 )paren
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
+)brace
 id|INT_OFF
 suffix:semicolon
 r_while
@@ -18754,9 +18776,14 @@ comma
 id|FD_DOR
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The driver will try and free resources and relies on us&n;&t; *&t;to know if they were allocated or not.&n;&t; */
 id|fdc
 op_assign
 l_int|0
+suffix:semicolon
+id|irqdma_allocated
+op_assign
+l_int|1
 suffix:semicolon
 r_return
 l_int|0
@@ -18808,6 +18835,12 @@ suffix:semicolon
 )brace
 id|INT_ON
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|irqdma_allocated
+)paren
+(brace
 id|fd_disable_dma
 c_func
 (paren
@@ -18823,6 +18856,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|irqdma_allocated
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|set_dor
 c_func
 (paren
@@ -19533,11 +19571,17 @@ id|have_no_fdc
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|floppy_grab_irq_and_dma
 c_func
 (paren
 )paren
-suffix:semicolon
+op_eq
+l_int|0
+)paren
+(brace
 id|lock_fdc
 c_func
 (paren
@@ -19564,6 +19608,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 eof

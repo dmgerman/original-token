@@ -4234,6 +4234,7 @@ id|pte
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * By the time we get here, we already hold the mm semaphore&n; */
 DECL|function|handle_mm_fault
 r_void
 id|handle_mm_fault
@@ -4317,6 +4318,11 @@ id|pte
 r_goto
 id|no_memory
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|handle_pte_fault
 c_func
 (paren
@@ -4329,6 +4335,11 @@ comma
 id|write_access
 comma
 id|pte
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|update_mmu_cache

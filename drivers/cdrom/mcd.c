@@ -223,6 +223,14 @@ op_assign
 id|MCD_INTR_NR
 suffix:semicolon
 multiline_comment|/* must directly follow mcd_port */
+id|MODULE_PARM
+c_func
+(paren
+id|mcd
+comma
+l_string|&quot;1-2i&quot;
+)paren
+suffix:semicolon
 DECL|variable|McdTimeout
 DECL|variable|McdTries
 r_static

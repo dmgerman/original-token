@@ -4671,7 +4671,7 @@ id|msp
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 )brace
 id|msp3400c_setmode
@@ -5462,6 +5462,8 @@ id|msp3400c_detach
 comma
 id|msp3400c_command
 )brace
+suffix:semicolon
+id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module

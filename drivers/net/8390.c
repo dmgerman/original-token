@@ -3101,11 +3101,8 @@ id|EN0_RXCR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Initialize the rest of the 8390 device structure. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/*&n; * Initialize the rest of the 8390 device structure.  Do NOT __initfunc&n; * this, as it is used by 8390 based modular drivers too.&n; */
+DECL|function|ethdev_init
 r_int
 id|ethdev_init
 c_func
@@ -3114,7 +3111,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_if

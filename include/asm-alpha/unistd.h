@@ -224,7 +224,7 @@ mdefine_line|#define __NR_osf_old_sigsetmask&t;110&t;/* not implemented */
 DECL|macro|__NR_sigsuspend
 mdefine_line|#define __NR_sigsuspend&t;&t;111
 DECL|macro|__NR_osf_sigstack
-mdefine_line|#define __NR_osf_sigstack&t;112&t;/* not implemented */
+mdefine_line|#define __NR_osf_sigstack&t;112
 DECL|macro|__NR_recvmsg
 mdefine_line|#define __NR_recvmsg&t;&t;113
 DECL|macro|__NR_sendmsg
@@ -385,8 +385,8 @@ DECL|macro|__NR_getpgid
 mdefine_line|#define __NR_getpgid&t;&t;233
 DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid&t;&t;234
-DECL|macro|__NR_osf_sigaltstack
-mdefine_line|#define __NR_osf_sigaltstack&t;235&t;/* not implemented */
+DECL|macro|__NR_sigaltstack
+mdefine_line|#define __NR_sigaltstack&t;235
 DECL|macro|__NR_osf_waitid
 mdefine_line|#define __NR_osf_waitid&t;&t;236&t;/* not implemented */
 DECL|macro|__NR_osf_priocntlset
@@ -574,6 +574,10 @@ DECL|macro|__NR_adjtimex
 mdefine_line|#define __NR_adjtimex&t;&t;&t;366
 DECL|macro|__NR_getcwd
 mdefine_line|#define __NR_getcwd&t;&t;&t;367
+DECL|macro|__NR_capget
+mdefine_line|#define __NR_capget&t;&t;&t;368
+DECL|macro|__NR_capset
+mdefine_line|#define __NR_capset&t;&t;&t;369
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 DECL|macro|_syscall_return
 mdefine_line|#define _syscall_return(type)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (_sc_err ? errno = _sc_ret, _sc_ret = -1L : 0), (type) _sc_ret

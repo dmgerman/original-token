@@ -1247,10 +1247,11 @@ l_int|16
 )paren
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;Sorry, you CPU does not support tsc. I am dying...&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Sorry, you CPU does not support tsc. Net profiler is dying...&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

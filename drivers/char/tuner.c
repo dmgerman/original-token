@@ -1147,6 +1147,8 @@ comma
 id|tuner_command
 )brace
 suffix:semicolon
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

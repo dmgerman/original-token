@@ -577,6 +577,8 @@ id|vma-&gt;vm_mm-&gt;locked_vm
 op_add_assign
 id|pages
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n; * This is horribly broken. See the comment on the same&n; * brokenness in mm/mmap.c (essentially, this doesn&squot;t&n; * work anyway for PROT_NONE and writable pages, and now&n; * that we properly get the mmap semaphore it would just&n; * lock up on us).&n; *&n; * Fix the same way.&n; */
 r_if
 c_cond
 (paren
@@ -584,6 +586,7 @@ id|newflags
 op_amp
 id|VM_LOCKED
 )paren
+(brace
 r_while
 c_loop
 (paren
@@ -625,6 +628,8 @@ op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
+)brace
+macro_line|#endif
 )brace
 r_return
 id|retval
@@ -898,6 +903,13 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -992,6 +1004,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -1012,6 +1031,13 @@ id|len
 (brace
 r_int
 id|ret
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -1055,6 +1081,13 @@ suffix:semicolon
 id|unlock_kernel
 c_func
 (paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
@@ -1215,6 +1248,13 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -1297,6 +1337,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -1312,6 +1359,13 @@ r_void
 (brace
 r_int
 id|ret
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -1329,6 +1383,13 @@ suffix:semicolon
 id|unlock_kernel
 c_func
 (paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return

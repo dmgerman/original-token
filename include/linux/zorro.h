@@ -131,7 +131,7 @@ DECL|macro|ZORRO_ID
 mdefine_line|#define ZORRO_ID(manuf, prod, epc) &bslash;&n;    ((ZORRO_MANUF_##manuf &lt;&lt; 16) | ((prod) &lt;&lt; 8) | (epc))
 DECL|typedef|zorro_id
 r_typedef
-id|u32
+id|__u32
 id|zorro_id
 suffix:semicolon
 DECL|macro|ZORRO_MANUF_PACIFIC_PERIPHERALS
@@ -731,6 +731,10 @@ DECL|macro|ZORRO_MANUF_ARMAX
 mdefine_line|#define ZORRO_MANUF_ARMAX&t;&t;&t;&t;&t;0x0885
 DECL|macro|ZORRO_PROD_ARMAX_OMNIBUS
 mdefine_line|#define  ZORRO_PROD_ARMAX_OMNIBUS&t;&t;&t;&t;ZORRO_ID(ARMAX, 0x00, 0)
+DECL|macro|ZORRO_MANUF_ZEUS
+mdefine_line|#define ZORRO_MANUF_ZEUS&t;&t;&t;&t;&t;0x088d
+DECL|macro|ZORRO_PROD_ZEUS_SPIDER
+mdefine_line|#define  ZORRO_PROD_ZEUS_SPIDER&t;&t;&t;&t;&t;ZORRO_ID(ZEUS, 0x04, 0)
 DECL|macro|ZORRO_MANUF_NEWTEK
 mdefine_line|#define ZORRO_MANUF_NEWTEK&t;&t;&t;&t;&t;0x088F
 DECL|macro|ZORRO_PROD_NEWTEK_VIDEOTOASTER
@@ -882,6 +886,8 @@ DECL|macro|ZORRO_PROD_PHASE5_CYBERVISION64_3D
 mdefine_line|#define  ZORRO_PROD_PHASE5_CYBERVISION64_3D&t;&t;&t;ZORRO_ID(PHASE5, 0x43, 0)
 DECL|macro|ZORRO_PROD_PHASE5_CYBERSTORM_MK_III
 mdefine_line|#define  ZORRO_PROD_PHASE5_CYBERSTORM_MK_III&t;&t;&t;ZORRO_ID(PHASE5, 0x64, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_603E_PLUS
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_603E_PLUS&t;&t;&t;ZORRO_ID(PHASE5, 0x6e, 0)
 DECL|macro|ZORRO_MANUF_DPS
 mdefine_line|#define ZORRO_MANUF_DPS&t;&t;&t;&t;&t;&t;0x2169
 DECL|macro|ZORRO_PROD_DPS_PERSONAL_ANIMATION_RECORDER
@@ -908,6 +914,10 @@ DECL|macro|ZORRO_MANUF_UWE_GERLACH
 mdefine_line|#define ZORRO_MANUF_UWE_GERLACH&t;&t;&t;&t;&t;0x3FF7
 DECL|macro|ZORRO_PROD_UWE_GERLACH_RAM_ROM
 mdefine_line|#define  ZORRO_PROD_UWE_GERLACH_RAM_ROM&t;&t;&t;&t;ZORRO_ID(UWE_GERLACH, 0xd4, 0)
+DECL|macro|ZORRO_MANUF_ACT
+mdefine_line|#define ZORRO_MANUF_ACT&t;&t;&t;&t;&t;&t;0x4231
+DECL|macro|ZORRO_PROD_ACT_PRELUDE
+mdefine_line|#define  ZORRO_PROD_ACT_PRELUDE&t;&t;&t;&t;&t;ZORRO_ID(ACT, 0x01, 0)
 DECL|macro|ZORRO_MANUF_MACROSYSTEMS_GERMANY
 mdefine_line|#define ZORRO_MANUF_MACROSYSTEMS_GERMANY&t;&t;&t;0x4754
 DECL|macro|ZORRO_PROD_MACROSYSTEMS_MAESTRO
