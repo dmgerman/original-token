@@ -146,8 +146,9 @@ id|dead_key_next
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* &n; * In order to retrieve the shift_state (for the mouse server), either&n; * the variable must be global, or a new procedure must be create to &n; * return the value. I chose the former way.&n; */
 DECL|variable|shift_state
-r_static
+multiline_comment|/*static*/
 r_int
 id|shift_state
 op_assign

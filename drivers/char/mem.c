@@ -1703,7 +1703,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ftape: allocated %d buffers alligned at: %p&bslash;n&quot;
+l_string|&quot;ftape: allocated %d buffers aligned at: %p&bslash;n&quot;
 comma
 id|NR_FTAPE_BUFFERS
 comma

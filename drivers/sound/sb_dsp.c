@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip (SB1.0 to 2.1, SB Pro).&n; *&n; * Copyright by Hannu Savolainen 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added code to support Sound Galaxy NX Pro&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB)
 macro_line|#include &quot;sb.h&quot;
@@ -2187,6 +2187,11 @@ id|hw_config
 r_int
 id|i
 suffix:semicolon
+r_int
+id|mixer_type
+op_assign
+l_int|0
+suffix:semicolon
 id|sbc_major
 op_assign
 id|sbc_minor
@@ -2286,6 +2291,8 @@ id|sbc_major
 op_ge
 l_int|3
 )paren
+id|mixer_type
+op_assign
 id|sb_mixer_init
 (paren
 id|sbc_major
@@ -2333,6 +2340,30 @@ l_int|3
 )paren
 (brace
 macro_line|#ifndef SCO
+macro_line|#  ifdef __SGNXPRO__
+r_if
+c_cond
+(paren
+id|mixer_type
+op_eq
+l_int|2
+)paren
+(brace
+id|sprintf
+(paren
+id|sb_dsp_operations.name
+comma
+l_string|&quot;Sound Galaxy NX Pro %d.%d&quot;
+comma
+id|sbc_major
+comma
+id|sbc_minor
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#  endif
+(brace
 id|sprintf
 (paren
 id|sb_dsp_operations.name
@@ -2344,6 +2375,7 @@ comma
 id|sbc_minor
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 r_else

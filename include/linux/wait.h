@@ -7,6 +7,7 @@ DECL|macro|WUNTRACED
 mdefine_line|#define WUNTRACED&t;0x00000002
 DECL|macro|__WCLONE
 mdefine_line|#define __WCLONE&t;0x80000000
+macro_line|#ifdef __KERNEL__
 DECL|struct|wait_queue
 r_struct
 id|wait_queue
@@ -84,5 +85,6 @@ id|select_table
 suffix:semicolon
 DECL|macro|__MAX_SELECT_TABLE_ENTRIES
 mdefine_line|#define __MAX_SELECT_TABLE_ENTRIES (4096 / sizeof (struct select_table_entry))
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

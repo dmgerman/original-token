@@ -1061,7 +1061,7 @@ r_int
 id|mode
 )paren
 suffix:semicolon
-r_void
+r_int
 id|sb_mixer_init
 c_func
 (paren

@@ -1421,6 +1421,22 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
+macro_line|#&t;ifdef MSS2_BASE
+(brace
+id|SNDCARD_MSS
+comma
+(brace
+id|MSS2_BASE
+comma
+id|MSS2_IRQ
+comma
+id|MSS2_DMA
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#&t;endif
 macro_line|#endif
 macro_line|#if !defined(EXCLUDE_UART6850) &amp;&amp; !defined(EXCLUDE_MIDI)
 (brace

@@ -61,6 +61,16 @@ DECL|macro|WIN_DIAGNOSE
 mdefine_line|#define WIN_DIAGNOSE&t;&t;0x90
 DECL|macro|WIN_SPECIFY
 mdefine_line|#define WIN_SPECIFY&t;&t;0x91
+DECL|macro|WIN_MULTREAD
+mdefine_line|#define WIN_MULTREAD&t;&t;0xC4&t;/* read multiple sectors&t;*/
+DECL|macro|WIN_MULTWRITE
+mdefine_line|#define WIN_MULTWRITE&t;&t;0xC5&t;/* write multiple sectors&t;*/
+DECL|macro|WIN_SETMULT
+mdefine_line|#define WIN_SETMULT&t;&t;0xC6&t;/* enable read multiple&t;&t;*/
+DECL|macro|WIN_IDENTIFY
+mdefine_line|#define WIN_IDENTIFY&t;&t;0xEC&t;/* ask drive to identify itself&t;*/
+DECL|macro|WIN_SETFEATURES
+mdefine_line|#define WIN_SETFEATURES&t;&t;0xEF&t;/* set special drive features   */
 multiline_comment|/* Bits for HD_ERROR */
 DECL|macro|MARK_ERR
 mdefine_line|#define MARK_ERR&t;0x01&t;/* Bad address mark */
@@ -105,5 +115,15 @@ id|start
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|HDIO_GETUNMASKINTR
+mdefine_line|#define HDIO_GETUNMASKINTR&t;0x302
+DECL|macro|HDIO_SETUNMASKINTR
+mdefine_line|#define HDIO_SETUNMASKINTR&t;0x303
+DECL|macro|HDIO_GETMULTCOUNT
+mdefine_line|#define HDIO_GETMULTCOUNT&t;0x304
+DECL|macro|HDIO_SETMULTCOUNT
+mdefine_line|#define HDIO_SETMULTCOUNT&t;0x305
+DECL|macro|HDIO_SETFEATURE
+mdefine_line|#define HDIO_SETFEATURE  &t;0x306
 macro_line|#endif
 eof

@@ -1393,10 +1393,6 @@ id|dev-&gt;open
 op_assign
 id|ppp_dev_open
 suffix:semicolon
-id|dev-&gt;do_ioctl
-op_assign
-id|ppp_dev_ioctl
-suffix:semicolon
 id|dev-&gt;stop
 op_assign
 id|ppp_dev_close
@@ -1437,6 +1433,11 @@ suffix:semicolon
 id|dev-&gt;queue_xmit
 op_assign
 id|dev_queue_xmit
+suffix:semicolon
+macro_line|#else
+id|dev-&gt;do_ioctl
+op_assign
+id|ppp_dev_ioctl
 suffix:semicolon
 macro_line|#endif
 r_for
@@ -2659,6 +2660,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef NET02D
 DECL|function|ppp_dev_ioctl
 r_static
 r_int
@@ -2776,6 +2778,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*************************************************************&n; * TTY OUTPUT&n; *    The following function delivers a fully-formed PPP&n; *    frame in ppp-&gt;xbuff to the TTY for output.&n; *************************************************************/
 macro_line|#ifdef NEW_TTY_DRIVERS
 r_static
@@ -2821,6 +2824,13 @@ id|dev-&gt;flags
 op_amp
 id|IFF_UP
 )paren
+macro_line|#ifndef NET02D
+id|mark_bh
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+macro_line|#else
 id|dev_tint
 (paren
 (paren
@@ -2835,6 +2845,7 @@ op_member_access_from_pointer
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* enable any blocked process pending transmission */
 id|wake_up_interruptible
 (paren
@@ -4714,12 +4725,10 @@ id|count
 )paren
 )brace
 multiline_comment|/* receive the frame through the network software */
-r_while
-c_loop
 (paren
-(paren
+r_void
+)paren
 id|dev_rint
-c_func
 (paren
 id|c
 comma
@@ -4728,13 +4737,6 @@ comma
 l_int|0
 comma
 id|ppp-&gt;dev
-)paren
-op_amp
-op_complement
-l_int|1
-)paren
-op_ne
-l_int|0
 )paren
 suffix:semicolon
 r_return

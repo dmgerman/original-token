@@ -2150,6 +2150,12 @@ id|sk-&gt;localroute
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;timer.next
+op_assign
+id|sk-&gt;timer.prev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sk-&gt;timer.data
 op_assign
 (paren

@@ -130,7 +130,7 @@ mdefine_line|#define SBFM_MAXINSTR&t;&t;(256)&t;/* Size of the FM Instrument ban
 multiline_comment|/* 128 instruments for general MIDI setup and 16 unassigned&t; */
 multiline_comment|/*&n; * Minor numbers for the sound driver.&n; *&n; * Unfortunately Creative called the codec chip of SB as a DSP. For this&n; * reason the /dev/dsp is reserved for digitized audio use. There is a&n; * device for true DSP processors but it will be called something else.&n; * In v3.0 it&squot;s /dev/sndproc but this could be a temporary solution.&n; */
 DECL|macro|SND_NDEVS
-mdefine_line|#define SND_NDEVS&t;64&t;/* Number of supported devices */
+mdefine_line|#define SND_NDEVS&t;256&t;/* Number of supported devices */
 DECL|macro|SND_DEV_CTL
 mdefine_line|#define SND_DEV_CTL&t;0&t;/* Control port /dev/mixer */
 DECL|macro|SND_DEV_SEQ
@@ -159,7 +159,7 @@ mdefine_line|#define ON&t;&t;1
 DECL|macro|OFF
 mdefine_line|#define OFF&t;&t;0
 DECL|macro|MAX_AUDIO_DEV
-mdefine_line|#define MAX_AUDIO_DEV&t;4
+mdefine_line|#define MAX_AUDIO_DEV&t;5
 DECL|macro|MAX_MIXER_DEV
 mdefine_line|#define MAX_MIXER_DEV&t;2
 DECL|macro|MAX_SYNTH_DEV
