@@ -4,10 +4,10 @@ DECL|macro|CONFIG_BLK_DEV_HD
 mdefine_line|#define CONFIG_BLK_DEV_HD 1
 DECL|macro|CONFIG_TCPIP
 mdefine_line|#define CONFIG_TCPIP 1
-DECL|macro|CONFIG_PROFILE
-mdefine_line|#define CONFIG_PROFILE 1
 DECL|macro|CONFIG_MAX_16M
 mdefine_line|#define CONFIG_MAX_16M 1
+DECL|macro|CONFIG_M486
+mdefine_line|#define CONFIG_M486 1
 multiline_comment|/*&n; * SCSI support&n; */
 multiline_comment|/*&n; * SCSI support type (disk, tape, CDrom)&n; */
 multiline_comment|/*&n; * SCSI low-level drivers&n; */

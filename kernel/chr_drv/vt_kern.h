@@ -2,14 +2,16 @@ macro_line|#ifndef _VT_KERN_H
 DECL|macro|_VT_KERN_H
 mdefine_line|#define _VT_KERN_H
 multiline_comment|/*&n; * this really is an extension of the vc_cons structure in console.c, but&n; * with information needed by the vt package&n; */
+macro_line|#include &lt;linux/vt.h&gt;
 DECL|struct|vt_cons
 r_extern
 r_struct
 id|vt_cons
 (brace
-DECL|member|vt_mode
+DECL|member|vc_mode
 r_int
-id|vt_mode
+r_char
+id|vc_mode
 suffix:semicolon
 multiline_comment|/* KD_TEXT, ... */
 DECL|member|vc_kbdraw
@@ -26,6 +28,19 @@ DECL|member|vc_kbdleds
 r_int
 r_char
 id|vc_kbdleds
+suffix:semicolon
+DECL|member|vt_mode
+r_struct
+id|vt_mode
+id|vt_mode
+suffix:semicolon
+DECL|member|vt_pid
+r_int
+id|vt_pid
+suffix:semicolon
+DECL|member|vt_newvt
+r_int
+id|vt_newvt
 suffix:semicolon
 )brace
 id|vt_cons

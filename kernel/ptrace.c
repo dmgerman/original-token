@@ -921,6 +921,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|pid
+op_eq
+l_int|1
+)paren
+multiline_comment|/* you may not mess with init */
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|child

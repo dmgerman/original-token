@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux&n;&n;  Version 0.02 for Linux 0.98.4 and Eric Youngdale&squot;s new scsi driver&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;&n;  Features:&n;  - support for different block sizes and internal buffering&n;  - *nix-style ioctl with codes from mtio.h from the QIC-02 driver by&n;    Hennus Bergman (command MTSETBLK added)&n;  - character device&n;  - rewind and non-rewind devices&n;  - capability to handle several tape drives simultaneously&n;  - one buffer if one drive, two buffers if more than one drive (limits the&n;    number of simultaneously open drives to two)&n;  - write behind&n;  - seek and tell (Tandberg compatible and SCSI-2)&n;&n;  Devices:&n;  Autorewind devices have minor numbers equal to the tape numbers (0 &gt; ).&n;  Nonrewind device has the minor number equal to tape number + 128.&n;&n;  Problems:&n;  The end of media detection may not work correctly because of the buffering.&n;  If you want to do multiple tape backups relying on end of tape detection,&n;  you should disable write behind and in addition to that check that the&n;  tapes are readable.&n;&n;  Kai Makisara, Nov 9, 1992  email makisara@vtinsx.ins.vtt.fi or&n;                                    Kai.Makisara@vtt.fi&n;  Last changes Dec 6, 1992.&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux&n;&n;  Version 0.02 for Linux 0.98.4 and Eric Youngdale&squot;s new scsi driver&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;&n;  Features:&n;  - support for different block sizes and internal buffering&n;  - *nix-style ioctl with codes from mtio.h from the QIC-02 driver by&n;    Hennus Bergman (command MTSETBLK added)&n;  - character device&n;  - rewind and non-rewind devices&n;  - capability to handle several tape drives simultaneously&n;  - one buffer if one drive, two buffers if more than one drive (limits the&n;    number of simultaneously open drives to two)&n;  - write behind&n;  - seek and tell (Tandberg compatible and SCSI-2)&n;&n;  Devices:&n;  Autorewind devices have minor numbers equal to the tape numbers (0 &gt; ).&n;  Nonrewind device has the minor number equal to tape number + 128.&n;&n;  Problems:&n;  The end of media detection may not work correctly because of the buffering.&n;  If you want to do multiple tape backups relying on end of tape detection,&n;  you should disable write behind and in addition to that check that the&n;  tapes are readable.&n;&n;  Kai Makisara, Nov 9, 1992  email makisara@vtinsx.ins.vtt.fi or&n;                                    Kai.Makisara@vtt.fi&n;  Last changes Dec 19, 1992.&n;*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20,9 +20,11 @@ DECL|macro|NO_TAPE
 mdefine_line|#define NO_TAPE  NOT_READY
 multiline_comment|/* Uncomment the following if you want the rewind, etc. commands return&n;   before command completion. */
 multiline_comment|/* #define ST_NOWAIT */
+multiline_comment|/* Uncomment the following if you want the tape to be positioned correctly&n;   within file after close (the tape is positioned correctly with respect&n;   to the filemarks even wihout ST_IN_FILE_POS defined */
+multiline_comment|/* #define ST_IN_FILE_POS */
 multiline_comment|/* #define DEBUG */
 DECL|macro|ST_TIMEOUT
-mdefine_line|#define ST_TIMEOUT 2000
+mdefine_line|#define ST_TIMEOUT 6000
 DECL|macro|ST_LONG_TIMEOUT
 mdefine_line|#define ST_LONG_TIMEOUT 200000
 multiline_comment|/* Number of ST_BLOCK_SIZE blocks in the buffers */
@@ -2910,13 +2912,21 @@ c_cond
 (paren
 op_logical_neg
 id|rewind
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
 id|scsi_tapes
 (braket
 id|dev
 )braket
 dot
 id|eof
+op_eq
+l_int|1
+)paren
 op_logical_and
 op_logical_neg
 id|scsi_tapes
@@ -2938,7 +2948,20 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Back over the EOF hit inadvertently */
+multiline_comment|/* Back over the EOF hit */
+macro_line|#ifdef ST_IN_FILE_POS
+id|flush_buffer
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -3942,32 +3965,16 @@ id|dev
 )braket
 dot
 id|eof
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|scsi_tapes
-(braket
-id|dev
-)braket
-dot
-id|eof
 op_eq
-l_int|1
+l_int|2
 )paren
-r_return
-l_int|0
-suffix:semicolon
-r_else
-multiline_comment|/* EOM or blank check */
+multiline_comment|/* EOM or Blank Check */
 r_return
 (paren
 op_minus
 id|EIO
 )paren
 suffix:semicolon
-)brace
 id|scsi_tapes
 (braket
 id|dev
@@ -4154,6 +4161,15 @@ id|dev
 )braket
 dot
 id|buffer-&gt;read_pointer
+op_assign
+l_int|0
+suffix:semicolon
+id|scsi_tapes
+(braket
+id|dev
+)braket
+dot
+id|eof_hit
 op_assign
 l_int|0
 suffix:semicolon
@@ -4546,7 +4562,7 @@ dot
 id|buffer-&gt;buffer_size
 suffix:semicolon
 )brace
-multiline_comment|/* if (SCpnt-&gt;result != 0 || SCpnt-&gt;sense_buffer[0] != 0) */
+multiline_comment|/* if (scsi_tapes[dev].buffer-&gt;buffer_bytes == 0 &amp;&amp;&n;&t;   scsi_tapes[dev].eof == 0) */
 r_if
 c_cond
 (paren
@@ -4700,16 +4716,51 @@ r_if
 c_cond
 (paren
 id|total
+op_eq
+l_int|0
+op_logical_and
+id|scsi_tapes
+(braket
+id|dev
+)braket
+dot
+id|eof
+op_eq
+l_int|1
 )paren
-r_return
-id|total
+id|scsi_tapes
+(braket
+id|dev
+)braket
+dot
+id|eof
+op_assign
+l_int|0
 suffix:semicolon
-r_else
+r_if
+c_cond
+(paren
+id|total
+op_eq
+l_int|0
+op_logical_and
+id|scsi_tapes
+(braket
+id|dev
+)braket
+dot
+id|eof
+op_eq
+l_int|2
+)paren
 r_return
 (paren
 op_minus
 id|EIO
 )paren
+suffix:semicolon
+r_return
+id|total
 suffix:semicolon
 )brace
 )brace
@@ -5453,7 +5504,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;st%d: Spacing to end of tape media.&bslash;n&quot;
+l_string|&quot;st%d: Spacing to end of recorded medium.&bslash;n&quot;
 comma
 id|dev
 )paren
@@ -6062,6 +6113,28 @@ comma
 id|file
 comma
 id|MTFSF
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTFSFM
+)paren
+id|ioctl_result
+op_assign
+id|st_int_ioctl
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+id|MTBSF
 comma
 l_int|1
 )paren

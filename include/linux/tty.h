@@ -758,6 +758,17 @@ id|priv
 suffix:semicolon
 r_extern
 r_void
+id|tty_hangup
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|do_SAK
 c_func
 (paren

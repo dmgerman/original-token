@@ -557,7 +557,7 @@ l_int|2
 )braket
 op_assign
 (brace
-l_string|&quot;/bin/init&quot;
+l_string|&quot;init&quot;
 comma
 l_int|NULL
 comma
@@ -1072,6 +1072,16 @@ id|memory_end
 )paren
 suffix:semicolon
 macro_line|#endif
+id|memory_start
+op_assign
+id|inode_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
 id|mem_init
 c_func
 (paren
@@ -1083,11 +1093,6 @@ id|memory_end
 )paren
 suffix:semicolon
 id|buffer_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|inode_init
 c_func
 (paren
 )paren

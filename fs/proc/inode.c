@@ -590,6 +590,9 @@ suffix:colon
 r_case
 l_int|11
 suffix:colon
+r_case
+l_int|12
+suffix:colon
 id|inode-&gt;i_mode
 op_assign
 id|S_IFREG

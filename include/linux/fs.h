@@ -13,7 +13,7 @@ macro_line|#undef NR_OPEN
 DECL|macro|NR_OPEN
 mdefine_line|#define NR_OPEN 256
 DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 128
+mdefine_line|#define NR_INODE 256
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE 128
 DECL|macro|NR_SUPER
@@ -56,11 +56,18 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
+r_int
 id|inode_init
 c_func
 (paren
-r_void
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
 )paren
 suffix:semicolon
 DECL|macro|MAJOR

@@ -12,7 +12,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * Serial driver configuration section.  Here are the various options:&n; *&n; * CONFIG_AUTO_IRQ&n; *&t;&t;Enables automatic IRQ detection.  I&squot;ve put in some&n; * &t;&t;fixes to this which should make this work much more&n; * &t;&t;cleanly than it used to in 0.98pl2-6.  It should be&n; * &t;&t;much less vulnerable to false IRQ&squot;s now.&n; * &n; * NEW_INTERRUPT_ROUTINE&n; * &t;&t;Enables the new interrupt routine, which is faster&n; * &t;&t;(which is better on slow CPU&squot;s), and handles parity&n; * &t;&t;errors, break conditions, and hardware handshaking.&n; * &t;&t;People were having problems with it earlier, but I&n; * &t;&t;believe they have been fixed now, so there should&n; * &t;&t;hopefully be no reason to #undef this option.&n; * &n; * CONFIG_AST_FOURPORT&n; *&t;&t;Enables support for the AST Fourport serial port.&n; * &n; * CONFIG_ACCENT_ASYNC&n; *&t;&t;Enables support for the Accent Async 4 port serial&n; * &t;&t;port.&n; * &n; */
 DECL|macro|NEW_INTERRUPT_ROUTINE
-mdefine_line|#define NEW_INTERRUPT_ROUTINE
+macro_line|#undef NEW_INTERRUPT_ROUTINE
 DECL|macro|WAKEUP_CHARS
 mdefine_line|#define WAKEUP_CHARS (3*TTY_BUF_SIZE/4)
 multiline_comment|/*&n; * rs_event&t;&t;- Bitfield of serial lines that events pending&n; * &t;&t;&t;&t;to be processed at the next clock tick.&n; * rs_write_active&t;- Bitfield of serial lines that are actively&n; * &t;&t;&t;&t;transmitting (and therefore have a&n; * &t;&t;&t;&t;write timeout pending, in case the&n; * &t;&t;&t;&t;THRE interrupt gets lost.)&n; * IRQ_ISR[]&t;&t;- Array to store the head of the ISR linked list&n; * &t;&t;&t;&t;for each IRQ.&n; */
@@ -1688,7 +1688,6 @@ r_if
 c_cond
 (paren
 (paren
-(paren
 id|status
 op_amp
 (paren
@@ -1700,19 +1699,10 @@ id|UART_MSR_DDCD
 op_eq
 id|UART_MSR_DDCD
 )paren
-op_logical_and
-id|info-&gt;tty-&gt;session
-OG
-l_int|0
-)paren
-id|kill_sl
+id|tty_hangup
 c_func
 (paren
-id|info-&gt;tty-&gt;session
-comma
-id|SIGHUP
-comma
-l_int|1
+id|info-&gt;tty
 )paren
 suffix:semicolon
 r_if
@@ -2176,25 +2166,12 @@ op_amp
 id|info-&gt;event
 )paren
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|info-&gt;tty-&gt;session
-OG
-l_int|0
-)paren
-id|kill_sl
+id|tty_hangup
 c_func
 (paren
-id|info-&gt;tty-&gt;session
-comma
-id|SIGHUP
-comma
-l_int|1
+id|info-&gt;tty
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

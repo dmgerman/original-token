@@ -843,6 +843,22 @@ id|rw
 r_if
 c_cond
 (paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;kfree_skb: skb = NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|skb-&gt;lock
 )paren
 (brace
@@ -1057,9 +1073,6 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-id|start
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1160,6 +1173,32 @@ id|j
 op_eq
 l_int|0
 )paren
+(brace
+id|start
+op_assign
+(paren
+id|i
+op_plus
+l_int|1
+op_plus
+id|start
+)paren
+op_mod
+l_int|1024
+suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;get_new_socknum returning %d, start = %d&bslash;n&quot;
+comma
+id|i
+op_plus
+id|base
+op_plus
+l_int|1
+comma
+id|start
+)paren
+suffix:semicolon
 r_return
 (paren
 id|i
@@ -1169,6 +1208,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1208,6 +1248,19 @@ op_add_assign
 id|SOCK_ARRAY_SIZE
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+l_string|&quot;get_new_socknum returning %d, start = %d&bslash;n&quot;
+comma
+id|best
+op_plus
+id|base
+op_plus
+l_int|1
+comma
+id|start
+)paren
+suffix:semicolon
 r_return
 (paren
 id|best
@@ -1647,6 +1700,18 @@ id|sk-&gt;inuse
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* incase it&squot;s sleeping somewhere. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;dead
+)paren
+id|wake_up
+(paren
+id|sk-&gt;sleep
+)paren
+suffix:semicolon
 id|remove_sock
 (paren
 id|sk
@@ -1669,6 +1734,8 @@ r_if
 c_cond
 (paren
 id|sk-&gt;send_tmp
+op_ne
+l_int|NULL
 )paren
 id|kfree_skb
 (paren
@@ -2230,11 +2297,11 @@ r_if
 c_cond
 (paren
 id|sk-&gt;rmem_alloc
-op_le
+op_eq
 l_int|0
 op_logical_and
 id|sk-&gt;wmem_alloc
-op_le
+op_eq
 l_int|0
 )paren
 (brace
@@ -2302,6 +2369,11 @@ id|sk-&gt;time_wait
 )paren
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+l_string|&quot;leaving destroy_sock&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 r_static
 r_int
@@ -3689,7 +3761,7 @@ multiline_comment|/* needs to be at most 2 full packets. */
 multiline_comment|/* how many packets we should send before forcing an ack. &n;     if this is set to zero it is the same as sk-&gt;delay_acks = 0 */
 id|sk-&gt;max_ack_backlog
 op_assign
-id|MAX_ACK_BACKLOG
+l_int|0
 suffix:semicolon
 id|sk-&gt;inuse
 op_assign
@@ -3697,9 +3769,8 @@ l_int|0
 suffix:semicolon
 id|sk-&gt;delay_acks
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
-multiline_comment|/* default to waiting a while before sending&n;&t;&t;&t; acks.  */
 id|sk-&gt;wback
 op_assign
 l_int|NULL
@@ -4022,6 +4093,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|PRINTK
+(paren
+l_string|&quot;sk-&gt;linger set.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|close
@@ -4095,6 +4171,11 @@ suffix:semicolon
 id|sock-&gt;data
 op_assign
 l_int|NULL
+suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;ip_proto_release returning&bslash;n&quot;
+)paren
 suffix:semicolon
 r_return
 (paren

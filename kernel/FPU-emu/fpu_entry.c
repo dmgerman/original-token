@@ -1143,6 +1143,20 @@ r_int
 id|arg
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;math-meulation not enabled and no coprocessor found.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;killing %s.&bslash;n&quot;
+comma
+id|current-&gt;comm
+)paren
+suffix:semicolon
 id|send_sig
 c_func
 (paren

@@ -22,10 +22,22 @@ DECL|macro|KG_ALTGR
 mdefine_line|#define KG_ALTGR&t;5
 DECL|macro|KG_CAPSLOCK
 mdefine_line|#define KG_CAPSLOCK&t;6
-DECL|macro|KG_E0
-mdefine_line|#define KG_E0&t;&t;7
-DECL|macro|KG_E1
-mdefine_line|#define KG_E1&t;&t;8
+multiline_comment|/*&n; * &quot;dead&quot; keys - prefix key values that are valid only for the next&n; * character code (sticky shift, E0/E1 special scancodes, diacriticals)&n; */
+r_extern
+r_int
+r_int
+id|kbd_dead_keys
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|kbd_prev_dead_keys
+suffix:semicolon
+multiline_comment|/*&n; * these are the hardcoded dead key flags&n; */
+DECL|macro|KGD_E0
+mdefine_line|#define KGD_E0&t;&t;0
+DECL|macro|KGD_E1
+mdefine_line|#define KGD_E1&t;&t;1
 multiline_comment|/*&n; * kbd-&gt;xxx contains the VC-local things (flag settings etc..)&n; * The low 3 local flags are hardcoded to be the led setting..&n; */
 DECL|struct|kbd_struct
 r_struct
@@ -162,6 +174,84 @@ id|flag
 )paren
 (brace
 id|kbd_flags
+op_xor_assign
+l_int|1
+op_lshift
+id|flag
+suffix:semicolon
+)brace
+DECL|function|kbd_dead
+r_extern
+r_inline
+r_int
+id|kbd_dead
+c_func
+(paren
+r_int
+id|flag
+)paren
+(brace
+r_return
+id|kbd_prev_dead_keys
+op_amp
+(paren
+l_int|1
+op_lshift
+id|flag
+)paren
+suffix:semicolon
+)brace
+DECL|function|set_kbd_dead
+r_extern
+r_inline
+r_void
+id|set_kbd_dead
+c_func
+(paren
+r_int
+id|flag
+)paren
+(brace
+id|kbd_dead_keys
+op_or_assign
+l_int|1
+op_lshift
+id|flag
+suffix:semicolon
+)brace
+DECL|function|clr_kbd_dead
+r_extern
+r_inline
+r_void
+id|clr_kbd_dead
+c_func
+(paren
+r_int
+id|flag
+)paren
+(brace
+id|kbd_dead_keys
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|flag
+)paren
+suffix:semicolon
+)brace
+DECL|function|chg_kbd_dead
+r_extern
+r_inline
+r_void
+id|chg_kbd_dead
+c_func
+(paren
+r_int
+id|flag
+)paren
+(brace
+id|kbd_dead_keys
 op_xor_assign
 l_int|1
 op_lshift

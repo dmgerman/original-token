@@ -10,9 +10,6 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#ifndef CONFIG_BLK_DEV_SR
-macro_line|#error The iso9660 filesystem can only be used with CDROM.
-macro_line|#endif
 r_extern
 r_int
 id|check_cdrom_media_change

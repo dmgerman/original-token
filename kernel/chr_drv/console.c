@@ -514,8 +514,14 @@ DECL|macro|kbdmode
 mdefine_line|#define kbdmode&t;&t;(vc_cons[currcons].vc_kbdmode)
 DECL|macro|tab_stop
 mdefine_line|#define tab_stop&t;(vc_cons[currcons].vc_tab_stop)
+DECL|macro|vcmode
+mdefine_line|#define vcmode&t;&t;(vt_cons[currcons].vc_mode)
 DECL|macro|vtmode
 mdefine_line|#define vtmode&t;&t;(vt_cons[currcons].vt_mode)
+DECL|macro|vtpid
+mdefine_line|#define vtpid&t;&t;(vt_cons[currcons].vt_pid)
+DECL|macro|vtnewvt
+mdefine_line|#define vtnewvt&t;&t;(vt_cons[currcons].vt_newvt)
 DECL|macro|set_kbd
 mdefine_line|#define set_kbd(x) set_vc_kbd_flag(kbd_table+currcons,x)
 DECL|macro|clr_kbd
@@ -820,7 +826,7 @@ id|fg_console
 op_logical_or
 id|console_blanked
 op_logical_or
-id|vtmode
+id|vcmode
 op_eq
 id|KD_GRAPHICS
 )paren
@@ -5462,7 +5468,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vtmode
+id|vcmode
 op_eq
 id|KD_GRAPHICS
 )paren
@@ -5510,7 +5516,7 @@ id|vt_cons
 id|fg_console
 )braket
 dot
-id|vt_mode
+id|vc_mode
 op_eq
 id|KD_GRAPHICS
 )paren
@@ -5943,9 +5949,39 @@ op_star
 )paren
 id|origin
 suffix:semicolon
-id|vtmode
+id|vcmode
 op_assign
 id|KD_TEXT
+suffix:semicolon
+id|vtmode.mode
+op_assign
+id|VT_AUTO
+suffix:semicolon
+id|vtmode.waitv
+op_assign
+l_int|0
+suffix:semicolon
+id|vtmode.relsig
+op_assign
+l_int|0
+suffix:semicolon
+id|vtmode.acqsig
+op_assign
+l_int|0
+suffix:semicolon
+id|vtmode.frsig
+op_assign
+l_int|0
+suffix:semicolon
+id|vtpid
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|vtnewvt
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|clr_kbd
 c_func
@@ -6191,6 +6227,13 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|console_blanked
+)paren
+r_return
+suffix:semicolon
 id|timer_table
 (braket
 id|BLANK_TIMER
@@ -6241,6 +6284,14 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|console_blanked
+)paren
+r_return
+suffix:semicolon
 id|timer_table
 (braket
 id|BLANK_TIMER
@@ -6786,7 +6837,7 @@ id|vt_cons
 id|fg_console
 )braket
 dot
-id|vt_mode
+id|vc_mode
 op_eq
 id|KD_GRAPHICS
 )paren
@@ -6873,6 +6924,17 @@ suffix:semicolon
 id|tty-&gt;ioctl
 op_assign
 id|vt_ioctl
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty-&gt;line
+OG
+id|NR_CONSOLES
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 r_return
 l_int|0

@@ -394,6 +394,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|target
+op_ge
+id|NR_SR
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 r_switch
 c_cond
 (paren

@@ -310,6 +310,7 @@ macro_line|#else
 multiline_comment|/* unknown blk device */
 macro_line|#error &quot;unknown blk device&quot;
 macro_line|#endif
+macro_line|#if (MAJOR_NR != 9)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
@@ -609,6 +610,7 @@ mdefine_line|#define CLEAR_INTR
 macro_line|#endif
 DECL|macro|INIT_REQUEST
 mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

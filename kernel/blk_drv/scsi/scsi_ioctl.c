@@ -904,7 +904,7 @@ id|cmd
 op_ne
 l_int|0
 op_logical_and
-id|dev-&gt;id
+id|dev-&gt;index
 OG
 id|NR_SCSI_DEVICES
 )paren

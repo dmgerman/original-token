@@ -447,6 +447,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|aux_write_dev
+c_func
+(paren
+id|AUX_DISABLE_DEV
+)paren
+suffix:semicolon
+multiline_comment|/* disable aux device */
+id|poll_status
+c_func
+(paren
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -456,13 +468,6 @@ id|AUX_COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* Disable Aux device */
-id|aux_write_dev
-c_func
-(paren
-id|AUX_DISABLE_DEV
-)paren
-suffix:semicolon
-multiline_comment|/* disable aux device */
 id|aux_write_cmd
 c_func
 (paren
@@ -1024,6 +1029,27 @@ id|aux_present
 op_assign
 l_int|1
 suffix:semicolon
+id|poll_status
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|AUX_DISABLE
+comma
+id|AUX_COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* Disable Aux device */
+id|aux_write_cmd
+c_func
+(paren
+id|AUX_INTS_OFF
+)paren
+suffix:semicolon
+multiline_comment|/* disable controller ints */
 r_return
 id|kmem_start
 suffix:semicolon

@@ -146,15 +146,15 @@ mdefine_line|#define MAX_WINDOW  12000
 DECL|macro|MIN_WINDOW
 mdefine_line|#define MIN_WINDOW   2048
 DECL|macro|MAX_ACK_BACKLOG
-mdefine_line|#define MAX_ACK_BACKLOG 8
+mdefine_line|#define MAX_ACK_BACKLOG 2
 DECL|macro|MIN_WRITE_SPACE
 mdefine_line|#define MIN_WRITE_SPACE 2048
 DECL|macro|TCP_WINDOW_DIFF
 mdefine_line|#define TCP_WINDOW_DIFF 2048
 DECL|macro|TCP_RETR1
-mdefine_line|#define TCP_RETR1       7       /* this is howmany retries it does&n;&t;&t;&t;&t;   before it tries to figure out&n;&t;&t;&t;&t;   if the gateway is down. */
+mdefine_line|#define TCP_RETR1      10       /* this is howmany retries it does&n;&t;&t;&t;&t;   before it tries to figure out&n;&t;&t;&t;&t;   if the gateway is down. */
 DECL|macro|TCP_RETR2
-mdefine_line|#define TCP_RETR2      10&t;/* this should take between 3 and&n;&t;&t;&t;&t;   ten minutes ( 1024 * rtt). */
+mdefine_line|#define TCP_RETR2      25&t;/* this should take at least&n;&t;&t;&t;&t;   90 minutes to time out. */
 DECL|macro|TCP_TIMEOUT_LEN
 mdefine_line|#define TCP_TIMEOUT_LEN 720000 /* should be about 2 hrs. */
 DECL|macro|TCP_TIMEWAIT_LEN
@@ -162,7 +162,7 @@ mdefine_line|#define TCP_TIMEWAIT_LEN 6000 /* How long to wait to sucessfully &n
 DECL|macro|TCP_ACK_TIME
 mdefine_line|#define TCP_ACK_TIME 35 /* time to delay before sending an ack. */
 DECL|macro|TCP_DONE_TIME
-mdefine_line|#define TCP_DONE_TIME 2500 /* maximum time to wait before actually destroying&n;&t;&t;&t;     a socket. */
+mdefine_line|#define TCP_DONE_TIME 250 /* maximum time to wait before actually destroying&n;&t;&t;&t;     a socket. */
 DECL|macro|TCP_WRITE_TIME
 mdefine_line|#define TCP_WRITE_TIME 100 /* initial time to wait for an ack,&n;&t;&t;&t;      after last transmit. */
 DECL|macro|TCP_CONNECT_TIME

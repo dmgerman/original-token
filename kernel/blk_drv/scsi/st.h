@@ -88,7 +88,7 @@ DECL|member|eof
 r_int
 id|eof
 suffix:colon
-l_int|1
+l_int|2
 suffix:semicolon
 DECL|member|write_prot
 r_int
@@ -106,7 +106,7 @@ DECL|member|eof_hit
 r_int
 id|eof_hit
 suffix:colon
-l_int|2
+l_int|1
 suffix:semicolon
 DECL|member|buffer
 id|ST_buffer

@@ -293,6 +293,8 @@ c_loop
 (paren
 id|log_size
 op_logical_and
+id|i
+OL
 id|len
 )paren
 (brace
