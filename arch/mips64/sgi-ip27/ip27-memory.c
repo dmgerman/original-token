@@ -90,14 +90,10 @@ c_func
 l_string|&quot;NUMA debug&bslash;n&quot;
 )paren
 suffix:semicolon
-op_star
+id|BUG
+c_func
 (paren
-r_int
-op_star
 )paren
-l_int|0
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0

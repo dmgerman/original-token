@@ -228,7 +228,7 @@ r_int
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|coda_dentry_delete
 c_func
 (paren
@@ -2106,12 +2106,6 @@ suffix:semicolon
 id|de-&gt;d_inode-&gt;i_nlink
 op_decrement
 suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|de
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3714,7 +3708,7 @@ suffix:semicolon
 multiline_comment|/*&n; * This is the callback from dput() when d_count is going to 0.&n; * We use this to unhash dentries with bad inodes.&n; */
 DECL|function|coda_dentry_delete
 r_static
-r_void
+r_int
 id|coda_dentry_delete
 c_func
 (paren
@@ -3734,6 +3728,7 @@ op_logical_neg
 id|dentry-&gt;d_inode
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|flags
 op_assign
@@ -3775,13 +3770,13 @@ comma
 id|dentry-&gt;d_inode-&gt;i_ino
 )paren
 suffix:semicolon
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
+r_return
+l_int|1
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is called when we want to check if the inode has&n; * changed on the server.  Coda makes this easy since the&n; * cache manager Venus issues a downcall to the kernel when this &n; * happens &n; */
 DECL|function|coda_revalidate_inode

@@ -941,9 +941,9 @@ id|proc_follow_link
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * As some entries in /proc are volatile, we want to &n; * get rid of unused dentries.  This could be made &n; * smarter: we could keep a &quot;volatile&quot; flag in the &n; * inode to indicate which ones to keep.&n; */
-r_static
-r_void
 DECL|function|proc_delete_dentry
+r_static
+r_int
 id|proc_delete_dentry
 c_func
 (paren
@@ -953,11 +953,8 @@ op_star
 id|dentry
 )paren
 (brace
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
+r_return
+l_int|1
 suffix:semicolon
 )brace
 DECL|variable|proc_dentry_operations

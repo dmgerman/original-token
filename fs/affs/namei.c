@@ -1246,12 +1246,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 id|mark_inode_dirty
 c_func
 (paren
@@ -1865,12 +1859,6 @@ id|mark_inode_dirty
 c_func
 (paren
 id|inode
-)paren
-suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 id|rmdir_done

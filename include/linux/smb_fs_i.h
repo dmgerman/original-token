@@ -48,6 +48,11 @@ r_int
 id|closed
 suffix:semicolon
 multiline_comment|/* timestamp when closed */
+DECL|member|openers
+r_int
+id|openers
+suffix:semicolon
+multiline_comment|/* number of fileid users */
 )brace
 suffix:semicolon
 macro_line|#endif

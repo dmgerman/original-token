@@ -46,9 +46,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* for now, drop everything to force lookups ... */
+multiline_comment|/* ITYM s/everything/&amp; positive/... */
 DECL|function|umsdos_dentry_dput
 r_static
-r_void
+r_int
 id|umsdos_dentry_dput
 c_func
 (paren
@@ -71,13 +72,13 @@ c_cond
 id|inode
 )paren
 (brace
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
+r_return
+l_int|1
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|umsdos_dentry_operations
 r_struct

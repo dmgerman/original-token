@@ -11,8 +11,6 @@ DECL|macro|select_table_handle
 mdefine_line|#define select_table_handle select_table
 DECL|macro|vm_area_handle
 mdefine_line|#define vm_area_handle struct vm_area_struct
-DECL|macro|file_operation_handle
-mdefine_line|#define file_operation_handle file_operations
 DECL|macro|connect_wrapper
 mdefine_line|#define connect_wrapper(x) 0
 DECL|macro|current_got_fatal_signal

@@ -1348,5 +1348,15 @@ r_int
 id|usecs
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|rio_start_card_running
+(paren
+r_struct
+id|Host
+op_star
+id|HostP
+)paren
+suffix:semicolon
 macro_line|#endif&t;/* __func_h_def */
 eof

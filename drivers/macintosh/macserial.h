@@ -258,11 +258,11 @@ r_char
 id|is_cobalt_modem
 suffix:semicolon
 multiline_comment|/* is a gatwick-based cobalt modem */
-DECL|member|is_pwbk_ir
+DECL|member|is_irda
 r_char
-id|is_pwbk_ir
+id|is_irda
 suffix:semicolon
-multiline_comment|/* is connected to an IR led on powerbooks */
+multiline_comment|/* is connected to an IrDA codec */
 DECL|member|tx_active
 r_int
 r_char

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.c,v 1.4 2000/03/22 13:59:01 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/ptrace.c&n; *&n; * Original x86 implementation:&n; *&t;By Ross Biro 1/23/92&n; *&t;edited by Linus Torvalds&n; *&n; * SuperH version:   Copyright (C) 1999, 2000  Kaz Kojima &amp; Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: ptrace.c,v 1.5 2000/05/09 01:42:21 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/ptrace.c&n; *&n; * Original x86 implementation:&n; *&t;By Ross Biro 1/23/92&n; *&t;edited by Linus Torvalds&n; *&n; * SuperH version:   Copyright (C) 1999, 2000  Kaz Kojima &amp; Niibe Yutaka&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -681,10 +681,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|ret
 suffix:semicolon
 id|lock_kernel
@@ -749,6 +745,17 @@ c_func
 id|pid
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|child
+)paren
+id|get_task_struct
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
 id|read_unlock
 c_func
 (paren
@@ -756,7 +763,6 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME!!! */
 r_if
 c_cond
 (paren
@@ -780,7 +786,7 @@ l_int|1
 )paren
 multiline_comment|/* you may not mess with init */
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 r_if
 c_cond
@@ -798,7 +804,7 @@ op_eq
 id|tsk
 )paren
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 r_if
 c_cond
@@ -863,7 +869,7 @@ id|CAP_SYS_PTRACE
 )paren
 )paren
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 multiline_comment|/* the same process cannot be attached many times */
 r_if
@@ -874,19 +880,17 @@ op_amp
 id|PF_PTRACED
 )paren
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 id|child-&gt;flags
 op_or_assign
 id|PF_PTRACED
 suffix:semicolon
-id|write_lock_irqsave
+id|write_lock_irq
 c_func
 (paren
 op_amp
 id|tasklist_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -914,13 +918,11 @@ id|child
 )paren
 suffix:semicolon
 )brace
-id|write_unlock_irqrestore
+id|write_unlock_irq
 c_func
 (paren
 op_amp
 id|tasklist_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|send_sig
@@ -938,7 +940,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 )brace
 id|ret
@@ -957,7 +959,7 @@ id|PF_PTRACED
 )paren
 )paren
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 r_if
 c_cond
@@ -975,7 +977,7 @@ op_ne
 id|PTRACE_KILL
 )paren
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 )brace
 r_if
@@ -986,7 +988,7 @@ op_ne
 id|tsk
 )paren
 r_goto
-id|out
+id|out_tsk
 suffix:semicolon
 r_switch
 c_cond
@@ -1804,13 +1806,11 @@ id|child-&gt;exit_code
 op_assign
 id|data
 suffix:semicolon
-id|write_lock_irqsave
+id|write_lock_irq
 c_func
 (paren
 op_amp
 id|tasklist_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|REMOVE_LINKS
@@ -1829,13 +1829,11 @@ c_func
 id|child
 )paren
 suffix:semicolon
-id|write_unlock_irqrestore
+id|write_unlock_irq
 c_func
 (paren
 op_amp
 id|tasklist_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|wake_up_process
@@ -1861,6 +1859,14 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|out_tsk
+suffix:colon
+id|free_task_struct
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel

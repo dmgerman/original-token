@@ -3356,7 +3356,7 @@ id|socket
 id|u32
 id|status
 op_assign
-id|config_readl
+id|cb_readl
 c_func
 (paren
 id|socket

@@ -5246,12 +5246,6 @@ id|buffer
 )paren
 suffix:semicolon
 )brace
-id|d_delete
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

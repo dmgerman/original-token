@@ -185,8 +185,8 @@ DECL|macro|BLKSSZGET
 mdefine_line|#define BLKSSZGET  _IO(0x12,104)/* get block device sector size */
 macro_line|#if 0
 mdefine_line|#define BLKPG      _IO(0x12,105)/* See blkpg.h */
-mdefine_line|#define BLKELVGET   _IO(0x12,106)/* elevator get */
-mdefine_line|#define BLKELVSET   _IO(0x12,107)/* elevator set */
+mdefine_line|#define BLKELVGET  _IOR(0x12,106,sizeof(blkelv_ioctl_arg_t))/* elevator get */
+mdefine_line|#define BLKELVSET  _IOW(0x12,107,sizeof(blkelv_ioctl_arg_t))/* elevator set */
 multiline_comment|/* This was here just to show that the number is taken -&n;   probably all these _IO(0x12,*) ioctls should be moved to blkpg.h. */
 macro_line|#endif
 DECL|macro|BMAP_IOCTL
@@ -3109,6 +3109,27 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|do_mount
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|vfs_statfs
 c_func
 (paren
@@ -3805,6 +3826,8 @@ c_func
 r_struct
 id|page
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -5210,6 +5233,21 @@ id|filldir_t
 comma
 r_void
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|dcache_readdir
+c_func
+(paren
+r_struct
+id|file
+op_star
+comma
+r_void
+op_star
+comma
+id|filldir_t
 )paren
 suffix:semicolon
 r_extern

@@ -290,7 +290,7 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|ncp_delete_dentry
 c_func
 (paren
@@ -495,9 +495,9 @@ id|a-&gt;len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is the callback from dput() when d_count is going to 0.&n; * We use this to unhash dentries with bad inodes and close files.&n; */
+multiline_comment|/*&n; * This is the callback from dput() when d_count is going to 0.&n; * We use this to unhash dentries with bad inodes.&n; * Closing files can be safely postponed until iput() - it&squot;s done there anyway.&n; */
 r_static
-r_void
+r_int
 DECL|function|ncp_delete_dentry
 id|ncp_delete_dentry
 c_func
@@ -530,53 +530,17 @@ c_func
 id|inode
 )paren
 )paren
-(brace
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * Lock the superblock, then recheck the dentry count.&n;&t;&t; * (Somebody might have used it again ...)&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_count
-op_eq
+r_return
 l_int|1
-op_logical_and
-id|NCP_FINFO
-c_func
-(paren
-id|inode
-)paren
-op_member_access_from_pointer
-id|opened
-)paren
-(brace
-id|PPRINTK
-c_func
-(paren
-l_string|&quot;ncp_delete_dentry: closing file %s/%s&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-)paren
 suffix:semicolon
-id|ncp_make_closed
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
 )brace
 r_else
 (brace
 multiline_comment|/* N.B. Unhash negative dentries? */
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 r_static
 r_inline
@@ -4876,12 +4840,6 @@ comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 r_break

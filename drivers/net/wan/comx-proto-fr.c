@@ -3982,11 +3982,6 @@ op_assign
 op_amp
 id|fr_write_proc
 suffix:semicolon
-id|new_file-&gt;proc_iops
-op_assign
-op_amp
-id|comx_normal_inode_ops
-suffix:semicolon
 id|new_file-&gt;size
 op_assign
 l_int|5
@@ -4039,11 +4034,6 @@ id|new_file-&gt;write_proc
 op_assign
 op_amp
 id|fr_write_proc
-suffix:semicolon
-id|new_file-&gt;proc_iops
-op_assign
-op_amp
-id|comx_normal_inode_ops
 suffix:semicolon
 id|new_file-&gt;size
 op_assign
@@ -4244,11 +4234,6 @@ op_assign
 op_amp
 id|fr_write_proc
 suffix:semicolon
-id|new_file-&gt;proc_iops
-op_assign
-op_amp
-id|comx_normal_inode_ops
-suffix:semicolon
 id|new_file-&gt;size
 op_assign
 l_int|5
@@ -4301,11 +4286,6 @@ id|new_file-&gt;write_proc
 op_assign
 op_amp
 id|fr_write_proc
-suffix:semicolon
-id|new_file-&gt;proc_iops
-op_assign
-op_amp
-id|comx_normal_inode_ops
 suffix:semicolon
 id|new_file-&gt;size
 op_assign

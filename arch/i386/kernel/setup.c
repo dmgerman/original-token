@@ -1305,9 +1305,10 @@ DECL|macro|E820_DEBUG
 mdefine_line|#define E820_DEBUG&t;1
 DECL|function|print_e820_map
 r_static
-id|__init
 r_void
+id|__init
 id|print_e820_map
+c_func
 (paren
 r_void
 )paren

@@ -3783,12 +3783,6 @@ r_struct
 id|file
 id|File_T
 suffix:semicolon
-DECL|typedef|FileOperations_T
-r_typedef
-r_struct
-id|file_operations
-id|FileOperations_T
-suffix:semicolon
 DECL|typedef|GenericDiskInfo_T
 r_typedef
 r_struct

@@ -3504,7 +3504,10 @@ id|copied
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* func_enter2 (); */
+id|func_enter2
+(paren
+)paren
+suffix:semicolon
 id|tty
 op_assign
 id|port-&gt;gs.tty
@@ -3758,7 +3761,10 @@ id|tty
 suffix:semicolon
 multiline_comment|/*    tty_schedule_flip (tty); */
 )brace
-multiline_comment|/* func_exit (); */
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Inlined: it is called only once. Remove the inline if you add another &n;   call */
 DECL|function|sx_check_modem_signals
@@ -9008,6 +9014,21 @@ op_assign
 id|MUTEX
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t;&t;&t; * Initializing wait queue&n;&t;&t;&t; */
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|port-&gt;gs.open_wait
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|port-&gt;gs.close_wait
+)paren
+suffix:semicolon
 id|port
 op_increment
 suffix:semicolon

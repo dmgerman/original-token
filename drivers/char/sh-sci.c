@@ -625,6 +625,35 @@ id|SCSMR
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_SH_SCIF_SERIAL)
+macro_line|#if defined(__sh3__)
+(brace
+multiline_comment|/* For SH7709, SH7709A, SH7729 */
+r_int
+r_int
+id|data
+suffix:semicolon
+multiline_comment|/* We need to set SCPCR to enable RTS/CTS */
+id|data
+op_assign
+id|ctrl_inw
+c_func
+(paren
+id|SCPCR
+)paren
+suffix:semicolon
+multiline_comment|/* Clear out SCP7MD1,0, SCP6MD1,0, SCP4MD1,0*/
+id|ctrl_outw
+c_func
+(paren
+id|data
+op_amp
+l_int|0x0fcf
+comma
+id|SCPCR
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -639,6 +668,56 @@ op_or_assign
 l_int|0x08
 suffix:semicolon
 r_else
+(brace
+macro_line|#if defined(__sh3__)
+r_int
+r_int
+id|data
+suffix:semicolon
+multiline_comment|/* We need to set SCPCR to enable RTS/CTS */
+id|data
+op_assign
+id|ctrl_inw
+c_func
+(paren
+id|SCPCR
+)paren
+suffix:semicolon
+multiline_comment|/* Clear out SCP7MD1,0, SCP4MD1,0,&n;&t;&t;   Set SCP6MD1,0 = {01} (output)  */
+id|ctrl_outw
+c_func
+(paren
+(paren
+id|data
+op_amp
+l_int|0x0fcf
+)paren
+op_or
+l_int|0x1000
+comma
+id|SCPCR
+)paren
+suffix:semicolon
+id|data
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|SCPDR
+)paren
+suffix:semicolon
+multiline_comment|/* Set /RTS2 (bit6) = 0 */
+id|ctrl_outb
+c_func
+(paren
+id|data
+op_amp
+l_int|0xbf
+comma
+id|SCPDR
+)paren
+suffix:semicolon
+macro_line|#elif defined(__SH4__)
 id|ctrl_outw
 c_func
 (paren
@@ -648,6 +727,8 @@ id|SCSPTR
 )paren
 suffix:semicolon
 multiline_comment|/* Set RTS = 1 */
+macro_line|#endif
+)brace
 id|ctrl_out
 c_func
 (paren
@@ -3089,7 +3170,9 @@ c_func
 (paren
 id|i
 comma
-id|SCI_IPR_OFFSET
+id|SCI_IPR_ADDR
+comma
+id|SCI_IPR_POS
 comma
 id|SCI_PRIORITY
 )paren
@@ -3328,6 +3411,13 @@ comma
 id|SC_TDR
 )paren
 suffix:semicolon
+id|ctrl_in
+c_func
+(paren
+id|SC_SR
+)paren
+suffix:semicolon
+multiline_comment|/* Dummy read */
 id|ctrl_out
 c_func
 (paren
@@ -3444,6 +3534,13 @@ c_func
 id|SC_RDR
 )paren
 suffix:semicolon
+id|ctrl_in
+c_func
+(paren
+id|SC_SR
+)paren
+suffix:semicolon
+multiline_comment|/* Dummy read */
 id|ctrl_out
 c_func
 (paren

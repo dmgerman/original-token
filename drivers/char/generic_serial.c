@@ -56,6 +56,16 @@ mdefine_line|#define RELEASEIT restore_flags (flags)
 macro_line|#endif
 DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;1
+macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|gs_debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|function|my_hd
 r_static
@@ -597,7 +607,6 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-multiline_comment|/* printk (&quot;from_user = %d.&bslash;n&quot;, from_user); */
 id|save_flags
 c_func
 (paren
@@ -610,7 +619,6 @@ c_cond
 id|from_user
 )paren
 (brace
-multiline_comment|/* printk (&quot;Going into the semaphore&bslash;n&quot;); */
 id|down
 c_func
 (paren
@@ -618,7 +626,6 @@ op_amp
 id|tmp_buf_sem
 )paren
 suffix:semicolon
-multiline_comment|/* printk (&quot;got out of the semaphore&bslash;n&quot;); */
 r_while
 c_loop
 (paren
@@ -1224,26 +1231,12 @@ id|EINVAL
 suffix:semicolon
 multiline_comment|/* This is an error which we don&squot;t know how to handle. */
 )brace
-id|gs_dprintk
-(paren
-id|GS_DEBUG_FLUSH
-comma
-l_string|&quot;checkpoint 1&bslash;n&quot;
-)paren
-suffix:semicolon
 id|rcib
 op_assign
 id|gs_real_chars_in_buffer
 c_func
 (paren
 id|port-&gt;tty
-)paren
-suffix:semicolon
-id|gs_dprintk
-(paren
-id|GS_DEBUG_FLUSH
-comma
-l_string|&quot;checkpoint 2&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1270,13 +1263,6 @@ r_return
 id|rv
 suffix:semicolon
 )brace
-id|gs_dprintk
-(paren
-id|GS_DEBUG_FLUSH
-comma
-l_string|&quot;checkpoint 3&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* stop trying: now + twice the time it would normally take +  seconds */
 id|end_jiffies
 op_assign
@@ -1840,7 +1826,6 @@ id|gs_shutdown_port
 id|port
 )paren
 suffix:semicolon
-multiline_comment|/* gs_flush_buffer (tty); */
 id|port-&gt;flags
 op_and_assign
 op_complement
@@ -2435,9 +2420,10 @@ comma
 id|port-&gt;blocked_open
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+(paren
 id|TASK_RUNNING
+)paren
 suffix:semicolon
 id|remove_wait_queue
 c_func
@@ -2522,19 +2508,6 @@ id|gs_port
 op_star
 )paren
 id|tty-&gt;driver_data
-suffix:semicolon
-id|gs_dprintk
-(paren
-id|GS_DEBUG_CLOSE
-comma
-l_string|&quot;tty=%p, port=%p port-&gt;tty=%p&bslash;n&quot;
-comma
-id|tty
-comma
-id|port
-comma
-id|port-&gt;tty
-)paren
 suffix:semicolon
 r_if
 c_cond

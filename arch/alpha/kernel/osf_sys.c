@@ -32,26 +32,6 @@ macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 r_extern
 r_int
-id|do_sys_mount
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|do_pipe
 c_func
 (paren
@@ -1472,7 +1452,7 @@ id|out
 suffix:semicolon
 id|retval
 op_assign
-id|do_sys_mount
+id|do_mount
 c_func
 (paren
 id|devname
@@ -1583,7 +1563,7 @@ id|out
 suffix:semicolon
 id|retval
 op_assign
-id|do_sys_mount
+id|do_mount
 c_func
 (paren
 id|devname
@@ -1654,7 +1634,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 r_return
-id|do_sys_mount
+id|do_mount
 c_func
 (paren
 l_string|&quot;&quot;

@@ -609,8 +609,11 @@ c_cond
 (paren
 id|ent-&gt;dentry
 )paren
-id|ent-&gt;dentry-&gt;d_count
-op_increment
+id|dget
+c_func
+(paren
+id|ent-&gt;dentry
+)paren
 suffix:semicolon
 id|dhnp
 op_assign

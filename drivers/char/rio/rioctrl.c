@@ -11,6 +11,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -534,6 +535,10 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+id|func_enter
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Confuse teh compiler to think that we&squot;ve initialized these */
 id|Host
@@ -8350,6 +8355,10 @@ suffix:semicolon
 id|p-&gt;RIOError.Error
 op_assign
 id|IOCTL_COMMAND_UNKNOWN
+suffix:semicolon
+id|func_exit
+(paren
+)paren
 suffix:semicolon
 r_return
 id|EINVAL

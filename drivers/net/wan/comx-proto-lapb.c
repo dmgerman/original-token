@@ -2502,11 +2502,6 @@ op_assign
 op_amp
 id|comxlapb_write_proc
 suffix:semicolon
-id|new_file-&gt;proc_iops
-op_assign
-op_amp
-id|comx_normal_inode_ops
-suffix:semicolon
 id|new_file-&gt;size
 op_assign
 id|size

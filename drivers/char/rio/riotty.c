@@ -13,6 +13,7 @@ DECL|macro|__EXPLICIT_DEF_H__
 mdefine_line|#define __EXPLICIT_DEF_H__
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -295,6 +296,15 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
+id|func_enter
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure driver_data is NULL in case the rio isn&squot;t booted jet. Else gs_close&n;&t;   is going to oops.&n;&t;*/
+id|tty-&gt;driver_data
+op_assign
+l_int|NULL
+suffix:semicolon
 id|SysPort
 op_assign
 id|rio_minor
@@ -331,8 +341,13 @@ c_func
 id|ENXIO
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 id|rio_dprint
@@ -389,8 +404,14 @@ c_func
 id|ENXIO
 )paren
 suffix:semicolon
+id|func_exit
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;** Grab pointer to the port stucture&n;&t;*/
@@ -402,6 +423,15 @@ id|SysPort
 )braket
 suffix:semicolon
 multiline_comment|/* Get control struc */
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_TTY
+comma
+l_string|&quot;PortP: %p&bslash;n&quot;
+comma
+id|PortP
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -421,6 +451,10 @@ l_string|&quot;port not mapped into system&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 id|pseterr
 c_func
 (paren
@@ -428,7 +462,8 @@ id|ENXIO
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 id|tty-&gt;driver_data
@@ -489,8 +524,13 @@ c_func
 id|ENXIO
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;** If the RTA has not booted yet and the user has choosen to block&n;&t;** until the RTA is present then we must spin here waiting for&n;&t;** the RTA to boot.&n;&t;*/
@@ -553,6 +593,10 @@ l_string|&quot;RTA EINTR in delay &bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINTR
@@ -591,6 +635,10 @@ id|pseterr
 c_func
 (paren
 id|EINTR
+)paren
+suffix:semicolon
+id|func_exit
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -646,6 +694,10 @@ c_func
 id|ENXIO
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -696,6 +748,10 @@ l_string|&quot;RTA never booted&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -726,6 +782,10 @@ l_string|&quot;RTA_wait_for_boot: EINTR in delay &bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINTR
@@ -748,6 +808,10 @@ comma
 (paren
 l_string|&quot;Waiting for RTA to boot timeout&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|func_exit
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -808,9 +872,15 @@ c_cond
 (paren
 id|retval
 )paren
+(brace
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/*&n;&t;** If the port is in the final throws of being closed,&n;&t;** we should wait here (politely), waiting&n;&t;** for it to finish, so that it doesn&squot;t close us!&n;&t;*/
 r_while
@@ -955,6 +1025,10 @@ id|retval
 op_assign
 op_minus
 id|ENXIO
+suffix:semicolon
+id|func_exit
+(paren
+)paren
 suffix:semicolon
 r_return
 id|retval
@@ -1180,6 +1254,10 @@ comma
 id|PortP
 comma
 id|FCLOSE
+)paren
+suffix:semicolon
+id|func_exit
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -1408,6 +1486,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINTR
@@ -1493,6 +1575,10 @@ comma
 (paren
 l_string|&quot;Returning from open&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|func_exit
+(paren
 )paren
 suffix:semicolon
 r_return

@@ -102,7 +102,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|cpm_enet_init
+id|scc_enet_init
 c_func
 (paren
 r_void
@@ -263,9 +263,9 @@ l_int|0
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_8xx)
+macro_line|#if defined(CONFIG_SCC_ENET)
 (brace
-id|cpm_enet_init
+id|scc_enet_init
 comma
 l_int|0
 )brace

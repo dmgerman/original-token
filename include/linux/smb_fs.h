@@ -373,15 +373,6 @@ id|inode
 op_star
 )paren
 suffix:semicolon
-r_void
-id|smb_close_dentry
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-)paren
-suffix:semicolon
 r_int
 id|smb_close_fileid
 c_func

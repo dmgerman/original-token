@@ -62,196 +62,6 @@ macro_line|#include &quot;protsts.h&quot;
 macro_line|#include &quot;rioboard.h&quot;
 macro_line|#include &quot;rio_linux.h&quot;
 multiline_comment|/* I don&squot;t think that this driver can handle more than 512 ports on&n;one machine.  Specialix specifies max 4 boards in one machine. I don&squot;t&n;know why. If you want to try anyway you&squot;ll have to increase the number&n;of boards in rio.h.  You&squot;ll have to allocate more majors if you need&n;more than 512 ports.... */
-multiline_comment|/* ************************************************************** */
-multiline_comment|/* * This section can be removed when 2.0 becomes outdated....  * */
-multiline_comment|/* ************************************************************** */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100    /* Less than 2.1.0 */
-DECL|macro|TWO_ZERO
-mdefine_line|#define TWO_ZERO
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020209   /* less than 2.2.x */
-macro_line|#warning &quot;Please use a recent 2.2.x kernel. &quot;
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef TWO_ZERO
-multiline_comment|/* Here is the section that makes the 2.2 compatible driver source &n;   work for 2.0 too! We mostly try to adopt the &quot;new thingies&quot; from 2.2, &n;   and provide for compatibility stuff here if possible. */
-macro_line|#include &lt;linux/bios32.h&gt;
-DECL|macro|Get_user
-mdefine_line|#define Get_user(a,b)                a = get_user(b)
-DECL|macro|Put_user
-mdefine_line|#define Put_user(a,b)                0,put_user(a,b)
-DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user(a,b,c)          memcpy_tofs(a,b,c)
-DECL|function|copy_from_user
-r_static
-r_inline
-r_int
-id|copy_from_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-id|c
-)paren
-(brace
-id|memcpy_fromfs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|c
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|macro|pci_present
-mdefine_line|#define pci_present                  pcibios_present
-DECL|macro|pci_read_config_word
-mdefine_line|#define pci_read_config_word         pcibios_read_config_word
-DECL|macro|pci_read_config_dword
-mdefine_line|#define pci_read_config_dword        pcibios_read_config_dword
-DECL|function|get_irq
-r_static
-r_inline
-r_int
-r_char
-id|get_irq
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|fn
-)paren
-(brace
-r_int
-r_char
-id|t
-suffix:semicolon
-id|pcibios_read_config_byte
-(paren
-id|bus
-comma
-id|fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|t
-)paren
-suffix:semicolon
-r_return
-id|t
-suffix:semicolon
-)brace
-DECL|function|ioremap
-r_static
-r_inline
-r_void
-op_star
-id|ioremap
-c_func
-(paren
-r_int
-r_int
-id|base
-comma
-r_int
-id|length
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|base
-OL
-l_int|0x100000
-)paren
-r_return
-(paren
-r_void
-op_star
-)paren
-id|base
-suffix:semicolon
-r_return
-id|vremap
-(paren
-id|base
-comma
-id|length
-)paren
-suffix:semicolon
-)brace
-DECL|macro|my_iounmap
-mdefine_line|#define my_iounmap(x, b)             (((long)x&lt;0x100000)?0:vfree ((void*)x))
-DECL|macro|capable
-mdefine_line|#define capable(x)                   suser()
-DECL|macro|queue_task
-mdefine_line|#define queue_task                   queue_task_irq_off
-DECL|macro|tty_flip_buffer_push
-mdefine_line|#define tty_flip_buffer_push(tty)    queue_task(&amp;tty-&gt;flip.tqueue, &amp;tq_timer)
-DECL|macro|signal_pending
-mdefine_line|#define signal_pending(current)      (current-&gt;signal &amp; ~current-&gt;blocked)
-DECL|macro|schedule_timeout
-mdefine_line|#define schedule_timeout(to)         do {current-&gt;timeout = jiffies + (to);schedule ();} while (0)
-DECL|macro|time_after
-mdefine_line|#define time_after(t1,t2)            (((long)t1-t2) &gt; 0)
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(nr, addr)   set_bit(nr, addr)
-DECL|macro|test_and_clear_bit
-mdefine_line|#define test_and_clear_bit(nr, addr) clear_bit(nr, addr)
-multiline_comment|/* Not yet implemented on 2.0 */
-DECL|macro|ASYNC_SPD_SHI
-mdefine_line|#define ASYNC_SPD_SHI  -1
-DECL|macro|ASYNC_SPD_WARP
-mdefine_line|#define ASYNC_SPD_WARP -1
-multiline_comment|/* Ugly hack: the driver_name doesn&squot;t exist in 2.0.x . So we define it&n;   to the &quot;name&quot; field that does exist. As long as the assignments are&n;   done in the right order, there is nothing to worry about. */
-DECL|macro|driver_name
-mdefine_line|#define driver_name           name 
-multiline_comment|/* Should be in a header somewhere. They are in tty.h on 2.2 */
-DECL|macro|TTY_HW_COOK_OUT
-mdefine_line|#define TTY_HW_COOK_OUT       14 /* Flag to tell ntty what we can handle */
-DECL|macro|TTY_HW_COOK_IN
-mdefine_line|#define TTY_HW_COOK_IN        15 /* in hardware - output and input       */
-multiline_comment|/* The return type of a &quot;close&quot; routine. */
-DECL|macro|INT
-mdefine_line|#define INT                   void
-DECL|macro|NO_ERROR
-mdefine_line|#define NO_ERROR              /* Nothing */
-macro_line|#else
-multiline_comment|/* The 2.2.x compatibility section. */
-macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|Get_user
-mdefine_line|#define Get_user(a,b)         get_user(a,b)
-DECL|macro|Put_user
-mdefine_line|#define Put_user(a,b)         put_user(a,b)
-DECL|macro|get_irq
-mdefine_line|#define get_irq(pdev)         pdev-&gt;irq
-DECL|macro|INT
-mdefine_line|#define INT                   int
-DECL|macro|NO_ERROR
-mdefine_line|#define NO_ERROR              0              
-DECL|macro|my_iounmap
-mdefine_line|#define my_iounmap(x,b)       (iounmap((char *)(b)))
-macro_line|#endif
-multiline_comment|/* ************************************************************** */
-multiline_comment|/* *                End of compatibility section..              * */
-multiline_comment|/* ************************************************************** */
 multiline_comment|/* Why the hell am I defining these here? */
 DECL|macro|RIO_TYPE_NORMAL
 mdefine_line|#define RIO_TYPE_NORMAL 1
@@ -722,22 +532,6 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/* &n;   This driver can spew a whole lot of debugging output at you. If you&n;   need maximum performance, you should disable the DEBUG define. To&n;   aid in debugging in the field, I&squot;m leaving the compile-time debug&n;   features enabled, and disable them &quot;runtime&quot;. That allows me to&n;   instruct people with problems to enable debugging without requiring&n;   them to recompile... &n;*/
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG
-macro_line|#ifdef DEBUG
-DECL|macro|rio_dprintk
-mdefine_line|#define rio_dprintk(f, str...) if (rio_debug &amp; f) printk (str)
-macro_line|#else
-DECL|macro|rio_dprintk
-mdefine_line|#define rio_dprintk(f, str...) /* nothing */
-macro_line|#endif
-DECL|macro|func_enter
-mdefine_line|#define func_enter() rio_dprintk (RIO_DEBUG_FLOW, &quot;rio: enter &quot; __FUNCTION__ &quot;&bslash;n&quot;)
-DECL|macro|func_exit
-mdefine_line|#define func_exit()  rio_dprintk (RIO_DEBUG_FLOW, &quot;rio: exit  &quot; __FUNCTION__ &quot;&bslash;n&quot;)
-DECL|macro|func_enter2
-mdefine_line|#define func_enter2() rio_dprintk (RIO_DEBUG_FLOW, &quot;rio: enter &quot; __FUNCTION__ &bslash;&n;                                  &quot;(port %d)&bslash;n&quot;, port-&gt;line)
 multiline_comment|/* &n; *  Firmware loader driver specific routines&n; *&n; */
 DECL|variable|rio_fw_fops
 r_static
@@ -746,47 +540,18 @@ id|file_operations
 id|rio_fw_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/*&t;lseek&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;read&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;write&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;readdir&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;select&t;*/
+id|ioctl
+suffix:colon
 id|rio_fw_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/*&t;mmap&t;*/
+id|open
+suffix:colon
 id|rio_fw_open
 comma
-macro_line|#ifndef TWO_ZERO
-l_int|NULL
-comma
-multiline_comment|/*&t;flush&t;*/
-macro_line|#endif
+id|release
+suffix:colon
 id|rio_fw_release
 comma
-l_int|NULL
-comma
-multiline_comment|/*&t;fsync&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;fasync&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;check_media_change&t;*/
-l_int|NULL
-comma
-multiline_comment|/*&t;revalidate&t;*/
 )brace
 suffix:semicolon
 DECL|variable|rio_fw_device
@@ -853,7 +618,6 @@ id|port
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|badinfo
 comma
@@ -879,7 +643,6 @@ id|RIO_MAGIC
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|badmagic
 comma
@@ -947,8 +710,10 @@ op_add_assign
 l_int|16
 )paren
 (brace
-id|printk
+id|rio_dprintk
 (paren
+id|RIO_DEBUG_PARAM
+comma
 l_string|&quot;%08x &quot;
 comma
 (paren
@@ -974,8 +739,10 @@ id|j
 op_increment
 )paren
 (brace
-id|printk
+id|rio_dprintk
 (paren
+id|RIO_DEBUG_PARAM
+comma
 l_string|&quot;%02x %s&quot;
 comma
 id|addr
@@ -1022,8 +789,10 @@ op_plus
 id|i
 )braket
 suffix:semicolon
-id|printk
+id|rio_dprintk
 (paren
+id|RIO_DEBUG_PARAM
+comma
 l_string|&quot;%c&quot;
 comma
 (paren
@@ -1050,8 +819,10 @@ id|ch
 )paren
 suffix:semicolon
 )brace
-id|printk
+id|rio_dprintk
 (paren
+id|RIO_DEBUG_PARAM
+comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1346,6 +1117,11 @@ op_star
 id|HostP
 )paren
 (brace
+id|func_enter
+c_func
+(paren
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1370,6 +1146,11 @@ l_int|0xff
 )paren
 suffix:semicolon
 )brace
+id|func_exit
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|rio_interrupt
 r_static
@@ -1394,18 +1175,20 @@ id|Host
 op_star
 id|HostP
 suffix:semicolon
+id|func_enter
+(paren
+)paren
+suffix:semicolon
 id|HostP
 op_assign
-op_amp
-id|p-&gt;RIOHosts
-(braket
 (paren
-r_int
+r_struct
+id|Host
+op_star
 )paren
 id|ptr
-)braket
 suffix:semicolon
-multiline_comment|/*   func_enter ();  */
+multiline_comment|/* &amp;p-&gt;RIOHosts[(long)ptr]; */
 id|rio_dprintk
 (paren
 id|RIO_DEBUG_IFLOW
@@ -1478,6 +1261,13 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_IFLOW
+comma
+l_string|&quot;rio: We&squot;ve have noticed the interrupt&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1577,7 +1367,10 @@ comma
 id|HostP-&gt;Ivec
 )paren
 suffix:semicolon
-multiline_comment|/*  func_exit ();  */
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|rio_pollfunc
 r_static
@@ -1597,11 +1390,11 @@ id|rio_interrupt
 (paren
 l_int|0
 comma
-(paren
-r_void
-op_star
-)paren
+op_amp
+id|p-&gt;RIOHosts
+(braket
 id|data
+)braket
 comma
 l_int|NULL
 )paren
@@ -1854,8 +1647,10 @@ op_logical_neg
 id|port-&gt;gs.tty
 )paren
 (brace
-id|printk
+id|rio_dprintk
 (paren
+id|RIO_DBUG_TTY
+comma
 l_string|&quot;No tty.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1869,8 +1664,10 @@ op_logical_neg
 id|port-&gt;gs.tty-&gt;termios
 )paren
 (brace
-id|printk
+id|rio_dprintk
 (paren
+id|RIO_DEBUG_TTY
+comma
 l_string|&quot;No termios.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2850,6 +2647,11 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
+id|func_exit
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_amp
 id|vpdp
@@ -3472,6 +3274,21 @@ op_assign
 op_amp
 id|rio_real_driver
 suffix:semicolon
+multiline_comment|/*&n;     * Initializing wait queue&n;     */
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|port-&gt;gs.open_wait
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|port-&gt;gs.close_wait
+)paren
+suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/* We could postpone initializing them to when they are configured. */
@@ -3585,7 +3402,6 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|rio_release_drivers
 r_static
 r_void
@@ -3630,7 +3446,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef TWO_ZERO
 DECL|macro|PDEV
 mdefine_line|#define PDEV unsigned char pci_bus, unsigned pci_fun
@@ -3666,7 +3481,7 @@ suffix:semicolon
 DECL|macro|CNTRL_REG_OFFSET
 mdefine_line|#define CNTRL_REG_OFFSET        0x50
 DECL|macro|CNTRL_REG_GOODVALUE
-mdefine_line|#define CNTRL_REG_GOODVALUE     0x00260000
+mdefine_line|#define CNTRL_REG_GOODVALUE     0x18260000
 id|pci_read_config_dword
 c_func
 (paren
@@ -3978,7 +3793,6 @@ comma
 id|tint
 )paren
 suffix:semicolon
-multiline_comment|/* rio_dprintk (RIO_DEBUG_PROBE, &quot;pdev = %d/%d  (%x)&bslash;n&quot;, pdev, tint); */
 r_if
 c_cond
 (paren
@@ -4089,7 +3903,17 @@ id|rio_pcicopy
 suffix:semicolon
 id|hp-&gt;Mode
 op_assign
-id|RIO_PCI_DEFAULT_MODE
+id|RIO_PCI_BOOT_FROM_RAM
+suffix:semicolon
+id|rio_reset_interrupt
+(paren
+id|hp
+)paren
+suffix:semicolon
+id|rio_start_card_running
+(paren
+id|hp
+)paren
 suffix:semicolon
 id|rio_dprintk
 (paren
@@ -4144,6 +3968,13 @@ op_eq
 id|RIO_SUCCESS
 )paren
 (brace
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_INIT
+comma
+l_string|&quot;Done RIOBoardTest&bslash;n&quot;
+)paren
+suffix:semicolon
 id|WBYTE
 c_func
 (paren
@@ -4266,13 +4097,11 @@ dot
 id|UniqueNum
 )paren
 suffix:semicolon
-macro_line|#if 1
 id|fix_rio_pci
 (paren
 id|pdev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|p-&gt;RIOLastPCISearch
 op_assign
 id|RIO_SUCCESS
@@ -4458,7 +4287,35 @@ id|rio_pcicopy
 suffix:semicolon
 id|hp-&gt;Mode
 op_assign
-id|RIO_PCI_DEFAULT_MODE
+id|RIO_PCI_BOOT_FROM_RAM
+suffix:semicolon
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_PROBE
+comma
+l_string|&quot;Ivec: %x&bslash;n&quot;
+comma
+id|hp-&gt;Ivec
+)paren
+suffix:semicolon
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_PROBE
+comma
+l_string|&quot;Mode: %x&bslash;n&quot;
+comma
+id|hp-&gt;Mode
+)paren
+suffix:semicolon
+id|rio_reset_interrupt
+(paren
+id|hp
+)paren
+suffix:semicolon
+id|rio_start_card_running
+(paren
+id|hp
+)paren
 suffix:semicolon
 id|rio_dprintk
 (paren
@@ -4750,6 +4607,7 @@ id|hp-&gt;Copy
 op_assign
 id|rio_pcicopy
 suffix:semicolon
+multiline_comment|/* AT card PCI???? - PVDL&n;                             * -- YES! this is now a normal copy. Only the &n;                             * old PCI card uses the special PCI copy. &n;                             * Moreover, the ISA card will work with the &n;                             * special PCI copy anyway. -- REW */
 id|hp-&gt;Mode
 op_assign
 l_int|0
@@ -4759,6 +4617,13 @@ op_assign
 id|get_VPD_PROM
 (paren
 id|hp
+)paren
+suffix:semicolon
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_PROBE
+comma
+l_string|&quot;Got VPD ROM&bslash;n&quot;
 )paren
 suffix:semicolon
 id|okboard
@@ -4949,9 +4814,21 @@ op_and_assign
 l_int|0x7fff
 suffix:semicolon
 )brace
-r_if
-c_cond
+id|rio_dprintk
 (paren
+id|RIO_DEBUG_INIT
+comma
+l_string|&quot;Requesting interrupt hp: %p rio_interrupt: %d Mode: %x&bslash;n&quot;
+comma
+id|hp
+comma
+id|hp-&gt;Ivec
+comma
+id|hp-&gt;Mode
+)paren
+suffix:semicolon
+id|retval
+op_assign
 id|request_irq
 (paren
 id|hp-&gt;Ivec
@@ -4962,12 +4839,22 @@ id|mode
 comma
 l_string|&quot;rio&quot;
 comma
+id|hp
+)paren
+suffix:semicolon
+id|rio_dprintk
 (paren
-r_void
-op_star
+id|RIO_DEBUG_INIT
+comma
+l_string|&quot;Return value from request_irq: %d&bslash;n&quot;
+comma
+id|retval
 )paren
-id|i
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
 )paren
 (brace
 id|printk
@@ -4991,6 +4878,46 @@ comma
 l_string|&quot;Got irq %d.&bslash;n&quot;
 comma
 id|hp-&gt;Ivec
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hp-&gt;Ivec
+op_ne
+l_int|0
+)paren
+(brace
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_INIT
+comma
+l_string|&quot;Enabling interrupts on rio card.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|hp-&gt;Mode
+op_or_assign
+id|RIO_PCI_INT_ENABLE
+suffix:semicolon
+)brace
+r_else
+id|hp-&gt;Mode
+op_and_assign
+op_logical_neg
+id|RIO_PCI_INT_ENABLE
+suffix:semicolon
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_INIT
+comma
+l_string|&quot;New Mode: %x&bslash;n&quot;
+comma
+id|hp-&gt;Mode
+)paren
+suffix:semicolon
+id|rio_start_card_running
+(paren
+id|hp
 )paren
 suffix:semicolon
 )brace
@@ -5045,9 +4972,10 @@ c_cond
 id|found
 )paren
 (brace
-id|printk
+id|rio_dprintk
 (paren
-id|KERN_INFO
+id|RIO_DEBUG_INIT
+comma
 l_string|&quot;rio: total of %d boards detected.&bslash;n&quot;
 comma
 id|found
@@ -5161,11 +5089,7 @@ id|free_irq
 (paren
 id|hp-&gt;Ivec
 comma
-(paren
-r_void
-op_star
-)paren
-id|i
+id|hp
 )paren
 suffix:semicolon
 id|rio_dprintk

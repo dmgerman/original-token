@@ -3142,6 +3142,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Exceptional case: normally we are not allowed to unhash a busy&n; * directory. In this case, however, we can do it - no aliasing problems&n; * due to the way we treat inodes.&n; */
 DECL|function|pid_base_revalidate
 r_static
 r_int
@@ -3177,7 +3178,7 @@ suffix:semicolon
 )brace
 DECL|function|pid_delete_dentry
 r_static
-r_void
+r_int
 id|pid_delete_dentry
 c_func
 (paren
@@ -3187,11 +3188,8 @@ op_star
 id|dentry
 )paren
 (brace
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
+r_return
+l_int|1
 suffix:semicolon
 )brace
 DECL|variable|pid_fd_dentry_operations

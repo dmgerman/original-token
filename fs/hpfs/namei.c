@@ -2278,12 +2278,6 @@ comma
 id|inode
 )paren
 suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2683,12 +2677,6 @@ c_func
 id|dir
 comma
 id|inode
-)paren
-suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 )brace

@@ -350,7 +350,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|member|d_delete
-r_void
+r_int
 (paren
 op_star
 id|d_delete
@@ -577,14 +577,26 @@ id|inode
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* test whether root is busy without destroying dcache */
+multiline_comment|/* &lt;clickety&gt;-&lt;click&gt; the ramfs-type tree */
 r_extern
-r_int
-id|d_active_refs
+r_void
+id|d_genocide
 c_func
 (paren
 r_struct
 id|dentry
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|dentry
+op_star
+id|d_find_alias
+c_func
+(paren
+r_struct
+id|inode
 op_star
 )paren
 suffix:semicolon

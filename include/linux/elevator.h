@@ -71,6 +71,11 @@ id|elevator_fn
 op_star
 id|elevator_fn
 suffix:semicolon
+DECL|member|queue_ID
+r_int
+r_int
+id|queue_ID
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|ELEVATOR_DEFAULTS
@@ -81,8 +86,7 @@ r_struct
 id|blkelv_ioctl_arg_s
 (brace
 DECL|member|queue_ID
-r_void
-op_star
+r_int
 id|queue_ID
 suffix:semicolon
 DECL|member|read_latency
@@ -102,9 +106,9 @@ DECL|typedef|blkelv_ioctl_arg_t
 id|blkelv_ioctl_arg_t
 suffix:semicolon
 DECL|macro|BLKELVGET
-mdefine_line|#define BLKELVGET   _IO(0x12,106)
+mdefine_line|#define BLKELVGET   _IOR(0x12,106,sizeof(blkelv_ioctl_arg_t))
 DECL|macro|BLKELVSET
-mdefine_line|#define BLKELVSET   _IO(0x12,107)
+mdefine_line|#define BLKELVSET   _IOW(0x12,107,sizeof(blkelv_ioctl_arg_t))
 r_extern
 r_int
 id|blkelvget_ioctl

@@ -133,7 +133,7 @@ mdefine_line|#define OPTION_NOMOUNT          0x02
 DECL|macro|OPTION_ONLY
 mdefine_line|#define OPTION_ONLY             0x04
 DECL|macro|OOPS
-mdefine_line|#define OOPS(format, args...) {printk (format, ## args); &bslash;&n;                               printk (&quot;Forcing Oops&bslash;n&quot;); &bslash;&n;                               *(int *) 0 = 0;}
+mdefine_line|#define OOPS(format, args...) {printk (format, ## args); &bslash;&n;                               printk (&quot;Forcing Oops&bslash;n&quot;); &bslash;&n;                               BUG();}
 DECL|struct|directory_type
 r_struct
 id|directory_type
@@ -9002,7 +9002,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_d_iput  */
 r_static
-r_void
+r_int
 id|devfs_d_delete
 (paren
 r_struct
@@ -9073,7 +9073,7 @@ suffix:semicolon
 multiline_comment|/**&n; *&t;devfs_d_delete - Callback for when all files for a dentry are closed.&n; *&t;@detry: The dentry.&n; */
 DECL|function|devfs_d_delete
 r_static
-r_void
+r_int
 id|devfs_d_delete
 (paren
 r_struct
@@ -9139,12 +9139,8 @@ id|dentry
 )paren
 suffix:semicolon
 macro_line|#endif
-id|d_drop
-(paren
-id|dentry
-)paren
-suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 id|fs_info
@@ -9188,6 +9184,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -9197,6 +9194,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -9220,6 +9218,7 @@ id|di-&gt;mode
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -9228,6 +9227,7 @@ op_logical_neg
 id|di-&gt;de-&gt;u.fcb.open
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|di-&gt;de-&gt;u.fcb.open
 op_assign
@@ -9260,6 +9260,7 @@ op_logical_neg
 id|di-&gt;de-&gt;u.fcb.auto_owner
 )paren
 r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/*  Change the ownership/protection back  */
 id|di-&gt;mode
@@ -9294,6 +9295,9 @@ suffix:semicolon
 id|inode-&gt;i_gid
 op_assign
 id|di-&gt;gid
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_d_delete  */
@@ -13266,30 +13270,6 @@ r_void
 r_int
 id|err
 suffix:semicolon
-r_extern
-r_int
-id|do_sys_mount
-(paren
-r_char
-op_star
-id|dev_name
-comma
-r_char
-op_star
-id|dir_name
-comma
-r_char
-op_star
-id|type
-comma
-r_int
-id|flags
-comma
-r_void
-op_star
-id|data
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -13303,7 +13283,7 @@ r_return
 suffix:semicolon
 id|err
 op_assign
-id|do_sys_mount
+id|do_mount
 (paren
 l_string|&quot;none&quot;
 comma

@@ -128,6 +128,13 @@ id|adb_got_sleep
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|adb_inited
+r_static
+r_int
+id|adb_inited
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 r_static
 r_int
@@ -764,6 +771,19 @@ r_return
 l_int|0
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* xmon may do early-init */
+r_if
+c_cond
+(paren
+id|adb_inited
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|adb_inited
+op_assign
+l_int|1
+suffix:semicolon
 id|adb_controller
 op_assign
 l_int|NULL

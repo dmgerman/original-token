@@ -281,8 +281,9 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_8xx
+macro_line|#if (defined(CONFIG_8xx) || defined(CONFIG_8260))
 r_extern
+r_void
 id|console_8xx_init
 c_func
 (paren
@@ -9280,7 +9281,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
-macro_line|#ifdef CONFIG_8xx
+macro_line|#if (defined(CONFIG_8xx) || defined(CONFIG_8260))
 id|console_8xx_init
 c_func
 (paren
@@ -9709,7 +9710,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_8xx
+macro_line|#if (defined(CONFIG_8xx) || defined(CONFIG_8260))
 id|rs_8xx_init
 c_func
 (paren

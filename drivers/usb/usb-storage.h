@@ -163,19 +163,20 @@ DECL|macro|US_BULK_STAT_FAIL
 mdefine_line|#define US_BULK_STAT_FAIL&t;1
 DECL|macro|US_BULK_STAT_PHASE
 mdefine_line|#define US_BULK_STAT_PHASE&t;2
-DECL|macro|US_BULK_RESET
-mdefine_line|#define US_BULK_RESET&t;&t;0xff
-DECL|macro|US_BULK_RESET_SOFT
-mdefine_line|#define US_BULK_RESET_SOFT&t;1
-DECL|macro|US_BULK_RESET_HARD
-mdefine_line|#define US_BULK_RESET_HARD&t;0
+multiline_comment|/* bulk-only class specific requests */
+DECL|macro|US_BULK_RESET_REQUEST
+mdefine_line|#define US_BULK_RESET_REQUEST&t;0xff
+DECL|macro|US_BULK_GET_MAX_LUN
+mdefine_line|#define US_BULK_GET_MAX_LUN&t;0xfe
 multiline_comment|/*&n; * us_bulk_transfer() return codes&n; */
 DECL|macro|US_BULK_TRANSFER_GOOD
-mdefine_line|#define US_BULK_TRANSFER_GOOD&t;0
+mdefine_line|#define US_BULK_TRANSFER_GOOD&t;&t;0  /* good transfer                 */
 DECL|macro|US_BULK_TRANSFER_SHORT
-mdefine_line|#define US_BULK_TRANSFER_SHORT&t;1
+mdefine_line|#define US_BULK_TRANSFER_SHORT&t;&t;1  /* transfered less than expected */
 DECL|macro|US_BULK_TRANSFER_FAILED
-mdefine_line|#define US_BULK_TRANSFER_FAILED 2
+mdefine_line|#define US_BULK_TRANSFER_FAILED&t;&t;2  /* transfer died in the middle   */
+DECL|macro|US_BULK_TRANSFER_ABORTED
+mdefine_line|#define US_BULK_TRANSFER_ABORTED&t;3  /* transfer canceled             */
 multiline_comment|/*&n; * Transport return codes&n; */
 DECL|macro|USB_STOR_TRANSPORT_GOOD
 mdefine_line|#define USB_STOR_TRANSPORT_GOOD&t;   0   /* Transport good, command good&t;   */
@@ -183,6 +184,8 @@ DECL|macro|USB_STOR_TRANSPORT_FAILED
 mdefine_line|#define USB_STOR_TRANSPORT_FAILED  1   /* Transport good, command failed   */
 DECL|macro|USB_STOR_TRANSPORT_ERROR
 mdefine_line|#define USB_STOR_TRANSPORT_ERROR   2   /* Transport bad (i.e. device dead) */
+DECL|macro|USB_STOR_TRANSPORT_ABORTED
+mdefine_line|#define USB_STOR_TRANSPORT_ABORTED 3   /* Transport aborted                */
 multiline_comment|/*&n; * CBI accept device specific command&n; */
 DECL|macro|US_CBI_ADSC
 mdefine_line|#define US_CBI_ADSC&t;&t;0

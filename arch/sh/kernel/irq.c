@@ -1030,7 +1030,7 @@ op_amp
 id|irq_controller_lock
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 id|__sti
 c_func
 (paren
@@ -1972,4 +1972,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; defined(CONFIG_SYSCTL)
+DECL|function|init_irq_proc
+r_void
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif
 eof

@@ -33,6 +33,21 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_static
+r_void
+id|__flush_tlb_page
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Ugly, ugly, but the goto&squot;s result in better assembly..&n; */
 DECL|function|__verify_write
 r_int
@@ -616,10 +631,9 @@ id|bad_area
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault,&n;&t; * make sure we exit gracefully rather than endlessly redo&n;&t; * the fault.&n;&t; */
-(brace
-r_int
-id|fault
-op_assign
+r_switch
+c_cond
+(paren
 id|handle_mm_fault
 c_func
 (paren
@@ -631,25 +645,34 @@ id|address
 comma
 id|writeaccess
 )paren
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+id|tsk-&gt;min_flt
+op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fault
-OL
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|tsk-&gt;maj_flt
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|0
-)paren
-r_goto
-id|out_of_memory
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fault
-)paren
+suffix:colon
 r_goto
 id|do_sigbus
+suffix:semicolon
+r_default
+suffix:colon
+r_goto
+id|out_of_memory
 suffix:semicolon
 )brace
 id|up
@@ -769,7 +792,7 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;mov.l&t;%1,%0&quot;
+l_string|&quot;mov.l&t;%1, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -786,6 +809,12 @@ id|MMU_TTB
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|page
+)paren
+(brace
 id|page
 op_assign
 (paren
@@ -856,6 +885,7 @@ comma
 id|page
 )paren
 suffix:semicolon
+)brace
 )brace
 id|die
 c_func
@@ -990,34 +1020,19 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  We don&squot;t need to set PTEH register.&n;&t; *  It&squot;s automatically set by the hardware.&n;&t; */
-id|pteval
-op_assign
-id|pte_val
+macro_line|#if defined(__SH4__)
+multiline_comment|/*&n;&t; * ITLB is not affected by &quot;ldtlb&quot; instruction.&n;&t; * So, we need to flush the entry by ourselves.&n;&t; */
+id|__flush_tlb_page
 c_func
 (paren
-id|pte
-)paren
-suffix:semicolon
-id|pteval
-op_and_assign
-id|_PAGE_FLAGS_HARDWARE_MASK
-suffix:semicolon
-multiline_comment|/* drop software flags */
-id|pteval
-op_or_assign
-id|_PAGE_FLAGS_HARDWARE_DEFAULT
-suffix:semicolon
-multiline_comment|/* add default flags */
-multiline_comment|/* Set PTEL register */
-id|ctrl_outl
-c_func
-(paren
-id|pteval
+id|vma-&gt;vm_mm
 comma
-id|MMU_PTEL
+id|address
+op_amp
+id|PAGE_MASK
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Set PTEH register */
 id|pteaddr
 op_assign
@@ -1039,6 +1054,33 @@ c_func
 id|pteaddr
 comma
 id|MMU_PTEH
+)paren
+suffix:semicolon
+multiline_comment|/* Set PTEL register */
+id|pteval
+op_assign
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+suffix:semicolon
+id|pteval
+op_and_assign
+id|_PAGE_FLAGS_HARDWARE_MASK
+suffix:semicolon
+multiline_comment|/* drop software flags */
+id|pteval
+op_or_assign
+id|_PAGE_FLAGS_HARDWARE_DEFAULT
+suffix:semicolon
+multiline_comment|/* add default flags */
+id|ctrl_outl
+c_func
+(paren
+id|pteval
+comma
+id|MMU_PTEL
 )paren
 suffix:semicolon
 multiline_comment|/* Load the TLB */
@@ -1188,75 +1230,6 @@ comma
 id|addr
 )paren
 suffix:semicolon
-macro_line|#if 0 &t;/* Not need when using ASSOC. ??? */
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|addr
-op_assign
-id|MMU_ITLB_ADDRESS_ARRAY
-op_or
-(paren
-id|i
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-id|data
-op_assign
-id|ctrl_inl
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-id|data
-op_and_assign
-op_complement
-l_int|0x300
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|data
-op_eq
-(paren
-id|page
-op_or
-id|asid
-)paren
-)paren
-(brace
-id|ctrl_outl
-c_func
-(paren
-id|data
-comma
-id|addr
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-)brace
-macro_line|#endif
 id|back_to_P1
 c_func
 (paren
@@ -1533,6 +1506,7 @@ id|flags
 comma
 id|status
 suffix:semicolon
+multiline_comment|/*&n;&t; * Flush all the TLB.&n;&t; *&n;&t; * Write to the MMU control register&squot;s bit:&n;&t; * &t;TF-bit for SH-3, TI-bit for SH-4.&n;&t; *      It&squot;s same position, bit #2.&n;&t; */
 id|save_and_cli
 c_func
 (paren
@@ -1551,7 +1525,6 @@ id|status
 op_or_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/* Set TF-bit to flush */
 id|ctrl_outl
 c_func
 (paren

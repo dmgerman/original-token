@@ -4,6 +4,7 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef _LINUX_USBDEVICE_FS_H
 DECL|macro|_LINUX_USBDEVICE_FS_H
 mdefine_line|#define _LINUX_USBDEVICE_FS_H
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|USBDEVICE_SUPER_MAGIC
 mdefine_line|#define USBDEVICE_SUPER_MAGIC 0x9fa2

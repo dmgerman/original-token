@@ -2688,14 +2688,9 @@ r_int
 id|data
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;rtc: lost some interrupts at %ldHz.&bslash;n&quot;
-comma
-id|rtc_freq
-)paren
+r_int
+r_int
+id|freq
 suffix:semicolon
 id|spin_lock_irq
 (paren
@@ -2760,11 +2755,24 @@ l_int|0xF0
 )paren
 suffix:semicolon
 multiline_comment|/* restart */
+id|freq
+op_assign
+id|rtc_freq
+suffix:semicolon
 id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|rtc_lock
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;rtc: lost some interrupts at %ldHz.&bslash;n&quot;
+comma
+id|freq
 )paren
 suffix:semicolon
 multiline_comment|/* Now we have new data */

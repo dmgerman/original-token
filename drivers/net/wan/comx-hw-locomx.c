@@ -1767,11 +1767,6 @@ op_assign
 op_amp
 id|locomx_write_proc
 suffix:semicolon
-id|new_file-&gt;proc_iops
-op_assign
-op_amp
-id|comx_normal_inode_ops
-suffix:semicolon
 id|new_file-&gt;nlink
 op_assign
 l_int|1
@@ -1821,17 +1816,12 @@ op_assign
 op_amp
 id|locomx_write_proc
 suffix:semicolon
-id|new_file-&gt;proc_iops
-op_assign
-op_amp
-id|comx_normal_inode_ops
-suffix:semicolon
 id|new_file-&gt;nlink
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* &t;No clock yet */
-multiline_comment|/*&n;&t;if ((new_file = create_proc_entry(FILENAME_CLOCK, S_IFREG | 0644, &n;&t;    ch-&gt;procdir)) == NULL) {&n;&t;&t;return -EIO;&n;&t;}&n;&t;new_file-&gt;data = (void *)new_file;&n;&t;new_file-&gt;read_proc = &amp;locomx_read_proc;&n;&t;new_file-&gt;write_proc = &amp;locomx_write_proc;&n;&t;new_file-&gt;proc_iops = &amp;comx_normal_inode_ops;&n;&t;new_file-&gt;nlink = 1;&n;*/
+multiline_comment|/*&n;&t;if ((new_file = create_proc_entry(FILENAME_CLOCK, S_IFREG | 0644, &n;&t;    ch-&gt;procdir)) == NULL) {&n;&t;&t;return -EIO;&n;&t;}&n;&t;new_file-&gt;data = (void *)new_file;&n;&t;new_file-&gt;read_proc = &amp;locomx_read_proc;&n;&t;new_file-&gt;write_proc = &amp;locomx_write_proc;&n;&t;new_file-&gt;nlink = 1;&n;*/
 id|ch-&gt;HW_access_board
 op_assign
 l_int|NULL

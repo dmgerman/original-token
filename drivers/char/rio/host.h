@@ -79,7 +79,7 @@ id|spinlock_t
 id|HostLock
 suffix:semicolon
 multiline_comment|/* Lock structure for MPX */
-multiline_comment|/*struct pci_devinfo&t;    PciDevInfo; */
+multiline_comment|/*struct pci_devinfo    PciDevInfo; */
 multiline_comment|/* PCI Bus/Device/Function stuff */
 multiline_comment|/*struct lockb&t;    HostLock;  */
 multiline_comment|/* Lock structure for MPX */

@@ -1659,7 +1659,7 @@ c_cond
 id|xfer
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|sp-&gt;tx_skbufs

@@ -668,7 +668,7 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|smb_delete_dentry
 c_func
 (paren
@@ -992,9 +992,9 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is the callback from dput() when d_count is going to 0.&n; * We use this to unhash dentries with bad inodes and close files.&n; */
+multiline_comment|/*&n; * This is the callback from dput() when d_count is going to 0.&n; * We use this to unhash dentries with bad inodes.&n; */
 r_static
-r_void
+r_int
 DECL|function|smb_delete_dentry
 id|smb_delete_dentry
 c_func
@@ -1033,24 +1033,18 @@ id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
+r_return
+l_int|1
 suffix:semicolon
 )brace
-id|smb_close_dentry
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
 multiline_comment|/* N.B. Unhash negative dentries? */
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Whenever a lookup succeeds, we know the parent directories&n; * are all valid, so we want to update the dentry timestamps.&n; * N.B. Move this to dcache?&n; */
 r_void
@@ -1732,20 +1726,12 @@ c_cond
 op_logical_neg
 id|error
 )paren
-(brace
 id|smb_renew_times
 c_func
 (paren
 id|dentry
 )paren
 suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
-)brace
 r_return
 id|error
 suffix:semicolon

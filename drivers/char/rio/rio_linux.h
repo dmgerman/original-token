@@ -6,7 +6,6 @@ mdefine_line|#define RIO_PORTSPERBOARD 128
 DECL|macro|RIO_NPORTS
 mdefine_line|#define RIO_NPORTS        (RIO_NBOARDS * RIO_PORTSPERBOARD)
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|RIO_MAGIC
 mdefine_line|#define RIO_MAGIC 0x12345678
 DECL|struct|vpd_prom
@@ -215,5 +214,27 @@ DECL|macro|rio_memcpy_toio
 mdefine_line|#define rio_memcpy_toio(dummy,dest,source,n)   memcpy_toio(dest, source, n)
 DECL|macro|rio_memcpy_fromio
 mdefine_line|#define rio_memcpy_fromio                      memcpy_fromio
+macro_line|#endif
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
+multiline_comment|/* &n;   This driver can spew a whole lot of debugging output at you. If you&n;   need maximum performance, you should disable the DEBUG define. To&n;   aid in debugging in the field, I&squot;m leaving the compile-time debug&n;   features enabled, and disable them &quot;runtime&quot;. That allows me to&n;   instruct people with problems to enable debugging without requiring&n;   them to recompile... &n;*/
+macro_line|#ifdef DEBUG
+DECL|macro|rio_dprintk
+mdefine_line|#define rio_dprintk(f, str...) if (rio_debug &amp; f) printk (str)
+DECL|macro|func_enter
+mdefine_line|#define func_enter() rio_dprintk (RIO_DEBUG_FLOW, &quot;rio: enter &quot; __FUNCTION__ &quot;&bslash;n&quot;)
+DECL|macro|func_exit
+mdefine_line|#define func_exit()  rio_dprintk (RIO_DEBUG_FLOW, &quot;rio: exit  &quot; __FUNCTION__ &quot;&bslash;n&quot;)
+DECL|macro|func_enter2
+mdefine_line|#define func_enter2() rio_dprintk (RIO_DEBUG_FLOW, &quot;rio: enter &quot; __FUNCTION__ &bslash;&n;                                   &quot;(port %d)&bslash;n&quot;, port-&gt;line)
+macro_line|#else
+DECL|macro|rio_dprintk
+mdefine_line|#define rio_dprintk(f, str...) /* nothing */
+DECL|macro|func_enter
+mdefine_line|#define func_enter()
+DECL|macro|func_exit
+mdefine_line|#define func_exit()
+DECL|macro|func_enter2
+mdefine_line|#define func_enter2()
 macro_line|#endif
 eof

@@ -1600,9 +1600,9 @@ id|USB_PORT_FEAT_LOWSPEED
 )paren
 ques
 c_cond
-l_string|&quot;Low Speed&quot;
+l_string|&quot;1.5 Mb/s&quot;
 suffix:colon
-l_string|&quot;High Speed&quot;
+l_string|&quot;12 Mb/s&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Clear the connection change status */
@@ -1778,9 +1778,9 @@ id|USB_PORT_FEAT_LOWSPEED
 )paren
 ques
 c_cond
-l_string|&quot;Low Speed&quot;
+l_string|&quot;1.5 Mb/s&quot;
 suffix:colon
-l_string|&quot;High Speed&quot;
+l_string|&quot;12 Mb/s&quot;
 )paren
 suffix:semicolon
 r_if

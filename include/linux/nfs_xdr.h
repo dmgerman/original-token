@@ -1528,7 +1528,7 @@ id|readdir
 )paren
 (paren
 r_struct
-id|dentry
+id|file
 op_star
 comma
 id|u64

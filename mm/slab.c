@@ -6091,14 +6091,10 @@ id|objp
 suffix:semicolon
 macro_line|#if 1
 multiline_comment|/* FORCE A KERNEL DUMP WHEN THIS HAPPENS. SPEAK IN ALL CAPS. GET THE CALL CHAIN. */
-op_star
+id|BUG
+c_func
 (paren
-r_int
-op_star
 )paren
-l_int|0
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 id|null_ptr

@@ -2426,12 +2426,6 @@ id|d_drop
 id|dent
 )paren
 suffix:semicolon
-r_else
-id|d_delete
-(paren
-id|dent
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5898,6 +5892,18 @@ comma
 id|dentry
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+id|d_delete
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren
@@ -6876,7 +6882,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Goes through counter = (shm_rss &gt;&gt; prio) present shm pages.&n; */
+multiline_comment|/*&n; * Goes through counter = (shm_rss / (prio + 1)) present shm pages.&n; */
 DECL|variable|swap_id
 r_static
 r_int
@@ -6940,8 +6946,12 @@ suffix:semicolon
 id|counter
 op_assign
 id|shm_rss
-op_rshift
+op_div
+(paren
 id|prio
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8505,8 +8515,12 @@ suffix:semicolon
 id|counter
 op_assign
 id|zshm_rss
-op_rshift
+op_div
+(paren
 id|prio
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond

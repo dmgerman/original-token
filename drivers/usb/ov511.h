@@ -8,7 +8,7 @@ DECL|macro|OV511_DEBUG
 mdefine_line|#define OV511_DEBUG&t;/* Turn on debug messages */
 macro_line|#ifdef OV511_DEBUG
 DECL|macro|PDEBUG
-macro_line|#  define PDEBUG(level, fmt, args...) &bslash;&n;if (debug &gt;= level) printk(&quot;ov511: [&quot; __PRETTY_FUNCTION__ &quot;:%d] &quot; fmt &quot;&bslash;n&quot;, __LINE__ , ## args)
+macro_line|#  define PDEBUG(level, fmt, args...) &bslash;&n;if (debug &gt;= level) info(&quot;[&quot; __PRETTY_FUNCTION__ &quot;:%d] &quot; fmt, __LINE__ , ## args)
 macro_line|#else
 DECL|macro|PDEBUG
 macro_line|#  define PDEBUG(level, fmt, args...) do {} while(0)
@@ -190,89 +190,97 @@ DECL|macro|OV511PLUS_ALT_SIZE_961
 mdefine_line|#define OV511PLUS_ALT_SIZE_961&t;7
 multiline_comment|/* OV7610 registers */
 DECL|macro|OV7610_REG_GAIN
-mdefine_line|#define OV7610_REG_GAIN          0x00
+mdefine_line|#define OV7610_REG_GAIN          0x00&t;/* gain setting (5:0) */
 DECL|macro|OV7610_REG_BLUE
-mdefine_line|#define OV7610_REG_BLUE          0x01
+mdefine_line|#define OV7610_REG_BLUE          0x01&t;/* blue channel balance */
 DECL|macro|OV7610_REG_RED
-mdefine_line|#define OV7610_REG_RED           0x02
+mdefine_line|#define OV7610_REG_RED           0x02&t;/* red channel balance */
 DECL|macro|OV7610_REG_SAT
-mdefine_line|#define OV7610_REG_SAT           0x03
+mdefine_line|#define OV7610_REG_SAT           0x03&t;/* saturation */
+multiline_comment|/* 04 reserved */
 DECL|macro|OV7610_REG_CNT
-mdefine_line|#define OV7610_REG_CNT           0x05
+mdefine_line|#define OV7610_REG_CNT           0x05&t;/* Y contrast */
 DECL|macro|OV7610_REG_BRT
-mdefine_line|#define OV7610_REG_BRT           0x06
+mdefine_line|#define OV7610_REG_BRT           0x06&t;/* Y brightness */
+multiline_comment|/* 08-0b reserved */
 DECL|macro|OV7610_REG_BLUE_BIAS
-mdefine_line|#define OV7610_REG_BLUE_BIAS     0x0C
+mdefine_line|#define OV7610_REG_BLUE_BIAS     0x0C&t;/* blue channel bias (5:0) */
 DECL|macro|OV7610_REG_RED_BIAS
-mdefine_line|#define OV7610_REG_RED_BIAS      0x0D
+mdefine_line|#define OV7610_REG_RED_BIAS      0x0D&t;/* read channel bias (5:0) */
 DECL|macro|OV7610_REG_GAMMA_COEFF
-mdefine_line|#define OV7610_REG_GAMMA_COEFF   0x0E
+mdefine_line|#define OV7610_REG_GAMMA_COEFF   0x0E&t;/* gamma settings */
 DECL|macro|OV7610_REG_WB_RANGE
-mdefine_line|#define OV7610_REG_WB_RANGE      0x0F
+mdefine_line|#define OV7610_REG_WB_RANGE      0x0F&t;/* AEC/ALC/S-AWB settings */
 DECL|macro|OV7610_REG_EXP
-mdefine_line|#define OV7610_REG_EXP           0x10
+mdefine_line|#define OV7610_REG_EXP           0x10&t;/* manual exposure setting */
 DECL|macro|OV7610_REG_CLOCK
-mdefine_line|#define OV7610_REG_CLOCK         0x11
+mdefine_line|#define OV7610_REG_CLOCK         0x11&t;/* polarity/clock prescaler */
 DECL|macro|OV7610_REG_COM_A
-mdefine_line|#define OV7610_REG_COM_A         0x12
+mdefine_line|#define OV7610_REG_COM_A         0x12&t;/* misc common regs */
 DECL|macro|OV7610_REG_COM_B
-mdefine_line|#define OV7610_REG_COM_B         0x13
+mdefine_line|#define OV7610_REG_COM_B         0x13&t;/* misc common regs */
 DECL|macro|OV7610_REG_COM_C
-mdefine_line|#define OV7610_REG_COM_C         0x14
+mdefine_line|#define OV7610_REG_COM_C         0x14&t;/* misc common regs */
 DECL|macro|OV7610_REG_COM_D
-mdefine_line|#define OV7610_REG_COM_D         0x15
+mdefine_line|#define OV7610_REG_COM_D         0x15&t;/* misc common regs */
 DECL|macro|OV7610_REG_FIELD_DIVIDE
-mdefine_line|#define OV7610_REG_FIELD_DIVIDE  0x16
+mdefine_line|#define OV7610_REG_FIELD_DIVIDE  0x16&t;/* field interval/mode settings */
 DECL|macro|OV7610_REG_HWIN_START
-mdefine_line|#define OV7610_REG_HWIN_START    0x17
+mdefine_line|#define OV7610_REG_HWIN_START    0x17&t;/* horizontal window start */
 DECL|macro|OV7610_REG_HWIN_END
-mdefine_line|#define OV7610_REG_HWIN_END      0x18
+mdefine_line|#define OV7610_REG_HWIN_END      0x18&t;/* horizontal window end */
 DECL|macro|OV7610_REG_VWIN_START
-mdefine_line|#define OV7610_REG_VWIN_START    0x19
+mdefine_line|#define OV7610_REG_VWIN_START    0x19&t;/* vertical window start */
 DECL|macro|OV7610_REG_VWIN_END
-mdefine_line|#define OV7610_REG_VWIN_END      0x1A
+mdefine_line|#define OV7610_REG_VWIN_END      0x1A&t;/* vertical window end */
 DECL|macro|OV7610_REG_PIXEL_SHIFT
-mdefine_line|#define OV7610_REG_PIXEL_SHIFT   0x1B
+mdefine_line|#define OV7610_REG_PIXEL_SHIFT   0x1B&t;/* pixel shift */
 DECL|macro|OV7610_REG_ID_HIGH
-mdefine_line|#define OV7610_REG_ID_HIGH       0x1C
+mdefine_line|#define OV7610_REG_ID_HIGH       0x1C&t;/* manufacturer ID MSB */
 DECL|macro|OV7610_REG_ID_LOW
-mdefine_line|#define OV7610_REG_ID_LOW        0x1D
+mdefine_line|#define OV7610_REG_ID_LOW        0x1D&t;/* manufacturer ID LSB */
+multiline_comment|/* 0e-0f reserved */
 DECL|macro|OV7610_REG_COM_E
-mdefine_line|#define OV7610_REG_COM_E         0x20
+mdefine_line|#define OV7610_REG_COM_E         0x20&t;/* misc common regs */
 DECL|macro|OV7610_REG_YOFFSET
-mdefine_line|#define OV7610_REG_YOFFSET       0x21
+mdefine_line|#define OV7610_REG_YOFFSET       0x21&t;/* Y channel offset */
 DECL|macro|OV7610_REG_UOFFSET
-mdefine_line|#define OV7610_REG_UOFFSET       0x22
+mdefine_line|#define OV7610_REG_UOFFSET       0x22&t;/* U channel offset */
+multiline_comment|/* 23 reserved */
 DECL|macro|OV7610_REG_ECW
-mdefine_line|#define OV7610_REG_ECW           0x24
+mdefine_line|#define OV7610_REG_ECW           0x24&t;/* Exposure white level for AEC */
 DECL|macro|OV7610_REG_ECB
-mdefine_line|#define OV7610_REG_ECB           0x25
+mdefine_line|#define OV7610_REG_ECB           0x25&t;/* Exposure black level for AEC */
 DECL|macro|OV7610_REG_COM_F
-mdefine_line|#define OV7610_REG_COM_F         0x26
+mdefine_line|#define OV7610_REG_COM_F         0x26&t;/* misc settings */
 DECL|macro|OV7610_REG_COM_G
-mdefine_line|#define OV7610_REG_COM_G         0x27
+mdefine_line|#define OV7610_REG_COM_G         0x27&t;/* misc settings */
 DECL|macro|OV7610_REG_COM_H
-mdefine_line|#define OV7610_REG_COM_H         0x28
+mdefine_line|#define OV7610_REG_COM_H         0x28&t;/* misc settings */
 DECL|macro|OV7610_REG_COM_I
-mdefine_line|#define OV7610_REG_COM_I         0x29
+mdefine_line|#define OV7610_REG_COM_I         0x29&t;/* misc settings */
 DECL|macro|OV7610_REG_FRAMERATE_H
-mdefine_line|#define OV7610_REG_FRAMERATE_H   0x2A
+mdefine_line|#define OV7610_REG_FRAMERATE_H   0x2A&t;/* frame rate MSB + misc */
 DECL|macro|OV7610_REG_FRAMERATE_L
-mdefine_line|#define OV7610_REG_FRAMERATE_L   0x2B
+mdefine_line|#define OV7610_REG_FRAMERATE_L   0x2B&t;/* frame rate LSB */
 DECL|macro|OV7610_REG_ALC
-mdefine_line|#define OV7610_REG_ALC           0x2C
+mdefine_line|#define OV7610_REG_ALC           0x2C&t;/* Auto Level Control settings */
 DECL|macro|OV7610_REG_COM_J
-mdefine_line|#define OV7610_REG_COM_J         0x2D
+mdefine_line|#define OV7610_REG_COM_J         0x2D&t;/* misc settings */
 DECL|macro|OV7610_REG_VOFFSET
-mdefine_line|#define OV7610_REG_VOFFSET       0x2E
+mdefine_line|#define OV7610_REG_VOFFSET       0x2E&t;/* V channel offset adjustment */
+DECL|macro|OV7610_REG_ARRAY_BIAS
+mdefine_line|#define OV7610_REG_ARRAY_BIAS&t; 0x2F&t;/* Array bias -- don&squot;t change */
+multiline_comment|/* 30-32 reserved */
 DECL|macro|OV7610_REG_YGAMMA
-mdefine_line|#define OV7610_REG_YGAMMA        0x33
+mdefine_line|#define OV7610_REG_YGAMMA        0x33&t;/* misc gamma settings (7:6) */
 DECL|macro|OV7610_REG_BIAS_ADJUST
-mdefine_line|#define OV7610_REG_BIAS_ADJUST   0x34
+mdefine_line|#define OV7610_REG_BIAS_ADJUST   0x34&t;/* misc bias settings */
 DECL|macro|OV7610_REG_COM_L
-mdefine_line|#define OV7610_REG_COM_L         0x35
+mdefine_line|#define OV7610_REG_COM_L         0x35&t;/* misc settings */
+multiline_comment|/* 36-37 reserved */
 DECL|macro|OV7610_REG_COM_K
-mdefine_line|#define OV7610_REG_COM_K         0x38
+mdefine_line|#define OV7610_REG_COM_K         0x38&t;/* misc registers */
 DECL|macro|STREAM_BUF_SIZE
 mdefine_line|#define STREAM_BUF_SIZE&t;(PAGE_SIZE * 4)
 DECL|macro|SCRATCH_BUF_SIZE
@@ -283,9 +291,8 @@ DECL|macro|FRAME_SIZE_PER_DESC
 mdefine_line|#define FRAME_SIZE_PER_DESC&t;993&t;/* FIXME - Deprecated */
 DECL|macro|MAX_FRAME_SIZE_PER_DESC
 mdefine_line|#define MAX_FRAME_SIZE_PER_DESC&t;993&t;/* For statically allocated stuff */
-singleline_comment|// FIXME - should this be 0x81 (endpoint address) or 0x01 (endpoint number)?
 DECL|macro|OV511_ENDPOINT_ADDRESS
-mdefine_line|#define OV511_ENDPOINT_ADDRESS 0x81&t;/* Address of isoc endpoint */
+mdefine_line|#define OV511_ENDPOINT_ADDRESS 1&t;/* Isoc endpoint number */
 singleline_comment|// CAMERA SPECIFIC
 singleline_comment|// FIXME - these can vary between specific models
 DECL|macro|OV7610_I2C_WRITE_ID
@@ -562,13 +569,6 @@ id|usb_device
 op_star
 id|dev
 suffix:semicolon
-macro_line|#if 0
-r_int
-r_char
-id|customid
-suffix:semicolon
-multiline_comment|/* Type of camera */
-macro_line|#else
 DECL|member|customid
 r_int
 id|customid
@@ -577,11 +577,30 @@ DECL|member|desc
 r_int
 id|desc
 suffix:semicolon
-macro_line|#endif
 DECL|member|iface
 r_int
 r_char
 id|iface
+suffix:semicolon
+DECL|member|brightness
+r_int
+id|brightness
+suffix:semicolon
+DECL|member|colour
+r_int
+id|colour
+suffix:semicolon
+DECL|member|contrast
+r_int
+id|contrast
+suffix:semicolon
+DECL|member|hue
+r_int
+id|hue
+suffix:semicolon
+DECL|member|whiteness
+r_int
+id|whiteness
 suffix:semicolon
 DECL|member|lock
 r_struct
@@ -731,6 +750,91 @@ DECL|member|description
 r_char
 op_star
 id|description
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|palette_list
+r_struct
+id|palette_list
+(brace
+DECL|member|num
+r_int
+id|num
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|mode_list
+r_struct
+id|mode_list
+(brace
+DECL|member|width
+r_int
+id|width
+suffix:semicolon
+DECL|member|height
+r_int
+id|height
+suffix:semicolon
+DECL|member|mode
+r_int
+id|mode
+suffix:semicolon
+DECL|member|pxcnt
+id|u8
+id|pxcnt
+suffix:semicolon
+DECL|member|lncnt
+id|u8
+id|lncnt
+suffix:semicolon
+DECL|member|pxdv
+id|u8
+id|pxdv
+suffix:semicolon
+DECL|member|lndv
+id|u8
+id|lndv
+suffix:semicolon
+DECL|member|s_pxcnt
+id|u8
+id|s_pxcnt
+suffix:semicolon
+DECL|member|s_lncnt
+id|u8
+id|s_lncnt
+suffix:semicolon
+DECL|member|s_pxdv
+id|u8
+id|s_pxdv
+suffix:semicolon
+DECL|member|s_lndv
+id|u8
+id|s_lndv
+suffix:semicolon
+DECL|member|clock
+id|u8
+id|clock
+suffix:semicolon
+DECL|member|m420
+id|u8
+id|m420
+suffix:semicolon
+DECL|member|common_A
+id|u8
+id|common_A
+suffix:semicolon
+DECL|member|common_C
+id|u8
+id|common_C
+suffix:semicolon
+DECL|member|common_L
+id|u8
+id|common_L
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -6098,16 +6098,17 @@ id|host
 op_increment
 )paren
 (brace
+id|spin_lock_init
+(paren
+op_amp
 id|p-&gt;RIOHosts
 (braket
 id|host
 )braket
 dot
 id|HostLock
-op_assign
-id|SPIN_LOCK_UNLOCKED
+)paren
 suffix:semicolon
-multiline_comment|/* Let the first guy takes it */
 id|p-&gt;RIOHosts
 (braket
 id|host

@@ -77,8 +77,10 @@ DECL|macro|SCI_TEI_IRQ
 mdefine_line|#define SCI_TEI_IRQ&t;26
 DECL|macro|SCI_IRQ_END
 mdefine_line|#define SCI_IRQ_END&t;27
-DECL|macro|SCI_IPR_OFFSET
-mdefine_line|#define SCI_IPR_OFFSET&t;(16+4)
+DECL|macro|SCI_IPR_ADDR
+mdefine_line|#define SCI_IPR_ADDR&t;INTC_IPRB
+DECL|macro|SCI_IPR_POS
+mdefine_line|#define SCI_IPR_POS&t;1
 macro_line|#endif
 "&f;"
 macro_line|#if defined(CONFIG_SH_SCIF_SERIAL)
@@ -100,14 +102,20 @@ mdefine_line|#define SCFCR  (volatile unsigned char *)0xA400015C
 DECL|macro|SCFDR
 mdefine_line|#define SCFDR  0xA400015E
 DECL|macro|SCSPTR
-macro_line|#undef  SCSPTR /* Is there any register for RTS?? */
+macro_line|#undef  SCSPTR /* SH7709 doesn&squot;t have SCSPTR */
+DECL|macro|SCPCR
+mdefine_line|#define SCPCR  0xA4000116 /* Instead, it has SCPCR and SCPDR */
+DECL|macro|SCPDR
+mdefine_line|#define SCPDR  0xA4000136
 DECL|macro|SCLSR
 macro_line|#undef  SCLSR
 DECL|macro|SCSCR_INIT
 mdefine_line|#define SCSCR_INIT&t;0x30&t;/* TIE=0,RIE=0,TE=1,RE=1 */
 multiline_comment|/* 0x33 when external clock is used */
-DECL|macro|SCI_IPR_OFFSET
-mdefine_line|#define SCI_IPR_OFFSET&t;(64+4)
+DECL|macro|SCI_IPR_ADDR
+mdefine_line|#define SCI_IPR_ADDR&t;INTC_IPRE
+DECL|macro|SCI_IPR_POS
+mdefine_line|#define SCI_IPR_POS&t;1
 macro_line|#elif defined(__SH4__)
 DECL|macro|SCSMR
 mdefine_line|#define SCSMR  (volatile unsigned short *)0xFFE80000
@@ -131,8 +139,10 @@ DECL|macro|SCLSR
 mdefine_line|#define SCLSR  0xFFE80024
 DECL|macro|SCSCR_INIT
 mdefine_line|#define SCSCR_INIT&t;0x0038&t;/* TIE=0,RIE=0,TE=1,RE=1,REIE=1 */
-DECL|macro|SCI_IPR_OFFSET
-mdefine_line|#define SCI_IPR_OFFSET&t;(32+4)
+DECL|macro|SCI_IPR_ADDR
+mdefine_line|#define SCI_IPR_ADDR&t;INTC_IPRC
+DECL|macro|SCI_IPR_POS
+mdefine_line|#define SCI_IPR_POS&t;1
 macro_line|#endif
 DECL|macro|SCI_ER
 mdefine_line|#define SCI_ER    0x0080
@@ -235,9 +245,15 @@ suffix:semicolon
 DECL|macro|WAIT_RFCR_COUNTER
 mdefine_line|#define WAIT_RFCR_COUNTER 200
 multiline_comment|/*&n; * Values for the BitRate Register (SCBRR)&n; *&n; * The values are actually divisors for a frequency which can&n; * be internal to the SH3 (14.7456MHz) or derived from an external&n; * clock source.  This driver assumes the internal clock is used;&n; * to support using an external clock source, config options or&n; * possibly command-line options would need to be added.&n; *&n; * Also, to support speeds below 2400 (why?) the lower 2 bits of&n; * the SCSMR register would also need to be set to non-zero values.&n; *&n; * -- Greg Banks 27Feb2000&n; */
+multiline_comment|/*&n; * XXX: Well, this is not relevant...&n; * Should we have config option for peripheral clock?&n; * Or we get the value from time.c.&n; */
 macro_line|#if defined(__sh3__)
+macro_line|#if defined(CONFIG_CPU_SUBTYPE_SH7709)
 DECL|macro|PCLK
-mdefine_line|#define PCLK           14745600
+mdefine_line|#define PCLK           33333333
+macro_line|#else
+DECL|macro|PCLK
+mdefine_line|#define PCLK           14745600&t;/* Isn&squot;t it 15MHz? */
+macro_line|#endif
 macro_line|#elif defined(__SH4__)
 DECL|macro|PCLK
 mdefine_line|#define PCLK           33333333

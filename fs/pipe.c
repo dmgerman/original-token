@@ -2759,6 +2759,10 @@ id|sb-&gt;s_blocksize_bits
 op_assign
 l_int|10
 suffix:semicolon
+id|sb-&gt;s_magic
+op_assign
+id|PIPEFS_MAGIC
+suffix:semicolon
 id|sb-&gt;s_op
 op_assign
 op_amp

@@ -1476,7 +1476,7 @@ id|gfp_mask
 suffix:semicolon
 id|priority
 op_assign
-l_int|6
+l_int|32
 suffix:semicolon
 r_do
 (brace
@@ -1779,13 +1779,6 @@ id|GFP_KSWAPD
 )paren
 suffix:semicolon
 )brace
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_disk
-)paren
-suffix:semicolon
 id|pgdat
 op_assign
 id|pgdat-&gt;node_next

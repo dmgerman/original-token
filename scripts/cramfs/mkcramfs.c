@@ -82,7 +82,6 @@ id|PAGE_CACHE_SIZE
 suffix:semicolon
 DECL|variable|warn_dev
 DECL|variable|warn_gid
-DECL|variable|warn_link
 DECL|variable|warn_namelen
 DECL|variable|warn_size
 DECL|variable|warn_uid
@@ -91,8 +90,6 @@ r_int
 id|warn_dev
 comma
 id|warn_gid
-comma
-id|warn_link
 comma
 id|warn_namelen
 comma
@@ -919,20 +916,6 @@ m_exit
 (paren
 l_int|5
 )paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|st.st_nlink
-OG
-l_int|1
-)paren
-(brace
-multiline_comment|/* TODO: Although cramfs doesn&squot;t&n;&t;&t;&t;&t;&t;   support hard links, we could still&n;&t;&t;&t;&t;&t;   share data offset values between&n;&t;&t;&t;&t;&t;   different inodes (safe because&n;&t;&t;&t;&t;&t;   read-only).  This would give at&n;&t;&t;&t;&t;&t;   least the space saving of hard&n;&t;&t;&t;&t;&t;   links.  Just keep a hash mapping&n;&t;&t;&t;&t;&t;   &lt;st_ino, st_dev&gt; onto struct&n;&t;&t;&t;&t;&t;   entry*.  Alternatively, steal some&n;&t;&t;&t;&t;&t;   code from Roger Wolff&squot;s `same&squot;&n;&t;&t;&t;&t;&t;   program, which creates a hash of&n;&t;&t;&t;&t;&t;   file data contents. */
-id|warn_link
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -2615,24 +2598,6 @@ id|stderr
 comma
 multiline_comment|/* bytes, not chars: think UTF8. */
 l_string|&quot;warning: filenames truncated to 255 bytes.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|warn_link
-)paren
-id|fprintf
-c_func
-(paren
-id|stderr
-comma
-l_string|&quot;warning: cramfs cannot represent hard links.  You may want to change hard links in&bslash;n&quot;
-l_string|&quot; %s with symlinks to other files in %s.&bslash;n&quot;
-comma
-id|dirname
-comma
-id|dirname
 )paren
 suffix:semicolon
 r_if

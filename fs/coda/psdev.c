@@ -1105,6 +1105,13 @@ op_ne
 id|current-&gt;pid
 )paren
 (brace
+multiline_comment|/* FIXME: this is broken. If venus does fork(), accounting goes wrong */
+id|printk
+c_func
+(paren
+l_string|&quot;Closed by someone else than caller?&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

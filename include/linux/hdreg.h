@@ -834,19 +834,6 @@ mdefine_line|#define IDE_NICE_2&t;&t;(4)&t;/* when we know it&squot;s on our exp
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These routines are used for kernel command line parameters from main.c:&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_BLK_DEV_HD
-r_void
-id|hd_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif&t;/* CONFIG_BLK_DEV_HD */
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 r_int
 id|ide_register

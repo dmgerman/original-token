@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/char/mac_keyb.c&n; *&n; * Keyboard driver for Power Macintosh computers.&n; *&n; * Adapted from drivers/char/keyboard.c by Paul Mackerras&n; * (see that file for its authors and contributors).&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; *&n; * Adapted to ADB changes and support for more devices by&n; * Benjamin Herrenschmidt. Adapted from code in MkLinux&n; * and reworked.&n; *&n; * Supported devices:&n; *&n; * - Standard 1 button mouse&n; * - All standard Apple Extended protocol (handler ID 4)&n; * - mouseman and trackman mice &amp; trackballs &n; * - PowerBook Trackpad (default setup: enable tapping)&n; * - MicroSpeed mouse &amp; trackball (needs testing)&n; * - CH Products Trackball Pro (needs testing)&n; * - Contour Design (Contour Mouse)&n; * - Hunter digital (NoHandsMouse)&n; * - Kensignton TurboMouse 5 (needs testing)&n; * - Mouse Systems A3 mice and trackballs &lt;aidan@kublai.com&gt;&n; * - MacAlly 2-buttons mouse (needs testing) &lt;pochini@denise.shiny.it&gt;&n; *&n; * To do:&n; *&n; * Improve Kensignton support, add MacX support as a dynamic&n; * option (not a compile-time option).&n; */
+multiline_comment|/*&n; * drivers/char/mac_keyb.c&n; *&n; * Keyboard driver for Power Macintosh computers.&n; *&n; * Adapted from drivers/char/keyboard.c by Paul Mackerras&n; * (see that file for its authors and contributors).&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; *&n; * Adapted to ADB changes and support for more devices by&n; * Benjamin Herrenschmidt. Adapted from code in MkLinux&n; * and reworked.&n; *&n; * Supported devices:&n; *&n; * - Standard 1 button mouse&n; * - All standard Apple Extended protocol (handler ID 4)&n; * - mouseman and trackman mice &amp; trackballs&n; * - PowerBook Trackpad (default setup: enable tapping)&n; * - MicroSpeed mouse &amp; trackball (needs testing)&n; * - CH Products Trackball Pro (needs testing)&n; * - Contour Design (Contour Mouse)&n; * - Hunter digital (NoHandsMouse)&n; * - Kensignton TurboMouse 5 (needs testing)&n; * - Mouse Systems A3 mice and trackballs &lt;aidan@kublai.com&gt;&n; * - MacAlly 2-buttons mouse (needs testing) &lt;pochini@denise.shiny.it&gt;&n; *&n; * To do:&n; *&n; * Improve Kensignton support, add MacX support as a dynamic&n; * option (not a compile-time option).&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -2784,7 +2784,7 @@ id|repeat_timer
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_ADBMOUSE
-multiline_comment|/*&n;&t; * XXX: Add mouse button 2+3 fake codes here if mouse open.&n;&t; *&t;Keep track of &squot;button&squot; states here as we only send &n;&t; *&t;single up/down events!&n;&t; *&t;Really messy; might need to check if keyboard is in&n;&t; *&t;VC_RAW mode.&n;&t; *&t;Might also want to know how many buttons need to be emulated.&n;&t; *&t;-&gt; hide this as function in arch/m68k/mac ?&n;&t; */
+multiline_comment|/*&n;&t; * XXX: Add mouse button 2+3 fake codes here if mouse open.&n;&t; *&t;Keep track of &squot;button&squot; states here as we only send&n;&t; *&t;single up/down events!&n;&t; *&t;Really messy; might need to check if keyboard is in&n;&t; *&t;VC_RAW mode.&n;&t; *&t;Might also want to know how many buttons need to be emulated.&n;&t; *&t;-&gt; hide this as function in arch/m68k/mac ?&n;&t; */
 r_if
 c_cond
 (paren
@@ -3722,6 +3722,7 @@ r_int
 id|autopoll
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_PMU
 multiline_comment|/*&n;&t; * XXX: Where is the contrast control for the passive?&n;&t; *  -- Cort&n;&t; */
 multiline_comment|/* Ignore data from register other than 0 */
 macro_line|#if 0
@@ -3865,7 +3866,6 @@ r_case
 l_int|0xa
 suffix:colon
 multiline_comment|/* down event */
-macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -3907,7 +3907,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_break
 suffix:semicolon
 multiline_comment|/* brightness increase */
@@ -3915,7 +3914,6 @@ r_case
 l_int|0x9
 suffix:colon
 multiline_comment|/* down event */
-macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -3957,10 +3955,10 @@ l_int|0x1f
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_ADB_PMU */
 )brace
 multiline_comment|/* Map led flags as defined in kbd_kern.h to bits for Apple keyboard. */
 DECL|variable|mac_ledmap
@@ -5907,7 +5905,7 @@ id|id
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* This will initialize mice using the Microspeed, MacPoint and&n;&t;   other compatible firmware. Bit 12 enables extended protocol.&n;&t;   &n;&t;   Register 1 Listen (4 Bytes)&n;            0 -  3     Button is mouse (set also for double clicking!!!)&n;            4 -  7     Button is locking (affects change speed also)&n;            8 - 11     Button changes speed&n;           12          1 = Extended mouse mode, 0 = normal mouse mode&n;           13 - 15     unused 0&n;           16 - 23     normal speed&n;           24 - 31     changed speed&n;&n;       Register 1 talk holds version and product identification information.&n;       Register 1 Talk (4 Bytes):&n;            0 -  7     Product code&n;            8 - 23     undefined, reserved&n;           24 - 31     Version number&n;        &n;       Speed 0 is max. 1 to 255 set speed in increments of 1/256 of max.&n; */
+multiline_comment|/* This will initialize mice using the Microspeed, MacPoint and&n;&t;   other compatible firmware. Bit 12 enables extended protocol.&n;&n;&t;   Register 1 Listen (4 Bytes)&n;            0 -  3     Button is mouse (set also for double clicking!!!)&n;            4 -  7     Button is locking (affects change speed also)&n;            8 - 11     Button changes speed&n;           12          1 = Extended mouse mode, 0 = normal mouse mode&n;           13 - 15     unused 0&n;           16 - 23     normal speed&n;           24 - 31     changed speed&n;&n;       Register 1 talk holds version and product identification information.&n;       Register 1 Talk (4 Bytes):&n;            0 -  7     Product code&n;            8 - 23     undefined, reserved&n;           24 - 31     Version number&n;&n;       Speed 0 is max. 1 to 255 set speed in increments of 1/256 of max.&n; */
 id|adb_request
 c_func
 (paren

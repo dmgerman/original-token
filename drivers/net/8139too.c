@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&n;&t;8139too.c: A RealTek RTL-8139 Fast Ethernet driver for Linux.&n;&n;&t;Copyright 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;Originally: Written 1997-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Contributors:&n;&n;&t;&t;Donald Becker - he wrote the original driver, kudos to him!&n;&t;&t;(but please don&squot;t e-mail him for support, this isn&squot;t his driver)&n;&n;&t;&t;Tigran Aivazian - bug fixes, skbuff free cleanup&n;&n;&t;&t;Martin Mares - suggestions for PCI cleanup&n;&t;&t;&n;&t;&t;David S. Miller - PCI DMA and softnet updates&n;&n;&t;&t;Ernst Gill - fixes ported from BSD driver&n;&n;&t;&t;Daniel Kobras - identified specific locations of&n;&t;&t;&t;posted MMIO write bugginess&n;&n;-----------------------------------------------------------------------------&n;&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the RealTek RTL8139 series, the RealTek&n;Fast Ethernet controllers for PCI and CardBus.  This chip is used on many&n;low-end boards, sometimes with its markings changed.&n;&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;&n;III. Driver operation&n;&n;IIIa. Rx Ring buffers&n;&n;The receive unit uses a single linear ring buffer rather than the more&n;common (and more efficient) descriptor-based architecture.  Incoming frames&n;are sequentially stored into the Rx region, and the host copies them into&n;skbuffs.&n;&n;Comment: While it is theoretically possible to process many frames in place,&n;any delay in Rx processing would cause us to drop frames.  More importantly,&n;the Linux protocol stack is not designed to operate in this manner.&n;&n;IIIb. Tx operation&n;&n;The RTL8139 uses a fixed set of four Tx descriptors in register space.&n;In a stunningly bad design choice, Tx frames must be 32 bit aligned.  Linux&n;aligns the IP header on word boundaries, and 14 byte ethernet header means&n;that almost all frames will need to be copied to an alignment buffer.&n;&n;IVb. References&n;&n;http://www.realtek.com.tw/cn/cn.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;&n;IVc. Errata&n;&n;1) The RTL-8139 has a serious problem with motherboards which do&n;posted MMIO writes to PCI space.  This driver works around the&n;problem by having an MMIO  register write be immediately followed by&n;an MMIO register read.&n;&n;2) The RTL-8129 is only supported in Donald Becker&squot;s rtl8139 driver.&n;&n;*/
+multiline_comment|/*&n;&n;&t;8139too.c: A RealTek RTL-8139 Fast Ethernet driver for Linux.&n;&n;&t;Copyright 2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;Originally: Written 1997-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;Contributors:&n;&n;&t;&t;Donald Becker - he wrote the original driver, kudos to him!&n;&t;&t;(but please don&squot;t e-mail him for support, this isn&squot;t his driver)&n;&n;&t;&t;Tigran Aivazian - bug fixes, skbuff free cleanup&n;&n;&t;&t;Martin Mares - suggestions for PCI cleanup&n;&t;&t;&n;&t;&t;David S. Miller - PCI DMA and softnet updates&n;&n;&t;&t;Ernst Gill - fixes ported from BSD driver&n;&n;&t;&t;Daniel Kobras - identified specific locations of&n;&t;&t;&t;posted MMIO write bugginess&n;&n;&t;&t;Gerard Sharp - bug fix&n;&n;&t;Submitting bug reports:&n;&n;&t;&t;&quot;rtl8139-diag -mmmaaavvveefN&quot; output&n;&t;&t;enable RTL8139_DEBUG below, and look at &squot;dmesg&squot; or kernel log&n;&n;&t;&t;See 8139too.txt for more details.&n;&n;-----------------------------------------------------------------------------&n;&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the RealTek RTL8139 series, the RealTek&n;Fast Ethernet controllers for PCI and CardBus.  This chip is used on many&n;low-end boards, sometimes with its markings changed.&n;&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;&n;III. Driver operation&n;&n;IIIa. Rx Ring buffers&n;&n;The receive unit uses a single linear ring buffer rather than the more&n;common (and more efficient) descriptor-based architecture.  Incoming frames&n;are sequentially stored into the Rx region, and the host copies them into&n;skbuffs.&n;&n;Comment: While it is theoretically possible to process many frames in place,&n;any delay in Rx processing would cause us to drop frames.  More importantly,&n;the Linux protocol stack is not designed to operate in this manner.&n;&n;IIIb. Tx operation&n;&n;The RTL8139 uses a fixed set of four Tx descriptors in register space.&n;In a stunningly bad design choice, Tx frames must be 32 bit aligned.  Linux&n;aligns the IP header on word boundaries, and 14 byte ethernet header means&n;that almost all frames will need to be copied to an alignment buffer.&n;&n;IVb. References&n;&n;http://www.realtek.com.tw/cn/cn.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;&n;IVc. Errata&n;&n;1) The RTL-8139 has a serious problem with motherboards which do&n;posted MMIO writes to PCI space.  This driver works around the&n;problem by having an MMIO  register write be immediately followed by&n;an MMIO register read.&n;&n;2) The RTL-8129 is only supported in Donald Becker&squot;s rtl8139 driver.&n;&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|RTL8139_VERSION
-mdefine_line|#define RTL8139_VERSION &quot;0.9.4.1&quot;
+mdefine_line|#define RTL8139_VERSION &quot;0.9.5&quot;
 DECL|macro|RTL8139_MODULE_NAME
 mdefine_line|#define RTL8139_MODULE_NAME &quot;8139too&quot;
 DECL|macro|RTL8139_DRIVER_NAME
@@ -766,6 +766,75 @@ l_int|0x01
 comma
 )brace
 suffix:semicolon
+multiline_comment|/* Bits in TxConfig. */
+DECL|enum|tx_config_bits
+r_enum
+id|tx_config_bits
+(brace
+DECL|enumerator|TxIFG1
+id|TxIFG1
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|25
+)paren
+comma
+multiline_comment|/* Interframe Gap Time */
+DECL|enumerator|TxIFG0
+id|TxIFG0
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|24
+)paren
+comma
+multiline_comment|/* Enabling these bits violates IEEE 802.3 */
+DECL|enumerator|TxLoopBack
+id|TxLoopBack
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|18
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+l_int|17
+)paren
+comma
+multiline_comment|/* enable loopback test mode */
+DECL|enumerator|TxCRC
+id|TxCRC
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|16
+)paren
+comma
+multiline_comment|/* DISABLE appending CRC to end of Tx packets */
+DECL|enumerator|TxClearAbt
+id|TxClearAbt
+op_assign
+(paren
+l_int|1
+op_lshift
+l_int|0
+)paren
+comma
+multiline_comment|/* Clear abort (WO) */
+DECL|enumerator|TxVersionMask
+id|TxVersionMask
+op_assign
+l_int|0x7C800000
+comma
+multiline_comment|/* mask out version bits 30-26, 23 */
+)brace
+suffix:semicolon
 multiline_comment|/* Bits in Config1 */
 DECL|enum|Config1Bits
 r_enum
@@ -1035,8 +1104,17 @@ comma
 DECL|enumerator|CH_8139A
 id|CH_8139A
 comma
+DECL|enumerator|CH_8139A_G
+id|CH_8139A_G
+comma
 DECL|enumerator|CH_8139B
 id|CH_8139B
+comma
+DECL|enumerator|CH_8130
+id|CH_8130
+comma
+DECL|enumerator|CH_8139C
+id|CH_8139C
 comma
 DECL|typedef|chip_t
 )brace
@@ -1053,6 +1131,11 @@ r_char
 op_star
 id|name
 suffix:semicolon
+DECL|member|version
+id|u32
+id|version
+suffix:semicolon
+multiline_comment|/* from RTL8139C docs */
 DECL|member|RxConfigMask
 id|u32
 id|RxConfigMask
@@ -1068,6 +1151,8 @@ op_assign
 (brace
 l_string|&quot;RTL-8139&quot;
 comma
+l_int|0x60000000
+comma
 l_int|0xf0fe0040
 comma
 multiline_comment|/* XXX copied from RTL8139A, verify */
@@ -1076,14 +1161,47 @@ comma
 (brace
 l_string|&quot;RTL-8139A&quot;
 comma
+l_int|0x70000000
+comma
 l_int|0xf0fe0040
 comma
 )brace
 comma
 (brace
-l_string|&quot;RTL-8139B(L)&quot;
+l_string|&quot;RTL-8139A rev. G&quot;
+comma
+l_int|0x70800000
+comma
+l_int|0xf0fe0040
+comma
+)brace
+comma
+(brace
+l_string|&quot;RTL-8139B&quot;
+comma
+l_int|0x78000000
 comma
 l_int|0xf0fc0040
+)brace
+comma
+(brace
+l_string|&quot;RTL-8130&quot;
+comma
+l_int|0x7C000000
+comma
+l_int|0xf0fe0040
+comma
+multiline_comment|/* XXX copied from RTL8139A, verify */
+)brace
+comma
+(brace
+l_string|&quot;RTL-8139C&quot;
+comma
+l_int|0x74000000
+comma
+l_int|0xf0fc0040
+comma
+multiline_comment|/* XXX copied from RTL8139B, verify */
 )brace
 comma
 )brace
@@ -1978,23 +2096,9 @@ c_cond
 (paren
 id|rc
 )paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-id|PFX
-l_string|&quot;cannot enable PCI device (bus %d, &quot;
-l_string|&quot;devfn %d), aborting&bslash;n&quot;
-comma
-id|pdev-&gt;bus-&gt;number
-comma
-id|pdev-&gt;devfn
-)paren
-suffix:semicolon
 r_goto
 id|err_out_free_mmio
 suffix:semicolon
-)brace
 id|pci_set_master
 (paren
 id|pdev
@@ -2288,47 +2392,79 @@ id|RTL_R32
 (paren
 id|TxConfig
 )paren
+op_amp
+id|TxVersionMask
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|arraysize
+(paren
+id|rtl_chip_info
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+id|i
+op_ge
+l_int|0
+suffix:semicolon
+id|i
+op_decrement
+)paren
 r_if
 c_cond
-(paren
-(paren
 (paren
 id|tmp
-op_rshift
-l_int|28
-)paren
-op_amp
-l_int|7
-)paren
 op_eq
-l_int|7
+id|rtl_chip_info
+(braket
+id|i
+)braket
+dot
+id|version
 )paren
 (brace
-r_if
-c_cond
+id|tp-&gt;chipset
+op_assign
+id|i
+suffix:semicolon
+r_goto
+id|match
+suffix:semicolon
+)brace
+multiline_comment|/* if unknown chip, assume array element #0, original RTL-8139 in this case */
+id|printk
 (paren
-id|pio_len
-op_eq
-id|RTL8139B_IO_SIZE
+id|KERN_DEBUG
+id|PFX
+l_string|&quot;PCI device %s: unknown chip version, assuming RTL-8139&bslash;n&quot;
+comma
+id|pdev-&gt;slot_name
 )paren
+suffix:semicolon
+id|printk
+(paren
+id|KERN_DEBUG
+id|PFX
+l_string|&quot;PCI device %s: TxConfig = 0x%x&bslash;n&quot;
+comma
+id|pdev-&gt;slot_name
+comma
+id|RTL_R32
+(paren
+id|TxConfig
+)paren
+)paren
+suffix:semicolon
 id|tp-&gt;chipset
 op_assign
-id|CH_8139B
+l_int|0
 suffix:semicolon
-r_else
-id|tp-&gt;chipset
-op_assign
-id|CH_8139A
-suffix:semicolon
-)brace
-r_else
-(brace
-id|tp-&gt;chipset
-op_assign
-id|CH_8139
-suffix:semicolon
-)brace
+id|match
+suffix:colon
 id|DPRINTK
 (paren
 l_string|&quot;chipset id (%d/%d/%d) == %d, &squot;%s&squot;&bslash;n&quot;
@@ -2735,7 +2871,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;%s: &squot;%s&squot; board found at 0x%lx, IRQ %d&bslash;n&quot;
+l_string|&quot;%s: %s board found at 0x%lx, IRQ %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4451,6 +4587,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* if link status not ok... */
 r_if
 c_cond
@@ -4654,6 +4791,15 @@ multiline_comment|/* check_duplex() here. */
 multiline_comment|/* XXX writing Config1 here is flat out wrong */
 multiline_comment|/* RTL_W8 (Config1, tp-&gt;full_duplex ? 0x60 : 0x20); */
 )brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|tp-&gt;chipset
+OG
+id|CH_8139
+)paren
+(brace
 id|tmp
 op_assign
 id|RTL_R8
@@ -4684,6 +4830,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -6622,6 +6769,7 @@ id|rtl8139_set_rx_mode
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* XXX potentially temporary hack to&n;&t;&t;&t; * restart hung receiver */
 r_while
 c_loop
 (paren
@@ -6637,8 +6785,6 @@ id|RTL_R8
 (paren
 id|ChipCmd
 )paren
-op_amp
-id|ChipCmdClear
 suffix:semicolon
 r_if
 c_cond
@@ -6661,7 +6807,11 @@ id|RTL_W8_F
 (paren
 id|ChipCmd
 comma
+(paren
 id|tmp8
+op_amp
+id|ChipCmdClear
+)paren
 op_or
 id|CmdRxEnb
 op_or
@@ -6669,6 +6819,13 @@ id|CmdTxEnb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* G.S.: Re-enable receiver */
+multiline_comment|/* XXX temporary hack to work around receiver hang */
+id|rtl8139_set_rx_mode
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8281,12 +8438,6 @@ suffix:semicolon
 id|u32
 id|tmp
 suffix:semicolon
-r_int
-r_int
-id|flags
-op_assign
-l_int|0
-suffix:semicolon
 id|DPRINTK
 (paren
 l_string|&quot;ENTER&bslash;n&quot;
@@ -8461,12 +8612,10 @@ id|in_irq
 (paren
 )paren
 )paren
-id|spin_lock_irqsave
+id|spin_lock_irq
 (paren
 op_amp
 id|tp-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* We can safely update without stopping the chip. */
@@ -8529,12 +8678,10 @@ id|in_irq
 (paren
 )paren
 )paren
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 (paren
 op_amp
 id|tp-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|DPRINTK

@@ -3742,11 +3742,11 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|pci_fixup_rcc
+DECL|function|pci_fixup_serverworks
 r_static
 r_void
 id|__init
-id|pci_fixup_rcc
+id|pci_fixup_serverworks
 c_func
 (paren
 r_struct
@@ -3755,7 +3755,7 @@ op_star
 id|d
 )paren
 (brace
-multiline_comment|/*&n;&t; * RCC host bridges -- Find and scan all secondary buses.&n;&t; * Register 0x44 contains first, 0x45 last bus number routed there.&n;&t; */
+multiline_comment|/*&n;&t; * ServerWorks host bridges -- Find and scan all secondary buses.&n;&t; * Register 0x44 contains first, 0x45 last bus number routed there.&n;&t; */
 id|u8
 id|busno
 suffix:semicolon
@@ -3773,7 +3773,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PCI: RCC host bridge: secondary bus %02x&bslash;n&quot;
+l_string|&quot;PCI: ServerWorks host bridge: secondary bus %02x&bslash;n&quot;
 comma
 id|busno
 )paren
@@ -4108,21 +4108,31 @@ comma
 (brace
 id|PCI_FIXUP_HEADER
 comma
-id|PCI_VENDOR_ID_RCC
+id|PCI_VENDOR_ID_SERVERWORKS
 comma
-id|PCI_DEVICE_ID_RCC_HE
+id|PCI_DEVICE_ID_SERVERWORKS_HE
 comma
-id|pci_fixup_rcc
+id|pci_fixup_serverworks
 )brace
 comma
 (brace
 id|PCI_FIXUP_HEADER
 comma
-id|PCI_VENDOR_ID_RCC
+id|PCI_VENDOR_ID_SERVERWORKS
 comma
-id|PCI_DEVICE_ID_RCC_LE
+id|PCI_DEVICE_ID_SERVERWORKS_LE
 comma
-id|pci_fixup_rcc
+id|pci_fixup_serverworks
+)brace
+comma
+(brace
+id|PCI_FIXUP_HEADER
+comma
+id|PCI_VENDOR_ID_SERVERWORKS
+comma
+id|PCI_DEVICE_ID_SERVERWORKS_CMIC_HE
+comma
+id|pci_fixup_serverworks
 )brace
 comma
 (brace

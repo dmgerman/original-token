@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/heathrow.h&gt;
 multiline_comment|/* Misc minor number allocated for /dev/pmu */
 DECL|macro|PMU_MINOR
 mdefine_line|#define PMU_MINOR&t;154
@@ -2402,7 +2403,7 @@ l_string|&quot;PowerBook G3 Series&quot;
 comma
 l_string|&quot;1999 PowerBook G3&quot;
 comma
-l_string|&quot;Core99 (iBook/iMac/G4)&quot;
+l_string|&quot;Core99&quot;
 )brace
 suffix:semicolon
 r_int
@@ -5586,7 +5587,7 @@ r_extern
 r_int
 id|xmon_wants_key
 comma
-id|xmon_pmu_keycode
+id|xmon_adb_keycode
 suffix:semicolon
 r_if
 c_cond
@@ -5594,7 +5595,7 @@ c_cond
 id|xmon_wants_key
 )paren
 (brace
-id|xmon_pmu_keycode
+id|xmon_adb_keycode
 op_assign
 id|data
 (braket
@@ -6567,6 +6568,19 @@ op_ne
 id|PBOOK_SLEEP_OK
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;sleep %d rejected by %p (%p)&bslash;n&quot;
+comma
+id|when
+comma
+id|current
+comma
+id|current-&gt;notifier_call
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -7118,7 +7132,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|50000
+l_int|150000
 )paren
 suffix:semicolon
 )brace
@@ -7336,14 +7350,6 @@ l_int|0x7fffffff
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* Save the state of PCI config space for some slots */
-id|pbook_pci_save
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* For 750, save backside cache setting and disable it */
 id|save_l2cr
 op_assign
@@ -7371,7 +7377,6 @@ id|macio_base
 op_ne
 l_int|0
 )paren
-(brace
 id|save_fcr
 op_assign
 id|in_le32
@@ -7384,25 +7389,6 @@ id|macio_base
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Check if this is still valid on older powerbooks */
-id|out_le32
-c_func
-(paren
-id|FEATURE_CTRL
-c_func
-(paren
-id|macio_base
-)paren
-comma
-id|save_fcr
-op_amp
-op_complement
-(paren
-l_int|0x00000140UL
-)paren
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7491,7 +7477,7 @@ c_loop
 op_logical_neg
 id|sleep_req.complete
 )paren
-id|mb
+id|pmu_poll
 c_func
 (paren
 )paren
@@ -7511,6 +7497,22 @@ id|idle
 id|pmu_poll
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* clear IOBUS enable */
+id|out_le32
+c_func
+(paren
+id|FEATURE_CTRL
+c_func
+(paren
+id|macio_base
+)paren
+comma
+id|save_fcr
+op_amp
+op_complement
+id|HRW_IOBUS_ENABLE
 )paren
 suffix:semicolon
 multiline_comment|/* Call low-level ASM sleep handler */
@@ -7558,6 +7560,21 @@ comma
 id|pmcr1
 )paren
 suffix:semicolon
+multiline_comment|/* reenable IOBUS */
+id|out_le32
+c_func
+(paren
+id|FEATURE_CTRL
+c_func
+(paren
+id|macio_base
+)paren
+comma
+id|save_fcr
+op_or
+id|HRW_IOBUS_ENABLE
+)paren
+suffix:semicolon
 multiline_comment|/* Make sure the PMU is idle */
 r_while
 c_loop
@@ -7576,14 +7593,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* According to someone from Apple, this should not be needed,&n;&t;   at least not for all devices. Let&squot;s keep it for now until we&n;&t;   have something that works. */
-id|pbook_pci_restore
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|set_context
 c_func
 (paren
@@ -7612,6 +7621,12 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Notify drivers */
+id|mdelay
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
 id|broadcast_wake
 c_func
 (paren

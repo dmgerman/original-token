@@ -184,13 +184,13 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;clrt&bslash;n&bslash;t&quot;
-l_string|&quot;mov&t;%0, %1&bslash;n&bslash;t&quot;
-l_string|&quot;shll16&t;%0&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%0, %1&bslash;n&bslash;t&quot;
-l_string|&quot;movt&t;%0&bslash;n&bslash;t&quot;
-l_string|&quot;shlr16&t;%1&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;%1, %0&quot;
+l_string|&quot;swap.w %0, %1&bslash;n&bslash;t&quot;
+l_string|&quot;extu.w&t;%0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;extu.w&t;%1, %1&bslash;n&bslash;t&quot;
+l_string|&quot;add&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;swap.w&t;%0, %1&bslash;n&bslash;t&quot;
+l_string|&quot;add&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;not&t;%0, %0&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -209,7 +209,6 @@ id|sum
 )paren
 suffix:semicolon
 r_return
-op_complement
 id|sum
 suffix:semicolon
 )brace
@@ -236,30 +235,28 @@ r_int
 r_int
 id|sum
 comma
-id|__dummy
+id|__dummy0
+comma
+id|__dummy1
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;mov.l&t;@%1+, %0&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;#-4, %2&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
+l_string|&quot;add&t;#-2, %2&bslash;n&bslash;t&quot;
 l_string|&quot;clrt&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
-l_string|&quot;addc&t;%3, %0&bslash;n&quot;
 l_string|&quot;1:&bslash;t&quot;
-l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
 l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
-l_string|&quot;movt&t;%3&bslash;n&bslash;t&quot;
+l_string|&quot;movt&t;%4&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;@%1+, %3&bslash;n&bslash;t&quot;
 l_string|&quot;dt&t;%2&bslash;n&bslash;t&quot;
 l_string|&quot;bf/s&t;1b&bslash;n&bslash;t&quot;
-l_string|&quot; cmp/eq #1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;mov&t;#0, %3&bslash;n&bslash;t&quot;
+l_string|&quot; cmp/eq #1, %4&bslash;n&bslash;t&quot;
 l_string|&quot;addc&t;%3, %0&bslash;n&bslash;t&quot;
+l_string|&quot;addc&t;%2, %0&quot;
+multiline_comment|/* Here %2 is 0, add carry-bit */
 multiline_comment|/* Since the input registers which are loaded with iph and ihl&n;&t;   are modified, we must also specify them as outputs, or gcc&n;&t;   will assume they contain their original values. */
 suffix:colon
 l_string|&quot;=r&quot;
@@ -277,9 +274,14 @@ l_string|&quot;=r&quot;
 id|ihl
 )paren
 comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|__dummy0
+)paren
+comma
 l_string|&quot;=&amp;z&quot;
 (paren
-id|__dummy
+id|__dummy1
 )paren
 suffix:colon
 l_string|&quot;1&quot;

@@ -33,6 +33,10 @@ DECL|macro|FBIOBLANK
 mdefine_line|#define FBIOBLANK&t;&t;0x4611&t;&t;/* arg: 0 or vesa level + 1 */
 DECL|macro|FBIOGET_VBLANK
 mdefine_line|#define FBIOGET_VBLANK&t;&t;_IOR(&squot;F&squot;, 0x12, struct fb_vblank)
+DECL|macro|FBIO_ALLOC
+mdefine_line|#define FBIO_ALLOC              0x4613
+DECL|macro|FBIO_FREE
+mdefine_line|#define FBIO_FREE               0x4614
 DECL|macro|FB_TYPE_PACKED_PIXELS
 mdefine_line|#define FB_TYPE_PACKED_PIXELS&t;&t;0&t;/* Packed Pixels&t;*/
 DECL|macro|FB_TYPE_PLANES
@@ -143,6 +147,8 @@ DECL|macro|FB_ACCEL_IGS_CYBER2010
 mdefine_line|#define FB_ACCEL_IGS_CYBER2010&t;34&t;/* CyberPro 2010&t;&t;*/
 DECL|macro|FB_ACCEL_IGS_CYBER5000
 mdefine_line|#define FB_ACCEL_IGS_CYBER5000&t;35&t;/* CyberPro 5000&t;&t;*/
+DECL|macro|FB_ACCEL_SIS_GLAMOUR
+mdefine_line|#define FB_ACCEL_SIS_GLAMOUR    36&t;/* SiS 300/630/540              */
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo

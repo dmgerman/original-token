@@ -1046,6 +1046,20 @@ c_func
 id|have_submounts
 )paren
 suffix:semicolon
+DECL|variable|d_genocide
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|d_genocide
+)paren
+suffix:semicolon
+DECL|variable|d_find_alias
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|d_find_alias
+)paren
+suffix:semicolon
 DECL|variable|prune_dcache
 id|EXPORT_SYMBOL
 c_func
@@ -1254,6 +1268,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|vfs_readdir
+)paren
+suffix:semicolon
+DECL|variable|dcache_readdir
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dcache_readdir
 )paren
 suffix:semicolon
 multiline_comment|/* for stackable file systems (lofs, wrapfs, cryptfs, etc.) */

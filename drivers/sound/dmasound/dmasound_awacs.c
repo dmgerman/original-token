@@ -9,11 +9,14 @@ macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
+macro_line|#include &lt;asm/feature.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;awacs_defs.h&quot;
 macro_line|#include &quot;dmasound.h&quot;
 multiline_comment|/*&n; * Interrupt numbers and addresses, obtained from the device tree.&n; */
@@ -8503,10 +8506,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*** Mid level stuff *********************************************************/
 multiline_comment|/*&n; * /dev/mixer abstraction&n; */
-DECL|function|PMacMixerIoctl
+DECL|function|awacs_mixer_ioctl
 r_static
 r_int
-id|PMacMixerIoctl
+id|awacs_mixer_ioctl
 c_func
 (paren
 id|u_int
@@ -8519,15 +8522,6 @@ id|arg
 r_int
 id|data
 suffix:semicolon
-multiline_comment|/* Different IOCTLS for burgundy*/
-r_if
-c_cond
-(paren
-id|awacs_revision
-OL
-id|AWACS_BURGUNDY
-)paren
-(brace
 r_switch
 c_cond
 (paren
@@ -8874,7 +8868,7 @@ c_func
 (paren
 id|arg
 comma
-id|dmasound_set_volume
+id|PMacSetVolume
 c_func
 (paren
 id|data
@@ -9339,10 +9333,113 @@ comma
 id|data
 )paren
 suffix:semicolon
+r_case
+id|MIXER_WRITE
+c_func
+(paren
+id|SOUND_MASK_MONITOR
+)paren
+suffix:colon
+id|IOCTL_IN
+c_func
+(paren
+id|arg
+comma
+id|data
+)paren
+suffix:semicolon
+id|awacs_reg
+(braket
+l_int|1
+)braket
+op_and_assign
+op_complement
+id|MASK_LOOPTHRU
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|data
+op_amp
+l_int|0xff
+)paren
+op_ge
+l_int|50
+)paren
+id|awacs_reg
+(braket
+l_int|1
+)braket
+op_or_assign
+id|MASK_LOOPTHRU
+suffix:semicolon
+id|awacs_write
+c_func
+(paren
+id|MASK_ADDR1
+op_or
+id|awacs_reg
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* fall through */
+r_case
+id|MIXER_READ
+c_func
+(paren
+id|SOUND_MASK_MONITOR
+)paren
+suffix:colon
+id|data
+op_assign
+(paren
+id|awacs_reg
+(braket
+l_int|1
+)braket
+op_amp
+id|MASK_LOOPTHRU
+)paren
+ques
+c_cond
+l_int|100
+suffix:colon
+l_int|0
+suffix:semicolon
+r_return
+id|IOCTL_OUT
+c_func
+(paren
+id|arg
+comma
+id|data
+)paren
+suffix:semicolon
 )brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 )brace
-r_else
+DECL|function|burgundy_mixer_ioctl
+r_static
+r_int
+id|burgundy_mixer_ioctl
+c_func
+(paren
+id|u_int
+id|cmd
+comma
+id|u_long
+id|arg
+)paren
 (brace
+r_int
+id|data
+suffix:semicolon
 multiline_comment|/* We are, we are, we are... Burgundy or better */
 r_switch
 c_cond
@@ -10105,10 +10202,49 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-)brace
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+DECL|function|PMacMixerIoctl
+r_static
+r_int
+id|PMacMixerIoctl
+c_func
+(paren
+id|u_int
+id|cmd
+comma
+id|u_long
+id|arg
+)paren
+(brace
+multiline_comment|/* Different IOCTLS for burgundy*/
+r_if
+c_cond
+(paren
+id|awacs_revision
+op_ge
+id|AWACS_BURGUNDY
+)paren
+r_return
+id|burgundy_mixer_ioctl
+c_func
+(paren
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+r_return
+id|awacs_mixer_ioctl
+c_func
+(paren
+id|cmd
+comma
+id|arg
+)paren
 suffix:semicolon
 )brace
 DECL|function|PMacWriteSqSetup

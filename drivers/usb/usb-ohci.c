@@ -2309,6 +2309,10 @@ comma
 id|ed
 )paren
 suffix:semicolon
+id|urb-&gt;status
+op_assign
+id|USB_ST_URB_PENDING
+suffix:semicolon
 id|td_submit_urb
 (paren
 id|urb
@@ -2323,11 +2327,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|urb-&gt;status
-op_assign
-id|USB_ST_URB_PENDING
-suffix:semicolon
-singleline_comment|// queue_urb(s, &amp;urb-&gt;urb_list);
 r_return
 l_int|0
 suffix:semicolon
@@ -9275,15 +9274,6 @@ r_int
 r_int
 id|mem_base
 suffix:semicolon
-id|mem_base
-op_assign
-id|dev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9303,6 +9293,15 @@ id|pci_set_master
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|mem_base
+op_assign
+id|dev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
 suffix:semicolon
 id|mem_base
 op_assign

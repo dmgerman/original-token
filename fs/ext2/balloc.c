@@ -643,7 +643,7 @@ id|block_group
 op_logical_and
 id|sb-&gt;u.ext2_sb.s_block_bitmap
 (braket
-id|block_group
+l_int|0
 )braket
 )paren
 (brace

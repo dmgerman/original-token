@@ -23,7 +23,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#if defined(__sh3__)
-multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; *&n; *  Caches are indexed (effectively) by physical address on SH-3, so&n; *  we don&squot;t need them.&n; */
+multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; *  - flush_icache_range(start, end) flushes(invalidates) a range for icache&n; *  - flush_icache_page(vma, pg) flushes(invalidates) a page for icache&n; *&n; *  Caches are indexed (effectively) by physical address on SH-3, so&n; *  we don&squot;t need them.&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
 DECL|macro|flush_cache_mm
@@ -95,16 +95,15 @@ id|addr
 suffix:semicolon
 r_extern
 r_void
-id|__flush_page_to_ram
+id|flush_page_to_ram
 c_func
 (paren
-r_int
-r_int
-id|page_va
+r_struct
+id|page
+op_star
+id|page
 )paren
 suffix:semicolon
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page)&t;__flush_page_to_ram(page_address(page))
 r_extern
 r_void
 id|flush_icache_range

@@ -3306,12 +3306,6 @@ c_func
 id|dir
 )paren
 suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 id|end_rmdir
 suffix:colon
 id|brelse
@@ -3583,13 +3577,6 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
-id|d_delete
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
-multiline_comment|/* This also frees the inode */
 id|end_unlink
 suffix:colon
 id|brelse
