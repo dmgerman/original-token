@@ -35,6 +35,7 @@ id|proc_scsi
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_int
 id|scsi_proc_info
@@ -59,6 +60,16 @@ r_int
 id|inout
 )paren
 suffix:semicolon
+r_static
+r_void
+id|scsi_dump_status
+c_func
+(paren
+r_int
+id|level
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;   static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.38 1997/01/19 23:07:18 davem Exp $&quot;;&n; */
 multiline_comment|/*&n; * Definitions and constants.&n; */
 DECL|macro|INTERNAL_ERROR
@@ -391,15 +402,6 @@ id|SCpnt
 suffix:semicolon
 DECL|macro|SCSI_BLOCK
 mdefine_line|#define SCSI_BLOCK(DEVICE, HOST)                                                &bslash;&n;                ((HOST-&gt;block &amp;&amp; host_active &amp;&amp; HOST != host_active)            &bslash;&n;&t;&t;  || ((HOST)-&gt;can_queue &amp;&amp; HOST-&gt;host_busy &gt;= HOST-&gt;can_queue)    &bslash;&n;                  || ((HOST)-&gt;host_blocked)                                       &bslash;&n;                  || ((DEVICE) != NULL &amp;&amp; (DEVICE)-&gt;device_blocked) )
-r_static
-r_void
-id|scsi_dump_status
-c_func
-(paren
-r_int
-id|level
-)paren
-suffix:semicolon
 DECL|struct|dev_info
 r_struct
 id|dev_info
@@ -7450,7 +7452,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Yes we&squot;re here... */
 multiline_comment|/*&n;&t; * This makes /proc/scsi and /proc/scsi/scsi visible.&n;&t; */
-macro_line|#if CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_scsi
 op_assign
 id|create_proc_entry
@@ -8426,7 +8428,7 @@ id|level
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Usage: echo &quot;scsi log token #N&quot; &gt; /proc/scsi/scsi&n;&t; * where token is one of [error,scan,mlqueue,mlcomplete,llqueue,&n;&t; * llcomplete,hlqueue,hlcomplete]&n;&t; */
-macro_line|#if CONFIG_SCSI_LOGGING&t;&t;/* { */
+macro_line|#ifdef CONFIG_SCSI_LOGGING&t;&t;/* { */
 r_if
 c_cond
 (paren
@@ -10460,7 +10462,7 @@ op_assign
 id|tpnt
 suffix:semicolon
 multiline_comment|/* Add the new driver to /proc/scsi */
-macro_line|#if CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 id|build_proc_dir_entries
 c_func
 (paren
@@ -11478,7 +11480,7 @@ op_assign
 id|next_scsi_host
 suffix:semicolon
 multiline_comment|/* Remove the /proc/scsi directory entry */
-macro_line|#if CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_scsi_unregister
 c_func
 (paren
@@ -11695,7 +11697,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Rebuild the /proc/scsi directory entries */
-macro_line|#if CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_scsi_unregister
 c_func
 (paren
@@ -12294,6 +12296,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif&t;&t;&t;&t;/* CONFIG_MODULES */
+macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/*&n; * Function:    scsi_dump_status&n; *&n; * Purpose:     Brain dump of scsi system, used for problem solving.&n; *&n; * Arguments:   level - used to indicate level of detail.&n; *&n; * Notes:       The level isn&squot;t used at all yet, but we need to find some way&n; *              of sensibly logging varying degrees of information.  A quick one-line&n; *              display of each command, plus the status would be most useful.&n; *&n; *              This does depend upon CONFIG_SCSI_LOGGING - I do want some way of turning&n; *              it all off if the user wants a lean and mean kernel.  It would probably&n; *              also be useful to allow the user to specify one single host to be dumped.&n; *              A second argument to the function would be useful for that purpose.&n; *&n; *              FIXME - some formatting of the output into tables would be very handy.&n; */
 DECL|function|scsi_dump_status
 r_static
@@ -12305,8 +12308,7 @@ r_int
 id|level
 )paren
 (brace
-macro_line|#if CONFIG_PROC_FS
-macro_line|#if CONFIG_SCSI_LOGGING&t;&t;/* { */
+macro_line|#ifdef CONFIG_SCSI_LOGGING&t;&t;/* { */
 r_int
 id|i
 suffix:semicolon
@@ -12616,8 +12618,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* printk(&quot;wait_for_request = %p&bslash;n&quot;, &amp;wait_for_request); */
 macro_line|#endif&t;/* CONFIG_SCSI_LOGGING */ /* } */
-macro_line|#endif&t;&t;&t;&t;/* CONFIG_PROC_FS */
 )brace
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_PROC_FS */
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -12637,7 +12639,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * This makes /proc/scsi and /proc/scsi/scsi visible.&n;&t; */
-macro_line|#if CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_scsi
 op_assign
 id|create_proc_entry
@@ -12885,7 +12887,7 @@ c_func
 id|SCSI_BH
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/* No, we&squot;re not here anymore. Don&squot;t show the /proc/scsi files. */
 id|remove_proc_entry
 (paren

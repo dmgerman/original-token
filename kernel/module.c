@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * Rewritten by Richard Henderson &lt;rth@tamu.edu&gt; Dec 1996&n; *&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; */
+multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * Rewritten by Richard Henderson &lt;rth@tamu.edu&gt; Dec 1996&n; * Use rw spinlock instead of global kernel lock for module_list, by TA &lt;tigran@sco.com&gt;&n; *&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; */
 macro_line|#ifdef CONFIG_MODULES&t;&t;/* a *big* #ifdef block... */
 r_extern
 r_struct
@@ -164,6 +164,12 @@ r_int
 id|tag_freed
 )paren
 suffix:semicolon
+DECL|variable|modlist_lock
+id|rwlock_t
+id|modlist_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* needed for /proc/kcore, here because kernel_module is static (TA) */
 DECL|function|get_kcore_size
 r_int
@@ -208,10 +214,11 @@ op_plus
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-multiline_comment|/* shouldn&squot;t we have a rw spinlock for module_list? */
-id|lock_kernel
+id|read_lock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_for
@@ -250,9 +257,11 @@ op_assign
 r_try
 suffix:semicolon
 )brace
-id|unlock_kernel
+id|read_unlock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_return
@@ -466,9 +475,11 @@ id|module
 op_star
 id|mod
 suffix:semicolon
-id|lock_kernel
+id|write_lock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_if
@@ -685,9 +696,11 @@ id|name
 suffix:semicolon
 id|err0
 suffix:colon
-id|unlock_kernel
+id|write_unlock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_return
@@ -747,9 +760,11 @@ id|module_ref
 op_star
 id|dep
 suffix:semicolon
-id|lock_kernel
+id|write_lock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_if
@@ -1596,9 +1611,11 @@ id|name
 suffix:semicolon
 id|err0
 suffix:colon
-id|unlock_kernel
+id|write_unlock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_return
@@ -1638,9 +1655,11 @@ suffix:semicolon
 r_int
 id|something_changed
 suffix:semicolon
-id|lock_kernel
+id|write_lock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_if
@@ -1923,9 +1942,11 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
+id|write_unlock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_return
@@ -1968,6 +1989,13 @@ op_assign
 id|space
 op_assign
 l_int|0
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -2022,10 +2050,19 @@ comma
 id|len
 )paren
 )paren
+(brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+)brace
 id|buf
 op_add_assign
 id|len
@@ -2039,6 +2076,13 @@ op_add_assign
 id|len
 suffix:semicolon
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2085,6 +2129,13 @@ id|mod-&gt;name
 )paren
 op_plus
 l_int|1
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3048,9 +3099,11 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-id|lock_kernel
+id|read_lock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_if
@@ -3272,9 +3325,11 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|unlock_kernel
+id|read_unlock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_return
@@ -3306,9 +3361,11 @@ r_struct
 id|kernel_sym
 id|ksym
 suffix:semicolon
-id|lock_kernel
+id|read_lock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_for
@@ -3570,16 +3627,18 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|unlock_kernel
+id|read_unlock
 c_func
 (paren
+op_amp
+id|modlist_lock
 )paren
 suffix:semicolon
 r_return
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look for a module by name, ignoring modules marked for deletion.&n; */
+multiline_comment|/*&n; * Look for a module by name, ignoring modules marked for deletion.&n; * Callers must hold modlist_lock at least in read mode.&n; */
 r_static
 r_struct
 id|module
@@ -3641,7 +3700,7 @@ r_return
 id|mod
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Free the given module.&n; */
+multiline_comment|/*&n; * Free the given module.&n; * Callers must hold modlist_lock in exclusive (write) mode.&n; */
 r_static
 r_void
 DECL|function|free_module
@@ -3853,6 +3912,13 @@ r_struct
 id|module_ref
 op_star
 id|ref
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -4159,6 +4225,13 @@ macro_line|#undef safe_copy_cstr
 )brace
 id|fini
 suffix:colon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 r_return
 id|PAGE_SIZE
 op_minus
@@ -4213,6 +4286,13 @@ id|off_t
 id|begin
 op_assign
 l_int|0
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -4424,6 +4504,13 @@ id|len
 op_assign
 id|length
 suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 r_return
 id|len
 suffix:semicolon
@@ -4456,6 +4543,13 @@ id|sym
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -4549,6 +4643,13 @@ op_eq
 l_int|0
 )paren
 (brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 r_return
 id|sym-&gt;value
 suffix:semicolon
@@ -4556,6 +4657,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

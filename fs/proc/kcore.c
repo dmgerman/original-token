@@ -854,6 +854,13 @@ id|module
 op_star
 id|m
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -949,6 +956,13 @@ id|elf-&gt;e_phnum
 op_increment
 suffix:semicolon
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|modlist_lock
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n;&t; * Set up the notes in similar form to SVR4 core dumps made&n;&t; * with info from their /proc.&n;&t; */

@@ -282,6 +282,13 @@ c_func
 id|proc_scsi
 )paren
 suffix:semicolon
+DECL|variable|proc_scsi_inode_operations
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_scsi_inode_operations
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These are here only while I debug the rest of the scsi stuff.&n; */
 DECL|variable|scsi_hostlist
 id|EXPORT_SYMBOL

@@ -712,30 +712,6 @@ id|local
 )paren
 suffix:semicolon
 multiline_comment|/* void start_net(ray_dev_t *local); */
-r_static
-r_int
-id|ray_cs_proc_read
-c_func
-(paren
-r_char
-op_star
-id|buf
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|off
-comma
-r_int
-id|len
-comma
-r_int
-id|spare
-)paren
-suffix:semicolon
 multiline_comment|/* Create symbol table for registering with kernel in init_module */
 DECL|variable|ray_dev_ioctl
 id|EXPORT_SYMBOL
@@ -1474,47 +1450,6 @@ id|rcsid
 op_assign
 l_string|&quot;Raylink/WebGear wireless LAN - Corey &lt;Thomas corey@world.std.com&gt;&quot;
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|ray_cs_proc_entry
-r_struct
-id|proc_dir_entry
-id|ray_cs_proc_entry
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* Dynamic inode # */
-l_int|6
-comma
-l_string|&quot;ray_cs&quot;
-comma
-multiline_comment|/* name length and name */
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-multiline_comment|/* mode */
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* nlinks, owner, group */
-l_int|0
-comma
-multiline_comment|/* size (unused) */
-l_int|NULL
-comma
-multiline_comment|/* operations (default) */
-op_amp
-id|ray_cs_proc_read
-comma
-multiline_comment|/* function to read data */
-multiline_comment|/* The end ?? */
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*===========================================================================*/
 DECL|function|cs_error
 r_static
@@ -14045,14 +13980,17 @@ id|rc
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS    
-id|proc_register
+multiline_comment|/* [proc-namespace][fixme] It shouldn&squot;t be under root, damnit! */
+id|create_proc_info_entry
 c_func
 (paren
-op_amp
+l_string|&quot;ray_cs&quot;
+comma
+l_int|0
+comma
 id|proc_root
 comma
-op_amp
-id|ray_cs_proc_entry
+id|ray_cs_proc_read
 )paren
 suffix:semicolon
 macro_line|#endif    
@@ -14178,13 +14116,12 @@ id|dev_list
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS    
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;ray_cs&quot;
 comma
-id|ray_cs_proc_entry.low_ino
+id|proc_root
 )paren
 suffix:semicolon
 macro_line|#endif   

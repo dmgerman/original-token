@@ -3,6 +3,7 @@ macro_line|#ifndef _LINUX_MODULE_H
 DECL|macro|_LINUX_MODULE_H
 mdefine_line|#define _LINUX_MODULE_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifdef __GENKSYMS__
 DECL|macro|_set_ver
 macro_line|#  define _set_ver(sym) sym
@@ -470,6 +471,10 @@ macro_line|#else
 DECL|macro|EXPORT_NO_SYMBOLS
 mdefine_line|#define EXPORT_NO_SYMBOLS
 macro_line|#endif /* MODULE */
+r_extern
+id|rwlock_t
+id|modlist_lock
+suffix:semicolon
 r_extern
 r_int
 r_int

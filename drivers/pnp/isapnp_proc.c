@@ -1045,13 +1045,13 @@ c_cond
 (paren
 id|isapnp_proc_entry
 )paren
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
+l_string|&quot;isapnp&quot;
+comma
 op_amp
 id|proc_root
-comma
-id|isapnp_proc_entry-&gt;low_ino
 )paren
 suffix:semicolon
 r_return
