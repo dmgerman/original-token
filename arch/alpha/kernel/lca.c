@@ -1194,7 +1194,7 @@ id|ear
 id|printk
 c_func
 (paren
-l_string|&quot;    %s %s error to %s occurred at address %x&quot;
+l_string|&quot;    %s %s error to %s occurred at address %x&bslash;n&quot;
 comma
 (paren
 id|esr

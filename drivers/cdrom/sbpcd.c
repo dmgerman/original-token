@@ -31493,25 +31493,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MOD_IN_USE
-)paren
-(brace
-id|msg
-c_func
-(paren
-id|DBG_INF
-comma
-l_string|&quot;%s module in use - can&squot;t remove it.&bslash;n&quot;
-comma
-id|major_name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 (paren
 id|unregister_blkdev
 c_func

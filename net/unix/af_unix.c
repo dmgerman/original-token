@@ -1051,7 +1051,7 @@ id|sk-&gt;allocation
 op_assign
 id|GFP_KERNEL
 suffix:semicolon
-id|sk-&gt;inuse
+id|sk-&gt;users
 op_assign
 l_int|0
 suffix:semicolon
@@ -2810,9 +2810,13 @@ id|fd
 suffix:semicolon
 id|fd
 op_assign
-id|get_user_long
+id|get_user
 c_func
 (paren
+(paren
+r_int
+op_star
+)paren
 id|msg-&gt;msg_accrights
 )paren
 suffix:semicolon
@@ -3356,7 +3360,7 @@ id|current-&gt;files-&gt;close_on_exec
 )paren
 suffix:semicolon
 multiline_comment|/* need verify area here? */
-id|put_user_long
+id|put_user
 c_func
 (paren
 id|slot

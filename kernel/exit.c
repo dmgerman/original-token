@@ -2980,6 +2980,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
 multiline_comment|/*&n; * sys_waitpid() remains for compatibility. waitpid() should be&n; * implemented by calling sys_wait4() from libc.a.&n; */
 DECL|function|sys_waitpid
 id|asmlinkage
@@ -3013,4 +3014,5 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

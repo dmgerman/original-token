@@ -14,6 +14,10 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifdef __alpha__
+macro_line|# include &lt;asm/unaligned.h&gt;
+macro_line|#endif
 macro_line|#include &quot;ide.h&quot;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
@@ -93,14 +97,14 @@ r_struct
 id|ide_cd_config_flags
 (brace
 DECL|member|drq_interrupt
-r_int
+id|__u8
 id|drq_interrupt
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Device sends an interrupt when ready&n;                                 for a packet command. */
 DECL|member|no_doorlock
-r_int
+id|__u8
 id|no_doorlock
 suffix:colon
 l_int|1
@@ -108,35 +112,35 @@ suffix:semicolon
 multiline_comment|/* Drive cannot lock the door. */
 macro_line|#if ! STANDARD_ATAPI
 DECL|member|no_playaudio12
-r_int
+id|__u8
 id|no_playaudio12
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* The PLAYAUDIO12 command is not supported. */
 DECL|member|no_lba_toc
-r_int
+id|__u8
 id|no_lba_toc
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive cannot return TOC info in LBA format. */
 DECL|member|playmsf_uses_bcd
-r_int
+id|__u8
 id|playmsf_uses_bcd
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive uses BCD in PLAYAUDIO_MSF. */
 DECL|member|old_readcd
-r_int
+id|__u8
 id|old_readcd
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive uses old READ CD opcode. */
 DECL|member|vertos_lossage
-r_int
+id|__u8
 id|vertos_lossage
 suffix:colon
 l_int|1
@@ -144,7 +148,7 @@ suffix:semicolon
 multiline_comment|/* Drive is a Vertos 300,&n;&t;&t;&t;&t; and likes to speak BCD. */
 macro_line|#endif  /* not STANDARD_ATAPI */
 DECL|member|reserved
-r_int
+id|__u8
 id|reserved
 suffix:colon
 l_int|1
@@ -159,35 +163,35 @@ r_struct
 id|ide_cd_state_flags
 (brace
 DECL|member|media_changed
-r_int
+id|__u8
 id|media_changed
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Driver has noticed a media change. */
 DECL|member|toc_valid
-r_int
+id|__u8
 id|toc_valid
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Saved TOC information is current. */
 DECL|member|door_locked
-r_int
+id|__u8
 id|door_locked
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* We think that the drive door is locked. */
 DECL|member|eject_on_close
-r_int
+id|__u8
 id|eject_on_close
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive should eject when device is closed. */
 DECL|member|reserved
-r_int
+id|__u8
 id|reserved
 suffix:colon
 l_int|4
@@ -3382,6 +3386,27 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
+macro_line|#ifdef __alpha__
+id|stl_u
+(paren
+id|htonl
+(paren
+id|frame
+)paren
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|pc.c
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+macro_line|#else
 op_star
 (paren
 r_int
@@ -3400,6 +3425,7 @@ id|htonl
 id|frame
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Send the command to the drive and return. */
 (paren
 r_void
@@ -6411,6 +6437,43 @@ l_int|0
 op_assign
 id|SCMD_PLAYAUDIO12
 suffix:semicolon
+macro_line|#ifdef __alpha__
+id|stq_u
+c_func
+(paren
+(paren
+(paren
+r_int
+)paren
+id|htonl
+(paren
+id|lba_end
+op_minus
+id|lba_start
+)paren
+op_lshift
+l_int|32
+)paren
+op_or
+id|htonl
+c_func
+(paren
+id|lba_start
+)paren
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|pc.c
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+macro_line|#else
 op_star
 (paren
 r_int
@@ -6449,6 +6512,7 @@ op_minus
 id|lba_start
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|cdrom_queue_packet_command
 (paren
@@ -7142,6 +7206,28 @@ op_lshift
 l_int|2
 )paren
 suffix:semicolon
+macro_line|#ifdef __alpha__
+id|stl_u
+c_func
+(paren
+id|htonl
+(paren
+id|lba
+)paren
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|pc.c
+(braket
+l_int|2
+)braket
+)paren
+suffix:semicolon
+macro_line|#else
 op_star
 (paren
 r_int
@@ -7160,6 +7246,7 @@ id|htonl
 id|lba
 )paren
 suffix:semicolon
+macro_line|#endif
 id|pc.c
 (braket
 l_int|8

@@ -649,12 +649,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3605,7 +3599,7 @@ id|sk-&gt;acked_seq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Optimisation: Duplicate frame or extension of previous frame from&n;&t;&t;&t; *&t;same sequence point (lost ack case).&n;&t;&t;&t; *&t;The frame contains duplicate data or replaces a previous frame&n;&t;&t;&t; *&t;discard the previous frame (safe as sk-&gt;inuse is set) and put&n;&t;&t;&t; *&t;the new one in its place.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Optimisation: Duplicate frame or extension of previous frame from&n;&t;&t;&t; *&t;same sequence point (lost ack case).&n;&t;&t;&t; *&t;The frame contains duplicate data or replaces a previous frame&n;&t;&t;&t; *&t;discard the previous frame (safe as sk-&gt;users is set) and put&n;&t;&t;&t; *&t;the new one in its place.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4578,15 +4572,10 @@ op_assign
 id|saddr
 suffix:semicolon
 multiline_comment|/* We may need to add it to the backlog here. */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;inuse
+id|sk-&gt;users
 )paren
 (brace
 id|skb_queue_tail
@@ -4598,24 +4587,10 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-id|sk-&gt;inuse
-op_assign
-l_int|1
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;If this socket has got a reset it&squot;s to all intents and purposes &n;&t; *&t;really dead. Count closed sockets as dead.&n;&t; *&n;&t; *&t;Note: BSD appears to have a bug here. A &squot;closed&squot; TCP in BSD&n;&t; *&t;simply drops data. This seems incorrect as a &squot;closed&squot; TCP doesn&squot;t&n;&t; *&t;exist so should cause resets as if the port was unreachable.&n;&t; */
 r_if
@@ -4732,12 +4707,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4765,12 +4734,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Now we have several options: In theory there is nothing else&n;&t;&t;&t; *&t;in the frame. KA9Q has an option to send data with the syn,&n;&t;&t;&t; *&t;BSD accepts data with the syn up to the [to be] advertised window&n;&t;&t;&t; *&t;and Solaris 2.1 gives you a protocol error. For now we just ignore&n;&t;&t;&t; *&t;it, that fits the spec precisely and avoids incompatibilities. It&n;&t;&t;&t; *&t;would be nice in future to drop through and process the data.&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Now TTCP is starting to use we ought to queue this data.&n;&t;&t;&t; */
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4798,12 +4761,6 @@ c_func
 id|skb
 comma
 id|FREE_READ
-)paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return
@@ -4876,12 +4833,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4939,12 +4890,6 @@ c_func
 id|skb
 comma
 id|FREE_READ
-)paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return
@@ -5124,12 +5069,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5139,7 +5078,7 @@ r_goto
 id|rfc_step6
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;BSD has a funny hack with TIME_WAIT and fast reuse of a port. There is&n;&t; *&t;a more complex suggestion for fixing these reuse issues in RFC1644&n;&t; *&t;but not yet ready for general use. Also see RFC1379.&n;&t; */
+multiline_comment|/*&n;&t; *&t;BSD has a funny hack with TIME_WAIT and fast reuse of a port. There is&n;&t; *&t;a more complex suggestion for fixing these reuse issues in RFC1644&n;&t; *&t;but not yet ready for general use. Also see RFC1379.&n;&t; *&n;&t; *&t;Note the funny way we go back to the top of this function for&n;&t; *&t;this case (&quot;goto try_next_socket&quot;).  That also takes care of&n;&t; *&t;checking &quot;sk-&gt;users&quot; for the new socket as well as doing all&n;&t; *&t;the normal tests on the packet.&n;&t; */
 DECL|macro|BSD_TIME_WAIT
 mdefine_line|#define BSD_TIME_WAIT
 macro_line|#ifdef BSD_TIME_WAIT
@@ -5211,12 +5150,6 @@ id|sk-&gt;shutdown
 op_assign
 id|SHUTDOWN_MASK
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|sk
 op_assign
 id|get_sock
@@ -5234,6 +5167,7 @@ comma
 id|daddr
 )paren
 suffix:semicolon
+multiline_comment|/* this is not really correct: we should check sk-&gt;users */
 r_if
 c_cond
 (paren
@@ -5244,10 +5178,6 @@ op_eq
 id|TCP_LISTEN
 )paren
 (brace
-id|sk-&gt;inuse
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
@@ -5274,12 +5204,6 @@ comma
 id|seq
 op_plus
 l_int|128000
-)paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return
@@ -5313,6 +5237,8 @@ comma
 id|skb-&gt;seq
 comma
 id|skb-&gt;end_seq
+op_minus
+id|th-&gt;syn
 )paren
 )paren
 (brace
@@ -5338,12 +5264,6 @@ c_func
 id|skb
 comma
 id|FREE_READ
-)paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return
@@ -5471,12 +5391,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5499,12 +5413,6 @@ c_func
 id|skb
 comma
 id|FREE_READ
-)paren
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_return
@@ -5549,12 +5457,6 @@ id|FREE_READ
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;And done&n;&t; */
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

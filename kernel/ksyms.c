@@ -123,7 +123,7 @@ r_void
 op_star
 id|sys_call_table
 suffix:semicolon
-macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;
+macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)
 macro_line|#include &quot;../drivers/net/8390.h&quot;
 macro_line|#endif
 r_extern

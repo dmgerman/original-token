@@ -3569,7 +3569,7 @@ id|sk-&gt;rmem_alloc
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;inuse
+id|sk-&gt;users
 op_assign
 l_int|0
 suffix:semicolon
@@ -3887,7 +3887,7 @@ id|sk-&gt;rmem_alloc
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;inuse
+id|sk-&gt;users
 op_assign
 l_int|0
 suffix:semicolon
@@ -8416,6 +8416,8 @@ suffix:semicolon
 id|skb_free_datagram
 c_func
 (paren
+id|sk
+comma
 id|skb
 )paren
 suffix:semicolon

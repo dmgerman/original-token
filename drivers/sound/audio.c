@@ -131,6 +131,9 @@ comma
 (paren
 id|caddr_t
 )paren
+(paren
+r_int
+)paren
 id|fmt
 comma
 l_int|1

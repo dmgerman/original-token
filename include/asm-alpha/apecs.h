@@ -75,108 +75,108 @@ mdefine_line|#define APECS_IOC_TLBDATA7              (IDENT_ADDR + 0x1A00003E0UL
 DECL|macro|APECS_IOC_TBIA
 mdefine_line|#define APECS_IOC_TBIA                  (IDENT_ADDR + 0x1A0000400UL)
 multiline_comment|/*&n; * 21071-CA Control and Status registers.&n; * These are used to program memory timing,&n; *  configure memory and initialise the B-Cache.&n; */
-DECL|macro|APECS_IOC_GCR
-mdefine_line|#define APECS_IOC_GCR&t;&t;        (IDENT_ADDR + 0x180000000UL)
-DECL|macro|APECS_IOC_EDSR
-mdefine_line|#define APECS_IOC_EDSR&t;&t;        (IDENT_ADDR + 0x180000040UL)
-DECL|macro|APECS_IOC_TAR
-mdefine_line|#define APECS_IOC_TAR  &t;&t;        (IDENT_ADDR + 0x180000060UL)
-DECL|macro|APECS_IOC_ELAR
-mdefine_line|#define APECS_IOC_ELAR&t;&t;        (IDENT_ADDR + 0x180000080UL)
-DECL|macro|APECS_IOC_EHAR
-mdefine_line|#define APECS_IOC_EHAR  &t;&t;(IDENT_ADDR + 0x1800000a0UL)
-DECL|macro|APECS_IOC_SFT_RST
-mdefine_line|#define APECS_IOC_SFT_RST&t;&t;(IDENT_ADDR + 0x1800000c0UL)
-DECL|macro|APECS_IOC_LDxLAR
-mdefine_line|#define APECS_IOC_LDxLAR &t;&t;(IDENT_ADDR + 0x1800000e0UL)
-DECL|macro|APECS_IOC_LDxHAR
-mdefine_line|#define APECS_IOC_LDxHAR &t;&t;(IDENT_ADDR + 0x180000100UL)
-DECL|macro|APECS_IOC_GTR
-mdefine_line|#define APECS_IOC_GTR    &t;&t;(IDENT_ADDR + 0x180000200UL)
-DECL|macro|APECS_IOC_RTR
-mdefine_line|#define APECS_IOC_RTR    &t;&t;(IDENT_ADDR + 0x180000220UL)
-DECL|macro|APECS_IOC_VFPR
-mdefine_line|#define APECS_IOC_VFPR   &t;&t;(IDENT_ADDR + 0x180000240UL)
-DECL|macro|APECS_IOC_PDLDR
-mdefine_line|#define APECS_IOC_PDLDR  &t;&t;(IDENT_ADDR + 0x180000260UL)
-DECL|macro|APECS_IOC_PDhDR
-mdefine_line|#define APECS_IOC_PDhDR  &t;&t;(IDENT_ADDR + 0x180000280UL)
+DECL|macro|APECS_MEM_GCR
+mdefine_line|#define APECS_MEM_GCR&t;&t;        (IDENT_ADDR + 0x180000000UL)
+DECL|macro|APECS_MEM_EDSR
+mdefine_line|#define APECS_MEM_EDSR&t;&t;        (IDENT_ADDR + 0x180000040UL)
+DECL|macro|APECS_MEM_TAR
+mdefine_line|#define APECS_MEM_TAR  &t;&t;        (IDENT_ADDR + 0x180000060UL)
+DECL|macro|APECS_MEM_ELAR
+mdefine_line|#define APECS_MEM_ELAR&t;&t;        (IDENT_ADDR + 0x180000080UL)
+DECL|macro|APECS_MEM_EHAR
+mdefine_line|#define APECS_MEM_EHAR  &t;&t;(IDENT_ADDR + 0x1800000a0UL)
+DECL|macro|APECS_MEM_SFT_RST
+mdefine_line|#define APECS_MEM_SFT_RST&t;&t;(IDENT_ADDR + 0x1800000c0UL)
+DECL|macro|APECS_MEM_LDxLAR
+mdefine_line|#define APECS_MEM_LDxLAR &t;&t;(IDENT_ADDR + 0x1800000e0UL)
+DECL|macro|APECS_MEM_LDxHAR
+mdefine_line|#define APECS_MEM_LDxHAR &t;&t;(IDENT_ADDR + 0x180000100UL)
+DECL|macro|APECS_MEM_GTR
+mdefine_line|#define APECS_MEM_GTR    &t;&t;(IDENT_ADDR + 0x180000200UL)
+DECL|macro|APECS_MEM_RTR
+mdefine_line|#define APECS_MEM_RTR    &t;&t;(IDENT_ADDR + 0x180000220UL)
+DECL|macro|APECS_MEM_VFPR
+mdefine_line|#define APECS_MEM_VFPR   &t;&t;(IDENT_ADDR + 0x180000240UL)
+DECL|macro|APECS_MEM_PDLDR
+mdefine_line|#define APECS_MEM_PDLDR  &t;&t;(IDENT_ADDR + 0x180000260UL)
+DECL|macro|APECS_MEM_PDhDR
+mdefine_line|#define APECS_MEM_PDhDR  &t;&t;(IDENT_ADDR + 0x180000280UL)
 multiline_comment|/* Bank x Base Address Register */
-DECL|macro|APECS_IOC_B0BAR
-mdefine_line|#define APECS_IOC_B0BAR  &t;&t;(IDENT_ADDR + 0x180000800UL)
-DECL|macro|APECS_IOC_B1BAR
-mdefine_line|#define APECS_IOC_B1BAR  &t;&t;(IDENT_ADDR + 0x180000820UL)
-DECL|macro|APECS_IOC_B2BAR
-mdefine_line|#define APECS_IOC_B2BAR  &t;&t;(IDENT_ADDR + 0x180000840UL)
-DECL|macro|APECS_IOC_B3BAR
-mdefine_line|#define APECS_IOC_B3BAR  &t;&t;(IDENT_ADDR + 0x180000860UL)
-DECL|macro|APECS_IOC_B4BAR
-mdefine_line|#define APECS_IOC_B4BAR  &t;&t;(IDENT_ADDR + 0x180000880UL)
-DECL|macro|APECS_IOC_B5BAR
-mdefine_line|#define APECS_IOC_B5BAR  &t;&t;(IDENT_ADDR + 0x1800008A0UL)
-DECL|macro|APECS_IOC_B6BAR
-mdefine_line|#define APECS_IOC_B6BAR  &t;&t;(IDENT_ADDR + 0x1800008C0UL)
-DECL|macro|APECS_IOC_B7BAR
-mdefine_line|#define APECS_IOC_B7BAR  &t;&t;(IDENT_ADDR + 0x1800008E0UL)
-DECL|macro|APECS_IOC_B8BAR
-mdefine_line|#define APECS_IOC_B8BAR  &t;&t;(IDENT_ADDR + 0x180000900UL)
+DECL|macro|APECS_MEM_B0BAR
+mdefine_line|#define APECS_MEM_B0BAR  &t;&t;(IDENT_ADDR + 0x180000800UL)
+DECL|macro|APECS_MEM_B1BAR
+mdefine_line|#define APECS_MEM_B1BAR  &t;&t;(IDENT_ADDR + 0x180000820UL)
+DECL|macro|APECS_MEM_B2BAR
+mdefine_line|#define APECS_MEM_B2BAR  &t;&t;(IDENT_ADDR + 0x180000840UL)
+DECL|macro|APECS_MEM_B3BAR
+mdefine_line|#define APECS_MEM_B3BAR  &t;&t;(IDENT_ADDR + 0x180000860UL)
+DECL|macro|APECS_MEM_B4BAR
+mdefine_line|#define APECS_MEM_B4BAR  &t;&t;(IDENT_ADDR + 0x180000880UL)
+DECL|macro|APECS_MEM_B5BAR
+mdefine_line|#define APECS_MEM_B5BAR  &t;&t;(IDENT_ADDR + 0x1800008A0UL)
+DECL|macro|APECS_MEM_B6BAR
+mdefine_line|#define APECS_MEM_B6BAR  &t;&t;(IDENT_ADDR + 0x1800008C0UL)
+DECL|macro|APECS_MEM_B7BAR
+mdefine_line|#define APECS_MEM_B7BAR  &t;&t;(IDENT_ADDR + 0x1800008E0UL)
+DECL|macro|APECS_MEM_B8BAR
+mdefine_line|#define APECS_MEM_B8BAR  &t;&t;(IDENT_ADDR + 0x180000900UL)
 multiline_comment|/* Bank x Configuration Register */
-DECL|macro|APECS_IOC_B0BCR
-mdefine_line|#define APECS_IOC_B0BCR  &t;&t;(IDENT_ADDR + 0x180000A00UL)
-DECL|macro|APECS_IOC_B1BCR
-mdefine_line|#define APECS_IOC_B1BCR  &t;&t;(IDENT_ADDR + 0x180000A20UL)
-DECL|macro|APECS_IOC_B2BCR
-mdefine_line|#define APECS_IOC_B2BCR  &t;&t;(IDENT_ADDR + 0x180000A40UL)
-DECL|macro|APECS_IOC_B3BCR
-mdefine_line|#define APECS_IOC_B3BCR  &t;&t;(IDENT_ADDR + 0x180000A60UL)
-DECL|macro|APECS_IOC_B4BCR
-mdefine_line|#define APECS_IOC_B4BCR  &t;&t;(IDENT_ADDR + 0x180000A80UL)
-DECL|macro|APECS_IOC_B5BCR
-mdefine_line|#define APECS_IOC_B5BCR  &t;&t;(IDENT_ADDR + 0x180000AA0UL)
-DECL|macro|APECS_IOC_B6BCR
-mdefine_line|#define APECS_IOC_B6BCR  &t;&t;(IDENT_ADDR + 0x180000AC0UL)
-DECL|macro|APECS_IOC_B7BCR
-mdefine_line|#define APECS_IOC_B7BCR  &t;&t;(IDENT_ADDR + 0x180000AE0UL)
-DECL|macro|APECS_IOC_B8BCR
-mdefine_line|#define APECS_IOC_B8BCR  &t;&t;(IDENT_ADDR + 0x180000B00UL)
+DECL|macro|APECS_MEM_B0BCR
+mdefine_line|#define APECS_MEM_B0BCR  &t;&t;(IDENT_ADDR + 0x180000A00UL)
+DECL|macro|APECS_MEM_B1BCR
+mdefine_line|#define APECS_MEM_B1BCR  &t;&t;(IDENT_ADDR + 0x180000A20UL)
+DECL|macro|APECS_MEM_B2BCR
+mdefine_line|#define APECS_MEM_B2BCR  &t;&t;(IDENT_ADDR + 0x180000A40UL)
+DECL|macro|APECS_MEM_B3BCR
+mdefine_line|#define APECS_MEM_B3BCR  &t;&t;(IDENT_ADDR + 0x180000A60UL)
+DECL|macro|APECS_MEM_B4BCR
+mdefine_line|#define APECS_MEM_B4BCR  &t;&t;(IDENT_ADDR + 0x180000A80UL)
+DECL|macro|APECS_MEM_B5BCR
+mdefine_line|#define APECS_MEM_B5BCR  &t;&t;(IDENT_ADDR + 0x180000AA0UL)
+DECL|macro|APECS_MEM_B6BCR
+mdefine_line|#define APECS_MEM_B6BCR  &t;&t;(IDENT_ADDR + 0x180000AC0UL)
+DECL|macro|APECS_MEM_B7BCR
+mdefine_line|#define APECS_MEM_B7BCR  &t;&t;(IDENT_ADDR + 0x180000AE0UL)
+DECL|macro|APECS_MEM_B8BCR
+mdefine_line|#define APECS_MEM_B8BCR  &t;&t;(IDENT_ADDR + 0x180000B00UL)
 multiline_comment|/* Bank x Timing Register A */
-DECL|macro|APECS_IOC_B0TRA
-mdefine_line|#define APECS_IOC_B0TRA  &t;&t;(IDENT_ADDR + 0x180000C00UL)
-DECL|macro|APECS_IOC_B1TRA
-mdefine_line|#define APECS_IOC_B1TRA  &t;&t;(IDENT_ADDR + 0x180000C20UL)
-DECL|macro|APECS_IOC_B2TRA
-mdefine_line|#define APECS_IOC_B2TRA  &t;&t;(IDENT_ADDR + 0x180000C40UL)
-DECL|macro|APECS_IOC_B3TRA
-mdefine_line|#define APECS_IOC_B3TRA  &t;&t;(IDENT_ADDR + 0x180000C60UL)
-DECL|macro|APECS_IOC_B4TRA
-mdefine_line|#define APECS_IOC_B4TRA  &t;&t;(IDENT_ADDR + 0x180000C80UL)
-DECL|macro|APECS_IOC_B5TRA
-mdefine_line|#define APECS_IOC_B5TRA  &t;&t;(IDENT_ADDR + 0x180000CA0UL)
-DECL|macro|APECS_IOC_B6TRA
-mdefine_line|#define APECS_IOC_B6TRA  &t;&t;(IDENT_ADDR + 0x180000CC0UL)
-DECL|macro|APECS_IOC_B7TRA
-mdefine_line|#define APECS_IOC_B7TRA  &t;&t;(IDENT_ADDR + 0x180000CE0UL)
-DECL|macro|APECS_IOC_B8TRA
-mdefine_line|#define APECS_IOC_B8TRA  &t;&t;(IDENT_ADDR + 0x180000D00UL)
+DECL|macro|APECS_MEM_B0TRA
+mdefine_line|#define APECS_MEM_B0TRA  &t;&t;(IDENT_ADDR + 0x180000C00UL)
+DECL|macro|APECS_MEM_B1TRA
+mdefine_line|#define APECS_MEM_B1TRA  &t;&t;(IDENT_ADDR + 0x180000C20UL)
+DECL|macro|APECS_MEM_B2TRA
+mdefine_line|#define APECS_MEM_B2TRA  &t;&t;(IDENT_ADDR + 0x180000C40UL)
+DECL|macro|APECS_MEM_B3TRA
+mdefine_line|#define APECS_MEM_B3TRA  &t;&t;(IDENT_ADDR + 0x180000C60UL)
+DECL|macro|APECS_MEM_B4TRA
+mdefine_line|#define APECS_MEM_B4TRA  &t;&t;(IDENT_ADDR + 0x180000C80UL)
+DECL|macro|APECS_MEM_B5TRA
+mdefine_line|#define APECS_MEM_B5TRA  &t;&t;(IDENT_ADDR + 0x180000CA0UL)
+DECL|macro|APECS_MEM_B6TRA
+mdefine_line|#define APECS_MEM_B6TRA  &t;&t;(IDENT_ADDR + 0x180000CC0UL)
+DECL|macro|APECS_MEM_B7TRA
+mdefine_line|#define APECS_MEM_B7TRA  &t;&t;(IDENT_ADDR + 0x180000CE0UL)
+DECL|macro|APECS_MEM_B8TRA
+mdefine_line|#define APECS_MEM_B8TRA  &t;&t;(IDENT_ADDR + 0x180000D00UL)
 multiline_comment|/* Bank x Timing Register B */
-DECL|macro|APECS_IOC_B0TRB
-mdefine_line|#define APECS_IOC_B0TRB                 (IDENT_ADDR + 0x180000E00UL)
-DECL|macro|APECS_IOC_B1TRB
-mdefine_line|#define APECS_IOC_B1TRB  &t;&t;(IDENT_ADDR + 0x180000E20UL)
-DECL|macro|APECS_IOC_B2TRB
-mdefine_line|#define APECS_IOC_B2TRB  &t;&t;(IDENT_ADDR + 0x180000E40UL)
-DECL|macro|APECS_IOC_B3TRB
-mdefine_line|#define APECS_IOC_B3TRB  &t;&t;(IDENT_ADDR + 0x180000E60UL)
-DECL|macro|APECS_IOC_B4TRB
-mdefine_line|#define APECS_IOC_B4TRB  &t;&t;(IDENT_ADDR + 0x180000E80UL)
-DECL|macro|APECS_IOC_B5TRB
-mdefine_line|#define APECS_IOC_B5TRB  &t;&t;(IDENT_ADDR + 0x180000EA0UL)
-DECL|macro|APECS_IOC_B6TRB
-mdefine_line|#define APECS_IOC_B6TRB  &t;&t;(IDENT_ADDR + 0x180000EC0UL)
-DECL|macro|APECS_IOC_B7TRB
-mdefine_line|#define APECS_IOC_B7TRB  &t;&t;(IDENT_ADDR + 0x180000EE0UL)
-DECL|macro|APECS_IOC_B8TRB
-mdefine_line|#define APECS_IOC_B8TRB  &t;&t;(IDENT_ADDR + 0x180000F00UL)
+DECL|macro|APECS_MEM_B0TRB
+mdefine_line|#define APECS_MEM_B0TRB                 (IDENT_ADDR + 0x180000E00UL)
+DECL|macro|APECS_MEM_B1TRB
+mdefine_line|#define APECS_MEM_B1TRB  &t;&t;(IDENT_ADDR + 0x180000E20UL)
+DECL|macro|APECS_MEM_B2TRB
+mdefine_line|#define APECS_MEM_B2TRB  &t;&t;(IDENT_ADDR + 0x180000E40UL)
+DECL|macro|APECS_MEM_B3TRB
+mdefine_line|#define APECS_MEM_B3TRB  &t;&t;(IDENT_ADDR + 0x180000E60UL)
+DECL|macro|APECS_MEM_B4TRB
+mdefine_line|#define APECS_MEM_B4TRB  &t;&t;(IDENT_ADDR + 0x180000E80UL)
+DECL|macro|APECS_MEM_B5TRB
+mdefine_line|#define APECS_MEM_B5TRB  &t;&t;(IDENT_ADDR + 0x180000EA0UL)
+DECL|macro|APECS_MEM_B6TRB
+mdefine_line|#define APECS_MEM_B6TRB  &t;&t;(IDENT_ADDR + 0x180000EC0UL)
+DECL|macro|APECS_MEM_B7TRB
+mdefine_line|#define APECS_MEM_B7TRB  &t;&t;(IDENT_ADDR + 0x180000EE0UL)
+DECL|macro|APECS_MEM_B8TRB
+mdefine_line|#define APECS_MEM_B8TRB  &t;&t;(IDENT_ADDR + 0x180000F00UL)
 multiline_comment|/*&n; * Memory spaces:&n; */
 DECL|macro|APECS_IACK_SC
 mdefine_line|#define APECS_IACK_SC&t;&t;        (IDENT_ADDR + 0x1b0000000UL)

@@ -260,7 +260,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* to keep gcc quiet */
-macro_line|#ifdef CONFIG_ALPHA_AVANTI
+macro_line|#ifdef CONFIG_ALPHA_SRM
+multiline_comment|/* some SRMs step on these registers during a machine check: */
 r_register
 r_int
 id|s0
@@ -320,7 +321,6 @@ id|s0
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -332,7 +332,6 @@ id|s1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -344,7 +343,6 @@ id|s2
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -356,7 +354,6 @@ id|s3
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -368,7 +365,6 @@ id|s4
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -380,7 +376,6 @@ id|s5
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 macro_line|#endif
 id|save_flags
 c_func
@@ -692,7 +687,8 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_AVANTI
+macro_line|#ifdef CONFIG_ALPHA_SRM
+multiline_comment|/* some SRMs step on these registers during a machine check: */
 id|asm
 r_volatile
 (paren
@@ -704,7 +700,6 @@ id|s0
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -716,7 +711,6 @@ id|s1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -728,7 +722,6 @@ id|s2
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -740,7 +733,6 @@ id|s3
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -752,7 +744,6 @@ id|s4
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 id|asm
 r_volatile
 (paren
@@ -764,7 +755,6 @@ id|s5
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* SRM X4.2 on Avanti steps on this */
 macro_line|#endif
 r_return
 id|value

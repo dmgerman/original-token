@@ -1,7 +1,6 @@
 macro_line|#ifndef _ALPHA_UNISTD_H
 DECL|macro|_ALPHA_UNISTD_H
 mdefine_line|#define _ALPHA_UNISTD_H
-multiline_comment|/*&n; * &quot;.long 131&quot; is &quot;PAL_callsys&quot;..&n; *&n; * Duh, the alpha gcc compiler doesn&squot;t allow us to specify regs&n; * yet. I&squot;ll have to see about this later..&n; */
 DECL|macro|__NR_exit
 mdefine_line|#define __NR_exit&t;&t;  1
 DECL|macro|__NR_fork
@@ -58,6 +57,8 @@ DECL|macro|__NR_getxgid
 mdefine_line|#define __NR_getxgid&t;&t; 47
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct&t;&t; 51
+DECL|macro|__NR_sigpending
+mdefine_line|#define __NR_sigpending&t;&t; 52
 DECL|macro|__NR_ioctl
 mdefine_line|#define __NR_ioctl&t;&t; 54
 DECL|macro|__NR_symlink
@@ -78,6 +79,8 @@ DECL|macro|__NR_stat
 mdefine_line|#define __NR_stat&t;&t; 67
 DECL|macro|__NR_lstat
 mdefine_line|#define __NR_lstat&t;&t; 68
+DECL|macro|__NR_mmap
+mdefine_line|#define __NR_mmap&t;&t; 71&t;/* OSF/1 mmap is superset of Linux */
 DECL|macro|__NR_munmap
 mdefine_line|#define __NR_munmap&t;&t; 73
 DECL|macro|__NR_mprotect
@@ -164,6 +167,8 @@ DECL|macro|__NR_truncate
 mdefine_line|#define __NR_truncate&t;&t;129
 DECL|macro|__NR_ftruncate
 mdefine_line|#define __NR_ftruncate&t;&t;130
+DECL|macro|__NR_flock
+mdefine_line|#define __NR_flock&t;&t;131
 DECL|macro|__NR_setgid
 mdefine_line|#define __NR_setgid&t;&t;132
 DECL|macro|__NR_sendto
@@ -192,6 +197,8 @@ DECL|macro|__NR_getsockname
 mdefine_line|#define __NR_getsockname&t;150
 DECL|macro|__NR_sigaction
 mdefine_line|#define __NR_sigaction&t;&t;156
+DECL|macro|__NR_setdomainname
+mdefine_line|#define __NR_setdomainname&t;166
 DECL|macro|__NR_msgctl
 mdefine_line|#define __NR_msgctl&t;&t;200
 DECL|macro|__NR_msgget
@@ -212,12 +219,14 @@ DECL|macro|__NR_shmdt
 mdefine_line|#define __NR_shmdt&t;&t;211
 DECL|macro|__NR_shmget
 mdefine_line|#define __NR_shmget&t;&t;212
+DECL|macro|__NR_msync
+mdefine_line|#define __NR_msync&t;&t;217
+DECL|macro|__NR_getpgid
+mdefine_line|#define __NR_getpgid&t;&t;233
 DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid&t;&t;234
-DECL|macro|__NR_getsysinfo
-mdefine_line|#define __NR_getsysinfo&t;&t;256
-DECL|macro|__NR_setsysinfo
-mdefine_line|#define __NR_setsysinfo&t;&t;257
+DECL|macro|__NR_sysfs
+mdefine_line|#define __NR_sysfs&t;&t;254
 multiline_comment|/*&n; * Linux-specific system calls begin at 300&n; */
 DECL|macro|__NR_bdflush
 mdefine_line|#define __NR_bdflush&t;&t;300
@@ -255,7 +264,52 @@ DECL|macro|__NR_mlockall
 mdefine_line|#define __NR_mlockall&t;&t;316
 DECL|macro|__NR_munlockall
 mdefine_line|#define __NR_munlockall&t;&t;317
+DECL|macro|__NR_sysinfo
+mdefine_line|#define __NR_sysinfo&t;&t;318
+DECL|macro|__NR_sysctl
+mdefine_line|#define __NR_sysctl&t;&t;319
+DECL|macro|__NR_idle
+mdefine_line|#define __NR_idle&t;&t;320
+DECL|macro|__NR_umount
+mdefine_line|#define __NR_umount&t;&t;321
+DECL|macro|__NR_swapon
+mdefine_line|#define __NR_swapon&t;&t;322
+DECL|macro|__NR_times
+mdefine_line|#define __NR_times&t;&t;323
+DECL|macro|__NR_personality
+mdefine_line|#define __NR_personality&t;324
+DECL|macro|__NR_setfsuid
+mdefine_line|#define __NR_setfsuid&t;&t;325
+DECL|macro|__NR_setfsgid
+mdefine_line|#define __NR_setfsgid&t;&t;326
+DECL|macro|__NR_ustat
+mdefine_line|#define __NR_ustat&t;&t;327
+DECL|macro|__NR_statfs
+mdefine_line|#define __NR_statfs&t;&t;328
+DECL|macro|__NR_fstatfs
+mdefine_line|#define __NR_fstatfs&t;&t;329
+DECL|macro|__NR_sched_setparam
+mdefine_line|#define __NR_sched_setparam&t;&t;330
+DECL|macro|__NR_sched_getparam
+mdefine_line|#define __NR_sched_getparam&t;&t;331
+DECL|macro|__NR_sched_setscheduler
+mdefine_line|#define __NR_sched_setscheduler&t;&t;332
+DECL|macro|__NR_sched_getscheduler
+mdefine_line|#define __NR_sched_getscheduler&t;&t;333
+DECL|macro|__NR_sched_yield
+mdefine_line|#define __NR_sched_yield&t;&t;334
+DECL|macro|__NR_sched_get_priority_max
+mdefine_line|#define __NR_sched_get_priority_max&t;335
+DECL|macro|__NR_sched_get_priority_min
+mdefine_line|#define __NR_sched_get_priority_min&t;336
+DECL|macro|__NR_sched_rr_get_interval
+mdefine_line|#define __NR_sched_rr_get_interval&t;337
+DECL|macro|__NR_afs_syscall
+mdefine_line|#define __NR_afs_syscall&t;&t;338
+DECL|macro|__NR_uname
+mdefine_line|#define __NR_uname&t;&t;&t;339
 macro_line|#ifdef __LIBRARY__
+multiline_comment|/*&n; * Duh, the alpha gcc compiler doesn&squot;t allow us to specify regs&n; * yet. I&squot;ll have to see about this later..&n; */
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;&t;return (type) -1; &bslash;&n;}
@@ -764,7 +818,7 @@ suffix:semicolon
 )brace
 r_extern
 r_int
-id|sys_waitpid
+id|sys_wait4
 c_func
 (paren
 r_int
@@ -773,6 +827,10 @@ r_int
 op_star
 comma
 r_int
+comma
+r_struct
+id|rusage
+op_star
 )paren
 suffix:semicolon
 DECL|function|waitpid
@@ -794,7 +852,7 @@ id|flags
 )paren
 (brace
 r_return
-id|sys_waitpid
+id|sys_wait4
 c_func
 (paren
 id|pid
@@ -802,6 +860,8 @@ comma
 id|wait_stat
 comma
 id|flags
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

@@ -918,7 +918,7 @@ id|num
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef NFSROOT_DEBUG
+multiline_comment|/* always print this message so user knows what&squot;s going on... */
 id|printk
 c_func
 (paren
@@ -926,7 +926,6 @@ id|KERN_NOTICE
 l_string|&quot;NFS: Sending RARP request...&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren

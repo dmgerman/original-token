@@ -19,6 +19,9 @@ macro_line|#else /* !MODVERSIONS */
 DECL|macro|X
 macro_line|# define X(sym) { (void *) &amp; sym, SYMBOL_NAME_STR(sym)}
 macro_line|#endif /* MODVERSIONS */
+multiline_comment|/*&n; * Some symbols always need to be unversioned.  This includes&n; * compiler generated calls to functions.&n; */
+DECL|macro|XNOVERS
+mdefine_line|#define XNOVERS(sym) { (void *) &amp; sym, SYMBOL_NAME_STR(sym)}
 DECL|macro|EMPTY
 mdefine_line|#define EMPTY {0,0}
 l_int|0

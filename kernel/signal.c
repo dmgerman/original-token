@@ -12,6 +12,8 @@ DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 DECL|macro|_BLOCKABLE
 mdefine_line|#define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * This call isn&squot;t used by all ports, in particular, the Alpha&n; * uses osf_sigprocmask instead.  Maybe it should be moved into&n; * arch-dependent dir?&n; */
 DECL|function|sys_sigprocmask
 id|asmlinkage
 r_int
@@ -163,6 +165,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * For backwards compatibility?  Functionality superseded by sigprocmask.&n; */
 DECL|function|sys_sgetmask
 id|asmlinkage
 r_int
@@ -201,6 +204,7 @@ r_return
 id|old
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_sigpending
 id|asmlinkage
 r_int
@@ -343,6 +347,8 @@ r_return
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backwards compatibility?  Functionality superseded by sigaction.&n; */
 DECL|function|sys_signal
 id|asmlinkage
 r_int
@@ -480,6 +486,7 @@ r_int
 id|handler
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_sigaction
 id|asmlinkage
 r_int

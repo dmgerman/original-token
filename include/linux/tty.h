@@ -637,6 +637,10 @@ suffix:semicolon
 r_extern
 r_int
 id|fg_console
+comma
+id|last_console
+comma
+id|want_console
 suffix:semicolon
 r_extern
 r_int

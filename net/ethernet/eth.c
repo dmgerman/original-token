@@ -755,6 +755,18 @@ r_int
 id|base
 )paren
 (brace
+macro_line|#ifdef CONFIG_IP_ROUTER
+id|memcpy
+c_func
+(paren
+id|dest-&gt;data
+comma
+id|src
+comma
+id|length
+)paren
+suffix:semicolon
+macro_line|#else
 r_struct
 id|ethhdr
 op_star
@@ -917,5 +929,6 @@ id|dest-&gt;ip_summed
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 eof

@@ -1492,13 +1492,11 @@ id|skb-&gt;list
 op_assign
 l_int|NULL
 suffix:semicolon
-(paren
 id|next-&gt;prev
 op_assign
 id|prev
-)paren
-op_member_access_from_pointer
-id|next
+suffix:semicolon
+id|prev-&gt;next
 op_assign
 id|next
 suffix:semicolon
@@ -1899,6 +1897,11 @@ r_void
 id|skb_free_datagram
 c_func
 (paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
 r_struct
 id|sk_buff
 op_star

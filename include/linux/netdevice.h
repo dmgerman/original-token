@@ -73,18 +73,18 @@ id|hh_cache
 op_star
 id|hh_next
 suffix:semicolon
-DECL|member|hh_refcnt
-r_int
-r_int
-id|hh_refcnt
-suffix:semicolon
-multiline_comment|/* number of users */
 DECL|member|hh_arp
 r_void
 op_star
 id|hh_arp
 suffix:semicolon
 multiline_comment|/* Opaque pointer, used by&n;&t;&t;&t;&t;&t; * any address resolution module,&n;&t;&t;&t;&t;&t; * not only ARP.&n;&t;&t;&t;&t;&t; */
+DECL|member|hh_refcnt
+r_int
+r_int
+id|hh_refcnt
+suffix:semicolon
+multiline_comment|/* number of users */
 DECL|member|hh_type
 r_int
 r_int

@@ -20,6 +20,8 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * sys_time() can be implemented in user-level using&n; * sys_gettimeofday().  Is this for backwards compatibility?  If so,&n; * why not move it into the appropriate arch directory (for those&n; * architectures that need it).&n; */
 DECL|function|sys_time
 id|asmlinkage
 r_int
@@ -82,6 +84,7 @@ r_return
 id|i
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * sys_stime() can be implemented in user-level using&n; * sys_settimeofday().  Is this for backwards compatibility?  If so,&n; * why not move it into the appropriate arch directory (for those&n; * architectures that need it).&n; */
 DECL|function|sys_stime
 id|asmlinkage
 r_int
@@ -177,6 +180,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_gettimeofday
 id|asmlinkage
 r_int

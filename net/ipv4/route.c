@@ -3297,7 +3297,7 @@ c_func
 (paren
 id|temp
 comma
-l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%ld&bslash;t%lu&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%lu&bslash;t%u&bslash;t%ld&bslash;t%1d&quot;
+l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%u&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%lu&bslash;t%u&bslash;t%d&bslash;t%1d&quot;
 comma
 id|r-&gt;rt_dev-&gt;name
 comma

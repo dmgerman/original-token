@@ -66,7 +66,75 @@ op_star
 id|MB
 suffix:semicolon
 multiline_comment|/* &lt;16MB is ISA memory */
+multiline_comment|/*&n; * Disable PCI device DEV so that it does not respond to I/O or memory&n; * accesses.&n; */
+DECL|function|disable_dev
+r_static
+r_void
+id|disable_dev
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|pci_bus
+op_star
+id|bus
+suffix:semicolon
+r_int
+r_int
+id|cmd
+suffix:semicolon
+id|bus
+op_assign
+id|dev-&gt;bus
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|cmd
+)paren
+suffix:semicolon
+multiline_comment|/* hack, turn it off first... */
+id|cmd
+op_and_assign
+(paren
+op_complement
+id|PCI_COMMAND_IO
+op_amp
+op_complement
+id|PCI_COMMAND_MEMORY
+op_amp
+op_complement
+id|PCI_COMMAND_MASTER
+)paren
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|PCI_COMMAND
+comma
+id|cmd
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Layout memory and I/O for a device:&n; */
+DECL|macro|MAX
+mdefine_line|#define MAX(val1, val2) ( ((val1) &gt; (val2)) ? val1 : val2)
 DECL|function|layout_dev
 r_static
 r_void
@@ -97,6 +165,10 @@ comma
 id|size
 comma
 id|reg
+suffix:semicolon
+r_int
+r_int
+id|alignto
 suffix:semicolon
 id|bus
 op_assign
@@ -207,6 +279,17 @@ id|base
 op_amp
 l_int|0xffffffff
 suffix:semicolon
+multiline_comment|/* align to multiple of size of minimum base */
+id|alignto
+op_assign
+id|MAX
+c_func
+(paren
+l_int|0x400
+comma
+id|size
+)paren
+suffix:semicolon
 id|base
 op_assign
 id|ALIGN
@@ -214,7 +297,7 @@ c_func
 (paren
 id|io_base
 comma
-id|size
+id|alignto
 )paren
 suffix:semicolon
 id|io_base
@@ -349,6 +432,17 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;&t; * The following holds at least for the Low Cost&n;&t;&t;&t; * Alpha implementation of the PCI interface:&n;&t;&t;&t; *&n;&t;&t;&t; * In sparse memory address space, the first&n;&t;&t;&t; * octant (16MB) of every 128MB segment is&n;&t;&t;&t; * aliased to the the very first 16MB of the&n;&t;&t;&t; * address space (i.e., it aliases the ISA&n;&t;&t;&t; * memory address space).  Thus, we try to&n;&t;&t;&t; * avoid allocating PCI devices in that range.&n;&t;&t;&t; * Can be allocated in 2nd-7th octant only.&n;&t;&t;&t; * Devices that need more than 112MB of&n;&t;&t;&t; * address space must be accessed through&n;&t;&t;&t; * dense memory space only!&n;&t;&t;&t; */
+multiline_comment|/* align to multiple of size of minimum base */
+id|alignto
+op_assign
+id|MAX
+c_func
+(paren
+l_int|0x1000
+comma
+id|size
+)paren
+suffix:semicolon
 id|base
 op_assign
 id|ALIGN
@@ -356,7 +450,7 @@ c_func
 (paren
 id|mem_base
 comma
-id|size
+id|alignto
 )paren
 suffix:semicolon
 r_if
@@ -404,9 +498,11 @@ c_cond
 (paren
 id|base
 op_div
+(paren
 l_int|16
 op_star
 id|MB
+)paren
 )paren
 op_amp
 l_int|0x7
@@ -439,7 +535,7 @@ c_func
 (paren
 id|base
 comma
-id|size
+id|alignto
 )paren
 suffix:semicolon
 )brace
@@ -448,9 +544,11 @@ c_cond
 (paren
 id|base
 op_div
+(paren
 l_int|128
 op_star
 id|MB
+)paren
 op_ne
 (paren
 id|base
@@ -458,9 +556,11 @@ op_plus
 id|size
 )paren
 op_div
+(paren
 l_int|128
 op_star
 id|MB
+)paren
 )paren
 (brace
 id|base
@@ -491,7 +591,7 @@ c_func
 (paren
 id|base
 comma
-id|size
+id|alignto
 )paren
 suffix:semicolon
 )brace
@@ -648,6 +748,41 @@ op_star
 id|MB
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * There are times when the PCI devices have already been&n;&t; * setup (e.g., by MILO or SRM).  In these cases there is a&n;&t; * window during which two devices may have an overlapping&n;&t; * address range.  To avoid this causing trouble, we first&n;&t; * turn off the I/O and memory address decoders for all PCI&n;&t; * devices.  They&squot;ll be re-enabled only once all address&n;&t; * decoders are programmed consistently.&n;&t; */
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|bus-&gt;devices
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;sibling
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|16
+op_ne
+id|PCI_BASE_CLASS_BRIDGE
+)paren
+(brace
+id|disable_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n;&t; * Allocate space to each device:&n;&t; */
 r_for
 c_loop
@@ -1799,12 +1934,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Fixup configuration for Noname (AXPpci33) and Avanti (AlphaStation 240).&n; */
-DECL|function|avanti_and_noname_fixup
+multiline_comment|/*&n; * Fixup configuration for all boards that route the PCI interrupts&n; * through the SIO PCI/ISA bridge.  This includes Noname (AXPpci33),&n; * Avanti (AlphaStation) and Kenetics&squot;s Platform 2000.&n; */
+DECL|function|sio_fixup
 r_static
 r_inline
 r_void
-id|avanti_and_noname_fixup
+id|sio_fixup
 c_func
 (paren
 r_void
@@ -1827,6 +1962,120 @@ l_int|5
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_ALPHA_P2K
+(brace
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* idsel  6 (53c810) */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* idsel  7 (SIO: PCI/ISA bridge) */
+(brace
+l_int|1
+comma
+l_int|1
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* idsel  8 (slot A) */
+(brace
+l_int|2
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|0
+comma
+l_int|1
+)brace
+comma
+multiline_comment|/* idsel  9 (slot B) */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* idsel 10 (unused) */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* idsel 11 (unused) */
+(brace
+l_int|3
+comma
+l_int|3
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* idsel 12 (CMD0646) */
+macro_line|#else
 (brace
 l_int|3
 comma
@@ -1873,7 +2122,7 @@ op_minus
 l_int|1
 )brace
 comma
-multiline_comment|/* idsel  8 (slot closest to ISA) */
+multiline_comment|/* idsel  8 (Noname hack: slot closest to ISA) */
 (brace
 op_minus
 l_int|1
@@ -1922,7 +2171,7 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* idsel 11 (slot furthest from ISA) KN25_PCI_SLOT0 */
+multiline_comment|/* idsel 11 KN25_PCI_SLOT0 */
 (brace
 l_int|1
 comma
@@ -1935,10 +2184,9 @@ comma
 l_int|1
 )brace
 comma
-multiline_comment|/* idsel 12 (middle slot) KN25_PCI_SLOT1 */
-macro_line|#ifdef CONFIG_ALPHA_AVANTI
+multiline_comment|/* idsel 12 KN25_PCI_SLOT1 */
 (brace
-l_int|1
+l_int|2
 comma
 l_int|2
 comma
@@ -1950,7 +2198,7 @@ l_int|2
 )brace
 comma
 multiline_comment|/* idsel 13 KN25_PCI_SLOT2 */
-macro_line|#endif /* CONFIG_ALPHA_AVANTI */
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t; * route_tab selects irq routing in PCI/ISA bridge so that:&n;&t; *&t;&t;PIRQ0 -&gt; irq 15&n;&t; *&t;&t;PIRQ1 -&gt; irq  9&n;&t; *&t;&t;PIRQ2 -&gt; irq 10&n;&t; *&t;&t;PIRQ3 -&gt; irq 11&n;&t; *&n;&t; * This probably ought to be configurable via MILO.  For&n;&t; * example, sound boards seem to like using IRQ 9.&n;&t; */
@@ -2019,7 +2267,22 @@ c_cond
 id|dev-&gt;bus-&gt;number
 op_ne
 l_int|0
-op_logical_or
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;bios32.sio_fixup: don&squot;t know how to fixup devices on bus %d&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|PCI_SLOT
 c_func
 (paren
@@ -2053,9 +2316,12 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;bios32.avanti_and_noname_fixup: no dev on bus %d, slot %d!!&bslash;n&quot;
+l_string|&quot;bios32.sio_fixup: &quot;
+l_string|&quot;weird, found device %04x:%04x in non-existent slot %d!!&bslash;n&quot;
 comma
-id|dev-&gt;bus-&gt;number
+id|dev-&gt;vendor
+comma
+id|dev-&gt;device
 comma
 id|PCI_SLOT
 c_func
@@ -2194,7 +2460,7 @@ id|dev-&gt;irq
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  outw() doesn&squot;t&n;&t; * work, for some reason.&n;&t; */
+multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  outw() doesn&squot;t&n;&t; * work.&n;&t; */
 id|outb
 c_func
 (paren
@@ -2223,65 +2489,6 @@ comma
 l_int|0x4d1
 )paren
 suffix:semicolon
-macro_line|#if PCI_MODIFY
-(brace
-r_int
-r_char
-id|hostid
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * SRM console version X3.9 seems to reset the SCSI&n;&t;&t; * host-id to 0 no matter what console environment&n;&t;&t; * variable pka0_host_id is set to.  Thus, if the&n;&t;&t; * host-id reads out as a zero, we set it to 7.  The&n;&t;&t; * SCSI controller is on the motherboard on bus 0,&n;&t;&t; * slot 6&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|pcibios_read_config_byte
-c_func
-(paren
-l_int|0
-comma
-id|PCI_DEVFN
-c_func
-(paren
-l_int|6
-comma
-l_int|0
-)paren
-comma
-l_int|0x84
-comma
-op_amp
-id|hostid
-)paren
-op_eq
-id|PCIBIOS_SUCCESSFUL
-op_logical_and
-(paren
-id|hostid
-op_eq
-l_int|0
-)paren
-)paren
-(brace
-id|pcibios_write_config_byte
-c_func
-(paren
-l_int|0
-comma
-id|PCI_DEVFN
-c_func
-(paren
-l_int|6
-comma
-l_int|0
-)paren
-comma
-l_int|0x84
-comma
-l_int|7
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* !PCI_MODIFY */
 id|enable_ide
 c_func
 (paren
@@ -2325,13 +2532,13 @@ id|pci_root
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * Now is the time to do all those dirty little deeds...&n;&t; */
-macro_line|#if defined(CONFIG_ALPHA_NONAME) || defined(CONFIG_ALPHA_AVANTI)
-id|avanti_and_noname_fixup
+macro_line|#if defined(CONFIG_ALPHA_NONAME) || defined(CONFIG_ALPHA_AVANTI) || defined(CONFIG_ALPHA_P2K)
+id|sio_fixup
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_CABRIOLET)
+macro_line|#elif defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB164)
 id|cabriolet_fixup
 c_func
 (paren

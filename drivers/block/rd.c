@@ -669,7 +669,7 @@ DECL|function|identify_ramdisk_image
 id|identify_ramdisk_image
 c_func
 (paren
-r_int
+id|kdev_t
 id|device
 comma
 r_struct
@@ -1098,7 +1098,7 @@ r_int
 r_int
 id|fs
 suffix:semicolon
-r_int
+id|kdev_t
 id|device
 comma
 id|ram_device
@@ -1149,10 +1149,12 @@ id|ROOT_DEV
 suffix:semicolon
 id|ram_device
 op_assign
+id|MKDEV
+c_func
 (paren
 id|MAJOR_NR
-op_lshift
-l_int|8
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1552,10 +1554,12 @@ id|ROOT_DEV
 suffix:semicolon
 id|ROOT_DEV
 op_assign
+id|MKDEV
+c_func
 (paren
 id|MAJOR_NR
-op_lshift
-l_int|8
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|done

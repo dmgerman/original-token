@@ -80,7 +80,7 @@ id|NR_LDISCS
 )braket
 suffix:semicolon
 multiline_comment|/* line disc dispatch table&t;*/
-multiline_comment|/*&n; * fg_console is the current virtual console,&n; * last_console is the last used one,&n; * kmsg_redirect is the console for kernel messages,&n; * redirect is the pseudo-tty that console output&n; * is redirected to if asked by TIOCCONS.&n; */
+multiline_comment|/*&n; * fg_console is the current virtual console,&n; * last_console is the last used one,&n; * want_console is the console we want to switch to,&n; * kmsg_redirect is the console for kernel messages,&n; * redirect is the pseudo-tty that console output&n; * is redirected to if asked by TIOCCONS.&n; */
 DECL|variable|fg_console
 r_int
 id|fg_console
@@ -92,6 +92,13 @@ r_int
 id|last_console
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|want_console
+r_int
+id|want_console
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|kmsg_redirect
 r_int

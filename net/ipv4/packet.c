@@ -126,12 +126,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -380,9 +374,11 @@ id|timeout
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Stop more data and kill the socket off.&n;&t; */
-id|sk-&gt;inuse
-op_assign
-l_int|1
+id|lock_sock
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 id|sk-&gt;state
 op_assign
@@ -1008,14 +1004,9 @@ multiline_comment|/*&n;&t; *&t;Free or return the buffer as appropriate. Again t
 id|skb_free_datagram
 c_func
 (paren
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We are done.&n;&t; */
-id|release_sock
-c_func
-(paren
 id|sk
+comma
+id|skb
 )paren
 suffix:semicolon
 r_return

@@ -8751,7 +8751,7 @@ id|error
 suffix:semicolon
 id|c
 op_assign
-id|get_user_long
+id|get_user
 c_func
 (paren
 (paren
@@ -8949,7 +8949,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_user_byte
+id|put_user
 c_func
 (paren
 op_star
@@ -9123,7 +9123,7 @@ op_star
 id|stp
 op_increment
 op_assign
-id|get_user_byte
+id|get_user
 c_func
 (paren
 id|argp
@@ -9306,7 +9306,7 @@ op_star
 id|stp
 op_increment
 op_assign
-id|get_user_byte
+id|get_user
 c_func
 (paren
 id|argp
@@ -9609,7 +9609,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_user_byte
+id|put_user
 c_func
 (paren
 op_star
@@ -9837,7 +9837,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_user_byte
+id|put_user
 c_func
 (paren
 op_star

@@ -1706,13 +1706,6 @@ suffix:semicolon
 r_int
 id|tmp
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-multiline_comment|/* in case the malloc sleeps. */
 id|buff
 op_assign
 id|sock_wmalloc
@@ -1726,10 +1719,6 @@ l_int|1
 comma
 id|GFP_KERNEL
 )paren
-suffix:semicolon
-id|sk-&gt;inuse
-op_assign
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2124,12 +2113,6 @@ op_assign
 id|TCP_CLOSE
 suffix:semicolon
 multiline_comment|/* And this will destroy it */
-id|release_sock
-c_func
-(paren
-id|newsk
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2215,12 +2198,6 @@ suffix:semicolon
 id|newsk-&gt;state
 op_assign
 id|TCP_CLOSE
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|newsk
-)paren
 suffix:semicolon
 id|skb-&gt;sk
 op_assign
@@ -2485,12 +2462,6 @@ id|skb
 suffix:semicolon
 id|sk-&gt;ack_backlog
 op_increment
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|newsk
-)paren
 suffix:semicolon
 id|tcp_statistics.TcpOutSegs
 op_increment

@@ -40,6 +40,7 @@ id|vt_cons
 id|MAX_NR_CONSOLES
 )braket
 suffix:semicolon
+macro_line|#ifndef __alpha__
 id|asmlinkage
 r_int
 id|sys_ioperm
@@ -57,6 +58,7 @@ r_int
 id|on
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|getkeycode
@@ -87,16 +89,6 @@ id|compute_shiftstate
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|change_console
-c_func
-(paren
-r_int
-r_int
-id|new_console
 )paren
 suffix:semicolon
 r_extern
@@ -913,6 +905,8 @@ suffix:semicolon
 r_return
 id|i
 suffix:semicolon
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n;&t;&t; * These cannot be implemented on any machine that implements&n;&t;&t; * ioperm() in user level (such as Alpha PCs).&n;&t;&t; */
 r_case
 id|KDADDIO
 suffix:colon
@@ -979,6 +973,7 @@ id|ENXIO
 suffix:colon
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_case
 id|KDSETMODE
 suffix:colon
@@ -3866,7 +3861,7 @@ id|i
 r_return
 id|i
 suffix:semicolon
-id|change_console
+id|set_console
 c_func
 (paren
 id|arg
@@ -4034,10 +4029,21 @@ id|i
 r_return
 id|i
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * When we actually do the console switch,&n;&t;&t;&t;&t; * make sure we are atomic with respect to&n;&t;&t;&t;&t; * other console switches..&n;&t;&t;&t;&t; */
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|complete_change_console
 c_func
 (paren
 id|newvt
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

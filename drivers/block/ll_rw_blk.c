@@ -1987,7 +1987,19 @@ id|correct_size
 id|printk
 c_func
 (paren
-l_string|&quot;ll_rw_block: only %d-char blocks implemented (%lu)&bslash;n&quot;
+l_string|&quot;ll_rw_block: device %s: &quot;
+l_string|&quot;only %d-char blocks implemented (%lu)&bslash;n&quot;
+comma
+id|kdevname
+c_func
+(paren
+id|bh
+(braket
+l_int|0
+)braket
+op_member_access_from_pointer
+id|b_dev
+)paren
 comma
 id|correct_size
 comma

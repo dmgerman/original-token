@@ -431,6 +431,8 @@ r_return
 id|max_prio
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * Why do these exist?  Binary compatibility with some other standard?&n; * If so, maybe they should be moved into the appropriate arch&n; * directory.&n; */
 DECL|function|sys_profil
 id|asmlinkage
 r_int
@@ -515,6 +517,7 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+macro_line|#endif
 r_extern
 r_void
 id|hard_reset_now
@@ -945,6 +948,8 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * Why do these exist?  Binary compatibility with some other standard?&n; * If so, maybe they should be moved into the appropriate arch&n; * directory.&n; */
 DECL|function|sys_phys
 id|asmlinkage
 r_int
@@ -1015,6 +1020,7 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Unprivileged users may change the real uid to the effective uid&n; * or vice versa.  (BSD-style)&n; *&n; * If you set the real uid at all, or set the effective uid to a value not&n; * equal to the real uid, then the saved uid is set to the new effective uid.&n; *&n; * This makes it possible for a setuid program to completely drop its&n; * privileges, which is often a useful assertion to make when you are doing&n; * a security audit over a program.&n; *&n; * The general idea is that a program which uses just setreuid() will be&n; * 100% compatible with BSD.  A program which uses just setuid() will be&n; * 100% compatible with POSIX w/ Saved ID&squot;s. &n; */
 DECL|function|sys_setreuid
 id|asmlinkage
@@ -2392,6 +2398,8 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * Move these to arch dependent dir since they are for&n; * backward compatiblity only?&n; */
 DECL|function|sys_uname
 id|asmlinkage
 r_int
@@ -2679,6 +2687,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_sethostname
 id|asmlinkage
 r_int

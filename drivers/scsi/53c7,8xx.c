@@ -2111,6 +2111,18 @@ id|SCID_REG
 op_amp
 l_int|15
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|host-&gt;this_id
+op_eq
+l_int|0
+)paren
+id|host-&gt;this_id
+op_assign
+l_int|7
+suffix:semicolon
+multiline_comment|/* sanitize hostid---0 doesn&squot;t make sense */
 id|hostdata-&gt;this_id_mask
 op_assign
 l_int|1
@@ -5584,7 +5596,7 @@ id|failed
 (brace
 id|printk
 (paren
-l_string|&quot;scsi%d : DSP = 0x%p (script at 0x%px, start at 0x%x)&bslash;n&quot;
+l_string|&quot;scsi%d : DSP = 0x%p (script at 0x%p, start at 0x%x)&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -19026,16 +19038,16 @@ multiline_comment|/* &n;     * Check to see if the instruction pointer is not bo
 r_if
 c_cond
 (paren
+id|MAP_NR
+c_func
 (paren
-r_int
-r_int
-)paren
 id|insn
+)paren
 template_param
+id|MAP_NR
+c_func
 (paren
 id|high_memory
-op_minus
-l_int|8
 )paren
 op_logical_or
 (paren
@@ -19062,16 +19074,18 @@ op_eq
 id|DCMD_TYPE_MMI
 )paren
 op_logical_and
+id|MAP_NR
+c_func
 (paren
-r_int
-r_int
-)paren
 id|insn
+op_plus
+l_int|12
+)paren
 OG
+id|MAP_NR
+c_func
 (paren
 id|high_memory
-op_minus
-l_int|12
 )paren
 )paren
 )paren

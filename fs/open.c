@@ -649,6 +649,8 @@ id|length
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * sys_utime() can be implemented in user-level using sys_utimes().&n; * Is this for backwards compatibility?  If so, why not move it&n; * into the appropriate arch directory (for those architectures that&n; * need it).&n; */
 multiline_comment|/* If times==NULL, set access and modification to current time,&n; * must be owner or have write permission.&n; * Else, update from *times, must be owner or super user.&n; */
 DECL|function|sys_utime
 id|asmlinkage
@@ -842,6 +844,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* If times==NULL, set access and modification to current time,&n; * must be owner or have write permission.&n; * Else, update from *times, must be owner or super user.&n; */
 DECL|function|sys_utimes
 id|asmlinkage
@@ -2743,6 +2746,8 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|sys_creat
 id|asmlinkage
 r_int
@@ -2774,6 +2779,7 @@ id|mode
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|close_fp
 r_int
 id|close_fp

@@ -5,14 +5,14 @@ multiline_comment|/*&n; *  linux/include/linux/nfs_fs.h&n; *&n; *  Copyright (C)
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
-multiline_comment|/*&n; * The readdir cache size controls how many directory entries are cached.&n; * Its size is limited by the number of nfs_entry structures that can fit&n; * in one 4096-byte page, currently 256.&n; */
+multiline_comment|/*&n; * The readdir cache size controls how many directory entries are cached.&n; * Its size is limited by the number of nfs_entry structures that can fit&n; * in one page, currently, the limit is 256 when using 4KB pages.&n; */
 DECL|macro|NFS_READDIR_CACHE_SIZE
 mdefine_line|#define NFS_READDIR_CACHE_SIZE&t;&t;64
 DECL|macro|NFS_MAX_FILE_IO_BUFFER_SIZE
 mdefine_line|#define NFS_MAX_FILE_IO_BUFFER_SIZE&t;16384
 DECL|macro|NFS_DEF_FILE_IO_BUFFER_SIZE
 mdefine_line|#define NFS_DEF_FILE_IO_BUFFER_SIZE&t;1024
-multiline_comment|/*&n; * The upper limit on timeouts for the exponential backoff algorithm&n; * in tenths of a second.&n; */
+multiline_comment|/*&n; * The upper limit on timeouts for the exponential backoff algorithm.&n; */
 DECL|macro|NFS_MAX_RPC_TIMEOUT
 mdefine_line|#define NFS_MAX_RPC_TIMEOUT&t;&t;(6*HZ)
 multiline_comment|/*&n; * Size of the lookup cache in units of number of entries cached.&n; * It is better not to make this too large although the optimum&n; * depends on a usage and environment.&n; */

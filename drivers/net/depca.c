@@ -7366,6 +7366,9 @@ c_func
 (paren
 l_string|&quot;0x%8.8x  &quot;
 comma
+(paren
+id|u32
+)paren
 id|readl
 c_func
 (paren
@@ -7386,6 +7389,9 @@ c_func
 (paren
 l_string|&quot;...0x%8.8x&bslash;n&quot;
 comma
+(paren
+id|u32
+)paren
 id|readl
 c_func
 (paren
@@ -7433,6 +7439,9 @@ c_func
 (paren
 l_string|&quot;0x%8.8x  &quot;
 comma
+(paren
+id|u32
+)paren
 id|readl
 c_func
 (paren
@@ -7453,6 +7462,9 @@ c_func
 (paren
 l_string|&quot;...0x%8.8x&bslash;n&quot;
 comma
+(paren
+id|u32
+)paren
 id|readl
 c_func
 (paren
@@ -7479,6 +7491,9 @@ c_func
 (paren
 l_string|&quot;&bslash;tmode: 0x%4.4x&bslash;n&quot;
 comma
+(paren
+id|u16
+)paren
 id|readw
 c_func
 (paren
@@ -7620,6 +7635,9 @@ c_func
 (paren
 l_string|&quot;&bslash;trx_ring at: 0x%8.8x&bslash;n&quot;
 comma
+(paren
+id|u32
+)paren
 id|readl
 c_func
 (paren
@@ -7633,6 +7651,9 @@ c_func
 (paren
 l_string|&quot;&bslash;ttx_ring at: 0x%8.8x&bslash;n&quot;
 comma
+(paren
+id|u32
+)paren
 id|readl
 c_func
 (paren

@@ -530,9 +530,6 @@ id|count
 )paren
 op_logical_and
 (paren
-id|abs
-c_func
-(paren
 id|jiffies
 op_minus
 id|cache
@@ -541,7 +538,6 @@ id|i
 )braket
 dot
 id|time
-)paren
 OL
 id|EXPIRE_CACHE
 )paren

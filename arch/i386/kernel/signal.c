@@ -794,6 +794,14 @@ id|mask
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;This stops gcc flipping out. Otherwise the assembler&n;&t;&t; *&t;including volatiles for the inline function to get&n;&t;&t; *&t;current combined with this gets it confused.&n;&t;&t; */
+r_struct
+id|task_struct
+op_star
+id|t
+op_assign
+id|current
+suffix:semicolon
 id|__asm__
 c_func
 (paren
@@ -802,7 +810,7 @@ l_string|&quot;btrl %1,%0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|current-&gt;signal
+id|t-&gt;signal
 )paren
 comma
 l_string|&quot;=r&quot;
@@ -812,7 +820,7 @@ id|signr
 suffix:colon
 l_string|&quot;0&quot;
 (paren
-id|current-&gt;signal
+id|t-&gt;signal
 )paren
 comma
 l_string|&quot;1&quot;

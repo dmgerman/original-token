@@ -1319,6 +1319,7 @@ id|f-&gt;fw_tosxor
 suffix:semicolon
 )brace
 r_else
+(brace
 id|tosand
 op_assign
 l_int|0xFF
@@ -1327,6 +1328,7 @@ id|tosxor
 op_assign
 l_int|0x00
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3102,7 +3104,7 @@ id|iph-&gt;daddr
 comma
 id|size
 comma
-id|skb-&gt;sk
+id|skb
 )paren
 suffix:semicolon
 )brace
@@ -3151,7 +3153,7 @@ c_func
 r_struct
 id|sk_buff
 op_star
-id|skb_ptr
+id|skb
 )paren
 (brace
 r_struct
@@ -3159,7 +3161,7 @@ id|iphdr
 op_star
 id|iph
 op_assign
-id|skb_ptr-&gt;h.iph
+id|skb-&gt;h.iph
 suffix:semicolon
 r_int
 r_int
@@ -3182,7 +3184,7 @@ id|tcphdr
 op_star
 )paren
 (paren
-id|skb_ptr-&gt;h.raw
+id|skb-&gt;h.raw
 op_plus
 (paren
 id|iph-&gt;ihl
@@ -3348,7 +3350,7 @@ id|ms-&gt;mport
 r_int
 id|size
 op_assign
-id|skb_ptr-&gt;len
+id|skb-&gt;len
 op_minus
 (paren
 (paren
@@ -3358,7 +3360,7 @@ op_star
 )paren
 id|portptr
 op_minus
-id|skb_ptr-&gt;h.raw
+id|skb-&gt;h.raw
 )paren
 suffix:semicolon
 id|iph-&gt;daddr
@@ -3566,7 +3568,7 @@ id|iph-&gt;daddr
 comma
 id|size
 comma
-id|skb_ptr-&gt;sk
+id|skb
 )paren
 suffix:semicolon
 )brace

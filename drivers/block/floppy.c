@@ -326,6 +326,8 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+DECL|macro|ITYPE
+mdefine_line|#define ITYPE(x) (((x)&gt;&gt;2) &amp; 0x1f)
 DECL|macro|TOMINOR
 mdefine_line|#define TOMINOR(x) ((x &amp; 3) | ((x &amp; 4) &lt;&lt; 5))
 DECL|macro|UNIT
@@ -13299,7 +13301,7 @@ comma
 r_int
 id|type
 comma
-r_int
+id|kdev_t
 id|device
 )paren
 (brace
@@ -13395,7 +13397,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|TYPE
+id|ITYPE
 c_func
 (paren
 id|drive_state
@@ -13508,7 +13510,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|TYPE
+id|ITYPE
 c_func
 (paren
 id|drive_state
@@ -17621,7 +17623,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|TYPE
+id|ITYPE
 c_func
 (paren
 id|i
@@ -17634,7 +17636,7 @@ id|i
 op_assign
 id|floppy_type
 (braket
-id|TYPE
+id|ITYPE
 c_func
 (paren
 id|i

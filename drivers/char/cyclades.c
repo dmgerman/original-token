@@ -4534,7 +4534,8 @@ id|info-&gt;xmit_buf
 )paren
 (brace
 r_int
-r_int
+r_char
+op_star
 id|temp
 suffix:semicolon
 id|temp

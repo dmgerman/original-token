@@ -5893,23 +5893,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|__FILE__
-l_string|&quot;: module is in use, remove rejected&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|scsi_unregister_module
 c_func
 (paren

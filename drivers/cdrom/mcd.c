@@ -6467,21 +6467,6 @@ r_void
 r_if
 c_cond
 (paren
-id|MOD_IN_USE
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;mcd module in use - can&squot;t remove it.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 (paren
 id|unregister_blkdev
 c_func

@@ -34,7 +34,7 @@ mdefine_line|#define _IOC_READ&t;2U
 DECL|macro|_IOC_WRITE
 mdefine_line|#define _IOC_WRITE&t;4U
 DECL|macro|_IOC
-mdefine_line|#define _IOC(dir,type,nr,size) &bslash;&n;&t;(((dir)  &lt;&lt; _IOC_DIRSHIFT) | &bslash;&n;&t; ((type) &lt;&lt; _IOC_TYPESHIFT) | &bslash;&n;&t; ((nr)   &lt;&lt; _IOC_NRSHIFT) | &bslash;&n;&t; ((size) &lt;&lt; _IOC_SIZESHIFT))
+mdefine_line|#define _IOC(dir,type,nr,size)&t;&t;&t;&bslash;&n;&t;((__u32)&t;&t;&t;&t;&bslash;&n;&t; (((dir)  &lt;&lt; _IOC_DIRSHIFT) |&t;&t;&bslash;&n;&t;  ((type) &lt;&lt; _IOC_TYPESHIFT) |&t;&t;&bslash;&n;&t;  ((nr)   &lt;&lt; _IOC_NRSHIFT) |&t;&t;&bslash;&n;&t;  ((size) &lt;&lt; _IOC_SIZESHIFT)))
 multiline_comment|/* used to create numbers */
 DECL|macro|_IO
 mdefine_line|#define _IO(type,nr)&t;&t;_IOC(_IOC_NONE,(type),(nr),0)

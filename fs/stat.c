@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|cp_old_stat
 r_static
 r_void
@@ -117,6 +119,7 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|cp_new_stat
 r_static
 r_void
@@ -354,6 +357,8 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|sys_stat
 id|asmlinkage
 r_int
@@ -439,6 +444,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_newstat
 id|asmlinkage
 r_int
@@ -524,6 +530,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|sys_lstat
 id|asmlinkage
 r_int
@@ -609,6 +617,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_newlstat
 id|asmlinkage
 r_int
@@ -694,6 +703,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backward compatibility?  Maybe this should be moved&n; * into arch/i386 instead?&n; */
 DECL|function|sys_fstat
 id|asmlinkage
 r_int
@@ -787,6 +798,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sys_newfstat
 id|asmlinkage
 r_int

@@ -1164,6 +1164,8 @@ id|timer
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backwards compatibility?  This can be done in libc so Alpha&n; * and all newer ports shouldn&squot;t need it.&n; */
 DECL|function|sys_pause
 id|asmlinkage
 r_int
@@ -1187,6 +1189,7 @@ op_minus
 id|ERESTARTNOHAND
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * wake_up doesn&squot;t wake up stopped processes - they have to be awakened&n; * with signals or similar.&n; *&n; * Note that this doesn&squot;t need cli-sti pairs: interrupts may not change&n; * the wait-queue structures directly, but only call wake_up() to wake&n; * a process. The process itself must remove the queue once it has woken.&n; */
 DECL|function|wake_up
 r_void
@@ -3441,6 +3444,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * For backwards compatibility?  This can be done in libc so Alpha&n; * and all newer ports shouldn&squot;t need it.&n; */
 DECL|function|sys_alarm
 id|asmlinkage
 r_int
@@ -3507,6 +3512,7 @@ r_return
 id|oldalarm
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * The Alpha uses getxpid, getxuid, and getxgid instead.  Maybe this&n; * should be moved into arch/i386 instead?&n; */
 DECL|function|sys_getpid
 id|asmlinkage
 r_int
@@ -3585,6 +3591,7 @@ r_return
 id|current-&gt;egid
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This has been replaced by sys_setpriority.  Maybe it should be&n; * moved into the arch depedent tree for those ports that require&n; * it for backward compatibility?&n; */
 DECL|function|sys_nice
 id|asmlinkage
 r_int
@@ -3717,6 +3724,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|find_process_by_pid
 r_static
 r_struct

@@ -810,9 +810,11 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|sk-&gt;inuse
-op_assign
-l_int|1
+id|lock_sock
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 multiline_comment|/* just to be safe. */
 id|remove_sock
@@ -1192,9 +1194,11 @@ id|sk-&gt;ack_backlog
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;inuse
-op_assign
-l_int|0
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 id|reset_timer
 c_func
@@ -2655,9 +2659,11 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|sk-&gt;inuse
-op_assign
-l_int|1
+id|lock_sock
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 multiline_comment|/* This will destroy it. */
 id|sock-&gt;data

@@ -142,17 +142,10 @@ op_assign
 id|sk-&gt;timeout
 suffix:semicolon
 multiline_comment|/* &n;&t; * only process if socket is not in use&n;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;inuse
-op_logical_or
-id|in_bh
+id|sk-&gt;users
 )paren
 (brace
 id|sk-&gt;timer.expires
@@ -176,15 +169,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|sk-&gt;inuse
-op_assign
-l_int|1
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Always see if we need to send an ack. */
 r_if
 c_cond
@@ -243,11 +227,6 @@ id|printk
 l_string|&quot;non dead socket in time_done&bslash;n&quot;
 )paren
 suffix:semicolon
-id|release_sock
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -287,7 +266,7 @@ id|sk-&gt;wmem_alloc
 op_decrement
 suffix:semicolon
 multiline_comment|/* Might now have hit 0 - fall through and do it again if so */
-id|sk-&gt;inuse
+id|sk-&gt;users
 op_assign
 l_int|0
 suffix:semicolon
@@ -312,7 +291,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Socket gone, DON&squot;T update sk-&gt;inuse! */
+multiline_comment|/* Socket gone, DON&squot;T update sk-&gt;users! */
 r_break
 suffix:semicolon
 r_case
@@ -355,11 +334,6 @@ comma
 id|TCP_DONE_TIME
 )paren
 suffix:semicolon
-id|release_sock
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -369,11 +343,6 @@ id|printk
 l_string|&quot;net_timer: timer expired - reason %d is unknown&bslash;n&quot;
 comma
 id|why
-)paren
-suffix:semicolon
-id|release_sock
-(paren
-id|sk
 )paren
 suffix:semicolon
 r_break

@@ -2518,6 +2518,18 @@ op_complement
 l_int|1
 suffix:semicolon
 multiline_comment|/* always mask out irq 0---it&squot;s the unused timer */
+macro_line|#ifdef CONFIG_ALPHA_P2K
+id|irqs
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+multiline_comment|/* mask out irq 8 since that&squot;s the unused RTC input to PIC */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2727,7 +2739,7 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
-macro_line|#if defined(CONFIG_ALPHA_JENSEN) || defined(CONFIG_ALPHA_NONAME) || &bslash;&n;    defined(CONFIG_ALPHA_SRM)
+macro_line|#if defined(CONFIG_ALPHA_JENSEN) || defined(CONFIG_ALPHA_NONAME) || &bslash;&n;    defined(CONFIG_ALPHA_P2K) || defined(CONFIG_ALPHA_SRM)
 id|srm_device_interrupt
 c_func
 (paren

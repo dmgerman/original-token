@@ -8119,7 +8119,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|put_user_long
+id|put_user
 c_func
 (paren
 id|result
@@ -8195,7 +8195,7 @@ id|TIOCMSET
 suffix:colon
 id|value
 op_assign
-id|get_user_long
+id|get_user
 c_func
 (paren
 (paren
