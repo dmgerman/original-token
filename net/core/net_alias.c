@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *&t;&t;NET_ALIAS network device aliasing module.&n; *&n; *&n; * Version:&t;@(#)net_alias.c&t;0.43   12/20/95&n; *&n; * Authors:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&t;&t;Marcelo Fabian Roccasalva, &lt;mfroccas@raiz.uncu.edu.ar&gt;&n; *&n; * Features:&n; *&t;-&t;AF_ independent: net_alias_type objects&n; *&t;-&t;AF_INET optimized&n; *&t;-&t;ACTUAL alias devices inserted in dev chain&n; *&t;-&t;fast hashed alias address lookup&n; *&t;-&t;net_alias_type objs registration/unreg., module-ables.&n; *&t;-&t;/proc/net/aliases &amp; /proc/net/alias_types entries&n; * Fixes:&n; *&t;JJC&t;:&t;several net_alias_type func. renamed.&n; *&t;JJC&t;:&t;net_alias_type object methods now pass *this.&n; *&t;JJC&t;:&t;xxx_rcv device selection based on &lt;src,dst&gt; addrs&n; *&n; * FIXME:&n; *&t;- User calls sleep/wake_up locking.&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;&t;NET_ALIAS network device aliasing module.&n; *&n; *&n; * Version:&t;@(#)net_alias.c&t;0.43   12/20/95&n; *&n; * Authors:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&t;&t;Marcelo Fabian Roccasalva, &lt;mfroccas@raiz.uncu.edu.ar&gt;&n; *&n; * Features:&n; *&t;-&t;AF_ independent: net_alias_type objects&n; *&t;-&t;AF_INET optimized&n; *&t;-&t;ACTUAL alias devices inserted in dev chain&n; *&t;-&t;fast hashed alias address lookup&n; *&t;-&t;net_alias_type objs registration/unreg., module-ables.&n; *&t;-&t;/proc/net/aliases &amp; /proc/net/alias_types entries&n; * Fixes:&n; *&t;&t;&t;JJC&t;:&t;several net_alias_type func. renamed.&n; *&t;&t;&t;JJC&t;:&t;net_alias_type object methods now pass &n; *&t;&t;&t;&t;&t;*this.&n; *&t;&t;&t;JJC&t;:&t;xxx_rcv device selection based on &lt;src,dst&gt; &n; *&t;&t;&t;&t;&t;addrs&n; *&t;&t;Andreas Schultz&t;:&t;Kerneld support.&n; *&n; * FIXME:&n; *&t;- User calls sleep/wake_up locking.&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -13,6 +14,9 @@ macro_line|#include &quot;net_alias.h&quot;
 macro_line|#include &quot;user_stubs.h&quot;
 macro_line|#endif
 macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Only allow the following flags to pass from main device to aliases&n; */
 DECL|macro|NET_ALIAS_IFF_MASK
 mdefine_line|#define  NET_ALIAS_IFF_MASK   (IFF_UP|IFF_BROADCAST|IFF_RUNNING|IFF_NOARP|IFF_LOOPBACK|IFF_POINTOPOINT)
@@ -1110,6 +1114,44 @@ op_logical_neg
 id|nat
 )paren
 (brace
+macro_line|#ifdef CONFIG_KERNELD
+r_char
+id|modname
+(braket
+l_int|20
+)braket
+suffix:semicolon
+id|sprintf
+(paren
+id|modname
+comma
+l_string|&quot;netalias-%d&quot;
+comma
+id|family
+)paren
+suffix:semicolon
+id|request_module
+c_func
+(paren
+id|modname
+)paren
+suffix:semicolon
+id|nat
+op_assign
+id|nat_getbytype
+c_func
+(paren
+id|family
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|nat
+)paren
+(brace
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1132,6 +1174,9 @@ suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_KERNELD
+)brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n;   * do not allow creation over downed devices&n;   */
 op_star

@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/string.h&gt;
 DECL|variable|high_memory
 r_int
 r_int
@@ -570,9 +571,6 @@ comma
 op_star
 id|new_pg
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -601,29 +599,28 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|memcpy
+c_func
 (paren
-id|i
-op_assign
-id|USER_PTRS_PER_PGD
-suffix:semicolon
-id|i
-OL
-id|PTRS_PER_PGD
-suffix:semicolon
-id|i
-op_increment
-)paren
 id|new_pg
-(braket
-id|i
-)braket
-op_assign
+op_plus
+id|USER_PTRS_PER_PGD
+comma
 id|page_dir
-(braket
-id|i
-)braket
+op_plus
+id|USER_PTRS_PER_PGD
+comma
+(paren
+id|PTRS_PER_PGD
+op_minus
+id|USER_PTRS_PER_PGD
+)paren
+op_star
+r_sizeof
+(paren
+id|pgd_t
+)paren
+)paren
 suffix:semicolon
 id|invalidate_mm
 c_func
@@ -3973,7 +3970,7 @@ id|vm_area_struct
 op_star
 id|mpnt
 suffix:semicolon
-id|invalidate_inode_pages
+id|truncate_inode_pages
 c_func
 (paren
 id|inode

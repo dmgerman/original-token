@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;No fd passing yet.&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesnt panic the kernel.&n; */
+multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;&t;Currently this contains all but the file descriptor passing code.&n; *&t;&t;Before that goes in the odd bugs in the iovec handlers need &n; *&t;&t;fixing, and this bit testing. BSD fd passing is not a trivial part&n; *&t;&t;of the exercise it turns out. Anyone like writing garbage collectors.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;No fd passing yet.&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesnt panic the kernel.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -34,7 +34,7 @@ l_int|NULL
 suffix:semicolon
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;(((a)&lt;(b))?(a):(b))
-multiline_comment|/*&n; * Make sure the unix name is null-terminated.&n; */
+multiline_comment|/*&n; *&t;Make sure the unix name is null-terminated.&n; */
 DECL|function|unix_mkname
 r_static
 r_inline
@@ -1772,8 +1772,21 @@ r_if
 c_cond
 (paren
 id|sock-&gt;state
-op_eq
+op_ne
 id|SS_CONNECTING
+)paren
+(brace
+r_return
+op_minus
+id|EISCONN
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|O_NONBLOCK
 )paren
 (brace
 r_return
@@ -1781,10 +1794,7 @@ op_minus
 id|EALREADY
 suffix:semicolon
 )brace
-r_return
-op_minus
-id|EISCONN
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Drop through the connect up logic to the wait.&n;&t;&t; */
 )brace
 r_if
 c_cond
@@ -1822,7 +1832,11 @@ c_cond
 id|sk-&gt;type
 op_eq
 id|SOCK_DGRAM
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|sk-&gt;protinfo.af_unix.other
 )paren
 (brace
@@ -1838,14 +1852,6 @@ op_assign
 id|SS_UNCONNECTED
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sock-&gt;type
-op_eq
-id|SOCK_DGRAM
-)paren
-(brace
 id|other
 op_assign
 id|unix_find_other

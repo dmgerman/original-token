@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;SoftDog&t;0.02:&t;A Software Watchdog Device&n; *&n; *&t;(c) Copyright 1995    Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;&n; *&n; *&t;Email us for quotes on Linux software and driver development. &n; *&n; *&t;&t;&t;-----------------------&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;&t;-----------------------&n; *&n; *&t;Software only watchdog driver. Unlike its big brother the WDT501P&n; *&t;driver this won&squot;t always recover a failed machine.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -121,6 +122,7 @@ id|file
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Shut off the timer.&n;&t; */
+macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT&t; 
 id|del_timer
 c_func
 (paren
@@ -128,6 +130,7 @@ op_amp
 id|watchdog_ticktock
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|timer_alive
 op_assign
 l_int|0

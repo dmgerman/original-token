@@ -679,6 +679,7 @@ op_eq
 id|WATCHDOG_MINOR
 )paren
 (brace
+macro_line|#ifndef CONFIG_WATCHDOG_NOWAYOUT&t;
 id|inb_p
 c_func
 (paren
@@ -695,6 +696,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* 0 length reset pulses now */
+macro_line|#endif&t;&t;
 id|wdt_is_open
 op_assign
 l_int|0

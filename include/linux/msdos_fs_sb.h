@@ -105,6 +105,11 @@ DECL|member|dotsOK
 r_char
 id|dotsOK
 suffix:semicolon
+DECL|member|showexec
+r_char
+id|showexec
+suffix:semicolon
+multiline_comment|/* 1 = only set x bit for com/exe/bat */
 DECL|member|sys_immutable
 r_char
 id|sys_immutable

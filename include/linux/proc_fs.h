@@ -106,6 +106,9 @@ id|PROC_PID_INO
 op_assign
 l_int|2
 comma
+DECL|enumerator|PROC_PID_STATUS
+id|PROC_PID_STATUS
+comma
 DECL|enumerator|PROC_PID_MEM
 id|PROC_PID_MEM
 comma

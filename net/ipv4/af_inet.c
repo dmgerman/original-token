@@ -902,28 +902,7 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;  &t; *&t;In case it&squot;s sleeping somewhere. &n;  &t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sk-&gt;dead
-)paren
-id|sk
-op_member_access_from_pointer
-id|write_space
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-multiline_comment|/*&n;  &t; *&t;Don&squot;t discard received data until the user side kills its&n;  &t; *&t;half of the socket.&n;  &t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;dead
-)paren
-(brace
+multiline_comment|/*&n;  &t; *&t;Clean up the read buffer.&n;  &t; */
 r_while
 c_loop
 (paren
@@ -960,10 +939,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|skb-&gt;sk-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;sk-&gt;prot
 op_member_access_from_pointer
 id|close
@@ -989,7 +964,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; *&t;Now we need to clean up the send head. &n;&t; */
 id|cli
@@ -1106,10 +1080,6 @@ c_cond
 id|sk-&gt;pair
 )paren
 (brace
-id|sk-&gt;pair-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
 id|sk-&gt;pair-&gt;prot
 op_member_access_from_pointer
 id|close
@@ -1129,8 +1099,6 @@ multiline_comment|/*&n;&t; * Now if everything is gone we can free the socket&n;
 r_if
 c_cond
 (paren
-id|sk-&gt;dead
-op_logical_and
 id|sk-&gt;rmem_alloc
 op_eq
 l_int|0
@@ -1186,6 +1154,12 @@ r_else
 (brace
 multiline_comment|/* this should never happen. */
 multiline_comment|/* actually it can if an ack has just been sent. */
+id|printk
+c_func
+(paren
+l_string|&quot;Socket destroy delayed&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sk-&gt;destroy
 op_assign
 l_int|1
@@ -3451,10 +3425,6 @@ id|newsock-&gt;data
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
 id|destroy_sock
 c_func
 (paren
@@ -3632,10 +3602,6 @@ c_func
 (paren
 id|sk2
 )paren
-suffix:semicolon
-id|sk2-&gt;dead
-op_assign
-l_int|1
 suffix:semicolon
 id|destroy_sock
 c_func

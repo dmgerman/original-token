@@ -423,6 +423,26 @@ c_func
 l_string|&quot;ncp_mmap: called&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ncp_conn_valid
+c_func
+(paren
+id|NCP_SERVER
+c_func
+(paren
+id|inode
+)paren
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 multiline_comment|/* only PAGE_COW or read-only supported now */
 r_if
 c_cond

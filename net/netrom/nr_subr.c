@@ -655,10 +655,7 @@ comma
 op_amp
 id|sk-&gt;nr-&gt;user_addr
 comma
-r_sizeof
-(paren
-id|ax25_address
-)paren
+id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
 id|dptr
@@ -696,10 +693,7 @@ comma
 op_amp
 id|sk-&gt;nr-&gt;source_addr
 comma
-r_sizeof
-(paren
-id|ax25_address
-)paren
+id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
 id|dptr

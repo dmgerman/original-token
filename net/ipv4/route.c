@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/route.h&gt;
@@ -1840,9 +1841,10 @@ op_amp
 id|RTF_GATEWAY
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Don&squot;t try to add a gateway we can&squot;t reach.. &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Don&squot;t try to add a gateway we can&squot;t reach.. &n;&t;&t; *&t;Tunnel devices are exempt from this rule.&n;&t;&t; */
 r_if
 c_cond
+(paren
 (paren
 id|dev
 op_ne
@@ -1851,6 +1853,11 @@ c_func
 (paren
 id|gw
 )paren
+)paren
+op_logical_and
+id|dev-&gt;type
+op_ne
+id|ARPHRD_TUNNEL
 )paren
 r_return
 suffix:semicolon

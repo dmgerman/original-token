@@ -152,7 +152,7 @@ id|sk-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-l_int|10
+id|HZ
 suffix:semicolon
 id|add_timer
 c_func
@@ -259,57 +259,12 @@ r_case
 id|TIME_DESTROY
 suffix:colon
 multiline_comment|/*&n;&t;&t; *&t;We&squot;ve waited for a while for all the memory associated with&n;&t;&t; *&t;the socket to be freed.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|sk-&gt;wmem_alloc
-op_ne
-l_int|0
-op_logical_or
-id|sk-&gt;rmem_alloc
-op_ne
-l_int|0
-)paren
-(brace
-id|sk-&gt;wmem_alloc
-op_increment
-suffix:semicolon
-multiline_comment|/* So it DOESN&squot;T go away */
-id|destroy_sock
-(paren
-id|sk
-)paren
-suffix:semicolon
-id|sk-&gt;wmem_alloc
-op_decrement
-suffix:semicolon
-multiline_comment|/* Might now have hit 0 - fall through and do it again if so */
-id|sk-&gt;users
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* This will be ok, the destroy won&squot;t totally work */
-)brace
-r_if
-c_cond
-(paren
-id|sk-&gt;wmem_alloc
-op_eq
-l_int|0
-op_logical_and
-id|sk-&gt;rmem_alloc
-op_eq
-l_int|0
-)paren
-(brace
 id|destroy_sock
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* Socket gone, DON&squot;T update sk-&gt;users! */
 r_break
 suffix:semicolon
 r_case
@@ -347,7 +302,7 @@ id|reset_timer
 (paren
 id|sk
 comma
-id|TIME_DESTROY
+id|TIME_DONE
 comma
 id|TCP_DONE_TIME
 )paren

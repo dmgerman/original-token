@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Added DAMA support&n; */
+multiline_comment|/*&n; *&t;AX.25 release 031&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1252,8 +1252,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* dl1bke 960114: shouldn&squot;t ax25/dama_check_need_response reside as  */
-multiline_comment|/*                static inline void ...() in ax25.h, should it? ;-) */
+multiline_comment|/*&n; *&t;dl1bke 960114: shouldn&squot;t ax25/dama_check_need_response reside as&n; *                static inline void ...() in ax25.h, should it? ;-)&n; */
 DECL|function|ax25_check_need_response
 r_void
 id|ax25_check_need_response
@@ -1289,7 +1288,7 @@ id|ax25
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* dl1bke 960114: transmit I frames on DAMA poll */
+multiline_comment|/*&n; *&t;dl1bke 960114: transmit I frames on DAMA poll&n; */
 DECL|function|dama_enquiry_response
 r_void
 id|dama_enquiry_response
@@ -1303,8 +1302,6 @@ id|ax25
 id|ax25_cb
 op_star
 id|ax25o
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -1359,10 +1356,12 @@ id|ax25
 suffix:semicolon
 )brace
 r_else
+(brace
 id|ax25-&gt;n2count
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|ax25-&gt;t3timer
 op_assign
 id|ax25-&gt;t3
@@ -1411,6 +1410,8 @@ op_assign
 id|ax25_list
 suffix:semicolon
 id|ax25o
+op_ne
+l_int|NULL
 suffix:semicolon
 id|ax25o
 op_assign
@@ -1515,12 +1516,14 @@ id|ax25o-&gt;ack_queue
 op_ne
 l_int|NULL
 )paren
+(brace
 id|ax25_t1_timeout
 c_func
 (paren
 id|ax25o
 )paren
 suffix:semicolon
+)brace
 id|ax25o-&gt;t3timer
 op_assign
 id|ax25o-&gt;t3

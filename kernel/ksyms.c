@@ -480,6 +480,12 @@ comma
 id|X
 c_func
 (paren
+id|invalidate_inode_pages
+)paren
+comma
+id|X
+c_func
+(paren
 id|fsync_dev
 )paren
 comma
@@ -547,6 +553,12 @@ id|X
 c_func
 (paren
 id|__wait_on_buffer
+)paren
+comma
+id|X
+c_func
+(paren
+id|__wait_on_page
 )paren
 comma
 id|X

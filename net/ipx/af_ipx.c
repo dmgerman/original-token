@@ -6534,6 +6534,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* General user level IPX */
+id|sk-&gt;ipx_ncp_server
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sk-&gt;debug
 op_assign
 l_int|0

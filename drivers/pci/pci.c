@@ -689,6 +689,26 @@ comma
 id|DEVICE
 c_func
 (paren
+id|SGS
+comma
+id|SGS_2000
+comma
+l_string|&quot;STG 2000X&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SGS
+comma
+id|SGS_1764
+comma
+l_string|&quot;STG 1764X&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|BUSLOGIC
 comma
 id|BUSLOGIC_946C_2
@@ -1151,6 +1171,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|AMCC
+comma
+id|AMCC_MYRINET
+comma
+l_string|&quot;Myrinet PCI (M2-PCI-32)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|INTERG
 comma
 id|INTERG_1680
@@ -1346,6 +1376,46 @@ comma
 id|SPECIALIX_RIO
 comma
 l_string|&quot;RIO host&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RP8OCTA
+comma
+l_string|&quot;RocketPort 8 Oct&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RP8INTF
+comma
+l_string|&quot;RocketPort 8 Intf&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RP16INTF
+comma
+l_string|&quot;RocketPort 16 Intf&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|RP
+comma
+id|RP32INTF
+comma
+l_string|&quot;RocketPort 32 Intf&quot;
 )paren
 comma
 id|DEVICE
@@ -2859,6 +2929,12 @@ id|PCI_VENDOR_ID_SPECIALIX
 suffix:colon
 r_return
 l_string|&quot;Specialix&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_RP
+suffix:colon
+r_return
+l_string|&quot;Comtrol&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_CYCLADES

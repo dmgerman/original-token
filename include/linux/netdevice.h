@@ -13,16 +13,21 @@ DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7
 macro_line|#ifndef CONFIG_AX25
 macro_line|#ifndef CONFIG_TR
+macro_line|#ifndef CONFIG_NET_IPIP
 DECL|macro|MAX_HEADER
 mdefine_line|#define MAX_HEADER&t;32&t;&t;/* We really need about 18 worst case .. so 32 is aligned */
 macro_line|#else
 DECL|macro|MAX_HEADER
+mdefine_line|#define MAX_HEADER&t;48&t;&t;/* We need to allow for having tunnel headers */
+macro_line|#endif  /* IPIP */
+macro_line|#else
+DECL|macro|MAX_HEADER
 mdefine_line|#define MAX_HEADER&t;48&t;&t;/* Token Ring header needs 40 bytes ... 48 is aligned */ 
-macro_line|#endif
+macro_line|#endif /* TR */
 macro_line|#else
 DECL|macro|MAX_HEADER
 mdefine_line|#define MAX_HEADER&t;96&t;&t;/* AX.25 + NetROM */
-macro_line|#endif
+macro_line|#endif /* AX25 */
 DECL|macro|IS_MYADDR
 mdefine_line|#define IS_MYADDR&t;1&t;&t;/* address is (one of) our own&t;*/
 DECL|macro|IS_LOOPBACK

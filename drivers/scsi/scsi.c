@@ -642,6 +642,17 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/* guess what? */
 (brace
+l_string|&quot;MEDIAVIS&quot;
+comma
+l_string|&quot;RENO CD-ROMX2A&quot;
+comma
+l_string|&quot;2.03&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/*Responds to all lun */
+(brace
 l_string|&quot;NEC&quot;
 comma
 l_string|&quot;CD-ROM DRIVE:841&quot;
@@ -680,6 +691,17 @@ comma
 l_string|&quot;ST296&quot;
 comma
 l_string|&quot;921&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Responds to all lun */
+(brace
+l_string|&quot;SEAGATE&quot;
+comma
+l_string|&quot;ST1581&quot;
+comma
+l_string|&quot;6538&quot;
 comma
 id|BLIST_NOLUN
 )brace

@@ -1082,6 +1082,19 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|truncate_inode_pages
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|GFP_BUFFER
 mdefine_line|#define GFP_BUFFER&t;0x00
 DECL|macro|GFP_ATOMIC

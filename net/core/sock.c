@@ -1652,6 +1652,11 @@ r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;This is only ever called from a user process context, hence&n;&t; *&t;(until fine grained SMP) its safe. sk-&gt;users must be volatile&n;&t; *&t;so the compiler doesn&squot;t do anything unfortunate with it.&n;&t; *&n;&t; *&t;The &quot;barrier()&quot; stuff takes care of that. Note that the rcv&n;&t; *&t;function may not sleep, so &quot;users&quot; is not going to change there.&n;&t; */
 multiline_comment|/* See if we have any packets built up. */
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1669,15 +1674,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sk-&gt;users
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1716,16 +1712,12 @@ op_star
 id|sk-&gt;pair
 )paren
 suffix:semicolon
-id|sk-&gt;users
-op_assign
-l_int|0
-suffix:semicolon
-id|barrier
+)brace
+id|end_bh_atomic
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif  
 )brace
 eof

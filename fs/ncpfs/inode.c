@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,6 +13,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 macro_line|#include &quot;ncplib_kernel.h&quot;
 r_extern
 r_int
@@ -644,6 +648,11 @@ id|file
 op_star
 id|wdog_filp
 suffix:semicolon
+r_struct
+id|file
+op_star
+id|msg_filp
+suffix:semicolon
 id|kdev_t
 id|dev
 op_assign
@@ -698,6 +707,13 @@ l_string|&quot;older&quot;
 suffix:colon
 l_string|&quot;newer&quot;
 )paren
+suffix:semicolon
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 r_if
@@ -792,6 +808,52 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|data-&gt;message_fd
+op_ge
+id|NR_OPEN
+)paren
+op_logical_or
+(paren
+(paren
+id|msg_filp
+op_assign
+id|current-&gt;files-&gt;fd
+(braket
+id|data-&gt;message_fd
+)braket
+)paren
+op_eq
+l_int|NULL
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|S_ISSOCK
+c_func
+(paren
+id|msg_filp-&gt;f_inode-&gt;i_mode
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncp_read_super: invalid wdog socket&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/* We must malloc our own super-block info */
 id|server
 op_assign
@@ -835,6 +897,10 @@ op_add_assign
 l_int|1
 suffix:semicolon
 id|wdog_filp-&gt;f_count
+op_add_assign
+l_int|1
+suffix:semicolon
+id|msg_filp-&gt;f_count
 op_add_assign
 l_int|1
 suffix:semicolon
@@ -882,6 +948,10 @@ id|server-&gt;wdog_filp
 op_assign
 id|wdog_filp
 suffix:semicolon
+id|server-&gt;msg_filp
+op_assign
+id|msg_filp
+suffix:semicolon
 id|server-&gt;lock
 op_assign
 l_int|0
@@ -895,6 +965,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|server-&gt;buffer_size
+op_assign
+l_int|0
+suffix:semicolon
+id|server-&gt;conn_status
 op_assign
 l_int|0
 suffix:semicolon
@@ -934,6 +1008,19 @@ id|S_IRWXO
 )paren
 op_or
 id|S_IFDIR
+suffix:semicolon
+multiline_comment|/* protect against invalid mount points */
+id|server-&gt;m.mount_point
+(braket
+r_sizeof
+(paren
+id|server-&gt;m.mount_point
+)paren
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|server-&gt;packet_size
 op_assign
@@ -1001,6 +1088,45 @@ id|printk
 c_func
 (paren
 l_string|&quot;ncp_read_super: Could not catch watchdog&bslash;n&quot;
+)paren
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+id|unlock_super
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+r_goto
+id|fail
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ncp_catch_message
+c_func
+(paren
+id|server
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncp_read_super: Could not catch messages&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ncp_dont_catch_watchdog
+c_func
+(paren
+id|server
 )paren
 suffix:semicolon
 id|error
@@ -1226,6 +1352,10 @@ id|wdog_filp-&gt;f_count
 op_sub_assign
 l_int|1
 suffix:semicolon
+id|msg_filp-&gt;f_count
+op_sub_assign
+l_int|1
+suffix:semicolon
 id|ncp_kfree_s
 c_func
 (paren
@@ -1311,6 +1441,12 @@ c_func
 id|server-&gt;wdog_filp
 )paren
 suffix:semicolon
+id|close_fp
+c_func
+(paren
+id|server-&gt;msg_filp
+)paren
+suffix:semicolon
 id|ncp_free_all_inodes
 c_func
 (paren
@@ -1361,6 +1497,102 @@ id|sb
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+)brace
+multiline_comment|/* This routine is called from an interrupt in ncp_msg_data_ready. So&n; * we have to be careful NOT to sleep here! */
+r_void
+DECL|function|ncp_trigger_message
+id|ncp_trigger_message
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+)paren
+(brace
+r_char
+id|command
+(braket
+r_sizeof
+(paren
+id|server-&gt;m.mount_point
+)paren
+op_plus
+r_sizeof
+(paren
+id|NCP_MSG_COMMAND
+)paren
+op_plus
+l_int|2
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|server
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ncp_trigger_message: invalid server!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;ncp_trigger_message: on %s&bslash;n&quot;
+comma
+id|server-&gt;m.mount_point
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_KERNELD
+id|strcpy
+c_func
+(paren
+id|command
+comma
+id|NCP_MSG_COMMAND
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|command
+comma
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|command
+comma
+id|server-&gt;m.mount_point
+)paren
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;ksystem: %s&bslash;n&quot;
+comma
+id|command
+)paren
+suffix:semicolon
+id|ksystem
+c_func
+(paren
+id|command
+comma
+id|KERNELD_NOWAIT
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_static
 r_void
@@ -1462,6 +1694,26 @@ r_struct
 id|nw_modify_dos_info
 id|info
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ncp_conn_valid
+c_func
+(paren
+id|NCP_SERVER
+c_func
+(paren
+id|inode
+)paren
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1943,6 +2195,7 @@ id|ncp_fs_type
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+r_int
 DECL|function|init_module
 id|init_module
 c_func

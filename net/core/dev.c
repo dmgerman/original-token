@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -368,6 +368,10 @@ op_star
 id|name
 )paren
 (brace
+r_char
+op_star
+id|sptr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -379,6 +383,49 @@ id|name
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_for
+c_loop
+(paren
+id|sptr
+op_assign
+id|name
+suffix:semicolon
+op_star
+id|sptr
+suffix:semicolon
+id|sptr
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_star
+id|sptr
+op_eq
+l_char|&squot;:&squot;
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+op_star
+id|sptr
+op_logical_and
+op_star
+(paren
+id|sptr
+op_plus
+l_int|1
+)paren
+)paren
+)paren
+macro_line|#endif
 id|request_module
 c_func
 (paren
@@ -1877,6 +1924,20 @@ multiline_comment|/* Downed devices don&squot;t count */
 r_continue
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;Have we run out of space here ?&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|len
+OL
+r_sizeof
+(paren
+r_struct
+id|ifreq
+)paren
+)paren
+r_break
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -1919,20 +1980,6 @@ op_amp
 id|ifr.ifr_addr.sin_addr.s_addr
 op_assign
 id|dev-&gt;pa_addr
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Have we run out of space here ?&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|len
-OL
-r_sizeof
-(paren
-r_struct
-id|ifreq
-)paren
-)paren
-r_break
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Write this block to the caller&squot;s space. &n;&t;&t; */
 id|memcpy_tofs

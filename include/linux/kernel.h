@@ -5,6 +5,9 @@ multiline_comment|/*&n; * &squot;kernel.h&squot; contains some often-used functi
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
+multiline_comment|/* Optimization barrier */
+DECL|macro|barrier
+mdefine_line|#define barrier() __asm__(&quot;&quot;: : :&quot;memory&quot;)
 DECL|macro|INT_MAX
 mdefine_line|#define INT_MAX&t;&t;((int)(~0U&gt;&gt;1))
 DECL|macro|UINT_MAX

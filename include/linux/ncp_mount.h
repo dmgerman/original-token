@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/ipx.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
 macro_line|#include &lt;linux/ncp_fs_i.h&gt;
 DECL|macro|NCP_MOUNT_VERSION
-mdefine_line|#define NCP_MOUNT_VERSION 1
+mdefine_line|#define NCP_MOUNT_VERSION 2
 DECL|macro|NCP_USERNAME_LEN
 mdefine_line|#define NCP_USERNAME_LEN (NCP_BINDERY_NAME_LEN)
 DECL|macro|NCP_PASSWORD_LEN
@@ -58,25 +58,25 @@ r_int
 r_char
 id|server_name
 (braket
-l_int|49
+id|NCP_BINDERY_NAME_LEN
 )braket
 suffix:semicolon
-DECL|member|username
+DECL|member|mount_point
 r_int
 r_char
-id|username
+id|mount_point
 (braket
-id|NCP_USERNAME_LEN
+id|PATH_MAX
 op_plus
 l_int|1
 )braket
 suffix:semicolon
-DECL|member|password
+DECL|member|mounted_vol
 r_int
 r_char
-id|password
+id|mounted_vol
 (braket
-id|NCP_PASSWORD_LEN
+id|NCP_VOLNAME_LEN
 op_plus
 l_int|1
 )braket

@@ -583,7 +583,7 @@ id|wait_queue
 op_star
 id|wait
 suffix:semicolon
-id|invalidate_inode_pages
+id|truncate_inode_pages
 c_func
 (paren
 id|inode

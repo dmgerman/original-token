@@ -117,8 +117,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
-DECL|macro|barrier
-mdefine_line|#define barrier() __asm__(&quot;&quot;: : :&quot;memory&quot;)
 r_extern
 r_void
 id|sched_init

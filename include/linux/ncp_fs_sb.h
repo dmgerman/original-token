@@ -31,6 +31,13 @@ op_star
 id|wdog_filp
 suffix:semicolon
 multiline_comment|/* File pointer to wdog socket */
+DECL|member|msg_filp
+r_struct
+id|file
+op_star
+id|msg_filp
+suffix:semicolon
+multiline_comment|/* File pointer to message socket */
 DECL|member|data_ready
 r_void
 op_star
@@ -59,7 +66,7 @@ DECL|member|conn_status
 id|u8
 id|conn_status
 suffix:semicolon
-multiline_comment|/* Bit 4 = 1 ==&gt; Server going down, no&n;&t;&t;&t;&t;   requests allowed anymore */
+multiline_comment|/* Bit 4 = 1 ==&gt; Server going down, no&n;&t;&t;&t;&t;   requests allowed anymore.&n;&t;&t;&t;&t;   Bit 0 = 1 ==&gt; Server is down. */
 DECL|member|buffer_size
 r_int
 id|buffer_size
@@ -117,6 +124,49 @@ suffix:semicolon
 multiline_comment|/* &squot;&bslash;0&squot; */
 )brace
 suffix:semicolon
+r_static
+r_inline
+r_int
+DECL|function|ncp_conn_valid
+id|ncp_conn_valid
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+)paren
+(brace
+r_return
+(paren
+(paren
+id|server-&gt;conn_status
+op_amp
+l_int|0x11
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_void
+DECL|function|ncp_invalidate_conn
+id|ncp_invalidate_conn
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+)paren
+(brace
+id|server-&gt;conn_status
+op_or_assign
+l_int|0x01
+suffix:semicolon
+)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

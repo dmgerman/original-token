@@ -83,6 +83,8 @@ DECL|macro|NCP_MAXPATHLEN
 mdefine_line|#define NCP_MAXPATHLEN 255
 DECL|macro|NCP_MAXNAMELEN
 mdefine_line|#define NCP_MAXNAMELEN 14
+DECL|macro|NCP_MSG_COMMAND
+mdefine_line|#define NCP_MSG_COMMAND &quot;/sbin/nwmsg&quot;
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* The readdir cache size controls how many directory entries are&n; * cached.&n; */
 DECL|macro|NCP_READDIR_CACHE_SIZE
@@ -390,6 +392,16 @@ op_star
 id|server
 )paren
 suffix:semicolon
+r_void
+id|ncp_trigger_message
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+)paren
+suffix:semicolon
 multiline_comment|/* linux/fs/ncpfs/sock.c */
 r_int
 id|ncp_request
@@ -436,6 +448,16 @@ id|server
 suffix:semicolon
 r_int
 id|ncp_dont_catch_watchdog
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+)paren
+suffix:semicolon
+r_int
+id|ncp_catch_message
 c_func
 (paren
 r_struct

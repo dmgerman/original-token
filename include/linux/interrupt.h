@@ -2,7 +2,7 @@ multiline_comment|/* interrupt.h */
 macro_line|#ifndef _LINUX_INTERRUPT_H
 DECL|macro|_LINUX_INTERRUPT_H
 mdefine_line|#define _LINUX_INTERRUPT_H
-macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|struct|bh_struct
 r_struct
@@ -161,6 +161,11 @@ r_void
 id|intr_count
 op_increment
 suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|end_bh_atomic
 r_extern
@@ -172,6 +177,11 @@ c_func
 r_void
 )paren
 (brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 id|intr_count
 op_decrement
 suffix:semicolon

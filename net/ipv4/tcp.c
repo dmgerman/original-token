@@ -223,10 +223,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;sk-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
 id|tcp_close
 c_func
 (paren
@@ -4432,7 +4428,7 @@ r_return
 id|send_fin
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Shutdown the sending side of a connection. Much like close except&n; *&t;that we don&squot;t receive shut down or set sk-&gt;dead=1.&n; */
+multiline_comment|/*&n; *&t;Shutdown the sending side of a connection. Much like close except&n; *&t;that we don&squot;t receive shut down or set sk-&gt;dead.&n; */
 DECL|function|tcp_shutdown
 r_void
 id|tcp_shutdown
@@ -4643,6 +4639,10 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+id|sk-&gt;dead
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -4798,10 +4798,6 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * This will destroy it. The timers will take care of actually&n;&t; * free&squot;ing up the memory.&n;&t; */
-id|sk-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
 id|tcp_cache_zap
 c_func
 (paren
@@ -4813,6 +4809,10 @@ c_func
 (paren
 id|sk
 )paren
+suffix:semicolon
+id|sk-&gt;dead
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This will accept the next outstanding connection. &n; */

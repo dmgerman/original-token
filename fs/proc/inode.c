@@ -1026,6 +1026,9 @@ r_case
 id|PROC_PID_CMDLINE
 suffix:colon
 r_case
+id|PROC_PID_STATUS
+suffix:colon
+r_case
 id|PROC_PID_STAT
 suffix:colon
 r_case

@@ -523,6 +523,13 @@ r_int
 r_int
 id|ipx_port
 suffix:semicolon
+multiline_comment|/* To handle asynchronous messages from the NetWare server, we have to&n; * know the connection this socket belongs to. Sorry to blow up this&n; * structure even more. */
+DECL|member|ipx_ncp_server
+r_struct
+id|ncp_server
+op_star
+id|ipx_ncp_server
+suffix:semicolon
 macro_line|#ifdef CONFIG_IPX_INTERN
 DECL|member|ipx_node
 r_int
