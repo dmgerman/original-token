@@ -1,7 +1,7 @@
 multiline_comment|/* udp.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: udp.c,v 0.8.4.5 1992/11/18 15:38:03 bir7 Exp $ */
-multiline_comment|/* $Log: udp.c,v $&n; * Revision 0.8.4.5  1992/11/18  15:38:03  bir7&n; * fixed minor problem in waiting for memory.&n; *&n; * Revision 0.8.4.4  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Fixed ctrl-h and added NULL checking to print_uh&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
+multiline_comment|/* $Id: udp.c,v 0.8.4.9 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: udp.c,v $&n; * Revision 0.8.4.9  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.8  1992/12/12  01:50:49  bir7&n; * Changed connect.&n; *&n; * Revision 0.8.4.7  1992/12/05  21:35:53  bir7&n; * Added more debuggin code.&n; *&n; * Revision 0.8.4.6  1992/12/03  19:52:20  bir7&n; * fixed problems in udp_error.&n; *&n; * Revision 0.8.4.5  1992/11/18  15:38:03  bir7&n; * fixed minor problem in waiting for memory.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Fixed ctrl-h and added NULL checking to print_uh&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -20,6 +20,19 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
 macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
+DECL|macro|UDP_DEBUG
+macro_line|#undef UDP_DEBUG
+macro_line|#ifdef PRINTK
+DECL|macro|PRINTK
+macro_line|#undef PRINTK
+macro_line|#endif
+macro_line|#ifdef UDP_DEBUG
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK printk
+macro_line|#else
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK dummy_routine
+macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b) ((a)&lt;(b)?(a):(b))
 r_static
@@ -223,7 +236,7 @@ id|protocol
 )paren
 (brace
 r_struct
-id|tcp_header
+id|udp_header
 op_star
 id|th
 suffix:semicolon
@@ -233,11 +246,16 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;udp_err (err=%d, header=%X, daddr=%X, saddr=%X, ip_protocl=%X)&bslash;n&quot;
+)paren
+suffix:semicolon
 id|th
 op_assign
 (paren
 r_struct
-id|tcp_header
+id|udp_header
 op_star
 )paren
 id|header
@@ -312,6 +330,7 @@ l_int|0xff
 dot
 id|errno
 suffix:semicolon
+multiline_comment|/* it&squot;s only fatal if we have connected to them. */
 r_if
 c_cond
 (paren
@@ -323,6 +342,10 @@ l_int|0xff
 )braket
 dot
 id|fatal
+op_logical_and
+id|sk-&gt;state
+op_eq
+id|TCP_ESTABLISHED
 )paren
 (brace
 id|sk-&gt;prot
@@ -795,6 +818,10 @@ r_return
 (paren
 id|len
 )paren
+suffix:semicolon
+id|skb-&gt;lock
+op_assign
+l_int|0
 suffix:semicolon
 id|skb-&gt;mem_addr
 op_assign
@@ -1376,6 +1403,10 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|skb-&gt;lock
+op_assign
+l_int|0
+suffix:semicolon
 id|skb-&gt;mem_addr
 op_assign
 id|skb
@@ -1548,6 +1579,32 @@ op_star
 id|uh
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|amt
+OL
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;udp.c: amt = %d &lt; 0&bslash;n&quot;
+comma
+id|amt
+)paren
+suffix:semicolon
+id|release_sock
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_return
+(paren
+id|copied
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&t;&t;  verify_area (from, amt);*/
 id|memcpy_fromfs
 c_func
@@ -1979,6 +2036,20 @@ op_eq
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;shutdown
+op_amp
+id|RCV_SHUTDOWN
+)paren
+(brace
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2840,6 +2911,8 @@ comma
 id|udp_select
 comma
 id|udp_ioctl
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma

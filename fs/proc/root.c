@@ -179,6 +179,15 @@ l_int|7
 comma
 l_string|&quot;meminfo&quot;
 )brace
+comma
+(brace
+l_int|5
+comma
+l_int|4
+comma
+l_string|&quot;self&quot;
+)brace
+multiline_comment|/* will change inode # */
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY
@@ -318,6 +327,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ino
+op_eq
+l_int|5
+)paren
+multiline_comment|/* self modifying inode ... */
+id|ino
+op_assign
+(paren
+id|current-&gt;pid
+op_lshift
+l_int|16
+)paren
+op_plus
+l_int|2
+suffix:semicolon
 )brace
 r_else
 (brace

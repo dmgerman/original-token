@@ -17,6 +17,7 @@ DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
+r_static
 r_int
 id|isofs_file_read
 c_func
@@ -389,8 +390,8 @@ id|result
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * isofs_file_read() is also needed by the directory read-routine,&n; * so it&squot;s not static. NOTE! reading directories directly is a bad idea,&n; * but has to be supported for now for compatability reasons with older&n; * versions.&n; */
 DECL|function|isofs_file_read
+r_static
 r_int
 id|isofs_file_read
 c_func

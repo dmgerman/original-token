@@ -82,7 +82,7 @@ mdefine_line|#define&t;ENOTEMPTY&t;39&t;/* Directory not empty */
 DECL|macro|ELOOP
 mdefine_line|#define&t;ELOOP&t;&t;40&t;/* Too many symbolic links encountered */
 DECL|macro|EWOULDBLOCK
-mdefine_line|#define&t;EWOULDBLOCK&t;41&t;/* Operation would block */
+mdefine_line|#define&t;EWOULDBLOCK&t;EAGAIN&t;/* Operation would block */
 DECL|macro|ENOMSG
 mdefine_line|#define&t;ENOMSG&t;&t;42&t;/* No message of desired type */
 DECL|macro|EIDRM

@@ -64,9 +64,9 @@ mdefine_line|#define SCAN_OGMBS        0xc0  /* start multiple commands, signatu
 multiline_comment|/*    where (n) = lower 6 bits */
 multiline_comment|/*&n; *  For INITIALIZATION:&n; */
 DECL|macro|BUS_ON
-mdefine_line|#define BUS_ON            24    /* x 125ns, 24 = 3000ns, BIOS uses 8000ns */
+mdefine_line|#define BUS_ON            48    /* x 125ns, 48 = 6000ns, BIOS uses 8000ns */
 DECL|macro|BUS_OFF
-mdefine_line|#define BUS_OFF           24    /* x 125ns, BIOS uses 1875ns */
+mdefine_line|#define BUS_OFF           24    /* x 125ns, 24 = 3000ns, BIOS uses 1875ns */
 DECL|macro|INTR_ACK
 mdefine_line|#define INTR_ACK ASC_STAT+1
 DECL|macro|CONTROL
@@ -204,6 +204,30 @@ DECL|typedef|Scb
 )brace
 id|Scb
 suffix:semicolon
+multiline_comment|/*&n; *  WD7000-specific scatter/gather element structure&n; */
+DECL|struct|sgb
+r_typedef
+r_struct
+id|sgb
+(brace
+DECL|member|len
+id|unchar
+id|len
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|ptr
+id|unchar
+id|ptr
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|typedef|Sgb
+)brace
+id|Sgb
+suffix:semicolon
 multiline_comment|/*&n; *  Note:  MAX_SCBS _must_ be defined large enough to keep ahead of the&n; *  demand for SCBs, which will be at most WD7000_Q * WD7000_SG.  1 is&n; *  added to each because they can be 0.&n; */
 DECL|macro|MAX_SCBS
 mdefine_line|#define MAX_SCBS  ((WD7000_Q+1) * (WD7000_SG+1))
@@ -289,11 +313,14 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
+multiline_comment|/*&n; *  Define WD7000_SG to be the number of Sgbs that will fit in a block of&n; *  size WD7000_SCRIBBLE.  WD7000_SCRIBBLE must be 512, 1024, 2048, or 4096.&n; *&n; *  The sg_tablesize value will default to SG_NONE for older boards (before&n; *  rev 7.0), but will be changed to WD7000_SG when a newer board is&n; *  detected.&n; */
+DECL|macro|WD7000_SCRIBBLE
+mdefine_line|#define WD7000_SCRIBBLE  512
 DECL|macro|WD7000_Q
 mdefine_line|#define WD7000_Q    OGMB_CNT
 DECL|macro|WD7000_SG
-mdefine_line|#define WD7000_SG   SG_NONE
+mdefine_line|#define WD7000_SG   (WD7000_SCRIBBLE / sizeof(Sgb))
 DECL|macro|WD7000
-mdefine_line|#define WD7000 {&bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;wd7000_info, wd7000_command,&t;&bslash;&n;&t;wd7000_queuecommand,&t;        &bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1}
+mdefine_line|#define WD7000 {&bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;wd7000_info, wd7000_command,&t;&bslash;&n;&t;wd7000_queuecommand,&t;        &bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, SG_NONE, 1, 0, 1}
 macro_line|#endif
 eof

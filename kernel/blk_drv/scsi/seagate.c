@@ -18,6 +18,10 @@ r_int
 r_char
 id|target
 comma
+r_int
+r_char
+id|lun
+comma
 r_const
 r_void
 op_star
@@ -546,10 +550,13 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are our saved pointers for the outstanding command that is &n; * waiting for a reconnect&n; */
 DECL|variable|current_target
+DECL|variable|current_lun
 r_static
 r_int
 r_char
 id|current_target
+comma
+id|current_lun
 suffix:semicolon
 DECL|variable|current_cmnd
 DECL|variable|current_data
@@ -676,6 +683,8 @@ id|internal_command
 (paren
 id|current_target
 comma
+id|current_lun
+comma
 id|current_cmnd
 comma
 id|current_data
@@ -768,6 +777,10 @@ id|current_target
 op_assign
 id|SCpnt-&gt;target
 suffix:semicolon
+id|current_lun
+op_assign
+id|SCpnt-&gt;lun
+suffix:semicolon
 (paren
 r_const
 r_void
@@ -794,6 +807,8 @@ op_assign
 id|internal_command
 (paren
 id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;lun
 comma
 id|SCpnt-&gt;cmnd
 comma
@@ -848,6 +863,8 @@ id|internal_command
 (paren
 id|SCpnt-&gt;target
 comma
+id|SCpnt-&gt;lun
+comma
 id|SCpnt-&gt;cmnd
 comma
 id|SCpnt-&gt;request_buffer
@@ -870,6 +887,10 @@ c_func
 r_int
 r_char
 id|target
+comma
+r_int
+r_char
+id|lun
 comma
 r_const
 r_void
@@ -2231,7 +2252,7 @@ c_func
 (paren
 l_int|1
 comma
-l_int|0
+id|lun
 )paren
 suffix:semicolon
 macro_line|#if (DEBUG &amp; (PHASE_RESELECT | PHASE_MSGOUT)) 

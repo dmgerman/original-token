@@ -792,6 +792,16 @@ id|current-&gt;state
 op_assign
 id|TASK_RUNNING
 suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|queue-&gt;proc_list
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop

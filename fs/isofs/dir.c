@@ -37,7 +37,7 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek - default */
-id|isofs_file_read
+l_int|NULL
 comma
 multiline_comment|/* read */
 l_int|NULL

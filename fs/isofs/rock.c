@@ -255,12 +255,14 @@ comma
 l_char|&squot;L&squot;
 )paren
 suffix:colon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 l_string|&quot;RR: CL&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -293,12 +295,14 @@ comma
 l_char|&squot;L&squot;
 )paren
 suffix:colon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
 l_string|&quot;RR: PL&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -700,6 +704,7 @@ comma
 l_char|&squot;E&squot;
 )paren
 suffix:colon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -708,6 +713,7 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1138,7 +1144,7 @@ l_int|8
 op_or
 (paren
 id|low
-op_logical_and
+op_amp
 l_int|0xff
 )paren
 )paren
@@ -1407,6 +1413,7 @@ comma
 l_char|&squot;L&squot;
 )paren
 suffix:colon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -1415,12 +1422,19 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+macro_line|#endif
 id|inode-&gt;u.isofs_i.i_first_extent
 op_assign
 id|isonum_733
 c_func
 (paren
 id|rr-&gt;u.CL.location
+)paren
+op_lshift
+(paren
+id|ISOFS_BLOCK_BITS
+op_minus
+id|ISOFS_BUFFER_BITS
 )paren
 suffix:semicolon
 id|reloc
@@ -1432,7 +1446,7 @@ id|inode-&gt;i_sb
 comma
 id|inode-&gt;u.isofs_i.i_first_extent
 op_lshift
-id|ISOFS_BLOCK_BITS
+id|ISOFS_BUFFER_BITS
 )paren
 suffix:semicolon
 id|inode-&gt;i_mode

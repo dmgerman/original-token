@@ -395,8 +395,6 @@ DECL|macro|CLOCAL
 mdefine_line|#define CLOCAL&t;0004000
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;03600000&t;&t;/* input baud rate (not used) */
-DECL|macro|CNORTSCTS
-mdefine_line|#define CNORTSCTS 010000000000&t;&t;/* no flow control */
 DECL|macro|CRTSCTS
 mdefine_line|#define CRTSCTS&t;  020000000000&t;&t;/* flow control */
 multiline_comment|/* c_lflag bits */

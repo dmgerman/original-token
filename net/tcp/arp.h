@@ -1,7 +1,7 @@
 multiline_comment|/* arp.h */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: arp.h,v 0.8.4.2 1992/11/15 14:55:30 bir7 Exp $ */
-multiline_comment|/* $Log: arp.h,v $&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: arp.h,v $&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
+multiline_comment|/* $Id: arp.h,v 0.8.4.3 1992/12/03 19:54:12 bir7 Exp $ */
+multiline_comment|/* $Log: arp.h,v $&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: arp.h,v $&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/15  14:55:30  bir7&n; * make arp_q global so sock.c can mess with it.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
 macro_line|#ifndef _TCP_ARP_H
 DECL|macro|_TCP_ARP_H
 mdefine_line|#define _TCP_ARP_H
@@ -185,5 +185,7 @@ DECL|macro|ARP_TIMEOUT
 mdefine_line|#define ARP_TIMEOUT 8640000 /* about 8 hours. */
 DECL|macro|ARP_RES_TIME
 mdefine_line|#define ARP_RES_TIME 250 /* 2.5 seconds. */
+DECL|macro|ARP_QUEUE_MAGIC
+mdefine_line|#define ARP_QUEUE_MAGIC 0x0432447A
 macro_line|#endif
 eof

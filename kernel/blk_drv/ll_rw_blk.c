@@ -26,7 +26,7 @@ id|wait_for_request
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* This specifies how many blocks to read ahead on the disk.  We might want&n;   to change this to sectors later, but for now this will work */
+multiline_comment|/* This specifies how many sectors to read ahead on the disk.  */
 DECL|variable|read_ahead
 r_int
 id|read_ahead

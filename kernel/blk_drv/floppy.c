@@ -3243,6 +3243,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|do_floppy
+op_assign
+l_int|NULL
+suffix:semicolon
 id|request_done
 c_func
 (paren
@@ -3259,6 +3263,11 @@ c_func
 )paren
 suffix:semicolon
 id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|redo_fd_request
 c_func
 (paren
 )paren

@@ -1189,6 +1189,11 @@ id|req
 op_assign
 l_int|NULL
 suffix:semicolon
+r_int
+id|flag
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1213,6 +1218,14 @@ r_return
 suffix:semicolon
 id|INIT_REQUEST
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|flag
+op_increment
+op_eq
+l_int|0
+)paren
 id|SCpnt
 op_assign
 id|allocate_device
@@ -1238,6 +1251,11 @@ id|device-&gt;index
 comma
 l_int|0
 )paren
+suffix:semicolon
+r_else
+id|SCpnt
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;   try and find a queueable request (i.e. device not busy, and host able to&n;   accept another command.  If we find one, then we queue it. This can&n;   make a big difference on systems with more than one disk drive.  We want&n;   to have the interrupts off when monkeying with the request list, because&n;   otherwise the kernel might try and slip in a request inbetween somewhere. */
 r_if

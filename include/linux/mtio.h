@@ -60,6 +60,10 @@ DECL|macro|MTSETBLK
 mdefine_line|#define MTSETBLK 20&t;/* set block length (SCSI) */
 DECL|macro|MTSETDENSITY
 mdefine_line|#define MTSETDENSITY 21&t;/* set tape density (SCSI) */
+DECL|macro|MTSEEK
+mdefine_line|#define MTSEEK&t;22&t;/* seek to block (Tandberg, etc.) */
+DECL|macro|MTTELL
+mdefine_line|#define MTTELL&t;23&t;/* tell block (Tandber, etc.) */
 multiline_comment|/* structure for MTIOCGET - mag tape get status command */
 DECL|struct|mtget
 r_struct
@@ -152,11 +156,25 @@ multiline_comment|/* descriptive name */
 suffix:semicolon
 DECL|macro|MT_TAPE_INFO
 mdefine_line|#define MT_TAPE_INFO&t;{ &bslash;&n;&t;{MT_ISUNKNOWN,&t;&t;&quot;Unknown type of tape device&quot;}, &bslash;&n;&t;{MT_ISQIC02,&t;&t;&quot;Generic QIC-02 tape streamer&quot;}, &bslash;&n;&t;{MT_ISWT5150,&t;&t;&quot;Wangtek 5150, QIC-150&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_5945L2,&t;&quot;Archive 5945L-2&quot;}, &bslash;&n;&t;{MT_ISCMSJ500,&t;&t;&quot;CMS Jumbo 500&quot;}, &bslash;&n;&t;{MT_ISTDC3610,&t;&t;&quot;Tandberg TDC 3610, QIC-24&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_VP60I,&t;&quot;Archive VP60i, QIC-02&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2150L,&t;&quot;Archive Viper 2150L&quot;}, &bslash;&n;&t;{MT_ISWT5099EEN24,&t;&quot;Wangtek 5099-een24, 60MB&quot;}, &bslash;&n;&t;{MT_ISEVEREX_FT40A,&t;&quot;Everex FT40A, QIC-40&quot;}, &bslash;&n;&t;{MT_ISSCSI1,&t;&t;&quot;Generic SCSI-1 tape&quot;}, &bslash;&n;&t;{0, NULL} &bslash;&n;}
+multiline_comment|/* structure for MTIOCPOS - mag tape get position command */
+DECL|struct|mtpos
+r_struct
+id|mtpos
+(brace
+DECL|member|mt_blkno
+r_int
+id|mt_blkno
+suffix:semicolon
+multiline_comment|/* current block number */
+)brace
+suffix:semicolon
 multiline_comment|/* mag tape io control commands */
 DECL|macro|MTIOCTOP
 mdefine_line|#define&t;MTIOCTOP&t;_IOW(&squot;m&squot;, 1, struct mtop)&t;/* do a mag tape op */
 DECL|macro|MTIOCGET
 mdefine_line|#define&t;MTIOCGET&t;_IOR(&squot;m&squot;, 2, struct mtget)&t;/* get tape status */
+DECL|macro|MTIOCPOS
+mdefine_line|#define&t;MTIOCPOS&t;_IOR(&squot;m&squot;, 3, struct mtpos)&t;/* get tape position */
 multiline_comment|/* Generic Mag Tape (device independent) status macros for examining&n; * mt_gstat -- HP-UX compatible.&n; * There is room for more generic status bits here, but I don&squot;t&n; * know which of them are reserved. At least three or so should&n; * be added to make this really useful.&n; */
 DECL|macro|GMT_EOF
 mdefine_line|#define GMT_EOF(x)              ((x) &amp; 0x80000000)

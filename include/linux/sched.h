@@ -479,6 +479,20 @@ id|brk
 comma
 id|start_stack
 suffix:semicolon
+DECL|member|arg_start
+DECL|member|arg_end
+DECL|member|env_start
+DECL|member|env_end
+r_int
+r_int
+id|arg_start
+comma
+id|arg_end
+comma
+id|env_start
+comma
+id|env_end
+suffix:semicolon
 DECL|member|pid
 DECL|member|pgrp
 DECL|member|session
@@ -754,7 +768,7 @@ DECL|macro|PF_TRACESYS
 mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{ 0, },},0,0,0, &bslash;&n;/* flags */&t;0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0c0f200}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; 0x10,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{ 0, },},0,0,0, &bslash;&n;/* flags */&t;0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x9f,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x9f,0xc0c0f200}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; 0x10,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -946,12 +960,12 @@ DECL|macro|_TSS
 mdefine_line|#define _TSS(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_TSS_ENTRY&lt;&lt;3))
 DECL|macro|_LDT
 mdefine_line|#define _LDT(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_LDT_ENTRY&lt;&lt;3))
-DECL|macro|ltr
-mdefine_line|#define ltr(n) __asm__(&quot;ltr %%ax&quot;::&quot;a&quot; (_TSS(n)))
-DECL|macro|lldt
-mdefine_line|#define lldt(n) __asm__(&quot;lldt %%ax&quot;::&quot;a&quot; (_LDT(n)))
-DECL|macro|str
-mdefine_line|#define str(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
+DECL|macro|load_TR
+mdefine_line|#define load_TR(n) __asm__(&quot;ltr %%ax&quot;::&quot;a&quot; (_TSS(n)))
+DECL|macro|load_ldt
+mdefine_line|#define load_ldt(n) __asm__(&quot;lldt %%ax&quot;::&quot;a&quot; (_LDT(n)))
+DECL|macro|store_TR
+mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
 multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * tha math co-processor latest.&n; */
 DECL|macro|switch_to
 mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;d&quot; (_TSS(n)),&quot;c&quot; ((long) task[n]) &bslash;&n;&t;:&quot;cx&quot;); &bslash;&n;}

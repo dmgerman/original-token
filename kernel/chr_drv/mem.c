@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -1359,6 +1360,14 @@ suffix:semicolon
 id|mem_start
 op_assign
 id|mouse_init
+c_func
+(paren
+id|mem_start
+)paren
+suffix:semicolon
+id|mem_start
+op_assign
+id|soundcard_init
 c_func
 (paren
 id|mem_start

@@ -1,7 +1,7 @@
 multiline_comment|/* sock.h */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: sock.h,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: sock.h,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: sock.h,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
+multiline_comment|/* $Id: sock.h,v 0.8.4.5 1992/12/12 01:50:49 bir7 Exp $ */
+multiline_comment|/* $Log: sock.h,v $&n; * Revision 0.8.4.5  1992/12/12  01:50:49  bir7&n; * Fixed support for half duplex connections.&n; *&n; * Revision 0.8.4.4  1992/12/06  23:29:59  bir7&n; * Added mss and support for half completed packets.&n; *&n; * Revision 0.8.4.3  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#ifndef _TCP_SOCK_H
 DECL|macro|_TCP_SOCK_H
 mdefine_line|#define _TCP_SOCK_H
@@ -171,6 +171,12 @@ id|sk_buff
 op_star
 id|back_log
 suffix:semicolon
+DECL|member|send_tmp
+r_struct
+id|sk_buff
+op_star
+id|send_tmp
+suffix:semicolon
 DECL|member|retransmits
 r_int
 id|retransmits
@@ -256,6 +262,11 @@ DECL|member|shutdown
 r_int
 r_int
 id|shutdown
+suffix:semicolon
+DECL|member|mss
+r_int
+r_int
+id|mss
 suffix:semicolon
 DECL|member|rtt
 r_int
@@ -828,6 +839,23 @@ op_star
 id|sk
 )paren
 suffix:semicolon
+DECL|member|shutdown
+r_void
+(paren
+op_star
+id|shutdown
+)paren
+(paren
+r_volatile
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|how
+)paren
+suffix:semicolon
 DECL|member|max_header
 r_int
 r_int
@@ -979,6 +1007,10 @@ DECL|member|daddr
 r_int
 r_int
 id|daddr
+suffix:semicolon
+DECL|member|magic
+r_int
+id|magic
 suffix:semicolon
 DECL|member|acked
 DECL|member|used

@@ -167,7 +167,7 @@ suffix:semicolon
 multiline_comment|/* Latest revision known to be bad.  Not used yet */
 )brace
 suffix:semicolon
-DECL|variable|blacklist
+macro_line|#if 0
 r_static
 r_struct
 id|blist
@@ -212,7 +212,6 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-DECL|function|blacklisted
 r_static
 r_int
 (def_block
@@ -337,6 +336,7 @@ suffix:semicolon
 )brace
 )def_block
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;As the actual SCSI command runs in the background, we must set up a &n; *&t;flag that tells scan_scsis() when the result it has is valid.  &n; *&t;scan_scsis can set the_result to -1, and watch for it to become the &n; *&t;actual return code for that call.  the scan_scsis_done function() is &n; *&t;our user specified completion function that is passed on to the  &n; *&t;scsi_do_cmd() function.&n; */
 DECL|variable|in_scan
 r_static
@@ -899,6 +899,9 @@ suffix:colon
 r_case
 id|TYPE_DISK
 suffix:colon
+r_case
+id|TYPE_MOD
+suffix:colon
 id|scsi_devices
 (braket
 id|NR_SCSI_DEVICES
@@ -1050,6 +1053,9 @@ suffix:semicolon
 r_case
 id|TYPE_DISK
 suffix:colon
+r_case
+id|TYPE_MOD
+suffix:colon
 id|printk
 c_func
 (paren
@@ -1084,6 +1090,62 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+suffix:semicolon
+id|scsi_devices
+(braket
+id|NR_SCSI_DEVICES
+)braket
+dot
+id|scsi_level
+op_assign
+id|scsi_result
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x07
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_devices
+(braket
+id|NR_SCSI_DEVICES
+)braket
+dot
+id|scsi_level
+op_ge
+l_int|2
+op_logical_or
+(paren
+id|scsi_devices
+(braket
+id|NR_SCSI_DEVICES
+)braket
+dot
+id|scsi_level
+op_eq
+l_int|1
+op_logical_and
+(paren
+id|scsi_result
+(braket
+l_int|3
+)braket
+op_amp
+l_int|0x0f
+)paren
+op_eq
+l_int|1
+)paren
+)paren
+id|scsi_devices
+(braket
+id|NR_SCSI_DEVICES
+)braket
+dot
+id|scsi_level
+op_increment
 suffix:semicolon
 multiline_comment|/* These devices need this &quot;key&quot; to unlock the device&n;&t;&t;&t;   so we can use it */
 r_if
@@ -1214,6 +1276,7 @@ suffix:semicolon
 op_increment
 id|NR_SCSI_DEVICES
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* Some scsi devices cannot be polled for lun != 0&n;&t;&t;&t;   due to firmware bugs */
 r_if
 c_cond
@@ -1228,6 +1291,7 @@ id|scsi_result
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Some scsi-1 peripherals do not handle lun != 0.&n;&t;&t;&t;   I am assuming that scsi-2 peripherals do better */
 r_if
 c_cond
@@ -3179,6 +3243,8 @@ id|MAYREDO
 suffix:semicolon
 m_exit
 op_assign
+id|DRIVER_SENSE
+op_or
 id|SUGGEST_RETRY
 suffix:semicolon
 r_break
@@ -3201,6 +3267,8 @@ suffix:semicolon
 m_exit
 op_assign
 id|DRIVER_SENSE
+op_or
+id|SUGGEST_ABORT
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5039,6 +5107,9 @@ r_break
 suffix:semicolon
 r_case
 id|TYPE_DISK
+suffix:colon
+r_case
+id|TYPE_MOD
 suffix:colon
 id|sd_attach
 c_func

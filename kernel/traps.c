@@ -271,7 +271,7 @@ l_int|0x17
 )paren
 )paren
 suffix:semicolon
-id|str
+id|store_TR
 c_func
 (paren
 id|i

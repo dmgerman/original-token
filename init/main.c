@@ -914,7 +914,7 @@ id|ramdisk_size
 op_assign
 id|RAMDISK_SIZE
 suffix:semicolon
-macro_line|#ifdef MAX_16M
+macro_line|#ifdef CONFIG_MAX_16M
 r_if
 c_cond
 (paren
@@ -1006,7 +1006,7 @@ c_func
 id|command_line
 )paren
 suffix:semicolon
-macro_line|#ifdef PROFILE_SHIFT
+macro_line|#ifdef CONFIG_PROFILE
 id|prof_buffer
 op_assign
 (paren
@@ -1027,7 +1027,7 @@ id|end
 suffix:semicolon
 id|prof_len
 op_rshift_assign
-id|PROFILE_SHIFT
+l_int|2
 suffix:semicolon
 id|memory_start
 op_add_assign

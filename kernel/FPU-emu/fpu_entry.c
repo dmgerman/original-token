@@ -1,7 +1,8 @@
 multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_entry.c                                                              |&n; |                                                                           |&n; | The entry function for wm-FPU-emu                                         |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail apm233m@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | See the files &quot;README&quot; and &quot;COPYING&quot; for further copyright and warranty   |&n; | information.                                                              |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | math_emulate() is the sole entry point for wm-FPU-emu                     |&n; +---------------------------------------------------------------------------*/
-macro_line|#ifdef KERNEL_MATH_EMULATION
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -1158,5 +1159,5 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* KERNEL_MATH_EMULATION */
+macro_line|#endif /* CONFIG_MATH_EMULATION */
 eof

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;kern_sock.h&quot;
@@ -25,7 +26,7 @@ r_struct
 id|proto_ops
 id|unix_proto_ops
 suffix:semicolon
-macro_line|#ifdef INET_SOCKETS
+macro_line|#ifdef CONFIG_TCPIP
 r_extern
 r_struct
 id|proto_ops
@@ -66,7 +67,7 @@ op_amp
 id|unix_proto_ops
 )brace
 comma
-macro_line|#ifdef INET_SOCKETS
+macro_line|#ifdef CONFIG_TCPIP
 (brace
 id|AF_INET
 comma
@@ -2707,14 +2708,50 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|sock-&gt;state
-op_ne
-id|SS_UNCONNECTED
 )paren
 (brace
+r_case
+id|SS_UNCONNECTED
+suffix:colon
+multiline_comment|/* This is ok... continue with connect */
+r_break
+suffix:semicolon
+r_case
+id|SS_CONNECTED
+suffix:colon
+multiline_comment|/* Socket is already connected */
+r_return
+op_minus
+id|EISCONN
+suffix:semicolon
+r_case
+id|SS_CONNECTING
+suffix:colon
+multiline_comment|/* Not yet connected... */
+multiline_comment|/* we will check this. */
+r_return
+(paren
+id|sock-&gt;ops
+op_member_access_from_pointer
+id|connect
+c_func
+(paren
+id|sock
+comma
+id|uservaddr
+comma
+id|addrlen
+comma
+id|file-&gt;f_flags
+)paren
+)paren
+suffix:semicolon
+r_default
+suffix:colon
 id|PRINTK
 c_func
 (paren

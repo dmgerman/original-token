@@ -1,11 +1,12 @@
 multiline_comment|/* arp.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: arp.c,v 0.8.4.3 1992/11/15 14:55:30 bir7 Exp $ */
-multiline_comment|/* $Log: arp.c,v $&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more cli/sti pairs in send_q and another sanity check&n; * in arp_queue.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
+multiline_comment|/* $Id: arp.c,v 0.8.4.5 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: arp.c,v $&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/03  19:52:20  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more cli/sti pairs in send_q and another sanity check&n; * in arp_queue.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -58,6 +59,11 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb2
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -78,6 +84,91 @@ id|arp_q
 suffix:semicolon
 r_do
 (brace
+r_if
+c_cond
+(paren
+id|skb-&gt;magic
+op_ne
+id|ARP_QUEUE_MAGIC
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;arp.c skb with bad magic - %X: squashing queue&bslash;n&quot;
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|arp_q
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* extra consistancy check. */
+r_if
+c_cond
+(paren
+id|skb-&gt;next
+op_eq
+l_int|NULL
+macro_line|#ifdef CONFIG_MAX_16M
+op_logical_or
+(paren
+r_int
+r_int
+)paren
+(paren
+id|skb-&gt;next
+)paren
+OG
+l_int|16
+op_star
+l_int|1024
+op_star
+l_int|1024
+macro_line|#endif
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;dev.c: *** bug bad skb-&gt;next, squashing queue &bslash;n&quot;
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|arp_q
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|skb-&gt;magic
+op_assign
+l_int|0
+suffix:semicolon
+id|skb2
+op_assign
+id|skb-&gt;next
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -156,11 +247,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -170,16 +256,15 @@ l_int|NULL
 )paren
 r_break
 suffix:semicolon
-id|skb
-op_assign
-id|arp_q
-suffix:semicolon
-r_continue
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|skb
 op_assign
-id|skb-&gt;next
+id|skb2
 suffix:semicolon
 )brace
 r_while
@@ -717,6 +802,10 @@ r_return
 (paren
 l_int|1
 )paren
+suffix:semicolon
+id|skb-&gt;lock
+op_assign
+l_int|0
 suffix:semicolon
 id|skb-&gt;mem_addr
 op_assign
@@ -1757,6 +1846,10 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+id|skb-&gt;lock
+op_assign
+l_int|0
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -2250,7 +2343,9 @@ c_func
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;arp.c: arp_queue skb already on queue. &bslash;n&quot;
+l_string|&quot;arp.c: arp_queue skb already on queue magic=%X. &bslash;n&quot;
+comma
+id|skb-&gt;magic
 )paren
 suffix:semicolon
 r_return
@@ -2296,6 +2391,10 @@ op_assign
 id|skb
 suffix:semicolon
 )brace
+id|skb-&gt;magic
+op_assign
+id|ARP_QUEUE_MAGIC
+suffix:semicolon
 id|sti
 c_func
 (paren

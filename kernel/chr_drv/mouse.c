@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/kernel/chr_drv/mouse.c&n; *&n; * Generic mouse o
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * note that you can remove any or all of the drivers by undefining&n; * the minor values in &lt;linux/mouse.h&gt;&n; */
 r_extern
 r_struct
@@ -95,7 +96,7 @@ c_cond
 id|minor
 )paren
 (brace
-macro_line|#ifdef BUSMOUSE_MINOR
+macro_line|#ifdef CONFIG_BUSMOUSE
 r_case
 id|BUSMOUSE_MINOR
 suffix:colon
@@ -107,7 +108,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef PSMOUSE_MINOR
+macro_line|#ifdef CONFIG_PSMOUSE
 r_case
 id|PSMOUSE_MINOR
 suffix:colon
@@ -119,7 +120,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MS_BUSMOUSE_MINOR
+macro_line|#ifdef CONFIG_MS_BUSMOUSE
 r_case
 id|MS_BUSMOUSE_MINOR
 suffix:colon
@@ -131,7 +132,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef ATIXL_BUSMOUSE_MINOR
+macro_line|#ifdef CONFIG_ATIXL_BUSMOUSE
 r_case
 id|ATIXL_BUSMOUSE_MINOR
 suffix:colon
@@ -207,7 +208,7 @@ r_int
 id|kmem_start
 )paren
 (brace
-macro_line|#ifdef BUSMOUSE_MINOR
+macro_line|#ifdef CONFIG_BUSMOUSE
 id|kmem_start
 op_assign
 id|bus_mouse_init
@@ -217,7 +218,7 @@ id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef PSMOUSE_MINOR
+macro_line|#ifdef CONFIG_PSMOUSE
 id|kmem_start
 op_assign
 id|psaux_init
@@ -227,7 +228,7 @@ id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MS_BUSMOUSE_MINOR
+macro_line|#ifdef CONFIG_MS_BUSMOUSE
 id|kmem_start
 op_assign
 id|ms_bus_mouse_init
@@ -237,7 +238,7 @@ id|kmem_start
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef ATIXL_BUSMOUSE_MINOR
+macro_line|#ifdef CONFIG_ATIXL_BUSMOUSE
 id|kmem_start
 op_assign
 id|atixl_busmouse_init

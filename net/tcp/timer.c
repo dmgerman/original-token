@@ -1,7 +1,7 @@
 multiline_comment|/* timer.c */
 multiline_comment|/*&n;  Copyright (C) 1992  Ross Biro&n;  &n;  This program is free software; you can redistribute it and/or modify&n;  it under the terms of the GNU General Public License as published by&n;  the Free Software Foundation; either version 1, or (at your option)&n;  any later version.&n;  &n;  This program is distributed in the hope that it will be useful,&n;  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;  GNU General Public License for more details.&n;  &n;  You should have received a copy of the GNU General Public License&n;  along with this program; if not, write to the Free Software&n;  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;  &n;  The Author may be reached as bir7@leland.stanford.edu or&n;  C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;  */
-multiline_comment|/* $Id: timer.c,v 0.8.4.2 1992/11/10 10:38:48 bir7 Exp $ */
-multiline_comment|/* $Log: timer.c,v $&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
+multiline_comment|/* $Id: timer.c,v 0.8.4.5 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: timer.c,v $&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/12  01:50:49  bir7&n; * Fixed timeouts.&n; *&n; * Revision 0.8.4.3  1992/12/06  23:29:59  bir7&n; * Fixed bugs in timeout.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -15,7 +15,19 @@ macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
-macro_line|#include &quot;../kern_sock.h&quot;
+DECL|macro|TIMER_DEBUG
+macro_line|#undef TIMER_DEBUG
+macro_line|#ifdef PRINTK
+DECL|macro|PRINTK
+macro_line|#undef PRINTK
+macro_line|#endif
+macro_line|#ifdef TIMER_DEBUG
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK printk
+macro_line|#else
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK dummy_routine
+macro_line|#endif
 DECL|variable|timer_base
 r_static
 r_struct
@@ -56,6 +68,10 @@ r_if
 c_cond
 (paren
 id|timer_base
+op_eq
+l_int|NULL
+op_logical_or
+id|t
 op_eq
 l_int|NULL
 )paren
@@ -421,16 +437,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|PRINTK
-(paren
-l_string|&quot;net_timer: found sk=%X&bslash;n&quot;
-comma
-id|sk
-)paren
-suffix:semicolon
 id|why
 op_assign
 id|sk-&gt;timeout
+suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;net_timer: found sk=%X why = %d&bslash;n&quot;
+comma
+id|sk
+comma
+id|why
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -622,8 +640,17 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|sk-&gt;retransmits
-op_increment
+id|PRINTK
+(paren
+l_string|&quot;retransmitting.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sk-&gt;prot-&gt;retransmit
+(paren
+id|sk
+comma
+l_int|0
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -633,6 +660,11 @@ OG
 id|TCP_RETR1
 )paren
 (brace
+id|PRINTK
+(paren
+l_string|&quot;timer.c TIME_WRITE time-out 1&bslash;n&quot;
+)paren
+suffix:semicolon
 id|arp_destroy
 (paren
 id|sk-&gt;daddr
@@ -652,14 +684,14 @@ OG
 id|TCP_RETR2
 )paren
 (brace
+id|PRINTK
+(paren
+l_string|&quot;timer.c TIME_WRITE time-out 2&bslash;n&quot;
+)paren
+suffix:semicolon
 id|sk-&gt;err
 op_assign
 id|ETIMEDOUT
-suffix:semicolon
-id|arp_destroy
-(paren
-id|sk-&gt;daddr
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -723,22 +755,11 @@ r_break
 suffix:semicolon
 )brace
 )brace
-r_else
-multiline_comment|/* sk-&gt;retransmites .. */
-(brace
-id|sk-&gt;prot-&gt;retransmit
-(paren
-id|sk
-comma
-l_int|1
-)paren
-suffix:semicolon
 id|release_sock
 (paren
 id|sk
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 )brace
@@ -747,6 +768,10 @@ r_if
 c_cond
 (paren
 id|sk-&gt;wfront
+op_eq
+l_int|NULL
+op_logical_and
+id|sk-&gt;send_tmp
 op_eq
 l_int|NULL
 )paren
@@ -761,6 +786,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* this basically assumes tcp here. */
 multiline_comment|/* exponential fall back. */
+multiline_comment|/* The rtt should quickly get back to normal once&n;&t;&t;we start sending packets again. */
 id|sk-&gt;rtt
 op_mul_assign
 l_int|2
@@ -768,12 +794,25 @@ suffix:semicolon
 id|sk-&gt;time_wait.len
 op_assign
 id|sk-&gt;rtt
-op_star
-l_int|2
 suffix:semicolon
 id|sk-&gt;timeout
 op_assign
 id|TIME_WRITE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;prot-&gt;write_wakeup
+op_ne
+l_int|NULL
+)paren
+id|sk-&gt;prot
+op_member_access_from_pointer
+id|write_wakeup
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 id|reset_timer
 (paren
@@ -786,10 +825,32 @@ op_amp
 id|sk-&gt;time_wait
 )paren
 suffix:semicolon
+id|release_sock
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|TIME_KEEPOPEN
 suffix:colon
 multiline_comment|/* send something to keep the&n;&t;&t;&t;&t;   connection open. */
+r_if
+c_cond
+(paren
+id|sk-&gt;prot-&gt;write_wakeup
+op_ne
+l_int|NULL
+)paren
+id|sk-&gt;prot
+op_member_access_from_pointer
+id|write_wakeup
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|sk-&gt;retransmits
 op_increment
 suffix:semicolon
@@ -801,6 +862,11 @@ OG
 id|TCP_RETR1
 )paren
 (brace
+id|PRINTK
+(paren
+l_string|&quot;timer.c TIME_KEEPOPEN time-out 1&bslash;n&quot;
+)paren
+suffix:semicolon
 id|arp_destroy
 (paren
 id|sk-&gt;daddr
@@ -811,6 +877,13 @@ id|ip_route_check
 id|sk-&gt;daddr
 )paren
 suffix:semicolon
+id|release_sock
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -820,6 +893,11 @@ OG
 id|TCP_RETR2
 )paren
 (brace
+id|PRINTK
+(paren
+l_string|&quot;timer.c TIME_KEEPOPEN time-out 2&bslash;n&quot;
+)paren
+suffix:semicolon
 id|arp_destroy
 (paren
 id|sk-&gt;daddr
@@ -877,24 +955,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_else
-multiline_comment|/* sk-&gt;retransmits. */
-(brace
-r_if
-c_cond
-(paren
-id|sk-&gt;prot-&gt;write_wakeup
-op_ne
-l_int|NULL
-)paren
-id|sk-&gt;prot
-op_member_access_from_pointer
-id|write_wakeup
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|release_sock
 (paren
 id|sk
@@ -902,7 +962,6 @@ id|sk
 suffix:semicolon
 r_break
 suffix:semicolon
-)brace
 r_default
 suffix:colon
 id|release_sock

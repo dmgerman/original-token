@@ -43,6 +43,7 @@ op_star
 id|rscsi_disks
 suffix:semicolon
 DECL|variable|sd_sizes
+r_static
 r_int
 op_star
 id|sd_sizes
@@ -1243,6 +1244,11 @@ id|req
 op_assign
 l_int|NULL
 suffix:semicolon
+r_int
+id|flag
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1267,6 +1273,15 @@ r_return
 suffix:semicolon
 id|INIT_REQUEST
 suffix:semicolon
+multiline_comment|/* We have to be careful here.  allocate_device will get a free pointer, but&n;   there is no guarantee that it is queueable.  In normal usage, we want to&n;   call this, because other types of devices may have the host all tied up,&n;   and we want to make sure that we have at least one request pending for this&n;   type of device.   We can also come through here while servicing an&n;   interrupt, because of the need to start another command.  If we call&n;   allocate_device more than once, then the system can wedge if the command&n;   is not queueable.  The request_queueable function is safe because it checks&n;   to make sure that the host is able to take another command before it returns&n;   a pointer.  */
+r_if
+c_cond
+(paren
+id|flag
+op_increment
+op_eq
+l_int|0
+)paren
 id|SCpnt
 op_assign
 id|allocate_device
@@ -1292,6 +1307,11 @@ id|device-&gt;index
 comma
 l_int|0
 )paren
+suffix:semicolon
+r_else
+id|SCpnt
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;   try and find a queueable request (i.e. device not busy, and host able to&n;   accept another command.  If we find one, then we queue it. This can&n;   make a big difference on systems with more than one disk drive.  We want&n;   to have the interrupts off when monkeying with the request list, because&n;   otherwise the kernel might try and slip in a request inbetween somewhere. */
 r_if

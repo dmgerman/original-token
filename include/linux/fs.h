@@ -227,6 +227,7 @@ macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
 macro_line|#include &lt;linux/iso_fs_i.h&gt;
+macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 DECL|struct|inode
 r_struct
 id|inode
@@ -413,6 +414,11 @@ r_struct
 id|iso_inode_info
 id|isofs_i
 suffix:semicolon
+DECL|member|nfs_i
+r_struct
+id|nfs_inode_info
+id|nfs_i
+suffix:semicolon
 DECL|member|u
 )brace
 id|u
@@ -511,6 +517,7 @@ macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext_fs_sb.h&gt;
 macro_line|#include &lt;linux/msdos_fs_sb.h&gt;
 macro_line|#include &lt;linux/iso_fs_sb.h&gt;
+macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -599,6 +606,11 @@ DECL|member|isofs_sb
 r_struct
 id|isofs_sb_info
 id|isofs_sb
+suffix:semicolon
+DECL|member|nfs_sb
+r_struct
+id|nfs_sb_info
+id|nfs_sb
 suffix:semicolon
 DECL|member|u
 )brace

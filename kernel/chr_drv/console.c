@@ -218,14 +218,6 @@ r_int
 id|vc_saved_y
 suffix:semicolon
 multiline_comment|/* mode flags */
-DECL|member|vc_kbdapplic
-r_int
-r_int
-id|vc_kbdapplic
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Application keyboard */
 DECL|member|vc_charset
 r_int
 r_int
@@ -242,14 +234,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Saved character set */
-DECL|member|vc_decckm
-r_int
-r_int
-id|vc_decckm
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Cursor Keys Mode */
 DECL|member|vc_decscnm
 r_int
 r_int
@@ -274,14 +258,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Autowrap Mode */
-DECL|member|vc_decarm
-r_int
-r_int
-id|vc_decarm
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Autorepeat Mode */
 DECL|member|vc_deccm
 r_int
 r_int
@@ -298,14 +274,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Insert Mode */
-DECL|member|vc_lnm
-r_int
-r_int
-id|vc_lnm
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Line feed New line Mode */
 multiline_comment|/* attribute flags */
 DECL|member|vc_intensity
 r_int
@@ -506,8 +474,6 @@ DECL|macro|deccm
 mdefine_line|#define deccm&t;&t;(vc_cons[currcons].vc_deccm)
 DECL|macro|decim
 mdefine_line|#define decim&t;&t;(vc_cons[currcons].vc_decim)
-DECL|macro|kbdapplic
-mdefine_line|#define kbdapplic&t;(vc_cons[currcons].vc_kbdapplic)
 DECL|macro|need_wrap
 mdefine_line|#define need_wrap&t;(vc_cons[currcons].vc_need_wrap)
 DECL|macro|color
@@ -559,7 +525,9 @@ mdefine_line|#define is_kbd(x) vc_kbd_flag(kbd_table+currcons,x)
 DECL|macro|decarm
 mdefine_line|#define decarm&t;&t;VC_REPEAT
 DECL|macro|decckm
-mdefine_line|#define decckm&t;&t;VC_APPLIC
+mdefine_line|#define decckm&t;&t;VC_CKMODE
+DECL|macro|kbdapplic
+mdefine_line|#define kbdapplic&t;VC_APPLIC
 DECL|macro|kbdraw
 mdefine_line|#define kbdraw&t;&t;VC_RAW
 DECL|macro|lnm
@@ -3763,8 +3731,6 @@ c_func
 id|lnm
 )paren
 suffix:semicolon
-DECL|macro|is_kbd
-mdefine_line|#define is_kbd(x) vc_kbd_flag(kbd_table+currcons,x)
 id|kbd_table
 (braket
 id|currcons
@@ -4406,9 +4372,11 @@ r_case
 l_char|&squot;&gt;&squot;
 suffix:colon
 multiline_comment|/* Numeric keypad */
+id|clr_kbd
+c_func
+(paren
 id|kbdapplic
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -4416,9 +4384,11 @@ r_case
 l_char|&squot;=&squot;
 suffix:colon
 multiline_comment|/* Appl. keypad */
+id|set_kbd
+c_func
+(paren
 id|kbdapplic
-op_assign
-l_int|1
+)paren
 suffix:semicolon
 r_continue
 suffix:semicolon

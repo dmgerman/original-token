@@ -190,6 +190,8 @@ DECL|macro|PORT_16550
 mdefine_line|#define PORT_16550&t;3
 DECL|macro|PORT_16550A
 mdefine_line|#define PORT_16550A&t;4
+DECL|macro|PORT_MAX
+mdefine_line|#define PORT_MAX&t;4
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
 DECL|macro|ASYNC_NOSCRATCH
 mdefine_line|#define ASYNC_NOSCRATCH&t;0x0001&t;/* 16XXX UART with no scratch register */
@@ -205,6 +207,8 @@ DECL|macro|ASYNC_SPD_VHI
 mdefine_line|#define ASYNC_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps */
 DECL|macro|ASYNC_SPD_CUST
 mdefine_line|#define ASYNC_SPD_CUST&t;0x0030  /* Use user-specified divisor */
+DECL|macro|ASYNC_FLAGS
+mdefine_line|#define ASYNC_FLAGS&t;0x0037&t;/* Possible legal async flags */
 DECL|macro|IS_A_CONSOLE
 mdefine_line|#define IS_A_CONSOLE(min)&t;(((min) &amp; 0xC0) == 0x00)
 DECL|macro|IS_A_SERIAL
@@ -729,6 +733,21 @@ c_func
 (paren
 r_int
 id|pgrp
+comma
+r_int
+id|sig
+comma
+r_int
+id|priv
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|kill_sl
+c_func
+(paren
+r_int
+id|sess
 comma
 r_int
 id|sig

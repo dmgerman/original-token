@@ -1153,6 +1153,14 @@ c_cond
 id|nr_free_pages
 OG
 l_int|30
+op_logical_and
+id|buffermem
+OL
+l_int|6
+op_star
+l_int|1024
+op_star
+l_int|1024
 )paren
 id|grow_buffers
 c_func

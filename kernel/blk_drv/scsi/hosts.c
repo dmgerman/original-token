@@ -1,20 +1,12 @@
 multiline_comment|/*&n; *&t;hosts.c Copyright (C) 1992 Drew Eckhardt &n; *&t;mid to lowlevel SCSI driver interface by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
 multiline_comment|/*&n; *&t;This file contains the medium level SCSI&n; *&t;host interface initialization, as well as the scsi_hosts array of SCSI&n; *&t;hosts currently present in the system. &n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_SCSI
 macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#ifndef NULL 
 DECL|macro|NULL
 mdefine_line|#define NULL 0L
-macro_line|#endif
-macro_line|#ifdef FIGURE_MAX_SCSI_HOSTS
-DECL|macro|MAX_SCSI_HOSTS
-mdefine_line|#define MAX_SCSI_HOSTS
-macro_line|#endif
-macro_line|#ifndef MAX_SCSI_HOSTS
-macro_line|#include &quot;max_hosts.h&quot;
 macro_line|#endif
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#ifdef CONFIG_SCSI_AHA1542
@@ -41,13 +33,6 @@ macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n;*/
 multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the &n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized) &n; *&t;with more than one simulatenous host number, can handle being&n; *&t;rentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
 multiline_comment|/*&n; *&t;When figure is run, we don&squot;t want to link to any object code.  Since &n; *&t;the macro for each host will contain function pointers, we cannot &n; *&t;use it and instead must use a &quot;blank&quot; that does no such &n; *&t;idiocy.&n; */
-macro_line|#ifdef FIGURE_MAX_SCSI_HOSTS
-DECL|macro|BLANKIFY
-mdefine_line|#define BLANKIFY(what) BLANK_HOST
-macro_line|#else
-DECL|macro|BLANKIFY
-mdefine_line|#define BLANKIFY(what) what
-macro_line|#endif
 DECL|variable|scsi_hosts
 id|Scsi_Host
 id|scsi_hosts
@@ -56,88 +41,35 @@ id|scsi_hosts
 op_assign
 (brace
 macro_line|#ifdef CONFIG_SCSI_AHA1542
-id|BLANKIFY
-c_func
-(paren
 id|AHA1542
-)paren
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA1740
-id|BLANKIFY
-c_func
-(paren
 id|AHA1740
-)paren
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
-id|BLANKIFY
-c_func
-(paren
 id|FDOMAIN_16X0
-)paren
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SEAGATE
-id|BLANKIFY
-c_func
-(paren
 id|SEAGATE_ST0X
-)paren
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
-id|BLANKIFY
-c_func
-(paren
 id|ULTRASTOR_14F
-)paren
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
-id|BLANKIFY
-c_func
-(paren
 id|WD7000
-)paren
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
-id|BLANKIFY
-c_func
-(paren
 id|SCSI_DEBUG
-)paren
 comma
 macro_line|#endif
 )brace
 suffix:semicolon
-macro_line|#ifdef FIGURE_MAX_SCSI_HOSTS
-DECL|macro|MAX_SCSI_HOSTS
-macro_line|#undef MAX_SCSI_HOSTS
-DECL|macro|MAX_SCSI_HOSTS
-mdefine_line|#define  MAX_SCSI_HOSTS  (sizeof(scsi_hosts) / sizeof(Scsi_Host))
-macro_line|#endif
-macro_line|#ifdef FIGURE_MAX_SCSI_HOSTS
-macro_line|#include &lt;stdio.h&gt;
-DECL|function|main
-r_void
-id|main
-(paren
-r_void
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;%d&quot;
-comma
-id|MAX_SCSI_HOSTS
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 multiline_comment|/*&n; *&t;Our semaphores and timeout counters, where size depends on MAX_SCSI_HOSTS here. &n; */
 DECL|variable|host_busy
 r_volatile
@@ -331,24 +263,6 @@ id|count
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
-macro_line|#else
-DECL|function|main
-r_void
-id|main
-c_func
-(paren
-r_void
-)paren
-(brace
-id|printf
-c_func
-(paren
-l_string|&quot;0&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;
 macro_line|#ifndef CONFIG_BLK_DEV_SD
 DECL|function|sd_init
 r_int

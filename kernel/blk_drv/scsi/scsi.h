@@ -74,6 +74,8 @@ DECL|macro|SET_LIMITS
 mdefine_line|#define SET_LIMITS&t;&t;0x33
 DECL|macro|PRE_FETCH
 mdefine_line|#define PRE_FETCH&t;&t;0x34
+DECL|macro|READ_POSITION
+mdefine_line|#define READ_POSITION&t;&t;0x34
 DECL|macro|SYNCRONIZE_CACHE
 mdefine_line|#define SYNCRONIZE_CACHE&t;0x35
 DECL|macro|LOCK_UNLOCK_CACHE
@@ -200,15 +202,15 @@ mdefine_line|#define DRIVER_TIMEOUT&t;&t;0x06
 DECL|macro|DRIVER_HARD
 mdefine_line|#define DRIVER_HARD&t;&t;0x07
 DECL|macro|SUGGEST_RETRY
-mdefine_line|#define SUGGEST_RETRY&t;&t;0x08
+mdefine_line|#define SUGGEST_RETRY&t;&t;0x10
 DECL|macro|SUGGEST_ABORT
-mdefine_line|#define SUGGEST_ABORT&t;&t;0x09 
+mdefine_line|#define SUGGEST_ABORT&t;&t;0x20 
 DECL|macro|SUGGEST_REMAP
-mdefine_line|#define SUGGEST_REMAP&t;&t;0x0a
+mdefine_line|#define SUGGEST_REMAP&t;&t;0x30
 DECL|macro|SUGGEST_DIE
-mdefine_line|#define SUGGEST_DIE&t;&t;0x0b
+mdefine_line|#define SUGGEST_DIE&t;&t;0x40
 DECL|macro|DRIVER_SENSE
-mdefine_line|#define DRIVER_SENSE&t;&t;0x10
+mdefine_line|#define DRIVER_SENSE&t;&t;0x08
 DECL|macro|DRIVER_MASK
 mdefine_line|#define DRIVER_MASK 0x0f
 DECL|macro|SUGGEST_MASK
@@ -249,8 +251,19 @@ DECL|macro|TYPE_WORM
 mdefine_line|#define TYPE_WORM&t;0x04&t;/* Treated as ROM by our system */
 DECL|macro|TYPE_ROM
 mdefine_line|#define TYPE_ROM&t;0x05
+DECL|macro|TYPE_MOD
+mdefine_line|#define TYPE_MOD&t;0x07  /* Magneto-optical disk - treated as TYPE_DISK */
 DECL|macro|TYPE_NO_LUN
 mdefine_line|#define TYPE_NO_LUN&t;0x7f
+multiline_comment|/*&n;&t;SCSI command sets&n;&n;*/
+DECL|macro|SCSI_UNKNOWN
+mdefine_line|#define SCSI_UNKNOWN&t;0
+DECL|macro|SCSI_1
+mdefine_line|#define&t;SCSI_1&t;&t;1
+DECL|macro|SCSI_1_CCS
+mdefine_line|#define&t;SCSI_1_CCS&t;2
+DECL|macro|SCSI_2
+mdefine_line|#define&t;SCSI_2&t;&t;3
 multiline_comment|/*&n;&t;Every SCSI command starts with a one byte OP-code.&n;&t;The next byte&squot;s high three bits are the LUN of the&n;&t;device.  Any multi-byte quantities are stored high byte&n;&t;first, and may have a 5 bit MSB in the same byte&n;&t;as the LUN.&n;*/
 multiline_comment|/*&n;&t;The scsi_device struct contains what we know about each given scsi&n;&t;device.&n;*/
 DECL|struct|scsi_device
@@ -287,6 +300,10 @@ multiline_comment|/* Used to wait if device is busy */
 DECL|member|type
 r_char
 id|type
+suffix:semicolon
+DECL|member|scsi_level
+r_char
+id|scsi_level
 suffix:semicolon
 DECL|member|writeable
 r_int

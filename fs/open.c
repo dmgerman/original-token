@@ -2044,6 +2044,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|inode
+op_logical_and
 id|S_ISREG
 c_func
 (paren

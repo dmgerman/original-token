@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Fri Nov 27 22:57:28 1992 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * WARNING: THIS IS A BETA VERSION!&n; *          USE AT YOUR OWN RISK!&n; *          BACKUP YOUR SYSTEM BEFORE USING!&n;&n; * I would like to thank Maxtor, whose *free* 206 page manual on the LXT&n; * drives was very helpful: &quot;LXT SCSI Products: Specifications and OEM&n; * Technical Manual (Revision B/September 1991)&quot;&n;&n; * I wish that I could thank Future Domain for the necessary documentation,&n; * but I can&squot;t.  I used the $25 &quot;TMC-1800 SCSI Chip Specification&quot; document&n; * (FDC-1800T), which documents the *chip* and not the board.  Without it,&n; * I would have been totally lost, but it would have been nice to have some&n; * example source.  (The DOS BIOS source cost $250 and the UN*X driver&n; * source was $750 [both required a non-disclosure agreement].  Ever wonder&n; * why there are no freely available Future Domain drivers?)&n;&n; * Thanks to: Todd Carrico (todd@wutc.wustl.edu), Dan Poirier&n; * (poirier@cs.unc.edu ), Ken Corey (kenc@sol.acs.unt.edu), and C. de Bruin&n; * (bruin@dutiba.tudelft.nl) for alpha testing.  Also thanks to Drew&n; * Eckhardt (drew@cs.colorado.edu) for answering questions, and to Doug&n; * Hoffman (hoffman@cs.unc.edu) for lending me SCSI devices to make driver&n; * more robust. */
+multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Wed Dec  9 21:34:53 1992 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * WARNING: THIS IS A BETA VERSION!&n; *          USE AT YOUR OWN RISK!&n; *          BACKUP YOUR SYSTEM BEFORE USING!&n;&n; * I would like to thank Maxtor, whose *free* 206 page manual on the LXT&n; * drives was very helpful: &quot;LXT SCSI Products: Specifications and OEM&n; * Technical Manual (Revision B/September 1991)&quot;&n;&n; * I wish that I could thank Future Domain for the necessary documentation,&n; * but I can&squot;t.  I used the $25 &quot;TMC-1800 SCSI Chip Specification&quot; document&n; * (FDC-1800T), which documents the *chip* and not the board.  Without it,&n; * I would have been totally lost, but it would have been nice to have some&n; * example source.  (The DOS BIOS source cost $250 and the UN*X driver&n; * source was $750 [both required a non-disclosure agreement].  Ever wonder&n; * why there are no freely available Future Domain drivers?)&n;&n; * Thanks to: Todd Carrico (todd@wutc.wustl.edu), Dan Poirier&n; * (poirier@cs.unc.edu ), Ken Corey (kenc@sol.acs.unt.edu), C. de Bruin&n; * (bruin@dutiba.tudelft.nl) and Sakari Aaltonen (sakaria@vipunen.hit.fi)&n; * for alpha testing.  Also thanks to Drew Eckhardt (drew@cs.colorado.edu)&n; * and Eric Youngdale (eric@tantalus.nrl.navy.mil) for answering questions,&n; * and to Doug Hoffman (hoffman@cs.unc.edu) for lending me SCSI devices to&n; * make the driver more robust. */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../blk.h&quot;
@@ -8,7 +8,7 @@ macro_line|#include &quot;fdomain.h&quot;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION          &quot;3.1&quot;&t;/* Change with each revision */
+mdefine_line|#define VERSION          &quot;3.2&quot;&t;/* Change with each revision */
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG            1&t;/* Enable debugging output */
@@ -32,6 +32,8 @@ DECL|macro|DEBUG_DETECT
 mdefine_line|#define DEBUG_DETECT     0&t;/* Debug fdomain_16x0_detect() */
 DECL|macro|DEBUG_MESSAGES
 mdefine_line|#define DEBUG_MESSAGES   0      /* Debug MESSAGE IN PHASE */
+DECL|macro|DEBUG_ABORT
+mdefine_line|#define DEBUG_ABORT      1    /* Debug abort() routine */
 macro_line|#else
 DECL|macro|EVERY_ACCESS
 mdefine_line|#define EVERY_ACCESS     0&t;/* LEAVE THESE ALONE--CHANGE THE ONES ABOVE */
@@ -41,6 +43,8 @@ DECL|macro|DEBUG_DETECT
 mdefine_line|#define DEBUG_DETECT     0
 DECL|macro|DEBUG_MESSAGES
 mdefine_line|#define DEBUG_MESSAGES   0
+DECL|macro|DEBUG_ABORT
+mdefine_line|#define DEBUG_ABORT      0
 macro_line|#endif
 multiline_comment|/* Errors are reported on the line, so we don&squot;t need to report them again */
 macro_line|#if EVERY_ACCESS
@@ -93,6 +97,11 @@ r_static
 r_int
 id|Interrupt_Cntl_port
 suffix:semicolon
+DECL|variable|Interrupt_Mask_port
+r_static
+r_int
+id|Interrupt_Mask_port
+suffix:semicolon
 DECL|variable|Read_FIFO_port
 r_static
 r_int
@@ -107,6 +116,11 @@ DECL|variable|SCSI_Cntl_port
 r_static
 r_int
 id|SCSI_Cntl_port
+suffix:semicolon
+DECL|variable|SCSI_Data_NoACK_port
+r_static
+r_int
+id|SCSI_Data_NoACK_port
 suffix:semicolon
 DECL|variable|SCSI_Status_port
 r_static
@@ -254,21 +268,26 @@ op_assign
 l_int|7
 comma
 DECL|enumerator|SCSI_Data_NoACK
-DECL|enumerator|Option_Select
+DECL|enumerator|Interrupt_Mask
 id|SCSI_Data_NoACK
 op_assign
 l_int|8
 comma
+id|Interrupt_Mask
+op_assign
+l_int|9
+comma
+DECL|enumerator|Option_Select
+DECL|enumerator|Read_FIFO
 id|Option_Select
 op_assign
 l_int|10
 comma
-DECL|enumerator|Read_FIFO
-DECL|enumerator|FIFO_Data_Count
 id|Read_FIFO
 op_assign
 l_int|12
 comma
+DECL|enumerator|FIFO_Data_Count
 id|FIFO_Data_Count
 op_assign
 l_int|14
@@ -1323,6 +1342,12 @@ id|port_base
 op_plus
 id|Interrupt_Cntl
 suffix:semicolon
+id|Interrupt_Mask_port
+op_assign
+id|port_base
+op_plus
+id|Interrupt_Mask
+suffix:semicolon
 id|Read_FIFO_port
 op_assign
 id|port_base
@@ -1340,6 +1365,12 @@ op_assign
 id|port_base
 op_plus
 id|SCSI_Cntl
+suffix:semicolon
+id|SCSI_Data_NoACK_port
+op_assign
+id|port_base
+op_plus
+id|SCSI_Data_NoACK
 suffix:semicolon
 id|SCSI_Status_port
 op_assign
@@ -2149,9 +2180,7 @@ op_lshift
 id|target
 )paren
 comma
-id|port_base
-op_plus
-id|SCSI_Data_NoACK
+id|SCSI_Data_NoACK_port
 )paren
 suffix:semicolon
 r_if
@@ -2516,9 +2545,7 @@ comma
 id|inb
 c_func
 (paren
-id|port_base
-op_plus
-id|SCSI_Data_NoACK
+id|SCSI_Data_NoACK_port
 )paren
 )paren
 suffix:semicolon
@@ -2652,9 +2679,7 @@ op_lshift
 id|current_SC-&gt;target
 )paren
 comma
-id|port_base
-op_plus
-id|SCSI_Data_NoACK
+id|SCSI_Data_NoACK_port
 )paren
 suffix:semicolon
 macro_line|#if RESELECTION
@@ -2754,8 +2779,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if EVERY_ACCESS
 r_else
+(brace
+macro_line|#if EVERY_ACCESS
 id|printk
 c_func
 (paren
@@ -2763,6 +2789,18 @@ l_string|&quot; AltSel &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Stop arbitration (also set FIFO for output and enable parity) */
+id|outb
+c_func
+(paren
+l_int|0xd0
+op_or
+id|PARITY_MASK
+comma
+id|TMC_Cntl_port
+)paren
+suffix:semicolon
+)brace
 )brace
 id|current_SC-&gt;SCp.phase
 op_assign
@@ -3992,9 +4030,7 @@ c_func
 (paren
 l_int|0x40
 comma
-id|port_base
-op_plus
-id|SCSI_Data_NoACK
+id|SCSI_Data_NoACK_port
 )paren
 suffix:semicolon
 multiline_comment|/* Set our id bit */
@@ -5019,7 +5055,7 @@ r_int
 id|code
 )paren
 (brace
-macro_line|#if EVERY_ACCESS || ERRORS_ONLY
+macro_line|#if EVERY_ACCESS || ERRORS_ONLY || DEBUG_ABORT
 id|printk
 c_func
 (paren
@@ -5027,6 +5063,166 @@ l_string|&quot;SCSI (Future Domain): Abort &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if DEBUG_ABORT
+id|printk
+c_func
+(paren
+l_string|&quot;Phase = %d, flag = %d, target = %d cmnd = 0x%02x pieces = %d size = %u&bslash;n&quot;
+comma
+id|current_SC-&gt;SCp.phase
+comma
+id|in_interrupt_code
+comma
+id|current_SC-&gt;target
+comma
+op_star
+(paren
+r_int
+r_char
+op_star
+)paren
+id|current_SC-&gt;cmnd
+comma
+id|current_SC-&gt;use_sg
+comma
+id|current_SC-&gt;request_bufflen
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;IMR = 0x%02x%02x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0x0a1
+)paren
+comma
+id|inb
+c_func
+(paren
+l_int|0x21
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0a
+comma
+l_int|0xa0
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;IRR = 0x%02x&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0xa0
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0a
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%02x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0b
+comma
+l_int|0xa0
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ISR = 0x%02x&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0xa0
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0b
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%02x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SCSI Status    = %x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|SCSI_Status_port
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;TMC Status     = %x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|TMC_Status_port
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Interrupt Mask = %x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|Interrupt_Mask_port
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|cli
 c_func
 (paren
@@ -5088,7 +5284,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Aborts are not done well. . . */
-macro_line|#if 0
 id|my_done
 c_func
 (paren

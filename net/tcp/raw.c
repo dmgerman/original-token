@@ -1,7 +1,7 @@
 multiline_comment|/* raw.c - implements raw ip sockets. */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: raw.c,v 0.8.4.6 1992/11/18 15:38:03 bir7 Exp $ */
-multiline_comment|/* $Log: raw.c,v $&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * Works now.&n; *&n; *&n; * Revision 0.8.4.4  1992/11/17  09:27:07  bir7&n; * Fixed error in header building.&n; *&n; * Revision 0.8.4.3  1992/11/16  16:13:40  bir7&n; * Added debuggin information.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
+multiline_comment|/* $Id: raw.c,v 0.8.4.9 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: raw.c,v $&n; * Revision 0.8.4.9  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.8  1992/12/12  01:50:49  bir7&n; * Fixed bug in call to err routine.&n; *&n; * Revision 0.8.4.7  1992/12/06  11:31:47  bir7&n; * added raw_err.&n; *&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * Works now.&n; *&n; *&n; * Revision 0.8.4.4  1992/11/17  09:27:07  bir7&n; * Fixed error in header building.&n; *&n; * Revision 0.8.4.3  1992/11/16  16:13:40  bir7&n; * Added debuggin information.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -17,7 +17,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &quot;../kern_sock.h&quot; /* for PRINTK */
+macro_line|#include &quot;icmp.h&quot;
 macro_line|#ifdef PRINTK
 DECL|macro|PRINTK
 macro_line|#undef PRINTK
@@ -68,6 +68,113 @@ r_return
 (paren
 id|b
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* raw_err gets called by the icmp module. */
+r_void
+DECL|function|raw_err
+id|raw_err
+(paren
+r_int
+id|err
+comma
+r_int
+r_char
+op_star
+id|header
+comma
+r_int
+r_int
+id|daddr
+comma
+r_int
+r_int
+id|saddr
+comma
+r_struct
+id|ip_protocol
+op_star
+id|protocol
+)paren
+(brace
+r_volatile
+r_struct
+id|sock
+op_star
+id|sk
+suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;raw_err (err=%d, header=%X, daddr=%X, saddr=%X, ip_protocl=%X)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|protocol
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
+id|sk
+op_assign
+id|protocol-&gt;data
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* This is meaningless in raw sockets. */
+r_if
+c_cond
+(paren
+id|err
+op_amp
+l_int|0xff00
+op_eq
+(paren
+id|ICMP_SOURCE_QUENCH
+op_lshift
+l_int|8
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;cong_window
+OG
+l_int|1
+)paren
+id|sk-&gt;cong_window
+op_assign
+id|sk-&gt;cong_window
+op_div
+l_int|2
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|sk-&gt;err
+op_assign
+id|icmp_err_convert
+(braket
+id|err
+op_amp
+l_int|0xff
+)braket
+dot
+id|errno
+suffix:semicolon
+multiline_comment|/* none of them are fatal for raw sockets. */
+multiline_comment|/*   if (icmp_err_convert[err &amp; 0xff].fatal)&n;     {&n;&t;sk-&gt;prot-&gt;close(sk, 0);&n;     } */
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* this should be the easiest of all, all we do is copy it into&n;   a buffer. */
@@ -714,6 +821,10 @@ c_func
 suffix:semicolon
 )brace
 )brace
+id|skb-&gt;lock
+op_assign
+l_int|0
+suffix:semicolon
 id|skb-&gt;mem_addr
 op_assign
 id|skb
@@ -1035,6 +1146,10 @@ op_star
 )paren
 id|sk
 suffix:semicolon
+id|p-&gt;err_handler
+op_assign
+id|raw_err
+suffix:semicolon
 id|add_ip_protocol
 (paren
 id|p
@@ -1152,6 +1267,18 @@ r_return
 (paren
 op_minus
 id|EINVAL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;shutdown
+op_amp
+id|RCV_SHUTDOWN
+)paren
+r_return
+(paren
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1555,6 +1682,8 @@ comma
 l_int|NULL
 comma
 id|raw_init
+comma
+l_int|NULL
 comma
 l_int|128
 comma

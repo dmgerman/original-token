@@ -133,5 +133,10 @@ DECL|typedef|Scsi_Tape
 )brace
 id|Scsi_Tape
 suffix:semicolon
+multiline_comment|/* Positioning SCSI-commands for Tandberg, etc. drives */
+DECL|macro|QFA_REQUEST_BLOCK
+mdefine_line|#define&t;QFA_REQUEST_BLOCK&t;0x02
+DECL|macro|QFA_SEEK_BLOCK
+mdefine_line|#define&t;QFA_SEEK_BLOCK&t;&t;0x0c
 macro_line|#endif
 eof

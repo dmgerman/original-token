@@ -1,7 +1,7 @@
 multiline_comment|/* tcp.h */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: tcp.h,v 0.8.4.1 1992/11/10 00:17:18 bir7 Exp $ */
-multiline_comment|/* $Log: tcp.h,v $&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and $Log: tcp.h,v $&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *.&n; * */
+multiline_comment|/* $Id: tcp.h,v 0.8.4.6 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: tcp.h,v $&n; * Revision 0.8.4.6  1992/12/12  19:25:04  bir7&n; * Fixed anti-memory Leak in shutdown.&n; *&n; * Revision 0.8.4.5  1992/12/12  01:50:49  bir7&n; * Fixed several bugs including half-duplex connections.&n; *&n; * Revision 0.8.4.4  1992/12/08  20:49:15  bir7&n; * Fixed minor bugs and checked out MSS.&n; *&n; * Revision 0.8.4.3  1992/12/06  23:29:59  bir7&n; * Added support for mss and half completed packets.  Also added&n; * support for shrinking windows.&n; *&n; * Revision 0.8.4.2  1992/12/03  19:54:12  bir7&n; * Added paranoid queue checking.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#ifndef _TCP_TCP_H
 DECL|macro|_TCP_TCP_H
 mdefine_line|#define _TCP_TCP_H
@@ -106,10 +106,11 @@ comma
 DECL|enumerator|TCP_SYN_RECV
 id|TCP_SYN_RECV
 comma
-DECL|enumerator|TCP_CLOSING
+macro_line|#if 0
 id|TCP_CLOSING
 comma
 multiline_comment|/* not a valid state, just a seperator so we can use&n;&t;&t;  &lt; tcp_closing or &gt; tcp_closing for checks. */
+macro_line|#endif
 DECL|enumerator|TCP_FIN_WAIT1
 id|TCP_FIN_WAIT1
 comma
@@ -121,6 +122,9 @@ id|TCP_TIME_WAIT
 comma
 DECL|enumerator|TCP_CLOSE
 id|TCP_CLOSE
+comma
+DECL|enumerator|TCP_CLOSE_WAIT
+id|TCP_CLOSE_WAIT
 comma
 DECL|enumerator|TCP_LAST_ACK
 id|TCP_LAST_ACK
@@ -142,7 +146,7 @@ mdefine_line|#define MAX_WINDOW  12000
 DECL|macro|MIN_WINDOW
 mdefine_line|#define MIN_WINDOW   2048
 DECL|macro|MAX_ACK_BACKLOG
-mdefine_line|#define MAX_ACK_BACKLOG 2
+mdefine_line|#define MAX_ACK_BACKLOG 8
 DECL|macro|MIN_WRITE_SPACE
 mdefine_line|#define MIN_WRITE_SPACE 2048
 DECL|macro|TCP_WINDOW_DIFF
@@ -165,6 +169,8 @@ DECL|macro|TCP_CONNECT_TIME
 mdefine_line|#define TCP_CONNECT_TIME 200 /* time to retransmit first syn. */
 DECL|macro|TCP_SYN_RETRIES
 mdefine_line|#define TCP_SYN_RETRIES 30 /* number of times to retry openning a connection.&n;&t;&t;&t;      */
+DECL|macro|TCP_PROBEWAIT_LEN
+mdefine_line|#define TCP_PROBEWAIT_LEN 250 /* time to wait between probes when I&squot;ve got&n;&t;&t;&t;&t; something to write and there is no window. */
 DECL|macro|TCP_NO_CHECK
 mdefine_line|#define TCP_NO_CHECK 0 /* turn to one if you want the default to be no&n;&t;&t;&t;  checksum . */
 r_void
@@ -176,7 +182,9 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|HEADER_SIZE
-mdefine_line|#define HEADER_SIZE 100
+mdefine_line|#define HEADER_SIZE 64 /* Maximum header size we need to deal with. */
+DECL|macro|TCP_WRITE_QUEUE_MAGIC
+mdefine_line|#define TCP_WRITE_QUEUE_MAGIC 0xa5f23477
 multiline_comment|/* this next routines deal with comparing 32 bit unsigned ints and&n;    worry about wrap around. The general strategy is to do a normal&n;    compare so long as neither of the numbers is within 4k of wrapping.&n;    Otherwise we must check for the wrap. */
 r_static
 r_inline
@@ -337,6 +345,38 @@ id|seq3
 op_plus
 l_int|1
 )paren
+)paren
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_const
+r_int
+DECL|function|tcp_connected
+id|tcp_connected
+(paren
+r_const
+r_int
+id|state
+)paren
+(brace
+r_return
+(paren
+id|state
+op_eq
+id|TCP_ESTABLISHED
+op_logical_or
+id|state
+op_eq
+id|TCP_CLOSE_WAIT
+op_logical_or
+id|state
+op_eq
+id|TCP_FIN_WAIT1
+op_logical_or
+id|state
+op_eq
+id|TCP_FIN_WAIT2
 )paren
 suffix:semicolon
 )brace

@@ -1599,6 +1599,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Most of this is commented out because people were getting kernel crashes&n;   with it enabled.  If you want to re-enable this, please figure out why&n;   the kernel was panicing. ERY */
 DECL|function|ultrastor_14f_reset
 r_int
 id|ultrastor_14f_reset
@@ -1619,6 +1620,7 @@ l_string|&quot;US14F: reset: called&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if 0
 multiline_comment|/* Issue SCSI BUS reset */
 id|outb_p
 c_func
@@ -1658,6 +1660,7 @@ id|aborted
 op_assign
 id|DID_RESET
 suffix:semicolon
+macro_line|#endif
 macro_line|#if (ULTRASTOR_DEBUG &amp; UD_RESET)
 id|printk
 c_func

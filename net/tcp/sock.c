@@ -1,7 +1,7 @@
 multiline_comment|/* sock.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: sock.c,v 0.8.4.6 1992/11/18 15:38:03 bir7 Exp $ */
-multiline_comment|/* $Log: sock.c,v $&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * Fixed minor problem in setsockopt.&n; *&n; * Revision 0.8.4.5  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.4  1992/11/16  16:13:40  bir7&n; * Fixed some error returns and undid one of the accept changes.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Added more checking for a packet being on a queue before it&squot;s&n; * dropped when a socket is closed.  Added check to see if it&squot;s&n; * on the arp_q also.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
+multiline_comment|/* $Id: sock.c,v 0.8.4.12 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: sock.c,v $&n; * Revision 0.8.4.12  1992/12/12  19:25:04  bir7&n; * Made memory leak checking more leanent.&n; *&n; * Revision 0.8.4.11  1992/12/12  01:50:49  bir7&n; * Fixed memory leak in accept.&n; *&n; * Revision 0.8.4.10  1992/12/08  20:49:15  bir7&n; * Added support for -EINPROGRESS&n; *&n; * Revision 0.8.4.9  1992/12/06  23:29:59  bir7&n; * Added mss and support for half completed packets.&n; *&n; * Revision 0.8.4.8  1992/12/05  21:35:53  bir7&n; * changed dev-&gt;init to return an int.&n; *&n; * Revision 0.8.4.7  1992/12/03  19:52:20  bir7&n; * added paranoid queue checking&n; *&n; * Revision 0.8.4.6  1992/11/18  15:38:03  bir7&n; * Fixed minor problem in setsockopt.&n; *&n; * Revision 0.8.4.5  1992/11/17  14:19:47  bir7&n; *&n; * Revision 0.8.4.4  1992/11/16  16:13:40  bir7&n; * Fixed some error returns and undid one of the accept changes.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Added more checking for a packet being on a queue before it&squot;s&n; * dropped when a socket is closed.  Added check to see if it&squot;s&n; * on the arp_q also.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.5  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -17,10 +17,25 @@ macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;sock.h&quot;
+macro_line|#include &quot;arp.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+DECL|macro|ISOCK_DEBUG
+macro_line|#undef ISOCK_DEBUG
+macro_line|#ifdef PRINTK
+DECL|macro|PRINTK
+macro_line|#undef PRINTK
+macro_line|#endif
+macro_line|#ifdef ISOCK_DEBUG
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK printk
+macro_line|#else
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK dummy_routine
+macro_line|#endif
 macro_line|#ifdef MEM_DEBUG
 DECL|macro|MPRINTK
 mdefine_line|#define MPRINTK printk
@@ -838,6 +853,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|skb-&gt;magic
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1646,6 +1665,18 @@ op_amp
 id|sk-&gt;time_wait
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;send_tmp
+)paren
+id|kfree_skb
+(paren
+id|sk-&gt;send_tmp
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
 multiline_comment|/* cleanup up the write buffer. */
 r_for
 c_loop
@@ -1669,6 +1700,24 @@ id|skb2
 op_assign
 id|skb-&gt;next
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;magic
+op_ne
+id|TCP_WRITE_QUEUE_MAGIC
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;sock.c:destroy_sock write queue with bad magic (%X)&bslash;n&quot;
+comma
+id|skb-&gt;magic
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|kfree_skb
 c_func
 (paren
@@ -1683,6 +1732,10 @@ id|skb2
 suffix:semicolon
 )brace
 id|sk-&gt;wfront
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sk-&gt;wback
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1786,6 +1839,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* see if it&squot;s in a transmit queue. */
+multiline_comment|/* this can be simplified quite a bit.  Look&n;&t; at tcp.c:tcp_ack to see how. */
 r_if
 c_cond
 (paren
@@ -1827,6 +1881,39 @@ op_eq
 id|arp_q
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|skb-&gt;magic
+op_ne
+id|ARP_QUEUE_MAGIC
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;sock.c: destroy_sock skb on arp queue with&quot;
+l_string|&quot;bas magic (%X)&bslash;n&quot;
+comma
+id|skb-&gt;magic
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|arp_q
+op_assign
+l_int|NULL
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|arp_q
 op_assign
 id|skb-&gt;next
@@ -1862,6 +1949,35 @@ op_eq
 id|skb
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|skb-&gt;magic
+op_ne
+id|DEV_QUEUE_MAGIC
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;sock.c: destroy sock skb on dev queue&quot;
+l_string|&quot;with bad magic (%X)&bslash;n&quot;
+comma
+id|skb-&gt;magic
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|skb-&gt;dev-&gt;buffs
 (braket
 id|i
@@ -1885,6 +2001,33 @@ op_eq
 id|arp_q
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|skb-&gt;magic
+op_ne
+id|ARP_QUEUE_MAGIC
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;sock.c: destroy_sock skb on arp queue with&quot;
+l_string|&quot;bas magic (%X)&bslash;n&quot;
+comma
+id|skb-&gt;magic
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|arp_q
 op_assign
 l_int|NULL
@@ -1920,6 +2063,35 @@ op_eq
 id|skb
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|skb-&gt;magic
+op_ne
+id|DEV_QUEUE_MAGIC
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;sock.c: destroy sock skb on dev queue&quot;
+l_string|&quot;with bad magic (%X)&bslash;n&quot;
+comma
+id|skb-&gt;magic
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|skb-&gt;dev-&gt;buffs
 (braket
 id|i
@@ -2058,11 +2230,11 @@ r_if
 c_cond
 (paren
 id|sk-&gt;rmem_alloc
-op_eq
+op_le
 l_int|0
 op_logical_and
 id|sk-&gt;wmem_alloc
-op_eq
+op_le
 l_int|0
 )paren
 (brace
@@ -2819,6 +2991,15 @@ id|sk-&gt;num
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* we might as well re use these. */
+id|sk-&gt;max_ack_backlog
+op_assign
+id|backlog
+suffix:semicolon
+id|sk-&gt;ack_backlog
+op_assign
+l_int|0
+suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_LISTEN
@@ -2846,6 +3027,9 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+op_star
+id|dev2
 suffix:semicolon
 r_struct
 id|ip_protocol
@@ -2930,6 +3114,11 @@ id|tmp
 suffix:semicolon
 )brace
 multiline_comment|/* add the devices */
+multiline_comment|/* if the call to dev-&gt;init fails, the dev is removed&n;     from the chain disconnecting the device until the&n;     next reboot. */
+id|dev2
+op_assign
+l_int|NULL
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2950,7 +3139,7 @@ r_if
 c_cond
 (paren
 id|dev-&gt;init
-)paren
+op_logical_and
 id|dev
 op_member_access_from_pointer
 id|init
@@ -2958,8 +3147,42 @@ c_func
 (paren
 id|dev
 )paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev2
+op_eq
+l_int|NULL
+)paren
+id|dev_base
+op_assign
+id|dev-&gt;next
+suffix:semicolon
+r_else
+id|dev2-&gt;next
+op_assign
+id|dev-&gt;next
 suffix:semicolon
 )brace
+r_else
+(brace
+id|dev2
+op_assign
+id|dev
+suffix:semicolon
+)brace
+)brace
+id|bh_base
+(braket
+id|INET_BH
+)braket
+dot
+id|routine
+op_assign
+id|inet_bh
+suffix:semicolon
 id|timer_table
 (braket
 id|NET_TIMER
@@ -3448,6 +3671,15 @@ id|sk-&gt;ack_timed
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;send_tmp
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sk-&gt;mss
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* we will try not to send any packets smaller&n;&t;&t;   than this. */
 multiline_comment|/* this is how many unacked bytes we will accept for&n;     this socket.  */
 id|sk-&gt;max_unacked
 op_assign
@@ -3747,6 +3979,15 @@ l_int|NULL
 r_return
 (paren
 l_int|0
+)paren
+suffix:semicolon
+id|PRINTK
+(paren
+l_string|&quot;ip_proto_release (sock = %X, peer = %X)&bslash;n&quot;
+comma
+id|sock
+comma
+id|peer
 )paren
 suffix:semicolon
 id|wake_up
@@ -4280,6 +4521,72 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_ESTABLISHED
+)paren
+(brace
+id|sock-&gt;state
+op_assign
+id|SS_CONNECTED
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|EISCONN
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sock-&gt;state
+op_eq
+id|SS_CONNECTING
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_SYN_SENT
+op_logical_or
+id|sk-&gt;state
+op_eq
+id|TCP_SYN_RECV
+)paren
+r_return
+(paren
+op_minus
+id|EINPROGRESS
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;err
+)paren
+r_return
+(paren
+op_minus
+id|sk-&gt;err
+)paren
+suffix:semicolon
+id|sock-&gt;state
+op_assign
+id|SS_CONNECTED
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|EISCONN
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* we may need to bind the socket. */
 r_if
 c_cond
@@ -4379,14 +4686,20 @@ suffix:semicolon
 )brace
 id|sock-&gt;state
 op_assign
-id|SS_CONNECTED
+id|SS_CONNECTING
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|sk-&gt;state
+op_ne
+id|TCP_ESTABLISHED
+op_logical_and
+(paren
 id|flags
 op_amp
 id|O_NONBLOCK
+)paren
 )paren
 r_return
 (paren
@@ -4404,12 +4717,12 @@ r_while
 c_loop
 (paren
 id|sk-&gt;state
-op_ne
-id|TCP_ESTABLISHED
-op_logical_and
+op_eq
+id|TCP_SYN_SENT
+op_logical_or
 id|sk-&gt;state
-OL
-id|TCP_CLOSING
+op_eq
+id|TCP_SYN_RECV
 )paren
 (brace
 id|interruptible_sleep_on
@@ -4435,6 +4748,10 @@ id|sk-&gt;intr
 op_assign
 l_int|1
 suffix:semicolon
+id|sock-&gt;state
+op_assign
+id|SS_UNCONNECTED
+suffix:semicolon
 r_return
 (paren
 op_minus
@@ -4447,6 +4764,10 @@ id|sti
 c_func
 (paren
 )paren
+suffix:semicolon
+id|sock-&gt;state
+op_assign
+id|SS_CONNECTED
 suffix:semicolon
 id|sk-&gt;intr
 op_assign
@@ -4462,6 +4783,10 @@ op_logical_and
 id|sk-&gt;err
 )paren
 (brace
+id|sock-&gt;state
+op_assign
+id|SS_UNCONNECTED
+suffix:semicolon
 r_return
 (paren
 op_minus
@@ -4551,6 +4876,23 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* we&squot;ve been passed an extra socket. We need to free it up because&n;   the tcp module creates it&squot;s own when it accepts one. */
+r_if
+c_cond
+(paren
+id|newsock-&gt;data
+)paren
+id|kfree_s
+(paren
+id|newsock-&gt;data
+comma
+r_sizeof
+(paren
+r_struct
+id|sock
+)paren
+)paren
+suffix:semicolon
 id|newsock-&gt;data
 op_assign
 l_int|NULL
@@ -4860,9 +5202,12 @@ id|peer
 r_if
 c_cond
 (paren
+op_logical_neg
+id|tcp_connected
+c_func
+(paren
 id|sk-&gt;state
-op_ne
-id|TCP_ESTABLISHED
+)paren
 )paren
 r_return
 (paren
@@ -4994,21 +5339,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;shutdown
-op_amp
-id|RCV_SHUTDOWN
-)paren
-(brace
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* this seems to be what sunos does. */
-)brace
 multiline_comment|/* we may need to bind the socket. */
 r_if
 c_cond
@@ -5122,20 +5452,6 @@ comma
 id|__LINE__
 )paren
 suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|sk-&gt;shutdown
-op_amp
-id|RCV_SHUTDOWN
-)paren
-(brace
 r_return
 (paren
 l_int|0
@@ -5729,20 +6045,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;shutdown
-op_amp
-id|RCV_SHUTDOWN
-)paren
-(brace
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|sk-&gt;prot-&gt;recvfrom
 op_eq
 l_int|NULL
@@ -5893,9 +6195,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sock-&gt;state
+op_eq
+id|SS_CONNECTING
+op_logical_and
 id|sk-&gt;state
-op_ne
+op_eq
 id|TCP_ESTABLISHED
+)paren
+id|sock-&gt;state
+op_assign
+id|SS_CONNECTED
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tcp_connected
+c_func
+(paren
+id|sk-&gt;state
+)paren
 )paren
 r_return
 (paren
@@ -5906,6 +6226,18 @@ suffix:semicolon
 id|sk-&gt;shutdown
 op_or_assign
 id|how
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;prot-&gt;shutdown
+)paren
+id|sk-&gt;prot-&gt;shutdown
+(paren
+id|sk
+comma
+id|how
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -6574,12 +6906,6 @@ c_cond
 (paren
 op_logical_neg
 id|sk-&gt;dead
-op_logical_and
-id|sk-&gt;wmem_alloc
-OG
-id|SK_WMEM_MAX
-op_div
-l_int|2
 )paren
 id|wake_up
 c_func

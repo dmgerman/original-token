@@ -1,7 +1,7 @@
 multiline_comment|/* loopback.c contains the loopback device functions. */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: loopback.c,v 0.8.4.3 1992/11/18 15:38:03 bir7 Exp $ */
-multiline_comment|/* $Log: loopback.c,v $&n; * Revision 0.8.4.3  1992/11/18  15:38:03  bir7&n; * Fixed bug in start_xmit.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; * */
+multiline_comment|/* $Id: loopback.c,v 0.8.4.5 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: loopback.c,v $&n; * Revision 0.8.4.5  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.4  1992/12/05  21:35:53  bir7&n; * changed dev-&gt;init to return an int.&n; *&n; * Revision 0.8.4.3  1992/11/18  15:38:03  bir7&n; * Fixed bug in start_xmit.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.2  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -298,7 +298,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_void
+r_int
 DECL|function|loopback_init
 id|loopback_init
 c_func
@@ -367,6 +367,11 @@ suffix:semicolon
 id|dev-&gt;loopback
 op_assign
 l_int|1
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
 suffix:semicolon
 )brace
 eof

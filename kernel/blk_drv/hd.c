@@ -3174,6 +3174,14 @@ op_assign
 op_amp
 id|hd_fops
 suffix:semicolon
+id|read_ahead
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+l_int|8
+suffix:semicolon
+multiline_comment|/* 8 sector (4kB) read-ahead */
 id|hd_gendisk.next
 op_assign
 id|gendisk_head

@@ -1,7 +1,7 @@
 multiline_comment|/* ip.c */
 multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2, or (at your option)&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n;&n;    The Author may be reached as bir7@leland.stanford.edu or&n;    C/O Department of Mathematics; Stanford University; Stanford, CA 94305&n;*/
-multiline_comment|/* $Id: ip.c,v 0.8.4.4 1992/11/18 15:38:03 bir7 Exp $ */
-multiline_comment|/* $Log: ip.c,v $&n; * Revision 0.8.4.4  1992/11/18  15:38:03  bir7&n; * Fixed bug in copying packet and checking packet type.&n; *&n; * Revision 0.8.4.3  1992/11/17  14:19:47  bir7&n; * *** empty log message ***&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and &n; *&n;*/
+multiline_comment|/* $Id: ip.c,v 0.8.4.8 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: ip.c,v $&n; * Revision 0.8.4.8  1992/12/12  19:25:04  bir7&n; * Cleaned up Log messages.&n; *&n; * Revision 0.8.4.7  1992/12/06  23:29:59  bir7&n; * Changed retransmit to double rtt.&n; *&n; * Revision 0.8.4.6  1992/12/05  21:35:53  bir7&n; * fixed checking of wrong fragmentation bit.&n; *&n; * Revision 0.8.4.5  1992/12/03  19:52:20  bir7&n; * added paranoid queue checking&n; *&n; * Revision 0.8.4.4  1992/11/18  15:38:03  bir7&n; * Fixed bug in copying packet and checking packet type.&n; *&n; * Revision 0.8.4.3  1992/11/17  14:19:47  bir7&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.3  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2932,7 +2932,7 @@ c_cond
 (paren
 id|iph-&gt;frag_off
 op_amp
-l_int|64
+l_int|32
 )paren
 op_logical_or
 (paren
@@ -2973,7 +2973,6 @@ id|iph-&gt;ihl
 op_star
 l_int|4
 suffix:semicolon
-multiline_comment|/* add it to the arp table if it&squot;s talking to us.  That way we&n;     will be able to talk to them also. */
 id|hash
 op_assign
 id|iph-&gt;protocol
@@ -3068,6 +3067,10 @@ suffix:semicolon
 id|skb2-&gt;mem_addr
 op_assign
 id|skb2
+suffix:semicolon
+id|skb2-&gt;lock
+op_assign
+l_int|0
 suffix:semicolon
 id|skb2-&gt;h.raw
 op_assign
@@ -3219,6 +3222,22 @@ id|free
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ip.c: ip_queue_xmit dev = NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|skb-&gt;free
 op_assign
 id|free
@@ -3287,6 +3306,11 @@ suffix:semicolon
 id|skb-&gt;next
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* see if this is the one&n;     trashing our queue. */
+id|skb-&gt;magic
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -3590,11 +3614,14 @@ op_assign
 id|skb-&gt;link3
 suffix:semicolon
 )brace
+multiline_comment|/* double the rtt time every time we retransmit. &n;     This will cause exponential back off on how&n;     hard we try to get through again.  Once we&n;     get through, the rtt will settle back down&n;     reasonably quickly. */
+id|sk-&gt;rtt
+op_mul_assign
+l_int|2
+suffix:semicolon
 id|sk-&gt;time_wait.len
 op_assign
 id|sk-&gt;rtt
-op_star
-l_int|2
 suffix:semicolon
 id|sk-&gt;timeout
 op_assign

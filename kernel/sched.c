@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid(), which just extracts a field from&n; * current-task&n; */
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -1848,7 +1849,7 @@ r_else
 id|current-&gt;stime
 op_increment
 suffix:semicolon
-macro_line|#ifdef PROFILE_SHIFT
+macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -1870,7 +1871,7 @@ id|regs-&gt;eip
 suffix:semicolon
 id|eip
 op_rshift_assign
-id|PROFILE_SHIFT
+l_int|2
 suffix:semicolon
 r_if
 c_cond
@@ -2683,13 +2684,13 @@ c_func
 l_string|&quot;pushfl ; andl $0xffffbfff,(%esp) ; popfl&quot;
 )paren
 suffix:semicolon
-id|ltr
+id|load_TR
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
-id|lldt
+id|load_ldt
 c_func
 (paren
 l_int|0

@@ -66,14 +66,14 @@ id|tty-&gt;line
 r_if
 c_cond
 (paren
-id|tty-&gt;link-&gt;pgrp
+id|tty-&gt;link-&gt;session
 OG
 l_int|0
 )paren
-id|kill_pg
+id|kill_sl
 c_func
 (paren
-id|tty-&gt;link-&gt;pgrp
+id|tty-&gt;link-&gt;session
 comma
 id|SIGHUP
 comma

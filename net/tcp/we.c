@@ -3,8 +3,8 @@ multiline_comment|/*&n;    Copyright (C) 1992  Ross Biro&n;&n;    This program i
 multiline_comment|/* The bsd386 version was used as an example in order to write this&n;   code */
 multiline_comment|/*&n;&t;The driver was significantly modified by Bob Harris to allow the&n;&t;software to operate with either the wd8003 or wd8013 boards.  The&n;&t;wd8013 boards will operate using full memory on board (as specified&n;&t;by the user in Space.c) and the 16 bit wide interface.  The driver&n;&t;will autodetect which board it is using on boot (i.e. &quot;using 16 bit I/F&quot;).&n;&t;In addition, the interrupts structure was significantly modified to &n;&t;respond to all the chips interrupts and to keep track of statistics.&n;&t;The statistics are not currently used.  Debug messages can be toggled&n;&t;by setting the wd_debug variable to a non-zero number.   The driver &n;&t;can detect an open or shorted cable - the wd8013 board functions after&n;&t;the problem is corrected, but the wd8003 board does not always recover.&n;&t;The driver is gradually being migrated toward the National Semiconductor&n;&t;recommendations.  Constructive comments or suggestions can be sent to:&n;&n;&t;&t;Bob Harris, rth@sparta.com&n;&t;&t;7926 Jones Branch Drive, Suite 900&n;&t;&t;McLean, Va. 22102&n;*/
 multiline_comment|/* Note:  My driver was full of bugs.  Basically if it works, credit&n;   Bob Harris.  If it&squot;s broken blame me.  -RAB */
-multiline_comment|/* $Id: we.c,v 0.8.4.3 1992/11/15 14:55:30 bir7 Exp $ */
-multiline_comment|/* $Log: we.c,v $&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more checking in start_xmit to make sure packet doesn&squot;t disapear&n; * out from under us.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added $i&b;Id$ and Log&n; * */
+multiline_comment|/* $Id: we.c,v 0.8.4.8 1992/12/12 19:25:04 bir7 Exp $ */
+multiline_comment|/* $Log: we.c,v $&n; * Revision 0.8.4.8  1992/12/12  19:25:04  bir7&n; * cleaned up Log messages.&n; *&n; * Revision 0.8.4.7  1992/12/12  01:50:49  bir7&n; * made ring buffer volatile.&n; *&n; * Revision 0.8.4.6  1992/12/06  11:31:47  bir7&n; * Added missing braces in if statement.&n; *&n; * Revision 0.8.4.5  1992/12/05  21:35:53  bir7&n; * Added check for bad hardware returning runt packets.&n; *&n; * Revision 0.8.4.4  1992/12/03  19:52:20  bir7&n; * Added better queue checking.&n; *&n; * Revision 0.8.4.3  1992/11/15  14:55:30  bir7&n; * Put more checking in start_xmit to make sure packet doesn&squot;t disapear&n; * out from under us.&n; *&n; * Revision 0.8.4.2  1992/11/10  10:38:48  bir7&n; * Change free_s to kfree_s and accidently changed free_skb to kfree_skb.&n; *&n; * Revision 0.8.4.1  1992/11/10  00:17:18  bir7&n; * version change only.&n; *&n; * Revision 0.8.3.4  1992/11/10  00:14:47  bir7&n; * Changed malloc to kmalloc and added Id and Log&n; * */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -506,6 +506,7 @@ DECL|function|wdget
 id|wdget
 c_func
 (paren
+r_volatile
 r_struct
 id|wd_ring
 op_star
@@ -523,7 +524,6 @@ op_star
 id|fptr
 suffix:semicolon
 r_int
-r_int
 id|len
 suffix:semicolon
 id|fptr
@@ -539,11 +539,26 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* some people have bugs in their hardware which let&n;     ring-&gt;count be 0.  It shouldn&squot;t happen, but we&n;     should check for it. */
 id|len
 op_assign
 id|ring-&gt;count
 op_minus
 l_int|4
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|56
+)paren
+id|printk
+(paren
+l_string|&quot;we.c: Hardware problem, runt packet. ring-&gt;count = %d&bslash;n&quot;
+comma
+id|ring-&gt;count
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -708,6 +723,11 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+id|cli
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* arp_queue turns them back on. */
 id|status
 op_and_assign
 op_complement
@@ -1156,6 +1176,7 @@ r_char
 id|cmd
 suffix:semicolon
 multiline_comment|/* Command register save */
+r_volatile
 r_struct
 id|wd_ring
 op_star
@@ -1222,6 +1243,7 @@ multiline_comment|/* Position pointer to packet in card ring buffer */
 id|ring
 op_assign
 (paren
+r_volatile
 r_struct
 id|wd_ring
 op_star
@@ -2270,6 +2292,7 @@ id|errors
 op_amp
 id|FU
 )paren
+(brace
 id|stats.tx_fifo_errors
 op_increment
 suffix:semicolon
@@ -2279,6 +2302,7 @@ c_func
 l_string|&quot;&bslash;nwd8013 - TX FIFO underrun!&quot;
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Cannot do anymore - empty the bit bucket */
 id|tx_aborted
 op_assign
@@ -2470,7 +2494,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-r_void
+r_int
 DECL|function|wd8003_init
 id|wd8003_init
 c_func
@@ -2539,6 +2563,9 @@ op_assign
 id|OPEN
 suffix:semicolon
 r_return
+(paren
+l_int|1
+)paren
 suffix:semicolon
 )brace
 id|printk
@@ -2956,6 +2983,16 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+r_return
+(paren
+l_int|1
+)paren
+suffix:semicolon
 )brace
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
 )brace
 eof

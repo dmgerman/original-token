@@ -1,22 +1,22 @@
 multiline_comment|/*&n; *  linux/fs/filesystems.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  table of configured filesystems&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#ifdef MINIX_FS
+macro_line|#ifdef CONFIG_MINIX_FS
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef EXT_FS
+macro_line|#ifdef CONFIG_EXT_FS
 macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef MSDOS_FS
+macro_line|#ifdef CONFIG_MSDOS_FS
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef NFS_FS
+macro_line|#ifdef CONFIG_NFS_FS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#endif
-macro_line|#ifdef ISO9660_FS
+macro_line|#ifdef CONFIG_ISO9660_FS
 macro_line|#include &lt;linux/iso_fs.h&gt;
 macro_line|#endif
 DECL|variable|file_systems
@@ -27,7 +27,7 @@ id|file_systems
 )braket
 op_assign
 (brace
-macro_line|#ifdef MINIX_FS
+macro_line|#ifdef CONFIG_MINIX_FS
 (brace
 id|minix_read_super
 comma
@@ -37,7 +37,7 @@ l_int|1
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef EXT_FS
+macro_line|#ifdef CONFIG_EXT_FS
 (brace
 id|ext_read_super
 comma
@@ -47,7 +47,7 @@ l_int|1
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef MSDOS_FS
+macro_line|#ifdef CONFIG_MSDOS_FS
 (brace
 id|msdos_read_super
 comma
@@ -57,7 +57,7 @@ l_int|1
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef PROC_FS
+macro_line|#ifdef CONFIG_PROC_FS
 (brace
 id|proc_read_super
 comma
@@ -67,7 +67,7 @@ l_int|0
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef NFS_FS
+macro_line|#ifdef CONFIG_NFS_FS
 (brace
 id|nfs_read_super
 comma
@@ -77,7 +77,7 @@ l_int|0
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef ISO9660_FS
+macro_line|#ifdef CONFIG_ISO9660_FS
 (brace
 id|isofs_read_super
 comma
