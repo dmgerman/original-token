@@ -174,6 +174,9 @@ c_func
 op_star
 id|inode
 )paren
+op_logical_or
+op_logical_neg
+id|count
 )paren
 r_return
 l_int|0

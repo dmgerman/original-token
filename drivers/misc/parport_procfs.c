@@ -190,7 +190,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|port-&gt;lock
+id|pp-&gt;lock
 comma
 id|flags
 )paren

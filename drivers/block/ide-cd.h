@@ -1112,6 +1112,7 @@ mdefine_line|#define ARY_LEN(a) ((sizeof(a) / sizeof(a[0])))
 macro_line|#if VERBOSE_IDE_CD_ERRORS
 multiline_comment|/* From Table 124 of the ATAPI 1.2 spec.&n;   Unchanged in Table 140 of the ATAPI 2.6 draft standard. */
 DECL|variable|sense_key_texts
+r_const
 r_char
 op_star
 id|sense_key_texts
@@ -1163,6 +1164,7 @@ r_int
 id|packet_command
 suffix:semicolon
 DECL|member|text
+r_const
 r_char
 op_star
 id|text
@@ -1335,6 +1337,7 @@ r_int
 id|asc_ascq
 suffix:semicolon
 DECL|member|text
+r_const
 r_char
 op_star
 id|text

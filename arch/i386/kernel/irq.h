@@ -77,6 +77,13 @@ r_int
 id|fn
 )paren
 suffix:semicolon
+r_int
+id|IO_APIC_irq_trigger
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
 r_void
 id|make_8259A_irq
 (paren
