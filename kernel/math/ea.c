@@ -453,13 +453,7 @@ c_func
 (paren
 id|info
 comma
-l_int|1
-op_lshift
-(paren
 id|SIGILL
-op_minus
-l_int|1
-)paren
 )paren
 suffix:semicolon
 )brace

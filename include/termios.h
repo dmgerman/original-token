@@ -63,6 +63,10 @@ DECL|macro|TIOCLINUX
 mdefine_line|#define TIOCLINUX&t;0x541C
 DECL|macro|TIOCCONS
 mdefine_line|#define TIOCCONS&t;0x541D
+DECL|macro|TIOCGSERIAL
+mdefine_line|#define TIOCGSERIAL&t;0x541E
+DECL|macro|TIOCSSERIAL
+mdefine_line|#define TIOCSSERIAL&t;0x541F
 DECL|struct|winsize
 r_struct
 id|winsize
