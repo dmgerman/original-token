@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.19 1995/11/25 00:58:24 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.20 1995/11/26 02:29:09 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -294,9 +294,6 @@ op_star
 id|regs
 )paren
 (brace
-r_int
-id|wsvd
-suffix:semicolon
 r_struct
 id|sigcontext_struct
 op_star

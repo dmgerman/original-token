@@ -278,6 +278,13 @@ id|iattr
 id|newattrs
 suffix:semicolon
 multiline_comment|/* truncate virtual mappings of this file */
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|vmtruncate
 c_func
 (paren
@@ -305,6 +312,13 @@ id|truncate
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 id|newattrs.ia_ctime

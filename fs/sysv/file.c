@@ -420,12 +420,12 @@ op_star
 id|bhb
 op_logical_and
 op_logical_neg
+id|buffer_uptodate
+c_func
 (paren
 op_star
 id|bhb
 )paren
-op_member_access_from_pointer
-id|b_uptodate
 )paren
 (brace
 id|uptodate
@@ -513,12 +513,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|buffer_uptodate
+c_func
 (paren
 op_star
 id|bhe
 )paren
-op_member_access_from_pointer
-id|b_uptodate
 )paren
 (brace
 multiline_comment|/* read error? */
@@ -679,12 +679,12 @@ op_star
 id|bhe
 op_logical_or
 op_logical_neg
+id|buffer_locked
+c_func
 (paren
 op_star
 id|bhe
 )paren
-op_member_access_from_pointer
-id|b_lock
 )paren
 )paren
 suffix:semicolon
@@ -956,7 +956,11 @@ op_ne
 id|sb-&gt;sv_block_size
 op_logical_and
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
 )paren
 (brace
 id|ll_rw_block
@@ -980,7 +984,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
 )paren
 (brace
 id|brelse
@@ -1004,7 +1012,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* now either c==sb-&gt;sv_block_size or bh-&gt;b_uptodate */
+multiline_comment|/* now either c==sb-&gt;sv_block_size or buffer_uptodate(bh) */
 id|p
 op_assign
 (paren
@@ -1054,9 +1062,13 @@ id|buf
 op_add_assign
 id|c
 suffix:semicolon
-id|bh-&gt;b_uptodate
-op_assign
+id|mark_buffer_uptodate
+c_func
+(paren
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func

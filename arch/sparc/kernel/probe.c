@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: probe.c,v 1.38 1995/11/25 00:58:14 davem Exp $&n; * probe.c: Preliminary device tree probing routines...&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: probe.c,v 1.39 1995/11/26 00:54:37 davem Exp $&n; * probe.c: Preliminary device tree probing routines...&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,12 +28,16 @@ r_struct
 id|mostek48t02
 op_star
 id|mstk48t02_regs
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|mstk48t08_regs
 r_struct
 id|mostek48t08
 op_star
 id|mstk48t08_regs
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|master_l10_limit
 r_volatile
@@ -1620,7 +1624,7 @@ l_string|&quot;clock&quot;
 comma
 l_int|0x0
 comma
-l_int|0x1
+l_int|0x0
 )paren
 suffix:semicolon
 id|mstk48t08_regs
@@ -1733,7 +1737,7 @@ l_string|&quot;clock&quot;
 comma
 l_int|0x0
 comma
-l_int|0x1
+l_int|0x0
 )paren
 suffix:semicolon
 id|mstk48t02_regs

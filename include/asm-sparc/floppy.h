@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.8 1995/11/25 02:31:45 davem Exp $&n; * asm-sparc/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* asm-sparc/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_FLOPPY_H
 DECL|macro|__ASM_SPARC_FLOPPY_H
 mdefine_line|#define __ASM_SPARC_FLOPPY_H
@@ -314,6 +314,7 @@ l_int|2
 suffix:colon
 multiline_comment|/* FD_DOR */
 multiline_comment|/* Oh geese, 82072 on the Sun has no DOR register,&n;&t;&t; * the functionality is implemented via the AUXIO&n;&t;&t; * I/O register.  So we must emulate the behavior.&n;&t;&t; *&n;&t;&t; * ASSUMPTIONS:  There will only ever be one floppy&n;&t;&t; *               drive attached to a Sun controller&n;&t;&t; *               and it will be at drive zero.&n;&t;&t; */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -321,7 +322,16 @@ id|value
 op_amp
 l_int|0xf0
 )paren
+macro_line|#else
+r_if
+c_cond
+(paren
+id|value
+op_amp
+l_int|0x10
+)paren
 (brace
+macro_line|#endif
 id|set_auxio
 c_func
 (paren
@@ -331,7 +341,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
 r_else
 id|set_auxio
 c_func
@@ -341,7 +350,6 @@ comma
 id|AUXIO_FLPY_DSEL
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -538,11 +546,6 @@ r_char
 op_star
 id|pdma_vaddr
 suffix:semicolon
-DECL|variable|pdma_vsave
-r_char
-op_star
-id|pdma_vsave
-suffix:semicolon
 DECL|variable|pdma_size
 r_int
 r_int
@@ -680,8 +683,6 @@ r_void
 (brace
 multiline_comment|/* We&squot;re about to let it rip, lock any tlb entries necessary. */
 id|pdma_vaddr
-op_assign
-id|pdma_vsave
 op_assign
 id|mmu_lockarea
 c_func

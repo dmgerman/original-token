@@ -875,6 +875,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ICMP: %s:%d: protocol unreachable.&bslash;n&quot;
 comma
 id|in_ntoa
@@ -904,6 +905,7 @@ macro_line|#ifdef CONFIG_NO_PATH_MTU_DISCOVERY
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ICMP: %s: fragmentation needed and DF set.&bslash;n&quot;
 comma
 id|in_ntoa
@@ -1070,6 +1072,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ICMP: %s: Source Route Failed.&bslash;n&quot;
 comma
 id|in_ntoa
@@ -1256,6 +1259,7 @@ multiline_comment|/*&n;&t; *&t;We are a router. Routers should not respond to IC
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;icmp: ICMP redirect from %s on %s ignored.&bslash;n&quot;
 comma
 id|in_ntoa
@@ -1316,6 +1320,7 @@ multiline_comment|/*&n;&t;&t;&t; *&t;Add better route to host.&n;&t;&t;&t; *&t;B
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ICMP redirect from %s&bslash;n&quot;
 comma
 id|in_ntoa
@@ -1348,6 +1353,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ICMP: cannot handle TOS redirects yet!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1885,6 +1891,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ICMP: failed checksum from %s!&bslash;n&quot;
 comma
 id|in_ntoa

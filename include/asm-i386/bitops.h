@@ -164,7 +164,7 @@ r_return
 id|oldbit
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine doesn&squot;t need to be atomic, but it&squot;s faster to code it&n; * this way.&n; */
+multiline_comment|/*&n; * This routine doesn&squot;t need to be atomic.&n; */
 DECL|function|test_bit
 r_extern
 id|__inline__
@@ -181,33 +181,30 @@ op_star
 id|addr
 )paren
 (brace
+r_return
+l_int|1UL
+op_amp
+(paren
+(paren
+(paren
 r_int
-id|oldbit
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;btl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|oldbit
+r_int
+op_star
 )paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|CONST_ADDR
+id|addr
 )paren
-comma
-l_string|&quot;ir&quot;
+(braket
+id|nr
+op_rshift
+l_int|5
+)braket
+op_rshift
 (paren
 id|nr
+op_amp
+l_int|31
 )paren
 )paren
-suffix:semicolon
-r_return
-id|oldbit
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find-bit routines..&n; */

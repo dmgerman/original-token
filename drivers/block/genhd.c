@@ -391,15 +391,7 @@ l_int|1024
 r_return
 suffix:semicolon
 multiline_comment|/*&n;&t;   * This block is from a device that we&squot;re about to stomp on.&n;&t;   * So make sure nobody thinks this block is usable.&n;&t;   */
-id|bh-&gt;b_dirt
-op_assign
-l_int|0
-suffix:semicolon
-id|bh-&gt;b_uptodate
-op_assign
-l_int|0
-suffix:semicolon
-id|bh-&gt;b_req
+id|bh-&gt;b_state
 op_assign
 l_int|0
 suffix:semicolon
@@ -736,21 +728,13 @@ id|data
 op_assign
 id|bh-&gt;b_data
 suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* In some cases we modify the geometry    */
-id|bh-&gt;b_uptodate
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*  of the drive (below), so ensure that   */
-id|bh-&gt;b_req
+multiline_comment|/*  nobody else tries to re-use this data. */
+id|bh-&gt;b_state
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*  nobody else tries to re-use this data. */
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|check_table
 suffix:colon

@@ -295,7 +295,11 @@ c_cond
 id|bh
 op_logical_and
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
 )paren
 id|bh_read
 (braket
@@ -412,7 +416,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * read error: all bets are off&n;&t;&t;&t; */
@@ -607,7 +615,11 @@ c_cond
 id|bh
 op_logical_and
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
 )paren
 id|bh_read
 (braket

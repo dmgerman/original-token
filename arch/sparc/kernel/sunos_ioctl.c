@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl.c,v 1.7 1995/11/25 00:58:30 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl.c,v 1.8 1995/11/26 04:07:39 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -38,8 +38,8 @@ r_int
 r_int
 id|cmd
 comma
-r_void
-op_star
+r_int
+r_int
 id|arg
 )paren
 (brace

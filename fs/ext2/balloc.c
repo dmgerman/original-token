@@ -1926,9 +1926,13 @@ comma
 id|sb-&gt;s_blocksize
 )paren
 suffix:semicolon
-id|bh-&gt;b_uptodate
-op_assign
+id|mark_buffer_uptodate
+c_func
+(paren
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func

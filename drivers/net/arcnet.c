@@ -929,13 +929,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 multiline_comment|/* functions for header/arp/etc building */
@@ -8998,13 +8991,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 macro_line|#if 0&t;  /* no promiscuous mode at all on most (all?) ARCnet models */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: socket.h,v 1.4 1995/11/25 02:32:49 davem Exp $ */
+multiline_comment|/* $Id: socket.h,v 1.5 1995/11/26 01:32:36 davem Exp $ */
 macro_line|#ifndef _ASM_SOCKET_H
 DECL|macro|_ASM_SOCKET_H
 mdefine_line|#define _ASM_SOCKET_H
@@ -33,6 +33,8 @@ mdefine_line|#define SO_LINGER&t;0x0080
 DECL|macro|SO_OOBINLINE
 mdefine_line|#define SO_OOBINLINE&t;0x0100
 multiline_comment|/* To add :#define SO_REUSEPORT 0x0200 */
+DECL|macro|SO_BSDCOMPAT
+mdefine_line|#define SO_BSDCOMPAT    0x0400
 multiline_comment|/* wha!??? */
 DECL|macro|SO_DONTLINGER
 mdefine_line|#define SO_DONTLINGER   (~SO_LINGER)  /* Older SunOS compat. hack */

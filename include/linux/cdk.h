@@ -1087,16 +1087,15 @@ suffix:semicolon
 macro_line|#pragma&t;pack()
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Define the set of ioctls used by the driver to do special things&n; *&t;to the board. These include interrupting it, and initializeing&n; *&t;the driver after board startup and shutdown.&n; */
-DECL|macro|STLCMD
-mdefine_line|#define&t;STLCMD&t;&t;(((unsigned long) &squot;s&squot;) &lt;&lt; 8)
+macro_line|#include &lt;linux/ioctl.h&gt;
 DECL|macro|STL_BINTR
-mdefine_line|#define&t;STL_BINTR&t;(STLCMD | 20)
+mdefine_line|#define&t;STL_BINTR&t;_IO(&squot;s&squot;,20)
 DECL|macro|STL_BSTART
-mdefine_line|#define&t;STL_BSTART&t;(STLCMD | 21)
+mdefine_line|#define&t;STL_BSTART&t;_IO(&squot;s&squot;,21)
 DECL|macro|STL_BSTOP
-mdefine_line|#define&t;STL_BSTOP&t;(STLCMD | 22)
+mdefine_line|#define&t;STL_BSTOP&t;_IO(&squot;s&squot;,22)
 DECL|macro|STL_BRESET
-mdefine_line|#define&t;STL_BRESET&t;(STLCMD | 23)
+mdefine_line|#define&t;STL_BRESET&t;_IO(&squot;s&squot;,23)
 multiline_comment|/*****************************************************************************/
 macro_line|#endif
 eof

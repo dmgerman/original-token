@@ -11519,7 +11519,11 @@ c_cond
 id|CURRENT-&gt;bh
 op_logical_and
 op_logical_neg
-id|CURRENT-&gt;bh-&gt;b_lock
+id|buffer_locked
+c_func
+(paren
+id|CURRENT-&gt;bh
+)paren
 )paren
 id|panic
 c_func
@@ -16257,7 +16261,11 @@ c_cond
 id|bh
 op_logical_and
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
 )paren
 id|ll_rw_block
 c_func

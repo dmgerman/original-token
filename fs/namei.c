@@ -2007,6 +2007,13 @@ r_return
 id|error
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -2024,6 +2031,13 @@ id|truncate
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 id|inode-&gt;i_dirt

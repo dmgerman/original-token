@@ -80,6 +80,8 @@ r_int
 id|time_status
 op_assign
 id|STA_UNSYNC
+op_or
+id|STA_PLL
 suffix:semicolon
 multiline_comment|/* clock status bits */
 DECL|variable|time_offset
@@ -93,7 +95,7 @@ DECL|variable|time_constant
 r_int
 id|time_constant
 op_assign
-l_int|0
+l_int|2
 suffix:semicolon
 multiline_comment|/* pll time constant */
 DECL|variable|time_tolerance

@@ -5386,8 +5386,10 @@ c_cond
 id|CURRENT-&gt;bh
 op_logical_and
 op_logical_neg
+id|buffer_locked
+c_func
 (paren
-id|CURRENT-&gt;bh-&gt;b_lock
+id|CURRENT-&gt;bh
 )paren
 )paren
 (brace

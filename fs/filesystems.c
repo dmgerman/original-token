@@ -31,11 +31,21 @@ c_func
 r_char
 op_star
 id|nfsname
+comma
+r_char
+op_star
+id|nfsaddrs
 )paren
 suffix:semicolon
 r_extern
 r_char
 id|nfs_root_name
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_char
+id|nfs_root_addrs
 (braket
 )braket
 suffix:semicolon
@@ -369,10 +379,15 @@ macro_line|#ifdef CONFIG_ROOT_NFS
 r_if
 c_cond
 (paren
-id|nfs_root_name
-(braket
-l_int|0
-)braket
+id|ROOT_DEV
+op_eq
+id|MKDEV
+c_func
+(paren
+id|UNNAMED_MAJOR
+comma
+l_int|255
+)paren
 )paren
 (brace
 r_if
@@ -382,6 +397,8 @@ id|nfs_root_init
 c_func
 (paren
 id|nfs_root_name
+comma
+id|nfs_root_addrs
 )paren
 OL
 l_int|0
@@ -391,7 +408,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Root-NFS: Unable to mount NFS filesystem as /, using /dev/fd0 instead&bslash;n&quot;
+l_string|&quot;Root-NFS: Unable to contact NFS server for root fs, using /dev/fd0 instead&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ROOT_DEV

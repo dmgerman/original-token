@@ -1,7 +1,7 @@
-multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c&n; *&n; *  Copyright (C) 1995  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works&n; *  is to first determine the local IP address via RARP. Then handle&n; *  the RPC negotiation with the system which replied to the RARP. The&n; *  actual mounting is done later, when init() is running.&n; *&n; * &t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&n; *&t;TODO:&n; *&t;&t;Support bootp and dhcp as well as rarp.&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/nfsroot.c&n; *&n; *  Copyright (C) 1995  Gero Kuhlmann &lt;gero@gkminix.han.de&gt;&n; *&n; *  Allow an NFS filesystem to be mounted as root. The way this works&n; *  is to first determine the local IP address via RARP. Then handle&n; *  the RPC negotiation with the system which replied to the RARP. The&n; *  actual mounting is done later, when init() is running. In addition&n; *  it&squot;s possible to avoid using RARP if the necessary addresses are&n; *  provided on the kernel command line. This is necessary to use boot-&n; *  roms which use bootp instead of RARP.&n; *&n; *&t;Changes:&n; *&n; *&t;Alan Cox&t;:&t;Removed get_address name clash with FPU.&n; *&t;Alan Cox&t;:&t;Reformatted a bit.&n; *&n; */
 multiline_comment|/* Define this to allow debugging output */
 DECL|macro|NFSROOT_DEBUG
-mdefine_line|#define NFSROOT_DEBUG 1
+macro_line|#undef NFSROOT_DEBUG 1
 multiline_comment|/* Define the timeout for waiting for a RARP reply */
 DECL|macro|RARP_TIMEOUT
 mdefine_line|#define RARP_TIMEOUT&t;30&t;/* 30 seconds */
@@ -27,12 +27,11 @@ macro_line|#endif
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
-macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
-DECL|macro|IPPORT_RESERVED
-mdefine_line|#define IPPORT_RESERVED 1024
+macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#include &lt;net/route.h&gt;
 multiline_comment|/* Range of privileged ports */
 DECL|macro|STARTPORT
 mdefine_line|#define STARTPORT 600
@@ -95,6 +94,20 @@ id|sockaddr_in
 id|server
 suffix:semicolon
 multiline_comment|/* Server IP address */
+DECL|variable|gateway
+r_static
+r_struct
+id|sockaddr_in
+id|gateway
+suffix:semicolon
+multiline_comment|/* Gateway IP address */
+DECL|variable|netmask
+r_static
+r_struct
+id|sockaddr_in
+id|netmask
+suffix:semicolon
+multiline_comment|/* Netmask for local subnet */
 DECL|variable|nfs_data
 r_static
 r_struct
@@ -117,93 +130,12 @@ r_int
 id|nfs_port
 suffix:semicolon
 multiline_comment|/* Port to connect to for NFS service */
-multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;RARP Subroutines&n;&n; ***************************************************************************/
-r_extern
-r_void
-id|arp_send
-c_func
-(paren
-r_int
-id|type
-comma
-r_int
-id|ptype
-comma
-r_int
-r_int
-id|target_ip
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|src_ip
-comma
-r_int
-r_char
-op_star
-id|dest_hw
-comma
-r_int
-r_char
-op_star
-id|src_hw
-comma
-r_int
-r_char
-op_star
-id|target_hw
-)paren
-suffix:semicolon
+multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;Device Handling Subroutines&n;&n; ***************************************************************************/
+multiline_comment|/*&n; * Setup and initialize all network devices&n; */
+DECL|function|root_dev_open
 r_static
 r_int
-id|root_rarp_recv
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|packet_type
-op_star
-id|pt
-)paren
-suffix:semicolon
-DECL|variable|rarp_packet_type
-r_static
-r_struct
-id|packet_type
-id|rarp_packet_type
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* Should be: __constant_htons(ETH_P_RARP) - but this _doesn&squot;t_ come out constant! */
-l_int|NULL
-comma
-multiline_comment|/* Listen to all devices */
-id|root_rarp_recv
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *  For receiving rarp packets a packet type has to be registered. Also&n; *  initialize all devices for usage by RARP.&n; */
-DECL|function|root_rarp_open
-r_static
-r_int
-id|root_rarp_open
+id|root_dev_open
 c_func
 (paren
 r_void
@@ -225,34 +157,15 @@ id|old_flags
 suffix:semicolon
 r_int
 id|num
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Register the packet type &n;&t; */
-id|rarp_packet_type.type
 op_assign
-id|htons
-c_func
-(paren
-id|ETH_P_RARP
-)paren
+l_int|0
 suffix:semicolon
-id|dev_add_pack
-c_func
-(paren
-op_amp
-id|rarp_packet_type
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Open all devices which allow RARP &n;&t; */
 r_for
 c_loop
 (paren
 id|dev
 op_assign
 id|dev_base
-comma
-id|num
-op_assign
-l_int|0
 suffix:semicolon
 id|dev
 op_ne
@@ -282,8 +195,6 @@ op_amp
 id|IFF_LOOPBACK
 op_or
 id|IFF_POINTOPOINT
-op_or
-id|IFF_NOARP
 )paren
 )paren
 )paren
@@ -374,15 +285,46 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-r_return
+r_if
+c_cond
+(paren
 id|num
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;NFS: Unable to open at least one network device&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Remove the packet type again when all rarp packets have been received&n; *  and restore the state of the device. However, keep the root device&n; *  open for the upcoming mount.&n; */
-DECL|function|root_rarp_close
+macro_line|#ifdef NFSROOT_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;NFS: Opened %d network interfaces&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *  Restore the state of all devices. However, keep the root device open&n; *  for the upcoming mount.&n; */
+DECL|function|root_dev_close
 r_static
 r_void
-id|root_rarp_close
+id|root_dev_close
 c_func
 (paren
 r_void
@@ -398,23 +340,6 @@ id|open_dev
 op_star
 id|nextp
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Deregister the packet type &n;&t; */
-id|rarp_packet_type.type
-op_assign
-id|htons
-c_func
-(paren
-id|ETH_P_RARP
-)paren
-suffix:semicolon
-id|dev_remove_pack
-c_func
-(paren
-op_amp
-id|rarp_packet_type
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Deactivate all previously opened devices except that one which is&n;&t; *&t;able to connect to a suitable server&n;&t; */
 id|openp
 op_assign
 id|open_base
@@ -482,7 +407,141 @@ id|nextp
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Receive RARP packets.&n; */
+multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;RARP Subroutines&n;&n; ***************************************************************************/
+r_extern
+r_void
+id|arp_send
+c_func
+(paren
+r_int
+id|type
+comma
+r_int
+id|ptype
+comma
+r_int
+r_int
+id|target_ip
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|src_ip
+comma
+r_int
+r_char
+op_star
+id|dest_hw
+comma
+r_int
+r_char
+op_star
+id|src_hw
+comma
+r_int
+r_char
+op_star
+id|target_hw
+)paren
+suffix:semicolon
+r_static
+r_int
+id|root_rarp_recv
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|packet_type
+op_star
+id|pt
+)paren
+suffix:semicolon
+DECL|variable|rarp_packet_type
+r_static
+r_struct
+id|packet_type
+id|rarp_packet_type
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Should be: __constant_htons(ETH_P_RARP)&n;&t;&t;&t;&t; * - but this _doesn&squot;t_ come out constant! */
+l_int|NULL
+comma
+multiline_comment|/* Listen to all devices */
+id|root_rarp_recv
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *  Register the packet type for RARP&n; */
+DECL|function|root_rarp_open
+r_static
+r_void
+id|root_rarp_open
+c_func
+(paren
+r_void
+)paren
+(brace
+id|rarp_packet_type.type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_RARP
+)paren
+suffix:semicolon
+id|dev_add_pack
+c_func
+(paren
+op_amp
+id|rarp_packet_type
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *  Deregister the RARP packet type&n; */
+DECL|function|root_rarp_close
+r_static
+r_void
+id|root_rarp_close
+c_func
+(paren
+r_void
+)paren
+(brace
+id|rarp_packet_type.type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_RARP
+)paren
+suffix:semicolon
+id|dev_remove_pack
+c_func
+(paren
+op_amp
+id|rarp_packet_type
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *  Receive RARP packets.&n; */
 DECL|function|root_rarp_recv
 r_static
 r_int
@@ -548,7 +607,7 @@ op_star
 id|tha
 suffix:semicolon
 multiline_comment|/* s for &quot;source&quot;, t for &quot;target&quot; */
-multiline_comment|/*&n;&t; *&t;If this test doesn&squot;t pass, its not IP, or we should ignore it anyway &n;&t; */
+multiline_comment|/* If this test doesn&squot;t pass, its not IP, or we should ignore it anyway */
 r_if
 c_cond
 (paren
@@ -577,7 +636,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;If it&squot;s not a RARP reply, delete it. &n;&t; */
+multiline_comment|/* If it&squot;s not a RARP reply, delete it. */
 r_if
 c_cond
 (paren
@@ -602,7 +661,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;If it&squot;s not ethernet or AX25, delete it. &n;&t; */
+multiline_comment|/* If it&squot;s not ethernet or AX25, delete it. */
 r_if
 c_cond
 (paren
@@ -653,7 +712,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Extract variable width fields &n;&t; */
+multiline_comment|/* Extract variable width fields */
 id|sha
 op_assign
 id|rarp_ptr
@@ -696,7 +755,7 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Discard packets which are not meant for us. &n;&t; */
+multiline_comment|/* Discard packets which are not meant for us. */
 r_if
 c_cond
 (paren
@@ -723,7 +782,32 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;The packet is what we were looking for. Setup the global variables. &n;&t; */
+multiline_comment|/* Discard packets which are not from specified server. */
+r_if
+c_cond
+(paren
+id|server.sin_addr.s_addr
+op_ne
+id|INADDR_NONE
+op_logical_and
+id|server.sin_addr.s_addr
+op_ne
+id|sip
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * The packet is what we were looking for. Setup the global&n;&t; * variables.&n;&t; */
 id|cli
 c_func
 (paren
@@ -763,6 +847,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|myaddr.sin_addr.s_addr
+op_eq
+id|INADDR_NONE
+)paren
+(brace
 id|myaddr.sin_family
 op_assign
 id|dev-&gt;family
@@ -771,20 +863,24 @@ id|myaddr.sin_addr.s_addr
 op_assign
 id|tip
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|server.sin_addr.s_addr
+op_eq
+id|INADDR_NONE
+)paren
+(brace
 id|server.sin_family
 op_assign
 id|dev-&gt;family
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|server.sin_addr.s_addr
-)paren
 id|server.sin_addr.s_addr
 op_assign
 id|sip
 suffix:semicolon
+)brace
 id|kfree_skb
 c_func
 (paren
@@ -797,10 +893,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send RARP request packet over all devices which allow RARP.&n; */
+multiline_comment|/*&n; *  Send RARP request packet over all devices which allow RARP.&n; */
 DECL|function|root_rarp_send
 r_static
-r_void
+r_int
 id|root_rarp_send
 c_func
 (paren
@@ -816,6 +912,11 @@ r_struct
 id|device
 op_star
 id|dev
+suffix:semicolon
+r_int
+id|num
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef NFSROOT_DEBUG
 id|printk
@@ -846,6 +947,17 @@ id|dev
 op_assign
 id|openp-&gt;dev
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_NOARP
+)paren
+)paren
+(brace
 id|arp_send
 c_func
 (paren
@@ -866,9 +978,36 @@ comma
 id|dev-&gt;dev_addr
 )paren
 suffix:semicolon
+id|num
+op_increment
+suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Determine client and server IP numbers and appropriate device by using&n; *&t;the RARP protocol.&n; */
+r_if
+c_cond
+(paren
+id|num
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;NFS: Couldn&squot;t find device to send RARP request to&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *  Determine client and server IP numbers and appropriate device by using&n; *  the RARP protocol.&n; */
 DECL|function|do_rarp
 r_static
 r_int
@@ -886,31 +1025,16 @@ suffix:semicolon
 r_int
 r_int
 id|timeout
+op_assign
+l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Open all devices and setup RARP protocol &n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
+multiline_comment|/* Setup RARP protocol */
 id|root_rarp_open
 c_func
 (paren
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;NFS: No network device found to send RARP request to&bslash;n&quot;
-)paren
 suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;Send RARP request and wait, until we get an answer. This loop seems&n;&t; *&t;to be a terrible waste of cpu time, but actually there is no process&n;&t; *&t;running at all, so we don&squot;t need to use any scheduler functions.&n;&t; *&t;[Actually we could now, but the nothing else running note still &n;&t; *&t; applies.. - AC]&n;&t; */
+multiline_comment|/*&n;&t; * Send RARP request and wait, until we get an answer. This loop&n;&t; * seems to be a terrible waste of cpu time, but actually there is&n;&t; * no process running at all, so we don&squot;t need to use any&n;&t; * scheduler functions.&n;&t; * [Actually we could now, but the nothing else running note still &n;&t; *  applies.. - AC]&n;&t; */
 r_for
 c_loop
 (paren
@@ -930,10 +1054,17 @@ id|retries
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|root_rarp_send
 c_func
 (paren
 )paren
+OL
+l_int|0
+)paren
+r_break
 suffix:semicolon
 id|timeout
 op_assign
@@ -959,12 +1090,21 @@ l_int|NULL
 suffix:semicolon
 suffix:semicolon
 )brace
+id|root_rarp_close
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|root_dev
 op_eq
 l_int|NULL
+op_logical_and
+id|timeout
+OG
+l_int|0
 )paren
 (brace
 id|printk
@@ -979,11 +1119,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|root_rarp_close
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1020,41 +1155,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;Routines to setup NFS&n;&n; ***************************************************************************/
-r_extern
-r_void
-id|ip_rt_add
-c_func
-(paren
-r_int
-id|flags
-comma
-r_int
-r_int
-id|addr
-comma
-r_int
-r_int
-id|mask
-comma
-r_int
-r_int
-id|gw
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|mss
-comma
-r_int
-r_int
-id|window
-)paren
-suffix:semicolon
-multiline_comment|/*&n; *&t;The following integer options are recognized&n; */
+multiline_comment|/*&n; *  The following integer options are recognized&n; */
 DECL|struct|nfs_int_opts
 r_static
 r_struct
@@ -1147,7 +1248,7 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;And now the flag options &n; */
+multiline_comment|/*&n; *  And now the flag options&n; */
 DECL|struct|nfs_bool_opts
 r_static
 r_struct
@@ -1272,137 +1373,7 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|function|nfs_get_address
-r_static
-r_int
-r_int
-id|nfs_get_address
-(paren
-r_char
-op_star
-op_star
-id|str
-)paren
-(brace
-r_int
-r_int
-id|l
-suffix:semicolon
-r_int
-r_int
-id|val
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|l
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|l
-op_lshift_assign
-l_int|8
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-op_star
-id|str
-op_ne
-l_char|&squot;&bslash;0&squot;
-)paren
-(brace
-id|val
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-op_star
-op_star
-id|str
-op_ne
-l_char|&squot;&bslash;0&squot;
-op_logical_and
-op_star
-op_star
-id|str
-op_ne
-l_char|&squot;.&squot;
-op_logical_and
-op_star
-op_star
-id|str
-op_ne
-l_char|&squot;:&squot;
-)paren
-(brace
-id|val
-op_mul_assign
-l_int|10
-suffix:semicolon
-id|val
-op_add_assign
-op_star
-op_star
-id|str
-op_minus
-l_char|&squot;0&squot;
-suffix:semicolon
-(paren
-op_star
-id|str
-)paren
-op_increment
-suffix:semicolon
-)brace
-id|l
-op_or_assign
-id|val
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-op_star
-id|str
-op_ne
-l_char|&squot;&bslash;0&squot;
-)paren
-(paren
-op_star
-id|str
-)paren
-op_increment
-suffix:semicolon
-)brace
-)brace
-r_return
-id|htonl
-c_func
-(paren
-id|l
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Prepare the NFS data structure and parse any options&n; */
+multiline_comment|/*&n; *  Prepare the NFS data structure and parse any options&n; */
 DECL|function|root_nfs_parse
 r_static
 r_int
@@ -1430,7 +1401,40 @@ comma
 op_star
 id|val
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Get the host ip number &n;&t; */
+multiline_comment|/* Set the default system name in case none was previously found */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|system_utsname.nodename
+(braket
+l_int|0
+)braket
+)paren
+(brace
+id|strncpy
+c_func
+(paren
+id|system_utsname.nodename
+comma
+id|in_ntoa
+c_func
+(paren
+id|myaddr.sin_addr.s_addr
+)paren
+comma
+id|__NEW_UTS_LEN
+)paren
+suffix:semicolon
+id|system_utsname.nodename
+(braket
+id|__NEW_UTS_LEN
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+)brace
+multiline_comment|/* It is possible to override the host IP number here */
 r_if
 c_cond
 (paren
@@ -1443,18 +1447,42 @@ op_star
 id|name
 op_le
 l_char|&squot;9&squot;
+op_logical_and
+(paren
+id|cp
+op_assign
+id|strchr
+c_func
+(paren
+id|name
+comma
+l_char|&squot;:&squot;
+)paren
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
+op_star
+id|cp
+op_increment
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 id|server.sin_addr.s_addr
 op_assign
-id|nfs_get_address
+id|in_aton
+c_func
 (paren
-op_amp
 id|name
 )paren
 suffix:semicolon
+id|name
+op_assign
+id|cp
+suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Setup the server hostname &n;&t; */
+multiline_comment|/* Setup the server hostname */
 id|cp
 op_assign
 id|in_ntoa
@@ -1473,11 +1501,7 @@ comma
 l_int|255
 )paren
 suffix:semicolon
-id|nfs_data.addr
-op_assign
-id|server
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Set the name of the directory to mount &n;&t; */
+multiline_comment|/* Set the name of the directory to mount */
 id|cp
 op_assign
 id|in_ntoa
@@ -1557,7 +1581,7 @@ comma
 id|cp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Set some default values &n;&t; */
+multiline_comment|/* Set some default values */
 id|nfs_port
 op_assign
 op_minus
@@ -1603,7 +1627,7 @@ id|nfs_data.acdirmax
 op_assign
 l_int|60
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Process any options&n;&t; */
+multiline_comment|/* Process any options */
 r_if
 c_cond
 (paren
@@ -1752,7 +1776,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Tell the user what&squot;s going on.&n; */
+multiline_comment|/*&n; *  Tell the user what&squot;s going on.&n; */
 DECL|function|root_nfs_print
 r_static
 r_void
@@ -1817,7 +1841,264 @@ id|nfs_data.flags
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Set the interface address and configure a route to the server.&n; */
+multiline_comment|/*&n; *  Parse any IP addresses&n; */
+DECL|function|root_nfs_addrs
+r_static
+r_void
+id|root_nfs_addrs
+c_func
+(paren
+r_char
+op_star
+id|addrs
+)paren
+(brace
+r_char
+op_star
+id|cp
+comma
+op_star
+id|ip
+comma
+op_star
+id|dp
+suffix:semicolon
+r_int
+id|num
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Clear all addresses and strings */
+id|myaddr.sin_family
+op_assign
+id|server.sin_family
+op_assign
+id|gateway.sin_family
+op_assign
+id|netmask.sin_family
+op_assign
+id|AF_INET
+suffix:semicolon
+id|myaddr.sin_addr.s_addr
+op_assign
+id|server.sin_addr.s_addr
+op_assign
+id|gateway.sin_addr.s_addr
+op_assign
+id|netmask.sin_addr.s_addr
+op_assign
+id|INADDR_NONE
+suffix:semicolon
+id|system_utsname.nodename
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|system_utsname.domainname
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/*&n;&t; * Parse the address field. It contains 4 IP addresses which are&n;&t; * separated by colons: Field 0 = my own address Field 1 = server&n;&t; * address Field 2 = gateway address Field 3 = netmask address&n;&t; * Field 4 = client host name&n;&t; */
+id|ip
+op_assign
+id|addrs
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|ip
+op_logical_and
+op_star
+id|ip
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|cp
+op_assign
+id|strchr
+c_func
+(paren
+id|ip
+comma
+l_char|&squot;:&squot;
+)paren
+)paren
+)paren
+op_star
+id|cp
+op_increment
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strlen
+c_func
+(paren
+id|ip
+)paren
+OG
+l_int|0
+)paren
+(brace
+macro_line|#ifdef NFSROOT_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;NFS: IP address num %d is &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
+comma
+id|num
+comma
+id|ip
+)paren
+suffix:semicolon
+macro_line|#endif
+r_switch
+c_cond
+(paren
+id|num
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|myaddr.sin_addr.s_addr
+op_assign
+id|in_aton
+c_func
+(paren
+id|ip
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|server.sin_addr.s_addr
+op_assign
+id|in_aton
+c_func
+(paren
+id|ip
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|gateway.sin_addr.s_addr
+op_assign
+id|in_aton
+c_func
+(paren
+id|ip
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|netmask.sin_addr.s_addr
+op_assign
+id|in_aton
+c_func
+(paren
+id|ip
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+r_if
+c_cond
+(paren
+(paren
+id|dp
+op_assign
+id|strchr
+c_func
+(paren
+id|ip
+comma
+l_char|&squot;.&squot;
+)paren
+)paren
+)paren
+(brace
+op_star
+id|dp
+op_increment
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|system_utsname.domainname
+comma
+id|dp
+comma
+id|__NEW_UTS_LEN
+)paren
+suffix:semicolon
+id|system_utsname.domainname
+(braket
+id|__NEW_UTS_LEN
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+)brace
+id|strncpy
+c_func
+(paren
+id|system_utsname.nodename
+comma
+id|ip
+comma
+id|__NEW_UTS_LEN
+)paren
+suffix:semicolon
+id|system_utsname.nodename
+(braket
+id|__NEW_UTS_LEN
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_break
+suffix:semicolon
+)brace
+)brace
+id|ip
+op_assign
+id|cp
+suffix:semicolon
+id|num
+op_increment
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; *  Set the interface address and configure a route to the server.&n; */
 DECL|function|root_nfs_setup
 r_static
 r_void
@@ -1829,14 +2110,25 @@ r_void
 (brace
 r_struct
 id|rtentry
-id|server_route
+id|route
 suffix:semicolon
-r_struct
-id|sockaddr_in
-op_star
-id|sin
+multiline_comment|/* Set the correct netmask */
+r_if
+c_cond
+(paren
+id|netmask.sin_addr.s_addr
+op_eq
+id|INADDR_NONE
+)paren
+id|netmask.sin_addr.s_addr
+op_assign
+id|ip_get_mask
+c_func
+(paren
+id|myaddr.sin_addr.s_addr
+)paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Setup the device correctly&n;&t; */
+multiline_comment|/* Setup the device correctly */
 id|root_dev-&gt;family
 op_assign
 id|myaddr.sin_family
@@ -1847,11 +2139,7 @@ id|myaddr.sin_addr.s_addr
 suffix:semicolon
 id|root_dev-&gt;pa_mask
 op_assign
-id|ip_get_mask
-c_func
-(paren
-id|myaddr.sin_addr.s_addr
-)paren
+id|netmask.sin_addr.s_addr
 suffix:semicolon
 id|root_dev-&gt;pa_brdaddr
 op_assign
@@ -1864,73 +2152,164 @@ id|root_dev-&gt;pa_dstaddr
 op_assign
 l_int|0
 suffix:semicolon
-id|sin
-op_assign
+multiline_comment|/*&n;&t; * Now add a route to the server. If there is no gateway given,&n;&t; * the server is on our own local network, so a host route is&n;&t; * sufficient. Otherwise we first have to create a host route to&n;&t; * the gateway, and then setup a gatewayed host route to the&n;&t; * server. Note that it&squot;s not possible to setup a network route&n;&t; * because we don&squot;t know the network mask of the server network.&n;&t; */
+id|memset
+c_func
 (paren
-r_struct
-id|sockaddr_in
-op_star
-)paren
 op_amp
-id|server_route.rt_dst
-suffix:semicolon
-op_star
-id|sin
-op_assign
-id|server
-suffix:semicolon
-id|sin
-op_assign
+id|route
+comma
+l_int|0
+comma
+r_sizeof
 (paren
-r_struct
-id|sockaddr_in
-op_star
+id|route
 )paren
-op_amp
-id|server_route.rt_genmask
+)paren
 suffix:semicolon
-id|sin-&gt;sin_family
+id|route.rt_dev
 op_assign
-id|AF_INET
+id|root_dev-&gt;name
 suffix:semicolon
-id|sin-&gt;sin_addr.s_addr
+id|route.rt_mss
 op_assign
-id|root_dev-&gt;pa_mask
+id|root_dev-&gt;mtu
 suffix:semicolon
-id|server_route.rt_dev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|server_route.rt_flags
+id|route.rt_flags
 op_assign
 id|RTF_HOST
 op_or
 id|RTF_UP
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Now add a route to the server&n;&t; */
+op_star
+(paren
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+(paren
+id|route.rt_genmask
+)paren
+)paren
+op_assign
+id|netmask
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|gateway.sin_addr.s_addr
+op_eq
+id|INADDR_NONE
+op_logical_or
+id|gateway.sin_addr.s_addr
+op_eq
+id|server.sin_addr.s_addr
+op_logical_or
+op_logical_neg
+(paren
+(paren
+id|server.sin_addr.s_addr
+op_xor
+id|root_dev-&gt;pa_addr
+)paren
+op_amp
+id|root_dev-&gt;pa_mask
+)paren
+)paren
+(brace
+op_star
+(paren
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+(paren
+id|route.rt_dst
+)paren
+)paren
+op_assign
+id|server
+suffix:semicolon
 id|ip_rt_new
 c_func
 (paren
 op_amp
-id|server_route
+id|route
 )paren
-op_eq
-op_minus
-l_int|1
-)paren
+suffix:semicolon
+)brace
+r_else
 (brace
-id|printk
+op_star
+(paren
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+(paren
+id|route.rt_dst
+)paren
+)paren
+op_assign
+id|gateway
+suffix:semicolon
+id|ip_rt_new
 c_func
 (paren
-l_string|&quot;Unable to add NFS server route.&bslash;n&quot;
+op_amp
+id|route
+)paren
+suffix:semicolon
+id|route.rt_flags
+op_or_assign
+id|RTF_GATEWAY
+suffix:semicolon
+op_star
+(paren
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+(paren
+id|route.rt_gateway
+)paren
+)paren
+op_assign
+id|gateway
+suffix:semicolon
+op_star
+(paren
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+op_amp
+(paren
+id|route.rt_dst
+)paren
+)paren
+op_assign
+id|server
+suffix:semicolon
+id|ip_rt_new
+c_func
+(paren
+op_amp
+id|route
 )paren
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Get the necessary IP addresses and prepare for mounting the required&n; *&t;NFS filesystem.&n; */
+multiline_comment|/*&n; *  Get the necessary IP addresses and prepare for mounting the required&n; *  NFS filesystem.&n; */
 DECL|function|nfs_root_init
 r_int
 id|nfs_root_init
@@ -1939,13 +2318,17 @@ c_func
 r_char
 op_star
 id|nfsname
+comma
+r_char
+op_star
+id|nfsaddrs
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Initialize network device and get local and server IP address &n;&t; */
+multiline_comment|/* Setup all network devices */
 r_if
 c_cond
 (paren
-id|do_rarp
+id|root_dev_open
 c_func
 (paren
 )paren
@@ -1956,7 +2339,106 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Initialize the global variables necessary for NFS. The server&n;&t; *&t;directory is actually mounted after init() has been started.&n;&t; */
+multiline_comment|/*&n;&t; * Get local and server IP address. First check for addresses in&n;&t; * command line parameter. If one of the IP addresses is missing,&n;&t; * or there&squot;s more than one network interface in the system, use&n;&t; * RARP to get the missing values and routing information. If all&n;&t; * addresses are given, the best way to find a proper routing is&n;&t; * to use icmp echo requests (&quot;ping&quot;), but that would add a lot of&n;&t; * code to this module, which is only really necessary in the rare&n;&t; * case of multiple ethernet devices in the (diskless) system and&n;&t; * if the server is on another subnet (otherwise RARP can serve as&n;&t; * a ping substitute). If only one device is installed the routing&n;&t; * is obvious.&n;&t; */
+id|root_nfs_addrs
+c_func
+(paren
+id|nfsaddrs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|myaddr.sin_addr.s_addr
+op_eq
+id|INADDR_NONE
+op_logical_or
+id|server.sin_addr.s_addr
+op_eq
+id|INADDR_NONE
+op_logical_or
+(paren
+id|open_base
+op_ne
+l_int|NULL
+op_logical_and
+id|open_base-&gt;next
+op_ne
+l_int|NULL
+)paren
+)paren
+op_logical_and
+id|do_rarp
+c_func
+(paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|root_dev_close
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|root_dev
+op_eq
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|open_base
+op_ne
+l_int|NULL
+op_logical_and
+id|open_base-&gt;next
+op_eq
+l_int|NULL
+)paren
+(brace
+id|root_dev
+op_assign
+id|open_base-&gt;dev
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;NFS: Unable to find routing to server&bslash;n&quot;
+)paren
+suffix:semicolon
+id|root_dev_close
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * Close all network devices except the device which connects to&n;&t; * server&n;&t; */
+id|root_dev_close
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Initialize the global variables necessary for NFS. The server&n;&t; * directory is actually mounted after init() has been started.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2025,20 +2507,7 @@ op_star
 id|args
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|socket
-op_star
-id|socki_lookup
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
-multiline_comment|/*&n; *&t;Open a UDP socket.&n; */
+multiline_comment|/*&n; *  Open a UDP socket.&n; */
 DECL|function|root_nfs_open
 r_static
 r_int
@@ -2067,7 +2536,7 @@ comma
 id|IPPROTO_UDP
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Open the socket &n;&t; */
+multiline_comment|/* Open the socket */
 r_if
 c_cond
 (paren
@@ -2098,7 +2567,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&t;&n;&t; *&t;Copy the file and inode data area so that we can remove the&n;&t; *&t;file lateron without killing the socket. After all this the&n;&t; *&t;closing routine just needs to remove the file pointer from&n;&t; *&t;the init-task descriptor.&n;&t; */
+multiline_comment|/*&n;&t; * Copy the file and inode data area so that we can remove the&n;&t; * file lateron without killing the socket. After all this the&n;&t; * closing routine just needs to remove the file pointer from the&n;&t; * init-task descriptor.&n;&t; */
 id|filp
 op_assign
 id|current-&gt;files-&gt;fd
@@ -2191,7 +2660,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Close the UDP file descriptor. The main part of preserving the socket&n; *&t;has already been done after opening it. Now we have to remove the&n; *&t;file descriptor from the init task.&n; */
+multiline_comment|/*&n; *  Close the UDP file descriptor. The main part of preserving the socket&n; *  has already been done after opening it. Now we have to remove the file&n; *  descriptor from the init task.&n; */
 DECL|function|root_nfs_close
 r_static
 r_void
@@ -2202,7 +2671,7 @@ r_int
 id|close_all
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Remove the file from the list of open files &n;&t; */
+multiline_comment|/* Remove the file from the list of open files */
 id|current-&gt;files-&gt;fd
 (braket
 id|nfs_data.fd
@@ -2220,7 +2689,7 @@ l_int|0
 id|current-&gt;files-&gt;count
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Clear memory use by the RPC packet &n;&t; */
+multiline_comment|/* Clear memory used by the RPC packet */
 r_if
 c_cond
 (paren
@@ -2238,7 +2707,7 @@ op_plus
 l_int|1024
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;In case of an error we also have to close the socket again (sigh)&n;&t; */
+multiline_comment|/*&n;&t; * In case of an error we also have to close the socket again&n;&t; * (sigh)&n;&t; */
 r_if
 c_cond
 (paren
@@ -2249,7 +2718,7 @@ id|nfs_inode.u.socket_i.inode
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* The inode is already cleared */
+multiline_comment|/* The inode is already&n;&t;&t;&t;&t;&t;&t;&t; * cleared */
 r_if
 c_cond
 (paren
@@ -2269,7 +2738,7 @@ id|nfs_file
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Find a suitable listening port and bind to it&n; */
+multiline_comment|/*&n; *  Find a suitable listening port and bind to it&n; */
 DECL|function|root_nfs_bind
 r_static
 r_int
@@ -2415,7 +2884,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send an RPC request and wait for the answer&n; */
+multiline_comment|/*&n; *  Send an RPC request and wait for the answer&n; */
 DECL|function|root_nfs_call
 r_static
 r_int
@@ -2450,10 +2919,10 @@ op_assign
 op_amp
 id|nfs_file
 comma
-multiline_comment|/* struct file * */
+multiline_comment|/* struct file *&t; */
 l_int|0
 comma
-multiline_comment|/* struct rsock * */
+multiline_comment|/* struct rsock *&t; */
 (brace
 l_int|0
 comma
@@ -2461,27 +2930,27 @@ l_string|&quot;&quot;
 comma
 )brace
 comma
-multiline_comment|/* toaddr */
+multiline_comment|/* toaddr&t;&t; */
 l_int|0
 comma
-multiline_comment|/* lock */
+multiline_comment|/* lock&t;&t;&t; */
 l_int|NULL
 comma
-multiline_comment|/* wait queue */
+multiline_comment|/* wait queue&t;&t; */
 id|NFS_MOUNT_SOFT
 comma
-multiline_comment|/* flags - this seems a ___BAD___ default - AC */
+multiline_comment|/* flags&t;&t; */
 l_int|0
 comma
 l_int|0
 comma
-multiline_comment|/* rsize, wsize */
+multiline_comment|/* rsize, wsize&t;&t; */
 l_int|0
 comma
-multiline_comment|/* timeo */
+multiline_comment|/* timeo&t;&t; */
 l_int|0
 comma
-multiline_comment|/* retrans */
+multiline_comment|/* retrans&t;&t; */
 l_int|3
 op_star
 id|HZ
@@ -2517,7 +2986,7 @@ op_member_access_from_pointer
 id|u.socket_i
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;extract the other end of the socket into server-&gt;toaddr &n;&t; */
+multiline_comment|/* extract the other end of the socket into s-&gt;toaddr */
 id|sock-&gt;ops
 op_member_access_from_pointer
 id|getname
@@ -2618,7 +3087,7 @@ comma
 id|nfs_data.hostname
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;First connect the UDP socket to a server port, then send the packet&n;&t; *&t;out, and finally check wether the answer is OK.&n;&t; */
+multiline_comment|/*&n;&t; * First connect the UDP socket to a server port, then send the&n;&t; * packet out, and finally check wether the answer is OK.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2651,11 +3120,9 @@ id|nfs_file.f_flags
 OL
 l_int|0
 )paren
-(brace
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2685,7 +3152,7 @@ id|rpc_packet
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Create an RPC packet header&n; */
+multiline_comment|/*&n; *  Create an RPC packet header&n; */
 DECL|function|root_nfs_header
 r_static
 r_int
@@ -2753,18 +3220,6 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-id|strcpy
-c_func
-(paren
-id|system_utsname.nodename
-comma
-id|in_ntoa
-c_func
-(paren
-id|myaddr.sin_addr.s_addr
-)paren
-)paren
-suffix:semicolon
 r_return
 id|rpc_header
 c_func
@@ -2785,7 +3240,7 @@ id|groups
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Query server portmapper for the port of a daemon program&n; */
+multiline_comment|/*&n; *  Query server portmapper for the port of a daemon program&n; */
 DECL|function|root_nfs_get_port
 r_static
 r_int
@@ -2803,7 +3258,7 @@ r_int
 op_star
 id|p
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Prepare header for portmap request&n;&t; */
+multiline_comment|/* Prepare header for portmap request */
 id|server.sin_port
 op_assign
 id|htons
@@ -2834,7 +3289,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Set arguments for portmapper&n;&t; */
+multiline_comment|/* Set arguments for portmapper */
 op_star
 id|p
 op_increment
@@ -2871,7 +3326,7 @@ op_increment
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Send request to server portmapper&n;&t; */
+multiline_comment|/* Send request to server portmapper */
 r_if
 c_cond
 (paren
@@ -2900,7 +3355,7 @@ id|p
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get portnumbers for mountd and nfsd from server&n; */
+multiline_comment|/*&n; *  Get portnumbers for mountd and nfsd from server&n; */
 DECL|function|root_nfs_ports
 r_static
 r_int
@@ -3020,7 +3475,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get a file handle from the server for the directory which is to be mounted&n; */
+multiline_comment|/*&n; *  Get a file handle from the server for the directory which is to be&n; *  mounted&n; */
 DECL|function|root_nfs_get_handle
 r_static
 r_int
@@ -3038,7 +3493,7 @@ comma
 op_star
 id|p
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Prepare header for mountd request &n;&t; */
+multiline_comment|/* Prepare header for mountd request */
 id|p
 op_assign
 id|root_nfs_header
@@ -3069,7 +3524,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Set arguments for mountd&n;&t; */
+multiline_comment|/* Set arguments for mountd */
 id|len
 op_assign
 id|strlen
@@ -3119,7 +3574,7 @@ id|p
 op_add_assign
 id|len
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Send request to server portmapper &n;&t; */
+multiline_comment|/* Send request to server mountd */
 r_if
 c_cond
 (paren
@@ -3177,6 +3632,21 @@ op_star
 id|p
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;NFS: &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Got file handle for %s via RPC&bslash;n&quot;
+comma
+id|nfs_path
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -3206,7 +3676,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Now actually mount the given directory&n; */
+multiline_comment|/*&n; *  Now actually mount the given directory&n; */
 DECL|function|root_nfs_do_mount
 r_static
 r_int
@@ -3219,7 +3689,7 @@ op_star
 id|sb
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;First connect to the nfsd port on the server &n;&t; */
+multiline_comment|/* First connect to the nfsd port on the server */
 id|server.sin_port
 op_assign
 id|htons
@@ -3276,7 +3746,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Now (finally ;-)) read the super block for mounting&n;&t; */
+multiline_comment|/* Now (finally ;-)) read the super block for mounting */
 r_if
 c_cond
 (paren
@@ -3309,7 +3779,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get the NFS port numbers and file handle, and then read the super-&n; *&t;block for mounting.&n; */
+multiline_comment|/*&n; *  Get the NFS port numbers and file handle, and then read the super-&n; *  block for mounting.&n; */
 DECL|function|nfs_root_mount
 r_int
 id|nfs_root_mount

@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
@@ -94,25 +96,25 @@ DECL|macro|IS_IMMUTABLE
 mdefine_line|#define IS_IMMUTABLE(inode) ((inode)-&gt;i_flags &amp; S_IMMUTABLE)
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
-mdefine_line|#define BLKROSET 4701 /* set device read-only (0 = read-write) */
+mdefine_line|#define BLKROSET   _IO(0x12,93)&t;/* set device read-only (0 = read-write) */
 DECL|macro|BLKROGET
-mdefine_line|#define BLKROGET 4702 /* get read-only status (0 = read_write) */
+mdefine_line|#define BLKROGET   _IO(0x12,94)&t;/* get read-only status (0 = read_write) */
 DECL|macro|BLKRRPART
-mdefine_line|#define BLKRRPART 4703 /* re-read partition table */
+mdefine_line|#define BLKRRPART  _IO(0x12,95)&t;/* re-read partition table */
 DECL|macro|BLKGETSIZE
-mdefine_line|#define BLKGETSIZE 4704 /* return device size */
+mdefine_line|#define BLKGETSIZE _IO(0x12,96)&t;/* return device size */
 DECL|macro|BLKFLSBUF
-mdefine_line|#define BLKFLSBUF 4705 /* flush buffer cache */
+mdefine_line|#define BLKFLSBUF  _IO(0x12,97)&t;/* flush buffer cache */
 DECL|macro|BLKRASET
-mdefine_line|#define BLKRASET 4706 /* Set read ahead for block device */
+mdefine_line|#define BLKRASET   _IO(0x12,98)&t;/* Set read ahead for block device */
 DECL|macro|BLKRAGET
-mdefine_line|#define BLKRAGET 4707 /* get current read ahead setting */
+mdefine_line|#define BLKRAGET   _IO(0x12,99)&t;/* get current read ahead setting */
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP
-mdefine_line|#define FIBMAP&t;   0x0001&t;/* bmap access */
+mdefine_line|#define FIBMAP&t;   _IO(0x00,1)&t;/* bmap access */
 DECL|macro|FIGETBSZ
-mdefine_line|#define FIGETBSZ   0x0002&t;/* get the block size used for bmap */
+mdefine_line|#define FIGETBSZ   _IO(0x00,2)&t;/* get the block size used for bmap */
 macro_line|#ifdef __KERNEL__
 r_extern
 r_void
@@ -175,6 +177,19 @@ id|buffer_block
 id|BLOCK_SIZE
 )braket
 suffix:semicolon
+multiline_comment|/* bh state bits */
+DECL|macro|BH_Uptodate
+mdefine_line|#define BH_Uptodate&t;0&t;/* 1 if the buffer contains valid data */
+DECL|macro|BH_Dirty
+mdefine_line|#define BH_Dirty&t;1&t;/* 1 if the buffer is dirty */
+DECL|macro|BH_Lock
+mdefine_line|#define BH_Lock&t;&t;2&t;/* 1 if the buffer is locked */
+DECL|macro|BH_Req
+mdefine_line|#define BH_Req&t;&t;3&t;/* 0 if the buffer has been invalidated */
+DECL|macro|BH_Touched
+mdefine_line|#define BH_Touched&t;4&t;/* 1 if the buffer has been touched (aging) */
+DECL|macro|BH_Has_aged
+mdefine_line|#define BH_Has_aged&t;5&t;/* 1 if the buffer has been aged (aging) */
 DECL|struct|buffer_head
 r_struct
 id|buffer_head
@@ -202,63 +217,24 @@ id|kdev_t
 id|b_dev
 suffix:semicolon
 multiline_comment|/* device (B_FREE = free) */
+DECL|member|b_state
+r_int
+r_int
+id|b_state
+suffix:semicolon
+multiline_comment|/* buffer state bitmap (see above) */
 DECL|member|b_count
 r_int
 r_int
 id|b_count
 suffix:semicolon
 multiline_comment|/* users using this block */
-DECL|member|b_uptodate
-r_int
-r_char
-id|b_uptodate
-suffix:semicolon
-DECL|member|b_dirt
-r_int
-r_char
-id|b_dirt
-suffix:semicolon
-multiline_comment|/* 0-clean,1-dirty */
-DECL|member|b_lock
-r_int
-r_char
-id|b_lock
-suffix:semicolon
-multiline_comment|/* 0 - ok, 1 -locked */
-DECL|member|b_req
-r_int
-r_char
-id|b_req
-suffix:semicolon
-multiline_comment|/* 0 if the buffer has been &n;&t;&t;&t;&t;&t; * invalidated */
 DECL|member|b_list
 r_int
-r_char
+r_int
 id|b_list
 suffix:semicolon
 multiline_comment|/* List that this buffer appears */
-DECL|member|b_reuse
-r_int
-r_char
-id|b_reuse
-suffix:semicolon
-multiline_comment|/* 0 - normal, &n;&t;&t;&t;&t;&t; * 1 - better reused for something &n;&t;&t;&t;&t;&t; *     else */
-DECL|member|b_touched
-r_int
-r_char
-id|b_touched
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* True if the buffer has been&n;&t;&t;&t;&t;&t; * accessed since it was last aged */
-DECL|member|b_has_aged
-r_int
-r_char
-id|b_has_aged
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* True if the buffer has aged&n;&t;&t;&t;&t;&t; * (by alias to another buffer&n;&t;&t;&t;&t;&t; * on the same page) since it&n;&t;&t;&t;&t;&t; * was last scanned for aging */
 DECL|member|b_flushtime
 r_int
 r_int
@@ -319,6 +295,150 @@ suffix:semicolon
 multiline_comment|/* request queue */
 )brace
 suffix:semicolon
+DECL|function|buffer_uptodate
+r_static
+r_inline
+r_int
+id|buffer_uptodate
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_return
+id|test_bit
+c_func
+(paren
+id|BH_Uptodate
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
+DECL|function|buffer_dirty
+r_static
+r_inline
+r_int
+id|buffer_dirty
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_return
+id|test_bit
+c_func
+(paren
+id|BH_Dirty
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
+DECL|function|buffer_locked
+r_static
+r_inline
+r_int
+id|buffer_locked
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_return
+id|test_bit
+c_func
+(paren
+id|BH_Lock
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
+DECL|function|buffer_req
+r_static
+r_inline
+r_int
+id|buffer_req
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_return
+id|test_bit
+c_func
+(paren
+id|BH_Req
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
+DECL|function|buffer_touched
+r_static
+r_inline
+r_int
+id|buffer_touched
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_return
+id|test_bit
+c_func
+(paren
+id|BH_Touched
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
+DECL|function|buffer_has_aged
+r_static
+r_inline
+r_int
+id|buffer_has_aged
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_return
+id|test_bit
+c_func
+(paren
+id|BH_Has_aged
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext_fs_i.h&gt;
@@ -2085,6 +2205,47 @@ DECL|macro|BUF_SHARED
 mdefine_line|#define BUF_SHARED 5   /* Buffers shared */
 DECL|macro|NR_LIST
 mdefine_line|#define NR_LIST 6
+DECL|function|mark_buffer_uptodate
+r_extern
+r_inline
+r_void
+id|mark_buffer_uptodate
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+comma
+r_int
+id|on
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|on
+)paren
+id|set_bit
+c_func
+(paren
+id|BH_Uptodate
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+r_else
+id|clear_bit
+c_func
+(paren
+id|BH_Uptodate
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
 DECL|function|mark_buffer_clean
 r_extern
 r_inline
@@ -2101,13 +2262,16 @@ id|bh
 r_if
 c_cond
 (paren
-id|bh-&gt;b_dirt
+id|clear_bit
+c_func
+(paren
+id|BH_Dirty
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
 )paren
 (brace
-id|bh-&gt;b_dirt
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2115,14 +2279,12 @@ id|bh-&gt;b_list
 op_eq
 id|BUF_DIRTY
 )paren
-(brace
 id|refile_buffer
 c_func
 (paren
 id|bh
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|mark_buffer_dirty
@@ -2145,13 +2307,16 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|bh-&gt;b_dirt
+id|set_bit
+c_func
+(paren
+id|BH_Dirty
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
 )paren
 (brace
-id|bh-&gt;b_dirt
-op_assign
-l_int|1
-suffix:semicolon
 id|set_writetime
 c_func
 (paren
@@ -2167,14 +2332,12 @@ id|bh-&gt;b_list
 op_ne
 id|BUF_DIRTY
 )paren
-(brace
 id|refile_buffer
 c_func
 (paren
 id|bh
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 r_extern

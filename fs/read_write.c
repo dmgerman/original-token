@@ -696,6 +696,13 @@ id|error
 r_return
 id|error
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|written
 op_assign
 id|file-&gt;f_op
@@ -710,6 +717,13 @@ comma
 id|buf
 comma
 id|count
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If data has been written to the file, remove the setuid and&n;&t; * the setgid bits&n;&t; */

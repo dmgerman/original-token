@@ -4503,7 +4503,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|CURRENT-&gt;bh-&gt;b_lock
+id|buffer_locked
+c_func
+(paren
+id|CURRENT-&gt;bh
+)paren
 )paren
 (brace
 id|panic

@@ -166,6 +166,10 @@ id|PAGE_SIZE
 op_minus
 id|nbyte
 suffix:semicolon
+multiline_comment|/* FIXME: someone should investigate, why a bad binary&n;&t;&t;   is allowed to bring a wrong elf_bss until here,&n;&t;&t;   and how to react. Suffice the plain return?&n;&t;&t;   rossius@hrz.tu-chemnitz.de */
+r_if
+c_cond
+(paren
 id|verify_area
 c_func
 (paren
@@ -179,7 +183,11 @@ id|elf_bss
 comma
 id|nbyte
 )paren
+)paren
+(brace
+r_return
 suffix:semicolon
+)brace
 id|fpnt
 op_assign
 (paren

@@ -20,6 +20,9 @@ macro_line|#endif
 macro_line|#ifndef _LINUX_DIRENT_H
 macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#endif
+macro_line|#ifndef _LINUX_IOCTL_H
+macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#endif
 DECL|struct|umsdos_fake_info
 r_struct
 id|umsdos_fake_info
@@ -168,28 +171,28 @@ multiline_comment|/* The next ioctl commands operate only on the DOS directory *
 multiline_comment|/* The file umsdos_progs/umsdosio.c contain a string table */
 multiline_comment|/* based on the order of those definition. Keep it in sync */
 DECL|macro|UMSDOS_READDIR_DOS
-mdefine_line|#define UMSDOS_READDIR_DOS&t;1234&t;/* Do a readdir of the DOS directory */
+mdefine_line|#define UMSDOS_READDIR_DOS _IO(0x04,210) /* Do a readdir of the DOS directory */
 DECL|macro|UMSDOS_UNLINK_DOS
-mdefine_line|#define UMSDOS_UNLINK_DOS&t;1235&t;/* Erase in the DOS directory only */
+mdefine_line|#define UMSDOS_UNLINK_DOS  _IO(0x04,211) /* Erase in the DOS directory only */
 DECL|macro|UMSDOS_RMDIR_DOS
-mdefine_line|#define UMSDOS_RMDIR_DOS&t;1236&t;/* rmdir in the DOS directory only */
+mdefine_line|#define UMSDOS_RMDIR_DOS   _IO(0x04,212) /* rmdir in the DOS directory only */
 DECL|macro|UMSDOS_STAT_DOS
-mdefine_line|#define UMSDOS_STAT_DOS&t;&t;1237&t;/* Get info about a file */
+mdefine_line|#define UMSDOS_STAT_DOS    _IO(0x04,213) /* Get info about a file */
 multiline_comment|/* The next ioctl commands operate only on the EMD file */
 DECL|macro|UMSDOS_CREAT_EMD
-mdefine_line|#define UMSDOS_CREAT_EMD&t;1238&t;/* Create a file */
+mdefine_line|#define UMSDOS_CREAT_EMD   _IO(0x04,214) /* Create a file */
 DECL|macro|UMSDOS_UNLINK_EMD
-mdefine_line|#define UMSDOS_UNLINK_EMD&t;1239&t;/* unlink (rmdir) a file */
+mdefine_line|#define UMSDOS_UNLINK_EMD  _IO(0x04,215) /* unlink (rmdir) a file */
 DECL|macro|UMSDOS_READDIR_EMD
-mdefine_line|#define UMSDOS_READDIR_EMD&t;1240&t;/* read the EMD file only. */
+mdefine_line|#define UMSDOS_READDIR_EMD _IO(0x04,216) /* read the EMD file only. */
 DECL|macro|UMSDOS_GETVERSION
-mdefine_line|#define UMSDOS_GETVERSION&t;1241&t;/* Get the release number of UMSDOS */
+mdefine_line|#define UMSDOS_GETVERSION  _IO(0x04,217) /* Get the release number of UMSDOS */
 DECL|macro|UMSDOS_INIT_EMD
-mdefine_line|#define UMSDOS_INIT_EMD&t;&t;1242&t;/* Create the EMD file if not there */
+mdefine_line|#define UMSDOS_INIT_EMD    _IO(0x04,218) /* Create the EMD file if not there */
 DECL|macro|UMSDOS_DOS_SETUP
-mdefine_line|#define UMSDOS_DOS_SETUP&t;1243&t;/* Set the defaults of the MsDOS driver */
+mdefine_line|#define UMSDOS_DOS_SETUP   _IO(0x04,219) /* Set the defaults of the MsDOS driver */
 DECL|macro|UMSDOS_RENAME_DOS
-mdefine_line|#define UMSDOS_RENAME_DOS&t;1244&t;/* rename a file/directory in the DOS */
+mdefine_line|#define UMSDOS_RENAME_DOS  _IO(0x04,220) /* rename a file/directory in the DOS */
 multiline_comment|/* directory only */
 DECL|struct|umsdos_ioctl
 r_struct

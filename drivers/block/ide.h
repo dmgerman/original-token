@@ -26,6 +26,10 @@ macro_line|#ifndef SUPPORT_CMD640&t;&t;&t;/* 1 to support CMD640 chipset */
 DECL|macro|SUPPORT_CMD640
 mdefine_line|#define SUPPORT_CMD640&t;&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
+macro_line|#ifndef SUPPORT_UMC8672&t;&t;&t;/* 1 to support UMC8672 chipset */
+DECL|macro|SUPPORT_UMC8672
+mdefine_line|#define SUPPORT_UMC8672&t;&t;1&t;/* 0 to reduce kernel size */
+macro_line|#endif
 macro_line|#ifndef SUPPORT_HT6560B&t;&t;&t;/* 1 to support HT6560B chipset */
 DECL|macro|SUPPORT_HT6560B
 mdefine_line|#define SUPPORT_HT6560B&t;&t;1&t;/* 0 to reduce kernel size */

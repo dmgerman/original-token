@@ -32,7 +32,7 @@ mdefine_line|#define FINEUSEC (1L &lt;&lt; SHIFT_SCALE) /* 1 us in phase units *
 DECL|macro|MAXPHASE
 mdefine_line|#define MAXPHASE 512000L        /* max phase error (us) */
 DECL|macro|MAXFREQ
-mdefine_line|#define MAXFREQ (512000L &lt;&lt; SHIFT_USEC)  /* max frequency error (ppm) */
+mdefine_line|#define MAXFREQ (100L &lt;&lt; SHIFT_USEC)  /* max frequency error (ppm) */
 DECL|macro|MAXTIME
 mdefine_line|#define MAXTIME (200L &lt;&lt; PPS_AVG) /* max PPS error (jitter) (200 us) */
 DECL|macro|MINSEC
