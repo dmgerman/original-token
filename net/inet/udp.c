@@ -839,16 +839,7 @@ suffix:semicolon
 multiline_comment|/* Now build the IP and MAC header. */
 id|buff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|saddr
 op_assign

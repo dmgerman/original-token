@@ -121,16 +121,7 @@ op_assign
 id|dev_rint
 c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 id|skb-&gt;len
 comma

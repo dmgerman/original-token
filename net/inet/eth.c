@@ -740,11 +740,7 @@ r_struct
 id|ethhdr
 op_star
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|arp_add
 c_func
@@ -787,11 +783,7 @@ r_struct
 id|ethhdr
 op_star
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 r_if
 c_cond

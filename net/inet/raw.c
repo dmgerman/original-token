@@ -905,17 +905,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* verify_area(VERIFY_WRITE, from, len);*/
 id|memcpy_fromfs
+c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 op_plus
 id|tmp
 comma
@@ -945,16 +937,7 @@ id|iph
 suffix:semicolon
 id|buff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|buff
 op_add_assign

@@ -609,6 +609,8 @@ comma
 id|sys_get_kernel_syms
 comma
 id|sys_quotactl
+comma
+id|sys_getpgid
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */

@@ -22,6 +22,8 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+DECL|macro|USE_NAGLE
+mdefine_line|#define USE_NAGLE
 DECL|macro|SEQ_TICK
 mdefine_line|#define SEQ_TICK 3
 DECL|variable|seq_offset
@@ -2081,11 +2083,7 @@ op_plus
 r_int
 r_int
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 op_eq
 r_sizeof
 (paren
@@ -2149,11 +2147,7 @@ op_plus
 r_int
 r_int
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 id|sk
 )paren
@@ -2173,7 +2167,13 @@ comma
 id|sk-&gt;window_seq
 )paren
 op_logical_or
+(paren
 id|sk-&gt;retransmits
+op_logical_and
+id|sk-&gt;timeout
+op_eq
+id|TIME_WRITE
+)paren
 op_logical_or
 id|sk-&gt;packets_out
 op_ge
@@ -2425,11 +2425,7 @@ r_struct
 id|tcphdr
 op_star
 )paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 suffix:semicolon
 multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
@@ -3294,11 +3290,7 @@ op_minus
 r_int
 r_int
 )paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 )paren
 op_plus
 r_sizeof
@@ -3359,16 +3351,7 @@ suffix:semicolon
 id|memcpy_fromfs
 c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 op_plus
 id|skb-&gt;len
 comma
@@ -3406,7 +3389,7 @@ id|skb-&gt;len
 op_minus
 id|hdrlen
 )paren
-OG
+op_ge
 id|sk-&gt;mtu
 op_logical_or
 (paren
@@ -3784,16 +3767,7 @@ l_int|0
 suffix:semicolon
 id|buff
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/*&n;&t; * FIXME: we need to optimize this.&n;&t; * Perhaps some hints here would be good.&n;&t; */
 id|tmp
@@ -4087,7 +4061,13 @@ comma
 id|sk-&gt;window_seq
 )paren
 op_logical_or
+(paren
 id|sk-&gt;retransmits
+op_logical_and
+id|sk-&gt;timeout
+op_eq
+id|TIME_WRITE
+)paren
 op_logical_or
 id|sk-&gt;packets_out
 op_ge
@@ -4529,15 +4509,7 @@ id|tcphdr
 op_star
 )paren
 (paren
-(paren
-r_char
-op_star
-)paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 op_plus
 id|tmp
 )paren
@@ -6477,11 +6449,7 @@ r_struct
 id|tcphdr
 op_star
 )paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 suffix:semicolon
 multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
@@ -6575,9 +6543,7 @@ op_plus
 id|tmp
 )paren
 suffix:semicolon
-id|buff
-op_member_access_from_pointer
-id|len
+id|buff-&gt;len
 op_add_assign
 id|tmp
 suffix:semicolon
@@ -7060,11 +7026,7 @@ r_struct
 id|tcphdr
 op_star
 )paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 suffix:semicolon
 multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
@@ -8053,11 +8015,7 @@ r_struct
 id|tcphdr
 op_star
 )paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 suffix:semicolon
 multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
@@ -8814,11 +8772,7 @@ r_struct
 id|tcphdr
 op_star
 )paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 suffix:semicolon
 multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp
@@ -8904,9 +8858,7 @@ op_plus
 id|tmp
 )paren
 suffix:semicolon
-id|buff
-op_member_access_from_pointer
-id|len
+id|buff-&gt;len
 op_add_assign
 id|tmp
 suffix:semicolon
@@ -9178,6 +9130,10 @@ op_logical_and
 id|sk-&gt;retransmits
 op_eq
 l_int|0
+op_logical_or
+id|sk-&gt;timeout
+op_ne
+id|TIME_WRITE
 op_logical_or
 id|before
 c_func
@@ -9556,6 +9512,19 @@ comma
 id|sk-&gt;window_seq
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;retransmits
+op_logical_and
+id|sk-&gt;timeout
+op_eq
+id|TIME_KEEPOPEN
+)paren
+id|sk-&gt;retransmits
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -10301,6 +10270,10 @@ op_logical_and
 id|sk-&gt;retransmits
 op_eq
 l_int|0
+op_logical_or
+id|sk-&gt;timeout
+op_ne
+id|TIME_WRITE
 op_logical_or
 id|before
 c_func
@@ -12578,11 +12551,7 @@ r_struct
 id|tcphdr
 op_star
 )paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 suffix:semicolon
 multiline_comment|/* Put in the IP header and routing stuff. */
 multiline_comment|/* We need to build the routing stuff fromt the things saved in skb. */
@@ -13103,6 +13072,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef undef
+multiline_comment|/*&n; * if we do this, we won&squot;t respond to keepalive packets, since those&n; * are slightly out of window, and we have to generate an ack&n; * a late ack out still not to have a sequence number less than&n; * one we&squot;ve seen before.  Berkeley doesn&squot;t seem to do this, but it&squot;s&n; * always hard to be sure.&n; */
 multiline_comment|/* In case it&squot;s just a late ack, let it through. */
 r_if
 c_cond
@@ -13136,6 +13107,7 @@ id|th-&gt;syn
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -13834,6 +13806,8 @@ c_func
 l_string|&quot;&bslash;rtcp_rcv: not in seq&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef undef
+multiline_comment|/* nice idea, but tcp_sequence already does this.  Maybe it shouldn&squot;t?? */
 r_if
 c_cond
 (paren
@@ -13856,6 +13830,7 @@ id|saddr
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|kfree_skb
 c_func
 (paren
@@ -15209,11 +15184,7 @@ r_struct
 id|tcphdr
 op_star
 )paren
-(paren
-id|buff
-op_plus
-l_int|1
-)paren
+id|buff-&gt;data
 suffix:semicolon
 multiline_comment|/* Put in the IP header and routing stuff. */
 id|tmp

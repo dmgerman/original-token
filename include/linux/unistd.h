@@ -264,6 +264,10 @@ DECL|macro|__NR_delete_module
 mdefine_line|#define __NR_delete_module&t;129
 DECL|macro|__NR_get_kernel_syms
 mdefine_line|#define __NR_get_kernel_syms&t;130
+DECL|macro|__NR_quotactl
+mdefine_line|#define __NR_quotactl&t;&t;131
+DECL|macro|__NR_getpgid
+mdefine_line|#define __NR_getpgid&t;&t;132
 r_extern
 r_int
 id|errno

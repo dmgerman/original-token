@@ -208,6 +208,22 @@ r_int
 id|users
 suffix:semicolon
 multiline_comment|/* User count - see datagram.c (and soon seqpacket.c/stream.c) */
+DECL|member|padding
+r_int
+r_int
+id|padding
+(braket
+l_int|0
+)braket
+suffix:semicolon
+DECL|member|data
+r_int
+r_char
+id|data
+(braket
+l_int|0
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SK_WMEM_MAX

@@ -430,10 +430,9 @@ op_assign
 l_int|1
 suffix:semicolon
 id|memcpy_fromfs
+c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|from
 comma
@@ -872,9 +871,7 @@ c_func
 (paren
 id|to
 comma
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|copied
 )paren

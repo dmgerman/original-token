@@ -1822,16 +1822,7 @@ suffix:semicolon
 multiline_comment|/* First we copy the packet into a buffer, and save it for later. */
 id|to
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 id|left
 op_assign
@@ -2099,16 +2090,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;* Bump the pointer to the next structure.&n;&t;* This assumes that the basic &squot;skb&squot; pointer points to&n;&t;* the MAC header, if any (as indicated by its &quot;length&quot;&n;&t;* field).  Take care now!&n;&t;*/
 id|skb-&gt;h.raw
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 op_plus
 id|skb-&gt;dev-&gt;hard_header_len
 suffix:semicolon
