@@ -69,7 +69,7 @@ suffix:semicolon
 DECL|variable|log_wait
 r_static
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|log_wait
 op_assign

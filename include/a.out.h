@@ -138,6 +138,9 @@ mdefine_line|#define NMAGIC 0410
 multiline_comment|/* Code indicating demand-paged executable.  */
 DECL|macro|ZMAGIC
 mdefine_line|#define ZMAGIC 0413
+multiline_comment|/* Code indicating core file.  */
+DECL|macro|CMAGIC
+mdefine_line|#define CMAGIC 0421
 macro_line|#if !defined (N_BADMAG)
 DECL|macro|N_BADMAG
 mdefine_line|#define N_BADMAG(x)&t;&t;&t;&t;&t;&bslash;&n; (N_MAGIC(x) != OMAGIC &amp;&amp; N_MAGIC(x) != NMAGIC&t;&t;&bslash;&n;  &amp;&amp; N_MAGIC(x) != ZMAGIC)

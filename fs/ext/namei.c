@@ -4420,7 +4420,7 @@ id|new_len
 (brace
 r_static
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|wait
 op_assign

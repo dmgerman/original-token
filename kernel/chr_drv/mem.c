@@ -1296,6 +1296,14 @@ c_func
 id|mem_start
 )paren
 suffix:semicolon
+id|mem_start
+op_assign
+id|mouse_init
+c_func
+(paren
+id|mem_start
+)paren
+suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon

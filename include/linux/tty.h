@@ -36,7 +36,7 @@ id|tail
 suffix:semicolon
 DECL|member|proc_list
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|proc_list
 suffix:semicolon
@@ -283,13 +283,108 @@ id|secondary
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write. These are the flag bits.&n; */
+multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write. These are the flag&n; * bit-numbers. Use the set_bit() and clear_bit()&n; * macros to make it all atomic.&n; */
 DECL|macro|TTY_WRITE_BUSY
-mdefine_line|#define TTY_WRITE_BUSY 1
+mdefine_line|#define TTY_WRITE_BUSY 0
 DECL|macro|TTY_READ_BUSY
-mdefine_line|#define TTY_READ_BUSY 2
+mdefine_line|#define TTY_READ_BUSY 1
 DECL|macro|TTY_CR_PENDING
-mdefine_line|#define TTY_CR_PENDING 4
+mdefine_line|#define TTY_CR_PENDING 2
+multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. Both set_bit and clear_bit return 0&n; * if the bit-setting went ok, != 0 if the bit already was set/cleared.&n; */
+DECL|function|set_bit
+r_extern
+r_inline
+r_int
+id|set_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_int
+op_star
+id|addr
+)paren
+(brace
+r_char
+id|ok
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;btsl %1,%2&bslash;n&bslash;tsetb %0&quot;
+suffix:colon
+l_string|&quot;=q&quot;
+(paren
+id|ok
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|nr
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+id|addr
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ok
+suffix:semicolon
+)brace
+DECL|function|clear_bit
+r_extern
+r_inline
+r_int
+id|clear_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_int
+op_star
+id|addr
+)paren
+(brace
+r_char
+id|ok
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;btrl %1,%2&bslash;n&bslash;tsetnb %0&quot;
+suffix:colon
+l_string|&quot;=q&quot;
+(paren
+id|ok
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|nr
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+id|addr
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ok
+suffix:semicolon
+)brace
 DECL|macro|TTY_WRITE_FLUSH
 mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 DECL|macro|TTY_READ_FLUSH

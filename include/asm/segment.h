@@ -416,6 +416,7 @@ id|val
 )paren
 (brace
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;mov %0,%%fs&quot;

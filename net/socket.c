@@ -219,7 +219,7 @@ op_star
 id|file
 )paren
 suffix:semicolon
-multiline_comment|/*static*/
+r_static
 r_int
 id|sock_select
 c_func
@@ -308,7 +308,7 @@ mdefine_line|#define last_socket (sockets + NSOCKETS - 1)
 DECL|variable|socket_wait_free
 r_static
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|socket_wait_free
 op_assign
@@ -1345,7 +1345,7 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*static*/
+r_static
 r_int
 DECL|function|sock_select
 id|sock_select
@@ -1362,11 +1362,11 @@ op_star
 id|file
 comma
 r_int
-id|which
+id|sel_type
 comma
 id|select_table
 op_star
-id|seltable
+id|wait
 )paren
 (brace
 r_struct
@@ -1382,7 +1382,7 @@ comma
 id|inode
 comma
 (paren
-id|which
+id|sel_type
 op_eq
 id|SEL_IN
 )paren
@@ -1391,7 +1391,7 @@ c_cond
 l_string|&quot;in&quot;
 suffix:colon
 (paren
-id|which
+id|sel_type
 op_eq
 id|SEL_OUT
 )paren
@@ -1420,12 +1420,11 @@ id|inode
 id|printk
 c_func
 (paren
-l_string|&quot;sock_write: can&squot;t find socket for inode!&bslash;n&quot;
+l_string|&quot;sock_select: can&squot;t find socket for inode!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EBADF
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * handle server sockets specially&n;&t; */
@@ -1440,7 +1439,7 @@ id|SO_ACCEPTCON
 r_if
 c_cond
 (paren
-id|which
+id|sel_type
 op_eq
 id|SEL_IN
 )paren
@@ -1458,6 +1457,23 @@ suffix:colon
 l_string|&quot;no &quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sock-&gt;iconn
+)paren
+r_return
+l_int|1
+suffix:semicolon
+id|select_wait
+c_func
+(paren
+op_amp
+id|inode-&gt;i_wait
+comma
+id|wait
+)paren
+suffix:semicolon
 r_return
 id|sock-&gt;iconn
 ques
@@ -1473,11 +1489,27 @@ c_func
 l_string|&quot;sock_select: nothing else for server socket&bslash;n&quot;
 )paren
 suffix:semicolon
+id|select_wait
+c_func
+(paren
+op_amp
+id|inode-&gt;i_wait
+comma
+id|wait
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * we can&squot;t return errors to select, so its either yes or no.&n;&t; */
+r_if
+c_cond
+(paren
+id|sock-&gt;ops
+op_logical_and
+id|sock-&gt;ops-&gt;select
+)paren
 r_return
 id|sock-&gt;ops
 op_member_access_from_pointer
@@ -1486,12 +1518,12 @@ c_func
 (paren
 id|sock
 comma
-id|which
+id|sel_type
+comma
+id|wait
 )paren
-ques
-c_cond
-l_int|1
-suffix:colon
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

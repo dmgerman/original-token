@@ -286,7 +286,11 @@ op_star
 id|sock
 comma
 r_int
-id|which
+id|sel_type
+comma
+id|select_table
+op_star
+id|wait
 )paren
 suffix:semicolon
 r_static
@@ -2464,7 +2468,11 @@ op_star
 id|sock
 comma
 r_int
-id|which
+id|sel_type
+comma
+id|select_table
+op_star
+id|wait
 )paren
 (brace
 r_struct
@@ -2478,7 +2486,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|which
+id|sel_type
 op_eq
 id|SEL_IN
 )paren
@@ -2540,7 +2548,14 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_else
+id|select_wait
+c_func
+(paren
+id|sock-&gt;wait
+comma
+id|wait
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2548,7 +2563,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|which
+id|sel_type
 op_eq
 id|SEL_OUT
 )paren
@@ -2596,7 +2611,8 @@ suffix:colon
 l_string|&quot; no&quot;
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
 (paren
 id|UN_BUF_SPACE
 c_func
@@ -2606,6 +2622,19 @@ id|peerupd
 OG
 l_int|0
 )paren
+r_return
+l_int|1
+suffix:semicolon
+id|select_wait
+c_func
+(paren
+id|sock-&gt;wait
+comma
+id|wait
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* SEL_EX */

@@ -604,7 +604,7 @@ DECL|variable|fdc_wait
 DECL|variable|format_done
 r_static
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|fdc_wait
 op_assign
@@ -778,7 +778,7 @@ l_int|0
 suffix:semicolon
 DECL|variable|wait_on_floppy_select
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|wait_on_floppy_select
 op_assign

@@ -128,6 +128,12 @@ op_star
 id|u_fpstate
 suffix:semicolon
 multiline_comment|/* Math Co-processor pointer. */
+DECL|member|magic
+r_int
+r_int
+id|magic
+suffix:semicolon
+multiline_comment|/* To uniquely identify a core file */
 )brace
 suffix:semicolon
 DECL|macro|NBPG

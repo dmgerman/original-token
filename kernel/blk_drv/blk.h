@@ -42,7 +42,7 @@ id|buffer
 suffix:semicolon
 DECL|member|waiting
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|waiting
 suffix:semicolon
@@ -109,7 +109,7 @@ id|NR_REQUEST
 suffix:semicolon
 r_extern
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|wait_for_request
 suffix:semicolon

@@ -2,6 +2,8 @@ multiline_comment|/*&n; * This file has definitions for some important file tabl
 macro_line|#ifndef _FS_H
 DECL|macro|_FS_H
 mdefine_line|#define _FS_H
+macro_line|#include &lt;linux/limits.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/dirent.h&gt;
 macro_line|#include &lt;sys/vfs.h&gt;
@@ -34,26 +36,6 @@ DECL|macro|MAJOR
 mdefine_line|#define MAJOR(a) (((unsigned)(a))&gt;&gt;8)
 DECL|macro|MINOR
 mdefine_line|#define MINOR(a) ((a)&amp;0xff)
-DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 32
-DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 128
-DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE 128
-DECL|macro|NR_SUPER
-mdefine_line|#define NR_SUPER 8
-DECL|macro|NR_HASH
-mdefine_line|#define NR_HASH 307
-DECL|macro|NR_BUFFERS
-mdefine_line|#define NR_BUFFERS nr_buffers
-DECL|macro|BLOCK_SIZE
-mdefine_line|#define BLOCK_SIZE 1024
-DECL|macro|BLOCK_SIZE_BITS
-mdefine_line|#define BLOCK_SIZE_BITS 10
-DECL|macro|MAX_CHRDEV
-mdefine_line|#define MAX_CHRDEV 16
-DECL|macro|MAX_BLKDEV
-mdefine_line|#define MAX_BLKDEV 16
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -93,6 +75,8 @@ DECL|macro|MS_NODEV
 mdefine_line|#define MS_NODEV     4 /* disallow access to device special files */
 DECL|macro|MS_NOEXEC
 mdefine_line|#define MS_NOEXEC    8 /* disallow program execution */
+DECL|macro|MS_SYNC
+mdefine_line|#define MS_SYNC     16 /* writes are synced at once */
 multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to overrride it sevelctively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; */
 DECL|macro|IS_RDONLY
 mdefine_line|#define IS_RDONLY(inode) ((inode)-&gt;i_flags &amp; MS_RDONLY)
@@ -102,6 +86,8 @@ DECL|macro|IS_NODEV
 mdefine_line|#define IS_NODEV(inode) ((inode)-&gt;i_flags &amp; MS_NODEV)
 DECL|macro|IS_NOEXEC
 mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
+DECL|macro|IS_SYNC
+mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNC)
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET 4701 /* set device read-only (0 = read-write) */
@@ -164,7 +150,7 @@ suffix:semicolon
 multiline_comment|/* 0 - ok, 1 -locked */
 DECL|member|b_wait
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|b_wait
 suffix:semicolon
@@ -271,13 +257,13 @@ id|i_sb
 suffix:semicolon
 DECL|member|i_wait
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|i_wait
 suffix:semicolon
 DECL|member|i_wait2
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|i_wait2
 suffix:semicolon
@@ -372,63 +358,6 @@ id|f_pos
 suffix:semicolon
 )brace
 suffix:semicolon
-r_typedef
-r_struct
-(brace
-DECL|member|old_task
-r_struct
-id|task_struct
-op_star
-id|old_task
-suffix:semicolon
-DECL|member|wait_address
-r_struct
-id|task_struct
-op_star
-op_star
-id|wait_address
-suffix:semicolon
-DECL|typedef|wait_entry
-)brace
-id|wait_entry
-suffix:semicolon
-DECL|struct|select_table_struct
-r_typedef
-r_struct
-id|select_table_struct
-(brace
-DECL|member|nr
-DECL|member|woken
-r_int
-id|nr
-comma
-id|woken
-suffix:semicolon
-DECL|member|current
-r_struct
-id|task_struct
-op_star
-id|current
-suffix:semicolon
-DECL|member|next_table
-r_struct
-id|select_table_struct
-op_star
-id|next_table
-suffix:semicolon
-DECL|member|entry
-id|wait_entry
-id|entry
-(braket
-id|NR_OPEN
-op_star
-l_int|3
-)braket
-suffix:semicolon
-DECL|typedef|select_table
-)brace
-id|select_table
-suffix:semicolon
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -516,7 +445,7 @@ id|s_time
 suffix:semicolon
 DECL|member|s_wait
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|s_wait
 suffix:semicolon

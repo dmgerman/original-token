@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
-multiline_comment|/* #include &lt;linux/msdos_fs.h&gt; */
+macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -65,7 +65,12 @@ comma
 l_string|&quot;ext&quot;
 )brace
 comma
-multiline_comment|/*&t;{msdos_read_super,&quot;msdos&quot;}, */
+(brace
+id|msdos_read_super
+comma
+l_string|&quot;msdos&quot;
+)brace
+comma
 (brace
 l_int|NULL
 comma
@@ -185,11 +190,6 @@ op_star
 id|sb
 )paren
 (brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sb-&gt;s_lock
 op_assign
 l_int|0
@@ -201,11 +201,6 @@ op_amp
 (paren
 id|sb-&gt;s_wait
 )paren
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

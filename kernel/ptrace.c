@@ -980,7 +980,7 @@ c_cond
 (paren
 (paren
 op_logical_neg
-id|current-&gt;dumpable
+id|child-&gt;dumpable
 op_logical_or
 (paren
 id|current-&gt;uid

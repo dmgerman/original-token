@@ -87,7 +87,7 @@ id|next
 suffix:semicolon
 DECL|member|wait
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 op_star
 id|wait
@@ -328,7 +328,11 @@ op_star
 id|sock
 comma
 r_int
-id|which
+id|sel_type
+comma
+id|select_table
+op_star
+id|wait
 )paren
 suffix:semicolon
 DECL|member|ioctl

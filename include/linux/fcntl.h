@@ -2,29 +2,31 @@ macro_line|#ifndef _FCNTL_H
 DECL|macro|_FCNTL_H
 mdefine_line|#define _FCNTL_H
 macro_line|#include &lt;sys/types.h&gt;
-multiline_comment|/* open/fcntl - NOCTTY, NDELAY isn&squot;t implemented yet */
+multiline_comment|/* open/fcntl - O_SYNC isn&squot;t implemented yet */
 DECL|macro|O_ACCMODE
-mdefine_line|#define O_ACCMODE&t;00003
+mdefine_line|#define O_ACCMODE&t;  0003
 DECL|macro|O_RDONLY
-mdefine_line|#define O_RDONLY&t;   00
+mdefine_line|#define O_RDONLY&t;    00
 DECL|macro|O_WRONLY
-mdefine_line|#define O_WRONLY&t;   01
+mdefine_line|#define O_WRONLY&t;    01
 DECL|macro|O_RDWR
-mdefine_line|#define O_RDWR&t;&t;   02
+mdefine_line|#define O_RDWR&t;&t;    02
 DECL|macro|O_CREAT
-mdefine_line|#define O_CREAT&t;&t;00100&t;/* not fcntl */
+mdefine_line|#define O_CREAT&t;&t;  0100&t;/* not fcntl */
 DECL|macro|O_EXCL
-mdefine_line|#define O_EXCL&t;&t;00200&t;/* not fcntl */
+mdefine_line|#define O_EXCL&t;&t;  0200&t;/* not fcntl */
 DECL|macro|O_NOCTTY
-mdefine_line|#define O_NOCTTY&t;00400&t;/* not fcntl */
+mdefine_line|#define O_NOCTTY&t;  0400&t;/* not fcntl */
 DECL|macro|O_TRUNC
-mdefine_line|#define O_TRUNC&t;&t;01000&t;/* not fcntl */
+mdefine_line|#define O_TRUNC&t;&t; 01000&t;/* not fcntl */
 DECL|macro|O_APPEND
-mdefine_line|#define O_APPEND&t;02000
+mdefine_line|#define O_APPEND&t; 02000
 DECL|macro|O_NONBLOCK
-mdefine_line|#define O_NONBLOCK&t;04000
+mdefine_line|#define O_NONBLOCK&t; 04000
 DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;O_NONBLOCK
+DECL|macro|O_SYNC
+mdefine_line|#define O_SYNC&t;&t;010000
 multiline_comment|/* Defines for fcntl-commands. Note that currently&n; * locking isn&squot;t supported, and other things aren&squot;t really&n; * tested.&n; */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */

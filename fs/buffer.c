@@ -46,7 +46,7 @@ suffix:semicolon
 DECL|variable|buffer_wait
 r_static
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|buffer_wait
 op_assign

@@ -315,6 +315,8 @@ r_void
 (brace
 r_int
 id|i
+comma
+id|task_nr
 suffix:semicolon
 id|repeat
 suffix:colon
@@ -381,6 +383,11 @@ id|last_pid
 r_goto
 id|repeat
 suffix:semicolon
+multiline_comment|/* Only the super-user can fill the last available slot */
+id|task_nr
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -404,8 +411,31 @@ id|task
 id|i
 )braket
 )paren
+r_if
+c_cond
+(paren
+id|task_nr
+)paren
 r_return
+id|task_nr
+suffix:semicolon
+r_else
+id|task_nr
+op_assign
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|task_nr
+op_logical_and
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+id|task_nr
 suffix:semicolon
 r_return
 op_minus
@@ -550,6 +580,14 @@ op_star
 id|current
 suffix:semicolon
 multiline_comment|/* NOTE! this doesn&squot;t copy the supervisor stack */
+id|p-&gt;wait.task
+op_assign
+id|p
+suffix:semicolon
+id|p-&gt;wait.next
+op_assign
+l_int|NULL
+suffix:semicolon
 id|p-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
@@ -660,7 +698,10 @@ suffix:semicolon
 id|p-&gt;tss.eflags
 op_assign
 id|eflags
+op_amp
+l_int|0xffffcfff
 suffix:semicolon
+multiline_comment|/* iopl is always 0 for a new process */
 id|p-&gt;tss.eax
 op_assign
 l_int|0

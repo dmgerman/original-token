@@ -30,7 +30,7 @@ suffix:semicolon
 multiline_comment|/*&n; * used to wait on when there are no free requests&n; */
 DECL|variable|wait_for_request
 r_struct
-id|task_struct
+id|wait_queue
 op_star
 id|wait_for_request
 op_assign
@@ -1098,7 +1098,8 @@ id|buffer
 suffix:semicolon
 id|req-&gt;waiting
 op_assign
-id|current
+op_amp
+id|current-&gt;wait
 suffix:semicolon
 id|req-&gt;bh
 op_assign
@@ -1533,7 +1534,8 @@ id|buf
 suffix:semicolon
 id|req-&gt;waiting
 op_assign
-id|current
+op_amp
+id|current-&gt;wait
 suffix:semicolon
 id|req-&gt;bh
 op_assign

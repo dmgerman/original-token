@@ -18,7 +18,7 @@ id|port
 )paren
 (brace
 id|__asm__
-r_volatile
+id|__volatile__
 (paren
 l_string|&quot;outb %0,%1&quot;
 op_scope_resolution
@@ -57,7 +57,7 @@ id|port
 )paren
 (brace
 id|__asm__
-r_volatile
+id|__volatile__
 (paren
 l_string|&quot;outb %0,%1&bslash;n&bslash;t&quot;
 macro_line|#ifdef REALLY_SLOW_IO
@@ -104,7 +104,7 @@ r_char
 id|_v
 suffix:semicolon
 id|__asm__
-r_volatile
+id|__volatile__
 (paren
 l_string|&quot;inb %1,%0&quot;
 suffix:colon
@@ -145,7 +145,7 @@ r_char
 id|_v
 suffix:semicolon
 id|__asm__
-r_volatile
+id|__volatile__
 (paren
 l_string|&quot;inb %1,%0&bslash;n&bslash;t&quot;
 macro_line|#ifdef REALLY_SLOW_IO
