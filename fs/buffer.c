@@ -2257,7 +2257,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* If invalidate_buffers() will trash dirty buffers, it means some kind&n;   of fs corruption is going on. Trashing dirty data always imply losing&n;   information that was supposed to be just stored on the physical layer&n;   by the user.&n;&n;   Thus invalidate_buffers in general usage is not allwowed to trash dirty&n;   buffers. For example ioctl(FLSBLKBUF) expects dirty data to be preserved.&n;&n;   NOTE: In the case where the user removed a removable-media-disk even if&n;   there&squot;s still dirty data not synced on disk (due a bug in the device driver&n;   or due an error of the user), by not destroying the dirty buffers we could&n;   generate corruption also on the next media inserted, thus a parameter is&n;   necessary to handle this case in the most safe way possible (trying&n;   to not corrupt also the new disk inserted with the data belonging to&n;   the old now corrupted disk). Also for the ramdisk the natural thing&n;   to do in order to release the ramdisk memory is to destroy dirty buffers.&n;&n;   These are two special cases. Normal usage imply the device driver&n;   to issue a sync on the device (without waiting I/O completation) and&n;   then an invalidate_buffers call that doesn&squot;t trashes dirty buffers. */
+multiline_comment|/* If invalidate_buffers() will trash dirty buffers, it means some kind&n;   of fs corruption is going on. Trashing dirty data always imply losing&n;   information that was supposed to be just stored on the physical layer&n;   by the user.&n;&n;   Thus invalidate_buffers in general usage is not allwowed to trash dirty&n;   buffers. For example ioctl(FLSBLKBUF) expects dirty data to be preserved.&n;&n;   NOTE: In the case where the user removed a removable-media-disk even if&n;   there&squot;s still dirty data not synced on disk (due a bug in the device driver&n;   or due an error of the user), by not destroying the dirty buffers we could&n;   generate corruption also on the next media inserted, thus a parameter is&n;   necessary to handle this case in the most safe way possible (trying&n;   to not corrupt also the new disk inserted with the data belonging to&n;   the old now corrupted disk). Also for the ramdisk the natural thing&n;   to do in order to release the ramdisk memory is to destroy dirty buffers.&n;&n;   These are two special cases. Normal usage imply the device driver&n;   to issue a sync on the device (without waiting I/O completation) and&n;   then an invalidate_buffers call that doesn&squot;t trash dirty buffers. */
 DECL|function|__invalidate_buffers
 r_void
 id|__invalidate_buffers
@@ -2455,6 +2455,7 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* else complain loudly? */
 id|write_unlock
 c_func
 (paren
@@ -4179,37 +4180,6 @@ r_if
 c_cond
 (paren
 id|blocks
-OL
-(paren
-id|read_ahead
-(braket
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-)braket
-op_rshift
-id|index
-)paren
-)paren
-id|blocks
-op_assign
-id|read_ahead
-(braket
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-)braket
-op_rshift
-id|index
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|blocks
 OG
 id|NBUF
 )paren
@@ -4217,7 +4187,6 @@ id|blocks
 op_assign
 id|NBUF
 suffix:semicolon
-multiline_comment|/*&t;if (blocks) printk(&quot;breada (new) %d blocks&bslash;n&quot;,blocks); */
 id|bhlist
 (braket
 l_int|0

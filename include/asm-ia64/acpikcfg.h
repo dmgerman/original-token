@@ -1,5 +1,6 @@
-macro_line|#ifdef&t;CONFIG_ACPI_KERNEL_CONFIG
 multiline_comment|/*&n; *  acpikcfg.h - ACPI based Kernel Configuration Manager External Interfaces&n; *&n; *  Copyright (C) 2000 Intel Corp.&n; *  Copyright (C) 2000 J.I. Lee  &lt;jung-ik.lee@intel.com&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef&t;CONFIG_ACPI_KERNEL_CONFIG
 id|u32
 id|__init
 id|acpi_cf_init

@@ -1394,8 +1394,5 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Nothing to do on sparc64 :) */
-DECL|macro|set_pgdir
-mdefine_line|#define set_pgdir(address, entry)&t;do { } while(0)
 macro_line|#endif /* _SPARC64_PGALLOC_H */
 eof

@@ -3,7 +3,7 @@ DECL|macro|__ASM_SH_PGALLOC_2LEVEL_H
 mdefine_line|#define __ASM_SH_PGALLOC_2LEVEL_H
 multiline_comment|/*&n; * traditional two-level paging, page table allocation routines:&n; */
 DECL|function|get_pmd_fast
-r_extern
+r_static
 id|__inline__
 id|pmd_t
 op_star
@@ -22,7 +22,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|free_pmd_fast
-r_extern
+r_static
 id|__inline__
 r_void
 id|free_pmd_fast
@@ -35,7 +35,7 @@ id|pmd
 (brace
 )brace
 DECL|function|free_pmd_slow
-r_extern
+r_static
 id|__inline__
 r_void
 id|free_pmd_slow
@@ -48,8 +48,8 @@ id|pmd
 (brace
 )brace
 DECL|function|pmd_alloc
-r_extern
-r_inline
+r_static
+id|__inline__
 id|pmd_t
 op_star
 id|pmd_alloc

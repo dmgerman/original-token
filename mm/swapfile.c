@@ -1394,10 +1394,11 @@ id|mm
 )paren
 r_return
 suffix:semicolon
-id|vmlist_access_lock
+id|spin_lock
 c_func
 (paren
-id|mm
+op_amp
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 r_for
@@ -1439,10 +1440,11 @@ id|page
 )paren
 suffix:semicolon
 )brace
-id|vmlist_access_unlock
+id|spin_unlock
 c_func
 (paren
-id|mm
+op_amp
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 r_return

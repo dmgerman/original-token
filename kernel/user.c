@@ -238,7 +238,7 @@ id|up
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * For SMP, we need to re-test the user struct counter&n; * after having aquired the spinlock. This allows us to do&n; * the common case (not freeing anything) without having&n; * any locking.&n; */
+multiline_comment|/*&n; * For SMP, we need to re-test the user struct counter&n; * after having acquired the spinlock. This allows us to do&n; * the common case (not freeing anything) without having&n; * any locking.&n; */
 macro_line|#ifdef CONFIG_SMP
 DECL|macro|uid_hash_free
 mdefine_line|#define uid_hash_free(up)&t;(!atomic_read(&amp;(up)-&gt;__count))

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.9 2000/08/01 04:53:58 anton Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.10 2000/10/13 01:40:26 davem Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H
@@ -660,18 +660,7 @@ DECL|macro|pgd_free
 mdefine_line|#define pgd_free(pgd) BTFIXUP_CALL(pgd_free)(pgd)
 DECL|macro|pgd_alloc
 mdefine_line|#define pgd_alloc() BTFIXUP_CALL(pgd_alloc)()
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|set_pgdir
-comma
-r_int
-r_int
-comma
-id|pgd_t
-)paren
+macro_line|#error Anton, you need to do set_pgdir things now as on ix86, see i386/mm/fault.c
 DECL|macro|set_pgdir
 mdefine_line|#define set_pgdir(address,entry) BTFIXUP_CALL(set_pgdir)(address,entry)
 macro_line|#endif /* _SPARC64_PGALLOC_H */

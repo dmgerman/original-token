@@ -2829,11 +2829,6 @@ id|lp-&gt;options
 op_or_assign
 id|PORT_FD
 suffix:semicolon
-id|lp-&gt;a
-op_assign
-op_star
-id|a
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2854,6 +2849,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|lp-&gt;a
+op_assign
+op_star
+id|a
+suffix:semicolon
 multiline_comment|/* detect special T1/E1 WAN card by checking for MAC address */
 r_if
 c_cond

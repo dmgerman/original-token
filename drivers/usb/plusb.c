@@ -875,6 +875,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|s-&gt;bulkurb-&gt;dev
+op_assign
+id|s-&gt;usbdev
+suffix:semicolon
 id|ret
 op_assign
 id|usb_submit_urb

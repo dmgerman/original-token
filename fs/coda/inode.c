@@ -307,11 +307,6 @@ id|silent
 r_struct
 id|inode
 op_star
-id|psdev
-op_assign
-l_int|0
-comma
-op_star
 id|root
 op_assign
 l_int|0

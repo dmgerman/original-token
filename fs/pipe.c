@@ -1287,7 +1287,7 @@ comma
 id|wait
 )paren
 suffix:semicolon
-multiline_comment|/* Reading only -- no need for aquiring the semaphore.  */
+multiline_comment|/* Reading only -- no need for acquiring the semaphore.  */
 id|mask
 op_assign
 id|POLLIN

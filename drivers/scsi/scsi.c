@@ -6619,10 +6619,11 @@ l_int|1024
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Remove it from the linked list and /proc */
+multiline_comment|/*&n;&t; * Remove it from the linked list and /proc if all&n;&t; * hosts were successfully removed (ie preset == 0)&n;&t; */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|tpnt-&gt;present
 )paren
 (brace

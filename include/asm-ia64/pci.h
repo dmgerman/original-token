@@ -1,7 +1,6 @@
 macro_line|#ifndef _ASM_IA64_PCI_H
 DECL|macro|_ASM_IA64_PCI_H
 mdefine_line|#define _ASM_IA64_PCI_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

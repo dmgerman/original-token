@@ -5623,7 +5623,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Perform a file control on a socket file descriptor.&n; *&n; *&t;Doesn&squot;t aquire a fd lock, because no network fcntl&n; *&t;function sleeps currently.&n; */
+multiline_comment|/*&n; *&t;Perform a file control on a socket file descriptor.&n; *&n; *&t;Doesn&squot;t acquire a fd lock, because no network fcntl&n; *&t;function sleeps currently.&n; */
 DECL|function|sock_fcntl
 r_int
 id|sock_fcntl

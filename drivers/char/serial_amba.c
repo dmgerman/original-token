@@ -8279,10 +8279,6 @@ id|wait_key
 suffix:colon
 id|ambauart_console_wait_key
 comma
-id|unblank
-suffix:colon
-l_int|NULL
-comma
 id|setup
 suffix:colon
 id|ambauart_console_setup

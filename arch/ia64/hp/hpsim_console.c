@@ -64,38 +64,35 @@ id|console
 id|hpsim_cons
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;simcons&quot;
 comma
+id|write
+suffix:colon
 id|simcons_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* read */
+id|device
+suffix:colon
 id|simcons_console_device
 comma
-multiline_comment|/* device */
+id|wait_key
+suffix:colon
 id|simcons_wait_key
 comma
-multiline_comment|/* wait_key */
-l_int|NULL
-comma
-multiline_comment|/* unblank */
+id|setup
+suffix:colon
 id|simcons_init
 comma
-multiline_comment|/* setup */
+id|flags
+suffix:colon
 id|CON_PRINTBUFFER
 comma
-multiline_comment|/* flags */
+id|index
+suffix:colon
 op_minus
 l_int|1
 comma
-multiline_comment|/* index */
-l_int|0
-comma
-multiline_comment|/* cflag */
-l_int|NULL
-multiline_comment|/* next */
 )brace
 suffix:semicolon
 r_static

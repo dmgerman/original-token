@@ -4331,7 +4331,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;ax25_connect(): %s uses autobind, please contact jreuter@poboxes.com&bslash;n&quot;
+l_string|&quot;ax25_connect(): %s uses autobind, please contact jreuter@yaina.de&bslash;n&quot;
 comma
 id|current-&gt;comm
 )paren

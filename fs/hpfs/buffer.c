@@ -827,7 +827,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-multiline_comment|/* vvvv - workaround for the breada bug */
 r_if
 c_cond
 (paren
@@ -837,19 +836,6 @@ op_logical_or
 id|secno
 op_plus
 id|ahead
-op_plus
-(paren
-id|read_ahead
-(braket
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-)braket
-op_rshift
-l_int|9
-)paren
 op_ge
 id|s-&gt;s_hpfs_fs_size
 )paren
@@ -1098,7 +1084,6 @@ r_goto
 id|bail
 suffix:semicolon
 )brace
-multiline_comment|/* vvvv - workaround for the breada bug */
 r_if
 c_cond
 (paren
@@ -1110,19 +1095,6 @@ op_plus
 l_int|4
 op_plus
 id|ahead
-op_plus
-(paren
-id|read_ahead
-(braket
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-)braket
-op_rshift
-l_int|9
-)paren
 OG
 id|s-&gt;s_hpfs_fs_size
 )paren

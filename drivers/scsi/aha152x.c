@@ -5630,7 +5630,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * setup controller to generate interrupts depending&n; * on current state (lock has to be aquired)&n; *&n; */
+multiline_comment|/*&n; * setup controller to generate interrupts depending&n; * on current state (lock has to be acquired)&n; *&n; */
 DECL|function|setup_expected_interrupts
 r_static
 r_int

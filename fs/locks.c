@@ -185,14 +185,6 @@ c_func
 op_amp
 id|fl-&gt;fl_link
 )paren
-op_logical_or
-op_logical_neg
-id|list_empty
-c_func
-(paren
-op_amp
-id|fl-&gt;fl_list
-)paren
 )paren
 id|panic
 c_func
@@ -232,13 +224,6 @@ c_func
 (paren
 op_amp
 id|fl-&gt;fl_block
-)paren
-suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
-id|fl-&gt;fl_list
 )paren
 suffix:semicolon
 id|init_waitqueue_head
@@ -1149,14 +1134,14 @@ id|list_del
 c_func
 (paren
 op_amp
-id|waiter-&gt;fl_list
+id|waiter-&gt;fl_block
 )paren
 suffix:semicolon
 id|INIT_LIST_HEAD
 c_func
 (paren
 op_amp
-id|waiter-&gt;fl_list
+id|waiter-&gt;fl_block
 )paren
 suffix:semicolon
 id|list_del
@@ -1204,7 +1189,7 @@ id|list_empty
 c_func
 (paren
 op_amp
-id|waiter-&gt;fl_list
+id|waiter-&gt;fl_block
 )paren
 )paren
 (brace
@@ -1235,7 +1220,7 @@ id|list_add_tail
 c_func
 (paren
 op_amp
-id|waiter-&gt;fl_list
+id|waiter-&gt;fl_block
 comma
 op_amp
 id|blocker-&gt;fl_block
@@ -1298,7 +1283,7 @@ comma
 r_struct
 id|file_lock
 comma
-id|fl_list
+id|fl_block
 )paren
 suffix:semicolon
 multiline_comment|/* N.B. Is it possible for the notify function to block?? */
@@ -2109,10 +2094,6 @@ suffix:semicolon
 id|blocked_pid
 op_assign
 id|block_fl-&gt;fl_pid
-suffix:semicolon
-id|tmp
-op_assign
-id|blocked_list.next
 suffix:semicolon
 id|next_task
 suffix:colon
@@ -6266,7 +6247,7 @@ id|list_empty
 c_func
 (paren
 op_amp
-id|waiter-&gt;fl_list
+id|waiter-&gt;fl_block
 )paren
 )paren
 (brace
@@ -6913,7 +6894,7 @@ comma
 r_struct
 id|file_lock
 comma
-id|fl_list
+id|fl_block
 )paren
 suffix:semicolon
 id|lock_get_status

@@ -1687,7 +1687,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Tell a process that it has a new active signal..&n; *&n; * NOTE! we rely on the previous spin_lock to&n; * lock interrupts for us! We can only be called with&n; * &quot;sigmask_lock&quot; held, and the local interrupt must&n; * have been disabled when that got aquired!&n; *&n; * No need to set need_resched since signal event passing&n; * goes through -&gt;blocked&n; */
+multiline_comment|/*&n; * Tell a process that it has a new active signal..&n; *&n; * NOTE! we rely on the previous spin_lock to&n; * lock interrupts for us! We can only be called with&n; * &quot;sigmask_lock&quot; held, and the local interrupt must&n; * have been disabled when that got acquired!&n; *&n; * No need to set need_resched since signal event passing&n; * goes through -&gt;blocked&n; */
 DECL|function|signal_wake_up
 r_static
 r_inline

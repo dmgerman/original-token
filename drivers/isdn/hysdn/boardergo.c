@@ -1785,7 +1785,7 @@ c_func
 id|card
 )paren
 suffix:semicolon
-multiline_comment|/* return the aquired hardware */
+multiline_comment|/* return the acquired hardware */
 r_return
 (paren
 op_minus

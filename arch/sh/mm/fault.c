@@ -811,10 +811,11 @@ r_goto
 id|no_context
 suffix:semicolon
 )brace
-DECL|function|__do_page_fault1
-r_static
+multiline_comment|/*&n; * Called with interrupt disabled.&n; */
+DECL|function|__do_page_fault
+id|asmlinkage
 r_int
-id|__do_page_fault1
+id|__do_page_fault
 c_func
 (paren
 r_struct
@@ -857,7 +858,6 @@ id|address
 OL
 id|VMALLOC_END
 )paren
-multiline_comment|/* We can change the implementation of P3 area pte entries.&n;&t;&t;   set_pgdir and such. */
 id|dir
 op_assign
 id|pgd_offset_k
@@ -1030,62 +1030,6 @@ id|entry
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Called with interrupt disabled.&n; */
-DECL|function|__do_page_fault
-id|asmlinkage
-r_void
-id|__do_page_fault
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|writeaccess
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-multiline_comment|/*&n;&t; * XXX: Could you please implement this (calling __do_page_fault1)&n;&t; * in assembler language in entry.S?&n;&t; */
-r_if
-c_cond
-(paren
-id|__do_page_fault1
-c_func
-(paren
-id|regs
-comma
-id|writeaccess
-comma
-id|address
-)paren
-op_eq
-l_int|0
-)paren
-multiline_comment|/* Done. */
-r_return
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|do_page_fault
-c_func
-(paren
-id|regs
-comma
-id|writeaccess
-comma
-id|address
-)paren
 suffix:semicolon
 )brace
 DECL|function|update_mmu_cache

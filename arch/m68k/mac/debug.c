@@ -435,34 +435,19 @@ id|console
 id|mac_console_driver
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;debug&quot;
 comma
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* device */
-l_int|NULL
-comma
-multiline_comment|/* wait_key */
-l_int|NULL
-comma
-multiline_comment|/* unblank */
-l_int|NULL
-comma
-multiline_comment|/* setup */
+id|flags
+suffix:colon
 id|CON_PRINTBUFFER
 comma
+id|index
+suffix:colon
 op_minus
 l_int|1
 comma
-l_int|0
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Crude hack to get console output to the screen before the framebuffer&n; * is initialized (happens a lot later in 2.1!).&n; * We just use the console routines declared in head.S, this will interfere&n; * with regular framebuffer console output and should be used exclusively&n; * to debug kernel problems manifesting before framebuffer init (aka WSOD)&n; *&n; * To keep this hack from interfering with the regular console driver, either&n; * deregister this driver before/on framebuffer console init, or silence this&n; * function after the fbcon driver is running (will lose console messages!?).&n; * To debug real early bugs, need to write a &squot;mac_register_console_hack()&squot;&n; * that is called from start_kernel() before setup_arch() and just registers&n; * this driver if Mac.&n; */

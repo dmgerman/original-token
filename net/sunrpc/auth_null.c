@@ -185,6 +185,10 @@ id|cred-&gt;cr_flags
 op_assign
 id|RPCAUTH_CRED_UPTODATE
 suffix:semicolon
+id|cred-&gt;cr_uid
+op_assign
+id|current-&gt;uid
+suffix:semicolon
 r_return
 id|cred
 suffix:semicolon

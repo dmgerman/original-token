@@ -706,7 +706,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &quot;plug&quot; the device if there are no outstanding requests: this will&n; * force the transfer to start only after we have put all the requests&n; * on the list.&n; *&n; * This is called with interrupts off and no requests on the queue.&n; * (and with the request spinlock aquired)&n; */
+multiline_comment|/*&n; * &quot;plug&quot; the device if there are no outstanding requests: this will&n; * force the transfer to start only after we have put all the requests&n; * on the list.&n; *&n; * This is called with interrupts off and no requests on the queue.&n; * (and with the request spinlock acquired)&n; */
 DECL|function|generic_plug_device
 r_static
 r_void
@@ -1664,7 +1664,7 @@ l_string|&quot;drive_stat_acct: cmd not R/W?&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts (aquires the request spinlock) so that it can muck&n; * with the request-lists in peace. Thus it should be called with no spinlocks&n; * held.&n; *&n; * By this point, req-&gt;cmd is always either READ/WRITE, never READA,&n; * which is important for drive_stat_acct() above.&n; */
+multiline_comment|/*&n; * add-request adds a request to the linked list.&n; * It disables interrupts (acquires the request spinlock) so that it can muck&n; * with the request-lists in peace. Thus it should be called with no spinlocks&n; * held.&n; *&n; * By this point, req-&gt;cmd is always either READ/WRITE, never READA,&n; * which is important for drive_stat_acct() above.&n; */
 DECL|function|add_request
 r_static
 r_inline
@@ -1846,7 +1846,7 @@ id|req-&gt;q-&gt;wait_for_request
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Has to be called with the request spinlock aquired&n; */
+multiline_comment|/*&n; * Has to be called with the request spinlock acquired&n; */
 DECL|function|attempt_merge
 r_static
 r_void

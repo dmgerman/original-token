@@ -1381,7 +1381,7 @@ multiline_comment|/*&n;&t;&t;&t; * No interrupt could be used&n;&t;&t;&t; */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;Failed to aquire an IRQ line&bslash;n&quot;
+l_string|&quot;Failed to acquire an IRQ line&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue

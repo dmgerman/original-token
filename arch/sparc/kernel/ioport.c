@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.39 2000/06/20 01:10:00 anton Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; *&n; * 2000/01/29&n; * &lt;rth&gt; zait: as long as pci_alloc_consistent produces something addressable, &n; *&t;things are ok.&n; * &lt;zaitcev&gt; rth: no, it is relevant, because get_free_pages returns you a&n; *&t;pointer into the big page mapping&n; * &lt;rth&gt; zait: so what?&n; * &lt;rth&gt; zait: remap_it_my_way(virt_to_phys(get_free_page()))&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Suppose I did this remap_it_my_way(virt_to_phys(get_free_page())).&n; *&t;So far so good.&n; * &lt;zaitcev&gt; Now, driver calls pci_free_consistent(with result of&n; *&t;remap_it_my_way()).&n; * &lt;zaitcev&gt; How do you find the address to pass to free_pages()?&n; * &lt;rth&gt; zait: walk the page tables?  It&squot;s only two or three level after all.&n; * &lt;rth&gt; zait: you have to walk them anyway to remove the mapping.&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Sounds reasonable&n; */
+multiline_comment|/* $Id: ioport.c,v 1.40 2000/10/10 09:44:46 anton Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; *&n; * 2000/01/29&n; * &lt;rth&gt; zait: as long as pci_alloc_consistent produces something addressable, &n; *&t;things are ok.&n; * &lt;zaitcev&gt; rth: no, it is relevant, because get_free_pages returns you a&n; *&t;pointer into the big page mapping&n; * &lt;rth&gt; zait: so what?&n; * &lt;rth&gt; zait: remap_it_my_way(virt_to_phys(get_free_page()))&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Suppose I did this remap_it_my_way(virt_to_phys(get_free_page())).&n; *&t;So far so good.&n; * &lt;zaitcev&gt; Now, driver calls pci_free_consistent(with result of&n; *&t;remap_it_my_way()).&n; * &lt;zaitcev&gt; How do you find the address to pass to free_pages()?&n; * &lt;rth&gt; zait: walk the page tables?  It&squot;s only two or three level after all.&n; * &lt;rth&gt; zait: you have to walk them anyway to remove the mapping.&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Sounds reasonable&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -942,6 +942,18 @@ id|res-&gt;start
 op_plus
 l_int|1
 suffix:semicolon
+id|plen
+op_assign
+(paren
+id|plen
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+id|PAGE_MASK
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1319,7 +1331,7 @@ r_int
 id|p
 op_amp
 (paren
-id|PAGE_MASK
+id|PAGE_SIZE
 op_minus
 l_int|1
 )paren
@@ -2166,7 +2178,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_alloc_consistent: no core&bslash;n&quot;
+l_string|&quot;pci_alloc_consistent: no core&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2411,7 +2423,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_free_consistent: cannot free %p&bslash;n&quot;
+l_string|&quot;pci_free_consistent: cannot free %p&bslash;n&quot;
 comma
 id|p
 )paren
@@ -2430,7 +2442,7 @@ r_int
 id|p
 op_amp
 (paren
-id|PAGE_MASK
+id|PAGE_SIZE
 op_minus
 l_int|1
 )paren
@@ -2442,7 +2454,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_free_consistent: unaligned va %p&bslash;n&quot;
+l_string|&quot;pci_free_consistent: unaligned va %p&bslash;n&quot;
 comma
 id|p
 )paren
@@ -2479,7 +2491,7 @@ id|n
 id|printk
 c_func
 (paren
-l_string|&quot;sbus_free_consistent: region 0x%lx asked 0x%lx&bslash;n&quot;
+l_string|&quot;pci_free_consistent: region 0x%lx asked 0x%lx&bslash;n&quot;
 comma
 (paren
 r_int

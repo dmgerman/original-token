@@ -41,34 +41,19 @@ id|console
 id|atari_console_driver
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;debug&quot;
 comma
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* device */
-l_int|NULL
-comma
-multiline_comment|/* wait_key */
-l_int|NULL
-comma
-multiline_comment|/* unblank */
-l_int|NULL
-comma
-multiline_comment|/* setup */
+id|flags
+suffix:colon
 id|CON_PRINTBUFFER
 comma
+id|index
+suffix:colon
 op_minus
 l_int|1
 comma
-l_int|0
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|ata_mfp_out

@@ -1857,7 +1857,8 @@ c_func
 id|u32
 id|base
 comma
-id|u32
+r_int
+r_int
 id|mask
 )paren
 (brace

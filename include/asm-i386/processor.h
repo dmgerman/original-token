@@ -179,8 +179,8 @@ DECL|macro|X86_FEATURE_PAT
 mdefine_line|#define X86_FEATURE_PAT&t;&t;0x00010000&t;/* Page Attribute Table */
 DECL|macro|X86_FEATURE_PSE36
 mdefine_line|#define X86_FEATURE_PSE36&t;0x00020000&t;/* 36-bit PSEs */
-DECL|macro|X86_FEATURE_18
-mdefine_line|#define X86_FEATURE_18&t;&t;0x00040000
+DECL|macro|X86_FEATURE_PN
+mdefine_line|#define X86_FEATURE_PN&t;&t;0x00040000
 DECL|macro|X86_FEATURE_19
 mdefine_line|#define X86_FEATURE_19&t;&t;0x00080000
 DECL|macro|X86_FEATURE_20

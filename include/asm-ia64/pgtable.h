@@ -124,7 +124,6 @@ mdefine_line|#define PTRS_PER_PAGE&t;(__IA64_UL(1) &lt;&lt; (PAGE_SHIFT-3))
 macro_line|# ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * All the normal masks have the &quot;page accessed&quot; bits on, as any time&n; * they are used, the page is accessed. They are cleared only by the&n; * page-out routines&n; */
 DECL|macro|PAGE_NONE

@@ -405,10 +405,11 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|vmlist_access_unlock
+id|spin_unlock
 c_func
 (paren
-id|mm
+op_amp
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|error
@@ -538,10 +539,11 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|vmlist_access_unlock
+id|spin_unlock
 c_func
 (paren
-id|mm
+op_amp
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 multiline_comment|/* OK, do a physical asynchronous write to swap.  */
@@ -1131,10 +1133,11 @@ op_assign
 id|mm-&gt;swap_address
 suffix:semicolon
 multiline_comment|/*&n;&t; * Find the proper vm-area after freezing the vma chain &n;&t; * and ptes.&n;&t; */
-id|vmlist_access_lock
+id|spin_lock
 c_func
 (paren
-id|mm
+op_amp
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|vma
@@ -1232,10 +1235,11 @@ l_int|0
 suffix:semicolon
 id|out_unlock
 suffix:colon
-id|vmlist_access_unlock
+id|spin_unlock
 c_func
 (paren
-id|mm
+op_amp
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 multiline_comment|/* We didn&squot;t find anything for the process */

@@ -770,7 +770,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* we must attempt to aquire or bias the lock */
+multiline_comment|/* we must attempt to acquire or bias the lock */
 id|schedule
 c_func
 (paren

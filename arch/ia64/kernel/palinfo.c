@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * palinfo.c&n; *&n; * Prints processor specific information reported by PAL.&n; * This code is based on specification of PAL as of the&n; * Intel IA-64 Architecture Software Developer&squot;s Manual v1.0.&n; *&n; * &n; * Copyright (C) 2000 Hewlett-Packard Co&n; * Copyright (C) 2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * &n; * 05/26/2000&t;S.Eranian&t;initial release&n; * 08/21/2000&t;S.Eranian&t;updated to July 2000 PAL specs&n; *&n; * ISSUES:&n; *&t;- as of 2.2.9/2.2.12, the following values are still wrong&n; *&t;&t;PAL_VM_SUMMARY: key &amp; rid sizes&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

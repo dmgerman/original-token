@@ -1517,6 +1517,10 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
+id|mdc800-&gt;irq_urb-&gt;dev
+op_assign
+id|mdc800-&gt;dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1785,6 +1789,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Download -&gt; Request new bytes */
+id|mdc800-&gt;download_urb-&gt;dev
+op_assign
+id|mdc800-&gt;dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2114,6 +2122,10 @@ id|mdc800-&gt;in
 comma
 l_int|8
 )paren
+suffix:semicolon
+id|mdc800-&gt;write_urb-&gt;dev
+op_assign
+id|mdc800-&gt;dev
 suffix:semicolon
 r_if
 c_cond

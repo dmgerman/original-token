@@ -1268,10 +1268,11 @@ op_star
 )paren
 l_int|0
 suffix:semicolon
-id|vmlist_modify_lock
+id|spin_lock
 c_func
 (paren
-id|current-&gt;mm
+op_amp
+id|current-&gt;mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|insert_vm_struct
@@ -1282,10 +1283,11 @@ comma
 id|mpnt
 )paren
 suffix:semicolon
-id|vmlist_modify_unlock
+id|spin_unlock
 c_func
 (paren
-id|current-&gt;mm
+op_amp
+id|current-&gt;mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|current-&gt;mm-&gt;total_vm

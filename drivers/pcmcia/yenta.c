@@ -3621,7 +3621,9 @@ id|socket
 comma
 id|PCI_CACHE_LINE_SIZE
 comma
-l_int|32
+id|L1_CACHE_BYTES
+op_div
+l_int|4
 )paren
 suffix:semicolon
 id|config_writeb

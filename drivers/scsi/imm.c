@@ -4675,7 +4675,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Aimmrently the the disk-&gt;capacity attribute is off by 1 sector &n; * for all disk drives.  We add the one here, but it should really&n; * be done in sd.c.  Even if it gets fixed there, this will still&n; * work.&n; */
+multiline_comment|/*&n; * Apparently the the disk-&gt;capacity attribute is off by 1 sector &n; * for all disk drives.  We add the one here, but it should really&n; * be done in sd.c.  Even if it gets fixed there, this will still&n; * work.&n; */
 DECL|function|imm_biosparam
 r_int
 id|imm_biosparam
@@ -4778,23 +4778,6 @@ id|ip
 l_int|1
 )braket
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ip
-(braket
-l_int|2
-)braket
-OG
-l_int|1023
-)paren
-id|ip
-(braket
-l_int|2
-)braket
-op_assign
-l_int|1023
 suffix:semicolon
 )brace
 r_return

@@ -1355,12 +1355,6 @@ id|list_head
 id|fl_block
 suffix:semicolon
 multiline_comment|/* circular list of blocked processes */
-DECL|member|fl_list
-r_struct
-id|list_head
-id|fl_list
-suffix:semicolon
-multiline_comment|/* block list member */
 DECL|member|fl_owner
 id|fl_owner_t
 id|fl_owner

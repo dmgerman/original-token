@@ -14996,7 +14996,7 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* Prevent reentrancy. We need to do that because we may have&n;&t; * multiple interrupt handler running concurently.&n;&t; * It is safe because wv_splhi() disable interrupts before aquiring&n;&t; * the spinlock. */
+multiline_comment|/* Prevent reentrancy. We need to do that because we may have&n;&t; * multiple interrupt handler running concurrently.&n;&t; * It is safe because wv_splhi() disables interrupts before acquiring&n;&t; * the spinlock. */
 id|spin_lock
 c_func
 (paren

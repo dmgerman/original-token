@@ -2341,7 +2341,7 @@ suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Joerg Reuter DL1BKE &lt;jreuter@poboxes.com&gt;&quot;
+l_string|&quot;Joerg Reuter DL1BKE &lt;jreuter@yaina.de&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION

@@ -29251,7 +29251,7 @@ suffix:semicolon
 )brace
 DECL|macro|CLOCK_PULSE
 macro_line|#undef CLOCK_PULSE
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic2940_uwpro_cable_detect&n; *&n; * Description:&n; *   Detect the cables that are present on the 2940-UWPro cards&n; *&n; * NOTE: This functions assumes the SEEPROM will have already been aquired&n; *       prior to invocation of this function.&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic2940_uwpro_cable_detect&n; *&n; * Description:&n; *   Detect the cables that are present on the 2940-UWPro cards&n; *&n; * NOTE: This function assumes the SEEPROM will have already been acquired&n; *       prior to invocation of this function.&n; *-F*************************************************************************/
 r_static
 r_void
 DECL|function|aic2940_uwpro_wide_cable_detect
@@ -29347,7 +29347,7 @@ id|BRDDAT7
 suffix:semicolon
 multiline_comment|/*&n;   * We&squot;re done, the calling function will release the SEEPROM for us&n;   */
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic787x_cable_detect&n; *&n; * Description:&n; *   Detect the cables that are present on aic787x class controller chips&n; *&n; * NOTE: This functions assumes the SEEPROM will have already been aquired&n; *       prior to invocation of this function.&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic787x_cable_detect&n; *&n; * Description:&n; *   Detect the cables that are present on aic787x class controller chips&n; *&n; * NOTE: This function assumes the SEEPROM will have already been acquired&n; *       prior to invocation of this function.&n; *-F*************************************************************************/
 r_static
 r_void
 DECL|function|aic787x_cable_detect
@@ -29457,7 +29457,7 @@ id|BRDDAT7
 suffix:semicolon
 multiline_comment|/*&n;   * We&squot;re done, the calling function will release the SEEPROM for us&n;   */
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic787x_ultra2_term_detect&n; *&n; * Description:&n; *   Detect the termination settings present on ultra2 class controllers&n; *&n; * NOTE: This functions assumes the SEEPROM will have already been aquired&n; *       prior to invocation of this function.&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic787x_ultra2_term_detect&n; *&n; * Description:&n; *   Detect the termination settings present on ultra2 class controllers&n; *&n; * NOTE: This function assumes the SEEPROM will have already been acquired&n; *       prior to invocation of this function.&n; *-F*************************************************************************/
 r_static
 r_void
 DECL|function|aic7xxx_ultra2_term_detect

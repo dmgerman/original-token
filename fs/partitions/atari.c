@@ -187,6 +187,12 @@ id|hd_size
 )paren
 (brace
 multiline_comment|/* if there&squot;s no valid primary partition, assume that no Atari&n;&t; format partition table (there&squot;s no reliable magic or the like&n;&t; :-() */
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

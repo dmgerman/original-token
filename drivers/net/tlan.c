@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *&t;v1.4 Feb 10, 2000    - Updated with more changes required after Dave&squot;s&n; *&t;                       network cleanup in 2.3.43pre7 (Tigran &amp; myself)&n; *&t;                     - Minor stuff.&n; *&n; *&t;v1.5 March 22, 2000  - Fixed another timer bug that would hang the driver&n; *&t;&t;&t;       if no cable/link were present.&n; *&t;&t;&t;     - Cosmetic changes.&n; *&t;&t;&t;     - TODO: Port completely to new PCI/DMA API&n; *&t;&t;&t;     &t;     Auto-Neg fallback.&n; *&n; * &t;v1.6 April 04, 2000  - Fixed driver support for kernel-parameters. Haven&squot;t&n; * &t;&t;&t;       tested it though, as the kernel support is currently &n; * &t;&t;&t;       broken (2.3.99p4p3).&n; * &t;&t;&t;     - Updated tlan.txt accordingly.&n; * &t;&t;&t;     - Adjusted minimum/maximum frame length.&n; * &t;&t;&t;     - There is now a TLAN website up at &n; * &t;&t;&t;       http://tlan.kernel.dk&n; *&n; * &t;v1.7 April 07, 2000  - Started to implement custom ioctls. Driver now&n; * &t;&t;&t;       reports PHY information when used with Donald&n; * &t;&t;&t;       Beckers userspace MII diagnostics utility.&n; *&n; * &t;v1.8 April 23, 2000  - Fixed support for forced speed/duplex settings.&n; * &t;&t;&t;     - Added link information to Auto-Neg and forced&n; * &t;&t;&t;       modes. When NIC operates with auto-neg the driver&n; * &t;&t;&t;       will report Link speed &amp; duplex modes as well as&n; * &t;&t;&t;       link partner abilities. When forced link is used,&n; * &t;&t;&t;       the driver will report status of the established&n; * &t;&t;&t;       link.&n; * &t;&t;&t;       Please read tlan.txt for additional information. &n; * &t;&t;&t;     - Removed call to check_region(), and used &n; * &t;&t;&t;       return value of request_region() instead.&n; *&t;&n; *&t;v1.8a May 28, 2000   - Minor updates.&n; *&n; *&t;v1.9 July 25, 2000   - Fixed a few remaining Full-Duplex issues.&n; *&t;                     - Updated with timer fixes from Andrew Morton.&n; *&t;                     - Fixed module race in TLan_Open.&n; *&t;                     - Added routine to monitor PHY status.&n; *&t;                     - Added activity led support for Proliant devices.&n; *&n; *&t;v1.10 Aug 30, 2000   - Added support for EISA based tlan controllers &n; *&t;&t;&t;       like the Compaq NetFlex3/E. &n; *&t;&t;&t;     - Rewrote tlan_probe to better handle multiple&n; *&t;&t;&t;       bus probes. Probing and device setup is now&n; *&t;&t;&t;       done through TLan_Probe and TLan_init_one. Actual&n; *&t;&t;&t;       hardware probe is done with kernel API and &n; *&t;&t;&t;       TLan_EisaProbe.&n; *&t;&t;&t;     - Adjusted debug information for probing.&n; *&t;&t;&t;     - Fixed bug that would cause general debug information &n; *&t;&t;&t;       to be printed after driver removal. &n; *&t;&t;&t;     - Added transmit timeout handling.&n; *&t;&t;&t;     - Fixed OOM return values in tlan_probe. &n; *&t;&t;&t;     - Fixed possible mem leak in tlan_exit &n; *&t;&t;&t;       (now tlan_remove_one).&n; *&t;&t;&t;     - Fixed timer bug in TLan_phyMonitor.&n; *&t;&t;&t;     - This driver version is alpha quality, please&n; *&t;&t;&t;       send me any bug issues you may encounter.&n; *&n; *&t;v1.11 Aug 31, 2000   - Do not try to register irq 0 if no irq line was &n; *&t;&t;&t;       set for EISA cards.&n; *&t;&t;&t;     - Added support for NetFlex3/E with nibble-rate&n; *&t;&t;&t;       10Base-T PHY. This is untestet as I haven&squot;t got&n; *&t;&t;&t;       one of these cards.&n; *&t;&t;&t;     - Fixed timer being added twice.&n; *&t;&t;&t;     - Disabled PhyMonitoring by default as this is&n; *&t;&t;&t;       work in progress. Define MONITOR to enable it.&n; *&t;&t;&t;     - Now we don&squot;t display link info with PHYs that&n; *&t;&t;&t;       doesn&squot;t support it (level1).&n; *&t;&t;&t;     - Incresed tx_timeout beacuse of auto-neg.&n; *&t;&t;&t;     - Adjusted timers for forced speeds.&n; *&n; *******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *&t;v1.4 Feb 10, 2000    - Updated with more changes required after Dave&squot;s&n; *&t;                       network cleanup in 2.3.43pre7 (Tigran &amp; myself)&n; *&t;                     - Minor stuff.&n; *&n; *&t;v1.5 March 22, 2000  - Fixed another timer bug that would hang the driver&n; *&t;&t;&t;       if no cable/link were present.&n; *&t;&t;&t;     - Cosmetic changes.&n; *&t;&t;&t;     - TODO: Port completely to new PCI/DMA API&n; *&t;&t;&t;     &t;     Auto-Neg fallback.&n; *&n; * &t;v1.6 April 04, 2000  - Fixed driver support for kernel-parameters. Haven&squot;t&n; * &t;&t;&t;       tested it though, as the kernel support is currently &n; * &t;&t;&t;       broken (2.3.99p4p3).&n; * &t;&t;&t;     - Updated tlan.txt accordingly.&n; * &t;&t;&t;     - Adjusted minimum/maximum frame length.&n; * &t;&t;&t;     - There is now a TLAN website up at &n; * &t;&t;&t;       http://tlan.kernel.dk&n; *&n; * &t;v1.7 April 07, 2000  - Started to implement custom ioctls. Driver now&n; * &t;&t;&t;       reports PHY information when used with Donald&n; * &t;&t;&t;       Beckers userspace MII diagnostics utility.&n; *&n; * &t;v1.8 April 23, 2000  - Fixed support for forced speed/duplex settings.&n; * &t;&t;&t;     - Added link information to Auto-Neg and forced&n; * &t;&t;&t;       modes. When NIC operates with auto-neg the driver&n; * &t;&t;&t;       will report Link speed &amp; duplex modes as well as&n; * &t;&t;&t;       link partner abilities. When forced link is used,&n; * &t;&t;&t;       the driver will report status of the established&n; * &t;&t;&t;       link.&n; * &t;&t;&t;       Please read tlan.txt for additional information. &n; * &t;&t;&t;     - Removed call to check_region(), and used &n; * &t;&t;&t;       return value of request_region() instead.&n; *&t;&n; *&t;v1.8a May 28, 2000   - Minor updates.&n; *&n; *&t;v1.9 July 25, 2000   - Fixed a few remaining Full-Duplex issues.&n; *&t;                     - Updated with timer fixes from Andrew Morton.&n; *&t;                     - Fixed module race in TLan_Open.&n; *&t;                     - Added routine to monitor PHY status.&n; *&t;                     - Added activity led support for Proliant devices.&n; *&n; *&t;v1.10 Aug 30, 2000   - Added support for EISA based tlan controllers &n; *&t;&t;&t;       like the Compaq NetFlex3/E. &n; *&t;&t;&t;     - Rewrote tlan_probe to better handle multiple&n; *&t;&t;&t;       bus probes. Probing and device setup is now&n; *&t;&t;&t;       done through TLan_Probe and TLan_init_one. Actual&n; *&t;&t;&t;       hardware probe is done with kernel API and &n; *&t;&t;&t;       TLan_EisaProbe.&n; *&t;&t;&t;     - Adjusted debug information for probing.&n; *&t;&t;&t;     - Fixed bug that would cause general debug information &n; *&t;&t;&t;       to be printed after driver removal. &n; *&t;&t;&t;     - Added transmit timeout handling.&n; *&t;&t;&t;     - Fixed OOM return values in tlan_probe. &n; *&t;&t;&t;     - Fixed possible mem leak in tlan_exit &n; *&t;&t;&t;       (now tlan_remove_one).&n; *&t;&t;&t;     - Fixed timer bug in TLan_phyMonitor.&n; *&t;&t;&t;     - This driver version is alpha quality, please&n; *&t;&t;&t;       send me any bug issues you may encounter.&n; *&n; *&t;v1.11 Aug 31, 2000   - Do not try to register irq 0 if no irq line was &n; *&t;&t;&t;       set for EISA cards.&n; *&t;&t;&t;     - Added support for NetFlex3/E with nibble-rate&n; *&t;&t;&t;       10Base-T PHY. This is untestet as I haven&squot;t got&n; *&t;&t;&t;       one of these cards.&n; *&t;&t;&t;     - Fixed timer being added twice.&n; *&t;&t;&t;     - Disabled PhyMonitoring by default as this is&n; *&t;&t;&t;       work in progress. Define MONITOR to enable it.&n; *&t;&t;&t;     - Now we don&squot;t display link info with PHYs that&n; *&t;&t;&t;       doesn&squot;t support it (level1).&n; *&t;&t;&t;     - Incresed tx_timeout beacuse of auto-neg.&n; *&t;&t;&t;     - Adjusted timers for forced speeds.&n; *&n; *&t;v1.12 Oct 12, 2000   - Minor fixes (memleak, init, etc.)&n; *&n; *******************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
 macro_line|#include &lt;linux/init.h&gt;
@@ -28,37 +28,27 @@ r_struct
 id|net_device
 op_star
 id|TLan_Eisa_Devices
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|TLanDevicesInstalled
 r_static
 r_int
 id|TLanDevicesInstalled
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Force speed, duplex and aui settings */
 DECL|variable|aui
 r_static
 r_int
 id|aui
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|duplex
 r_static
 r_int
 id|duplex
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|speed
 r_static
 r_int
 id|speed
-op_assign
-l_int|0
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func
@@ -114,15 +104,11 @@ DECL|variable|debug
 r_static
 r_int
 id|debug
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|bbuf
 r_static
 r_int
 id|bbuf
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|TLanPadBuffer
 r_static
@@ -146,21 +132,17 @@ r_char
 op_star
 id|tlan_banner
 op_assign
-l_string|&quot;ThunderLAN driver v1.11&bslash;n&quot;
+l_string|&quot;ThunderLAN driver v1.12&bslash;n&quot;
 suffix:semicolon
 DECL|variable|tlan_have_pci
 r_static
 r_int
 id|tlan_have_pci
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tlan_have_eisa
 r_static
 r_int
 id|tlan_have_eisa
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|media
 r_const
@@ -593,7 +575,7 @@ id|tlan_pci_tbl
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|TLan_EisaProbe
 c_func
 (paren
@@ -1284,7 +1266,7 @@ multiline_comment|/*************************************************************
 DECL|function|tlan_remove_one
 r_static
 r_void
-id|__exit
+id|__devexit
 id|tlan_remove_one
 c_func
 (paren
@@ -1380,9 +1362,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|rc
-suffix:semicolon
 r_static
 r_int
 id|pad_allocated
@@ -1459,8 +1438,6 @@ l_string|&quot;Starting PCI Probe....&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Use new style PCI probing. Now the kernel will&n;&t;   do most of this for us */
-id|rc
-op_assign
 id|pci_module_init
 c_func
 (paren
@@ -1476,8 +1453,6 @@ comma
 l_string|&quot;Starting EISA Probe....&bslash;n&quot;
 )paren
 suffix:semicolon
-id|rc
-op_assign
 id|TLan_EisaProbe
 c_func
 (paren
@@ -1566,7 +1541,7 @@ multiline_comment|/*&n;&t;******************************************************
 DECL|function|TLan_probe1
 r_static
 r_int
-id|__init
+id|__devinit
 id|TLan_probe1
 c_func
 (paren
@@ -1643,19 +1618,6 @@ id|priv
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-id|memset
-c_func
-(paren
-id|priv
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|TLanPrivateInfo
-)paren
-)paren
-suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -1688,10 +1650,24 @@ c_func
 id|pdev
 )paren
 )paren
+(brace
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 id|pci_read_config_byte
 (paren
 id|pdev
@@ -2157,7 +2133,7 @@ suffix:semicolon
 multiline_comment|/**************************************************************&n;&t; * &t;TLan_EisaProbe&n;&t; *&n;&t; *  &t;Returns: 0 on success, 1 otherwise&n;&t; *&n;&t; *  &t;Parms:&t; None&n;&t; *&n;&t; *&n;&t; *  &t;This functions probes for EISA devices and calls &n;&t; *  &t;TLan_probe1 when one is found. &n;&t; *&n;&t; *************************************************************/
 DECL|function|TLan_EisaProbe
 r_static
-r_int
+r_void
 id|__init
 id|TLan_EisaProbe
 (paren
@@ -2195,7 +2171,6 @@ l_string|&quot;No EISA bus present&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Loop through all slots of the EISA bus */
@@ -2507,9 +2482,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-r_return
-id|rc
-suffix:semicolon
 )brace
 multiline_comment|/* TLan_EisaProbe */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_Init&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;0 on success, error code otherwise.&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;The structure of the device to be&n;&t; *&t;&t;&t;init&squot;ed.&n;&t; *&n;&t; *&t;This function completes the initialization of the&n;&t; *&t;device structure and driver.  It reserves the IO&n;&t; *&t;addresses, allocates memory for the lists and bounce&n;&t; *&t;buffers, retrieves the MAC address from the eeprom&n;&t; *&t;and assignes the device&squot;s methods.&n;&t; *&t;&n;&t; **************************************************************/
@@ -2912,8 +2884,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|err
 suffix:semicolon
 )brace
 id|init_timer
@@ -3140,7 +3111,6 @@ op_star
 id|dev
 )paren
 (brace
-singleline_comment|//TLanPrivateInfo *priv = (TLanPrivateInfo *) dev-&gt;priv;
 id|TLAN_DBG
 c_func
 (paren
@@ -3176,7 +3146,7 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|netif_start_queue
+id|netif_wake_queue
 c_func
 (paren
 id|dev
@@ -9758,21 +9728,9 @@ c_func
 r_struct
 id|net_device
 op_star
-id|data
+id|dev
 )paren
 (brace
-r_struct
-id|net_device
-op_star
-id|dev
-op_assign
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-id|data
-suffix:semicolon
 id|TLanPrivateInfo
 op_star
 id|priv

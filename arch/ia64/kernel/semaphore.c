@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * IA-64 semaphore implementation (derived from x86 version).&n; *&n; * Copyright (C) 1999-2000 Hewlett-Packard Co&n; * Copyright (C) 1999-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
-multiline_comment|/*&n; * Semaphores are implemented using a two-way counter: The &quot;count&quot;&n; * variable is decremented for each process that tries to aquire the&n; * semaphore, while the &quot;sleepers&quot; variable is a count of such&n; * aquires.&n; *&n; * Notably, the inline &quot;up()&quot; and &quot;down()&quot; functions can efficiently&n; * test if they need to do any extra work (up needs to do something&n; * only if count was negative before the increment operation.&n; *&n; * &quot;sleepers&quot; and the contention routine ordering is protected by the&n; * semaphore spinlock.&n; *&n; * Note that these functions are only called when there is contention&n; * on the lock, and as such all this is the &quot;non-critical&quot; part of the&n; * whole semaphore business. The critical part is the inline stuff in&n; * &lt;asm/semaphore.h&gt; where we want to avoid any extra jumps and calls.&n; */
+multiline_comment|/*&n; * Semaphores are implemented using a two-way counter: The &quot;count&quot;&n; * variable is decremented for each process that tries to acquire the&n; * semaphore, while the &quot;sleepers&quot; variable is a count of such&n; * acquires.&n; *&n; * Notably, the inline &quot;up()&quot; and &quot;down()&quot; functions can efficiently&n; * test if they need to do any extra work (up needs to do something&n; * only if count was negative before the increment operation.&n; *&n; * &quot;sleepers&quot; and the contention routine ordering is protected by the&n; * semaphore spinlock.&n; *&n; * Note that these functions are only called when there is contention&n; * on the lock, and as such all this is the &quot;non-critical&quot; part of the&n; * whole semaphore business. The critical part is the inline stuff in&n; * &lt;asm/semaphore.h&gt; where we want to avoid any extra jumps and calls.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 multiline_comment|/*&n; * Logic:&n; *  - Only on a boundary condition do we need to care. When we go&n; *    from a negative count to a non-negative, we wake people up.&n; *  - When we go from a non-negative count to a negative do we&n; *    (a) synchronize with the &quot;sleepers&quot; count and (b) make sure&n; *    that we&squot;re on the wakeup list before we synchronize so that&n; *    we cannot lose wakeup events.&n; */
@@ -531,7 +531,7 @@ op_assign
 id|TASK_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This gets called if we failed to aquire the lock and we are not&n; * biased to acquire the lock.  We undo the decrement that was&n; * done earlier, go to sleep, and then attempt to re-acquire the&n; * lock afterwards.&n; */
+multiline_comment|/*&n; * This gets called if we failed to acquire the lock and we are not&n; * biased to acquire the lock.  We undo the decrement that was&n; * done earlier, go to sleep, and then attempt to re-acquire the&n; * lock afterwards.&n; */
 r_static
 r_inline
 r_void
@@ -874,7 +874,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* we must attempt to aquire or bias the lock */
+multiline_comment|/* we must attempt to acquire or bias the lock */
 id|schedule
 c_func
 (paren

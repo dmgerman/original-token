@@ -64,6 +64,8 @@ mdefine_line|#define RPCAUTH_CRED_MAGIC&t;0x0f4aa4f0
 multiline_comment|/*&n; * Client authentication handle&n; */
 DECL|macro|RPC_CREDCACHE_NR
 mdefine_line|#define RPC_CREDCACHE_NR&t;8
+DECL|macro|RPC_CREDCACHE_MASK
+mdefine_line|#define RPC_CREDCACHE_MASK&t;(RPC_CREDCACHE_NR - 1)
 DECL|struct|rpc_auth
 r_struct
 id|rpc_auth

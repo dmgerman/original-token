@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dbri.h,v 1.12 1999/09/21 14:37:34 davem Exp $&n; * drivers/sbus/audio/cs4231.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; */
+multiline_comment|/* $Id: dbri.h,v 1.13 2000/10/13 00:34:24 uzi Exp $&n; * drivers/sbus/audio/cs4231.h&n; *&n; * Copyright (C) 1997 Rudolf Koenig (rfkoenig@immd4.informatik.uni-erlangen.de)&n; */
 macro_line|#ifndef _DBRI_H_
 DECL|macro|_DBRI_H_
 mdefine_line|#define _DBRI_H_
@@ -19,7 +19,7 @@ mdefine_line|#define REG9&t;0x24UL&t;&t;/* Interrupt Queue Pointer */
 DECL|macro|DBRI_NO_CMDS
 mdefine_line|#define DBRI_NO_CMDS&t;64
 DECL|macro|DBRI_NO_INTS
-mdefine_line|#define DBRI_NO_INTS&t;2
+mdefine_line|#define DBRI_NO_INTS&t;1&t;/* Note: the value of this define was&n;&t;&t;&t;&t; * originally 2.  The ringbuffer to store&n;&t;&t;&t;&t; * interrupts in dma is currently broken.&n;&t;&t;&t;&t; * This is a temporary fix until the ringbuffer&n;&t;&t;&t;&t; * is fixed.&n;&t;&t;&t;&t; */
 DECL|macro|DBRI_INT_BLK
 mdefine_line|#define DBRI_INT_BLK&t;64
 DECL|macro|DBRI_NO_DESCS

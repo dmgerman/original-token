@@ -111,6 +111,12 @@ r_struct
 id|input_dev
 id|dev
 suffix:semicolon
+DECL|member|usbdev
+r_struct
+id|usb_device
+op_star
+id|usbdev
+suffix:semicolon
 DECL|member|irq
 r_struct
 id|urb
@@ -1235,6 +1241,10 @@ op_increment
 r_return
 l_int|0
 suffix:semicolon
+id|wacom-&gt;irq.dev
+op_assign
+id|wacom-&gt;usbdev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1624,6 +1634,10 @@ suffix:semicolon
 id|wacom-&gt;dev.idversion
 op_assign
 id|dev-&gt;descriptor.bcdDevice
+suffix:semicolon
+id|wacom-&gt;usbdev
+op_assign
+id|dev
 suffix:semicolon
 id|FILL_INT_URB
 c_func

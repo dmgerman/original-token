@@ -47,6 +47,13 @@ r_struct
 id|urb
 id|irq
 suffix:semicolon
+DECL|member|my_usb_device
+r_struct
+id|usb_device
+op_star
+id|my_usb_device
+suffix:semicolon
+singleline_comment|// for resubmitting my urb
 DECL|member|open
 r_int
 id|open
@@ -238,6 +245,10 @@ op_increment
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|mouse-&gt;irq.dev
+op_assign
+id|mouse-&gt;my_usb_device
 suffix:semicolon
 r_if
 c_cond
@@ -747,6 +758,10 @@ c_func
 (paren
 id|buf
 )paren
+suffix:semicolon
+id|mouse-&gt;my_usb_device
+op_assign
+id|dev
 suffix:semicolon
 id|FILL_INT_URB
 c_func

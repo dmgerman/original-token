@@ -629,8 +629,8 @@ id|nr
 op_assign
 (paren
 id|cred-&gt;cr_uid
-op_mod
-id|RPC_CREDCACHE_NR
+op_amp
+id|RPC_CREDCACHE_MASK
 )paren
 suffix:semicolon
 id|spin_lock
@@ -718,8 +718,8 @@ id|RPC_TASK_ROOTCREDS
 id|nr
 op_assign
 id|current-&gt;uid
-op_mod
-id|RPC_CREDCACHE_NR
+op_amp
+id|RPC_CREDCACHE_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -893,8 +893,8 @@ id|nr
 op_assign
 (paren
 id|cred-&gt;cr_uid
-op_mod
-id|RPC_CREDCACHE_NR
+op_amp
+id|RPC_CREDCACHE_MASK
 )paren
 suffix:semicolon
 id|spin_lock

@@ -248,7 +248,9 @@ r_void
 id|show_free_areas_core
 c_func
 (paren
-r_int
+id|pg_data_t
+op_star
+id|pgdat
 )paren
 suffix:semicolon
 r_extern
@@ -289,11 +291,11 @@ op_star
 id|pmap
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_DISCONTIGMEM
 r_extern
 id|pg_data_t
 id|contig_page_data
 suffix:semicolon
+macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|macro|NODE_DATA
 mdefine_line|#define NODE_DATA(nid)&t;&t;(&amp;contig_page_data)
 DECL|macro|NODE_MEM_MAP

@@ -2,7 +2,6 @@ macro_line|#ifndef _ASM_IA64_HW_IRQ_H
 DECL|macro|_ASM_IA64_HW_IRQ_H
 mdefine_line|#define _ASM_IA64_HW_IRQ_H
 multiline_comment|/*&n; * Copyright (C) 2000 Hewlett-Packard Co&n; * Copyright (C) 2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
