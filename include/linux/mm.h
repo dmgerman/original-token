@@ -27,6 +27,7 @@ r_int
 id|page_cluster
 suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; * Linux kernel virtual memory manager primitives.&n; * The idea being to have a &quot;virtual&quot; mm in the same way&n; * we have a virtual fs - giving a cleaner interface to the&n; * mm details, and allowing different kinds of memory mappings&n; * (from shared memory to executable loading to arbitrary&n; * mmap() functions).&n; */
 multiline_comment|/*&n; * This struct defines a memory VMM memory area. There is one of these&n; * per VM-area/task.  A VM area is any part of the process virtual memory&n; * space that has a special rule for the page-fault handlers (ie a shared&n; * library, the executable area etc).&n; */
@@ -357,13 +358,15 @@ DECL|typedef|swp_entry_t
 )brace
 id|swp_entry_t
 suffix:semicolon
+r_struct
+id|zone_struct
+suffix:semicolon
 multiline_comment|/*&n; * Try to keep the most commonly accessed fields in single cache lines&n; * here (16 bytes or greater).  This ordering should be particularly&n; * beneficial on 32-bit processors.&n; *&n; * The first line is data used in page cache lookup, the second line&n; * is used for linear searches (eg. clock algorithm scans). &n; */
 DECL|struct|page
 r_typedef
 r_struct
 id|page
 (brace
-multiline_comment|/* these must be first (free area handling) */
 DECL|member|list
 r_struct
 id|list_head
@@ -424,6 +427,12 @@ r_int
 r_virtual
 suffix:semicolon
 multiline_comment|/* nonzero if kmapped */
+DECL|member|zone
+r_struct
+id|zone_struct
+op_star
+id|zone
+suffix:semicolon
 DECL|typedef|mem_map_t
 )brace
 id|mem_map_t
@@ -531,29 +540,134 @@ id|mem_map_t
 op_star
 id|mem_map
 suffix:semicolon
-multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; *&n; * We have two allocation namespaces - the *get*page*() variants&n; * return virtual kernel addresses to the allocated page(s), the&n; * alloc_page*() variants return &squot;struct page *&squot;.&n; */
-DECL|macro|__get_free_page
-mdefine_line|#define __get_free_page(gfp_mask) __get_free_pages((gfp_mask),0)
-DECL|macro|__get_dma_pages
-mdefine_line|#define __get_dma_pages(gfp_mask, order) __get_free_pages((gfp_mask) | GFP_DMA,(order))
-r_extern
+multiline_comment|/*&n; * Free memory management - zoned buddy allocator.&n; */
+macro_line|#if CONFIG_AP1000
+multiline_comment|/* the AP+ needs to allocate 8MB contiguous, aligned chunks of ram&n;   for the ring buffers */
+DECL|macro|MAX_ORDER
+mdefine_line|#define MAX_ORDER 12
+macro_line|#else
+DECL|macro|MAX_ORDER
+mdefine_line|#define MAX_ORDER 10
+macro_line|#endif
+DECL|struct|free_area_struct
+r_typedef
+r_struct
+id|free_area_struct
+(brace
+DECL|member|free_list
+r_struct
+id|list_head
+id|free_list
+suffix:semicolon
+DECL|member|map
 r_int
 r_int
-id|FASTCALL
-c_func
-(paren
-id|__get_free_pages
-c_func
-(paren
+op_star
+id|map
+suffix:semicolon
+DECL|typedef|free_area_t
+)brace
+id|free_area_t
+suffix:semicolon
+DECL|struct|zone_struct
+r_typedef
+r_struct
+id|zone_struct
+(brace
+multiline_comment|/*&n;&t; * Commonly accessed fields:&n;&t; */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|offset
+r_int
+r_int
+id|offset
+suffix:semicolon
+DECL|member|free_pages
+r_int
+r_int
+id|free_pages
+suffix:semicolon
+DECL|member|low_on_memory
+r_int
+id|low_on_memory
+suffix:semicolon
+DECL|member|pages_low
+DECL|member|pages_high
+r_int
+r_int
+id|pages_low
+comma
+id|pages_high
+suffix:semicolon
+multiline_comment|/*&n;&t; * free areas of different sizes&n;&t; */
+DECL|member|free_area
+id|free_area_t
+id|free_area
+(braket
+id|MAX_ORDER
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t; * rarely used fields:&n;&t; */
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+DECL|typedef|zone_t
+)brace
+id|zone_t
+suffix:semicolon
+DECL|macro|ZONE_DMA
+mdefine_line|#define ZONE_DMA&t;&t;0
+DECL|macro|ZONE_NORMAL
+mdefine_line|#define ZONE_NORMAL&t;&t;1
+DECL|macro|ZONE_HIGHMEM
+mdefine_line|#define ZONE_HIGHMEM&t;&t;2
+multiline_comment|/*&n; * NUMA architectures will have more:&n; */
+DECL|macro|MAX_NR_ZONES
+mdefine_line|#define MAX_NR_ZONES&t;&t;3
+multiline_comment|/*&n; * One allocation request operates on a zonelist. A zonelist&n; * is a list of zones, the first one is the &squot;goal&squot; of the&n; * allocation, the other zones are fallback zones, in decreasing&n; * priority. On NUMA we want to fall back on other CPU&squot;s zones&n; * as well.&n; *&n; * Right now a zonelist takes up less than a cacheline. We never&n; * modify it apart from boot-up, and only a few indices are used,&n; * so despite the zonelist table being relatively big, the cache&n; * footprint of this construct is very small.&n; */
+DECL|struct|zonelist_struct
+r_typedef
+r_struct
+id|zonelist_struct
+(brace
+DECL|member|zones
+id|zone_t
+op_star
+id|zones
+(braket
+id|MAX_NR_ZONES
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+singleline_comment|// NULL delimited
+DECL|member|gfp_mask
 r_int
 id|gfp_mask
-comma
-r_int
-r_int
-id|order
-)paren
-)paren
 suffix:semicolon
+DECL|typedef|zonelist_t
+)brace
+id|zonelist_t
+suffix:semicolon
+DECL|macro|NR_GFPINDEX
+mdefine_line|#define NR_GFPINDEX&t;&t;0x100
+r_extern
+id|zonelist_t
+id|zonelists
+(braket
+id|NR_GFPINDEX
+)braket
+suffix:semicolon
+multiline_comment|/*&n; * There is only one page-allocator function, and two main namespaces to&n; * it. The alloc_page*() variants return &squot;struct page *&squot; and as such&n; * can allocate highmem pages, the *get*page*() variants return&n; * virtual kernel addresses to the allocated page(s).&n; */
 r_extern
 r_struct
 id|page
@@ -561,6 +675,25 @@ op_star
 id|FASTCALL
 c_func
 (paren
+id|__alloc_pages
+c_func
+(paren
+id|zonelist_t
+op_star
+id|zonelist
+comma
+r_int
+r_int
+id|order
+)paren
+)paren
+suffix:semicolon
+DECL|function|alloc_pages
+r_extern
+r_inline
+r_struct
+id|page
+op_star
 id|alloc_pages
 c_func
 (paren
@@ -571,10 +704,105 @@ r_int
 r_int
 id|order
 )paren
+(brace
+multiline_comment|/*  temporary check. */
+r_if
+c_cond
+(paren
+id|zonelists
+(braket
+id|gfp_mask
+)braket
+dot
+id|gfp_mask
+op_ne
+(paren
+id|gfp_mask
+)paren
+)paren
+id|BUG
+c_func
+(paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Gets optimized away by the compiler.&n;&t; */
+r_if
+c_cond
+(paren
+id|order
+op_ge
+id|MAX_ORDER
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+r_return
+id|__alloc_pages
+c_func
+(paren
+id|zonelists
+op_plus
+(paren
+id|gfp_mask
+)paren
+comma
+id|order
+)paren
+suffix:semicolon
+)brace
 DECL|macro|alloc_page
-mdefine_line|#define alloc_page(gfp_mask) alloc_pages(gfp_mask, 0)
+mdefine_line|#define alloc_page(gfp_mask) &bslash;&n;&t;&t;alloc_pages(gfp_mask, 0)
+DECL|function|__get_free_pages
+r_extern
+r_inline
+r_int
+r_int
+id|__get_free_pages
+(paren
+r_int
+id|gfp_mask
+comma
+r_int
+r_int
+id|order
+)paren
+(brace
+r_struct
+id|page
+op_star
+id|page
+suffix:semicolon
+id|page
+op_assign
+id|alloc_pages
+c_func
+(paren
+id|gfp_mask
+comma
+id|order
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+id|__page_address
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+)brace
+DECL|macro|__get_free_page
+mdefine_line|#define __get_free_page(gfp_mask) &bslash;&n;&t;&t;__get_free_pages((gfp_mask),0)
+DECL|macro|__get_dma_pages
+mdefine_line|#define __get_dma_pages(gfp_mask, order) &bslash;&n;&t;&t;__get_free_pages((gfp_mask) | GFP_DMA,(order))
 DECL|function|get_zeroed_page
 r_extern
 r_inline
@@ -621,14 +849,70 @@ suffix:semicolon
 multiline_comment|/*&n; * The old interface name will be removed in 2.5:&n; */
 DECL|macro|get_free_page
 mdefine_line|#define get_free_page get_zeroed_page
-multiline_comment|/* memory.c &amp; swap.c*/
-DECL|macro|free_page
-mdefine_line|#define free_page(addr) free_pages((addr),0)
+multiline_comment|/*&n; * There is only one &squot;core&squot; page-freeing function.&n; */
 r_extern
-r_int
+r_void
 id|FASTCALL
 c_func
 (paren
+id|__free_pages_ok
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+r_int
+id|order
+)paren
+)paren
+suffix:semicolon
+DECL|function|__free_pages
+r_extern
+r_inline
+r_void
+id|__free_pages
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+r_int
+id|order
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|put_page_testzero
+c_func
+(paren
+id|page
+)paren
+)paren
+r_return
+suffix:semicolon
+id|__free_pages_ok
+c_func
+(paren
+id|page
+comma
+id|order
+)paren
+suffix:semicolon
+)brace
+DECL|macro|__free_page
+mdefine_line|#define __free_page(page) __free_pages(page, 0)
+DECL|function|free_pages
+r_extern
+r_inline
+r_void
 id|free_pages
 c_func
 (paren
@@ -640,22 +924,37 @@ r_int
 r_int
 id|order
 )paren
-)paren
-suffix:semicolon
-r_extern
+(brace
 r_int
-id|FASTCALL
+r_int
+id|map_nr
+op_assign
+id|MAP_NR
 c_func
 (paren
-id|__free_page
-c_func
-(paren
-r_struct
-id|page
-op_star
-)paren
+id|addr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|map_nr
+OL
+id|max_mapnr
+)paren
+id|__free_pages
+c_func
+(paren
+id|mem_map
+op_plus
+id|map_nr
+comma
+id|order
+)paren
+suffix:semicolon
+)brace
+DECL|macro|free_page
+mdefine_line|#define free_page(addr) free_pages((addr),0)
 r_extern
 r_void
 id|show_free_areas
@@ -1195,7 +1494,7 @@ mdefine_line|#define GFP_KSWAPD&t;(__GFP_IO | __GFP_SWAP)
 multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
 DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;__GFP_DMA
-multiline_comment|/* Flag - indicates that the buffer can be taken from high memory which is not&n;   directly addressable by the kernel */
+multiline_comment|/* Flag - indicates that the buffer can be taken from high memory which is not&n;   permanently mapped by the kernel */
 DECL|macro|GFP_HIGHMEM
 mdefine_line|#define GFP_HIGHMEM&t;__GFP_HIGHMEM
 multiline_comment|/* vma is the first one with  address &lt; vma-&gt;vm_end,&n; * and even  address &lt; vma-&gt;vm_start. Have to extend vma. */

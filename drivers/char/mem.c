@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/raw.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#ifdef CONFIG_SOUND
 r_void
 id|soundcore_init

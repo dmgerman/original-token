@@ -19,7 +19,7 @@ macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|DLINFO_ITEMS
 mdefine_line|#define DLINFO_ITEMS 13

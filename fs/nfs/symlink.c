@@ -243,6 +243,12 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
+id|kmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 multiline_comment|/* We place the length at the beginning of the page,&n;&t; * in host byte order, followed by the string.  The&n;&t; * XDR response verification will NULL terminate it.&n;&t; */
 id|rl_args.fh
 op_assign
@@ -300,6 +306,12 @@ id|page
 suffix:semicolon
 id|unlock_out
 suffix:colon
+id|kunmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|UnlockPage
 c_func
 (paren
@@ -402,7 +414,7 @@ op_assign
 id|u32
 op_star
 )paren
-id|page_address
+id|kmap
 c_func
 (paren
 id|page
@@ -433,6 +445,12 @@ comma
 id|p
 comma
 id|len
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|page_cache_release
@@ -578,7 +596,7 @@ op_assign
 id|u32
 op_star
 )paren
-id|page_address
+id|kmap
 c_func
 (paren
 id|page
@@ -602,6 +620,12 @@ comma
 id|base
 comma
 id|follow
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|page_cache_release

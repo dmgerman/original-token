@@ -400,7 +400,7 @@ c_cond
 op_logical_neg
 id|ret
 op_logical_and
-id|block
+id|lblock
 op_ne
 l_int|0x7FFFFFFF
 )paren

@@ -41,8 +41,22 @@ r_void
 )paren
 id|__init
 suffix:semicolon
+multiline_comment|/*&n; * Right now we initialize only a single pte table. It can be extended&n; * easily, subsequent pte tables have to be allocated in one physical&n; * chunk of RAM.&n; */
 DECL|macro|PKMAP_BASE
 mdefine_line|#define PKMAP_BASE (0xff000000UL)
+macro_line|#ifdef CONFIG_X86_PAE
+DECL|macro|LAST_PKMAP
+mdefine_line|#define LAST_PKMAP 512
+macro_line|#else
+DECL|macro|LAST_PKMAP
+mdefine_line|#define LAST_PKMAP 1024
+macro_line|#endif
+DECL|macro|LAST_PKMAP_MASK
+mdefine_line|#define LAST_PKMAP_MASK (LAST_PKMAP-1)
+DECL|macro|PKMAP_NR
+mdefine_line|#define PKMAP_NR(virt)  ((virt-PKMAP_BASE) &gt;&gt; PAGE_SHIFT)
+DECL|macro|PKMAP_ADDR
+mdefine_line|#define PKMAP_ADDR(nr)  (PKMAP_BASE + ((nr) &lt;&lt; PAGE_SHIFT))
 r_extern
 r_int
 r_int

@@ -125,7 +125,6 @@ c_func
 id|l
 )paren
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 multiline_comment|/*&n; * Temporary debugging check to catch old code using&n; * unmapped ISA addresses. Will be removed in 2.4.&n; */
 macro_line|#if 1

@@ -398,9 +398,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 suffix:semicolon
 r_int
@@ -421,9 +418,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 suffix:semicolon
 r_int
@@ -444,9 +438,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 suffix:semicolon
 r_int
@@ -467,9 +458,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 suffix:semicolon
 macro_line|#endif /* _CODA_PROC_H */

@@ -1624,7 +1624,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/* drivers/char/fbmem.c */
+multiline_comment|/* drivers/video/fbmem.c */
 r_extern
 r_int
 id|register_framebuffer
@@ -1648,6 +1648,27 @@ op_star
 id|fb_info
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|num_registered_fb
+suffix:semicolon
+r_extern
+r_struct
+id|fb_info
+op_star
+id|registered_fb
+(braket
+id|FB_MAX
+)braket
+suffix:semicolon
+r_extern
+r_char
+id|con2fb_map
+(braket
+id|MAX_NR_CONSOLES
+)braket
+suffix:semicolon
+multiline_comment|/* drivers/video/fbmon.c */
 r_extern
 r_int
 id|fbmon_valid_timings
@@ -1680,26 +1701,6 @@ id|fb_info
 op_star
 id|fb_info
 )paren
-suffix:semicolon
-r_extern
-r_int
-id|num_registered_fb
-suffix:semicolon
-r_extern
-r_struct
-id|fb_info
-op_star
-id|registered_fb
-(braket
-id|FB_MAX
-)braket
-suffix:semicolon
-r_extern
-r_char
-id|con2fb_map
-(braket
-id|MAX_NR_CONSOLES
-)braket
 suffix:semicolon
 multiline_comment|/* drivers/video/fbcon.c */
 r_extern

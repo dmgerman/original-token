@@ -164,7 +164,7 @@ op_assign
 id|u8
 op_star
 )paren
-id|page_address
+id|kmap
 c_func
 (paren
 id|page
@@ -308,6 +308,12 @@ id|count
 suffix:semicolon
 id|io_error
 suffix:colon
+id|kunmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 multiline_comment|/* Note: we don&squot;t refresh if the call failed (fattr invalid) */
 r_if
 c_cond
@@ -995,6 +1001,12 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* One for the IO, one for us */
+id|kmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|append_write_request
 c_func
 (paren
@@ -2285,6 +2297,12 @@ id|req
 )paren
 )paren
 id|ClearPageUptodate
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|kunmap
 c_func
 (paren
 id|page

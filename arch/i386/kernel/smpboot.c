@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/mtrr.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 multiline_comment|/* Set if we find a B stepping CPU&t;&t;&t;*/
 DECL|variable|smp_b_stepping
 r_static
@@ -2113,11 +2114,9 @@ id|cpuinfo_x86
 op_star
 id|c
 op_assign
-op_amp
 id|cpu_data
-(braket
+op_plus
 id|id
-)braket
 suffix:semicolon
 op_star
 id|c
@@ -2125,6 +2124,10 @@ op_assign
 id|boot_cpu_data
 suffix:semicolon
 id|c-&gt;pte_quick
+op_assign
+l_int|0
+suffix:semicolon
+id|c-&gt;pmd_quick
 op_assign
 l_int|0
 suffix:semicolon
@@ -2331,7 +2334,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if 1
 multiline_comment|/* Enable focus processor (bit==0) */
 id|value
 op_and_assign
@@ -2717,20 +2720,6 @@ c_func
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|apic_phys
-comma
-l_int|0
-comma
-id|PAGE_SIZE
-)paren
-suffix:semicolon
 id|apic_phys
 op_assign
 id|__pa
@@ -2813,20 +2802,6 @@ r_int
 id|alloc_bootmem_pages
 c_func
 (paren
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|ioapic_phys
-comma
-l_int|0
-comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon

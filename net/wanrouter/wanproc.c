@@ -444,7 +444,7 @@ id|fail
 suffix:semicolon
 id|p
 op_assign
-id|proc_create_proc_entry
+id|create_proc_entry
 c_func
 (paren
 l_string|&quot;config&quot;
@@ -468,13 +468,13 @@ op_assign
 op_amp
 id|router_inode
 suffix:semicolon
-id|p-&gt;info
+id|p-&gt;get_info
 op_assign
 id|config_get_info
 suffix:semicolon
 id|p
 op_assign
-id|proc_create_proc_entry
+id|create_proc_entry
 c_func
 (paren
 l_string|&quot;status&quot;
@@ -498,7 +498,7 @@ op_assign
 op_amp
 id|router_inode
 suffix:semicolon
-id|p-&gt;info
+id|p-&gt;get_info
 op_assign
 id|status_get_info
 suffix:semicolon
@@ -520,9 +520,9 @@ suffix:colon
 id|remove_proc_entry
 c_func
 (paren
-id|proc_net
-comma
 id|ROUTER_NAME
+comma
+id|proc_net
 )paren
 suffix:semicolon
 id|fail

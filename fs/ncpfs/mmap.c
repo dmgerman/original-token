@@ -109,9 +109,10 @@ op_assign
 id|alloc_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_HIGHMEM
 )paren
 suffix:semicolon
+multiline_comment|/* ncpfs has nothing against GFP_HIGHMEM&n;&t;           as long as recvmsg and memset works on it */
 r_if
 c_cond
 (paren
@@ -123,7 +124,7 @@ id|page
 suffix:semicolon
 id|pg_addr
 op_assign
-id|page_address
+id|kmap
 c_func
 (paren
 id|page
@@ -323,6 +324,12 @@ comma
 id|PAGE_SIZE
 op_minus
 id|already_read
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 r_return

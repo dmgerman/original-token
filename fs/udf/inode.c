@@ -826,7 +826,7 @@ id|sfibh
 comma
 id|dfibh
 suffix:semicolon
-r_int
+id|loff_t
 id|f_pos
 op_assign
 id|UDF_I_EXT0OFFS
@@ -837,7 +837,7 @@ id|inode
 op_rshift
 l_int|2
 suffix:semicolon
-r_int
+id|loff_t
 id|size
 op_assign
 (paren

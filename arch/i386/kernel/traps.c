@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/debugreg.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#ifdef CONFIG_X86_VISWS_APIC
 macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;asm/cobalt.h&gt;

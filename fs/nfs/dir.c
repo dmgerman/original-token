@@ -1292,6 +1292,12 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
+id|kmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|rd_args.fh
 op_assign
 id|NFS_FH
@@ -1309,7 +1315,7 @@ op_star
 id|page_address
 c_func
 (paren
-id|page_cache
+id|page
 )paren
 suffix:semicolon
 id|rd_res.bufsiz
@@ -1412,6 +1418,14 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|unmap_out
+suffix:colon
+id|kunmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|unlock_out
 suffix:colon
 id|UnlockPage
@@ -1434,7 +1448,7 @@ id|page
 )paren
 suffix:semicolon
 r_goto
-id|unlock_out
+id|unmap_out
 suffix:semicolon
 )brace
 multiline_comment|/* Seek up to dirent assosciated with the passed in cookie,&n; * then fill in dirents found.  Return the last cookie&n; * actually given to the user, to update the file position.&n; */
@@ -1732,6 +1746,12 @@ id|dirent_read_error
 suffix:semicolon
 id|success
 suffix:colon
+id|kmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|filp-&gt;f_pos
 op_assign
 id|nfs_do_filldir
@@ -1752,6 +1772,12 @@ comma
 id|dirent
 comma
 id|filldir
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|page_cache_release

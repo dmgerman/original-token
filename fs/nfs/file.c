@@ -566,7 +566,7 @@ c_func
 id|u8
 op_star
 )paren
-id|page_address
+id|kmap
 c_func
 (paren
 id|page
@@ -577,6 +577,12 @@ comma
 id|buf
 comma
 id|bytes
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|status

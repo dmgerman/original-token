@@ -154,16 +154,6 @@ suffix:semicolon
 r_char
 op_star
 id|buffer
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|page_address
-c_func
-(paren
-id|page
-)paren
 suffix:semicolon
 r_int
 id|rsize
@@ -207,6 +197,19 @@ c_func
 (paren
 l_string|&quot;NFS: nfs_readpage_sync(%p)&bslash;n&quot;
 comma
+id|page
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * This works now because the socket layer never tries to DMA&n;&t; * into this buffer directly.&n;&t; */
+id|buffer
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|kmap
+c_func
+(paren
 id|page
 )paren
 suffix:semicolon
@@ -380,6 +383,12 @@ l_int|0
 suffix:semicolon
 id|io_error
 suffix:colon
+id|kunmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|UnlockPage
 c_func
 (paren
@@ -558,6 +567,12 @@ id|fail
 )paren
 suffix:semicolon
 )brace
+id|kunmap
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|UnlockPage
 c_func
 (paren
@@ -609,12 +624,6 @@ id|page
 r_int
 r_int
 id|address
-op_assign
-id|page_address
-c_func
-(paren
-id|page
-)paren
 suffix:semicolon
 r_struct
 id|nfs_rreq
@@ -694,6 +703,14 @@ id|req
 )paren
 r_goto
 id|out_defer
+suffix:semicolon
+id|address
+op_assign
+id|kmap
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 multiline_comment|/* Initialize request */
 multiline_comment|/* N.B. Will the dentry remain valid for life of request? */
@@ -799,6 +816,12 @@ id|dprintk
 c_func
 (paren
 l_string|&quot;NFS: failed to enqueue async READ request.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kunmap
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 id|kfree
@@ -985,14 +1008,10 @@ id|page
 suffix:semicolon
 id|out_free
 suffix:colon
-id|free_page
-c_func
-(paren
-id|page_address
+id|__free_page
 c_func
 (paren
 id|page
-)paren
 )paren
 suffix:semicolon
 id|out

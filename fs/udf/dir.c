@@ -980,23 +980,6 @@ suffix:semicolon
 multiline_comment|/* halt enum */
 )brace
 )brace
-r_else
-(brace
-id|udf_debug
-c_func
-(paren
-l_string|&quot;size=%d, nf_pos=%d, liu=%d, lfi=%d&bslash;n&quot;
-comma
-id|size
-comma
-id|nf_pos
-comma
-id|liu
-comma
-id|lfi
-)paren
-suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* end while */

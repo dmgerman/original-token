@@ -2239,10 +2239,6 @@ id|highstart_pfn
 op_assign
 id|MAXMEM_PFN
 suffix:semicolon
-id|highend_pfn
-op_assign
-id|max_pfn
-suffix:semicolon
 id|printk
 c_func
 (paren

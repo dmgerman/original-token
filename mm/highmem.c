@@ -194,7 +194,7 @@ op_assign
 id|kmap
 c_func
 (paren
-id|page
+id|highpage
 )paren
 suffix:semicolon
 id|copy_page
@@ -220,7 +220,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|page
+id|highpage
 )paren
 suffix:semicolon
 multiline_comment|/* Preserve the caching of the swap_entry. */
@@ -243,20 +243,6 @@ r_return
 id|highpage
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Right now we initialize only a single pte table. It can be extended&n; * easily, subsequent pte tables have to be allocated in one physical&n; * chunk of RAM.&n; */
-macro_line|#ifdef CONFIG_X86_PAE
-DECL|macro|LAST_PKMAP
-mdefine_line|#define LAST_PKMAP 2048
-macro_line|#else
-DECL|macro|LAST_PKMAP
-mdefine_line|#define LAST_PKMAP 4096
-macro_line|#endif
-DECL|macro|LAST_PKMAP_MASK
-mdefine_line|#define LAST_PKMAP_MASK (LAST_PKMAP-1)
-DECL|macro|PKMAP_NR
-mdefine_line|#define PKMAP_NR(virt)&t;((virt-PKMAP_BASE) &gt;&gt; PAGE_SHIFT)
-DECL|macro|PKMAP_ADDR
-mdefine_line|#define PKMAP_ADDR(nr)&t;(PKMAP_BASE + ((nr) &lt;&lt; PAGE_SHIFT))
 multiline_comment|/*&n; * Virtual_count is not a pure &quot;count&quot;.&n; *  0 means that it is not mapped, and has not been mapped&n; *    since a TLB flush - it is usable.&n; *  1 means that there are no users, but it has been mapped&n; *    since the last TLB flush - so we can&squot;t use it.&n; *  n means that there are (n-1) current users of it.&n; */
 DECL|variable|pkmap_count
 r_static
@@ -362,7 +348,10 @@ c_func
 id|pte
 )paren
 )paren
-r_continue
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 id|pte_clear
 c_func
@@ -495,13 +484,6 @@ op_amp
 id|kmap_lock
 )paren
 suffix:semicolon
-singleline_comment|// it&squot;s not quite possible to saturate the
-singleline_comment|// pkmap pool right now.
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -524,7 +506,6 @@ op_amp
 id|kmap_lock
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Somebody else might have mapped it while we slept */
 r_if
 c_cond
@@ -543,6 +524,7 @@ id|count
 op_assign
 id|LAST_PKMAP
 suffix:semicolon
+)brace
 )brace
 id|vaddr
 op_assign
@@ -604,21 +586,6 @@ id|page
 r_int
 r_int
 id|vaddr
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|PageHighMem
-c_func
-(paren
-id|page
-)paren
-)paren
-id|BUG
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * For highmem pages, we can&squot;t trust &quot;virtual&quot; until&n;&t; * after we have the lock.&n;&t; *&n;&t; * We cannot call this from interrupts, as it may block&n;&t; */
 id|spin_lock

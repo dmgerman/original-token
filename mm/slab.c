@@ -3389,18 +3389,11 @@ c_cond
 op_logical_neg
 id|cachep
 )paren
-(brace
-id|printk
+id|BUG
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;kmem_shrink: NULL ptr&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|2
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3409,20 +3402,11 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|printk
+id|BUG
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;kmem_shrink: Called during int - %s&bslash;n&quot;
-comma
-id|cachep-&gt;c_name
 )paren
 suffix:semicolon
-r_return
-l_int|2
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3433,20 +3417,11 @@ c_func
 id|cachep
 )paren
 )paren
-(brace
-id|printk
+id|BUG
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;kmem_shrink: Invalid cache addr %p&bslash;n&quot;
-comma
-id|cachep
 )paren
 suffix:semicolon
-r_return
-l_int|2
-suffix:semicolon
-)brace
 r_return
 id|__kmem_cache_shrink
 c_func

@@ -7493,6 +7493,7 @@ op_assign
 op_amp
 id|proc_mtrr_inode_operations
 suffix:semicolon
+macro_line|#endif    
 id|init_table
 (paren
 )paren

@@ -1178,7 +1178,7 @@ r_struct
 id|inode
 op_star
 comma
-r_int
+id|loff_t
 op_star
 comma
 r_struct

@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * Rewritten by Richard Henderson &lt;rth@tamu.edu&gt; Dec 1996&n; *&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; */
 macro_line|#ifdef CONFIG_MODULES&t;&t;/* a *big* #ifdef block... */

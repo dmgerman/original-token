@@ -2,8 +2,7 @@ macro_line|#ifndef _LINUX_HIGHMEM_H
 DECL|macro|_LINUX_HIGHMEM_H
 mdefine_line|#define _LINUX_HIGHMEM_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/pagemap.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#ifdef CONFIG_HIGHMEM
 r_extern
 r_struct
@@ -91,7 +90,7 @@ mdefine_line|#define prepare_highmem_swapout(page) page
 DECL|macro|replace_with_highmem
 mdefine_line|#define replace_with_highmem(page) page
 DECL|macro|kmap
-mdefine_line|#define kmap(page) page_address(page)
+mdefine_line|#define kmap(page) __page_address(page)
 DECL|macro|kunmap
 mdefine_line|#define kunmap(page) do { } while (0)
 macro_line|#endif /* CONFIG_HIGHMEM */

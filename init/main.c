@@ -1836,16 +1836,6 @@ c_func
 id|size
 )paren
 suffix:semicolon
-id|memset
-c_func
-(paren
-id|prof_buffer
-comma
-l_int|0
-comma
-id|size
-)paren
-suffix:semicolon
 )brace
 id|kmem_cache_init
 c_func

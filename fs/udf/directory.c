@@ -319,7 +319,7 @@ id|inode
 op_star
 id|dir
 comma
-r_int
+id|loff_t
 op_star
 id|nf_pos
 comma

@@ -6,13 +6,13 @@ multiline_comment|/*&n; * 05.04.94  -  Multi-page memory management added for v1
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/iobuf.h&gt;
-macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
+macro_line|#include &lt;linux/highmem.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 DECL|variable|max_mapnr
 r_int
 r_int

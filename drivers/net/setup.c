@@ -6,6 +6,14 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
 r_extern
 r_int
+id|plip_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|mkiss_init_ctrl_dev
 c_func
 (paren
