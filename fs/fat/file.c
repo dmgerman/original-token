@@ -2083,6 +2083,24 @@ id|inode
 r_return
 multiline_comment|/* -EPERM */
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;FAT: fat_truncate called though fs is read-only, uhh...&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+multiline_comment|/* -EROFS */
+suffix:semicolon
+)brace
 id|cluster
 op_assign
 id|SECTOR_SIZE

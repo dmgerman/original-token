@@ -108,6 +108,14 @@ DECL|macro|FB_ACCEL_MATROX_MGAG100
 mdefine_line|#define FB_ACCEL_MATROX_MGAG100&t;20&t;/* Matrox G100 (Productiva G100) */
 DECL|macro|FB_ACCEL_MATROX_MGAG200
 mdefine_line|#define FB_ACCEL_MATROX_MGAG200&t;21&t;/* Matrox G200 (Myst, Mill, ...) */
+DECL|macro|FB_ACCEL_SUN_CG14
+mdefine_line|#define FB_ACCEL_SUN_CG14&t;22&t;/* Sun cgfourteen&t;&t; */
+DECL|macro|FB_ACCEL_SUN_BWTWO
+mdefine_line|#define FB_ACCEL_SUN_BWTWO&t;23&t;/* Sun bwtwo&t;&t;&t; */
+DECL|macro|FB_ACCEL_SUN_CGTHREE
+mdefine_line|#define FB_ACCEL_SUN_CGTHREE&t;24&t;/* Sun cgthree&t;&t;&t; */
+DECL|macro|FB_ACCEL_SUN_TCX
+mdefine_line|#define FB_ACCEL_SUN_TCX&t;25&t;/* Sun tcx&t;&t;&t; */
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo
@@ -1282,11 +1290,11 @@ op_star
 id|info
 )paren
 suffix:semicolon
-DECL|member|set_dispsw
+DECL|member|set_disp
 r_void
 (paren
 op_star
-id|set_dispsw
+id|set_disp
 )paren
 (paren
 r_const

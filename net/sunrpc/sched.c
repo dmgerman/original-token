@@ -3476,9 +3476,9 @@ c_func
 (paren
 l_string|&quot;          name=%s/%s&bslash;n&quot;
 comma
-id|wreq-&gt;wb_dentry-&gt;d_parent-&gt;d_name.name
+id|wreq-&gt;wb_file-&gt;f_dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|wreq-&gt;wb_dentry-&gt;d_name.name
+id|wreq-&gt;wb_file-&gt;f_dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 )brace

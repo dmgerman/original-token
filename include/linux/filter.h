@@ -14,22 +14,22 @@ id|sock_filter
 multiline_comment|/* Filter block */
 (brace
 DECL|member|code
-id|u16
+id|__u16
 id|code
 suffix:semicolon
 multiline_comment|/* Actual filter code */
 DECL|member|jt
-id|u8
+id|__u8
 id|jt
 suffix:semicolon
 multiline_comment|/* Jump true */
 DECL|member|jf
-id|u8
+id|__u8
 id|jf
 suffix:semicolon
 multiline_comment|/* Jump false */
 DECL|member|k
-id|u32
+id|__u32
 id|k
 suffix:semicolon
 multiline_comment|/* Generic multiuse field */
@@ -54,6 +54,62 @@ id|filter
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|struct|sk_filter
+r_struct
+id|sk_filter
+(brace
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* Number of filter blocks */
+DECL|member|insns
+r_struct
+id|sock_filter
+id|insns
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|function|sk_filter_len
+r_extern
+id|__inline__
+r_int
+r_int
+id|sk_filter_len
+c_func
+(paren
+r_struct
+id|sk_filter
+op_star
+id|fp
+)paren
+(brace
+r_return
+id|fp-&gt;len
+op_star
+r_sizeof
+(paren
+r_struct
+id|sock_filter
+)paren
+op_plus
+r_sizeof
+(paren
+op_star
+id|fp
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Instruction classes&n; */
 DECL|macro|BPF_CLASS
 mdefine_line|#define BPF_CLASS(code) ((code) &amp; 0x07)
@@ -145,29 +201,47 @@ DECL|macro|BPF_TAX
 mdefine_line|#define         BPF_TAX         0x00
 DECL|macro|BPF_TXA
 mdefine_line|#define         BPF_TXA         0x80
+macro_line|#ifndef BPF_MAXINSNS
 DECL|macro|BPF_MAXINSNS
-mdefine_line|#define BPF_MAXINSNS 512
+mdefine_line|#define BPF_MAXINSNS 4096
+macro_line|#endif
 multiline_comment|/*&n; * Macros for filter block array initializers.&n; */
+macro_line|#ifndef BPF_STMT
 DECL|macro|BPF_STMT
 mdefine_line|#define BPF_STMT(code, k) { (unsigned short)(code), 0, 0, k }
+macro_line|#endif
+macro_line|#ifndef BPF_JUMP
 DECL|macro|BPF_JUMP
 mdefine_line|#define BPF_JUMP(code, k, jt, jf) { (unsigned short)(code), jt, jf, k }
+macro_line|#endif
 multiline_comment|/*&n; * Number of scratch memory words for: BPF_ST and BPF_STX&n; */
 DECL|macro|BPF_MEMWORDS
 mdefine_line|#define BPF_MEMWORDS 16
+multiline_comment|/* RATIONALE. Negative offsets are invalid in BPF.&n;   We use them to reference ancillary data.&n;   Unlike introduction new instructions, it does not break&n;   existing compilers/optimizers.&n; */
+DECL|macro|SKF_AD_OFF
+mdefine_line|#define SKF_AD_OFF    (-0x1000)
+DECL|macro|SKF_AD_PROTOCOL
+mdefine_line|#define SKF_AD_PROTOCOL 0
+DECL|macro|SKF_AD_PKTTYPE
+mdefine_line|#define SKF_AD_PKTTYPE &t;4
+DECL|macro|SKF_AD_IFINDEX
+mdefine_line|#define SKF_AD_IFINDEX &t;8
+DECL|macro|SKF_AD_MAX
+mdefine_line|#define SKF_AD_MAX &t;12
+DECL|macro|SKF_NET_OFF
+mdefine_line|#define SKF_NET_OFF   (-0x100000)
+DECL|macro|SKF_LL_OFF
+mdefine_line|#define SKF_LL_OFF    (-0x200000)
 macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|sk_run_filter
 c_func
 (paren
-r_int
-r_char
+r_struct
+id|sk_buff
 op_star
-id|data
-comma
-r_int
-id|len
+id|skb
 comma
 r_struct
 id|sock_filter

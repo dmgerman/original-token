@@ -97,12 +97,12 @@ op_star
 op_star
 id|list
 suffix:semicolon
-DECL|member|marksweep
-r_int
-id|marksweep
+DECL|member|gc_tree
+r_struct
+id|sock
+op_star
+id|gc_tree
 suffix:semicolon
-DECL|macro|MARKED
-mdefine_line|#define MARKED&t;&t;&t;1
 DECL|member|inflight
 r_int
 id|inflight

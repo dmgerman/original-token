@@ -911,9 +911,12 @@ id|newport_putc
 (paren
 id|vc
 comma
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 comma
 id|ypos
 comma

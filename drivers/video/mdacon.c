@@ -1688,9 +1688,12 @@ c_func
 id|mda_convert_attr
 c_func
 (paren
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 )paren
 comma
 id|dest

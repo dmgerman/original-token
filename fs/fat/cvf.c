@@ -1,10 +1,14 @@
-multiline_comment|/*&n; * CVF extensions for fat-based filesystems&n; *&n; * written 1997,1998 by Frank Gockel &lt;gockel@sent13.uni-duisburg.de&gt;&n; *&n; */
+multiline_comment|/* &n; * CVF extensions for fat-based filesystems&n; *&n; * written 1997,1998 by Frank Gockel &lt;gockel@sent13.uni-duisburg.de&gt;&n; *&n; * please do not remove the next line, dmsdos needs it for verifying patches&n; * CVF-FAT-VERSION-ID: 1.2.0&n; *&n; */
 macro_line|#include&lt;linux/sched.h&gt;
 macro_line|#include&lt;linux/fs.h&gt;
 macro_line|#include&lt;linux/msdos_fs.h&gt;
 macro_line|#include&lt;linux/msdos_fs_sb.h&gt;
 macro_line|#include&lt;linux/string.h&gt;
 macro_line|#include&lt;linux/fat_cvf.h&gt;
+macro_line|#include&lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_KMOD
+macro_line|#include&lt;linux/kmod.h&gt;
+macro_line|#endif
 DECL|macro|MAX_CVF_FORMATS
 mdefine_line|#define MAX_CVF_FORMATS 3
 DECL|variable|cvf_formats
@@ -415,6 +419,70 @@ c_cond
 (paren
 id|force
 )paren
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|force
+comma
+l_string|&quot;autoload&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+macro_line|#ifdef CONFIG_KMOD
+id|request_module
+c_func
+(paren
+l_string|&quot;cvf_autoload&quot;
+)paren
+suffix:semicolon
+id|force
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;cannot autoload CVF modules: kmod support is not compiled into kernel&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#ifdef CONFIG_KMOD
+r_if
+c_cond
+(paren
+id|force
+)paren
+r_if
+c_cond
+(paren
+op_star
+id|force
+)paren
+(brace
+id|request_module
+c_func
+(paren
+id|force
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|force
+)paren
 (brace
 r_if
 c_cond
@@ -471,6 +539,18 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;CVF format %s unknown (module not loaded?)&bslash;n&quot;
+comma
+id|force
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )brace
 )brace
 r_for
@@ -545,7 +625,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;CVF detection ambiguous, use cvf_format=xxx option&bslash;n&quot;
+l_string|&quot;CVF detection ambiguous, please use cvf_format=xxx option&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

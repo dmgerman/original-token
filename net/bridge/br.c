@@ -5449,6 +5449,23 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Keep silent when disabled&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|br_stats.flags
+op_amp
+id|BR_UP
+)paren
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Create and send the message&n;&t; */
 id|skb
 op_assign
@@ -5583,6 +5600,23 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Keep silent when disabled&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|br_stats.flags
+op_amp
+id|BR_UP
+)paren
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|skb
 op_assign
 id|alloc_bridge_skb

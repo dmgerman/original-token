@@ -2515,9 +2515,11 @@ id|MSDOS_NAME
 )paren
 r_continue
 suffix:semicolon
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|dir-&gt;i_sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -2525,9 +2527,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|dir-&gt;i_sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -9130,8 +9134,6 @@ id|res
 r_goto
 id|rename_done
 suffix:semicolon
-)brace
-multiline_comment|/* Serious lossage here. FAT uses braindead inode numbers scheme,&n;&t; * so we can&squot;t simply cannibalize the entry. It means that we have&n;&t; * no warranties that crash here will not make target disappear&n;&t; * after reboot. Lose, lose. Nothing to do with that until we&squot;ll&n;&t; * separate the functions of i_ino: it serves both as a search key&n;&t; * in icache and as a part of stat output. It would kill all the&n;&t; * &squot;busy&squot; stuff on the spot. Later.&n;&t; */
 r_if
 c_cond
 (paren
@@ -9140,6 +9142,8 @@ id|is_dir
 id|new_dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
+)brace
+multiline_comment|/* Serious lossage here. FAT uses braindead inode numbers scheme,&n;&t; * so we can&squot;t simply cannibalize the entry. It means that we have&n;&t; * no warranties that crash here will not make target disappear&n;&t; * after reboot. Lose, lose. Nothing to do with that until we&squot;ll&n;&t; * separate the functions of i_ino: it serves both as a search key&n;&t; * in icache and as a part of stat output. It would kill all the&n;&t; * &squot;busy&squot; stuff on the spot. Later.&n;&t; */
 id|res
 op_assign
 id|vfat_find

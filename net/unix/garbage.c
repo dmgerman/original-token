@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Garbage Collector For AF_UNIX sockets&n; *&n; * Garbage Collector:&n; *&t;Copyright (C) Barak A. Pearlmutter.&n; *&t;Released under the GPL version 2 or later.&n; *&n; * Chopped about by Alan Cox 22/3/96 to make it fit the AF_UNIX socket problem.&n; * If it doesn&squot;t work blame me, it worked when Barak sent it.&n; *&n; * Assumptions:&n; *&n; *  - object w/ a bit&n; *  - free list&n; *&n; * Current optimizations:&n; *&n; *  - explicit stack instead of recursion&n; *  - tail recurse on first born instead of immediate push/pop&n; *&n; *  Future optimizations:&n; *&n; *  - don&squot;t just push entire root set; process in place&n; *  - use linked list for internal stack&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *  Fixes:&n; *&t;Alan Cox&t;07 Sept&t;1997&t;Vmalloc internal stack as needed.&n; *&t;&t;&t;&t;&t;Cope with changing max_files.&n; *&t;Al Viro&t;&t;11 Oct 1998&n; *&t;&t;Graph may have cycles. That is, we can send the descriptor&n; *&t;&t;of foo to bar and vice versa. Current code chokes on that.&n; *&t;&t;Fix: move SCM_RIGHTS ones into the separate list and then&n; *&t;&t;skb_free() them all instead of doing explicit fput&squot;s.&n; *&t;&t;Another problem: since fput() may block somebody may&n; *&t;&t;create a new unix_socket when we are in the middle of sweep&n; *&t;&t;phase. Fix: revert the logic wrt MARKED. Mark everything&n; *&t;&t;upon the beginning and unmark non-junk ones.&n; *&n; *&t;&t;[12 Oct 1998] AAARGH! New code purges all SCM_RIGHTS&n; *&t;&t;sent to connect()&squot;ed but still not accept()&squot;ed sockets.&n; *&t;&t;Fixed. Old code had slightly different problem here:&n; *&t;&t;extra fput() in situation when we passed the descriptor via&n; *&t;&t;such socket and closed it (descriptor). That would happen on&n; *&t;&t;each unix_gc() until the accept(). Since the struct file in&n; *&t;&t;question would go to the free list and might be reused...&n; *&t;&t;That might be the reason of random oopses on close_fp() in&n; *&t;&t;unrelated processes.&n; *&n; */
+multiline_comment|/*&n; * NET3:&t;Garbage Collector For AF_UNIX sockets&n; *&n; * Garbage Collector:&n; *&t;Copyright (C) Barak A. Pearlmutter.&n; *&t;Released under the GPL version 2 or later.&n; *&n; * Chopped about by Alan Cox 22/3/96 to make it fit the AF_UNIX socket problem.&n; * If it doesn&squot;t work blame me, it worked when Barak sent it.&n; *&n; * Assumptions:&n; *&n; *  - object w/ a bit&n; *  - free list&n; *&n; * Current optimizations:&n; *&n; *  - explicit stack instead of recursion&n; *  - tail recurse on first born instead of immediate push/pop&n; *  - we gather the stuff that should not be killed into tree&n; *    and stack is just a path from root to the current pointer.&n; *&n; *  Future optimizations:&n; *&n; *  - don&squot;t just push entire root set; process in place&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *  Fixes:&n; *&t;Alan Cox&t;07 Sept&t;1997&t;Vmalloc internal stack as needed.&n; *&t;&t;&t;&t;&t;Cope with changing max_files.&n; *&t;Al Viro&t;&t;11 Oct 1998&n; *&t;&t;Graph may have cycles. That is, we can send the descriptor&n; *&t;&t;of foo to bar and vice versa. Current code chokes on that.&n; *&t;&t;Fix: move SCM_RIGHTS ones into the separate list and then&n; *&t;&t;skb_free() them all instead of doing explicit fput&squot;s.&n; *&t;&t;Another problem: since fput() may block somebody may&n; *&t;&t;create a new unix_socket when we are in the middle of sweep&n; *&t;&t;phase. Fix: revert the logic wrt MARKED. Mark everything&n; *&t;&t;upon the beginning and unmark non-junk ones.&n; *&n; *&t;&t;[12 Oct 1998] AAARGH! New code purges all SCM_RIGHTS&n; *&t;&t;sent to connect()&squot;ed but still not accept()&squot;ed sockets.&n; *&t;&t;Fixed. Old code had slightly different problem here:&n; *&t;&t;extra fput() in situation when we passed the descriptor via&n; *&t;&t;such socket and closed it (descriptor). That would happen on&n; *&t;&t;each unix_gc() until the accept(). Since the struct file in&n; *&t;&t;question would go to the free list and might be reused...&n; *&t;&t;That might be the reason of random oopses on close_fp() in&n; *&t;&t;unrelated processes.&n; *&n; *&t;AV&t;&t;28 Feb 1999&n; *&t;&t;Kill the explicit allocation of stack. Now we keep the tree&n; *&t;&t;with root in dummy + pointer (gc_current) to one of the nodes.&n; *&t;&t;Stack is represented as path from gc_current to dummy. Unmark&n; *&t;&t;now means &quot;add to tree&quot;. Push == &quot;make it a son of gc_current&quot;.&n; *&t;&t;Pop == &quot;move gc_current to parent&quot;. We keep only pointers to&n; *&t;&t;parents (-&gt;gc_tree).&n; *&t;AV&t;&t;1 Mar 1999&n; *&t;&t;Damn. Added missing check for -&gt;dead in listen queues scanning.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -11,34 +11,22 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 multiline_comment|/* Internal data structures and random procedures: */
-DECL|variable|stack
+DECL|macro|GC_HEAD
+mdefine_line|#define GC_HEAD ((unix_socket *)(-1))
+DECL|variable|gc_current
 r_static
 id|unix_socket
 op_star
-op_star
-id|stack
+id|gc_current
+op_assign
+id|GC_HEAD
 suffix:semicolon
 multiline_comment|/* stack of objects to mark */
-DECL|variable|in_stack
-r_static
-r_int
-id|in_stack
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* first free entry in stack */
-DECL|variable|max_stack
-r_static
-r_int
-id|max_stack
-suffix:semicolon
-multiline_comment|/* Top of stack */
 DECL|function|unix_get_socket
 r_extern
 r_inline
@@ -177,40 +165,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;Garbage Collector Support Functions&n; */
-DECL|function|push_stack
-r_extern
-r_inline
-r_void
-id|push_stack
-c_func
-(paren
-id|unix_socket
-op_star
-id|x
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|in_stack
-op_eq
-id|max_stack
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;can&squot;t push onto full stack&quot;
-)paren
-suffix:semicolon
-id|stack
-(braket
-id|in_stack
-op_increment
-)braket
-op_assign
-id|x
-suffix:semicolon
-)brace
 DECL|function|pop_stack
 r_extern
 r_inline
@@ -222,25 +176,18 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|in_stack
-op_eq
-l_int|0
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;can&squot;t pop empty gc stack&quot;
-)paren
+id|unix_socket
+op_star
+id|p
+op_assign
+id|gc_current
+suffix:semicolon
+id|gc_current
+op_assign
+id|p-&gt;protinfo.af_unix.gc_tree
 suffix:semicolon
 r_return
-id|stack
-(braket
-op_decrement
-id|in_stack
-)braket
+id|p
 suffix:semicolon
 )brace
 DECL|function|empty_stack
@@ -254,9 +201,9 @@ r_void
 )paren
 (brace
 r_return
-id|in_stack
+id|gc_current
 op_eq
-l_int|0
+id|GC_HEAD
 suffix:semicolon
 )brace
 DECL|function|maybe_unmark_and_push
@@ -274,25 +221,17 @@ id|x
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|x-&gt;protinfo.af_unix.marksweep
-op_amp
-id|MARKED
-)paren
+id|x-&gt;protinfo.af_unix.gc_tree
 )paren
 r_return
 suffix:semicolon
-id|x-&gt;protinfo.af_unix.marksweep
-op_and_assign
-op_complement
-id|MARKED
+id|x-&gt;protinfo.af_unix.gc_tree
+op_assign
+id|gc_current
 suffix:semicolon
-id|push_stack
-c_func
-(paren
+id|gc_current
+op_assign
 id|x
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* The external entry point: unix_gc() */
@@ -340,78 +279,6 @@ id|in_unix_gc
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|stack
-op_eq
-l_int|NULL
-op_logical_or
-id|max_files
-OG
-id|max_stack
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|stack
-)paren
-(brace
-id|vfree
-c_func
-(paren
-id|stack
-)paren
-suffix:semicolon
-)brace
-id|stack
-op_assign
-(paren
-id|unix_socket
-op_star
-op_star
-)paren
-id|vmalloc
-c_func
-(paren
-id|max_files
-op_star
-r_sizeof
-(paren
-r_struct
-id|unix_socket
-op_star
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stack
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;unix_gc: deferred due to low memory.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|in_unix_gc
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|max_stack
-op_assign
-id|max_files
-suffix:semicolon
-)brace
 id|forall_unix_sockets
 c_func
 (paren
@@ -420,9 +287,9 @@ comma
 id|s
 )paren
 (brace
-id|s-&gt;protinfo.af_unix.marksweep
-op_or_assign
-id|MARKED
+id|s-&gt;protinfo.af_unix.gc_tree
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Everything is now marked &n;&t; */
@@ -607,6 +474,7 @@ multiline_comment|/* We have to scan not-yet-accepted ones too */
 r_if
 c_cond
 (paren
+(paren
 id|UNIXCB
 c_func
 (paren
@@ -616,6 +484,10 @@ dot
 id|attr
 op_amp
 id|MSG_SYN
+)paren
+op_logical_and
+op_logical_neg
+id|skb-&gt;sk-&gt;dead
 )paren
 (brace
 r_if
@@ -652,17 +524,13 @@ id|f
 r_if
 c_cond
 (paren
-(paren
-id|f-&gt;protinfo.af_unix.marksweep
-op_amp
-id|MARKED
-)paren
+op_logical_neg
+id|f-&gt;protinfo.af_unix.gc_tree
 )paren
 (brace
-id|f-&gt;protinfo.af_unix.marksweep
-op_and_assign
-op_complement
-id|MARKED
+id|f-&gt;protinfo.af_unix.gc_tree
+op_assign
+id|GC_HEAD
 suffix:semicolon
 id|x
 op_assign
@@ -696,9 +564,8 @@ id|s
 r_if
 c_cond
 (paren
-id|s-&gt;protinfo.af_unix.marksweep
-op_amp
-id|MARKED
+op_logical_neg
+id|s-&gt;protinfo.af_unix.gc_tree
 )paren
 (brace
 r_struct

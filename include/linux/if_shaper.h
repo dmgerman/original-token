@@ -42,7 +42,8 @@ id|recovery
 suffix:semicolon
 multiline_comment|/* Time we can next clock a packet out on&n;&t;&t;&t;&t;   an empty queue */
 DECL|member|locked
-r_char
+r_int
+r_int
 id|locked
 suffix:semicolon
 DECL|member|dev

@@ -60,6 +60,7 @@ id|u16
 id|scr_readw
 c_func
 (paren
+r_const
 id|u16
 op_star
 id|addr
@@ -154,6 +155,7 @@ id|u16
 op_star
 id|d
 comma
+r_const
 id|u16
 op_star
 id|s
@@ -185,6 +187,7 @@ id|u16
 op_star
 id|d
 comma
+r_const
 id|u16
 op_star
 id|s

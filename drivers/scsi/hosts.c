@@ -154,6 +154,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C406A
 macro_line|#include &quot;NCR53c406a.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SYM53C416 
+macro_line|#include &quot;sym53c416.h&quot; 
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DC390T
 macro_line|#include &quot;dc390.h&quot;
 macro_line|#endif
@@ -198,6 +201,9 @@ macro_line|#include &quot;pluto.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_INITIO
 macro_line|#include &quot;ini9100u.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_INIA100
+macro_line|#include &quot;inia100.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
@@ -362,7 +368,7 @@ macro_line|#ifdef CONFIG_SCSI_AIC7XXX
 id|AIC7XXX
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_FD_MCS
+macro_line|#ifdef CONFIG_SCSI_FD_MCS
 id|FD_MCS
 comma
 macro_line|#endif
@@ -380,6 +386,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C406A&t;/* 53C406A should come before QLOGIC */
 id|NCR53c406a
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SYM53C416 
+id|SYM53C416
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGIC_FAS
@@ -468,6 +478,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_INITIO
 id|INI9100U
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_INIA100
+id|INIA100
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGICPTI

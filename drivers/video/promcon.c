@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: promcon.c,v 1.12 1998/08/23 20:19:01 mj Exp $&n; * Console driver utilizing PROM sun terminal emulation&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek  (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: promcon.c,v 1.13 1999/01/19 09:56:46 jj Exp $&n; * Console driver utilizing PROM sun terminal emulation&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek  (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1235,8 +1235,11 @@ r_int
 r_int
 id|attr
 op_assign
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
+)paren
 suffix:semicolon
 r_int
 r_char
@@ -1378,9 +1381,12 @@ id|b
 comma
 l_string|&quot;&bslash;033[7m%c&bslash;033[m&quot;
 comma
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 )paren
 suffix:semicolon
 r_else
@@ -1393,9 +1399,12 @@ id|b
 comma
 l_string|&quot;%c&quot;
 comma
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 )paren
 suffix:semicolon
 id|strcpy
@@ -1592,9 +1601,12 @@ op_star
 id|b
 op_increment
 op_assign
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 suffix:semicolon
 )brace
 id|px
@@ -1609,9 +1621,12 @@ id|last
 (brace
 id|save
 op_assign
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 suffix:semicolon
 id|b
 op_add_assign
@@ -1622,9 +1637,12 @@ id|b
 comma
 l_string|&quot;%c&bslash;b&bslash;033[@%c&quot;
 comma
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 comma
 id|save
 )paren
@@ -1701,8 +1719,6 @@ id|x
 r_int
 r_int
 id|s
-op_assign
-id|c
 suffix:semicolon
 r_if
 c_cond
@@ -1710,6 +1726,15 @@ c_cond
 id|console_blanked
 )paren
 r_return
+suffix:semicolon
+id|scr_writew
+c_func
+(paren
+id|c
+comma
+op_amp
+id|s
+)paren
 suffix:semicolon
 id|promcon_putcs
 c_func
@@ -3154,6 +3179,7 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 r_if
 c_cond
 (paren
@@ -3178,6 +3204,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_else
+macro_line|#endif
 r_if
 c_cond
 (paren

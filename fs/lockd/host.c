@@ -556,7 +556,7 @@ id|proto
 suffix:semicolon
 id|host-&gt;h_authflavor
 op_assign
-id|RPC_AUTH_NULL
+id|RPC_AUTH_UNIX
 suffix:semicolon
 id|host-&gt;h_rpcclnt
 op_assign

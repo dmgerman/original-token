@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bwtwofb.c,v 1.6 1998/09/15 15:45:35 jj Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
+multiline_comment|/* $Id: bwtwofb.c,v 1.7 1999/01/26 10:55:02 jj Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -891,6 +891,10 @@ op_assign
 id|fb-&gt;var.xres_virtual
 op_rshift
 l_int|3
+suffix:semicolon
+id|fix-&gt;accel
+op_assign
+id|FB_ACCEL_SUN_BWTWO
 suffix:semicolon
 id|disp-&gt;scrollmode
 op_assign

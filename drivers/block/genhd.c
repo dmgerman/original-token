@@ -3995,11 +3995,7 @@ id|dev
 comma
 id|blk
 comma
-id|get_ptable_blocksize
-c_func
-(paren
-id|dev
-)paren
+l_int|512
 )paren
 )paren
 )paren
@@ -4146,11 +4142,7 @@ id|dev
 comma
 id|blk
 comma
-id|get_ptable_blocksize
-c_func
-(paren
-id|dev
-)paren
+l_int|512
 )paren
 )paren
 )paren

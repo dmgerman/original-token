@@ -598,10 +598,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|xxx_set_dispsw
+DECL|function|xxx_set_disp
 r_static
 r_void
-id|xxx_set_dispsw
+id|xxx_set_disp
 c_func
 (paren
 r_const
@@ -620,21 +620,10 @@ op_star
 id|info
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/*&n;     *  Fill in a pointer to appropriate low level text console operations (and&n;     *  optionally a pointer to help data) for the video mode `par&squot; of your&n;     *  video hardware. These can be generic software routines, or hardware&n;     *  accelerated routines specifically tailored for your hardware.&n;     *  If you don&squot;t have any appropriate operations, you must fill in a&n;     *  pointer to dummy operations, and there will be no text output.&n;     */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
+multiline_comment|/*&n;     *  Fill in a pointer with the virtual address of the mapped frame buffer.&n;     *  Fill in a pointer to appropriate low level text console operations (and&n;     *  optionally a pointer to help data) for the video mode `par&squot; of your&n;     *  video hardware. These can be generic software routines, or hardware&n;     *  accelerated routines specifically tailored for your hardware.&n;     *  If you don&squot;t have any appropriate operations, you must fill in a&n;     *  pointer to dummy operations, and there will be no text output.&n;     */
+id|disp-&gt;screen_base
+op_assign
+id|virtual_frame_buffer_address
 suffix:semicolon
 macro_line|#ifdef FBCON_HAS_CFB8
 r_if
@@ -720,12 +709,6 @@ id|disp-&gt;dispsw
 op_assign
 op_amp
 id|fbcon_dummy
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* ------------ Interfaces to hardware functions ------------ */

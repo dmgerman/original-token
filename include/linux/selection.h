@@ -214,6 +214,7 @@ c_func
 r_int
 id|currcons
 comma
+r_const
 id|u16
 op_star
 id|org

@@ -802,7 +802,7 @@ suffix:semicolon
 id|fgx
 op_assign
 l_int|3
-multiline_comment|/*attr_fgcol(p,*s)*/
+multiline_comment|/*attr_fgcol(p,scr_readw(s))*/
 suffix:semicolon
 id|bgx
 op_assign
@@ -811,8 +811,11 @@ c_func
 (paren
 id|p
 comma
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
+)paren
 )paren
 suffix:semicolon
 id|fgx
@@ -862,9 +865,12 @@ op_decrement
 (brace
 id|c
 op_assign
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 op_amp
 id|p-&gt;charmask
 suffix:semicolon

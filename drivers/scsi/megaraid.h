@@ -1,7 +1,12 @@
 macro_line|#ifndef __MEGARAID_H__
 DECL|macro|__MEGARAID_H__
 mdefine_line|#define __MEGARAID_H__
+macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
+DECL|macro|MULTI_IO
+mdefine_line|#define MULTI_IO 0    /* change to 1 for fully parallel I/O to adapter */
+multiline_comment|/* works on some systems, not on others yet */
 DECL|macro|IN_ISR
 mdefine_line|#define IN_ISR                  0x80000000L
 DECL|macro|NO_INTR
@@ -29,7 +34,7 @@ mdefine_line|#define SCB_LOCKED              -4
 DECL|macro|MEGA_CMD_TIMEOUT
 mdefine_line|#define MEGA_CMD_TIMEOUT        10
 DECL|macro|MAX_SGLIST
-mdefine_line|#define MAX_SGLIST              20
+mdefine_line|#define MAX_SGLIST              17
 DECL|macro|MAX_COMMANDS
 mdefine_line|#define MAX_COMMANDS            254
 DECL|macro|MAX_LOGICAL_DRIVES
@@ -84,7 +89,7 @@ mdefine_line|#define I_TOGGLE_PORT      0x01
 DECL|macro|INTR_PORT
 mdefine_line|#define INTR_PORT          0x0a
 DECL|macro|MAILBOX_SIZE
-mdefine_line|#define MAILBOX_SIZE       70
+mdefine_line|#define MAILBOX_SIZE       (sizeof(mega_mailbox)-16)
 DECL|macro|MBOX_BUSY_PORT
 mdefine_line|#define MBOX_BUSY_PORT     0x00
 DECL|macro|MBOX_PORT0
@@ -144,12 +149,16 @@ DECL|macro|PCI_CONF_BASE_ADDR_OFFSET
 mdefine_line|#define PCI_CONF_BASE_ADDR_OFFSET  0x10
 DECL|macro|PCI_CONF_IRQ_OFFSET
 mdefine_line|#define PCI_CONF_IRQ_OFFSET        0x3c
+DECL|macro|PCI_CONF_AMISIG
+mdefine_line|#define PCI_CONF_AMISIG            0xa0
+DECL|macro|AMI_SIGNATURE
+mdefine_line|#define AMI_SIGNATURE              0x11223344
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 DECL|macro|MEGARAID
-mdefine_line|#define MEGARAID &bslash;&n;  { NULL,                               /* Next                      */&bslash;&n;    NULL,                               /* Usage Count Pointer       */&bslash;&n;    NULL,                               /* /proc Directory Entry     */&bslash;&n;    megaraid_proc_info,                 /* /proc Info Function       */&bslash;&n;    &quot;MegaRAID&quot;,                         /* Driver Name               */&bslash;&n;    megaraid_detect,                    /* Detect Host Adapter       */&bslash;&n;    megaraid_release,                   /* Release Host Adapter      */&bslash;&n;    megaraid_info,                      /* Driver Info Function      */&bslash;&n;    megaraid_command,                   /* Command Function          */&bslash;&n;    megaraid_queue,                     /* Queue Command Function    */&bslash;&n;    megaraid_abort,                     /* Abort Command Function    */&bslash;&n;    megaraid_reset,                     /* Reset Command Function    */&bslash;&n;    NULL,                               /* Slave Attach Function     */&bslash;&n;    megaraid_biosparam,                 /* Disk BIOS Parameters      */&bslash;&n;    1,                                  /* # of cmds that can be&bslash;&n;                                           outstanding at any time */&bslash;&n;    7,                                  /* HBA Target ID             */&bslash;&n;    MAX_SGLIST,                         /* Scatter/Gather Table Size */&bslash;&n;    1,                                  /* SCSI Commands per LUN     */&bslash;&n;    0,                                  /* Present                   */&bslash;&n;    0,                                  /* Default Unchecked ISA DMA */&bslash;&n;    ENABLE_CLUSTERING }                 /* Enable Clustering         */
+mdefine_line|#define MEGARAID &bslash;&n;  { NULL,                               /* Next                      */&bslash;&n;    NULL,                               /* Usage Count Pointer       */&bslash;&n;    NULL,                               /* /proc Directory Entry     */&bslash;&n;    megaraid_proc_info,                 /* /proc Info Function       */&bslash;&n;    &quot;MegaRAID&quot;,                         /* Driver Name               */&bslash;&n;    megaraid_detect,                    /* Detect Host Adapter       */&bslash;&n;    megaraid_release,                   /* Release Host Adapter      */&bslash;&n;    megaraid_info,                      /* Driver Info Function      */&bslash;&n;    megaraid_command,                   /* Command Function          */&bslash;&n;    megaraid_queue,                     /* Queue Command Function    */&bslash;&n;    megaraid_abort,                     /* Abort Command Function    */&bslash;&n;    megaraid_reset,                     /* Reset Command Function    */&bslash;&n;    NULL,                               /* Slave Attach Function     */&bslash;&n;    megaraid_biosparam,                 /* Disk BIOS Parameters      */&bslash;&n;    254,                                /* # of cmds that can be&bslash;&n;                                           outstanding at any time */&bslash;&n;    7,                                  /* HBA Target ID             */&bslash;&n;    MAX_SGLIST,                         /* Scatter/Gather Table Size */&bslash;&n;    64,                                 /* SCSI Commands per LUN     */&bslash;&n;    0,                                  /* Present                   */&bslash;&n;    0,                                  /* Default Unchecked ISA DMA */&bslash;&n;    ENABLE_CLUSTERING }&t;&t;/* Enable Clustering         */
 macro_line|#else
 DECL|macro|MEGARAID
-mdefine_line|#define MEGARAID &bslash;&n;  {&bslash;&n;    name:            &quot;MegaRAID&quot;,               /* Driver Name               */&bslash;&n;    proc_info:        megaraid_proc_info,      /* /proc driver info         */&bslash;&n;    detect:           megaraid_detect,         /* Detect Host Adapter       */&bslash;&n;    release:          megaraid_release,        /* Release Host Adapter      */&bslash;&n;    info:             megaraid_info,           /* Driver Info Function      */&bslash;&n;    command:          megaraid_command,        /* Command Function          */&bslash;&n;    queuecommand:     megaraid_queue,          /* Queue Command Function    */&bslash;&n;    abort:            megaraid_abort,          /* Abort Command Function    */&bslash;&n;    reset:            megaraid_reset,          /* Reset Command Function    */&bslash;&n;    bios_param:       megaraid_biosparam,      /* Disk BIOS Parameters      */&bslash;&n;    can_queue:        255,                     /* Can Queue                 */&bslash;&n;    this_id:          7,                       /* HBA Target ID             */&bslash;&n;    sg_tablesize:     MAX_SGLIST,              /* Scatter/Gather Table Size */&bslash;&n;    cmd_per_lun:      1,                       /* SCSI Commands per LUN     */&bslash;&n;    present:          0,                       /* Present                   */&bslash;&n;    unchecked_isa_dma:0,                       /* Default Unchecked ISA DMA */&bslash;&n;    use_clustering:   ENABLE_CLUSTERING       /* Enable Clustering         */&bslash;&n;  }
+mdefine_line|#define MEGARAID &bslash;&n;  {&bslash;&n;    name:            &quot;MegaRAID&quot;,               /* Driver Name               */&bslash;&n;    proc_info:        megaraid_proc_info,      /* /proc driver info         */&bslash;&n;    detect:           megaraid_detect,         /* Detect Host Adapter       */&bslash;&n;    release:          megaraid_release,        /* Release Host Adapter      */&bslash;&n;    info:             megaraid_info,           /* Driver Info Function      */&bslash;&n;    command:          megaraid_command,        /* Command Function          */&bslash;&n;    queuecommand:     megaraid_queue,          /* Queue Command Function    */&bslash;&n;    abort:            megaraid_abort,          /* Abort Command Function    */&bslash;&n;    reset:            megaraid_reset,          /* Reset Command Function    */&bslash;&n;    bios_param:       megaraid_biosparam,      /* Disk BIOS Parameters      */&bslash;&n;    can_queue:        1 /* MAX_COMMANDS */,            /* Can Queue                 */&bslash;&n;    this_id:          7,                       /* HBA Target ID             */&bslash;&n;    sg_tablesize:     MAX_SGLIST,              /* Scatter/Gather Table Size */&bslash;&n;    cmd_per_lun:      64,                      /* SCSI Commands per LUN     */&bslash;&n;    present:          0,                       /* Present                   */&bslash;&n;    unchecked_isa_dma:0,                       /* Default Unchecked ISA DMA */&bslash;&n;    use_clustering:   ENABLE_CLUSTERING       /* Enable Clustering         */&bslash;&n;  }
 macro_line|#endif
 multiline_comment|/* Structures */
 DECL|struct|_mega_ADP_INFO
@@ -446,17 +455,17 @@ id|u_char
 id|busy
 suffix:semicolon
 DECL|member|numstatus
-multiline_comment|/* 0x10*/
+multiline_comment|/* 0x10 */
 id|u_char
 id|numstatus
 suffix:semicolon
 DECL|member|status
-multiline_comment|/* 0x11*/
+multiline_comment|/* 0x11 */
 id|u_char
 id|status
 suffix:semicolon
 DECL|member|completed
-multiline_comment|/* 0x12*/
+multiline_comment|/* 0x12 */
 id|u_char
 id|completed
 (braket
@@ -481,6 +490,101 @@ suffix:semicolon
 DECL|typedef|mega_mailbox
 )brace
 id|mega_mailbox
+suffix:semicolon
+DECL|struct|_mega_ioctl_mbox
+r_typedef
+r_struct
+id|_mega_ioctl_mbox
+(brace
+DECL|member|cmd
+multiline_comment|/* 0x0 */
+id|u_char
+id|cmd
+suffix:semicolon
+DECL|member|cmdid
+multiline_comment|/* 0x1 */
+id|u_char
+id|cmdid
+suffix:semicolon
+DECL|member|channel
+multiline_comment|/* 0x2 */
+id|u_char
+id|channel
+suffix:semicolon
+DECL|member|param
+multiline_comment|/* 0x3 */
+id|u_char
+id|param
+suffix:semicolon
+DECL|member|pad
+multiline_comment|/* 0x4 */
+id|u_char
+id|pad
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|xferaddr
+multiline_comment|/* 0x8 */
+id|u_long
+id|xferaddr
+suffix:semicolon
+DECL|member|logdrv
+multiline_comment|/* 0xC */
+id|u_char
+id|logdrv
+suffix:semicolon
+DECL|member|numsgelements
+multiline_comment|/* 0xD */
+id|u_char
+id|numsgelements
+suffix:semicolon
+DECL|member|resvd
+multiline_comment|/* 0xE */
+id|u_char
+id|resvd
+suffix:semicolon
+DECL|member|busy
+multiline_comment|/* 0xF */
+id|u_char
+id|busy
+suffix:semicolon
+DECL|member|numstatus
+multiline_comment|/* 0x10 */
+id|u_char
+id|numstatus
+suffix:semicolon
+DECL|member|status
+multiline_comment|/* 0x11 */
+id|u_char
+id|status
+suffix:semicolon
+DECL|member|completed
+multiline_comment|/* 0x12 */
+id|u_char
+id|completed
+(braket
+l_int|46
+)braket
+suffix:semicolon
+DECL|member|mraid_poll
+id|u_char
+id|mraid_poll
+suffix:semicolon
+DECL|member|mraid_ack
+id|u_char
+id|mraid_ack
+suffix:semicolon
+DECL|member|malign
+id|u_char
+id|malign
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|typedef|mega_ioctl_mbox
+)brace
+id|mega_ioctl_mbox
 suffix:semicolon
 DECL|struct|_mega_sglist
 r_typedef

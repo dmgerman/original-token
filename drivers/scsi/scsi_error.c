@@ -1439,6 +1439,13 @@ r_struct
 id|timer_list
 id|timer
 suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|timer
+)paren
+suffix:semicolon
 id|timer.data
 op_assign
 (paren

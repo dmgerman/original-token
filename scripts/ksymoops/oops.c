@@ -4079,7 +4079,7 @@ l_string|&quot;(&quot;
 multiline_comment|/*  4 */
 l_string|&quot;(general protection.*)&quot;
 l_string|&quot;|(&lt;[0-9]+&gt;)&quot;
-l_string|&quot;|(([&lt;(]?[0-9a-fA-F]+[&gt;)]?[ &bslash;t]*)+)&quot;
+l_string|&quot;|(([&lt;(]?[0-9a-fA-F]+[&gt;)]?[ &bslash;t]+)+[&lt;(]?[0-9a-fA-F]+[&gt;)]?)&quot;
 l_string|&quot;)&quot;
 l_string|&quot;(.*)$&quot;
 multiline_comment|/* trailing garbage */

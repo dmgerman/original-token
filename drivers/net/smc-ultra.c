@@ -1,5 +1,5 @@
 multiline_comment|/* smc-ultra.c: A SMC Ultra ethernet driver for linux. */
-multiline_comment|/*&n;&t;This is a driver for the SMC Ultra and SMC EtherEZ ISA ethercards.&n;&n;&t;Written 1993-1996 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This driver uses the cards in the 8390-compatible, shared memory mode.&n;&t;Most of the run-time complexity is handled by the generic code in&n;&t;8390.c.  The code in this file is responsible for&n;&n;&t;&t;ultra_probe()&t; &t;Detecting and initializing the card.&n;&t;&t;ultra_probe1()&n;&n;&t;&t;ultra_open()&t;&t;The card-specific details of starting, stopping&n;&t;&t;ultra_reset_8390()&t;and resetting the 8390 NIC core.&n;&t;&t;ultra_close()&n;&n;&t;&t;ultra_block_input()&t;&t;Routines for reading and writing blocks of&n;&t;&t;ultra_block_output()&t;packet buffer memory.&n;&n;&t;This driver enables the shared memory only when doing the actual data&n;&t;transfers to avoid a bug in early version of the card that corrupted&n;&t;data transferred by a AHA1542.&n;&n;&t;This driver now supports the programmed-I/O (PIO) data transfer mode of&n;&t;the EtherEZ. It does not use the non-8390-compatible &quot;Altego&quot; mode.&n;&t;That support (if available) is smc-ez.c.&n;&n;&t;Changelog:&n;&n;&t;Paul Gortmaker&t;: multiple card support for module users.&n;&t;Donald Becker&t;: 4/17/96 PIO support, minor potential problems avoided.&n;&t;Donald Becker&t;: 6/6/96 correctly set auto-wrap bit.&n;*/
+multiline_comment|/*&n;&t;This is a driver for the SMC Ultra and SMC EtherEZ ISA ethercards.&n;&n;&t;Written 1993-1998 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This driver uses the cards in the 8390-compatible mode.&n;&t;Most of the run-time complexity is handled by the generic code in&n;&t;8390.c.  The code in this file is responsible for&n;&n;&t;&t;ultra_probe()&t; &t;Detecting and initializing the card.&n;&t;&t;ultra_probe1()&n;&n;&t;&t;ultra_open()&t;&t;The card-specific details of starting, stopping&n;&t;&t;ultra_reset_8390()&t;and resetting the 8390 NIC core.&n;&t;&t;ultra_close()&n;&n;&t;&t;ultra_block_input()&t;&t;Routines for reading and writing blocks of&n;&t;&t;ultra_block_output()&t;packet buffer memory.&n;&t;&t;ultra_pio_input()&n;&t;&t;ultra_pio_output()&n;&n;&t;This driver enables the shared memory only when doing the actual data&n;&t;transfers to avoid a bug in early version of the card that corrupted&n;&t;data transferred by a AHA1542.&n;&n;&t;This driver now supports the programmed-I/O (PIO) data transfer mode of&n;&t;the EtherEZ. It does not use the non-8390-compatible &quot;Altego&quot; mode.&n;&t;That support (if available) is in smc-ez.c.&n;&n;&t;Changelog:&n;&n;&t;Paul Gortmaker&t;: multiple card support for module users.&n;&t;Donald Becker&t;: 4/17/96 PIO support, minor potential problems avoided.&n;&t;Donald Becker&t;: 6/6/96 correctly set auto-wrap bit.&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v2.00 6/6/96 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v2.02 2/3/98 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -153,6 +153,7 @@ r_char
 op_star
 id|buf
 comma
+r_const
 r_int
 id|start_page
 )paren
@@ -217,6 +218,7 @@ r_char
 op_star
 id|buf
 comma
+r_const
 r_int
 id|start_page
 )paren
@@ -555,7 +557,6 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
-multiline_comment|/* We should have a &quot;dev&quot; from Space.c or the static module table. */
 r_if
 c_cond
 (paren
@@ -563,13 +564,6 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;smc-ultra.c: Passed a NULL device.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|dev
 op_assign
 id|init_etherdev
@@ -580,7 +574,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1097,6 +1090,47 @@ op_minus
 id|ULTRA_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* ASIC addr */
+r_int
+r_char
+id|irq2reg
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x04
+comma
+l_int|0x08
+comma
+l_int|0
+comma
+l_int|0x0C
+comma
+l_int|0
+comma
+l_int|0x40
+comma
+l_int|0
+comma
+l_int|0x04
+comma
+l_int|0x44
+comma
+l_int|0x48
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x4C
+comma
+)brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1135,6 +1169,69 @@ comma
 id|ioaddr
 op_plus
 l_int|5
+)paren
+suffix:semicolon
+multiline_comment|/* Set the IRQ line. */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|4
+)paren
+op_or
+l_int|0x80
+comma
+id|ioaddr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|13
+)paren
+op_amp
+op_complement
+l_int|0x4C
+)paren
+op_or
+id|irq2reg
+(braket
+id|dev-&gt;irq
+)braket
+comma
+id|ioaddr
+op_plus
+l_int|13
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|4
+)paren
+op_amp
+l_int|0x7f
+comma
+id|ioaddr
+op_plus
+l_int|4
 )paren
 suffix:semicolon
 r_if
@@ -1618,7 +1715,7 @@ id|ULTRA_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* Disable memory. */
 )brace
-multiline_comment|/* The identical operations for programmed I/O cards.&n;   The PIO model is trivial to use: the 16 bit start address is written&n;   byte-sequentially to IOPA, with no intervening I/O operations, and the&n;   data is read or written to the IOPD data port.&n;   The only potential complication is that the address register is shared&n;   must be always be rewritten between each read/write direction change.&n;   This is no problem for us, as the 8390 code ensures that we are single&n;   threaded. */
+multiline_comment|/* The identical operations for programmed I/O cards.&n;   The PIO model is trivial to use: the 16 bit start address is written&n;   byte-sequentially to IOPA, with no intervening I/O operations, and the&n;   data is read or written to the IOPD data port.&n;   The only potential complication is that the address register is shared&n;   and must be always be rewritten between each read/write direction change.&n;   This is no problem for us, as the 8390 code ensures that we are single&n;   threaded. */
 DECL|function|ultra_pio_get_hdr
 r_static
 r_void
@@ -1748,6 +1845,7 @@ op_plus
 id|IOPA
 )paren
 suffix:semicolon
+multiline_comment|/* We know skbuffs are padded to at least word alignment. */
 id|insw
 c_func
 (paren
@@ -1766,32 +1864,6 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef notdef
-multiline_comment|/* We don&squot;t need this -- skbuffs are padded to at least word alignment. */
-r_if
-c_cond
-(paren
-id|count
-op_amp
-l_int|0x01
-)paren
-(brace
-id|buf
-(braket
-id|count
-op_minus
-l_int|1
-)braket
-op_assign
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|IOPD
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|ultra_pio_output
 r_static
@@ -1813,6 +1885,7 @@ r_char
 op_star
 id|buf
 comma
+r_const
 r_int
 id|start_page
 )paren
@@ -1846,6 +1919,7 @@ op_plus
 id|IOPA
 )paren
 suffix:semicolon
+multiline_comment|/* An extra odd byte is OK here as well. */
 id|outsw
 c_func
 (paren
@@ -2188,17 +2262,10 @@ id|found
 op_ne
 l_int|0
 )paren
-(brace
-multiline_comment|/* Got at least one. */
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
+multiline_comment|/* Got at least one. */
 r_return
 op_minus
 id|ENXIO
@@ -2208,11 +2275,6 @@ id|found
 op_increment
 suffix:semicolon
 )brace
-id|lock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2262,6 +2324,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* NB: ultra_close_card() does free_irq + irq2dev */
 r_int
 id|ioaddr
 op_assign
@@ -2269,13 +2332,16 @@ id|dev-&gt;base_addr
 op_minus
 id|ULTRA_NIC_OFFSET
 suffix:semicolon
-r_void
-op_star
-id|priv
-op_assign
+id|kfree
+c_func
+(paren
 id|dev-&gt;priv
+)paren
 suffix:semicolon
-multiline_comment|/* NB: ultra_close_card() does free_irq */
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
 id|release_region
 c_func
 (paren
@@ -2290,21 +2356,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|priv
-)paren
-suffix:semicolon
 )brace
 )brace
-id|unlock_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c smc-ultra.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c smc-ultra.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

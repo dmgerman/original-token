@@ -4,6 +4,7 @@ DECL|macro|_VIDEO_FBCON_H
 mdefine_line|#define _VIDEO_FBCON_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
+macro_line|#include &lt;linux/vt_buffer.h&gt;
 multiline_comment|/*                                  &n;     *  `switch&squot; for the Low Level Operations&n;     */
 DECL|struct|display_switch
 r_struct

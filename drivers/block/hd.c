@@ -3747,6 +3747,7 @@ l_int|0x12
 op_amp
 l_int|0xf0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3763,6 +3764,7 @@ id|NR_HD
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* __i386__ */
 r_for

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Phase5 CybervisionPPC (TVP4020) definitions for the Permedia2 framebuffer&n; * driver.&n; *&n; * Copyright (c) 1998-1999 Ilario Nardinocchi (nardinoc@CS.UniBO.IT)&n; * --------------------------------------------------------------------------&n; * $Id: cvisionppc.h,v 1.1.2.1 1999/01/12 19:52:59 geert Exp $&n; * --------------------------------------------------------------------------&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * Phase5 CybervisionPPC (TVP4020) definitions for the Permedia2 framebuffer&n; * driver.&n; *&n; * Copyright (c) 1998-1999 Ilario Nardinocchi (nardinoc@CS.UniBO.IT)&n; * --------------------------------------------------------------------------&n; * $Id: cvisionppc.h,v 1.8 1999/01/28 13:18:07 illo Exp $&n; * --------------------------------------------------------------------------&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef CVISIONPPC_H
 DECL|macro|CVISIONPPC_H
 mdefine_line|#define CVISIONPPC_H
@@ -22,8 +22,7 @@ op_star
 id|pci_bridge
 suffix:semicolon
 DECL|member|user_flags
-r_int
-r_int
+id|u32
 id|user_flags
 suffix:semicolon
 )brace

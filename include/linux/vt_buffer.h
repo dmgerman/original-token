@@ -79,6 +79,7 @@ id|u16
 op_star
 id|d
 comma
+r_const
 id|u16
 op_star
 id|s
@@ -126,6 +127,7 @@ id|u16
 op_star
 id|d
 comma
+r_const
 id|u16
 op_star
 id|s
@@ -201,6 +203,7 @@ id|u16
 op_star
 id|d
 comma
+r_const
 id|u16
 op_star
 id|s
@@ -243,6 +246,7 @@ id|u16
 op_star
 id|d
 comma
+r_const
 id|u16
 op_star
 id|s

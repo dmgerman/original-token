@@ -794,7 +794,7 @@ id|info
 suffix:semicolon
 r_static
 r_void
-id|clgen_set_dispsw
+id|clgen_set_disp
 c_func
 (paren
 r_const
@@ -841,7 +841,7 @@ id|clgen_pan_display
 comma
 id|clgen_blank
 comma
-id|clgen_set_dispsw
+id|clgen_set_disp
 )brace
 suffix:semicolon
 multiline_comment|/* Text console acceleration */
@@ -6889,10 +6889,10 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|clgen_set_dispsw
+DECL|function|clgen_set_disp
 r_static
 r_void
-id|clgen_set_dispsw
+id|clgen_set_disp
 c_func
 (paren
 r_const
@@ -6938,8 +6938,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;clgen_get_dispsw(): &quot;
+l_string|&quot;clgen_set_disp(): &quot;
 )paren
+suffix:semicolon
+id|disp-&gt;screen_base
+op_assign
+id|info2-&gt;fbmem
 suffix:semicolon
 r_switch
 c_cond
@@ -8247,7 +8251,6 @@ suffix:semicolon
 id|clgenfb_init
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 r_return

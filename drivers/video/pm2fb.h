@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Permedia2 framebuffer driver definitions.&n; * Copyright (c) 1998-1999 Ilario Nardinocchi (nardinoc@CS.UniBO.IT)&n; * --------------------------------------------------------------------------&n; * $Id: pm2fb.h,v 1.1.2.1 1999/01/12 19:53:02 geert Exp $&n; * --------------------------------------------------------------------------&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * Permedia2 framebuffer driver definitions.&n; * Copyright (c) 1998-1999 Ilario Nardinocchi (nardinoc@CS.UniBO.IT)&n; * --------------------------------------------------------------------------&n; * $Id: pm2fb.h,v 1.21 1999/01/28 13:18:07 illo Exp $&n; * --------------------------------------------------------------------------&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef PM2FB_H
 DECL|macro|PM2FB_H
 mdefine_line|#define PM2FB_H
@@ -9,7 +9,7 @@ mdefine_line|#define PM2_MAX_PIXCLOCK&t;230000&t;&t;&t;/* in KHz */
 DECL|macro|PM2_REGS_SIZE
 mdefine_line|#define PM2_REGS_SIZE&t;&t;0x10000
 DECL|macro|PM2TAG
-mdefine_line|#define PM2TAG(r) (unsigned long )(((r)-0x8000)&gt;&gt;3)
+mdefine_line|#define PM2TAG(r) (u32 )(((r)-0x8000)&gt;&gt;3)
 multiline_comment|/*****************************************************************************&n; * Permedia2 registers used in the framebuffer&n; *****************************************************************************/
 DECL|macro|PM2R_RESET_STATUS
 mdefine_line|#define PM2R_RESET_STATUS&t;&t;&t;&t;0x0000
@@ -208,25 +208,25 @@ DECL|macro|PM2I_RD_BLUE_KEY
 mdefine_line|#define PM2I_RD_BLUE_KEY&t;&t;&t;&t;0x44
 multiline_comment|/* Fields and flags */
 DECL|macro|PM2F_RENDER_AREASTIPPLE
-mdefine_line|#define PM2F_RENDER_AREASTIPPLE&t;&t;&t;&t;(1&lt;&lt;0)
+mdefine_line|#define PM2F_RENDER_AREASTIPPLE&t;&t;&t;&t;(1L&lt;&lt;0)
 DECL|macro|PM2F_RENDER_FASTFILL
-mdefine_line|#define PM2F_RENDER_FASTFILL&t;&t;&t;&t;(1&lt;&lt;3)
+mdefine_line|#define PM2F_RENDER_FASTFILL&t;&t;&t;&t;(1L&lt;&lt;3)
 DECL|macro|PM2F_RENDER_PRIMITIVE_MASK
-mdefine_line|#define PM2F_RENDER_PRIMITIVE_MASK&t;&t;&t;(0x3&lt;&lt;6)
+mdefine_line|#define PM2F_RENDER_PRIMITIVE_MASK&t;&t;&t;(3L&lt;&lt;6)
 DECL|macro|PM2F_RENDER_LINE
 mdefine_line|#define PM2F_RENDER_LINE&t;&t;&t;&t;0
 DECL|macro|PM2F_RENDER_TRAPEZOID
-mdefine_line|#define PM2F_RENDER_TRAPEZOID&t;&t;&t;&t;(1&lt;&lt;6)
+mdefine_line|#define PM2F_RENDER_TRAPEZOID&t;&t;&t;&t;(1L&lt;&lt;6)
 DECL|macro|PM2F_RENDER_POINT
-mdefine_line|#define PM2F_RENDER_POINT&t;&t;&t;&t;(2&lt;&lt;6)
+mdefine_line|#define PM2F_RENDER_POINT&t;&t;&t;&t;(2L&lt;&lt;6)
 DECL|macro|PM2F_RENDER_RECTANGLE
-mdefine_line|#define PM2F_RENDER_RECTANGLE&t;&t;&t;&t;(3&lt;&lt;6)
+mdefine_line|#define PM2F_RENDER_RECTANGLE&t;&t;&t;&t;(3L&lt;&lt;6)
 DECL|macro|PM2F_SYNCHRONIZATION
-mdefine_line|#define PM2F_SYNCHRONIZATION&t;&t;&t;&t;(1&lt;&lt;10)
+mdefine_line|#define PM2F_SYNCHRONIZATION&t;&t;&t;&t;(1L&lt;&lt;10)
 DECL|macro|PM2F_PLL_LOCKED
 mdefine_line|#define PM2F_PLL_LOCKED&t;&t;&t;&t;&t;0x10
 DECL|macro|PM2F_BEING_RESET
-mdefine_line|#define PM2F_BEING_RESET&t;&t;&t;&t;(1&lt;&lt;31)
+mdefine_line|#define PM2F_BEING_RESET&t;&t;&t;&t;(1L&lt;&lt;31)
 DECL|macro|PM2F_DATATYPE_COLOR
 mdefine_line|#define PM2F_DATATYPE_COLOR&t;&t;&t;&t;0x8000
 DECL|macro|PM2F_VGA_ENABLE
@@ -284,19 +284,29 @@ mdefine_line|#define PM2F_TEXTEL_SIZE_4&t;&t;&t;&t;0x00180000
 DECL|macro|PM2F_TEXTEL_SIZE_24
 mdefine_line|#define PM2F_TEXTEL_SIZE_24&t;&t;&t;&t;0x00200000
 DECL|macro|PM2F_INCREASE_X
-mdefine_line|#define PM2F_INCREASE_X&t;&t;&t;&t;&t;(1&lt;&lt;21)
+mdefine_line|#define PM2F_INCREASE_X&t;&t;&t;&t;&t;(1L&lt;&lt;21)
 DECL|macro|PM2F_INCREASE_Y
-mdefine_line|#define PM2F_INCREASE_Y&t;&t;&t;&t;&t;(1&lt;&lt;22)
+mdefine_line|#define PM2F_INCREASE_Y&t;&t;&t;&t;&t;(1L&lt;&lt;22)
 DECL|macro|PM2F_CONFIG_FB_WRITE_ENABLE
-mdefine_line|#define PM2F_CONFIG_FB_WRITE_ENABLE&t;&t;&t;(1&lt;&lt;3)
+mdefine_line|#define PM2F_CONFIG_FB_WRITE_ENABLE&t;&t;&t;(1L&lt;&lt;3)
 DECL|macro|PM2F_CONFIG_FB_PACKED_DATA
-mdefine_line|#define PM2F_CONFIG_FB_PACKED_DATA&t;&t;&t;(1&lt;&lt;2)
+mdefine_line|#define PM2F_CONFIG_FB_PACKED_DATA&t;&t;&t;(1L&lt;&lt;2)
 DECL|macro|PM2F_CONFIG_FB_READ_DEST_ENABLE
-mdefine_line|#define PM2F_CONFIG_FB_READ_DEST_ENABLE&t;&t;&t;(1&lt;&lt;1)
+mdefine_line|#define PM2F_CONFIG_FB_READ_DEST_ENABLE&t;&t;&t;(1L&lt;&lt;1)
 DECL|macro|PM2F_CONFIG_FB_READ_SOURCE_ENABLE
-mdefine_line|#define PM2F_CONFIG_FB_READ_SOURCE_ENABLE&t;&t;(1&lt;&lt;0)
+mdefine_line|#define PM2F_CONFIG_FB_READ_SOURCE_ENABLE&t;&t;(1L&lt;&lt;0)
 DECL|macro|PM2F_COLOR_KEY_TEST_OFF
-mdefine_line|#define PM2F_COLOR_KEY_TEST_OFF&t;&t;&t;&t;(1&lt;&lt;4)
+mdefine_line|#define PM2F_COLOR_KEY_TEST_OFF&t;&t;&t;&t;(1L&lt;&lt;4)
+DECL|macro|PM2F_MEM_CONFIG_RAM_MASK
+mdefine_line|#define PM2F_MEM_CONFIG_RAM_MASK&t;&t;&t;(3L&lt;&lt;29)
+DECL|macro|PM2F_MEM_BANKS_1
+mdefine_line|#define PM2F_MEM_BANKS_1&t;&t;&t;&t;0L
+DECL|macro|PM2F_MEM_BANKS_2
+mdefine_line|#define PM2F_MEM_BANKS_2&t;&t;&t;&t;(1L&lt;&lt;29)
+DECL|macro|PM2F_MEM_BANKS_3
+mdefine_line|#define PM2F_MEM_BANKS_3&t;&t;&t;&t;(2L&lt;&lt;29)
+DECL|macro|PM2F_MEM_BANKS_4
+mdefine_line|#define PM2F_MEM_BANKS_4&t;&t;&t;&t;(3L&lt;&lt;29)
 macro_line|#endif /* PM2FB_H */
 multiline_comment|/*****************************************************************************&n; * That&squot;s all folks!&n; *****************************************************************************/
 eof

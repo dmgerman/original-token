@@ -209,6 +209,11 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* Set the flag before we drop the lock, That way the IRQ arrives&n;&t;   after its set and we get no silly warnings */
+id|dev-&gt;start
+op_assign
+l_int|1
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -217,10 +222,6 @@ id|ei_local-&gt;page_lock
 comma
 id|flags
 )paren
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
 suffix:semicolon
 id|ei_local-&gt;irqlock
 op_assign

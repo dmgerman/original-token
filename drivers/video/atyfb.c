@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: atyfb.c,v 1.98 1999/01/14 08:50:53 geert Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*  $Id: atyfb.c,v 1.102 1999/01/21 22:44:42 geert Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/******************************************************************************&n;&n;  TODO:&n;&n;    - cursor support on all cards and all ramdacs.&n;    - cursor parameters controlable via ioctl()s.&n;    - guess PLL and MCLK based on the original PLL register values initialized&n;      by the BIOS or Open Firmware (if they are initialized).&n;&n;&t;&t;&t;&t;&t;&t;(Anyone to help with this?)&n;&n;******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -27,6 +27,8 @@ macro_line|#if defined(CONFIG_PPC)
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;video/macmodes.h&gt;
+macro_line|#include &lt;asm/adb.h&gt;
+macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#endif
 macro_line|#ifdef __sparc__
 macro_line|#include &lt;asm/pbm.h&gt;
@@ -1987,7 +1989,7 @@ l_string|&quot;3D RAGE LT PRO (AGP)&quot;
 )brace
 comma
 (brace
-l_int|0x4c42
+l_int|0x4c44
 comma
 l_int|0x4c44
 comma
@@ -1995,7 +1997,7 @@ l_string|&quot;3D RAGE LT PRO&quot;
 )brace
 comma
 (brace
-l_int|0x4c42
+l_int|0x4c47
 comma
 l_int|0x4c47
 comma
@@ -2003,7 +2005,7 @@ l_string|&quot;3D RAGE LT PRO&quot;
 )brace
 comma
 (brace
-l_int|0x4c42
+l_int|0x4c49
 comma
 l_int|0x4c49
 comma
@@ -2011,7 +2013,7 @@ l_string|&quot;3D RAGE LT PRO&quot;
 )brace
 comma
 (brace
-l_int|0x4c42
+l_int|0x4c50
 comma
 l_int|0x4c50
 comma
@@ -6672,7 +6674,7 @@ l_int|5
 suffix:semicolon
 id|var-&gt;green.offset
 op_assign
-l_int|6
+l_int|5
 suffix:semicolon
 id|var-&gt;green.length
 op_assign
@@ -12191,53 +12193,49 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|Gx
 op_eq
 id|GT_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GU_CHIP_ID
-)paren
 op_logical_or
-(paren
+id|Gx
+op_eq
+id|GV_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|GW_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|GZ_CHIP_ID
+op_logical_or
 id|Gx
 op_eq
 id|LG_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GB_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GD_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GI_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GP_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GQ_CHIP_ID
-)paren
 )paren
 id|tmp
 op_or_assign
@@ -17183,6 +17181,25 @@ suffix:semicolon
 id|u8
 id|gen_cntl
 suffix:semicolon
+macro_line|#if defined(CONFIG_PPC)
+r_if
+c_cond
+(paren
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+op_logical_and
+id|blank
+)paren
+id|pmu_enable_backlight
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 id|gen_cntl
 op_assign
 id|aty_ld_8
@@ -17263,6 +17280,26 @@ comma
 id|info
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_PPC)
+r_if
+c_cond
+(paren
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+op_logical_and
+op_logical_neg
+id|blank
+)paren
+id|pmu_enable_backlight
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n;     *  Read a single color register and split it into&n;     *  colors/transparent. Return != 0 for invalid regno.&n;     */
 DECL|function|atyfb_getcolreg
@@ -17499,53 +17536,49 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|Gx
 op_eq
 id|GT_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GU_CHIP_ID
-)paren
 op_logical_or
-(paren
+id|Gx
+op_eq
+id|GV_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|GW_CHIP_ID
+op_logical_or
+id|Gx
+op_eq
+id|GZ_CHIP_ID
+op_logical_or
 id|Gx
 op_eq
 id|LG_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GB_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GD_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GI_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GP_CHIP_ID
-)paren
 op_logical_or
-(paren
 id|Gx
 op_eq
 id|GQ_CHIP_ID
-)paren
 )paren
 id|i
 op_or_assign

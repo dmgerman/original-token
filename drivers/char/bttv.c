@@ -8173,6 +8173,10 @@ op_star
 )paren
 id|dev
 suffix:semicolon
+r_int
+r_int
+id|f
+suffix:semicolon
 id|btv-&gt;user
 op_decrement
 suffix:semicolon
@@ -8195,6 +8199,25 @@ c_func
 id|btv
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;A word of warning. At this point the chip&n;&t; *&t;is still capturing because its FIFO hasn&squot;t emptied&n;&t; *&t;and the DMA control operations are posted PCI &n;&t; *&t;operations.&n;&t; */
+id|btread
+c_func
+(paren
+id|BT848_I2C
+)paren
+suffix:semicolon
+multiline_comment|/* This fixes the PCI posting delay */
+multiline_comment|/*&n;&t; *&t;This is sucky but right now I can&squot;t find a good way to&n;&t; *&t;be sure its safe to free the buffer. We wait 5-6 fields&n;&t; *&t;which is more than sufficient to be sure.&n;&t; */
+id|schedule_timeout
+c_func
+(paren
+id|HZ
+op_div
+l_int|10
+)paren
+suffix:semicolon
+multiline_comment|/* Wait 1/10th of a second */
+multiline_comment|/*&n;&t; *&t;We have allowed it to drain.&n;&t; */
 r_if
 c_cond
 (paren
@@ -15390,7 +15413,7 @@ c_func
 id|btv-&gt;risc_jmp
 )paren
 suffix:semicolon
-multiline_comment|/* enable cpaturing and DMA */
+multiline_comment|/* enable capturing */
 id|btaor
 c_func
 (paren
@@ -16430,7 +16453,7 @@ c_func
 (paren
 id|btv
 comma
-l_int|1
+l_int|3
 )paren
 suffix:semicolon
 id|wake_up_interruptible

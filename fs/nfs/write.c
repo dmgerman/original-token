@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -666,31 +667,6 @@ id|rqfirst
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Check the credentials associated with this write request.&n;&t; * If the buffer is owned by the same user, we can happily&n;&t; * add our data without risking server permission problems.&n;&t; * Note that I&squot;m not messing around with RPC root override creds&n;&t; * here, because they&squot;re used by swap requests only which&n;&t; * always write out full pages. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|rpcauth_matchcred
-c_func
-(paren
-op_amp
-id|req-&gt;wb_task
-comma
-id|req-&gt;wb_task.tk_cred
-)paren
-)paren
-(brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;NFS:      update failed (cred mismatch)&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -768,14 +744,9 @@ id|create_write_request
 c_func
 (paren
 r_struct
-id|dentry
+id|file
 op_star
-id|dentry
-comma
-r_struct
-id|inode
-op_star
-id|inode
+id|file
 comma
 r_struct
 id|page
@@ -791,6 +762,20 @@ r_int
 id|bytes
 )paren
 (brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|rpc_clnt
 op_star
@@ -914,13 +899,9 @@ r_goto
 id|out_req
 suffix:semicolon
 multiline_comment|/* Put the task on inode&squot;s writeback request list. */
-id|wreq-&gt;wb_dentry
+id|wreq-&gt;wb_file
 op_assign
-id|dentry
-suffix:semicolon
-id|wreq-&gt;wb_inode
-op_assign
-id|inode
+id|file
 suffix:semicolon
 id|wreq-&gt;wb_pid
 op_assign
@@ -1024,11 +1005,25 @@ op_amp
 id|req-&gt;wb_task
 suffix:semicolon
 r_struct
+id|file
+op_star
+id|file
+op_assign
+id|req-&gt;wb_file
+suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
+r_struct
 id|inode
 op_star
 id|inode
 op_assign
-id|req-&gt;wb_inode
+id|dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -1151,6 +1146,27 @@ id|req
 )paren
 (brace
 r_struct
+id|file
+op_star
+id|file
+op_assign
+id|req-&gt;wb_file
+suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
+r_struct
 id|rpc_clnt
 op_star
 id|clnt
@@ -1158,7 +1174,7 @@ op_assign
 id|NFS_CLIENT
 c_func
 (paren
-id|req-&gt;wb_inode
+id|inode
 )paren
 suffix:semicolon
 r_struct
@@ -1415,6 +1431,10 @@ c_cond
 (paren
 id|req
 op_logical_and
+id|req-&gt;wb_file
+op_eq
+id|file
+op_logical_and
 id|update_write_request
 c_func
 (paren
@@ -1463,9 +1483,7 @@ op_assign
 id|create_write_request
 c_func
 (paren
-id|dentry
-comma
-id|inode
+id|file
 comma
 id|page
 comma
@@ -1492,11 +1510,8 @@ op_amp
 id|page-&gt;count
 )paren
 suffix:semicolon
-id|dget
-c_func
-(paren
-id|dentry
-)paren
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 multiline_comment|/* Schedule request */
 id|synchronous
@@ -1834,10 +1849,10 @@ id|page
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write back all pending writes for one user.. &n; */
+multiline_comment|/*&n; * Write back all pending writes from one file descriptor..&n; */
 r_int
-DECL|function|nfs_wb_pid
-id|nfs_wb_pid
+DECL|function|nfs_wb_file
+id|nfs_wb_file
 c_func
 (paren
 r_struct
@@ -1845,8 +1860,10 @@ id|inode
 op_star
 id|inode
 comma
-id|pid_t
-id|pid
+r_struct
+id|file
+op_star
+id|file
 )paren
 (brace
 id|NFS_WB
@@ -1854,40 +1871,9 @@ c_func
 (paren
 id|inode
 comma
-id|req-&gt;wb_pid
+id|req-&gt;wb_file
 op_eq
-id|pid
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Flush all write requests for truncation:&n; * &t;Simplification of the comparison has the side-effect of&n; *&t;causing all writes in an infested page to be waited upon.&n; */
-r_int
-DECL|function|nfs_flush_trunc
-id|nfs_flush_trunc
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-r_int
-id|from
-)paren
-(brace
-id|from
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
-id|NFS_WB
-c_func
-(paren
-id|inode
-comma
-id|req-&gt;wb_page-&gt;offset
-op_ge
-id|from
+id|file
 )paren
 suffix:semicolon
 )brace
@@ -1909,23 +1895,6 @@ id|inode
 comma
 l_int|0
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Check if a previous write operation returned an error&n; */
-r_int
-DECL|function|nfs_check_error
-id|nfs_check_error
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-multiline_comment|/* FIXME! */
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The following procedures make up the writeback finite state machinery:&n; *&n; * 1.&t;Try to lock the page if not yet locked by us,&n; *&t;set up the RPC call info, and pass to the call FSM.&n; */
@@ -1961,11 +1930,18 @@ op_assign
 id|req-&gt;wb_page
 suffix:semicolon
 r_struct
+id|file
+op_star
+id|file
+op_assign
+id|req-&gt;wb_file
+suffix:semicolon
+r_struct
 id|dentry
 op_star
 id|dentry
 op_assign
-id|req-&gt;wb_dentry
+id|file-&gt;f_dentry
 suffix:semicolon
 id|dprintk
 c_func
@@ -2071,11 +2047,11 @@ op_star
 id|task-&gt;tk_calldata
 suffix:semicolon
 r_struct
-id|inode
+id|file
 op_star
-id|inode
+id|file
 op_assign
-id|req-&gt;wb_inode
+id|req-&gt;wb_file
 suffix:semicolon
 r_struct
 id|page
@@ -2089,6 +2065,20 @@ id|status
 op_assign
 id|task-&gt;tk_status
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -2096,9 +2086,9 @@ l_string|&quot;NFS: %4d nfs_wback_result (%s/%s, status=%d, flags=%x)&bslash;n&q
 comma
 id|task-&gt;tk_pid
 comma
-id|req-&gt;wb_dentry-&gt;d_parent-&gt;d_name.name
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|req-&gt;wb_dentry-&gt;d_name.name
+id|dentry-&gt;d_name.name
 comma
 id|status
 comma
@@ -2125,6 +2115,10 @@ l_int|0
 id|req-&gt;wb_flags
 op_or_assign
 id|NFS_WRITE_INVALIDATE
+suffix:semicolon
+id|file-&gt;f_error
+op_assign
+id|status
 suffix:semicolon
 )brace
 r_else
@@ -2253,10 +2247,10 @@ suffix:semicolon
 id|nr_write_requests
 op_decrement
 suffix:semicolon
-id|dput
+id|fput
 c_func
 (paren
-id|req-&gt;wb_dentry
+id|req-&gt;wb_file
 )paren
 suffix:semicolon
 id|wake_up
@@ -2266,7 +2260,6 @@ op_amp
 id|req-&gt;wb_wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME!&n;&t; *&n;&t; * We should not free the request here if it has pending&n;&t; * error status on it. We should just leave it around, to&n;&t; * let the error be collected later. However, the error&n;&t; * collecting routines are too stupid for that right now,&n;&t; * so we just drop the error on the floor at this point&n;&t; * for any async writes.&n;&t; *&n;&t; * This should not be a major headache to fix, but I want&n;&t; * to validate basic operations first.&n;&t; */
 id|free_write_request
 c_func
 (paren

@@ -1,10 +1,7 @@
-multiline_comment|/*===================================================================&n; *&n; *                    Linux MegaRAID device driver&n; * &n; * Copyright 1998 American Megatrends Inc.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Version : 0.92&n; * &n; * Description: Linux device driver for AMI MegaRAID controller&n; *&n; * History:&n; *&n; * Version 0.90:&n; *     Works and has been tested with the MegaRAID 428 controller, and&n; *     the MegaRAID 438 controller.  Probably works with the 466 also,&n; *     but not tested.&n; *&n; * Version 0.91:&n; *     Aligned mailbox area on 16-byte boundry.&n; *     Added schedule() at the end to properly clean up.&n; *     Made improvements for conformity to linux driver standards.&n; *&n; * Version 0.92:&n; *     Added support for 2.1 kernels.&n; *         Reads from pci_dev struct, so it&squot;s not dependent on pcibios.&n; *         Added some missing virt_to_bus() translations.&n; *     Added support for SMP.&n; *         Changed global cli()&squot;s to spinlocks for 2.1, and simulated&n; *          spinlocks for 2.0.&n; *     Removed setting of SA_INTERRUPT flag when requesting Irq.&n; *&n; * Version 0.92ac:&n; *&t;Small changes to the comments/formatting. Plus a couple of&n; *&t;added notes. Returned to the authors. No actual code changes&n; *&t;save printk levels.&n; *&t;8 Oct 98&t;Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *     Merged with 2.1.131 source tree.&n; *     12 Dec 98       K. Baranowski &lt;kgb@knm.org.pl&gt;&n; *&n; * BUGS:&n; *     Tested with 2.1.90, but unfortunately there is a bug in pci.c which&n; *     fails to detect our controller.  Does work with 2.1.118--don&squot;t know&n; *     which kernel in between it was fixed in.&n; *     With SMP enabled under 2.1.118 with more than one processor, gets an&n; *     error message &quot;scsi_end_request: buffer-list destroyed&quot; under heavy&n; *     IO, but doesn&squot;t seem to affect operation, or data integrity.  The&n; *     message doesn&squot;t occur without SMP enabled, or with one proccessor with&n; *     SMP enabled, or under any combination under 2.0 kernels.&n; *&n; *===================================================================*/
-DECL|macro|QISR
-mdefine_line|#define QISR 1
+multiline_comment|/*===================================================================&n; *&n; *                    Linux MegaRAID device driver&n; *&n; * Copyright 1998 American Megatrends Inc.&n; *&n; *              This program is free software; you can redistribute it and/or&n; *              modify it under the terms of the GNU General Public License&n; *              as published by the Free Software Foundation; either version&n; *              2 of the License, or (at your option) any later version.&n; *&n; * Version : 0.96&n; * &n; * Description: Linux device driver for AMI MegaRAID controller&n; *&n; * Supported controllers: MegaRAID 418, 428, 438, 466, 762&n; * &n; * Maintainer: Jeff L Jones &lt;jeffreyj@ami.com&gt;&n; *&n; * History:&n; *&n; * Version 0.90:&n; *     Original source contributed by Dell; integrated it into the kernel and&n; *     cleaned up some things.  Added support for 438/466 controllers.&n; *&n; * Version 0.91:&n; *     Aligned mailbox area on 16-byte boundry.&n; *     Added schedule() at the end to properly clean up.&n; *     Made improvements for conformity to linux driver standards.&n; *&n; * Version 0.92:&n; *     Added support for 2.1 kernels.&n; *         Reads from pci_dev struct, so it&squot;s not dependent on pcibios.&n; *         Added some missing virt_to_bus() translations.&n; *     Added support for SMP.&n; *         Changed global cli()&squot;s to spinlocks for 2.1, and simulated&n; *          spinlocks for 2.0.&n; *     Removed setting of SA_INTERRUPT flag when requesting Irq.&n; *&n; * Version 0.92ac:&n; *      Small changes to the comments/formatting. Plus a couple of&n; *      added notes. Returned to the authors. No actual code changes&n; *      save printk levels.&n; *      8 Oct 98        Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *     Merged with 2.1.131 source tree.&n; *     12 Dec 98       K. Baranowski &lt;kgb@knm.org.pl&gt;                          &n; *&n; * Version 0.93:&n; *     Added support for vendor specific ioctl commands (0x80+xxh)&n; *     Changed some fields in MEGARAID struct to better values.&n; *     Added signature check for Rp controllers under 2.0 kernels&n; *     Changed busy-wait loop to be time-based&n; *     Fixed SMP race condition in isr&n; *     Added kfree (sgList) on release&n; *     Added #include linux/version.h to megaraid.h for hosts.h&n; *     Changed max_id to represent max logical drives instead of targets.&n; *&n; * Version 0.94:&n; *     Got rid of some excess locking/unlocking&n; *     Fixed slight memory corruption problem while memcpy&squot;ing into mailbox&n; *     Changed logical drives to be reported as luns rather than targets&n; *     Changed max_id to 16 since it is now max targets/chan again.&n; *     Improved ioctl interface for upcoming megamgr&n; *&n; * Version 0.95:&n; *     Fixed problem of queueing multiple commands to adapter;&n; *       still has some strange problems on some setups, so still&n; *       defaults to single.  To enable parallel commands change&n; *       #define MULTI_IO in megaraid.h&n; *     Changed kmalloc allocation to be done in beginning.&n; *     Got rid of C++ style comments&n; *&n; * Version 0.96:&n; *     762 fully supported.&n; *&n; * BUGS:&n; *     Some older 2.1 kernels (eg. 2.1.90) have a bug in pci.c that&n; *     fails to detect the controller as a pci device on the system.&n; *&n; *===================================================================*/
 DECL|macro|CRLFSTR
 mdefine_line|#define CRLFSTR &quot;&bslash;n&quot;
-DECL|macro|MULTIQ
-mdefine_line|#define MULTIQ 1
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
@@ -17,15 +14,12 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
-multiline_comment|/* originally ported by Dell Corporation; updated, released, and maintained by&n;   American Megatrends */
 id|MODULE_AUTHOR
-c_func
 (paren
 l_string|&quot;American Megatrends Inc.&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
-c_func
 (paren
 l_string|&quot;AMI MegaRAID driver&quot;
 )paren
@@ -49,6 +43,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;&t;/* for kmalloc() */
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#else
@@ -60,22 +55,22 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;megaraid.h&quot;
-multiline_comment|/*================================================================&n; *&n; *                          #Defines&n; *&n; *================================================================*/
+multiline_comment|/*================================================================&n; *&n; *                          #Defines&n; *&n; *================================================================&n; */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
 DECL|macro|ioremap
 mdefine_line|#define ioremap vremap
 DECL|macro|iounmap
 mdefine_line|#define iounmap vfree
 multiline_comment|/* simulate spin locks */
-DECL|member|lock
-DECL|typedef|spinlock_t
 r_typedef
 r_struct
 (brace
+DECL|member|lock
 r_volatile
 r_char
 id|lock
 suffix:semicolon
+DECL|typedef|spinlock_t
 )brace
 id|spinlock_t
 suffix:semicolon
@@ -97,13 +92,15 @@ mdefine_line|#define MAX_SERBUF 160
 DECL|macro|COM_BASE
 mdefine_line|#define COM_BASE 0x2f8
 DECL|macro|ENQUEUE
-mdefine_line|#define ENQUEUE(obj,type,list,next) &bslash;&n;{ type **node; long cpuflag; &bslash;&n;  spin_lock_irqsave(&amp;mega_lock,cpuflag);&bslash;&n;  for(node=&amp;(list); *node; node=(type **)&amp;(*node)-&gt;##next); &bslash;&n;  (*node) = obj; &bslash;&n;  (*node)-&gt;##next = NULL; &bslash;&n;  spin_unlock_irqrestore(&amp;mega_lock,cpuflag);&bslash;&n;};
+mdefine_line|#define ENQUEUE(obj,type,list,next) &bslash;&n;{ type **node; long cpuflag; &bslash;&n;  spin_lock_irqsave(&amp;mega_lock,cpuflag);&bslash;&n;  for(node=&amp;(list); *node; node=(type **)&amp;(*node)-&gt;##next); &bslash;&n;  (*node) = obj; &bslash;&n;  (*node)-&gt;##next = NULL; &bslash;&n;  spin_unlock_irqrestore(&amp;mega_lock,cpuflag);&bslash;&n;}
+multiline_comment|/* a non-locking version (if we already have the lock) */
+DECL|macro|ENQUEUE_NL
+mdefine_line|#define ENQUEUE_NL(obj,type,list,next) &bslash;&n;{ type **node; &bslash;&n;  for(node=&amp;(list); *node; node=(type **)&amp;(*node)-&gt;##next); &bslash;&n;  (*node) = obj; &bslash;&n;  (*node)-&gt;##next = NULL; &bslash;&n;}
 DECL|macro|DEQUEUE
 mdefine_line|#define DEQUEUE(obj,type,list,next) &bslash;&n;{ long cpuflag; &bslash;&n;  spin_lock_irqsave(&amp;mega_lock,cpuflag);&bslash;&n;  if ((obj=list) != NULL) {&bslash;&n;    list = (type *)(list)-&gt;##next; &bslash;&n;  } &bslash;&n;  spin_unlock_irqrestore(&amp;mega_lock,cpuflag);&bslash;&n;};
 DECL|function|RDINDOOR
 id|u_long
 id|RDINDOOR
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -112,7 +109,6 @@ id|megaCfg
 (brace
 r_return
 id|readl
-c_func
 (paren
 id|megaCfg-&gt;base
 op_plus
@@ -123,7 +119,6 @@ suffix:semicolon
 DECL|function|WRINDOOR
 r_void
 id|WRINDOOR
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -134,7 +129,6 @@ id|value
 )paren
 (brace
 id|writel
-c_func
 (paren
 id|value
 comma
@@ -147,7 +141,6 @@ suffix:semicolon
 DECL|function|RDOUTDOOR
 id|u_long
 id|RDOUTDOOR
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -156,7 +149,6 @@ id|megaCfg
 (brace
 r_return
 id|readl
-c_func
 (paren
 id|megaCfg-&gt;base
 op_plus
@@ -167,7 +159,6 @@ suffix:semicolon
 DECL|function|WROUTDOOR
 r_void
 id|WROUTDOOR
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -178,7 +169,6 @@ id|value
 )paren
 (brace
 id|writel
-c_func
 (paren
 id|value
 comma
@@ -188,11 +178,10 @@ l_int|0x2C
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; *&n; *                    Function prototypes&n; *&n; *================================================================*/
+multiline_comment|/*================================================================&n; *&n; *                    Function prototypes&n; *&n; *================================================================&n; */
 r_static
 r_int
 id|MegaIssueCmd
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -213,7 +202,6 @@ suffix:semicolon
 r_static
 r_int
 id|build_sglist
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -235,7 +223,6 @@ suffix:semicolon
 r_static
 r_void
 id|mega_runque
-c_func
 (paren
 r_void
 op_star
@@ -244,7 +231,6 @@ suffix:semicolon
 r_static
 r_void
 id|mega_rundoneq
-c_func
 (paren
 r_void
 )paren
@@ -252,7 +238,6 @@ suffix:semicolon
 r_static
 r_void
 id|mega_cmd_done
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -263,6 +248,31 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_static
+id|mega_scb
+op_star
+id|mega_ioctl
+(paren
+id|mega_host_config
+op_star
+id|megaCfg
+comma
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
+r_static
+r_inline
+r_void
+id|freeSgList
+c_func
+(paren
+id|mega_host_config
+op_star
+id|megaCfg
+)paren
+suffix:semicolon
 multiline_comment|/* set SERDEBUG to 1 to enable serial debugging */
 DECL|macro|SERDEBUG
 mdefine_line|#define SERDEBUG 0
@@ -270,7 +280,6 @@ macro_line|#if SERDEBUG
 r_static
 r_void
 id|ser_init
-c_func
 (paren
 r_void
 )paren
@@ -278,7 +287,6 @@ suffix:semicolon
 r_static
 r_void
 id|ser_puts
-c_func
 (paren
 r_char
 op_star
@@ -288,7 +296,6 @@ suffix:semicolon
 r_static
 r_void
 id|ser_putc
-c_func
 (paren
 r_char
 id|c
@@ -297,7 +304,6 @@ suffix:semicolon
 r_static
 r_int
 id|ser_printk
-c_func
 (paren
 r_const
 r_char
@@ -310,7 +316,7 @@ dot
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*================================================================&n; *&n; *                    Global variables&n; *&n; *================================================================*/
+multiline_comment|/*================================================================&n; *&n; *                    Global variables&n; *&n; *================================================================&n; */
 DECL|variable|numCtlrs
 r_static
 r_int
@@ -324,20 +330,12 @@ id|mega_host_config
 op_star
 id|megaCtlrs
 (braket
-l_int|4
+l_int|12
 )braket
 op_assign
 (brace
 l_int|0
 )brace
-suffix:semicolon
-multiline_comment|/* Change this to 0 if you want to see the raw drives */
-DECL|variable|use_raid
-r_static
-r_int
-id|use_raid
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/* Queue of pending/completed SCBs */
 DECL|variable|qPending
@@ -414,7 +412,6 @@ DECL|function|ser_init
 r_static
 r_void
 id|ser_init
-c_func
 (paren
 )paren
 (brace
@@ -424,7 +421,6 @@ op_assign
 id|COM_BASE
 suffix:semicolon
 id|outb
-c_func
 (paren
 l_int|0x80
 comma
@@ -434,7 +430,6 @@ l_int|3
 )paren
 suffix:semicolon
 id|outb
-c_func
 (paren
 l_int|0
 comma
@@ -445,7 +440,6 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* 9600 Baud, if 19200: outb(6,port) */
 id|outb
-c_func
 (paren
 l_int|12
 comma
@@ -453,7 +447,6 @@ id|port
 )paren
 suffix:semicolon
 id|outb
-c_func
 (paren
 l_int|3
 comma
@@ -463,7 +456,6 @@ l_int|3
 )paren
 suffix:semicolon
 id|outb
-c_func
 (paren
 l_int|0
 comma
@@ -477,7 +469,6 @@ DECL|function|ser_puts
 r_static
 r_void
 id|ser_puts
-c_func
 (paren
 r_char
 op_star
@@ -489,7 +480,6 @@ op_star
 id|ptr
 suffix:semicolon
 id|ser_init
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -507,7 +497,6 @@ op_increment
 id|ptr
 )paren
 id|ser_putc
-c_func
 (paren
 op_star
 id|ptr
@@ -518,7 +507,6 @@ DECL|function|ser_putc
 r_static
 r_void
 id|ser_putc
-c_func
 (paren
 r_char
 id|c
@@ -534,7 +522,6 @@ c_loop
 (paren
 (paren
 id|inb
-c_func
 (paren
 id|port
 op_plus
@@ -548,7 +535,6 @@ l_int|0
 )paren
 suffix:semicolon
 id|outb
-c_func
 (paren
 id|c
 comma
@@ -568,7 +554,6 @@ c_loop
 (paren
 (paren
 id|inb
-c_func
 (paren
 id|port
 op_plus
@@ -582,7 +567,6 @@ l_int|0
 )paren
 suffix:semicolon
 id|outb
-c_func
 (paren
 l_int|0x0d
 comma
@@ -595,7 +579,6 @@ DECL|function|ser_printk
 r_static
 r_int
 id|ser_printk
-c_func
 (paren
 r_const
 r_char
@@ -616,16 +599,7 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-id|mega_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|va_start
-c_func
 (paren
 id|args
 comma
@@ -635,7 +609,6 @@ suffix:semicolon
 id|i
 op_assign
 id|vsprintf
-c_func
 (paren
 id|strbuf
 comma
@@ -645,24 +618,13 @@ id|args
 )paren
 suffix:semicolon
 id|ser_puts
-c_func
 (paren
 id|strbuf
 )paren
 suffix:semicolon
 id|va_end
-c_func
 (paren
 id|args
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|mega_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -678,7 +640,6 @@ macro_line|#endif
 DECL|function|callDone
 r_void
 id|callDone
-c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -692,7 +653,6 @@ id|SCpnt-&gt;result
 )paren
 (brace
 id|TRACE
-c_func
 (paren
 (paren
 l_string|&quot;*** %.08lx %.02x &lt;%d.%d.%d&gt; = %x&bslash;n&quot;
@@ -715,22 +675,18 @@ id|SCpnt-&gt;result
 )paren
 suffix:semicolon
 )brace
-id|SCpnt
-op_member_access_from_pointer
-id|scsi_done
-c_func
+id|SCpnt-&gt;scsi_done
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------------&n; *&n; *                      Local functions&n; *&n; *-------------------------------------------------------------------------*/
-multiline_comment|/*================================================&n; * Initialize SCB structures&n; *================================================*/
+multiline_comment|/*================================================&n; * Initialize SCB structures&n; *================================================&n; */
 DECL|function|initSCB
 r_static
-r_void
+r_int
 id|initSCB
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -781,8 +737,54 @@ id|idx
 dot
 id|sgList
 op_assign
-l_int|NULL
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+id|mega_sglist
+)paren
+op_star
+id|MAX_SGLIST
+comma
+id|GFP_ATOMIC
+op_or
+id|GFP_DMA
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|megaCfg-&gt;scbList
+(braket
+id|idx
+)braket
+dot
+id|sgList
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Can&squot;t allocate sglist for id %d&bslash;n&quot;
+comma
+id|idx
+)paren
+suffix:semicolon
+id|freeSgList
+c_func
+(paren
+id|megaCfg
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|megaCfg-&gt;scbList
 (braket
 id|idx
@@ -793,14 +795,16 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
-multiline_comment|/*===========================&n; * Allocate a SCB structure&n; *===========================*/
+multiline_comment|/*===========================&n; * Allocate a SCB structure&n; *===========================&n; */
 DECL|function|allocateSCB
 r_static
 id|mega_scb
 op_star
 id|allocateSCB
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -818,7 +822,6 @@ r_int
 id|flags
 suffix:semicolon
 id|spin_lock_irqsave
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -860,18 +863,26 @@ id|megaCfg-&gt;scbList
 id|idx
 )braket
 dot
-id|flag
+id|idx
 op_assign
-l_int|0
+id|idx
+suffix:semicolon
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|mega_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|megaCfg-&gt;scbList
 (braket
 id|idx
 )braket
 dot
-id|idx
+id|flag
 op_assign
-id|idx
+l_int|0
 suffix:semicolon
 id|megaCfg-&gt;scbList
 (braket
@@ -891,51 +902,6 @@ id|next
 op_assign
 l_int|NULL
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|mega_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|megaCfg-&gt;scbList
-(braket
-id|idx
-)braket
-dot
-id|sgList
-op_eq
-l_int|NULL
-)paren
-(brace
-id|megaCfg-&gt;scbList
-(braket
-id|idx
-)braket
-dot
-id|sgList
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-id|mega_sglist
-)paren
-op_star
-id|MAX_SGLIST
-comma
-id|GFP_ATOMIC
-op_or
-id|GFP_DMA
-)paren
-suffix:semicolon
-)brace
 r_return
 op_amp
 id|megaCfg-&gt;scbList
@@ -946,7 +912,6 @@ suffix:semicolon
 )brace
 )brace
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -955,7 +920,6 @@ id|flags
 )paren
 suffix:semicolon
 id|printk
-c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;Megaraid: Could not allocate free SCB!!!&bslash;n&quot;
@@ -965,38 +929,20 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*=======================&n; * Free a SCB structure&n; *=======================*/
+multiline_comment|/*=======================&n; * Free a SCB structure&n; *=======================&n; */
 DECL|function|freeSCB
 r_static
 r_void
 id|freeSCB
-c_func
 (paren
 id|mega_scb
 op_star
 id|scb
 )paren
 (brace
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|mega_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|scb-&gt;flag
 op_assign
 l_int|0
-suffix:semicolon
-id|scb-&gt;idx
-op_assign
-op_minus
-l_int|1
 suffix:semicolon
 id|scb-&gt;next
 op_assign
@@ -1006,14 +952,10 @@ id|scb-&gt;SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|mega_lock
-comma
-id|flags
-)paren
+id|scb-&gt;idx
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Run through the list of completed requests */
@@ -1021,7 +963,6 @@ DECL|function|mega_rundoneq
 r_static
 r_void
 id|mega_rundoneq
-c_func
 (paren
 )paren
 (brace
@@ -1033,7 +974,7 @@ id|Scsi_Cmnd
 op_star
 id|SCpnt
 suffix:semicolon
-r_int
+r_char
 id|islogical
 suffix:semicolon
 r_while
@@ -1043,7 +984,6 @@ l_int|1
 )paren
 (brace
 id|DEQUEUE
-c_func
 (paren
 id|SCpnt
 comma
@@ -1071,19 +1011,17 @@ op_star
 )paren
 id|SCpnt-&gt;host-&gt;hostdata
 suffix:semicolon
-multiline_comment|/* Check if we&squot;re allowing access to RAID drives or physical&n;     *  if use_raid == 1 and this wasn&squot;t a disk on the max channel or&n;     *  if use_raid == 0 and this was a disk on the max channel&n;     *  then fail.&n;     */
 id|islogical
 op_assign
 (paren
 id|SCpnt-&gt;channel
 op_eq
 id|megaCfg-&gt;host-&gt;max_channel
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
+op_logical_and
+id|SCpnt-&gt;target
+op_eq
 l_int|0
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1114,11 +1052,8 @@ op_eq
 id|TYPE_DISK
 )paren
 op_logical_and
-(paren
+op_logical_neg
 id|islogical
-op_ne
-id|use_raid
-)paren
 )paren
 (brace
 id|SCpnt-&gt;result
@@ -1177,7 +1112,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* Callback */
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -1189,7 +1123,6 @@ DECL|function|mega_cmd_done
 r_static
 r_void
 id|mega_cmd_done
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -1208,7 +1141,6 @@ op_assign
 id|status
 suffix:semicolon
 id|ENQUEUE
-c_func
 (paren
 id|pScb-&gt;SCpnt
 comma
@@ -1220,7 +1152,6 @@ id|host_scribble
 )paren
 suffix:semicolon
 id|freeSCB
-c_func
 (paren
 id|pScb
 )paren
@@ -1231,7 +1162,6 @@ DECL|function|mega_runque
 r_static
 r_void
 id|mega_runque
-c_func
 (paren
 r_void
 op_star
@@ -1251,12 +1181,10 @@ id|flags
 suffix:semicolon
 multiline_comment|/* Take care of any completed requests */
 id|mega_rundoneq
-c_func
 (paren
 )paren
 suffix:semicolon
 id|DEQUEUE
-c_func
 (paren
 id|pScb
 comma
@@ -1273,6 +1201,23 @@ c_cond
 id|pScb
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pScb-&gt;SCpnt
+)paren
+(brace
+id|TRACE
+c_func
+(paren
+(paren
+l_string|&quot;NULL SCpnt for idx %d!&bslash;n&quot;
+comma
+id|pScb-&gt;idx
+)paren
+)paren
+suffix:semicolon
+)brace
 id|megaCfg
 op_assign
 (paren
@@ -1296,10 +1241,9 @@ id|PENDING
 )paren
 (brace
 id|TRACE
-c_func
 (paren
 (paren
-l_string|&quot;%.08lx %.02x &lt;%d.%d.%d&gt; intr%d busy%d isr%d pending%d&bslash;n&quot;
+l_string|&quot;%.08lx %.02x &lt;%d.%d.%d&gt; busy%d isr%d pending%d&bslash;n&quot;
 comma
 id|pScb-&gt;SCpnt-&gt;serial_number
 comma
@@ -1313,8 +1257,6 @@ comma
 id|pScb-&gt;SCpnt-&gt;target
 comma
 id|pScb-&gt;SCpnt-&gt;lun
-comma
-id|intr_count
 comma
 id|megaCfg-&gt;mbox-&gt;busy
 comma
@@ -1347,7 +1289,6 @@ r_if
 c_cond
 (paren
 id|MegaIssueCmd
-c_func
 (paren
 id|megaCfg
 comma
@@ -1361,7 +1302,6 @@ l_int|1
 (brace
 multiline_comment|/* We&squot;re BUSY... come back later */
 id|spin_lock_irqsave
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -1378,7 +1318,6 @@ op_assign
 id|pScb
 suffix:semicolon
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -1399,7 +1338,6 @@ id|PENDING
 (brace
 multiline_comment|/* If PENDING, irq will schedule task */
 id|queue_task
-c_func
 (paren
 op_amp
 id|runq
@@ -1418,7 +1356,6 @@ r_static
 id|mega_scb
 op_star
 id|mega_build_cmd
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -1444,10 +1381,46 @@ suffix:semicolon
 r_int
 id|seg
 suffix:semicolon
-multiline_comment|/* We don&squot;t support multi-luns */
+r_char
+id|islogical
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|SCpnt-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x80
+)paren
+multiline_comment|/* ioctl from megamgr */
+r_return
+id|mega_ioctl
+(paren
+id|megaCfg
+comma
+id|SCpnt
+)paren
+suffix:semicolon
+id|islogical
+op_assign
+(paren
+id|SCpnt-&gt;channel
+op_eq
+id|megaCfg-&gt;host-&gt;max_channel
+op_logical_and
+id|SCpnt-&gt;target
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|islogical
+op_logical_and
 id|SCpnt-&gt;lun
 op_ne
 l_int|0
@@ -1462,7 +1435,6 @@ l_int|16
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -1475,9 +1447,7 @@ multiline_comment|/*-----------------------------------------------------&n;   *
 r_if
 c_cond
 (paren
-id|SCpnt-&gt;channel
-op_eq
-id|megaCfg-&gt;host-&gt;max_channel
+id|islogical
 )paren
 (brace
 r_switch
@@ -1493,7 +1463,6 @@ r_case
 id|TEST_UNIT_READY
 suffix:colon
 id|memset
-c_func
 (paren
 id|SCpnt-&gt;request_buffer
 comma
@@ -1511,7 +1480,6 @@ l_int|16
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -1523,7 +1491,6 @@ r_case
 id|MODE_SENSE
 suffix:colon
 id|memset
-c_func
 (paren
 id|SCpnt-&gt;request_buffer
 comma
@@ -1544,7 +1511,6 @@ l_int|16
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -1566,7 +1532,6 @@ c_cond
 id|pScb
 op_assign
 id|allocateSCB
-c_func
 (paren
 id|megaCfg
 comma
@@ -1586,7 +1551,6 @@ l_int|16
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -1610,7 +1574,6 @@ op_amp
 id|pScb-&gt;mboxData
 suffix:semicolon
 id|memset
-c_func
 (paren
 id|mbox
 comma
@@ -1623,7 +1586,6 @@ id|pScb-&gt;mboxData
 )paren
 suffix:semicolon
 id|memset
-c_func
 (paren
 id|pthru
 comma
@@ -1641,7 +1603,11 @@ l_int|0
 suffix:semicolon
 id|pthru-&gt;ars
 op_assign
-l_int|0
+l_int|1
+suffix:semicolon
+id|pthru-&gt;reqsenselen
+op_assign
+l_int|14
 suffix:semicolon
 id|pthru-&gt;islogical
 op_assign
@@ -1649,7 +1615,7 @@ l_int|1
 suffix:semicolon
 id|pthru-&gt;logdrv
 op_assign
-id|SCpnt-&gt;target
+id|SCpnt-&gt;lun
 suffix:semicolon
 id|pthru-&gt;cdblen
 op_assign
@@ -1658,7 +1624,6 @@ suffix:semicolon
 id|pthru-&gt;dataxferaddr
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|SCpnt-&gt;request_buffer
 )paren
@@ -1668,7 +1633,6 @@ op_assign
 id|SCpnt-&gt;request_bufflen
 suffix:semicolon
 id|memcpy
-c_func
 (paren
 id|pthru-&gt;cdb
 comma
@@ -1685,7 +1649,6 @@ suffix:semicolon
 id|mbox-&gt;xferaddr
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|pthru
 )paren
@@ -1713,7 +1676,6 @@ c_cond
 id|pScb
 op_assign
 id|allocateSCB
-c_func
 (paren
 id|megaCfg
 comma
@@ -1733,7 +1695,6 @@ l_int|16
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -1752,7 +1713,6 @@ op_amp
 id|pScb-&gt;mboxData
 suffix:semicolon
 id|memset
-c_func
 (paren
 id|mbox
 comma
@@ -1766,7 +1726,7 @@ id|pScb-&gt;mboxData
 suffix:semicolon
 id|mbox-&gt;logdrv
 op_assign
-id|SCpnt-&gt;target
+id|SCpnt-&gt;lun
 suffix:semicolon
 id|mbox-&gt;cmd
 op_assign
@@ -1939,7 +1899,6 @@ multiline_comment|/* Calculate Scatter-Gather info */
 id|mbox-&gt;numsgelements
 op_assign
 id|build_sglist
-c_func
 (paren
 id|megaCfg
 comma
@@ -1974,7 +1933,6 @@ l_int|16
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -1995,7 +1953,6 @@ c_cond
 id|pScb
 op_assign
 id|allocateSCB
-c_func
 (paren
 id|megaCfg
 comma
@@ -2015,7 +1972,6 @@ l_int|16
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -2038,7 +1994,6 @@ op_star
 id|pScb-&gt;mboxData
 suffix:semicolon
 id|memset
-c_func
 (paren
 id|mbox
 comma
@@ -2051,7 +2006,6 @@ id|pScb-&gt;mboxData
 )paren
 suffix:semicolon
 id|memset
-c_func
 (paren
 id|pthru
 comma
@@ -2069,7 +2023,11 @@ l_int|0
 suffix:semicolon
 id|pthru-&gt;ars
 op_assign
-l_int|0
+l_int|1
+suffix:semicolon
+id|pthru-&gt;reqsenselen
+op_assign
+l_int|14
 suffix:semicolon
 id|pthru-&gt;islogical
 op_assign
@@ -2088,7 +2046,6 @@ op_assign
 id|SCpnt-&gt;cmd_len
 suffix:semicolon
 id|memcpy
-c_func
 (paren
 id|pthru-&gt;cdb
 comma
@@ -2100,7 +2057,6 @@ suffix:semicolon
 id|pthru-&gt;numsgelements
 op_assign
 id|build_sglist
-c_func
 (paren
 id|megaCfg
 comma
@@ -2129,7 +2085,6 @@ suffix:semicolon
 id|mbox-&gt;xferaddr
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|pthru
 )paren
@@ -2142,12 +2097,473 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*--------------------------------------------------------------------&n; * build RAID commands for controller, passed down through ioctl()&n; *--------------------------------------------------------------------*/
+DECL|function|mega_ioctl
+r_static
+id|mega_scb
+op_star
+id|mega_ioctl
+(paren
+id|mega_host_config
+op_star
+id|megaCfg
+comma
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+(brace
+id|mega_scb
+op_star
+id|pScb
+suffix:semicolon
+id|mega_ioctl_mbox
+op_star
+id|mbox
+suffix:semicolon
+id|mega_mailbox
+op_star
+id|mailbox
+suffix:semicolon
+id|mega_passthru
+op_star
+id|pthru
+suffix:semicolon
+r_int
+id|seg
+suffix:semicolon
+r_int
+r_char
+op_star
+id|data
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|SCpnt-&gt;request_buffer
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|pScb
+op_assign
+id|allocateSCB
+(paren
+id|megaCfg
+comma
+id|SCpnt
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|SCpnt-&gt;result
+op_assign
+(paren
+id|DID_ERROR
+op_lshift
+l_int|16
+)paren
+suffix:semicolon
+id|callDone
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;nBUF: &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|18
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; %x&quot;
+comma
+id|data
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;......&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|mbox
+op_assign
+(paren
+id|mega_ioctl_mbox
+op_star
+)paren
+op_amp
+id|pScb-&gt;mboxData
+suffix:semicolon
+id|mailbox
+op_assign
+(paren
+id|mega_mailbox
+op_star
+)paren
+op_amp
+id|pScb-&gt;mboxData
+suffix:semicolon
+id|memset
+(paren
+id|mailbox
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|pScb-&gt;mboxData
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|data
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0x03
+)paren
+(brace
+multiline_comment|/* passthrough command */
+r_int
+r_char
+id|cdblen
+op_assign
+id|data
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|pthru
+op_assign
+op_amp
+id|pScb-&gt;pthru
+suffix:semicolon
+id|memset
+(paren
+id|pthru
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|mega_passthru
+)paren
+)paren
+suffix:semicolon
+id|pthru-&gt;islogical
+op_assign
+(paren
+id|data
+(braket
+id|cdblen
+op_plus
+l_int|3
+)braket
+op_amp
+l_int|0x80
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+id|pthru-&gt;timeout
+op_assign
+id|data
+(braket
+id|cdblen
+op_plus
+l_int|3
+)braket
+op_amp
+l_int|0x07
+suffix:semicolon
+id|pthru-&gt;reqsenselen
+op_assign
+l_int|14
+suffix:semicolon
+id|pthru-&gt;ars
+op_assign
+(paren
+id|data
+(braket
+id|cdblen
+op_plus
+l_int|3
+)braket
+op_amp
+l_int|0x08
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+id|pthru-&gt;logdrv
+op_assign
+id|data
+(braket
+id|cdblen
+op_plus
+l_int|4
+)braket
+suffix:semicolon
+id|pthru-&gt;channel
+op_assign
+id|data
+(braket
+id|cdblen
+op_plus
+l_int|5
+)braket
+suffix:semicolon
+id|pthru-&gt;target
+op_assign
+id|data
+(braket
+id|cdblen
+op_plus
+l_int|6
+)braket
+suffix:semicolon
+id|pthru-&gt;cdblen
+op_assign
+id|cdblen
+suffix:semicolon
+id|memcpy
+(paren
+id|pthru-&gt;cdb
+comma
+op_amp
+id|data
+(braket
+l_int|3
+)braket
+comma
+id|cdblen
+)paren
+suffix:semicolon
+id|mailbox-&gt;cmd
+op_assign
+id|MEGA_MBOXCMD_PASSTHRU
+suffix:semicolon
+id|mailbox-&gt;xferaddr
+op_assign
+id|virt_to_bus
+(paren
+id|pthru
+)paren
+suffix:semicolon
+id|pthru-&gt;numsgelements
+op_assign
+id|build_sglist
+(paren
+id|megaCfg
+comma
+id|pScb
+comma
+(paren
+id|u_long
+op_star
+)paren
+op_amp
+id|pthru-&gt;dataxferaddr
+comma
+(paren
+id|u_long
+op_star
+)paren
+op_amp
+id|pthru-&gt;dataxferlen
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+(paren
+id|SCpnt-&gt;request_bufflen
+op_minus
+id|cdblen
+op_minus
+l_int|7
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|data
+(braket
+id|i
+)braket
+op_assign
+id|data
+(braket
+id|i
+op_plus
+id|cdblen
+op_plus
+l_int|7
+)braket
+suffix:semicolon
+)brace
+r_return
+id|pScb
+suffix:semicolon
+)brace
+multiline_comment|/* else normal (nonpassthru) command */
+id|mbox-&gt;cmd
+op_assign
+id|data
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|mbox-&gt;channel
+op_assign
+id|data
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|mbox-&gt;param
+op_assign
+id|data
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|mbox-&gt;pad
+(braket
+l_int|0
+)braket
+op_assign
+id|data
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|mbox-&gt;logdrv
+op_assign
+id|data
+(braket
+l_int|4
+)braket
+suffix:semicolon
+id|mbox-&gt;numsgelements
+op_assign
+id|build_sglist
+(paren
+id|megaCfg
+comma
+id|pScb
+comma
+(paren
+id|u_long
+op_star
+)paren
+op_amp
+id|mbox-&gt;xferaddr
+comma
+(paren
+id|u_long
+op_star
+)paren
+op_amp
+id|seg
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+(paren
+id|SCpnt-&gt;request_bufflen
+op_minus
+l_int|6
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|data
+(braket
+id|i
+)braket
+op_assign
+id|data
+(braket
+id|i
+op_plus
+l_int|6
+)braket
+suffix:semicolon
+)brace
+r_return
+(paren
+id|pScb
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*--------------------------------------------------------------------&n; * Interrupt service routine&n; *--------------------------------------------------------------------*/
 DECL|function|megaraid_isr
 r_static
 r_void
 id|megaraid_isr
-c_func
 (paren
 r_int
 id|irq
@@ -2216,8 +2632,17 @@ op_eq
 id|irq
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 id|spin_lock_irqsave
-c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
+id|spin_lock_irqsave
 (paren
 op_amp
 id|mega_lock
@@ -2234,7 +2659,6 @@ id|IN_ISR
 )paren
 (brace
 id|TRACE
-c_func
 (paren
 (paren
 l_string|&quot;ISR called reentrantly!!&bslash;n&quot;
@@ -2258,7 +2682,6 @@ id|BOARD_QUARTZ
 id|dword
 op_assign
 id|RDOUTDOOR
-c_func
 (paren
 id|megaCfg
 )paren
@@ -2278,7 +2701,6 @@ op_complement
 id|IN_ISR
 suffix:semicolon
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -2286,11 +2708,20 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
 id|WROUTDOOR
-c_func
 (paren
 id|megaCfg
 comma
@@ -2303,7 +2734,6 @@ r_else
 id|byte
 op_assign
 id|READ_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -2329,7 +2759,6 @@ op_complement
 id|IN_ISR
 suffix:semicolon
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -2337,11 +2766,20 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
 id|WRITE_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -2368,7 +2806,6 @@ l_int|1
 )paren
 (brace
 id|TRACE
-c_func
 (paren
 (paren
 l_string|&quot;ISR: Received %d status&bslash;n&quot;
@@ -2377,7 +2814,6 @@ id|qCnt
 )paren
 )paren
 id|printk
-c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;Got numstatus = %d&bslash;n&quot;
@@ -2426,39 +2862,25 @@ op_minus
 l_int|1
 )braket
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|mega_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/* locks within cmd_done */
-id|mega_cmd_done
-c_func
-(paren
-id|megaCfg
-comma
-op_amp
-id|megaCfg-&gt;scbList
-(braket
-id|sIdx
-op_minus
-l_int|1
-)braket
-comma
+multiline_comment|/* FVF: let&squot;s try to avoid un/locking for no good reason */
+id|pScb-&gt;SCpnt-&gt;result
+op_assign
 id|qStatus
+suffix:semicolon
+id|ENQUEUE_NL
+(paren
+id|pScb-&gt;SCpnt
+comma
+id|Scsi_Cmnd
+comma
+id|qCompleted
+comma
+id|host_scribble
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
+id|freeSCB
 (paren
-op_amp
-id|mega_lock
-comma
-id|flags
+id|pScb
 )paren
 suffix:semicolon
 )brace
@@ -2472,12 +2894,10 @@ id|BOARD_QUARTZ
 )paren
 (brace
 id|WRINDOOR
-c_func
 (paren
 id|megaCfg
 comma
 id|virt_to_bus
-c_func
 (paren
 id|megaCfg-&gt;mbox
 )paren
@@ -2489,7 +2909,6 @@ r_while
 c_loop
 (paren
 id|RDINDOOR
-c_func
 (paren
 id|megaCfg
 )paren
@@ -2501,7 +2920,6 @@ suffix:semicolon
 r_else
 (brace
 id|CLEAR_INTR
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
@@ -2518,7 +2936,6 @@ op_complement
 id|PENDING
 suffix:semicolon
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -2526,23 +2943,13 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|mega_runque
-c_func
 (paren
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|io_request_lock
@@ -2550,10 +2957,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#if 0
 multiline_comment|/* Queue as a delayed ISR routine */
 id|queue_task_irq_off
-c_func
 (paren
 op_amp
 id|runq
@@ -2563,18 +2970,8 @@ id|tq_immediate
 )paren
 suffix:semicolon
 id|mark_bh
-c_func
 (paren
 id|IMMEDIATE_BH
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|mega_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2587,7 +2984,6 @@ DECL|function|busyWaitMbox
 r_static
 r_int
 id|busyWaitMbox
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -2616,12 +3012,17 @@ l_int|0
 suffix:semicolon
 id|counter
 OL
-l_int|0xFFFFFF
+l_int|10000
 suffix:semicolon
 id|counter
 op_increment
 )paren
 (brace
+id|udelay
+(paren
+l_int|100
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2636,13 +3037,13 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/* give up after 1 second */
 )brace
-multiline_comment|/*=====================================================&n; * Post a command to the card&n; *&n; * Arguments:&n; *   mega_host_config *megaCfg - Controller structure&n; *   u_char *mboxData - Mailbox area, 16 bytes&n; *   mega_scb *pScb   - SCB posting (or NULL if N/A)&n; *   int intr         - if 1, interrupt, 0 is blocking&n; *=====================================================*/
+multiline_comment|/*=====================================================&n; * Post a command to the card&n; *&n; * Arguments:&n; *   mega_host_config *megaCfg - Controller structure&n; *   u_char *mboxData - Mailbox area, 16 bytes&n; *   mega_scb *pScb   - SCB posting (or NULL if N/A)&n; *   int intr         - if 1, interrupt, 0 is blocking&n; *=====================================================&n; */
 DECL|function|MegaIssueCmd
 r_static
 r_int
 id|MegaIssueCmd
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -2704,7 +3105,16 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Set busy */
-multiline_comment|/* one bad report of problem when issuing a command while pending.&n;   * Wasn&squot;t able to duplicate, but it doesn&squot;t really affect performance&n;   * anyway, so don&squot;t allow command while PENDING&n;   */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|mega_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#if !MULTI_IO
 r_if
 c_cond
 (paren
@@ -2713,17 +3123,26 @@ op_amp
 id|PENDING
 )paren
 (brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|mega_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Wait until mailbox is free */
 r_if
 c_cond
 (paren
 id|busyWaitMbox
-c_func
 (paren
 id|megaCfg
 )paren
@@ -2736,7 +3155,6 @@ id|pScb
 )paren
 (brace
 id|TRACE
-c_func
 (paren
 (paren
 l_string|&quot;Mailbox busy %.08lx &lt;%d.%d.%d&gt;&bslash;n&quot;
@@ -2752,44 +3170,17 @@ id|pScb-&gt;SCpnt-&gt;lun
 )paren
 suffix:semicolon
 )brace
-r_return
-op_minus
-l_int|1
+r_else
+(brace
+id|TRACE
+c_func
+(paren
+(paren
+l_string|&quot;pScb NULL in MegaIssueCmd!&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Copy mailbox data into host structure */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|mega_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|mbox
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|mega_mailbox
-)paren
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|mbox
-comma
-id|mboxData
-comma
-l_int|16
-)paren
-suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -2797,6 +3188,30 @@ op_amp
 id|mega_lock
 comma
 id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Copy mailbox data into host structure */
+id|memset
+(paren
+id|mbox
+comma
+l_int|0
+comma
+l_int|16
+)paren
+suffix:semicolon
+id|memcpy
+(paren
+id|mbox
+comma
+id|mboxData
+comma
+l_int|16
 )paren
 suffix:semicolon
 multiline_comment|/* Kick IO */
@@ -2828,12 +3243,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|WRINDOOR
-c_func
 (paren
 id|megaCfg
 comma
 id|virt_to_bus
-c_func
 (paren
 id|megaCfg-&gt;mbox
 )paren
@@ -2845,18 +3258,25 @@ suffix:semicolon
 r_else
 (brace
 id|ENABLE_INTR
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 id|ISSUE_COMMAND
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|mega_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -2878,12 +3298,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|WRINDOOR
-c_func
 (paren
 id|megaCfg
 comma
 id|virt_to_bus
-c_func
 (paren
 id|megaCfg-&gt;mbox
 )paren
@@ -2898,7 +3316,6 @@ c_loop
 id|cmdDone
 op_assign
 id|RDOUTDOOR
-c_func
 (paren
 id|megaCfg
 )paren
@@ -2906,15 +3323,21 @@ id|megaCfg
 op_ne
 l_int|0x10001234
 )paren
-(brace
 suffix:semicolon
-)brace
 id|WROUTDOOR
-c_func
 (paren
 id|megaCfg
 comma
 id|cmdDone
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|mega_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -2924,7 +3347,6 @@ id|pScb
 )paren
 (brace
 id|mega_cmd_done
-c_func
 (paren
 id|megaCfg
 comma
@@ -2934,18 +3356,15 @@ id|mbox-&gt;status
 )paren
 suffix:semicolon
 id|mega_rundoneq
-c_func
 (paren
 )paren
 suffix:semicolon
 )brace
 id|WRINDOOR
-c_func
 (paren
 id|megaCfg
 comma
 id|virt_to_bus
-c_func
 (paren
 id|megaCfg-&gt;mbox
 )paren
@@ -2957,16 +3376,13 @@ r_while
 c_loop
 (paren
 id|RDINDOOR
-c_func
 (paren
 id|megaCfg
 )paren
 op_amp
 l_int|0x2
 )paren
-(brace
 suffix:semicolon
-)brace
 id|megaCfg-&gt;flag
 op_and_assign
 op_complement
@@ -2976,13 +3392,11 @@ suffix:semicolon
 r_else
 (brace
 id|DISABLE_INTR
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 id|ISSUE_COMMAND
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
@@ -2996,7 +3410,6 @@ op_logical_neg
 id|byte
 op_assign
 id|READ_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -3007,11 +3420,8 @@ op_amp
 id|INTR_VALID
 )paren
 )paren
-(brace
 suffix:semicolon
-)brace
 id|WRITE_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -3021,15 +3431,27 @@ id|byte
 )paren
 suffix:semicolon
 id|ENABLE_INTR
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 id|CLEAR_INTR
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
+)paren
+suffix:semicolon
+id|megaCfg-&gt;flag
+op_and_assign
+op_complement
+id|PENDING
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|mega_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -3039,7 +3461,6 @@ id|pScb
 )paren
 (brace
 id|mega_cmd_done
-c_func
 (paren
 id|megaCfg
 comma
@@ -3049,16 +3470,20 @@ id|mbox-&gt;status
 )paren
 suffix:semicolon
 id|mega_rundoneq
-c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-id|megaCfg-&gt;flag
-op_and_assign
-op_complement
-id|PENDING
+r_else
+(brace
+id|TRACE
+(paren
+(paren
+l_string|&quot;Error: NULL pScb!&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
+)brace
 )brace
 )brace
 r_return
@@ -3070,7 +3495,6 @@ DECL|function|build_sglist
 r_static
 r_int
 id|build_sglist
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -3110,7 +3534,6 @@ op_star
 id|buffer
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|scb-&gt;SCpnt-&gt;request_buffer
 )paren
@@ -3134,7 +3557,7 @@ r_struct
 id|scatterlist
 op_star
 )paren
-id|scb-&gt;SCpnt-&gt;buffer
+id|scb-&gt;SCpnt-&gt;request_buffer
 suffix:semicolon
 r_if
 c_cond
@@ -3148,7 +3571,6 @@ op_star
 id|buffer
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|sgList
 (braket
@@ -3199,7 +3621,6 @@ dot
 id|address
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|sgList
 (braket
@@ -3232,7 +3653,6 @@ op_star
 id|buffer
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|scb-&gt;sgList
 )paren
@@ -3247,12 +3667,11 @@ r_return
 id|scb-&gt;SCpnt-&gt;use_sg
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------&n; * Initializes the address of the controller&squot;s mailbox register&n; *  The mailbox register is used to issue commands to the card.&n; *  Format of the mailbox area:&n; *   00 01 command&n; *   01 01 command id&n; *   02 02 # of sectors&n; *   04 04 logical bus address&n; *   08 04 physical buffer address&n; *   0C 01 logical drive #&n; *   0D 01 length of scatter/gather list&n; *   0E 01 reserved&n; *   0F 01 mailbox busy&n; *   10 01 numstatus byte&n; *   11 01 status byte&n; *--------------------------------------------------------------------*/
+multiline_comment|/*--------------------------------------------------------------------&n; * Initializes the adress of the controller&squot;s mailbox register&n; *  The mailbox register is used to issue commands to the card.&n; *  Format of the mailbox area:&n; *   00 01 command&n; *   01 01 command id&n; *   02 02 # of sectors&n; *   04 04 logical bus address&n; *   08 04 physical buffer address&n; *   0C 01 logical drive #&n; *   0D 01 length of scatter/gather list&n; *   0E 01 reserved&n; *   0F 01 mailbox busy&n; *   10 01 numstatus byte&n; *   11 01 status byte&n; *--------------------------------------------------------------------*/
 DECL|function|mega_register_mailbox
 r_static
 r_int
 id|mega_register_mailbox
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -3312,7 +3731,6 @@ id|BOARD_QUARTZ
 r_else
 (brace
 id|WRITE_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -3324,7 +3742,6 @@ l_int|0xFF
 )paren
 suffix:semicolon
 id|WRITE_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -3340,7 +3757,6 @@ l_int|0xFF
 )paren
 suffix:semicolon
 id|WRITE_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -3356,7 +3772,6 @@ l_int|0xFF
 )paren
 suffix:semicolon
 id|WRITE_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -3372,7 +3787,6 @@ l_int|0xFF
 )paren
 suffix:semicolon
 id|WRITE_PORT
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -3382,13 +3796,11 @@ id|ENABLE_MBOX_BYTE
 )paren
 suffix:semicolon
 id|CLEAR_INTR
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
 suffix:semicolon
 id|ENABLE_INTR
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 )paren
@@ -3403,7 +3815,6 @@ DECL|function|mega_i_query_adapter
 r_static
 r_int
 id|mega_i_query_adapter
-c_func
 (paren
 id|mega_host_config
 op_star
@@ -3428,7 +3839,6 @@ id|u_long
 id|paddr
 suffix:semicolon
 id|spin_lock_init
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -3438,7 +3848,6 @@ multiline_comment|/* Initialize adapter inquiry */
 id|paddr
 op_assign
 id|virt_to_bus
-c_func
 (paren
 id|megaCfg-&gt;mega_buffer
 )paren
@@ -3452,7 +3861,6 @@ op_star
 id|mboxData
 suffix:semicolon
 id|memset
-c_func
 (paren
 (paren
 r_void
@@ -3469,7 +3877,6 @@ id|megaCfg-&gt;mega_buffer
 )paren
 suffix:semicolon
 id|memset
-c_func
 (paren
 id|mbox
 comma
@@ -3489,7 +3896,6 @@ id|paddr
 suffix:semicolon
 multiline_comment|/* Issue a blocking command to the card */
 id|MegaIssueCmd
-c_func
 (paren
 id|megaCfg
 comma
@@ -3513,20 +3919,20 @@ id|megaCfg-&gt;host-&gt;max_channel
 op_assign
 id|adapterInfo-&gt;AdpInfo.ChanPresent
 suffix:semicolon
+multiline_comment|/*  megaCfg-&gt;host-&gt;max_id = adapterInfo-&gt;AdpInfo.MaxTargPerChan; */
 id|megaCfg-&gt;host-&gt;max_id
 op_assign
-id|adapterInfo-&gt;AdpInfo.MaxTargPerChan
+l_int|16
 suffix:semicolon
+multiline_comment|/* max targets/chan */
 id|megaCfg-&gt;numldrv
 op_assign
 id|adapterInfo-&gt;LogdrvInfo.NumLDrv
 suffix:semicolon
 macro_line|#if 0
 id|printk
-c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;---- Logical drive info ----&bslash;n&quot;
+l_string|&quot;KERN_DEBUG ---- Logical drive info ----&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -3545,9 +3951,7 @@ op_increment
 )paren
 (brace
 id|printk
-c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;%d: size: %ld prop: %x state: %x&bslash;n&quot;
 comma
 id|i
@@ -3570,7 +3974,6 @@ id|i
 suffix:semicolon
 )brace
 id|printk
-c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;---- Physical drive info ----&bslash;n&quot;
@@ -3604,13 +4007,11 @@ l_int|8
 )paren
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
-c_func
 (paren
 l_string|&quot;%d: %x   &quot;
 comma
@@ -3624,7 +4025,6 @@ id|i
 suffix:semicolon
 )brace
 id|printk
-c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -3634,9 +4034,8 @@ id|megaCfg-&gt;max_cmds
 op_assign
 id|adapterInfo-&gt;AdpInfo.MaxConcCmds
 suffix:semicolon
-macro_line|#ifdef HP            /* use HP firmware and bios version encoding */
+macro_line|#ifdef HP&t;&t;&t;/* use HP firmware and bios version encoding */
 id|sprintf
-c_func
 (paren
 id|megaCfg-&gt;fwVer
 comma
@@ -3677,7 +4076,6 @@ l_int|0x0f
 )paren
 suffix:semicolon
 id|sprintf
-c_func
 (paren
 id|megaCfg-&gt;biosVer
 comma
@@ -3719,7 +4117,6 @@ l_int|0x0f
 suffix:semicolon
 macro_line|#else
 id|memcpy
-c_func
 (paren
 id|megaCfg-&gt;fwVer
 comma
@@ -3736,7 +4133,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|memcpy
-c_func
 (paren
 id|megaCfg-&gt;biosVer
 comma
@@ -3754,7 +4150,6 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 id|printk
-c_func
 (paren
 id|KERN_INFO
 l_string|&quot;megaraid: [%s:%s] detected %d logical drives&quot;
@@ -3776,7 +4171,6 @@ multiline_comment|/*----------------------------------------------------------&n
 DECL|function|megaraid_proc_info
 r_int
 id|megaraid_proc_info
-c_func
 (paren
 r_char
 op_star
@@ -3812,7 +4206,6 @@ suffix:semicolon
 DECL|function|findCard
 r_int
 id|findCard
-c_func
 (paren
 id|Scsi_Host_Template
 op_star
@@ -3852,13 +4245,17 @@ id|pciIdx
 op_assign
 l_int|0
 suffix:semicolon
+id|u_short
+id|numFound
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 r_while
 c_loop
 (paren
 op_logical_neg
 id|pcibios_find_device
-c_func
 (paren
 id|pciVendor
 comma
@@ -3874,6 +4271,51 @@ id|pciDevFun
 )paren
 )paren
 (brace
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|flag
+op_amp
+id|BOARD_QUARTZ
+)paren
+(brace
+id|u_int
+id|magic
+suffix:semicolon
+id|pcibios_read_config_dword
+(paren
+id|pciBus
+comma
+id|pciDevFun
+comma
+id|PCI_CONF_AMISIG
+comma
+op_amp
+id|magic
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|magic
+op_ne
+id|AMI_SIGNATURE
+)paren
+(brace
+id|pciIdx
+op_increment
+suffix:semicolon
+r_continue
+suffix:semicolon
+multiline_comment|/* not an AMI board */
+)brace
+)brace
+macro_line|#endif
+macro_line|#if 0
+)brace
+multiline_comment|/* keep auto-indenters happy */
+macro_line|#endif
 macro_line|#else
 r_struct
 id|pci_dev
@@ -3889,7 +4331,6 @@ c_loop
 id|pdev
 op_assign
 id|pci_find_device
-c_func
 (paren
 id|pciVendor
 comma
@@ -3910,7 +4351,6 @@ id|pdev-&gt;devfn
 suffix:semicolon
 macro_line|#endif
 id|printk
-c_func
 (paren
 id|KERN_INFO
 l_string|&quot;megaraid: found 0x%4.04x:0x%4.04x:idx %d:bus %d:slot %d:fun %d&bslash;n&quot;
@@ -3924,13 +4364,11 @@ comma
 id|pciBus
 comma
 id|PCI_SLOT
-c_func
 (paren
 id|pciDevFun
 )paren
 comma
 id|PCI_FUNC
-c_func
 (paren
 id|pciDevFun
 )paren
@@ -3939,7 +4377,6 @@ suffix:semicolon
 multiline_comment|/* Read the base port and IRQ from PCI */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 id|pcibios_read_config_dword
-c_func
 (paren
 id|pciBus
 comma
@@ -3956,7 +4393,6 @@ id|megaBase
 )paren
 suffix:semicolon
 id|pcibios_read_config_byte
-c_func
 (paren
 id|pciBus
 comma
@@ -4002,7 +4438,6 @@ op_assign
 r_int
 )paren
 id|ioremap
-c_func
 (paren
 id|megaBase
 comma
@@ -4025,7 +4460,6 @@ multiline_comment|/* Initialize SCSI Host structure */
 id|host
 op_assign
 id|scsi_register
-c_func
 (paren
 id|pHostTmpl
 comma
@@ -4044,7 +4478,6 @@ op_star
 id|host-&gt;hostdata
 suffix:semicolon
 id|memset
-c_func
 (paren
 id|megaCfg
 comma
@@ -4057,7 +4490,6 @@ id|mega_host_config
 )paren
 suffix:semicolon
 id|printk
-c_func
 (paren
 id|KERN_INFO
 l_string|&quot; scsi%d: Found a MegaRAID controller at 0x%x, IRQ: %d&quot;
@@ -4129,7 +4561,6 @@ r_if
 c_cond
 (paren
 id|check_region
-c_func
 (paren
 id|megaBase
 comma
@@ -4138,7 +4569,6 @@ l_int|16
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;megaraid: Couldn&squot;t register I/O range!&quot;
@@ -4146,7 +4576,6 @@ id|CRLFSTR
 )paren
 suffix:semicolon
 id|scsi_unregister
-c_func
 (paren
 id|host
 )paren
@@ -4155,7 +4584,6 @@ r_continue
 suffix:semicolon
 )brace
 id|request_region
-c_func
 (paren
 id|megaBase
 comma
@@ -4170,7 +4598,6 @@ r_if
 c_cond
 (paren
 id|request_irq
-c_func
 (paren
 id|megaIrq
 comma
@@ -4185,7 +4612,6 @@ id|megaCfg
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;megaraid: Couldn&squot;t register IRQ %d!&quot;
@@ -4195,7 +4621,6 @@ id|megaIrq
 )paren
 suffix:semicolon
 id|scsi_unregister
-c_func
 (paren
 id|host
 )paren
@@ -4204,12 +4629,10 @@ r_continue
 suffix:semicolon
 )brace
 id|mega_register_mailbox
-c_func
 (paren
 id|megaCfg
 comma
 id|virt_to_bus
-c_func
 (paren
 (paren
 r_void
@@ -4221,28 +4644,40 @@ id|megaCfg-&gt;mailbox
 )paren
 suffix:semicolon
 id|mega_i_query_adapter
-c_func
 (paren
 id|megaCfg
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize SCBs */
+r_if
+c_cond
+(paren
 id|initSCB
-c_func
 (paren
 id|megaCfg
 )paren
+)paren
+(brace
+id|scsi_unregister
+(paren
+id|host
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|numFound
+op_increment
 suffix:semicolon
 )brace
 r_return
-id|pciIdx
+id|numFound
 suffix:semicolon
 )brace
 multiline_comment|/*---------------------------------------------------------&n; * Detects if a megaraid controller exists in this system&n; *---------------------------------------------------------*/
 DECL|function|megaraid_detect
 r_int
 id|megaraid_detect
-c_func
 (paren
 id|Scsi_Host_Template
 op_star
@@ -4265,13 +4700,11 @@ c_cond
 (paren
 op_logical_neg
 id|pcibios_present
-c_func
 (paren
 )paren
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;megaraid: PCI bios not present.&quot;
@@ -4286,7 +4719,6 @@ macro_line|#endif
 id|count
 op_add_assign
 id|findCard
-c_func
 (paren
 id|pHostTmpl
 comma
@@ -4300,7 +4732,6 @@ suffix:semicolon
 id|count
 op_add_assign
 id|findCard
-c_func
 (paren
 id|pHostTmpl
 comma
@@ -4314,7 +4745,6 @@ suffix:semicolon
 id|count
 op_add_assign
 id|findCard
-c_func
 (paren
 id|pHostTmpl
 comma
@@ -4333,7 +4763,6 @@ multiline_comment|/*------------------------------------------------------------
 DECL|function|megaraid_release
 r_int
 id|megaraid_release
-c_func
 (paren
 r_struct
 id|Scsi_Host
@@ -4373,7 +4802,6 @@ id|mboxData
 suffix:semicolon
 multiline_comment|/* Flush cache to disk */
 id|memset
-c_func
 (paren
 id|mbox
 comma
@@ -4391,7 +4819,6 @@ l_int|0xA
 suffix:semicolon
 multiline_comment|/* Issue a blocking (interrupts disabled) command to the card */
 id|MegaIssueCmd
-c_func
 (paren
 id|megaCfg
 comma
@@ -4403,7 +4830,6 @@ l_int|0
 )paren
 suffix:semicolon
 id|schedule
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -4417,7 +4843,6 @@ id|BOARD_QUARTZ
 )paren
 (brace
 id|iounmap
-c_func
 (paren
 (paren
 r_void
@@ -4430,7 +4855,6 @@ suffix:semicolon
 r_else
 (brace
 id|release_region
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;io_port
 comma
@@ -4439,16 +4863,20 @@ l_int|16
 suffix:semicolon
 )brace
 id|free_irq
-c_func
 (paren
 id|megaCfg-&gt;host-&gt;irq
 comma
 id|megaCfg
 )paren
 suffix:semicolon
-multiline_comment|/* Must be freed first, otherwise&n;                                            extra interrupt is generated */
-id|scsi_unregister
+multiline_comment|/* Must be freed first, otherwise&n;&n;&t;&t;&t;&t;&t;&t;   extra interrupt is generated */
+id|freeSgList
 c_func
+(paren
+id|megaCfg
+)paren
+suffix:semicolon
+id|scsi_unregister
 (paren
 id|pSHost
 )paren
@@ -4457,13 +4885,65 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|freeSgList
+r_static
+r_inline
+r_void
+id|freeSgList
+c_func
+(paren
+id|mega_host_config
+op_star
+id|megaCfg
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|megaCfg-&gt;max_cmds
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|megaCfg-&gt;scbList
+(braket
+id|i
+)braket
+dot
+id|sgList
+)paren
+id|kfree
+(paren
+id|megaCfg-&gt;scbList
+(braket
+id|i
+)braket
+dot
+id|sgList
+)paren
+suffix:semicolon
+multiline_comment|/* free sgList */
+)brace
+)brace
 multiline_comment|/*----------------------------------------------&n; * Get information about the card/driver &n; *----------------------------------------------*/
 DECL|function|megaraid_info
 r_const
 r_char
 op_star
 id|megaraid_info
-c_func
 (paren
 r_struct
 id|Scsi_Host
@@ -4503,7 +4983,6 @@ op_star
 id|megaCfg-&gt;mega_buffer
 suffix:semicolon
 id|sprintf
-c_func
 (paren
 id|buffer
 comma
@@ -4526,7 +5005,6 @@ multiline_comment|/*------------------------------------------------------------
 DECL|function|megaraid_queue
 r_int
 id|megaraid_queue
-c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -4575,7 +5053,6 @@ id|SCpnt-&gt;channel
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|KERN_INFO
 l_string|&quot;scsi%d: scanning channel %c for devices.&bslash;n&quot;
@@ -4608,7 +5085,6 @@ c_cond
 id|pScb
 op_assign
 id|mega_build_cmd
-c_func
 (paren
 id|megaCfg
 comma
@@ -4621,7 +5097,6 @@ l_int|NULL
 (brace
 multiline_comment|/* Add SCB to the head of the pending queue */
 id|ENQUEUE
-c_func
 (paren
 id|pScb
 comma
@@ -4634,7 +5109,6 @@ id|next
 suffix:semicolon
 multiline_comment|/* Issue the command to the card */
 id|mega_runque
-c_func
 (paren
 l_int|NULL
 )paren
@@ -4644,7 +5118,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*----------------------------------------------------------------------&n; * Issue a blocking command to the controller&n; *&n; * Note - this isnt 2.0.x SMP safe&n; *----------------------------------------------------------------------*/
+multiline_comment|/*----------------------------------------------------------------------&n; * Issue a blocking command to the controller&n; *----------------------------------------------------------------------*/
 DECL|variable|internal_done_flag
 r_volatile
 r_static
@@ -4665,7 +5139,6 @@ DECL|function|internal_done
 r_static
 r_void
 id|internal_done
-c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -4680,11 +5153,11 @@ id|internal_done_flag
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This seems dangerous in an SMP environment because &n; *&t;while spinning on internal_done_flag in 2.0.x SMP&n; *&t;no IRQ&squot;s will be taken, including those that might&n; *&t;be needed to clear this.&n; *&n; *&t;I think this should be using a wait queue ?&n; *&t;&t;&t;&t;-- AC&n; */
+multiline_comment|/*&n; *      This seems dangerous in an SMP environment because&n; *      while spinning on internal_done_flag in 2.0.x SMP&n; *      no IRQ&squot;s will be taken, including those that might&n; *      be needed to clear this.&n; *&n; *      I think this should be using a wait queue ?&n; *                              -- AC&n; */
+multiline_comment|/*&n; *      I&squot;ll probably fix this in the next version, but&n; *      megaraid_command() will never get called since can_queue is set,&n; *      except maybe in a *really* old kernel in which case it&squot;s very&n; *      unlikely they&squot;d be using SMP anyway.  Really this function is&n; *      just here for completeness.&n; *                              - JLJ&n; */
 DECL|function|megaraid_command
 r_int
 id|megaraid_command
-c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -4697,7 +5170,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Queue command, and wait until it has completed */
 id|megaraid_queue
-c_func
 (paren
 id|SCpnt
 comma
@@ -4710,13 +5182,10 @@ c_loop
 op_logical_neg
 id|internal_done_flag
 )paren
-(brace
 id|barrier
-c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 r_return
 id|internal_done_errcode
 suffix:semicolon
@@ -4725,7 +5194,6 @@ multiline_comment|/*------------------------------------------------------------
 DECL|function|megaraid_abort
 r_int
 id|megaraid_abort
-c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -4743,7 +5211,6 @@ r_int
 id|flags
 suffix:semicolon
 id|spin_lock_irqsave
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -4760,7 +5227,6 @@ op_star
 id|SCpnt-&gt;host-&gt;hostdata
 suffix:semicolon
 id|TRACE
-c_func
 (paren
 (paren
 l_string|&quot;ABORT!!! %.08lx %.02x &lt;%d.%d.%d&gt;&bslash;n&quot;
@@ -4823,7 +5289,6 @@ id|SCpnt
 )paren
 (brace
 id|freeSCB
-c_func
 (paren
 op_amp
 id|megaCfg-&gt;scbList
@@ -4847,7 +5312,6 @@ l_int|24
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -4856,7 +5320,6 @@ suffix:semicolon
 )brace
 )brace
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -4872,7 +5335,6 @@ multiline_comment|/*------------------------------------------------------------
 DECL|function|megaraid_reset
 r_int
 id|megaraid_reset
-c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -4894,7 +5356,6 @@ r_int
 id|flags
 suffix:semicolon
 id|spin_lock_irqsave
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -4911,7 +5372,6 @@ op_star
 id|SCpnt-&gt;host-&gt;hostdata
 suffix:semicolon
 id|TRACE
-c_func
 (paren
 (paren
 l_string|&quot;RESET: %.08lx %.02x &lt;%d.%d.%d&gt;&bslash;n&quot;
@@ -4970,7 +5430,6 @@ dot
 id|SCpnt
 suffix:semicolon
 id|freeSCB
-c_func
 (paren
 op_amp
 id|megaCfg-&gt;scbList
@@ -4994,7 +5453,6 @@ l_int|24
 )paren
 suffix:semicolon
 id|callDone
-c_func
 (paren
 id|SCpnt
 )paren
@@ -5002,7 +5460,6 @@ suffix:semicolon
 )brace
 )brace
 id|spin_unlock_irqrestore
-c_func
 (paren
 op_amp
 id|mega_lock
@@ -5018,7 +5475,6 @@ multiline_comment|/*------------------------------------------------------------
 DECL|function|megaraid_biosparam
 r_int
 id|megaraid_biosparam
-c_func
 (paren
 id|Disk
 op_star

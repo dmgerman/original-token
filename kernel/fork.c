@@ -718,10 +718,10 @@ id|next_safe
 op_assign
 id|PID_MAX
 suffix:semicolon
+)brace
 r_goto
 id|repeat
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond

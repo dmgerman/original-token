@@ -1033,6 +1033,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|sym53c416_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|wd7000_setup
 c_func
 (paren
@@ -3269,6 +3283,14 @@ macro_line|#ifdef CONFIG_SCSI_NCR53C406A
 l_string|&quot;ncr53c406a=&quot;
 comma
 id|NCR53c406a_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SYM53C416
+(brace
+l_string|&quot;sym53c416=&quot;
+comma
+id|sym53c416_setup
 )brace
 comma
 macro_line|#endif

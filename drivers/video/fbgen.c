@@ -1206,18 +1206,6 @@ comma
 id|info
 )paren
 suffix:semicolon
-id|display-&gt;screen_base
-op_assign
-id|phys_to_virt
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|fix.smem_start
-)paren
-suffix:semicolon
 id|display-&gt;visual
 op_assign
 id|fix.visual
@@ -1266,7 +1254,7 @@ l_int|0
 suffix:semicolon
 id|fbhw
 op_member_access_from_pointer
-id|set_dispsw
+id|set_disp
 c_func
 (paren
 op_amp

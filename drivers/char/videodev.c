@@ -157,6 +157,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_RADIO_TYPHOON
+r_extern
+r_int
+id|typhoon_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_PMS
 r_extern
 r_int

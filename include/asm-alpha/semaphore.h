@@ -1,15 +1,15 @@
 macro_line|#ifndef _ALPHA_SEMAPHORE_H
 DECL|macro|_ALPHA_SEMAPHORE_H
 mdefine_line|#define _ALPHA_SEMAPHORE_H
-multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; */
+multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; * (C) Copyright 1996 Richard Henderson&n; */
 macro_line|#include &lt;asm/current.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-multiline_comment|/*&n; * Semaphores are recursive: we allow the holder process to recursively do&n; * down() operations on a semaphore that the process already owns. In order&n; * to do that, we need to keep a semaphore-local copy of the owner and the&n; * &quot;depth of ownership&quot;.&n; *&n; * NOTE! Nasty memory ordering rules:&n; *  - &quot;owner&quot; and &quot;owner_count&quot; may only be modified once you hold the lock.&n; *  - &quot;owner_count&quot; must be written _after_ modifying owner, and must be&n; *  read _before_ reading owner. There must be appropriate write and read&n; *  barriers to enforce this.&n; */
 DECL|struct|semaphore
 r_struct
 id|semaphore
 (brace
+multiline_comment|/* Careful, inline assembly knows about the position of these two.  */
 DECL|member|count
 id|atomic_t
 id|count
@@ -18,16 +18,7 @@ DECL|member|waking
 id|atomic_t
 id|waking
 suffix:semicolon
-DECL|member|owner
-r_struct
-id|task_struct
-op_star
-id|owner
-suffix:semicolon
-DECL|member|owner_depth
-r_int
-id|owner_depth
-suffix:semicolon
+multiline_comment|/* biased by -1 */
 DECL|member|wait
 r_struct
 id|wait_queue
@@ -37,11 +28,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) &bslash;&n; { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL, 0, NULL })
+mdefine_line|#define MUTEX ((struct semaphore) &bslash;&n; { ATOMIC_INIT(1), ATOMIC_INIT(-1), NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) &bslash;&n; { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL, 1, NULL })
-DECL|macro|semaphore_owner
-mdefine_line|#define semaphore_owner(sem)&t;((sem)-&gt;owner)
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) &bslash;&n; { ATOMIC_INIT(0), ATOMIC_INIT(-1), NULL })
 DECL|macro|sema_init
 mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
 r_extern
@@ -67,6 +56,17 @@ id|sem
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|__down_trylock
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|__up
 c_func
@@ -77,7 +77,7 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-multiline_comment|/* All three have custom assembly linkages.  */
+multiline_comment|/* All have custom assembly linkages.  */
 r_extern
 r_void
 id|__down_failed
@@ -102,6 +102,17 @@ id|sem
 suffix:semicolon
 r_extern
 r_void
+id|__down_failed_trylock
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|__up_wakeup
 c_func
 (paren
@@ -111,139 +122,6 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * which we have.  Let the rest of the losers suck eggs.&n; *&n; * Tricky bits --&n; *&n; * (1) One task does two downs, no other contention&n; *&t;initial state:&n; *&t;&t;count = 1, waking = 0, depth = undef;&n; *&t;down(&amp;sem)&n; *&t;&t;count = 0, waking = 0, depth = 1;&n; *&t;down(&amp;sem)&n; *&t;&t;atomic dec and test sends us to waking_non_zero via __down&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;conditional atomic dec on waking discovers no free slots&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;test for owner succeeeds and we return ok.&n; *&t;&t;&t;count = -1, waking = 0, depth = 2;&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = -1, waking = 0, depth = 1;&n; *&t;&t;atomic inc and test sends us to slow path&n; *&t;&t;&t;count = 0, waking = 0, depth = 1;&n; *&t;&t;notice !(depth &lt; 0) and don&squot;t call __up.&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = 0, waking = 0, depth = 0;&n; *&t;&t;atomic inc and test succeeds.&n; *&t;&t;&t;count = 1, waking = 0, depth = 0;&n; */
-DECL|function|wake_one_more
-r_static
-r_inline
-r_void
-id|wake_one_more
-c_func
-(paren
-r_struct
-id|semaphore
-op_star
-id|sem
-)paren
-(brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|sem-&gt;waking
-)paren
-suffix:semicolon
-)brace
-DECL|function|waking_non_zero
-r_static
-r_inline
-r_int
-id|waking_non_zero
-c_func
-(paren
-r_struct
-id|semaphore
-op_star
-id|sem
-comma
-r_struct
-id|task_struct
-op_star
-id|tsk
-)paren
-(brace
-r_int
-id|owner_depth
-suffix:semicolon
-r_int
-id|ret
-comma
-id|tmp
-suffix:semicolon
-id|owner_depth
-op_assign
-id|sem-&gt;owner_depth
-suffix:semicolon
-multiline_comment|/* Atomic decrement, iff the value is &gt; 0.  */
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;1:&t;ldl_l&t;%1,%2&bslash;n&quot;
-l_string|&quot;&t;ble&t;%1,2f&bslash;n&quot;
-l_string|&quot;&t;subl&t;%1,1,%0&bslash;n&quot;
-l_string|&quot;&t;stl_c&t;%0,%2&bslash;n&quot;
-l_string|&quot;&t;beq&t;%0,3f&bslash;n&quot;
-l_string|&quot;2:&t;mb&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
-l_string|&quot;3:&t;br&t;1b&bslash;n&quot;
-l_string|&quot;.previous&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|ret
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|tmp
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|__atomic_fool_gcc
-c_func
-(paren
-op_amp
-id|sem-&gt;waking
-)paren
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-l_int|0
-)paren
-)paren
-suffix:semicolon
-id|ret
-op_or_assign
-(paren
-(paren
-id|owner_depth
-op_ne
-l_int|0
-)paren
-op_amp
-(paren
-id|sem-&gt;owner
-op_eq
-id|tsk
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-(brace
-id|sem-&gt;owner
-op_assign
-id|tsk
-suffix:semicolon
-id|wmb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Don&squot;t use the old value, which is stale in the&n;&t;&t;   !owner case.  */
-id|sem-&gt;owner_depth
-op_increment
-suffix:semicolon
-)brace
-r_return
-id|ret
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Whee.  Hidden out of line code is fun.  The contention cases are&n; * handled out of line in kernel/sched.c; arch/alpha/lib/semaphore.S&n; * takes care of making sure we can call it without clobbering regs.&n; */
 DECL|function|down
 r_extern
@@ -263,40 +141,21 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;/* semaphore down operation */&bslash;n&quot;
-l_string|&quot;1:&t;ldl_l&t;$27,%3&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l&t;$27,%0&bslash;n&quot;
 l_string|&quot;&t;subl&t;$27,1,$27&bslash;n&quot;
 l_string|&quot;&t;mov&t;$27,$28&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;$28,%0&bslash;n&quot;
 l_string|&quot;&t;beq&t;$28,2f&bslash;n&quot;
 l_string|&quot;&t;blt&t;$27,3f&bslash;n&quot;
-multiline_comment|/* Got the semaphore no contention.  Set owner and depth.  */
-l_string|&quot;&t;stq&t;$8,%1&bslash;n&quot;
-l_string|&quot;&t;lda&t;$28,1&bslash;n&quot;
-l_string|&quot;&t;wmb&bslash;n&quot;
-l_string|&quot;&t;stq&t;$28,%2&bslash;n&quot;
 l_string|&quot;4:&t;mb&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
-l_string|&quot;3:&t;lda&t;$24,%3&bslash;n&quot;
+l_string|&quot;3:&t;lda&t;$24,%0&bslash;n&quot;
 l_string|&quot;&t;jsr&t;$28,__down_failed&bslash;n&quot;
 l_string|&quot;&t;ldgp&t;$29,0($28)&bslash;n&quot;
 l_string|&quot;&t;br&t;4b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|sem-&gt;count
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|sem-&gt;owner
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|sem-&gt;owner_depth
-)paren
 suffix:colon
 l_string|&quot;m&quot;
 (paren
@@ -340,22 +199,17 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;/* semaphore down interruptible operation */&bslash;n&quot;
-l_string|&quot;1:&t;ldl_l&t;$27,%4&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l&t;$27,%1&bslash;n&quot;
 l_string|&quot;&t;subl&t;$27,1,$27&bslash;n&quot;
 l_string|&quot;&t;mov&t;$27,$28&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;$28,%1&bslash;n&quot;
 l_string|&quot;&t;beq&t;$28,2f&bslash;n&quot;
 l_string|&quot;&t;blt&t;$27,3f&bslash;n&quot;
-multiline_comment|/* Got the semaphore no contention.  Set owner and depth.  */
-l_string|&quot;&t;stq&t;$8,%2&bslash;n&quot;
-l_string|&quot;&t;lda&t;$28,1&bslash;n&quot;
-l_string|&quot;&t;wmb&bslash;n&quot;
-l_string|&quot;&t;stq&t;$28,%3&bslash;n&quot;
-l_string|&quot;&t;mov&t;$31,$24&bslash;n&quot;
+l_string|&quot;&t;mov&t;$31,%0&bslash;n&quot;
 l_string|&quot;4:&t;mb&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
-l_string|&quot;3:&t;lda&t;$24,%4&bslash;n&quot;
+l_string|&quot;3:&t;lda&t;$24,%1&bslash;n&quot;
 l_string|&quot;&t;jsr&t;$28,__down_failed_interruptible&bslash;n&quot;
 l_string|&quot;&t;ldgp&t;$29,0($28)&bslash;n&quot;
 l_string|&quot;&t;br&t;4b&bslash;n&quot;
@@ -364,21 +218,6 @@ suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|ret
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|sem-&gt;count
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|sem-&gt;owner
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|sem-&gt;owner_depth
 )paren
 suffix:colon
 l_string|&quot;m&quot;
@@ -390,6 +229,76 @@ l_string|&quot;$27&quot;
 comma
 l_string|&quot;$28&quot;
 comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * down_trylock returns 0 on success, 1 if we failed to get the lock.&n; *&n; * We must manipulate count and waking simultaneously and atomically.&n; * Do this by using ll/sc on the pair of 32-bit words.&n; */
+DECL|function|down_trylock
+r_extern
+r_inline
+r_int
+id|down_trylock
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+r_int
+id|ret
+comma
+id|tmp
+comma
+id|tmp2
+suffix:semicolon
+multiline_comment|/* &quot;Equivalent&quot; C.  Note that we have to do this all without&n;&t;   (taken) branches in order to be a valid ll/sc sequence.&n;&n;&t;   do {&n;&t;       tmp = ldq_l;&n;&t;       ret = 0;&n;&t;       tmp -= 1;&n;&t;       if ((int)tmp &lt; 0)&t;&t;// count&n;&t;           break;&n;&t;       if ((long)tmp &lt; 0)&t;&t;// waking&n;&t;           break;&n;&t;       tmp += 0xffffffff00000000;&n;&t;       ret = 1;&n;&t;       tmp = stq_c = tmp;&n;&t;   } while (tmp == 0);&n;&t;*/
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_l&t;%1,%3&bslash;n&quot;
+l_string|&quot;&t;lda&t;%0,0&bslash;n&quot;
+l_string|&quot;&t;subl&t;%1,1,%2&bslash;n&quot;
+l_string|&quot;&t;subq&t;%1,1,%1&bslash;n&quot;
+l_string|&quot;&t;blt&t;%2,2f&bslash;n&quot;
+l_string|&quot;&t;blt&t;%1,2f&bslash;n&quot;
+l_string|&quot;&t;ldah&t;%1,0x8000(%1)&bslash;n&quot;
+l_string|&quot;&t;ldah&t;%1,0x8000(%1)&bslash;n&quot;
+l_string|&quot;&t;lda&t;%0,1&bslash;n&quot;
+l_string|&quot;&t;stq_c&t;%1,%3&bslash;n&quot;
+l_string|&quot;&t;beq&t;%1,3f&bslash;n&quot;
+l_string|&quot;2:&t;mb&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;3:&t;br&t;1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|ret
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+id|sem
+)paren
+suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -416,7 +325,7 @@ id|__volatile__
 (paren
 l_string|&quot;/* semaphore up operation */&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;
-l_string|&quot;1:&t;ldl_l&t;$27,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l&t;$27,%0&bslash;n&quot;
 l_string|&quot;&t;addl&t;$27,1,$27&bslash;n&quot;
 l_string|&quot;&t;mov&t;$27,$28&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;$28,%0&bslash;n&quot;
@@ -426,27 +335,16 @@ l_string|&quot;&t;ble&t;$27,3f&bslash;n&quot;
 l_string|&quot;4:&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
-l_string|&quot;3:&t;lda&t;$24,%1&bslash;n&quot;
-l_string|&quot;&t;bgt&t;%2,4b&bslash;n&quot;
+l_string|&quot;3:&t;lda&t;$24,%0&bslash;n&quot;
 l_string|&quot;&t;jsr&t;$28,__up_wakeup&bslash;n&quot;
 l_string|&quot;&t;ldgp&t;$29,0($28)&bslash;n&quot;
 l_string|&quot;&t;br&t;4b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|sem-&gt;count
-)paren
 suffix:colon
 l_string|&quot;m&quot;
 (paren
 id|sem-&gt;count
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-op_decrement
-id|sem-&gt;owner_depth
 )paren
 suffix:colon
 l_string|&quot;$24&quot;

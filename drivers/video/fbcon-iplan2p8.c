@@ -2270,8 +2270,11 @@ c_func
 (paren
 id|p
 comma
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
+)paren
 )paren
 comma
 op_amp
@@ -2289,8 +2292,11 @@ c_func
 (paren
 id|p
 comma
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
+)paren
 )paren
 comma
 op_amp
@@ -2322,9 +2328,12 @@ op_decrement
 multiline_comment|/* I think, unrolling the loops like in the 1 plane case isn&squot;t&n;&t;* practicable here, because the body is much longer for 4&n;&t;* planes (mostly the dup4l()). I guess, unrolling this would&n;&t;* need more than 256 bytes and so exceed the instruction&n;&t;* cache :-(&n;&t;*/
 id|c
 op_assign
-op_star
+id|scr_readw
+c_func
+(paren
 id|s
 op_increment
+)paren
 op_amp
 id|p-&gt;charmask
 suffix:semicolon

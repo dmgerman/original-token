@@ -1,4 +1,4 @@
-multiline_comment|/* zoltrix radio plus driver for Linux radio support&n; * (c) 1998 C. van Schaik &lt;carl@leg.uct.ac.za&gt;&n; *&n; * BUGS  &n; *  Due to the inconsistancy in reading from the signal flags&n; *  it is difficult to get an accurate tuned signal.&n; *&n; *  There seems to be a problem with the volume setting that I must still&n; *  figure out. &n; *  It seems that the card has is not linear to 0 volume. It cuts off&n; *  at a low frequency, and it is not possible (at least I have not found)&n; *  to get fine volume control over the low volume range.&n; *&n; *  Some code derived from code by Frans Brinkman&n; *&n; * 1999-01-05 - (C. van Schaik)&n; *&t;      - Changed tuning to 1/160Mhz accuracy&n; *&t;      - Added stereo support&n; *&t;&t;(card defaults to stereo)&n; *&t;&t;(can explicitly force mono on the card)&n; *&t;&t;(can detect if station is in stereo)&n; *&t;      - Added unmute function&n; *&t;      - Reworked ioctl functions&n; */
+multiline_comment|/* zoltrix radio plus driver for Linux radio support&n; * (c) 1998 C. van Schaik &lt;carl@leg.uct.ac.za&gt;&n; *&n; * BUGS  &n; *  Due to the inconsistancy in reading from the signal flags&n; *  it is difficult to get an accurate tuned signal.&n; *&n; *  There seems to be a problem with the volume setting that I must still&n; *  figure out. &n; *  It seems that the card has is not linear to 0 volume. It cuts off&n; *  at a low frequency, and it is not possible (at least I have not found)&n; *  to get fine volume control over the low volume range.&n; *&n; *  Some code derived from code by Romolo Manfredini&n; *&t;&t;&t;&t;   romolo@bicnet.it&n; *&n; * 1999-01-05 - (C. van Schaik)&n; *&t;      - Changed tuning to 1/160Mhz accuracy&n; *&t;      - Added stereo support&n; *&t;&t;(card defaults to stereo)&n; *&t;&t;(can explicitly force mono on the card)&n; *&t;&t;(can detect if station is in stereo)&n; *&t;      - Added unmute function&n; *&t;      - Reworked ioctl functions&n; */
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules                        */
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata                       */
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region   */
@@ -1266,19 +1266,13 @@ id|zol
 )paren
 suffix:semicolon
 r_else
+(brace
 id|zol_unmute
 c_func
 (paren
 id|zol
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|v.flags
-op_amp
-id|VIDEO_AUDIO_VOLUME
-)paren
 id|zol_setvol
 c_func
 (paren
@@ -1289,6 +1283,7 @@ op_div
 l_int|4096
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

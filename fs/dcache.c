@@ -1408,6 +1408,13 @@ r_int
 id|gfp_mask
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_IO
+)paren
 id|prune_dcache
 c_func
 (paren
