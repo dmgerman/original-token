@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;tulip.c:v0.03 1/18/95 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;tulip.c:v0.05 1/20/95 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -67,7 +67,7 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 DECL|macro|TULIP_DEBUG
-mdefine_line|#define TULIP_DEBUG 3
+mdefine_line|#define TULIP_DEBUG 1
 macro_line|#ifdef TULIP_DEBUG
 DECL|variable|tulip_debug
 r_int
@@ -487,12 +487,6 @@ c_func
 r_int
 id|pci_index
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;tulip.c: PCI bios is present, checking for devices...&bslash;n&quot;
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -695,6 +689,37 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
+multiline_comment|/* Stop the chip&squot;s Tx and Rx processes. */
+id|outl
+c_func
+(paren
+id|inl
+c_func
+(paren
+id|ioaddr
+op_plus
+id|CSR6
+)paren
+op_amp
+op_complement
+l_int|0x2002
+comma
+id|ioaddr
+op_plus
+id|CSR6
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the missed-packet counter. */
+id|inl
+c_func
+(paren
+id|ioaddr
+op_plus
+id|CSR8
+)paren
+op_amp
+l_int|0xffff
+suffix:semicolon
 multiline_comment|/* The station address ROM is read byte serially.  The register must&n;&t;   be polled, waiting for the value to be read bit serially from the&n;&t;   EEPROM.&n;&t;   */
 id|outl
 c_func
@@ -762,6 +787,14 @@ id|value
 )paren
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;, IRQ %d&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
 multiline_comment|/* We do a request_region() only to register /proc/ioports info. */
 id|request_region
 c_func
@@ -822,16 +855,6 @@ r_sizeof
 (paren
 r_struct
 id|tulip_private
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;, Rx buffers at %#x, IRQ %d&bslash;n&quot;
-comma
-id|tp-&gt;rx_buffs
-comma
-id|dev-&gt;irq
 )paren
 suffix:semicolon
 multiline_comment|/* The Tulip-specific entries in the device structure. */
@@ -916,11 +939,11 @@ id|CSR0
 suffix:semicolon
 id|SLOW_DOWN_IO
 suffix:semicolon
-multiline_comment|/* Deassert reset.  Wait the specified 50 PCI cycles by initializing&n;&t;   Tx and Rx queues and the address filter list. */
+multiline_comment|/* Deassert reset.  Set 8 longword cache alignment, 8 longword burst.&n;&t;   Cache alignment bits 15:14&t;     Burst length 13:8&n;    &t;0000&t;No alignment  0x00000000 unlimited&t;&t;0800 8 longwords&n;&t;&t;4000&t;8  longwords&t;&t;0100 1 longword&t;&t;1000 16 longwords&n;&t;&t;8000&t;16 longwords&t;&t;0200 2 longwords&t;2000 32 longwords&n;&t;&t;C000&t;32  longwords&t;&t;0400 4 longwords&n;&t;   Wait the specified 50 PCI cycles after a reset by initializing&n;&t;   Tx and Rx queues and the address filter list. */
 id|outl
 c_func
 (paren
-l_int|0xfff80000
+l_int|0xfff84800
 comma
 id|ioaddr
 op_plus
@@ -2681,51 +2704,6 @@ dot
 id|buffer1
 comma
 id|pkt_len
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: New packet length %d status %#x %#x %#x %#x to %#x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|pkt_len
-comma
-id|lp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|status
-comma
-id|lp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|length
-comma
-id|lp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|buffer1
-comma
-id|lp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|buffer2
-comma
-id|lp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|buffer1
 )paren
 suffix:semicolon
 id|netif_rx

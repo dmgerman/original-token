@@ -2,6 +2,10 @@ multiline_comment|/* dummy.c: a dummy net driver&n;&n;&t;The purpose of this dri
 multiline_comment|/* To have statistics (just packets sent) define this */
 DECL|macro|DUMMY_STATS
 macro_line|#undef DUMMY_STATS
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -20,10 +24,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 r_static
 r_int
 id|dummy_xmit

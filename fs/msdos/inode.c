@@ -1,4 +1,13 @@
 multiline_comment|/*&n; *  linux/fs/msdos/inode.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11,15 +20,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 r_extern
 r_int

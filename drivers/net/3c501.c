@@ -9,6 +9,11 @@ op_assign
 l_string|&quot;3c501.c: 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov).&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Braindamage remaining:&n;  The 3c501 board.&n;  */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -19,16 +24,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 r_extern
 r_struct
 id|device

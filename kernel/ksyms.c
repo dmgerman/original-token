@@ -1,5 +1,6 @@
-multiline_comment|/* &n; * Herein lies all the functions/variables that are &quot;exported&quot; for linkage&n; * with dynamically loaded kernel modules.&n; *&t;&t;&t;Jon.&n; *&n; * Stacked module support and unified symbol table added by&n; * Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; */
+multiline_comment|/* &n; * Herein lies all the functions/variables that are &quot;exported&quot; for linkage&n; * with dynamically loaded kernel modules.&n; *&t;&t;&t;Jon.&n; *&n; * - Stacked module support and unified symbol table added (June 1994)&n; * - External symbol table support added (December 1994)&n; * - Versions on symbols added (December 1994)&n; * by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -14,7 +15,6 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -68,9 +68,6 @@ r_void
 op_star
 id|sys_call_table
 suffix:semicolon
-multiline_comment|/* must match struct internal_symbol !!! */
-DECL|macro|X
-mdefine_line|#define X(name)&t;{ (void *) &amp;name, &quot;_&quot; #name }
 macro_line|#ifdef CONFIG_FTAPE
 r_extern
 r_char
@@ -139,14 +136,20 @@ id|symbol_table
 id|symbol_table
 op_assign
 (brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* for stacked module support */
+macro_line|#include &lt;linux/symtab_begin.h&gt;
+macro_line|#ifdef CONFIG_MODVERSIONS
 (brace
+(paren
+r_void
+op_star
+)paren
+l_int|1
+multiline_comment|/* Version version :-) */
+comma
+l_string|&quot;_Using_Versions&quot;
+)brace
+comma
+macro_line|#endif
 multiline_comment|/* stackable module support */
 id|X
 c_func
@@ -154,9 +157,15 @@ c_func
 id|rename_module_symbol
 )paren
 comma
+id|X
+c_func
+(paren
+id|register_symtab
+)paren
+comma
 multiline_comment|/* system info variables */
 multiline_comment|/* These check that they aren&squot;t defines (0/1) */
-macro_line|#ifndef EISA_bus
+macro_line|#ifndef EISA_bus__is_a_macro
 id|X
 c_func
 (paren
@@ -164,7 +173,7 @@ id|EISA_bus
 )paren
 comma
 macro_line|#endif
-macro_line|#ifndef MCA_bus
+macro_line|#ifndef MCA_bus__is_a_macro
 id|X
 c_func
 (paren
@@ -172,7 +181,7 @@ id|MCA_bus
 )paren
 comma
 macro_line|#endif
-macro_line|#ifndef wp_works_ok
+macro_line|#ifndef wp_works_ok__is_a_macro
 id|X
 c_func
 (paren
@@ -1331,22 +1340,7 @@ id|msdos_write_inode
 comma
 macro_line|#endif
 multiline_comment|/********************************************************&n;&t; * Do not add anything below this line,&n;&t; * as the stacked modules depend on this!&n;&t; */
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-multiline_comment|/* mark end of table */
-)brace
-comma
-(brace
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-multiline_comment|/* no module refs */
-)brace
+macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon
 multiline_comment|/*&n;int symbol_table_size = sizeof (symbol_table) / sizeof (symbol_table[0]);&n;*/

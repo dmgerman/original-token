@@ -117,18 +117,13 @@ r_int
 id|__unused
 )paren
 (brace
-id|__unused
-op_assign
-l_int|1
-suffix:semicolon
-id|do_exit
+id|halt
 c_func
 (paren
-id|SIGSEGV
 )paren
 suffix:semicolon
 r_return
-id|__unused
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set up a signal frame... Make the stack look the way iBCS2 expects&n; * it to look.&n; */
@@ -165,7 +160,10 @@ r_int
 id|oldmask
 )paren
 (brace
-r_return
+id|halt
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note that &squot;init&squot; is a special process: it doesn&squot;t get signals it doesn&squot;t&n; * want to handle. Thus you cannot kill init even with a SIGKILL even by&n; * mistake.&n; *&n; * Note that we go through the signals twice: once to check the signals that&n; * the kernel can handle, and then we build all the user-level signal handling&n; * stack-frames in one go after that.&n; */
@@ -185,6 +183,11 @@ op_star
 id|regs
 )paren
 (brace
+id|halt
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

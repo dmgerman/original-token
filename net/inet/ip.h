@@ -407,5 +407,100 @@ r_struct
 id|ip_mib
 id|ip_statistics
 suffix:semicolon
+multiline_comment|/*&n; *&t;This is a version of ip_compute_csum() optimized for IP headers, which&n; *&t;always checksum on 4 octet boundaries.&n; *&t;Used by ip.c and slhc.c (the net driver module)&n; *&t;(Moved to here by bj0rn@blox.se)&n; */
+DECL|function|ip_fast_csum
+r_static
+r_inline
+r_int
+r_int
+id|ip_fast_csum
+c_func
+(paren
+r_int
+r_char
+op_star
+id|buff
+comma
+r_int
+id|wlen
+)paren
+(brace
+r_int
+r_int
+id|sum
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|wlen
+)paren
+(brace
+r_int
+r_int
+id|bogus
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;clc&bslash;n&quot;
+l_string|&quot;1:&bslash;t&quot;
+l_string|&quot;lodsl&bslash;n&bslash;t&quot;
+l_string|&quot;adcl %3, %0&bslash;n&bslash;t&quot;
+l_string|&quot;decl %2&bslash;n&bslash;t&quot;
+l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
+l_string|&quot;adcl $0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;movl %0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $16, %3&bslash;n&bslash;t&quot;
+l_string|&quot;addw %w3, %w0&bslash;n&bslash;t&quot;
+l_string|&quot;adcw $0, %w0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;=S&quot;
+(paren
+id|buff
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|wlen
+)paren
+comma
+l_string|&quot;=a&quot;
+(paren
+id|bogus
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|buff
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|wlen
+)paren
+)paren
+suffix:semicolon
+)brace
+r_return
+(paren
+op_complement
+id|sum
+)paren
+op_amp
+l_int|0xffff
+suffix:semicolon
+)brace
 macro_line|#endif&t;/* _IP_H */
 eof

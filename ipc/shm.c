@@ -2018,7 +2018,7 @@ l_char|&squot;-&squot;
 comma
 id|shmd-&gt;vm_flags
 op_amp
-id|VM_SHARED
+id|VM_MAYSHARE
 ques
 c_cond
 l_char|&squot;s&squot;

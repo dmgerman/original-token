@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_MALLOC_H
 DECL|macro|_LINUX_MALLOC_H
 mdefine_line|#define _LINUX_MALLOC_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#ifdef CONFIG_DEBUG_MALLOC
 DECL|macro|kmalloc
 mdefine_line|#define kmalloc(a,b) deb_kmalloc(__FILE__,__LINE__,a,b)

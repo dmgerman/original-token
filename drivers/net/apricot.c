@@ -8,6 +8,10 @@ id|version
 op_assign
 l_string|&quot;apricot.c:v0.2 05/12/94&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -22,10 +26,6 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(addr, size)&t;0

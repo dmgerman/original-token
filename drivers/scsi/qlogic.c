@@ -45,6 +45,9 @@ DECL|macro|QL_TURBO_PDMA
 mdefine_line|#define QL_TURBO_PDMA 0
 macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------*/
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &quot;../block/blk.h&quot;&t;/* to get disk capacity */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

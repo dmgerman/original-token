@@ -7,6 +7,10 @@ id|version
 op_assign
 l_string|&quot;depca.c:v0.381 12/12/94 davies@wanton.lkg.dec.com&bslash;n&quot;
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif /* MODULE */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -22,10 +26,6 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif /* MODULE */
 macro_line|#include &quot;depca.h&quot;
 macro_line|#ifdef DEPCA_DEBUG
 DECL|variable|depca_debug

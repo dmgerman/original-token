@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

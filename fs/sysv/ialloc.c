@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/sysv/ialloc.c&n; *&n; *  minix/bitmap.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext/freelists.c&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *&n; *  xenix/alloc.c&n; *  Copyright (C) 1992  Doug Evans&n; *&n; *  coh/alloc.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/ialloc.c&n; *  Copyright (C) 1993  Bruno Haible&n; *&n; *  This file contains code for allocating/freeing inodes.&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

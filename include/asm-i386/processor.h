@@ -63,6 +63,8 @@ id|EISA_bus
 suffix:semicolon
 DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
+DECL|macro|MCA_bus__is_a_macro
+mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;0xc0000000

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 multiline_comment|/* We don&squot;t use the head/tail construction any more. Now we use the start/len*/
 multiline_comment|/* construction providing full use of PIPE_BUF (multiple of PAGE_SIZE) */
 multiline_comment|/* Florian Coosmann (FGC)                                ^ current = 1       */

@@ -762,7 +762,7 @@ id|newprot
 op_assign
 id|protection_map
 (braket
-id|vma-&gt;vm_flags
+id|newflags
 op_amp
 l_int|0xf
 )braket

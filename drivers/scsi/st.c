@@ -2,6 +2,7 @@ multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See t
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mtio.h&gt;

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/kernel/ldt.c&n; *&n; * Copyright (C) 1992 Krishn
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;

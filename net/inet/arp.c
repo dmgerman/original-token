@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;

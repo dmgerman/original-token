@@ -12,6 +12,12 @@ DECL|macro|START_ADDR
 mdefine_line|#define START_ADDR&t;0x00004000
 DECL|macro|START_SIZE
 mdefine_line|#define START_SIZE&t;(32*1024)
+DECL|macro|EMPTY_PGT
+mdefine_line|#define EMPTY_PGT&t;0x00001000
+DECL|macro|EMPTY_PGE
+mdefine_line|#define EMPTY_PGE&t;0x00001000
+DECL|macro|ZERO_PGE
+mdefine_line|#define ZERO_PGE&t;0x00001000
 macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_void
@@ -50,9 +56,9 @@ macro_line|#ifndef stbar  /* store barrier Sparc insn to synchronize stores in P
 DECL|macro|stbar
 mdefine_line|#define stbar() __asm__ __volatile__(&quot;stbar&quot;: : :&quot;memory&quot;)
 macro_line|#endif
-multiline_comment|/* Changing the PIL on the sparc is a bit hairy. I figure out some&n; * more optimized way of doing this soon.&n; */
+multiline_comment|/* Changing the PIL on the sparc is a bit hairy. I&squot;ll figure out some&n; * more optimized way of doing this soon. This is bletcherous code.&n; */
 DECL|macro|swpipl
-mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl, psr; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;and %1, 15, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sll %1, 8, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rd %%psr, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;or %%g0, %2, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;or %2, %1, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;wr %2, 0x0, %%psr&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;srl %0, 8, %0&bslash;n&bslash;t&quot; &bslash;&n;        &quot;and %0, 15, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl), &quot;r&quot; (psr=0)); &bslash;&n;__old_ipl; })
+mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl, psr; &bslash;&n;__asm__ __volatile__( &bslash;&n;        &quot;rd %%psr, %0&bslash;n&bslash;t&quot; : &quot;=&amp;r&quot; (__old_ipl)); &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;and %1, 15, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sll %0, 8, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;or  %0, %2, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;wr  %0, 0x0, %%psr&bslash;n&bslash;t&quot; &bslash;&n;&t;: &quot;=&amp;r&quot; (psr) &bslash;&n;&t;: &quot;r&quot; (__new_ipl), &quot;r&quot; (__old_ipl)); &bslash;&n;__old_ipl = ((__old_ipl&gt;&gt;8)&amp;15); &bslash;&n;__old_ipl; })
 DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;swpipl(15)  /* 15 = no int&squot;s except nmi&squot;s */
 DECL|macro|sti
@@ -62,7 +68,7 @@ mdefine_line|#define save_flags(flags)&t;do { flags = swpipl(15); } while (0)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;swpipl(flags)
 DECL|macro|iret
-mdefine_line|#define iret() __asm__ __volatile__ (&quot;jmp %%l1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&t;     &quot;rett %l2&bslash;n&bslash;t&quot;: : :&quot;memory&quot;)
+mdefine_line|#define iret() __asm__ __volatile__ (&quot;jmp %%l1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&t;     &quot;rett %%l2&bslash;n&bslash;t&quot;: : :&quot;memory&quot;)
 DECL|macro|_set_gate
 mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;)
 DECL|macro|set_intr_gate

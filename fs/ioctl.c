@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/ioctl.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;

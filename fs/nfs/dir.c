@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/nfs/dir.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  nfs directory handling functions&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;

@@ -1,6 +1,7 @@
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 r_static
 id|asmlinkage
 r_void

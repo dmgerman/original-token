@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_SOUND

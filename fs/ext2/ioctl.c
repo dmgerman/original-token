@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 DECL|function|ext2_ioctl
 r_int
 id|ext2_ioctl

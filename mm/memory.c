@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|variable|high_memory
@@ -695,16 +696,12 @@ op_star
 id|tsk
 )paren
 (brace
-r_int
-r_int
+id|pgd_t
+op_star
 id|pg_dir
 suffix:semicolon
 id|pg_dir
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|PAGE_DIR_OFFSET
 c_func
 (paren
@@ -718,6 +715,10 @@ id|mem_map
 id|MAP_NR
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|pg_dir
 )paren
 )braket

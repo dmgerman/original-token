@@ -1,4 +1,13 @@
 multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -80,15 +89,6 @@ comma
 suffix:semicolon
 DECL|macro|LP_NO
 mdefine_line|#define LP_NO 3
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 multiline_comment|/* Test if printer is ready (and optionally has no error conditions) */
 DECL|macro|LP_READY
 mdefine_line|#define LP_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : (status &amp; LP_PBUSY))

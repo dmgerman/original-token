@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|LOAD_INT
@@ -3011,7 +3012,7 @@ op_increment
 op_assign
 id|flags
 op_amp
-id|VM_SHARED
+id|VM_MAYSHARE
 ques
 c_cond
 l_char|&squot;s&squot;

@@ -9,6 +9,10 @@ op_assign
 l_string|&quot;3c509.c:1.03 10/8/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -23,10 +27,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#ifdef EL3_DEBUG
 DECL|variable|el3_debug
 r_int

@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; */
+multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; * New addition in December 1994: (Bjorn Ekwall, idea from Jacques Gelinas)&n; *&t;- Externally callable function:&n; *&n; *&t;&t;&quot;int register_symtab(struct symbol_table *)&quot;&n; *&n; *&t;  This function can be called from within the kernel,&n; *&t;  and ALSO from loadable modules.&n; *&t;  The goal is to assist in modularizing the kernel even more,&n; *&t;  and finally: reducing the number of entries in ksyms.c&n; *&t;  since every subsystem should now be able to decide amd&n; *&t;  control exactly what symbols it wants to export, locally!&n; */
 macro_line|#ifdef DEBUG_MODULE
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(a) printk a
@@ -71,6 +71,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|module_init_flag
+r_static
+r_int
+id|module_init_flag
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Hmm... */
 multiline_comment|/*&n; * Called at boot time&n; */
 DECL|function|init_modules
 r_void
@@ -1174,6 +1182,11 @@ id|mp
 suffix:semicolon
 )brace
 )brace
+id|module_init_flag
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Hmm... */
 r_if
 c_cond
 (paren
@@ -1186,10 +1199,22 @@ id|rt.init
 op_ne
 l_int|0
 )paren
+(brace
+id|module_init_flag
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Hmm... */
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
+id|module_init_flag
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Hmm... */
 id|mp-&gt;state
 op_assign
 id|MOD_RUNNING
@@ -1407,6 +1432,13 @@ op_plus
 l_int|1
 suffix:semicolon
 )brace
+r_else
+multiline_comment|/* include the count for the module name! */
+id|nmodsyms
+op_add_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* return modules without symbols too */
 )brace
 r_if
 c_cond
@@ -1464,23 +1496,9 @@ id|mp-&gt;next
 r_if
 c_cond
 (paren
-(paren
 id|mp-&gt;state
 op_eq
 id|MOD_RUNNING
-)paren
-op_logical_and
-(paren
-id|mp-&gt;symtab
-op_ne
-l_int|NULL
-)paren
-op_logical_and
-(paren
-id|mp-&gt;symtab-&gt;n_symbols
-OG
-l_int|0
-)paren
 )paren
 (brace
 multiline_comment|/* magic: write module info as a pseudo symbol */
@@ -1517,6 +1535,14 @@ suffix:semicolon
 op_increment
 id|to
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mp-&gt;symtab
+op_ne
+l_int|NULL
+)paren
+(brace
 r_for
 c_loop
 (paren
@@ -1573,6 +1599,7 @@ r_sizeof
 id|isym
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -2440,6 +2467,490 @@ r_return
 id|p
 op_minus
 id|buf
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Rules:&n; * - The new symbol table should be statically allocated, or else you _have_&n; *   to set the &quot;size&quot; field of the struct to the number of bytes allocated.&n; *&n; * - The strings that name the symbols will not be copied, maybe the pointers&n; *&n; * - For a loadable module, the function should only be called in the&n; *   context of init_module&n; *&n; * Those are the only restrictions! (apart from not being reenterable...)&n; *&n; * If you want to remove a symbol table for a loadable module,&n; * the call looks like: &quot;register_symtab(0)&quot;.&n; *&n; * The look of the code is mostly dictated by the format of&n; * the frozen struct symbol_table, due to compatibility demands.&n; */
+DECL|macro|INTSIZ
+mdefine_line|#define INTSIZ sizeof(struct internal_symbol)
+DECL|macro|REFSIZ
+mdefine_line|#define REFSIZ sizeof(struct module_ref)
+DECL|macro|SYMSIZ
+mdefine_line|#define SYMSIZ sizeof(struct symbol_table)
+DECL|macro|MODSIZ
+mdefine_line|#define MODSIZ sizeof(struct module)
+DECL|variable|nulltab
+r_static
+r_struct
+id|symbol_table
+id|nulltab
+suffix:semicolon
+r_int
+DECL|function|register_symtab
+id|register_symtab
+c_func
+(paren
+r_struct
+id|symbol_table
+op_star
+id|intab
+)paren
+(brace
+r_struct
+id|module
+op_star
+id|mp
+suffix:semicolon
+r_struct
+id|module
+op_star
+id|link
+suffix:semicolon
+r_struct
+id|symbol_table
+op_star
+id|oldtab
+suffix:semicolon
+r_struct
+id|symbol_table
+op_star
+id|newtab
+suffix:semicolon
+r_struct
+id|module_ref
+op_star
+id|newref
+suffix:semicolon
+r_int
+id|size
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|intab
+op_logical_and
+(paren
+id|intab-&gt;n_symbols
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+r_struct
+id|internal_symbol
+op_star
+id|sym
+suffix:semicolon
+multiline_comment|/* How many symbols, really? */
+r_for
+c_loop
+(paren
+id|sym
+op_assign
+id|intab-&gt;symbol
+suffix:semicolon
+id|sym-&gt;name
+suffix:semicolon
+op_increment
+id|sym
+)paren
+id|intab-&gt;n_symbols
+op_add_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#if 1
+r_if
+c_cond
+(paren
+id|module_init_flag
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Hmm... */
+macro_line|#else
+r_if
+c_cond
+(paren
+id|module_list
+op_eq
+op_amp
+id|kernel_module
+)paren
+(brace
+macro_line|#endif
+multiline_comment|/* Aha! Called from an &quot;internal&quot; module */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|intab
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* or -ESILLY_PROGRAMMER :-) */
+multiline_comment|/* create a pseudo module! */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|mp
+op_assign
+(paren
+r_struct
+id|module
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|MODSIZ
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* panic time! */
+id|printk
+c_func
+(paren
+l_string|&quot;Out of memory for new symbol table!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+multiline_comment|/* else  OK */
+id|memset
+c_func
+(paren
+id|mp
+comma
+l_int|0
+comma
+id|MODSIZ
+)paren
+suffix:semicolon
+id|mp-&gt;state
+op_assign
+id|MOD_RUNNING
+suffix:semicolon
+multiline_comment|/* Since it is resident... */
+id|mp-&gt;name
+op_assign
+l_string|&quot;&quot;
+suffix:semicolon
+multiline_comment|/* This is still the &quot;kernel&quot; symbol table! */
+id|mp-&gt;symtab
+op_assign
+id|intab
+suffix:semicolon
+multiline_comment|/* link it in _after_ the resident symbol table */
+id|mp-&gt;next
+op_assign
+id|kernel_module.next
+suffix:semicolon
+id|kernel_module.next
+op_assign
+id|mp
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* else ******** Called from a loadable module **********/
+multiline_comment|/*&n;&t; * This call should _only_ be done in the context of the&n;&t; * call to  init_module  i.e. when loading the module!!&n;&t; * Or else...&n;&t; */
+id|mp
+op_assign
+id|module_list
+suffix:semicolon
+multiline_comment|/* true when doing init_module! */
+multiline_comment|/* Any table there before? */
+r_if
+c_cond
+(paren
+(paren
+id|oldtab
+op_assign
+id|mp-&gt;symtab
+)paren
+op_eq
+(paren
+r_struct
+id|symbol_table
+op_star
+)paren
+l_int|0
+)paren
+(brace
+multiline_comment|/* No, just insert it! */
+id|mp-&gt;symtab
+op_assign
+id|intab
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* else  ****** we have to replace the module symbol table ******/
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|oldtab-&gt;n_symbols
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/* Oh dear, I have to drop the old ones... */
+id|printk
+c_func
+(paren
+l_string|&quot;Warning, dropping old symbols&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|oldtab-&gt;n_refs
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* no problems! */
+id|mp-&gt;symtab
+op_assign
+id|intab
+suffix:semicolon
+multiline_comment|/* if the old table was kmalloc-ed, drop it */
+r_if
+c_cond
+(paren
+id|oldtab-&gt;size
+OG
+l_int|0
+)paren
+id|kfree_s
+c_func
+(paren
+id|oldtab
+comma
+id|oldtab-&gt;size
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* else */
+multiline_comment|/***** The module references other modules... insmod said so! *****/
+multiline_comment|/* We have to allocate a new symbol table, or we lose them! */
+r_if
+c_cond
+(paren
+id|intab
+op_eq
+(paren
+r_struct
+id|symbol_table
+op_star
+)paren
+l_int|0
+)paren
+id|intab
+op_assign
+op_amp
+id|nulltab
+suffix:semicolon
+multiline_comment|/* easier code with zeroes in place */
+multiline_comment|/* the input symbol table space does not include the string table */
+multiline_comment|/* (it does for symbol tables that insmod creates) */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|newtab
+op_assign
+(paren
+r_struct
+id|symbol_table
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|size
+op_assign
+id|SYMSIZ
+op_plus
+id|intab-&gt;n_symbols
+op_star
+id|INTSIZ
+op_plus
+id|oldtab-&gt;n_refs
+op_star
+id|REFSIZ
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* panic time! */
+id|printk
+c_func
+(paren
+l_string|&quot;Out of memory for new symbol table!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+multiline_comment|/* copy up to, and including, the new symbols */
+id|memcpy
+c_func
+(paren
+id|newtab
+comma
+id|intab
+comma
+id|SYMSIZ
+op_plus
+id|intab-&gt;n_symbols
+op_star
+id|INTSIZ
+)paren
+suffix:semicolon
+id|newtab-&gt;size
+op_assign
+id|size
+suffix:semicolon
+id|newtab-&gt;n_refs
+op_assign
+id|oldtab-&gt;n_refs
+suffix:semicolon
+multiline_comment|/* copy references */
+id|memcpy
+c_func
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|newtab
+)paren
+op_plus
+id|SYMSIZ
+op_plus
+id|intab-&gt;n_symbols
+op_star
+id|INTSIZ
+comma
+(paren
+(paren
+r_char
+op_star
+)paren
+id|oldtab
+)paren
+op_plus
+id|SYMSIZ
+op_plus
+id|oldtab-&gt;n_symbols
+op_star
+id|INTSIZ
+comma
+id|oldtab-&gt;n_refs
+op_star
+id|REFSIZ
+)paren
+suffix:semicolon
+multiline_comment|/* relink references from the old table to the new one */
+multiline_comment|/* pointer to the first reference entry in newtab! Really! */
+id|newref
+op_assign
+(paren
+r_struct
+id|module_ref
+op_star
+)paren
+op_amp
+(paren
+id|newtab-&gt;symbol
+(braket
+id|newtab-&gt;n_symbols
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* check for reference links from previous modules */
+r_for
+c_loop
+(paren
+id|link
+op_assign
+id|module_list
+suffix:semicolon
+id|link
+op_logical_and
+(paren
+id|link
+op_ne
+op_amp
+id|kernel_module
+)paren
+suffix:semicolon
+id|link
+op_assign
+id|link-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|link-&gt;ref-&gt;module
+op_eq
+id|mp
+)paren
+id|link-&gt;ref
+op_assign
+id|newref
+op_increment
+suffix:semicolon
+)brace
+id|mp-&gt;symtab
+op_assign
+id|newtab
+suffix:semicolon
+multiline_comment|/* all references (if any) have been handled */
+multiline_comment|/* if the old table was kmalloc-ed, drop it */
+r_if
+c_cond
+(paren
+id|oldtab-&gt;size
+OG
+l_int|0
+)paren
+id|kfree_s
+c_func
+(paren
+id|oldtab
+comma
+id|oldtab-&gt;size
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

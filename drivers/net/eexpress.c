@@ -10,6 +10,10 @@ l_string|&quot;eexpress.c:v0.07 1/19/94 Donald Becker (becker@super.org)&bslash;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documentation.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990. It provides just enough&n;&t;info that the casual reader might think that it documents the i82586.&n;*/
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -27,10 +31,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/malloc.h&gt;
 multiline_comment|/* use 0 for production, 1 for verification, 2..7 for debug */
 macro_line|#ifndef NET_DEBUG

@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/umsdos/namei.c&n; *&n; *&t;Written 1993 by Jacques Gelinas &n; *&t;Inspired from linux/fs/msdos/... by Werner Almesberger&n; *&n; * Maintain and access the --linux alternate directory file.&n;*/
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

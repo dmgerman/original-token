@@ -29,6 +29,10 @@ r_int
 r_int
 id|mem_map_t
 suffix:semicolon
+DECL|macro|VMALLOC_START
+mdefine_line|#define VMALLOC_START&t;&t;0xFFFFFE0000000000
+DECL|macro|VMALLOC_VMADDR
+mdefine_line|#define VMALLOC_VMADDR(x)&t;((unsigned long)(x))
 macro_line|#ifdef CONFIG_STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte
@@ -159,7 +163,7 @@ mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FO
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FOW)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_VALID | _PAGE_ASM | __ACCESS_BITS | __DIRTY_BITS)
+mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_VALID | _PAGE_ASM | _PAGE_KRE | _PAGE_KWE)
 DECL|macro|_PAGE_NORMAL
 mdefine_line|#define _PAGE_NORMAL(x) __pgprot(_PAGE_VALID | __ACCESS_BITS | (x))
 DECL|macro|__P000
@@ -245,10 +249,6 @@ mdefine_line|#define PTR_MASK&t;&t;&t;(~(sizeof(void*)-1))
 multiline_comment|/* sizeof(void*)==1&lt;&lt;SIZEOF_PTR_LOG2 */
 DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;3
-multiline_comment|/* to find an entry in a page-table-directory */
-multiline_comment|/*&n; * XXXXX This isn&squot;t right: we shouldn&squot;t use the ptbr, but the L2 pointer.&n; * This is just for getting it through the compiler right now&n; */
-DECL|macro|PAGE_DIR_OFFSET
-mdefine_line|#define PAGE_DIR_OFFSET(tsk,address) &bslash;&n;((pgd_t *) ((tsk)-&gt;tss.ptbr + ((((unsigned long)(address)) &gt;&gt; 21) &amp; PTR_MASK &amp; ~PAGE_MASK)))
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
@@ -256,9 +256,95 @@ multiline_comment|/* the no. of pointers that fit on a page */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;&t;&t;(PAGE_SIZE/sizeof(void*))
 multiline_comment|/* to set the page-dir */
-multiline_comment|/*&n; * XXXXX This isn&squot;t right: we shouldn&squot;t use the ptbr, but the L2 pointer.&n; * This is just for getting it through the compiler right now&n; */
-DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.ptbr = (unsigned long) (pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;invalidate(); &bslash;&n;} while (0)
+DECL|function|SET_PAGE_DIR
+r_extern
+r_inline
+r_void
+id|SET_PAGE_DIR
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+id|pgd_t
+op_star
+id|pgdir
+)paren
+(brace
+id|tsk-&gt;tss.ptbr
+op_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+id|pgdir
+op_minus
+id|PAGE_OFFSET
+)paren
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tsk
+op_eq
+id|current
+)paren
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* to find an entry in a page-table-directory */
+DECL|function|PAGE_DIR_OFFSET
+r_extern
+r_inline
+id|pgd_t
+op_star
+id|PAGE_DIR_OFFSET
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+(paren
+id|pgd_t
+op_star
+)paren
+(paren
+(paren
+id|tsk-&gt;tss.ptbr
+op_lshift
+id|PAGE_SHIFT
+)paren
+op_plus
+id|PAGE_OFFSET
+)paren
+op_plus
+(paren
+(paren
+id|address
+op_rshift
+l_int|33
+)paren
+op_amp
+id|PTR_MASK
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_int
 r_int

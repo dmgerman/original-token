@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * Count is now a supported feature, but currently only the ext2fs&n; * uses it.  A count value of 1 is supported for compatibility with&n; * earlier libraries, but larger values are supported: count should&n; * indicate the total buffer space available for filling with dirents.&n; * The d_off entry in the dirents will then indicate the offset from&n; * each dirent to the next, and the return value will indicate the&n; * number of bytes written.  All dirents will be written at&n; * word-aligned addresses.  [sct Oct 1994]&n; */
 DECL|function|sys_readdir

@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *&t;fs/msdos/mmap.c&n; *&n; *&t;Written by Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&t;Inspired by fs/nfs/mmap.c (Jaon Tombs 15 Aug 1993)&n; *&n; *&t;msdos mmap handling&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;

@@ -67,6 +67,8 @@ l_int|4096
 suffix:semicolon
 DECL|macro|BUFSIZE_INDEX
 mdefine_line|#define BUFSIZE_INDEX(X) ((int) buffersize_index[(X)&gt;&gt;9])
+DECL|macro|MAX_BUF_PER_PAGE
+mdefine_line|#define MAX_BUF_PER_PAGE (PAGE_SIZE / 512)
 r_static
 r_int
 id|grow_buffers
@@ -1123,9 +1125,18 @@ r_if
 c_cond
 (paren
 id|bh-&gt;b_dev
-op_eq
+op_ne
 id|dev
 )paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh-&gt;b_count
+)paren
+r_continue
+suffix:semicolon
 id|bh-&gt;b_flushtime
 op_assign
 id|bh-&gt;b_uptodate
@@ -4611,7 +4622,7 @@ id|buffer_head
 op_star
 id|bhr
 (braket
-l_int|8
+id|MAX_BUF_PER_PAGE
 )braket
 suffix:semicolon
 r_for
@@ -4783,7 +4794,7 @@ id|buffer_head
 op_star
 id|bh
 (braket
-l_int|8
+id|MAX_BUF_PER_PAGE
 )braket
 suffix:semicolon
 r_int
@@ -5036,7 +5047,7 @@ comma
 op_star
 id|arr
 (braket
-l_int|8
+id|MAX_BUF_PER_PAGE
 )braket
 suffix:semicolon
 r_int
@@ -5437,7 +5448,7 @@ id|buffer_head
 op_star
 id|bh
 (braket
-l_int|8
+id|MAX_BUF_PER_PAGE
 )braket
 suffix:semicolon
 r_int
@@ -7331,7 +7342,7 @@ comma
 op_star
 id|arr
 (braket
-l_int|8
+id|MAX_BUF_PER_PAGE
 )braket
 suffix:semicolon
 r_int

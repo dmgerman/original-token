@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/msdos/fat.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

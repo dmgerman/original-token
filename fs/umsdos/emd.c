@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/umsdos/emd.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *&n; *  Extended MS-DOS directory handling functions&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -2,6 +2,7 @@ multiline_comment|/*&n;&t;linux/kernel/blk_drv/mcd.c - Mitsumi CDROM driver&n;&n
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

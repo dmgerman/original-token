@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 DECL|function|ext2_put_inode
 r_void
 id|ext2_put_inode

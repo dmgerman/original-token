@@ -2,6 +2,10 @@ multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for 
 DECL|macro|SL_CHECK_TRANSMIT
 mdefine_line|#define SL_CHECK_TRANSMIT
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 multiline_comment|/* Undef this, if you don&squot;t need 6bit encapsulation code in the driver */
 DECL|macro|CONFIG_SLIP_MODE_SLIP6
 mdefine_line|#define CONFIG_SLIP_MODE_SLIP6
@@ -26,10 +30,6 @@ macro_line|#ifdef CONFIG_INET
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;slhc.h&quot;
-macro_line|#endif
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|macro|SLIP_VERSION

@@ -1,5 +1,5 @@
 multiline_comment|/* netdrv_init.c: Initialization for network devices. */
-multiline_comment|/*&n;&t;Written 1993,1994 by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;The author may be reached as becker@cesdis.gsfc.nasa.gov or&n;&t;C/O Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file contains the initialization for the &quot;pl14+&quot; style ethernet&n;&t;drivers.  It should eventually replace most of drivers/net/Space.c.&n;&t;It&squot;s primary advantage is that it&squot;s able to allocate low-memory buffers.&n;&t;A secondary advantage is that the dangerous NE*000 netcards can reserve&n;&t;their I/O port region before the SCSI probes start.&n;&n;&t;Modifications/additions by Bjorn Ekwall &lt;bj0rn@blox.se&gt;:&n;&t;&t;ethdev_index[MAX_ETH_CARDS]&n;&t;&t;register_netdev() / unregister_netdev()&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -275,6 +275,17 @@ id|dev-&gt;init
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sizeof_priv
+op_assign
+(paren
+id|sizeof_priv
+op_plus
+l_int|3
+)paren
+op_amp
+op_complement
+l_int|3
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -297,8 +308,6 @@ op_star
 id|mem_startp
 op_add_assign
 id|sizeof_priv
-op_plus
-l_int|3
 suffix:semicolon
 )brace
 r_else
@@ -308,10 +317,18 @@ id|kmalloc
 c_func
 (paren
 id|sizeof_priv
-op_plus
-l_int|3
 comma
 id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|dev-&gt;priv
+comma
+l_int|0
+comma
+id|sizeof_priv
 )paren
 suffix:semicolon
 r_goto

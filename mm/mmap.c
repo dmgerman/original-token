@@ -445,6 +445,7 @@ id|VM_SHARED
 op_or
 id|VM_MAYSHARE
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * This looks strange, but when we don&squot;t have the file open&n;&t;&t;&t; * for writing, we can demote the shared mapping to a simpler&n;&t;&t;&t; * private mapping. That also takes care of a security hole&n;&t;&t;&t; * with ptrace() writing to a shared mapping without write&n;&t;&t;&t; * permissions.&n;&t;&t;&t; *&n;&t;&t;&t; * We leave the VM_MAYSHARE bit on, just to get correct output&n;&t;&t;&t; * from /proc/xxx/maps..&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -458,7 +459,11 @@ l_int|2
 id|vma-&gt;vm_flags
 op_and_assign
 op_complement
+(paren
 id|VM_MAYWRITE
+op_or
+id|VM_SHARED
+)paren
 suffix:semicolon
 )brace
 )brace

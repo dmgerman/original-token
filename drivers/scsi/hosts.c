@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#ifndef NULL
 DECL|macro|NULL

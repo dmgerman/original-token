@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/kernel/chr_drv/sound/soundcard.c&n; *&n; * Sound
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 DECL|variable|soundcards_installed
 r_static
 r_int

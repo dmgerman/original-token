@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
 r_extern
 r_int

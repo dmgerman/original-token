@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/isofs/rock.c&n; *&n; *  (C) 1992, 1993  Eric Youngdale&n; *&n; *  Rock Ridge Extensions to iso9660&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;

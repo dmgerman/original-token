@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
@@ -20,6 +21,8 @@ id|blksize_size
 (braket
 )braket
 suffix:semicolon
+DECL|macro|MAX_BUF_PER_PAGE
+mdefine_line|#define MAX_BUF_PER_PAGE (PAGE_SIZE / 512)
 DECL|macro|NBUF
 mdefine_line|#define NBUF 64
 DECL|function|block_write
@@ -77,7 +80,7 @@ suffix:semicolon
 r_int
 id|cluster_list
 (braket
-l_int|8
+id|MAX_BUF_PER_PAGE
 )braket
 suffix:semicolon
 r_struct
@@ -1030,7 +1033,7 @@ suffix:semicolon
 r_int
 id|cluster_list
 (braket
-l_int|8
+id|MAX_BUF_PER_PAGE
 )braket
 suffix:semicolon
 r_int

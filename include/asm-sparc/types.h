@@ -6,6 +6,15 @@ multiline_comment|/* NOTE: I will have to change these when the V9 sparcs come i
 macro_line|#ifndef _SIZE_T
 DECL|macro|_SIZE_T
 mdefine_line|#define _SIZE_T
+macro_line|#ifdef __svr4__
+DECL|typedef|size_t
+r_typedef
+r_int
+r_int
+r_int
+suffix:semicolon
+multiline_comment|/* solaris sucks */
+macro_line|#else
 DECL|typedef|size_t
 r_typedef
 r_int
@@ -13,6 +22,8 @@ r_int
 r_int
 r_int
 suffix:semicolon
+multiline_comment|/* sunos is much better */
+macro_line|#endif /* !(__svr4__) */
 macro_line|#endif
 macro_line|#ifndef _SSIZE_T
 DECL|macro|_SSIZE_T

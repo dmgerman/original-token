@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;

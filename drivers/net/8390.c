@@ -9,6 +9,10 @@ op_assign
 l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -27,10 +31,6 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;8390.h&quot;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;int block_input(struct device *dev, int count, char *buf, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into BUF.  Start reading from&n;&t;&t;RING_OFFSET, the address as the 8390 sees it.  The first read will&n;&t;&t;always be the 4 byte, page aligned 8390 header.  *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;*/
 DECL|macro|ei_reset_8390
 mdefine_line|#define ei_reset_8390 (ei_local-&gt;reset_8390)

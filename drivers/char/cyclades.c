@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/cyclades.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;

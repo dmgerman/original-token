@@ -1,7 +1,11 @@
-multiline_comment|/*&n; * Routines to compress and uncompress tcp packets (for transmission&n; * over low speed serial lines).&n; *&n; * Copyright (c) 1989 Regents of the University of California.&n; * All rights reserved.&n; *&n; * Redistribution and use in source and binary forms are permitted&n; * provided that the above copyright notice and this paragraph are&n; * duplicated in all such forms and that any documentation,&n; * advertising materials, and other materials related to such&n; * distribution and use acknowledge that the software was developed&n; * by the University of California, Berkeley.  The name of the&n; * University may not be used to endorse or promote products derived&n; * from this software without specific prior written permission.&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND WITHOUT ANY EXPRESS OR&n; * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.&n; *&n; *&t;Van Jacobson (van@helios.ee.lbl.gov), Dec 31, 1989:&n; *&t;- Initial distribution.&n; *&n; *&n; * modified for KA9Q Internet Software Package by&n; * Katie Stevens (dkstevens@ucdavis.edu)&n; * University of California, Davis&n; * Computing Services&n; *&t;- 01-31-90&t;initial adaptation (from 1.19)&n; *&t;PPP.05&t;02-15-90 [ks]&n; *&t;PPP.08&t;05-02-90 [ks]&t;use PPP protocol field to signal compression&n; *&t;PPP.15&t;09-90&t; [ks]&t;improve mbuf handling&n; *&t;PPP.16&t;11-02&t; [karn]&t;substantially rewritten to use NOS facilities&n; *&n; *&t;- Feb 1991&t;Bill_Simpson@um.cc.umich.edu&n; *&t;&t;&t;variable number of conversation slots&n; *&t;&t;&t;allow zero or one slots&n; *&t;&t;&t;separate routines&n; *&t;&t;&t;status display&n; *&t;- Jul 1994&t;Dmitry Gorodchanin&n; *&t;&t;&t;Fixes for memory leaks.&n; *      - Oct 1994      Dmitry Gorodchanin&n; *                      Modularization.&n; *&n; *&n; *&t;This module is a difficult issue. Its clearly inet code but its also clearly&n; *&t;driver code belonging close to PPP and SLIP&n; */
+multiline_comment|/*&n; * Routines to compress and uncompress tcp packets (for transmission&n; * over low speed serial lines).&n; *&n; * Copyright (c) 1989 Regents of the University of California.&n; * All rights reserved.&n; *&n; * Redistribution and use in source and binary forms are permitted&n; * provided that the above copyright notice and this paragraph are&n; * duplicated in all such forms and that any documentation,&n; * advertising materials, and other materials related to such&n; * distribution and use acknowledge that the software was developed&n; * by the University of California, Berkeley.  The name of the&n; * University may not be used to endorse or promote products derived&n; * from this software without specific prior written permission.&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND WITHOUT ANY EXPRESS OR&n; * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.&n; *&n; *&t;Van Jacobson (van@helios.ee.lbl.gov), Dec 31, 1989:&n; *&t;- Initial distribution.&n; *&n; *&n; * modified for KA9Q Internet Software Package by&n; * Katie Stevens (dkstevens@ucdavis.edu)&n; * University of California, Davis&n; * Computing Services&n; *&t;- 01-31-90&t;initial adaptation (from 1.19)&n; *&t;PPP.05&t;02-15-90 [ks]&n; *&t;PPP.08&t;05-02-90 [ks]&t;use PPP protocol field to signal compression&n; *&t;PPP.15&t;09-90&t; [ks]&t;improve mbuf handling&n; *&t;PPP.16&t;11-02&t; [karn]&t;substantially rewritten to use NOS facilities&n; *&n; *&t;- Feb 1991&t;Bill_Simpson@um.cc.umich.edu&n; *&t;&t;&t;variable number of conversation slots&n; *&t;&t;&t;allow zero or one slots&n; *&t;&t;&t;separate routines&n; *&t;&t;&t;status display&n; *&t;- Jul 1994&t;Dmitry Gorodchanin&n; *&t;&t;&t;Fixes for memory leaks.&n; *      - Oct 1994      Dmitry Gorodchanin&n; *                      Modularization.&n; *&t;- Jan 1995&t;Bjorn Ekwall&n; *&t;&t;&t;Use ip_fast_csum from ip.h&n; *&n; *&n; *&t;This module is a difficult issue. Its clearly inet code but its also clearly&n; *&t;driver code belonging close to PPP and SLIP&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Entire module is for IP only */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -25,10 +29,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;slhc.h&quot;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 DECL|variable|last_retran
 r_int
 id|last_retran
@@ -90,17 +90,6 @@ r_char
 op_star
 op_star
 id|cpp
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ip_csum
-c_func
-(paren
-r_struct
-id|iphdr
-op_star
-id|iph
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize compression data structure&n; *&t;slots must be in range 0 to 255 (zero meaning no compression)&n; */
@@ -2411,8 +2400,11 @@ id|icp
 op_member_access_from_pointer
 id|check
 op_assign
-id|ip_csum
+id|ip_fast_csum
 c_func
+(paren
+id|icp
+comma
 (paren
 (paren
 r_struct
@@ -2420,6 +2412,9 @@ id|iphdr
 op_star
 )paren
 id|icp
+)paren
+op_member_access_from_pointer
+id|ihl
 )paren
 suffix:semicolon
 id|memcpy
@@ -2613,10 +2608,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ip_csum
+id|ip_fast_csum
 c_func
 (paren
-id|ip
+id|icp
+comma
+id|ip-&gt;ihl
 )paren
 )paren
 (brace

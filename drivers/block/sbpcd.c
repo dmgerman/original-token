@@ -6,6 +6,7 @@ macro_line|#endif SBPCD_ISSUE
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 multiline_comment|/* #undef DS */
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

@@ -609,6 +609,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Start the kernel:&n; * - switch to the proper PCB structure&n; * - switch to the proper ptbr&n; * - switch to the new kernel stack&n; */
 DECL|function|runkernel
 r_static
 r_void
@@ -630,6 +631,87 @@ op_star
 )paren
 id|INIT_PCB
 suffix:semicolon
+r_int
+r_int
+id|oldptbr
+comma
+op_star
+id|oldL1
+suffix:semicolon
+r_int
+r_int
+id|newptbr
+comma
+op_star
+id|newL1
+suffix:semicolon
+id|oldptbr
+op_assign
+id|pcb_va-&gt;ptbr
+suffix:semicolon
+id|oldL1
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|PAGE_OFFSET
+op_plus
+(paren
+id|oldptbr
+op_lshift
+id|PAGE_SHIFT
+)paren
+)paren
+suffix:semicolon
+id|newptbr
+op_assign
+(paren
+id|SWAPPER_PGD
+op_minus
+id|PAGE_OFFSET
+)paren
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+id|newL1
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|SWAPPER_PGD
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|newL1
+comma
+id|oldL1
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+id|newL1
+(braket
+l_int|1023
+)braket
+op_assign
+(paren
+id|newptbr
+op_lshift
+l_int|32
+)paren
+op_or
+id|pgprot_val
+c_func
+(paren
+id|PAGE_KERNEL
+)paren
+suffix:semicolon
 op_star
 id|init_pcb
 op_assign
@@ -642,6 +724,10 @@ id|PAGE_SIZE
 op_plus
 id|INIT_STACK
 suffix:semicolon
+id|init_pcb-&gt;ptbr
+op_assign
+id|newptbr
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -649,6 +735,8 @@ c_func
 l_string|&quot;bis %0,%0,$26&bslash;n&bslash;t&quot;
 l_string|&quot;bis %1,%1,$16&bslash;n&bslash;t&quot;
 l_string|&quot;.long %2&bslash;n&bslash;t&quot;
+l_string|&quot;lda $16,-2($31)&bslash;n&bslash;t&quot;
+l_string|&quot;.long 51&bslash;n&bslash;t&quot;
 l_string|&quot;ret ($26)&quot;
 suffix:colon
 multiline_comment|/* no outputs: it doesn&squot;t even return */

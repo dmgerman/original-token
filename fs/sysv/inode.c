@@ -1,12 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/sysv/inode.c&n; *&n; *  minix/inode.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  xenix/inode.c&n; *  Copyright (C) 1992  Doug Evans&n; *&n; *  coh/inode.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Paul B. Monday&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Bruno Haible&n; *&n; *  This file contains code for allocating/freeing inodes and for read/writing&n; *  the superblock.&n; */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/sysv_fs.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/locks.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -16,6 +8,14 @@ mdefine_line|#define MOD_INC_USE_COUNT
 DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/sysv_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 DECL|function|sysv_put_inode
 r_void
 id|sysv_put_inode

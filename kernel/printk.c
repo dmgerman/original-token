@@ -5,6 +5,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 DECL|macro|LOG_BUF_LEN
 mdefine_line|#define LOG_BUF_LEN&t;4096
 DECL|variable|buf

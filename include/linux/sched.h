@@ -16,6 +16,7 @@ suffix:semicolon
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
@@ -50,7 +51,6 @@ DECL|macro|LAST_TASK
 mdefine_line|#define LAST_TASK task[NR_TASKS-1]
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/param.h&gt;

@@ -27,6 +27,13 @@ r_int
 r_int
 id|mem_map_t
 suffix:semicolon
+multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
+DECL|macro|VMALLOC_OFFSET
+mdefine_line|#define VMALLOC_OFFSET&t;(8*1024*1024)
+DECL|macro|VMALLOC_START
+mdefine_line|#define VMALLOC_START ((high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
+DECL|macro|VMALLOC_VMADDR
+mdefine_line|#define VMALLOC_VMADDR(x) (TASK_SIZE + (unsigned long)(x))
 macro_line|#ifdef CONFIG_STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte

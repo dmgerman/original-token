@@ -1,13 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/umsdos/inode.c&n; *&n; *&t;Written 1993 by Jacques Gelinas &n; *&t;Inspired from linux/fs/msdos/... by Werner Almesberger&n; *&n; */
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/msdos_fs.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -17,6 +8,15 @@ mdefine_line|#define MOD_INC_USE_COUNT
 DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/umsdos_fs.h&gt;
 DECL|variable|pseudo_root
 r_struct
 id|inode

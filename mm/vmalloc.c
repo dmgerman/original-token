@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|struct|vm_struct
 r_struct
@@ -44,9 +45,6 @@ id|vmlist
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
-DECL|macro|VMALLOC_OFFSET
-mdefine_line|#define VMALLOC_OFFSET&t;(8*1024*1024)
 DECL|function|set_pgdir
 r_static
 r_inline
@@ -637,30 +635,32 @@ id|PAGE_SHIFT
 suffix:semicolon
 id|dindex
 op_assign
+id|VMALLOC_VMADDR
+c_func
 (paren
-id|TASK_SIZE
-op_plus
-(paren
-r_int
-r_int
-)paren
 id|addr
 )paren
-op_rshift
-l_int|22
 suffix:semicolon
 id|index
 op_assign
 (paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|addr
-)paren
+id|dindex
 op_rshift
 id|PAGE_SHIFT
+)paren
+op_amp
+(paren
+id|PTRS_PER_PAGE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|dindex
+op_assign
+(paren
+id|dindex
+op_rshift
+id|PGDIR_SHIFT
 )paren
 op_amp
 (paren
@@ -928,20 +928,7 @@ op_assign
 r_void
 op_star
 )paren
-(paren
-(paren
-id|high_memory
-op_plus
-id|VMALLOC_OFFSET
-)paren
-op_amp
-op_complement
-(paren
-id|VMALLOC_OFFSET
-op_minus
-l_int|1
-)paren
-)paren
+id|VMALLOC_START
 suffix:semicolon
 id|area-&gt;size
 op_assign

@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/isofs/file.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  isofs regular file handling primitives&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

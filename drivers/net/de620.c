@@ -34,6 +34,10 @@ id|utp
 suffix:semicolon
 multiline_comment|/*&n; * Force media with insmod:&n; *&t;insmod de620.o bnc=1&n; * or&n; *&t;insmod de620.o utp=1&n; */
 "&f;"
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -50,10 +54,6 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 multiline_comment|/* Constant definitions for the DE-620 registers, commands and bits */
 macro_line|#include &quot;de620.h&quot;
 DECL|macro|netstats

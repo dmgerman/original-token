@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *&t;fs/nfs/mmap.c&t;by Jon Tombs 15 Aug 1993&n; *&n; * This code is from&n; *&t;linux/mm/mmap.c which was written by obz, Linus and Eric&n; * and&n; *&t;linux/mm/memory.c  by Linus Torvalds and others&n; *&n; *&t;Copyright (C) 1993&n; *&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

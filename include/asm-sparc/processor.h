@@ -5,11 +5,17 @@ mdefine_line|#define __ASM_SPARC_PROCESSOR_H
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 1
+DECL|macro|EISA_bus__is_a_macro
+mdefine_line|#define EISA_bus__is_a_macro /* for versions in ksyms.c */
 DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
+DECL|macro|MCA_bus__is_a_macro
+mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/*&n; * Write Protection works right in supervisor mode on the Sparc&n; */
 DECL|macro|wp_works_ok
 mdefine_line|#define wp_works_ok 1
+DECL|macro|wp_works_ok__is_a_macro
+mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; *&n; * &quot;this is gonna have to change to 1gig for the sparc&quot; - David S. Miller&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xc0000000UL)
