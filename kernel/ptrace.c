@@ -5,9 +5,9 @@ macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/ptrace.h&gt;
 multiline_comment|/*&n; * does not yet catch signals sent when the child dies.&n; * in exit.c or in signal.c.&n; */
 multiline_comment|/* determines which flags the user has access to. */
@@ -50,7 +50,9 @@ multiline_comment|/* change a pid into a task struct. */
 DECL|function|get_task
 r_static
 r_inline
-r_int
+r_struct
+id|task_struct
+op_star
 id|get_task
 c_func
 (paren
@@ -98,12 +100,14 @@ id|pid
 )paren
 )paren
 r_return
+id|task
+(braket
 id|i
+)braket
 suffix:semicolon
 )brace
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * this routine will get a word off of the processes priviledged stack. &n; * the offset is how far from the base addr as stored in the TSS.  &n; * this routine assumes that all the priviledged stacks are in our&n; * data space.&n; */
@@ -902,17 +906,26 @@ id|task_struct
 op_star
 id|child
 suffix:semicolon
-r_int
-id|childno
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|request
 op_eq
-l_int|0
+id|PTRACE_TRACEME
 )paren
 (brace
+multiline_comment|/* are we already being traced? */
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_PTRACED
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 multiline_comment|/* set the ptrace bit in the proccess flags. */
 id|current-&gt;flags
 op_or_assign
@@ -922,32 +935,80 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|childno
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|child
 op_assign
 id|get_task
 c_func
 (paren
 id|pid
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|childno
-OL
-l_int|0
+)paren
 )paren
 r_return
 op_minus
 id|ESRCH
 suffix:semicolon
-r_else
-id|child
-op_assign
-id|task
-(braket
-id|childno
-)braket
+r_if
+c_cond
+(paren
+id|request
+op_eq
+id|PTRACE_ATTACH
+)paren
+(brace
+r_int
+id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|current-&gt;dumpable
+op_logical_or
+(paren
+id|current-&gt;uid
+op_ne
+id|child-&gt;euid
+)paren
+op_logical_or
+(paren
+id|current-&gt;gid
+op_ne
+id|child-&gt;egid
+)paren
+)paren
+op_logical_and
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+multiline_comment|/* the same process cannot be attached many times */
+r_if
+c_cond
+(paren
+id|child-&gt;flags
+op_amp
+id|PF_PTRACED
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|child-&gt;flags
+op_or_assign
+id|PF_PTRACED
 suffix:semicolon
 r_if
 c_cond
@@ -955,7 +1016,81 @@ c_cond
 id|child-&gt;p_pptr
 op_ne
 id|current
+)paren
+(brace
+id|REMOVE_LINKS
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
+id|child-&gt;p_pptr
+op_assign
+id|current
+suffix:semicolon
+id|SET_LINKS
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
+)brace
+id|tmp
+op_assign
+id|get_stack_long
+c_func
+(paren
+id|child
+comma
+l_int|4
+op_star
+id|EFL
+op_minus
+id|MAGICNUMBER
+)paren
+op_or
+id|TRAP_FLAG
+suffix:semicolon
+id|put_stack_long
+c_func
+(paren
+id|child
+comma
+l_int|4
+op_star
+id|EFL
+op_minus
+id|MAGICNUMBER
+comma
+id|tmp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|child-&gt;state
+op_eq
+id|TASK_INTERRUPTIBLE
 op_logical_or
+id|child-&gt;state
+op_eq
+id|TASK_STOPPED
+)paren
+id|child-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
+id|child-&gt;signal
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|child-&gt;flags
@@ -979,11 +1114,11 @@ id|request
 (brace
 multiline_comment|/* when I and D space are seperate, these will need to be fixed. */
 r_case
-l_int|1
+id|PTRACE_PEEKTEXT
 suffix:colon
 multiline_comment|/* read word at location addr. */
 r_case
-l_int|2
+id|PTRACE_PEEKDATA
 suffix:colon
 (brace
 r_int
@@ -996,10 +1131,7 @@ op_assign
 id|read_long
 c_func
 (paren
-id|task
-(braket
-id|childno
-)braket
+id|child
 comma
 id|addr
 comma
@@ -1048,7 +1180,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* read the word at location addr in the USER area. */
 r_case
-l_int|3
+id|PTRACE_PEEKUSR
 suffix:colon
 (brace
 r_int
@@ -1121,20 +1253,17 @@ suffix:semicolon
 )brace
 multiline_comment|/* when I and D space are seperate, this will have to be fixed. */
 r_case
-l_int|4
+id|PTRACE_POKETEXT
 suffix:colon
 multiline_comment|/* write the word at location addr. */
 r_case
-l_int|5
+id|PTRACE_POKEDATA
 suffix:colon
 r_return
 id|write_long
 c_func
 (paren
-id|task
-(braket
-id|childno
-)braket
+id|child
 comma
 id|addr
 comma
@@ -1142,7 +1271,7 @@ id|data
 )paren
 suffix:semicolon
 r_case
-l_int|6
+id|PTRACE_POKEUSR
 suffix:colon
 multiline_comment|/* write the word at location addr in the USER area */
 id|addr
@@ -1234,7 +1363,7 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
-l_int|7
+id|PTRACE_CONT
 suffix:colon
 (brace
 multiline_comment|/* restart after signal. */
@@ -1268,7 +1397,7 @@ l_int|1
 suffix:semicolon
 id|child-&gt;state
 op_assign
-l_int|0
+id|TASK_RUNNING
 suffix:semicolon
 multiline_comment|/* make sure the single step bit is not set. */
 id|tmp
@@ -1308,7 +1437,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * make the child exit.  Best I can do is send it a sigkill. &n; * perhaps it should be put in the status that it want&squot;s to &n; * exit.&n; */
 r_case
-l_int|8
+id|PTRACE_KILL
 suffix:colon
 (brace
 r_int
@@ -1316,7 +1445,7 @@ id|tmp
 suffix:semicolon
 id|child-&gt;state
 op_assign
-l_int|0
+id|TASK_RUNNING
 suffix:semicolon
 id|child-&gt;signal
 op_assign
@@ -1365,7 +1494,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_case
-l_int|9
+id|PTRACE_SINGLESTEP
 suffix:colon
 (brace
 multiline_comment|/* set the trap flag. */
@@ -1404,7 +1533,7 @@ id|tmp
 suffix:semicolon
 id|child-&gt;state
 op_assign
-l_int|0
+id|TASK_RUNNING
 suffix:semicolon
 id|child-&gt;signal
 op_assign
@@ -1418,7 +1547,7 @@ OG
 l_int|0
 op_logical_and
 id|data
-OL
+op_le
 id|NSIG
 )paren
 id|child-&gt;signal
@@ -1432,6 +1561,63 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* give it a chance to run. */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_case
+id|PTRACE_DETACH
+suffix:colon
+(brace
+multiline_comment|/* detach a process that was attached. */
+r_int
+id|tmp
+suffix:semicolon
+id|child-&gt;flags
+op_and_assign
+op_complement
+id|PF_PTRACED
+suffix:semicolon
+id|child-&gt;signal
+op_assign
+l_int|0
+suffix:semicolon
+id|child-&gt;state
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* make sure the single step bit is not set. */
+id|tmp
+op_assign
+id|get_stack_long
+c_func
+(paren
+id|child
+comma
+l_int|4
+op_star
+id|EFL
+op_minus
+id|MAGICNUMBER
+)paren
+op_amp
+op_complement
+id|TRAP_FLAG
+suffix:semicolon
+id|put_stack_long
+c_func
+(paren
+id|child
+comma
+l_int|4
+op_star
+id|EFL
+op_minus
+id|MAGICNUMBER
+comma
+id|tmp
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

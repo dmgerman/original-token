@@ -675,10 +675,6 @@ id|sa-&gt;sa_flags
 op_amp
 id|SA_INTERRUPT
 )paren
-op_logical_or
-id|signr
-template_param
-id|SIGTTOU
 )paren
 )paren
 id|regs-&gt;eax
@@ -820,7 +816,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;&t;&t;current-&gt;p_pptr-&gt;signal |= (1&lt;&lt;(SIGCHLD-1));*/
 r_return
 l_int|1
 suffix:semicolon

@@ -223,7 +223,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&t;*((struct minix_super_block *) s) =&n;&t;&t;*((struct minix_super_block *) bh-&gt;b_data); */
 id|ms
 op_assign
 (paren

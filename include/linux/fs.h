@@ -35,7 +35,7 @@ mdefine_line|#define MAJOR(a) (((unsigned)(a))&gt;&gt;8)
 DECL|macro|MINOR
 mdefine_line|#define MINOR(a) ((a)&amp;0xff)
 DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 20
+mdefine_line|#define NR_OPEN 32
 DECL|macro|NR_INODE
 mdefine_line|#define NR_INODE 128
 DECL|macro|NR_FILE
@@ -1275,6 +1275,23 @@ id|inode
 op_star
 op_star
 id|res_inode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|do_mknod
+c_func
+(paren
+r_const
+r_char
+op_star
+id|filename
+comma
+r_int
+id|mode
+comma
+r_int
+id|dev
 )paren
 suffix:semicolon
 r_extern
