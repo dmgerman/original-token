@@ -3979,6 +3979,18 @@ multiline_comment|/* no hardware */
 r_if
 c_cond
 (paren
+id|fp-&gt;f_mode
+op_amp
+l_int|2
+)paren
+multiline_comment|/* write access? */
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|mcd_open_count
 op_logical_and

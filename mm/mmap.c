@@ -691,6 +691,17 @@ c_func
 id|area
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|area-&gt;vm_inode
+)paren
+id|iput
+c_func
+(paren
+id|area-&gt;vm_inode
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -794,6 +805,11 @@ id|mpnt-&gt;vm_inode
 id|mpnt-&gt;vm_inode-&gt;i_count
 op_increment
 suffix:semicolon
+id|area-&gt;vm_end
+op_assign
+id|addr
+suffix:semicolon
+multiline_comment|/* Truncate area */
 id|insert_vm_struct
 c_func
 (paren
@@ -802,11 +818,6 @@ comma
 id|mpnt
 )paren
 suffix:semicolon
-id|area-&gt;vm_end
-op_assign
-id|addr
-suffix:semicolon
-multiline_comment|/* Truncate area */
 )brace
 multiline_comment|/* construct whatever mapping is needed */
 id|mpnt

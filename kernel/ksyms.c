@@ -355,6 +355,18 @@ c_func
 id|zeromap_page_range
 )paren
 comma
+id|X
+c_func
+(paren
+id|unmap_page_range
+)paren
+comma
+id|X
+c_func
+(paren
+id|merge_segments
+)paren
+comma
 multiline_comment|/* internal kernel memory management */
 id|X
 c_func
@@ -427,6 +439,12 @@ id|X
 c_func
 (paren
 id|lnamei
+)paren
+comma
+id|X
+c_func
+(paren
+id|open_namei
 )paren
 comma
 multiline_comment|/* device registration */
@@ -578,6 +596,18 @@ id|X
 c_func
 (paren
 id|wake_up_interruptible
+)paren
+comma
+id|X
+c_func
+(paren
+id|sleep_on
+)paren
+comma
+id|X
+c_func
+(paren
+id|interruptible_sleep_on
 )paren
 comma
 id|X

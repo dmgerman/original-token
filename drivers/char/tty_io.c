@@ -35,6 +35,11 @@ c_func
 r_const
 r_int
 id|arg
+comma
+r_struct
+id|tty_struct
+op_star
+id|tty
 )paren
 suffix:semicolon
 r_extern
@@ -56,6 +61,14 @@ c_func
 r_const
 r_int
 id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mouse_reporting_p
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -6142,6 +6155,8 @@ id|set_selection
 c_func
 (paren
 id|arg
+comma
+id|tty
 )paren
 suffix:semicolon
 r_case
@@ -6188,6 +6203,15 @@ id|arg
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+r_case
+l_int|7
+suffix:colon
+r_return
+id|mouse_reporting_p
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
 r_default

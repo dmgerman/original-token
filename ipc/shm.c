@@ -71,6 +71,20 @@ r_int
 id|id
 )paren
 suffix:semicolon
+r_static
+r_int
+r_int
+id|shm_swap_in
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|variable|shm_tot
 r_static
 r_int
@@ -1962,6 +1976,38 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|shm_vm_ops
+r_static
+r_struct
+id|vm_operations_struct
+id|shm_vm_ops
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* open */
+l_int|NULL
+comma
+multiline_comment|/* close */
+l_int|NULL
+comma
+multiline_comment|/* nopage (done with swapin) */
+l_int|NULL
+comma
+multiline_comment|/* wppage */
+l_int|NULL
+comma
+multiline_comment|/* share */
+l_int|NULL
+comma
+multiline_comment|/* unmap */
+l_int|NULL
+comma
+multiline_comment|/* swapout (hardcoded right now) */
+id|shm_swap_in
+multiline_comment|/* swapin */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * This is really minimal support to make the shared mem stuff&n; * ve known by the general VM manager. It should add the vm_ops&n; * field so that &squot;munmap()&squot; and friends work correctly on shared&n; * memory areas..&n; */
 DECL|function|add_vm_area
 r_static
@@ -1976,6 +2022,9 @@ comma
 r_int
 r_int
 id|len
+comma
+r_int
+id|readonly
 )paren
 (brace
 r_struct
@@ -2034,6 +2083,16 @@ id|addr
 op_plus
 id|len
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|readonly
+)paren
+id|vma-&gt;vm_page_prot
+op_assign
+id|PAGE_READONLY
+suffix:semicolon
+r_else
 id|vma-&gt;vm_page_prot
 op_assign
 id|PAGE_SHARED
@@ -2056,7 +2115,8 @@ l_int|0
 suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
-l_int|NULL
+op_amp
+id|shm_vm_ops
 suffix:semicolon
 id|insert_vm_struct
 c_func
@@ -2528,6 +2588,10 @@ comma
 id|shmd-&gt;end
 op_minus
 id|shmd-&gt;start
+comma
+id|shmflg
+op_amp
+id|SHM_RDONLY
 )paren
 )paren
 )paren
@@ -3110,27 +3174,27 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * page not present ... go through shm_pages .. called from swap_in()&n; */
-DECL|function|shm_no_page
-r_void
-id|shm_no_page
+multiline_comment|/*&n; * page not present ... go through shm_pages&n; */
+DECL|function|shm_swap_in
+r_static
+r_int
+r_int
+id|shm_swap_in
+c_func
 (paren
-r_int
-r_int
+r_struct
+id|vm_area_struct
 op_star
-id|ptent
+id|vma
+comma
+r_int
+r_int
+id|code
 )paren
 (brace
 r_int
 r_int
 id|page
-suffix:semicolon
-r_int
-r_int
-id|code
-op_assign
-op_star
-id|ptent
 suffix:semicolon
 r_struct
 id|shmid_ds
@@ -3169,6 +3233,9 @@ id|id
 )paren
 suffix:semicolon
 r_return
+id|BAD_PAGE
+op_or
+id|PAGE_SHARED
 suffix:semicolon
 )brace
 id|shp
@@ -3198,6 +3265,9 @@ id|id
 )paren
 suffix:semicolon
 r_return
+id|BAD_PAGE
+op_or
+id|PAGE_SHARED
 suffix:semicolon
 )brace
 id|idx
@@ -3226,6 +3296,9 @@ id|id
 )paren
 suffix:semicolon
 r_return
+id|BAD_PAGE
+op_or
+id|PAGE_SHARED
 suffix:semicolon
 )brace
 r_if
@@ -3263,16 +3336,10 @@ c_func
 id|current
 )paren
 suffix:semicolon
-op_star
-id|ptent
-op_assign
+r_return
 id|BAD_PAGE
 op_or
-id|PAGE_ACCESSED
-op_or
-l_int|7
-suffix:semicolon
-r_return
+id|PAGE_SHARED
 suffix:semicolon
 )brace
 r_if
@@ -3395,7 +3462,7 @@ multiline_comment|/* write-protect */
 id|page
 op_and_assign
 op_complement
-l_int|2
+id|PAGE_RW
 suffix:semicolon
 id|mem_map
 (braket
@@ -3407,12 +3474,8 @@ id|page
 )braket
 op_increment
 suffix:semicolon
-op_star
-id|ptent
-op_assign
-id|page
-suffix:semicolon
 r_return
+id|page
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Goes through counter = (shm_rss &lt;&lt; prio) present shm pages. &n; */

@@ -2452,6 +2452,17 @@ c_func
 id|mpnt
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mpnt-&gt;vm_inode
+)paren
+id|iput
+c_func
+(paren
+id|mpnt-&gt;vm_inode
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren

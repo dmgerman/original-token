@@ -1040,6 +1040,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|variable|identified
+r_static
 r_int
 r_int
 id|identified
@@ -1054,6 +1055,7 @@ comma
 suffix:semicolon
 multiline_comment|/* 1 = drive ID already displayed   */
 DECL|variable|unmask_intr
+r_static
 r_int
 r_int
 id|unmask_intr
@@ -1068,6 +1070,7 @@ comma
 suffix:semicolon
 multiline_comment|/* 1 = unmask IRQs during I/O       */
 DECL|variable|max_mult
+r_static
 r_int
 r_int
 id|max_mult
@@ -1082,6 +1085,7 @@ comma
 suffix:semicolon
 multiline_comment|/* max sectors for MultMode         */
 DECL|variable|mult_req
+r_static
 r_int
 r_int
 id|mult_req
@@ -1096,6 +1100,7 @@ comma
 suffix:semicolon
 multiline_comment|/* requested MultMode count         */
 DECL|variable|mult_count
+r_static
 r_int
 r_int
 id|mult_count
@@ -1110,6 +1115,7 @@ comma
 suffix:semicolon
 multiline_comment|/* currently enabled MultMode count */
 DECL|variable|WCURRENT
+r_static
 r_struct
 id|request
 id|WCURRENT

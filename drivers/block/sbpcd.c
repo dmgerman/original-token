@@ -17532,6 +17532,17 @@ id|ENXIO
 )paren
 suffix:semicolon
 multiline_comment|/* no hardware */
+r_if
+c_cond
+(paren
+id|fp-&gt;f_mode
+op_amp
+l_int|2
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
 id|i
 op_assign
 id|MINOR

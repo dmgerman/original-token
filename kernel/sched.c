@@ -1670,14 +1670,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;next
+id|timer-&gt;next
 op_logical_or
-id|p-&gt;prev
+id|timer-&gt;prev
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;del_timer() called with timer not initialized&bslash;n&quot;
+l_string|&quot;del_timer() called from %08lx with timer not initialized&bslash;n&quot;
+comma
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|timer
+)paren
+(braket
+op_minus
+l_int|1
+)braket
 )paren
 suffix:semicolon
 id|restore_flags

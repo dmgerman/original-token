@@ -6274,6 +6274,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|filp-&gt;f_mode
+op_amp
+l_int|2
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|sony_spun_up
 )paren

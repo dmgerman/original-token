@@ -1157,6 +1157,17 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */
+r_if
+c_cond
+(paren
+id|filp-&gt;f_mode
+op_amp
+l_int|2
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
 id|check_disk_change
 c_func
 (paren
