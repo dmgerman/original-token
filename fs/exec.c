@@ -1048,7 +1048,6 @@ id|dump_size
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Now prepare to dump the stack area */
 r_if
 c_cond
@@ -1077,7 +1076,6 @@ id|dump_size
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Finally dump the task struct.  Not be used by gdb, but could be useful */
 id|set_fs
 c_func
@@ -4329,10 +4327,10 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 id|error
 op_assign
@@ -4397,10 +4395,10 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
-suffix:semicolon
 id|current-&gt;executable
 op_assign
 id|bprm-&gt;inode

@@ -20,6 +20,8 @@ l_string|&quot;ARCZIPLHALZHZOOTARZ  ARJ&quot;
 multiline_comment|/* common archivers */
 l_string|&quot;TZ TAZTZPTPZ&quot;
 multiline_comment|/* abbreviations of tar.Z and tar.zip */
+l_string|&quot;GZ TGZDEB&quot;
+multiline_comment|/* .gz, .tar.gz and Debian packages   */
 l_string|&quot;GIFBMPTIFGL JPGPCX&quot;
 multiline_comment|/* graphics */
 l_string|&quot;TFMVF GF PK PXLDVI&quot;

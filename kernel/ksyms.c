@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Herein lies all the functions/variables that are &quot;exported&quot; for linkage&n; * with dynamically loaded kernel modules.&n; *&t;&t;&t;Jon.&n; */
+multiline_comment|/* &n; * Herein lies all the functions/variables that are &quot;exported&quot; for linkage&n; * with dynamically loaded kernel modules.&n; *&t;&t;&t;Jon.&n; *&n; * Stacked module support and unified symbol table added by&n; * Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -11,14 +11,17 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_void
 op_star
 id|sys_call_table
 suffix:semicolon
+multiline_comment|/* must match struct internal_symbol !!! */
 DECL|macro|X
 mdefine_line|#define X(name)&t;{ (void *) &amp;name, &quot;_&quot; #name }
 macro_line|#ifdef CONFIG_FTAPE
@@ -273,27 +276,40 @@ id|irq2dev_map
 (braket
 )braket
 suffix:semicolon
-macro_line|#endif
-r_struct
-(brace
-DECL|member|addr
+r_extern
 r_void
+id|dev_kfree_skb
+c_func
+(paren
+r_struct
+id|sk_buff
 op_star
-id|addr
+comma
+r_int
+)paren
 suffix:semicolon
-DECL|member|name
-r_const
-r_char
-op_star
-id|name
-suffix:semicolon
+macro_line|#endif
 DECL|variable|symbol_table
-)brace
+r_struct
 id|symbol_table
-(braket
-)braket
+id|symbol_table
 op_assign
 (brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* for stacked module support */
+(brace
+multiline_comment|/* stackable module support */
+id|X
+c_func
+(paren
+id|rename_module_symbol
+)paren
+comma
 multiline_comment|/* system info variables */
 id|X
 c_func
@@ -499,6 +515,18 @@ id|X
 c_func
 (paren
 id|free_irq
+)paren
+comma
+id|X
+c_func
+(paren
+id|enable_irq
+)paren
+comma
+id|X
+c_func
+(paren
+id|disable_irq
 )paren
 comma
 id|X
@@ -734,24 +762,29 @@ c_func
 id|irq2dev_map
 )paren
 comma
+id|X
+c_func
+(paren
+id|dev_kfree_skb
+)paren
+comma
 macro_line|#endif
+multiline_comment|/********************************************************&n;&t; * Do not add anything below this line,&n;&t; * as the stacked modules depend on this!&n;&t; */
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+multiline_comment|/* mark end of table */
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+multiline_comment|/* no module refs */
 )brace
 suffix:semicolon
-DECL|variable|symbol_table_size
-r_int
-id|symbol_table_size
-op_assign
-r_sizeof
-(paren
-id|symbol_table
-)paren
-op_div
-r_sizeof
-(paren
-id|symbol_table
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
+multiline_comment|/*&n;int symbol_table_size = sizeof (symbol_table) / sizeof (symbol_table[0]);&n;*/
 eof

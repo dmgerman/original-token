@@ -1,14 +1,66 @@
 multiline_comment|/*&n; * sbpcd.h   Specify interface address and interface type here.&n; */
-multiline_comment|/*&n; * these definitions can get overridden by the kernel command line&n; * (&quot;lilo boot option&quot;). Examples:&n; *                                 sbpcd=0x230,SoundBlaster&n; *                             or&n; *                                 sbpcd=0x300,LaserMate&n; *                             or&n; *                                 sbpcd=0x330,SPEA&n; * these strings are case sensitive !!!&n; */
-multiline_comment|/* &n; * change this to select the type of your interface board:&n; *&n; * set SBPRO to 1 for &quot;true&quot; SoundBlaster card&n; * set SBPRO to 0 for &quot;poor&quot; (no sound) interface cards&n; *                and for &quot;compatible&quot; soundcards.&n; * set SBPRO to 2 for the SPEA Media FX card&n; *&n; * most &quot;compatible&quot; sound boards like Galaxy need to set SBPRO to 0 !!!&n; * if SBPRO gets set wrong, the drive will get found - but any&n; * data access will give errors (audio access will work).&n; * The OmniCD interface card from CreativeLabs needs SBPRO 1.&n; *&n; * mail to emoenke@gwdg.de if your &quot;compatible&quot; card needs SBPRO 1&n; * (currently I do not know any &quot;compatible&quot; with SBPRO 1)&n; * then I can include better information with the next release.&n; */
-DECL|macro|SBPRO
-mdefine_line|#define SBPRO     1
-multiline_comment|/*&n; * put your CDROM port base address here:&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P) adresses typically are 0x0300, 0x0310, ...&n; * SPEA addresses are 0x320, 0x330, 0x340, 0x350&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; */
+multiline_comment|/*&n; * these definitions can get overridden by the kernel command line&n; * (&quot;lilo boot option&quot;). Examples:&n; *                                 sbpcd=0x230,SoundBlaster&n; *                             or&n; *                                 sbpcd=0x300,LaserMate&n; *                             or&n; *                                 sbpcd=0x330,SPEA&n; *&n; *  and, if you have a second CDROM controller board,&n; *                                 sbpcd2=0x310,LaserMate&n; *  and so on.&n; *&n; * These strings are case sensitive !!!&n; */
+multiline_comment|/*&n; * put your CDROM port base address into CDROM_PORT&n; * and specify the type of your interface in SBPRO.&n; *&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P) adresses typically are 0x0300, 0x0310, ...&n; * SPEA addresses are 0x320, 0x330, 0x340, 0x350&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; *&n; * set SBPRO to 1 for &quot;true&quot; SoundBlaster card&n; * set SBPRO to 0 for &quot;poor&quot; (no sound) interface cards&n; *                and for &quot;compatible&quot; soundcards.&n; * set SBPRO to 2 for the SPEA Media FX card&n; *&n; * most &quot;compatible&quot; sound boards like Galaxy need to set SBPRO to 0 !!!&n; * if SBPRO gets set wrong, the drive will get found - but any&n; * data access will give errors (audio access will work).&n; * The OmniCD interface card from CreativeLabs needs SBPRO 1.&n; *&n; * mail to emoenke@gwdg.de if your &quot;compatible&quot; card needs SBPRO 1&n; * (currently I do not know any &quot;compatible&quot; with SBPRO 1)&n; * then I can include better information with the next release.&n; */
+macro_line|#if !(SBPCD_ISSUE-1) /* first (or if you have only one) interface board: */
 DECL|macro|CDROM_PORT
 mdefine_line|#define CDROM_PORT 0x0230
+DECL|macro|SBPRO
+mdefine_line|#define SBPRO     1
+macro_line|#endif
+multiline_comment|/* ignore the rest if you have only one interface board &amp; driver */
+macro_line|#if !(SBPCD_ISSUE-2) /* second interface board: */
+DECL|macro|CDROM_PORT
+mdefine_line|#define CDROM_PORT 0x0370
+DECL|macro|SBPRO
+mdefine_line|#define SBPRO     0
+macro_line|#endif
+macro_line|#if !(SBPCD_ISSUE-3) /* third interface board: */
+DECL|macro|CDROM_PORT
+mdefine_line|#define CDROM_PORT 0x0330
+DECL|macro|SBPRO
+mdefine_line|#define SBPRO     0
+macro_line|#endif
+macro_line|#if !(SBPCD_ISSUE-4) /* fourth interface board: */
+DECL|macro|CDROM_PORT
+mdefine_line|#define CDROM_PORT 0x0340
+DECL|macro|SBPRO
+mdefine_line|#define SBPRO     0
+macro_line|#endif
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * nothing to change below here if you are not experimenting&n; */
+macro_line|#ifndef _LINUX_SBPCD_H
+DECL|macro|_LINUX_SBPCD_H
+mdefine_line|#define _LINUX_SBPCD_H
+multiline_comment|/*==========================================================================*/
+multiline_comment|/*==========================================================================*/
+multiline_comment|/*&n; * to fork and execute a function after some elapsed time:&n; * one &quot;jifs&quot; unit is 10 msec.&n; */
+DECL|macro|MY_TIMER
+macro_line|#undef MY_TIMER
+DECL|macro|SET_TIMER
+macro_line|#undef SET_TIMER
+DECL|macro|CLEAR_TIMER
+macro_line|#undef CLEAR_TIMER
+macro_line|#if !(SBPCD_ISSUE-1)
+DECL|macro|MY_TIMER
+mdefine_line|#define MY_TIMER SBPCD_TIMER
+macro_line|#endif
+macro_line|#if !(SBPCD_ISSUE-2)
+DECL|macro|MY_TIMER
+mdefine_line|#define MY_TIMER SBPCD2_TIMER
+macro_line|#endif
+macro_line|#if !(SBPCD_ISSUE-3)
+DECL|macro|MY_TIMER
+mdefine_line|#define MY_TIMER SBPCD3_TIMER
+macro_line|#endif
+macro_line|#if !(SBPCD_ISSUE-4)
+DECL|macro|MY_TIMER
+mdefine_line|#define MY_TIMER SBPCD4_TIMER
+macro_line|#endif
+DECL|macro|SET_TIMER
+mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;        ((timer_table[MY_TIMER].expires = jiffies + jifs), &bslash;&n;        (timer_table[MY_TIMER].fn = func), &bslash;&n;        (timer_active |= 1&lt;&lt;MY_TIMER))
+DECL|macro|CLEAR_TIMER
+mdefine_line|#define CLEAR_TIMER&t;timer_active &amp;= ~(1&lt;&lt;MY_TIMER)
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * Debug output levels&n; */
@@ -62,8 +114,10 @@ DECL|macro|DBG_SQ
 mdefine_line|#define DBG_SQ &t;&t;24&t;/* dump SubQ frame */
 DECL|macro|DBG_AUD
 mdefine_line|#define DBG_AUD&t;&t;25      /* &quot;read audio&quot; debugging */
+DECL|macro|DBG_SEQ
+mdefine_line|#define DBG_SEQ&t;&t;26      /* Sequoia interface configuration trace */
 DECL|macro|DBG_000
-mdefine_line|#define DBG_000&t;&t;26      /* unnecessary information */
+mdefine_line|#define DBG_000&t;&t;27      /* unnecessary information */
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * bits of flags_cmd_out:&n; */
@@ -219,47 +273,7 @@ DECL|macro|READ_SC
 mdefine_line|#define READ_SC  0x04 /* &quot;subchannel info&quot;: 96 bytes per frame */
 DECL|macro|READ_AU
 mdefine_line|#define READ_AU  0x08 /* &quot;audio frame&quot;: 2352 bytes per frame */
-multiline_comment|/*&n; * preliminary extensions to cdrom.h for transfering audio frames:&n; */
-DECL|macro|CDROMREADAUDIO
-mdefine_line|#define CDROMREADAUDIO 0xE0 /* IOCTL function (arg = &amp;cdrom_aud) */
-DECL|struct|cdrom_aud
-DECL|member|lba
-r_struct
-id|cdrom_aud
-(brace
-id|u_int
-id|lba
-suffix:semicolon
-multiline_comment|/* frame address */
-DECL|member|buf
-id|u_char
-op_star
-id|buf
-suffix:semicolon
-multiline_comment|/* frame buffer (2352 bytes) */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * sense byte: used only if new_drive&n; *                  only during cmd 09 00 xx ah al 00 00&n; *&n; *          values: 00&n; *                  82&n; *                  xx from infobuf[0] after 85 00 00 00 00 00 00&n; */
-DECL|macro|CD_MINS
-mdefine_line|#define CD_MINS                   75  /* minutes per CD                  */
-DECL|macro|CD_SECS
-mdefine_line|#define CD_SECS                   60  /* seconds per minutes             */
-DECL|macro|CD_FRAMES
-mdefine_line|#define CD_FRAMES                 75  /* frames per second               */
-DECL|macro|CD_FRAMESIZE
-mdefine_line|#define CD_FRAMESIZE            2048  /* bytes per frame, data mode      */
-DECL|macro|CD_FRAMESIZE_XA
-mdefine_line|#define CD_FRAMESIZE_XA         2340  /* bytes per frame, &quot;xa&quot; mode      */
-DECL|macro|CD_FRAMESIZE_RAW
-mdefine_line|#define CD_FRAMESIZE_RAW        2352  /* bytes per frame, &quot;raw&quot; mode     */
-DECL|macro|CD_FRAMESIZE_SUB
-mdefine_line|#define CD_FRAMESIZE_SUB          96  /* subchannel data size            */
-DECL|macro|CD_BLOCK_OFFSET
-mdefine_line|#define CD_BLOCK_OFFSET          150  /* offset of first logical frame   */
-DECL|macro|CD_XA_HEAD
-mdefine_line|#define CD_XA_HEAD                12  /* header size of XA frame         */
-DECL|macro|CD_XA_TAIL
-mdefine_line|#define CD_XA_TAIL               280  /* tail size of XA frame           */
+multiline_comment|/*&n; * sense byte: used only if new_drive&n; *                  only during cmd 09 00 xx ah al 00 00&n; *&n; *          values: 00&n; *                  82 &quot;raw audio&quot; mode&n; *                  xx from infobuf[0] after 85 00 00 00 00 00 00&n; */
 multiline_comment|/* audio status (bin) */
 DECL|macro|aud_00
 mdefine_line|#define aud_00 0x00 /* Audio status byte not supported or not valid */
@@ -287,7 +301,7 @@ mdefine_line|#define aud_15 0x15 /* No current audio status to return           
 multiline_comment|/*============================================================================&n;==============================================================================&n;&n;COMMAND SET of &quot;old&quot; drives like CR-521, CR-522&n;               (the CR-562 family is different):&n;&n;No.&t;Command&t;&t;&t;       Code&n;--------------------------------------------&n;&n;Drive Commands:&n; 1&t;Seek&t;&t;&t;&t;01&t;&n; 2&t;Read Data&t;&t;&t;02&n; 3&t;Read XA-Data&t;&t;&t;03&n; 4&t;Read Header&t;&t;&t;04&n; 5&t;Spin Up&t;&t;&t;&t;05&n; 6&t;Spin Down&t;&t;&t;06&n; 7&t;Diagnostic&t;&t;&t;07&n; 8&t;Read UPC&t;&t;&t;08&n; 9&t;Read ISRC&t;&t;&t;09&n;10&t;Play Audio&t;&t;&t;0A&n;11&t;Play Audio MSF&t;&t;&t;0B&n;12&t;Play Audio Track/Index&t;&t;0C&n;&n;Status Commands:&n;13&t;Read Status&t;&t;&t;81&t;&n;14&t;Read Error&t;&t;&t;82&n;15&t;Read Drive Version&t;&t;83&n;16&t;Mode Select&t;&t;&t;84&n;17&t;Mode Sense&t;&t;&t;85&n;18&t;Set XA Parameter&t;&t;86&n;19&t;Read XA Parameter&t;&t;87&n;20&t;Read Capacity&t;&t;&t;88&n;21&t;Read SUB_Q&t;&t;&t;89&n;22&t;Read Disc Code&t;&t;&t;8A&n;23&t;Read Disc Information&t;&t;8B&n;24&t;Read TOC&t;&t;&t;8C&n;25&t;Pause/Resume&t;&t;&t;8D&n;26&t;Read Packet&t;&t;&t;8E&n;27&t;Read Path Check&t;&t;&t;00&n; &n; &n;all numbers (lba, msf-bin, msf-bcd, counts) to transfer high byte first&n;&n;mnemo     7-byte command        #bytes response (r0...rn)&n;________ ____________________  ____ &n;&n;Read Status:&n;status:  81.                    (1)  one-byte command, gives the main&n;                                                          status byte&n;Read Error:&n;check1:  82 00 00 00 00 00 00.  (6)  r1: audio status&n;&n;Read Packet:&n;check2:  8e xx 00 00 00 00 00. (xx)  gets xx bytes response, relating&n;                                        to commands 01 04 05 07 08 09&n;&n;Play Audio:&n;play:    0a ll-bb-aa nn-nn-nn.  (0)  play audio, ll-bb-aa: starting block (lba),&n;                                                 nn-nn-nn: #blocks&n;Play Audio MSF:&n;         0b mm-ss-ff mm-ss-ff   (0)  play audio from/to&n;&n;Play Audio Track/Index:&n;         0c ...&n;&n;Pause/Resume:&n;pause:   8d pr 00 00 00 00 00.  (0)  pause (pr=00) &n;                                     resume (pr=80) audio playing&n;&n;Mode Select:&n;         84 00 nn-nn ??-?? 00   (0)  nn-nn: 2048 or 2340&n;                                     possibly defines transfer size&n;&n;set_vol: 84 83 00 00 sw le 00.  (0)  sw(itch): lrxxxxxx (off=1)&n;                                     le(vel): min=0, max=FF, else half&n;&t;&t;&t;&t;     (firmware 2.11)&n;&n;Mode Sense:&n;get_vol: 85 03 00 00 00 00 00.  (2)  tell current audio volume setting&n;&n;Read Disc Information:&n;tocdesc: 8b 00 00 00 00 00 00.  (6)  read the toc descriptor (&quot;msf-bin&quot;-format)&n;&n;Read TOC:&n;tocent:  8c fl nn 00 00 00 00.  (8)  read toc entry #nn&n;                                       (fl=0:&quot;lba&quot;-, =2:&quot;msf-bin&quot;-format)&n;&n;Read Capacity:&n;capacit: 88 00 00 00 00 00 00.  (5)  &quot;read CD-ROM capacity&quot;&n;&n;&n;Read Path Check:&n;ping:    00 00 00 00 00 00 00.  (2)  r0=AA, r1=55&n;                                     (&quot;ping&quot; if the drive is connected)&n;&n;Read Drive Version:&n;ident:   83 00 00 00 00 00 00. (12)  gives &quot;MATSHITAn.nn&quot; &n;                                     (n.nn = 2.01, 2.11., 3.00, ...)&n;&n;Seek:&n;seek:    01 00 ll-bb-aa 00 00.  (0)  &n;seek:    01 02 mm-ss-ff 00 00.  (0)  &n;&n;Read Data:&n;read:    02 xx-xx-xx nn-nn fl. (??)  read nn-nn blocks of 2048 bytes,&n;                                     starting at block xx-xx-xx  &n;                                     fl=0: &quot;lba&quot;-, =2:&quot;msf-bcd&quot;-coded xx-xx-xx&n;&n;Read XA-Data:&n;read:    03 ll-bb-aa nn-nn 00. (??)  read nn-nn blocks of 2340 bytes, &n;                                     starting at block ll-bb-aa&n;&n;Read SUB_Q:&n;         89 fl 00 00 00 00 00. (13)  r0: audio status, r4-r7: lba/msf, &n;                                       fl=0: &quot;lba&quot;, fl=2: &quot;msf&quot;&n;&n;Read Disc Code:&n;         8a 00 00 00 00 00 00. (14)  possibly extended &quot;check condition&quot;-info&n;&n;Read Header:&n;         04 00 ll-bb-aa 00 00.  (0)   4 bytes response with &quot;check2&quot;&n;         04 02 mm-ss-ff 00 00.  (0)   4 bytes response with &quot;check2&quot;&n;&n;Spin Up:&n;         05 00 ll-bb-aa 00 00.  (0)  possibly implies a &quot;seek&quot;&n;&n;Spin Down:&n;         06 ...&n;&n;Diagnostic:&n;         07 00 ll-bb-aa 00 00.  (2)   2 bytes response with &quot;check2&quot;&n;         07 02 mm-ss-ff 00 00.  (2)   2 bytes response with &quot;check2&quot;&n;&n;Read UPC:&n;         08 00 ll-bb-aa 00 00. (16)  &n;         08 02 mm-ss-ff 00 00. (16)  &n;&n;Read ISRC:&n;         09 00 ll-bb-aa 00 00. (15)  15 bytes response with &quot;check2&quot;&n;         09 02 mm-ss-ff 00 00. (15)  15 bytes response with &quot;check2&quot;&n;&n;Set XA Parameter:&n;         86 ...&n;&n;Read XA Parameter:&n;         87 ...&n;&n;==============================================================================&n;============================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
-multiline_comment|/*&n; * highest allowed drive number (MINOR+1)&n; * currently only one controller, maybe later up to 4&n; */
+multiline_comment|/*&n; * highest allowed drive number (MINOR+1)&n; */
 DECL|macro|NR_SBPCD
 mdefine_line|#define NR_SBPCD 4
 multiline_comment|/*&n; * we try to never disable interrupts - seems to work&n; */
@@ -302,12 +316,6 @@ multiline_comment|/*============================================================
 multiline_comment|/*&n; * use &quot;REP INSB&quot; for strobing the data in:&n; */
 DECL|macro|READ_DATA
 mdefine_line|#define READ_DATA(port, buf, nr) insb(port, buf, nr)
-multiline_comment|/*==========================================================================*/
-multiline_comment|/*&n; * to fork and execute a function after some elapsed time:&n; * one &quot;jifs&quot; unit is 10 msec.&n; */
-DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;        ((timer_table[SBPCD_TIMER].expires = jiffies + jifs), &bslash;&n;        (timer_table[SBPCD_TIMER].fn = func), &bslash;&n;        (timer_active |= 1&lt;&lt;SBPCD_TIMER))
-DECL|macro|CLEAR_TIMER
-mdefine_line|#define CLEAR_TIMER&t;timer_active &amp;= ~(1&lt;&lt;SBPCD_TIMER)
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * Creative Labs Programmers did this:&n; */
 DECL|macro|MAX_TRACKS
@@ -355,4 +363,5 @@ DECL|typedef|BLK
 id|BLK
 suffix:semicolon
 multiline_comment|/*==========================================================================*/
+macro_line|#endif _LINUX_SBPCD_H
 eof

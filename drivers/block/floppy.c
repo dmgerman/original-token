@@ -7,12 +7,15 @@ multiline_comment|/*&n; * Automatic floppy-detection and formatting written by W
 multiline_comment|/*&n; * 1992/7/22 -- Hennus Bergman: Added better error reporting, fixed &n; * FDC data overrun bug, added some preliminary stuff for vertical&n; * recording support.&n; *&n; * 1992/9/17: Added DMA allocation &amp; DMA functions. -- hhb.&n; *&n; * TODO: Errors are still not counted properly.&n; */
 multiline_comment|/* 1992/9/20&n; * Modifications for ``Sector Shifting&squot;&squot; by Rob Hooft (hooft@chem.ruu.nl)&n; * modelled after the freeware MS/DOS program fdformat/88 V1.8 by &n; * Christoph H. Hochst&bslash;&quot;atter.&n; * I have fixed the shift values to the ones I always use. Maybe a new&n; * ioctl() should be created to be able to modify them.&n; * There is a bug in the driver that makes it impossible to format a&n; * floppy as the first thing after bootup.&n; */
 multiline_comment|/*&n; * 1993/4/29 -- Linus -- cleaned up the timer handling in the kernel, and&n; * this helped the floppy driver as well. Much cleaner, and still seems to&n; * work.&n; */
+multiline_comment|/* 1994/6/24 --bbroad-- added the floppy table entries and made&n; * minor modifications to allow 2.88 floppies to be run. &n; */
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 DECL|macro|FLOPPY_IRQ
 mdefine_line|#define FLOPPY_IRQ 6
 DECL|macro|FLOPPY_DMA
 mdefine_line|#define FLOPPY_DMA 2
+DECL|macro|FDC_FIFO_UNTESTED
+mdefine_line|#define FDC_FIFO_UNTESTED           /* -bb */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -21,6 +24,7 @@ macro_line|#include &lt;linux/fdreg.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -109,10 +113,10 @@ DECL|macro|MAX_ERRORS
 mdefine_line|#define MAX_ERRORS 12
 multiline_comment|/*&n; * Maximum disk size (in kilobytes). This default is used whenever the&n; * current disk size is unknown.&n; */
 DECL|macro|MAX_DISK_SIZE
-mdefine_line|#define MAX_DISK_SIZE 1440
+mdefine_line|#define MAX_DISK_SIZE 2880 /* was 1440 -bb */
 multiline_comment|/*&n; * Maximum number of sectors in a track buffer. Track buffering is disabled&n; * if tracks are bigger.&n; */
 DECL|macro|MAX_BUFFER_SECTORS
-mdefine_line|#define MAX_BUFFER_SECTORS 18
+mdefine_line|#define MAX_BUFFER_SECTORS 36 /* was 18 -bb */
 multiline_comment|/*&n; * The DMA channel used by the floppy controller cannot access data at&n; * addresses &gt;= 16MB&n; *&n; * Went back to the 1MB limit, as some people had problems with the floppy&n; * driver otherwise. It doesn&squot;t matter much for performance anyway, as most&n; * floppy accesses go through the track buffer.&n; */
 DECL|macro|LAST_DMA_ADDR
 mdefine_line|#define LAST_DMA_ADDR&t;(0x100000 - BLOCK_SIZE)
@@ -330,6 +334,52 @@ l_int|NULL
 )brace
 comma
 multiline_comment|/* 1.44MB diskette */
+(brace
+l_int|5760
+comma
+l_int|36
+comma
+l_int|2
+comma
+l_int|80
+comma
+l_int|0
+comma
+l_int|0x1B
+comma
+l_int|0x43
+comma
+l_int|0xAF
+comma
+l_int|0x54
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 2.88MB diskette */
+(brace
+l_int|5760
+comma
+l_int|36
+comma
+l_int|2
+comma
+l_int|80
+comma
+l_int|0
+comma
+l_int|0x1B
+comma
+l_int|0x43
+comma
+l_int|0xAF
+comma
+l_int|0x54
+comma
+l_int|NULL
+)brace
+comma
+multiline_comment|/* 2.88MB diskette */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Auto-detection. Each drive type has a pair of formats which are&n; * used in succession to try to read the disk. If the FDC cannot lock onto&n; * the disk, the next format is tried. This uses the variable &squot;probing&squot;.&n; */
@@ -526,6 +576,98 @@ l_string|&quot;720k/AT&quot;
 )brace
 comma
 multiline_comment|/* 3.5&quot; 720kB diskette */
+(brace
+l_int|5760
+comma
+l_int|36
+comma
+l_int|2
+comma
+l_int|80
+comma
+l_int|0
+comma
+l_int|0x1B
+comma
+l_int|0x43
+comma
+l_int|0xAF
+comma
+l_int|0x54
+comma
+l_string|&quot;2.88M-AMI&quot;
+)brace
+comma
+multiline_comment|/* DUMMY */
+(brace
+l_int|2880
+comma
+l_int|18
+comma
+l_int|2
+comma
+l_int|80
+comma
+l_int|0
+comma
+l_int|0x1B
+comma
+l_int|0x00
+comma
+l_int|0xCF
+comma
+l_int|0x6C
+comma
+l_string|&quot;1.44M-AMI&quot;
+)brace
+comma
+multiline_comment|/* Dummy */
+(brace
+l_int|5760
+comma
+l_int|36
+comma
+l_int|2
+comma
+l_int|80
+comma
+l_int|0
+comma
+l_int|0x1B
+comma
+l_int|0x43
+comma
+l_int|0xAF
+comma
+l_int|0x54
+comma
+l_string|&quot;2.88M&quot;
+)brace
+comma
+multiline_comment|/* 2.88MB diskette */
+(brace
+l_int|2880
+comma
+l_int|18
+comma
+l_int|2
+comma
+l_int|80
+comma
+l_int|0
+comma
+l_int|0x1B
+comma
+l_int|0x40
+comma
+l_int|0xCF
+comma
+l_int|0x6C
+comma
+l_string|&quot;1.44MX&quot;
+)brace
+comma
+multiline_comment|/* 1.44MB diskette */
 )brace
 suffix:semicolon
 multiline_comment|/* Auto-detection: Disk type used until the next media change occurs. */
@@ -752,6 +894,38 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_static
+r_void
+id|floppy_ready
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|recalibrate_floppy
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|floppy_release_irq_and_dma
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These are global variables, as that&squot;s the easiest way to give&n; * information to interrupts. They are the data used for the current&n; * request.&n; */
 DECL|macro|NO_TRACK
 mdefine_line|#define NO_TRACK 255
@@ -866,17 +1040,9 @@ r_int
 r_char
 id|fdc_version
 op_assign
-id|FDC_TYPE_STD
+l_int|0x90
 suffix:semicolon
 multiline_comment|/* FDC version code */
-r_static
-r_void
-id|floppy_ready
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|select_callback
 r_static
 r_void
@@ -3212,14 +3378,6 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Special case - used after a unexpected interrupt (or reset)&n; */
-r_static
-r_void
-id|recalibrate_floppy
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|function|recal_interrupt
 r_static
 r_void
@@ -5537,9 +5695,10 @@ l_int|0
 op_logical_and
 id|code
 OL
-l_int|5
+l_int|7
 )paren
 (brace
+multiline_comment|/* -bb*/
 id|base
 op_assign
 op_amp
@@ -5733,6 +5892,20 @@ suffix:semicolon
 r_int
 id|old_dev
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
 id|drive
 op_assign
 id|inode-&gt;i_rdev
@@ -5869,6 +6042,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|floppy_release_irq_and_dma
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|variable|floppy_fops
 r_static
@@ -6077,43 +6255,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irqaction
-c_func
-(paren
-id|FLOPPY_IRQ
-comma
-op_amp
-id|floppy_sigaction
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to grab IRQ%d for the floppy driver&bslash;n&quot;
-comma
-id|FLOPPY_IRQ
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_dma
-c_func
-(paren
-id|FLOPPY_DMA
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Unable to grab DMA%d for the floppy driver&bslash;n&quot;
-comma
-id|FLOPPY_DMA
-)paren
-suffix:semicolon
 multiline_comment|/* Try to determine the floppy controller type */
 id|DEVICE_INTR
 op_assign
@@ -6200,5 +6341,113 @@ c_func
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|function|floppy_grab_irq_and_dma
+r_static
+r_int
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|irqaction
+c_func
+(paren
+id|FLOPPY_IRQ
+comma
+op_amp
+id|floppy_sigaction
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to grab IRQ%d for the floppy driver&bslash;n&quot;
+comma
+id|FLOPPY_IRQ
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|FLOPPY_DMA
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to grab DMA%d for the floppy driver&bslash;n&quot;
+comma
+id|FLOPPY_DMA
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|FLOPPY_IRQ
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|enable_irq
+c_func
+(paren
+id|FLOPPY_IRQ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|floppy_release_irq_and_dma
+r_static
+r_void
+id|floppy_release_irq_and_dma
+c_func
+(paren
+r_void
+)paren
+(brace
+id|disable_dma
+c_func
+(paren
+id|FLOPPY_DMA
+)paren
+suffix:semicolon
+id|free_dma
+c_func
+(paren
+id|FLOPPY_DMA
+)paren
+suffix:semicolon
+id|disable_irq
+c_func
+(paren
+id|FLOPPY_IRQ
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|FLOPPY_IRQ
+)paren
+suffix:semicolon
 )brace
 eof

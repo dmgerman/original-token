@@ -270,6 +270,14 @@ comma
 l_string|&quot;filesystems&quot;
 )brace
 comma
+(brace
+l_int|20
+comma
+l_int|5
+comma
+l_string|&quot;ksyms&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

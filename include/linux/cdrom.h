@@ -1,7 +1,28 @@
-multiline_comment|/****************************************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; * SCSI header library for linux&t;&t;&t;&t;&t;&t;&t;*&n; * (C) 1992 David Giller rafetmad@oxy.edu&t;&t;&t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; * &lt;linux/cdrom.h&gt; -- CD-ROM IOCTLs and structs&t;&t; &t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; ****************************************************************************************/
+multiline_comment|/****************************************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; * general (not only SCSI) header library for linux CDROM drivers                       *&n; * (C) 1992 David Giller rafetmad@oxy.edu&t;&t;&t;&t;&t;&t;*&n; *     1994 Eberhard Moenkeberg emoenke@gwdg.de (&quot;read audio&quot; and some other stuff)&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; * &lt;linux/cdrom.h&gt; -- CD-ROM IOCTLs and structs&t;&t; &t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; ****************************************************************************************/
 macro_line|#ifndef&t;_LINUX_CDROM_H
 DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H
+multiline_comment|/*&n; * some fix numbers&n; */
+DECL|macro|CD_MINS
+mdefine_line|#define CD_MINS                   75  /* minutes per CD                  */
+DECL|macro|CD_SECS
+mdefine_line|#define CD_SECS                   60  /* seconds per minute              */
+DECL|macro|CD_FRAMES
+mdefine_line|#define CD_FRAMES                 75  /* frames per second               */
+DECL|macro|CD_FRAMESIZE
+mdefine_line|#define CD_FRAMESIZE            2048  /* bytes per frame, cooked mode    */
+DECL|macro|CD_FRAMESIZE_XA
+mdefine_line|#define CD_FRAMESIZE_XA         2340  /* bytes per frame, &quot;xa&quot; mode      */
+DECL|macro|CD_FRAMESIZE_RAW
+mdefine_line|#define CD_FRAMESIZE_RAW        2352  /* bytes per frame, &quot;raw&quot; mode     */
+DECL|macro|CD_FRAMESIZE_SUB
+mdefine_line|#define CD_FRAMESIZE_SUB          96  /* subchannel data size            */
+DECL|macro|CD_BLOCK_OFFSET
+mdefine_line|#define CD_BLOCK_OFFSET          150  /* offset of first logical frame   */
+DECL|macro|CD_XA_HEAD
+mdefine_line|#define CD_XA_HEAD                12  /* header size of XA frame         */
+DECL|macro|CD_XA_TAIL
+mdefine_line|#define CD_XA_TAIL               280  /* tail size of XA frame           */
 multiline_comment|/*&n; *&n; * For IOCTL calls, we will commandeer byte 0x53, or &squot;S&squot;.&n; *&n; */
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */
 multiline_comment|/*&n; * Group 2 (10-byte).  All of these are called &squot;optional&squot; by SCSI-II.&n; */
@@ -732,6 +753,58 @@ id|cdread_buflen
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * preliminary extensions for transfering audio frames&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
+DECL|struct|cdrom_read_audio
+r_struct
+id|cdrom_read_audio
+(brace
+r_union
+(brace
+r_struct
+(brace
+DECL|member|minute
+id|u_char
+id|minute
+suffix:semicolon
+DECL|member|second
+id|u_char
+id|second
+suffix:semicolon
+DECL|member|frame
+id|u_char
+id|frame
+suffix:semicolon
+DECL|member|msf
+)brace
+id|msf
+suffix:semicolon
+DECL|member|lba
+r_int
+id|lba
+suffix:semicolon
+DECL|member|addr
+)brace
+id|addr
+suffix:semicolon
+multiline_comment|/* frame address */
+DECL|member|addr_format
+id|u_char
+id|addr_format
+suffix:semicolon
+multiline_comment|/* CDROM_LBA or CDROM_MSF */
+DECL|member|nframes
+r_int
+id|nframes
+suffix:semicolon
+multiline_comment|/* number of 2352-byte-frames to read at once, currently only 1 allowed */
+DECL|member|buf
+id|u_char
+op_star
+id|buf
+suffix:semicolon
+multiline_comment|/* frame buffer (size: nframes*2352 bytes) */
+)brace
+suffix:semicolon
 macro_line|#ifdef FIVETWELVE
 DECL|macro|CDROM_MODE1_SIZE
 mdefine_line|#define&t;CDROM_MODE1_SIZE&t;512
@@ -747,7 +820,7 @@ mdefine_line|#define&t;CDROMPAUSE&t;&t;0x5301&t;&t;/* pause&t;&t;&t;*/
 DECL|macro|CDROMRESUME
 mdefine_line|#define&t;CDROMRESUME&t;&t;0x5302&t;&t;/* resume&t;&t;&t;*/
 DECL|macro|CDROMPLAYMSF
-mdefine_line|#define&t;CDROMPLAYMSF&t;&t;0x5303&t;&t;/* (stuct cdrom_msf)&t;&t;*/
+mdefine_line|#define&t;CDROMPLAYMSF&t;&t;0x5303&t;&t;/* (struct cdrom_msf)&t;&t;*/
 multiline_comment|/* SCMD_PLAY_AUDIO_MSF&t;&t;*/
 DECL|macro|CDROMPLAYTRKIND
 mdefine_line|#define&t;CDROMPLAYTRKIND&t;&t;0x5304&t;&t;/* (struct cdrom_ti)&t;&t;*/
@@ -776,5 +849,8 @@ multiline_comment|/* read type-2 data (not suppt)&t;*/
 DECL|macro|CDROMREADMODE1
 mdefine_line|#define&t;CDROMREADMODE1&t;&t;0x530d&t;&t;/* (struct cdrom_read)&t;&t;*/
 multiline_comment|/* read type-1 data &t;&t;*/
+multiline_comment|/*&n; * preliminary extension for transfering audio frames&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
+DECL|macro|CDROMREADAUDIO
+mdefine_line|#define&t;CDROMREADAUDIO&t;&t;0x530e&t;&t;/* (struct cdrom_read_audio)&t;*/
 macro_line|#endif  _LINUX_CDROM_H
 eof

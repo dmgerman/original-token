@@ -7149,13 +7149,13 @@ id|RTF_WINDOW
 )paren
 )paren
 (brace
-id|sk-&gt;window_clamp
+id|newsk-&gt;window_clamp
 op_assign
 id|rt-&gt;rt_window
 suffix:semicolon
 )brace
 r_else
-id|sk-&gt;window_clamp
+id|newsk-&gt;window_clamp
 op_assign
 l_int|0
 suffix:semicolon

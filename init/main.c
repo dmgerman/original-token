@@ -318,6 +318,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|init_modules
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|kmalloc_init
 (paren
@@ -2096,6 +2104,11 @@ id|parse_options
 c_func
 (paren
 id|command_line
+)paren
+suffix:semicolon
+id|init_modules
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROFILE
