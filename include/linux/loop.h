@@ -15,11 +15,11 @@ DECL|member|lo_number
 r_int
 id|lo_number
 suffix:semicolon
-DECL|member|lo_inode
+DECL|member|lo_dentry
 r_struct
-id|inode
+id|dentry
 op_star
-id|lo_inode
+id|lo_dentry
 suffix:semicolon
 DECL|member|lo_refcnt
 r_int
