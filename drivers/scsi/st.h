@@ -382,6 +382,11 @@ r_int
 r_char
 id|rew_at_close
 suffix:semicolon
+DECL|member|inited
+r_int
+r_char
+id|inited
+suffix:semicolon
 DECL|member|block_size
 r_int
 id|block_size

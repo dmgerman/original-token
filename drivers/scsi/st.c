@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;   Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 1999 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Sat Aug  7 13:54:31 1999 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n; */
+multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;   Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 1999 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Tue Oct 19 21:39:15 1999 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,9 +17,20 @@ macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* The driver prints some debugging information on the console if DEBUG&n;   is defined and non-zero. */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG 0
+macro_line|#if DEBUG
 multiline_comment|/* The message level for the debug messages is currently set to KERN_NOTICE&n;   so that people can easily see the messages. Later when the debugging messages&n;   in the drivers are more widely classified, this may be changed to KERN_DEBUG. */
 DECL|macro|ST_DEB_MSG
 mdefine_line|#define ST_DEB_MSG  KERN_NOTICE
+DECL|macro|DEB
+mdefine_line|#define DEB(a) a
+DECL|macro|DEBC
+mdefine_line|#define DEBC(a) if (debugging) { a ; }
+macro_line|#else
+DECL|macro|DEB
+mdefine_line|#define DEB(a)
+DECL|macro|DEBC
+mdefine_line|#define DEBC(a)
+macro_line|#endif
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR SCSI_TAPE_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
@@ -170,15 +181,16 @@ multiline_comment|/* The buffer size should fit into the 24 bits for length in t
 macro_line|#if ST_BUFFER_SIZE &gt;= (2 &lt;&lt; 24 - 1)
 macro_line|#error &quot;Buffer size should not exceed (2 &lt;&lt; 24 - 1) bytes!&quot;
 macro_line|#endif
-macro_line|#if DEBUG
-DECL|variable|debugging
+id|DEB
+c_func
+(paren
 r_static
 r_int
 id|debugging
 op_assign
-l_int|1
+id|DEBUG
 suffix:semicolon
-macro_line|#endif
+)paren
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 0
 DECL|macro|MAX_WRITE_RETRIES
@@ -473,13 +485,15 @@ id|SCpnt-&gt;sense_buffer
 comma
 id|scode
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_const
 r_char
 op_star
 id|stp
 suffix:semicolon
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -525,9 +539,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|debugging
 )paren
@@ -576,7 +591,6 @@ id|SCpnt-&gt;request_bufflen
 )paren
 suffix:semicolon
 r_if
-c_cond
 (paren
 id|driver_byte
 c_func
@@ -596,7 +610,8 @@ id|SCpnt
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 r_if
 c_cond
 (paren
@@ -631,7 +646,7 @@ id|scode
 op_ne
 id|RECOVERED_ERROR
 op_logical_and
-multiline_comment|/*       scode != UNIT_ATTENTION &amp;&amp; */
+multiline_comment|/* scode != UNIT_ATTENTION &amp;&amp; */
 id|scode
 op_ne
 id|BLANK_CHECK
@@ -776,15 +791,15 @@ op_lshift
 id|MT_ST_SOFTERR_SHIFT
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|debugging
 )paren
 (brace
 r_if
-c_cond
 (paren
 id|SCpnt-&gt;data_cmnd
 (braket
@@ -799,7 +814,6 @@ l_string|&quot;read&quot;
 suffix:semicolon
 r_else
 r_if
-c_cond
 (paren
 id|SCpnt-&gt;data_cmnd
 (braket
@@ -836,7 +850,8 @@ id|recover_count
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 r_if
 c_cond
 (paren
@@ -1054,12 +1069,14 @@ id|last_SCpnt
 op_assign
 id|SCpnt
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 id|STp-&gt;write_pending
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
+)paren
 id|up
 c_func
 (paren
@@ -1067,10 +1084,11 @@ id|SCpnt-&gt;request.sem
 )paren
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_else
 r_if
-c_cond
 (paren
 id|debugging
 )paren
@@ -1083,7 +1101,8 @@ comma
 id|st_nbr
 )paren
 suffix:semicolon
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 )brace
 multiline_comment|/* Do the scsi command. Waits until command performed if do_wait is true.&n;   Otherwise write_behind_check() is used to check that the command&n;   has finished. */
 r_static
@@ -1392,9 +1411,10 @@ id|STbuffer
 op_assign
 id|STp-&gt;buffer
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|STp-&gt;write_pending
 )paren
@@ -1405,7 +1425,8 @@ r_else
 id|STp-&gt;nbr_finished
 op_increment
 suffix:semicolon
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 id|down
 c_func
 (paren
@@ -1612,12 +1633,9 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -1637,8 +1655,8 @@ l_string|&quot;forward&quot;
 suffix:colon
 l_string|&quot;backward&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|SCpnt
 op_assign
 id|st_do_scsi
@@ -1783,12 +1801,9 @@ op_member_access_from_pointer
 id|last_result_fatal
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -1807,8 +1822,7 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|last_result
 )paren
-suffix:semicolon
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -1880,12 +1894,9 @@ id|STp-&gt;block_size
 op_star
 id|STp-&gt;block_size
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -1900,8 +1911,8 @@ id|STp-&gt;devt
 comma
 id|transfer
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|memset
 c_func
 (paren
@@ -2713,7 +2724,9 @@ c_cond
 id|STp-&gt;in_use
 )paren
 (brace
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -2723,7 +2736,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
+)paren
 r_return
 (paren
 op_minus
@@ -2753,12 +2766,9 @@ op_ne
 id|STp-&gt;current_mode
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -2771,8 +2781,8 @@ id|STp-&gt;current_mode
 comma
 id|mode
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|new_session
 op_assign
 id|TRUE
@@ -3059,14 +3069,16 @@ id|STp-&gt;recover_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 id|STp-&gt;nbr_waits
 op_assign
 id|STp-&gt;nbr_finished
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -3217,6 +3229,22 @@ id|UNIT_ATTENTION
 )paren
 (brace
 multiline_comment|/* New media? */
+multiline_comment|/* Flush the queued UNIT ATTENTION sense data */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|10
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|memset
 c_func
 (paren
@@ -3262,6 +3290,34 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x70
+)paren
+op_ne
+l_int|0x70
+op_logical_or
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x0f
+)paren
+op_ne
+id|UNIT_ATTENTION
+)paren
+r_break
+suffix:semicolon
+)brace
 (paren
 id|STp-&gt;device
 )paren
@@ -3285,7 +3341,7 @@ id|STp-&gt;nbr_partitions
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* This guess will be updated later if necessary */
+multiline_comment|/* This guess will be updated later&n;                                                    if necessary */
 r_for
 c_loop
 (paren
@@ -3600,16 +3656,22 @@ id|b_data
 l_int|5
 )braket
 suffix:semicolon
-macro_line|#if DEBUG
 r_if
 c_cond
 (paren
+id|DEB
+c_func
+(paren
 id|debugging
+op_logical_or
+)paren
+op_logical_neg
+id|STp-&gt;inited
 )paren
 id|printk
 c_func
 (paren
-id|ST_DEB_MSG
+id|KERN_WARNING
 l_string|&quot;st%d: Block limits %d - %d bytes.&bslash;n&quot;
 comma
 id|dev
@@ -3619,7 +3681,6 @@ comma
 id|STp-&gt;max_block
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -3632,12 +3693,9 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -3646,8 +3704,8 @@ l_string|&quot;st%d: Can&squot;t read block limits.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 id|memset
@@ -3714,12 +3772,9 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -3728,8 +3783,8 @@ l_string|&quot;st%d: No Mode Sense.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|STp-&gt;block_size
 op_assign
 id|ST_DEFAULT_BLOCK
@@ -3751,12 +3806,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -3801,8 +3853,8 @@ id|b_data
 l_int|3
 )braket
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3879,12 +3931,9 @@ id|b_data
 l_int|11
 )braket
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -3928,8 +3977,8 @@ l_int|7
 comma
 id|STp-&gt;drv_buffer
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -4050,6 +4099,10 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
+id|STp-&gt;inited
+op_assign
+id|TRUE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4094,12 +4147,9 @@ id|read_pointer
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -4122,8 +4172,8 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|buffer_blocks
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4134,12 +4184,9 @@ id|STp-&gt;write_prot
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -4148,8 +4195,8 @@ l_string|&quot;st%d: Write protected&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4233,12 +4280,9 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* This code is reached when the device is opened for the first time&n;&t;&t;   after the driver has been initialized with tape in the drive and the&n;&t;&t;   partition support has been enabled. */
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -4247,8 +4291,8 @@ l_string|&quot;st%d: Updating partition number in status.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4585,12 +4629,9 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -4599,8 +4640,8 @@ l_string|&quot;st%d: update_partition at close failed.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
@@ -4628,13 +4669,9 @@ c_func
 id|STp
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 id|printk
 c_func
 (paren
@@ -4664,8 +4701,7 @@ comma
 id|STp-&gt;nbr_finished
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -4889,12 +4925,9 @@ id|ST_FM
 suffix:semicolon
 )brace
 )brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -4908,8 +4941,8 @@ id|cmd
 l_int|4
 )braket
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 r_if
@@ -5435,9 +5468,10 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 op_logical_neg
 id|STp-&gt;in_use
@@ -5459,7 +5493,8 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 multiline_comment|/* Write must be integral number of blocks */
 r_if
 c_cond
@@ -5740,12 +5775,9 @@ op_member_access_from_pointer
 id|last_result_fatal
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -5760,8 +5792,8 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|last_result
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6173,12 +6205,9 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -6187,8 +6216,8 @@ l_string|&quot;st%d: Error on write:&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6377,12 +6406,9 @@ id|ENOSPC
 )paren
 suffix:semicolon
 multiline_comment|/* EOM within current request */
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -6393,8 +6419,8 @@ id|dev
 comma
 id|transfer
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -6418,12 +6444,9 @@ id|EIO
 )paren
 suffix:semicolon
 multiline_comment|/* EOM for old data */
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -6432,8 +6455,8 @@ l_string|&quot;st%d: EOM with lost data.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_else
@@ -6773,12 +6796,14 @@ l_int|4
 op_assign
 id|blks
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 id|STp-&gt;write_pending
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
+)paren
 id|SCpnt
 op_assign
 id|st_do_scsi
@@ -7176,12 +7201,9 @@ id|retval
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -7230,8 +7252,8 @@ id|SCpnt-&gt;sense_buffer
 l_int|7
 )braket
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7484,12 +7506,9 @@ id|transfer
 op_star
 id|STp-&gt;block_size
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -7506,8 +7525,8 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|buffer_bytes
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7597,12 +7616,9 @@ id|transfer
 op_star
 id|STp-&gt;block_size
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -7617,8 +7633,8 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|buffer_bytes
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 r_if
@@ -7678,12 +7694,9 @@ id|transfer
 op_star
 id|STp-&gt;block_size
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -7698,20 +7711,17 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|buffer_bytes
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 multiline_comment|/* end of EOF, EOM, ILI test */
 r_else
 (brace
 multiline_comment|/* nonzero sense key */
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -7720,8 +7730,8 @@ l_string|&quot;st%d: Tape error while reading.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|STps-&gt;drv_block
 op_assign
 (paren
@@ -7748,12 +7758,9 @@ op_eq
 id|BLANK_CHECK
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -7762,8 +7769,8 @@ l_string|&quot;st%d: Zero returned for first BLANK CHECK after EOF.&bslash;n&quo
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|STps-&gt;eof
 op_assign
 id|ST_EOD_2
@@ -8003,9 +8010,10 @@ op_minus
 id|ENXIO
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 op_logical_neg
 id|STp-&gt;in_use
@@ -8027,7 +8035,8 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 r_if
 c_cond
 (paren
@@ -8174,9 +8183,10 @@ op_assign
 id|ST_READING
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|debugging
 op_logical_and
@@ -8201,7 +8211,8 @@ op_member_access_from_pointer
 id|buffer_bytes
 )paren
 suffix:semicolon
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 r_if
 c_cond
 (paren
@@ -8407,9 +8418,10 @@ OG
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|debugging
 op_logical_and
@@ -8438,7 +8450,8 @@ op_minus
 id|total
 )paren
 suffix:semicolon
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 id|transfer
 op_assign
 (paren
@@ -8527,7 +8540,7 @@ r_break
 suffix:semicolon
 multiline_comment|/* Read only one variable length block */
 )brace
-multiline_comment|/* for (total = 0, special = 0; total &lt; count &amp;&amp; !special; ) */
+multiline_comment|/* for (total = 0, special = 0;&n;                                   total &lt; count &amp;&amp; !special; ) */
 r_if
 c_cond
 (paren
@@ -8722,7 +8735,9 @@ comma
 id|STm-&gt;sysv
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -8734,7 +8749,7 @@ comma
 id|debugging
 )paren
 suffix:semicolon
-macro_line|#endif
+)paren
 )brace
 DECL|function|st_set_options
 r_static
@@ -8824,12 +8839,9 @@ id|modes_defined
 op_assign
 id|TRUE
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -8840,8 +8852,8 @@ id|dev
 comma
 id|STp-&gt;current_mode
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|code
 op_assign
@@ -8988,7 +9000,9 @@ id|MT_ST_SYSV
 op_ne
 l_int|0
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 id|debugging
 op_assign
 (paren
@@ -8999,7 +9013,7 @@ id|MT_ST_DEBUGGING
 op_ne
 l_int|0
 suffix:semicolon
-macro_line|#endif
+)paren
 id|st_log_options
 c_func
 (paren
@@ -9220,9 +9234,10 @@ id|STm-&gt;sysv
 op_assign
 id|value
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 (paren
 id|options
@@ -9236,7 +9251,7 @@ id|debugging
 op_assign
 id|value
 suffix:semicolon
-macro_line|#endif
+)paren
 id|st_log_options
 c_func
 (paren
@@ -9813,12 +9828,9 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -9827,8 +9839,8 @@ l_string|&quot;st%d: Compression mode page not supported.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|scsi_release_command
 c_func
 (paren
@@ -9846,12 +9858,9 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -9880,8 +9889,8 @@ suffix:colon
 l_int|0
 )paren
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Check if compression can be changed */
 r_if
 c_cond
@@ -9904,12 +9913,9 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -9918,8 +9924,8 @@ l_string|&quot;st%d: Compression not supported.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|scsi_release_command
 c_func
 (paren
@@ -10074,12 +10080,9 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -10088,8 +10091,8 @@ l_string|&quot;st%d: Compression change failed.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|scsi_release_command
 c_func
 (paren
@@ -10107,12 +10110,9 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -10123,8 +10123,8 @@ id|dev
 comma
 id|state
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|scsi_release_command
 c_func
 (paren
@@ -10364,12 +10364,9 @@ l_int|4
 op_assign
 id|arg
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -10397,8 +10394,8 @@ id|cmd
 l_int|4
 )braket
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10486,15 +10483,10 @@ l_int|4
 op_assign
 id|ltmp
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 r_if
-c_cond
 (paren
 id|cmd
 (braket
@@ -10548,8 +10540,7 @@ id|ltmp
 )paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -10626,12 +10617,9 @@ l_int|4
 op_assign
 id|arg
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -10659,8 +10647,8 @@ id|cmd
 l_int|4
 )braket
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10736,15 +10724,10 @@ l_int|4
 op_assign
 id|ltmp
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 r_if
-c_cond
 (paren
 id|cmd
 (braket
@@ -10798,8 +10781,7 @@ id|ltmp
 )paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -10868,12 +10850,9 @@ l_int|4
 op_assign
 id|arg
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -10901,8 +10880,8 @@ id|cmd
 l_int|4
 )braket
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10981,15 +10960,10 @@ l_int|4
 op_assign
 id|ltmp
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 r_if
-c_cond
 (paren
 id|cmd
 (braket
@@ -11043,8 +11017,7 @@ id|ltmp
 )paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -11140,15 +11113,10 @@ id|timeout
 op_assign
 id|STp-&gt;timeout
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 r_if
-c_cond
 (paren
 id|cmd_in
 op_eq
@@ -11211,8 +11179,7 @@ l_int|4
 )braket
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 r_if
 c_cond
 (paren
@@ -11262,12 +11229,9 @@ op_assign
 id|STp-&gt;timeout
 suffix:semicolon
 macro_line|#endif
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -11276,8 +11240,8 @@ l_string|&quot;st%d: Rewinding tape.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|fileno
 op_assign
 id|blkno
@@ -11339,13 +11303,9 @@ op_plus
 id|MT_ST_HPLOADER_OFFSET
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 id|printk
 c_func
 (paren
@@ -11370,9 +11330,8 @@ id|arg
 op_minus
 id|MT_ST_HPLOADER_OFFSET
 )paren
+)paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|cmd
 (braket
 l_int|3
@@ -11403,15 +11362,10 @@ op_assign
 id|STp-&gt;long_timeout
 suffix:semicolon
 macro_line|#endif
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 r_if
-c_cond
 (paren
 id|cmd_in
 op_ne
@@ -11436,8 +11390,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 id|fileno
 op_assign
 id|blkno
@@ -11451,12 +11404,9 @@ suffix:semicolon
 r_case
 id|MTNOP
 suffix:colon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -11465,8 +11415,8 @@ l_string|&quot;st%d: No op on tape.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -11504,12 +11454,9 @@ l_int|4
 op_assign
 l_int|3
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -11518,8 +11465,8 @@ l_string|&quot;st%d: Retensioning tape.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|fileno
 op_assign
 id|blkno
@@ -11591,12 +11538,9 @@ l_int|1
 op_assign
 l_int|3
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -11605,8 +11549,8 @@ l_string|&quot;st%d: Spacing to end of recorded medium.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|blkno
 op_assign
 l_int|0
@@ -11667,12 +11611,9 @@ op_star
 l_int|8
 suffix:semicolon
 macro_line|#endif
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -11681,8 +11622,8 @@ l_string|&quot;st%d: Erasing tape.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|fileno
 op_assign
 id|blkno
@@ -11714,12 +11655,9 @@ l_int|4
 op_assign
 id|SCSI_REMOVAL_PREVENT
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -11728,8 +11666,8 @@ l_string|&quot;st%d: Locking drive door.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif&t;/* ; */
 r_break
 suffix:semicolon
 r_case
@@ -11753,12 +11691,9 @@ l_int|4
 op_assign
 id|SCSI_REMOVAL_ALLOW
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -11767,8 +11702,8 @@ l_string|&quot;st%d: Unlocking drive door.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif&t;/* ; */
 r_break
 suffix:semicolon
 r_case
@@ -12086,15 +12021,10 @@ id|timeout
 op_assign
 id|STp-&gt;timeout
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 r_if
-c_cond
 (paren
 id|cmd_in
 op_eq
@@ -12145,7 +12075,6 @@ l_int|11
 )paren
 suffix:semicolon
 r_if
-c_cond
 (paren
 id|cmd_in
 op_eq
@@ -12174,7 +12103,6 @@ l_int|4
 )paren
 suffix:semicolon
 r_if
-c_cond
 (paren
 id|cmd_in
 op_eq
@@ -12204,8 +12132,7 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 r_break
 suffix:semicolon
 r_default
@@ -12557,7 +12484,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* SCSI command was not completely successful. Don&squot;t return&n;&t;&t;&t;&t;   from this block without releasing the SCSI command block! */
+multiline_comment|/* SCSI command was not completely successful. Don&squot;t return&n;                    from this block without releasing the SCSI command block! */
 r_if
 c_cond
 (paren
@@ -13216,12 +13143,9 @@ id|partition
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -13230,8 +13154,8 @@ l_string|&quot;st%d: Can&squot;t read tape position.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 (paren
@@ -13412,12 +13336,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -13432,8 +13353,8 @@ comma
 op_star
 id|partition
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|scsi_release_command
 c_func
@@ -13549,12 +13470,9 @@ id|STp-&gt;partition
 )braket
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -13567,9 +13485,12 @@ id|block
 comma
 id|partition
 )paren
+)paren
 suffix:semicolon
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|partition
 OL
@@ -13581,7 +13502,7 @@ op_minus
 id|EIO
 )paren
 suffix:semicolon
-macro_line|#endif
+)paren
 multiline_comment|/* Update the location at the partition we are leaving */
 r_if
 c_cond
@@ -13644,12 +13565,9 @@ id|STps-&gt;last_block_visited
 op_assign
 id|blk
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -13662,8 +13580,8 @@ id|blk
 comma
 id|STp-&gt;partition
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 id|memset
@@ -13819,12 +13737,9 @@ l_int|8
 op_assign
 id|partition
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -13837,8 +13752,8 @@ id|STp-&gt;partition
 comma
 id|partition
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 macro_line|#if ST_NOWAIT
@@ -14350,12 +14265,9 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -14364,8 +14276,8 @@ l_string|&quot;st%d: Can&squot;t read medium partition page.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 (paren
@@ -14391,12 +14303,9 @@ l_int|3
 op_plus
 l_int|1
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -14407,8 +14316,8 @@ id|dev
 comma
 id|result
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 id|result
@@ -14528,12 +14437,9 @@ l_int|3
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -14542,8 +14448,8 @@ l_string|&quot;st%d: Formatting tape with one partition.&bslash;n&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -14586,12 +14492,9 @@ id|size
 op_amp
 l_int|0xff
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -14602,8 +14505,8 @@ id|dev
 comma
 id|size
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|bp
 (braket
@@ -14861,9 +14764,10 @@ id|dev
 )braket
 )paren
 suffix:semicolon
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|debugging
 op_logical_and
@@ -14887,7 +14791,8 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 id|STm
 op_assign
 op_amp
@@ -15163,7 +15068,7 @@ op_eq
 id|MTSEEK
 )paren
 (brace
-multiline_comment|/* Old position must be restored if partition will be changed */
+multiline_comment|/* Old position must be restored if partition will be&n;                                   changed */
 id|i
 op_assign
 op_logical_neg
@@ -16675,7 +16580,7 @@ id|b_size
 op_div_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* Large enough for the rest of the buffers */
+multiline_comment|/* Large enough for the&n;                                                                rest of the buffers */
 r_continue
 suffix:semicolon
 )brace
@@ -16795,13 +16700,9 @@ l_int|0
 dot
 id|address
 suffix:semicolon
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
-(brace
 id|printk
 c_func
 (paren
@@ -16842,8 +16743,7 @@ dot
 id|length
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
+)paren
 id|tb-&gt;in_use
 op_assign
 l_int|0
@@ -17106,12 +17006,9 @@ id|segs
 op_increment
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
-r_if
-c_cond
+id|DEBC
+c_func
 (paren
-id|debugging
-)paren
 id|printk
 c_func
 (paren
@@ -17126,8 +17023,8 @@ id|STbuffer-&gt;sg_segs
 comma
 id|b_size
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|TRUE
 suffix:semicolon
@@ -17190,9 +17087,10 @@ dot
 id|length
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 r_if
-c_cond
 (paren
 id|debugging
 op_logical_and
@@ -17213,7 +17111,8 @@ comma
 id|STbuffer-&gt;sg_segs
 )paren
 suffix:semicolon
-macro_line|#endif
+)paren
+multiline_comment|/* end DEB */
 id|STbuffer-&gt;sg_segs
 op_assign
 id|STbuffer-&gt;orig_sg_segs
@@ -18151,6 +18050,10 @@ id|mt_status-&gt;mt_type
 op_assign
 id|MT_ISSCSI2
 suffix:semicolon
+id|tpnt-&gt;inited
+op_assign
+l_int|0
+suffix:semicolon
 id|tpnt-&gt;devt
 op_assign
 id|MKDEV
@@ -18618,7 +18521,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if DEBUG
+id|DEB
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -18629,8 +18534,8 @@ id|st_buffer_size
 comma
 id|st_write_threshold
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|memset
 c_func
 (paren
