@@ -600,10 +600,6 @@ c_func
 (paren
 r_int
 id|mode
-comma
-r_char
-op_star
-id|reboot_cmd
 )paren
 (brace
 multiline_comment|/* Who said DEC engineer&squot;s have no sense of humor? ;-)  */
@@ -627,14 +623,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|common_kill_arch
-c_func
-(paren
-id|mode
-comma
-id|reboot_cmd
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * The System Vectors&n; */
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_ALCOR)

@@ -6573,16 +6573,6 @@ c_func
 id|devc
 )paren
 suffix:semicolon
-id|waveartist_mixer_set
-c_func
-(paren
-id|devc
-comma
-id|SOUND_MIXER_RECSRC
-comma
-id|SOUND_MASK_MIC
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

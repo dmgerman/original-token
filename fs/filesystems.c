@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/ntfs_fs.h&gt;
 macro_line|#include &lt;linux/hfs_fs.h&gt;
 macro_line|#include &lt;linux/devpts_fs.h&gt;
 macro_line|#include &lt;linux/bfs_fs.h&gt;
+macro_line|#include &lt;linux/adfs_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;

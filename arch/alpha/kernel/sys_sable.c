@@ -921,7 +921,7 @@ id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
-id|common_kill_arch
+l_int|NULL
 comma
 id|pci_map_irq
 suffix:colon

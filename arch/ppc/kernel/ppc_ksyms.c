@@ -1031,6 +1031,20 @@ c_func
 id|find_phandle
 )paren
 suffix:semicolon
+DECL|variable|device_is_compatible
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|device_is_compatible
+)paren
+suffix:semicolon
+DECL|variable|machine_is_compatible
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|machine_is_compatible
+)paren
+suffix:semicolon
 DECL|variable|get_property
 id|EXPORT_SYMBOL
 c_func
@@ -1071,13 +1085,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|feature_test
-)paren
-suffix:semicolon
-DECL|variable|device_is_compatible
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|device_is_compatible
 )paren
 suffix:semicolon
 macro_line|#endif /* defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC) */

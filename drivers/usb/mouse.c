@@ -669,7 +669,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look like a PS/2 mouse, please..&n; *&n; * The PS/2 protocol is fairly strange, but&n; * oh, well, it&squot;s at least common..&n; */
+multiline_comment|/*&n; * Look like a PS/2 mouse, please..&n; * In XFree86 (3.3.5 tested) you must select Protocol &quot;NetMousePS/2&quot;,&n; *  then use your wheel as Button 4 and 5 via ZAxisMapping 4 5.&n; *&n; * The PS/2 protocol is fairly strange, but&n; * oh, well, it&squot;s at least common..&n; */
 DECL|function|read_mouse
 r_static
 id|ssize_t

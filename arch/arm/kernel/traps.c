@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1986,5 +1987,38 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|trap_init
+r_void
+id|__init
+id|trap_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_extern
+r_void
+id|__trap_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|__trap_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_CPU_32
+id|modify_domain
+c_func
+(paren
+id|DOMAIN_USER
+comma
+id|DOMAIN_CLIENT
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

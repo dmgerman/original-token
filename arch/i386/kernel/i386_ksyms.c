@@ -41,6 +41,36 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|FASTCALL
+c_func
+(paren
+id|__write_lock_failed
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|FASTCALL
+c_func
+(paren
+id|__read_lock_failed
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_HD) || defined(CONFIG_BLK_DEV_IDE_MODULE) || defined(CONFIG_BLK_DEV_HD_MODULE)
 r_extern
 r_struct
@@ -423,6 +453,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|cpu_online_map
+)paren
+suffix:semicolon
+DECL|variable|__write_lock_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__write_lock_failed
+)paren
+suffix:semicolon
+DECL|variable|__read_lock_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__read_lock_failed
 )paren
 suffix:semicolon
 multiline_comment|/* Global SMP irq stuff */

@@ -1757,11 +1757,9 @@ id|vaddr
 comma
 id|vaddr
 op_plus
-l_int|4
+id|PAGE_SIZE
 op_star
-l_int|1024
-op_star
-l_int|1024
+id|LAST_PKMAP
 comma
 id|pgd_base
 )paren

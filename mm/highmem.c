@@ -263,6 +263,8 @@ DECL|variable|kmap_lock
 r_static
 id|spinlock_t
 id|kmap_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|variable|pkmap_page_table
 id|pte_t

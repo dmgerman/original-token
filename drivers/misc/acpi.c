@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -31,6 +32,16 @@ macro_line|#ifndef DECLARE_WAIT_QUEUE_HEAD
 DECL|macro|DECLARE_WAIT_QUEUE_HEAD
 mdefine_line|#define DECLARE_WAIT_QUEUE_HEAD(x) struct wait_queue * x = NULL
 macro_line|#endif
+multiline_comment|/*&n; * Yes, it&squot;s unfortunate that we are relying on get_cmos_time&n; * because it is slow (&gt; 1 sec.) and i386 only.&t; It might be better&n; * to use some of the code from drivers/char/rtc.c in the near future&n; */
+r_extern
+r_int
+r_int
+id|get_cmos_time
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_static
 r_int
 id|acpi_control_thread
@@ -119,10 +130,9 @@ op_star
 id|len
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_static
 r_int
-id|acpi_do_sleep_wake
+id|acpi_do_sleep
 c_func
 (paren
 id|ctl_table
@@ -146,12 +156,11 @@ op_star
 id|len
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|variable|acpi_idle_wait
+DECL|variable|acpi_control_wait
 id|DECLARE_WAIT_QUEUE_HEAD
 c_func
 (paren
-id|acpi_idle_wait
+id|acpi_control_wait
 )paren
 suffix:semicolon
 DECL|variable|acpi_sysctl
@@ -204,6 +213,23 @@ id|acpi_dsdt_addr
 op_assign
 l_int|0
 suffix:semicolon
+singleline_comment|// current system sleep state (S0 - S4)
+DECL|variable|acpi_sleep_state
+r_static
+id|acpi_sstate_t
+id|acpi_sleep_state
+op_assign
+id|ACPI_S0
+suffix:semicolon
+singleline_comment|// time sleep began
+DECL|variable|acpi_sleep_start
+r_static
+r_int
+r_int
+id|acpi_sleep_start
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|acpi_event_lock
 r_static
 id|spinlock_t
@@ -234,6 +260,14 @@ id|u32
 id|acpi_gpe_level
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|acpi_event_state
+r_static
+r_volatile
+id|acpi_sstate_t
+id|acpi_event_state
+op_assign
+id|ACPI_S0
 suffix:semicolon
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -507,21 +541,21 @@ id|acpi_do_ulong
 )brace
 comma
 (brace
-id|ACPI_S5_SLP_TYP
+id|ACPI_S0_SLP_TYP
 comma
-l_string|&quot;s5_slp_typ&quot;
+l_string|&quot;s0_slp_typ&quot;
 comma
 op_amp
 id|acpi_slp_typ
 (braket
-l_int|5
+id|ACPI_S0
 )braket
 comma
 r_sizeof
 (paren
 id|acpi_slp_typ
 (braket
-l_int|5
+id|ACPI_S0
 )braket
 )paren
 comma
@@ -533,33 +567,65 @@ op_amp
 id|acpi_do_ulong
 )brace
 comma
-macro_line|#if 0
 (brace
-l_int|123
+id|ACPI_S1_SLP_TYP
+comma
+l_string|&quot;s1_slp_typ&quot;
+comma
+op_amp
+id|acpi_slp_typ
+(braket
+id|ACPI_S1
+)braket
+comma
+r_sizeof
+(paren
+id|acpi_slp_typ
+(braket
+id|ACPI_S1
+)braket
+)paren
+comma
+l_int|0600
+comma
+l_int|NULL
+comma
+op_amp
+id|acpi_do_ulong
+)brace
+comma
+(brace
+id|ACPI_S5_SLP_TYP
+comma
+l_string|&quot;s5_slp_typ&quot;
+comma
+op_amp
+id|acpi_slp_typ
+(braket
+id|ACPI_S5
+)braket
+comma
+r_sizeof
+(paren
+id|acpi_slp_typ
+(braket
+id|ACPI_S5
+)braket
+)paren
+comma
+l_int|0600
+comma
+l_int|NULL
+comma
+op_amp
+id|acpi_do_ulong
+)brace
+comma
+(brace
+id|ACPI_SLEEP
 comma
 l_string|&quot;sleep&quot;
 comma
-(paren
-r_void
-op_star
-)paren
-l_int|1
-comma
-l_int|0
-comma
-l_int|0600
-comma
-l_int|NULL
-comma
-op_amp
-id|acpi_do_sleep_wake
-)brace
-comma
-(brace
-l_int|124
-comma
-l_string|&quot;wake&quot;
-comma
 l_int|NULL
 comma
 l_int|0
@@ -569,10 +635,9 @@ comma
 l_int|NULL
 comma
 op_amp
-id|acpi_do_sleep_wake
+id|acpi_do_sleep
 )brace
 comma
-macro_line|#endif
 (brace
 l_int|0
 )brace
@@ -2447,6 +2512,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|acpi_event_state
+op_assign
+id|acpi_sleep_state
+suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren
@@ -3086,6 +3155,63 @@ r_return
 id|status
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Update system time from real-time clock&n; */
+DECL|function|acpi_update_clock
+r_static
+r_void
+id|acpi_update_clock
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|acpi_sleep_start
+)paren
+(brace
+r_int
+r_int
+id|delta
+suffix:semicolon
+r_struct
+id|timeval
+id|tv
+suffix:semicolon
+id|delta
+op_assign
+id|get_cmos_time
+c_func
+(paren
+)paren
+op_minus
+id|acpi_sleep_start
+suffix:semicolon
+id|do_gettimeofday
+c_func
+(paren
+op_amp
+id|tv
+)paren
+suffix:semicolon
+id|tv.tv_sec
+op_add_assign
+id|delta
+suffix:semicolon
+id|do_settimeofday
+c_func
+(paren
+op_amp
+id|tv
+)paren
+suffix:semicolon
+id|acpi_sleep_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n; * Enter system sleep state&n; */
 DECL|function|acpi_enter_sx
 r_static
@@ -3173,13 +3299,33 @@ op_ne
 id|ACPI_S0
 )paren
 (brace
+id|acpi_sleep_start
+op_assign
+id|get_cmos_time
+c_func
+(paren
+)paren
+suffix:semicolon
 id|acpi_enter_dx
 c_func
 (paren
 id|ACPI_D3
 )paren
 suffix:semicolon
+id|acpi_sleep_state
+op_assign
+id|state
+suffix:semicolon
 )brace
+singleline_comment|// clear wake status
+id|acpi_write_pm1_status
+c_func
+(paren
+id|acpi_facp
+comma
+id|ACPI_WAK
+)paren
+suffix:semicolon
 singleline_comment|// set SLP_TYPa/b and SLP_EN
 r_if
 c_cond
@@ -3249,10 +3395,50 @@ op_eq
 id|ACPI_S0
 )paren
 (brace
+id|acpi_sleep_state
+op_assign
+id|state
+suffix:semicolon
 id|acpi_enter_dx
 c_func
 (paren
 id|ACPI_D0
+)paren
+suffix:semicolon
+id|acpi_sleep_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|state
+op_eq
+id|ACPI_S1
+)paren
+(brace
+singleline_comment|// wait until S1 is entered
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|acpi_read_pm1_status
+c_func
+(paren
+id|acpi_facp
+)paren
+op_amp
+id|ACPI_WAK
+)paren
+)paren
+suffix:semicolon
+singleline_comment|// finished sleeping, update system time
+id|acpi_update_clock
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -4204,17 +4390,15 @@ id|gpe_status
 op_assign
 l_int|0
 suffix:semicolon
+id|acpi_sstate_t
+id|event_state
+op_assign
+l_int|0
+suffix:semicolon
 r_char
 id|str
 (braket
-l_int|4
-op_star
-r_sizeof
-(paren
-id|u32
-)paren
-op_plus
-l_int|7
+l_int|27
 )braket
 suffix:semicolon
 r_int
@@ -4296,6 +4480,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|event_state
+op_assign
+id|acpi_event_state
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4334,11 +4522,13 @@ c_func
 (paren
 id|str
 comma
-l_string|&quot;0x%08x 0x%08x&bslash;n&quot;
+l_string|&quot;0x%08x 0x%08x 0x%01x&bslash;n&quot;
 comma
 id|pm1_status
 comma
 id|gpe_status
+comma
+id|event_state
 )paren
 suffix:semicolon
 id|copy_to_user
@@ -4364,11 +4554,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*&n; * Sleep or wake system&n; */
+multiline_comment|/*&n; * Enter system sleep state&n; */
+DECL|function|acpi_do_sleep
 r_static
 r_int
-id|acpi_do_sleep_wake
+id|acpi_do_sleep
 c_func
 (paren
 id|ctl_table
@@ -4417,29 +4607,18 @@ suffix:semicolon
 )brace
 r_else
 (brace
-singleline_comment|// just shutdown some devices for now
-r_if
-c_cond
-(paren
-id|ctl-&gt;data
-)paren
-(brace
-id|acpi_enter_dx
+id|acpi_enter_sx
 c_func
 (paren
-id|ACPI_D3
+id|ACPI_S1
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|acpi_enter_dx
+id|acpi_enter_sx
 c_func
 (paren
-id|ACPI_D0
+id|ACPI_S0
 )paren
 suffix:semicolon
-)brace
 )brace
 id|file-&gt;f_pos
 op_add_assign
@@ -4450,7 +4629,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * Initialize and enable ACPI&n; */
 DECL|function|acpi_init
 r_static
@@ -4902,7 +5080,7 @@ id|interruptible_sleep_on
 c_func
 (paren
 op_amp
-id|acpi_idle_wait
+id|acpi_control_wait
 )paren
 suffix:semicolon
 r_if
@@ -4916,7 +5094,7 @@ id|current
 )paren
 r_break
 suffix:semicolon
-singleline_comment|// find all idle devices and set idle timer based on policy
+singleline_comment|// find all idle devices and set idle timer
 )brace
 r_return
 l_int|0
@@ -4930,11 +5108,11 @@ id|acpi_init
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Module visible symbols&n; */
-DECL|variable|acpi_idle_wait
+DECL|variable|acpi_control_wait
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|acpi_idle_wait
+id|acpi_control_wait
 )paren
 suffix:semicolon
 DECL|variable|acpi_register

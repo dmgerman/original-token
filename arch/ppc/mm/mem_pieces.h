@@ -2,7 +2,6 @@ multiline_comment|/*&n; *    Copyright (c) 1996 Paul Mackerras &lt;paulus@cs.anu
 macro_line|#ifndef __MEM_PIECES_H__
 DECL|macro|__MEM_PIECES_H__
 mdefine_line|#define&t;__MEM_PIECES_H__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef __cplusplus
 r_extern

@@ -8,59 +8,67 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-multiline_comment|/*&n; * Device types&n; */
+macro_line|#endif /* __KERNEL__ */
+multiline_comment|/*&n; * System sleep states&n; */
 r_enum
 (brace
-DECL|enumerator|ACPI_SYS_DEV
-id|ACPI_SYS_DEV
+DECL|enumerator|ACPI_S0
+id|ACPI_S0
 comma
-multiline_comment|/* system device (fan, KB controller, ...) */
-DECL|enumerator|ACPI_PCI_DEV
-id|ACPI_PCI_DEV
+multiline_comment|/* working */
+DECL|enumerator|ACPI_S1
+id|ACPI_S1
 comma
-multiline_comment|/* generic PCI device */
-DECL|enumerator|ACPI_PCI_BUS
-id|ACPI_PCI_BUS
+multiline_comment|/* sleep */
+DECL|enumerator|ACPI_S2
+id|ACPI_S2
 comma
-multiline_comment|/* PCI bus */
-DECL|enumerator|ACPI_ISA_DEV
-id|ACPI_ISA_DEV
+multiline_comment|/* sleep */
+DECL|enumerator|ACPI_S3
+id|ACPI_S3
 comma
-multiline_comment|/* generic ISA device */
-DECL|enumerator|ACPI_ISA_BUS
-id|ACPI_ISA_BUS
+multiline_comment|/* sleep */
+DECL|enumerator|ACPI_S4
+id|ACPI_S4
 comma
-multiline_comment|/* ISA bus */
-DECL|enumerator|ACPI_USB_DEV
-id|ACPI_USB_DEV
+multiline_comment|/* non-volatile sleep */
+DECL|enumerator|ACPI_S5
+id|ACPI_S5
 comma
-multiline_comment|/* generic USB device */
-DECL|enumerator|ACPI_USB_HUB
-id|ACPI_USB_HUB
-comma
-multiline_comment|/* USB hub device */
-DECL|enumerator|ACPI_USB_CTRL
-id|ACPI_USB_CTRL
-comma
-multiline_comment|/* USB controller */
-DECL|enumerator|ACPI_SCSI_DEV
-id|ACPI_SCSI_DEV
-comma
-multiline_comment|/* generic SCSI device */
-DECL|enumerator|ACPI_SCSI_CTRL
-id|ACPI_SCSI_CTRL
-comma
-multiline_comment|/* SCSI controller */
+multiline_comment|/* soft-off */
 )brace
 suffix:semicolon
-DECL|typedef|acpi_dev_t
+DECL|typedef|acpi_sstate_t
 r_typedef
 r_int
-id|acpi_dev_t
+id|acpi_sstate_t
 suffix:semicolon
-multiline_comment|/*&n; * Device addresses&n; */
-DECL|macro|ACPI_PCI_ADR
-mdefine_line|#define ACPI_PCI_ADR(dev) ((dev)-&gt;bus-&gt;number &lt;&lt; 16 | (dev)-&gt;devfn)
+multiline_comment|/*&n; * Device states&n; */
+r_enum
+(brace
+DECL|enumerator|ACPI_D0
+id|ACPI_D0
+comma
+multiline_comment|/* fully-on */
+DECL|enumerator|ACPI_D1
+id|ACPI_D1
+comma
+multiline_comment|/* partial-on */
+DECL|enumerator|ACPI_D2
+id|ACPI_D2
+comma
+multiline_comment|/* partial-on */
+DECL|enumerator|ACPI_D3
+id|ACPI_D3
+comma
+multiline_comment|/* fully-off */
+)brace
+suffix:semicolon
+DECL|typedef|acpi_dstate_t
+r_typedef
+r_int
+id|acpi_dstate_t
+suffix:semicolon
 multiline_comment|/*&n; * HID (PnP) values&n; */
 r_enum
 (brace
@@ -119,66 +127,60 @@ r_typedef
 r_int
 id|acpi_hid_t
 suffix:semicolon
-multiline_comment|/*&n; * Device states&n; */
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * Device types&n; */
 r_enum
 (brace
-DECL|enumerator|ACPI_D0
-id|ACPI_D0
+DECL|enumerator|ACPI_SYS_DEV
+id|ACPI_SYS_DEV
 comma
-multiline_comment|/* fully-on */
-DECL|enumerator|ACPI_D1
-id|ACPI_D1
+multiline_comment|/* system device (fan, KB controller, ...) */
+DECL|enumerator|ACPI_PCI_DEV
+id|ACPI_PCI_DEV
 comma
-multiline_comment|/* partial-on */
-DECL|enumerator|ACPI_D2
-id|ACPI_D2
+multiline_comment|/* generic PCI device */
+DECL|enumerator|ACPI_PCI_BUS
+id|ACPI_PCI_BUS
 comma
-multiline_comment|/* partial-on */
-DECL|enumerator|ACPI_D3
-id|ACPI_D3
+multiline_comment|/* PCI bus */
+DECL|enumerator|ACPI_ISA_DEV
+id|ACPI_ISA_DEV
 comma
-multiline_comment|/* fully-off */
+multiline_comment|/* generic ISA device */
+DECL|enumerator|ACPI_ISA_BUS
+id|ACPI_ISA_BUS
+comma
+multiline_comment|/* ISA bus */
+DECL|enumerator|ACPI_USB_DEV
+id|ACPI_USB_DEV
+comma
+multiline_comment|/* generic USB device */
+DECL|enumerator|ACPI_USB_HUB
+id|ACPI_USB_HUB
+comma
+multiline_comment|/* USB hub device */
+DECL|enumerator|ACPI_USB_CTRL
+id|ACPI_USB_CTRL
+comma
+multiline_comment|/* USB controller */
+DECL|enumerator|ACPI_SCSI_DEV
+id|ACPI_SCSI_DEV
+comma
+multiline_comment|/* generic SCSI device */
+DECL|enumerator|ACPI_SCSI_CTRL
+id|ACPI_SCSI_CTRL
+comma
+multiline_comment|/* SCSI controller */
 )brace
 suffix:semicolon
-DECL|typedef|acpi_dstate_t
+DECL|typedef|acpi_dev_t
 r_typedef
 r_int
-id|acpi_dstate_t
+id|acpi_dev_t
 suffix:semicolon
-multiline_comment|/*&n; * System sleep states&n; */
-r_enum
-(brace
-DECL|enumerator|ACPI_S0
-id|ACPI_S0
-comma
-multiline_comment|/* working */
-DECL|enumerator|ACPI_S1
-id|ACPI_S1
-comma
-multiline_comment|/* sleep */
-DECL|enumerator|ACPI_S2
-id|ACPI_S2
-comma
-multiline_comment|/* sleep */
-DECL|enumerator|ACPI_S3
-id|ACPI_S3
-comma
-multiline_comment|/* sleep */
-DECL|enumerator|ACPI_S4
-id|ACPI_S4
-comma
-multiline_comment|/* non-volatile sleep */
-DECL|enumerator|ACPI_S5
-id|ACPI_S5
-comma
-multiline_comment|/* soft-off */
-)brace
-suffix:semicolon
-DECL|typedef|acpi_sstate_t
-r_typedef
-r_int
-id|acpi_sstate_t
-suffix:semicolon
+multiline_comment|/*&n; * Device addresses&n; */
+DECL|macro|ACPI_PCI_ADR
+mdefine_line|#define ACPI_PCI_ADR(dev) ((dev)-&gt;bus-&gt;number &lt;&lt; 16 | (dev)-&gt;devfn)
 r_struct
 id|acpi_dev
 suffix:semicolon
@@ -268,7 +270,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_ACPI
 r_extern
 id|wait_queue_head_t
-id|acpi_idle_wait
+id|acpi_control_wait
 suffix:semicolon
 multiline_comment|/*&n; * Register a device with the ACPI subsystem&n; */
 r_struct
@@ -378,14 +380,14 @@ id|waitqueue_active
 c_func
 (paren
 op_amp
-id|acpi_idle_wait
+id|acpi_control_wait
 )paren
 )paren
 id|wake_up
 c_func
 (paren
 op_amp
-id|acpi_idle_wait
+id|acpi_control_wait
 )paren
 suffix:semicolon
 )brace
@@ -925,8 +927,17 @@ comma
 DECL|enumerator|ACPI_P_LVL3_LAT
 id|ACPI_P_LVL3_LAT
 comma
+DECL|enumerator|ACPI_S0_SLP_TYP
+id|ACPI_S0_SLP_TYP
+comma
+DECL|enumerator|ACPI_S1_SLP_TYP
+id|ACPI_S1_SLP_TYP
+comma
 DECL|enumerator|ACPI_S5_SLP_TYP
 id|ACPI_S5_SLP_TYP
+comma
+DECL|enumerator|ACPI_SLEEP
+id|ACPI_SLEEP
 comma
 )brace
 suffix:semicolon

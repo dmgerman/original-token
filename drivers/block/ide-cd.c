@@ -1528,12 +1528,6 @@ id|wait
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;in expiry&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* blank and format can take an extremly long time to&n;&t; * complete, if the IMMED bit was not set.&n;&t; */
 r_if
 c_cond

@@ -28,10 +28,6 @@ id|__asm__
 r_volatile
 (paren
 "&quot;"
-id|mov
-id|lr
-comma
-macro_line|#0x41000000&t;&t;@ prepare to jump to ROM
 id|mcr
 id|p15
 comma
@@ -51,12 +47,16 @@ id|off
 id|mov
 id|pc
 comma
-id|lr
-l_string|&quot; : : &quot;
-id|r
-l_string|&quot; (cpu_reset()) : &quot;
-id|cc
-"&quot;"
+macro_line|#0x41000000&t;&t;@ jump to ROM&quot; : :
+l_string|&quot;r&quot;
+(paren
+id|cpu_reset
+c_func
+(paren
+)paren
+)paren
+suffix:colon
+l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace

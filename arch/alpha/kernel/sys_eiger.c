@@ -720,7 +720,7 @@ id|common_init_pci
 comma
 id|kill_arch
 suffix:colon
-id|common_kill_arch
+id|tsunami_kill_arch
 comma
 id|pci_map_irq
 suffix:colon

@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -2854,6 +2855,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_setup&n; *&n; * Description:&n; *   Handle Linux boot parameters. This routine allows for assigning a value&n; *   to a parameter with a &squot;:&squot; between the parameter and the value.&n; *   ie. aic7xxx=unpause:0x0A,extended&n; *-F*************************************************************************/
+r_static
 r_void
 DECL|function|aic7xxx_setup
 id|aic7xxx_setup
@@ -2862,10 +2864,6 @@ c_func
 r_char
 op_star
 id|s
-comma
-r_int
-op_star
-id|dummy
 )paren
 (brace
 r_int
@@ -3714,6 +3712,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;aic7xxx=&quot;
+comma
+id|aix7xxx_setup
+)paren
+suffix:semicolon
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   pause_sequencer&n; *&n; * Description:&n; *   Pause the sequencer and wait for it to actually stop - this&n; *   is important since the sequencer can disable pausing for critical&n; *   sections.&n; *-F*************************************************************************/
 r_static
 r_inline

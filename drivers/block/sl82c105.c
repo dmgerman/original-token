@@ -149,6 +149,9 @@ c_func
 id|drive
 )paren
 suffix:semicolon
+id|ide_startstop_t
+id|startstop
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -213,6 +216,9 @@ c_cond
 id|ide_wait_stat
 c_func
 (paren
+op_amp
+id|startstop
+comma
 id|drive
 comma
 id|DRIVE_READY

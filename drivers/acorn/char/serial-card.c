@@ -1,8 +1,11 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/char/serial-card.c&n; *&n; * Copyright (c) 1996 Russell King.&n; *&n; * A generic handler of serial expansion cards that use 16550s or&n; * the like.&n; *&n; * Definitions:&n; *  MY_PRODS&t;&t;Product numbers to identify this card by&n; *  MY_MANUS&t;&t;Manufacturer numbers to identify this card by&n; *  MY_NUMPORTS&t;&t;Number of ports per card&n; *  MY_BAUD_BASE&t;Baud base for the card&n; *  MY_INIT&t;&t;Initialisation routine name&n; *  MY_BASE_ADDRESS(ec)&t;Return base address for ports&n; *  MY_PORT_ADDRESS&n; *&t;(port,cardaddr)&t;Return address for port using base address&n; *&t;&t;&t;from above.&n; *&n; * Changelog:&n; *  30-07-1996&t;RMK&t;Created&n; *  22-04-1998&t;RMK&t;Removed old register_pre_init_serial&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/char/serial-card.c&n; *&n; * Copyright (c) 1996-1999 Russell King.&n; *&n; * A generic handler of serial expansion cards that use 16550s or&n; * the like.&n; *&n; * Definitions:&n; *  MY_PRODS&t;&t;Product numbers to identify this card by&n; *  MY_MANUS&t;&t;Manufacturer numbers to identify this card by&n; *  MY_NUMPORTS&t;&t;Number of ports per card&n; *  MY_BAUD_BASE&t;Baud base for the card&n; *  MY_INIT&t;&t;Initialisation routine name&n; *  MY_BASE_ADDRESS(ec)&t;Return base address for ports&n; *  MY_PORT_ADDRESS&n; *&t;(port,cardaddr)&t;Return address for port using base address&n; *&t;&t;&t;from above.&n; *&n; * Changelog:&n; *  30-07-1996&t;RMK&t;Created&n; *  22-04-1998&t;RMK&t;Removed old register_pre_init_serial&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
+macro_line|#include &lt;asm/string.h&gt;
 macro_line|#ifndef NUM_SERIALS
 DECL|macro|NUM_SERIALS
 mdefine_line|#define NUM_SERIALS&t;MY_NUMPORTS * MAX_ECARDS
@@ -43,10 +46,6 @@ DECL|macro|ADD_ECARD
 mdefine_line|#define ADD_ECARD(ec,card) expcard[(card)] = (ec)
 DECL|macro|ADD_PORT
 mdefine_line|#define ADD_PORT(port,addr)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__serial_ports[__serial_pcount] = (port);&t;&bslash;&n;&t;&t;__serial_addr[__serial_pcount] = (addr);&t;&bslash;&n;&t;&t;__serial_pcount += 1;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
-DECL|macro|MY_INIT
-macro_line|#undef MY_INIT
-DECL|macro|MY_INIT
-mdefine_line|#define MY_INIT init_module
 macro_line|#else
 DECL|macro|ADD_ECARD
 mdefine_line|#define ADD_ECARD(ec,card)
@@ -99,7 +98,7 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|serial_struct
+id|req
 )paren
 )paren
 suffix:semicolon
@@ -128,9 +127,11 @@ id|req
 )paren
 suffix:semicolon
 )brace
-DECL|function|MY_INIT
+DECL|function|INIT
+r_static
 r_int
-id|MY_INIT
+id|__init
+id|INIT
 (paren
 r_void
 )paren
@@ -285,14 +286,16 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|EXIT
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|EXIT
 (paren
 r_void
 )paren
 (brace
+macro_line|#ifdef MODULE
 r_int
 id|i
 suffix:semicolon
@@ -362,6 +365,22 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+DECL|variable|INIT
+id|module_init
+c_func
+(paren
+id|INIT
+)paren
+suffix:semicolon
+DECL|variable|EXIT
+id|module_exit
+c_func
+(paren
+id|EXIT
+)paren
+suffix:semicolon
 eof

@@ -541,6 +541,7 @@ r_int
 id|dummy_emul
 c_func
 (paren
+r_void
 )paren
 (brace
 r_return

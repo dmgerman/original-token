@@ -38,9 +38,9 @@ mdefine_line|#define _FP_FRAC_OVERP_2(fs,X)&t;(_FP_FRAC_HIGH_##fs(X) &amp; _FP_O
 DECL|macro|_FP_FRAC_EQ_2
 mdefine_line|#define _FP_FRAC_EQ_2(X, Y)&t;(X##_f1 == Y##_f1 &amp;&amp; X##_f0 == Y##_f0)
 DECL|macro|_FP_FRAC_GT_2
-mdefine_line|#define _FP_FRAC_GT_2(X, Y)&t;&bslash;&n;  (X##_f1 &gt; Y##_f1 || X##_f1 == Y##_f1 &amp;&amp; X##_f0 &gt; Y##_f0)
+mdefine_line|#define _FP_FRAC_GT_2(X, Y)&t;&bslash;&n;  (X##_f1 &gt; Y##_f1 || (X##_f1 == Y##_f1 &amp;&amp; X##_f0 &gt; Y##_f0))
 DECL|macro|_FP_FRAC_GE_2
-mdefine_line|#define _FP_FRAC_GE_2(X, Y)&t;&bslash;&n;  (X##_f1 &gt; Y##_f1 || X##_f1 == Y##_f1 &amp;&amp; X##_f0 &gt;= Y##_f0)
+mdefine_line|#define _FP_FRAC_GE_2(X, Y)&t;&bslash;&n;  (X##_f1 &gt; Y##_f1 || (X##_f1 == Y##_f1 &amp;&amp; X##_f0 &gt;= Y##_f0))
 DECL|macro|_FP_ZEROFRAC_2
 mdefine_line|#define _FP_ZEROFRAC_2&t;&t;0, 0
 DECL|macro|_FP_MINFRAC_2

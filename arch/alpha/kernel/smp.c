@@ -1343,6 +1343,36 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|fork_by_hand
+r_static
+r_int
+id|__init
+id|fork_by_hand
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|pt_regs
+id|regs
+suffix:semicolon
+multiline_comment|/*&n;&t; * don&squot;t care about the regs settings since&n;&t; * we&squot;ll never reschedule the forked task.&n;&t; */
+r_return
+id|do_fork
+c_func
+(paren
+id|CLONE_VM
+op_or
+id|CLONE_PID
+comma
+l_int|0
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Bring one cpu online.&n; */
 r_static
 r_int
@@ -1367,20 +1397,23 @@ r_int
 id|timeout
 suffix:semicolon
 multiline_comment|/* Cook up an idler for this guy.  Note that the address we give&n;&t;   to kernel_thread is irrelevant -- it&squot;s going to start where&n;&t;   HWRPB.CPU_restart says to start.  But this gets all the other&n;&t;   task-y sort of data structures set up like we wish.  */
-id|kernel_thread
+multiline_comment|/*&n;&t; * We can&squot;t use kernel_thread since we must avoid to&n;&t; * reschedule the child.&n;&t; */
+r_if
+c_cond
+(paren
+id|fork_by_hand
 c_func
 (paren
-(paren
-r_void
-op_star
 )paren
-id|__smp_callin
+OL
+l_int|0
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;failed fork for CPU %d&quot;
 comma
-l_int|NULL
-comma
-id|CLONE_PID
-op_or
-id|CLONE_VM
+id|cpuid
 )paren
 suffix:semicolon
 id|idle
@@ -1398,10 +1431,39 @@ c_func
 (paren
 l_string|&quot;No idle process for CPU %d&quot;
 comma
-id|cpunum
+id|cpuid
 )paren
 suffix:semicolon
+id|idle-&gt;processor
+op_assign
+id|cpuid
+suffix:semicolon
+id|__cpu_logical_map
+(braket
+id|cpunum
+)braket
+op_assign
+id|cpuid
+suffix:semicolon
+id|cpu_number_map
+(braket
+id|cpuid
+)braket
+op_assign
+id|cpunum
+suffix:semicolon
+id|idle-&gt;has_cpu
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* we schedule the first task manually */
 id|del_from_runqueue
+c_func
+(paren
+id|idle
+)paren
+suffix:semicolon
+id|unhash_process
 c_func
 (paren
 id|idle
@@ -1413,16 +1475,6 @@ id|cpunum
 )braket
 op_assign
 id|idle
-suffix:semicolon
-id|idle-&gt;processor
-op_assign
-id|cpuid
-suffix:semicolon
-multiline_comment|/* Schedule the first task manually.  */
-multiline_comment|/* ??? Ingo, what is this?  */
-id|idle-&gt;has_cpu
-op_assign
-l_int|1
 suffix:semicolon
 id|DBGS
 c_func
@@ -1499,6 +1551,30 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* we must invalidate our stuff as we failed to boot the CPU */
+id|__cpu_logical_map
+(braket
+id|cpunum
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|cpu_number_map
+(braket
+id|cpuid
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* the idle task is local to us so free it as we don&squot;t use it */
+id|free_task_struct
+c_func
+(paren
+id|idle
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1515,20 +1591,6 @@ suffix:semicolon
 id|alive
 suffix:colon
 multiline_comment|/* Another &quot;Red Snapper&quot;. */
-id|cpu_number_map
-(braket
-id|cpuid
-)braket
-op_assign
-id|cpunum
-suffix:semicolon
-id|__cpu_logical_map
-(braket
-id|cpunum
-)braket
-op_assign
-id|cpuid
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2054,17 +2116,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * Only broken Intel needs this, thus it should not even be&n; * referenced globally.&n; */
-r_void
-id|__init
-DECL|function|initialize_secondary
-id|initialize_secondary
-c_func
-(paren
-r_void
-)paren
-(brace
 )brace
 "&f;"
 r_extern

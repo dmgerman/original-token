@@ -387,7 +387,7 @@ l_int|NULL
 comma
 id|kill_arch
 suffix:colon
-id|common_kill_arch
+l_int|NULL
 comma
 )brace
 suffix:semicolon

@@ -635,10 +635,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -730,10 +726,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -825,10 +817,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -908,10 +896,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int

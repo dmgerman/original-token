@@ -210,9 +210,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_static
 r_void
-DECL|function|common_kill_arch
-id|common_kill_arch
+DECL|function|common_shutdown
+id|common_shutdown
+c_func
 (paren
 r_int
 id|mode
@@ -373,6 +375,19 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|alpha_mv.kill_arch
+)paren
+id|alpha_mv
+dot
+id|kill_arch
+c_func
+(paren
+id|mode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|alpha_using_srm
 op_logical_and
@@ -411,9 +426,7 @@ op_star
 id|restart_cmd
 )paren
 (brace
-id|alpha_mv
-dot
-id|kill_arch
+id|common_shutdown
 c_func
 (paren
 id|LINUX_REBOOT_CMD_RESTART
@@ -430,9 +443,7 @@ c_func
 r_void
 )paren
 (brace
-id|alpha_mv
-dot
-id|kill_arch
+id|common_shutdown
 c_func
 (paren
 id|LINUX_REBOOT_CMD_HALT
@@ -441,17 +452,15 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-DECL|function|machine_power_off
 r_void
+DECL|function|machine_power_off
 id|machine_power_off
 c_func
 (paren
 r_void
 )paren
 (brace
-id|alpha_mv
-dot
-id|kill_arch
+id|common_shutdown
 c_func
 (paren
 id|LINUX_REBOOT_CMD_POWER_OFF
@@ -460,8 +469,8 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-DECL|function|show_regs
 r_void
+DECL|function|show_regs
 id|show_regs
 c_func
 (paren
@@ -579,8 +588,8 @@ id|regs-&gt;hae
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Re-start a thread when doing execve()&n; */
-DECL|function|start_thread
 r_void
+DECL|function|start_thread
 id|start_thread
 c_func
 (paren
@@ -620,8 +629,8 @@ id|sp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
-DECL|function|exit_thread
 r_void
+DECL|function|exit_thread
 id|exit_thread
 c_func
 (paren
@@ -629,8 +638,8 @@ r_void
 )paren
 (brace
 )brace
-DECL|function|flush_thread
 r_void
+DECL|function|flush_thread
 id|flush_thread
 c_func
 (paren
@@ -658,8 +667,8 @@ id|FPCR_INED
 )paren
 suffix:semicolon
 )brace
-DECL|function|release_thread
 r_void
+DECL|function|release_thread
 id|release_thread
 c_func
 (paren
@@ -671,8 +680,8 @@ id|dead_task
 (brace
 )brace
 multiline_comment|/*&n; * &quot;alpha_clone()&quot;.. By the time we get here, the&n; * non-volatile registers have also been saved on the&n; * stack. We do some ugly pointer stuff here.. (see&n; * also copy_thread)&n; *&n; * Notice that &quot;fork()&quot; is implemented in terms of clone,&n; * with parameters (SIGCHLD, 0).&n; */
-DECL|function|alpha_clone
 r_int
+DECL|function|alpha_clone
 id|alpha_clone
 c_func
 (paren
@@ -724,8 +733,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-DECL|function|alpha_vfork
 r_int
+DECL|function|alpha_vfork
 id|alpha_vfork
 c_func
 (paren
@@ -764,8 +773,8 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Copy an alpha thread..&n; *&n; * Note the &quot;stack_offset&quot; stuff: when returning to kernel mode, we need&n; * to have some extra stack-space for the kernel stack that still exists&n; * after the &quot;ret_from_sys_call&quot;. When returning to user mode, we only&n; * want the space needed by the syscall stack frame (ie &quot;struct pt_regs&quot;).&n; * Use the passed &quot;regs&quot; pointer to determine how much space we need&n; * for a kernel fork().&n; */
-DECL|function|copy_thread
 r_int
+DECL|function|copy_thread
 id|copy_thread
 c_func
 (paren
@@ -976,8 +985,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the user structure for a core dump..&n; */
-DECL|function|dump_thread
 r_void
+DECL|function|dump_thread
 id|dump_thread
 c_func
 (paren
@@ -1331,9 +1340,10 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-DECL|function|dump_fpu
 r_int
+DECL|function|dump_fpu
 id|dump_fpu
+c_func
 (paren
 r_struct
 id|pt_regs
@@ -1379,9 +1389,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; *&n; * This works due to the alpha calling sequence: the first 6 args&n; * are gotten from registers, while the rest is on the stack, so&n; * we get a0-a5 for free, and then magically find &quot;struct pt_regs&quot;&n; * on the stack for us..&n; *&n; * Don&squot;t do this at home.&n; */
-DECL|function|sys_execve
 id|asmlinkage
 r_int
+DECL|function|sys_execve
 id|sys_execve
 c_func
 (paren
@@ -1521,9 +1531,9 @@ DECL|macro|first_sched
 mdefine_line|#define first_sched&t;((unsigned long) scheduling_functions_start_here)
 DECL|macro|last_sched
 mdefine_line|#define last_sched&t;((unsigned long) scheduling_functions_end_here)
+r_int
+r_int
 DECL|function|get_wchan
-r_int
-r_int
 id|get_wchan
 c_func
 (paren

@@ -101,8 +101,37 @@ DECL|macro|check_arg_vec
 mdefine_line|#define check_arg_vec(vec) &bslash;&n;    if (vec &lt; 0 || vec &gt;= OPENPIC_NUM_VECTORS) &bslash;&n;&t;printk(&quot;openpic.c:%d: illegal vector %d&bslash;n&quot;, __LINE__, vec);
 DECL|macro|check_arg_pri
 mdefine_line|#define check_arg_pri(pri) &bslash;&n;    if (pri &lt; 0 || pri &gt;= OPENPIC_NUM_PRI) &bslash;&n;&t;printk(&quot;openpic.c:%d: illegal priority %d&bslash;n&quot;, __LINE__, pri);
+multiline_comment|/*&n; * Turned this check off since the IPI&squot;s are treated as irqs&n; * but they&squot;re above NumSources -- Cort&n; */
 DECL|macro|check_arg_irq
-mdefine_line|#define check_arg_irq(irq) &bslash;&n;    if (irq &lt; 0 || irq &gt;= (NumSources+open_pic.irq_offset)) &bslash;&n;&t;printk(&quot;openpic.c:%d: illegal irq %d&bslash;n&quot;, __LINE__, irq);
+mdefine_line|#define check_arg_irq(irq)
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|irq
+OL
+l_int|0
+op_logical_or
+id|irq
+op_ge
+(paren
+id|NumSources
+op_plus
+id|open_pic.irq_offset
+)paren
+)paren
+"&bslash;"
+id|printk
+c_func
+(paren
+l_string|&quot;openpic.c:%d: illegal irq %d&bslash;n&quot;
+comma
+id|__LINE__
+comma
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|check_arg_cpu
 mdefine_line|#define check_arg_cpu(cpu) &bslash;&n;    if (cpu &lt; 0 || cpu &gt;= NumProcessors) &bslash;&n;&t;printk(&quot;openpic.c:%d: illegal cpu %d&bslash;n&quot;, __LINE__, cpu);
 macro_line|#else
@@ -721,13 +750,13 @@ id|i
 op_increment
 )paren
 (brace
-multiline_comment|/* Disabled, Priority 0 */
+multiline_comment|/* Disabled, Priority 8 */
 id|openpic_initipi
 c_func
 (paren
 id|i
 comma
-l_int|0
+l_int|8
 comma
 id|OPENPIC_VEC_IPI
 op_plus
@@ -749,31 +778,6 @@ c_func
 l_string|&quot;openpic ext&quot;
 comma
 l_int|0x3bc
-)paren
-suffix:semicolon
-multiline_comment|/* SIOint (8259 cascade) is special */
-id|openpic_initirq
-c_func
-(paren
-l_int|0
-comma
-l_int|8
-comma
-id|open_pic.irq_offset
-comma
-l_int|1
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|openpic_mapirq
-c_func
-(paren
-l_int|0
-comma
-l_int|1
-op_lshift
-l_int|0
 )paren
 suffix:semicolon
 r_for
@@ -860,6 +864,31 @@ op_ne
 id|_MACH_gemini
 )paren
 (brace
+multiline_comment|/* SIOint (8259 cascade) is special */
+id|openpic_initirq
+c_func
+(paren
+l_int|0
+comma
+l_int|8
+comma
+id|open_pic.irq_offset
+comma
+l_int|1
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|openpic_mapirq
+c_func
+(paren
+l_int|0
+comma
+l_int|1
+op_lshift
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

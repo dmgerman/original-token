@@ -5,10 +5,10 @@ macro_line|#include &lt;asm/fpumacro.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;sfp-util.h&quot;
-macro_line|#include &quot;soft-fp.h&quot;
-macro_line|#include &quot;single.h&quot;
-macro_line|#include &quot;double.h&quot;
-macro_line|#include &quot;quad.h&quot;
+macro_line|#include &lt;math-emu/soft-fp.h&gt;
+macro_line|#include &lt;math-emu/single.h&gt;
+macro_line|#include &lt;math-emu/double.h&gt;
+macro_line|#include &lt;math-emu/quad.h&gt;
 multiline_comment|/* QUAD - ftt == 3 */
 DECL|macro|FMOVQ
 mdefine_line|#define FMOVQ&t;0x003

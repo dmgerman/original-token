@@ -195,6 +195,8 @@ DECL|macro|FP_CMP_EQ_Q
 mdefine_line|#define FP_CMP_EQ_Q(r,X,Y)&t;_FP_CMP_EQ(Q,4,r,X,Y)
 DECL|macro|FP_TO_INT_Q
 mdefine_line|#define FP_TO_INT_Q(r,X,rsz,rsg)&t;_FP_TO_INT(Q,4,r,X,rsz,rsg)
+DECL|macro|FP_TO_INT_ROUND_Q
+mdefine_line|#define FP_TO_INT_ROUND_Q(r,X,rsz,rsg)&t;_FP_TO_INT_ROUND(Q,4,r,X,rsz,rsg)
 DECL|macro|FP_FROM_INT_Q
 mdefine_line|#define FP_FROM_INT_Q(X,r,rs,rt)&t;_FP_FROM_INT(Q,4,X,r,rs,rt)
 DECL|macro|_FP_FRAC_HIGH_Q
@@ -327,6 +329,8 @@ DECL|macro|FP_CMP_EQ_Q
 mdefine_line|#define FP_CMP_EQ_Q(r,X,Y)&t;_FP_CMP_EQ(Q,2,r,X,Y)
 DECL|macro|FP_TO_INT_Q
 mdefine_line|#define FP_TO_INT_Q(r,X,rsz,rsg)&t;_FP_TO_INT(Q,2,r,X,rsz,rsg)
+DECL|macro|FP_TO_INT_ROUND_Q
+mdefine_line|#define FP_TO_INT_ROUND_Q(r,X,rsz,rsg)&t;_FP_TO_INT_ROUND(Q,2,r,X,rsz,rsg)
 DECL|macro|FP_FROM_INT_Q
 mdefine_line|#define FP_FROM_INT_Q(X,r,rs,rt)&t;_FP_FROM_INT(Q,2,X,r,rs,rt)
 DECL|macro|_FP_FRAC_HIGH_Q

@@ -69,7 +69,7 @@ DECL|variable|isapnp_reset
 r_int
 id|isapnp_reset
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 multiline_comment|/* reset all PnP cards (deactivate) */
 DECL|variable|isapnp_skip_pci_scan
@@ -491,7 +491,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|20
 )paren
 suffix:semicolon
 )brace
@@ -1042,6 +1042,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
 )brace
 DECL|function|isapnp_peek
 r_static
@@ -1118,7 +1124,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -1621,10 +1627,27 @@ c_func
 l_int|0x00
 )paren
 suffix:semicolon
+id|isapnp_set_rdp
+c_func
+(paren
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 id|write_address
 c_func
 (paren
 l_int|0x01
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
 )paren
 suffix:semicolon
 r_goto

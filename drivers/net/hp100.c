@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** hp100.c &n;** HP CASCADE Architecture Driver for 100VG-AnyLan Network Adapters&n;**&n;** $Id: hp100.c,v 1.57 1998/04/10 16:27:23 perex Exp perex $&n;**&n;** Based on the HP100 driver written by Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** Extended for new busmaster capable chipsets by &n;** Siegfried &quot;Frieder&quot; Loeffler (dg1sek) &lt;floeff@mathematik.uni-stuttgart.de&gt;&n;**&n;** Maintained by: Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** &n;** This driver has only been tested with&n;** -- HP J2585B 10/100 Mbit/s PCI Busmaster&n;** -- HP J2585A 10/100 Mbit/s PCI &n;** -- HP J2970  10 Mbit/s PCI Combo 10base-T/BNC&n;** -- HP J2973  10 Mbit/s PCI 10base-T&n;** -- HP J2573  10/100 ISA&n;** -- Compex ReadyLink ENET100-VG4  10/100 Mbit/s PCI / EISA&n;** -- Compex FreedomLine 100/VG  10/100 Mbit/s ISA / EISA / PCI&n;** &n;** but it should also work with the other CASCADE based adapters.&n;**&n;** TODO:&n;**       -  J2573 seems to hang sometimes when in shared memory mode.&n;**       -  Mode for Priority TX&n;**       -  Check PCI registers, performance might be improved?&n;**       -  To reduce interrupt load in busmaster, one could switch off&n;**          the interrupts that are used to refill the queues whenever the&n;**          queues are filled up to more than a certain threshold.&n;**       -  some updates for EISA version of card&n;**&n;**&n;**   This code is free software; you can redistribute it and/or modify&n;**   it under the terms of the GNU General Public License as published by&n;**   the Free Software Foundation; either version 2 of the License, or&n;**   (at your option) any later version.&n;**&n;**   This code is distributed in the hope that it will be useful,&n;**   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**   GNU General Public License for more details.&n;**&n;**   You should have received a copy of the GNU General Public License&n;**   along with this program; if not, write to the Free Software&n;**   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**&n;** 1.56 -&gt; 1.57&n;**   - updates for new PCI interface for 2.1 kernels&n;**&n;** 1.55 -&gt; 1.56&n;**   - removed printk in misc. interrupt and update statistics to allow&n;**     monitoring of card status&n;**   - timing changes in xmit routines, relogin to 100VG hub added when&n;**     driver does reset&n;**   - included fix for Compex FreedomLine PCI adapter&n;** &n;** 1.54 -&gt; 1.55&n;**   - fixed bad initialization in init_module&n;**   - added Compex FreedomLine adapter&n;**   - some fixes in card initialization&n;**&n;** 1.53 -&gt; 1.54&n;**   - added hardware multicast filter support (doesn&squot;t work)&n;**   - little changes in hp100_sense_lan routine &n;**     - added support for Coax and AUI (J2970)&n;**   - fix for multiple cards and hp100_mode parameter (insmod)&n;**   - fix for shared IRQ &n;**&n;** 1.52 -&gt; 1.53&n;**   - fixed bug in multicast support&n;**&n;*/
+multiline_comment|/*&n;** hp100.c &n;** HP CASCADE Architecture Driver for 100VG-AnyLan Network Adapters&n;**&n;** $Id: hp100.c,v 1.58 1999/11/30 17:20:20 perex Exp perex $&n;**&n;** Based on the HP100 driver written by Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** Extended for new busmaster capable chipsets by &n;** Siegfried &quot;Frieder&quot; Loeffler (dg1sek) &lt;loeffler@cdi.fr&gt;&n;**&n;** Maintained by: Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** &n;** This driver has only been tested with&n;** -- HP J2585B 10/100 Mbit/s PCI Busmaster&n;** -- HP J2585A 10/100 Mbit/s PCI &n;** -- HP J2970  10 Mbit/s PCI Combo 10base-T/BNC&n;** -- HP J2973  10 Mbit/s PCI 10base-T&n;** -- HP J2573  10/100 ISA&n;** -- Compex ReadyLink ENET100-VG4  10/100 Mbit/s PCI / EISA&n;** -- Compex FreedomLine 100/VG  10/100 Mbit/s ISA / EISA / PCI&n;** &n;** but it should also work with the other CASCADE based adapters.&n;**&n;** TODO:&n;**       -  J2573 seems to hang sometimes when in shared memory mode.&n;**       -  Mode for Priority TX&n;**       -  Check PCI registers, performance might be improved?&n;**       -  To reduce interrupt load in busmaster, one could switch off&n;**          the interrupts that are used to refill the queues whenever the&n;**          queues are filled up to more than a certain threshold.&n;**       -  some updates for EISA version of card&n;**&n;**&n;**   This code is free software; you can redistribute it and/or modify&n;**   it under the terms of the GNU General Public License as published by&n;**   the Free Software Foundation; either version 2 of the License, or&n;**   (at your option) any later version.&n;**&n;**   This code is distributed in the hope that it will be useful,&n;**   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**   GNU General Public License for more details.&n;**&n;**   You should have received a copy of the GNU General Public License&n;**   along with this program; if not, write to the Free Software&n;**   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;** 1.57 -&gt; 1.58&n;**   - &squot;no connection found&squot; message is time limited now&n;**&n;** 1.56 -&gt; 1.57&n;**   - updates for new PCI interface for 2.1 kernels&n;**&n;** 1.55 -&gt; 1.56&n;**   - removed printk in misc. interrupt and update statistics to allow&n;**     monitoring of card status&n;**   - timing changes in xmit routines, relogin to 100VG hub added when&n;**     driver does reset&n;**   - included fix for Compex FreedomLine PCI adapter&n;** &n;** 1.54 -&gt; 1.55&n;**   - fixed bad initialization in init_module&n;**   - added Compex FreedomLine adapter&n;**   - some fixes in card initialization&n;**&n;** 1.53 -&gt; 1.54&n;**   - added hardware multicast filter support (doesn&squot;t work)&n;**   - little changes in hp100_sense_lan routine &n;**     - added support for Coax and AUI (J2970)&n;**   - fix for multiple cards and hp100_mode parameter (insmod)&n;**   - fix for shared IRQ &n;**&n;** 1.52 -&gt; 1.53&n;**   - fixed bug in multicast support&n;**&n;*/
 DECL|macro|HP100_DEFAULT_PRIORITY_TX
 mdefine_line|#define HP100_DEFAULT_PRIORITY_TX 0 
 DECL|macro|HP100_DEBUG
@@ -6540,6 +6540,42 @@ OL
 l_int|0
 )paren
 (brace
+multiline_comment|/* Added Mon Nov 1 06:13:19 1999 by Brian Moore&n;               * (mooreb@iname.com) to prevent too much kernel IO&n;               * in the case of not having a network connection&n;               */
+(brace
+r_int
+id|thistime
+op_assign
+id|jiffies
+suffix:semicolon
+r_static
+r_int
+id|delaytime
+op_assign
+l_int|10
+op_star
+id|HZ
+suffix:semicolon
+r_static
+r_int
+id|lasttime
+op_assign
+id|thistime
+op_minus
+id|delaytime
+suffix:semicolon
+singleline_comment|// We don&squot;t worry about rollover
+r_if
+c_cond
+(paren
+id|thistime
+op_ge
+(paren
+id|lasttime
+op_plus
+id|delaytime
+)paren
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -6548,6 +6584,12 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|lasttime
+op_assign
+id|thistime
+suffix:semicolon
+)brace
+)brace
 id|hp100_start_interface
 c_func
 (paren

@@ -1012,6 +1012,10 @@ DECL|macro|DVD_LU_SEND_ASF
 mdefine_line|#define DVD_LU_SEND_ASF&t;&t;8
 DECL|macro|DVD_INVALIDATE_AGID
 mdefine_line|#define DVD_INVALIDATE_AGID&t;9
+DECL|macro|DVD_LU_SEND_RPC_STATE
+mdefine_line|#define DVD_LU_SEND_RPC_STATE&t;10
+DECL|macro|DVD_HOST_SEND_RPC_STATE
+mdefine_line|#define DVD_HOST_SEND_RPC_STATE&t;11
 multiline_comment|/* State data */
 DECL|typedef|dvd_key
 r_typedef
@@ -1185,6 +1189,48 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|dvd_host_send_rpcstate
+r_struct
+id|dvd_host_send_rpcstate
+(brace
+DECL|member|pdrc
+id|__u8
+id|pdrc
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_lu_send_rpcstate
+r_struct
+id|dvd_lu_send_rpcstate
+(brace
+DECL|member|type
+id|__u8
+id|type
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|vra
+id|__u8
+id|vra
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|ucca
+id|__u8
+id|ucca
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|region_mask
+id|__u8
+id|region_mask
+suffix:semicolon
+DECL|member|rpc_scheme
+id|__u8
+id|rpc_scheme
+suffix:semicolon
+)brace
+suffix:semicolon
 r_typedef
 r_union
 (brace
@@ -1226,6 +1272,16 @@ DECL|member|lsasf
 r_struct
 id|dvd_lu_send_asf
 id|lsasf
+suffix:semicolon
+DECL|member|hrpcs
+r_struct
+id|dvd_host_send_rpcstate
+id|hrpcs
+suffix:semicolon
+DECL|member|lrpcs
+r_struct
+id|dvd_lu_send_rpcstate
+id|lrpcs
 suffix:semicolon
 DECL|typedef|dvd_authinfo
 )brace

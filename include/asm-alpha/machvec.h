@@ -506,9 +506,6 @@ id|kill_arch
 )paren
 (paren
 r_int
-comma
-r_char
-op_star
 )paren
 suffix:semicolon
 DECL|member|pci_swizzle

@@ -1372,6 +1372,8 @@ id|val
 (brace
 r_int
 id|i
+comma
+id|c
 suffix:semicolon
 id|i
 op_assign
@@ -1379,11 +1381,7 @@ id|max_mapnr
 suffix:semicolon
 id|val-&gt;totalram
 op_assign
-l_int|0
-suffix:semicolon
-id|val-&gt;sharedram
-op_assign
-l_int|0
+id|totalram_pages
 suffix:semicolon
 id|val-&gt;freeram
 op_assign
@@ -1400,6 +1398,10 @@ c_func
 op_amp
 id|buffermem_pages
 )paren
+suffix:semicolon
+id|val-&gt;sharedram
+op_assign
+l_int|0
 suffix:semicolon
 r_while
 c_loop
@@ -1423,53 +1425,45 @@ id|i
 )paren
 r_continue
 suffix:semicolon
-id|val-&gt;totalram
-op_increment
+id|c
+op_assign
+id|atomic_read
+c_func
+(paren
+op_amp
+id|mem_map
+(braket
+id|i
+)braket
+dot
+id|count
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|atomic_read
-c_func
-(paren
-op_amp
-id|mem_map
-(braket
-id|i
-)braket
-dot
-id|count
+id|c
+OG
+l_int|1
 )paren
-)paren
-r_continue
-suffix:semicolon
 id|val-&gt;sharedram
 op_add_assign
-id|atomic_read
-c_func
-(paren
-op_amp
-id|mem_map
-(braket
-id|i
-)braket
-dot
-id|count
-)paren
+id|c
 op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|val-&gt;totalram
-op_lshift_assign
-id|PAGE_SHIFT
+id|val-&gt;totalhigh
+op_assign
+l_int|0
 suffix:semicolon
-id|val-&gt;sharedram
-op_lshift_assign
-id|PAGE_SHIFT
+id|val-&gt;freehigh
+op_assign
+l_int|0
 suffix:semicolon
-r_return
+id|val-&gt;mem_unit
+op_assign
+id|PAGE_SIZE
 suffix:semicolon
 )brace
 r_void
@@ -3038,7 +3032,7 @@ id|_PAGE_HWWRITE
 suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
 r_else
-multiline_comment|/* On the powerpc (not 8xx), no user access&n;&t;&t;&t;&t;   forces R/W kernel access */
+multiline_comment|/* On the powerpc, denying user access&n;&t;&t;&t;&t;   forces R/W kernel access */
 id|f
 op_or_assign
 id|_PAGE_USER
@@ -3818,7 +3812,7 @@ suffix:semicolon
 r_case
 id|_MACH_Pmac
 suffix:colon
-macro_line|#if 0
+macro_line|#if 1
 (brace
 r_int
 r_int
@@ -4587,7 +4581,7 @@ id|initpages
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)&t;
+macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC)
 r_extern
 r_int
 r_int
@@ -4595,7 +4589,7 @@ id|rtas_data
 comma
 id|rtas_size
 suffix:semicolon
-macro_line|#endif /* defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC) */
+macro_line|#endif /* CONFIG_CHRP || CONFIG_PMAC || CONFIG_ALL_PPC */
 id|max_mapnr
 op_assign
 id|max_low_pfn
@@ -4669,7 +4663,7 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
-macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)&t;
+macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC)
 multiline_comment|/* mark the RTAS pages as reserved */
 r_if
 c_cond
@@ -4709,7 +4703,7 @@ id|addr
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC) */
+macro_line|#endif /* CONFIG_CHRP || CONFIG_PMAC || CONFIG_ALL_PPC */
 r_for
 c_loop
 (paren
@@ -4787,16 +4781,6 @@ id|initpages
 op_increment
 suffix:semicolon
 r_else
-r_if
-c_cond
-(paren
-id|addr
-OL
-(paren
-id|ulong
-)paren
-id|klimit
-)paren
 id|datapages
 op_increment
 suffix:semicolon
@@ -4811,6 +4795,9 @@ r_int
 r_int
 )paren
 id|nr_free_pages
+c_func
+(paren
+)paren
 op_lshift
 (paren
 id|PAGE_SHIFT

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/arm/kernel/process.c&n; *&n; *  Copyright (C) 1996-1999 Russell King - Converted to ARM.&n; *  Origional Copyright (C) 1995  Linus Torvalds&n; */
-multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -47,8 +46,6 @@ DECL|variable|hlt_counter
 r_static
 r_int
 id|hlt_counter
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|disable_hlt
 r_void
@@ -74,6 +71,62 @@ id|hlt_counter
 op_decrement
 suffix:semicolon
 )brace
+DECL|function|nohlt_setup
+r_static
+r_int
+id|__init
+id|nohlt_setup
+c_func
+(paren
+r_char
+op_star
+id|__unused
+)paren
+(brace
+id|hlt_counter
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|hlt_setup
+r_static
+r_int
+id|__init
+id|hlt_setup
+c_func
+(paren
+r_char
+op_star
+id|__unused
+)paren
+(brace
+id|hlt_counter
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;nohlt&quot;
+comma
+id|nohlt_setup
+)paren
+suffix:semicolon
+id|__setup
+c_func
+(paren
+l_string|&quot;hlt&quot;
+comma
+id|hlt_setup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The idle loop on an ARM...&n; */
 DECL|function|cpu_idle
 r_void
@@ -205,6 +258,11 @@ id|printk
 c_func
 (paren
 l_string|&quot;Reboot failed -- System halted&bslash;n&quot;
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 r_while

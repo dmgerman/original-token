@@ -323,6 +323,13 @@ id|IDENT_ADDR
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
+id|__reload_thread
+c_func
+(paren
+op_amp
+id|current-&gt;thread
+)paren
+suffix:semicolon
 )brace
 id|__EXTERN_INLINE
 r_void

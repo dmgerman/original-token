@@ -134,6 +134,8 @@ DECL|macro|FP_CMP_EQ_S
 mdefine_line|#define FP_CMP_EQ_S(r,X,Y)&t;_FP_CMP_EQ(S,1,r,X,Y)
 DECL|macro|FP_TO_INT_S
 mdefine_line|#define FP_TO_INT_S(r,X,rsz,rsg)&t;_FP_TO_INT(S,1,r,X,rsz,rsg)
+DECL|macro|FP_TO_INT_ROUND_S
+mdefine_line|#define FP_TO_INT_ROUND_S(r,X,rsz,rsg)&t;_FP_TO_INT_ROUND(S,1,r,X,rsz,rsg)
 DECL|macro|FP_FROM_INT_S
 mdefine_line|#define FP_FROM_INT_S(X,r,rs,rt)&t;_FP_FROM_INT(S,1,X,r,rs,rt)
 DECL|macro|_FP_FRAC_HIGH_S

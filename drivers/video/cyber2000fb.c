@@ -3027,6 +3027,40 @@ op_star
 id|var
 )paren
 (brace
+r_static
+r_int
+r_int
+id|divisors_2000
+(braket
+)braket
+op_assign
+(brace
+l_int|1
+comma
+l_int|2
+comma
+l_int|4
+comma
+l_int|8
+)brace
+suffix:semicolon
+r_static
+r_int
+r_int
+id|divisors_2010
+(braket
+)braket
+op_assign
+(brace
+l_int|1
+comma
+l_int|2
+comma
+l_int|4
+comma
+l_int|6
+)brace
+suffix:semicolon
 r_int
 r_int
 id|pll_ps
@@ -3040,13 +3074,34 @@ op_assign
 l_int|69842
 suffix:semicolon
 r_int
+r_int
+op_star
+id|divisors
+suffix:semicolon
+r_int
 id|div2
 comma
 id|div1
 comma
 id|mult
 suffix:semicolon
-multiline_comment|/*&n;&t; * Step 1:&n;&t; *   find div2 such that 150MHz &lt; fpll &lt; 220MHz&n;&t; *   and 0 &lt;= div2 &lt; 4&n;&t; */
+multiline_comment|/*&n;&t; * Step 1:&n;&t; *   find div2 such that 115MHz &lt; fpll &lt; 257MHz&n;&t; *   and 0 &lt;= div2 &lt; 4&n;&t; */
+r_if
+c_cond
+(paren
+id|current_par.dev_id
+op_eq
+id|PCI_DEVICE_ID_INTERG_2010
+)paren
+id|divisors
+op_assign
+id|divisors_2010
+suffix:semicolon
+r_else
+id|divisors
+op_assign
+id|divisors_2000
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3060,24 +3115,41 @@ l_int|4
 suffix:semicolon
 id|div2
 op_increment
-comma
-id|pll_ps
-op_rshift_assign
-l_int|1
 )paren
+(brace
+r_int
+r_int
+id|new_pll
+suffix:semicolon
+id|new_pll
+op_assign
+id|pll_ps
+op_div
+id|divisors
+(braket
+id|div2
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|6667
+l_int|8696
 OG
-id|pll_ps
+id|new_pll
 op_logical_and
-id|pll_ps
+id|new_pll
 OG
-l_int|4545
+l_int|3891
 )paren
+(brace
+id|pll_ps
+op_assign
+id|new_pll
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -3132,6 +3204,8 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#else
+multiline_comment|/*  /1     /2     /4     /6     /8    */
+multiline_comment|/*                      (2010) (2000) */
 r_if
 c_cond
 (paren
@@ -3140,12 +3214,12 @@ op_eq
 l_int|4630
 )paren
 (brace
-multiline_comment|/* 216.0, 108.0, 54.00, 27.000 */
+multiline_comment|/* 216.0, 108.0, 54.00, 36.000 27.000 */
 id|mult
 op_assign
 l_int|181
 suffix:semicolon
-multiline_comment|/* 4630   9260   18520  37040  */
+multiline_comment|/* 4630   9260   18520  27780  37040  */
 id|div1
 op_assign
 l_int|12
@@ -3160,12 +3234,12 @@ op_eq
 l_int|4965
 )paren
 (brace
-multiline_comment|/* 201.0, 100.5, 50.25, 25.125 */
+multiline_comment|/* 201.0, 100.5, 50.25, 33.500 25.125 */
 id|mult
 op_assign
 l_int|211
 suffix:semicolon
-multiline_comment|/* 4965   9930   19860  39720  */
+multiline_comment|/* 4965   9930   19860  29790  39720  */
 id|div1
 op_assign
 l_int|15
@@ -3180,12 +3254,12 @@ op_eq
 l_int|5050
 )paren
 (brace
-multiline_comment|/* 198.0,  99.0, 49.50, 24.750 */
+multiline_comment|/* 198.0,  99.0, 49.50, 33.000 24.750 */
 id|mult
 op_assign
 l_int|83
 suffix:semicolon
-multiline_comment|/* 5050   10100  20200  40400  */
+multiline_comment|/* 5050   10100  20200  30300  40400  */
 id|div1
 op_assign
 l_int|6
@@ -3200,12 +3274,12 @@ op_eq
 l_int|6349
 )paren
 (brace
-multiline_comment|/* 158.0,  79.0, 39.50, 19.750 */
+multiline_comment|/* 158.0,  79.0, 39.50, 26.333 19.750 */
 id|mult
 op_assign
 l_int|209
 suffix:semicolon
-multiline_comment|/* 6349   12698  25396  50792  */
+multiline_comment|/* 6349   12698  25396  38094  50792  */
 id|div1
 op_assign
 l_int|19
@@ -3220,12 +3294,12 @@ op_eq
 l_int|6422
 )paren
 (brace
-multiline_comment|/* 156.0,  78.0, 39.00, 19.500 */
+multiline_comment|/* 156.0,  78.0, 39.00, 26.000 19.500 */
 id|mult
 op_assign
 l_int|190
 suffix:semicolon
-multiline_comment|/* 6422   12844  25688  51376  */
+multiline_comment|/* 6422   12844  25688  38532  51376  */
 id|div1
 op_assign
 l_int|17
@@ -4657,6 +4731,80 @@ comma
 id|cyber2000fb_ioctl
 )brace
 suffix:semicolon
+DECL|function|cyber2000fb_attach
+r_int
+id|cyber2000fb_attach
+c_func
+(paren
+r_struct
+id|cyberpro_info
+op_star
+id|info
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current_par.initialised
+)paren
+(brace
+id|info-&gt;regs
+op_assign
+id|CyberRegs
+suffix:semicolon
+id|info-&gt;fb
+op_assign
+id|current_par.screen_base
+suffix:semicolon
+id|info-&gt;fb_size
+op_assign
+id|current_par.screen_size
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|info-&gt;dev_name
+comma
+id|current_par.dev_name
+comma
+r_sizeof
+(paren
+id|info-&gt;dev_name
+)paren
+)paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+)brace
+r_return
+id|current_par.initialised
+suffix:semicolon
+)brace
+DECL|function|cyber2000fb_detach
+r_void
+id|cyber2000fb_detach
+c_func
+(paren
+r_void
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
+DECL|variable|cyber2000fb_attach
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cyber2000fb_attach
+)paren
+suffix:semicolon
+DECL|variable|cyber2000fb_detach
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cyber2000fb_detach
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These parameters give&n; * 640x480, hsync 31.5kHz, vsync 60Hz&n; */
 r_static
 r_struct
@@ -5473,6 +5621,10 @@ dot
 id|start
 op_plus
 l_int|0x00800000
+suffix:semicolon
+id|current_par.dev_id
+op_assign
+id|dev-&gt;device
 suffix:semicolon
 multiline_comment|/*&n;&t; * Map in the registers&n;&t; */
 r_if

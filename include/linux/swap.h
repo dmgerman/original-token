@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_SWAP_H
 DECL|macro|_LINUX_SWAP_H
 mdefine_line|#define _LINUX_SWAP_H
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|SWAP_FLAG_PREFER
 mdefine_line|#define SWAP_FLAG_PREFER&t;0x8000&t;/* set if swap priority specified */
@@ -112,6 +113,10 @@ suffix:semicolon
 DECL|member|swap_device
 id|kdev_t
 id|swap_device
+suffix:semicolon
+DECL|member|sdev_lock
+id|spinlock_t
+id|sdev_lock
 suffix:semicolon
 DECL|member|swap_file
 r_struct
@@ -325,14 +330,6 @@ id|swp_entry_t
 suffix:semicolon
 r_extern
 r_int
-id|swap_duplicate
-c_func
-(paren
-id|swp_entry_t
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|swap_check_entry
 c_func
 (paren
@@ -364,27 +361,6 @@ r_int
 suffix:semicolon
 DECL|macro|read_swap_cache
 mdefine_line|#define read_swap_cache(entry) read_swap_cache_async(entry, 1);
-r_extern
-r_int
-id|swap_count
-c_func
-(paren
-r_struct
-id|page
-op_star
-)paren
-suffix:semicolon
-r_extern
-id|swp_entry_t
-id|acquire_swap_entry
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Make these inline later once they are working properly.&n; */
 r_extern
 r_void
@@ -457,6 +433,67 @@ c_func
 (paren
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|get_swaphandle_info
+c_func
+(paren
+id|swp_entry_t
+comma
+r_int
+r_int
+op_star
+comma
+id|kdev_t
+op_star
+comma
+r_struct
+id|inode
+op_star
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|swap_duplicate
+c_func
+(paren
+id|swp_entry_t
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|swap_count
+c_func
+(paren
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+r_extern
+id|swp_entry_t
+id|acquire_swap_entry
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|valid_swaphandles
+c_func
+(paren
+id|swp_entry_t
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 DECL|macro|get_swap_page
@@ -613,6 +650,18 @@ DECL|macro|lru_cache_add
 mdefine_line|#define&t;lru_cache_add(page)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;&t;list_add(&amp;(page)-&gt;lru, &amp;lru_cache);&t;&bslash;&n;&t;nr_lru_pages++;&t;&t;&t;&t;&bslash;&n;&t;spin_unlock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;} while (0)
 DECL|macro|lru_cache_del
 mdefine_line|#define&t;lru_cache_del(page)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;&t;list_del(&amp;(page)-&gt;lru);&t;&t;&t;&bslash;&n;&t;nr_lru_pages--;&t;&t;&t;&t;&bslash;&n;&t;spin_unlock(&amp;pagemap_lru_lock);&t;&t;&bslash;&n;} while (0)
+r_extern
+id|spinlock_t
+id|swaplock
+suffix:semicolon
+DECL|macro|swap_list_lock
+mdefine_line|#define swap_list_lock()&t;spin_lock(&amp;swaplock)
+DECL|macro|swap_list_unlock
+mdefine_line|#define swap_list_unlock()&t;spin_unlock(&amp;swaplock)
+DECL|macro|swap_device_lock
+mdefine_line|#define swap_device_lock(p)&t;spin_lock(&amp;p-&gt;sdev_lock)
+DECL|macro|swap_device_unlock
+mdefine_line|#define swap_device_unlock(p)&t;spin_unlock(&amp;p-&gt;sdev_lock)
 macro_line|#endif /* __KERNEL__*/
 macro_line|#endif /* _LINUX_SWAP_H */
 eof

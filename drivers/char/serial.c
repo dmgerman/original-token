@@ -17561,32 +17561,6 @@ id|serial_state
 op_star
 id|state
 suffix:semicolon
-r_extern
-r_void
-id|atomwide_serial_init
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dualsp_serial_init
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_ATOMWIDE_SERIAL
-id|atomwide_serial_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_DUALSP_SERIAL
-id|dualsp_serial_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

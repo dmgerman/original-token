@@ -1,11 +1,9 @@
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _PPC_PGTABLE_H
 DECL|macro|_PPC_PGTABLE_H
 mdefine_line|#define _PPC_PGTABLE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/threads.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* For TASK_SIZE */
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -463,9 +461,9 @@ DECL|macro|pmd_clear
 mdefine_line|#define&t;pmd_clear(pmdp)&t;&t;do { pmd_val(*(pmdp)) = 0; } while (0)
 multiline_comment|/*&n; * Permanent address of a page.&n; */
 DECL|macro|page_address
-mdefine_line|#define page_address(page) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
+mdefine_line|#define page_address(page)  ({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
 DECL|macro|__page_address
-mdefine_line|#define __page_address(page) ({ if (PageHighMem(page)) BUG(); PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT); })
+mdefine_line|#define __page_address(page) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x)&t;&t;((x) &gt;&gt; (20-PAGE_SHIFT))
 DECL|macro|pte_page
@@ -518,7 +516,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|pgd_clear
-mdefine_line|#define pgd_clear(xp) &t;&t;&t;&t;do { } while(0)
+mdefine_line|#define pgd_clear(xp)&t;&t;&t;&t;do { } while (0)
 DECL|macro|pgd_page
 mdefine_line|#define pgd_page(pgd) &bslash;&n;&t;((unsigned long) __va(pgd_val(pgd) &amp; PAGE_MASK))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
@@ -1031,44 +1029,14 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|macro|page_pte_prot
-mdefine_line|#define page_pte_prot(page,prot) mk_pte(page, prot)
-DECL|macro|page_pte
-mdefine_line|#define page_pte(page)&t;page_pte_prot(page, __pgprot(0))
 DECL|macro|pmd_page
 mdefine_line|#define pmd_page(pmd)&t;(pmd_val(pmd))
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
 multiline_comment|/* to find an entry in a page-table-directory */
-DECL|function|pgd_offset
-r_extern
-r_inline
-id|pgd_t
-op_star
-id|pgd_offset
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|mm-&gt;pgd
-op_plus
-(paren
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)paren
-suffix:semicolon
-)brace
+DECL|macro|pgd_offset
+mdefine_line|#define pgd_offset(mm, address)&t; ((mm)-&gt;pgd + ((address) &gt;&gt; PGDIR_SHIFT))
 multiline_comment|/* Find an entry in the second-level page table.. */
 DECL|function|pmd_offset
 r_extern
@@ -1140,267 +1108,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is handled very differently on the PPC since out page tables&n; * are all 0&squot;s and I want to be able to use these zero&squot;d pages elsewhere&n; * as well - it gives us quite a speedup.&n; *&n; * Note that the SMP/UP versions are the same but we don&squot;t need a&n; * per cpu list of zero pages because we do the zero-ing with the cache&n; * off and the access routines are lock-free but the pgt cache stuff&n; * is per-cpu since it isn&squot;t done with any lock-free access routines&n; * (although I think we need arch-specific routines so I can do lock-free).&n; *&n; * I need to generalize this so we can use it for other arch&squot;s as well.&n; * -- Cort&n; */
-macro_line|#ifdef __SMP__
-DECL|macro|quicklists
-mdefine_line|#define quicklists&t;cpu_data[smp_processor_id()]
-macro_line|#else
-DECL|struct|pgtable_cache_struct
-r_extern
-r_struct
-id|pgtable_cache_struct
-(brace
-DECL|member|pgd_cache
-r_int
-r_int
-op_star
-id|pgd_cache
-suffix:semicolon
-DECL|member|pte_cache
-r_int
-r_int
-op_star
-id|pte_cache
-suffix:semicolon
-DECL|member|pgtable_cache_sz
-r_int
-r_int
-id|pgtable_cache_sz
-suffix:semicolon
-)brace
-id|quicklists
-suffix:semicolon
-macro_line|#endif
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist &t;&t;(quicklists.pgd_cache)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist &t;&t;((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist &t;&t;(quicklists.pte_cache)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size &t;(quicklists.pgtable_cache_sz)
-r_extern
-r_int
-r_int
-op_star
-id|zero_cache
-suffix:semicolon
-multiline_comment|/* head linked list of pre-zero&squot;d pages */
-r_extern
-id|atomic_t
-id|zero_sz
-suffix:semicolon
-multiline_comment|/* # currently pre-zero&squot;d pages */
-r_extern
-id|atomic_t
-id|zeropage_hits
-suffix:semicolon
-multiline_comment|/* # zero&squot;d pages request that we&squot;ve done */
-r_extern
-id|atomic_t
-id|zeropage_calls
-suffix:semicolon
-multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
-r_extern
-id|atomic_t
-id|zerototal
-suffix:semicolon
-multiline_comment|/* # pages zero&squot;d over time */
-DECL|macro|zero_quicklist
-mdefine_line|#define zero_quicklist     &t;(zero_cache)
-DECL|macro|zero_cache_sz
-mdefine_line|#define zero_cache_sz  &t; &t;(zero_sz)
-DECL|macro|zero_cache_calls
-mdefine_line|#define zero_cache_calls &t;(zeropage_calls)
-DECL|macro|zero_cache_hits
-mdefine_line|#define zero_cache_hits  &t;(zeropage_hits)
-DECL|macro|zero_cache_total
-mdefine_line|#define zero_cache_total &t;(zerototal)
-multiline_comment|/* return a pre-zero&squot;d page from the list, return NULL if none available -- Cort */
-r_extern
-r_int
-r_int
-id|get_zero_page_fast
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|__bad_pte
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-suffix:semicolon
-DECL|function|set_pgdir
-r_extern
-r_inline
-r_void
-id|set_pgdir
-c_func
-(paren
-r_int
-r_int
-id|address
-comma
-id|pgd_t
-id|entry
-)paren
-(brace
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
-id|pgd_t
-op_star
-id|pgd
-suffix:semicolon
-macro_line|#ifdef __SMP__
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif&t;
-id|read_lock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-id|for_each_task
-c_func
-(paren
-id|p
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|p-&gt;mm
-)paren
-r_continue
-suffix:semicolon
-op_star
-id|pgd_offset
-c_func
-(paren
-id|p-&gt;mm
-comma
-id|address
-)paren
-op_assign
-id|entry
-suffix:semicolon
-)brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-macro_line|#ifndef __SMP__
-r_for
-c_loop
-(paren
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|pgd_quicklist
-suffix:semicolon
-id|pgd
-suffix:semicolon
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-)paren
-id|pgd
-(braket
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)braket
-op_assign
-id|entry
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* To pgd_alloc/pgd_free, one holds master kernel lock and so does our callee, so we can&n;&t;   modify pgd caches of other CPUs as well. -jj */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NR_CPUS
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_for
-c_loop
-(paren
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|cpu_data
-(braket
-id|i
-)braket
-dot
-id|pgd_cache
-suffix:semicolon
-id|pgd
-suffix:semicolon
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-)paren
-id|pgd
-(braket
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)braket
-op_assign
-id|entry
-suffix:semicolon
-macro_line|#endif
-)brace
 r_extern
 id|pgd_t
 id|swapper_pg_dir
@@ -1439,11 +1146,11 @@ id|va
 suffix:semicolon
 multiline_comment|/* Encode and de-code a swap entry */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry).val &gt;&gt; 1) &amp; 0x3f)
+mdefine_line|#define SWP_TYPE(entry)&t;&t;&t;(((entry).val &gt;&gt; 1) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry).val &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(entry)&t;&t;((entry).val &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) ((swp_entry_t) { (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8)) })
+mdefine_line|#define SWP_ENTRY(type, offset)&t;&t;((swp_entry_t) { ((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8) })
 DECL|macro|pte_to_swp_entry
 mdefine_line|#define pte_to_swp_entry(pte)&t;&t;((swp_entry_t) { pte_val(pte) })
 DECL|macro|swp_entry_to_pte

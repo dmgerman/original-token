@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/dio.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/blinken.h&gt;
 macro_line|#include &lt;asm/hwtest.h&gt;
+macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-mfb.h&gt;
 macro_line|#include &lt;video/fbcon-cfb2.h&gt;
 macro_line|#include &lt;video/fbcon-cfb4.h&gt;

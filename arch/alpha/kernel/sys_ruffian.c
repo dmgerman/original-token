@@ -764,14 +764,10 @@ id|ruffian_kill_arch
 (paren
 r_int
 id|mode
-comma
-r_char
-op_star
-id|reboot_cmd
 )paren
 (brace
 macro_line|#if 0
-multiline_comment|/* this only causes re-entry to ARCSBIOS */
+multiline_comment|/* This only causes re-entry to ARCSBIOS */
 multiline_comment|/* Perhaps this works for other PYXIS as well?  */
 op_star
 (paren
@@ -787,14 +783,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|common_kill_arch
-c_func
-(paren
-id|mode
-comma
-id|reboot_cmd
-)paren
-suffix:semicolon
 )brace
 r_static
 r_int

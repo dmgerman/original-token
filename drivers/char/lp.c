@@ -656,9 +656,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|status
 op_amp
 id|LP_PERRORP
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|LP_F
+c_func
+(paren
+id|minor
+)paren
+op_amp
+id|LP_CAREFUL
+)paren
 )paren
 multiline_comment|/* No error. */
 id|last
@@ -745,6 +758,16 @@ id|EIO
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|LP_PERRORP
+)paren
+)paren
 (brace
 r_if
 c_cond
@@ -773,6 +796,14 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
+)brace
+r_else
+(brace
+id|last
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Come here if LP_CAREFUL is set and no&n;                             errors are reported. */
 )brace
 id|lp_table
 (braket
@@ -1930,7 +1961,6 @@ id|LP_ABORTOPEN
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef OBSOLETED
 r_case
 id|LPCAREFUL
 suffix:colon
@@ -1959,7 +1989,6 @@ id|LP_CAREFUL
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 r_case
 id|LPWAIT
 suffix:colon

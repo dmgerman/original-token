@@ -515,9 +515,19 @@ r_int
 id|cpu
 )paren
 (brace
-multiline_comment|/*&n;&t; * This isn&squot;t the case anymore since the other CPU could be&n;&t; * sleeping and won&squot;t reschedule until the next interrupt (such&n;&t; * as the timer).&n;&t; *  -- Cort&n;&t; */
-multiline_comment|/* This is only used if `cpu&squot; is running an idle task,&n;&t;   so it will reschedule itself anyway... */
-multiline_comment|/*smp_message_pass(cpu, MSG_RESCHEDULE, 0, 0);*/
+multiline_comment|/*&n;&t; * This is only used if `cpu&squot; is running an idle task,&n;&t; * so it will reschedule itself anyway...&n;&t; *&n;&t; * This isn&squot;t the case anymore since the other CPU could be&n;&t; * sleeping and won&squot;t reschedule until the next interrupt (such&n;&t; * as the timer).&n;&t; *  -- Cort&n;&t; */
+id|smp_message_pass
+c_func
+(paren
+id|cpu
+comma
+id|MSG_RESCHEDULE
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
 )brace
 DECL|function|smp_send_stop
 r_void
@@ -1089,10 +1099,6 @@ c_cond
 l_int|4
 suffix:colon
 id|cpu_nr
-suffix:semicolon
-id|cpu_nr
-op_assign
-l_int|2
 suffix:semicolon
 r_break
 suffix:semicolon

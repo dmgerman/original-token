@@ -1344,8 +1344,6 @@ op_star
 id|where
 )paren
 suffix:semicolon
-DECL|macro|SYNC_OTHER_CPUS
-mdefine_line|#define SYNC_OTHER_CPUS(x)&t;udelay((x)+1);
 r_static
 r_inline
 r_void
@@ -1414,11 +1412,6 @@ op_amp
 id|global_irq_lock
 )paren
 suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1452,12 +1445,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|SYNC_OTHER_CPUS
+id|udelay
 c_func
 (paren
-id|cpu
+l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* make sure to run pending irqs */
 id|__cli
 c_func
 (paren

@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/apollohw.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-mfb.h&gt;
 multiline_comment|/* apollo video HW definitions */
 multiline_comment|/*&n; * Control Registers.   IOBASE + $x&n; *&n; * Note: these are the Memory/IO BASE definitions for a mono card set to the&n; * alternate address&n; *&n; * Control 3A and 3B serve identical functions except that 3A&n; * deals with control 1 and 3b deals with Color LUT reg.&n; */

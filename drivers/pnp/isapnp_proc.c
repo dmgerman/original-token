@@ -3330,7 +3330,7 @@ c_cond
 id|c
 op_ge
 l_char|&squot;0&squot;
-op_logical_or
+op_logical_and
 id|c
 op_le
 l_char|&squot;9&squot;
@@ -3346,7 +3346,7 @@ c_cond
 id|c
 op_ge
 l_char|&squot;a&squot;
-op_logical_or
+op_logical_and
 id|c
 op_le
 l_char|&squot;f&squot;
@@ -3366,7 +3366,7 @@ c_cond
 id|c
 op_ge
 l_char|&squot;A&squot;
-op_logical_or
+op_logical_and
 id|c
 op_le
 l_char|&squot;F&squot;

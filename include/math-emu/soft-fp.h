@@ -2,7 +2,7 @@ multiline_comment|/* Software floating-point emulation.&n;   Copyright (C) 1997,
 macro_line|#ifndef SOFT_FP_H
 DECL|macro|SOFT_FP_H
 mdefine_line|#define SOFT_FP_H
-macro_line|#include &quot;sfp-machine.h&quot;
+macro_line|#include &lt;asm/sfp-machine.h&gt;
 multiline_comment|/* Allow sfp-machine to have its own byte order definitions. */
 macro_line|#ifndef __BYTE_ORDER
 macro_line|#include &lt;endian.h&gt;
@@ -70,6 +70,11 @@ macro_line|#endif
 macro_line|#ifndef FP_HANDLE_EXCEPTIONS
 DECL|macro|FP_HANDLE_EXCEPTIONS
 mdefine_line|#define FP_HANDLE_EXCEPTIONS do {} while (0)
+macro_line|#endif
+multiline_comment|/* By default we never flush denormal input operands to signed zero. */
+macro_line|#ifndef FP_DENORM_ZERO
+DECL|macro|FP_DENORM_ZERO
+mdefine_line|#define FP_DENORM_ZERO 0
 macro_line|#endif
 macro_line|#ifndef FP_INHIBIT_RESULTS
 multiline_comment|/* By default we write the results always.&n; * sfp-machine may override this and e.g.&n; * check if some exceptions are unmasked&n; * and inhibit it in such a case.&n; */

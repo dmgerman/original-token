@@ -72,12 +72,6 @@ op_assign
 op_amp
 id|hose_head
 suffix:semicolon
-DECL|variable|probing_hose
-r_struct
-id|pci_controler
-op_star
-id|probing_hose
-suffix:semicolon
 multiline_comment|/*&n; * Quirks.&n; */
 r_static
 r_void
@@ -703,7 +697,12 @@ id|pci_controler
 op_star
 id|hose
 op_assign
-id|probing_hose
+(paren
+r_struct
+id|pci_controler
+op_star
+)paren
+id|bus-&gt;sysdata
 suffix:semicolon
 r_struct
 id|pci_dev
@@ -738,10 +737,6 @@ op_assign
 id|dev-&gt;sibling
 )paren
 (brace
-id|dev-&gt;sysdata
-op_assign
-id|hose
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1085,10 +1080,6 @@ id|hose-&gt;last_busno
 op_assign
 l_int|0xff
 suffix:semicolon
-id|probing_hose
-op_assign
-id|hose
-suffix:semicolon
 id|bus
 op_assign
 id|pci_scan_bus
@@ -1116,10 +1107,6 @@ op_add_assign
 l_int|1
 suffix:semicolon
 )brace
-id|probing_hose
-op_assign
-l_int|NULL
-suffix:semicolon
 id|pci_assign_unassigned_resources
 c_func
 (paren

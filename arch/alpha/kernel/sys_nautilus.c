@@ -141,45 +141,23 @@ suffix:semicolon
 r_void
 DECL|function|nautilus_kill_arch
 id|nautilus_kill_arch
+c_func
 (paren
 r_int
 id|mode
-comma
-r_char
-op_star
-id|restart_cmd
 )paren
 (brace
 id|u8
 id|tmp
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTC
-id|rtc_kill_pit
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_switch
+r_if
 c_cond
 (paren
 id|mode
+op_eq
+id|LINUX_REBOOT_CMD_RESTART
 )paren
 (brace
-r_case
-id|LINUX_REBOOT_CMD_HALT
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Press Reset bottun&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|LINUX_REBOOT_CMD_RESTART
-suffix:colon
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -223,24 +201,7 @@ comma
 l_int|0x92
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Press Reset button&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|LINUX_REBOOT_CMD_POWER_OFF
-suffix:colon
 )brace
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* Machine check handler code&n; *&n; * Perform analysis of a machine check that was triggered by the EV6&n; * CPU&squot;s fault-detection mechanism.&n; */
 multiline_comment|/* IPR structures for EV6, containing the necessary data for the&n; * machine check handler to unpick the logout frame&n; */

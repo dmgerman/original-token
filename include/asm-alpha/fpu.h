@@ -2,6 +2,10 @@ macro_line|#ifndef __ASM_ALPHA_FPU_H
 DECL|macro|__ASM_ALPHA_FPU_H
 mdefine_line|#define __ASM_ALPHA_FPU_H
 multiline_comment|/*&n; * Alpha floating-point control register defines:&n; */
+DECL|macro|FPCR_DNOD
+mdefine_line|#define FPCR_DNOD&t;(1UL&lt;&lt;47)&t;/* denorm INV trap disable */
+DECL|macro|FPCR_DNZ
+mdefine_line|#define FPCR_DNZ&t;(1UL&lt;&lt;48)&t;/* denorms to zero */
 DECL|macro|FPCR_INVD
 mdefine_line|#define FPCR_INVD&t;(1UL&lt;&lt;49)&t;/* invalid op disable (opt.) */
 DECL|macro|FPCR_DZED
@@ -53,8 +57,17 @@ DECL|macro|IEEE_TRAP_ENABLE_UNF
 mdefine_line|#define IEEE_TRAP_ENABLE_UNF&t;(1UL&lt;&lt;4)&t;/* underflow */
 DECL|macro|IEEE_TRAP_ENABLE_INE
 mdefine_line|#define IEEE_TRAP_ENABLE_INE&t;(1UL&lt;&lt;5)&t;/* inexact */
+DECL|macro|IEEE_TRAP_ENABLE_DNO
+mdefine_line|#define IEEE_TRAP_ENABLE_DNO&t;(1UL&lt;&lt;6)&t;/* denorm */
 DECL|macro|IEEE_TRAP_ENABLE_MASK
-mdefine_line|#define IEEE_TRAP_ENABLE_MASK&t;(IEEE_TRAP_ENABLE_INV | IEEE_TRAP_ENABLE_DZE |&bslash;&n;&t;&t;&t;&t; IEEE_TRAP_ENABLE_OVF | IEEE_TRAP_ENABLE_UNF |&bslash;&n;&t;&t;&t;&t; IEEE_TRAP_ENABLE_INE)
+mdefine_line|#define IEEE_TRAP_ENABLE_MASK&t;(IEEE_TRAP_ENABLE_INV | IEEE_TRAP_ENABLE_DZE |&bslash;&n;&t;&t;&t;&t; IEEE_TRAP_ENABLE_OVF | IEEE_TRAP_ENABLE_UNF |&bslash;&n;&t;&t;&t;&t; IEEE_TRAP_ENABLE_INE | IEEE_TRAP_ENABLE_DNO)
+multiline_comment|/* Denorm and Underflow flushing */
+DECL|macro|IEEE_MAP_DMZ
+mdefine_line|#define IEEE_MAP_DMZ&t;&t;(1UL&lt;&lt;12)&t;/* Map denorm inputs to zero */
+DECL|macro|IEEE_MAP_UMZ
+mdefine_line|#define IEEE_MAP_UMZ&t;&t;(1UL&lt;&lt;13)&t;/* Map underflowed outputs to zero */
+DECL|macro|IEEE_MAP_MASK
+mdefine_line|#define IEEE_MAP_MASK&t;&t;(IEEE_MAP_DMZ | IEEE_MAP_UMZ)
 multiline_comment|/* status bits coming from fpcr: */
 DECL|macro|IEEE_STATUS_INV
 mdefine_line|#define IEEE_STATUS_INV&t;&t;(1UL&lt;&lt;17)
@@ -66,10 +79,16 @@ DECL|macro|IEEE_STATUS_UNF
 mdefine_line|#define IEEE_STATUS_UNF&t;&t;(1UL&lt;&lt;20)
 DECL|macro|IEEE_STATUS_INE
 mdefine_line|#define IEEE_STATUS_INE&t;&t;(1UL&lt;&lt;21)
+DECL|macro|IEEE_STATUS_DNO
+mdefine_line|#define IEEE_STATUS_DNO&t;&t;(1UL&lt;&lt;22)
 DECL|macro|IEEE_STATUS_MASK
-mdefine_line|#define IEEE_STATUS_MASK&t;(IEEE_STATUS_INV | IEEE_STATUS_DZE |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_OVF | IEEE_STATUS_UNF |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_INE)
+mdefine_line|#define IEEE_STATUS_MASK&t;(IEEE_STATUS_INV | IEEE_STATUS_DZE |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_OVF | IEEE_STATUS_UNF |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_INE | IEEE_STATUS_DNO)
 DECL|macro|IEEE_SW_MASK
-mdefine_line|#define IEEE_SW_MASK&t;&t;(IEEE_TRAP_ENABLE_MASK | IEEE_STATUS_MASK)
+mdefine_line|#define IEEE_SW_MASK&t;&t;(IEEE_TRAP_ENABLE_MASK | IEEE_STATUS_MASK | IEEE_MAP_MASK)
+DECL|macro|IEEE_CURRENT_RM_SHIFT
+mdefine_line|#define IEEE_CURRENT_RM_SHIFT&t;32
+DECL|macro|IEEE_CURRENT_RM_MASK
+mdefine_line|#define IEEE_CURRENT_RM_MASK&t;(3UL&lt;&lt;IEEE_CURRENT_RM_SHIFT)
 DECL|macro|IEEE_STATUS_TO_EXCSUM_SHIFT
 mdefine_line|#define IEEE_STATUS_TO_EXCSUM_SHIFT&t;16
 DECL|macro|IEEE_INHERIT
@@ -145,6 +164,17 @@ id|IEEE_TRAP_ENABLE_INE
 op_lshift
 l_int|57
 suffix:semicolon
+id|fp
+op_or_assign
+(paren
+op_complement
+id|sw
+op_amp
+id|IEEE_TRAP_ENABLE_DNO
+)paren
+op_lshift
+l_int|41
+suffix:semicolon
 r_return
 id|fp
 suffix:semicolon
@@ -207,6 +237,17 @@ id|IEEE_TRAP_ENABLE_UNF
 op_or
 id|IEEE_TRAP_ENABLE_INE
 )paren
+suffix:semicolon
+id|sw
+op_or_assign
+(paren
+op_complement
+id|fp
+op_rshift
+l_int|41
+)paren
+op_amp
+id|IEEE_TRAP_ENABLE_DNO
 suffix:semicolon
 r_return
 id|sw
@@ -302,6 +343,29 @@ suffix:semicolon
 r_extern
 r_void
 id|alpha_write_fp_reg
+(paren
+r_int
+r_int
+id|reg
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|alpha_read_fp_reg_s
+(paren
+r_int
+r_int
+id|reg
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|alpha_write_fp_reg_s
 (paren
 r_int
 r_int

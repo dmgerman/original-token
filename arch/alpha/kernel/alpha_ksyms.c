@@ -488,11 +488,25 @@ c_func
 id|alpha_read_fp_reg
 )paren
 suffix:semicolon
+DECL|variable|alpha_read_fp_reg_s
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alpha_read_fp_reg_s
+)paren
+suffix:semicolon
 DECL|variable|alpha_write_fp_reg
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|alpha_write_fp_reg
+)paren
+suffix:semicolon
+DECL|variable|alpha_write_fp_reg_s
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alpha_write_fp_reg_s
 )paren
 suffix:semicolon
 multiline_comment|/* In-kernel system calls.  */

@@ -168,6 +168,8 @@ DECL|macro|FP_CMP_EQ_E
 mdefine_line|#define FP_CMP_EQ_E(r,X,Y)&t;_FP_CMP_EQ(E,4,r,X,Y)
 DECL|macro|FP_TO_INT_E
 mdefine_line|#define FP_TO_INT_E(r,X,rsz,rsg)&t;_FP_TO_INT(E,4,r,X,rsz,rsg)
+DECL|macro|FP_TO_INT_ROUND_E
+mdefine_line|#define FP_TO_INT_ROUND_E(r,X,rsz,rsg)&t;_FP_TO_INT_ROUND(E,4,r,X,rsz,rsg)
 DECL|macro|FP_FROM_INT_E
 mdefine_line|#define FP_FROM_INT_E(X,r,rs,rt)&t;_FP_FROM_INT(E,4,X,r,rs,rt)
 DECL|macro|_FP_FRAC_HIGH_E
@@ -285,6 +287,8 @@ DECL|macro|FP_CMP_EQ_E
 mdefine_line|#define FP_CMP_EQ_E(r,X,Y)&t;_FP_CMP_EQ(E,2,r,X,Y)
 DECL|macro|FP_TO_INT_E
 mdefine_line|#define FP_TO_INT_E(r,X,rsz,rsg)&t;_FP_TO_INT(E,2,r,X,rsz,rsg)
+DECL|macro|FP_TO_INT_ROUND_E
+mdefine_line|#define FP_TO_INT_ROUND_E(r,X,rsz,rsg)&t;_FP_TO_INT_ROUND(E,2,r,X,rsz,rsg)
 DECL|macro|FP_FROM_INT_E
 mdefine_line|#define FP_FROM_INT_E(X,r,rs,rt)&t;_FP_FROM_INT(E,2,X,r,rs,rt)
 DECL|macro|_FP_FRAC_HIGH_E

@@ -282,6 +282,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|tsunami_kill_arch
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|tsunami_machine_check
 c_func
 (paren
@@ -550,18 +558,6 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* process.c */
-r_extern
-r_void
-id|common_kill_arch
-(paren
-r_int
-id|mode
-comma
-r_char
-op_star
-id|reboot_cmd
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|cpu_idle

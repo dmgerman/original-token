@@ -1269,7 +1269,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|OPENPIC_VEC_SPURIOUS
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
