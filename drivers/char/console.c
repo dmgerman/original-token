@@ -6615,6 +6615,14 @@ l_int|127
 op_logical_or
 id|disp_ctrl
 )paren
+op_logical_and
+(paren
+id|c
+op_ne
+l_int|128
+op_plus
+l_int|27
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6792,6 +6800,11 @@ c_cond
 id|c
 )paren
 (brace
+r_case
+l_int|0
+suffix:colon
+r_continue
+suffix:semicolon
 r_case
 l_int|7
 suffix:colon

@@ -1,9 +1,9 @@
-multiline_comment|/*&n; * DTC controller, taken from T128 driver by...&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix and Linux consulting and custom programming)&n; *&t;drew@colorado.edu&n; *      +1 (303) 440-4894&n; *&n; * DISTRIBUTION RELEASE 1. &n; *&n; * For more information, please consult &n; *&n; * &n; * &n; * and &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
+multiline_comment|/*&n; * DTC controller, taken from T128 driver by...&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix and Linux consulting and custom programming)&n; *&t;drew@colorado.edu&n; *      +1 (303) 440-4894&n; *&n; * DISTRIBUTION RELEASE 2. &n; *&n; * For more information, please consult &n; *&n; * &n; * &n; * and &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 macro_line|#ifndef DTC3280_H
 DECL|macro|DTC3280_H
 mdefine_line|#define DTC3280_H
 DECL|macro|DTC_PUBLIC_RELEASE
-mdefine_line|#define DTC_PUBLIC_RELEASE 1
+mdefine_line|#define DTC_PUBLIC_RELEASE 2
 multiline_comment|/*#define DTCDEBUG 0x1*/
 DECL|macro|DTCDEBUG_INIT
 mdefine_line|#define DTCDEBUG_INIT&t;0x1
@@ -155,29 +155,29 @@ mdefine_line|#define DTC3x80 {NULL, NULL, NULL, NULL, &bslash;&n;&t;&quot;DTC 31
 macro_line|#endif
 macro_line|#ifndef HOSTS_C
 DECL|macro|NCR5380_implementation_fields
-mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    volatile unsigned char *base
+mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    volatile unsigned int base
 DECL|macro|NCR5380_local_declare
-mdefine_line|#define NCR5380_local_declare() &bslash;&n;    volatile unsigned char *base
+mdefine_line|#define NCR5380_local_declare() &bslash;&n;    volatile unsigned int base
 DECL|macro|NCR5380_setup
-mdefine_line|#define NCR5380_setup(instance) &bslash;&n;    base = (volatile unsigned char *) (instance)-&gt;base
+mdefine_line|#define NCR5380_setup(instance) &bslash;&n;    base = (unsigned int)(instance)-&gt;base
 DECL|macro|DTC_address
 mdefine_line|#define DTC_address(reg) (base + DTC_5380_OFFSET + reg)
 DECL|macro|dbNCR5380_read
-mdefine_line|#define dbNCR5380_read(reg)                                              &bslash;&n;    (rval=*(DTC_address(reg)), &bslash;&n;     (((unsigned char) printk(&quot;DTC : read register %d at addr %08x is: %02x&bslash;n&quot;&bslash;&n;    , (reg), (int)DTC_address(reg), rval)), rval ) )
+mdefine_line|#define dbNCR5380_read(reg)                                              &bslash;&n;    (rval=readb(DTC_address(reg)), &bslash;&n;     (((unsigned char) printk(&quot;DTC : read register %d at addr %08x is: %02x&bslash;n&quot;&bslash;&n;    , (reg), (int)DTC_address(reg), rval)), rval ) )
 DECL|macro|dbNCR5380_write
-mdefine_line|#define dbNCR5380_write(reg, value) do {                                  &bslash;&n;    printk(&quot;DTC : write %02x to register %d at address %08x&bslash;n&quot;,         &bslash;&n;            (value), (reg), (int)DTC_address(reg));     &bslash;&n;    *(DTC_address(reg)) = (value);} while(0)
+mdefine_line|#define dbNCR5380_write(reg, value) do {                                  &bslash;&n;    printk(&quot;DTC : write %02x to register %d at address %08x&bslash;n&quot;,         &bslash;&n;            (value), (reg), (int)DTC_address(reg));     &bslash;&n;    writeb(value, DTC_address(reg));} while(0)
 macro_line|#if !(DTCDEBUG &amp; DTCDEBUG_TRANSFER) 
 DECL|macro|NCR5380_read
-mdefine_line|#define NCR5380_read(reg) (*(DTC_address(reg)))
+mdefine_line|#define NCR5380_read(reg) (readb(DTC_address(reg)))
 DECL|macro|NCR5380_write
-mdefine_line|#define NCR5380_write(reg, value) (*(DTC_address(reg)) = (value))
+mdefine_line|#define NCR5380_write(reg, value) (writeb(value, DTC_address(reg)))
 macro_line|#else
 DECL|macro|NCR5380_read
-mdefine_line|#define NCR5380_read(reg) (*(DTC_address(reg)))
+mdefine_line|#define NCR5380_read(reg) (readb(DTC_address(reg)))
 DECL|macro|xNCR5380_read
-mdefine_line|#define xNCR5380_read(reg)&t;&t;&t;&t;&t;&t;&bslash;&n;    (((unsigned char) printk(&quot;DTC : read register %d at address %08x&bslash;n&quot;&bslash;&n;    , (reg), DTC_address(reg))), *(DTC_address(reg)))
+mdefine_line|#define xNCR5380_read(reg)&t;&t;&t;&t;&t;&t;&bslash;&n;    (((unsigned char) printk(&quot;DTC : read register %d at address %08x&bslash;n&quot;&bslash;&n;    , (reg), DTC_address(reg))), readb(DTC_address(reg)))
 DECL|macro|NCR5380_write
-mdefine_line|#define NCR5380_write(reg, value) do {&t;&t;&t;&t;&t;&bslash;&n;    printk(&quot;DTC : write %02x to register %d at address %08x&bslash;n&quot;, &t;&bslash;&n;&t;    (value), (reg), (int)DTC_address(reg));&t;&bslash;&n;    *(DTC_address(reg)) = (value);&t;&t;} while(0)
+mdefine_line|#define NCR5380_write(reg, value) do {&t;&t;&t;&t;&t;&bslash;&n;    printk(&quot;DTC : write %02x to register %d at address %08x&bslash;n&quot;, &t;&bslash;&n;&t;    (value), (reg), (int)DTC_address(reg));&t;&bslash;&n;    writeb(value, DTC_address(reg));} while(0)
 macro_line|#endif
 DECL|macro|NCR5380_intr
 mdefine_line|#define NCR5380_intr dtc_intr

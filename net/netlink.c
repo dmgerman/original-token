@@ -233,6 +233,7 @@ op_star
 id|buf
 comma
 r_int
+r_int
 id|count
 )paren
 (brace
@@ -314,6 +315,7 @@ r_char
 op_star
 id|buf
 comma
+r_int
 r_int
 id|count
 )paren
@@ -455,7 +457,7 @@ suffix:semicolon
 )brace
 DECL|function|netlink_lseek
 r_static
-r_int
+id|loff_t
 id|netlink_lseek
 c_func
 (paren
@@ -469,7 +471,7 @@ id|file
 op_star
 id|file
 comma
-id|off_t
+id|loff_t
 id|offset
 comma
 r_int

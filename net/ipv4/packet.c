@@ -16,37 +16,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/*&n; *&t;We really ought to have a single public _inline_ min function!&n; */
-DECL|function|min
-r_static
-r_int
-r_int
-id|min
-c_func
-(paren
-r_int
-r_int
-id|a
-comma
-r_int
-r_int
-id|b
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|a
-OL
-id|b
-)paren
-r_return
-id|a
-suffix:semicolon
-r_return
-id|b
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;This should be the easiest of all, all we do is copy it into a buffer. &n; */
 DECL|function|packet_rcv
 r_int
@@ -1082,18 +1051,11 @@ op_assign
 (brace
 id|packet_close
 comma
-id|ip_build_header
-comma
-multiline_comment|/* Not actually used */
 l_int|NULL
 comma
 l_int|NULL
 comma
-id|ip_queue_xmit
-comma
-multiline_comment|/* These two are not actually used */
-l_int|NULL
-comma
+multiline_comment|/* accept */
 l_int|NULL
 comma
 l_int|NULL
@@ -1111,6 +1073,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 multiline_comment|/* No set/get socket options */
 l_int|NULL
 comma
@@ -1123,6 +1087,9 @@ multiline_comment|/* Recvmsg */
 id|packet_bind
 comma
 multiline_comment|/* Bind */
+l_int|NULL
+comma
+multiline_comment|/* Backlog_rcv */
 l_int|128
 comma
 l_int|0

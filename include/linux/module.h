@@ -129,6 +129,24 @@ multiline_comment|/* actual size defined by n_refs */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Note: The string table follows immediately after the symbol table in memory!&n; */
+DECL|struct|_exceptinfo
+r_struct
+id|_exceptinfo
+(brace
+DECL|member|start
+r_struct
+id|exception_table_entry
+op_star
+id|start
+suffix:semicolon
+DECL|member|stop
+r_struct
+id|exception_table_entry
+op_star
+id|stop
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|module
 r_struct
 id|module
@@ -184,12 +202,25 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* cleanup routine */
+DECL|member|exceptinfo
+r_struct
+id|_exceptinfo
+id|exceptinfo
+suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n;&t;prior to modules-2.1 there were no real way to identify&n;&t;which insmod is talking to us Now a special signature must&n;&t;be written here.&n;&n;&t;The new module utilities knows about older kernel and write&n;&t;the init in the signature and the cleanup in the init.&n;&t;This is to make sure newer utilities work with older kernel&n;&t;so it is simple for people to upgrade.&n;*/
+DECL|macro|MODULE_2_1_7_SIG
+mdefine_line|#define MODULE_2_1_7_SIG&t;((void*)0x00000217)
 DECL|struct|mod_routines
 r_struct
 id|mod_routines
 (brace
+DECL|member|signature
+r_void
+op_star
+id|signature
+suffix:semicolon
 DECL|member|init
 r_int
 (paren
@@ -212,6 +243,11 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* cleanup routine */
+DECL|member|exceptinfo
+r_struct
+id|_exceptinfo
+id|exceptinfo
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The first word of the module contains the use count.&n; */
@@ -254,6 +290,12 @@ DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT&t;do { } while (0)
 DECL|macro|MOD_IN_USE
 mdefine_line|#define MOD_IN_USE&t;&t;1
+r_extern
+r_struct
+id|module
+op_star
+id|module_list
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* insert new symbol table */
 r_extern

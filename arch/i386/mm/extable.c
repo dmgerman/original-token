@@ -1,4 +1,6 @@
 multiline_comment|/*&n; * linux/arch/i386/mm/extable.c&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_const
@@ -154,6 +156,13 @@ r_int
 r_int
 id|ret
 suffix:semicolon
+macro_line|#ifdef CONFIG_MODULES
+r_struct
+id|module
+op_star
+id|mp
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Search the kernel&squot;s table first.  */
 id|ret
 op_assign
@@ -177,7 +186,56 @@ id|ret
 r_return
 id|ret
 suffix:semicolon
-multiline_comment|/* FIXME -- search the module&squot;s tables here */
+macro_line|#ifdef CONFIG_MODULES
+r_for
+c_loop
+(paren
+id|mp
+op_assign
+id|module_list
+suffix:semicolon
+id|mp
+op_ne
+l_int|NULL
+suffix:semicolon
+id|mp
+op_assign
+id|mp-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mp-&gt;exceptinfo.start
+op_ne
+l_int|NULL
+)paren
+(brace
+id|ret
+op_assign
+id|search_one_table
+c_func
+(paren
+id|mp-&gt;exceptinfo.start
+comma
+id|mp-&gt;exceptinfo.stop
+op_minus
+l_int|1
+comma
+id|addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_return
+id|ret
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

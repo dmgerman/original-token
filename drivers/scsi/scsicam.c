@@ -140,13 +140,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
-(paren
-l_string|&quot;scsicam_bios_param : trying existing mapping&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* try to infer mapping from partition table */
 id|ret_code
 op_assign
 id|partsize
@@ -201,13 +195,7 @@ op_minus
 l_int|1
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
-(paren
-l_string|&quot;scsicam_bios_param : trying optimal mapping&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* pick some standard mapping with at most 1024 cylinders,&n;&t;   and at most 62 sectors per track - this works up to&n;&t;   7905 MB */
 id|ret_code
 op_assign
 id|setsize
@@ -247,8 +235,63 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-r_return
+multiline_comment|/* if something went wrong, then apparently we have to return&n;       a geometry with more than 1024 cylinders */
+r_if
+c_cond
+(paren
 id|ret_code
+op_logical_or
+id|ip
+(braket
+l_int|0
+)braket
+OG
+l_int|255
+op_logical_or
+id|ip
+(braket
+l_int|1
+)braket
+OG
+l_int|63
+)paren
+(brace
+id|ip
+(braket
+l_int|0
+)braket
+op_assign
+l_int|64
+suffix:semicolon
+id|ip
+(braket
+l_int|1
+)braket
+op_assign
+l_int|32
+suffix:semicolon
+id|ip
+(braket
+l_int|2
+)braket
+op_assign
+id|size
+op_div
+(paren
+id|ip
+(braket
+l_int|0
+)braket
+op_star
+id|ip
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : static int partsize(struct buffer_head *bh, unsigned long &n; *     capacity,unsigned int *cyls, unsigned int *hds, unsigned int *secs);&n; *&n; * Purpose : to determine the BIOS mapping used to create the partition&n; *&t;table, storing the results in *cyls, *hds, and *secs &n; *&n; * Returns : -1 on failure, 0 on success.&n; *&n; */

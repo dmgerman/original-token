@@ -102,6 +102,16 @@ DECL|macro|RTF_IRTT
 mdefine_line|#define RTF_IRTT&t;0x0100&t;&t;/* Initial round trip time&t;  */
 DECL|macro|RTF_REJECT
 mdefine_line|#define RTF_REJECT&t;0x0200&t;&t;/* Reject route&t;&t;&t;  */
+DECL|macro|RTF_ADDRCONF
+mdefine_line|#define RTF_ADDRCONF&t;0x0800&t;&t;/* announced on link prefix&t;  */
+DECL|macro|RTF_INVALID
+mdefine_line|#define RTF_INVALID&t;0x1000
+DECL|macro|RTF_DCACHE
+mdefine_line|#define RTF_DCACHE&t;0x2000
+DECL|macro|RTF_DEFAULT
+mdefine_line|#define RTF_DEFAULT&t;0x4000&t;&t;/* Route is a default route&t;  */
+DECL|macro|RTF_NEXTHOP
+mdefine_line|#define RTF_NEXTHOP&t;0x8000&t;&t;/* Non gateway route with nexthop */
 multiline_comment|/*&n; *&t;This structure is passed from the kernel to user space by netlink&n; *&t;routing/device announcements&n; */
 DECL|struct|netlink_rtinfo
 r_struct

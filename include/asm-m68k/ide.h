@@ -1,8 +1,11 @@
+multiline_comment|/*&n; *  linux/include/asm-m68k/ide.h&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
+multiline_comment|/* Copyright(c) 1996 Kars de Jong */
+multiline_comment|/* Based on the ide driver from 1.2.13pl8 */
+multiline_comment|/*&n; * Credits (alphabetical):&n; *&n; *  - Bjoern Brauel&n; *  - Kars de Jong&n; *  - Torsten Ebeling&n; *  - Dwight Engen&n; *  - Thorsten Floeck&n; *  - Roman Hodek&n; *  - Guenther Kelleter&n; *  - Chris Lawrence&n; *  - Michael Rausch&n; *  - Christian Sauer&n; *  - Michael Schmitz&n; *  - Jes Soerensen&n; *  - Michael Thurm&n; *  - Geert Uytterhoeven&n; */
 macro_line|#ifndef _M68K_IDE_H
 DECL|macro|_M68K_IDE_H
 mdefine_line|#define _M68K_IDE_H
-multiline_comment|/* Copyright(c) 1996 Kars de Jong */
-multiline_comment|/* Based on the ide driver from 1.2.13pl8 */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -15,88 +18,612 @@ macro_line|#include &lt;asm/atarihdreg.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
 macro_line|#endif /* CONFIG_ATARI */
-macro_line|#include &lt;asm/bootinfo.h&gt;
-DECL|struct|hd_regs_struct
-r_struct
-id|hd_regs_struct
+macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
+DECL|typedef|ide_ioreg_t
+r_typedef
+r_int
+r_char
+op_star
+id|ide_ioreg_t
+suffix:semicolon
+macro_line|#ifndef MAX_HWIFS
+DECL|macro|MAX_HWIFS
+mdefine_line|#define MAX_HWIFS&t;1
+macro_line|#endif
+DECL|function|ide_default_irq
+r_static
+id|__inline
+r_int
+id|ide_default_irq
+(paren
+id|ide_ioreg_t
+id|base
+)paren
 (brace
-DECL|member|hd_error
-r_int
-r_int
-id|hd_error
-comma
-DECL|member|hd_nsector
-id|hd_nsector
-comma
-DECL|member|hd_sector
-id|hd_sector
-comma
-DECL|member|hd_lcyl
-id|hd_lcyl
-comma
-DECL|member|hd_hcyl
-id|hd_hcyl
-comma
-DECL|member|hd_select
-id|hd_select
-comma
-DECL|member|hd_status
-id|hd_status
+r_return
+l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
-DECL|variable|hd_regs
+DECL|function|ide_default_io_base
 r_static
-r_struct
-id|hd_regs_struct
-id|hd_regs
-suffix:semicolon
-r_static
-r_void
-id|probe_m68k_ide
+id|__inline__
+id|ide_ioreg_t
+id|ide_default_io_base
 (paren
-r_void
+r_int
+id|index
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|index
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+macro_line|#ifdef CONFIG_AMIGA
+r_if
+c_cond
+(paren
+id|MACH_IS_AMIGA
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|AMIGAHW_PRESENT
+c_func
+(paren
+id|A4000_IDE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Gayle IDE interface (A%d style)&bslash;n&quot;
+comma
+l_int|4000
 )paren
 suffix:semicolon
-multiline_comment|/* Undefine these again, they were defined for the PC. */
-DECL|macro|IDE_ERROR_OFFSET
-macro_line|#undef IDE_ERROR_OFFSET
-DECL|macro|IDE_NSECTOR_OFFSET
-macro_line|#undef IDE_NSECTOR_OFFSET
-DECL|macro|IDE_SECTOR_OFFSET
-macro_line|#undef IDE_SECTOR_OFFSET
-DECL|macro|IDE_LCYL_OFFSET
-macro_line|#undef IDE_LCYL_OFFSET
-DECL|macro|IDE_HCYL_OFFSET
-macro_line|#undef IDE_HCYL_OFFSET
-DECL|macro|IDE_SELECT_OFFSET
-macro_line|#undef IDE_SELECT_OFFSET
-DECL|macro|IDE_STATUS_OFFSET
-macro_line|#undef IDE_STATUS_OFFSET
-DECL|macro|IDE_FEATURE_OFFSET
-macro_line|#undef IDE_FEATURE_OFFSET
-DECL|macro|IDE_COMMAND_OFFSET
-macro_line|#undef IDE_COMMAND_OFFSET
-DECL|macro|SELECT_DRIVE
-macro_line|#undef SELECT_DRIVE
-DECL|macro|IDE_ERROR_OFFSET
-mdefine_line|#define IDE_ERROR_OFFSET&t;hd_regs.hd_error
-DECL|macro|IDE_NSECTOR_OFFSET
-mdefine_line|#define IDE_NSECTOR_OFFSET&t;hd_regs.hd_nsector
-DECL|macro|IDE_SECTOR_OFFSET
-mdefine_line|#define IDE_SECTOR_OFFSET&t;hd_regs.hd_sector
-DECL|macro|IDE_LCYL_OFFSET
-mdefine_line|#define IDE_LCYL_OFFSET&t;&t;hd_regs.hd_lcyl
-DECL|macro|IDE_HCYL_OFFSET
-mdefine_line|#define IDE_HCYL_OFFSET&t;&t;hd_regs.hd_hcyl
-DECL|macro|IDE_SELECT_OFFSET
-mdefine_line|#define IDE_SELECT_OFFSET&t;hd_regs.hd_select
-DECL|macro|IDE_STATUS_OFFSET
-mdefine_line|#define IDE_STATUS_OFFSET&t;hd_regs.hd_status
-DECL|macro|IDE_FEATURE_OFFSET
-mdefine_line|#define IDE_FEATURE_OFFSET&t;IDE_ERROR_OFFSET
-DECL|macro|IDE_COMMAND_OFFSET
-mdefine_line|#define IDE_COMMAND_OFFSET&t;IDE_STATUS_OFFSET
+r_return
+(paren
+(paren
+id|ide_ioreg_t
+)paren
+id|ZTWO_VADDR
+c_func
+(paren
+id|HD_BASE_A4000
+)paren
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|AMIGAHW_PRESENT
+c_func
+(paren
+id|A1200_IDE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Gayle IDE interface (A%d style)&bslash;n&quot;
+comma
+l_int|1200
+)paren
+suffix:semicolon
+r_return
+(paren
+(paren
+id|ide_ioreg_t
+)paren
+id|ZTWO_VADDR
+c_func
+(paren
+id|HD_BASE_A1200
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#ifdef CONFIG_ATARI
+r_if
+c_cond
+(paren
+id|MACH_IS_ATARI
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ATARIHW_PRESENT
+c_func
+(paren
+id|IDE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Falcon IDE interface&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+(paren
+id|ide_ioreg_t
+)paren
+id|ATA_HD_BASE
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* CONFIG_ATARI */
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|ide_init_hwif_ports
+r_static
+id|__inline__
+r_void
+id|ide_init_hwif_ports
+(paren
+id|ide_ioreg_t
+op_star
+id|p
+comma
+id|ide_ioreg_t
+id|base
+comma
+r_int
+op_star
+id|irq
+)paren
+(brace
+op_star
+id|p
+op_increment
+op_assign
+id|base
+suffix:semicolon
+macro_line|#ifdef CONFIG_AMIGA
+r_if
+c_cond
+(paren
+id|MACH_IS_AMIGA
+)paren
+(brace
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_ERROR
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_NSECTOR
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_SECTOR
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_LCYL
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_HCYL
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_SELECT
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_STATUS
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|AMI_HD_CMD
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|AMIGAHW_PRESENT
+c_func
+(paren
+id|A4000_IDE
+)paren
+)paren
+op_star
+id|p
+op_increment
+op_assign
+(paren
+id|ide_ioreg_t
+)paren
+id|ZTWO_VADDR
+c_func
+(paren
+id|HD_A4000_IRQ
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|AMIGAHW_PRESENT
+c_func
+(paren
+id|A1200_IDE
+)paren
+)paren
+op_star
+id|p
+op_increment
+op_assign
+(paren
+id|ide_ioreg_t
+)paren
+id|ZTWO_VADDR
+c_func
+(paren
+id|HD_A1200_IRQ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+l_int|NULL
+)paren
+op_star
+id|irq
+op_assign
+id|IRQ_AMIGA_PORTS
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#ifdef CONFIG_ATARI
+r_if
+c_cond
+(paren
+id|MACH_IS_ATARI
+)paren
+(brace
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_ERROR
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_NSECTOR
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_SECTOR
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_LCYL
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_HCYL
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_CURRENT
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_STATUS
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+id|ATA_HD_CMD
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+l_int|NULL
+)paren
+op_star
+id|irq
+op_assign
+id|IRQ_MFP_IDE
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ATARI */
+)brace
+r_typedef
+r_union
+(brace
+r_int
+id|all
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* all of the bits together */
+r_struct
+(brace
+DECL|member|bit7
+r_int
+id|bit7
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* always 1 */
+DECL|member|lba
+r_int
+id|lba
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* using LBA instead of CHS */
+DECL|member|bit5
+r_int
+id|bit5
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* always 1 */
+DECL|member|unit
+r_int
+id|unit
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* drive select number, 0 or 1 */
+DECL|member|head
+r_int
+id|head
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* always zeros here */
+DECL|member|b
+)brace
+id|b
+suffix:semicolon
+DECL|typedef|select_t
+)brace
+id|select_t
+suffix:semicolon
+DECL|function|ide_request_irq
+r_static
+id|__inline__
+r_int
+id|ide_request_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+r_int
+r_int
+id|flags
+comma
+r_const
+r_char
+op_star
+id|device
+comma
+r_void
+op_star
+id|dev_id
+)paren
+(brace
+macro_line|#ifdef CONFIG_AMIGA
+r_if
+c_cond
+(paren
+id|MACH_IS_AMIGA
+)paren
+r_return
+id|request_irq
+c_func
+(paren
+id|irq
+comma
+id|handler
+comma
+l_int|0
+comma
+id|device
+comma
+id|dev_id
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_AMIGA */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ide_free_irq
+r_static
+id|__inline__
+r_void
+id|ide_free_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+)paren
+(brace
+macro_line|#ifdef CONFIG_AMIGA
+r_if
+c_cond
+(paren
+id|MACH_IS_AMIGA
+)paren
+id|free_irq
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_AMIGA */
+)brace
+multiline_comment|/*&n; * We should really implement those some day.&n; */
+DECL|function|ide_check_region
+r_static
+id|__inline__
+r_int
+id|ide_check_region
+(paren
+id|ide_ioreg_t
+id|from
+comma
+r_int
+r_int
+id|extent
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ide_request_region
+r_static
+id|__inline__
+r_void
+id|ide_request_region
+(paren
+id|ide_ioreg_t
+id|from
+comma
+r_int
+r_int
+id|extent
+comma
+r_const
+r_char
+op_star
+id|name
+)paren
+(brace
+)brace
+DECL|function|ide_release_region
+r_static
+id|__inline__
+r_void
+id|ide_release_region
+(paren
+id|ide_ioreg_t
+id|from
+comma
+r_int
+r_int
+id|extent
+)paren
+(brace
+)brace
+DECL|macro|SUPPORT_SLOW_DATA_PORTS
+macro_line|#undef SUPPORT_SLOW_DATA_PORTS
+DECL|macro|SUPPORT_SLOW_DATA_PORTS
+mdefine_line|#define SUPPORT_SLOW_DATA_PORTS 0
 DECL|macro|SUPPORT_VLB_SYNC
 macro_line|#undef SUPPORT_VLB_SYNC
 DECL|macro|SUPPORT_VLB_SYNC
@@ -105,28 +632,109 @@ DECL|macro|HD_DATA
 macro_line|#undef HD_DATA
 DECL|macro|HD_DATA
 mdefine_line|#define HD_DATA NULL
-multiline_comment|/* MSch: changed sti() to STI() wherever possible in ide.c; moved STI() def. &n; * to asm/ide.h &n; */
-multiline_comment|/* The Atari interrupt structure strictly requires that the IPL isn&squot;t lowered&n; * uncontrolled in an interrupt handler. In the concrete case, the IDE&n; * interrupt is already a slow int, so the irq is already disabled at the time&n; * the handler is called, and the IPL has been lowered to the minimum value&n; * possible. To avoid going below that, STI() checks for being called inside&n; * an interrupt, and in that case it does nothing. Hope that is reasonable and&n; * works. (Roman)&n; */
-macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA)
-DECL|macro|STI
-mdefine_line|#define&t;STI()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;if (!intr_count) sti();&t;&t;&t;&bslash;&n;    } while(0)
-macro_line|#elif defined(CONFIG_ATARI)
-DECL|macro|STI
-mdefine_line|#define&t;STI()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!MACH_IS_ATARI || !intr_count) sti();&t;&bslash;&n;    } while(0)
-macro_line|#else /* !defined(CONFIG_ATARI) */
-DECL|macro|STI
-mdefine_line|#define&t;STI()&t;sti()
-macro_line|#endif
-DECL|macro|SELECT_DRIVE
-mdefine_line|#define SELECT_DRIVE(hwif,drive)  OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_base+IDE_SELECT_OFFSET);
 DECL|macro|insl
-mdefine_line|#define insl(data_reg, buffer, wcount) insw(data_reg, buffer, wcount&lt;&lt;1)
+mdefine_line|#define insl(data_reg, buffer, wcount) insw(data_reg, buffer, (wcount)&lt;&lt;1)
 DECL|macro|outsl
-mdefine_line|#define outsl(data_reg, buffer, wcount) outsw(data_reg, buffer, wcount&lt;&lt;1)
+mdefine_line|#define outsl(data_reg, buffer, wcount) outsw(data_reg, buffer, (wcount)&lt;&lt;1)
 DECL|macro|insw
-mdefine_line|#define insw(port, buf, nr) &bslash;&n;    if (nr % 16) &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a0@,%/a1@+; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;); &bslash;&n;    else &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; lsrl  #4,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;);
+mdefine_line|#define insw(port, buf, nr) &bslash;&n;    if ((nr) % 16) &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a0@,%/a1@+; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;); &bslash;&n;    else &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; lsrl  #4,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/a1@+; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;)
 DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, nr) &bslash;&n;    if (nr % 16) &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;); &bslash;&n;    else &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; lsrl  #4,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;);
+mdefine_line|#define outsw(port, buf, nr) &bslash;&n;    if ((nr) % 16) &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;); &bslash;&n;    else &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; lsrl  #4,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;)
+macro_line|#ifdef CONFIG_ATARI
+DECL|macro|insl_swapw
+mdefine_line|#define insl_swapw(data_reg, buffer, wcount) &bslash;&n;    insw_swapw(data_reg, buffer, (wcount)&lt;&lt;1)
+DECL|macro|outsl_swapw
+mdefine_line|#define outsl_swapw(data_reg, buffer, wcount) &bslash;&n;    outsw_swapw(data_reg, buffer, (wcount)&lt;&lt;1)
+DECL|macro|insw_swapw
+mdefine_line|#define insw_swapw(port, buf, nr) &bslash;&n;    if ((nr) % 8) &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;d0&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;); &bslash;&n;    else &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; lsrl  #3,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; movew %/a0@,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a1@+; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;d0&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;)
+DECL|macro|outsw_swapw
+mdefine_line|#define outsw_swapw(port, buf, nr) &bslash;&n;    if ((nr) % 8) &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;d0&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;); &bslash;&n;    else &bslash;&n;&t;__asm__ __volatile__ &bslash;&n;&t;       (&quot;movel %0,%/a0; &bslash;&n;&t;&t; movel %1,%/a1; &bslash;&n;&t;&t; movel %2,%/d6; &bslash;&n;&t;&t; lsrl  #3,%/d6; &bslash;&n;&t;&t; subql #1,%/d6; &bslash;&n;&t;       1:movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; movew %/a1@+,%/d0; &bslash;&n;&t;&t; rolw  #8,%/d0; &bslash;&n;&t;&t; movew %/d0,%/a0@; &bslash;&n;&t;&t; dbra %/d6,1b&quot; : &bslash;&n;&t;&t;: &quot;g&quot; (port), &quot;g&quot; (buf), &quot;g&quot; (nr) &bslash;&n;&t;&t;: &quot;d0&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;d6&quot;)
+macro_line|#endif /* CONFIG_ATARI */
+DECL|function|ide_ack_intr
+r_static
+id|__inline__
+r_int
+id|ide_ack_intr
+(paren
+id|ide_ioreg_t
+id|base_port
+comma
+id|ide_ioreg_t
+id|irq_port
+)paren
+(brace
+macro_line|#ifdef CONFIG_AMIGA
+r_if
+c_cond
+(paren
+id|MACH_IS_AMIGA
+)paren
+(brace
+r_int
+r_char
+id|ch
+suffix:semicolon
+id|ch
+op_assign
+id|inb
+c_func
+(paren
+id|irq_port
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ch
+op_amp
+l_int|0x80
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|AMIGAHW_PRESENT
+c_func
+(paren
+id|A1200_IDE
+)paren
+)paren
+(brace
+(paren
+r_void
+)paren
+id|inb
+c_func
+(paren
+id|base_port
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x7c
+op_or
+(paren
+id|ch
+op_amp
+l_int|0x03
+)paren
+comma
+id|irq_port
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* CONFIG_AMIGA */
+r_return
+l_int|1
+suffix:semicolon
+)brace
 DECL|macro|T_CHAR
 mdefine_line|#define T_CHAR          (0x0000)        /* char:  don&squot;t touch  */
 DECL|macro|T_SHORT
@@ -147,6 +755,7 @@ DECL|macro|D_INT
 mdefine_line|#define D_INT(cnt)      (T_INT   | (cnt))
 DECL|macro|D_TEXT
 mdefine_line|#define D_TEXT(cnt)     (T_TEXT  | (cnt))
+macro_line|#ifdef CONFIG_AMIGA
 DECL|variable|driveid_types
 r_static
 id|u_short
@@ -256,11 +865,12 @@ multiline_comment|/* dma_1word - reservedyy */
 suffix:semicolon
 DECL|macro|num_driveid_types
 mdefine_line|#define num_driveid_types       (sizeof(driveid_types)/sizeof(*driveid_types))
-DECL|function|big_endianize_driveid
+macro_line|#endif /* CONFIG_AMIGA */
+DECL|function|ide_fix_driveid
 r_static
 id|__inline__
 r_void
-id|big_endianize_driveid
+id|ide_fix_driveid
 c_func
 (paren
 r_struct
@@ -269,6 +879,7 @@ op_star
 id|id
 )paren
 (brace
+macro_line|#ifdef CONFIG_AMIGA
 id|u_char
 op_star
 id|p
@@ -288,6 +899,14 @@ id|cnt
 suffix:semicolon
 id|u_char
 id|t
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_AMIGA
+)paren
+r_return
 suffix:semicolon
 r_for
 c_loop
@@ -507,6 +1126,147 @@ r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* CONFIG_AMIGA */
 )brace
+DECL|function|ide_release_lock
+r_static
+id|__inline__
+r_void
+id|ide_release_lock
+(paren
+r_int
+op_star
+id|ide_lock
+)paren
+(brace
+macro_line|#ifdef CONFIG_ATARI
+r_if
+c_cond
+(paren
+id|MACH_IS_ATARI
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|ide_lock
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ide_release_lock: bug&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+op_star
+id|ide_lock
+op_assign
+l_int|0
+suffix:semicolon
+id|stdma_release
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ATARI */
+)brace
+DECL|function|ide_get_lock
+r_static
+id|__inline__
+r_void
+id|ide_get_lock
+(paren
+r_int
+op_star
+id|ide_lock
+comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+macro_line|#ifdef CONFIG_ATARI
+r_if
+c_cond
+(paren
+id|MACH_IS_ATARI
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|ide_lock
+op_eq
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|intr_count
+OG
+l_int|0
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Falcon IDE hasn&squot;t ST-DMA lock in interrupt&quot;
+)paren
+suffix:semicolon
+id|stdma_lock
+c_func
+(paren
+id|handler
+comma
+id|data
+)paren
+suffix:semicolon
+op_star
+id|ide_lock
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* CONFIG_ATARI */
+)brace
+multiline_comment|/*&n; * On the Atari, we sometimes can&squot;t enable interrupts:&n; */
+multiline_comment|/* MSch: changed sti() to STI() wherever possible in ide.c; moved STI() def. &n; * to asm/ide.h &n; */
+multiline_comment|/* The Atari interrupt structure strictly requires that the IPL isn&squot;t lowered&n; * uncontrolled in an interrupt handler. In the concrete case, the IDE&n; * interrupt is already a slow int, so the irq is already disabled at the time&n; * the handler is called, and the IPL has been lowered to the minimum value&n; * possible. To avoid going below that, STI() checks for being called inside&n; * an interrupt, and in that case it does nothing. Hope that is reasonable and&n; * works. (Roman)&n; */
+macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA)
+DECL|macro|ide_sti
+mdefine_line|#define&t;ide_sti()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!intr_count) sti();&t;&t;&t;&t;&bslash;&n;    } while(0)
+macro_line|#elif defined(CONFIG_ATARI)
+DECL|macro|ide_sti
+mdefine_line|#define&t;ide_sti()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!MACH_IS_ATARI || !intr_count) sti();&t;&bslash;&n;    } while(0)
+macro_line|#else /* !defined(CONFIG_ATARI) */
+DECL|macro|ide_sti
+mdefine_line|#define&t;ide_sti()&t;sti()
+macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _M68K_IDE_H */
 eof

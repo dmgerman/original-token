@@ -70,8 +70,8 @@ op_star
 id|bh
 )paren
 (brace
-r_if
-c_cond
+r_while
+c_loop
 (paren
 id|set_bit
 c_func

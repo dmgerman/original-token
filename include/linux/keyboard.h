@@ -695,8 +695,10 @@ DECL|macro|K_DTILDE
 mdefine_line|#define K_DTILDE&t;K(KT_DEAD,3)
 DECL|macro|K_DDIERE
 mdefine_line|#define K_DDIERE&t;K(KT_DEAD,4)
+DECL|macro|K_DCEDIL
+mdefine_line|#define K_DCEDIL&t;K(KT_DEAD,5)
 DECL|macro|NR_DEAD
-mdefine_line|#define NR_DEAD&t;&t;5
+mdefine_line|#define NR_DEAD&t;&t;6
 DECL|macro|K_DOWN
 mdefine_line|#define K_DOWN&t;&t;K(KT_CUR,0)
 DECL|macro|K_LEFT

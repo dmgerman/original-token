@@ -755,7 +755,8 @@ l_int|31
 comma
 l_int|3
 comma
-l_int|0
+op_minus
+l_int|1
 comma
 l_int|1
 )brace

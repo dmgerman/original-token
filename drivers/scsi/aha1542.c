@@ -5230,7 +5230,7 @@ c_cond
 (paren
 id|trans
 op_eq
-l_int|2
+id|BIOS_TRANSLATION_25563
 )paren
 (brace
 id|printk
@@ -6566,7 +6566,6 @@ id|disk-&gt;device-&gt;host
 op_member_access_from_pointer
 id|bios_translation
 suffix:semicolon
-multiline_comment|/* Should this be &gt; 1024, or &gt;= 1024?  Enquiring minds want to know. */
 r_if
 c_cond
 (paren
@@ -6580,7 +6579,7 @@ l_int|1024
 op_logical_and
 id|translation_algorithm
 op_eq
-l_int|2
+id|BIOS_TRANSLATION_25563
 )paren
 (brace
 multiline_comment|/* Please verify that this is the same as what DOS returns */
@@ -6636,8 +6635,6 @@ op_rshift
 l_int|11
 suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/*  if (ip[2] &gt;= 1024) ip[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon

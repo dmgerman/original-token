@@ -127,6 +127,9 @@ op_star
 id|header
 comma
 id|__u32
+id|info
+comma
+id|__u32
 id|daddr
 comma
 id|__u32
@@ -1229,7 +1232,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Temporary&n; */
 DECL|function|udp_sendmsg
-r_static
 r_int
 id|udp_sendmsg
 c_func
@@ -1617,7 +1619,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &t;This should be easy, if there is something there we&bslash;&n; * &t;return it, otherwise we block.&n; */
+multiline_comment|/*&n; * &t;This should be easy, if there is something there we&n; * &t;return it, otherwise we block.&n; */
 DECL|function|udp_recvmsg
 r_int
 id|udp_recvmsg
@@ -1838,14 +1840,26 @@ op_star
 id|sk
 comma
 r_struct
-id|sockaddr_in
+id|sockaddr
 op_star
-id|usin
+id|uaddr
 comma
 r_int
 id|addr_len
 )paren
 (brace
+r_struct
+id|sockaddr_in
+op_star
+id|usin
+op_assign
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+id|uaddr
+suffix:semicolon
 r_struct
 id|rtable
 op_star
@@ -2048,7 +2062,7 @@ suffix:semicolon
 DECL|function|udp_queue_rcv_skb
 r_static
 r_inline
-r_void
+r_int
 id|udp_queue_rcv_skb
 c_func
 (paren
@@ -2102,10 +2116,14 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|udp_statistics.UdpInDatagrams
 op_increment
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|udp_deliver
@@ -2303,25 +2321,6 @@ suffix:semicolon
 r_int
 id|addr_type
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we&squot;re doing a &quot;redo&quot; (the socket was busy last time&n;&t; * around), we can just queue the packet now..&n;&t; */
-r_if
-c_cond
-(paren
-id|redo
-)paren
-(brace
-id|udp_queue_rcv_skb
-c_func
-(paren
-id|skb-&gt;sk
-comma
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * First time through the loop.. Do all the setup stuff&n;&t; * (including finding out the socket we go to etc)&n;&t; */
 id|addr_type
 op_assign
@@ -2867,25 +2866,21 @@ op_assign
 (brace
 id|udp_close
 comma
-id|ip_build_header
-comma
 id|udp_connect
 comma
 l_int|NULL
 comma
-id|ip_queue_xmit
-comma
 l_int|NULL
 comma
 l_int|NULL
 comma
 l_int|NULL
-comma
-id|udp_rcv
 comma
 id|datagram_select
 comma
 id|udp_ioctl
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -2902,6 +2897,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* No special bind function */
+id|udp_queue_rcv_skb
+comma
 l_int|128
 comma
 l_int|0
@@ -2912,10 +2909,7 @@ l_int|0
 comma
 l_int|0
 comma
-(brace
 l_int|NULL
-comma
-)brace
 )brace
 suffix:semicolon
 eof

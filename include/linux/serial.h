@@ -95,8 +95,37 @@ DECL|macro|PORT_CIRRUS
 mdefine_line|#define PORT_CIRRUS     5
 DECL|macro|PORT_16650
 mdefine_line|#define PORT_16650&t;6
+DECL|macro|PORT_16650V2
+mdefine_line|#define PORT_16650V2&t;7
+DECL|macro|PORT_16750
+mdefine_line|#define PORT_16750&t;8
 DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;6
+mdefine_line|#define PORT_MAX&t;8
+DECL|struct|serial_uart_config
+r_struct
+id|serial_uart_config
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|dfl_xmit_fifo_size
+r_int
+id|dfl_xmit_fifo_size
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|UART_CLEAR_FIFO
+mdefine_line|#define UART_CLEAR_FIFO&t;&t;0x01
+DECL|macro|UART_USE_FIFO
+mdefine_line|#define UART_USE_FIFO&t;&t;0x02
+DECL|macro|UART_STARTECH
+mdefine_line|#define UART_STARTECH&t;&t;0x04
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
 DECL|macro|ASYNC_HUP_NOTIFY
 mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */
@@ -107,7 +136,7 @@ mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) 
 DECL|macro|ASYNC_SPLIT_TERMIOS
 mdefine_line|#define ASYNC_SPLIT_TERMIOS 0x0008 /* Separate termios for dialin/callout */
 DECL|macro|ASYNC_SPD_MASK
-mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
+mdefine_line|#define ASYNC_SPD_MASK&t;0x1030
 DECL|macro|ASYNC_SPD_HI
 mdefine_line|#define ASYNC_SPD_HI&t;0x0010&t;/* Use 56000 instead of 38400 bps */
 DECL|macro|ASYNC_SPD_VHI
@@ -124,10 +153,16 @@ DECL|macro|ASYNC_PGRP_LOCKOUT
 mdefine_line|#define ASYNC_PGRP_LOCKOUT    0x0200 /* Lock out cua opens based on pgrp */
 DECL|macro|ASYNC_CALLOUT_NOHUP
 mdefine_line|#define ASYNC_CALLOUT_NOHUP   0x0400 /* Don&squot;t do hangups for cua device */
+DECL|macro|ASYNC_HARDPPS_CD
+mdefine_line|#define ASYNC_HARDPPS_CD&t;0x0800&t;/* Call hardpps when CD goes high  */
+DECL|macro|ASYNC_SPD_SHI
+mdefine_line|#define ASYNC_SPD_SHI&t;0x1000&t;/* Use 230400 instead of 38400 bps */
+DECL|macro|ASYNC_SPD_WARP
+mdefine_line|#define ASYNC_SPD_WARP&t;0x1010&t;/* Use 460800 instead of 38400 bps */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x0FFF&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x1FFF&t;/* Possible legal async flags */
 DECL|macro|ASYNC_USR_MASK
-mdefine_line|#define ASYNC_USR_MASK 0x0430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
+mdefine_line|#define ASYNC_USR_MASK 0x1430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
 DECL|macro|ASYNC_INITIALIZED
 mdefine_line|#define ASYNC_INITIALIZED&t;0x80000000 /* Serial port was initialized */
@@ -145,6 +180,8 @@ DECL|macro|ASYNC_CHECK_CD
 mdefine_line|#define ASYNC_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
 DECL|macro|ASYNC_SHARE_IRQ
 mdefine_line|#define ASYNC_SHARE_IRQ&t;&t;0x01000000 /* for multifunction cards */
+DECL|macro|ASYNC_INTERNAL_FLAGS
+mdefine_line|#define ASYNC_INTERNAL_FLAGS&t;0xFF000000 /* Internal flags */
 multiline_comment|/*&n; * Multiport serial configuration structure --- external structure&n; */
 DECL|struct|serial_multiport_struct
 r_struct
@@ -266,9 +303,9 @@ id|dcd
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|async_struct
+DECL|struct|serial_state
 r_struct
-id|async_struct
+id|serial_state
 (brace
 DECL|member|magic
 r_int
@@ -290,17 +327,94 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* defined in tty.h */
 DECL|member|hub6
 r_int
 id|hub6
 suffix:semicolon
-multiline_comment|/* HUB6 plus one */
 DECL|member|type
 r_int
 id|type
 suffix:semicolon
-multiline_comment|/* UART type */
+DECL|member|line
+r_int
+id|line
+suffix:semicolon
+DECL|member|xmit_fifo_size
+r_int
+id|xmit_fifo_size
+suffix:semicolon
+DECL|member|custom_divisor
+r_int
+id|custom_divisor
+suffix:semicolon
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+DECL|member|close_delay
+r_int
+r_int
+id|close_delay
+suffix:semicolon
+DECL|member|closing_wait
+r_int
+r_int
+id|closing_wait
+suffix:semicolon
+multiline_comment|/* time to wait before closing */
+DECL|member|icount
+r_struct
+id|async_icount
+id|icount
+suffix:semicolon
+DECL|member|normal_termios
+r_struct
+id|termios
+id|normal_termios
+suffix:semicolon
+DECL|member|callout_termios
+r_struct
+id|termios
+id|callout_termios
+suffix:semicolon
+DECL|member|info
+r_struct
+id|async_struct
+op_star
+id|info
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|async_struct
+r_struct
+id|async_struct
+(brace
+DECL|member|magic
+r_int
+id|magic
+suffix:semicolon
+DECL|member|port
+r_int
+id|port
+suffix:semicolon
+DECL|member|hub6
+r_int
+id|hub6
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|member|xmit_fifo_size
+r_int
+id|xmit_fifo_size
+suffix:semicolon
+DECL|member|state
+r_struct
+id|serial_state
+op_star
+id|state
+suffix:semicolon
 DECL|member|tty
 r_struct
 id|tty_struct
@@ -318,14 +432,6 @@ suffix:semicolon
 DECL|member|timeout
 r_int
 id|timeout
-suffix:semicolon
-DECL|member|xmit_fifo_size
-r_int
-id|xmit_fifo_size
-suffix:semicolon
-DECL|member|custom_divisor
-r_int
-id|custom_divisor
 suffix:semicolon
 DECL|member|x_char
 r_int
@@ -375,11 +481,6 @@ DECL|member|line
 r_int
 id|line
 suffix:semicolon
-DECL|member|count
-r_int
-id|count
-suffix:semicolon
-multiline_comment|/* # of fd on device */
 DECL|member|blocked_open
 r_int
 id|blocked_open
@@ -423,16 +524,6 @@ r_struct
 id|tq_struct
 id|tqueue_hangup
 suffix:semicolon
-DECL|member|normal_termios
-r_struct
-id|termios
-id|normal_termios
-suffix:semicolon
-DECL|member|callout_termios
-r_struct
-id|termios
-id|callout_termios
-suffix:semicolon
 DECL|member|open_wait
 r_struct
 id|wait_queue
@@ -451,12 +542,6 @@ id|wait_queue
 op_star
 id|delta_msr_wait
 suffix:semicolon
-DECL|member|icount
-r_struct
-id|async_icount
-id|icount
-suffix:semicolon
-multiline_comment|/* kernel counters for the 4 input interrupts */
 DECL|member|next_port
 r_struct
 id|async_struct
@@ -474,6 +559,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|SERIAL_MAGIC
 mdefine_line|#define SERIAL_MAGIC 0x5301
+DECL|macro|SSTATE_MAGIC
+mdefine_line|#define SSTATE_MAGIC 0x5302
 multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
 DECL|macro|SERIAL_XMIT_SIZE
 mdefine_line|#define SERIAL_XMIT_SIZE 4096

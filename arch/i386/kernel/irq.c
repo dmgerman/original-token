@@ -2390,7 +2390,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;probe_irq_off: irqs=0x%04x irqmask=0x%04x&bslash;n&quot;
+l_string|&quot;probe_irq_off: irqs=0x%04lx irqmask=0x%04x&bslash;n&quot;
 comma
 id|irqs
 comma

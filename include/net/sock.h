@@ -2,9 +2,16 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _SOCK_H
 DECL|macro|_SOCK_H
 mdefine_line|#define _SOCK_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;&t;&t;/* struct options */
 macro_line|#include &lt;linux/in.h&gt;&t;&t;/* struct sockaddr_in */
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+macro_line|#include &lt;linux/in6.h&gt;&t;&t;/* struct sockaddr_in6 */
+macro_line|#include &lt;linux/ipv6.h&gt;&t;&t;/* dest_cache, inet6_options */
+macro_line|#include &lt;linux/icmpv6.h&gt;
+macro_line|#include &lt;net/if_inet6.h&gt;&t;/* struct ipv6_mc_socklist */
+macro_line|#endif
 macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -156,7 +163,118 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_NUTCP
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+DECL|struct|ipv6_pinfo
+r_struct
+id|ipv6_pinfo
+(brace
+DECL|member|saddr
+r_struct
+id|in6_addr
+id|saddr
+suffix:semicolon
+DECL|member|rcv_saddr
+r_struct
+id|in6_addr
+id|rcv_saddr
+suffix:semicolon
+DECL|member|daddr
+r_struct
+id|in6_addr
+id|daddr
+suffix:semicolon
+DECL|member|flow_lbl
+id|__u32
+id|flow_lbl
+suffix:semicolon
+DECL|member|priority
+id|__u8
+id|priority
+suffix:semicolon
+DECL|member|hop_limit
+id|__u8
+id|hop_limit
+suffix:semicolon
+DECL|member|mcast_hops
+id|__u8
+id|mcast_hops
+suffix:semicolon
+multiline_comment|/* sockopt flags */
+DECL|member|recvsrcrt
+id|__u8
+id|recvsrcrt
+suffix:colon
+l_int|1
+comma
+DECL|member|rxinfo
+id|rxinfo
+suffix:colon
+l_int|1
+comma
+DECL|member|mc_loop
+id|mc_loop
+suffix:colon
+l_int|1
+comma
+DECL|member|unused
+id|unused
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* device for outgoing mcast packets */
+DECL|member|mc_if
+r_struct
+id|device
+op_star
+id|mc_if
+suffix:semicolon
+DECL|member|ipv6_mc_list
+r_struct
+id|ipv6_mc_socklist
+op_star
+id|ipv6_mc_list
+suffix:semicolon
+multiline_comment|/* &n;&t; * destination cache entry pointer&n;&t; * contains a pointer to neighbour cache&n;&t; * and other info related to network level &n;&t; * (ex. PMTU)&n;&t; */
+DECL|member|dest
+r_struct
+id|dest_entry
+op_star
+id|dest
+suffix:semicolon
+DECL|member|dc_sernum
+id|__u32
+id|dc_sernum
+suffix:semicolon
+DECL|member|opt
+r_struct
+id|ipv6_options
+op_star
+id|opt
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|raw6_opt
+r_struct
+id|raw6_opt
+(brace
+DECL|member|checksum
+id|__u32
+id|checksum
+suffix:semicolon
+multiline_comment|/* perform checksum */
+DECL|member|offset
+id|__u32
+id|offset
+suffix:semicolon
+multiline_comment|/* checksum offset  */
+DECL|member|filter
+r_struct
+id|icmp6_filter
+id|filter
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif /* IPV6 */
 DECL|struct|tcp_opt
 r_struct
 id|tcp_opt
@@ -202,6 +320,31 @@ id|__u32
 id|snd_wl2
 suffix:semicolon
 multiline_comment|/* Ack sequence for update&t;&t;*/
+DECL|member|rcv_wup
+id|__u32
+id|rcv_wup
+suffix:semicolon
+multiline_comment|/* rcv_nxt on last window update sent&t;*/
+DECL|member|srtt
+id|__u32
+id|srtt
+suffix:semicolon
+multiline_comment|/* smothed round trip time &lt;&lt; 3&t;&t;*/
+DECL|member|mdev
+id|__u32
+id|mdev
+suffix:semicolon
+multiline_comment|/* medium deviation&t;&t;&t;*/
+DECL|member|rto
+id|__u32
+id|rto
+suffix:semicolon
+multiline_comment|/* retransmit timeout&t;&t;&t;*/
+DECL|member|backoff
+id|__u32
+id|backoff
+suffix:semicolon
+multiline_comment|/* backoff&t;&t;&t;&t;*/
 multiline_comment|/*&n; *&t;Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)&n; */
 DECL|member|snd_cwnd
 id|__u32
@@ -244,10 +387,99 @@ id|timer_list
 id|retransmit_timer
 suffix:semicolon
 multiline_comment|/* Resend (no ack) */
+DECL|member|basertt
+id|__u32
+id|basertt
+suffix:semicolon
+multiline_comment|/* Vegas baseRTT */
+DECL|member|delayed_acks
+id|__u8
+id|delayed_acks
+suffix:semicolon
+DECL|member|dup_acks
+id|__u8
+id|dup_acks
+suffix:semicolon
+DECL|member|lrcvtime
+id|__u32
+id|lrcvtime
+suffix:semicolon
+multiline_comment|/* timestamp of last received data packet  */
+DECL|member|rcv_tstamp
+id|__u32
+id|rcv_tstamp
+suffix:semicolon
+multiline_comment|/* timestamp of last received packet  */
+DECL|member|iat_mdev
+id|__u32
+id|iat_mdev
+suffix:semicolon
+multiline_comment|/* interarrival time medium deviation */
+DECL|member|iat
+id|__u32
+id|iat
+suffix:semicolon
+multiline_comment|/* interarrival time */
+DECL|member|ato
+id|__u32
+id|ato
+suffix:semicolon
+multiline_comment|/* delayed ack timeout */
+DECL|member|high_seq
+id|__u32
+id|high_seq
+suffix:semicolon
+multiline_comment|/*&n; *&t;new send pointers&n; */
+DECL|member|send_head
+r_struct
+id|sk_buff
+op_star
+id|send_head
+suffix:semicolon
+DECL|member|retrans_head
+r_struct
+id|sk_buff
+op_star
+id|retrans_head
+suffix:semicolon
+multiline_comment|/* retrans head can be &n;&t;&t;&t;&t;&t;&t; * different to the head of&n;&t;&t;&t;&t;&t;&t; * write queue if we are doing&n;&t;&t;&t;&t;&t;&t; * fast retransmit&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n; * pending events&n; */
+DECL|member|pending
+id|__u8
+id|pending
+suffix:semicolon
+multiline_comment|/*&n; *&t;Header prediction flags&n; *&t;0x5?10 &lt;&lt; 16 + snd_wnd in net byte order&n; */
+DECL|member|pred_flags
+id|__u32
+id|pred_flags
+suffix:semicolon
+DECL|member|snd_wnd
+id|__u32
+id|snd_wnd
+suffix:semicolon
+multiline_comment|/* The window we expect to receive */
+DECL|member|probes_out
+id|__u32
+id|probes_out
+suffix:semicolon
+multiline_comment|/* unanswered 0 window probes&t;   */
+DECL|member|syn_wait_queue
+r_struct
+id|open_request
+op_star
+id|syn_wait_queue
+suffix:semicolon
+DECL|member|af_specific
+r_struct
+id|tcp_func
+op_star
+id|af_specific
+suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
+multiline_comment|/*&n; * The idea is to start moving to a newer struct gradualy&n; * &n; * IMHO the newer struct should have the following format:&n; * &n; *&t;struct sock {&n; *&t;&t;sockmem [mem, proto, callbacks]&n; *&n; *&t;&t;union or struct {&n; *&t;&t;&t;netrom;&n; *&t;&t;&t;ax_25;&n; *&t;&t;} ll_pinfo;&n; *&t;&n; *&t;&t;union {&n; *&t;&t;&t;ipv4;&n; *&t;&t;&t;ipv6;&n; *&t;&t;&t;ipx;&n; *&t;&t;} net_pinfo;&n; *&n; *&t;&t;union {&n; *&t;&t;&t;tcp;&n; *&t;&t;&t;udp;&n; *&t;&t;&t;spx;&n; *&t;&t;} tp_pinfo;&n; *&n; *&t;}&n; */
+multiline_comment|/*&n; *  TCP will start to use the new protinfo while *still using the old* fields &n; */
 DECL|struct|sock
 r_struct
 id|sock
@@ -276,31 +508,9 @@ DECL|member|write_seq
 id|__u32
 id|write_seq
 suffix:semicolon
-DECL|member|sent_seq
-id|__u32
-id|sent_seq
-suffix:semicolon
-DECL|member|acked_seq
-id|__u32
-id|acked_seq
-suffix:semicolon
 DECL|member|copied_seq
 id|__u32
 id|copied_seq
-suffix:semicolon
-DECL|member|rcv_ack_seq
-id|__u32
-id|rcv_ack_seq
-suffix:semicolon
-DECL|member|rcv_ack_cnt
-r_int
-r_int
-id|rcv_ack_cnt
-suffix:semicolon
-multiline_comment|/* count of same ack */
-DECL|member|window_seq
-id|__u32
-id|window_seq
 suffix:semicolon
 DECL|member|fin_seq
 id|__u32
@@ -323,6 +533,14 @@ r_int
 id|users
 suffix:semicolon
 multiline_comment|/* user count */
+DECL|member|delayed_acks
+r_int
+r_char
+id|delayed_acks
+comma
+DECL|member|dup_acks
+id|dup_acks
+suffix:semicolon
 multiline_comment|/*&n;   *&t;Not all are volatile, but some are, so we&n;   * &t;might as well say they all are.&n;   */
 DECL|member|dead
 r_volatile
@@ -349,9 +567,6 @@ id|keepopen
 comma
 DECL|member|linger
 id|linger
-comma
-DECL|member|delay_acks
-id|delay_acks
 comma
 DECL|member|destroy
 id|destroy
@@ -407,21 +622,12 @@ DECL|member|send_head
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|send_head
-suffix:semicolon
-DECL|member|send_next
-r_struct
-id|sk_buff
-op_star
-r_volatile
-id|send_next
 suffix:semicolon
 DECL|member|send_tail
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|send_tail
 suffix:semicolon
 DECL|member|back_log
@@ -441,7 +647,7 @@ id|timer_list
 id|partial_timer
 suffix:semicolon
 DECL|member|retransmits
-r_int
+id|atomic_t
 id|retransmits
 suffix:semicolon
 DECL|member|write_queue
@@ -451,6 +657,14 @@ id|write_queue
 comma
 DECL|member|receive_queue
 id|receive_queue
+comma
+DECL|member|out_of_order_queue
+id|out_of_order_queue
+suffix:semicolon
+DECL|member|family
+r_int
+r_int
+id|family
 suffix:semicolon
 DECL|member|prot
 r_struct
@@ -484,42 +698,6 @@ r_int
 r_int
 id|max_unacked
 suffix:semicolon
-DECL|member|window
-r_int
-r_int
-id|window
-suffix:semicolon
-DECL|member|lastwin_seq
-id|__u32
-id|lastwin_seq
-suffix:semicolon
-multiline_comment|/* sequence number when we last updated the window we offer */
-DECL|member|high_seq
-id|__u32
-id|high_seq
-suffix:semicolon
-multiline_comment|/* sequence number when we did current fast retransmit */
-DECL|member|ato
-r_volatile
-r_int
-r_int
-id|ato
-suffix:semicolon
-multiline_comment|/* ack timeout */
-DECL|member|lrcvtime
-r_volatile
-r_int
-r_int
-id|lrcvtime
-suffix:semicolon
-multiline_comment|/* jiffies at last data rcv */
-DECL|member|idletime
-r_volatile
-r_int
-r_int
-id|idletime
-suffix:semicolon
-multiline_comment|/* jiffies at last rcv */
 DECL|member|bytes_rcv
 r_int
 r_int
@@ -533,21 +711,18 @@ id|mtu
 suffix:semicolon
 multiline_comment|/* mss negotiated in the syn&squot;s */
 DECL|member|mss
-r_volatile
 r_int
 r_int
 id|mss
 suffix:semicolon
 multiline_comment|/* current eff. mss - can change */
 DECL|member|user_mss
-r_volatile
 r_int
 r_int
 id|user_mss
 suffix:semicolon
 multiline_comment|/* mss requested by user in ioctl */
 DECL|member|max_window
-r_volatile
 r_int
 r_int
 id|max_window
@@ -568,54 +743,63 @@ r_int
 id|num
 suffix:semicolon
 DECL|member|cong_window
-r_volatile
 r_int
 r_int
 id|cong_window
 suffix:semicolon
 DECL|member|cong_count
-r_volatile
 r_int
 r_int
 id|cong_count
 suffix:semicolon
 DECL|member|packets_out
-r_volatile
-r_int
-r_int
+id|atomic_t
 id|packets_out
 suffix:semicolon
 DECL|member|shutdown
-r_volatile
 r_int
 r_int
 id|shutdown
 suffix:semicolon
-DECL|member|rtt
-r_volatile
+DECL|member|window
 r_int
 r_int
-id|rtt
+id|window
 suffix:semicolon
-DECL|member|mdev
-r_volatile
-r_int
-r_int
-id|mdev
+multiline_comment|/* used by netrom/ax.25 */
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+r_union
+(brace
+DECL|member|af_inet6
+r_struct
+id|ipv6_pinfo
+id|af_inet6
 suffix:semicolon
-DECL|member|rto
-r_volatile
-r_int
-r_int
-id|rto
+DECL|member|net_pinfo
+)brace
+id|net_pinfo
+suffix:semicolon
+macro_line|#endif
+r_union
+(brace
+DECL|member|af_tcp
+r_struct
+id|tcp_opt
+id|af_tcp
+suffix:semicolon
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+DECL|member|tp_raw
+r_struct
+id|raw6_opt
+id|tp_raw
+suffix:semicolon
+macro_line|#endif
+DECL|member|tp_pinfo
+)brace
+id|tp_pinfo
 suffix:semicolon
 multiline_comment|/*&n; *&t;currently backoff isn&squot;t used, but I&squot;m maintaining it in case&n; *&t;we want to go back to a backoff formula that needs it&n; */
-DECL|member|backoff
-r_volatile
-r_int
-r_int
-id|backoff
-suffix:semicolon
+multiline_comment|/* &n;&t;unsigned short&t;&t;backoff;&n; */
 DECL|member|err
 DECL|member|err_soft
 r_int
@@ -657,11 +841,9 @@ id|debug
 suffix:semicolon
 DECL|member|rcvbuf
 r_int
-r_int
 id|rcvbuf
 suffix:semicolon
 DECL|member|sndbuf
-r_int
 r_int
 id|sndbuf
 suffix:semicolon
@@ -889,9 +1071,51 @@ op_star
 id|sk
 )paren
 suffix:semicolon
+DECL|member|backlog_rcv
+r_int
+(paren
+op_star
+id|backlog_rcv
+)paren
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;IP protocol blocks we attach to sockets.&n; */
+macro_line|#if 0
+multiline_comment|/*&n; *&t;Inet protocol options&n; */
+r_struct
+id|inet_options
+(brace
+id|__u8
+id|version
+suffix:semicolon
+r_union
+(brace
+r_struct
+id|options
+id|opt_v4
+suffix:semicolon
+r_struct
+id|ipv6_options
+id|opt_v6
+suffix:semicolon
+)brace
+id|u
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n; *&t;IP protocol blocks we attach to sockets.&n; *&t;socket layer -&gt; transport layer interface&n; *&t;transport -&gt; network interface is defined by struct inet_proto&n; */
 DECL|struct|proto
 r_struct
 id|proto
@@ -913,54 +1137,6 @@ r_int
 id|timeout
 )paren
 suffix:semicolon
-DECL|member|build_header
-r_int
-(paren
-op_star
-id|build_header
-)paren
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-id|__u32
-id|saddr
-comma
-id|__u32
-id|daddr
-comma
-r_struct
-id|device
-op_star
-op_star
-id|dev
-comma
-r_int
-id|type
-comma
-r_struct
-id|options
-op_star
-id|opt
-comma
-r_int
-id|len
-comma
-r_int
-id|tos
-comma
-r_int
-id|ttl
-comma
-r_struct
-id|rtable
-op_star
-op_star
-id|rp
-)paren
-suffix:semicolon
 DECL|member|connect
 r_int
 (paren
@@ -974,9 +1150,9 @@ op_star
 id|sk
 comma
 r_struct
-id|sockaddr_in
+id|sockaddr
 op_star
-id|usin
+id|uaddr
 comma
 r_int
 id|addr_len
@@ -998,32 +1174,6 @@ id|sk
 comma
 r_int
 id|flags
-)paren
-suffix:semicolon
-DECL|member|queue_xmit
-r_void
-(paren
-op_star
-id|queue_xmit
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_int
-id|free
 )paren
 suffix:semicolon
 DECL|member|retransmit
@@ -1066,47 +1216,6 @@ r_struct
 id|sock
 op_star
 id|sk
-)paren
-suffix:semicolon
-DECL|member|rcv
-r_int
-(paren
-op_star
-id|rcv
-)paren
-(paren
-r_struct
-id|sk_buff
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|options
-op_star
-id|opt
-comma
-id|__u32
-id|daddr
-comma
-r_int
-r_int
-id|len
-comma
-id|__u32
-id|saddr
-comma
-r_int
-id|redo
-comma
-r_struct
-id|inet_protocol
-op_star
-id|protocol
 )paren
 suffix:semicolon
 DECL|member|select
@@ -1154,6 +1263,19 @@ r_int
 (paren
 op_star
 id|init
+)paren
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+suffix:semicolon
+DECL|member|destroy
+r_int
+(paren
+op_star
+id|destroy
 )paren
 (paren
 r_struct
@@ -1310,6 +1432,24 @@ r_int
 id|addr_len
 )paren
 suffix:semicolon
+DECL|member|backlog_rcv
+r_int
+(paren
+op_star
+id|backlog_rcv
+)paren
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
 DECL|member|max_header
 r_int
 r_int
@@ -1338,25 +1478,27 @@ DECL|member|sock_array
 r_struct
 id|sock
 op_star
+op_star
 id|sock_array
-(braket
-id|SOCK_ARRAY_SIZE
-)braket
 suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|TIME_WRITE
-mdefine_line|#define TIME_WRITE&t;1
+mdefine_line|#define TIME_WRITE&t;1&t;/* Not yet used */
+DECL|macro|TIME_RETRANS
+mdefine_line|#define TIME_RETRANS&t;2&t;/* Retransmit timer */
+DECL|macro|TIME_DACK
+mdefine_line|#define TIME_DACK&t;3&t;/* Delayed ack timer */
 DECL|macro|TIME_CLOSE
-mdefine_line|#define TIME_CLOSE&t;2
+mdefine_line|#define TIME_CLOSE&t;4
 DECL|macro|TIME_KEEPOPEN
-mdefine_line|#define TIME_KEEPOPEN&t;3
+mdefine_line|#define TIME_KEEPOPEN&t;5
 DECL|macro|TIME_DESTROY
-mdefine_line|#define TIME_DESTROY&t;4
+mdefine_line|#define TIME_DESTROY&t;6
 DECL|macro|TIME_DONE
-mdefine_line|#define TIME_DONE&t;5&t;/* Used to absorb those last few packets */
+mdefine_line|#define TIME_DONE&t;7&t;/* Used to absorb those last few packets */
 DECL|macro|TIME_PROBE0
-mdefine_line|#define TIME_PROBE0&t;6
+mdefine_line|#define TIME_PROBE0&t;8
 multiline_comment|/*&n; *&t;About 10 seconds &n; */
 DECL|macro|SOCK_DESTROY_TIME
 mdefine_line|#define SOCK_DESTROY_TIME (10*HZ)
@@ -1496,6 +1638,69 @@ id|sk
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;This might not be the most apropriate place for this two&t; &n; *&t;but since they are used by a lot of the net related code&n; *&t;at least they get declared on a include that is common to all&n; */
+DECL|function|min
+r_static
+id|__inline__
+r_int
+id|min
+c_func
+(paren
+r_int
+r_int
+id|a
+comma
+r_int
+r_int
+id|b
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|a
+OG
+id|b
+)paren
+id|a
+op_assign
+id|b
+suffix:semicolon
+r_return
+id|a
+suffix:semicolon
+)brace
+DECL|function|max
+r_static
+id|__inline__
+r_int
+id|max
+c_func
+(paren
+r_int
+r_int
+id|a
+comma
+r_int
+r_int
+id|b
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|a
+OL
+id|b
+)paren
+id|a
+op_assign
+id|b
+suffix:semicolon
+r_return
+id|a
+suffix:semicolon
+)brace
 r_extern
 r_struct
 id|sock
@@ -1545,7 +1750,7 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|put_sock
+id|inet_put_sock
 c_func
 (paren
 r_int
@@ -1997,7 +2202,7 @@ id|timer_base
 suffix:semicolon
 r_extern
 r_void
-id|delete_timer
+id|net_delete_timer
 (paren
 r_struct
 id|sock
@@ -2006,7 +2211,7 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|reset_timer
+id|net_reset_timer
 (paren
 r_struct
 id|sock

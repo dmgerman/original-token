@@ -145,6 +145,8 @@ DECL|macro|NET_AX25
 mdefine_line|#define NET_AX25        9
 DECL|macro|NET_BRIDGE
 mdefine_line|#define NET_BRIDGE&t;10
+DECL|macro|NET_IPV6
+mdefine_line|#define NET_IPV6&t;11
 multiline_comment|/* /proc/sys/net/core */
 multiline_comment|/* /proc/sys/net/ethernet */
 multiline_comment|/* /proc/sys/net/802 */
@@ -164,6 +166,13 @@ DECL|macro|NET_IPV4_ARP_CONFIRM_INTERVAL
 mdefine_line|#define NET_IPV4_ARP_CONFIRM_INTERVAL   6
 DECL|macro|NET_IPV4_ARP_CONFIRM_TIMEOUT
 mdefine_line|#define NET_IPV4_ARP_CONFIRM_TIMEOUT&t;7
+DECL|macro|NET_IPV4_TCP_VEGAS_CONG_AVOID
+mdefine_line|#define NET_IPV4_TCP_VEGAS_CONG_AVOID   8
+multiline_comment|/* /proc/sys/net/ipv6 */
+DECL|macro|NET_IPV6_FORWARDING
+mdefine_line|#define NET_IPV6_FORWARDING&t;&t;1
+DECL|macro|NET_IPV6_HOPLIMIT
+mdefine_line|#define NET_IPV6_HOPLIMIT&t;&t;2
 multiline_comment|/* /proc/sys/net/ipx */
 multiline_comment|/* /proc/sys/net/appletalk */
 multiline_comment|/* /proc/sys/net/netrom */

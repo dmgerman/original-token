@@ -1363,6 +1363,11 @@ r_char
 op_star
 id|dp
 suffix:semicolon
+id|__u32
+id|info
+op_assign
+l_int|0
+suffix:semicolon
 id|iph
 op_assign
 (paren
@@ -1667,14 +1672,9 @@ op_assign
 l_int|68
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Ugly trick to pass MTU to protocol layer.&n;&t;&t;&t;&t; * Really we should add argument &quot;info&quot; to error handler.&n;&t;&t;&t;&t; */
-id|iph-&gt;id
+id|info
 op_assign
-id|htons
-c_func
-(paren
 id|new_mtu
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1786,6 +1786,8 @@ comma
 id|icmph-&gt;code
 comma
 id|dp
+comma
+id|info
 comma
 id|iph-&gt;daddr
 comma

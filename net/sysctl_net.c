@@ -72,6 +72,14 @@ id|bridge_table
 )braket
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_IPV6
+r_extern
+id|ctl_table
+id|ipv6_table
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|variable|net_table
 id|ctl_table
 id|net_table
@@ -230,6 +238,22 @@ comma
 l_int|0555
 comma
 id|bridge_table
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_IPV6
+(brace
+id|NET_IPV6
+comma
+l_string|&quot;ipv6&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0555
+comma
+id|ipv6_table
 )brace
 comma
 macro_line|#endif

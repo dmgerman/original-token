@@ -60,10 +60,10 @@ id|inet_protocol
 id|tcp_protocol
 op_assign
 (brace
-id|tcp_rcv
+id|tcp_v4_rcv
 comma
 multiline_comment|/* TCP handler&t;&t;*/
-id|tcp_err
+id|tcp_v4_err
 comma
 multiline_comment|/* TCP error control&t;*/
 macro_line|#if defined(CONFIG_NET_IPIP) &amp;&amp; defined(CONFIG_IP_FORWARD)

@@ -8,11 +8,12 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
+macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
@@ -2531,6 +2532,10 @@ id|skb-&gt;destructor
 op_assign
 l_int|NULL
 suffix:semicolon
+id|skb-&gt;inclone
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|skb
 suffix:semicolon
@@ -2623,6 +2628,12 @@ id|skb-&gt;data_skb
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb-&gt;inclone
+)paren
 id|kfree
 c_func
 (paren
@@ -2660,12 +2671,61 @@ id|sk_buff
 op_star
 id|n
 suffix:semicolon
+r_int
+id|inbuff
+op_assign
+l_int|0
+suffix:semicolon
 id|IS_SKB
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb_tailroom
+c_func
+(paren
+id|skb
+)paren
+op_ge
+r_sizeof
+(paren
+r_struct
+id|sk_buff
+)paren
+)paren
+(brace
+id|n
+op_assign
+(paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|skb-&gt;end
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+id|skb-&gt;end
+op_sub_assign
+r_sizeof
+(paren
+r_struct
+id|sk_buff
+)paren
+suffix:semicolon
+id|inbuff
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
 id|n
 op_assign
 id|kmalloc
@@ -2689,6 +2749,7 @@ id|n
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren
@@ -2772,6 +2833,10 @@ suffix:semicolon
 id|n-&gt;users
 op_assign
 l_int|0
+suffix:semicolon
+id|n-&gt;inclone
+op_assign
+id|inbuff
 suffix:semicolon
 r_return
 id|n
@@ -2929,6 +2994,31 @@ op_plus
 id|offset
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+id|n-&gt;ipv6_hdr
+op_assign
+(paren
+r_struct
+id|ipv6hdr
+op_star
+)paren
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|skb-&gt;ipv6_hdr
+)paren
+op_plus
+id|offset
+)paren
+suffix:semicolon
+id|n-&gt;nexthop
+op_assign
+id|skb-&gt;nexthop
+suffix:semicolon
+macro_line|#endif
 id|n-&gt;saddr
 op_assign
 id|skb-&gt;saddr

@@ -58,6 +58,11 @@ id|sock
 op_star
 id|sp
 suffix:semicolon
+r_struct
+id|tcp_opt
+op_star
+id|tp
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -188,6 +193,13 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+id|tp
+op_assign
+op_amp
+(paren
+id|sp-&gt;tp_pinfo.af_tcp
+)paren
+suffix:semicolon
 id|dest
 op_assign
 id|sp-&gt;daddr
@@ -336,7 +348,7 @@ ques
 c_cond
 id|sp-&gt;write_seq
 op_minus
-id|sp-&gt;rcv_ack_seq
+id|tp-&gt;snd_una
 suffix:colon
 id|sp-&gt;wmem_alloc
 comma
@@ -345,7 +357,7 @@ op_eq
 l_int|0
 ques
 c_cond
-id|sp-&gt;acked_seq
+id|tp-&gt;rcv_nxt
 op_minus
 id|sp-&gt;copied_seq
 suffix:colon

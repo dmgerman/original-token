@@ -128,7 +128,6 @@ id|hd-&gt;minor_shift
 op_plus
 l_char|&squot;a&squot;
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
 multiline_comment|/*&n;&t; * IDE devices use multiple major numbers, but the drives&n;&t; * are named as:  {hda,hdb}, {hdc,hdd}, {hde,hdf}, {hdg,hdh}..&n;&t; * This requires special handling here.&n;&t; */
 r_switch
 c_cond
@@ -165,7 +164,6 @@ op_assign
 l_string|&quot;hd&quot;
 suffix:semicolon
 )brace
-macro_line|#endif
 id|part
 op_assign
 id|minor

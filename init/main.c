@@ -3737,6 +3737,12 @@ c_func
 id|linux_banner
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP__
 id|smp_init
 c_func

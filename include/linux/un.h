@@ -23,32 +23,5 @@ suffix:semicolon
 multiline_comment|/* pathname */
 )brace
 suffix:semicolon
-DECL|struct|cmsghdr
-r_struct
-id|cmsghdr
-(brace
-DECL|member|cmsg_len
-r_int
-r_int
-id|cmsg_len
-suffix:semicolon
-DECL|member|cmsg_level
-r_int
-id|cmsg_level
-suffix:semicolon
-DECL|member|cmsg_type
-r_int
-id|cmsg_type
-suffix:semicolon
-DECL|member|cmsg_data
-r_int
-r_char
-id|cmsg_data
-(braket
-l_int|0
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
 macro_line|#endif /* _LINUX_UN_H */
 eof

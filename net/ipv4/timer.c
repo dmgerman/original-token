@@ -16,9 +16,9 @@ macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-DECL|function|delete_timer
+DECL|function|net_delete_timer
 r_void
-id|delete_timer
+id|net_delete_timer
 (paren
 r_struct
 id|sock
@@ -56,9 +56,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|reset_timer
+DECL|function|net_reset_timer
 r_void
-id|reset_timer
+id|net_reset_timer
 (paren
 r_struct
 id|sock
@@ -73,7 +73,7 @@ r_int
 id|len
 )paren
 (brace
-id|delete_timer
+id|net_delete_timer
 (paren
 id|t
 )paren
@@ -219,7 +219,7 @@ op_logical_neg
 id|sk-&gt;dead
 )paren
 (brace
-id|reset_timer
+id|net_reset_timer
 c_func
 (paren
 id|sk
@@ -275,7 +275,7 @@ id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
 suffix:semicolon
-id|delete_timer
+id|net_delete_timer
 (paren
 id|sk
 )paren
@@ -298,7 +298,7 @@ id|sk-&gt;shutdown
 op_assign
 id|SHUTDOWN_MASK
 suffix:semicolon
-id|reset_timer
+id|net_reset_timer
 (paren
 id|sk
 comma

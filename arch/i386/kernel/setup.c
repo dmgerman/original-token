@@ -686,8 +686,13 @@ id|LOADER_TYPE
 id|initrd_start
 op_assign
 id|INITRD_START
+ques
+c_cond
+id|INITRD_START
 op_plus
 id|PAGE_OFFSET
+suffix:colon
+l_int|0
 suffix:semicolon
 id|initrd_end
 op_assign

@@ -10,23 +10,25 @@ DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
 DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7
-macro_line|#ifndef CONFIG_AX25
-macro_line|#ifndef CONFIG_TR
-macro_line|#ifndef CONFIG_NET_IPIP
+macro_line|#if !defined(CONFIG_AX25) &amp;&amp; !defined(CONFIG_TR)
+DECL|macro|LL_MAX_HEADER
+mdefine_line|#define LL_MAX_HEADER&t;32
+macro_line|#else
+macro_line|#if defined(CONFIG_AX25)
+DECL|macro|LL_MAX_HEADER
+mdefine_line|#define LL_MAX_HEADER&t;96
+macro_line|#else
+DECL|macro|LL_MAX_HEADER
+mdefine_line|#define LL_MAX_HEADER&t;48
+macro_line|#endif
+macro_line|#endif
+macro_line|#if !defined(CONFIG_NET_IPIP) &amp;&amp; &bslash;&n;    !defined(CONFIG_IPV6) &amp;&amp; !defined(CONFIG_IPV6_MODULE)
 DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;32&t;&t;/* We really need about 18 worst case .. so 32 is aligned */
+mdefine_line|#define MAX_HEADER LL_MAX_HEADER
 macro_line|#else
 DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;80&t;&t;/* We need to allow for having tunnel headers */
-macro_line|#endif  /* IPIP */
-macro_line|#else
-DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;48&t;&t;/* Token Ring header needs 40 bytes ... 48 is aligned */ 
-macro_line|#endif /* TR */
-macro_line|#else
-DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;96&t;&t;/* AX.25 + NetROM */
-macro_line|#endif /* AX25 */
+mdefine_line|#define MAX_HEADER (LL_MAX_HEADER + 48)
+macro_line|#endif
 DECL|macro|IS_MYADDR
 mdefine_line|#define IS_MYADDR&t;1&t;&t;/* address is (one of) our own&t;*/
 DECL|macro|IS_LOOPBACK
@@ -312,12 +314,25 @@ r_char
 id|addr_len
 suffix:semicolon
 multiline_comment|/* hardware address length&t;*/
+macro_line|#if 0
+id|__u32
+id|pa_addr_arr
+(braket
+l_int|4
+)braket
+suffix:semicolon
+id|__u16
+id|pa_prefix_len
+suffix:semicolon
+mdefine_line|#define pa_addr&t;&t;  pa_addr_arr[3];
+macro_line|#else
 DECL|member|pa_addr
 r_int
 r_int
 id|pa_addr
 suffix:semicolon
 multiline_comment|/* protocol address&t;&t;*/
+macro_line|#endif
 DECL|member|pa_brdaddr
 r_int
 r_int

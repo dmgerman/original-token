@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; */
+multiline_comment|/*&n; * sysctl.c: General linux system control interface&n; *&n; * Begun 24 March 1995, Stephen Tweedie&n; * Added /proc support, Dec 1995&n; * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.&n; * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.&n; * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.&n; * Dynamic registration fixes, Stephen Tweedie.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1082,7 +1082,7 @@ id|newval
 comma
 id|newlen
 comma
-id|root_table
+id|tmp-&gt;ctl_table
 comma
 op_amp
 id|context
@@ -2036,6 +2036,12 @@ r_struct
 id|proc_dir_entry
 op_star
 id|de
+comma
+op_star
+id|tmp
+suffix:semicolon
+r_int
+id|exists
 suffix:semicolon
 r_for
 c_loop
@@ -2047,6 +2053,10 @@ id|table
 op_increment
 )paren
 (brace
+id|exists
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Can&squot;t do anything without a proc name. */
 r_if
 c_cond
@@ -2166,6 +2176,62 @@ suffix:semicolon
 multiline_comment|/* Otherwise it&squot;s a subdir */
 r_else
 (brace
+multiline_comment|/* First check to see if it already exists */
+r_for
+c_loop
+(paren
+id|tmp
+op_assign
+id|root-&gt;subdir
+suffix:semicolon
+id|tmp
+suffix:semicolon
+id|tmp
+op_assign
+id|tmp-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tmp-&gt;namelen
+op_eq
+id|de-&gt;namelen
+op_logical_and
+op_logical_neg
+id|memcmp
+c_func
+(paren
+id|tmp-&gt;name
+comma
+id|de-&gt;name
+comma
+id|de-&gt;namelen
+)paren
+)paren
+(brace
+id|exists
+op_assign
+l_int|1
+suffix:semicolon
+id|kfree
+(paren
+id|de
+)paren
+suffix:semicolon
+id|de
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|exists
+)paren
+(brace
 id|de-&gt;ops
 op_assign
 op_amp
@@ -2179,10 +2245,17 @@ op_or_assign
 id|S_IFDIR
 suffix:semicolon
 )brace
+)brace
 id|table-&gt;de
 op_assign
 id|de
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|exists
+)paren
 id|proc_register_dynamic
 c_func
 (paren
@@ -2284,6 +2357,22 @@ id|de
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Don&squot;t unregister proc directories which still have&n;&t;&t;   entries... */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+(paren
+id|de-&gt;mode
+op_amp
+id|S_IFDIR
+)paren
+op_logical_and
+id|de-&gt;subdir
+)paren
+)paren
+(brace
 id|proc_unregister
 c_func
 (paren
@@ -2298,6 +2387,7 @@ c_func
 id|de
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 DECL|function|do_rw_proc

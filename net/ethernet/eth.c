@@ -16,7 +16,36 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;net/ipv6.h&gt;
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;net/ndisc.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/checksum.h&gt;
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+DECL|variable|ndisc_eth_hook
+r_int
+(paren
+op_star
+id|ndisc_eth_hook
+)paren
+(paren
+r_int
+r_char
+op_star
+comma
+r_struct
+id|device
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 DECL|function|eth_setup
 r_void
 id|eth_setup
@@ -337,19 +366,92 @@ op_star
 )paren
 id|buff
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Only ARP/IP is currently supported&n;&t; */
-r_if
+multiline_comment|/*&n;&t; *&t;Only ARP/IP and NDISC/IPv6 are currently supported&n;&t; */
+r_switch
 c_cond
 (paren
 id|eth-&gt;h_proto
-op_ne
-id|htons
+)paren
+(brace
+macro_line|#ifdef CONFIG_INET
+r_case
+id|__constant_htons
 c_func
 (paren
 id|ETH_P_IP
 )paren
+suffix:colon
+multiline_comment|/*&n;&t;&t; *&t;Try to get ARP to resolve the header.&n;&t;&t; */
+r_return
+(paren
+id|arp_find
+c_func
+(paren
+id|eth-&gt;h_dest
+comma
+id|dst
+comma
+id|dev
+comma
+id|dev-&gt;pa_addr
+comma
+id|skb
 )paren
-(brace
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+r_case
+id|__constant_htons
+c_func
+(paren
+id|ETH_P_IPV6
+)paren
+suffix:colon
+macro_line|#ifdef CONFIG_IPV6
+r_return
+(paren
+id|ndisc_eth_resolv
+c_func
+(paren
+id|eth-&gt;h_dest
+comma
+id|dev
+comma
+id|skb
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|ndisc_eth_hook
+)paren
+r_return
+(paren
+id|ndisc_eth_hook
+c_func
+(paren
+id|eth-&gt;h_dest
+comma
+id|dev
+comma
+id|skb
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif&t;
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
@@ -377,34 +479,12 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Try to get ARP to resolve the header.&n;&t; */
-macro_line|#ifdef CONFIG_INET&t; 
-r_return
-id|arp_find
-c_func
-(paren
-id|eth-&gt;h_dest
-comma
-id|dst
-comma
-id|dev
-comma
-id|dev-&gt;pa_addr
-comma
-id|skb
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-suffix:semicolon
-macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; *&t;Determine the packet&squot;s protocol ID. The rule here is that we &n; *&t;assume 802.3 if the type field is short enough to be a length.&n; *&t;This is normal practice and works for any &squot;now in use&squot; protocol.&n; */
 DECL|function|eth_type_trans

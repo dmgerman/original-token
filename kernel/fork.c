@@ -1137,7 +1137,7 @@ id|p-&gt;leader
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* process leadership doesn&squot;t inherit */
+multiline_comment|/* session leadership doesn&squot;t inherit */
 id|p-&gt;tty_old_pgrp
 op_assign
 l_int|0

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 1.13  Aug 12, 1996&n; *&n; *  Copyright (c) 1995-1996  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
-multiline_comment|/*&n; * This module provides support for the Bus Master IDE DMA function&n; * of the Intel PCI Triton I/II chipsets (i82371FB or i82371SB).&n; *&n; * Pretty much the same code will work for the OPTi &quot;Viper&quot; chipset.&n; * Look for DMA support for this in linux kernel 2.1.xx, when it appears.&n; *&n; * DMA is currently supported only for hard disk drives (not cdroms).&n; *&n; * Support for cdroms will likely be added at a later date,&n; * after broader experience has been obtained with hard disks.&n; *&n; * Up to four drives may be enabled for DMA, and the Triton chipset will&n; * (hopefully) arbitrate the PCI bus among them.  Note that the i82371 chip&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the i82371 chip.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support multi-word DMA mode2 (mword2), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (single or multi) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view modes supported&n; * by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing was done with an ASUS P55TP4XE/100 system and the following drives:&n; *&n; *   Quantum Fireball 1080A (1Gig w/83kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 works well (7.4MB/sec), despite the tiny on-drive buffer.&n; *&t;- This drive also does PIO mode4, at about the same speed as DMA mode2.&n; *&t;  An awesome drive for the price!&n; *&n; *   Fujitsu M1606TA (1Gig w/256kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 gives horrible performance (1.6MB/sec), despite the good&n; *&t;  size of the on-drive buffer and a boasted 10ms average access time.&n; *&t;- PIO mode4 was better, but peaked at a mere 4.5MB/sec.&n; *&n; *   Micropolis MC2112A (1Gig w/508kB buffer), drive pre-dates EIDE and ATA2.&n; *&t;- DMA works fine (2.2MB/sec), probably due to the large on-drive buffer.&n; *&t;- This older drive can also be tweaked for fastPIO (3.7MB/sec) by using&n; *&t;  maximum clock settings (5,4) and setting all flags except prefetch.&n; *&n; *   Western Digital AC31000H (1Gig w/128kB buffer), DMA mode1, PIO mode3.&n; *&t;- DMA does not work reliably.  The drive appears to be somewhat tardy&n; *&t;  in deasserting DMARQ at the end of a sector.  This is evident in&n; *&t;  the observation that WRITEs work most of the time, depending on&n; *&t;  cache-buffer occupancy, but multi-sector reads seldom work.&n; *&n; * Testing was done with a Gigabyte GA-586 ATE system and the following drive:&n; * (Uwe Bonnes - bon@elektron.ikp.physik.th-darmstadt.de)&n; *&n; *   Western Digital AC31600H (1.6Gig w/128kB buffer), DMA mode2, PIO mode4.&n; *&t;- much better than its 1Gig cousin, this drive is reported to work&n; *&t;  very well with DMA (7.3MB/sec).&n; *&n; * Other drives:&n; *&n; *   Maxtor 7540AV (515Meg w/32kB buffer), DMA modes mword0/sword2, PIO mode3.&n; *&t;- a budget drive, with budget performance, around 3MB/sec.&n; *&n; *   Western Digital AC2850F (814Meg w/64kB buffer), DMA mode1, PIO mode3.&n; *&t;- another &quot;caviar&quot; drive, similar to the AC31000, except that this one&n; *&t;  worked with DMA in at least one system.  Throughput is about 3.8MB/sec&n; *&t;  for both DMA and PIO.&n; *&n; *   Conner CFS850A (812Meg w/64kB buffer), DMA mode2, PIO mode4.&n; *&t;- like most Conner models, this drive proves that even a fast interface&n; *&t;  cannot improve slow media.  Both DMA and PIO peak around 3.5MB/sec.&n; *&n; *   Maxtor 71260AT (1204Meg w/256kB buffer), DMA mword0/sword2, PIO mode3.&n; *&t;- works with DMA, on some systems (but not always on others, eg. Dell),&n; *&t;giving 3-4MB/sec performance, about the same as mode3.&n; *&n; * If you have any drive models to add, email your results to:  mlord@pobox.com&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * And, yes, Intel Zappa boards really *do* use the Triton IDE ports.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * This module provides support for the Bus Master IDE DMA function&n; * of the Intel PCI Triton I/II chipsets (i82371FB or i82371SB).&n; *&n; * Pretty much the same code will work for the OPTi &quot;Viper&quot; chipset.&n; * Look for DMA support for this in linux kernel 2.1.xx, when it appears.&n; *&n; * Up to four drives may be enabled for DMA, and the Triton chipset will&n; * (hopefully) arbitrate the PCI bus among them.  Note that the i82371 chip&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the i82371 chip.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support multi-word DMA mode2 (mword2), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (single or multi) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view modes supported&n; * by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing was done with an ASUS P55TP4XE/100 system and the following drives:&n; *&n; *   Quantum Fireball 1080A (1Gig w/83kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 works well (7.4MB/sec), despite the tiny on-drive buffer.&n; *&t;- This drive also does PIO mode4, at about the same speed as DMA mode2.&n; *&t;  An awesome drive for the price!&n; *&n; *   Fujitsu M1606TA (1Gig w/256kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 gives horrible performance (1.6MB/sec), despite the good&n; *&t;  size of the on-drive buffer and a boasted 10ms average access time.&n; *&t;- PIO mode4 was better, but peaked at a mere 4.5MB/sec.&n; *&n; *   Micropolis MC2112A (1Gig w/508kB buffer), drive pre-dates EIDE and ATA2.&n; *&t;- DMA works fine (2.2MB/sec), probably due to the large on-drive buffer.&n; *&t;- This older drive can also be tweaked for fastPIO (3.7MB/sec) by using&n; *&t;  maximum clock settings (5,4) and setting all flags except prefetch.&n; *&n; *   Western Digital AC31000H (1Gig w/128kB buffer), DMA mode1, PIO mode3.&n; *&t;- DMA does not work reliably.  The drive appears to be somewhat tardy&n; *&t;  in deasserting DMARQ at the end of a sector.  This is evident in&n; *&t;  the observation that WRITEs work most of the time, depending on&n; *&t;  cache-buffer occupancy, but multi-sector reads seldom work.&n; *&n; * Testing was done with a Gigabyte GA-586 ATE system and the following drive:&n; * (Uwe Bonnes - bon@elektron.ikp.physik.th-darmstadt.de)&n; *&n; *   Western Digital AC31600H (1.6Gig w/128kB buffer), DMA mode2, PIO mode4.&n; *&t;- much better than its 1Gig cousin, this drive is reported to work&n; *&t;  very well with DMA (7.3MB/sec).&n; *&n; * Other drives:&n; *&n; *   Maxtor 7540AV (515Meg w/32kB buffer), DMA modes mword0/sword2, PIO mode3.&n; *&t;- a budget drive, with budget performance, around 3MB/sec.&n; *&n; *   Western Digital AC2850F (814Meg w/64kB buffer), DMA mode1, PIO mode3.&n; *&t;- another &quot;caviar&quot; drive, similar to the AC31000, except that this one&n; *&t;  worked with DMA in at least one system.  Throughput is about 3.8MB/sec&n; *&t;  for both DMA and PIO.&n; *&n; *   Conner CFS850A (812Meg w/64kB buffer), DMA mode2, PIO mode4.&n; *&t;- like most Conner models, this drive proves that even a fast interface&n; *&t;  cannot improve slow media.  Both DMA and PIO peak around 3.5MB/sec.&n; *&n; *   Maxtor 71260AT (1204Meg w/256kB buffer), DMA mword0/sword2, PIO mode3.&n; *&t;- works with DMA, on some systems (but not always on others, eg. Dell),&n; *&t;giving 3-4MB/sec performance, about the same as mode3.&n; *&n; * If you have any drive models to add, email your results to:  mlord@pobox.com&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * And, yes, Intel Zappa boards really *do* use the Triton IDE ports.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -285,7 +284,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* paging and tape requests have (rq-&gt;bh == NULL) */
+multiline_comment|/* paging requests have (rq-&gt;bh == NULL) */
 id|addr
 op_assign
 id|virt_to_bus
@@ -293,20 +292,6 @@ id|virt_to_bus
 id|rq-&gt;buffer
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
-r_if
-c_cond
-(paren
-id|drive-&gt;media
-op_eq
-id|ide_tape
-)paren
-id|size
-op_assign
-id|drive-&gt;tape.pc-&gt;request_transfer
-suffix:semicolon
-r_else
-macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */&t;
 id|size
 op_assign
 id|rq-&gt;nr_sectors
@@ -805,7 +790,6 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* clear status bits */
-macro_line|#ifdef CONFIG_BLK_DEV_IDEATAPI
 r_if
 c_cond
 (paren
@@ -816,7 +800,6 @@ id|ide_disk
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDEATAPI */&t;
 id|ide_set_handler
 c_func
 (paren
@@ -1457,7 +1440,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hwif-&gt;io_base
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
 op_eq
 l_int|0x1f0
 )paren
@@ -1504,7 +1490,10 @@ r_else
 r_if
 c_cond
 (paren
-id|hwif-&gt;io_base
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
 op_eq
 l_int|0x170
 )paren
@@ -1648,7 +1637,10 @@ id|stime
 r_if
 c_cond
 (paren
-id|hwif-&gt;io_base
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
 op_eq
 l_int|0x1f0
 )paren

@@ -171,6 +171,8 @@ DECL|macro|HDIO_SET_DMA
 mdefine_line|#define HDIO_SET_DMA&t;&t;0x0326&t;/* change use-dma flag */
 DECL|macro|HDIO_SET_PIO_MODE
 mdefine_line|#define HDIO_SET_PIO_MODE&t;0x0327&t;/* reconfig interface to new speed */
+DECL|macro|HDIO_SCAN_HWIF
+mdefine_line|#define HDIO_SCAN_HWIF&t;&t;0x0328&t;/* register and (re)scan interface */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct
@@ -481,7 +483,8 @@ r_char
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDE_PCMCIA
+macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 r_int
 id|ide_register
 c_func
@@ -504,8 +507,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif  /* CONFIG_BLK_DEV_IDE_PCMCIA */
-macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
+macro_line|#endif /* CONFIG_BLK_DEV_IDE || CONFIG_BLK_DEV_IDE_MODULE */
 macro_line|#endif  /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_HDREG_H */
 eof

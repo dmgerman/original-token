@@ -270,6 +270,12 @@ comma
 DECL|enumerator|PROC_NET_IP_MASQ_APP
 id|PROC_NET_IP_MASQ_APP
 comma
+DECL|enumerator|PROC_NET_RT6
+id|PROC_NET_RT6
+comma
+DECL|enumerator|PROC_NET_RT6_STATS
+id|PROC_NET_RT6_STATS
+comma
 DECL|enumerator|PROC_NET_STRIP_STATUS
 id|PROC_NET_STRIP_STATUS
 comma

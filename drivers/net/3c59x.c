@@ -3083,7 +3083,7 @@ c_func
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/* Set reciever mode: presumably accept b-case and phys addr only. */
+multiline_comment|/* Set receiver mode: presumably accept b-case and phys addr only. */
 id|set_rx_mode
 c_func
 (paren

@@ -68,6 +68,10 @@ macro_line|#ifndef SCSI_NCR_MAX_SYNC
 DECL|macro|SCSI_NCR_MAX_SYNC
 mdefine_line|#define SCSI_NCR_MAX_SYNC   (10000)
 macro_line|#endif
+macro_line|#ifndef SCSI_NCR_DEFAULT_SYNC
+DECL|macro|SCSI_NCR_DEFAULT_SYNC
+mdefine_line|#define SCSI_NCR_DEFAULT_SYNC&t;SCSI_NCR_MAX_SYNC
+macro_line|#endif
 multiline_comment|/*&n;**    The maximal bus with (in log2 byte)&n;**    (0=8 bit, 1=16 bit)&n;*/
 macro_line|#ifndef SCSI_NCR_MAX_WIDE
 DECL|macro|SCSI_NCR_MAX_WIDE
@@ -1471,11 +1475,6 @@ r_int
 id|ncr_cache
 suffix:semicolon
 multiline_comment|/* Cache test variable               */
-DECL|member|release_stage
-r_int
-id|release_stage
-suffix:semicolon
-multiline_comment|/* Synchronisation stage on release  */
 DECL|member|waiting_list
 id|Scsi_Cmnd
 op_star
@@ -1483,6 +1482,11 @@ id|waiting_list
 suffix:semicolon
 multiline_comment|/* Waiting list header for commands  */
 multiline_comment|/* that we can&squot;t put into the squeue */
+DECL|member|release_stage
+id|u_char
+id|release_stage
+suffix:semicolon
+multiline_comment|/* Synchronisation stage on release  */
 multiline_comment|/*-----------------------------------------------&n;&t;**&t;Added field to support differences&n;&t;**&t;between ncr chips.&n;&t;**&t;sv_xxx are some io register bit value at start-up and&n;&t;**&t;so assumed to have been set by the sdms bios.&n;&t;**&t;uf_xxx are the bit fields of io register that will keep &n;&t;**&t;the features used by the driver.&n;&t;**-----------------------------------------------&n;&t;*/
 DECL|member|device_id
 id|u_short
@@ -8844,6 +8848,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*---------------------------------------------------&n;&t;**&n;&t;**&t;timestamp&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
+macro_line|#ifdef SCSI_NCR_PROFILE
 id|bzero
 (paren
 op_amp
@@ -8860,6 +8865,7 @@ id|cp-&gt;phys.header.stamp.start
 op_assign
 id|jiffies
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*----------------------------------------------------&n;&t;**&n;&t;**&t;Get device quirks from a speciality table.&n;&t;**&n;&t;**&t;@GENSCSI@&n;&t;**&t;This should be a part of the device table&n;&t;**&t;in &quot;scsi_conf.c&quot;.&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
 r_if
 c_cond
@@ -12438,7 +12444,7 @@ id|usrsync
 op_assign
 l_int|255
 suffix:semicolon
-macro_line|#ifndef SCSI_NCR_FORCE_ASYNCHRONOUS
+macro_line|#if defined(SCSI_NCR_DEFAULT_SYNC) &amp;&amp; SCSI_NCR_DEFAULT_SYNC != 0
 r_if
 c_cond
 (paren
@@ -12452,7 +12458,7 @@ id|period
 op_assign
 l_int|1000000
 op_div
-id|SCSI_NCR_MAX_SYNC
+id|SCSI_NCR_DEFAULT_SYNC
 suffix:semicolon
 multiline_comment|/* ns = 10e6 / kHz */
 r_if
@@ -13946,6 +13952,7 @@ id|SIGP
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef undef
 r_if
 c_cond
 (paren
@@ -13997,6 +14004,7 @@ op_assign
 id|thistime
 suffix:semicolon
 )brace
+macro_line|#endif /* undef */
 multiline_comment|/*----------------------------------------------------&n;&t;&t;**&n;&t;&t;**&t;should handle ccb timeouts&n;&t;&t;**&t;Let the middle scsi driver manage timeouts.&n;&t;&t;**----------------------------------------------------&n;&t;&t;*/
 r_for
 c_loop
@@ -19802,43 +19810,57 @@ id|cmd
 )paren
 (brace
 r_struct
-id|dsb
+id|scr_tblmove
 op_star
-id|phys
-op_assign
-op_amp
-id|cp-&gt;phys
+id|data
 suffix:semicolon
-id|u_short
+r_int
 id|segment
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|use_sg
+op_assign
+(paren
+r_int
+)paren
+id|cmd-&gt;use_sg
+suffix:semicolon
+id|bzero
+(paren
+id|cp-&gt;phys.data
+comma
+r_sizeof
+(paren
+id|cp-&gt;phys.data
+)paren
+)paren
+suffix:semicolon
+id|data
+op_assign
+id|cp-&gt;phys.data
 suffix:semicolon
 id|cp-&gt;data_len
 op_assign
 l_int|0
 suffix:semicolon
-id|bzero
-(paren
-op_amp
-id|phys-&gt;data
-comma
-r_sizeof
-(paren
-id|phys-&gt;data
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|cmd-&gt;use_sg
+id|use_sg
 )paren
 (brace
-id|phys-&gt;data
+r_if
+c_cond
+(paren
+id|cmd-&gt;request_bufflen
+)paren
+(brace
+id|data
 (braket
-id|segment
+l_int|0
 )braket
 dot
 id|addr
@@ -19849,9 +19871,9 @@ c_func
 id|cmd-&gt;request_buffer
 )paren
 suffix:semicolon
-id|phys-&gt;data
+id|data
 (braket
-id|segment
+l_int|0
 )braket
 dot
 id|size
@@ -19859,29 +19881,25 @@ op_assign
 id|cmd-&gt;request_bufflen
 suffix:semicolon
 id|cp-&gt;data_len
-op_add_assign
-id|phys-&gt;data
+op_assign
+id|data
 (braket
-id|segment
+l_int|0
 )braket
 dot
 id|size
 suffix:semicolon
 id|segment
-op_increment
-suffix:semicolon
-r_return
-id|segment
+op_assign
+l_int|1
 suffix:semicolon
 )brace
-r_while
-c_loop
+)brace
+r_else
+r_if
+c_cond
 (paren
-id|segment
-OL
-id|cmd-&gt;use_sg
-op_logical_and
-id|segment
+id|use_sg
 OL
 id|MAX_SCATTER
 )paren
@@ -19898,7 +19916,15 @@ op_star
 )paren
 id|cmd-&gt;buffer
 suffix:semicolon
-id|phys-&gt;data
+r_while
+c_loop
+(paren
+id|segment
+OL
+id|use_sg
+)paren
+(brace
+id|data
 (braket
 id|segment
 )braket
@@ -19916,7 +19942,7 @@ dot
 id|address
 )paren
 suffix:semicolon
-id|phys-&gt;data
+id|data
 (braket
 id|segment
 )braket
@@ -19932,7 +19958,7 @@ id|length
 suffix:semicolon
 id|cp-&gt;data_len
 op_add_assign
-id|phys-&gt;data
+id|data
 (braket
 id|segment
 )braket
@@ -19943,15 +19969,15 @@ op_increment
 id|segment
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
 r_return
-id|segment
-OL
-id|cmd-&gt;use_sg
-ques
-c_cond
 op_minus
 l_int|1
-suffix:colon
+suffix:semicolon
+)brace
+r_return
 id|segment
 suffix:semicolon
 )brace

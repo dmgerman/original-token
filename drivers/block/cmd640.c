@@ -1284,7 +1284,10 @@ id|ide_generic
 r_if
 c_cond
 (paren
-id|hwif-&gt;io_base
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
 op_eq
 l_int|0x1f0
 )paren
@@ -1296,7 +1299,10 @@ r_else
 r_if
 c_cond
 (paren
-id|hwif-&gt;io_base
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
 op_eq
 l_int|0x170
 )paren
@@ -2400,20 +2406,13 @@ id|d.cycle_time
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;%s: selected cmd640 PIO mode%d (%dns) %s/IORDY%s&quot;
+l_string|&quot;%s: selected cmd640 PIO mode%d (%dns)%s&quot;
 comma
 id|drive-&gt;name
 comma
 id|d.pio_mode
 comma
 id|d.cycle_time
-comma
-id|d.use_iordy
-ques
-c_cond
-l_string|&quot;w&quot;
-suffix:colon
-l_string|&quot;wo&quot;
 comma
 id|d.overridden
 ques

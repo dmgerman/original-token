@@ -466,7 +466,7 @@ suffix:semicolon
 r_int
 id|mtime
 op_assign
-id|finfo-&gt;mtime
+id|inode-&gt;i_mtime
 suffix:semicolon
 r_int
 id|file_id

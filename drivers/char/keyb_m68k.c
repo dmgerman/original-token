@@ -1893,12 +1893,15 @@ DECL|macro|A_TILDE
 mdefine_line|#define A_TILDE  &squot;~&squot;
 DECL|macro|A_DIAER
 mdefine_line|#define A_DIAER  &squot;&quot;&squot;
+DECL|macro|A_CEDIL
+mdefine_line|#define A_CEDIL  &squot;,&squot;
 DECL|variable|ret_diacr
 r_static
 r_int
 r_char
 id|ret_diacr
 (braket
+id|NR_DEAD
 )braket
 op_assign
 (brace
@@ -1911,6 +1914,8 @@ comma
 id|A_TILDE
 comma
 id|A_DIAER
+comma
+id|A_CEDIL
 )brace
 suffix:semicolon
 multiline_comment|/* If a dead key pressed twice, output a character corresponding to it, */

@@ -86,6 +86,112 @@ suffix:semicolon
 multiline_comment|/* 4.4 BSD item we dont use      */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;POSIX 1003.1g - ancillary data object information&n; *&t;Ancillary data consits of a sequence of pairs of&n; *&t;(cmsghdr, cmsg_data[])&n; */
+DECL|struct|cmsghdr
+r_struct
+id|cmsghdr
+(brace
+DECL|member|cmsg_len
+r_int
+id|cmsg_len
+suffix:semicolon
+multiline_comment|/* data byte count, including hdr */
+DECL|member|cmsg_level
+r_int
+id|cmsg_level
+suffix:semicolon
+multiline_comment|/* originating protocol */
+DECL|member|cmsg_type
+r_int
+id|cmsg_type
+suffix:semicolon
+multiline_comment|/* protocol-specific type */
+DECL|member|cmsg_data
+r_int
+r_char
+id|cmsg_data
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;Ancilliary data object information MACROS&n; *&t;Table 5-14 of POSIX 1003.1g&n; */
+DECL|macro|CMSG_DATA
+mdefine_line|#define CMSG_DATA(cmsg)&t;&t;cmsg-&gt;cmsg_data
+DECL|macro|CMSG_NXTHDR
+mdefine_line|#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr(mhdr, cmsg)
+DECL|macro|CMSG_FIRST
+mdefine_line|#define CMSG_FIRST(mhdr)&t;((struct cmsghdr *) (mhdr)-&gt;msg_control)
+DECL|function|cmsg_nxthdr
+r_extern
+id|__inline__
+r_struct
+id|cmsghdr
+op_star
+id|cmsg_nxthdr
+c_func
+(paren
+r_struct
+id|msghdr
+op_star
+id|mhdr
+comma
+r_struct
+id|cmsghdr
+op_star
+id|cmsg
+)paren
+(brace
+r_void
+op_star
+id|ptr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmsg-&gt;cmsg_len
+OL
+r_sizeof
+(paren
+r_struct
+id|cmsghdr
+)paren
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|ptr
+op_assign
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|cmsg
+)paren
+op_plus
+id|cmsg-&gt;cmsg_len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ptr
+op_ge
+id|mhdr-&gt;msg_control
+op_plus
+id|mhdr-&gt;msg_controllen
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+r_return
+id|ptr
+suffix:semicolon
+)brace
 multiline_comment|/* Control Messages */
 DECL|macro|SCM_RIGHTS
 mdefine_line|#define SCM_RIGHTS&t;&t;1
@@ -172,6 +278,12 @@ mdefine_line|#define MSG_PROXY&t;16&t;/* Supply or ask second address. */
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_IP
 mdefine_line|#define SOL_IP&t;&t;0
+DECL|macro|SOL_IPV6
+mdefine_line|#define SOL_IPV6&t;41
+DECL|macro|SOL_ICMPV6
+mdefine_line|#define SOL_ICMPV6&t;58
+DECL|macro|SOL_RAW
+mdefine_line|#define SOL_RAW&t;&t;255
 DECL|macro|SOL_IPX
 mdefine_line|#define SOL_IPX&t;&t;256
 DECL|macro|SOL_AX25
@@ -251,6 +363,54 @@ id|iov
 comma
 r_int
 id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|memcpy_fromiovecend
+c_func
+(paren
+r_int
+r_char
+op_star
+id|kdata
+comma
+r_struct
+id|iovec
+op_star
+id|iov
+comma
+r_int
+id|offset
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|csum_partial_copy_fromiovecend
+c_func
+(paren
+r_int
+r_char
+op_star
+id|kdata
+comma
+r_struct
+id|iovec
+op_star
+id|iov
+comma
+r_int
+id|offset
+comma
+r_int
+id|len
+comma
+r_int
+id|csum
 )paren
 suffix:semicolon
 r_extern

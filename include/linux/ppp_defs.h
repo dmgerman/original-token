@@ -37,6 +37,8 @@ DECL|macro|PPP_VJC_COMP
 mdefine_line|#define&t;PPP_VJC_COMP&t;0x2d&t;/* VJ compressed TCP */
 DECL|macro|PPP_VJC_UNCOMP
 mdefine_line|#define&t;PPP_VJC_UNCOMP&t;0x2f&t;/* VJ uncompressed TCP */
+DECL|macro|PPP_IPV6
+mdefine_line|#define PPP_IPV6&t;0x57&t;/* Internet Protocol Version 6 */
 DECL|macro|PPP_COMP
 mdefine_line|#define PPP_COMP&t;0xfd&t;/* compressed packet */
 DECL|macro|PPP_IPCP

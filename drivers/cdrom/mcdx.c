@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MITSUMI_X_CDROM_MAJOR

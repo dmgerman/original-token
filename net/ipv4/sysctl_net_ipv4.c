@@ -1,6 +1,28 @@
 multiline_comment|/* -*- linux-c -*-&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;net/tcp.h&gt;
+multiline_comment|/*&n; *&t;TCP configuration parameters&n; */
+DECL|macro|TCP_PMTU_DISC
+mdefine_line|#define TCP_PMTU_DISC&t;0x00000001&t;/* perform PMTU discovery&t;  */
+DECL|macro|TCP_CONG_AVOID
+mdefine_line|#define TCP_CONG_AVOID&t;0x00000002&t;/* congestion avoidance algorithm */
+DECL|macro|TCP_DELAY_ACKS
+mdefine_line|#define TCP_DELAY_ACKS&t;0x00000003&t;/* delayed ack stategy&t;&t;  */
+macro_line|#if 0
+r_static
+r_int
+id|boolean_min
+op_assign
+l_int|0
+suffix:semicolon
+r_static
+r_int
+id|boolean_max
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* From arp.c */
 r_extern
 r_int
@@ -29,6 +51,10 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_arp_confirm_timeout
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_tcp_vegas_cong_avoidance
 suffix:semicolon
 DECL|variable|ipv4_table
 id|ctl_table
@@ -170,6 +196,59 @@ l_string|&quot;arp_confirm_timeout&quot;
 comma
 op_amp
 id|sysctl_arp_confirm_timeout
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+macro_line|#if 0
+(brace
+id|TCP_PMTU_DISC
+comma
+l_string|&quot;tcp_pmtu_discovery&quot;
+comma
+op_amp
+id|ipv4_pmtu_discovery
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+comma
+op_amp
+id|sysctl_intvec_minmax
+comma
+op_amp
+id|boolean_min
+comma
+op_amp
+id|boolean_max
+)brace
+comma
+macro_line|#endif
+(brace
+id|NET_IPV4_TCP_VEGAS_CONG_AVOID
+comma
+l_string|&quot;tcp_vegas_cong_avoid&quot;
+comma
+op_amp
+id|sysctl_tcp_vegas_cong_avoidance
 comma
 r_sizeof
 (paren

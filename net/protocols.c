@@ -11,7 +11,20 @@ macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#endif
 macro_line|#ifdef&t;CONFIG_INET
 macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#ifdef&t;CONFIG_IPV6
+r_extern
+r_void
+id|inet6_proto_init
+c_func
+(paren
+r_struct
+id|net_proto
+op_star
+id|pro
+)paren
+suffix:semicolon
 macro_line|#endif
+macro_line|#endif&t;/* INET */
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 macro_line|#include &lt;net/ipxcall.h&gt;
 macro_line|#include &lt;net/p8022call.h&gt;
@@ -119,6 +132,15 @@ id|inet_proto_init
 )brace
 comma
 multiline_comment|/* TCP/IP&t;&t;&t;*/
+macro_line|#ifdef&t;CONFIG_IPV6
+(brace
+l_string|&quot;INET6&quot;
+comma
+id|inet6_proto_init
+)brace
+comma
+multiline_comment|/* IPv6&t;*/
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef  CONFIG_IPX
 (brace

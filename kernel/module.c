@@ -17,7 +17,6 @@ id|module
 id|kernel_module
 suffix:semicolon
 DECL|variable|module_list
-r_static
 r_struct
 id|module
 op_star
@@ -376,6 +375,14 @@ id|mp-&gt;cleanup
 op_assign
 l_int|NULL
 suffix:semicolon
+id|mp-&gt;exceptinfo.start
+op_assign
+l_int|NULL
+suffix:semicolon
+id|mp-&gt;exceptinfo.stop
+op_assign
+l_int|NULL
+suffix:semicolon
 op_star
 (paren
 r_int
@@ -694,9 +701,31 @@ r_int
 id|rt.cleanup
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rt.signature
+op_ne
+id|MODULE_2_1_7_SIG
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Older insmod used with kernel 2.1.7 +&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|mp-&gt;cleanup
 op_assign
 id|rt.cleanup
+suffix:semicolon
+id|mp-&gt;exceptinfo
+op_assign
+id|rt.exceptinfo
 suffix:semicolon
 multiline_comment|/* update kernel symbol table */
 r_if

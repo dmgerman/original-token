@@ -183,6 +183,21 @@ op_star
 id|ip_hdr
 suffix:semicolon
 multiline_comment|/* For IPPROTO_RAW &t;&t;&t;&t;*/
+macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
+DECL|member|ipv6_hdr
+r_struct
+id|ipv6hdr
+op_star
+id|ipv6_hdr
+suffix:semicolon
+multiline_comment|/* &n;&t; *&t;It would be inefficient to store the nexthop address in every&n;&t; *&t;skb. Instead we store a pointer to the respective neighbour&n;&t; *&t;cache entry. This might make ndisc cache management harder.&n;&t; */
+DECL|member|nexthop
+r_struct
+id|neighbour
+op_star
+id|nexthop
+suffix:semicolon
+macro_line|#endif&t;&t;
 DECL|member|len
 r_int
 r_int
@@ -286,6 +301,8 @@ DECL|macro|PACKET_MULTICAST
 mdefine_line|#define PACKET_MULTICAST&t;2&t;&t;/* To group&t;&t;&t;&t;&t;*/
 DECL|macro|PACKET_OTHERHOST
 mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;/* To someone else &t;&t;&t;&t;*/
+DECL|macro|PACKET_NDISC
+mdefine_line|#define PACKET_NDISC&t;&t;17&t;&t;/* Outgoing NDISC packet&t;&t;&t;*/
 DECL|member|users
 r_int
 r_int
@@ -362,6 +379,11 @@ id|__u16
 id|redirport
 suffix:semicolon
 multiline_comment|/* Redirect port&t;&t;&t;&t;*/
+DECL|member|inclone
+id|__u16
+id|inclone
+suffix:semicolon
+multiline_comment|/* Inline clone&t;*/
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_SKB_LARGE

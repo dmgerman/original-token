@@ -44,6 +44,13 @@ id|aux_device_present
 comma
 id|kbd_read_mask
 suffix:semicolon
+macro_line|#ifdef __i386__
+r_extern
+r_struct
+id|drive_info_struct
+id|drive_info
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -686,6 +693,20 @@ c_func
 id|resetup_one_dev
 )paren
 comma
+id|X
+c_func
+(paren
+id|unplug_device
+)paren
+comma
+macro_line|#ifdef __i386__
+id|X
+c_func
+(paren
+id|drive_info
+)paren
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL&t;
 multiline_comment|/* Module creation of serial units */
 id|X
@@ -812,6 +833,36 @@ id|X
 c_func
 (paren
 id|unregister_sysctl_table
+)paren
+comma
+id|X
+c_func
+(paren
+id|sysctl_string
+)paren
+comma
+id|X
+c_func
+(paren
+id|sysctl_intvec
+)paren
+comma
+id|X
+c_func
+(paren
+id|proc_dostring
+)paren
+comma
+id|X
+c_func
+(paren
+id|proc_dointvec
+)paren
+comma
+id|X
+c_func
+(paren
+id|proc_dointvec_minmax
 )paren
 comma
 multiline_comment|/* interrupt handling */
@@ -1134,6 +1185,12 @@ c_func
 id|_ctype
 )paren
 comma
+id|X
+c_func
+(paren
+id|secure_tcp_sequence_number
+)paren
+comma
 multiline_comment|/* Signal interfaces */
 id|X
 c_func
@@ -1344,20 +1401,6 @@ c_func
 id|kbd_read_mask
 )paren
 comma
-macro_line|#ifdef CONFIG_BLK_DEV_IDE_PCMCIA
-id|X
-c_func
-(paren
-id|ide_register
-)paren
-comma
-id|X
-c_func
-(paren
-id|ide_unregister
-)paren
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_MD
 id|X
 c_func

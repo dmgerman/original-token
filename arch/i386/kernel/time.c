@@ -6,9 +6,12 @@ macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1485,6 +1488,60 @@ id|do_gettimeoffset
 op_assign
 id|do_fast_gettimeoffset
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|x86_vendor_id
+comma
+l_string|&quot;AuthenticAMD&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|x86
+op_eq
+l_int|5
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|x86_model
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* turn on cycle counters during power down */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot; movl $0x83, %%ecx &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;rdmsr &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;orl $1,%%eax &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;wrmsr &bslash;n &quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;ax&quot;
+comma
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;dx&quot;
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
 multiline_comment|/* read Pentium cycle counter */
 id|__asm__
 c_func

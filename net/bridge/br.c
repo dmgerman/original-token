@@ -1073,7 +1073,7 @@ id|port_no
 dot
 id|path_cost
 )paren
-op_eq
+OL
 (paren
 id|port_info
 (braket

@@ -329,6 +329,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|DEC
+comma
+id|DEC_21152_AA
+comma
+l_string|&quot;DC21152-AA&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|CIRRUS
 comma
 id|CIRRUS_5430

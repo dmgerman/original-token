@@ -65,6 +65,9 @@ DECL|macro|UART_FCR6_T_TRIGGER_24
 mdefine_line|#define UART_FCR6_T_TRIGGER_24  0x20 /* Mask for transmit trigger set at 24 */
 DECL|macro|UART_FCR6_T_TRIGGER_30
 mdefine_line|#define UART_FCR6_T_TRIGGER_30&t;0x30 /* Mask for transmit trigger set at 30 */
+multiline_comment|/* TI 16750 definitions */
+DECL|macro|UART_FCR7_64BYTE
+mdefine_line|#define UART_FCR7_64BYTE&t;0x20 /* Go into 64 byte mode */
 multiline_comment|/*&n; * These are the definitions for the Line Control Register&n; * &n; * Note: if the word length is 5 bits (UART_LCR_WLEN5), then setting &n; * UART_LCR_STOP will select 1.5 stop bits, not 2 stop bits.&n; */
 DECL|macro|UART_LCR_DLAB
 mdefine_line|#define UART_LCR_DLAB&t;0x80&t;/* Divisor latch access bit */
@@ -123,6 +126,9 @@ DECL|macro|UART_IER_THRI
 mdefine_line|#define UART_IER_THRI&t;0x02&t;/* Enable Transmitter holding register int. */
 DECL|macro|UART_IER_RDI
 mdefine_line|#define UART_IER_RDI&t;0x01&t;/* Enable receiver data interrupt */
+multiline_comment|/*&n; * Sleep mode for ST16650 and TI16750.&n; * Note that for 16650, EFR-bit 4 must be selected as well.&n; */
+DECL|macro|UART_IERX_SLEEP
+mdefine_line|#define UART_IERX_SLEEP  0x10&t;/* Enable sleep mode */
 multiline_comment|/*&n; * These are the definitions for the Modem Control Register&n; */
 DECL|macro|UART_MCR_LOOP
 mdefine_line|#define UART_MCR_LOOP&t;0x10&t;/* Enable loopback test mode */
@@ -160,8 +166,8 @@ DECL|macro|UART_EFR_RTS
 mdefine_line|#define UART_EFR_RTS&t;0x40&t;/* RTS flow control */
 DECL|macro|UART_EFR_SCD
 mdefine_line|#define UART_EFR_SCD&t;0x20&t;/* Special character detect */
-DECL|macro|UART_EFR_ENI
-mdefine_line|#define UART_EFR_ENI&t;0x10&t;/* Enhanced Interrupt */
+DECL|macro|UART_EFR_ECB
+mdefine_line|#define UART_EFR_ECB&t;0x10&t;/* Enhanced control bit */
 multiline_comment|/*&n; * the low four bits control software flow control&n; */
 macro_line|#endif /* _LINUX_SERIAL_REG_H */
 eof

@@ -432,7 +432,6 @@ r_int
 id|ioaddr
 )paren
 (brace
-macro_line|#ifndef MODULE
 r_const
 r_char
 op_star
@@ -810,7 +809,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif /* !MODULE */
 r_return
 l_int|0
 suffix:semicolon

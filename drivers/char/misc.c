@@ -103,6 +103,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|wdt_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|pcwatchdog_init
 c_func
 (paren
@@ -764,7 +772,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
+macro_line|#ifdef CONFIG_WDT
+id|wdt_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PCWATCHDOG
 id|pcwatchdog_init
 c_func
