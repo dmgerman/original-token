@@ -1749,6 +1749,10 @@ id|ISA_DMA_THRESHOLD
 (brace
 id|bounce_buffer
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|scsi_malloc
 c_func
 (paren
@@ -2580,6 +2584,10 @@ l_int|10
 (brace
 id|tmp
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|scsi_malloc
 c_func
 (paren

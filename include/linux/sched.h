@@ -1502,6 +1502,7 @@ op_star
 id|sem
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * These are not yet interrupt-safe&n; */
 DECL|function|down
 r_extern
 r_inline

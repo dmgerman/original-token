@@ -1,8 +1,26 @@
 macro_line|#ifndef _LINUX_VM86_H
 DECL|macro|_LINUX_VM86_H
 mdefine_line|#define _LINUX_VM86_H
+DECL|macro|TF_MASK
+mdefine_line|#define TF_MASK&t;&t;0x00000100
+DECL|macro|IF_MASK
+mdefine_line|#define IF_MASK&t;&t;0x00000200
+DECL|macro|IOPL_MASK
+mdefine_line|#define IOPL_MASK&t;0x00003000
+DECL|macro|NT_MASK
+mdefine_line|#define NT_MASK&t;&t;0x00004000
 DECL|macro|VM_MASK
-mdefine_line|#define VM_MASK 0x00020000
+mdefine_line|#define VM_MASK&t;&t;0x00020000
+DECL|macro|AC_MASK
+mdefine_line|#define AC_MASK&t;&t;0x00040000
+DECL|macro|BIOSSEG
+mdefine_line|#define BIOSSEG&t;&t;0x0f000
+DECL|macro|CPU_286
+mdefine_line|#define CPU_286&t;&t;2
+DECL|macro|CPU_386
+mdefine_line|#define CPU_386&t;&t;3
+DECL|macro|CPU_486
+mdefine_line|#define CPU_486&t;&t;4
 multiline_comment|/*&n; * This is the stack-layout when we have done a &quot;SAVE_ALL&quot; from vm86&n; * mode - the main change is that the old segment descriptors aren&squot;t&n; * useful any more and are forced to be zero by the kernel (and the&n; * hardware when a trap occurs), and the real segment descriptors are&n; * at the end of the structure. Look at ptrace.h to see the &quot;normal&quot;&n; * setup.&n; */
 DECL|struct|vm86_regs
 r_struct
@@ -62,8 +80,12 @@ r_int
 id|eip
 suffix:semicolon
 DECL|member|cs
+DECL|member|__csh
+r_int
 r_int
 id|cs
+comma
+id|__csh
 suffix:semicolon
 DECL|member|eflags
 r_int
@@ -74,25 +96,45 @@ r_int
 id|esp
 suffix:semicolon
 DECL|member|ss
+DECL|member|__ssh
+r_int
 r_int
 id|ss
+comma
+id|__ssh
 suffix:semicolon
 multiline_comment|/*&n; * these are specific to v86 mode:&n; */
 DECL|member|es
+DECL|member|__esh
+r_int
 r_int
 id|es
+comma
+id|__esh
 suffix:semicolon
 DECL|member|ds
+DECL|member|__dsh
+r_int
 r_int
 id|ds
+comma
+id|__dsh
 suffix:semicolon
 DECL|member|fs
+DECL|member|__fsh
+r_int
 r_int
 id|fs
+comma
+id|__fsh
 suffix:semicolon
 DECL|member|gs
+DECL|member|__gsh
+r_int
 r_int
 id|gs
+comma
+id|__gsh
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -115,10 +157,54 @@ r_int
 r_int
 id|screen_bitmap
 suffix:semicolon
+DECL|member|v_eflags
+r_int
+r_int
+id|v_eflags
+suffix:semicolon
+DECL|member|cpu_type
+r_int
+r_int
+id|cpu_type
+suffix:semicolon
+DECL|member|return_if_iflag
+r_int
+r_int
+id|return_if_iflag
+suffix:semicolon
+DECL|member|int_revectored
+r_int
+r_char
+id|int_revectored
+(braket
+l_int|0x100
+)braket
+suffix:semicolon
+DECL|member|int21_revectored
+r_int
+r_char
+id|int21_revectored
+(braket
+l_int|0x100
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * flags masks&n; */
 DECL|macro|VM86_SCREEN_BITMAP
 mdefine_line|#define VM86_SCREEN_BITMAP 1
+macro_line|#ifdef __KERNEL__
+r_void
+id|handle_vm86_fault
+c_func
+(paren
+r_struct
+id|vm86_regs
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

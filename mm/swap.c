@@ -2477,7 +2477,7 @@ id|order
 suffix:semicolon
 )brace
 DECL|macro|EXPAND
-mdefine_line|#define EXPAND(addr,low,high) &bslash;&n;do { unsigned long size = PAGE_SIZE &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;high--; size &gt;&gt;= 1; cli(); &bslash;&n;&t;&t;add_mem_queue(free_area_list+high, addr); &bslash;&n;&t;&t;mark_used((unsigned long) addr, high); &bslash;&n;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;addr = (void *) (size + (unsigned long) addr); &bslash;&n;&t;} mem_map[MAP_NR((unsigned long) addr)] = 1; &bslash;&n;} while (0)
+mdefine_line|#define EXPAND(addr,low,high) &bslash;&n;do { unsigned long size = PAGE_SIZE &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;high--; size &gt;&gt;= 1; cli(); &bslash;&n;&t;&t;add_mem_queue(free_area_list+high, addr); &bslash;&n;&t;&t;mark_used((unsigned long) addr, high); &bslash;&n;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;addr = (struct mem_list *) (size + (unsigned long) addr); &bslash;&n;&t;} mem_map[MAP_NR((unsigned long) addr)] = 1; &bslash;&n;} while (0)
 DECL|function|__get_free_pages
 r_int
 r_int

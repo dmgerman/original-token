@@ -3,6 +3,8 @@ macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 DECL|macro|X
 mdefine_line|#define X(name)&t;{ (void *) &amp;name, &quot;_&quot; #name }
 macro_line|#ifdef CONFIG_FTAPE
@@ -42,6 +44,106 @@ id|symbol_table
 )braket
 op_assign
 (brace
+multiline_comment|/* process memory management */
+id|X
+c_func
+(paren
+id|wp_works_ok
+)paren
+comma
+id|X
+c_func
+(paren
+id|__verify_write
+)paren
+comma
+id|X
+c_func
+(paren
+id|do_mmap
+)paren
+comma
+id|X
+c_func
+(paren
+id|do_munmap
+)paren
+comma
+multiline_comment|/* internal kernel memory management */
+id|X
+c_func
+(paren
+id|__get_free_pages
+)paren
+comma
+id|X
+c_func
+(paren
+id|free_pages
+)paren
+comma
+id|X
+c_func
+(paren
+id|kmalloc
+)paren
+comma
+id|X
+c_func
+(paren
+id|kfree_s
+)paren
+comma
+id|X
+c_func
+(paren
+id|vmalloc
+)paren
+comma
+id|X
+c_func
+(paren
+id|vfree
+)paren
+comma
+multiline_comment|/* filesystem internal functions */
+id|X
+c_func
+(paren
+id|getname
+)paren
+comma
+id|X
+c_func
+(paren
+id|putname
+)paren
+comma
+id|X
+c_func
+(paren
+id|__iget
+)paren
+comma
+id|X
+c_func
+(paren
+id|iput
+)paren
+comma
+id|X
+c_func
+(paren
+id|namei
+)paren
+comma
+id|X
+c_func
+(paren
+id|lnamei
+)paren
+comma
+multiline_comment|/* device registration */
 id|X
 c_func
 (paren
@@ -66,6 +168,26 @@ c_func
 id|unregister_blkdev
 )paren
 comma
+multiline_comment|/* interrupt handling */
+id|X
+c_func
+(paren
+id|request_irq
+)paren
+comma
+id|X
+c_func
+(paren
+id|free_irq
+)paren
+comma
+multiline_comment|/* process management */
+id|X
+c_func
+(paren
+id|wake_up
+)paren
+comma
 id|X
 c_func
 (paren
@@ -75,13 +197,7 @@ comma
 id|X
 c_func
 (paren
-id|wp_works_ok
-)paren
-comma
-id|X
-c_func
-(paren
-id|__verify_write
+id|schedule
 )paren
 comma
 id|X
@@ -99,13 +215,26 @@ comma
 id|X
 c_func
 (paren
+id|xtime
+)paren
+comma
+multiline_comment|/* misc */
+id|X
+c_func
+(paren
 id|printk
 )paren
 comma
 id|X
 c_func
 (paren
-id|schedule
+id|sprintf
+)paren
+comma
+id|X
+c_func
+(paren
+id|vsprintf
 )paren
 comma
 macro_line|#ifdef CONFIG_FTAPE

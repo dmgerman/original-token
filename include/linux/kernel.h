@@ -3,6 +3,7 @@ DECL|macro|_LINUX_KERNEL_H
 mdefine_line|#define _LINUX_KERNEL_H
 multiline_comment|/*&n; * &squot;kernel.h&squot; contains some often-used function prototypes etc&n; */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 DECL|macro|INT_MAX
 mdefine_line|#define INT_MAX&t;&t;((int)(~0U&gt;&gt;1))
@@ -92,6 +93,7 @@ id|error_code
 )paren
 id|ATTRIB_NORET
 suffix:semicolon
+r_extern
 r_int
 r_int
 id|simple_strtoul
@@ -109,6 +111,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|sprintf
 c_func
@@ -127,6 +130,23 @@ dot
 dot
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|vsprintf
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_const
+r_char
+op_star
+comma
+id|va_list
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|session_of_pgrp
 c_func
@@ -135,6 +155,7 @@ r_int
 id|pgrp
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|kill_proc
 c_func
@@ -149,6 +170,7 @@ r_int
 id|priv
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|kill_pg
 c_func
@@ -163,6 +185,7 @@ r_int
 id|priv
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|kill_sl
 c_func
