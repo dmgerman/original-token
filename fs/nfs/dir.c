@@ -2898,7 +2898,6 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * To avoid retaining a stale inode reference, we check the dentry&n; * use count prior to the operation, and return EBUSY if it has&n; * multiple users.&n; *&n; * We update inode-&gt;i_nlink and free the inode prior to the operation&n; * to avoid possible races if the server reuses the inode.&n; *&n; * FIXME! We don&squot;t do it anymore (2.1.131) - it interacts badly with&n; * new rmdir().  -- AV&n; */
 DECL|function|nfs_rmdir
 r_static
 r_int
@@ -2948,25 +2947,6 @@ id|NFS_MAXNAMLEN
 r_goto
 id|out
 suffix:semicolon
-id|error
-op_assign
-op_minus
-id|EBUSY
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|list_empty
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_hash
-)paren
-)paren
-r_goto
-id|out
-suffix:semicolon
 macro_line|#ifdef NFS_PARANOIA
 r_if
 c_cond
@@ -2990,15 +2970,6 @@ id|dentry-&gt;d_inode-&gt;i_nlink
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; * Update i_nlink and free the inode before unlinking.&n;&t; */
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_inode-&gt;i_nlink
-)paren
-id|dentry-&gt;d_inode-&gt;i_nlink
-op_decrement
-suffix:semicolon
 id|nfs_invalidate_dircache
 c_func
 (paren
@@ -3025,6 +2996,29 @@ comma
 id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
+multiline_comment|/* Update i_nlink and invalidate dentry. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_inode-&gt;i_nlink
+)paren
+id|dentry-&gt;d_inode-&gt;i_nlink
+op_decrement
+suffix:semicolon
+)brace
 id|out
 suffix:colon
 r_return

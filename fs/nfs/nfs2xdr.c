@@ -2786,6 +2786,12 @@ id|EROFS
 )brace
 comma
 (brace
+id|NFSERR_OPNOTSUPP
+comma
+id|EOPNOTSUPP
+)brace
+comma
+(brace
 id|NFSERR_NAMETOOLONG
 comma
 id|ENAMETOOLONG

@@ -336,19 +336,6 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|variable|size_buffers_type
-r_static
-r_int
-id|size_buffers_type
-(braket
-id|NR_LIST
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|nr_buffer_heads
 r_static
 r_int
@@ -400,11 +387,11 @@ r_int
 id|nref_dirt
 suffix:semicolon
 multiline_comment|/* Dirty buffer threshold for activating bdflush&n;&t;&t;&t;&t;  when trying to refill buffers. */
-DECL|member|pct_dirt
+DECL|member|dummy1
 r_int
-id|pct_dirt
+id|dummy1
 suffix:semicolon
-multiline_comment|/* Max %age of mem for dirty buffers before&n;&t;&t;&t;&t;    activating bdflush */
+multiline_comment|/* unused */
 DECL|member|age_buffer
 r_int
 id|age_buffer
@@ -1964,13 +1951,6 @@ id|bh-&gt;b_list
 )braket
 op_decrement
 suffix:semicolon
-id|size_buffers_type
-(braket
-id|bh-&gt;b_list
-)braket
-op_sub_assign
-id|bh-&gt;b_size
-suffix:semicolon
 id|remove_from_hash_queue
 c_func
 (paren
@@ -2312,13 +2292,6 @@ id|nr_buffers_type
 id|bh-&gt;b_list
 )braket
 op_increment
-suffix:semicolon
-id|size_buffers_type
-(braket
-id|bh-&gt;b_list
-)braket
-op_add_assign
-id|bh-&gt;b_size
 suffix:semicolon
 multiline_comment|/* Put the buffer in new hash-queue if it has a device. */
 id|bh-&gt;b_next
@@ -3386,17 +3359,6 @@ op_div
 l_int|100
 )paren
 suffix:semicolon
-r_int
-id|too_large
-op_assign
-(paren
-id|num_physpages
-op_star
-id|bdf_prm.b_un.pct_dirt
-op_div
-l_int|100
-)paren
-suffix:semicolon
 multiline_comment|/* This buffer is dirty, maybe we need to start flushing.&n;&t;&t;&t; * If too high a percentage of the buffers are dirty...&n;&t;&t;&t; */
 r_if
 c_cond
@@ -3407,28 +3369,6 @@ id|BUF_DIRTY
 )braket
 OG
 id|too_many
-op_logical_or
-id|size_buffers_type
-(braket
-id|BUF_DIRTY
-)braket
-op_div
-id|PAGE_SIZE
-OG
-id|too_large
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|nr_buffers_type
-(braket
-id|BUF_LOCKED
-)braket
-OG
-l_int|3
-op_star
-id|bdf_prm.b_un.ndirty
 )paren
 id|wakeup_bdflush
 c_func
@@ -3436,14 +3376,6 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-r_else
-id|wakeup_bdflush
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* If this is a loop device, and&n;&t;&t;&t; * more than half of the buffers are dirty...&n;&t;&t;&t; * (Prevents no-free-buffers deadlock with loop device.)&n;&t;&t;&t; */
 r_if
 c_cond

@@ -120,6 +120,11 @@ id|NFSERR_ROFS
 op_assign
 l_int|30
 comma
+DECL|enumerator|NFSERR_OPNOTSUPP
+id|NFSERR_OPNOTSUPP
+op_assign
+l_int|45
+comma
 DECL|enumerator|NFSERR_NAMETOOLONG
 id|NFSERR_NAMETOOLONG
 op_assign
