@@ -2661,7 +2661,7 @@ op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * revalidate elevator, queue request_lock was dropped&n;&t;&t; */
+)brace
 id|head
 op_assign
 op_amp
@@ -2679,7 +2679,6 @@ id|head
 op_assign
 id|head-&gt;next
 suffix:semicolon
-)brace
 multiline_comment|/* fill up the request-info, and add it to the queue */
 id|req-&gt;cmd
 op_assign

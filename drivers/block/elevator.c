@@ -344,6 +344,10 @@ id|sequence
 op_assign
 id|elevator-&gt;sequence
 suffix:semicolon
+id|entry
+op_assign
+id|head
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -355,10 +359,6 @@ id|q-&gt;plugged
 id|head
 op_assign
 id|head-&gt;next
-suffix:semicolon
-id|entry
-op_assign
-id|head
 suffix:semicolon
 r_while
 c_loop
@@ -760,6 +760,10 @@ id|bh-&gt;b_size
 op_rshift
 l_int|9
 suffix:semicolon
+id|entry
+op_assign
+id|head
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -771,10 +775,6 @@ id|q-&gt;plugged
 id|head
 op_assign
 id|head-&gt;next
-suffix:semicolon
-id|entry
-op_assign
-id|head
 suffix:semicolon
 r_while
 c_loop
