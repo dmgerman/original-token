@@ -1,10 +1,13 @@
-multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Mon Sep 18 21:00:49 1995 by root@kai.makisara.fi&n;*/
+multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Sun Sep 24 11:46:15 1995 by root@kai.makisara.fi&n;*/
 macro_line|#ifndef _ST_OPTIONS_H
 DECL|macro|_ST_OPTIONS_H
 mdefine_line|#define _ST_OPTIONS_H
 multiline_comment|/* The driver allocates the tape buffers when needed if ST_RUNTIME_BUFFERS&n;   is nonzero. Otherwise a number of buffers are allocated at initialization.&n;   The drawback of runtime allocation is that allocation may fail. In any&n;   case the driver tries to allocate a new tape buffer when none is free. */
 DECL|macro|ST_RUNTIME_BUFFERS
 mdefine_line|#define ST_RUNTIME_BUFFERS 0
+multiline_comment|/* The minimum limit for the number of SCSI tape devices is determined by&n;   ST_MAX_TAPES. If the number of tape devices and the &quot;slack&quot; defined by&n;   ST_EXTRA_DEVS exceeds ST_MAX_TAPES, the large number is used. */
+DECL|macro|ST_MAX_TAPES
+mdefine_line|#define ST_MAX_TAPES 4
 multiline_comment|/* The driver does not wait for some operations to finish before returning&n;   to the user program if ST_NOWAIT is non-zero. This helps if the SCSI&n;   adapter does not support multiple outstanding commands. However, the user&n;   should not give a new tape command before the previous one has finished. */
 DECL|macro|ST_NOWAIT
 mdefine_line|#define ST_NOWAIT 0

@@ -3,6 +3,9 @@ DECL|macro|_VT_KERN_H
 mdefine_line|#define _VT_KERN_H
 multiline_comment|/*&n; * this really is an extension of the vc_cons structure in console.c, but&n; * with information needed by the vt package&n; */
 macro_line|#include &lt;linux/vt.h&gt;
+multiline_comment|/*&n; * Presently, a lot of graphics programs do not restore the contents of&n; * the higher font pages.  Defining this flag will avoid use of them, but&n; * will lose support for PIO_FONTRESET.  Note that many font operations are&n; * not likely to work with these programs anyway; they need to be&n; * fixed.  The linux/Documentation directory includes a code snippet&n; * to save and restore the text font.&n; */
+DECL|macro|BROKEN_GRAPHICS_PROGRAMS
+mdefine_line|#define BROKEN_GRAPHICS_PROGRAMS 1
 DECL|struct|vt_struct
 r_extern
 r_struct

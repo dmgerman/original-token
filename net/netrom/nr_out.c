@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Added NET/ROM fragmentation.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Added NET/ROM fragmentation.&n; *&t;&t;&t;Darryl(G7LED)&t;Fixed NAK, to give out correct reponse.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;linux/errno.h&gt;
@@ -399,7 +399,35 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-id|nr_send_iframe
+id|skbn-&gt;data
+(braket
+l_int|2
+)braket
+op_assign
+id|sk-&gt;nr-&gt;va
+suffix:semicolon
+id|skbn-&gt;data
+(braket
+l_int|3
+)braket
+op_assign
+id|sk-&gt;nr-&gt;vr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;nr-&gt;condition
+op_amp
+id|OWN_RX_BUSY_CONDITION
+)paren
+id|skbn-&gt;data
+(braket
+l_int|4
+)braket
+op_or_assign
+id|NR_CHOKE_FLAG
+suffix:semicolon
+id|nr_transmit_buffer
 c_func
 (paren
 id|sk
@@ -517,9 +545,7 @@ op_assign
 id|start
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Transmit data until either we&squot;re out of data to send or&n;&t;&t; * the window is full.&n;&t;&t; */
-r_do
-(brace
-multiline_comment|/*&n;&t;&t;&t; * Dequeue the frame and copy it.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Dequeue the frame and copy it.&n;&t;&t; */
 id|skb
 op_assign
 id|skb_dequeue
@@ -529,6 +555,8 @@ op_amp
 id|sk-&gt;write_queue
 )paren
 suffix:semicolon
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -607,11 +635,15 @@ c_loop
 op_logical_neg
 id|last
 op_logical_and
-id|skb_peek
+(paren
+id|skb
+op_assign
+id|skb_dequeue
 c_func
 (paren
 op_amp
 id|sk-&gt;write_queue
+)paren
 )paren
 op_ne
 l_int|NULL
@@ -826,24 +858,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * The following routines are taken from page 170 of the 7th ARRL Computer&n; * Networking Conference paper, as is the whole state machine.&n; */
-DECL|function|nr_nr_error_recovery
-r_void
-id|nr_nr_error_recovery
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-(brace
-id|nr_establish_data_link
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-)brace
 DECL|function|nr_establish_data_link
 r_void
 id|nr_establish_data_link
@@ -986,12 +1000,6 @@ comma
 id|nr
 )paren
 suffix:semicolon
-id|nr_requeue_frames
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|nr_calculate_rtt
 c_func
 (paren
@@ -1023,12 +1031,6 @@ c_func
 id|sk
 comma
 id|nr
-)paren
-suffix:semicolon
-id|nr_requeue_frames
-c_func
-(paren
-id|sk
 )paren
 suffix:semicolon
 id|sk-&gt;nr-&gt;t1timer

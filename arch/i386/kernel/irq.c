@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -833,6 +834,21 @@ id|irq
 )braket
 op_increment
 suffix:semicolon
+macro_line|#ifdef CONFIG_RANDOM
+r_if
+c_cond
+(paren
+id|action-&gt;flags
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|add_interrupt_randomness
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
 id|action
 op_member_access_from_pointer
 id|handler
@@ -870,6 +886,21 @@ id|irq
 )braket
 op_increment
 suffix:semicolon
+macro_line|#ifdef CONFIG_RANDOM
+r_if
+c_cond
+(paren
+id|action-&gt;flags
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|add_interrupt_randomness
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
 id|action
 op_member_access_from_pointer
 id|handler

@@ -1178,6 +1178,25 @@ op_eq
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;opt
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|sk-&gt;opt
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *&t;This one is pure paranoia. I&squot;ll take it out&n;&t;&t; *&t;later once I know the bug is buried.&n;&t;&t; */
+id|tcp_cache_zap
+c_func
+(paren
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -2931,12 +2950,19 @@ id|sock-&gt;data
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* &n;&t; *&t;Nasty here. release_sock can cause more frames&n;&t; *&t;to be played through the socket. That can&n;&t; *&t;reinitialise the tcp cache after tcp_close();&n;&t; */
 id|release_sock
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
+id|tcp_cache_zap
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Kill the cache again. */
 id|sk-&gt;socket
 op_assign
 l_int|NULL
@@ -3983,7 +4009,6 @@ id|sk2-&gt;dead
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* ANK */
 id|destroy_sock
 c_func
 (paren

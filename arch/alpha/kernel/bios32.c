@@ -2224,6 +2224,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_EB66P)
+id|eb66p_fixup
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#elif defined(CONFIG_ALPHA_EB66)
 id|eb66_and_eb64p_fixup
 c_func

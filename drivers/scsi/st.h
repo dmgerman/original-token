@@ -46,6 +46,16 @@ r_char
 op_star
 id|b_data
 suffix:semicolon
+DECL|member|orig_size
+r_int
+id|orig_size
+suffix:semicolon
+DECL|member|orig_b_data
+r_int
+r_char
+op_star
+id|orig_b_data
+suffix:semicolon
 DECL|typedef|ST_buffer
 )brace
 id|ST_buffer
@@ -53,6 +63,10 @@ suffix:semicolon
 r_typedef
 r_struct
 (brace
+DECL|member|devt
+id|kdev_t
+id|devt
+suffix:semicolon
 DECL|member|capacity
 r_int
 id|capacity

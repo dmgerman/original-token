@@ -46,6 +46,16 @@ op_star
 id|tv
 )paren
 suffix:semicolon
+r_void
+id|do_settimeofday
+c_func
+(paren
+r_struct
+id|timeval
+op_star
+id|tv
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|macro|FD_SETSIZE
 mdefine_line|#define FD_SETSIZE&t;&t;__FD_SETSIZE

@@ -208,7 +208,15 @@ multiline_comment|/* Magic here: If we listen() and a new link dies before it&n;
 r_if
 c_cond
 (paren
+id|sk-&gt;destroy
+op_logical_or
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_LISTEN
+op_logical_and
 id|sk-&gt;dead
+)paren
 )paren
 (brace
 id|del_timer

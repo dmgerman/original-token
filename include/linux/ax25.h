@@ -3,7 +3,7 @@ mdefine_line|#define PF_AX25&t;&t;AF_AX25
 DECL|macro|AX25_MTU
 mdefine_line|#define AX25_MTU&t;256
 DECL|macro|AX25_MAX_DIGIS
-mdefine_line|#define AX25_MAX_DIGIS&t;8
+mdefine_line|#define AX25_MAX_DIGIS&t;6
 r_typedef
 r_struct
 (brace
@@ -80,8 +80,6 @@ id|ax25_address
 id|digi_addr
 (braket
 id|AX25_MAX_DIGIS
-op_minus
-l_int|2
 )braket
 suffix:semicolon
 )brace
@@ -110,8 +108,6 @@ DECL|macro|SIOCAX25DELUID
 mdefine_line|#define SIOCAX25DELUID&t;&t;(SIOCPROTOPRIVATE+2)
 DECL|macro|SIOCAX25NOUID
 mdefine_line|#define SIOCAX25NOUID&t;&t;(SIOCPROTOPRIVATE+3)
-DECL|macro|SIOCAX25DIGCTL
-mdefine_line|#define&t;SIOCAX25DIGCTL&t;&t;(SIOCPROTOPRIVATE+4)
 DECL|macro|SIOCAX25GETPARMS
 mdefine_line|#define&t;SIOCAX25GETPARMS&t;(SIOCPROTOPRIVATE+5)
 DECL|macro|SIOCAX25SETPARMS
@@ -120,6 +116,10 @@ DECL|macro|AX25_NOUID_DEFAULT
 mdefine_line|#define AX25_NOUID_DEFAULT&t;0
 DECL|macro|AX25_NOUID_BLOCK
 mdefine_line|#define AX25_NOUID_BLOCK&t;1
+DECL|macro|AX25_DIGI_INBAND
+mdefine_line|#define&t;AX25_DIGI_INBAND&t;0x01&t;/* Allow digipeating within port **/
+DECL|macro|AX25_DIGI_XBAND
+mdefine_line|#define&t;AX25_DIGI_XBAND&t;&t;0x02&t;/* Allow digipeating across ports **/
 DECL|macro|AX25_VALUES_IPDEFMODE
 mdefine_line|#define&t;AX25_VALUES_IPDEFMODE&t;0&t;/* &squot;D&squot;=DG &squot;V&squot;=VC */
 DECL|macro|AX25_VALUES_AXDEFMODE
@@ -144,6 +144,8 @@ DECL|macro|AX25_VALUES_T3
 mdefine_line|#define&t;AX25_VALUES_T3&t;&t;10&t;/* Default T3 timeout value */
 DECL|macro|AX25_VALUES_N2
 mdefine_line|#define&t;AX25_VALUES_N2&t;&t;11&t;/* Default N2 value */
+DECL|macro|AX25_VALUES_DIGI
+mdefine_line|#define&t;AX25_VALUES_DIGI&t;12&t;/* Digipeat mode */
 DECL|macro|AX25_MAX_VALUES
 mdefine_line|#define&t;AX25_MAX_VALUES&t;&t;20
 DECL|struct|ax25_parms_struct

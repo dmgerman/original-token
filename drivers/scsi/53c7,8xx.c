@@ -11749,7 +11749,7 @@ id|hostdata-&gt;state
 op_assign
 id|STATE_HALTED
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;     * NCR53c700 and NCR53c700-66 change the current SCSI&n;&t;&t;     * process, hostdata-&gt;current, in the Linux driver so&n;&t;&t;     * cmd = hostdata-&gt;current.&n;&t;&t;     *&n;&t;&t;     * With other chips, we must look through the commands&n;&t;&t;     * executing and find the command structure which &n;&t;&t;     * corresponds to the DSA register.&n;&t;&t;     */
+multiline_comment|/*&n;&t;&t;     * NCR53c700 and NCR53c700-66 change the current SCSI&n;&t;&t;     * process, hostdata-&gt;current_cmd, in the Linux driver so&n;&t;&t;     * cmd = hostdata-&gt;current_cmd.&n;&t;&t;     *&n;&t;&t;     * With other chips, we must look through the commands&n;&t;&t;     * executing and find the command structure which &n;&t;&t;     * corresponds to the DSA register.&n;&t;&t;     */
 r_if
 c_cond
 (paren
@@ -11765,7 +11765,7 @@ r_struct
 id|NCR53c7x0_cmd
 op_star
 )paren
-id|hostdata-&gt;current
+id|hostdata-&gt;current_cmd
 suffix:semicolon
 )brace
 r_else

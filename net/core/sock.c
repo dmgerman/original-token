@@ -1467,6 +1467,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -1474,7 +1475,36 @@ id|tmp
 op_le
 id|sk-&gt;wmem_alloc
 )paren
+macro_line|#else
+multiline_comment|/* ANK: Line above seems either incorrect&n;&t;&t;&t; *&t;or useless. sk-&gt;wmem_alloc has a tiny chance to change&n;&t;&t;&t; *&t;between tmp = sk-&gt;w... and cli(),&n;&t;&t;&t; *&t;but it might(?) change earlier. In real life&n;&t;&t;&t; *&t;it does not (I never seen the message).&n;&t;&t;&t; *&t;In any case I&squot;d delete this check at all, or&n;&t;&t;&t; *&t;change it to:&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;wmem_alloc
+op_plus
+id|size
+op_ge
+id|sk-&gt;sndbuf
+)paren
+macro_line|#endif
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;wmem_alloc
+op_le
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;sock.c: Look where I am %ld&lt;%ld&bslash;n&quot;
+comma
+id|tmp
+comma
+id|sk-&gt;wmem_alloc
+)paren
+suffix:semicolon
 id|sk-&gt;socket-&gt;flags
 op_and_assign
 op_complement
@@ -1640,7 +1670,12 @@ id|skb
 comma
 id|skb-&gt;dev
 comma
-id|sk-&gt;opt
+(paren
+r_struct
+id|options
+op_star
+)paren
+id|skb-&gt;proto_priv
 comma
 id|skb-&gt;saddr
 comma

@@ -3,16 +3,26 @@ macro_line|#ifndef _AX25_H
 DECL|macro|_AX25_H
 mdefine_line|#define _AX25_H 
 macro_line|#include &lt;linux/ax25.h&gt;
+DECL|macro|PR_SLOWHZ
+mdefine_line|#define PR_SLOWHZ&t;10&t;&t;/*  Run timing at 1/10 second - gives us better resolution for 56kbit links */
+DECL|macro|AX25_T1CLAMPLO
+mdefine_line|#define&t;AX25_T1CLAMPLO  (1 * PR_SLOWHZ)&t;/* If defined, clamp at 1 second **/
+DECL|macro|AX25_T1CLAMPHI
+mdefine_line|#define&t;AX25_T1CLAMPHI (30 * PR_SLOWHZ)&t;/* If defined, clamp at 30 seconds **/
+DECL|macro|AX25_BROKEN_NETMAC
+mdefine_line|#define&t;AX25_BROKEN_NETMAC
 DECL|macro|AX25_BPQ_HEADER_LEN
 mdefine_line|#define&t;AX25_BPQ_HEADER_LEN&t;16
 DECL|macro|AX25_KISS_HEADER_LEN
 mdefine_line|#define&t;AX25_KISS_HEADER_LEN&t;1
-DECL|macro|AX25_MAX_HEADER_LEN
-mdefine_line|#define&t;AX25_MAX_HEADER_LEN&t;56
 DECL|macro|AX25_HEADER_LEN
 mdefine_line|#define&t;AX25_HEADER_LEN&t;&t;17
 DECL|macro|AX25_ADDR_LEN
 mdefine_line|#define&t;AX25_ADDR_LEN&t;&t;7
+DECL|macro|AX25_DIGI_HEADER_LEN
+mdefine_line|#define&t;AX25_DIGI_HEADER_LEN&t;(AX25_MAX_DIGIS * AX25_ADDR_LEN)
+DECL|macro|AX25_MAX_HEADER_LEN
+mdefine_line|#define&t;AX25_MAX_HEADER_LEN&t;(AX25_HEADER_LEN + AX25_DIGI_HEADER_LEN)
 DECL|macro|AX25_P_IP
 mdefine_line|#define AX25_P_IP&t;0xCC
 DECL|macro|AX25_P_ARP
@@ -105,8 +115,6 @@ DECL|macro|AX25_STATE_3
 mdefine_line|#define AX25_STATE_3&t;3
 DECL|macro|AX25_STATE_4
 mdefine_line|#define AX25_STATE_4&t;4
-DECL|macro|PR_SLOWHZ
-mdefine_line|#define PR_SLOWHZ&t;10&t;&t;&t;/*  Run timing at 1/10 second - gives us better resolution for 56kbit links */
 DECL|macro|MODULUS
 mdefine_line|#define MODULUS &t;8&t;&t;&t;/*  Standard AX.25 modulus */
 DECL|macro|EMODULUS
@@ -135,6 +143,8 @@ DECL|macro|AX25_DEF_T3
 mdefine_line|#define&t;AX25_DEF_T3&t;&t;300
 DECL|macro|AX25_DEF_N2
 mdefine_line|#define&t;AX25_DEF_N2&t;&t;10
+DECL|macro|AX25_DEF_DIGI
+mdefine_line|#define&t;AX25_DEF_DIGI&t;&t;(AX25_DIGI_INBAND|AX25_DIGI_XBAND)
 DECL|struct|ax25_uid_assoc
 r_typedef
 r_struct
@@ -165,7 +175,7 @@ DECL|member|calls
 id|ax25_address
 id|calls
 (braket
-l_int|6
+id|AX25_MAX_DIGIS
 )braket
 suffix:semicolon
 DECL|member|repeated
@@ -173,7 +183,7 @@ r_int
 r_char
 id|repeated
 (braket
-l_int|6
+id|AX25_MAX_DIGIS
 )braket
 suffix:semicolon
 DECL|member|ndigi
@@ -784,6 +794,15 @@ op_star
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_requeue_frames
+c_func
+(paren
+id|ax25_cb
+op_star
 )paren
 suffix:semicolon
 r_extern

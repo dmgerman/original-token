@@ -3,6 +3,10 @@ macro_line|#ifndef _NETROM_H
 DECL|macro|_NETROM_H
 mdefine_line|#define _NETROM_H 
 macro_line|#include &lt;linux/netrom.h&gt;
+DECL|macro|NR_T1CLAMPLO
+mdefine_line|#define&t;NR_T1CLAMPLO   (1 * PR_SLOWHZ)&t;/* If defined, clamp at 1 second **/
+DECL|macro|NR_T1CLAMPHI
+mdefine_line|#define&t;NR_T1CLAMPHI (300 * PR_SLOWHZ)&t;/* If defined, clamp at 30 seconds **/
 DECL|macro|NR_NETWORK_LEN
 mdefine_line|#define&t;NR_NETWORK_LEN&t;&t;15
 DECL|macro|NR_TRANSPORT_LEN
@@ -39,9 +43,9 @@ mdefine_line|#define NR_STATE_2&t;&t;2
 DECL|macro|NR_STATE_3
 mdefine_line|#define NR_STATE_3&t;&t;3
 DECL|macro|NR_DEFAULT_T1
-mdefine_line|#define NR_DEFAULT_T1&t;&t;(120 * PR_SLOWHZ)&t;/* Outstanding frames - 10 seconds */
+mdefine_line|#define NR_DEFAULT_T1&t;&t;(120 * PR_SLOWHZ)&t;/* Outstanding frames - 120 seconds */
 DECL|macro|NR_DEFAULT_T2
-mdefine_line|#define NR_DEFAULT_T2&t;&t;(5   * PR_SLOWHZ)&t;/* Response delay     - 3 seconds */
+mdefine_line|#define NR_DEFAULT_T2&t;&t;(5   * PR_SLOWHZ)&t;/* Response delay     - 5 seconds */
 DECL|macro|NR_DEFAULT_N2
 mdefine_line|#define NR_DEFAULT_N2&t;&t;3&t;&t;&t;/* Number of Retries */
 DECL|macro|NR_DEFAULT_T4
@@ -321,7 +325,6 @@ id|sock
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*extern int  nr_get_info(char *, char **, off_t, int, int);*/
 multiline_comment|/* nr_dev.c */
 r_extern
 r_int
@@ -409,16 +412,6 @@ op_star
 comma
 r_struct
 id|sk_buff
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|nr_nr_error_recovery
-c_func
-(paren
-r_struct
-id|sock
 op_star
 )paren
 suffix:semicolon

@@ -185,10 +185,8 @@ DECL|macro|IP_TTL
 mdefine_line|#define IP_TTL&t;&t;2
 DECL|macro|IP_HDRINCL
 mdefine_line|#define IP_HDRINCL&t;3
-macro_line|#ifdef V1_3_WILL_DO_THIS_FUNKY_STUFF
 DECL|macro|IP_OPTIONS
 mdefine_line|#define IP_OPTIONS&t;4
-macro_line|#endif
 DECL|macro|IP_MULTICAST_IF
 mdefine_line|#define IP_MULTICAST_IF&t;&t;&t;32
 DECL|macro|IP_MULTICAST_TTL

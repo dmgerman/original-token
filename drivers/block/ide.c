@@ -11971,6 +11971,8 @@ comma
 id|ide_intr
 comma
 id|SA_INTERRUPT
+op_or
+id|SA_SAMPLE_RANDOM
 comma
 id|hwif-&gt;name
 )paren

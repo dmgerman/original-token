@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/tpqic02.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -1033,6 +1034,8 @@ DECL|macro|zero_lseek
 mdefine_line|#define zero_lseek&t;null_lseek
 DECL|macro|write_zero
 mdefine_line|#define write_zero&t;write_null
+DECL|macro|write_random
+mdefine_line|#define write_random&t;write_null
 DECL|variable|ram_fops
 r_static
 r_struct
@@ -1269,6 +1272,72 @@ l_int|NULL
 multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_RANDOM
+DECL|variable|random_fops
+r_static
+r_struct
+id|file_operations
+id|random_fops
+op_assign
+(brace
+id|memory_lseek
+comma
+id|read_random
+comma
+id|write_random
+comma
+l_int|NULL
+comma
+multiline_comment|/* full_readdir */
+l_int|NULL
+comma
+multiline_comment|/* full_select */
+l_int|NULL
+comma
+multiline_comment|/* full_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* full_mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+multiline_comment|/* no special release code */
+)brace
+suffix:semicolon
+DECL|variable|urandom_fops
+r_static
+r_struct
+id|file_operations
+id|urandom_fops
+op_assign
+(brace
+id|memory_lseek
+comma
+id|read_random_unlimited
+comma
+id|write_random
+comma
+l_int|NULL
+comma
+multiline_comment|/* full_readdir */
+l_int|NULL
+comma
+multiline_comment|/* full_select */
+l_int|NULL
+comma
+multiline_comment|/* full_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* full_mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+multiline_comment|/* no special release code */
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|memory_open
 r_static
 r_int
@@ -1366,6 +1435,28 @@ id|full_fops
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_RANDOM
+r_case
+l_int|8
+suffix:colon
+id|filp-&gt;f_op
+op_assign
+op_amp
+id|random_fops
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|9
+suffix:colon
+id|filp-&gt;f_op
+op_assign
+op_amp
+id|urandom_fops
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 r_return
@@ -1474,6 +1565,13 @@ comma
 id|MEM_MAJOR
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_RANDOM
+id|rand_initialize
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mem_start
 op_assign
 id|tty_init

@@ -84,6 +84,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA
 macro_line|#include &quot;eata.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_NCR53C406A
+macro_line|#include &quot;NCR53c406a.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
@@ -147,6 +150,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_GENERIC_NCR5380
 id|GENERIC_NCR5380
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_NCR53C406A&t;/* 53C406A should come before QLOGIC */
+id|NCR53c406a
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGIC

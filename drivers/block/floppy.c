@@ -8724,7 +8724,7 @@ l_int|2
 op_star
 id|head_shift
 op_plus
-l_int|1
+l_int|3
 suffix:semicolon
 multiline_comment|/* position of logical sector 1 on this track */
 id|n
@@ -16809,6 +16809,8 @@ comma
 id|floppy_interrupt
 comma
 id|SA_INTERRUPT
+op_or
+id|SA_SAMPLE_RANDOM
 comma
 l_string|&quot;floppy&quot;
 )paren

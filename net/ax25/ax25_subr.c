@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 030&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names. Removed&n; *&t;&t;&t;&t;&t;old BSD code.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added support for extended AX.25.&n; *&t;&t;&t;&t;&t;Added fragmentation support.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 030&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.2.1 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names. Removed&n; *&t;&t;&t;&t;&t;old BSD code.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added support for extended AX.25.&n; *&t;&t;&t;&t;&t;Added fragmentation support.&n; *&t;&t;&t;Darryl(G7LED)&t;Added function ax25_requeue_frames() to split&n; *&t;&t;&t;&t;&t;it up from ax25_frames_acked().&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;linux/errno.h&gt;
@@ -21,7 +21,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-multiline_comment|/* #define&t;NO_BACKOFF&t;*/
 multiline_comment|/*&n; *&t;This routine purges all the queues of frames.&n; */
 DECL|function|ax25_clear_queues
 r_void
@@ -170,11 +169,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-op_star
-id|skb_prev
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * Remove all the ack-ed frames from the ack queue.&n;&t; */
 r_if
@@ -235,6 +229,28 @@ id|ax25-&gt;modulus
 suffix:semicolon
 )brace
 )brace
+)brace
+multiline_comment|/* Maybe this should be your ax25_invoke_retransmission(), which appears&n; * to be used but not do anything.  ax25_invoke_retransmission() used to&n; * be in AX 0.29, but has now gone in 0.30.&n; */
+DECL|function|ax25_requeue_frames
+r_void
+id|ax25_requeue_frames
+c_func
+(paren
+id|ax25_cb
+op_star
+id|ax25
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+op_star
+id|skb_prev
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n;&t; * Requeue all the un-ack-ed frames on the output queue to be picked&n;&t; * up by ax25_kick called from the timer. This arrangement handles the&n;&t; * possibility of an empty output queue.&n;&t; */
 r_while
 c_loop
@@ -1195,7 +1211,6 @@ op_star
 id|ax25
 )paren
 (brace
-macro_line|#ifndef NO_BACKOFF
 r_int
 id|n
 comma
@@ -1244,13 +1259,6 @@ id|t
 op_star
 id|ax25-&gt;rtt
 suffix:semicolon
-macro_line|#else
-r_return
-l_int|2
-op_star
-id|ax25-&gt;rtt
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Calculate the Round Trip Time&n; */
 DECL|function|ax25_calculate_rtt
@@ -1288,22 +1296,54 @@ id|ax25-&gt;t1timer
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/* Don&squot;t go below one second */
+macro_line|#ifdef&t;AX25_T1CLAMPLO
+multiline_comment|/* Don&squot;t go below one tenth of a second */
 r_if
 c_cond
 (paren
 id|ax25-&gt;rtt
 OL
-l_int|1
-op_star
-id|PR_SLOWHZ
+(paren
+id|AX25_T1CLAMPLO
+)paren
 )paren
 id|ax25-&gt;rtt
 op_assign
-l_int|1
-op_star
+(paren
+id|AX25_T1CLAMPLO
+)paren
+suffix:semicolon
+macro_line|#else&t;/* Failsafe - some people might have sub 1/10th RTTs :-) **/
+r_if
+c_cond
+(paren
+id|ax25-&gt;rtt
+op_eq
+l_int|0
+)paren
+id|ax25-&gt;rtt
+op_assign
 id|PR_SLOWHZ
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef&t;AX25_T1CLAMPHI
+multiline_comment|/* OR above clamped seconds **/
+r_if
+c_cond
+(paren
+id|ax25-&gt;rtt
+OG
+(paren
+id|AX25_T1CLAMPHI
+)paren
+)paren
+id|ax25-&gt;rtt
+op_assign
+(paren
+id|AX25_T1CLAMPHI
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Digipeated address processing&n; */
 multiline_comment|/*&n; *&t;Given an AX.25 address pull of to, from, digi list, command/response and the start of data&n; *&n; */
@@ -1482,7 +1522,7 @@ c_cond
 (paren
 id|d
 op_ge
-l_int|6
+id|AX25_MAX_DIGIS
 )paren
 r_return
 l_int|NULL

@@ -1527,6 +1527,21 @@ id|irq_action
 op_plus
 id|irq
 suffix:semicolon
+macro_line|#ifdef CONFIG_RANDOM
+r_if
+c_cond
+(paren
+id|action-&gt;flags
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|add_interrupt_randomness
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* quick interrupts get executed with no extra overhead */
 r_if
 c_cond

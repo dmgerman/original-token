@@ -400,7 +400,7 @@ r_int
 r_int
 id|vc
 op_assign
-id|sk-&gt;nr-&gt;vl
+id|sk-&gt;nr-&gt;vr
 suffix:semicolon
 r_int
 r_int
@@ -443,16 +443,6 @@ op_mod
 id|NR_MODULUS
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|ns
-op_eq
-id|vt
-)paren
-r_return
-l_int|1
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -492,8 +482,6 @@ op_assign
 id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
-op_plus
-l_int|3
 op_plus
 id|NR_NETWORK_LEN
 op_plus
@@ -584,8 +572,6 @@ comma
 id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
-op_plus
-l_int|2
 op_plus
 id|NR_NETWORK_LEN
 )paren
@@ -931,8 +917,6 @@ id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
 op_plus
-l_int|3
-op_plus
 id|NR_NETWORK_LEN
 op_plus
 id|NR_TRANSPORT_LEN
@@ -966,8 +950,6 @@ comma
 id|AX25_BPQ_HEADER_LEN
 op_plus
 id|AX25_MAX_HEADER_LEN
-op_plus
-l_int|2
 )paren
 suffix:semicolon
 id|dptr
@@ -1232,22 +1214,54 @@ id|sk-&gt;nr-&gt;t1timer
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/* Don&squot;t go below one second */
+macro_line|#ifdef&t;NR_T1CLAMPLO
+multiline_comment|/* Don&squot;t go below one tenth of a second */
 r_if
 c_cond
 (paren
 id|sk-&gt;nr-&gt;rtt
 OL
-l_int|1
-op_star
-id|PR_SLOWHZ
+(paren
+id|NR_T1CLAMPLO
+)paren
 )paren
 id|sk-&gt;nr-&gt;rtt
 op_assign
-l_int|1
-op_star
+(paren
+id|NR_T1CLAMPLO
+)paren
+suffix:semicolon
+macro_line|#else   /* Failsafe - some people might have sub 1/10th RTTs :-) **/
+r_if
+c_cond
+(paren
+id|sk-&gt;nr-&gt;rtt
+op_eq
+l_int|0
+)paren
+id|sk-&gt;nr-&gt;rtt
+op_assign
 id|PR_SLOWHZ
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef  NR_T1CLAMPHI
+multiline_comment|/* OR above clamped seconds **/
+r_if
+c_cond
+(paren
+id|sk-&gt;nr-&gt;rtt
+OG
+(paren
+id|NR_T1CLAMPHI
+)paren
+)paren
+id|sk-&gt;nr-&gt;rtt
+op_assign
+(paren
+id|NR_T1CLAMPHI
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 eof

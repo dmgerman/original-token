@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&n; *&n; *&t;Status:&n; *&t;&t;Tree building works. Cache manager to be added next.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -894,7 +894,7 @@ id|arg
 comma
 r_sizeof
 (paren
-id|sr
+id|vr
 )paren
 )paren
 suffix:semicolon
@@ -961,7 +961,7 @@ id|vr
 comma
 r_sizeof
 (paren
-id|sr
+id|vr
 )paren
 )paren
 suffix:semicolon

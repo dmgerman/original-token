@@ -200,6 +200,15 @@ r_int
 id|csum
 suffix:semicolon
 multiline_comment|/* Checksum &t;&t;&t;&t;&t;*/
+DECL|member|proto_priv
+r_int
+r_char
+id|proto_priv
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* Protocol private data&t;&t;&t;*/
 DECL|member|acked
 r_volatile
 r_char

@@ -876,9 +876,9 @@ c_func
 (paren
 id|REALTEK
 comma
-id|REALTEK_8300
+id|REALTEK_8029
 comma
-l_string|&quot;ENW-8300C&quot;
+l_string|&quot;8029&quot;
 )paren
 comma
 id|DEVICE

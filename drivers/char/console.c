@@ -11261,6 +11261,33 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Default font is always 256 */
+macro_line|#ifdef BROKEN_GRAPHICS_PROGRAMS
+multiline_comment|/*&n;&t; * All fonts are loaded in slot 0 (0:1 for 512 ch)&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|arg
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* Return to default font not supported */
+id|video_font_is_default
+op_assign
+l_int|0
+suffix:semicolon
+id|font_select
+op_assign
+id|ch512
+ques
+c_cond
+l_int|0x04
+suffix:colon
+l_int|0x00
+suffix:semicolon
+macro_line|#else&t;
 multiline_comment|/*&n;&t; * The default font is kept in slot 0 and is never touched.&n;&t; * A custom font is loaded in slot 2 (256 ch) or 2:3 (512 ch)&n;&t; */
 r_if
 c_cond
@@ -11302,6 +11329,7 @@ l_int|4
 op_star
 id|cmapsz
 suffix:semicolon
+macro_line|#endif
 id|cli
 c_func
 (paren

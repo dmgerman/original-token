@@ -1274,7 +1274,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              Multisession CD&squot;s are supported too.&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
-multiline_comment|/*&n; * 19950704 operator@melchior.frmug.fr.net (Thomas Quinot)&n; *&n; *   - SONY:&t;Same as Nec.&n; */
+multiline_comment|/*&n; * 19950704 operator@melchior.frmug.fr.net (Thomas Quinot)&n; *&n; *   - SONY:&t;Same as Nec.&n; *&n; *   - PIONEER: works with SONY code&n; */
 DECL|function|sr_photocd
 r_static
 r_void
@@ -2306,11 +2306,14 @@ r_case
 id|SCSI_MAN_SONY
 suffix:colon
 multiline_comment|/* Thomas QUINOT &lt;thomas@melchior.frmug.fr.net&gt; */
+r_case
+id|SCSI_MAN_PIONEER
+suffix:colon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: use SONY code&bslash;n&quot;
+l_string|&quot;sr_photocd: use SONY/PIONEER code&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

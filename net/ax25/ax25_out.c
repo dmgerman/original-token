@@ -69,7 +69,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|skb-&gt;len
+op_minus
+l_int|1
+)paren
 OG
 id|mtu
 )paren
@@ -581,9 +585,7 @@ op_assign
 id|start
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Transmit data until either we&squot;re out of data to send or&n;&t;&t; * the window is full. Send a poll on the final I frame if&n;&t;&t; * the window is filled.&n;&t;&t; */
-r_do
-(brace
-multiline_comment|/*&n;&t;&t;&t; * Dequeue the frame and copy it.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Dequeue the frame and copy it.&n;&t;&t; */
 id|skb
 op_assign
 id|skb_dequeue
@@ -593,6 +595,8 @@ op_amp
 id|ax25-&gt;write_queue
 )paren
 suffix:semicolon
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -710,11 +714,15 @@ c_loop
 op_logical_neg
 id|last
 op_logical_and
-id|skb_peek
+(paren
+id|skb
+op_assign
+id|skb_dequeue
 c_func
 (paren
 op_amp
 id|ax25-&gt;write_queue
+)paren
 )paren
 op_ne
 l_int|NULL

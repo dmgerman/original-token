@@ -747,6 +747,9 @@ id|len
 comma
 r_int
 id|rt
+comma
+id|__u32
+id|saddr
 )paren
 (brace
 r_int
@@ -767,6 +770,25 @@ r_struct
 id|udpfakehdr
 id|ufh
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ulen
+OG
+l_int|65535
+op_minus
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EMSGSIZE
+suffix:semicolon
+)brace
 id|ufh.uh.source
 op_assign
 id|sk-&gt;dummy_th.source
@@ -845,6 +867,10 @@ id|ulen
 comma
 id|sin-&gt;sin_addr.s_addr
 comma
+id|saddr
+comma
+id|sk-&gt;opt
+comma
 id|rt
 comma
 id|IPPROTO_UDP
@@ -867,6 +893,10 @@ comma
 id|ulen
 comma
 id|sin-&gt;sin_addr.s_addr
+comma
+id|saddr
+comma
+id|sk-&gt;opt
 comma
 id|rt
 comma
@@ -933,6 +963,11 @@ id|sin
 suffix:semicolon
 r_int
 id|tmp
+suffix:semicolon
+id|__u32
+id|saddr
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* &n;&t; *&t;Check the flags. We support no flags for UDP sending&n;&t; */
 r_if
@@ -1089,6 +1124,8 @@ comma
 id|len
 comma
 id|flags
+comma
+id|saddr
 )paren
 suffix:semicolon
 multiline_comment|/* The datagram has been sent off.  Release the socket. */

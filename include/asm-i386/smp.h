@@ -3,6 +3,8 @@ DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
 macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;asm/i82489.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
 multiline_comment|/*&n; *&t;Support definitions for SMP machines following the intel multiprocessing&n; *&t;specification&n; */
 multiline_comment|/*&n; *&t;This tag identifies where the SMP configuration&n; *&t;information is. &n; */
 DECL|macro|SMP_MAGIC_IDENT
@@ -448,7 +450,7 @@ r_struct
 id|cpuinfo_x86
 id|cpu_data
 (braket
-l_int|32
+id|NR_PROCS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Private routines/data&n; */
@@ -487,7 +489,7 @@ r_char
 op_star
 id|kernel_stacks
 (braket
-l_int|32
+id|NR_PROCS
 )braket
 suffix:semicolon
 r_extern

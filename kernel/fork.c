@@ -853,7 +853,7 @@ op_logical_neg
 id|new_stack
 )paren
 r_goto
-id|bad_fork_free
+id|bad_fork_free_p
 suffix:semicolon
 id|error
 op_assign
@@ -875,7 +875,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|bad_fork_free
+id|bad_fork_free_stack
 suffix:semicolon
 op_star
 id|p
@@ -1217,7 +1217,7 @@ suffix:semicolon
 id|nr_tasks
 op_decrement
 suffix:semicolon
-id|bad_fork_free
+id|bad_fork_free_stack
 suffix:colon
 id|free_page
 c_func
@@ -1225,6 +1225,8 @@ c_func
 id|new_stack
 )paren
 suffix:semicolon
+id|bad_fork_free_p
+suffix:colon
 id|kfree
 c_func
 (paren

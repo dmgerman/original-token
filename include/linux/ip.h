@@ -33,24 +33,26 @@ DECL|member|ptr
 id|__u8
 id|ptr
 suffix:semicolon
-r_union
-(brace
 macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|flags
 id|__u8
 id|flags
 suffix:colon
 l_int|4
 comma
+DECL|member|overflow
 id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
 macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|overflow
 id|__u8
 id|overflow
 suffix:colon
 l_int|4
 comma
+DECL|member|flags
 id|flags
 suffix:colon
 l_int|4
@@ -58,14 +60,6 @@ suffix:semicolon
 macro_line|#else
 macro_line|#error&t;&quot;Please fix &lt;asm/byteorder.h&gt;&quot;
 macro_line|#endif&t;&t;&t;&t;&t;&t;
-DECL|member|full_char
-id|__u8
-id|full_char
-suffix:semicolon
-DECL|member|x
-)brace
-id|x
-suffix:semicolon
 DECL|member|data
 id|__u32
 id|data
@@ -99,53 +93,129 @@ id|MAX_ROUTE
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|IPOPT_OPTVAL
+mdefine_line|#define IPOPT_OPTVAL 0
+DECL|macro|IPOPT_OLEN
+mdefine_line|#define IPOPT_OLEN   1
+DECL|macro|IPOPT_OFFSET
+mdefine_line|#define IPOPT_OFFSET 2
+DECL|macro|IPOPT_MINOFF
+mdefine_line|#define IPOPT_MINOFF 4
+DECL|macro|MAX_IPOPTLEN
+mdefine_line|#define MAX_IPOPTLEN 40
+DECL|macro|IPOPT_NOP
+mdefine_line|#define IPOPT_NOP IPOPT_NOOP
+DECL|macro|IPOPT_EOL
+mdefine_line|#define IPOPT_EOL IPOPT_END
+DECL|macro|IPOPT_TS
+mdefine_line|#define IPOPT_TS  IPOPT_TIMESTAMP
+DECL|macro|IPOPT_TS_TSONLY
+mdefine_line|#define&t;IPOPT_TS_TSONLY&t;&t;0&t;&t;/* timestamps only */
+DECL|macro|IPOPT_TS_TSANDADDR
+mdefine_line|#define&t;IPOPT_TS_TSANDADDR&t;1&t;&t;/* timestamps and addresses */
+DECL|macro|IPOPT_TS_PRESPEC
+mdefine_line|#define&t;IPOPT_TS_PRESPEC&t;2&t;&t;/* specified modules only */
 DECL|struct|options
 r_struct
 id|options
 (brace
-DECL|member|record_route
-r_struct
-id|route
-id|record_route
+DECL|member|faddr
+id|__u32
+id|faddr
 suffix:semicolon
-DECL|member|loose_route
-r_struct
-id|route
-id|loose_route
+multiline_comment|/* Saved first hop address */
+DECL|member|optlen
+r_int
+r_char
+id|optlen
 suffix:semicolon
-DECL|member|strict_route
-r_struct
-id|route
-id|strict_route
+DECL|member|srr
+r_int
+r_char
+id|srr
 suffix:semicolon
-DECL|member|tstamp
-r_struct
-id|timestamp
-id|tstamp
+DECL|member|rr
+r_int
+r_char
+id|rr
 suffix:semicolon
-DECL|member|security
+DECL|member|ts
 r_int
-r_int
-id|security
+r_char
+id|ts
 suffix:semicolon
-DECL|member|compartment
+DECL|member|is_setbyuser
 r_int
-r_int
-id|compartment
+r_char
+id|is_setbyuser
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Set by setsockopt?&t;&t;&t;*/
+DECL|member|is_data
+id|is_data
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Options in __data, rather than skb&t;*/
+DECL|member|is_strictroute
+id|is_strictroute
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Strict source route&t;&t;&t;*/
+DECL|member|srr_is_hit
+id|srr_is_hit
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Packet destination addr was our one&t;*/
+DECL|member|is_changed
+id|is_changed
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* IP checksum more not valid&t;&t;*/
+DECL|member|rr_needaddr
+id|rr_needaddr
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Need to record addr of outgoing dev&t;*/
+DECL|member|ts_needtime
+id|ts_needtime
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Need to record timestamp&t;&t;*/
+DECL|member|ts_needaddr
+id|ts_needaddr
+suffix:colon
+l_int|1
 suffix:semicolon
-DECL|member|handling
+multiline_comment|/* Need to record addr of outgoing dev  */
+DECL|member|__pad1
 r_int
-r_int
-id|handling
+r_char
+id|__pad1
 suffix:semicolon
-DECL|member|stream
+DECL|member|__pad2
 r_int
-r_int
-id|stream
+r_char
+id|__pad2
 suffix:semicolon
-DECL|member|tcc
+DECL|member|__pad3
 r_int
-id|tcc
+r_char
+id|__pad3
+suffix:semicolon
+DECL|member|__data
+r_int
+r_char
+id|__data
+(braket
+l_int|0
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -729,6 +729,16 @@ r_int
 id|need_resched
 suffix:semicolon
 r_extern
+r_void
+id|do_timer
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 r_int
 op_star

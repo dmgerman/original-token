@@ -831,8 +831,6 @@ comma
 l_int|0
 comma
 id|iph-&gt;daddr
-comma
-l_int|0
 )paren
 )paren
 (brace

@@ -1775,12 +1775,12 @@ op_star
 id|running_list
 suffix:semicolon
 multiline_comment|/* commands running, maintained&n;&t;&t;&t;&t;&t;&t;   by Linux driver */
-DECL|member|current
+DECL|member|current_cmd
 r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
-id|current
+id|current_cmd
 suffix:semicolon
 multiline_comment|/* currently connected &n;&t;&t;&t;&t;&t;&t;   nexus, ONLY valid for&n;&t;&t;&t;&t;&t;&t;   NCR53c700/NCR53c700-66&n;&t;&t;&t;&t;&t;&t; */
 DECL|member|spare

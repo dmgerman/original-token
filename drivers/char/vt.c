@@ -4744,6 +4744,13 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#ifdef BROKEN_GRAPHICS_PROGRAMS
+multiline_comment|/* With BROKEN_GRAPHICS_PROGRAMS defined, the default&n;&t;&t;   font is not saved. */
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+macro_line|#else
 id|i
 op_assign
 id|con_set_font
@@ -4794,6 +4801,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
 r_case
 id|GIO_FONTX
