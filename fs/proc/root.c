@@ -10,6 +10,9 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_ZORRO
+macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Offset of the first process in the /proc root directory..&n; */
 DECL|macro|FIRST_PROCESS_ENTRY
 mdefine_line|#define FIRST_PROCESS_ENTRY 256
@@ -2002,37 +2005,6 @@ op_amp
 id|proc_array_inode_operations
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_ZORRO
-DECL|variable|proc_root_zorro
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_root_zorro
-op_assign
-(brace
-id|PROC_ZORRO
-comma
-l_int|5
-comma
-l_string|&quot;zorro&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_array_inode_operations
-)brace
-suffix:semicolon
-macro_line|#endif
 DECL|variable|proc_root_cpuinfo
 r_static
 r_struct
@@ -2062,7 +2034,7 @@ op_amp
 id|proc_array_inode_operations
 )brace
 suffix:semicolon
-macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
+macro_line|#if defined (CONFIG_PROC_HARDWARE)
 DECL|variable|proc_root_hardware
 r_static
 r_struct
@@ -2075,6 +2047,37 @@ comma
 l_int|8
 comma
 l_string|&quot;hardware&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_array_inode_operations
+)brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_STRAM_PROC
+DECL|variable|proc_root_stram
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_root_stram
+op_assign
+(brace
+id|PROC_STRAM
+comma
+l_int|5
+comma
+l_string|&quot;stram&quot;
 comma
 id|S_IFREG
 op_or
@@ -2785,18 +2788,6 @@ op_amp
 id|proc_root_version
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ZORRO
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-id|proc_root_zorro
-)paren
-suffix:semicolon
-macro_line|#endif
 id|proc_register
 c_func
 (paren
@@ -3063,7 +3054,7 @@ id|proc_openprom
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
+macro_line|#ifdef CONFIG_PROC_HARDWARE
 id|proc_register
 c_func
 (paren
@@ -3072,6 +3063,18 @@ id|proc_root
 comma
 op_amp
 id|proc_root_hardware
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_STRAM_PROC
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|proc_root_stram
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -253,6 +253,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ATARI_SCSI_RESET_BOOT
 r_static
 r_void
 id|atari_scsi_reset_boot
@@ -261,6 +262,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 r_char
@@ -1863,11 +1865,13 @@ id|instance-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_ATARI_SCSI_RESET_BOOT
 id|atari_scsi_reset_boot
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|NCR5380_init
 (paren
 id|instance
@@ -2547,6 +2551,7 @@ r_return
 id|rv
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ATARI_SCSI_RESET_BOOT
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2649,6 +2654,7 @@ l_string|&quot; done&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|atari_scsi_info
 r_const
 r_char

@@ -4212,4 +4212,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|mac_kbd_reset_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+)paren
+(brace
+)brace
 eof

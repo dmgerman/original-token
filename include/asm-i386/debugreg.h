@@ -1,6 +1,6 @@
-macro_line|#ifndef _LINUX_DEBUGREG_H
-DECL|macro|_LINUX_DEBUGREG_H
-mdefine_line|#define _LINUX_DEBUGREG_H
+macro_line|#ifndef _I386_DEBUGREG_H
+DECL|macro|_I386_DEBUGREG_H
+mdefine_line|#define _I386_DEBUGREG_H
 multiline_comment|/* Indicate the register numbers for a number of the specific&n;   debug registers.  Registers 0-3 contain the addresses we wish to trap on */
 DECL|macro|DR_FIRSTADDR
 mdefine_line|#define DR_FIRSTADDR 0        /* u_debugreg[DR_FIRSTADDR] */
@@ -12,13 +12,17 @@ DECL|macro|DR_CONTROL
 mdefine_line|#define DR_CONTROL 7          /* u_debugreg[DR_CONTROL] */
 multiline_comment|/* Define a few things for the status register.  We can use this to determine&n;   which debugging register was responsible for the trap.  The other bits&n;   are either reserved or not of interest to us. */
 DECL|macro|DR_TRAP0
-mdefine_line|#define DR_TRAP0 (0x1) /* Trap due to db0 */
+mdefine_line|#define DR_TRAP0&t;(0x1)&t;&t;/* db0 */
 DECL|macro|DR_TRAP1
-mdefine_line|#define DR_TRAP1 (0x2) /* Trap due to db1 */
+mdefine_line|#define DR_TRAP1&t;(0x2)&t;&t;/* db1 */
 DECL|macro|DR_TRAP2
-mdefine_line|#define DR_TRAP2 (0x4) /* Trap due to db2 */
+mdefine_line|#define DR_TRAP2&t;(0x4)&t;&t;/* db2 */
 DECL|macro|DR_TRAP3
-mdefine_line|#define DR_TRAP3 (0x8) /* Trap due to db3 */
+mdefine_line|#define DR_TRAP3&t;(0x8)&t;&t;/* db3 */
+DECL|macro|DR_STEP
+mdefine_line|#define DR_STEP&t;&t;(0x4000)&t;/* single-step */
+DECL|macro|DR_SWITCH
+mdefine_line|#define DR_SWITCH&t;(0x8000)&t;/* task switch */
 multiline_comment|/* Now define a bunch of things for manipulating the control register.&n;   The top two bytes of the control register consist of 4 fields of 4&n;   bits - each field corresponds to one of the four debug registers,&n;   and indicates what types of access we trap on, and how large the data&n;   field is that we are looking at */
 DECL|macro|DR_CONTROL_SHIFT
 mdefine_line|#define DR_CONTROL_SHIFT 16 /* Skip this many bits in ctl register */

@@ -133,7 +133,7 @@ id|here
 id|panic
 c_func
 (paren
-l_string|&quot;skput:over: %p:%d put:%d dev:%s&quot;
+l_string|&quot;skput:under: %p:%d put:%d dev:%s&quot;
 comma
 id|here
 comma

@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mvme16xhw.h&gt;
@@ -96,6 +95,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|MACH_IS_MVME16x
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mvme16x_config
 op_amp
 id|MVME16x_CONFIG_NO_SCSICHIP
@@ -158,7 +166,7 @@ l_int|0xfff47000
 comma
 l_int|0
 comma
-l_int|0x55
+id|MVME16x_IRQ_SCSI
 comma
 id|DMA_NONE
 comma

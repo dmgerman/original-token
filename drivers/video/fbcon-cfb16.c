@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/cfb16.c -- Low level frame buffer operations for 16 bpp&n; *&t;&t;&t;&t;   truecolor packed pixels&n; *&n; *&t;Created 5 Apr 1997 by Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;

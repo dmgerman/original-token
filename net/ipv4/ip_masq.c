@@ -5974,9 +5974,11 @@ id|skb-&gt;csum
 )paren
 )paren
 (brace
-id|IP_MASQ_WARNING
+id|IP_MASQ_DEBUG
 c_func
 (paren
+l_int|2
+comma
 l_string|&quot;failed TCP/UDP checksum from %d.%d.%d.%d!&bslash;n&quot;
 comma
 id|NIPQUAD

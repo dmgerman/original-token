@@ -1368,6 +1368,19 @@ suffix:semicolon
 macro_line|#endif
 r_extern
 r_void
+id|stram_swap_setup
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|wd33c93_setup
 (paren
 r_char
@@ -1405,6 +1418,21 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAC_SCSI
+r_extern
+r_void
+id|mac_scsi_setup
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_CYCLADES
 r_extern
 r_void
@@ -3183,7 +3211,15 @@ id|atari_scsi_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4091_SCSI)
+macro_line|#ifdef CONFIG_STRAM_SWAP
+(brace
+l_string|&quot;stram_swap=&quot;
+comma
+id|stram_swap_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) &bslash;&n;&t;    || defined(CONFIG_A4091_SCSI) || defined(CONFIG_MVME16x_SCSI) &bslash;&n;&t;    || defined(CONFIG_BVME6000_SCSI)
 (brace
 l_string|&quot;53c7xx=&quot;
 comma
@@ -3204,6 +3240,14 @@ macro_line|#if defined(CONFIG_GVP11_SCSI)
 l_string|&quot;gvp11=&quot;
 comma
 id|gvp11_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAC_SCSI
+(brace
+l_string|&quot;mac5380=&quot;
+comma
+id|mac_scsi_setup
 )brace
 comma
 macro_line|#endif

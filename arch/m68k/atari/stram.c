@@ -3035,6 +3035,11 @@ id|vm_area_struct
 op_star
 id|vma
 suffix:semicolon
+r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Go through process&squot; page directory.&n;&t; */
 r_if
 c_cond
@@ -3049,6 +3054,13 @@ id|init_mm
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -3093,12 +3105,24 @@ comma
 id|isswap
 )paren
 )paren
-r_return
+(brace
+id|retval
+op_assign
 l_int|1
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
+)brace
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|retval
 suffix:semicolon
 )brace
 DECL|function|unswap_by_move
@@ -4590,7 +4614,10 @@ id|max_start
 suffix:semicolon
 )brace
 multiline_comment|/* setup parameters from command line */
-DECL|function|stram_swap_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|stram_swap_setup
 c_func
@@ -4602,6 +4629,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -5062,12 +5090,16 @@ id|block_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|function|stram_device_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|stram_device_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

@@ -57,6 +57,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|lock_depth
 )paren
 id|spin_lock

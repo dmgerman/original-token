@@ -929,13 +929,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reset after probe */
-DECL|member|no_autodma
+DECL|member|autodma
 r_int
-id|no_autodma
+id|autodma
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* don&squot;t automatically enable DMA at boot */
+multiline_comment|/* automatically try to enable DMA at boot */
 DECL|member|channel
 id|byte
 id|channel

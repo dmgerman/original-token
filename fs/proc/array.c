@@ -5392,18 +5392,6 @@ r_char
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ZORRO
-r_extern
-r_int
-id|zorro_get_list
-c_func
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
 r_extern
 r_int
 id|get_hardware_list
@@ -5413,7 +5401,15 @@ r_char
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
+r_extern
+r_int
+id|get_stram_list
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 DECL|function|get_root_array
 r_static
 r_int
@@ -5688,24 +5684,24 @@ comma
 id|length
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ZORRO
+macro_line|#ifdef CONFIG_PROC_HARDWARE
 r_case
-id|PROC_ZORRO
+id|PROC_HARDWARE
 suffix:colon
 r_return
-id|zorro_get_list
+id|get_hardware_list
 c_func
 (paren
 id|page
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
+macro_line|#ifdef CONFIG_STRAM_PROC
 r_case
-id|PROC_HARDWARE
+id|PROC_STRAM
 suffix:colon
 r_return
-id|get_hardware_list
+id|get_stram_list
 c_func
 (paren
 id|page

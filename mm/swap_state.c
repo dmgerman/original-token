@@ -493,7 +493,7 @@ id|page
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This will be a legal case once we have a more mature swap cache.&n;&t; */
+multiline_comment|/*&n;&t; * This is a legal case, but warn about it.&n;&t; */
 r_if
 c_cond
 (paren
@@ -509,6 +509,7 @@ l_int|1
 (brace
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;VM: Removing page cache on unshared page %08lx&bslash;n&quot;
 comma
 id|page_address
@@ -517,8 +518,6 @@ c_func
 id|page
 )paren
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_SWAP
@@ -542,73 +541,16 @@ id|page-&gt;count
 )paren
 suffix:semicolon
 macro_line|#endif
-id|remove_page_from_hash_queue
-(paren
-id|page
-)paren
-suffix:semicolon
-id|remove_page_from_inode_queue
-(paren
-id|page
-)paren
-suffix:semicolon
 id|PageClearSwapCache
 (paren
 id|page
 )paren
 suffix:semicolon
-id|__free_page
-(paren
-id|page
-)paren
-suffix:semicolon
-)brace
-DECL|function|find_in_swap_cache
-r_int
-id|find_in_swap_cache
+id|remove_inode_page
 c_func
 (paren
-r_struct
-id|page
-op_star
 id|page
 )paren
-(brace
-macro_line|#ifdef SWAP_CACHE_INFO
-id|swap_cache_find_total
-op_increment
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|PageSwapCache
-(paren
-id|page
-)paren
-)paren
-(brace
-r_int
-id|entry
-op_assign
-id|page-&gt;offset
-suffix:semicolon
-macro_line|#ifdef SWAP_CACHE_INFO
-id|swap_cache_find_success
-op_increment
-suffix:semicolon
-macro_line|#endif&t;
-id|remove_from_swap_cache
-(paren
-id|page
-)paren
-suffix:semicolon
-r_return
-id|entry
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|delete_from_swap_cache

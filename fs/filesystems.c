@@ -32,7 +32,7 @@ macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#ifdef CONFIG_CODA_FS
 r_extern
 r_int
-id|init_coda_fs
+id|init_coda
 c_func
 (paren
 r_void
@@ -167,7 +167,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_CODA_FS
-id|init_coda_fs
+id|init_coda
 c_func
 (paren
 )paren

@@ -81,6 +81,16 @@ DECL|enumerator|LP_IOEXT
 id|LP_IOEXT
 op_assign
 l_int|4
+comma
+DECL|enumerator|LP_MVME167
+id|LP_MVME167
+op_assign
+l_int|5
+comma
+DECL|enumerator|LP_BVME6000
+id|LP_BVME6000
+op_assign
+l_int|6
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * warning: this structure is in kernel space and has to fit in one page,&n; * i.e. must not be larger than 4k&n; */

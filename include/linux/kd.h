@@ -317,6 +317,69 @@ DECL|macro|KDSETKEYCODE
 mdefine_line|#define KDSETKEYCODE&t;0x4B4D&t;/* write kernel keycode table entry */
 DECL|macro|KDSIGACCEPT
 mdefine_line|#define KDSIGACCEPT&t;0x4B4E&t;/* accept kbd generated signals */
+DECL|struct|hwclk_time
+r_struct
+id|hwclk_time
+(brace
+DECL|member|sec
+r_int
+id|sec
+suffix:semicolon
+multiline_comment|/* 0..59 */
+DECL|member|min
+r_int
+id|min
+suffix:semicolon
+multiline_comment|/* 0..59 */
+DECL|member|hour
+r_int
+id|hour
+suffix:semicolon
+multiline_comment|/* 0..23 */
+DECL|member|day
+r_int
+id|day
+suffix:semicolon
+multiline_comment|/* 1..31 */
+DECL|member|mon
+r_int
+id|mon
+suffix:semicolon
+multiline_comment|/* 0..11 */
+DECL|member|year
+r_int
+id|year
+suffix:semicolon
+multiline_comment|/* 70... */
+DECL|member|wday
+r_int
+id|wday
+suffix:semicolon
+multiline_comment|/* 0..6, 0 is Sunday, -1 means unknown/don&squot;t set */
+)brace
+suffix:semicolon
+DECL|macro|KDGHWCLK
+mdefine_line|#define KDGHWCLK        0x4B50&t;/* get hardware clock */
+DECL|macro|KDSHWCLK
+mdefine_line|#define KDSHWCLK        0x4B51  /* set hardware clock */
+DECL|struct|kbd_repeat
+r_struct
+id|kbd_repeat
+(brace
+DECL|member|delay
+r_int
+id|delay
+suffix:semicolon
+multiline_comment|/* in msec; &lt;= 0: don&squot;t change */
+DECL|member|rate
+r_int
+id|rate
+suffix:semicolon
+multiline_comment|/* in msec; &lt;= 0: don&squot;t change */
+)brace
+suffix:semicolon
+DECL|macro|KDKBDREP
+mdefine_line|#define KDKBDREP        0x4B52  /* set keyboard delay/repeat rate;&n;&t;&t;&t;&t; * actually used values are returned */
 DECL|macro|KDFONTOP
 mdefine_line|#define KDFONTOP&t;0x4B72&t;/* font operations */
 DECL|struct|console_font_op

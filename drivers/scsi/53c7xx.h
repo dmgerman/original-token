@@ -1405,6 +1405,43 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* CMD_* flags */
+DECL|member|cmnd
+r_int
+r_char
+id|cmnd
+(braket
+l_int|12
+)braket
+suffix:semicolon
+multiline_comment|/* CDB, copied from Scsi_Cmnd */
+DECL|member|result
+r_int
+id|result
+suffix:semicolon
+multiline_comment|/* Copy to Scsi_Cmnd when done */
+r_struct
+(brace
+multiline_comment|/* Private non-cached bounce buffer */
+DECL|member|buf
+r_int
+r_char
+id|buf
+(braket
+l_int|256
+)braket
+suffix:semicolon
+DECL|member|addr
+id|u32
+id|addr
+suffix:semicolon
+DECL|member|len
+id|u32
+id|len
+suffix:semicolon
+DECL|member|bounce
+)brace
+id|bounce
+suffix:semicolon
 multiline_comment|/*&n; * SDTR and WIDE messages are an either/or affair&n; * in this message, since we will go into message out and send&n; * _the whole mess_ without dropping out of message out to &n; * let the target go into message in after sending the first &n; * message.&n; */
 DECL|member|select
 r_int
@@ -2396,7 +2433,7 @@ mdefine_line|#define NCR53c7x0_insn_size(insn)&t;&t;&t;&t;&t;&bslash;&n;    (((i
 DECL|macro|NCR53c7x0_local_declare
 mdefine_line|#define NCR53c7x0_local_declare()&t;&t;&t;&t;&t;&bslash;&n;    volatile unsigned char *NCR53c7x0_address_memory;&t;&t;&t;&bslash;&n;    unsigned int NCR53c7x0_address_io;&t;&t;&t;&t;&t;&bslash;&n;    int NCR53c7x0_memory_mapped
 DECL|macro|NCR53c7x0_local_setup
-mdefine_line|#define NCR53c7x0_local_setup(host)&t;&t;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_memory = (void *) (host)-&gt;base;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_io = (unsigned int) (host)-&gt;io_port;&t;&t;&bslash;&n;    NCR53c7x0_memory_mapped = ((struct NCR53c7x0_hostdata *) &t;&t;&bslash;&n;&t;host-&gt;hostdata)-&gt; options &amp; OPTION_MEMORY_MAPPED 
+mdefine_line|#define NCR53c7x0_local_setup(host)&t;&t;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_memory = (void *) (host)-&gt;base;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_io = (unsigned int) (host)-&gt;io_port;&t;&t;&bslash;&n;    NCR53c7x0_memory_mapped = ((struct NCR53c7x0_hostdata *) &t;&t;&bslash;&n;&t;host-&gt;hostdata[0])-&gt; options &amp; OPTION_MEMORY_MAPPED 
 macro_line|#ifdef BIG_ENDIAN
 multiline_comment|/* These could be more efficient, given that we are always memory mapped,&n; * but they don&squot;t give the same problems as the write macros, so leave&n; * them. */
 DECL|macro|NCR53c7x0_read8

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/drivers/char/vc_screen.c&n; *&n; * Provide access to virtual console memory.&n; * /dev/vcs0: the screen as it is being viewed right now (possibly scrolled)&n; * /dev/vcsN: the screen of /dev/ttyN (1 &lt;= N &lt;= 63)&n; *            [minor: N]&n; *&n; * /dev/vcsaN: idem, but including attributes, and prefixed with&n; *&t;the 4 bytes lines,columns,x,y (as screendump used to give).&n; *&t;Attribute/character pair is in native endianity.&n; *            [minor: N+128]&n; *&n; * This replaces screendump and part of selection, so that the system&n; * administrator can control access using file system permissions.&n; *&n; * aeb@cwi.nl - efter Friedas begravelse - 950211&n; *&n; * machek@k332.feld.cvut.cz - modified not to send characters to wrong console&n; *&t; - fixed some fatal off-by-one bugs (0-- no longer == -1 -&gt; looping and looping and looping...)&n; *&t; - making it shorter - scr_readw are macros which expand in PRETTY long code&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -2,6 +2,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#include &lt;asm/amipcmcia.h&gt;
 r_extern
 r_volatile
 id|u_short
@@ -82,39 +83,48 @@ c_func
 id|amiga_audio_min_period
 )paren
 suffix:semicolon
-DECL|variable|zorro_find
+macro_line|#ifdef CONFIG_AMIGA_PCMCIA
+DECL|variable|pcmcia_reset
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|zorro_find
+id|pcmcia_reset
 )paren
 suffix:semicolon
-DECL|variable|zorro_get_board
+DECL|variable|pcmcia_copy_tuple
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|zorro_get_board
+id|pcmcia_copy_tuple
 )paren
 suffix:semicolon
-DECL|variable|zorro_config_board
+DECL|variable|pcmcia_program_voltage
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|zorro_config_board
+id|pcmcia_program_voltage
 )paren
 suffix:semicolon
-DECL|variable|zorro_unconfig_board
+DECL|variable|pcmcia_access_speed
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|zorro_unconfig_board
+id|pcmcia_access_speed
 )paren
 suffix:semicolon
-DECL|variable|zorro_unused_z2ram
+DECL|variable|pcmcia_write_enable
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|zorro_unused_z2ram
+id|pcmcia_write_enable
 )paren
 suffix:semicolon
+DECL|variable|pcmcia_write_disable
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pcmcia_write_disable
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

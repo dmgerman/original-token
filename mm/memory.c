@@ -4449,7 +4449,7 @@ id|pgtable_cache_size
 OG
 id|pgt_cache_water
 (braket
-l_int|0
+l_int|1
 )braket
 )paren
 (brace
@@ -4460,7 +4460,6 @@ c_cond
 (paren
 id|pgd_quicklist
 )paren
-(brace
 id|free_pgd_slow
 c_func
 (paren
@@ -4470,13 +4469,11 @@ c_func
 )paren
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|pmd_quicklist
 )paren
-(brace
 id|free_pmd_slow
 c_func
 (paren
@@ -4486,13 +4483,11 @@ c_func
 )paren
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|pte_quicklist
 )paren
-(brace
 id|free_pte_slow
 c_func
 (paren
@@ -4503,7 +4498,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-)brace
 r_while
 c_loop
 (paren
@@ -4511,12 +4505,10 @@ id|pgtable_cache_size
 OG
 id|pgt_cache_water
 (braket
-l_int|1
+l_int|0
 )braket
 )paren
-(brace
 suffix:semicolon
-)brace
 )brace
 )brace
 eof

@@ -162,16 +162,11 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|check_pgt_cache
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
 multiline_comment|/* block out HSYNC on the atari (falcon) */
@@ -197,6 +192,11 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* machine compilation types */ 
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 id|run_task_queue
 c_func
 (paren

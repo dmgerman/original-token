@@ -1,4 +1,5 @@
 multiline_comment|/*&n;     *  VGA characters/attributes&n;     */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_VGA) || defined(CONFIG_FBCON_VGA_MODULE)
 DECL|macro|FBCON_HAS_VGA

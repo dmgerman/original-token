@@ -1176,7 +1176,7 @@ id|at_least_one_hwif_enabled
 op_assign
 l_int|0
 comma
-id|no_autodma
+id|autodma
 op_assign
 l_int|0
 comma
@@ -1208,6 +1208,12 @@ id|mate
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_IDEDMA_AUTO
+id|autodma
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|check_if_enabled
 suffix:colon
 r_if
@@ -1287,9 +1293,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|no_autodma
+id|autodma
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/* default DMA off if we had to configure it here */
 r_goto
@@ -1710,15 +1716,6 @@ op_assign
 id|hwif
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|no_autodma
-)paren
-id|hwif-&gt;no_autodma
-op_assign
-l_int|1
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
@@ -1731,11 +1728,19 @@ comma
 id|DEVID_SIS5513
 )paren
 )paren
-id|hwif-&gt;no_autodma
+id|autodma
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|autodma
+)paren
+id|hwif-&gt;autodma
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* too many SIS-5513 systems have troubles */
 r_if
 c_cond
 (paren
@@ -1818,19 +1823,9 @@ id|PCI_COMMAND_MASTER
 )paren
 (brace
 multiline_comment|/*&n; &t; &t;&t;&t; * Set up BM-DMA capability (PnP BIOS should have done this)&n; &t; &t;&t;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;%s: %s enabling Bus-Master DMA&bslash;n&quot;
-comma
-id|hwif-&gt;name
-comma
-id|d-&gt;name
-)paren
-suffix:semicolon
-id|hwif-&gt;no_autodma
+id|hwif-&gt;autodma
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/* default DMA off if we had to configure it here */
 (paren

@@ -77,6 +77,19 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|kbd_reset_setup
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* machine dependent irq functions */
 r_extern
 r_void

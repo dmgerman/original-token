@@ -1,4 +1,5 @@
 multiline_comment|/*&n;     *  Monochrome (mfb)&n;     */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_MFB) || defined(CONFIG_FBCON_MFB_MODULE)
 DECL|macro|FBCON_HAS_MFB

@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
+macro_line|#include &lt;asm/amipcmcia.h&gt;
 r_extern
 r_int
 id|cia_request_irq
@@ -345,6 +346,21 @@ id|i
 )braket
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* turn off PCMCIA interrupts */
+r_if
+c_cond
+(paren
+id|AMIGAHW_PRESENT
+c_func
+(paren
+id|PCMCIA
+)paren
+)paren
+id|pcmcia_disable_irq
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* turn off all interrupts and enable the master interrupt bit */
 id|custom.intena

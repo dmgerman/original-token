@@ -2799,6 +2799,9 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
+id|mm_segment_t
+id|old_fs
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2815,6 +2818,13 @@ c_func
 (paren
 op_amp
 id|inode-&gt;i_sem
+)paren
+suffix:semicolon
+id|old_fs
+op_assign
+id|get_fs
+c_func
+(paren
 )paren
 suffix:semicolon
 id|set_fs
@@ -2843,7 +2853,7 @@ suffix:semicolon
 id|set_fs
 c_func
 (paren
-id|USER_DS
+id|old_fs
 )paren
 suffix:semicolon
 id|up

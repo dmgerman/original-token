@@ -4245,6 +4245,12 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+id|coda_purge_children
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|coda_purge_dentries
 c_func
 (paren

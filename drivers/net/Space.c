@@ -540,6 +540,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|apne_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|bionet_probe
 c_func
 (paren
@@ -1462,6 +1472,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_HYDRA&t;&t;/* Hydra Systems Amiganet Ethernet board */
 (brace
 id|hydra_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_APNE&t;&t;/* A1200 PCMCIA NE2000 */
+(brace
+id|apne_probe
 comma
 l_int|0
 )brace

@@ -562,8 +562,7 @@ op_amp
 l_int|1
 )paren
 op_logical_and
-op_logical_neg
-id|hwif-&gt;no_autodma
+id|hwif-&gt;autodma
 )paren
 (brace
 multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 0/1/2) enabled */

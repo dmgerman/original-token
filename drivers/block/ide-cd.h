@@ -116,7 +116,7 @@ DECL|macro|ABORTED_COMMAND
 mdefine_line|#define ABORTED_COMMAND         0x0b
 DECL|macro|MISCOMPARE
 mdefine_line|#define MISCOMPARE              0x0e
-multiline_comment|/* We want some additional flags for cd-rom drives.&n;   To save space in the ide_drive_t struct, use some fields which&n;   doesn&squot;t make sense for cd-roms -- `bios_cyl&squot; and `bios_head&squot;. */
+multiline_comment|/* We want some additional flags for CDROM drives.&n;   To save space in the ide_drive_t struct, use some fields which&n;   doesn&squot;t make sense for CDROMs -- `bios_cyl&squot; and `bios_head&squot;. */
 multiline_comment|/* Configuration flags.  These describe the capabilities of the drive.&n;   They generally do not change after initialization, unless we learn&n;   more about the drive from stuff failing. */
 DECL|struct|ide_cd_config_flags
 r_struct

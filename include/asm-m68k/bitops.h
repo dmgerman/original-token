@@ -989,6 +989,52 @@ DECL|macro|hweight16
 mdefine_line|#define hweight16(x) generic_hweight16(x)
 DECL|macro|hweight8
 mdefine_line|#define hweight8(x) generic_hweight8(x)
+multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
+DECL|function|ffs
+r_extern
+id|__inline__
+r_int
+id|ffs
+c_func
+(paren
+r_int
+id|x
+)paren
+(brace
+r_int
+id|cnt
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;bfffo %1{#0:#0}&quot;
+suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|cnt
+)paren
+suffix:colon
+l_string|&quot;dm&quot;
+(paren
+id|x
+op_amp
+op_minus
+id|x
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|32
+op_minus
+id|cnt
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
+DECL|macro|hweight32
+mdefine_line|#define hweight32(x) generic_hweight32(x)
+DECL|macro|hweight16
+mdefine_line|#define hweight16(x) generic_hweight16(x)
+DECL|macro|hweight8
+mdefine_line|#define hweight8(x) generic_hweight8(x)
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* Bitmap functions for the minix filesystem */
 r_extern

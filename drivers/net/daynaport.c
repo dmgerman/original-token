@@ -1345,7 +1345,6 @@ l_int|0
 suffix:semicolon
 r_static
 r_int
-r_char
 id|fwrd4_offsets
 (braket
 l_int|16
@@ -1355,7 +1354,6 @@ initialization_block
 suffix:semicolon
 r_static
 r_int
-r_char
 id|back4_offsets
 (braket
 l_int|16

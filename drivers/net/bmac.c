@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Network device driver for the BMAC ethernet controller on&n; * Apple Powermacs.  Assumes it&squot;s under a DBDMA controller.&n; *&n; * Copyright (C) 1998 Randy Gobbel.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;

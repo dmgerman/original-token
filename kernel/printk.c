@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|LOG_BUF_LEN
-mdefine_line|#define LOG_BUF_LEN&t;8192
+mdefine_line|#define LOG_BUF_LEN&t;(16384)
 DECL|variable|buf
 r_static
 r_char

@@ -20,11 +20,6 @@ op_star
 id|memavailp
 )paren
 suffix:semicolon
-multiline_comment|/* Virtual address region for use by kernel_map() */
-DECL|macro|KMAP_START
-mdefine_line|#define&t;KMAP_START&t;0xd0000000
-DECL|macro|KMAP_END
-mdefine_line|#define&t;KMAP_END&t;0xf0000000
 multiline_comment|/* Granularity of kernel_map() allocations */
 DECL|macro|KMAP_STEP
 mdefine_line|#define KMAP_STEP&t;(256*1024)

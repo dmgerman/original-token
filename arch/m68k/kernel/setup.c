@@ -172,6 +172,22 @@ r_int
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* machine dependent &quot;kbd-reset&quot; setup function */
+r_void
+(paren
+op_star
+id|kbd_reset_setup
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+)paren
+id|__initdata
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* machine dependent irq functions */
 r_void
 (paren
@@ -511,7 +527,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|config_bmve6000
+id|config_bvme6000
 c_func
 (paren
 r_void

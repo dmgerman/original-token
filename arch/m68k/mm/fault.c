@@ -279,13 +279,6 @@ comma
 id|write
 )paren
 suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|mm-&gt;mmap_sem
-)paren
-suffix:semicolon
 multiline_comment|/* There seems to be a missing invalidate somewhere in do_no_page.&n;&t; * Until I found it, this one cures the problem and makes&n;&t; * 1.2 run on the 68040 (Martin Apel).&n;&t; */
 r_if
 c_cond
@@ -298,6 +291,13 @@ c_func
 id|vma
 comma
 id|address
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return

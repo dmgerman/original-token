@@ -372,6 +372,8 @@ DECL|macro|__NR_capget
 mdefine_line|#define __NR_capget&t;&t;184
 DECL|macro|__NR_capset
 mdefine_line|#define __NR_capset&t;&t;185
+DECL|macro|__NR_sigaltstack
+mdefine_line|#define __NR_sigaltstack&t;186
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)
@@ -616,27 +618,8 @@ r_int
 id|flags
 )paren
 (brace
-r_register
-r_int
-id|retval
-id|__asm__
-(paren
-l_string|&quot;d0&quot;
-)paren
-op_assign
-id|__NR_clone
-suffix:semicolon
-r_register
-r_int
-id|clone_arg
-id|__asm__
-(paren
-l_string|&quot;d1&quot;
-)paren
-op_assign
-id|flags
-op_or
-id|CLONE_VM
+id|pid_t
+id|pid
 suffix:semicolon
 id|mm_segment_t
 id|fs
@@ -652,6 +635,27 @@ id|set_fs
 (paren
 id|KERNEL_DS
 )paren
+suffix:semicolon
+(brace
+r_register
+r_int
+id|retval
+id|__asm__
+(paren
+l_string|&quot;d0&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+id|clone_arg
+id|__asm__
+(paren
+l_string|&quot;d1&quot;
+)paren
+op_assign
+id|flags
+op_or
+id|CLONE_VM
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -716,13 +720,18 @@ comma
 l_string|&quot;d2&quot;
 )paren
 suffix:semicolon
+id|pid
+op_assign
+id|retval
+suffix:semicolon
+)brace
 id|set_fs
 (paren
 id|fs
 )paren
 suffix:semicolon
 r_return
-id|retval
+id|pid
 suffix:semicolon
 )brace
 DECL|function|wait

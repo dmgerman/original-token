@@ -141,7 +141,7 @@ id|page
 op_plus
 id|len
 comma
-l_string|&quot;%2d %s&bslash;n&quot;
+l_string|&quot;%3d %s&bslash;n&quot;
 comma
 id|i
 comma
@@ -202,7 +202,7 @@ id|page
 op_plus
 id|len
 comma
-l_string|&quot;%2d %s&bslash;n&quot;
+l_string|&quot;%3d %s&bslash;n&quot;
 comma
 id|i
 comma

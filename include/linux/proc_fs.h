@@ -104,9 +104,6 @@ comma
 DECL|enumerator|PROC_LOCKS
 id|PROC_LOCKS
 comma
-DECL|enumerator|PROC_ZORRO
-id|PROC_ZORRO
-comma
 DECL|enumerator|PROC_HARDWARE
 id|PROC_HARDWARE
 comma
@@ -510,6 +507,12 @@ comma
 DECL|enumerator|PROC_SCSI_AMIGA7XX
 id|PROC_SCSI_AMIGA7XX
 comma
+DECL|enumerator|PROC_SCSI_MVME16x
+id|PROC_SCSI_MVME16x
+comma
+DECL|enumerator|PROC_SCSI_BVME6000
+id|PROC_SCSI_BVME6000
+comma
 DECL|enumerator|PROC_SCSI_A3000
 id|PROC_SCSI_A3000
 comma
@@ -521,6 +524,9 @@ id|PROC_SCSI_GVP11
 comma
 DECL|enumerator|PROC_SCSI_ATARI
 id|PROC_SCSI_ATARI
+comma
+DECL|enumerator|PROC_SCSI_MAC
+id|PROC_SCSI_MAC
 comma
 DECL|enumerator|PROC_SCSI_IDESCSI
 id|PROC_SCSI_IDESCSI
@@ -604,6 +610,12 @@ comma
 DECL|enumerator|PROC_BUS_PCI_DEVICES
 id|PROC_BUS_PCI_DEVICES
 comma
+DECL|enumerator|PROC_BUS_ZORRO
+id|PROC_BUS_ZORRO
+comma
+DECL|enumerator|PROC_BUS_ZORRO_DEVICES
+id|PROC_BUS_ZORRO_DEVICES
+comma
 DECL|enumerator|PROC_BUS_LAST
 id|PROC_BUS_LAST
 )brace
@@ -615,7 +627,7 @@ id|fs_directory_inos
 DECL|enumerator|PROC_FS_CODA
 id|PROC_FS_CODA
 op_assign
-id|PROC_MCA_LAST
+id|PROC_BUS_LAST
 comma
 DECL|enumerator|PROC_FS_LAST
 id|PROC_FS_LAST
@@ -628,7 +640,7 @@ id|fs_coda_directory_inos
 DECL|enumerator|PROC_VFS_STATS
 id|PROC_VFS_STATS
 op_assign
-id|PROC_MCA_LAST
+id|PROC_FS_LAST
 comma
 DECL|enumerator|PROC_UPCALL_STATS
 id|PROC_UPCALL_STATS

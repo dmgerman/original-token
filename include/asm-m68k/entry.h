@@ -27,6 +27,9 @@ l_int|12
 id|LTASK_EXECDOMAIN
 op_assign
 l_int|16
+id|LTASK_NEEDRESCHED
+op_assign
+l_int|20
 id|LTSS_KSP
 op_assign
 l_int|0

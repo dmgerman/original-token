@@ -1099,9 +1099,9 @@ mdefine_line|#define&t;START_MOTOR_OFF_TIMER(delay)&t;&t;&t;&t;&bslash;&n;    do
 DECL|macro|START_CHECK_CHANGE_TIMER
 mdefine_line|#define&t;START_CHECK_CHANGE_TIMER(delay)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        timer_table[FLOPPY_TIMER].expires = jiffies + (delay);&t;&bslash;&n;        timer_active |= (1 &lt;&lt; FLOPPY_TIMER);&t;&t;&t;&bslash;&n;&t;} while(0)
 DECL|macro|START_TIMEOUT
-mdefine_line|#define&t;START_TIMEOUT()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        del_timer( &amp;timeout_timer );&t;&t;&t;&t;&bslash;&n;        timeout_timer.expires = jiffies + FLOPPY_TIMEOUT;&t;&bslash;&n;        add_timer( &amp;timeout_timer );&t;&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define&t;START_TIMEOUT()&t;&t;&t;&t;&t;&t;&bslash;&n;    mod_timer(&amp;timeout_timer, jiffies + FLOPPY_TIMEOUT)
 DECL|macro|STOP_TIMEOUT
-mdefine_line|#define&t;STOP_TIMEOUT()&t;&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        del_timer( &amp;timeout_timer );&t;&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define&t;STOP_TIMEOUT()&t;&t;&t;&t;&t;&t;&bslash;&n;    del_timer(&amp;timeout_timer)
 multiline_comment|/*&n; * The driver is trying to determine the correct media format&n; * while Probing is set. fd_rwsec_done() clears it after a&n; * successful access.&n; */
 DECL|variable|Probing
 r_static
@@ -5356,6 +5356,7 @@ r_if
 c_cond
 (paren
 id|test_bit
+c_func
 (paren
 id|drive
 comma
@@ -5364,6 +5365,7 @@ id|changed_floppies
 )paren
 op_logical_or
 id|test_bit
+c_func
 (paren
 id|drive
 comma
@@ -5389,6 +5391,7 @@ op_amp
 id|FTD_MSG
 )paren
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;floppy: clear format %p!&bslash;n&quot;
@@ -5402,6 +5405,7 @@ op_minus
 l_int|1
 suffix:semicolon
 id|clear_bit
+c_func
 (paren
 id|drive
 comma
@@ -5410,6 +5414,7 @@ id|fake_change
 )paren
 suffix:semicolon
 id|clear_bit
+c_func
 (paren
 id|drive
 comma
@@ -5417,7 +5422,7 @@ op_amp
 id|changed_floppies
 )paren
 suffix:semicolon
-multiline_comment|/* &n;       * MSch: clearing geometry makes sense only for autoprobe formats, &n;       * for &squot;permanent user-defined&squot; parameter: restore default_params[] &n;       * here if flagged valid!&n;       */
+multiline_comment|/* MSch: clearing geometry makes sense only for autoprobe&n;&t;&t;   formats, for &squot;permanent user-defined&squot; parameter:&n;&t;&t;   restore default_params[] here if flagged valid! */
 r_if
 c_cond
 (paren
@@ -6044,10 +6049,11 @@ id|IRQ_MFP_FDC
 )paren
 suffix:semicolon
 )brace
+DECL|function|invalidate_drive
 r_static
 r_int
-DECL|function|invalidate_drive
 id|invalidate_drive
+c_func
 (paren
 id|kdev_t
 id|rdev
@@ -6060,6 +6066,7 @@ op_minus
 l_int|1
 suffix:semicolon
 id|set_bit
+c_func
 (paren
 id|MINOR
 c_func
@@ -6074,6 +6081,7 @@ id|fake_change
 )paren
 suffix:semicolon
 id|check_disk_change
+c_func
 (paren
 id|rdev
 )paren
@@ -7015,8 +7023,9 @@ id|FDFLUSH
 suffix:colon
 r_return
 id|invalidate_drive
+c_func
 (paren
-id|drive
+id|device
 )paren
 suffix:semicolon
 )brace
@@ -7565,6 +7574,7 @@ suffix:semicolon
 id|drive
 op_assign
 id|MINOR
+c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
@@ -7620,13 +7630,14 @@ id|fd_ref
 (braket
 id|drive
 )braket
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|old_dev
 op_ne
+id|MINOR
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 )paren
 r_return
 op_minus
@@ -7658,6 +7669,8 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7685,7 +7698,11 @@ id|fd_device
 id|drive
 )braket
 op_assign
+id|MINOR
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7694,12 +7711,22 @@ id|old_dev
 op_logical_and
 id|old_dev
 op_ne
+id|MINOR
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 )paren
 id|invalidate_buffers
 c_func
 (paren
+id|MKDEV
+c_func
+(paren
+id|FLOPPY_MAJOR
+comma
 id|old_dev
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Allow ioctls if we have write-permissions even if read-only open */
@@ -7733,8 +7760,6 @@ l_int|2
 id|filp-&gt;f_mode
 op_or_assign
 id|OPEN_WRITE_BIT
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -7815,7 +7840,11 @@ id|drive
 suffix:semicolon
 id|drive
 op_assign
+id|MINOR
+c_func
+(paren
 id|inode-&gt;i_rdev
+)paren
 op_amp
 l_int|3
 suffix:semicolon

@@ -1038,11 +1038,13 @@ op_or
 id|FASTLANE_DMA_ESI
 )paren
 suffix:semicolon
+macro_line|#ifdef __mc68000__
 id|nop
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|dregs-&gt;ctrl_reg
 op_assign
 id|ctrl_data

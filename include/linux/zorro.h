@@ -1,125 +1,8 @@
-multiline_comment|/*&n; *  linux/zorro.h -- Amiga AutoConfig (Zorro) Expansion Device Definitions&n; *&n; *  Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *  Please update arch/m68k/amiga/zorro.c if you make changes here!&n; *&n; *  Many IDs were obtained from ExpName/Identify ((C) Richard K&#xfffd;rber)&n; *  and by looking at the NetBSD-Amiga kernel sources&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+multiline_comment|/*&n; *  linux/zorro.h -- Amiga AutoConfig (Zorro) Bus Definitions&n; *&n; *  Copyright (C) 1995-1998 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
 macro_line|#ifndef _LINUX_ZORRO_H
 DECL|macro|_LINUX_ZORRO_H
 mdefine_line|#define _LINUX_ZORRO_H
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/*&n;     *  Zorro Product Classes&n;     *&n;     *  Make sure to keep these in sync with arch/m68k/amiga/zorro.c!&n;     */
-DECL|enum|Zorro_Classes
-r_enum
-id|Zorro_Classes
-(brace
-DECL|enumerator|ZORRO_CLASS_UNKNOWN
-id|ZORRO_CLASS_UNKNOWN
-op_assign
-l_int|0x00
-comma
-DECL|enumerator|ZORRO_CLASS_ARCNET
-id|ZORRO_CLASS_ARCNET
-comma
-DECL|enumerator|ZORRO_CLASS_AUDIO
-id|ZORRO_CLASS_AUDIO
-comma
-DECL|enumerator|ZORRO_CLASS_BRIDGE
-id|ZORRO_CLASS_BRIDGE
-comma
-DECL|enumerator|ZORRO_CLASS_DSP
-id|ZORRO_CLASS_DSP
-comma
-DECL|enumerator|ZORRO_CLASS_ETHERNET
-id|ZORRO_CLASS_ETHERNET
-comma
-DECL|enumerator|ZORRO_CLASS_ETHERNET_PARALLEL
-id|ZORRO_CLASS_ETHERNET_PARALLEL
-comma
-DECL|enumerator|ZORRO_CLASS_FLASHROM
-id|ZORRO_CLASS_FLASHROM
-comma
-DECL|enumerator|ZORRO_CLASS_FPU_RAM
-id|ZORRO_CLASS_FPU_RAM
-comma
-DECL|enumerator|ZORRO_CLASS_GFX
-id|ZORRO_CLASS_GFX
-comma
-DECL|enumerator|ZORRO_CLASS_GFXRAM
-id|ZORRO_CLASS_GFXRAM
-comma
-DECL|enumerator|ZORRO_CLASS_HD
-id|ZORRO_CLASS_HD
-comma
-DECL|enumerator|ZORRO_CLASS_HD_RAM
-id|ZORRO_CLASS_HD_RAM
-comma
-DECL|enumerator|ZORRO_CLASS_IDE
-id|ZORRO_CLASS_IDE
-comma
-DECL|enumerator|ZORRO_CLASS_IDE_RAM
-id|ZORRO_CLASS_IDE_RAM
-comma
-DECL|enumerator|ZORRO_CLASS_IDE_FLOPPY
-id|ZORRO_CLASS_IDE_FLOPPY
-comma
-DECL|enumerator|ZORRO_CLASS_ISDN
-id|ZORRO_CLASS_ISDN
-comma
-DECL|enumerator|ZORRO_CLASS_MACEMU
-id|ZORRO_CLASS_MACEMU
-comma
-DECL|enumerator|ZORRO_CLASS_MISC
-id|ZORRO_CLASS_MISC
-comma
-DECL|enumerator|ZORRO_CLASS_MODEM
-id|ZORRO_CLASS_MODEM
-comma
-DECL|enumerator|ZORRO_CLASS_MULTIIO
-id|ZORRO_CLASS_MULTIIO
-comma
-DECL|enumerator|ZORRO_CLASS_RAM
-id|ZORRO_CLASS_RAM
-comma
-DECL|enumerator|ZORRO_CLASS_SCANNER
-id|ZORRO_CLASS_SCANNER
-comma
-DECL|enumerator|ZORRO_CLASS_SCSI
-id|ZORRO_CLASS_SCSI
-comma
-DECL|enumerator|ZORRO_CLASS_SCSI_IDE
-id|ZORRO_CLASS_SCSI_IDE
-comma
-DECL|enumerator|ZORRO_CLASS_SCSI_RAM
-id|ZORRO_CLASS_SCSI_RAM
-comma
-DECL|enumerator|ZORRO_CLASS_SCSI_SERIAL
-id|ZORRO_CLASS_SCSI_SERIAL
-comma
-DECL|enumerator|ZORRO_CLASS_SERIAL
-id|ZORRO_CLASS_SERIAL
-comma
-DECL|enumerator|ZORRO_CLASS_TABLET
-id|ZORRO_CLASS_TABLET
-comma
-DECL|enumerator|ZORRO_CLASS_TURBO
-id|ZORRO_CLASS_TURBO
-comma
-DECL|enumerator|ZORRO_CLASS_TURBO_RAM
-id|ZORRO_CLASS_TURBO_RAM
-comma
-DECL|enumerator|ZORRO_CLASS_TURBO_HD
-id|ZORRO_CLASS_TURBO_HD
-comma
-DECL|enumerator|ZORRO_CLASS_TURBO_IDE
-id|ZORRO_CLASS_TURBO_IDE
-comma
-DECL|enumerator|ZORRO_CLASS_TURBO_SCSI
-id|ZORRO_CLASS_TURBO_SCSI
-comma
-DECL|enumerator|ZORRO_CLASS_TURBO_SCSI_RAM
-id|ZORRO_CLASS_TURBO_SCSI_RAM
-comma
-DECL|enumerator|ZORRO_CLASS_VIDEO
-id|ZORRO_CLASS_VIDEO
-comma
-)brace
-suffix:semicolon
 multiline_comment|/*&n;     *  Known Zorro Boards&n;     *&n;     *  Each Zorro board has a 32-bit ID of the form&n;     *&n;     *      mmmmmmmmmmmmmmmmppppppppeeeeeeee&n;     *&n;     *  with&n;     *&n;     *      mmmmmmmmmmmmmmmm&t;16-bit Manufacturer ID (assigned by CBM (sigh))&n;     *      pppppppp&t;&t;8-bit Product ID (assigned by manufacturer)&n;     *      eeeeeeee&t;&t;8-bit Extended Product ID (currently only used&n;     *&t;&t;&t;&t;for some GVP boards)&n;     */
 DECL|macro|ZORRO_MANUF
 mdefine_line|#define ZORRO_MANUF(id)&t;&t;((id) &gt;&gt; 16)
@@ -732,7 +615,7 @@ mdefine_line|#define ZORRO_MANUF_ARMAX&t;&t;&t;&t;&t;0x0885
 DECL|macro|ZORRO_PROD_ARMAX_OMNIBUS
 mdefine_line|#define  ZORRO_PROD_ARMAX_OMNIBUS&t;&t;&t;&t;ZORRO_ID(ARMAX, 0x00, 0)
 DECL|macro|ZORRO_MANUF_ZEUS
-mdefine_line|#define ZORRO_MANUF_ZEUS&t;&t;&t;&t;&t;0x088d
+mdefine_line|#define ZORRO_MANUF_ZEUS&t;&t;&t;&t;&t;0x088D
 DECL|macro|ZORRO_PROD_ZEUS_SPIDER
 mdefine_line|#define  ZORRO_PROD_ZEUS_SPIDER&t;&t;&t;&t;&t;ZORRO_ID(ZEUS, 0x04, 0)
 DECL|macro|ZORRO_MANUF_NEWTEK
@@ -974,7 +857,7 @@ DECL|macro|ZORRO_PROD_COMBITEC_HD
 mdefine_line|#define  ZORRO_PROD_COMBITEC_HD&t;&t;&t;&t;&t;ZORRO_ID(COMBITEC_2, 0x2A, 0)
 DECL|macro|ZORRO_PROD_COMBITEC_SRAM
 mdefine_line|#define  ZORRO_PROD_COMBITEC_SRAM&t;&t;&t;&t;ZORRO_ID(COMBITEC_2, 0x2B, 0)
-multiline_comment|/*&n;     *  Test and illegal Manufacturer IDs.&n;     *  These do NOT appear in arch/m68k/amiga/zorro.c!&n;     */
+multiline_comment|/*&n;     *  Test and illegal Manufacturer IDs.&n;     */
 DECL|macro|ZORRO_MANUF_HACKER
 mdefine_line|#define ZORRO_MANUF_HACKER&t;&t;&t;&t;&t;0x07DB
 DECL|macro|ZORRO_PROD_GENERAL_PROTOTYPE
@@ -1056,21 +939,27 @@ id|ln_Pred
 suffix:semicolon
 multiline_comment|/* Pointer to previous (predecessor) */
 DECL|member|ln_Type
-id|u_char
+id|__u8
 id|ln_Type
 suffix:semicolon
 DECL|member|ln_Pri
-r_char
+id|__s8
 id|ln_Pri
 suffix:semicolon
 multiline_comment|/* Priority, for sorting */
 DECL|member|ln_Name
-r_char
+id|__s8
 op_star
 id|ln_Name
 suffix:semicolon
 multiline_comment|/* ID string, null terminated */
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|struct|ExpansionRom
 r_struct
@@ -1078,57 +967,63 @@ id|ExpansionRom
 (brace
 multiline_comment|/* -First 16 bytes of the expansion ROM */
 DECL|member|er_Type
-id|u_char
+id|__u8
 id|er_Type
 suffix:semicolon
 multiline_comment|/* Board type, size and flags */
 DECL|member|er_Product
-id|u_char
+id|__u8
 id|er_Product
 suffix:semicolon
 multiline_comment|/* Product number, assigned by manufacturer */
 DECL|member|er_Flags
-id|u_char
+id|__u8
 id|er_Flags
 suffix:semicolon
 multiline_comment|/* Flags */
 DECL|member|er_Reserved03
-id|u_char
+id|__u8
 id|er_Reserved03
 suffix:semicolon
 multiline_comment|/* Must be zero ($ff inverted) */
 DECL|member|er_Manufacturer
-id|u_short
+id|__u16
 id|er_Manufacturer
 suffix:semicolon
-multiline_comment|/* Unique ID,ASSIGNED BY COMMODORE-AMIGA! */
+multiline_comment|/* Unique ID, ASSIGNED BY COMMODORE-AMIGA! */
 DECL|member|er_SerialNumber
-id|u_long
+id|__u32
 id|er_SerialNumber
 suffix:semicolon
 multiline_comment|/* Available for use by manufacturer */
 DECL|member|er_InitDiagVec
-id|u_short
+id|__u16
 id|er_InitDiagVec
 suffix:semicolon
 multiline_comment|/* Offset to optional &quot;DiagArea&quot; structure */
 DECL|member|er_Reserved0c
-id|u_char
+id|__u8
 id|er_Reserved0c
 suffix:semicolon
 DECL|member|er_Reserved0d
-id|u_char
+id|__u8
 id|er_Reserved0d
 suffix:semicolon
 DECL|member|er_Reserved0e
-id|u_char
+id|__u8
 id|er_Reserved0e
 suffix:semicolon
 DECL|member|er_Reserved0f
-id|u_char
+id|__u8
 id|er_Reserved0f
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* er_Type board type bits */
 DECL|macro|ERT_TYPEMASK
@@ -1152,12 +1047,12 @@ id|Node
 id|cd_Node
 suffix:semicolon
 DECL|member|cd_Flags
-id|u_char
+id|__u8
 id|cd_Flags
 suffix:semicolon
 multiline_comment|/* (read/write) */
 DECL|member|cd_Pad
-id|u_char
+id|__u8
 id|cd_Pad
 suffix:semicolon
 multiline_comment|/* reserved */
@@ -1174,17 +1069,17 @@ id|cd_BoardAddr
 suffix:semicolon
 multiline_comment|/* where in memory the board was placed */
 DECL|member|cd_BoardSize
-id|u_long
+id|__u32
 id|cd_BoardSize
 suffix:semicolon
 multiline_comment|/* size of board in bytes */
 DECL|member|cd_SlotAddr
-id|u_short
+id|__u16
 id|cd_SlotAddr
 suffix:semicolon
 multiline_comment|/* which slot number (PRIVATE) */
 DECL|member|cd_SlotSize
-id|u_short
+id|__u16
 id|cd_SlotSize
 suffix:semicolon
 multiline_comment|/* number of slots (PRIVATE) */
@@ -1202,7 +1097,7 @@ id|cd_NextCD
 suffix:semicolon
 multiline_comment|/* linked list of drivers to config */
 DECL|member|cd_Unused
-id|u_long
+id|__u32
 id|cd_Unused
 (braket
 l_int|4
@@ -1210,6 +1105,12 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* for whatever the driver wants */
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 macro_line|#else /* __ASSEMBLY__ */
 id|LN_Succ
@@ -1381,6 +1282,22 @@ id|ZORRO_NUM_AUTO
 suffix:semicolon
 multiline_comment|/*&n;     *  Zorro Functions&n;     */
 r_extern
+r_void
+id|zorro_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|zorro_proc_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_int
 r_int
 id|zorro_find
@@ -1441,7 +1358,7 @@ id|part
 suffix:semicolon
 multiline_comment|/*&n;     *  Bitmask indicating portions of available Zorro II RAM that are unused&n;     *  by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n;     *  (128 chunks, physical 0x00200000-0x009fffff).&n;     *&n;     *  If you want to use (= allocate) portions of this RAM, you should clear&n;     *  the corresponding bits.&n;     */
 r_extern
-id|u32
+id|__u32
 id|zorro_unused_z2ram
 (braket
 l_int|4
@@ -1459,25 +1376,6 @@ DECL|macro|Z2RAM_CHUNKMASK
 mdefine_line|#define Z2RAM_CHUNKMASK&t;&t;(0x0000ffff)
 DECL|macro|Z2RAM_CHUNKSHIFT
 mdefine_line|#define Z2RAM_CHUNKSHIFT&t;(16)
-multiline_comment|/*&n;     *  Verbose Board Identification&n;     */
-r_extern
-r_void
-id|zorro_identify
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|zorro_get_list
-c_func
-(paren
-r_char
-op_star
-id|buffer
-)paren
-suffix:semicolon
 macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_ZORRO_H */

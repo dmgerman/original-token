@@ -48,7 +48,8 @@ suffix:semicolon
 r_int
 id|NCR53c7x0_release
 (paren
-id|Scsi_Host_Template
+r_struct
+id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
@@ -100,7 +101,7 @@ id|proc_dir_entry
 id|proc_scsi_mvme16x
 suffix:semicolon
 DECL|macro|MVME16x_SCSI
-mdefine_line|#define MVME16x_SCSI {/* next */                NULL,            &bslash;&n;&t;&t;      /* usage_count */         NULL,&t;         &bslash;&n;&t;&t;      /* proc_dir_entry */      NULL, &bslash;&n;&t;&t;      /* proc_info */           NULL,            &bslash;&n;&t;&t;      /* name */                &quot;MVME16x SCSI&quot;, &bslash;&n;&t;&t;      /* detect */              mvme16x_scsi_detect,    &bslash;&n;&t;&t;      /* release */             NULL,   &bslash;&n;&t;&t;      /* info */                NULL,&t;         &bslash;&n;&t;&t;      /* command */             NULL,            &bslash;&n;&t;&t;      /* queuecommand */        NCR53c7xx_queue_command, &bslash;&n;&t;&t;      /* abort */               NCR53c7xx_abort,   &bslash;&n;&t;&t;      /* reset */               NCR53c7xx_reset,   &bslash;&n;&t;&t;      /* slave_attach */        NULL,            &bslash;&n;&t;&t;      /* bios_param */          NULL /*scsicam_bios_param*/, &bslash;&n;&t;&t;      /* can_queue */           24,       &bslash;&n;&t;&t;      /* this_id */             7,               &bslash;&n;&t;&t;      /* sg_tablesize */        127,          &bslash;&n;&t;&t;      /* cmd_per_lun */&t;        3,     &bslash;&n;&t;&t;      /* present */             0,               &bslash;&n;&t;&t;      /* unchecked_isa_dma */   0,               &bslash;&n;&t;&t;      /* use_clustering */      DISABLE_CLUSTERING }
+mdefine_line|#define MVME16x_SCSI  {name:                &quot;MVME16x NCR53c710 SCSI&quot;, &bslash;&n;&t;&t;       detect:              mvme16x_scsi_detect,    &bslash;&n;&t;&t;       queuecommand:        NCR53c7xx_queue_command, &bslash;&n;&t;&t;       abort:               NCR53c7xx_abort,   &bslash;&n;&t;&t;       reset:               NCR53c7xx_reset,   &bslash;&n;&t;&t;       bios_param:          scsicam_bios_param,   &bslash;&n;&t;&t;       can_queue:           24,       &bslash;&n;&t;&t;       this_id:             7,               &bslash;&n;&t;&t;       sg_tablesize:        63,          &bslash;&n;&t;&t;       cmd_per_lun:&t;    3,     &bslash;&n;&t;&t;       use_clustering:      DISABLE_CLUSTERING }
 macro_line|#endif
 macro_line|#endif /* MVME16x_SCSI_H */
 eof

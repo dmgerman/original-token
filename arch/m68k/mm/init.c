@@ -228,6 +228,7 @@ id|i
 id|reserved
 op_increment
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -347,6 +348,14 @@ c_func
 l_string|&quot;%d pages swap cached&bslash;n&quot;
 comma
 id|cached
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%ld pages in page table cache&bslash;n&quot;
+comma
+id|pgtable_cache_size
 )paren
 suffix:semicolon
 id|show_buffers

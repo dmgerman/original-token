@@ -1,8 +1,8 @@
-multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997, 1998 Erik Andersen &lt;andersee@debian.org&gt;&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to the hardware. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n; To Do List:&n; ----------------------------------&n;&n; -- Modify sysctl/proc interface. I plan on having one directory per&n; drive, with entries for outputing general drive information, and sysctl&n; based tunable parameters such as whether the tray should auto-close for&n; that drive. Suggestions (or patches) for this welcome!&n;&n; -- Change the CDROMREADMODE1, CDROMREADMODE2, CDROMREADAUDIO, and &n; CDROMREADRAW ioctls so they go through the Uniform CD-ROM driver.&n;&n;&n;&n;&n; Revision History&n; ----------------------------------&n; 1.00  Date Unknown -- David van Leeuwen &lt;david@tm.tno.nl&gt;&n; -- Initial version by David A. van Leeuwen. I don&squot;t have a detailed&n;  changelog for the 1.x series, David?&n;&n;2.00  Dec  2, 1997 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  -- Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved...&n;&n;  -- Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  -- Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  -- Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  -- Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  -- Simplified some complex logic so that the source code is easier to read.&n;&n;  -- Other stuff I probably forgot to mention (lots of changes).&n;&n;2.01 to 2.11 Dec 1997-Jan 1998&n;  -- TO-DO!  Write changelogs for 2.01 to 2.12.&n;&n;2.12  Jan  24, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in the IOCTL_IN and IOCTL_OUT macros.  It turns out that&n;  copy_*_user does not return EFAULT on error, but instead return the number &n;  of bytes not copied.  I was returning whatever non-zero stuff came back from &n;  the copy_*_user functions directly, which would result in strange errors.&n;&n;-------------------------------------------------------------------------*/
+multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997, 1998 Erik Andersen &lt;andersee@debian.org&gt;&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to the hardware. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n; To Do List:&n; ----------------------------------&n;&n; -- Modify sysctl/proc interface. I plan on having one directory per&n; drive, with entries for outputing general drive information, and sysctl&n; based tunable parameters such as whether the tray should auto-close for&n; that drive. Suggestions (or patches) for this welcome!&n;&n; -- Change the CDROMREADMODE1, CDROMREADMODE2, CDROMREADAUDIO, and &n; CDROMREADRAW ioctls so they go through the Uniform CD-ROM driver.&n;&n;&n;&n;&n; Revision History&n; ----------------------------------&n; 1.00  Date Unknown -- David van Leeuwen &lt;david@tm.tno.nl&gt;&n; -- Initial version by David A. van Leeuwen. I don&squot;t have a detailed&n;  changelog for the 1.x series, David?&n;&n;2.00  Dec  2, 1997 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  -- Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved...&n;&n;  -- Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  -- Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  -- Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  -- Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  -- Simplified some complex logic so that the source code is easier to read.&n;&n;  -- Other stuff I probably forgot to mention (lots of changes).&n;&n;2.01 to 2.11 Dec 1997-Jan 1998&n;  -- TO-DO!  Write changelogs for 2.01 to 2.12.&n;&n;2.12  Jan  24, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in the IOCTL_IN and IOCTL_OUT macros.  It turns out that&n;  copy_*_user does not return EFAULT on error, but instead return the number &n;  of bytes not copied.  I was returning whatever non-zero stuff came back from &n;  the copy_*_user functions directly, which would result in strange errors.&n;&n;2.13  July 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in CDROM_SELECT_SPEED where you couldn&squot;t lower the speed&n;  of the drive.  Thanks to Tobias Ringstr|m &lt;tori@prosolvia.se&gt; for pointing&n;  this out and providing a simple fix.&n;  -- Fixed the procfs-unload-module bug with the fill_inode procfs callback.&n;  thanks to Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n;  -- Fixed it so that the /proc entry now also shows up when cdrom is&n;  compiled into the kernel.  Before it only worked when loaded as a module.&n;&n;-------------------------------------------------------------------------*/
 DECL|macro|REVISION
-mdefine_line|#define REVISION &quot;Revision: 2.12&quot;
+mdefine_line|#define REVISION &quot;Revision: 2.13&quot;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;Id: cdrom.c 2.12 1998/01/24 22:15:45 erik Exp&quot;
+mdefine_line|#define VERSION &quot;Id: cdrom.c 2.13 1998/07/17 erik&quot;
 multiline_comment|/* I use an error-log mask to give fine grain control over the type of&n;   messages dumped to the system logs.  The available masks include: */
 DECL|macro|CD_NOTHING
 mdefine_line|#define CD_NOTHING      0x0
@@ -35,12 +35,90 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt; 
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+multiline_comment|/* used to tell the module to turn on full debugging messages */
+DECL|variable|debug
+r_static
+r_int
+id|debug
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* default compatibility mode */
+DECL|variable|autoclose
+r_static
+r_int
+id|autoclose
+op_assign
+l_int|1
+suffix:semicolon
+DECL|variable|autoeject
+r_static
+r_int
+id|autoeject
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|lockdoor
+r_static
+r_int
+id|lockdoor
+op_assign
+l_int|1
+suffix:semicolon
+DECL|variable|check_media_type
+r_static
+r_int
+id|check_media_type
+op_assign
+l_int|0
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|autoclose
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|autoeject
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|lockdoor
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|check_media_type
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#if (ERRLOGMASK!=CD_NOTHING)
 DECL|macro|cdinfo
-mdefine_line|#define cdinfo(type, fmt, args...) &bslash;&n;&t;if (ERRLOGMASK &amp; type) printk(KERN_INFO &quot;cdrom: &quot; fmt, ## args)
+mdefine_line|#define cdinfo(type, fmt, args...) &bslash;&n;        if ((ERRLOGMASK &amp; type) || debug==1 ) &bslash;&n;            printk(KERN_INFO &quot;cdrom: &quot; fmt, ## args)
 macro_line|#else
 DECL|macro|cdinfo
 mdefine_line|#define cdinfo(type, fmt, args...) 
@@ -163,6 +241,14 @@ id|u_char
 id|requested
 )paren
 suffix:semicolon
+r_static
+r_void
+id|cdrom_sysctl_register
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_typedef
 r_struct
 (brace
@@ -274,6 +360,12 @@ op_star
 id|cdi
 )paren
 (brace
+r_static
+r_char
+id|banner_printed
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 id|major
 op_assign
@@ -331,6 +423,34 @@ r_return
 op_minus
 l_int|2
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|banner_printed
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Uniform CDROM driver &quot;
+id|REVISION
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|banner_printed
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
+id|cdrom_sysctl_register
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SYSCTL */ 
+)brace
 id|ENSURE
 c_func
 (paren
@@ -421,15 +541,6 @@ comma
 id|CDC_IOCTLS
 )paren
 suffix:semicolon
-id|cdi-&gt;options
-op_assign
-id|CDO_AUTO_CLOSE
-op_or
-id|CDO_USE_FFLAGS
-op_or
-id|CDO_LOCK
-suffix:semicolon
-multiline_comment|/* default compatibility mode */
 id|cdi-&gt;mc_flags
 op_assign
 l_int|0
@@ -438,35 +549,66 @@ id|cdo-&gt;n_minors
 op_assign
 l_int|0
 suffix:semicolon
-(brace
-r_static
-r_char
-id|banner_printed
+id|cdi-&gt;options
 op_assign
-l_int|0
+id|CDO_USE_FFLAGS
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|banner_printed
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Uniform CD-ROM driver &quot;
-id|REVISION
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|banner_printed
-op_assign
+id|autoclose
+op_eq
 l_int|1
+)paren
+id|cdi-&gt;options
+op_or_assign
+(paren
+r_int
+)paren
+id|CDO_AUTO_CLOSE
 suffix:semicolon
-)brace
-)brace
+r_if
+c_cond
+(paren
+id|autoeject
+op_eq
+l_int|1
+)paren
+id|cdi-&gt;options
+op_or_assign
+(paren
+r_int
+)paren
+id|CDO_AUTO_EJECT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lockdoor
+op_eq
+l_int|1
+)paren
+id|cdi-&gt;options
+op_or_assign
+(paren
+r_int
+)paren
+id|CDO_LOCK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_media_type
+op_eq
+l_int|1
+)paren
+id|cdi-&gt;options
+op_or_assign
+(paren
+r_int
+)paren
+id|CDO_CHECK_TYPE
+suffix:semicolon
 id|cdinfo
 c_func
 (paren
@@ -820,7 +962,7 @@ comma
 l_string|&quot;entering open_for_data&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Check if the driver can report drive status.  If it can we&n;&t;   can do clever things.  If it can&squot;t, well, we at least tried! */
+multiline_comment|/* Check if the driver can report drive status.  If it can, we&n;&t;   can do clever things.  If it can&squot;t, well, we at least tried! */
 r_if
 c_cond
 (paren
@@ -1051,13 +1193,17 @@ multiline_comment|/* CD-Players which don&squot;t use O_NONBLOCK, workman&n;&t; 
 r_if
 c_cond
 (paren
-id|cdi-&gt;options
-op_amp
-id|CDO_CHECK_TYPE
-op_logical_and
 id|tracks.data
 op_eq
 l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cdi-&gt;options
+op_amp
+id|CDO_CHECK_TYPE
 )paren
 (brace
 id|cdinfo
@@ -1076,6 +1222,18 @@ suffix:semicolon
 r_goto
 id|clean_up_and_return
 suffix:semicolon
+)brace
+r_else
+(brace
+id|cdinfo
+c_func
+(paren
+id|CD_OPEN
+comma
+l_string|&quot;wrong media type, but CDO_CHECK_TYPE not set.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 id|cdinfo
 c_func
@@ -1173,7 +1331,7 @@ suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-multiline_comment|/* Something failed.  Try to unlock the drive, because some drivers&n;&t;(notably ide-cd) lock the drive after every command.  This produced&n;&t;a nasty bug where after mount failed, the drive would remain locked!  &n;&t;This ensures that the drive gets unlocked after a mount fails.  This &n;&t;is a goto to avoid adding bloating the driver with redundant code. */
+multiline_comment|/* Something failed.  Try to unlock the drive, because some drivers&n;&t;(notably ide-cd) lock the drive after every command.  This produced&n;&t;a nasty bug where after mount failed, the drive would remain locked!  &n;&t;This ensures that the drive gets unlocked after a mount fails.  This &n;&t;is a goto to avoid bloating the driver with redundant code. */
 id|clean_up_and_return
 suffix:colon
 id|cdinfo
@@ -1222,7 +1380,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* This code is similar to that in open_for_data. The routine is called&n;   in case a audio play operation is requested. It doesn&squot;t make much sense&n;   to do this on a data disc.&n;*/
+multiline_comment|/* This code is similar to that in open_for_data. The routine is called&n;   whenever an audio play operation is requested.&n;*/
 DECL|function|check_for_audio_disc
 r_int
 id|check_for_audio_disc
@@ -2662,20 +2820,6 @@ id|CDC_SELECT_SPEED
 r_return
 op_minus
 id|ENOSYS
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-id|arg
-OG
-id|cdi-&gt;speed
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 r_return
 id|cdo
@@ -4520,9 +4664,6 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-macro_line|#endif /* endif CONFIG_SYSCTL */
-macro_line|#ifdef MODULE
-macro_line|#ifdef CONFIG_SYSCTL
 DECL|variable|cdrom_sysctl_header
 r_static
 r_struct
@@ -4530,6 +4671,33 @@ id|ctl_table_header
 op_star
 id|cdrom_sysctl_header
 suffix:semicolon
+multiline_comment|/*&n; * This is called as the fill_inode function when an inode&n; * is going into (fill = 1) or out of service (fill = 0).&n; * We use it here to manage the module use counts.&n; *&n; * Note: only the top-level directory needs to do this; if&n; * a lower level is referenced, the parent will be as well.&n; */
+DECL|function|cdrom_procfs_modcount
+r_static
+r_void
+id|cdrom_procfs_modcount
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|fill
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fill
+)paren
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_else
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
 DECL|function|cdrom_sysctl_register
 r_static
 r_void
@@ -4539,6 +4707,21 @@ c_func
 r_void
 )paren
 (brace
+r_static
+r_int
+id|initialized
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initialized
+op_eq
+l_int|1
+)paren
+r_return
+suffix:semicolon
 id|cdrom_sysctl_header
 op_assign
 id|register_sysctl_table
@@ -4548,6 +4731,15 @@ id|cdrom_root_table
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|cdrom_root_table-&gt;de-&gt;fill_inode
+op_assign
+op_amp
+id|cdrom_procfs_modcount
+suffix:semicolon
+id|initialized
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|cdrom_sysctl_unregister
@@ -4567,6 +4759,7 @@ id|cdrom_sysctl_header
 suffix:semicolon
 )brace
 macro_line|#endif /* endif CONFIG_SYSCTL */
+macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * Based on retz3fb.c and clgen.c&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

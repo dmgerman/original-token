@@ -21,8 +21,14 @@ macro_line|#endif
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4091_SCSI)
+macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4091_SCSI) || defined (CONFIG_GVP_TURBO_SCSI)
 macro_line|#include &quot;amiga7xx.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_MVME16x_SCSI
+macro_line|#include &quot;mvme16x.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_BVME6000_SCSI
+macro_line|#include &quot;bvme6000.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_A3000_SCSI
 macro_line|#include &quot;a3000.h&quot;
@@ -208,7 +214,7 @@ id|builtin_scsi_hosts
 op_assign
 (brace
 macro_line|#ifdef CONFIG_AMIGA
-macro_line|#if defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4000T_SCSI) || defined(CONFIG_A4091_SCSI)
+macro_line|#if defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4000T_SCSI) || defined(CONFIG_A4091_SCSI) || defined (CONFIG_GVP_TURBO_SCSI)
 id|AMIGA7XX_SCSI
 comma
 macro_line|#endif
@@ -250,6 +256,14 @@ macro_line|#ifdef CONFIG_ATARI_SCSI
 id|ATARI_SCSI
 comma
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_MVME16x_SCSI
+id|MVME16x_SCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BVME6000_SCSI
+id|BVME6000_SCSI
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ADVANSYS
 id|ADVANSYS

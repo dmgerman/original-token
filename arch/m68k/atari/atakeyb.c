@@ -16,11 +16,6 @@ macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-r_extern
-r_int
-r_char
-id|mach_keyboard_type
-suffix:semicolon
 r_static
 r_void
 id|atakeyb_rep
@@ -4217,7 +4212,7 @@ op_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* say that we don&squot;t have an AltGr key */
-id|mach_keyboard_type
+id|keyboard_type
 op_assign
 id|KB_84
 suffix:semicolon
@@ -4545,7 +4540,7 @@ id|__initfunc
 c_func
 (paren
 r_void
-id|kbd_reset_setup
+id|atari_kbd_reset_setup
 c_func
 (paren
 r_char

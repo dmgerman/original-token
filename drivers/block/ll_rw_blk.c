@@ -3086,6 +3086,16 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#ifdef CONFIG_STRAM_SWAP
+r_extern
+r_int
+id|stram_device_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * First step of what used to be end_request&n; *&n; * 0 means continue with end_that_request_last,&n; * 1 means we are done&n; */
 r_int
 DECL|function|end_that_request_first
@@ -3443,6 +3453,13 @@ id|max_sectors
 suffix:semicolon
 macro_line|#ifdef CONFIG_AMIGA_Z2RAM
 id|z2_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_STRAM_SWAP
+id|stram_device_init
 c_func
 (paren
 )paren

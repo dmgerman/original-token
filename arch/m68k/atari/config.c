@@ -114,6 +114,17 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|atari_kbd_reset_setup
+c_func
+(paren
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* atari specific irq functions */
 r_extern
 r_void
@@ -960,6 +971,10 @@ suffix:semicolon
 id|mach_kbd_leds
 op_assign
 id|atari_kbd_leds
+suffix:semicolon
+id|kbd_reset_setup
+op_assign
+id|atari_kbd_reset_setup
 suffix:semicolon
 id|mach_init_IRQ
 op_assign

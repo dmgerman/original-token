@@ -200,6 +200,18 @@ op_star
 id|link
 suffix:semicolon
 multiline_comment|/* list of all clients */
+DECL|member|rx_pending
+r_struct
+id|rpc_xprt
+op_star
+id|rx_pending
+suffix:semicolon
+multiline_comment|/* receive pending list */
+DECL|member|rx_pending_flag
+r_int
+id|rx_pending_flag
+suffix:semicolon
+multiline_comment|/* are we on the pending list ? */
 DECL|member|file
 r_struct
 id|file

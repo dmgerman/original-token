@@ -7,9 +7,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/busmouse.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
-macro_line|#include &lt;asm/atari_mouse.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|variable|mouse
 r_static
@@ -677,6 +677,19 @@ r_void
 )paren
 )paren
 (brace
+r_int
+id|r
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_ATARI
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 id|mouse.active
 op_assign
 l_int|0
@@ -689,28 +702,28 @@ id|mouse.wait
 op_assign
 l_int|NULL
 suffix:semicolon
+id|r
+op_assign
+id|misc_register
+c_func
+(paren
+op_amp
+id|atari_mouse
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|MACH_IS_ATARI
+id|r
 )paren
 r_return
-op_minus
-id|ENODEV
+id|r
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
 l_string|&quot;Atari mouse installed.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|misc_register
-c_func
-(paren
-op_amp
-id|atari_mouse
 )paren
 suffix:semicolon
 r_return
@@ -858,7 +871,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;asm/setup.h&gt;
 DECL|function|init_module
 r_int
 id|init_module

@@ -1,4 +1,5 @@
 multiline_comment|/*&n;     *  Atari interleaved bitplanes (2 planes) (iplan2p2)&n;     */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_IPLAN2P2) || defined(CONFIG_FBCON_IPLAN2P2_MODULE)
 DECL|macro|FBCON_HAS_IPLAN2P2
