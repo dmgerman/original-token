@@ -1,5 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.16 2000/08/01 22:01:19 mdharm Exp $&n; *&n; * Current development and maintainance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.23 2000/08/08 20:46:45 mdharm Exp $&n; *&n; * Current development and maintainance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;scsiglue.h&quot;
 macro_line|#include &quot;transport.h&quot;
@@ -11,11 +10,27 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_USB_STORAGE_SDDR09
 macro_line|#include &quot;sddr09.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_USB_STORAGE_DPCM
+macro_line|#include &quot;dpcm.h&quot;
+macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+multiline_comment|/* Some informational data */
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Matthew Dharm &lt;mdharm-usb@one-eyed-alien.net&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Mass Storage driver for Linux&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Per device data&n; */
 DECL|variable|my_host_number
 r_static
@@ -97,6 +112,327 @@ id|storage_disconnect
 comma
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * fill_inquiry_response takes an unsigned char array (which must&n; * be at least 36 characters) and populates the vendor name,&n; * product name, and revision fields. Then the array is copied&n; * into the SCSI command&squot;s response buffer (oddly enough&n; * called request_buffer). data_len contains the length of the&n; * data array, which again must be at least 36.&n; */
+DECL|function|fill_inquiry_response
+r_void
+id|fill_inquiry_response
+c_func
+(paren
+r_struct
+id|us_data
+op_star
+id|us
+comma
+r_int
+r_char
+op_star
+id|data
+comma
+r_int
+r_int
+id|data_len
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_struct
+id|scatterlist
+op_star
+id|sg
+suffix:semicolon
+r_int
+id|len
+op_assign
+id|us-&gt;srb-&gt;request_bufflen
+OG
+id|data_len
+ques
+c_cond
+id|data_len
+suffix:colon
+id|us-&gt;srb-&gt;request_bufflen
+suffix:semicolon
+r_int
+id|transferred
+suffix:semicolon
+r_int
+id|amt
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|data_len
+OL
+l_int|36
+)paren
+singleline_comment|// You lose.
+r_return
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|data
+op_plus
+l_int|8
+comma
+id|us-&gt;unusual_dev-&gt;vendorName
+comma
+id|strlen
+c_func
+(paren
+id|us-&gt;unusual_dev-&gt;vendorName
+)paren
+OG
+l_int|8
+ques
+c_cond
+l_int|8
+suffix:colon
+id|strlen
+c_func
+(paren
+id|us-&gt;unusual_dev-&gt;vendorName
+)paren
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|data
+op_plus
+l_int|16
+comma
+id|us-&gt;unusual_dev-&gt;productName
+comma
+id|strlen
+c_func
+(paren
+id|us-&gt;unusual_dev-&gt;productName
+)paren
+OG
+l_int|16
+ques
+c_cond
+l_int|16
+suffix:colon
+id|strlen
+c_func
+(paren
+id|us-&gt;unusual_dev-&gt;productName
+)paren
+)paren
+suffix:semicolon
+id|data
+(braket
+l_int|32
+)braket
+op_assign
+l_int|0x30
+op_plus
+(paren
+(paren
+id|us-&gt;pusb_dev-&gt;descriptor.bcdDevice
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0x0F
+)paren
+suffix:semicolon
+id|data
+(braket
+l_int|33
+)braket
+op_assign
+l_int|0x30
+op_plus
+(paren
+(paren
+id|us-&gt;pusb_dev-&gt;descriptor.bcdDevice
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0x0F
+)paren
+suffix:semicolon
+id|data
+(braket
+l_int|34
+)braket
+op_assign
+l_int|0x30
+op_plus
+(paren
+(paren
+id|us-&gt;pusb_dev-&gt;descriptor.bcdDevice
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x0F
+)paren
+suffix:semicolon
+id|data
+(braket
+l_int|35
+)braket
+op_assign
+l_int|0x30
+op_plus
+(paren
+(paren
+id|us-&gt;pusb_dev-&gt;descriptor.bcdDevice
+)paren
+op_amp
+l_int|0x0F
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|us-&gt;srb-&gt;use_sg
+)paren
+(brace
+id|sg
+op_assign
+(paren
+r_struct
+id|scatterlist
+op_star
+)paren
+id|us-&gt;srb-&gt;request_buffer
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|us-&gt;srb-&gt;use_sg
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|memset
+c_func
+(paren
+id|sg
+(braket
+id|i
+)braket
+dot
+id|address
+comma
+l_int|0
+comma
+id|sg
+(braket
+id|i
+)braket
+dot
+id|length
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+comma
+id|transferred
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|us-&gt;srb-&gt;use_sg
+op_logical_and
+id|transferred
+OL
+id|len
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|amt
+op_assign
+id|sg
+(braket
+id|i
+)braket
+dot
+id|length
+OG
+id|len
+op_minus
+id|transferred
+ques
+c_cond
+id|len
+op_minus
+id|transferred
+suffix:colon
+id|sg
+(braket
+id|i
+)braket
+dot
+id|length
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|sg
+(braket
+id|i
+)braket
+dot
+id|address
+comma
+id|data
+op_plus
+id|transferred
+comma
+id|amt
+)paren
+suffix:semicolon
+id|transferred
+op_sub_assign
+id|amt
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|memset
+c_func
+(paren
+id|us-&gt;srb-&gt;request_buffer
+comma
+l_int|0
+comma
+id|us-&gt;srb-&gt;request_bufflen
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|us-&gt;srb-&gt;request_buffer
+comma
+id|data
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|function|usb_stor_control_thread
 r_static
 r_int
@@ -644,6 +980,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* This is the list of devices we recognize, along with their flag data */
+multiline_comment|/* The vendor name should be kept at eight characters or less, and&n; * the product name should be kept at 16 characters or less. If a device&n; * has the US_FL_DUMMY_INQUIRY flag, then the vendor and product names&n; * normally generated by a device thorugh the INQUIRY response will be&n; * taken from this list, and this is the reason for the above size&n; * restriction. However, if the flag is not present, then you&n; * are free to use as many characters as you like.&n; */
 DECL|variable|us_unusual_dev_list
 r_static
 r_struct
@@ -662,11 +999,15 @@ l_int|0x0200
 comma
 l_int|0x0200
 comma
-l_string|&quot;HP USB CD-Writer Plus&quot;
+l_string|&quot;HP&quot;
+comma
+l_string|&quot;CD-Writer+&quot;
 comma
 id|US_SC_8070
 comma
 id|US_PR_CB
+comma
+l_int|NULL
 comma
 l_int|0
 )brace
@@ -681,16 +1022,16 @@ l_int|0x0001
 comma
 l_int|0x0001
 comma
-l_string|&quot;HP USB CD-Writer Plus 8200e&quot;
+l_string|&quot;HP&quot;
+comma
+l_string|&quot;CD-Writer+ 8200e&quot;
 comma
 id|US_SC_8070
 comma
 id|US_PR_SCM_ATAPI
 comma
-id|US_FL_ALT_LENGTH
-op_or
-id|US_FL_NEED_INIT
-op_or
+id|init_8200e
+comma
 id|US_FL_SINGLE_LUN
 )brace
 comma
@@ -704,11 +1045,15 @@ l_int|0x0200
 comma
 l_int|0x0200
 comma
-l_string|&quot;Matshita LS-120&quot;
+l_string|&quot;Matshita&quot;
+comma
+l_string|&quot;LS-120&quot;
 comma
 id|US_SC_8020
 comma
 id|US_PR_CB
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 )brace
@@ -722,13 +1067,17 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Shuttle eUSCSI Bridge&quot;
+l_string|&quot;Shuttle&quot;
+comma
+l_string|&quot;eUSCSI Bridge&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|US_FL_ALT_LENGTH
+l_int|NULL
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -740,11 +1089,15 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Shuttle eUSB MMC Adapter&quot;
+l_string|&quot;Shuttle&quot;
+comma
+l_string|&quot;eUSB MMC Adapter&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_CB
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 )brace
@@ -758,21 +1111,21 @@ l_int|0x0210
 comma
 l_int|0x0210
 comma
-l_string|&quot;Sony DSC-S30/S70&quot;
+l_string|&quot;Sony&quot;
+comma
+l_string|&quot;DSC-S30/S70&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_CB
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 op_or
 id|US_FL_START_STOP
 op_or
 id|US_FL_MODE_XLATE
-op_or
-id|US_FL_ALT_LENGTH
-op_or
-id|US_FL_ALT_LENGTH
 )brace
 comma
 (brace
@@ -784,19 +1137,21 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Sony Memorystick MSAC-US1&quot;
+l_string|&quot;Sony&quot;
+comma
+l_string|&quot;Memorystick MSAC-US1&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_CB
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 op_or
 id|US_FL_START_STOP
 op_or
 id|US_FL_MODE_XLATE
-op_or
-id|US_FL_ALT_LENGTH
 )brace
 comma
 (brace
@@ -808,11 +1163,15 @@ l_int|0x0000
 comma
 l_int|0x0299
 comma
-l_string|&quot;Y-E Data Flashbuster-U&quot;
+l_string|&quot;Y-E Data&quot;
+comma
+l_string|&quot;Flashbuster-U&quot;
 comma
 id|US_SC_UFI
 comma
 id|US_PR_CB
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 )brace
@@ -826,11 +1185,15 @@ l_int|0x0300
 comma
 l_int|0x9999
 comma
-l_string|&quot;Y-E Data Flashbuster-U&quot;
+l_string|&quot;Y-E Data&quot;
+comma
+l_string|&quot;Flashbuster-U&quot;
 comma
 id|US_SC_UFI
 comma
 id|US_PR_CBI
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 )brace
@@ -844,13 +1207,17 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Hagiwara FlashGate SmartMedia&quot;
+l_string|&quot;Hagiwara&quot;
+comma
+l_string|&quot;FlashGate SmartMedia&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|US_FL_ALT_LENGTH
+l_int|NULL
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -862,11 +1229,15 @@ l_int|0x0200
 comma
 l_int|0x0200
 comma
-l_string|&quot;Sandisk ImageMate (SDDR-05a)&quot;
+l_string|&quot;Sandisk&quot;
+comma
+l_string|&quot;ImageMate SDDR05a&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_CB
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 op_or
@@ -883,11 +1254,15 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Sandisk ImageMate (SDDR-09)&quot;
+l_string|&quot;Sandisk&quot;
+comma
+l_string|&quot;ImageMate SDDR09&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_EUSB_SDDR09
+comma
+l_int|NULL
 comma
 id|US_FL_SINGLE_LUN
 op_or
@@ -904,11 +1279,15 @@ l_int|0x0009
 comma
 l_int|0x0009
 comma
-l_string|&quot;Sandisk Imagemate (SDDR-31)&quot;
+l_string|&quot;Sandisk&quot;
+comma
+l_string|&quot;ImageMate SDDR31&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_BULK
+comma
+l_int|NULL
 comma
 id|US_FL_IGNORE_SER
 )brace
@@ -922,15 +1301,65 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Microtech USB-SCSI-DB25&quot;
+l_string|&quot;Microtech&quot;
+comma
+l_string|&quot;USB-SCSI-DB25&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|US_FL_ALT_LENGTH
+l_int|NULL
+comma
+l_int|0
 )brace
 comma
+(brace
+l_int|0x059f
+comma
+l_int|0xa601
+comma
+l_int|0x0200
+comma
+l_int|0x0200
+comma
+l_string|&quot;LaCie&quot;
+comma
+l_string|&quot;USB Hard Disk&quot;
+comma
+id|US_SC_RBC
+comma
+id|US_PR_CB
+comma
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+macro_line|#ifdef CONFIG_USB_STORAGE_DPCM
+(brace
+l_int|0x07af
+comma
+l_int|0x0006
+comma
+l_int|0x0100
+comma
+l_int|0x0100
+comma
+l_string|&quot;Microtech&quot;
+comma
+l_string|&quot;CameraMate (DPCM_USB)&quot;
+comma
+id|US_SC_SCSI
+comma
+id|US_PR_DPCM_USB
+comma
+l_int|NULL
+comma
+id|US_FL_START_STOP
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0x07af
 comma
@@ -940,13 +1369,17 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Microtech USB-SCSI-HD50&quot;
+l_string|&quot;Microtech&quot;
+comma
+l_string|&quot;USB-SCSI-HD50&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|US_FL_ALT_LENGTH
+l_int|NULL
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -958,13 +1391,17 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;In-System USB/IDE Bridge&quot;
+l_string|&quot;In-System&quot;
+comma
+l_string|&quot;USB/IDE Bridge&quot;
 comma
 id|US_SC_8070
 comma
 id|US_PR_BULK
 comma
-id|US_FL_ALT_LENGTH
+l_int|NULL
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -976,13 +1413,17 @@ l_int|0x0100
 comma
 l_int|0x0100
 comma
-l_string|&quot;Hagiwara Flashgate&quot;
+l_string|&quot;Hagiwara&quot;
+comma
+l_string|&quot;Flashgate&quot;
 comma
 id|US_SC_SCSI
 comma
 id|US_PR_BULK
 comma
-id|US_FL_ALT_LENGTH
+l_int|NULL
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -1092,9 +1533,11 @@ multiline_comment|/* otherwise, we found one! */
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;-- found matching device: %s&bslash;n&quot;
+l_string|&quot;-- found matching device: %s %s&bslash;n&quot;
 comma
-id|ptr-&gt;name
+id|ptr-&gt;vendorName
+comma
+id|ptr-&gt;productName
 )paren
 suffix:semicolon
 r_return
@@ -2007,18 +2450,6 @@ id|ss-&gt;ep_int
 op_assign
 id|ep_int
 suffix:semicolon
-multiline_comment|/* Reset the device&squot;s NEED_INIT flag if it needs to be&n;                   initialized with a magic sequence */
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-id|US_FL_NEED_INIT
-)paren
-id|ss-&gt;flags
-op_or_assign
-id|US_FL_NEED_INIT
-suffix:semicolon
 multiline_comment|/* allocate an IRQ callback if one is needed */
 r_if
 c_cond
@@ -2037,6 +2468,22 @@ id|ss
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* Re-Initialize the device if it needs it */
+r_if
+c_cond
+(paren
+id|unusual_dev
+op_logical_and
+id|unusual_dev-&gt;initFunction
+)paren
+(paren
+op_star
+id|unusual_dev-&gt;initFunction
+)paren
+(paren
+id|ss
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2210,6 +2657,10 @@ id|ss-&gt;flags
 op_assign
 id|flags
 suffix:semicolon
+id|ss-&gt;unusual_dev
+op_assign
+id|unusual_dev
+suffix:semicolon
 multiline_comment|/* copy over the endpoint data */
 r_if
 c_cond
@@ -2288,6 +2739,23 @@ id|ss-&gt;vendor
 op_eq
 l_int|0
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|unusual_dev
+)paren
+id|strncpy
+c_func
+(paren
+id|ss-&gt;vendor
+comma
+id|unusual_dev-&gt;vendorName
+comma
+id|USB_STOR_STRING_LEN
+)paren
+suffix:semicolon
+r_else
 id|strncpy
 c_func
 (paren
@@ -2298,6 +2766,7 @@ comma
 id|USB_STOR_STRING_LEN
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2309,6 +2778,23 @@ id|ss-&gt;product
 op_eq
 l_int|0
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|unusual_dev
+)paren
+id|strncpy
+c_func
+(paren
+id|ss-&gt;product
+comma
+id|unusual_dev-&gt;productName
+comma
+id|USB_STOR_STRING_LEN
+)paren
+suffix:semicolon
+r_else
 id|strncpy
 c_func
 (paren
@@ -2319,6 +2805,7 @@ comma
 id|USB_STOR_STRING_LEN
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2462,6 +2949,29 @@ suffix:semicolon
 id|ss-&gt;transport
 op_assign
 id|sddr09_transport
+suffix:semicolon
+id|ss-&gt;transport_reset
+op_assign
+id|usb_stor_CB_reset
+suffix:semicolon
+id|ss-&gt;max_lun
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_STORAGE_DPCM
+r_case
+id|US_PR_DPCM_USB
+suffix:colon
+id|ss-&gt;transport_name
+op_assign
+l_string|&quot;Control/Bulk-EUSB/SDDR09&quot;
+suffix:semicolon
+id|ss-&gt;transport
+op_assign
+id|dpcm_transport
 suffix:semicolon
 id|ss-&gt;transport_reset
 op_assign
@@ -2701,6 +3211,22 @@ op_star
 id|ss-&gt;htmplt.proc_dir
 op_assign
 id|ss
+suffix:semicolon
+multiline_comment|/* Just before we start our control thread, initialize&n;&t;&t; * the device if it needs initialization */
+r_if
+c_cond
+(paren
+id|unusual_dev
+op_logical_and
+id|unusual_dev-&gt;initFunction
+)paren
+(paren
+op_star
+id|unusual_dev-&gt;initFunction
+)paren
+(paren
+id|ss
+)paren
 suffix:semicolon
 multiline_comment|/* start up our control thread */
 id|ss-&gt;pid
@@ -3132,18 +3658,6 @@ id|module_exit
 c_func
 (paren
 id|usb_stor_exit
-)paren
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Michael Gee &lt;michael@linuxspecific.com&gt;, David L. Brown, Jr. &lt;usb-storage@davidb.org&gt;, Matthew Dharm &lt;mdharm-usb@one-eyed-alien.net&gt;&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;USB Mass Storage driver&quot;
 )paren
 suffix:semicolon
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * printer.c  Version 0.5&n; *&n; * Copyright (c) 1999 Michael Gee&t;&lt;michael@linuxspecific.com&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 2000 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; * Copyright (c) 2000 Randy Dunlap&t;&lt;randy.dunlap@intel.com&gt;&n; *&n; * USB Printer Device Class driver for USB printers and printer cables&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.1 - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.2 - some more cleanups&n; *&t;v0.3 - cleaner again, waitqueue fixes&n; *&t;v0.4 - fixes in unidirectional mode&n; *&t;v0.5 - add DEVICE_ID string support&n; */
+multiline_comment|/*&n; * printer.c  Version 0.6&n; *&n; * Copyright (c) 1999 Michael Gee&t;&lt;michael@linuxspecific.com&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 2000 Randy Dunlap&t;&lt;randy.dunlap@intel.com&gt;&n; * Copyright (c) 2000 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; *&n; * USB Printer Device Class driver for USB printers and printer cables&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.1 - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.2 - some more cleanups&n; *&t;v0.3 - cleaner again, waitqueue fixes&n; *&t;v0.4 - fixes in unidirectional mode&n; *&t;v0.5 - add DEVICE_ID string support&n; *&t;v0.6 - never time out&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -33,7 +33,7 @@ mdefine_line|#define USBLP_MINORS&t;&t;16
 DECL|macro|USBLP_MINOR_BASE
 mdefine_line|#define USBLP_MINOR_BASE&t;0
 DECL|macro|USBLP_WRITE_TIMEOUT
-mdefine_line|#define USBLP_WRITE_TIMEOUT&t;(60*60*HZ)&t;&t;/* 60 minutes */
+mdefine_line|#define USBLP_WRITE_TIMEOUT&t;(5*HZ)&t;&t;&t;/* 5 seconds */
 DECL|struct|usblp
 r_struct
 id|usblp
@@ -105,12 +105,6 @@ id|usblp_table
 (braket
 id|USBLP_MINORS
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* ... */
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * Functions for usblp control messages.&n; */
 DECL|function|usblp_ctrl_msg
@@ -271,7 +265,9 @@ id|urb-&gt;status
 id|warn
 c_func
 (paren
-l_string|&quot;nonzero read/write bulk status received: %d&quot;
+l_string|&quot;usblp%d: nonzero read/write bulk status received: %d&quot;
+comma
+id|usblp-&gt;minor
 comma
 id|urb-&gt;status
 )paren
@@ -285,6 +281,24 @@ id|usblp-&gt;wait
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get and print printer errors.&n; */
+DECL|variable|usblp_messages
+r_static
+r_char
+op_star
+id|usblp_messages
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;ok&quot;
+comma
+l_string|&quot;out of paper&quot;
+comma
+l_string|&quot;off-line&quot;
+comma
+l_string|&quot;on fire&quot;
+)brace
+suffix:semicolon
 DECL|function|usblp_check_status
 r_static
 r_int
@@ -295,11 +309,18 @@ r_struct
 id|usblp
 op_star
 id|usblp
+comma
+r_int
+id|err
 )paren
 (brace
 r_int
 r_char
 id|status
+comma
+id|newerr
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -317,12 +338,13 @@ id|status
 id|err
 c_func
 (paren
-l_string|&quot;failed reading usblp status&quot;
+l_string|&quot;usblp%d: failed reading printer status&quot;
+comma
+id|usblp-&gt;minor
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EIO
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -334,6 +356,10 @@ op_amp
 id|LP_PERRORP
 )paren
 (brace
+id|newerr
+op_assign
+l_int|3
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -341,20 +367,10 @@ id|status
 op_amp
 id|LP_POUTPA
 )paren
-(brace
-id|info
-c_func
-(paren
-l_string|&quot;usblp%d: out of paper&quot;
-comma
-id|usblp-&gt;minor
-)paren
+id|newerr
+op_assign
+l_int|1
 suffix:semicolon
-r_return
-op_minus
-id|ENOSPC
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -363,35 +379,33 @@ id|status
 op_amp
 id|LP_PSELECD
 )paren
-(brace
+id|newerr
+op_assign
+l_int|2
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|newerr
+op_ne
+id|err
+)paren
 id|info
 c_func
 (paren
-l_string|&quot;usblp%d: off-line&quot;
+l_string|&quot;usblp%d: %s&quot;
 comma
 id|usblp-&gt;minor
+comma
+id|usblp_messages
+(braket
+id|newerr
+)braket
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-id|info
-c_func
-(paren
-l_string|&quot;usblp%d: on fire&quot;
-comma
-id|usblp-&gt;minor
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-r_return
-l_int|0
+id|newerr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * File op functions.&n; */
@@ -498,12 +512,29 @@ id|usblp_check_status
 c_func
 (paren
 id|usblp
+comma
+l_int|0
 )paren
 )paren
 )paren
+(brace
+id|retval
+op_assign
+id|retval
+OG
+l_int|1
+ques
+c_cond
+op_minus
+id|EIO
+suffix:colon
+op_minus
+id|ENOSPC
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+)brace
 id|usblp-&gt;used
 op_assign
 l_int|1
@@ -725,15 +756,15 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|length
-suffix:semicolon
 r_struct
 id|usblp
 op_star
 id|usblp
 op_assign
 id|file-&gt;private_data
+suffix:semicolon
+r_int
+id|length
 suffix:semicolon
 r_if
 c_cond
@@ -793,10 +824,9 @@ l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/* big-endian */
-macro_line|#if 0
 id|dbg
 (paren
-l_string|&quot;usblp_ioctl GET_DEVICE_ID: actlen=%d, user size=%d, string=&squot;%s&squot;&quot;
+l_string|&quot;usblp_ioctl GET_DEVICE_ID actlen: %d, size: %d, string: &squot;%s&squot;&quot;
 comma
 id|length
 comma
@@ -813,7 +843,6 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -838,6 +867,7 @@ r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 (paren
 r_int
@@ -904,9 +934,11 @@ op_assign
 id|file-&gt;private_data
 suffix:semicolon
 r_int
-id|retval
-comma
 id|timeout
+comma
+id|err
+op_assign
+l_int|0
 comma
 id|writecount
 op_assign
@@ -989,35 +1021,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|usblp-&gt;writeurb.status
-op_eq
-op_minus
-id|EINPROGRESS
-)paren
-(brace
-id|usb_unlink_urb
-c_func
-(paren
-op_amp
-id|usblp-&gt;writeurb
-)paren
-suffix:semicolon
-id|err
-c_func
-(paren
-l_string|&quot;usblp%d: timed out&quot;
-comma
-id|usblp-&gt;minor
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 op_logical_neg
 id|usblp-&gt;dev
 )paren
@@ -1028,10 +1031,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|usblp-&gt;writeurb.status
 )paren
 (brace
+id|err
+op_assign
+id|usblp_check_status
+c_func
+(paren
+id|usblp
+comma
+id|err
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|writecount
 op_add_assign
 id|usblp-&gt;writeurb.transfer_buffer_length
@@ -1040,45 +1055,6 @@ id|usblp-&gt;writeurb.transfer_buffer_length
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|retval
-op_assign
-id|usblp_check_status
-c_func
-(paren
-id|usblp
-)paren
-)paren
-)paren
-(brace
-id|err
-c_func
-(paren
-l_string|&quot;usblp%d: error %d writing to printer (retval=%d)&quot;
-comma
-id|usblp-&gt;minor
-comma
-id|usblp-&gt;writeurb.status
-comma
-id|retval
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-r_return
-id|retval
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1425,20 +1401,18 @@ id|interface-&gt;bInterfaceSubClass
 op_ne
 l_int|1
 op_logical_or
-(paren
 id|interface-&gt;bInterfaceProtocol
-op_ne
-l_int|1
-op_logical_and
-id|interface-&gt;bInterfaceProtocol
-op_ne
-l_int|2
-)paren
+template_param
+l_int|3
 op_logical_or
 (paren
 id|interface-&gt;bInterfaceProtocol
 OG
+l_int|1
+op_logical_and
 id|interface-&gt;bNumEndpoints
+OL
+l_int|2
 )paren
 )paren
 r_continue
@@ -1462,8 +1436,8 @@ op_logical_neg
 id|bidir
 op_logical_and
 id|interface-&gt;bInterfaceProtocol
-op_eq
-l_int|2
+OG
+l_int|1
 )paren
 (brace
 id|bidir

@@ -1372,6 +1372,24 @@ id|drm_agp_func_t
 id|drm_agp
 suffix:semicolon
 macro_line|#endif
+DECL|struct|drm_sigdata
+r_typedef
+r_struct
+id|drm_sigdata
+(brace
+DECL|member|context
+r_int
+id|context
+suffix:semicolon
+DECL|member|lock
+id|drm_hw_lock_t
+op_star
+id|lock
+suffix:semicolon
+DECL|typedef|drm_sigdata_t
+)brace
+id|drm_sigdata_t
+suffix:semicolon
 DECL|struct|drm_device
 r_typedef
 r_struct
@@ -1697,6 +1715,15 @@ DECL|member|dev_private
 r_void
 op_star
 id|dev_private
+suffix:semicolon
+DECL|member|sigdata
+id|drm_sigdata_t
+id|sigdata
+suffix:semicolon
+multiline_comment|/* For block_all_signals */
+DECL|member|sigmask
+id|sigset_t
+id|sigmask
 suffix:semicolon
 DECL|typedef|drm_device_t
 )brace
@@ -3254,6 +3281,16 @@ id|context
 comma
 id|drm_lock_flags_t
 id|flags
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_notifier
+c_func
+(paren
+r_void
+op_star
+id|priv
 )paren
 suffix:semicolon
 multiline_comment|/* Context Bitmap support (ctxbitmap.c) */

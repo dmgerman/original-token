@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *&t;v1.4 Feb 10, 2000    - Updated with more changes required after Dave&squot;s&n; *&t;                       network cleanup in 2.3.43pre7 (Tigran &amp; myself)&n; *&t;                     - Minor stuff.&n; *&n; *&t;v1.5 March 22, 2000  - Fixed another timer bug that would hang the driver&n; *&t;&t;&t;       if no cable/link were present.&n; *&t;&t;&t;     - Cosmetic changes.&n; *&t;&t;&t;     - TODO: Port completely to new PCI/DMA API&n; *&t;&t;&t;     &t;     Auto-Neg fallback.&n; *&n; * &t;v1.6 April 04, 2000  - Fixed driver support for kernel-parameters. Haven&squot;t&n; * &t;&t;&t;       tested it though, as the kernel support is currently &n; * &t;&t;&t;       broken (2.3.99p4p3).&n; * &t;&t;&t;     - Updated tlan.txt accordingly.&n; * &t;&t;&t;     - Adjusted minimum/maximum frame length.&n; * &t;&t;&t;     - There is now a TLAN website up at &n; * &t;&t;&t;       http://tlan.kernel.dk&n; *&n; * &t;v1.7 April 07, 2000  - Started to implement custom ioctls. Driver now&n; * &t;&t;&t;       reports PHY information when used with Donald&n; * &t;&t;&t;       Beckers userspace MII diagnostics utility.&n; *&n; * &t;v1.8 April 23, 2000  - Fixed support for forced speed/duplex settings.&n; * &t;&t;&t;     - Added link information to Auto-Neg and forced&n; * &t;&t;&t;       modes. When NIC operates with auto-neg the driver&n; * &t;&t;&t;       will report Link speed &amp; duplex modes as well as&n; * &t;&t;&t;       link partner abilities. When forced link is used,&n; * &t;&t;&t;       the driver will report status of the established&n; * &t;&t;&t;       link.&n; * &t;&t;&t;       Please read tlan.txt for additional information. &n; * &t;&t;&t;     - Removed call to check_region(), and used &n; * &t;&t;&t;       return value of request_region() instead.&n; *&t;&n; *&t;v1.8a May 28, 2000   - Minor updates.&n; *&n; *******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *&t;v1.4 Feb 10, 2000    - Updated with more changes required after Dave&squot;s&n; *&t;                       network cleanup in 2.3.43pre7 (Tigran &amp; myself)&n; *&t;                     - Minor stuff.&n; *&n; *&t;v1.5 March 22, 2000  - Fixed another timer bug that would hang the driver&n; *&t;&t;&t;       if no cable/link were present.&n; *&t;&t;&t;     - Cosmetic changes.&n; *&t;&t;&t;     - TODO: Port completely to new PCI/DMA API&n; *&t;&t;&t;     &t;     Auto-Neg fallback.&n; *&n; * &t;v1.6 April 04, 2000  - Fixed driver support for kernel-parameters. Haven&squot;t&n; * &t;&t;&t;       tested it though, as the kernel support is currently &n; * &t;&t;&t;       broken (2.3.99p4p3).&n; * &t;&t;&t;     - Updated tlan.txt accordingly.&n; * &t;&t;&t;     - Adjusted minimum/maximum frame length.&n; * &t;&t;&t;     - There is now a TLAN website up at &n; * &t;&t;&t;       http://tlan.kernel.dk&n; *&n; * &t;v1.7 April 07, 2000  - Started to implement custom ioctls. Driver now&n; * &t;&t;&t;       reports PHY information when used with Donald&n; * &t;&t;&t;       Beckers userspace MII diagnostics utility.&n; *&n; * &t;v1.8 April 23, 2000  - Fixed support for forced speed/duplex settings.&n; * &t;&t;&t;     - Added link information to Auto-Neg and forced&n; * &t;&t;&t;       modes. When NIC operates with auto-neg the driver&n; * &t;&t;&t;       will report Link speed &amp; duplex modes as well as&n; * &t;&t;&t;       link partner abilities. When forced link is used,&n; * &t;&t;&t;       the driver will report status of the established&n; * &t;&t;&t;       link.&n; * &t;&t;&t;       Please read tlan.txt for additional information. &n; * &t;&t;&t;     - Removed call to check_region(), and used &n; * &t;&t;&t;       return value of request_region() instead.&n; *&t;&n; *&t;v1.8a May 28, 2000   - Minor updates.&n; *&n; *&t;v1.9 July 25, 2000   - Fixed a few remaining Full-Duplex issues.&n; *     &t;&t;&t;     - Updated with timer fixes from Andrew Morton.&n; *     &t;&t;&t;     - Fixed module race in TLan_Open.&n; *&t;&t;&t;     - Added routine to monitor PHY status.&n; *&t;&t;&t;     - Added activity led support for Proliant devices.&n; *&n; *******************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
 macro_line|#include &lt;linux/init.h&gt;
@@ -142,7 +142,7 @@ r_char
 op_star
 id|tlan_banner
 op_assign
-l_string|&quot;ThunderLAN driver v1.8a&bslash;n&quot;
+l_string|&quot;ThunderLAN driver v1.9&bslash;n&quot;
 suffix:semicolon
 DECL|variable|media
 r_const
@@ -263,7 +263,7 @@ id|PCI_DEVICE_ID_NETELLIGENT_10_100_PROLIANT
 comma
 l_string|&quot;Compaq Netelligent Integrated 10/100 TX UTP&quot;
 comma
-id|TLAN_ADAPTER_NONE
+id|TLAN_ADAPTER_ACTIVITY_LED
 comma
 l_int|0x83
 )brace
@@ -747,6 +747,16 @@ suffix:semicolon
 r_static
 r_void
 id|TLan_PhyFinishAutoNeg
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+)paren
+suffix:semicolon
+r_static
+r_void
+id|TLan_PhyMonitor
 c_func
 (paren
 r_struct
@@ -2249,9 +2259,10 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|err
 suffix:semicolon
 )brace
 id|netif_start_queue
@@ -3102,7 +3113,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
@@ -5075,6 +5086,17 @@ id|priv-&gt;timerType
 )paren
 (brace
 r_case
+id|TLAN_TIMER_LINK_BEAT
+suffix:colon
+id|TLan_PhyMonitor
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|TLAN_TIMER_PHY_PDOWN
 suffix:colon
 id|TLan_PhyPowerDown
@@ -7019,6 +7041,26 @@ comma
 id|TLAN_LED_LINK
 )paren
 suffix:semicolon
+multiline_comment|/* We have link beat..for now anyway */
+id|priv-&gt;link
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*Enabling link beat monitoring */
+id|TLan_SetTimer
+c_func
+(paren
+id|dev
+comma
+(paren
+l_int|10
+op_star
+id|HZ
+)paren
+comma
+id|TLAN_TIMER_LINK_BEAT
+)paren
+suffix:semicolon
 )brace
 )brace
 r_if
@@ -8248,6 +8290,10 @@ op_eq
 id|TLAN_DUPLEX_FULL
 )paren
 (brace
+id|priv-&gt;tlanFullDuplex
+op_assign
+id|TRUE
+suffix:semicolon
 id|TLan_MiiWriteReg
 c_func
 (paren
@@ -8300,6 +8346,10 @@ op_eq
 id|TLAN_DUPLEX_FULL
 )paren
 (brace
+id|priv-&gt;tlanFullDuplex
+op_assign
+id|TRUE
+suffix:semicolon
 id|TLan_MiiWriteReg
 c_func
 (paren
@@ -8883,6 +8933,171 @@ id|TLAN_TIMER_FINISH_RESET
 suffix:semicolon
 )brace
 multiline_comment|/* TLan_PhyFinishAutoNeg */
+multiline_comment|/*********************************************************************&n;&t; *&n;&t; * &t;TLan_PhyMonitor&n;&t; *&n;&t; * &t;Returns: &n;&t; * &t;&t;None&n;&t; *&n;&t; * &t;Params:&n;&t; * &t;&t;dev&t;&t;The device structure of this device.&n;&t; *&n;&t; *&t;&n;&t; *&t;This function monitors PHY condition by reading the status&n;&t; *&t;register via the MII bus. This can be used to give info&n;&t; *&t;about link changes (up/down), and possible switch to alternate&n;&t; *&t;media.&n;&t; *&n;&t; * ******************************************************************/
+DECL|function|TLan_PhyMonitor
+r_void
+id|TLan_PhyMonitor
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|TLanPrivateInfo
+op_star
+id|priv
+op_assign
+(paren
+id|TLanPrivateInfo
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|u16
+id|phy
+suffix:semicolon
+id|u16
+id|phy_status
+suffix:semicolon
+id|phy
+op_assign
+id|priv-&gt;phy
+(braket
+id|priv-&gt;phyNum
+)braket
+suffix:semicolon
+multiline_comment|/* Get PHY status register */
+id|TLan_MiiReadReg
+c_func
+(paren
+id|dev
+comma
+id|phy
+comma
+id|MII_GEN_STS
+comma
+op_amp
+id|phy_status
+)paren
+suffix:semicolon
+multiline_comment|/* Check if link has been lost */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|phy_status
+op_amp
+id|MII_GS_LINK
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|priv-&gt;link
+)paren
+(brace
+id|priv-&gt;link
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;TLAN: %s has lost link&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_RUNNING
+suffix:semicolon
+id|TLan_SetTimer
+c_func
+(paren
+id|dev
+comma
+(paren
+l_int|2
+op_star
+id|HZ
+)paren
+comma
+id|TLAN_TIMER_LINK_BEAT
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Link restablished? */
+r_if
+c_cond
+(paren
+(paren
+id|phy_status
+op_amp
+id|MII_GS_LINK
+)paren
+op_logical_and
+op_logical_neg
+id|priv-&gt;link
+)paren
+(brace
+id|priv-&gt;link
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;TLAN: %s has reestablished link&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|dev-&gt;flags
+op_or_assign
+id|IFF_RUNNING
+suffix:semicolon
+id|TLan_SetTimer
+c_func
+(paren
+id|dev
+comma
+(paren
+l_int|2
+op_star
+id|HZ
+)paren
+comma
+id|TLAN_TIMER_LINK_BEAT
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Setup a new monitor */
+id|TLan_SetTimer
+c_func
+(paren
+id|dev
+comma
+(paren
+l_int|2
+op_star
+id|HZ
+)paren
+comma
+id|TLAN_TIMER_LINK_BEAT
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*****************************************************************************&n;******************************************************************************&n;&n;&t;ThunderLAN Driver MII Routines&n;&n;&t;These routines are based on the information in Chap. 2 of the&n;&t;&quot;ThunderLAN Programmer&squot;s Guide&quot;, pp. 15-24.&n;&n;******************************************************************************&n;*****************************************************************************/
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_MiiReadReg&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;0&t;if ack received ok&n;&t; *&t;&t;1&t;otherwise.&n;&t; *&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;&t;The device structure containing&n;&t; *&t;&t;&t;&t;The io address and interrupt count&n;&t; *&t;&t;&t;&t;for this device.&n;&t; *&t;&t;phy&t;&t;The address of the PHY to be queried.&n;&t; *&t;&t;reg&t;&t;The register whose contents are to be&n;&t; *&t;&t;&t;&t;retreived.&n;&t; *&t;&t;val&t;&t;A pointer to a variable to store the&n;&t; *&t;&t;&t;&t;retrieved value.&n;&t; *&n;&t; *&t;This function uses the TLAN&squot;s MII bus to retreive the contents&n;&t; *&t;of a given register on a PHY.  It sends the appropriate info&n;&t; *&t;and then reads the 16-bit register value from the MII bus via&n;&t; *&t;the TLAN SIO register.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_MiiReadReg

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: mousedev.c,v 1.10 2000/06/23 09:23:00 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Input driver to PS/2 or ImPS/2 device driver module.&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: mousedev.c,v 1.15 2000/08/14 21:05:26 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Input driver to PS/2 or ImPS/2 device driver module.&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 DECL|macro|MOUSEDEV_MINOR_BASE
 mdefine_line|#define MOUSEDEV_MINOR_BASE &t;32
@@ -97,6 +97,7 @@ comma
 id|oldy
 suffix:semicolon
 DECL|member|ps2
+r_int
 r_char
 id|ps2
 (braket
@@ -291,6 +292,19 @@ id|type
 r_case
 id|EV_ABS
 suffix:colon
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|BTN_TRIGGER
+comma
+id|handle-&gt;dev-&gt;keybit
+)paren
+)paren
+r_break
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1239,10 +1253,10 @@ op_or_assign
 (paren
 id|list-&gt;buttons
 op_amp
-l_int|0x30
+l_int|0x18
 )paren
 op_lshift
-l_int|2
+l_int|3
 )paren
 suffix:semicolon
 r_if

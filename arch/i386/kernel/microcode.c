@@ -115,7 +115,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* read()/write()/ioctl() are serialized on this */
-DECL|variable|microcode_rwsem
+r_static
 id|DECLARE_RWSEM
 c_func
 (paren

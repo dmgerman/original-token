@@ -3701,13 +3701,11 @@ c_func
 (paren
 id|VFS
 comma
-l_string|&quot;NFS: safe_remove(%s/%s, %ld)&bslash;n&quot;
+l_string|&quot;NFS: safe_remove(%s/%s)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
-comma
-id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Unhash the dentry while we remove the file ...&n;&t; */
@@ -3775,6 +3773,11 @@ c_func
 id|dir_i
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+)paren
 id|NFS_CACHEINV
 c_func
 (paren

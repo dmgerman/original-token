@@ -577,6 +577,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef IFORCE_USB
 DECL|function|iforce_open
 r_static
 r_int
@@ -667,6 +668,7 @@ id|iforce-&gt;irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|iforce_input_setup
 r_static
 r_void
@@ -954,6 +956,7 @@ r_private
 op_assign
 id|iforce
 suffix:semicolon
+macro_line|#ifdef IFORCE_USB
 id|iforce-&gt;dev.open
 op_assign
 id|iforce_open
@@ -962,6 +965,7 @@ id|iforce-&gt;dev.close
 op_assign
 id|iforce_close
 suffix:semicolon
+macro_line|#endif
 id|input_register_device
 c_func
 (paren

@@ -1,7 +1,7 @@
 macro_line|#ifndef _INPUT_H
 DECL|macro|_INPUT_H
 mdefine_line|#define _INPUT_H
-multiline_comment|/*&n; * $Id: input.h,v 1.14 2000/06/03 20:18:52 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: input.h,v 1.18 2000/07/25 21:36:56 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/time.h&gt;
@@ -326,8 +326,8 @@ DECL|macro|KEY_F23
 mdefine_line|#define KEY_F23&t;&t;&t;122&t;&t;
 DECL|macro|KEY_F24
 mdefine_line|#define KEY_F24&t;&t;&t;123&t;&t;
-DECL|macro|KEY_JPN
-mdefine_line|#define KEY_JPN&t;&t;&t;124&t;&t;
+DECL|macro|KEY_KPCOMMA
+mdefine_line|#define KEY_KPCOMMA&t;&t;124
 DECL|macro|KEY_LEFTMETA
 mdefine_line|#define KEY_LEFTMETA&t;&t;125&t;&t;
 DECL|macro|KEY_RIGHTMETA
@@ -434,8 +434,48 @@ DECL|macro|KEY_SCROLLUP
 mdefine_line|#define KEY_SCROLLUP&t;&t;177
 DECL|macro|KEY_SCROLLDOWN
 mdefine_line|#define KEY_SCROLLDOWN&t;&t;178
+DECL|macro|KEY_KPLEFTPAREN
+mdefine_line|#define KEY_KPLEFTPAREN&t;&t;179
+DECL|macro|KEY_KPRIGHTPAREN
+mdefine_line|#define KEY_KPRIGHTPAREN&t;180
+DECL|macro|KEY_INTL1
+mdefine_line|#define KEY_INTL1&t;&t;181
+DECL|macro|KEY_INTL2
+mdefine_line|#define KEY_INTL2&t;&t;182
+DECL|macro|KEY_INTL3
+mdefine_line|#define KEY_INTL3&t;&t;183
+DECL|macro|KEY_INTL4
+mdefine_line|#define KEY_INTL4&t;&t;184
+DECL|macro|KEY_INTL5
+mdefine_line|#define KEY_INTL5&t;&t;185
+DECL|macro|KEY_INTL6
+mdefine_line|#define KEY_INTL6&t;&t;186
+DECL|macro|KEY_INTL7
+mdefine_line|#define KEY_INTL7&t;&t;187
+DECL|macro|KEY_INTL8
+mdefine_line|#define KEY_INTL8&t;&t;188
+DECL|macro|KEY_INTL9
+mdefine_line|#define KEY_INTL9&t;&t;189
+DECL|macro|KEY_LANG1
+mdefine_line|#define KEY_LANG1&t;&t;190
+DECL|macro|KEY_LANG2
+mdefine_line|#define KEY_LANG2&t;&t;191
+DECL|macro|KEY_LANG3
+mdefine_line|#define KEY_LANG3&t;&t;192
+DECL|macro|KEY_LANG4
+mdefine_line|#define KEY_LANG4&t;&t;193
+DECL|macro|KEY_LANG5
+mdefine_line|#define KEY_LANG5&t;&t;194
+DECL|macro|KEY_LANG6
+mdefine_line|#define KEY_LANG6&t;&t;195
+DECL|macro|KEY_LANG7
+mdefine_line|#define KEY_LANG7&t;&t;196
+DECL|macro|KEY_LANG8
+mdefine_line|#define KEY_LANG8&t;&t;197
+DECL|macro|KEY_LANG9
+mdefine_line|#define KEY_LANG9&t;&t;198
 DECL|macro|KEY_UNKNOWN
-mdefine_line|#define KEY_UNKNOWN&t;&t;180
+mdefine_line|#define KEY_UNKNOWN&t;&t;200
 DECL|macro|BTN_MISC
 mdefine_line|#define BTN_MISC&t;&t;0x100
 DECL|macro|BTN_0
@@ -678,6 +718,10 @@ DECL|macro|BUS_PARPORT
 mdefine_line|#define BUS_PARPORT&t;&t;0x15
 DECL|macro|BUS_AMIGA
 mdefine_line|#define BUS_AMIGA&t;&t;0x16
+DECL|macro|BUS_ADB
+mdefine_line|#define BUS_ADB&t;&t;&t;0x17
+DECL|macro|BUS_I2C
+mdefine_line|#define BUS_I2C&t;&t;&t;0x18
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * In-kernel definitions.&n; */
 macro_line|#include &lt;linux/sched.h&gt;

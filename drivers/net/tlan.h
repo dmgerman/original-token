@@ -341,13 +341,17 @@ DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
+DECL|member|link
+id|u8
+id|link
+suffix:semicolon
 DECL|typedef|TLanPrivateInfo
 )brace
 id|TLanPrivateInfo
 suffix:semicolon
 multiline_comment|/*****************************************************************&n;&t; * TLan Driver Timer Definitions&n;&t; *&n;&t; ****************************************************************/
-DECL|macro|TLAN_TIMER_LINK
-mdefine_line|#define TLAN_TIMER_LINK&t;&t;&t;1
+DECL|macro|TLAN_TIMER_LINK_BEAT
+mdefine_line|#define TLAN_TIMER_LINK_BEAT&t;&t;1
 DECL|macro|TLAN_TIMER_ACTIVITY
 mdefine_line|#define TLAN_TIMER_ACTIVITY&t;&t;2
 DECL|macro|TLAN_TIMER_PHY_PDOWN
@@ -649,11 +653,11 @@ mdefine_line|#define &t;MII_GIL_MODEL&t;&t;0x03F0
 DECL|macro|MII_GIL_REVISION
 mdefine_line|#define &t;MII_GIL_REVISION&t;0x000F
 DECL|macro|MII_AN_ADV
-mdefine_line|#define MII_AN_ADV&t;&t;&t;0x04
+mdefine_line|#define MII_AN_ADV&t;&t;&t;0x0004
 DECL|macro|MII_AN_LPA
-mdefine_line|#define MII_AN_LPA&t;&t;&t;0x05
+mdefine_line|#define MII_AN_LPA&t;&t;&t;0x0005
 DECL|macro|MII_AN_EXP
-mdefine_line|#define MII_AN_EXP&t;&t;&t;0x06
+mdefine_line|#define MII_AN_EXP&t;&t;&t;0x0006
 multiline_comment|/* ThunderLAN Specific MII/PHY Registers */
 DECL|macro|TLAN_TLPHY_ID
 mdefine_line|#define TLAN_TLPHY_ID&t;&t;&t;0x10

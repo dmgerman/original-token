@@ -130,7 +130,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#if 1 /*def CONFIG_IP_ROUTER*/
 DECL|function|eth_copy_and_sum
 r_static
 id|__inline__
@@ -164,30 +163,6 @@ id|len
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-r_extern
-r_void
-id|eth_copy_and_sum
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|dest
-comma
-r_int
-r_char
-op_star
-id|src
-comma
-r_int
-id|length
-comma
-r_int
-id|base
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#endif&t;/* _LINUX_ETHERDEVICE_H */
 eof

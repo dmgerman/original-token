@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/module.h&gt;&t;&t;/* Modules &t;&t;&t;*/
 macro_line|#include &lt;linux/init.h&gt;&t;&t;&t;/* Initdata&t;&t;&t;*/
 macro_line|#include &lt;asm/uaccess.h&gt;&t;&t;/* copy to/from user&t;&t;*/
 macro_line|#include &lt;linux/videodev.h&gt;&t;&t;/* kernel radio structs&t;&t;*/
-macro_line|#include &quot;../sound/miroaci.h&quot;&t;&t;/* ACI Control by acimixer      */
+macro_line|#include &quot;../../sound/miroaci.h&quot;&t;/* ACI Control by acimixer      */
 DECL|variable|users
 r_static
 r_int

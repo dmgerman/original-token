@@ -562,6 +562,7 @@ r_char
 op_star
 id|extra
 suffix:semicolon
+multiline_comment|/* Extra descriptors */
 DECL|member|extralen
 r_int
 id|extralen
@@ -655,6 +656,17 @@ r_struct
 id|usb_interface
 op_star
 id|interface
+suffix:semicolon
+DECL|member|extra
+r_int
+r_char
+op_star
+id|extra
+suffix:semicolon
+multiline_comment|/* Extra descriptors */
+DECL|member|extralen
+r_int
+id|extralen
 suffix:semicolon
 )brace
 id|__attribute__

@@ -6147,6 +6147,7 @@ op_eq
 l_int|5
 )paren
 )paren
+(brace
 id|readahead
 op_assign
 (paren
@@ -6190,9 +6191,11 @@ id|PAGE_SHIFT
 op_minus
 l_int|9
 )paren
+)paren
 op_star
 l_int|2
 suffix:semicolon
+)brace
 r_else
 (brace
 r_if
@@ -6223,7 +6226,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;md%d: max total readahead window set to %dk&bslash;n&quot;
+l_string|&quot;md%d: max total readahead window set to %ldk&bslash;n&quot;
 comma
 id|mdidx
 c_func
@@ -6244,7 +6247,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;md%d: %d data-disks, max readahead per data-disk: %dk&bslash;n&quot;
+l_string|&quot;md%d: %d data-disks, max readahead per data-disk: %ldk&bslash;n&quot;
 comma
 id|mdidx
 c_func

@@ -1,7 +1,7 @@
 macro_line|#ifndef __HID_H
 DECL|macro|__HID_H
 mdefine_line|#define __HID_H
-multiline_comment|/*&n; * $Id: hid.h,v 1.4 2000/05/29 09:01:52 vojtech Exp $&n; *&n; *  Copyright (c) 1999 Andreas Gal&n; *  Copyright (c) 2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: hid.h,v 1.7 2000/05/31 22:57:48 vojtech Exp $&n; *&n; *  Copyright (c) 1999 Andreas Gal&n; *  Copyright (c) 2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; *&n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -256,8 +256,10 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is the local enviroment. It is resistent up the the next main-item.&n; */
-DECL|macro|MAX_USAGES
-mdefine_line|#define MAX_USAGES 1024
+DECL|macro|HID_MAX_DESCRIPTOR_SIZE
+mdefine_line|#define HID_MAX_DESCRIPTOR_SIZE&t;&t;4096
+DECL|macro|HID_MAX_USAGES
+mdefine_line|#define HID_MAX_USAGES&t;&t;&t;1024
 DECL|struct|hid_local
 r_struct
 id|hid_local
@@ -266,7 +268,7 @@ DECL|member|usage
 r_int
 id|usage
 (braket
-id|MAX_USAGES
+id|HID_MAX_USAGES
 )braket
 suffix:semicolon
 multiline_comment|/* usage array */
@@ -495,6 +497,27 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|HID_REPORT_TYPES
 mdefine_line|#define HID_REPORT_TYPES 3
+DECL|macro|HID_BUFFER_SIZE
+mdefine_line|#define HID_BUFFER_SIZE&t;&t;32
+DECL|macro|HID_CONTROL_FIFO_SIZE
+mdefine_line|#define HID_CONTROL_FIFO_SIZE&t;8
+DECL|struct|hid_control_fifo
+r_struct
+id|hid_control_fifo
+(brace
+DECL|member|dr
+id|devrequest
+id|dr
+suffix:semicolon
+DECL|member|buffer
+r_char
+id|buffer
+(braket
+id|HID_BUFFER_SIZE
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|hid_device
 r_struct
 id|hid_device
@@ -544,39 +567,44 @@ r_int
 id|ifnum
 suffix:semicolon
 multiline_comment|/* USB interface number */
-DECL|member|buffer
-r_char
-id|buffer
-(braket
-l_int|32
-)braket
-suffix:semicolon
-multiline_comment|/* Receive buffer */
-DECL|member|bufout
-r_char
-id|bufout
-(braket
-l_int|32
-)braket
-suffix:semicolon
-multiline_comment|/* Transmit buffer */
-DECL|member|dr
-id|devrequest
-id|dr
-suffix:semicolon
-multiline_comment|/* Startup packet */
 DECL|member|urb
 r_struct
 id|urb
 id|urb
 suffix:semicolon
 multiline_comment|/* USB URB structure */
+DECL|member|buffer
+r_char
+id|buffer
+(braket
+id|HID_BUFFER_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/* Rx buffer */
 DECL|member|urbout
 r_struct
 id|urb
 id|urbout
 suffix:semicolon
 multiline_comment|/* Output URB */
+DECL|member|out
+r_struct
+id|hid_control_fifo
+id|out
+(braket
+id|HID_CONTROL_FIFO_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/* Transmit buffer */
+DECL|member|outhead
+DECL|member|outtail
+r_int
+r_char
+id|outhead
+comma
+id|outtail
+suffix:semicolon
+multiline_comment|/* Tx buffer head &amp; tail */
 DECL|member|input
 r_struct
 id|input_dev

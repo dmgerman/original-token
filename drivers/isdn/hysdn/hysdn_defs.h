@@ -2,6 +2,7 @@ multiline_comment|/* $Id: hysdn_defs.h,v 1.3 2000/06/13 09:14:26 ualbrecht Exp $
 macro_line|#ifndef HYSDN_DEFS_H
 DECL|macro|HYSDN_DEFS_H
 mdefine_line|#define HYSDN_DEFS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hysdn_if.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;

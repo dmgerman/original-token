@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: semantics.&n; *&n; * Version:&t;$Id: fib_semantics.c,v 1.16 2000/06/21 17:14:50 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: semantics.&n; *&n; * Version:&t;$Id: fib_semantics.c,v 1.17 2000/08/19 23:22:56 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -3319,12 +3319,10 @@ c_cond
 id|r-&gt;rt_dev
 )paren
 (brace
-macro_line|#ifdef CONFIG_IP_ALIAS
 r_char
 op_star
 id|colon
 suffix:semicolon
-macro_line|#endif
 r_struct
 id|net_device
 op_star
@@ -3364,7 +3362,6 @@ l_int|1
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_ALIAS
 id|colon
 op_assign
 id|strchr
@@ -3385,7 +3382,6 @@ id|colon
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
 id|dev
 op_assign
 id|__dev_get_by_name
@@ -3409,7 +3405,6 @@ op_assign
 op_amp
 id|dev-&gt;ifindex
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_ALIAS
 r_if
 c_cond
 (paren
@@ -3492,7 +3487,6 @@ op_amp
 id|ifa-&gt;ifa_local
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 id|ptr
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&t;&t;Adam Sulmicki &lt;adam@cfar.umd.edu&gt;&n; *              Pekka Riikonen &lt;priikone@poesidon.pspt.fi&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;    Michael Chastain&t;:&t;Fix signed/unsigned for SIOCGIFCONF&n; *&t;&t;Cyrus Durgin&t;:&t;Cleaned for KMOD&n; *&t;&t;Adam Sulmicki   :&t;Bug Fix : Network Device Unload&n; *&t;&t;&t;&t;&t;A network device unload needs to purge&n; *&t;&t;&t;&t;&t;the backlog queue.&n; *&t;Paul Rusty Russell&t;:&t;SIOCSIFNAME&n; *              Pekka Riikonen  :&t;Netdev boot-time settings code&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&t;&t;Adam Sulmicki &lt;adam@cfar.umd.edu&gt;&n; *              Pekka Riikonen &lt;priikone@poesidon.pspt.fi&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;    Michael Chastain&t;:&t;Fix signed/unsigned for SIOCGIFCONF&n; *&t;&t;Cyrus Durgin&t;:&t;Cleaned for KMOD&n; *&t;&t;Adam Sulmicki   :&t;Bug Fix : Network Device Unload&n; *&t;&t;&t;&t;&t;A network device unload needs to purge&n; *&t;&t;&t;&t;&t;the backlog queue.&n; *&t;Paul Rusty Russell&t;:&t;SIOCSIFNAME&n; *              Pekka Riikonen  :&t;Netdev boot-time settings code&n; *              Andrew Morton   :       Make unregister_netdevice wait indefinitely on dev-&gt;refcnt&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -7546,6 +7546,8 @@ id|dev
 r_int
 r_int
 id|now
+comma
+id|warning_time
 suffix:semicolon
 r_struct
 id|net_device
@@ -7815,8 +7817,10 @@ id|dev-&gt;refcnt
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* EXPLANATION. If dev-&gt;refcnt is not 1 now (1 is our own reference)&n;&t;   it means that someone in the kernel still has reference&n;&t;   to this device and we cannot release it.&n;&n;&t;   &quot;New style&quot; devices have destructors, hence we can return from this&n;&t;   function and destructor will do all the work later.&n;&n;&t;   &quot;Old style&quot; devices expect that device is free of any references&n;&t;   upon exit from this function. WE CANNOT MAKE such release&n;&t;   without delay. Note that it is not new feature. Referencing devices&n;&t;   after they are released occured in 2.0 and 2.2.&n;&t;   Now we just can know about each fact of illegal usage.&n;&n;&t;   So, we linger for 10*HZ (it is an arbitrary number)&n;&n;&t;   After 1 second, we start to rebroadcast unregister notifications&n;&t;   in hope that careless clients will release the device.&n;&n;&t;   If timeout expired, we have no choice how to cross fingers&n;&t;   and return. Real alternative would be block here forever&n;&t;   and we will make it eventually, when all peaceful citizens&n;&t;   will be notified and repaired.&n;&t; */
+multiline_comment|/* EXPLANATION. If dev-&gt;refcnt is not now 1 (our own reference)&n;&t;   it means that someone in the kernel still has a reference&n;&t;   to this device and we cannot release it.&n;&n;&t;   &quot;New style&quot; devices have destructors, hence we can return from this&n;&t;   function and destructor will do all the work later.  As of kernel 2.4.0&n;&t;   there are very few &quot;New Style&quot; devices.&n;&n;&t;   &quot;Old style&quot; devices expect that the device is free of any references&n;&t;   upon exit from this function.&n;&t;   We cannot return from this function until all such references have&n;&t;   fallen away.  This is because the caller of this function will probably&n;&t;   immediately kfree(*dev) and then be unloaded via sys_delete_module.&n;&n;&t;   So, we linger until all references fall away.  The duration of the&n;&t;   linger is basically unbounded! It is driven by, for example, the&n;&t;   current setting of sysctl_ipfrag_time.&n;&n;&t;   After 1 second, we start to rebroadcast unregister notifications&n;&t;   in hope that careless clients will release the device.&n;&n;&t; */
 id|now
+op_assign
+id|warning_time
 op_assign
 id|jiffies
 suffix:semicolon
@@ -7882,32 +7886,20 @@ c_cond
 (paren
 id|jiffies
 op_minus
-id|now
+id|warning_time
 )paren
 OG
 l_int|10
 op_star
 id|HZ
 )paren
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|dev-&gt;refcnt
-)paren
-op_ne
-l_int|1
-)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;unregister_netdevice: Old style device %s leaked(refcnt=%d). Wait for crash.&bslash;n&quot;
+id|KERN_EMERG
+l_string|&quot;unregister_netdevice: waiting for %s to &quot;
+l_string|&quot;become free. Usage count = %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -7917,10 +7909,14 @@ c_func
 op_amp
 id|dev-&gt;refcnt
 )paren
-op_minus
-l_int|1
 )paren
 suffix:semicolon
+id|warning_time
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
+)brace
 id|dev_put
 c_func
 (paren
