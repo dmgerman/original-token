@@ -20,14 +20,9 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;arp.h&quot;
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-macro_line|#endif
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifdef EL3_DEBUG
 DECL|variable|el3_debug
 r_int
@@ -274,7 +269,6 @@ op_add_assign
 l_int|0x1000
 )paren
 (brace
-multiline_comment|/* Check the standard EISA ID register for an encoded &squot;3Com&squot;. */
 r_if
 c_cond
 (paren
@@ -282,26 +276,11 @@ id|inw
 c_func
 (paren
 id|ioaddr
-op_plus
-l_int|0xC80
 )paren
 op_ne
 l_int|0x6d50
 )paren
 r_continue
-suffix:semicolon
-multiline_comment|/* Change the register set to the configuration window 0. */
-id|outw
-c_func
-(paren
-l_int|0x0800
-comma
-id|ioaddr
-op_plus
-l_int|0xC80
-op_plus
-id|EL3_CMD
-)paren
 suffix:semicolon
 id|irq
 op_assign
@@ -358,13 +337,14 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Restore the &quot;Product ID&quot; to the EEPROM read register. */
+multiline_comment|/* Restore the &quot;Manufacturer ID&quot; to the EEPROM read register. */
+multiline_comment|/* The manual says to restore &quot;Product ID&quot; (reg. 3). !???! */
 id|read_eeprom
 c_func
 (paren
 id|ioaddr
 comma
-l_int|3
+l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/* Was the EISA code an add-on hack?  Nahhhhh... */
@@ -898,114 +878,10 @@ id|set_multicast_list
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Fill in the generic fields of the device structure. */
-r_for
-c_loop
+id|ether_setup
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;hard_header
-op_assign
-id|eth_header
-suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-id|eth_add_arp
-suffix:semicolon
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
-suffix:semicolon
-id|dev-&gt;rebuild_header
-op_assign
-id|eth_rebuild_header
-suffix:semicolon
-id|dev-&gt;type_trans
-op_assign
-id|eth_type_trans
-suffix:semicolon
-id|dev-&gt;type
-op_assign
-id|ARPHRD_ETHER
-suffix:semicolon
-id|dev-&gt;hard_header_len
-op_assign
-id|ETH_HLEN
-suffix:semicolon
-id|dev-&gt;mtu
-op_assign
-l_int|1500
-suffix:semicolon
-multiline_comment|/* eth_mtu */
-id|dev-&gt;addr_len
-op_assign
-id|ETH_ALEN
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETH_ALEN
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|dev-&gt;broadcast
-(braket
-id|i
-)braket
-op_assign
-l_int|0xff
-suffix:semicolon
-)brace
-multiline_comment|/* New-style flags. */
-id|dev-&gt;flags
-op_assign
-id|IFF_BROADCAST
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-r_sizeof
-(paren
-r_int
-r_int
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -1620,41 +1496,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Fill in the ethernet header. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|skb-&gt;arp
-op_logical_and
-id|dev
-op_member_access_from_pointer
-id|rebuild_header
-c_func
-(paren
-id|skb-&gt;data
-comma
-id|dev
-)paren
-)paren
-(brace
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|arp_queue
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2258,7 +2099,7 @@ comma
 id|status
 )paren
 suffix:semicolon
-multiline_comment|/* Clear all interrupts we have handled. */
+multiline_comment|/* Clear all interrupts we have handled */
 id|outw
 c_func
 (paren
@@ -2732,19 +2573,6 @@ id|rx_status
 op_amp
 l_int|0x7ff
 suffix:semicolon
-r_int
-id|sksize
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
-id|pkt_len
-op_plus
-l_int|3
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -2755,7 +2583,9 @@ op_assign
 id|alloc_skb
 c_func
 (paren
-id|sksize
+id|pkt_len
+op_plus
+l_int|3
 comma
 id|GFP_ATOMIC
 )paren
@@ -2770,7 +2600,7 @@ l_int|4
 id|printk
 c_func
 (paren
-l_string|&quot;&t;   Receiving packet size %d status %4.4x.&bslash;n&quot;
+l_string|&quot;Receiving packet size %d status %4.4x.&bslash;n&quot;
 comma
 id|pkt_len
 comma
@@ -2785,14 +2615,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;mem_len
-op_assign
-id|sksize
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
 id|skb-&gt;len
 op_assign
 id|pkt_len
@@ -2966,7 +2788,7 @@ c_func
 (paren
 id|skb
 comma
-id|sksize
+id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -2985,7 +2807,7 @@ l_string|&quot;%s: Couldn&squot;t allocate a sk_buff of size %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|sksize
+id|pkt_len
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; */
+multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; *&n; *&n; *&t;FIXME:&t;This driver still makes some IP&squot;ish assumptions. It should build cleanly KISS TNC only without&n; *&t;CONFIG_INET defined.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -14,21 +14,24 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &quot;ax25.h&quot;
 macro_line|#endif
-macro_line|#include &quot;eth.h&quot;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#ifdef CONFIG_INET
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#endif
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
-macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;slip.h&quot;
+macro_line|#ifdef CONFIG_INET
 macro_line|#include &quot;slhc.h&quot;
+macro_line|#endif
 DECL|macro|SLIP_VERSION
 mdefine_line|#define&t;SLIP_VERSION&t;&quot;0.7.5&quot;
 multiline_comment|/* Define some IP layer stuff.  Not all systems have it. */
@@ -1378,6 +1381,7 @@ id|count
 op_assign
 id|sl-&gt;rcount
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET  
 r_if
 c_cond
 (paren
@@ -1600,6 +1604,7 @@ comma
 id|sl-&gt;rcount
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Bump the datagram to the upper layers... */
 r_do
 (brace
@@ -1802,6 +1807,7 @@ id|p
 op_assign
 id|icp
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET  
 r_if
 c_cond
 (paren
@@ -1830,109 +1836,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef OLD  
-multiline_comment|/*&n;   * Send an initial END character to flush out any&n;   * data that may have accumulated in the receiver&n;   * due to line noise.&n;   */
-id|bp
-op_assign
-id|sl-&gt;xbuff
-suffix:semicolon
-op_star
-id|bp
-op_increment
-op_assign
-id|END
-suffix:semicolon
-id|count
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/*&n;   * For each byte in the packet, send the appropriate&n;   * character sequence, according to the SLIP protocol.&n;   */
-r_while
-c_loop
-(paren
-id|len
-op_decrement
-OG
-l_int|0
-)paren
-(brace
-id|c
-op_assign
-op_star
-id|p
-op_increment
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|c
-)paren
-(brace
-r_case
-id|END
-suffix:colon
-op_star
-id|bp
-op_increment
-op_assign
-id|ESC
-suffix:semicolon
-op_star
-id|bp
-op_increment
-op_assign
-id|ESC_END
-suffix:semicolon
-id|count
-op_add_assign
-l_int|2
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ESC
-suffix:colon
-op_star
-id|bp
-op_increment
-op_assign
-id|ESC
-suffix:semicolon
-op_star
-id|bp
-op_increment
-op_assign
-id|ESC_ESC
-suffix:semicolon
-id|count
-op_add_assign
-l_int|2
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-op_star
-id|bp
-op_increment
-op_assign
-id|c
-suffix:semicolon
-id|count
-op_increment
-suffix:semicolon
-)brace
-)brace
-op_star
-id|bp
-op_increment
-op_assign
-id|END
-suffix:semicolon
-id|count
-op_increment
-suffix:semicolon
-macro_line|#else
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1977,7 +1881,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-macro_line|#endif  &t;  
 id|sl-&gt;spacket
 op_increment
 suffix:semicolon
@@ -2152,7 +2055,8 @@ op_ne
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef CONFIG_AX25  
+macro_line|#if 0  
+macro_line|#ifdef CONFIG_AX25 
 r_if
 c_cond
 (paren
@@ -2198,6 +2102,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif  &t;
+macro_line|#endif
 id|sl_lock
 c_func
 (paren
@@ -2263,9 +2168,9 @@ c_func
 id|size
 )paren
 suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&t;sl_hex_dump(skb-&gt;data,skb-&gt;len);*/
+)brace
+)brace
 id|sl_encaps
 c_func
 (paren
@@ -2333,7 +2238,7 @@ id|SL_MODE_AX25
 )paren
 (brace
 r_return
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_AX25
@@ -2342,7 +2247,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 r_return
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_IP
@@ -2370,16 +2275,21 @@ r_int
 r_int
 id|type
 comma
-r_int
-r_int
+r_void
+op_star
 id|daddr
 comma
-r_int
-r_int
+r_void
+op_star
 id|saddr
 comma
 r_int
 id|len
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 (brace
 macro_line|#ifdef CONFIG_AX25
@@ -2405,7 +2315,7 @@ id|SL_MODE_AX25
 op_logical_and
 id|type
 op_ne
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_AX25
@@ -2413,7 +2323,7 @@ id|ETH_P_AX25
 )paren
 (brace
 r_return
-id|ax25_encapsulate_ip
+id|ax25_encapsulate
 c_func
 (paren
 id|buff
@@ -2427,6 +2337,8 @@ comma
 id|saddr
 comma
 id|len
+comma
+id|skb
 )paren
 suffix:semicolon
 )brace
@@ -2434,69 +2346,6 @@ macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
-)brace
-multiline_comment|/* Add an ARP-entry for this device&squot;s broadcast address. Not used. */
-r_static
-r_void
-DECL|function|sl_add_arp
-id|sl_add_arp
-c_func
-(paren
-r_int
-r_int
-id|addr
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-macro_line|#ifdef CONFIG_AX25
-r_struct
-id|slip
-op_star
-id|sl
-op_assign
-op_amp
-id|sl_ctrl
-(braket
-id|dev-&gt;base_addr
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sl-&gt;mode
-op_amp
-id|SL_MODE_AX25
-)paren
-(brace
-id|arp_add
-c_func
-(paren
-id|addr
-comma
-(paren
-(paren
-r_char
-op_star
-)paren
-id|skb-&gt;data
-)paren
-op_plus
-l_int|8
-comma
-id|dev
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;
 )brace
 multiline_comment|/* Rebuild the MAC-level header.  Not used by SLIP. */
 r_static
@@ -2513,6 +2362,15 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|raddr
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 (brace
 macro_line|#ifdef CONFIG_AX25
@@ -2542,6 +2400,10 @@ c_func
 id|buff
 comma
 id|dev
+comma
+id|raddr
+comma
+id|skb
 )paren
 suffix:semicolon
 )brace
@@ -3197,128 +3059,6 @@ id|p
 op_assign
 id|buff
 suffix:semicolon
-macro_line|#ifdef OLD&t;
-r_while
-c_loop
-(paren
-id|count
-op_decrement
-)paren
-(brace
-id|c
-op_assign
-op_star
-id|p
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sl-&gt;escape
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|c
-op_eq
-id|ESC_ESC
-)paren
-id|sl_enqueue
-c_func
-(paren
-id|sl
-comma
-id|ESC
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|c
-op_eq
-id|ESC_END
-)paren
-id|sl_enqueue
-c_func
-(paren
-id|sl
-comma
-id|END
-)paren
-suffix:semicolon
-r_else
-id|printk
-(paren
-l_string|&quot;SLIP: received wrong character&bslash;n&quot;
-)paren
-suffix:semicolon
-id|sl-&gt;escape
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|c
-op_eq
-id|ESC
-)paren
-id|sl-&gt;escape
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|c
-op_eq
-id|END
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sl-&gt;rcount
-OG
-l_int|2
-)paren
-id|sl_bump
-c_func
-(paren
-id|sl
-)paren
-suffix:semicolon
-id|sl_dequeue
-c_func
-(paren
-id|sl
-comma
-id|sl-&gt;rcount
-)paren
-suffix:semicolon
-id|sl-&gt;rcount
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-id|sl_enqueue
-c_func
-(paren
-id|sl
-comma
-id|c
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -3353,7 +3093,6 @@ comma
 id|error
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
 )brace
 r_while
 c_loop
@@ -4538,13 +4277,7 @@ id|VERIFY_WRITE
 comma
 id|arg
 comma
-id|strlen
-c_func
-(paren
-id|sl-&gt;dev-&gt;name
-)paren
-op_plus
-l_int|1
+l_int|16
 )paren
 suffix:semicolon
 r_if
@@ -4554,6 +4287,7 @@ id|err
 )paren
 (brace
 r_return
+op_minus
 id|err
 suffix:semicolon
 )brace
@@ -4777,12 +4511,14 @@ comma
 id|SL_NRUNIT
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET&t;&t;&t;&t;
 id|printk
 c_func
 (paren
 l_string|&quot;CSLIP: code copyright 1989 Regents of the University of California&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 macro_line|#ifdef CONFIG_AX25
 id|printk
 c_func
@@ -4933,10 +4669,6 @@ id|dev-&gt;hard_header
 op_assign
 id|sl_header
 suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-id|sl_add_arp
-suffix:semicolon
 id|dev-&gt;type_trans
 op_assign
 id|sl_type_trans
@@ -4989,10 +4721,6 @@ l_int|7
 suffix:semicolon
 multiline_comment|/*    &quot;&quot;      &quot;&quot;       &quot;&quot;    &quot;&quot; */
 macro_line|#endif  
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
-suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
 id|sl_rebuild_header
@@ -5011,12 +4739,15 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
 id|dev-&gt;buffs
 (braket
 id|i
 )braket
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* New-style flags. */
 id|dev-&gt;flags

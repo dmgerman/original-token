@@ -26,10 +26,9 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;arp.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifndef HAVE_AUTOIRQ
 multiline_comment|/* From auto_irq.c, in ioport.h for later versions. */
 r_extern
@@ -60,12 +59,6 @@ id|irq2dev_map
 l_int|16
 )braket
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(addr, size) kfree_s(addr,size);
 macro_line|#endif
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
@@ -210,7 +203,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 r_static
 r_void
 id|set_multicast_list
@@ -229,7 +221,6 @@ op_star
 id|addrs
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Example routines you must write ;-&gt;. */
 DECL|macro|tx_done
 mdefine_line|#define tx_done(dev) 1
@@ -670,122 +661,16 @@ id|dev-&gt;get_stats
 op_assign
 id|net_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values.&n;&t;   This should be in a common file instead of per-driver.  */
-r_for
-c_loop
+multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values. */
+id|ether_setup
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;hard_header
-op_assign
-id|eth_header
-suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-id|eth_add_arp
-suffix:semicolon
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
-suffix:semicolon
-id|dev-&gt;rebuild_header
-op_assign
-id|eth_rebuild_header
-suffix:semicolon
-id|dev-&gt;type_trans
-op_assign
-id|eth_type_trans
-suffix:semicolon
-id|dev-&gt;type
-op_assign
-id|ARPHRD_ETHER
-suffix:semicolon
-id|dev-&gt;hard_header_len
-op_assign
-id|ETH_HLEN
-suffix:semicolon
-id|dev-&gt;mtu
-op_assign
-l_int|1500
-suffix:semicolon
-multiline_comment|/* eth_mtu */
-id|dev-&gt;addr_len
-op_assign
-id|ETH_ALEN
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETH_ALEN
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|dev-&gt;broadcast
-(braket
-id|i
-)braket
-op_assign
-l_int|0xff
-suffix:semicolon
-)brace
-multiline_comment|/* New-style flags. */
-id|dev-&gt;flags
-op_assign
-id|IFF_BROADCAST
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-r_sizeof
-(paren
-r_int
-r_int
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -1015,41 +900,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* For ethernet, fill in the header.  This should really be done by a&n;&t;   higher level, rather than duplicated for each ethernet adaptor. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|skb-&gt;arp
-op_logical_and
-id|dev
-op_member_access_from_pointer
-id|rebuild_header
-c_func
-(paren
-id|skb-&gt;data
-comma
-id|dev
-)paren
-)paren
-(brace
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|arp_queue
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
 r_if
 c_cond
@@ -1438,17 +1288,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Malloc up new buffer. */
-r_int
-id|sksize
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
-id|pkt_len
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -1459,7 +1298,7 @@ op_assign
 id|alloc_skb
 c_func
 (paren
-id|sksize
+id|pkt_len
 comma
 id|GFP_ATOMIC
 )paren
@@ -1486,14 +1325,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|skb-&gt;mem_len
-op_assign
-id|sksize
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
 id|skb-&gt;len
 op_assign
 id|pkt_len
@@ -1534,56 +1365,12 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_NETIF_RX
 id|netif_rx
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_rint
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|skb
-comma
-id|pkt_len
-comma
-id|IN_SKBUFF
-comma
-id|dev
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|kfree_s
-c_func
-(paren
-id|skb
-comma
-id|sksize
-)paren
-suffix:semicolon
-id|lp-&gt;stats.rx_dropped
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
@@ -1743,7 +1530,6 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#ifdef HAVE_MULTICAST
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
 r_static
 r_void
@@ -1796,7 +1582,6 @@ id|ioaddr
 suffix:semicolon
 multiline_comment|/* Disable promiscuous mode, use normal mode */
 )brace
-macro_line|#endif
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c skeleton.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

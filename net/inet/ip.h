@@ -1,8 +1,11 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP module.&n; *&n; * Version:&t;@(#)ip.h&t;1.0.2&t;05/07/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP module.&n; *&n; * Version:&t;@(#)ip.h&t;1.0.2&t;05/07/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _IP_H
 DECL|macro|_IP_H
 mdefine_line|#define _IP_H
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#ifndef _SNMP_H
+macro_line|#include &quot;snmp.h&quot;
+macro_line|#endif
 macro_line|#include &quot;sock.h&quot;&t;/* struct sock */
 multiline_comment|/* IP flags. */
 DECL|macro|IP_CE
@@ -147,6 +150,7 @@ r_void
 id|ip_print
 c_func
 (paren
+r_const
 r_struct
 id|iphdr
 op_star
@@ -359,6 +363,19 @@ r_int
 op_star
 id|optlen
 )paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|ip_mib
+id|ip_statistics
 suffix:semicolon
 macro_line|#endif&t;/* _IP_H */
 eof

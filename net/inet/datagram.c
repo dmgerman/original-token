@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;SUCS&t;NET2 Debugged.&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; */
+multiline_comment|/*&n; *&t;SUCS NET3:&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-).&n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; *&t;&t;Alan Cox&t;:&t;Rewrote skb_read_datagram to avoid the skb_peek_copy stuff.&n; *&t;&t;Alan Cox&t;:&t;Added support for SOCK_SEQPACKET. IPX can no longer use the SO_TYPE hack but&n; *&t;&t;&t;&t;&t;AX.25 now works right, and SPX is feasible.&n; *&t;&t;Alan Cox&t;:&t;Fixed write select of non IP protocol crash.&n; *&t;&t;Florian  La Roche:&t;Changed for my new skbuff handling.&n; *&n; *&t;Note:&n; *&t;&t;A lot of this will change when the protocol/socket seperation&n; *&t;occurs. Using this will make things reasonably clean.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,15 +9,14 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
-macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;udp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 multiline_comment|/*&n; *&t;Get a datagram skbuff, understands the peeking, nonblocking wakeups and possible&n; *&t;races. This replaces identical code in packet,raw and udp, as well as the yet to&n; *&t;be released IPX support. It also finally fixes the long standing peek and read&n; *&t;race for datagram sockets. If you alter this routine remember it must be&n; *&t;re-entrant.&n; */
 DECL|function|skb_recv_datagram
@@ -58,7 +57,12 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|sk-&gt;rqueue
+id|skb_peek
+c_func
+(paren
+op_amp
+id|sk-&gt;receive_queue
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -181,7 +185,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;rqueue
+id|skb_peek
+c_func
+(paren
+op_amp
+id|sk-&gt;receive_queue
+)paren
 op_eq
 l_int|NULL
 )paren
@@ -256,7 +265,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Again only user level code calls this function, so nothing interrupt level&n;&t;     will suddenely eat the rqueue */
+multiline_comment|/* Again only user level code calls this function, so nothing interrupt level&n;&t;     will suddenely eat the receive_queue */
 r_if
 c_cond
 (paren
@@ -274,7 +283,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|sk-&gt;rqueue
+id|sk-&gt;receive_queue
 )paren
 suffix:semicolon
 r_if
@@ -308,7 +317,7 @@ id|skb_peek
 c_func
 (paren
 op_amp
-id|sk-&gt;rqueue
+id|sk-&gt;receive_queue
 )paren
 suffix:semicolon
 r_if
@@ -399,9 +408,11 @@ multiline_comment|/* See if it needs destroying */
 r_if
 c_cond
 (paren
-id|skb-&gt;list
-op_eq
-l_int|NULL
+op_logical_neg
+id|skb-&gt;next
+op_logical_and
+op_logical_neg
+id|skb-&gt;prev
 )paren
 (brace
 multiline_comment|/* Been dequeued by someone - ie its read */
@@ -512,7 +523,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;rqueue
+id|skb_peek
+c_func
+(paren
+op_amp
+id|sk-&gt;receive_queue
+)paren
 op_ne
 l_int|NULL
 op_logical_or

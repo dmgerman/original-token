@@ -11,15 +11,14 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;arp.h&quot;
-multiline_comment|/* Display an IP address in readable format. */
+macro_line|#include &lt;linux/skbuff.h&gt;
+multiline_comment|/*&n; *&t;Display an IP address in readable format. &n; */
 DECL|function|in_ntoa
 r_char
 op_star
@@ -38,7 +37,6 @@ id|buff
 l_int|18
 )braket
 suffix:semicolon
-r_register
 r_char
 op_star
 id|p
@@ -100,10 +98,10 @@ r_return
 id|buff
 suffix:semicolon
 )brace
-multiline_comment|/* Convert an ASCII string to binary IP. */
-r_int
-r_int
+multiline_comment|/*&n; *&t;Convert an ASCII string to binary IP. &n; */
 DECL|function|in_aton
+r_int
+r_int
 id|in_aton
 c_func
 (paren
@@ -213,8 +211,9 @@ id|l
 )paren
 suffix:semicolon
 )brace
-r_void
+multiline_comment|/*&n; *&t;Debugging print out&n; */
 DECL|function|dprintf
+r_void
 id|dprintf
 c_func
 (paren
@@ -323,9 +322,17 @@ id|buff
 )paren
 suffix:semicolon
 )brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Debugging output lost: No free memory.&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
-r_int
+multiline_comment|/*&n; *&t;Debugging ioctl() requests&n; */
 DECL|function|dbg_ioctl
+r_int
 id|dbg_ioctl
 c_func
 (paren

@@ -15,7 +15,7 @@ multiline_comment|/*#include &lt;linux/kernel.h&gt;*/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
 multiline_comment|/*#include &lt;asm/system.h&gt;*/
 DECL|variable|irq2dev_map
 r_struct

@@ -8,9 +8,9 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
-multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;*/
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;   &n;   [Removed all support for /dev network devices. When someone adds streams then&n;    by magic we get them, but otherwise they are un-needed and a space waste]&n;*/
 multiline_comment|/* The next device number/name to assign: &quot;eth0&quot;, &quot;eth1&quot;, etc. */
 DECL|variable|next_ethdev_number
 r_static
@@ -19,46 +19,6 @@ id|next_ethdev_number
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef NET_MAJOR_NUM
-DECL|variable|netcard_fops
-r_static
-r_struct
-id|file_operations
-id|netcard_fops
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync */
-)brace
-suffix:semicolon
-macro_line|#endif
 r_int
 r_int
 id|lance_init
@@ -88,30 +48,6 @@ r_int
 id|mem_end
 )paren
 (brace
-macro_line|#ifdef NET_MAJOR_NUM
-r_if
-c_cond
-(paren
-id|register_chrdev
-c_func
-(paren
-id|NET_MAJOR_NUM
-comma
-l_string|&quot;network&quot;
-comma
-op_amp
-id|netcard_fops
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;WARNING: Unable to get major %d for the network devices.&bslash;n&quot;
-comma
-id|NET_MAJOR_NUM
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#if defined(CONFIG_LANCE)&t;&t;&t;/* Note this is _not_ CONFIG_AT1500. */
 id|mem_start
 op_assign
@@ -304,24 +240,19 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
 id|dev-&gt;buffs
 (braket
 id|i
 )braket
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|dev-&gt;hard_header
 op_assign
 id|eth_header
-suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-id|eth_add_arp
-suffix:semicolon
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
 suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
@@ -452,6 +383,127 @@ suffix:semicolon
 )brace
 r_return
 id|dev
+suffix:semicolon
+)brace
+DECL|function|ether_setup
+r_void
+id|ether_setup
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values.&n;&t;   This should be in a common file instead of per-driver.  */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|DEV_NUMBUFFS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|dev-&gt;buffs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|dev-&gt;hard_header
+op_assign
+id|eth_header
+suffix:semicolon
+id|dev-&gt;rebuild_header
+op_assign
+id|eth_rebuild_header
+suffix:semicolon
+id|dev-&gt;type_trans
+op_assign
+id|eth_type_trans
+suffix:semicolon
+id|dev-&gt;type
+op_assign
+id|ARPHRD_ETHER
+suffix:semicolon
+id|dev-&gt;hard_header_len
+op_assign
+id|ETH_HLEN
+suffix:semicolon
+id|dev-&gt;mtu
+op_assign
+l_int|1500
+suffix:semicolon
+multiline_comment|/* eth_mtu */
+id|dev-&gt;addr_len
+op_assign
+id|ETH_ALEN
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ETH_ALEN
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|dev-&gt;broadcast
+(braket
+id|i
+)braket
+op_assign
+l_int|0xff
+suffix:semicolon
+)brace
+multiline_comment|/* New-style flags. */
+id|dev-&gt;flags
+op_assign
+id|IFF_BROADCAST
+suffix:semicolon
+id|dev-&gt;family
+op_assign
+id|AF_INET
+suffix:semicolon
+id|dev-&gt;pa_addr
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;pa_brdaddr
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;pa_mask
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;pa_alen
+op_assign
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 suffix:semicolon
 )brace
 "&f;"

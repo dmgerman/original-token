@@ -2713,7 +2713,7 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;[%8.8x %x] &quot;
+l_string|&quot;[%p %lx] &quot;
 comma
 id|bh-&gt;b_data
 comma
@@ -2751,7 +2751,7 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;{%d:%8.8x %8.8x %d}  &quot;
+l_string|&quot;{%d:%p %p %d}  &quot;
 comma
 id|count
 comma

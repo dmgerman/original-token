@@ -30,74 +30,6 @@ DECL|macro|ARPOP_RREQUEST
 mdefine_line|#define&t;ARPOP_RREQUEST&t;3&t;&t;/* RARP request&t;&t;&t;*/
 DECL|macro|ARPOP_RREPLY
 mdefine_line|#define&t;ARPOP_RREPLY&t;4&t;&t;/* RARP reply&t;&t;&t;*/
-multiline_comment|/*&n; * Address Resolution Protocol.&n; *&n; * See RFC 826 for protocol description.  ARP packets are variable&n; * in size; the arphdr structure defines the fixed-length portion.&n; * Protocol type values are the same as those for 10 Mb/s Ethernet.&n; * It is followed by the variable-sized fields ar_sha, arp_spa,&n; * arp_tha and arp_tpa in that order, according to the lengths&n; * specified.  Field names used correspond to RFC 826.&n; */
-DECL|struct|arphdr
-r_struct
-id|arphdr
-(brace
-DECL|member|ar_hrd
-r_int
-r_int
-id|ar_hrd
-suffix:semicolon
-multiline_comment|/* format of hardware address&t;*/
-DECL|member|ar_pro
-r_int
-r_int
-id|ar_pro
-suffix:semicolon
-multiline_comment|/* format of protocol address&t;*/
-DECL|member|ar_hln
-r_int
-r_char
-id|ar_hln
-suffix:semicolon
-multiline_comment|/* length of hardware address&t;*/
-DECL|member|ar_pln
-r_int
-r_char
-id|ar_pln
-suffix:semicolon
-multiline_comment|/* length of protocol address&t;*/
-DECL|member|ar_op
-r_int
-r_int
-id|ar_op
-suffix:semicolon
-multiline_comment|/* ARP opcode (command)&t;&t;*/
-multiline_comment|/* The rest is variable in size, according to the sizes above. */
-macro_line|#if 0
-r_int
-r_char
-id|ar_sha
-(braket
-)braket
-suffix:semicolon
-multiline_comment|/* sender hardware address&t;*/
-r_int
-r_char
-id|ar_spa
-(braket
-)braket
-suffix:semicolon
-multiline_comment|/* sender protocol address&t;*/
-r_int
-r_char
-id|ar_tha
-(braket
-)braket
-suffix:semicolon
-multiline_comment|/* target hardware address&t;*/
-r_int
-r_char
-id|ar_tpa
-(braket
-)braket
-suffix:semicolon
-multiline_comment|/* target protocol address&t;*/
-macro_line|#endif&t;/* not actually included! */
-)brace
-suffix:semicolon
 multiline_comment|/* ARP ioctl request. */
 DECL|struct|arpreq
 r_struct
@@ -123,8 +55,6 @@ multiline_comment|/* flags&t;&t;&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/* ARP Flag values. */
-DECL|macro|ATF_INUSE
-mdefine_line|#define&t;ATF_INUSE&t;0x01&t;&t;/* entry in use&t;&t;&t;*/
 DECL|macro|ATF_COM
 mdefine_line|#define ATF_COM&t;&t;0x02&t;&t;/* completed entry (ha valid)&t;*/
 DECL|macro|ATF_PERM

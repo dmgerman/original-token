@@ -8,12 +8,12 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 r_void
@@ -78,14 +78,6 @@ id|delete_timer
 id|t
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|timeout
-op_ne
-op_minus
-l_int|1
-)paren
 id|t-&gt;timeout
 op_assign
 id|timeout
@@ -148,15 +140,17 @@ op_assign
 id|sk-&gt;timeout
 suffix:semicolon
 multiline_comment|/* timeout is overwritten by &squot;delete_timer&squot; and &squot;reset_timer&squot; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|sk-&gt;inuse
 op_logical_or
-id|in_inet_bh
-c_func
-(paren
-)paren
+id|in_bh
 )paren
 (brace
 id|sk-&gt;timer.expires
@@ -170,12 +164,22 @@ op_amp
 id|sk-&gt;timer
 )paren
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|sk-&gt;inuse
 op_assign
 l_int|1
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 id|DPRINTF
 (paren
@@ -193,14 +197,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;wfront
+id|skb_peek
+c_func
+(paren
+op_amp
+id|sk-&gt;write_queue
+)paren
 op_logical_and
 id|before
 c_func
 (paren
 id|sk-&gt;window_seq
 comma
-id|sk-&gt;wfront-&gt;h.seq
+id|sk-&gt;write_queue.next-&gt;h.seq
 )paren
 op_logical_and
 id|sk-&gt;send_head
@@ -258,9 +267,14 @@ c_cond
 op_logical_neg
 id|sk-&gt;dead
 )paren
-id|wake_up_interruptible
+id|sk
+op_member_access_from_pointer
+id|data_ready
+c_func
 (paren
-id|sk-&gt;sleep
+id|sk
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -387,9 +401,11 @@ id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* Kill the ARP entry in case the hardware has changed. */
-id|arp_destroy_maybe
+id|arp_destroy
 (paren
 id|sk-&gt;daddr
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -398,9 +414,12 @@ c_cond
 op_logical_neg
 id|sk-&gt;dead
 )paren
-id|wake_up_interruptible
+id|sk
+op_member_access_from_pointer
+id|state_change
+c_func
 (paren
-id|sk-&gt;sleep
+id|sk
 )paren
 suffix:semicolon
 id|sk-&gt;shutdown
@@ -444,22 +463,55 @@ id|TIME_WRITE
 suffix:colon
 multiline_comment|/* try to retransmit. */
 multiline_comment|/* It could be we got here because we needed to send an ack.&n;&t; * So we need to check for that.&n;&t; */
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|skb
+op_assign
+id|sk-&gt;send_head
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;send_head
+op_logical_neg
+id|skb
 )paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 r_if
 c_cond
 (paren
 id|jiffies
 OL
-(paren
-id|sk-&gt;send_head-&gt;when
+id|skb-&gt;when
 op_plus
 id|sk-&gt;rto
-)paren
 )paren
 (brace
 id|reset_timer
@@ -468,13 +520,17 @@ id|sk
 comma
 id|TIME_WRITE
 comma
-(paren
-id|sk-&gt;send_head-&gt;when
+id|skb-&gt;when
 op_plus
 id|sk-&gt;rto
 op_minus
 id|jiffies
 )paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|release_sock
@@ -485,6 +541,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* printk(&quot;timer: seq %d retrans %d out %d cong %d&bslash;n&quot;, sk-&gt;send_head-&gt;h.seq,&n;&t;     sk-&gt;retransmits, sk-&gt;packets_out, sk-&gt;cong_window); */
 id|DPRINTF
 (paren
@@ -540,9 +602,11 @@ l_string|&quot;timer.c TIME_WRITE time-out 1&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy_maybe
+id|arp_destroy
 (paren
 id|sk-&gt;daddr
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|ip_route_check
@@ -627,6 +691,7 @@ id|sk
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 r_case
 id|TIME_KEEPOPEN
 suffix:colon
@@ -702,9 +767,11 @@ l_string|&quot;timer.c TIME_KEEPOPEN time-out 1&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy_maybe
+id|arp_destroy
 (paren
 id|sk-&gt;daddr
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|ip_route_check
@@ -741,9 +808,11 @@ l_string|&quot;timer.c TIME_KEEPOPEN time-out 2&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|arp_destroy_maybe
+id|arp_destroy
 (paren
 id|sk-&gt;daddr
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|sk-&gt;err
@@ -772,9 +841,12 @@ c_cond
 op_logical_neg
 id|sk-&gt;dead
 )paren
-id|wake_up_interruptible
+id|sk
+op_member_access_from_pointer
+id|state_change
+c_func
 (paren
-id|sk-&gt;sleep
+id|sk
 )paren
 suffix:semicolon
 id|release_sock
@@ -807,12 +879,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;net timer expired - reason unknown, sk=%08X&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|sk
+l_string|&quot;net_timer: timer expired - reason unknown&bslash;n&quot;
 )paren
 suffix:semicolon
 id|release_sock

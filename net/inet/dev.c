@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Interface (streams) handling functions.&n; *&n; * Version:&t;@(#)dev.c&t;1.0.19&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&t;&n; *&t;&t;Alan Cox:&t;check_addr returns a value for a wrong subnet&n; *&t;&t;&t;&t;ie not us but don&squot;t forward this!&n; *&t;&t;Alan Cox:&t;block timer if the inet_bh handler is running&n; *&t;&t;Alan Cox:&t;generic queue code added. A lot neater now&n; *&t;&t;C.E.Hawkins:&t;SIOCGIFCONF only reports &squot;upped&squot; interfaces&n; *&t;&t;C.E.Hawkins:&t;IFF_PROMISC support&n; *&t;&t;Alan Cox:&t;Supports Donald Beckers new hardware &n; *&t;&t;&t;&t;multicast layer, but not yet multicast lists.&n; *&t;&t;Alan Cox:&t;ip_addr_match problems with class A/B nets.&n; *&t;&t;C.E.Hawkins&t;IP 0.0.0.0 and also same net route fix. [FIXME: Ought to cause ICMP_REDIRECT]&n; *&t;&t;Alan Cox:&t;Removed bogus subnet check now the subnet code&n; *&t;&t;&t;&t;a) actually works for all A/B nets&n; *&t;&t;&t;&t;b) doesn&squot;t forward off the same interface.&n; *&t;&t;Alan Cox:&t;Multiple extra protocols&n; *&t;&t;Alan Cox:&t;Fixed ifconfig up of dud device setting the up flag&n; *&t;&t;Alan Cox:&t;Fixed verify_area errors&n; *&t;&t;Alan Cox:&t;Removed IP_SET_DEV as per Fred&squot;s comment. I hope this doesn&squot;t give&n; *&t;&t;&t;&t;anything away 8)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independant device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
+multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -14,177 +15,53 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
-macro_line|#include &quot;protocol.h&quot;
-macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
-macro_line|#ifdef CONFIG_AX25
-macro_line|#include &quot;ax25.h&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_IPX
-DECL|variable|ipx_8023_type
-r_static
-r_struct
-id|packet_type
-id|ipx_8023_type
-op_assign
-(brace
-id|NET16
-c_func
-(paren
-id|ETH_P_802_3
-)paren
-comma
-l_int|0
-comma
-id|ipx_rcv
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-DECL|variable|ipx_packet_type
-r_static
-r_struct
-id|packet_type
-id|ipx_packet_type
-op_assign
-(brace
-id|NET16
-c_func
-(paren
-id|ETH_P_IPX
-)paren
-comma
-l_int|0
-comma
-id|ipx_rcv
-comma
-l_int|NULL
-comma
-op_amp
-id|ipx_8023_type
-)brace
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AX25
-DECL|variable|ax25_packet_type
-r_static
-r_struct
-id|packet_type
-id|ax25_packet_type
-op_assign
-(brace
-id|NET16
-c_func
-(paren
-id|ETH_P_AX25
-)paren
-comma
-l_int|0
-comma
-id|ax25_rcv
-comma
-l_int|NULL
-comma
-macro_line|#ifdef CONFIG_IPX
-op_amp
-id|ipx_packet_type
-macro_line|#else
-l_int|NULL
-macro_line|#endif
-)brace
-suffix:semicolon
-macro_line|#endif
-DECL|variable|arp_packet_type
-r_static
-r_struct
-id|packet_type
-id|arp_packet_type
-op_assign
-(brace
-id|NET16
-c_func
-(paren
-id|ETH_P_ARP
-)paren
-comma
-l_int|0
-comma
-multiline_comment|/* copy */
-id|arp_rcv
-comma
-l_int|NULL
-comma
-macro_line|#ifdef CONFIG_IPX
-macro_line|#ifndef CONFIG_AX25
-op_amp
-id|ipx_packet_type
-macro_line|#else
-op_amp
-id|ax25_packet_type
-macro_line|#endif
-macro_line|#else
-macro_line|#ifdef CONFIG_AX25
-op_amp
-id|ax25_packet_type
-macro_line|#else
-l_int|NULL
-multiline_comment|/* next */
-macro_line|#endif
-macro_line|#endif
-)brace
-suffix:semicolon
-DECL|variable|ip_packet_type
-r_static
-r_struct
-id|packet_type
-id|ip_packet_type
-op_assign
-(brace
-id|NET16
-c_func
-(paren
-id|ETH_P_IP
-)paren
-comma
-l_int|0
-comma
-multiline_comment|/* copy */
-id|ip_rcv
-comma
-l_int|NULL
-comma
-op_amp
-id|arp_packet_type
-)brace
-suffix:semicolon
+multiline_comment|/*&n; *&t;The list of packet types we will receive (as opposed to discard)&n; *&t;and the routines to invoke.&n; */
 DECL|variable|ptype_base
 r_struct
 id|packet_type
 op_star
 id|ptype_base
 op_assign
-op_amp
-id|ip_packet_type
+l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n; *&t;Device drivers call our routines to queue packets here. We empty the&n; *&t;queue in the bottom half handler.&n; */
 DECL|variable|backlog
 r_static
 r_struct
-id|sk_buff
-op_star
-r_volatile
+id|sk_buff_head
 id|backlog
 op_assign
-l_int|NULL
+(brace
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+op_amp
+id|backlog
+comma
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+op_amp
+id|backlog
+macro_line|#ifdef CONFIG_SKB_CHECK
+comma
+id|SK_HEAD_SKB
+macro_line|#endif
+)brace
 suffix:semicolon
+multiline_comment|/* &n; *&t;We don&squot;t overdo the queue or we will thrash memory badly.&n; */
 DECL|variable|backlog_size
 r_static
 r_int
@@ -192,19 +69,20 @@ id|backlog_size
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|ip_bcast
+multiline_comment|/*&n; *&t;The number of sockets open for &squot;all&squot; protocol use. We have to&n; *&t;know this to copy a buffer the correct number of times.&n; */
+DECL|variable|dev_nit
 r_static
 r_int
-r_int
-id|ip_bcast
+id|dev_nit
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Return the lesser of the two values. */
-r_static
-r_int
-r_int
+multiline_comment|/*&n; *&t;Return the lesser of the two values. &n; */
 DECL|function|min
+r_static
+id|__inline__
+r_int
+r_int
 id|min
 c_func
 (paren
@@ -217,534 +95,23 @@ r_int
 id|b
 )paren
 (brace
-r_if
-c_cond
+r_return
 (paren
 id|a
 OL
 id|b
 )paren
-r_return
+ques
+c_cond
 id|a
-suffix:semicolon
-r_return
+suffix:colon
 id|b
 suffix:semicolon
 )brace
-multiline_comment|/* Determine a default network mask, based on the IP address. */
-r_static
-r_int
-r_int
-DECL|function|get_mask
-id|get_mask
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|dst
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|addr
-op_eq
-l_int|0L
-)paren
-r_return
-l_int|0L
-suffix:semicolon
-multiline_comment|/* special case */
-id|dst
-op_assign
-id|ntohl
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IN_CLASSA
-c_func
-(paren
-id|dst
-)paren
-)paren
-r_return
-id|htonl
-c_func
-(paren
-id|IN_CLASSA_NET
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IN_CLASSB
-c_func
-(paren
-id|dst
-)paren
-)paren
-r_return
-id|htonl
-c_func
-(paren
-id|IN_CLASSB_NET
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IN_CLASSC
-c_func
-(paren
-id|dst
-)paren
-)paren
-r_return
-id|htonl
-c_func
-(paren
-id|IN_CLASSC_NET
-)paren
-suffix:semicolon
-multiline_comment|/* Something else, probably a subnet. */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_int
-DECL|function|ip_addr_match
-id|ip_addr_match
-c_func
-(paren
-r_int
-r_int
-id|me
-comma
-r_int
-r_int
-id|him
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_int
-r_int
-id|mask
-op_assign
-l_int|0xFFFFFFFF
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_DEV
-comma
-l_string|&quot;ip_addr_match(%s, &quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|me
-)paren
-)paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_DEV
-comma
-l_string|&quot;%s)&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|him
-)paren
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|me
-op_eq
-id|him
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-comma
-id|me
-op_rshift_assign
-l_int|8
-comma
-id|him
-op_rshift_assign
-l_int|8
-comma
-id|mask
-op_rshift_assign
-l_int|8
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|me
-op_amp
-l_int|0xFF
-)paren
-op_ne
-(paren
-id|him
-op_amp
-l_int|0xFF
-)paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * The only way this could be a match is for&n;&t;&t; * the rest of addr1 to be 0 or 255.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|me
-op_ne
-l_int|0
-op_logical_and
-id|me
-op_ne
-id|mask
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-)brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Check the address for our address, broadcasts, etc. */
-DECL|function|chk_addr
-r_int
-id|chk_addr
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-r_int
-r_int
-id|mask
-suffix:semicolon
-multiline_comment|/* Accept both `all ones&squot; and `all zeros&squot; as BROADCAST. */
-r_if
-c_cond
-(paren
-id|addr
-op_eq
-id|INADDR_ANY
-op_logical_or
-id|addr
-op_eq
-id|INADDR_BROADCAST
-)paren
-r_return
-id|IS_BROADCAST
-suffix:semicolon
-id|mask
-op_assign
-id|get_mask
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-multiline_comment|/* Accept all of the `loopback&squot; class A net. */
-r_if
-c_cond
-(paren
-(paren
-id|addr
-op_amp
-id|mask
-)paren
-op_eq
-id|htonl
-c_func
-(paren
-l_int|0x7F000000L
-)paren
-)paren
-r_return
-id|IS_MYADDR
-suffix:semicolon
-multiline_comment|/* OK, now check the interface addresses. */
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-op_ne
-l_int|NULL
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|dev-&gt;pa_addr
-op_eq
-l_int|0
-)paren
-multiline_comment|/* || (dev-&gt;flags&amp;IFF_PROMISC)*/
-)paren
-r_return
-id|IS_MYADDR
-suffix:semicolon
-multiline_comment|/* Is it the exact IP address? */
-r_if
-c_cond
-(paren
-id|addr
-op_eq
-id|dev-&gt;pa_addr
-)paren
-r_return
-id|IS_MYADDR
-suffix:semicolon
-multiline_comment|/* Is it our broadcast address? */
-r_if
-c_cond
-(paren
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_BROADCAST
-)paren
-op_logical_and
-id|addr
-op_eq
-id|dev-&gt;pa_brdaddr
-)paren
-r_return
-id|IS_BROADCAST
-suffix:semicolon
-multiline_comment|/* Nope. Check for a subnetwork broadcast. */
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|addr
-op_xor
-id|dev-&gt;pa_addr
-)paren
-op_amp
-id|dev-&gt;pa_mask
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|addr
-op_amp
-op_complement
-id|dev-&gt;pa_mask
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-id|IS_BROADCAST
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|addr
-op_amp
-op_complement
-id|dev-&gt;pa_mask
-)paren
-op_eq
-op_complement
-id|dev-&gt;pa_mask
-)paren
-r_return
-id|IS_BROADCAST
-suffix:semicolon
-)brace
-multiline_comment|/* Nope. Check for Network broadcast. */
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|addr
-op_xor
-id|dev-&gt;pa_addr
-)paren
-op_amp
-id|mask
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|addr
-op_amp
-op_complement
-id|mask
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-id|IS_BROADCAST
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|addr
-op_amp
-op_complement
-id|mask
-)paren
-op_eq
-op_complement
-id|mask
-)paren
-r_return
-id|IS_BROADCAST
-suffix:semicolon
-)brace
-)brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* no match at all */
-)brace
-multiline_comment|/*&n; * Retrieve our own address.&n; * Because the loopback address (127.0.0.1) is already recognized&n; * automatically, we can use the loopback interface&squot;s address as&n; * our &quot;primary&quot; interface.  This is the addressed used by IP et&n; * al when it doesn&squot;t know which address to use (i.e. it does not&n; * yet know from or to which interface to go...).&n; */
-r_int
-r_int
-DECL|function|my_addr
-id|my_addr
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-op_ne
-l_int|NULL
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_LOOPBACK
-)paren
-r_return
-id|dev-&gt;pa_addr
-suffix:semicolon
-)brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|variable|dev_nit
-r_static
-r_int
-id|dev_nit
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Number of network taps running */
-multiline_comment|/* Add a protocol ID to the list.  This will change soon. */
-r_void
+multiline_comment|/******************************************************************************************&n;&n;&t;&t;Protocol management and registration routines&n;&n;*******************************************************************************************/
+multiline_comment|/*&n; *&t;Add a protocol ID to the list.&n; */
 DECL|function|dev_add_pack
+r_void
 id|dev_add_pack
 c_func
 (paren
@@ -763,17 +130,18 @@ id|pt-&gt;next
 op_assign
 id|ptype_base
 suffix:semicolon
-multiline_comment|/* Don&squot;t use copy counts on ETH_P_ALL. Instead keep a global&n;     count of number of these and use it and pt-&gt;copy to decide&n;     copies */
+multiline_comment|/* &n;&t; *&t;Don&squot;t use copy counts on ETH_P_ALL. Instead keep a global&n; &t; *&t;count of number of these and use it and pt-&gt;copy to decide&n;&t; *&t;copies &n;&t; */
 id|pt-&gt;copy
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Assume we will not be copying the buffer before &n;&t;&t;&t; * this routine gets it&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 id|pt-&gt;type
 op_eq
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_ALL
@@ -787,7 +155,7 @@ suffix:semicolon
 multiline_comment|/* I&squot;d like a /dev/nit too one day 8) */
 r_else
 (brace
-multiline_comment|/* See if we need to copy it. */
+multiline_comment|/*&n;  &t;&t; *&t;See if we need to copy it - that is another process also&n;  &t;&t; *&t;wishes to receive this type of packet.&n;  &t;&t; */
 r_for
 c_loop
 (paren
@@ -816,6 +184,7 @@ id|pt-&gt;copy
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* We will need to copy */
 r_break
 suffix:semicolon
 )brace
@@ -827,7 +196,7 @@ c_cond
 (paren
 id|pt-&gt;type
 op_eq
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_ALL
@@ -853,6 +222,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* &n;&t;&t;&t; *&t;Move to the end of the list&n;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -871,6 +241,7 @@ id|p1-&gt;next
 (brace
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Hook on the end&n;&t;&t;&t; */
 id|p1-&gt;next
 op_assign
 id|pt
@@ -878,14 +249,15 @@ suffix:semicolon
 )brace
 )brace
 r_else
+multiline_comment|/*&n; *&t;It goes on the start &n; */
 id|ptype_base
 op_assign
 id|pt
 suffix:semicolon
 )brace
-multiline_comment|/* Remove a protocol ID from the list.  This will change soon. */
-r_void
+multiline_comment|/*&n; *&t;Remove a protocol ID from the list.&n; */
 DECL|function|dev_remove_pack
+r_void
 id|dev_remove_pack
 c_func
 (paren
@@ -903,12 +275,13 @@ comma
 op_star
 id|pt1
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Keep the count of nit (Network Interface Tap) sockets correct.&n;&t; */
 r_if
 c_cond
 (paren
 id|pt-&gt;type
 op_eq
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_ALL
@@ -917,6 +290,7 @@ id|ETH_P_ALL
 id|dev_nit
 op_decrement
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If we are first, just unhook us.&n;&t; */
 r_if
 c_cond
 (paren
@@ -936,6 +310,7 @@ id|lpt
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This is harder. What we do is to walk the list of sockets &n;&t; *&t;for this type. We unhook the entry, and if there is a previous&n;&t; *&t;entry that is copying _and_ we are not copying, (ie we are the&n;&t; *&t;last entry for this type) then the previous one is set to&n;&t; *&t;non-copying as it is now the last.&n;&t; */
 r_for
 c_loop
 (paren
@@ -992,35 +367,30 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pt1-&gt;next
-op_member_access_from_pointer
-id|type
+id|pt1-&gt;next-&gt;type
 op_eq
-id|pt
-op_member_access_from_pointer
-id|type
+id|pt-&gt;type
 op_logical_and
 id|pt-&gt;type
 op_ne
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_ALL
 )paren
 )paren
-(brace
 id|lpt
 op_assign
 id|pt1-&gt;next
 suffix:semicolon
 )brace
 )brace
-)brace
-multiline_comment|/* Find an interface in the list. This will change soon. */
+multiline_comment|/*****************************************************************************************&n;&n;&t;&t;&t;    Device Inteface Subroutines&n;&n;******************************************************************************************/
+multiline_comment|/* &n; *&t;Find an interface by name.&n; */
+DECL|function|dev_get
 r_struct
 id|device
 op_star
-DECL|function|dev_get
 id|dev_get
 c_func
 (paren
@@ -1071,134 +441,9 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* Find an interface that can handle addresses for a certain address. */
-DECL|function|dev_check
-r_struct
-id|device
-op_star
-id|dev_check
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_POINTOPOINT
-)paren
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|addr
-op_ne
-id|dev-&gt;pa_dstaddr
-)paren
-r_continue
-suffix:semicolon
-r_return
-id|dev
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_POINTOPOINT
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;pa_mask
-op_amp
-(paren
-id|addr
-op_xor
-id|dev-&gt;pa_addr
-)paren
-)paren
-r_continue
-suffix:semicolon
-r_return
-id|dev
-suffix:semicolon
-)brace
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
-multiline_comment|/* Prepare an interface for use. */
-r_int
+multiline_comment|/*&n; *&t;Prepare an interface for use. &n; */
 DECL|function|dev_open
+r_int
 id|dev_open
 c_func
 (paren
@@ -1213,6 +458,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Call device private open method&n;&t; */
 r_if
 c_cond
 (paren
@@ -1228,6 +474,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If it went open OK then set the flags&n;&t; */
 r_if
 c_cond
 (paren
@@ -1247,9 +494,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Completely shutdown an interface. */
-r_int
+multiline_comment|/*&n; *&t;Completely shutdown an interface.&n; *&n; *&t;WARNING: Both because of the way the upper layers work (that can be fixed)&n; *&t;and because of races during a close (that can&squot;t be fixed any other way)&n; *&t;a device may be given things to transmit EVEN WHEN IT IS DOWN. The driver&n; *&t;MUST cope with this (eg by freeing and dumping the frame).&n; */
 DECL|function|dev_close
+r_int
 id|dev_close
 c_func
 (paren
@@ -1259,6 +506,7 @@ op_star
 id|dev
 )paren
 (brace
+multiline_comment|/*&n;&t; *&t;Only close a device if it is up.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1276,6 +524,7 @@ id|dev-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Call the device specific close. This cannot fail.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1289,12 +538,14 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|rt_flush
+multiline_comment|/*&n;&t;&t; *&t;Delete the route to the device.&n;&t;&t; */
+id|ip_rt_flush
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Blank the IP addresses&n;&t;&t; */
 id|dev-&gt;pa_addr
 op_assign
 l_int|0
@@ -1311,7 +562,7 @@ id|dev-&gt;pa_mask
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Purge any queued packets when we down the link */
+multiline_comment|/*&n;&t;&t; *&t;Purge any queued packets when we down the link &n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -1368,9 +619,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Send (or queue for sending) a packet. */
-r_void
+multiline_comment|/*&n; *&t;Send (or queue for sending) a packet. &n; */
 DECL|function|dev_queue_xmit
+r_void
 id|dev_queue_xmit
 c_func
 (paren
@@ -1439,6 +690,12 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This just eliminates some race conditions, but not all... &n;&t; */
 r_if
 c_cond
 (paren
@@ -1447,7 +704,13 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Make sure we haven&squot;t missed an interrupt. */
+multiline_comment|/*&n;&t;&t; *&t;Make sure we haven&squot;t missed an interrupt. &n;&t;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;dev_queue_xmit: worked around a missed interrupt&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dev
 op_member_access_from_pointer
 id|hard_start_xmit
@@ -1458,9 +721,15 @@ comma
 id|dev
 )paren
 suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Negative priority is used to flag a frame that is being pulled from the&n;&t; *&t;queue front as a retransmit attempt. It therefore goes back on the queue&n;&t; *&t;start on a failure.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1500,9 +769,58 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;If the address has not been resolved called the device header rebuilder.&n;&t; *&t;This can cover all protocols and technically no just ARP either.&n;&t; */
 r_if
 c_cond
 (paren
+op_logical_neg
+id|skb-&gt;arp
+op_logical_and
+id|dev
+op_member_access_from_pointer
+id|rebuild_header
+c_func
+(paren
+id|skb-&gt;data
+comma
+id|dev
+comma
+id|skb-&gt;raddr
+comma
+id|skb
+)paren
+)paren
+(brace
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;This is vitally important. We _MUST_ keep packets in order. While tcp/ip&n;&t; *&t;suffers only a slow down some IPX apps, and all the AX.25 code will break&n;&t; *&t;if it occurs out of order. &n;&t; *&n;&t; *&t;This is commented out while I fix a few &squot;side effects&squot;&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|where
+op_eq
+l_int|1
+op_logical_or
+id|skb_peek
+c_func
+(paren
+op_amp
+id|dev-&gt;buffs
+(braket
+id|pri
+)braket
+)paren
+op_eq
+l_int|NULL
+)paren
+op_logical_and
 id|dev
 op_member_access_from_pointer
 id|hard_start_xmit
@@ -1516,37 +834,15 @@ op_eq
 l_int|0
 )paren
 (brace
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Put skb into a bidirectional circular linked list. */
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_DEV
-comma
-l_string|&quot;dev_queue_xmit dev-&gt;buffs[%d]=%X&bslash;n&quot;
-comma
-id|pri
-comma
-id|dev-&gt;buffs
-(braket
-id|pri
-)braket
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Interrupts should already be cleared by hard_start_xmit. */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|skb-&gt;magic
-op_assign
-id|DEV_QUEUE_MAGIC
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Transmission failed, put skb back into a list. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1579,19 +875,15 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|skb-&gt;magic
-op_assign
-id|DEV_QUEUE_MAGIC
-suffix:semicolon
-id|sti
+id|end_bh_atomic
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Receive a packet from a device driver and queue it for the upper&n; * (protocol) levels.  It always succeeds.&n; */
-r_void
+multiline_comment|/*&n; *&t;Receive a packet from a device driver and queue it for the upper&n; *&t;(protocol) levels.  It always succeeds. This is the recommended &n; *&t;interface to use.&n; */
 DECL|function|netif_rx
+r_void
 id|netif_rx
 c_func
 (paren
@@ -1607,7 +899,12 @@ id|dropping
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Set any necessary flags. */
+r_extern
+r_struct
+id|timeval
+id|xtime
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Any received buffers are un-owned and should be discarded&n;&t; *&t;when freed. These will be updated later as the frames get&n;&t; *&t;owners.&n;&t; */
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -1616,7 +913,20 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* check that we aren&squot;t oevrdoing things.. */
+r_if
+c_cond
+(paren
+id|skb-&gt;stamp.tv_sec
+op_eq
+l_int|0
+)paren
+(brace
+id|skb-&gt;stamp
+op_assign
+id|xtime
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Check that we aren&squot;t oevrdoing things.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1656,7 +966,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* and add it to the &quot;backlog&quot; queue. */
+multiline_comment|/*&n;&t; *&t;Add it to the &quot;backlog&quot; queue. &n;&t; */
 id|IS_SKB
 c_func
 (paren
@@ -1675,14 +985,7 @@ suffix:semicolon
 id|backlog_size
 op_increment
 suffix:semicolon
-multiline_comment|/* If any packet arrived, mark it for processing. */
-r_if
-c_cond
-(paren
-id|backlog
-op_ne
-l_int|NULL
-)paren
+multiline_comment|/*&n;&t; *&t;If any packet arrived, mark it for processing after the&n;&t; *&t;hardware interrupt returns.&n;&t; */
 id|mark_bh
 c_func
 (paren
@@ -1692,9 +995,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The old interface to fetch a packet from a device driver.&n; * This function is the base level entry point for all drivers that&n; * want to send a packet to the upper (protocol) levels.  It takes&n; * care of de-multiplexing the packet to the various modules based&n; * on their protocol ID.&n; *&n; * Return values:&t;1 &lt;- exit I can&squot;t do any more&n; *&t;&t;&t;0 &lt;- feed me more (i.e. &quot;done&quot;, &quot;OK&quot;). &n; */
-r_int
+multiline_comment|/*&n; *&t;The old interface to fetch a packet from a device driver.&n; *&t;This function is the base level entry point for all drivers that&n; *&t;want to send a packet to the upper (protocol) levels.  It takes&n; *&t;care of de-multiplexing the packet to the various modules based&n; *&t;on their protocol ID.&n; *&n; *&t;Return values:&t;1 &lt;- exit I can&squot;t do any more&n; *&t;&t;&t;0 &lt;- feed me more (i.e. &quot;done&quot;, &quot;OK&quot;). &n; *&n; *&t;This function is OBSOLETE and should not be used by any new&n; *&t;device.&n; */
 DECL|function|dev_rint
+r_int
 id|dev_rint
 c_func
 (paren
@@ -1788,7 +1091,12 @@ id|dropping
 r_if
 c_cond
 (paren
+id|skb_peek
+c_func
+(paren
+op_amp
 id|backlog
+)paren
 op_ne
 l_int|NULL
 )paren
@@ -1811,12 +1119,6 @@ op_assign
 id|alloc_skb
 c_func
 (paren
-r_sizeof
-(paren
-op_star
-id|skb
-)paren
-op_plus
 id|len
 comma
 id|GFP_ATOMIC
@@ -1846,26 +1148,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|skb-&gt;mem_len
-op_assign
-r_sizeof
-(paren
-op_star
-id|skb
-)paren
-op_plus
-id|len
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|skb
-suffix:semicolon
-multiline_comment|/* First we copy the packet into a buffer, and save it for later. */
+multiline_comment|/* &n;&t;&t; *&t;First we copy the packet into a buffer, and save it for later. We&n;&t;&t; *&t;in effect handle the incoming data as if it were from a circular buffer&n;&t;&t; */
 id|to
 op_assign
 id|skb-&gt;data
@@ -1954,6 +1237,7 @@ id|dev-&gt;rmem_start
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;Tag the frame and kick it to the proper receive routine&n;&t; */
 id|skb-&gt;len
 op_assign
 id|len
@@ -1972,14 +1256,14 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* OK, all done. */
+multiline_comment|/*&n;&t; *&t;OK, all done. &n;&t; */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This routine causes all interfaces to try to send some data. */
-r_void
+multiline_comment|/*&n; *&t;This routine causes all interfaces to try to send some data. &n; */
 DECL|function|dev_transmit
+r_void
 id|dev_transmit
 c_func
 (paren
@@ -2014,6 +1298,7 @@ op_logical_neg
 id|dev-&gt;tbusy
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Kick the device&n;&t;&t;&t; */
 id|dev_tint
 c_func
 (paren
@@ -2023,14 +1308,16 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/**********************************************************************************&n;&n;&t;&t;&t;Receive Queue Processor&n;&t;&t;&t;&n;***********************************************************************************/
+multiline_comment|/*&n; *&t;This is a single non-rentrant routine which takes the received packet&n; *&t;queue and throws it at the networking layers in the hope that something&n; *&t;useful will emerge.&n; */
 DECL|variable|in_bh
-r_static
 r_volatile
 r_char
 id|in_bh
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Non-rentrant remember */
 DECL|function|in_inet_bh
 r_int
 id|in_inet_bh
@@ -2050,9 +1337,9 @@ suffix:colon
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function gets called periodically, to see if we can&n; * process any data that came in from some interface.&n; *&n; */
-r_void
+multiline_comment|/*&n; *&t;When we are called the queue is ready to grab, the interrupts are&n; *&t;on and hardware can interrupt and queue to the receive queue a we&n; *&t;run with no problems.&n; *&t;This is run as a bottom half after an interrupt handler that does&n; *&t;mark_bh(INET_BH);&n; */
 DECL|function|inet_bh
+r_void
 id|inet_bh
 c_func
 (paren
@@ -2084,7 +1371,7 @@ suffix:semicolon
 r_int
 id|nitcount
 suffix:semicolon
-multiline_comment|/* Atomically check and mark our BUSY state. */
+multiline_comment|/*&n;&t; *&t;Atomically check and mark our BUSY state. &n;&t; */
 r_if
 c_cond
 (paren
@@ -2103,13 +1390,19 @@ id|in_bh
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Can we send anything now? */
+multiline_comment|/*&n;&t; *&t;Can we send anything now? We want to clear the&n;&t; *&t;decks for any more sends that get done as we&n;&t; *&t;process the input.&n;&t; */
 id|dev_transmit
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Any data left to process? */
+multiline_comment|/*&n;&t; *&t;Any data left to process. This may occur because a&n;&t; *&t;mark_bh() is done after we empty the queue including&n;&t; *&t;that from the device which does a mark_bh() just after&n;&t; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;While the queue is not empty&n;&t; */
 r_while
 c_loop
 (paren
@@ -2127,6 +1420,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;We have a packet. Therefore the queue has shrunk&n;&t;&t; */
 id|backlog_size
 op_decrement
 suffix:semicolon
@@ -2143,7 +1437,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;* Bump the pointer to the next structure.&n;&t;* This assumes that the basic &squot;skb&squot; pointer points to&n;&t;* the MAC header, if any (as indicated by its &quot;length&quot;&n;&t;* field).  Take care now!&n;&t;*/
+multiline_comment|/*&n;&t;&t;*&t;Bump the pointer to the next structure.&n;&t;&t;*&t;This assumes that the basic &squot;skb&squot; pointer points to&n;&t;&t;*&t;the MAC header, if any (as indicated by its &quot;length&quot;&n;&t;&t;*&t;field).  Take care now!&n;&t;&t;*/
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
@@ -2154,7 +1448,7 @@ id|skb-&gt;len
 op_sub_assign
 id|skb-&gt;dev-&gt;hard_header_len
 suffix:semicolon
-multiline_comment|/*&n;&t;* Fetch the packet protocol ID.  This is also quite ugly, as&n;&t;* it depends on the protocol driver (the interface itself) to&n;&t;* know what the type is, or where to get it from.  The Ethernet&n;&t;* interfaces fetch the ID from the two bytes in the Ethernet MAC&n;&t;* header (the h_proto field in struct ethhdr), but drivers like&n;&t;* SLIP and PLIP have no alternative but to force the type to be&n;&t;* IP or something like that.  Sigh- FvK&n;&t;*/
+multiline_comment|/*&n;&t;&t;* &t;Fetch the packet protocol ID.  This is also quite ugly, as&n;&t;&t;* &t;it depends on the protocol driver (the interface itself) to&n;&t;&t;* &t;know what the type is, or where to get it from.  The Ethernet&n;&t;&t;* &t;interfaces fetch the ID from the two bytes in the Ethernet MAC&n;&t;&t;*&t;header (the h_proto field in struct ethhdr), but other drivers&n;&t;&t;*&t;may either use the ethernet ID&squot;s or extra ones that do not&n;&t;&t;*&t;clash (eg ETH_P_AX25). We could set this before we queue the&n;&t;&t;*&t;frame. In fact I may change this when I have time.&n;&t;&t;*/
 id|type
 op_assign
 id|skb-&gt;dev
@@ -2167,7 +1461,7 @@ comma
 id|skb-&gt;dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We got a packet ID.  Now loop over the &quot;known protocols&quot;&n;&t; * table (which is actually a linked list, but this will&n;&t; * change soon if I get my way- FvK), and forward the packet&n;&t; * to anyone who wants it.&n;&t; */
+multiline_comment|/*&n;&t;&t; *&t;We got a packet ID.  Now loop over the &quot;known protocols&quot;&n;&t;&t; *&t;table (which is actually a linked list, but this will&n;&t;&t; *&t;change soon if I get my way- FvK), and forward the packet&n;&t;&t; *&t;to anyone who wants it.&n;&t;&t; *&n;&t;&t; *&t;[FvK didn&squot;t get his way but he is right this ought to be&n;&t;&t; *&t;hashed so we typically get a single hit. The speed cost&n;&t;&t; *&t;here is minimal but no doubt adds up at the 4,000+ pkts/second&n;&t;&t; *&t;rate we can hit flat out]&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -2193,7 +1487,7 @@ id|type
 op_logical_or
 id|ptype-&gt;type
 op_eq
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_ALL
@@ -2210,7 +1504,7 @@ c_cond
 (paren
 id|ptype-&gt;type
 op_eq
-id|NET16
+id|htons
 c_func
 (paren
 id|ETH_P_ALL
@@ -2227,13 +1521,14 @@ op_logical_or
 id|nitcount
 )paren
 (brace
-multiline_comment|/* copy if we need to&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;copy if we need to&n;&t;&t;&t;&t;&t; */
+macro_line|#ifdef OLD
 id|skb2
 op_assign
 id|alloc_skb
 c_func
 (paren
-id|skb-&gt;mem_len
+id|skb-&gt;len
 comma
 id|GFP_ATOMIC
 )paren
@@ -2252,14 +1547,9 @@ c_func
 (paren
 id|skb2
 comma
-(paren
-r_const
-r_void
-op_star
-)paren
 id|skb
 comma
-id|skb-&gt;mem_len
+id|skb2-&gt;mem_len
 )paren
 suffix:semicolon
 id|skb2-&gt;mem_addr
@@ -2297,6 +1587,29 @@ id|skb2-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#else
+id|skb2
+op_assign
+id|skb_clone
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb2
+op_eq
+l_int|NULL
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif&t;&t;&t;&t;
 )brace
 r_else
 (brace
@@ -2305,12 +1618,12 @@ op_assign
 id|skb
 suffix:semicolon
 )brace
-multiline_comment|/* This used to be in the &squot;else&squot; part, but then&n;&t;&t;&t; * we don&squot;t have this flag set when we get a&n;&t;&t;&t; * protocol that *does* require copying... -FvK&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Protocol located. &n;&t;&t;&t;&t; */
 id|flag
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Kick the protocol handler. */
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Kick the protocol handler. This should be fast&n;&t;&t;&t;&t; *&t;and efficient code.&n;&t;&t;&t;&t; */
 id|ptype
 op_member_access_from_pointer
 id|func
@@ -2325,7 +1638,8 @@ id|ptype
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * That&squot;s odd.  We got an unknown packet.  Who&squot;s using&n;&t; * stuff like Novell or Amoeba on this network??&n;&t; */
+multiline_comment|/* End of protocol list loop */
+multiline_comment|/*&n;&t;&t; * &t;Has an unknown packet has been received ?&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2345,10 +1659,6 @@ id|type
 )paren
 )paren
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2358,7 +1668,7 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Again, see if we can transmit anything now. */
+multiline_comment|/*&n;&t;&t; *&t;Again, see if we can transmit anything now. &n;&t;&t; */
 id|dev_transmit
 c_func
 (paren
@@ -2370,6 +1680,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* End of queue loop */
+multiline_comment|/*&n;  &t; *&t;We have emptied the queue&n;  &t; */
 id|in_bh
 op_assign
 l_int|0
@@ -2379,13 +1691,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;One last output flush.&n;&t; */
 id|dev_transmit
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine is called when an device driver (i.e. an&n; * interface) is * ready to transmit a packet.&n; */
+multiline_comment|/*&n; *&t;This routine is called when an device driver (i.e. an&n; *&t;interface) is ready to transmit a packet.&n; */
 DECL|function|dev_tint
 r_void
 id|dev_tint
@@ -2405,6 +1718,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Work the queues in priority order&n;&t; */
 r_for
 c_loop
 (paren
@@ -2420,6 +1734,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;Pull packets from the queue&n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -2440,21 +1755,8 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;magic
-op_assign
-l_int|0
-suffix:semicolon
-id|skb-&gt;next
-op_assign
-l_int|NULL
-suffix:semicolon
-id|skb-&gt;prev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev
-op_member_access_from_pointer
-id|queue_xmit
+multiline_comment|/*&n;&t;&t;&t; *&t;Feed them to the output stage and if it fails&n;&t;&t;&t; *&t;indicate they re-queue at the front.&n;&t;&t;&t; */
+id|dev_queue_xmit
 c_func
 (paren
 id|skb
@@ -2467,6 +1769,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;If we can take no more then stop here.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2477,10 +1780,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Perform a SIOCGIFCONF call. */
+multiline_comment|/*&n; *&t;Perform a SIOCGIFCONF call. This structure will change&n; *&t;size shortly, and there is nothing I can do about it.&n; *&t;Thus we will need a &squot;compatibility mode&squot;.&n; */
+DECL|function|dev_ifconf
 r_static
 r_int
-DECL|function|dev_ifconf
 id|dev_ifconf
 c_func
 (paren
@@ -2512,7 +1815,7 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/* Fetch the caller&squot;s info block. */
+multiline_comment|/*&n;&t; *&t;Fetch the caller&squot;s info block. &n;&t; */
 id|err
 op_assign
 id|verify_area
@@ -2562,6 +1865,7 @@ id|pos
 op_assign
 id|ifc.ifc_buf
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We now walk the device list filling each active device&n;&t; *&t;into the array.&n;&t; */
 id|err
 op_assign
 id|verify_area
@@ -2584,7 +1888,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/* Loop over the interfaces, and write an info block for each. */
+multiline_comment|/*&n;&t; *&t;Loop over the interfaces, and write an info block for each. &n;&t; */
 r_for
 c_loop
 (paren
@@ -2612,6 +1916,7 @@ id|IFF_UP
 )paren
 )paren
 (brace
+multiline_comment|/* Downed devices don&squot;t count */
 r_continue
 suffix:semicolon
 )brace
@@ -2658,7 +1963,7 @@ id|ifr.ifr_addr.sin_addr.s_addr
 op_assign
 id|dev-&gt;pa_addr
 suffix:semicolon
-multiline_comment|/* Write this block to the caller&squot;s space. */
+multiline_comment|/*&n;&t;&t; *&t;Write this block to the caller&squot;s space. &n;&t;&t; */
 id|memcpy_tofs
 c_func
 (paren
@@ -2690,6 +1995,7 @@ r_struct
 id|ifreq
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Have we run out of space here ?&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2704,7 +2010,7 @@ id|ifreq
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* All done.  Write the updated control block back to the caller. */
+multiline_comment|/*&n;&t; *&t;All done.  Write the updated control block back to the caller. &n;&t; */
 id|ifc.ifc_len
 op_assign
 (paren
@@ -2737,16 +2043,17 @@ id|ifconf
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Report how much was filled in&n;&t; */
 r_return
 id|pos
 op_minus
 id|arg
 suffix:semicolon
 )brace
-multiline_comment|/* Print device statistics. */
+multiline_comment|/*&n; *&t;This is invoked by the /proc filesystem handler to display a device&n; *&t;in detail.&n; */
 DECL|function|sprintf_stats
-r_char
-op_star
+r_static
+r_int
 id|sprintf_stats
 c_func
 (paren
@@ -2760,12 +2067,6 @@ op_star
 id|dev
 )paren
 (brace
-r_char
-op_star
-id|pos
-op_assign
-id|buffer
-suffix:semicolon
 r_struct
 id|enet_statistics
 op_star
@@ -2786,17 +2087,20 @@ suffix:colon
 l_int|NULL
 )paren
 suffix:semicolon
+r_int
+id|size
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|stats
 )paren
-id|pos
-op_add_assign
+id|size
+op_assign
 id|sprintf
 c_func
 (paren
-id|pos
+id|buffer
 comma
 l_string|&quot;%6s:%7d %4d %4d %4d %4d %8d %4d %4d %4d %5d %4d&bslash;n&quot;
 comma
@@ -2840,12 +2144,12 @@ id|stats-&gt;tx_heartbeat_errors
 )paren
 suffix:semicolon
 r_else
-id|pos
-op_add_assign
+id|size
+op_assign
 id|sprintf
 c_func
 (paren
-id|pos
+id|buffer
 comma
 l_string|&quot;%6s: No statistics available.&bslash;n&quot;
 comma
@@ -2853,41 +2157,72 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
-id|pos
+id|size
 suffix:semicolon
 )brace
-multiline_comment|/* Called from the PROCfs module. */
-r_int
+multiline_comment|/*&n; *&t;Called from the PROCfs module. This now uses the new arbitary sized /proc/net interface&n; *&t;to create /proc/net/dev&n; */
 DECL|function|dev_get_info
+r_int
 id|dev_get_info
 c_func
 (paren
 r_char
 op_star
 id|buffer
-)paren
-(brace
+comma
 r_char
 op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|off_t
+id|begin
+op_assign
+l_int|0
+suffix:semicolon
+id|off_t
 id|pos
 op_assign
-id|buffer
+l_int|0
+suffix:semicolon
+r_int
+id|size
 suffix:semicolon
 r_struct
 id|device
 op_star
 id|dev
 suffix:semicolon
-id|pos
-op_add_assign
+id|size
+op_assign
 id|sprintf
 c_func
 (paren
-id|pos
+id|buffer
 comma
 l_string|&quot;Inter-|   Receive                  |  Transmit&bslash;n&quot;
 l_string|&quot; face |packets errs drop fifo frame|packets errs drop fifo colls carrier&bslash;n&quot;
 )paren
+suffix:semicolon
+id|pos
+op_add_assign
+id|size
+suffix:semicolon
+id|len
+op_add_assign
+id|size
 suffix:semicolon
 r_for
 c_loop
@@ -2905,23 +2240,99 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
-id|pos
+id|size
 op_assign
 id|sprintf_stats
 c_func
 (paren
-id|pos
+id|buffer
+op_plus
+id|len
 comma
 id|dev
 )paren
 suffix:semicolon
-)brace
-r_return
+id|len
+op_add_assign
+id|size
+suffix:semicolon
 id|pos
-op_minus
-id|buffer
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pos
+OL
+id|offset
+)paren
+(brace
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|begin
+op_assign
+id|pos
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|pos
+OG
+id|offset
+op_plus
+id|length
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+)brace
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+multiline_comment|/* Start of wanted data */
+id|len
+op_sub_assign
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+multiline_comment|/* Start slop */
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+(brace
+id|len
+op_assign
+id|length
+suffix:semicolon
+)brace
+multiline_comment|/* Ending slop */
+r_return
+id|len
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;This checks bitmasks for the ioctl calls for devices.&n; */
 DECL|function|bad_mask
 r_static
 r_inline
@@ -2979,10 +2390,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Perform the SIOCxIFxxx calls. */
+multiline_comment|/*&n; *&t;Perform the SIOCxIFxxx calls. &n; *&n; *&t;The socket layer has seen an ioctl the address family thinks is&n; *&t;for the device. At this point we get invoked to make a decision&n; */
+DECL|function|dev_ifsioc
 r_static
 r_int
-DECL|function|dev_ifsioc
 id|dev_ifsioc
 c_func
 (paren
@@ -3007,7 +2418,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/* Fetch the caller&squot;s info block. */
+multiline_comment|/*&n;&t; *&t;Fetch the caller&squot;s info block into kernel space&n;&t; */
 r_int
 id|err
 op_assign
@@ -3050,7 +2461,7 @@ id|ifreq
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* See which interface the caller is talking about. */
+multiline_comment|/*&n;&t; *&t;See which interface the caller is talking about. &n;&t; */
 r_if
 c_cond
 (paren
@@ -3068,7 +2479,7 @@ l_int|NULL
 )paren
 r_return
 op_minus
-id|EINVAL
+id|ENODEV
 suffix:semicolon
 r_switch
 c_cond
@@ -3079,6 +2490,7 @@ id|getset
 r_case
 id|SIOCGIFFLAGS
 suffix:colon
+multiline_comment|/* Get interface flags */
 id|ifr.ifr_flags
 op_assign
 id|dev-&gt;flags
@@ -3107,6 +2519,7 @@ suffix:semicolon
 r_case
 id|SIOCSIFFLAGS
 suffix:colon
+multiline_comment|/* Set interface flags */
 (brace
 r_int
 id|old_flags
@@ -3139,6 +2552,7 @@ op_or
 id|IFF_ALLMULTI
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Has promiscuous mode been turned off&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3170,6 +2584,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; &t; *&t;Has it been turned on&n;&t;&t;&t; &t; */
 r_if
 c_cond
 (paren
@@ -3202,6 +2617,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;  &t; *&t;Have we downed the interface&n;&t;&t;&t;  &t; */
 r_if
 c_cond
 (paren
@@ -3233,6 +2649,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;Have we upped the interface &n;&t;&t;&t;&t;&t; */
 id|ret
 op_assign
 (paren
@@ -3259,6 +2676,7 @@ id|dev
 suffix:colon
 l_int|0
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t;&t; *&t;Check the flags.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3281,6 +2699,7 @@ suffix:semicolon
 r_case
 id|SIOCGIFADDR
 suffix:colon
+multiline_comment|/* Get interface address (and family) */
 (paren
 r_struct
 id|sockaddr_in
@@ -3335,6 +2754,7 @@ suffix:semicolon
 r_case
 id|SIOCSIFADDR
 suffix:colon
+multiline_comment|/* Set interface address (and family) */
 id|dev-&gt;pa_addr
 op_assign
 (paren
@@ -3351,7 +2771,7 @@ id|ifr.ifr_addr.sa_family
 suffix:semicolon
 id|dev-&gt;pa_mask
 op_assign
-id|get_mask
+id|ip_get_mask
 c_func
 (paren
 id|dev-&gt;pa_addr
@@ -3373,6 +2793,7 @@ suffix:semicolon
 r_case
 id|SIOCGIFBRDADDR
 suffix:colon
+multiline_comment|/* Get the broadcast address */
 (paren
 r_struct
 id|sockaddr_in
@@ -3427,6 +2848,7 @@ suffix:semicolon
 r_case
 id|SIOCSIFBRDADDR
 suffix:colon
+multiline_comment|/* Set the broadcast address */
 id|dev-&gt;pa_brdaddr
 op_assign
 (paren
@@ -3446,6 +2868,7 @@ suffix:semicolon
 r_case
 id|SIOCGIFDSTADDR
 suffix:colon
+multiline_comment|/* Get the destination address (for point-to-point links) */
 (paren
 r_struct
 id|sockaddr_in
@@ -3500,6 +2923,7 @@ suffix:semicolon
 r_case
 id|SIOCSIFDSTADDR
 suffix:colon
+multiline_comment|/* Set the destination address (for point-to-point links) */
 id|dev-&gt;pa_dstaddr
 op_assign
 (paren
@@ -3519,6 +2943,7 @@ suffix:semicolon
 r_case
 id|SIOCGIFNETMASK
 suffix:colon
+multiline_comment|/* Get the netmask for the interface */
 (paren
 r_struct
 id|sockaddr_in
@@ -3573,6 +2998,7 @@ suffix:semicolon
 r_case
 id|SIOCSIFNETMASK
 suffix:colon
+multiline_comment|/* Set the netmask for the interface */
 (brace
 r_int
 r_int
@@ -3591,6 +3017,7 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;The mask we set must be legal.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3612,12 +3039,13 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
-)brace
 r_case
 id|SIOCGIFMETRIC
 suffix:colon
+multiline_comment|/* Get the metric on the inteface (currently unused) */
 id|ifr.ifr_metric
 op_assign
 id|dev-&gt;metric
@@ -3646,6 +3074,7 @@ suffix:semicolon
 r_case
 id|SIOCSIFMETRIC
 suffix:colon
+multiline_comment|/* Set the metric on the interface (currently unused) */
 id|dev-&gt;metric
 op_assign
 id|ifr.ifr_metric
@@ -3659,6 +3088,7 @@ suffix:semicolon
 r_case
 id|SIOCGIFMTU
 suffix:colon
+multiline_comment|/* Get the MTU of a device */
 id|ifr.ifr_mtu
 op_assign
 id|dev-&gt;mtu
@@ -3687,6 +3117,20 @@ suffix:semicolon
 r_case
 id|SIOCSIFMTU
 suffix:colon
+multiline_comment|/* Set the MTU of a device */
+multiline_comment|/*&n;&t;&t;&t; *&t;MTU must be positive and under the page size problem&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|ifr.ifr_mtu
+l_int|3800
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|dev-&gt;mtu
 op_assign
 id|ifr.ifr_mtu
@@ -3700,6 +3144,7 @@ suffix:semicolon
 r_case
 id|SIOCGIFMEM
 suffix:colon
+multiline_comment|/* Get the per device memory space. We can add this but currently&n;&t;&t;&t;&t;&t;   do not support it */
 id|printk
 c_func
 (paren
@@ -3721,6 +3166,7 @@ suffix:semicolon
 r_case
 id|SIOCSIFMEM
 suffix:colon
+multiline_comment|/* Set the per device memory buffer space. Not applicable in our case */
 id|printk
 c_func
 (paren
@@ -3740,12 +3186,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|SIOCGIFHWADDR
+id|OLD_SIOCGIFHWADDR
 suffix:colon
+multiline_comment|/* Get the hardware address. This will change and SIFHWADDR will be added */
 id|memcpy
 c_func
 (paren
-id|ifr.ifr_hwaddr
+id|ifr.old_ifr_hwaddr
 comma
 id|dev-&gt;dev_addr
 comma
@@ -3773,6 +3220,88 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|SIOCGIFHWADDR
+suffix:colon
+id|memcpy
+c_func
+(paren
+id|ifr.ifr_hwaddr.sa_data
+comma
+id|dev-&gt;dev_addr
+comma
+id|MAX_ADDR_LEN
+)paren
+suffix:semicolon
+id|ifr.ifr_hwaddr.sa_family
+op_assign
+id|dev-&gt;type
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|arg
+comma
+op_amp
+id|ifr
+comma
+r_sizeof
+(paren
+r_struct
+id|ifreq
+)paren
+)paren
+suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SIOCSIFHWADDR
+suffix:colon
+r_if
+c_cond
+(paren
+id|dev-&gt;set_mac_address
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EOPNOTSUPP
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ifr.ifr_hwaddr.sa_family
+op_ne
+id|dev-&gt;type
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|ret
+op_assign
+id|dev
+op_member_access_from_pointer
+id|set_mac_address
+c_func
+(paren
+id|dev
+comma
+id|ifr.ifr_hwaddr.sa_data
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Unknown ioctl&n;&t;&t; */
 r_default
 suffix:colon
 id|ret
@@ -3785,9 +3314,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* This function handles all &quot;interface&quot;-type I/O control requests. */
-r_int
+multiline_comment|/*&n; *&t;This function handles all &quot;interface&quot;-type I/O control requests. The actual&n; *&t;&squot;doing&squot; part of this is dev_ifsioc above.&n; */
 DECL|function|dev_ioctl
+r_int
 id|dev_ioctl
 c_func
 (paren
@@ -3800,34 +3329,13 @@ op_star
 id|arg
 )paren
 (brace
-r_struct
-id|iflink
-id|iflink
-suffix:semicolon
-r_struct
-id|ddi_device
-op_star
-id|dev
-suffix:semicolon
 r_switch
 c_cond
 (paren
 id|cmd
 )paren
 (brace
-r_case
-id|IP_SET_DEV
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Your network configuration program needs upgrading.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;The old old setup ioctl. Even its name and this entry will soon be&n;&t;&t; *&t;just so much ionization on a backup tape.&n;&t;&t; */
 r_case
 id|SIOCGIFCONF
 suffix:colon
@@ -3847,6 +3355,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Ioctl calls that can be done by all.&n;&t;&t; */
 r_case
 id|SIOCGIFFLAGS
 suffix:colon
@@ -3874,6 +3383,12 @@ suffix:colon
 r_case
 id|SIOCGIFHWADDR
 suffix:colon
+r_case
+id|SIOCSIFHWADDR
+suffix:colon
+r_case
+id|OLD_SIOCGIFHWADDR
+suffix:colon
 r_return
 id|dev_ifsioc
 c_func
@@ -3883,6 +3398,7 @@ comma
 id|cmd
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Ioctl calls requiring the power of a superuser&n;&t;&t; */
 r_case
 id|SIOCSIFFLAGS
 suffix:colon
@@ -3932,66 +3448,11 @@ suffix:semicolon
 r_case
 id|SIOCSIFLINK
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
-id|memcpy_fromfs
-c_func
-(paren
-op_amp
-id|iflink
-comma
-id|arg
-comma
-r_sizeof
-(paren
-id|iflink
-)paren
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|ddi_map
-c_func
-(paren
-id|iflink.id
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* Now allocate an interface and connect it. */
-id|printk
-c_func
-(paren
-l_string|&quot;AF_INET: DDI &bslash;&quot;%s&bslash;&quot; linked to stream &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|iflink.stream
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Unknown ioctl.&n;&t;&t; */
 r_default
 suffix:colon
 r_return
@@ -4000,9 +3461,9 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Initialize the DEV module. */
-r_void
+multiline_comment|/*&n; *&t;Initialize the DEV module. At boot time this walks the device list and&n; *&t;unhooks any devices that fail to initialise (normally hardware not &n; *&t;present) and leaves us with a valid list of present and active devices.&n; *&n; *&t;The PCMICA code may need to change this a little, and add a pair&n; *&t;of register_inet_device() unregister_inet_device() calls. This will be&n; *&t;needed for ethernet as modules support.&n; */
 DECL|function|dev_init
+r_void
 id|dev_init
 c_func
 (paren
@@ -4017,7 +3478,7 @@ comma
 op_star
 id|dev2
 suffix:semicolon
-multiline_comment|/* Add the devices.&n;   * If the call to dev-&gt;init fails, the dev is removed&n;   * from the chain disconnecting the device until the&n;   * next reboot.&n;   */
+multiline_comment|/*&n;&t; *&t;Add the devices.&n;&t; *&t;If the call to dev-&gt;init fails, the dev is removed&n;&t; *&t;from the chain disconnecting the device until the&n;&t; *&t;next reboot.&n;&t; */
 id|dev2
 op_assign
 l_int|NULL
@@ -4052,6 +3513,7 @@ id|dev
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;It failed to come up. Unhook it.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4077,14 +3539,5 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Set up some IP addresses. */
-id|ip_bcast
-op_assign
-id|in_aton
-c_func
-(paren
-l_string|&quot;255.255.255.255&quot;
-)paren
-suffix:semicolon
 )brace
 eof

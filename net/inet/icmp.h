@@ -11,6 +11,11 @@ id|icmp_err_convert
 )braket
 suffix:semicolon
 r_extern
+r_struct
+id|icmp_mib
+id|icmp_statistics
+suffix:semicolon
+r_extern
 r_void
 id|icmp_send
 c_func

@@ -20,11 +20,10 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;iow.h&quot;                    /* left in for pl13/14 compatibility... */
-macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;arp.h&quot;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;depca.h&quot;
 macro_line|#ifdef DEPCA_DEBUG
 DECL|variable|depca_debug
@@ -107,12 +106,6 @@ DECL|macro|CRC_POLYNOMIAL
 mdefine_line|#define CRC_POLYNOMIAL 0x04c11db7       /* Ethernet CRC polynomial */
 macro_line|#endif /* CRC_POLYNOMIAL */
 macro_line|#endif /* HAVE_MULTICAST */
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(buff, size) kfree_s(buff,size)
-macro_line|#endif  /* HAVE_ALLOC_SKB */
 multiline_comment|/*&n;** The DEPCA Rx and Tx ring descriptors. &n;*/
 DECL|struct|depca_rx_head
 r_struct
@@ -4003,17 +3996,6 @@ id|entry
 dot
 id|msg_length
 suffix:semicolon
-r_int
-id|sksize
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
-id|pkt_len
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -4024,7 +4006,7 @@ op_assign
 id|alloc_skb
 c_func
 (paren
-id|sksize
+id|pkt_len
 comma
 id|GFP_ATOMIC
 )paren
@@ -4052,14 +4034,6 @@ multiline_comment|/* Really, deferred. */
 r_break
 suffix:semicolon
 )brace
-id|skb-&gt;mem_len
-op_assign
-id|sksize
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
 id|skb-&gt;len
 op_assign
 id|pkt_len
@@ -4093,56 +4067,12 @@ id|pkt_len
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;    ** Notify the upper protocol layers that there is another &n;&t;    ** packet to handle&n;&t;    */
-macro_line|#ifdef HAVE_NETIF_RX
 id|netif_rx
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_rint
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|skb
-comma
-id|pkt_len
-comma
-id|IN_SKBUFF
-comma
-id|dev
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|kfree_skbmem
-c_func
-(paren
-id|skb
-comma
-id|sksize
-)paren
-suffix:semicolon
-id|lp-&gt;stats.rx_dropped
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon

@@ -10,12 +10,14 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
+macro_line|#if 0
 macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#endif
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 macro_line|#include &quot;udp.h&quot;
@@ -362,6 +364,9 @@ op_ge
 id|sk-&gt;rcvbuf
 )paren
 (brace
+id|ip_statistics.IpInDiscards
+op_increment
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -382,11 +387,14 @@ id|sk-&gt;rmem_alloc
 op_add_assign
 id|skb-&gt;mem_len
 suffix:semicolon
+id|ip_statistics.IpInDelivers
+op_increment
+suffix:semicolon
 id|skb_queue_tail
 c_func
 (paren
 op_amp
-id|sk-&gt;rqueue
+id|sk-&gt;receive_queue
 comma
 id|skb
 )paren
@@ -653,7 +661,7 @@ id|sk-&gt;broadcast
 op_eq
 l_int|0
 op_logical_and
-id|chk_addr
+id|ip_chk_addr
 c_func
 (paren
 id|sin.sin_addr.s_addr
@@ -718,12 +726,6 @@ c_func
 id|sk
 comma
 id|len
-op_plus
-r_sizeof
-(paren
-op_star
-id|skb
-)paren
 op_plus
 id|sk-&gt;prot-&gt;max_header
 comma
@@ -822,22 +824,6 @@ c_func
 suffix:semicolon
 )brace
 )brace
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
-id|skb-&gt;mem_len
-op_assign
-id|len
-op_plus
-r_sizeof
-(paren
-op_star
-id|skb
-)paren
-op_plus
-id|sk-&gt;prot-&gt;max_header
-suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
@@ -845,11 +831,6 @@ suffix:semicolon
 id|skb-&gt;free
 op_assign
 l_int|1
-suffix:semicolon
-multiline_comment|/* these two should be unecessary. */
-id|skb-&gt;arp
-op_assign
-l_int|0
 suffix:semicolon
 id|tmp
 op_assign
@@ -1501,6 +1482,10 @@ id|to
 comma
 id|copied
 )paren
+suffix:semicolon
+id|sk-&gt;stamp
+op_assign
+id|skb-&gt;stamp
 suffix:semicolon
 multiline_comment|/* Copy the address. */
 r_if

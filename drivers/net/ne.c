@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
 DECL|macro|NE_BASE
 mdefine_line|#define NE_BASE&t; (dev-&gt;base_addr)

@@ -4,13 +4,13 @@ DECL|macro|_TCP_H
 mdefine_line|#define _TCP_H
 macro_line|#include &lt;linux/tcp.h&gt;
 DECL|macro|MAX_SYN_SIZE
-mdefine_line|#define MAX_SYN_SIZE&t;44 + sizeof (struct sk_buff) + MAX_HEADER
+mdefine_line|#define MAX_SYN_SIZE&t;44 + MAX_HEADER
 DECL|macro|MAX_FIN_SIZE
-mdefine_line|#define MAX_FIN_SIZE&t;40 + sizeof (struct sk_buff) + MAX_HEADER
+mdefine_line|#define MAX_FIN_SIZE&t;40 + MAX_HEADER
 DECL|macro|MAX_ACK_SIZE
-mdefine_line|#define MAX_ACK_SIZE&t;40 + sizeof (struct sk_buff) + MAX_HEADER
+mdefine_line|#define MAX_ACK_SIZE&t;40 + MAX_HEADER
 DECL|macro|MAX_RESET_SIZE
-mdefine_line|#define MAX_RESET_SIZE&t;40 + sizeof (struct sk_buff) + MAX_HEADER
+mdefine_line|#define MAX_RESET_SIZE&t;40 + MAX_HEADER
 DECL|macro|MAX_WINDOW
 mdefine_line|#define MAX_WINDOW&t;8192
 DECL|macro|MIN_WINDOW
@@ -50,8 +50,6 @@ DECL|macro|TCP_PROBEWAIT_LEN
 mdefine_line|#define TCP_PROBEWAIT_LEN 100&t;/* time to wait between probes when&n;&t;&t;&t;&t; * I&squot;ve got something to write and&n;&t;&t;&t;&t; * there is no window&t;&t;&t;*/
 DECL|macro|TCP_NO_CHECK
 mdefine_line|#define TCP_NO_CHECK&t;0&t;/* turn to one if you want the default&n;&t;&t;&t;&t; * to be no checksum&t;&t;&t;*/
-DECL|macro|TCP_WRITE_QUEUE_MAGIC
-mdefine_line|#define TCP_WRITE_QUEUE_MAGIC 0xa5f23477
 multiline_comment|/*&n; *&t;TCP option&n; */
 DECL|macro|TCPOPT_NOP
 mdefine_line|#define TCPOPT_NOP&t;&t;1

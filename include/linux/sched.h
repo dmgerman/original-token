@@ -28,6 +28,10 @@ r_int
 r_int
 id|intr_count
 suffix:semicolon
+DECL|macro|start_bh_atomic
+mdefine_line|#define start_bh_atomic() &bslash;&n;__asm__ __volatile__(&quot;incl _intr_count&quot;)
+DECL|macro|end_bh_atomic
+mdefine_line|#define end_bh_atomic() &bslash;&n;__asm__ __volatile__(&quot;decl _intr_count&quot;)
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; */
 r_extern
 r_int

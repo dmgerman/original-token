@@ -46,22 +46,12 @@ macro_line|#include &lt;netinet/in.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;ip.h&quot;
-macro_line|#include &quot;route.h&quot;
-macro_line|#include &quot;protocol.h&quot;
-macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
-macro_line|#include &quot;arp.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 DECL|macro|netstats
 mdefine_line|#define netstats enet_statistics
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size,pri)&t;(struct sk_buff *)kmalloc(size,pri)
-macro_line|#endif
 multiline_comment|/**************************************************&n; *                                                *&n; * Definition of D-Link Ethernet Pocket adapter   *&n; *                                                *&n; **************************************************/
 multiline_comment|/*&n; * D-Link Ethernet pocket adapter ports&n; */
 multiline_comment|/*&n; * OK, so I&squot;m cheating, but there are an awful lot of&n; * reads and writes in order to get anything in and out&n; * of the DE-600 with 4 bits at a time in the parallel port,&n; * so every saved instruction really helps :-)&n; *&n; * That is, I don&squot;t care what the device struct says&n; * but hope that Space.c will keep the rest of the drivers happy.&n; */
@@ -579,11 +569,13 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Yes, I know!&n;&t; * This is really not nice, but since a machine that uses DE-600&n;&t; * rarely uses any other TCP/IP connection device simultaneously,&n;&t; * this hack shouldn&squot;t really slow anything up.&n;&t; * (I don&squot;t know about slip though... but it won&squot;t break it)&n;&t; *&n;&t; * This fix is better than changing in tcp.h IMHO&n;&t; */
+macro_line|#if 0&t; 
 id|tcp_prot.rspace
 op_assign
 id|d_link_rspace
 suffix:semicolon
 multiline_comment|/* was: sock_rspace */
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -650,11 +642,13 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
 id|tcp_prot.rspace
 op_assign
 id|sock_rspace
 suffix:semicolon
 multiline_comment|/* see comment above! */
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -775,44 +769,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* For ethernet, fill in the header (hardware addresses) with an arp. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|skb-&gt;arp
-)paren
-r_if
-c_cond
-(paren
-id|dev
-op_member_access_from_pointer
-id|rebuild_header
-c_func
-(paren
-id|skb-&gt;data
-comma
-id|dev
-)paren
-)paren
-(brace
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|arp_queue
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1415,9 +1371,6 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
-r_int
-id|sksize
-suffix:semicolon
 r_register
 r_int
 r_char
@@ -1510,22 +1463,12 @@ comma
 id|size
 )paren
 suffix:semicolon
-id|sksize
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
-id|size
-suffix:semicolon
 id|skb
 op_assign
 id|alloc_skb
 c_func
 (paren
-id|sksize
+id|size
 comma
 id|GFP_ATOMIC
 )paren
@@ -1550,7 +1493,7 @@ l_string|&quot;%s: Couldn&squot;t allocate a sk_buff of size %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|sksize
+id|size
 )paren
 suffix:semicolon
 r_return
@@ -1560,14 +1503,6 @@ multiline_comment|/* else */
 id|skb-&gt;lock
 op_assign
 l_int|0
-suffix:semicolon
-id|skb-&gt;mem_len
-op_assign
-id|sksize
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
 suffix:semicolon
 multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
 id|buffer
@@ -1936,50 +1871,9 @@ id|netstats
 )paren
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 id|get_stats
-suffix:semicolon
-id|dev-&gt;hard_header
-op_assign
-id|eth_header
-suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-id|eth_add_arp
-suffix:semicolon
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
-suffix:semicolon
-id|dev-&gt;rebuild_header
-op_assign
-id|eth_rebuild_header
-suffix:semicolon
-id|dev-&gt;type_trans
-op_assign
-id|eth_type_trans
 suffix:semicolon
 id|dev-&gt;open
 op_assign
@@ -1994,51 +1888,10 @@ op_assign
 op_amp
 id|d_link_start_xmit
 suffix:semicolon
-multiline_comment|/* These are ethernet specific. */
-id|dev-&gt;type
-op_assign
-id|ARPHRD_ETHER
-suffix:semicolon
-id|dev-&gt;hard_header_len
-op_assign
-id|ETH_HLEN
-suffix:semicolon
-id|dev-&gt;mtu
-op_assign
-l_int|1500
-suffix:semicolon
-multiline_comment|/* eth_mtu */
-id|dev-&gt;addr_len
-op_assign
-id|ETH_ALEN
-suffix:semicolon
-multiline_comment|/* New-style flags. */
-id|dev-&gt;flags
-op_assign
-id|IFF_BROADCAST
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-r_sizeof
+id|ether_setup
+c_func
 (paren
-r_int
-r_int
+id|dev
 )paren
 suffix:semicolon
 id|select_prn

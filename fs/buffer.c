@@ -786,7 +786,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Weird - unlocked, clean and not uptodate buffer on %d list %d&bslash;n&quot;
+l_string|&quot;Weird - unlocked, clean and not uptodate buffer on list %d&bslash;n&quot;
 comma
 id|nlist
 )paren
@@ -836,7 +836,7 @@ id|BUF_DIRTY
 id|printk
 c_func
 (paren
-l_string|&quot;[%d %x %d] &quot;
+l_string|&quot;[%d %x %ld] &quot;
 comma
 id|nlist
 comma
@@ -2702,11 +2702,8 @@ id|isize
 OG
 l_int|100
 )paren
-(brace
 r_return
-l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t;   now so as to ensure that there are still clean buffers available&n;&t;   for user processes to use (and dirty) */
 multiline_comment|/* We are going to try and locate this much memory */
 id|needed

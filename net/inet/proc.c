@@ -7,13 +7,13 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;udp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;raw.h&quot;
 multiline_comment|/*&n; * Get__netinfo returns the length of that string.&n; *&n; * KNOWN BUGS&n; *  As in get_unix_netinfo, the buffer might be too small. If this&n; *  happens, get__netinfo returns only part of the available infos.&n; */
@@ -34,6 +34,17 @@ id|buffer
 comma
 r_int
 id|format
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
 )paren
 (brace
 r_struct
@@ -46,12 +57,6 @@ r_struct
 id|sock
 op_star
 id|sp
-suffix:semicolon
-r_char
-op_star
-id|pos
-op_assign
-id|buffer
 suffix:semicolon
 r_int
 id|i
@@ -71,16 +76,31 @@ id|destp
 comma
 id|srcp
 suffix:semicolon
+r_int
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|off_t
+id|pos
+op_assign
+l_int|0
+suffix:semicolon
+id|off_t
+id|begin
+op_assign
+l_int|0
+suffix:semicolon
 id|s_array
 op_assign
 id|pro-&gt;sock_array
 suffix:semicolon
-id|pos
+id|len
 op_add_assign
 id|sprintf
 c_func
 (paren
-id|pos
+id|buffer
 comma
 l_string|&quot;sl  local_address rem_address   st tx_queue rx_queue tr tm-&gt;when uid&bslash;n&quot;
 )paren
@@ -173,12 +193,14 @@ id|sp-&gt;timer.expires
 op_assign
 l_int|0
 suffix:semicolon
-id|pos
+id|len
 op_add_assign
 id|sprintf
 c_func
 (paren
-id|pos
+id|buffer
+op_plus
+id|len
 comma
 l_string|&quot;%2d: %08lX:%04X %08lX:%04X %02X %08lX:%08lX %02X:%08lX %08X %d&bslash;n&quot;
 comma
@@ -246,40 +268,47 @@ op_amp
 id|sp-&gt;timer
 )paren
 suffix:semicolon
-multiline_comment|/* Is place in buffer too rare? then abort. */
-r_if
-c_cond
-(paren
-id|pos
-OG
-id|buffer
-op_plus
-id|PAGE_SIZE
-op_minus
-l_int|90
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;oops, too many %s sockets for netinfo.&bslash;n&quot;
-comma
-id|pro-&gt;name
-)paren
-suffix:semicolon
-r_return
-id|strlen
-c_func
-(paren
-id|buffer
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; * All sockets with (port mod SOCK_ARRAY_SIZE) = i&n;&t;&t; * are kept in sock_array[i], so we must follow the&n;&t;&t; * &squot;next&squot; link to get them all.&n;&t;&t; */
 id|sp
 op_assign
 id|sp-&gt;next
 suffix:semicolon
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pos
+OL
+id|offset
+)paren
+(brace
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|begin
+op_assign
+id|pos
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|pos
+OG
+id|offset
+op_plus
+id|length
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 )brace
 id|sti
 c_func
@@ -287,13 +316,54 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* We only turn interrupts back on for a moment, but because the interrupt queues anything built up&n;&t;&t;   before this will clear before we jump back and cli, so its not as bad as it looks */
+r_if
+c_cond
+(paren
+id|pos
+OG
+id|offset
+op_plus
+id|length
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+)brace
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+id|len
+op_sub_assign
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+(brace
+id|len
+op_assign
+id|length
+suffix:semicolon
 )brace
 r_return
-id|strlen
-c_func
-(paren
-id|buffer
-)paren
+id|len
 suffix:semicolon
 )brace
 DECL|function|tcp_get_info
@@ -304,6 +374,17 @@ c_func
 r_char
 op_star
 id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
 )paren
 (brace
 r_return
@@ -316,6 +397,12 @@ comma
 id|buffer
 comma
 l_int|0
+comma
+id|start
+comma
+id|offset
+comma
+id|length
 )paren
 suffix:semicolon
 )brace
@@ -327,6 +414,17 @@ c_func
 r_char
 op_star
 id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
 )paren
 (brace
 r_return
@@ -339,6 +437,12 @@ comma
 id|buffer
 comma
 l_int|1
+comma
+id|start
+comma
+id|offset
+comma
+id|length
 )paren
 suffix:semicolon
 )brace
@@ -350,6 +454,17 @@ c_func
 r_char
 op_star
 id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
 )paren
 (brace
 r_return
@@ -362,6 +477,12 @@ comma
 id|buffer
 comma
 l_int|1
+comma
+id|start
+comma
+id|offset
+comma
+id|length
 )paren
 suffix:semicolon
 )brace

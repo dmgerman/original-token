@@ -25,14 +25,9 @@ macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;ip.h&quot;
-macro_line|#include &quot;protocol.h&quot;
-macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
-macro_line|#include &quot;arp.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;int block_input(struct device *dev, int count, char *buf, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into BUF.  Start reading from&n;&t;&t;RING_OFFSET, the address as the 8390 sees it.  The first read will&n;&t;&t;always be the 4 byte, page aligned 8390 header.  *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;*/
 DECL|macro|ei_reset_8390
@@ -409,10 +404,12 @@ id|ei_local-&gt;stat.tx_packets
 op_eq
 l_int|0
 )paren
+(brace
 id|ei_local-&gt;interface_num
 op_xor_assign
 l_int|1
 suffix:semicolon
+)brace
 multiline_comment|/* Try a different xcvr.  */
 )brace
 multiline_comment|/* Try to restart the card.  Perhaps the user has fixed something. */
@@ -454,41 +451,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Fill in the ethernet header. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|skb-&gt;arp
-op_logical_and
-id|dev
-op_member_access_from_pointer
-id|rebuild_header
-c_func
-(paren
-id|skb-&gt;data
-comma
-id|dev
-)paren
-)paren
-(brace
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|arp_queue
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|length
 op_assign
 id|skb-&gt;len
@@ -1915,17 +1877,6 @@ op_eq
 id|ENRSR_RXOK
 )paren
 (brace
-r_int
-id|sksize
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
-id|pkt_len
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -1936,7 +1887,7 @@ op_assign
 id|alloc_skb
 c_func
 (paren
-id|sksize
+id|pkt_len
 comma
 id|GFP_ATOMIC
 )paren
@@ -1963,7 +1914,7 @@ l_string|&quot;%s: Couldn&squot;t allocate a sk_buff of size %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|sksize
+id|pkt_len
 )paren
 suffix:semicolon
 id|ei_local-&gt;stat.rx_dropped
@@ -1974,14 +1925,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|skb-&gt;mem_len
-op_assign
-id|sksize
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
 id|skb-&gt;len
 op_assign
 id|pkt_len
@@ -2455,9 +2398,6 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2558,114 +2498,10 @@ op_amp
 id|set_multicast_list
 suffix:semicolon
 macro_line|#endif
-r_for
-c_loop
+id|ether_setup
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;hard_header
-op_assign
-id|eth_header
-suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-id|eth_add_arp
-suffix:semicolon
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
-suffix:semicolon
-id|dev-&gt;rebuild_header
-op_assign
-id|eth_rebuild_header
-suffix:semicolon
-id|dev-&gt;type_trans
-op_assign
-id|eth_type_trans
-suffix:semicolon
-id|dev-&gt;type
-op_assign
-id|ARPHRD_ETHER
-suffix:semicolon
-id|dev-&gt;hard_header_len
-op_assign
-id|ETH_HLEN
-suffix:semicolon
-id|dev-&gt;mtu
-op_assign
-l_int|1500
-suffix:semicolon
-multiline_comment|/* eth_mtu */
-id|dev-&gt;addr_len
-op_assign
-id|ETH_ALEN
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETH_ALEN
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|dev-&gt;broadcast
-(braket
-id|i
-)braket
-op_assign
-l_int|0xff
-suffix:semicolon
-)brace
-multiline_comment|/* New-style flags. */
-id|dev-&gt;flags
-op_assign
-id|IFF_BROADCAST
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-r_sizeof
-(paren
-r_int
-r_int
+id|dev
 )paren
 suffix:semicolon
 r_return

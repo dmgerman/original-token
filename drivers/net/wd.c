@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* Compatibility definitions for earlier kernel versions. */
 macro_line|#ifndef HAVE_PORTRESERVE

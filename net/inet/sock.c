@@ -16,15 +16,15 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;udp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;raw.h&quot;
 macro_line|#include &quot;icmp.h&quot;
@@ -88,35 +88,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  send_head = %p&bslash;n&quot;
-comma
-id|sk-&gt;send_head
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;  state = %d&bslash;n&quot;
 comma
 id|sk-&gt;state
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;  wback = %p, rqueue = %p&bslash;n&quot;
-comma
-id|sk-&gt;wback
-comma
-id|sk-&gt;rqueue
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;  wfront = %p&bslash;n&quot;
-comma
-id|sk-&gt;wfront
 )paren
 suffix:semicolon
 id|printk
@@ -180,11 +154,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  pair = %p, back_log = %p&bslash;n&quot;
+l_string|&quot;  pair = %p&bslash;n&quot;
 comma
 id|sk-&gt;pair
-comma
-id|sk-&gt;back_log
 )paren
 suffix:semicolon
 id|printk
@@ -236,8 +208,8 @@ id|sk-&gt;shutdown
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_void
-DECL|function|print_skb
 id|print_skb
 c_func
 (paren
@@ -304,6 +276,7 @@ id|skb-&gt;free
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_static
 r_int
 DECL|function|sk_inuse
@@ -914,22 +887,6 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sk1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;sock.c: remove_sock: sk1 == NULL&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
 id|sk1-&gt;prot
 )paren
 (brace
@@ -1139,52 +1096,23 @@ id|FREE_WRITE
 suffix:semicolon
 )brace
 multiline_comment|/* Cleanup up the write buffer. */
-r_for
+r_while
 c_loop
 (paren
+(paren
 id|skb
 op_assign
-id|sk-&gt;wfront
-suffix:semicolon
-id|skb
-op_ne
-l_int|NULL
-suffix:semicolon
-)paren
-(brace
-r_struct
-id|sk_buff
-op_star
-id|skb2
-suffix:semicolon
-id|skb2
-op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|skb-&gt;next
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;magic
-op_ne
-id|TCP_WRITE_QUEUE_MAGIC
-)paren
-(brace
-id|printk
+id|skb_dequeue
 c_func
 (paren
-l_string|&quot;sock.c:destroy_sock write queue with bad magic(%X)&bslash;n&quot;
-comma
-id|skb-&gt;magic
+op_amp
+id|sk-&gt;write_queue
 )paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
 id|IS_SKB
 c_func
 (paren
@@ -1199,27 +1127,7 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|skb
-op_assign
-id|skb2
-suffix:semicolon
 )brace
-id|sk-&gt;wfront
-op_assign
-l_int|NULL
-suffix:semicolon
-id|sk-&gt;wback
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;rqueue
-op_ne
-l_int|NULL
-)paren
-(brace
 r_while
 c_loop
 (paren
@@ -1230,14 +1138,14 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|sk-&gt;rqueue
+id|sk-&gt;receive_queue
 )paren
 )paren
 op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * This will take care of closing sockets that were&n;&t;&t; * listening and didn&squot;t accept everything.&n;&t;&t; */
+multiline_comment|/*&n;&t; * This will take care of closing sockets that were&n;&t; * listening and didn&squot;t accept everything.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1286,12 +1194,12 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-)brace
-id|sk-&gt;rqueue
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* Now we need to clean up the send head. */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1311,22 +1219,20 @@ op_star
 id|skb2
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * We need to remove skb from the transmit queue,&n;&t;&t; * or maybe the arp queue.&n;&t;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* see if it&squot;s in a transmit queue. */
-multiline_comment|/* this can be simplified quite a bit.  Look */
-multiline_comment|/* at tcp.c:tcp_ack to see how. */
 r_if
 c_cond
 (paren
 id|skb-&gt;next
-op_ne
-l_int|NULL
+op_logical_and
+id|skb-&gt;prev
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;destroy_sock: unlinked skb&bslash;n&quot;
+)paren
+suffix:semicolon
 id|IS_SKB
 c_func
 (paren
@@ -1344,18 +1250,8 @@ id|skb-&gt;dev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|skb2
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
 id|skb-&gt;link3
 suffix:semicolon
 id|kfree_skb
@@ -1375,11 +1271,25 @@ id|sk-&gt;send_head
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* And now the backlog. */
-r_if
-c_cond
+id|sti
+c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* And now the backlog. */
+r_while
+c_loop
+(paren
+(paren
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
 id|sk-&gt;back_log
+)paren
+)paren
 op_ne
 l_int|NULL
 )paren
@@ -1388,38 +1298,8 @@ multiline_comment|/* this should never happen. */
 id|printk
 c_func
 (paren
-l_string|&quot;cleaning back_log. &bslash;n&quot;
+l_string|&quot;cleaning back_log&bslash;n&quot;
 )paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|skb
-op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|sk-&gt;back_log
-suffix:semicolon
-r_do
-(brace
-r_struct
-id|sk_buff
-op_star
-id|skb2
-suffix:semicolon
-id|skb2
-op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|skb-&gt;next
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1429,31 +1309,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|skb
-op_assign
-id|skb2
-suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|skb
-op_ne
-id|sk-&gt;back_log
-)paren
-(brace
-suffix:semicolon
-)brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-id|sk-&gt;back_log
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* Now if it has a half accepted/ closed socket. */
 r_if
 c_cond
@@ -1596,26 +1452,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -3154,6 +2990,10 @@ id|sk-&gt;type
 op_assign
 id|sock-&gt;type
 suffix:semicolon
+id|sk-&gt;stamp.tv_sec
+op_assign
+l_int|0
+suffix:semicolon
 id|sk-&gt;protocol
 op_assign
 id|protocol
@@ -3340,17 +3180,19 @@ id|sk-&gt;delay_acks
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;wback
-op_assign
-l_int|NULL
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|sk-&gt;write_queue
+)paren
 suffix:semicolon
-id|sk-&gt;wfront
-op_assign
-l_int|NULL
-suffix:semicolon
-id|sk-&gt;rqueue
-op_assign
-l_int|NULL
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|sk-&gt;receive_queue
+)paren
 suffix:semicolon
 id|sk-&gt;mtu
 op_assign
@@ -3370,7 +3212,7 @@ l_int|0
 suffix:semicolon
 id|sk-&gt;saddr
 op_assign
-id|my_addr
+id|ip_my_addr
 c_func
 (paren
 )paren
@@ -3416,9 +3258,12 @@ op_assign
 op_amp
 id|net_timer
 suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
 id|sk-&gt;back_log
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|sk-&gt;blog
 op_assign
@@ -3865,6 +3710,9 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+r_int
+id|chk_addr_ret
+suffix:semicolon
 id|sk
 op_assign
 (paren
@@ -3874,26 +3722,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* check this error. */
 r_if
 c_cond
@@ -4027,6 +3855,14 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+id|chk_addr_ret
+op_assign
+id|ip_chk_addr
+c_func
+(paren
+id|addr.sin_addr.s_addr
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4034,11 +3870,7 @@ id|addr.sin_addr.s_addr
 op_ne
 l_int|0
 op_logical_and
-id|chk_addr
-c_func
-(paren
-id|addr.sin_addr.s_addr
-)paren
+id|chk_addr_ret
 op_ne
 id|IS_MYADDR
 )paren
@@ -4050,11 +3882,7 @@ multiline_comment|/* Source address MUST be ours! */
 r_if
 c_cond
 (paren
-id|chk_addr
-c_func
-(paren
-id|addr.sin_addr.s_addr
-)paren
+id|chk_addr_ret
 op_logical_or
 id|addr.sin_addr.s_addr
 op_eq
@@ -4292,26 +4120,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4653,26 +4461,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk1
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n;   * We&squot;ve been passed an extra socket.&n;   * We need to free it up because the tcp module creates&n;   * it&squot;s own when it accepts one.&n;   */
 r_if
 c_cond
@@ -4695,10 +4483,6 @@ suffix:semicolon
 id|newsock-&gt;data
 op_assign
 l_int|NULL
-suffix:semicolon
-id|sk-&gt;dead
-op_assign
-l_int|1
 suffix:semicolon
 id|destroy_sock
 c_func
@@ -5097,7 +4881,7 @@ l_int|0
 )paren
 id|sin.sin_addr.s_addr
 op_assign
-id|my_addr
+id|ip_my_addr
 c_func
 (paren
 )paren
@@ -5179,26 +4963,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* We may need to bind the socket. */
 r_if
 c_cond
@@ -5308,26 +5072,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* We may need to bind the socket. */
 r_if
 c_cond
@@ -5434,26 +5178,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5586,26 +5310,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5746,26 +5450,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5927,26 +5611,6 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6191,26 +5855,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: sock-&gt;data = NULL: %d&bslash;n&quot;
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|sk-&gt;prot-&gt;select
 op_eq
 l_int|NULL
@@ -6435,6 +6079,85 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+r_case
+id|SIOCGSTAMP
+suffix:colon
+r_if
+c_cond
+(paren
+id|sk
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;stamp.tv_sec
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|ENOENT
+suffix:semicolon
+)brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_struct
+id|timeval
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+id|memcpy_tofs
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+op_amp
+id|sk-&gt;stamp
+comma
+r_sizeof
+(paren
+r_struct
+id|timeval
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 macro_line|#if 0&t;/* FIXME: */
 r_case
 id|SIOCATMARK
@@ -6485,7 +6208,7 @@ r_case
 id|SIOCDELRTOLD
 suffix:colon
 r_return
-id|rt_ioctl
+id|ip_rt_ioctl
 c_func
 (paren
 id|cmd
@@ -6519,9 +6242,6 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-r_case
-id|IP_SET_DEV
-suffix:colon
 r_case
 id|SIOCGIFCONF
 suffix:colon
@@ -6578,6 +6298,12 @@ id|SIOCSIFLINK
 suffix:colon
 r_case
 id|SIOCGIFHWADDR
+suffix:colon
+r_case
+id|SIOCSIFHWADDR
+suffix:colon
+r_case
+id|OLD_SIOCGIFHWADDR
 suffix:colon
 r_return
 id|dev_ioctl
@@ -6695,7 +6421,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;wmem_alloc
 op_add_assign
-id|size
+id|c-&gt;mem_len
 suffix:semicolon
 id|sti
 c_func
@@ -6806,7 +6532,7 @@ c_func
 suffix:semicolon
 id|sk-&gt;rmem_alloc
 op_add_assign
-id|size
+id|c-&gt;mem_len
 suffix:semicolon
 id|sti
 c_func
@@ -7011,11 +6737,6 @@ suffix:semicolon
 id|IS_SKB
 c_func
 (paren
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
 id|mem
 )paren
 suffix:semicolon
@@ -7121,11 +6842,6 @@ suffix:semicolon
 id|IS_SKB
 c_func
 (paren
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
 id|mem
 )paren
 suffix:semicolon
@@ -7372,33 +7088,19 @@ op_star
 id|sk
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sk
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;sock.c: release_sock sk == NULL&bslash;n&quot;
-)paren
+r_struct
+id|sk_buff
+op_star
+id|skb
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|sk-&gt;prot
 )paren
-(brace
-multiline_comment|/*&t;printk(&quot;sock.c: release_sock sk-&gt;prot == NULL&bslash;n&quot;); */
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7407,11 +7109,6 @@ id|sk-&gt;blog
 r_return
 suffix:semicolon
 multiline_comment|/* See if we have any packets built up. */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sk-&gt;inuse
 op_assign
 l_int|1
@@ -7419,28 +7116,23 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
 id|sk-&gt;back_log
+)paren
+)paren
 op_ne
 l_int|NULL
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
 id|sk-&gt;blog
 op_assign
 l_int|1
-suffix:semicolon
-id|skb
-op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|sk-&gt;back_log
 suffix:semicolon
 id|DPRINTF
 c_func
@@ -7451,51 +7143,6 @@ comma
 l_string|&quot;release_sock: skb = %X:&bslash;n&quot;
 comma
 id|skb
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;next
-op_ne
-id|skb
-)paren
-(brace
-id|sk-&gt;back_log
-op_assign
-id|skb-&gt;next
-suffix:semicolon
-id|skb-&gt;prev-&gt;next
-op_assign
-id|skb-&gt;next
-suffix:semicolon
-id|skb-&gt;next-&gt;prev
-op_assign
-id|skb-&gt;prev
-suffix:semicolon
-)brace
-r_else
-(brace
-id|sk-&gt;back_log
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|DPRINTF
-c_func
-(paren
-(paren
-id|DBG_INET
-comma
-l_string|&quot;sk-&gt;back_log = %X&bslash;n&quot;
-comma
-id|sk-&gt;back_log
 )paren
 )paren
 suffix:semicolon
@@ -7532,11 +7179,6 @@ op_star
 id|sk-&gt;pair
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 id|sk-&gt;blog
 op_assign
@@ -7545,11 +7187,6 @@ suffix:semicolon
 id|sk-&gt;inuse
 op_assign
 l_int|0
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7834,7 +7471,7 @@ r_int
 r_int
 id|seq_offset
 suffix:semicolon
-multiline_comment|/* Called by ddi.c on kernel startup.  */
+multiline_comment|/*&n; *&t;Called by ddi.c on kernel startup.  &n; */
 DECL|function|inet_proto_init
 r_void
 id|inet_proto_init
@@ -7857,10 +7494,10 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society Net2Debugged [1.30]&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society NET3.010&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Set up our UNIX VFS major device. */
+multiline_comment|/*&n;&t; *&t;Set up our UNIX VFS major device. (compatibility)&n;&t; */
 r_if
 c_cond
 (paren
@@ -7891,7 +7528,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Tell SOCKET that we are alive... */
+multiline_comment|/*&n;   *&t;Tell SOCKET that we are alive... &n;   */
 (paren
 r_void
 )paren
@@ -7910,7 +7547,7 @@ id|CURRENT_TIME
 op_star
 l_int|250
 suffix:semicolon
-multiline_comment|/* Add all the protocols. */
+multiline_comment|/*&n;&t; *&t;Add all the protocols. &n;&t; */
 r_for
 c_loop
 (paren
@@ -8007,13 +7644,25 @@ op_assign
 id|tmp
 suffix:semicolon
 )brace
-multiline_comment|/* Initialize the DEV module. */
+multiline_comment|/*&n;&t; *&t;Initialize the DEV module. &n;&t; */
 id|dev_init
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize the &quot;Buffer Head&quot; pointers. */
+multiline_comment|/*&n;&t; *&t;Set the ARP module up&n;&t; */
+id|arp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;  &t; *&t;Set the IP module up&n;  &t; */
+id|ip_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Initialize the &quot;Buffer Head&quot; pointers. &n;&t; */
 id|bh_base
 (braket
 id|INET_BH

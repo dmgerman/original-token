@@ -5,7 +5,7 @@ mdefine_line|#define _SOCK_H
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;&t;&t;/* struct options */
 macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
-macro_line|#include &quot;skbuff.h&quot;&t;&t;/* struct sk_buff */
+macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
 macro_line|#include &quot;protocol.h&quot;&t;&t;/* struct inet_protocol */
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &quot;ax25.h&quot;
@@ -156,13 +156,6 @@ id|sock
 op_star
 id|pair
 suffix:semicolon
-DECL|member|send_tail
-r_struct
-id|sk_buff
-op_star
-r_volatile
-id|send_tail
-suffix:semicolon
 DECL|member|send_head
 r_struct
 id|sk_buff
@@ -170,11 +163,16 @@ op_star
 r_volatile
 id|send_head
 suffix:semicolon
-DECL|member|back_log
+DECL|member|send_tail
 r_struct
 id|sk_buff
 op_star
 r_volatile
+id|send_tail
+suffix:semicolon
+DECL|member|back_log
+r_struct
+id|sk_buff_head
 id|back_log
 suffix:semicolon
 DECL|member|partial
@@ -192,22 +190,13 @@ DECL|member|retransmits
 r_int
 id|retransmits
 suffix:semicolon
-DECL|member|wback
+DECL|member|write_queue
 r_struct
-id|sk_buff
-op_star
-r_volatile
-id|wback
+id|sk_buff_head
+id|write_queue
 comma
-DECL|member|wfront
-op_star
-r_volatile
-id|wfront
-comma
-DECL|member|rqueue
-op_star
-r_volatile
-id|rqueue
+DECL|member|receive_queue
+id|receive_queue
 suffix:semicolon
 DECL|member|prot
 r_struct
@@ -491,6 +480,11 @@ DECL|member|timer
 r_struct
 id|timer_list
 id|timer
+suffix:semicolon
+DECL|member|stamp
+r_struct
+id|timeval
+id|stamp
 suffix:semicolon
 multiline_comment|/* identd */
 DECL|member|socket

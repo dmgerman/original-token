@@ -1,26 +1,24 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;@(#)packet.c&t;1.0.6&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;@(#)packet.c&t;1.0.6&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Added NULL&squot;s for socket options.&n; *&t;&t;Alan Cox&t;:&t;Re-commented the code.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
-macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &quot;udp.h&quot;
-macro_line|#include &quot;raw.h&quot;
+multiline_comment|/*&n; *&t;We really ought to have a single public _inline_ min function!&n; */
+DECL|function|min
 r_static
 r_int
 r_int
-DECL|function|min
 id|min
 c_func
 (paren
@@ -47,9 +45,9 @@ r_return
 id|b
 suffix:semicolon
 )brace
-multiline_comment|/* This should be the easiest of all, all we do is copy it into a buffer. */
-r_int
+multiline_comment|/*&n; *&t;This should be the easiest of all, all we do is copy it into a buffer. &n; */
 DECL|function|packet_rcv
+r_int
 id|packet_rcv
 c_func
 (paren
@@ -74,6 +72,7 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;When we registered the protcol we saved the socket in the data&n;&t; *&t;field for just this event.&n;&t; */
 id|sk
 op_assign
 (paren
@@ -83,6 +82,7 @@ op_star
 )paren
 id|pt-&gt;data
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The SOCK_PACKET socket receives _all_ frames, and as such &n;&t; *&t;therefore needs to put the header back onto the buffer.&n;&t; *&t;(it was removed by inet_bh()).&n;&t; */
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -95,7 +95,7 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-multiline_comment|/* Charge it too the socket. */
+multiline_comment|/*&n;&t; *&t;Charge the memory to the socket. This is done specificially&n;&t; *&t;to prevent sockets using all the memory up.&n;&t; */
 r_if
 c_cond
 (paren
@@ -126,11 +126,12 @@ id|sk-&gt;rmem_alloc
 op_add_assign
 id|skb-&gt;mem_len
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Queue the packet up, and wake anyone waiting for it.&n;&t; */
 id|skb_queue_tail
 c_func
 (paren
 op_amp
-id|sk-&gt;rqueue
+id|sk-&gt;receive_queue
 comma
 id|skb
 )paren
@@ -141,20 +142,22 @@ c_func
 id|sk-&gt;sleep
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Processing complete.&n;&t; */
 id|release_sock
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
+multiline_comment|/* This is now effectively surplus in this layer */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This will do terrible things if len + ipheader + devheader &gt; dev-&gt;mtu */
+multiline_comment|/*&n; *&t;Output a raw packet to a device layer. This bypasses all the other&n; *&t;protocol layers and you must therefore supply it with a complete frame&n; */
+DECL|function|packet_sendto
 r_static
 r_int
-DECL|function|packet_sendto
 id|packet_sendto
 c_func
 (paren
@@ -203,7 +206,7 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/* Check the flags. */
+multiline_comment|/*&n;&t; *&t;Check the flags. &n;&t; */
 r_if
 c_cond
 (paren
@@ -224,7 +227,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* Get and verify the address. */
+multiline_comment|/*&n;&t; *&t;Get and verify the address. &n;&t; */
 r_if
 c_cond
 (paren
@@ -290,6 +293,8 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/* SOCK_PACKET must be sent giving an address */
+multiline_comment|/*&n;&t; *&t;Check the buffer is readable.&n;&t; */
 id|err
 op_assign
 id|verify_area
@@ -312,7 +317,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/* Find the device first to size check it */
+multiline_comment|/*&n;&t; *&t;Find the device first to size check it &n;&t; */
 id|saddr.sa_data
 (braket
 l_int|13
@@ -341,6 +346,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;You may not queue a frame bigger than the mtu. This is the lowest level&n;&t; *&t;raw protocol and you must do your own fragmentation at this level.&n;&t; */
 r_if
 c_cond
 (paren
@@ -354,7 +360,7 @@ op_minus
 id|EMSGSIZE
 suffix:semicolon
 )brace
-multiline_comment|/* Now allocate the buffer, knowing 4K pagelimits wont break this line */
+multiline_comment|/*&n;&t; *&t;Now allocate the buffer, knowing 4K pagelimits wont break this line.&n;&t; */
 id|skb
 op_assign
 id|sk-&gt;prot
@@ -365,19 +371,13 @@ c_func
 id|sk
 comma
 id|len
-op_plus
-r_sizeof
-(paren
-op_star
-id|skb
-)paren
 comma
 l_int|0
 comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-multiline_comment|/* This shouldn&squot;t happen, but it could. */
+multiline_comment|/*&n;&t; *&t;If the write buffer is full, then tough. At this level the user gets to&n;&t; *&t;deal with the problem.&n;&t; */
 r_if
 c_cond
 (paren
@@ -401,21 +401,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/* Fill it in */
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
-id|skb-&gt;mem_len
-op_assign
-id|len
-op_plus
-r_sizeof
-(paren
-op_star
-id|skb
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Fill it in &n;&t; */
 id|skb-&gt;sk
 op_assign
 id|sk
@@ -438,14 +424,12 @@ id|skb-&gt;len
 op_assign
 id|len
 suffix:semicolon
-id|skb-&gt;next
-op_assign
-l_int|NULL
-suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* No ARP needs doing on this (complete) frame */
+multiline_comment|/*&n;&t; *&t;Now send it&n;&t; */
 r_if
 c_cond
 (paren
@@ -453,9 +437,7 @@ id|dev-&gt;flags
 op_amp
 id|IFF_UP
 )paren
-id|dev
-op_member_access_from_pointer
-id|queue_xmit
+id|dev_queue_xmit
 c_func
 (paren
 id|skb
@@ -478,9 +460,10 @@ r_return
 id|len
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;A write to a SOCK_PACKET can&squot;t actually do anything useful and will&n; *&t;always fail but we include it for completeness and future expansion.&n; */
+DECL|function|packet_write
 r_static
 r_int
-DECL|function|packet_write
 id|packet_write
 c_func
 (paren
@@ -524,9 +507,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Close a SOCK_PACKET socket. This is fairly simple. We immediately go&n; *&t;to &squot;closed&squot; state and remove our protocol entry in the device list.&n; *&t;The release_sock() will destroy the socket if a user has closed the&n; *&t;file side of the object.&n; */
+DECL|function|packet_close
 r_static
 r_void
-DECL|function|packet_close
 id|packet_close
 c_func
 (paren
@@ -585,9 +569,10 @@ id|sk
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Create a packet of type SOCK_PACKET. We do one slightly irregular&n; *&t;thing here that wants tidying up. We borrow the &squot;pair&squot; pointer in&n; *&t;the socket object so we can find the packet_type entry in the&n; *&t;device list. The reverse is easy as we use the data field of the&n; *&t;packet type to point to our socket.&n; */
+DECL|function|packet_init
 r_static
 r_int
-DECL|function|packet_init
 id|packet_init
 c_func
 (paren
@@ -654,7 +639,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
-multiline_comment|/* We need to remember this somewhere. */
+multiline_comment|/*&n;&t; *&t;We need to remember this somewhere. &n;&t; */
 id|sk-&gt;pair
 op_assign
 (paren
@@ -668,9 +653,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This should be easy, if there is something there&n; * we return it, otherwise we block.&n; */
-r_int
+multiline_comment|/*&n; *&t;Pull a packet from our receive queue and hand it to the user.&n; *&t;If neccessary we block.&n; */
 DECL|function|packet_recvfrom
+r_int
 id|packet_recvfrom
 c_func
 (paren
@@ -761,6 +746,7 @@ id|RCV_SHUTDOWN
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If the address length field is there to be filled in, we fill&n;&t; *&t;it in now.&n;&t; */
 r_if
 c_cond
 (paren
@@ -806,6 +792,40 @@ id|addr_len
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|saddr
+)paren
+(brace
+id|err
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|saddr
+comma
+r_sizeof
+(paren
+op_star
+id|saddr
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; *&t;Check the user given area can be written to.&n;&t; */
 id|err
 op_assign
 id|verify_area
@@ -828,6 +848,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Call the generic datagram receiver. This handles all sorts&n;&t; *&t;of horrible races and re-entrancy so we can forget about it&n;&t; *&t;in the protocol layers.&n;&t; */
 id|skb
 op_assign
 id|skb_recv_datagram
@@ -843,6 +864,7 @@ op_amp
 id|err
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;An error occured so return it. Because skb_recv_datagram() &n;&t; *&t;handles the blocking we don&squot;t see and worry about blocking&n;&t; *&t;retries.&n;&t; */
 r_if
 c_cond
 (paren
@@ -855,6 +877,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;You lose any data beyond the buffer you gave. If it worries a&n;&t; *&t;user program they can ask the device for its MTU anyway.&n;&t; */
 id|copied
 op_assign
 id|min
@@ -875,8 +898,8 @@ comma
 id|copied
 )paren
 suffix:semicolon
-multiline_comment|/* Don&squot;t use skb_copy_datagram here: We can&squot;t get frag chains */
-multiline_comment|/* Copy the address. */
+multiline_comment|/* We can&squot;t use skb_copy_datagram here */
+multiline_comment|/*&n;&t; *&t;Copy the address. &n;&t; */
 r_if
 c_cond
 (paren
@@ -901,20 +924,6 @@ comma
 l_int|14
 )paren
 suffix:semicolon
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|saddr
-comma
-r_sizeof
-(paren
-op_star
-id|saddr
-)paren
-)paren
-suffix:semicolon
 id|memcpy_tofs
 c_func
 (paren
@@ -931,13 +940,14 @@ id|saddr
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Free or return the buffer as appropriate. Again this hides all the&n;&t; *&t;races and re-entrancy issues from us.&n;&t; */
 id|skb_free_datagram
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* Its either been used up, or its a peek_copy anyway */
+multiline_comment|/*&n;&t; *&t;We are done.&n;&t; */
 id|release_sock
 c_func
 (paren
@@ -948,8 +958,9 @@ r_return
 id|copied
 suffix:semicolon
 )brace
-r_int
+multiline_comment|/*&n; *&t;A packet read can succeed and is just the same as a recvfrom but without the&n; *&t;addresses being recorded.&n; */
 DECL|function|packet_read
+r_int
 id|packet_read
 c_func
 (paren
@@ -993,6 +1004,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;This structure declares to the lower layer socket subsystem currently&n; *&t;incorrectly embedded in the IP code how to behave. This interface needs&n; *&t;a lot of work and will change.&n; */
 DECL|variable|packet_prot
 r_struct
 id|proto
@@ -1023,12 +1035,14 @@ id|packet_recvfrom
 comma
 id|ip_build_header
 comma
-id|udp_connect
+multiline_comment|/* Not actually used */
+l_int|NULL
 comma
 l_int|NULL
 comma
 id|ip_queue_xmit
 comma
+multiline_comment|/* These two are not actually used */
 id|ip_retransmit
 comma
 l_int|NULL

@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region

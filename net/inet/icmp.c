@@ -1,19 +1,20 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&n; * &n; *&t;FIXME:&n; *&t;&t;When 1.0.6 is out merge in the NET channel diffs for TIMESTAMP&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n;#include &lt;linux/string.h&gt;&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &quot;snmp.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &quot;snmp.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -21,6 +22,14 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
+multiline_comment|/*&n; *&t;Statistics&n; */
+DECL|variable|icmp_statistics
+r_struct
+id|icmp_mib
+id|icmp_statistics
+op_assign
+initialization_block
+suffix:semicolon
 multiline_comment|/* An array of errno for error messages from dest unreach. */
 DECL|variable|icmp_err_convert
 r_struct
@@ -122,10 +131,10 @@ l_int|0
 multiline_comment|/*&t;ICMP_HOST_UNR_TOS&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/* Display the contents of an ICMP header. */
+multiline_comment|/* &n; *&t;Display the contents of an ICMP header. &n; */
+DECL|function|print_icmp
 r_static
 r_void
-DECL|function|print_icmp
 id|print_icmp
 c_func
 (paren
@@ -169,9 +178,9 @@ id|icmph-&gt;un.gateway
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Send an ICMP message. */
-r_void
+multiline_comment|/*&n; *&t;Send an ICMP message in response to a situation&n; *&n; *&t;Fixme: Fragment handling is wrong really.&n; */
 DECL|function|icmp_send
+r_void
 id|icmp_send
 c_func
 (paren
@@ -213,6 +222,14 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|ndev
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Make this =dev to force replies on the same interface */
 id|DPRINTF
 c_func
 (paren
@@ -231,15 +248,155 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Get some memory for the reply. */
-id|len
+multiline_comment|/*&n;&t; *&t;Find the original IP header.&n;&t; */
+id|iph
 op_assign
-r_sizeof
 (paren
 r_struct
-id|sk_buff
+id|iphdr
+op_star
 )paren
+(paren
+id|skb_in-&gt;data
 op_plus
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We must NEVER NEVER send an ICMP error to an ICMP error message&n;&t; */
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|ICMP_DEST_UNREACH
+op_logical_or
+id|type
+op_eq
+id|ICMP_REDIRECT
+op_logical_or
+id|type
+op_eq
+id|ICMP_SOURCE_QUENCH
+op_logical_or
+id|type
+op_eq
+id|ICMP_TIME_EXCEEDED
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|iph-&gt;protocol
+op_eq
+id|IPPROTO_ICMP
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+)brace
+id|icmp_statistics.IcmpOutMsgs
+op_increment
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This needs a tidy.&t;&n;&t; */
+r_switch
+c_cond
+(paren
+id|type
+)paren
+(brace
+r_case
+id|ICMP_DEST_UNREACH
+suffix:colon
+id|icmp_statistics.IcmpOutDestUnreachs
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_SOURCE_QUENCH
+suffix:colon
+id|icmp_statistics.IcmpOutSrcQuenchs
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_REDIRECT
+suffix:colon
+id|icmp_statistics.IcmpOutRedirects
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_ECHO
+suffix:colon
+id|icmp_statistics.IcmpOutEchos
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_ECHOREPLY
+suffix:colon
+id|icmp_statistics.IcmpOutEchoReps
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_TIME_EXCEEDED
+suffix:colon
+id|icmp_statistics.IcmpOutTimeExcds
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_PARAMETERPROB
+suffix:colon
+id|icmp_statistics.IcmpOutParmProbs
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_TIMESTAMP
+suffix:colon
+id|icmp_statistics.IcmpOutTimestamps
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_TIMESTAMPREPLY
+suffix:colon
+id|icmp_statistics.IcmpOutTimestampReps
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_ADDRESS
+suffix:colon
+id|icmp_statistics.IcmpOutAddrMasks
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ICMP_ADDRESSREPLY
+suffix:colon
+id|icmp_statistics.IcmpOutAddrMaskReps
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Get some memory for the reply. &n;&t; */
+id|len
+op_assign
 id|dev-&gt;hard_header_len
 op_plus
 r_sizeof
@@ -285,43 +442,14 @@ id|skb
 op_eq
 l_int|NULL
 )paren
+(brace
+id|icmp_statistics.IcmpOutErrors
+op_increment
+suffix:semicolon
 r_return
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
-id|skb-&gt;mem_len
-op_assign
-id|len
-suffix:semicolon
-id|len
-op_sub_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-suffix:semicolon
-multiline_comment|/* Find the IP header. */
-id|iph
-op_assign
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-(paren
-id|skb_in-&gt;data
-op_plus
-id|dev-&gt;hard_header_len
-)paren
-suffix:semicolon
-multiline_comment|/* Build Layer 2-3 headers for message back to source. */
+)brace
+multiline_comment|/*&n;&t; *&t;Build Layer 2-3 headers for message back to source. &n;&t; */
 id|offset
 op_assign
 id|ip_build_header
@@ -334,7 +462,7 @@ comma
 id|iph-&gt;saddr
 comma
 op_amp
-id|dev
+id|ndev
 comma
 id|IPPROTO_ICMP
 comma
@@ -355,6 +483,9 @@ OL
 l_int|0
 )paren
 (brace
+id|icmp_statistics.IcmpOutErrors
+op_increment
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -370,7 +501,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Re-adjust length according to actual IP header size. */
+multiline_comment|/* &n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
 id|skb-&gt;len
 op_assign
 id|offset
@@ -389,6 +520,7 @@ id|iphdr
 op_plus
 l_int|8
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Fill in the frame&n;&t; */
 id|icmph
 op_assign
 (paren
@@ -479,7 +611,7 @@ c_func
 id|icmph
 )paren
 suffix:semicolon
-multiline_comment|/* Send it and free it. */
+multiline_comment|/*&n;&t; *&t;Send it and free it once sent.&n;&t; */
 id|ip_queue_xmit
 c_func
 (paren
@@ -493,10 +625,10 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP_UNREACH and ICMP_QUENCH. */
+multiline_comment|/* &n; *&t;Handle ICMP_UNREACH and ICMP_QUENCH. &n; */
+DECL|function|icmp_unreach
 r_static
 r_void
-DECL|function|icmp_unreach
 id|icmp_unreach
 c_func
 (paren
@@ -710,7 +842,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Get the protocol(s). */
+multiline_comment|/*&n;&t; *&t;Get the protocol(s). &n;&t; */
 id|hash
 op_assign
 id|iph-&gt;protocol
@@ -721,7 +853,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* This can change while we are doing it. */
+multiline_comment|/*&n;&t; *&t;This can&squot;t change while we are doing it. &n;&t; */
 id|ipprot
 op_assign
 (paren
@@ -756,7 +888,7 @@ op_star
 )paren
 id|ipprot-&gt;next
 suffix:semicolon
-multiline_comment|/* Pass it off to everyone who wants it. */
+multiline_comment|/* &n;&t;&t; *&t;Pass it off to everyone who wants it. &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -798,10 +930,6 @@ op_assign
 id|nextip
 suffix:semicolon
 )brace
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -811,10 +939,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP_REDIRECT. */
+multiline_comment|/*&n; *&t;Handle ICMP_REDIRECT. &n; */
+DECL|function|icmp_redirect
 r_static
 r_void
-DECL|function|icmp_redirect
 id|icmp_redirect
 c_func
 (paren
@@ -843,6 +971,7 @@ r_int
 r_int
 id|ip
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Get the copied header of the packet that caused the redirect&n;&t; */
 id|iph
 op_assign
 (paren
@@ -871,8 +1000,9 @@ l_int|7
 r_case
 id|ICMP_REDIR_NET
 suffix:colon
+multiline_comment|/*&n;&t;&t;&t; *&t;This causes a problem with subnetted networks. What we should do&n;&t;&t;&t; *&t;is use ICMP_ADDRESS to get the subnet mask of the problem route&n;&t;&t;&t; *&t;and set both. But we don&squot;t..&n;&t;&t;&t; */
 macro_line|#ifdef not_a_good_idea
-id|rt_add
+id|ip_rt_add
 c_func
 (paren
 (paren
@@ -898,7 +1028,8 @@ macro_line|#endif
 r_case
 id|ICMP_REDIR_HOST
 suffix:colon
-id|rt_add
+multiline_comment|/*&n;&t;&t;&t; *&t;Add better route to host&n;&t;&t;&t; */
+id|ip_rt_add
 c_func
 (paren
 (paren
@@ -957,10 +1088,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/*&n;  &t; *&t;Discard the original packet&n;  &t; */
 id|kfree_skb
 c_func
 (paren
@@ -970,10 +1098,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP_ECHO (&quot;ping&quot;) requests. */
+multiline_comment|/*&n; *&t;Handle ICMP_ECHO (&quot;ping&quot;) requests. &n; */
+DECL|function|icmp_echo
 r_static
 r_void
-DECL|function|icmp_echo
 id|icmp_echo
 c_func
 (paren
@@ -1019,19 +1147,26 @@ id|sk_buff
 op_star
 id|skb2
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|ndev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
 id|size
 comma
 id|offset
 suffix:semicolon
+id|icmp_statistics.IcmpOutEchoReps
+op_increment
+suffix:semicolon
+id|icmp_statistics.IcmpOutMsgs
+op_increment
+suffix:semicolon
 id|size
 op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
 id|dev-&gt;hard_header_len
 op_plus
 l_int|64
@@ -1056,9 +1191,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;sk
-op_assign
-l_int|NULL
+id|icmp_statistics.IcmpOutErrors
+op_increment
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1071,18 +1205,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|skb2-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
-id|skb2-&gt;mem_addr
-op_assign
-id|skb2
-suffix:semicolon
-id|skb2-&gt;mem_len
-op_assign
-id|size
-suffix:semicolon
 id|skb2-&gt;free
 op_assign
 l_int|1
@@ -1100,7 +1222,7 @@ comma
 id|saddr
 comma
 op_amp
-id|dev
+id|ndev
 comma
 id|IPPROTO_ICMP
 comma
@@ -1121,6 +1243,9 @@ OL
 l_int|0
 )paren
 (brace
+id|icmp_statistics.IcmpOutErrors
+op_increment
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1135,10 +1260,6 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -1150,14 +1271,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Re-adjust length according to actual IP header size. */
+multiline_comment|/*&n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
 id|skb2-&gt;len
 op_assign
 id|offset
 op_plus
 id|len
 suffix:semicolon
-multiline_comment|/* Build ICMP_ECHO Response message. */
+multiline_comment|/*&n;&t; *&t;Build ICMP_ECHO Response message. &n;&t; */
 id|icmphr
 op_assign
 (paren
@@ -1216,7 +1337,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/* Ship it out - free it when done */
+multiline_comment|/*&n;&t; *&t;Ship it out - free it when done &n;&t; */
 id|ip_queue_xmit
 c_func
 (paren
@@ -1234,10 +1355,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Free the received frame&n;&t; */
 id|kfree_skb
 c_func
 (paren
@@ -1247,10 +1365,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP Timestamp requests. */
+multiline_comment|/*&n; *&t;Handle ICMP Timestamp requests. &n; */
+DECL|function|icmp_timestamp
 r_static
 r_void
-DECL|function|icmp_timestamp
 id|icmp_timestamp
 c_func
 (paren
@@ -1314,14 +1432,15 @@ id|timeval
 id|xtime
 suffix:semicolon
 multiline_comment|/* kernel/time.c */
+r_struct
+id|device
+op_star
+id|ndev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|size
 op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
 id|dev-&gt;hard_header_len
 op_plus
 l_int|64
@@ -1357,26 +1476,17 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
+id|icmp_statistics.IcmpOutErrors
+op_increment
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|skb2-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
-id|skb2-&gt;mem_addr
-op_assign
-id|skb2
-suffix:semicolon
-id|skb2-&gt;mem_len
-op_assign
-id|size
-suffix:semicolon
 id|skb2-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Build Layer 2-3 headers for message back to source */
+multiline_comment|/*&n; *&t;Build Layer 2-3 headers for message back to source &n; */
 id|offset
 op_assign
 id|ip_build_header
@@ -1389,7 +1499,7 @@ comma
 id|saddr
 comma
 op_amp
-id|dev
+id|ndev
 comma
 id|IPPROTO_ICMP
 comma
@@ -1424,10 +1534,6 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -1436,17 +1542,20 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
+id|icmp_statistics.IcmpOutErrors
+op_increment
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Re-adjust length according to actual IP header size. */
+multiline_comment|/*&n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
 id|skb2-&gt;len
 op_assign
 id|offset
 op_plus
 id|len
 suffix:semicolon
-multiline_comment|/* Build ICMP_TIMESTAMP Response message. */
+multiline_comment|/*&n;&t; *&t;Build ICMP_TIMESTAMP Response message. &n;&t; */
 id|icmphr
 op_assign
 (paren
@@ -1524,7 +1633,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* the originate timestamp (timeptr [0]) is still in the copy: */
+multiline_comment|/*&n;&t; *&t;the originate timestamp (timeptr [0]) is still in the copy: &n;&t; */
 id|timeptr
 (braket
 l_int|1
@@ -1556,7 +1665,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/* Ship it out - free it when done */
+multiline_comment|/*&n;&t; *&t;Ship it out - free it when done &n;&t; */
 id|ip_queue_xmit
 c_func
 (paren
@@ -1574,9 +1683,8 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
+id|icmp_statistics.IcmpOutTimestampReps
+op_increment
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1587,10 +1695,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle the ICMP INFORMATION REQUEST. */
+multiline_comment|/*&n; *&t;Handle the ICMP INFORMATION REQUEST. &n; */
+DECL|function|icmp_info
 r_static
 r_void
-DECL|function|icmp_info
 id|icmp_info
 c_func
 (paren
@@ -1626,11 +1734,7 @@ op_star
 id|opt
 )paren
 (brace
-multiline_comment|/* NOT YET */
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/* Obsolete */
 id|kfree_skb
 c_func
 (paren
@@ -1640,10 +1744,10 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handle ICMP_ADRESS_MASK requests. */
+multiline_comment|/* &n; *&t;Handle ICMP_ADRESS_MASK requests. &n; */
+DECL|function|icmp_address
 r_static
 r_void
-DECL|function|icmp_address
 id|icmp_address
 c_func
 (paren
@@ -1694,14 +1798,21 @@ id|size
 comma
 id|offset
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|ndev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|icmp_statistics.IcmpOutMsgs
+op_increment
+suffix:semicolon
+id|icmp_statistics.IcmpOutAddrMaskReps
+op_increment
+suffix:semicolon
 id|size
 op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
 id|dev-&gt;hard_header_len
 op_plus
 l_int|64
@@ -1726,9 +1837,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;sk
-op_assign
-l_int|NULL
+id|icmp_statistics.IcmpOutErrors
+op_increment
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1741,23 +1851,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|skb2-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
-id|skb2-&gt;mem_addr
-op_assign
-id|skb2
-suffix:semicolon
-id|skb2-&gt;mem_len
-op_assign
-id|size
-suffix:semicolon
 id|skb2-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Build Layer 2-3 headers for message back to source */
+multiline_comment|/* &n;&t; *&t;Build Layer 2-3 headers for message back to source &n;&t; */
 id|offset
 op_assign
 id|ip_build_header
@@ -1770,7 +1868,7 @@ comma
 id|saddr
 comma
 op_amp
-id|dev
+id|ndev
 comma
 id|IPPROTO_ICMP
 comma
@@ -1791,6 +1889,9 @@ OL
 l_int|0
 )paren
 (brace
+id|icmp_statistics.IcmpOutErrors
+op_increment
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1805,10 +1906,6 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -1820,14 +1917,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Re-adjust length according to actual IP header size. */
+multiline_comment|/*&n;&t; *&t;Re-adjust length according to actual IP header size. &n;&t; */
 id|skb2-&gt;len
 op_assign
 id|offset
 op_plus
 id|len
 suffix:semicolon
-multiline_comment|/* Build ICMP ADDRESS MASK Response message. */
+multiline_comment|/*&n;&t; *&t;Build ICMP ADDRESS MASK Response message. &n;&t; */
 id|icmphr
 op_assign
 (paren
@@ -1933,9 +2030,9 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Deal with incoming ICMP packets. */
-r_int
+multiline_comment|/* &n; *&t;Deal with incoming ICMP packets. &n; */
 DECL|function|icmp_rcv
+r_int
 id|icmp_rcv
 c_func
 (paren
@@ -1985,11 +2082,14 @@ r_char
 op_star
 id|buff
 suffix:semicolon
-multiline_comment|/* Drop broadcast packets. */
+multiline_comment|/*&n;&t; *&t;Drop broadcast packets. IP has done a broadcast check and ought one day&n;&t; *&t;to pass on that information.&n;&t; */
+id|icmp_statistics.IcmpInMsgs
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|chk_addr
+id|ip_chk_addr
 c_func
 (paren
 id|daddr
@@ -2014,9 +2114,8 @@ id|saddr
 )paren
 )paren
 suffix:semicolon
-id|skb1-&gt;sk
-op_assign
-l_int|NULL
+id|icmp_statistics.IcmpInErrors
+op_increment
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2030,6 +2129,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n;  &t; *&t;Grab the packet as an icmp object&n;  &t; */
 id|buff
 op_assign
 id|skb1-&gt;h.raw
@@ -2043,7 +2143,7 @@ op_star
 )paren
 id|buff
 suffix:semicolon
-multiline_comment|/* Validate the packet first */
+multiline_comment|/*&n;&t; *&t;Validate the packet first &n;&t; */
 r_if
 c_cond
 (paren
@@ -2062,6 +2162,9 @@ id|len
 )paren
 (brace
 multiline_comment|/* Failed checksum! */
+id|icmp_statistics.IcmpInErrors
+op_increment
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2073,10 +2176,6 @@ c_func
 id|saddr
 )paren
 )paren
-suffix:semicolon
-id|skb1-&gt;sk
-op_assign
-l_int|NULL
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2096,7 +2195,7 @@ c_func
 id|icmph
 )paren
 suffix:semicolon
-multiline_comment|/* Parse the ICMP message */
+multiline_comment|/*&n;&t; *&t;Parse the ICMP message &n;&t; */
 r_switch
 c_cond
 (paren
@@ -2106,12 +2205,43 @@ id|icmph-&gt;type
 r_case
 id|ICMP_TIME_EXCEEDED
 suffix:colon
+id|icmp_statistics.IcmpInTimeExcds
+op_increment
+suffix:semicolon
+id|icmp_unreach
+c_func
+(paren
+id|icmph
+comma
+id|skb1
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 id|ICMP_DEST_UNREACH
 suffix:colon
+id|icmp_statistics.IcmpInDestUnreachs
+op_increment
+suffix:semicolon
+id|icmp_unreach
+c_func
+(paren
+id|icmph
+comma
+id|skb1
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 id|ICMP_SOURCE_QUENCH
 suffix:colon
+id|icmp_statistics.IcmpInSrcQuenchs
+op_increment
+suffix:semicolon
 id|icmp_unreach
 c_func
 (paren
@@ -2126,6 +2256,9 @@ suffix:semicolon
 r_case
 id|ICMP_REDIRECT
 suffix:colon
+id|icmp_statistics.IcmpInRedirects
+op_increment
+suffix:semicolon
 id|icmp_redirect
 c_func
 (paren
@@ -2142,6 +2275,9 @@ suffix:semicolon
 r_case
 id|ICMP_ECHO
 suffix:colon
+id|icmp_statistics.IcmpInEchos
+op_increment
+suffix:semicolon
 id|icmp_echo
 c_func
 (paren
@@ -2166,9 +2302,8 @@ suffix:semicolon
 r_case
 id|ICMP_ECHOREPLY
 suffix:colon
-id|skb1-&gt;sk
-op_assign
-l_int|NULL
+id|icmp_statistics.IcmpInEchoReps
+op_increment
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2184,6 +2319,9 @@ suffix:semicolon
 r_case
 id|ICMP_TIMESTAMP
 suffix:colon
+id|icmp_statistics.IcmpInTimestamps
+op_increment
+suffix:semicolon
 id|icmp_timestamp
 c_func
 (paren
@@ -2208,9 +2346,8 @@ suffix:semicolon
 r_case
 id|ICMP_TIMESTAMPREPLY
 suffix:colon
-id|skb1-&gt;sk
-op_assign
-l_int|NULL
+id|icmp_statistics.IcmpInTimestampReps
+op_increment
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2223,6 +2360,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* INFO is obsolete and doesn&squot;t even feature in the SNMP stats */
 r_case
 id|ICMP_INFO_REQUEST
 suffix:colon
@@ -2268,6 +2406,9 @@ suffix:semicolon
 r_case
 id|ICMP_ADDRESS
 suffix:colon
+id|icmp_statistics.IcmpInAddrMasks
+op_increment
+suffix:semicolon
 id|icmp_address
 c_func
 (paren
@@ -2292,9 +2433,9 @@ suffix:semicolon
 r_case
 id|ICMP_ADDRESSREPLY
 suffix:colon
-id|skb1-&gt;sk
-op_assign
-l_int|NULL
+multiline_comment|/*&n;&t;&t;&t; *&t;We ought to set our netmask on receiving this, but &n;&t;&t;&t; *&t;experience shows its a waste of effort.&n;&t;&t;&t; */
+id|icmp_statistics.IcmpInAddrMaskReps
+op_increment
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2309,6 +2450,9 @@ l_int|0
 suffix:semicolon
 r_default
 suffix:colon
+id|icmp_statistics.IcmpInErrors
+op_increment
+suffix:semicolon
 id|DPRINTF
 c_func
 (paren
@@ -2327,10 +2471,6 @@ id|icmph-&gt;type
 )paren
 )paren
 suffix:semicolon
-id|skb1-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2344,10 +2484,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*NOTREACHED*/
-id|skb1-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2361,9 +2497,9 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Perform any ICMP-related I/O control requests. */
-r_int
+multiline_comment|/*&n; *&t;Perform any ICMP-related I/O control requests. &n; *&t;[to vanish soon]&n; */
 DECL|function|icmp_ioctl
+r_int
 id|icmp_ioctl
 c_func
 (paren

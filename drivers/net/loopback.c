@@ -13,15 +13,10 @@ macro_line|#include &lt;linux/if_ether.h&gt;&t;/* For the statistics structure. 
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;ip.h&quot;
-macro_line|#include &quot;protocol.h&quot;
-macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sock.h&quot;
-macro_line|#include &quot;arp.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 r_static
 r_int
 DECL|function|loopback_xmit
@@ -100,6 +95,26 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;loopback error: called by %08lx&bslash;n&quot;
+comma
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|skb
+)paren
+(braket
+op_minus
+l_int|1
+)braket
+)paren
+suffix:semicolon
 id|stats-&gt;tx_errors
 op_increment
 suffix:semicolon
@@ -112,6 +127,11 @@ op_assign
 l_int|1
 suffix:semicolon
 id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|start_bh_atomic
 c_func
 (paren
 )paren
@@ -143,6 +163,11 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -151,6 +176,11 @@ op_ne
 l_int|1
 )paren
 (brace
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|done
 op_assign
 id|dev_rint
@@ -163,6 +193,11 @@ comma
 l_int|0
 comma
 id|dev
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -236,6 +271,9 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 id|dev-&gt;mtu
 op_assign
 l_int|2000
@@ -257,10 +295,6 @@ macro_line|#if 1
 id|dev-&gt;hard_header
 op_assign
 id|eth_header
-suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-l_int|NULL
 suffix:semicolon
 id|dev-&gt;hard_header_len
 op_assign
@@ -290,10 +324,6 @@ id|dev-&gt;hard_header_length
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;add_arp
-op_assign
-l_int|NULL
-suffix:semicolon
 id|dev-&gt;addr_len
 op_assign
 l_int|0
@@ -316,10 +346,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-id|dev-&gt;queue_xmit
-op_assign
-id|dev_queue_xmit
-suffix:semicolon
 multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign
@@ -392,6 +418,31 @@ suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 id|get_stats
+suffix:semicolon
+multiline_comment|/* Fill in the generic fields of the device structure. */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|DEV_NUMBUFFS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|dev-&gt;buffs
+(braket
+id|i
+)braket
+)paren
 suffix:semicolon
 r_return
 l_int|0

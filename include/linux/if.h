@@ -4,170 +4,6 @@ DECL|macro|_LINUX_IF_H
 mdefine_line|#define _LINUX_IF_H
 macro_line|#include &lt;linux/types.h&gt;&t;&t;/* for &quot;caddr_t&quot; et al&t;&t;*/
 macro_line|#include &lt;linux/socket.h&gt;&t;&t;/* for &quot;struct sockaddr&quot; et al&t;*/
-multiline_comment|/* Structure defining a queue for a network interface. */
-macro_line|#ifdef not_yet_in_linux
-DECL|struct|ifnet
-r_struct
-id|ifnet
-(brace
-DECL|member|if_name
-r_char
-op_star
-id|if_name
-suffix:semicolon
-multiline_comment|/* name, e.g. ``en&squot;&squot; or ``lo&squot;&squot;&t;*/
-DECL|member|if_unit
-r_int
-id|if_unit
-suffix:semicolon
-multiline_comment|/* sub-unit for device driver&t;*/
-DECL|member|if_mtu
-r_int
-id|if_mtu
-suffix:semicolon
-multiline_comment|/* maximum transmission unit&t;*/
-DECL|member|if_flags
-r_int
-id|if_flags
-suffix:semicolon
-multiline_comment|/* up/down, broadcast, etc.&t;*/
-DECL|member|if_timer
-r_int
-id|if_timer
-suffix:semicolon
-multiline_comment|/* time &squot;til if_watchdog called&t;*/
-DECL|member|if_metric
-r_int
-id|if_metric
-suffix:semicolon
-multiline_comment|/* routing metric (not used)&t;*/
-DECL|member|if_addrlist
-r_struct
-id|ifaddr
-op_star
-id|if_addrlist
-suffix:semicolon
-multiline_comment|/* linked list of addrs per if&t;*/
-DECL|struct|ifqueue
-r_struct
-id|ifqueue
-(brace
-DECL|member|ifq_head
-r_struct
-id|mbuf
-op_star
-id|ifq_head
-suffix:semicolon
-DECL|member|ifq_tail
-r_struct
-id|mbuf
-op_star
-id|ifq_tail
-suffix:semicolon
-DECL|member|ifq_len
-r_int
-id|ifq_len
-suffix:semicolon
-DECL|member|ifq_maxlen
-r_int
-id|ifq_maxlen
-suffix:semicolon
-DECL|member|ifq_drops
-r_int
-id|ifq_drops
-suffix:semicolon
-DECL|member|if_snd
-)brace
-id|if_snd
-suffix:semicolon
-multiline_comment|/* output queue&t;&t;&t;*/
-multiline_comment|/* Procedure handles. */
-DECL|member|if_init
-r_int
-(paren
-op_star
-id|if_init
-)paren
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* init routine&t;&t;&t;*/
-DECL|member|if_output
-r_int
-(paren
-op_star
-id|if_output
-)paren
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* output routine&t;&t;*/
-DECL|member|if_ioctl
-r_int
-(paren
-op_star
-id|if_ioctl
-)paren
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* ioctl routine&t;&t;*/
-DECL|member|if_reset
-r_int
-(paren
-op_star
-id|if_reset
-)paren
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* bus reset routine&t;&t;*/
-DECL|member|if_watchdog
-r_int
-(paren
-op_star
-id|if_watchdog
-)paren
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* timer routine&t;&t;*/
-multiline_comment|/* Generic interface statistics. */
-DECL|member|if_ipackets
-r_int
-id|if_ipackets
-suffix:semicolon
-multiline_comment|/* packets recv&squot;d on interface&t;*/
-DECL|member|if_ierrors
-r_int
-id|if_ierrors
-suffix:semicolon
-multiline_comment|/* input errors on interface&t;*/
-DECL|member|if_opackets
-r_int
-id|if_opackets
-suffix:semicolon
-multiline_comment|/* packets sent on interface&t;*/
-DECL|member|if_oerrors
-r_int
-id|if_oerrors
-suffix:semicolon
-multiline_comment|/* output errors on interface&t;*/
-DECL|member|if_collisions
-r_int
-id|if_collisions
-suffix:semicolon
-multiline_comment|/* collisions on CSMA i&squot;faces&t;*/
-multiline_comment|/* Linked list: pointer to next interface. */
-DECL|member|if_next
-r_struct
-id|ifnet
-op_star
-id|if_next
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Standard interface flags. */
 DECL|macro|IFF_UP
 mdefine_line|#define&t;IFF_UP&t;&t;0x1&t;&t;/* interface is up&t;&t;*/
@@ -263,6 +99,7 @@ id|ifrn_hwaddr
 id|IFHWADDRLEN
 )braket
 suffix:semicolon
+multiline_comment|/* Obsolete */
 DECL|member|ifr_ifrn
 )brace
 id|ifr_ifrn
@@ -289,6 +126,11 @@ r_struct
 id|sockaddr
 id|ifru_netmask
 suffix:semicolon
+DECL|member|ifru_hwaddr
+r_struct
+id|sockaddr
+id|ifru_hwaddr
+suffix:semicolon
 DECL|member|ifru_flags
 r_int
 id|ifru_flags
@@ -313,8 +155,10 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ifr_name
 mdefine_line|#define ifr_name&t;ifr_ifrn.ifrn_name&t;/* interface name &t;*/
+DECL|macro|old_ifr_hwaddr
+mdefine_line|#define old_ifr_hwaddr&t;ifr_ifrn.ifrn_hwaddr&t;/* interface hardware   */
 DECL|macro|ifr_hwaddr
-mdefine_line|#define ifr_hwaddr&t;ifr_ifrn.ifrn_hwaddr&t;/* interface hardware   */
+mdefine_line|#define ifr_hwaddr&t;ifr_ifru.ifru_hwaddr&t;/* MAC address &t;&t;*/
 DECL|macro|ifr_addr
 mdefine_line|#define&t;ifr_addr&t;ifr_ifru.ifru_addr&t;/* address&t;&t;*/
 DECL|macro|ifr_dstaddr

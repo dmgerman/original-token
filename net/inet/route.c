@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -9,16 +9,16 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;dev.h&quot;
+macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
-macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
+multiline_comment|/*&n; *&t;The routing table list&n; */
 DECL|variable|rt_base
 r_static
 r_struct
@@ -28,6 +28,7 @@ id|rt_base
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n; *&t;Pointer to the loopback route&n; */
 DECL|variable|rt_loopback
 r_static
 r_struct
@@ -37,10 +38,10 @@ id|rt_loopback
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Dump the contents of a routing table entry. */
+multiline_comment|/*&n; *&t;Dump the contents of a routing table entry. &n; */
+DECL|function|rt_print
 r_static
 r_void
-DECL|function|rt_print
 id|rt_print
 c_func
 (paren
@@ -127,7 +128,7 @@ id|rt-&gt;rt_refcnt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Remove a routing table entry.&n; */
+multiline_comment|/*&n; *&t;Remove a routing table entry.&n; */
 DECL|function|rt_del
 r_static
 r_void
@@ -173,6 +174,7 @@ op_assign
 op_amp
 id|rt_base
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This must be done with interrupts off because we could take&n;&t; *&t;an ICMP_REDIRECT.&n;&t; */
 id|save_flags
 c_func
 (paren
@@ -218,6 +220,7 @@ id|rp
 op_assign
 id|r-&gt;rt_next
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;If we delete the loopback route update its pointer.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -249,10 +252,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Remove all routing table entries for a device.&n; */
-DECL|function|rt_flush
+multiline_comment|/*&n; *&t;Remove all routing table entries for a device. This is called when&n; *&t;a device is downed.&n; */
+DECL|function|ip_rt_flush
 r_void
-id|rt_flush
+id|ip_rt_flush
 c_func
 (paren
 r_struct
@@ -374,7 +377,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Used by &squot;rt_add()&squot; when we can&squot;t get the netmask any other way..&n; *&n; * If the lower byte or two are zero, we guess the mask based on the&n; * number of zero 8-bit net numbers, otherwise we use the &quot;default&quot;&n; * masks judging by the destination address and our device netmask.&n; */
+multiline_comment|/*&n; *&t;Used by &squot;rt_add()&squot; when we can&squot;t get the netmask any other way..&n; *&n; *&t;If the lower byte or two are zero, we guess the mask based on the&n; *&t;number of zero 8-bit net numbers, otherwise we use the &quot;default&quot;&n; *&t;masks judging by the destination address and our device netmask.&n; */
 DECL|function|default_mask
 r_static
 r_inline
@@ -436,6 +439,7 @@ id|IN_CLASSC_NET
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;If no mask is specified then generate a default entry.&n; */
 DECL|function|guess_mask
 r_static
 r_int
@@ -492,6 +496,7 @@ r_return
 id|dev-&gt;pa_mask
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Find the route entry through which our gateway will be reached&n; */
 DECL|function|get_gw_dev
 r_static
 r_inline
@@ -546,7 +551,7 @@ id|rt-&gt;rt_mask
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* gateways behind gateways are a no-no */
+multiline_comment|/* &n;&t;&t; *&t;Gateways behind gateways are a no-no &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -562,10 +567,10 @@ id|rt-&gt;rt_dev
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * rewrote rt_add(), as the old one was weird. Linus&n; */
-DECL|function|rt_add
+multiline_comment|/*&n; *&t;Rewrote rt_add(), as the old one was weird - Linus&n; *&n; *&t;This routine is used to update the IP routing table, either&n; *&t;from the kernel (ICMP_REDIRECT) or via an ioctl call issued&n; *&t;by the superuser.&n; */
+DECL|function|ip_rt_add
 r_void
-id|rt_add
+id|ip_rt_add
 c_func
 (paren
 r_int
@@ -607,6 +612,7 @@ r_int
 r_int
 id|cpuflags
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;A host is a unique machine and has no network bits.&n;&t; */
 r_if
 c_cond
 (paren
@@ -620,6 +626,7 @@ op_assign
 l_int|0xffffffff
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;Calculate the network mask&n;&t; */
 r_else
 r_if
 c_cond
@@ -681,6 +688,7 @@ op_and_assign
 id|mask
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;A gateway must be reachable and not a local address&n;&t; */
 r_if
 c_cond
 (paren
@@ -701,7 +709,7 @@ op_amp
 id|RTF_GATEWAY
 )paren
 (brace
-multiline_comment|/* don&squot;t try to add a gateway we can&squot;t reach.. */
+multiline_comment|/*&n;&t;&t; *&t;Don&squot;t try to add a gateway we can&squot;t reach.. &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -725,7 +733,7 @@ id|gw
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Allocate an entry. */
+multiline_comment|/*&n;&t; *&t;Allocate an entry and fill it in.&n;&t; */
 id|rt
 op_assign
 (paren
@@ -812,7 +820,7 @@ c_func
 id|rt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * What we have to do is loop though this until we have&n;&t; * found the first address which has a higher generality than&n;&t; * the one in rt.  Then we can put rt in right before it.&n;&t; */
+multiline_comment|/*&n;&t; *&t;What we have to do is loop though this until we have&n;&t; *&t;found the first address which has a higher generality than&n;&t; *&t;the one in rt.  Then we can put rt in right before it.&n;&t; *&t;The interrupts must be off for this process.&n;&t; */
 id|save_flags
 c_func
 (paren
@@ -824,7 +832,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* remove old route if we are getting a duplicate. */
+multiline_comment|/*&n;&t; *&t;Remove old route if we are getting a duplicate. &n;&t; */
 id|rp
 op_assign
 op_amp
@@ -888,7 +896,7 @@ id|rtable
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* add the new route */
+multiline_comment|/*&n;&t; *&t;Add the new route &n;&t; */
 id|rp
 op_assign
 op_amp
@@ -935,6 +943,7 @@ id|rp
 op_assign
 id|rt
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Update the loopback route&n;&t; */
 r_if
 c_cond
 (paren
@@ -946,6 +955,7 @@ id|rt_loopback
 op_assign
 id|rt
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Restore the interrupts and return&n;&t; */
 id|restore_flags
 c_func
 (paren
@@ -955,6 +965,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Check if a mask is acceptable.&n; */
 DECL|function|bad_mask
 r_static
 r_inline
@@ -1012,6 +1023,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Process a route add request from the user&n; */
 DECL|function|rt_new
 r_static
 r_int
@@ -1048,6 +1060,7 @@ id|mask
 comma
 id|gw
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If a device is specified find it.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1104,6 +1117,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;If the device isn&squot;t INET, don&squot;t allow it&n;&t; */
 r_if
 c_cond
 (paren
@@ -1115,6 +1129,7 @@ r_return
 op_minus
 id|EAFNOSUPPORT
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Make local copies of the important bits&n;&t; */
 id|flags
 op_assign
 id|r-&gt;rt_flags
@@ -1161,7 +1176,7 @@ id|r-&gt;rt_gateway
 op_member_access_from_pointer
 id|sin_addr.s_addr
 suffix:semicolon
-multiline_comment|/* BSD emulation: Permits route add someroute gw one-of-my-addresses&n;   to indicate which iface. Not as clean as the nice Linux dev technique&n;   but people keep using it... */
+multiline_comment|/*&n;&t; *&t;BSD emulation: Permits route add someroute gw one-of-my-addresses&n;&t; *&t;to indicate which iface. Not as clean as the nice Linux dev technique&n;&t; *&t;but people keep using it... &n;&t; */
 r_if
 c_cond
 (paren
@@ -1224,6 +1239,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;Ignore faulty masks&n;&t; */
 r_if
 c_cond
 (paren
@@ -1239,6 +1255,7 @@ id|mask
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Set the mask to nothing for host routes.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1264,6 +1281,7 @@ r_return
 op_minus
 id|EAFNOSUPPORT
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;You can only gateway IP via IP..&n;&t; */
 r_if
 c_cond
 (paren
@@ -1307,12 +1325,13 @@ id|dev
 )paren
 id|dev
 op_assign
-id|dev_check
+id|ip_dev_check
 c_func
 (paren
 id|daddr
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Unknown device.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1324,7 +1343,8 @@ r_return
 op_minus
 id|ENETUNREACH
 suffix:semicolon
-id|rt_add
+multiline_comment|/*&n;&t; *&t;Add the route&n;&t; */
+id|ip_rt_add
 c_func
 (paren
 id|flags
@@ -1342,6 +1362,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Remove a route, as requested by the user.&n; */
 DECL|function|rt_kill
 r_static
 r_int
@@ -1379,15 +1400,26 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Called from the PROCfs module. */
-r_int
+multiline_comment|/* &n; *&t;Called from the PROCfs module. This outputs /proc/net/route.&n; */
 DECL|function|rt_get_info
+r_int
 id|rt_get_info
 c_func
 (paren
 r_char
 op_star
 id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
 )paren
 (brace
 r_struct
@@ -1395,25 +1427,39 @@ id|rtable
 op_star
 id|r
 suffix:semicolon
-r_char
-op_star
-id|pos
+r_int
+id|len
+op_assign
+l_int|0
 suffix:semicolon
+id|off_t
 id|pos
 op_assign
-id|buffer
+l_int|0
 suffix:semicolon
-id|pos
+id|off_t
+id|begin
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|size
+suffix:semicolon
+id|len
 op_add_assign
 id|sprintf
 c_func
 (paren
-id|pos
+id|buffer
 comma
 l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tMask&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* This isn&squot;t quite right -- r-&gt;rt_dst is a struct! */
+id|pos
+op_assign
+id|len
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This isn&squot;t quite right -- r-&gt;rt_dst is a struct! &n;&t; */
 r_for
 c_loop
 (paren
@@ -1430,12 +1476,14 @@ op_assign
 id|r-&gt;rt_next
 )paren
 (brace
-id|pos
-op_add_assign
+id|size
+op_assign
 id|sprintf
 c_func
 (paren
-id|pos
+id|buffer
+op_plus
+id|len
 comma
 l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%lu&bslash;t%d&bslash;t%08lX&bslash;n&quot;
 comma
@@ -1456,21 +1504,90 @@ comma
 id|r-&gt;rt_mask
 )paren
 suffix:semicolon
-)brace
-r_return
+id|len
+op_add_assign
+id|size
+suffix:semicolon
 id|pos
-op_minus
-id|buffer
+op_add_assign
+id|size
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pos
+OL
+id|offset
+)paren
+(brace
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|begin
+op_assign
+id|pos
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is hackish, but results in better code. Use &quot;-S&quot; to see why.&n; */
+r_if
+c_cond
+(paren
+id|pos
+OG
+id|offset
+op_plus
+id|length
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+)brace
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+id|len
+op_sub_assign
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+(brace
+id|len
+op_assign
+id|length
+suffix:semicolon
+)brace
+r_return
+id|len
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;This is hackish, but results in better code. Use &quot;-S&quot; to see why.&n; */
 DECL|macro|early_out
 mdefine_line|#define early_out ({ goto no_route; 1; })
-DECL|function|rt_route
+multiline_comment|/*&n; *&t;Route a packet. This needs to be fairly quick. Florian &amp; Co. &n; *&t;suggested a unified ARP and IP routing cache. Done right its&n; *&t;probably a brilliant idea. I&squot;d actually suggest a unified&n; *&t;ARP/IP routing/Socket pointer cache. Volunteers welcome&n; */
+DECL|function|ip_rt_route
 r_struct
 id|rtable
 op_star
-id|rt_route
+id|ip_rt_route
 c_func
 (paren
 r_int
@@ -1481,6 +1598,11 @@ r_struct
 id|options
 op_star
 id|opt
+comma
+r_int
+r_int
+op_star
+id|src_addr
 )paren
 (brace
 r_struct
@@ -1522,7 +1644,7 @@ id|rt-&gt;rt_mask
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* broadcast addresses can be special cases.. */
+multiline_comment|/*&n;&t;&t; *&t;broadcast addresses can be special cases.. &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1537,6 +1659,20 @@ op_eq
 id|daddr
 )paren
 r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|src_addr
+op_ne
+l_int|NULL
+)paren
+(brace
+op_star
+id|src_addr
+op_assign
+id|rt-&gt;rt_dev-&gt;pa_addr
 suffix:semicolon
 )brace
 r_if
@@ -1574,10 +1710,11 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|function|get_old_rtent
+multiline_comment|/*&n; *&t;Backwards compatibility&n; */
+DECL|function|ip_get_old_rtent
 r_static
 r_int
-id|get_old_rtent
+id|ip_get_old_rtent
 c_func
 (paren
 r_struct
@@ -1685,13 +1822,20 @@ id|rt-&gt;rt_dev
 op_assign
 id|tmp.rt_dev
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: obsolete routing request made.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|rt_ioctl
+multiline_comment|/*&n; *&t;Handle IP routing ioctl calls. These are used to manipulate the routing tables&n; */
+DECL|function|ip_rt_ioctl
 r_int
-id|rt_ioctl
+id|ip_rt_ioctl
 c_func
 (paren
 r_int
@@ -1719,6 +1863,7 @@ id|cmd
 r_case
 id|DDIOCSDBG
 suffix:colon
+multiline_comment|/* Control debugging */
 r_return
 id|dbg_ioctl
 c_func
@@ -1731,9 +1876,11 @@ suffix:semicolon
 r_case
 id|SIOCADDRTOLD
 suffix:colon
+multiline_comment|/* Old style add route */
 r_case
 id|SIOCDELRTOLD
 suffix:colon
+multiline_comment|/* Old style delete route */
 r_if
 c_cond
 (paren
@@ -1749,7 +1896,7 @@ id|EPERM
 suffix:semicolon
 id|err
 op_assign
-id|get_old_rtent
+id|ip_get_old_rtent
 c_func
 (paren
 (paren
@@ -1796,9 +1943,11 @@ suffix:semicolon
 r_case
 id|SIOCADDRT
 suffix:colon
+multiline_comment|/* Add a route */
 r_case
 id|SIOCDELRT
 suffix:colon
+multiline_comment|/* Delete a route */
 r_if
 c_cond
 (paren

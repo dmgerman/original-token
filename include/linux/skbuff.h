@@ -1,26 +1,22 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the &squot;struct sk_buff&squot; memory handlers.&n; *&n; * Version:&t;@(#)skbuff.h&t;1.0.4&t;05/20/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;&t;: &t;Volatiles (this makes me unhappy - we want proper asm linked list stuff)&n; *&t;&t;Alan Cox&t;&t;:&t;Declaration for new primitives&n; *&t;&t;Alan Cox&t;&t;:&t;Fraglist support (idea by Donald Becker)&n; *&t;&t;Alan Cox&t;&t;:&t;&squot;users&squot; counter. Combines with datagram changes to avoid skb_peek_copy&n; *&t;&t;&t;&t;&t;&t;being used.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
-macro_line|#ifndef _SKBUFF_H
-DECL|macro|_SKBUFF_H
-mdefine_line|#define _SKBUFF_H
+multiline_comment|/*&n; *&t;Definitions for the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Florian La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+macro_line|#ifndef _LINUX_SKBUFF_H
+DECL|macro|_LINUX_SKBUFF_H
+mdefine_line|#define _LINUX_SKBUFF_H
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#ifdef CONFIG_IPX
-macro_line|#include &quot;ipx.h&quot;
-macro_line|#endif
+macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
+DECL|macro|CONFIG_SKB_CHECK
+mdefine_line|#define CONFIG_SKB_CHECK&t;1
 DECL|macro|HAVE_ALLOC_SKB
 mdefine_line|#define HAVE_ALLOC_SKB&t;&t;/* For the drivers to know */
 DECL|macro|FREE_READ
 mdefine_line|#define FREE_READ&t;1
 DECL|macro|FREE_WRITE
 mdefine_line|#define FREE_WRITE&t;0
-DECL|struct|sk_buff
+DECL|struct|sk_buff_head
 r_struct
-id|sk_buff
+id|sk_buff_head
 (brace
-DECL|member|magic_debug_cookie
-r_int
-r_int
-id|magic_debug_cookie
-suffix:semicolon
 DECL|member|next
 r_struct
 id|sk_buff
@@ -35,20 +31,44 @@ op_star
 r_volatile
 id|prev
 suffix:semicolon
+macro_line|#if CONFIG_SKB_CHECK
+DECL|member|magic_debug_cookie
+r_int
+id|magic_debug_cookie
+suffix:semicolon
+macro_line|#endif
+)brace
+suffix:semicolon
+DECL|struct|sk_buff
+r_struct
+id|sk_buff
+(brace
+DECL|member|next
+r_struct
+id|sk_buff
+op_star
+r_volatile
+id|next
+suffix:semicolon
+DECL|member|prev
+r_struct
+id|sk_buff
+op_star
+r_volatile
+id|prev
+suffix:semicolon
+macro_line|#if CONFIG_SKB_CHECK
+DECL|member|magic_debug_cookie
+r_int
+id|magic_debug_cookie
+suffix:semicolon
+macro_line|#endif
 DECL|member|link3
 r_struct
 id|sk_buff
 op_star
 r_volatile
 id|link3
-suffix:semicolon
-DECL|member|list
-r_struct
-id|sk_buff
-op_star
-r_volatile
-op_star
-id|list
 suffix:semicolon
 DECL|member|sk
 r_struct
@@ -63,6 +83,11 @@ r_int
 id|when
 suffix:semicolon
 multiline_comment|/* used to compute rtt&squot;s&t;*/
+DECL|member|stamp
+r_struct
+id|timeval
+id|stamp
+suffix:semicolon
 DECL|member|dev
 r_struct
 id|device
@@ -100,12 +125,6 @@ id|udphdr
 op_star
 id|uh
 suffix:semicolon
-DECL|member|arp
-r_struct
-id|arphdr
-op_star
-id|arp
-suffix:semicolon
 DECL|member|raw
 r_int
 r_char
@@ -117,13 +136,6 @@ r_int
 r_int
 id|seq
 suffix:semicolon
-macro_line|#ifdef CONFIG_IPX&t;
-DECL|member|ipx
-id|ipx_packet
-op_star
-id|ipx
-suffix:semicolon
-macro_line|#endif&t;
 DECL|member|h
 )brace
 id|h
@@ -172,10 +184,12 @@ r_int
 r_int
 id|daddr
 suffix:semicolon
-DECL|member|magic
+DECL|member|raddr
 r_int
-id|magic
+r_int
+id|raddr
 suffix:semicolon
+multiline_comment|/* next hop addr */
 DECL|member|acked
 r_volatile
 r_char
@@ -198,7 +212,6 @@ id|tries
 comma
 id|lock
 suffix:semicolon
-multiline_comment|/* Lock is now unused */
 DECL|member|users
 r_int
 r_int
@@ -227,10 +240,17 @@ DECL|macro|SK_WMEM_MAX
 mdefine_line|#define SK_WMEM_MAX&t;32767
 DECL|macro|SK_RMEM_MAX
 mdefine_line|#define SK_RMEM_MAX&t;32767
+macro_line|#ifdef CONFIG_SKB_CHECK
 DECL|macro|SK_FREED_SKB
 mdefine_line|#define SK_FREED_SKB&t;0x0DE2C0DE
 DECL|macro|SK_GOOD_SKB
 mdefine_line|#define SK_GOOD_SKB&t;0xDEC0DED1
+DECL|macro|SK_HEAD_SKB
+mdefine_line|#define SK_HEAD_SKB&t;0x12231298
+macro_line|#endif
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; *&t;Handling routines are only of interest to the kernel&n; */
+macro_line|#if 0
 r_extern
 r_void
 id|print_skb
@@ -241,6 +261,7 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|kfree_skb
@@ -257,13 +278,22 @@ id|rw
 suffix:semicolon
 r_extern
 r_void
+id|skb_queue_head_init
+c_func
+(paren
+r_struct
+id|sk_buff_head
+op_star
+id|list
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|skb_queue_head
 c_func
 (paren
 r_struct
-id|sk_buff
-op_star
-r_volatile
+id|sk_buff_head
 op_star
 id|list
 comma
@@ -279,9 +309,7 @@ id|skb_queue_tail
 c_func
 (paren
 r_struct
-id|sk_buff
-op_star
-r_volatile
+id|sk_buff_head
 op_star
 id|list
 comma
@@ -299,9 +327,7 @@ id|skb_dequeue
 c_func
 (paren
 r_struct
-id|sk_buff
-op_star
-r_volatile
+id|sk_buff_head
 op_star
 id|list
 )paren
@@ -350,34 +376,6 @@ id|buf
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|skb_new_list_head
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-r_volatile
-op_star
-id|list
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|sk_buff
-op_star
-id|skb_peek
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-r_volatile
-op_star
-id|list
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|sk_buff
 op_star
@@ -385,9 +383,7 @@ id|skb_peek_copy
 c_func
 (paren
 r_struct
-id|sk_buff
-op_star
-r_volatile
+id|sk_buff_head
 op_star
 id|list
 )paren
@@ -418,6 +414,22 @@ id|mem
 comma
 r_int
 id|size
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|sk_buff
+op_star
+id|skb_clone
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 r_extern
@@ -456,8 +468,50 @@ op_star
 id|skb
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;Peek an sk_buff. Unlike most other operations you _MUST_&n; *&t;be careful with this one. A peek leaves the buffer on the&n; *&t;list and someone else may run off with it. For an interrupt&n; *&t;type system cli() peek the buffer copy the data and sti();&n; */
+DECL|function|skb_peek
+r_static
+id|__inline__
+r_struct
+id|sk_buff
+op_star
+id|skb_peek
+c_func
+(paren
+r_struct
+id|sk_buff_head
+op_star
+id|list_
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|list
+op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|list_
+suffix:semicolon
+r_return
+(paren
+id|list-&gt;next
+op_ne
+id|list
+)paren
+ques
+c_cond
+id|list-&gt;next
+suffix:colon
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#if CONFIG_SKB_CHECK
 r_extern
-r_void
+r_int
 id|skb_check
 c_func
 (paren
@@ -468,12 +522,22 @@ id|skb
 comma
 r_int
 comma
+r_int
+comma
 r_char
 op_star
 )paren
 suffix:semicolon
 DECL|macro|IS_SKB
-mdefine_line|#define IS_SKB(skb)&t;skb_check((skb),__LINE__,__FILE__)
+mdefine_line|#define IS_SKB(skb)&t;&t;skb_check((skb), 0, __LINE__,__FILE__)
+DECL|macro|IS_SKB_HEAD
+mdefine_line|#define IS_SKB_HEAD(skb)&t;skb_check((skb), 1, __LINE__,__FILE__)
+macro_line|#else
+DECL|macro|IS_SKB
+mdefine_line|#define IS_SKB(skb)&t;&t;0
+DECL|macro|IS_SKB_HEAD
+mdefine_line|#define IS_SKB_HEAD(skb)&t;0
+macro_line|#endif
 r_extern
 r_struct
 id|sk_buff
@@ -547,5 +611,6 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* _SKBUFF_H */
+macro_line|#endif&t;/* __KERNEL__ */
+macro_line|#endif&t;/* _LINUX_SKBUFF_H */
 eof

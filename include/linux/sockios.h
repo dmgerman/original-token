@@ -3,51 +3,6 @@ macro_line|#ifndef _LINUX_SOCKIOS_H
 DECL|macro|_LINUX_SOCKIOS_H
 mdefine_line|#define _LINUX_SOCKIOS_H
 multiline_comment|/* This section will go away soon! */
-macro_line|#if 1&t;/* FIXME: */
-DECL|macro|MAX_IP_NAME
-mdefine_line|#define MAX_IP_NAME&t;20
-DECL|macro|IP_SET_DEV
-mdefine_line|#define IP_SET_DEV&t;0x2401
-DECL|struct|ip_config
-r_struct
-id|ip_config
-(brace
-DECL|member|name
-r_char
-id|name
-(braket
-id|MAX_IP_NAME
-)braket
-suffix:semicolon
-DECL|member|paddr
-r_int
-r_int
-id|paddr
-suffix:semicolon
-DECL|member|router
-r_int
-r_int
-id|router
-suffix:semicolon
-DECL|member|net
-r_int
-r_int
-id|net
-suffix:semicolon
-DECL|member|up
-DECL|member|destroy
-r_int
-id|up
-suffix:colon
-l_int|1
-comma
-id|destroy
-suffix:colon
-l_int|1
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#endif&t;/* FIXME: */
 multiline_comment|/* Socket-level I/O control calls. */
 DECL|macro|FIOSETOWN
 mdefine_line|#define FIOSETOWN &t;0x8901
@@ -59,6 +14,8 @@ DECL|macro|SIOCGPGRP
 mdefine_line|#define SIOCGPGRP&t;0x8904
 DECL|macro|SIOCATMARK
 mdefine_line|#define SIOCATMARK&t;0x8905
+DECL|macro|SIOCGSTAMP
+mdefine_line|#define SIOCGSTAMP&t;0x8096&t;&t;/* Get stamp */
 multiline_comment|/* Routing table calls. */
 DECL|macro|SIOCADDRT
 mdefine_line|#define SIOCADDRT&t;0x890B&t;&t;/* add routing table entry&t;*/
@@ -103,14 +60,16 @@ DECL|macro|SIOCGIFMTU
 mdefine_line|#define SIOCGIFMTU&t;0x8921&t;&t;/* get MTU size&t;&t;&t;*/
 DECL|macro|SIOCSIFMTU
 mdefine_line|#define SIOCSIFMTU&t;0x8922&t;&t;/* set MTU size&t;&t;&t;*/
-DECL|macro|SIOCGIFHWADDR
-mdefine_line|#define&t;SIOCGIFHWADDR&t;0x8923&t;&t;/* get hardware address&t;&t;*/
+DECL|macro|OLD_SIOCGIFHWADDR
+mdefine_line|#define&t;OLD_SIOCGIFHWADDR&t;0x8923&t;&t;/* get hardware address&t;&t;*/
 DECL|macro|SIOCSIFHWADDR
 mdefine_line|#define&t;SIOCSIFHWADDR&t;0x8924&t;&t;/* set hardware address (NI)&t;*/
 DECL|macro|SIOCGIFENCAP
 mdefine_line|#define SIOCGIFENCAP&t;0x8925&t;&t;/* get/set slip encapsulation   */
 DECL|macro|SIOCSIFENCAP
 mdefine_line|#define SIOCSIFENCAP&t;0x8926&t;&t;
+DECL|macro|SIOCGIFHWADDR
+mdefine_line|#define SIOCGIFHWADDR&t;0x8927&t;&t;/* Get hardware address&t;&t;*/
 multiline_comment|/* Routing table calls (oldrtent - don&squot;t use) */
 DECL|macro|SIOCADDRTOLD
 mdefine_line|#define SIOCADDRTOLD&t;0x8940&t;&t;/* add routing table entry&t;*/

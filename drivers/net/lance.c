@@ -20,21 +20,14 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &quot;dev.h&quot;
-macro_line|#include &quot;eth.h&quot;
-macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;arp.h&quot;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(addr, size)&t;0
 DECL|macro|snarf_region
 mdefine_line|#define snarf_region(addr, size)&t;do ; while(0)
-macro_line|#endif
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(buff, size) kfree_s(buff,size)
 macro_line|#endif
 r_struct
 id|device
@@ -1222,13 +1215,11 @@ op_assign
 op_amp
 id|lance_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-macro_line|#endif
 r_return
 id|mem_start
 suffix:semicolon
@@ -2046,41 +2037,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Fill in the ethernet header. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|skb-&gt;arp
-op_logical_and
-id|dev
-op_member_access_from_pointer
-id|rebuild_header
-c_func
-(paren
-id|skb-&gt;data
-comma
-id|dev
-)paren
-)paren
-(brace
-id|skb-&gt;dev
-op_assign
-id|dev
-suffix:semicolon
-id|arp_queue
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3075,17 +3031,6 @@ id|entry
 dot
 id|msg_length
 suffix:semicolon
-r_int
-id|sksize
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
-id|pkt_len
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -3096,7 +3041,7 @@ op_assign
 id|alloc_skb
 c_func
 (paren
-id|sksize
+id|pkt_len
 comma
 id|GFP_ATOMIC
 )paren
@@ -3124,14 +3069,6 @@ multiline_comment|/* Really, deferred. */
 r_break
 suffix:semicolon
 )brace
-id|skb-&gt;mem_len
-op_assign
-id|sksize
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
 id|skb-&gt;len
 op_assign
 id|pkt_len
@@ -3164,56 +3101,12 @@ comma
 id|pkt_len
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_NETIF_RX
 id|netif_rx
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_rint
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|skb
-comma
-id|pkt_len
-comma
-id|IN_SKBUFF
-comma
-id|dev
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|kfree_skbmem
-c_func
-(paren
-id|skb
-comma
-id|sksize
-)paren
-suffix:semicolon
-id|lp-&gt;stats.rx_dropped
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
@@ -3461,7 +3354,6 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#ifdef HAVE_MULTICAST
 multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;   &t;&t;&t;best-effort filtering.&n; */
 r_static
 r_void
@@ -3649,7 +3541,6 @@ id|LANCE_DATA
 suffix:semicolon
 multiline_comment|/* Resume normal operation. */
 )brace
-macro_line|#endif
 macro_line|#ifdef HAVE_DEVLIST
 DECL|variable|lance_portlist
 r_static
