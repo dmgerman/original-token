@@ -2,6 +2,7 @@ macro_line|#ifndef _IDE_CD_H
 DECL|macro|_IDE_CD_H
 mdefine_line|#define _IDE_CD_H
 multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Erik Andersen&n; */
+macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
 DECL|macro|VERBOSE_IDE_CD_ERRORS
@@ -280,13 +281,7 @@ DECL|struct|atapi_request_sense
 r_struct
 id|atapi_request_sense
 (brace
-DECL|member|error_code
-r_int
-r_char
-id|error_code
-suffix:colon
-l_int|7
-suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|valid
 r_int
 r_char
@@ -294,10 +289,63 @@ id|valid
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|error_code
+r_int
+r_char
+id|error_code
+suffix:colon
+l_int|7
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+r_int
+r_char
+id|error_code
+suffix:colon
+l_int|7
+suffix:semicolon
+r_int
+r_char
+id|valid
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 DECL|member|reserved1
 id|byte
 id|reserved1
 suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved3
+r_int
+r_char
+id|reserved3
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|ili
+r_int
+r_char
+id|ili
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved2
+r_int
+r_char
+id|reserved2
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|sense_key
+r_int
+r_char
+id|sense_key
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|sense_key
 r_int
 r_char
@@ -326,6 +374,9 @@ id|reserved3
 suffix:colon
 l_int|2
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 DECL|member|info
 id|byte
 id|info
@@ -451,18 +502,35 @@ DECL|member|reserved1
 id|byte
 id|reserved1
 suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|adr
+id|__u8
+id|adr
+suffix:colon
+l_int|4
+suffix:semicolon
 DECL|member|control
-r_int
+id|__u8
+id|control
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|control
+id|__u8
 id|control
 suffix:colon
 l_int|4
 suffix:semicolon
 DECL|member|adr
-r_int
+id|__u8
 id|adr
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 DECL|member|track
 id|byte
 id|track
@@ -543,6 +611,20 @@ DECL|member|acdsc_format
 id|u_char
 id|acdsc_format
 suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|acdsc_ctrl
+id|u_char
+id|acdsc_ctrl
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|acdsc_adr
+id|u_char
+id|acdsc_adr
+suffix:colon
+l_int|4
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|acdsc_adr
 id|u_char
 id|acdsc_adr
@@ -555,6 +637,9 @@ id|acdsc_ctrl
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 DECL|member|acdsc_trk
 id|u_char
 id|acdsc_trk
@@ -630,39 +715,91 @@ DECL|struct|atapi_capabilities_page
 r_struct
 id|atapi_capabilities_page
 (brace
-DECL|member|page_code
-r_int
-id|page_code
-suffix:colon
-l_int|6
-suffix:semicolon
-DECL|member|reserved1
-r_int
-id|reserved1
-suffix:colon
-l_int|1
-suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|parameters_saveable
-r_int
+id|__u8
 id|parameters_saveable
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|reserved1
+id|__u8
+id|reserved1
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|page_code
+id|__u8
+id|page_code
+suffix:colon
+l_int|6
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+id|__u8
+id|page_code
+suffix:colon
+l_int|6
+suffix:semicolon
+id|__u8
+id|reserved1
+suffix:colon
+l_int|1
+suffix:semicolon
+id|__u8
+id|parameters_saveable
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 DECL|member|page_length
 id|byte
 id|page_length
 suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved2
+id|__u8
+id|reserved2
+suffix:colon
+l_int|5
+suffix:semicolon
+multiline_comment|/* Drive supports reading CD-R discs with addressing method 2 */
+DECL|member|method2
+id|__u8
+id|method2
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reserved in 1.2 */
+multiline_comment|/* Drive can read from CD-R/W (CD-E) discs (orange book, part III) */
+DECL|member|cd_rw_read
+id|__u8
+id|cd_rw_read
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reserved in 1.2 */
 multiline_comment|/* Drive supports read from CD-R discs (orange book, part II) */
 DECL|member|cd_r_read
-r_int
+id|__u8
 id|cd_r_read
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
-multiline_comment|/* Drive supports read from CD-R/W (CD-E) discs (orange book, part III) */
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+multiline_comment|/* Drive supports read from CD-R discs (orange book, part II) */
+DECL|member|cd_r_read
+id|__u8
+id|cd_r_read
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reserved in 1.2 */
+multiline_comment|/* Drive can read from CD-R/W (CD-E) discs (orange book, part III) */
 DECL|member|cd_rw_read
-r_int
+id|__u8
 id|cd_rw_read
 suffix:colon
 l_int|1
@@ -670,180 +807,373 @@ suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
 multiline_comment|/* Drive supports reading CD-R discs with addressing method 2 */
 DECL|member|method2
-r_int
+id|__u8
 id|method2
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
 DECL|member|reserved2
-r_int
+id|__u8
 id|reserved2
 suffix:colon
 l_int|5
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved3
+id|__u8
+id|reserved3
+suffix:colon
+l_int|6
+suffix:semicolon
+multiline_comment|/* Drive can write to CD-R/W (CD-E) discs (orange book, part III) */
+DECL|member|cd_rw_write
+id|__u8
+id|cd_rw_write
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reserved in 1.2 */
 multiline_comment|/* Drive supports write to CD-R discs (orange book, part II) */
 DECL|member|cd_r_write
-r_int
+id|__u8
 id|cd_r_write
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
-multiline_comment|/* Drive supports write to CD-R/W (CD-E) discs (orange book, part III) */
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+multiline_comment|/* Drive can write to CD-R discs (orange book, part II) */
+DECL|member|cd_r_write
+id|__u8
+id|cd_r_write
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reserved in 1.2 */
+multiline_comment|/* Drive can write to CD-R/W (CD-E) discs (orange book, part III) */
 DECL|member|cd_rw_write
-r_int
+id|__u8
 id|cd_rw_write
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
 DECL|member|reserved3
-r_int
+id|__u8
 id|reserved3
 suffix:colon
 l_int|6
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved4
+id|__u8
+id|reserved4
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can read multisession discs. */
+DECL|member|multisession
+id|__u8
+id|multisession
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can read mode 2, form 2 data. */
+DECL|member|mode2_form2
+id|__u8
+id|mode2_form2
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can read mode 2, form 1 (XA) data. */
+DECL|member|mode2_form1
+id|__u8
+id|mode2_form1
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports digital output on port 2. */
+DECL|member|digport2
+id|__u8
+id|digport2
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports digital output on port 1. */
+DECL|member|digport1
+id|__u8
+id|digport1
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can deliver a composite audio/video data stream. */
+DECL|member|composite
+id|__u8
+id|composite
+suffix:colon
+l_int|1
+suffix:semicolon
 multiline_comment|/* Drive supports audio play operations. */
 DECL|member|audio_play
-r_int
+id|__u8
+id|audio_play
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+multiline_comment|/* Drive supports audio play operations. */
+DECL|member|audio_play
+id|__u8
 id|audio_play
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can deliver a composite audio/video data stream. */
 DECL|member|composite
-r_int
+id|__u8
 id|composite
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive supports digital output on port 1. */
 DECL|member|digport1
-r_int
+id|__u8
 id|digport1
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive supports digital output on port 2. */
 DECL|member|digport2
-r_int
+id|__u8
 id|digport2
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can read mode 2, form 1 (XA) data. */
 DECL|member|mode2_form1
-r_int
+id|__u8
 id|mode2_form1
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can read mode 2, form 2 data. */
 DECL|member|mode2_form2
-r_int
+id|__u8
 id|mode2_form2
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can read multisession discs. */
 DECL|member|multisession
-r_int
+id|__u8
 id|multisession
 suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|reserved4
-r_int
+id|__u8
 id|reserved4
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved5
+id|__u8
+id|reserved5
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can return Media Catalog Number (UPC) info. */
+DECL|member|upc
+id|__u8
+id|upc
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can return International Standard Recording Code info. */
+DECL|member|isrc
+id|__u8
+id|isrc
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive supports C2 error pointers. */
+DECL|member|c2_pointers
+id|__u8
+id|c2_pointers
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* R-W data will be returned deinterleaved and error corrected. */
+DECL|member|rw_corr
+id|__u8
+id|rw_corr
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Subchannel reads can return combined R-W information. */
+DECL|member|rw_supported
+id|__u8
+id|rw_supported
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can continue a read cdda operation from a loss of streaming.*/
+DECL|member|cdda_accurate
+id|__u8
+id|cdda_accurate
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can read Red Book audio data. */
 DECL|member|cdda
-r_int
+id|__u8
+id|cdda
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+multiline_comment|/* Drive can read Red Book audio data. */
+DECL|member|cdda
+id|__u8
 id|cdda
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can continue a read cdda operation from a loss of streaming.*/
 DECL|member|cdda_accurate
-r_int
+id|__u8
 id|cdda_accurate
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Subchannel reads can return combined R-W information. */
 DECL|member|rw_supported
-r_int
+id|__u8
 id|rw_supported
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* R-W data will be returned deinterleaved and error corrected. */
 DECL|member|rw_corr
-r_int
+id|__u8
 id|rw_corr
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive supports C2 error pointers. */
 DECL|member|c2_pointers
-r_int
+id|__u8
 id|c2_pointers
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can return International Standard Recording Code info. */
 DECL|member|isrc
-r_int
+id|__u8
 id|isrc
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can return Media Catalog Number (UPC) info. */
 DECL|member|upc
-r_int
+id|__u8
 id|upc
 suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|reserved5
-r_int
+id|__u8
 id|reserved5
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+multiline_comment|/* Drive mechanism types. */
+DECL|member|mechtype
+id|mechtype_t
+id|mechtype
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|reserved6
+id|__u8
+id|reserved6
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can eject a disc or changer cartridge. */
+DECL|member|eject
+id|__u8
+id|eject
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* State of prevent/allow jumper. */
+DECL|member|prevent_jumper
+id|__u8
+id|prevent_jumper
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Present state of door lock. */
+DECL|member|lock_state
+id|__u8
+id|lock_state
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can lock the door. */
 DECL|member|lock
-r_int
+id|__u8
+id|lock
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+multiline_comment|/* Drive can lock the door. */
+DECL|member|lock
+id|__u8
 id|lock
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Present state of door lock. */
 DECL|member|lock_state
-r_int
+id|__u8
 id|lock_state
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* State of prevent/allow jumper. */
 DECL|member|prevent_jumper
-r_int
+id|__u8
 id|prevent_jumper
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can eject a disc or changer cartridge. */
 DECL|member|eject
-r_int
+id|__u8
 id|eject
 suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|reserved6
-r_int
+id|__u8
 id|reserved6
 suffix:colon
 l_int|1
@@ -855,23 +1185,64 @@ id|mechtype
 suffix:colon
 l_int|3
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved7
+id|__u8
+id|reserved7
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Drive supports software slot selection. */
+DECL|member|sss
+id|__u8
+id|sss
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reserved in 1.2 */
+multiline_comment|/* Changer can report exact contents of slots. */
+DECL|member|disc_present
+id|__u8
+id|disc_present
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reserved in 1.2 */
+multiline_comment|/* Audio for each channel can be muted independently. */
+DECL|member|separate_mute
+id|__u8
+id|separate_mute
+suffix:colon
+l_int|1
+suffix:semicolon
 multiline_comment|/* Audio level for each channel can be controlled independently. */
 DECL|member|separate_volume
-r_int
+id|__u8
+id|separate_volume
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+multiline_comment|/* Audio level for each channel can be controlled independently. */
+DECL|member|separate_volume
+id|__u8
 id|separate_volume
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Audio for each channel can be muted independently. */
 DECL|member|separate_mute
-r_int
+id|__u8
 id|separate_mute
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Changer can report exact contents of slots. */
 DECL|member|disc_present
-r_int
+id|__u8
 id|disc_present
 suffix:colon
 l_int|1
@@ -879,18 +1250,21 @@ suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
 multiline_comment|/* Drive supports software slot selection. */
 DECL|member|sss
-r_int
+id|__u8
 id|sss
 suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
 DECL|member|reserved7
-r_int
+id|__u8
 id|reserved7
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 multiline_comment|/* Note: the following four fields are returned in big-endian form. */
 multiline_comment|/* Maximum speed (in kB/s). */
 DECL|member|maxspeed
@@ -923,36 +1297,73 @@ DECL|struct|atapi_mechstat_header
 r_struct
 id|atapi_mechstat_header
 (brace
-DECL|member|curslot
-r_int
-id|curslot
-suffix:colon
-l_int|5
-suffix:semicolon
-DECL|member|changer_state
-r_int
-id|changer_state
-suffix:colon
-l_int|2
-suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|fault
-r_int
+id|__u8
 id|fault
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|changer_state
+id|__u8
+id|changer_state
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|curslot
+id|__u8
+id|curslot
+suffix:colon
+l_int|5
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+id|__u8
+id|curslot
+suffix:colon
+l_int|5
+suffix:semicolon
+id|__u8
+id|changer_state
+suffix:colon
+l_int|2
+suffix:semicolon
+id|__u8
+id|fault
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|mech_state
+id|__u8
+id|mech_state
+suffix:colon
+l_int|3
+suffix:semicolon
 DECL|member|reserved1
-r_int
+id|__u8
+id|reserved1
+suffix:colon
+l_int|5
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|reserved1
+id|__u8
 id|reserved1
 suffix:colon
 l_int|5
 suffix:semicolon
 DECL|member|mech_state
-r_int
+id|__u8
 id|mech_state
 suffix:colon
 l_int|3
 suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 DECL|member|curlba
 id|byte
 id|curlba
@@ -965,7 +1376,7 @@ id|byte
 id|nslots
 suffix:semicolon
 DECL|member|slot_tablelen
-r_int
+id|__u8
 r_int
 id|slot_tablelen
 suffix:semicolon
@@ -975,24 +1386,44 @@ DECL|struct|atapi_slot
 r_struct
 id|atapi_slot
 (brace
-DECL|member|change
-r_int
-id|change
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|reserved1
-r_int
-id|reserved1
-suffix:colon
-l_int|6
-suffix:semicolon
+macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|disc_present
-r_int
+id|__u8
 id|disc_present
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|reserved1
+id|__u8
+id|reserved1
+suffix:colon
+l_int|6
+suffix:semicolon
+DECL|member|change
+id|__u8
+id|change
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+id|__u8
+id|change
+suffix:colon
+l_int|1
+suffix:semicolon
+id|__u8
+id|reserved1
+suffix:colon
+l_int|6
+suffix:semicolon
+id|__u8
+id|disc_present
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Please fix &lt;asm/byteorder.h&gt;&quot;
+macro_line|#endif
 DECL|member|reserved2
 id|byte
 id|reserved2

@@ -652,20 +652,9 @@ op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 r_struct
-id|inode
-op_star
-id|dir
-op_assign
-id|dentry-&gt;d_parent-&gt;d_inode
-suffix:semicolon
-r_struct
 id|dentry
 op_star
 id|demd
-suffix:semicolon
-id|inode-&gt;u.umsdos_i.i_dir_owner
-op_assign
-id|dir-&gt;i_ino
 suffix:semicolon
 id|inode-&gt;u.umsdos_i.i_emd_owner
 op_assign
@@ -769,10 +758,6 @@ comma
 id|dir-&gt;i_ino
 )paren
 )paren
-suffix:semicolon
-id|inode-&gt;u.umsdos_i.i_dir_owner
-op_assign
-id|dir-&gt;i_ino
 suffix:semicolon
 id|inode-&gt;u.umsdos_i.i_emd_owner
 op_assign
@@ -1317,12 +1302,6 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-r_int
-r_int
-id|i_emd_owner
-op_assign
-id|inode-&gt;u.umsdos_i.i_emd_owner
-suffix:semicolon
 r_struct
 id|dentry
 op_star
@@ -1340,17 +1319,17 @@ id|umsdos_dirent
 id|entry
 suffix:semicolon
 id|Printk
+c_func
 (paren
 (paren
-id|KERN_DEBUG
-l_string|&quot;UMSDOS_notify_change: entering&bslash;n&quot;
+l_string|&quot;UMSDOS_notify_change: entering for %s/%s&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|ret
 op_assign
 id|inode_change_ok
@@ -1359,13 +1338,29 @@ id|inode
 comma
 id|attr
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
-op_ne
-l_int|0
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;UMSDOS_notify_change: %s/%s change not OK, ret=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|ret
 )paren
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1382,16 +1377,6 @@ c_cond
 id|inode-&gt;i_ino
 op_eq
 id|UMSDOS_ROOT_INO
-)paren
-r_goto
-id|out_nolink
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i_emd_owner
-op_ne
-l_int|0
 )paren
 r_goto
 id|out_nolink
@@ -1436,13 +1421,27 @@ c_cond
 op_logical_neg
 id|demd-&gt;d_inode
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;UMSDOS_notify_change: no EMD file %s/%s&bslash;n&quot;
+comma
+id|demd-&gt;d_parent-&gt;d_name.name
+comma
+id|demd-&gt;d_name.name
+)paren
+suffix:semicolon
 r_goto
 id|out_dput
 suffix:semicolon
+)brace
 id|ret
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* don&squot;t do anything if this is the EMD itself */
 r_if
 c_cond
 (paren
@@ -1454,15 +1453,6 @@ r_goto
 id|out_dput
 suffix:semicolon
 multiline_comment|/* This inode is not a EMD file nor an inode used internally&n;&t; * by MSDOS, so we can update its status.&n;&t; * See emd.c&n;&t; */
-id|Printk
-(paren
-(paren
-l_string|&quot;notify change %p &quot;
-comma
-id|inode
-)paren
-)paren
-suffix:semicolon
 id|fill_new_filp
 (paren
 op_amp
@@ -1476,9 +1466,14 @@ op_assign
 id|inode-&gt;u.umsdos_i.pos
 suffix:semicolon
 id|Printk
+c_func
 (paren
 (paren
-l_string|&quot;pos = %Lu &quot;
+l_string|&quot;UMSDOS_notify_change: %s/%s reading at %u&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 comma
 id|filp.f_pos
 )paren
@@ -1505,10 +1500,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|ret
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_notify_change: %s/%s EMD read error, ret=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|ret
+)paren
+suffix:semicolon
+r_goto
+id|out_dput
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1600,6 +1611,24 @@ comma
 id|UMSDOS_REC_SIZE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_notify_change: %s/%s EMD write error, ret=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|ret
+)paren
+suffix:semicolon
 id|Printk
 (paren
 (paren
@@ -1613,8 +1642,30 @@ id|entry.nlink
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* #Specification: notify_change / msdos fs&n;&t;&t; * notify_change operation are done only on the&n;&t;&t; * EMD file. The msdos fs is not even called.&n;&t;&t; */
-)brace
+multiline_comment|/* #Specification: notify_change / msdos fs&n;&t; * notify_change operation are done only on the&n;&t; * EMD file. The msdos fs is not even called.&n;&t; */
+macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
+r_if
+c_cond
+(paren
+id|entry.flags
+op_amp
+id|UMSDOS_HIDDEN
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_notify_change: %s/%s hidden, nlink=%d, ret=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|entry.nlink
+comma
+id|ret
+)paren
+suffix:semicolon
+macro_line|#endif
 id|out_dput
 suffix:colon
 id|dput
@@ -1800,7 +1851,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS dentry-WIP-Beta 0.82-7 &quot;
+l_string|&quot;UMSDOS dentry-Beta 0.83 &quot;
 l_string|&quot;(compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION

@@ -501,7 +501,7 @@ macro_line|#else /* __LITTLE_ENDIAN */
 DECL|macro|TCP_COMBINED_PORTS
 mdefine_line|#define TCP_COMBINED_PORTS(__sport, __dport) &bslash;&n;&t;(((__u32)(__dport)&lt;&lt;16) | (__u32)(__sport))
 macro_line|#endif
-macro_line|#if defined(__alpha__) || defined(__sparc_v9__)
+macro_line|#if (BITS_PER_LONG == 64)
 macro_line|#ifdef __BIG_ENDIAN
 DECL|macro|TCP_V4_ADDR_COOKIE
 mdefine_line|#define TCP_V4_ADDR_COOKIE(__name, __saddr, __daddr) &bslash;&n;&t;__u64 __name = (((__u64)(__saddr))&lt;&lt;32)|((__u64)(__daddr));
@@ -2515,9 +2515,6 @@ multiline_comment|/* Sequence number ACK&squot;d&t;*/
 suffix:semicolon
 DECL|macro|TCP_SKB_CB
 mdefine_line|#define TCP_SKB_CB(__skb)&t;((struct tcp_skb_cb *)&amp;((__skb)-&gt;cb[0]))
-multiline_comment|/* We store the congestion window as a packet count, shifted by&n; * a factor so that implementing the 1/2 MSS ssthresh rules&n; * is easy.&n; */
-DECL|macro|TCP_CWND_SHIFT
-mdefine_line|#define TCP_CWND_SHIFT&t;1
 multiline_comment|/* This determines how many packets are &quot;in the network&quot; to the best&n; * of our knowledge.  In many cases it is conservative, but where&n; * detailed information is available from the receiver (via SACK&n; * blocks etc.) we can make more aggressive calculations.&n; *&n; * Use this for decisions involving congestion control, use just&n; * tp-&gt;packets_out to determine if the send queue is empty or not.&n; *&n; * Read this equation as:&n; *&n; *&t;&quot;Packets sent once on transmission queue&quot; MINUS&n; *&t;&quot;Packets acknowledged by FACK information&quot; PLUS&n; *&t;&quot;Packets fast retransmitted&quot;&n; */
 DECL|function|tcp_packets_in_flight
 r_static
@@ -2619,11 +2616,7 @@ c_func
 id|tp
 )paren
 OL
-(paren
 id|tp-&gt;snd_cwnd
-op_rshift
-id|TCP_CWND_SHIFT
-)paren
 )paren
 op_logical_and
 op_logical_neg

@@ -1196,6 +1196,14 @@ comma
 id|len
 )paren
 suffix:semicolon
+id|info-&gt;entry.name
+(braket
+id|len
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/* for printk */
 id|info-&gt;entry.name_len
 op_assign
 id|len

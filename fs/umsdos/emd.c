@@ -94,9 +94,6 @@ r_int
 id|count
 )paren
 (brace
-id|ssize_t
-id|ret
-suffix:semicolon
 id|mm_segment_t
 id|old_fs
 op_assign
@@ -104,10 +101,8 @@ id|get_fs
 (paren
 )paren
 suffix:semicolon
-id|set_fs
-(paren
-id|KERNEL_DS
-)paren
+id|ssize_t
+id|ret
 suffix:semicolon
 multiline_comment|/* note: i_binary=2 is for CVF-FAT. We put it here, instead of&n;&t; * umsdos_file_write_kmem, since it is also wise not to compress&n;&t; * symlinks (in the unlikely event that they are &gt; 512 bytes and&n;&t; * can be compressed.&n;&t; * FIXME: should we set it when reading symlinks too?&n;&t; */
 id|MSDOS_I
@@ -118,6 +113,11 @@ op_member_access_from_pointer
 id|i_binary
 op_assign
 l_int|2
+suffix:semicolon
+id|set_fs
+(paren
+id|KERNEL_DS
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -133,6 +133,32 @@ op_amp
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
+id|set_fs
+(paren
+id|old_fs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_file_write: ret=%d&bslash;n&quot;
+comma
+id|ret
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 macro_line|#ifdef UMSDOS_PARANOIA
 r_if
 c_cond
@@ -141,7 +167,6 @@ id|ret
 op_ne
 id|count
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -153,13 +178,9 @@ comma
 id|ret
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
-id|set_fs
-(paren
-id|old_fs
-)paren
-suffix:semicolon
+id|out
+suffix:colon
 r_return
 id|ret
 suffix:semicolon
@@ -698,9 +719,21 @@ c_func
 id|demd
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_make_emd: can&squot;t get dentry in %s, err=%d&bslash;n&quot;
+comma
+id|parent-&gt;d_name.name
+comma
+id|err
+)paren
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+)brace
 multiline_comment|/* already created? */
 id|err
 op_assign
@@ -722,7 +755,7 @@ id|Printk
 c_func
 (paren
 (paren
-l_string|&quot;umsdos_make_emd: creating %s/%s&bslash;n&quot;
+l_string|&quot;umsdos_make_emd: creating EMD %s/%s&bslash;n&quot;
 comma
 id|parent-&gt;d_name.name
 comma
@@ -753,11 +786,13 @@ id|err
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;UMSDOS: Can&squot;t create EMD file %s/%s&bslash;n&quot;
+l_string|&quot;UMSDOS: create %s/%s failed, err=%d&bslash;n&quot;
 comma
 id|parent-&gt;d_name.name
 comma
 id|demd-&gt;d_name.name
+comma
+id|err
 )paren
 suffix:semicolon
 r_goto
@@ -2582,8 +2617,9 @@ id|demd
 suffix:semicolon
 id|out
 suffix:colon
-id|printk
+id|Printk
 c_func
+(paren
 (paren
 l_string|&quot;umsdos_isempty: checked %s/%s, empty=%d&bslash;n&quot;
 comma
@@ -2593,15 +2629,13 @@ id|dentry-&gt;d_name.name
 comma
 id|ret
 )paren
+)paren
 suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Locate an entry in a EMD directory.&n; * Return 0 if OK, error code if not, generally -ENOENT.&n; *&n; * does not change i_count&n; */
-multiline_comment|/* 0: anything */
-multiline_comment|/* 1: file */
-multiline_comment|/* 2: directory */
+multiline_comment|/*&n; * Locate an entry in a EMD directory.&n; * Return 0 if OK, error code if not, generally -ENOENT.&n; *&n; * expect argument:&n; * &t;0: anything&n; * &t;1: file&n; * &t;2: directory&n; */
 DECL|function|umsdos_findentry
 r_int
 id|umsdos_findentry
@@ -2640,14 +2674,15 @@ id|ret
 r_goto
 id|out
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|expect
-op_ne
-l_int|0
 )paren
 (brace
+r_case
+l_int|1
+suffix:colon
 r_if
 c_cond
 (paren
@@ -2656,35 +2691,30 @@ id|S_ISDIR
 id|info-&gt;entry.mode
 )paren
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|expect
-op_ne
-l_int|2
-)paren
 id|ret
 op_assign
 op_minus
 id|EISDIR
 suffix:semicolon
-)brace
-r_else
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
 r_if
 c_cond
 (paren
-id|expect
-op_eq
-l_int|2
+op_logical_neg
+id|S_ISDIR
+(paren
+id|info-&gt;entry.mode
 )paren
-(brace
+)paren
 id|ret
 op_assign
 op_minus
 id|ENOTDIR
 suffix:semicolon
-)brace
 )brace
 id|out
 suffix:colon

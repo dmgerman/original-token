@@ -4809,6 +4809,21 @@ id|jiffies
 op_plus
 id|WAIT_MIN_SLEEP
 suffix:semicolon
+macro_line|#if 1
+r_if
+c_cond
+(paren
+id|hwgroup-&gt;timer.next
+op_logical_or
+id|hwgroup-&gt;timer.prev
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ide_set_handler: timer already active&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|mod_timer
 c_func
 (paren
@@ -5439,6 +5454,7 @@ op_amp
 id|hwgroup-&gt;timer
 )paren
 suffix:semicolon
+multiline_comment|/* Is this needed?? */
 r_if
 c_cond
 (paren
@@ -5528,6 +5544,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *  need something here for HX PIIX3 UDMA and HPT343.......AMH&n;&t; *  irq timeout: status=0x58 { DriveReady SeekComplete DataRequest }&n;&t; */
 )brace
 id|spin_unlock_irqrestore
 c_func

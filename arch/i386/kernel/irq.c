@@ -110,6 +110,11 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+multiline_comment|/* startup is the same as &quot;enable&quot;, shutdown is same as &quot;disable&quot; */
+DECL|macro|startup_8259A_irq
+mdefine_line|#define startup_8259A_irq&t;enable_8259A_irq
+DECL|macro|shutdown_8259A_irq
+mdefine_line|#define shutdown_8259A_irq&t;disable_8259A_irq
 multiline_comment|/*&n; * Dummy controller type for unused interrupts&n; */
 DECL|function|do_none
 r_static
@@ -152,6 +157,11 @@ id|irq
 )paren
 (brace
 )brace
+multiline_comment|/* startup is the same as &quot;enable&quot;, shutdown is same as &quot;disable&quot; */
+DECL|macro|startup_none
+mdefine_line|#define startup_none&t;enable_none
+DECL|macro|shutdown_none
+mdefine_line|#define shutdown_none&t;disable_none
 DECL|variable|no_irq_type
 r_static
 r_struct
@@ -160,6 +170,10 @@ id|no_irq_type
 op_assign
 (brace
 l_string|&quot;none&quot;
+comma
+id|startup_none
+comma
+id|shutdown_none
 comma
 id|do_none
 comma
@@ -176,6 +190,10 @@ id|i8259A_irq_type
 op_assign
 (brace
 l_string|&quot;XT-PIC&quot;
+comma
+id|startup_8259A_irq
+comma
+id|shutdown_8259A_irq
 comma
 id|do_8259A_IRQ
 comma
@@ -2913,53 +2931,6 @@ op_logical_neg
 id|shared
 )paren
 (brace
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-id|IO_APIC_IRQ
-c_func
-(paren
-id|irq
-)paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * If it was on a 8259, disable it there&n;&t;&t;&t; * and move the &quot;pendingness&quot; onto the&n;&t;&t;&t; * new irq descriptor.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|irq
-OL
-l_int|16
-)paren
-(brace
-id|disable_8259A_irq
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i8259A_irq_pending
-c_func
-(paren
-id|irq
-)paren
-)paren
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|status
-op_or_assign
-id|IRQ_PENDING
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 id|irq_desc
 (braket
 id|irq
@@ -2981,7 +2952,7 @@ id|irq
 dot
 id|handler
 op_member_access_from_pointer
-id|enable
+id|startup
 c_func
 (paren
 id|irq
@@ -3269,7 +3240,7 @@ id|irq
 dot
 id|handler
 op_member_access_from_pointer
-id|disable
+id|shutdown
 c_func
 (paren
 id|irq
@@ -3387,7 +3358,7 @@ id|i
 dot
 id|handler
 op_member_access_from_pointer
-id|enable
+id|startup
 c_func
 (paren
 id|i
@@ -3499,7 +3470,7 @@ id|i
 dot
 id|handler
 op_member_access_from_pointer
-id|disable
+id|shutdown
 c_func
 (paren
 id|i
@@ -3651,7 +3622,7 @@ id|i
 dot
 id|handler
 op_member_access_from_pointer
-id|disable
+id|shutdown
 c_func
 (paren
 id|i

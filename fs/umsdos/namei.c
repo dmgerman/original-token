@@ -640,7 +640,7 @@ id|ret
 r_goto
 id|out_unlock
 suffix:semicolon
-multiline_comment|/* create short name dentry */
+multiline_comment|/* do a real lookup to get the short name dentry */
 id|fake
 op_assign
 id|umsdos_lookup_dentry
@@ -673,7 +673,7 @@ id|fake
 )paren
 )paren
 r_goto
-id|out_unlock
+id|out_remove
 suffix:semicolon
 multiline_comment|/* should not exist yet ... */
 id|ret
@@ -723,7 +723,6 @@ id|inode
 op_assign
 id|fake-&gt;d_inode
 suffix:semicolon
-multiline_comment|/* long name also gets inode info */
 id|inode-&gt;i_count
 op_increment
 suffix:semicolon
@@ -818,6 +817,40 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Add a new file into the alternate directory.&n; * The file is added to the real MSDOS directory. If successful, it&n; * is then added to the EMD file.&n; * &n; * Return the status of the operation. 0 mean success.&n; */
+DECL|function|UMSDOS_create
+r_int
+id|UMSDOS_create
+(paren
+r_struct
+id|inode
+op_star
+id|dir
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+r_int
+id|mode
+)paren
+(brace
+r_return
+id|umsdos_create_any
+(paren
+id|dir
+comma
+id|dentry
+comma
+id|mode
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Initialise the new_entry from the old for a rename operation.&n; * (Only useful for umsdos_rename_f() below).&n; */
 DECL|function|umsdos_ren_init
 r_static
@@ -833,9 +866,6 @@ r_struct
 id|umsdos_info
 op_star
 id|old_info
-comma
-r_int
-id|flags
 )paren
 (brace
 multiline_comment|/* != 0, this is the value of flags */
@@ -869,11 +899,6 @@ id|old_info-&gt;entry.mtime
 suffix:semicolon
 id|new_info-&gt;entry.flags
 op_assign
-id|flags
-ques
-c_cond
-id|flags
-suffix:colon
 id|old_info-&gt;entry.flags
 suffix:semicolon
 id|new_info-&gt;entry.nlink
@@ -881,12 +906,14 @@ op_assign
 id|old_info-&gt;entry.nlink
 suffix:semicolon
 )brace
+macro_line|#ifdef OBSOLETE
 DECL|macro|chkstk
 mdefine_line|#define chkstk() &bslash;&n;if (STACK_MAGIC != *(unsigned long *)current-&gt;kernel_stack_page){&bslash;&n;    printk(KERN_ALERT &quot;UMSDOS: %s magic %x != %lx ligne %d&bslash;n&quot; &bslash;&n;&t;   , current-&gt;comm,STACK_MAGIC &bslash;&n;&t;   ,*(unsigned long *)current-&gt;kernel_stack_page &bslash;&n;&t;   ,__LINE__); &bslash;&n;}
 DECL|macro|chkstk
 macro_line|#undef chkstk
 DECL|macro|chkstk
 mdefine_line|#define chkstk() do { } while (0);
+macro_line|#endif
 multiline_comment|/*&n; * Rename a file (move) in the file system.&n; */
 DECL|function|umsdos_rename_f
 r_static
@@ -926,6 +953,9 @@ op_star
 r_new
 comma
 op_star
+id|old_emd
+comma
+op_star
 id|new_target
 op_assign
 l_int|NULL
@@ -934,9 +964,10 @@ r_int
 id|err
 comma
 id|ret
+comma
+id|rehash
 op_assign
-op_minus
-id|EPERM
+l_int|0
 suffix:semicolon
 r_struct
 id|umsdos_info
@@ -945,6 +976,11 @@ suffix:semicolon
 r_struct
 id|umsdos_info
 id|new_info
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EPERM
 suffix:semicolon
 id|err
 op_assign
@@ -986,9 +1022,34 @@ id|err
 r_goto
 id|out
 suffix:semicolon
-id|chkstk
+multiline_comment|/* Get the EMD dentry for the old parent */
+id|old_emd
+op_assign
+id|umsdos_get_emd_dentry
+c_func
 (paren
+id|old_dentry-&gt;d_parent
 )paren
+suffix:semicolon
+id|ret
+op_assign
+id|PTR_ERR
+c_func
+(paren
+id|old_emd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_ERR
+c_func
+(paren
+id|old_emd
+)paren
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|umsdos_lockcreate2
 (paren
@@ -997,25 +1058,17 @@ comma
 id|new_dir
 )paren
 suffix:semicolon
-id|chkstk
-(paren
-)paren
-suffix:semicolon
 id|ret
 op_assign
 id|umsdos_findentry
 c_func
 (paren
-id|old_dentry-&gt;d_parent
+id|old_emd-&gt;d_parent
 comma
 op_amp
 id|old_info
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|chkstk
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -1024,13 +1077,17 @@ c_cond
 id|ret
 )paren
 (brace
-id|Printk
+id|printk
+c_func
 (paren
-(paren
-l_string|&quot;ret %d &quot;
+id|KERN_ERR
+l_string|&quot;umsdos_rename_f: old entry %s/%s not in EMD, ret=%d&bslash;n&quot;
+comma
+id|old_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|old_info.entry.name
 comma
 id|ret
-)paren
 )paren
 suffix:semicolon
 r_goto
@@ -1077,7 +1134,12 @@ c_cond
 id|err
 op_eq
 l_int|0
-op_logical_and
+)paren
+(brace
+multiline_comment|/* Are we allowed to replace it? */
+r_if
+c_cond
+(paren
 id|is_sticky
 c_func
 (paren
@@ -1098,6 +1160,50 @@ r_goto
 id|out_unlock
 suffix:semicolon
 )brace
+multiline_comment|/* check whether it _really_ exists ... */
+id|ret
+op_assign
+op_minus
+id|EEXIST
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_dentry-&gt;d_inode
+)paren
+r_goto
+id|out_unlock
+suffix:semicolon
+multiline_comment|/* bogus lookup? complain and fix up the EMD ... */
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_rename_f: entry %s/%s exists, inode NULL??&bslash;n&quot;
+comma
+id|new_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|new_info.entry.name
+)paren
+suffix:semicolon
+id|err
+op_assign
+id|umsdos_delentry
+c_func
+(paren
+id|new_dentry-&gt;d_parent
+comma
+op_amp
+id|new_info
+comma
+id|S_ISDIR
+c_func
+(paren
+id|new_info.entry.mode
+)paren
+)paren
+suffix:semicolon
+)brace
 id|Printk
 (paren
 (paren
@@ -1105,6 +1211,7 @@ l_string|&quot;new newentry &quot;
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* create the new entry ... */
 id|umsdos_ren_init
 (paren
 op_amp
@@ -1112,9 +1219,16 @@ id|new_info
 comma
 op_amp
 id|old_info
-comma
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|flags
 )paren
+id|new_info.entry.flags
+op_assign
+id|flags
 suffix:semicolon
 id|ret
 op_assign
@@ -1126,10 +1240,6 @@ op_amp
 id|new_info
 )paren
 suffix:semicolon
-id|chkstk
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1139,7 +1249,12 @@ id|ret
 id|printk
 c_func
 (paren
-l_string|&quot;umsdos_rename_f: new name failed, ret=%d&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;umsdos_rename_f: newentry %s/%s failed, ret=%d&bslash;n&quot;
+comma
+id|new_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|new_info.entry.name
 comma
 id|ret
 )paren
@@ -1148,6 +1263,45 @@ r_goto
 id|out_unlock
 suffix:semicolon
 )brace
+multiline_comment|/* If we&squot;re moving a hardlink, drop it first */
+r_if
+c_cond
+(paren
+id|old_info.entry.flags
+op_amp
+id|UMSDOS_HLINK
+)paren
+(brace
+id|rehash
+op_assign
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|old_dentry-&gt;d_hash
+)paren
+suffix:semicolon
+id|d_drop
+c_func
+(paren
+id|old_dentry
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_rename_f: moving hardlink %s/%s, rehash=%d&bslash;n&quot;
+comma
+id|old_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|old_info.entry.name
+comma
+id|rehash
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Do a real lookup to get the old short name dentry */
 id|old
 op_assign
 id|umsdos_lookup_dentry
@@ -1179,9 +1333,24 @@ c_func
 id|old
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_rename_f: lookup old dentry %s/%s, ret=%d&bslash;n&quot;
+comma
+id|old_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|old_info.fake.fname
+comma
+id|ret
+)paren
+suffix:semicolon
 r_goto
 id|out_unlock
 suffix:semicolon
+)brace
 multiline_comment|/* short and long name dentries match? */
 r_if
 c_cond
@@ -1227,10 +1396,25 @@ c_func
 r_new
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_rename_f: lookup new dentry %s/%s, ret=%d&bslash;n&quot;
+comma
+id|new_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|new_info.fake.fname
+comma
+id|ret
+)paren
+suffix:semicolon
 r_goto
 id|out_dput
 suffix:semicolon
-multiline_comment|/*&n;&t; * Note! If the short and long name dentries match,&n;&t; * the target name will be destroyed by the msdos&n;&t; * rename. So we make a copy in case it&squot;s needed.&n;&t; */
+)brace
+multiline_comment|/*&n;&t; * Note! If the new short- and long-name dentries are&n;&t; * aliases, the target name will be destroyed by the&n;&t; * msdos-level rename. If in addition the old dentries&n;&t; * _aren&squot;t_ aliased, we&squot;ll need the original new name&n;&t; * for the final d_move, and so must make a copy here.&n;&t; *&n;&t; * Welcome to the mysteries of the dcache ...&n;&t; */
 r_if
 c_cond
 (paren
@@ -1245,6 +1429,14 @@ c_func
 r_new
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|old
+op_ne
+id|old_dentry
+)paren
+(brace
 multiline_comment|/* make a copy of the target dentry */
 id|ret
 op_assign
@@ -1272,13 +1464,8 @@ r_goto
 id|out_dput
 suffix:semicolon
 )brace
-id|Printk
-(paren
-(paren
-l_string|&quot;msdos_rename &quot;
-)paren
-)paren
-suffix:semicolon
+)brace
+multiline_comment|/* Do the msdos-level rename */
 id|ret
 op_assign
 id|msdos_rename
@@ -1292,13 +1479,9 @@ comma
 r_new
 )paren
 suffix:semicolon
-id|chkstk
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
-id|printk
+id|Printk
 c_func
+(paren
 (paren
 l_string|&quot;umsdos_rename_f: now %s/%s, ret=%d&bslash;n&quot;
 comma
@@ -1308,8 +1491,8 @@ id|old-&gt;d_name.name
 comma
 id|ret
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1332,6 +1515,20 @@ op_ne
 l_int|0
 )paren
 (brace
+id|Printk
+c_func
+(paren
+(paren
+l_string|&quot;umsdos_rename_f: rename failed, ret=%d, removing %s/%s&bslash;n&quot;
+comma
+id|ret
+comma
+id|new_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|new_info.entry.name
+)paren
+)paren
+suffix:semicolon
 id|umsdos_delentry
 (paren
 id|new_dentry-&gt;d_parent
@@ -1345,20 +1542,16 @@ id|new_info.entry.mode
 )paren
 )paren
 suffix:semicolon
-id|chkstk
-(paren
-)paren
-suffix:semicolon
 r_goto
 id|out_dput
 suffix:semicolon
 )brace
-multiline_comment|/* Rename successful ... remove old name from EMD */
-id|ret
+multiline_comment|/*&n;&t; * Rename successful ... remove the old name from the EMD.&n;&t; * Note that we use the EMD parent here, as the old dentry&n;&t; * may have moved to a new parent ...&n;&t; */
+id|err
 op_assign
 id|umsdos_delentry
 (paren
-id|old_dentry-&gt;d_parent
+id|old_emd-&gt;d_parent
 comma
 op_amp
 id|old_info
@@ -1369,10 +1562,27 @@ id|old_info.entry.mode
 )paren
 )paren
 suffix:semicolon
-id|chkstk
+r_if
+c_cond
 (paren
+id|err
+)paren
+(brace
+multiline_comment|/* Failed? Complain a bit, but don&squot;t fail the operation */
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_rename_f: delentry %s/%s failed, error=%d&bslash;n&quot;
+comma
+id|old_emd-&gt;d_parent-&gt;d_name.name
+comma
+id|old_info.entry.name
+comma
+id|err
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* dput() the dentry if we haven&squot;t already */
 id|out_dput
 suffix:colon
@@ -1449,22 +1659,6 @@ id|new_target
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Update f_pos so notify_change will succeed&n;&t; * if the file was already in use.&n;&t; */
-macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
-id|printk
-c_func
-(paren
-l_string|&quot;umsdos_rename_f: %s/%s dirinfo, old=%d, new=%d&bslash;n&quot;
-comma
-id|old_dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|old_dentry-&gt;d_name.name
-comma
-id|old_info.f_pos
-comma
-id|new_info.f_pos
-)paren
-suffix:semicolon
-macro_line|#endif
 id|umsdos_set_dirinfo_new
 c_func
 (paren
@@ -1479,6 +1673,12 @@ id|dput
 c_func
 (paren
 id|new_target
+)paren
+suffix:semicolon
+id|dput
+c_func
+(paren
+id|old_emd
 )paren
 suffix:semicolon
 id|umsdos_unlockcreate
@@ -1752,15 +1952,17 @@ r_struct
 id|inode
 op_star
 id|olddir
-suffix:semicolon
-r_char
-op_star
-id|path
+op_assign
+id|olddentry-&gt;d_parent-&gt;d_inode
 suffix:semicolon
 r_struct
 id|dentry
 op_star
 id|temp
+suffix:semicolon
+r_char
+op_star
+id|path
 suffix:semicolon
 r_int
 r_int
@@ -1770,8 +1972,12 @@ r_int
 id|ret
 suffix:semicolon
 r_struct
-id|umsdos_dirent
-id|entry
+id|umsdos_info
+id|old_info
+suffix:semicolon
+r_struct
+id|umsdos_info
+id|hid_info
 suffix:semicolon
 macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
 id|printk
@@ -1847,10 +2053,6 @@ id|buffer
 r_goto
 id|out
 suffix:semicolon
-id|olddir
-op_assign
-id|olddentry-&gt;d_parent-&gt;d_inode
-suffix:semicolon
 id|umsdos_lockcreate2
 (paren
 id|dir
@@ -1858,16 +2060,17 @@ comma
 id|olddir
 )paren
 suffix:semicolon
-multiline_comment|/* get the directory entry for the old name */
+multiline_comment|/*&n;&t; * Parse the name and get the visible directory entry.&n;&t; */
 id|ret
 op_assign
-id|umsdos_dentry_to_entry
-c_func
+id|umsdos_parse
 (paren
-id|olddentry
+id|olddentry-&gt;d_name.name
+comma
+id|olddentry-&gt;d_name.len
 comma
 op_amp
-id|entry
+id|old_info
 )paren
 suffix:semicolon
 r_if
@@ -1878,36 +2081,56 @@ id|ret
 r_goto
 id|out_unlock
 suffix:semicolon
-macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
+id|ret
+op_assign
+id|umsdos_findentry
+(paren
+id|olddentry-&gt;d_parent
+comma
+op_amp
+id|old_info
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;umsdos_link: have old entry %s, ino=%lu, flags=%x&bslash;n&quot;
+l_string|&quot;UMSDOS_link: %s/%s not in EMD, ret=%d&bslash;n&quot;
 comma
-id|entry.name
+id|olddentry-&gt;d_parent-&gt;d_name.name
 comma
-id|oldinode-&gt;i_ino
+id|olddentry-&gt;d_name.name
 comma
-id|entry.flags
+id|ret
 )paren
 suffix:semicolon
-macro_line|#endif
+r_goto
+id|out_unlock
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * If the visible dentry is a pseudo-hardlink, the original&n;&t; * file must be already hidden.&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|entry.flags
+id|old_info.entry.flags
 op_amp
-id|UMSDOS_HIDDEN
+id|UMSDOS_HLINK
 )paren
 )paren
 (brace
-r_struct
-id|umsdos_info
-id|info
+r_int
+id|err
 suffix:semicolon
-multiline_comment|/* get a hidden link name */
+multiline_comment|/* create a hidden link name */
 id|ret
 op_assign
 id|umsdos_newhidden
@@ -1915,7 +2138,7 @@ id|umsdos_newhidden
 id|olddentry-&gt;d_parent
 comma
 op_amp
-id|info
+id|hid_info
 )paren
 suffix:semicolon
 r_if
@@ -1923,32 +2146,44 @@ c_cond
 (paren
 id|ret
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_link: can&squot;t make hidden %s/%s, ret=%d&bslash;n&quot;
+comma
+id|olddentry-&gt;d_parent-&gt;d_name.name
+comma
+id|hid_info.entry.name
+comma
+id|ret
+)paren
+suffix:semicolon
 r_goto
 id|out_unlock
 suffix:semicolon
-id|Printk
-c_func
-(paren
-(paren
-l_string|&quot;umsdos_link: made hidden %s&bslash;n&quot;
-comma
-id|info.entry.name
-)paren
-)paren
-suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * Make a dentry and rename the original file ...&n;&t;&t; */
 id|temp
 op_assign
 id|umsdos_lookup_dentry
 c_func
 (paren
-id|dentry-&gt;d_parent
+id|olddentry-&gt;d_parent
 comma
-id|info.entry.name
+id|hid_info.entry.name
 comma
-id|info.entry.name_len
+id|hid_info.entry.name_len
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|PTR_ERR
+c_func
+(paren
+id|temp
 )paren
 suffix:semicolon
 r_if
@@ -1960,9 +2195,23 @@ c_func
 id|temp
 )paren
 )paren
-r_goto
-id|out_unlock
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_link: lookup %s/%s failed, ret=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|hid_info.entry.name
+comma
+id|ret
+)paren
 suffix:semicolon
+r_goto
+id|cleanup
+suffix:semicolon
+)brace
 multiline_comment|/* rename the link to the hidden location ... */
 id|ret
 op_assign
@@ -1972,7 +2221,7 @@ id|olddir
 comma
 id|olddentry
 comma
-id|dir
+id|olddir
 comma
 id|temp
 comma
@@ -1990,21 +2239,28 @@ c_cond
 (paren
 id|ret
 )paren
-r_goto
-id|out_unlock
-suffix:semicolon
-macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;umsdos_link: renamed to %s%s&bslash;n&quot;
+l_string|&quot;umsdos_link: rename to %s/%s failed, ret=%d&bslash;n&quot;
 comma
-id|olddentry-&gt;d_parent-&gt;d_name.name
+id|temp-&gt;d_parent-&gt;d_name.name
 comma
-id|olddentry-&gt;d_name.name
+id|temp-&gt;d_name.name
+comma
+id|ret
 )paren
 suffix:semicolon
-macro_line|#endif
+r_goto
+id|cleanup
+suffix:semicolon
+)brace
+multiline_comment|/* mark the inode as a hardlink */
+id|oldinode-&gt;u.umsdos_i.i_is_hlink
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Capture the path to the hidden link.&n;&t;&t; */
 id|path
 op_assign
@@ -2022,15 +2278,6 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|path
-)paren
-r_goto
-id|out_unlock
-suffix:semicolon
 id|Printk
 c_func
 (paren
@@ -2041,7 +2288,7 @@ id|path
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Recreate a dentry for the original name and symlink it.&n;&t;&t; * Note: this counts as the &quot;original&quot; reference, so we &n;&t;&t; * don&squot;t increment i_nlink for this one.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Recreate a dentry for the original name and symlink it,&n;&t;&t; * then symlink the new dentry. Don&squot;t give up if one fails,&n;&t;&t; * or we&squot;ll lose the file completely!&n;&t;&t; *&n;&t;&t; * Note: this counts as the &quot;original&quot; reference, so we &n;&t;&t; * don&squot;t increment i_nlink for this one.&n;&t;&t; */
 id|temp
 op_assign
 id|umsdos_lookup_dentry
@@ -2049,25 +2296,32 @@ c_func
 (paren
 id|olddentry-&gt;d_parent
 comma
-id|entry.name
+id|old_info.entry.name
 comma
-id|entry.name_len
+id|old_info.entry.name_len
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|PTR_ERR
+c_func
+(paren
+id|temp
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|IS_ERR
 c_func
 (paren
 id|temp
 )paren
 )paren
-r_goto
-id|out_unlock
-suffix:semicolon
+(brace
 id|ret
 op_assign
 id|umsdos_symlink_x
@@ -2091,16 +2345,9 @@ c_func
 id|temp
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-)paren
-r_goto
-id|out_unlock
-suffix:semicolon
+)brace
 multiline_comment|/* This symlink increments i_nlink (see below.) */
-id|ret
+id|err
 op_assign
 id|umsdos_symlink_x
 (paren
@@ -2117,16 +2364,174 @@ comma
 id|UMSDOS_HLINK
 )paren
 suffix:semicolon
+multiline_comment|/* fold the two errors */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+id|ret
+op_assign
+id|err
+suffix:semicolon
+r_goto
+id|out_unlock
+suffix:semicolon
+multiline_comment|/* creation failed ... remove the link entry */
+id|cleanup
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_link: link failed, ret=%d, removing %s/%s&bslash;n&quot;
+comma
+id|ret
+comma
+id|olddentry-&gt;d_parent-&gt;d_name.name
+comma
+id|hid_info.entry.name
+)paren
+suffix:semicolon
+id|err
+op_assign
+id|umsdos_delentry
+c_func
+(paren
+id|olddentry-&gt;d_parent
+comma
+op_amp
+id|hid_info
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_goto
 id|out_unlock
 suffix:semicolon
 )brace
+id|Printk
+c_func
+(paren
+(paren
+l_string|&quot;UMSDOS_link: %s/%s already hidden&bslash;n&quot;
+comma
+id|olddentry-&gt;d_parent-&gt;d_name.name
+comma
+id|olddentry-&gt;d_name.name
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * The original file is already hidden, and we need to get &n;&t; * the dentry for its real name, not the visible name.&n;&t; * N.B. make sure it&squot;s the hidden inode ...&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|oldinode-&gt;u.umsdos_i.i_is_hlink
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;UMSDOS_link: %s/%s hidden, ino=%ld not hlink??&bslash;n&quot;
+comma
+id|olddentry-&gt;d_parent-&gt;d_name.name
+comma
+id|olddentry-&gt;d_name.name
+comma
+id|oldinode-&gt;i_ino
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * In order to get the correct (real) inode, we just drop&n;&t; * the original dentry.&n;&t; */
+id|d_drop
+c_func
+(paren
+id|olddentry
+)paren
+suffix:semicolon
+id|Printk
+c_func
+(paren
+(paren
+l_string|&quot;UMSDOS_link: hard link %s/%s, fake=%s&bslash;n&quot;
+comma
+id|olddentry-&gt;d_parent-&gt;d_name.name
+comma
+id|olddentry-&gt;d_name.name
+comma
+id|old_info.fake.fname
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Do a real lookup to get the short name dentry */
+id|temp
+op_assign
+id|umsdos_lookup_dentry
+c_func
+(paren
+id|olddentry-&gt;d_parent
+comma
+id|old_info.fake.fname
+comma
+id|old_info.fake.len
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|PTR_ERR
+c_func
+(paren
+id|temp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_ERR
+c_func
+(paren
+id|temp
+)paren
+)paren
+r_goto
+id|out_unlock
+suffix:semicolon
+multiline_comment|/* now resolve the link ... */
+id|temp
+op_assign
+id|umsdos_solve_hlink
+c_func
+(paren
+id|temp
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|PTR_ERR
+c_func
+(paren
+id|temp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_ERR
+c_func
+(paren
+id|temp
+)paren
+)paren
+r_goto
+id|out_unlock
+suffix:semicolon
 id|path
 op_assign
 id|umsdos_d_path
 c_func
 (paren
-id|olddentry
+id|temp
 comma
 (paren
 r_char
@@ -2137,25 +2542,27 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|dput
+c_func
 (paren
-op_logical_neg
-id|path
+id|temp
 )paren
-r_goto
-id|out_unlock
 suffix:semicolon
 id|Printk
 c_func
 (paren
 (paren
-l_string|&quot;umsdos_link: already hidden, path=%s&bslash;n&quot;
+l_string|&quot;umsdos_link: %s/%s already hidden, path=%s&bslash;n&quot;
+comma
+id|olddentry-&gt;d_parent-&gt;d_name.name
+comma
+id|olddentry-&gt;d_name.name
 comma
 id|path
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* finally we can symlink it ... */
 id|ret
 op_assign
 id|umsdos_symlink_x
@@ -2205,19 +2612,43 @@ r_struct
 id|iattr
 id|newattrs
 suffix:semicolon
-id|oldinode-&gt;i_nlink
-op_increment
-suffix:semicolon
+macro_line|#ifdef UMSDOS_PARANOIA
+r_if
+c_cond
+(paren
+op_logical_neg
+id|oldinode-&gt;u.umsdos_i.i_is_hlink
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;UMSDOS_link: linked %s/%s, nlink=%d&bslash;n&quot;
+l_string|&quot;UMSDOS_link: %s/%s, ino=%ld, not marked as hlink!&bslash;n&quot;
 comma
 id|olddentry-&gt;d_parent-&gt;d_name.name
 comma
 id|olddentry-&gt;d_name.name
 comma
+id|oldinode-&gt;i_ino
+)paren
+suffix:semicolon
+macro_line|#endif
 id|oldinode-&gt;i_nlink
+op_increment
+suffix:semicolon
+id|Printk
+c_func
+(paren
+(paren
+l_string|&quot;UMSDOS_link: linked %s/%s, ino=%ld, nlink=%d&bslash;n&quot;
+comma
+id|olddentry-&gt;d_parent-&gt;d_name.name
+comma
+id|olddentry-&gt;d_name.name
+comma
+id|oldinode-&gt;i_ino
+comma
+id|oldinode-&gt;i_nlink
+)paren
 )paren
 suffix:semicolon
 id|newattrs.ia_valid
@@ -2246,40 +2677,6 @@ id|ret
 suffix:semicolon
 r_return
 id|ret
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Add a new file into the alternate directory.&n; * The file is added to the real MSDOS directory. If successful, it&n; * is then added to the EMD file.&n; * &n; * Return the status of the operation. 0 mean success.&n; */
-DECL|function|UMSDOS_create
-r_int
-id|UMSDOS_create
-(paren
-r_struct
-id|inode
-op_star
-id|dir
-comma
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-r_int
-id|mode
-)paren
-(brace
-r_return
-id|umsdos_create_any
-(paren
-id|dir
-comma
-id|dentry
-comma
-id|mode
-comma
-l_int|0
-comma
-l_int|0
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Add a sub-directory in a directory&n; */
@@ -3139,6 +3536,10 @@ id|inode
 suffix:semicolon
 r_int
 id|ret
+comma
+id|rehash
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|umsdos_info
@@ -3287,28 +3688,40 @@ op_amp
 id|UMSDOS_HLINK
 )paren
 (brace
+id|rehash
+op_assign
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
+suffix:semicolon
 id|d_drop
 c_func
 (paren
 id|dentry
 )paren
 suffix:semicolon
-macro_line|#ifdef UMSDOS_PARANOIA
-id|printk
+id|Printk
 c_func
 (paren
-l_string|&quot;UMSDOS_unlink: hard link %s/%s, fake=%s, dropping&bslash;n&quot;
+(paren
+l_string|&quot;UMSDOS_unlink: hard link %s/%s, fake=%s, rehash=%d&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
 id|info.fake.fname
+comma
+id|rehash
+)paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-multiline_comment|/* get the short name dentry */
+multiline_comment|/* Do a real lookup to get the short name dentry */
 id|temp
 op_assign
 id|umsdos_lookup_dentry
@@ -3582,7 +3995,7 @@ r_goto
 id|out_cleanup
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If this was the last linked references, delete it now.&n;&t; */
+multiline_comment|/*&n;&t; * If this was the last linked reference, delete it now.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3600,14 +4013,22 @@ comma
 id|link
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;umsdos_unlink: nlink -&gt; 0, unlinked, ret=%d&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;umsdos_unlink: link removal failed, ret=%d&bslash;n&quot;
 comma
 id|ret
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -3738,6 +4159,39 @@ id|EEXIST
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/*&n;&t; * Something seems to be giving negative lookups when&n;&t; * the file really exists ... track this down!&n;&t; */
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|new_dentry-&gt;d_inode
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;UMSDOS_rename: %s/%s negative, error EEXIST??&bslash;n&quot;
+comma
+id|new_dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|new_dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+id|d_drop
+c_func
+(paren
+id|new_dentry
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 multiline_comment|/* This is not terribly efficient but should work. */
 r_if
 c_cond
@@ -3779,6 +4233,7 @@ multiline_comment|/* this time the rename should work ... */
 id|ret
 op_assign
 id|umsdos_rename_f
+c_func
 (paren
 id|old_dir
 comma

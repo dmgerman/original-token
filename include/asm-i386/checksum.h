@@ -51,6 +51,7 @@ op_star
 id|dst_err_ptr
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;Note: when you get a NULL pointer exception here this means someone&n; *&t;passed in an incorrect kernel address to one of these functions. &n; *&t;&n; *&t;If you use these functions directly please don&squot;t forget the &n; *&t;verify_area().&n; */
 r_extern
 id|__inline__
 DECL|function|csum_partial_copy_nocheck
@@ -74,17 +75,6 @@ r_int
 id|sum
 )paren
 (brace
-r_int
-op_star
-id|src_err_ptr
-op_assign
-l_int|NULL
-comma
-op_star
-id|dst_err_ptr
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 id|csum_partial_copy_generic
 (paren
@@ -96,9 +86,9 @@ id|len
 comma
 id|sum
 comma
-id|src_err_ptr
+l_int|NULL
 comma
-id|dst_err_ptr
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -129,12 +119,6 @@ op_star
 id|err_ptr
 )paren
 (brace
-r_int
-op_star
-id|dst_err_ptr
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 id|csum_partial_copy_generic
 (paren
@@ -148,7 +132,7 @@ id|sum
 comma
 id|err_ptr
 comma
-id|dst_err_ptr
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -181,12 +165,6 @@ op_star
 id|err_ptr
 )paren
 (brace
-r_int
-op_star
-id|src_err_ptr
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 id|csum_partial_copy_generic
 (paren
@@ -198,7 +176,7 @@ id|len
 comma
 id|sum
 comma
-id|src_err_ptr
+l_int|NULL
 comma
 id|err_ptr
 )paren
@@ -851,16 +829,10 @@ op_star
 id|err_ptr
 )paren
 (brace
-r_int
-op_star
-id|src_err_ptr
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|verify_area
+id|access_ok
 c_func
 (paren
 id|VERIFY_WRITE
@@ -869,8 +841,6 @@ id|dst
 comma
 id|len
 )paren
-op_eq
-l_int|0
 )paren
 r_return
 id|csum_partial_copy_generic
@@ -884,7 +854,7 @@ id|len
 comma
 id|sum
 comma
-id|src_err_ptr
+l_int|NULL
 comma
 id|err_ptr
 )paren
@@ -901,8 +871,10 @@ op_minus
 id|EFAULT
 suffix:semicolon
 r_return
-id|sum
+op_minus
+l_int|1
 suffix:semicolon
+multiline_comment|/* invalid checksum */
 )brace
 macro_line|#endif
 eof

@@ -2250,6 +2250,16 @@ c_func
 (paren
 id|PLX
 comma
+id|PLX_9050
+comma
+l_string|&quot;PCI9050 I2O&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|PLX
+comma
 id|PLX_9080
 comma
 l_string|&quot;PCI9080 I2O&quot;
@@ -2853,6 +2863,16 @@ comma
 id|INIT_360P
 comma
 l_string|&quot;360 P&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|TTI
+comma
+id|TTI_HPT343
+comma
+l_string|&quot;HPT343&quot;
 )paren
 comma
 id|DEVICE
@@ -3603,6 +3623,16 @@ comma
 id|RICOH_RL5C466
 comma
 l_string|&quot;RL5C466&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ARTOP
+comma
+id|ARTOP_ATP8400
+comma
+l_string|&quot;ATP8400&quot;
 )paren
 comma
 id|DEVICE
@@ -6001,6 +6031,12 @@ id|PCI_VENDOR_ID_INIT
 suffix:colon
 r_return
 l_string|&quot;Initio Corp&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_TTI
+suffix:colon
+r_return
+l_string|&quot;Triones Technologies, Inc.&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_VIA

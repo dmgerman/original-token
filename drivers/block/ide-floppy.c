@@ -157,6 +157,7 @@ multiline_comment|/*&n; *&t;Removable Block Access Capabilities Page&n; */
 r_typedef
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|page_code
 r_int
 id|page_code
@@ -178,11 +179,34 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Should be 0 */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|ps
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Should be 0 */
+r_int
+id|reserved1_6
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|page_code
+suffix:colon
+l_int|6
+suffix:semicolon
+multiline_comment|/* Page code - Should be 0x1b */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|page_length
 id|u8
 id|page_length
 suffix:semicolon
 multiline_comment|/* Page Length - Should be 0xa */
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|reserved2
 r_int
 id|reserved2
@@ -230,6 +254,57 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Non cd optical device */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|sflp
+r_int
+id|sflp
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* System floppy type device */
+DECL|member|srfp
+r_int
+id|srfp
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Supports reporting progress of format */
+DECL|member|reserved2
+r_int
+id|reserved2
+suffix:colon
+l_int|6
+suffix:semicolon
+DECL|member|ncd
+r_int
+id|ncd
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Non cd optical device */
+DECL|member|sml
+r_int
+id|sml
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Single / Multiple lun supported */
+DECL|member|reserved3
+r_int
+id|reserved3
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|tlun
+r_int
+id|tlun
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Total logical units supported by the device */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|reserved
 id|u8
 id|reserved
@@ -245,6 +320,7 @@ multiline_comment|/*&n; *&t;Flexible disk page.&n; */
 r_typedef
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|page_code
 r_int
 id|page_code
@@ -266,6 +342,28 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* The device is capable of saving the page */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|ps
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* The device is capable of saving the page */
+r_int
+id|reserved1_6
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|page_code
+suffix:colon
+l_int|6
+suffix:semicolon
+multiline_comment|/* Page code - Should be 0x5 */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|page_length
 id|u8
 id|page_length
@@ -357,6 +455,7 @@ id|u32
 id|blocks
 suffix:semicolon
 multiline_comment|/* Number of blocks */
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|dc
 r_int
 id|dc
@@ -370,6 +469,23 @@ id|reserved
 suffix:colon
 l_int|6
 suffix:semicolon
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|reserved
+r_int
+id|reserved
+suffix:colon
+l_int|6
+suffix:semicolon
+DECL|member|dc
+r_int
+id|dc
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Descriptor Code */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|length_msb
 id|u8
 id|length_msb
@@ -561,6 +677,7 @@ l_int|8
 suffix:semicolon
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|check
 r_int
 id|check
@@ -617,6 +734,58 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* The device has access to the command block */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|bsy
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* The device has access to the command block */
+r_int
+id|drdy
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Ignored for ATAPI commands (ready to accept ATA command) */
+r_int
+id|reserved5
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|dsc
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Media access command finished */
+r_int
+id|drq
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Data is request by the device */
+r_int
+id|corr
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Correctable error occurred */
+r_int
+id|idx
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|check
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Error occurred */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -636,6 +805,7 @@ l_int|8
 suffix:semicolon
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|ili
 r_int
 id|ili
@@ -671,6 +841,40 @@ suffix:colon
 l_int|4
 suffix:semicolon
 multiline_comment|/* Sense key of the last failed packet command */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|sense_key
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Sense key of the last failed packet command */
+r_int
+id|mcr
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Media Change Requested - As defined by ATA */
+r_int
+id|abrt
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Aborted command - As defined by ATA */
+r_int
+id|eom
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* End Of Media Detected */
+r_int
+id|ili
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Illegal Length Indication */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -690,6 +894,7 @@ l_int|8
 suffix:semicolon
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|dma
 r_int
 id|dma
@@ -718,6 +923,34 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Reserved */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|reserved7
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|reserved654
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Reserved (Tag Type) */
+r_int
+id|reserved321
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|dma
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Using DMA or PIO */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -737,6 +970,7 @@ l_int|16
 suffix:semicolon
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|low
 r_int
 id|low
@@ -751,6 +985,22 @@ suffix:colon
 l_int|8
 suffix:semicolon
 multiline_comment|/* MSB */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|high
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* MSB */
+r_int
+id|low
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* LSB */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -770,6 +1020,7 @@ l_int|8
 suffix:semicolon
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|cod
 r_int
 id|cod
@@ -791,6 +1042,28 @@ suffix:colon
 l_int|6
 suffix:semicolon
 multiline_comment|/* Reserved */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|reserved
+suffix:colon
+l_int|6
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|io
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* The device requests us to read (1) or write (0) */
+r_int
+id|cod
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Information transferred is command (1) or data (0) */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -810,6 +1083,7 @@ l_int|8
 suffix:semicolon
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|sam_lun
 r_int
 id|sam_lun
@@ -852,6 +1126,46 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Should be set to 1 */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|one7
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Should be set to 1 */
+r_int
+id|reserved6
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|one5
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Should be set to 1 */
+r_int
+id|drv
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* The responding drive will be drive 0 (0) or drive 1 (1) */
+r_int
+id|reserved3
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|sam_lun
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Logical unit number */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -871,6 +1185,7 @@ l_int|8
 suffix:semicolon
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|zero0
 r_int
 id|zero0
@@ -906,6 +1221,40 @@ suffix:colon
 l_int|4
 suffix:semicolon
 multiline_comment|/* Reserved */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|reserved4567
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|one3
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Should be set to 1 */
+r_int
+id|srst
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* ATA software reset. ATAPI devices should use the new ATAPI srst. */
+r_int
+id|nien
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Device interrupt is disabled (1) or enabled (0) */
+r_int
+id|zero0
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Should be set to zero */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|b
 )brace
 id|b
@@ -919,6 +1268,7 @@ DECL|struct|idefloppy_id_gcw
 r_struct
 id|idefloppy_id_gcw
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|packet_size
 r_int
 id|packet_size
@@ -968,12 +1318,59 @@ suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* Protocol type */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|protocol
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Protocol type */
+r_int
+id|reserved13
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|device_type
+suffix:colon
+l_int|5
+suffix:semicolon
+multiline_comment|/* Device type */
+r_int
+id|removable
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Removable media */
+r_int
+id|drq_type
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Command packet DRQ type */
+r_int
+id|reserved234
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|packet_size
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Packet Size */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;INQUIRY packet command - Data Format&n; */
 r_typedef
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|device_type
 r_int
 id|device_type
@@ -1051,6 +1448,76 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* AENC - Reserved */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|reserved0_765
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Peripheral Qualifier - Reserved */
+r_int
+id|device_type
+suffix:colon
+l_int|5
+suffix:semicolon
+multiline_comment|/* Peripheral Device Type */
+r_int
+id|rmb
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Removable Medium Bit */
+r_int
+id|reserved1_6t0
+suffix:colon
+l_int|7
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|iso_version
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* ISO Version */
+r_int
+id|ecma_version
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* ECMA Version */
+r_int
+id|ansi_version
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* ANSI Version */
+r_int
+id|reserved3_7
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* AENC - Reserved */
+r_int
+id|reserved3_6
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* TrmIOP - Reserved */
+r_int
+id|reserved3_45
+suffix:colon
+l_int|2
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|response_format
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Response Data Format */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|additional_length
 id|u8
 id|additional_length
@@ -1116,6 +1583,7 @@ multiline_comment|/*&n; *&t;REQUEST SENSE packet command result - Data Format.&n
 r_typedef
 r_struct
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|error_code
 r_int
 id|error_code
@@ -1164,6 +1632,51 @@ id|reserved2_67
 suffix:colon
 l_int|2
 suffix:semicolon
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+id|valid
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* The information field conforms to SFF-8070i */
+r_int
+id|error_code
+suffix:colon
+l_int|7
+suffix:semicolon
+multiline_comment|/* Current error (0x70) */
+id|u8
+id|reserved1
+suffix:colon
+l_int|8
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|reserved2_67
+suffix:colon
+l_int|2
+suffix:semicolon
+r_int
+id|ili
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Incorrect Length Indicator */
+r_int
+id|reserved2_4
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Reserved */
+r_int
+id|sense_key
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Sense Key */
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|information
 id|u32
 id|information
@@ -1237,6 +1750,7 @@ id|u8
 id|medium_type
 suffix:semicolon
 multiline_comment|/* Medium Type */
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|reserved3
 r_int
 id|reserved3
@@ -1250,6 +1764,23 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Write protect */
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+DECL|member|wp
+r_int
+id|wp
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Write protect */
+DECL|member|reserved3
+r_int
+id|reserved3
+suffix:colon
+l_int|7
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|reserved
 id|u8
 id|reserved
@@ -6175,6 +6706,8 @@ l_string|&quot;IOMEGA ZIP 100 ATAPI&quot;
 op_eq
 l_int|0
 op_logical_and
+(paren
+(paren
 id|strcmp
 c_func
 (paren
@@ -6184,6 +6717,20 @@ l_string|&quot;21.D&quot;
 )paren
 op_eq
 l_int|0
+)paren
+op_logical_or
+(paren
+id|strcmp
+c_func
+(paren
+id|drive-&gt;id-&gt;fw_rev
+comma
+l_string|&quot;23.D&quot;
+)paren
+op_eq
+l_int|0
+)paren
+)paren
 )paren
 (brace
 r_for

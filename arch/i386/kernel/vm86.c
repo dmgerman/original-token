@@ -42,6 +42,23 @@ DECL|macro|VM86_REGS_SIZE1
 mdefine_line|#define VM86_REGS_SIZE1 &bslash;&n;        ( (unsigned)( &amp; (((struct kernel_vm86_regs *)0)-&gt;VM86_REGS_PART2) ) )
 DECL|macro|VM86_REGS_SIZE2
 mdefine_line|#define VM86_REGS_SIZE2 (sizeof(struct kernel_vm86_regs) - VM86_REGS_SIZE1)
+id|asmlinkage
+r_struct
+id|pt_regs
+op_star
+id|FASTCALL
+c_func
+(paren
+id|save_v86_state
+c_func
+(paren
+r_struct
+id|kernel_vm86_regs
+op_star
+id|regs
+)paren
+)paren
+suffix:semicolon
 DECL|function|save_v86_state
 id|asmlinkage
 r_struct

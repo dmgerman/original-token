@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.33 1998/08/27 16:55:20 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.35 1998/09/07 00:13:57 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1263,102 +1263,9 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FILTER
+macro_line|#if defined(CONFIG_FILTER) || !defined(HAVE_CSUM_COPY_USER)
 DECL|macro|CONFIG_UDP_DELAY_CSUM
 macro_line|#undef CONFIG_UDP_DELAY_CSUM
-macro_line|#endif
-macro_line|#ifdef CONFIG_UDP_DELAY_CSUM
-multiline_comment|/* Please, read comments in net/checksum.h, asm/checksum.h&n;&n;   I commented out csum_partial_copy_to_user there because it did not&n;   verify_area. Now I am even wondered, how clever was I that time 8)8)&n;   If I did not it, I would step into this hole again.   --ANK&n; */
-macro_line|#ifndef _HAVE_ARCH_COPY_AND_CSUM_TO_USER
-macro_line|#if defined(__i386__)
-r_static
-id|__inline__
-DECL|function|csum_and_copy_to_user
-r_int
-r_int
-id|csum_and_copy_to_user
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-comma
-r_int
-id|sum
-comma
-r_int
-op_star
-id|err_ptr
-)paren
-(brace
-r_int
-op_star
-id|src_err_ptr
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|dst
-comma
-id|len
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-id|csum_partial_copy_generic
-c_func
-(paren
-id|src
-comma
-id|dst
-comma
-id|len
-comma
-id|sum
-comma
-id|src_err_ptr
-comma
-id|err_ptr
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-)paren
-op_star
-id|err_ptr
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-id|sum
-suffix:semicolon
-)brace
-macro_line|#elif defined(__sparc__)
-DECL|macro|csum_and_copy_to_user
-mdefine_line|#define csum_and_copy_to_user csum_partial_copy_to_user
-macro_line|#else
-DECL|macro|CONFIG_UDP_DELAY_CSUM
-macro_line|#undef CONFIG_UDP_DELAY_CSUM
-macro_line|#endif
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; * &t;This should be easy, if there is something there we&n; * &t;return it, otherwise we block.&n; */
 DECL|function|udpv6_recvmsg
@@ -3843,16 +3750,13 @@ l_int|0
 multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|udpv6_init
 r_void
+id|__init
 id|udpv6_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|inet6_add_protocol

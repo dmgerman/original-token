@@ -764,6 +764,25 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
+macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
+r_if
+c_cond
+(paren
+id|entry.flags
+op_amp
+id|UMSDOS_HLINK
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_readdir_x: %s/%s is hardlink&bslash;n&quot;
+comma
+id|filp-&gt;f_dentry-&gt;d_name.name
+comma
+id|entry.name
+)paren
+suffix:semicolon
+macro_line|#endif
 id|umsdos_parse
 (paren
 id|entry.name
@@ -819,15 +838,38 @@ id|dret
 r_break
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * If the file wasn&squot;t found, remove it from the EMD.&n;&t;&t; */
+id|inode
+op_assign
+id|dret-&gt;d_inode
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|dret-&gt;d_inode
+id|inode
 )paren
 r_goto
 id|remove_name
 suffix:semicolon
+macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
+r_if
+c_cond
+(paren
+id|inode-&gt;u.umsdos_i.i_is_hlink
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_readdir_x: %s/%s already resolved, ino=%ld&bslash;n&quot;
+comma
+id|dret-&gt;d_parent-&gt;d_name.name
+comma
+id|dret-&gt;d_name.name
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+macro_line|#endif
 id|Printk
 (paren
 (paren
@@ -854,6 +896,9 @@ id|UMSDOS_HLINK
 )paren
 op_logical_and
 id|follow_hlink
+op_logical_and
+op_logical_neg
+id|inode-&gt;u.umsdos_i.i_is_hlink
 )paren
 (brace
 id|dret
@@ -882,29 +927,6 @@ id|dret
 )paren
 r_break
 suffix:semicolon
-macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
-id|printk
-c_func
-(paren
-l_string|&quot;umsdos_readdir_x: link is %s/%s, ino=%ld&bslash;n&quot;
-comma
-id|dret-&gt;d_parent-&gt;d_name.name
-comma
-id|dret-&gt;d_name.name
-comma
-(paren
-id|dret-&gt;d_inode
-ques
-c_cond
-id|dret-&gt;d_inode-&gt;i_ino
-suffix:colon
-l_int|0
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-multiline_comment|/* save the inode ptr and number, then free the dentry */
 id|inode
 op_assign
 id|dret-&gt;d_inode
@@ -929,6 +951,7 @@ suffix:semicolon
 r_goto
 id|clean_up
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* #Specification:  pseudo root / reading real root&n;&t;&t; * The pseudo root (/linux) is logically&n;&t;&t; * erased from the real root.  This means that&n;&t;&t; * ls /DOS, won&squot;t show &quot;linux&quot;. This avoids&n;&t;&t; * infinite recursion (/DOS/linux/DOS/linux/...) while&n;&t;&t; * walking the file system.&n;&t;&t; */
 r_if
@@ -1030,7 +1053,7 @@ macro_line|#ifdef UMSDOS_PARANOIA
 id|printk
 c_func
 (paren
-l_string|&quot;umsdos_readdir_x: %s/%s out of sync, erased&bslash;n&quot;
+l_string|&quot;umsdos_readdir_x: %s/%s out of sync, erasing&bslash;n&quot;
 comma
 id|filp-&gt;f_dentry-&gt;d_name.name
 comma
@@ -1794,10 +1817,6 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|inode-&gt;u.umsdos_i.i_dir_owner
-op_assign
-id|parent-&gt;d_inode-&gt;i_ino
-suffix:semicolon
 id|inode-&gt;u.umsdos_i.i_emd_owner
 op_assign
 l_int|0
@@ -2260,14 +2279,32 @@ c_func
 id|dret
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;umsdos_lookup_x: %s/%s real lookup failed, ret=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|ret
+)paren
+suffix:semicolon
 r_goto
 id|out
+suffix:semicolon
+)brace
+id|inode
+op_assign
+id|dret-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|dret-&gt;d_inode
+id|inode
 )paren
 r_goto
 id|out_remove
@@ -2301,9 +2338,14 @@ multiline_comment|/* Check for a hard link */
 r_if
 c_cond
 (paren
+(paren
 id|info.entry.flags
 op_amp
 id|UMSDOS_HLINK
+)paren
+op_logical_and
+op_logical_neg
+id|inode-&gt;u.umsdos_i.i_is_hlink
 )paren
 (brace
 id|dret
@@ -2333,7 +2375,6 @@ id|dret
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|ret
 op_assign
 op_minus
@@ -2363,6 +2404,7 @@ suffix:semicolon
 r_goto
 id|out_dput
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2476,7 +2518,7 @@ r_goto
 id|out_dput
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check whether a file exists in the current directory.&n; * Return 0 if OK, negative error code if not (ex: -ENOENT).&n; * &n; * called by VFS. should fill dentry-&gt;d_inode (via d_add), and &n; * set (increment) dentry-&gt;d_inode-&gt;i_count.&n; *&n; */
+multiline_comment|/*&n; * Check whether a file exists in the current directory.&n; * Return 0 if OK, negative error code if not (ex: -ENOENT).&n; * &n; * Called by VFS; should fill dentry-&gt;d_inode via d_add.&n; */
 DECL|function|UMSDOS_lookup
 r_int
 id|UMSDOS_lookup
@@ -2762,7 +2804,7 @@ r_return
 id|path
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * gets dentry which points to pseudo-hardlink&n; *&n; * it should try to find file it points to&n; * if file is found, it should dput() original dentry and return new one&n; * (with d_count = i_count = 1)&n; * Otherwise, it should return with error, with dput()ed original dentry.&n; *&n; */
+multiline_comment|/*&n; * Return the dentry which points to a pseudo-hardlink.&n; *&n; * it should try to find file it points to&n; * if file is found, return new dentry/inode&n; * The resolved inode will have i_is_hlink set.&n; *&n; * Note: the original dentry is always dput(), even if an error occurs.&n; */
 DECL|function|umsdos_solve_hlink
 r_struct
 id|dentry
@@ -3114,31 +3156,48 @@ multiline_comment|/* end while */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|IS_ERR
 c_func
 (paren
 id|dentry_dst
 )paren
 )paren
-id|printk
-(paren
-l_string|&quot;umsdos_solve_hlink: err=%ld&bslash;n&quot;
-comma
-id|PTR_ERR
-c_func
-(paren
-id|dentry_dst
-)paren
-)paren
+(brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dentry_dst-&gt;d_inode
 suffix:semicolon
-macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
-r_else
 r_if
 c_cond
 (paren
-op_logical_neg
-id|dentry_dst-&gt;d_inode
+id|inode
 )paren
+(brace
+id|inode-&gt;u.umsdos_i.i_is_hlink
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
+id|printk
+(paren
+l_string|&quot;umsdos_solve_hlink: resolved link %s/%s, ino=%ld&bslash;n&quot;
+comma
+id|dentry_dst-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry_dst-&gt;d_name.name
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+(brace
+macro_line|#ifdef UMSDOS_DEBUG_VERBOSE
 id|printk
 (paren
 l_string|&quot;umsdos_solve_hlink: resolved link %s/%s negative!&bslash;n&quot;
@@ -3148,19 +3207,23 @@ comma
 id|dentry_dst-&gt;d_name.name
 )paren
 suffix:semicolon
+macro_line|#endif
+)brace
+)brace
 r_else
 id|printk
+c_func
 (paren
-l_string|&quot;umsdos_solve_hlink: resolved link %s/%s, ino=%ld&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;umsdos_solve_hlink: err=%ld&bslash;n&quot;
 comma
-id|dentry_dst-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry_dst-&gt;d_name.name
-comma
-id|dentry_dst-&gt;d_inode-&gt;i_ino
+id|PTR_ERR
+c_func
+(paren
+id|dentry_dst
+)paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|out_free
 suffix:colon
 id|kfree

@@ -2256,6 +2256,10 @@ id|__init
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
+DECL|macro|BAD_DMA_DRIVE
+mdefine_line|#define BAD_DMA_DRIVE&t;&t;0
+DECL|macro|GOOD_DMA_DRIVE
+mdefine_line|#define GOOD_DMA_DRIVE&t;&t;1
 r_int
 id|ide_build_dmatable
 (paren
@@ -2270,6 +2274,17 @@ id|ide_dma_intr
 id|ide_drive_t
 op_star
 id|drive
+)paren
+suffix:semicolon
+r_int
+id|check_drive_lists
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|good_bad
 )paren
 suffix:semicolon
 r_int

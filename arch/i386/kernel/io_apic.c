@@ -3657,12 +3657,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10
-op_star
-l_int|10000
+l_int|100
 )paren
 suffix:semicolon
 r_if
@@ -3787,11 +3785,11 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Level triggered interrupts can just be masked.&n; */
-DECL|function|enable_level_ioapic_irq
+multiline_comment|/*&n; * Starting up a edge-triggered IO-APIC interrupt is&n; * nasty - we need to make sure that we get the edge.&n; * If it is already asserted for some reason, we need&n; * to fake an edge by marking it IRQ_PENDING..&n; *&n; * This is not complete - we should be able to fake&n; * an edge even if it isn&squot;t on the 8259A...&n; */
+DECL|function|startup_edge_ioapic_irq
 r_static
 r_void
-id|enable_level_ioapic_irq
+id|startup_edge_ioapic_irq
 c_func
 (paren
 r_int
@@ -3799,31 +3797,57 @@ r_int
 id|irq
 )paren
 (brace
-id|unmask_IO_APIC_irq
-c_func
+r_if
+c_cond
 (paren
 id|irq
-)paren
-suffix:semicolon
-)brace
-DECL|function|disable_level_ioapic_irq
-r_static
-r_void
-id|disable_level_ioapic_irq
-c_func
-(paren
-r_int
-r_int
-id|irq
+OL
+l_int|16
 )paren
 (brace
-id|mask_IO_APIC_irq
+id|disable_8259A_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i8259A_irq_pending
+c_func
+(paren
+id|irq
+)paren
+)paren
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|status
+op_or_assign
+id|IRQ_PENDING
+suffix:semicolon
+)brace
+id|enable_edge_ioapic_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
 )brace
+DECL|macro|shutdown_edge_ioapic_irq
+mdefine_line|#define shutdown_edge_ioapic_irq&t;disable_edge_ioapic_irq
+multiline_comment|/*&n; * Level triggered interrupts can just be masked,&n; * and shutting down and starting up the interrupt&n; * is the same as enabling and disabling them.&n; */
+DECL|macro|startup_level_ioapic_irq
+mdefine_line|#define startup_level_ioapic_irq&t;unmask_IO_APIC_irq
+DECL|macro|shutdown_level_ioapic_irq
+mdefine_line|#define shutdown_level_ioapic_irq&t;mask_IO_APIC_irq
+DECL|macro|enable_level_ioapic_irq
+mdefine_line|#define enable_level_ioapic_irq&t;&t;unmask_IO_APIC_irq
+DECL|macro|disable_level_ioapic_irq
+mdefine_line|#define disable_level_ioapic_irq&t;mask_IO_APIC_irq
 DECL|function|do_edge_ioapic_IRQ
 r_static
 r_void
@@ -4158,6 +4182,10 @@ op_assign
 (brace
 l_string|&quot;IO-APIC-edge&quot;
 comma
+id|startup_edge_ioapic_irq
+comma
+id|shutdown_edge_ioapic_irq
+comma
 id|do_edge_ioapic_IRQ
 comma
 id|enable_edge_ioapic_irq
@@ -4173,6 +4201,10 @@ id|ioapic_level_irq_type
 op_assign
 (brace
 l_string|&quot;IO-APIC-level&quot;
+comma
+id|startup_level_ioapic_irq
+comma
+id|shutdown_level_ioapic_irq
 comma
 id|do_level_ioapic_IRQ
 comma
@@ -4448,9 +4480,9 @@ l_string|&quot; works.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&n; * IRQ&squot;s that are handled by the old PIC in all cases:&n; * - IRQ2 is the cascade IRQ, and cannot be a io-apic IRQ.&n; *   Linux doesn&squot;t really care, as it&squot;s not actually used&n; *   for any interrupt handling anyway.&n; * - IRQ13 is the FPU error IRQ, and may be connected&n; *   directly from the FPU to the old PIC. Linux doesn&squot;t&n; *   really care, because Linux doesn&squot;t want to use IRQ13&n; *   anyway (exception 16 is the proper FPU error signal)&n; * - IRQ9 is broken on PIIX4 motherboards:&n; *&n; *&t;&t;&quot;IRQ9 cannot be re-assigned&quot;&n; *&n; *&t;&t;IRQ9 is not available to assign to&n; *&t;&t;ISA add-in cards because it is&n; *&t;&t;dedicated to the power&n; *&t;&t;management function of the PIIX4&n; *&t;&t;controller on the motherboard.&n; *&t;&t;This is true for other motherboards&n; *&t;&t;which use the 82371AB PIIX4&n; *&t;&t;component.&n; */
+multiline_comment|/*&n; *&n; * IRQ&squot;s that are handled by the old PIC in all cases:&n; * - IRQ2 is the cascade IRQ, and cannot be a io-apic IRQ.&n; *   Linux doesn&squot;t really care, as it&squot;s not actually used&n; *   for any interrupt handling anyway.&n; * - IRQ13 is the FPU error IRQ, and may be connected&n; *   directly from the FPU to the old PIC. Linux doesn&squot;t&n; *   really care, because Linux doesn&squot;t want to use IRQ13&n; *   anyway (exception 16 is the proper FPU error signal)&n; *&n; * Additionally, something is definitely wrong with irq9&n; * on PIIX4 boards.&n; */
 DECL|macro|PIC_IRQS
-mdefine_line|#define PIC_IRQS&t;((1&lt;&lt;2)|(1&lt;&lt;9)|(1&lt;&lt;13))
+mdefine_line|#define PIC_IRQS&t;((1&lt;&lt;2)|(1&lt;&lt;13))
 DECL|function|setup_IO_APIC
 r_void
 id|__init
@@ -4570,29 +4602,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get rid of any pending interrupt sources by just blindly&n;&t; * ACK&squot;ing the IO-APIC. There is apparently no other way to&n;&t; * remove stale bits in the ISR.&n;&t; *&n;&t; * I&squot;d love to be proven wrong, please tell me how to clear&n;&t; * the ISR bit for specific interrupts..&n;&t; *&n;&t; * Oh, how do we clear the IRR bit? I&squot;d like to be able to&n;&t; * make sure that we get one interrupt for something that &n;&t; * is pending when we enable it, even if it is edge-triggered.&n;&t; * How to fool the IO-APIC to think it got an edge when&n;&t; * enabled?&n;&t; */
-(brace
-r_int
-id|i
-op_assign
-l_int|10
-suffix:semicolon
-r_do
-(brace
-id|ack_APIC_irq
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_decrement
-id|i
-)paren
-suffix:semicolon
-)brace
 id|print_IO_APIC
 c_func
 (paren

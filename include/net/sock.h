@@ -529,6 +529,11 @@ id|__u32
 id|snd_ssthresh
 suffix:semicolon
 multiline_comment|/* Slow start size threshold&t;&t;*/
+DECL|member|snd_cwnd_cnt
+id|__u16
+id|snd_cwnd_cnt
+suffix:semicolon
+multiline_comment|/* Linear increase counter&t;&t;*/
 DECL|member|dup_acks
 id|__u8
 id|dup_acks

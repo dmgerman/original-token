@@ -57,6 +57,8 @@ DECL|macro|WIN_READ
 mdefine_line|#define WIN_READ&t;&t;0x20
 DECL|macro|WIN_WRITE
 mdefine_line|#define WIN_WRITE&t;&t;0x30
+DECL|macro|WIN_WRITE_VERIFY
+mdefine_line|#define WIN_WRITE_VERIFY&t;0x3C
 DECL|macro|WIN_VERIFY
 mdefine_line|#define WIN_VERIFY&t;&t;0x40
 DECL|macro|WIN_FORMAT
@@ -91,6 +93,10 @@ DECL|macro|WIN_READDMA
 mdefine_line|#define WIN_READDMA&t;&t;0xc8&t;/* read sectors using DMA transfers */
 DECL|macro|WIN_WRITEDMA
 mdefine_line|#define WIN_WRITEDMA&t;&t;0xca&t;/* write sectors using DMA transfers */
+DECL|macro|WIN_READ_BUFFER
+mdefine_line|#define WIN_READ_BUFFER&t;&t;0xE4&t;/* force read only 1 sector */
+DECL|macro|WIN_WRITE_BUFFER
+mdefine_line|#define WIN_WRITE_BUFFER&t;0xE8&t;/* force write only 1 sector */
 DECL|macro|WIN_SMART
 mdefine_line|#define WIN_SMART&t;&t;0xb0&t;/* self-monitoring and reporting */
 multiline_comment|/* Additional drive command codes used by ATAPI devices. */
@@ -126,6 +132,8 @@ DECL|macro|TRK0_ERR
 mdefine_line|#define TRK0_ERR&t;0x02&t;/* couldn&squot;t find track 0 */
 DECL|macro|ABRT_ERR
 mdefine_line|#define ABRT_ERR&t;0x04&t;/* Command aborted */
+DECL|macro|MCR_ERR
+mdefine_line|#define MCR_ERR&t;&t;0x08&t;/* media change request */
 DECL|macro|ID_ERR
 mdefine_line|#define ID_ERR&t;&t;0x10&t;/* ID field not found */
 DECL|macro|ECC_ERR

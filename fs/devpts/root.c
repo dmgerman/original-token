@@ -473,8 +473,10 @@ id|dir-&gt;i_sb
 )paren
 suffix:semicolon
 r_int
+r_int
 id|entry
-comma
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 r_const
@@ -610,12 +612,11 @@ r_if
 c_cond
 (paren
 id|entry
-OG
+op_ge
 id|sbi-&gt;max_ptys
 )paren
 r_return
-op_minus
-id|ENOENT
+l_int|0
 suffix:semicolon
 id|dentry-&gt;d_inode
 op_assign
