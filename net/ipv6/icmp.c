@@ -1197,7 +1197,7 @@ suffix:semicolon
 multiline_comment|/* delivery to upper layer protocols failed. try raw sockets */
 id|sk
 op_assign
-id|rawv6_prot.sock_array
+id|raw_v6_htable
 (braket
 id|hash
 )braket
@@ -1219,7 +1219,7 @@ c_loop
 (paren
 id|sk
 op_assign
-id|inet6_get_sock_raw
+id|raw_v6_lookup
 c_func
 (paren
 id|sk

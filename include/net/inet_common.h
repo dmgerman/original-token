@@ -11,24 +11,6 @@ r_struct
 id|proto_ops
 id|inet_dgram_ops
 suffix:semicolon
-r_extern
-r_struct
-id|sock
-op_star
-id|tcp_sock_array
-(braket
-id|SOCK_ARRAY_SIZE
-)braket
-suffix:semicolon
-r_extern
-r_struct
-id|sock
-op_star
-id|udp_sock_array
-(braket
-id|SOCK_ARRAY_SIZE
-)braket
-suffix:semicolon
 multiline_comment|/*&n; *&t;INET4 prototypes used by INET6&n; */
 r_extern
 r_void

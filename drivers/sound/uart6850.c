@@ -1,8 +1,7 @@
 multiline_comment|/*&n; * sound/uart6850.c&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
 DECL|variable|uart6850_base

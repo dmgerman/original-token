@@ -1,17 +1,7 @@
-multiline_comment|/*================================================================&n; * AWE32 access routines&n; *================================================================*/
+multiline_comment|/*&n; * sound/awe_hw.h&n; *&n; * Access routines and definitions for the low level driver for the &n; * AWE32/Sound Blaster 32 wave table synth.&n; *   version 0.3.1; Jan. 21, 1997&n; *&n; * Copyright (C) 1996,1997 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef AWE_HW_H_DEF
 DECL|macro|AWE_HW_H_DEF
 mdefine_line|#define AWE_HW_H_DEF
-multiline_comment|/*&n; * user configuration:&n; * if auto detection can&squot;t work properly, define the following values&n; * for your machine.&n; */
-multiline_comment|/*#define AWE_DEFAULT_BASE_ADDR&t;0x620*/
-multiline_comment|/* base port address */
-multiline_comment|/*#define AWE_DEFAULT_MEM_SIZE&t;512*/
-multiline_comment|/* kbytes */
-multiline_comment|/*&n; * maximum size of sample table:&n; * if your data overflow, increase the following values.&n; */
-DECL|macro|AWE_MAX_SAMPLES
-mdefine_line|#define AWE_MAX_SAMPLES&t;&t;400
-DECL|macro|AWE_MAX_INFOS
-mdefine_line|#define AWE_MAX_INFOS&t;&t;900&t;/* GS presets has 801 infos! */
 multiline_comment|/*&n; * Emu-8000 control registers&n; * name(channel)&t;reg, port&n; */
 DECL|macro|awe_cmd_idx
 mdefine_line|#define awe_cmd_idx(reg,ch)&t;(((reg)&lt;&lt; 5) | (ch))
@@ -45,6 +35,8 @@ DECL|macro|AWE_HWCF5
 mdefine_line|#define AWE_HWCF5&t;awe_cmd_idx(1,10), Data1&t;/* DW: config dw 5 */
 DECL|macro|AWE_HWCF6
 mdefine_line|#define AWE_HWCF6&t;awe_cmd_idx(1,13), Data1&t;/* DW: config dw 6 */
+DECL|macro|AWE_HWCF7
+mdefine_line|#define AWE_HWCF7&t;awe_cmd_idx(1,14), Data1&t;/* DW: config dw 7? (not documented) */
 DECL|macro|AWE_SMALR
 mdefine_line|#define AWE_SMALR&t;awe_cmd_idx(1,20), Data1&t;/* DW: sound memory address for left read */
 DECL|macro|AWE_SMARR
@@ -105,7 +97,7 @@ DECL|macro|AWE_TREMFRQ
 mdefine_line|#define AWE_TREMFRQ(ch)&t;awe_cmd_idx(4,ch), Data3&t;/* W: LFO#1 tremolo amount and freq */
 DECL|macro|AWE_FM2FRQ2
 mdefine_line|#define AWE_FM2FRQ2(ch)&t;awe_cmd_idx(5,ch), Data3&t;/* W: LFO#2 vibrato amount and freq */
-multiline_comment|/*  used during detection (returns ROM version ?)                    */
+multiline_comment|/* used during detection (returns ROM version?; not documented in ADIP) */
 DECL|macro|AWE_U1
 mdefine_line|#define AWE_U1&t;&t;0xE0, Data3&t;  /* (R)(W) used in initialization */
 DECL|macro|AWE_U2
@@ -114,7 +106,13 @@ DECL|macro|AWE_MAX_VOICES
 mdefine_line|#define AWE_MAX_VOICES&t;&t;32
 DECL|macro|AWE_NORMAL_VOICES
 mdefine_line|#define AWE_NORMAL_VOICES&t;30&t;/*30&amp;31 are reserved for DRAM refresh*/
+DECL|macro|AWE_MAX_CHANNELS
+mdefine_line|#define AWE_MAX_CHANNELS&t;32&t;/* max midi channels (must &gt;= voices) */
 DECL|macro|AWE_DRAM_OFFSET
 mdefine_line|#define AWE_DRAM_OFFSET&t;&t;0x200000
+DECL|macro|AWE_MAX_DRAM_SIZE
+mdefine_line|#define AWE_MAX_DRAM_SIZE&t;(28 * 1024)&t;/* 28 MB is max onboard memory */
+DECL|macro|AWE_DEFAULT_ATTENUATION
+mdefine_line|#define AWE_DEFAULT_ATTENUATION&t;32&t;/* 12dB below */
 macro_line|#endif
 eof

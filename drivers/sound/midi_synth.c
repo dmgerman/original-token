@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/midi_synth.c&n; *&n; * High level midi sequencer manager for dumb MIDI interfaces.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -981,23 +981,8 @@ id|cmd
 r_case
 id|SNDCTL_SYNTH_INFO
 suffix:colon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-id|synth_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|info
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -1010,8 +995,18 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+id|synth_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|info
 comma
 r_sizeof
 (paren
@@ -1019,8 +1014,6 @@ r_struct
 id|synth_info
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 l_int|0

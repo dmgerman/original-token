@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SBDSP)
@@ -130,6 +130,7 @@ macro_line|#ifdef SMW_MIDI0001_INCLUDED
 macro_line|#include &quot;smw-midi0001.h&quot;
 macro_line|#else
 DECL|variable|smw_ucode
+r_static
 r_int
 r_char
 op_star
@@ -138,6 +139,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|variable|smw_ucodeLen
+r_static
 r_int
 id|smw_ucodeLen
 op_assign
@@ -233,6 +235,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|sb_dsp_get_byte
 id|sb_dsp_get_byte
@@ -372,6 +375,7 @@ id|devc
 )paren
 suffix:semicolon
 )brace
+r_static
 r_void
 DECL|function|sbintr
 id|sbintr
@@ -1082,18 +1086,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
-r_if
-c_cond
-(paren
-id|devc-&gt;type
-op_eq
-id|MDL_SBPNP
-)paren
-r_return
-l_int|1
-suffix:semicolon
 id|printk
 (paren
 l_string|&quot;SB16 IRQ%d is not possible&bslash;n&quot;
@@ -1490,6 +1482,18 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+id|strlen
+(paren
+id|name
+op_plus
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1769,6 +1773,18 @@ op_plus
 l_int|1
 )paren
 )paren
+)paren
+suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+id|strlen
+(paren
+id|name
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -2212,6 +2228,7 @@ id|devc-&gt;minor
 op_eq
 l_int|1
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2275,6 +2292,7 @@ suffix:semicolon
 multiline_comment|/* Mixer only */
 )brace
 )brace
+)brace
 multiline_comment|/*&n; * Save device information for sb_dsp_init()&n; */
 id|detected_devc
 op_assign
@@ -2295,6 +2313,16 @@ r_sizeof
 id|sb_devc
 )paren
 )paren
+)paren
+suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+id|sb_devc
 )paren
 suffix:semicolon
 r_if
@@ -2632,6 +2660,13 @@ l_string|&quot;This is a genuine SB Pro&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef __SMP__
+multiline_comment|/* Skip IRQ detection if SMP (doesn&squot;t work) */
+id|devc-&gt;irq_ok
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2711,7 +2746,7 @@ id|devc-&gt;irq_ok
 (brace
 id|printk
 (paren
-l_string|&quot;sb: Interrupt test on IRQ%d failed - Propable IRQ conflict&bslash;n&quot;
+l_string|&quot;sb: Interrupt test on IRQ%d failed - Probable IRQ conflict&bslash;n&quot;
 comma
 id|devc-&gt;irq
 )paren
@@ -2731,8 +2766,9 @@ id|devc-&gt;irq
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* IRQ setup */
+macro_line|#endif /* __SMP__ */
 )brace
+multiline_comment|/* IRQ setup */
 id|request_region
 (paren
 id|hw_config-&gt;io_base

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;$Id: ipv6_input.c,v 1.13 1996/10/11 16:03:06 roque Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;$Id: ipv6_input.c,v 1.4 1997/02/28 09:56:33 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -676,14 +676,14 @@ op_assign
 id|nexthdr
 op_amp
 (paren
-id|SOCK_ARRAY_SIZE
+id|MAX_INET_PROTOS
 op_minus
 l_int|1
 )paren
 suffix:semicolon
 id|sk
 op_assign
-id|rawv6_prot.sock_array
+id|raw_v6_htable
 (braket
 id|hash
 )braket
@@ -701,7 +701,7 @@ l_int|NULL
 suffix:semicolon
 id|sk
 op_assign
-id|inet6_get_sock_raw
+id|raw_v6_lookup
 c_func
 (paren
 id|sk
@@ -729,7 +729,7 @@ c_loop
 (paren
 id|sk2
 op_assign
-id|inet6_get_sock_raw
+id|raw_v6_lookup
 c_func
 (paren
 id|sk2-&gt;next

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_CS4232)
@@ -7,12 +7,6 @@ DECL|macro|KEY_PORT
 mdefine_line|#define KEY_PORT&t;0x279&t;/* Same as LPT1 status port */
 DECL|macro|CSN_NUM
 mdefine_line|#define CSN_NUM&t;&t;0x99&t;/* Just a random number */
-DECL|variable|osp
-r_static
-r_int
-op_star
-id|osp
-suffix:semicolon
 r_static
 r_void
 DECL|function|CS_OUT
@@ -76,7 +70,7 @@ op_assign
 id|hw_config-&gt;irq
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_void
@@ -574,7 +568,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* Delay */
 multiline_comment|/*&n; * Initialize logical device 3 (MPU)&n; */
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -851,7 +845,7 @@ id|dma1
 suffix:semicolon
 id|ad1848_init
 (paren
-l_string|&quot;CS4232&quot;
+l_string|&quot;Crystal audio controller&quot;
 comma
 id|base
 comma
@@ -900,7 +894,7 @@ id|SOUND_MIXER_SYNTH
 suffix:semicolon
 multiline_comment|/* FM synth */
 )brace
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -964,7 +958,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|probe_mpu401
+id|probe_uart401
 (paren
 op_amp
 id|hw_config2
@@ -975,7 +969,7 @@ id|mpu_detected
 op_assign
 l_int|1
 suffix:semicolon
-id|attach_mpu401
+id|attach_uart401
 (paren
 op_amp
 id|hw_config2
@@ -1049,7 +1043,7 @@ multiline_comment|/* Capture DMA */
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -1112,7 +1106,7 @@ id|hw_config2.card_subtype
 op_assign
 l_int|0
 suffix:semicolon
-id|unload_mpu401
+id|unload_uart401
 (paren
 op_amp
 id|hw_config2

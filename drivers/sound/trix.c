@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/trix.c&n; *&n; * Low level driver for the MediaTrix AudioTrix Pro&n; * (MT-0002-PC Control Chip)&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sb.h&quot;
@@ -684,6 +684,16 @@ c_cond
 (paren
 id|ret
 )paren
+(brace
+macro_line|#ifdef TRIX_ENABLE_JOYSTICK
+id|trix_write
+(paren
+l_int|0x15
+comma
+l_int|0x80
+)paren
+suffix:semicolon
+macro_line|#endif
 id|request_region
 (paren
 l_int|0x390
@@ -693,6 +703,7 @@ comma
 l_string|&quot;AudioTrix&quot;
 )paren
 suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon

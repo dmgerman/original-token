@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@ix.netcom.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, however this is not yet supported in this&n; * software.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 card. Support for miro soundcards with&n; * additional ACI functions can easily be added later.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1996-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1996-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; */
+multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@ix.netcom.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, however this is not yet supported in this&n; * software.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 card. Support for miro soundcards with&n; * additional ACI functions can easily be added later.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1997-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1997-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; */
 multiline_comment|/*&n; * Some driver specific information and features:&n; *&n; * This mixer driver identifies itself to applications as &quot;ACI&quot; in&n; * mixer_info.id as retrieved by ioctl(fd, SOUND_MIXER_INFO, &amp;mixer_info).&n; *&n; * Proprietary mixer features that go beyond the standard OSS mixer&n; * interface are:&n; * &n; * Full duplex solo configuration:&n; *&n; *   int solo_mode;&n; *   ioctl(fd, SOUND_MIXER_PRIVATE1, &amp;solo_mode);&n; *&n; *   solo_mode = 0: deactivate solo mode (default)&n; *   solo_mode &gt; 0: activate solo mode&n; *                  With activated solo mode, the PCM input can not any&n; *                  longer hear the signals produced by the PCM output.&n; *                  Activating solo mode is important in duplex mode in order&n; *                  to avoid feedback distortions.&n; *   solo_mode &lt; 0: do not change solo mode (just retrieve the status)&n; *&n; *   When the ioctl() returns 0, solo_mode contains the previous&n; *   status (0 = deactivated, 1 = activated). If solo mode is not&n; *   implemented on this card, ioctl() returns -1 and sets errno to&n; *   EINVAL.&n; *&n; */
 macro_line|#include &quot;lowlevel.h&quot;
 macro_line|#include &quot;../sound_config.h&quot;
@@ -48,6 +48,23 @@ id|aci_present
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE                  /* Whether the aci mixer is to be reset.    */
+DECL|variable|aci_reset
+r_int
+id|aci_reset
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Default: don&squot;t reset if the driver is a  */
+macro_line|#else                          /* module; use &quot;insmod sound.o aci_reset=1&quot; */
+DECL|variable|aci_reset
+r_int
+id|aci_reset
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* to override.                             */
+macro_line|#endif
 DECL|macro|COMMAND_REGISTER
 mdefine_line|#define COMMAND_REGISTER    (aci_port)
 DECL|macro|STATUS_REGISTER
@@ -904,15 +921,14 @@ op_lshift
 l_int|8
 suffix:semicolon
 r_return
-id|snd_ioctl_return
-c_func
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 id|vol
 )paren
 suffix:semicolon
@@ -940,25 +956,15 @@ id|vol
 comma
 id|ret
 suffix:semicolon
-r_int
-id|param
-suffix:semicolon
-id|param
+multiline_comment|/* left channel */
+id|vol
 op_assign
-id|get_user
-c_func
-(paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
-suffix:semicolon
-multiline_comment|/* left channel */
-id|vol
-op_assign
-id|param
 op_amp
 l_int|0xff
 suffix:semicolon
@@ -1018,7 +1024,12 @@ multiline_comment|/* right channel */
 id|vol
 op_assign
 (paren
-id|param
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
 op_rshift
 l_int|8
 )paren
@@ -1080,15 +1091,14 @@ op_lshift
 l_int|8
 suffix:semicolon
 r_return
-id|snd_ioctl_return
-c_func
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 id|ret
 )paren
 suffix:semicolon
@@ -1130,15 +1140,12 @@ id|SOUND_MIXER_PRIVATE1
 r_if
 c_cond
 (paren
-id|get_user
-c_func
-(paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 op_ge
 l_int|0
 )paren
@@ -1147,15 +1154,12 @@ id|aci_solo
 op_assign
 op_logical_neg
 op_logical_neg
-id|get_user
-c_func
-(paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1201,14 +1205,14 @@ op_minus
 id|EIO
 suffix:semicolon
 r_return
-id|snd_ioctl_return
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 (paren
 id|status
 op_amp
@@ -1220,15 +1224,14 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
-id|snd_ioctl_return
-c_func
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 id|aci_solo
 )paren
 suffix:semicolon
@@ -1385,15 +1388,12 @@ suffix:colon
 multiline_comment|/* MIC pre-amp */
 id|vol
 op_assign
-id|get_user
-c_func
-(paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 op_amp
 l_int|0xff
 suffix:semicolon
@@ -1448,15 +1448,14 @@ id|vol
 )paren
 suffix:semicolon
 r_return
-id|snd_ioctl_return
-c_func
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 id|vol
 op_or
 (paren
@@ -1470,14 +1469,14 @@ r_case
 id|SOUND_MIXER_RECSRC
 suffix:colon
 r_return
-id|snd_ioctl_return
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 l_int|0
 )paren
 suffix:semicolon
@@ -1504,14 +1503,14 @@ r_case
 id|SOUND_MIXER_DEVMASK
 suffix:colon
 r_return
-id|snd_ioctl_return
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 id|SOUND_MASK_VOLUME
 op_or
 id|SOUND_MASK_CD
@@ -1539,14 +1538,14 @@ r_case
 id|SOUND_MIXER_STEREODEVS
 suffix:colon
 r_return
-id|snd_ioctl_return
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 id|SOUND_MASK_VOLUME
 op_or
 id|SOUND_MASK_CD
@@ -1570,14 +1569,14 @@ r_case
 id|SOUND_MIXER_RECMASK
 suffix:colon
 r_return
-id|snd_ioctl_return
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 l_int|0
 )paren
 suffix:semicolon
@@ -1587,14 +1586,14 @@ r_case
 id|SOUND_MIXER_RECSRC
 suffix:colon
 r_return
-id|snd_ioctl_return
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 l_int|0
 )paren
 suffix:semicolon
@@ -1604,14 +1603,14 @@ r_case
 id|SOUND_MIXER_CAPS
 suffix:colon
 r_return
-id|snd_ioctl_return
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 l_int|0
 )paren
 suffix:semicolon
@@ -1779,15 +1778,14 @@ op_lshift
 l_int|8
 suffix:semicolon
 r_return
-id|snd_ioctl_return
-c_func
 (paren
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-comma
+op_assign
 id|vol
 )paren
 suffix:semicolon
@@ -2050,6 +2048,12 @@ comma
 id|aci_port
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|aci_reset
+)paren
+(brace
 multiline_comment|/* initialize ACI mixer */
 id|implied_cmd
 c_func
@@ -2061,6 +2065,7 @@ id|aci_solo
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 multiline_comment|/* attach the mixer */
 id|request_region
 c_func
@@ -2088,10 +2093,10 @@ OG
 l_int|0
 op_logical_and
 op_logical_neg
-id|strcmp
+id|strncmp
 c_func
 (paren
-l_string|&quot;MAD16 WSS (CS4231A)&quot;
+l_string|&quot;MAD16 WSS&quot;
 comma
 id|mixer_devs
 (braket
@@ -2101,6 +2106,8 @@ l_int|1
 )braket
 op_member_access_from_pointer
 id|name
+comma
+l_int|9
 )paren
 )paren
 (brace
@@ -2350,6 +2357,29 @@ op_amp
 id|aci_mixer_operations
 suffix:semicolon
 )brace
+multiline_comment|/* Just do something; otherwise the first write command fails, at&n;   * least with my PCM20.&n;   */
+id|aci_mixer_ioctl
+c_func
+(paren
+id|num_mixers
+op_minus
+l_int|1
+comma
+id|SOUND_MIXER_READ_VOLUME
+comma
+(paren
+id|caddr_t
+)paren
+op_amp
+id|volume
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|aci_reset
+)paren
+(brace
 multiline_comment|/* Initialize ACI mixer with reasonable power-up values */
 id|volume
 op_assign
@@ -2511,6 +2541,7 @@ op_amp
 id|volume
 )paren
 suffix:semicolon
+)brace
 id|aci_present
 op_assign
 l_int|1

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle Beach Maui and Tropez.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
@@ -354,6 +354,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_void
 DECL|function|mauiintr
 id|mauiintr
@@ -971,6 +972,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|maui_load_patch
 id|maui_load_patch
@@ -1721,6 +1723,10 @@ id|this_dev
 )braket
 op_member_access_from_pointer
 id|converter
+suffix:semicolon
+id|synth-&gt;id
+op_assign
+l_string|&quot;MAUI&quot;
 suffix:semicolon
 r_if
 c_cond

@@ -1,7 +1,7 @@
+multiline_comment|/*&n; * sound/awe_voice.h&n; *&n; * Voice information definitions for the low level driver for the &n; * AWE32/Sound Blaster 32 wave table synth.&n; *   version 0.3.1b; Jan. 21, 1997&n; *&n; * Copyright (C) 1996,1997 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef AWE_VOICE_H
 DECL|macro|AWE_VOICE_H
 mdefine_line|#define AWE_VOICE_H
-multiline_comment|/*================================================================&n; * awe_voice.h -- voice information for AWE32 wave table synth&n; *&t;ver.0.2.0; Oct. 16, 1996&n; *&t;copyright (c) 1996  by Takashi Iwai&n; *================================================================*/
 macro_line|#ifndef SAMPLE_TYPE_AWE32
 DECL|macro|SAMPLE_TYPE_AWE32
 mdefine_line|#define SAMPLE_TYPE_AWE32&t;0x20
@@ -54,11 +54,17 @@ DECL|macro|AWE_LOAD_INFO
 mdefine_line|#define AWE_LOAD_INFO&t;&t;0
 DECL|macro|AWE_LOAD_DATA
 mdefine_line|#define AWE_LOAD_DATA&t;&t;1
+DECL|macro|AWE_APPEND_DATA
+mdefine_line|#define AWE_APPEND_DATA&t;&t;0x00
+DECL|macro|AWE_REPLACE_DATA
+mdefine_line|#define AWE_REPLACE_DATA&t;0x80
 DECL|member|reserved
 r_int
 id|reserved
 suffix:semicolon
 multiline_comment|/* word alignment data */
+multiline_comment|/* the actual patch data begins after this */
+macro_line|#if defined(AWE_COMPAT_030) &amp;&amp; AWE_COMPAT_030
 DECL|member|data
 r_char
 id|data
@@ -66,11 +72,13 @@ id|data
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/* patch data follows here */
+macro_line|#endif
 DECL|typedef|awe_patch_info
 )brace
 id|awe_patch_info
 suffix:semicolon
+DECL|macro|AWE_PATCH_INFO_SIZE
+mdefine_line|#define AWE_PATCH_INFO_SIZE&t;16
 multiline_comment|/*----------------------------------------------------------------&n; * raw voice information record&n; *----------------------------------------------------------------*/
 multiline_comment|/* wave table envelope &amp; effect parameters to control EMU8000 */
 DECL|struct|_awe_voice_parm
@@ -215,6 +223,8 @@ DECL|typedef|awe_voice_parm
 )brace
 id|awe_voice_parm
 suffix:semicolon
+DECL|macro|AWE_VOICE_PARM_SIZE
+mdefine_line|#define AWE_VOICE_PARM_SIZE&t;48
 multiline_comment|/* wave table parameters: 92 bytes */
 DECL|struct|_awe_voice_info
 r_typedef
@@ -348,6 +358,17 @@ DECL|typedef|awe_voice_info
 )brace
 id|awe_voice_info
 suffix:semicolon
+DECL|macro|AWE_VOICE_INFO_SIZE
+mdefine_line|#define AWE_VOICE_INFO_SIZE&t;92
+multiline_comment|/*----------------------------------------------------------------*/
+multiline_comment|/* The info entry of awe_voice_rec is changed from 0 to 1&n; * for some compilers refusing zero size array.&n; * Due to this change, sizeof(awe_voice_rec) becomes different&n; * from older versions.&n; * Use AWE_VOICE_REC_SIZE instead.&n; */
+macro_line|#if defined(AWE_COMPAT_030) &amp;&amp; AWE_COMPAT_030
+DECL|macro|AWE_INFOARRAY_SIZE
+mdefine_line|#define AWE_INFOARRAY_SIZE&t;0
+macro_line|#else
+DECL|macro|AWE_INFOARRAY_SIZE
+mdefine_line|#define AWE_INFOARRAY_SIZE&t;1
+macro_line|#endif
 multiline_comment|/* instrument info header: 4 bytes */
 DECL|struct|_awe_voice_rec
 r_typedef
@@ -371,18 +392,20 @@ r_int
 id|nvoices
 suffix:semicolon
 multiline_comment|/* number of voices */
+multiline_comment|/* voice information follows here */
 DECL|member|info
 id|awe_voice_info
 id|info
 (braket
-l_int|0
+id|AWE_INFOARRAY_SIZE
 )braket
 suffix:semicolon
-multiline_comment|/* voice information follows here */
 DECL|typedef|awe_voice_rec
 )brace
 id|awe_voice_rec
 suffix:semicolon
+DECL|macro|AWE_VOICE_REC_SIZE
+mdefine_line|#define AWE_VOICE_REC_SIZE&t;4
 multiline_comment|/*----------------------------------------------------------------&n; * sample wave information&n; *----------------------------------------------------------------*/
 multiline_comment|/* wave table sample header: 32 bytes */
 DECL|struct|awe_sample_info
@@ -448,12 +471,15 @@ DECL|macro|AWE_SAMPLE_STEREO_LEFT
 mdefine_line|#define AWE_SAMPLE_STEREO_LEFT&t;32&t;/* stereo left sound */
 DECL|macro|AWE_SAMPLE_STEREO_RIGHT
 mdefine_line|#define AWE_SAMPLE_STEREO_RIGHT&t;64&t;/* stereo right sound */
+DECL|macro|AWE_SAMPLE_REVERSE_LOOP
+mdefine_line|#define AWE_SAMPLE_REVERSE_LOOP 128&t;/* reverse looping */
 DECL|member|checksum
 r_int
 r_int
 id|checksum
 suffix:semicolon
 multiline_comment|/* check sum */
+macro_line|#if defined(AWE_COMPAT_030) &amp;&amp; AWE_COMPAT_030
 DECL|member|data
 r_int
 r_int
@@ -463,11 +489,94 @@ l_int|0
 )braket
 suffix:semicolon
 multiline_comment|/* sample data follows here */
+macro_line|#endif
 DECL|typedef|awe_sample_info
 )brace
 id|awe_sample_info
 suffix:semicolon
+DECL|macro|AWE_SAMPLE_INFO_SIZE
+mdefine_line|#define AWE_SAMPLE_INFO_SIZE&t;32
 multiline_comment|/*----------------------------------------------------------------&n; * awe hardware controls&n; *----------------------------------------------------------------*/
+DECL|struct|_awe_mode_rec
+r_typedef
+r_struct
+id|_awe_mode_rec
+(brace
+DECL|member|base_addr
+r_int
+id|base_addr
+suffix:semicolon
+DECL|member|mem_size
+r_int
+id|mem_size
+suffix:semicolon
+multiline_comment|/* word size */
+DECL|member|max_voices
+DECL|member|max_infos
+DECL|member|max_samples
+r_int
+id|max_voices
+comma
+id|max_infos
+comma
+id|max_samples
+suffix:semicolon
+DECL|member|current_sf_id
+r_int
+r_int
+id|current_sf_id
+suffix:semicolon
+DECL|member|free_mem
+r_int
+id|free_mem
+suffix:semicolon
+multiline_comment|/* word offset */
+DECL|member|free_info
+r_int
+id|free_info
+suffix:semicolon
+DECL|member|free_sample
+r_int
+id|free_sample
+suffix:semicolon
+DECL|member|reverb_mode
+r_int
+id|reverb_mode
+suffix:semicolon
+DECL|member|chorus_mode
+r_int
+id|chorus_mode
+suffix:semicolon
+DECL|member|init_atten
+r_int
+r_int
+id|init_atten
+suffix:semicolon
+DECL|member|channel_mode
+r_int
+id|channel_mode
+suffix:semicolon
+DECL|member|gus_bank
+r_int
+id|gus_bank
+suffix:semicolon
+DECL|member|exclusive_sound
+r_int
+id|exclusive_sound
+suffix:semicolon
+DECL|member|drum_flags
+r_int
+r_int
+id|drum_flags
+suffix:semicolon
+DECL|member|debug_mode
+r_int
+id|debug_mode
+suffix:semicolon
+DECL|typedef|awe_mode_rec
+)brace
+id|awe_mode_rec
+suffix:semicolon
 DECL|macro|_AWE_DEBUG_MODE
 mdefine_line|#define _AWE_DEBUG_MODE&t;&t;&t;0x00
 DECL|macro|_AWE_REVERB_MODE
@@ -488,6 +597,18 @@ DECL|macro|_AWE_INITIAL_VOLUME
 mdefine_line|#define _AWE_INITIAL_VOLUME&t;&t;0x08
 DECL|macro|_AWE_SET_GUS_BANK
 mdefine_line|#define _AWE_SET_GUS_BANK&t;&t;0x09
+DECL|macro|_AWE_CHANNEL_MODE
+mdefine_line|#define _AWE_CHANNEL_MODE&t;&t;0x0a&t;/* v0.3 features */
+DECL|macro|_AWE_DRUM_CHANNELS
+mdefine_line|#define _AWE_DRUM_CHANNELS&t;&t;0x0b&t;/* v0.3 features */
+DECL|macro|_AWE_EXCLUSIVE_SOUND
+mdefine_line|#define _AWE_EXCLUSIVE_SOUND&t;&t;0x0c&t;/* v0.3 features */
+DECL|macro|_AWE_INITIAL_ATTEN
+mdefine_line|#define _AWE_INITIAL_ATTEN&t;_AWE_INITIAL_VOLUME
+DECL|macro|_AWE_NOTEOFF_ALL
+mdefine_line|#define _AWE_NOTEOFF_ALL&t;&t;0x0e
+DECL|macro|_AWE_GET_CURRENT_MODE
+mdefine_line|#define _AWE_GET_CURRENT_MODE&t;&t;0x10&t;/* v0.3 features */
 DECL|macro|_AWE_MODE_FLAG
 mdefine_line|#define _AWE_MODE_FLAG&t;&t;&t;0x80
 DECL|macro|_AWE_COOKED_FLAG
@@ -512,10 +633,28 @@ DECL|macro|AWE_TERMINATE_CHANNEL
 mdefine_line|#define AWE_TERMINATE_CHANNEL(dev,voice) _AWE_CMD(dev,voice,_AWE_TERMINATE_CHANNEL,0,0)
 DECL|macro|AWE_TERMINATE_ALL
 mdefine_line|#define AWE_TERMINATE_ALL(dev) _AWE_CMD(dev, 0, _AWE_TERMINATE_ALL, 0, 0)
+DECL|macro|AWE_NOTEOFF_ALL
+mdefine_line|#define AWE_NOTEOFF_ALL(dev) _AWE_CMD(dev, 0, _AWE_NOTEOFF_ALL, 0, 0)
 DECL|macro|AWE_INITIAL_VOLUME
 mdefine_line|#define AWE_INITIAL_VOLUME(dev,atten) _AWE_CMD(dev, 0, _AWE_INITIAL_VOLUME, atten, 0)
+DECL|macro|AWE_INITIAL_ATTEN
+mdefine_line|#define AWE_INITIAL_ATTEN  AWE_INITIAL_VOLUME
 DECL|macro|AWE_SET_GUS_BANK
 mdefine_line|#define AWE_SET_GUS_BANK(dev,bank) _AWE_CMD(dev, 0, _AWE_SET_GUS_BANK, bank, 0)
+DECL|macro|AWE_SET_CHANNEL_MODE
+mdefine_line|#define AWE_SET_CHANNEL_MODE(dev,mode) _AWE_CMD(dev, 0, _AWE_CHANNEL_MODE, mode, 0)
+DECL|macro|AWE_DRUM_CHANNELS
+mdefine_line|#define AWE_DRUM_CHANNELS(dev,channels) _AWE_CMD(dev, 0, _AWE_DRUM_CHANNELS, channels, 0)
+DECL|macro|AWE_EXCLUSIVE_SOUND
+mdefine_line|#define AWE_EXCLUSIVE_SOUND(dev,mode) _AWE_CMD(dev, 0, _AWE_EXCLUSIVE_SOUND, mode, 0)
+multiline_comment|/* it must be direct access */
+DECL|macro|AWE_GET_CURRENT_MODE
+mdefine_line|#define AWE_GET_CURRENT_MODE(dev,addr) &bslash;&n;{char tmpbuf[8];&bslash;&n; tmpbuf[0] = SEQ_PRIVATE; tmpbuf[1] = dev;&bslash;&n; tmpbuf[2] = _AWE_MODE_FLAG|_AWE_GET_CURRENT_MODE;&bslash;&n; tmpbuf[3] = 0; *(awe_mode_rec**)(tmpbuf +4) = (awe_mode_rec*)(addr);&bslash;&n; write(seqfd, tmpbuf, 8);}
+multiline_comment|/* extended pressure controls; not portable with other sound drivers */
+DECL|macro|AWE_KEY_PRESSURE
+mdefine_line|#define AWE_KEY_PRESSURE(dev,ch,note,vel) SEQ_START_NOTE(dev,ch,(note)+128,vel)
+DECL|macro|AWE_CHN_PRESSURE
+mdefine_line|#define AWE_CHN_PRESSURE(dev,ch,vel) SEQ_START_NOTE(dev,(ch)+128,0,vel)
 multiline_comment|/* reverb mode */
 DECL|macro|AWE_REVERB_ROOM1
 mdefine_line|#define&t;AWE_REVERB_ROOM1&t;0

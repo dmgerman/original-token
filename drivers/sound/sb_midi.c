@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SBDSP) &amp;&amp; defined(CONFIG_MIDI)
@@ -7,21 +7,6 @@ macro_line|#include &quot;sb.h&quot;
 DECL|macro|SB_TEST_IRQ
 macro_line|#undef SB_TEST_IRQ
 multiline_comment|/*&n; * The DSP channel can be used either for input or output. Variable&n; * &squot;sb_irq_mode&squot; will be set when the program calls read or write first time&n; * after open. Current version doesn&squot;t support mode changes without closing&n; * and reopening the device. Support for this feature may be implemented in a&n; * future version of this driver.&n; */
-DECL|variable|midi_input_intr
-r_void
-(paren
-op_star
-id|midi_input_intr
-)paren
-(paren
-r_int
-id|dev
-comma
-r_int
-r_char
-id|data
-)paren
-suffix:semicolon
 r_static
 r_int
 DECL|function|sb_midi_open
@@ -547,6 +532,17 @@ id|midi_operations
 )paren
 )paren
 suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+r_struct
+id|midi_operations
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -639,6 +635,17 @@ id|synth_operations
 )paren
 )paren
 suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+r_struct
+id|synth_operations
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -697,6 +704,15 @@ r_struct
 id|synth_operations
 )paren
 )paren
+suffix:semicolon
+id|midi_devs
+(braket
+id|num_midis
+)braket
+op_member_access_from_pointer
+id|converter-&gt;id
+op_assign
+l_string|&quot;SBMIDI&quot;
 suffix:semicolon
 id|num_midis
 op_increment

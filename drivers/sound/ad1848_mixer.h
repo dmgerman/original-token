@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/ad1848_mixer.h&n; * &n; * Definitions for the mixer of AD1848 and compatible codecs.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * The AD1848 codec has generic input lines called Line, Aux1 and Aux2.&n; * Soundcard manufacturers have connected actual inputs (CD, synth, line,&n; * etc) to these inputs in different order. Therefore it&squot;s difficult&n; * to assign mixer channels to to these inputs correctly. The following&n; * contains two alternative mappings. The first one is for GUS MAX and&n; * the second is just a generic one (line1, line2 and line3).&n; * (Actually this is not a mapping but rather some kind of interleaving&n; * solution).&n; */
 DECL|macro|MODE1_REC_DEVICES
 mdefine_line|#define MODE1_REC_DEVICES&t;&t;(SOUND_MASK_LINE3 | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_LINE1|SOUND_MASK_IMIX)
@@ -277,6 +277,7 @@ multiline_comment|/*&n; * Most of the mixer entries work in backwards. Setting t
 DECL|macro|MIX_ENT
 mdefine_line|#define MIX_ENT(name, reg_l, pola_l, pos_l, len_l, reg_r, pola_r, pos_r, len_r)&t;&bslash;&n;&t;{{reg_l, pola_l, pos_l, len_l}, {reg_r, pola_r, pos_r, len_r}}
 DECL|variable|ad1848_mix_devices
+r_static
 id|mixer_ents
 id|ad1848_mix_devices
 (braket
@@ -660,6 +661,7 @@ l_int|5
 )brace
 suffix:semicolon
 DECL|variable|iwave_mix_devices
+r_static
 id|mixer_ents
 id|iwave_mix_devices
 (braket
@@ -870,21 +872,21 @@ c_func
 (paren
 id|SOUND_MIXER_IMIX
 comma
-l_int|13
+l_int|16
 comma
 l_int|1
 comma
-l_int|2
+l_int|0
 comma
-l_int|6
+l_int|5
+comma
+l_int|17
+comma
+l_int|1
 comma
 l_int|0
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
+l_int|5
 )paren
 comma
 id|MIX_ENT
@@ -1044,6 +1046,7 @@ l_int|5
 suffix:semicolon
 multiline_comment|/* OPTi 82C930 has somewhat different port addresses.&n; * Note: VOLUME == SPEAKER, SYNTH == LINE2, LINE == LINE3, CD == LINE1&n; * VOLUME, SYNTH, LINE, CD are not enabled above.&n; * MIC is level of mic monitoring direct to output. Same for CD, LINE, etc.&n; */
 DECL|variable|c930_mix_devices
+r_static
 id|mixer_ents
 id|c930_mix_devices
 (braket

@@ -1,8 +1,8 @@
-multiline_comment|/*&n; *     PnP soundcard support is not included in this version.&n; *&n; *     There is a separately distributed patch available for AEDSP16.&n; */
+multiline_comment|/*&n; *     PnP soundcard support is not included in this version.&n; *&n; *       AESDP16 driver is now included in the lowlevel directory.&n; */
 DECL|macro|DISABLED_OPTIONS
-mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_SPNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2)|B(OPT_UNUSED3)|B(OPT_UNUSED4)|B(OPT_UNUSED5))
+mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_SPNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2)|B(OPT_UNUSED3)|B(OPT_UNUSED4)|B(OPT_UNUSED5)|B(OPT_UART6850))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
@@ -84,7 +84,7 @@ mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMA
 DECL|macro|SBDSP_DEVS
 mdefine_line|#define SBDSP_DEVS (B(OPT_SB)|B(OPT_SPNP)|B(OPT_MAD16)|B(OPT_TRIX))
 DECL|macro|SEQUENCER_DEVS
-mdefine_line|#define SEQUENCER_DEVS (MIDI_CARDS|B(OPT_YM3812)|B(OPT_ADLIB)|B(OPT_GUS)|B(OPT_MAUI))
+mdefine_line|#define SEQUENCER_DEVS 0x7fffffff
 multiline_comment|/*&n; * Options that have been disabled for some reason (incompletely implemented&n; * and/or tested). Don&squot;t remove from this list before looking at file&n; * experimental.txt for further info.&n; */
 r_typedef
 r_struct
@@ -567,7 +567,7 @@ op_assign
 (brace
 l_string|&quot;ProAudioSpectrum 16 support&quot;
 comma
-l_string|&quot;Sound Blaster (SB, SBPro, SB16, clones) support&quot;
+l_string|&quot;_TRUE_ Sound Blaster (SB, SBPro, SB16/32/64, ESS, Jazz16) support&quot;
 comma
 l_string|&quot;Generic OPL2/OPL3 FM synthesizer support&quot;
 comma
@@ -3615,6 +3615,25 @@ id|ask_int_choice
 (paren
 id|B
 (paren
+id|OPT_MSS
+)paren
+comma
+l_string|&quot;MSS_DMA2&quot;
+comma
+l_string|&quot;MSS/WSS second DMA (if possible)&quot;
+comma
+id|FMT_INT
+comma
+op_minus
+l_int|1
+comma
+l_string|&quot;0, 1 or 3&quot;
+)paren
+suffix:semicolon
+id|ask_int_choice
+(paren
+id|B
+(paren
 id|OPT_SSCAPE
 )paren
 comma
@@ -3747,7 +3766,7 @@ id|show_comment
 (paren
 id|B
 (paren
-id|OPT_MAUI
+id|OPT_TRIX
 )paren
 comma
 l_string|&quot;ERROR! You have to use old sound configuration method with AudioTrix.&quot;

@@ -3,6 +3,27 @@ macro_line|#ifndef _UDP_H
 DECL|macro|_UDP_H
 mdefine_line|#define _UDP_H
 macro_line|#include &lt;linux/udp.h&gt;
+DECL|macro|UDP_HTABLE_SIZE
+mdefine_line|#define UDP_HTABLE_SIZE&t;&t;128
+multiline_comment|/* udp.c: This needs to be shared by v4 and v6 because the lookup&n; *        and hashing code needs to work with different AF&squot;s yet&n; *        the port space is shared.&n; */
+r_extern
+r_struct
+id|sock
+op_star
+id|udp_hash
+(braket
+id|UDP_HTABLE_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|udp_good_socknum
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|UDP_NO_CHECK
 mdefine_line|#define UDP_NO_CHECK&t;0
 r_extern
@@ -95,15 +116,6 @@ r_int
 id|arg
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|udp_cache_zap
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* Remove udp last socket cache */
 multiline_comment|/* CONFIG_IP_TRANSPARENT_PROXY */
 r_extern
 r_int

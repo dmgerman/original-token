@@ -1,5 +1,3 @@
-DECL|macro|_PAS2_CARD_C_
-mdefine_line|#define _PAS2_CARD_C_
 multiline_comment|/*&n; * sound/pas2_card.c&n; *&n; * Detection routine for the Pro Audio Spectrum cards.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -244,6 +242,7 @@ id|translate_code
 suffix:semicolon
 )brace
 multiline_comment|/******************* Begin of the Interrupt Handler ********************/
+r_static
 r_void
 DECL|function|pasintr
 id|pasintr
@@ -390,6 +389,7 @@ suffix:semicolon
 )brace
 multiline_comment|/******************* End of the Interrupt handler **********************/
 multiline_comment|/******************* Begin of the Initialization Code ******************/
+r_static
 r_int
 DECL|function|config_pas_hw
 id|config_pas_hw
@@ -427,7 +427,6 @@ comma
 l_int|0x138B
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Local timer control *&n;&t;&t;&t;&t;   * register&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0x36
@@ -435,7 +434,6 @@ comma
 l_int|0x1388
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Sample rate timer (16 bit)&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0
@@ -450,7 +448,6 @@ comma
 l_int|0x138B
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Local timer control *&n;&t;&t;&t;&t;   * register&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0x74
@@ -458,7 +455,6 @@ comma
 l_int|0x1389
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * Sample count register (16&n;&t;&t;&t;&t;   * * bit)&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0
@@ -529,7 +525,7 @@ l_int|15
 (brace
 id|printk
 (paren
-l_string|&quot;PAS2: Invalid IRQ %d&quot;
+l_string|&quot;PAS16: Invalid IRQ %d&quot;
 comma
 id|pas_irq
 )paren
@@ -576,7 +572,7 @@ id|pas_irq
 (brace
 id|printk
 (paren
-l_string|&quot;PAS2: Invalid IRQ %d&quot;
+l_string|&quot;PAS16: Invalid IRQ %d&quot;
 comma
 id|pas_irq
 )paren
@@ -620,7 +616,7 @@ l_int|7
 (brace
 id|printk
 (paren
-l_string|&quot;PAS2: Invalid DMA selection %d&quot;
+l_string|&quot;PAS16: Invalid DMA selection %d&quot;
 comma
 id|hw_config-&gt;dma
 )paren
@@ -654,7 +650,7 @@ id|hw_config-&gt;dma
 (brace
 id|printk
 (paren
-l_string|&quot;PAS2: Invalid DMA selection %d&quot;
+l_string|&quot;PAS16: Invalid DMA selection %d&quot;
 comma
 id|hw_config-&gt;dma
 )paren
@@ -914,6 +910,7 @@ r_return
 id|ok
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|detect_pas_hw
 id|detect_pas_hw
@@ -984,7 +981,7 @@ l_int|0xff
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * We probably have a PAS-series board, now check for a PAS2-series board&n;   * by trying to change the board revision bits. PAS2-series hardware won&squot;t&n;   * let you do this - the bits are read-only.&n;   */
+multiline_comment|/*&n;   * We probably have a PAS-series board, now check for a PAS16-series board&n;   * by trying to change the board revision bits. PAS16-series hardware won&squot;t&n;   * let you do this - the bits are read-only.&n;   */
 id|foo
 op_assign
 id|board_id
@@ -1019,7 +1016,6 @@ id|board_id
 op_ne
 id|foo
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Not a PAS2&n;&t;&t;&t;&t; */
 r_return
 l_int|0
 suffix:semicolon

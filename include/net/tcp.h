@@ -5,6 +5,253 @@ mdefine_line|#define _TCP_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+multiline_comment|/* This is for all connections with a full identity, no wildcards. */
+DECL|macro|TCP_HTABLE_SIZE
+mdefine_line|#define TCP_HTABLE_SIZE&t;&t;128
+multiline_comment|/* This is for listening sockets, thus all sockets which possess wildcards. */
+DECL|macro|TCP_LHTABLE_SIZE
+mdefine_line|#define TCP_LHTABLE_SIZE&t;16&t;/* Yes, really, this is all you need. */
+multiline_comment|/* This is for all sockets, to keep track of the local port allocations. */
+DECL|macro|TCP_BHTABLE_SIZE
+mdefine_line|#define TCP_BHTABLE_SIZE&t;64
+multiline_comment|/* tcp_ipv4.c: These need to be shared by v4 and v6 because the lookup&n; *             and hashing code needs to work with different AF&squot;s yet&n; *             the port space is shared.&n; */
+r_extern
+r_struct
+id|sock
+op_star
+id|tcp_established_hash
+(braket
+id|TCP_HTABLE_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|sock
+op_star
+id|tcp_listening_hash
+(braket
+id|TCP_LHTABLE_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|sock
+op_star
+id|tcp_bound_hash
+(braket
+id|TCP_BHTABLE_SIZE
+)braket
+suffix:semicolon
+multiline_comment|/* These are AF independant. */
+DECL|function|tcp_bhashfn
+r_static
+id|__inline__
+r_int
+id|tcp_bhashfn
+c_func
+(paren
+id|__u16
+id|lport
+)paren
+(brace
+r_return
+(paren
+id|lport
+op_xor
+(paren
+id|lport
+op_rshift
+l_int|7
+)paren
+)paren
+op_amp
+(paren
+id|TCP_BHTABLE_SIZE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+)brace
+DECL|function|tcp_sk_bhashfn
+r_static
+id|__inline__
+r_int
+id|tcp_sk_bhashfn
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+id|__u16
+id|lport
+op_assign
+id|sk-&gt;num
+suffix:semicolon
+r_return
+id|tcp_bhashfn
+c_func
+(paren
+id|lport
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* These can have wildcards, don&squot;t try too hard.&n; * XXX deal with thousands of IP aliases for listening ports later&n; */
+DECL|function|tcp_lhashfn
+r_static
+id|__inline__
+r_int
+id|tcp_lhashfn
+c_func
+(paren
+r_int
+r_int
+id|num
+)paren
+(brace
+r_return
+id|num
+op_amp
+(paren
+id|TCP_LHTABLE_SIZE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+)brace
+DECL|function|tcp_sk_listen_hashfn
+r_static
+id|__inline__
+r_int
+id|tcp_sk_listen_hashfn
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_return
+id|tcp_lhashfn
+c_func
+(paren
+id|sk-&gt;num
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Only those holding the sockhash lock call these two things here.&n; * Note the slightly gross overloading of sk-&gt;prev, AF_UNIX is the&n; * only other main benefactor of that member of SK, so who cares.&n; */
+DECL|function|tcp_sk_bindify
+r_static
+id|__inline__
+r_void
+id|tcp_sk_bindify
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_int
+id|hashent
+op_assign
+id|tcp_sk_bhashfn
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|sk-&gt;prev
+op_assign
+id|tcp_bound_hash
+(braket
+id|hashent
+)braket
+suffix:semicolon
+id|tcp_bound_hash
+(braket
+id|hashent
+)braket
+op_assign
+id|sk
+suffix:semicolon
+)brace
+DECL|function|tcp_sk_unbindify
+r_static
+id|__inline__
+r_void
+id|tcp_sk_unbindify
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_int
+id|hashent
+op_assign
+id|tcp_sk_bhashfn
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_struct
+id|sock
+op_star
+op_star
+id|htable
+op_assign
+op_amp
+id|tcp_bound_hash
+(braket
+id|hashent
+)braket
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_star
+id|htable
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|htable
+op_eq
+id|sk
+)paren
+(brace
+op_star
+id|htable
+op_assign
+id|sk-&gt;prev
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|htable
+op_assign
+op_amp
+(paren
+(paren
+op_star
+id|htable
+)paren
+op_member_access_from_pointer
+id|prev
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
 DECL|macro|NETHDR_SIZE
 mdefine_line|#define NETHDR_SIZE&t;sizeof(struct ipv6hdr)
@@ -63,11 +310,11 @@ mdefine_line|#define TCP_SYN_RETRIES&t; 10&t;/* number of times to retry opening
 DECL|macro|TCP_PROBEWAIT_LEN
 mdefine_line|#define TCP_PROBEWAIT_LEN (1*HZ)/* time to wait between probes when&n;&t;&t;&t;&t; * I&squot;ve got something to write and&n;&t;&t;&t;&t; * there is no window&t;&t;&t;*/
 DECL|macro|TCP_KEEPALIVE_TIME
-mdefine_line|#define TCP_KEEPALIVE_TIME (180*60*HZ)&t;/* two hours */
+mdefine_line|#define TCP_KEEPALIVE_TIME (180*60*HZ)&t;&t;/* two hours */
 DECL|macro|TCP_KEEPALIVE_PROBES
-mdefine_line|#define TCP_KEEPALIVE_PROBES&t;9&t;/* Max of 9 keepalive probes&t;*/
+mdefine_line|#define TCP_KEEPALIVE_PROBES&t;9&t;&t;/* Max of 9 keepalive probes&t;*/
 DECL|macro|TCP_KEEPALIVE_PERIOD
-mdefine_line|#define TCP_KEEPALIVE_PERIOD (75*HZ)&t;/* period of keepalive check&t;*/
+mdefine_line|#define TCP_KEEPALIVE_PERIOD ((75*HZ)&gt;&gt;2)&t;/* period of keepalive check&t;*/
 DECL|macro|TCP_NO_CHECK
 mdefine_line|#define TCP_NO_CHECK&t;0&t;/* turn to one if you want the default&n;&t;&t;&t;&t; * to be no checksum&t;&t;&t;*/
 DECL|macro|TCP_SYNACK_PERIOD
@@ -616,6 +863,15 @@ r_extern
 r_struct
 id|tcp_mib
 id|tcp_statistics
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|tcp_good_socknum
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -1176,15 +1432,6 @@ r_int
 id|max_timeout
 )paren
 suffix:semicolon
-multiline_comment|/* tcp_input.c */
-r_extern
-r_void
-id|tcp_cache_zap
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* CONFIG_IP_TRANSPARENT_PROXY */
 r_extern
 r_int
@@ -1585,11 +1832,6 @@ suffix:semicolon
 r_case
 id|TCP_CLOSE
 suffix:colon
-id|tcp_cache_zap
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Should be about 2 rtt&squot;s */
 id|net_reset_timer
 c_func

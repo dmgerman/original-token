@@ -235,6 +235,8 @@ id|synth_operations
 id|std_midi_synth
 op_assign
 (brace
+l_string|&quot;MIDI&quot;
+comma
 op_amp
 id|std_synth_info
 comma

@@ -1,10 +1,10 @@
 macro_line|#ifndef SOUNDCARD_H
 DECL|macro|SOUNDCARD_H
 mdefine_line|#define SOUNDCARD_H
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1997&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 multiline_comment|/*&n; * OSS interface version. With versions earlier than 3.6 this value is&n; * an integer with value less than 361. In versions 3.6 and later&n; * it&squot;s a six digit hexadecimal value. For example value&n; * of 0x030600 represents OSS version 3.6.0.&n; * Use ioctl(fd, OSS_GETVERSION, &amp;int) to get the version number of&n; * the currently active driver.&n; */
 DECL|macro|SOUND_VERSION
-mdefine_line|#define SOUND_VERSION&t;0x030700
+mdefine_line|#define SOUND_VERSION&t;0x0307f1
 DECL|macro|OPEN_SOUND_SYSTEM
 mdefine_line|#define OPEN_SOUND_SYSTEM
 multiline_comment|/* In Linux we need to be prepared for cross compiling */
@@ -65,7 +65,7 @@ mdefine_line|#define SNDCARD_UART401&t;&t;26
 multiline_comment|/* Soundcard numbers 27 to N are reserved. Don&squot;t add more numbers here */
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _SIOWR
-macro_line|#if defined(_IOWR) &amp;&amp; !defined(sun)
+macro_line|#if defined(_IOWR) &amp;&amp; !defined(sun) &amp;&amp; !defined(sparc)
 multiline_comment|/* Use already defined ioctl defines if they exist (except with Sun) */
 DECL|macro|SIOCPARM_MASK
 mdefine_line|#define&t;SIOCPARM_MASK&t;IOCPARM_MASK
@@ -77,6 +77,16 @@ DECL|macro|SIOC_IN
 mdefine_line|#define&t;SIOC_IN&t;&t;IOC_IN
 DECL|macro|SIOC_INOUT
 mdefine_line|#define&t;SIOC_INOUT&t;IOC_INOUT
+DECL|macro|_SIOC_SIZE
+mdefine_line|#define _SIOC_SIZE&t;_IOC_SIZE
+DECL|macro|_SIOC_DIR
+mdefine_line|#define _SIOC_DIR&t;_IOC_DIR
+DECL|macro|_SIOC_NONE
+mdefine_line|#define _SIOC_NONE&t;_IOC_NONE
+DECL|macro|_SIOC_READ
+mdefine_line|#define _SIOC_READ&t;_IOC_READ
+DECL|macro|_SIOC_WRITE
+mdefine_line|#define _SIOC_WRITE&t;_IOC_WRITE
 DECL|macro|_SIO
 mdefine_line|#define&t;_SIO&t;&t;_IO
 DECL|macro|_SIOR
@@ -86,7 +96,7 @@ mdefine_line|#define&t;_SIOW&t;&t;_IOW
 DECL|macro|_SIOWR
 mdefine_line|#define&t;_SIOWR&t;&t;_IOWR
 macro_line|#else
-multiline_comment|/* Ioctl&squot;s have the command encoded in the lower word,&n; * and the size of any in or out parameters in the upper&n; * word.  The high 2 bits of the upper word are used&n; * to encode the in/out status of the parameter; for now&n; * we restrict parameters to at most 128 bytes.&n; */
+multiline_comment|/* Ioctl&squot;s have the command encoded in the lower word,&n; * and the size of any in or out parameters in the upper&n; * word.  The high 2 bits of the upper word are used&n; * to encode the in/out status of the parameter; for now&n; * we restrict parameters to at most 8191 bytes.&n; */
 multiline_comment|/* #define&t;SIOCTYPE&t;&t;(0xff&lt;&lt;8) */
 DECL|macro|SIOCPARM_MASK
 mdefine_line|#define&t;SIOCPARM_MASK&t;0x1fff&t;&t;/* parameters must be &lt; 8192 bytes */
@@ -108,6 +118,16 @@ mdefine_line|#define&t;_SIOW(x,y,t)&t;((int)(SIOC_IN|((sizeof(t)&amp;SIOCPARM_MA
 multiline_comment|/* this should be _SIORW, but stdio got there first */
 DECL|macro|_SIOWR
 mdefine_line|#define&t;_SIOWR(x,y,t)&t;((int)(SIOC_INOUT|((sizeof(t)&amp;SIOCPARM_MASK)&lt;&lt;16)|(x&lt;&lt;8)|y))
+DECL|macro|_SIOC_SIZE
+mdefine_line|#define _SIOC_SIZE(x)&t;((x&gt;&gt;16)&amp;SIOCPARM_MASK)&t;
+DECL|macro|_SIOC_DIR
+mdefine_line|#define _SIOC_DIR(x)&t;(x &amp; 0xf0000000)
+DECL|macro|_SIOC_NONE
+mdefine_line|#define _SIOC_NONE&t;SIOC_VOID
+DECL|macro|_SIOC_READ
+mdefine_line|#define _SIOC_READ&t;SIOC_OUT
+DECL|macro|_SIOC_WRITE
+mdefine_line|#define _SIOC_WRITE&t;SIOC_IN
 macro_line|#  endif /* _IOWR */
 macro_line|#endif  /* !_SIOWR */
 DECL|macro|SNDCTL_SEQ_RESET
@@ -148,6 +168,8 @@ DECL|macro|SNDCTL_SEQ_OUTOFBAND
 mdefine_line|#define SNDCTL_SEQ_OUTOFBAND&t;&t;_SIOW (&squot;Q&squot;,18, struct seq_event_rec)
 DECL|macro|SNDCTL_SEQ_GETTIME
 mdefine_line|#define SNDCTL_SEQ_GETTIME&t;&t;_SIOR (&squot;Q&squot;,19, int)
+DECL|macro|SNDCTL_SYNTH_ID
+mdefine_line|#define SNDCTL_SYNTH_ID&t;&t;&t;_SIOWR(&squot;Q&squot;,20, struct synth_info)
 DECL|struct|seq_event_rec
 r_struct
 id|seq_event_rec
@@ -203,7 +225,7 @@ macro_line|#  define _PATCHKEY(id) ((id&lt;&lt;8)|0xfd)
 DECL|macro|AFMT_S16_NE
 macro_line|#  define AFMT_S16_NE AFMT_S16_LE
 macro_line|#endif
-multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is propably too limited.&n; */
+multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is probably too limited.&n; */
 DECL|struct|patch_info
 r_struct
 id|patch_info
@@ -213,11 +235,11 @@ r_int
 r_int
 id|key
 suffix:semicolon
-multiline_comment|/* Use GUS_PATCH here */
+multiline_comment|/* Use WAVE_PATCH here */
+DECL|macro|WAVE_PATCH
+mdefine_line|#define WAVE_PATCH&t;_PATCHKEY(0x04)
 DECL|macro|GUS_PATCH
-mdefine_line|#define GUS_PATCH&t;_PATCHKEY(0x04)
-DECL|macro|OBSOLETE_GUS_PATCH
-mdefine_line|#define OBSOLETE_GUS_PATCH&t;_PATCHKEY(0x02)
+mdefine_line|#define GUS_PATCH&t;WAVE_PATCH
 DECL|member|device_no
 r_int
 id|device_no
@@ -248,6 +270,8 @@ DECL|macro|WAVE_SUSTAIN_ON
 mdefine_line|#define WAVE_SUSTAIN_ON&t;0x20&t;/* bit 5 = Turn sustaining on. (Env. pts. 3)*/
 DECL|macro|WAVE_ENVELOPES
 mdefine_line|#define WAVE_ENVELOPES&t;0x40&t;/* bit 6 = Enable envelopes - 1 */
+DECL|macro|WAVE_FAST_RELEASE
+mdefine_line|#define WAVE_FAST_RELEASE 0x80&t;/* bit 7 = Shut off immediately after note off */
 multiline_comment|/* &t;(use the env_rate/env_offs fields). */
 multiline_comment|/* Linux specific bits */
 DECL|macro|WAVE_VIBRATO
@@ -405,7 +429,7 @@ DECL|member|key
 r_int
 id|key
 suffix:semicolon
-multiline_comment|/* Use GUS_PATCH here */
+multiline_comment|/* Use SYSEX_PATCH or MAUI_PATCH here */
 DECL|macro|SYSEX_PATCH
 mdefine_line|#define SYSEX_PATCH&t;_PATCHKEY(0x05)
 DECL|macro|MAUI_PATCH
@@ -575,7 +599,7 @@ multiline_comment|/*&n; * Note! SEQ_WAIT, SEQ_MIDIPUTC and SEQ_ECHO are used als
 multiline_comment|/*&n; * Event codes 0xf0 to 0xfc are reserved for future extensions.&n; */
 DECL|macro|SEQ_FULLSIZE
 mdefine_line|#define SEQ_FULLSIZE&t;&t;0xfd&t;/* Long events */
-multiline_comment|/*&n; *&t;SEQ_FULLSIZE events are used for loading patches/samples to the&n; *&t;synthesizer devices. These events are passed directly to the driver&n; *&t;of the associated synthesizer device. There is no limit to the size&n; *&t;of the extended events. These events are not queued but executed&n; *&t;immediately when the write() is called (execution can take several&n; *&t;seconds of time). &n; *&n; *&t;When a SEQ_FULLSIZE message is written to the device, it must&n; *&t;be written using exactly one write() call. Other events cannot&n; *&t;be mixed to the same write.&n; *&t;&n; *&t;For FM synths (YM3812/OPL3) use struct sbi_instrument and write it to the &n; *&t;/dev/sequencer. Don&squot;t write other data together with the instrument structure&n; *&t;Set the key field of the structure to FM_PATCH. The device field is used to&n; *&t;route the patch to the corresponding device.&n; *&n; *&t;For Gravis UltraSound use struct patch_info. Initialize the key field&n; *      to GUS_PATCH.&n; */
+multiline_comment|/*&n; *&t;SEQ_FULLSIZE events are used for loading patches/samples to the&n; *&t;synthesizer devices. These events are passed directly to the driver&n; *&t;of the associated synthesizer device. There is no limit to the size&n; *&t;of the extended events. These events are not queued but executed&n; *&t;immediately when the write() is called (execution can take several&n; *&t;seconds of time). &n; *&n; *&t;When a SEQ_FULLSIZE message is written to the device, it must&n; *&t;be written using exactly one write() call. Other events cannot&n; *&t;be mixed to the same write.&n; *&t;&n; *&t;For FM synths (YM3812/OPL3) use struct sbi_instrument and write it to the &n; *&t;/dev/sequencer. Don&squot;t write other data together with the instrument structure&n; *&t;Set the key field of the structure to FM_PATCH. The device field is used to&n; *&t;route the patch to the corresponding device.&n; *&n; *&t;For wave table use struct patch_info. Initialize the key field&n; *      to WAVE_PATCH.&n; */
 DECL|macro|SEQ_PRIVATE
 mdefine_line|#define SEQ_PRIVATE&t;&t;0xfe&t;/* Low level HW dependent events (8 bytes) */
 DECL|macro|SEQ_EXTENDED
@@ -658,8 +682,10 @@ DECL|macro|FM_TYPE_OPL3
 mdefine_line|#define FM_TYPE_OPL3&t;&t;&t;0x01
 DECL|macro|MIDI_TYPE_MPU401
 mdefine_line|#define MIDI_TYPE_MPU401&t;&t;0x401
+DECL|macro|SAMPLE_TYPE_BASIC
+mdefine_line|#define SAMPLE_TYPE_BASIC&t;&t;0x10
 DECL|macro|SAMPLE_TYPE_GUS
-mdefine_line|#define SAMPLE_TYPE_GUS&t;&t;&t;0x10
+mdefine_line|#define SAMPLE_TYPE_GUS&t;&t;&t;SAMPLE_TYPE_BASIC
 DECL|member|perc_mode
 r_int
 id|perc_mode
@@ -960,6 +986,15 @@ DECL|macro|SNDCTL_DSP_SETSYNCRO
 mdefine_line|#define SNDCTL_DSP_SETSYNCRO&t;&t;_SIO  (&squot;P&squot;, 21)
 DECL|macro|SNDCTL_DSP_SETDUPLEX
 mdefine_line|#define SNDCTL_DSP_SETDUPLEX&t;&t;_SIO  (&squot;P&squot;, 22)
+multiline_comment|/*&n; * Application&squot;s profile defines the way how playback underrun situations should be handled.&n; * &n; *&t;APF_NORMAL (the default) and APF_NETWORK make the driver to cleanup the&n; *&t;playback buffer whenever an underrun occurs. This consumes some time&n; *&t;preven&squot;s looping the existing buffer.&n; *&t;APF_CPUINTENS is intended to be set by CPU intensive applications which&n; *&t;are likely to run out of time occasionally. In this mode the buffer cleanup is&n; *&t;disabled which saves CPU time but also let&squot;s the previous buffer content to&n; *&t;be played during the &quot;pause&quot; after the underrun.&n; */
+DECL|macro|SNDCTL_DSP_PROFILE
+mdefine_line|#define SNDCTL_DSP_PROFILE&t;&t;_SIOW (&squot;P&squot;, 23, int)
+DECL|macro|APF_NORMAL
+mdefine_line|#define&t;  APF_NORMAL&t;0&t;/* Normal applications */
+DECL|macro|APF_NETWORK
+mdefine_line|#define&t;  APF_NETWORK&t;1&t;/* Underruns probably caused by an &quot;external&quot; delay */
+DECL|macro|APF_CPUINTENS
+mdefine_line|#define   APF_CPUINTENS 2&t;/* Underruns probably caused by &quot;overheating&quot; the CPU */
 DECL|macro|SOUND_PCM_READ_RATE
 mdefine_line|#define SOUND_PCM_READ_RATE&t;&t;_SIOR (&squot;P&squot;, 2, int)
 DECL|macro|SOUND_PCM_READ_CHANNELS
@@ -1514,7 +1549,8 @@ DECL|macro|LOCL_STARTAUDIO
 mdefine_line|#define LOCL_STARTAUDIO&t;&t;1
 macro_line|#if (!defined(__KERNEL__) &amp;&amp; !defined(KERNEL) &amp;&amp; !defined(INKERNEL) &amp;&amp; !defined(_KERNEL)) || defined(USE_SEQ_MACROS) 
 multiline_comment|/*&n; *&t;Some convenience macros to simplify programming of the&n; *&t;/dev/sequencer interface&n; *&n; *&t;These macros define the API which should be used when possible.&n; */
-macro_line|#ifndef USE_SIMPLE_MACROS
+DECL|macro|SEQ_DECLAREBUF
+mdefine_line|#define SEQ_DECLAREBUF()&t;&t;SEQ_USE_EXTBUF()
 r_void
 id|seqbuf_dump
 c_func
@@ -1523,13 +1559,189 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* This function must be provided by programs */
+r_extern
+r_int
+id|OSS_init
+c_func
+(paren
+r_int
+id|seqfd
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|OSS_seqbuf_dump
+c_func
+(paren
+r_int
+id|fd
+comma
+r_int
+r_char
+op_star
+id|buf
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|OSS_seq_advbuf
+c_func
+(paren
+r_int
+id|len
+comma
+r_int
+id|fd
+comma
+r_int
+r_char
+op_star
+id|buf
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|OSS_seq_needbuf
+c_func
+(paren
+r_int
+id|len
+comma
+r_int
+id|fd
+comma
+r_int
+r_char
+op_star
+id|buf
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|OSS_patch_caching
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chn
+comma
+r_int
+id|patch
+comma
+r_int
+id|fd
+comma
+r_int
+r_char
+op_star
+id|buf
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|OSS_drum_caching
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chn
+comma
+r_int
+id|patch
+comma
+r_int
+id|fd
+comma
+r_int
+r_char
+op_star
+id|buf
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|OSS_write_patch
+c_func
+(paren
+r_int
+id|fd
+comma
+r_int
+r_char
+op_star
+id|buf
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|OSS_write_patch2
+c_func
+(paren
+r_int
+id|fd
+comma
+r_int
+r_char
+op_star
+id|buf
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+DECL|macro|SEQ_PM_DEFINES
+mdefine_line|#define SEQ_PM_DEFINES int __foo_bar___
+macro_line|#ifdef OSSLIB
+DECL|macro|SEQ_USE_EXTBUF
+macro_line|#  define SEQ_USE_EXTBUF() &bslash;&n;&t;&t;extern unsigned char *_seqbuf; &bslash;&n;&t;&t;extern int _seqbuflen;extern int _seqbufptr
+DECL|macro|SEQ_DEFINEBUF
+macro_line|#  define SEQ_DEFINEBUF(len) SEQ_USE_EXTBUF();static int _requested_seqbuflen=len
+DECL|macro|_SEQ_ADVBUF
+macro_line|#  define _SEQ_ADVBUF(len) OSS_seq_advbuf(len, seqfd, _seqbuf, _seqbuflen)
+DECL|macro|_SEQ_NEEDBUF
+macro_line|#  define _SEQ_NEEDBUF(len) OSS_seq_needbuf(len, seqfd, _seqbuf, _seqbuflen)
+DECL|macro|SEQ_DUMPBUF
+macro_line|#  define SEQ_DUMPBUF() OSS_seqbuf_dump(seqfd, _seqbuf, _seqbuflen)
+DECL|macro|SEQ_LOAD_GMINSTR
+macro_line|#  define SEQ_LOAD_GMINSTR(dev, instr) &bslash;&n;&t;&t;OSS_patch_caching(dev, -1, instr, seqfd, _seqbuf, _seqbuflen)
+DECL|macro|SEQ_LOAD_GMDRUM
+macro_line|#  define SEQ_LOAD_GMDRUM(dev, drum) &bslash;&n;&t;&t;OSS_drum_caching(dev, -1, drum, seqfd, _seqbuf, _seqbuflen)
+macro_line|#else /* !OSSLIB */
+DECL|macro|SEQ_LOAD_GMINSTR
+macro_line|#  define SEQ_LOAD_GMINSTR(dev, instr)
+DECL|macro|SEQ_LOAD_GMDRUM
+macro_line|#  define SEQ_LOAD_GMDRUM(dev, drum)
+DECL|macro|SEQ_USE_EXTBUF
+macro_line|#  define SEQ_USE_EXTBUF() &bslash;&n;&t;&t;extern unsigned char _seqbuf[]; &bslash;&n;&t;&t;extern int _seqbuflen;extern int _seqbufptr
+macro_line|#ifndef USE_SIMPLE_MACROS
 multiline_comment|/* Sample seqbuf_dump() implementation:&n; *&n; *&t;SEQ_DEFINEBUF (2048);&t;-- Defines a buffer for 2048 bytes&n; *&n; *&t;int seqfd;&t;&t;-- The file descriptor for /dev/sequencer.&n; *&n; *&t;void&n; *&t;seqbuf_dump ()&n; *&t;{&n; *&t;  if (_seqbufptr)&n; *&t;    if (write (seqfd, _seqbuf, _seqbufptr) == -1)&n; *&t;      {&n; *&t;&t;perror (&quot;write /dev/sequencer&quot;);&n; *&t;&t;exit (-1);&n; *&t;      }&n; *&t;  _seqbufptr = 0;&n; *&t;}&n; */
 DECL|macro|SEQ_DEFINEBUF
 mdefine_line|#define SEQ_DEFINEBUF(len)&t;&t;unsigned char _seqbuf[len]; int _seqbuflen = len;int _seqbufptr = 0
-DECL|macro|SEQ_USE_EXTBUF
-mdefine_line|#define SEQ_USE_EXTBUF()&t;&t;extern unsigned char _seqbuf[]; extern int _seqbuflen;extern int _seqbufptr
-DECL|macro|SEQ_DECLAREBUF
-mdefine_line|#define SEQ_DECLAREBUF()&t;&t;SEQ_USE_EXTBUF()
 DECL|macro|_SEQ_NEEDBUF
 mdefine_line|#define _SEQ_NEEDBUF(len)&t;&t;if ((_seqbufptr+(len)) &gt; _seqbuflen) seqbuf_dump()
 DECL|macro|_SEQ_ADVBUF
@@ -1541,6 +1753,7 @@ multiline_comment|/*&n; * This variation of the sequencer macros is used just to
 DECL|macro|_SEQ_NEEDBUF
 mdefine_line|#define _SEQ_NEEDBUF(len)&t;/* empty */
 macro_line|#endif
+macro_line|#endif /* !OSSLIB */
 DECL|macro|SEQ_VOLUME_MODE
 mdefine_line|#define SEQ_VOLUME_MODE(dev, mode)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_VOLMODE;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (mode);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+4] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+6] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 multiline_comment|/*&n; * Midi voice messages&n; */
@@ -1557,11 +1770,18 @@ DECL|macro|_CHN_COMMON
 mdefine_line|#define _CHN_COMMON(dev, event, chn, p1, p2, w14) &bslash;&n;&t;&t;&t;&t;&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = EV_CHN_COMMON;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (event);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (chn);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+4] = (p1);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = (p2);&bslash;&n;&t;&t;&t;&t;&t;*(short *)&amp;_seqbuf[_seqbufptr+6] = (w14);&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 multiline_comment|/*&n; * SEQ_SYSEX permits sending of sysex messages. (It may look that it permits&n; * sending any MIDI bytes but it&squot;s absolutely not possible. Trying to do&n; * so _will_ cause problems with MPU401 intelligent mode).&n; *&n; * Sysex messages are sent in blocks of 1 to 6 bytes. Longer messages must be &n; * sent by calling SEQ_SYSEX() several times (there must be no other events&n; * between them). First sysex fragment must have 0xf0 in the first byte&n; * and the last byte (buf[len-1] of the last fragment must be 0xf7. No byte&n; * between these sysex start and end markers cannot be larger than 0x7f. Also&n; * lengths of each fragments (except the last one) must be 6.&n; *&n; * Breaking the above rules may work with some MIDI ports but is likely to&n; * cause fatal problems with some other devices (such as MPU401).&n; */
 DECL|macro|SEQ_SYSEX
-mdefine_line|#define SEQ_SYSEX(dev, buf, len) &bslash;&n;&t;&t;&t;&t;&t;{int i, l=(len); if (l&gt;6)l=6;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = EV_SYSEX;&bslash;&n;&t;&t;&t;&t;&t;for(i=0;i&lt;l;i++)_seqbuf[_seqbufptr+i+1] = (buf)[i];&bslash;&n;&t;&t;&t;&t;&t;for(i=l;i&lt;6;i++)_seqbuf[_seqbufptr+i+1] = 0xff;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
+mdefine_line|#define SEQ_SYSEX(dev, buf, len) &bslash;&n;&t;&t;&t;&t;&t;{int ii, ll=(len); &bslash;&n;&t;&t;&t;&t;&t; unsigned char *bufp=buf;&bslash;&n;&t;&t;&t;&t;&t; if (ll&gt;6)ll=6;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = EV_SYSEX;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = (dev);&bslash;&n;&t;&t;&t;&t;&t;for(ii=0;ii&lt;ll;ii++)&bslash;&n;&t;&t;&t;&t;&t;   _seqbuf[_seqbufptr+ii+2] = bufp[ii];&bslash;&n;&t;&t;&t;&t;&t;for(ii=ll;ii&lt;6;ii++)&bslash;&n;&t;&t;&t;&t;&t;   _seqbuf[_seqbufptr+ii+2] = 0xff;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 DECL|macro|SEQ_CHN_PRESSURE
 mdefine_line|#define SEQ_CHN_PRESSURE(dev, chn, pressure) &bslash;&n;&t;&t;_CHN_COMMON(dev, MIDI_CHN_PRESSURE, chn, pressure, 0, 0)
 DECL|macro|SEQ_SET_PATCH
-mdefine_line|#define SEQ_SET_PATCH(dev, chn, patch) &bslash;&n;&t;&t;_CHN_COMMON(dev, MIDI_PGM_CHANGE, chn, patch, 0, 0)
+mdefine_line|#define SEQ_SET_PATCH SEQ_PGM_CHANGE
+macro_line|#ifdef OSSLIB
+DECL|macro|SEQ_PGM_CHANGE
+macro_line|#   define SEQ_PGM_CHANGE(dev, chn, patch) &bslash;&n;&t;&t;{OSS_patch_caching(dev, chn, patch, seqfd, _seqbuf, _seqbuflen); &bslash;&n;&t;&t; _CHN_COMMON(dev, MIDI_PGM_CHANGE, chn, patch, 0, 0);}
+macro_line|#else
+DECL|macro|SEQ_PGM_CHANGE
+macro_line|#   define SEQ_PGM_CHANGE(dev, chn, patch) &bslash;&n;&t;&t;_CHN_COMMON(dev, MIDI_PGM_CHANGE, chn, patch, 0, 0)
+macro_line|#endif
 DECL|macro|SEQ_CONTROL
 mdefine_line|#define SEQ_CONTROL(dev, chn, controller, value) &bslash;&n;&t;&t;_CHN_COMMON(dev, MIDI_CTL_CHANGE, chn, controller, 0, value)
 DECL|macro|SEQ_BENDER
@@ -1609,10 +1829,17 @@ multiline_comment|/*&n; * Events for the level 1 interface only &n; */
 DECL|macro|SEQ_MIDIOUT
 mdefine_line|#define SEQ_MIDIOUT(device, byte)&t;{_SEQ_NEEDBUF(4);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_MIDIPUTC;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = (byte);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (device);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(4);}
 multiline_comment|/*&n; * Patch loading.&n; */
+macro_line|#ifdef OSSLIB
 DECL|macro|SEQ_WRPATCH
-mdefine_line|#define SEQ_WRPATCH(patchx, len)&t;&t;{if (_seqbufptr) seqbuf_dump();&bslash;&n;&t;&t;&t;&t;&t;if (write(seqfd, (char*)(patchx), len)==-1) &bslash;&n;&t;&t;&t;&t;&t;   perror(&quot;Write patch: /dev/sequencer&quot;);}
+macro_line|#   define SEQ_WRPATCH(patchx, len) &bslash;&n;&t;&t;OSS_write_patch(seqfd, (char*)(patchx), len)
 DECL|macro|SEQ_WRPATCH2
-mdefine_line|#define SEQ_WRPATCH2(patchx, len)&t;(seqbuf_dump(), write(seqfd, (char*)(patchx), len))
+macro_line|#   define SEQ_WRPATCH2(patchx, len) &bslash;&n;&t;&t;OSS_write_patch2(seqfd, (char*)(patchx), len)
+macro_line|#else
+DECL|macro|SEQ_WRPATCH
+macro_line|#   define SEQ_WRPATCH(patchx, len) &bslash;&n;&t;&t;{if (_seqbufptr) SEQ_DUMPBUF();&bslash;&n;&t;&t; if (write(seqfd, (char*)(patchx), len)==-1) &bslash;&n;&t;&t;    perror(&quot;Write patch: /dev/sequencer&quot;);}
+DECL|macro|SEQ_WRPATCH2
+macro_line|#   define SEQ_WRPATCH2(patchx, len) &bslash;&n;&t;&t;(SEQ_DUMPBUF(), write(seqfd, (char*)(patchx), len))
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

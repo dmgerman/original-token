@@ -10,7 +10,7 @@ op_assign
 (brace
 l_int|0x40
 comma
-l_int|0x40
+l_int|0x00
 comma
 l_int|0x40
 comma
@@ -22,7 +22,7 @@ l_int|0x40
 comma
 l_int|0x40
 comma
-l_int|0x40
+l_int|0x7f
 comma
 multiline_comment|/*   0 to   7 */
 l_int|0x40
@@ -31,7 +31,7 @@ l_int|0x40
 comma
 l_int|0x40
 comma
-l_int|0x40
+l_int|0x7f
 comma
 l_int|0x40
 comma
@@ -216,13 +216,13 @@ l_int|0x00
 comma
 l_int|0x00
 comma
-l_int|0x00
+l_int|0x7f
 comma
-l_int|0x00
+l_int|0x7f
 comma
-l_int|0x00
+l_int|0x7f
 comma
-l_int|0x00
+l_int|0x7f
 comma
 l_int|0x00
 comma

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
-multiline_comment|/*&n; *&t;TODO&n; *&t;&t;- A better sock cache&n; *&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -3570,13 +3569,6 @@ op_ne
 id|sk-&gt;syn_seq
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;syn in established state&bslash;n&quot;
-)paren
-suffix:semicolon
 id|tcp_reset
 c_func
 (paren
@@ -3778,7 +3770,7 @@ suffix:semicolon
 r_int
 id|rcv_mss
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;state == CLOSED&n;&t; *&t;tested in tcp_v{4,6}_rcv&n;&t; */
+multiline_comment|/*&n;&t; *&t;state == CLOSED&n;&t; *&t;Hash lookup always fails, so no worries. -DaveM &n;&t; */
 r_switch
 c_cond
 (paren

@@ -44,6 +44,22 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|init_aedsp16
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|uninit_aedsp16
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * There are two places where you can insert initialization calls of&n; * low level drivers. sound_init_lowlevel_drivers() is called after&n; * the sound driver has been initialized (the normal case)&n; * while sound_preinit_lowlevel_drivers() is called before that.&n; */
 r_void
 DECL|function|sound_preinit_lowlevel_drivers
@@ -53,6 +69,13 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_AEDSP16
+id|init_aedsp16
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|sound_init_lowlevel_drivers
@@ -94,6 +117,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_AWE32_SYNTH
 id|unload_awe
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_AEDSP16
+id|uninit_aedsp16
 c_func
 (paren
 )paren

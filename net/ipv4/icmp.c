@@ -1725,12 +1725,13 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Throw it at our lower layers&n;&t; *&n;&t; *&t;RFC 1122: 3.2.2 MUST extract the protocol ID from the passed header.&n;&t; *&t;RFC 1122: 3.2.2.1 MUST pass ICMP unreach messages to the transport layer.&n;&t; *&t;RFC 1122: 3.2.2.2 MUST pass ICMP time expired messages to transport layer.&n;&t; */
 multiline_comment|/* Deliver ICMP message to raw sockets. Pretty useless feature?&n;&t; */
+multiline_comment|/* Note: See raw.c and net/raw.h, RAWV4_HTABLE_SIZE==MAX_INET_PROTOS */
 id|hash
 op_assign
 id|iph-&gt;protocol
 op_amp
 (paren
-id|SOCK_ARRAY_SIZE
+id|MAX_INET_PROTOS
 op_minus
 l_int|1
 )paren
@@ -1741,7 +1742,7 @@ c_cond
 (paren
 id|raw_sk
 op_assign
-id|raw_prot.sock_array
+id|raw_v4_htable
 (braket
 id|hash
 )braket
@@ -1752,7 +1753,7 @@ l_int|NULL
 (brace
 id|raw_sk
 op_assign
-id|get_sock_raw
+id|raw_v4_lookup
 c_func
 (paren
 id|raw_sk
@@ -1780,7 +1781,7 @@ id|skb
 suffix:semicolon
 id|raw_sk
 op_assign
-id|get_sock_raw
+id|raw_v4_lookup
 c_func
 (paren
 id|raw_sk-&gt;next
@@ -1794,17 +1795,6 @@ id|iph-&gt;daddr
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Get the protocol(s).&n;&t; */
-id|hash
-op_assign
-id|iph-&gt;protocol
-op_amp
-(paren
-id|MAX_INET_PROTOS
-op_minus
-l_int|1
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;This can&squot;t change while we are doing it. &n;&t; *&n;&t; *&t;FIXME: Deliver to appropriate raw sockets too.&n;&t; */
 id|ipprot
 op_assign
@@ -2514,6 +2504,47 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
 multiline_comment|/*&n; *&t;Check incoming icmp packets not addressed locally, to check whether&n; *&t;they relate to a (proxying) socket on our system.&n; *&t;Needed for transparent proxying.&n; *&n; *&t;This code is presently ugly and needs cleanup.&n; *&t;Probably should add a chkaddr entry to ipprot to call a chk routine&n; *&t;in udp.c or tcp.c...&n; */
+multiline_comment|/* This should work with the new hashes now. -DaveM */
+r_extern
+r_struct
+id|sock
+op_star
+id|tcp_v4_lookup
+c_func
+(paren
+id|u32
+id|saddr
+comma
+id|u16
+id|sport
+comma
+id|u32
+id|daddr
+comma
+id|u16
+id|dport
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|sock
+op_star
+id|udp_v4_lookup
+c_func
+(paren
+id|u32
+id|saddr
+comma
+id|u16
+id|sport
+comma
+id|u32
+id|daddr
+comma
+id|u16
+id|dport
+)paren
+suffix:semicolon
 DECL|function|icmp_chkaddr
 r_int
 id|icmp_chkaddr
@@ -2642,19 +2673,16 @@ l_int|2
 suffix:semicolon
 id|sk
 op_assign
-id|get_sock
+id|tcp_v4_lookup
 c_func
 (paren
-op_amp
-id|tcp_prot
+id|iph-&gt;saddr
 comma
 id|th-&gt;source
 comma
 id|iph-&gt;daddr
 comma
 id|th-&gt;dest
-comma
-id|iph-&gt;saddr
 )paren
 suffix:semicolon
 r_if
@@ -2734,19 +2762,16 @@ l_int|2
 suffix:semicolon
 id|sk
 op_assign
-id|get_sock
+id|udp_v4_lookup
 c_func
 (paren
-op_amp
-id|udp_prot
+id|iph-&gt;saddr
 comma
 id|uh-&gt;source
 comma
 id|iph-&gt;daddr
 comma
 id|uh-&gt;dest
-comma
-id|iph-&gt;saddr
 )paren
 suffix:semicolon
 r_if

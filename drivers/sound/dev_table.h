@@ -1,9 +1,8 @@
 multiline_comment|/*&n; *&t;dev_table.h&n; *&n; *&t;Global definitions for device call tables&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Sound card numbers 27 to 999. (1 to 26 are defined in soundcard.h)&n; * Numbers 1000 to N are reserved for driver&squot;s internal use.&n; */
 DECL|macro|SNDCARD_DESKPROXL
 mdefine_line|#define SNDCARD_DESKPROXL&t;&t;27&t;/* Compaq Deskpro XL */
@@ -157,8 +156,8 @@ DECL|macro|DMA_ALLOC_DONE
 mdefine_line|#define DMA_ALLOC_DONE&t;0x00000020
 DECL|macro|DMA_SYNCING
 mdefine_line|#define DMA_SYNCING&t;0x00000040
-DECL|macro|DMA_CLEAN
-mdefine_line|#define DMA_CLEAN&t;0x00000080
+DECL|macro|DMA_DIRTY
+mdefine_line|#define DMA_DIRTY&t;0x00000080
 DECL|macro|DMA_POST
 mdefine_line|#define DMA_POST&t;0x00000100
 DECL|member|open_mode
@@ -202,6 +201,10 @@ DECL|member|fragment_size
 r_int
 id|fragment_size
 suffix:semicolon
+DECL|member|needs_reorg
+r_int
+id|needs_reorg
+suffix:semicolon
 DECL|member|max_fragments
 r_int
 id|max_fragments
@@ -216,7 +219,13 @@ id|underrun_count
 suffix:semicolon
 DECL|member|byte_counter
 r_int
+r_int
 id|byte_counter
+suffix:semicolon
+DECL|member|user_counter
+r_int
+r_int
+id|user_counter
 suffix:semicolon
 DECL|member|data_rate
 r_int
@@ -233,9 +242,19 @@ DECL|member|neutral_byte
 r_char
 id|neutral_byte
 suffix:semicolon
+DECL|member|dma
+r_int
+id|dma
+suffix:semicolon
+multiline_comment|/* DMA channel */
 macro_line|#ifdef OS_DMA_PARMS
 id|OS_DMA_PARMS
 macro_line|#endif
+DECL|member|applic_profile
+r_int
+id|applic_profile
+suffix:semicolon
+multiline_comment|/* Application profile (APF_*) */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Structure for use with various microcontrollers and DSP processors &n; * in the recent soundcards.&n; */
@@ -373,9 +392,6 @@ id|count
 comma
 r_int
 id|intrflag
-comma
-r_int
-id|dma_restart
 )paren
 suffix:semicolon
 DECL|member|start_input
@@ -397,9 +413,6 @@ id|count
 comma
 r_int
 id|intrflag
-comma
-r_int
-id|dma_restart
 )paren
 suffix:semicolon
 DECL|member|ioctl
@@ -418,9 +431,6 @@ id|cmd
 comma
 id|caddr_t
 id|arg
-comma
-r_int
-id|local
 )paren
 suffix:semicolon
 DECL|member|prepare_for_input
@@ -457,22 +467,11 @@ r_int
 id|nbufs
 )paren
 suffix:semicolon
-DECL|member|reset
+DECL|member|halt_io
 r_void
 (paren
 op_star
-id|reset
-)paren
-(paren
-r_int
-id|dev
-)paren
-suffix:semicolon
-DECL|member|halt_xfer
-r_void
-(paren
-op_star
-id|halt_xfer
+id|halt_io
 )paren
 (paren
 r_int
@@ -609,7 +608,7 @@ DECL|member|name
 r_char
 id|name
 (braket
-l_int|64
+l_int|128
 )braket
 suffix:semicolon
 DECL|member|flags
@@ -630,6 +629,8 @@ DECL|macro|DMA_HARDSTOP
 mdefine_line|#define DMA_HARDSTOP&t;&t;0x10
 DECL|macro|DMA_NODMA
 mdefine_line|#define DMA_NODMA&t;&t;0x20
+DECL|macro|DMA_EXACT
+mdefine_line|#define DMA_EXACT&t;&t;0x40
 DECL|member|format_mask
 r_int
 id|format_mask
@@ -647,16 +648,15 @@ id|audio_driver
 op_star
 id|d
 suffix:semicolon
+DECL|member|portc
+r_void
+op_star
+id|portc
+suffix:semicolon
+multiline_comment|/* Driver spesific info */
 DECL|member|buffsize
 r_int
 id|buffsize
-suffix:semicolon
-DECL|member|dmachan1
-DECL|member|dmachan2
-r_int
-id|dmachan1
-comma
-id|dmachan2
 suffix:semicolon
 DECL|member|dmap_in
 DECL|member|dmap_out
@@ -695,6 +695,11 @@ r_int
 id|min_fragment
 suffix:semicolon
 multiline_comment|/* 0 == unlimited */
+DECL|member|parent_dev
+r_int
+id|parent_dev
+suffix:semicolon
+multiline_comment|/* 0 -&gt; no parent, 1 to n -&gt; parent=parent_dev+1 */
 )brace
 suffix:semicolon
 r_int
@@ -765,6 +770,12 @@ DECL|struct|synth_operations
 r_struct
 id|synth_operations
 (brace
+DECL|member|id
+r_char
+op_star
+id|id
+suffix:semicolon
+multiline_comment|/* Unique identifier (ASCII) max 29 char */
 DECL|member|info
 r_struct
 id|synth_info
@@ -1094,6 +1105,28 @@ id|chn_info
 l_int|16
 )braket
 suffix:semicolon
+DECL|member|emulation
+r_int
+id|emulation
+suffix:semicolon
+DECL|macro|EMU_GM
+mdefine_line|#define&t;EMU_GM&t;&t;&t;1&t;/* General MIDI */
+DECL|macro|EMU_XG
+mdefine_line|#define&t;EMU_XG&t;&t;&t;2&t;/* Yamaha XG */
+DECL|macro|MAX_SYSEX_BUF
+mdefine_line|#define MAX_SYSEX_BUF&t;64
+DECL|member|sysex_buf
+r_int
+r_char
+id|sysex_buf
+(braket
+id|MAX_SYSEX_BUF
+)braket
+suffix:semicolon
+DECL|member|sysex_ptr
+r_int
+id|sysex_ptr
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|midi_input_info
@@ -1339,6 +1372,10 @@ DECL|member|dev
 r_int
 id|dev
 suffix:semicolon
+DECL|member|priority
+r_int
+id|priority
+suffix:semicolon
 DECL|member|tmr_start
 r_int
 r_int
@@ -1562,7 +1599,7 @@ id|num_midis
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_SEQUENCER
+macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
 r_extern
 r_struct
 id|sound_timer_operations
@@ -2101,21 +2138,6 @@ r_struct
 id|driver_info
 )paren
 suffix:semicolon
-DECL|variable|max_sound_drivers
-r_int
-id|max_sound_drivers
-op_assign
-r_sizeof
-(paren
-id|sound_drivers
-)paren
-op_div
-r_sizeof
-(paren
-r_struct
-id|driver_info
-)paren
-suffix:semicolon
 macro_line|#ifndef FULL_SOUND
 multiline_comment|/*&n; *&t;List of devices actually configured in the system.&n; *&n; *&t;Note! The detection order is significant. Don&squot;t change it.&n; */
 DECL|variable|snd_installed_cards
@@ -2374,8 +2396,7 @@ id|MSS_IRQ
 comma
 id|MSS_DMA
 comma
-op_minus
-l_int|1
+id|MSS_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2392,8 +2413,7 @@ id|MSS_IRQ
 comma
 id|MSS_DMA
 comma
-op_minus
-l_int|1
+id|MSS_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2411,8 +2431,7 @@ id|MSS2_IRQ
 comma
 id|MSS2_DMA
 comma
-op_minus
-l_int|1
+id|MSS2_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2686,6 +2705,7 @@ id|card_info
 )paren
 suffix:semicolon
 DECL|variable|max_sound_cards
+r_static
 r_int
 id|max_sound_cards
 op_assign
@@ -2722,6 +2742,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|max_sound_cards
+r_static
 r_int
 id|max_sound_cards
 op_assign
@@ -2735,24 +2756,14 @@ id|trace_init
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#else
+macro_line|#   else
 DECL|variable|trace_init
 r_int
 id|trace_init
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef MODULE_PARM
-id|MODULE_PARM
-c_func
-(paren
-id|trace_init
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
+macro_line|#   endif
 macro_line|#else
 r_extern
 r_struct
@@ -2833,10 +2844,6 @@ r_int
 id|num_sound_drivers
 suffix:semicolon
 r_extern
-r_int
-id|max_sound_drivers
-suffix:semicolon
-r_extern
 r_struct
 id|card_info
 id|snd_installed_cards
@@ -2846,10 +2853,6 @@ suffix:semicolon
 r_extern
 r_int
 id|num_sound_cards
-suffix:semicolon
-r_extern
-r_int
-id|max_sound_cards
 suffix:semicolon
 r_extern
 r_int

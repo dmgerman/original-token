@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
 multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
@@ -156,13 +156,6 @@ id|devc
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|force_opl3_mode
-r_static
-r_int
-id|force_opl3_mode
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|detected_model
 r_static
 r_int
@@ -230,25 +223,6 @@ r_int
 id|velocity
 )paren
 suffix:semicolon
-r_void
-DECL|function|enable_opl3_mode
-id|enable_opl3_mode
-(paren
-r_int
-id|left
-comma
-r_int
-id|right
-comma
-r_int
-id|both
-)paren
-(brace
-id|force_opl3_mode
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 r_static
 r_void
 DECL|function|enter_4op_mode
@@ -460,7 +434,7 @@ r_struct
 id|sbi_instrument
 id|ins
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -469,6 +443,7 @@ op_star
 op_amp
 id|ins
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -480,6 +455,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -539,19 +515,8 @@ l_int|6
 suffix:colon
 id|devc-&gt;nr_voice
 suffix:semicolon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-op_amp
-id|devc-&gt;fm_info
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -564,16 +529,20 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|devc-&gt;fm_info
 comma
 r_sizeof
 (paren
 id|devc-&gt;fm_info
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 l_int|0
@@ -670,6 +639,17 @@ id|devc
 )paren
 )paren
 suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+op_star
+id|devc
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -752,6 +732,10 @@ op_logical_and
 id|signature
 op_ne
 l_int|0x02
+op_logical_and
+id|signature
+op_ne
+l_int|0x0f
 )paren
 (brace
 id|DDB
@@ -774,9 +758,6 @@ c_cond
 id|signature
 op_eq
 l_int|0x06
-op_logical_and
-op_logical_neg
-id|force_opl3_mode
 )paren
 multiline_comment|/* OPL2 */
 (brace
@@ -792,6 +773,10 @@ c_cond
 id|signature
 op_eq
 l_int|0x00
+op_logical_or
+id|signature
+op_eq
+l_int|0x0f
 )paren
 multiline_comment|/* OPL3 or OPL4 */
 (brace
@@ -1330,6 +1315,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * The next table looks magical, but it certainly is not. Its values have&n; * been calculated as table[i]=8*log(i/64)/log(2) with an obvious exception&n; * for i=0. This log-table converts a linear volume-scaling (0..127) to a&n; * logarithmic scaling as present in the FM-synthesizer chips. so :    Volume&n; * 64 =  0 db = relative volume  0 and:    Volume 32 = -6 db = relative&n; * volume -8 it was implemented as a table because it is only 128 bytes and&n; * it saves a lot of log() calculations. (RH)&n; */
 DECL|variable|fm_volume_table
+r_static
 r_char
 id|fm_volume_table
 (braket
@@ -3011,6 +2997,8 @@ id|voice
 )braket
 dot
 id|bender_range
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|devc-&gt;voc
@@ -3290,7 +3278,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|devc-&gt;model
 op_ne
 l_int|2
@@ -4280,6 +4267,8 @@ id|voice
 )braket
 dot
 id|bender_range
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|devc-&gt;voc
@@ -4812,7 +4801,16 @@ id|voice
 dot
 id|bender
 op_assign
-id|info-&gt;bender_value
+l_int|0
+suffix:semicolon
+id|devc-&gt;voc
+(braket
+id|voice
+)braket
+dot
+id|bender_range
+op_assign
+id|info-&gt;bender_range
 suffix:semicolon
 id|devc-&gt;voc
 (braket
@@ -4852,6 +4850,8 @@ id|synth_operations
 id|opl3_operations
 op_assign
 (brace
+l_string|&quot;OPL&quot;
+comma
 l_int|NULL
 comma
 l_int|0

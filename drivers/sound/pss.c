@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/pss.c&n; *&n; * The low level driver for the Personal Sound System (ECHO ESC614).&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_PSS) &amp;&amp; defined(CONFIG_AUDIO)
@@ -1268,6 +1268,7 @@ id|CONF_PSS
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* 0x0400 enables joystick */
 id|outw
 (paren
 l_int|0x0000
@@ -1951,7 +1952,7 @@ r_return
 op_minus
 id|ENOSPC
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -1959,6 +1960,7 @@ op_star
 )paren
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -1970,6 +1972,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -2043,7 +2046,7 @@ r_return
 op_minus
 id|ENOSPC
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -2051,6 +2054,7 @@ op_star
 )paren
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -2062,6 +2066,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -2129,18 +2134,8 @@ op_assign
 id|i
 suffix:semicolon
 multiline_comment|/* feed back number of WORDs sent */
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-id|buf
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2153,8 +2148,13 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+id|buf
 comma
 r_sizeof
 (paren
@@ -2162,8 +2162,6 @@ op_star
 id|buf
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 id|vfree
 (paren
@@ -2315,18 +2313,8 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-id|buf
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2339,8 +2327,13 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+id|buf
 comma
 r_sizeof
 (paren
@@ -2348,8 +2341,6 @@ op_star
 id|buf
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 id|vfree
 (paren
@@ -2377,7 +2368,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -2386,6 +2377,7 @@ op_star
 op_amp
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -2397,6 +2389,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -2497,19 +2490,8 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-op_amp
-id|buf
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2522,16 +2504,20 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|buf
 comma
 r_sizeof
 (paren
 id|buf
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 l_int|0
@@ -2554,7 +2540,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -2563,6 +2549,7 @@ op_star
 op_amp
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -2574,6 +2561,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -2700,7 +2688,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -2709,6 +2697,7 @@ op_star
 op_amp
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -2720,6 +2709,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -2882,7 +2872,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -2891,6 +2881,7 @@ op_star
 op_amp
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -2902,6 +2893,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -3035,19 +3027,8 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-op_amp
-id|buf
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -3060,16 +3041,20 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|buf
 comma
 r_sizeof
 (paren
 id|buf
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 l_int|0

@@ -8,7 +8,7 @@ id|proto
 id|raw_prot
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|raw_err
 c_func
 (paren
@@ -33,6 +33,43 @@ comma
 r_struct
 id|sk_buff
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Note: v4 ICMP wants to get at this stuff, if you change the&n; *       hashing mechanism, make sure you update icmp.c as well.&n; */
+DECL|macro|RAWV4_HTABLE_SIZE
+mdefine_line|#define RAWV4_HTABLE_SIZE&t;MAX_INET_PROTOS
+r_extern
+r_struct
+id|sock
+op_star
+id|raw_v4_htable
+(braket
+id|RAWV4_HTABLE_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|sock
+op_star
+id|raw_v4_lookup
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+r_int
+id|num
+comma
+r_int
+r_int
+id|raddr
+comma
+r_int
+r_int
+id|laddr
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _RAW_H */

@@ -1,5 +1,5 @@
 DECL|macro|SOUND_VERSION_STRING
-mdefine_line|#define SOUND_VERSION_STRING &quot;3.7-beta12-961115&quot;
+mdefine_line|#define SOUND_VERSION_STRING &quot;3.8-beta9-970226&quot;
 DECL|macro|SOUND_INTERNAL_VERSION
-mdefine_line|#define SOUND_INTERNAL_VERSION 0x030707
+mdefine_line|#define SOUND_INTERNAL_VERSION 0x030803
 eof

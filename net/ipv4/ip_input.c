@@ -287,12 +287,13 @@ op_star
 l_int|4
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Deliver to raw sockets. This is fun as to avoid copies we want to make no surplus copies.&n;&t; *&n;&t; *&t;RFC 1122: SHOULD pass TOS value up to the transport layer.&n;&t; */
+multiline_comment|/* Note: See raw.c and net/raw.h, RAWV4_HTABLE_SIZE==MAX_INET_PROTOS */
 id|hash
 op_assign
 id|iph-&gt;protocol
 op_amp
 (paren
-id|SOCK_ARRAY_SIZE
+id|MAX_INET_PROTOS
 op_minus
 l_int|1
 )paren
@@ -304,7 +305,7 @@ c_cond
 (paren
 id|raw_sk
 op_assign
-id|raw_prot.sock_array
+id|raw_v4_htable
 (braket
 id|hash
 )braket
@@ -327,7 +328,7 @@ id|skb1
 suffix:semicolon
 id|raw_sk
 op_assign
-id|get_sock_raw
+id|raw_v4_lookup
 c_func
 (paren
 id|raw_sk
@@ -344,14 +345,14 @@ c_cond
 (paren
 id|raw_sk
 )paren
-multiline_comment|/* Any raw sockets */
 (brace
+multiline_comment|/* Any raw sockets */
 r_do
 (brace
 multiline_comment|/* Find the next */
 id|sknext
 op_assign
-id|get_sock_raw
+id|raw_v4_lookup
 c_func
 (paren
 id|raw_sk-&gt;next
@@ -414,21 +415,10 @@ l_int|NULL
 (brace
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Here either raw_sk is the last raw socket, or NULL if none &n;&t;&t;&t; */
-multiline_comment|/*&n;&t;&t;&t; *&t;We deliver to the last raw socket AFTER the protocol checks as it avoids a surplus copy &n;&t;&t;&t; */
+multiline_comment|/*&t;Here either raw_sk is the last raw socket, or NULL if&n;&t;&t;&t; *&t;none.  We deliver to the last raw socket AFTER the&n;&t;&t;&t; *&t;protocol checks as it avoids a surplus copy.&n;&t;&t;&t; */
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;skb-&gt;h.raw now points at the protocol beyond the IP header.&n;&t; */
-id|hash
-op_assign
-id|iph-&gt;protocol
-op_amp
-(paren
-id|MAX_INET_PROTOS
-op_minus
-l_int|1
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren

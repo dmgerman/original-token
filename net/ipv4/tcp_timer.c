@@ -1037,6 +1037,7 @@ multiline_comment|/*&n; *&t;Check all sockets for keepalive timer&n; *&t;Called 
 multiline_comment|/*&n; *&t;don&squot;t send over 5 keepopens at a time to avoid burstiness &n; *&t;on big servers [AC]&n; */
 DECL|macro|MAX_KA_PROBES
 mdefine_line|#define MAX_KA_PROBES&t;5
+multiline_comment|/* Keepopen&squot;s are only valid for &quot;established&quot; TCP&squot;s, nicely our listener&n; * hash gets rid of most of the useless testing, so we run through a couple&n; * of the established hash chains each clock tick.  -DaveM&n; */
 DECL|function|tcp_keepalive
 r_static
 r_void
@@ -1048,10 +1049,11 @@ r_int
 id|data
 )paren
 (brace
-r_struct
-id|sock
-op_star
-id|sk
+r_static
+r_int
+id|chain_start
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|count
@@ -1066,19 +1068,30 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|0
+id|chain_start
 suffix:semicolon
 id|i
 OL
-id|SOCK_ARRAY_SIZE
+(paren
+id|chain_start
+op_plus
+(paren
+id|TCP_HTABLE_SIZE
+op_rshift
+l_int|2
+)paren
+)paren
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
+r_struct
+id|sock
+op_star
 id|sk
 op_assign
-id|tcp_prot.sock_array
+id|tcp_established_hash
 (braket
 id|i
 )braket
@@ -1103,7 +1116,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1111,14 +1123,40 @@ id|count
 op_eq
 id|MAX_KA_PROBES
 )paren
-r_return
+(brace
+r_goto
+id|out
 suffix:semicolon
+)brace
+)brace
 id|sk
 op_assign
 id|sk-&gt;next
 suffix:semicolon
 )brace
 )brace
+id|out
+suffix:colon
+id|chain_start
+op_assign
+(paren
+(paren
+id|chain_start
+op_plus
+(paren
+id|TCP_HTABLE_SIZE
+op_rshift
+l_int|2
+)paren
+)paren
+op_amp
+(paren
+id|TCP_HTABLE_SIZE
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;The TCP retransmit timer. This lacks a few small details.&n; *&n; *&t;1. &t;An initial rtt timeout on the probe0 should cause what we can&n; *&t;&t;of the first write queue buffer to be split and sent.&n; *&t;2.&t;On a &squot;major timeout&squot; as defined by RFC1122 we shouldn&squot;t report&n; *&t;&t;ETIMEDOUT if we know an additional &squot;soft&squot; error caused this.&n; *&t;&t;tcp_err should save a &squot;soft error&squot; for us.&n; *&t;[Unless someone has broken it then it does, except for one 2.0 &n; *&t;broken case of a send when the route/device is directly unreachable,&n; *&t;and we error but should retry! - FIXME] [AC]&n; */
 DECL|function|tcp_retransmit_timer
@@ -1264,6 +1302,7 @@ id|sk
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Slow timer for SYN-RECV sockets&n; */
+multiline_comment|/* This now scales very nicely. -DaveM */
 DECL|function|tcp_syn_recv_timer
 r_static
 r_void
@@ -1298,7 +1337,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|SOCK_ARRAY_SIZE
+id|TCP_LHTABLE_SIZE
 suffix:semicolon
 id|i
 op_increment
@@ -1306,7 +1345,7 @@ op_increment
 (brace
 id|sk
 op_assign
-id|tcp_prot.sock_array
+id|tcp_listening_hash
 (braket
 id|i
 )braket
@@ -1325,13 +1364,10 @@ op_assign
 op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
+multiline_comment|/* TCP_LISTEN is implied. */
 r_if
 c_cond
 (paren
-id|sk-&gt;state
-op_eq
-id|TCP_LISTEN
-op_logical_and
 op_logical_neg
 id|sk-&gt;users
 op_logical_and
@@ -1367,10 +1403,8 @@ c_cond
 (paren
 id|conn-&gt;sk
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -68,6 +68,10 @@ DECL|macro|MDL_ESS
 mdefine_line|#define MDL_ESS&t;&t;12&t;/* ESS ES688 and ES1688 */
 DECL|macro|MDL_AZTECH
 mdefine_line|#define MDL_AZTECH&t;13&t;/* Aztech Sound Galaxy family */
+DECL|macro|MDL_ES1868MIDI
+mdefine_line|#define MDL_ES1868MIDI&t;14&t;/* MIDI port of ESS1868 */
+DECL|macro|MDL_AEDSP
+mdefine_line|#define MDL_AEDSP&t;15&t;/* Audio Excel DSP 16 */
 multiline_comment|/*&n; * Config flags&n; */
 DECL|macro|SB_NO_MIDI
 mdefine_line|#define SB_NO_MIDI&t;0x00000001
@@ -314,14 +318,6 @@ id|val
 )paren
 suffix:semicolon
 r_int
-id|sb_dsp_get_byte
-(paren
-id|sb_devc
-op_star
-id|devc
-)paren
-suffix:semicolon
-r_int
 id|sb_dsp_reset
 (paren
 id|sb_devc
@@ -393,6 +389,17 @@ c_func
 id|sb_devc
 op_star
 id|devc
+)paren
+suffix:semicolon
+r_void
+id|sb_mixer_set_stereo
+(paren
+id|sb_devc
+op_star
+id|devc
+comma
+r_int
+id|mode
 )paren
 suffix:semicolon
 r_void

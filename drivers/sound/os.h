@@ -1,3 +1,6 @@
+macro_line|#ifdef __alpha__
+macro_line|#else
+macro_line|#endif
 DECL|macro|ALLOW_SELECT
 mdefine_line|#define ALLOW_SELECT
 DECL|macro|NO_INLINE_ASM
@@ -19,24 +22,23 @@ macro_line|#if LINUX_VERSION_CODE &gt; 131328
 DECL|macro|LINUX21X
 mdefine_line|#define LINUX21X
 macro_line|#endif
-macro_line|#include &lt;linux/param.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/ctype.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/utsname.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#include &lt;asm/param.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef __alpha__
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/utsname.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 DECL|macro|FALSE
@@ -48,6 +50,7 @@ r_struct
 id|snd_wait
 (brace
 DECL|member|opts
+r_volatile
 r_int
 id|opts
 suffix:semicolon
@@ -99,9 +102,18 @@ id|chn
 suffix:semicolon
 DECL|macro|RUNTIME_DMA_ALLOC
 mdefine_line|#define RUNTIME_DMA_ALLOC
+DECL|macro|USE_AUTOINIT_DMA
+mdefine_line|#define USE_AUTOINIT_DMA
 r_extern
 id|caddr_t
 id|sound_mem_blocks
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|sound_mem_sizes
 (braket
 l_int|1024
 )braket

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sound_switch.c&n; *&n; * The system call switch handler&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 DECL|variable|in_use
@@ -271,7 +271,7 @@ r_return
 op_minus
 id|ENOSPC
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -279,6 +279,7 @@ op_star
 )paren
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -290,6 +291,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -307,18 +309,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-id|buf
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -331,8 +323,13 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+id|buf
 comma
 r_sizeof
 (paren
@@ -340,8 +337,6 @@ op_star
 id|buf
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 id|vfree
 (paren
@@ -399,7 +394,7 @@ r_return
 op_minus
 id|ENOSPC
 suffix:semicolon
-id|copy_from_user
+id|memcpy
 (paren
 (paren
 r_char
@@ -407,6 +402,7 @@ op_star
 )paren
 id|buf
 comma
+(paren
 op_amp
 (paren
 (paren
@@ -418,6 +414,7 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
 r_sizeof
 (paren
@@ -474,18 +471,8 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-id|buf
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -498,8 +485,13 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+id|buf
 comma
 r_sizeof
 (paren
@@ -507,8 +499,6 @@ op_star
 id|buf
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 id|vfree
 (paren
@@ -1565,7 +1555,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#ifdef CONFIG_SEQUENCER
 r_if
 c_cond
 (paren
@@ -2487,19 +2477,8 @@ id|dev
 op_member_access_from_pointer
 id|modify_counter
 suffix:semicolon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-op_amp
-id|info
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2512,16 +2491,20 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|info
 comma
 r_sizeof
 (paren
 id|info
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 l_int|0
@@ -2581,19 +2564,8 @@ op_member_access_from_pointer
 id|name
 )paren
 suffix:semicolon
-(brace
-r_char
-op_star
-id|fixit
-op_assign
+id|memcpy
 (paren
-r_char
-op_star
-)paren
-op_amp
-id|info
-suffix:semicolon
-id|copy_to_user
 (paren
 op_amp
 (paren
@@ -2606,16 +2578,20 @@ id|arg
 (braket
 l_int|0
 )braket
+)paren
 comma
-id|fixit
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|info
 comma
 r_sizeof
 (paren
 id|info
 )paren
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 l_int|0
@@ -2670,12 +2646,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|_IOC_DIR
+id|_SIOC_DIR
 (paren
 id|cmd
 )paren
 op_amp
-id|_IOC_WRITE
+id|_SIOC_WRITE
 )paren
 id|mixer_devs
 (braket
@@ -2743,10 +2719,14 @@ op_eq
 id|OSS_GETVERSION
 )paren
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|SOUND_VERSION
 )paren
 suffix:semicolon

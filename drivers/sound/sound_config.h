@@ -1,5 +1,5 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &quot;local.h&quot;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
@@ -82,11 +82,11 @@ mdefine_line|#define MAX_AUDIO_DEV&t;5
 DECL|macro|MAX_MIXER_DEV
 mdefine_line|#define MAX_MIXER_DEV&t;5
 DECL|macro|MAX_SYNTH_DEV
-mdefine_line|#define MAX_SYNTH_DEV&t;3
+mdefine_line|#define MAX_SYNTH_DEV&t;5
 DECL|macro|MAX_MIDI_DEV
 mdefine_line|#define MAX_MIDI_DEV&t;6
 DECL|macro|MAX_TIMER_DEV
-mdefine_line|#define MAX_TIMER_DEV&t;3
+mdefine_line|#define MAX_TIMER_DEV&t;4
 DECL|struct|fileinfo
 r_struct
 id|fileinfo
@@ -212,6 +212,10 @@ suffix:semicolon
 DECL|member|bender_value
 r_int
 id|bender_value
+suffix:semicolon
+DECL|member|bender_range
+r_int
+id|bender_range
 suffix:semicolon
 DECL|member|controllers
 r_int

@@ -1,8 +1,6 @@
 multiline_comment|/*&n; * sound/sound_timer.c&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-DECL|macro|SEQUENCER_C
-mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_SEQUENCER)
 DECL|variable|initialized
@@ -95,7 +93,7 @@ r_int
 id|tmr_value
 )paren
 (brace
-multiline_comment|/*&n;     *    Convert timer ticks to MIDI ticks&n;   */
+multiline_comment|/*&n;   *    Convert timer ticks to MIDI ticks&n;   */
 r_int
 r_int
 id|tmp
@@ -600,10 +598,14 @@ r_case
 id|SNDCTL_TMR_SOURCE
 suffix:colon
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|TMR_INTERNAL
 )paren
 suffix:semicolon
@@ -652,16 +654,14 @@ suffix:semicolon
 r_case
 id|SNDCTL_TMR_TIMEBASE
 suffix:colon
-id|get_user
-(paren
 id|val
-comma
+op_assign
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -697,10 +697,14 @@ id|val
 suffix:semicolon
 )brace
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|curr_timebase
 )paren
 suffix:semicolon
@@ -709,16 +713,14 @@ suffix:semicolon
 r_case
 id|SNDCTL_TMR_TEMPO
 suffix:colon
-id|get_user
-(paren
 id|val
-comma
+op_assign
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -773,10 +775,14 @@ id|reprogram_timer
 suffix:semicolon
 )brace
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|curr_tempo
 )paren
 suffix:semicolon
@@ -785,16 +791,14 @@ suffix:semicolon
 r_case
 id|SNDCTL_SEQ_CTRLRATE
 suffix:colon
-id|get_user
-(paren
 id|val
-comma
+op_assign
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -809,10 +813,14 @@ op_minus
 id|EINVAL
 suffix:semicolon
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 (paren
 (paren
 id|curr_tempo
@@ -832,10 +840,14 @@ r_case
 id|SNDCTL_SEQ_GETTIME
 suffix:colon
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|curr_ticks
 )paren
 suffix:semicolon
@@ -909,7 +921,7 @@ id|sound_timer
 op_assign
 (brace
 (brace
-l_string|&quot;GUS Timer&quot;
+l_string|&quot;Sound Timer&quot;
 comma
 l_int|0
 )brace
@@ -1018,14 +1030,25 @@ r_if
 c_cond
 (paren
 id|initialized
-op_logical_or
-id|t
-op_eq
-l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|t-&gt;priority
+op_le
+id|tmr-&gt;priority
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* There is already a similar timer */
+multiline_comment|/* There is already a similar or better timer */
+id|tmr
+op_assign
+id|t
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|initialized
 op_assign
 l_int|1

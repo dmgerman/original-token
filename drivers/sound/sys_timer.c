@@ -1,8 +1,6 @@
 multiline_comment|/*&n; * sound/sys_timer.c&n; *&n; * The default timer for the Level 2 sequencer interface&n; * Uses the (1/HZ sec) timer of kernel.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
-DECL|macro|SEQUENCER_C
-mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIG_SEQUENCER
 DECL|variable|opened
@@ -585,10 +583,14 @@ r_case
 id|SNDCTL_TMR_SOURCE
 suffix:colon
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|TMR_INTERNAL
 )paren
 suffix:semicolon
@@ -641,16 +643,14 @@ suffix:colon
 r_int
 id|val
 suffix:semicolon
-id|get_user
-(paren
 id|val
-comma
+op_assign
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -686,10 +686,14 @@ id|val
 suffix:semicolon
 )brace
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|curr_timebase
 )paren
 suffix:semicolon
@@ -703,16 +707,14 @@ suffix:colon
 r_int
 id|val
 suffix:semicolon
-id|get_user
-(paren
 id|val
-comma
+op_assign
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -763,10 +765,14 @@ id|val
 suffix:semicolon
 )brace
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|curr_tempo
 )paren
 suffix:semicolon
@@ -780,16 +786,14 @@ suffix:colon
 r_int
 id|val
 suffix:semicolon
-id|get_user
-(paren
 id|val
-comma
+op_assign
+op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -804,10 +808,14 @@ op_minus
 id|EINVAL
 suffix:semicolon
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 (paren
 (paren
 id|curr_tempo
@@ -828,10 +836,14 @@ r_case
 id|SNDCTL_SEQ_GETTIME
 suffix:colon
 r_return
-id|ioctl_out
 (paren
+op_star
+(paren
+r_int
+op_star
+)paren
 id|arg
-comma
+op_assign
 id|curr_ticks
 )paren
 suffix:semicolon

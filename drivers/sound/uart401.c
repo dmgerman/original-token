@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/uart401.c&n; *&n; * MPU-401 UART driver (formerly uart401_midi.c)&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
@@ -886,6 +886,16 @@ id|uart401_devc
 )paren
 )paren
 suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+id|uart401_devc
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1003,7 +1013,9 @@ comma
 id|devc-&gt;irq
 )paren
 suffix:semicolon
-r_return
+id|devc-&gt;share_irq
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|irq2devc
@@ -1084,6 +1096,17 @@ r_struct
 id|midi_operations
 )paren
 )paren
+)paren
+suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+r_struct
+id|midi_operations
 )paren
 suffix:semicolon
 r_if
@@ -1178,6 +1201,17 @@ id|synth_operations
 )paren
 )paren
 suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+r_struct
+id|synth_operations
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1248,6 +1282,15 @@ id|info.name
 comma
 id|name
 )paren
+suffix:semicolon
+id|midi_devs
+(braket
+id|num_midis
+)braket
+op_member_access_from_pointer
+id|converter-&gt;id
+op_assign
+l_string|&quot;UART401&quot;
 suffix:semicolon
 id|num_midis
 op_increment
@@ -1437,6 +1480,10 @@ id|ok
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_static
 id|uart401_devc
 id|hw_info
@@ -1505,11 +1552,25 @@ id|devc-&gt;share_irq
 op_assign
 l_int|0
 suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
 id|ok
 op_assign
 id|reset_uart401
 (paren
 id|devc
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_if

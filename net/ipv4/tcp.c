@@ -1393,6 +1393,12 @@ op_ne
 id|TCP_SYN_RECV
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;tcp_do_sendmsg1: EPIPE dude...&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1539,6 +1545,12 @@ id|copied
 )paren
 r_return
 id|copied
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;tcp_do_sendmsg2: SEND_SHUTDOWN, EPIPE...&bslash;n&quot;
+)paren
 suffix:semicolon
 id|send_sig
 c_func
@@ -3632,11 +3644,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|tcp_cache_zap
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3669,6 +3676,14 @@ suffix:semicolon
 id|sk-&gt;dead
 op_assign
 l_int|1
+suffix:semicolon
+id|sk-&gt;prot
+op_member_access_from_pointer
+id|unhash
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3812,13 +3827,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This will destroy it. The timers will take care of actually&n;&t; * free&squot;ing up the memory.&n;&t; */
-id|tcp_cache_zap
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Kill the cache again. */
 multiline_comment|/* Now that the socket is dead, if we are in the FIN_WAIT2 state&n;&t; * we may need to set up a timer.&n;         */
 r_if
 c_cond
@@ -3874,6 +3882,23 @@ id|sk-&gt;dead
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_eq
+id|TCP_CLOSE
+)paren
+(brace
+id|sk-&gt;prot
+op_member_access_from_pointer
+id|unhash
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;Wait for an incoming connection, avoid race&n; *&t;conditions. This must be called with the socket locked.&n; */
 DECL|function|wait_for_connect

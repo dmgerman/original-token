@@ -1095,35 +1095,63 @@ id|proto
 id|packet_prot
 op_assign
 (brace
+(paren
+r_struct
+id|sock
+op_star
+)paren
+op_amp
+id|packet_prot
+comma
+multiline_comment|/* sklist_next */
+(paren
+r_struct
+id|sock
+op_star
+)paren
+op_amp
+id|packet_prot
+comma
+multiline_comment|/* sklist_prev */
 id|packet_close
 comma
+multiline_comment|/* close */
 l_int|NULL
 comma
+multiline_comment|/* connect */
 l_int|NULL
 comma
 multiline_comment|/* accept */
 l_int|NULL
 comma
+multiline_comment|/* retransmit */
 l_int|NULL
 comma
+multiline_comment|/* write_wakeup */
 l_int|NULL
 comma
+multiline_comment|/* read_wakeup */
 id|datagram_poll
 comma
+multiline_comment|/* poll */
 l_int|NULL
 comma
-multiline_comment|/* No ioctl */
+multiline_comment|/* ioctl */
 id|packet_init
 comma
+multiline_comment|/* init */
 l_int|NULL
 comma
+multiline_comment|/* destroy */
 l_int|NULL
 comma
+multiline_comment|/* shutdown */
 l_int|NULL
 comma
-multiline_comment|/* No set/get socket options */
+multiline_comment|/* setsockopt */
 l_int|NULL
 comma
+multiline_comment|/* getsockopt */
 id|packet_sendmsg
 comma
 multiline_comment|/* Sendmsg */
@@ -1132,19 +1160,39 @@ comma
 multiline_comment|/* Recvmsg */
 id|packet_bind
 comma
-multiline_comment|/* Bind */
+multiline_comment|/* bind */
 l_int|NULL
 comma
-multiline_comment|/* Backlog_rcv */
+multiline_comment|/* backlog_rcv */
+l_int|NULL
+comma
+multiline_comment|/* hash */
+l_int|NULL
+comma
+multiline_comment|/* unhash */
+l_int|NULL
+comma
+multiline_comment|/* rehash */
+l_int|NULL
+comma
+multiline_comment|/* good_socknum */
+l_int|NULL
+comma
+multiline_comment|/* verify_bind */
 l_int|128
 comma
+multiline_comment|/* max_header */
 l_int|0
 comma
+multiline_comment|/* retransmits */
 l_string|&quot;PACKET&quot;
 comma
+multiline_comment|/* name */
 l_int|0
 comma
+multiline_comment|/* inuse */
 l_int|0
+multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
 eof

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/dev_table.c&n; *&n; * Device call tables.&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|_DEV_TABLE_C_
 mdefine_line|#define _DEV_TABLE_C_
@@ -453,6 +453,7 @@ id|i
 dot
 id|enabled
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -473,6 +474,7 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -509,6 +511,8 @@ id|enabled
 op_assign
 l_int|0
 suffix:semicolon
+)brace
+)brace
 )brace
 r_if
 c_cond
@@ -1936,6 +1940,17 @@ id|audio_driver
 )paren
 )paren
 suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+r_struct
+id|audio_driver
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1968,6 +1983,17 @@ r_struct
 id|audio_operations
 )paren
 )paren
+)paren
+suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+r_struct
+id|audio_operations
 )paren
 suffix:semicolon
 r_if
@@ -2127,14 +2153,6 @@ id|op-&gt;devc
 op_assign
 id|devc
 suffix:semicolon
-id|op-&gt;dmachan1
-op_assign
-id|dma1
-suffix:semicolon
-id|op-&gt;dmachan2
-op_assign
-id|dma2
-suffix:semicolon
 multiline_comment|/*&n; *    Hardcoded defaults&n; */
 id|op-&gt;buffsize
 op_assign
@@ -2151,6 +2169,18 @@ id|num
 op_assign
 id|num_audiodevs
 op_increment
+suffix:semicolon
+id|DMAbuf_init
+(paren
+)paren
+suffix:semicolon
+id|op-&gt;dmap_out-&gt;dma
+op_assign
+id|dma1
+suffix:semicolon
+id|op-&gt;dmap_in-&gt;dma
+op_assign
+id|dma2
 suffix:semicolon
 id|DMAbuf_init
 (paren
@@ -2269,6 +2299,17 @@ r_struct
 id|mixer_operations
 )paren
 )paren
+)paren
+suffix:semicolon
+id|sound_mem_sizes
+(braket
+id|sound_nblocks
+)braket
+op_assign
+r_sizeof
+(paren
+r_struct
+id|mixer_operations
 )paren
 suffix:semicolon
 r_if

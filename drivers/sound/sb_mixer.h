@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/sb_mixer.h&n; * &n; * Definitions for the SB Pro and SB16 mixers&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added defines for the Sound Galaxy NX Pro mixer.&n; * &n; */
 DECL|macro|SBPRO_RECORDING_DEVICES
 mdefine_line|#define SBPRO_RECORDING_DEVICES&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | SOUND_MASK_CD)
@@ -81,6 +81,7 @@ DECL|macro|MIX_ENT
 mdefine_line|#define MIX_ENT(name, reg_l, bit_l, len_l, reg_r, bit_r, len_r)&t;&bslash;&n;&t;{{reg_l, bit_l, len_l}, {reg_r, bit_r, len_r}}
 macro_line|#ifdef __SB_MIXER_C__
 DECL|variable|sbpro_mix
+r_static
 id|mixer_tab
 id|sbpro_mix
 op_assign
@@ -303,6 +304,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|es688_mix
+r_static
 id|mixer_tab
 id|es688_mix
 op_assign
@@ -616,6 +618,7 @@ l_int|0
 suffix:semicolon
 macro_line|#ifdef&t;__SGNXPRO__
 DECL|variable|sgnxpro_mix
+r_static
 id|mixer_tab
 id|sgnxpro_mix
 op_assign
@@ -875,6 +878,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|variable|sb16_mix
+r_static
 id|mixer_tab
 id|sb16_mix
 op_assign

@@ -2,6 +2,44 @@ macro_line|#ifndef _NET_RAWV6_H
 DECL|macro|_NET_RAWV6_H
 mdefine_line|#define _NET_RAWV6_H
 macro_line|#ifdef __KERNEL__
+DECL|macro|RAWV6_HTABLE_SIZE
+mdefine_line|#define RAWV6_HTABLE_SIZE&t;MAX_INET_PROTOS
+r_extern
+r_struct
+id|sock
+op_star
+id|raw_v6_htable
+(braket
+id|RAWV6_HTABLE_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_struct
+id|sock
+op_star
+id|raw_v6_lookup
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+r_int
+id|num
+comma
+r_struct
+id|in6_addr
+op_star
+id|loc_addr
+comma
+r_struct
+id|in6_addr
+op_star
+id|rmt_addr
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|rawv6_rcv
